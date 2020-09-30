@@ -64,13 +64,14 @@ export function useHexColorFieldState(
 
   let increment = useCallback(() => {
     setColorValue((prevColor: Color) => {
-      let prevColorInt = prevColor ? prevColor.toHexInt() : minColorInt;
       let newColor = prevColor;
+      let prevColorInt = prevColor ? prevColor.toHexInt() : minColorInt;
+      let newColorString = prevColor ? prevColor.toString('hex') : '';
       if (prevColorInt < maxColorInt) {
-        let newValue = `#${Math.min(prevColorInt + step, maxColorInt).toString(16).padStart(6, '0')}`;
-        newColor = new Color(newValue);
+        newColorString = `#${Math.min(prevColorInt + step, maxColorInt).toString(16).padStart(6, '0').toUpperCase()}`;
+        newColor = new Color(newColorString);
       }
-      setInputValue(newColor.toString('hex'));
+      setInputValue(newColorString);
       return newColor;
     });
   }, [minColorInt, maxColorInt]);
@@ -89,14 +90,15 @@ export function useHexColorFieldState(
   let decrement = useCallback(() => {
     setColorValue((prevColor: Color) => {
       let newColor = prevColor ? prevColor : minColor;
+      let newColorString = newColor.toString('hex');
       if (prevColor) {
         let prevColorInt = prevColor.toHexInt();
         if (prevColorInt > minColorInt) {
-          let newValue = `#${Math.max(prevColorInt - step, minColorInt).toString(16).padStart(6, '0')}`;
-          newColor = new Color(newValue);
+          newColorString = `#${Math.max(prevColorInt - step, minColorInt).toString(16).padStart(6, '0').toUpperCase()}`;
+          newColor = new Color(newColorString);
         }
       }
-      setInputValue(newColor.toString('hex'));
+      setInputValue(newColorString);
       return newColor;
     });
   }, [minColor, minColorInt]);
