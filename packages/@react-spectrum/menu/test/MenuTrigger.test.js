@@ -110,7 +110,7 @@ describe('MenuTrigger', function () {
     }
 
     triggerEvent(triggerButton);
-    jest.runAllTimers();
+    act(() => {jest.runAllTimers();});
 
     let menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
@@ -134,7 +134,7 @@ describe('MenuTrigger', function () {
     }
 
     triggerEvent(triggerButton, menu);
-    jest.runAllTimers();
+    act(() => {jest.runAllTimers();});
     expect(menu).not.toBeInTheDocument();
 
     if (Component === MenuTrigger) {

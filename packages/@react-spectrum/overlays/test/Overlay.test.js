@@ -16,9 +16,7 @@ import React from 'react';
 import {render} from '@react-spectrum/test-utils/src/testingLibrary';
 import {theme} from '@react-spectrum/theme-default';
 
-function ExampleOverlay() {
-  return <span data-testid="contents">Overlay</span>;
-}
+const ExampleOverlay = React.forwardRef((props, ref) => <span data-testid="contents" ref={ref}>Overlay</span>);
 
 describe('Overlay', function () {
   it('should render nothing if isOpen is not set', function () {
@@ -37,10 +35,11 @@ describe('Overlay', function () {
   it('should render into a portal in the body', function () {
     let providerRef = React.createRef();
     let overlayRef = React.createRef();
+    let contentRef = React.createRef();
     render(
       <Provider theme={theme} ref={providerRef}>
-        <Overlay isOpen ref={overlayRef}>
-          <ExampleOverlay />
+        <Overlay isOpen ref={overlayRef} nodeRef={contentRef}>
+          <ExampleOverlay ref={contentRef} />
         </Overlay>
       </Provider>
     );

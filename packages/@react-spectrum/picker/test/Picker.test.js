@@ -23,6 +23,7 @@ import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 
 describe('Picker', function () {
   let offsetWidth, offsetHeight;
@@ -787,7 +788,7 @@ describe('Picker', function () {
       );
 
       let label = getAllByText('Test')[0];
-      label.click();
+      act(() => {userEvent.click(label);});
 
       let picker = getByRole('button');
       expect(document.activeElement).toBe(picker);

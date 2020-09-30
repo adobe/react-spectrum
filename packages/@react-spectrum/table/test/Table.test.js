@@ -1232,7 +1232,7 @@ describe('Table', function () {
 
       it('should support keyboard navigation after pressing focusable element inside a cell', function () {
         let tree = renderFocusable();
-        act(() => triggerPress(tree.getAllByRole('switch')[0]));
+        triggerPress(tree.getAllByRole('switch')[0]);
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
 
         moveFocus('ArrowDown');
@@ -1241,7 +1241,7 @@ describe('Table', function () {
 
       it('should marshall focus to the child on press of the cell', function () {
         let tree = renderFocusable();
-        act(() => triggerPress(tree.getAllByRole('rowheader')[0]));
+        triggerPress(tree.getAllByRole('rowheader')[0]);
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
       });
 
@@ -1334,7 +1334,7 @@ describe('Table', function () {
       it('should move focus after the table when tabbing', function () {
         let tree = renderFocusable();
 
-        act(() => triggerPress(tree.getAllByRole('switch')[1]));
+        triggerPress(tree.getAllByRole('switch')[1]);
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
         // Simulate tabbing within the table
@@ -1372,7 +1372,7 @@ describe('Table', function () {
       it('should move focus before the table when shift tabbing', function () {
         let tree = renderFocusable();
 
-        act(() => triggerPress(tree.getAllByRole('switch')[1]));
+        triggerPress(tree.getAllByRole('switch')[1]);
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
         // Simulate shift tabbing within the table
@@ -1508,7 +1508,7 @@ describe('Table', function () {
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
-        act(() => triggerPress(getCell(tree, 'Baz 1')));
+        triggerPress(getCell(tree, 'Baz 1'));
 
         checkSelection(onSelectionChange, ['Foo 1']);
         expect(row).toHaveAttribute('aria-selected', 'true');
@@ -1575,7 +1575,7 @@ describe('Table', function () {
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
-        act(() => triggerPress(getCell(tree, 'Baz 1')));
+        triggerPress(getCell(tree, 'Baz 1'));
 
         checkSelection(onSelectionChange, ['Foo 1']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
@@ -1583,7 +1583,7 @@ describe('Table', function () {
         checkSelectAll(tree, 'indeterminate');
 
         onSelectionChange.mockReset();
-        act(() => triggerPress(getCell(tree, 'Baz 2')));
+        triggerPress(getCell(tree, 'Baz 2'));
 
         checkSelection(onSelectionChange, ['Foo 1', 'Foo 2']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
@@ -1593,7 +1593,7 @@ describe('Table', function () {
 
         // Deselect
         onSelectionChange.mockReset();
-        act(() => triggerPress(getCell(tree, 'Baz 2')));
+        triggerPress(getCell(tree, 'Baz 2'));
 
         checkSelection(onSelectionChange, ['Foo 1']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
@@ -1645,10 +1645,10 @@ describe('Table', function () {
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
-        act(() => triggerPress(getCell(tree, 'Baz 1')));
+        triggerPress(getCell(tree, 'Baz 1'));
 
         onSelectionChange.mockReset();
-        act(() => triggerPress(getCell(tree, 'Baz 20'), {shiftKey: true}));
+        triggerPress(getCell(tree, 'Baz 20'), {shiftKey: true});
 
         checkSelection(onSelectionChange, [
           'Foo 1', 'Foo 2', 'Foo 3', 'Foo 4', 'Foo 5', 'Foo 6', 'Foo 7', 'Foo 8', 'Foo 9', 'Foo 10',
@@ -1667,10 +1667,10 @@ describe('Table', function () {
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
-        act(() => triggerPress(getCell(tree, 'Baz 10')));
+        triggerPress(getCell(tree, 'Baz 10'));
 
         onSelectionChange.mockReset();
-        act(() => triggerPress(getCell(tree, 'Baz 20'), {shiftKey: true}));
+        triggerPress(getCell(tree, 'Baz 20'), {shiftKey: true});
 
         checkSelection(onSelectionChange, [
           'Foo 10', 'Foo 11', 'Foo 12', 'Foo 13', 'Foo 14', 'Foo 15',
@@ -1681,7 +1681,7 @@ describe('Table', function () {
         checkRowSelection(rows.slice(21), false);
 
         onSelectionChange.mockReset();
-        act(() => triggerPress(getCell(tree, 'Baz 1'), {shiftKey: true}));
+        triggerPress(getCell(tree, 'Baz 1'), {shiftKey: true});
 
         checkSelection(onSelectionChange, [
           'Foo 1', 'Foo 2', 'Foo 3', 'Foo 4', 'Foo 5',
@@ -1864,7 +1864,7 @@ describe('Table', function () {
         act(() => userEvent.click(tree.getByLabelText('Select All')));
 
         onSelectionChange.mockReset();
-        act(() => triggerPress(rows[4]));
+        triggerPress(rows[4]);
 
         let expected = [];
         for (let i = 1; i <= 100; i++) {
@@ -1889,7 +1889,7 @@ describe('Table', function () {
         act(() => userEvent.click(tree.getByLabelText('Select All')));
 
         onSelectionChange.mockReset();
-        act(() => triggerPress(rows[4], {shiftKey: true}));
+        triggerPress(rows[4], {shiftKey: true});
 
         checkSelection(onSelectionChange, ['Foo 4']);
         checkRowSelection(rows.slice(1, 4), false);
@@ -1926,7 +1926,7 @@ describe('Table', function () {
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
-        act(() => triggerPress(getCell(tree, 'Baz 1')));
+        triggerPress(getCell(tree, 'Baz 1'));
         checkSelectAll(tree, 'indeterminate');
 
         onSelectionChange.mockReset();
@@ -1971,10 +1971,10 @@ describe('Table', function () {
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
 
-        act(() => triggerPress(rows[1]));
+        triggerPress(rows[1]);
         checkSelectAll(tree, 'indeterminate');
 
-        act(() => triggerPress(rows[2]));
+        triggerPress(rows[2]);
         checkSelectAll(tree, 'checked');
 
         rerender(tree, renderJSX(onSelectionChange, [
@@ -2004,7 +2004,7 @@ describe('Table', function () {
       expect(rows[2]).toHaveAttribute('aria-rowindex', '3');
 
       let button = tree.getByLabelText('Add item');
-      act(() => triggerPress(button));
+      triggerPress(button);
 
       let dialog = tree.getByRole('dialog');
       expect(dialog).toBeVisible();
@@ -2022,7 +2022,7 @@ describe('Table', function () {
       act(() => userEvent.tab());
 
       let createButton = tree.getByText('Create');
-      act(() => triggerPress(createButton));
+      triggerPress(createButton);
       act(() => {jest.runAllTimers();});
 
       expect(dialog).not.toBeInTheDocument();
@@ -2050,7 +2050,7 @@ describe('Table', function () {
       expect(rows).toHaveLength(3);
 
       let button = within(rows[2]).getByRole('button');
-      act(() => triggerPress(button));
+      triggerPress(button);
 
       let menu = tree.getByRole('menu');
       expect(document.activeElement).toBe(menu);
@@ -2058,13 +2058,13 @@ describe('Table', function () {
       let menuItems = within(menu).getAllByRole('menuitem');
       expect(menuItems.length).toBe(2);
 
-      act(() => triggerPress(menuItems[1]));
+      triggerPress(menuItems[1]);
       expect(menu).not.toBeInTheDocument();
 
       let dialog = tree.getByRole('alertdialog', {hidden: true});
       let deleteButton = within(dialog).getByRole('button', {hidden: true});
 
-      act(() => triggerPress(deleteButton));
+      triggerPress(deleteButton);
       expect(dialog).not.toBeInTheDocument();
 
       act(() => jest.runAllTimers());
@@ -2091,7 +2091,7 @@ describe('Table', function () {
       expect(rows[2]).toHaveAttribute('aria-rowindex', '3');
 
       let button = within(rows[1]).getByRole('button');
-      act(() => triggerPress(button));
+      triggerPress(button);
 
       let menu = tree.getByRole('menu');
       expect(document.activeElement).toBe(menu);
@@ -2099,13 +2099,13 @@ describe('Table', function () {
       let menuItems = within(menu).getAllByRole('menuitem');
       expect(menuItems.length).toBe(2);
 
-      act(() => triggerPress(menuItems[1]));
+      triggerPress(menuItems[1]);
       expect(menu).not.toBeInTheDocument();
 
       let dialog = tree.getByRole('alertdialog', {hidden: true});
       let deleteButton = within(dialog).getByRole('button', {hidden: true});
 
-      act(() => triggerPress(deleteButton));
+      triggerPress(deleteButton);
       expect(dialog).not.toBeInTheDocument();
 
       act(() => jest.runAllTimers());
@@ -2132,12 +2132,12 @@ describe('Table', function () {
       expect(checkbox.checked).toBe(true);
 
       let deleteButton = tree.getByLabelText('Delete selected items');
-      act(() => triggerPress(deleteButton));
+      triggerPress(deleteButton);
 
       let dialog = tree.getByRole('alertdialog');
       let confirmButton = within(dialog).getByRole('button');
 
-      act(() => triggerPress(confirmButton));
+      triggerPress(confirmButton);
       expect(dialog).not.toBeInTheDocument();
 
       act(() => jest.runAllTimers());
@@ -2156,7 +2156,7 @@ describe('Table', function () {
       expect(rows).toHaveLength(3);
 
       let button = within(rows[2]).getByRole('button');
-      act(() => triggerPress(button));
+      triggerPress(button);
 
       let menu = tree.getByRole('menu');
       expect(document.activeElement).toBe(menu);
@@ -2164,7 +2164,7 @@ describe('Table', function () {
       let menuItems = within(menu).getAllByRole('menuitem');
       expect(menuItems.length).toBe(2);
 
-      act(() => triggerPress(menuItems[0]));
+      triggerPress(menuItems[0]);
       expect(menu).not.toBeInTheDocument();
 
       let dialog = tree.getByRole('dialog', {hidden: true});
@@ -2174,7 +2174,7 @@ describe('Table', function () {
       typeText(firstName, 'Jessica');
 
       let saveButton = tree.getByText('Save');
-      act(() => triggerPress(saveButton));
+      triggerPress(saveButton);
 
       expect(dialog).not.toBeInTheDocument();
 
@@ -2552,7 +2552,7 @@ describe('Table', function () {
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
 
-      act(() => triggerPress(columnheaders[0]));
+      triggerPress(columnheaders[0]);
 
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenCalledWith({column: 'foo', direction: 'ascending'});
@@ -2584,7 +2584,7 @@ describe('Table', function () {
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
 
-      act(() => triggerPress(columnheaders[0]));
+      triggerPress(columnheaders[0]);
 
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenCalledWith({column: 'foo', direction: 'descending'});
@@ -2616,7 +2616,7 @@ describe('Table', function () {
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
 
-      act(() => triggerPress(columnheaders[0]));
+      triggerPress(columnheaders[0]);
 
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenCalledWith({column: 'foo', direction: 'ascending'});
@@ -2648,7 +2648,7 @@ describe('Table', function () {
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
 
-      act(() => triggerPress(columnheaders[1]));
+      triggerPress(columnheaders[1]);
 
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenCalledWith({column: 'bar', direction: 'ascending'});
