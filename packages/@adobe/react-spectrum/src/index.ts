@@ -44,5 +44,3 @@ export {useAsyncList, useListData, useTreeData} from '@react-stately/data';
 export {VisuallyHidden} from '@react-aria/visually-hidden';
 export {useCollator, useDateFormatter, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
 export {SSRProvider} from '@react-aria/ssr';
-
-export type {IconPropsWithoutChildren, UIIconPropsWithoutChildren} from '@react-spectrum/icon';
