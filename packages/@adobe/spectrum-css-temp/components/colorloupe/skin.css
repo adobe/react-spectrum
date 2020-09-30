@@ -1,0 +1,4 @@
+.spectrum-ColorLoupe-outer {
+  fill: var(--spectrum-colorloupe-inner-border-color);
+  stroke: var(--spectrum-colorloupe-outer-border-color);
+}
