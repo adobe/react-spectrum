@@ -43,6 +43,6 @@ describe('Color', function () {
 
   it('should convert a color to its equivalent hex value in decimal format', function () {
     const color = new Color('#abcdef');
-    expect(color.toHexInt()).toBe(11259375);
+    expect(color.toHexInt()).toBe(0xABCDEF);
   });
 });
