@@ -1519,9 +1519,8 @@ describe('Picker', function () {
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
 
-      jest.advanceTimersByTime(500);
-
-      picker.focus();
+      act(() => jest.advanceTimersByTime(500));
+      act(() => picker.focus());
       act(() => {fireEvent.keyDown(picker, {key: 'ArrowDown'});});
       act(() => jest.runAllTimers());
       listbox = getByRole('listbox');
