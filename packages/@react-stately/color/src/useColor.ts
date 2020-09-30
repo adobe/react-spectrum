@@ -17,10 +17,15 @@ import {useMemo} from 'react';
 export function useColor(value: ColorInput) {
   let color = useMemo(() => {
     if (typeof value === 'string') {
-      return new Color(value);
+      try {
+        return new Color(value);
+      } catch (err) {
+        return undefined;
+      }
     }
     return value;
   }, [value]);
-  let colorInt = useMemo(() => color.toHexInt(), [color]);
+
+  let colorInt = useMemo(() => color ? color.toHexInt() : undefined, [color]);
   return {color, colorInt};
 }

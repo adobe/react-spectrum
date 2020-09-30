@@ -11,7 +11,7 @@
  */
 
 import {Color} from './Color';
-import {ColorInput, HexColorFieldProps} from '@react-types/color';
+import {HexColorFieldProps} from '@react-types/color';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {useCallback, useState} from 'react';
 import {useColor} from './useColor';
@@ -22,41 +22,24 @@ export interface HexColorFieldState extends Omit<NumberFieldState, 'value' | 'se
   setInputValue: (value: string) => void
 }
 
-export const defaultMinValue = new Color('#000000');
-export const defaultMaxValue = new Color('#FFFFFF');
-const minValueRange = [new Color('#000000'), new Color('#FFFFFE')];
-const maxValueRange = [new Color('#000001'), new Color('#FFFFFF')];
+export const minColor = new Color('#000000');
+export const maxColor = new Color('#FFFFFF');
+let minColorInt = minColor.toHexInt();
+let maxColorInt = maxColor.toHexInt();
 
 export function useHexColorFieldState(
   props: HexColorFieldProps
 ): HexColorFieldState {
   let {
-    minValue = defaultMinValue,
-    maxValue = defaultMaxValue,
     step = 1,
     value,
     defaultValue,
     onChange,
     validationState
   } = props;
-
-  let clampColor = (value: ColorInput, min: Color, max: Color) => {
-    try {
-      let color = typeof value === 'string' ? new Color(value) : value;
-      let colorInt = color.toHexInt();
-      if (colorInt < min.toHexInt()) { return min; }
-      if (colorInt > max.toHexInt()) { return max; }
-      return color;
-    } catch (err) {
-      return undefined;
-    }
-  };
-
-  let {color: minColor, colorInt: minColorInt} = useColor(clampColor(minValue, minValueRange[0], minValueRange[1]));
-  let {color: maxColor, colorInt: maxColorInt} = useColor(clampColor(maxValue, maxValueRange[0], maxValueRange[1]));
-
-  let initialValue = clampColor(value, minColor, maxColor);
-  let initialDefaultValue = clampColor(defaultValue, minColor, maxColor);
+  
+  let {color: initialValue} = useColor(value);
+  let {color: initialDefaultValue} = useColor(defaultValue);
   let [colorValue, setColorValue] = useControlledState<Color>(initialValue, initialDefaultValue, onChange);
 
   let initialInputValue = (value || defaultValue) && colorValue ? colorValue.toString('hex') : '';
@@ -74,7 +57,7 @@ export function useHexColorFieldState(
       setInputValue(newColorString);
       return newColor;
     });
-  }, [minColorInt, maxColorInt]);
+  }, [step, setColorValue, setInputValue]);
 
   let incrementToMax = useCallback(() => {
     setColorValue((prevColor: Color) => {
@@ -85,7 +68,7 @@ export function useHexColorFieldState(
       setInputValue(newColor.toString('hex'));
       return newColor;
     });
-  }, [maxColor, maxColorInt, minColorInt, setColorValue, setInputValue]);
+  }, [setColorValue, setInputValue]);
 
   let decrement = useCallback(() => {
     setColorValue((prevColor: Color) => {
@@ -101,7 +84,7 @@ export function useHexColorFieldState(
       setInputValue(newColorString);
       return newColor;
     });
-  }, [minColor, minColorInt]);
+  }, [step, setColorValue, setInputValue]);
 
   let decrementToMin = useCallback(() => {
     setColorValue((prevColor: Color) => {
@@ -112,7 +95,7 @@ export function useHexColorFieldState(
       setInputValue(newColor.toString('hex'));
       return newColor;
     });
-  }, [minColor, minColorInt, setColorValue, setInputValue]);
+  }, [setColorValue, setInputValue]);
 
   let setFieldInputValue = (value: string) => {
     value = value.replace(/[^#0-9a-f]/ig, '');
@@ -122,13 +105,8 @@ export function useHexColorFieldState(
       value = `#${value}`;
     }
     try {
-      let newColor = clampColor(value, minColor, maxColor);
-      if (newColor) {
-        setColorValue((prevColor: Color) => {
-          let prevColorInt = prevColor ? prevColor.toHexInt() : minColorInt;
-          return prevColorInt === newColor.toHexInt() ? prevColor : newColor;
-        });
-      }
+      let newColor = new Color(value);
+      setColorValue((prevColor: Color) => prevColor && prevColor.toHexInt() === newColor.toHexInt() ? prevColor : newColor);
     } catch (err) {
       // ignore
     }

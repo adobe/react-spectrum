@@ -58,10 +58,6 @@ storiesOf('HexColorField', module)
     () => render({step: 16})
   )
   .add(
-    'min = #AAAAAA, max = #CCCCCC',
-    () => render({minValue: '#AAA', maxValue: '#CCC'})
-  )
-  .add(
     'controlled value',
     () => (
       <ControlledHexColorField
@@ -75,18 +71,6 @@ storiesOf('HexColorField', module)
       <HexColorFieldPopover
         label="Choose a color"
         value="#ff0000"
-        step={255}
-        onChange={action('change')} />
-    )
-  )
-  .add(
-    'as a popover, with custom min/max',
-    () => (
-      <HexColorFieldPopover
-        label="Choose a color"
-        minValue="#aaa"
-        maxValue="#ccc"
-        value={new Color('#bbb')}
         step={255}
         onChange={action('change')} />
     )

@@ -12,10 +12,9 @@
 
 import {AriaHexColorFieldProps} from '@react-types/color';
 import {
-  defaultMaxValue,
-  defaultMinValue,
   HexColorFieldState,
-  useColor
+  maxColor,
+  minColor
 } from '@react-stately/color';
 import {
   HTMLAttributes,
@@ -40,9 +39,7 @@ export function useHexColorField(
   let {
     isDisabled,
     isReadOnly,
-    isRequired,
-    minValue = defaultMinValue,
-    maxValue = defaultMaxValue
+    isRequired
   } = props;
   
   let {
@@ -57,16 +54,13 @@ export function useHexColorField(
   } = state;
 
   let inputId = useId();
-  let {colorInt: minColorInt} = useColor(minValue);
-  let {colorInt: maxColorInt} = useColor(maxValue);
-
   let {spinButtonProps} = useSpinButton(
     {
       isDisabled,
       isReadOnly,
       isRequired,
-      maxValue: maxColorInt,
-      minValue: minColorInt,
+      maxValue: maxColor.toHexInt(),
+      minValue: minColor.toHexInt(),
       onIncrement: increment,
       onIncrementToMax: incrementToMax,
       onDecrement: decrement,

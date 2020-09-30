@@ -52,8 +52,6 @@ export interface HexColorFieldProps extends InputBase, Validation, FocusableProp
   value?: ColorInput,
   defaultValue?: ColorInput,
   onChange?: (color: Color) => void,
-  minValue?: ColorInput,
-  maxValue?: ColorInput,
   step?: number
 }
 
