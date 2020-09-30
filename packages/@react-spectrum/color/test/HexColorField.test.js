@@ -136,8 +136,10 @@ describe('HexColorField', function () {
     let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe('#AABBCC');
 
-    act(() => {hexColorField.focus();});
-    userEvent.clear(hexColorField);
+    act(() => {
+      hexColorField.focus();
+      userEvent.clear(hexColorField);
+    });
     typeText(hexColorField, 'cba');
     expect(hexColorField.value).toBe('cba');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
@@ -160,8 +162,10 @@ describe('HexColorField', function () {
     let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe('#AABBCC');
 
-    act(() => {hexColorField.focus();});
-    userEvent.clear(hexColorField);
+    act(() => {
+      hexColorField.focus();
+      userEvent.clear(hexColorField);
+    });
     typeText(hexColorField, 'cba');
     expect(hexColorField.value).toBe('cba');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
@@ -178,8 +182,10 @@ describe('HexColorField', function () {
     let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe('#AABBCC');
 
-    act(() => {hexColorField.focus();});
-    userEvent.clear(hexColorField);
+    act(() => {
+      hexColorField.focus();
+      userEvent.clear(hexColorField);
+    });
     typeText(hexColorField, 'xyz#8b');
     expect(hexColorField.value).toBe('#8b');
     expect(onChangeSpy).not.toHaveBeenCalled();
@@ -281,8 +287,10 @@ describe('HexColorField', function () {
     expect(hexColorField.value).toBe(initExpected);
 
     let newColor = new Color('#BBBBBB');
-    act(() => {hexColorField.focus();});
-    userEvent.clear(hexColorField);
+    act(() => {
+      hexColorField.focus();
+      userEvent.clear(hexColorField);
+    });
     typeText(hexColorField, newValue);
     expect(hexColorField.value).toBe(newValue);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
