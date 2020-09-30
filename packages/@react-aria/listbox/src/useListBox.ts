@@ -27,7 +27,7 @@ interface ListBoxAria {
   labelProps: HTMLAttributes<HTMLElement>
 }
 
-interface AriaListBoxOptions<T> extends AriaListBoxProps<T> {
+interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'children'> {
   /** Whether the listbox uses virtual scrolling. */
   isVirtualized?: boolean,
 
@@ -49,7 +49,7 @@ interface AriaListBoxOptions<T> extends AriaListBoxProps<T> {
  * @param props - Props for the listbox.
  * @param state - State for the listbox, as returned by `useListState`.
  */
-export function useListBox<T>(props: Omit<AriaListBoxOptions<T>, 'children'>, state: ListState<T>, ref: RefObject<HTMLElement>): ListBoxAria {
+export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement>): ListBoxAria {
   let domProps = filterDOMProps(props, {labelable: true});
   let {listProps} = useSelectableList({
     ...props,
