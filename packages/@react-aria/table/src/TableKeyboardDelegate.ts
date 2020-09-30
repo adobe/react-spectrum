@@ -405,7 +405,7 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     let hasWrapped = false;
-    while (key) {
+    while (key != null) {
       let item = collection.getItem(key);
 
       // Check each of the row header cells in this row for a match
