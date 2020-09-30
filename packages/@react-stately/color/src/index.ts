@@ -11,8 +11,5 @@
  */
 
 export * from './Color';
-<<<<<<< HEAD
 export * from './useColor';
 export * from './useHexColorFieldState';
-=======
->>>>>>> upstream/main

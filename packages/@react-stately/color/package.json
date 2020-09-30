@@ -15,15 +15,11 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-<<<<<<< HEAD
     "@babel/runtime": "^7.6.2",
     "@react-stately/numberfield": "^3.0.0-alpha.1",
     "@react-stately/utils": "^3.1.0",
     "@react-types/color": "^3.0.0-alpha.1",
     "@react-types/numberfield": "^3.0.0-alpha.1"
-=======
-    "@babel/runtime": "^7.6.2"
->>>>>>> upstream/main
   },
   "peerDependencies": {
     "react": "^16.8.0"
