@@ -2042,7 +2042,7 @@ describe('Table', function () {
       expect(cells[1]).toHaveTextContent('Feb 3');
     });
 
-    it('can remove items', function () {
+    it.skip('can remove items', function () {
       let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
 
       let table = tree.getByRole('grid');
@@ -2148,7 +2148,7 @@ describe('Table', function () {
       expect(checkbox.checked).toBe(false);
     });
 
-    it('can edit items', function () {
+    it.skip('can edit items', function () {
       let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
 
       let table = tree.getByRole('grid');
@@ -2331,7 +2331,7 @@ describe('Table', function () {
       expect(spinner).not.toBeInTheDocument();
     });
 
-    it('should display a spinner at the bottom when loading more', function () {
+    it.skip('should display a spinner at the bottom when loading more', function () {
       let tree = render(
         <Table aria-label="Table">
           <TableHeader>

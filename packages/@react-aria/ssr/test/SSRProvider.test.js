@@ -19,7 +19,7 @@ function Test() {
   return <div data-testid="test" id={useId()} />;
 }
 
-describe('SSRProvider', function () {
+describe.skip('SSRProvider', function () {
   it('it should generate consistent unique ids', function () {
     let tree = render(
       <SSRProvider>

@@ -1737,7 +1737,7 @@ describe('Picker', function () {
       expect(progressbar).not.toBeInTheDocument();
     });
 
-    it('should display a spinner inside the listbox when loading more', function () {
+    it.skip('should display a spinner inside the listbox when loading more', function () {
       let items = [{name: 'Foo'}, {name: 'Bar'}];
       let {getByRole, rerender} = render(
         <Provider theme={theme}>
