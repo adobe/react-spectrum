@@ -248,7 +248,7 @@ describe('Radios', function () {
     // have to click label or it won't work
     let dogs = getByLabelText('Dogs');
     let cats = getByLabelText('Cats');
-    userEvent.click(cats);
+    act(() => {userEvent.click(cats);});
     expect(onChangeSpy).not.toHaveBeenCalled();
     expect(radios[0].checked).toBe(false);
     expect(radios[1].checked).toBe(false);

@@ -34,6 +34,17 @@ function inTestcaseWithoutAct(context) {
       ) {
         return !foundAct;
       }
+      if (
+        parent.type === 'CallExpression' &&
+        parent.callee.type === 'TaggedTemplateExpression' &&
+        parent.callee.tag.type === 'MemberExpression' &&
+        parent.callee.tag.object.type === 'Identifier' &&
+        parent.callee.tag.object.name === 'it' &&
+        parent.callee.tag.property.type === 'Identifier' &&
+        parent.callee.tag.property.name === 'each'
+      ) {
+        return !foundAct;
+      }
     }
   }
   return false;

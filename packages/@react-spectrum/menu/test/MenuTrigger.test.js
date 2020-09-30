@@ -218,7 +218,7 @@ describe('MenuTrigger', function () {
 
     let triggerButton = tree.getByText('Menu Button');
     triggerPress(triggerButton);
-    jest.runAllTimers();
+    act(() => {jest.runAllTimers();});
 
     menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
@@ -238,7 +238,7 @@ describe('MenuTrigger', function () {
 
     let triggerButton = tree.getByText('Menu Button');
     triggerPress(triggerButton);
-    jest.runAllTimers();
+    act(() => {jest.runAllTimers();});
 
     expect(menu).not.toBeInTheDocument();
     expect(onOpenChange).toBeCalledTimes(1);
@@ -251,7 +251,7 @@ describe('MenuTrigger', function () {
     let tree = renderComponent(Component, props, {}, {isDisabled: true});
     let button = tree.getByRole('button');
     triggerPress(button);
-    jest.runAllTimers();
+    act(() => {jest.runAllTimers();});
     let menu = tree.queryByRole('menu');
     expect(menu).toBeNull();
     expect(onOpenChange).toBeCalledTimes(0);
@@ -265,14 +265,14 @@ describe('MenuTrigger', function () {
       let tree = renderComponent(Component, props, {selectedKeys: ['Bar']});
       let button = tree.getByRole('button');
       triggerPress(button);
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
       let menuItems = within(menu).getAllByRole('menuitem');
       let selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
       triggerPress(button);
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       expect(menu).not.toBeInTheDocument();
 
@@ -283,7 +283,7 @@ describe('MenuTrigger', function () {
       selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
       triggerPress(button);
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
       expect(menu).not.toBeInTheDocument();
 
       // Opening menu via up arrow still autofocuses the selected item
@@ -403,14 +403,14 @@ describe('MenuTrigger', function () {
       tree = renderComponent(Component, props);
       let button = tree.getByRole('button');
       triggerPress(button);
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
 
       let scrollable = tree.getByTestId('scrollable');
       fireEvent.scroll(scrollable);
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(button);
     });
@@ -423,12 +423,12 @@ describe('MenuTrigger', function () {
       tree = renderComponent(Component, props);
       let button = tree.getByRole('button');
       triggerPress(button);
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
       fireEvent.keyDown(menu, {key: 'Escape', code: 27, charCode: 27});
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(button);
     });
@@ -441,13 +441,13 @@ describe('MenuTrigger', function () {
       tree = renderComponent(Component, props);
       let button = tree.getByRole('button');
       triggerPress(button);
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
       fireEvent.mouseDown(document.body);
       fireEvent.mouseUp(document.body);
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(button);
     });
@@ -461,7 +461,7 @@ describe('MenuTrigger', function () {
       expect(onOpenChange).toBeCalledTimes(0);
       let button = tree.getByRole('button');
       triggerPress(button);
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
@@ -504,7 +504,7 @@ describe('MenuTrigger', function () {
       expect(onOpenChange).toBeCalledTimes(0);
       let button = tree.getByRole('button');
       triggerPress(button);
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
@@ -516,7 +516,7 @@ describe('MenuTrigger', function () {
       expect(menuItem1).toBeTruthy();
       fireEvent.keyDown(menuItem1, {key: 'Enter', code: 13, charCode: 13});
       fireEvent.keyUp(menuItem1, {key: 'Enter', code: 13, charCode: 13});
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
       expect(onSelectionChange).toBeCalledTimes(1);
       expect(menu).toBeInTheDocument();
       expect(button).toHaveAttribute('aria-expanded', 'true');
@@ -592,15 +592,15 @@ describe('MenuTrigger', function () {
       expect(onOpenChange).toBeCalledTimes(0);
       let button = tree.getByRole('button');
       triggerPress(button);
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
       expect(onOpenChange).toBeCalledTimes(1);
       expect(button).toHaveAttribute('aria-expanded', 'true');
 
-      document.activeElement.blur();
-      jest.runAllTimers();
+      act(() => {document.activeElement.blur();});
+      act(() => {jest.runAllTimers();});
       expect(menu).not.toBeInTheDocument();
       expect(button).toHaveAttribute('aria-expanded', 'false');
       expect(onOpenChange).toBeCalledTimes(2);
