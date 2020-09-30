@@ -15,7 +15,6 @@ import {ColorThumb} from '../src/ColorThumb';
 import {ColorWheel} from '../';
 import {Flex} from '@adobe/react-spectrum';
 import React, {useState} from 'react';
-import {SpectrumColorWheelProps} from '@react-types/color';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('ColorThumb', module)
@@ -43,94 +42,29 @@ storiesOf('ColorThumb', module)
 
 storiesOf('ColorWheel', module)
   .add(
-    'default',
-    () => <ColorWheel defaultValue={new Color('#f00')} channel={'red'} />
+    'hsl',
+    () => <ColorWheel defaultValue={new Color('hsl(0, 100%, 50%)')} />
   )
+  // .add(
+  //   'hsb',
+  //   () => <ColorWheel defaultValue={new Color('hsb(0, 100%, 50%)')} />
+  // )
   .add(
     'disabled',
-    () => <ColorWheel isDisabled defaultValue={new Color('#f07')} channel={'red'} />
+    () => <ColorWheel isDisabled defaultValue={new Color('hsl(0, 100%, 50%)')} />
   )
   .add(
     '* custom size',
-    () => <ColorWheel defaultValue={new Color('#f07')} channel={'red'} />
+    () => <ColorWheel defaultValue={new Color('hsl(0, 100%, 50%)')} />
   )
   .add(
     'controlled',
     () => {
-      let [color, setColor] = useState(new Color('#ffffff'));
-      return <ColorWheel value={color} onChange={setColor} channel={'red'} />;
-    }
-  );
-
-storiesOf('ColorWheel/rgb', module)
-  .add(
-    'rgba',
-    () =>  {
-      let [color, setColor] = useState(new Color('#f0f'));
+      let [color, setColor] = useState(new Color('hsl(0, 100%, 50%)'));
       let colorCSS = color.toString('css');
       return (<Flex gap={'size-500'} direction="row" alignItems="center">
-        <ColorWheel onChange={setColor} value={color} channel="red" />
-        <ColorWheel onChange={setColor} value={color} channel="green" />
-        <ColorWheel onChange={setColor} value={color} channel="blue" />
-        <ColorWheel onChange={setColor} value={color} channel="alpha" />
+        <ColorWheel onChange={setColor} value={color} />
         <div style={{width: '50px', height: '50px', backgroundColor: colorCSS, border: '1px solid black'}} />
       </Flex>);
     }
-  )
-  .add(
-    'red',
-    () => <Component defaultValue={new Color('#fff')} channel="red" />
-  )
-  .add(
-    'green',
-    () => <Component defaultValue={new Color('#fff')} channel="green" />
-  )
-  .add(
-    'blue',
-    () => <Component defaultValue={new Color('#fff')} channel="blue" />
-  )
-  .add(
-    'alpha',
-    () => <Component defaultValue={new Color('#fff')} channel="alpha" />
   );
-
-storiesOf('ColorWheel/hsl', module)
-  .add(
-    'hsla',
-    () =>  {
-      let [color, setColor] = useState(new Color('hsl(270, 100%, 50%)'));
-      let colorCSS = color.toString('css');
-      return (<Flex gap={'size-500'} direction="row" alignItems="center">
-        <ColorWheel onChange={setColor} value={color} channel="hue" />
-        <ColorWheel onChange={setColor} value={color} channel="saturation" />
-        <ColorWheel onChange={setColor} value={color} channel="lightness" />
-        <ColorWheel onChange={setColor} value={color} channel="alpha" />
-        <div style={{width: '50px', height: '50px', backgroundColor: colorCSS, border: '1px solid black'}} />
-      </Flex>);
-    }
-  )
-  .add(
-    'hue',
-    () => <Component defaultValue={new Color('hsl(270, 100%, 50%)')} channel="hue" />
-  )
-  .add(
-    'saturation',
-    () => <Component defaultValue={new Color('hsl(270, 100%, 50%)')} channel="saturation" />
-  )
-  .add(
-    'lightness',
-    () => <Component defaultValue={new Color('hsl(270, 100%, 50%)')} channel="lightness" />
-  )
-  .add(
-    'alpha',
-    () => <Component defaultValue={new Color('hsl(270, 100%, 50%)')} channel="alpha" />
-  );
-
-function Component({defaultValue, ...props}: SpectrumColorWheelProps) {
-  let [color, setColor] = useState(defaultValue);
-  let colorCSS = color.toString('css');
-  return (<Flex gap={'size-500'} direction="row" alignItems="center">
-    <ColorWheel onChange={setColor} value={color} {...props} />
-    <div style={{width: '50px', height: '50px', backgroundColor: colorCSS, border: '1px solid black'}} />
-  </Flex>);
-}

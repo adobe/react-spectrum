@@ -190,20 +190,27 @@ class RGBColor implements ColorValue {
   }
 }
 
+const HSB_REGEX = /hsb\((\d+(?:.\d+)?\s?,\s?\d+(?:.\d+)?%\s?,\s?\d+(?:.\d+)?%)\)|hsba\((\d+(?:.\d+)?\s?,\s?\d+(?:.\d+)?%\s?,\s?\d+(?:.\d+)?%\s?,\s?\d(.\d+)?)\)/;
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 class HSBColor implements ColorValue {
   constructor(private hue: number, private saturation: number, private brightness: number, private alpha: number) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   static parse(value: string): HSBColor | void {
-    // TODO
+    let m: RegExpMatchArray | void;
+    if ((m = value.match(HSB_REGEX))) {
+      const [h, s, l] = (m[1] ?? m[2]).split(',').map(n => Number(n.trim().replace('%', '')));
+      return new HSBColor(h, s, l, 1);
+    }
   }
 
   toString(format: ColorFormat | 'css') {
     switch (format) {
+      case 'css':
+        return this.toHSL().toString('css');
       case 'hsb':
         return `hsb(${this.hue}, ${this.saturation}%, ${this.brightness}%)`;
-      case 'css':
       case 'hsba':
         return `hsba(${this.hue}, ${this.saturation}%, ${this.brightness}%, ${this.alpha})`;
       default:

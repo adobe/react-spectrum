@@ -24,12 +24,6 @@ export interface ColorWheelState {
   readonly value: Color,
   setValue(value: string | Color): void,
 
-  // numeric value for the current channel
-  readonly channelValue: number,
-  readonly channelValuePercent: number,
-  setChannelValue(value: number): void,
-  setChannelValuePercent(value: number): void,
-
   // Based on props but normalized and include defaults based on selected channel.
   minValue: number,
   maxValue: number,
@@ -39,7 +33,6 @@ export interface ColorWheelState {
 }
 
 export interface ColorWheelStateProps {
-  channel: ColorChannel,
   onChange?: (Color) => void,
   minValue: number,
   maxValue: number
@@ -47,7 +40,6 @@ export interface ColorWheelStateProps {
 
 // @ts-ignore
 export interface ColorWheelProps extends BaseSliderProps, ValueBase<Color>, StyleProps {
-  channel: ColorChannel,
   // overriding these to allow passing string:
   value?: string | Color,
   defaultValue?: string | Color

@@ -15,7 +15,7 @@ import {Color} from '@react-stately/color';
 import {ColorThumb} from './ColorThumb';
 import {ColorWheelProps, ColorWheelState} from '@react-types/color';
 import {focusWithoutScrolling, mergeProps, useId} from '@react-aria/utils';
-import React, {HTMLAttributes, InputHTMLAttributes, useCallback, useMemo, useRef, useState} from 'react';
+import React, {HTMLAttributes, InputHTMLAttributes, useCallback, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/colorwheel/vars.css';
 import {useControlledState} from '@react-stately/utils';
 import {useFocus, useFocusVisible, useMove} from '@react-aria/interactions';
@@ -30,7 +30,7 @@ function normalizeColor(v: string | Color) {
 }
 
 function useColorWheelState(props: ColorWheelProps): ColorWheelState {
-  let {value, defaultValue, onChange, channel} = props;
+  let {value, defaultValue, onChange} = props;
 
   let [state, setState] = useControlledState(normalizeColor(value), normalizeColor(defaultValue), onChange);
 
@@ -40,15 +40,6 @@ function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     value: state,
     setValue(value) {
       setState(normalizeColor(value));
-    },
-
-    channelValue: state.getChannelValue(channel),
-    channelValuePercent: state.getChannelValuePercent(channel),
-    setChannelValue(value) {
-      setState(state => state.withChannelValue(channel, value));
-    },
-    setChannelValuePercent(value) {
-      setState(state => state.withChannelValuePercent(channel, value));
     },
 
     setDragging(value) {
@@ -87,13 +78,15 @@ let radius = 67.5;
 function useColorWheel(props, state: ColorWheelState): {thumbProps: HTMLAttributes<HTMLElement>, containerProps: HTMLAttributes<HTMLElement>, inputProps: InputHTMLAttributes<HTMLInputElement>} {
   let {inputRef, containerRef, isDisabled} = props;
 
-  const focusInput = useCallback(() => {
+  let focusInput = useCallback(() => {
     if (inputRef.current) {
       focusWithoutScrolling(inputRef.current);
     }
   }, [inputRef]);
 
-  const stateRef = useRef<ColorWheelState>(null);
+  let isOnWheel = useRef<boolean>(false);
+
+  let stateRef = useRef<ColorWheelState>(null);
   stateRef.current = state;
 
   let currentPosition = useRef<{x: number, y: number}>(null);
@@ -103,25 +96,33 @@ function useColorWheel(props, state: ColorWheelState): {thumbProps: HTMLAttribut
     },
     onMove({deltaX, deltaY, pointerType}) {
       if (currentPosition.current == null) {
-        currentPosition.current = angleToCartesian(stateRef.current.channelValuePercent * 360, radius);
+        currentPosition.current = angleToCartesian(stateRef.current.value.getChannelValue('hue'), radius);
       }
       currentPosition.current.x += deltaX;
       currentPosition.current.y += deltaY;
       if (pointerType === 'keyboard') {
         if (deltaX > 0) {
-          stateRef.current.setChannelValuePercent(stateRef.current.channelValuePercent + 0.01);
+          stateRef.current.setValue(stateRef.current.value.withChannelValue('hue', stateRef.current.value.getChannelValue('hue') + 1));
         } else if (deltaX < 0) {
-          stateRef.current.setChannelValuePercent(stateRef.current.channelValuePercent - 0.01);
+          stateRef.current.setValue(stateRef.current.value.withChannelValue('hue', stateRef.current.value.getChannelValue('hue') - 1));
         }
       } else {
-        stateRef.current.setChannelValuePercent((cartesianToAngle(currentPosition.current.x, currentPosition.current.y, radius) / 360));
+        stateRef.current.setValue(stateRef.current.value.withChannelValue('hue', cartesianToAngle(currentPosition.current.x, currentPosition.current.y, radius)));
       }
     }
   };
-  let movePropsContainer = useMove(moveHandler);
+  let movePropsContainer = useMove({
+    ...moveHandler,
+    onMove(e) {
+      if (isOnWheel.current) {
+        moveHandler.onMove(e);
+      }
+    }
+  });
   let movePropsThumb = useMove(moveHandler);
 
   let onEnd = () => {
+    isOnWheel.current = false;
     focusInput();
     state.setDragging(false);
     window.removeEventListener('mouseup', onEnd, false);
@@ -134,8 +135,10 @@ function useColorWheel(props, state: ColorWheelState): {thumbProps: HTMLAttribut
     let y = pageY - rect.y - rect.height / 2;
     let radius = Math.sqrt(x * x + y * y);
     let angle = cartesianToAngle(x, y, radius);
-    if (60 < radius && radius < 80) {
-      stateRef.current.setChannelValuePercent(angle / 360);
+    // TODO calculate numbers
+    if (55 < radius && radius < 80) {
+      isOnWheel.current = true;
+      stateRef.current.setValue(stateRef.current.value.withChannelValue('hue', angle));
 
       focusInput();
       state.setDragging(true);
@@ -161,10 +164,15 @@ function useColorWheel(props, state: ColorWheelState): {thumbProps: HTMLAttribut
   };
 }
 
+const SEGMENTS = [];
+for (let i = 0; i < 360; i++) {
+  SEGMENTS.push(<rect width="80" height="2" x="80" y="79" fill={`hsl(${i}, 100%, 50%)`} transform={`rotate(${i} 80 80)`} key={i} />);
+}
+
 function ColorWheel(props: ColorWheelProps) {
   props = useProviderProps(props);
 
-  let {isDisabled, channel} = props;
+  let {isDisabled} = props;
   let inputRef = useRef(null);
   let containerRef = useRef(null);
   let {isFocusVisible} = useFocusVisible();
@@ -179,24 +187,10 @@ function ColorWheel(props: ColorWheelProps) {
   });
 
   let colorToDisplay = state.value;
-  if (channel === 'hue') {
-    // TODO HSB doesn't have lightness
-    colorToDisplay = colorToDisplay.withChannelValuePercent('saturation', 1).withChannelValuePercent('lightness', 0.5).withChannelValuePercent('alpha', 1);
-  } else if (channel === 'saturation' || channel === 'lightness' || channel === 'red' || channel === 'green' || channel === 'blue') {
-    colorToDisplay = colorToDisplay.withChannelValuePercent('alpha', 1);
-  }
-
-  let segments = useMemo(() => {
-    let segments = [];
-    for (let i = 0; i < 360; i++) {
-      segments.push(<rect width="80" height="2" x="80" y="79" fill={colorToDisplay.withChannelValuePercent(channel, (i / 360)).toString('css')} transform={`rotate(${i} 80 80)`} key={i} />);
-    }
-    return segments;
-  }, [channel, colorToDisplay.withChannelValuePercent(channel, 0).toString('css')]);
 
   let maskId = useId();
 
-  let {x, y} = angleToCartesian(state.channelValuePercent * 360, radius);
+  let {x, y} = angleToCartesian(state.value.getChannelValue('hue'), radius);
 
   return (
     <div className={classNames(styles, 'spectrum-ColorWheel', {'is-disabled': isDisabled})} ref={containerRef} {...containerProps}>
@@ -208,7 +202,7 @@ function ColorWheel(props: ColorWheelProps) {
           </mask>
         </defs>
         <g className={classNames(styles, 'spectrum-ColorWheel-segment')} mask={`url(#${maskId})`}>
-          {segments}
+          {SEGMENTS}
         </g>
         <circle cx="80" cy="80" r="79.5" className={classNames(styles, 'spectrum-ColorWheel-outerCircle')} mask={`url(#${maskId})`} />
         <circle cx="80" cy="80" r="56" className={classNames(styles, 'spectrum-ColorWheel-innerCircle')} />
