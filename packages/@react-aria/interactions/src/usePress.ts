@@ -15,7 +15,8 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {focusWithoutScrolling, mergeProps, runAfterTransition} from '@react-aria/utils';
+import {disableTextSelection, restoreTextSelection} from './textSelection';
+import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {isVirtualClick} from './utils';
 import {PointerType, PressEvents} from '@react-types/shared';
@@ -25,7 +26,9 @@ export interface PressProps extends PressEvents {
   /** Whether the target is in a controlled press state (e.g. an overlay it triggers is open). */
   isPressed?: boolean,
   /** Whether the press events should be disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  /** Whether the target should not receive focus on press. */
+  preventFocusOnPress?: boolean
 }
 
 export interface PressHookProps extends PressProps {
@@ -93,6 +96,7 @@ export function usePress(props: PressHookProps): PressResult {
     onPressUp,
     isDisabled,
     isPressed: isPressedProp,
+    preventFocusOnPress,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ref: _, // Removing `ref` from `domProps` because TypeScript is dumb
     ...domProps
@@ -112,11 +116,11 @@ export function usePress(props: PressHookProps): PressResult {
   let addGlobalListener = useCallback((eventTarget, type, listener, options) => {
     globalListeners.current.set(listener, {type, eventTarget, options});
     eventTarget.addEventListener(type, listener, options);
-  }, [globalListeners.current]);
+  }, []);
   let removeGlobalListener = useCallback((eventTarget, type, listener, options) => {
     eventTarget.removeEventListener(type, listener, options);
     globalListeners.current.delete(listener);
-  }, [globalListeners.current]);
+  }, []);
 
   let pressProps = useMemo(() => {
     let state = ref.current;
@@ -233,7 +237,7 @@ export function usePress(props: PressHookProps): PressResult {
           // trigger as if it were a keyboard click.
           if (!state.ignoreClickAfterPress && !state.ignoreEmulatedMouseEvents && isVirtualClick(e.nativeEvent)) {
             // Ensure the element receives focus (VoiceOver on iOS does not do this)
-            if (!isDisabled) {
+            if (!isDisabled && !preventFocusOnPress) {
               focusWithoutScrolling(e.currentTarget);
             }
 
@@ -265,31 +269,6 @@ export function usePress(props: PressHookProps): PressResult {
       }
     };
 
-    // Safari on iOS starts selecting text on long press. The only way to avoid this, it seems,
-    // is to add user-select: none to the entire page. Adding it to the pressable element prevents
-    // that element from being selected, but nearby elements may still receive selection. We add
-    // user-select: none on touch start, and remove it again on touch end to prevent this.
-    let disableTextSelection = () => {
-      state.userSelect = document.documentElement.style.webkitUserSelect;
-      document.documentElement.style.webkitUserSelect = 'none';
-    };
-
-    let restoreTextSelection = () => {
-      // There appears to be a delay on iOS where selection still might occur
-      // after pointer up, so wait a bit before removing user-select.
-      setTimeout(() => {
-        // Wait for any CSS transitions to complete so we don't recompute style
-        // for the whole page in the middle of the animation and cause jank.
-        runAfterTransition(() => {
-          // Avoid race conditions
-          if (!state.isPressed && document.documentElement.style.webkitUserSelect === 'none') {
-            document.documentElement.style.webkitUserSelect = state.userSelect || '';
-            state.userSelect = null;
-          }
-        });
-      }, 300);
-    };
-
     if (typeof PointerEvent !== 'undefined') {
       pressProps.onPointerDown = (e) => {
         // Only handle left clicks
@@ -307,7 +286,7 @@ export function usePress(props: PressHookProps): PressResult {
           state.activePointerId = e.pointerId;
           state.target = e.currentTarget;
 
-          if (!isDisabled) {
+          if (!isDisabled && !preventFocusOnPress) {
             focusWithoutScrolling(e.currentTarget);
           }
 
@@ -410,7 +389,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.isOverTarget = true;
         state.target = e.currentTarget;
 
-        if (!isDisabled) {
+        if (!isDisabled && !preventFocusOnPress) {
           focusWithoutScrolling(e.currentTarget);
         }
 
@@ -479,7 +458,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         // Due to browser inconsistencies, especially on mobile browsers, we prevent default
         // on the emulated mouse event and handle focusing the pressable element ourselves.
-        if (!isDisabled) {
+        if (!isDisabled && !preventFocusOnPress) {
           focusWithoutScrolling(e.currentTarget);
         }
 
@@ -561,7 +540,7 @@ export function usePress(props: PressHookProps): PressResult {
     }
 
     return pressProps;
-  }, [onPress, onPressStart, onPressEnd, onPressChange, onPressUp, isDisabled]);
+  }, [isDisabled, onPressStart, onPressChange, onPressEnd, onPress, onPressUp, addGlobalListener, preventFocusOnPress, removeGlobalListener]);
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
@@ -570,7 +549,7 @@ export function usePress(props: PressHookProps): PressResult {
         removeGlobalListener(value.eventTarget, value.type, key, value.options);
       });
     };
-  }, [globalListeners.current]);
+  }, [removeGlobalListener]);
 
   return {
     isPressed: isPressedProp || isPressed,

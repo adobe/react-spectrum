@@ -25,7 +25,7 @@ interface ModalWrapperProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode,
   isOpen?: boolean,
   onClose?: () => void,
-  type?: 'fullscreen' | 'fullscreenTakeover',
+  type?: 'modal' | 'fullscreen' | 'fullscreenTakeover',
   isDismissable?: boolean,
   isKeyboardDismissDisabled?: boolean
 }

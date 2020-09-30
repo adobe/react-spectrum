@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+<<<<<<< HEAD
 import {
   ColorChannel,
   ColorFormat,
@@ -18,6 +19,16 @@ import {
 
 export class Color implements ColorType {
   private value?: ColorValue;
+=======
+/** A list of supported color formats. */
+type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hsb' | 'hsba';
+
+/** A list of color channels. */
+type ColorChannel = 'hue' | 'saturation' | 'brightness' | 'lightness' | 'red' | 'green' | 'blue' | 'alpha';
+
+export class Color {
+  private value: ColorValue;
+>>>>>>> upstream/main
 
   constructor(value: string) {
     let parsed: ColorValue | void = RGBColor.parse(value);
@@ -70,10 +81,13 @@ export class Color implements ColorType {
     }
   }
 
+<<<<<<< HEAD
   toHexInt(): number {
     return parseInt(this.toString('hex').substring(1), 16);
   }
 
+=======
+>>>>>>> upstream/main
   getChannelValue(channel: ColorChannel): number {
     if (channel in this.value) {
       return this.value[channel];

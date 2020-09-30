@@ -189,7 +189,7 @@ describe('SideNav', function () {
       getByText('Alice')
     ];
 
-    bar.focus();
+    act(() => {bar.focus();});
     triggerPress(bar);
 
     expect(foo).not.toHaveAttribute('aria-current');
@@ -204,7 +204,7 @@ describe('SideNav', function () {
 
     expect(spy).toBeCalledTimes(1);
 
-    alice.focus();
+    act(() => {alice.focus();});
     triggerPress(alice);
 
     expect(foo).not.toHaveAttribute('aria-current');
@@ -266,7 +266,7 @@ describe('SideNav', function () {
 
     let items = getAllByRole('link');
     let selectedItem = items[0];
-    selectedItem.focus();
+    act(() => {selectedItem.focus();});
     expect(selectedItem).toBe(document.activeElement);
     act(() => {fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});});
     let nextSelectedItem = items[1];
@@ -294,13 +294,13 @@ describe('SideNav', function () {
 
     let items = getAllByRole('link');
     let firstItem = items[0];
-    firstItem.focus();
+    act(() => {firstItem.focus();});
     expect(firstItem).toBe(document.activeElement);
     act(() => {fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});});
     let lastItem = items[items.length - 1];
     expect(lastItem).not.toBe(document.activeElement);
 
-    lastItem.focus();
+    act(() => {lastItem.focus();});
     expect(lastItem).toBe(document.activeElement);
     act(() => {fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});});
     expect(firstItem).not.toBe(document.activeElement);
@@ -323,7 +323,7 @@ describe('SideNav', function () {
 
     let items = getAllByRole('link');
     let firstItem = items[0];
-    firstItem.focus();
+    act(() => {firstItem.focus();});
     expect(firstItem).toBe(document.activeElement);
     act(() => {
       fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});
@@ -331,7 +331,7 @@ describe('SideNav', function () {
     let lastItem = items[items.length - 1];
     expect(lastItem).toBe(document.activeElement);
 
-    lastItem.focus();
+    act(() => {lastItem.focus();});
     expect(lastItem).toBe(document.activeElement);
     act(() => {
       fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});
@@ -469,7 +469,7 @@ describe('SideNav', function () {
     expect(bar).toHaveAttribute('aria-current', 'page');
 
 
-    alice.focus();
+    act(() => {alice.focus();});
     triggerPress(alice);
     expect(bar).not.toHaveAttribute('aria-current');
     expect(alice).toHaveAttribute('aria-current', 'page');
@@ -506,7 +506,7 @@ describe('SideNav', function () {
     expect(bar).toHaveAttribute('aria-current', 'page');
 
 
-    alice.focus();
+    act(() => {alice.focus();});
     triggerPress(alice);
     expect(bar).not.toHaveAttribute('aria-current');
     expect(alice).toHaveAttribute('aria-current', 'page');

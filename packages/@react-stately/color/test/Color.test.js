@@ -40,9 +40,12 @@ describe('Color', function () {
       expect(() => new Color('#ggg')).toThrow('Invalid color value: #ggg');
     });
   });
+<<<<<<< HEAD
 
   it('should convert a color to its equivalent hex value in decimal format', function () {
     const color = new Color('#abcdef');
     expect(color.toHexInt()).toBe(11259375);
   });
+=======
+>>>>>>> upstream/main
 });

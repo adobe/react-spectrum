@@ -287,6 +287,59 @@ describe('Picker', function () {
       expect(document.activeElement).toBe(items[2]);
     });
 
+    it('can change item focus with arrow keys, even for item key=""', function () {
+      let onOpenChange = jest.fn();
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Picker label="Test" onOpenChange={onOpenChange}>
+            <Item key="1">One</Item>
+            <Item key="">Two</Item>
+            <Item key="3">Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      expect(() => getByRole('listbox')).toThrow();
+
+      let picker = getByRole('button');
+      act(() => {fireEvent.keyDown(picker, {key: 'ArrowDown'});});
+      act(() => {fireEvent.keyUp(picker, {key: 'ArrowDown'});});
+      act(() => jest.runAllTimers());
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      expect(onOpenChange).toBeCalledTimes(1);
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(picker).toHaveAttribute('aria-expanded', 'true');
+      expect(picker).toHaveAttribute('aria-controls', listbox.id);
+
+      let items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(3);
+      expect(items[0]).toHaveTextContent('One');
+      expect(items[1]).toHaveTextContent('Two');
+      expect(items[2]).toHaveTextContent('Three');
+
+      expect(document.activeElement).toBe(items[0]);
+
+      act(() => {fireEvent.keyDown(listbox, {key: 'ArrowDown'});});
+      act(() => {fireEvent.keyUp(listbox, {key: 'ArrowDown'});});
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toBe(items[1]);
+
+      act(() => {fireEvent.keyDown(listbox, {key: 'ArrowDown'});});
+      act(() => {fireEvent.keyUp(listbox, {key: 'ArrowDown'});});
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toBe(items[2]);
+
+      act(() => {fireEvent.keyDown(listbox, {key: 'ArrowUp'});});
+      act(() => {fireEvent.keyUp(listbox, {key: 'ArrowUp'});});
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toBe(items[1]);
+    });
+
     it('supports controlled open state', function () {
       let onOpenChange = jest.fn();
       let {getByRole, getByLabelText} = render(
@@ -926,7 +979,7 @@ describe('Picker', function () {
           </Picker>
         </Provider>
       );
-      
+
       let picker = getByRole('button');
       expect(picker).toHaveTextContent('Select an option…');
       act(() => triggerPress(picker));
@@ -1428,6 +1481,7 @@ describe('Picker', function () {
             <Item key="one">One</Item>
             <Item key="two">Two</Item>
             <Item key="three">Three</Item>
+            <Item key="">None</Item>
           </Picker>
         </Provider>
       );
@@ -1440,7 +1494,7 @@ describe('Picker', function () {
 
       let listbox = getByRole('listbox');
       let items = within(listbox).getAllByRole('option');
-      expect(items.length).toBe(3);
+      expect(items.length).toBe(4);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
       expect(items[2]).toHaveTextContent('Three');
@@ -1464,6 +1518,22 @@ describe('Picker', function () {
 
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
+
+      act(() => jest.advanceTimersByTime(500));
+      act(() => picker.focus());
+      act(() => {fireEvent.keyDown(picker, {key: 'ArrowDown'});});
+      act(() => jest.runAllTimers());
+      listbox = getByRole('listbox');
+      items = within(listbox).getAllByRole('option');
+      expect(document.activeElement).toBe(items[2]);
+      act(() => {fireEvent.keyDown(listbox, {key: 'n'});});
+      act(() => {fireEvent.keyDown(document.activeElement, {key: 'Enter'});});
+      act(() => {fireEvent.keyUp(document.activeElement, {key: 'Enter'});});
+      act(() => jest.runAllTimers());
+      expect(listbox).not.toBeInTheDocument();
+      expect(picker).toHaveTextContent('None');
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(onSelectionChange).toHaveBeenLastCalledWith('');
     });
 
     it('does not deselect when pressing an already selected item', function () {
