@@ -287,6 +287,59 @@ describe('Picker', function () {
       expect(document.activeElement).toBe(items[2]);
     });
 
+    it('can change item focus with arrow keys, even for item key=""', function () {
+      let onOpenChange = jest.fn();
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Picker label="Test" onOpenChange={onOpenChange}>
+            <Item key="1">One</Item>
+            <Item key="">Two</Item>
+            <Item key="3">Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      expect(() => getByRole('listbox')).toThrow();
+
+      let picker = getByRole('button');
+      act(() => {fireEvent.keyDown(picker, {key: 'ArrowDown'});});
+      act(() => {fireEvent.keyUp(picker, {key: 'ArrowDown'});});
+      act(() => jest.runAllTimers());
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      expect(onOpenChange).toBeCalledTimes(1);
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(picker).toHaveAttribute('aria-expanded', 'true');
+      expect(picker).toHaveAttribute('aria-controls', listbox.id);
+
+      let items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(3);
+      expect(items[0]).toHaveTextContent('One');
+      expect(items[1]).toHaveTextContent('Two');
+      expect(items[2]).toHaveTextContent('Three');
+
+      expect(document.activeElement).toBe(items[0]);
+
+      act(() => {fireEvent.keyDown(listbox, {key: 'ArrowDown'});});
+      act(() => {fireEvent.keyUp(listbox, {key: 'ArrowDown'});});
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toBe(items[1]);
+
+      act(() => {fireEvent.keyDown(listbox, {key: 'ArrowDown'});});
+      act(() => {fireEvent.keyUp(listbox, {key: 'ArrowDown'});});
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toBe(items[2]);
+
+      act(() => {fireEvent.keyDown(listbox, {key: 'ArrowUp'});});
+      act(() => {fireEvent.keyUp(listbox, {key: 'ArrowUp'});});
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toBe(items[1]);
+    });
+
     it('supports controlled open state', function () {
       let onOpenChange = jest.fn();
       let {getByRole, getByLabelText} = render(
@@ -926,7 +979,7 @@ describe('Picker', function () {
           </Picker>
         </Provider>
       );
-      
+
       let picker = getByRole('button');
       expect(picker).toHaveTextContent('Select an option…');
       act(() => triggerPress(picker));

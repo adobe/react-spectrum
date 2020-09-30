@@ -217,9 +217,9 @@ describe('ActionGroup', function () {
     let tree = render(
       <Provider theme={theme} locale={props.locale}>
         <ActionGroup orientation={props.orientation} >
-          <Item data-testid="button-1">Click me 1</Item>
-          <Item data-testid="button-2">Click me 2</Item>
-          <Item data-testid="button-3">Click me 3</Item>
+          <Item data-testid="button-1" key="1">Click me 1</Item>
+          <Item data-testid="button-2" key="">Click me 2</Item>
+          <Item data-testid="button-3" key="3">Click me 3</Item>
         </ActionGroup>
       </Provider>
     );
