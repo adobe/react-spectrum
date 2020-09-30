@@ -1524,6 +1524,8 @@ describe('Picker', function () {
       act(() => {fireEvent.keyDown(picker, {key: 'ArrowDown'});});
       act(() => jest.runAllTimers());
       listbox = getByRole('listbox');
+      items = within(listbox).getAllByRole('option');
+      expect(document.activeElement).toBe(items[2]);
       act(() => {fireEvent.keyDown(listbox, {key: 'n'});});
       act(() => {fireEvent.keyDown(document.activeElement, {key: 'Enter'});});
       act(() => {fireEvent.keyUp(document.activeElement, {key: 'Enter'});});
