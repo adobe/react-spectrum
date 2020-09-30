@@ -1481,6 +1481,7 @@ describe('Picker', function () {
             <Item key="one">One</Item>
             <Item key="two">Two</Item>
             <Item key="three">Three</Item>
+            <Item key="">None</Item>
           </Picker>
         </Provider>
       );
@@ -1493,7 +1494,7 @@ describe('Picker', function () {
 
       let listbox = getByRole('listbox');
       let items = within(listbox).getAllByRole('option');
-      expect(items.length).toBe(3);
+      expect(items.length).toBe(4);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
       expect(items[2]).toHaveTextContent('Three');
@@ -1517,6 +1518,21 @@ describe('Picker', function () {
 
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
+
+      jest.advanceTimersByTime(500);
+
+      picker.focus();
+      act(() => {fireEvent.keyDown(picker, {key: 'ArrowDown'});});
+      act(() => jest.runAllTimers());
+      listbox = getByRole('listbox');
+      act(() => {fireEvent.keyDown(listbox, {key: 'n'});});
+      act(() => {fireEvent.keyDown(document.activeElement, {key: 'Enter'});});
+      act(() => {fireEvent.keyUp(document.activeElement, {key: 'Enter'});});
+      act(() => jest.runAllTimers());
+      expect(listbox).not.toBeInTheDocument();
+      expect(picker).toHaveTextContent('None');
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(onSelectionChange).toHaveBeenLastCalledWith('');
     });
 
     it('does not deselect when pressing an already selected item', function () {
