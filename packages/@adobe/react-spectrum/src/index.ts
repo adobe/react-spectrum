@@ -37,6 +37,7 @@ export {Heading, Keyboard, Text} from '@react-spectrum/text';
 export {TextArea, TextField} from '@react-spectrum/textfield';
 export {theme as darkTheme} from '@react-spectrum/theme-dark';
 export {theme as defaultTheme} from '@react-spectrum/theme-default';
+export {theme as lightTheme} from '@react-spectrum/theme-light';
 export {Content, Footer, Header, View} from '@react-spectrum/view';
 export {Well} from '@react-spectrum/well';
 export {Item, Section} from '@react-stately/collections';
