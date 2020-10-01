@@ -38,7 +38,7 @@ describe('useHexColorField', function () {
     expect(inputFieldProps.role).toBe('spinbutton');
     expect(inputFieldProps['aria-valuenow']).toBeNull();
     expect(inputFieldProps['aria-valuetext']).toBeNull();
-    expect(inputFieldProps['aria-valuemin']).toBe(0);
+    expect(inputFieldProps['aria-valuemin']).toBe(0x000000);
     expect(inputFieldProps['aria-valuemax']).toBe(0xFFFFFF);
     expect(inputFieldProps['aria-required']).toBeNull();
     expect(inputFieldProps['aria-disabled']).toBeNull();
@@ -53,14 +53,6 @@ describe('useHexColorField', function () {
     let {inputFieldProps} = renderHexColorFieldHook({}, {colorValue});
     expect(inputFieldProps['aria-valuenow']).toBe(colorValue.toHexInt());
     expect(inputFieldProps['aria-valuetext']).toBe('#FF88A0');
-  });
-
-  it('should return props for custom min and max value', function () {
-    let minValue = new Color('#aaa');
-    let maxValue = new Color('#ccc');
-    let {inputFieldProps} = renderHexColorFieldHook({minValue, maxValue});
-    expect(inputFieldProps['aria-valuemin']).toBe(minValue.toHexInt());
-    expect(inputFieldProps['aria-valuemax']).toBe(maxValue.toHexInt());
   });
 
   it('should return props for label', function () {
