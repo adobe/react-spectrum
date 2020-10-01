@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames} from '@react-spectrum/utils';
+import {classNames, dimensionValue} from '@react-spectrum/utils';
 import {ColorThumb} from './ColorThumb';
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {SpectrumColorWheelProps} from '@react-types/color';
 import styles from '@adobe/spectrum-css-temp/components/colorwheel/vars.css';
 import {useColorWheel} from '@react-aria/color';
@@ -26,12 +26,24 @@ for (let i = 0; i < 360; i++) {
   SEGMENTS.push(<rect width="80" height="2" x="80" y="79" fill={`hsl(${i}, 100%, 50%)`} transform={`rotate(${i} 80 80)`} key={i} />);
 }
 
+const RATIO_INNER_OUTER = 56 / 80;
+
 function ColorWheel(props: SpectrumColorWheelProps) {
   props = useProviderProps(props);
 
   let {isDisabled} = props;
+  let size = props.size && dimensionValue(props.size);
+
   let inputRef = useRef(null);
   let containerRef = useRef(null);
+
+  let [wheelRadius, setWheelRadius] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      setWheelRadius(containerRef.current.offsetWidth / 2);
+    }
+  }, [containerRef]);
 
   let state = useColorWheelState(props);
   let {containerProps, inputProps, thumbProps, thumbPosition: {x, y}} = useColorWheel({
@@ -39,8 +51,8 @@ function ColorWheel(props: SpectrumColorWheelProps) {
     inputRef,
     containerRef,
     // TODO How is a custom wheel size specified? This needs to be recalculated
-    innerRadius: 56,
-    outerRadius: 80
+    innerRadius: wheelRadius * RATIO_INNER_OUTER,
+    outerRadius: wheelRadius
   }, state);
 
   let {isFocusVisible} = useFocusVisible();
@@ -53,7 +65,16 @@ function ColorWheel(props: SpectrumColorWheelProps) {
   let maskId = useId();
 
   return (
-    <div className={classNames(styles, 'spectrum-ColorWheel', {'is-disabled': isDisabled})} ref={containerRef} {...containerProps}>
+    <div
+      className={classNames(styles, 'spectrum-ColorWheel', {'is-disabled': isDisabled})}
+      ref={containerRef}
+      {...containerProps}
+      style={size && {
+        // Workaround around https://github.com/adobe/spectrum-css/issues/1032
+        // @ts-ignore
+        'width': size,
+        'height': size
+      }}>
       <svg className={classNames(styles, 'spectrum-ColorWheel-wheel')} viewBox="0 0 160 160" aria-hidden="true">
         <defs>
           <mask id={maskId}>
@@ -68,16 +89,19 @@ function ColorWheel(props: SpectrumColorWheelProps) {
         <circle cx="80" cy="80" r="56" className={classNames(styles, 'spectrum-ColorWheel-innerCircle')} />
       </svg>
 
-      <ColorThumb
-        value={state.value}
-        isFocused={isFocused && isFocusVisible}
-        isDisabled={isDisabled}
-        isDragging={state.dragging}
-        style={{transform: `translate(${x}px, ${y}px)`}}
-        className={classNames(styles, 'spectrum-ColorWheel-handle')}
-        {...thumbProps}>
-        <input {...focusProps} className={classNames(styles, 'spectrum-ColorWheel-slider')} {...inputProps} ref={inputRef} />
-      </ColorThumb>
+      {
+        // Only display the thumb once the wheel radius is actually known to prevent it from jumping around.
+        wheelRadius && <ColorThumb
+          value={state.value}
+          isFocused={isFocused && isFocusVisible}
+          isDisabled={isDisabled}
+          isDragging={state.dragging}
+          style={{transform: `translate(${x}px, ${y}px)`}}
+          className={classNames(styles, 'spectrum-ColorWheel-handle')}
+          {...thumbProps}>
+          <input {...focusProps} className={classNames(styles, 'spectrum-ColorWheel-slider')} {...inputProps} ref={inputRef} />
+        </ColorThumb>
+      }
     </div>
   );
 }

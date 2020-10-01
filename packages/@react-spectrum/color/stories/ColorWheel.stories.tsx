@@ -12,44 +12,16 @@
 
 import {action} from '@storybook/addon-actions';
 import {Color} from '@react-stately/color';
-import {ColorThumb} from '../src/ColorThumb';
 import {ColorWheel} from '../';
 import {Flex} from '@adobe/react-spectrum';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
-
-storiesOf('ColorThumb', module)
-  .add(
-    'default',
-    () => <ColorThumb value={new Color('#f00')} />
-  )
-  .add(
-    'focused',
-    () => <ColorThumb value={new Color('#f00')} isFocused />
-  )
-  .add(
-    'focused, dragging',
-    () => <ColorThumb value={new Color('#f00')} isFocused isDragging />
-  )
-  .add(
-    'focused, dragging, alpha',
-    () => <ColorThumb value={new Color('hsla(0, 100%, 100%, 0)')} isFocused isDragging />
-  )
-  .add(
-    'disabled',
-    () => <ColorThumb value={new Color('#f00')} isDisabled />
-  );
-
 
 storiesOf('ColorWheel', module)
   .add(
     'default',
     () => <ColorWheel defaultValue={new Color('hsl(0, 100%, 50%)')} onChange={action('change')} />
   )
-  // .add(
-  //   'hsb',
-  //   () => <ColorWheel defaultValue={new Color('hsb(0, 100%, 50%)')} />
-  // )
   .add(
     'disabled',
     () => <ColorWheel isDisabled defaultValue={new Color('hsl(0, 100%, 50%)')} />
@@ -59,8 +31,8 @@ storiesOf('ColorWheel', module)
     () => <ColorWheel step={360 / 12} defaultValue={new Color('hsl(0, 100%, 50%)')} />
   )
   .add(
-    '* custom size',
-    () => <ColorWheel defaultValue={new Color('hsl(0, 100%, 50%)')} />
+    'custom size',
+    () => <ColorWheel defaultValue={new Color('hsl(0, 100%, 50%)')} size="size-1000" />
   )
   .add(
     'controlled',

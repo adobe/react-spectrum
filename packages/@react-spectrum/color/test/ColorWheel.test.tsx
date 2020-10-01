@@ -31,9 +31,16 @@ const getBoundingClientRect = () => ({
 
 describe('ColorWheel', () => {
   let onChangeSpy = jest.fn();
-
   afterEach(() => {
     onChangeSpy.mockClear();
+  });
+
+  let widthStub;
+  beforeAll(() => {
+    widthStub = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => SIZE);
+  });
+  afterAll(() => {
+    widthStub.mockReset();
   });
 
   it('sets input props', () => {

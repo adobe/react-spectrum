@@ -12,8 +12,8 @@
 
 import {BaseSliderProps} from '@react-types/slider';
 import {Color} from '@react-stately/color';
+import {DimensionValue, StyleProps, ValueBase} from '@react-types/shared';
 import {HTMLAttributes, InputHTMLAttributes, RefObject} from 'react';
-import {StyleProps, ValueBase} from '@react-types/shared';
 
 /** A list of supported color formats. */
 export type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hsb' | 'hsba';
@@ -33,8 +33,8 @@ export interface ColorWheelState {
 }
 
 // @ts-ignore
-export interface ColorWheelProps extends BaseSliderProps, ValueBase<Color>, StyleProps {
-  onChange?: (Color) => void,
+export interface ColorWheelProps extends BaseSliderProps, ValueBase<Color>, Omit<StyleProps, 'width', 'height'> {
+  onChange?: (value: Color) => void,
   step?: number,
   // overriding these to allow passing string:
   value?: string | Color,
@@ -56,5 +56,5 @@ export interface ColorWheelAriaResult {
 }
 
 export interface SpectrumColorWheelProps extends ColorWheelProps {
-  size?: number
+  size?: DimensionValue
 }
