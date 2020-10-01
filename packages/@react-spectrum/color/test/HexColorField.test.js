@@ -11,7 +11,11 @@
  */
 
 import {act, fireEvent, render} from '@testing-library/react';
-import {Color} from '@react-stately/color';
+import {
+  Color,
+  maxColor,
+  minColor
+} from '@react-stately/color';
 import {HexColorField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -96,10 +100,11 @@ describe('HexColorField', function () {
   });
 
   it('should be empty when invalid value is provided', function () {
-    let {getByLabelText} = renderComponent({defaultValue: true});
+    let {getByLabelText} = renderComponent({defaultValue: '#fffffffff'});
     let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe('');
 
+    // call commitInputValue to re-verify that a colorValue is not set in state
     act(() => {hexColorField.focus();});
     act(() => {hexColorField.blur();});
     expect(hexColorField.value).toBe('');
@@ -117,16 +122,6 @@ describe('HexColorField', function () {
     let {getByLabelText} = renderComponent(props);
     let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe('#AABBCC');
-  });
-
-  it.each`
-    Name                   | props
-    ${'custom min value'}  | ${{defaultValue: '#aaa', minValue: '#bbb'}}
-    ${'custom max value'}  | ${{defaultValue: '#ccc', maxValue: '#bbb'}}
-  `('should clamp initial value provided to $Name', function ({props}) {
-    let {getByLabelText} = renderComponent(props);
-    let hexColorField = getByLabelText('Primary Color');
-    expect(hexColorField.value).toBe('#BBBBBB');
   });
 
   it('should handle uncontrolled state', function () {
@@ -176,7 +171,7 @@ describe('HexColorField', function () {
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('should disallow invalid characters revert back to last valid value', function () {
+  it('should disallow invalid characters and revert back to last valid value', function () {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({defaultValue: '#abc', onChange: onChangeSpy});
     let hexColorField = getByLabelText('Primary Color');
@@ -253,51 +248,44 @@ describe('HexColorField', function () {
   });
 
   it.each`
-    Name                                 | props                                                    | initExpected  | key
-    ${'not increment beyond max value'}  | ${{defaultValue: '#bbbbba', maxValue: '#bbb', step: 4}}  | ${'#BBBBBA'}  | ${'ArrowUp'}
-    ${'not decrement beyond min value'}  | ${{defaultValue: '#bbbbbc', minValue: '#bbb', step: 4}}  | ${'#BBBBBC'}  | ${'ArrowDown'}
-    ${'increment to max value'}          | ${{defaultValue: '#aaa', maxValue: '#bbb'}}              | ${'#AAAAAA'}  | ${'End'}
-    ${'decrement to min value'}          | ${{defaultValue: '#ccc', minValue: '#bbb'}}              | ${'#CCCCCC'}  | ${'Home'}
+    Name                                 | props                                   | initExpected  | key
+    ${'not increment beyond max value'}  | ${{defaultValue: '#fffffc', step: 16}}  | ${'#FFFFFC'}  | ${'ArrowUp'}
+    ${'increment to max value'}          | ${{defaultValue: '#aabbcc'}}            | ${'#AABBCC'}  | ${'End'}
   `('should $Name', function ({props, initExpected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({...props, onChange: onChangeSpy});
     let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe(initExpected);
 
-    let newColor = new Color('#BBBBBB');
     fireEvent.keyDown(hexColorField, {key});
     fireEvent.keyUp(hexColorField, {key});
-    expect(onChangeSpy).toHaveBeenCalledWith(newColor);
-    expect(hexColorField.value).toBe(newColor.toString('hex'));
+    expect(onChangeSpy).toHaveBeenCalledWith(maxColor);
+    expect(hexColorField.value).toBe(maxColor.toString('hex'));
 
-    // repeat action to make sure onChange is not called when already at min/max
+    // repeat action to make sure onChange is not called when already at max
     fireEvent.keyDown(hexColorField, {key});
     fireEvent.keyUp(hexColorField, {key});
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
   it.each`
-    Name            | props                                        | initExpected  | newValue
-    ${'max value'}  | ${{defaultValue: '#aaa', maxValue: '#bbb'}}  | ${'#AAAAAA'}  | ${'fff'}
-    ${'min value'}  | ${{defaultValue: '#ccc', minValue: '#bbb'}}  | ${'#CCCCCC'}  | ${'000'}
-  `('should clamp value to $Name on change', function ({props, initExpected, newValue}) {
+    Name                                 | props                                   | initExpected  | key
+    ${'not decrement beyond min value'}  | ${{defaultValue: '#00000c', step: 16}}  | ${'#00000C'}  | ${'ArrowDown'}
+    ${'decrement to min value'}          | ${{defaultValue: '#aabbcc'}}            | ${'#AABBCC'}  | ${'Home'}
+  `('should $Name', function ({props, initExpected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({...props, onChange: onChangeSpy});
     let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe(initExpected);
 
-    let newColor = new Color('#BBBBBB');
-    act(() => {
-      hexColorField.focus();
-      userEvent.clear(hexColorField);
-    });
-    typeText(hexColorField, newValue);
-    expect(hexColorField.value).toBe(newValue);
-    expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledWith(newColor);
+    fireEvent.keyDown(hexColorField, {key});
+    fireEvent.keyUp(hexColorField, {key});
+    expect(onChangeSpy).toHaveBeenCalledWith(minColor);
+    expect(hexColorField.value).toBe(minColor.toString('hex'));
 
-    act(() => {hexColorField.blur();});
-    expect(hexColorField.value).toBe(newColor.toString('hex'));
+    // repeat action to make sure onChange is not called when already at min
+    fireEvent.keyDown(hexColorField, {key});
+    fireEvent.keyUp(hexColorField, {key});
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 });
