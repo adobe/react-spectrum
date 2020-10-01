@@ -15,14 +15,23 @@ import {OverlayTriggerProps, PositionProps} from '@react-types/overlays';
 import {ReactElement, ReactNode} from 'react';
 
 export interface TooltipTriggerProps extends OverlayTriggerProps {
+  /**
+   * Whether the tooltip should be disabled, independent from the trigger.
+   */
   isDisabled?: boolean,
+
+  /**
+   * The delay time for the tooltip to show up. [See guidelines](https://spectrum.corp.adobe.com/page/tooltip/#Immediate-or-delayed-appearance).
+   */
   delay?: number,
+
   /**
    * The additional offset applied along the main axis between the element and its
    * anchor element.
    * @default 7
    */
   offset?: number,
+
   /**
    * The additional offset applied along the cross axis between the element and its
    * anchor element.
@@ -43,7 +52,19 @@ export interface TooltipProps {
 export interface AriaTooltipProps extends TooltipProps, DOMProps, AriaLabelingProps {}
 
 export interface SpectrumTooltipProps extends AriaTooltipProps, StyleProps {
+  /**
+   * The [visual style](https://spectrum.corp.adobe.com/page/tooltip/#Semantic-variants) of the Tooltip.
+   */
   variant?: 'neutral' | 'positive' | 'negative' | 'info',
+
+  /**
+   * The placement of the element with respect to its anchor element.
+   * @default 'top'
+   */
   placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom',
+
+  /**
+   * Whether the element is rendered.
+   */
   showIcon?: boolean
 }

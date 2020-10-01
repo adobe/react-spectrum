@@ -10,26 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTooltipProps} from '@react-types/tooltip';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes} from 'react';
+/// <reference types="css-module-types" />
 
-interface TooltipAria {
-  /**
-   * Props for the tooltip element.
-   */
-  tooltipProps: HTMLAttributes<HTMLElement>
-}
+import darkest from '@adobe/spectrum-css-temp/vars/spectrum-darkest.css';
+import global from '@adobe/spectrum-css-temp/vars/spectrum-global.css';
+import large from '@adobe/spectrum-css-temp/vars/spectrum-large.css';
+import lightest from '@adobe/spectrum-css-temp/vars/spectrum-lightest.css';
+import medium from '@adobe/spectrum-css-temp/vars/spectrum-medium.css';
+import {Theme} from '@react-types/provider';
 
-/**
- * Provides the accessibility implementation for a Tooltip component.
- */
-export function useTooltip(props: AriaTooltipProps): TooltipAria {
-  let domProps = filterDOMProps(props, {labelable: true});
-
-  return {
-    tooltipProps: mergeProps(domProps, {
-      role: 'tooltip'
-    })
-  };
-}
+export let theme: Theme = {
+  global,
+  light: lightest,
+  dark: darkest,
+  medium,
+  large
+};

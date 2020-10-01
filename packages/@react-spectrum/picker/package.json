@@ -47,6 +47,7 @@
     "@react-spectrum/provider": "^3.1.1",
     "@react-spectrum/text": "^3.1.0",
     "@react-spectrum/utils": "^3.2.1",
+    "@react-stately/collections": "^3.2.0",
     "@react-stately/select": "^3.1.0",
     "@react-types/overlays": "^3.2.0",
     "@react-types/select": "^3.1.0",
