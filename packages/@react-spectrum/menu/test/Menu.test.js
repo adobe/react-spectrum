@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render, within} from '@testing-library/react';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import {fireEvent, render, within} from '@testing-library/react';
 import {Item, Menu, Section} from '../';
 import {Keyboard, Text} from '@react-spectrum/text';
 import {MenuContext} from '../src/context';
@@ -639,10 +639,22 @@ describe('Menu', function () {
 
     let menu = tree.getByRole('menu');
     let menuItem = within(menu).getByRole('menuitem');
-    triggerPress(menuItem);
+
+    act(() => {
+      triggerPress(menuItem);
+      jest.runAllTimers();
+    });
 
     let dialog = tree.getByRole('dialog');
     expect(dialog).toBeVisible();
+
+    act(() => {
+      fireEvent.keyDown(dialog, {key: 'Escape'});
+      fireEvent.keyUp(dialog, {key: 'Escape'});
+      jest.runAllTimers();
+    });
+
+    expect(() => tree.getByRole('dialog')).toThrow();
   });
 
   describe('supports onAction', function () {

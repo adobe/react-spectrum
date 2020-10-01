@@ -245,7 +245,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input2);
 
       input2.blur();
-      expect(document.activeElement).toBe(document.body);
+      expect(document.activeElement).toBe(input2);
 
       outside.focus();
       fireEvent.focusIn(outside);
@@ -274,7 +274,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input2);
 
       input2.blur();
-      expect(document.activeElement).toBe(document.body);
+      expect(document.activeElement).toBe(input2);
       fireEvent.focusOut(input2);
       expect(document.activeElement).toBe(input2);
     });

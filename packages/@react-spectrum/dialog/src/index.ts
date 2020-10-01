@@ -15,3 +15,5 @@
 export * from './AlertDialog';
 export * from './Dialog';
 export * from './DialogTrigger';
+export * from './DialogContainer';
+export * from './useDialogContainer';

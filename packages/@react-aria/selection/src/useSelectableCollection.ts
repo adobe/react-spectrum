@@ -112,7 +112,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
             ? delegate.getKeyBelow(manager.focusedKey)
             : delegate.getFirstKey();
 
-          if (nextKey) {
+          if (nextKey != null) {
             manager.setFocusedKey(nextKey);
             if (manager.selectionMode === 'single' && selectOnFocus) {
               manager.replaceSelection(nextKey);
@@ -138,7 +138,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
             ? delegate.getKeyAbove(manager.focusedKey)
             : delegate.getLastKey();
 
-          if (nextKey) {
+          if (nextKey != null) {
             manager.setFocusedKey(nextKey);
             if (manager.selectionMode === 'single' && selectOnFocus) {
               manager.replaceSelection(nextKey);
@@ -161,7 +161,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         if (delegate.getKeyLeftOf) {
           e.preventDefault();
           let nextKey = delegate.getKeyLeftOf(manager.focusedKey);
-          if (nextKey) {
+          if (nextKey != null) {
             manager.setFocusedKey(nextKey);
             if (manager.selectionMode === 'single' && selectOnFocus) {
               manager.replaceSelection(nextKey);
@@ -177,7 +177,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         if (delegate.getKeyRightOf) {
           e.preventDefault();
           let nextKey = delegate.getKeyRightOf(manager.focusedKey);
-          if (nextKey) {
+          if (nextKey != null) {
             manager.setFocusedKey(nextKey);
             if (manager.selectionMode === 'single' && selectOnFocus) {
               manager.replaceSelection(nextKey);
@@ -219,7 +219,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         if (delegate.getKeyPageBelow) {
           e.preventDefault();
           let nextKey = delegate.getKeyPageBelow(manager.focusedKey);
-          if (nextKey) {
+          if (nextKey != null) {
             manager.setFocusedKey(nextKey);
             if (e.shiftKey && manager.selectionMode === 'multiple') {
               manager.extendSelection(nextKey);
@@ -231,7 +231,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         if (delegate.getKeyPageAbove) {
           e.preventDefault();
           let nextKey = delegate.getKeyPageAbove(manager.focusedKey);
-          if (nextKey) {
+          if (nextKey != null) {
             manager.setFocusedKey(nextKey);
             if (e.shiftKey && manager.selectionMode === 'multiple') {
               manager.extendSelection(nextKey);

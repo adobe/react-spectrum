@@ -1,0 +1,233 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/dialog';
+import {ExampleImage, HeaderInfo, PropTable, FunctionAPI} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/dialog/package.json';
+
+```jsx import
+import {Content, Footer, Header} from '@react-spectrum/view';
+import {Form} from '@react-spectrum/form';
+import {Heading, Text} from '@react-spectrum/text';
+import {TextField} from '@react-spectrum/textfield';
+import {Divider} from '@react-spectrum/divider';
+import {DialogContainer, Dialog, AlertDialog} from '@react-spectrum/dialog';
+import {ActionButton, Button} from '@react-spectrum/button';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {MenuTrigger, Menu, Item} from '@react-spectrum/menu';
+import More from '@spectrum-icons/workflow/More';
+import Delete from '@spectrum-icons/workflow/Delete';
+import Edit from '@spectrum-icons/workflow/Edit';
+```
+
+---
+category: Overlays
+keywords: [dialog container, dialog, modal]
+after_version: 3.3.0
+---
+
+# DialogContainer
+
+<p>{docs.exports.DialogContainer.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['DialogContainer', 'Dialog']} />
+
+## Example
+
+```tsx example
+function Example(props) {
+  let [isOpen, setOpen] = React.useState(false);
+
+  return (
+    <>
+      <ActionButton onPress={() => setOpen(true)}>
+        <Delete />
+        <Text>Delete</Text>
+      </ActionButton>
+      <DialogContainer onDismiss={() => setOpen(false)} {...props}>
+        {isOpen &&
+          <AlertDialog
+            title="Delete"
+            variant="destructive"
+            primaryActionLabel="Delete">
+            Are you sure you want to delete this item?
+          </AlertDialog>
+        }
+      </DialogContainer>
+    </>
+  );
+}
+```
+
+## Dialog triggered by a menu item
+
+DialogContainer is useful over a [DialogTrigger](DialogTrigger.html) when your have a trigger that can unmount while the dialog is
+open. For example, placing a DialogTrigger around a menu item would not work because the menu closes when pressing an item, thereby
+unmounting the DialogTrigger. When the trigger unmounts, so does the Dialog. In these cases, it is useful to place the dialog *outside*
+the tree that unmounts, so that the dialog is not also removed.
+
+The following example shows a [MenuTrigger](MenuTrigger.html) containing a [Menu](Menu.html) with two actions: "edit" and "delete".
+Each menu item opens a different dialog. This is implemented by using a DialogContainer that displays the edit dialog,
+delete dialog, or no dialog depending on the current value stored in local state. Pressing a menu item triggers the menu's
+`onAction` prop, which sets the state to the type of dialog to display, based on the menu item's `key`. This causes the associated
+dialog to be rendered within the DialogContainer.
+
+This example also demonstrates the use of the `useDialogContainer` hook, which allows the dialog to dismiss itself when a user
+presses one of the buttons inside it. This triggers the DialogContainer's `onDismiss` event, which resets the state storing the
+open dialog back to `null`. In addition, the user can close the dialog using the <kbd>Escape</kbd> key (unless the
+`isKeyboardDismissDisabled` prop is set), or by clicking outside (if the `isDismissable` prop is set).
+
+```tsx example
+import {useDialogContainer} from '@react-spectrum/dialog';
+
+function Example() {
+  let [dialog, setDialog] = React.useState();
+
+  return (
+    <>
+      <MenuTrigger>
+        <ActionButton aria-label="Actions"><More /></ActionButton>
+        <Menu onAction={setDialog}>
+          <Item key="edit">Edit...</Item>
+          <Item key="delete">Delete...</Item>
+        </Menu>
+      </MenuTrigger>
+      <DialogContainer onDismiss={() => setDialog(null)}>
+        {dialog === 'edit' &&
+          <EditDialog />
+        }
+        {dialog === 'delete' &&
+          <AlertDialog
+            title="Delete"
+            variant="destructive"
+            primaryActionLabel="Delete">
+            Are you sure you want to delete this item?
+          </AlertDialog>
+        }
+      </DialogContainer>
+    </>
+  );
+}
+
+function EditDialog() {
+  // This hook allows us to dismiss the dialog when the user
+  // presses one of the buttons (below).
+  let dialog = useDialogContainer();
+
+  return (
+    <Dialog>
+      <Heading>Edit</Heading>
+      <Divider />
+      <Content>
+        <Form labelPosition="side" width="100%">
+          <TextField autoFocus label="First Name" defaultValue="John" />
+          <TextField label="Last Name" defaultValue="Smith" />
+        </Form>
+      </Content>
+      <ButtonGroup>
+        <Button variant="secondary" onPress={dialog.dismiss}>Cancel</Button>
+        <Button variant="cta" onPress={dialog.dismiss}>Save</Button>
+      </ButtonGroup>
+    </Dialog>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.DialogContainer} links={docs.links} />
+
+## useDialogContainer
+
+The `useDialogContainer` hook can be used to allow a custom dialog component to access the `type` of container
+the dialog is rendered in (e.g. `modal`, `popover`, `fullscreen`, etc.), and also to dismiss the dialog
+programmatically. It works with both `DialogContainer` and [DialogTrigger](DialogTrigger.html).
+
+<FunctionAPI function={docs.exports.useDialogContainer} links={docs.links} />
+
+## Visual options
+
+### Full screen
+
+The `type` prop allows setting the type of modal to display. Set it to `"fullscreen"` to display a full screen dialog, which
+only reveals a small portion of the page behind the underlay. Use this variant for more complex workflows that do not fit in
+the available modal dialog [sizes](Dialog.html#size).
+
+```tsx example
+function Example(props) {
+  let [isOpen, setOpen] = React.useState(false);
+
+  return (
+    <>
+      <ActionButton onPress={() => setOpen(true)}>
+        <Edit />
+        <Text>Edit</Text>
+      </ActionButton>
+      <DialogContainer type="fullscreen" onDismiss={() => setOpen(false)} {...props}>
+        {isOpen &&
+          <EditDialog />
+        }
+      </DialogContainer>
+    </>
+  );
+}
+```
+
+### Full screen takeover
+
+Fullscreen takeover dialogs are similar to the fullscreen variant except that the dialog covers the entire screen.
+
+```tsx example
+function Example(props) {
+  let [isOpen, setOpen] = React.useState(false);
+
+  return (
+    <>
+      <ActionButton onPress={() => setOpen(true)}>
+        <Edit />
+        <Text>Edit</Text>
+      </ActionButton>
+      <DialogContainer type="fullscreenTakeover" onDismiss={() => setOpen(false)} {...props}>
+        {isOpen &&
+          <EditDialog />
+        }
+      </DialogContainer>
+    </>
+  );
+}
+```
+
+```tsx import
+// Duplicated from above so we can access in other examples...
+function EditDialog() {
+  let dialog = useDialogContainer();
+
+  return (
+    <Dialog>
+      <Heading>Edit</Heading>
+      <Divider />
+      <Content>
+        <Form width="100%">
+          <TextField autoFocus label="First Name" defaultValue="John" />
+          <TextField label="Last Name" defaultValue="Smith" />
+        </Form>
+      </Content>
+      <ButtonGroup>
+        <Button variant="secondary" onPress={dialog.dismiss}>Cancel</Button>
+        <Button variant="cta" onPress={dialog.dismiss}>Save</Button>
+      </ButtonGroup>
+    </Dialog>
+  );
+}
+```

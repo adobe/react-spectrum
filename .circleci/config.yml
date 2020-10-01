@@ -51,6 +51,19 @@ jobs:
           name: test
           command: yarn ci-test
 
+  test_17:
+    docker:
+      - image: circleci/node:12.10
+
+    working_directory: ~/react-spectrum
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: test
+          command: yarn ci-test-17
+
   lint:
     docker:
       - image: circleci/node:12.10
@@ -82,6 +95,26 @@ jobs:
           root: dist
           paths:
             - '*/storybook/'
+
+  storybook-17:
+    docker:
+      - image: circleci/node:12.10
+    resource_class: large
+
+    working_directory: ~/react-spectrum
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build storybook-17
+          command: make storybook-17
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - '*/storybook-17/'
+
   docs:
     docker:
       - image: circleci/node:12.10
@@ -182,10 +215,16 @@ workflows:
       - test:
           requires:
             - install
+      - test_17:
+          requires:
+            - install
       - lint:
           requires:
             - install
       - storybook:
+          requires:
+            - install
+      - storybook-17:
           requires:
             - install
       - docs:
@@ -201,7 +240,9 @@ workflows:
           requires:
             - lint
             - test
+            - test_17
             - storybook
+            - storybook-17
             - docs
       - deploy-production:
           filters:

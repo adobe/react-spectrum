@@ -93,6 +93,16 @@ storiesOf('ActionGroup', module)
     )
   )
   .add(
+    'with falsy item key',
+    () => (
+      <ActionGroup onAction={action('onAction')}>
+        <Item key="add">Add</Item>
+        <Item key="">Delete</Item>
+        <Item key="edit">Edit</Item>
+      </ActionGroup>
+    )
+  )
+  .add(
     'isDisabled',
     () => render({isDisabled: true, defaultSelectedKeys: ['1']}, docItems)
   )

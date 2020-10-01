@@ -284,6 +284,17 @@ storiesOf('Picker', module)
     )
   )
   .add(
+    'falsy item key',
+    () => (
+      <Picker label="Test" onSelectionChange={action('selectionChange')}>
+        <Item key="">None</Item>
+        <Item key="One">One</Item>
+        <Item key="Two">Two</Item>
+        <Item key="Three">Three</Item>
+      </Picker>
+    )
+  )
+  .add(
     'no visible label',
     () => (
       <Picker aria-label="Test" onSelectionChange={action('selectionChange')}>
