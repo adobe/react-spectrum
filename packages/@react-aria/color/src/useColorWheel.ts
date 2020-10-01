@@ -35,10 +35,6 @@ function cartesianToAngle(x: number, y: number, radius: number): number {
   return (deg + 360) % 360;
 }
 
-function roundToStep(value: number, step: number): number {
-  return Math.round(value / step) * step;
-}
-
 export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState): ColorWheelAriaResult {
   let {inputRef, containerRef, isDisabled, step = 1, innerRadius, outerRadius} = props;
 
@@ -71,7 +67,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
           stateRef.current.setHue(stateRef.current.value.getChannelValue('hue') - step);
         }
       } else {
-        stateRef.current.setHue(roundToStep(cartesianToAngle(currentPosition.current.x, currentPosition.current.y, thumbRadius), step));
+        stateRef.current.setHue(cartesianToAngle(currentPosition.current.x, currentPosition.current.y, thumbRadius));
       }
     }
   };
@@ -104,7 +100,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     let angle = cartesianToAngle(x, y, radius);
     if (innerRadius < radius && radius < outerRadius) {
       isOnWheel.current = true;
-      stateRef.current.setHue(roundToStep(angle, step));
+      stateRef.current.setHue(angle);
 
       focusInput();
       state.setDragging(true);

@@ -25,8 +25,12 @@ function normalizeColor(v: string | Color) {
 
 const DEFAULT_COLOR = new Color('hsl(0, 100%, 50%)');
 
+function roundToStep(value: number, step: number): number {
+  return Math.round(value / step) * step;
+}
+
 export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
-  let {value, defaultValue, onChange} = props;
+  let {value, defaultValue, onChange, step = 1} = props;
 
   if (!value && !defaultValue) {
     defaultValue = DEFAULT_COLOR;
@@ -44,6 +48,7 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
 
     hue: state.getChannelValue('hue'),
     setHue(value) {
+      value = roundToStep(value, step);
       if (state.getChannelValue('hue') !== value) {
         setState(state.withChannelValue('hue', value));
       }
