@@ -20,7 +20,7 @@ import {SpectrumRangeSliderProps} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
-import {VisuallyHidden} from '@adobe/react-spectrum';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 function RangeSlider(props: SpectrumRangeSliderProps) {
   let {onChange, value, defaultValue, ...otherProps} = props;
