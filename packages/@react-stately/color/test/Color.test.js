@@ -23,6 +23,7 @@ describe('Color', function () {
       expect(color.toString('hex')).toBe('#AABBCC');
       expect(color.toString('rgb')).toBe('rgb(170, 187, 204)');
       expect(color.toString('rgba')).toBe('rgba(170, 187, 204, 1)');
+      expect(color.toString('css')).toBe('rgba(170, 187, 204, 1)');
     });
 
     it('should parse a long hex color', function () {
@@ -34,10 +35,53 @@ describe('Color', function () {
       expect(color.toString('hex')).toBe('#ABCDEF');
       expect(color.toString('rgb')).toBe('rgb(171, 205, 239)');
       expect(color.toString('rgba')).toBe('rgba(171, 205, 239, 1)');
+      expect(color.toString('css')).toBe('rgba(171, 205, 239, 1)');
     });
 
     it('should throw on invalid hex value', function () {
       expect(() => new Color('#ggg')).toThrow('Invalid color value: #ggg');
+    });
+
+    it('should parse a hsl color', function () {
+      let color = new Color('hsl(120, 100%, 50%)');
+      expect(color.getChannelValue('hue')).toBe(120);
+      expect(color.getChannelValue('saturation')).toBe(100);
+      expect(color.getChannelValue('lightness')).toBe(50);
+      expect(color.getChannelValue('alpha')).toBe(1);
+      expect(color.toString('hsl')).toBe('hsl(120, 100%, 50%)');
+      expect(color.toString('hsla')).toBe('hsla(120, 100%, 50%, 1)');
+      expect(color.toString('css')).toBe('hsla(120, 100%, 50%, 1)');
+    });
+
+    it('should parse a hsl color', function () {
+      let color = new Color('hsl(120, 100%, 50%)');
+      expect(color.getChannelValue('hue')).toBe(120);
+      expect(color.getChannelValue('saturation')).toBe(100);
+      expect(color.getChannelValue('lightness')).toBe(50);
+      expect(color.getChannelValue('alpha')).toBe(1);
+      expect(color.toString('hsl')).toBe('hsl(120, 100%, 50%)');
+      expect(color.toString('hsla')).toBe('hsla(120, 100%, 50%, 1)');
+      expect(color.toString('css')).toBe('hsla(120, 100%, 50%, 1)');
+    });
+
+    it('should parse a hsla color', function () {
+      let color = new Color('hsla(120, 100%, 50%, 0.5)');
+      expect(color.getChannelValue('hue')).toBe(120);
+      expect(color.getChannelValue('saturation')).toBe(100);
+      expect(color.getChannelValue('lightness')).toBe(50);
+      expect(color.getChannelValue('alpha')).toBe(0.5);
+      expect(color.toString('hsl')).toBe('hsl(120, 100%, 50%)');
+      expect(color.toString('hsla')).toBe('hsla(120, 100%, 50%, 0.5)');
+      expect(color.toString('css')).toBe('hsla(120, 100%, 50%, 0.5)');
+    });
+
+    it('normalizes hsla value by clamping', function () {
+      let color = new Color('hsla(-400, 120%, -4%, -1)');
+      expect(color.getChannelValue('hue')).toBe(320);
+      expect(color.getChannelValue('saturation')).toBe(100);
+      expect(color.getChannelValue('lightness')).toBe(0);
+      expect(color.getChannelValue('alpha')).toBe(0);
+      expect(color.toString('hsla')).toBe('hsla(320, 100%, 0%, 0)');
     });
   });
 });

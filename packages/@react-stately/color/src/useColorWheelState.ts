@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color} from '../';
+import {Color} from './Color';
 import {ColorWheelProps, ColorWheelState} from '@react-types/color';
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
@@ -23,8 +23,14 @@ function normalizeColor(v: string | Color) {
   }
 }
 
+const DEFAULT_COLOR = new Color('hsl(0, 100%, 50%)');
+
 export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
   let {value, defaultValue, onChange} = props;
+
+  if (!value && !defaultValue) {
+    defaultValue = DEFAULT_COLOR;
+  }
 
   let [state, setState] = useControlledState(normalizeColor(value), normalizeColor(defaultValue), onChange);
 
@@ -38,7 +44,9 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
 
     hue: state.getChannelValue('hue'),
     setHue(value) {
-      setState(state.withChannelValue('hue', value));
+      if (state.getChannelValue('hue') !== value) {
+        setState(state.withChannelValue('hue', value));
+      }
     },
 
     setDragging(value) {

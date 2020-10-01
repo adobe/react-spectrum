@@ -23,13 +23,13 @@ function radToDeg(rad: number) {
   return rad * 180 / Math.PI;
 }
 
+// 0deg = 3 o'clock. increses clockwise
 function angleToCartesian(angle: number, radius: number): {x: number, y: number} {
   let rad = degToRad(360 - angle + 90);
   let x = Math.sin(rad) * (radius);
   let y = Math.cos(rad) * (radius);
   return {x, y};
 }
-
 function cartesianToAngle(x: number, y: number, radius: number): number {
   let deg = radToDeg(Math.atan2(y / radius, x / radius));
   return (deg + 360) % 360;
@@ -38,7 +38,6 @@ function cartesianToAngle(x: number, y: number, radius: number): number {
 function roundToStep(value: number, step: number): number {
   return Math.round(value / step) * step;
 }
-
 
 export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState): ColorWheelAriaResult {
   let {inputRef, containerRef, isDisabled, step = 1, innerRadius, outerRadius} = props;
@@ -50,8 +49,6 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       focusWithoutScrolling(inputRef.current);
     }
   }, [inputRef]);
-
-  let isOnWheel = useRef<boolean>(false);
 
   let stateRef = useRef<ColorWheelState>(null);
   stateRef.current = state;
@@ -78,6 +75,9 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       }
     }
   };
+  let movePropsThumb = useMove(moveHandler);
+
+  let isOnWheel = useRef<boolean>(false);
   let movePropsContainer = useMove({
     ...moveHandler,
     onMove(e) {
@@ -86,7 +86,6 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       }
     }
   });
-  let movePropsThumb = useMove(moveHandler);
 
   let onEnd = () => {
     isOnWheel.current = false;
@@ -94,6 +93,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     state.setDragging(false);
     window.removeEventListener('mouseup', onEnd, false);
     window.removeEventListener('touchend', onEnd, false);
+    window.removeEventListener('pointerup', onEnd, false);
   };
 
   let onStart = (pageX: number, pageY: number) => {
@@ -110,21 +110,23 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       state.setDragging(true);
       window.addEventListener('mouseup', onEnd, false);
       window.addEventListener('touchend', onEnd, false);
+      window.addEventListener('pointerup', onEnd, false);
     }
   };
 
   return {
-    containerProps: mergeProps({
-      onMouseDown: (e: React.MouseEvent) => onStart(e.pageX, e.pageY),
-      onTouchStart: (e: React.TouchEvent) => onStart(e.touches[0].pageX, e.touches[0].pageY)
+    containerProps: isDisabled ? {} : mergeProps({
+      onMouseDown: (e: React.MouseEvent) => {onStart(e.pageX, e.pageY);},
+      onPointerDown: (e: React.PointerEvent) => {e.preventDefault(); onStart(e.pageX, e.pageY);},
+      onTouchStart: (e: React.TouchEvent) => {onStart(e.targetTouches[0].pageX, e.targetTouches[0].pageY);}
     }, movePropsContainer),
-    thumbProps: movePropsThumb,
+    thumbProps: isDisabled ? {} : movePropsThumb,
     inputProps: {
       type: 'range',
       'aria-label': 'hue',
       min: '0',
       max: '360',
-      step: step,
+      step: String(step),
       disabled: isDisabled
     },
     thumbPosition: angleToCartesian(state.value.getChannelValue('hue'), thumbRadius)

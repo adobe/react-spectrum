@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {clamp} from '@react-aria/utils';
 import {ColorChannel, ColorFormat} from '@react-types/color';
 
 export class Color {
@@ -81,12 +82,9 @@ export class Color {
   }
 
   withChannelValue(channel: ColorChannel, value: number): Color {
-    if (channel in this.value) {
-      let x = Color.fromColorValue(this.value.clone());
-      x.value[channel] = value;
-      return x;
-    }
-    throw new Error('Unsupported color channel: ' + channel);
+    let x = Color.fromColorValue(this.value.clone());
+    x.value.setChannelValue(channel, value);
+    return x;
   }
 
   withChannelValuePercent(channel: ColorChannel, value: number): Color {
@@ -102,6 +100,7 @@ interface ColorValue {
   toHSL(): ColorValue,
   toString(format: ColorFormat | 'css'): string,
   clone(): ColorValue,
+  setChannelValue(format: ColorChannel, value: number): void,
   setChannelValuePercent(format: ColorChannel, value: number): void,
   getChannelValuePercent(format: ColorChannel): number
 }
@@ -176,6 +175,19 @@ class RGBColor implements ColorValue {
     }
   }
 
+  setChannelValue(channel: ColorChannel, value: number) {
+    switch (channel) {
+      case 'red':
+      case 'green':
+      case 'blue':
+      case 'alpha':
+        this[channel] = value;
+        break;
+      default:
+        throw new Error('Unkown channel for RGB: ' + channel);
+    }
+  }
+
   getChannelValuePercent(channel: ColorChannel) {
     switch (channel) {
       case 'red':
@@ -190,19 +202,13 @@ class RGBColor implements ColorValue {
   }
 }
 
-const HSB_REGEX = /hsb\((\d+(?:.\d+)?\s?,\s?\d+(?:.\d+)?%\s?,\s?\d+(?:.\d+)?%)\)|hsba\((\d+(?:.\d+)?\s?,\s?\d+(?:.\d+)?%\s?,\s?\d+(?:.\d+)?%\s?,\s?\d(.\d+)?)\)/;
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 class HSBColor implements ColorValue {
   constructor(private hue: number, private saturation: number, private brightness: number, private alpha: number) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   static parse(value: string): HSBColor | void {
-    let m: RegExpMatchArray | void;
-    if ((m = value.match(HSB_REGEX))) {
-      const [h, s, l] = (m[1] ?? m[2]).split(',').map(n => Number(n.trim().replace('%', '')));
-      return new HSBColor(h, s, l, 1);
-    }
+    // TODO
   }
 
   toString(format: ColorFormat | 'css') {
@@ -248,6 +254,20 @@ class HSBColor implements ColorValue {
     }
   }
 
+  setChannelValue(channel: ColorChannel, value: number) {
+    switch (channel) {
+      case 'saturation':
+      case 'brightness':
+        this[channel] = clamp(value, 0, 100);
+        break;
+      case 'alpha':
+        this.alpha = clamp(value, 0, 1);
+        break;
+      default:
+        throw new Error('Unkown channel for HSB: ' + channel);
+    }
+  }
+
   getChannelValuePercent(channel: ColorChannel) {
     switch (channel) {
       case 'saturation':
@@ -261,7 +281,11 @@ class HSBColor implements ColorValue {
   }
 }
 
-const HSL_REGEX = /hsl\((\d+(?:.\d+)?\s?,\s?\d+(?:.\d+)?%\s?,\s?\d+(?:.\d+)?%)\)|hsla\((\d+(?:.\d+)?\s?,\s?\d+(?:.\d+)?%\s?,\s?\d+(?:.\d+)?%\s?,\s?\d(.\d+)?)\)/;
+const HSL_REGEX = /hsl\((-?\d+(?:.\d+)?\s?,\s?-?\d+(?:.\d+)?%\s?,\s?-?\d+(?:.\d+)?%)\)|hsla\((-?\d+(?:.\d+)?\s?,\s?-?\d+(?:.\d+)?%\s?,\s?-?\d+(?:.\d+)?%\s?,\s?-?\d(.\d+)?)\)/;
+
+function mod(n, m) {
+  return ((n % m) + m) % m;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 class HSLColor implements ColorValue {
@@ -271,8 +295,8 @@ class HSLColor implements ColorValue {
   static parse(value: string): HSLColor | void {
     let m: RegExpMatchArray | void;
     if ((m = value.match(HSL_REGEX))) {
-      const [h, s, l] = (m[1] ?? m[2]).split(',').map(n => Number(n.trim().replace('%', '')));
-      return new HSLColor(h, s, l, 1);
+      const [h, s, l, a] = (m[1] ?? m[2]).split(',').map(n => Number(n.trim().replace('%', '')));
+      return new HSLColor(mod(h, 360), clamp(s, 0, 100), clamp(l, 0, 100), clamp(a ?? 1, 0, 1));
     }
   }
 
@@ -304,7 +328,6 @@ class HSLColor implements ColorValue {
     return new HSLColor(this.hue, this.saturation, this.lightness, this.alpha);
   }
 
-
   setChannelValuePercent(channel: ColorChannel, value: number) {
     switch (channel) {
       case 'hue':
@@ -319,6 +342,23 @@ class HSLColor implements ColorValue {
         break;
       default:
         throw new Error('Unkown channel for HSL: ' + channel);
+    }
+  }
+
+  setChannelValue(channel: ColorChannel, value: number) {
+    switch (channel) {
+      case 'hue':
+        this.hue = mod(value, 360);
+        break;
+      case 'saturation':
+      case 'lightness':
+        this[channel] = clamp(value, 0, 100);
+        break;
+      case 'alpha':
+        this.alpha = clamp(value, 0, 1);
+        break;
+      default:
+        throw new Error('Unkown channel for HSB: ' + channel);
     }
   }
 
