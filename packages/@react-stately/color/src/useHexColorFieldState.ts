@@ -100,7 +100,10 @@ export function useHexColorFieldState(
   let setFieldInputValue = (value: string) => {
     value = value.replace(/[^#0-9a-f]/ig, '');
     setInputValue(value);
-    if (!value.length) { return; }
+    if (!value.length) {
+      setColorValue(null);
+      return;
+    }
     if (!value.startsWith('#')) {
       value = `#${value}`;
     }

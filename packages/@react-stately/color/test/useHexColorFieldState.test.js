@@ -166,7 +166,7 @@ describe('useHexColorFieldState tests', function () {
     expect(result.current.inputValue).toBe('#cba');
   });
 
-  it('should not call onChange when input is cleared', function () {
+  it('should call onChange when input is cleared', function () {
     let onChangeSpy = jest.fn();
     let props = {defaultValue: '#abc', onChange: onChangeSpy};
     let {result} = renderHook(() => useHexColorFieldState(props));
@@ -177,11 +177,8 @@ describe('useHexColorFieldState tests', function () {
     expect(result.current.inputValue).toBe('#AABBCC');
 
     act(() => result.current.setInputValue(''));
-    expect(onChangeSpy).not.toHaveBeenCalled();
-    expect(result.current.colorValue.getChannelValue('red')).toBe(170);
-    expect(result.current.colorValue.getChannelValue('green')).toBe(187);
-    expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
-    expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(null);
+    expect(result.current.colorValue).toBeNull();
     expect(result.current.inputValue).toBe('');
   });
 
