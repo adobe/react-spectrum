@@ -191,18 +191,29 @@ function computePosition(
   let {placement, crossPlacement, axis, crossAxis, size, crossSize} = placementInfo;
   let position: Position = {};
 
-  position[crossAxis] = childOffset[crossAxis] + crossOffset;
+  // button position
+  position[crossAxis] = childOffset[crossAxis]
   if (crossPlacement === 'center') {
+    //  + (button size / 2) - (overlay size / 2)
+    // at this point the overlay center should match the button center
     position[crossAxis] += (childOffset[crossSize] - overlaySize[crossSize]) / 2;
   } else if (crossPlacement !== crossAxis) {
+    //  + (button size) - (overlay size)
+    // at this point the overlay bottom should match the button bottom
     position[crossAxis] += (childOffset[crossSize] - overlaySize[crossSize]);
-  }
+  }/* else {
+    the overlay top should match the button top
+  } */
+  // add the crossOffset from props
+  position[crossAxis] += crossOffset;
 
-  // Ensure overlay sticks to target(ignore for overlays smaller than target)
-  if (childOffset[crossSize] < overlaySize[crossSize]) {
-    let positionForPositiveSideOverflow = Math.min(position[crossAxis], childOffset[crossAxis]);
-    position[crossAxis] = Math.max(positionForPositiveSideOverflow, childOffset[crossAxis] - overlaySize[crossSize] + childOffset[crossSize]);
-  }
+  // this is button center position - the overlay size + half of the button to align bottom of overlay with button center
+  let minViablePosition = childOffset[crossAxis] + (childOffset[crossSize] / 2) - overlaySize[crossSize];
+  // this is button position of center, aligns top of overlay with button center
+  let maxViablePosition = childOffset[crossAxis] + (childOffset[crossSize] / 2);
+
+  // clamp it into the range of the min/max positions
+  position[crossAxis] = Math.min(Math.max(minViablePosition, position[crossAxis]), maxViablePosition);
 
   // Floor these so the position isn't placed on a partial pixel, only whole pixels. Shouldn't matter if it was floored or ceiled, so chose one.
   if (placement === axis) {
@@ -229,13 +240,13 @@ function getMaxHeight(
 ) {
   return position.top != null
     // We want the distance between the top of the overlay to the bottom of the boundary
-    ? Math.max(0, 
+    ? Math.max(0,
       (boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top) // this is the bottom of the boundary
       - (containerOffsetWithBoundary.top + position.top) // this is the top of the overlay
       - (margins.top + margins.bottom + padding) // save additional space for margin and padding
     )
     // We want the distance between the top of the trigger to the top of the boundary
-    : Math.max(0, 
+    : Math.max(0,
       (childOffset.top + containerOffsetWithBoundary.top) // this is the top of the trigger
       - (boundaryDimensions.top + boundaryDimensions.scroll.top) // this is the top of the boundary
       - (margins.top + margins.bottom + padding) // save additional space for margin and padding
@@ -325,7 +336,7 @@ export function calculatePositionInternal(
   position[crossAxis] += delta;
 
   let arrowPosition: Position = {};
-  arrowPosition[crossAxis] = childOffset[crossSize] > overlaySize[crossSize] ? null : (childOffset[crossAxis] - position[crossAxis] + childOffset[crossSize] / 2);
+  arrowPosition[crossAxis] = (childOffset[crossAxis] - position[crossAxis] + childOffset[crossSize] / 2);
 
   return {
     position,

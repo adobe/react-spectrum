@@ -100,6 +100,94 @@ storiesOf('TooltipTrigger', module)
         <Button variant="secondary">No Tooltip</Button>
       </Flex>
     )
+  )
+  .add(
+    'crossoffset examples',
+    () => (
+      <Flex gap="size-200">
+        <Flex gap="size-200" direction="column" alignItems="start">
+          <span>Left Top</span>
+          <TooltipTrigger delay={0} placement="left top" crossOffset={10}>
+            <ActionButton>Tooltip Trigger</ActionButton>
+            <Tooltip>Tooltip message.</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger delay={0} placement="left top">
+            <ActionButton>Tooltip Trigger</ActionButton>
+            <Tooltip>Tooltip message.</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger delay={0} placement="left top" crossOffset={-10}>
+            <ActionButton>Tooltip Trigger</ActionButton>
+            <Tooltip>Tooltip message.</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger delay={0} placement="left top" crossOffset={10}>
+            <ActionButton>Tooltip</ActionButton>
+            <Tooltip>Tooltip message.</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger delay={0} placement="left top">
+            <ActionButton>Tooltip</ActionButton>
+            <Tooltip>Tooltip message.</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger delay={0} placement="left top" crossOffset={-10}>
+            <ActionButton>Tooltip</ActionButton>
+            <Tooltip>Tooltip message.</Tooltip>
+          </TooltipTrigger>
+        </Flex>
+        <Flex gap="size-200" direction="column" alignItems="start">
+          <span>Left</span>
+          <TooltipTrigger delay={0} placement="left" crossOffset={10}>
+            <ActionButton>Tooltip Trigger</ActionButton>
+            <Tooltip>Tooltip message.</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger delay={0} placement="left">
+            <ActionButton>Tooltip Trigger</ActionButton>
+            <Tooltip>Tooltip message.</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger delay={0} placement="left" crossOffset={-10}>
+            <ActionButton>Tooltip Trigger</ActionButton>
+            <Tooltip>Tooltip message.</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger delay={0} placement="left" crossOffset={10}>
+            <ActionButton>Tooltip</ActionButton>
+            <Tooltip>Tooltip message.</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger delay={0} placement="left">
+            <ActionButton>Tooltip</ActionButton>
+            <Tooltip>Tooltip message.</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger delay={0} placement="left" crossOffset={-10}>
+            <ActionButton>Tooltip</ActionButton>
+            <Tooltip>Tooltip message.</Tooltip>
+          </TooltipTrigger>
+        </Flex>
+        <Flex gap="size-200" direction="column" alignItems="start">
+          <span>Left Bottom</span>
+          <TooltipTrigger delay={0} placement="left bottom" crossOffset={10}>
+            <ActionButton>Tooltip Trigger</ActionButton>
+            <Tooltip>Tooltip message.</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger delay={0} placement="left bottom">
+            <ActionButton>Tooltip Trigger</ActionButton>
+            <Tooltip>Tooltip message.</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger delay={0} placement="left bottom" crossOffset={-10}>
+            <ActionButton>Tooltip Trigger</ActionButton>
+            <Tooltip>Tooltip message.</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger delay={0} placement="left bottom" crossOffset={10}>
+            <ActionButton>Tooltip</ActionButton>
+            <Tooltip>Tooltip message.</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger delay={0} placement="left bottom">
+            <ActionButton>Tooltip</ActionButton>
+            <Tooltip>Tooltip message.</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger delay={0} placement="left bottom" crossOffset={-10}>
+            <ActionButton>Tooltip</ActionButton>
+            <Tooltip>Tooltip message.</Tooltip>
+          </TooltipTrigger>
+        </Flex>
+      </Flex>
+    )
   );
 
 function render(props = {}) {
