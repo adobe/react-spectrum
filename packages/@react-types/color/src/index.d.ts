@@ -12,6 +12,7 @@
 
 import {BaseSliderProps} from '@react-types/slider';
 import {Color} from '@react-stately/color';
+import {HTMLAttributes, InputHTMLAttributes, RefObject} from 'react';
 import {StyleProps, ValueBase} from '@react-types/shared';
 
 /** A list of supported color formats. */
@@ -24,25 +25,34 @@ export interface ColorWheelState {
   readonly value: Color,
   setValue(value: string | Color): void,
 
-  // Based on props but normalized and include defaults based on selected channel.
-  minValue: number,
-  maxValue: number,
+  readonly hue: number,
+  setHue(value: number): void,
 
   dragging: boolean,
   setDragging(value: boolean): void
 }
 
-export interface ColorWheelStateProps {
-  onChange?: (Color) => void,
-  minValue: number,
-  maxValue: number
-}
-
 // @ts-ignore
 export interface ColorWheelProps extends BaseSliderProps, ValueBase<Color>, StyleProps {
+  onChange?: (Color) => void,
+  step?: number,
   // overriding these to allow passing string:
   value?: string | Color,
   defaultValue?: string | Color
+}
+
+export interface ColorWheelAriaProps extends ColorWheelProps {
+  inputRef: RefObject<HTMLElement>,
+  containerRef: RefObject<HTMLElement>,
+  innerRadius: number,
+  outerRadius: number
+}
+
+export interface ColorWheelAriaResult {
+  thumbProps: HTMLAttributes<HTMLElement>,
+  containerProps: HTMLAttributes<HTMLElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  thumbPosition: {x: number, y: number}
 }
 
 export interface SpectrumColorWheelProps extends ColorWheelProps {

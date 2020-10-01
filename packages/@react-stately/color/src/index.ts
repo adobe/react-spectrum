@@ -11,3 +11,4 @@
  */
 
 export * from './Color';
+export * from './useColorWheelState';

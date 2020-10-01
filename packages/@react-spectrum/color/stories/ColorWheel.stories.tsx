@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
 import {Color} from '@react-stately/color';
 import {ColorThumb} from '../src/ColorThumb';
 import {ColorWheel} from '../';
@@ -42,8 +43,8 @@ storiesOf('ColorThumb', module)
 
 storiesOf('ColorWheel', module)
   .add(
-    'hsl',
-    () => <ColorWheel defaultValue={new Color('hsl(0, 100%, 50%)')} />
+    'default',
+    () => <ColorWheel defaultValue={new Color('hsl(0, 100%, 50%)')} onChange={action('change')} />
   )
   // .add(
   //   'hsb',
@@ -52,6 +53,10 @@ storiesOf('ColorWheel', module)
   .add(
     'disabled',
     () => <ColorWheel isDisabled defaultValue={new Color('hsl(0, 100%, 50%)')} />
+  )
+  .add(
+    'step',
+    () => <ColorWheel step={360 / 12} defaultValue={new Color('hsl(0, 100%, 50%)')} />
   )
   .add(
     '* custom size',
