@@ -40,6 +40,7 @@
     "@react-spectrum/button": "^3.2.0",
     "@react-spectrum/menu": "^3.2.0",
     "@react-spectrum/utils": "^3.2.1",
+    "@react-stately/collections": "^3.2.0",
     "@react-types/breadcrumbs": "^3.1.0",
     "@react-types/shared": "^3.2.0",
     "@spectrum-icons/ui": "^3.1.0"

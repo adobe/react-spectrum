@@ -50,6 +50,8 @@
     "@react-spectrum/textfield": "^3.1.2",
     "@react-spectrum/theme-dark": "^3.1.0",
     "@react-spectrum/theme-default": "^3.1.0",
+    "@react-spectrum/theme-light": "^3.1.0",
+    "@react-spectrum/tooltip": "^3.0.0-alpha.0",
     "@react-spectrum/view": "^3.1.0",
     "@react-spectrum/well": "^3.1.0",
     "@react-stately/collections": "^3.2.0",
