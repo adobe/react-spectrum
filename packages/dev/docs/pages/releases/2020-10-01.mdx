@@ -1,0 +1,195 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: This release includes the new `Tooltip`, `TooltipTrigger`, and `DialogContainer` components, a new light theme, and mono-packages for react-aria and react-stately. Thanks to all of the contributors!
+date: 2020-10-01
+---
+
+# October 1, 2020 Release
+
+Another exciting set of releases have dropped! 🎤
+
+We have released the `Tooltip` and `TooltipTrigger` components! We’ve put a lot of effort into making our tooltips fully accessible and as native-like as possible, including matching the delay behavior when hovering over multiple elements with tooltips. See the documentation for [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/Tooltip.html) and [React Aria](https://react-spectrum.adobe.com/react-aria/useTooltipTrigger.html) for more details.
+
+The much requested `DialogContainer` component has been also added to this release. This allows you to have more control over where your `Dialog` is rendered, and support triggers that unmount (e.g. dialogs in menus). Visit our [docs](https://react-spectrum.adobe.com/react-spectrum/DialogContainer.html) for more details.
+
+We have also added a new light theme to React Spectrum thanks to [@evargast](https://github.com/evargast). You can find out more in our [theming](https://react-spectrum.adobe.com/react-spectrum/theming.html#how-themes-are-defined) guide.
+
+As an additional convenience for those using multiple React Aria or React Stately hooks, we now offer a single package each for `react-aria` and `react-stately`. This allows you to install a single package instead of many individual packages. See our getting started guides for [React Aria](https://react-spectrum.adobe.com/react-aria/getting-started.html#mono-package) and [React Stately](https://react-spectrum.adobe.com/react-stately/getting-started.html#mono-package) to find out how you can take advantage of them.
+
+Finally, make sure you check out the [last blog post](https://react-spectrum.adobe.com/blog/building-a-button-part-3.html) of the series on Building a Button which was added to our [blog](https://react-spectrum.adobe.com/blog/index.html). As always, a huge thank you to all our contributors for the new features, fixes and updates. 🤩
+
+## New components
+
+- **DialogContainer** - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1082) - [documentation](https://react-spectrum.adobe.com/react-spectrum/ToggleButton.html)
+    - `@react-spectrum/dialog`
+- **Tooltip** - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/843) - [documentation](https://react-spectrum.adobe.com/react-spectrum/Tooltip.html)
+    - `@react-spectrum/tooltip`
+    - `@react-aria/tooltip`
+    - `@react-stately/tooltip`
+
+## New features
+
+- Support for upcoming React 17 - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1040)
+- Allow `usePreventScroll` to be disabled - [@McZenith](https://github.com/McZenith) - [PR](https://github.com/adobe/react-spectrum/pull/972)
+- Update `ScrollView` to implement `useResizeObserver` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/910)
+- Add `CheckboxGroup` to `@adobe/react-spectrum` package - [@royalbhati](https://github.com/royalbhati) - [PR](https://github.com/adobe/react-spectrum/pull/1102)
+- Add ability to prevent focus in `usePress` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1073)
+- Added new `NoSearchResults` illustration for `IllustratedMessage` - [@evargast](https://github.com/evargast) - [PR](https://github.com/adobe/react-spectrum/pull/1086)
+- Add `@react-spectrum/t``heme-light` package - [@evargast](https://github.com/evargast) - [PR](https://github.com/adobe/react-spectrum/pull/1046/)
+## Fixed
+- Fix .editorconfig for indent_style - [@alexey-yunoshev](https://github.com/alexey-yunoshev) - [PR](https://github.com/adobe/react-spectrum/pull/1036)
+- `Flex` passes Id to top level element - [@LucianRadu](https://github.com/LucianRadu) - [PR](https://github.com/adobe/react-spectrum/pull/1041)
+- Skip in-scope elements when restoring Focus in `useSelect` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1049)
+- Allow falsy keys in `Picker` - [@kamal](https://github.com/kamal) - [PR](https://github.com/adobe/react-spectrum/pull/1015)
+- Fix transition events breaking SSR - [@HipsterBrown](https://github.com/HipsterBrown) - [PR](https://github.com/adobe/react-spectrum/pull/1052)
+- Fix inputRef type for `useSearchField` & `useTextField` - [@RafalFilipek](https://github.com/RafalFilipek) - [PR](https://github.com/adobe/react-spectrum/pull/1027)
+- Reset box-sizing in `ActionButton`  - [@deloreyj](https://github.com/deloreyj) - [PR](https://github.com/adobe/react-spectrum/pull/1058)
+- Fix scrolling in `Menu` trays [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/958)
+- Adjust positioning code for `useOverlayPosition` when placement=”top” - [@chungwu](https://github.com/chungwu) - [PR](https://github.com/adobe/react-spectrum/pull/1005)
+- Hide unsupported functionality in full screen `Dialog` - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/1062)
+- Fix types of workflow icons - [@clentfort](https://github.com/clentfort) - [PR](https://github.com/adobe/react-spectrum/pull/1028)
+- Make sure user-select is removed on HTML elements - [@zidian257](https://github.com/zidian257) - [PR](https://github.com/adobe/react-spectrum/pull/926)
+## Docs
+- Fix prop types in `useListBox` docs - [@mischnic](https://github.com/mischnic) -  [PR](https://github.com/adobe/react-spectrum/pull/1107)
+- Update case in IllustratedMessage - [@evargast](https://github.com/evargast) - [PR](https://github.com/adobe/react-spectrum/pull/1086)
+
+
+## Released packages
+
+```
+ - @adobe/react-spectrum@3.4.0
+ - react-aria@3.0.0
+ - react-stately@3.0.0
+ - @react-aria/actiongroup@3.1.1
+ - @react-aria/aria-modal-polyfill@3.2.1
+ - @react-aria/breadcrumbs@3.1.1
+ - @react-aria/button@3.2.2
+ - @react-aria/checkbox@3.2.1
+ - @react-aria/dialog@3.1.2
+ - @react-aria/focus@3.2.2
+ - @react-aria/i18n@3.1.2
+ - @react-aria/interactions@3.2.1
+ - @react-aria/label@3.1.1
+ - @react-aria/link@3.1.2
+ - @react-aria/listbox@3.2.1
+ - @react-aria/menu@3.1.2
+ - @react-aria/meter@3.1.1
+ - @react-aria/overlays@3.4.0
+ - @react-aria/progress@3.1.1
+ - @react-aria/radio@3.1.2
+ - @react-aria/searchfield@3.1.1
+ - @react-aria/select@3.2.1
+ - @react-aria/selection@3.2.1
+ - @react-aria/separator@3.1.1
+ - @react-aria/slider@3.0.0-alpha.2
+ - @react-aria/ssr@3.0.1
+ - @react-aria/switch@3.1.1
+ - @react-aria/table@3.0.0-alpha.7
+ - @react-aria/tabs@3.0.0-alpha.1
+ - @react-aria/textfield@3.2.1
+ - @react-aria/toggle@3.1.1
+ - @react-aria/tooltip@3.0.0
+ - @react-aria/utils@3.3.0
+ - @react-aria/virtualizer@3.2.0
+ - @react-aria/visually-hidden@3.2.1
+ - @react-spectrum/actiongroup@3.1.1
+ - @react-spectrum/breadcrumbs@3.1.3
+ - @react-spectrum/button@3.2.1
+ - @react-spectrum/buttongroup@3.1.2
+ - @react-spectrum/checkbox@3.2.1
+ - @react-spectrum/dialog@3.3.0
+ - @react-spectrum/divider@3.1.1
+ - @react-spectrum/form@3.2.1
+ - @react-spectrum/icon@3.2.0
+ - @react-spectrum/illustratedmessage@3.1.1
+ - @react-spectrum/image@3.1.1
+ - @react-spectrum/label@3.2.1
+ - @react-spectrum/layout@3.1.3
+ - @react-spectrum/link@3.1.1
+ - @react-spectrum/listbox@3.2.1
+ - @react-spectrum/menu@3.2.1
+ - @react-spectrum/meter@3.1.1
+ - @react-spectrum/overlays@3.2.2
+ - @react-spectrum/picker@3.2.1
+ - @react-spectrum/progress@3.1.1
+ - @react-spectrum/provider@3.1.2
+ - @react-spectrum/radio@3.1.1
+ - @react-spectrum/searchfield@3.1.1
+ - @react-spectrum/statuslight@3.1.1
+ - @react-spectrum/switch@3.1.1
+ - @react-spectrum/table@3.0.0-alpha.7
+ - @react-spectrum/tabs@3.0.0-alpha.2
+ - @react-spectrum/text@3.1.1
+ - @react-spectrum/textfield@3.1.3
+ - @react-spectrum/theme-light@3.0.0
+ - @react-spectrum/tooltip@3.0.0
+ - @react-spectrum/utils@3.3.0
+ - @react-spectrum/view@3.1.1
+ - @react-spectrum/well@3.1.1
+ - @react-stately/checkbox@3.0.1
+ - @react-stately/collections@3.2.1
+ - @react-stately/data@3.1.1
+ - @react-stately/layout@3.1.2
+ - @react-stately/list@3.2.1
+ - @react-stately/menu@3.2.1
+ - @react-stately/overlays@3.1.1
+ - @react-stately/radio@3.2.1
+ - @react-stately/searchfield@3.1.1
+ - @react-stately/select@3.1.1
+ - @react-stately/selection@3.2.1
+ - @react-stately/slider@3.0.0-alpha.2
+ - @react-stately/table@3.0.0-alpha.6
+ - @react-stately/toggle@3.2.1
+ - @react-stately/tooltip@3.0.0
+ - @react-stately/tree@3.1.2
+ - @react-stately/utils@3.1.1
+ - @react-stately/virtualizer@3.1.2
+ - @react-types/actiongroup@3.1.1
+ - @react-types/breadcrumbs@3.1.1
+ - @react-types/button@3.2.1
+ - @react-types/buttongroup@3.1.1
+ - @react-types/checkbox@3.2.1
+ - @react-types/dialog@3.3.0
+ - @react-types/divider@3.1.1
+ - @react-types/form@3.2.1
+ - @react-types/illustratedmessage@3.1.1
+ - @react-types/image@3.1.1
+ - @react-types/label@3.2.1
+ - @react-types/layout@3.1.1
+ - @react-types/link@3.1.1
+ - @react-types/listbox@3.1.1
+ - @react-types/menu@3.1.1
+ - @react-types/meter@3.1.1
+ - @react-types/overlays@3.2.1
+ - @react-types/progress@3.1.1
+ - @react-types/provider@3.1.1
+ - @react-types/radio@3.1.1
+ - @react-types/searchfield@3.1.1
+ - @react-types/select@3.1.1
+ - @react-types/shared@3.2.1
+ - @react-types/slider@3.0.0-alpha.1
+ - @react-types/statuslight@3.1.1
+ - @react-types/switch@3.1.1
+ - @react-types/table@3.0.0-rc.5
+ - @react-types/tabs@3.0.0-alpha.1
+ - @react-types/text@3.1.1
+ - @react-types/textfield@3.2.1
+ - @react-types/tooltip@3.0.0
+ - @react-types/view@3.1.1
+ - @react-types/well@3.1.1
+ - @spectrum-icons/color@3.2.0
+ - @spectrum-icons/illustrations@3.2.0
+ - @spectrum-icons/ui@3.2.0
+ - @spectrum-icons/workflow@3.2.0
+ ```
