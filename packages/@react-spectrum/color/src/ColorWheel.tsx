@@ -12,8 +12,8 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {ColorThumb} from './ColorThumb';
-import {ColorWheelProps} from '@react-types/color';
 import React, {useRef, useState} from 'react';
+import {SpectrumColorWheelProps} from '@react-types/color';
 import styles from '@adobe/spectrum-css-temp/components/colorwheel/vars.css';
 import {useColorWheel} from '@react-aria/color';
 import {useColorWheelState} from '@react-stately/color';
@@ -26,7 +26,7 @@ for (let i = 0; i < 360; i++) {
   SEGMENTS.push(<rect width="80" height="2" x="80" y="79" fill={`hsl(${i}, 100%, 50%)`} transform={`rotate(${i} 80 80)`} key={i} />);
 }
 
-function ColorWheel(props: ColorWheelProps) {
+function ColorWheel(props: SpectrumColorWheelProps) {
   props = useProviderProps(props);
 
   let {isDisabled} = props;
