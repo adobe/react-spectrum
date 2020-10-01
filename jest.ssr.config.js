@@ -33,8 +33,13 @@ module.exports = {
     'packages/'
   ],
 
+  testTimeout: 30000,
+
+  globalSetup: require.resolve('@react-spectrum/test-utils/src/ssrSetup'),
+  globalTeardown: require.resolve('@react-spectrum/test-utils/src/ssrTeardown'),
+
   // The test environment that will be used for testing
-  testEnvironment: require.resolve('@react-spectrum/test-utils/src/SSREnvironment'),
+  testEnvironment: 'jsdom',
 
   // The glob patterns Jest uses to detect test files
   testMatch: [

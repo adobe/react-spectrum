@@ -216,7 +216,7 @@ describe('DateRangePicker', function () {
 
       let cells = getAllByRole('gridcell');
       let selected = cells.filter(cell => cell.getAttribute('aria-selected') === 'true');
-      expect(selected[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected (Click to start selecting date range)');
+      expect(selected[0].children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected (Click to start selecting date range)');
 
       triggerPress(getByLabelText('Sunday, February 10, 2019 selected'));
       triggerPress(getByLabelText('Sunday, February 17, 2019'));
@@ -364,7 +364,7 @@ describe('DateRangePicker', function () {
 
       let startMonth = getAllByLabelText('Month')[0];
       expect(startMonth).toHaveTextContent('2');
-      startMonth.focus();
+      act(() => {startMonth.focus();});
       fireEvent.keyDown(startMonth, {key: 'ArrowDown'});
 
       expect(startMonth).toHaveTextContent('1'); // uncontrolled
@@ -373,7 +373,7 @@ describe('DateRangePicker', function () {
 
       let endYear = getAllByLabelText('Year')[1];
       expect(endYear).toHaveTextContent('2019');
-      endYear.focus();
+      act(() => {endYear.focus();});
       fireEvent.keyDown(endYear, {key: 'ArrowUp'});
 
       expect(endYear).toHaveTextContent('2020'); // uncontrolled
@@ -391,7 +391,7 @@ describe('DateRangePicker', function () {
 
       let startMonth = getAllByLabelText('Month')[0];
       expect(startMonth).toHaveTextContent('2');
-      startMonth.focus();
+      act(() => {startMonth.focus();});
       fireEvent.keyDown(startMonth, {key: 'ArrowDown'});
 
       expect(startMonth).toHaveTextContent('2'); // controlled
@@ -400,7 +400,7 @@ describe('DateRangePicker', function () {
 
       let endYear = getAllByLabelText('Year')[1];
       expect(endYear).toHaveTextContent('2019');
-      endYear.focus();
+      act(() => {endYear.focus();});
       fireEvent.keyDown(endYear, {key: 'ArrowUp'});
 
       expect(endYear).toHaveTextContent('2019'); // controlled
@@ -417,7 +417,7 @@ describe('DateRangePicker', function () {
       );
 
       let startMonth = getAllByLabelText('Month')[0];
-      startMonth.focus();
+      act(() => {startMonth.focus();});
       fireEvent.keyDown(startMonth, {key: '8'});
 
       expect(startMonth).toHaveTextContent('8'); // uncontrolled
@@ -428,7 +428,7 @@ describe('DateRangePicker', function () {
 
       let endYear = getAllByLabelText('Year')[1];
       expect(endYear).toHaveTextContent('2019');
-      endYear.focus();
+      act(() => {endYear.focus();});
       fireEvent.keyDown(endYear, {key: '2'});
       fireEvent.keyDown(endYear, {key: '0'});
       fireEvent.keyDown(endYear, {key: '2'});
@@ -448,7 +448,7 @@ describe('DateRangePicker', function () {
       );
 
       let startMonth = getAllByLabelText('Month')[0];
-      startMonth.focus();
+      act(() => {startMonth.focus();});
       fireEvent.keyDown(startMonth, {key: '8'});
 
       expect(startMonth).toHaveTextContent('2'); // controlled
@@ -459,7 +459,7 @@ describe('DateRangePicker', function () {
 
       let endDay = getAllByLabelText('Day')[1];
       expect(endDay).toHaveTextContent('6');
-      endDay.focus();
+      act(() => {endDay.focus();});
       fireEvent.keyDown(endDay, {key: '4'});
 
       expect(endDay).toHaveTextContent('6'); // controlled
@@ -477,7 +477,7 @@ describe('DateRangePicker', function () {
 
       let endYear = getAllByLabelText('Year')[1];
       expect(endYear).toHaveTextContent('2019');
-      endYear.focus();
+      act(() => {endYear.focus();});
       fireEvent.keyDown(endYear, {key: 'Backspace'});
 
       expect(endYear).toHaveTextContent('201'); // uncontrolled
@@ -495,7 +495,7 @@ describe('DateRangePicker', function () {
 
       let endYear = getAllByLabelText('Year')[1];
       expect(endYear).toHaveTextContent('2019');
-      endYear.focus();
+      act(() => {endYear.focus();});
       fireEvent.keyDown(endYear, {key: 'Backspace'});
 
       expect(endYear).toHaveTextContent('2019'); // controlled
@@ -650,7 +650,7 @@ describe('DateRangePicker', function () {
       expect(endDate).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
 
       let segments = getAllByRole('spinbutton');
-      segments[0].focus();
+      act(() => {segments[0].focus();});
 
       fireEvent.keyDown(document.activeElement, {key: '2'});
       expect(startDate).toHaveTextContent(`2/1/${new Date().getFullYear()}`);

@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
 import {Flex} from '@react-spectrum/layout';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -24,35 +24,47 @@ storiesOf('TooltipTrigger', module)
   )
   .add(
     'placement: left',
-    () => render({placement: 'left', delay: 0})
+    () => render({placement: 'left'})
+  )
+  .add(
+    'placement: right',
+    () => render({placement: 'right'})
   )
   .add(
     'placement: start',
-    () => render({placement: 'start', delay: 0})
+    () => render({placement: 'start'})
   )
   .add(
     'placement: top',
-    () => render({placement: 'top', delay: 0})
+    () => render({placement: 'top'})
   )
   .add(
     'placement: bottom',
-    () => render({placement: 'bottom', delay: 0})
+    () => render({placement: 'bottom'})
+  )
+  .add(
+    'placement: top with offset',
+    () => render({placement: 'top', offset: 50})
+  )
+  .add(
+    'placement: bottom with crossOffset',
+    () => render({placement: 'bottom', crossOffset: 50})
   )
   .add(
     'isDisabled',
-    () => render({placement: 'start', isDisabled: true, delay: 0})
+    () => render({placement: 'start', isDisabled: true})
   )
   .add(
-    'delay',
-    () => render({})
+    'zero delay',
+    () => render({delay: 0})
   )
   .add(
     'multiple tooltips',
-    () => renderMultipleTriggers({placement: 'start', delay: 0})
+    () => renderMultipleTriggers({placement: 'start'})
   )
   .add(
-    'delay multiple tooltips',
-    () => renderMultipleTriggers({})
+    'zero delay multiple tooltips',
+    () => renderMultipleTriggers({delay: 0})
   )
   .add(
     'controlled',
@@ -61,6 +73,33 @@ storiesOf('TooltipTrigger', module)
   .add(
     'trigger disabled',
     () => renderDisabledTrigger()
+  )
+  .add(
+    'arrow positioning at edge',
+    () => (
+      <div style={{width: '100%'}}>
+        <TooltipTrigger onOpenChange={action('openChange')}>
+          <ActionButton>Trigger Tooltip</ActionButton>
+          <Tooltip>
+            Long tooltip message that just goes on and on.
+          </Tooltip>
+        </TooltipTrigger>
+      </div>
+    )
+  )
+  .add(
+    'tooltip with other hoverables',
+    () => (
+      <Flex gap="size-100">
+        <TooltipTrigger onOpenChange={action('openChange')}>
+          <ActionButton>Trigger Tooltip</ActionButton>
+          <Tooltip>
+            Long tooltip message that just goes on and on.
+          </Tooltip>
+        </TooltipTrigger>
+        <Button variant="secondary">No Tooltip</Button>
+      </Flex>
+    )
   );
 
 function render(props = {}) {

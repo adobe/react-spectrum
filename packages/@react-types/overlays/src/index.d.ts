@@ -65,6 +65,7 @@ export interface OverlayProps {
   children: ReactNode,
   isOpen?: boolean,
   container?: Element,
+  isKeyboardDismissDisabled?: boolean,
   onEnter?: () => void,
   onEntering?: () => void,
   onEntered?: () => void,
@@ -77,7 +78,7 @@ export interface ModalProps extends StyleProps, OverlayProps {
   children: ReactElement,
   isOpen?: boolean,
   onClose?: () => void,
-  type?: 'fullscreen' | 'fullscreenTakeover',
+  type?: 'modal' | 'fullscreen' | 'fullscreenTakeover',
   isDismissable?: boolean
 }
 

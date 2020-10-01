@@ -1,5 +1,6 @@
 import {ChangeEvent, HTMLAttributes, useCallback, useEffect} from 'react';
 import {focusWithoutScrolling, mergeProps, useDrag1D} from '@react-aria/utils';
+import {sliderIds} from './utils';
 import {SliderState} from '@react-stately/slider';
 import {SliderThumbProps} from '@react-types/slider';
 import {useFocusable} from '@react-aria/focus';
@@ -11,7 +12,7 @@ interface SliderThumbAria {
 
   /** Props for the root thumb element; handles the dragging motion. */
   thumbProps: HTMLAttributes<HTMLElement>,
-  
+
   /** Props for the label element for this thumb. */
   labelProps: HTMLAttributes<HTMLElement>
 }
@@ -23,7 +24,7 @@ interface SliderThumbOptions extends SliderThumbProps {
 
 /**
  * Provides behavior and accessibility for a thumb of a slider component.
- * 
+ *
  * @param opts Options for this Slider thumb.
  * @param state Slider state, created via `useSliderState`.
  */
@@ -37,18 +38,18 @@ export function useSliderThumb(
     isDisabled,
     isReadOnly,
     validationState,
-    labelId,
-    trackRef, 
+    trackRef,
     inputRef
   } = opts;
 
+  let labelId = sliderIds.get(state);
   const {labelProps, fieldProps} = useLabel({
     ...opts,
     'aria-labelledby': `${labelId} ${opts['aria-labelledby'] ?? ''}`.trim()
   });
 
   const value = state.values[index];
-  const allowDrag = !(isDisabled || isReadOnly);
+  const isEditable = !(isDisabled || isReadOnly);
 
   const focusInput = useCallback(() => {
     if (inputRef.current) {
@@ -78,6 +79,9 @@ export function useSliderThumb(
     }
   });
 
+  // Immediately register editability with the state
+  state.setThumbEditable(index, isEditable);
+
   const {focusableProps} = useFocusable(
     mergeProps(opts, {
       onFocus: () => state.setFocusedThumb(index),
@@ -86,17 +90,17 @@ export function useSliderThumb(
     inputRef
   );
 
-  // We install mouse handlers for the drag motion on the thumb div, but 
+  // We install mouse handlers for the drag motion on the thumb div, but
   // not the key handler for moving the thumb with the slider.  Instead,
   // we focus the range input, and let the browser handle the keyboard
   // interactions; we then listen to input's onChange to update state.
   return {
     inputProps: mergeProps(focusableProps, fieldProps, {
       type: 'range',
-      tabIndex: allowDrag ? 0 : undefined,
+      tabIndex: isEditable ? 0 : undefined,
       min: state.getThumbMinValue(index),
       max: state.getThumbMaxValue(index),
-      step: state.getStep(),
+      step: state.step,
       value: value,
       readOnly: isReadOnly,
       disabled: isDisabled,
@@ -109,7 +113,7 @@ export function useSliderThumb(
         state.setThumbValue(index, parseFloat(e.target.value));
       }
     }),
-    thumbProps: allowDrag ? mergeProps({
+    thumbProps: isEditable ? mergeProps({
       onMouseDown: draggableProps.onMouseDown,
       onMouseEnter: draggableProps.onMouseEnter,
       onMouseOut: draggableProps.onMouseOut

@@ -17,7 +17,8 @@ import {mergeProps} from '@react-aria/utils';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
-interface ButtonAria {
+
+export interface ButtonAria {
   /** Props for the button element. */
   buttonProps: ButtonHTMLAttributes<HTMLButtonElement>,
   /** Whether the button is currently pressed. */

@@ -404,7 +404,7 @@ export class Virtualizer<T extends object, V, W> {
    */
   relayout(context: InvalidationContext<T, V> = {}) {
     // Ignore relayouts while animating the scroll position
-    if (this._scrollAnimation) {
+    if (this._scrollAnimation || typeof requestAnimationFrame === 'undefined') {
       return;
     }
 

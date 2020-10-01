@@ -69,12 +69,18 @@ icons: packages/@spectrum-icons/workflow/src packages/@spectrum-icons/color/src 
 storybook:
 	NODE_ENV=production yarn build:storybook
 
+storybook-17:
+	yarn build:storybook-17
+
 # for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:
 	$(MAKE) publish
 
 publish: build
-	lerna publish from-package --yes
+	yarn publish
+
+publish-nightly: build
+	yarn publish:nightly
 
 build:
 	parcel build packages/@react-{spectrum,aria,stately}/*/ --no-minify

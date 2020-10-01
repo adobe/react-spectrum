@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {AriaAttributes, HTMLAttributes, ReactNode, useContext, useEffect, useState} from 'react';
+import React, {AriaAttributes, HTMLAttributes, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 interface ModalProviderProps extends HTMLAttributes<HTMLElement> {
@@ -37,8 +37,8 @@ const Context = React.createContext<ModalContext | null>(null);
 export function ModalProvider(props: ModalProviderProps) {
   let {children} = props;
   let parent = useContext(Context);
-  let [modalCount, setModalCount] = useState(parent ? parent.modalCount : 0);
-  let context = {
+  let [modalCount, setModalCount] = useState(0);
+  let context = useMemo(() => ({
     parent,
     modalCount,
     addModal() {
@@ -53,7 +53,7 @@ export function ModalProvider(props: ModalProviderProps) {
         parent.removeModal();
       }
     }
-  };
+  }), [parent, modalCount]);
 
   return (
     <Context.Provider value={context}>

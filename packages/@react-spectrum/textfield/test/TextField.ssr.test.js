@@ -10,18 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent} from '@testing-library/react';
+import {testSSR} from '@react-spectrum/test-utils';
 
-// Triggers a "press" event on an element.
-// TODO: move to somewhere more common
-export function triggerPress(element, opts = {}) {
-  act(() => {
-    fireEvent.mouseDown(element, {detail: 1, ...opts});
+describe('TextField SSR', function () {
+  it('should render without errors', async function () {
+    await testSSR(__filename, `
+      import {TextField} from '../';
+
+      <TextField label="text" />
+    `);
   });
-  act(() => {
-    fireEvent.mouseUp(element, {detail: 1, ...opts});
-  });
-  act(() => {
-    fireEvent.click(element, {detail: 1, ...opts});
-  });
-}
+});

@@ -49,7 +49,6 @@ let withSection = [
   ]}
 ];
 
-
 storiesOf('Picker', module)
   .add(
     'default',
@@ -281,6 +280,17 @@ storiesOf('Picker', module)
             <Text>Floof</Text>
           </Item>
         </Section>
+      </Picker>
+    )
+  )
+  .add(
+    'falsy item key',
+    () => (
+      <Picker label="Test" onSelectionChange={action('selectionChange')}>
+        <Item key="">None</Item>
+        <Item key="One">One</Item>
+        <Item key="Two">Two</Item>
+        <Item key="Three">Three</Item>
       </Picker>
     )
   )

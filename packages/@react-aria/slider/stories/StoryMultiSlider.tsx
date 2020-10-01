@@ -1,7 +1,7 @@
 import {classNames} from '@react-spectrum/utils';
-import {CommonSliderThumbProps, SliderProps, SliderThumbProps} from '@react-types/slider';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
+import {SliderProps, SliderThumbProps} from '@react-types/slider';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import styles from './story-slider.css';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
@@ -17,7 +17,7 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
   const trackRef = React.useRef<HTMLDivElement>(null);
   const state = useSliderState(props);
   const {
-    trackProps, labelProps, thumbProps: commonThumbProps, containerProps
+    trackProps, labelProps, containerProps
   } = useSlider(props, state, trackRef);
 
   const numThumbs = React.Children.count(children);
@@ -31,17 +31,20 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
         {props.label && <label {...labelProps} className={styles.label}>{props.label}</label>}
         <div className={styles.value}>{JSON.stringify(state.values)}</div>
       </div>
-      <div className={styles.trackContainer}>
+      {
+        // We make rail and all thumbs children of the trackRef.  That means dragging on the thumb
+        // will also trigger the dragging handlers on the track, so we need to make sure we don't
+        // double-handle these events.
+      }
+      <div ref={trackRef} className={styles.track} {...trackProps}>
         <div className={styles.rail} />
-        <div {...trackProps} ref={trackRef} className={styles.track} />
-        {React.Children.map(children, ((child, index) => 
+        {React.Children.map(children, ((child, index) =>
           React.cloneElement(child as React.ReactElement, {
             __context: {
               sliderProps: props,
               state,
               trackRef,
-              index,
-              commonThumbProps
+              index
             }
           } as any)))}
       </div>
@@ -50,30 +53,28 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
 }
 
 
-interface StoryThumbProps extends Omit<SliderThumbProps, 'index'|'labelId'> {
+interface StoryThumbProps extends Omit<SliderThumbProps, 'index'> {
 }
 
 interface SliderStateContext {
   sliderProps: StoryMultiSliderProps,
   state: SliderState,
   trackRef: React.RefObject<HTMLElement>,
-  index: number,
-  commonThumbProps: CommonSliderThumbProps
+  index: number
 }
 
 export function StoryThumb(props: StoryThumbProps) {
   if (!(props as any).__context) {
     throw new Error('Cannot use StoryThumb outside of a StoryMultiSlider!');
   }
-  
+
   const {label, isDisabled} = props;
   const context = (props as any).__context as SliderStateContext;
-  const {index, state, commonThumbProps, sliderProps} = context;
+  const {index, state, sliderProps} = context;
   const inputRef = React.useRef<HTMLInputElement>(null);
   const {inputProps, thumbProps, labelProps} = useSliderThumb({
-    index, 
+    index,
     ...props,
-    ...commonThumbProps,
     isReadOnly: sliderProps.isReadOnly || props.isReadOnly,
     isDisabled: sliderProps.isDisabled || props.isDisabled,
     trackRef: context.trackRef,
@@ -82,9 +83,9 @@ export function StoryThumb(props: StoryThumbProps) {
 
   return (
     <FocusRing within focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
-      <div 
-        {...thumbProps} 
-        className={classNames(styles, 'thumb', {thumbDisabled: isDisabled})}
+      <div
+        {...thumbProps}
+        className={classNames(styles, 'thumb', 'thumbHandle', {thumbDisabled: isDisabled})}
         style={{
           'left': `${state.getThumbPercent(index) * 100}%`
         }}>

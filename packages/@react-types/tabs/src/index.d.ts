@@ -38,7 +38,12 @@ export interface TabsAriaProps<T> extends CollectionBase<T>, SingleSelection, Ar
    * The orientation of the tabs.
    * @default 'horizontal'
    */
-  orientation?: Orientation
+  orientation?: Orientation,
+  /**
+   * Whether the Tabs are disabled.
+   * Shows that a selection exists, but is not available in that circumstance.
+   */
+  isDisabled?: boolean
 }
 
 export interface SpectrumTabsProps<T> extends TabsAriaProps<T>, DOMProps, StyleProps {

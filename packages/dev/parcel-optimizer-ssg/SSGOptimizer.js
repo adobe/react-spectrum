@@ -40,7 +40,9 @@ module.exports = new Optimizer({
           description: meta.description,
           keywords: meta.keywords,
           date: meta.date,
-          image: getImageURL(meta.image, bundleGraph, b)
+          author: meta.author,
+          image: getImageURL(meta.image, bundleGraph, b),
+          order: meta.order
         });
       }
     });
@@ -65,7 +67,9 @@ module.exports = new Optimizer({
           description: mainAsset.meta.description,
           keywords: mainAsset.meta.keywords,
           date: mainAsset.meta.date,
-          image: getImageURL(mainAsset.meta.image, bundleGraph, bundle)
+          author: mainAsset.meta.author,
+          image: getImageURL(mainAsset.meta.image, bundleGraph, bundle),
+          order: mainAsset.meta.order
         },
         toc: mainAsset.meta.toc,
         publicUrl: bundle.target.publicUrl

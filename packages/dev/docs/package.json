@@ -20,6 +20,7 @@
     "@react-spectrum/text": "^3.1.0",
     "@react-spectrum/theme-default": "^3.1.0",
     "@react-spectrum/view": "^3.1.0",
+    "@spectrum-icons/illustrations": "^3.1.0",
     "@spectrum-icons/ui": "^3.1.0",
     "@spectrum-icons/workflow": "^3.1.0",
     "clsx": "^1.1.1",
@@ -27,8 +28,8 @@
     "highlight.js": "9.18.1",
     "markdown-to-jsx": "^6.11.0",
     "quicklink": "^2.0.0",
-    "react": "^16.8.0",
-    "react-dom": "^16.8.0",
+    "react": "^16.8.0 || ^17.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1",
     "react-lowlight": "^2.0.0"
   }
 }

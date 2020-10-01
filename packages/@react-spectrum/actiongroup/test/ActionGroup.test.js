@@ -18,6 +18,7 @@ import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 import V2Button from '@react/react-spectrum/Button';
@@ -129,6 +130,10 @@ function renderComponentWithExtraInputs(props) {
 }
 
 describe('ActionGroup', function () {
+  beforeAll(function () {
+    jest.useFakeTimers();
+  });
+
   afterEach(() => {
     btnBehavior.reset();
   });
@@ -212,16 +217,14 @@ describe('ActionGroup', function () {
     let tree = render(
       <Provider theme={theme} locale={props.locale}>
         <ActionGroup orientation={props.orientation} >
-          <Item data-testid="button-1">Click me 1</Item>
-          <Item data-testid="button-2">Click me 2</Item>
-          <Item data-testid="button-3">Click me 3</Item>
+          <Item data-testid="button-1" key="1">Click me 1</Item>
+          <Item data-testid="button-2" key="">Click me 2</Item>
+          <Item data-testid="button-3" key="3">Click me 3</Item>
         </ActionGroup>
       </Provider>
     );
 
     let buttons = tree.getAllByRole('button');
-    let buttonGroup = tree.getByRole('toolbar');
-    buttonGroup.focus();
 
     orders.forEach(({action, result}, index) => {
       action(document.activeElement);
@@ -252,8 +255,6 @@ describe('ActionGroup', function () {
     );
 
     let buttons = tree.getAllByRole('button');
-    let buttonGroup = tree.getByRole('toolbar');
-    buttonGroup.focus();
 
     orders.forEach(({action, result}, index) => {
       action(document.activeElement);
@@ -278,8 +279,6 @@ describe('ActionGroup', function () {
     );
 
     let buttons = tree.getAllByRole('button');
-    let buttonGroup = tree.getByRole('toolbar');
-    buttonGroup.focus();
 
     orders.forEach(({action, result}, index) => {
       action(document.activeElement);
@@ -293,7 +292,7 @@ describe('ActionGroup', function () {
     let buttonBefore = tree.getByLabelText('ButtonBefore');
     let buttonAfter = tree.getByLabelText('ButtonAfter');
     let buttons = tree.getAllByRole('radio');
-    buttonBefore.focus();
+    act(() => {buttonBefore.focus();});
 
     act(() => userEvent.tab());
     expect(document.activeElement).toBe(buttons[0]);
@@ -605,9 +604,45 @@ describe('ActionGroup', function () {
     );
 
     let button = tree.getByRole('button');
-    triggerPress(button);
+
+    act(() => {
+      triggerPress(button);
+      jest.runAllTimers();
+    });
 
     let dialog = tree.getByRole('dialog');
     expect(dialog).toBeVisible();
+
+    act(() => {
+      fireEvent.keyDown(dialog, {key: 'Escape'});
+      fireEvent.keyUp(dialog, {key: 'Escape'});
+      jest.runAllTimers();
+    });
+
+    expect(() => tree.getByRole('dialog')).toThrow();
+  });
+
+  it('supports TooltipTrigger as a wrapper around items', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <ActionGroup>
+          <TooltipTrigger>
+            <Item>Hi</Item>
+            <Tooltip>
+              I'm a tooltip
+            </Tooltip>
+          </TooltipTrigger>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button = tree.getByRole('button');
+    fireEvent.keyDown(document.body, {key: 'Tab'});
+    fireEvent.keyUp(document.body, {key: 'Tab'});
+    act(() => button.focus());
+
+    let tooltip = tree.getByRole('tooltip');
+    expect(tooltip).toBeVisible();
+    expect(button).toHaveAttribute('aria-describedby', tooltip.id);
   });
 });

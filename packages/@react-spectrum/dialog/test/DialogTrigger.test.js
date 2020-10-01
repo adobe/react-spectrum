@@ -12,12 +12,18 @@
 
 import {act, fireEvent, render, waitFor, within} from '@testing-library/react';
 import {ActionButton, Button} from '@react-spectrum/button';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '../';
+import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
+
 
 describe('DialogTrigger', function () {
   let matchMedia;
@@ -30,11 +36,21 @@ describe('DialogTrigger', function () {
 
   beforeEach(() => {
     matchMedia = new MatchMediaMock();
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    // this needs to be a setTimeout so that the dialog can be removed from the dom before the callback is invoked
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(() => cb(), 0));
   });
 
   afterEach(() => {
-    jest.runAllTimers();
+    // Ensure we close any dialogs before unmounting to avoid warning.
+    let dialog = document.querySelector('[role="dialog"]');
+    if (dialog) {
+      act(() => {
+        fireEvent.keyDown(dialog, {key: 'Escape'});
+        fireEvent.keyUp(dialog, {key: 'Escape'});
+        jest.runAllTimers();
+      });
+    }
+
     matchMedia.clear();
     window.requestAnimationFrame.mockRestore();
   });
@@ -124,6 +140,46 @@ describe('DialogTrigger', function () {
     expect(popover).toHaveAttribute('style');
   });
 
+  it('popovers should be closeable', function () {
+    let {getByRole, getByText, queryByRole} = render(
+      <Provider theme={theme}>
+        <DialogTrigger type="popover">
+          <ActionButton>Trigger</ActionButton>
+          {(close) => (
+            <Dialog>
+              contents
+              <ButtonGroup>
+                <Button variant="secondary" onPress={close}>
+                  Cancel
+                </Button>
+              </ButtonGroup>
+            </Dialog>
+          )}
+        </DialogTrigger>
+      </Provider>
+    );
+
+    let triggerButton = getByRole('button');
+    triggerPress(triggerButton);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toBeVisible();
+
+    let cancelButton = getByText('Cancel');
+    triggerPress(cancelButton);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    dialog = queryByRole('dialog');
+    expect(dialog).toBeNull();
+  });
+
   it('should trigger a modal instead of a popover on mobile', function () {
     matchMedia.useMediaQuery('(max-width: 700px)');
     let {getByRole, getByTestId} = render(
@@ -193,7 +249,9 @@ describe('DialogTrigger', function () {
     );
 
     let button = getByRole('button');
-    triggerPress(button);
+    act(() => {button.focus();});
+    fireEvent.focusIn(button);
+    act(() => {userEvent.click(button);});
 
     act(() => {
       jest.runAllTimers();
@@ -217,6 +275,11 @@ describe('DialogTrigger', function () {
     await waitFor(() => {
       expect(dialog).not.toBeInTheDocument();
     }); // wait for animation
+
+    // now that it's been unmounted, run the raf callback
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(document.activeElement).toBe(button);
   });
@@ -623,5 +686,162 @@ describe('DialogTrigger', function () {
     await waitFor(() => {
       expect(dialog).not.toBeInTheDocument();
     }); // wait for animation
+  });
+
+  it('disable closing dialog via escape key', async function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <DialogTrigger isKeyboardDismissDisabled>
+          <ActionButton>Trigger</ActionButton>
+          {close => <Dialog><ActionButton onPress={close}>Close</ActionButton></Dialog>}
+        </DialogTrigger>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    triggerPress(button);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let dialog = getByRole('dialog');
+
+    await waitFor(() => {
+      expect(dialog).toBeVisible();
+    }); // wait for animation
+
+    expect(document.activeElement).toBe(dialog);
+
+    fireEvent.keyDown(dialog, {key: 'Escape'});
+    fireEvent.keyUp(dialog, {key: 'Escape'});
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    await waitFor(() => {
+      expect(dialog).toBeInTheDocument();
+    }); // wait for animation
+
+    expect(document.activeElement).toBe(dialog);
+
+    // Close the dialog by clicking the button inside
+    button = within(dialog).getByRole('button');
+    act(() => {
+      triggerPress(button);
+      jest.runAllTimers();
+    });
+
+    expect(() => getByRole('dialog')).toThrow();
+  });
+
+  it('should warn when unmounting a dialog trigger while a modal is open', function () {
+    let warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <MenuTrigger>
+          <ActionButton>Trigger</ActionButton>
+          <Menu>
+            <DialogTrigger isKeyboardDismissDisabled>
+              <Item>Open menu</Item>
+              <Dialog>Content body</Dialog>
+            </DialogTrigger>
+          </Menu>
+        </MenuTrigger>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+
+    act(() => {
+      triggerPress(button);
+      jest.runAllTimers();
+    });
+
+    let menu = getByRole('menu');
+    let menuitem = within(menu).getByRole('menuitem');
+
+    act(() => {
+      triggerPress(menuitem);
+      jest.runAllTimers();
+    });
+
+    expect(() => getByRole('menu')).toThrow();
+    expect(() => getByRole('menuitem')).toThrow();
+    expect(() => getByRole('dialog')).toThrow();
+
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn).toHaveBeenCalledWith('A DialogTrigger unmounted while open. This is likely due to being placed within a trigger that unmounts or inside a conditional. Consider using a DialogContainer instead.');
+  });
+
+  it('should not try to restore focus to the outer dialog when the inner dialog opens', async () => {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <TextField id="document-input" aria-label="document input" />
+        <DialogTrigger>
+          <ActionButton id="outer-trigger">Trigger</ActionButton>
+          <Dialog id="outer-dialog">
+            <Content>
+              <TextField id="outer-input" aria-label="outer input" autoFocus />
+              <DialogTrigger>
+                <ActionButton id="inner-trigger">Trigger</ActionButton>
+                <Dialog id="inner-dialog">
+                  <Content>
+                    <TextField id="inner-input" aria-label="outer input" autoFocus />
+                  </Content>
+                </Dialog>
+              </DialogTrigger>
+            </Content>
+          </Dialog>
+        </DialogTrigger>
+      </Provider>
+    );
+    let button = getByRole('button');
+    triggerPress(button);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let outerDialog = getByRole('dialog');
+
+    await waitFor(() => {
+      expect(outerDialog).toBeVisible();
+    }); // wait for animation
+    let outerButton = getByRole('button');
+    let outerInput = getByRole('textbox');
+
+    expect(document.activeElement).toBe(outerInput);
+    triggerPress(outerButton);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let innerDialog = getByRole('dialog');
+
+    await waitFor(() => {
+      expect(innerDialog).toBeVisible();
+    }); // wait for animation
+
+    let innerInput = getByRole('textbox');
+
+    expect(document.activeElement).toBe(innerInput);
+
+    act(() => {userEvent.click(document.body);});
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    expect(document.activeElement).toBe(innerInput);
+
+    let outsideInput = document.getElementById('document-input');
+    act(() => {outsideInput.focus();});
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(document.activeElement).toBe(innerInput);
   });
 });

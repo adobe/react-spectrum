@@ -46,8 +46,7 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
   let icon = (
     <Asterisk
       UNSAFE_className={classNames(styles, 'spectrum-FieldLabel-requiredIcon')}
-      aria-label={includeNecessityIndicatorInAccessibilityName ? formatMessage('(required)') : undefined}
-      size="S" />
+      aria-label={includeNecessityIndicatorInAccessibilityName ? formatMessage('(required)') : undefined} />
   );
 
   let labelClassNames = classNames(

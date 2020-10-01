@@ -1,0 +1,89 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: This release includes new nightly releases and support for SSR. Huge thanks to all of the amazing contributors!
+date: 2020-09-02
+---
+
+# September 02, 2020 Release
+
+We have some exciting changes in this release. First of all, we now have nightly builds! Thanks to [@mischnic](https://github.com/mischnic), we now release our packages whenever we merge to main under a “nightly” tag on npm. This means you don’t have to wait for our normal release cycle to get a preview of what we are up to.
+
+In this release we also worked on adding support for server side rendering. This has been one of the top requests we've received from a number of teams who would like to use React Spectrum and React Aria with popular frameworks such as [Gatsby](https://www.gatsbyjs.com) and [Next.js](https://nextjs.org). For more details on SSR, check out our guides for [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/ssr.html) and [React Aria](https://react-spectrum.adobe.com/react-aria/ssr.html).
+
+As always, a huge thank you to all our contributors for the new features, fixes and updates.
+
+## New components
+
+- **CheckboxGroup** - [@Andarist](https://github.com/Andarist) - [PR](https://github.com/adobe/react-spectrum/pull/868)
+    - [CheckboxGroup](../../react-spectrum/CheckboxGroup.html) component in `@react-spectrum/checkbox`
+    - [useCheckboxGroup](../../react-aria/useCheckboxGroup.html) hook in `@react-aria/checkbox`
+    - [useCheckboxGroupState](../../react-stately/useCheckboxGroupState.html) hook in `@react-stately/checkbox`
+- **SSRProvider** - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/992)
+    - [SSRProvider](../../react-aria/SSRProvider.html) component in `@react-aria/ssr`
+    - [useIsSSR](../../react-aria/useIsSSR.html.html) component in `@react-aria/ssr`
+
+## New features
+
+- `DialogTrigger` close function now works with `Popover` - [@cheapsteak](https://github.com/cheapsteak) - [PR](https://github.com/adobe/react-spectrum/pull/997)
+- Nightly builds - [@mischnic](https://github.com/mischnic) - [PR](https://github.com/adobe/react-spectrum/pull/735)
+
+
+## Bug fixes
+
+- Move rAF in `Virtualizer` to avoid calling on SSR - [@fezproof](https://github.com/fezproof) - [PR](https://github.com/adobe/react-spectrum/pull/975)
+- Update type in `useLink` - [@ronderksen](https://github.com/ronderksen) - [PR](https://github.com/adobe/react-spectrum/pull/1000)
+- Improve `Slider` drag handling - [@chungwu](https://github.com/chungwu) - [PR](https://github.com/adobe/react-spectrum/pull/955)
+- Basic SSR tests passing with CI integration - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/994)
+- Use screen width instead of window to determine `isMobile` in `Picker` and `Menu` - [@michayou](https://github.com/michayou) - [PR](https://github.com/adobe/react-spectrum/pull/1001)
+- Add extra padding in `Tray` to help with iOS home bar - [@ronderksen](https://github.com/ronderksen) - [PR](https://github.com/adobe/react-spectrum/pull/1007)
+- Set a default for lang and dir when SSR - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1026)
+- Stop `Tray` closing on scroll - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1023)
+- `Slider` `onChange` only fires when value changes - [@xitter](https://github.com/xitter) - [PR](https://github.com/adobe/react-spectrum/pull/999)
+
+## Docs
+
+- Update `useSwitch` example to pass a ref - [@andrew-t-james](https://github.com/andrew-t-james) - [PR](https://github.com/adobe/react-spectrum/pull/988)
+- Added clarification for `FocusRing` when modality is undefined - [@tomByrer](https://github.com/tomByrer) - [PR](https://github.com/adobe/react-spectrum/pull/1022)
+
+## Released packages
+
+```
+ - @adobe/react-spectrum@3.3.0
+ - @react-aria/checkbox@3.2.0
+ - @react-aria/focus@3.2.1
+ - @react-aria/i18n@3.1.1
+ - @react-aria/link@3.1.1
+ - @react-aria/overlays@3.3.0
+ - @react-aria/radio@3.1.1
+ - @react-aria/slider@3.0.0-alpha.1
+ - @react-aria/ssr@3.0.0
+ - @react-aria/utils@3.2.1
+ - @react-aria/virtualizer@3.1.2
+ - @react-spectrum/breadcrumbs@3.1.2
+ - @react-spectrum/buttongroup@3.1.1
+ - @react-spectrum/checkbox@3.2.0
+ - @react-spectrum/dialog@3.2.1
+ - @react-spectrum/layout@3.1.2
+ - @react-spectrum/menu@3.2.0
+ - @react-spectrum/overlays@3.2.1
+ - @react-spectrum/picker@3.2.0
+ - @react-spectrum/tabs@3.0.0-alpha.1
+ - @react-spectrum/textfield@3.1.2
+ - @react-spectrum/utils@3.2.1
+ - @react-stately/checkbox@3.0.0
+ - @react-stately/radio@3.2.0
+ - @react-stately/slider@3.0.0-alpha.1
+ - @react-stately/virtualizer@3.1.1
+ - @react-types/checkbox@3.2.0
+```

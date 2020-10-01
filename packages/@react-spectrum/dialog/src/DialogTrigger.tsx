@@ -15,7 +15,7 @@ import {DOMRefValue} from '@react-types/shared';
 import {Modal, Popover, Tray} from '@react-spectrum/overlays';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {Fragment, ReactElement, useRef} from 'react';
+import React, {Fragment, ReactElement, useEffect, useRef} from 'react';
 import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
 import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
@@ -28,6 +28,7 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
     hideArrow,
     targetRef,
     isDismissable,
+    isKeyboardDismissDisabled,
     ...positionProps
   } = props;
   if (!Array.isArray(children) || children.length > 2) {
@@ -49,6 +50,20 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
   }
 
   let state = useOverlayTriggerState(props);
+  let wasOpen = useRef(false);
+  wasOpen.current = state.isOpen;
+  let isExiting = useRef(false);
+  let onExiting = () => isExiting.current = true;
+  let onExited = () => isExiting.current = false;
+
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => {
+      if ((wasOpen.current || isExiting.current) && type !== 'popover' && type !== 'tray') {
+        console.warn('A DialogTrigger unmounted while open. This is likely due to being placed within a trigger that unmounts or inside a conditional. Consider using a DialogContainer instead.');
+      }
+    };
+  }, []);
 
   if (type === 'popover') {
     return (
@@ -58,6 +73,7 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
         targetRef={targetRef}
         trigger={trigger}
         content={content}
+        isKeyboardDismissDisabled={isKeyboardDismissDisabled}
         hideArrow={hideArrow} />
     );
   }
@@ -66,20 +82,25 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
     switch (type) {
       case 'fullscreen':
       case 'fullscreenTakeover':
-        return (
-          <Modal isOpen={state.isOpen} isDismissable={false} onClose={state.close} type={type}>
-            {typeof content === 'function' ? content(state.close) : content}
-          </Modal>
-        );
       case 'modal':
         return (
-          <Modal isOpen={state.isOpen} isDismissable={isDismissable} onClose={state.close}>
+          <Modal
+            isOpen={state.isOpen}
+            isDismissable={type === 'modal' ? isDismissable : false}
+            onClose={state.close}
+            type={type}
+            isKeyboardDismissDisabled={isKeyboardDismissDisabled}
+            onExiting={onExiting}
+            onExited={onExited}>
             {typeof content === 'function' ? content(state.close) : content}
           </Modal>
         );
       case 'tray':
         return (
-          <Tray isOpen={state.isOpen} onClose={state.close}>
+          <Tray
+            isOpen={state.isOpen}
+            onClose={state.close}
+            isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
             {typeof content === 'function' ? content(state.close) : content}
           </Tray>
         );
@@ -121,7 +142,7 @@ DialogTrigger.getCollectionNode = function* (props: SpectrumDialogTriggerProps) 
 let _DialogTrigger = DialogTrigger as (props: SpectrumDialogTriggerProps) => JSX.Element;
 export {_DialogTrigger as DialogTrigger};
 
-function PopoverTrigger({state, targetRef, trigger, content, hideArrow, ...props}) {
+function PopoverTrigger({state, targetRef, trigger, content, hideArrow, isKeyboardDismissDisabled, ...props}) {
   let triggerRef = useRef<HTMLElement>();
 
   let overlayRef = useRef<DOMRefValue<HTMLDivElement>>();
@@ -151,8 +172,9 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, ...props
       onClose={state.close}
       placement={placement}
       arrowProps={arrowProps}
+      isKeyboardDismissDisabled={isKeyboardDismissDisabled}
       hideArrow={hideArrow}>
-      {content}
+      {typeof content === 'function' ? content(state.close) : content}
     </Popover>
   );
 
@@ -168,7 +190,7 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, ...props
 }
 
 interface SpectrumDialogTriggerBase {
-  type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
+  type: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
   state: OverlayTriggerState,
   isDismissable?: boolean,
   dialogProps?: SpectrumDialogProps | {},

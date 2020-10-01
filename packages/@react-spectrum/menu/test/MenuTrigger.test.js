@@ -80,6 +80,7 @@ describe('MenuTrigger', function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.useFakeTimers();
   });
@@ -317,6 +318,44 @@ describe('MenuTrigger', function () {
       let menuItems = within(menu).getAllByRole('menuitem');
       let selectedItem = menuItems[0];
       expect(selectedItem).toBe(document.activeElement);
+    });
+
+    it.each`
+      Name             | Component      | props
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
+    `('$Name moves focus via ArrowDown and ArrowUp', function ({Component, props}) {
+      let tree = render(
+        <Provider theme={theme}>
+          <div data-testid="scrollable">
+            <MenuTrigger>
+              <Button>
+                {triggerText}
+              </Button>
+              <Menu>
+                <Item key="1">One</Item>
+                <Item key="">Two</Item>
+                <Item key="3">Three</Item>
+              </Menu>
+            </MenuTrigger>
+          </div>
+        </Provider>
+      );
+
+      let button = tree.getByRole('button');
+      fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
+      let menu = tree.getByRole('menu');
+      let menuItems = within(menu).getAllByRole('menuitem');
+      let selectedItem = menuItems[0];
+      expect(selectedItem).toBe(document.activeElement);
+
+      fireEvent.keyDown(menu, {key: 'ArrowDown', code: 40, charCode: 40});
+      expect(menuItems[1]).toBe(document.activeElement);
+
+      fireEvent.keyDown(menu, {key: 'ArrowDown', code: 40, charCode: 40});
+      expect(menuItems[2]).toBe(document.activeElement);
+
+      fireEvent.keyDown(menu, {key: 'ArrowUp', code: 38, charCode: 38});
+      expect(menuItems[1]).toBe(document.activeElement);
     });
   });
 
@@ -565,6 +604,19 @@ describe('MenuTrigger', function () {
       expect(menu).not.toBeInTheDocument();
       expect(button).toHaveAttribute('aria-expanded', 'false');
       expect(onOpenChange).toBeCalledTimes(2);
+    });
+
+    it.each`
+      Name                      | Component      | props | menuProps
+      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
+      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple'}}
+      ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
+    `('$Name ignores repeating keyboard events', function ({Component, props, menuProps}) {
+      tree = renderComponent(Component, props, menuProps);
+      openAndTriggerMenuItem(tree, Component === MenuTrigger, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: 'Enter', code: 13, charCode: 13, repeat: true}));
+
+      let menu = tree.queryByRole('menu');
+      expect(menu).toBeTruthy();
     });
 
     it('tabs to the next element after the trigger and closes the menu', function () {

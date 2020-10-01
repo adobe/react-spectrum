@@ -33,7 +33,25 @@ export interface SpectrumDialogTriggerProps extends OverlayTriggerProps, Positio
   /** The ref of the element the Dialog should visually attach itself to. Defaults to the trigger button if not defined. */
   targetRef?: RefObject<HTMLElement>,
   /** Whether a modal type Dialog should be dismissable. */
-  isDismissable?: boolean
+  isDismissable?: boolean,
+  /** Whether pressing the escape key to close the dialog should be disabled. */
+  isKeyboardDismissDisabled?: boolean
+}
+
+export interface SpectrumDialogContainerProps {
+  /** The Dialog to display, if any. */
+  children: ReactNode,
+  /** Handler that is called when the 'x' button of a dismissable Dialog is clicked. */
+  onDismiss: () => void,
+  /**
+   * The type of Dialog that should be rendered. See the visual options below for examples of each.
+   * @default 'modal'
+   */
+  type?: 'modal' | 'fullscreen' | 'fullscreenTakeover',
+  /** Whether the Dialog is dismissable. See the [Dialog docs](Dialog.html#dismissable-dialogs) for more details. */
+  isDismissable?: boolean,
+  /** Whether pressing the escape key to close the dialog should be disabled. */
+  isKeyboardDismissDisabled?: boolean
 }
 
 export interface AriaDialogProps extends DOMProps, AriaLabelingProps {
@@ -81,5 +99,4 @@ export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
   /** Button to focus by default when the dialog opens. */
   autoFocusButton?: 'cancel' | 'primary' | 'secondary'
   // allowsKeyboardConfirmation?: boolean, // triggers primary action
-  // isKeyboardCancelDisabled?: boolean // needed?
 }

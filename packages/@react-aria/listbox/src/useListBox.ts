@@ -27,7 +27,7 @@ interface ListBoxAria {
   labelProps: HTMLAttributes<HTMLElement>
 }
 
-interface AriaListBoxOptions<T> extends AriaListBoxProps<T> {
+interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'children'> {
   /** Whether the listbox uses virtual scrolling. */
   isVirtualized?: boolean,
 
@@ -72,9 +72,10 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
 
   return {
     labelProps,
-    listBoxProps: mergeProps(domProps, {
+    listBoxProps: mergeProps(domProps, state.selectionManager.selectionMode === 'multiple' ? {
+      'aria-multiselectable': 'true'
+    } : {}, {
       role: 'listbox',
-      'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined,
       ...mergeProps(fieldProps, listProps)
     })
   };
