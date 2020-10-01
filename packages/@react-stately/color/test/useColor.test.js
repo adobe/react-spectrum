@@ -31,4 +31,10 @@ describe('useColor tests', function () {
     expect(result.current.color).toBe(color);
     expect(result.current.colorInt).toBe(color.toHexInt());
   });
+
+  it('should return undefined color and colorInt for invalid color value', function () {
+    let {result} = renderHook(() => useColor('invalidColor'));
+    expect(result.current.color).toBeUndefined();
+    expect(result.current.colorInt).toBeUndefined();
+  });
 });
