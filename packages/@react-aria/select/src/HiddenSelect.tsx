@@ -39,7 +39,7 @@ interface HiddenSelectProps<T> extends AriaHiddenSelectProps<T> {
  * can be used in combination with `useSelect` to support browser form autofill, mobile form
  * navigation, and native HTML form submission.
  */
-function useHiddenSelect<T>(props: AriaHiddenSelectProps<T>, state: SelectState<T>, triggerRef: RefObject<HTMLElement>) {
+export function useHiddenSelect<T>(props: AriaHiddenSelectProps<T>, state: SelectState<T>, triggerRef: RefObject<HTMLElement>) {
   let {name, isDisabled} = props;
   let modality = useInteractionModality();
   let {visuallyHiddenProps} = useVisuallyHidden();
