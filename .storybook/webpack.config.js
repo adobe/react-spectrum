@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const md5 = require('md5');
 const fs = require('fs');
+const reactVersion = require('react/package.json').version;
 
 const fileHashMemo = {};
 
@@ -27,6 +28,7 @@ module.exports = ({config}, env) => {
     // see https://github.com/storybooks/storybook/issues/1570
     config.plugins = config.plugins.filter(plugin => plugin.constructor.name !== 'UglifyJsPlugin')
   }
+  config.plugins.push(new webpack.DefinePlugin({REACT_VERSION: JSON.stringify(reactVersion)}));
 
   config.resolve.extensions.push('.ts', '.tsx');
 
