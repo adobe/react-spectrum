@@ -18,9 +18,16 @@ const TOOLTIP_DELAY = 1500; // this seems to be a 1.5 second delay, check with d
 const TOOLTIP_COOLDOWN = 500;
 
 export interface TooltipTriggerState {
+  /** Whether the tooltip is currently showing. */
   isOpen: boolean,
-  open: (immediate?: boolean) => void,
-  close: () => void
+  /**
+   * Shows the tooltip. By default, the tooltip becomes visible after a delay
+   * depending on a global warmup timer. The `immediate` option shows the
+   * tooltip immediately instead.
+   */
+  open(immediate?: boolean): void,
+  /** Hides the tooltip. */
+  close(): void
 }
 
 let tooltips = {};
@@ -107,7 +114,7 @@ export function useTooltipTriggerState(props: TooltipTriggerProps): TooltipTrigg
         delete tooltips[id];
       }
     };
-  }, []);
+  }, [id]);
 
   return {
     isOpen,

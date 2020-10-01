@@ -31,17 +31,14 @@ keywords: [tooltip, aria]
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['useTooltipTrigger']}
+  componentNames={['useTooltipTrigger', 'useTooltip']}
   sourceData={[
     {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-1.2/#tooltip'}
   ]} />
 
 ## API
 
-`useTooltipTrigger`
 <FunctionAPI function={docs.exports.useTooltipTrigger} links={docs.links} />
-
-`useTooltip`
 <FunctionAPI function={docs.exports.useTooltip} links={docs.links} />
 
 ## Features
@@ -80,6 +77,8 @@ hook in `@react-stately/tooltip`. The state object should be passed as an option
 
 This example implements a Tooltip that renders in an absolute position next to its target. The <TypeLink links={docs.links} type={docs.exports.useTooltip} /> hook applies the correct ARIA attributes to the tooltip, and `useTooltipTrigger` associates it to the trigger element.
 
+Two instances of the example are rendered to demonstrate the behavior of the delay on hover. If you hover over the first button, the tooltip will be shown after a delay. Hovering over the second button shows the tooltip immediately. If you wait for a delay before hovering another element, the delay restarts.
+
 ```tsx example
 import {useTooltipTriggerState} from '@react-stately/tooltip';
 import {mergeProps} from '@react-aria/utils';
@@ -91,9 +90,9 @@ function Tooltip(props) {
     <span
       style={{
         position: 'absolute',
-        right: '-10px',
-        top: '0',
-        transform: 'translateX(100%)',
+        left: '5px',
+        top: '100%',
+        marginTop: '10px',
         backgroundColor: 'white',
         color: 'black',
         padding: '5px'
@@ -123,6 +122,7 @@ function Example(props) {
   );
 }
 
+<Example />
 <Example />
 ```
 
