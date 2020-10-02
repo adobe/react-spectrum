@@ -66,7 +66,6 @@ export function useListBoxLayout<T>(state: ListState<T>) {
 /** @private */
 function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElement>) {
   let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, shouldUseVirtualFocus, domProps = {}, transitionDuration = 0, isMobile} = props;
-  // @ts-ignore
   let {listBoxProps} = useListBox({
     ...props,
     ...domProps,

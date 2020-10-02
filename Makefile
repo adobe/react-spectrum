@@ -69,6 +69,9 @@ icons: packages/@spectrum-icons/workflow/src packages/@spectrum-icons/color/src 
 storybook:
 	NODE_ENV=production yarn build:storybook
 
+storybook-17:
+	yarn build:storybook-17
+
 # for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:
 	$(MAKE) publish

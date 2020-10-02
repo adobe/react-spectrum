@@ -78,7 +78,7 @@ export interface ModalProps extends StyleProps, OverlayProps {
   children: ReactElement,
   isOpen?: boolean,
   onClose?: () => void,
-  type?: 'fullscreen' | 'fullscreenTakeover',
+  type?: 'modal' | 'fullscreen' | 'fullscreenTakeover',
   isDismissable?: boolean
 }
 

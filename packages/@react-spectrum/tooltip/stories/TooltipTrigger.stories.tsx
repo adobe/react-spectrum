@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
 import {Flex} from '@react-spectrum/layout';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -85,6 +85,20 @@ storiesOf('TooltipTrigger', module)
           </Tooltip>
         </TooltipTrigger>
       </div>
+    )
+  )
+  .add(
+    'tooltip with other hoverables',
+    () => (
+      <Flex gap="size-100">
+        <TooltipTrigger onOpenChange={action('openChange')}>
+          <ActionButton>Trigger Tooltip</ActionButton>
+          <Tooltip>
+            Long tooltip message that just goes on and on.
+          </Tooltip>
+        </TooltipTrigger>
+        <Button variant="secondary">No Tooltip</Button>
+      </Flex>
     )
   );
 

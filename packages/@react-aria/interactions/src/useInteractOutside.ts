@@ -50,12 +50,13 @@ export function useInteractOutside(props: InteractOutsideProps) {
         }
       };
 
-      document.addEventListener('pointerdown', onPointerDown, false);
-      document.addEventListener('pointerup', onPointerUp, false);
+      // changing these to capture phase fixed combobox
+      document.addEventListener('pointerdown', onPointerDown, true);
+      document.addEventListener('pointerup', onPointerUp, true);
 
       return () => {
-        document.removeEventListener('pointerdown', onPointerDown, false);
-        document.removeEventListener('pointerup', onPointerUp, false);
+        document.removeEventListener('pointerdown', onPointerDown, true);
+        document.removeEventListener('pointerup', onPointerUp, true);
       };
     } else {
       let onMouseUp = (e) => {
@@ -75,16 +76,16 @@ export function useInteractOutside(props: InteractOutsideProps) {
         }
       };
 
-      document.addEventListener('mousedown', onPointerDown, false);
-      document.addEventListener('mouseup', onMouseUp, false);
-      document.addEventListener('touchstart', onPointerDown, false);
-      document.addEventListener('touchend', onTouchEnd, false);
+      document.addEventListener('mousedown', onPointerDown, true);
+      document.addEventListener('mouseup', onMouseUp, true);
+      document.addEventListener('touchstart', onPointerDown, true);
+      document.addEventListener('touchend', onTouchEnd, true);
 
       return () => {
-        document.removeEventListener('mousedown', onPointerDown, false);
-        document.removeEventListener('mouseup', onMouseUp, false);
-        document.removeEventListener('touchstart', onPointerDown, false);
-        document.removeEventListener('touchend', onTouchEnd, false);
+        document.removeEventListener('mousedown', onPointerDown, true);
+        document.removeEventListener('mouseup', onMouseUp, true);
+        document.removeEventListener('touchstart', onPointerDown, true);
+        document.removeEventListener('touchend', onTouchEnd, true);
       };
     }
   }, [onInteractOutside, ref, state.ignoreEmulatedMouseEvents, state.isPointerDown]);
