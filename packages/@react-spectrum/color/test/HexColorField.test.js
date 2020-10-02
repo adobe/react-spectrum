@@ -217,9 +217,7 @@ describe('HexColorField', function () {
   it.each`
     Name                                | expected                 | key
     ${'increment with arrow up key'}    | ${new Color('#AAAAAE')}  | ${'ArrowUp'}
-    ${'increment with page up key'}     | ${new Color('#AAAAAE')}  | ${'PageUp'}
     ${'decrement with arrow down key'}  | ${new Color('#AAAAA6')}  | ${'ArrowDown'}
-    ${'decrement with page down key'}   | ${new Color('#AAAAA6')}  | ${'PageDown'}
   `('should handle $Name event', function ({expected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({
