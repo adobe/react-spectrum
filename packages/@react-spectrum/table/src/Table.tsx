@@ -611,7 +611,19 @@ function TableCellBase({cell, cellRef, ...otherProps}) {
             )
           )
         }>
-        <span className={classNames(styles, 'spectrum-Table-cellContents', classNames(stylesOverrides, {'react-spectrum-Table-cellContents--hideHeader':columnProps.hideHeader}))}>
+        <span
+          className={
+            classNames(
+              styles,
+              'spectrum-Table-cellContents',
+              classNames(
+                stylesOverrides,
+                {
+                  'react-spectrum-Table-cellContents--hideHeader': columnProps.hideHeader
+                }
+              )
+            )
+        }>
           {cell.rendered}
         </span>
       </div>

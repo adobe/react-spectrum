@@ -550,7 +550,7 @@ storiesOf('Table', module)
     {chromatic: {disable: true}}
   )
   .add(
-    'hideHeader multiple columns',
+    'hideHeader',
     () => (
       <Table
         aria-label="Table with static contents"
