@@ -68,9 +68,11 @@ export function useTypeSelect(options: TypeSelectOptions): TypeSelectAria {
     let key = keyboardDelegate.getKeyForSearch(state.search, selectionManager.focusedKey);
 
     // If no key found, search from the top.
-    key = key || keyboardDelegate.getKeyForSearch(state.search);
+    if (key == null) {
+      key = keyboardDelegate.getKeyForSearch(state.search);
+    }
 
-    if (key) {
+    if (key != null) {
       selectionManager.setFocusedKey(key);
       if (onTypeSelect) {
         onTypeSelect(key);
@@ -86,7 +88,7 @@ export function useTypeSelect(options: TypeSelectOptions): TypeSelectAria {
   return {
     typeSelectProps: {
       // Using a capturing listener to catch the keydown event before
-      // other hooks in order to handle the Spacebar event. 
+      // other hooks in order to handle the Spacebar event.
       onKeyDownCapture: keyboardDelegate.getKeyForSearch ? onKeyDown : null
     }
   };

@@ -20,10 +20,21 @@ import {useFocusable} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
 
 interface TooltipTriggerAria {
+  /**
+   * Props for the trigger element.
+   */
   triggerProps: HTMLAttributes<HTMLElement> & PressProps & HoverProps & FocusEvents,
+
+  /**
+   * Props for the overlay container element.
+   */
   tooltipProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a tooltip trigger, e.g. a button
+ * that shows a description when focused or hovered.
+ */
 export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTriggerState, ref: RefObject<HTMLElement>) : TooltipTriggerAria {
   let {
     isDisabled

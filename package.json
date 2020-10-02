@@ -39,6 +39,8 @@
     "publish:nightly": "lerna publish -y --canary --preid nightly --dist-tag=nightly --exact --force-publish=* --no-push"
   },
   "workspaces": [
+    "packages/react-stately",
+    "packages/react-aria",
     "packages/*/*"
   ],
   "devDependencies": {
