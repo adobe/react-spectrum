@@ -64,7 +64,7 @@ export const DEFAULT_MAX_VALUE = 100;
 export const DEFAULT_STEP_VALUE = 1;
 
 export function useSliderState(props: Omit<SliderProps, 'direction'>): SliderState {
-  let {isReadOnly, isDisabled, minValue = DEFAULT_MIN_VALUE, maxValue = DEFAULT_MAX_VALUE, formatOptions, step = DEFAULT_STEP_VALUE} = props;
+  let {isDisabled, minValue = DEFAULT_MIN_VALUE, maxValue = DEFAULT_MAX_VALUE, formatOptions, step = DEFAULT_STEP_VALUE} = props;
 
   const [values, setValues] = useControlledState<number[]>(
     props.value as any,
@@ -97,7 +97,7 @@ export function useSliderState(props: Omit<SliderProps, 'direction'>): SliderSta
   }
 
   function updateValue(index: number, value: number) {
-    if (isReadOnly || isDisabled || !isThumbEditable(index)) {
+    if (isDisabled || !isThumbEditable(index)) {
       return;
     }
     const thisMin = getThumbMinValue(index);
@@ -109,7 +109,7 @@ export function useSliderState(props: Omit<SliderProps, 'direction'>): SliderSta
   }
 
   function updateDragging(index: number, dragging: boolean) {
-    if (isReadOnly || isDisabled || !isThumbEditable(index)) {
+    if (isDisabled || !isThumbEditable(index)) {
       return;
     }
 

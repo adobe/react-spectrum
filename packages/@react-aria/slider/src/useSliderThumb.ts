@@ -30,13 +30,12 @@ interface SliderThumbOptions extends SliderThumbProps {
  */
 export function useSliderThumb(
   opts: SliderThumbOptions,
-  state: SliderState,
+  state: SliderState
 ): SliderThumbAria {
   const {
     index,
     isRequired,
     isDisabled,
-    isReadOnly,
     validationState,
     trackRef,
     inputRef,
@@ -50,7 +49,6 @@ export function useSliderThumb(
   });
 
   const value = state.values[index];
-  const isEditable = !(isDisabled || isReadOnly);
 
   const focusInput = useCallback(() => {
     if (inputRef.current) {
@@ -81,7 +79,7 @@ export function useSliderThumb(
   });
 
   // Immediately register editability with the state
-  state.setThumbEditable(index, isEditable);
+  state.setThumbEditable(index, !isDisabled);
 
   const {focusableProps} = useFocusable(
     mergeProps(opts, {
@@ -98,12 +96,11 @@ export function useSliderThumb(
   return {
     inputProps: mergeProps(focusableProps, fieldProps, {
       type: 'range',
-      tabIndex: isEditable ? 0 : undefined,
+      tabIndex: !isDisabled ? 0 : undefined,
       min: state.getThumbMinValue(index),
       max: state.getThumbMaxValue(index),
       step: state.step,
       value: value,
-      readOnly: isReadOnly,
       disabled: isDisabled,
       'aria-orientation': 'horizontal',
       'aria-valuetext': state.getThumbValueLabel(index),
@@ -114,13 +111,13 @@ export function useSliderThumb(
         state.setThumbValue(index, parseFloat(e.target.value));
       }
     }),
-    thumbProps: mergeProps(isEditable ? {
+    thumbProps: !isDisabled ? mergeProps({
       onMouseDown: draggableProps.onMouseDown,
       onMouseEnter: draggableProps.onMouseEnter,
       onMouseOut: draggableProps.onMouseOut
-    } : {}, isDisabled ? {} : {
+    }, {
       onMouseDown: focusInput
-    }),
+    }) : {},
     labelProps
   };
 }
