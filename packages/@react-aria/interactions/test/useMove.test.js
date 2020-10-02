@@ -25,6 +25,20 @@ function Example(props) {
 describe('useMove', function () {
   // TODO test: end event has different target than start
 
+  beforeAll(() => {
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    jest.useFakeTimers();
+  });
+  afterAll(() => {
+    jest.useRealTimers();
+    window.requestAnimationFrame.mockRestore();
+  });
+
+  afterEach(() => {
+    // for restoreTextSelection
+    jest.runAllTimers();
+  });
+
   describe('mouse events', function () {
     installMouseEvent();
 
@@ -122,6 +136,39 @@ describe('useMove', function () {
       fireEvent.touchStart(el, {targetTouches: [{pageX: 1, pageY: 30}]});
       fireEvent.touchEnd(el);
       expect(events).toStrictEqual([]);
+    });
+  });
+
+  describe('user-select: none', () => {
+    let mockUserSelect = 'contain';
+    let oldUserSelect = document.documentElement.style.webkitUserSelect;
+
+    beforeEach(() => {
+      document.documentElement.style.webkitUserSelect = mockUserSelect;
+    });
+    afterEach(() => {
+      document.documentElement.style.webkitUserSelect = oldUserSelect;
+    });
+
+    it('adds and removes user-select: none to the body', function () {
+      let tree = render(
+        <Example
+          onMoveStart={() => {}}
+          onMove={() => {}}
+          onMoveEnd={() => {}} />
+      );
+
+      let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
+
+      expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
+      fireEvent.touchStart(el, {targetTouches: [{pageX: 1, pageY: 30}]});
+      expect(document.documentElement.style.webkitUserSelect).toBe('none');
+      fireEvent.touchMove(el, {targetTouches: [{pageX: 10, pageY: 25}]});
+      expect(document.documentElement.style.webkitUserSelect).toBe('none');
+      fireEvent.touchEnd(el);
+      expect(document.documentElement.style.webkitUserSelect).toBe('none');
+      jest.advanceTimersByTime(300);
+      expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
     });
   });
 

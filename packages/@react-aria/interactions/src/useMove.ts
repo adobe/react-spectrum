@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {disableTextSelection, restoreTextSelection}  from './textSelection';
 import {HTMLAttributes, useMemo, useRef} from 'react';
 
 export interface BaseMoveEvent {
@@ -61,6 +62,7 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
         // currentTargets.add(target);
         currentTarget = target;
       }
+      disableTextSelection();
       state.current.movedAfterDown = false;
       return true;
     };
@@ -89,6 +91,7 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
         //   }
         // }
       // }
+      restoreTextSelection();
       if (state.current.movedAfterDown) {
         onMoveEnd?.({
           type: 'moveend',
@@ -96,8 +99,6 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
         });
       }
     };
-
-    // TODO rtl
 
     if (typeof PointerEvent === 'undefined') {
       let onMouseMove = (e: MouseEvent) => {
@@ -109,10 +110,10 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
         window.removeEventListener('mousemove', onMouseMove, false);
         window.removeEventListener('mouseup', onMouseUp, false);
       };
-
-
       moveProps.onMouseDown = (e: React.MouseEvent) => {
-        if (start(e.target)) {
+        if (e.button === 0 && start(e.target)) {
+          e.stopPropagation();
+          e.preventDefault();
           state.current.previousPosition = {pageX: e.pageX, pageY: e.pageY};
           window.addEventListener('mousemove', onMouseMove, false);
           window.addEventListener('mouseup', onMouseUp, false);
@@ -133,11 +134,13 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
       };
       moveProps.onTouchStart = (e: React.TouchEvent) => {
         if (start(e.target)) {
+          e.stopPropagation();
+          e.preventDefault();
           let {pageX, pageY} = e.targetTouches[0];
           state.current.previousPosition = {pageX, pageY};
-          window.addEventListener('touchmove', onTouchMove, {passive: true});
-          window.addEventListener('touchend', onTouchEnd, {passive: true});
-          window.addEventListener('touchcancel', onTouchEnd, {passive: true});
+          window.addEventListener('touchmove', onTouchMove, false);
+          window.addEventListener('touchend', onTouchEnd, false);
+          window.addEventListener('touchcancel', onTouchEnd, false);
         }
       };
     } else {
@@ -155,7 +158,6 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
       let onPointerUp = (e: PointerEvent) => {
         // @ts-ignore
         let pointerType: BaseMoveEvent['pointerType'] = e.pointerType || 'mouse';
-
         end(pointerType/* , e.target */);
         window.removeEventListener('pointermove', onPointerMove, false);
         window.removeEventListener('pointerup', onPointerUp, false);
@@ -163,7 +165,9 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
       };
 
       moveProps.onPointerDown = (e: React.PointerEvent) => {
-        if (start(e.target)) {
+        if (e.button === 0 && start(e.target)) {
+          e.stopPropagation();
+          e.preventDefault();
           state.current.previousPosition = {pageX: e.pageX, pageY: e.pageY};
           window.addEventListener('pointermove', onPointerMove, false);
           window.addEventListener('pointerup', onPointerUp, false);
