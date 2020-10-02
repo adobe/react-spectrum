@@ -16,6 +16,7 @@ import {sliderIds} from './utils';
 import {SliderProps} from '@react-types/slider';
 import {SliderState} from '@react-stately/slider';
 import {useLabel} from '@react-aria/label';
+import {useLocale} from '@react-aria/i18n';
 
 interface SliderAria {
   /** Props for the label element. */
@@ -48,7 +49,7 @@ export function useSlider(
   // Attach id of the label to the state so it can be accessed by useSliderThumb.
   sliderIds.set(state, labelProps.id ?? fieldProps.id);
 
-  let {direction = 'ltr'} = props;
+  let {direction} = useLocale();
 
   // When the user clicks or drags the track, we want the motion to set and drag the
   // closest thumb.  Hence we also need to install useDrag1D() on the track element.

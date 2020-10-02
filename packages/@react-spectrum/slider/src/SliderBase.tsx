@@ -16,7 +16,7 @@ import React, {CSSProperties, HTMLAttributes, MutableRefObject, ReactNode, useRe
 import {SliderState, useSliderState} from '@react-stately/slider';
 import {SpectrumBarSliderBase, SpectrumSliderTicksBase} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
-import {useLocale, useNumberFormatter} from '@react-aria/i18n';
+import {useNumberFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 
@@ -46,7 +46,6 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
   } = props;
 
   let {styleProps} = useStyleProps(otherProps);
-  let {direction} = useLocale();
 
   // Assumes that DEFAULT_MIN_VALUE and DEFAULT_MAX_VALUE are both positive, this value needs to be passed to useSliderState, so
   // getThumbMinValue/getThumbMaxValue cannot be used here.
@@ -73,7 +72,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     containerProps,
     trackProps,
     labelProps
-  } = useSlider({...props, direction}, state, trackRef);
+  } = useSlider(props, state, trackRef);
 
   let inputRefs = [];
   let thumbProps = [];
@@ -86,8 +85,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
       index: i,
       isDisabled: props.isDisabled,
       trackRef,
-      inputRef: inputRefs[i],
-      direction
+      inputRef: inputRefs[i]
     }, state);
 
     inputProps[i] = v.inputProps;

@@ -5,6 +5,7 @@ import {SliderState} from '@react-stately/slider';
 import {SliderThumbProps} from '@react-types/slider';
 import {useFocusable} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
+import {useLocale} from '@react-aria/i18n';
 
 interface SliderThumbAria {
   /** Props for the range input. */
@@ -38,9 +39,10 @@ export function useSliderThumb(
     isDisabled,
     validationState,
     trackRef,
-    inputRef,
-    direction = 'ltr'
+    inputRef
   } = opts;
+
+  let {direction} = useLocale();
 
   let labelId = sliderIds.get(state);
   const {labelProps, fieldProps} = useLabel({
