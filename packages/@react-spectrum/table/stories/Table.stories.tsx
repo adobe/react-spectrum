@@ -550,20 +550,20 @@ storiesOf('Table', module)
     {chromatic: {disable: true}}
   )
   .add(
-    'headerless columns',
+    'hideHeader multiple columns',
     () => (
       <Table
         aria-label="Table with static contents"
-        width={300}
+        width={350}
         height={200}>
         <TableHeader>
           <Column key="foo" allowsSorting>
             Foo
           </Column>
-          <Column key="addAction" noHeader>
+          <Column key="addAction" hideHeader>
             Add Item
           </Column>
-          <Column key="deleteAction" noHeader showDivider>
+          <Column key="deleteAction" hideHeader showDivider>
             Delete Item
           </Column>
           <Column key="bar">Bar</Column>

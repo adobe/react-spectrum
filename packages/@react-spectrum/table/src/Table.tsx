@@ -38,9 +38,9 @@ const DEFAULT_HEADER_HEIGHT = {
   large: 40
 };
 
-const DEFAULT_NO_HEADER_CELL_WIDTH = {
-  medium: 39,
-  large: 45
+const DEFAULT_HIDE_HEADER_CELL_WIDTH = {
+  medium: 34,
+  large: 42
 };
 
 const ROW_HEIGHTS = {
@@ -87,7 +87,7 @@ function Table<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLD
     estimatedHeadingHeight: props.overflowMode === 'wrap'
       ? DEFAULT_HEADER_HEIGHT[scale]
       : null,
-    defaultNoheaderCellWidth: DEFAULT_NO_HEADER_CELL_WIDTH[scale] || null
+    defaultHideHeaderCellWidth: DEFAULT_HIDE_HEADER_CELL_WIDTH[scale] || null
   }), [props.overflowMode, scale, density]);
   let {direction} = useLocale();
   layout.collection = state.collection;
@@ -201,9 +201,9 @@ function Table<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLD
           return <TableSelectAllCell column={item} />;
         }
 
-        if (item.props.noHeader) {
+        if (item.props.hideHeader) {
           return (
-            <TooltipTrigger delay={0} placement="top" offset={-15}>
+            <TooltipTrigger placement="top">
               <TableColumnHeader column={item} />
               <Tooltip placement="top">{item.rendered}</Tooltip>
             </TooltipTrigger>
@@ -396,12 +396,12 @@ function TableColumnHeader({column}) {
               {
                 'react-spectrum-Table-cell--alignCenter': columnProps.align === 'center' || column.colspan > 1,
                 'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end',
-                'react-spectrum-Table-cell--noHeader': columnProps.noHeader
+                'react-spectrum-Table-cell--hideHeader': columnProps.hideHeader
               }
             )
           )
         }>
-        {!columnProps?.noHeader && column.rendered}
+        {!columnProps?.hideHeader && column.rendered}
         {columnProps.allowsSorting &&
           <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />
         }
@@ -606,12 +606,12 @@ function TableCellBase({cell, cellRef, ...otherProps}) {
               {
                 'react-spectrum-Table-cell--alignCenter': columnProps.align === 'center',
                 'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end',
-                'react-spectrum-Table-cell--noHeader': columnProps.noHeader
+                'react-spectrum-Table-cell--hideHeader': columnProps.hideHeader
               }
             )
           )
         }>
-        <span className={classNames(styles, 'spectrum-Table-cellContents')}>
+        <span className={classNames(styles, 'spectrum-Table-cellContents', classNames(stylesOverrides, {'react-spectrum-Table-cellContents--hideHeader':columnProps.hideHeader}))}>
           {cell.rendered}
         </span>
       </div>

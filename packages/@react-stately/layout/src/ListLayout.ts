@@ -24,7 +24,7 @@ type ListLayoutOptions<T> = {
   padding?: number,
   indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number,
   collator?: Intl.Collator,
-  defaultNoheaderCellWidth?: number
+  defaultHideHeaderCellWidth?: number
 };
 
 // A wrapper around LayoutInfo that supports heirarchy
@@ -53,7 +53,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected headingHeight: number;
   protected estimatedHeadingHeight: number;
   protected padding: number;
-  protected defaultNoheaderCellWidth: number;
+  protected defaultHideHeaderCellWidth: number;
   protected indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number;
   protected layoutInfos: Map<Key, LayoutInfo>;
   protected layoutNodes: Map<Key, LayoutNode>;
@@ -85,7 +85,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     this.rootNodes = [];
     this.lastWidth = 0;
     this.lastCollection = null;
-    this.defaultNoheaderCellWidth = options.defaultNoheaderCellWidth;
+    this.defaultHideHeaderCellWidth = options.defaultHideHeaderCellWidth;
   }
 
   getLayoutInfo(key: Key) {

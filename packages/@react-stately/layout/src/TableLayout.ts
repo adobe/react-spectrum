@@ -53,8 +53,8 @@ export class TableLayout<T> extends ListLayout<T> {
     for (let column of this.collection.columns) {
       let props = column.props as ColumnProps<T>;
       let width = props.width ?? props.defaultWidth;
-      if (!props.width && props.noHeader) {
-        width = this.defaultNoheaderCellWidth;
+      if (!props.width && props.hideHeader) {
+        width = this.defaultHideHeaderCellWidth;
       }
       if (width != null) {
         let w = this.parseWidth(width);

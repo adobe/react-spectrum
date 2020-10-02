@@ -40,7 +40,10 @@
   height: 100%;
 }
 
-.react-spectrum-Table-cell--noHeader {
-  margin: 0;
-  padding: 0 2px;
+.react-spectrum-Table-cell--hideHeader {
+  padding: 0;
+}
+
+.react-spectrum-Table-cellContents--hideHeader {
+  text-overflow: clip;
 }

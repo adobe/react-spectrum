@@ -42,6 +42,7 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
     }
   });
 
+  // Needed to pick up the focusable context, enabling things like Tooltips for example
   let {focusableProps} = useFocusable({}, ref);
   let ariaSort: HTMLAttributes<HTMLElement>['aria-sort'] = null;
   if (node.props.allowsSorting) {
