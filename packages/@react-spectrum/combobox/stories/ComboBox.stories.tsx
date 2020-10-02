@@ -109,7 +109,6 @@ storiesOf('ComboBox', module)
     'isOpen',
     () => (
       <div>
-        <div>Note: Combobox needs focus to show dropdown.</div>
         <ComboBox label="Combobox" isOpen {...actions}>
           <Item key="one">Item One</Item>
           <Item key="two" textValue="Item Two">
@@ -119,13 +118,13 @@ storiesOf('ComboBox', module)
           <Item key="three">Item Three</Item>
         </ComboBox>
       </div>
-    )
+    ),
+    {note: 'Combobox needs focus to show dropdown.'}
   )
   .add(
     'defaultOpen',
     () => (
       <div>
-        <div>Note: Combobox needs focus to show dropdown.</div>
         <ComboBox label="Combobox" defaultOpen {...actions}>
           <Item key="one">Item One</Item>
           <Item key="two" textValue="Item Two">
@@ -135,7 +134,8 @@ storiesOf('ComboBox', module)
           <Item key="three">Item Three</Item>
         </ComboBox>
       </div>
-    )
+    ),
+    {note: 'Combobox needs focus to show dropdown.'}
   )
   .add(
     'inputValue (controlled)',
@@ -321,7 +321,7 @@ let ControlledKeyComboBox = (props) => {
   return (
     <div>
       <div>Current selectedKey: {selectedKey}</div>
-      <ButtonGroup marginEnd="30px">
+      <ButtonGroup marginEnd="30px" UNSAFE_style={{verticalAlign: 'bottom'}}>
         <Button variant="secondary" onPress={() => setSelectedKey('3')}>
           <Text>Snake</Text>
         </Button>
@@ -353,7 +353,7 @@ let ControlledValueComboBox = (props) => {
   return (
     <div>
       <div>Current input value: {value}</div>
-      <ButtonGroup marginEnd="30px">
+      <ButtonGroup marginEnd="30px" UNSAFE_style={{verticalAlign: 'bottom'}}>
         <Button variant="secondary" onPress={() => setValue('Blah')}>
           <Text>Blah</Text>
         </Button>

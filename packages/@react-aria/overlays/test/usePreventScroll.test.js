@@ -15,7 +15,7 @@ import {render} from '@testing-library/react';
 import {usePreventScroll} from '..';
 
 function Example(props) {
-  usePreventScroll();
+  usePreventScroll(props);
   return (
     <div />
   );
@@ -45,6 +45,16 @@ describe('usePreventScroll', function () {
     expect(document.body).toHaveStyle('overflow: hidden');
 
     one.unmount();
+    expect(document.body).not.toHaveStyle('overflow: hidden');
+  });
+
+  it('should remove overflow: hidden when isDisabled option is true', function () {
+    expect(document.body).not.toHaveStyle('overflow: hidden');
+
+    let res = render(<Example />);
+    expect(document.body).toHaveStyle('overflow: hidden');
+
+    res.rerender(<Example isDisabled />);
     expect(document.body).not.toHaveStyle('overflow: hidden');
   });
 });

@@ -16,7 +16,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
-import userEvent from '@testing-library/user-event';
+import {typeText} from '@react-spectrum/test-utils';
 
 // a note for these tests, text selection is not working in jsdom, so on focus will not select the value already
 // in the numberfield
@@ -82,9 +82,9 @@ describe('NumberField', function () {
   `('$Name handles input change', () => {
     let {textField} = renderNumberField({onChange: onChangeSpy});
 
-    fireEvent.focus(textField);
-    act(() => {userEvent.type(textField, '5');});
-    fireEvent.blur(textField);
+    act(() => {textField.focus();});
+    typeText(textField, '5');
+    act(() => {textField.blur();});
     expect(onChangeSpy).toHaveBeenCalledWith(5);
   });
 
@@ -94,9 +94,9 @@ describe('NumberField', function () {
   `('$Name handles input change with custom step number', () => {
     let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, step: 5});
 
-    fireEvent.focus(textField);
-    act(() => {userEvent.type(textField, '2');});
-    fireEvent.blur(textField);
+    act(() => {textField.focus();});
+    typeText(textField, '2');
+    act(() => {textField.blur();});
     expect(onChangeSpy).toHaveBeenCalledWith(2);
     onChangeSpy.mockReset();
     triggerPress(incrementButton);
@@ -114,10 +114,10 @@ describe('NumberField', function () {
 
     expect(container).not.toHaveAttribute('aria-invalid');
 
-    fireEvent.focus(textField);
-    act(() => {userEvent.type(textField, '-1');});
+    act(() => {textField.focus();});
+    typeText(textField, '-1');
     expect(onChangeSpy).not.toHaveBeenCalled();
-    fireEvent.blur(textField);
+    act(() => {textField.blur();});
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(0);
     expect(textField).toHaveAttribute('value', '0');
@@ -137,10 +137,10 @@ describe('NumberField', function () {
     expect(container).not.toHaveAttribute('aria-invalid');
 
     // TODO: should the numberfield emit any onChange until blur or arrows?
-    fireEvent.focus(textField);
-    act(() => {userEvent.type(textField, '2');});
+    act(() => {textField.focus();});
+    typeText(textField, '2');
     expect(onChangeSpy).not.toHaveBeenCalled();
-    fireEvent.blur(textField);
+    act(() => {textField.blur();});
     expect(onChangeSpy).toHaveBeenCalledWith(1);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(textField).toHaveAttribute('value', '1');
@@ -189,7 +189,7 @@ describe('NumberField', function () {
 
     let {textField} = renderNumberField({onChange: onChangeSpy});
 
-    fireEvent.focus(textField);
+    act(() => {textField.focus();});
     act(() => {fireEvent.wheel(textField, {deltaY: 10});});
     expect(onChangeSpy).toHaveBeenCalledWith(-1);
   });
@@ -200,7 +200,7 @@ describe('NumberField', function () {
   `('$Name increment value when scrolling upwards', () => {
     let {textField} = renderNumberField({onChange: onChangeSpy});
 
-    fireEvent.focus(textField);
+    act(() => {textField.focus();});
     act(() => {fireEvent.wheel(textField, {deltaY: -10});});
     expect(onChangeSpy).toHaveBeenCalledWith(1);
   });
@@ -264,10 +264,10 @@ describe('NumberField', function () {
     ${'NumberField'}        | ${'98.543213'} | ${'98.54321'}
     ${'NumberField rounds'} | ${'98.543216'} | ${'98.54322'}
   `('$Name can have specified fraction digits', ({value, result}) => {
-    let {textField} = renderNumberField({showStepper: true, formatOptions: {maximumFractionDigits: 5}});
-    fireEvent.focus(textField);
-    act(() => {userEvent.type(textField, value);});
-    fireEvent.blur(textField);
+    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, formatOptions: {maximumFractionDigits: 5}});
+    act(() => {textField.focus();});
+    typeText(textField, value);
+    act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', result);
   });
 
@@ -301,7 +301,7 @@ describe('NumberField', function () {
     let {textField} = renderNumberField({showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
     expect(textField).toHaveAttribute('value', '€10.00');
-    fireEvent.focus(textField);
+    act(() => {textField.focus();});
     expect(textField).toHaveAttribute('value', '€10.00');
   });
 
@@ -314,9 +314,9 @@ describe('NumberField', function () {
     let {textField} = renderNumberField({showStepper: true, defaultValue: 10, ...props}, locale);
 
     expect(textField).toHaveAttribute('value', expected[0]);
-    fireEvent.focus(textField);
+    act(() => {textField.focus();});
     expect(textField).toHaveAttribute('value', expected[1]);
-    fireEvent.blur(textField);
+    act(() => {textField.blur();});
   });
 
   // must use js-escapes for negative currency arabic, otherwise jest won't recognize the result as being equal
@@ -347,7 +347,7 @@ describe('NumberField', function () {
   `('$Name pressing up arrow & down arrow keeps focus state formatting', ({props, locale, expected}) => {
     let {textField} = renderNumberField({showStepper: true, defaultValue: 10, ...props}, locale);
 
-    fireEvent.focus(textField);
+    act(() => {textField.focus();});
     expect(textField).toHaveAttribute('value', expected[0]);
     fireEvent.keyDown(textField, {key: 'ArrowUp'});
     fireEvent.keyUp(textField, {key: 'ArrowUp'});
@@ -357,7 +357,7 @@ describe('NumberField', function () {
     fireEvent.keyDown(textField, {key: 'ArrowDown'});
     fireEvent.keyUp(textField, {key: 'ArrowDown'});
     expect(textField).toHaveAttribute('value', expected[2]);
-    fireEvent.blur(textField);
+    act(() => {textField.blur();});
     // after blur, we should go to the formatted version
     expect(textField).toHaveAttribute('value', expected[3]);
   });
@@ -369,12 +369,12 @@ describe('NumberField', function () {
     let {textField} = renderNumberField({showStepper: true, defaultValue: 10});
 
     expect(textField).toHaveAttribute('value', '10');
-    act(() => {userEvent.type(textField, '-');});
-    fireEvent.blur(textField);
+    typeText(textField, '-');
+    act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '10');
-    fireEvent.focus(textField);
+    act(() => {textField.focus();});
     expect(textField).toHaveAttribute('value', '10');
-    fireEvent.blur(textField);
+    act(() => {textField.blur();});
   });
 
   it.each`
@@ -385,19 +385,15 @@ describe('NumberField', function () {
   `('$Name typing in locale stays consistent', ({props, locale, keystrokes, expected}) => {
     let {textField} = renderNumberField({showStepper: true, onChange: onChangeSpy, ...props}, locale);
 
-    fireEvent.focus(textField);
+    act(() => {textField.focus();});
     expect(textField).toHaveAttribute('value', '');
-    act(() => {
-      userEvent.type(textField, keystrokes[0]);
-    });
+    typeText(textField, keystrokes[0]);
     expect(onChangeSpy).toHaveBeenCalledWith(4);
     expect(textField).toHaveAttribute('value', expected[0]);
-    act(() => {
-      userEvent.type(textField, keystrokes[1]);
-    });
+    typeText(textField, keystrokes[1]);
     expect(onChangeSpy).toHaveBeenCalledWith(42);
     expect(textField).toHaveAttribute('value', expected[1]);
-    fireEvent.blur(textField);
+    act(() => {textField.blur();});
     // after blur, we should go to the formatted version
     expect(textField).toHaveAttribute('value', expected[2]);
   });
@@ -405,7 +401,7 @@ describe('NumberField', function () {
   it('advances automatically if the arrows are held down', () => {
     let {textField, incrementButton, decrementButton} = renderNumberField({showStepper: true, defaultValue: 10, onChange: onChangeSpy});
 
-    fireEvent.focus(textField);
+    act(() => {textField.focus();});
     fireEvent.mouseDown(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(11);
     act(() => {jest.advanceTimersByTime(399);});
@@ -448,8 +444,8 @@ describe('NumberField', function () {
   `('$Name handles input change with custom decimal step number', () => {
     let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, step: 0.001});
 
-    fireEvent.focus(textField);
-    act(() => {userEvent.type(textField, '1');});
+    act(() => {textField.focus();});
+    typeText(textField, '1');
     triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(1.001);
     triggerPress(incrementButton);
@@ -458,7 +454,7 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledWith(1.003);
     triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(1.004);
-    fireEvent.blur(textField);
+    act(() => {textField.blur();});
   });
 
   // not sure why this one won't work, it looked like select() was added to jsdom 5 years ago
@@ -471,10 +467,10 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '100');
     // after we focus, we should have all 0f '100' selected, we can prove this by typing something into the input
     // if it wasn't all selected, then we'd still see some of the old value, instead we want to only see the new value
-    fireEvent.focus(textField);
-    act(() => {userEvent.type(textField, '3');});
+    act(() => {textField.focus();});
+    typeText(textField, '3');
     expect(textField).toHaveAttribute('value', '3');
-    fireEvent.blur(textField);
+    act(() => {textField.blur();});
   });
 
   it.each`

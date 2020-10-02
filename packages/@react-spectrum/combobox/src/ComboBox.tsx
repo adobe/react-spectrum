@@ -74,16 +74,16 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     state
   );
 
+  let isMobile = useMediaQuery('(max-width: 700px)');
   let {overlayProps, placement} = useOverlayPosition({
     targetRef: unwrapDOMRef(triggerRef),
     overlayRef: unwrapDOMRef(popoverRef),
     scrollRef: listboxRef,
     placement: `${direction} end` as Placement,
     shouldFlip: shouldFlip,
-    isOpen: state.isOpen
+    isOpen: state.isOpen && !isMobile,
+    onClose: state.close
   });
-
-  let isMobile = useMediaQuery('(max-width: 700px)');
 
   let comboBoxAutoFocus;
   // Focus first/last item on menu open if focusStategy is set (done by up/down arrows)

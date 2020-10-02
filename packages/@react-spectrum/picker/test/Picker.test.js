@@ -32,6 +32,7 @@ describe('Picker', function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.useFakeTimers();
   });
@@ -284,6 +285,59 @@ describe('Picker', function () {
       expect(items[2]).toHaveTextContent('Three');
 
       expect(document.activeElement).toBe(items[2]);
+    });
+
+    it('can change item focus with arrow keys, even for item key=""', function () {
+      let onOpenChange = jest.fn();
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Picker label="Test" onOpenChange={onOpenChange}>
+            <Item key="1">One</Item>
+            <Item key="">Two</Item>
+            <Item key="3">Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      expect(() => getByRole('listbox')).toThrow();
+
+      let picker = getByRole('button');
+      act(() => {fireEvent.keyDown(picker, {key: 'ArrowDown'});});
+      act(() => {fireEvent.keyUp(picker, {key: 'ArrowDown'});});
+      act(() => jest.runAllTimers());
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      expect(onOpenChange).toBeCalledTimes(1);
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(picker).toHaveAttribute('aria-expanded', 'true');
+      expect(picker).toHaveAttribute('aria-controls', listbox.id);
+
+      let items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(3);
+      expect(items[0]).toHaveTextContent('One');
+      expect(items[1]).toHaveTextContent('Two');
+      expect(items[2]).toHaveTextContent('Three');
+
+      expect(document.activeElement).toBe(items[0]);
+
+      act(() => {fireEvent.keyDown(listbox, {key: 'ArrowDown'});});
+      act(() => {fireEvent.keyUp(listbox, {key: 'ArrowDown'});});
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toBe(items[1]);
+
+      act(() => {fireEvent.keyDown(listbox, {key: 'ArrowDown'});});
+      act(() => {fireEvent.keyUp(listbox, {key: 'ArrowDown'});});
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toBe(items[2]);
+
+      act(() => {fireEvent.keyDown(listbox, {key: 'ArrowUp'});});
+      act(() => {fireEvent.keyUp(listbox, {key: 'ArrowUp'});});
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toBe(items[1]);
     });
 
     it('supports controlled open state', function () {
@@ -915,6 +969,72 @@ describe('Picker', function () {
       expect(picker).toHaveTextContent('Three');
     });
 
+    it('can select items with falsy keys', function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Picker label="Test" onSelectionChange={onSelectionChange}>
+            <Item key="">Empty</Item>
+            <Item key={0}>Zero</Item>
+            <Item key={false}>False</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let picker = getByRole('button');
+      expect(picker).toHaveTextContent('Select an option…');
+      act(() => triggerPress(picker));
+      act(() => jest.runAllTimers());
+
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(3);
+      expect(items[0]).toHaveTextContent('Empty');
+      expect(items[1]).toHaveTextContent('Zero');
+      expect(items[2]).toHaveTextContent('False');
+
+      expect(document.activeElement).toBe(listbox);
+
+      act(() => triggerPress(items[0]));
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenLastCalledWith('');
+      act(() => jest.runAllTimers());
+      expect(listbox).not.toBeInTheDocument();
+
+      expect(document.activeElement).toBe(picker);
+      expect(picker).toHaveTextContent('Empty');
+
+      act(() => triggerPress(picker));
+      act(() => jest.runAllTimers());
+
+      listbox = getByRole('listbox');
+      let item1 = within(listbox).getByText('Zero');
+
+      act(() => triggerPress(item1));
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(onSelectionChange).toHaveBeenLastCalledWith('0');
+      act(() => jest.runAllTimers());
+      expect(listbox).not.toBeInTheDocument();
+
+      expect(document.activeElement).toBe(picker);
+      expect(picker).toHaveTextContent('Zero');
+
+      act(() => triggerPress(picker));
+      act(() => jest.runAllTimers());
+
+      listbox = getByRole('listbox');
+      let item2 = within(listbox).getByText('False');
+
+      act(() => triggerPress(item2));
+      expect(onSelectionChange).toHaveBeenCalledTimes(3);
+      expect(onSelectionChange).toHaveBeenLastCalledWith('false');
+      act(() => jest.runAllTimers());
+      expect(listbox).not.toBeInTheDocument();
+
+      expect(document.activeElement).toBe(picker);
+      expect(picker).toHaveTextContent('False');
+    });
+
+
     it('can select items with the Space key', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
@@ -1361,6 +1481,7 @@ describe('Picker', function () {
             <Item key="one">One</Item>
             <Item key="two">Two</Item>
             <Item key="three">Three</Item>
+            <Item key="">None</Item>
           </Picker>
         </Provider>
       );
@@ -1373,7 +1494,7 @@ describe('Picker', function () {
 
       let listbox = getByRole('listbox');
       let items = within(listbox).getAllByRole('option');
-      expect(items.length).toBe(3);
+      expect(items.length).toBe(4);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
       expect(items[2]).toHaveTextContent('Three');
@@ -1397,6 +1518,22 @@ describe('Picker', function () {
 
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
+
+      act(() => jest.advanceTimersByTime(500));
+      act(() => picker.focus());
+      act(() => {fireEvent.keyDown(picker, {key: 'ArrowDown'});});
+      act(() => jest.runAllTimers());
+      listbox = getByRole('listbox');
+      items = within(listbox).getAllByRole('option');
+      expect(document.activeElement).toBe(items[2]);
+      act(() => {fireEvent.keyDown(listbox, {key: 'n'});});
+      act(() => {fireEvent.keyDown(document.activeElement, {key: 'Enter'});});
+      act(() => {fireEvent.keyUp(document.activeElement, {key: 'Enter'});});
+      act(() => jest.runAllTimers());
+      expect(listbox).not.toBeInTheDocument();
+      expect(picker).toHaveTextContent('None');
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(onSelectionChange).toHaveBeenLastCalledWith('');
     });
 
     it('does not deselect when pressing an already selected item', function () {

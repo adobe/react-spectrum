@@ -121,13 +121,14 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       }
     };
 
-    ref.current.addEventListener(
+    let inputRef = ref.current;
+    inputRef.addEventListener(
       'wheel',
       handleInputScrollWheel,
       {passive: false}
     );
     return () => {
-      ref.current.removeEventListener(
+      inputRef.removeEventListener(
         'wheel',
         handleInputScrollWheel
       );

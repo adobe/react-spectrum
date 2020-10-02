@@ -26,6 +26,7 @@ import React, {
 import {Rect, Size} from '@react-stately/virtualizer';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
+import {useResizeObserver} from '@react-aria/utils';
 
 interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   contentSize: Size,
@@ -121,38 +122,33 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     };
   }, []);
 
-  useLayoutEffect(() => {
-    // TODO: resize observer
-    // https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver
-    let updateSize = () => {
-      let dom = ref.current;
-      if (!dom) {
-        return;
-      }
+  let updateSize = useCallback(() => {
+    let dom = ref.current;
+    if (!dom) {
+      return;
+    }
 
-      let w = dom.clientWidth;
-      let h = dom.clientHeight;
-      if (sizeToFit && contentSize.width > 0 && contentSize.height > 0) {
-        if (sizeToFit === 'width') {
-          w = Math.min(w, contentSize.width);
-        } else if (sizeToFit === 'height') {
-          h = Math.min(h, contentSize.height);
-        }
+    let w = dom.clientWidth;
+    let h = dom.clientHeight;
+    if (sizeToFit && contentSize.width > 0 && contentSize.height > 0) {
+      if (sizeToFit === 'width') {
+        w = Math.min(w, contentSize.width);
+      } else if (sizeToFit === 'height') {
+        h = Math.min(h, contentSize.height);
       }
+    }
 
-      if (state.width !== w || state.height !== h) {
-        state.width = w;
-        state.height = h;
-        onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, w, h));
-      }
-    };
-
-    updateSize();
-    window.addEventListener('resize', updateSize, false);
-    return () => {
-      window.removeEventListener('resize', updateSize, false);
-    };
+    if (state.width !== w || state.height !== h) {
+      state.width = w;
+      state.height = h;
+      onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, w, h));
+    }
   }, [onVisibleRectChange, ref, state, sizeToFit, contentSize]);
+
+  useLayoutEffect(() => {
+    updateSize();
+  }, [updateSize]);
+  useResizeObserver({ref, onResize: updateSize});
 
   let style: React.CSSProperties = {
     // Reset padding so that relative positioning works correctly. Padding will be done in JS layout.

@@ -225,6 +225,7 @@ const CATEGORY_ORDER = [
   '...',
   'Content',
   'Internationalization',
+  'Server Side Rendering',
   'Utilities'
 ];
 
@@ -327,14 +328,14 @@ function Nav({currentPageName, pages}) {
   }
 
   return (
-    <nav className={docStyles.nav}>
+    <nav className={docStyles.nav} aria-labelledby="nav-title-id">
       <header>
         {currentParts.length > 1 &&
           <a href="../index.html" className={docStyles.backBtn}>
             <ChevronLeft aria-label="Back" />
           </a>
         }
-        <a href={isBlog ? '/index.html' : './index.html'} className={docStyles.homeBtn}>
+        <a href={isBlog ? '/index.html' : './index.html'} className={docStyles.homeBtn} id="nav-title-id">
           <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe">
             <polygon points="19,0 30,0 30,26" />
             <polygon points="11.1,0 0,0 0,26" />
@@ -353,7 +354,7 @@ function Nav({currentPageName, pages}) {
             <li className={sideNavStyles['spectrum-SideNav-item']}>
               <h3 className={sideNavStyles['spectrum-SideNav-heading']} id={headingId}>{key}</h3>
               <ul className={sideNavStyles['spectrum-SideNav']} aria-labelledby={headingId}>
-                {pageMap[key].sort((a, b) => a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
+                {pageMap[key].sort((a, b) => (a.order || 0) < (b.order || 0) || a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
               </ul>
             </li>
           );

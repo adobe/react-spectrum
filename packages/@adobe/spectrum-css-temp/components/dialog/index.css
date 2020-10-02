@@ -285,7 +285,7 @@ governing permissions and limitations under the License.
     padding-block-start: 0px;
   }
 
-  .spectrum-Dialog-footer {
+  .spectrum-Dialog-footer, .spectrum-Dialog-typeIcon, .spectrum-Dialog-closeButton {
     display: none;
   }
 

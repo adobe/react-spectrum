@@ -21,7 +21,7 @@ import userEvent from '@testing-library/user-event';
 
 let items = [
   {name: 'Tab 1', children: 'Tab 1 body'},
-  {name: 'Tab 2', children: 'Tab 2 body'},
+  {name: '', children: 'Tab 2 body'},
   {name: 'Tab 3', children: 'Tab 3 body'}
 ];
 
