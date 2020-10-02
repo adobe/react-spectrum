@@ -31,7 +31,7 @@ storiesOf('RangeSlider', module)
   )
   .add(
     'custom width',
-    () => render({label: 'Label', width: '200px'})
+    () => render({label: 'Label', width: '300px'})
   )
   .add(
     'label overflow',

@@ -116,9 +116,9 @@ export function useSlider(
         state.setThumbDragging(realTimeTrackDraggingIndex.current, true);
         state.setThumbValue(index, value);
 
-        document.addEventListener('mouseup', onUpTrack, false);
-        document.addEventListener('touchend', onUpTrack, false);
-        document.addEventListener('pointerup', onUpTrack, false);
+        trackRef.current.addEventListener('mouseup', onUpTrack, {capture: true});
+        trackRef.current.addEventListener('touchend', onUpTrack, {capture: true});
+        trackRef.current.addEventListener('pointerup', onUpTrack, {capture: true});
       } else {
         realTimeTrackDraggingIndex.current = null;
       }
@@ -130,9 +130,10 @@ export function useSlider(
       state.setThumbDragging(realTimeTrackDraggingIndex.current, false);
       realTimeTrackDraggingIndex.current = null;
     }
-    document.removeEventListener('mouseup', onUpTrack, false);
-    document.removeEventListener('touchend', onUpTrack, false);
-    document.removeEventListener('pointerup', onUpTrack, false);
+
+    trackRef.current.removeEventListener('mouseup', onUpTrack, {capture: true});
+    trackRef.current.removeEventListener('touchend', onUpTrack, {capture: true});
+    trackRef.current.removeEventListener('pointerup', onUpTrack, {capture: true});
   };
 
   return {
@@ -147,7 +148,7 @@ export function useSlider(
     trackProps: mergeProps({
       onMouseDown(e: React.MouseEvent<HTMLElement>) { onDownTrack(e, e.clientX); },
       onPointerDown(e: React.PointerEvent<HTMLElement>) { onDownTrack(e, e.clientX); },
-      onTouchStart(e: React.TouchEvent<HTMLElement>) { onDownTrack(e, e.touches[0].clientX); }
+      onTouchStart(e: React.TouchEvent<HTMLElement>) { onDownTrack(e, e.targetTouches[0].clientX); }
     }, moveProps)
   };
 }

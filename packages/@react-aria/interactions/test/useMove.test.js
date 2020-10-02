@@ -23,8 +23,6 @@ function Example(props) {
 }
 
 describe('useMove', function () {
-  // TODO test: end event has different target than start
-
   beforeAll(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
     jest.useFakeTimers();
@@ -54,12 +52,32 @@ describe('useMove', function () {
 
       let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
 
-      fireEvent.mouseDown(el, {pageX: 1, pageY: 30});
+      fireEvent.mouseDown(el, {button: 0, pageX: 1, pageY: 30});
       expect(events).toStrictEqual([]);
-      fireEvent.mouseMove(el, {pageX: 10, pageY: 25});
+      fireEvent.mouseMove(el, {button: 0, pageX: 10, pageY: 25});
       expect(events).toStrictEqual([{type: 'movestart', pointerType: 'mouse'}, {type: 'move', pointerType: 'mouse', deltaX: 9, deltaY: -5}]);
       fireEvent.mouseUp(el);
       expect(events).toStrictEqual([{type: 'movestart', pointerType: 'mouse'}, {type: 'move', pointerType: 'mouse', deltaX: 9, deltaY: -5}, {type: 'moveend', pointerType: 'mouse'}]);
+    });
+
+    it('doesn\'t respond to right click', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let tree = render(
+        <Example
+          onMoveStart={addEvent}
+          onMove={addEvent}
+          onMoveEnd={addEvent} />
+      );
+
+      let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
+
+      fireEvent.mouseDown(el, {button: 2, pageX: 1, pageY: 30});
+      expect(events).toStrictEqual([]);
+      fireEvent.mouseMove(el, {button: 2, pageX: 10, pageY: 25});
+      expect(events).toStrictEqual([]);
+      fireEvent.mouseUp(el, {button: 2, pageX: 10, pageY: 25});
+      expect(events).toStrictEqual([]);
     });
 
     it('doesn\'t fire anything when clicking', function () {
@@ -74,8 +92,8 @@ describe('useMove', function () {
 
       let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
 
-      fireEvent.mouseDown(el, {pageX: 1, pageY: 30});
-      fireEvent.mouseUp(el);
+      fireEvent.mouseDown(el, {button: 0, pageX: 1, pageY: 30});
+      fireEvent.mouseUp(el, {button: 0, pageX: 1, pageY: 30});
       expect(events).toStrictEqual([]);
     });
   });
@@ -93,11 +111,11 @@ describe('useMove', function () {
 
       let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
 
-      fireEvent.touchStart(el, {targetTouches: [{pageX: 1, pageY: 30}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, pageX: 1, pageY: 30}]});
       expect(events).toStrictEqual([]);
-      fireEvent.touchMove(el, {targetTouches: [{pageX: 10, pageY: 25}]});
+      fireEvent.touchMove(el, {changedTouches: [{identifier: 1, pageX: 10, pageY: 25}]});
       expect(events).toStrictEqual([{type: 'movestart', pointerType: 'touch'}, {type: 'move', pointerType: 'touch', deltaX: 9, deltaY: -5}]);
-      fireEvent.touchEnd(el);
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX: 10, pageY: 25}]});
       expect(events).toStrictEqual([{type: 'movestart', pointerType: 'touch'}, {type: 'move', pointerType: 'touch', deltaX: 9, deltaY: -5}, {type: 'moveend', pointerType: 'touch'}]);
     });
 
@@ -113,11 +131,11 @@ describe('useMove', function () {
 
       let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
 
-      fireEvent.touchStart(el, {targetTouches: [{pageX: 1, pageY: 30}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, pageX: 1, pageY: 30}]});
       expect(events).toStrictEqual([]);
-      fireEvent.touchMove(el, {targetTouches: [{pageX: 10, pageY: 25}]});
+      fireEvent.touchMove(el, {changedTouches: [{identifier: 1, pageX: 10, pageY: 25}]});
       expect(events).toStrictEqual([{type: 'movestart', pointerType: 'touch'}, {type: 'move', pointerType: 'touch', deltaX: 9, deltaY: -5}]);
-      fireEvent.touchCancel(el);
+      fireEvent.touchCancel(el, {changedTouches: [{identifier: 1, pageX: 10, pageY: 25}]});
       expect(events).toStrictEqual([{type: 'movestart', pointerType: 'touch'}, {type: 'move', pointerType: 'touch', deltaX: 9, deltaY: -5}, {type: 'moveend', pointerType: 'touch'}]);
     });
 
@@ -133,8 +151,8 @@ describe('useMove', function () {
 
       let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
 
-      fireEvent.touchStart(el, {targetTouches: [{pageX: 1, pageY: 30}]});
-      fireEvent.touchEnd(el);
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, pageX: 1, pageY: 30}]});
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX: 1, pageY: 30}]});
       expect(events).toStrictEqual([]);
     });
   });
@@ -161,11 +179,11 @@ describe('useMove', function () {
       let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
 
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
-      fireEvent.touchStart(el, {targetTouches: [{pageX: 1, pageY: 30}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, pageX: 1, pageY: 30}]});
       expect(document.documentElement.style.webkitUserSelect).toBe('none');
-      fireEvent.touchMove(el, {targetTouches: [{pageX: 10, pageY: 25}]});
+      fireEvent.touchMove(el, {changedTouches: [{identifier: 1, pageX: 10, pageY: 25}]});
       expect(document.documentElement.style.webkitUserSelect).toBe('none');
-      fireEvent.touchEnd(el);
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX: 10, pageY: 25}]});
       expect(document.documentElement.style.webkitUserSelect).toBe('none');
       jest.advanceTimersByTime(300);
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
@@ -191,11 +209,11 @@ describe('useMove', function () {
 
     let [, el] = tree.getAllByTestId(EXAMPLE_ELEMENT_TESTID);
 
-    fireEvent.touchStart(el, {targetTouches: [{pageX: 1, pageY: 30}]});
+    fireEvent.touchStart(el, {targetTouches: [{identifier: 1, pageX: 1, pageY: 30}]});
     expect(eventsChild).toStrictEqual([]);
-    fireEvent.touchMove(el, {targetTouches: [{pageX: 10, pageY: 25}]});
+    fireEvent.touchMove(el, {changedTouches: [{identifier: 1, pageX: 10, pageY: 25}]});
     expect(eventsChild).toStrictEqual([{type: 'movestart', pointerType: 'touch'}, {type: 'move', pointerType: 'touch', deltaX: 9, deltaY: -5}]);
-    fireEvent.touchEnd(el);
+    fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX: 10, pageY: 25}]});
     expect(eventsChild).toStrictEqual([{type: 'movestart', pointerType: 'touch'}, {type: 'move', pointerType: 'touch', deltaX: 9, deltaY: -5}, {type: 'moveend', pointerType: 'touch'}]);
     expect(eventsParent).toStrictEqual([]);
 
@@ -223,8 +241,6 @@ describe('useMove', function () {
       fireEvent.keyDown(el, {key: Key});
       expect(events).toStrictEqual([{type: 'movestart', pointerType: 'keyboard'}, {type: 'move', pointerType: 'keyboard', ...Result}, {type: 'moveend', pointerType: 'keyboard'}]);
     });
-
-    // TODO should the arrow keys bubble through? should useMove call e.preventDefault()?
 
     it('allows handling other key events', function () {
       let events = [];
@@ -261,12 +277,32 @@ describe('useMove', function () {
 
       let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
 
-      fireEvent.pointerDown(el, {pointerType: 'pen', pageX: 1, pageY: 30});
+      fireEvent.pointerDown(el, {pointerType: 'pen', pointerId: 1, pageX: 1, pageY: 30});
       expect(events).toStrictEqual([]);
-      fireEvent.pointerMove(el, {pointerType: 'pen', pageX: 10, pageY: 25});
+      fireEvent.pointerMove(el, {pointerType: 'pen', pointerId: 1, pageX: 10, pageY: 25});
       expect(events).toStrictEqual([{type: 'movestart', pointerType: 'pen'}, {type: 'move', pointerType: 'pen', deltaX: 9, deltaY: -5}]);
-      fireEvent.pointerUp(el, {pointerType: 'pen'});
+      fireEvent.pointerUp(el, {pointerType: 'pen', pointerId: 1});
       expect(events).toStrictEqual([{type: 'movestart', pointerType: 'pen'}, {type: 'move', pointerType: 'pen', deltaX: 9, deltaY: -5}, {type: 'moveend', pointerType: 'pen'}]);
+    });
+
+    it('doesn\'t respond to right click', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let tree = render(
+        <Example
+          onMoveStart={addEvent}
+          onMove={addEvent}
+          onMoveEnd={addEvent} />
+      );
+
+      let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
+
+      fireEvent.pointerDown(el, {pointerType: 'pen', pointerId: 1, pageX: 1, pageY: 30, button: 2});
+      expect(events).toStrictEqual([]);
+      fireEvent.pointerMove(el, {pointerType: 'pen', pointerId: 1, pageX: 10, pageY: 25, button: 2});
+      expect(events).toStrictEqual([]);
+      fireEvent.pointerUp(el, {pointerType: 'pen', pointerId: 1, pageX: 10, pageY: 25, button: 2});
+      expect(events).toStrictEqual([]);
     });
 
     it('ends with pointercancel', function () {
@@ -281,11 +317,11 @@ describe('useMove', function () {
 
       let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
 
-      fireEvent.pointerDown(el, {pointerType: 'pen', pageX: 1, pageY: 30});
+      fireEvent.pointerDown(el, {pointerType: 'pen', pointerId: 1, pageX: 1, pageY: 30});
       expect(events).toStrictEqual([]);
-      fireEvent.pointerMove(el, {pointerType: 'pen', pageX: 10, pageY: 25});
+      fireEvent.pointerMove(el, {pointerType: 'pen', pointerId: 1, pageX: 10, pageY: 25});
       expect(events).toStrictEqual([{type: 'movestart', pointerType: 'pen'}, {type: 'move', pointerType: 'pen', deltaX: 9, deltaY: -5}]);
-      fireEvent.pointerCancel(el, {pointerType: 'pen'});
+      fireEvent.pointerCancel(el, {pointerType: 'pen', pointerId: 1});
       expect(events).toStrictEqual([{type: 'movestart', pointerType: 'pen'}, {type: 'move', pointerType: 'pen', deltaX: 9, deltaY: -5}, {type: 'moveend', pointerType: 'pen'}]);
     });
 
@@ -301,8 +337,8 @@ describe('useMove', function () {
 
       let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
 
-      fireEvent.pointerDown(el, {pointerType: 'pen', pageX: 1, pageY: 30});
-      fireEvent.pointerUp(el, {pointerType: 'pen'});
+      fireEvent.pointerDown(el, {pointerType: 'pen', pointerId: 1, pageX: 1, pageY: 30});
+      fireEvent.pointerUp(el, {pointerType: 'pen', pointerId: 1, pageX: 1, pageY: 30});
       expect(events).toStrictEqual([]);
     });
   });

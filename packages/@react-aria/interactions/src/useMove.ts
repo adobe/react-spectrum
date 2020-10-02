@@ -39,36 +39,25 @@ export interface MoveProps {
   onMoveEnd?: (e: MoveEndEvent) => void
 }
 
-// const currentTargets: Set<HTMLElement> = new Set();
-let currentTarget: HTMLElement | null = null;
-
 export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
   let {onMoveStart, onMove, onMoveEnd} = props;
 
-  let state = useRef({movedAfterDown: false, previousPosition: null});
+  let state = useRef<{
+    didMove: boolean,
+    lastPosition: {pageX: number, pageY: number} | null,
+    id: number | null
+  }>({didMove: false, lastPosition: null, id: null});
 
   let moveProps = useMemo(() => {
     let moveProps: HTMLAttributes<HTMLElement> = {};
 
-    let start = (target?: any) => {
-      // Only move innermost element that is using useMove, not potential parents.
-      if (target) {
-        if (currentTarget) {
-          return false;
-        }
-        // if ([...currentTargets].some(e => e.contains(target))) {
-        //   return false;
-        // }
-        // currentTargets.add(target);
-        currentTarget = target;
-      }
+    let start = () => {
       disableTextSelection();
-      state.current.movedAfterDown = false;
-      return true;
+      state.current.didMove = false;
     };
     let move = (pointerType: BaseMoveEvent['pointerType'], deltaX: number, deltaY: number) => {
-      if (!state.current.movedAfterDown) {
-        state.current.movedAfterDown = true;
+      if (!state.current.didMove) {
+        state.current.didMove = true;
         onMoveStart?.({
           type: 'movestart',
           pointerType
@@ -81,18 +70,9 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
         deltaY: deltaY
       });
     };
-    let end = (pointerType: BaseMoveEvent['pointerType']/* , target?: any */) => {
-      currentTarget = null;
-      // if (target) {
-        // for (let e of currentTargets) {
-        //   // The cursor might be let go on some parent element.
-        //   if (target.contains(e) || e.contains(target)) {
-        //     currentTargets.delete(e);
-        //   }
-        // }
-      // }
+    let end = (pointerType: BaseMoveEvent['pointerType']) => {
       restoreTextSelection();
-      if (state.current.movedAfterDown) {
+      if (state.current.didMove) {
         onMoveEnd?.({
           type: 'moveend',
           pointerType
@@ -102,73 +82,95 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
 
     if (typeof PointerEvent === 'undefined') {
       let onMouseMove = (e: MouseEvent) => {
-        move('mouse', e.pageX - state.current.previousPosition.pageX, e.pageY - state.current.previousPosition.pageY);
-        state.current.previousPosition = {pageX: e.pageX, pageY: e.pageY};
+        if (e.button === 0) {
+          move('mouse', e.pageX - state.current.lastPosition.pageX, e.pageY - state.current.lastPosition.pageY);
+          state.current.lastPosition = {pageX: e.pageX, pageY: e.pageY};
+        }
       };
-      let onMouseUp = (/* e: MouseEvent */) => {
-        end('mouse'/* , e.target */);
-        window.removeEventListener('mousemove', onMouseMove, false);
-        window.removeEventListener('mouseup', onMouseUp, false);
+      let onMouseUp = (e: MouseEvent) => {
+        if (e.button === 0) {
+          end('mouse');
+          window.removeEventListener('mousemove', onMouseMove, false);
+          window.removeEventListener('mouseup', onMouseUp, false);
+        }
       };
       moveProps.onMouseDown = (e: React.MouseEvent) => {
-        if (e.button === 0 && start(e.target)) {
+        if (e.button === 0) {
+          start();
           e.stopPropagation();
           e.preventDefault();
-          state.current.previousPosition = {pageX: e.pageX, pageY: e.pageY};
+          state.current.lastPosition = {pageX: e.pageX, pageY: e.pageY};
           window.addEventListener('mousemove', onMouseMove, false);
           window.addEventListener('mouseup', onMouseUp, false);
         }
       };
 
       let onTouchMove = (e: TouchEvent) => {
-        // TODO which touch?
-        let {pageX, pageY} = e.targetTouches[0];
-        move('touch', pageX - state.current.previousPosition.pageX, pageY - state.current.previousPosition.pageY);
-        state.current.previousPosition = {pageX, pageY};
+        // @ts-ignore
+        let touch = [...e.changedTouches].findIndex(({identifier}) => identifier === state.current.id);
+        if (touch >= 0) {
+          let {pageX, pageY} = e.changedTouches[touch];
+          move('touch', pageX - state.current.lastPosition.pageX, pageY - state.current.lastPosition.pageY);
+          state.current.lastPosition = {pageX, pageY};
+        }
       };
-      let onTouchEnd = (/* e: TouchEvent */) => {
-        end('touch'/* , e.target */);
-        window.removeEventListener('touchmove', onTouchMove);
-        window.removeEventListener('touchend', onTouchEnd);
-        window.removeEventListener('touchcancel', onTouchEnd);
+      let onTouchEnd = (e: TouchEvent) => {
+        // @ts-ignore
+        let touch = [...e.changedTouches].findIndex(({identifier}) => identifier === state.current.id);
+        if (touch >= 0) {
+          end('touch');
+          window.removeEventListener('touchmove', onTouchMove);
+          window.removeEventListener('touchend', onTouchEnd);
+          window.removeEventListener('touchcancel', onTouchEnd);
+        }
       };
       moveProps.onTouchStart = (e: React.TouchEvent) => {
-        if (start(e.target)) {
-          e.stopPropagation();
-          e.preventDefault();
-          let {pageX, pageY} = e.targetTouches[0];
-          state.current.previousPosition = {pageX, pageY};
-          window.addEventListener('touchmove', onTouchMove, false);
-          window.addEventListener('touchend', onTouchEnd, false);
-          window.addEventListener('touchcancel', onTouchEnd, false);
+        if (e.targetTouches.length === 0) {
+          return;
         }
+
+        let {pageX, pageY, identifier} = e.targetTouches[0];
+        start();
+        e.stopPropagation();
+        e.preventDefault();
+        state.current.lastPosition = {pageX, pageY};
+        state.current.id = identifier;
+        window.addEventListener('touchmove', onTouchMove, false);
+        window.addEventListener('touchend', onTouchEnd, false);
+        window.addEventListener('touchcancel', onTouchEnd, false);
       };
     } else {
       let onPointerMove = (e: PointerEvent) => {
-        // @ts-ignore
-        let pointerType: BaseMoveEvent['pointerType'] = e.pointerType || 'mouse';
+        if (e.pointerId === state.current.id) {
+          // @ts-ignore
+          let pointerType: BaseMoveEvent['pointerType'] = e.pointerType || 'mouse';
 
-        // Problems with PointerEvent#movementX/movementY:
-        // 1. it is always 0 on macOS Safari.
-        // 2. On Chrome Android, it's scaled by devicePixelRatio, but not on Chrome macOS
-        move(pointerType, e.pageX - state.current.previousPosition.pageX, e.pageY - state.current.previousPosition.pageY);
-        state.current.previousPosition = {pageX: e.pageX, pageY: e.pageY};
+          // Problems with PointerEvent#movementX/movementY:
+          // 1. it is always 0 on macOS Safari.
+          // 2. On Chrome Android, it's scaled by devicePixelRatio, but not on Chrome macOS
+          move(pointerType, e.pageX - state.current.lastPosition.pageX, e.pageY - state.current.lastPosition.pageY);
+          state.current.lastPosition = {pageX: e.pageX, pageY: e.pageY};
+        }
       };
 
       let onPointerUp = (e: PointerEvent) => {
-        // @ts-ignore
-        let pointerType: BaseMoveEvent['pointerType'] = e.pointerType || 'mouse';
-        end(pointerType/* , e.target */);
-        window.removeEventListener('pointermove', onPointerMove, false);
-        window.removeEventListener('pointerup', onPointerUp, false);
-        window.removeEventListener('pointercancel', onPointerUp, false);
+        if (e.pointerId === state.current.id) {
+            // @ts-ignore
+          let pointerType: BaseMoveEvent['pointerType'] = e.pointerType || 'mouse';
+          end(pointerType/* , e.target */);
+          window.removeEventListener('pointermove', onPointerMove, false);
+          window.removeEventListener('pointerup', onPointerUp, false);
+          window.removeEventListener('pointercancel', onPointerUp, false);
+        }
       };
 
       moveProps.onPointerDown = (e: React.PointerEvent) => {
-        if (e.button === 0 && start(e.target)) {
+        if (e.button === 0) {
+          start();
           e.stopPropagation();
           e.preventDefault();
-          state.current.previousPosition = {pageX: e.pageX, pageY: e.pageY};
+          state.current.lastPosition = {pageX: e.pageX, pageY: e.pageY};
+          state.current.id = e.pointerId;
           window.addEventListener('pointermove', onPointerMove, false);
           window.addEventListener('pointerup', onPointerUp, false);
           window.addEventListener('pointercancel', onPointerUp, false);

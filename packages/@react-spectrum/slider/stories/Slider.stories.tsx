@@ -11,6 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Flex} from '@adobe/react-spectrum';
 import React, {useState} from 'react';
 import {Slider} from '../';
 import {SpectrumSliderProps} from '@react-types/slider';
@@ -24,6 +25,13 @@ storiesOf('Slider', module)
   .add(
     'label',
     () => render({label: 'Label'})
+  )
+  .add(
+    'multitouch',
+    () => (<Flex direction="column" gap="size-1000">
+      {render({label: 'Label'})}
+      {render({label: 'Label'})}
+    </Flex>)
   )
   .add(
     'isDisabled',

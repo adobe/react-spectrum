@@ -14,11 +14,12 @@
 
 import {action} from '@storybook/addon-actions';
 import {clamp} from '@react-aria/utils';
+import {Flex} from '@react-spectrum/layout';
 import React, {useRef, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useMove} from '../';
 
-export function useClampedMove(props) {
+function useClampedMove(props) {
   let currentPosition = useRef<{x?: number, y?: number}>();
 
   let {getCurrentState, onMoveTo, onMoveStart, onMoveEnd, reverseX = false, reverseY = false} = props;
@@ -43,6 +44,25 @@ export function useClampedMove(props) {
   return moveProps;
 }
 
+function Ball1D() {
+  let [state, setState] = useState({x: 0, color: 'black'});
+
+  let props = useClampedMove({
+    linear: 'horizontal',
+    reverseY: true,
+    onMoveStart() { setState((state) => ({...state, color: 'red'})); },
+    onMoveTo({x}) {
+      setState((state) => ({...state, x: clamp(x, 0, 200 - 30), y: 0}));
+    },
+    getCurrentState() { return {x: state.x, y: 0}; },
+    onMoveEnd() { setState((state) => ({...state, color: 'black'})); }
+  });
+
+  return (<div style={{width: '200px', height: '30px', background: 'white', border: '1px solid black', position: 'relative', touchAction: 'none'}}>
+    <div tabIndex={0} {...props} style={{width: '30px', height: '30px', borderRadius: '100%', position: 'absolute', left: state.x + 'px', background: state.color}} />
+  </div>);
+}
+
 storiesOf('useMove', module)
   .add(
     'Log',
@@ -58,24 +78,10 @@ storiesOf('useMove', module)
   )
   .add(
     'Ball 1D',
-    () => {
-      let [state, setState] = useState({x: 0, color: 'black'});
-
-      let props = useClampedMove({
-        linear: 'horizontal',
-        reverseY: true,
-        onMoveStart() { setState((state) => ({...state, color: 'red'})); },
-        onMoveTo({x}) {
-          setState((state) => ({...state, x: clamp(x, 0, 200 - 30), y: 0}));
-        },
-        getCurrentState() { return {x: state.x, y: 0}; },
-        onMoveEnd() { setState((state) => ({...state, color: 'black'})); }
-      });
-
-      return (<div style={{width: '200px', height: '30px', background: 'white', border: '1px solid black', position: 'relative', touchAction: 'none'}}>
-        <div tabIndex={0} {...props} style={{width: '30px', height: '30px', borderRadius: '100%', position: 'absolute', left: state.x + 'px', background: state.color}} />
-      </div>);
-    }
+    () => (<Flex direction="column" gap="size-1000">
+      <Ball1D />
+      <Ball1D />
+    </Flex>)
   )
   .add(
     'Ball 2D',
