@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {FocusableRef} from '@react-types/shared';
 import React, {CSSProperties, HTMLAttributes, MutableRefObject, ReactNode, useRef} from 'react';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import {SpectrumBarSliderBase, SpectrumSliderTicksBase} from '@react-types/slider';
@@ -34,7 +35,7 @@ export interface SliderBaseProps extends SpectrumBarSliderBase<number[]>, Spectr
   count: 1 | 2
 }
 
-function SliderBase(props: SliderBaseProps) {
+function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {
     tickCount, showTickLabels, tickLabels, isDisabled, count,
@@ -92,6 +93,8 @@ function SliderBase(props: SliderBaseProps) {
     inputProps[i] = v.inputProps;
     thumbProps[i] = v.thumbProps;
   }
+
+  let domRef = useFocusableRef(ref, inputRefs[0]);
 
   let ticks = null;
   if (tickCount > 0) {
@@ -152,6 +155,7 @@ function SliderBase(props: SliderBaseProps) {
 
   return (
     <div
+      ref={domRef}
       className={classNames(styles,
         'spectrum-Slider',
         {
@@ -189,5 +193,5 @@ function SliderBase(props: SliderBaseProps) {
   );
 }
 
-// TODO forwardref?
-export {SliderBase};
+const _SliderBase = React.forwardRef(SliderBase);
+export {_SliderBase as SliderBase};

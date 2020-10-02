@@ -12,6 +12,7 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {DEFAULT_MAX_VALUE, DEFAULT_MIN_VALUE} from '@react-stately/slider';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
@@ -22,7 +23,7 @@ import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-function RangeSlider(props: SpectrumRangeSliderProps) {
+function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
   let {onChange, value, defaultValue, ...otherProps} = props;
 
   let baseProps: Omit<SliderBaseProps, 'children'> = {
@@ -41,7 +42,7 @@ function RangeSlider(props: SpectrumRangeSliderProps) {
   let hovers = [useHover({}), useHover({})];
 
   return (
-    <SliderBase {...baseProps} classes={'spectrum-Slider--range'}>
+    <SliderBase {...baseProps} classes={'spectrum-Slider--range'} ref={ref}>
       {({state, thumbProps, inputRefs, inputProps, ticks}: SliderBaseChildArguments) => {
         let cssDirection = direction === 'rtl' ? 'right' : 'left';
 
@@ -81,5 +82,6 @@ function RangeSlider(props: SpectrumRangeSliderProps) {
     </SliderBase>);
 }
 
-// TODO forwardref?
-export {RangeSlider};
+
+const _RangeSlider = React.forwardRef(RangeSlider);
+export {_RangeSlider as RangeSlider};

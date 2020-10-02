@@ -12,6 +12,7 @@
 
 import {clamp, mergeProps} from '@react-aria/utils';
 import {classNames} from '@react-spectrum/utils';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
 import {SliderBase, SliderBaseChildArguments, SliderBaseProps} from './SliderBase';
@@ -21,7 +22,7 @@ import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-function Slider(props: SpectrumSliderProps) {
+function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
   let {onChange, value, defaultValue, isFilled, fillOffset, trackGradient, ...otherProps} = props;
 
   let baseProps: Omit<SliderBaseProps, 'children'> = {
@@ -41,6 +42,7 @@ function Slider(props: SpectrumSliderProps) {
   return (
     <SliderBase
       {...baseProps}
+      ref={ref}
       classes={{
         'spectrum-Slider--filled': isFilled && fillOffset == null
       }}
@@ -107,5 +109,5 @@ function Slider(props: SpectrumSliderProps) {
   );
 }
 
-// TODO forwardref?
-export {Slider};
+const _Slider = React.forwardRef(Slider);
+export {_Slider as Slider};
