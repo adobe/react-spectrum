@@ -22,10 +22,10 @@ export interface HexColorFieldState extends Omit<NumberFieldState, 'value' | 'se
   setInputValue: (value: string) => void
 }
 
-export const minColor = new Color('#000000');
-export const maxColor = new Color('#FFFFFF');
-let minColorInt = minColor.toHexInt();
-let maxColorInt = maxColor.toHexInt();
+export const MIN_COLOR = new Color('#000000');
+export const MAX_COLOR = new Color('#FFFFFF');
+const MIN_COLOR_INT = MIN_COLOR.toHexInt();
+const MAX_COLOR_INT = MAX_COLOR.toHexInt();
 
 export function useHexColorFieldState(
   props: HexColorFieldProps
@@ -48,10 +48,10 @@ export function useHexColorFieldState(
   let increment = useCallback(() => {
     setColorValue((prevColor: Color) => {
       let newColor = prevColor;
-      let prevColorInt = prevColor ? prevColor.toHexInt() : minColorInt;
+      let prevColorInt = prevColor ? prevColor.toHexInt() : MIN_COLOR_INT;
       let newColorString = prevColor ? prevColor.toString('hex') : '';
-      if (prevColorInt < maxColorInt) {
-        newColorString = `#${Math.min(prevColorInt + step, maxColorInt).toString(16).padStart(6, '0').toUpperCase()}`;
+      if (prevColorInt < MAX_COLOR_INT) {
+        newColorString = `#${Math.min(prevColorInt + step, MAX_COLOR_INT).toString(16).padStart(6, '0').toUpperCase()}`;
         newColor = new Color(newColorString);
       }
       setInputValue(newColorString);
@@ -61,8 +61,8 @@ export function useHexColorFieldState(
 
   let incrementToMax = useCallback(() => {
     setColorValue((prevColor: Color) => {
-      let newColor = maxColor;
-      if (prevColor && prevColor.toHexInt() === maxColorInt) {
+      let newColor = MAX_COLOR;
+      if (prevColor && prevColor.toHexInt() === MAX_COLOR_INT) {
         newColor = prevColor;
       }
       setInputValue(newColor.toString('hex'));
@@ -72,12 +72,12 @@ export function useHexColorFieldState(
 
   let decrement = useCallback(() => {
     setColorValue((prevColor: Color) => {
-      let newColor = prevColor ? prevColor : minColor;
+      let newColor = prevColor ? prevColor : MIN_COLOR;
       let newColorString = newColor.toString('hex');
       if (prevColor) {
         let prevColorInt = prevColor.toHexInt();
-        if (prevColorInt > minColorInt) {
-          newColorString = `#${Math.max(prevColorInt - step, minColorInt).toString(16).padStart(6, '0').toUpperCase()}`;
+        if (prevColorInt > MIN_COLOR_INT) {
+          newColorString = `#${Math.max(prevColorInt - step, MIN_COLOR_INT).toString(16).padStart(6, '0').toUpperCase()}`;
           newColor = new Color(newColorString);
         }
       }
@@ -88,8 +88,8 @@ export function useHexColorFieldState(
 
   let decrementToMin = useCallback(() => {
     setColorValue((prevColor: Color) => {
-      let newColor = minColor;
-      if (prevColor && prevColor.toHexInt() === minColorInt) {
+      let newColor = MIN_COLOR;
+      if (prevColor && prevColor.toHexInt() === MIN_COLOR_INT) {
         newColor = prevColor;
       }
       setInputValue(newColor.toString('hex'));

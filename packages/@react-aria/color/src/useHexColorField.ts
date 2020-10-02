@@ -13,8 +13,8 @@
 import {AriaHexColorFieldProps} from '@react-types/color';
 import {
   HexColorFieldState,
-  maxColor,
-  minColor
+  MAX_COLOR,
+  MIN_COLOR
 } from '@react-stately/color';
 import {
   HTMLAttributes,
@@ -59,8 +59,8 @@ export function useHexColorField(
       isDisabled,
       isReadOnly,
       isRequired,
-      maxValue: maxColor.toHexInt(),
-      minValue: minColor.toHexInt(),
+      maxValue: MAX_COLOR.toHexInt(),
+      minValue: MIN_COLOR.toHexInt(),
       onIncrement: increment,
       onIncrementToMax: incrementToMax,
       onDecrement: decrement,
