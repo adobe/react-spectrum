@@ -115,13 +115,14 @@ function ControlledHexColorField(props: any = {}) {
     setColor(color);
     if (props.onChange) { props.onChange(color); }
   };
+  let style = color ? {backgroundColor: color.toString('rgb')} : {};
   return (
     <Flex direction="row" gap="size-100" alignItems="end">
       <HexColorField
         label="Primary Color"
         onChange={onChange}
         value={color} />
-      <View width="size-400" height="size-400" UNSAFE_style={{backgroundColor: color.toString('rgb')}} />
+      <View width="size-400" height="size-400" UNSAFE_style={style} />
     </Flex>
   );
 }
