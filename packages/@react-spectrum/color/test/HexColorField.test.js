@@ -11,11 +11,7 @@
  */
 
 import {act, fireEvent, render} from '@testing-library/react';
-import {
-  Color,
-  maxColor,
-  minColor
-} from '@react-stately/color';
+import {Color} from '@react-stately/color';
 import {HexColorField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -269,6 +265,7 @@ describe('HexColorField', function () {
     let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe(initExpected);
 
+    let maxColor = new Color('#FFFFFF');
     fireEvent.keyDown(hexColorField, {key});
     fireEvent.keyUp(hexColorField, {key});
     expect(onChangeSpy).toHaveBeenCalledWith(maxColor);
@@ -290,6 +287,7 @@ describe('HexColorField', function () {
     let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe(initExpected);
 
+    let minColor = new Color('#000000');
     fireEvent.keyDown(hexColorField, {key});
     fireEvent.keyUp(hexColorField, {key});
     expect(onChangeSpy).toHaveBeenCalledWith(minColor);
