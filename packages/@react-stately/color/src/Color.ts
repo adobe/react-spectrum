@@ -242,6 +242,9 @@ class HSBColor implements ColorValue {
 
   setChannelValuePercent(channel: ColorChannel, value: number) {
     switch (channel) {
+      case 'hue':
+        this.hue = value * 360;
+        break;
       case 'saturation':
       case 'brightness':
         this[channel] = value * 100;
@@ -256,6 +259,9 @@ class HSBColor implements ColorValue {
 
   setChannelValue(channel: ColorChannel, value: number) {
     switch (channel) {
+      case 'hue':
+        this.hue = mod(value, 360);
+        break;
       case 'saturation':
       case 'brightness':
         this[channel] = clamp(value, 0, 100);
@@ -270,6 +276,9 @@ class HSBColor implements ColorValue {
 
   getChannelValuePercent(channel: ColorChannel) {
     switch (channel) {
+      case 'hue':
+        this.hue = this.hue / 360;
+        break;
       case 'saturation':
       case 'brightness':
         return this[channel] / 100;
@@ -281,7 +290,11 @@ class HSBColor implements ColorValue {
   }
 }
 
-const HSL_REGEX = /hsl\((-?\d+(?:.\d+)?\s?,\s?-?\d+(?:.\d+)?%\s?,\s?-?\d+(?:.\d+)?%)\)|hsla\((-?\d+(?:.\d+)?\s?,\s?-?\d+(?:.\d+)?%\s?,\s?-?\d+(?:.\d+)?%\s?,\s?-?\d(.\d+)?)\)/;
+// X = <negative/positive number with/without decimal places>
+// before/after a comma, an 0 or more whitespaces are allowed
+// - hsl(X, X%, X%)
+// - hsla(X, X%, X%, X)
+const HSL_REGEX = /hsl\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%)\)|hsla\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d(.\d+)?)\)/;
 
 function mod(n, m) {
   return ((n % m) + m) % m;

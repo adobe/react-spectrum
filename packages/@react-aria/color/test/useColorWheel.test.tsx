@@ -45,7 +45,7 @@ function ColorWheel(props: ColorWheelProps) {
   }, state);
 
   return (<div data-testid="container" {...containerProps} ref={containerRef}>
-    <div data-testid="thumb" data-dragging={state.dragging} {...thumbProps} style={{transform: `translate(${x}, ${y})`}}>
+    <div data-testid="thumb" {...thumbProps} style={{transform: `translate(${x}, ${y})`}}>
       <input {...inputProps} ref={inputRef} />
     </div>
   </div>);
@@ -56,6 +56,22 @@ describe('useColorWheel', () => {
 
   afterEach(() => {
     onChangeSpy.mockClear();
+  });
+
+  beforeAll(() => {
+    // @ts-ignore
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => cb());
+    jest.useFakeTimers();
+  });
+  afterAll(() => {
+    jest.useRealTimers();
+    // @ts-ignore
+    window.requestAnimationFrame.mockRestore();
+  });
+
+  afterEach(() => {
+    // for restoreTextSelection
+    jest.runAllTimers();
   });
 
   it('sets input props', () => {
@@ -160,14 +176,22 @@ describe('useColorWheel', () => {
   });
 
   describe.each`
-    type                | actions                                                                 | prepare
-    ${'Mouse Events'}   | ${[fireEvent.mouseDown, fireEvent.mouseMove, fireEvent.mouseUp]}        | ${installMouseEvent}
-    ${'Pointer Events'} | ${[fireEvent.pointerDown, fireEvent.pointerMove, fireEvent.pointerUp]}  | ${installPointerEvent}
-    ${'Touch Events'}   | ${[
-      (el, {pageX, pageY}) => fireEvent.touchStart(el, {targetTouches: [{pageX, pageY}]}),
-      (el, {pageX, pageY}) => fireEvent.touchMove(el, {targetTouches: [{pageX, pageY}]}),
-      (el, {pageX, pageY}) => fireEvent.touchEnd(el, {targetTouches: [{pageX, pageY}]})
-    ]}      | ${() => {}}
+    type                | prepare               | actions
+    ${'Mouse Events'}   | ${installMouseEvent}  | ${[
+      (el, {pageX, pageY}) => fireEvent.mouseDown(el, {button: 0, pageX, pageY}),
+      (el, {pageX, pageY}) => fireEvent.mouseMove(el, {button: 0, pageX, pageY}),
+      (el, {pageX, pageY}) => fireEvent.mouseUp(el, {button: 0, pageX, pageY})
+    ]}
+    ${'Pointer Events'} | ${installPointerEvent}| ${[
+      (el, {pageX, pageY}) => fireEvent.pointerDown(el, {button: 0, pointerId: 1, pageX, pageY}),
+      (el, {pageX, pageY}) => fireEvent.pointerMove(el, {button: 0, pointerId: 1, pageX, pageY}),
+      (el, {pageX, pageY}) => fireEvent.pointerUp(el, {button: 0, pointerId: 1, pageX, pageY})
+    ]}
+    ${'Touch Events'}   | ${() => {}}           | ${[
+      (el, {pageX, pageY}) => fireEvent.touchStart(el, {targetTouches: [{identifier: 1, pageX, pageY}]}),
+      (el, {pageX, pageY}) => fireEvent.touchMove(el, {changedTouches: [{identifier: 1, pageX, pageY}]}),
+      (el, {pageX, pageY}) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX, pageY}]})
+    ]}
   `('$type', ({actions: [start, move, end], prepare}) => {
     prepare();
 
@@ -182,18 +206,15 @@ describe('useColorWheel', () => {
       expect(document.activeElement).not.toBe(slider);
       start(thumb, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
       expect(onChangeSpy).toHaveBeenCalledTimes(0);
-      expect(thumb.dataset.dragging).toBe('true');
       expect(document.activeElement).toBe(slider);
 
       move(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 90).toString('hsla'));
-      expect(thumb.dataset.dragging).toBe('true');
       expect(document.activeElement).toBe(slider);
 
       end(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      expect(thumb.dataset.dragging).toBe('false');
       expect(document.activeElement).toBe(slider);
     });
 
@@ -208,17 +229,14 @@ describe('useColorWheel', () => {
       expect(document.activeElement).not.toBe(slider);
       start(thumb, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
       expect(onChangeSpy).toHaveBeenCalledTimes(0);
-      expect(thumb.dataset.dragging).toBe('false');
       expect(document.activeElement).not.toBe(slider);
 
       move(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
       expect(onChangeSpy).toHaveBeenCalledTimes(0);
-      expect(thumb.dataset.dragging).toBe('false');
       expect(document.activeElement).not.toBe(slider);
 
       end(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
       expect(onChangeSpy).toHaveBeenCalledTimes(0);
-      expect(thumb.dataset.dragging).toBe('false');
       expect(document.activeElement).not.toBe(slider);
     });
 
@@ -250,25 +268,21 @@ describe('useColorWheel', () => {
       start(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 90).toString('hsla'));
-      expect(thumb.dataset.dragging).toBe('true');
       expect(document.activeElement).toBe(slider);
 
       move(thumb, {pageX: CENTER - THUMB_RADIUS, pageY: CENTER});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
       expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 180).toString('hsla'));
-      expect(thumb.dataset.dragging).toBe('true');
       expect(document.activeElement).toBe(slider);
 
       end(thumb, {pageX: CENTER - THUMB_RADIUS, pageY: CENTER});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
-      expect(thumb.dataset.dragging).toBe('false');
       expect(document.activeElement).toBe(slider);
     });
 
     it('clicking and dragging on the track doesn\'t work when disabled', () => {
       let defaultColor = new Color('hsl(0, 100%, 50%)');
       let {getByRole, getByTestId} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} isDisabled />);
-      let thumb = getByTestId('thumb');
       let slider = getByRole('slider');
       let container = getByTestId('container');
       container.getBoundingClientRect = getBoundingClientRect;
@@ -276,17 +290,14 @@ describe('useColorWheel', () => {
       expect(document.activeElement).not.toBe(slider);
       start(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
       expect(onChangeSpy).toHaveBeenCalledTimes(0);
-      expect(thumb.dataset.dragging).toBe('false');
       expect(document.activeElement).not.toBe(slider);
 
       move(container, {pageX: CENTER - THUMB_RADIUS, pageY: CENTER});
       expect(onChangeSpy).toHaveBeenCalledTimes(0);
-      expect(thumb.dataset.dragging).toBe('false');
       expect(document.activeElement).not.toBe(slider);
 
       end(container, {pageX: CENTER - THUMB_RADIUS, pageY: CENTER});
       expect(onChangeSpy).toHaveBeenCalledTimes(0);
-      expect(thumb.dataset.dragging).toBe('false');
       expect(document.activeElement).not.toBe(slider);
     });
 

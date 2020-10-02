@@ -43,14 +43,13 @@ function ColorWheel(props: SpectrumColorWheelProps) {
     if (containerRef.current) {
       setWheelRadius(containerRef.current.offsetWidth / 2);
     }
-  }, [containerRef]);
+  }, [size, containerRef]);
 
   let state = useColorWheelState(props);
   let {containerProps, inputProps, thumbProps, thumbPosition: {x, y}} = useColorWheel({
     ...props,
     inputRef,
     containerRef,
-    // TODO How is a custom wheel size specified? This needs to be recalculated
     innerRadius: wheelRadius * RATIO_INNER_OUTER,
     outerRadius: wheelRadius
   }, state);

@@ -11,9 +11,20 @@
  */
 
 import {Color} from './Color';
-import {ColorWheelProps, ColorWheelState} from '@react-types/color';
+import {ColorWheelProps} from '@react-types/color';
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
+
+export interface ColorWheelState {
+  readonly value: Color,
+  setValue(value: string | Color): void,
+
+  readonly hue: number,
+  setHue(value: number): void,
+
+  dragging: boolean,
+  setDragging(value: boolean): void
+}
 
 function normalizeColor(v: string | Color) {
   if (typeof v === 'string') {

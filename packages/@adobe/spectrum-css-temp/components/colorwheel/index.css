@@ -36,6 +36,7 @@
   border-radius: var(--spectrum-colorwheel-border-radius);
 
   user-select: none;
+  touch-action: none;
   cursor: default;
 
   &.is-focused {

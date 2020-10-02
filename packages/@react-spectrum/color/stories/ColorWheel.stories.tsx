@@ -32,7 +32,16 @@ storiesOf('ColorWheel', module)
   )
   .add(
     'custom size',
-    () => <ColorWheel defaultValue={new Color('hsl(0, 100%, 50%)')} size="size-1000" />
+    () => {
+      let [size, setSize] = useState('50vh');
+      return (<Flex direction="column" alignItems="center" gap="size-200">
+        <Flex direction="row">
+          <button onClick={() => setSize('size-1000')}>size-1000</button>
+          <button onClick={() => setSize('size-2000')}>size-2000</button>
+        </Flex>
+        <ColorWheel defaultValue={new Color('hsl(0, 100%, 50%)')} size={size} />
+      </Flex>);
+    }
   )
   .add(
     'controlled',

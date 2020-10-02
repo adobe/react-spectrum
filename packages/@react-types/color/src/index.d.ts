@@ -13,24 +13,13 @@
 import {BaseSliderProps} from '@react-types/slider';
 import {Color} from '@react-stately/color';
 import {DimensionValue, StyleProps, ValueBase} from '@react-types/shared';
-import {HTMLAttributes, InputHTMLAttributes, RefObject} from 'react';
+import {RefObject} from 'react';
 
 /** A list of supported color formats. */
 export type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hsb' | 'hsba';
 
 /** A list of color channels. */
 export type ColorChannel = 'hue' | 'saturation' | 'brightness' | 'lightness' | 'red' | 'green' | 'blue' | 'alpha';
-
-export interface ColorWheelState {
-  readonly value: Color,
-  setValue(value: string | Color): void,
-
-  readonly hue: number,
-  setHue(value: number): void,
-
-  dragging: boolean,
-  setDragging(value: boolean): void
-}
 
 // @ts-ignore
 export interface ColorWheelProps extends BaseSliderProps, ValueBase<Color>, Omit<StyleProps, 'width', 'height'> {
@@ -46,13 +35,6 @@ export interface ColorWheelAriaProps extends ColorWheelProps {
   containerRef: RefObject<HTMLElement>,
   innerRadius: number,
   outerRadius: number
-}
-
-export interface ColorWheelAriaResult {
-  thumbProps: HTMLAttributes<HTMLElement>,
-  containerProps: HTMLAttributes<HTMLElement>,
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
-  thumbPosition: {x: number, y: number}
 }
 
 export interface SpectrumColorWheelProps extends ColorWheelProps {
