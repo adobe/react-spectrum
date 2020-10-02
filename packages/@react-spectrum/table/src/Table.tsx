@@ -412,6 +412,7 @@ function TableSelectAllCell({column}) {
   return (
     <div
       {...mergeProps(columnHeaderProps, hoverProps)}
+      aria-disabled={isSingleSelectionMode}
       ref={ref}
       className={
         classNames(
