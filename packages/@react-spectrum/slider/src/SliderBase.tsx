@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {BaseSliderProps, SpectrumSliderTicksBase} from '@react-types/slider';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {LabelPosition, Orientation, StyleProps, ValueBase} from '@react-types/shared';
 import React, {CSSProperties, HTMLAttributes, MutableRefObject, ReactNode, useRef} from 'react';
 import {SliderState, useSliderState} from '@react-stately/slider';
+import {SpectrumBarSliderBase, SpectrumSliderTicksBase} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useLocale, useNumberFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -28,17 +27,11 @@ export interface SliderBaseChildArguments {
   state: SliderState
 }
 
-export interface SliderBaseProps extends BaseSliderProps, ValueBase<number[]>, SpectrumSliderTicksBase, StyleProps {
+export interface SliderBaseProps extends SpectrumBarSliderBase<number[]>, SpectrumSliderTicksBase {
   children: (SliderBaseChildArguments) => ReactNode,
-  formatOptions?: Intl.NumberFormatOptions,
   classes?: string[] | Object,
   style?: CSSProperties,
-  count: 1 | 2,
-  // SpectrumBarSliderBase:
-  orientation?: Orientation,
-  labelPosition?: LabelPosition,
-  valueLabel?: ReactNode,
-  showValueLabel?: boolean
+  count: 1 | 2
 }
 
 function SliderBase(props: SliderBaseProps) {
@@ -61,8 +54,11 @@ function SliderBase(props: SliderBaseProps) {
   if (alwaysDisplaySign) {
     if (formatOptions != null) {
       if (!('signDisplay' in formatOptions)) {
-        // @ts-ignore
-        formatOptions.signDisplay = 'exceptZero';
+        formatOptions = {
+          ...formatOptions,
+          // @ts-ignore
+          signDisplay: 'exceptZero'
+        };
       }
     } else {
       // @ts-ignore

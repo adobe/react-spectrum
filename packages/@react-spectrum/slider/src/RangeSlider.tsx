@@ -60,7 +60,7 @@ function RangeSlider(props: SpectrumRangeSliderProps) {
           style={{[cssDirection]: `${state.getThumbPercent(i) * 100}%`}}
           {...mergeProps(thumbProps[i], hovers[i].hoverProps)}
           role="presentation">
-          <VisuallyHidden isFocusable>
+          <VisuallyHidden>
             <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRefs[i]} {...inputProps[i]} />
           </VisuallyHidden>
         </div>));

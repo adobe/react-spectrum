@@ -19,7 +19,7 @@ import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
 
-describe('Slider', function () {
+describe('RangeSlider', function () {
   it('supports aria-label', function () {
     let {getByRole} = render(<RangeSlider aria-label="The Label" />);
 

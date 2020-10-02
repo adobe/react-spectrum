@@ -82,7 +82,7 @@ function Slider(props: SpectrumSliderProps) {
           }}
           {...mergeProps(thumbProps, hoverProps)}
           role="presentation">
-          <VisuallyHidden isFocusable>
+          <VisuallyHidden>
             <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRef} {...inputProps} />
           </VisuallyHidden>
         </div>);
