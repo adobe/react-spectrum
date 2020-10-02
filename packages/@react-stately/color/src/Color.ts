@@ -77,20 +77,14 @@ export class Color {
     throw new Error('Unsupported color channel: ' + channel);
   }
 
-  getChannelValuePercent(channel: ColorChannel): number {
-    return this.value.getChannelValuePercent(channel);
-  }
-
   withChannelValue(channel: ColorChannel, value: number): Color {
-    let x = Color.fromColorValue(this.value.clone());
-    x.value.setChannelValue(channel, value);
-    return x;
-  }
+    if (channel in this.value) {
+      let x = Color.fromColorValue(this.value.clone());
+      x.value[channel] = value;
+      return x;
+    }
 
-  withChannelValuePercent(channel: ColorChannel, value: number): Color {
-    let x = Color.fromColorValue(this.value.clone());
-    x.value.setChannelValuePercent(channel, value);
-    return x;
+    throw new Error('Unsupported color channel: ' + channel);
   }
 }
 
@@ -99,13 +93,16 @@ interface ColorValue {
   toHSB(): ColorValue,
   toHSL(): ColorValue,
   toString(format: ColorFormat | 'css'): string,
-  clone(): ColorValue,
-  setChannelValue(format: ColorChannel, value: number): void,
-  setChannelValuePercent(format: ColorChannel, value: number): void,
-  getChannelValuePercent(format: ColorChannel): number
+  clone(): ColorValue
 }
 
 const HEX_REGEX = /^#(?:([0-9a-f]{3})|([0-9a-f]{6}))$/i;
+
+// X = <negative/positive number with/without decimal places>
+// before/after a comma, 0 or more whitespaces are allowed
+// - rgb(X, X, X)
+// - rgba(X, X, X, X)
+const RGB_REGEX = /rgb\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?)\)|rgba\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d(.\d+)?)\)/;
 
 class RGBColor implements ColorValue {
   constructor(private red: number, private green: number, private blue: number, private alpha: number) {}
@@ -124,8 +121,9 @@ class RGBColor implements ColorValue {
         let b = parseInt(m[2][4] + m[2][5], 16);
         return new RGBColor(r, g, b, 1);
       }
-    } else {
-      // TODO: check rgb and rgba strings
+    } if ((m = value.match(RGB_REGEX))) {
+      const [r, g, b, a] = (m[1] ?? m[2]).split(',').map(n => Number(n.trim()));
+      return new RGBColor(clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255), clamp(a ?? 1, 0, 1));
     }
   }
 
@@ -158,47 +156,6 @@ class RGBColor implements ColorValue {
 
   clone(): ColorValue {
     return new RGBColor(this.red, this.green, this.blue, this.alpha);
-  }
-
-  setChannelValuePercent(channel: ColorChannel, value: number) {
-    switch (channel) {
-      case 'red':
-      case 'green':
-      case 'blue':
-        this[channel] = value * 255;
-        break;
-      case 'alpha':
-        this.alpha = value;
-        break;
-      default:
-        throw new Error('Unkown channel for RGB: ' + channel);
-    }
-  }
-
-  setChannelValue(channel: ColorChannel, value: number) {
-    switch (channel) {
-      case 'red':
-      case 'green':
-      case 'blue':
-      case 'alpha':
-        this[channel] = value;
-        break;
-      default:
-        throw new Error('Unkown channel for RGB: ' + channel);
-    }
-  }
-
-  getChannelValuePercent(channel: ColorChannel) {
-    switch (channel) {
-      case 'red':
-      case 'green':
-      case 'blue':
-        return this[channel] / 255;
-      case 'alpha':
-        return this.alpha;
-      default:
-        throw new Error('Unkown channel for RGB: ' + channel);
-    }
   }
 }
 
@@ -239,59 +196,10 @@ class HSBColor implements ColorValue {
   clone(): ColorValue {
     return new HSBColor(this.hue, this.saturation, this.brightness, this.alpha);
   }
-
-  setChannelValuePercent(channel: ColorChannel, value: number) {
-    switch (channel) {
-      case 'hue':
-        this.hue = value * 360;
-        break;
-      case 'saturation':
-      case 'brightness':
-        this[channel] = value * 100;
-        break;
-      case 'alpha':
-        this.alpha = value;
-        break;
-      default:
-        throw new Error('Unkown channel for HSB: ' + channel);
-    }
-  }
-
-  setChannelValue(channel: ColorChannel, value: number) {
-    switch (channel) {
-      case 'hue':
-        this.hue = mod(value, 360);
-        break;
-      case 'saturation':
-      case 'brightness':
-        this[channel] = clamp(value, 0, 100);
-        break;
-      case 'alpha':
-        this.alpha = clamp(value, 0, 1);
-        break;
-      default:
-        throw new Error('Unkown channel for HSB: ' + channel);
-    }
-  }
-
-  getChannelValuePercent(channel: ColorChannel) {
-    switch (channel) {
-      case 'hue':
-        this.hue = this.hue / 360;
-        break;
-      case 'saturation':
-      case 'brightness':
-        return this[channel] / 100;
-      case 'alpha':
-        return this.alpha;
-      default:
-        throw new Error('Unkown channel for HSB: ' + channel);
-    }
-  }
 }
 
 // X = <negative/positive number with/without decimal places>
-// before/after a comma, an 0 or more whitespaces are allowed
+// before/after a comma, 0 or more whitespaces are allowed
 // - hsl(X, X%, X%)
 // - hsla(X, X%, X%, X)
 const HSL_REGEX = /hsl\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%)\)|hsla\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d(.\d+)?)\)/;
@@ -339,53 +247,5 @@ class HSLColor implements ColorValue {
 
   clone(): ColorValue {
     return new HSLColor(this.hue, this.saturation, this.lightness, this.alpha);
-  }
-
-  setChannelValuePercent(channel: ColorChannel, value: number) {
-    switch (channel) {
-      case 'hue':
-        this[channel] = value * 360;
-        break;
-      case 'saturation':
-      case 'lightness':
-        this[channel] = value * 100;
-        break;
-      case 'alpha':
-        this.alpha = value;
-        break;
-      default:
-        throw new Error('Unkown channel for HSL: ' + channel);
-    }
-  }
-
-  setChannelValue(channel: ColorChannel, value: number) {
-    switch (channel) {
-      case 'hue':
-        this.hue = mod(value, 360);
-        break;
-      case 'saturation':
-      case 'lightness':
-        this[channel] = clamp(value, 0, 100);
-        break;
-      case 'alpha':
-        this.alpha = clamp(value, 0, 1);
-        break;
-      default:
-        throw new Error('Unkown channel for HSB: ' + channel);
-    }
-  }
-
-  getChannelValuePercent(channel: ColorChannel) {
-    switch (channel) {
-      case 'hue':
-        return this[channel] / 360;
-      case 'saturation':
-      case 'lightness':
-        return this[channel] / 100;
-      case 'alpha':
-        return this.alpha;
-      default:
-        throw new Error('Unkown channel for HSL: ' + channel);
-    }
   }
 }

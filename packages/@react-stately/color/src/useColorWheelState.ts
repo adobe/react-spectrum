@@ -40,6 +40,10 @@ function roundToStep(value: number, step: number): number {
   return Math.round(value / step) * step;
 }
 
+function mod(n, m) {
+  return ((n % m) + m) % m;
+}
+
 export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
   let {value, defaultValue, onChange, step = 1} = props;
 
@@ -59,7 +63,7 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
 
     hue: state.getChannelValue('hue'),
     setHue(value) {
-      value = roundToStep(value, step);
+      value = roundToStep(mod(value, 360), step);
       if (state.getChannelValue('hue') !== value) {
         setState(state.withChannelValue('hue', value));
       }
