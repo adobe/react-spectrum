@@ -134,6 +134,36 @@ export function useNumberFieldState(
     return 'latin';
   };
 
+  // not sure best way to go about this given that numbers can have
+  // max/min sigfigs and decimals, and some of the
+  // formats have defaults, like currency
+  // so take the approach of formatting our value
+  // then joining together the relevant parts
+  // then parsing that joined result back to a number
+  // this should round us as the formatter does
+  let roundValueUsingFormatter = (value: number): number => {
+    let parts = inputValueFormatter.formatToParts(value);
+    let result = parts.map((part) => {
+      switch (part.type) {
+        case 'currency':
+        case 'nan':
+        case 'plusSign':
+        case 'percentSign':
+        case 'group':
+        case 'infinity':
+        case 'literal':
+          return '';
+        case 'minusSign':
+        case 'decimal':
+        case 'fraction':
+        case 'integer':
+        default:
+          return part.value;
+      }
+    }).join('');
+    return numberParser.parse(result);
+  }
+
   // if minus sign or parens is typed, auto switch the sign?
   // take some inspiration from datepicker to display parts?
   let setValue = (value: string) => {
@@ -148,7 +178,8 @@ export function useNumberFieldState(
 
     // If new value is a number less than max and more than min then update the number value
     if (!isNaN(newValue) && newValue < maxValue && newValue > minValue) {
-      setNumberValue(newValue);
+      let roundedValue = roundValueUsingFormatter(newValue)
+      setNumberValue(roundedValue);
       tempNum.current = NaN;
     } else if (!isNaN(newValue)) {
       tempNum.current = newValue;

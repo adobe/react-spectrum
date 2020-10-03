@@ -253,6 +253,26 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
+  `('$Name properly will return the same number from onChange as is displayed', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 10, formatOptions: {maximumFractionDigits: 2}});
+
+    expect(textField).toHaveAttribute('value', '10');
+    typeText(textField, '.01');
+    expect(textField).toHaveAttribute('value', '10.01');
+    expect(onChangeSpy).toHaveBeenLastCalledWith(10.01);
+    onChangeSpy.mockReset();
+
+    typeText(textField, '45');
+    expect(textField).toHaveAttribute('value', '10.0145');
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '10.01');
+    expect(onChangeSpy).not.toHaveBeenCalled();
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
   `('$Name properly formats defaultValue', () => {
     let {textField} = renderNumberField({showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
