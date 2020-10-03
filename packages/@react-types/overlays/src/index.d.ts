@@ -97,7 +97,7 @@ export interface TrayProps extends StyleProps, OverlayProps {
   isOpen?: boolean,
   onClose?: () => void,
   shouldCloseOnBlur?: boolean,
-  lockHeightToMax?: boolean
+  isFixedHeight?: boolean
 }
 
 export interface OverlayTriggerProps {
