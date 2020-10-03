@@ -89,8 +89,8 @@ function Table<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLD
     estimatedHeadingHeight: props.overflowMode === 'wrap'
       ? DEFAULT_HEADER_HEIGHT[scale]
       : null,
-    getDefaultWidth: ({width, hideHeader, isSelectionCell}) => {
-      if (isNaN(width) && hideHeader) {
+    getDefaultWidth: ({hideHeader, isSelectionCell}) => {
+      if (hideHeader) {
         return  DEFAULT_HIDE_HEADER_CELL_WIDTH[scale];
       } else if (isSelectionCell) {
         return SELECTION_CELL_DEFAULT_WIDTH;
@@ -409,7 +409,7 @@ function TableColumnHeader({column}) {
             )
           )
         }>
-        {!columnProps?.hideHeader && column.rendered}
+        {!columnProps.hideHeader && column.rendered}
         {columnProps.allowsSorting &&
           <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />
         }
