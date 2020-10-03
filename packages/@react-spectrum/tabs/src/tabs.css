@@ -17,6 +17,10 @@
   height: 100%;
 }
 
+.react-spectrum-Tabs--hidden {
+  visibility: hidden;
+}
+
 .react-spectrum-TabPanel--vertical {
   display: flex;
   flex-direction: row;

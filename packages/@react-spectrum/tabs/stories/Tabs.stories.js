@@ -12,6 +12,8 @@
 
 import {action} from '@storybook/addon-actions';
 import Bookmark from '@spectrum-icons/workflow/Bookmark';
+import {Button} from '@react-spectrum/button';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
 import Calendar from '@spectrum-icons/workflow/Calendar';
 import {Content, Heading, Item, Text} from '@adobe/react-spectrum';
 import Dashboard from '@spectrum-icons/workflow/Dashboard';
@@ -90,6 +92,12 @@ storiesOf('Tabs', module)
   .add(
     'middle disabled',
     () => render({disabledKeys: ['val2']})
+  )
+  // TODO ask if this is supposed to be overflowMode or behavior that is always applied
+  // TODO add a quiet and density compact version of below
+  .add(
+    'collapses',
+    () => renderMany()
   );
 
 function render(props = {}) {
@@ -199,6 +207,34 @@ function renderWithFalsyKey(props = {}) {
           </Text>
         </Content>
       </Item>
+    </Tabs>
+  );
+}
+
+function renderMany(props = {}) {
+  let items = [
+    {name: 'Tab 1', children: 'Tab Body 1', icon: <Dashboard size="S" />},
+    {name: 'Tab 2', children: 'Tab Body 2', icon: <Calendar size="S" />},
+    {name: 'Tab 3', children: 'Tab Body 3', icon: <Bookmark size="S" />},
+    {name: 'Tab 4', children: 'Tab Body 4', icon: <Dashboard size="S" />},
+    {name: 'Tab 5', children: 'Tab Body 5', icon: <Calendar size="S" />},
+    {name: 'Tab 6', children: 'Tab Body 6', icon: <Bookmark size="S" />}
+  ];
+
+  return (
+    <Tabs {...props} maxWidth={500} onSelectionChange={action('onSelectionChange')}>
+      {items.map(item => (
+        <Item key={item.name} title={item.name} icon={item.icon}>
+          <Content margin="size-160">
+            <Heading>{item.children}</Heading>
+            <Text>
+              Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+              Id cupidatat aute id ut excepteur exercitation magna pariatur. Mollit irure irure reprehenderit pariatur eiusmod proident Lorem deserunt duis cillum mollit. Do reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum. Velit aliquip commodo ea ipsum incididunt culpa nostrud deserunt incididunt exercitation. In quis proident sit ad dolore tempor. Eiusmod pariatur quis commodo labore cupidatat cillum enim eiusmod voluptate laborum culpa. Laborum cupidatat incididunt velit voluptate incididunt occaecat quis do.
+              Consequat adipisicing irure Lorem commodo officia sint id. Velit sit magna aliquip eiusmod non id deserunt. Magna veniam ad consequat dolor cupidatat esse enim Lorem ullamco. Anim excepteur consectetur id in. Mollit laboris duis labore enim duis esse reprehenderit.
+            </Text>
+          </Content>
+        </Item>
+      ))}
     </Tabs>
   );
 }
