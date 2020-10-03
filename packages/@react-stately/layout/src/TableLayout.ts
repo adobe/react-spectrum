@@ -64,7 +64,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let remainingSpace = this.virtualizer.visibleRect.width;
     for (let column of this.collection.columns) {
       let props = column.props as ColumnProps<T>;
-      let width = props.width ?? this.getDefaultWidth(props);
+      let width = props.width ?? props.defaultWidth ?? this.getDefaultWidth(props);
       if (width != null) {
         let w = this.parseWidth(width);
         this.columnWidths.set(column.key, w);

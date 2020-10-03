@@ -89,14 +89,12 @@ function Table<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLD
     estimatedHeadingHeight: props.overflowMode === 'wrap'
       ? DEFAULT_HEADER_HEIGHT[scale]
       : null,
-    getDefaultWidth: ({defaultWidth, width, hideHeader, isSelectionCell}) => {
-      if (!width && hideHeader) {
-        return  DEFAULT_HIDE_HEADER_CELL_WIDTH[scale] || null;
-      }
-      if (isSelectionCell) {
+    getDefaultWidth: ({width, hideHeader, isSelectionCell}) => {
+      if (isNaN(width) && hideHeader) {
+        return  DEFAULT_HIDE_HEADER_CELL_WIDTH[scale];
+      } else if (isSelectionCell) {
         return SELECTION_CELL_DEFAULT_WIDTH;
       }
-      return defaultWidth;
     }
   }), [props.overflowMode, scale, density]);
   let {direction} = useLocale();
