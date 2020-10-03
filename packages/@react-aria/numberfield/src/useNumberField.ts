@@ -58,15 +58,14 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   const formatMessage = useMessageFormatter(intlMessages);
 
   const inputId = useId();
+
   let {focusProps} = useFocus({
-    onFocus: () => {
-      ref.current.select();
-    },
     onBlur: () => {
       // Set input value to normalized valid value
       commitInputValue();
     }
   });
+
 
   const {
     spinButtonProps,
@@ -92,17 +91,24 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   decrementAriaLabel = decrementAriaLabel || formatMessage('Decrement');
   const canStep = isDisabled || isReadOnly;
 
+  // pressing the stepper buttons should send focus to the input
+  let onPressStart = () => {
+    ref.current.focus();
+  }
+
   const incrementButtonProps: AriaButtonProps = mergeProps(incButtonProps, {
     'aria-label': incrementAriaLabel,
     'aria-controls': inputId,
     excludeFromTabOrder: true,
-    isDisabled: canStep || value >= maxValue
+    isDisabled: canStep || value >= maxValue,
+    onPressStart
   });
   const decrementButtonProps: AriaButtonProps = mergeProps(decButtonProps, {
     'aria-label': decrementAriaLabel,
     'aria-controls': inputId,
     excludeFromTabOrder: true,
-    isDisabled: canStep || value <= minValue
+    isDisabled: canStep || value <= minValue,
+    onPressStart
   });
 
   useEffect(() => {
@@ -175,7 +181,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     numberFieldProps: {
       role: 'group',
       'aria-disabled': isDisabled,
-      'aria-invalid': validationState === 'invalid' ? 'true' : undefined
+      'aria-invalid': validationState === 'invalid' ? 'true' : undefined,
     },
     labelProps,
     inputFieldProps,

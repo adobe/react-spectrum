@@ -116,6 +116,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
       </div>
     </FocusRing>
   );
+  // how to ignore a right click on the stepper buttons to prevent focus of just them
 
   if (label) {
     let labelWrapperClass = classNames(

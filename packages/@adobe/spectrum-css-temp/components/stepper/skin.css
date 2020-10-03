@@ -262,28 +262,32 @@ governing permissions and limitations under the License.
 .spectrum-Stepper {
   border-inline-start-width: 1px !important;
   &:focus-ring {
+    box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
     .spectrum-Stepper-input {
-      box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
+       box-shadow: none;
     }
 
     &:invalid,
     &.is-invalid {
+      box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
       .spectrum-Stepper-input {
-        box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
+        box-shadow: none;
       }
     }
   }
 
   &.is-focused {
     &.focus-ring {
+      box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
       .spectrum-Stepper-input {
-        box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
+        box-shadow: none;
       }
 
       &:invalid,
       &.is-invalid {
+        box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
         .spectrum-Stepper-input {
-          box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
+          box-shadow: none;
         }
       }
     }
@@ -293,11 +297,13 @@ governing permissions and limitations under the License.
 
 .spectrum-Stepper--quiet {
   &:focus {
+    box-shadow: none;
     .spectrum-Stepper-input {
       box-shadow: none;
     }
     &:invalid,
     &.is-invalid {
+      box-shadow: none;
       .spectrum-Stepper-input {
         box-shadow: none;
       }
@@ -305,6 +311,7 @@ governing permissions and limitations under the License.
   }
 
   &.focus-ring {
+    box-shadow: none;
     .spectrum-Stepper-input {
       box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-key-focus);
     }
@@ -319,6 +326,7 @@ governing permissions and limitations under the License.
 
   &:invalid,
   &.is-invalid {
+    box-shadow: none;
     .spectrum-Stepper-input {
       box-shadow: none;
       border-color: var(--spectrum-textfield-border-color-error);
@@ -326,10 +334,12 @@ governing permissions and limitations under the License.
   }
 
   &.is-focused {
+    box-shadow: none;
     .spectrum-Stepper-input {
       box-shadow: none;
     }
     &.focus-ring {
+      box-shadow: none;
       .spectrum-Stepper-input {
         border-color: var(--spectrum-textfield-border-color-key-focus);
         box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-key-focus);
@@ -337,6 +347,7 @@ governing permissions and limitations under the License.
 
       &:invalid,
       &.is-invalid {
+        box-shadow: none;
         .spectrum-Stepper-input {
           box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
         }
@@ -345,6 +356,7 @@ governing permissions and limitations under the License.
 
     &:invalid,
     &.is-invalid {
+      box-shadow: none;
       .spectrum-Stepper-input {
         box-shadow: none;
         border-color: var(--spectrum-textfield-border-color-error);
@@ -354,6 +366,7 @@ governing permissions and limitations under the License.
 
   &.is-invalid {
     &.focus-ring {
+      box-shadow: none;
       .spectrum-Stepper-input {
         border-color: var(--spectrum-textfield-border-color-error);
         box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);

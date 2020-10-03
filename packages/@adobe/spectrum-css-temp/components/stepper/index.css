@@ -38,8 +38,11 @@ governing permissions and limitations under the License.
 .spectrum-Stepper-buttons {
   display: flex;
   flex-direction: column;
-  border-radius: var(--spectrum-border-radius) 0 0 var(--spectrum-border-radius);
   transition: box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
+  border-radius: var(--spectrum-border-radius);
+  border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
+  border-end-start-radius: var(--spectrum-stepper-border-radius-reset);
+  border-inline-start-width: 0;
 }
 
 .spectrum-Stepper-stepUp,
