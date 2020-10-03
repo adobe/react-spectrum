@@ -58,6 +58,8 @@ const ROW_HEIGHTS = {
   }
 };
 
+const SELECTION_CELL_DEFAULT_WIDTH = 55;
+
 const TableContext = React.createContext<TableState<unknown>>(null);
 function useTableContext() {
   return useContext(TableContext);
@@ -87,7 +89,15 @@ function Table<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLD
     estimatedHeadingHeight: props.overflowMode === 'wrap'
       ? DEFAULT_HEADER_HEIGHT[scale]
       : null,
-    defaultHideHeaderCellWidth: DEFAULT_HIDE_HEADER_CELL_WIDTH[scale] || null
+    getDefaultWidth: ({defaultWidth, width, hideHeader, isSelectionCell}) => {
+      if (!width && hideHeader) {
+        return  DEFAULT_HIDE_HEADER_CELL_WIDTH[scale] || null;
+      }
+      if (isSelectionCell) {
+        return SELECTION_CELL_DEFAULT_WIDTH;
+      }
+      return defaultWidth;
+    }
   }), [props.overflowMode, scale, density]);
   let {direction} = useLocale();
   layout.collection = state.collection;

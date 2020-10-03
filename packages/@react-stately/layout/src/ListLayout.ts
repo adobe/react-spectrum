@@ -15,7 +15,7 @@ import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-statel
 import {Key} from 'react';
 // import { DragTarget, DropTarget, DropPosition } from '@react-types/shared';
 
-type ListLayoutOptions<T> = {
+export type ListLayoutOptions<T> = {
   /** The height of a row in px. */
   rowHeight?: number,
   estimatedRowHeight?: number,
@@ -23,8 +23,7 @@ type ListLayoutOptions<T> = {
   estimatedHeadingHeight?: number,
   padding?: number,
   indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number,
-  collator?: Intl.Collator,
-  defaultHideHeaderCellWidth?: number
+  collator?: Intl.Collator
 };
 
 // A wrapper around LayoutInfo that supports heirarchy
@@ -53,7 +52,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected headingHeight: number;
   protected estimatedHeadingHeight: number;
   protected padding: number;
-  protected defaultHideHeaderCellWidth: number;
   protected indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number;
   protected layoutInfos: Map<Key, LayoutInfo>;
   protected layoutNodes: Map<Key, LayoutNode>;
@@ -85,7 +83,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     this.rootNodes = [];
     this.lastWidth = 0;
     this.lastCollection = null;
-    this.defaultHideHeaderCellWidth = options.defaultHideHeaderCellWidth;
   }
 
   getLayoutInfo(key: Key) {

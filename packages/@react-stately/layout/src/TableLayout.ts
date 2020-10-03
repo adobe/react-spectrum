@@ -13,13 +13,25 @@
 import {ColumnProps, TableCollection, TableNode} from '@react-types/table';
 import {Key} from 'react';
 import {LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
-import {LayoutNode, ListLayout} from './ListLayout';
+import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
+
+
+type TableLayoutOptions<T> = ListLayoutOptions<T> & {
+  getDefaultWidth: (props) => string | number
+}
 
 export class TableLayout<T> extends ListLayout<T> {
   collection: TableCollection<T>;
   lastCollection: TableCollection<T>;
   columnWidths: Map<Key, number>;
   stickyColumnIndices: number[];
+  getDefaultWidth: (props) => string | number;
+
+  constructor(options: TableLayoutOptions<T>) {
+    super(options);
+    this.getDefaultWidth = options.getDefaultWidth;
+  }
+
 
   buildCollection(): LayoutNode[] {
     // If columns changed, clear layout cache.
@@ -52,10 +64,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let remainingSpace = this.virtualizer.visibleRect.width;
     for (let column of this.collection.columns) {
       let props = column.props as ColumnProps<T>;
-      let width = props.width ?? props.defaultWidth;
-      if (!props.width && props.hideHeader) {
-        width = this.defaultHideHeaderCellWidth;
-      }
+      let width = props.width ?? this.getDefaultWidth(props);
       if (width != null) {
         let w = this.parseWidth(width);
         this.columnWidths.set(column.key, w);

@@ -557,7 +557,7 @@ storiesOf('Table', module)
         width={350}
         height={200}>
         <TableHeader>
-          <Column key="foo" allowsSorting>
+          <Column key="foo">
             Foo
           </Column>
           <Column key="addAction" hideHeader>
