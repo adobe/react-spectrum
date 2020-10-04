@@ -45,5 +45,6 @@
 }
 
 .react-spectrum-Table-cellContents--hideHeader {
-  text-overflow: clip;
+  margin: 0;
+  padding: 0;
 }

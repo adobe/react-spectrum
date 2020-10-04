@@ -39,8 +39,8 @@ const DEFAULT_HEADER_HEIGHT = {
 };
 
 const DEFAULT_HIDE_HEADER_CELL_WIDTH = {
-  medium: 34,
-  large: 42
+  medium: 35,
+  large: 43
 };
 
 const ROW_HEIGHTS = {
