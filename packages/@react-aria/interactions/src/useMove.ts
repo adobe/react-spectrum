@@ -12,6 +12,7 @@
 
 import {disableTextSelection, restoreTextSelection}  from './textSelection';
 import {HTMLAttributes, useMemo, useRef} from 'react';
+import {useGlobalListeners} from '@react-aria/utils';
 
 export interface BaseMoveEvent {
   pointerType: 'mouse' | 'pen' | 'touch' | 'keyboard'
@@ -47,6 +48,8 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
     lastPosition: {pageX: number, pageY: number} | null,
     id: number | null
   }>({didMove: false, lastPosition: null, id: null});
+
+  let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
   let moveProps = useMemo(() => {
     let moveProps: HTMLAttributes<HTMLElement> = {};
@@ -90,8 +93,8 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
       let onMouseUp = (e: MouseEvent) => {
         if (e.button === 0) {
           end('mouse');
-          window.removeEventListener('mousemove', onMouseMove, false);
-          window.removeEventListener('mouseup', onMouseUp, false);
+          removeGlobalListener(window, 'mousemove', onMouseMove, false);
+          removeGlobalListener(window, 'mouseup', onMouseUp, false);
         }
       };
       moveProps.onMouseDown = (e: React.MouseEvent) => {
@@ -100,8 +103,8 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
           e.stopPropagation();
           e.preventDefault();
           state.current.lastPosition = {pageX: e.pageX, pageY: e.pageY};
-          window.addEventListener('mousemove', onMouseMove, false);
-          window.addEventListener('mouseup', onMouseUp, false);
+          addGlobalListener(window, 'mousemove', onMouseMove, false);
+          addGlobalListener(window, 'mouseup', onMouseUp, false);
         }
       };
 
@@ -119,9 +122,9 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
         let touch = [...e.changedTouches].findIndex(({identifier}) => identifier === state.current.id);
         if (touch >= 0) {
           end('touch');
-          window.removeEventListener('touchmove', onTouchMove);
-          window.removeEventListener('touchend', onTouchEnd);
-          window.removeEventListener('touchcancel', onTouchEnd);
+          removeGlobalListener(window, 'touchmove', onTouchMove);
+          removeGlobalListener(window, 'touchend', onTouchEnd);
+          removeGlobalListener(window, 'touchcancel', onTouchEnd);
         }
       };
       moveProps.onTouchStart = (e: React.TouchEvent) => {
@@ -135,9 +138,9 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
         e.preventDefault();
         state.current.lastPosition = {pageX, pageY};
         state.current.id = identifier;
-        window.addEventListener('touchmove', onTouchMove, false);
-        window.addEventListener('touchend', onTouchEnd, false);
-        window.addEventListener('touchcancel', onTouchEnd, false);
+        addGlobalListener(window, 'touchmove', onTouchMove, false);
+        addGlobalListener(window, 'touchend', onTouchEnd, false);
+        addGlobalListener(window, 'touchcancel', onTouchEnd, false);
       };
     } else {
       let onPointerMove = (e: PointerEvent) => {
@@ -157,10 +160,10 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
         if (e.pointerId === state.current.id) {
             // @ts-ignore
           let pointerType: BaseMoveEvent['pointerType'] = e.pointerType || 'mouse';
-          end(pointerType/* , e.target */);
-          window.removeEventListener('pointermove', onPointerMove, false);
-          window.removeEventListener('pointerup', onPointerUp, false);
-          window.removeEventListener('pointercancel', onPointerUp, false);
+          end(pointerType);
+          removeGlobalListener(window, 'pointermove', onPointerMove, false);
+          removeGlobalListener(window, 'pointerup', onPointerUp, false);
+          removeGlobalListener(window, 'pointercancel', onPointerUp, false);
         }
       };
 
@@ -171,9 +174,9 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
           e.preventDefault();
           state.current.lastPosition = {pageX: e.pageX, pageY: e.pageY};
           state.current.id = e.pointerId;
-          window.addEventListener('pointermove', onPointerMove, false);
-          window.addEventListener('pointerup', onPointerUp, false);
-          window.addEventListener('pointercancel', onPointerUp, false);
+          addGlobalListener(window, 'pointermove', onPointerMove, false);
+          addGlobalListener(window, 'pointerup', onPointerUp, false);
+          addGlobalListener(window, 'pointercancel', onPointerUp, false);
         }
       };
     }
