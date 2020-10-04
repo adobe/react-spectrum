@@ -361,4 +361,44 @@ describe('Slider', function () {
       expect(onChangeSpy).not.toHaveBeenCalled();
     });
   });
+
+  describe('touch interactions', () => {
+    beforeAll(() => {
+      jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
+    });
+    afterAll(() => {
+      // @ts-ignore
+      window.HTMLElement.prototype.offsetWidth.mockReset();
+    });
+
+    it('doesn\'t jump to second touch on track while already dragging', () => {
+      let onChangeSpy = jest.fn();
+      let {getByRole} = render(
+        <Slider
+          label="The Label"
+          onChange={onChangeSpy}
+          defaultValue={50} />
+      );
+
+      let slider = getByRole('slider');
+      let thumb = slider.parentElement.parentElement;
+      // @ts-ignore
+      let [, rightTrack] = [...thumb.parentElement.children].filter(c => c !== thumb);
+
+      fireEvent.touchStart(thumb, {targetTouches: [{identifier: 1, clientX: 50, pageX: 50}]});
+      expect(onChangeSpy).toHaveBeenCalledTimes(0);
+
+      fireEvent.touchStart(rightTrack, {targetTouches: [{identifier: 2, clientX: 60, pageX: 60}]});
+      fireEvent.touchMove(rightTrack, {changedTouches: [{identifier: 2, clientX: 70, pageX: 70}]});
+      fireEvent.touchEnd(rightTrack, {changedTouches: [{identifier: 2, clientX: 70, pageX: 70}]});
+      expect(onChangeSpy).toHaveBeenCalledTimes(0);
+
+      fireEvent.touchMove(thumb, {changedTouches: [{identifier: 1, clientX: 30, pageX: 30}]});
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeSpy).toHaveBeenLastCalledWith(30);
+
+      fireEvent.touchEnd(thumb, {changedTouches: [{identifier: 1, clientX: 30, pageX: 30}]});
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    });
+  });
 });

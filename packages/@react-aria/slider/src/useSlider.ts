@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp, mergeProps} from '@react-aria/utils';
+import {clamp, mergeProps, useGlobalListeners} from '@react-aria/utils';
 import {HTMLAttributes, useRef} from 'react';
 import {sliderIds} from './utils';
 import {SliderProps} from '@react-types/slider';
@@ -52,6 +52,8 @@ export function useSlider(
 
   let {direction} = useLocale();
 
+  let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
+
   // When the user clicks or drags the track, we want the motion to set and drag the
   // closest thumb.  Hence we also need to install useMove() on the track element.
   // Here, we keep track of which index is the "closest" to the drag start point.
@@ -86,8 +88,8 @@ export function useSlider(
   });
 
   let onDownTrack = (e: React.UIEvent, clientX: number) => {
-    // We only trigger track-dragging if the user clicks on the track itself.
-    if (trackRef.current && !props.isDisabled) {
+    // We only trigger track-dragging if the user clicks on the track itself and nothing is currently being dragged.
+    if (trackRef.current && !props.isDisabled && state.values.every((_, i) => !state.isThumbDragging(i))) {
       // Find the closest thumb
       const trackPosition = trackRef.current.getBoundingClientRect().left;
       const clickPosition = clientX;
@@ -108,17 +110,12 @@ export function useSlider(
         realTimeTrackDraggingIndex.current = index;
         state.setFocusedThumb(index);
 
-        // We immediately toggle state to dragging and set the value on mouse down.
-        // We set the value now, instead of waiting for onDrag, so that the thumb
-        // is updated while you're still holding the mouse button down.  And we
-        // set dragging on now, so that onChangeEnd() won't fire yet when we set
-        // the value.
         state.setThumbDragging(realTimeTrackDraggingIndex.current, true);
         state.setThumbValue(index, value);
 
-        trackRef.current.addEventListener('mouseup', onUpTrack, {capture: true});
-        trackRef.current.addEventListener('touchend', onUpTrack, {capture: true});
-        trackRef.current.addEventListener('pointerup', onUpTrack, {capture: true});
+        addGlobalListener(window, 'mouseup', onUpTrack, false);
+        addGlobalListener(window, 'touchend', onUpTrack, false);
+        addGlobalListener(window, 'pointerup', onUpTrack, false);
       } else {
         realTimeTrackDraggingIndex.current = null;
       }
@@ -131,9 +128,9 @@ export function useSlider(
       realTimeTrackDraggingIndex.current = null;
     }
 
-    trackRef.current.removeEventListener('mouseup', onUpTrack, {capture: true});
-    trackRef.current.removeEventListener('touchend', onUpTrack, {capture: true});
-    trackRef.current.removeEventListener('pointerup', onUpTrack, {capture: true});
+    removeGlobalListener(window, 'mouseup', onUpTrack, false);
+    removeGlobalListener(window, 'touchend', onUpTrack, false);
+    removeGlobalListener(window, 'pointerup', onUpTrack, false);
   };
 
   return {

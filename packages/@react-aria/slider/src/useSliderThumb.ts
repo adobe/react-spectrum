@@ -1,5 +1,5 @@
 import {ChangeEvent, HTMLAttributes, useCallback, useEffect, useRef} from 'react';
-import {clamp, focusWithoutScrolling, mergeProps} from '@react-aria/utils';
+import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
 import {sliderIds} from './utils';
 import {SliderState} from '@react-stately/slider';
 import {SliderThumbProps} from '@react-types/slider';
@@ -44,6 +44,7 @@ export function useSliderThumb(
   } = opts;
 
   let {direction} = useLocale();
+  let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
   let labelId = sliderIds.get(state);
   const {labelProps, fieldProps} = useLabel({
@@ -74,8 +75,6 @@ export function useSliderThumb(
   let moveProps = useMove({
     onMoveStart() {
       currentPosition.current = null;
-      stateRef.current.setThumbDragging(index, true);
-      focusInput();
     },
     onMove({deltaX, deltaY, pointerType}) {
       if (currentPosition.current == null) {
@@ -90,10 +89,6 @@ export function useSliderThumb(
         currentPosition.current += reverseX ? -deltaX : deltaX;
         stateRef.current.setThumbPercent(index, clamp(currentPosition.current / trackRef.current.offsetWidth, 0, 1));
       }
-    },
-    onMoveEnd() {
-      stateRef.current.setThumbDragging(index, false);
-      focusInput();
     }
   });
 
@@ -107,6 +102,24 @@ export function useSliderThumb(
     }),
     inputRef
   );
+
+  let onDown = () => {
+    focusInput();
+    state.setThumbDragging(index, true);
+
+    addGlobalListener(window, 'mouseup', onUp, false);
+    addGlobalListener(window, 'touchend', onUp, false);
+    addGlobalListener(window, 'pointerup', onUp, false);
+
+  };
+
+  let onUp = () => {
+    focusInput();
+    state.setThumbDragging(index, false);
+    removeGlobalListener(window, 'mouseup', onUp, false);
+    removeGlobalListener(window, 'touchend', onUp, false);
+    removeGlobalListener(window, 'pointerup', onUp, false);
+  };
 
   // We install mouse handlers for the drag motion on the thumb div, but
   // not the key handler for moving the thumb with the slider.  Instead,
@@ -132,7 +145,11 @@ export function useSliderThumb(
     }),
     thumbProps: !isDisabled ? mergeProps(
       moveProps,
-      {onMouseDown: focusInput, onTouchStart: focusInput}
+      {
+        onPointerDown: onDown,
+        onMouseDown: onDown,
+        onTouchStart: onDown
+      }
     ) : {},
     labelProps
   };
