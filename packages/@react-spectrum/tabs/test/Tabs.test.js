@@ -76,7 +76,7 @@ describe('Tabs', function () {
     let selectedItem = tabs[0];
 
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-    selectedItem.focus();
+    act(() => {selectedItem.focus();});
     fireEvent.keyDown(selectedItem, {key: 'ArrowRight', code: 39, charCode: 39});
     let nextSelectedItem = tabs[1];
     expect(nextSelectedItem).toHaveAttribute('aria-selected', 'true');
@@ -95,7 +95,7 @@ describe('Tabs', function () {
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let selectedItem = tabs[0];
-    selectedItem.focus();
+    act(() => {selectedItem.focus();});
 
     /** Doesn't change selection because it's vertical tabs. */
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
@@ -116,7 +116,7 @@ describe('Tabs', function () {
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
-    firstItem.focus();
+    act(() => {firstItem.focus();});
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(firstItem, {key: 'ArrowLeft', code: 37, charCode: 37});
     let lastItem = tabs[tabs.length - 1];
@@ -130,7 +130,7 @@ describe('Tabs', function () {
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
-    firstItem.focus();
+    act(() => {firstItem.focus();});
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(firstItem, {key: 'End', code: 35, charCode: 35});
     let lastItem = tabs[tabs.length - 1];
@@ -146,7 +146,7 @@ describe('Tabs', function () {
     let firstItem = tabs[0];
     let secondItem = tabs[1];
     let thirdItem = tabs[2];
-    firstItem.focus();
+    act(() => {firstItem.focus();});
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(firstItem, {key: 'ArrowRight', code: 39, charCode: 39});
     expect(secondItem).toHaveAttribute('aria-selected', 'false');

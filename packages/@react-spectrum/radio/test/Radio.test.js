@@ -487,7 +487,7 @@ describe('Radios', function () {
       expect(radios[1]).toHaveAttribute('tabIndex', '0');
       expect(radios[2]).toHaveAttribute('tabIndex', '0');
 
-      radios[0].focus();
+      act(() => {radios[0].focus();});
       expect(document.activeElement).toBe(radios[0]);
 
       act(() => {userEvent.click(radios[1]);});

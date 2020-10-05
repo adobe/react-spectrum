@@ -307,7 +307,7 @@ describe('ActionGroup', function () {
     let buttonBefore = tree.getByLabelText('ButtonBefore');
     let buttonAfter = tree.getByLabelText('ButtonAfter');
     let buttons = tree.getAllByRole('radio');
-    buttonAfter.focus();
+    act(() => {buttonAfter.focus();});
 
     act(() => userEvent.tab({shift: true}));
     expect(document.activeElement).toBe(buttons[1]);
@@ -322,7 +322,7 @@ describe('ActionGroup', function () {
     let buttonBefore = tree.getByLabelText('ButtonBefore');
     let buttonAfter = tree.getByLabelText('ButtonAfter');
     let buttons = tree.getAllByRole('radio');
-    buttonBefore.focus();
+    act(() => {buttonBefore.focus();});
 
     act(() => userEvent.tab());
     expect(document.activeElement).toBe(buttons[0]);
