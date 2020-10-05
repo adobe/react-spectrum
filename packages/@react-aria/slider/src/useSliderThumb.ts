@@ -75,6 +75,7 @@ export function useSliderThumb(
   let moveProps = useMove({
     onMoveStart() {
       currentPosition.current = null;
+      state.setThumbDragging(index, true);
     },
     onMove({deltaX, deltaY, pointerType}) {
       if (currentPosition.current == null) {
@@ -89,6 +90,9 @@ export function useSliderThumb(
         currentPosition.current += reverseX ? -deltaX : deltaX;
         stateRef.current.setThumbPercent(index, clamp(currentPosition.current / trackRef.current.offsetWidth, 0, 1));
       }
+    },
+    onMoveEnd() {
+      state.setThumbDragging(index, false);
     }
   });
 
