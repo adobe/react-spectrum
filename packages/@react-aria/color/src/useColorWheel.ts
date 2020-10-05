@@ -93,9 +93,9 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
 
   let isOnWheel = useRef<boolean>(false);
   let movePropsContainer = useMove({
-    onMoveStart(e) {
+    onMoveStart() {
       if (isOnWheel.current) {
-        moveHandler.onMoveStart(e);
+        moveHandler.onMoveStart();
       }
     },
     onMove(e) {
@@ -103,9 +103,9 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
         moveHandler.onMove(e);
       }
     },
-    onMoveEnd(e) {
+    onMoveEnd() {
       if (isOnWheel.current) {
-        moveHandler.onMoveEnd(e);
+        moveHandler.onMoveEnd();
       }
     }
   });
