@@ -90,23 +90,21 @@ function ColorWheel(props: SpectrumColorWheelProps) {
         'width': size,
         'height': size
       }}>
-      <svg className={classNames(styles, 'spectrum-ColorWheel-wheel')} viewBox="0 0 160 160" aria-hidden="true">
-        <defs>
-          <mask id={maskId}>
-            <circle cx="80" cy="80" r="80" fill="white" />
-            <circle cx="80" cy="80" r={svgInnerRadius} fill="black" />
-          </mask>
-        </defs>
-        <g className={classNames(styles, 'spectrum-ColorWheel-segment')} mask={`url(#${maskId})`}>
-          {SEGMENTS}
-        </g>
-        <circle cx="80" cy="80" r="79.5" className={classNames(styles, 'spectrum-ColorWheel-outerCircle')} mask={`url(#${maskId})`} />
-        <circle cx="80" cy="80" r={svgInnerRadius} className={classNames(styles, 'spectrum-ColorWheel-innerCircle')} />
-      </svg>
-
-      {
-        // Only display the thumb once the wheel radius is actually known to prevent it from jumping around.
-        wheelRadius && <ColorThumb
+      { wheelRadius && <>
+        <svg className={classNames(styles, 'spectrum-ColorWheel-wheel')} viewBox="0 0 160 160" aria-hidden="true">
+          <defs>
+            <mask id={maskId}>
+              <circle cx="80" cy="80" r="80" fill="white" />
+              <circle cx="80" cy="80" r={svgInnerRadius} fill="black" />
+            </mask>
+          </defs>
+          <g className={classNames(styles, 'spectrum-ColorWheel-segment')} mask={`url(#${maskId})`}>
+            {SEGMENTS}
+          </g>
+          <circle cx="80" cy="80" r="79.5" className={classNames(styles, 'spectrum-ColorWheel-outerCircle')} mask={`url(#${maskId})`} />
+          <circle cx="80" cy="80" r={svgInnerRadius} className={classNames(styles, 'spectrum-ColorWheel-innerCircle')} />
+        </svg>
+        <ColorThumb
           value={state.value}
           isFocused={isFocused && isFocusVisible}
           isDisabled={isDisabled}
@@ -116,7 +114,7 @@ function ColorWheel(props: SpectrumColorWheelProps) {
           {...thumbProps}>
           <input {...focusProps} className={classNames(styles, 'spectrum-ColorWheel-slider')} {...inputProps} ref={inputRef} />
         </ColorThumb>
-      }
+      </> }
     </div>
   );
 }
