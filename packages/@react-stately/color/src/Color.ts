@@ -92,6 +92,8 @@ interface ColorValue {
 }
 
 const HEX_REGEX = /^#(?:([0-9a-f]{3})|([0-9a-f]{6}))$/i;
+const RED_MULTIPLIER = Math.pow(16, 4);
+const GREEEN_MULTIPLIER = Math.pow(16, 2);
 
 class RGBColor implements ColorValue {
   constructor(private red: number, private green: number, private blue: number, private alpha: number) {}
@@ -129,7 +131,7 @@ class RGBColor implements ColorValue {
   }
 
   toInt() {
-    return this.red * Math.pow(16, 4) + this.green * Math.pow(16, 2) + this.blue;
+    return this.red * RED_MULTIPLIER + this.green * GREEEN_MULTIPLIER + this.blue;
   }
 
   toRGB(): ColorValue {
