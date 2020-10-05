@@ -12,7 +12,7 @@
 
 const path = require('path');
 
-function inTestcaseWithoutAct(context) {
+function inTestcaseWithoutAct(context, actLocalName) {
   let foundAct = false;
   for (let n of context.getAncestors().reverse()) {
     if (
@@ -23,7 +23,7 @@ function inTestcaseWithoutAct(context) {
       if (
         parent.type === 'CallExpression' &&
         parent.callee.type === 'Identifier' &&
-        parent.callee.name === 'act'
+        parent.callee.name === actLocalName
       ) {
         foundAct = true;
       }
@@ -95,11 +95,26 @@ module.exports = {
       },
       create(context) {
         if (context.getFilename().includes(path.sep + 'test' + path.sep)) {
+          let actLocalName = null;
           return {
+            ImportSpecifier(node) {
+              let {parent} = node;
+              if (
+                  parent.importKind === 'value' &&
+                  parent.source &&
+                  parent.source.type === 'Literal' &&
+                  parent.source.value === '@testing-library/react' &&
+                  node.imported.type === 'Identifier' &&
+                  node.imported.name === 'act'
+                ) {
+                actLocalName = node.local.name;
+              }
+            },
             CallExpression(node) {
               if (
                 node.callee.type === 'MemberExpression' &&
-                inTestcaseWithoutAct(context)
+                actLocalName &&
+                inTestcaseWithoutAct(context, actLocalName)
               ) {
                 if (
                   node.arguments.length === 0 &&
