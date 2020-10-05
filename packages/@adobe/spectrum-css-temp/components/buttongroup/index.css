@@ -16,7 +16,7 @@ governing permissions and limitations under the License.
 
 .spectrum-ButtonGroup {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
   /* necessary so that offsetLeft on button children is correct */
   position: relative;
   flex-grow: 1;
