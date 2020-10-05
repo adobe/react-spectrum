@@ -34,7 +34,7 @@ function ColorThumb(props: ColorThumbProps) {
   return (
     <div className={classNames(stylesHandle, 'spectrum-ColorHandle', {'is-focused': isFocused, 'is-disabled': isDisabled}) + ' ' + className} {...otherProps}>
       <div className={classNames(stylesHandle, 'spectrum-ColorHandle-color')} style={{backgroundColor: valueCSS}} />
-      <svg className={classNames(stylesLoupe, 'spectrum-ColorLoupe',  {'is-open': isDragging})}>
+      <svg className={classNames(stylesLoupe, 'spectrum-ColorLoupe',  {'is-open': isDragging})} aria-hidden="true">
         <path
           className={classNames(stylesLoupe, 'spectrum-ColorLoupe-inner')}
           d="M25 1a24 24 0 0124 24c0 16.255-24 40-24 40S1 41.255 1 25A24 24 0 0125 1z"

@@ -123,7 +123,7 @@ describe('useColorWheel', () => {
   });
 
   describe('keyboard events', () => {
-    it('works', () => {
+    it('left/right works', () => {
       let defaultColor = new Color('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
@@ -133,6 +133,20 @@ describe('useColorWheel', () => {
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 1).toString('hsla'));
       fireEvent.keyDown(slider, {key: 'Left'});
+      expect(onChangeSpy).toHaveBeenCalledTimes(2);
+      expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
+    });
+
+    it('up/down works', () => {
+      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
+      let slider = getByRole('slider');
+      act(() => {slider.focus();});
+
+      fireEvent.keyDown(slider, {key: 'Up'});
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 1).toString('hsla'));
+      fireEvent.keyDown(slider, {key: 'Down'});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
       expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
     });
@@ -170,6 +184,20 @@ describe('useColorWheel', () => {
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 45).toString('hsla'));
       fireEvent.keyDown(slider, {key: 'Left'});
+      expect(onChangeSpy).toHaveBeenCalledTimes(2);
+      expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
+    });
+
+    it('steps with page up/down', () => {
+      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
+      let slider = getByRole('slider');
+      act(() => {slider.focus();});
+
+      fireEvent.keyDown(slider, {key: 'PageUp'});
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 6).toString('hsla'));
+      fireEvent.keyDown(slider, {key: 'PageDown'});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
       expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
     });

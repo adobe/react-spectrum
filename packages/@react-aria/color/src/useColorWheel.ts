@@ -12,9 +12,9 @@
 
 import {ColorWheelAriaProps} from '@react-types/color';
 import {ColorWheelState} from '@react-stately/color';
-import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
 import React, {HTMLAttributes, InputHTMLAttributes, useCallback, useRef} from 'react';
-import {useMove} from '@react-aria/interactions';
+import {useKeyboard, useMove} from '@react-aria/interactions';
 
 export interface ColorWheelAriaResult {
   thumbProps: HTMLAttributes<HTMLElement>,
@@ -22,6 +22,8 @@ export interface ColorWheelAriaResult {
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   thumbPosition: {x: number, y: number}
 }
+
+const PAGE_STEP_SIZE = 6;
 
 function degToRad(deg: number) {
   return deg * Math.PI / 180;
@@ -46,6 +48,8 @@ function cartesianToAngle(x: number, y: number, radius: number): number {
 export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState): ColorWheelAriaResult {
   let {inputRef, containerRef, isDisabled, step = 1, innerRadius, outerRadius} = props;
 
+  let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
+
   let thumbRadius = (innerRadius + outerRadius) / 2;
 
   let focusInput = useCallback(() => {
@@ -61,6 +65,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
   let moveHandler = {
     onMoveStart() {
       currentPosition.current = null;
+      state.setDragging(true);
     },
     onMove({deltaX, deltaY, pointerType}) {
       if (currentPosition.current == null) {
@@ -69,14 +74,19 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       currentPosition.current.x += deltaX;
       currentPosition.current.y += deltaY;
       if (pointerType === 'keyboard') {
-        if (deltaX > 0) {
+        if (deltaX > 0 || deltaY < 0) {
           stateRef.current.setHue(stateRef.current.hue + step);
-        } else if (deltaX < 0) {
+        } else if (deltaX < 0 || deltaY > 0) {
           stateRef.current.setHue(stateRef.current.hue - step);
         }
       } else {
         stateRef.current.setHue(cartesianToAngle(currentPosition.current.x, currentPosition.current.y, thumbRadius));
       }
+    },
+    onMoveEnd() {
+      isOnWheel.current = false;
+      state.setDragging(false);
+      focusInput();
     }
   };
   let movePropsThumb = useMove(moveHandler);
@@ -91,16 +101,15 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     }
   });
 
-  let onEnd = () => {
-    isOnWheel.current = false;
+  let onThumbDown = () => {
     focusInput();
-    state.setDragging(false);
-    window.removeEventListener('mouseup', onEnd, {capture: true});
-    window.removeEventListener('touchend', onEnd, {capture: true});
-    window.removeEventListener('pointerup', onEnd, {capture: true});
+    state.setDragging(true);
+    addGlobalListener(window, 'mouseup', onUp, false);
+    addGlobalListener(window, 'touchend', onUp, false);
+    addGlobalListener(window, 'pointerup', onUp, false);
   };
 
-  let onStart = (pageX: number, pageY: number) => {
+  let onTrackDown = (pageX: number, pageY: number) => {
     let rect = (containerRef.current as HTMLElement).getBoundingClientRect();
     let x = pageX - rect.x - rect.width / 2;
     let y = pageY - rect.y - rect.height / 2;
@@ -112,23 +121,50 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
 
       focusInput();
       state.setDragging(true);
-      window.addEventListener('mouseup', onEnd, {capture: true});
-      window.addEventListener('touchend', onEnd, {capture: true});
-      window.addEventListener('pointerup', onEnd, {capture: true});
+
+      addGlobalListener(window, 'mouseup', onUp, false);
+      addGlobalListener(window, 'touchend', onUp, false);
+      addGlobalListener(window, 'pointerup', onUp, false);
     }
   };
 
+  let onUp = () => {
+    isOnWheel.current = false;
+    state.setDragging(false);
+    focusInput();
+
+    removeGlobalListener(window, 'mouseup', onUp, false);
+    removeGlobalListener(window, 'touchend', onUp, false);
+    removeGlobalListener(window, 'pointerup', onUp, false);
+  };
+
+  let pageStepSize = Math.max(PAGE_STEP_SIZE, step);
+  let {keyboardProps} = useKeyboard({
+    onKeyDown(e) {
+      switch (e.key) {
+        case 'PageUp':
+          e.preventDefault();
+          state.setHue(Math.round((state.hue + pageStepSize) / pageStepSize) * pageStepSize);
+          break;
+        case 'PageDown':
+          e.preventDefault();
+          state.setHue(Math.round((state.hue - pageStepSize) / pageStepSize) * pageStepSize);
+          break;
+      }
+    }
+  });
+
   return {
     containerProps: isDisabled ? {} : mergeProps({
-      onMouseDown: (e: React.MouseEvent) => {onStart(e.pageX, e.pageY);},
-      onPointerDown: (e: React.PointerEvent) => {onStart(e.pageX, e.pageY);},
-      onTouchStart: (e: React.TouchEvent) => {onStart(e.targetTouches[0].pageX, e.targetTouches[0].pageY);}
+      onMouseDown: (e: React.MouseEvent) => {onTrackDown(e.pageX, e.pageY);},
+      onPointerDown: (e: React.PointerEvent) => {onTrackDown(e.pageX, e.pageY);},
+      onTouchStart: (e: React.TouchEvent) => {onTrackDown(e.targetTouches[0].pageX, e.targetTouches[0].pageY);}
     }, movePropsContainer),
     thumbProps: isDisabled ? {} : mergeProps({
-      onMouseDown: () => { focusInput(); },
-      onPointerDown: () => { focusInput(); },
-      onTouchStart: () => { focusInput(); }
-    }, movePropsThumb),
+      onMouseDown: onThumbDown,
+      onPointerDown: onThumbDown,
+      onTouchStart: onThumbDown
+    }, movePropsThumb, keyboardProps),
     inputProps: {
       type: 'range',
       'aria-label': 'hue',

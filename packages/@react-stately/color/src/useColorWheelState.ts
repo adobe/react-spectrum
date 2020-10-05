@@ -22,7 +22,7 @@ export interface ColorWheelState {
   readonly hue: number,
   setHue(value: number): void,
 
-  dragging: boolean,
+  isDragging: boolean,
   setDragging(value: boolean): void
 }
 
@@ -45,33 +45,33 @@ function mod(n, m) {
 }
 
 export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
-  let {value, defaultValue, onChange, step = 1} = props;
+  let {defaultValue, onChange, step = 1} = props;
 
-  if (!value && !defaultValue) {
+  if (!props.value && !defaultValue) {
     defaultValue = DEFAULT_COLOR;
   }
 
-  let [state, setState] = useControlledState(normalizeColor(value), normalizeColor(defaultValue), onChange);
+  let [value, setValue] = useControlledState(normalizeColor(props.value), normalizeColor(defaultValue), onChange);
 
-  let [dragging, setDragging] = useState(false);
+  let [isDragging, setDragging] = useState(false);
 
   return {
-    value: state,
-    setValue(value) {
-      setState(normalizeColor(value));
+    value,
+    setValue(v) {
+      setValue(normalizeColor(v));
     },
 
-    hue: state.getChannelValue('hue'),
-    setHue(value) {
-      value = roundToStep(mod(value, 360), step);
-      if (state.getChannelValue('hue') !== value) {
-        setState(state.withChannelValue('hue', value));
+    hue: value.getChannelValue('hue'),
+    setHue(v) {
+      v = roundToStep(mod(v, 360), step);
+      if (value.getChannelValue('hue') !== v) {
+        setValue(value.withChannelValue('hue', v));
       }
     },
 
     setDragging(value) {
       setDragging(value);
     },
-    dragging
+    isDragging
   };
 }

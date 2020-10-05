@@ -12,13 +12,13 @@
 
 import {classNames, dimensionValue} from '@react-spectrum/utils';
 import {ColorThumb} from './ColorThumb';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {SpectrumColorWheelProps} from '@react-types/color';
 import styles from '@adobe/spectrum-css-temp/components/colorwheel/vars.css';
 import {useColorWheel} from '@react-aria/color';
 import {useColorWheelState} from '@react-stately/color';
 import {useFocus, useFocusVisible} from '@react-aria/interactions';
-import {useId} from '@react-aria/utils';
+import {useId, useResizeObserver} from '@react-aria/utils';
 import {useProviderProps} from '@react-spectrum/provider';
 
 const SEGMENTS = [];
@@ -40,10 +40,22 @@ function ColorWheel(props: SpectrumColorWheelProps) {
   let [wheelRadius, setWheelRadius] = useState<number | null>(null);
 
   useEffect(() => {
+    // the size observer's fallback to the window resize event doesn't fire on mount
+    if (containerRef.current && wheelRadius == null) {
+      setWheelRadius(containerRef.current.offsetWidth / 2);
+    }
+  }, [containerRef, wheelRadius, setWheelRadius]);
+
+  let resizeHandler = useCallback(() => {
     if (containerRef.current) {
       setWheelRadius(containerRef.current.offsetWidth / 2);
     }
-  }, [size, containerRef]);
+  }, [containerRef, setWheelRadius]);
+
+  useResizeObserver({
+    ref: containerRef,
+    onResize: resizeHandler
+  });
 
   let state = useColorWheelState(props);
   let {containerProps, inputProps, thumbProps, thumbPosition: {x, y}} = useColorWheel({
@@ -94,7 +106,7 @@ function ColorWheel(props: SpectrumColorWheelProps) {
           value={state.value}
           isFocused={isFocused && isFocusVisible}
           isDisabled={isDisabled}
-          isDragging={state.dragging}
+          isDragging={state.isDragging}
           style={{transform: `translate(${x}px, ${y}px)`}}
           className={classNames(styles, 'spectrum-ColorWheel-handle')}
           {...thumbProps}>

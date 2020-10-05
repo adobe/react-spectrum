@@ -33,11 +33,12 @@ storiesOf('ColorWheel', module)
   .add(
     'custom size',
     () => {
-      let [size, setSize] = useState('50vh');
+      let [size, setSize] = useState('size-2400');
       return (<Flex direction="column" alignItems="center" gap="size-200">
         <Flex direction="row">
-          <button onClick={() => setSize('size-1000')}>size-1000</button>
-          <button onClick={() => setSize('size-2000')}>size-2000</button>
+          <button onClick={() => setSize('size-2400')}>size-2400</button>
+          <button onClick={() => setSize('size-5000')}>size-5000</button>
+          <button onClick={() => setSize('50vh')}>50vh</button>
         </Flex>
         <ColorWheel defaultValue={new Color('hsl(0, 100%, 50%)')} size={size} />
       </Flex>);
