@@ -24,7 +24,7 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
 
   let {direction} = useLocale();
 
-  let {containerProps, trackProps} = useSlider(props, state, trackRef);
+  let {containerProps, trackProps, labelProps} = useSlider(props, state, trackRef);
   let {inputProps, thumbProps} = useSliderThumb({
     ...props,
     index: 0
@@ -35,6 +35,7 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
     trackProps,
     inputProps,
     thumbProps,
+    labelProps,
     generateBackground() {
       let value = state.getDisplayColor();
       let to: string;

@@ -26,7 +26,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 function ColorSlider(props: ColorSliderProps) {
   props = useProviderProps(props);
 
-  let {isDisabled, channel, orientation} = props;
+  let {isDisabled, channel, orientation, showValueLabel = true} = props;
   let vertical = orientation === 'vertical';
 
   let {direction} = useLocale();
@@ -34,12 +34,22 @@ function ColorSlider(props: ColorSliderProps) {
   let inputRef = useRef();
   let trackRef = useRef();
 
+  // The default label should be localized...
+  let defaultLabel = channel[0].toUpperCase() + channel.slice(1);
+
+  let labelText = props.label;
+  if (props.label === undefined) {
+    if (!vertical) {
+      labelText = defaultLabel;
+    }
+  }
+  let ariaLabel = props['aria-label'] ?? (labelText == null ? defaultLabel : undefined);
+
   let state = useColorSliderState(props);
-  let {inputProps, thumbProps, containerProps, trackProps, generateBackground} = useColorSlider({
+  let {inputProps, thumbProps, containerProps, trackProps, labelProps, generateBackground} = useColorSlider({
     ...props,
-    // TODO label situation
-    // If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
-    'aria-label': channel,
+    label: labelText,
+    'aria-label': ariaLabel,
     trackRef,
     inputRef
   }, state);
@@ -56,12 +66,23 @@ function ColorSlider(props: ColorSliderProps) {
     thumbPosition = 1 - thumbPosition;
   }
 
+  let alignLabel;
+  if (vertical) {
+    alignLabel = 'center';
+  } else if (labelText != null && showValueLabel) {
+    alignLabel = 'space-between';
+  } else if (labelText != null) {
+    alignLabel = 'flex-start';
+  } else if (showValueLabel) {
+    alignLabel = 'flex-end';
+  }
+
   return (
     <div>
-      <Flex direction="row" justifyContent="space-between">
-        {/* TODO: connect this label with the slider input */}
-        <Label>{channel[0].toUpperCase() + channel.slice(1)}</Label>
-        <Label>{state.getThumbValueLabel(0)}</Label>
+      <Flex direction="row" justifyContent={alignLabel}>
+        {labelText && <Label {...labelProps}>{labelText}</Label>}
+        {/* TODO: is it on purpose that aria-labelledby isn't passed through? */}
+        {showValueLabel && <Label aria-labelledby={labelProps.id}>{state.getThumbValueLabel(0)}</Label>}
       </Flex>
       <div className={classNames(styles, 'spectrum-ColorSlider', {'is-disabled': isDisabled, 'spectrum-ColorSlider--vertical': vertical})} {...containerProps}>
         <div className={classNames(styles, 'spectrum-ColorSlider-checkerboard')} role="presentation" ref={trackRef} {...trackProps}>

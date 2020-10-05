@@ -23,6 +23,18 @@ storiesOf('ColorSlider', module)
     () => <ColorSlider defaultValue={new Color('#7f0000')} channel={'red'} />
   )
   .add(
+    'no label',
+    () => <ColorSlider defaultValue={new Color('#7f0000')} channel={'red'} label={null} />
+  )
+  .add(
+    'no value label',
+    () => <ColorSlider defaultValue={new Color('#7f0000')} channel={'red'} showValueLabel={false} />
+  )
+  .add(
+    'no label, no value label',
+    () => <ColorSlider defaultValue={new Color('#7f0000')} channel={'red'} label={null} showValueLabel={false} />
+  )
+  .add(
     'step',
     () => <ColorSlider defaultValue={new Color('hsl(0, 100%, 50%)')} channel={'hue'} step={72} />
   )
@@ -44,7 +56,6 @@ storiesOf('ColorSlider', module)
       let [color, setColor] = useState(new Color('#ff00ff'));
       return (<Flex gap="size-500" alignItems="center">
         <Flex direction="column">
-          <Text>RGBA</Text>
           <ColorSlider value={color} onChange={setColor} channel={'red'} />
           <ColorSlider value={color} onChange={setColor} channel={'green'} />
           <ColorSlider value={color} onChange={setColor} channel={'blue'} />

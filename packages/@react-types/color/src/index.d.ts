@@ -41,13 +41,12 @@ export interface SpectrumColorWheelProps extends ColorWheelProps {
   size?: DimensionValue
 }
 
-
 // @ts-ignore
 interface ColorSliderProps extends Omit<BaseSliderProps, 'minValue' | 'maxValue'>, ValueBase<Color>, LabelableProps, AriaLabelingProps {
   channel: ColorChannel,
   value?: string | Color, // override to allow passing string
   defaultValue?: string | Color,
-  /** Whether the value's label is displayed. True by default if there's a `label`, false by default if not. */
+  /** Whether the value's label is displayed. True by default, false by default if not. */
   showValueLabel?: boolean
   // showTextField?: boolean, // do we want this? we didn't keep it for slider....
 }
