@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, unwrapDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, unwrapDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, Node, Orientation, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
@@ -20,6 +20,7 @@ import {SingleSelectListState, useSingleSelectListState} from '@react-stately/li
 import {SpectrumTabsProps} from '@react-types/tabs';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import tabsStyles from './tabs.css';
+import {Text} from '@react-spectrum/text';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
@@ -155,11 +156,6 @@ export function Tab<T>(props: TabProps<T>) {
   });
   let isSelected = state.selectedKey === key;
 
-  let icon = item.props.icon ? React.cloneElement(item.props.icon, {
-    size: 'S',
-    UNSAFE_className: classNames(styles, 'spectrum-Icon')
-  }) : undefined;
-
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
@@ -176,8 +172,20 @@ export function Tab<T>(props: TabProps<T>) {
           },
           styleProps.className
         )}>
-        {icon}
-        {rendered && <span className={classNames(styles, 'spectrum-Tabs-itemLabel')}>{rendered}</span>}
+        <SlotProvider
+          slots={{
+            icon: {
+              size: 'S',
+              UNSAFE_className: classNames(styles, 'spectrum-Icon')
+            },
+            text: {
+              UNSAFE_className: classNames(styles, 'spectrum-Tabs-itemLabel')
+            }
+          }}>
+            {typeof rendered === 'string'
+              ? <Text>{rendered}</Text>
+              : rendered}
+        </SlotProvider>
       </div>
     </FocusRing>
   );
@@ -231,10 +239,10 @@ function TabsPicker(props) {
     let node = unwrapDOMRef(ref);
     setPickerNode(node.current);
   }, [ref]);
-  console.log('state', [...state.collection])
 
   let items = [...state.collection].map((item) => ({
-    name: item.rendered,
+    rendered: item.rendered,
+    textValue: item.textValue,
     key: item.key
   }))
 
@@ -253,8 +261,7 @@ function TabsPicker(props) {
         styleProps.className
       )}>
       <Picker items={items} ref={ref} aria-label={tabListProps['aria-label']} isQuiet isDisabled={isDisabled} selectedKey={state.selectedKey} onSelectionChange={state.setSelectedKey}>
-        {/* TODO maybe have textValue="item.name" */}
-        {item => <Item key={item.key}>{item.name}</Item>}
+        {item => <Item key={item.key} textValue={item.textValue}>{item.rendered}</Item>}
       </Picker>
       {pickerNode && <TabLine orientation="horizontal" selectedTab={pickerNode}/>}
     </div>

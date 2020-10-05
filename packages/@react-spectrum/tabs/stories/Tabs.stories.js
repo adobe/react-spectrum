@@ -86,6 +86,18 @@ storiesOf('Tabs', module)
   .add(
     'collapse behavior',
     () => renderMany()
+  )
+  .add(
+    'collapse behavior, isQuiet',
+    () => renderMany({isQuiet: true})
+  )
+  .add(
+    'collapse behavior, density: compact',
+    () => renderMany({density: 'compact'})
+  )
+  .add(
+    'collapse behavior, density: compact, isQuiet',
+    () => renderMany({isQuiet: true, density: 'compact'})
   );
 
 function render(props = {}) {
@@ -128,7 +140,15 @@ function render(props = {}) {
 function renderWithIcons(props = {}) {
   return (
     <Tabs {...props} maxWidth={500} onSelectionChange={action('onSelectionChange')}>
-      <Item key="dashboard" icon={<Dashboard />} title="Dashboard">
+      <Item
+        key="dashboard"
+        textValue="Dashboard"
+        title={
+          <>
+            <Dashboard />
+            <Text>Dashboard</Text>
+          </>
+        }>
         <Content margin="size-160">
           <Heading>Dashboard</Heading>
           <Text>
@@ -138,7 +158,15 @@ function renderWithIcons(props = {}) {
           </Text>
         </Content>
       </Item>
-      <Item key="calendar" icon={<Calendar />} title="Calendar">
+      <Item
+        key="calendar"
+        textValue="Calendar"
+        title={
+          <>
+            <Calendar />
+            <Text>Calendar</Text>
+          </>
+        }>
         <Content margin="size-160">
           <Heading>Calendar</Heading>
           <Text>
@@ -148,7 +176,15 @@ function renderWithIcons(props = {}) {
           </Text>
         </Content>
       </Item>
-      <Item key="bookmark" icon={<Bookmark />} title="Bookmark">
+      <Item
+        key="bookmark"
+        textValue="Bookmark"
+        title={
+          <>
+            <Bookmark />
+            <Text>Bookmark</Text>
+          </>
+        }>
         <Content margin="size-160">
           <Heading>Bookmark</Heading>
           <Text>
@@ -227,10 +263,18 @@ function renderMany(props = {}) {
   };
 
   return (
-    <div style={{overflow: 'auto', flexDirection: 'column'}}>
-      <Tabs {...props} items={tabs} maxWidth={500} onSelectionChange={action('onSelectionChange')}>
+    <div style={{overflow: 'hidden', flexDirection: 'column'}}>
+      <Tabs {...props} aria-label="Tab example" items={tabs} maxWidth={500} onSelectionChange={action('onSelectionChange')}>
         {item => (
-          <Item key={item.name} title={item.name} icon={item.icon}>
+          <Item
+            key={item.name}
+            textValue={item.name}
+            title={
+              <>
+                {item.icon}
+                <Text>{item.name}</Text>
+              </>
+            }>
             <Content margin="size-160">
               <Heading>{item.children}</Heading>
               <Text>
@@ -241,7 +285,6 @@ function renderMany(props = {}) {
             </Content>
           </Item>
         )}
-
       </Tabs>
       <ButtonGroup marginEnd="30px">
         <Button variant="secondary" onPress={() => addTab()}>
