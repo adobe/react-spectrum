@@ -17,7 +17,9 @@ import {useControlledState} from '@react-stately/utils';
 
 export interface ColorSliderState extends SliderState {
   value: Color,
-  setValue(value: string | Color): void
+  setValue(value: string | Color): void,
+  /** Returns the color that should be displayed in the slider instead of `value` or the optional parameter. */
+  getDisplayColor(c?: Color): Color
 }
 
 function normalizeColor(v: string | Color) {
@@ -50,6 +52,25 @@ export function useColorSliderState(props: ColorSliderProps): ColorSliderState {
     value: color,
     setValue(value) {
       setColor(normalizeColor(value));
+    },
+    getDisplayColor(c: Color = color) {
+      switch (channel) {
+        case 'hue':
+          return new Color(`hsl(${c.getChannelValue('hue')}, 100%, 50%)`);
+        case 'lightness':
+          c = c.withChannelValue('saturation', 0);
+        case 'brightness':
+        case 'saturation':
+        case 'red':
+        case 'green':
+        case 'blue':
+          return c.withChannelValue('alpha', 1);
+        case 'alpha': {
+          return c;
+        }
+        default:
+          throw new Error('Unknown color channel: ' + channel);
+      }
     }
   };
 }
