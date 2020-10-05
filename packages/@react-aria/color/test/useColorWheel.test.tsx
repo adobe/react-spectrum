@@ -188,6 +188,20 @@ describe('useColorWheel', () => {
       expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
     });
 
+    it('can always get back to 0 even with step', () => {
+      let defaultColor = new Color('hsl(330, 100%, 50%)');
+      let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} step={110} />);
+      let slider = getByRole('slider');
+      act(() => {slider.focus();});
+
+      fireEvent.keyDown(slider, {key: 'Right'});
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
+      fireEvent.keyDown(slider, {key: 'Left'});
+      expect(onChangeSpy).toHaveBeenCalledTimes(2);
+      expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 330).toString('hsla'));
+    });
+
     it('steps with page up/down', () => {
       let defaultColor = new Color('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);

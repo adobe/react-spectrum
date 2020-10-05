@@ -22,6 +22,9 @@ export interface ColorWheelState {
   readonly hue: number,
   setHue(value: number): void,
 
+  increment(minStepSize?: number),
+  decrement(minStepSize?: number),
+
   isDragging: boolean,
   setDragging(value: boolean): void
 }
@@ -40,8 +43,17 @@ function roundToStep(value: number, step: number): number {
   return Math.round(value / step) * step;
 }
 
-function mod(n, m) {
+function mod(n: number, m: number) {
   return ((n % m) + m) % m;
+}
+
+function roundDown(v: number) {
+  let r = Math.floor(v);
+  if (r === v) {
+    return v - 1;
+  } else {
+    return r;
+  }
 }
 
 export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
@@ -55,17 +67,43 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
 
   let [isDragging, setDragging] = useState(false);
 
+  let hue = value.getChannelValue('hue');
+  function setHue(v: number) {
+    if (v > 360) {
+      // Make sure you can always get back to 0.
+      v = 0;
+    }
+    v = roundToStep(mod(v, 360), step);
+    if (hue !== v) {
+      setValue(value.withChannelValue('hue', v));
+    }
+  }
+
   return {
     value,
     setValue(v) {
       setValue(normalizeColor(v));
     },
 
-    hue: value.getChannelValue('hue'),
-    setHue(v) {
-      v = roundToStep(mod(v, 360), step);
-      if (value.getChannelValue('hue') !== v) {
-        setValue(value.withChannelValue('hue', v));
+    hue,
+    setHue,
+
+    increment(minStepSize: number = 0) {
+      let newValue = hue + Math.max(minStepSize, step);
+      if (newValue > 360) {
+        // Make sure you can always get back to 0.
+        newValue = 0;
+      }
+      setHue(newValue);
+    },
+    decrement(minStepSize: number = 0) {
+      let s = Math.max(minStepSize, step);
+      if (hue === 0) {
+        // We can't just subtract step because this might be the case:
+        // |(previous step) - 0| < step size
+        setHue(roundDown(360 / s) * s);
+      } else {
+        setHue(hue - s);
       }
     },
 

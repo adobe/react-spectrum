@@ -75,9 +75,9 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       currentPosition.current.y += deltaY;
       if (pointerType === 'keyboard') {
         if (deltaX > 0 || deltaY < 0) {
-          stateRef.current.setHue(stateRef.current.hue + step);
+          state.increment();
         } else if (deltaX < 0 || deltaY > 0) {
-          stateRef.current.setHue(stateRef.current.hue - step);
+          state.decrement();
         }
       } else {
         stateRef.current.setHue(cartesianToAngle(currentPosition.current.x, currentPosition.current.y, thumbRadius));
@@ -147,17 +147,16 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     removeGlobalListener(window, 'pointerup', onUp, false);
   };
 
-  let pageStepSize = Math.max(PAGE_STEP_SIZE, step);
   let {keyboardProps} = useKeyboard({
     onKeyDown(e) {
       switch (e.key) {
         case 'PageUp':
           e.preventDefault();
-          state.setHue(Math.round((state.hue + pageStepSize) / pageStepSize) * pageStepSize);
+          state.increment(PAGE_STEP_SIZE);
           break;
         case 'PageDown':
           e.preventDefault();
-          state.setHue(Math.round((state.hue - pageStepSize) / pageStepSize) * pageStepSize);
+          state.decrement(PAGE_STEP_SIZE);
           break;
       }
     }
