@@ -2179,7 +2179,7 @@ describe('ComboBox', function () {
       let items = within(tray).getAllByRole('option');
       expect(items.length).toBe(1);
 
-      let placeholderText = within(items[0]).getByText('No Results');
+      let placeholderText = within(items[0]).getByText('No results');
       expect(placeholderText).toBeVisible();
 
 
@@ -2190,7 +2190,7 @@ describe('ComboBox', function () {
 
       items = within(tray).getAllByRole('option');
       expect(items.length).toBe(3);
-      expect(() => within(tray).getByText('No Results')).toThrow();
+      expect(() => within(tray).getByText('No results')).toThrow();
     });
 
     it('user can select options by pressing them', function () {
@@ -2408,7 +2408,7 @@ describe('ComboBox', function () {
       let items = within(tray).getAllByRole('option');
       expect(items.length).toBe(1);
 
-      let placeholderText = within(items[0]).getByText('No Results');
+      let placeholderText = within(items[0]).getByText('No results');
       expect(placeholderText).toBeVisible();
     });
 

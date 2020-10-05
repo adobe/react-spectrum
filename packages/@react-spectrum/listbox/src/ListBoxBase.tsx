@@ -21,7 +21,7 @@ import {ListLayout} from '@react-stately/layout';
 import {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {HTMLAttributes, ReactElement, RefObject, useMemo} from 'react';
+import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useMemo} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useCollator, useMessageFormatter} from '@react-aria/i18n';
@@ -42,7 +42,7 @@ interface ListBoxBaseProps<T> extends DOMProps, AriaLabelingProps, StyleProps {
   transitionDuration?: number,
   isLoading?: boolean,
   onLoadMore?: () => void,
-  isMobile?: boolean
+  renderEmptyState?: () => ReactNode
 }
 
 /** @private */
@@ -65,7 +65,7 @@ export function useListBoxLayout<T>(state: ListState<T>) {
 
 /** @private */
 function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElement>) {
-  let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, shouldUseVirtualFocus, domProps = {}, transitionDuration = 0, isMobile} = props;
+  let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, shouldUseVirtualFocus, domProps = {}, transitionDuration = 0} = props;
   let {listBoxProps} = useListBox({
     ...props,
     ...domProps,
@@ -145,14 +145,18 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
                   UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
               </div>
             );
-          } else if (type === 'placeholder' && isMobile) {
+          } else if (type === 'placeholder') {
+            let emptyState = props.renderEmptyState ? props.renderEmptyState() : null;
+            if (emptyState == null) {
+              return null;
+            }
+
             return (
               <div
                 // aria-selected isn't needed here since this option is not selectable.
                 // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
-                role="option"
-                style={{paddingInlineStart: 16, paddingTop: 12}}>
-                <i>No Results</i>
+                role="option">
+                {emptyState}
               </div>
             );
           }

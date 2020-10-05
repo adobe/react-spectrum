@@ -14,10 +14,13 @@ import {AriaComboBoxProps, useComboBox} from '@react-aria/combobox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames, unwrapDOMRef, useIsMobileDevice, useStyleProps} from '@react-spectrum/utils';
 import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
+import comboboxStyles from './combobox.css';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRefValue, FocusableRefValue} from '@react-types/shared';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusRing, FocusScope} from '@react-aria/focus';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
@@ -31,6 +34,7 @@ import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
 import {useCollator} from '@react-aria/i18n';
+import {useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObject<TextFieldRef>) {
@@ -64,6 +68,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   let collator = useCollator({sensitivity: 'base'});
   let state = useComboBoxState({...props, collator, isMobile});
   let layout = useListBoxLayout(state);
+  let formatMessage = useMessageFormatter(intlMessages);
 
   let {triggerProps, inputProps, listBoxProps, labelProps} = useComboBox(
     {
@@ -126,7 +131,11 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
         // Set max height: inherit so Tray scrolling works
         UNSAFE_style={{maxHeight: 'inherit'}}
         shouldUseVirtualFocus
-        isMobile={isMobile} />
+        renderEmptyState={isMobile ? () => (
+          <span className={classNames(comboboxStyles, 'no-results')}>
+            {formatMessage('noResults')}
+          </span>
+        ) : null} />
       <DismissButton onDismiss={() => state.close()} />
     </FocusScope>
   );

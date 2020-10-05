@@ -137,7 +137,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     }
 
     if (nodes.length === 0) {
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, 40);
+      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.rowHeight || this.estimatedRowHeight);
       let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
       this.layoutInfos.set('placeholder', placeholder);
       nodes.push({layoutInfo: placeholder});
