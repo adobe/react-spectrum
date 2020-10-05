@@ -117,4 +117,44 @@ describe('Color', function () {
     expect(newColor.getChannelValue('lightness')).toBe(color.getChannelValue('lightness'));
     expect(newColor.getChannelValue('alpha')).toBe(color.getChannelValue('alpha'));
   });
+
+  describe('hsb', function () {
+    it('should parse a hsb color', function () {
+      let color = new Color('hsb(120, 100%, 50%)');
+      expect(color.getChannelValue('hue')).toBe(120);
+      expect(color.getChannelValue('saturation')).toBe(100);
+      expect(color.getChannelValue('brightness')).toBe(50);
+      expect(color.getChannelValue('alpha')).toBe(1);
+      expect(color.toString('hsb')).toBe('hsb(120, 100%, 50%)');
+      expect(color.toString('hsba')).toBe('hsba(120, 100%, 50%, 1)');
+    });
+
+    it('should parse a hsba color', function () {
+      let color = new Color('hsba(120, 100%, 50%, 0.5)');
+      expect(color.getChannelValue('hue')).toBe(120);
+      expect(color.getChannelValue('saturation')).toBe(100);
+      expect(color.getChannelValue('brightness')).toBe(50);
+      expect(color.getChannelValue('alpha')).toBe(0.5);
+      expect(color.toString('hsb')).toBe('hsb(120, 100%, 50%)');
+      expect(color.toString('hsba')).toBe('hsba(120, 100%, 50%, 0.5)');
+    });
+
+    it('normalizes hsba value by clamping', function () {
+      let color = new Color('hsba(-400, 120%, -4%, -1)');
+      expect(color.getChannelValue('hue')).toBe(320);
+      expect(color.getChannelValue('saturation')).toBe(100);
+      expect(color.getChannelValue('brightness')).toBe(0);
+      expect(color.getChannelValue('alpha')).toBe(0);
+      expect(color.toString('hsba')).toBe('hsba(320, 100%, 0%, 0)');
+    });
+  });
+
+  it('withChannelValue', () => {
+    let color = new Color('hsl(120, 100%, 50%)');
+    let newColor = color.withChannelValue('hue', 200);
+    expect(newColor.getChannelValue('hue')).toBe(200);
+    expect(newColor.getChannelValue('saturation')).toBe(color.getChannelValue('saturation'));
+    expect(newColor.getChannelValue('lightness')).toBe(color.getChannelValue('lightness'));
+    expect(newColor.getChannelValue('alpha')).toBe(color.getChannelValue('alpha'));
+  });
 });

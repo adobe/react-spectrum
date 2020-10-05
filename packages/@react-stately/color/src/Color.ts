@@ -130,7 +130,9 @@ class RGBColor implements ColorValue {
   toString(format: ColorFormat | 'css') {
     switch (format) {
       case 'hex':
-        return '#' + (1 << 24 | this.red << 16 | this.green << 8 | this.blue).toString(16).slice(1).toUpperCase();
+        return '#' + (this.red.toString(16).padStart(2, '0') + this.green.toString(16).padStart(2, '0') + this.blue.toString(16).padStart(2, '0')).toUpperCase();
+      case 'hexa':
+        return '#' + (this.red.toString(16).padStart(2, '0') + this.green.toString(16).padStart(2, '0') + this.blue.toString(16).padStart(2, '0') + Math.round(this.alpha * 255).toString(16).padStart(2, '0')).toUpperCase();
       case 'rgb':
         return `rgb(${this.red}, ${this.green}, ${this.blue})`;
       case 'css':
@@ -159,13 +161,22 @@ class RGBColor implements ColorValue {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+// X = <negative/positive number with/without decimal places>
+// before/after a comma, 0 or more whitespaces are allowed
+// - hsb(X, X%, X%)
+// - hsba(X, X%, X%, X)
+const HSB_REGEX = /hsb\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%)\)|hsba\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d(.\d+)?)\)/;
+
 class HSBColor implements ColorValue {
   constructor(private hue: number, private saturation: number, private brightness: number, private alpha: number) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   static parse(value: string): HSBColor | void {
-    // TODO
+    let m: RegExpMatchArray | void;
+    if ((m = value.match(HSB_REGEX))) {
+      const [h, s, b, a] = (m[1] ?? m[2]).split(',').map(n => Number(n.trim().replace('%', '')));
+      return new HSBColor(mod(h, 360), clamp(s, 0, 100), clamp(b, 0, 100), clamp(a ?? 1, 0, 1));
+    }
   }
 
   toString(format: ColorFormat | 'css') {
