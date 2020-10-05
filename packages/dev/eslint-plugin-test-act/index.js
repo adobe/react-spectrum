@@ -115,11 +115,6 @@ module.exports = {
                   JEST_TIMER_FUNCTIONS.includes(node.callee.property.name)
                 ) {
                   report(node, context);
-                } else if (
-                  node.callee.object.type === 'Identifier' &&
-                  node.callee.object.name === 'userEvent'
-                ) {
-                  report(node, context);
                 }
               }
             }
