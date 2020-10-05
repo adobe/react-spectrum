@@ -11,7 +11,6 @@ type useResizeObserverOptionsType<T> = {
 
 export function useResizeObserver<T extends HTMLElement>(options: useResizeObserverOptionsType<T>) {
   const {ref, onResize} = options;
-
   useEffect(() => {
     if (!ref) {
       return;
@@ -23,7 +22,6 @@ export function useResizeObserver<T extends HTMLElement>(options: useResizeObser
         window.removeEventListener('resize', onResize, false);
       };
     } else {
-
       const resizeObserverInstance = new window.ResizeObserver((entries) => {
         if (!entries.length) {
           return;

@@ -12,7 +12,7 @@
 
 import {classNames, SlotProvider, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
+import {filterDOMProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import React, {useCallback, useEffect, useState} from 'react';
 import {SpectrumButtonGroupProps} from '@react-types/buttongroup';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
@@ -48,7 +48,8 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
       }
     }
   }, [domRef, orientation]);
-
+  
+  
   // On scale or children change, remove vertical orientation class via dirty = true and check for overflow
   useLayoutEffect(() => {
     if (dirty) {
@@ -66,17 +67,7 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
   }, [children, scale]);
 
   // Check for overflow on window resize
-  useEffect(() => {
-    if (orientation !== 'vertical') {
-      // I think performance could be optimized here by creating a global, debounced hook for listening to resize
-      // events rather than creating an event-listener per component.
-      window.addEventListener('resize', checkForOverflow);
-      checkForOverflow();
-      return () => {
-        window.removeEventListener('resize', checkForOverflow);
-      };
-    }
-  }, [checkForOverflow, orientation]);
+   useResizeObserver({ref: domRef, onResize: checkForOverflow});
 
   return (
     <div
