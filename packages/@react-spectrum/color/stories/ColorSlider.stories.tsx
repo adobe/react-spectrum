@@ -32,20 +32,18 @@ storiesOf('ColorSlider', module)
   )
   .add(
     'vertical',
-    () => {
-      let [color, setColor] = useState(new Color('#ff0000'));
-      return (<Flex direction="column" alignItems="center">
-        <Text>{color.getChannelValue('red')}</Text>
-        <ColorSlider value={color} onChange={setColor} channel={'red'} orientation="vertical" />
-      </Flex>);
-    }
+    () => <ColorSlider defaultValue={new Color('#ff0000')} channel={'red'} orientation="vertical" />
+  )
+  .add(
+    'controlled',
+    () => <ColorSlider value={new Color('#ff0000')} channel={'red'} />
   )
   .add(
     'rgba',
     () => {
       let [color, setColor] = useState(new Color('#ff00ff'));
       return (<Flex gap="size-500" alignItems="center">
-        <Flex direction="column" gap="size-300">
+        <Flex direction="column">
           <Text>RGBA</Text>
           <ColorSlider value={color} onChange={setColor} channel={'red'} />
           <ColorSlider value={color} onChange={setColor} channel={'green'} />
@@ -64,14 +62,30 @@ storiesOf('ColorSlider', module)
     () => {
       let [color, setColor] = useState(new Color('hsla(0, 100%, 50%, 0.5)'));
       return (<Flex gap="size-500" alignItems="center">
-        <Flex direction="column" gap="size-300">
-          <Text>HSLA</Text>
+        <Flex direction="column">
           <ColorSlider value={color} onChange={setColor} channel={'hue'} />
           <ColorSlider value={color} onChange={setColor} channel={'saturation'} />
           <ColorSlider value={color} onChange={setColor} channel={'lightness'} />
           <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
         </Flex>
-        <Flex direction="column" alignItems="center"gap="size-100">
+        <Flex direction="column" alignItems="center" gap="size-100">
+          <div style={{width: '100px', height: '100px', background: color.toString('css')}} />
+        </Flex>
+      </Flex>);
+    }
+  )
+  .add(
+    'hsba',
+    () => {
+      let [color, setColor] = useState(new Color('hsba(0, 100%, 50%, 0.5)'));
+      return (<Flex gap="size-500" alignItems="center">
+        <Flex direction="column">
+          <ColorSlider value={color} onChange={setColor} channel={'hue'} />
+          <ColorSlider value={color} onChange={setColor} channel={'saturation'} />
+          <ColorSlider value={color} onChange={setColor} channel={'brightness'} />
+          <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
+        </Flex>
+        <Flex direction="column" alignItems="center" gap="size-100">
           <div style={{width: '100px', height: '100px', background: color.toString('css')}} />
         </Flex>
       </Flex>);

@@ -15,6 +15,8 @@ import {Color, ColorSliderState, useColorSliderState} from '@react-stately/color
 import {ColorChannel, ColorSliderProps} from '@react-types/color';
 import {ColorThumb} from './ColorThumb';
 import {Direction} from '@react-types/shared';
+import {Flex} from '@react-spectrum/layout';
+import {Label} from '@react-spectrum/label';
 import React, {useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/colorslider/vars.css';
 import {useColorSlider} from '@react-aria/color';
@@ -22,14 +24,13 @@ import {useFocus, useFocusVisible} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-
 function getDisplayColor(value: Color, channel: ColorChannel): Color {
   switch (channel) {
     case 'hue':
       return new Color(`hsl(${value.getChannelValue('hue')}, 100%, 50%)`);
     case 'lightness':
-    case 'brightness':
       value = value.withChannelValue('saturation', 0);
+    case 'brightness':
     case 'saturation':
     case 'red':
     case 'green':
@@ -83,12 +84,12 @@ function ColorSlider(props: ColorSliderProps) {
   let inputRef = useRef();
   let trackRef = useRef();
 
-  // TODO label situation
-  // If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
 
   let state = useColorSliderState(props);
   let {inputProps, thumbProps, containerProps, trackProps} = useColorSlider({
     ...props,
+    // TODO label situation
+    // If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
     'aria-label': channel,
     trackRef,
     inputRef
@@ -106,23 +107,30 @@ function ColorSlider(props: ColorSliderProps) {
     thumbPosition = 1 - thumbPosition;
   }
 
-  return (<div className={classNames(styles, 'spectrum-ColorSlider', {'is-disabled': isDisabled, 'spectrum-ColorSlider--vertical': vertical})} {...containerProps}>
-    <div className={classNames(styles, 'spectrum-ColorSlider-checkerboard')} role="presentation" ref={trackRef} {...trackProps}>
-      <div className={classNames(styles, 'spectrum-ColorSlider-gradient')} role="presentation" style={{background: getBackground(state, channel, vertical, direction)}} />
-    </div>
+  return (
+    <div>
+      <Flex direction="row" justifyContent="space-between">
+        {/* TODO: connect this label with the slider input */}
+        <Label>{channel[0].toUpperCase() + channel.slice(1)}</Label>
+        <Label>{state.getThumbValueLabel(0)}</Label>
+      </Flex>
+      <div className={classNames(styles, 'spectrum-ColorSlider', {'is-disabled': isDisabled, 'spectrum-ColorSlider--vertical': vertical})} {...containerProps}>
+        <div className={classNames(styles, 'spectrum-ColorSlider-checkerboard')} role="presentation" ref={trackRef} {...trackProps}>
+          <div className={classNames(styles, 'spectrum-ColorSlider-gradient')} role="presentation" style={{background: getBackground(state, channel, vertical, direction)}} />
+        </div>
 
-    <ColorThumb
-      value={getDisplayColor(state.value, channel)}
-      isFocused={isFocused && isFocusVisible}
-      isDisabled={isDisabled}
-      isDragging={state.isThumbDragging(0)}
-      style={{[vertical ? 'top' : 'left']: `${thumbPosition * 100}%`}}
-      className={classNames(styles, 'spectrum-ColorSlider-handle')}
-      {...thumbProps}>
-      <input {...inputProps} {...focusProps} ref={inputRef} className={classNames(styles, 'spectrum-ColorSlider-slider')} />
-    </ColorThumb>
-
-  </div>);
+        <ColorThumb
+          value={getDisplayColor(state.value, channel)}
+          isFocused={isFocused && isFocusVisible}
+          isDisabled={isDisabled}
+          isDragging={state.isThumbDragging(0)}
+          style={{[vertical ? 'top' : 'left']: `${thumbPosition * 100}%`}}
+          className={classNames(styles, 'spectrum-ColorSlider-handle')}
+          {...thumbProps}>
+          <input {...inputProps} {...focusProps} ref={inputRef} className={classNames(styles, 'spectrum-ColorSlider-slider')} />
+        </ColorThumb>
+      </div>
+    </div>);
 }
 
 export {ColorSlider};
