@@ -17,9 +17,41 @@
   height: 100%;
 }
 
-.react-spectrum-Tabs--hidden {
-  visibility: hidden;
+.react-spectrum-Tabs--collapsible {
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 0%;
+  overflow: hidden;
+  position: relative;
 }
+
+.react-spectrum-Tabs--container {
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 0%;
+  &.react-spectrum-Tabs--hidden {
+    visibility: hidden;
+  }
+}
+
+.react-spectrum-Tabs--dropdown {
+  height: calc(100% - 2px);
+  left: 0;
+  position: absolute;
+  transform: translateY(-50%);
+  top: 50%;
+  width: 100%;
+
+  /* TODO: Ask what to do about the below styles. Need to get them propagated to the Picker's FieldButton */
+  /* .spectrum-FieldButton {
+    padding: 0 4px;
+  }
+
+  .focus-ring {
+    border-radius: 2px;
+  } */
+}
+
 
 .react-spectrum-TabPanel--vertical {
   display: flex;

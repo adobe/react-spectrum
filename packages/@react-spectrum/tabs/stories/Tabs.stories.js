@@ -85,19 +85,19 @@ storiesOf('Tabs', module)
   // TODO add a quiet and density compact version of below
   .add(
     'collapse behavior',
-    () => renderMany()
+    () => <ManyTabs />
   )
   .add(
     'collapse behavior, isQuiet',
-    () => renderMany({isQuiet: true})
+    () => <ManyTabs isQuiet />
   )
   .add(
     'collapse behavior, density: compact',
-    () => renderMany({density: 'compact'})
+    () => <ManyTabs density="compact" />
   )
   .add(
     'collapse behavior, density: compact, isQuiet',
-    () => renderMany({isQuiet: true, density: 'compact'})
+    () => <ManyTabs isQuiet density="compact" />
   );
 
 function render(props = {}) {
@@ -235,7 +235,7 @@ function renderWithFalsyKey(props = {}) {
   );
 }
 
-function renderMany(props = {}) {
+let ManyTabs = (props = {}) => {
   let items = [
     {name: 'Tab 1', children: 'Tab Body 1', icon: <Dashboard size="S" />},
     {name: 'Tab 2', children: 'Tab Body 2', icon: <Calendar size="S" />},
@@ -296,4 +296,4 @@ function renderMany(props = {}) {
       </ButtonGroup>
     </div>
   );
-}
+};

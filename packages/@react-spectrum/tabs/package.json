@@ -41,6 +41,7 @@
     "@react-spectrum/button": "^3.2.0",
     "@react-spectrum/menu": "^3.2.0",
     "@react-spectrum/picker": "^3.2.0",
+    "@react-spectrum/text": "3.1.0",
     "@react-spectrum/utils": "^3.2.1",
     "@react-stately/list": "^3.2.0",
     "@react-types/shared": "^3.2.0",

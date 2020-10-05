@@ -75,8 +75,7 @@ export function useTabs<T>(props: TabsAriaProps<T>, state: SingleSelectListState
       ...mergeProps(focusWithinProps, collectionProps, tabListLabelProps),
       role: 'tablist',
       'aria-disabled': isDisabled,
-      tabIndex: isDisabled ? null : tabIndex,
-
+      tabIndex: isDisabled ? null : tabIndex
     },
     tabPanelProps: {
       id: generateId(state, selectedKey, 'tabpanel'),
