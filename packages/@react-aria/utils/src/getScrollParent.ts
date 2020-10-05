@@ -10,17 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useId';
-export * from './chain';
-export * from './mergeProps';
-export * from './number';
-export * from './getOffset';
-export * from './useDrag1D';
-export * from './useLabels';
-export * from './useUpdateEffect';
-export * from './focusWithoutScrolling';
-export * from './filterDOMProps';
-export * from './runAfterTransition';
-export * from './useLayoutEffect';
-export * from './useResizeObserver';
-export * from './getScrollParent';
+export function getScrollParent(node: Element): Element {
+  while (node && !isScrollable(node)) {
+    node = node.parentElement;
+  }
+
+  return node || document.scrollingElement || document.documentElement;
+}
+
+function isScrollable(node: Element): boolean {
+  let style = window.getComputedStyle(node);
+  return /(auto|scroll)/.test(style.overflow + style.overflowX + style.overflowY);
+}
