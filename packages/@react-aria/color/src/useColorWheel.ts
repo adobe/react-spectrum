@@ -23,7 +23,7 @@ export interface ColorWheelAriaResult {
   thumbPosition: {x: number, y: number}
 }
 
-const PAGE_STEP_SIZE = 6;
+const PAGE_MIN_STEP_SIZE = 6;
 
 function degToRad(deg: number) {
   return deg * Math.PI / 180;
@@ -33,7 +33,7 @@ function radToDeg(rad: number) {
   return rad * 180 / Math.PI;
 }
 
-// 0deg = 3 o'clock. increses clockwise
+// 0deg = 3 o'clock. increases clockwise
 function angleToCartesian(angle: number, radius: number): {x: number, y: number} {
   let rad = degToRad(360 - angle + 90);
   let x = Math.sin(rad) * (radius);
@@ -175,11 +175,11 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       switch (e.key) {
         case 'PageUp':
           e.preventDefault();
-          state.increment(PAGE_STEP_SIZE);
+          state.increment(PAGE_MIN_STEP_SIZE);
           break;
         case 'PageDown':
           e.preventDefault();
-          state.decrement(PAGE_STEP_SIZE);
+          state.decrement(PAGE_MIN_STEP_SIZE);
           break;
       }
     }

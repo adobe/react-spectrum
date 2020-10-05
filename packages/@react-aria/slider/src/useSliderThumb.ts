@@ -19,7 +19,7 @@ interface SliderThumbAria {
   labelProps: HTMLAttributes<HTMLElement>
 }
 
-interface SliderThumbOptions extends SliderThumbProps {
+export interface SliderThumbOptions extends SliderThumbProps {
   trackRef: React.RefObject<HTMLElement>,
   inputRef: React.RefObject<HTMLInputElement>
 }

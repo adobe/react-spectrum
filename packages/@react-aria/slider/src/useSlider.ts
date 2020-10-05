@@ -19,7 +19,7 @@ import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
 import {useMove} from '@react-aria/interactions';
 
-interface SliderAria {
+export interface SliderAria {
   /** Props for the label element. */
   labelProps: HTMLAttributes<HTMLElement>,
 

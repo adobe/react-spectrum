@@ -10,6 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Color';
-export * from './useColorSliderState';
-export * from './useColorWheelState';
+import {ColorSliderState} from '@react-stately/color';
+import {SliderThumbOptions, useSlider, useSliderThumb} from '@react-aria/slider';
+
+export interface ColorSliderOptions extends Omit<SliderThumbOptions, 'index'> {}
+
+export function useColorSlider(props: ColorSliderOptions, state: ColorSliderState) {
+  let {trackRef} = props;
+
+  let {containerProps, trackProps} = useSlider(props, state, trackRef);
+  let {inputProps, thumbProps} = useSliderThumb({
+    ...props,
+    index: 0
+  }, state);
+
+  return {
+    containerProps,
+    trackProps,
+    inputProps,
+    thumbProps
+  };
+}

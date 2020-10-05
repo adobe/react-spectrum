@@ -86,6 +86,25 @@ export class Color {
 
     throw new Error('Unsupported color channel: ' + channel);
   }
+
+  static getRange(channel: ColorChannel) {
+    switch (channel) {
+      case 'hue':
+        return {minValue: 0, maxValue: 360, step: 1};
+      case 'saturation':
+      case 'lightness':
+      case 'brightness':
+        return {minValue: 0, maxValue: 100, step: 1};
+      case 'red':
+      case 'green':
+      case 'blue':
+        return {minValue: 0, maxValue: 255, step: 1};
+      case 'alpha':
+        return {minValue: 0, maxValue: 1, step: 0.01};
+      default:
+        throw new Error('Unknown color channel: ' + channel);
+    }
+  }
 }
 
 interface ColorValue {
