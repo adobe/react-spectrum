@@ -16,6 +16,7 @@ import {DOMProps} from '@react-types/shared';
 import React, {ReactElement} from 'react';
 import stylesHandle from '@adobe/spectrum-css-temp/components/colorhandle/vars.css';
 import stylesLoupe from '@adobe/spectrum-css-temp/components/colorloupe/vars.css';
+import {useId} from '@react-aria/utils';
 
 interface ColorThumbProps extends DOMProps {
   value: Color,
@@ -29,12 +30,23 @@ interface ColorThumbProps extends DOMProps {
 function ColorThumb(props: ColorThumbProps) {
   let {value, isDisabled, isDragging, isFocused, children, className = '', ...otherProps} = props;
 
+  let patternId = useId();
+
   let valueCSS = value.toString('css');
 
   return (
     <div className={classNames(stylesHandle, 'spectrum-ColorHandle', {'is-focused': isFocused, 'is-disabled': isDisabled}) + ' ' + className} {...otherProps}>
       <div className={classNames(stylesHandle, 'spectrum-ColorHandle-color')} style={{backgroundColor: valueCSS}} />
       <svg className={classNames(stylesLoupe, 'spectrum-ColorLoupe',  {'is-open': isDragging})} aria-hidden="true">
+        <pattern id={patternId} x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
+          <rect className={classNames(stylesLoupe, 'spectrum-ColorLoupe-inner-background')} x="0" y="0" width="16" height="16" />
+          <rect className={classNames(stylesLoupe, 'spectrum-ColorLoupe-inner-checker')} x="0" y="0" width="8" height="8" />
+          <rect className={classNames(stylesLoupe, 'spectrum-ColorLoupe-inner-checker')} x="8" y="8" width="8" height="8" />
+        </pattern>
+        <path
+          className={classNames(stylesLoupe, 'spectrum-ColorLoupe-inner')}
+          d="M25 1a24 24 0 0124 24c0 16.255-24 40-24 40S1 41.255 1 25A24 24 0 0125 1z"
+          fill={`url(#${patternId})`} />
         <path
           className={classNames(stylesLoupe, 'spectrum-ColorLoupe-inner')}
           d="M25 1a24 24 0 0124 24c0 16.255-24 40-24 40S1 41.255 1 25A24 24 0 0125 1z"
