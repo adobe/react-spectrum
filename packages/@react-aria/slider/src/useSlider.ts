@@ -45,7 +45,9 @@ export function useSlider(
   state: SliderState,
   trackRef: React.RefObject<HTMLElement>
 ): SliderAria {
-  const {labelProps, fieldProps} = useLabel(props);
+  let {labelProps, fieldProps} = useLabel(props);
+
+  let isVertical = props.orientation === 'vertical';
 
   // Attach id of the label to the state so it can be accessed by useSliderThumb.
   sliderIds.set(state, labelProps.id ?? fieldProps.id);
@@ -68,14 +70,22 @@ export function useSlider(
     onMoveStart() {
       currentPosition.current = null;
     },
-    onMove({deltaX}) {
+    onMove({deltaX, deltaY}) {
+      let size = isVertical ? trackRef.current.offsetHeight : trackRef.current.offsetWidth;
+
       if (currentPosition.current == null) {
-        currentPosition.current = stateRef.current.getThumbPercent(realTimeTrackDraggingIndex.current) * trackRef.current.offsetWidth;
+        currentPosition.current = stateRef.current.getThumbPercent(realTimeTrackDraggingIndex.current) * size;
       }
-      currentPosition.current += reverseX ? -deltaX : deltaX;
+
+      let delta = isVertical ? deltaY : deltaX;
+      if (isVertical || reverseX) {
+        delta = -delta;
+      }
+
+      currentPosition.current += delta;
 
       if (realTimeTrackDraggingIndex.current != null && trackRef.current) {
-        const percent = clamp(currentPosition.current / trackRef.current.offsetWidth, 0, 1);
+        const percent = clamp(currentPosition.current / size, 0, 1);
         stateRef.current.setThumbPercent(realTimeTrackDraggingIndex.current, percent);
       }
     },
@@ -88,15 +98,16 @@ export function useSlider(
   });
 
   let currentPointer = useRef<number | null | undefined>(undefined);
-  let onDownTrack = (e: React.UIEvent, id: number, clientX: number) => {
+  let onDownTrack = (e: React.UIEvent, id: number, clientX: number, clientY: number) => {
     // We only trigger track-dragging if the user clicks on the track itself and nothing is currently being dragged.
     if (trackRef.current && !props.isDisabled && state.values.every((_, i) => !state.isThumbDragging(i))) {
+      let size = isVertical ? trackRef.current.offsetHeight : trackRef.current.offsetWidth;
       // Find the closest thumb
-      const trackPosition = trackRef.current.getBoundingClientRect().left;
-      const clickPosition = clientX;
+      const trackPosition = trackRef.current.getBoundingClientRect()[isVertical ? 'top' : 'left'];
+      const clickPosition = isVertical ? clientY : clientX;
       const offset = clickPosition - trackPosition;
-      let percent = offset / trackRef.current.offsetWidth;
-      if (direction === 'rtl') {
+      let percent = offset / size;
+      if (direction === 'rtl' || isVertical) {
         percent = 1 - percent;
       }
       let value = state.getPercentValue(percent);
@@ -148,9 +159,9 @@ export function useSlider(
       ...fieldProps
     },
     trackProps: mergeProps({
-      onMouseDown(e: React.MouseEvent<HTMLElement>) { onDownTrack(e, undefined, e.clientX); },
-      onPointerDown(e: React.PointerEvent<HTMLElement>) { onDownTrack(e, e.pointerId, e.clientX); },
-      onTouchStart(e: React.TouchEvent<HTMLElement>) { onDownTrack(e, e.changedTouches[0].identifier, e.changedTouches[0].clientX); }
+      onMouseDown(e: React.MouseEvent<HTMLElement>) { onDownTrack(e, undefined, e.clientX, e.clientY); },
+      onPointerDown(e: React.PointerEvent<HTMLElement>) { onDownTrack(e, e.pointerId, e.clientX, e.clientY); },
+      onTouchStart(e: React.TouchEvent<HTMLElement>) { onDownTrack(e, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY); }
     }, moveProps)
   };
 }
