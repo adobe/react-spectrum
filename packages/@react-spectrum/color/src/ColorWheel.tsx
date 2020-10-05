@@ -26,7 +26,7 @@ for (let i = 0; i < 360; i++) {
   SEGMENTS.push(<rect width="80" height="2" x="80" y="79" fill={`hsl(${i}, 100%, 50%)`} transform={`rotate(${i} 80 80)`} key={i} />);
 }
 
-const RATIO_INNER_OUTER = 56 / 80;
+const WHEEL_THICKNESS = 24;
 
 function ColorWheel(props: SpectrumColorWheelProps) {
   props = useProviderProps(props);
@@ -62,7 +62,7 @@ function ColorWheel(props: SpectrumColorWheelProps) {
     ...props,
     inputRef,
     containerRef,
-    innerRadius: wheelRadius * RATIO_INNER_OUTER,
+    innerRadius: wheelRadius - WHEEL_THICKNESS,
     outerRadius: wheelRadius
   }, state);
 
@@ -74,6 +74,10 @@ function ColorWheel(props: SpectrumColorWheelProps) {
   });
 
   let maskId = useId();
+
+  // We are keeping the svg viewbox at 160x160 so that SEGMENTS can remain constant.
+  // Instead make sure that the track thickness remains constant after scaling.
+  let svgInnerRadius = 80 - (WHEEL_THICKNESS * (80 / wheelRadius));
 
   return (
     <div
@@ -90,14 +94,14 @@ function ColorWheel(props: SpectrumColorWheelProps) {
         <defs>
           <mask id={maskId}>
             <circle cx="80" cy="80" r="80" fill="white" />
-            <circle cx="80" cy="80" r="56" fill="black" />
+            <circle cx="80" cy="80" r={svgInnerRadius} fill="black" />
           </mask>
         </defs>
         <g className={classNames(styles, 'spectrum-ColorWheel-segment')} mask={`url(#${maskId})`}>
           {SEGMENTS}
         </g>
         <circle cx="80" cy="80" r="79.5" className={classNames(styles, 'spectrum-ColorWheel-outerCircle')} mask={`url(#${maskId})`} />
-        <circle cx="80" cy="80" r="56" className={classNames(styles, 'spectrum-ColorWheel-innerCircle')} />
+        <circle cx="80" cy="80" r={svgInnerRadius} className={classNames(styles, 'spectrum-ColorWheel-innerCircle')} />
       </svg>
 
       {
