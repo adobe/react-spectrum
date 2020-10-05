@@ -26,8 +26,6 @@ import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useResizeObserver} from '@react-aria/utils';
 import {useTab, useTabs} from '@react-aria/tabs';
 
-import {VisuallyHidden} from '@react-aria/visually-hidden';
-
 export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
   props = useProviderProps(props);
   let {
@@ -40,18 +38,9 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
   } = props;
 
   let ref = useRef<HTMLDivElement>();
-  let pickerRef = useRef<HTMLDivElement>();
   let state = useSingleSelectListState<T>({
     ...props,
     onSelectionChange
-  });
-
-  // TODO: figure out if I need this for picker or not
-  let childArray = [];
-  React.Children.forEach(props.children, child => {
-    if (React.isValidElement(child)) {
-      childArray.push(child);
-    }
   });
 
   let {direction} = useLocale();
@@ -99,43 +88,45 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
         `react-spectrum-TabPanel--${orientation}`,
         styleProps.className
       )}>
-      <div
-        {...styleProps}
-        {...tabListProps}
-        aria-hidden={collapse && orientation !== 'vertical'}
-        ref={ref}
-        className={classNames(
-          styles,
-          'spectrum-Tabs',
-          `spectrum-Tabs--${orientation}`,
-          {
-            'spectrum-Tabs--quiet': isQuiet,
-          },
-          density ? `spectrum-Tabs--${density}` : '',
-          classNames(
-            tabsStyles,
+      {/* TODO, might need this container so that we can have the hidden tabs overlap on top of the picker instead of sitting above it*/}
+      {/* <div style={{display: 'flex', flexGrow: 1, flexShrink: 0, flexBasis: 0, overflow: 'hidden', position: 'relative'}}> */}
+        <div
+          {...styleProps}
+          {...tabListProps}
+          aria-hidden={collapse && orientation !== 'vertical'}
+          ref={ref}
+          className={classNames(
+            styles,
+            'spectrum-Tabs',
+            `spectrum-Tabs--${orientation}`,
             {
-              // TODO: Ask if I should use VisuallyHidden instead, felt kinda weird using it since I apply aria-hidden above
-              'react-spectrum-Tabs--hidden': collapse && orientation !== 'vertical'
-            }
-          ),
-          styleProps.className
-        )}>
-        {[...state.collection].map((item) => (
-          <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
-        ))}
-        <TabLine orientation={orientation} selectedTab={selectedTab} />
-      </div>
-      {(collapse && orientation !== 'vertical') &&
-        <TabsPicker
-          styleProps={styleProps}
-          tabListProps={tabListProps}
-          density={density}
-          isDisabled={isDisabled}
-          isQuiet={isQuiet}
-          state={state}
-          childArray={childArray} />
-      }
+              'spectrum-Tabs--quiet': isQuiet,
+            },
+            density ? `spectrum-Tabs--${density}` : '',
+            classNames(
+              tabsStyles,
+              {
+                // TODO: Ask if I should use VisuallyHidden instead, felt kinda weird using it since I apply aria-hidden above
+                'react-spectrum-Tabs--hidden': collapse && orientation !== 'vertical'
+              }
+            ),
+            styleProps.className
+          )}>
+          {[...state.collection].map((item) => (
+            <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
+          ))}
+          <TabLine orientation={orientation} selectedTab={selectedTab} />
+        </div>
+        {(collapse && orientation !== 'vertical') &&
+          <TabsPicker
+            styleProps={styleProps}
+            tabListProps={tabListProps}
+            density={density}
+            isDisabled={isDisabled}
+            isQuiet={isQuiet}
+            state={state} />
+        }
+      {/* </div> */}
       <div {...tabPanelProps} className="react-spectrum-TabPanel-body">
         {state.selectedItem && state.selectedItem.props.children}
       </div>
@@ -230,7 +221,6 @@ function TabsPicker(props) {
     tabListProps,
     isQuiet,
     density,
-    childArray,
     state
   } = props;
 
@@ -241,6 +231,12 @@ function TabsPicker(props) {
     let node = unwrapDOMRef(ref);
     setPickerNode(node.current);
   }, [ref]);
+  console.log('state', [...state.collection])
+
+  let items = [...state.collection].map((item) => ({
+    name: item.rendered,
+    key: item.key
+  }))
 
   // TODO: Figure out if tabListProps should go onto the div here, v2 doesn't do it
   return (
@@ -256,9 +252,9 @@ function TabsPicker(props) {
         density ? `spectrum-Tabs--${density}` : '',
         styleProps.className
       )}>
-      <Picker ref={ref} aria-label={tabListProps['aria-label']} isQuiet isDisabled={isDisabled} selectedKey={state.selectedKey} onSelectionChange={state.setSelectedKey}>
-        {/* TODO: Think about whether or not to use childArray */}
-        {childArray}
+      <Picker items={items} ref={ref} aria-label={tabListProps['aria-label']} isQuiet isDisabled={isDisabled} selectedKey={state.selectedKey} onSelectionChange={state.setSelectedKey}>
+        {/* TODO maybe have textValue="item.name" */}
+        {item => <Item key={item.key}>{item.name}</Item>}
       </Picker>
       {pickerNode && <TabLine orientation="horizontal" selectedTab={pickerNode}/>}
     </div>

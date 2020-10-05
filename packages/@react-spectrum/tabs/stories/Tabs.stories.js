@@ -78,25 +78,13 @@ storiesOf('Tabs', module)
     () => render({keyboardActivation: 'manual'})
   )
   .add(
-    'overflowMode: dropdown',
-    () => render({overflowMode: 'dropdown'})
-  )
-  .add(
-    'overflowMode: dropdown, density: compact',
-    () => render({overflowMode: 'dropdown', density: 'compact'})
-  )
-  .add(
-    'overflowMode: dropdown, orientation: vertical',
-    () => render({overflowMode: 'dropdown', orientation: 'vertical'})
-  )
-  .add(
     'middle disabled',
     () => render({disabledKeys: ['val2']})
   )
   // TODO ask if this is supposed to be overflowMode or behavior that is always applied
   // TODO add a quiet and density compact version of below
   .add(
-    'collapses',
+    'collapse behavior',
     () => renderMany()
   );
 
@@ -221,20 +209,48 @@ function renderMany(props = {}) {
     {name: 'Tab 6', children: 'Tab Body 6', icon: <Bookmark size="S" />}
   ];
 
+  let [tabs, setTabs] = React.useState(items);
+  let addTab = () => {
+    let newTabs = [...tabs];
+    newTabs.push({
+      name: `Tab ${tabs.length + 1}`,
+      children: `Tab Body ${tabs.length + 1}`
+    });
+
+    setTabs(newTabs);
+  };
+
+  let removeTab = () => {
+    let newTabs = [...tabs];
+    newTabs.pop();
+    setTabs(newTabs);
+  };
+
   return (
-    <Tabs {...props} maxWidth={500} onSelectionChange={action('onSelectionChange')}>
-      {items.map(item => (
-        <Item key={item.name} title={item.name} icon={item.icon}>
-          <Content margin="size-160">
-            <Heading>{item.children}</Heading>
-            <Text>
-              Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
-              Id cupidatat aute id ut excepteur exercitation magna pariatur. Mollit irure irure reprehenderit pariatur eiusmod proident Lorem deserunt duis cillum mollit. Do reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum. Velit aliquip commodo ea ipsum incididunt culpa nostrud deserunt incididunt exercitation. In quis proident sit ad dolore tempor. Eiusmod pariatur quis commodo labore cupidatat cillum enim eiusmod voluptate laborum culpa. Laborum cupidatat incididunt velit voluptate incididunt occaecat quis do.
-              Consequat adipisicing irure Lorem commodo officia sint id. Velit sit magna aliquip eiusmod non id deserunt. Magna veniam ad consequat dolor cupidatat esse enim Lorem ullamco. Anim excepteur consectetur id in. Mollit laboris duis labore enim duis esse reprehenderit.
-            </Text>
-          </Content>
-        </Item>
-      ))}
-    </Tabs>
+    <div style={{overflow: 'auto', flexDirection: 'column'}}>
+      <Tabs {...props} items={tabs} maxWidth={500} onSelectionChange={action('onSelectionChange')}>
+        {item => (
+          <Item key={item.name} title={item.name} icon={item.icon}>
+            <Content margin="size-160">
+              <Heading>{item.children}</Heading>
+              <Text>
+                Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+                Id cupidatat aute id ut excepteur exercitation magna pariatur. Mollit irure irure reprehenderit pariatur eiusmod proident Lorem deserunt duis cillum mollit. Do reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum. Velit aliquip commodo ea ipsum incididunt culpa nostrud deserunt incididunt exercitation. In quis proident sit ad dolore tempor. Eiusmod pariatur quis commodo labore cupidatat cillum enim eiusmod voluptate laborum culpa. Laborum cupidatat incididunt velit voluptate incididunt occaecat quis do.
+                Consequat adipisicing irure Lorem commodo officia sint id. Velit sit magna aliquip eiusmod non id deserunt. Magna veniam ad consequat dolor cupidatat esse enim Lorem ullamco. Anim excepteur consectetur id in. Mollit laboris duis labore enim duis esse reprehenderit.
+              </Text>
+            </Content>
+          </Item>
+        )}
+
+      </Tabs>
+      <ButtonGroup marginEnd="30px">
+        <Button variant="secondary" onPress={() => addTab()}>
+          <Text>Add Tab</Text>
+        </Button>
+        <Button variant="secondary" onPress={() => removeTab()}>
+          <Text>Remove Tab</Text>
+        </Button>
+      </ButtonGroup>
+    </div>
   );
 }
