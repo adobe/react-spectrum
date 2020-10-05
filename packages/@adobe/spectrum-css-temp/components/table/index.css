@@ -160,6 +160,15 @@ governing permissions and limitations under the License.
   margin: 0 -4px;
 }
 
+.react-spectrum-Table-cell--hideHeader {
+  padding: 0;
+}
+
+.react-spectrum-Table-cellContents--hideHeader {
+  margin: 0;
+  padding: 0;
+}
+
 .spectrum-Table--wrap .spectrum-Table-cellContents {
   white-space: normal;
 }

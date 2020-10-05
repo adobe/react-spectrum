@@ -606,15 +606,15 @@ function TableCellBase({cell, cellRef, ...otherProps}) {
             styles,
             'spectrum-Table-cell',
             {
-              'spectrum-Table-cell--divider': columnProps.showDivider
+              'spectrum-Table-cell--divider': columnProps.showDivider,
+              'react-spectrum-Table-cell--hideHeader': columnProps.hideHeader
             },
             classNames(
               stylesOverrides,
               'react-spectrum-Table-cell',
               {
                 'react-spectrum-Table-cell--alignCenter': columnProps.align === 'center',
-                'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end',
-                'react-spectrum-Table-cell--hideHeader': columnProps.hideHeader
+                'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end'
               }
             )
           )
@@ -624,12 +624,9 @@ function TableCellBase({cell, cellRef, ...otherProps}) {
             classNames(
               styles,
               'spectrum-Table-cellContents',
-              classNames(
-                stylesOverrides,
-                {
-                  'react-spectrum-Table-cellContents--hideHeader': columnProps.hideHeader
-                }
-              )
+              {
+                'react-spectrum-Table-cellContents--hideHeader': columnProps.hideHeader
+              }
             )
         }>
           {cell.rendered}
