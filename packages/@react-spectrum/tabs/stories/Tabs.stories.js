@@ -15,11 +15,11 @@ import Bookmark from '@spectrum-icons/workflow/Bookmark';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import Calendar from '@spectrum-icons/workflow/Calendar';
-import {Content, Heading, Item, Text} from '@adobe/react-spectrum';
+import {Content, Heading, Text} from '@adobe/react-spectrum';
 import Dashboard from '@spectrum-icons/workflow/Dashboard';
+import {Item, Tabs} from '..';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {Tabs} from '..';
 
 storiesOf('Tabs', module)
   .add(

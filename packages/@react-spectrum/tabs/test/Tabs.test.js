@@ -11,10 +11,9 @@
  */
 
 import {act, fireEvent, render, within} from '@testing-library/react';
-import {Item} from '@adobe/react-spectrum';
+import {Item, Tabs} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {Tabs} from '../src';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';

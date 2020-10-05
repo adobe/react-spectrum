@@ -92,12 +92,13 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
 
   useResizeObserver({ref: ref, onResize: onResize});
 
+  let hidden = collapse && orientation !== 'vertical';
   let tablist = (
     <>
       <div
         {...styleProps}
         {...tabListProps}
-        aria-hidden={collapse && orientation !== 'vertical'}
+        aria-hidden={hidden}
         ref={ref}
         className={classNames(
           styles,
@@ -272,6 +273,11 @@ function TabsPicker(props) {
     key: item.key
   }));
 
+  let pickerProps = {
+    'aria-labelledby': tabListProps['aria-labelledby'],
+    'aria-label': tabListProps['aria-label']
+  };
+
   // TODO: Figure out if tabListProps should go onto the div here, v2 doesn't do it
   return (
     <div
@@ -287,7 +293,7 @@ function TabsPicker(props) {
           'react-spectrum-Tabs--dropdown'
         )
       )}>
-      <Picker items={items} ref={ref} aria-label={tabListProps['aria-label']} isQuiet isDisabled={isDisabled} selectedKey={state.selectedKey} onSelectionChange={state.setSelectedKey}>
+      <Picker {...pickerProps} items={items} ref={ref} isQuiet isDisabled={isDisabled} selectedKey={state.selectedKey} onSelectionChange={state.setSelectedKey}>
         {item => <Item key={item.key} textValue={item.textValue}>{item.rendered}</Item>}
       </Picker>
       {pickerNode && <TabLine orientation="horizontal" selectedTab={pickerNode} />}
