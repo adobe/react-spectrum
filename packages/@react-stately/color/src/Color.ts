@@ -201,7 +201,20 @@ class HSBColor implements ColorValue {
   }
 
   toHSL(): ColorValue {
-    throw new Error('Not implemented');
+    // determine the lightness in the range [0,100]
+    var l = (2 - this.saturation / 100) * this.brightness / 2;
+
+    // store the HSL components
+    let hue = this.hue;
+    let saturation = this.saturation * this.brightness / (l < 50 ? l * 2 : 200 - l * 2);
+    let lightness = l;
+
+    // correct a division-by-zero error
+    if (isNaN(saturation)) {
+      saturation = 0;
+    }
+
+    return new HSLColor(hue, saturation, lightness, this.alpha);
   }
 
   clone(): ColorValue {
