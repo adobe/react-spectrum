@@ -396,15 +396,15 @@ function TableColumnHeader({column}) {
               'is-sortable': columnProps.allowsSorting,
               'is-sorted-desc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'descending',
               'is-sorted-asc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'ascending',
-              'is-hovered': isHovered
+              'is-hovered': isHovered,
+              'spectrum-Table-cell--hideHeader': columnProps.hideHeader
             },
             classNames(
               stylesOverrides,
               'react-spectrum-Table-cell',
               {
                 'react-spectrum-Table-cell--alignCenter': columnProps.align === 'center' || column.colspan > 1,
-                'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end',
-                'react-spectrum-Table-cell--hideHeader': columnProps.hideHeader
+                'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end'
               }
             )
           )
@@ -607,7 +607,7 @@ function TableCellBase({cell, cellRef, ...otherProps}) {
             'spectrum-Table-cell',
             {
               'spectrum-Table-cell--divider': columnProps.showDivider,
-              'react-spectrum-Table-cell--hideHeader': columnProps.hideHeader
+              'spectrum-Table-cell--hideHeader': columnProps.hideHeader
             },
             classNames(
               stylesOverrides,
@@ -625,7 +625,7 @@ function TableCellBase({cell, cellRef, ...otherProps}) {
               styles,
               'spectrum-Table-cellContents',
               {
-                'react-spectrum-Table-cellContents--hideHeader': columnProps.hideHeader
+                'spectrum-Table-cellContents--hideHeader': columnProps.hideHeader
               }
             )
         }>

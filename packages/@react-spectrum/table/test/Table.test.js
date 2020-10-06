@@ -3166,7 +3166,7 @@ describe('Table', function () {
       let headers = within(grid).getAllByRole('columnheader');
       expect(headers).toHaveLength(2);
       let className = headers[1].className;
-      expect(className.includes('react-spectrum-Table-cell--hideHeader')).toBeTruthy();
+      expect(className.includes('spectrum-Table-cell--hideHeader')).toBeTruthy();
       expect(headers[0]).toHaveTextContent('Foo');
       expect(headers[1]).toBeEmptyDOMElement();
 
@@ -3182,7 +3182,7 @@ describe('Table', function () {
       let buttons = within(actionCell[0]).getAllByRole('button');
       expect(buttons).toHaveLength(1);
       className = actionCell[0].className;
-      expect(className.includes('react-spectrum-Table-cell--hideHeader')).toBeTruthy();
+      expect(className.includes('spectrum-Table-cell--hideHeader')).toBeTruthy();
     });
 
     it('renders table with headerless column with large scale', function () {
