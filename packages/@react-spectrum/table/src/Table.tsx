@@ -39,8 +39,8 @@ const DEFAULT_HEADER_HEIGHT = {
 };
 
 const DEFAULT_HIDE_HEADER_CELL_WIDTH = {
-  medium: 35,
-  large: 43
+  medium: 38,
+  large: 46
 };
 
 const ROW_HEIGHTS = {
@@ -89,9 +89,10 @@ function Table<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLD
     estimatedHeadingHeight: props.overflowMode === 'wrap'
       ? DEFAULT_HEADER_HEIGHT[scale]
       : null,
-    getDefaultWidth: ({hideHeader, isSelectionCell}) => {
+    getDefaultWidth: ({hideHeader, isSelectionCell, showDivider}) => {
       if (hideHeader) {
-        return  DEFAULT_HIDE_HEADER_CELL_WIDTH[scale];
+        let width = DEFAULT_HIDE_HEADER_CELL_WIDTH[scale];
+        return showDivider ? width + 1 : width;
       } else if (isSelectionCell) {
         return SELECTION_CELL_DEFAULT_WIDTH;
       }
@@ -623,10 +624,7 @@ function TableCellBase({cell, cellRef, ...otherProps}) {
           className={
             classNames(
               styles,
-              'spectrum-Table-cellContents',
-              {
-                'spectrum-Table-cellContents--hideHeader': columnProps.hideHeader
-              }
+              'spectrum-Table-cellContents'
             )
         }>
           {cell.rendered}

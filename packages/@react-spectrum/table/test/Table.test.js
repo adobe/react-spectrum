@@ -3126,12 +3126,12 @@ describe('Table', function () {
 
   describe('headerless columns', function () {
 
-    let renderTable = (props, scale) => render(
+    let renderTable = (props, scale, showDivider = false) => render(
       <Table aria-label="Table" data-testid="test" {...props}>
         <TableHeader>
           <Column key="foo">Foo</Column>
-          <Column key="addAction" hideHeader>
-              Add Item
+          <Column key="addAction" hideHeader showDivider={showDivider}>
+            Add Item
           </Column>
         </TableHeader>
         <TableBody>
@@ -3174,7 +3174,7 @@ describe('Table', function () {
       let rows = within(rowgroups[1]).getAllByRole('row');
       expect(rows).toHaveLength(1);
       // The width of headerless column
-      expect(rows[0].childNodes[1].style.width).toBe('35px');
+      expect(rows[0].childNodes[1].style.width).toBe('38px');
       let rowheader = within(rows[0]).getByRole('rowheader');
       expect(rowheader).toHaveTextContent('Foo 1');
       let actionCell = within(rows[0]).getAllByRole('gridcell');
@@ -3195,7 +3195,19 @@ describe('Table', function () {
       let rows = within(rowgroups[1]).getAllByRole('row');
       expect(rows).toHaveLength(1);
       // The width of headerless column
-      expect(rows[0].childNodes[1].style.width).toBe('43px');
+      expect(rows[0].childNodes[1].style.width).toBe('46px');
+    });
+
+    it('renders table with headerless column and divider', function () {
+      let {getByRole} = renderTable({}, undefined, true);
+      let grid = getByRole('grid');
+      expect(grid).toBeVisible();
+      let rowgroups = within(grid).getAllByRole('rowgroup');
+      expect(rowgroups).toHaveLength(2);
+      let rows = within(rowgroups[1]).getAllByRole('row');
+      expect(rows).toHaveLength(1);
+      // The width of headerless column with divider
+      expect(rows[0].childNodes[1].style.width).toBe('39px');
     });
 
     it('renders table with headerless column with tooltip', function () {
@@ -3211,7 +3223,6 @@ describe('Table', function () {
       });
       let tooltip = getByRole('tooltip');
       expect(tooltip).toBeVisible();
-
     });
 
   });
