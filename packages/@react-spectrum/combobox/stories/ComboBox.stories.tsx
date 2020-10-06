@@ -321,7 +321,7 @@ let ControlledKeyComboBox = (props) => {
   return (
     <div>
       <div>Current selectedKey: {selectedKey}</div>
-      <ButtonGroup marginEnd="30px">
+      <ButtonGroup marginEnd="30px" UNSAFE_style={{verticalAlign: 'bottom'}}>
         <Button variant="secondary" onPress={() => setSelectedKey('3')}>
           <Text>Snake</Text>
         </Button>
@@ -353,7 +353,7 @@ let ControlledValueComboBox = (props) => {
   return (
     <div>
       <div>Current input value: {value}</div>
-      <ButtonGroup marginEnd="30px">
+      <ButtonGroup marginEnd="30px" UNSAFE_style={{verticalAlign: 'bottom'}}>
         <Button variant="secondary" onPress={() => setValue('Blah')}>
           <Text>Blah</Text>
         </Button>

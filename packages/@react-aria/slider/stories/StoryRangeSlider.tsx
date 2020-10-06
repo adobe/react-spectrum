@@ -31,7 +31,6 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
   const {thumbProps: minThumbProps, inputProps: minInputProps} = useSliderThumb({
     index: 0,
     'aria-label': minLabel ?? 'Minimum',
-    isReadOnly: props.isReadOnly,
     isDisabled: props.isDisabled,
     trackRef,
     inputRef: minInputRef
@@ -40,7 +39,6 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
   const {thumbProps: maxThumbProps, inputProps: maxInputProps} = useSliderThumb({
     index: 1,
     'aria-label': maxLabel ?? 'Maximum',
-    isReadOnly: props.isReadOnly,
     isDisabled: props.isDisabled,
     trackRef,
     inputRef: maxInputRef
@@ -58,7 +56,7 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
       </div>
       <div className={styles.trackContainer}>
         {
-          // We make rail and filledRail children of track. User can click on the track, the 
+          // We make rail and filledRail children of track. User can click on the track, the
           // rail, or the filledRail to drag by track
         }
         <div ref={trackRef} className={styles.track} {...trackProps}>
@@ -77,11 +75,12 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
               'left': `${state.getThumbPercent(0) * 100}%`
             }}>
             {
-              // We put thumbProps on thumbHandle, so that you cannot drag by the tip 
+              // We put thumbProps on thumbHandle, so that you cannot drag by the tip
             }
-            <div {...minThumbProps} className={styles.thumbHandle} />
+            <div {...minThumbProps} className={styles.thumbHandle}>
+              <VisuallyHidden><input className={styles.input} ref={minInputRef} {...minInputProps} /></VisuallyHidden>
+            </div>
             {props.showTip && <div className={styles.tip}>{state.getThumbValueLabel(0)}</div>}
-            <VisuallyHidden isFocusable><input className={styles.input} ref={minInputRef} {...minInputProps} /></VisuallyHidden>
           </div>
         </FocusRing>
         <FocusRing within focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
@@ -92,12 +91,13 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
               'left': `${state.getThumbPercent(1) * 100}%`
             }}>
             {
-              // For fun, we put the thumbProps on the thumb container instead of just the handle.  
+              // For fun, we put the thumbProps on the thumb container instead of just the handle.
               // This means you can drag the max thumb by the tip.
             }
-            <div className={styles.thumbHandle} />
+            <div className={styles.thumbHandle}>
+              <VisuallyHidden><input className={styles.input} ref={maxInputRef} {...maxInputProps} /></VisuallyHidden>
+            </div>
             {props.showTip && <div className={styles.tip}>{state.getThumbValueLabel(1)} (can drag by tip)</div>}
-            <VisuallyHidden isFocusable><input className={styles.input} ref={maxInputRef} {...maxInputProps} /></VisuallyHidden>
           </div>
         </FocusRing>
       </div>

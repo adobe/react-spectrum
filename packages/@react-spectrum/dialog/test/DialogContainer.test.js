@@ -45,20 +45,16 @@ describe('DialogContainer', function () {
     let button = getByRole('button');
     expect(() => getByRole('dialog')).toThrow();
 
-    act(() => {
-      triggerPress(button);
-      jest.runAllTimers();
-    });
+    triggerPress(button);
+    act(() => {jest.runAllTimers();});
 
     let dialog = getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
 
     button = within(dialog).getByText('Confirm');
 
-    act(() => {
-      triggerPress(button);
-      jest.runAllTimers();
-    });
+    triggerPress(button);
+    act(() => {jest.runAllTimers();});
 
     expect(() => getByRole('dialog')).toThrow();
   });
@@ -73,19 +69,15 @@ describe('DialogContainer', function () {
     let button = getByRole('button');
     expect(() => getByRole('dialog')).toThrow();
 
-    act(() => {
-      triggerPress(button);
-      jest.runAllTimers();
-    });
+    triggerPress(button);
+    act(() => {jest.runAllTimers();});
 
     let dialog = getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
 
-    act(() => {
-      fireEvent.keyDown(dialog, {key: 'Escape'});
-      fireEvent.keyUp(dialog, {key: 'Escape'});
-      jest.runAllTimers();
-    });
+    fireEvent.keyDown(dialog, {key: 'Escape'});
+    fireEvent.keyUp(dialog, {key: 'Escape'});
+    act(() => {jest.runAllTimers();});
 
     expect(() => getByRole('dialog')).toThrow();
   });
@@ -100,19 +92,15 @@ describe('DialogContainer', function () {
     let button = getByRole('button');
     expect(() => getByRole('dialog')).toThrow();
 
-    act(() => {
-      triggerPress(button);
-      jest.runAllTimers();
-    });
+    triggerPress(button);
+    act(() => {jest.runAllTimers();});
 
     let dialog = getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
 
-    act(() => {
-      fireEvent.keyDown(dialog, {key: 'Escape'});
-      fireEvent.keyUp(dialog, {key: 'Escape'});
-      jest.runAllTimers();
-    });
+    fireEvent.keyDown(dialog, {key: 'Escape'});
+    fireEvent.keyUp(dialog, {key: 'Escape'});
+    act(() => {jest.runAllTimers();});
 
     expect(getByRole('dialog')).toBeVisible();
   });
@@ -127,17 +115,13 @@ describe('DialogContainer', function () {
     let button = getByRole('button');
     expect(() => getByRole('dialog')).toThrow();
 
-    act(() => {
-      triggerPress(button);
-      jest.runAllTimers();
-    });
+    triggerPress(button);
+    act(() => {jest.runAllTimers();});
 
     expect(getByRole('dialog')).toBeVisible();
 
-    act(() => {
-      triggerPress(document.body);
-      jest.runAllTimers();
-    });
+    triggerPress(document.body);
+    act(() => {jest.runAllTimers();});
 
     expect(getByRole('dialog')).toBeVisible();
   });
@@ -152,17 +136,13 @@ describe('DialogContainer', function () {
     let button = getByRole('button');
     expect(() => getByRole('dialog')).toThrow();
 
-    act(() => {
-      triggerPress(button);
-      jest.runAllTimers();
-    });
+    triggerPress(button);
+    act(() => {jest.runAllTimers();});
 
     expect(getByRole('dialog')).toBeVisible();
 
-    act(() => {
-      triggerPress(document.body);
-      jest.runAllTimers();
-    });
+    triggerPress(document.body);
+    act(() => {jest.runAllTimers();});
 
     expect(() => getByRole('dialog')).toThrow();
   });
@@ -177,20 +157,16 @@ describe('DialogContainer', function () {
     let button = getByRole('button');
     expect(() => getByRole('dialog')).toThrow();
 
-    act(() => {
-      triggerPress(button);
-      jest.runAllTimers();
-    });
+    triggerPress(button);
+    act(() => {jest.runAllTimers();});
 
     expect(() => getByRole('dialog')).toThrow();
 
     let menu = getByRole('menu');
     let menuitem = within(menu).getByRole('menuitem');
 
-    act(() => {
-      triggerPress(menuitem);
-      jest.runAllTimers();
-    });
+    triggerPress(menuitem);
+    act(() => {jest.runAllTimers();});
 
     expect(() => getByRole('menu')).toThrow();
     expect(() => getByRole('menuitem')).toThrow();
@@ -198,10 +174,8 @@ describe('DialogContainer', function () {
     let dialog = getByRole('dialog');
     button = within(dialog).getByText('Confirm');
 
-    act(() => {
-      triggerPress(button);
-      jest.runAllTimers();
-    });
+    triggerPress(button);
+    act(() => {jest.runAllTimers();});
 
     expect(() => getByRole('dialog')).toThrow();
   });

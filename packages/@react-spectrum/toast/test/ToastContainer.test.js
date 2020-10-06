@@ -25,7 +25,7 @@ function RenderToastButton(props = {}) {
       <Button
         onPress={() => toastContext.neutral('Toast is default', props)}
         variant="primary">
-          Show Default Toast
+        Show Default Toast
       </Button>
     </div>
   );

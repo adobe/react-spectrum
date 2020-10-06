@@ -42,6 +42,8 @@ You can install any React Stately package using a package manager like [npm](htt
 yarn add @react-stately/radio
 ```
 
+We also offer a single package containing all React Stately hooks. See [below](#mono-package) for details.
+
 ## Building a component
 
 This example shows a very simple radio group component built with the [useRadioGroupState](useRadioGroupState.html) hook
@@ -85,6 +87,31 @@ function RadioGroup(props) {
 If you're using React Stately on the web, see [useRadioGroup](../react-aria/useRadioGroup.html) in React Aria to help
 handle more of this behavior and accessibility for you. To see an example of how React Stately manages more complex state,
 see [useSelectState](useSelectState.html).
+
+## Mono-package
+
+In addition to individual packages, we also offer a mono-package containing all of the React Stately hooks in a single
+package. This ensures that all packages use compatible versions and are upgraded together. If you release all components
+in your component library in a single package, or just want to get started easily without installing a lot of packages,
+the mono-package may be the way to go. It is available as the [react-stately](https://npmjs.com/package/react-stately) package
+on npm.
+
+```
+yarn add react-stately
+```
+
+Once installed, all hooks work the same way as the individual packages, but are imported from the `react-stately` package
+instead of individual packages.
+
+```tsx
+// Individual packages
+import {useRadioGroupState} from '@react-stately/radio';
+```
+
+```tsx
+// Monopackage
+import {useRadioGroupState} from 'react-stately';
+```
 
 ## Next steps
 

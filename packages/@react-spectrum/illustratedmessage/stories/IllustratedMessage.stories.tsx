@@ -15,6 +15,7 @@ import Error from '@spectrum-icons/illustrations/src/Error';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '../';
 import {Link} from '@react-spectrum/link';
+import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import NotFound from '@spectrum-icons/illustrations/src/NotFound';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -27,9 +28,17 @@ storiesOf('IllustratedMessage', module)
   .add(
     'Not found',
     () => render({
-      heading: 'Error 404: Page not found.',
+      heading: 'Error 404: Page not found',
       description: 'This page isn’t available. Try checking the URL or visit a different page.',
       illustration: <NotFound />
+    })
+  )
+  .add(
+    'No search results',
+    () => render({
+      heading: 'No matching results',
+      description: 'Try another search.',
+      illustration: <NoSearchResults />
     })
   )
   .add(
@@ -78,12 +87,8 @@ storiesOf('IllustratedMessage', module)
   );
 
 function render(props: any = {}) {
-  let {
-    illustration,
-    heading,
-    description,
-    ...otherProps
-  } = props;
+  let {illustration, heading, description, ...otherProps} = props;
+
   return (
     <IllustratedMessage {...otherProps}>
       {description && <Content>{description}</Content>}
