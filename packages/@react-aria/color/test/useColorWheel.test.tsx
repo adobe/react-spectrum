@@ -230,7 +230,7 @@ describe('useColorWheel', () => {
       (el, {pageX, pageY}) => fireEvent.pointerUp(el, {button: 0, pointerId: 1, pageX, pageY})
     ]}
     ${'Touch Events'}   | ${() => {}}           | ${[
-      (el, {pageX, pageY}) => fireEvent.touchStart(el, {targetTouches: [{identifier: 1, pageX, pageY}]}),
+      (el, {pageX, pageY}) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1, pageX, pageY}]}),
       (el, {pageX, pageY}) => fireEvent.touchMove(el, {changedTouches: [{identifier: 1, pageX, pageY}]}),
       (el, {pageX, pageY}) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX, pageY}]})
     ]}
@@ -260,7 +260,7 @@ describe('useColorWheel', () => {
       expect(document.activeElement).toBe(slider);
     });
 
-    it('dragging the thumb doesn\'t works when disabled', () => {
+    it('dragging the thumb doesn\'t work when disabled', () => {
       let defaultColor = new Color('hsl(0, 100%, 50%)');
       let {getByRole, getByTestId} = render(<ColorWheel isDisabled defaultValue={defaultColor} onChange={onChangeSpy} />);
       let thumb = getByTestId('thumb');

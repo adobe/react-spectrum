@@ -169,7 +169,7 @@ describe('ColorWheel', () => {
       (el, {pageX, pageY}) => fireEvent.pointerUp(el, {button: 0, pointerId: 1, pageX, pageY})
     ]}
     ${'Touch Events'}   | ${() => {}}           | ${[
-      (el, {pageX, pageY}) => fireEvent.touchStart(el, {targetTouches: [{identifier: 1, pageX, pageY}]}),
+      (el, {pageX, pageY}) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1, pageX, pageY}]}),
       (el, {pageX, pageY}) => fireEvent.touchMove(el, {changedTouches: [{identifier: 1, pageX, pageY}]}),
       (el, {pageX, pageY}) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX, pageY}]})
     ]}
