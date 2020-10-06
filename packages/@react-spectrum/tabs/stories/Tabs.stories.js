@@ -100,7 +100,7 @@ storiesOf('Tabs', module)
 
 function render(props = {}) {
   return (
-    <Tabs {...props} maxWidth={500} onSelectionChange={action('onSelectionChange')}>
+    <Tabs {...props} aria-label="Tab example" maxWidth={500} onSelectionChange={action('onSelectionChange')}>
       <Item title="Tab 1" key="val1">
         <Content margin="size-160">
           <Heading>Tab Body 1</Heading>
@@ -137,7 +137,7 @@ function render(props = {}) {
 
 function renderWithIcons(props = {}) {
   return (
-    <Tabs {...props} maxWidth={500} onSelectionChange={action('onSelectionChange')}>
+    <Tabs {...props} aria-label="Tab example" maxWidth={500} onSelectionChange={action('onSelectionChange')}>
       <Item
         key="dashboard"
         textValue="Dashboard"
@@ -198,7 +198,7 @@ function renderWithIcons(props = {}) {
 
 function renderWithFalsyKey(props = {}) {
   return (
-    <Tabs {...props} maxWidth={500} onSelectionChange={action('onSelectionChange')}>
+    <Tabs {...props} aria-label="Tab example" maxWidth={500} onSelectionChange={action('onSelectionChange')}>
       <Item title="Tab 1" key="">
         <Content margin="size-160">
           <Heading>Tab Body 1</Heading>

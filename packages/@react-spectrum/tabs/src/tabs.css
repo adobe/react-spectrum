@@ -18,6 +18,7 @@
 }
 
 .react-spectrum-Tabs--collapsible {
+  /* TODO figure out why I had to remove display: flex here to get it to work */
   flex-grow: 1;
   flex-shrink: 0;
   flex-basis: 0%;

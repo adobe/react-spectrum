@@ -222,7 +222,15 @@ export function Tab<T>(props: TabProps<T>) {
   );
 }
 
-function TabLine({orientation, selectedTab}) {
+function TabLine(props) {
+  let {
+    orientation,
+    // Is either the tab node (non-collapsed) or the picker node (collapsed)
+    selectedTab,
+    // selectedKey is provided so that the TabLine styles are updated when the TabPicker's width updates from a selection change
+    selectedKey
+  } = props;
+
   let verticalSelectionIndicatorOffset = 12;
   let {direction} = useLocale();
   let {scale} = useProvider();
@@ -236,9 +244,11 @@ function TabLine({orientation, selectedTab}) {
   useLayoutEffect(() => {
     if (selectedTab) {
       let styleObj = {transform: undefined, width: undefined, height: undefined};
+      // In RTL, calculate the transform from the right edge of the tablist so that resizing the window doesn't break the Tabline position due to offsetLeft changes
+      let offset = direction === 'rtl' ? -1 * (selectedTab.offsetParent.offsetWidth - selectedTab.offsetWidth - selectedTab.offsetLeft) : selectedTab.offsetLeft
       styleObj.transform = orientation === 'vertical'
         ? `translateY(${selectedTab.offsetTop + verticalSelectionIndicatorOffset / 2}px)`
-        : `translateX(${selectedTab.offsetLeft}px) `;
+        : `translateX(${offset}px)`;
 
       if (orientation === 'horizontal') {
         styleObj.width = `${selectedTab.offsetWidth}px`;
@@ -248,7 +258,7 @@ function TabLine({orientation, selectedTab}) {
       setStyle(styleObj);
     }
 
-  }, [direction, setStyle, selectedTab, orientation, scale, verticalSelectionIndicatorOffset]);
+  }, [direction, setStyle, selectedTab, orientation, scale, verticalSelectionIndicatorOffset, selectedKey]);
 
   return <div className={classNames(styles, 'spectrum-Tabs-selectionIndicator')} role="presentation" style={style} />;
 }
@@ -298,7 +308,7 @@ function TabsPicker(props) {
       <Picker {...pickerProps} items={items} ref={ref} isQuiet isDisabled={isDisabled} selectedKey={state.selectedKey} onSelectionChange={state.setSelectedKey}>
         {item => <Item key={item.key} textValue={item.textValue}>{item.rendered}</Item>}
       </Picker>
-      {pickerNode && <TabLine orientation="horizontal" selectedTab={pickerNode} />}
+      {pickerNode && <TabLine orientation="horizontal" selectedTab={pickerNode} selectedKey={state.selectedKey} />}
     </div>
   );
 }
