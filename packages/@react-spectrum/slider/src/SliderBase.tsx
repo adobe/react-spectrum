@@ -12,13 +12,14 @@
 
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
+import {intlMessages, useSlider, useSliderThumb} from '@react-aria/slider';
 import React, {CSSProperties, HTMLAttributes, MutableRefObject, ReactNode, useRef} from 'react';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import {SpectrumBarSliderBase} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
-import {useNumberFormatter} from '@react-aria/i18n';
+import {useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
+import {usePress} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useSlider, useSliderThumb} from '@react-aria/slider';
 
 export interface SliderBaseChildArguments {
   inputRefs: MutableRefObject<undefined>[],
@@ -47,6 +48,8 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
   } = props;
 
   let {styleProps} = useStyleProps(otherProps);
+
+  let formatMessage = useMessageFormatter(intlMessages);
 
   // Assumes that DEFAULT_MIN_VALUE and DEFAULT_MAX_VALUE are both positive, this value needs to be passed to useSliderState, so
   // getThumbMinValue/getThumbMaxValue cannot be used here.
@@ -86,7 +89,8 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
       index: i,
       isDisabled: props.isDisabled,
       trackRef,
-      inputRef: inputRefs[i]
+      inputRef: inputRefs[i],
+      'aria-label': (count === 2 ? formatMessage(i === 0 ? 'minimum' : 'maximum') : undefined)
     }, state);
 
     inputProps[i] = v.inputProps;
@@ -121,17 +125,48 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
 
   let displayValue = valueLabel;
   let maxLabelLength = undefined;
+  
+  // Pressing the displayValue should focus the corresponding input.
+  let {pressProps: outputPressProps} = usePress({
+    onPress: (e) => inputRefs.find(inputRef => inputRef.current.id === e.target.getAttribute('for')).current.focus()
+  });
+
   if (!displayValue) {
     maxLabelLength = Math.max([...formatter.format(state.getThumbMinValue(0))].length, [...formatter.format(state.getThumbMaxValue(0))].length);
     switch (state.values.length) {
       case 1:
-        displayValue = state.getThumbValueLabel(0);
+        
+        displayValue = (
+          <output
+            {...outputPressProps}
+            aria-live="off"
+            aria-labelledby={labelProps.id}
+            htmlFor={inputProps[0].id}>
+            {state.getThumbValueLabel(0)}
+          </output>);
         break;
       case 2:
         // This should really use the NumberFormat#formatRange proposal...
         // https://github.com/tc39/ecma402/issues/393
         // https://github.com/tc39/proposal-intl-numberformat-v3#formatrange-ecma-402-393
-        displayValue = `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`;
+        displayValue = (
+          <>
+            <output
+              {...outputPressProps}
+              aria-live="off"
+              aria-labelledby={`${labelProps.id} ${inputProps[0].id}`}
+              htmlFor={inputProps[0].id}>
+              {`${state.getThumbValueLabel(0)} – `}
+            </output>
+            <output
+              {...outputPressProps}
+              aria-live="off"
+              aria-labelledby={`${labelProps.id} ${inputProps[1].id}`}
+              htmlFor={inputProps[1].id}>
+              {state.getThumbValueLabel(1)}
+            </output>
+          </>
+        );
 
         maxLabelLength = 2 + 2 * Math.max(
           maxLabelLength,
@@ -143,14 +178,17 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     }
   }
 
-  let labelNode = <label className={classNames(styles, 'spectrum-Slider-label')} {...labelProps}>{props.label}</label>;
+  let labelNode = (
+    <label
+      className={classNames(styles, 'spectrum-Slider-label')}
+      {...labelProps}
+      htmlFor={inputProps[0].id}>
+      {props.label}
+    </label>
+  );
   let valueNode = (
     <div
       className={classNames(styles, 'spectrum-Slider-value')}
-      // TODO really?
-      role="textbox"
-      aria-readonly="true"
-      aria-labelledby={labelProps.id}
       style={maxLabelLength && {width: `${maxLabelLength}ch`, minWidth: `${maxLabelLength}ch`}}>
       {displayValue}
     </div>

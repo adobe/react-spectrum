@@ -36,13 +36,15 @@ describe('RangeSlider', function () {
     let group = getByRole('group');
     let labelId = group.getAttribute('aria-labelledby');
     let [leftSlider, rightSlider] = getAllByRole('slider');
-    expect(leftSlider.getAttribute('aria-labelledby')).toBe(labelId);
-    expect(rightSlider.getAttribute('aria-labelledby')).toBe(labelId);
+    expect(leftSlider.getAttribute('aria-label')).toBe('Minimum');
+    expect(rightSlider.getAttribute('aria-label')).toBe('Maximum');
+    expect(leftSlider.getAttribute('aria-labelledby')).toBe(`${labelId} ${leftSlider.id}`);
+    expect(rightSlider.getAttribute('aria-labelledby')).toBe(`${labelId} ${rightSlider.id}`);
 
     expect(document.getElementById(labelId)).toHaveTextContent(/^The Label$/);
 
     // Shows value as well
-    expect(group.textContent).toBe('The Label0 - 100');
+    expect(group.textContent).toBe('The Label0 – 100');
   });
 
   it('supports showValueLabel: false', function () {
@@ -172,14 +174,14 @@ describe('RangeSlider', function () {
       let group = getByRole('group');
       let [sliderLeft, sliderRight] = getAllByRole('slider');
 
-      expect(group.textContent).toBe('The Label+10 - +20');
+      expect(group.textContent).toBe('The Label+10 – +20');
       expect(sliderLeft).toHaveAttribute('aria-valuetext', '+10');
       expect(sliderRight).toHaveAttribute('aria-valuetext', '+20');
       fireEvent.change(sliderLeft, {target: {value: '-35'}});
       expect(sliderLeft).toHaveAttribute('aria-valuetext', '-35');
-      expect(group.textContent).toBe('The Label-35 - +20');
+      expect(group.textContent).toBe('The Label-35 – +20');
       fireEvent.change(sliderRight, {target: {value: '0'}});
-      expect(group.textContent).toBe('The Label-35 - 0');
+      expect(group.textContent).toBe('The Label-35 – 0');
       expect(sliderRight).toHaveAttribute('aria-valuetext', '0');
     });
 
@@ -197,14 +199,14 @@ describe('RangeSlider', function () {
       let group = getByRole('group');
       let [sliderLeft, sliderRight] = getAllByRole('slider');
 
-      expect(group.textContent).toBe('The Label20% - 60%');
+      expect(group.textContent).toBe('The Label20% – 60%');
       expect(sliderLeft).toHaveAttribute('aria-valuetext', '20%');
       expect(sliderRight).toHaveAttribute('aria-valuetext', '60%');
       fireEvent.change(sliderLeft, {target: {value: '0.3'}});
-      expect(group.textContent).toBe('The Label30% - 60%');
+      expect(group.textContent).toBe('The Label30% – 60%');
       expect(sliderLeft).toHaveAttribute('aria-valuetext', '30%');
       fireEvent.change(sliderRight, {target: {value: '0.7'}});
-      expect(group.textContent).toBe('The Label30% - 70%');
+      expect(group.textContent).toBe('The Label30% – 70%');
       expect(sliderRight).toHaveAttribute('aria-valuetext', '70%');
     });
   });

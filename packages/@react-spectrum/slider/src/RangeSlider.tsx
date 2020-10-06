@@ -65,7 +65,17 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivE
 
         let handles = [0, 1].map(i => (
           <div
-            className={classNames(styles, 'spectrum-Slider-handle', {'is-hovered': hovers[i].isHovered, 'is-dragged': state.isThumbDragging(i)})}
+            className={
+              classNames(
+                styles,
+                'spectrum-Slider-handle',
+                {
+                  'is-hovered': hovers[i].isHovered,
+                  'is-dragged': state.isThumbDragging(i),
+                  'is-tophandle': state.focusedThumb === i
+                }
+              )
+            }
             style={{[cssDirection]: `${state.getThumbPercent(i) * 100}%`}}
             {...mergeProps(thumbProps[i], hovers[i].hoverProps)}
             role="presentation">

@@ -12,3 +12,4 @@
 
 export * from './useSlider';
 export * from './useSliderThumb';
+export {intlMessages} from '../intl';
