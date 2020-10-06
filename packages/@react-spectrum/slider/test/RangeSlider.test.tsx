@@ -210,16 +210,13 @@ describe('RangeSlider', function () {
   });
 
   describe('keyboard interactions', () => {
-    // Can't test arrow/page up/down arrows because they are handled by the browser and JSDOM doesn't feel like it.
+    // Can't test arrow/page up/down, home/end arrows because they are handled by the browser and JSDOM doesn't feel like it.
 
     it.each`
       Name                                 | props                                 | commands
       ${'(left/right arrows, ltr)'}        | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowRight, result: +1}, {left: press.ArrowLeft, result: -1}, {right: press.ArrowRight, result: +1}, {right: press.ArrowLeft, result: -1}]}
       ${'(left/right arrows, rtl)'}        | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowLeft, result: +1}, {right: press.ArrowRight, result: -1}, {right: press.ArrowLeft, result: +1}]}
-      ${'(home/end, ltr)'}                 | ${{locale: 'de-DE'}}                  | ${[{left: press.End, result: '50'}, {left: press.Home, result: '0'}, {left: press.ArrowRight, result: '1'}, {right: press.Home, result: '1'}, {right: press.End, result: '100'}]}
-      ${'(home/end, rtl)'}                 | ${{locale: 'ar-AE'}}                  | ${[{left: press.End, result: '50'}, {left: press.Home, result: '0'}, {left: press.ArrowLeft,  result: '1'}, {right: press.Home, result: '1'}, {right: press.End, result: '100'}]}
       ${'(left/right arrows, isDisabled)'} | ${{locale: 'de-DE', isDisabled: true}}| ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}, {right: press.ArrowRight, result: 0}, {right: press.ArrowLeft, result: 0}]}
-      ${'(home/end, isDisabled)'}          | ${{locale: 'de-DE', isDisabled: true}}| ${[{left: press.End, result: 0}, {left: press.Home, result: 0}, {right: press.End, result: 0}, {right: press.Home, result: 0}]}
     `('$Name moves the slider in the correct direction', function ({props, commands}) {
       let tree = render(
         <Provider theme={theme} {...props}>
@@ -268,6 +265,30 @@ describe('RangeSlider', function () {
       window.HTMLElement.prototype.offsetWidth.mockReset();
     });
 
+    beforeAll(() => {
+      let oldMouseEvent = MouseEvent;
+      // @ts-ignore
+      global.MouseEvent = class FakeMouseEvent extends MouseEvent {
+        _init: {pageX: number, pageY: number};
+        constructor(name, init) {
+          super(name, init);
+          this._init = init;
+        }
+        get pageX() {
+          return this._init.pageX;
+        }
+        get pageY() {
+          return this._init.pageY;
+        }
+      };
+      // @ts-ignore
+      global.MouseEvent.oldMouseEvent = oldMouseEvent;
+    });
+    afterAll(() => {
+      // @ts-ignore
+      global.MouseEvent = global.MouseEvent.oldMouseEvent;
+    });
+
     it('can click and drag handle', () => {
       let onChangeSpy = jest.fn();
       let {getAllByRole} = render(
@@ -280,36 +301,36 @@ describe('RangeSlider', function () {
       let [sliderLeft, sliderRight] = getAllByRole('slider');
       let [thumbLeft, thumbRight] = [sliderLeft.parentElement.parentElement, sliderRight.parentElement.parentElement];
 
-      fireEvent.mouseDown(thumbLeft, {clientX: 20});
+      fireEvent.mouseDown(thumbLeft, {clientX: 20, pageX: 20});
       expect(onChangeSpy).not.toHaveBeenCalled();
       expect(document.activeElement).toBe(sliderLeft);
-      fireEvent.mouseMove(thumbLeft, {clientX: 10});
+      fireEvent.mouseMove(thumbLeft, {pageX: 10});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy).toHaveBeenLastCalledWith({start: 10, end: 50});
-      fireEvent.mouseMove(thumbLeft, {clientX: -10});
+      fireEvent.mouseMove(thumbLeft, {pageX: -10});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
       expect(onChangeSpy).toHaveBeenLastCalledWith({start: 0, end: 50});
-      fireEvent.mouseMove(thumbLeft, {clientX: 120});
+      fireEvent.mouseMove(thumbLeft, {pageX: 120});
       expect(onChangeSpy).toHaveBeenCalledTimes(3);
       expect(onChangeSpy).toHaveBeenLastCalledWith({start: 50, end: 50});
-      fireEvent.mouseUp(thumbLeft, {clientX: 120});
+      fireEvent.mouseUp(thumbLeft, {pageX: 120});
       expect(onChangeSpy).toHaveBeenCalledTimes(3);
 
       onChangeSpy.mockClear();
 
-      fireEvent.mouseDown(thumbRight, {clientX: 50});
+      fireEvent.mouseDown(thumbRight, {clientX: 50, pageX: 50});
       expect(onChangeSpy).not.toHaveBeenCalled();
       expect(document.activeElement).toBe(sliderRight);
-      fireEvent.mouseMove(thumbRight, {clientX: 60});
+      fireEvent.mouseMove(thumbRight, {pageX: 60});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy).toHaveBeenLastCalledWith({start: 50, end: 60});
-      fireEvent.mouseMove(thumbRight, {clientX: -10});
+      fireEvent.mouseMove(thumbRight, {pageX: -10});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
       expect(onChangeSpy).toHaveBeenLastCalledWith({start: 50, end: 50});
-      fireEvent.mouseMove(thumbRight, {clientX: 120});
+      fireEvent.mouseMove(thumbRight, {pageX: 120});
       expect(onChangeSpy).toHaveBeenCalledTimes(3);
       expect(onChangeSpy).toHaveBeenLastCalledWith({start: 50, end: 100});
-      fireEvent.mouseUp(thumbRight, {clientX: 120});
+      fireEvent.mouseUp(thumbRight, {pageX: 120});
       expect(onChangeSpy).toHaveBeenCalledTimes(3);
     });
 
@@ -326,30 +347,30 @@ describe('RangeSlider', function () {
       let [sliderLeft, sliderRight] = getAllByRole('slider');
       let [thumbLeft, thumbRight] = [sliderLeft.parentElement.parentElement, sliderRight.parentElement.parentElement];
 
-      fireEvent.mouseDown(thumbLeft, {clientX: 20});
+      fireEvent.mouseDown(thumbLeft, {clientX: 20, pageX: 20});
       expect(onChangeSpy).not.toHaveBeenCalled();
       expect(document.activeElement).not.toBe(sliderLeft);
-      fireEvent.mouseMove(thumbLeft, {clientX: 10});
+      fireEvent.mouseMove(thumbLeft, {pageX: 10});
       expect(onChangeSpy).not.toHaveBeenCalled();
-      fireEvent.mouseMove(thumbLeft, {clientX: -10});
+      fireEvent.mouseMove(thumbLeft, {pageX: -10});
       expect(onChangeSpy).not.toHaveBeenCalled();
-      fireEvent.mouseMove(thumbLeft, {clientX: 120});
+      fireEvent.mouseMove(thumbLeft, {pageX: 120});
       expect(onChangeSpy).not.toHaveBeenCalled();
-      fireEvent.mouseUp(thumbLeft, {clientX: 120});
+      fireEvent.mouseUp(thumbLeft, {pageX: 120});
       expect(onChangeSpy).not.toHaveBeenCalled();
 
       onChangeSpy.mockClear();
 
-      fireEvent.mouseDown(thumbRight, {clientX: 50});
+      fireEvent.mouseDown(thumbRight, {clientX: 50, pageX: 20});
       expect(onChangeSpy).not.toHaveBeenCalled();
       expect(document.activeElement).not.toBe(sliderRight);
-      fireEvent.mouseMove(thumbRight, {clientX: 60});
+      fireEvent.mouseMove(thumbRight, {pageX: 60});
       expect(onChangeSpy).not.toHaveBeenCalled();
-      fireEvent.mouseMove(thumbRight, {clientX: -10});
+      fireEvent.mouseMove(thumbRight, {pageX: -10});
       expect(onChangeSpy).not.toHaveBeenCalled();
-      fireEvent.mouseMove(thumbRight, {clientX: 120});
+      fireEvent.mouseMove(thumbRight, {pageX: 120});
       expect(onChangeSpy).not.toHaveBeenCalled();
-      fireEvent.mouseUp(thumbRight, {clientX: 120});
+      fireEvent.mouseUp(thumbRight, {pageX: 120});
       expect(onChangeSpy).not.toHaveBeenCalled();
     });
 
@@ -369,38 +390,38 @@ describe('RangeSlider', function () {
       let [leftTrack, middleTrack, rightTrack] = [...thumbLeft.parentElement.children].filter(c => c !== thumbLeft && c !== thumbRight);
 
       // left track
-      fireEvent.mouseDown(leftTrack, {clientX: 20});
+      fireEvent.mouseDown(leftTrack, {clientX: 20, pageX: 20});
       expect(document.activeElement).toBe(sliderLeft);
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy).toHaveBeenLastCalledWith({start: 20, end: 70});
-      fireEvent.mouseUp(thumbLeft, {clientX: 20});
+      fireEvent.mouseUp(thumbLeft, {pageX: 20});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
 
       // middle track, near left slider
       onChangeSpy.mockClear();
-      fireEvent.mouseDown(middleTrack, {clientX: 40});
+      fireEvent.mouseDown(middleTrack, {clientX: 40, pageX: 40});
       expect(document.activeElement).toBe(sliderLeft);
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy).toHaveBeenLastCalledWith({start: 40, end: 70});
-      fireEvent.mouseUp(thumbLeft, {clientX: 40});
+      fireEvent.mouseUp(thumbLeft, {pageX: 40});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
 
       // middle track, near right slider
       onChangeSpy.mockClear();
-      fireEvent.mouseDown(middleTrack, {clientX: 60});
+      fireEvent.mouseDown(middleTrack, {clientX: 60, pageX: 40});
       expect(document.activeElement).toBe(sliderRight);
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy).toHaveBeenLastCalledWith({start: 40, end: 60});
-      fireEvent.mouseUp(thumbRight, {clientX: 60});
+      fireEvent.mouseUp(thumbRight, {pageX: 60});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
 
       // right track
       onChangeSpy.mockClear();
-      fireEvent.mouseDown(rightTrack, {clientX: 90});
+      fireEvent.mouseDown(rightTrack, {clientX: 90, pageX: 90});
       expect(document.activeElement).toBe(sliderRight);
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy).toHaveBeenLastCalledWith({start: 40, end: 90});
-      fireEvent.mouseUp(thumbRight, {clientX: 90});
+      fireEvent.mouseUp(thumbRight, {pageX: 90});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
     });
 
@@ -421,34 +442,34 @@ describe('RangeSlider', function () {
       let [leftTrack, middleTrack, rightTrack] = [...thumbLeft.parentElement.children].filter(c => c !== thumbLeft && c !== thumbRight);
 
       // left track
-      fireEvent.mouseDown(leftTrack, {clientX: 20});
+      fireEvent.mouseDown(leftTrack, {clientX: 20, pageX: 20});
       expect(document.activeElement).not.toBe(sliderLeft);
       expect(onChangeSpy).not.toHaveBeenCalled();
-      fireEvent.mouseUp(thumbLeft, {clientX: 20});
+      fireEvent.mouseUp(thumbLeft, {pageX: 20});
       expect(onChangeSpy).not.toHaveBeenCalled();
 
       // middle track, near left slider
       onChangeSpy.mockClear();
-      fireEvent.mouseDown(middleTrack, {clientX: 40});
+      fireEvent.mouseDown(middleTrack, {clientX: 40, pageX: 40});
       expect(document.activeElement).not.toBe(sliderLeft);
       expect(onChangeSpy).not.toHaveBeenCalled();
-      fireEvent.mouseUp(thumbLeft, {clientX: 40});
+      fireEvent.mouseUp(thumbLeft, {pageX: 40});
       expect(onChangeSpy).not.toHaveBeenCalled();
 
       // middle track, near right slider
       onChangeSpy.mockClear();
-      fireEvent.mouseDown(middleTrack, {clientX: 60});
+      fireEvent.mouseDown(middleTrack, {clientX: 60, pageX: 60});
       expect(document.activeElement).not.toBe(sliderRight);
       expect(onChangeSpy).not.toHaveBeenCalled();
-      fireEvent.mouseUp(thumbRight, {clientX: 60});
+      fireEvent.mouseUp(thumbRight, {pageX: 60});
       expect(onChangeSpy).not.toHaveBeenCalled();
 
       // right track
       onChangeSpy.mockClear();
-      fireEvent.mouseDown(rightTrack, {clientX: 90});
+      fireEvent.mouseDown(rightTrack, {clientX: 90, pageX: 90});
       expect(document.activeElement).not.toBe(sliderRight);
       expect(onChangeSpy).not.toHaveBeenCalled();
-      fireEvent.mouseUp(thumbRight, {clientX: 90});
+      fireEvent.mouseUp(thumbRight, {pageX: 90});
       expect(onChangeSpy).not.toHaveBeenCalled();
     });
   });

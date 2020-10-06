@@ -55,6 +55,7 @@ governing permissions and limitations under the License.
   display: block;
 
   user-select: none;
+  touch-action: none;
 }
 
 .spectrum-Slider-controls {

@@ -1,11 +1,12 @@
-import {ChangeEvent, HTMLAttributes, useCallback, useEffect} from 'react';
-import {focusWithoutScrolling, mergeProps, useDrag1D} from '@react-aria/utils';
+import {ChangeEvent, HTMLAttributes, useCallback, useEffect, useRef} from 'react';
+import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
 import {sliderIds} from './utils';
 import {SliderState} from '@react-stately/slider';
 import {SliderThumbProps} from '@react-types/slider';
 import {useFocusable} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
+import {useMove} from '@react-aria/interactions';
 
 interface SliderThumbAria {
   /** Props for the range input. */
@@ -43,6 +44,7 @@ export function useSliderThumb(
   } = opts;
 
   let {direction} = useLocale();
+  let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
   let labelId = sliderIds.get(state);
   const {labelProps, fieldProps} = useLabel({
@@ -66,17 +68,31 @@ export function useSliderThumb(
     }
   }, [isFocused, focusInput]);
 
-  const draggableProps = useDrag1D({
-    containerRef: trackRef as any,
-    reverse: direction === 'rtl',
-    orientation: 'horizontal',
-    onDrag: (dragging) => {
-      state.setThumbDragging(index, dragging);
-      focusInput();
+  const stateRef = useRef<SliderState>(null);
+  stateRef.current = state;
+  let reverseX = direction === 'rtl';
+  let currentPosition = useRef<number>(null);
+  let moveProps = useMove({
+    onMoveStart() {
+      currentPosition.current = null;
+      state.setThumbDragging(index, true);
     },
-    onPositionChange: (position) => {
-      const percent = position / trackRef.current.offsetWidth;
-      state.setThumbPercent(index, percent);
+    onMove({deltaX, deltaY, pointerType}) {
+      if (currentPosition.current == null) {
+        currentPosition.current = stateRef.current.getThumbPercent(index) * trackRef.current.offsetWidth;
+      }
+      if (pointerType === 'keyboard') {
+        // (invert left/right according to language direction) + (up should always increase)
+        let delta = ((reverseX ? -deltaX : deltaX) + -deltaY) * stateRef.current.step;
+        currentPosition.current += delta * trackRef.current.offsetWidth;
+        stateRef.current.setThumbValue(index, stateRef.current.getThumbValue(index) + delta);
+      } else {
+        currentPosition.current += reverseX ? -deltaX : deltaX;
+        stateRef.current.setThumbPercent(index, clamp(currentPosition.current / trackRef.current.offsetWidth, 0, 1));
+      }
+    },
+    onMoveEnd() {
+      state.setThumbDragging(index, false);
     }
   });
 
@@ -90,6 +106,24 @@ export function useSliderThumb(
     }),
     inputRef
   );
+
+  let onDown = () => {
+    focusInput();
+    state.setThumbDragging(index, true);
+
+    addGlobalListener(window, 'mouseup', onUp, false);
+    addGlobalListener(window, 'touchend', onUp, false);
+    addGlobalListener(window, 'pointerup', onUp, false);
+
+  };
+
+  let onUp = () => {
+    focusInput();
+    state.setThumbDragging(index, false);
+    removeGlobalListener(window, 'mouseup', onUp, false);
+    removeGlobalListener(window, 'touchend', onUp, false);
+    removeGlobalListener(window, 'pointerup', onUp, false);
+  };
 
   // We install mouse handlers for the drag motion on the thumb div, but
   // not the key handler for moving the thumb with the slider.  Instead,
@@ -113,13 +147,14 @@ export function useSliderThumb(
         state.setThumbValue(index, parseFloat(e.target.value));
       }
     }),
-    thumbProps: !isDisabled ? mergeProps({
-      onMouseDown: draggableProps.onMouseDown,
-      onMouseEnter: draggableProps.onMouseEnter,
-      onMouseOut: draggableProps.onMouseOut
-    }, {
-      onMouseDown: focusInput
-    }) : {},
+    thumbProps: !isDisabled ? mergeProps(
+      moveProps,
+      {
+        onPointerDown: onDown,
+        onMouseDown: onDown,
+        onTouchStart: onDown
+      }
+    ) : {},
     labelProps
   };
 }

@@ -11,6 +11,7 @@
  */
 
 import {act, fireEvent, render} from '@testing-library/react';
+import {installMouseEvent} from '@react-spectrum/test-utils';
 import {press, testKeypresses} from './utils';
 import {Provider} from '@adobe/react-spectrum';
 import React, {useState} from 'react';
@@ -191,16 +192,13 @@ describe('Slider', function () {
   });
 
   describe('keyboard interactions', () => {
-    // Can't test arrow/page up/down arrows because they are handled by the browser and JSDOM doesn't feel like it.
+    // Can't test arrow/page up/down, home/end arrows because they are handled by the browser and JSDOM doesn't feel like it.
 
     it.each`
       Name                                 | props                                 | commands
       ${'(left/right arrows, ltr)'}        | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowRight, result: +1}, {left: press.ArrowLeft, result: -1}]}
       ${'(left/right arrows, rtl)'}        | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowLeft, result: +1}]}
-      ${'(home/end, ltr)'}                 | ${{locale: 'de-DE'}}                  | ${[{left: press.End, result: '100'}, {left: press.Home, result: '0'}]}
-      ${'(home/end, rtl)'}                 | ${{locale: 'ar-AE'}}                  | ${[{left: press.End, result: '100'}, {left: press.Home, result: '0'}]}
       ${'(left/right arrows, isDisabled)'} | ${{locale: 'de-DE', isDisabled: true}}| ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}]}
-      ${'(home/end, isDisabled)'}          | ${{locale: 'de-DE', isDisabled: true}}| ${[{left: press.End, result: 0}, {left: press.Home, result: 0}]}
     `('$Name moves the slider in the correct direction', function ({props, commands}) {
       let tree = render(
         <Provider theme={theme} {...props}>
@@ -249,6 +247,8 @@ describe('Slider', function () {
       window.HTMLElement.prototype.offsetWidth.mockReset();
     });
 
+    installMouseEvent();
+
     it('can click and drag handle', () => {
       let onChangeSpy = jest.fn();
       let {getByRole} = render(
@@ -260,20 +260,20 @@ describe('Slider', function () {
 
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
-      fireEvent.mouseDown(thumb, {clientX: 50});
+      fireEvent.mouseDown(thumb, {clientX: 50, pageX: 50});
       expect(onChangeSpy).not.toHaveBeenCalled();
       expect(document.activeElement).toBe(slider);
 
-      fireEvent.mouseMove(thumb, {clientX: 10});
+      fireEvent.mouseMove(thumb, {pageX: 10});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy).toHaveBeenLastCalledWith(10);
-      fireEvent.mouseMove(thumb, {clientX: -10});
+      fireEvent.mouseMove(thumb, {pageX: -10});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
       expect(onChangeSpy).toHaveBeenLastCalledWith(0);
-      fireEvent.mouseMove(thumb, {clientX: 120});
+      fireEvent.mouseMove(thumb, {pageX: 120});
       expect(onChangeSpy).toHaveBeenCalledTimes(3);
       expect(onChangeSpy).toHaveBeenLastCalledWith(100);
-      fireEvent.mouseUp(thumb, {clientX: 120});
+      fireEvent.mouseUp(thumb, {pageX: 120});
       expect(onChangeSpy).toHaveBeenCalledTimes(3);
     });
 
@@ -289,12 +289,12 @@ describe('Slider', function () {
 
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
-      fireEvent.mouseDown(thumb, {clientX: 50});
+      fireEvent.mouseDown(thumb, {clientX: 50, pageX: 50});
       expect(onChangeSpy).not.toHaveBeenCalled();
       expect(document.activeElement).not.toBe(slider);
-      fireEvent.mouseMove(thumb, {clientX: 10});
+      fireEvent.mouseMove(thumb, {pageX: 10});
       expect(onChangeSpy).not.toHaveBeenCalled();
-      fireEvent.mouseUp(thumb, {clientX: 10});
+      fireEvent.mouseUp(thumb, {pageX: 10});
       expect(onChangeSpy).not.toHaveBeenCalled();
     });
 
@@ -313,20 +313,20 @@ describe('Slider', function () {
       let [leftTrack, rightTrack] = [...thumb.parentElement.children].filter(c => c !== thumb);
 
       // left track
-      fireEvent.mouseDown(leftTrack, {clientX: 20});
+      fireEvent.mouseDown(leftTrack, {clientX: 20, pageX: 20});
       expect(document.activeElement).toBe(slider);
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy).toHaveBeenLastCalledWith(20);
-      fireEvent.mouseUp(thumb, {clientX: 20});
+      fireEvent.mouseUp(thumb, {pageX: 20});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
 
       // right track
       onChangeSpy.mockClear();
-      fireEvent.mouseDown(rightTrack, {clientX: 70});
+      fireEvent.mouseDown(rightTrack, {clientX: 70, pageX: 70});
       expect(document.activeElement).toBe(slider);
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy).toHaveBeenLastCalledWith(70);
-      fireEvent.mouseUp(thumb, {clientX: 70});
+      fireEvent.mouseUp(thumb, {pageX: 70});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
     });
 
@@ -346,19 +346,59 @@ describe('Slider', function () {
       let [leftTrack, rightTrack] = [...thumb.parentElement.children].filter(c => c !== thumb);
 
       // left track
-      fireEvent.mouseDown(leftTrack, {clientX: 20});
+      fireEvent.mouseDown(leftTrack, {clientX: 20, pageX: 20});
       expect(document.activeElement).not.toBe(slider);
       expect(onChangeSpy).not.toHaveBeenCalled();
-      fireEvent.mouseUp(thumb, {clientX: 20});
+      fireEvent.mouseUp(thumb, {pageX: 20});
       expect(onChangeSpy).not.toHaveBeenCalled();
 
       // right track
       onChangeSpy.mockClear();
-      fireEvent.mouseDown(rightTrack, {clientX: 70});
+      fireEvent.mouseDown(rightTrack, {clientX: 70, pageX: 70});
       expect(document.activeElement).not.toBe(slider);
       expect(onChangeSpy).not.toHaveBeenCalled();
-      fireEvent.mouseUp(thumb, {clientX: 70});
+      fireEvent.mouseUp(thumb, {pageX: 70});
       expect(onChangeSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('touch interactions', () => {
+    beforeAll(() => {
+      jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
+    });
+    afterAll(() => {
+      // @ts-ignore
+      window.HTMLElement.prototype.offsetWidth.mockReset();
+    });
+
+    it('doesn\'t jump to second touch on track while already dragging', () => {
+      let onChangeSpy = jest.fn();
+      let {getByRole} = render(
+        <Slider
+          label="The Label"
+          onChange={onChangeSpy}
+          defaultValue={50} />
+      );
+
+      let slider = getByRole('slider');
+      let thumb = slider.parentElement.parentElement;
+      // @ts-ignore
+      let [, rightTrack] = [...thumb.parentElement.children].filter(c => c !== thumb);
+
+      fireEvent.touchStart(thumb, {targetTouches: [{identifier: 1, clientX: 50, pageX: 50}]});
+      expect(onChangeSpy).toHaveBeenCalledTimes(0);
+
+      fireEvent.touchStart(rightTrack, {targetTouches: [{identifier: 2, clientX: 60, pageX: 60}]});
+      fireEvent.touchMove(rightTrack, {changedTouches: [{identifier: 2, clientX: 70, pageX: 70}]});
+      fireEvent.touchEnd(rightTrack, {changedTouches: [{identifier: 2, clientX: 70, pageX: 70}]});
+      expect(onChangeSpy).toHaveBeenCalledTimes(0);
+
+      fireEvent.touchMove(thumb, {changedTouches: [{identifier: 1, clientX: 30, pageX: 30}]});
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeSpy).toHaveBeenLastCalledWith(30);
+
+      fireEvent.touchEnd(thumb, {changedTouches: [{identifier: 1, clientX: 30, pageX: 30}]});
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
     });
   });
 });

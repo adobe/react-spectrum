@@ -11,6 +11,7 @@
  */
 
 import {fireEvent, render} from '@testing-library/react';
+import {installPointerEvent} from '@react-spectrum/test-utils';
 import React from 'react';
 import {useHover} from '../';
 
@@ -54,13 +55,7 @@ describe('useHover', function () {
   });
 
   describe('pointer events', function () {
-    beforeEach(() => {
-      global.PointerEvent = {};
-    });
-
-    afterEach(() => {
-      delete global.PointerEvent;
-    });
+    installPointerEvent();
 
     it('should fire hover events based on pointer events', function () {
       let events = [];

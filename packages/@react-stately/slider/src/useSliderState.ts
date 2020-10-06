@@ -64,7 +64,7 @@ export const DEFAULT_MAX_VALUE = 100;
 export const DEFAULT_STEP_VALUE = 1;
 
 export function useSliderState(props: SliderProps): SliderState {
-  let {isDisabled, minValue = DEFAULT_MIN_VALUE, maxValue = DEFAULT_MAX_VALUE, formatOptions, step = DEFAULT_STEP_VALUE} = props;
+  const {isDisabled, minValue = DEFAULT_MIN_VALUE, maxValue = DEFAULT_MAX_VALUE, formatOptions, step = DEFAULT_STEP_VALUE} = props;
 
   const [values, setValues] = useControlledState<number[]>(
     props.value as any,
@@ -74,6 +74,11 @@ export function useSliderState(props: SliderProps): SliderState {
   const [isDraggings, setDraggings] = useState<boolean[]>(new Array(values.length).fill(false));
   const isEditablesRef = useRef<boolean[]>(new Array(values.length).fill(true));
   const [focusedIndex, setFocusedIndex] = useState<number|undefined>(undefined);
+
+  const valuesRef = useRef<number[]>(null);
+  valuesRef.current = values;
+  const isDraggingsRef = useRef<boolean[]>(null);
+  isDraggingsRef.current = isDraggings;
 
   const formatter = useNumberFormatter(formatOptions);
 
@@ -105,7 +110,8 @@ export function useSliderState(props: SliderProps): SliderState {
 
     // Round value to multiple of step, clamp value between min and max
     value = clamp(getRoundedValue(value), thisMin, thisMax);
-    setValues(values => replaceIndex(values, index, value));
+    valuesRef.current = replaceIndex(valuesRef.current, index, value);
+    setValues(valuesRef.current);
   }
 
   function updateDragging(index: number, dragging: boolean) {
@@ -113,12 +119,13 @@ export function useSliderState(props: SliderProps): SliderState {
       return;
     }
 
-    const newDraggings = replaceIndex(isDraggings, index, dragging);
-    setDraggings(newDraggings);
+    const wasDragging = isDraggingsRef.current[index];
+    isDraggingsRef.current = replaceIndex(isDraggingsRef.current, index, dragging);
+    setDraggings(isDraggingsRef.current);
 
     // Call onChangeEnd if no handles are dragging.
-    if (props.onChangeEnd && isDraggings[index] && !newDraggings.some(Boolean)) {
-      props.onChangeEnd(values);
+    if (props.onChangeEnd && wasDragging && !isDraggingsRef.current.some(Boolean)) {
+      props.onChangeEnd(valuesRef.current);
     }
   }
 

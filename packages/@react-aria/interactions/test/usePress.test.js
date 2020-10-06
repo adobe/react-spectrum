@@ -11,6 +11,7 @@
  */
 
 import {fireEvent, render} from '@testing-library/react';
+import {installPointerEvent} from '@react-spectrum/test-utils';
 import React from 'react';
 import {usePress} from '../';
 
@@ -49,13 +50,7 @@ describe('usePress', function () {
   // TODO: JSDOM doesn't yet support pointer events. Once they do, convert these tests.
   // https://github.com/jsdom/jsdom/issues/2527
   describe('pointer events', function () {
-    beforeEach(() => {
-      global.PointerEvent = {};
-    });
-
-    afterEach(() => {
-      delete global.PointerEvent;
-    });
+    installPointerEvent();
 
     it('should fire press events based on pointer events', function () {
       let events = [];

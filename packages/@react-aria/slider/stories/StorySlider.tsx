@@ -68,9 +68,10 @@ export function StorySlider(props: StorySliderProps) {
               'left': `${state.getThumbPercent(0) * 100}%`
             }}>
             {/* We put thumbProps on thumbHandle, so that you cannot drag by the tip */}
-            <div {...thumbProps} className={styles.thumbHandle} />
+            <div {...thumbProps} className={styles.thumbHandle}>
+              <VisuallyHidden><input className={styles.input} ref={inputRef} {...inputProps} /></VisuallyHidden>
+            </div>
             {props.showTip && <div className={styles.tip}>{state.getThumbValueLabel(0)}</div>}
-            <VisuallyHidden isFocusable><input className={styles.input} ref={inputRef} {...inputProps} /></VisuallyHidden>
           </div>
         </FocusRing>
       </div>
