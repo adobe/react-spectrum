@@ -50,7 +50,7 @@ function inTestcaseWithoutAct(context, actLocalName) {
   return false;
 }
 
-function report(node, context) {
+function report(node, context, actLocalName) {
   context.report({
     node,
     message: 'Should be wrapped in an act() call',
@@ -60,7 +60,7 @@ function report(node, context) {
       let source = context
         .getSourceCode()
         .text.slice(parent.range[0], parent.range[1]);
-      return fixer.replaceTextRange(parent.range, `act(() => {${source}});`);
+      return fixer.replaceTextRange(parent.range, `${actLocalName}(() => {${source}});`);
     }
   });
 }
@@ -95,7 +95,7 @@ module.exports = {
       },
       create(context) {
         if (context.getFilename().includes(path.sep + 'test' + path.sep)) {
-          let actLocalName = null;
+          let actLocalName = 'act';
           return {
             ImportSpecifier(node) {
               let {parent} = node;
@@ -122,14 +122,14 @@ module.exports = {
                   (node.callee.property.name === 'focus' ||
                     node.callee.property.name === 'blur')
                 ) {
-                  report(node, context);
+                  report(node, context, actLocalName);
                 } else if (
                   node.callee.object.type === 'Identifier' &&
                   node.callee.object.name === 'jest' &&
                   node.callee.property.type === 'Identifier' &&
                   JEST_TIMER_FUNCTIONS.includes(node.callee.property.name)
                 ) {
-                  report(node, context);
+                  report(node, context, actLocalName);
                 }
               }
             }

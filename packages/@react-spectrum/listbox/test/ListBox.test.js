@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render, within} from '@testing-library/react';
 import Bell from '@spectrum-icons/workflow/Bell';
-import {fireEvent, render, within} from '@testing-library/react';
 import {Item, ListBox, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -558,7 +558,7 @@ describe('ListBox', function () {
       expect(document.activeElement).toBe(options[5]);
 
       // Advance the timers so we can select using the Spacebar
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       fireEvent.keyDown(document.activeElement, {key: ' ', code: 32, charCode: 32});
 
@@ -585,7 +585,7 @@ describe('ListBox', function () {
       fireEvent.keyDown(listbox, {key: 'B'});
       expect(document.activeElement).toBe(options[1]);
 
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       fireEvent.keyDown(listbox, {key: 'B'});
       expect(document.activeElement).toBe(options[1]);
@@ -602,7 +602,7 @@ describe('ListBox', function () {
       fireEvent.keyDown(listbox, {key: 'E'});
       expect(document.activeElement).toBe(options[4]);
 
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       fireEvent.keyDown(listbox, {key: 'B'});
       expect(document.activeElement).toBe(options[4]);

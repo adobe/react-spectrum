@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
 import React from 'react';
 import {useMove} from '../';
@@ -185,7 +185,7 @@ describe('useMove', function () {
       expect(document.documentElement.style.webkitUserSelect).toBe('none');
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX: 10, pageY: 25}]});
       expect(document.documentElement.style.webkitUserSelect).toBe('none');
-      jest.advanceTimersByTime(300);
+      act(() => {jest.advanceTimersByTime(300);});
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
     });
   });
