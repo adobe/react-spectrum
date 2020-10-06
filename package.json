@@ -168,8 +168,5 @@
     "postcss-calc": "6.0.2",
     "jest-environment-jsdom": "26.3.0",
     "jsdom": "16.3.0"
-  },
-  "dependencies": {
-    "yarn": "^1.22.10"
   }
 }
