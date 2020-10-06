@@ -122,13 +122,12 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
       if (scrollToItem) {
         scrollToItem(focusedKey);
       } else {
-        // offsetY required to have android talkback accessibility cursor properly positioned after combobox tray menu is scrolled
-        virtualizer.scrollToItem(focusedKey, {duration: 0, offsetY: ref.current.offsetTop});
+        virtualizer.scrollToItem(focusedKey, {duration: 0});
       }
     }
 
     lastFocusedKey.current = focusedKey;
-  }, [focusedKey, virtualizer.visibleRect.height, virtualizer, lastFocusedKey, scrollToItem, ref]);
+  }, [focusedKey, virtualizer.visibleRect.height, virtualizer, lastFocusedKey, scrollToItem]);
 
   let isFocusWithin = useRef(false);
   let onFocus = useCallback((e: FocusEvent) => {
@@ -137,8 +136,7 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     // We only want to do this if the collection itself is receiving focus, not a child
     // element, and we aren't moving focus to the collection from within (see below).
     if (e.target === ref.current && !isFocusWithin.current) {
-      // offsetY required to have android talkback accessibility cursor properly positioned after combobox tray menu is scrolled
-      virtualizer.scrollToItem(focusedKey, {duration: 0, offsetY: ref.current.offsetTop});
+      virtualizer.scrollToItem(focusedKey, {duration: 0});
     }
 
     isFocusWithin.current = e.target !== ref.current;
