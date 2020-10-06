@@ -27,7 +27,7 @@ storiesOf('DialogTrigger', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
   .add(
     'default',
-    () => render({}),
+    () => render({})
   )
   .add(
     'type: popover',

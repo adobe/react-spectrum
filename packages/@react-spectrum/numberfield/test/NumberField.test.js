@@ -187,7 +187,7 @@ describe('NumberField', function () {
     let {textField} = renderNumberField(Component, {onChange: onChangeSpy});
 
     act(() => {textField.focus();});
-    act(() => {fireEvent.wheel(textField, {deltaY: 10});});
+    fireEvent.wheel(textField, {deltaY: 10});
     expect(onChangeSpy).toHaveBeenCalledWith(-1);
   });
 
@@ -199,7 +199,7 @@ describe('NumberField', function () {
     let {textField} = renderNumberField(Component, {onChange: onChangeSpy});
 
     act(() => {textField.focus();});
-    act(() => {fireEvent.wheel(textField, {deltaY: -10});});
+    fireEvent.wheel(textField, {deltaY: -10});
     expect(onChangeSpy).toHaveBeenCalledWith(1);
   });
 
@@ -247,7 +247,7 @@ describe('NumberField', function () {
 
     expect(textField).toHaveAttribute('aria-invalid', 'true');
     act(() => {textField.focus();});
-    act(() => {fireEvent.wheel(textField, {deltaY: -10});});
+    fireEvent.wheel(textField, {deltaY: -10});
     expect(textField).not.toHaveAttribute('aria-invalid');
   });
 
@@ -261,7 +261,7 @@ describe('NumberField', function () {
 
     expect(textField).toHaveAttribute('aria-invalid', 'true');
     act(() => {textField.focus();});
-    act(() => {fireEvent.wheel(textField, {deltaY: 10});});
+    fireEvent.wheel(textField, {deltaY: 10});
     expect(textField).not.toHaveAttribute('aria-invalid');
   });
 

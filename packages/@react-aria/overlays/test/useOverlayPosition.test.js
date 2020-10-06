@@ -202,7 +202,7 @@ describe('useOverlayPosition with positioned container', () => {
         } else {
           return realGetComputedStyle(element);
         }
-      }),
+      })
     );
   });
 

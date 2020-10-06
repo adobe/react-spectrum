@@ -11,7 +11,7 @@
  */
 
 import {disableTextSelection, restoreTextSelection}  from './textSelection';
-import {HTMLAttributes, useMemo, useRef} from 'react';
+import React, {HTMLAttributes, useMemo, useRef} from 'react';
 import {useGlobalListeners} from '@react-aria/utils';
 
 export interface BaseMoveEvent {

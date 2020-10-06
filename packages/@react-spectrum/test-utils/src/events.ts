@@ -17,15 +17,9 @@ import userEvent from '@testing-library/user-event';
 // Triggers a "press" event on an element.
 // TODO: move to somewhere more common
 export function triggerPress(element, opts = {}) {
-  act(() => {
-    fireEvent.mouseDown(element, {detail: 1, ...opts});
-  });
-  act(() => {
-    fireEvent.mouseUp(element, {detail: 1, ...opts});
-  });
-  act(() => {
-    fireEvent.click(element, {detail: 1, ...opts});
-  });
+  fireEvent.mouseDown(element, {detail: 1, ...opts});
+  fireEvent.mouseUp(element, {detail: 1, ...opts});
+  fireEvent.click(element, {detail: 1, ...opts});
 }
 
 /**

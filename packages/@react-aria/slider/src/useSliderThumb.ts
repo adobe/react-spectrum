@@ -1,5 +1,5 @@
-import {ChangeEvent, HTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
+import React, {ChangeEvent, HTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {sliderIds} from './utils';
 import {SliderState} from '@react-stately/slider';
 import {SliderThumbProps} from '@react-types/slider';
