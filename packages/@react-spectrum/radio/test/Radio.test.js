@@ -157,7 +157,7 @@ describe('Radios', function () {
     expect(radios[2].checked).toBe(false);
 
     let dogs = getByLabelText('Dogs');
-    act(() => {userEvent.click(dogs);});
+    userEvent.click(dogs);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
 
@@ -253,7 +253,7 @@ describe('Radios', function () {
     expect(radios[0].checked).toBe(false);
     expect(radios[1].checked).toBe(false);
     expect(radios[2].checked).toBe(false);
-    act(() => {userEvent.click(dogs);});
+    userEvent.click(dogs);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
     expect(radios[0].checked).toBe(true);
@@ -277,7 +277,7 @@ describe('Radios', function () {
     expect(radios[2]).toHaveAttribute('readonly');
 
     let cats = getByLabelText('Cats');
-    act(() => {userEvent.click(cats);});
+    userEvent.click(cats);
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
 
@@ -297,7 +297,7 @@ describe('Radios', function () {
     expect(radios[2]).not.toHaveAttribute('readonly');
 
     let dogs = getByLabelText('Dogs');
-    act(() => {userEvent.click(dogs);});
+    userEvent.click(dogs);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -320,7 +320,7 @@ describe('Radios', function () {
 
     // have to click label or it won't work
     let dogs = getByLabelText('Dogs');
-    act(() => {userEvent.click(dogs);});
+    userEvent.click(dogs);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
     expect(radios[0].checked).toBe(true);
@@ -345,7 +345,7 @@ describe('Radios', function () {
     expect(radios[2].checked).toBe(true);
 
     let dogs = getByLabelText('Dogs');
-    act(() => {userEvent.click(dogs);});
+    userEvent.click(dogs);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
     expect(radios[0].checked).toBe(false);
@@ -452,28 +452,22 @@ describe('Radios', function () {
       // 0. body/nothing is focused
 
       // 1. tab once to focus button before radiogroup
-      act(() => {
-        userEvent.tab();
-      });
+      userEvent.tab();
       expect(document.activeElement).toBe(button);
       expect(document.activeElement).not.toBe(radios[0]);
       expect(document.activeElement).not.toBe(radios[1]);
       expect(document.activeElement).not.toBe(radios[2]);
 
       // 2. tab once again to focus radiogroup (= first radiobutton)
-      act(() => {
-        userEvent.tab();
-      });
+      userEvent.tab();
       expect(document.activeElement).not.toBe(button);
       expect(document.activeElement).toBe(radios[0]);
       expect(document.activeElement).not.toBe(radios[1]);
       expect(document.activeElement).not.toBe(radios[2]);
 
       // 3. tab once again to focus the body, and again to wrap back around to the button
-      act(() => {
-        userEvent.tab();
-        userEvent.tab();
-      });
+      userEvent.tab();
+      userEvent.tab();
       expect(document.activeElement).toBe(button);
       expect(document.activeElement).not.toBe(radios[0]);
       expect(document.activeElement).not.toBe(radios[1]);
@@ -490,7 +484,7 @@ describe('Radios', function () {
       act(() => {radios[0].focus();});
       expect(document.activeElement).toBe(radios[0]);
 
-      act(() => {userEvent.click(radios[1]);});
+      userEvent.click(radios[1]);
       expect(document.activeElement).toBe(radios[1]);
       expect(radios[0]).toHaveAttribute('tabIndex', '-1');
       expect(radios[1]).toHaveAttribute('tabIndex', '0');
@@ -531,7 +525,7 @@ describe('Radios', function () {
       act(() => {radioGroup.focus();});
 
       orders.forEach(({action, result}, index) => {
-        act(() => {action(document.activeElement);});
+        action(document.activeElement);
         verifyResult(radios, result(), index);
       });
     });
@@ -563,7 +557,7 @@ describe('Radios', function () {
       act(() => {radioGroup.focus();});
 
       orders.forEach(({action, result}, index) => {
-        act(() => {action(document.activeElement);});
+        action(document.activeElement);
         verifyResult(radios, result(), index);
       });
     });
@@ -589,7 +583,7 @@ describe('Radios', function () {
       act(() => {radioGroup.focus();});
 
       orders.forEach(({action, result}, index) => {
-        act(() => {action(document.activeElement);});
+        action(document.activeElement);
         verifyResult(radios, result(), index);
       });
     });

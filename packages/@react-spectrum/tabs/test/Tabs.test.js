@@ -212,7 +212,7 @@ describe('Tabs', function () {
 
   it('should focus the selected tab when tabbing in for the first time', function () {
     let tree = renderComponent({defaultSelectedKey: items[1].name});
-    act(() => userEvent.tab());
+    userEvent.tab();
 
     let tablist = tree.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
@@ -221,7 +221,7 @@ describe('Tabs', function () {
 
   it('should not focus any tabs when isDisabled tabbing in for the first time', function () {
     let tree = renderComponent({defaultSelectedKey: items[1].name, isDisabled: true});
-    act(() => userEvent.tab());
+    userEvent.tab();
 
     let tabpanel = tree.getByRole('tabpanel');
     expect(document.activeElement).toBe(tabpanel);
@@ -229,7 +229,7 @@ describe('Tabs', function () {
 
   it('disabled tabs cannot be keyboard navigated to', function () {
     let tree = renderComponent({defaultSelectedKey: items[0].name, disabledKeys: [items[1].name], onSelectionChange});
-    act(() => userEvent.tab());
+    userEvent.tab();
 
     let tablist = tree.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
@@ -241,12 +241,12 @@ describe('Tabs', function () {
 
   it('disabled tabs cannot be pressed', function () {
     let tree = renderComponent({defaultSelectedKey: items[0].name, disabledKeys: [items[1].name], onSelectionChange});
-    act(() => userEvent.tab());
+    userEvent.tab();
 
     let tablist = tree.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     expect(document.activeElement).toBe(tabs[0]);
-    act(() => userEvent.click(tabs[1]));
+    userEvent.click(tabs[1]);
     expect(onSelectionChange).not.toBeCalled();
   });
 });

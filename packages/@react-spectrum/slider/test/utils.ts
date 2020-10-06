@@ -13,7 +13,7 @@
 import {act, fireEvent} from '@testing-library/react';
 
 function pressKeyOnButton(key, button) {
-  act(() => {fireEvent.keyDown(button, {key});});
+  fireEvent.keyDown(button, {key});
 }
 export const press = {
   ArrowRight: (button: HTMLElement) => pressKeyOnButton('ArrowRight', button),
