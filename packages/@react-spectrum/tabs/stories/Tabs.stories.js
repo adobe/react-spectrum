@@ -81,8 +81,6 @@ storiesOf('Tabs', module)
     'middle disabled',
     () => render({disabledKeys: ['val2']})
   )
-  // TODO ask if this is supposed to be overflowMode or behavior that is always applied
-  // TODO add a quiet and density compact version of below
   .add(
     'collapse behavior',
     () => <ManyTabs />

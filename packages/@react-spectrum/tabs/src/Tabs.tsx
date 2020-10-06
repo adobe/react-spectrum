@@ -79,7 +79,9 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
 
     let farEdgeTabList = getFurthestPoint(tabsComponent);
     let farEdgeLastTab = getFurthestPoint(lastTab);
-    if (farEdgeTabList < farEdgeLastTab) {
+    let shouldCollapse = direction === 'rtl' ? farEdgeLastTab < farEdgeTabList : farEdgeTabList < farEdgeLastTab;
+
+    if (shouldCollapse) {
       setCollapse(true);
     } else {
       setCollapse(false);
