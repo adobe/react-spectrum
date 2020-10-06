@@ -50,8 +50,18 @@ storiesOf('ButtonGroup', module)
   .add(
     'align: center, orientation: vertical',
     () => render({align: 'center', orientation: 'vertical'})
+  
+  )
+  .add(
+    'resizeable',
+    () => (
+      <div style={{minWidth: '100px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+        {render({})}
+      </div>
+    )
   );
-
+  
+  
 function render(props) {
   return <Component {...props} />;
 }

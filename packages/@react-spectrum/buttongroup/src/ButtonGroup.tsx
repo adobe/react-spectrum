@@ -49,7 +49,6 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
     }
   }, [domRef, orientation]);
   
-  
   // On scale or children change, remove vertical orientation class via dirty = true and check for overflow
   useLayoutEffect(() => {
     if (dirty) {
@@ -65,9 +64,19 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
   // Don't add dirty to dep array since it will cause infinite loop
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [children, scale]);
+  
 
   // Check for overflow on window resize
+  useEffect(() => {
+    window.addEventListener('resize', checkForOverflow);
+    checkForOverflow();
+    return () => {
+      window.removeEventListener('resize', checkForOverflow);
+    };
+  }, [orientation]);
+
   useResizeObserver({ref: domRef, onResize: checkForOverflow});
+  
 
   return (
     <div

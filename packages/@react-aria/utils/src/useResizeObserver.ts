@@ -18,6 +18,7 @@ export function useResizeObserver<T extends HTMLElement>(options: useResizeObser
 
     if (!hasResizeObserver()) {
       window.addEventListener('resize', onResize, false);
+
       return () => {
         window.removeEventListener('resize', onResize, false);
       };
@@ -30,7 +31,7 @@ export function useResizeObserver<T extends HTMLElement>(options: useResizeObser
         onResize();
       });
       resizeObserverInstance.observe(ref.current);
-
+  
       return () => {
         resizeObserverInstance.unobserve(ref.current);
       };
