@@ -88,13 +88,14 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
           styles,
           'spectrum-Menu-item',
           {
-            // For ComboBox since focus doesn't leave the input but menu items need keyboard focus style
+            // If using virtual focus, apply focused styles to the item when the user is interacting with keyboard modality
             'is-focused': shouldUseVirtualFocus && isFocused && isKeyboardModality,
             'is-disabled': isDisabled,
             'is-selected': isSelected,
             'is-selectable': state.selectionManager.selectionMode !== 'none',
-            // isHovered required for customValue ComboBox, isFocused required for opening ComboBox via button
-            'is-hovered': isHovered || isFocused && !isKeyboardModality
+            // When shouldFocusOnHover is false, apply hover styles both when hovered with the mouse.
+            // Otherwise, apply hover styles when focused using non-keyboard modality.
+            'is-hovered': (isHovered && !shouldFocusOnHover) || (isFocused && !isKeyboardModality)
           }
         )}>
         <Grid
