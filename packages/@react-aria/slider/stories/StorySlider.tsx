@@ -35,7 +35,6 @@ export function StorySlider(props: StorySliderProps) {
 
   const {thumbProps, inputProps} = useSliderThumb({
     index: 0,
-    isReadOnly: props.isReadOnly,
     isDisabled: props.isDisabled,
     trackRef,
     inputRef

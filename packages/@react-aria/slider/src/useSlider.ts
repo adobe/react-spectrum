@@ -16,6 +16,7 @@ import {sliderIds} from './utils';
 import {SliderProps} from '@react-types/slider';
 import {SliderState} from '@react-stately/slider';
 import {useLabel} from '@react-aria/label';
+import {useLocale} from '@react-aria/i18n';
 
 interface SliderAria {
   /** Props for the label element. */
@@ -45,10 +46,10 @@ export function useSlider(
 ): SliderAria {
   const {labelProps, fieldProps} = useLabel(props);
 
-  const isSliderEditable = !(props.isDisabled || props.isReadOnly);
-
   // Attach id of the label to the state so it can be accessed by useSliderThumb.
   sliderIds.set(state, labelProps.id ?? fieldProps.id);
+
+  let {direction} = useLocale();
 
   // When the user clicks or drags the track, we want the motion to set and drag the
   // closest thumb.  Hence we also need to install useDrag1D() on the track element.
@@ -56,9 +57,9 @@ export function useSlider(
   // It is set onMouseDown; see trackProps below.
   const realTimeTrackDraggingIndex = useRef<number | undefined>(undefined);
   const isTrackDragging = useRef(false);
-  const {onMouseDown, onMouseEnter, onMouseOut} = useDrag1D({
+  const {onMouseDown, onMouseEnter, onMouseOut, onKeyDown} = useDrag1D({
     containerRef: trackRef as any,
-    reverse: false,
+    reverse: direction === 'rtl',
     orientation: 'horizontal',
     onDrag: (dragging) => {
       if (realTimeTrackDraggingIndex.current !== undefined) {
@@ -79,6 +80,18 @@ export function useSlider(
           realTimeTrackDraggingIndex.current = undefined;
         }
       }
+    },
+    onIncrement() {
+      state.setThumbValue(state.focusedThumb, state.getThumbValue(state.focusedThumb) + state.step);
+    },
+    onDecrement() {
+      state.setThumbValue(state.focusedThumb, state.getThumbValue(state.focusedThumb) - state.step);
+    },
+    onIncrementToMax() {
+      state.setThumbValue(state.focusedThumb, state.getThumbMaxValue(state.focusedThumb));
+    },
+    onDecrementToMin() {
+      state.setThumbValue(state.focusedThumb, state.getThumbMinValue(state.focusedThumb));
     }
   });
 
@@ -95,12 +108,15 @@ export function useSlider(
     trackProps: mergeProps({
       onMouseDown: (e: React.MouseEvent<HTMLElement>) => {
         // We only trigger track-dragging if the user clicks on the track itself.
-        if (trackRef.current && isSliderEditable) {
+        if (trackRef.current && !props.isDisabled) {
           // Find the closest thumb
           const trackPosition = trackRef.current.getBoundingClientRect().left;
           const clickPosition = e.clientX;
           const offset = clickPosition - trackPosition;
-          const percent = offset / trackRef.current.offsetWidth;
+          let percent = offset / trackRef.current.offsetWidth;
+          if (direction === 'rtl') {
+            percent = 1 - percent;
+          }
           const value = state.getPercentValue(percent);
 
           // Only compute the diff for thumbs that are editable, as only they can be dragged
@@ -127,7 +143,7 @@ export function useSlider(
         }
       }
     }, {
-      onMouseDown, onMouseEnter, onMouseOut
+      onMouseDown, onMouseEnter, onMouseOut, onKeyDown
     })
   };
 }

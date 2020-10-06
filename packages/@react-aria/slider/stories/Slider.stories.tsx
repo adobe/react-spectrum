@@ -6,7 +6,7 @@ import {StoryRangeSlider} from './StoryRangeSlider';
 import {StorySlider} from './StorySlider';
 
 
-storiesOf('Slider', module)
+storiesOf('Slider (hooks)', module)
   .add(
     'single',
     () => <StorySlider label="Size" onChange={action('onChange')} onChangeEnd={action('onChangeEnd')} showTip />
@@ -25,11 +25,11 @@ storiesOf('Slider', module)
   )
   .add(
     'range',
-    () => (<StoryRangeSlider 
-      label="Temperature" 
-      defaultValue={[25, 75]} 
-      onChange={action('onChange')} 
-      onChangeEnd={action('onChangeEnd')} 
+    () => (<StoryRangeSlider
+      label="Temperature"
+      defaultValue={[25, 75]}
+      onChange={action('onChange')}
+      onChangeEnd={action('onChangeEnd')}
       showTip
       formatOptions={{
         style: 'unit',
@@ -39,11 +39,11 @@ storiesOf('Slider', module)
   )
   .add(
     'range with aria-label',
-    () => (<StoryRangeSlider 
+    () => (<StoryRangeSlider
       aria-label="Temperature"
-      defaultValue={[25, 75]} 
-      onChange={action('onChange')} 
-      onChangeEnd={action('onChangeEnd')} 
+      defaultValue={[25, 75]}
+      onChange={action('onChange')}
+      onChangeEnd={action('onChangeEnd')}
       showTip
       formatOptions={{
         style: 'unit',
@@ -54,9 +54,9 @@ storiesOf('Slider', module)
   .add(
     '3 thumbs',
     () => (
-      <StoryMultiSlider 
-        label="Ticks" 
-        onChange={action('onChange')} 
+      <StoryMultiSlider
+        label="Ticks"
+        onChange={action('onChange')}
         onChangeEnd={action('onChangeEnd')}
         defaultValue={[10, 40, 80]}>
         <StoryThumb label="A" />
@@ -68,9 +68,9 @@ storiesOf('Slider', module)
   .add(
     '3 thumbs with disabled',
     () => (
-      <StoryMultiSlider 
-        label="Ticks" 
-        onChange={action('onChange')} 
+      <StoryMultiSlider
+        label="Ticks"
+        onChange={action('onChange')}
         onChangeEnd={action('onChangeEnd')}
         defaultValue={[10, 40, 80]}>
         <StoryThumb label="A" />
@@ -82,9 +82,9 @@ storiesOf('Slider', module)
   .add(
     '3 thumbs with aria-label',
     () => (
-      <StoryMultiSlider 
+      <StoryMultiSlider
         aria-label="Ticks"
-        onChange={action('onChange')} 
+        onChange={action('onChange')}
         onChangeEnd={action('onChangeEnd')}
         defaultValue={[10, 40, 80]}>
         <StoryThumb aria-label="A" />
