@@ -84,13 +84,14 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       }
     },
     onMoveEnd() {
-      isOnWheel.current = false;
+      isOnWheel.current = undefined;
       state.setDragging(false);
       focusInput();
     }
   };
   let movePropsThumb = useMove(moveHandler);
 
+  let currentPointer = useRef<number | null | undefined>(undefined);
   let isOnWheel = useRef<boolean>(false);
   let movePropsContainer = useMove({
     onMoveStart() {
@@ -110,41 +111,63 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     }
   });
 
-  let onThumbDown = () => {
-    focusInput();
-    state.setDragging(true);
-    addGlobalListener(window, 'mouseup', onUp, false);
-    addGlobalListener(window, 'touchend', onUp, false);
-    addGlobalListener(window, 'pointerup', onUp, false);
+  let onThumbDown = (id: number | null) => {
+    if (!state.isDragging) {
+      currentPointer.current = id;
+      focusInput();
+      state.setDragging(true);
+      addGlobalListener(window, 'mouseup', onThumbUp, false);
+      addGlobalListener(window, 'touchend', onThumbUp, false);
+      addGlobalListener(window, 'pointerup', onThumbUp, false);
+    }
   };
 
-  let onTrackDown = (pageX: number, pageY: number) => {
+  let onThumbUp = (e) => {
+    let id = e.pointerId ?? e.changedTouches?.[0].identifier;
+    if (id === currentPointer.current) {
+      focusInput();
+      state.setDragging(false);
+      currentPointer.current = undefined;
+      isOnWheel.current = false;
+
+      removeGlobalListener(window, 'mouseup', onThumbUp, false);
+      removeGlobalListener(window, 'touchend', onThumbUp, false);
+      removeGlobalListener(window, 'pointerup', onThumbUp, false);
+    }
+  };
+
+  let onTrackDown = (id: number | null, pageX: number, pageY: number) => {
     let rect = (containerRef.current as HTMLElement).getBoundingClientRect();
     let x = pageX - rect.x - rect.width / 2;
     let y = pageY - rect.y - rect.height / 2;
     let radius = Math.sqrt(x * x + y * y);
     let angle = cartesianToAngle(x, y, radius);
-    if (innerRadius < radius && radius < outerRadius) {
+    if (innerRadius < radius && radius < outerRadius && !state.isDragging && currentPointer.current === undefined) {
       isOnWheel.current = true;
+      currentPointer.current = id;
       stateRef.current.setHue(angle);
 
       focusInput();
       state.setDragging(true);
 
-      addGlobalListener(window, 'mouseup', onUp, false);
-      addGlobalListener(window, 'touchend', onUp, false);
-      addGlobalListener(window, 'pointerup', onUp, false);
+      addGlobalListener(window, 'mouseup', onTrackUp, false);
+      addGlobalListener(window, 'touchend', onTrackUp, false);
+      addGlobalListener(window, 'pointerup', onTrackUp, false);
     }
   };
 
-  let onUp = () => {
-    isOnWheel.current = false;
-    state.setDragging(false);
-    focusInput();
+  let onTrackUp = (e) => {
+    let id = e.pointerId ?? e.changedTouches?.[0].identifier;
+    if (isOnWheel.current && id === currentPointer.current) {
+      isOnWheel.current = false;
+      currentPointer.current = undefined;
+      state.setDragging(false);
+      focusInput();
 
-    removeGlobalListener(window, 'mouseup', onUp, false);
-    removeGlobalListener(window, 'touchend', onUp, false);
-    removeGlobalListener(window, 'pointerup', onUp, false);
+      removeGlobalListener(window, 'mouseup', onTrackUp, false);
+      removeGlobalListener(window, 'touchend', onTrackUp, false);
+      removeGlobalListener(window, 'pointerup', onTrackUp, false);
+    }
   };
 
   let {keyboardProps} = useKeyboard({
@@ -164,14 +187,14 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
 
   return {
     containerProps: isDisabled ? {} : mergeProps({
-      onMouseDown: (e: React.MouseEvent) => {onTrackDown(e.pageX, e.pageY);},
-      onPointerDown: (e: React.PointerEvent) => {onTrackDown(e.pageX, e.pageY);},
-      onTouchStart: (e: React.TouchEvent) => {onTrackDown(e.targetTouches[0].pageX, e.targetTouches[0].pageY);}
+      onMouseDown: (e: React.MouseEvent) => {onTrackDown(undefined, e.pageX, e.pageY);},
+      onPointerDown: (e: React.PointerEvent) => {onTrackDown(e.pointerId, e.pageX, e.pageY);},
+      onTouchStart: (e: React.TouchEvent) => {onTrackDown(e.changedTouches[0].identifier, e.changedTouches[0].pageX, e.changedTouches[0].pageY);}
     }, movePropsContainer),
     thumbProps: isDisabled ? {} : mergeProps({
-      onMouseDown: onThumbDown,
-      onPointerDown: onThumbDown,
-      onTouchStart: onThumbDown
+      onMouseDown: () => {onThumbDown(undefined);},
+      onPointerDown: (e: React.PointerEvent) => {onThumbDown(e.pointerId);},
+      onTouchStart: (e: React.TouchEvent) => {onThumbDown(e.changedTouches[0].identifier);}
     }, movePropsThumb, keyboardProps),
     inputProps: {
       type: 'range',

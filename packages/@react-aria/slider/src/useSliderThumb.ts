@@ -1,5 +1,5 @@
-import {ChangeEvent, HTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
+import React, {ChangeEvent, HTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {sliderIds} from './utils';
 import {SliderState} from '@react-stately/slider';
 import {SliderThumbProps} from '@react-types/slider';
@@ -107,8 +107,10 @@ export function useSliderThumb(
     inputRef
   );
 
-  let onDown = () => {
+  let currentPointer = useRef<number | null | undefined>(undefined);
+  let onDown = (id: number | null) => {
     focusInput();
+    currentPointer.current = id;
     state.setThumbDragging(index, true);
 
     addGlobalListener(window, 'mouseup', onUp, false);
@@ -117,12 +119,15 @@ export function useSliderThumb(
 
   };
 
-  let onUp = () => {
-    focusInput();
-    state.setThumbDragging(index, false);
-    removeGlobalListener(window, 'mouseup', onUp, false);
-    removeGlobalListener(window, 'touchend', onUp, false);
-    removeGlobalListener(window, 'pointerup', onUp, false);
+  let onUp = (e) => {
+    let id = e.pointerId ?? e.changedTouches?.[0].identifier;
+    if (id === currentPointer.current) {
+      focusInput();
+      state.setThumbDragging(index, false);
+      removeGlobalListener(window, 'mouseup', onUp, false);
+      removeGlobalListener(window, 'touchend', onUp, false);
+      removeGlobalListener(window, 'pointerup', onUp, false);
+    }
   };
 
   // We install mouse handlers for the drag motion on the thumb div, but
@@ -150,9 +155,9 @@ export function useSliderThumb(
     thumbProps: !isDisabled ? mergeProps(
       moveProps,
       {
-        onPointerDown: onDown,
-        onMouseDown: onDown,
-        onTouchStart: onDown
+        onMouseDown: () => {onDown(null);},
+        onPointerDown: (e: React.PointerEvent) => {onDown(e.pointerId);},
+        onTouchStart: (e: React.TouchEvent) => {onDown(e.changedTouches[0].identifier);}
       }
     ) : {},
     labelProps

@@ -11,7 +11,7 @@
  */
 
 import {clamp, mergeProps, useGlobalListeners} from '@react-aria/utils';
-import {HTMLAttributes, useRef} from 'react';
+import React, {HTMLAttributes, useRef} from 'react';
 import {sliderIds} from './utils';
 import {SliderProps} from '@react-types/slider';
 import {SliderState} from '@react-stately/slider';
@@ -87,7 +87,8 @@ export function useSlider(
     }
   });
 
-  let onDownTrack = (e: React.UIEvent, clientX: number) => {
+  let currentPointer = useRef<number | null | undefined>(undefined);
+  let onDownTrack = (e: React.UIEvent, id: number, clientX: number) => {
     // We only trigger track-dragging if the user clicks on the track itself and nothing is currently being dragged.
     if (trackRef.current && !props.isDisabled && state.values.every((_, i) => !state.isThumbDragging(i))) {
       // Find the closest thumb
@@ -109,6 +110,7 @@ export function useSlider(
 
         realTimeTrackDraggingIndex.current = index;
         state.setFocusedThumb(index);
+        currentPointer.current = id;
 
         state.setThumbDragging(realTimeTrackDraggingIndex.current, true);
         state.setThumbValue(index, value);
@@ -122,15 +124,18 @@ export function useSlider(
     }
   };
 
-  let onUpTrack = () => {
-    if (realTimeTrackDraggingIndex.current != null) {
-      state.setThumbDragging(realTimeTrackDraggingIndex.current, false);
-      realTimeTrackDraggingIndex.current = null;
-    }
+  let onUpTrack = (e) => {
+    let id = e.pointerId ?? e.changedTouches?.[0].identifier;
+    if (id === currentPointer.current) {
+      if (realTimeTrackDraggingIndex.current != null) {
+        state.setThumbDragging(realTimeTrackDraggingIndex.current, false);
+        realTimeTrackDraggingIndex.current = null;
+      }
 
-    removeGlobalListener(window, 'mouseup', onUpTrack, false);
-    removeGlobalListener(window, 'touchend', onUpTrack, false);
-    removeGlobalListener(window, 'pointerup', onUpTrack, false);
+      removeGlobalListener(window, 'mouseup', onUpTrack, false);
+      removeGlobalListener(window, 'touchend', onUpTrack, false);
+      removeGlobalListener(window, 'pointerup', onUpTrack, false);
+    }
   };
 
   return {
@@ -143,9 +148,9 @@ export function useSlider(
       ...fieldProps
     },
     trackProps: mergeProps({
-      onMouseDown(e: React.MouseEvent<HTMLElement>) { onDownTrack(e, e.clientX); },
-      onPointerDown(e: React.PointerEvent<HTMLElement>) { onDownTrack(e, e.clientX); },
-      onTouchStart(e: React.TouchEvent<HTMLElement>) { onDownTrack(e, e.targetTouches[0].clientX); }
+      onMouseDown(e: React.MouseEvent<HTMLElement>) { onDownTrack(e, undefined, e.clientX); },
+      onPointerDown(e: React.PointerEvent<HTMLElement>) { onDownTrack(e, e.pointerId, e.clientX); },
+      onTouchStart(e: React.TouchEvent<HTMLElement>) { onDownTrack(e, e.changedTouches[0].identifier, e.changedTouches[0].clientX); }
     }, moveProps)
   };
 }
