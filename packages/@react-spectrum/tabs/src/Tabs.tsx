@@ -39,6 +39,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
   } = props;
 
   let ref = useRef<HTMLDivElement>();
+  let wrapperRef = useRef<HTMLDivElement>();
   let state = useSingleSelectListState<T>({
     ...props,
     onSelectionChange
@@ -72,27 +73,29 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
       }
     };
 
-    let tabsComponent = ref.current;
-    let tabs = Array.from(ref.current.children);
-    // The last child is the TabLine so we look at the second to last child for the last Tab
-    let lastTab = tabs[tabs.length - 2];
+    if (wrapperRef.current) {
+      let tabsComponent = wrapperRef.current;
+      let tabs = Array.from(ref.current.children);
+      // The last child is the TabLine so we look at the second to last child for the last Tab
+      let lastTab = tabs[tabs.length - 2];
 
-    let farEdgeTabList = getFurthestPoint(tabsComponent);
-    let farEdgeLastTab = getFurthestPoint(lastTab);
-    let shouldCollapse = direction === 'rtl' ? farEdgeLastTab < farEdgeTabList : farEdgeTabList < farEdgeLastTab;
+      let farEdgeTabList = getFurthestPoint(tabsComponent);
+      let farEdgeLastTab = getFurthestPoint(lastTab);
+      let shouldCollapse = direction === 'rtl' ? farEdgeLastTab < farEdgeTabList : farEdgeTabList < farEdgeLastTab;
 
-    if (shouldCollapse) {
-      setCollapse(true);
-    } else {
-      setCollapse(false);
+      if (shouldCollapse) {
+        setCollapse(true);
+      } else {
+        setCollapse(false);
+      }
     }
-  }, [ref, direction]);
+  }, [ref, wrapperRef, direction]);
 
   useEffect(() => {
     onResize();
   }, [props.children, onResize]);
 
-  useResizeObserver({ref: ref, onResize: onResize});
+  useResizeObserver({ref: wrapperRef, onResize: onResize});
 
   let hidden = collapse && orientation !== 'vertical';
   let tablist = (
@@ -140,6 +143,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
   if (orientation !== 'vertical') {
     tablist = (
       <div
+        ref={wrapperRef}
         className={classNames(
           tabsStyles,
           'react-spectrum-Tabs--collapsible'
@@ -235,6 +239,8 @@ function TabLine(props) {
   let {direction} = useLocale();
   let {scale} = useProvider();
 
+  // TODO: Figure out the best way to get rid of the wiggle when it goes from non-collapsed to collapsed
+  // Only way I've found is to initialize the state with the calulated transform...
   let [style, setStyle] = useState({
     width: undefined,
     height: undefined,

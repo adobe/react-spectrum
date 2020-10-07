@@ -261,8 +261,8 @@ let ManyTabs = (props = {}) => {
   };
 
   return (
-    <div style={{overflow: 'hidden', flexDirection: 'column'}}>
-      <Tabs {...props} aria-label="Tab example" items={tabs} maxWidth={500} onSelectionChange={action('onSelectionChange')}>
+    <div style={{width: '80%'}}>
+      <Tabs {...props} aria-label="Tab example" items={tabs} onSelectionChange={action('onSelectionChange')}>
         {item => (
           <Item
             key={item.name}
