@@ -19,7 +19,6 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {SpectrumTabsProps} from '@react-types/tabs';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
-import tabsStyles from './tabs.css';
 import {Text} from '@react-spectrum/text';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
@@ -114,12 +113,12 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
           },
           density ? `spectrum-Tabs--${density}` : '',
           classNames(
-            tabsStyles,
+            styles,
             {
               // TODO: Ask if I should use VisuallyHidden instead, felt kinda weird using it since I apply aria-hidden above
-              'react-spectrum-Tabs--hidden': collapse && orientation !== 'vertical'
+              'spectrum-Tabs--hidden': collapse && orientation !== 'vertical'
             },
-            'react-spectrum-Tabs--container'
+            'spectrum-Tabs--container'
           ),
           styleProps.className
         )}>
@@ -145,8 +144,8 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
       <div
         ref={wrapperRef}
         className={classNames(
-          tabsStyles,
-          'react-spectrum-Tabs--collapsible'
+          styles,
+          'spectrum-Tabs--collapsible'
         )}>
         {tablist}
       </div>
@@ -157,13 +156,13 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
     <div
       {...styleProps}
       className={classNames(
-        tabsStyles,
-        'react-spectrum-TabPanel',
-        `react-spectrum-TabPanel--${orientation}`,
+        styles,
+        'spectrum-TabsPanel',
+        `spectrum-TabsPanel--${orientation}`,
         styleProps.className
       )}>
       {tablist}
-      <div {...tabPanelProps} className="react-spectrum-TabPanel-body">
+      <div {...tabPanelProps}>
         {state.selectedItem && state.selectedItem.props.children}
       </div>
     </div>
@@ -307,8 +306,8 @@ function TabsPicker(props) {
           'spectrum-Tabs--quiet': isQuiet
         },
         classNames(
-          tabsStyles,
-          'react-spectrum-Tabs--dropdown'
+          styles,
+          'spectrum-Tabs--dropdown'
         )
       )}>
       <Picker {...pickerProps} items={items} ref={ref} isQuiet isDisabled={isDisabled} selectedKey={state.selectedKey} onSelectionChange={state.setSelectedKey}>

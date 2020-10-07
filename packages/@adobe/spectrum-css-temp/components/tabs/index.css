@@ -17,6 +17,20 @@ governing permissions and limitations under the License.
   --spectrum-tabs-compact-item-height: calc(var(--spectrum-tabs-quiet-compact-height) - var(--spectrum-tabs-rule-height));
 }
 
+.spectrum-TabsPanel {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.spectrum-TabsPanel--horizontal {
+  flex-direction: column;
+}
+
+.spectrum-TabsPanel--vertical {
+  flex-direction: row;
+}
+
 .spectrum-Tabs {
   display: flex;
 
@@ -31,6 +45,24 @@ governing permissions and limitations under the License.
   vertical-align: top;
 
   outline: none;
+
+  &.spectrum-Tabs--dropdown {
+    height: calc(100% - 2px);
+    inset-inline-start: 0;
+    position: absolute;
+    transform: translateY(-50%);
+    top: 50%;
+    width: 100%;
+
+    /* TODO: Ask what to do about the below styles. Need to get them propagated to the Picker's FieldButton/Picker */
+    .spectrum-FieldButton {
+      padding: 0 4px;
+    }
+
+    .focus-ring {
+      border-radius: 2px;
+    }
+  }
 }
 
 .spectrum-Tabs-item {
@@ -202,5 +234,23 @@ governing permissions and limitations under the License.
     inline-size: var(--spectrum-tabs-vertical-rule-width);
 
     inset-inline-start: calc(var(--spectrum-tabs-vertical-rule-width) * -1);
+  }
+}
+
+.spectrum-Tabs--collapsible {
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 0%;
+  overflow: hidden;
+  position: relative;
+}
+
+.spectrum-Tabs--container {
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 0%;
+  &.spectrum-Tabs--hidden {
+    visibility: hidden;
   }
 }
