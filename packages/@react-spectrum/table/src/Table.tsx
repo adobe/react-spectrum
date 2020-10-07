@@ -32,6 +32,7 @@ import {useHover} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useTable, useTableCell, useTableColumnHeader, useTableRow, useTableRowGroup, useTableRowHeader, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 const DEFAULT_HEADER_HEIGHT = {
   medium: 34,
@@ -410,7 +411,10 @@ function TableColumnHeader({column}) {
             )
           )
         }>
-        {!columnProps.hideHeader && column.rendered}
+        {columnProps.hideHeader ?
+          <VisuallyHidden>{column.rendered}</VisuallyHidden> :
+          column.rendered
+        }
         {columnProps.allowsSorting &&
           <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />
         }

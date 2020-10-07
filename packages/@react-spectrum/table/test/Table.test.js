@@ -3168,7 +3168,11 @@ describe('Table', function () {
       let className = headers[1].className;
       expect(className.includes('spectrum-Table-cell--hideHeader')).toBeTruthy();
       expect(headers[0]).toHaveTextContent('Foo');
-      expect(headers[1]).toBeEmptyDOMElement();
+      // visually hidden syle
+      expect(headers[1].childNodes[0].style.clipPath).toBe('inset(50%)');
+      expect(headers[1].childNodes[0].style.width).toBe('1px');
+      expect(headers[1].childNodes[0].style.height).toBe('1px');
+      expect(headers[1]).not.toBeEmptyDOMElement();
 
 
       let rows = within(rowgroups[1]).getAllByRole('row');
