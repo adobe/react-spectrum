@@ -24,7 +24,8 @@ export interface ComboBoxState<T> extends SelectState<T> {
 }
 
 interface ComboBoxStateProps<T> extends ComboBoxProps<T> {
-  collator: Intl.Collator
+  collator: Intl.Collator,
+  isMobile?: boolean
 }
 
 function filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean): Iterable<Node<T>> {
@@ -49,7 +50,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   let {
     onFilter,
     collator,
-    onSelectionChange
+    onSelectionChange,
+    isMobile
   } = props;
 
   let [isFocused, setFocused] = useState(false);
@@ -72,13 +74,13 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
   // Need this collection here so that an initial inputValue can be found via collection.getItem
   // This is really just a replacement for using CollectionBuilder
-  let {collection} = useSingleSelectListState({
+  let {collection, disabledKeys} = useSingleSelectListState({
     ...props,
     // default to null if props.selectedKey isn't set to avoid useControlledState's uncontrolled to controlled warning
     selectedKey: props.selectedKey || null
   });
 
-  if (props.selectedKey && props.inputValue) {
+  if (props.selectedKey && props.inputValue && !disabledKeys.has(props.selectedKey)) {
     let selectedItem = collection.getItem(props.selectedKey);
     let itemText = selectedItem ? selectedItem.textValue : '';
     if (itemText !== props.inputValue) {
@@ -93,42 +95,51 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
     let newSelectedKey = computeKeyFromValue(value, collection);
     if (newSelectedKey !== selectedKey) {
-      if (onSelectionChange) {
+      if (onSelectionChange && !disabledKeys.has(newSelectedKey)) {
         onSelectionChange(newSelectedKey);
       }
     }
   };
 
-  let initialSelectedKeyText = collection.getItem(props.selectedKey)?.textValue;
-  let initialDefaultSelectedKeyText = collection.getItem(props.defaultSelectedKey)?.textValue;
-  let [inputValue, setInputValue] = useControlledState(toString(props.inputValue), initialSelectedKeyText || toString(props.defaultInputValue) || initialDefaultSelectedKeyText || '', onInputChange);
+  let initialText = disabledKeys.has(computeKeyFromValue(toString(props.inputValue), collection)) ? '' : toString(props.inputValue);
+  let initialDefaultText = disabledKeys.has(computeKeyFromValue(toString(props.defaultInputValue), collection)) ? '' : toString(props.defaultInputValue);
+  let initialSelectedKeyText = disabledKeys.has(props.selectedKey) ? '' : collection.getItem(props.selectedKey)?.textValue;
+  let initialDefaultSelectedKeyText = disabledKeys.has(props.defaultSelectedKey) ? '' : collection.getItem(props.defaultSelectedKey)?.textValue;
+  let [inputValue, setInputValue] = useControlledState(initialText, initialSelectedKeyText || initialDefaultText || initialDefaultSelectedKeyText || '', onInputChange);
 
-  let selectedKey = props.selectedKey || computeKeyFromValue(inputValue, collection);
+  // If user passes props.selectedKey=null or '', we want to honor that as the new key (e.g. Controlled key combobox, user want to programatically clear the selected key regardless of current input value)
+  let selectedKey = typeof props.selectedKey !== 'undefined' ? props.selectedKey : computeKeyFromValue(inputValue, collection);
+
+  // Wipe selectedKey if is in the disabled key list since it is an invalid selection
+  if (disabledKeys.has(selectedKey)) {
+    selectedKey = undefined;
+  }
 
   let triggerState = useMenuTriggerState(props);
 
   // Fires on selection change (when user hits Enter, clicks list item, props.selectedKey is changed)
   let setSelectedKey = useCallback((key) => {
-    let item = collection.getItem(key);
-    let itemText = item ? item.textValue : '';
-    // think about the below conditionals below
-    // If I don't have the extra itemText check, then setting props.selectedKey to undef or just deleting one letter of the text
-    // so it doesn't match a key will then clear the textfield entirely (in controlled selected key case)
-    // Problem with this is that a clear button w/ setSelectedKey = '' won't actually clear the textfield because of this itemText check (also controlled selected key only case, input value uncontrolled).
-    itemText && setInputValue(itemText);
+    if (!disabledKeys.has(key)) {
+      let item = collection.getItem(key);
+      let itemText = item ? item.textValue : '';
 
-    // If itemText happens to be the same as the current input text but the keys don't match
-    // setInputValue won't call onSelectionChange for us so we call it here manually
-    if (itemText === inputValue && selectedKey !== key) {
-      if (onSelectionChange) {
-        onSelectionChange(key);
+      // Update input value except in the case where itemText is empty and the user is in the input field (indicative of a controlled key case and the user hit backspace on a currently valid item)
+      if (itemText || !isFocused) {
+        setInputValue(itemText);
+      }
+
+      // If itemText happens to be the same as the current input text but the keys don't match
+      // setInputValue won't call onSelectionChange for us so we call it here manually
+      if (itemText === inputValue && selectedKey !== key) {
+        if (onSelectionChange) {
+          onSelectionChange(key);
+        }
       }
     }
-
-  }, [collection, setInputValue, inputValue, onSelectionChange, selectedKey]);
+  }, [collection, setInputValue, inputValue, onSelectionChange, selectedKey, isFocused, disabledKeys]);
 
   // Update the selectedKey and inputValue when props.selectedKey updates
-  let lastSelectedKeyProp = useRef('' as Key);
+  let lastSelectedKeyProp = useRef(props.selectedKey);
   useEffect(() => {
     // need this check since setSelectedKey changes a lot making this useEffect fire even when props.selectedKey hasn't changed
     if (lastSelectedKeyProp.current !== props.selectedKey) {
@@ -137,19 +148,21 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     lastSelectedKeyProp.current = props.selectedKey;
   }, [props.selectedKey, setSelectedKey]);
 
-  let lowercaseValue = inputValue.toLowerCase().replace(' ', '');
-
+  let lowercaseValue = inputValue.toLowerCase().replace(/ /g, '');
   let defaultFilterFn = useMemo(() => (node: Node<T>) => {
     let scan = 0;
-    let lowercaseNode = node.textValue.toLowerCase().replace(' ', '');
+
+    let lowercaseNode = node.textValue.toLowerCase().replace(/ /g, '');
     let sliceLen = lowercaseValue.length;
     let match = false;
 
-    for (; scan + sliceLen <= lowercaseNode.length && !match; scan++) {
-      let nodeSlice = lowercaseNode.slice(scan, scan + sliceLen);
-      let compareVal = collator.compare(lowercaseValue, nodeSlice);
-      if (compareVal === 0) {
-        match = true;
+    if (lowercaseValue.length > 0) {
+      for (; scan + sliceLen <= lowercaseNode.length && !match; scan++) {
+        let nodeSlice = lowercaseNode.slice(scan, scan + sliceLen);
+        let compareVal = collator.compare(lowercaseValue, nodeSlice);
+        if (compareVal === 0) {
+          match = true;
+        }
       }
     }
 
@@ -172,22 +185,28 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     return (nodes) => filter(nodes, defaultFilterFn);
   }, [itemsControlled, inputValue, defaultFilterFn]);
 
-  let {collection: filteredCollection, disabledKeys, selectionManager, selectedItem} = useSingleSelectListState(
+  let {collection: filteredCollection, selectionManager, selectedItem} = useSingleSelectListState(
     {
       ...props,
       // Fall back to null as the selectedKey to avoid useControlledState error of uncontrolled to controlled and viceversa
       selectedKey: selectedKey || null,
-      onSelectionChange: (key: Key) => setSelectedKey(key),
+      onSelectionChange: (key: Key) => {
+        setSelectedKey(key);
+        triggerState.close();
+      },
       filter: nodeFilter
     }
   );
 
-  // Prevent open operations from triggering if there is nothing to display
+  // Prevent open operations from triggering if there is nothing to display, exception is for mobile so that user can access tray input since textfield is read only
   let open = (focusStrategy?) => {
-    if (filteredCollection.size > 0) {
+    if (isMobile || filteredCollection.size > 0) {
       triggerState.open(focusStrategy);
     }
   };
+
+  // For mobile view comboboxes, the tray should remain open/can be opened even if user changes input such that the filteredCollection doesn't contain any matching items
+  let isOpen = triggerState.isOpen && isFocused && (isMobile || filteredCollection.size > 0);
 
   return {
     ...triggerState,
@@ -200,7 +219,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     setFocused,
     selectedItem,
     collection: filteredCollection,
-    isOpen: triggerState.isOpen && isFocused && filteredCollection.size > 0,
+    isOpen,
     inputValue,
     setInputValue
   };
