@@ -251,7 +251,7 @@ function TabLine(props) {
     if (selectedTab) {
       let styleObj = {transform: undefined, width: undefined, height: undefined};
       // In RTL, calculate the transform from the right edge of the tablist so that resizing the window doesn't break the Tabline position due to offsetLeft changes
-      let offset = direction === 'rtl' ? -1 * (selectedTab.offsetParent.offsetWidth - selectedTab.offsetWidth - selectedTab.offsetLeft) : selectedTab.offsetLeft
+      let offset = direction === 'rtl' ? -1 * (selectedTab.offsetParent.offsetWidth - selectedTab.offsetWidth - selectedTab.offsetLeft) : selectedTab.offsetLeft;
       styleObj.transform = orientation === 'vertical'
         ? `translateY(${selectedTab.offsetTop + verticalSelectionIndicatorOffset / 2}px)`
         : `translateX(${offset}px)`;
