@@ -11,26 +11,29 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {chain} from '@react-aria/utils';
+import {chain, mergeProps, useLabels} from '@react-aria/utils';
 import {ComboBoxProps} from '@react-types/combobox';
 import {ComboBoxState} from '@react-stately/combobox';
 import {getItemId, listIds} from '@react-aria/listbox';
-import {HTMLAttributes, RefObject, useEffect, useRef} from 'react';
+import {HTMLAttributes, InputHTMLAttributes, RefObject, useEffect, useRef} from 'react';
 import {ListLayout} from '@react-stately/layout';
 import {useMenuTrigger} from '@react-aria/menu';
+import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection} from '@react-aria/selection';
 import {useTextField} from '@react-aria/textfield';
 
-interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
+export interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
   popoverRef: RefObject<HTMLDivElement>,
   triggerRef: RefObject<HTMLElement>,
-  inputRef: RefObject<HTMLInputElement>,
-  layout: ListLayout<T>
+  inputRef: RefObject<HTMLInputElement & HTMLTextAreaElement>,
+  layout: ListLayout<T>,
+  isMobile?: boolean,
+  menuId?: string
 }
 
 interface ComboBoxAria {
   triggerProps: AriaButtonProps,
-  inputProps: HTMLAttributes<HTMLElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
   listBoxProps: HTMLAttributes<HTMLElement>,
   labelProps: HTMLAttributes<HTMLElement>
 }
@@ -44,7 +47,12 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     completionMode = 'suggest',
     menuTrigger = 'input',
     allowsCustomValue,
-    onCustomValue
+    onCustomValue,
+    isReadOnly,
+    isDisabled,
+    isMobile,
+    shouldSelectOnBlur = true,
+    menuId
   } = props;
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
@@ -57,15 +65,17 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
   let onChange = (val) => {
     state.setInputValue(val);
+    state.selectionManager.setFocusedKey(null);
 
     if (menuTrigger !== 'manual') {
       state.open();
     }
   };
 
+  // TODO: perhaps I should alter useMenuTrigger/useOverlayTrigger to accept a user specified menuId
   // Had to set the list id here instead of in useListBox or ListBoxBase so that it would be properly defined
   // when getting focusedKeyId
-  listIds.set(state, menuProps.id);
+  listIds.set(state, menuId || menuProps.id);
 
   let focusedItem = state.selectionManager.focusedKey && state.isOpen ? state.collection.getItem(state.selectionManager.focusedKey) : undefined;
   let focusedKeyId = focusedItem ? getItemId(state, focusedItem.key) : undefined;
@@ -89,10 +99,21 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
           // I think I need this .close so that the menu closes even
           // when the user hits Enter on the already selectedKey
           state.close();
+        } else if (allowsCustomValue) {
+          // Only fire onCustomValue when hitting enter if it differs from the currently selected key's text (if any)
+          let currentKeyText = state.collection.getItem(state.selectedKey)?.textValue;
+          if (currentKeyText !== state.inputValue) {
+            onCustomValue(state.inputValue);
+          }
+
+          state.close();
         }
+
         break;
       case 'Escape':
-        state.close();
+        if (state.isOpen) {
+          state.close();
+        }
         break;
       case 'ArrowDown':
         state.open('first');
@@ -100,24 +121,28 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       case 'ArrowUp':
         state.open('last');
         break;
+      case 'ArrowLeft':
+        state.selectionManager.setFocusedKey(null);
+        break;
+      case 'ArrowRight':
+        state.selectionManager.setFocusedKey(null);
+        break;
     }
   };
 
   let onBlur = (e) => {
-    // If user is clicking on the combobox button, early return so we don't change textfield focus state, update the selected key erroneously,
-    // and trigger close menu twice
-    if (triggerRef.current && triggerRef.current.contains(e.relatedTarget)) {
+    // Early return in the following cases so we don't change textfield focus state, update the selected key erroneously,
+    // and trigger close menu twice:
+    // If focus is moved into the popover (e.g. when focus is moved to the Tray's input field, mobile case).
+    // If the tray input is blurred and the relatedTarget is null (e.g. switching browser tabs or tapping on the tray empty space)
+    // The second case results in a inaccurate isFocused state if tray input is blurred by closing the virtual keyboard but we want isFocused to be true so
+    // useComboBoxState isOpen calculation doesn't think it should close
+    if ((popoverRef?.current && popoverRef.current.contains(e.relatedTarget)) || (isMobile && state.isOpen && e.relatedTarget === null)) {
       return;
     }
 
-    state.close();
-
-    // If blur happens from clicking on menu item, refocus textfield and early return
-    if (popoverRef.current && popoverRef.current.contains(e.relatedTarget)) {
-      // Stop propagation so focus styles on button don't go away
-      e.stopPropagation();
-      inputRef.current.focus();
-      return;
+    if (!isMobile) {
+      state.close();
     }
 
     if (props.onBlur) {
@@ -126,7 +151,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
     state.setFocused(false);
 
-    if (focusedItem) {
+    if (focusedItem && shouldSelectOnBlur) {
       state.setSelectedKey(state.selectionManager.focusedKey);
     } else if (allowsCustomValue && !state.selectedKey && onCustomValue) {
       onCustomValue(state.inputValue);
@@ -142,10 +167,13 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let onFocus = (e) => {
     // If inputfield is already focused, early return to prevent extra props.onFocus calls
     if (state.isFocused) {
+      // Call state.setFocused still so the setFocused(false) call generated by the tray's input onBlur from tray closure is overwritten
+      state.setFocused(true);
       return;
     }
 
-    if (menuTrigger === 'focus') {
+    // Prevent mobile combobox from opening on focus (focus returns to input when tray is closed and would cause it to reopen)
+    if (menuTrigger === 'focus' && !isMobile) {
       state.open();
     }
 
@@ -159,65 +187,110 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let {labelProps, inputProps} = useTextField({
     ...props,
     onChange,
-    onKeyDown: chain(state.isOpen && collectionProps.onKeyDownCapture, onKeyDown),
+    onKeyDown: !isReadOnly && chain(state.isOpen && collectionProps.onKeyDownCapture, onKeyDown),
     onBlur,
     value: state.inputValue,
-    onFocus
+    onFocus,
+    autoComplete: 'off'
   }, inputRef);
 
-  // Return focus to textfield if user clicks menu trigger button
+  let {pressProps: inputPressProps} = usePress({
+    onPress: (e) => {
+      if ((e.pointerType === 'touch' || e.pointerType === 'virtual') && !isReadOnly) {
+        inputRef.current.focus();
+        state.open();
+      }
+    },
+    // Prevent focus on press so that press + hold on iPhone still opens the tray instead of requiring another set of taps
+    preventFocusOnPress: true,
+    isDisabled,
+    ref: inputRef
+  });
+
+  // Don't need to handle the state.close() when pressing the trigger button since useInteractOutside will call it for us
   let onPress = (e) => {
     if (e.pointerType === 'touch') {
+      // Focus the input field in case it isn't focused yet
       inputRef.current.focus();
-      state.open();
+      if (!state.isOpen) {
+        state.open();
+      }
     }
   };
 
   let onPressStart = (e) => {
     if (e.pointerType !== 'touch') {
       inputRef.current.focus();
-      state.open(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null);
+      if (!state.isOpen) {
+        state.open((e.pointerType === 'keyboard' || e.pointerType === 'virtual') && !isMobile ? 'first' : null);
+      }
     }
   };
 
-  // TODO: Think about if the below focus key stuff needs to account for mobile
-  // Focus first item if filtered collection no longer contains original focused item (aka user typing to filter collection)
+  let prevOpenState = useRef(state.isOpen);
   useEffect(() => {
-    // Only set a focused key if one existed previously, don't want to focus something by default if allowsCustomValue = true
-    if ((!allowsCustomValue || state.selectionManager.focusedKey) && state.inputValue !== '' && !state.collection.getItem(state.selectionManager.focusedKey)) {
-      state.selectionManager.setFocusedKey(layout.getFirstKey());
-    }
-  }, [state.selectionManager, state.collection, layout, allowsCustomValue, state.inputValue]);
-
-  // Clear focused key if user clears textfield to prevent accidental selection on blur
-  // Also clear focused key if allowsCustomValue is true, there isn't a selected key, and there isn't a focusStrategy set (indicative of menu being opened via arrow up/down)
-  // Specifically for case where menu is closed and user copy pastes a matching value into input field then deletes a character
-  let lastValue = useRef(state.inputValue);
-  useEffect(() => {
-    if ((state.inputValue === '' && lastValue.current !== state.inputValue) || (allowsCustomValue && !state.selectedKey && !state.focusStrategy)) {
+    if (!state.isOpen && prevOpenState.current !== state.isOpen) {
+      // Clear focused key whenever combobox menu closes so opening the menu via pressing the open button doesn't autofocus the last focused key
       state.selectionManager.setFocusedKey(null);
+
+      // Refocus input when mobile tray closes for any reason
+      // Readonly state is quickly swapped to suppress virtual keyboard from opening again on tray close
+      if (isMobile) {
+        inputRef.current.readOnly = true;
+        inputRef.current?.focus({preventScroll: true});
+        inputRef.current.readOnly = false;
+      }
     }
 
-    lastValue.current = state.inputValue;
-  }, [state.selectionManager, state.inputValue]);
+    prevOpenState.current = state.isOpen;
+  }, [state.isOpen, inputRef, isMobile, state.selectionManager]);
+
+  let triggerLabelProps = useLabels({
+    id: menuTriggerProps.id,
+    'aria-label': 'Show suggestions',
+    'aria-labelledby': props['aria-labelledby'] || labelProps.id
+  });
+
+  let listBoxProps = useLabels({
+    id: menuProps.id,
+    'aria-label': 'Suggestions',
+    'aria-labelledby': props['aria-labelledby'] || labelProps.id
+  });
+
+  // If click happens on direct center of combobox input, might be virtual click from iPad so open combobox menu
+  let onClick = (e) => {
+    let rect = (e.target as HTMLElement).getBoundingClientRect();
+
+    let middleOfRect = {
+      x: Math.round(rect.left + .5 * rect.width),
+      y: Math.round(rect.top + .5 * rect.height)
+    };
+
+    if (e.clientX === middleOfRect.x && e.clientY === middleOfRect.y) {
+      inputRef.current.focus();
+      state.open();
+    }
+  };
 
   return {
     labelProps,
     triggerProps: {
       ...menuTriggerProps,
+      ...triggerLabelProps,
       excludeFromTabOrder: true,
       onPress,
       onPressStart
     },
     inputProps: {
-      ...inputProps,
+      // Only add the inputPressProps if mobile so that text highlighting via mouse click + drag works on desktop
+      // Substitute onClick for non-mobile cases so iPad voiceover virtual click on input opens the combobox menu
+      ...mergeProps(inputProps, isMobile ? inputPressProps : {onClick}),
       role: 'combobox',
-      'aria-controls': state.isOpen ? menuProps.id : undefined,
+      'aria-expanded': menuTriggerProps['aria-expanded'],
+      'aria-controls': state.isOpen ? menuId || menuProps.id : undefined,
       'aria-autocomplete': completionMode === 'suggest' ? 'list' : 'both',
       'aria-activedescendant': focusedKeyId
     },
-    listBoxProps: {
-      ...menuProps
-    }
+    listBoxProps: mergeProps(menuProps, listBoxProps)
   };
 }

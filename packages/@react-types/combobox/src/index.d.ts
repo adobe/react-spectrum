@@ -24,7 +24,8 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
   onCustomValue?: (value: string) => void,
   completionMode?: 'suggest' | 'complete',
   menuTrigger?: 'focus' | 'input' | 'manual',
-  shouldFlip?: boolean
+  shouldFlip?: boolean,
+  shouldSelectOnBlur?: boolean
 }
 
 export interface SpectrumComboBoxProps<T> extends ComboBoxProps<T>, SpectrumLabelableProps, StyleProps {

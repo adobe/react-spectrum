@@ -66,7 +66,11 @@ interface SelectableListOptions {
    * Whether typeahead is disabled.
    * @default false
    */
-  disallowTypeAhead?: boolean
+  disallowTypeAhead?: boolean,
+  /**
+   * Whether the collection items should use virtual focus instead of being focused directly.
+   */
+  shouldUseVirtualFocus?: boolean
 }
 
 interface SelectableListAria {
@@ -91,7 +95,8 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     isVirtualized,
     disallowEmptySelection,
     selectOnFocus = false,
-    disallowTypeAhead
+    disallowTypeAhead,
+    shouldUseVirtualFocus
   } = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
@@ -118,7 +123,8 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     shouldFocusWrap,
     disallowEmptySelection,
     selectOnFocus,
-    disallowTypeAhead
+    disallowTypeAhead,
+    shouldUseVirtualFocus
   });
 
   return {

@@ -21,7 +21,7 @@ import {ListLayout} from '@react-stately/layout';
 import {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {HTMLAttributes, ReactElement, RefObject, useMemo} from 'react';
+import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useMemo} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useCollator, useMessageFormatter} from '@react-aria/i18n';
@@ -41,7 +41,8 @@ interface ListBoxBaseProps<T> extends DOMProps, AriaLabelingProps, StyleProps {
   shouldUseVirtualFocus?: boolean,
   transitionDuration?: number,
   isLoading?: boolean,
-  onLoadMore?: () => void
+  onLoadMore?: () => void,
+  renderEmptyState?: () => ReactNode
 }
 
 /** @private */
@@ -121,7 +122,8 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
         renderWrapper={renderWrapper}
         transitionDuration={transitionDuration}
         isLoading={props.isLoading}
-        onLoadMore={props.onLoadMore}>
+        onLoadMore={props.onLoadMore}
+        shouldUseVirtualFocus={shouldUseVirtualFocus}>
         {(type, item: Node<T>) => {
           if (type === 'item') {
             return (
@@ -141,6 +143,20 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
                   size="S"
                   aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')}
                   UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
+              </div>
+            );
+          } else if (type === 'placeholder') {
+            let emptyState = props.renderEmptyState ? props.renderEmptyState() : null;
+            if (emptyState == null) {
+              return null;
+            }
+
+            return (
+              <div
+                // aria-selected isn't needed here since this option is not selectable.
+                // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
+                role="option">
+                {emptyState}
               </div>
             );
           }
