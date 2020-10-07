@@ -10,9 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {numberFormatSignDisplayPolyfill} from './utils';
 import {useLocale} from './context';
 
 let formatterCache = new Map<string, Intl.NumberFormat>();
+
+// @ts-ignore
+const supportsSignDisplay = (new Intl.NumberFormat('de-DE', {signDisplay: 'exceptZero'})).resolvedOptions().signDisplay === 'exceptZero';
 
 /**
  * Provides localized number formatting for the current locale. Automatically updates when the locale changes,
@@ -21,13 +25,23 @@ let formatterCache = new Map<string, Intl.NumberFormat>();
  */
 export function useNumberFormatter(options?: Intl.NumberFormatOptions): Intl.NumberFormat {
   let {locale} = useLocale();
-  
+
   let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
   if (formatterCache.has(cacheKey)) {
     return formatterCache.get(cacheKey);
   }
 
   let numberFormatter = new Intl.NumberFormat(locale, options);
-  formatterCache.set(cacheKey, numberFormatter);
+  // @ts-ignore
+  let {signDisplay} = options || {};
+  formatterCache.set(cacheKey, (!supportsSignDisplay && signDisplay != null) ? new Proxy(numberFormatter, {
+    get(target, property) {
+      if (property === 'format') {
+        return (v) => numberFormatSignDisplayPolyfill(numberFormatter, signDisplay, v);
+      } else {
+        return target[property];
+      }
+    }
+  }) : numberFormatter);
   return numberFormatter;
 }

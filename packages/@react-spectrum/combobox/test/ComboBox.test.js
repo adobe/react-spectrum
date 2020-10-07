@@ -416,7 +416,7 @@ describe('ComboBox', function () {
 
         let button = getByRole('button');
         let combobox = getByRole('combobox');
-        combobox.focus();
+        act(() => {combobox.focus();});
         expect(() => getByRole('listbox')).toThrow();
 
         act(() => {
@@ -434,7 +434,7 @@ describe('ComboBox', function () {
 
         let button = getByRole('button');
         let combobox = getByRole('combobox');
-        combobox.focus();
+        act(() => {combobox.focus();});
         expect(() => getByRole('listbox')).toThrow();
 
         act(() => {
@@ -452,7 +452,7 @@ describe('ComboBox', function () {
 
         let button = getByRole('button');
         let combobox = getByRole('combobox');
-        combobox.focus();
+        act(() => {combobox.focus();});
         expect(() => getByRole('listbox')).toThrow();
 
         typeText(combobox, 'Two');
@@ -479,7 +479,7 @@ describe('ComboBox', function () {
       it('doesn\'t select an item on matching input if it is a disabled key', function () {
         let {getByRole} = renderComboBox({disabledKeys: ['2']});
         let combobox = getByRole('combobox');
-        combobox.focus();
+        act(() => {combobox.focus();});
         typeText(combobox, 'Two');
 
         act(() => {
@@ -525,7 +525,7 @@ describe('ComboBox', function () {
 
         let combobox = getByRole('combobox');
         // Need to focus and skip click so combobox doesn't open for virtual click
-        combobox.focus();
+        act(() => {combobox.focus();});
         typeText(combobox, 'One', {skipClick: true});
         act(() => {
           jest.runAllTimers();
@@ -1104,7 +1104,7 @@ describe('ComboBox', function () {
 
       expect(onCustomValue).not.toHaveBeenCalled();
       // Need to focus and skip click so combobox doesn't open for virtual click
-      combobox.focus();
+      act(() => {combobox.focus();});
       typeText(combobox, 'Charm', {skipClick: true});
       act(() => {
         jest.runAllTimers();
@@ -2305,7 +2305,7 @@ describe('ComboBox', function () {
       let trayInput = within(tray).getByRole('combobox');
       expect(document.activeElement).toBe(trayInput);
 
-      trayInput.focus();
+      act(() => {trayInput.focus();});
       typeText(trayInput, 'Bleh', {skipClick: true});
       act(() => {
         jest.runAllTimers();

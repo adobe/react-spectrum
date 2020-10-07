@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, within} from '@testing-library/react';
 import {Checkbox, CheckboxGroup} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {render, within} from '@testing-library/react';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
@@ -48,7 +48,7 @@ describe('CheckboxGroup', () => {
     expect(checkboxes[2].checked).toBe(false);
 
     let dragons = getByLabelText('Dragons');
-    act(() => {userEvent.click(dragons);});
+    userEvent.click(dragons);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(['dragons']);
 
@@ -230,7 +230,7 @@ describe('CheckboxGroup', () => {
     let checkboxes = getAllByRole('checkbox');
     let dragons = getByLabelText('Dragons');
 
-    act(() => {userEvent.click(dragons);});
+    userEvent.click(dragons);
 
     expect(groupOnChangeSpy).toHaveBeenCalledTimes(0);
     expect(checkboxOnChangeSpy).toHaveBeenCalledTimes(0);

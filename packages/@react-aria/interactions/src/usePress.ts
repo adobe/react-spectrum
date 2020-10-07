@@ -17,10 +17,11 @@
 
 import {disableTextSelection, restoreTextSelection} from './textSelection';
 import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {isVirtualClick} from './utils';
 import {PointerType, PressEvents} from '@react-types/shared';
 import {PressResponderContext} from './context';
+import {useGlobalListeners} from '@react-aria/utils';
 
 export interface PressProps extends PressEvents {
   /** Whether the target is in a controlled press state (e.g. an overlay it triggers is open). */
@@ -112,15 +113,7 @@ export function usePress(props: PressHookProps): PressResult {
     isOverTarget: false
   });
 
-  let globalListeners = useRef(new Map());
-  let addGlobalListener = useCallback((eventTarget, type, listener, options) => {
-    globalListeners.current.set(listener, {type, eventTarget, options});
-    eventTarget.addEventListener(type, listener, options);
-  }, []);
-  let removeGlobalListener = useCallback((eventTarget, type, listener, options) => {
-    eventTarget.removeEventListener(type, listener, options);
-    globalListeners.current.delete(listener);
-  }, []);
+  let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
   let pressProps = useMemo(() => {
     let state = ref.current;
@@ -541,15 +534,6 @@ export function usePress(props: PressHookProps): PressResult {
 
     return pressProps;
   }, [isDisabled, onPressStart, onPressChange, onPressEnd, onPress, onPressUp, addGlobalListener, preventFocusOnPress, removeGlobalListener]);
-
-  // eslint-disable-next-line arrow-body-style
-  useEffect(() => {
-    return () => {
-      globalListeners.current.forEach((value, key) => {
-        removeGlobalListener(value.eventTarget, value.type, key, value.options);
-      });
-    };
-  }, [removeGlobalListener]);
 
   return {
     isPressed: isPressedProp || isPressed,
