@@ -129,11 +129,8 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
       </div>
       {(collapse && orientation !== 'vertical') &&
         <TabsPicker
+          {...props}
           styleProps={styleProps}
-          tabListProps={tabListProps}
-          density={density}
-          isDisabled={isDisabled}
-          isQuiet={isQuiet}
           state={state} />
       }
     </>
@@ -271,9 +268,10 @@ function TabLine(props) {
 function TabsPicker(props) {
   let {
     isDisabled,
-    tabListProps,
     isQuiet,
-    state
+    state,
+    'aria-labelledby': ariaLabeledBy,
+    'aria-label': ariaLabel
   } = props;
 
   let ref = useRef();
@@ -291,8 +289,8 @@ function TabsPicker(props) {
   }));
 
   let pickerProps = {
-    'aria-labelledby': tabListProps['aria-labelledby'],
-    'aria-label': tabListProps['aria-label']
+    'aria-labelledby': ariaLabeledBy,
+    'aria-label': ariaLabel
   };
 
   // TODO: Figure out if tabListProps should go onto the div here, v2 doesn't do it

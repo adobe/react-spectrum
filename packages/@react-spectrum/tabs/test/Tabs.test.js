@@ -27,12 +27,12 @@ let items = [
 function renderComponent(props) {
   return render(
     <Provider theme={theme}>
-      <Tabs {...props}>
-        {items.map(item => (
+      <Tabs {...props} items={items}>
+        {item => (
           <Item key={item.name} title={item.name}>
             {item.children}
           </Item>
-        ))}
+        )}
       </Tabs>
     </Provider>
   );
@@ -41,8 +41,21 @@ function renderComponent(props) {
 describe('Tabs', function () {
   let onSelectionChange = jest.fn();
 
+  beforeAll(function () {
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
+    jest.useFakeTimers();
+  });
+
   afterEach(() => {
-    onSelectionChange.mockClear();
+    jest.clearAllMocks();
+    act(() => jest.runAllTimers());
+  });
+
+  afterAll(function () {
+    jest.restoreAllMocks();
   });
 
   it('renders properly', function () {
@@ -247,5 +260,73 @@ describe('Tabs', function () {
     expect(document.activeElement).toBe(tabs[0]);
     userEvent.click(tabs[1]);
     expect(onSelectionChange).not.toBeCalled();
+  });
+
+  it('collapses when it can\'t render all the tabs horizontally', function () {
+    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
+      if (this instanceof HTMLDivElement) {
+        return {
+          right: 500
+        };
+      }
+    }).mockImplementationOnce(function () {
+      if (this instanceof HTMLDivElement) {
+        return {
+          right: 700
+        };
+      }
+    });
+
+    let {getByRole} = renderComponent({
+      'aria-label': 'Test Tabs',
+      'aria-labelledby': 'external label',
+      onSelectionChange,
+      defaultSelectedKey: items[0].name
+    });
+
+    // Tablist should be aria-hidden, thus the below should throw
+    expect(() => getByRole('tablist')).toThrow();
+    let tabpanel = getByRole('tabpanel');
+    expect(tabpanel).toBeTruthy();
+    expect(tabpanel).toHaveTextContent(items[0].children);
+
+    let picker = getByRole('button');
+    let pickerLabel = within(picker).getByText('Tab 1');
+    expect(picker).toHaveAttribute('aria-label', 'Test Tabs');
+    expect(picker).toHaveAttribute('aria-labelledby', `external label ${picker.id} ${pickerLabel.id}`);
+
+    triggerPress(picker);
+    act(() => jest.runAllTimers());
+    let listbox = getByRole('listbox');
+    let option = within(listbox).getByText('Tab 3');
+    triggerPress(option);
+    act(() => jest.runAllTimers());
+
+    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenCalledWith('Tab 3');
+
+    tabpanel = getByRole('tabpanel');
+    expect(tabpanel).toHaveTextContent(items[2].children);
+  });
+
+  it('doesn\'t collapse when it can render all the tabs horizontally', function () {
+    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
+      if (this instanceof HTMLDivElement) {
+        return {
+          right: 500
+        };
+      }
+    }).mockImplementationOnce(function () {
+      if (this instanceof HTMLDivElement) {
+        return {
+          right: 400
+        };
+      }
+    });
+
+    let {getByRole} = renderComponent();
+    let tablist = getByRole('tablist');
+    expect(tablist).toBeTruthy();
+    expect(() => getByRole('button')).toThrow();
   });
 });
