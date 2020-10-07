@@ -45,13 +45,13 @@ export interface LinkButtonProps {
 
 interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
   /** Indicates whether the element, or another grouping element it controls, is currently expanded or collapsed. */
-  'aria-expanded'?: boolean | 'true' | 'false',
+  'aria-expanded'?: boolean,
   /** Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by an element. */
-  'aria-haspopup'?: boolean | 'true' | 'false' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
+  'aria-haspopup'?: boolean | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
   /** Identifies the element (or elements) whose contents or presence are controlled by the current element. */
   'aria-controls'?: string,
   /** Indicates the current "pressed" state of toggle buttons. */
-  'aria-pressed'?: boolean | 'true' | 'false' | 'mixed',
+  'aria-pressed'?: boolean,
   /**
    * The behavior of the button when used in an HTML form.
    * @default 'button'
