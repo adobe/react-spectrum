@@ -161,7 +161,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Table-cell--hideHeader {
-  padding: 0 2px;
+   padding: 0;
+  justify-content: center;
 }
 
 .spectrum-Table--wrap .spectrum-Table-cellContents {

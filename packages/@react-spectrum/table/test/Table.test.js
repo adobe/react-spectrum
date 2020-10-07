@@ -3178,7 +3178,7 @@ describe('Table', function () {
       let rows = within(rowgroups[1]).getAllByRole('row');
       expect(rows).toHaveLength(1);
       // The width of headerless column
-      expect(rows[0].childNodes[1].style.width).toBe('38px');
+      expect(rows[0].childNodes[1].style.width).toBe('36px');
       let rowheader = within(rows[0]).getByRole('rowheader');
       expect(rowheader).toHaveTextContent('Foo 1');
       let actionCell = within(rows[0]).getAllByRole('gridcell');
@@ -3199,7 +3199,7 @@ describe('Table', function () {
       let rows = within(rowgroups[1]).getAllByRole('row');
       expect(rows).toHaveLength(1);
       // The width of headerless column
-      expect(rows[0].childNodes[1].style.width).toBe('46px');
+      expect(rows[0].childNodes[1].style.width).toBe('44px');
     });
 
     it('renders table with headerless column and divider', function () {
@@ -3211,7 +3211,7 @@ describe('Table', function () {
       let rows = within(rowgroups[1]).getAllByRole('row');
       expect(rows).toHaveLength(1);
       // The width of headerless column with divider
-      expect(rows[0].childNodes[1].style.width).toBe('39px');
+      expect(rows[0].childNodes[1].style.width).toBe('37px');
     });
 
     it('renders table with headerless column with tooltip', function () {
