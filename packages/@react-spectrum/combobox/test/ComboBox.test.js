@@ -101,7 +101,6 @@ function testComboBoxOpen(combobox, button, listbox, focusedItemIndex) {
 
   if (typeof focusedItemIndex === 'undefined') {
     expect(combobox).not.toHaveAttribute('aria-activedescendant');
-    expect(items[0]).toHaveAttribute('aria-selected', 'false');
 
     act(() => {
       fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
@@ -110,10 +109,8 @@ function testComboBoxOpen(combobox, button, listbox, focusedItemIndex) {
     });
 
     expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
-    expect(items[0]).toHaveAttribute('aria-selected', 'true');
   } else {
     expect(combobox).toHaveAttribute('aria-activedescendant', items[focusedItemIndex].id);
-    expect(items[focusedItemIndex]).toHaveAttribute('aria-selected', 'true');
   }
 }
 
@@ -236,7 +233,6 @@ describe('ComboBox', function () {
 
     expect(combobox.value).toBe('On');
     expect(items[0]).toHaveTextContent('One');
-    expect(items[0]).toHaveAttribute('aria-selected', 'false');
     expect(combobox).toHaveAttribute('aria-controls', listbox.id);
     expect(combobox).not.toHaveAttribute('aria-activedescendant');
 
@@ -246,7 +242,6 @@ describe('ComboBox', function () {
       jest.runAllTimers();
     });
 
-    expect(items[0]).toHaveAttribute('aria-selected', 'true');
     expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
   });
 
@@ -1980,7 +1975,6 @@ describe('ComboBox', function () {
 
       if (typeof focusedItemIndex === 'undefined') {
         expect(combobox).not.toHaveAttribute('aria-activedescendant');
-        expect(items[0]).toHaveAttribute('aria-selected', 'false');
 
         act(() => {
           fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
@@ -1989,10 +1983,8 @@ describe('ComboBox', function () {
         });
 
         expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
-        expect(items[0]).toHaveAttribute('aria-selected', 'true');
       } else {
         expect(combobox).toHaveAttribute('aria-activedescendant', items[focusedItemIndex].id);
-        expect(items[focusedItemIndex]).toHaveAttribute('aria-selected', 'true');
       }
     }
 
@@ -2098,8 +2090,6 @@ describe('ComboBox', function () {
       let items = within(tray).getAllByRole('option');
 
       expect(trayInput).toHaveAttribute('aria-activedescendant', items[1].id);
-      expect(items[1]).toHaveAttribute('aria-selected', 'true');
-      expect(items[0]).toHaveAttribute('aria-selected', 'false');
 
       act(() => {
         fireEvent.keyDown(combobox, {key: 'ArrowUp', code: 38, charCode: 38});
@@ -2108,8 +2098,6 @@ describe('ComboBox', function () {
       });
 
       expect(trayInput).toHaveAttribute('aria-activedescendant', items[0].id);
-      expect(items[0]).toHaveAttribute('aria-selected', 'true');
-      expect(items[1]).toHaveAttribute('aria-selected', 'false');
     });
 
     it('user can filter the menu options by typing in the tray input', function () {
