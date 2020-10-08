@@ -47,12 +47,24 @@ governing permissions and limitations under the License.
   outline: none;
 
   &.spectrum-Tabs--dropdown {
-    height: calc(100% - 2px);
     inset-inline-start: 0;
-    position: absolute;
-    transform: translateY(-50%);
-    top: 50%;
     width: 100%;
+    height: var(--spectrum-tabs-item-height);
+
+    /* TODO: Ask what to do about the below styles. Need to get them propagated to the Picker's FieldButton/Picker */
+    .spectrum-FieldButton {
+      padding: 0 4px;
+    }
+
+    .focus-ring {
+      border-radius: 2px;
+    }
+  }
+
+  &.spectrum-Tabs--dropdown--compact {
+    inset-inline-start: 0;
+    width: 100%;
+    height: var(--spectrum-tabs-compact-item-height);
 
     /* TODO: Ask what to do about the below styles. Need to get them propagated to the Picker's FieldButton/Picker */
     .spectrum-FieldButton {
@@ -250,7 +262,4 @@ governing permissions and limitations under the License.
   flex-grow: 1;
   flex-shrink: 0;
   flex-basis: 0%;
-  &.spectrum-Tabs--hidden {
-    visibility: hidden;
-  }
 }

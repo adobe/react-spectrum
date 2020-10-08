@@ -284,7 +284,6 @@ describe('Tabs', function () {
       defaultSelectedKey: items[0].name
     });
 
-    // Tablist should be aria-hidden, thus the below should throw
     expect(() => getByRole('tablist')).toThrow();
     let tabpanel = getByRole('tabpanel');
     expect(tabpanel).toBeTruthy();
