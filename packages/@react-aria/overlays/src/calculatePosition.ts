@@ -192,7 +192,7 @@ function computePosition(
   let position: Position = {};
 
   // button position
-  position[crossAxis] = childOffset[crossAxis]
+  position[crossAxis] = childOffset[crossAxis];
   if (crossPlacement === 'center') {
     //  + (button size / 2) - (overlay size / 2)
     // at this point the overlay center should match the button center
