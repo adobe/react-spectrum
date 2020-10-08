@@ -150,7 +150,7 @@ export function useSpinButton(
   return {
     spinButtonProps: {
       role: 'spinbutton',
-      'aria-valuenow': typeof value === 'number' ? value : null,
+      'aria-valuenow': !isNaN(value) ? value : null,
       'aria-valuetext': textValue || null,
       'aria-valuemin': minValue,
       'aria-valuemax': maxValue,
@@ -163,11 +163,15 @@ export function useSpinButton(
     },
     incrementButtonProps: {
       onPressStart: () => onIncrementPressStart(400),
-      onPressEnd: clearAsync
+      onPressEnd: clearAsync,
+      onFocus,
+      onBlur
     },
     decrementButtonProps: {
       onPressStart: () => onDecrementPressStart(400),
-      onPressEnd: clearAsync
+      onPressEnd: clearAsync,
+      onFocus,
+      onBlur
     }
   };
 }

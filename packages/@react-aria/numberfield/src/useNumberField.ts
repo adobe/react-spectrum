@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {clearAnnouncer} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {HTMLAttributes, LabelHTMLAttributes, RefObject, useEffect} from 'react';
 // @ts-ignore
@@ -17,7 +18,7 @@ import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFieldState} from '@react-stately/numberfield';
-import {useFocus} from '@react-aria/interactions';
+import {useFocus, useFocusWithin} from '@react-aria/interactions';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useSpinButton} from '@react-aria/spinbutton';
 import {useTextField} from '@react-aria/textfield';
@@ -66,6 +67,12 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     }
   });
 
+  let {focusWithinProps} = useFocusWithin({
+    onBlurWithin: () => {
+      clearAnnouncer('assertive');
+    }
+  });
+
 
   const {
     spinButtonProps,
@@ -91,9 +98,11 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   decrementAriaLabel = decrementAriaLabel || formatMessage('Decrement');
   const canStep = isDisabled || isReadOnly;
 
-  // pressing the stepper buttons should send focus to the input
-  let onPressStart = () => {
-    ref.current.focus();
+  // pressing the stepper buttons should send focus to the input except in the case of touch
+  let onPressStart = (e) => {
+    if (e.pointerType !== 'virtual') {
+      ref.current.focus();
+    }
   }
 
   const incrementButtonProps: AriaButtonProps = mergeProps(incButtonProps, {
@@ -182,6 +191,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       role: 'group',
       'aria-disabled': isDisabled,
       'aria-invalid': validationState === 'invalid' ? 'true' : undefined,
+      ...focusWithinProps
     },
     labelProps,
     inputFieldProps,
