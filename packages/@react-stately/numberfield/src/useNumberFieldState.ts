@@ -162,7 +162,7 @@ export function useNumberFieldState(
       }
     }).join('');
     return numberParser.parse(result);
-  }
+  };
 
   // if minus sign or parens is typed, auto switch the sign?
   // take some inspiration from datepicker to display parts?
@@ -178,7 +178,7 @@ export function useNumberFieldState(
 
     // If new value is a number less than max and more than min then update the number value
     if (!isNaN(newValue) && newValue < maxValue && newValue > minValue) {
-      let roundedValue = roundValueUsingFormatter(newValue)
+      let roundedValue = roundValueUsingFormatter(newValue);
       setNumberValue(roundedValue);
       tempNum.current = NaN;
     } else if (!isNaN(newValue)) {

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {clearAnnouncer} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
+import {clearAnnouncer} from '@react-aria/live-announcer';
 import {HTMLAttributes, LabelHTMLAttributes, RefObject, useEffect} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -103,7 +103,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     if (e.pointerType !== 'virtual') {
       ref.current.focus();
     }
-  }
+  };
 
   const incrementButtonProps: AriaButtonProps = mergeProps(incButtonProps, {
     'aria-label': incrementAriaLabel,
