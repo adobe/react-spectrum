@@ -232,7 +232,7 @@ function TabLine(props) {
   let [style, setStyle] = useState({
     width: undefined,
     height: undefined,
-    transform: undefined
+    transform: `translateX(var(--spectrum-tabs-focus-ring-padding-x))`
   });
 
   useLayoutEffect(() => {
