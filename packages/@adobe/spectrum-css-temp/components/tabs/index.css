@@ -46,7 +46,7 @@ governing permissions and limitations under the License.
 
   outline: none;
 
-  &.spectrum-Tabs--dropdown {
+  &.spectrum-Tabs-dropdown {
     inset-inline-start: 0;
     width: 100%;
     height: var(--spectrum-tabs-item-height);
@@ -59,20 +59,9 @@ governing permissions and limitations under the License.
     .focus-ring {
       border-radius: 2px;
     }
-  }
 
-  &.spectrum-Tabs--dropdown--compact {
-    inset-inline-start: 0;
-    width: 100%;
-    height: var(--spectrum-tabs-compact-item-height);
-
-    /* TODO: Ask what to do about the below styles. Need to get them propagated to the Picker's FieldButton/Picker */
-    .spectrum-FieldButton {
-      padding: 0 4px;
-    }
-
-    .focus-ring {
-      border-radius: 2px;
+    &.spectrum-Tabs-dropdown--compact {
+      height: var(--spectrum-tabs-compact-item-height);
     }
   }
 }

@@ -335,7 +335,7 @@ function TabsPicker(props) {
         styles,
         'spectrum-Tabs',
         'spectrum-Tabs--horizontal',
-        density ? `spectrum-Tabs--dropdown--${density}` : 'spectrum-Tabs--dropdown',
+        density ? `spectrum-Tabs-dropdown--${density}` : 'spectrum-Tabs-dropdown',
         {
           'spectrum-Tabs--quiet': isQuiet
         }
