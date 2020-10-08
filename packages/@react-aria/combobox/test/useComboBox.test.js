@@ -54,7 +54,7 @@ describe('useComboBox', function () {
     expect(inputProps['aria-controls']).toBeFalsy();
     expect(inputProps['aria-activedescendant']).toBeFalsy();
     expect(listBoxProps.id).toBeTruthy();
-    expect(listBoxProps['aria-labelledby']).toBe(triggerProps.id);
+    expect(listBoxProps['aria-labelledby']).toBe(`${labelProps.id} ${listBoxProps.id}`);
     expect(triggerProps.id).toBeTruthy();
     expect(triggerProps.excludeFromTabOrder).toBeTruthy();
     expect(triggerProps['aria-haspopup']).toBeTruthy();
@@ -64,8 +64,4 @@ describe('useComboBox', function () {
     expect(triggerProps['onPressStart']).toBeTruthy();
     expect(triggerProps['onKeyDown']).toBeTruthy();
   });
-
-  // TODO: test some of the useEffects?
-  // TODO: test when state.isOpen is true?
-  // Most of these are already tested in Combobox test
 });

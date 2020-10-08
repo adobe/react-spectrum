@@ -99,7 +99,7 @@ export function usePress(props: PressHookProps): PressResult {
     isPressed: isPressedProp,
     preventFocusOnPress,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    ref: _, // Removing `ref` from `domProps` because TypeScript is dumb
+    ref: _, // Removing `ref` from `domProps` because TypeScript is dumb,
     ...domProps
   } = usePressResponderContext(props);
 

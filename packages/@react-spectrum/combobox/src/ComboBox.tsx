@@ -10,26 +10,31 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaComboBoxProps, useComboBox} from '@react-aria/combobox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, unwrapDOMRef, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
+import {classNames, unwrapDOMRef, useIsMobileDevice, useStyleProps} from '@react-spectrum/utils';
+import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
+import comboboxStyles from './combobox.css';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRefValue, FocusableRefValue} from '@react-types/shared';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusRing, FocusScope} from '@react-aria/focus';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
+import {mergeProps, useId, useLayoutEffect} from '@react-aria/utils';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
+import {PressResponder, useHover} from '@react-aria/interactions';
 import React, {ReactElement, RefObject, useRef, useState} from 'react';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
 import {useCollator} from '@react-aria/i18n';
-import {useComboBox} from '@react-aria/combobox';
-import {useComboBoxState} from '@react-stately/combobox';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObject<TextFieldRef>) {
@@ -49,18 +54,22 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     menuTrigger = 'input',
     autoFocus,
     shouldFlip = true,
-    width,
     direction = 'bottom'
   } = props;
 
+  let isMobile = useIsMobileDevice();
+  let {hoverProps, isHovered} = useHover(props);
   let {styleProps} = useStyleProps(props);
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
   let listboxRef = useRef();
+  let trayInputRef = useRef();
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
   let collator = useCollator({sensitivity: 'base'});
-  let state = useComboBoxState({...props, collator});
+  let state = useComboBoxState({...props, collator, isMobile});
   let layout = useListBoxLayout(state);
+  let formatMessage = useMessageFormatter(intlMessages);
+
   let {triggerProps, inputProps, listBoxProps, labelProps} = useComboBox(
     {
       ...props,
@@ -69,12 +78,12 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
       triggerRef: unwrapDOMRef(triggerRef),
       popoverRef: unwrapDOMRef(popoverRef),
       inputRef: inputRef,
-      menuTrigger
+      menuTrigger,
+      isMobile
     },
     state
   );
 
-  let isMobile = useMediaQuery('(max-width: 700px)');
   let {overlayProps, placement} = useOverlayPosition({
     targetRef: unwrapDOMRef(triggerRef),
     overlayRef: unwrapDOMRef(popoverRef),
@@ -87,21 +96,28 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
 
   let comboBoxAutoFocus;
   // Focus first/last item on menu open if focusStategy is set (done by up/down arrows)
-  // Otherwise if allowsCustomValue is true, only autofocus if there is a selected item
-  // If allowsCustomValue is false, autofocus first item/selectedItem
   if (state.focusStrategy) {
     comboBoxAutoFocus = state.focusStrategy;
-  } else if (props.allowsCustomValue) {
-    if (state.selectedKey) {
-      comboBoxAutoFocus = true;
-    }
-  } else {
-    comboBoxAutoFocus = 'first';
   }
 
+  let trayId = useId();
   let listbox = (
     <FocusScope>
       <DismissButton onDismiss={() => state.close()} />
+      {isMobile &&
+        <ComboBoxTrayInput
+          {...props}
+          // generate a new id so we don't accidentially reuse a user generated id twice
+          id={trayId}
+          menuId={listBoxProps.id}
+          layout={layout}
+          popoverRef={unwrapDOMRef(popoverRef)}
+          inputRef={trayInputRef}
+          triggerRef={unwrapDOMRef(triggerRef)}
+          isMobile={isMobile}
+          state={state}
+          autoFocus />
+      }
       <ListBoxBase
         ref={listboxRef}
         domProps={listBoxProps}
@@ -114,7 +130,12 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
         width={isMobile ? '100%' : undefined}
         // Set max height: inherit so Tray scrolling works
         UNSAFE_style={{maxHeight: 'inherit'}}
-        shouldUseVirtualFocus />
+        shouldUseVirtualFocus
+        renderEmptyState={isMobile ? () => (
+          <span className={classNames(comboboxStyles, 'no-results')}>
+            {formatMessage('noResults')}
+          </span>
+        ) : null} />
       <DismissButton onDismiss={() => state.close()} />
     </FocusScope>
   );
@@ -129,12 +150,12 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
       let inputWidth = inputRef.current.offsetWidth;
       setMenuWidth(buttonWidth + inputWidth);
     }
-  }, [scale, isMobile, triggerRef, inputRef, state.selectedKey]);
+  }, [scale, isMobile, triggerRef, inputRef]);
 
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray isOpen={state.isOpen} onClose={state.close} shouldCloseOnBlur>
+      <Tray isOpen={state.isOpen} onClose={state.close} isFixedHeight ref={popoverRef}>
         {listbox}
       </Tray>
     );
@@ -159,6 +180,10 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     );
   }
 
+  // If there is a label defined, the textfield width should be determined by the label container
+  // otherwise it should recieve the style props
+  let textFieldStyles = props.label ? {style: {width: '100%'}} : styleProps;
+
   let textField = (
     <FocusRing
       within
@@ -167,6 +192,8 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
       focusRingClass={classNames(styles, 'focus-ring')}
       autoFocus={autoFocus}>
       <div
+        {...textFieldStyles}
+        {...hoverProps}
         className={
           classNames(
             styles,
@@ -174,12 +201,12 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
             {
               'spectrum-InputGroup--quiet': isQuiet,
               'is-disabled': isDisabled,
-              'is-invalid': validationState === 'invalid'
+              'is-invalid': validationState === 'invalid',
+              'is-hovered': isHovered
             },
-            styleProps.className
+            !props.label && styleProps.className
           )
-        }
-        style={{width: '100%'}}>
+        }>
         <TextFieldBase
           labelProps={labelProps}
           inputProps={inputProps}
@@ -193,24 +220,25 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
             )
           }
           isDisabled={isDisabled}
-          isReadOnly={isReadOnly}
           isQuiet={isQuiet}
           validationState={validationState}
-          width={width} />
-        <FieldButton
-          {...triggerProps}
-          ref={triggerRef}
-          UNSAFE_className={
-            classNames(
-              styles,
-              'spectrum-FieldButton'
-            )
-          }
-          isDisabled={isDisabled || isReadOnly}
-          isQuiet={isQuiet}
-          validationState={validationState}>
-          <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
-        </FieldButton>
+          flex={1} />
+        <PressResponder preventFocusOnPress>
+          <FieldButton
+            {...triggerProps}
+            ref={triggerRef}
+            UNSAFE_className={
+              classNames(
+                styles,
+                'spectrum-FieldButton'
+              )
+            }
+            isDisabled={isDisabled || isReadOnly}
+            isQuiet={isQuiet}
+            validationState={validationState}>
+            <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
+          </FieldButton>
+        </PressResponder>
         {overlay}
       </div>
     </FocusRing>
@@ -245,6 +273,71 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   }
 
   return textField;
+}
+
+interface ComboBoxTrayInputProps<T> extends SpectrumComboBoxProps<T>, AriaComboBoxProps<T> {
+  state: ComboBoxState<T>
+}
+
+function ComboBoxTrayInput<T>(props: ComboBoxTrayInputProps<T>) {
+  let {
+    validationState,
+    isDisabled,
+    isReadOnly,
+    isRequired,
+    necessityIndicator,
+    state,
+    inputRef,
+    label
+  } = props;
+
+  // Create a ref tracker that tracks if the tray input field was blurred. If tray input field was blurred,
+  // we'll want to stop the first virtual click from closing the tray in the usePress below so the user can properly
+  // restore focus and type in the textfield
+  let deferClose = useRef(false);
+  let {labelProps, inputProps} = useComboBox({
+    ...props,
+    onBlur: undefined,
+    onFocus: undefined
+  }, state);
+
+  // If click happens on direct center of tray input, might be virtual click from VoiceOver so close the tray
+  let onClick = (e) => {
+    let rect = (e.target as HTMLElement).getBoundingClientRect();
+
+    let middleOfRect = {
+      x: Math.round(rect.left + .5 * rect.width),
+      y: Math.round(rect.top + .5 * rect.height)
+    };
+
+    if (e.clientX === middleOfRect.x && e.clientY === middleOfRect.y) {
+      if (!deferClose.current) {
+        state.close();
+      } else {
+        deferClose.current = false;
+      }
+    }
+  };
+
+  // Add a separate onBlur to attach to the tray input because useComboBox doesn't call props.onBlur if e.relatedTarget is null (e.g. closing virtual keyboard when tray is open)
+  let onBlur = () => deferClose.current = true;
+
+  return (
+    <TextFieldBase
+      label={label}
+      // Prevent default on tray input label so it doesn't close tray on click
+      labelProps={{...labelProps, onClick: (e) => e.preventDefault()}}
+      inputProps={mergeProps(inputProps, {onClick, onBlur})}
+      inputRef={inputRef}
+      marginTop={label ? 5 : 15}
+      marginX={15}
+      width={'initial'}
+      validationState={validationState}
+      isDisabled={isDisabled}
+      isReadOnly={isReadOnly}
+      isRequired={isRequired}
+      necessityIndicator={necessityIndicator} />
+  );
 }
 
 const _ComboBox = React.forwardRef(ComboBox) as <T>(props: SpectrumComboBoxProps<T> & {ref?: RefObject<TextFieldRef>}) => ReactElement;
