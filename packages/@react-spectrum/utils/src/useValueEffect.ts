@@ -13,7 +13,7 @@
 import {Dispatch, useCallback, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
-type SetValueAction = () => Generator<boolean, void, unknown>;
+type SetValueAction = () => Generator<any, void, unknown>;
 
 // This hook works like `useState`, but when setting the value, you pass a generator function
 // that can yield multiple values. Each yielded value updates the state and waits for the next

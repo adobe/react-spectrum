@@ -92,7 +92,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
           return false;
         }
       }
-    }
+    };
 
     if (orientation !== 'vertical') {
       setCollapse(function* () {
@@ -103,7 +103,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
         yield computeShouldCollapse();
       });
     }
-  }, [ref, wrapperRef, direction]);
+  }, [ref, wrapperRef, direction, orientation, setCollapse]);
 
   useEffect(() => {
     checkShouldCollapse();
@@ -118,6 +118,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
       orientation={orientation}
       density={density}
       isQuiet={isQuiet}
+      isDisabled={isDisabled}
       state={state}
       selectedTab={selectedTab} />
   );
@@ -168,7 +169,7 @@ interface TabProps<T> extends DOMProps {
 }
 
 export function Tab<T>(props: TabProps<T>) {
-  let {item, state, isDisabled: propsDisabled, ...otherProps} = props;
+  let {item, state, isDisabled: propsDisabled} = props;
   let {key, rendered} = item;
   let isDisabled = propsDisabled || state.disabledKeys.has(key);
 
@@ -265,7 +266,7 @@ interface TabListProps<T> {
   selectedTab: HTMLElement
 }
 
-const TabList = React.forwardRef(function <T>(props: TabListProps<T>, ref) {
+const TabList = React.forwardRef(function <T> (props: TabListProps<T>, ref) {
   let {
     isQuiet,
     density,
@@ -295,7 +296,7 @@ const TabList = React.forwardRef(function <T>(props: TabListProps<T>, ref) {
       ))}
       <TabLine orientation={orientation} selectedTab={selectedTab} />
     </div>
-  )
+  );
 });
 
 function TabsPicker(props) {
@@ -336,7 +337,7 @@ function TabsPicker(props) {
         'spectrum-Tabs--horizontal',
         density ? `spectrum-Tabs--dropdown--${density}` : 'spectrum-Tabs--dropdown',
         {
-          'spectrum-Tabs--quiet': isQuiet,
+          'spectrum-Tabs--quiet': isQuiet
         }
       )}>
       <Picker {...pickerProps} items={items} ref={ref} isQuiet isDisabled={isDisabled} selectedKey={state.selectedKey} onSelectionChange={state.setSelectedKey}>
