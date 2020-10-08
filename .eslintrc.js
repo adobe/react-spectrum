@@ -5,12 +5,12 @@ let rulesDirPlugin = require('eslint-plugin-rulesdir');
 rulesDirPlugin.RULES_DIR = './bin';
 
 module.exports = {
-  plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', 'monorepo'],
+  plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', 'monorepo', 'eslint-plugin-test-act'],
   extends: ['eslint:recommended'],
   parser: 'babel-eslint',
   parserOptions: {
     ecmaFeatures: {
-      "legacyDecorators": true
+      'legacyDecorators': true
     },
     sourceType: 'module'
   },
@@ -20,17 +20,24 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     parserOptions: {
       ecmaFeatures: {
-        "jsx": true,
-        "legacyDecorators": true
+        'jsx': true,
+        'legacyDecorators': true
       },
-      "useJSXTextNode": true,
-      "project": "./tsconfig.json",
+      'useJSXTextNode': true,
+      'project': './tsconfig.json',
       sourceType: 'module'
     },
     rules: {
-      "no-unused-vars": OFF,
-      "@typescript-eslint/no-unused-vars": ERROR,
-      "@typescript-eslint/member-delimiter-style": [ERROR, {
+      'jsdoc/require-description-complete-sentence': [ERROR, {abbreviations: ['e.g', 'etc']}],
+      'jsdoc/check-alignment': ERROR,
+      'jsdoc/check-indentation': ERROR,
+      'jsdoc/check-tag-names': ERROR,
+      // enable this rule to see literally everything missing jsdocs, this rule needs some refinement but is good as a sanity check.
+      // 'jsdoc/require-jsdoc': [ERROR, {contexts:['TSInterfaceDeclaration TSPropertySignature', 'TSInterfaceDeclaration TSMethodSignature']}],
+      'jsdoc/require-description': [ERROR, {exemptedBy: ['deprecated'], checkConstructors: false}],
+      'no-unused-vars': OFF,
+      '@typescript-eslint/no-unused-vars': ERROR,
+      '@typescript-eslint/member-delimiter-style': [ERROR, {
         multiline: {
           delimiter: 'comma',
           requireLast: false
@@ -39,11 +46,12 @@ module.exports = {
           delimiter: 'comma',
           requireLast: false
         }
-      }],
+      }]
     }
   }, {
     files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**'],
     rules: {
+      'test-act/act-events-test': ERROR,
       'rulesdir/imports': OFF,
       'monorepo/no-internal-import': OFF,
       'jsdoc/require-jsdoc': OFF
@@ -65,22 +73,19 @@ module.exports = {
   globals: {
     'importSpectrumCSS': 'readonly',
     'jest': true,
-    'expect': true
+    'expect': true,
+    'JSX': 'readonly'
   },
   settings: {
     jsdoc: {
       ignorePrivate: true,
       publicFunctionsOnly: true
+    },
+    react: {
+      version: 'detect'
     }
   },
   rules: {
-    'jsdoc/require-description-complete-sentence': [ERROR, {abbreviations: ['e.g', 'etc']}],
-    'jsdoc/check-alignment': ERROR,
-    'jsdoc/check-indentation': ERROR,
-    'jsdoc/check-tag-names': ERROR,
-    // enable this rule to see literally everything missing jsdocs, this rule needs some refinement but is good as a sanity check.
-    // 'jsdoc/require-jsdoc': [ERROR, {contexts:['TSInterfaceDeclaration TSPropertySignature', 'TSInterfaceDeclaration TSMethodSignature']}],
-    'jsdoc/require-description': [ERROR, {exemptedBy: ['deprecated'], checkConstructors: false}],
     'comma-dangle': ERROR,
     'indent': OFF,
     'indent-legacy': [ERROR, ERROR, {SwitchCase: 1}],
@@ -234,8 +239,8 @@ module.exports = {
         ],
         li: ['menuitem', 'option', 'row', 'tab', 'treeitem'],
         table: ['grid'],
-        td: ['gridcell','columnheader','rowheader'],
-        th: ['columnheader','rowheader']
+        td: ['gridcell', 'columnheader', 'rowheader'],
+        th: ['columnheader', 'rowheader']
       }
     ],
     'jsx-a11y/no-noninteractive-tabindex': [
@@ -272,7 +277,8 @@ module.exports = {
           '@adobe/spectrum-css-temp',
           '@react/react-spectrum',
           '@spectrum-icons/ui',
-          '@spectrum-icons/workflow'
+          '@spectrum-icons/workflow',
+          '@spectrum-icons/illustrations'
         ]
       }
     ],

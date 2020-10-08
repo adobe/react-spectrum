@@ -11,8 +11,8 @@
  */
 
 import {getOffset} from './getOffset';
-import {HTMLAttributes, MutableRefObject, useRef} from 'react';
 import {Orientation} from '@react-types/shared';
+import React, {HTMLAttributes, MutableRefObject, useRef} from 'react';
 
 interface UseDrag1DProps {
   containerRef: MutableRefObject<HTMLElement>,
@@ -120,8 +120,8 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
     switch (e.key) {
       case 'Left':
       case 'ArrowLeft':
-        e.preventDefault();
         if (orientation === 'horizontal') {
+          e.preventDefault();
           if (onDecrement && !reverse) {
             onDecrement();
           } else if (onIncrement && reverse) {
@@ -131,8 +131,8 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
         break;
       case 'Up':
       case 'ArrowUp':
-        e.preventDefault();
         if (orientation === 'vertical') {
+          e.preventDefault();
           if (onDecrement && !reverse) {
             onDecrement();
           } else if (onIncrement && reverse) {
@@ -142,8 +142,8 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
         break;
       case 'Right':
       case 'ArrowRight':
-        e.preventDefault();
         if (orientation === 'horizontal') {
+          e.preventDefault();
           if (onIncrement && !reverse) {
             onIncrement();
           } else if (onDecrement && reverse) {
@@ -153,8 +153,8 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
         break;
       case 'Down':
       case 'ArrowDown':
-        e.preventDefault();
         if (orientation === 'vertical') {
+          e.preventDefault();
           if (onIncrement && !reverse) {
             onIncrement();
           } else if (onDecrement && reverse) {

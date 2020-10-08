@@ -100,7 +100,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   }, [ref, isFocused, manager.focusedKey, manager.isFocused, shouldUseVirtualFocus]);
 
   let itemProps: SelectableItemAria['itemProps'] = {
-    tabIndex: isFocused ? 0 : -1,
+    tabIndex: isFocused && !shouldUseVirtualFocus ? 0 : -1,
     onFocus(e) {
       if (e.target === ref.current) {
         manager.setFocusedKey(key);
