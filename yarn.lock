@@ -3642,40 +3642,6 @@
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
 
-"@react-aria/utils@3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@react-aria/utils/-/utils-3.1.0.tgz#157864d4c9123061cf7c55848340a318ff461d0d"
-  integrity sha512-DKCT0egALcuoIWe6/U72RTBt21GgJjfIbNz6OX/4So2Y9lnIdWb2Aohvp2EAOu/vi9S0XHiZKtuZmiRzSAe6OA==
-  dependencies:
-    "@babel/runtime" "^7.6.2"
-    "@react-types/shared" "^3.1.0"
-    classnames "^2.2.5"
-
-"@react-spectrum/form@3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@react-spectrum/form/-/form-3.1.0.tgz#75d370c777d15e7f55e5131ad8d87e08f0766668"
-  integrity sha512-6o9hpWAx8w4kXg45h4CJjggj5RIW6IzP92vAy8oAVtdCpzqNA6T2D80FtV4CRy6cyQncHESwLahTDZMzdyCP1g==
-  dependencies:
-    "@babel/runtime" "^7.6.2"
-    "@react-aria/utils" "^3.1.0"
-    "@react-spectrum/utils" "^3.1.0"
-    "@react-types/form" "^3.1.0"
-    "@react-types/shared" "^3.1.0"
-
-"@react-spectrum/label@3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@react-spectrum/label/-/label-3.1.0.tgz#2d96fee713d82ccc374cf3ab707dd9bbadd92e46"
-  integrity sha512-Q1Z+wnMshduCxKKmZJwPWEx69Uq88gFZn+rs72PeSN5l0NHw0YvS7l/7fO51yZ74teg2GqKFQuatH4qPwr/iug==
-  dependencies:
-    "@babel/runtime" "^7.6.2"
-    "@react-aria/i18n" "^3.1.0"
-    "@react-aria/label" "^3.1.0"
-    "@react-aria/utils" "^3.1.0"
-    "@react-spectrum/utils" "^3.1.0"
-    "@react-types/label" "^3.1.0"
-    "@react-types/shared" "^3.1.0"
-    "@spectrum-icons/ui" "^3.1.0"
-
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.0.tgz#ecdf48d532c58ea477acfcab80348424f8d0662f"

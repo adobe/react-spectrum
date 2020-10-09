@@ -223,7 +223,7 @@ export function useNumberFieldState(
     value: numberValue,
     inputValue,
     commitInputValue,
-    textValue: textValue === 'NaN' ? 'Empty' : textValue,
+    textValue: textValue === 'NaN' ? '' : textValue,
     currentNumeralSystem
   };
 }

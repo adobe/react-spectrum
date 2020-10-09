@@ -90,7 +90,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       onDecrement: decrement,
       onDecrementToMin: decrementToMin,
       value,
-      textValue
+      // by having a message, this prevents iOS VO from reading off '50%' for an empty field
+      textValue: textValue === '' ? formatMessage('Empty') : textValue
     }
   );
 
