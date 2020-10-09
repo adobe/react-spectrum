@@ -20,7 +20,6 @@ governing permissions and limitations under the License.
 .spectrum-TabsPanel {
   display: flex;
   width: 100%;
-  height: 100%;
 }
 
 .spectrum-TabsPanel--horizontal {
@@ -52,6 +51,7 @@ governing permissions and limitations under the License.
     height: var(--spectrum-tabs-item-height);
 
     /* TODO: Ask what to do about the below styles. Need to get them propagated to the Picker's FieldButton/Picker */
+
     .spectrum-FieldButton {
       padding: 0 4px;
     }
@@ -145,6 +145,13 @@ governing permissions and limitations under the License.
 
   transition: transform var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out;
   transform-origin: top left;
+  [dir='ltr'] & {
+    transform: translateX(var(--spectrum-tabs-focus-ring-padding-x));
+  }
+
+  [dir='rtl'] & {
+    transform: translateX(calc(var(--spectrum-tabs-focus-ring-padding-x) * -1));
+  }
 
   border-radius: var(--spectrum-tabs-rule-border-radius);
 }
@@ -247,7 +254,7 @@ governing permissions and limitations under the License.
   position: relative;
 }
 
-.spectrum-Tabs--container {
+.spectrum-Tabs-container {
   flex-grow: 1;
   flex-shrink: 0;
   flex-basis: 0%;

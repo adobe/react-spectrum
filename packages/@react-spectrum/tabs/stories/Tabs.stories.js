@@ -82,20 +82,28 @@ storiesOf('Tabs', module)
     () => render({disabledKeys: ['val2']})
   )
   .add(
+    'resizeable',
+    () => (
+      <div style={{minWidth: '100px', width: '300px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+        {render()}
+      </div>
+    )
+  )
+  .add(
     'collapse behavior',
-    () => <ManyTabs />
+    () => <DynamicTabs />
   )
   .add(
     'collapse behavior, isQuiet',
-    () => <ManyTabs isQuiet />
+    () => <DynamicTabs isQuiet />
   )
   .add(
     'collapse behavior, density: compact',
-    () => <ManyTabs density="compact" />
+    () => <DynamicTabs density="compact" />
   )
   .add(
     'collapse behavior, density: compact, isQuiet',
-    () => <ManyTabs isQuiet density="compact" />
+    () => <DynamicTabs isQuiet density="compact" />
   );
 
 function render(props = {}) {
@@ -273,7 +281,7 @@ function renderWithFalsyKey(props = {}) {
   );
 }
 
-let ManyTabs = (props = {}) => {
+let DynamicTabs = (props = {}) => {
   let items = [
     {name: 'Tab 1', children: 'Tab Body 1', icon: <Dashboard size="S" />},
     {name: 'Tab 2', children: 'Tab Body 2', icon: <Calendar size="S" />},

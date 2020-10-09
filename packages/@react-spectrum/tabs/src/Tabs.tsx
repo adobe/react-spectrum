@@ -67,14 +67,6 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
 
 
   let checkShouldCollapse = useCallback(() => {
-    let getFurthestPoint = (elem) => {
-      if (direction === 'rtl') {
-        return elem.getBoundingClientRect().left;
-      } else {
-        return elem.getBoundingClientRect().right;
-      }
-    };
-
     let computeShouldCollapse = () => {
       if (wrapperRef.current) {
         let tabsComponent = wrapperRef.current;
@@ -82,15 +74,12 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
         // The last child is the TabLine so we look at the second to last child for the last Tab
         let lastTab = tabs[tabs.length - 2];
 
-        let farEdgeTabList = getFurthestPoint(tabsComponent);
-        let farEdgeLastTab = getFurthestPoint(lastTab);
+        let end = direction === 'rtl' ? 'left' : 'right';
+        let farEdgeTabList = tabsComponent.getBoundingClientRect()[end];
+        let farEdgeLastTab = lastTab?.getBoundingClientRect()[end];
         let shouldCollapse = direction === 'rtl' ? farEdgeLastTab < farEdgeTabList : farEdgeTabList < farEdgeLastTab;
 
-        if (shouldCollapse) {
-          return true;
-        } else {
-          return false;
-        }
+        return shouldCollapse;
       }
     };
 
@@ -227,12 +216,9 @@ function TabLine(props) {
   let {direction} = useLocale();
   let {scale} = useProvider();
 
-  // TODO: Figure out the best way to get rid of the wiggle when it goes from non-collapsed to collapsed
-  // Only way I've found is to initialize the state with the calulated transform...
   let [style, setStyle] = useState({
     width: undefined,
-    height: undefined,
-    transform: `translateX(var(--spectrum-tabs-focus-ring-padding-x))`
+    height: undefined
   });
 
   useLayoutEffect(() => {
@@ -286,15 +272,15 @@ const TabList = React.forwardRef(function <T> (props: TabListProps<T>, ref) {
         'spectrum-Tabs',
         `spectrum-Tabs--${orientation}`,
         {
-          'spectrum-Tabs--quiet': isQuiet
+          'spectrum-Tabs--quiet': isQuiet,
+          [`spectrum-Tabs--${density}`]: density
         },
-        density ? `spectrum-Tabs--${density}` : '',
-        'spectrum-Tabs--container'
+        'spectrum-Tabs-container'
       )}>
       {[...state.collection].map((item) => (
         <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
       ))}
-      <TabLine orientation={orientation} selectedTab={selectedTab} />
+      {selectedTab && <TabLine orientation={orientation} selectedTab={selectedTab} />}
     </div>
   );
 });
@@ -335,9 +321,10 @@ function TabsPicker(props) {
         styles,
         'spectrum-Tabs',
         'spectrum-Tabs--horizontal',
-        density ? `spectrum-Tabs-dropdown--${density}` : 'spectrum-Tabs-dropdown',
+        'spectrum-Tabs-dropdown',
         {
-          'spectrum-Tabs--quiet': isQuiet
+          'spectrum-Tabs--quiet': isQuiet,
+          [`spectrum-Tabs-dropdown--${density}`]: density
         }
       )}>
       <Picker {...pickerProps} items={items} ref={ref} isQuiet isDisabled={isDisabled} selectedKey={state.selectedKey} onSelectionChange={state.setSelectedKey}>
