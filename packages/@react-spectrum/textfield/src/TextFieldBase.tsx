@@ -33,9 +33,9 @@ interface TextFieldBaseProps extends SpectrumTextFieldProps {
   wrapperChildren?: ReactElement | ReactElement[],
   inputClassName?: string,
   multiLine?: boolean,
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
-  inputProps: InputHTMLAttributes<HTMLInputElement & HTMLTextAreaElement>,
-  inputRef?: RefObject<HTMLInputElement & HTMLTextAreaElement>
+  labelProps?: LabelHTMLAttributes<HTMLLabelElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>,
+  inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>
 }
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {

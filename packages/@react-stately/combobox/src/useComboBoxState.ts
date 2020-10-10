@@ -20,24 +20,23 @@ import {useSingleSelectListState} from '@react-stately/list';
 
 export interface ComboBoxState<T> extends SelectState<T> {
   inputValue: string,
-  setInputValue: (value: string) => void
+  setInputValue(value: string): void,
+  commit(): void
 }
 
 interface ComboBoxStateProps<T> extends ComboBoxProps<T> {
   collator: Intl.Collator,
-  isMobile?: boolean
+  allowsEmptyCollection?: boolean,
+  shouldCloseOnBlur?: boolean
 }
 
 function filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean): Iterable<Node<T>> {
   let filteredNode = [];
   for (let node of nodes) {
     if (node.type === 'section' && node.hasChildNodes) {
-      let copyOfNode = {...node};
-      let copyOfChildNodes = copyOfNode.childNodes;
-      let filtered = filter(copyOfChildNodes, filterFn);
+      let filtered = filter(node.childNodes, filterFn);
       if ([...filtered].length > 0) {
-        copyOfNode.childNodes = filtered;
-        filteredNode.push(copyOfNode);
+        filteredNode.push({...node, childNodes: filtered});
       }
     } else if (node.type !== 'section' && filterFn(node)) {
       filteredNode.push(node);
@@ -51,10 +50,15 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     onFilter,
     collator,
     onSelectionChange,
-    isMobile
+    menuTrigger = 'input',
+    allowsEmptyCollection = false,
+    allowsCustomValue,
+    onCustomValue,
+    shouldSelectOnBlur = true,
+    shouldCloseOnBlur = true
   } = props;
 
-  let [isFocused, setFocused] = useState(false);
+  let [isFocused, setFocusedState] = useState(false);
   let itemsControlled = !!onFilter;
 
   let computeKeyFromValue = (value, collection) => {
@@ -125,6 +129,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
       // Update input value except in the case where itemText is empty and the user is in the input field (indicative of a controlled key case and the user hit backspace on a currently valid item)
       if (itemText || !isFocused) {
+        lv.current = itemText;
         setInputValue(itemText);
       }
 
@@ -200,13 +205,70 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
   // Prevent open operations from triggering if there is nothing to display, exception is for mobile so that user can access tray input since textfield is read only
   let open = (focusStrategy?) => {
-    if (isMobile || filteredCollection.size > 0) {
+    if (allowsEmptyCollection || filteredCollection.size > 0) {
       triggerState.open(focusStrategy);
     }
   };
 
-  // For mobile view comboboxes, the tray should remain open/can be opened even if user changes input such that the filteredCollection doesn't contain any matching items
-  let isOpen = triggerState.isOpen && isFocused && (isMobile || filteredCollection.size > 0);
+  let lv = useRef(inputValue);
+  useEffect(() => {
+    if (!allowsEmptyCollection && triggerState.isOpen && filteredCollection.size === 0) {
+      triggerState.close();
+    } else if (isFocused && filteredCollection.size > 0 && !triggerState.isOpen && inputValue !== lv.current && menuTrigger !== 'manual') {
+      triggerState.open();
+    }
+
+    lv.current = inputValue;
+  }, [triggerState.isOpen, inputValue, filteredCollection.size, isFocused]);
+
+  let lastCustomValue = useRef(inputValue);
+  let commitCustomValue = () => {
+    // Only fire onCustomValue if it differs from the currently selected key's text (if any)
+    let itemText = filteredCollection.getItem(selectedKey)?.textValue ?? '';
+    if (itemText === inputValue) {
+      return;
+    }
+
+    if (allowsCustomValue) {
+      if (inputValue !== lastCustomValue.current) {
+        onCustomValue?.(inputValue);
+        lastCustomValue.current = inputValue;
+      }
+    } else {
+      // Reset the input field if the user has typed a value that doesn't match any of the list items
+      lv.current = itemText;
+      setInputValue(itemText);
+    }
+  };
+
+  let commit = () => {
+    let focusedItem = selectionManager.focusedKey ? filteredCollection.getItem(selectionManager.focusedKey) : undefined;
+    if (focusedItem) {
+      setSelectedKey(selectionManager.focusedKey);
+    } else {
+      commitCustomValue();
+    }
+  };
+
+  let setFocused = (isFocused: boolean) => {
+    if (isFocused) {
+      if (menuTrigger === 'focus') {
+        triggerState.open();
+      }
+    } else {
+      if (shouldSelectOnBlur) {
+        commit();
+      } else {
+        commitCustomValue();
+      }
+
+      if (shouldCloseOnBlur) {
+        triggerState.close();
+      }
+    }
+
+    setFocusedState(isFocused);
+  };
 
   return {
     ...triggerState,
@@ -219,9 +281,9 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     setFocused,
     selectedItem,
     collection: filteredCollection,
-    isOpen,
     inputValue,
-    setInputValue
+    setInputValue,
+    commit
   };
 }
 
