@@ -92,7 +92,7 @@ governing permissions and limitations under the License.
 .spectrum-Stepper-input {
   position: relative;
 
-  flex: 1;
+  flex: 1 1 auto;
 
   border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
   border-end-end-radius: var(--spectrum-stepper-border-radius-reset);
