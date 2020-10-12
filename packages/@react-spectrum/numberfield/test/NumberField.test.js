@@ -191,7 +191,7 @@ describe('NumberField', function () {
     let {textField} = renderNumberField({onChange: onChangeSpy});
 
     act(() => {textField.focus();});
-    act(() => {fireEvent.wheel(textField, {deltaY: 10});});
+    fireEvent.wheel(textField, {deltaY: 10});
     expect(onChangeSpy).toHaveBeenCalledWith(-1);
   });
 
@@ -202,7 +202,7 @@ describe('NumberField', function () {
     let {textField} = renderNumberField({onChange: onChangeSpy});
 
     act(() => {textField.focus();});
-    act(() => {fireEvent.wheel(textField, {deltaY: -10});});
+    fireEvent.wheel(textField, {deltaY: -10});
     expect(onChangeSpy).toHaveBeenCalledWith(1);
   });
 

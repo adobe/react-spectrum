@@ -11,6 +11,7 @@
  */
 
 import {fireEvent, render} from '@testing-library/react';
+import {installPointerEvent} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
 import {useInteractOutside} from '../';
 
@@ -30,13 +31,7 @@ describe('useInteractOutside', function () {
   // TODO: JSDOM doesn't yet support pointer events. Once they do, convert these tests.
   // https://github.com/jsdom/jsdom/issues/2527
   describe('pointer events', function () {
-    beforeEach(() => {
-      global.PointerEvent = {};
-    });
-
-    afterEach(() => {
-      delete global.PointerEvent;
-    });
+    installPointerEvent();
 
     it('should fire interact outside events based on pointer events', function () {
       let onInteractOutside = jest.fn();

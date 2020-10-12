@@ -36,7 +36,7 @@ export interface SpinbuttonAria {
 }
 
 export function useSpinButton(
-  props: SpinButtonProps,
+  props: SpinButtonProps
 ): SpinbuttonAria {
   const _async = useRef<number>();
   let {

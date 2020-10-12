@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
+import {installPointerEvent} from '@react-spectrum/test-utils';
 import React from 'react';
 import {useHover} from '../';
 
@@ -54,13 +55,7 @@ describe('useHover', function () {
   });
 
   describe('pointer events', function () {
-    beforeEach(() => {
-      global.PointerEvent = {};
-    });
-
-    afterEach(() => {
-      delete global.PointerEvent;
-    });
+    installPointerEvent();
 
     it('should fire hover events based on pointer events', function () {
       let events = [];
@@ -155,7 +150,7 @@ describe('useHover', function () {
       fireEvent(el, pointerEvent('pointerout', {pointerType: 'touch'}));
       fireEvent(el, pointerEvent('pointerup', {pointerType: 'touch'}));
 
-      jest.advanceTimersByTime(100);
+      act(() => {jest.advanceTimersByTime(100);});
 
       // Safari on iOS has a bug that fires a pointer event with pointerType="mouse" on focus.
       // See https://bugs.webkit.org/show_bug.cgi?id=214609.
@@ -301,7 +296,7 @@ describe('useHover', function () {
       fireEvent.mouseLeave(el);
       fireEvent.touchEnd(el);
 
-      jest.advanceTimersByTime(100);
+      act(() => {jest.advanceTimersByTime(100);});
 
       // Safari on iOS has a bug that fires a mouse event on focus.
       // See https://bugs.webkit.org/show_bug.cgi?id=214609.
