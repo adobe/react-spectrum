@@ -24,8 +24,8 @@ import {useSpinButton} from '@react-aria/spinbutton';
 import {useTextField} from '@react-aria/textfield';
 
 /**
- * From https://github.com/filamentgroup/formcore/blob/master/js/numeric-input.js#L20
- * Can't use this because with type="number" we can't have things like $ in the field and they just stay blank
+ * From https://github.com/filamentgroup/formcore/blob/master/js/numeric-input.js#L20.
+ * Can't use this because with type="number" we can't have things like $ in the field and they just stay blank.
  */
 
 interface NumberFieldAria {
@@ -152,7 +152,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
         handleInputScrollWheel
       );
     };
-  }, [inputId, isReadOnly, isDisabled, decrement, increment]);
+  }, [inputId, isReadOnly, isDisabled, decrement, increment, ref]);
 
   /**
    * General outline for figuring out what to parse in on change
@@ -169,25 +169,25 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
    */
 
   let {labelProps, inputProps} = useTextField(
-      mergeProps(focusProps, {
-        label,
-        autoFocus,
-        isDisabled,
-        isReadOnly,
-        isRequired,
-        validationState,
-        value: state.inputValue,
-        autoComplete: 'off',
-        'aria-label': props['aria-label'] || null,
-        'aria-labelledby': props['aria-labelledby'] || null,
-        id: inputId,
-        placeholder: formatMessage('Enter a number'),
-        type: 'text',
-        inputMode: 'decimal',
-        onChange: state.setValue
-      }), ref);
+    {
+      label,
+      autoFocus,
+      isDisabled,
+      isReadOnly,
+      isRequired,
+      validationState,
+      value: state.inputValue,
+      autoComplete: 'off',
+      'aria-label': props['aria-label'] || null,
+      'aria-labelledby': props['aria-labelledby'] || null,
+      id: inputId,
+      placeholder: formatMessage('Enter a number'),
+      type: 'text',
+      inputMode: 'decimal',
+      onChange: state.setValue
+    }, ref);
 
-  const inputFieldProps = mergeProps(spinButtonProps, inputProps);
+  const inputFieldProps = mergeProps(spinButtonProps, inputProps, focusProps);
   return {
     numberFieldProps: {
       role: 'group',

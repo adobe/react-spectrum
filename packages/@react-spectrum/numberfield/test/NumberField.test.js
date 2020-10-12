@@ -17,7 +17,7 @@ import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {typeText} from '@react-spectrum/test-utils';
-import userEvent from "@testing-library/user-event";
+import userEvent from '@testing-library/user-event';
 
 // a note for these tests, text selection is not working in jsdom, so on focus will not select the value already
 // in the numberfield
