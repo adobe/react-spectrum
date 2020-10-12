@@ -17,6 +17,7 @@ import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {typeText} from '@react-spectrum/test-utils';
+import userEvent from "@testing-library/user-event";
 
 // a note for these tests, text selection is not working in jsdom, so on focus will not select the value already
 // in the numberfield
@@ -277,6 +278,53 @@ describe('NumberField', function () {
     let {textField} = renderNumberField({showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
     expect(textField).toHaveAttribute('value', '€10.00');
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name will not call onChange with NaN before a valid input has been typed', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, formatOptions: {style: 'currency', currency: 'EUR'}});
+    act(() => {textField.focus();});
+    typeText(textField, '-');
+    userEvent.type(textField, '{backspace}');
+    act(() => {textField.blur();});
+    expect(onChangeSpy).not.toHaveBeenCalled();
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name will not call onChange with NaN twice in a row', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, formatOptions: {style: 'currency', currency: 'EUR'}});
+    act(() => {textField.focus();});
+    typeText(textField, '-');
+    userEvent.type(textField, '{backspace}');
+    typeText(textField, '-');
+    userEvent.type(textField, '{backspace}');
+    act(() => {textField.blur();});
+    expect(onChangeSpy).not.toHaveBeenCalled();
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name deletes everything in the input once there is no number', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, formatOptions: {style: 'currency', currency: 'EUR'}});
+    act(() => {textField.focus();});
+    typeText(textField, '-1');
+    expect(onChangeSpy).toHaveBeenCalledWith(-1);
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '-€1.00');
+    act(() => {textField.focus();});
+    userEvent.type(textField, '{backspace}');
+    userEvent.type(textField, '{backspace}');
+    userEvent.type(textField, '{backspace}');
+    userEvent.type(textField, '{backspace}');
+    userEvent.type(textField, '{backspace}');
+    act(() => {textField.blur();});
+    expect(onChangeSpy).toHaveBeenLastCalledWith(NaN);
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it.each`

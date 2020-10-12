@@ -24,6 +24,14 @@ storiesOf('NumberField', module)
     () => render({})
   )
   .add(
+    'defaultValue: 10',
+    () => render({defaultValue: 10})
+  )
+  .add(
+    'value: 10',
+    () => render({value: 10})
+  )
+  .add(
     'number formatter',
     () => render({formatOptions: {style: 'currency', currency: 'EUR'}})
   )

@@ -23,6 +23,10 @@ import {useMessageFormatter} from '@react-aria/i18n';
 import {useSpinButton} from '@react-aria/spinbutton';
 import {useTextField} from '@react-aria/textfield';
 
+/**
+ * From https://github.com/filamentgroup/formcore/blob/master/js/numeric-input.js#L20
+ * Can't use this because with type="number" we can't have things like $ in the field and they just stay blank
+ */
 
 interface NumberFieldAria {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
@@ -90,8 +94,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       onDecrement: decrement,
       onDecrementToMin: decrementToMin,
       value,
-      // by having a message, this prevents iOS VO from reading off '50%' for an empty field
-      textValue: textValue === '' ? formatMessage('Empty') : textValue
+      textValue
     }
   );
 
@@ -166,10 +169,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
    */
 
   let {labelProps, inputProps} = useTextField(
-    mergeProps(
-      focusProps,
-      {
-        // ...props,
+      mergeProps(focusProps, {
         label,
         autoFocus,
         isDisabled,
@@ -183,6 +183,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
         id: inputId,
         placeholder: formatMessage('Enter a number'),
         type: 'text',
+        inputMode: 'decimal',
         onChange: state.setValue
       }), ref);
 

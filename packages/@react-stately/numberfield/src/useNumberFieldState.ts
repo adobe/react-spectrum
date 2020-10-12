@@ -47,15 +47,22 @@ export function useNumberFieldState(
   let symbols = useMemo(() => {
     // Get the minus sign of the current locale to filter the input value
     // Automatically updates the minus sign when numberFormatter changes
-    // won't work for currency accounting, what to do
-    let minusSign = inputValueFormatter.formatToParts(-11).find(p => p.type === 'minusSign').value;
+    // won't work for currency accounting, what to do. for now set it to be undefined
+    let minusSign = inputValueFormatter.formatToParts(-11).find(p => p.type === 'minusSign')?.value;
     let decimal = inputValueFormatter.formatToParts(1.1).find(p => p.type === 'decimal').value;
     return {minusSign, decimal};
   }, [inputValueFormatter]);
-  let minusSign = symbols.minusSign;
-  let decimal = symbols.decimal;
+  let {minusSign, decimal} = symbols;
 
-  let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, onChange);
+  // javascript doesn't recognize NaN === NaN, so multiple onChanges will get fired if we don't ignore consecutive ones
+  let lastValDispatched = useRef(NaN);
+  let smartOnChange = useCallback((val) => {
+    if (!isNaN(val) || !isNaN(lastValDispatched.current)) {
+      onChange?.(val);
+    }
+    lastValDispatched.current = val;
+  }, [lastValDispatched]);
+  let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, smartOnChange);
   let tempNum = useRef<number>(NaN);
   let initialInputValue = isNaN(numberValue) ? '' : inputValueFormatter.format(numberValue);
   let [inputValue, setInputValue] = useState(initialInputValue);
@@ -164,8 +171,13 @@ export function useNumberFieldState(
     return numberParser.parse(result);
   };
 
-  // if minus sign or parens is typed, auto switch the sign?
-  // take some inspiration from datepicker to display parts?
+  let replaceAllButFirstOccurrenceOfMinus = (val: string) => {
+    let first = val.indexOf(minusSign);
+    let prefix = val.substring(0, first + 1);
+    let suffix = val.substring(first + 1).replace(minusSign, '');
+    return prefix + suffix;
+  };
+
   let setValue = (value: string) => {
     if (value === '') {
       setNumberValue(NaN);
@@ -173,8 +185,11 @@ export function useNumberFieldState(
       return;
     }
     let numeralSystem = determineNumeralSystem(value);
-    let strippedValue = value.replace(new RegExp(`[^${minusSign}${numberingSystems[numeralSystem].join('')}${decimal}]`), '');
-    const newValue = numberParser.parse(strippedValue);
+
+    let strippedValue = value.replace(new RegExp(`[^${minusSign}${numberingSystems[numeralSystem].join('')}${decimal}]`, 'g'), '');
+    strippedValue = replaceAllButFirstOccurrenceOfMinus(strippedValue);
+
+    let newValue = numberParser.parse(strippedValue);
 
     // If new value is a number less than max and more than min then update the number value
     if (!isNaN(newValue) && newValue < maxValue && newValue > minValue) {
@@ -186,17 +201,23 @@ export function useNumberFieldState(
     }
 
     // Update the input value if value:
-    // 1) is not NaN or
-    // 2) is equal to minus sign or
+    // 1) is a number or
+    // 2) is a minus sign or
     // 3) is empty
     if (!isNaN(newValue) || value === minusSign  || value.length === 0) {
       setInputValue(value);
+    } else if (value.includes(minusSign)) {
+      // as you delete, once the last number is deleted, everything should go away, except the minus sign
+      setInputValue(minusSign);
+    } else {
+      setInputValue('');
     }
   };
 
   // Mostly used in onBlur event to set the input value to
   // formatted numberValue. e.g. user types `-` then blurs.
   // instead of leaving the only minus sign we set the input value back to valid value
+  // sometimes this acts funny, take story and enter -10, then delete the 0 and 1 in that order, blur, it'll repopulate with -1
   let commitInputValue = () => {
     // Do nothing if input value is empty
     if (!inputValue.length) {

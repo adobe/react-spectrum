@@ -14,6 +14,9 @@ import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {HTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 
 export interface SpinButtonProps extends InputBase, Validation, ValueBase<number>, RangeInputBase<number> {
@@ -51,6 +54,7 @@ export function useSpinButton(
     onDecrementToMin,
     onIncrementToMax
   } = props;
+  const formatMessage = useMessageFormatter(intlMessages);
 
   const clearAsync = () => clearTimeout(_async.current);
 
@@ -150,8 +154,10 @@ export function useSpinButton(
   return {
     spinButtonProps: {
       role: 'spinbutton',
-      'aria-valuenow': !isNaN(value) ? value : null,
-      'aria-valuetext': textValue || null,
+      'aria-valuenow': typeof value === 'number' ? value : null,
+      // by having a message, this prevents iOS VO from reading off '50%' for an empty field
+      // i'm not sure what other cases there are, where we want the spin button to read it
+      'aria-valuetext': textValue === '' ? formatMessage('Empty') : textValue,
       'aria-valuemin': minValue,
       'aria-valuemax': maxValue,
       'aria-disabled': isDisabled || null,
