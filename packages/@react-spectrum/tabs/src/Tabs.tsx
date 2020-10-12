@@ -280,7 +280,7 @@ const TabList = React.forwardRef(function <T> (props: TabListProps<T>, ref) {
       {[...state.collection].map((item) => (
         <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
       ))}
-      {selectedTab && <TabLine orientation={orientation} selectedTab={selectedTab} />}
+      <TabLine orientation={orientation} selectedTab={selectedTab} />
     </div>
   );
 });
@@ -327,10 +327,25 @@ function TabsPicker(props) {
           [`spectrum-Tabs-dropdown--${density}`]: density
         }
       )}>
-      <Picker {...pickerProps} items={items} ref={ref} isQuiet isDisabled={isDisabled} selectedKey={state.selectedKey} onSelectionChange={state.setSelectedKey}>
-        {item => <Item key={item.key} textValue={item.textValue}>{item.rendered}</Item>}
-      </Picker>
-      {pickerNode && <TabLine orientation="horizontal" selectedTab={pickerNode} selectedKey={state.selectedKey} />}
+       <SlotProvider
+          slots={{
+            button: {
+              focusRingStyles: styles
+            }
+          }}>
+        <Picker
+          {...pickerProps}
+          items={items}
+          ref={ref}
+          isQuiet
+          isDisabled={isDisabled}
+          selectedKey={state.selectedKey}
+          disabledKeys={state.disabledKeys}
+          onSelectionChange={state.setSelectedKey}>
+          {item => <Item key={item.key} textValue={item.textValue}>{item.rendered}</Item>}
+        </Picker>
+        {pickerNode && <TabLine orientation="horizontal" selectedTab={pickerNode} selectedKey={state.selectedKey} />}
+      </SlotProvider>
     </div>
   );
 }

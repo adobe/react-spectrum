@@ -14,7 +14,7 @@ governing permissions and limitations under the License.
 
 :root {
   --spectrum-tabs-item-height: calc(var(--spectrum-tabs-height) - var(--spectrum-tabs-rule-height));
-  --spectrum-tabs-compact-item-height: calc(var(--spectrum-tabs-quiet-compact-height) - var(--spectrum-tabs-rule-height));
+  --spectrum-tabs-compact-item-height: calc(3px + calc(var(--spectrum-tabs-quiet-compact-height) - var(--spectrum-tabs-rule-height)));
 }
 
 .spectrum-TabsPanel {
@@ -50,18 +50,17 @@ governing permissions and limitations under the License.
     width: 100%;
     height: var(--spectrum-tabs-item-height);
 
-    /* TODO: Ask what to do about the below styles. Need to get them propagated to the Picker's FieldButton/Picker */
-
-    .spectrum-FieldButton {
-      padding: 0 4px;
-    }
-
-    .focus-ring {
-      border-radius: 2px;
-    }
-
     &.spectrum-Tabs-dropdown--compact {
-      height: var(--spectrum-tabs-compact-item-height);
+      /* accomadation so focus ring top doesn't get cut off */
+      height: calc(var(--spectrum-tabs-compact-item-height) - 3px);
+      padding-top: 3px;
+    }
+
+    & button {
+      padding: 0 4px;
+      &:focus-ring {
+        border-radius: 2px;
+      }
     }
   }
 }
