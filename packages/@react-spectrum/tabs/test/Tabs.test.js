@@ -21,7 +21,7 @@ import userEvent from '@testing-library/user-event';
 
 let items = [
   {name: 'Tab 1', children: 'Tab 1 body'},
-  {name: 'Tab 2', children: 'Tab 2 body'},
+  {name: '', children: 'Tab 2 body'},
   {name: 'Tab 3', children: 'Tab 3 body'}
 ];
 
@@ -76,7 +76,7 @@ describe('Tabs', function () {
     let selectedItem = tabs[0];
 
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-    selectedItem.focus();
+    act(() => {selectedItem.focus();});
     fireEvent.keyDown(selectedItem, {key: 'ArrowRight', code: 39, charCode: 39});
     let nextSelectedItem = tabs[1];
     expect(nextSelectedItem).toHaveAttribute('aria-selected', 'true');
@@ -95,7 +95,7 @@ describe('Tabs', function () {
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let selectedItem = tabs[0];
-    selectedItem.focus();
+    act(() => {selectedItem.focus();});
 
     /** Doesn't change selection because it's vertical tabs. */
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
@@ -116,7 +116,7 @@ describe('Tabs', function () {
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
-    firstItem.focus();
+    act(() => {firstItem.focus();});
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(firstItem, {key: 'ArrowLeft', code: 37, charCode: 37});
     let lastItem = tabs[tabs.length - 1];
@@ -130,7 +130,7 @@ describe('Tabs', function () {
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
-    firstItem.focus();
+    act(() => {firstItem.focus();});
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(firstItem, {key: 'End', code: 35, charCode: 35});
     let lastItem = tabs[tabs.length - 1];
@@ -146,7 +146,7 @@ describe('Tabs', function () {
     let firstItem = tabs[0];
     let secondItem = tabs[1];
     let thirdItem = tabs[2];
-    firstItem.focus();
+    act(() => {firstItem.focus();});
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(firstItem, {key: 'ArrowRight', code: 39, charCode: 39});
     expect(secondItem).toHaveAttribute('aria-selected', 'false');
@@ -212,7 +212,7 @@ describe('Tabs', function () {
 
   it('should focus the selected tab when tabbing in for the first time', function () {
     let tree = renderComponent({defaultSelectedKey: items[1].name});
-    act(() => userEvent.tab());
+    userEvent.tab();
 
     let tablist = tree.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
@@ -221,7 +221,7 @@ describe('Tabs', function () {
 
   it('should not focus any tabs when isDisabled tabbing in for the first time', function () {
     let tree = renderComponent({defaultSelectedKey: items[1].name, isDisabled: true});
-    act(() => userEvent.tab());
+    userEvent.tab();
 
     let tabpanel = tree.getByRole('tabpanel');
     expect(document.activeElement).toBe(tabpanel);
@@ -229,7 +229,7 @@ describe('Tabs', function () {
 
   it('disabled tabs cannot be keyboard navigated to', function () {
     let tree = renderComponent({defaultSelectedKey: items[0].name, disabledKeys: [items[1].name], onSelectionChange});
-    act(() => userEvent.tab());
+    userEvent.tab();
 
     let tablist = tree.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
@@ -241,12 +241,12 @@ describe('Tabs', function () {
 
   it('disabled tabs cannot be pressed', function () {
     let tree = renderComponent({defaultSelectedKey: items[0].name, disabledKeys: [items[1].name], onSelectionChange});
-    act(() => userEvent.tab());
+    userEvent.tab();
 
     let tablist = tree.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     expect(document.activeElement).toBe(tabs[0]);
-    act(() => userEvent.click(tabs[1]));
+    userEvent.click(tabs[1]);
     expect(onSelectionChange).not.toBeCalled();
   });
 });

@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
+    "@react-aria/interactions": "^3.2.0",
     "@react-aria/listbox": "^3.1.0",
     "@react-aria/menu": "^3.1.0",
     "@react-aria/selection": "^3.1.0",
@@ -30,7 +31,7 @@
     "@react-types/combobox": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
-    "react": "^16.8.0"
+    "react": "^16.8.0 || ^17.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"

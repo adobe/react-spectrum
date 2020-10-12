@@ -119,7 +119,7 @@ describe('useToastState', () => {
       expect(result.current.toasts.length).toEqual(0);
       act(() => result.current.onAdd(timeoutToast.content, timeoutToast.props));
 
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       expect(result.current.toasts.length).toEqual(1);
       expect(result.current.toasts[0].timer).toBe(undefined);

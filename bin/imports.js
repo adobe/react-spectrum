@@ -16,62 +16,70 @@ const fs = require('fs');
 const Module = require('module');
 
 module.exports = function (context) {
-  return {
-    ImportDeclaration(node) {
-      let source = node.source.value.replace(/^[a-z]+:/, '');
-      if (source.startsWith('.') || Module.builtinModules.includes(source)) {
-        return;
-      }
-
-      // Split the import specifier on slashes. If it starts with an @ then it's
-      // a scoped package, otherwise just take the first part.
-      let parts = source.split('/');
-      let pkgName = source.startsWith('@') ? parts.slice(0, 2).join('/') : parts[0];
-
-      // Search for a package.json starting from the current filename
-      let pkgPath = findUp.sync('package.json', {cwd: path.dirname(context.getFilename())});
-      if (!pkgPath) {
-        return;
-      }
-
-      let pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-
-      // The only dev dependency should be spectrum-css.
-      if (exists(pkg.devDependencies, pkgName) && pkgName === '@adobe/spectrum-css-temp') {
-        return;
-      }
-
-      if (!exists(pkg.dependencies, pkgName) && !exists(pkg.peerDependencies, pkgName)) {
-        context.report({
-          node,
-          message: `Missing dependency on ${pkgName}.`,
-          fix(fixer) {
-            // Attempt to find a package in the monorepo. If the dep is for an external library,
-            // then we cannot auto fix it because we don't know the version to add.
-            let depPath = __dirname + '/../packages/' + pkgName + '/package.json';
-            if (!fs.existsSync(depPath)) {
-              return;
-            }
-
-            let depPkg = JSON.parse(fs.readFileSync(depPath, 'utf8'));
-
-            if (pkgName === '@react-spectrum/provider') {
-              pkg.peerDependencies = insertObject(pkg.peerDependencies, pkgName, depPkg.version);
-            } else {
-              pkg.dependencies = insertObject(pkg.dependencies, pkgName, depPkg.version);
-            }
-
-            fs.writeFileSync(pkgPath, JSON.stringify(pkg, false, 2) + '\n');
-
-            // Fake fix so eslint doesn't show the error.
-            return {
-              range: [0, 0],
-              text: ''
-            };
-          }
-        });
-      }
+  let processNode = (node) => {
+    if (!node.source) {
+      return;
     }
+
+    let source = node.source.value.replace(/^[a-z]+:/, '');
+    if (source.startsWith('.') || Module.builtinModules.includes(source)) {
+      return;
+    }
+
+    // Split the import specifier on slashes. If it starts with an @ then it's
+    // a scoped package, otherwise just take the first part.
+    let parts = source.split('/');
+    let pkgName = source.startsWith('@') ? parts.slice(0, 2).join('/') : parts[0];
+
+    // Search for a package.json starting from the current filename
+    let pkgPath = findUp.sync('package.json', {cwd: path.dirname(context.getFilename())});
+    if (!pkgPath) {
+      return;
+    }
+
+    let pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+
+    // The only dev dependency should be spectrum-css.
+    if (exists(pkg.devDependencies, pkgName) && pkgName === '@adobe/spectrum-css-temp') {
+      return;
+    }
+
+    if (!exists(pkg.dependencies, pkgName) && !exists(pkg.peerDependencies, pkgName)) {
+      context.report({
+        node,
+        message: `Missing dependency on ${pkgName}.`,
+        fix(fixer) {
+          // Attempt to find a package in the monorepo. If the dep is for an external library,
+          // then we cannot auto fix it because we don't know the version to add.
+          let depPath = __dirname + '/../packages/' + pkgName + '/package.json';
+          if (!fs.existsSync(depPath)) {
+            return;
+          }
+
+          let depPkg = JSON.parse(fs.readFileSync(depPath, 'utf8'));
+
+          if (pkgName === '@react-spectrum/provider') {
+            pkg.peerDependencies = insertObject(pkg.peerDependencies, pkgName, depPkg.version);
+          } else {
+            pkg.dependencies = insertObject(pkg.dependencies, pkgName, depPkg.version);
+          }
+
+          fs.writeFileSync(pkgPath, JSON.stringify(pkg, false, 2) + '\n');
+
+          // Fake fix so eslint doesn't show the error.
+          return {
+            range: [0, 0],
+            text: ''
+          };
+        }
+      });
+    }
+  };
+
+  return {
+    ImportDeclaration: processNode,
+    ExportNamedDeclaration: processNode,
+    ExportAllDeclaration: processNode
   };
 };
 

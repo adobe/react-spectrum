@@ -1,0 +1,50 @@
+{
+  "name": "react-aria",
+  "version": "3.0.0",
+  "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "prepublishOnly": "mkdir -p dist; cp src/index.ts dist/types.d.ts; cp src/index.ts dist/module.js; babel --root-mode upward src/index.ts -o dist/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@react-aria/breadcrumbs": "^3.1.1",
+    "@react-aria/button": "^3.2.2",
+    "@react-aria/checkbox": "^3.2.1",
+    "@react-aria/dialog": "^3.1.2",
+    "@react-aria/focus": "^3.2.2",
+    "@react-aria/i18n": "^3.1.2",
+    "@react-aria/interactions": "^3.2.1",
+    "@react-aria/label": "^3.1.1",
+    "@react-aria/link": "^3.1.2",
+    "@react-aria/listbox": "^3.2.1",
+    "@react-aria/menu": "^3.1.2",
+    "@react-aria/meter": "^3.1.1",
+    "@react-aria/overlays": "^3.4.0",
+    "@react-aria/progress": "^3.1.1",
+    "@react-aria/radio": "^3.1.2",
+    "@react-aria/searchfield": "^3.1.1",
+    "@react-aria/select": "^3.2.1",
+    "@react-aria/separator": "^3.1.1",
+    "@react-aria/ssr": "^3.0.1",
+    "@react-aria/switch": "^3.1.1",
+    "@react-aria/textfield": "^3.2.1",
+    "@react-aria/tooltip": "^3.0.0",
+    "@react-aria/utils": "^3.3.0",
+    "@react-aria/visually-hidden": "^3.2.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
