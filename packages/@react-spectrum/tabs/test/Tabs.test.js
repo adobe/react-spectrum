@@ -346,7 +346,7 @@ describe('Tabs', function () {
 
     let {getByRole, rerender} = render(
       <Provider theme={theme}>
-        <Tabs aria-label='Test Tabs' items={items}>
+        <Tabs aria-label="Test Tabs" items={items}>
           {item => (
             <Item key={item.name} title={item.name}>
               {item.children}
@@ -374,17 +374,17 @@ describe('Tabs', function () {
     });
 
     let newItems = [...items];
-    newItems.push({name: 'Tab 4', children: 'Tab 4 body'})
+    newItems.push({name: 'Tab 4', children: 'Tab 4 body'});
     rerender(
       <Provider theme={theme}>
-      <Tabs aria-label='Test Tabs' items={newItems}>
-        {item => (
-          <Item key={item.name} title={item.name}>
-            {item.children}
-          </Item>
-        )}
-      </Tabs>
-    </Provider>
+        <Tabs aria-label="Test Tabs" items={newItems}>
+          {item => (
+            <Item key={item.name} title={item.name}>
+              {item.children}
+            </Item>
+          )}
+        </Tabs>
+      </Provider>
     );
 
     expect(() => getByRole('tablist')).toThrow();
@@ -413,14 +413,14 @@ describe('Tabs', function () {
     newItems.splice(0, 1);
     rerender(
       <Provider theme={theme}>
-      <Tabs aria-label='Test Tabs' items={newItems}>
-        {item => (
-          <Item key={item.name} title={item.name}>
-            {item.children}
-          </Item>
-        )}
-      </Tabs>
-    </Provider>
+        <Tabs aria-label="Test Tabs" items={newItems}>
+          {item => (
+            <Item key={item.name} title={item.name}>
+              {item.children}
+            </Item>
+          )}
+        </Tabs>
+      </Provider>
     );
 
 
