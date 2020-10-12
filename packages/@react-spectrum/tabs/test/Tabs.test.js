@@ -328,4 +328,153 @@ describe('Tabs', function () {
     expect(tablist).toBeTruthy();
     expect(() => getByRole('button')).toThrow();
   });
+
+  it('dynamically collapses and expands on tab addition/subtraction', function () {
+    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
+      if (this instanceof HTMLDivElement) {
+        return {
+          right: 500
+        };
+      }
+    }).mockImplementationOnce(function () {
+      if (this instanceof HTMLDivElement) {
+        return {
+          right: 400
+        };
+      }
+    });
+
+    let {getByRole, rerender} = render(
+      <Provider theme={theme}>
+        <Tabs aria-label='Test Tabs' items={items}>
+          {item => (
+            <Item key={item.name} title={item.name}>
+              {item.children}
+            </Item>
+          )}
+        </Tabs>
+      </Provider>
+    );
+    let tablist = getByRole('tablist');
+    expect(tablist).toBeTruthy();
+    expect(() => getByRole('button')).toThrow();
+
+    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
+      if (this instanceof HTMLDivElement) {
+        return {
+          right: 500
+        };
+      }
+    }).mockImplementationOnce(function () {
+      if (this instanceof HTMLDivElement) {
+        return {
+          right: 700
+        };
+      }
+    });
+
+    let newItems = [...items];
+    newItems.push({name: 'Tab 4', children: 'Tab 4 body'})
+    rerender(
+      <Provider theme={theme}>
+      <Tabs aria-label='Test Tabs' items={newItems}>
+        {item => (
+          <Item key={item.name} title={item.name}>
+            {item.children}
+          </Item>
+        )}
+      </Tabs>
+    </Provider>
+    );
+
+    expect(() => getByRole('tablist')).toThrow();
+    let tabpanel = getByRole('tabpanel');
+    expect(tabpanel).toBeTruthy();
+    expect(tabpanel).toHaveTextContent(items[0].children);
+
+    let picker = getByRole('button');
+    expect(picker).toBeTruthy();
+
+    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
+      if (this instanceof HTMLDivElement) {
+        return {
+          right: 500
+        };
+      }
+    }).mockImplementationOnce(function () {
+      if (this instanceof HTMLDivElement) {
+        return {
+          right: 400
+        };
+      }
+    });
+
+    newItems = [...items];
+    newItems.splice(0, 1);
+    rerender(
+      <Provider theme={theme}>
+      <Tabs aria-label='Test Tabs' items={newItems}>
+        {item => (
+          <Item key={item.name} title={item.name}>
+            {item.children}
+          </Item>
+        )}
+      </Tabs>
+    </Provider>
+    );
+
+
+    tabpanel = getByRole('tabpanel');
+    expect(tabpanel).toBeTruthy();
+    expect(tabpanel).toHaveTextContent(items[1].children);
+
+    tablist = getByRole('tablist');
+    expect(tablist).toBeTruthy();
+    expect(() => getByRole('button')).toThrow();
+  });
+
+  it('disabled tabs cannot be selected via collapse picker', function () {
+    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
+      if (this instanceof HTMLDivElement) {
+        return {
+          right: 500
+        };
+      }
+    }).mockImplementationOnce(function () {
+      if (this instanceof HTMLDivElement) {
+        return {
+          right: 700
+        };
+      }
+    });
+
+    let {getByRole} = renderComponent({
+      'aria-label': 'Test Tabs',
+      onSelectionChange,
+      defaultSelectedKey: items[0].name,
+      disabledKeys: ['Tab 3']
+    });
+
+    expect(() => getByRole('tablist')).toThrow();
+    let tabpanel = getByRole('tabpanel');
+    expect(tabpanel).toBeTruthy();
+    expect(tabpanel).toHaveTextContent(items[0].children);
+
+    let picker = getByRole('button');
+
+    triggerPress(picker);
+    act(() => jest.runAllTimers());
+    let listbox = getByRole('listbox');
+    let option = within(listbox).getByText('Tab 3');
+    triggerPress(option);
+    act(() => jest.runAllTimers());
+    expect(onSelectionChange).not.toHaveBeenCalled();
+
+    option = within(listbox).getByText('Tab 2 body');
+    triggerPress(option);
+    act(() => jest.runAllTimers());
+    expect(onSelectionChange).toHaveBeenCalledWith('');
+    tabpanel = getByRole('tabpanel');
+    expect(tabpanel).toHaveTextContent(items[1].children);
+  });
 });

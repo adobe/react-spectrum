@@ -82,6 +82,10 @@ storiesOf('Tabs', module)
     () => render({disabledKeys: ['val2']})
   )
   .add(
+    'all disabled',
+    () => render({disabledKeys: ['val1', 'val2', 'val3', 'val4', 'val5']})
+  )
+  .add(
     'resizeable',
     () => (
       <div style={{minWidth: '100px', width: '300px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>

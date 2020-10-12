@@ -15,8 +15,9 @@ import {DOMProps, Node, Orientation} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {Item, Picker} from '@react-spectrum/picker';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {Key, useCallback, useEffect, useRef, useState} from 'react';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
+import {SpectrumPickerProps} from '@react-types/select';
 import {SpectrumTabsProps} from '@react-types/tabs';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import {Text} from '@react-spectrum/text';
@@ -129,7 +130,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
 
   if (collapse && orientation !== 'vertical') {
     tablist = (
-      <TabsPicker
+      <TabPicker
         {...props}
         state={state} />
     );
@@ -218,7 +219,13 @@ export function Tab<T>(props: TabProps<T>) {
   );
 }
 
-function TabLine(props) {
+interface TabLineProps {
+  orientation?: Orientation,
+  selectedTab?: HTMLElement,
+  selectedKey?: Key
+}
+
+function TabLine(props: TabLineProps) {
   let {
     orientation,
     // Is either the tab node (non-collapsed) or the picker node (collapsed)
@@ -240,7 +247,7 @@ function TabLine(props) {
     if (selectedTab) {
       let styleObj = {transform: undefined, width: undefined, height: undefined};
       // In RTL, calculate the transform from the right edge of the tablist so that resizing the window doesn't break the Tabline position due to offsetLeft changes
-      let offset = direction === 'rtl' ? -1 * (selectedTab.offsetParent?.offsetWidth - selectedTab.offsetWidth - selectedTab.offsetLeft) : selectedTab.offsetLeft;
+      let offset = direction === 'rtl' ? -1 * ((selectedTab.offsetParent as HTMLElement)?.offsetWidth - selectedTab.offsetWidth - selectedTab.offsetLeft) : selectedTab.offsetLeft;
       styleObj.transform = orientation === 'vertical'
         ? `translateY(${selectedTab.offsetTop + verticalSelectionIndicatorOffset / 2}px)`
         : `translateX(${offset}px)`;
@@ -300,7 +307,12 @@ const TabList = React.forwardRef(function <T> (props: TabListProps<T>, ref) {
   );
 });
 
-function TabsPicker(props) {
+interface TabPickerProps<T> extends SpectrumPickerProps<T> {
+  density?: 'compact',
+  state: SingleSelectListState<T>
+}
+
+function TabPicker<T>(props: TabPickerProps<T>) {
   let {
     isDisabled,
     isQuiet,
@@ -342,12 +354,12 @@ function TabsPicker(props) {
           [`spectrum-Tabs-dropdown--${density}`]: density
         }
       )}>
-       <SlotProvider
-          slots={{
-            button: {
-              focusRingStyles: styles
-            }
-          }}>
+      <SlotProvider
+        slots={{
+          button: {
+            focusRingStyles: styles
+          }
+        }}>
         <Picker
           {...pickerProps}
           items={items}
