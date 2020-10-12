@@ -144,11 +144,13 @@ governing permissions and limitations under the License.
 
   transition: transform var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out;
   transform-origin: top left;
-  [dir='ltr'] & {
+
+
+  [dir='ltr'] .spectrum-Tabs--horizontal & {
     transform: translateX(var(--spectrum-tabs-focus-ring-padding-x));
   }
 
-  [dir='rtl'] & {
+  [dir='rtl'] .spectrum-Tabs--horizontal & {
     transform: translateX(calc(var(--spectrum-tabs-focus-ring-padding-x) * -1));
   }
 
