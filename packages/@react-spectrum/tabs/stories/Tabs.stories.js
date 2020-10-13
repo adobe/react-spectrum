@@ -108,6 +108,10 @@ storiesOf('Tabs', module)
   .add(
     'collapse behavior, density: compact, isQuiet',
     () => <DynamicTabs isQuiet density="compact" />
+  )
+  .add(
+    'orientation flip',
+    () => <OrientationFlip />
   );
 
 function render(props = {}) {
@@ -285,15 +289,16 @@ function renderWithFalsyKey(props = {}) {
   );
 }
 
+let items = [
+  {name: 'Tab 1', children: 'Tab Body 1', icon: <Dashboard size="S" />},
+  {name: 'Tab 2', children: 'Tab Body 2', icon: <Calendar size="S" />},
+  {name: 'Tab 3', children: 'Tab Body 3', icon: <Bookmark size="S" />},
+  {name: 'Tab 4', children: 'Tab Body 4', icon: <Dashboard size="S" />},
+  {name: 'Tab 5', children: 'Tab Body 5', icon: <Calendar size="S" />},
+  {name: 'Tab 6', children: 'Tab Body 6', icon: <Bookmark size="S" />}
+];
+
 let DynamicTabs = (props = {}) => {
-  let items = [
-    {name: 'Tab 1', children: 'Tab Body 1', icon: <Dashboard size="S" />},
-    {name: 'Tab 2', children: 'Tab Body 2', icon: <Calendar size="S" />},
-    {name: 'Tab 3', children: 'Tab Body 3', icon: <Bookmark size="S" />},
-    {name: 'Tab 4', children: 'Tab Body 4', icon: <Dashboard size="S" />},
-    {name: 'Tab 5', children: 'Tab Body 5', icon: <Calendar size="S" />},
-    {name: 'Tab 6', children: 'Tab Body 6', icon: <Bookmark size="S" />}
-  ];
 
   let [tabs, setTabs] = React.useState(items);
   let addTab = () => {
@@ -344,6 +349,40 @@ let DynamicTabs = (props = {}) => {
           <Text>Remove Tab</Text>
         </Button>
       </ButtonGroup>
+    </div>
+  );
+};
+
+let OrientationFlip = (props = {}) => {
+  let [flipOrientation, setFlipOrientation] = React.useState(true);
+
+  return (
+    <div style={{width: '80%'}}>
+      <Tabs {...props} aria-label="Tab example" items={items} onSelectionChange={action('onSelectionChange')} orientation={flipOrientation ? 'horizontal' : 'vertical'}>
+        {item => (
+          <Item
+            key={item.name}
+            textValue={item.name}
+            title={
+              <>
+                {item.icon}
+                <Text>{item.name}</Text>
+              </>
+            }>
+            <Content margin="size-160">
+              <Heading>{item.children}</Heading>
+              <Text>
+                Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+                Id cupidatat aute id ut excepteur exercitation magna pariatur. Mollit irure irure reprehenderit pariatur eiusmod proident Lorem deserunt duis cillum mollit. Do reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum. Velit aliquip commodo ea ipsum incididunt culpa nostrud deserunt incididunt exercitation. In quis proident sit ad dolore tempor. Eiusmod pariatur quis commodo labore cupidatat cillum enim eiusmod voluptate laborum culpa. Laborum cupidatat incididunt velit voluptate incididunt occaecat quis do.
+                Consequat adipisicing irure Lorem commodo officia sint id. Velit sit magna aliquip eiusmod non id deserunt. Magna veniam ad consequat dolor cupidatat esse enim Lorem ullamco. Anim excepteur consectetur id in. Mollit laboris duis labore enim duis esse reprehenderit.
+              </Text>
+            </Content>
+          </Item>
+        )}
+      </Tabs>
+      <Button variant="secondary" onPress={() => setFlipOrientation((state) => !state)}>
+        <Text>Flip Orientation</Text>
+      </Button>
     </div>
   );
 };
