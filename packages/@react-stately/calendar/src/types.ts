@@ -13,8 +13,9 @@
 import {RangeValue} from '@react-types/shared';
 
 export interface CalendarStateBase {
+  isDisabled: boolean,
+  isReadOnly: boolean,
   currentMonth: Date,
-  setCurrentMonth(value: Date): void,
   focusedDate: Date,
   setFocusedDate(value: Date): void,
   focusNextDay(): void,
@@ -33,7 +34,15 @@ export interface CalendarStateBase {
   setFocused(value: boolean): void,
   weeksInMonth: number,
   weekStart: number,
-  getCellOptions(weekIndex: number, dayIndex: number): CalendarCellOptions
+  daysInMonth: number,
+  weekDays: Array<Date>,
+  getCellDate(weekIndex: number, dayIndex: number): Date,
+  isInvalid(date: Date): boolean,
+  isSelected(date: Date): boolean,
+  isCellFocused(date: Date): boolean,
+  isCellDisabled(date: Date): boolean,
+  isPreviousMonthInvalid(): boolean,
+  isNextMonthInvalid(): boolean
 }
 
 export interface CalendarState extends CalendarStateBase {
@@ -48,19 +57,4 @@ export interface RangeCalendarState extends CalendarStateBase {
   anchorDate: Date | null,
   setAnchorDate(date: Date | null): void,
   highlightedRange: RangeValue<Date>
-}
-
-export interface CalendarCellOptions {
-  cellDate: Date,
-  isToday: boolean,
-  isCurrentMonth: boolean,
-  isDisabled: boolean,
-  isReadOnly: boolean,
-  isSelected: boolean,
-  isFocused: boolean,
-  isRangeSelection?: boolean,
-  isRangeStart?: boolean,
-  isRangeEnd?: boolean,
-  isSelectionStart?: boolean,
-  isSelectionEnd?: boolean
 }
