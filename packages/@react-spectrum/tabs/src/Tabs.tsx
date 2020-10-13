@@ -137,7 +137,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
         styleProps.className
       )}>
       {orientation === 'vertical' && tablist}
-      {orientation !== 'vertical' && <CollapsibleTabList {...props} wrapperRef={wrapperRef} collapse={collapse} tabListProps={tabListProps} state={state} selectedTab={selectedTab} ref={ref} orientation={orientation} />}
+      {orientation !== 'vertical' && <CollapsibleTabList {...props} wrapperRef={wrapperRef} collapse={collapse} tabListProps={tabListProps} state={state} selectedTab={selectedTab} ref={ref} />}
       <div {...tabPanelProps}>
         {state.selectedItem && state.selectedItem.props.children}
       </div>
@@ -253,7 +253,6 @@ interface CollapsibleTabListProps<T> extends TabListProps<T>, TabPickerProps<T> 
 const CollapsibleTabList = React.forwardRef(function <T> (props: CollapsibleTabListProps<T>, ref: MutableRefObject<HTMLDivElement>) {
   let {
     tabListProps,
-    orientation,
     density,
     isQuiet,
     isDisabled,
@@ -276,7 +275,7 @@ const CollapsibleTabList = React.forwardRef(function <T> (props: CollapsibleTabL
         state={state}
         selectedTab={selectedTab}
         ref={ref}
-        orientation={orientation} />
+        orientation="horizontal" />
     );
   }
 
