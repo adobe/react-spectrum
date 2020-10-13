@@ -334,8 +334,8 @@ describe('CalendarBase', () => {
         expect(document.activeElement).toBe(cell);
       }
 
-      act(() => {fireEvent.keyDown(document.activeElement, {key, keyCode: keyCodes[key], ...opts});});
-      act(() => {fireEvent.keyUp(document.activeElement, {key, keyCode: keyCodes[key], ...opts});});
+      fireEvent.keyDown(document.activeElement, {key, keyCode: keyCodes[key], ...opts});
+      fireEvent.keyUp(document.activeElement, {key, keyCode: keyCodes[key], ...opts});
 
       cell = getByLabelText(value, {exact: false});
       if (isV2) {

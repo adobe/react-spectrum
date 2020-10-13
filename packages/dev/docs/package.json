@@ -28,8 +28,8 @@
     "highlight.js": "9.18.1",
     "markdown-to-jsx": "^6.11.0",
     "quicklink": "^2.0.0",
-    "react": "^16.8.0",
-    "react-dom": "^16.8.0",
+    "react": "^16.8.0 || ^17.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1",
     "react-lowlight": "^2.0.0"
   }
 }

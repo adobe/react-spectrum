@@ -21,6 +21,8 @@ governing permissions and limitations under the License.
 .spectrum-Slider-track {
   &::before {
     background: var(--spectrum-slider-track-color);
+    background-size: var(--spectrum-track-background-size);
+    background-position: var(--spectrum-track-background-position);
   }
 }
 
@@ -126,8 +128,8 @@ governing permissions and limitations under the License.
     background-position:
       0 0,
       0 var(--spectrum-global-dimension-static-size-100),
-      var(--spectrum-global-dimension-static-size-100) calc(var(--spectrum-global-dimension-static-size-100) * -1),
-      calc(var(--spectrum-global-dimension-static-size-100) * -1) 0;
+      var(--spectrum-global-dimension-static-size-100) calc(-1 * var(--spectrum-global-dimension-static-size-100)),
+      calc(-1 * var(--spectrum-global-dimension-static-size-100)) 0;
     z-index: 0;
   }
   .spectrum-Slider-track {
@@ -300,5 +302,24 @@ governing permissions and limitations under the License.
         }
       }
     }
+  }
+}
+
+.spectrum-Slider--label-side {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+
+  & > * {
+    display: inline-block;
+  }
+
+  & .spectrum-Slider-labelContainer {
+    padding-top: 0;
+    flex-shrink: 0;
+  }
+
+  & .spectrum-Slider-label {
+    margin-inline-end: var(--spectrum-slider-label-gap-x);
   }
 }

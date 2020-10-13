@@ -29,7 +29,7 @@ describe('Modal', function () {
     expect(() => {
       getByRole('dialog');
     }).toThrow();
-    expect(document.body).not.toHaveStyle('overflow: hidden');
+    expect(document.documentElement).not.toHaveStyle('overflow: hidden');
   });
 
   it('should render when isOpen is true', async function () {
@@ -47,7 +47,7 @@ describe('Modal', function () {
 
     let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
-    expect(document.body).toHaveStyle('overflow: hidden');
+    expect(document.documentElement).toHaveStyle('overflow: hidden');
   });
 
   it('hides the modal when pressing the escape key', async function () {

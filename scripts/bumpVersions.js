@@ -14,7 +14,7 @@ const exec = require('child_process').execSync;
 const fs = require('fs');
 const fetch = require('node-fetch');
 const semver = require('semver');
-const readline = require("readline");
+const readline = require('readline');
 const chalk = require('chalk');
 const http = require('http');
 const qs = require('querystring');
@@ -98,8 +98,12 @@ class VersionManager {
     let res = exec("git diff $(git describe --tags --abbrev=0)..HEAD --name-only packages ':!**/dev/**' ':!**/docs/**' ':!**/test/**' ':!**/stories/**' ':!**/chromatic/**'", {encoding: 'utf8'});
 
     for (let line of res.trim().split('\n')) {
-      let parts = line.split('/');
-      let name = parts.slice(1, 3).join('/');
+      let parts = line.split('/').slice(1, 3);
+      if (!parts[0].startsWith('@')) {
+        parts.pop();
+      }
+
+      let name = parts.join('/');
       let pkg = JSON.parse(fs.readFileSync(`packages/${name}/package.json`, 'utf8'));
       this.changedPackages.add(name);
     }
@@ -258,7 +262,7 @@ class VersionManager {
       if (this.existingPackages.has(name)) {
         let newVersion = status === 'released'
           ? semver.inc(pkg.version, bump)
-          : semver.inc(pkg.version, 'prerelease', status)
+          : semver.inc(pkg.version, 'prerelease', status);
         versions.set(name, [pkg.version, newVersion, pkg.private]);
       } else {
         let newVersion = '3.0.0';
@@ -305,7 +309,7 @@ class VersionManager {
     });
 
     return new Promise((resolve, reject) => {
-      rl.question('Do you want to continue? (y/n) ', function(c) {
+      rl.question('Do you want to continue? (y/n) ', function (c) {
         rl.close();
         if (c === 'n') {
           reject('Not continuing');
