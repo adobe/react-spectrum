@@ -13,7 +13,8 @@ export function useResizeObserver<T extends HTMLElement>(options: useResizeObser
   const {ref, onResize} = options;
 
   useEffect(() => {
-    if (!ref || !ref.current) {
+    let element = ref?.current;
+    if (!element) {
       return;
     }
 
@@ -31,11 +32,11 @@ export function useResizeObserver<T extends HTMLElement>(options: useResizeObser
 
         onResize();
       });
-      resizeObserverInstance.observe(ref.current);
+      resizeObserverInstance.observe(element);
 
       return () => {
-        if (ref.current) {
-          resizeObserverInstance.unobserve(ref.current);
+        if (element) {
+          resizeObserverInstance.unobserve(element);
         }
       };
     }

@@ -262,23 +262,6 @@ const CollapsibleTabList = React.forwardRef(function <T> (props: CollapsibleTabL
     collapse
   } = props;
 
-  let tablist;
-  if (collapse) {
-    tablist = <TabPicker {...props} />;
-  } else {
-    tablist = (
-      <TabList
-        {...tabListProps}
-        density={density}
-        isQuiet={isQuiet}
-        isDisabled={isDisabled}
-        state={state}
-        selectedTab={selectedTab}
-        ref={ref}
-        orientation="horizontal" />
-    );
-  }
-
   return (
     <div
       ref={wrapperRef}
@@ -286,7 +269,18 @@ const CollapsibleTabList = React.forwardRef(function <T> (props: CollapsibleTabL
         styles,
         'spectrum-Tabs--collapsible'
       )}>
-      {tablist}
+      {collapse && <TabPicker {...props} />}
+      {!collapse && (
+        <TabList
+          {...tabListProps}
+          density={density}
+          isQuiet={isQuiet}
+          isDisabled={isDisabled}
+          state={state}
+          selectedTab={selectedTab}
+          ref={ref}
+          orientation="horizontal" />
+      )}
     </div>
   );
 });

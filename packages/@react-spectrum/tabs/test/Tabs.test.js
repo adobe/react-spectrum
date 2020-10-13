@@ -330,7 +330,8 @@ describe('Tabs', function () {
   });
 
   it('dynamically collapses and expands on tab addition/subtraction', function () {
-    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
+
+    let spy = jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
       if (this instanceof HTMLDivElement) {
         return {
           right: 500
@@ -359,7 +360,7 @@ describe('Tabs', function () {
     expect(tablist).toBeTruthy();
     expect(() => getByRole('button')).toThrow();
 
-    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
+    spy.mockImplementationOnce(function () {
       if (this instanceof HTMLDivElement) {
         return {
           right: 500
@@ -395,7 +396,7 @@ describe('Tabs', function () {
     let picker = getByRole('button');
     expect(picker).toBeTruthy();
 
-    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
+    spy.mockImplementationOnce(function () {
       if (this instanceof HTMLDivElement) {
         return {
           right: 500
@@ -422,7 +423,6 @@ describe('Tabs', function () {
         </Tabs>
       </Provider>
     );
-
 
     tabpanel = getByRole('tabpanel');
     expect(tabpanel).toBeTruthy();
