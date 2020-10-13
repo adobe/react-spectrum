@@ -39,14 +39,16 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
   } = props;
 
   let ref = useRef<HTMLDivElement>();
+  let wrapperRef = useRef<HTMLDivElement>();
   let state = useSingleSelectListState<T>({
     ...props,
     onSelectionChange
   });
 
-
+  let {direction} = useLocale();
   let {styleProps} = useStyleProps(otherProps);
   let {tabListProps, tabPanelProps} = useTabs(props, state, ref);
+  let [collapse, setCollapse] = useValueEffect(false);
   let [selectedTab, setSelectedTab] = useState<HTMLElement>();
 
   let lastSelectedKey = useRef(state.selectedItem);
@@ -79,6 +81,40 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
     }
   }, [props.children, state, ref]);
 
+  let checkShouldCollapse = useCallback(() => {
+    let computeShouldCollapse = () => {
+      if (wrapperRef.current) {
+        let tabsComponent = wrapperRef.current;
+        let tabs = Array.from(ref.current.children);
+        // The last child is the TabLine so we look at the second to last child for the last Tab
+        let lastTab = tabs[tabs.length - 2];
+
+        let end = direction === 'rtl' ? 'left' : 'right';
+        let farEdgeTabList = tabsComponent.getBoundingClientRect()[end];
+        let farEdgeLastTab = lastTab?.getBoundingClientRect()[end];
+        let shouldCollapse = direction === 'rtl' ? farEdgeLastTab < farEdgeTabList : farEdgeTabList < farEdgeLastTab;
+
+        return shouldCollapse;
+      }
+    };
+
+    if (orientation !== 'vertical') {
+      setCollapse(function* () {
+        // Make Tabs render in non-collapsed state
+        yield false;
+
+        // Compute if Tabs should collapse and update
+        yield computeShouldCollapse();
+      });
+    }
+  }, [ref, wrapperRef, direction, orientation, setCollapse]);
+
+  useEffect(() => {
+    checkShouldCollapse();
+  }, [props.children, checkShouldCollapse]);
+
+  useResizeObserver({ref: wrapperRef.current && wrapperRef, onResize: checkShouldCollapse});
+
   let tablist = (
     <TabList
       {...tabListProps}
@@ -101,7 +137,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
         styleProps.className
       )}>
       {orientation === 'vertical' && tablist}
-      {orientation !== 'vertical' && <CollapsibleTabList {...props} tabListProps={tabListProps} state={state} selectedTab={selectedTab} ref={ref} orientation={orientation} />}
+      {orientation !== 'vertical' && <CollapsibleTabList {...props} wrapperRef={wrapperRef} collapse={collapse} tabListProps={tabListProps} state={state} selectedTab={selectedTab} ref={ref} orientation={orientation} />}
       <div {...tabPanelProps}>
         {state.selectedItem && state.selectedItem.props.children}
       </div>
@@ -209,7 +245,9 @@ function TabLine(props: TabLineProps) {
 }
 
 interface CollapsibleTabListProps<T> extends TabListProps<T>, TabPickerProps<T> {
-  tabListProps?: HTMLAttributes<HTMLElement>
+  tabListProps?: HTMLAttributes<HTMLElement>,
+  wrapperRef: MutableRefObject<HTMLDivElement>,
+  collapse?: boolean
 }
 
 const CollapsibleTabList = React.forwardRef(function <T> (props: CollapsibleTabListProps<T>, ref: MutableRefObject<HTMLDivElement>) {
@@ -220,46 +258,10 @@ const CollapsibleTabList = React.forwardRef(function <T> (props: CollapsibleTabL
     isQuiet,
     isDisabled,
     state,
-    selectedTab
+    selectedTab,
+    wrapperRef,
+    collapse
   } = props;
-
-  let wrapperRef = useRef<HTMLDivElement>();
-  let {direction} = useLocale();
-  let [collapse, setCollapse] = useValueEffect(false);
-
-  let checkShouldCollapse = useCallback(() => {
-    let computeShouldCollapse = () => {
-      if (wrapperRef.current) {
-        let tabsComponent = wrapperRef.current;
-        let tabs = Array.from(ref.current.children);
-        // The last child is the TabLine so we look at the second to last child for the last Tab
-        let lastTab = tabs[tabs.length - 2];
-
-        let end = direction === 'rtl' ? 'left' : 'right';
-        let farEdgeTabList = tabsComponent.getBoundingClientRect()[end];
-        let farEdgeLastTab = lastTab?.getBoundingClientRect()[end];
-        let shouldCollapse = direction === 'rtl' ? farEdgeLastTab < farEdgeTabList : farEdgeTabList < farEdgeLastTab;
-
-        return shouldCollapse;
-      }
-    };
-
-    if (orientation !== 'vertical') {
-      setCollapse(function* () {
-        // Make Tabs render in non-collapsed state
-        yield false;
-
-        // Compute if Tabs should collapse and update
-        yield computeShouldCollapse();
-      });
-    }
-  }, [ref, wrapperRef, direction, orientation, setCollapse]);
-
-  useEffect(() => {
-    checkShouldCollapse();
-  }, [props.children, checkShouldCollapse]);
-
-  useResizeObserver({ref: wrapperRef.current && wrapperRef, onResize: checkShouldCollapse});
 
   let tablist;
   if (collapse) {
