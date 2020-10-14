@@ -249,6 +249,7 @@ describe('HexColorField', function () {
     expect(hexColorField.value).toBe('#AAAAAA');
 
     fireEvent.wheel(hexColorField, {deltaY});
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(expected);
     expect(hexColorField.value).toBe(expected.toString('hex'));
   });
