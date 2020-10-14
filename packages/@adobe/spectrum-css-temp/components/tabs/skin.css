@@ -15,7 +15,12 @@ governing permissions and limitations under the License.
 
   &.spectrum-Tabs--isCollapsed button {
     &:focus-ring {
-      box-shadow: 0 0 0 var(--spectrum-button-primary-focus-ring-size-key-focus) var(--spectrum-button-primary-focus-ring-color-key-focus);
+      /* FieldButton Picker focus ring override */
+      box-shadow: none;
+
+      &::before {
+        border-color: var(--spectrum-tabs-focus-ring-color);
+      }
     }
   }
 }

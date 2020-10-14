@@ -51,17 +51,40 @@ governing permissions and limitations under the License.
     inset-inline-start: 0;
     height: var(--spectrum-tabs-item-height);
 
+    /* FieldButton Picker focus ring override */
+    & button {
+      &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+
+        box-sizing: border-box;
+
+        block-size: var(--spectrum-tabs-focus-ring-height);
+        margin-block-start: calc(calc(var(--spectrum-tabs-focus-ring-height) / -2) + calc(var(--spectrum-tabs-rule-height) / 2));
+        inset-inline-start: calc(var(--spectrum-tabs-focus-ring-padding-x) * -1);
+        inset-inline-end: calc(var(--spectrum-tabs-focus-ring-padding-x) * -1);
+        border: var(--spectrum-tabs-focus-ring-size) solid transparent;
+        border-radius: var(--spectrum-tabs-focus-ring-border-radius);
+
+        pointer-events: none;
+      }
+    }
+
     &.spectrum-Tabs--compact {
       /* accomadation so focus ring top doesn't get cut off */
       height: calc(var(--spectrum-tabs-compact-item-height) - 3px);
       padding-top: 3px;
-    }
 
-    & button {
-      &:focus-ring {
-        border-radius: 2px;
+      & button {
+        &::before {
+          /* shift focus ring for compact Tab picker so it properly overlaps the rule */
+          margin-block-start: calc(calc(calc(var(--spectrum-tabs-focus-ring-height) / -2) + calc(var(--spectrum-tabs-rule-height) / 2)) - 1px);
+        }
       }
     }
+
+
   }
 }
 
