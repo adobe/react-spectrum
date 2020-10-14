@@ -26,7 +26,7 @@ export interface ColorWheelProps extends BaseSliderProps, Omit<StyleProps, 'widt
   // overriding these to allow passing string:
   value?: string | Color,
   defaultValue?: string | Color,
-  onChange?: (value: Color) => void,
+  onChange?: (value: Color) => void
 }
 
 export interface ColorWheelAriaProps extends ColorWheelProps {
@@ -44,7 +44,7 @@ interface ColorSliderProps extends Omit<BaseSliderProps, 'minValue' | 'maxValue'
   channel: ColorChannel,
   value?: string | Color,
   defaultValue?: string | Color,
-  onChange?: (value: Color) => void
+  onChange?: (value: Color) => void,
   /** Whether the value's label is displayed. True by default, false by default if not. */
   showValueLabel?: boolean
   // showTextField?: boolean, // do we want this? we didn't keep it for slider....
