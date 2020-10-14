@@ -87,11 +87,11 @@ describe('Search', () => {
     expect(clearButton).toBeTruthy();
 
     let input = tree.getByTestId(testId);
-    act(() => {fireEvent.change(input, {target: {value: ''}});});
+    fireEvent.change(input, {target: {value: ''}});
     clearButton = tree.queryByLabelText('Clear search');
     expect(clearButton).toBeNull();
 
-    act(() => {userEvent.type(input, 'bleh');});
+    userEvent.type(input, 'bleh');
     clearButton = tree.queryByLabelText('Clear search');
     expect(clearButton).toBeTruthy();
   });
@@ -104,7 +104,7 @@ describe('Search', () => {
   `('$Name submits the textfield value when enter is pressed', ({Component}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onSubmit});
     let input = tree.getByTestId(testId);
-    act(() => {fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});});
+    fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});
     expect(onSubmit).toBeCalledTimes(1);
     expect(onSubmit).toHaveBeenLastCalledWith(inputText);
 
@@ -126,7 +126,7 @@ describe('Search', () => {
   `('$Name doesn\'t submit the textfield value when enter is pressed but field is disabled', ({Component, props}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onSubmit, ...props});
     let input = tree.getByTestId(testId);
-    act(() => {fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});});
+    fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});
     expect(onSubmit).toBeCalledTimes(0);
   });
 
@@ -139,7 +139,7 @@ describe('Search', () => {
     let tree = renderComponent(Component, {defaultValue: inputText, onChange, onClear});
     let input = tree.getByTestId(testId);
     expect(input.value).toBe(inputText);
-    act(() => {fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});});
+    fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
     expect(onChange).toBeCalledTimes(1);
     expect(onChange).toHaveBeenLastCalledWith('');
     expect(input.value).toBe('');
@@ -161,7 +161,7 @@ describe('Search', () => {
     let tree = renderComponent(Component, {value: inputText, onChange, onClear});
     let input = tree.getByTestId(testId);
     expect(input.value).toBe(inputText);
-    act(() => {fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});});
+    fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
     expect(onChange).toBeCalledTimes(1);
     expect(onChange).toHaveBeenLastCalledWith('');
     expect(input.value).toBe(inputText);
@@ -181,7 +181,7 @@ describe('Search', () => {
     let tree = renderComponent(Component, {defaultValue: inputText, onChange, onClear, ...props});
     let input = tree.getByTestId(testId);
     expect(input.value).toBe(inputText);
-    act(() => {fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});});
+    fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
     expect(onChange).toBeCalledTimes(0);
     expect(input.value).toBe(inputText);
 
@@ -225,7 +225,7 @@ describe('Search', () => {
     let input = tree.getByTestId(testId);
     let clearButton = tree.getByLabelText('Clear search');
     expect(input.value).toBe(inputText);
-    act(() => {userEvent.click(clearButton);});
+    userEvent.click(clearButton);
     expect(onChange).toBeCalledTimes(1);
 
     if (Component === SearchField) {
@@ -252,7 +252,7 @@ describe('Search', () => {
     let input = tree.getByTestId(testId);
     let clearButton = tree.getByLabelText('Clear search');
     expect(input.value).toBe(inputText);
-    act(() => {userEvent.click(clearButton);});
+    userEvent.click(clearButton);
     expect(onChange).toBeCalledTimes(0);
     expect(input.value).toBe(inputText);
 

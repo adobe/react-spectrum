@@ -11,7 +11,6 @@
  */
 
 import {AriaLabelingProps, DOMProps} from '@react-types/shared';
-import {HTMLAttributes} from 'react';
 import {useId} from './useId';
 
 /**
@@ -19,7 +18,7 @@ import {useId} from './useId';
  * @param props - Aria label props.
  * @param defaultLabel - Default value for aria-label when not present.
  */
-export function useLabels(props: DOMProps & AriaLabelingProps, defaultLabel?: string): HTMLAttributes<HTMLElement> {
+export function useLabels(props: DOMProps & AriaLabelingProps, defaultLabel?: string): DOMProps & AriaLabelingProps {
   let {
     id,
     'aria-label': label,

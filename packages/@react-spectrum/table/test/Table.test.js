@@ -11,6 +11,8 @@
  */
 
 import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
+import {ActionButton} from '@react-spectrum/button';
+import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {CRUDExample} from '../stories/CRUDExample';
 import {getFocusableTreeWalker} from '@react-aria/focus';
@@ -724,7 +726,7 @@ describe('Table', function () {
     );
 
     let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
-    let moveFocus = (key, opts = {}) => act(() => {fireEvent.keyDown(document.activeElement, {key, ...opts});});
+    let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
 
     describe('ArrowRight', function () {
       it('should move focus to the next cell in a row with ArrowRight', function () {
@@ -757,14 +759,14 @@ describe('Table', function () {
 
       it('should move focus from the row to the first cell with ArrowRight', function () {
         let tree = renderTable();
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
       });
 
       it('should move focus from the row to the last cell with ArrowRight in RTL', function () {
         let tree = renderTable('ar-AE');
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(getCell(tree, 'Baz 1'));
       });
@@ -843,14 +845,14 @@ describe('Table', function () {
 
       it('should move focus from the row to the last cell with ArrowLeft', function () {
         let tree = renderTable();
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(getCell(tree, 'Baz 1'));
       });
 
       it('should move focus from the row to the first cell with ArrowLeft in RTL', function () {
         let tree = renderTable('ar-AE');
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
       });
@@ -908,7 +910,7 @@ describe('Table', function () {
 
       it('should move focus to the row above with ArrowUp', function () {
         let tree = renderTable();
-        tree.getAllByRole('row')[2].focus();
+        act(() => {tree.getAllByRole('row')[2].focus();});
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[1]);
       });
@@ -922,7 +924,7 @@ describe('Table', function () {
 
       it('should move focus to the column header above the first row with ArrowUp', function () {
         let tree = renderTable();
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(getCell(tree, 'Foo'));
       });
@@ -950,7 +952,7 @@ describe('Table', function () {
 
       it('should move focus to the row below with ArrowDown', function () {
         let tree = renderTable();
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
       });
@@ -989,7 +991,7 @@ describe('Table', function () {
 
       it('should focus the first row with Home', function () {
         let tree = renderTable();
-        tree.getAllByRole('row')[2].focus();
+        act(() => {tree.getAllByRole('row')[2].focus();});
         moveFocus('Home');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[1]);
       });
@@ -1012,7 +1014,7 @@ describe('Table', function () {
 
       it('should focus the last row with End', function () {
         let tree = renderTable();
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
         moveFocus('End');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
       });
@@ -1030,7 +1032,7 @@ describe('Table', function () {
 
       it('should focus the row a page below', function () {
         let tree = renderMany();
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
         moveFocus('PageDown');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[25]);
       });
@@ -1046,7 +1048,7 @@ describe('Table', function () {
 
       it('should focus the row a page below', function () {
         let tree = renderMany();
-        tree.getAllByRole('row')[25].focus();
+        act(() => {tree.getAllByRole('row')[25].focus();});
         moveFocus('PageUp');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[1]);
       });
@@ -1112,7 +1114,7 @@ describe('Table', function () {
 
       it('focuses row by typing letters in rapid succession', function () {
         let tree = renderTypeSelect();
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
 
         moveFocus('J');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
@@ -1126,7 +1128,7 @@ describe('Table', function () {
 
       it('matches row against all row header cells', function () {
         let tree = renderTypeSelect();
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
 
         moveFocus('D');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[3]);
@@ -1139,7 +1141,7 @@ describe('Table', function () {
         moveFocus('J');
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
 
-        jest.runAllTimers();
+        act(() => {jest.runAllTimers();});
 
         moveFocus('J');
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
@@ -1158,7 +1160,7 @@ describe('Table', function () {
         moveFocus('h');
         expect(document.activeElement).toBe(getCell(tree, 'John'));
 
-        jest.runAllTimers();
+        act(() => {jest.runAllTimers();});
 
         moveFocus('J');
         expect(document.activeElement).toBe(getCell(tree, 'John'));
@@ -1174,7 +1176,7 @@ describe('Table', function () {
         moveFocus('J');
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
 
-        jest.runAllTimers();
+        act(() => {jest.runAllTimers();});
 
         moveFocus('S');
         expect(document.activeElement).toBe(getCell(tree, 'Sam'));
@@ -1232,7 +1234,7 @@ describe('Table', function () {
 
       it('should support keyboard navigation after pressing focusable element inside a cell', function () {
         let tree = renderFocusable();
-        act(() => triggerPress(tree.getAllByRole('switch')[0]));
+        triggerPress(tree.getAllByRole('switch')[0]);
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
 
         moveFocus('ArrowDown');
@@ -1241,7 +1243,7 @@ describe('Table', function () {
 
       it('should marshall focus to the child on press of the cell', function () {
         let tree = renderFocusable();
-        act(() => triggerPress(tree.getAllByRole('rowheader')[0]));
+        triggerPress(tree.getAllByRole('rowheader')[0]);
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
       });
 
@@ -1255,11 +1257,9 @@ describe('Table', function () {
         act(() => before.focus());
 
         // Simulate tabbing to the first "tabbable" item inside the table
-        act(() => {
-          fireEvent.keyDown(before, {key: 'Tab'});
-          within(table).getAllByRole('switch')[0].focus();
-          fireEvent.keyUp(before, {key: 'Tab'});
-        });
+        fireEvent.keyDown(before, {key: 'Tab'});
+        act(() => {within(table).getAllByRole('switch')[0].focus();});
+        fireEvent.keyUp(before, {key: 'Tab'});
 
         expect(document.activeElement).toBe(within(table).getAllByRole('row')[1]);
       });
@@ -1298,11 +1298,9 @@ describe('Table', function () {
         act(() => before.focus());
 
         // Simulate tabbing to the first "tabbable" item inside the table
-        act(() => {
-          fireEvent.keyDown(before, {key: 'Tab'});
-          within(table).getAllByRole('switch')[0].focus();
-          fireEvent.keyUp(before, {key: 'Tab'});
-        });
+        fireEvent.keyDown(before, {key: 'Tab'});
+        act(() => {within(table).getAllByRole('switch')[0].focus();});
+        fireEvent.keyUp(before, {key: 'Tab'});
 
         expect(document.activeElement).toBe(baz1);
       });
@@ -1322,11 +1320,9 @@ describe('Table', function () {
         act(() => after.focus());
 
         // Simulate tabbing to the last "tabbable" item inside the table
-        act(() => {
-          fireEvent.keyDown(after, {key: 'Tab'});
-          within(table).getAllByRole('link')[1].focus();
-          fireEvent.keyUp(after, {key: 'Tab'});
-        });
+        fireEvent.keyDown(after, {key: 'Tab'});
+        act(() => {within(table).getAllByRole('link')[1].focus();});
+        fireEvent.keyUp(after, {key: 'Tab'});
 
         expect(document.activeElement).toBe(baz1);
       });
@@ -1334,17 +1330,15 @@ describe('Table', function () {
       it('should move focus after the table when tabbing', function () {
         let tree = renderFocusable();
 
-        act(() => triggerPress(tree.getAllByRole('switch')[1]));
+        triggerPress(tree.getAllByRole('switch')[1]);
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
         // Simulate tabbing within the table
-        act(() => {
-          fireEvent.keyDown(document.activeElement, {key: 'Tab'});
-          let walker = getFocusableTreeWalker(document.body, {tabbable: true});
-          walker.currentNode = document.activeElement;
-          walker.nextNode().focus();
-          fireEvent.keyUp(document.activeElement, {key: 'Tab'});
-        });
+        fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+        let walker = getFocusableTreeWalker(document.body, {tabbable: true});
+        walker.currentNode = document.activeElement;
+        act(() => {walker.nextNode().focus();});
+        fireEvent.keyUp(document.activeElement, {key: 'Tab'});
 
         let after = tree.getByTestId('after');
         expect(document.activeElement).toBe(after);
@@ -1372,17 +1366,15 @@ describe('Table', function () {
       it('should move focus before the table when shift tabbing', function () {
         let tree = renderFocusable();
 
-        act(() => triggerPress(tree.getAllByRole('switch')[1]));
+        triggerPress(tree.getAllByRole('switch')[1]);
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
         // Simulate shift tabbing within the table
-        act(() => {
-          fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
-          let walker = getFocusableTreeWalker(document.body, {tabbable: true});
-          walker.currentNode = document.activeElement;
-          walker.previousNode().focus();
-          fireEvent.keyUp(document.activeElement, {key: 'Tab', shiftKey: true});
-        });
+        fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+        let walker = getFocusableTreeWalker(document.body, {tabbable: true});
+        walker.currentNode = document.activeElement;
+        act(() => {walker.previousNode().focus();});
+        fireEvent.keyUp(document.activeElement, {key: 'Tab', shiftKey: true});
 
         let before = tree.getByTestId('before');
         expect(document.activeElement).toBe(before);
@@ -1410,7 +1402,7 @@ describe('Table', function () {
 
         // When scrolling the focused item out of view, focus should move to the table itself
         body.scrollTop = 1000;
-        act(() => {fireEvent.scroll(body);});
+        fireEvent.scroll(body);
 
         expect(body.scrollTop).toBe(1000);
         expect(document.activeElement).toBe(tree.getByRole('grid'));
@@ -1429,7 +1421,7 @@ describe('Table', function () {
         focusCell(tree, 'Baz 5');
 
         body.scrollTop = 1000;
-        act(() => {fireEvent.scroll(body);});
+        fireEvent.scroll(body);
 
         expect(body.scrollTop).toBe(1000);
         expect(document.activeElement).toBe(tree.getByRole('grid'));
@@ -1481,11 +1473,9 @@ describe('Table', function () {
     };
 
     let pressWithKeyboard = (element, key = ' ') => {
-      act(() => {
-        fireEvent.keyDown(element, {key});
-        element.focus();
-        fireEvent.keyUp(element, {key});
-      });
+      fireEvent.keyDown(element, {key});
+      act(() => {element.focus();});
+      fireEvent.keyUp(element, {key});
     };
 
     describe('row selection', function () {
@@ -1495,7 +1485,7 @@ describe('Table', function () {
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
-        act(() => userEvent.click(within(row).getByRole('checkbox')));
+        userEvent.click(within(row).getByRole('checkbox'));
 
         checkSelection(onSelectionChange, ['Foo 1']);
         expect(row).toHaveAttribute('aria-selected', 'true');
@@ -1508,7 +1498,7 @@ describe('Table', function () {
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
-        act(() => triggerPress(getCell(tree, 'Baz 1')));
+        triggerPress(getCell(tree, 'Baz 1'));
 
         checkSelection(onSelectionChange, ['Foo 1']);
         expect(row).toHaveAttribute('aria-selected', 'true');
@@ -1521,7 +1511,7 @@ describe('Table', function () {
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
-        act(() => {fireEvent.keyDown(row, {key: ' '});});
+        fireEvent.keyDown(row, {key: ' '});
 
         checkSelection(onSelectionChange, ['Foo 1']);
         expect(row).toHaveAttribute('aria-selected', 'true');
@@ -1534,7 +1524,7 @@ describe('Table', function () {
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
-        act(() => {fireEvent.keyDown(row, {key: 'Enter'});});
+        fireEvent.keyDown(row, {key: 'Enter'});
 
         checkSelection(onSelectionChange, ['Foo 1']);
         expect(row).toHaveAttribute('aria-selected', 'true');
@@ -1547,7 +1537,7 @@ describe('Table', function () {
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
-        act(() => {fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: ' '});});
+        fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: ' '});
 
         checkSelection(onSelectionChange, ['Foo 1']);
         expect(row).toHaveAttribute('aria-selected', 'true');
@@ -1560,7 +1550,7 @@ describe('Table', function () {
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
-        act(() => {fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'Enter'});});
+        fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'Enter'});
 
         checkSelection(onSelectionChange, ['Foo 1']);
         expect(row).toHaveAttribute('aria-selected', 'true');
@@ -1575,7 +1565,7 @@ describe('Table', function () {
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
-        act(() => triggerPress(getCell(tree, 'Baz 1')));
+        triggerPress(getCell(tree, 'Baz 1'));
 
         checkSelection(onSelectionChange, ['Foo 1']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
@@ -1583,7 +1573,7 @@ describe('Table', function () {
         checkSelectAll(tree, 'indeterminate');
 
         onSelectionChange.mockReset();
-        act(() => triggerPress(getCell(tree, 'Baz 2')));
+        triggerPress(getCell(tree, 'Baz 2'));
 
         checkSelection(onSelectionChange, ['Foo 1', 'Foo 2']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
@@ -1593,7 +1583,7 @@ describe('Table', function () {
 
         // Deselect
         onSelectionChange.mockReset();
-        act(() => triggerPress(getCell(tree, 'Baz 2')));
+        triggerPress(getCell(tree, 'Baz 2'));
 
         checkSelection(onSelectionChange, ['Foo 1']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
@@ -1645,10 +1635,10 @@ describe('Table', function () {
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
-        act(() => triggerPress(getCell(tree, 'Baz 1')));
+        triggerPress(getCell(tree, 'Baz 1'));
 
         onSelectionChange.mockReset();
-        act(() => triggerPress(getCell(tree, 'Baz 20'), {shiftKey: true}));
+        triggerPress(getCell(tree, 'Baz 20'), {shiftKey: true});
 
         checkSelection(onSelectionChange, [
           'Foo 1', 'Foo 2', 'Foo 3', 'Foo 4', 'Foo 5', 'Foo 6', 'Foo 7', 'Foo 8', 'Foo 9', 'Foo 10',
@@ -1667,10 +1657,10 @@ describe('Table', function () {
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
-        act(() => triggerPress(getCell(tree, 'Baz 10')));
+        triggerPress(getCell(tree, 'Baz 10'));
 
         onSelectionChange.mockReset();
-        act(() => triggerPress(getCell(tree, 'Baz 20'), {shiftKey: true}));
+        triggerPress(getCell(tree, 'Baz 20'), {shiftKey: true});
 
         checkSelection(onSelectionChange, [
           'Foo 10', 'Foo 11', 'Foo 12', 'Foo 13', 'Foo 14', 'Foo 15',
@@ -1681,7 +1671,7 @@ describe('Table', function () {
         checkRowSelection(rows.slice(21), false);
 
         onSelectionChange.mockReset();
-        act(() => triggerPress(getCell(tree, 'Baz 1'), {shiftKey: true}));
+        triggerPress(getCell(tree, 'Baz 1'), {shiftKey: true});
 
         checkSelection(onSelectionChange, [
           'Foo 1', 'Foo 2', 'Foo 3', 'Foo 4', 'Foo 5',
@@ -1703,7 +1693,7 @@ describe('Table', function () {
         pressWithKeyboard(getCell(tree, 'Baz 10'));
 
         onSelectionChange.mockReset();
-        act(() => {fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: 'ArrowDown', shiftKey: true});});
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: 'ArrowDown', shiftKey: true});
 
         checkSelection(onSelectionChange, ['Foo 10', 'Foo 11']);
         checkRowSelection(rows.slice(1, 10), false);
@@ -1722,7 +1712,7 @@ describe('Table', function () {
         pressWithKeyboard(getCell(tree, 'Baz 10'));
 
         onSelectionChange.mockReset();
-        act(() => {fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: 'ArrowUp', shiftKey: true});});
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: 'ArrowUp', shiftKey: true});
 
         checkSelection(onSelectionChange, ['Foo 9', 'Foo 10']);
         checkRowSelection(rows.slice(1, 9), false);
@@ -1741,7 +1731,7 @@ describe('Table', function () {
         pressWithKeyboard(getCell(tree, 'Baz 10'));
 
         onSelectionChange.mockReset();
-        act(() => {fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: 'Home', shiftKey: true, ctrlKey: true});});
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: 'Home', shiftKey: true, ctrlKey: true});
 
         checkSelection(onSelectionChange, [
           'Foo 1', 'Foo 2', 'Foo 3', 'Foo 4', 'Foo 5',
@@ -1763,7 +1753,7 @@ describe('Table', function () {
         pressWithKeyboard(getCell(tree, 'Baz 10'));
 
         onSelectionChange.mockReset();
-        act(() => {fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: 'End', shiftKey: true, ctrlKey: true});});
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: 'End', shiftKey: true, ctrlKey: true});
 
         let expected = [];
         for (let i = 10; i <= 100; i++) {
@@ -1784,7 +1774,7 @@ describe('Table', function () {
         pressWithKeyboard(getCell(tree, 'Baz 10'));
 
         onSelectionChange.mockReset();
-        act(() => {fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: 'PageDown', shiftKey: true});});
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: 'PageDown', shiftKey: true});
 
         let expected = [];
         for (let i = 10; i <= 34; i++) {
@@ -1805,7 +1795,7 @@ describe('Table', function () {
         pressWithKeyboard(getCell(tree, 'Baz 10'));
 
         onSelectionChange.mockReset();
-        act(() => {fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: 'PageUp', shiftKey: true});});
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: 'PageUp', shiftKey: true});
 
         checkSelection(onSelectionChange, [
           'Foo 1', 'Foo 2', 'Foo 3', 'Foo 4', 'Foo 5',
@@ -1827,7 +1817,7 @@ describe('Table', function () {
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
 
-        act(() => userEvent.click(tree.getByLabelText('Select All')));
+        userEvent.click(tree.getByLabelText('Select All'));
 
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
@@ -1844,7 +1834,7 @@ describe('Table', function () {
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
 
-        act(() => {fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'a', ctrlKey: true});});
+        fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'a', ctrlKey: true});
 
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
@@ -1861,10 +1851,10 @@ describe('Table', function () {
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
 
-        act(() => userEvent.click(tree.getByLabelText('Select All')));
+        userEvent.click(tree.getByLabelText('Select All'));
 
         onSelectionChange.mockReset();
-        act(() => triggerPress(rows[4]));
+        triggerPress(rows[4]);
 
         let expected = [];
         for (let i = 1; i <= 100; i++) {
@@ -1886,10 +1876,10 @@ describe('Table', function () {
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
 
-        act(() => userEvent.click(tree.getByLabelText('Select All')));
+        userEvent.click(tree.getByLabelText('Select All'));
 
         onSelectionChange.mockReset();
-        act(() => triggerPress(rows[4], {shiftKey: true}));
+        triggerPress(rows[4], {shiftKey: true});
 
         checkSelection(onSelectionChange, ['Foo 4']);
         checkRowSelection(rows.slice(1, 4), false);
@@ -1906,11 +1896,11 @@ describe('Table', function () {
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
 
-        act(() => userEvent.click(tree.getByLabelText('Select All')));
+        userEvent.click(tree.getByLabelText('Select All'));
         checkSelectAll(tree, 'checked');
 
         onSelectionChange.mockReset();
-        act(() => userEvent.click(tree.getByLabelText('Select All')));
+        userEvent.click(tree.getByLabelText('Select All'));
 
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set());
@@ -1926,11 +1916,11 @@ describe('Table', function () {
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
-        act(() => triggerPress(getCell(tree, 'Baz 1')));
+        triggerPress(getCell(tree, 'Baz 1'));
         checkSelectAll(tree, 'indeterminate');
 
         onSelectionChange.mockReset();
-        act(() => {fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'Escape'});});
+        fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'Escape'});
 
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set());
@@ -1947,7 +1937,7 @@ describe('Table', function () {
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
 
-        act(() => userEvent.click(tree.getByLabelText('Select All')));
+        userEvent.click(tree.getByLabelText('Select All'));
         checkSelectAll(tree, 'checked');
         checkRowSelection(rows.slice(1), true);
 
@@ -1971,10 +1961,10 @@ describe('Table', function () {
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
 
-        act(() => triggerPress(rows[1]));
+        triggerPress(rows[1]);
         checkSelectAll(tree, 'indeterminate');
 
-        act(() => triggerPress(rows[2]));
+        triggerPress(rows[2]);
         checkSelectAll(tree, 'checked');
 
         rerender(tree, renderJSX(onSelectionChange, [
@@ -2004,25 +1994,25 @@ describe('Table', function () {
       expect(rows[2]).toHaveAttribute('aria-rowindex', '3');
 
       let button = tree.getByLabelText('Add item');
-      act(() => triggerPress(button));
+      triggerPress(button);
 
       let dialog = tree.getByRole('dialog');
       expect(dialog).toBeVisible();
 
       let firstName = tree.getByLabelText('First Name');
       typeText(firstName, 'Devon');
-      act(() => userEvent.tab());
+      userEvent.tab();
 
       let lastName = tree.getByLabelText('Last Name');
       typeText(lastName, 'Govett');
-      act(() => userEvent.tab());
+      userEvent.tab();
 
       let birthday = tree.getByLabelText('Birthday');
       typeText(birthday, 'Feb 3');
-      act(() => userEvent.tab());
+      userEvent.tab();
 
       let createButton = tree.getByText('Create');
-      act(() => triggerPress(createButton));
+      triggerPress(createButton);
       act(() => {jest.runAllTimers();});
 
       expect(dialog).not.toBeInTheDocument();
@@ -2050,7 +2040,7 @@ describe('Table', function () {
       expect(rows).toHaveLength(3);
 
       let button = within(rows[2]).getByRole('button');
-      act(() => triggerPress(button));
+      triggerPress(button);
 
       let menu = tree.getByRole('menu');
       expect(document.activeElement).toBe(menu);
@@ -2058,13 +2048,13 @@ describe('Table', function () {
       let menuItems = within(menu).getAllByRole('menuitem');
       expect(menuItems.length).toBe(2);
 
-      act(() => triggerPress(menuItems[1]));
+      triggerPress(menuItems[1]);
       expect(menu).not.toBeInTheDocument();
 
       let dialog = tree.getByRole('alertdialog', {hidden: true});
       let deleteButton = within(dialog).getByRole('button', {hidden: true});
 
-      act(() => triggerPress(deleteButton));
+      triggerPress(deleteButton);
       expect(dialog).not.toBeInTheDocument();
 
       act(() => jest.runAllTimers());
@@ -2091,7 +2081,7 @@ describe('Table', function () {
       expect(rows[2]).toHaveAttribute('aria-rowindex', '3');
 
       let button = within(rows[1]).getByRole('button');
-      act(() => triggerPress(button));
+      triggerPress(button);
 
       let menu = tree.getByRole('menu');
       expect(document.activeElement).toBe(menu);
@@ -2099,13 +2089,13 @@ describe('Table', function () {
       let menuItems = within(menu).getAllByRole('menuitem');
       expect(menuItems.length).toBe(2);
 
-      act(() => triggerPress(menuItems[1]));
+      triggerPress(menuItems[1]);
       expect(menu).not.toBeInTheDocument();
 
       let dialog = tree.getByRole('alertdialog', {hidden: true});
       let deleteButton = within(dialog).getByRole('button', {hidden: true});
 
-      act(() => triggerPress(deleteButton));
+      triggerPress(deleteButton);
       expect(dialog).not.toBeInTheDocument();
 
       act(() => jest.runAllTimers());
@@ -2128,16 +2118,16 @@ describe('Table', function () {
       expect(rows).toHaveLength(3);
 
       let checkbox = within(rows[0]).getByRole('checkbox');
-      act(() => userEvent.click(checkbox));
+      userEvent.click(checkbox);
       expect(checkbox.checked).toBe(true);
 
       let deleteButton = tree.getByLabelText('Delete selected items');
-      act(() => triggerPress(deleteButton));
+      triggerPress(deleteButton);
 
       let dialog = tree.getByRole('alertdialog');
       let confirmButton = within(dialog).getByRole('button');
 
-      act(() => triggerPress(confirmButton));
+      triggerPress(confirmButton);
       expect(dialog).not.toBeInTheDocument();
 
       act(() => jest.runAllTimers());
@@ -2156,7 +2146,7 @@ describe('Table', function () {
       expect(rows).toHaveLength(3);
 
       let button = within(rows[2]).getByRole('button');
-      act(() => triggerPress(button));
+      triggerPress(button);
 
       let menu = tree.getByRole('menu');
       expect(document.activeElement).toBe(menu);
@@ -2164,7 +2154,7 @@ describe('Table', function () {
       let menuItems = within(menu).getAllByRole('menuitem');
       expect(menuItems.length).toBe(2);
 
-      act(() => triggerPress(menuItems[0]));
+      triggerPress(menuItems[0]);
       expect(menu).not.toBeInTheDocument();
 
       let dialog = tree.getByRole('dialog', {hidden: true});
@@ -2174,7 +2164,7 @@ describe('Table', function () {
       typeText(firstName, 'Jessica');
 
       let saveButton = tree.getByText('Save');
-      act(() => triggerPress(saveButton));
+      triggerPress(saveButton);
 
       expect(dialog).not.toBeInTheDocument();
 
@@ -2195,7 +2185,7 @@ describe('Table', function () {
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
-      act(() => {fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});});
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
 
       expect(() => {
         tree.getByRole('menu');
@@ -2203,7 +2193,7 @@ describe('Table', function () {
 
       expect(document.activeElement).toBe(within(rows[2]).getByRole('button'));
 
-      act(() => {fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});});
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
 
       expect(() => {
         tree.getByRole('menu');
@@ -2211,7 +2201,7 @@ describe('Table', function () {
 
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
-      act(() => {fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});});
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
 
       let menu = tree.getByRole('menu');
       expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[0]);
@@ -2227,7 +2217,7 @@ describe('Table', function () {
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
-      act(() => {fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});});
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeInTheDocument();
@@ -2244,7 +2234,7 @@ describe('Table', function () {
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
-      act(() => {fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', altKey: true});});
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', altKey: true});
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeInTheDocument();
@@ -2261,7 +2251,7 @@ describe('Table', function () {
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
-      act(() => {fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});});
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeInTheDocument();
@@ -2552,7 +2542,7 @@ describe('Table', function () {
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
 
-      act(() => triggerPress(columnheaders[0]));
+      triggerPress(columnheaders[0]);
 
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenCalledWith({column: 'foo', direction: 'ascending'});
@@ -2584,7 +2574,7 @@ describe('Table', function () {
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
 
-      act(() => triggerPress(columnheaders[0]));
+      triggerPress(columnheaders[0]);
 
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenCalledWith({column: 'foo', direction: 'descending'});
@@ -2616,7 +2606,7 @@ describe('Table', function () {
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
 
-      act(() => triggerPress(columnheaders[0]));
+      triggerPress(columnheaders[0]);
 
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenCalledWith({column: 'foo', direction: 'ascending'});
@@ -2648,7 +2638,7 @@ describe('Table', function () {
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
 
-      act(() => triggerPress(columnheaders[1]));
+      triggerPress(columnheaders[1]);
 
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenCalledWith({column: 'bar', direction: 'ascending'});
@@ -3081,7 +3071,7 @@ describe('Table', function () {
         expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
       }
 
-      act(() => {userEvent.click(checkbox);});
+      userEvent.click(checkbox);
       expect(checkbox.checked).toBe(false);
 
       act(() => jest.runAllTimers());
@@ -3105,7 +3095,7 @@ describe('Table', function () {
       let checkbox = tree.getByLabelText('Net Budget');
       expect(checkbox.checked).toBe(true);
 
-      act(() => {userEvent.click(checkbox);});
+      userEvent.click(checkbox);
       expect(checkbox.checked).toBe(false);
 
       act(() => jest.runAllTimers());
@@ -3114,7 +3104,7 @@ describe('Table', function () {
       let columns = within(table).getAllByRole('columnheader');
       expect(columns).toHaveLength(5);
 
-      act(() => {userEvent.click(checkbox);});
+      userEvent.click(checkbox);
       expect(checkbox.checked).toBe(true);
 
       act(() => jest.runAllTimers());
@@ -3132,5 +3122,112 @@ describe('Table', function () {
         expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
       }
     });
+  });
+
+  describe('headerless columns', function () {
+
+    let renderTable = (props, scale, showDivider = false) => render(
+      <Table aria-label="Table" data-testid="test" {...props}>
+        <TableHeader>
+          <Column key="foo">Foo</Column>
+          <Column key="addAction" hideHeader showDivider={showDivider}>
+            Add Item
+          </Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>Foo 1</Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Add />
+              </ActionButton>
+            </Cell>
+          </Row>
+        </TableBody>
+      </Table>
+      , scale);
+
+    it('renders  table with headerless column with default scale', function () {
+      let {getByRole} = renderTable();
+      let grid = getByRole('grid');
+      expect(grid).toBeVisible();
+      expect(grid).toHaveAttribute('aria-label', 'Table');
+      expect(grid).toHaveAttribute('data-testid', 'test');
+
+      expect(grid).toHaveAttribute('aria-rowcount', '2');
+      expect(grid).toHaveAttribute('aria-colcount', '2');
+      let rowgroups = within(grid).getAllByRole('rowgroup');
+      expect(rowgroups).toHaveLength(2);
+
+      let headerRows = within(rowgroups[0]).getAllByRole('row');
+      expect(headerRows).toHaveLength(1);
+      expect(headerRows[0]).toHaveAttribute('aria-rowindex', '1');
+
+      let headers = within(grid).getAllByRole('columnheader');
+      expect(headers).toHaveLength(2);
+      let className = headers[1].className;
+      expect(className.includes('spectrum-Table-cell--hideHeader')).toBeTruthy();
+      expect(headers[0]).toHaveTextContent('Foo');
+      // visually hidden syle
+      expect(headers[1].childNodes[0].style.clipPath).toBe('inset(50%)');
+      expect(headers[1].childNodes[0].style.width).toBe('1px');
+      expect(headers[1].childNodes[0].style.height).toBe('1px');
+      expect(headers[1]).not.toBeEmptyDOMElement();
+
+
+      let rows = within(rowgroups[1]).getAllByRole('row');
+      expect(rows).toHaveLength(1);
+      // The width of headerless column
+      expect(rows[0].childNodes[1].style.width).toBe('36px');
+      let rowheader = within(rows[0]).getByRole('rowheader');
+      expect(rowheader).toHaveTextContent('Foo 1');
+      let actionCell = within(rows[0]).getAllByRole('gridcell');
+      expect(actionCell).toHaveLength(1);
+      let buttons = within(actionCell[0]).getAllByRole('button');
+      expect(buttons).toHaveLength(1);
+      className = actionCell[0].className;
+      expect(className.includes('spectrum-Table-cell--hideHeader')).toBeTruthy();
+    });
+
+    it('renders table with headerless column with large scale', function () {
+      let {getByRole} = renderTable({}, 'large');
+      let grid = getByRole('grid');
+      expect(grid).toBeVisible();
+      expect(grid).toHaveAttribute('aria-label', 'Table');
+      expect(grid).toHaveAttribute('data-testid', 'test');
+      let rowgroups = within(grid).getAllByRole('rowgroup');
+      let rows = within(rowgroups[1]).getAllByRole('row');
+      expect(rows).toHaveLength(1);
+      // The width of headerless column
+      expect(rows[0].childNodes[1].style.width).toBe('44px');
+    });
+
+    it('renders table with headerless column and divider', function () {
+      let {getByRole} = renderTable({}, undefined, true);
+      let grid = getByRole('grid');
+      expect(grid).toBeVisible();
+      let rowgroups = within(grid).getAllByRole('rowgroup');
+      expect(rowgroups).toHaveLength(2);
+      let rows = within(rowgroups[1]).getAllByRole('row');
+      expect(rows).toHaveLength(1);
+      // The width of headerless column with divider
+      expect(rows[0].childNodes[1].style.width).toBe('37px');
+    });
+
+    it('renders table with headerless column with tooltip', function () {
+      let {getByRole} = renderTable({}, 'large');
+      let grid = getByRole('grid');
+      expect(grid).toBeVisible();
+      expect(grid).toHaveAttribute('aria-label', 'Table');
+      expect(grid).toHaveAttribute('data-testid', 'test');
+      let headers = within(grid).getAllByRole('columnheader');
+      let headerlessColumn = headers[1];
+      act(() => {
+        headerlessColumn.focus();
+      });
+      let tooltip = getByRole('tooltip');
+      expect(tooltip).toBeVisible();
+    });
+
   });
 });

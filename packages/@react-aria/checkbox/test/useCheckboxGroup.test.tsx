@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render} from '@testing-library/react';
 import {AriaCheckboxGroupProps, AriaCheckboxProps} from '@react-types/checkbox';
 import {CheckboxGroupState, useCheckboxGroupState} from '@react-stately/checkbox';
 import React, {useRef} from 'react';
+import {render} from '@testing-library/react';
 import {useCheckboxGroup, useCheckboxGroupItem} from '../';
 import userEvent from '@testing-library/user-event';
 
@@ -68,7 +68,7 @@ describe('useCheckboxGroup', () => {
     expect(checkboxes[2].checked).toBe(false);
 
     let dragons = getByLabelText('Dragons');
-    act(() => {userEvent.click(dragons);});
+    userEvent.click(dragons);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(['dragons']);
 
@@ -251,7 +251,7 @@ describe('useCheckboxGroup', () => {
     let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];
     let dragons = getByLabelText('Dragons');
 
-    act(() => {userEvent.click(dragons);});
+    userEvent.click(dragons);
 
     expect(groupOnChangeSpy).toHaveBeenCalledTimes(0);
     expect(checkboxOnChangeSpy).toHaveBeenCalledTimes(0);

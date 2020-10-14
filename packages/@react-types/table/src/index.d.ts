@@ -51,7 +51,8 @@ export interface SpectrumColumnProps<T> extends ColumnProps<T> {
   allowsSorting?: boolean,
   isSticky?: boolean, // shouldStick??
   isRowHeader?: boolean,
-  showDivider?: boolean
+  showDivider?: boolean,
+  hideHeader?: boolean
 }
 
 export interface TableBodyProps<T> extends AsyncLoadable {

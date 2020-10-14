@@ -110,7 +110,7 @@ describe('Tray', function () {
     // The iOS Safari workaround blurs and refocuses the dialog after 0.5s
     expect(onClose).toHaveBeenCalledTimes(1);
 
-    dialog.blur();
+    act(() => {dialog.blur();});
     // (The iOS Safari workaround) + (the actual onClose) = 2
     expect(onClose).toHaveBeenCalledTimes(2);
   });

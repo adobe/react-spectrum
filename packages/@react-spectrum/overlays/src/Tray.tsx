@@ -76,7 +76,7 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
   // is up, so use the VisualViewport API to ensure the tray is displayed above the keyboard.
   let viewport = useViewportSize();
   let [height, setHeight] = useState(viewport.height);
-  let timeoutRef = useRef<NodeJS.Timeout>();
+  let timeoutRef = useRef<any>();
 
   useEffect(() => {
     clearTimeout(timeoutRef.current);

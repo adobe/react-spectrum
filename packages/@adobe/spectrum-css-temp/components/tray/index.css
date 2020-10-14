@@ -54,6 +54,8 @@
   position: absolute;
   bottom: 0;
   outline: none;
+  display: flex;
+  flex-direction: column;
   padding-bottom: env(safe-area-inset-bottom);
 
   border-radius: var(--spectrum-tray-full-width-border-radius) var(--spectrum-tray-full-width-border-radius) var(--spectrum-tray-border-radius) var(--spectrum-tray-border-radius);

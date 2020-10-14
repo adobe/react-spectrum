@@ -14,12 +14,12 @@ import {RefObject, useCallback} from 'react';
 import {ReusableView, Size} from '@react-stately/virtualizer';
 import {useLayoutEffect} from '@react-aria/utils';
 
-interface VirtualizerItemOptions<T extends object, V, W> {
+interface VirtualizerItemOptions<T extends object, V> {
   reusableView: ReusableView<T, V>,
   ref: RefObject<HTMLElement>
 }
 
-export function useVirtualizerItem<T extends object, V, W>(options: VirtualizerItemOptions<T, V, W>) {
+export function useVirtualizerItem<T extends object, V>(options: VirtualizerItemOptions<T, V>) {
   let {reusableView: {layoutInfo, virtualizer}, ref} = options;
 
   let updateSize = useCallback(() => {

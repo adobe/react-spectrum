@@ -10,13 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {PressProps} from './usePress';
-import React, {MutableRefObject} from 'react';
-
-interface IPressResponderContext extends PressProps {
-  register(): void,
-  ref?: MutableRefObject<HTMLElement>
+.no-results {
+  display: block;
+  padding-top: var(--spectrum-selectlist-option-padding-y);
+  padding-inline-start: var(--spectrum-selectlist-option-padding);
+  font-size: var(--spectrum-selectlist-option-text-size);
+  font-weight: var(--spectrum-selectlist-option-text-font-weight);
+  font-style: italic;
 }
-
-export const PressResponderContext = React.createContext<IPressResponderContext>(null);
-PressResponderContext.displayName = 'PressResponderContext';
