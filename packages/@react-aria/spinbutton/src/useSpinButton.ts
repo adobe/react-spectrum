@@ -132,7 +132,11 @@ export function useSpinButton(
       onIncrement();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
-        () => onIncrementPressStart(60),
+        () => {
+          if (isNaN(maxValue) || value < maxValue) {
+            onIncrementPressStart(60);
+          }
+        },
         initialStepDelay
       );
     },
@@ -144,7 +148,11 @@ export function useSpinButton(
       onDecrement();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
-        () => onDecrementPressStart(60),
+        () => {
+          if (isNaN(minValue) || value > minValue) {
+            onDecrementPressStart(60);
+          }
+        },
         initialStepDelay
       );
     },

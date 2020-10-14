@@ -506,6 +506,51 @@ describe('NumberField', function () {
     fireEvent.mouseUp(decrementButton);
   });
 
+  it('advances automatically to the limit and not beyond', () => {
+    let {textField, incrementButton, decrementButton} = renderNumberField({showStepper: true, defaultValue: 10, minValue: 0, maxValue: 20, onChange: onChangeSpy});
+
+    act(() => {textField.focus();});
+    fireEvent.mouseDown(incrementButton);
+    // to get to 20, it'll take 11 (0ms), 12 (400ms), 13 (60ms) ... 20 (540ms) 22 (660ms)
+    // we should never get to 21 or 22 though, but lets advance the time there to make sure
+    act(() => {jest.advanceTimersByTime(400 + (10 * 60));});
+    expect(onChangeSpy).toHaveBeenCalledTimes(10);
+    expect(onChangeSpy).toHaveBeenLastCalledWith(20);
+    fireEvent.mouseUp(incrementButton);
+
+    onChangeSpy.mockReset();
+
+    fireEvent.mouseDown(decrementButton);
+    act(() => {jest.advanceTimersByTime(400 + (20 * 60));});
+    expect(onChangeSpy).toHaveBeenCalledTimes(20);
+    expect(onChangeSpy).toHaveBeenLastCalledWith(0);
+    fireEvent.mouseUp(decrementButton);
+  });
+
+  it('advances increment starting from undefined', () => {
+    let {textField, incrementButton} = renderNumberField({showStepper: true, onChange: onChangeSpy});
+
+    act(() => {textField.focus();});
+    fireEvent.mouseDown(incrementButton);
+    // it should start at 0
+    act(() => {jest.advanceTimersByTime(400 + 60);});
+    expect(onChangeSpy).toHaveBeenCalledTimes(3);
+    expect(onChangeSpy).toHaveBeenLastCalledWith(3);
+    fireEvent.mouseUp(incrementButton);
+  });
+
+  it('advances decrement starting from undefined', () => {
+    let {textField, decrementButton} = renderNumberField({showStepper: true, onChange: onChangeSpy});
+
+    act(() => {textField.focus();});
+    fireEvent.mouseDown(decrementButton);
+    // it should start at 0
+    act(() => {jest.advanceTimersByTime(400 + 60);});
+    expect(onChangeSpy).toHaveBeenCalledTimes(3);
+    expect(onChangeSpy).toHaveBeenLastCalledWith(-3);
+    fireEvent.mouseUp(decrementButton);
+  });
+
   it.each`
     Name
     ${'v3 NumberField'}

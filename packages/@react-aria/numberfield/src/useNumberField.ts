@@ -12,7 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {clearAnnouncer} from '@react-aria/live-announcer';
-import {HTMLAttributes, LabelHTMLAttributes, RefObject, useEffect} from 'react';
+import {HTMLAttributes, LabelHTMLAttributes, RefObject, useEffect, useState} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
@@ -71,7 +71,9 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     }
   });
 
+  let [isFocusWithin, setFocusWithin] = useState(false);
   let {focusWithinProps} = useFocusWithin({
+    onFocusWithinChange: setFocusWithin,
     onBlurWithin: () => {
       clearAnnouncer('assertive');
     }
@@ -97,6 +99,17 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       textValue
     }
   );
+
+  useEffect(() => {
+    // if the focus is within the numberfield and it's not the input, then it's on one of the buttons
+    // if the value is at the boundary min/max, then move the focus back to the input because the button
+    // they are on has become disabled
+    if (isFocusWithin && ref.current && document.activeElement !== ref.current) {
+      if (value <= minValue || value >= maxValue) {
+        ref.current.focus();
+      }
+    }
+  }, [isFocusWithin, ref, value, minValue, maxValue]);
 
   incrementAriaLabel = incrementAriaLabel || formatMessage('Increment');
   decrementAriaLabel = decrementAriaLabel || formatMessage('Decrement');
