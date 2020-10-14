@@ -108,81 +108,81 @@ storiesOf('TooltipTrigger', module)
         <Flex gap="size-200" direction="column" alignItems="start">
           <span>Left Top</span>
           <TooltipTrigger delay={0} placement="left top" crossOffset={10}>
-            <ActionButton>Tooltip Trigger</ActionButton>
+            <ActionButton>Tooltip Trigger 10</ActionButton>
             <Tooltip>Tooltip message.</Tooltip>
           </TooltipTrigger>
           <TooltipTrigger delay={0} placement="left top">
-            <ActionButton>Tooltip Trigger</ActionButton>
+            <ActionButton>Tooltip Trigger 0</ActionButton>
             <Tooltip>Tooltip message.</Tooltip>
           </TooltipTrigger>
           <TooltipTrigger delay={0} placement="left top" crossOffset={-10}>
-            <ActionButton>Tooltip Trigger</ActionButton>
+            <ActionButton>Tooltip Trigger -10</ActionButton>
             <Tooltip>Tooltip message.</Tooltip>
           </TooltipTrigger>
           <TooltipTrigger delay={0} placement="left top" crossOffset={10}>
-            <ActionButton>Tooltip</ActionButton>
+            <ActionButton>Tooltip 10</ActionButton>
             <Tooltip>Tooltip message.</Tooltip>
           </TooltipTrigger>
           <TooltipTrigger delay={0} placement="left top">
-            <ActionButton>Tooltip</ActionButton>
+            <ActionButton>Tooltip 0</ActionButton>
             <Tooltip>Tooltip message.</Tooltip>
           </TooltipTrigger>
           <TooltipTrigger delay={0} placement="left top" crossOffset={-10}>
-            <ActionButton>Tooltip</ActionButton>
+            <ActionButton>Tooltip -10</ActionButton>
             <Tooltip>Tooltip message.</Tooltip>
           </TooltipTrigger>
         </Flex>
         <Flex gap="size-200" direction="column" alignItems="start">
           <span>Left</span>
           <TooltipTrigger delay={0} placement="left" crossOffset={10}>
-            <ActionButton>Tooltip Trigger</ActionButton>
+            <ActionButton>Tooltip Trigger 10</ActionButton>
             <Tooltip>Tooltip message.</Tooltip>
           </TooltipTrigger>
           <TooltipTrigger delay={0} placement="left">
-            <ActionButton>Tooltip Trigger</ActionButton>
+            <ActionButton>Tooltip Trigger 0 </ActionButton>
             <Tooltip>Tooltip message.</Tooltip>
           </TooltipTrigger>
           <TooltipTrigger delay={0} placement="left" crossOffset={-10}>
-            <ActionButton>Tooltip Trigger</ActionButton>
+            <ActionButton>Tooltip Trigger -10</ActionButton>
             <Tooltip>Tooltip message.</Tooltip>
           </TooltipTrigger>
           <TooltipTrigger delay={0} placement="left" crossOffset={10}>
-            <ActionButton>Tooltip</ActionButton>
+            <ActionButton>Tooltip 10</ActionButton>
             <Tooltip>Tooltip message.</Tooltip>
           </TooltipTrigger>
           <TooltipTrigger delay={0} placement="left">
-            <ActionButton>Tooltip</ActionButton>
+            <ActionButton>Tooltip 0</ActionButton>
             <Tooltip>Tooltip message.</Tooltip>
           </TooltipTrigger>
           <TooltipTrigger delay={0} placement="left" crossOffset={-10}>
-            <ActionButton>Tooltip</ActionButton>
+            <ActionButton>Tooltip -10</ActionButton>
             <Tooltip>Tooltip message.</Tooltip>
           </TooltipTrigger>
         </Flex>
         <Flex gap="size-200" direction="column" alignItems="start">
           <span>Left Bottom</span>
           <TooltipTrigger delay={0} placement="left bottom" crossOffset={10}>
-            <ActionButton>Tooltip Trigger</ActionButton>
+            <ActionButton>Tooltip Trigger 10</ActionButton>
             <Tooltip>Tooltip message.</Tooltip>
           </TooltipTrigger>
           <TooltipTrigger delay={0} placement="left bottom">
-            <ActionButton>Tooltip Trigger</ActionButton>
+            <ActionButton>Tooltip Trigger 0</ActionButton>
             <Tooltip>Tooltip message.</Tooltip>
           </TooltipTrigger>
           <TooltipTrigger delay={0} placement="left bottom" crossOffset={-10}>
-            <ActionButton>Tooltip Trigger</ActionButton>
+            <ActionButton>Tooltip Trigger -10</ActionButton>
             <Tooltip>Tooltip message.</Tooltip>
           </TooltipTrigger>
           <TooltipTrigger delay={0} placement="left bottom" crossOffset={10}>
-            <ActionButton>Tooltip</ActionButton>
+            <ActionButton>Tooltip 10</ActionButton>
             <Tooltip>Tooltip message.</Tooltip>
           </TooltipTrigger>
           <TooltipTrigger delay={0} placement="left bottom">
-            <ActionButton>Tooltip</ActionButton>
+            <ActionButton>Tooltip 0</ActionButton>
             <Tooltip>Tooltip message.</Tooltip>
           </TooltipTrigger>
           <TooltipTrigger delay={0} placement="left bottom" crossOffset={-10}>
-            <ActionButton>Tooltip</ActionButton>
+            <ActionButton>Tooltip -10</ActionButton>
             <Tooltip>Tooltip message.</Tooltip>
           </TooltipTrigger>
         </Flex>

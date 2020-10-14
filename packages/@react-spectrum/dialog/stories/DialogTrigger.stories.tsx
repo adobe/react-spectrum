@@ -313,21 +313,21 @@ storiesOf('DialogTrigger', module)
       <Flex gap="size-200" alignSelf="center">
         <Flex gap="size-200" direction="column" alignItems="start">
           <span>Left Top</span>
-          {renderPopover({type: 'popover', placement: 'left top', crossOffset: -50}, false)}
-          {renderPopover({type: 'popover', placement: 'left top'}, false)}
-          {renderPopover({type: 'popover', placement: 'left top', crossOffset: 50}, false)}
+          <div><span>-50</span>{renderPopover({type: 'popover', placement: 'left top', crossOffset: -50}, false)}</div>
+          <div><span>0</span>{renderPopover({type: 'popover', placement: 'left top'}, false)}</div>
+          <div><span>50</span>{renderPopover({type: 'popover', placement: 'left top', crossOffset: 50}, false)}</div>
         </Flex>
         <Flex gap="size-200" direction="column" alignItems="start">
           <span>Left</span>
-          {renderPopover({type: 'popover', placement: 'left', crossOffset: -50}, false)}
-          {renderPopover({type: 'popover', placement: 'left'}, false)}
-          {renderPopover({type: 'popover', placement: 'left', crossOffset: 50}, false)}
+          <div><span>-50</span>{renderPopover({type: 'popover', placement: 'left', crossOffset: -50}, false)}</div>
+          <div><span>0</span>{renderPopover({type: 'popover', placement: 'left'}, false)}</div>
+          <div><span>50</span>{renderPopover({type: 'popover', placement: 'left', crossOffset: 50}, false)}</div>
         </Flex>
         <Flex gap="size-200" direction="column" alignItems="start">
           <span>Left Bottom</span>
-          {renderPopover({type: 'popover', placement: 'left bottom', crossOffset: -50}, false)}
-          {renderPopover({type: 'popover', placement: 'left bottom'}, false)}
-          {renderPopover({type: 'popover', placement: 'left bottom', crossOffset: 50}, false)}
+          <div><span>-50</span>{renderPopover({type: 'popover', placement: 'left bottom', crossOffset: -50}, false)}</div>
+          <div><span>0</span>{renderPopover({type: 'popover', placement: 'left bottom'}, false)}</div>
+          <div><span>50</span>{renderPopover({type: 'popover', placement: 'left bottom', crossOffset: 50}, false)}</div>
         </Flex>
       </Flex>
     )
