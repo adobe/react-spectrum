@@ -28,7 +28,7 @@ storiesOf('ColorWheel', module)
   )
   .add(
     'step',
-    () => <ColorWheel step={110} defaultValue={new Color('hsl(0, 100%, 50%)')} />
+    () => <ColorWheel step={6} defaultValue={new Color('hsl(0, 100%, 50%)')} />
   )
   .add(
     'custom size',
