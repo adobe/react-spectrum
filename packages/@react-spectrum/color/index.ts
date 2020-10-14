@@ -10,5 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Color';
-export * from './useColorWheelState';
+export * from './src';

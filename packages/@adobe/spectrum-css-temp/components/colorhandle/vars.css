@@ -10,5 +10,5 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Color';
-export * from './useColorWheelState';
+@import './index.css';
+@import './skin.css';

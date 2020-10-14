@@ -10,5 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Color';
-export * from './useColorWheelState';
+/// <reference types="css-module-types" />
+
+export * from './ColorWheel';

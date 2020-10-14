@@ -10,17 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-/** A list of supported color formats. */
-type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hsb' | 'hsba';
-
-/** A list of color channels. */
-type ColorChannel = 'hue' | 'saturation' | 'brightness' | 'lightness' | 'red' | 'green' | 'blue' | 'alpha';
+import {clamp} from '@react-aria/utils';
+import {ColorChannel, ColorFormat} from '@react-types/color';
 
 export class Color {
   private value: ColorValue;
 
   constructor(value: string) {
-    let parsed: ColorValue | void = RGBColor.parse(value);
+    let parsed: ColorValue | void = RGBColor.parse(value) || HSBColor.parse(value) || HSLColor.parse(value);
     if (parsed) {
       this.value = parsed;
     } else {
@@ -52,8 +49,10 @@ export class Color {
     }
   }
 
-  toString(format: ColorFormat) {
+  toString(format: ColorFormat | 'css') {
     switch (format) {
+      case 'css':
+        return this.value.toString('css');
       case 'hex':
       case 'hexa':
       case 'rgb':
@@ -77,16 +76,33 @@ export class Color {
 
     throw new Error('Unsupported color channel: ' + channel);
   }
+
+  withChannelValue(channel: ColorChannel, value: number): Color {
+    if (channel in this.value) {
+      let x = Color.fromColorValue(this.value.clone());
+      x.value[channel] = value;
+      return x;
+    }
+
+    throw new Error('Unsupported color channel: ' + channel);
+  }
 }
 
 interface ColorValue {
   toRGB(): ColorValue,
   toHSB(): ColorValue,
   toHSL(): ColorValue,
-  toString(format: ColorFormat): string
+  toString(format: ColorFormat | 'css'): string,
+  clone(): ColorValue
 }
 
 const HEX_REGEX = /^#(?:([0-9a-f]{3})|([0-9a-f]{6}))$/i;
+
+// X = <negative/positive number with/without decimal places>
+// before/after a comma, 0 or more whitespaces are allowed
+// - rgb(X, X, X)
+// - rgba(X, X, X, X)
+const RGB_REGEX = /rgb\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?)\)|rgba\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d(.\d+)?)\)/;
 
 class RGBColor implements ColorValue {
   constructor(private red: number, private green: number, private blue: number, private alpha: number) {}
@@ -105,23 +121,26 @@ class RGBColor implements ColorValue {
         let b = parseInt(m[2][4] + m[2][5], 16);
         return new RGBColor(r, g, b, 1);
       }
-    } else {
-      // TODO: check rgb and rgba strings
+    } if ((m = value.match(RGB_REGEX))) {
+      const [r, g, b, a] = (m[1] ?? m[2]).split(',').map(n => Number(n.trim()));
+      return new RGBColor(clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255), clamp(a ?? 1, 0, 1));
     }
   }
 
-  toString(format: ColorFormat) {
+  toString(format: ColorFormat | 'css') {
     switch (format) {
       case 'hex':
         return '#' + (1 << 24 | this.red << 16 | this.green << 8 | this.blue).toString(16).slice(1).toUpperCase();
       case 'rgb':
         return `rgb(${this.red}, ${this.green}, ${this.blue})`;
+      case 'css':
       case 'rgba':
         return `rgba(${this.red}, ${this.green}, ${this.blue}, ${this.alpha})`;
       default:
         throw new Error('Unsupported color format: ' + format);
     }
   }
+
 
   toRGB(): ColorValue {
     return this;
@@ -134,6 +153,10 @@ class RGBColor implements ColorValue {
   toHSL(): ColorValue {
     throw new Error('Not implemented');
   }
+
+  clone(): ColorValue {
+    return new RGBColor(this.red, this.green, this.blue, this.alpha);
+  }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -145,8 +168,10 @@ class HSBColor implements ColorValue {
     // TODO
   }
 
-  toString(format: ColorFormat) {
+  toString(format: ColorFormat | 'css') {
     switch (format) {
+      case 'css':
+        return this.toHSL().toString('css');
       case 'hsb':
         return `hsb(${this.hue}, ${this.saturation}%, ${this.brightness}%)`;
       case 'hsba':
@@ -167,6 +192,20 @@ class HSBColor implements ColorValue {
   toHSL(): ColorValue {
     throw new Error('Not implemented');
   }
+
+  clone(): ColorValue {
+    return new HSBColor(this.hue, this.saturation, this.brightness, this.alpha);
+  }
+}
+
+// X = <negative/positive number with/without decimal places>
+// before/after a comma, 0 or more whitespaces are allowed
+// - hsl(X, X%, X%)
+// - hsla(X, X%, X%, X)
+const HSL_REGEX = /hsl\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%)\)|hsla\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d(.\d+)?)\)/;
+
+function mod(n, m) {
+  return ((n % m) + m) % m;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -175,13 +214,18 @@ class HSLColor implements ColorValue {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   static parse(value: string): HSLColor | void {
-    // TODO
+    let m: RegExpMatchArray | void;
+    if ((m = value.match(HSL_REGEX))) {
+      const [h, s, l, a] = (m[1] ?? m[2]).split(',').map(n => Number(n.trim().replace('%', '')));
+      return new HSLColor(mod(h, 360), clamp(s, 0, 100), clamp(l, 0, 100), clamp(a ?? 1, 0, 1));
+    }
   }
 
-  toString(format: ColorFormat) {
+  toString(format: ColorFormat | 'css') {
     switch (format) {
       case 'hsl':
         return `hsl(${this.hue}, ${this.saturation}%, ${this.lightness}%)`;
+      case 'css':
       case 'hsla':
         return `hsla(${this.hue}, ${this.saturation}%, ${this.lightness}%, ${this.alpha})`;
       default:
@@ -199,5 +243,9 @@ class HSLColor implements ColorValue {
 
   toHSL(): ColorValue {
     return this;
+  }
+
+  clone(): ColorValue {
+    return new HSLColor(this.hue, this.saturation, this.lightness, this.alpha);
   }
 }
