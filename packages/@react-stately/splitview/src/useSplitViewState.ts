@@ -17,7 +17,7 @@ import {useRef, useState} from 'react';
 const COLLAPSE_THRESHOLD = 50;
 
 export function useSplitViewState(props: SplitViewStatelyProps): SplitViewState {
-  let {
+  const {
     defaultPrimarySize = 304,
     primarySize,
     allowsCollapsing = false,
@@ -25,21 +25,27 @@ export function useSplitViewState(props: SplitViewStatelyProps): SplitViewState 
     onResizeEnd
   } = props;
 
-  let [minPos, setMinPos] = useState(0);
-  let [maxPos, setMaxPos] = useState(0);
-  let [dragging, setDragging] = useState(false);
-  let realTimeDragging = useRef(false);
-  let [hovered, setHovered] = useState(false);
-  let [offset, setOffset] = useControlledState(primarySize, defaultPrimarySize, () => {});
-  let prevOffset = useRef(offset);
+  const [minPos, setMinPos] = useState(0);
+  const [maxPos, setMaxPos] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const realTimeDragging = useRef(false);
+  const [hovered, setHovered] = useState(false);
+  const [offset, setOffset] = useControlledState(primarySize, defaultPrimarySize, () => {});
+  const realTimeOffset = useRef<number>(null);
+  realTimeOffset.current = offset;
+  const prevOffset = useRef(offset);
+
+  const hasChangedSinceDragStart = useRef<boolean>(null);
 
   let callOnResize = (value) => {
     if (onResize && value !== offset) {
+      hasChangedSinceDragStart.current = true;
       onResize(value);
     }
   };
+
   let callOnResizeEnd = (value) => {
-    if (onResizeEnd) {
+    if (hasChangedSinceDragStart.current && onResizeEnd) {
       onResizeEnd(value);
     }
   };
@@ -59,45 +65,50 @@ export function useSplitViewState(props: SplitViewStatelyProps): SplitViewState 
   let setOffsetValue = (value) => {
     let nextOffset = boundOffset(value);
     callOnResize(nextOffset);
-    if (!realTimeDragging.current) {
-      callOnResizeEnd(nextOffset);
-    }
     setOffset(nextOffset);
+    realTimeOffset.current = nextOffset;
   };
 
   let setDraggingValue = (value) => {
-    realTimeDragging.current = value;
-    setDragging(value);
+    if (realTimeDragging.current !== value) {
+      realTimeDragging.current = value;
+      setDragging(value);
+      if (!value) {
+        callOnResizeEnd(realTimeOffset.current);
+      } else {
+        hasChangedSinceDragStart.current = false;
+      }
+    }
   };
 
   let setHoverValue = (value) => {
     setHovered(value);
   };
 
-  let increment = () => setOffset(prevHandleOffset => {
-    let nextOffset = boundOffset(prevHandleOffset + 10);
+  let increment = () => {
+    let nextOffset = boundOffset(realTimeOffset.current + 10);
     if (nextOffset !== offset) {
       callOnResize(nextOffset);
-      callOnResizeEnd(nextOffset);
     }
-    return nextOffset;
-  });
+    realTimeOffset.current = nextOffset;
+    setOffset(nextOffset);
+  };
 
-  let decrement = () => setOffset(prevHandleOffset => {
-    let nextOffset = boundOffset(prevHandleOffset - 10);
+  let decrement = () => {
+    let nextOffset = boundOffset(realTimeOffset.current - 10);
     if (nextOffset !== offset) {
       callOnResize(nextOffset);
-      callOnResizeEnd(nextOffset);
     }
-    return nextOffset;
-  });
+    realTimeOffset.current = nextOffset;
+    setOffset(nextOffset);
+  };
 
   let decrementToMin = () => {
     let nextOffset = allowsCollapsing ? 0 : minPos;
     if (nextOffset !== offset) {
       callOnResize(nextOffset);
-      callOnResizeEnd(nextOffset);
       setOffset(nextOffset);
+      realTimeOffset.current = nextOffset;
     }
   };
 
@@ -105,8 +116,8 @@ export function useSplitViewState(props: SplitViewStatelyProps): SplitViewState 
     let nextOffset = maxPos;
     if (nextOffset !== offset) {
       callOnResize(nextOffset);
-      callOnResizeEnd(nextOffset);
       setOffset(nextOffset);
+      realTimeOffset.current = nextOffset;
     }
   };
 
@@ -120,7 +131,6 @@ export function useSplitViewState(props: SplitViewStatelyProps): SplitViewState 
     }
     let nextOffset = prevHandleOffset === 0 ? oldOffset || minPos : 0;
     callOnResize(nextOffset);
-    callOnResizeEnd(nextOffset);
     return nextOffset;
   });
 

@@ -1,0 +1,91 @@
+:root {
+  /* todo: fix this in DNA */
+  --spectrum-colorwheel-focus-ring-size: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-colorwheel-border-radius: 100%;
+  --spectrum-colorwheel-width: calc(var(--spectrum-global-dimension-size-125) * 16);
+  --spectrum-colorwheel-height: var(--spectrum-colorwheel-width);
+}
+
+%spectrum-ColorControl-handle--focused {
+  /* Bigger handle when focused */
+  width: calc(var(--spectrum-colorhandle-size) * 2);
+  height: calc(var(--spectrum-colorhandle-size) * 2);
+
+  margin-left: calc(-1 * var(--spectrum-colorhandle-size));
+  margin-top: calc(-1 * var(--spectrum-colorhandle-size));
+}
+
+/** index.css (scale dependent) */
+
+%spectrum-ColorControl-hiddenField {
+  opacity: 0.0001;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  margin: 0;
+  pointer-events: none;
+}
+
+.spectrum-ColorWheel {
+  position: relative;
+  display: block;
+  width: var(--spectrum-colorwheel-width);
+  height: var(--spectrum-colorwheel-height);
+
+  border-radius: var(--spectrum-colorwheel-border-radius);
+
+  user-select: none;
+  touch-action: none;
+  cursor: default;
+
+  &.is-focused {
+    z-index: 2;
+
+    .spectrum-ColorWheel-handle {
+      @extend %spectrum-ColorControl-handle--focused;
+    }
+  }
+
+  &.is-disabled {
+    pointer-events: none;
+  }
+
+  &.is-dragged {
+    /* Be on top when dragging so loupe can overlap */
+    z-index: 2;
+  }
+}
+
+.spectrum-ColorWheel-gradient {
+  position: relative;
+  z-index: 0;
+  width: var(--spectrum-colorwheel-width);
+  height: var(--spectrum-colorwheel-height);
+  border-radius: 100%;
+  box-sizing: border-box;
+
+  border-width: var(--spectrum-colorwheel-border-size);
+  border-style: solid;
+}
+
+.spectrum-ColorWheel-wheel {
+  position: relative;
+  z-index: 1;
+}
+
+.spectrum-ColorWheel-outerCircle,
+.spectrum-ColorWheel-innerCircle {
+  fill: transparent;
+
+  stroke-width: var(--spectrum-colorwheel-border-size);
+}
+
+.spectrum-ColorWheel-slider {
+  @extend %spectrum-ColorControl-hiddenField;
+}
+
+.spectrum-ColorWheel-handle {
+  left: 50%;
+  top: 50%;
+}

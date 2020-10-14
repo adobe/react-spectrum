@@ -13,6 +13,7 @@
 import {
   AriaLabelingProps,
   AriaValidationProps,
+  DimensionValue,
   FocusableDOMProps,
   FocusableProps,
   InputBase,
@@ -23,6 +24,9 @@ import {
   TextInputDOMProps,
   Validation
 } from '@react-types/shared';
+import {BaseSliderProps} from '@react-types/slider';
+import {Color} from '@react-stately/color';
+import {RefObject} from 'react';
 
 /** A list of supported color formats. */
 export type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hsb' | 'hsba';
@@ -31,22 +35,6 @@ export type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hs
 export type ColorChannel = 'hue' | 'saturation' | 'brightness' | 'lightness' | 'red' | 'green' | 'blue' | 'alpha';
 
 export type ColorInput = string | Color;
-
-export interface Color {
-  /** Converts the color to a string in the given format. */
-  toString(format: ColorFormat): string,
-
-  /** Converts the color to the given color format, and returns a new Color object. */
-  toFormat(format: ColorFormat): Color,
-
-  /** 
-   * Gets the numeric value for a given channel.
-   * Throws an error if the channel is unsupported in the current color format.
-   */
-  getChannelValue(channel: ColorChannel): number,
-
-  toHexInt(): number
-}
 
 export interface HexColorFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
   value?: ColorInput,
@@ -59,4 +47,33 @@ export interface AriaHexColorFieldProps extends HexColorFieldProps, AriaLabeling
 
 export interface SpectrumHexColorFieldProps extends AriaHexColorFieldProps, SpectrumLabelableProps, StyleProps {
   isQuiet?: boolean
+}
+
+export interface ColorWheelProps extends BaseSliderProps, Omit<StyleProps, 'width' | 'height'> {
+  step?: number,
+  // overriding these to allow passing string:
+  value?: string | Color,
+  defaultValue?: string | Color,
+  onChange?: (value: Color) => void
+}
+
+export interface ColorWheelAriaProps extends ColorWheelProps {
+  inputRef: RefObject<HTMLElement>,
+  containerRef: RefObject<HTMLElement>,
+  innerRadius: number,
+  outerRadius: number
+}
+
+export interface SpectrumColorWheelProps extends ColorWheelProps {
+  size?: DimensionValue
+}
+
+interface ColorSliderProps extends Omit<BaseSliderProps, 'minValue' | 'maxValue'>, LabelableProps, AriaLabelingProps {
+  channel: ColorChannel,
+  value?: string | Color,
+  defaultValue?: string | Color,
+  onChange?: (value: Color) => void,
+  /** Whether the value's label is displayed. True by default, false by default if not. */
+  showValueLabel?: boolean
+  // showTextField?: boolean, // do we want this? we didn't keep it for slider....
 }
