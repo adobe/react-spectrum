@@ -51,23 +51,11 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
   let [collapse, setCollapse] = useValueEffect(false);
   let [selectedTab, setSelectedTab] = useState<HTMLElement>();
 
-  let lastSelectedKey = useRef(state.selectedItem);
   useEffect(() => {
     // Ensure a tab is always selected (in case no selected key was specified or if selected item was deleted from collection)
     if (state.selectionManager.isEmpty || !state.collection.getItem(state.selectedKey)) {
-      // if there was a prior key specified, try to set the next key as the selected key
-      // fall back to the previous key if next key doesn't exist
-      if (state.selectedKey != null) {
-        let nextKey = lastSelectedKey.current.nextKey;
-        let replacementKey = nextKey != null && state.collection.getItem(nextKey) ? nextKey : lastSelectedKey.current.prevKey;
-        replacementKey = state.collection.getItem(replacementKey) ? replacementKey : state.collection.getLastKey();
-        state.selectionManager.replaceSelection(replacementKey);
-      } else {
-        state.selectionManager.replaceSelection(state.collection.getFirstKey());
-      }
+      state.selectionManager.replaceSelection(state.collection.getFirstKey());
     }
-
-    lastSelectedKey.current = state.selectedItem;
   }, [state]);
 
   useEffect(() => {
