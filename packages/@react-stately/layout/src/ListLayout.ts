@@ -15,7 +15,7 @@ import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-statel
 import {Key} from 'react';
 // import { DragTarget, DropTarget, DropPosition } from '@react-types/shared';
 
-type ListLayoutOptions<T> = {
+export type ListLayoutOptions<T> = {
   /** The height of a row in px. */
   rowHeight?: number,
   estimatedRowHeight?: number,

@@ -1,0 +1,11 @@
+.spectrum-ColorLoupe-outer {
+  fill: var(--spectrum-colorloupe-inner-border-color);
+  stroke: var(--spectrum-colorloupe-outer-border-color);
+}
+
+.spectrum-ColorLoupe-inner-background {
+  fill: var(--spectrum-global-color-static-white);
+}
+.spectrum-ColorLoupe-inner-checker {
+  fill: var(--spectrum-global-color-static-gray-500);
+}
