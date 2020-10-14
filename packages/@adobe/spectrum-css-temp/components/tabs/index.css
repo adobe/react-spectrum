@@ -19,6 +19,8 @@ governing permissions and limitations under the License.
 
 .spectrum-TabsPanel {
   display: flex;
+  /* This is so TabsPanel can collapse with wrapping block/flex containers out of the box. If end user wants to place element next to tabpanel,
+  they must include flex: 1 1 auto and min-width: 0 on the Tabs component. */
   width: 100%;
 }
 
@@ -45,12 +47,11 @@ governing permissions and limitations under the License.
 
   outline: none;
 
-  &.spectrum-Tabs-dropdown {
+  &.spectrum-Tabs--isCollapsed {
     inset-inline-start: 0;
-    width: 100%;
     height: var(--spectrum-tabs-item-height);
 
-    &.spectrum-Tabs-dropdown--compact {
+    &.spectrum-Tabs--compact {
       /* accomadation so focus ring top doesn't get cut off */
       height: calc(var(--spectrum-tabs-compact-item-height) - 3px);
       padding-top: 3px;
@@ -245,7 +246,7 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Tabs--collapsible {
+.spectrum-TabsPanel-collapseWrapper {
   display: flex;
   flex-grow: 1;
   flex-shrink: 0;
@@ -254,7 +255,7 @@ governing permissions and limitations under the License.
   position: relative;
 }
 
-.spectrum-Tabs-container {
+.spectrum-TabsPanel-tabs {
   flex-grow: 1;
   flex-shrink: 0;
   flex-basis: 0%;

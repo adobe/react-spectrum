@@ -137,7 +137,20 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
         styleProps.className
       )}>
       {orientation === 'vertical' && tablist}
-      {orientation !== 'vertical' && <CollapsibleTabList {...props} wrapperRef={wrapperRef} collapse={collapse} tabListProps={tabListProps} state={state} selectedTab={selectedTab} ref={ref} />}
+      {orientation !== 'vertical' &&
+        <CollapsibleTabList
+          {...props}
+          tabListclassName={classNames(
+            styles,
+            'spectrum-TabsPanel-tabs'
+          )}
+          wrapperRef={wrapperRef}
+          collapse={collapse}
+          tabListProps={tabListProps}
+          state={state}
+          selectedTab={selectedTab}
+          ref={ref} />
+      }
       <div {...tabPanelProps}>
         {state.selectedItem && state.selectedItem.props.children}
       </div>
@@ -247,7 +260,8 @@ function TabLine(props: TabLineProps) {
 interface CollapsibleTabListProps<T> extends TabListProps<T>, TabPickerProps<T> {
   tabListProps?: HTMLAttributes<HTMLElement>,
   wrapperRef: MutableRefObject<HTMLDivElement>,
-  collapse?: boolean
+  collapse?: boolean,
+  tabListclassName?: string
 }
 
 const CollapsibleTabList = React.forwardRef(function <T> (props: CollapsibleTabListProps<T>, ref: MutableRefObject<HTMLDivElement>) {
@@ -259,7 +273,8 @@ const CollapsibleTabList = React.forwardRef(function <T> (props: CollapsibleTabL
     state,
     selectedTab,
     wrapperRef,
-    collapse
+    collapse,
+    tabListclassName
   } = props;
 
   return (
@@ -267,9 +282,9 @@ const CollapsibleTabList = React.forwardRef(function <T> (props: CollapsibleTabL
       ref={wrapperRef}
       className={classNames(
         styles,
-        'spectrum-Tabs--collapsible'
+        'spectrum-TabsPanel-collapseWrapper'
       )}>
-      {collapse && <TabPicker {...props} />}
+      {collapse && <TabPicker {...props} className={tabListclassName} />}
       {!collapse && (
         <TabList
           {...tabListProps}
@@ -279,7 +294,8 @@ const CollapsibleTabList = React.forwardRef(function <T> (props: CollapsibleTabL
           state={state}
           selectedTab={selectedTab}
           ref={ref}
-          orientation="horizontal" />
+          orientation="horizontal"
+          className={tabListclassName} />
       )}
     </div>
   );
@@ -291,7 +307,8 @@ interface TabListProps<T> {
   isDisabled?: boolean,
   orientation?: Orientation,
   state: SingleSelectListState<T>,
-  selectedTab: HTMLElement
+  selectedTab: HTMLElement,
+  className?: string
 }
 
 const TabList = React.forwardRef(function <T> (props: TabListProps<T>, ref: MutableRefObject<HTMLDivElement>) {
@@ -302,6 +319,7 @@ const TabList = React.forwardRef(function <T> (props: TabListProps<T>, ref: Muta
     isDisabled,
     orientation,
     selectedTab,
+    className,
     ...otherProps
   } = props;
 
@@ -317,7 +335,7 @@ const TabList = React.forwardRef(function <T> (props: TabListProps<T>, ref: Muta
           'spectrum-Tabs--quiet': isQuiet,
           [`spectrum-Tabs--${density}`]: density
         },
-        'spectrum-Tabs-container'
+        className
       )}>
       {[...state.collection].map((item) => (
         <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
@@ -329,7 +347,8 @@ const TabList = React.forwardRef(function <T> (props: TabListProps<T>, ref: Muta
 
 interface TabPickerProps<T> extends SpectrumPickerProps<T> {
   density?: 'compact',
-  state: SingleSelectListState<T>
+  state: SingleSelectListState<T>,
+  className?: string
 }
 
 function TabPicker<T>(props: TabPickerProps<T>) {
@@ -339,7 +358,8 @@ function TabPicker<T>(props: TabPickerProps<T>) {
     state,
     'aria-labelledby': ariaLabeledBy,
     'aria-label': ariaLabel,
-    density
+    density,
+    className
   } = props;
 
   let ref = useRef();
@@ -368,11 +388,12 @@ function TabPicker<T>(props: TabPickerProps<T>) {
         styles,
         'spectrum-Tabs',
         'spectrum-Tabs--horizontal',
-        'spectrum-Tabs-dropdown',
+        'spectrum-Tabs--isCollapsed',
         {
           'spectrum-Tabs--quiet': isQuiet,
-          [`spectrum-Tabs-dropdown--${density}`]: density
-        }
+          [`spectrum-Tabs--${density}`]: density
+        },
+        className
       )}>
       <SlotProvider
         slots={{
