@@ -11,13 +11,9 @@
  */
 
 import {clamp} from '@react-aria/utils';
-import {
-  ColorChannel,
-  ColorFormat,
-  Color as ColorType
-} from '@react-types/color';
+import {ColorChannel, ColorFormat} from '@react-types/color';
 
-export class Color implements ColorType {
+export class Color {
   private value: ColorValue;
 
   constructor(value: string) {
