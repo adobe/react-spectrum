@@ -831,11 +831,13 @@ describe('TooltipTrigger', function () {
       );
       fireEvent.mouseMove(document.body);
       let button = getByLabelText('trigger');
+      expect(button).not.toHaveAttribute('aria-describedBy');
       fireEvent.mouseEnter(button);
       fireEvent.mouseMove(button);
       let tooltip = getByRole('tooltip');
       expect(button).toHaveAttribute('aria-describedBy', tooltip.id);
       fireEvent.mouseLeave(button);
+      expect(button).not.toHaveAttribute('aria-describedBy');
     });
   });
 });
