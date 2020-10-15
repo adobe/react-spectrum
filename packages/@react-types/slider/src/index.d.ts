@@ -2,6 +2,7 @@ import {AriaLabelingProps, AriaValidationProps, FocusableDOMProps, FocusableProp
 import {ReactNode} from 'react';
 
 export interface BaseSliderProps extends RangeInputBase<number>, LabelableProps, AriaLabelingProps {
+  orientation?: Orientation,
   isDisabled?: boolean,
   formatOptions?: Intl.NumberFormatOptions
 }
@@ -11,12 +12,12 @@ export interface SliderProps extends BaseSliderProps, ValueBase<number[]> {
 }
 
 export interface SliderThumbProps extends AriaLabelingProps, FocusableDOMProps, FocusableProps, Validation, AriaValidationProps, LabelableProps {
+  orientation?: Orientation,
   isDisabled?: boolean,
   index: number
 }
 
 export interface SpectrumBarSliderBase<T> extends BaseSliderProps, ValueBase<T>, StyleProps {
-  orientation?: Orientation,
   labelPosition?: LabelPosition,
   /** Whether the value's label is displayed. True by default if there's a `label`, false by default if not. */
   showValueLabel?: boolean,

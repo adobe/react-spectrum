@@ -1,0 +1,45 @@
+:root {
+  /* size is the same on desktop and mobile */
+  --spectrum-colorloupe-width-adjusted: calc(
+    var(--spectrum-colorloupe-width) +
+      var(--spectrum-colorhandle-inner-border-size) * 2
+  );
+  --spectrum-colorloupe-height-adjusted: calc(
+    var(--spectrum-colorloupe-height) +
+      var(--spectrum-colorhandle-inner-border-size) * 2
+  );
+
+  /* Distance between the loupe and the handle */
+  --spectrum-colorloupe-offset: var(
+    --spectrum-global-dimension-static-size-200
+  );
+
+  /* How much to animate up to the offset distance */
+  --spectrum-colorloupe-animation-distance: var(
+    --spectrum-global-dimension-static-size-100
+  );
+}
+
+.spectrum-ColorLoupe {
+  width: var(--spectrum-colorloupe-width-adjusted);
+  height: var(--spectrum-colorloupe-height-adjusted);
+
+  position: absolute;
+  transform: translate(0, var(--spectrum-colorloupe-animation-distance));
+  opacity: 0;
+  transform-origin: bottom center;
+  bottom: calc(50% + var(--spectrum-colorloupe-offset));
+  left: calc(50% - calc(var(--spectrum-colorloupe-width-adjusted) / 2));
+  transition: transform 100ms ease-in-out, opacity 125ms ease-in-out;
+
+  pointer-events: none;
+
+  &.is-open {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+}
+
+.spectrum-ColorLoupe-outer {
+  stroke-width: var(--spectrum-colorloupe-outer-border-size);
+}

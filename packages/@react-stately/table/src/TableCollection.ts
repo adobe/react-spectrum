@@ -43,8 +43,7 @@ export class TableCollection<T> implements ITableCollection<T> {
         rendered: null,
         childNodes: [],
         props: {
-          isSelectionCell: true,
-          width: 55 // TODO: spectrum??
+          isSelectionCell: true
         }
       };
 
