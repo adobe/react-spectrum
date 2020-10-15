@@ -44,12 +44,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     inputRef,
     layout,
     completionMode = 'suggest',
-    menuTrigger = 'input',
-    allowsCustomValue,
-    onCustomValue,
     isReadOnly,
     isDisabled,
-    shouldSelectOnBlur = true,
     menuId
   } = props;
 
@@ -60,11 +56,6 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     state,
     triggerRef
   );
-
-  let onChange = (val) => {
-    state.setInputValue(val);
-    state.selectionManager.setFocusedKey(null);
-  };
 
   // TODO: perhaps I should alter useMenuTrigger/useOverlayTrigger to accept a user specified menuId
   // Had to set the list id here instead of in useListBox or ListBoxBase so that it would be properly defined
@@ -88,8 +79,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let onKeyDown = (e) => {
     switch (e.key) {
       case 'Enter':
+      case 'Tab':
         state.commit();
-        state.close();
         break;
       case 'Escape':
         state.close();
@@ -139,7 +130,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
   let {labelProps, inputProps} = useTextField({
     ...props,
-    onChange,
+    onChange: state.setInputValue,
     onKeyDown: !isReadOnly && chain(state.isOpen && collectionProps.onKeyDownCapture, onKeyDown),
     onBlur,
     value: state.inputValue,
@@ -166,16 +157,6 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       }
     }
   };
-
-  let prevOpenState = useRef(state.isOpen);
-  useEffect(() => {
-    if (!state.isOpen && prevOpenState.current !== state.isOpen) {
-      // Clear focused key whenever combobox menu closes so opening the menu via pressing the open button doesn't autofocus the last focused key
-      state.selectionManager.setFocusedKey(null);
-    }
-
-    prevOpenState.current = state.isOpen;
-  }, [state.isOpen, inputRef, state.selectionManager]);
 
   let triggerLabelProps = useLabels({
     id: menuTriggerProps.id,

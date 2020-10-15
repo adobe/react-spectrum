@@ -30,7 +30,7 @@ import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
-import {useCollator} from '@react-aria/i18n';
+import {useFilter} from '@react-aria/i18n';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
@@ -56,8 +56,14 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     validationState,
   } = props;
 
-  let collator = useCollator({sensitivity: 'base'});
-  let state = useComboBoxState({...props, collator, allowsEmptyCollection: true});
+  let {contains} = useFilter({sensitivity: 'base'});
+  let state = useComboBoxState({
+    ...props,
+    defaultFilter: contains,
+    allowsEmptyCollection: true,
+    shouldCloseOnBlur: false,
+    allowsCustomValue: true // TODO: wrong
+  });
 
   ref = ref || useRef();
   let buttonRef = unwrapDOMRef(ref);
@@ -233,9 +239,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
       triggerRef: unwrapDOMRef(triggerRef),
       popoverRef: popoverRef,
       inputRef,
-      menuTrigger,
-      shouldCloseOnBlur: false,
-      allowsCustomValue: true // TODO: wrong
+      menuTrigger
     },
     state
   );
