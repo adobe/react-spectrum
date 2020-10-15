@@ -40,7 +40,7 @@ describe('NumberField', function () {
   });
 
   function renderNumberField(props = {}, locale = 'en-US') {
-    let {container, debug} = render(<Provider theme={theme} locale={locale}><NumberField aria-label="labelled" {...props} /></Provider>);
+    let {container, debug, rerender} = render(<Provider theme={theme} locale={locale}><NumberField aria-label="labelled" {...props} /></Provider>);
 
     container = within(container).queryByRole('group');
     let textField = container.firstChild;
@@ -54,7 +54,8 @@ describe('NumberField', function () {
       buttons,
       incrementButton,
       decrementButton,
-      debug
+      debug,
+      rerender: (props = {}, locale) => rerender(<Provider theme={theme} locale={locale}><NumberField aria-label="labelled" {...props} /></Provider>)
     };
   }
 
@@ -365,6 +366,17 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
+  `('$Name properly formats value when formatter changes', () => {
+    let {textField, rerender} = renderNumberField({defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
+
+    expect(textField).toHaveAttribute('value', '€10.00');
+    rerender({defaultValue: 10, formatOptions: {style: 'currency', currency: 'USD'}});
+    expect(textField).toHaveAttribute('value', '$10.00');
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
   `('$Name keeps formatting on focus', () => {
     let {textField} = renderNumberField({showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
@@ -632,6 +644,22 @@ describe('NumberField', function () {
   `('$Name 0 is rendered', ({props}) => {
     let {textField} = renderNumberField(props);
     expect(textField).toHaveAttribute('value', '0');
+  });
+
+  it.each`
+    Name                          | props
+    ${'NumberField controlled'}   | ${{value: 10, onChange: onChangeSpy}}
+  `('$Name 10 is rendered and will not change the value in the input for steppers', ({props}) => {
+    let {textField, incrementButton, decrementButton} = renderNumberField(props);
+    expect(textField).toHaveAttribute('value', '10');
+    triggerPress(incrementButton);
+    expect(textField).toHaveAttribute('value', '10');
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(11);
+    triggerPress(decrementButton);
+    expect(textField).toHaveAttribute('value', '10');
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    expect(onChangeSpy).toHaveBeenCalledWith(9);
   });
 
   it.each`
