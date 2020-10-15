@@ -12,7 +12,7 @@
 
 import {clamp} from '@react-aria/utils';
 import {NumberFieldProps} from '@react-types/numberfield';
-import {useCallback, useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
 import {useNumberFormatter, useNumberParser} from '@react-aria/i18n';
 
@@ -67,6 +67,10 @@ export function useNumberFieldState(
   let initialInputValue = isNaN(numberValue) ? '' : inputValueFormatter.format(numberValue);
   let [inputValue, setInputValue] = useState(initialInputValue);
 
+  useEffect(() => {
+    setInputValue(isNaN(numberValue) ? '' : inputValueFormatter.format(numberValue));
+  }, [inputValueFormatter, setInputValue]);
+
   let textValue = inputValueFormatter.format(numberValue);
 
   let increment = () => {
@@ -86,7 +90,9 @@ export function useNumberFieldState(
         maxValue
       );
 
-      setInputValue(inputValueFormatter.format(newValue));
+      if (isNaN(value)) {
+        setInputValue(inputValueFormatter.format(newValue));
+      }
       return newValue;
     });
   };
@@ -94,9 +100,11 @@ export function useNumberFieldState(
   let incrementToMax = useCallback(() => {
     if (maxValue != null) {
       setNumberValue(maxValue);
-      setInputValue(inputValueFormatter.format(maxValue));
+      if (isNaN(value)) {
+        setInputValue(inputValueFormatter.format(maxValue));
+      }
     }
-  }, [inputValueFormatter, maxValue, setNumberValue]);
+  }, [inputValueFormatter, maxValue, setNumberValue, value]);
 
   let decrement = () => {
     setNumberValue((previousValue) => {
@@ -114,7 +122,9 @@ export function useNumberFieldState(
         maxValue
       );
 
-      setInputValue(inputValueFormatter.format(newValue));
+      if (isNaN(value)) {
+        setInputValue(inputValueFormatter.format(newValue));
+      }
       return newValue;
     });
   };
@@ -122,9 +132,11 @@ export function useNumberFieldState(
   let decrementToMin = useCallback(() => {
     if (minValue != null) {
       setNumberValue(minValue);
-      setInputValue(inputValueFormatter.format(minValue));
+      if (isNaN(value)) {
+        setInputValue(inputValueFormatter.format(minValue));
+      }
     }
-  }, [inputValueFormatter, minValue, setNumberValue]);
+  }, [inputValueFormatter, minValue, setNumberValue, value]);
 
   // if too slow, use string diffing, but i doubt these will be strings THAT large
   // should i check more than just the first character matches?
