@@ -19,8 +19,7 @@ import {
 import {
   HTMLAttributes,
   LabelHTMLAttributes,
-  RefObject,
-  useEffect
+  RefObject
 } from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
 import {useSpinButton} from '@react-aria/spinbutton';
@@ -70,37 +69,16 @@ export function useHexColorField(
     }
   );
 
-  // Taken from https://github.com/adobe/react-spectrum/pull/1029/
-  useEffect(() => {
-    let currentRef = ref.current;
-    let handleInputScrollWheel = e => {
-      // If the input isn't supposed to receive input, do nothing.
-      // TODO: add focus
-      if (isDisabled || isReadOnly || !currentRef) {
-        return;
-      }
-
-      e.preventDefault();
-      if (e.deltaY < 0) {
-        increment();
-      } else {
-        decrement();
-      }
-    };
-
-    if (!currentRef) { return; }
-    currentRef.addEventListener(
-      'wheel',
-      handleInputScrollWheel,
-      {passive: false}
-    );
-    return () => {
-      currentRef.removeEventListener(
-        'wheel',
-        handleInputScrollWheel
-      );
-    };
-  }, [inputId, isReadOnly, isDisabled, decrement, increment, ref]);
+  let onWheel = (e) => {
+    if (isDisabled || isReadOnly) {
+      return;
+    }
+    if (e.deltaY < 0) {
+      increment();
+    } else {
+      decrement();
+    }
+  };
 
   let {labelProps, inputProps} = useTextField(
     mergeProps(props, {
@@ -113,6 +91,6 @@ export function useHexColorField(
 
   return {
     labelProps,
-    inputFieldProps: mergeProps(inputProps, spinButtonProps, {onBlur: commitInputValue})
+    inputFieldProps: mergeProps(inputProps, spinButtonProps, {onBlur: commitInputValue, onWheel})
   };
 }

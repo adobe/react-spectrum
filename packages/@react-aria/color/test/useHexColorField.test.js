@@ -69,6 +69,7 @@ describe('useHexColorField', function () {
     expect(typeof inputFieldProps.onBlur).toBe('function');
     expect(typeof inputFieldProps.onFocus).toBe('function');
     expect(typeof inputFieldProps.onKeyDown).toBe('function');
+    expect(typeof inputFieldProps.onWheel).toBe('function');
   });
 
   it('should return prop for invalid', function () {

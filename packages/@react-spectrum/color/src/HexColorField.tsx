@@ -44,5 +44,5 @@ function HexColorField(props: SpectrumHexColorFieldProps, ref: RefObject<TextFie
   );
 }
 
-let _HexColorField = React.forwardRef(HexColorField);
+const _HexColorField = React.forwardRef(HexColorField);
 export {_HexColorField as HexColorField};
