@@ -47,12 +47,16 @@ export function useNumberFieldState(
   let symbols = useMemo(() => {
     // Get the minus sign of the current locale to filter the input value
     // Automatically updates the minus sign when numberFormatter changes
-    // won't work for currency accounting, what to do. for now set it to be undefined
-    let minusSign = inputValueFormatter.formatToParts(-11).find(p => p.type === 'minusSign')?.value;
-    let decimal = inputValueFormatter.formatToParts(1.1).find(p => p.type === 'decimal').value;
-    return {minusSign, decimal};
+    // won't work for currency accounting, but we have validCharacters for that in the pattern
+    let allParts = inputValueFormatter.formatToParts(-1000.1);
+    let minusSign = allParts.find(p => p.type === 'minusSign')?.value;
+    let decimal = allParts.find(p => p.type === 'decimal')?.value;
+    // this is a string ready for any regex so we can identify allowed characters
+    let validCharacters = allParts.reduce((chars, p) => p.type === 'fraction' || p.type === 'integer' ? chars : chars + '\\' + p.value, '');
+    let literals = allParts.reduce((chars, p) => p.type === 'decimal' || p.type === 'fraction' || p.type === 'integer' || p.type === 'minusSign' ? chars : chars + '\\' + p.value, '');
+    return {minusSign, decimal, validCharacters, literals};
   }, [inputValueFormatter]);
-  let {minusSign, decimal} = symbols;
+  let {minusSign, decimal, validCharacters, literals} = symbols;
 
   // javascript doesn't recognize NaN === NaN, so multiple onChanges will get fired if we don't ignore consecutive ones
   let lastValDispatched = useRef(NaN);
@@ -183,10 +187,10 @@ export function useNumberFieldState(
     return numberParser.parse(result);
   };
 
-  let replaceAllButFirstOccurrenceOfMinus = (val: string) => {
-    let first = val.indexOf(minusSign);
+  let replaceAllButFirstOccurrence = (val: string, char: string) => {
+    let first = val.indexOf(char);
     let prefix = val.substring(0, first + 1);
-    let suffix = val.substring(first + 1).replace(minusSign, '');
+    let suffix = val.substring(first + 1).replace(char, '');
     return prefix + suffix;
   };
 
@@ -198,10 +202,12 @@ export function useNumberFieldState(
     }
     let numeralSystem = determineNumeralSystem(value);
 
-    let strippedValue = value.replace(new RegExp(`[^${minusSign}${numberingSystems[numeralSystem].join('')}${decimal}]`, 'g'), '');
-    strippedValue = replaceAllButFirstOccurrenceOfMinus(strippedValue);
+    let strippedValue = value.replace(new RegExp(`[^${numberingSystems[numeralSystem].join('')}${validCharacters}]`, 'g'), '');
+    strippedValue = replaceAllButFirstOccurrence(strippedValue, minusSign);
+    strippedValue = replaceAllButFirstOccurrence(strippedValue, decimal);
 
-    let newValue = numberParser.parse(strippedValue);
+    // to parse the number, we need to remove anything that isn't actually part of the number, for example we want -10.40 not -10.40 USD
+    let newValue = numberParser.parse(strippedValue.replace(new RegExp(`[${literals}]`, 'g'), ''));
 
     // If new value is a number less than max and more than min then update the number value
     if (!isNaN(newValue) && newValue < maxValue && newValue > minValue) {
@@ -212,18 +218,7 @@ export function useNumberFieldState(
       tempNum.current = newValue;
     }
 
-    // Update the input value if value:
-    // 1) is a number or
-    // 2) is a minus sign or
-    // 3) is empty
-    if (!isNaN(newValue) || value === minusSign  || value.length === 0) {
-      setInputValue(value);
-    } else if (value.includes(minusSign)) {
-      // as you delete, once the last number is deleted, everything should go away, except the minus sign
-      setInputValue(minusSign);
-    } else {
-      setInputValue('');
-    }
+    setInputValue(strippedValue);
   };
 
   // Mostly used in onBlur event to set the input value to
@@ -242,7 +237,7 @@ export function useNumberFieldState(
     } else {
       clampedValue = clamp(numberValue, minValue, maxValue);
     }
-    let newValue = inputValueFormatter.format(clampedValue);
+    let newValue = isNaN(clampedValue) ? '' : inputValueFormatter.format(clampedValue);
     setNumberValue(clampedValue);
     setInputValue(newValue);
   };

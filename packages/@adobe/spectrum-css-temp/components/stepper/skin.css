@@ -10,8 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* this file is terrible, all it does is make overrides to the textfield */
-/* classes were inverted in the input section from how they used to be written because I don't have good access to putting focus classes on the input */
+/*
+classes were inverted in the input section from how they used to be written because I don't have good access to putting focus classes on the input
+if the stepper buttons aren't being shown, none of this is needed
+I've divided up the file into css for the steppers vs css for the input to make that easier to follow
+*/
 
 .spectrum-Stepper {
   .spectrum-Stepper-stepUp,
@@ -259,7 +262,7 @@ governing permissions and limitations under the License.
 
 
 
-.spectrum-Stepper {
+.spectrum-Stepper.spectrum-Stepper--showStepper {
   border-inline-start-width: 1px !important;
   &:focus-ring {
     box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
@@ -295,7 +298,7 @@ governing permissions and limitations under the License.
 }
 
 
-.spectrum-Stepper--quiet {
+.spectrum-Stepper--quiet.spectrum-Stepper--showStepper {
   &:focus {
     box-shadow: none;
     .spectrum-Stepper-input {

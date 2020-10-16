@@ -55,11 +55,6 @@ governing permissions and limitations under the License.
   border-width: var(--spectrum-stepper-border-size-default);
   border-inline-start-width: var(--spectrum-stepper-border-size-reset);
   border-radius: var(--spectrum-border-radius) 0 0 var(--spectrum-border-radius);
-
-  .spectrum-Icon {
-    margin: 0 !important;
-    opacity: 1;
-  }
 }
 
 .spectrum-Stepper-stepUp {
@@ -80,16 +75,9 @@ governing permissions and limitations under the License.
   &:focus {
     border-block-start: none;
   }
-
-  .spectrum-Icon {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 3px;
-  }
 }
 
-.spectrum-Stepper-input {
+.spectrum-Stepper--showStepper .spectrum-Stepper-input {
   position: relative;
 
   flex: 1 1 auto;

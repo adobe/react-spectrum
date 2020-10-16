@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {Label} from '@react-spectrum/label';
@@ -63,6 +63,8 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
     incrementButtonProps,
     decrementButtonProps
   } = useNumberField(props, state, inputRef);
+  let isMobile = useMediaQuery('(max-width: 700px)');
+  let showStepperButtons = showStepper && !isMobile;
 
   let className = classNames(
     inputgroupStyles,
@@ -77,7 +79,8 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
       'spectrum-Stepper',
       {
         'spectrum-Stepper--quiet': isQuiet,
-        'is-invalid': props.validationState === 'invalid'
+        'is-invalid': props.validationState === 'invalid',
+        'spectrum-Stepper--showStepper': showStepperButtons
       },
       styleProps.className
     )
@@ -105,7 +108,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
           label={null}
           labelProps={labelProps}
           inputProps={inputFieldProps} />
-        {showStepper &&
+        {showStepperButtons &&
         <span
           className={classNames(stepperStyle, 'spectrum-Stepper-buttons')}
           role="presentation">

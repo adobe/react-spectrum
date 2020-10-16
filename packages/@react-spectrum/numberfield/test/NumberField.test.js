@@ -93,6 +93,46 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
+  `('$Name handles just typing a minus sign from empty', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy});
+
+    act(() => {textField.focus();});
+    typeText(textField, '-');
+    act(() => {textField.blur();});
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    expect(textField).toHaveAttribute('value', '');
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name handles starting a number with a decimal input change', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy});
+
+    act(() => {textField.focus();});
+    typeText(textField, '.5');
+    act(() => {textField.blur();});
+    expect(onChangeSpy).toHaveBeenCalledWith(0.5);
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('cannot type random letter after a number', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy});
+
+    act(() => {textField.focus();});
+    typeText(textField, '1acd');
+    expect(onChangeSpy).toHaveBeenCalledWith(1);
+    expect(textField).toHaveAttribute('value', '1');
+    act(() => {textField.blur();});
+    expect(onChangeSpy).toHaveBeenCalledWith(1);
+    expect(textField).toHaveAttribute('value', '1');
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
   `('$Name handles input change with custom step number', () => {
     let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, step: 5});
 
@@ -296,6 +336,22 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
+  `('$Name will parse numbers even if they have currency in them', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: -10, formatOptions: {style: 'currency', currency: 'USD'}});
+    act(() => {textField.focus();});
+    expect(textField).toHaveAttribute('value', '-$10.00');
+    userEvent.type(textField, '{backspace}');
+    typeText(textField, '2');
+    expect(textField).toHaveAttribute('value', '-$10.02');
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '-$10.02');
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(-10.02);
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
   `('$Name will not call onChange with NaN twice in a row', () => {
     let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, formatOptions: {style: 'currency', currency: 'EUR'}});
     act(() => {textField.focus();});
@@ -310,11 +366,12 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
-  `('$Name deletes everything in the input once there is no number', () => {
+  `('$Name if an invalid input is left, then revert to last good value', () => {
     let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, formatOptions: {style: 'currency', currency: 'EUR'}});
     act(() => {textField.focus();});
     typeText(textField, '-1');
     expect(onChangeSpy).toHaveBeenCalledWith(-1);
+    onChangeSpy.mockReset();
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '-€1.00');
     act(() => {textField.focus();});
@@ -323,9 +380,10 @@ describe('NumberField', function () {
     userEvent.type(textField, '{backspace}');
     userEvent.type(textField, '{backspace}');
     userEvent.type(textField, '{backspace}');
+    expect(textField).toHaveAttribute('value', '-');
     act(() => {textField.blur();});
-    expect(onChangeSpy).toHaveBeenLastCalledWith(NaN);
-    expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    expect(textField).toHaveAttribute('value', '-€1.00');
   });
 
   it.each`
@@ -390,6 +448,7 @@ describe('NumberField', function () {
     ${'US Euros'}     | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['€10.00', '€10.00']}
     ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['١٠٫٠٠ €', '١٠٫٠٠ €']}
     ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['10,00 €', '10,00 €']}
+    ${'US JPY'}       | ${{formatOptions: {style: 'currency', currency: 'JPY'}}} | ${'en-US'} | ${['¥10', '¥10']}
   `('$Name keeps formatted value on focus', ({props, locale, expected}) => {
     let {textField} = renderNumberField({showStepper: true, defaultValue: 10, ...props}, locale);
 

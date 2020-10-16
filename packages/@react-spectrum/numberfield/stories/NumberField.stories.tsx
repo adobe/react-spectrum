@@ -64,6 +64,14 @@ storiesOf('NumberField', module)
     () => render({autoFocus: true})
   )
   .add(
+    'showStepper = false',
+    () => render({showStepper: false})
+  )
+  .add(
+    'isQuiet, showStepper = false',
+    () => render({isQuiet: true, showStepper: false})
+  )
+  .add(
     'controlled',
     () => <NumberFieldControlled />
   )
