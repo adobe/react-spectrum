@@ -79,11 +79,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   let open = (focusStrategy?: FocusStratey) => {
     // Prevent open operations from triggering if there is nothing to display
     if (allowsEmptyCollection || filteredCollection.size > 0) {
-      // Reset focused key if focus strategy is not set
-      if (focusStrategy == null) {
-        selectionManager.setFocusedKey(null);
-      }
-
       triggerState.open(focusStrategy);
     }
   };
@@ -135,6 +130,13 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     }
   }, [selectedKey]);
 
+  useEffect(() => {
+    // Reset focused key when the menu closes
+    if (!triggerState.isOpen) {
+      selectionManager.setFocusedKey(null);
+    }
+  }, [triggerState.isOpen]);
+
   let commitCustomValue = () => {
     if (!allowsCustomValue) {
       resetInputValue();
@@ -149,8 +151,9 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       setSelectedKey(selectionManager.focusedKey);
     } else {
       commitCustomValue();
-      triggerState.close();
     }
+
+    triggerState.close();
   };
 
   let setFocused = (isFocused: boolean) => {

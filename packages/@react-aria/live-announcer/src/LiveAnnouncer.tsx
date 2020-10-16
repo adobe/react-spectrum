@@ -18,7 +18,7 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 let liveRegionAnnouncer = React.createRef();
 let node = null;
 let clearTimeoutId = null;
-const LIVEREGION_TIMEOUT_DELAY = 1000;
+const LIVEREGION_TIMEOUT_DELAY = 7000;
 
 /**
  * Announces the message using screen reader technology.

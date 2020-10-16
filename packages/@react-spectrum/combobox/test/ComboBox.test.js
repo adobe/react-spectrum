@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, render, within} from '@testing-library/react';
+import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
 import {ComboBox, Item, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
@@ -773,6 +775,30 @@ describe('ComboBox', function () {
       expect(items).toHaveLength(1);
       expect(combobox).not.toHaveAttribute('aria-activedescendant');
       expect(items[0].textContent).toBe('One');
+    });
+
+    it('closes menu when pressing Enter on an already selected item', function () {
+      let {getByRole} = renderComboBox({selectedKey: '2'});
+
+      let combobox = getByRole('combobox');
+      act(() => combobox.focus());
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeTruthy();
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+        jest.runAllTimers();
+      });
+
+      expect(() => getByRole('listbox')).toThrow();
+      expect(onSelectionChange).not.toHaveBeenCalled();
     });
   });
 
@@ -1753,7 +1779,7 @@ describe('ComboBox', function () {
       expect(onSelectionChange).toHaveBeenCalledWith(null);
     });
 
-    it('supports defaultSelectedKey and defaultValue (matching)', function () {
+    it('supports defaultSelectedKey and defaultInputValue (matching)', function () {
       let {getByRole} = renderComboBox({defaultSelectedKey: '2', defaultInputValue: 'Two'});
       let combobox = getByRole('combobox');
       let button = getByRole('button');
@@ -2529,6 +2555,148 @@ describe('ComboBox', function () {
       });
 
       expect(combobox).not.toHaveAttribute('aria-activedescendant');
+    });
+
+    describe('announcements', function () {
+      describe('keyboard navigating', function () {
+        it('should announce items when navigating with the arrow keys', function () {
+          let {getByRole} = renderComboBox();
+          let combobox = getByRole('combobox');
+
+          act(() => {
+            fireEvent.keyDown(combobox, {key: 'ArrowDown'});
+            fireEvent.keyUp(combobox, {key: 'ArrowDown'});
+            jest.runAllTimers();
+          });
+
+          expect(announce).toHaveBeenLastCalledWith('One');
+
+          act(() => {
+            fireEvent.keyDown(combobox, {key: 'ArrowDown'});
+            fireEvent.keyUp(combobox, {key: 'ArrowDown'});
+            jest.runAllTimers();
+          });
+
+          expect(announce).toHaveBeenLastCalledWith('Two');
+        });
+
+        it('should announce when navigating to the selected item', function () {
+          let {getByRole} = renderComboBox({selectedKey: '2'});
+          let combobox = getByRole('combobox');
+
+          act(() => {
+            fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+            fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+            jest.runAllTimers();
+          });
+
+          expect(announce).toHaveBeenLastCalledWith('Two, selected');
+        });
+
+        it('should announce when navigating into a section with multiple items', function () {
+          let {getByRole} = renderSectionComboBox();
+          let combobox = getByRole('combobox');
+
+          act(() => {
+            fireEvent.keyDown(combobox, {key: 'ArrowDown'});
+            fireEvent.keyUp(combobox, {key: 'ArrowDown'});
+            jest.runAllTimers();
+          });
+
+          expect(announce).toHaveBeenLastCalledWith('Entered group Section One, with 3 options. One');
+
+          act(() => {
+            fireEvent.keyDown(combobox, {key: 'ArrowDown'});
+            fireEvent.keyUp(combobox, {key: 'ArrowDown'});
+            jest.runAllTimers();
+          });
+
+          expect(announce).toHaveBeenLastCalledWith('Two');
+        });
+
+        it('should announce when navigating into a section with a single item', function () {
+          let {getByRole} = renderSectionComboBox({inputValue: 'Two'});
+          let combobox = getByRole('combobox');
+
+          act(() => {
+            fireEvent.keyDown(combobox, {key: 'ArrowDown'});
+            fireEvent.keyUp(combobox, {key: 'ArrowDown'});
+            jest.runAllTimers();
+          });
+
+          expect(announce).toHaveBeenLastCalledWith('Entered group Section One, with 1 option. Two');
+        });
+
+        it('should announce when navigating into a section with a selected item', function () {
+          let {getByRole} = renderSectionComboBox({selectedKey: '2'});
+          let combobox = getByRole('combobox');
+
+          act(() => {
+            fireEvent.keyDown(combobox, {key: 'ArrowDown'});
+            fireEvent.keyUp(combobox, {key: 'ArrowDown'});
+            jest.runAllTimers();
+          });
+
+          expect(announce).toHaveBeenLastCalledWith('Entered group Section One, with 1 option. Two, selected');
+        });
+      });
+
+      describe('filtering', function () {
+        it('should announce the number of options available when filtering', function () {
+          let {getByRole} = renderComboBox();
+          let combobox = getByRole('combobox');
+
+          typeText(combobox, 'o');
+          act(() => {
+            jest.runAllTimers();
+          });
+
+          expect(announce).toHaveBeenLastCalledWith('2 options available.');
+
+          typeText(combobox, 'n');
+          act(() => {
+            jest.runAllTimers();
+          });
+
+          expect(announce).toHaveBeenLastCalledWith('1 option available.');
+        });
+
+        it('should announce the number of options available when opening the menu', function () {
+          let {getByRole} = renderComboBox();
+          let button = getByRole('button');
+
+          act(() => {
+            triggerPress(button);
+            jest.runAllTimers();
+          });
+
+          expect(announce).toHaveBeenCalledWith('3 options available.');
+        });
+      });
+
+      describe('selection', function () {
+        it('should announce when a selection occurs', function () {
+          let {getByRole} = renderComboBox();
+          let combobox = getByRole('combobox');
+
+          act(() => {
+            combobox.focus();
+            fireEvent.keyDown(combobox, {key: 'ArrowDown'});
+            fireEvent.keyUp(combobox, {key: 'ArrowDown'});
+            jest.runAllTimers();
+          });
+
+          expect(announce).toHaveBeenLastCalledWith('One');
+
+          act(() => {
+            fireEvent.keyDown(combobox, {key: 'Enter'});
+            fireEvent.keyUp(combobox, {key: 'Enter'});
+            jest.runAllTimers();
+          });
+
+          expect(announce).toHaveBeenLastCalledWith('One, selected');
+        });
+      });
     });
   });
 });

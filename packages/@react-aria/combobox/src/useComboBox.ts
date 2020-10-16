@@ -16,8 +16,13 @@ import {ComboBoxProps} from '@react-types/combobox';
 import {ComboBoxState} from '@react-stately/combobox';
 import {getItemId, listIds} from '@react-aria/listbox';
 import {HTMLAttributes, InputHTMLAttributes, RefObject, useEffect, useRef} from 'react';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {ListLayout} from '@react-stately/layout';
+import {Collection, PressEvent, Node} from '@react-types/shared';
 import {useMenuTrigger} from '@react-aria/menu';
+import {announce} from '@react-aria/live-announcer';
+import {useMessageFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection} from '@react-aria/selection';
 import {useTextField} from '@react-aria/textfield';
@@ -49,6 +54,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     menuId
   } = props;
 
+  let formatMessage = useMessageFormatter(intlMessages);
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
       type: 'listbox'
@@ -76,7 +82,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   });
 
   // For textfield specific keydown operations
-  let onKeyDown = (e) => {
+  let onKeyDown = (e: React.KeyboardEvent) => {
     switch (e.key) {
       case 'Enter':
       case 'Tab':
@@ -98,14 +104,14 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
   };
 
-  let onBlur = (e) => {
+  let onBlur = (e: React.FocusEvent) => {
     // Early return in the following cases so we don't change textfield focus state, update the selected key erroneously,
     // and trigger close menu twice:
     // If focus is moved into the popover (e.g. when focus is moved to the Tray's input field, mobile case).
     // If the tray input is blurred and the relatedTarget is null (e.g. switching browser tabs or tapping on the tray empty space)
     // The second case results in a inaccurate isFocused state if tray input is blurred by closing the virtual keyboard but we want isFocused to be true so
     // useComboBoxState isOpen calculation doesn't think it should close
-    if (popoverRef.current?.contains(e.relatedTarget)) {
+    if (popoverRef.current?.contains(e.relatedTarget as HTMLElement)) {
       return;
     }
 
@@ -116,7 +122,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     state.setFocused(false);
   };
 
-  let onFocus = (e) => {
+  let onFocus = (e: React.FocusEvent) => {
     if (state.isFocused) {
       return;
     }
@@ -139,7 +145,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   }, inputRef);
 
   // Don't need to handle the state.close() when pressing the trigger button since useInteractOutside will call it for us
-  let onPress = (e) => {
+  let onPress = (e: PressEvent) => {
     if (e.pointerType === 'touch') {
       // Focus the input field in case it isn't focused yet
       inputRef.current.focus();
@@ -149,7 +155,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
   };
 
-  let onPressStart = (e) => {
+  let onPressStart = (e: PressEvent) => {
     if (e.pointerType !== 'touch') {
       inputRef.current.focus();
       if (!state.isOpen) {
@@ -171,7 +177,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   });
 
   // If click happens on direct center of combobox input, might be virtual click from iPad so open combobox menu
-  let onClick = (e) => {
+  let onClick = (e: React.MouseEvent) => {
     if (isDisabled || isReadOnly) {
       return;
     }
@@ -189,6 +195,60 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
   };
 
+  // VoiceOver has issues with announcing aria-activedescendant properly on change
+  // (especially on iOS). We use a live region announcer to announce focus changes
+  // manually. In addition, section titles are announced when navigating into a new section.
+  let sectionKey = focusedItem?.parentKey ?? null;
+  let itemKey = state.selectionManager.focusedKey ?? null;
+  let lastSection = useRef(sectionKey);
+  let lastItem = useRef(itemKey);
+  useEffect(() => {
+    if (focusedItem != null && itemKey !== lastItem.current) {
+      let isSelected = state.selectionManager.isSelected(itemKey);
+      let section = sectionKey != null ? state.collection.getItem(sectionKey) : null;
+      let sectionTitle = section?.['aria-label'] || (typeof section?.rendered === 'string' ? section.rendered : '') || '';
+
+      let announcement = formatMessage('focusAnnouncement', {
+        isGroupChange: section && sectionKey !== lastSection.current,
+        groupTitle: sectionTitle,
+        groupCount: section ? [...section.childNodes].length : 0,
+        optionText: focusedItem['aria-label'] || focusedItem.textValue || '',
+        isSelected
+      });
+
+      announce(announcement);
+    }
+
+    lastSection.current = sectionKey;
+    lastItem.current = itemKey;
+  }, [sectionKey, itemKey, focusedItem]);
+
+  // Announce the number of available suggestions when it changes
+  let optionCount = getOptionCount(state.collection);
+  let lastSize = useRef(optionCount);
+  let lastOpen = useRef(state.isOpen);
+  useEffect(() => {
+    if (state.isOpen && (state.isOpen !== lastOpen.current || optionCount !== lastSize.current)) {
+      let announcement = formatMessage('countAnnouncement', {optionCount});
+      announce(announcement);
+    }
+
+    lastSize.current = optionCount;
+    lastOpen.current = state.isOpen;
+  }, [state.isOpen, optionCount]);
+
+  // Announce when a selection occurs
+  let lastSelectedKey = useRef(state.selectedKey);
+  useEffect(() => {
+    if (state.isFocused && state.selectedItem && state.selectedKey !== lastSelectedKey.current) {
+      let optionText = state.selectedItem['aria-label'] || state.selectedItem.textValue || '';
+      let announcement = formatMessage('selectedAnnouncement', {optionText});
+      announce(announcement);
+    }
+
+    lastSelectedKey.current = state.selectedKey;
+  }, [state.selectedKey, state.selectedItem, state.isFocused]);
+
   return {
     labelProps,
     triggerProps: {
@@ -198,16 +258,27 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       onPress,
       onPressStart
     },
-    inputProps: {
-      // Only add the inputPressProps if mobile so that text highlighting via mouse click + drag works on desktop
-      // Substitute onClick for non-mobile cases so iPad voiceover virtual click on input opens the combobox menu
-      ...mergeProps(inputProps, {onClick}),
+    inputProps: mergeProps(inputProps, {
       role: 'combobox',
       'aria-expanded': menuTriggerProps['aria-expanded'],
       'aria-controls': state.isOpen ? menuId || menuProps.id : undefined,
       'aria-autocomplete': completionMode === 'suggest' ? 'list' : 'both',
-      'aria-activedescendant': focusedKeyId
-    },
+      'aria-activedescendant': focusedKeyId,
+      onClick
+    }),
     listBoxProps: mergeProps(menuProps, listBoxProps)
   };
+}
+
+function getOptionCount<T>(collection: Iterable<Node<T>>): number {
+  let count = 0;
+  for (let item of collection) {
+    if (item.type === 'section') {
+      count += getOptionCount(item.childNodes);
+    } else {
+      count++;
+    }
+  }
+
+  return count;
 }
