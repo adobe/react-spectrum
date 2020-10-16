@@ -148,7 +148,7 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
-  `('$Name clamps to closest min if smaller than the min', () => {
+  `('$Name will not allow typing of a number less than the min', () => {
     let {
       container,
       textField
@@ -157,12 +157,14 @@ describe('NumberField', function () {
     expect(container).not.toHaveAttribute('aria-invalid');
 
     act(() => {textField.focus();});
-    typeText(textField, '-1');
-    expect(onChangeSpy).not.toHaveBeenCalled();
-    act(() => {textField.blur();});
+    typeText(textField, '-');
+    expect(onChangeSpy).toHaveBeenCalledTimes(0);
+    expect(textField).toHaveAttribute('value', '');
+    typeText(textField, '1');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledWith(0);
-    expect(textField).toHaveAttribute('value', '0');
+    expect(onChangeSpy).toHaveBeenCalledWith(1);
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '1');
 
     expect(container).not.toHaveAttribute('aria-invalid');
   });
@@ -170,7 +172,7 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
-  `('$Name clamps to closest max if larger than the max', () => {
+  `('$Name will not allow typing of a number greater than the max', () => {
     let {
       container,
       textField
@@ -178,16 +180,20 @@ describe('NumberField', function () {
 
     expect(container).not.toHaveAttribute('aria-invalid');
 
-    // TODO: should the numberfield emit any onChange until blur or arrows?
     act(() => {textField.focus();});
     typeText(textField, '2');
     expect(onChangeSpy).not.toHaveBeenCalled();
     act(() => {textField.blur();});
-    expect(onChangeSpy).toHaveBeenCalledWith(1);
-    expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    expect(textField).toHaveAttribute('value', '1');
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    expect(textField).toHaveAttribute('value', '0');
 
     expect(container).not.toHaveAttribute('aria-invalid');
+
+    act(() => {textField.focus();});
+    typeText(textField, '1');
+    expect(onChangeSpy).toHaveBeenCalledWith(1);
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '1');
   });
 
   it.each`

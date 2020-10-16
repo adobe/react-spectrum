@@ -38,7 +38,7 @@ let numberingSystems = {
 export function useNumberFieldState(
   props: NumberFieldProps
 ): NumberFieldState {
-  let {minValue = -Infinity, maxValue = Infinity, step = 1, formatOptions, value, defaultValue, onChange} = props;
+  let {minValue = Number.MIN_SAFE_INTEGER, maxValue = Number.MAX_SAFE_INTEGER, step = 1, formatOptions, value, defaultValue, onChange} = props;
   let [currentNumeralSystem, setCurrentNumeralSystem] = useState('latin');
 
   let numberParser = useNumberParser();
@@ -50,12 +50,13 @@ export function useNumberFieldState(
     // won't work for currency accounting, but we have validCharacters for that in the pattern
     let allParts = inputValueFormatter.formatToParts(-1000.1);
     let minusSign = allParts.find(p => p.type === 'minusSign')?.value;
+    minusSign = minValue >= 0 || !minusSign ? '' : minusSign;
     let decimal = allParts.find(p => p.type === 'decimal')?.value;
-    // this is a string ready for any regex so we can identify allowed characters
-    let validCharacters = allParts.reduce((chars, p) => p.type === 'fraction' || p.type === 'integer' ? chars : chars + '\\' + p.value, '');
+    // this is a string ready for any regex so we can identify allowed characters, minus is excluded because of the way it can be handled
+    let validCharacters = allParts.reduce((chars, p) => p.type === 'fraction' || p.type === 'integer' || p.type === 'minusSign' ? chars : chars + '\\' + p.value, '');
     let literals = allParts.reduce((chars, p) => p.type === 'decimal' || p.type === 'fraction' || p.type === 'integer' || p.type === 'minusSign' ? chars : chars + '\\' + p.value, '');
     return {minusSign, decimal, validCharacters, literals};
-  }, [inputValueFormatter]);
+  }, [inputValueFormatter, minValue, maxValue]);
   let {minusSign, decimal, validCharacters, literals} = symbols;
 
   // javascript doesn't recognize NaN === NaN, so multiple onChanges will get fired if we don't ignore consecutive ones
@@ -77,7 +78,7 @@ export function useNumberFieldState(
 
   let textValue = inputValueFormatter.format(numberValue);
 
-  let increment = () => {
+  let increment = useCallback(() => {
     setNumberValue((previousValue) => {
       // TODO: should NaN default to zero for empty fields? what about min > 0?
       let prev = previousValue;
@@ -99,7 +100,7 @@ export function useNumberFieldState(
       }
       return newValue;
     });
-  };
+  }, [setNumberValue, setInputValue, tempNum, handleDecimalOperation, inputValueFormatter, value, minValue, maxValue, step]);
 
   let incrementToMax = useCallback(() => {
     if (maxValue != null) {
@@ -110,7 +111,7 @@ export function useNumberFieldState(
     }
   }, [inputValueFormatter, maxValue, setNumberValue, value]);
 
-  let decrement = () => {
+  let decrement = useCallback(() => {
     setNumberValue((previousValue) => {
       let prev = previousValue;
       if (isNaN(prev)) {
@@ -131,7 +132,7 @@ export function useNumberFieldState(
       }
       return newValue;
     });
-  };
+  }, [setNumberValue, setInputValue, tempNum, handleDecimalOperation, inputValueFormatter, value, minValue, maxValue, step]);
 
   let decrementToMin = useCallback(() => {
     if (minValue != null) {
@@ -202,20 +203,21 @@ export function useNumberFieldState(
     }
     let numeralSystem = determineNumeralSystem(value);
 
-    let strippedValue = value.replace(new RegExp(`[^${numberingSystems[numeralSystem].join('')}${validCharacters}]`, 'g'), '');
+    let strippedValue = value.replace(new RegExp(`[^${minusSign}${numberingSystems[numeralSystem].join('')}${validCharacters}]`, 'g'), '');
     strippedValue = replaceAllButFirstOccurrence(strippedValue, minusSign);
     strippedValue = replaceAllButFirstOccurrence(strippedValue, decimal);
 
     // to parse the number, we need to remove anything that isn't actually part of the number, for example we want -10.40 not -10.40 USD
     let newValue = numberParser.parse(strippedValue.replace(new RegExp(`[${literals}]`, 'g'), ''));
+    if (!isNaN(newValue) && (newValue > maxValue || newValue < minValue)) {
+      return;
+    }
 
     // If new value is a number less than max and more than min then update the number value
-    if (!isNaN(newValue) && newValue < maxValue && newValue > minValue) {
+    if (!isNaN(newValue) && newValue <= maxValue && newValue >= minValue) {
       let roundedValue = roundValueUsingFormatter(newValue);
       setNumberValue(roundedValue);
       tempNum.current = NaN;
-    } else if (!isNaN(newValue)) {
-      tempNum.current = newValue;
     }
 
     setInputValue(strippedValue);
