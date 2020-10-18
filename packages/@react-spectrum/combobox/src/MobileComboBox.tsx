@@ -279,7 +279,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   let listboxRef = useRef();
 
   return (
-    <div {...mergeProps(overlayProps, dialogProps)} ref={popoverRef} style={{display: 'flex', flexDirection: 'column'}}>
+    <div {...mergeProps(overlayProps, dialogProps)} ref={popoverRef} style={{display: 'flex', height: '100%', flexDirection: 'column'}}>
       <FocusScope restoreFocus>
         <DismissButton onDismiss={() => state.commit()} />
         <TextFieldBase
@@ -303,8 +303,6 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           layout={layout}
           state={state}
           width="100%"
-          // Set max height: inherit so Tray scrolling works
-          UNSAFE_style={{maxHeight: 'inherit'}}
           shouldUseVirtualFocus
           renderEmptyState={() => (
             <span className={classNames(comboboxStyles, 'no-results')}>
