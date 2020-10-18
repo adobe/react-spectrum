@@ -265,7 +265,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   let clearButton = (
     <PressResponder preventFocusOnPress>
       <ClearButton
-        aria-label="Clear"
+        aria-label={formatMessage('clear')}
         excludeFromTabOrder
         onPress={() => state.setInputValue('')}
         UNSAFE_className={

@@ -166,13 +166,13 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
   let triggerLabelProps = useLabels({
     id: menuTriggerProps.id,
-    'aria-label': 'Show suggestions',
+    'aria-label': formatMessage('buttonLabel'),
     'aria-labelledby': props['aria-labelledby'] || labelProps.id
   });
 
   let listBoxProps = useLabels({
     id: menuProps.id,
-    'aria-label': 'Suggestions',
+    'aria-label': formatMessage('listboxLabel'),
     'aria-labelledby': props['aria-labelledby'] || labelProps.id
   });
 
