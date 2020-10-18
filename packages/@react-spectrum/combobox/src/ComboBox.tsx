@@ -115,9 +115,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
         ref={popoverRef}
         placement={placement}
         hideArrow
-        shouldCloseOnBlur
-        onClose={state.close}>
-        <DismissButton onDismiss={() => state.close()} />
+        isNonModal>
         <ListBoxBase
           ref={listboxRef}
           domProps={listBoxProps}

@@ -93,7 +93,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           </span>
         </ComboBoxButton>
       </Field>
-      <Tray isOpen={state.isOpen} onClose={state.commit} isFixedHeight {...overlayProps}>
+      <Tray isOpen={state.isOpen} onClose={state.commit} isFixedHeight isNonModal {...overlayProps}>
         <ComboBoxTray
           {...props}
           overlayProps={overlayProps}

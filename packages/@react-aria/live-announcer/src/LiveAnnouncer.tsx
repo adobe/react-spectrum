@@ -16,7 +16,7 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 /* Inspired by https://github.com/AlmeroSteyn/react-aria-live */
 let liveRegionAnnouncer = React.createRef();
-let node = null;
+let node: HTMLElement = null;
 let clearTimeoutId = null;
 const LIVEREGION_TIMEOUT_DELAY = 7000;
 
@@ -51,7 +51,8 @@ export function destroyAnnouncer() {
 function ensureInstance(callback: (announcer:any) => void) {
   if (!liveRegionAnnouncer.current) {
     node = document.createElement('div');
-    document.body.appendChild(node);
+    node.dataset.liveAnnouncer = 'true';
+    document.body.prepend(node);
     ReactDOM.render(
       <LiveRegionAnnouncer ref={liveRegionAnnouncer} />,
       node,
@@ -129,6 +130,7 @@ function MessageAlternator({message = '', 'aria-live': ariaLive}) {
 function MessageBlock({message = '', 'aria-live': ariaLive}) {
   return (
     <VisuallyHidden
+      role="log"
       aria-live={ariaLive}
       aria-relevant="additions"
       aria-atomic="true">

@@ -280,7 +280,7 @@ describe('ComboBox', function () {
       it('has a controlled open state via isOpen', function () {
         let {getByRole} = renderComboBox({isOpen: true});
 
-        let combobox = getByRole('combobox', {hidden: true}); // TODO: fix once combobox isn't hidden
+        let combobox = getByRole('combobox');
         act(() => {
           combobox.focus();
           jest.runAllTimers();
@@ -309,7 +309,7 @@ describe('ComboBox', function () {
       it('has an uncontrolled open state via defaultOpen', function () {
         let {getByRole} = renderComboBox({defaultOpen: true});
 
-        let combobox = getByRole('combobox', {hidden: true}); // TODO: fix once combobox isn't hidden
+        let combobox = getByRole('combobox');
         act(() => {
           combobox.focus();
           jest.runAllTimers();
@@ -1452,7 +1452,7 @@ describe('ComboBox', function () {
     describe('controlled by both selectedKey and inputValue', function () {
       it('does not update state', function () {
         let {getByRole} = renderComboBox({selectedKey: '2', inputValue: 'T', isOpen: true});
-        let combobox = getByRole('combobox', {hidden: true});
+        let combobox = getByRole('combobox');
 
         expect(combobox.value).toBe('T');
         typeText(combobox, 'w');
@@ -1520,7 +1520,7 @@ describe('ComboBox', function () {
     describe('controlled by selectedKey', function () {
       it('updates inputValue state but not selectedKey', function () {
         let {getByRole} = renderComboBox({selectedKey: '2', isOpen: true});
-        let combobox = getByRole('combobox', {hidden: true});
+        let combobox = getByRole('combobox');
 
         expect(combobox.value).toBe('Two');
         expect(onInputChange).toHaveBeenLastCalledWith('Two');
@@ -1576,7 +1576,7 @@ describe('ComboBox', function () {
     describe('controlled by inputValue', function () {
       it('updates selectedKey but not not inputValue', function () {
         let {getByRole} = renderComboBox({defaultSelectedKey: '3', inputValue: 'T', isOpen: true});
-        let combobox = getByRole('combobox', {hidden: true});
+        let combobox = getByRole('combobox');
 
         expect(combobox.value).toBe('T');
 
@@ -1643,7 +1643,7 @@ describe('ComboBox', function () {
           jest.runAllTimers();
         });
 
-        let combobox = getByRole('combobox', {hidden: true});
+        let combobox = getByRole('combobox');
         expect(combobox.value).toBe('');
 
         let listbox = getByRole('listbox');
@@ -1950,7 +1950,7 @@ describe('ComboBox', function () {
       let groups = within(listbox).getAllByRole('group');
       expect(groups[0]).not.toHaveAttribute('aria-selected');
 
-      expect(() => within(listbox).getAllByRole('img', {hidden: true})).toThrow();
+      expect(() => within(listbox).getAllByRole('img')).toThrow();
     });
   });
 
@@ -2782,6 +2782,217 @@ describe('ComboBox', function () {
 
           expect(announce).toHaveBeenLastCalledWith('One, selected');
         });
+      });
+    });
+
+    describe('hiding surrounding content', function () {
+      it('should hide elements outside the combobox with aria-hidden', function () {
+        let {getByRole, getAllByRole} = render(
+          <>
+            <input type="checkbox" />
+            <ExampleComboBox />
+            <input type="checkbox" />
+          </>
+        );
+
+        let outside = getAllByRole('checkbox');
+        let combobox = getByRole('combobox');
+        let button = getByRole('button');
+
+        expect(outside).toHaveLength(2);
+
+        act(() => {
+          combobox.focus();
+          fireEvent.keyDown(combobox, {key: 'ArrowDown'});
+          fireEvent.keyUp(combobox, {key: 'ArrowDown'});
+          jest.runAllTimers();
+        });
+
+        let listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+        expect(button).toHaveAttribute('aria-hidden', 'true');
+        expect(outside[0]).toHaveAttribute('aria-hidden', 'true');
+        expect(outside[1]).toHaveAttribute('aria-hidden', 'true');
+
+        expect(() => getAllByRole('checkbox')).toThrow();
+        expect(getByRole('combobox')).toBeVisible();
+      });
+
+      it('should not traverse into a hidden container', function () {
+        let {getByRole, getAllByRole} = render(
+          <>
+            <div>
+              <input type="checkbox" />
+            </div>
+            <ExampleComboBox />
+            <input type="checkbox" />
+          </>
+        );
+
+        let outside = getAllByRole('checkbox');
+        let combobox = getByRole('combobox');
+        let button = getByRole('button');
+
+        expect(outside).toHaveLength(2);
+
+        act(() => {
+          combobox.focus();
+          fireEvent.keyDown(combobox, {key: 'ArrowDown'});
+          fireEvent.keyUp(combobox, {key: 'ArrowDown'});
+          jest.runAllTimers();
+        });
+
+        let listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+        expect(button).toHaveAttribute('aria-hidden', 'true');
+        expect(outside[0].parentElement).toHaveAttribute('aria-hidden', 'true');
+        expect(outside[0]).not.toHaveAttribute('aria-hidden', 'true');
+        expect(outside[1]).toHaveAttribute('aria-hidden', 'true');
+
+        expect(() => getAllByRole('checkbox')).toThrow();
+        expect(getByRole('combobox')).toBeVisible();
+      });
+
+      it('should not hide the live announcer element', function () {
+        let {getByRole} = render(<ExampleComboBox />);
+
+        // Use the real live announcer implementation just for this one test
+        let {announce: realAnnounce} = jest.requireActual('@react-aria/live-announcer');
+        announce.mockImplementationOnce(realAnnounce);
+
+        let combobox = getByRole('combobox');
+
+        act(() => {
+          combobox.focus();
+          fireEvent.keyDown(combobox, {key: 'ArrowDown'});
+          fireEvent.keyUp(combobox, {key: 'ArrowDown'});
+          jest.runAllTimers();
+        });
+
+        let listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+        expect(screen.getAllByRole('log')).toHaveLength(4);
+      });
+
+      it('should handle when a new element is added outside while open', async function () {
+        let Test = (props) => (
+          <div>
+            {props.show && <input type="checkbox" />}
+            <ExampleComboBox />
+            {props.show && <input type="checkbox" />}
+          </div>
+        );
+
+        let {getByRole, getAllByRole, rerender} = render(<Test />);
+
+        let combobox = getByRole('combobox');
+        let button = getByRole('button');
+
+        act(() => {
+          combobox.focus();
+          fireEvent.keyDown(combobox, {key: 'ArrowDown'});
+          fireEvent.keyUp(combobox, {key: 'ArrowDown'});
+          jest.runAllTimers();
+        });
+
+        let listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+        expect(button).toHaveAttribute('aria-hidden', 'true');
+
+        rerender(<Test show />);
+
+        await waitFor(() => expect(() => getAllByRole('checkbox')).toThrow());
+        expect(getByRole('combobox')).toBeVisible();
+        expect(getByRole('listbox')).toBeVisible();
+
+        let outside = getAllByRole('checkbox', {hidden: true});
+        expect(outside[0]).toHaveAttribute('aria-hidden', 'true');
+        expect(outside[1]).toHaveAttribute('aria-hidden', 'true');
+      });
+
+      it('should handle when a new element is added to an already hidden container', async function () {
+        let Test = (props) => (
+          <div>
+            <div data-testid="test">
+              {props.show && <input type="checkbox" />}
+            </div>
+            <ExampleComboBox />
+            {props.show && <input type="checkbox" />}
+          </div>
+        );
+
+        let {getByRole, getAllByRole, getByTestId, rerender} = render(<Test />);
+
+        let combobox = getByRole('combobox');
+        let button = getByRole('button');
+        let outer = getByTestId('test');
+
+        act(() => {
+          combobox.focus();
+          fireEvent.keyDown(combobox, {key: 'ArrowDown'});
+          fireEvent.keyUp(combobox, {key: 'ArrowDown'});
+          jest.runAllTimers();
+        });
+
+        let listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+        expect(button).toHaveAttribute('aria-hidden', 'true');
+        expect(outer).toHaveAttribute('aria-hidden', 'true');
+
+        rerender(<Test show />);
+
+        await waitFor(() => expect(() => getAllByRole('checkbox')).toThrow());
+        expect(getByRole('combobox')).toBeVisible();
+        expect(getByRole('listbox')).toBeVisible();
+
+        let outside = getAllByRole('checkbox', {hidden: true});
+        expect(outer).toHaveAttribute('aria-hidden', 'true');
+        expect(outside[0]).not.toHaveAttribute('aria-hidden');
+        expect(outside[1]).toHaveAttribute('aria-hidden', 'true');
+      });
+
+      it('should handle when a new element is added inside the listbox', async function () {
+        let Test = (props) => (
+          <div>
+            <input type="checkbox" />
+            <Provider theme={theme}>
+              <ComboBox label="Combobox" {...props}>
+                {item => <Item>{item.name}</Item>}
+              </ComboBox>
+            </Provider>
+            <input type="checkbox" />
+          </div>
+        );
+
+        let {getByRole, getAllByRole, rerender} = render(
+          <Test items={[{id: 1, name: 'One'}]} />
+        );
+
+        let combobox = getByRole('combobox');
+
+        act(() => {
+          combobox.focus();
+          fireEvent.keyDown(combobox, {key: 'ArrowDown'});
+          fireEvent.keyUp(combobox, {key: 'ArrowDown'});
+          jest.runAllTimers();
+        });
+
+        let listbox = getByRole('listbox');
+        let options = within(listbox).getAllByRole('option');
+        expect(options).toHaveLength(1);
+        expect(() => getAllByRole('checkbox')).toThrow();
+
+        rerender(<Test items={[{id: 1, name: 'One'}, {id: 2, name: 'Two'}]} />);
+
+        // Wait for mutation observer tick
+        await Promise.resolve();
+
+        options = within(listbox).getAllByRole('option');
+        expect(options).toHaveLength(2);
+
+        expect(() => getAllByRole('checkbox')).toThrow();
+        expect(getByRole('combobox')).toBeVisible();
+        expect(getByRole('listbox')).toBeVisible();
       });
     });
   });

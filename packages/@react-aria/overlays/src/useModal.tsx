@@ -123,6 +123,10 @@ interface ModalAriaProps extends HTMLAttributes<HTMLElement> {
   'data-ismodal': boolean
 }
 
+interface ModalOptions {
+  isDisabled?: boolean
+}
+
 interface ModalAria {
   /** Props for the modal content element. */
   modalProps: ModalAriaProps
@@ -134,7 +138,7 @@ interface ModalAria {
  * other types of overlays to ensure that only the top-most modal is
  * accessible at once.
  */
-export function useModal(): ModalAria {
+export function useModal(options?: ModalOptions): ModalAria {
   // Add aria-hidden to all parent providers on mount, and restore on unmount.
   let context = useContext(Context);
   if (!context) {
@@ -142,7 +146,7 @@ export function useModal(): ModalAria {
   }
 
   useEffect(() => {
-    if (!context || !context.parent) {
+    if (options?.isDisabled || !context || !context.parent) {
       return;
     }
 
@@ -158,7 +162,7 @@ export function useModal(): ModalAria {
 
   return {
     modalProps: {
-      'data-ismodal': true
+      'data-ismodal': !options?.isDisabled
     }
   };
 }

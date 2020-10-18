@@ -28,11 +28,12 @@ interface TrayWrapperProps extends HTMLAttributes<HTMLElement> {
   onClose?: () => void,
   shouldCloseOnBlur?: boolean,
   isKeyboardDismissDisabled?: boolean,
-  isFixedHeight?: boolean
+  isFixedHeight?: boolean,
+  isNonModal?: boolean
 }
 
 function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, onClose, shouldCloseOnBlur, isKeyboardDismissDisabled, isFixedHeight, ...otherProps} = props;
+  let {children, onClose, shouldCloseOnBlur, isKeyboardDismissDisabled, isFixedHeight, isNonModal, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
 
@@ -45,7 +46,8 @@ function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
         shouldCloseOnBlur={shouldCloseOnBlur}
         isKeyboardDismissDisabled={isKeyboardDismissDisabled}
         ref={domRef}
-        isFixedHeight={isFixedHeight}>
+        isFixedHeight={isFixedHeight}
+        isNonModal={isNonModal}>
         {children}
       </TrayWrapper>
     </Overlay>
@@ -61,11 +63,14 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isKeyboardDismissDisabled,
     isFixedHeight,
+    isNonModal,
     ...otherProps
   } = props;
   let {overlayProps} = useOverlay({...props, isDismissable: true}, ref);
   usePreventScroll();
-  let {modalProps} = useModal();
+  let {modalProps} = useModal({
+    isDisabled: isNonModal
+  });
 
   // We need to measure the window's height in JS rather than using percentages in CSS
   // so that contents (e.g. menu) can inherit the max-height properly. Using percentages
