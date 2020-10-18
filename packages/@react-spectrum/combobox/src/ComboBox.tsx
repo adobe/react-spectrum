@@ -39,7 +39,6 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   props = useProviderProps(props);
 
   let isMobile = useIsMobileDevice();
-
   if (isMobile) {
     return <MobileComboBox {...props} ref={ref} />;
   } else {
@@ -57,7 +56,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
   let listboxRef = useRef();
-  let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
+  let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({...props, defaultFilter: contains});
   let layout = useListBoxLayout(state);

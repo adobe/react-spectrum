@@ -23,7 +23,8 @@ import {useHover} from '@react-aria/interactions';
 
 interface ClearButtonProps extends ButtonProps, DOMProps, StyleProps {
   focusClassName?: string,
-  variant?: 'overBackground'
+  variant?: 'overBackground',
+  excludeFromTabOrder?: boolean
 }
 
 function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {

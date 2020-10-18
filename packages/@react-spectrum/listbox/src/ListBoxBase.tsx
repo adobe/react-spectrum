@@ -42,7 +42,8 @@ interface ListBoxBaseProps<T> extends DOMProps, AriaLabelingProps, StyleProps {
   transitionDuration?: number,
   isLoading?: boolean,
   onLoadMore?: () => void,
-  renderEmptyState?: () => ReactNode
+  renderEmptyState?: () => ReactNode,
+  onScroll?: () => void
 }
 
 /** @private */
