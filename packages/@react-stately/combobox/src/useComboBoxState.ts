@@ -12,7 +12,7 @@
 
 import {ComboBoxProps} from '@react-types/combobox';
 import {Key, useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {Collection, FocusStratey, Node} from '@react-types/shared';
+import {Collection, FocusStrategy, Node} from '@react-types/shared';
 import {SelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
 import {useMenuTriggerState} from '@react-stately/menu';
@@ -76,7 +76,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   };
 
   let triggerState = useMenuTriggerState(props);
-  let open = (focusStrategy?: FocusStratey) => {
+  let open = (focusStrategy?: FocusStrategy) => {
     // Prevent open operations from triggering if there is nothing to display
     if (allowsEmptyCollection || filteredCollection.size > 0) {
       triggerState.open(focusStrategy);
@@ -161,12 +161,9 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       if (menuTrigger === 'focus') {
         open();
       }
-    } else {
+    } else if (shouldCloseOnBlur) {
       commitCustomValue();
-
-      if (shouldCloseOnBlur) {
-        triggerState.close();
-      }
+      triggerState.close();
     }
 
     setFocusedState(isFocused);

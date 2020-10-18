@@ -105,13 +105,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   };
 
   let onBlur = (e: React.FocusEvent) => {
-    // Early return in the following cases so we don't change textfield focus state, update the selected key erroneously,
-    // and trigger close menu twice:
-    // If focus is moved into the popover (e.g. when focus is moved to the Tray's input field, mobile case).
-    // If the tray input is blurred and the relatedTarget is null (e.g. switching browser tabs or tapping on the tray empty space)
-    // The second case results in a inaccurate isFocused state if tray input is blurred by closing the virtual keyboard but we want isFocused to be true so
-    // useComboBoxState isOpen calculation doesn't think it should close
-    if (popoverRef.current?.contains(e.relatedTarget as HTMLElement)) {
+    // Ignore blur if focused moved to the button or into the popover.
+    if (e.relatedTarget === triggerRef.current || popoverRef.current?.contains(e.relatedTarget as HTMLElement)) {
       return;
     }
 
@@ -177,21 +172,30 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   });
 
   // If click happens on direct center of combobox input, might be virtual click from iPad so open combobox menu
-  let onClick = (e: React.MouseEvent) => {
+  let lastEventTime = useRef(0);
+  let onTouchEnd = (e: React.TouchEvent) => {
     if (isDisabled || isReadOnly) {
       return;
     }
 
+    // Sometimes VoiceOver on iOS fires two touchend events in quick succession. Ignore the second one.
+    if (e.timeStamp - lastEventTime.current < 500) {
+      e.preventDefault();
+      return;
+    }
+
     let rect = (e.target as HTMLElement).getBoundingClientRect();
+    let touch = e.changedTouches[0];
 
-    let middleOfRect = {
-      x: Math.round(rect.left + .5 * rect.width),
-      y: Math.round(rect.top + .5 * rect.height)
-    };
+    let centerX = Math.ceil(rect.left + .5 * rect.width);
+    let centerY = Math.ceil(rect.top + .5 * rect.height);
 
-    if (e.clientX === middleOfRect.x && e.clientY === middleOfRect.y) {
-      // inputRef.current.focus();
-      // state.toggle();
+    if (touch.clientX === centerX && touch.clientY === centerY) {
+      e.preventDefault();
+      inputRef.current.focus();
+      state.toggle();
+
+      lastEventTime.current = e.timeStamp;
     }
   };
 
@@ -264,7 +268,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       'aria-controls': state.isOpen ? menuId || menuProps.id : undefined,
       'aria-autocomplete': completionMode === 'suggest' ? 'list' : 'both',
       'aria-activedescendant': focusedKeyId,
-      onClick
+      onTouchEnd
     }),
     listBoxProps: mergeProps(menuProps, listBoxProps)
   };

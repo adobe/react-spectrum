@@ -61,8 +61,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     ...props,
     defaultFilter: contains,
     allowsEmptyCollection: true,
-    shouldCloseOnBlur: false,
-    allowsCustomValue: true // TODO: wrong
+    shouldCloseOnBlur: false
   });
 
   ref = ref || useRef();
@@ -94,7 +93,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           </span>
         </ComboBoxButton>
       </Field>
-      <Tray isOpen={state.isOpen} onClose={state.close} isFixedHeight {...overlayProps}>
+      <Tray isOpen={state.isOpen} onClose={state.commit} isFixedHeight {...overlayProps}>
         <ComboBoxTray
           {...props}
           overlayProps={overlayProps}
@@ -259,8 +258,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   // open the virtual keyboard rather than closing the tray.
   inputProps.role = 'searchbox';
   inputProps['aria-haspopup'] = 'listbox'
-  delete inputProps['aria-owns'];
-  delete inputProps.onClick;
+  delete inputProps.onTouchEnd;
 
   let clearButton = (
     <PressResponder preventFocusOnPress>
@@ -283,7 +281,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   return (
     <div {...mergeProps(overlayProps, dialogProps)} ref={popoverRef} style={{display: 'flex', flexDirection: 'column'}}>
       <FocusScope restoreFocus>
-        <DismissButton onDismiss={() => state.close()} />
+        <DismissButton onDismiss={() => state.commit()} />
         <TextFieldBase
           label={label}
           labelProps={labelProps}
@@ -322,7 +320,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
             inputRef.current.blur();
           }}
           flex={1} />
-        <DismissButton onDismiss={() => state.close()} />
+        <DismissButton onDismiss={() => state.commit()} />
       </FocusScope>
     </div>
   );
