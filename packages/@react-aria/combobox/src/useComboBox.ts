@@ -12,6 +12,7 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
+import {ariaHideOutside} from '@react-aria/overlays';
 import {chain, mergeProps, useLabels} from '@react-aria/utils';
 import {ComboBoxProps} from '@react-types/combobox';
 import {ComboBoxState} from '@react-stately/combobox';
@@ -254,7 +255,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
   useEffect(() => {
     if (state.isOpen) {
-      return hide([inputRef.current, popoverRef.current]);
+      return ariaHideOutside([inputRef.current, popoverRef.current]);
     }
   }, [state.isOpen, inputRef, popoverRef]);
 
@@ -292,86 +293,3 @@ function getOptionCount<T>(collection: Iterable<Node<T>>): number {
   return count;
 }
 
-// TODO: move this somewhere else (e.g. overlays package or maybe utils?)
-let refCountMap = new WeakMap<Element, number>();
-
-function hide(targets: HTMLElement[], parent = document.body) {
-  let visibleNodes = new Set<Element>(targets);
-  let hiddenNodes = new Set<Element>();
-  let walker = document.createTreeWalker(
-    parent,
-    NodeFilter.SHOW_ELEMENT,
-    {
-      acceptNode(node) {
-        // If this node is a live announcer, add it to the set of nodes to keep visible.
-        if ((node instanceof HTMLElement && node.dataset.liveAnnouncer === 'true')) {
-          visibleNodes.add(node);
-        }
-
-        // Skip this node and its children if it is one of the target nodes, or a live announcer.
-        // Also skip children of already hidden nodes, as aria-hidden is recursive.
-        if (
-          visibleNodes.has(node as Element) ||
-          hiddenNodes.has(node.parentElement)
-        ) {
-          return NodeFilter.FILTER_REJECT;
-        }
-
-        // Skip this node but continue to children if one of the targets is inside the node.
-        if (targets.some(target => node.contains(target))) {
-          return NodeFilter.FILTER_SKIP;
-        }
-
-        return NodeFilter.FILTER_ACCEPT;
-      }
-    }
-  );
-
-  let hide = (node: Element) => {
-    node.setAttribute('aria-hidden', 'true');
-    hiddenNodes.add(node);
-    refCountMap.set(node, (refCountMap.get(node) ?? 0) + 1);
-  };
-
-  let node = walker.nextNode() as Element;
-  while (node != null) {
-    hide(node);
-    node = walker.nextNode() as Element;
-  }
-
-  let observer = new MutationObserver(changes => {
-    for (let change of changes) {
-      if (change.type !== 'childList' || change.addedNodes.length === 0) {
-        continue;
-      }
-
-      // If the parent element of the added nodes is not within one of the targets,
-      // and not already inside a hidden node, hide all of the new children.
-      if (![...visibleNodes, ...hiddenNodes].some(node => node.contains(change.target))) {
-        for (let node of change.addedNodes) {
-          if ((node instanceof HTMLElement && node.dataset.liveAnnouncer === 'true')) {
-            visibleNodes.add(node);
-          } else if (node instanceof Element) {
-            hide(node);
-          }
-        }
-      }
-    }
-  });
-
-  observer.observe(parent, {childList: true, subtree: true});
-
-  return () => {
-    observer.disconnect();
-
-    for (let node of hiddenNodes) {
-      let count = refCountMap.get(node);
-      if (count === 1) {
-        node.removeAttribute('aria-hidden');
-        refCountMap.delete(node);
-      } else {
-        refCountMap.set(node, count - 1);
-      }
-    }
-  };
-}
