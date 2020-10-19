@@ -349,6 +349,13 @@ describe('ComboBox', function () {
         let listbox = getByRole('listbox');
         expect(listbox).toBeTruthy();
         expect(document.activeElement).toBe(combobox);
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        expect(() => getByRole('listbox')).toThrow();
       });
 
       it('doesn\'t focus first item if there are items loaded', function () {
@@ -384,6 +391,14 @@ describe('ComboBox', function () {
         let listbox = getByRole('listbox');
         expect(listbox).toBeTruthy();
         expect(document.activeElement).toBe(combobox);
+
+        act(() => {
+          fireEvent.touchStart(button, {targetTouches: [{identifier: 1}]});
+          fireEvent.touchEnd(button, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
+          jest.runAllTimers();
+        });
+
+        expect(() => getByRole('listbox')).toThrow();
       });
 
       it('resets the focused item when re-opening the menu', function () {
