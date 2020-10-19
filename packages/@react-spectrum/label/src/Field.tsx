@@ -11,7 +11,7 @@
  */
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, DOMRefValue, FocusableRefValue, LabelPosition} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import {Label} from './Label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from '@react-aria/utils';

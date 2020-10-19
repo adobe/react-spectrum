@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {ComboBoxProps} from '@react-types/combobox';
-import {Key, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Collection, FocusStrategy, Node} from '@react-types/shared';
+import {ComboBoxProps} from '@react-types/combobox';
+import {Key, useEffect, useMemo, useRef, useState} from 'react';
+import {ListCollection, useSingleSelectListState} from '@react-stately/list';
 import {SelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
 import {useMenuTriggerState} from '@react-stately/menu';
-import {ListCollection, useSingleSelectListState} from '@react-stately/list';
 
 export interface ComboBoxState<T> extends SelectState<T> {
   inputValue: string,
@@ -65,7 +65,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     props.items != null || !defaultFilter
       ? collection
       : filterCollection(collection, inputValue, defaultFilter)
-  ), [collection, inputValue, defaultFilter]);
+  ), [collection, inputValue, defaultFilter, props.items]);
 
   let setInputValue = (value: string) => {
     setInputValueState(value);
@@ -113,7 +113,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     }
 
     lastValue.current = inputValue;
-  }, [triggerState.isOpen, inputValue, filteredCollection.size, isFocused]);
+  });
 
   let lastSelectedKey = useRef(null);
   useEffect(() => {
@@ -128,14 +128,14 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       resetInputValue();
       lastSelectedKey.current = selectedKey;
     }
-  }, [selectedKey]);
+  });
 
   useEffect(() => {
     // Reset focused key when the menu closes
     if (!triggerState.isOpen) {
       selectionManager.setFocusedKey(null);
     }
-  }, [triggerState.isOpen]);
+  }, [triggerState.isOpen, selectionManager]);
 
   let commitCustomValue = () => {
     if (!allowsCustomValue) {

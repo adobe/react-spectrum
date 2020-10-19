@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {useComboBox} from '@react-aria/combobox';
+import {AriaButtonProps} from '@react-types/button';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames, unwrapDOMRef, useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
-import {useComboBoxState} from '@react-stately/combobox';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRef, DOMRefValue, FocusableRefValue} from '@react-types/shared';
+import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusRing} from '@react-aria/focus';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
-import {useLayoutEffect} from '@react-aria/utils';
+import {MobileComboBox} from './MobileComboBox';
 import {Placement} from '@react-types/overlays';
 import {Popover} from '@react-spectrum/overlays';
 import {PressResponder, useHover} from '@react-aria/interactions';
@@ -28,12 +28,11 @@ import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
+import {useComboBox} from '@react-aria/combobox';
+import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter} from '@react-aria/i18n';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
-
-import {MobileComboBox} from './MobileComboBox';
-import {Field} from '@react-spectrum/label';
-import {AriaButtonProps} from '@react-types/button';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);

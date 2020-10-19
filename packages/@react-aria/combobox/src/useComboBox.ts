@@ -10,18 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
+import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {chain, mergeProps, useLabels} from '@react-aria/utils';
 import {ComboBoxProps} from '@react-types/combobox';
 import {ComboBoxState} from '@react-stately/combobox';
+import {FocusEvent, HTMLAttributes, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useRef} from 'react';
 import {getItemId, listIds} from '@react-aria/listbox';
-import {HTMLAttributes, InputHTMLAttributes, RefObject, useEffect, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListLayout} from '@react-stately/layout';
-import {PressEvent, Node} from '@react-types/shared';
+import {Node, PressEvent} from '@react-types/shared';
 import {useMenuTrigger} from '@react-aria/menu';
-import {announce} from '@react-aria/live-announcer';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useSelectableCollection} from '@react-aria/selection';
 import {useTextField} from '@react-aria/textfield';
@@ -81,7 +81,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   });
 
   // For textfield specific keydown operations
-  let onKeyDown = (e: React.KeyboardEvent) => {
+  let onKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
       case 'Enter':
       case 'Tab':
@@ -103,7 +103,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
   };
 
-  let onBlur = (e: React.FocusEvent) => {
+  let onBlur = (e: FocusEvent) => {
     // Ignore blur if focused moved to the button or into the popover.
     if (e.relatedTarget === triggerRef.current || popoverRef.current?.contains(e.relatedTarget as HTMLElement)) {
       return;
@@ -116,7 +116,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     state.setFocused(false);
   };
 
-  let onFocus = (e: React.FocusEvent) => {
+  let onFocus = (e: FocusEvent) => {
     if (state.isFocused) {
       return;
     }
@@ -172,7 +172,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
   // If click happens on direct center of combobox input, might be virtual click from iPad so open combobox menu
   let lastEventTime = useRef(0);
-  let onTouchEnd = (e: React.TouchEvent) => {
+  let onTouchEnd = (e: TouchEvent) => {
     if (isDisabled || isReadOnly) {
       return;
     }
@@ -224,7 +224,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
     lastSection.current = sectionKey;
     lastItem.current = itemKey;
-  }, [sectionKey, itemKey, focusedItem]);
+  });
 
   // Announce the number of available suggestions when it changes
   let optionCount = getOptionCount(state.collection);
@@ -238,7 +238,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
     lastSize.current = optionCount;
     lastOpen.current = state.isOpen;
-  }, [state.isOpen, optionCount]);
+  });
 
   // Announce when a selection occurs
   let lastSelectedKey = useRef(state.selectedKey);
@@ -250,13 +250,13 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
 
     lastSelectedKey.current = state.selectedKey;
-  }, [state.selectedKey, state.selectedItem, state.isFocused]);
+  });
 
   useEffect(() => {
     if (state.isOpen) {
       return hide([inputRef.current, popoverRef.current]);
     }
-  }, [state.isOpen]);
+  }, [state.isOpen, inputRef, popoverRef]);
 
   return {
     labelProps,

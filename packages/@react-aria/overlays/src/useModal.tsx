@@ -158,7 +158,7 @@ export function useModal(options?: ModalOptions): ModalAria {
         context.parent.removeModal();
       }
     };
-  }, [context, context.parent]);
+  }, [context, context.parent, options?.isDisabled]);
 
   return {
     modalProps: {

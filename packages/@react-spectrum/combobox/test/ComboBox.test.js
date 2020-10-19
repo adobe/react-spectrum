@@ -2367,7 +2367,7 @@ describe('ComboBox', function () {
     });
 
     it('input is blurred when the user scrolls the listbox', function () {
-      let {getByRole, getByText, getByTestId} = renderComboBox();
+      let {getByRole, getByTestId} = renderComboBox();
       let button = getByRole('button');
 
       act(() => {

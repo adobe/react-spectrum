@@ -10,42 +10,40 @@
  * governing permissions and limitations under the License.
  */
 
-import {useComboBox} from '@react-aria/combobox';
+import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames, unwrapDOMRef} from '@react-spectrum/utils';
+import {ClearButton} from '@react-spectrum/button';
 import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
 import comboboxStyles from './combobox.css';
 import {DismissButton} from '@react-aria/overlays';
-import {DOMRefValue, FocusableRefValue, ValidationState, PressEvents} from '@react-types/shared';
+import {DOMRefValue, FocusableRefValue, PressEvents, ValidationState} from '@react-types/shared';
+import {Field} from '@react-spectrum/label';
 import {FocusRing, FocusScope} from '@react-aria/focus';
+import {focusSafely} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {mergeProps, useId} from '@react-aria/utils';
-import {Tray} from '@react-spectrum/overlays';
-import {useHover} from '@react-aria/interactions';
+import {PressResponder} from '@react-aria/interactions';
 import React, {HTMLAttributes, ReactNode, RefObject, useRef} from 'react';
+import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
-import {useFilter} from '@react-aria/i18n';
-import {useMessageFormatter} from '@react-aria/i18n';
-import {useProviderProps} from '@react-spectrum/provider';
-
-import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
+import {Tray} from '@react-spectrum/overlays';
 import {useButton} from '@react-aria/button';
-import {useOverlayTrigger} from '@react-aria/overlays';
-
-import {useDOMRef} from '@react-spectrum/utils';
-import {Field} from '@react-spectrum/label';
-import {useLabel} from '@react-aria/label';
+import {useComboBox} from '@react-aria/combobox';
 import {useDialog} from '@react-aria/dialog';
-import {focusSafely} from '@react-aria/focus';
-import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
-import {ClearButton} from '@react-spectrum/button';
-import {PressResponder} from '@react-aria/interactions';
+import {useDOMRef} from '@react-spectrum/utils';
+import {useFilter} from '@react-aria/i18n';
+import {useHover} from '@react-aria/interactions';
+import {useLabel} from '@react-aria/label';
+import {useMessageFormatter} from '@react-aria/i18n';
+import {useOverlayTrigger} from '@react-aria/overlays';
+import {useProviderProps} from '@react-spectrum/provider';
 
 export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObject<DOMRefValue<HTMLDivElement>>) {
   props = useProviderProps(props);
@@ -53,7 +51,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
   let {
     isQuiet,
     isDisabled,
-    validationState,
+    validationState
   } = props;
 
   let {contains} = useFilter({sensitivity: 'base'});
@@ -64,7 +62,8 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     shouldCloseOnBlur: false
   });
 
-  ref = ref || useRef();
+  let fallbackRef = useRef();
+  ref = ref || fallbackRef;
   let buttonRef = unwrapDOMRef(ref);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
 
@@ -160,50 +159,50 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
               {
                 'is-invalid': validationState === 'invalid',
                 'is-valid': validationState === 'valid',
-                'spectrum-Textfield--quiet': isQuiet,
+                'spectrum-Textfield--quiet': isQuiet
               }
             )
           }>
-            <div
-              className={
-                classNames(
-                  textfieldStyles,
-                  'spectrum-Textfield-input',
-                  {
-                    'is-hovered': isHovered
-                  },
-                  classNames(
-                    styles,
-                    'spectrum-InputGroup-field',
-                    classNames(labelStyles, 'spectrum-Field-field')
-                  )
-                )
-              }>
-              {children}
-            </div>
-          </div>
           <div
-            style={{WebkitAppearance: 'none'}}
             className={
               classNames(
-                buttonStyles,
-                'spectrum-FieldButton',
+                textfieldStyles,
+                'spectrum-Textfield-input',
                 {
-                  'spectrum-FieldButton--quiet': isQuiet,
-                  'is-active': isPressed,
-                  'is-disabled': isDisabled,
-                  'is-invalid': validationState === 'invalid',
                   'is-hovered': isHovered
                 },
                 classNames(
                   styles,
-                  'spectrum-FieldButton'
+                  'spectrum-InputGroup-field',
+                  classNames(labelStyles, 'spectrum-Field-field')
                 )
               )
             }>
-            <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
+            {children}
           </div>
         </div>
+        <div
+          style={{WebkitAppearance: 'none'}}
+          className={
+            classNames(
+              buttonStyles,
+              'spectrum-FieldButton',
+              {
+                'spectrum-FieldButton--quiet': isQuiet,
+                'is-active': isPressed,
+                'is-disabled': isDisabled,
+                'is-invalid': validationState === 'invalid',
+                'is-hovered': isHovered
+              },
+              classNames(
+                styles,
+                'spectrum-FieldButton'
+              )
+            )
+          }>
+          <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
+        </div>
+      </div>
     </FocusRing>
   );
 });
@@ -244,7 +243,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   );
 
   React.useEffect(() => {
-    focusSafely(inputRef.current)
+    focusSafely(inputRef.current);
   }, []);
 
   let {dialogProps} = useDialog({
@@ -257,7 +256,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   // "double tap to edit text", as with a textbox or searchbox. We'd like double tapping to
   // open the virtual keyboard rather than closing the tray.
   inputProps.role = 'searchbox';
-  inputProps['aria-haspopup'] = 'listbox'
+  inputProps['aria-haspopup'] = 'listbox';
   delete inputProps.onTouchEnd;
 
   let clearButton = (
@@ -268,11 +267,11 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
         onPress={() => state.setInputValue('')}
         UNSAFE_className={
         classNames(
-          searchStyles,
-          'spectrum-ClearButton'
-        )
-      }
-      isDisabled={isDisabled} />
+            searchStyles,
+            'spectrum-ClearButton'
+          )
+        }
+        isDisabled={isDisabled} />
     </PressResponder>
   );
 
