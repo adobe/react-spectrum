@@ -18,3 +18,37 @@
   font-weight: var(--spectrum-selectlist-option-text-font-weight);
   font-style: italic;
 }
+
+.mobile-combobox {
+  outline: none;
+}
+
+.mobile-value {
+  vertical-align: middle;
+}
+
+.mobile-button {
+  appearance: none;
+}
+
+.tray-dialog {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.tray-textfield {
+  margin: var(--spectrum-global-dimension-size-150);
+  margin-bottom: var(--spectrum-global-dimension-size-50);
+  flex-shrink: 0;
+  width: initial !important;
+
+  &.has-label {
+    margin-top: var(--spectrum-global-dimension-size-50);
+  }
+}
+
+.tray-listbox {
+  width: 100%;
+  flex: 1;
+}

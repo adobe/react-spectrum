@@ -80,6 +80,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           {...mergeProps(triggerProps, fieldProps)}
           isQuiet={isQuiet}
           isDisabled={isDisabled}
+          isPlaceholder={!state.inputValue}
           validationState={validationState}
           onPress={() => state.open()}
           aria-labelledby={[
@@ -87,8 +88,15 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
             fieldProps['aria-label'] && !fieldProps['aria-labelledby'] ? fieldProps.id : null,
             valueId
           ].filter(Boolean).join(' ')}>
-          <span id={valueId}>
-            {state.inputValue}
+          <span
+            id={valueId}
+            className={
+              classNames(
+                comboboxStyles,
+                'mobile-value'
+              )
+            }>
+            {state.inputValue || props.placeholder || ''}
           </span>
         </ComboBoxButton>
       </Field>
@@ -105,6 +113,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
 interface ComboBoxButtonProps extends PressEvents {
   isQuiet?: boolean,
   isDisabled?: boolean,
+  isPlaceholder?: boolean,
   validationState?: ValidationState,
   children?: ReactNode,
   style?: React.CSSProperties,
@@ -115,6 +124,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
   let {
     isQuiet,
     isDisabled,
+    isPlaceholder,
     validationState,
     children,
     style,
@@ -148,6 +158,10 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
               'is-invalid': validationState === 'invalid',
               'is-hovered': isHovered
             },
+            classNames(
+              comboboxStyles,
+              'mobile-combobox'
+            ),
             className
           )
         }>
@@ -169,7 +183,8 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
                 textfieldStyles,
                 'spectrum-Textfield-input',
                 {
-                  'is-hovered': isHovered
+                  'is-hovered': isHovered,
+                  'is-placeholder': isPlaceholder
                 },
                 classNames(
                   styles,
@@ -182,7 +197,6 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
           </div>
         </div>
         <div
-          style={{WebkitAppearance: 'none'}}
           className={
             classNames(
               buttonStyles,
@@ -197,6 +211,10 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
               classNames(
                 styles,
                 'spectrum-FieldButton'
+              ),
+              classNames(
+                comboboxStyles,
+                'mobile-button'
               )
             )
           }>
@@ -278,7 +296,15 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   let listboxRef = useRef();
 
   return (
-    <div {...mergeProps(overlayProps, dialogProps)} ref={popoverRef} style={{display: 'flex', height: '100%', flexDirection: 'column'}}>
+    <div
+      {...mergeProps(overlayProps, dialogProps)}
+      ref={popoverRef}
+      className={
+        classNames(
+          comboboxStyles,
+          'tray-dialog'
+        )
+      }>
       <FocusScope restoreFocus>
         <DismissButton onDismiss={() => state.commit()} />
         <TextFieldBase
@@ -288,12 +314,20 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           inputRef={inputRef}
           isDisabled={isDisabled}
           validationState={validationState}
-          marginTop={label ? 5 : 15}
-          marginX={15}
-          flexShrink={0}
-          UNSAFE_style={{width: 'initial'}}
           wrapperChildren={(state.inputValue !== '' && !props.isReadOnly) && clearButton}
-          UNSAFE_className={classNames(searchStyles, 'spectrum-Search')} />
+          UNSAFE_className={
+            classNames(
+              searchStyles,
+              'spectrum-Search',
+              classNames(
+                comboboxStyles,
+                'tray-textfield',
+                {
+                  'has-label': !!props.label
+                }
+              )
+            )
+          } />
         <ListBoxBase
           domProps={listBoxProps}
           disallowEmptySelection
@@ -301,13 +335,18 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           focusOnPointerEnter
           layout={layout}
           state={state}
-          width="100%"
           shouldUseVirtualFocus
           renderEmptyState={() => (
             <span className={classNames(comboboxStyles, 'no-results')}>
               {formatMessage('noResults')}
             </span>
           )}
+          UNSAFE_className={
+            classNames(
+              comboboxStyles,
+              'tray-listbox'
+            )
+          }
           ref={listboxRef}
           onScroll={() => {
             if (!listboxRef.current || !inputRef.current || document.activeElement !== inputRef.current) {
@@ -315,8 +354,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
             }
 
             inputRef.current.blur();
-          }}
-          flex={1} />
+          }} />
         <DismissButton onDismiss={() => state.commit()} />
       </FocusScope>
     </div>

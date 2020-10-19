@@ -2000,12 +2000,12 @@ describe('ComboBox', function () {
     }
 
     it('should render a button to open the tray', function () {
-      let {getByRole, getByText} = renderComboBox({selectedKey: '2'});
+      let {getByRole, getByText} = renderComboBox({});
       let button = getByRole('button');
 
       expect(button).toHaveAttribute('aria-haspopup', 'dialog');
       expect(button).toHaveAttribute('aria-expanded', 'false');
-      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText('Two').id}`);
+      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText(defaultProps.placeholder).id}`);
     });
 
     it('button should be labelled by external label', function () {
