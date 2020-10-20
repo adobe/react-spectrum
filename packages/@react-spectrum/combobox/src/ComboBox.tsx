@@ -12,9 +12,9 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, unwrapDOMRef, useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
+import {classNames, unwrapDOMRef, useFocusableRef, useIsMobileDevice} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
-import {DOMRef, DOMRefValue, FocusableRefValue} from '@react-types/shared';
+import {DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusRing} from '@react-aria/focus';
@@ -27,14 +27,13 @@ import React, {InputHTMLAttributes, ReactElement, RefObject, useRef, useState} f
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
-import {TextFieldRef} from '@react-types/textfield';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter} from '@react-aria/i18n';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
-function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObject<TextFieldRef>) {
+function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
 
   let isMobile = useIsMobileDevice();
@@ -45,7 +44,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   }
 }
 
-const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObject<TextFieldRef>) {
+const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
   let {
     menuTrigger = 'input',
     shouldFlip = true,
@@ -53,19 +52,21 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   } = props;
 
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
-  let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
-  let listboxRef = useRef();
+  let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
+  let listBoxRef = useRef();
   let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
+  let domRef = useFocusableRef(ref, inputRef);
+
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({...props, defaultFilter: contains});
   let layout = useListBoxLayout(state);
 
-  let {triggerProps, inputProps, listBoxProps, labelProps} = useComboBox(
+  let {buttonProps, inputProps, listBoxProps, labelProps} = useComboBox(
     {
       ...props,
-      layout,
-      triggerRef: unwrapDOMRef(triggerRef),
+      buttonRef: unwrapDOMRef(buttonRef),
       popoverRef: unwrapDOMRef(popoverRef),
+      listBoxRef,
       inputRef: inputRef,
       menuTrigger
     },
@@ -73,9 +74,9 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   );
 
   let {overlayProps, placement} = useOverlayPosition({
-    targetRef: unwrapDOMRef(triggerRef),
+    targetRef: unwrapDOMRef(buttonRef),
     overlayRef: unwrapDOMRef(popoverRef),
-    scrollRef: listboxRef,
+    scrollRef: listBoxRef,
     placement: `${direction} end` as Placement,
     shouldFlip: shouldFlip,
     isOpen: state.isOpen,
@@ -87,10 +88,10 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   let {scale} = useProvider();
 
   useLayoutEffect(() => {
-    let buttonWidth = triggerRef.current.UNSAFE_getDOMNode().offsetWidth;
+    let buttonWidth = buttonRef.current.UNSAFE_getDOMNode().offsetWidth;
     let inputWidth = inputRef.current.offsetWidth;
     setMenuWidth(buttonWidth + inputWidth);
-  }, [scale, triggerRef, inputRef]);
+  }, [scale, buttonRef, inputRef]);
 
   let style = {
     ...overlayProps.style,
@@ -99,13 +100,13 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
 
   return (
     <>
-      <Field {...props} labelProps={labelProps} ref={ref}>
+      <Field {...props} labelProps={labelProps} ref={domRef}>
         <ComboBoxInput
           {...props}
           inputProps={inputProps}
           inputRef={inputRef}
-          triggerProps={triggerProps}
-          triggerRef={triggerRef} />
+          triggerProps={buttonProps}
+          triggerRef={buttonRef} />
       </Field>
       <Popover
         isOpen={state.isOpen}
@@ -115,7 +116,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
         hideArrow
         isNonModal>
         <ListBoxBase
-          ref={listboxRef}
+          ref={listBoxRef}
           domProps={listBoxProps}
           disallowEmptySelection
           autoFocus={state.focusStrategy}
@@ -140,7 +141,7 @@ interface ComboBoxInputProps extends SpectrumComboBoxProps<unknown> {
   className?: string
 }
 
-const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInputProps, ref: DOMRef<HTMLDivElement>) {
+const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInputProps, ref: RefObject<HTMLElement>) {
   let {
     isQuiet,
     isDisabled,
@@ -154,7 +155,6 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     className
   } = props;
   let {hoverProps, isHovered} = useHover({});
-  let domRef = useDOMRef(ref);
 
   return (
     <FocusRing
@@ -165,7 +165,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
       autoFocus={autoFocus}>
       <div
         {...hoverProps}
-        ref={domRef}
+        ref={ref as RefObject<HTMLDivElement>}
         className={
           classNames(
             styles,
@@ -213,5 +213,5 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
   );
 });
 
-const _ComboBox = React.forwardRef(ComboBox) as <T>(props: SpectrumComboBoxProps<T> & {ref?: RefObject<TextFieldRef>}) => ReactElement;
+const _ComboBox = React.forwardRef(ComboBox) as <T>(props: SpectrumComboBoxProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
 export {_ComboBox as ComboBox};

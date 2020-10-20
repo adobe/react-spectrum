@@ -10,15 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Label} from './Label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from '@react-aria/utils';
-import React from 'react';
+import React, {RefObject} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 
-function Field(props: SpectrumFieldProps, ref: DOMRef<HTMLDivElement>) {
+function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   let {
     label,
     labelPosition = 'top',
@@ -32,7 +31,6 @@ function Field(props: SpectrumFieldProps, ref: DOMRef<HTMLDivElement>) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let domRef = useDOMRef(ref);
 
   if (label) {
     let labelWrapperClass = classNames(
@@ -52,7 +50,7 @@ function Field(props: SpectrumFieldProps, ref: DOMRef<HTMLDivElement>) {
     return (
       <div
         {...styleProps}
-        ref={domRef}
+        ref={ref as RefObject<HTMLDivElement>}
         className={labelWrapperClass}>
         <Label
           {...labelProps}
@@ -71,7 +69,7 @@ function Field(props: SpectrumFieldProps, ref: DOMRef<HTMLDivElement>) {
 
   return React.cloneElement(children, mergeProps(children.props, {
     ...styleProps,
-    ref: domRef
+    ref
   }));
 }
 

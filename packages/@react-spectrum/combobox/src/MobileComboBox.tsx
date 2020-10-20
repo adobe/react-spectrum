@@ -17,8 +17,8 @@ import {ClearButton} from '@react-spectrum/button';
 import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
 import comboboxStyles from './combobox.css';
 import {DismissButton} from '@react-aria/overlays';
-import {DOMRefValue, FocusableRefValue, PressEvents, ValidationState} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
+import {FocusableRef, FocusableRefValue, PressEvents, ValidationState} from '@react-types/shared';
 import {FocusRing, FocusScope} from '@react-aria/focus';
 import {focusSafely} from '@react-aria/focus';
 // @ts-ignore
@@ -37,15 +37,15 @@ import {Tray} from '@react-spectrum/overlays';
 import {useButton} from '@react-aria/button';
 import {useComboBox} from '@react-aria/combobox';
 import {useDialog} from '@react-aria/dialog';
-import {useDOMRef} from '@react-spectrum/utils';
 import {useFilter} from '@react-aria/i18n';
+import {useFocusableRef} from '@react-spectrum/utils';
 import {useHover} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useOverlayTrigger} from '@react-aria/overlays';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObject<DOMRefValue<HTMLDivElement>>) {
+export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
 
   let {
@@ -62,9 +62,8 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     shouldCloseOnBlur: false
   });
 
-  let fallbackRef = useRef();
-  ref = ref || fallbackRef;
-  let buttonRef = unwrapDOMRef(ref);
+  let buttonRef = useRef<HTMLElement>();
+  let domRef = useFocusableRef(ref, buttonRef);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
 
   let valueId = useId();
@@ -75,9 +74,10 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
 
   return (
     <>
-      <Field {...props} labelProps={labelProps} elementType="span" ref={ref}>
+      <Field {...props} labelProps={labelProps} elementType="span" ref={domRef}>
         <ComboBoxButton
           {...mergeProps(triggerProps, fieldProps)}
+          ref={buttonRef}
           isQuiet={isQuiet}
           isDisabled={isDisabled}
           isPlaceholder={!state.inputValue}
@@ -120,7 +120,7 @@ interface ComboBoxButtonProps extends PressEvents {
   className?: string
 }
 
-const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxButtonProps, ref: RefObject<DOMRefValue<HTMLDivElement>>) {
+const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxButtonProps, ref: RefObject<HTMLElement>) {
   let {
     isQuiet,
     isDisabled,
@@ -131,13 +131,12 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
     className
   } = props;
 
-  let domRef = useDOMRef(ref);
   let {hoverProps, isHovered} = useHover({});
 
   let {buttonProps, isPressed} = useButton({
     ...props,
     elementType: 'div'
-  }, domRef);
+  }, ref);
 
   return (
     <FocusRing
@@ -146,7 +145,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
       <div
         {...mergeProps(hoverProps, buttonProps)}
         aria-haspopup="dialog"
-        ref={domRef}
+        ref={ref as RefObject<HTMLDivElement>}
         style={{...style, outline: 'none'}}
         className={
           classNames(
@@ -242,8 +241,9 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   } = props;
 
   let inputRef = useRef<HTMLInputElement>();
-  let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
+  let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
   let popoverRef = useRef<HTMLDivElement>();
+  let listBoxRef = useRef();
   let layout = useListBoxLayout(state);
   let formatMessage = useMessageFormatter(intlMessages);
 
@@ -251,9 +251,10 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     {
       ...props,
       completionMode,
-      layout,
-      triggerRef: unwrapDOMRef(triggerRef),
+      keyboardDelegate: layout,
+      buttonRef: unwrapDOMRef(buttonRef),
       popoverRef: popoverRef,
+      listBoxRef,
       inputRef,
       menuTrigger
     },
@@ -292,8 +293,6 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
         isDisabled={isDisabled} />
     </PressResponder>
   );
-
-  let listboxRef = useRef();
 
   return (
     <div
@@ -347,9 +346,9 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
               'tray-listbox'
             )
           }
-          ref={listboxRef}
+          ref={listBoxRef}
           onScroll={() => {
-            if (!listboxRef.current || !inputRef.current || document.activeElement !== inputRef.current) {
+            if (!listBoxRef.current || !inputRef.current || document.activeElement !== inputRef.current) {
               return;
             }
 
