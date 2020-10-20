@@ -29,7 +29,7 @@ export function CalendarTableBody({state}: CalendarTableBodyProps) {
                 <CalendarCell
                   key={dayIndex}
                   state={state}
-                  {...state.getCellOptions(weekIndex, dayIndex)} />
+                  date={state.getCellDate(weekIndex, dayIndex)} />
                 )
               )
             }
