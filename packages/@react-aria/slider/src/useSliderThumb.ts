@@ -19,7 +19,7 @@ interface SliderThumbAria {
   labelProps: HTMLAttributes<HTMLElement>
 }
 
-interface SliderThumbOptions extends SliderThumbProps {
+export interface SliderThumbOptions extends SliderThumbProps {
   trackRef: React.RefObject<HTMLElement>,
   inputRef: React.RefObject<HTMLInputElement>
 }
@@ -34,7 +34,7 @@ export function useSliderThumb(
   opts: SliderThumbOptions,
   state: SliderState
 ): SliderThumbAria {
-  const {
+  let {
     index,
     isRequired,
     isDisabled,
@@ -42,6 +42,8 @@ export function useSliderThumb(
     trackRef,
     inputRef
   } = opts;
+
+  let isVertical = opts.orientation === 'vertical';
 
   let {direction} = useLocale();
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
@@ -78,17 +80,24 @@ export function useSliderThumb(
       state.setThumbDragging(index, true);
     },
     onMove({deltaX, deltaY, pointerType}) {
+      let size = isVertical ? trackRef.current.offsetHeight : trackRef.current.offsetWidth;
+
       if (currentPosition.current == null) {
-        currentPosition.current = stateRef.current.getThumbPercent(index) * trackRef.current.offsetWidth;
+        currentPosition.current = stateRef.current.getThumbPercent(index) * size;
       }
       if (pointerType === 'keyboard') {
-        // (invert left/right according to language direction) + (up should always increase)
-        let delta = ((reverseX ? -deltaX : deltaX) + -deltaY) * stateRef.current.step;
-        currentPosition.current += delta * trackRef.current.offsetWidth;
+        // (invert left/right according to language direction) + (according to vertical)
+        let delta = ((reverseX ? -deltaX : deltaX) + (isVertical ? -deltaY : -deltaY)) * stateRef.current.step;
+        currentPosition.current += delta * size;
         stateRef.current.setThumbValue(index, stateRef.current.getThumbValue(index) + delta);
       } else {
-        currentPosition.current += reverseX ? -deltaX : deltaX;
-        stateRef.current.setThumbPercent(index, clamp(currentPosition.current / trackRef.current.offsetWidth, 0, 1));
+        let delta = isVertical ? deltaY : deltaX;
+        if (isVertical || reverseX) {
+          delta = -delta;
+        }
+
+        currentPosition.current += delta;
+        stateRef.current.setThumbPercent(index, clamp(currentPosition.current / size, 0, 1));
       }
     },
     onMoveEnd() {
@@ -107,8 +116,10 @@ export function useSliderThumb(
     inputRef
   );
 
-  let onDown = () => {
+  let currentPointer = useRef<number | null | undefined>(undefined);
+  let onDown = (id: number | null) => {
     focusInput();
+    currentPointer.current = id;
     state.setThumbDragging(index, true);
 
     addGlobalListener(window, 'mouseup', onUp, false);
@@ -117,12 +128,15 @@ export function useSliderThumb(
 
   };
 
-  let onUp = () => {
-    focusInput();
-    state.setThumbDragging(index, false);
-    removeGlobalListener(window, 'mouseup', onUp, false);
-    removeGlobalListener(window, 'touchend', onUp, false);
-    removeGlobalListener(window, 'pointerup', onUp, false);
+  let onUp = (e) => {
+    let id = e.pointerId ?? e.changedTouches?.[0].identifier;
+    if (id === currentPointer.current) {
+      focusInput();
+      state.setThumbDragging(index, false);
+      removeGlobalListener(window, 'mouseup', onUp, false);
+      removeGlobalListener(window, 'touchend', onUp, false);
+      removeGlobalListener(window, 'pointerup', onUp, false);
+    }
   };
 
   // We install mouse handlers for the drag motion on the thumb div, but
@@ -138,7 +152,7 @@ export function useSliderThumb(
       step: state.step,
       value: value,
       disabled: isDisabled,
-      'aria-orientation': 'horizontal',
+      'aria-orientation': opts.orientation,
       'aria-valuetext': state.getThumbValueLabel(index),
       'aria-required': isRequired || undefined,
       'aria-invalid': validationState === 'invalid' || undefined,
@@ -150,9 +164,9 @@ export function useSliderThumb(
     thumbProps: !isDisabled ? mergeProps(
       moveProps,
       {
-        onPointerDown: onDown,
-        onMouseDown: onDown,
-        onTouchStart: onDown
+        onMouseDown: () => {onDown(null);},
+        onPointerDown: (e: React.PointerEvent) => {onDown(e.pointerId);},
+        onTouchStart: (e: React.TouchEvent) => {onDown(e.changedTouches[0].identifier);}
       }
     ) : {},
     labelProps

@@ -1,0 +1,81 @@
+:root {
+  /* redefine this var so it can be used in skin.css */
+  --spectrum-colorhandle-background-offset: calc(-1 * var(--spectrum-global-dimension-static-size-25));
+  --spectrum-colorhandle-checkerboard-size: var(--spectrum-global-dimension-static-size-100);
+
+  --spectrum-colorhandle-animation-duration: var(--spectrum-global-animation-duration-100);
+  --spectrum-colorhandle-animation-easing: ease-in-out;
+
+  --spectrum-colorhandle-hitarea-size: var(--spectrum-global-dimension-size-300);
+  --spectrum-colorhandle-hitarea-radius: 100%;
+}
+
+%spectrum-ColorControl-handle--focused {
+  /* Bigger handle when focused */
+  width: calc(var(--spectrum-colorhandle-size) * 2);
+  height: calc(var(--spectrum-colorhandle-size) * 2);
+
+  margin-left: calc(-1 * var(--spectrum-colorhandle-size));
+  margin-top: calc(-1 * var(--spectrum-colorhandle-size));
+}
+
+.spectrum-ColorHandle {
+  display: block;
+  position: absolute;
+  z-index: 1; /* Be above */
+  box-sizing: border-box;
+  width: var(--spectrum-colorhandle-size);
+  height: var(--spectrum-colorhandle-size);
+
+  margin-left: calc(-1 * calc(var(--spectrum-colorhandle-size) / 2));
+  margin-top: calc(-1 * calc(var(--spectrum-colorhandle-size) / 2));
+
+  border-width: var(--spectrum-colorhandle-inner-border-size);
+  border-style: solid;
+
+  background-size:
+    var(--spectrum-global-dimension-static-size-200)
+    var(--spectrum-global-dimension-static-size-200);
+  background-position:
+    var(--spectrum-colorhandle-background-offset) var(--spectrum-colorhandle-background-offset),
+    var(--spectrum-colorhandle-background-offset) calc(var(--spectrum-colorhandle-checkerboard-size) + var(--spectrum-colorhandle-background-offset)),
+    calc(var(--spectrum-colorhandle-checkerboard-size) + var(--spectrum-colorhandle-background-offset)) calc(-1 * var(--spectrum-colorhandle-checkerboard-size) + var(--spectrum-colorhandle-background-offset)),
+    calc(-1 * var(--spectrum-colorhandle-checkerboard-size) + var(--spectrum-colorhandle-background-offset)) var(--spectrum-colorhandle-background-offset);
+
+  transition:
+    width var(--spectrum-colorhandle-animation-duration) var(--spectrum-colorhandle-animation-easing),
+    height var(--spectrum-colorhandle-animation-duration) var(--spectrum-colorhandle-animation-easing),
+    border-width var(--spectrum-colorhandle-animation-duration) var(--spectrum-colorhandle-animation-easing),
+    margin-left var(--spectrum-colorhandle-animation-duration) var(--spectrum-colorhandle-animation-easing),
+    margin-top var(--spectrum-colorhandle-animation-duration) var(--spectrum-colorhandle-animation-easing);
+
+  &,
+  &:after {
+    border-radius: 100%;
+  }
+
+  &:after {
+    content: '';
+    left: calc(50% - calc(var(--spectrum-colorhandle-hitarea-size) / 2));
+    top: calc(50% - calc(var(--spectrum-colorhandle-hitarea-size) / 2));
+    position: absolute;
+    display: block;
+    width: var(--spectrum-colorhandle-hitarea-size);
+    height: var(--spectrum-colorhandle-hitarea-size);
+  }
+
+  &.is-focused,
+  &.focus-ring {
+    @extend %spectrum-ColorControl-handle--focused;
+  }
+
+  &.is-disabled {
+    pointer-events: none;
+  }
+}
+
+.spectrum-ColorHandle-color {
+  border-radius: 100%;
+  width: 100%;
+  height: 100%;
+}

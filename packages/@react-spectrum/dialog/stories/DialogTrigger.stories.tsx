@@ -17,6 +17,7 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
 import {Content, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
+import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Provider} from '@react-spectrum/provider';
@@ -305,6 +306,31 @@ storiesOf('DialogTrigger', module)
   .add(
     'alert dialog',
     () => renderAlert({})
+  )
+  .add(
+    'crossoffset examples',
+    () => (
+      <Flex gap="size-200" alignSelf="center">
+        <Flex gap="size-200" direction="column" alignItems="start">
+          <span>Left Top</span>
+          <div><span>-50</span>{renderPopover({type: 'popover', placement: 'left top', crossOffset: -50}, false)}</div>
+          <div><span>0</span>{renderPopover({type: 'popover', placement: 'left top'}, false)}</div>
+          <div><span>50</span>{renderPopover({type: 'popover', placement: 'left top', crossOffset: 50}, false)}</div>
+        </Flex>
+        <Flex gap="size-200" direction="column" alignItems="start">
+          <span>Left</span>
+          <div><span>-50</span>{renderPopover({type: 'popover', placement: 'left', crossOffset: -50}, false)}</div>
+          <div><span>0</span>{renderPopover({type: 'popover', placement: 'left'}, false)}</div>
+          <div><span>50</span>{renderPopover({type: 'popover', placement: 'left', crossOffset: 50}, false)}</div>
+        </Flex>
+        <Flex gap="size-200" direction="column" alignItems="start">
+          <span>Left Bottom</span>
+          <div><span>-50</span>{renderPopover({type: 'popover', placement: 'left bottom', crossOffset: -50}, false)}</div>
+          <div><span>0</span>{renderPopover({type: 'popover', placement: 'left bottom'}, false)}</div>
+          <div><span>50</span>{renderPopover({type: 'popover', placement: 'left bottom', crossOffset: 50}, false)}</div>
+        </Flex>
+      </Flex>
+    )
   );
 
 function render({width = 'auto', ...props}) {
@@ -330,9 +356,9 @@ function render({width = 'auto', ...props}) {
   );
 }
 
-function renderPopover({width = 'auto', ...props}) {
+function renderPopover({width = 'auto', ...props}, withMargin = true) {
   return (
-    <div style={{display: 'flex', width, margin: '100px 0'}}>
+    <div style={{display: 'flex', width, margin: withMargin && '100px 0'}}>
       <DialogTrigger {...props} onOpenChange={action('open change')}>
         <ActionButton>Trigger</ActionButton>
         <Dialog>

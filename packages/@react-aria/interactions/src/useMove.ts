@@ -122,17 +122,18 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
         let touch = [...e.changedTouches].findIndex(({identifier}) => identifier === state.current.id);
         if (touch >= 0) {
           end('touch');
+          state.current.id = null;
           removeGlobalListener(window, 'touchmove', onTouchMove);
           removeGlobalListener(window, 'touchend', onTouchEnd);
           removeGlobalListener(window, 'touchcancel', onTouchEnd);
         }
       };
       moveProps.onTouchStart = (e: React.TouchEvent) => {
-        if (e.targetTouches.length === 0) {
+        if (e.changedTouches.length === 0 || state.current.id != null) {
           return;
         }
 
-        let {pageX, pageY, identifier} = e.targetTouches[0];
+        let {pageX, pageY, identifier} = e.changedTouches[0];
         start();
         e.stopPropagation();
         e.preventDefault();
@@ -161,6 +162,7 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
             // @ts-ignore
           let pointerType: BaseMoveEvent['pointerType'] = e.pointerType || 'mouse';
           end(pointerType);
+          state.current.id = null;
           removeGlobalListener(window, 'pointermove', onPointerMove, false);
           removeGlobalListener(window, 'pointerup', onPointerUp, false);
           removeGlobalListener(window, 'pointercancel', onPointerUp, false);
@@ -168,7 +170,7 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
       };
 
       moveProps.onPointerDown = (e: React.PointerEvent) => {
-        if (e.button === 0) {
+        if (e.button === 0 && state.current.id == null) {
           start();
           e.stopPropagation();
           e.preventDefault();
@@ -217,7 +219,7 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
     };
 
     return moveProps;
-  }, [state, onMoveStart, onMove, onMoveEnd]);
+  }, [state, onMoveStart, onMove, onMoveEnd, addGlobalListener, removeGlobalListener]);
 
   return moveProps;
 }

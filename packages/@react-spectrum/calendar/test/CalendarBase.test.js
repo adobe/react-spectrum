@@ -155,6 +155,39 @@ describe('CalendarBase', () => {
     });
 
     it.each`
+      Name                    | Calendar              | props
+      ${'v3 Calendar'}        | ${Calendar}           | ${{defaultValue: new Date(2019, 1, 10), minValue: new Date(2019, 1, 3), maxValue: new Date(2019, 2, 20)}}
+      ${'v3 RangeCalendar'}   | ${RangeCalendar}      | ${{defaultValue: {start: new Date(2019, 1, 10), end: new Date(2019, 1, 15)}, minValue: new Date(2019, 1, 3), maxValue: new Date(2019, 2, 20)}}
+    `('$Name should disable the previous button if outside valid date range', ({Calendar, props}) => {
+      let {getByLabelText} = render(<Calendar {...props} />);
+
+      expect(getByLabelText('Previous')).toHaveAttribute('disabled');
+      expect(getByLabelText('Next')).not.toHaveAttribute('disabled');
+    });
+
+    it.each`
+      Name                    | Calendar              | props
+      ${'v3 Calendar'}        | ${Calendar}           | ${{defaultValue: new Date(2019, 2, 10), minValue: new Date(2019, 1, 3), maxValue: new Date(2019, 2, 20)}}
+      ${'v3 RangeCalendar'}   | ${RangeCalendar}      | ${{defaultValue: {start: new Date(2019, 2, 10), end: new Date(2019, 2, 15)}, minValue: new Date(2019, 1, 3), maxValue: new Date(2019, 2, 20)}}
+    `('$Name should disable the next button if outside valid date range', ({Calendar, props}) => {
+      let {getByLabelText} = render(<Calendar {...props} />);
+
+      expect(getByLabelText('Previous')).not.toHaveAttribute('disabled');
+      expect(getByLabelText('Next')).toHaveAttribute('disabled');
+    });
+
+    it.each`
+      Name                    | Calendar              | props
+      ${'v3 Calendar'}        | ${Calendar}           | ${{defaultValue: new Date(2019, 2, 10), minValue: new Date(2019, 1, 3), maxValue: new Date(2019, 1, 20)}}
+      ${'v3 RangeCalendar'}   | ${RangeCalendar}      | ${{defaultValue: {start: new Date(2019, 2, 10), end: new Date(2019, 2, 15)}, minValue: new Date(2019, 1, 3), maxValue: new Date(2019, 1, 20)}}
+    `('$Name should disable both the next and previous buttons if outside valid date range', ({Calendar, props}) => {
+      let {getByLabelText} = render(<Calendar {...props} />);
+
+      expect(getByLabelText('Previous')).toHaveAttribute('disabled');
+      expect(getByLabelText('Next')).toHaveAttribute('disabled');
+    });
+
+    it.each`
       Name                   | Calendar         | props
       ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new Date(2019, 5, 5)}}
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}}}
@@ -423,7 +456,7 @@ describe('CalendarBase', () => {
       );
 
       let headers = getAllByRole('columnheader');
-      expect(headers[0]).toHaveTextContent('Su');
+      expect(headers[0]).toHaveTextContent('S');
 
       rerender(
         <Provider theme={theme} locale="de-DE">
@@ -432,7 +465,7 @@ describe('CalendarBase', () => {
       );
 
       headers = getAllByRole('columnheader');
-      expect(headers[0]).toHaveTextContent('Mo');
+      expect(headers[0]).toHaveTextContent('M');
     });
 
     it.each`

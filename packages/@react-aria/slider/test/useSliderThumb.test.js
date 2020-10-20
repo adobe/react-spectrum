@@ -258,12 +258,14 @@ describe('useSliderThumb', () => {
   });
 
   describe('interactions on thumbs, where track contains thumbs', () => {
-    let widthStub;
+    let widthStub, heightStub;
     beforeAll(() => {
       widthStub = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
+      heightStub = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 100);
     });
     afterAll(() => {
       widthStub.mockReset();
+      heightStub.mockReset();
     });
     installMouseEvent();
 
@@ -276,6 +278,7 @@ describe('useSliderThumb', () => {
       stateRef.current = state;
       let {trackProps} = useSlider(props, state, trackRef);
       let {inputProps, thumbProps} = useSliderThumb({
+        ...props,
         'aria-label': 'Min',
         index: 0,
         trackRef,
@@ -344,6 +347,31 @@ describe('useSliderThumb', () => {
         expect(stateRef.current.values).toEqual([40]);
         expect(onChangeEndSpy).toBeCalledTimes(1);
       });
+
+      it('can be moved by dragging (vertical)', () => {
+        let onChangeSpy = jest.fn();
+        let onChangeEndSpy = jest.fn();
+        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10]} orientation="vertical" />);
+
+        // Drag thumb
+        let thumb0 = screen.getByTestId('thumb');
+        fireEvent.mouseDown(thumb0, {clientY: 90, pageY: 90});
+        expect(onChangeSpy).not.toHaveBeenCalled();
+        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(stateRef.current.values).toEqual([10]);
+
+        fireEvent.mouseMove(thumb0, {clientY: 80, pageY: 80});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([20]);
+        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(stateRef.current.values).toEqual([20]);
+
+        fireEvent.mouseMove(thumb0, {clientY: 60, pageY: 60});
+        fireEvent.mouseUp(thumb0, {clientY: 60, pageY: 60});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([40]);
+        expect(onChangeEndSpy).toHaveBeenLastCalledWith([40]);
+        expect(stateRef.current.values).toEqual([40]);
+        expect(onChangeEndSpy).toBeCalledTimes(1);
+      });
     });
 
     describe('using KeyEvents', () => {
@@ -360,6 +388,27 @@ describe('useSliderThumb', () => {
         expect(onChangeEndSpy).toHaveBeenLastCalledWith([11]);
         expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
         expect(stateRef.current.values).toEqual([11]);
+      });
+
+      it('can be moved with keys (vertical)', () => {
+        let onChangeSpy = jest.fn();
+        let onChangeEndSpy = jest.fn();
+        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10]} orientation="vertical" />);
+
+        // Drag thumb
+        let thumb0 = screen.getByTestId('thumb').firstChild;
+        fireEvent.keyDown(thumb0, {key: 'ArrowRight'});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([11]);
+        expect(onChangeSpy).toHaveBeenCalledTimes(1);
+        fireEvent.keyDown(thumb0, {key: 'ArrowUp'});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([12]);
+        expect(onChangeSpy).toHaveBeenCalledTimes(2);
+        fireEvent.keyDown(thumb0, {key: 'ArrowDown'});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([11]);
+        expect(onChangeSpy).toHaveBeenCalledTimes(3);
+        fireEvent.keyDown(thumb0, {key: 'ArrowLeft'});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([10]);
+        expect(onChangeSpy).toHaveBeenCalledTimes(4);
       });
     });
   });

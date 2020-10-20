@@ -12,9 +12,11 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
+import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from './CRUDExample';
+import Delete from '@spectrum-icons/workflow/Delete';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from './HidingColumns';
@@ -614,6 +616,121 @@ storiesOf('Table', module)
     'async loading',
     () => <AsyncLoadingExample />,
     {chromatic: {disable: true}}
+  )
+  .add(
+    'hideHeader',
+    () => (
+      <Table
+        aria-label="Table with static contents"
+        width={350}
+        height={200}>
+        <TableHeader>
+          <Column key="foo">
+            Foo
+          </Column>
+          <Column key="addAction" hideHeader>
+            Add Item
+          </Column>
+          <Column key="deleteAction" hideHeader showDivider>
+            Delete Item
+          </Column>
+          <Column key="bar">Bar</Column>
+          <Column key="baz">Baz</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Add />
+              </ActionButton>
+            </Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Delete />
+              </ActionButton>
+            </Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Add />
+              </ActionButton>
+            </Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Delete />
+              </ActionButton>
+            </Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Add />
+              </ActionButton>
+            </Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Delete />
+              </ActionButton>
+            </Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Add />
+              </ActionButton>
+            </Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Delete />
+              </ActionButton>
+            </Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Add />
+              </ActionButton>
+            </Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Delete />
+              </ActionButton>
+            </Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Add />
+              </ActionButton>
+            </Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Delete />
+              </ActionButton>
+            </Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    )
   );
 
 function AsyncLoadingExample() {
