@@ -60,6 +60,21 @@ import Beaker from '@spectrum-icons/workflow/Beaker';
 <Beaker size="XXL" />
 ```
 
+## Coloring
+
+Icons support four Spectrum semantic colors: `negative`, `notice`, `positive`, and `informative`. Icons within React Spectrum components typically
+have their colors styled appropriately, but you can use the `color` prop to adjust the color of any standalone icons.
+
+```tsx example
+import Alert from '@spectrum-icons/workflow/Alert';
+
+<Alert />
+<Alert color="negative" />
+<Alert color="notice" />
+<Alert color="positive" />
+<Alert color="informative" />
+```
+
 ## Labeling
 
 By default, icons are considered decorative, and are hidden from assistive technology. When used within a component like a button
