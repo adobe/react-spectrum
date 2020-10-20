@@ -142,8 +142,9 @@ function useToastContainerState(): ToastContainerState;
 
 
 interface ToastContainerAria {
-  // landmark roles, not 100% on this
-  role: 'complementary' | 'main'
+  // landmark roles, not 100% on this?
+  role: 'region',
+  aria-label: 'Notifications'
 }
 
 function useToastContainer(): ToastContainerAria;
