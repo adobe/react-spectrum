@@ -113,7 +113,7 @@ const borderStyleProps = {
 export const iconStyleProps: StyleHandlers = {
   ...baseStyleProps,
   color: ['color', iconColorValue]
-}
+};
 
 function rtl(ltr: string, rtl: string) {
   return (direction: Direction) => (
