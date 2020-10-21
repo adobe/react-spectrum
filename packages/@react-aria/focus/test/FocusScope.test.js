@@ -294,7 +294,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input2);
     });
 
-    it.only('uses document.activeElement instead of e.relatedTarget on blur to determine if focus is still in scope', function () {
+    it('uses document.activeElement instead of e.relatedTarget on blur to determine if focus is still in scope', function () {
       let {getByTestId} = render(
         <div>
           <FocusScope contain>
@@ -314,8 +314,8 @@ describe('FocusScope', function () {
       act(() => {
         // set document.activeElement to input2
         input2.focus();
-        // if onBlur didn't fallback to document.activeElement, this would reset focus to input1
-        fireEvent.blur(input1, {relatedTarget: null})
+        // if onBlur didn't fallback to checking document.activeElement, this would reset focus to input1
+        fireEvent.blur(input1, {relatedTarget: null});
         jest.advanceTimersByTime(10);
       });
 
