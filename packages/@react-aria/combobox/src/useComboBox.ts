@@ -42,6 +42,12 @@ interface ComboBoxAria {
   labelProps: HTMLAttributes<HTMLElement>
 }
 
+function isAppleDevice() {
+  return typeof window !== 'undefined' && window.navigator != null
+    ? /^(Mac|iPhone|iPad)/.test(window.navigator.platform)
+    : false;
+}
+
 export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState<T>): ComboBoxAria {
   let {
     buttonRef,
@@ -207,7 +213,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let lastSection = useRef(sectionKey);
   let lastItem = useRef(itemKey);
   useEffect(() => {
-    if (focusedItem != null && itemKey !== lastItem.current) {
+    if (isAppleDevice() && focusedItem != null && itemKey !== lastItem.current) {
       let isSelected = state.selectionManager.isSelected(itemKey);
       let section = sectionKey != null ? state.collection.getItem(sectionKey) : null;
       let sectionTitle = section?.['aria-label'] || (typeof section?.rendered === 'string' ? section.rendered : '') || '';
@@ -232,7 +238,14 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let lastSize = useRef(optionCount);
   let lastOpen = useRef(state.isOpen);
   useEffect(() => {
-    if (state.isOpen && (state.isOpen !== lastOpen.current || optionCount !== lastSize.current)) {
+    // Only announce the number of options available when the menu opens if there is no
+    // focused item, otherwise screen readers will typically read e.g. "1 of 6".
+    // The exception is VoiceOver since this isn't included in the message above.
+    let didOpenWithoutFocusedItem =
+      state.isOpen !== lastOpen.current &&
+      (state.selectionManager.focusedKey == null || isAppleDevice());
+
+    if (state.isOpen && (didOpenWithoutFocusedItem || optionCount !== lastSize.current)) {
       let announcement = formatMessage('countAnnouncement', {optionCount});
       announce(announcement);
     }
@@ -241,10 +254,10 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     lastOpen.current = state.isOpen;
   });
 
-  // Announce when a selection occurs
+  // Announce when a selection occurs for VoiceOver. Other screen readers typically do this automatically.
   let lastSelectedKey = useRef(state.selectedKey);
   useEffect(() => {
-    if (state.isFocused && state.selectedItem && state.selectedKey !== lastSelectedKey.current) {
+    if (isAppleDevice() && state.isFocused && state.selectedItem && state.selectedKey !== lastSelectedKey.current) {
       let optionText = state.selectedItem['aria-label'] || state.selectedItem.textValue || '';
       let announcement = formatMessage('selectedAnnouncement', {optionText});
       announce(announcement);

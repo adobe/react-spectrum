@@ -2697,6 +2697,17 @@ describe('ComboBox', function () {
     });
 
     describe('announcements', function () {
+      // Live announcer is (mostly) only used on apple devices for VoiceOver.
+      // Mock navigator.platform so we take that codepath.
+      let platformMock;
+      beforeEach(() => {
+        platformMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'MacIntel');
+      });
+
+      afterEach(() => {
+        platformMock.mockRestore();
+      });
+
       describe('keyboard navigating', function () {
         it('should announce items when navigating with the arrow keys', function () {
           let {getByRole} = renderComboBox();
@@ -2907,6 +2918,7 @@ describe('ComboBox', function () {
       });
 
       it('should not hide the live announcer element', function () {
+        let platformMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'MacIntel');
         let {getByRole} = render(<ExampleComboBox />);
 
         // Use the real live announcer implementation just for this one test
@@ -2924,7 +2936,8 @@ describe('ComboBox', function () {
 
         let listbox = getByRole('listbox');
         expect(listbox).toBeVisible();
-        expect(screen.getAllByRole('log')).toHaveLength(4);
+        expect(screen.getAllByRole('log')).toHaveLength(2);
+        platformMock.mockRestore();
       });
 
       it('should handle when a new element is added outside while open', async function () {

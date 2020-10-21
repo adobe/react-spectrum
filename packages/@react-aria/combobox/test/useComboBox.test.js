@@ -37,8 +37,9 @@ describe('useComboBox', function () {
     let props = {
       label: 'test label',
       popoverRef: React.createRef(),
-      triggerRef: React.createRef(),
-      textFieldRef: React.createRef(),
+      buttonRef: React.createRef(),
+      inputRef: React.createRef(),
+      listBoxRef: React.createRef(),
       layout: mockLayout
     };
 
