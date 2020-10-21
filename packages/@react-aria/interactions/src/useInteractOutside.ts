@@ -38,6 +38,10 @@ export function useInteractOutside(props: InteractOutsideProps) {
     let onPointerDown = (e) => {
       if (isValidEvent(e, ref)) {
         state.isPointerDown = true;
+        // for the same reason as usePress
+        if (e.button === 0) {
+          e.preventDefault();
+        }
       }
     };
 
@@ -47,6 +51,9 @@ export function useInteractOutside(props: InteractOutsideProps) {
         if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
           state.isPointerDown = false;
           onInteractOutside(e);
+          if (e.button === 0) {
+            e.preventDefault();
+          }
         }
       };
 
@@ -65,6 +72,9 @@ export function useInteractOutside(props: InteractOutsideProps) {
         } else if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
           state.isPointerDown = false;
           onInteractOutside(e);
+          if (e.button === 0) {
+            e.preventDefault();
+          }
         }
       };
 
@@ -73,6 +83,9 @@ export function useInteractOutside(props: InteractOutsideProps) {
         if (onInteractOutside && state.isPointerDown && isValidEvent(e, ref)) {
           state.isPointerDown = false;
           onInteractOutside(e);
+          if (e.button === 0) {
+            e.preventDefault();
+          }
         }
       };
 
