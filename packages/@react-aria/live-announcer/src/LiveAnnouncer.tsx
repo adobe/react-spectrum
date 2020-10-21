@@ -15,10 +15,11 @@ import ReactDOM from 'react-dom';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 /* Inspired by https://github.com/AlmeroSteyn/react-aria-live */
+const LIVEREGION_TIMEOUT_DELAY = 7000;
+
 let liveRegionAnnouncer = React.createRef();
 let node: HTMLElement = null;
-let clearTimeoutId = null;
-const LIVEREGION_TIMEOUT_DELAY = 7000;
+let messageId = 0;
 
 /**
  * Announces the message using screen reader technology.
@@ -64,34 +65,35 @@ function ensureInstance(callback: (announcer:any) => void) {
 }
 
 const LiveRegionAnnouncer = React.forwardRef((props, ref) => {
-  let [assertiveMessage, setAssertiveMessage] = useState('');
-  let [politeMessage, setPoliteMessage] = useState('');
+  let [assertiveMessages, setAssertiveMessages] = useState([]);
+  let [politeMessages, setPoliteMessages] = useState([]);
 
   let clear = (assertiveness) => {
     if (!assertiveness || assertiveness === 'assertive') {
-      setAssertiveMessage('');
+      setAssertiveMessages([]);
     }
 
     if (!assertiveness || assertiveness === 'polite') {
-      setPoliteMessage('');
+      setPoliteMessages([]);
     }
   };
 
-  let announce = (message, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY) => {
-    if (clearTimeoutId) {
-      clearTimeout(clearTimeoutId);
-      clearTimeoutId = null;
-    }
+  let announce = (message: string, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY) => {
+    let id = messageId++;
 
     if (assertiveness === 'assertive') {
-      setAssertiveMessage(message);
+      setAssertiveMessages(messages => [...messages, {id, text: message}]);
     } else {
-      setPoliteMessage(message);
+      setPoliteMessages(messages => [...messages, {id, text: message}]);
     }
 
     if (message !== '') {
-      clearTimeoutId = setTimeout(() => {
-        clear(assertiveness);
+      setTimeout(() => {
+        if (assertiveness === 'assertive') {
+          setAssertiveMessages(messages => messages.filter(message => message.id !== id));
+        } else {
+          setPoliteMessages(messages => messages.filter(message => message.id !== id));
+        }
       }, timeout);
     }
   };
@@ -103,38 +105,23 @@ const LiveRegionAnnouncer = React.forwardRef((props, ref) => {
 
   return (
     <Fragment>
-      <MessageAlternator aria-live="assertive" message={assertiveMessage} />
-      <MessageAlternator aria-live="polite" message={politeMessage} />
+      <MessageBlock aria-live="assertive">
+        {assertiveMessages.map(message => <div key={message.id}>{message.text}</div>)}
+      </MessageBlock>
+      <MessageBlock aria-live="polite">
+        {politeMessages.map(message => <div key={message.id}>{message.text}</div>)}
+      </MessageBlock>
     </Fragment>
   );
 });
 
-function MessageAlternator({message = '', 'aria-live': ariaLive}) {
-  let messagesRef = useRef(['', '']);
-  let indexRef = useRef(0);
-
-  if (message !== messagesRef.current[indexRef.current]) {
-    messagesRef.current[indexRef.current] = '';
-    indexRef.current = (indexRef.current + 1) % 2;
-    messagesRef.current[indexRef.current] = message;
-  }
-
-  return (
-    <Fragment>
-      <MessageBlock aria-live={ariaLive} message={messagesRef.current[0]} />
-      <MessageBlock aria-live={ariaLive} message={messagesRef.current[1]} />
-    </Fragment>
-  );
-}
-
-function MessageBlock({message = '', 'aria-live': ariaLive}) {
+function MessageBlock({children, 'aria-live': ariaLive}) {
   return (
     <VisuallyHidden
       role="log"
       aria-live={ariaLive}
-      aria-relevant="additions"
-      aria-atomic="true">
-      {message}
+      aria-relevant="additions">
+      {children}
     </VisuallyHidden>
   );
 }
