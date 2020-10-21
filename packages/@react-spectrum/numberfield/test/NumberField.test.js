@@ -141,10 +141,21 @@ describe('NumberField', function () {
     act(() => {textField.focus();});
     typeText(textField, '2');
     act(() => {textField.blur();});
-    expect(onChangeSpy).toHaveBeenCalledWith(2);
-    onChangeSpy.mockReset();
+    expect(onChangeSpy).toHaveBeenLastCalledWith(0);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
     triggerPress(incrementButton);
-    expect(onChangeSpy).toHaveBeenCalledWith(7);
+    expect(onChangeSpy).toHaveBeenLastCalledWith(5);
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
+
+    act(() => {textField.focus();});
+    userEvent.clear(textField);
+    typeText(textField, '3');
+    act(() => {textField.blur();});
+    expect(onChangeSpy).toHaveBeenLastCalledWith(5);
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    triggerPress(incrementButton);
+    expect(onChangeSpy).toHaveBeenLastCalledWith(10);
+    expect(onChangeSpy).toHaveBeenCalledTimes(3);
   });
 
   it.each`
@@ -685,7 +696,7 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
-  `('$Name sets invalid input value to valid number value on blur', ({Component}) => {
+  `('$Name sets invalid input value to valid number value on blur', () => {
     let {textField} = renderNumberField({showStepper: true, defaultValue: 10});
 
     expect(textField).toHaveAttribute('value', '10');
@@ -695,6 +706,95 @@ describe('NumberField', function () {
     act(() => {textField.focus();});
     expect(textField).toHaveAttribute('value', '10');
     act(() => {textField.blur();});
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name sets invalid input value to valid step on blur', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, defaultValue: 10, step: 10});
+
+    expect(textField).toHaveAttribute('value', '10');
+    act(() => {textField.focus();});
+    typeText(textField, '5');
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '100');
+    expect(onChangeSpy).toHaveBeenCalledWith(100);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+
+    act(() => {textField.focus();});
+    userEvent.clear(textField);
+    typeText(textField, '16');
+    expect(textField).toHaveAttribute('value', '16');
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '20');
+    expect(textField).toHaveAttribute('value', '20');
+    expect(onChangeSpy).toHaveBeenLastCalledWith(20);
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('goes to valid max on `end`', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, defaultValue: 10});
+
+    expect(textField).toHaveAttribute('value', '10');
+    act(() => {textField.focus();});
+    fireEvent.keyDown(textField, {key: 'End'});
+    fireEvent.keyUp(textField, {key: 'End'});
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '9,007,199,254,740,991');
+    expect(onChangeSpy).toHaveBeenCalledWith(9007199254740991);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('goes to valid step max on `end`', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, defaultValue: 10, step: 10});
+
+    expect(textField).toHaveAttribute('value', '10');
+    act(() => {textField.focus();});
+    fireEvent.keyDown(textField, {key: 'End'});
+    fireEvent.keyUp(textField, {key: 'End'});
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '9,007,199,254,740,990');
+    expect(onChangeSpy).toHaveBeenCalledWith(9007199254740990);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('goes to valid min on `home`', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, defaultValue: 10});
+
+    expect(textField).toHaveAttribute('value', '10');
+    act(() => {textField.focus();});
+    fireEvent.keyDown(textField, {key: 'Home'});
+    fireEvent.keyUp(textField, {key: 'Home'});
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '-9,007,199,254,740,991');
+    expect(onChangeSpy).toHaveBeenCalledWith(-9007199254740991);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('goes to valid step min on `home`', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, defaultValue: 10, step: 10});
+
+    expect(textField).toHaveAttribute('value', '10');
+    act(() => {textField.focus();});
+    fireEvent.keyDown(textField, {key: 'Home'});
+    fireEvent.keyUp(textField, {key: 'Home'});
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '-9,007,199,254,740,990');
+    expect(onChangeSpy).toHaveBeenCalledWith(-9007199254740990);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
   it.each`

@@ -40,7 +40,7 @@ const CURRENCY_SIGN_REGEX = new RegExp('^\\(.*\\)$');
 export function useNumberFieldState(
   props: NumberFieldProps
 ): NumberFieldState {
-  let {minValue = Number.MIN_SAFE_INTEGER, maxValue = Number.MAX_SAFE_INTEGER, step = 1, formatOptions, value, defaultValue, onChange} = props;
+  let {minValue = Number.MIN_SAFE_INTEGER, maxValue = Number.MAX_SAFE_INTEGER, step, formatOptions, value, defaultValue, onChange} = props;
   let [currentNumeralSystem, setCurrentNumeralSystem] = useState('latin');
 
   let numberParser = useNumberParser();
@@ -117,9 +117,10 @@ export function useNumberFieldState(
         tempNum.current = NaN;
       }
       const newValue = clamp(
-        handleDecimalOperation('+', prev, step),
+        handleDecimalOperation('+', prev, !isNaN(step) ? step : 1),
         minValue,
-        maxValue
+        maxValue,
+        step
       );
       return newValue;
     });
@@ -127,7 +128,7 @@ export function useNumberFieldState(
 
   let incrementToMax = useCallback(() => {
     if (maxValue != null) {
-      setNumberValue(maxValue);
+      setNumberValue(clamp(maxValue, minValue, maxValue, step));
     }
   }, [maxValue, setNumberValue]);
 
@@ -150,9 +151,10 @@ export function useNumberFieldState(
         tempNum.current = NaN;
       }
       const newValue = clamp(
-        handleDecimalOperation('-', prev, step),
+        handleDecimalOperation('-', prev, !isNaN(step) ? step : 1),
         minValue,
-        maxValue
+        maxValue,
+        step
       );
       return newValue;
     });
@@ -160,7 +162,7 @@ export function useNumberFieldState(
 
   let decrementToMin = useCallback(() => {
     if (minValue != null) {
-      setNumberValue(minValue);
+      setNumberValue(clamp(minValue, minValue, maxValue, step));
     }
   }, [minValue, setNumberValue]);
 
@@ -269,10 +271,10 @@ export function useNumberFieldState(
     }
     let clampedValue;
     if (!isNaN(tempNum.current)) {
-      clampedValue = clamp(tempNum.current, minValue, maxValue);
+      clampedValue = clamp(tempNum.current, minValue, maxValue, step);
       tempNum.current = NaN;
     } else {
-      clampedValue = clamp(numberValue, minValue, maxValue);
+      clampedValue = clamp(numberValue, minValue, maxValue, step);
     }
     let newValue = isNaN(clampedValue) ? '' : inputValueFormatter.format(clampedValue);
     setNumberValue(clampedValue);

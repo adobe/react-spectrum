@@ -11,8 +11,15 @@
  */
 
 /**
- * Takes a value and forces it to the closest min/max.
+ * Takes a value and forces it to the closest min/max if it's outside. Also forces it to the closest valid step.
  */
-export function clamp(value: number, min: number = -Infinity, max: number = Infinity): number {
-  return Math.min(Math.max(value, min), max);
+export function clamp(value: number, min: number = -Infinity, max: number = Infinity, step?: number): number {
+  let newValue = Math.min(Math.max(value, min), max);
+  // TODO: should this be its own function?
+  if (!isNaN(step)) {
+    // have to avoid Math.round(num / multiple) * multiple; because it can give results like "0.3000000000000004" for Round(.2 + .1, .1)
+    let diff = newValue % step;
+    return diff > step / 2 ? (newValue-diff+step) : newValue - diff;
+  }
+  return newValue;
 }

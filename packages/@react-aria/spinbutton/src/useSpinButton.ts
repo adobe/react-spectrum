@@ -98,13 +98,13 @@ export function useSpinButton(
         }
         break;
       case 'Home':
-        if (minValue != null && onDecrementToMin) {
+        if (onDecrementToMin) {
           e.preventDefault();
           onDecrementToMin();
         }
         break;
       case 'End':
-        if (maxValue != null && onIncrementToMax) {
+        if (onIncrementToMax) {
           e.preventDefault();
           onIncrementToMax();
         }
