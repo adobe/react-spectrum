@@ -115,6 +115,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     lastValue.current = inputValue;
   });
 
+  let isInitialRender = useRef(true);
   let lastSelectedKey = useRef(null);
   useEffect(() => {
     // Do nothing if both inputValue and selectedKey are controlled.
@@ -123,11 +124,14 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       return;
     }
 
-    // Update input value to the text of the selected item when the selectedKey changes.
-    if (selectedKey !== lastSelectedKey.current) {
+    // Update input value to the text of the selected item when the selectedKey changes,
+    // except when this is the initial render and there is a defaultInputValue.
+    if (selectedKey !== lastSelectedKey.current && !(isInitialRender.current && props.defaultInputValue != null)) {
       resetInputValue();
-      lastSelectedKey.current = selectedKey;
     }
+
+    isInitialRender.current = false;
+    lastSelectedKey.current = selectedKey;
   });
 
   useEffect(() => {

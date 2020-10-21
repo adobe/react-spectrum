@@ -1828,10 +1828,28 @@ describe('ComboBox', function () {
       expect(items[0]).toHaveAttribute('aria-selected', 'true');
     });
 
-    it('should update input value to match defaultSelectedKey', function () {
+    it('should keep defaultInputValue if it doesn\'t match defaultSelectedKey', function () {
       let {getByRole} = renderComboBox({defaultSelectedKey: '2', defaultInputValue: 'One'});
       let combobox = getByRole('combobox');
-      expect(combobox.value).toBe('Two');
+      expect(combobox.value).toBe('One');
+
+      act(() => {
+        combobox.focus();
+        fireEvent.change(combobox, {target: {value: ''}});
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      let items = within(listbox).getAllByRole('option');
+      expect(items).toHaveLength(3);
+
+      act(() => {
+        triggerPress(items[2]);
+        jest.runAllTimers();
+      });
+
+      expect(combobox.value).toBe('Three');
     });
 
     it('defaultInputValue should not set selected item', function () {
