@@ -2002,6 +2002,23 @@ describe('Table', function () {
         checkSelectAll(tree, 'unchecked');
       });
 
+      it('should only call onSelectionChange if there are selections to clear', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        checkSelectAll(tree, 'unchecked');
+        fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'Escape'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+
+        userEvent.click(tree.getByLabelText('Select All'));
+        checkSelectAll(tree, 'checked');
+        expect(onSelectionChange).toHaveBeenLastCalledWith('all');
+
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'Escape'});
+        expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set());
+      });
+
       it('should automatically select new items when select all is active', function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});

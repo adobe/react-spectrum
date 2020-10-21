@@ -310,7 +310,9 @@ export class SelectionManager implements MultipleSelectionManager {
    * Removes all keys from the selection.
    */
   clearSelection() {
-    this.state.setSelectedKeys(new Selection());
+    if (this.state.selectedKeys === 'all' || this.state.selectedKeys.size > 0) {
+      this.state.setSelectedKeys(new Selection());
+    }
   }
 
   /**
