@@ -12,14 +12,14 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {clearAnnouncer} from '@react-aria/live-announcer';
-import {HTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useState} from 'react';
+import {HTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useMemo, useState} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {useFocus, useFocusWithin} from '@react-aria/interactions';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
 import {useSpinButton} from '@react-aria/spinbutton';
 import {useTextField} from '@react-aria/textfield';
 
@@ -47,7 +47,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     maxValue,
     autoFocus,
     validationState,
-    label
+    label,
+    formatOptions
   } = props;
 
   let {
@@ -164,6 +165,9 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
    * after typing a character, place cursor after that character, helps to know previous position, maybe get from keyup? Or maybe keydown, though not optimal
    * what happens if a selection is made and a chunk is deleted or replaced out of the number? What if it includes the currency symbol or one paren out of two used in accounting representation.
    */
+  let numberFormatter = useNumberFormatter(formatOptions);
+  let intlOptions = useMemo(() => numberFormatter.resolvedOptions(), [numberFormatter]);
+  let hasDecimals = intlOptions.maximumFractionDigits > 0;
 
   let {labelProps, inputProps} = useTextField(
     {
@@ -180,7 +184,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       id: inputId,
       placeholder: formatMessage('Enter a number'),
       type: 'text',
-      inputMode: 'decimal',
+      inputMode: hasDecimals ? 'decimal' : 'numeric',
       onChange: state.setValue
     }, ref);
 

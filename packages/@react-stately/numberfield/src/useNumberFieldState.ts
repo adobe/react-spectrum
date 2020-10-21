@@ -45,6 +45,7 @@ export function useNumberFieldState(
 
   let numberParser = useNumberParser();
   let inputValueFormatter = useNumberFormatter(formatOptions);
+  let intlOptions = useMemo(() => inputValueFormatter.resolvedOptions(), [inputValueFormatter]);
 
   let isMaxRange = useMemo(() => minValue === Number.MIN_SAFE_INTEGER && maxValue === Number.MAX_SAFE_INTEGER, [minValue, maxValue]);
 
@@ -60,10 +61,18 @@ export function useNumberFieldState(
     plusSign = maxValue <= 0 || !plusSign ? '' : plusSign;
     let decimal = allParts.find(p => p.type === 'decimal')?.value;
     // this is a string ready for any regex so we can identify allowed characters, minus is excluded because of the way it can be handled
-    let validCharacters = allParts.reduce((chars, p) => p.type === 'fraction' || p.type === 'integer' || p.type === 'minusSign' || p.type === 'plusSign' ? chars : chars + '\\' + p.value, '');
+    let validCharacters = allParts.reduce((chars, p) => {
+      if (p.type === 'decimal' && intlOptions.maximumFractionDigits === 0) {
+        return chars;
+      }
+      if (p.type === 'fraction' || p.type === 'integer' || p.type === 'minusSign' || p.type === 'plusSign') {
+        return chars;
+      }
+      return chars + '\\' + p.value;
+    }, '');
     let literals = allParts.reduce((chars, p) => p.type === 'decimal' || p.type === 'fraction' || p.type === 'integer' || p.type === 'minusSign' || p.type === 'plusSign' ? chars : chars + '\\' + p.value, '');
     return {minusSign, plusSign, decimal, validCharacters, literals};
-  }, [inputValueFormatter, minValue, maxValue]);
+  }, [inputValueFormatter, minValue, maxValue, intlOptions]);
   let {minusSign, plusSign, decimal, validCharacters, literals} = symbols;
 
   // javascript doesn't recognize NaN === NaN, so multiple onChanges will get fired if we don't ignore consecutive ones
@@ -116,15 +125,19 @@ export function useNumberFieldState(
         prev = tempNum.current;
         tempNum.current = NaN;
       }
+      let clampStep = !isNaN(step) ? step : 1;
+      if (intlOptions.style === 'percent') {
+        clampStep = 0.01;
+      }
       const newValue = clamp(
-        handleDecimalOperation('+', prev, !isNaN(step) ? step : 1),
+        handleDecimalOperation('+', prev, clampStep),
         minValue,
         maxValue,
         step
       );
       return newValue;
     });
-  }, [setNumberValue, setInputValue, tempNum, handleDecimalOperation, minValue, maxValue, step, isMaxRange]);
+  }, [setNumberValue, setInputValue, tempNum, handleDecimalOperation, minValue, maxValue, step, isMaxRange, intlOptions]);
 
   let incrementToMax = useCallback(() => {
     if (maxValue != null) {
@@ -150,15 +163,19 @@ export function useNumberFieldState(
         prev = tempNum.current;
         tempNum.current = NaN;
       }
+      let clampStep = !isNaN(step) ? step : 1;
+      if (intlOptions.style === 'percent') {
+        clampStep = 0.01;
+      }
       const newValue = clamp(
-        handleDecimalOperation('-', prev, !isNaN(step) ? step : 1),
+        handleDecimalOperation('-', prev, clampStep),
         minValue,
         maxValue,
         step
       );
       return newValue;
     });
-  }, [setNumberValue, setInputValue, tempNum, handleDecimalOperation, minValue, maxValue, step]);
+  }, [setNumberValue, setInputValue, tempNum, handleDecimalOperation, minValue, maxValue, step, isMaxRange, intlOptions]);
 
   let decrementToMin = useCallback(() => {
     if (minValue != null) {
@@ -211,12 +228,12 @@ export function useNumberFieldState(
       }
     }).join('');
     let result = numberParser.parse(strippedValue);
-    if (formatOptions?.currencySign === 'accounting' && value < 0) {
+    if (intlOptions?.currencySign === 'accounting' && value < 0) {
       result = -1 * result;
     }
     // because the {style: 'percent'} adds two zeros to the end, we need to divide by 100 in that very specific case
     // otherwise we'll accidentally add 2 zeros when we format for real
-    if (formatOptions?.style === 'percent') {
+    if (intlOptions?.style === 'percent') {
       result = result / 100;
     }
     return result;
@@ -241,11 +258,11 @@ export function useNumberFieldState(
     let parseReady = strippedValue.replace(new RegExp(`[${literals}]`, 'g'), '');
     let newValue = numberParser.parse(parseReady);
     // accounting will always be stripped to a positive number, so if it's accounting and has a () around everything, then we need to make it negative again
-    if (formatOptions?.currencySign === 'accounting' && CURRENCY_SIGN_REGEX.test(strippedValue)) {
+    if (intlOptions?.currencySign === 'accounting' && CURRENCY_SIGN_REGEX.test(strippedValue)) {
       newValue = -1 * newValue;
     }
     // when reading the number, if it's a percent, then it should be interpreted as being divided by 100
-    if (formatOptions?.style === 'percent') {
+    if (intlOptions?.style === 'percent') {
       newValue = newValue / 100;
     }
     if (!isNaN(newValue) && (newValue > maxValue || newValue < minValue)) {

@@ -75,8 +75,62 @@ describe('NumberField', function () {
     expect(container).toHaveAttribute('role', 'group');
     expect(textField).toBeTruthy();
     expect(textField).toHaveAttribute('type', 'text');
+    expect(textField).toHaveAttribute('inputMode', 'decimal');
     expect(incrementButton).toBeTruthy();
     expect(decrementButton).toBeTruthy();
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name switches to numeric inputMode if maximumFractionDigits is 0 and cannot type decimal', () => {
+    let {
+      textField
+    } = renderNumberField({onChange: onChangeSpy, formatOptions: {maximumFractionDigits: 0}});
+
+    expect(textField).toHaveAttribute('inputMode', 'numeric');
+
+    act(() => {textField.focus();});
+    typeText(textField, '5.2');
+    expect(textField).toHaveAttribute('value', '52');
+    act(() => {textField.blur();});
+    expect(onChangeSpy).toHaveBeenCalledWith(52);
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name switches to numeric for currencies that have no decimals', () => {
+    let {
+      textField
+    } = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'JPY'}});
+
+    expect(textField).toHaveAttribute('inputMode', 'numeric');
+
+    act(() => {textField.focus();});
+    typeText(textField, '5.2');
+    expect(textField).toHaveAttribute('value', '52');
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '¥52');
+    expect(onChangeSpy).toHaveBeenCalledWith(52);
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name switches to numeric for percentages', () => {
+    let {
+      textField
+    } = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'percent'}});
+
+    expect(textField).toHaveAttribute('inputMode', 'numeric');
+
+    act(() => {textField.focus();});
+    typeText(textField, '5.2');
+    expect(textField).toHaveAttribute('value', '52');
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '52%');
+    expect(onChangeSpy).toHaveBeenCalledWith(0.52);
   });
 
   it.each`
@@ -512,7 +566,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name properly formats percents', () => {
-    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, showStepper: true, defaultValue: 0.1, step: 0.01, formatOptions: {style: 'percent'}});
+    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, showStepper: true, defaultValue: 0.1, formatOptions: {style: 'percent'}});
 
     expect(textField).toHaveAttribute('value', '10%');
     act(() => {textField.focus();});
