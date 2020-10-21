@@ -140,7 +140,7 @@ export function useSpinButton(
         initialStepDelay
       );
     },
-    [onIncrement]
+    [onIncrement, maxValue, value]
   );
 
   const onDecrementPressStart = useCallback(
@@ -156,7 +156,7 @@ export function useSpinButton(
         initialStepDelay
       );
     },
-    [onDecrement]
+    [onDecrement, minValue, value]
   );
 
   return {

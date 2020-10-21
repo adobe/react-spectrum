@@ -12,7 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {clearAnnouncer} from '@react-aria/live-announcer';
-import {HTMLAttributes, LabelHTMLAttributes, RefObject, useEffect, useState} from 'react';
+import {HTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useState} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
@@ -137,34 +137,18 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     onPressStart
   });
 
-  useEffect(() => {
-    const handleInputScrollWheel = e => {
+  let onWheel = useCallback((e) => {
       // If the input isn't supposed to receive input, do nothing.
       // TODO: add focus
-      if (isDisabled || isReadOnly || !ref.current) {
+      if (isDisabled || isReadOnly) {
         return;
       }
 
-      e.preventDefault();
       if (e.deltaY < 0) {
         increment();
       } else {
         decrement();
       }
-    };
-
-    let inputRef = ref.current;
-    inputRef.addEventListener(
-      'wheel',
-      handleInputScrollWheel,
-      {passive: false}
-    );
-    return () => {
-      inputRef.removeEventListener(
-        'wheel',
-        handleInputScrollWheel
-      );
-    };
   }, [inputId, isReadOnly, isDisabled, decrement, increment, ref]);
 
   /**
@@ -200,7 +184,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       onChange: state.setValue
     }, ref);
 
-  const inputFieldProps = mergeProps(spinButtonProps, inputProps, focusProps);
+  const inputFieldProps = mergeProps(spinButtonProps, inputProps, focusProps, {onWheel});
   return {
     numberFieldProps: {
       role: 'group',

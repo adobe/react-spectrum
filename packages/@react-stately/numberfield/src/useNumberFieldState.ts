@@ -35,6 +35,8 @@ let numberingSystems = {
   latin: [...('0123456789')]
 };
 
+const CURRENCY_SIGN_REGEX = new RegExp('^\\(.*\\)$');
+
 export function useNumberFieldState(
   props: NumberFieldProps
 ): NumberFieldState {
@@ -49,15 +51,18 @@ export function useNumberFieldState(
     // Automatically updates the minus sign when numberFormatter changes
     // won't work for currency accounting, but we have validCharacters for that in the pattern
     let allParts = inputValueFormatter.formatToParts(-1000.1);
+    let posAllParts = inputValueFormatter.formatToParts(1000.1);
     let minusSign = allParts.find(p => p.type === 'minusSign')?.value;
+    let plusSign = posAllParts.find(p => p.type === 'plusSign')?.value;
     minusSign = minValue >= 0 || !minusSign ? '' : minusSign;
+    plusSign = maxValue <= 0 || !plusSign ? '' : plusSign;
     let decimal = allParts.find(p => p.type === 'decimal')?.value;
     // this is a string ready for any regex so we can identify allowed characters, minus is excluded because of the way it can be handled
-    let validCharacters = allParts.reduce((chars, p) => p.type === 'fraction' || p.type === 'integer' || p.type === 'minusSign' ? chars : chars + '\\' + p.value, '');
-    let literals = allParts.reduce((chars, p) => p.type === 'decimal' || p.type === 'fraction' || p.type === 'integer' || p.type === 'minusSign' ? chars : chars + '\\' + p.value, '');
-    return {minusSign, decimal, validCharacters, literals};
+    let validCharacters = allParts.reduce((chars, p) => p.type === 'fraction' || p.type === 'integer' || p.type === 'minusSign' || p.type === 'plusSign' ? chars : chars + '\\' + p.value, '');
+    let literals = allParts.reduce((chars, p) => p.type === 'decimal' || p.type === 'fraction' || p.type === 'integer' || p.type === 'minusSign' || p.type === 'plusSign' ? chars : chars + '\\' + p.value, '');
+    return {minusSign, plusSign, decimal, validCharacters, literals};
   }, [inputValueFormatter, minValue, maxValue]);
-  let {minusSign, decimal, validCharacters, literals} = symbols;
+  let {minusSign, plusSign, decimal, validCharacters, literals} = symbols;
 
   // javascript doesn't recognize NaN === NaN, so multiple onChanges will get fired if we don't ignore consecutive ones
   let lastValDispatched = useRef(NaN);
@@ -72,9 +77,12 @@ export function useNumberFieldState(
   let initialInputValue = isNaN(numberValue) ? '' : inputValueFormatter.format(numberValue);
   let [inputValue, setInputValue] = useState(initialInputValue);
 
+  // this updates the field only if the formatter or number has changed, otherwise don't run it
+  // if it's run when numberValue changes then going from $10 -> $1 will cause it to actually go to $1.00
+  // because of this, we only fire onChange when scrolling/arrow keys/steppers/blur
   useEffect(() => {
     setInputValue(isNaN(numberValue) ? '' : inputValueFormatter.format(numberValue));
-  }, [inputValueFormatter, setInputValue]);
+  }, [inputValueFormatter, setInputValue, numberValue]);
 
   let textValue = inputValueFormatter.format(numberValue);
 
@@ -94,22 +102,15 @@ export function useNumberFieldState(
         minValue,
         maxValue
       );
-
-      if (isNaN(value)) {
-        setInputValue(inputValueFormatter.format(newValue));
-      }
       return newValue;
     });
-  }, [setNumberValue, setInputValue, tempNum, handleDecimalOperation, inputValueFormatter, value, minValue, maxValue, step]);
+  }, [setNumberValue, setInputValue, tempNum, handleDecimalOperation, minValue, maxValue, step]);
 
   let incrementToMax = useCallback(() => {
     if (maxValue != null) {
       setNumberValue(maxValue);
-      if (isNaN(value)) {
-        setInputValue(inputValueFormatter.format(maxValue));
-      }
     }
-  }, [inputValueFormatter, maxValue, setNumberValue, value]);
+  }, [maxValue, setNumberValue]);
 
   let decrement = useCallback(() => {
     setNumberValue((previousValue) => {
@@ -126,22 +127,15 @@ export function useNumberFieldState(
         minValue,
         maxValue
       );
-
-      if (isNaN(value)) {
-        setInputValue(inputValueFormatter.format(newValue));
-      }
       return newValue;
     });
-  }, [setNumberValue, setInputValue, tempNum, handleDecimalOperation, inputValueFormatter, value, minValue, maxValue, step]);
+  }, [setNumberValue, setInputValue, tempNum, handleDecimalOperation, minValue, maxValue, step]);
 
   let decrementToMin = useCallback(() => {
     if (minValue != null) {
       setNumberValue(minValue);
-      if (isNaN(value)) {
-        setInputValue(inputValueFormatter.format(minValue));
-      }
     }
-  }, [inputValueFormatter, minValue, setNumberValue, value]);
+  }, [minValue, setNumberValue]);
 
   // if too slow, use string diffing, but i doubt these will be strings THAT large
   // should i check more than just the first character matches?
@@ -167,17 +161,19 @@ export function useNumberFieldState(
   // this should round us as the formatter does
   let roundValueUsingFormatter = (value: number): number => {
     let parts = inputValueFormatter.formatToParts(value);
-    let result = parts.map((part) => {
+    let strippedValue = parts.map((part) => {
+      // list from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/formatToParts
       switch (part.type) {
         case 'currency':
         case 'nan':
-        case 'plusSign':
         case 'percentSign':
         case 'group':
         case 'infinity':
         case 'literal':
+        case 'unit': // this is supported in chrome :-/ for {style: 'unit', unit: 'percent', signDisplay: 'always'}
           return '';
         case 'minusSign':
+        case 'plusSign':
         case 'decimal':
         case 'fraction':
         case 'integer':
@@ -185,7 +181,16 @@ export function useNumberFieldState(
           return part.value;
       }
     }).join('');
-    return numberParser.parse(result);
+    let result = numberParser.parse(strippedValue);
+    if (formatOptions?.currencySign === 'accounting' && value < 0) {
+      result = -1 * result;
+    }
+    // because the {style: 'percent'} adds two zeros to the end, we need to divide by 100 in that very specific case
+    // otherwise we'll accidentally add 2 zeros when we format for real
+    if (formatOptions?.style === 'percent') {
+      result = result / 100;
+    }
+    return result;
   };
 
   let replaceAllButFirstOccurrence = (val: string, char: string) => {
@@ -196,19 +201,24 @@ export function useNumberFieldState(
   };
 
   let setValue = (value: string) => {
-    if (value === '') {
-      setNumberValue(NaN);
-      setInputValue('');
-      return;
-    }
     let numeralSystem = determineNumeralSystem(value);
 
-    let strippedValue = value.replace(new RegExp(`[^${minusSign}${numberingSystems[numeralSystem].join('')}${validCharacters}]`, 'g'), '');
+    let strippedValue = value.replace(new RegExp(`[^${minusSign}${plusSign}${numberingSystems[numeralSystem].join('')}${validCharacters}]`, 'g'), '');
     strippedValue = replaceAllButFirstOccurrence(strippedValue, minusSign);
+    strippedValue = replaceAllButFirstOccurrence(strippedValue, plusSign);
     strippedValue = replaceAllButFirstOccurrence(strippedValue, decimal);
 
-    // to parse the number, we need to remove anything that isn't actually part of the number, for example we want -10.40 not -10.40 USD
-    let newValue = numberParser.parse(strippedValue.replace(new RegExp(`[${literals}]`, 'g'), ''));
+    // to parse the number, we need to remove anything that isn't actually part of the number, for example we want '-10.40' not '-10.40 USD'
+    let parseReady = strippedValue.replace(new RegExp(`[${literals}]`, 'g'), '');
+    let newValue = numberParser.parse(parseReady);
+    // accounting will always be stripped to a positive number, so if it's accounting and has a () around everything, then we need to make it negative again
+    if (formatOptions?.currencySign === 'accounting' && CURRENCY_SIGN_REGEX.test(strippedValue)) {
+      newValue = -1 * newValue;
+    }
+    // when reading the number, if it's a percent, then it should be interpreted as being divided by 100
+    if (formatOptions?.style === 'percent') {
+      newValue = newValue / 100;
+    }
     if (!isNaN(newValue) && (newValue > maxValue || newValue < minValue)) {
       return;
     }
@@ -216,17 +226,12 @@ export function useNumberFieldState(
     // If new value is a number less than max and more than min then update the number value
     if (!isNaN(newValue) && newValue <= maxValue && newValue >= minValue) {
       let roundedValue = roundValueUsingFormatter(newValue);
-      setNumberValue(roundedValue);
-      tempNum.current = NaN;
+      tempNum.current = roundedValue;
     }
 
     setInputValue(strippedValue);
   };
 
-  // Mostly used in onBlur event to set the input value to
-  // formatted numberValue. e.g. user types `-` then blurs.
-  // instead of leaving the only minus sign we set the input value back to valid value
-  // sometimes this acts funny, take story and enter -10, then delete the 0 and 1 in that order, blur, it'll repopulate with -1
   let commitInputValue = () => {
     // Do nothing if input value is empty
     if (!inputValue.length) {
@@ -297,6 +302,16 @@ function handleDecimalOperation(operator, value1, value2) {
  *
  * example -3500 in normal
  * 0: {type: "minusSign", value: "-"}
+ * 1: {type: "integer", value: "3"}
+ * 2: {type: "group", value: "."}
+ * 3: {type: "integer", value: "500"}
+ * 4: {type: "decimal", value: ","}
+ * 5: {type: "fraction", value: "00"}
+ * 6: {type: "literal", value: " "}
+ * 7: {type: "currency", value: "€"}
+ *
+ * example 3500 in always show sign
+ * 0: {type: "plusSign", value: "+"}
  * 1: {type: "integer", value: "3"}
  * 2: {type: "group", value: "."}
  * 3: {type: "integer", value: "500"}

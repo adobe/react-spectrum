@@ -16,6 +16,7 @@ import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '../src';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
+import {chain} from "@react-aria/utils";
 
 storiesOf('NumberField', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
@@ -32,8 +33,20 @@ storiesOf('NumberField', module)
     () => render({value: 10})
   )
   .add(
-    'number formatter',
+    'currency',
     () => render({formatOptions: {style: 'currency', currency: 'EUR'}})
+  )
+  .add(
+    'percent',
+    () => render({formatOptions: {style: 'percent'}})
+  )
+  .add(
+    'percent min max fraction digits',
+    () => render({formatOptions: {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2}})
+  )
+  .add(
+    'percent using sign',
+    () => render({formatOptions: {style: 'unit', unit: 'percent', signDisplay: 'always'}})
   )
   .add(
     'isQuiet',
@@ -88,7 +101,7 @@ function render(props: any = {}) {
 
 function NumberFieldControlled(props) {
   let [value, setValue] = useState(10);
-  return <NumberField {...props} formatOptions={{style: 'currency', currency: 'EUR'}} value={value} onChange={setValue} />;
+  return <NumberField {...props} formatOptions={{style: 'currency', currency: 'EUR'}} value={value} onChange={chain(setValue, action('onChange'))} />;
 }
 
 function NumberFieldWithCurrencySelect(props) {
@@ -97,7 +110,7 @@ function NumberFieldWithCurrencySelect(props) {
   let [currencySign, setCurrencySign] = useState('standard');
   return (
     <Form>
-      <NumberField label="Monies" {...props} formatOptions={{style: 'currency', currency, currencySign}} value={value} onChange={setValue} />
+      <NumberField label="Monies" {...props} formatOptions={{style: 'currency', currency, currencySign}} value={value} onChange={chain(setValue, action('onChange'))} />
       <Picker
         onSelectionChange={item => setCurrency(String(item))}
         label="Choose Currency"
