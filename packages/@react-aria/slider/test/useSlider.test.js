@@ -44,12 +44,14 @@ describe('useSlider', () => {
   });
 
   describe('interactions on track', () => {
-    let widthStub;
+    let widthStub, heightStub;
     beforeAll(() => {
       widthStub = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
+      heightStub = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 100);
     });
     afterAll(() => {
       widthStub.mockReset();
+      heightStub.mockReset();
     });
 
     installMouseEvent();
@@ -132,6 +134,32 @@ describe('useSlider', () => {
       expect(onChangeSpy).not.toHaveBeenCalled();
       expect(onChangeEndSpy).not.toHaveBeenCalled();
       expect(stateRef.current.values).toEqual([10, 80]);
+    });
+
+    it('should allow you to set value of closest thumb by dragging on track (vertical)', () => {
+      let onChangeSpy = jest.fn();
+      let onChangeEndSpy = jest.fn();
+      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} orientation="vertical" />);
+
+      let track = screen.getByTestId('track');
+      fireEvent.mouseDown(track, {clientY: 80, pageY: 80});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([20, 80]);
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([20, 80]);
+
+      fireEvent.mouseMove(track, {clientY: 70, pageY: 70});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([30, 80]);
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([30, 80]);
+
+      fireEvent.mouseMove(track, {clientY: 60, pageY: 60});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([40, 80]);
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([40, 80]);
+
+      fireEvent.mouseUp(track, {clientY: 60, pageY: 60});
+      expect(onChangeEndSpy).toHaveBeenLastCalledWith([40, 80]);
+      expect(stateRef.current.values).toEqual([40, 80]);
     });
   });
 

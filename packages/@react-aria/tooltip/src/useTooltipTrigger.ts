@@ -132,7 +132,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
 
   return {
     triggerProps: {
-      'aria-describedby': state.open ? tooltipId : undefined,
+      'aria-describedby': state.isOpen ? tooltipId : undefined,
       ...mergeProps(focusableProps, hoverProps, pressProps)
     },
     tooltipProps: {
