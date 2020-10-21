@@ -22,6 +22,7 @@
     "@react-aria/label": "^3.1.1",
     "@react-aria/selection": "^3.2.1",
     "@react-aria/utils": "^3.3.0",
+    "@react-stately/collections": "^3.2.1",
     "@react-stately/list": "^3.2.1",
     "@react-types/listbox": "^3.1.1",
     "@react-types/shared": "^3.2.1"

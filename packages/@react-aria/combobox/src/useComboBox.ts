@@ -21,7 +21,7 @@ import {getItemCount} from '@react-stately/collections';
 import {getItemId, listIds} from '@react-aria/listbox';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {KeyboardDelegate, Node, PressEvent} from '@react-types/shared';
+import {KeyboardDelegate, PressEvent} from '@react-types/shared';
 import {ListKeyboardDelegate, useSelectableCollection} from '@react-aria/selection';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useMessageFormatter} from '@react-aria/i18n';

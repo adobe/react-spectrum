@@ -28,6 +28,7 @@
     "@react-aria/selection": "^3.1.0",
     "@react-aria/textfield": "^3.1.0",
     "@react-aria/utils": "^3.1.0",
+    "@react-stately/collections": "^3.2.1",
     "@react-stately/combobox": "^3.0.0-alpha.1",
     "@react-stately/layout": "^3.1.0",
     "@react-types/button": "^3.1.0",

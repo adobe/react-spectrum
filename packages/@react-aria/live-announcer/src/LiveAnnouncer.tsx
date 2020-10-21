@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {Fragment, useImperativeHandle, useRef, useState} from 'react';
+import React, {Fragment, useImperativeHandle, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
