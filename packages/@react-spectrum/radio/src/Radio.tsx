@@ -67,7 +67,7 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
           styleProps.className
         )
       }>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
+      <FocusRing isDisabled={isDisabled} focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
         <input
           {...inputProps}
           ref={inputRef}

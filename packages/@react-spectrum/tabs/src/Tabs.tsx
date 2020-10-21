@@ -109,7 +109,7 @@ export function Tab<T>(props: TabProps<T>) {
   }) : undefined;
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+    <FocusRing isDisabled={isDisabled} focusRingClass={classNames(styles, 'focus-ring')}>
       <div
         {...styleProps}
         {...mergeProps(tabProps, hoverProps)}

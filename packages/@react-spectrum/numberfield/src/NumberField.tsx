@@ -66,6 +66,7 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
   return (
     <FocusRing
       within
+      isDisabled={isDisabled}
       focusClass={classNames(inputgroupStyles, 'is-focused', classNames(stepperStyle, 'is-focused'))}
       focusRingClass={classNames(inputgroupStyles, 'focus-ring', classNames(stepperStyle, 'focus-ring'))}
       autoFocus={autoFocus}>

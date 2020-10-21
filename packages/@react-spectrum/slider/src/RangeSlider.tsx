@@ -69,11 +69,11 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivE
         return (<>
           {lowerTrack}
           {ticks}
-          <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
+          <FocusRing within isDisabled={props.isDisabled} focusRingClass={classNames(styles, 'is-focused')}>
             {handles[0]}
           </FocusRing>
           {middleTrack}
-          <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
+          <FocusRing within isDisabled={props.isDisabled} focusRingClass={classNames(styles, 'is-focused')}>
             {handles[1]}
           </FocusRing>
           {upperTrack}</>);

@@ -41,7 +41,7 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
   let {styleProps} = useStyleProps(otherProps);
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring', focusClassName)} autoFocus={autoFocus}>
+    <FocusRing isDisabled={isDisabled} focusRingClass={classNames(styles, 'focus-ring', focusClassName)} autoFocus={autoFocus}>
       <button
         {...styleProps}
         {...mergeProps(buttonProps, hoverProps)}

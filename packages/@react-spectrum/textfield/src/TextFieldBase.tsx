@@ -121,7 +121,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
           }
         )
       }>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
+      <FocusRing isDisabled={isDisabled} focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
         <ElementType
           {...mergeProps(inputProps, hoverProps)}
           ref={inputRef}

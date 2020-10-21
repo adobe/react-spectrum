@@ -101,7 +101,7 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
               width: `${Math.abs(width) * 100}%`
             }} />);
         }
-        return  (<>{lowerTrack}{ticks}<FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
+        return  (<>{lowerTrack}{ticks}<FocusRing within isDisabled={props.isDisabled} focusRingClass={classNames(styles, 'is-focused')}>
           {handle}
         </FocusRing>{upperTrack}{filledTrack}</>);
       }}

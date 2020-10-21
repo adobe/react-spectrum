@@ -61,7 +61,7 @@ export function StorySlider(props: StorySliderProps) {
             width: `${(state.getValuePercent(Math.max(value, origin)) - state.getValuePercent(Math.min(value, origin))) * 100}%`
           }} />
         <div ref={trackRef} className={styles.track} {...trackProps} />
-        <FocusRing within focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
+        <FocusRing within isDisabled={props.isDisabled} focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
           <div
             className={styles.thumb}
             style={{

@@ -43,7 +43,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
   let {styleProps} = useStyleProps(otherProps);
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
+    <FocusRing isDisabled={isDisabled} focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <button
         {...mergeProps(buttonProps, hoverProps)}
         ref={domRef}

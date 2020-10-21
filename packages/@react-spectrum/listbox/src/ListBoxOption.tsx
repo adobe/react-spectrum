@@ -77,7 +77,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
   let isKeyboardModality = isFocusVisible();
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+    <FocusRing isDisabled={isDisabled} focusRingClass={classNames(styles, 'focus-ring')}>
       <div
         {...mergeProps(optionProps, shouldFocusOnHover ? hoverProps : {})}
         ref={ref}

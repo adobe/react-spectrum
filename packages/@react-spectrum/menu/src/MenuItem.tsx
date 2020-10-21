@@ -75,7 +75,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     : rendered;
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+    <FocusRing isDisabled={isDisabled} focusRingClass={classNames(styles, 'focus-ring')}>
       <li
         {...mergeProps(menuItemProps, hoverProps)}
         ref={ref}

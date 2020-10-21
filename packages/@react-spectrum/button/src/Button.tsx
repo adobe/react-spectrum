@@ -50,7 +50,7 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
   }
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
+    <FocusRing isDisabled={isDisabled} focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <ElementType
         {...styleProps}
         {...mergeProps(buttonProps, hoverProps)}

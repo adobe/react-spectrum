@@ -65,6 +65,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
     <FocusRing
       within
       isTextInput
+      isDisabled={isDisabled}
       focusClass={classNames(styles, 'is-focused')}
       focusRingClass={classNames(styles, 'focus-ring')}
       autoFocus={autoFocus}>

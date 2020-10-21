@@ -16,6 +16,7 @@ import packageData from '@react-aria/focus/package.json';
 
 ```tsx import
 import {FocusRing} from '@react-aria/focus';
+import {useFocusWithin} from '@react-aria/interactions';
 ```
 
 ---
@@ -59,10 +60,16 @@ This example shows how to use `<FocusRing>` to apply a CSS class when keyboard f
   font-size: 14px;
   padding: 4px 8px;
 }
-
+.button:disabled {
+background: #6f6f6f;
+}
 .button.focus-ring {
   outline: 2px solid dodgerblue;
   outline-offset: 2px;
+}
+
+.button + .button {
+  margin-inline-start: 6px;
 }
 ```
 
@@ -70,4 +77,34 @@ This example shows how to use `<FocusRing>` to apply a CSS class when keyboard f
 <FocusRing focusRingClass="focus-ring">
   <button className="button">Test</button>
 </FocusRing>
+```
+
+### Disabled
+When an interactive element is disabled, it should not show the focus ring and focus should be moved elsewhere.
+
+```tsx example
+function FocusSwitcher() {
+    let [disableToggle, setDisableToggle] = React.useState(false);
+    let [isFocusWithin, setFocusWithin] = React.useState(false);
+    let {focusWithinProps} = useFocusWithin({
+      onFocusWithinChange: isFocusWithin => setFocusWithin(isFocusWithin)
+    })
+    let btn1 = React.useRef();
+    let btn2 = React.useRef();
+    React.useEffect(() => {
+      if (isFocusWithin) {
+        disableToggle ? btn2.current.focus() : btn1.current.focus();
+      }
+    }, [disableToggle, isFocusWithin, btn1, btn2]);
+    return (
+      <div {...focusWithinProps}>
+        <FocusRing isDisabled={disableToggle} focusRingClass="focus-ring">
+          <button disabled={disableToggle} onClick={() => setDisableToggle(true)} ref={btn1} className="button">Test1</button>
+        </FocusRing>
+        <FocusRing isDisabled={!disableToggle} focusRingClass="focus-ring">
+          <button disabled={!disableToggle} onClick={() => setDisableToggle(false)} ref={btn2} className="button">Test2</button>
+        </FocusRing>
+      </div>
+    );
+}
 ```

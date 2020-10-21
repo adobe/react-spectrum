@@ -55,7 +55,7 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
 
   return (
     <Fragment>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <FocusRing isDisabled={isDisabled} focusRingClass={classNames(styles, 'focus-ring')}>
         {element}
       </FocusRing>
       {isCurrent === false &&

@@ -54,7 +54,7 @@ export const Tag = ((props: SpectrumTagProps) => {
   let icon = props.icon || (isInvalid && <Alert />);
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+    <FocusRing isDisabled={isDisabled} focusRingClass={classNames(styles, 'focus-ring')}>
       <div
         {...styleProps}
         {...mergeProps(tagProps, hoverProps)}

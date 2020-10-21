@@ -68,7 +68,7 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
               width: `${(state.getThumbPercent(1) - state.getThumbPercent(0)) * 100}%`
             }} />
         </div>
-        <FocusRing within focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
+        <FocusRing within isDisabled={props.isDisabled} focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
           <div
             className={styles.thumb}
             style={{
@@ -83,7 +83,7 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
             {props.showTip && <div className={styles.tip}>{state.getThumbValueLabel(0)}</div>}
           </div>
         </FocusRing>
-        <FocusRing within focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
+        <FocusRing within isDisabled={props.isDisabled} focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
           <div
             className={styles.thumb}
             {...maxThumbProps}

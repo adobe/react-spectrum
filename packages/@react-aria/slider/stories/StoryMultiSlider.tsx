@@ -81,7 +81,7 @@ export function StoryThumb(props: StoryThumbProps) {
   }, state);
 
   return (
-    <FocusRing within focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
+    <FocusRing within isDisabled={isDisabled} focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
       <div
         {...thumbProps}
         className={classNames(styles, 'thumb', 'thumbHandle', {thumbDisabled: isDisabled})}

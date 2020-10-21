@@ -39,7 +39,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLBu
   let isTextOnly = React.Children.toArray(props.children).every(c => !React.isValidElement(c));
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
+    <FocusRing isDisabled={isDisabled} focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <button
         {...styleProps}
         {...mergeProps(buttonProps, hoverProps)}

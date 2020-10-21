@@ -188,6 +188,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     <FocusRing
       within
       isTextInput
+      isDisabled={isDisabled}
       focusClass={classNames(styles, 'is-focused')}
       focusRingClass={classNames(styles, 'focus-ring')}
       autoFocus={autoFocus}>

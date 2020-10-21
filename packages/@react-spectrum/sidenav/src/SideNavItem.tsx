@@ -46,7 +46,7 @@ export function SideNavItem<T>(props: SpectrumSideNavItemProps<T>) {
     <div
       {...listItemProps}
       className={className} >
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <FocusRing isDisabled={isDisabled} focusRingClass={classNames(styles, 'focus-ring')}>
         <a
           {...mergeProps(listItemLinkProps, hoverProps)}
           ref={ref}
