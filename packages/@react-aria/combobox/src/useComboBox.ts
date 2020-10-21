@@ -17,6 +17,7 @@ import {chain, mergeProps, useLabels} from '@react-aria/utils';
 import {ComboBoxProps} from '@react-types/combobox';
 import {ComboBoxState} from '@react-stately/combobox';
 import {FocusEvent, HTMLAttributes, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
+import {getItemCount} from '@react-stately/collections';
 import {getItemId, listIds} from '@react-aria/listbox';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -227,7 +228,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   });
 
   // Announce the number of available suggestions when it changes
-  let optionCount = getOptionCount(state.collection);
+  let optionCount = getItemCount(state.collection);
   let lastSize = useRef(optionCount);
   let lastOpen = useRef(state.isOpen);
   useEffect(() => {
@@ -277,17 +278,4 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }),
     listBoxProps: mergeProps(menuProps, listBoxProps)
   };
-}
-
-function getOptionCount<T>(collection: Iterable<Node<T>>): number {
-  let count = 0;
-  for (let item of collection) {
-    if (item.type === 'section') {
-      count += getOptionCount(item.childNodes);
-    } else {
-      count++;
-    }
-  }
-
-  return count;
 }

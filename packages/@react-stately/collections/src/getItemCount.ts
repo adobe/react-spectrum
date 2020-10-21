@@ -10,8 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Item';
-export * from './Section';
-export * from './types';
-export * from './useCollection';
-export * from './getItemCount';
+import {Node} from '@react-types/shared';
+
+const cache = new WeakMap<Iterable<unknown>, number>();
+
+export function getItemCount<T>(collection: Iterable<Node<T>>): number {
+  let count = cache.get(collection);
+  if (count != null) {
+    return count;
+  }
+
+  count = 0;
+  for (let item of collection) {
+    if (item.type === 'section') {
+      count += getItemCount(item.childNodes);
+    } else {
+      count++;
+    }
+  }
+
+  cache.set(collection, count);
+  return count;
+}
