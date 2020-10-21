@@ -245,16 +245,20 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
     };
 
     let onBlur = (e) => {
-      let isInAnyScope = isElementInAnyScope(e.relatedTarget, scopes);
+      // Brief timeout for document.activeElement to update (e.g. user clicks inside a iframe in a dialog)
+      setTimeout(() => {
+        // Fall back to document.activeElement if e.relatedTarget is null (e.g. user clicks inside a iframe in a dialog)
+        let isInAnyScope = isElementInAnyScope(e.relatedTarget || document.activeElement, scopes);
 
-      if (!isInAnyScope) {
-        activeScope = scopeRef;
-        focusedNode.current = e.target;
-        // Firefox doesn't shift focus back to the Dialog properly without this
-        raf.current = requestAnimationFrame(() => {
-          focusedNode.current.focus();
-        });
-      }
+        if (!isInAnyScope) {
+          activeScope = scopeRef;
+          focusedNode.current = e.target;
+          // Firefox doesn't shift focus back to the Dialog properly without this
+          raf.current = requestAnimationFrame(() => {
+            focusedNode.current.focus();
+          });
+        }
+      }, 10);
     };
 
     document.addEventListener('keydown', onKeyDown, false);

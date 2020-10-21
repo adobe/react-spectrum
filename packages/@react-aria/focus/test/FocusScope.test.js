@@ -16,12 +16,21 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 describe('FocusScope', function () {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
   beforeEach(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
   afterEach(() => {
     window.requestAnimationFrame.mockRestore();
+    jest.runAllTimers();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
   });
 
   describe('focus containment', function () {
@@ -244,7 +253,10 @@ describe('FocusScope', function () {
       fireEvent.focusIn(input2);
       expect(document.activeElement).toBe(input2);
 
-      act(() => {input2.blur();});
+      act(() => {
+        input2.blur();
+        jest.advanceTimersByTime(10);
+      });
       expect(document.activeElement).toBe(input2);
 
       act(() => {outside.focus();});
@@ -273,9 +285,40 @@ describe('FocusScope', function () {
       fireEvent.focusIn(input2);
       expect(document.activeElement).toBe(input2);
 
-      act(() => {input2.blur();});
+      act(() => {
+        input2.blur();
+        jest.advanceTimersByTime(10);
+      });
       expect(document.activeElement).toBe(input2);
       fireEvent.focusOut(input2);
+      expect(document.activeElement).toBe(input2);
+    });
+
+    it.only('uses document.activeElement instead of e.relatedTarget on blur to determine if focus is still in scope', function () {
+      let {getByTestId} = render(
+        <div>
+          <FocusScope contain>
+            <input data-testid="input1" />
+            <input data-testid="input2" />
+          </FocusScope>
+        </div>
+      );
+
+      let input1 = getByTestId('input1');
+      let input2 = getByTestId('input2');
+
+      act(() => {input1.focus();});
+      fireEvent.focusIn(input1); // jsdom doesn't fire this automatically
+      expect(document.activeElement).toBe(input1);
+
+      act(() => {
+        // set document.activeElement to input2
+        input2.focus();
+        // if onBlur didn't fallback to document.activeElement, this would reset focus to input1
+        fireEvent.blur(input1, {relatedTarget: null})
+        jest.advanceTimersByTime(10);
+      });
+
       expect(document.activeElement).toBe(input2);
     });
   });
