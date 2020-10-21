@@ -46,6 +46,8 @@ export function useNumberFieldState(
   let numberParser = useNumberParser();
   let inputValueFormatter = useNumberFormatter(formatOptions);
 
+  let isMaxRange = useMemo(() => minValue === Number.MIN_SAFE_INTEGER && maxValue === Number.MAX_SAFE_INTEGER, [minValue, maxValue]);
+
   let symbols = useMemo(() => {
     // Get the minus sign of the current locale to filter the input value
     // Automatically updates the minus sign when numberFormatter changes
@@ -65,7 +67,16 @@ export function useNumberFieldState(
   let {minusSign, plusSign, decimal, validCharacters, literals} = symbols;
 
   // javascript doesn't recognize NaN === NaN, so multiple onChanges will get fired if we don't ignore consecutive ones
-  let lastValDispatched = useRef(NaN);
+  // in addition, if the input starts with a number, then we'll count that as the last val dispatched, we only need to calculate it the first time
+  let startingValue = useMemo(() => {
+    if(!isNaN(value)) {
+      return value;
+    } else if (!isNaN(defaultValue)) {
+      return defaultValue;
+    }
+    return NaN;
+  }, []);
+  let lastValDispatched = useRef(startingValue);
   let smartOnChange = useCallback((val) => {
     if (!isNaN(val) || !isNaN(lastValDispatched.current)) {
       onChange?.(val);
@@ -88,11 +99,19 @@ export function useNumberFieldState(
 
   let increment = useCallback(() => {
     setNumberValue((previousValue) => {
-      // TODO: should NaN default to zero for empty fields? what about min > 0?
       let prev = previousValue;
       if (isNaN(prev)) {
-        prev = 0;
+        // if the input is empty, start from the min value when incrementing
+        prev = minValue;
+        if (isMaxRange) {
+          // unless the min/max range is at maximum, then start from 0
+          prev = 0;
+        } else if (minValue === Number.MIN_SAFE_INTEGER) {
+          // or if the direction we want to start from is unbound, start from the bound
+          prev = maxValue;
+        }
       }
+
       if (!isNaN(tempNum.current)) {
         prev = tempNum.current;
         tempNum.current = NaN;
@@ -104,7 +123,7 @@ export function useNumberFieldState(
       );
       return newValue;
     });
-  }, [setNumberValue, setInputValue, tempNum, handleDecimalOperation, minValue, maxValue, step]);
+  }, [setNumberValue, setInputValue, tempNum, handleDecimalOperation, minValue, maxValue, step, isMaxRange]);
 
   let incrementToMax = useCallback(() => {
     if (maxValue != null) {
@@ -115,8 +134,16 @@ export function useNumberFieldState(
   let decrement = useCallback(() => {
     setNumberValue((previousValue) => {
       let prev = previousValue;
+      // if the input is empty, start from the max value when decrementing
       if (isNaN(prev)) {
-        prev = 0;
+        prev = maxValue;
+        // unless the min/max range is at maximum, then start from 0
+        if (isMaxRange) {
+          prev = 0;
+        } else if (maxValue === Number.MAX_SAFE_INTEGER) {
+          // or if the direction we want to start from is unbound, start from the bound
+          prev = minValue;
+        }
       }
       if (!isNaN(tempNum.current)) {
         prev = tempNum.current;
@@ -233,8 +260,11 @@ export function useNumberFieldState(
   };
 
   let commitInputValue = () => {
-    // Do nothing if input value is empty
+    // Set to empty state if input value is empty
     if (!inputValue.length) {
+      tempNum.current = NaN;
+      setNumberValue(NaN);
+      setInputValue('');
       return;
     }
     let clampedValue;

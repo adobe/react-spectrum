@@ -305,6 +305,93 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
+  `('$Name starting from empty field, will start at the 0 if neither min or max are defined', () => {
+    let {
+      textField,
+      incrementButton,
+      decrementButton
+    } = renderNumberField({onChange: onChangeSpy});
+
+    expect(textField).toHaveAttribute('value', '');
+    triggerPress(incrementButton);
+    expect(textField).toHaveAttribute('value', '1');
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(1);
+
+    act(() => {textField.focus();});
+    userEvent.clear(textField);
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '');
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    expect(onChangeSpy).toHaveBeenLastCalledWith(NaN);
+
+    triggerPress(decrementButton);
+    expect(textField).toHaveAttribute('value', '-1');
+    expect(onChangeSpy).toHaveBeenCalledTimes(3);
+    expect(onChangeSpy).toHaveBeenCalledWith(-1);
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name starting from empty field, will start at the minValue if defined and not the smallest allowed', () => {
+    let {
+      textField,
+      incrementButton,
+      decrementButton
+    } = renderNumberField({onChange: onChangeSpy, minValue: 3});
+
+    expect(textField).toHaveAttribute('value', '');
+    triggerPress(incrementButton);
+    expect(textField).toHaveAttribute('value', '4');
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(4);
+
+    act(() => {textField.focus();});
+    userEvent.clear(textField);
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '');
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    expect(onChangeSpy).toHaveBeenLastCalledWith(NaN);
+
+    triggerPress(decrementButton);
+    expect(textField).toHaveAttribute('value', '3');
+    expect(onChangeSpy).toHaveBeenCalledTimes(3);
+    expect(onChangeSpy).toHaveBeenLastCalledWith(3);
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name starting from empty field, will start at the maxValue if defined and not the largest allowed', () => {
+    let {
+      textField,
+      incrementButton,
+      decrementButton
+    } = renderNumberField({onChange: onChangeSpy, maxValue: 3});
+
+    expect(textField).toHaveAttribute('value', '');
+    triggerPress(decrementButton);
+    expect(textField).toHaveAttribute('value', '2');
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(2);
+
+    act(() => {textField.focus();});
+    userEvent.clear(textField);
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '');
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    expect(onChangeSpy).toHaveBeenLastCalledWith(NaN);
+
+    triggerPress(incrementButton);
+    expect(textField).toHaveAttribute('value', '3');
+    expect(onChangeSpy).toHaveBeenCalledTimes(3);
+    expect(onChangeSpy).toHaveBeenLastCalledWith(3);
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
   `('$Name properly will return the same number from onChange as is displayed', () => {
     let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 10, formatOptions: {maximumFractionDigits: 2}});
 
@@ -858,5 +945,23 @@ describe('NumberField', function () {
     let {getByLabelText, getByRole} = render(<Provider theme={theme} locale="en-US"><NumberField {...props} /></Provider>);
     let spinButton = getByRole('spinbutton');
     expect(getByLabelText(props.label)).toBe(spinButton);
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name will re-enable the steppers if the value causing it to be disabled is deleted', () => {
+    let {textField, decrementButton, incrementButton} = renderNumberField({onChange: onChangeSpy, defaultValue: 1, maxValue: 1});
+    expect(textField).toHaveAttribute('value', '1');
+    expect(incrementButton).toBeDisabled();
+    expect(decrementButton).toBeEnabled();
+
+    act(() => {textField.focus();});
+    userEvent.clear(textField);
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '');
+    expect(onChangeSpy).toHaveBeenCalledWith(NaN);
+    expect(incrementButton).toBeEnabled();
+    expect(decrementButton).toBeEnabled();
   });
 });

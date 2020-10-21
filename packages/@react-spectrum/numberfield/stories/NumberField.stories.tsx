@@ -65,6 +65,14 @@ storiesOf('NumberField', module)
     () => render({minValue: 0, maxValue: 20})
   )
   .add(
+    'minValue = -50, maxValue = -20',
+    () => render({minValue: -50, maxValue: -20})
+  )
+  .add(
+    'minValue = 20, maxValue = 50',
+    () => render({minValue: 20, maxValue: 50})
+  )
+  .add(
     'minValue = 0, defaultValue = 0',
     () => render({minValue: 0, defaultValue: 0})
   )
