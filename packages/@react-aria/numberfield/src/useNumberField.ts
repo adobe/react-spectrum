@@ -139,18 +139,18 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   });
 
   let onWheel = useCallback((e) => {
-      // If the input isn't supposed to receive input, do nothing.
-      // TODO: add focus
-      if (isDisabled || isReadOnly) {
-        return;
-      }
+    // If the input isn't supposed to receive input, do nothing.
+    // TODO: add focus
+    if (isDisabled || isReadOnly) {
+      return;
+    }
 
-      if (e.deltaY < 0) {
-        increment();
-      } else {
-        decrement();
-      }
-  }, [inputId, isReadOnly, isDisabled, decrement, increment, ref]);
+    if (e.deltaY < 0) {
+      increment();
+    } else {
+      decrement();
+    }
+  }, [isReadOnly, isDisabled, decrement, increment]);
 
   /**
    * General outline for figuring out what to parse in on change

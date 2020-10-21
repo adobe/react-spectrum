@@ -11,6 +11,7 @@
  */
 
 import {act, fireEvent, render, within} from '@testing-library/react';
+import {chain} from '@react-aria/utils';
 import {NumberField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
@@ -18,7 +19,6 @@ import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
-import {chain} from "@react-aria/utils";
 
 // a note for these tests, text selection is not working in jsdom, so on focus will not select the value already
 // in the numberfield
@@ -589,11 +589,11 @@ describe('NumberField', function () {
     let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, value: 10, formatOptions: {style: 'unit', unit: 'percent', signDisplay: 'always'}});
 
     expect(textField).toHaveAttribute('value', '+10%');
-    textField.setSelectionRange(2,3);
+    textField.setSelectionRange(2, 3);
     typeText(textField, '{backspace}');
     expect(textField).toHaveAttribute('value', '+1%');
     expect(onChangeSpy).not.toHaveBeenCalled();
-    textField.setSelectionRange(2,3);
+    textField.setSelectionRange(2, 3);
     typeText(textField, '5%');
     expect(textField).toHaveAttribute('value', '+15%');
     act(() => {textField.blur();});
@@ -658,11 +658,11 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledWith(-9);
 
     act(() => {textField.focus();});
-    textField.setSelectionRange(2,3);
+    textField.setSelectionRange(2, 3);
     typeText(textField, '{backspace}');
-    textField.setSelectionRange(2,2);
+    textField.setSelectionRange(2, 2);
     typeText(textField, '1');
-    textField.setSelectionRange(3,3);
+    textField.setSelectionRange(3, 3);
     typeText(textField, '8');
     expect(textField).toHaveAttribute('value', '($18.00)');
     act(() => {textField.blur();});
@@ -671,7 +671,7 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenLastCalledWith(-18);
 
     act(() => {textField.focus();});
-    textField.setSelectionRange(7,8);
+    textField.setSelectionRange(7, 8);
     typeText(textField, '{backspace}');
     expect(textField).toHaveAttribute('value', '($18.00');
     act(() => {textField.blur();});
@@ -1060,7 +1060,7 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField controlled'}
-  `('$Name 10 is rendered and will change if the controlled version is implemented', ({}) => {
+  `('$Name 10 is rendered and will change if the controlled version is implemented', () => {
     function NumberFieldControlled(props) {
       let {onChange} = props;
       let [value, setValue] = useState(10);

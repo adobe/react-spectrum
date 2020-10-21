@@ -78,12 +78,13 @@ export function useNumberFieldState(
   // javascript doesn't recognize NaN === NaN, so multiple onChanges will get fired if we don't ignore consecutive ones
   // in addition, if the input starts with a number, then we'll count that as the last val dispatched, we only need to calculate it the first time
   let startingValue = useMemo(() => {
-    if(!isNaN(value)) {
+    if (!isNaN(value)) {
       return value;
     } else if (!isNaN(defaultValue)) {
       return defaultValue;
     }
     return NaN;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   let lastValDispatched = useRef(startingValue);
   let smartOnChange = useCallback((val) => {
@@ -91,7 +92,7 @@ export function useNumberFieldState(
       onChange?.(val);
     }
     lastValDispatched.current = val;
-  }, [lastValDispatched]);
+  }, [lastValDispatched, onChange]);
   let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, smartOnChange);
   let tempNum = useRef<number>(NaN);
   let initialInputValue = isNaN(numberValue) ? '' : inputValueFormatter.format(numberValue);
@@ -137,13 +138,13 @@ export function useNumberFieldState(
       );
       return newValue;
     });
-  }, [setNumberValue, setInputValue, tempNum, handleDecimalOperation, minValue, maxValue, step, isMaxRange, intlOptions]);
+  }, [setNumberValue, tempNum, minValue, maxValue, step, isMaxRange, intlOptions]);
 
   let incrementToMax = useCallback(() => {
     if (maxValue != null) {
       setNumberValue(clamp(maxValue, minValue, maxValue, step));
     }
-  }, [maxValue, setNumberValue]);
+  }, [maxValue, setNumberValue, minValue, step]);
 
   let decrement = useCallback(() => {
     setNumberValue((previousValue) => {
@@ -175,13 +176,13 @@ export function useNumberFieldState(
       );
       return newValue;
     });
-  }, [setNumberValue, setInputValue, tempNum, handleDecimalOperation, minValue, maxValue, step, isMaxRange, intlOptions]);
+  }, [setNumberValue, tempNum, minValue, maxValue, step, isMaxRange, intlOptions]);
 
   let decrementToMin = useCallback(() => {
     if (minValue != null) {
       setNumberValue(clamp(minValue, minValue, maxValue, step));
     }
-  }, [minValue, setNumberValue]);
+  }, [minValue, setNumberValue, maxValue, step]);
 
   // if too slow, use string diffing, but i doubt these will be strings THAT large
   // should i check more than just the first character matches?
