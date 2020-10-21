@@ -135,11 +135,19 @@ function ModalDialog(props) {
         left: 0,
         bottom: 0,
         right: 0,
-        background: 'rgba(0, 0, 0, 0.5)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
       }}>
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          background: 'rgba(0, 0, 0, 0.5)'
+        }} />
       <FocusScope contain restoreFocus autoFocus>
         <div
           {...overlayProps}
@@ -147,6 +155,7 @@ function ModalDialog(props) {
           {...modalProps}
           ref={ref}
           style={{
+            position: 'relative',
             background: 'white',
             color: 'black',
             padding: 30
