@@ -88,7 +88,7 @@ storiesOf('Tabs', module)
   .add(
     'resizeable',
     () => (
-      <div style={{minWidth: '100px', width: '300px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+      <div style={{minWidth: '100px', width: '300px', height: '400px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
         {render()}
       </div>
     )

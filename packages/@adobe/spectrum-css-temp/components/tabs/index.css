@@ -120,9 +120,7 @@ governing permissions and limitations under the License.
     block-size: var(--spectrum-tabs-item-height);
 
     & + .spectrum-Tabs-itemLabel {
-      /* icons are inexplicably offset by 3px. Subtract this value from the icon-gap
-         to correct the gap in CSS */
-      margin-inline-start: calc(var(--spectrum-tabs-icon-gap) - var(--spectrum-global-dimension-size-40));
+      margin-inline-start: var(--spectrum-tabs-icon-gap);
     }
   }
 
