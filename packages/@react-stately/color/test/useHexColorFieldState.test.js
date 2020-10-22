@@ -113,17 +113,8 @@ describe('useHexColorFieldState tests', function () {
     expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
 
     act(() => result.current.setInputValue('invalidColor'));
-    expect(result.current.inputValue).toBe('adC');
-
-    let newColor = new Color('#adc');
-    expect(onChangeSpy).toHaveBeenCalledWith(newColor);
-    expect(result.current.colorValue.getChannelValue('red')).toBe(170);
-    expect(result.current.colorValue.getChannelValue('green')).toBe(221);
-    expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
-    expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
-
-    act(() => result.current.commitInputValue());
-    expect(result.current.inputValue).toBe('#AADDCC');
+    expect(result.current.inputValue).toBe('#AABBCC');
+    expect(onChangeSpy).not.toHaveBeenCalled();
   });
 
   it('should update colorValue (uncontrolled)', function () {

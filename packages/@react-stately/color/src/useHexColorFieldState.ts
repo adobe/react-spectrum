@@ -98,20 +98,22 @@ export function useHexColorFieldState(
   };
 
   let setFieldInputValue = (value: string) => {
-    value = value.replace(/[^#0-9a-f]/ig, '');
-    setInputValue(value);
-    if (!value.length && colorValue) {
-      setColorValue(null);
-      return;
-    }
-    if (!value.startsWith('#')) {
-      value = `#${value}`;
-    }
-    try {
-      let newColor = new Color(value);
-      setColorValue((prevColor: Color) => prevColor && prevColor.toHexInt() === newColor.toHexInt() ? prevColor : newColor);
-    } catch (err) {
-      // ignore
+    value = value.match(/^#?[0-9a-f]{0,6}$/i)?.[0];
+    if (value !== undefined) {
+      setInputValue(value);
+      if (!value.length && colorValue) {
+        setColorValue(null);
+        return;
+      }
+      if (!value.startsWith('#')) {
+        value = `#${value}`;
+      }
+      try {
+        let newColor = new Color(value);
+        setColorValue((prevColor: Color) => prevColor && prevColor.toHexInt() === newColor.toHexInt() ? prevColor : newColor);
+      } catch (err) {
+        // ignore
+      }
     }
   };
 
