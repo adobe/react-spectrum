@@ -13,17 +13,17 @@
 import {Color} from './Color';
 import {HexColorFieldProps} from '@react-types/color';
 import {NumberFieldState} from '@react-stately/numberfield';
-import {useCallback, useState} from 'react';
 import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';
+import {useState} from 'react';
 
 export interface HexColorFieldState extends Omit<NumberFieldState, 'value' | 'setValue'> {
   colorValue: Color,
   setInputValue: (value: string) => void
 }
 
-export const MIN_COLOR = new Color('#000000');
-export const MAX_COLOR = new Color('#FFFFFF');
+const MIN_COLOR = new Color('#000000');
+const MAX_COLOR = new Color('#FFFFFF');
 const MIN_COLOR_INT = MIN_COLOR.toHexInt();
 const MAX_COLOR_INT = MAX_COLOR.toHexInt();
 
@@ -45,7 +45,7 @@ export function useHexColorFieldState(
   let initialInputValue = (value || defaultValue) && colorValue ? colorValue.toString('hex') : '';
   let [inputValue, setInputValue] = useState(initialInputValue);
 
-  let increment = useCallback(() => {
+  let increment = () => {
     setColorValue((prevColor: Color) => {
       let newColor = prevColor;
       let prevColorInt = prevColor ? prevColor.toHexInt() : MIN_COLOR_INT;
@@ -57,9 +57,9 @@ export function useHexColorFieldState(
       setInputValue(newColorString);
       return newColor;
     });
-  }, [step, setColorValue, setInputValue]);
+  };
 
-  let incrementToMax = useCallback(() => {
+  let incrementToMax = () => {
     setColorValue((prevColor: Color) => {
       let newColor = MAX_COLOR;
       if (prevColor && prevColor.toHexInt() === MAX_COLOR_INT) {
@@ -68,9 +68,9 @@ export function useHexColorFieldState(
       setInputValue(newColor.toString('hex'));
       return newColor;
     });
-  }, [setColorValue, setInputValue]);
+  };
 
-  let decrement = useCallback(() => {
+  let decrement = () => {
     setColorValue((prevColor: Color) => {
       let newColor = prevColor ? prevColor : MIN_COLOR;
       let newColorString = newColor.toString('hex');
@@ -84,9 +84,9 @@ export function useHexColorFieldState(
       setInputValue(newColorString);
       return newColor;
     });
-  }, [step, setColorValue, setInputValue]);
+  };
 
-  let decrementToMin = useCallback(() => {
+  let decrementToMin = () => {
     setColorValue((prevColor: Color) => {
       let newColor = MIN_COLOR;
       if (prevColor && prevColor.toHexInt() === MIN_COLOR_INT) {
@@ -95,7 +95,7 @@ export function useHexColorFieldState(
       setInputValue(newColor.toString('hex'));
       return newColor;
     });
-  }, [setColorValue, setInputValue]);
+  };
 
   let setFieldInputValue = (value: string) => {
     value = value.replace(/[^#0-9a-f]/ig, '');
