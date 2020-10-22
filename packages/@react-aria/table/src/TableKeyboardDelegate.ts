@@ -82,7 +82,7 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     // If focus was on a column, then focus the first child column if any,
-    // or find the corresponding cell in the first enabled row.
+    // or find the corresponding cell in the first row.
     if (startItem.type === 'column') {
       let child = [...startItem.childNodes][0];
       if (child) {
@@ -98,8 +98,8 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
       key = startItem.parentKey;
     }
 
-    // Find the next enabled item
-    key = this.findNextKey(item => item.type === 'item' && !this.disabledKeys.has(item.key), key);
+    // Find the next item
+    key = this.findNextKey(item => item.type === 'item', key);
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the next row.
       if (this.isCell(startItem)) {
@@ -133,8 +133,8 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
       key = startItem.parentKey;
     }
 
-    // Find the previous enabled item
-    key = this.findPreviousKey(item => item.type === 'item' && !this.disabledKeys.has(item.key), key);
+    // Find the previous item
+    key = this.findPreviousKey(item => item.type === 'item', key);
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the previous row.
       if (this.isCell(startItem)) {
@@ -282,8 +282,8 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
       }
     }
 
-    // Find the first enabled row
-    key = this.findNextKey(item => item.type === 'item' && !this.disabledKeys.has(item.key));
+    // Find the first row
+    key = this.findNextKey(item => item.type === 'item');
 
     // If global flag is set, focus the first cell in the first row.
     if (key != null && item && this.isCell(item) && global) {
@@ -312,8 +312,8 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
       }
     }
 
-    // Find the last enabled row
-    key = this.findPreviousKey(item => item.type === 'item' && !this.disabledKeys.has(item.key));
+    // Find the last row
+    key = this.findPreviousKey(item => item.type === 'item');
 
     // If global flag is set, focus the last cell in the last row.
     if (key != null && item && this.isCell(item) && global) {

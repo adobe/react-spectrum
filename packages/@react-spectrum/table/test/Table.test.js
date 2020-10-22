@@ -675,9 +675,9 @@ describe('Table', function () {
 
   describe('keyboard focus', function () {
     // locale is being set here, since we can't nest them, use original render function
-    let renderTable = (locale = 'en-US') => renderComponent(
+    let renderTable = (locale = 'en-US', props = {}) => renderComponent(
       <Provider locale={locale} theme={theme}>
-        <Table aria-label="Table">
+        <Table aria-label="Table" {...props}>
           <TableHeader columns={columns}>
             {column => <Column>{column.name}</Column>}
           </TableHeader>
@@ -816,6 +816,13 @@ describe('Table', function () {
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(getCell(tree, 'Baz'));
       });
+
+      it('should allow the user to focus disabled cells', function () {
+        let tree = renderTable('en-US', {disabledKeys: ['Foo 1']});
+        focusCell(tree, 'Bar 1');
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(getCell(tree, 'Baz 1'));
+      })
     });
 
     describe('ArrowLeft', function () {
@@ -902,6 +909,13 @@ describe('Table', function () {
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(getCell(tree, 'Foo'));
       });
+
+      it('should allow the user to focus disabled cells', function () {
+        let tree = renderTable('en-US', {disabledKeys: ['Foo 1']});
+        focusCell(tree, 'Bar 1');
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
+      })
     });
 
     describe('ArrowUp', function () {
@@ -944,6 +958,13 @@ describe('Table', function () {
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(getCell(tree, 'Tiered One Header'));
       });
+
+      it('should allow the user to focus disabled rows', function () {
+        let tree = renderTable('en-US', {disabledKeys: ['Foo 1']});
+        focusCell(tree, 'Bar 2');
+        moveFocus('ArrowUp');
+        expect(document.activeElement).toBe(getCell(tree, 'Bar 1'));
+      });
     });
 
     describe('ArrowDown', function () {
@@ -976,6 +997,13 @@ describe('Table', function () {
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(getCell(tree, 'Bar 1'));
       });
+
+      it('should allow the user to focus disabled cells', function () {
+        let tree = renderTable('en-US', {disabledKeys: ['Foo 2']});
+        focusCell(tree, 'Bar 1');
+        moveFocus('ArrowDown');
+        expect(document.activeElement).toBe(getCell(tree, 'Bar 2'));
+      })
     });
 
     describe('Home', function () {
