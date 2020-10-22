@@ -42,6 +42,7 @@ describe('HexColorField', function () {
     expect(getByRole('spinbutton')).toBe(hexColorField);
     expect(hexColorField).toHaveAttribute('type', 'text');
     expect(hexColorField).toHaveAttribute('autocomplete', 'off');
+    expect(hexColorField).toHaveAttribute('autocorrect', 'off');
     expect(hexColorField).not.toHaveAttribute('readonly');
     expect(hexColorField).not.toBeInvalid();
     expect(hexColorField).not.toBeDisabled();

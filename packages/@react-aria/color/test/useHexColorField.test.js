@@ -34,6 +34,7 @@ describe('useHexColorField', function () {
     let {inputFieldProps} = renderHexColorFieldHook({});
     expect(inputFieldProps.type).toBe('text');
     expect(inputFieldProps.autoComplete).toBe('off');
+    expect(inputFieldProps.autoCorrect).toBe('off');
     expect(inputFieldProps.id).toBeTruthy();
     expect(inputFieldProps.role).toBe('spinbutton');
     expect(inputFieldProps['aria-valuenow']).toBeNull();

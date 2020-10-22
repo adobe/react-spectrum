@@ -87,6 +87,10 @@ export function useHexColorField(
 
   return {
     labelProps,
-    inputFieldProps: mergeProps(inputProps, spinButtonProps, {onBlur: commitInputValue, onWheel})
+    inputFieldProps: mergeProps(inputProps, spinButtonProps, {
+      autoCorrect: 'off',
+      onBlur: commitInputValue,
+      onWheel
+    })
   };
 }
