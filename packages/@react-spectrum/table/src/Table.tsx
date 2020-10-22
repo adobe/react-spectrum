@@ -441,26 +441,29 @@ function TableSelectAllCell({column}) {
   let {hoverProps, isHovered} = useHover({});
 
   return (
-    <div
-      {...mergeProps(columnHeaderProps, hoverProps)}
-      aria-disabled={isSingleSelectionMode}
-      ref={ref}
-      className={
-        classNames(
-          styles,
-          'spectrum-Table-headCell',
-          'spectrum-Table-checkboxCell',
-          {
-            'is-hovered': isHovered
-          }
-        )
-      }>
-      {!isSingleSelectionMode && <Checkbox
-        {...checkboxProps}
-        isEmphasized
-        UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />
-      }
-    </div>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <div
+        {...mergeProps(columnHeaderProps, hoverProps)}
+        aria-disabled={isSingleSelectionMode}
+        ref={ref}
+        className={
+          classNames(
+            styles,
+            'spectrum-Table-headCell',
+            'spectrum-Table-checkboxCell',
+            {
+              'is-hovered': isHovered
+            }
+          )
+        }>
+        <Checkbox
+          {...checkboxProps}
+          isDisabled={isSingleSelectionMode}
+          isEmphasized
+          UNSAFE_style={{visibility: isSingleSelectionMode ? 'hidden' : 'show'}}
+          UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />
+      </div>
+    </FocusRing>
   );
 }
 
