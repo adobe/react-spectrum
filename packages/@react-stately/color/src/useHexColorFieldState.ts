@@ -38,8 +38,8 @@ export function useHexColorFieldState(
     validationState
   } = props;
   
-  let {color: initialValue} = useColor(value);
-  let {color: initialDefaultValue} = useColor(defaultValue);
+  let initialValue = useColor(value);
+  let initialDefaultValue = useColor(defaultValue);
   let [colorValue, setColorValue] = useControlledState<Color>(initialValue, initialDefaultValue, onChange);
 
   let initialInputValue = (value || defaultValue) && colorValue ? colorValue.toString('hex') : '';

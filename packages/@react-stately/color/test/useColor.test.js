@@ -17,24 +17,21 @@ import {useColor} from '../';
 describe('useColor tests', function () {
   it('should accept string value', function () {
     let {result} = renderHook(() => useColor('#abc'));
-    expect(result.current.color).toBeInstanceOf(Color);
-    expect(result.current.color.getChannelValue('red')).toBe(170);
-    expect(result.current.color.getChannelValue('green')).toBe(187);
-    expect(result.current.color.getChannelValue('blue')).toBe(204);
-    expect(result.current.color.getChannelValue('alpha')).toBe(1);
-    expect(result.current.colorInt).toBe(11189196);
+    expect(result.current).toBeInstanceOf(Color);
+    expect(result.current.getChannelValue('red')).toBe(170);
+    expect(result.current.getChannelValue('green')).toBe(187);
+    expect(result.current.getChannelValue('blue')).toBe(204);
+    expect(result.current.getChannelValue('alpha')).toBe(1);
   });
 
   it('should return the same Color object if provided as argument', function () {
     let color = new Color('#abc');
     let {result} = renderHook(() => useColor(color));
-    expect(result.current.color).toBe(color);
-    expect(result.current.colorInt).toBe(color.toHexInt());
+    expect(result.current).toBe(color);
   });
 
   it('should return undefined color and colorInt for invalid color value', function () {
     let {result} = renderHook(() => useColor('invalidColor'));
-    expect(result.current.color).toBeUndefined();
-    expect(result.current.colorInt).toBeUndefined();
+    expect(result.current).toBeUndefined();
   });
 });

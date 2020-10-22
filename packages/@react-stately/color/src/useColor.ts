@@ -15,7 +15,7 @@ import {ColorInput} from '@react-types/color';
 import {useMemo} from 'react';
 
 export function useColor(value: ColorInput) {
-  let color = useMemo(() => {
+  return useMemo(() => {
     if (typeof value === 'string') {
       try {
         return new Color(value);
@@ -25,7 +25,4 @@ export function useColor(value: ColorInput) {
     }
     return value;
   }, [value]);
-
-  let colorInt = useMemo(() => color ? color.toHexInt() : undefined, [color]);
-  return {color, colorInt};
 }
