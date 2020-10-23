@@ -27,13 +27,16 @@ Research:
 - looked at MaterialUI, Ant, and ReactBootstrap
 - similar api for the most part
   - some form of variant, timeout, onClose, positioning handling, transition customization, message customization
-- Ant has users render the toast (notification) via notification.[variant]({config}) instead of the typical <Toast /> format. Also no controlled 'open/show' prop
+- Ant has users render the toast (called "notification" by them) via `notification.[variant](config)` instead of the typical <Toast /> format. Also no controlled 'open/show' prop
   - MaterialUI and ReactBootstrap were more "normal", e.g. <Toast /> + having a "show/open" prop
 - none of them really handled queuing or making sure only a single toast was rendered at a time
   - up to user to handle that behavior
 
+Additional links:
+
 https://w3c.github.io/aria-practices/examples/alert/alert.html
 https://github.com/adobe/react-spectrum/blob/main/specs/accessibility/Toast.mdx
+https://spectrum.adobe.com/page/toast/
 
 
 Questions:
