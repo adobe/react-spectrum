@@ -19,7 +19,8 @@ import {useTableCell} from './useTableCell';
 interface RowHeaderProps {
   node: TableNode<unknown>,
   ref: RefObject<HTMLElement>,
-  isVirtualized?: boolean
+  isVirtualized?: boolean,
+  isDisabled?: boolean
 }
 
 interface RowHeaderAria {

@@ -11,7 +11,7 @@
  */
 
 import {Key} from 'react';
-import {Selection, SelectionMode} from '@react-types/shared';
+import {PressEvent, Selection, SelectionMode} from '@react-types/shared';
 
 export interface FocusState {
   /** Whether the collection is currently focused. */
@@ -41,7 +41,9 @@ export interface MultipleSelectionState extends FocusState {
   /** The currently selected keys in the collection. */
   readonly selectedKeys: Selection,
   /** Sets the selected keys in the collection. */
-  setSelectedKeys(keys: Selection | ((v: Selection) => Selection)): void
+  setSelectedKeys(keys: Selection | ((v: Selection) => Selection)): void,
+  /** The currently disabled keys in the collection. */
+  readonly disabledKeys: Set<Key>
 }
 
 export interface MultipleSelectionManager extends FocusState {
@@ -72,5 +74,10 @@ export interface MultipleSelectionManager extends FocusState {
   /** Removes all keys from the selection. */
   clearSelection(): void,
   /** Toggles between select all and an empty selection. */
-  toggleSelectAll(): void
+  toggleSelectAll(): void,
+  /**
+   * Toggles, replaces, or extends selection to the given key depending
+   * on the pointer event and collection's selection mode.
+   */
+  select(key: Key, e?: PressEvent | PointerEvent): void
 }
