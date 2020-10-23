@@ -99,8 +99,6 @@ export type DimensionValue =
   | number;
 
 export type ColorValue =
-  | 'status'
-  | 'version'
   | 'celery-400'
   | 'celery-500'
   | 'celery-600'
