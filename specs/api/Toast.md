@@ -9,7 +9,7 @@ governing permissions and limitations under the License. -->
 
 ## Introduction
 
-This document outlines the API for the Toast component to be implemented in React Spectrum v3. A major update from previous iterations is the concept of a Toast [queue](https://spectrum.adobe.com/page/toast/#Priority-queue). Additionally, an effort has been made to create an API that meshes with the React Hooks concept, allow us to provide aria and stately hooks for outside use in custom Toast components.
+This document outlines the API for the Toast component to be implemented in React Spectrum v3. A major update from previous iterations is the concept of a Toast [queue](https://spectrum.adobe.com/page/toast/#Priority-queue). Additionally, an effort has been made to create an API that meshes with the React Hooks concept, allowing us to provide aria and stately hooks for outside use in custom Toast components.
 
 ## Toast API
 ```typescript
@@ -78,7 +78,6 @@ interface ToastContainerProps {
   positioning: ?
 }
 
-
 interface ToastContainerState {
   // Returns what toast is currently displayed.
   visibleToast: ToastElement,
@@ -93,21 +92,20 @@ interface ToastContainerState {
   setToastQueue: (Array<ToastElement>) => void,
 
   // Adds a toast to the queue. Needs a unique identifier so toast look up can happen via removeToast.
-  addToast: (ToastElement, id/key) => void
+  addToast: (ToastElement, id/key) => void,
 
-  // Removes a toast regardless if it is visible or in queue. Uses the provided id/key to match what toast to remove.
-  removeToast: (id/key) => void
-}
+  // Removes a toast regardless if it is visible or in queue. Uses the provided id/key to find what toast to remove.
+  removeToast: (id/key) => void,
 
- - perhaps a way to customize toast priority logic is added here
-// Function that overrides the default priority logic. Consumes toast props and returns a priority number
+  // Function that overrides the default priority logic. Consumes toast props and returns a priority number.
   determinePriorityFn: (props) => number
+}
 
 function useToastContainerState(): ToastContainerState;
 
 
 interface ToastContainerAria {
-  // The
+  // TODO: Accesibility review
   role: 'region',
   aria-label: 'Notifications'
 }
@@ -115,43 +113,38 @@ interface ToastContainerAria {
 function useToastContainer(): ToastContainerAria;
 ```
 
-
-
-
 ## Use Cases
 
-- stuff found in the rsp room
-  - have toast last an indefinite amount of time (has progress bar inside it)
-  - show toast after an operation finishes (upload complete, form saved etc)
-    - also for error messaging (but not form validation)
-  - lotta requests for help positioning it
-- v2 stories (support the same stuff available there?)
+Toasts are used to display temporary notifications to an end user. Common causes for notification are when an operation finishes (e.g. file upload completes) and error messaging when said operation doesn't complete successfully.
+
+### Feature requests from the react-spectrum slack channel
+  - Have toast last an indefinite amount of time to track progress, then automatic dismissal when operation finishes.
+  - Flexible placement of toasts, specifically inside other elements.
+
+### Examples of React Spectrum Toast usage in Adobe
 - https://git.corp.adobe.com/io-sdk/willow/blob/492f02a527c1de111f9ea4246c262360f70684a1/src/components/AppsPage/AppsPageLayout.js
-  - toast appears to notify iOS support and other info
+  - Toast appears to notify user of current iOS support and CLI information.
 - https://git.corp.adobe.com/adobe-platform/ethos-homepage/blob/4327571c748e17f34af603246e8ec88e82b73397/comps/featurecomps/AddNewFlag.tsx
-  - notification toast for feature flag creation success and failure (validation)
+  - Notification toast shown for feature flag creation success and failure.
 - https://git.corp.adobe.com/di-services-3d/dncr-gltf-viewer/blob/5344620e96e4e1d14587cbb749df58130bca1418/src/AbuseForm.js
-  - notification (success or failure) for abuse report submission
+  - Notification toast shown for abuse report submission success or failure.
 - https://git.corp.adobe.com/aem-eng-ops/aem-headcount/blob/14275b2f4c4ca9ccb7c4f5eeea45dfdad1668b95/ui/src/views/login/Login.js
-  - error toast for authentication
+  - Error toast shown if authentication fails during login.
 
 ## Research
-- looked at MaterialUI, Ant, and ReactBootstrap
-- similar api for the most part
-  - some form of variant, timeout, onClose, positioning handling, transition customization, message customization
-- Ant has users render the toast (called "notification" by them) via `notification.[variant](config)` instead of the typical <Toast /> format. Also no controlled 'open/show' prop
-  - MaterialUI and ReactBootstrap were more "normal", e.g. <Toast /> + having a "show/open" prop
-- none of them really handled queuing or making sure only a single toast was rendered at a time
-  - up to user to handle that behavior
+  I looked at MaterialUI, Ant Design, and React Bootstrap for API inspiration. They had similar looking APIs for the most part, each with some form of toast variant, toast timeout, onClose handler, positioning handling, transition customization, and message customization. Ant Design differed from the other two libraries by having users render a toast via `notification.[variant](config)` instead of the typical `<Toast />` format. Ant Design also didn't have a controlled `open/show` prop on its toast, instead featuring a `notification.open/close` api.
+
+  None of the libraries handled queuing out of the box. The end user was made responsible for Toast visibility and ordering.
 
 ## Open Questions
 
-- Where is the line drawn for spectrum behavior here?
-  - is it the queue logic (aka the 1 through 8 priority), or is it the fact that there is a queue at all and we disallow displaying more than one toast at a time
-    - how much customization would we want to allow for priority logic/bypassing said logic
-- how flexible do we want toast customization to be?
-  - positioning? should it always be at the bottom or should be users the ability to customize positioning freely?
-- what about transitioning, should we allow customization of this?
+Where is the line drawn for spectrum behavior here?
+  - Do we consider the queue [logic](https://spectrum.adobe.com/page/toast/#Priority-queue) as something to exclude from the hooks entirely? Or is the existence of a queue and only allowing a single toast to be displayed at a time also something we would want to exclude from the hooks?
+    - How much end user customization would we want to allow for the priority logic? Would we want to allow a user to define their own priority logic?
+
+How flexible do we want toast customization to be?
+  - Positioning? Should it always be placed at the bottom or should we give users the ability to customize positioning freely?
+  -  What about Toast transitions, should we allow customization?
 
 
 ## Additional Links
