@@ -35,17 +35,7 @@ export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, stat
   let checkboxId = useId();
   let isSelected = state.selectionManager.isSelected(key) && !isDisabled;
 
-  let onChange = () => {
-    if (manager.selectionMode === 'single') {
-      if (manager.isSelected(key) && !manager.disallowEmptySelection) {
-        manager.toggleSelection(key);
-      } else {
-        manager.replaceSelection(key);
-      }
-    } else if (manager) {
-      manager.toggleSelection(key);
-    }
-  };
+  let onChange = () => manager.select(key);
 
   return {
     checkboxProps: {

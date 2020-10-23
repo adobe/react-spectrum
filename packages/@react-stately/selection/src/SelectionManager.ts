@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node, SelectionMode} from '@react-types/shared';
+import {Collection, Node, PressEvent, SelectionMode} from '@react-types/shared';
 import {Key} from 'react';
 import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
@@ -323,6 +323,24 @@ export class SelectionManager implements MultipleSelectionManager {
       this.clearSelection();
     } else {
       this.selectAll();
+    }
+  }
+
+  select(key: Key, e?: PressEvent | PointerEvent) {
+    if (this.selectionMode === 'none') {
+      return;
+    }
+
+    if (this.selectionMode === 'single') {
+      if (this.isSelected(key) && !this.disallowEmptySelection) {
+        this.toggleSelection(key);
+      } else {
+        this.replaceSelection(key);
+      }
+    } else if (e && e.shiftKey) {
+      this.extendSelection(key);
+    } else {
+      this.toggleSelection(key);
     }
   }
 }
