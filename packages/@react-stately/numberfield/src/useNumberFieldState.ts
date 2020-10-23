@@ -68,9 +68,14 @@ export function useNumberFieldState(
       if (p.type === 'fraction' || p.type === 'integer' || p.type === 'minusSign' || p.type === 'plusSign') {
         return chars;
       }
-      return chars + '\\' + p.value;
+      return chars + p.value;
     }, '');
-    let literals = allParts.reduce((chars, p) => p.type === 'decimal' || p.type === 'fraction' || p.type === 'integer' || p.type === 'minusSign' || p.type === 'plusSign' ? chars : chars + '\\' + p.value, '');
+    let literals = allParts.reduce((chars, p) => {
+      if (p.type === 'decimal' || p.type === 'fraction' || p.type === 'integer' || p.type === 'minusSign' || p.type === 'plusSign') {
+        return chars;
+      }
+      return chars + p.value;
+    }, '');
     return {minusSign, plusSign, decimal, validCharacters, literals};
   }, [inputValueFormatter, minValue, maxValue, intlOptions]);
   let {minusSign, plusSign, decimal, validCharacters, literals} = symbols;
@@ -234,8 +239,9 @@ export function useNumberFieldState(
     }
     // because the {style: 'percent'} adds two zeros to the end, we need to divide by 100 in that very specific case
     // otherwise we'll accidentally add 2 zeros when we format for real
+    // use * 100 represented this way in order to avoid javascript giving 2.109999999 in place of 2.11
     if (intlOptions?.style === 'percent') {
-      result = result / 100;
+      result = result / 1000 * 10;
     }
     return result;
   };
@@ -250,7 +256,8 @@ export function useNumberFieldState(
   let setValue = (value: string) => {
     let numeralSystem = determineNumeralSystem(value);
 
-    let strippedValue = value.replace(new RegExp(`[^${minusSign}${plusSign}${numberingSystems[numeralSystem].join('')}${validCharacters}]`, 'g'), '');
+    let invalidChars = new RegExp(`[^${minusSign}${plusSign}${numberingSystems[numeralSystem].join('')}${validCharacters}]`, 'g');
+    let strippedValue = value.replace(invalidChars, '');
     strippedValue = replaceAllButFirstOccurrence(strippedValue, minusSign);
     strippedValue = replaceAllButFirstOccurrence(strippedValue, plusSign);
     strippedValue = replaceAllButFirstOccurrence(strippedValue, decimal);
@@ -266,11 +273,8 @@ export function useNumberFieldState(
     if (intlOptions?.style === 'percent') {
       newValue = newValue / 100;
     }
-    if (!isNaN(newValue) && (newValue > maxValue || newValue < minValue)) {
-      return;
-    }
 
-    // If new value is a number less than max and more than min then update the number value
+    // If new value is a number less than max and more than min then update the temp number value
     if (!isNaN(newValue) && newValue <= maxValue && newValue >= minValue) {
       let roundedValue = roundValueUsingFormatter(newValue);
       tempNum.current = roundedValue;
@@ -294,9 +298,15 @@ export function useNumberFieldState(
     } else {
       clampedValue = clamp(numberValue, minValue, maxValue, step);
     }
+    clampedValue = roundValueUsingFormatter(clampedValue);
     let newValue = isNaN(clampedValue) ? '' : inputValueFormatter.format(clampedValue);
     setNumberValue(clampedValue);
-    setInputValue(newValue);
+    // in a controlled state, the numberValue won't change, so we won't go back to our old input without help
+    if (value === undefined) {
+      setInputValue(newValue);
+    } else {
+      setInputValue(inputValueFormatter.format(numberValue));
+    }
   };
 
   return {

@@ -19,7 +19,7 @@ import {mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {useFocus, useFocusWithin} from '@react-aria/interactions';
-import {useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
+import {useLocale, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
 import {useSpinButton} from '@react-aria/spinbutton';
 import {useTextField} from '@react-aria/textfield';
 
@@ -62,6 +62,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   } = state;
 
   const formatMessage = useMessageFormatter(intlMessages);
+  let {direction} = useLocale();
 
   const inputId = useId();
 
@@ -140,17 +141,19 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
 
   let onWheel = useCallback((e) => {
     // If the input isn't supposed to receive input, do nothing.
+    // If the ctrolKey is pressed, this is a zoom event, do nothing.
     // TODO: add focus
-    if (isDisabled || isReadOnly) {
+    if (isDisabled || isReadOnly || e.ctrlKey) {
       return;
     }
 
-    if (e.deltaY < 0) {
+    let isRTL = direction === 'rtl';
+    if (e.deltaY < 0 || (isRTL ? e.deltaX < 0 : e.deltaX > 0)) {
       increment();
     } else {
       decrement();
     }
-  }, [isReadOnly, isDisabled, decrement, increment]);
+  }, [isReadOnly, isDisabled, decrement, increment, direction]);
 
   /**
    * General outline for figuring out what to parse in on change

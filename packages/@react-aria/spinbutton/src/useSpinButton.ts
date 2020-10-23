@@ -123,9 +123,9 @@ export function useSpinButton(
 
   useEffect(() => {
     if (isFocused.current) {
-      announce(textValue || `${value}`);
+      announce(textValue === '' ? formatMessage('Empty') : textValue || `${value}`);
     }
-  }, [textValue, value]);
+  }, [textValue, value, formatMessage]);
 
   const onIncrementPressStart = useCallback(
     (initialStepDelay: number) => {
@@ -162,7 +162,7 @@ export function useSpinButton(
   return {
     spinButtonProps: {
       role: 'spinbutton',
-      'aria-valuenow': typeof value === 'number' ? value : null,
+      'aria-valuenow': !isNaN(value) ? value : null,
       // by having a message, this prevents iOS VO from reading off '50%' for an empty field
       // i'm not sure what other cases there are, where we want the spin button to read it
       'aria-valuetext': textValue === '' ? formatMessage('Empty') : textValue,

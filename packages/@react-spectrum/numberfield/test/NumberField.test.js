@@ -240,6 +240,24 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
+  `('$Name will allow typing of a number between min and max', () => {
+    let {
+      textField
+    } = renderNumberField({onChange: onChangeSpy, minValue: 20, maxValue: 50});
+
+    act(() => {textField.focus();});
+    typeText(textField, '32');
+    expect(textField).toHaveAttribute('value', '32');
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    act(() => {textField.blur();});
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(32);
+    expect(textField).toHaveAttribute('value', '32');
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
   `('$Name will not allow typing of a number greater than the max', () => {
     let {
       container,
@@ -302,24 +320,74 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
-  `('$Name decrement value when scrolling downwards', () => {
+  `('$Name decrement value when scrolling downwards or left in LTR', () => {
 
     let {textField} = renderNumberField({onChange: onChangeSpy});
 
     act(() => {textField.focus();});
     fireEvent.wheel(textField, {deltaY: 10});
     expect(onChangeSpy).toHaveBeenCalledWith(-1);
+    fireEvent.wheel(textField, {deltaX: -10});
+    expect(onChangeSpy).toHaveBeenLastCalledWith(-2);
+    act(() => {textField.blur();});
   });
 
   it.each`
     Name
     ${'NumberField'}
-  `('$Name increment value when scrolling upwards', () => {
+  `('$Name increment value when scrolling upwards or right in LTR', () => {
     let {textField} = renderNumberField({onChange: onChangeSpy});
 
     act(() => {textField.focus();});
     fireEvent.wheel(textField, {deltaY: -10});
+    expect(onChangeSpy).toHaveBeenLastCalledWith(1);
+    fireEvent.wheel(textField, {deltaX: 10});
+    expect(onChangeSpy).toHaveBeenLastCalledWith(2);
+    act(() => {textField.blur();});
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name decrement value when scrolling right in RTL', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy}, 'ar-AE');
+
+    act(() => {textField.focus();});
+    fireEvent.wheel(textField, {deltaY: 10});
+    expect(onChangeSpy).toHaveBeenCalledWith(-1);
+    fireEvent.wheel(textField, {deltaX: 10});
+    expect(onChangeSpy).toHaveBeenLastCalledWith(-2);
+    act(() => {textField.blur();});
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name increment value when scrolling left in RTL', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy}, 'ar-AE');
+
+    act(() => {textField.focus();});
+    fireEvent.wheel(textField, {deltaY: -10});
     expect(onChangeSpy).toHaveBeenCalledWith(1);
+    fireEvent.wheel(textField, {deltaX: -10});
+    expect(onChangeSpy).toHaveBeenLastCalledWith(2);
+    act(() => {textField.blur();});
+  });
+
+  // pinch to zoom triggers scrolling https://bugzilla.mozilla.org/show_bug.cgi?id=1052253 with the ctrl key
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name should not fire increment or decrement if it is a zoom event', () => {
+
+    let {textField} = renderNumberField({onChange: onChangeSpy});
+
+    act(() => {textField.focus();});
+    fireEvent.wheel(textField, {deltaY: 10, ctrlKey: true});
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    fireEvent.wheel(textField, {deltaY: -10, ctrlKey: true});
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    act(() => {textField.blur();});
   });
 
   // TODO: what should happen when an invalid defaultValue is supplied in a min/max
@@ -580,6 +648,19 @@ describe('NumberField', function () {
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '26%');
     expect(onChangeSpy).toHaveBeenLastCalledWith(0.26);
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name properly formats percent for 2.11', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2}});
+
+    act(() => {textField.focus();});
+    typeText(textField, '2.11');
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '2.11%');
+    expect(onChangeSpy).toHaveBeenCalledWith(0.0211);
   });
 
   it.each`
@@ -873,6 +954,20 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', expected[2]);
   });
 
+  it.each`
+    Name              | props                                                    | locale
+    ${'US Euros'}     | ${{defaultValue: 10, formatOptions: {style: 'currency', currency: 'SAR'}}} | ${'en-US'}
+  `('$Name typing in locale stays consistent', ({props, locale}) => {
+    let {textField} = renderNumberField({showStepper: true, onChange: onChangeSpy, ...props}, locale);
+    expect(textField).toHaveAttribute('value', 'SAR 10.00');
+
+    act(() => {textField.focus();});
+    expect(textField).toHaveAttribute('value', 'SAR 10.00');
+    typeText(textField, '@!');
+    expect(textField).toHaveAttribute('value', 'SAR 10.00');
+    act(() => {textField.blur();});
+  });
+
   it('advances automatically if the arrows are held down', () => {
     let {textField, incrementButton, decrementButton} = renderNumberField({showStepper: true, defaultValue: 10, onChange: onChangeSpy});
 
@@ -1055,6 +1150,20 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '10');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenCalledWith(9);
+  });
+
+  it.each`
+    Name                          | props
+    ${'NumberField controlled'}   | ${{value: 10, onChange: onChangeSpy}}
+  `('$Name 10 is rendered and will not change the value in the input for typed text', ({props}) => {
+    let {textField} = renderNumberField(props);
+    expect(textField).toHaveAttribute('value', '10');
+    act(() => {textField.focus();});
+    typeText(textField, '123');
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '10');
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(10123);
   });
 
   it.each`

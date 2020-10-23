@@ -18,6 +18,34 @@ import {NumberField} from '../src';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
+// please note,
+// that IE11 now returns undefined again for window.chrome
+// and new Opera 30 outputs true for window.chrome
+// but needs to check if window.opr is not undefined
+// and new IE Edge outputs to true now for window.chrome
+// and if not iOS Chrome check
+// so use the below updated condition
+let isChromium = window?.chrome;
+let winNav = window.navigator;
+let vendorName = winNav.vendor;
+let isOpera = typeof window?.opr !== "undefined";
+let isIEedge = winNav.userAgent.indexOf("Edge") > -1;
+let isIOSChrome = winNav.userAgent.match("CriOS");
+let isChrome;
+if (isIOSChrome) {
+  isChrome = false
+} else if(
+  isChromium !== null &&
+  typeof isChromium !== "undefined" &&
+  vendorName === "Google Inc." &&
+  isOpera === false &&
+  isIEedge === false
+) {
+  isChrome = true;
+} else {
+  isChrome = false;
+}
+
 storiesOf('NumberField', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
   .add(
@@ -41,12 +69,16 @@ storiesOf('NumberField', module)
     () => render({formatOptions: {style: 'percent'}})
   )
   .add(
-    'percent min max fraction digits',
+    'percent min = 2 max = 2 fraction digits',
     () => render({formatOptions: {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2}})
   )
   .add(
+    'percent min = 2 max = 3 fraction digits',
+    () => render({formatOptions: {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 3}})
+  )
+  .add(
     'percent using sign',
-    () => render({formatOptions: {style: 'unit', unit: 'percent', signDisplay: 'always'}})
+    () => renderForChrome({formatOptions: {style: 'unit', unit: 'percent', signDisplay: 'always'}})
   )
   .add(
     'isQuiet',
@@ -107,9 +139,18 @@ function render(props: any = {}) {
   );
 }
 
+function renderForChrome(props: any = {}) {
+  if (isChrome) {
+    return (
+      <NumberField {...props} onChange={action('onChange')} UNSAFE_className="custom_classname" label="Enter numbers"/>
+    );
+  }
+  return <div>This feature is not supported on your browser</div>;
+}
+
 function NumberFieldControlled(props) {
   let [value, setValue] = useState(10);
-  return <NumberField {...props} formatOptions={{style: 'currency', currency: 'EUR'}} value={value} onChange={chain(setValue, action('onChange'))} />;
+  return <NumberField {...props} formatOptions={{style: 'currency', currency: 'EUR'}} value={value} onChange={chain(setValue, action('onChange'))} label="Enter numbers" />;
 }
 
 function NumberFieldWithCurrencySelect(props) {
