@@ -46,37 +46,6 @@ governing permissions and limitations under the License.
   vertical-align: top;
 
   outline: none;
-
-  &.spectrum-Tabs--isCollapsed {
-    inset-inline-start: 0;
-    height: var(--spectrum-tabs-item-height);
-
-    /* FieldButton Picker focus ring override */
-    & button {
-      &::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-
-        box-sizing: border-box;
-
-        block-size: var(--spectrum-tabs-focus-ring-height);
-        margin-block-start: calc(calc(var(--spectrum-tabs-focus-ring-height) / -2) + calc(var(--spectrum-tabs-rule-height) / 2));
-        inset-inline-start: calc(var(--spectrum-tabs-focus-ring-padding-x) * -1);
-        inset-inline-end: calc(var(--spectrum-tabs-focus-ring-padding-x) * -1);
-        border: var(--spectrum-tabs-focus-ring-size) solid transparent;
-        border-radius: var(--spectrum-tabs-focus-ring-border-radius);
-
-        pointer-events: none;
-      }
-    }
-
-    &.spectrum-Tabs--compact {
-      & button {
-        height: calc(var(--spectrum-tabs-compact-item-height));
-      }
-    }
-  }
 }
 
 .spectrum-Tabs-item {
@@ -202,6 +171,36 @@ governing permissions and limitations under the License.
     inset-block-end: calc(var(--spectrum-tabs-rule-height) * -1);
   }
 
+  &.spectrum-Tabs--isCollapsed {
+    inset-inline-start: 0;
+    block-size: var(--spectrum-tabs-item-height);
+
+    /* FieldButton Picker focus ring override */
+    & button {
+      &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+
+        box-sizing: border-box;
+
+        block-size: var(--spectrum-tabs-focus-ring-height);
+        margin-block-start: calc(calc(var(--spectrum-tabs-focus-ring-height) / -2) + calc(var(--spectrum-tabs-rule-height) / 2));
+        inset-inline-start: calc(var(--spectrum-tabs-focus-ring-padding-x) * -1);
+        inset-inline-end: calc(var(--spectrum-tabs-focus-ring-padding-x) * -1);
+        border: var(--spectrum-tabs-focus-ring-size) solid transparent;
+        border-radius: var(--spectrum-tabs-focus-ring-border-radius);
+
+        pointer-events: none;
+      }
+    }
+
+    &.spectrum-Tabs--compact {
+      & button {
+        height: calc(var(--spectrum-tabs-compact-item-height));
+      }
+    }
+  }
 
   &.spectrum-Tabs--compact {
     /* The ActionButton is taller than the tabs, so don't push tabs around */
