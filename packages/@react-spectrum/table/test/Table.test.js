@@ -822,7 +822,7 @@ describe('Table', function () {
         focusCell(tree, 'Bar 1');
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(getCell(tree, 'Baz 1'));
-      })
+      });
     });
 
     describe('ArrowLeft', function () {
@@ -915,7 +915,7 @@ describe('Table', function () {
         focusCell(tree, 'Bar 1');
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
-      })
+      });
     });
 
     describe('ArrowUp', function () {
@@ -1003,7 +1003,7 @@ describe('Table', function () {
         focusCell(tree, 'Bar 1');
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(getCell(tree, 'Bar 2'));
-      })
+      });
     });
 
     describe('Home', function () {
@@ -1060,27 +1060,47 @@ describe('Table', function () {
         expect(document.activeElement).toBe(getCell(tree, 'Foo 25'));
         moveFocus('PageDown');
         expect(document.activeElement).toBe(getCell(tree, 'Foo 49'));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(getCell(tree, 'Foo 73'));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(getCell(tree, 'Foo 97'));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(getCell(tree, 'Foo 100'));
       });
 
       it('should focus the row a page below', function () {
         let tree = renderMany();
         act(() => {tree.getAllByRole('row')[1].focus();});
         moveFocus('PageDown');
-        expect(document.activeElement).toBe(tree.getAllByRole('row')[25]);
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: 'Foo 25'}));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: 'Foo 49'}));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: 'Foo 73'}));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: 'Foo 97'}));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: 'Foo 100'}));
       });
     });
 
     describe('PageUp', function () {
-      it('should focus the cell a page below', function () {
+      it('should focus the cell a page above', function () {
         let tree = renderMany();
         focusCell(tree, 'Foo 25');
         moveFocus('PageUp');
         expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
+        focusCell(tree, 'Foo 12');
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
       });
 
-      it('should focus the row a page below', function () {
+      it('should focus the row a page above', function () {
         let tree = renderMany();
         act(() => {tree.getAllByRole('row')[25].focus();});
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[1]);
+        act(() => {tree.getAllByRole('row')[12].focus();});
         moveFocus('PageUp');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[1]);
       });
