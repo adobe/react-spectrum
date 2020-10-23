@@ -16,21 +16,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 describe('FocusScope', function () {
-  beforeAll(() => {
-    jest.useFakeTimers();
-  });
-
   beforeEach(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
   afterEach(() => {
     window.requestAnimationFrame.mockRestore();
-    jest.runAllTimers();
-  });
-
-  afterAll(() => {
-    jest.useRealTimers();
   });
 
   describe('focus containment', function () {
@@ -255,7 +246,6 @@ describe('FocusScope', function () {
 
       act(() => {
         input2.blur();
-        jest.advanceTimersByTime(10);
       });
       expect(document.activeElement).toBe(input2);
 
@@ -287,7 +277,6 @@ describe('FocusScope', function () {
 
       act(() => {
         input2.blur();
-        jest.advanceTimersByTime(10);
       });
       expect(document.activeElement).toBe(input2);
       fireEvent.focusOut(input2);
@@ -316,7 +305,6 @@ describe('FocusScope', function () {
         input2.focus();
         // if onBlur didn't fallback to checking document.activeElement, this would reset focus to input1
         fireEvent.blur(input1, {relatedTarget: null});
-        jest.advanceTimersByTime(10);
       });
 
       expect(document.activeElement).toBe(input2);

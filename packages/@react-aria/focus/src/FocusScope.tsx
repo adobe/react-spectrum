@@ -245,8 +245,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
     };
 
     let onBlur = (e) => {
-      // Brief timeout for document.activeElement to update (e.g. user clicks inside a iframe in a dialog)
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         // Fall back to document.activeElement if e.relatedTarget is null (e.g. user clicks inside a iframe in a dialog)
         let isInAnyScope = isElementInAnyScope(e.relatedTarget || document.activeElement, scopes);
 
@@ -258,7 +257,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
             focusedNode.current.focus();
           });
         }
-      }, 10);
+      });
     };
 
     document.addEventListener('keydown', onKeyDown, false);
