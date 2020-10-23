@@ -358,6 +358,7 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   getKeyPageAbove(key: Key) {
+    let nextKey = key;
     let itemRect = this.getItemRect(key);
     if (!itemRect) {
       return null;
@@ -366,15 +367,31 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
     let pageY = Math.max(0, itemRect.maxY - this.getPageHeight());
 
     while (itemRect && itemRect.y > pageY) {
-      key = this.getKeyAbove(key);
-      itemRect = this.getItemRect(key);
+      nextKey = this.getKeyAbove(nextKey);
+      itemRect = this.getItemRect(nextKey);
     }
 
-    return key;
+    // If the next key is the same as the initial key but there are still more keys above,
+    // there aren't enough keys for another "page" so set the final row's cell as the next key
+    if (nextKey === key && this.getKeyAbove(nextKey) != null) {
+      let currentItem = this.collection.getItem(key);
+      let lastKey = this.collection.getFirstKey();
+      if (!this.isCell(currentItem)) {
+        nextKey = lastKey;
+      } else {
+        let firstRow = this.collection.getItem(lastKey);
+        let children = [...firstRow.childNodes];
+        nextKey = children[currentItem.index].key;
+      }
+    }
+
+    return nextKey;
   }
 
   getKeyPageBelow(key: Key) {
-    let itemRect = this.getItemRect(key);
+    let nextKey = key;
+    let itemRect = this.getItemRect(nextKey);
+
     if (!itemRect) {
       return null;
     }
@@ -383,11 +400,25 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
     let pageY = Math.min(this.getContentHeight() - pageHeight, itemRect.y + pageHeight);
 
     while (itemRect && itemRect.maxY < pageY) {
-      key = this.getKeyBelow(key);
-      itemRect = this.getItemRect(key);
+      nextKey = this.getKeyBelow(nextKey);
+      itemRect = this.getItemRect(nextKey);
     }
 
-    return key;
+    // If the next key is the same as the initial key but there are still more keys below,
+    // there aren't enough keys for another "page" so set the final row's cell as the next key
+    if (nextKey === key && this.getKeyBelow(nextKey) != null) {
+      let currentItem = this.collection.getItem(key);
+      let lastKey = this.collection.getLastKey();
+      if (!this.isCell(currentItem)) {
+        nextKey = lastKey;
+      } else {
+        let lastRow = this.collection.getItem(lastKey);
+        let children = [...lastRow.childNodes];
+        nextKey = children[currentItem.index].key;
+      }
+    }
+
+    return nextKey;
   }
 
   getKeyForSearch(search: string, fromKey?: Key) {

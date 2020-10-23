@@ -460,7 +460,7 @@ function TableSelectAllCell({column}) {
           {...checkboxProps}
           isDisabled={isSingleSelectionMode}
           isEmphasized
-          UNSAFE_style={{visibility: isSingleSelectionMode ? 'hidden' : 'show'}}
+          UNSAFE_style={{visibility: isSingleSelectionMode ? 'hidden' : 'visible'}}
           UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />
       </div>
     </FocusRing>
