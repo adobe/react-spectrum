@@ -18,6 +18,7 @@ import workflowIconPackageData from '@spectrum-icons/workflow/package.json';
 ```jsx import
 // import {Icon} from '@react-spectrum/icon';
 // import IconTable from './IconTable';
+import {Flex} from '@react-spectrum/layout';
 ```
 
 ---
@@ -39,7 +40,7 @@ Workflow icons are graphical metaphors or symbols that can be used to compliment
 ```tsx example
 import Airplane from '@spectrum-icons/workflow/Airplane';
 
-<Airplane />
+<Airplane aria-label="Airplane" />
 ```
 
 ## Sizing
@@ -51,13 +52,15 @@ but if you use icons standalone, you can use the `size` prop to control the sizi
 ```tsx example
 import Beaker from '@spectrum-icons/workflow/Beaker';
 
-<Beaker size="XXS" />
-<Beaker size="XS" />
-<Beaker size="S" />
-<Beaker size="M" />
-<Beaker size="L" />
-<Beaker size="XL" />
-<Beaker size="XXL" />
+<Flex gap="size-100">
+  <Beaker aria-label="XXS Beaker" size="XXS" />
+  <Beaker aria-label="XS Beaker" size="XS" />
+  <Beaker aria-label="S Beaker" size="S" />
+  <Beaker aria-label="M Beaker" size="M" />
+  <Beaker aria-label="L Beaker" size="L" />
+  <Beaker aria-label="XL Beaker" size="XL" />
+  <Beaker aria-label="XXL Beaker" size="XXL" />
+<Flex gap="size-100">
 ```
 
 ## Coloring
@@ -68,11 +71,13 @@ have their colors styled appropriately, but you can use the `color` prop to adju
 ```tsx example
 import Alert from '@spectrum-icons/workflow/Alert';
 
-<Alert />
-<Alert color="negative" />
-<Alert color="notice" />
-<Alert color="positive" />
-<Alert color="informative" />
+<Flex gap="size-100">
+  <Alert aria-label="Default Alert" />
+  <Alert aria-label="Negative Alert" color="negative" />
+  <Alert aria-label="Notification Alert" color="notice" />
+  <Alert aria-label="Positive Alert" color="positive" />
+  <Alert aria-label="Informative Alert" color="informative" />
+</Flex>
 ```
 
 ## Labeling
