@@ -38,7 +38,8 @@ export function useInteractOutside(props: InteractOutsideProps) {
     let onPointerDown = (e) => {
       if (isValidEvent(e, ref)) {
         state.isPointerDown = true;
-        // for the same reason as usePress
+        // Due to browser inconsistencies, we prevent
+        // default on pointer down. FF will otherwise try to start text selection.
         if (e.button === 0) {
           e.preventDefault();
         }
