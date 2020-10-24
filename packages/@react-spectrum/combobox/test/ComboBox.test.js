@@ -98,6 +98,11 @@ function testComboBoxOpen(combobox, button, listbox, focusedItemIndex) {
   expect(items[1]).toHaveTextContent('Two');
   expect(items[2]).toHaveTextContent('Three');
 
+  expect(listbox).not.toHaveAttribute('tabIndex');
+  for (let item of items) {
+    expect(item).not.toHaveAttribute('tabIndex');
+  }
+
   expect(document.activeElement).toBe(combobox);
 
   if (typeof focusedItemIndex === 'undefined') {
