@@ -185,7 +185,7 @@ function getFocusableElementsInScope(scope: HTMLElement[], opts: FocusManagerOpt
 function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolean) {
   let focusedNode = useRef<HTMLElement>();
 
-  let rafArray = useRef([]);
+  let raf = useRef(null);
   useEffect(() => {
     let scope = scopeRef.current;
     if (!contain) {
@@ -245,17 +245,15 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
     };
 
     let onBlur = (e) => {
-      rafArray.current[0] = requestAnimationFrame(() => {
+      // Firefox doesn't shift focus back to the Dialog properly without this
+      raf.current = requestAnimationFrame(() => {
         // Fall back to document.activeElement if e.relatedTarget is null (e.g. user clicks inside a iframe in a dialog)
         let isInAnyScope = isElementInAnyScope(e.relatedTarget || document.activeElement, scopes);
 
         if (!isInAnyScope) {
           activeScope = scopeRef;
           focusedNode.current = e.target;
-          // Firefox doesn't shift focus back to the Dialog properly without this
-          rafArray.current[1] = requestAnimationFrame(() => {
-            focusedNode.current.focus();
-          });
+          focusedNode.current.focus();
         }
       });
     };
@@ -274,12 +272,8 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
-    return () => {
-      for (let raf of rafArray.current) {
-        cancelAnimationFrame(raf);
-      }
-    }
-  }, [rafArray]);
+    return () => cancelAnimationFrame(raf.current);
+  }, [raf]);
 }
 
 function isElementInAnyScope(element: Element, scopes: Set<RefObject<HTMLElement[]>>) {
