@@ -27,7 +27,7 @@ import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {mergeProps, useId} from '@react-aria/utils';
 import {PressResponder} from '@react-aria/interactions';
-import React, {HTMLAttributes, ReactNode, RefObject, useRef} from 'react';
+import React, {HTMLAttributes, ReactNode, RefObject, useCallback, useRef} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
@@ -243,7 +243,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   let inputRef = useRef<HTMLInputElement>();
   let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
   let popoverRef = useRef<HTMLDivElement>();
-  let listBoxRef = useRef();
+  let listBoxRef = useRef<HTMLDivElement>();
   let layout = useListBoxLayout(state);
   let formatMessage = useMessageFormatter(intlMessages);
 
@@ -294,17 +294,37 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     </PressResponder>
   );
 
+  // Close the software keyboard on scroll to give the user a bigger area to scroll.
+  // But only do this if scrolling with touch, otherwise it can cause issues with touch
+  // screen readers.
+  let isTouchDown = useRef(false);
+  let onTouchStart = () => {
+    isTouchDown.current = true;
+  };
+
+  let onTouchEnd = () => {
+    isTouchDown.current = false;
+  };
+
+  let onScroll = useCallback(() => {
+    if (!inputRef.current || document.activeElement !== inputRef.current || !isTouchDown.current) {
+      return;
+    }
+
+    popoverRef.current.focus();
+  }, [inputRef, popoverRef, isTouchDown]);
+
   return (
-    <div
-      {...mergeProps(overlayProps, dialogProps)}
-      ref={popoverRef}
-      className={
-        classNames(
-          comboboxStyles,
-          'tray-dialog'
-        )
-      }>
-      <FocusScope restoreFocus>
+    <FocusScope restoreFocus contain>
+      <div
+        {...mergeProps(overlayProps, dialogProps)}
+        ref={popoverRef}
+        className={
+          classNames(
+            comboboxStyles,
+            'tray-dialog'
+          )
+        }>
         <DismissButton onDismiss={() => state.commit()} />
         <TextFieldBase
           label={label}
@@ -328,7 +348,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
             )
           } />
         <ListBoxBase
-          domProps={listBoxProps}
+          domProps={mergeProps(listBoxProps, {onTouchStart, onTouchEnd})}
           disallowEmptySelection
           shouldSelectOnPressUp
           focusOnPointerEnter
@@ -347,15 +367,9 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
             )
           }
           ref={listBoxRef}
-          onScroll={() => {
-            if (!listBoxRef.current || !inputRef.current || document.activeElement !== inputRef.current) {
-              return;
-            }
-
-            inputRef.current.blur();
-          }} />
+          onScroll={onScroll} />
         <DismissButton onDismiss={() => state.commit()} />
-      </FocusScope>
-    </div>
+      </div>
+    </FocusScope>
   );
 }

@@ -2418,7 +2418,7 @@ describe('ComboBox', function () {
       expect(items[0]).toHaveAttribute('aria-selected', 'true');
     });
 
-    it('input is blurred when the user scrolls the listbox', function () {
+    it('input is blurred when the user scrolls the listbox with touch', function () {
       let {getByRole, getByTestId} = renderComboBox();
       let button = getByRole('button');
 
@@ -2441,6 +2441,7 @@ describe('ComboBox', function () {
       expect(document.activeElement).toBe(trayInput);
 
       act(() => {
+        fireEvent.touchStart(listbox);
         fireEvent.scroll(listbox);
         jest.runAllTimers();
       });
