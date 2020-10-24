@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, DimensionValue, Direction, StyleProps, ViewStyleProps} from '@react-types/shared';
+import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, DimensionValue, Direction, IconColorValue, StyleProps, ViewStyleProps} from '@react-types/shared';
 import {CSSProperties, HTMLAttributes} from 'react';
 import {useLocale} from '@react-aria/i18n';
 
@@ -110,6 +110,11 @@ const borderStyleProps = {
   borderBottomWidth: 'borderBottomStyle'
 };
 
+export const iconStyleProps: StyleHandlers = {
+  ...baseStyleProps,
+  color: ['color', iconColorValue]
+};
+
 function rtl(ltr: string, rtl: string) {
   return (direction: Direction) => (
     direction === 'rtl' ? rtl : ltr
@@ -132,6 +137,10 @@ export function dimensionValue(value: DimensionValue) {
 type ColorType = 'default' | 'background' | 'border' | 'icon' | 'status';
 function colorValue(value: ColorValue, type: ColorType = 'default') {
   return `var(--spectrum-global-color-${value}, var(--spectrum-semantic-${value}-color-${type}))`;
+}
+
+function iconColorValue(value: IconColorValue) {
+  return `var(--spectrum-semantic-${value}-color-icon)`;
 }
 
 function backgroundColorValue(value: BackgroundColorValue) {
