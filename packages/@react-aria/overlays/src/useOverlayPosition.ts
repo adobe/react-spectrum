@@ -11,7 +11,7 @@
  */
 
 import {calculatePosition, PositionResult} from './calculatePosition';
-import {HTMLAttributes, RefObject, useCallback, useEffect, useState} from 'react';
+import {HTMLAttributes, RefObject, useCallback, useEffect, useRef, useState} from 'react';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
 import {useCloseOnScroll} from './useCloseOnScroll';
 import {useLocale} from '@react-aria/i18n';
@@ -54,6 +54,9 @@ interface PositionAria {
   /** Updates the position of the overlay. */
   updatePosition(): void
 }
+
+// @ts-ignore
+let visualViewport = typeof window !== 'undefined' && window.visualViewport;
 
 /**
  * Handles positioning overlays like popovers and menus relative to a trigger
@@ -124,12 +127,41 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   // Update position on window resize
   useResize(updatePosition);
 
+  // Reposition the overlay and do not close on scroll while the visual viewport is resizing.
+  // This will ensure that overlays adjust their positioning when the iOS virtual keyboard appears.
+  let isResizing = useRef(false);
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    let onResize = () => {
+      isResizing.current = true;
+      clearTimeout(timeout);
+
+      timeout = setTimeout(() => {
+        isResizing.current = false;
+      }, 500);
+
+      updatePosition();
+    };
+
+    visualViewport?.addEventListener('resize', onResize);
+
+    return () => {
+      visualViewport?.removeEventListener('resize', onResize);
+    };
+  }, [updatePosition])
+
+  let close = useCallback(() => {
+    if (!isResizing.current) {
+      onClose();
+    }
+  }, [onClose, isResizing]);
+
   // When scrolling a parent scrollable region of the trigger (other than the body),
   // we hide the popover. Otherwise, its position would be incorrect.
   useCloseOnScroll({
     triggerRef: targetRef,
     isOpen,
-    onClose
+    onClose: close
   });
 
   return {
