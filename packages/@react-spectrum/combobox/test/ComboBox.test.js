@@ -2006,6 +2006,12 @@ describe('ComboBox', function () {
     });
   });
 
+  it('should have aria-invalid when validationState="invalid"', function () {
+    let {getByRole} = renderComboBox({validationState: 'invalid'});
+    let combobox = getByRole('combobox');
+    expect(combobox).toHaveAttribute('aria-invalid', 'true');
+  });
+
   describe('mobile combobox', function () {
     beforeEach(() => {
       jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 600);
@@ -2650,6 +2656,12 @@ describe('ComboBox', function () {
       });
 
       expect(document.activeElement).toBe(button);
+    });
+
+    it('should include invalid in label when validationState="invalid"', function () {
+      let {getByRole, getByText, getByLabelText} = renderComboBox({validationState: 'invalid', selectedKey: '2'});
+      let button = getByRole('button');
+      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText('Two').id} ${getByLabelText('(invalid)').id}`);
     });
 
     describe('refs', function () {

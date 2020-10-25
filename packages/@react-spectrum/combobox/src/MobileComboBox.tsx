@@ -11,6 +11,7 @@
  */
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
+import {AriaButtonProps} from '@react-types/button';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
@@ -20,7 +21,7 @@ import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
 import comboboxStyles from './combobox.css';
 import {DismissButton} from '@react-aria/overlays';
 import {Field} from '@react-spectrum/label';
-import {FocusableRef, FocusableRefValue, PressEvents, ValidationState} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, ValidationState} from '@react-types/shared';
 import {FocusRing, FocusScope} from '@react-aria/focus';
 import {focusSafely} from '@react-aria/focus';
 // @ts-ignore
@@ -28,7 +29,6 @@ import intlMessages from '../intl/*.json';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {mergeProps, useId} from '@react-aria/utils';
-import {PressResponder} from '@react-aria/interactions';
 import React, {HTMLAttributes, ReactNode, RefObject, useCallback, useRef} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality, useHover} from '@react-aria/interactions';
@@ -68,7 +68,6 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
   let domRef = useFocusableRef(ref, buttonRef);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
 
-  let valueId = useId();
   let {labelProps, fieldProps} = useLabel({
     ...props,
     labelElementType: 'span'
@@ -97,22 +96,8 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           isDisabled={isDisabled}
           isPlaceholder={!state.inputValue}
           validationState={validationState}
-          onPress={() => state.open()}
-          aria-labelledby={[
-            fieldProps['aria-labelledby'],
-            fieldProps['aria-label'] && !fieldProps['aria-labelledby'] ? fieldProps.id : null,
-            valueId
-          ].filter(Boolean).join(' ')}>
-          <span
-            id={valueId}
-            className={
-              classNames(
-                comboboxStyles,
-                'mobile-value'
-              )
-            }>
-            {state.inputValue || props.placeholder || ''}
-          </span>
+          onPress={() => state.open()}>
+          {state.inputValue || props.placeholder || ''}
         </ComboBoxButton>
       </Field>
       <Tray isOpen={state.isOpen} onClose={state.commit} isFixedHeight isNonModal {...overlayProps}>
@@ -125,7 +110,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
   );
 });
 
-interface ComboBoxButtonProps extends PressEvents {
+interface ComboBoxButtonProps extends AriaButtonProps {
   isQuiet?: boolean,
   isDisabled?: boolean,
   isPlaceholder?: boolean,
@@ -145,16 +130,11 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
     style,
     className
   } = props;
-
-  let {hoverProps, isHovered} = useHover({});
-
-  let {buttonProps, isPressed} = useButton({
-    ...props,
-    elementType: 'div'
-  }, ref);
-
+  let formatMessage = useMessageFormatter(intlMessages);
+  let valueId = useId();
+  let invalidId = useId();
   let validationIcon = validationState === 'invalid'
-    ? <AlertMedium />
+    ? <AlertMedium id={invalidId} aria-label={formatMessage('invalid')} />
     : <CheckmarkMedium />;
 
   let validation = React.cloneElement(validationIcon, {
@@ -167,6 +147,18 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
       }
     )
   });
+
+  let {hoverProps, isHovered} = useHover({});
+  let {buttonProps, isPressed} = useButton({
+    ...props,
+    'aria-labelledby': [
+      props['aria-labelledby'],
+      props['aria-label'] && !props['aria-labelledby'] ? props.id : null,
+      valueId,
+      validationState === 'invalid' ? invalidId : null
+    ].filter(Boolean).join(' '),
+    elementType: 'div'
+  }, ref);
 
   return (
     <FocusRing
@@ -231,7 +223,16 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
                 )
               )
             }>
-            {children}
+            <span
+              id={valueId}
+              className={
+                classNames(
+                  comboboxStyles,
+                  'mobile-value'
+                )
+              }>
+              {children}
+            </span>
           </div>
           {validationState ? validation : null}
         </div>
