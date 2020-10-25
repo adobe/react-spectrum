@@ -200,7 +200,8 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
                 'spectrum-Textfield-input',
                 {
                   'is-hovered': isHovered,
-                  'is-placeholder': isPlaceholder
+                  'is-placeholder': isPlaceholder,
+                  'is-disabled': isDisabled
                 },
                 classNames(
                   styles,
