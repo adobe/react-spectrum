@@ -64,6 +64,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   let {buttonProps, inputProps, listBoxProps, labelProps} = useComboBox(
     {
       ...props,
+      keyboardDelegate: layout,
       buttonRef: unwrapDOMRef(buttonRef),
       popoverRef: unwrapDOMRef(popoverRef),
       listBoxRef,
