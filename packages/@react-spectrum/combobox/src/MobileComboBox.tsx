@@ -207,6 +207,10 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
                   styles,
                   'spectrum-InputGroup-field',
                   classNames(labelStyles, 'spectrum-Field-field')
+                ),
+                classNames(
+                  comboboxStyles,
+                  'mobile-input'
                 )
               )
             }>

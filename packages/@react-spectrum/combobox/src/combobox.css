@@ -23,6 +23,12 @@
   outline: none;
 }
 
+.mobile-input {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .mobile-value {
   vertical-align: middle;
 }
