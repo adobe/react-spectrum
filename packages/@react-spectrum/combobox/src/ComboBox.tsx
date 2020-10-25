@@ -186,16 +186,21 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
         <TextFieldBase
           inputProps={inputProps}
           inputRef={inputRef}
-          inputClassName={
+          UNSAFE_className={
             classNames(
               styles,
               'spectrum-InputGroup-field'
             )
           }
+          inputClassName={
+            classNames(
+              styles,
+              'spectrum-InputGroup-input'
+            )
+          }
           isDisabled={isDisabled}
           isQuiet={isQuiet}
-          validationState={validationState}
-          flex={1} />
+          validationState={validationState} />
         <PressResponder preventFocusOnPress>
           <FieldButton
             {...triggerProps}

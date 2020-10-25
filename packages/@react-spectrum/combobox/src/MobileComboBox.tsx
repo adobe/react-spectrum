@@ -195,7 +195,11 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
                 'is-invalid': validationState === 'invalid',
                 'is-valid': validationState === 'valid',
                 'spectrum-Textfield--quiet': isQuiet
-              }
+              },
+              classNames(
+                styles,
+                'spectrum-InputGroup-field'
+              )
             )
           }>
           <div
@@ -210,7 +214,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
                 },
                 classNames(
                   styles,
-                  'spectrum-InputGroup-field',
+                  'spectrum-InputGroup-input',
                   classNames(labelStyles, 'spectrum-Field-field')
                 ),
                 classNames(
