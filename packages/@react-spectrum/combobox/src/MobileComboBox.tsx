@@ -76,7 +76,12 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
 
   return (
     <>
-      <Field {...props} labelProps={labelProps} elementType="span" ref={domRef}>
+      <Field
+        {...props}
+        labelProps={labelProps}
+        elementType="span"
+        ref={domRef}
+        includeNecessityIndicatorInAccessibilityName>
         <ComboBoxButton
           {...mergeProps(triggerProps, fieldProps)}
           ref={buttonRef}

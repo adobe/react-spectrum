@@ -184,6 +184,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     // Sometimes VoiceOver on iOS fires two touchend events in quick succession. Ignore the second one.
     if (e.timeStamp - lastEventTime.current < 500) {
       e.preventDefault();
+      inputRef.current.focus();
       return;
     }
 
