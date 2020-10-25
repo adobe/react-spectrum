@@ -72,7 +72,6 @@ function useToggleButton(props: AriaToggleButtonProps<'param'>, state: ToggleSta
 function useToggleButton(props: AriaToggleButtonProps<'picture'>, state: ToggleState, ref: RefObject<HTMLPictureElement>): ButtonAria<HTMLAttributes<HTMLPictureElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'pre'>, state: ToggleState, ref: RefObject<HTMLPreElement>): ButtonAria<HTMLAttributes<HTMLPreElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'progress'>, state: ToggleState, ref: RefObject<HTMLProgressElement>): ButtonAria<HTMLAttributes<HTMLProgressElement>>;
-function useToggleButton(props: AriaToggleButtonProps<'script'>, state: ToggleState, ref: RefObject<HTMLScriptElement>): ButtonAria<HTMLAttributes<HTMLScriptElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'select'>, state: ToggleState, ref: RefObject<HTMLSelectElement>): ButtonAria<HTMLAttributes<HTMLSelectElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'slot'>, state: ToggleState, ref: RefObject<HTMLSlotElement>): ButtonAria<HTMLAttributes<HTMLSlotElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'source'>, state: ToggleState, ref: RefObject<HTMLSourceElement>): ButtonAria<HTMLAttributes<HTMLSourceElement>>;

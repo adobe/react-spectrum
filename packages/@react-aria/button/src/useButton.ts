@@ -82,7 +82,6 @@ function useButton(props: AriaButtonProps<'param'>, ref: RefObject<HTMLParamElem
 function useButton(props: AriaButtonProps<'picture'>, ref: RefObject<HTMLPictureElement>): ButtonAria<HTMLAttributes<HTMLPictureElement>>;
 function useButton(props: AriaButtonProps<'pre'>, ref: RefObject<HTMLPreElement>): ButtonAria<HTMLAttributes<HTMLPreElement>>;
 function useButton(props: AriaButtonProps<'progress'>, ref: RefObject<HTMLProgressElement>): ButtonAria<HTMLAttributes<HTMLProgressElement>>;
-function useButton(props: AriaButtonProps<'script'>, ref: RefObject<HTMLScriptElement>): ButtonAria<HTMLAttributes<HTMLScriptElement>>;
 function useButton(props: AriaButtonProps<'select'>, ref: RefObject<HTMLSelectElement>): ButtonAria<HTMLAttributes<HTMLSelectElement>>;
 function useButton(props: AriaButtonProps<'slot'>, ref: RefObject<HTMLSlotElement>): ButtonAria<HTMLAttributes<HTMLSlotElement>>;
 function useButton(props: AriaButtonProps<'source'>, ref: RefObject<HTMLSourceElement>): ButtonAria<HTMLAttributes<HTMLSourceElement>>;
