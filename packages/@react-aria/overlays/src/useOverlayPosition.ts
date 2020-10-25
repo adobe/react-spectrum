@@ -152,7 +152,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 
   let close = useCallback(() => {
     if (!isResizing.current) {
-      onClose();
+      onClose?.();
     }
   }, [onClose, isResizing]);
 

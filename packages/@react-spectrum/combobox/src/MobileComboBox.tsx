@@ -250,10 +250,6 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
               classNames(
                 styles,
                 'spectrum-FieldButton'
-              ),
-              classNames(
-                comboboxStyles,
-                'mobile-button'
               )
             )
           }>
@@ -319,19 +315,21 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   delete inputProps.onTouchEnd;
 
   let clearButton = (
-    <PressResponder preventFocusOnPress>
-      <ClearButton
-        aria-label={formatMessage('clear')}
-        excludeFromTabOrder
-        onPress={() => state.setInputValue('')}
-        UNSAFE_className={
-          classNames(
-            searchStyles,
-            'spectrum-ClearButton'
-          )
-        }
-        isDisabled={isDisabled} />
-    </PressResponder>
+    <ClearButton
+      preventFocus
+      aria-label={formatMessage('clear')}
+      excludeFromTabOrder
+      onPress={() => {
+        state.setInputValue('');
+        inputRef.current.focus();
+      }}
+      UNSAFE_className={
+        classNames(
+          searchStyles,
+          'spectrum-ClearButton'
+        )
+      }
+      isDisabled={isDisabled} />
   );
 
   // Close the software keyboard on scroll to give the user a bigger area to scroll.

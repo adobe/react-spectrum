@@ -49,6 +49,7 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
   let clearButton = (
     <ClearButton
       {...clearButtonProps}
+      preventFocus
       UNSAFE_className={
         classNames(
           styles,

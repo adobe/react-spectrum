@@ -33,10 +33,6 @@
   vertical-align: middle;
 }
 
-.mobile-button {
-  appearance: none;
-}
-
 .tray-dialog {
   display: flex;
   flex-direction: column;

@@ -2262,7 +2262,8 @@ describe('ComboBox', function () {
       expect(trayInput.value).toBe('r');
 
       let clearButton = within(tray).getByLabelText('Clear');
-      expect(clearButton).toHaveAttribute('tabIndex', '-1');
+      expect(clearButton.tagName).toBe('DIV');
+      expect(clearButton).not.toHaveAttribute('tabIndex');
       act(() => {
         triggerPress(clearButton);
       });
