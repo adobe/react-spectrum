@@ -2638,6 +2638,19 @@ describe('ComboBox', function () {
       expect(() => getByTestId('tray')).not.toThrow();
     });
 
+    it('should focus the button when clicking on the label', function () {
+      let {getByRole, getByText} = renderComboBox();
+      let label = getByText('Test');
+      let button = getByRole('button');
+
+      act(() => {
+        userEvent.click(label);
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement).toBe(button);
+    });
+
     describe('refs', function () {
       it('attaches a ref to the label wrapper', function () {
         let ref = React.createRef();

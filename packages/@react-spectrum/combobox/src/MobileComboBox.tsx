@@ -31,6 +31,7 @@ import {mergeProps, useId} from '@react-aria/utils';
 import {PressResponder} from '@react-aria/interactions';
 import React, {HTMLAttributes, ReactNode, RefObject, useCallback, useRef} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
+import {setInteractionModality, useHover} from '@react-aria/interactions';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
@@ -41,7 +42,6 @@ import {useComboBox} from '@react-aria/combobox';
 import {useDialog} from '@react-aria/dialog';
 import {useFilter} from '@react-aria/i18n';
 import {useFocusableRef} from '@react-spectrum/utils';
-import {useHover} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useOverlayTrigger} from '@react-aria/overlays';
@@ -73,6 +73,14 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     ...props,
     labelElementType: 'span'
   });
+
+  // Focus the button and show focus ring when clicking on the label
+  labelProps.onClick = () => {
+    if (!props.isDisabled) {
+      buttonRef.current.focus();
+      setInteractionModality('keyboard');
+    }
+  };
 
   return (
     <>
