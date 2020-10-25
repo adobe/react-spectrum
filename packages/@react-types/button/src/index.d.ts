@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, FocusableDOMProps, FocusableProps, PressEvents, StyleProps} from '@react-types/shared';
-import {JSXElementConstructor, ReactNode} from 'react';
+import {ElementType, JSXElementConstructor, ReactNode} from 'react';
 
 interface ButtonProps extends PressEvents, FocusableProps {
   /** Whether the button is disabled. */
@@ -29,12 +29,12 @@ interface ToggleButtonProps extends ButtonProps {
   onChange?: (isSelected: boolean) => void
 }
 
-export interface LinkButtonProps {
+export interface LinkButtonProps<T extends ElementType = 'button'> {
   /**
    * The HTML element or React element used to render the button, e.g. 'div', 'a', or `RouterLink`.
    * @default 'button'
    */
-  elementType?: string | JSXElementConstructor<any>,
+  elementType?: T | JSXElementConstructor<any>,
   /** A URL to link to if elementType="a". */
   href?: string,
   /** The target window for the link. */
@@ -59,8 +59,9 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
   type?: 'button' | 'submit' | 'reset'
 }
 
-export interface AriaButtonProps extends ButtonProps, LinkButtonProps, AriaBaseButtonProps {}
-export interface AriaToggleButtonProps extends ToggleButtonProps, AriaBaseButtonProps {}
+export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}
+
+export interface AriaToggleButtonProps<T extends ElementType = 'button'> extends ToggleButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}
 
 export interface SpectrumButtonProps extends AriaBaseButtonProps, ButtonProps, LinkButtonProps, StyleProps {
   /** The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button. */
