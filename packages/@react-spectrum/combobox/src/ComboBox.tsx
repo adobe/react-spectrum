@@ -138,7 +138,8 @@ interface ComboBoxInputProps extends SpectrumComboBoxProps<unknown> {
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   triggerProps: AriaButtonProps,
   triggerRef: RefObject<FocusableRefValue<HTMLElement>>,
-  className?: string
+  className?: string,
+  style?: React.CSSProperties
 }
 
 const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInputProps, ref: RefObject<HTMLElement>) {
@@ -152,6 +153,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     triggerProps,
     triggerRef,
     autoFocus,
+    style,
     className
   } = props;
   let {hoverProps, isHovered} = useHover({});
@@ -166,6 +168,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
       <div
         {...hoverProps}
         ref={ref as RefObject<HTMLDivElement>}
+        style={style}
         className={
           classNames(
             styles,
