@@ -32,9 +32,7 @@ import {ToggleState} from '@react-stately/toggle';
  /* eslint-disable no-redeclare */
 function useToggleButton(props: AriaToggleButtonProps<'a'>, state: ToggleState, ref: RefObject<HTMLAnchorElement>): ButtonAria<AnchorHTMLAttributes<HTMLAnchorElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'area'>, state: ToggleState, ref: RefObject<HTMLAreaElement>): ButtonAria<HTMLAttributes<HTMLAreaElement>>;
-function useToggleButton(props: AriaToggleButtonProps<'audio'>, state: ToggleState, ref: RefObject<HTMLAudioElement>): ButtonAria<HTMLAttributes<HTMLAudioElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'base'>, state: ToggleState, ref: RefObject<HTMLBaseElement>): ButtonAria<HTMLAttributes<HTMLBaseElement>>;
-function useToggleButton(props: AriaToggleButtonProps<'br'>, state: ToggleState, ref: RefObject<HTMLBRElement>): ButtonAria<HTMLAttributes<HTMLBRElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'button'>, state: ToggleState, ref: RefObject<HTMLButtonElement>): ButtonAria<ButtonHTMLAttributes<HTMLButtonElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'canvas'>, state: ToggleState, ref: RefObject<HTMLCanvasElement>): ButtonAria<HTMLAttributes<HTMLCanvasElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'data'>, state: ToggleState, ref: RefObject<HTMLDataElement>): ButtonAria<HTMLAttributes<HTMLDataElement>>;
@@ -60,15 +58,12 @@ function useToggleButton(props: AriaToggleButtonProps<'li'>, state: ToggleState,
 function useToggleButton(props: AriaToggleButtonProps<'link'>, state: ToggleState, ref: RefObject<HTMLLinkElement>): ButtonAria<HTMLAttributes<HTMLLinkElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'map'>, state: ToggleState, ref: RefObject<HTMLMapElement>): ButtonAria<HTMLAttributes<HTMLMapElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'menu'>, state: ToggleState, ref: RefObject<HTMLMenuElement>): ButtonAria<HTMLAttributes<HTMLMenuElement>>;
-function useToggleButton(props: AriaToggleButtonProps<'meta'>, state: ToggleState, ref: RefObject<HTMLMetaElement>): ButtonAria<HTMLAttributes<HTMLMetaElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'meter'>, state: ToggleState, ref: RefObject<HTMLMeterElement>): ButtonAria<HTMLAttributes<HTMLMeterElement>>;
-function useToggleButton(props: AriaToggleButtonProps<'object'>, state: ToggleState, ref: RefObject<HTMLObjectElement>): ButtonAria<HTMLAttributes<HTMLObjectElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'ol'>, state: ToggleState, ref: RefObject<HTMLOListElement>): ButtonAria<HTMLAttributes<HTMLOListElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'optgroup'>, state: ToggleState, ref: RefObject<HTMLOptGroupElement>): ButtonAria<HTMLAttributes<HTMLOptGroupElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'option'>, state: ToggleState, ref: RefObject<HTMLOptionElement>): ButtonAria<HTMLAttributes<HTMLOptionElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'output'>, state: ToggleState, ref: RefObject<HTMLOutputElement>): ButtonAria<HTMLAttributes<HTMLOutputElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'p'>, state: ToggleState, ref: RefObject<HTMLParagraphElement>): ButtonAria<HTMLAttributes<HTMLParagraphElement>>;
-function useToggleButton(props: AriaToggleButtonProps<'param'>, state: ToggleState, ref: RefObject<HTMLParamElement>): ButtonAria<HTMLAttributes<HTMLParamElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'picture'>, state: ToggleState, ref: RefObject<HTMLPictureElement>): ButtonAria<HTMLAttributes<HTMLPictureElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'pre'>, state: ToggleState, ref: RefObject<HTMLPreElement>): ButtonAria<HTMLAttributes<HTMLPreElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'progress'>, state: ToggleState, ref: RefObject<HTMLProgressElement>): ButtonAria<HTMLAttributes<HTMLProgressElement>>;
@@ -76,7 +71,6 @@ function useToggleButton(props: AriaToggleButtonProps<'select'>, state: ToggleSt
 function useToggleButton(props: AriaToggleButtonProps<'slot'>, state: ToggleState, ref: RefObject<HTMLSlotElement>): ButtonAria<HTMLAttributes<HTMLSlotElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'source'>, state: ToggleState, ref: RefObject<HTMLSourceElement>): ButtonAria<HTMLAttributes<HTMLSourceElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'span'>, state: ToggleState, ref: RefObject<HTMLSpanElement>): ButtonAria<HTMLAttributes<HTMLSpanElement>>;
-function useToggleButton(props: AriaToggleButtonProps<'style'>, state: ToggleState, ref: RefObject<HTMLStyleElement>): ButtonAria<HTMLAttributes<HTMLStyleElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'svg'>, state: ToggleState, ref: RefObject<SVGElement>): ButtonAria<HTMLAttributes<SVGElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'table'>, state: ToggleState, ref: RefObject<HTMLTableElement>): ButtonAria<HTMLAttributes<HTMLTableElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'td'>, state: ToggleState, ref: RefObject<HTMLTableDataCellElement>): ButtonAria<HTMLAttributes<HTMLTableDataCellElement>>;
@@ -87,9 +81,7 @@ function useToggleButton(props: AriaToggleButtonProps<'th'>, state: ToggleState,
 function useToggleButton(props: AriaToggleButtonProps<'thead'>, state: ToggleState, ref: RefObject<HTMLTableSectionElement>): ButtonAria<HTMLAttributes<HTMLTableSectionElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'time'>, state: ToggleState, ref: RefObject<HTMLTimeElement>): ButtonAria<HTMLAttributes<HTMLTimeElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'title'>, state: ToggleState, ref: RefObject<HTMLTitleElement>): ButtonAria<HTMLAttributes<HTMLTitleElement>>;
-function useToggleButton(props: AriaToggleButtonProps<'track'>, state: ToggleState, ref: RefObject<HTMLTrackElement>): ButtonAria<HTMLAttributes<HTMLTrackElement>>;
 function useToggleButton(props: AriaToggleButtonProps<'ul'>, state: ToggleState, ref: RefObject<HTMLUListElement>): ButtonAria<HTMLAttributes<HTMLUListElement>>;
-function useToggleButton(props: AriaToggleButtonProps<'video'>, state: ToggleState, ref: RefObject<HTMLVideoElement>): ButtonAria<HTMLAttributes<HTMLVideoElement>>;
 function useToggleButton(props: AriaToggleButtonProps<ElementType>, state: ToggleState, ref: RefObject<HTMLElement>): ButtonAria<HTMLElement>;
 function useToggleButton(props: AriaToggleButtonProps<ElementType>, state: ToggleState, ref: RefObject<any>): ButtonAria<any> {
   const {isSelected} = state;

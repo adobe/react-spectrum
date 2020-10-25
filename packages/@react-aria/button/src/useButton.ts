@@ -42,9 +42,7 @@ export interface ButtonAria<T> {
 /* eslint-disable no-redeclare */
 function useButton(props: AriaButtonProps<'a'>, ref: RefObject<HTMLAnchorElement>): ButtonAria<AnchorHTMLAttributes<HTMLAnchorElement>>;
 function useButton(props: AriaButtonProps<'area'>, ref: RefObject<HTMLAreaElement>): ButtonAria<HTMLAttributes<HTMLAreaElement>>;
-function useButton(props: AriaButtonProps<'audio'>, ref: RefObject<HTMLAudioElement>): ButtonAria<HTMLAttributes<HTMLAudioElement>>;
 function useButton(props: AriaButtonProps<'base'>, ref: RefObject<HTMLBaseElement>): ButtonAria<HTMLAttributes<HTMLBaseElement>>;
-function useButton(props: AriaButtonProps<'br'>, ref: RefObject<HTMLBRElement>): ButtonAria<HTMLAttributes<HTMLBRElement>>;
 function useButton(props: AriaButtonProps<'button'>, ref: RefObject<HTMLButtonElement>): ButtonAria<ButtonHTMLAttributes<HTMLButtonElement>>;
 function useButton(props: AriaButtonProps<'canvas'>, ref: RefObject<HTMLCanvasElement>): ButtonAria<HTMLAttributes<HTMLCanvasElement>>;
 function useButton(props: AriaButtonProps<'data'>, ref: RefObject<HTMLDataElement>): ButtonAria<HTMLAttributes<HTMLDataElement>>;
@@ -70,15 +68,12 @@ function useButton(props: AriaButtonProps<'li'>, ref: RefObject<HTMLLIElement>):
 function useButton(props: AriaButtonProps<'link'>, ref: RefObject<HTMLLinkElement>): ButtonAria<HTMLAttributes<HTMLLinkElement>>;
 function useButton(props: AriaButtonProps<'map'>, ref: RefObject<HTMLMapElement>): ButtonAria<HTMLAttributes<HTMLMapElement>>;
 function useButton(props: AriaButtonProps<'menu'>, ref: RefObject<HTMLMenuElement>): ButtonAria<HTMLAttributes<HTMLMenuElement>>;
-function useButton(props: AriaButtonProps<'meta'>, ref: RefObject<HTMLMetaElement>): ButtonAria<HTMLAttributes<HTMLMetaElement>>;
 function useButton(props: AriaButtonProps<'meter'>, ref: RefObject<HTMLMeterElement>): ButtonAria<HTMLAttributes<HTMLMeterElement>>;
-function useButton(props: AriaButtonProps<'object'>, ref: RefObject<HTMLObjectElement>): ButtonAria<HTMLAttributes<HTMLObjectElement>>;
 function useButton(props: AriaButtonProps<'ol'>, ref: RefObject<HTMLOListElement>): ButtonAria<HTMLAttributes<HTMLOListElement>>;
 function useButton(props: AriaButtonProps<'optgroup'>, ref: RefObject<HTMLOptGroupElement>): ButtonAria<HTMLAttributes<HTMLOptGroupElement>>;
 function useButton(props: AriaButtonProps<'option'>, ref: RefObject<HTMLOptionElement>): ButtonAria<HTMLAttributes<HTMLOptionElement>>;
 function useButton(props: AriaButtonProps<'output'>, ref: RefObject<HTMLOutputElement>): ButtonAria<HTMLAttributes<HTMLOutputElement>>;
 function useButton(props: AriaButtonProps<'p'>, ref: RefObject<HTMLParagraphElement>): ButtonAria<HTMLAttributes<HTMLParagraphElement>>;
-function useButton(props: AriaButtonProps<'param'>, ref: RefObject<HTMLParamElement>): ButtonAria<HTMLAttributes<HTMLParamElement>>;
 function useButton(props: AriaButtonProps<'picture'>, ref: RefObject<HTMLPictureElement>): ButtonAria<HTMLAttributes<HTMLPictureElement>>;
 function useButton(props: AriaButtonProps<'pre'>, ref: RefObject<HTMLPreElement>): ButtonAria<HTMLAttributes<HTMLPreElement>>;
 function useButton(props: AriaButtonProps<'progress'>, ref: RefObject<HTMLProgressElement>): ButtonAria<HTMLAttributes<HTMLProgressElement>>;
@@ -86,7 +81,6 @@ function useButton(props: AriaButtonProps<'select'>, ref: RefObject<HTMLSelectEl
 function useButton(props: AriaButtonProps<'slot'>, ref: RefObject<HTMLSlotElement>): ButtonAria<HTMLAttributes<HTMLSlotElement>>;
 function useButton(props: AriaButtonProps<'source'>, ref: RefObject<HTMLSourceElement>): ButtonAria<HTMLAttributes<HTMLSourceElement>>;
 function useButton(props: AriaButtonProps<'span'>, ref: RefObject<HTMLSpanElement>): ButtonAria<HTMLAttributes<HTMLSpanElement>>;
-function useButton(props: AriaButtonProps<'style'>, ref: RefObject<HTMLStyleElement>): ButtonAria<HTMLAttributes<HTMLStyleElement>>;
 function useButton(props: AriaButtonProps<'svg'>, ref: RefObject<SVGElement>): ButtonAria<HTMLAttributes<SVGElement>>;
 function useButton(props: AriaButtonProps<'table'>, ref: RefObject<HTMLTableElement>): ButtonAria<HTMLAttributes<HTMLTableElement>>;
 function useButton(props: AriaButtonProps<'td'>, ref: RefObject<HTMLTableDataCellElement>): ButtonAria<HTMLAttributes<HTMLTableDataCellElement>>;
@@ -97,9 +91,7 @@ function useButton(props: AriaButtonProps<'th'>, ref: RefObject<HTMLTableHeaderC
 function useButton(props: AriaButtonProps<'thead'>, ref: RefObject<HTMLTableSectionElement>): ButtonAria<HTMLAttributes<HTMLTableSectionElement>>;
 function useButton(props: AriaButtonProps<'time'>, ref: RefObject<HTMLTimeElement>): ButtonAria<HTMLAttributes<HTMLTimeElement>>;
 function useButton(props: AriaButtonProps<'title'>, ref: RefObject<HTMLTitleElement>): ButtonAria<HTMLAttributes<HTMLTitleElement>>;
-function useButton(props: AriaButtonProps<'track'>, ref: RefObject<HTMLTrackElement>): ButtonAria<HTMLAttributes<HTMLTrackElement>>;
 function useButton(props: AriaButtonProps<'ul'>, ref: RefObject<HTMLUListElement>): ButtonAria<HTMLAttributes<HTMLUListElement>>;
-function useButton(props: AriaButtonProps<'video'>, ref: RefObject<HTMLVideoElement>): ButtonAria<HTMLAttributes<HTMLVideoElement>>;
 function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<HTMLElement>): ButtonAria<HTMLElement>;
 function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<any>): ButtonAria<any> {
   let {
