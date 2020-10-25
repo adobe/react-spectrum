@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
+import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames, unwrapDOMRef} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
@@ -138,6 +140,21 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
     elementType: 'div'
   }, ref);
 
+  let validationIcon = validationState === 'invalid'
+    ? <AlertMedium />
+    : <CheckmarkMedium />;
+
+  let validation = React.cloneElement(validationIcon, {
+    UNSAFE_className: classNames(
+      textfieldStyles,
+      'spectrum-Textfield-validationIcon',
+      {
+        'is-invalid': validationState === 'invalid',
+        'is-valid': validationState === 'valid'
+      }
+    )
+  });
+
   return (
     <FocusRing
       focusClass={classNames(styles, 'is-focused')}
@@ -194,6 +211,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
             }>
             {children}
           </div>
+          {validationState ? validation : null}
         </div>
         <div
           className={
@@ -285,7 +303,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
         excludeFromTabOrder
         onPress={() => state.setInputValue('')}
         UNSAFE_className={
-        classNames(
+          classNames(
             searchStyles,
             'spectrum-ClearButton'
           )
@@ -338,12 +356,27 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
             classNames(
               searchStyles,
               'spectrum-Search',
+              'spectrum-Textfield',
+              {
+                'is-invalid': validationState === 'invalid',
+                'is-valid': validationState === 'valid'
+              },
               classNames(
                 comboboxStyles,
                 'tray-textfield',
                 {
                   'has-label': !!props.label
                 }
+              )
+            )
+          }
+          inputClassName={
+            classNames(
+              comboboxStyles,
+              'tray-textfield-input',
+              classNames(
+                searchStyles,
+                'spectrum-Search-input'
               )
             )
           } />

@@ -47,6 +47,10 @@
   &.has-label {
     margin-top: var(--spectrum-global-dimension-size-50);
   }
+
+  .tray-textfield-input {
+    padding-inline-start: var(--spectrum-textfield-padding-x);
+  }
 }
 
 .tray-listbox {

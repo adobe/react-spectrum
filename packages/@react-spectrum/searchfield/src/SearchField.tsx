@@ -67,9 +67,12 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
         classNames(
           styles,
           'spectrum-Search',
+          'spectrum-Textfield',
           {
             'is-disabled': isDisabled,
-            'is-quiet': props.isQuiet
+            'is-quiet': props.isQuiet,
+            'is-invalid': props.validationState === 'invalid',
+            'is-valid': props.validationState === 'valid'
           },
           UNSAFE_className
         )
