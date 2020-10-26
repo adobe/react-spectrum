@@ -15,7 +15,7 @@ import {HexColorFieldProps} from '@react-types/color';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 
 export interface HexColorFieldState extends Omit<NumberFieldState, 'value' | 'setValue'> {
   colorValue: Color,
@@ -45,9 +45,9 @@ export function useHexColorFieldState(
   let initialInputValue = (value || defaultValue) && colorValue ? colorValue.toString('hex') : '';
   let [inputValue, setInputValue] = useState(initialInputValue);
 
-  let addColorValue = (color: Color = MIN_COLOR, step: number) => {
-    let newColor = color;
-    let colorInt = color.toHexInt();
+  let addColorValue = (color: Color, step: number) => {
+    let newColor = color ? color : MIN_COLOR;
+    let colorInt = newColor.toHexInt();
     let newColorString = color ? color.toString('hex') : '';
 
     let clampInt = Math.min(Math.max(colorInt + step, MIN_COLOR_INT), MAX_COLOR_INT);
