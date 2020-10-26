@@ -222,7 +222,7 @@ describe('HexColorField', function () {
   `('should handle $Name event', function ({expected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({
-      value: '#aaa',
+      defaultValue: '#aaa',
       onChange: onChangeSpy,
       step: 4
     });
@@ -242,7 +242,7 @@ describe('HexColorField', function () {
   `('should handle $Name event', function ({expected, deltaY}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({
-      value: '#aaa',
+      defaultValue: '#aaa',
       onChange: onChangeSpy,
       step: 4
     });

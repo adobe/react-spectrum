@@ -65,14 +65,13 @@ export function useHexColorFieldState(
     let newColor = color ? color : MIN_COLOR;
     let colorInt = newColor.toHexInt();
     let newColorString = color ? color.toString('hex') : '';
-
+    
     let clampInt = Math.min(Math.max(colorInt + step, MIN_COLOR_INT), MAX_COLOR_INT);
     if (clampInt !== colorInt) {
       newColorString = `#${clampInt.toString(16).padStart(6, '0').toUpperCase()}`;
       newColor = new Color(newColorString);
     }
 
-    setInputValue(newColorString);
     return newColor;
   };
 
@@ -89,11 +88,8 @@ export function useHexColorFieldState(
         setColorValue(null);
         return;
       }
-      if (!value.startsWith('#')) {
-        value = `#${value}`;
-      }
       try {
-        let newColor = new Color(value);
+        let newColor = new Color(value.startsWith('#') ? value : `#${value}`);
         setColorValue((prevColor: Color) => prevColor && prevColor.toHexInt() === newColor.toHexInt() ? prevColor : newColor);
       } catch (err) {
         // ignore
