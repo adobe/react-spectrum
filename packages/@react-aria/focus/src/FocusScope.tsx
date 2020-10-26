@@ -247,8 +247,8 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
     let onBlur = (e) => {
       // Firefox doesn't shift focus back to the Dialog properly without this
       raf.current = requestAnimationFrame(() => {
-        // Fall back to document.activeElement if e.relatedTarget is null (e.g. user clicks inside a iframe in a dialog)
-        let isInAnyScope = isElementInAnyScope(e.relatedTarget || document.activeElement, scopes);
+        // Use document.activeElement instead of e.relatedTarget so we can tell if user clicked into iframe
+        let isInAnyScope = isElementInAnyScope(document.activeElement, scopes);
 
         if (!isInAnyScope) {
           activeScope = scopeRef;
