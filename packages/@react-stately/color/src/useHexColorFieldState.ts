@@ -45,6 +45,22 @@ export function useHexColorFieldState(
   let initialInputValue = (value || defaultValue) && colorValue ? colorValue.toString('hex') : '';
   let [inputValue, setInputValue] = useState(initialInputValue);
 
+  useEffect(() => {
+    setInputValue(inputValue => {
+      // Parse color from current inputValue.
+      // Only update the input value if the new colorValue is not equivalent.
+      try {
+        let currentColor = new Color(inputValue);
+        if (currentColor.toHexInt() !== colorValue?.toHexInt()) {
+          return colorValue ? colorValue.toString('hex') : '';
+        }
+      } catch (err) {
+        // ignore
+      }
+      return inputValue;
+    });
+  }, [colorValue, setInputValue]);
+
   let addColorValue = (color: Color, step: number) => {
     let newColor = color ? color : MIN_COLOR;
     let colorInt = newColor.toHexInt();
