@@ -290,19 +290,21 @@ function isElementInScope(element: Element, scope: HTMLElement[]) {
 }
 
 function focusElement(element: HTMLElement | null, scroll = false) {
-  if (element != null && !scroll) {
-    try {
-      focusSafely(element);
-    } catch (err) {
-      // ignore
+  requestAnimationFrame(() => {
+    if (element != null && !scroll) {
+      try {
+        focusSafely(element);
+      } catch (err) {
+        // ignore
+      }
+    } else if (element != null) {
+      try {
+        element.focus();
+      } catch (err) {
+        // ignore
+      }
     }
-  } else if (element != null) {
-    try {
-      element.focus();
-    } catch (err) {
-      // ignore
-    }
-  }
+  });
 }
 
 function focusFirstInScope(scope: HTMLElement[]) {
