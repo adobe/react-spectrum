@@ -84,6 +84,10 @@ storiesOf('Dialog', module)
   .add(
     'cleared content',
     () => renderWithDividerInContent({})
+  )
+  .add(
+    'with iframe',
+    () => renderIframe({})
   );
 
 storiesOf('Dialog/Alert', module)
@@ -238,6 +242,31 @@ function render({width = 'auto', isDismissable = undefined, ...props}) {
             <Header>The Header</Header>
             <Divider />
             <Content>{singleParagraph()}</Content>
+            {!isDismissable &&
+              <ButtonGroup>
+                <Button variant="secondary" onPress={close}>Cancel</Button>
+                <Button variant="cta" onPress={close}>Confirm</Button>
+              </ButtonGroup>}
+          </Dialog>
+        )}
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function renderIframe({width = 'auto', isDismissable = undefined, ...props}) {
+  return (
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+      <DialogTrigger isDismissable={isDismissable} defaultOpen>
+        <ActionButton>Trigger</ActionButton>
+        {(close) => (
+          <Dialog {...props}>
+            <Heading>The Heading</Heading>
+            <Header>The Header</Header>
+            <Divider />
+            <Content>
+              <iframe width="100%" title="wikipedia" src="https://wikipedia.org/wiki/Main_Page" />
+            </Content>
             {!isDismissable &&
               <ButtonGroup>
                 <Button variant="secondary" onPress={close}>Cancel</Button>
