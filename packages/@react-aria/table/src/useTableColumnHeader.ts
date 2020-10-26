@@ -24,7 +24,8 @@ interface ColumnHeaderProps {
   node: Node<unknown>,
   ref: RefObject<HTMLElement>,
   isVirtualized?: boolean,
-  colspan?: number
+  colspan?: number,
+  isDisabled?: boolean
 }
 
 interface ColumnHeaderAria {
@@ -32,11 +33,11 @@ interface ColumnHeaderAria {
 }
 
 export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>): ColumnHeaderAria {
-  let {node, colspan, ref} = props;
+  let {node, colspan, ref, isDisabled} = props;
   let {gridCellProps} = useTableCell(props, state);
 
   let {pressProps} = usePress({
-    isDisabled: !node.props.allowsSorting,
+    isDisabled: !node.props.allowsSorting || isDisabled,
     onPress() {
       state.sort(node.key);
     }

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
-import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {AriaLabelingProps, DOMProps, IconColorValue, StyleProps} from '@react-types/shared';
+import {classNames, iconStyleProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
@@ -38,7 +38,11 @@ interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
   /**
    * Indicates whether the element is exposed to an accessibility API.
    */
-  'aria-hidden'?: boolean | 'false' | 'true'
+  'aria-hidden'?: boolean | 'false' | 'true',
+  /**
+   * Color of the Icon.
+   */
+  color?: IconColorValue
 }
 
 export type IconPropsWithoutChildren = Omit<IconProps, 'children'>;
@@ -55,7 +59,7 @@ export function Icon(props: IconProps) {
     'aria-hidden': ariaHidden,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
+  let {styleProps} = useStyleProps(otherProps, iconStyleProps);
 
   let provider = useProvider();
   let scale = 'M';
