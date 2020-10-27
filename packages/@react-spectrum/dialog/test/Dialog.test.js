@@ -86,24 +86,25 @@ describe('Dialog', function () {
     let input2 = getByTestId('input2');
     expect(document.activeElement).toBe(dialog);
 
+    fireEvent.keyDown(document.activeElement, {key: 'Tab'});
     act(() => {
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
       jest.runAllTimers();
     });
 
     expect(document.activeElement).toBe(input1);
 
+    fireEvent.keyDown(document.activeElement, {key: 'Tab'});
     act(() => {
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
       jest.runAllTimers();
     });
 
     expect(document.activeElement).toBe(input2);
 
+    fireEvent.keyDown(document.activeElement, {key: 'Tab'});
     act(() => {
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
       jest.runAllTimers();
     });
+
     expect(document.activeElement).toBe(input1);
   });
 
