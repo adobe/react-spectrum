@@ -61,20 +61,6 @@ export function useHexColorFieldState(
     });
   }, [colorValue, setInputValue]);
 
-  let addColorValue = (color: Color, step: number) => {
-    let newColor = color ? color : MIN_COLOR;
-    let colorInt = newColor.toHexInt();
-    let newColorString = color ? color.toString('hex') : '';
-    
-    let clampInt = Math.min(Math.max(colorInt + step, MIN_COLOR_INT), MAX_COLOR_INT);
-    if (clampInt !== colorInt) {
-      newColorString = `#${clampInt.toString(16).padStart(6, '0').toUpperCase()}`;
-      newColor = new Color(newColorString);
-    }
-
-    return newColor;
-  };
-
   let increment = () => setColorValue((prevColor: Color) => addColorValue(prevColor, step));
   let decrement = () => setColorValue((prevColor: Color) => addColorValue(prevColor, -step));
   let incrementToMax = () => setColorValue((prevColor: Color) => addColorValue(prevColor, MAX_COLOR_INT));
@@ -98,7 +84,7 @@ export function useHexColorFieldState(
   };
 
   let commitInputValue = () => {
-    setFieldInputValue(colorValue ? colorValue.toString('hex') : '');
+    setInputValue(colorValue ? colorValue.toString('hex') : '');
   };
 
   return {
@@ -112,4 +98,17 @@ export function useHexColorFieldState(
     decrementToMin,
     validationState
   };
+}
+
+function addColorValue(color: Color, step: number) {
+  let newColor = color ? color : MIN_COLOR;
+  let colorInt = newColor.toHexInt();
+  let newColorString = color ? color.toString('hex') : '';
+  
+  let clampInt = Math.min(Math.max(colorInt + step, MIN_COLOR_INT), MAX_COLOR_INT);
+  if (clampInt !== colorInt) {
+    newColorString = `#${clampInt.toString(16).padStart(6, '0').toUpperCase()}`;
+    newColor = new Color(newColorString);
+  }
+  return newColor;
 }
