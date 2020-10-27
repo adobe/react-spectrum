@@ -10,17 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render} from '@testing-library/react';
 import {Dialog} from '../';
 import {DialogContext} from '../src/context';
-import {fireEvent, render} from '@testing-library/react';
 import {Header} from '@react-spectrum/view';
 import {Heading} from '@react-spectrum/text';
 import {ModalProvider} from '@react-aria/overlays';
 import React from 'react';
 
 describe('Dialog', function () {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
   beforeEach(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(() => cb(), 0));
+  });
+
+  afterEach(() => {
+    jest.runAllTimers();
+    window.requestAnimationFrame.mockRestore();
   });
 
   it('does not auto focus anything inside', function () {
@@ -73,13 +86,24 @@ describe('Dialog', function () {
     let input2 = getByTestId('input2');
     expect(document.activeElement).toBe(dialog);
 
-    fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+    act(() => {
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      jest.runAllTimers();
+    });
+
     expect(document.activeElement).toBe(input1);
 
-    fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+    act(() => {
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      jest.runAllTimers();
+    });
+
     expect(document.activeElement).toBe(input2);
 
-    fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+    act(() => {
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      jest.runAllTimers();
+    });
     expect(document.activeElement).toBe(input1);
   });
 
