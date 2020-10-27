@@ -81,7 +81,10 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
   }
 
   return (
-    <div ref={domRef} {...styleProps}>
+    <div
+      ref={domRef}
+      {...styleProps}
+      className={classNames(styles, 'spectrum-ColorSlider-container')}>
       <Flex direction="row" justifyContent={alignLabel}>
         {labelText && <Label {...labelProps}>{labelText}</Label>}
         {/* TODO: is it on purpose that aria-labelledby isn't passed through? */}
@@ -89,7 +92,6 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
       </Flex>
       <div
         {...containerProps}
-        style={{width: '100%'}}
         className={classNames(
           styles,
           'spectrum-ColorSlider', {
