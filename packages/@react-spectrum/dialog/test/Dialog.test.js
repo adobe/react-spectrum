@@ -19,6 +19,10 @@ import {ModalProvider} from '@react-aria/overlays';
 import React from 'react';
 
 describe('Dialog', function () {
+  beforeEach(() => {
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(() => cb(), 0));
+  });
+
   it('does not auto focus anything inside', function () {
     let {getByRole} = render(
       <Dialog>
