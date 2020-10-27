@@ -85,23 +85,23 @@ storiesOf('Slider', module)
     'fillOffset',
     () => render({label: 'Exposure', isFilled: true, fillOffset: 0, defaultValue: 0, minValue: -7, maxValue: 5})
   )
-  .add(
-    'ticks',
-    () => render({label: 'Label', tickCount: 4})
-  )
-  .add(
-    'showTickLabels: true',
-    () => render({label: 'Label', tickCount: 4, showTickLabels: true})
-  )
-  .add(
-    'showTickLabels, custom formatOptions',
-    // @ts-ignore
-    () => render({label: 'Label', tickCount: 5, showTickLabels: true, minValue: -10, maxValue: 10, width: '200px', formatOptions: {style: 'unit', unit: 'centimeter'}})
-  )
-  .add(
-    'tickLabels',
-    () => render({label: 'Label', tickCount: 3, showTickLabels: true, tickLabels: ['A', 'B', 'C']})
-  )
+  // .add(
+  //   'ticks',
+  //   () => render({label: 'Label', tickCount: 4})
+  // )
+  // .add(
+  //   'showTickLabels: true',
+  //   () => render({label: 'Label', tickCount: 4, showTickLabels: true})
+  // )
+  // .add(
+  //   'showTickLabels, custom formatOptions',
+  //   // @ts-ignore
+  //   () => render({label: 'Label', tickCount: 5, showTickLabels: true, minValue: -10, maxValue: 10, width: '200px', formatOptions: {style: 'unit', unit: 'centimeter'}})
+  // )
+  // .add(
+  //   'tickLabels',
+  //   () => render({label: 'Label', tickCount: 3, showTickLabels: true, tickLabels: ['A', 'B', 'C']})
+  // )
   .add(
     'trackGradient',
     () => render({label: 'Label', trackGradient: ['blue', 'red']})
@@ -109,11 +109,11 @@ storiesOf('Slider', module)
   .add(
     'trackGradient with fillOffset',
     () => render({label: 'Label', trackGradient: ['blue', 'red'], isFilled: true, fillOffset: 50})
-  )
-  .add(
-    '* orientation: vertical',
-    () => render({label: 'Label', orientation: 'vertical'})
   );
+  // .add(
+  //   '* orientation: vertical',
+  //   () => render({label: 'Label', orientation: 'vertical'})
+  // );
 
 function render(props: SpectrumSliderProps = {}) {
   if (props.onChange == null) {
