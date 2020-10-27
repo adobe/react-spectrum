@@ -23,8 +23,13 @@ const supportsSignDisplay = (new Intl.NumberFormat('de-DE', {signDisplay: 'excep
  * and handles caching of the number formatter for performance.
  * @param options - Formatting options.
  */
-export function useNumberFormatter(options?: Intl.NumberFormatOptions): Intl.NumberFormat {
+export function useNumberFormatter(options?: Intl.NumberFormatOptions, numeralOverride?: string): Intl.NumberFormat {
   let {locale} = useLocale();
+  // this makes ar-AE go to Eastern arabic numerals in Safari like it does in Chrome and FF
+  // https://bugs.webkit.org/show_bug.cgi?id=218139
+  if (numeralOverride && locale.indexOf('-u-nu-') === -1) {
+    locale = `${locale}-${numeralOverride}`;
+  }
 
   let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
   if (formatterCache.has(cacheKey)) {

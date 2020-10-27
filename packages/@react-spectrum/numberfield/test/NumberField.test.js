@@ -270,16 +270,18 @@ describe('NumberField', function () {
     typeText(textField, '2');
     expect(onChangeSpy).not.toHaveBeenCalled();
     act(() => {textField.blur();});
-    expect(onChangeSpy).not.toHaveBeenCalled();
-    expect(textField).toHaveAttribute('value', '0');
+    expect(onChangeSpy).toHaveBeenCalled();
+    expect(onChangeSpy).toHaveBeenCalledWith(1);
+    expect(textField).toHaveAttribute('value', '1');
 
     expect(container).not.toHaveAttribute('aria-invalid');
 
+    onChangeSpy.mockReset();
     act(() => {textField.focus();});
     typeText(textField, '1');
     expect(onChangeSpy).not.toHaveBeenCalled();
     act(() => {textField.blur();});
-    expect(onChangeSpy).toHaveBeenCalledWith(1);
+    expect(onChangeSpy).not.toHaveBeenCalled();
     expect(textField).toHaveAttribute('value', '1');
   });
 
@@ -772,16 +774,16 @@ describe('NumberField', function () {
 
   it.each`
     Name              | props                                                    | locale     | expected
-    ${'US Euros'}     | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['€10.00', '€10.00']}
-    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['١٠٫٠٠ €', '١٠٫٠٠ €']}
-    ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['10,00 €', '10,00 €']}
-    ${'US JPY'}       | ${{formatOptions: {style: 'currency', currency: 'JPY'}}} | ${'en-US'} | ${['¥10', '¥10']}
+    ${'US Euros'}     | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${'€10.00'}
+    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${'١٠٫٠٠ €'}
+    ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${'10,00 €'}
+    ${'US JPY'}       | ${{formatOptions: {style: 'currency', currency: 'JPY'}}} | ${'en-US'} | ${'¥10'}
   `('$Name keeps formatted value on focus', ({props, locale, expected}) => {
     let {textField} = renderNumberField({showStepper: true, defaultValue: 10, ...props}, locale);
 
-    expect(textField).toHaveAttribute('value', expected[0]);
+    expect(textField).toHaveAttribute('value', expected);
     act(() => {textField.focus();});
-    expect(textField).toHaveAttribute('value', expected[1]);
+    expect(textField).toHaveAttribute('value', expected);
     act(() => {textField.blur();});
   });
 
@@ -1226,5 +1228,64 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledWith(NaN);
     expect(incrementButton).toBeEnabled();
     expect(decrementButton).toBeEnabled();
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name can type in a numeral system that is not the default for the locale', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy});
+    expect(textField).toHaveAttribute('value', '');
+
+    act(() => {textField.focus();});
+    typeText(textField, '٤٢');
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '٤٢');
+    expect(onChangeSpy).toHaveBeenCalledWith(42);
+    onChangeSpy.mockReset();
+
+    act(() => {textField.focus();});
+    typeText(textField, '1');
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '٤٢');
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    onChangeSpy.mockReset();
+
+    act(() => {textField.focus();});
+    userEvent.clear(textField);
+    typeText(textField, '56');
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '56');
+    expect(onChangeSpy).toHaveBeenCalledWith(56);
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name can type in a numeral system that is not the default for arab system', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy});
+    expect(textField).toHaveAttribute('value', '');
+
+    act(() => {textField.focus();});
+    typeText(textField, '21');
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '21');
+    expect(onChangeSpy).toHaveBeenCalledWith(21);
+    onChangeSpy.mockReset();
+
+    act(() => {textField.focus();});
+    typeText(textField, '٤');
+    expect(textField).toHaveAttribute('value', '21');
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '21');
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    onChangeSpy.mockReset();
+
+    act(() => {textField.focus();});
+    userEvent.clear(textField);
+    typeText(textField, '٤٢');
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '٤٢');
+    expect(onChangeSpy).toHaveBeenCalledWith(42);
   });
 });

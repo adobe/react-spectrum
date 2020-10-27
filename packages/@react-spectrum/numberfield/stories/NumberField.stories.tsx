@@ -18,36 +18,11 @@ import {NumberField} from '../src';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
-// please note,
-// that IE11 now returns undefined again for window.chrome
-// and new Opera 30 outputs true for window.chrome
-// but needs to check if window.opr is not undefined
-// and new IE Edge outputs to true now for window.chrome
-// and if not iOS Chrome check
-// so use the below updated condition
-let isChromium = window?.chrome;
-let winNav = window.navigator;
-let vendorName = winNav.vendor;
-let isOpera = typeof window?.opr !== "undefined";
-let isIEedge = winNav.userAgent.indexOf("Edge") > -1;
-let isIOSChrome = winNav.userAgent.match("CriOS");
-let isChrome;
-if (isIOSChrome) {
-  isChrome = false
-} else if(
-  isChromium !== null &&
-  typeof isChromium !== "undefined" &&
-  vendorName === "Google Inc." &&
-  isOpera === false &&
-  isIEedge === false
-) {
-  isChrome = true;
-} else {
-  isChrome = false;
-}
-
 storiesOf('NumberField', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
+  .addDecorator(story => (
+    <ErrorBoundary>{story()}</ErrorBoundary>
+  ))
   .add(
     'default',
     () => render({})
@@ -78,7 +53,7 @@ storiesOf('NumberField', module)
   )
   .add(
     'percent using sign',
-    () => renderForChrome({formatOptions: {style: 'unit', unit: 'percent', signDisplay: 'always'}})
+    () => render({formatOptions: {style: 'unit', unit: 'percent', signDisplay: 'always'}})
   )
   .add(
     'isQuiet',
@@ -139,15 +114,6 @@ function render(props: any = {}) {
   );
 }
 
-function renderForChrome(props: any = {}) {
-  if (isChrome) {
-    return (
-      <NumberField {...props} onChange={action('onChange')} UNSAFE_className="custom_classname" label="Enter numbers"/>
-    );
-  }
-  return <div>This feature is not supported on your browser</div>;
-}
-
 function NumberFieldControlled(props) {
   let [value, setValue] = useState(10);
   return <NumberField {...props} formatOptions={{style: 'currency', currency: 'EUR'}} value={value} onChange={chain(setValue, action('onChange'))} label="Enter numbers" />;
@@ -176,4 +142,25 @@ function NumberFieldWithCurrencySelect(props) {
       </Picker>
     </Form>
   );
+}
+
+class ErrorBoundary extends React.Component<{}, {hasError: boolean}> {
+  constructor(props) {
+    super(props);
+    this.state = {hasError: false};
+  }
+
+  static getDerivedStateFromError() {
+    // Update state so the next render will show the fallback UI.
+    return {hasError: true};
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // You can render any custom fallback UI
+      return <div>Your browser may not support this set of Intl.Format options.</div>;
+    }
+
+    return this.props.children;
+  }
 }

@@ -41,14 +41,30 @@ export function useNumberFieldState(
   props: NumberFieldProps
 ): NumberFieldState {
   let {minValue = Number.MIN_SAFE_INTEGER, maxValue = Number.MAX_SAFE_INTEGER, step, formatOptions, value, defaultValue, onChange} = props;
-  let [currentNumeralSystem, setCurrentNumeralSystem] = useState('latin');
+  let [currentNumeralSystem, setCurrentNumeralSystem] = useState<string | undefined>();
 
-  let numberParser = useNumberParser();
-  let inputValueFormatter = useNumberFormatter(formatOptions);
+  let numeralOverride;
+  switch (currentNumeralSystem) {
+    case 'arab':
+      numeralOverride = 'u-nu-arab';
+      break;
+    case 'hanidec':
+      numeralOverride = 'u-nu-hanidec';
+      break;
+    case 'latin':
+      numeralOverride = 'u-nu-latn';
+      break;
+    default:
+      numeralOverride = '';
+      break;
+  }
+  let numberParser = useNumberParser(numeralOverride);
+  let inputValueFormatter = useNumberFormatter(formatOptions, numeralOverride);
   let intlOptions = useMemo(() => inputValueFormatter.resolvedOptions(), [inputValueFormatter]);
 
   let isMaxRange = useMemo(() => minValue === Number.MIN_SAFE_INTEGER && maxValue === Number.MAX_SAFE_INTEGER, [minValue, maxValue]);
 
+  // TODO should all of this kind of logic be moved into useNumberParser?
   let symbols = useMemo(() => {
     // Get the minus sign of the current locale to filter the input value
     // Automatically updates the minus sign when numberFormatter changes
@@ -99,18 +115,21 @@ export function useNumberFieldState(
     lastValDispatched.current = val;
   }, [lastValDispatched, onChange]);
   let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, smartOnChange);
-  let tempNum = useRef<number>(NaN);
+
   let initialInputValue = isNaN(numberValue) ? '' : inputValueFormatter.format(numberValue);
   let [inputValue, setInputValue] = useState(initialInputValue);
 
-  // this updates the field only if the formatter or number has changed, otherwise don't run it
-  // if it's run when numberValue changes then going from $10 -> $1 will cause it to actually go to $1.00
-  // because of this, we only fire onChange when scrolling/arrow keys/steppers/blur
-  useEffect(() => {
-    setInputValue(isNaN(numberValue) ? '' : inputValueFormatter.format(numberValue));
-  }, [inputValueFormatter, setInputValue, numberValue]);
-
   let textValue = inputValueFormatter.format(numberValue);
+
+  // this updates the field only if the formatter or number has changed,
+  // this should only run after increment, decrement, blur
+  // or when the formatter changes, but not because of the overrides, which is why we run on formatOptions
+  // I doubt that the formatOptions will change while a user is typing a number, but that might cause a problem
+  useEffect(() => {
+    setInputValue(isNaN(numberValue) ? '' : textValue);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formatOptions, setInputValue, numberValue]);
+
 
   let increment = useCallback(() => {
     setNumberValue((previousValue) => {
@@ -127,10 +146,6 @@ export function useNumberFieldState(
         }
       }
 
-      if (!isNaN(tempNum.current)) {
-        prev = tempNum.current;
-        tempNum.current = NaN;
-      }
       let clampStep = !isNaN(step) ? step : 1;
       if (intlOptions.style === 'percent') {
         clampStep = 0.01;
@@ -143,7 +158,7 @@ export function useNumberFieldState(
       );
       return newValue;
     });
-  }, [setNumberValue, tempNum, minValue, maxValue, step, isMaxRange, intlOptions]);
+  }, [setNumberValue, minValue, maxValue, step, isMaxRange, intlOptions]);
 
   let incrementToMax = useCallback(() => {
     if (maxValue != null) {
@@ -165,10 +180,6 @@ export function useNumberFieldState(
           prev = minValue;
         }
       }
-      if (!isNaN(tempNum.current)) {
-        prev = tempNum.current;
-        tempNum.current = NaN;
-      }
       let clampStep = !isNaN(step) ? step : 1;
       if (intlOptions.style === 'percent') {
         clampStep = 0.01;
@@ -181,7 +192,7 @@ export function useNumberFieldState(
       );
       return newValue;
     });
-  }, [setNumberValue, tempNum, minValue, maxValue, step, isMaxRange, intlOptions]);
+  }, [setNumberValue, minValue, maxValue, step, isMaxRange, intlOptions]);
 
   let decrementToMin = useCallback(() => {
     if (minValue != null) {
@@ -189,19 +200,15 @@ export function useNumberFieldState(
     }
   }, [minValue, setNumberValue, maxValue, step]);
 
-  // if too slow, use string diffing, but i doubt these will be strings THAT large
-  // should i check more than just the first character matches?
   let determineNumeralSystem = (value: string): string => {
-    for (let system in numberingSystems) {
-      let numerals = numberingSystems[system];
-      if ([...value].some(char => numerals.some(numeral => numeral === char))) {
-        setCurrentNumeralSystem(system);
+    for (let i in [...value]) {
+      let char = value[i];
+      let system = Object.keys(numberingSystems).find(key => numberingSystems[key].some(numeral => numeral === char));
+      if (system) {
         return system;
       }
     }
-    // TODO: how should we handle this?
-    // console.log('could not determine system, defaulting to latin');
-    return 'latin';
+    return undefined;
   };
 
   // not sure best way to go about this given that numbers can have
@@ -253,20 +260,43 @@ export function useNumberFieldState(
     return prefix + suffix;
   };
 
-  let setValue = (value: string) => {
-    let numeralSystem = determineNumeralSystem(value);
-
-    let invalidChars = new RegExp(`[^${minusSign}${plusSign}${numberingSystems[numeralSystem].join('')}${validCharacters}]`, 'g');
-    let strippedValue = value.replace(invalidChars, '');
+  let cleanInputValue = useMemo(() => {
+    let numerals = numberingSystems[currentNumeralSystem || 'latin'].join('');
+    if (!currentNumeralSystem) {
+      numerals = `${numerals}${numberingSystems['hanidec'].join('')}${numberingSystems['arab'].join('')}`;
+    }
+    let invalidChars = new RegExp(`[^${minusSign}${plusSign}${numerals}${validCharacters}]`, 'g');
+    let strippedValue = inputValue.replace(invalidChars, '');
     strippedValue = replaceAllButFirstOccurrence(strippedValue, minusSign);
     strippedValue = replaceAllButFirstOccurrence(strippedValue, plusSign);
     strippedValue = replaceAllButFirstOccurrence(strippedValue, decimal);
 
+    return strippedValue;
+  }, [inputValue, currentNumeralSystem, decimal, minusSign, plusSign, validCharacters]);
+
+  let setValue = (value: string) => {
+    let numeralSystem = determineNumeralSystem(value);
+    setCurrentNumeralSystem(numeralSystem);
+    setInputValue(value);
+  };
+
+  let commitInputValue = () => {
+    // Set to empty state if input value is empty
+    if (!inputValue.length) {
+      setNumberValue(NaN);
+      setInputValue('');
+      return;
+    }
     // to parse the number, we need to remove anything that isn't actually part of the number, for example we want '-10.40' not '-10.40 USD'
-    let parseReady = strippedValue.replace(new RegExp(`[${literals}]`, 'g'), '');
+    let parseReady = cleanInputValue.replace(new RegExp(`[${literals}]`, 'g'), '');
     let newValue = numberParser.parse(parseReady);
+    // if it failed to parse, then reset input to formatted version of current number
+    if (isNaN(newValue)) {
+      setInputValue(inputValueFormatter.format(numberValue));
+      return;
+    }
     // accounting will always be stripped to a positive number, so if it's accounting and has a () around everything, then we need to make it negative again
-    if (intlOptions?.currencySign === 'accounting' && CURRENCY_SIGN_REGEX.test(strippedValue)) {
+    if (intlOptions?.currencySign === 'accounting' && CURRENCY_SIGN_REGEX.test(cleanInputValue)) {
       newValue = -1 * newValue;
     }
     // when reading the number, if it's a percent, then it should be interpreted as being divided by 100
@@ -274,36 +304,18 @@ export function useNumberFieldState(
       newValue = newValue / 100;
     }
 
-    // If new value is a number less than max and more than min then update the temp number value
-    if (!isNaN(newValue) && newValue <= maxValue && newValue >= minValue) {
-      let roundedValue = roundValueUsingFormatter(newValue);
-      tempNum.current = roundedValue;
-    }
-
-    setInputValue(strippedValue);
-  };
-
-  let commitInputValue = () => {
-    // Set to empty state if input value is empty
-    if (!inputValue.length) {
-      tempNum.current = NaN;
-      setNumberValue(NaN);
-      setInputValue('');
-      return;
-    }
     let clampedValue;
-    if (!isNaN(tempNum.current)) {
-      clampedValue = clamp(tempNum.current, minValue, maxValue, step);
-      tempNum.current = NaN;
+    if (!isNaN(newValue)) {
+      clampedValue = clamp(newValue, minValue, maxValue, step);
     } else {
       clampedValue = clamp(numberValue, minValue, maxValue, step);
     }
     clampedValue = roundValueUsingFormatter(clampedValue);
-    let newValue = isNaN(clampedValue) ? '' : inputValueFormatter.format(clampedValue);
+    let result = isNaN(clampedValue) ? '' : inputValueFormatter.format(clampedValue);
     setNumberValue(clampedValue);
     // in a controlled state, the numberValue won't change, so we won't go back to our old input without help
     if (value === undefined) {
-      setInputValue(newValue);
+      setInputValue(result);
     } else {
       setInputValue(inputValueFormatter.format(numberValue));
     }
@@ -316,7 +328,7 @@ export function useNumberFieldState(
     decrement,
     decrementToMin,
     value: numberValue,
-    inputValue,
+    inputValue: cleanInputValue,
     commitInputValue,
     textValue: textValue === 'NaN' ? '' : textValue,
     currentNumeralSystem
