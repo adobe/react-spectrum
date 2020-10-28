@@ -102,27 +102,36 @@ export interface FocusableProps extends FocusEvents, KeyboardEvents {
 }
 
 interface BaseMoveEvent {
+  /** The pointer type that triggered the move event. */
   pointerType: PointerType
 }
 
-interface MoveStartEvent extends BaseMoveEvent{
+export interface MoveStartEvent extends BaseMoveEvent {
+  /** The type of move event being fired. */
   type: 'movestart'
 }
 
-interface MoveMoveEvent extends BaseMoveEvent{
+export interface MoveMoveEvent extends BaseMoveEvent {
+  /** The type of move event being fired. */
   type: 'move',
+  /** The amount moved in the X direction since the last event. */
   deltaX: number,
+  /** The amount moved in the Y direction since the last event. */
   deltaY: number
 }
 
-interface MoveEndEvent extends BaseMoveEvent{
+export interface MoveEndEvent extends BaseMoveEvent {
+  /** The type of move event being fired. */
   type: 'moveend'
 }
 
 export type MoveEvent = MoveStartEvent | MoveMoveEvent | MoveEndEvent;
 
 export interface MoveEvents {
+  /** Handler that is called when a move interaction starts. */
   onMoveStart?: (e: MoveStartEvent) => void,
-  onMove: (e: MoveMoveEvent) => void,
+  /** Handler that is called when the element is moved. */
+  onMove?: (e: MoveMoveEvent) => void,
+  /** Handler that is called when a move interaction ends. */
   onMoveEnd?: (e: MoveEndEvent) => void
 }
