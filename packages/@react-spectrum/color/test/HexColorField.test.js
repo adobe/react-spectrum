@@ -11,10 +11,11 @@
  */
 
 import {act, fireEvent, render} from '@testing-library/react';
+import {chain} from '@react-aria/utils';
 import {Color} from '@react-stately/color';
 import {HexColorField} from '../';
 import {Provider} from '@react-spectrum/provider';
-import React from 'react';
+import React, {useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
@@ -152,9 +153,50 @@ describe('HexColorField', function () {
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
   });
 
-  it('should handle controlled state', function () {
+  it('should not update value in controlled state', function () {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({value: '#abc', onChange: onChangeSpy});
+
+    let hexColorField = getByLabelText('Primary Color');
+    expect(hexColorField.value).toBe('#AABBCC');
+
+    act(() => {
+      hexColorField.focus();
+      userEvent.clear(hexColorField);
+    });
+    // should call onChange when input is cleared
+    expect(hexColorField.value).toBe('#AABBCC');
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(null);
+
+    act(() => {
+      hexColorField.focus();
+      userEvent.type(hexColorField, '{selectall}');
+    });
+    typeText(hexColorField, 'cba');
+    expect(hexColorField.value).toBe('#AABBCC');
+    expect(onChangeSpy).toHaveBeenCalledWith(new Color('#cba'));
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
+
+    act(() => {hexColorField.blur();});
+    expect(hexColorField.value).toBe('#AABBCC');
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('should update value in controlled state', function () {
+    function HexColorFieldControlled(props) {
+      let {onChange} = props;
+      let [color, setColor] = useState(props.value);
+      return (
+        <HexColorField
+          {...props}
+          label="Primary Color"
+          value={color}
+          onChange={chain(setColor, onChange)} />
+      ); 
+    }
+    let onChangeSpy = jest.fn();
+    let {getByLabelText} = render(<HexColorFieldControlled value={new Color('#abc')} onChange={onChangeSpy} />);
 
     let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe('#AABBCC');
@@ -174,7 +216,7 @@ describe('HexColorField', function () {
     expect(onChangeSpy).toHaveBeenCalledWith(new Color('#cba'));
 
     act(() => {hexColorField.blur();});
-    expect(hexColorField.value).toBe('#AABBCC');
+    expect(hexColorField.value).toBe('#CCBBAA');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
   });
 

@@ -81,7 +81,7 @@ storiesOf('HexColorField', module)
   );
 
 function HexColorFieldPopover(props: any = {}) {
-  let [color, setColor] = useState(props.value);
+  let [color, setColor] = useState(props.value || null);
   let colorString = color ? color.toString('hex') : '';
   return (
     <DialogTrigger type="popover">
@@ -110,7 +110,7 @@ function HexColorFieldPopover(props: any = {}) {
 }
 
 function ControlledHexColorField(props: any = {}) {
-  let [color, setColor] = useState(props.value);
+  let [color, setColor] = useState(props.value || null);
   let onChange = (color: Color) => {
     setColor(color);
     if (props.onChange) { props.onChange(color); }

@@ -154,7 +154,7 @@ describe('useHexColorFieldState tests', function () {
     expect(result.current.colorValue.getChannelValue('green')).toBe(187);
     expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
     expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
-    expect(result.current.inputValue).toBe('#cba');
+    expect(result.current.inputValue).toBe('#AABBCC');
   });
 
   it('should call onChange when input is cleared', function () {

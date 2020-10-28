@@ -49,8 +49,9 @@ export function useHexColorFieldState(
     setInputValue(inputValue => {
       // Parse color from current inputValue.
       // Only update the input value if the new colorValue is not equivalent.
+      if (!inputValue.length && colorValue) { return colorValue.toString('hex'); }
       try {
-        let currentColor = new Color(inputValue);
+        let currentColor = new Color(inputValue.startsWith('#') ? inputValue : `#${inputValue}`);
         if (currentColor.toHexInt() !== colorValue?.toHexInt()) {
           return colorValue ? colorValue.toString('hex') : '';
         }
@@ -59,7 +60,7 @@ export function useHexColorFieldState(
       }
       return inputValue;
     });
-  }, [colorValue, setInputValue]);
+  }, [inputValue, colorValue, setInputValue]);
 
   let increment = () => setColorValue((prevColor: Color) => addColorValue(prevColor, step));
   let decrement = () => setColorValue((prevColor: Color) => addColorValue(prevColor, -step));
@@ -69,16 +70,18 @@ export function useHexColorFieldState(
   let setFieldInputValue = (value: string) => {
     value = value.match(/^#?[0-9a-f]{0,6}$/i)?.[0];
     if (value !== undefined) {
-      setInputValue(value);
       if (!value.length && colorValue) {
         setColorValue(null);
         return;
       }
       try {
         let newColor = new Color(value.startsWith('#') ? value : `#${value}`);
-        setColorValue((prevColor: Color) => prevColor && prevColor.toHexInt() === newColor.toHexInt() ? prevColor : newColor);
+        setColorValue((prevColor: Color) => {
+          setInputValue(value);
+          return prevColor && prevColor.toHexInt() === newColor.toHexInt() ? prevColor : newColor;
+        });
       } catch (err) {
-        // ignore
+        setInputValue(value);
       }
     }
   };
