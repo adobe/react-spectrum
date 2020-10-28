@@ -29,10 +29,14 @@
   pointer-events: none;
 }
 
+.spectrum-ColorSlider-container {
+  width: var(--spectrum-colorslider-default-length);
+}
+
 .spectrum-ColorSlider {
   position: relative;
   display: block;
-  width: var(--spectrum-colorslider-default-length);
+  width: 100%;
   height: var(--spectrum-colorslider-height);
 
   /* Otherwise we randomly drag a file icon */
