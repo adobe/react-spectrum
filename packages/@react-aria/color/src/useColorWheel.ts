@@ -10,13 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorWheelAriaProps} from '@react-types/color';
+import {ColorWheelProps} from '@react-types/color';
 import {ColorWheelState} from '@react-stately/color';
 import {focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
-import React, {HTMLAttributes, InputHTMLAttributes, useCallback, useRef} from 'react';
+import React, {HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 
-export interface ColorWheelAriaResult {
+interface ColorWheelAriaProps extends ColorWheelProps {
+  inputRef: RefObject<HTMLElement>,
+  containerRef: RefObject<HTMLElement>,
+  innerRadius: number,
+  outerRadius: number
+}
+
+interface ColorWheelAria {
   thumbProps: HTMLAttributes<HTMLElement>,
   containerProps: HTMLAttributes<HTMLElement>,
   inputProps: InputHTMLAttributes<HTMLInputElement>,
@@ -45,7 +52,7 @@ function cartesianToAngle(x: number, y: number, radius: number): number {
   return (deg + 360) % 360;
 }
 
-export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState): ColorWheelAriaResult {
+export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState): ColorWheelAria {
   let {inputRef, containerRef, isDisabled, step = 1, innerRadius, outerRadius} = props;
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
@@ -89,11 +96,11 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       focusInput();
     }
   };
-  let movePropsThumb = useMove(moveHandler);
+  let {moveProps: movePropsThumb} = useMove(moveHandler);
 
   let currentPointer = useRef<number | null | undefined>(undefined);
   let isOnWheel = useRef<boolean>(false);
-  let movePropsContainer = useMove({
+  let {moveProps: movePropsContainer} = useMove({
     onMoveStart() {
       if (isOnWheel.current) {
         moveHandler.onMoveStart();

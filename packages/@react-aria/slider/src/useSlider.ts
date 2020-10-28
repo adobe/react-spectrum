@@ -19,7 +19,7 @@ import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
 import {useMove} from '@react-aria/interactions';
 
-export interface SliderAria {
+interface SliderAria {
   /** Props for the label element. */
   labelProps: HTMLAttributes<HTMLElement>,
 
@@ -66,7 +66,7 @@ export function useSlider(
   stateRef.current = state;
   const reverseX = direction === 'rtl';
   const currentPosition = useRef<number>(null);
-  const moveProps = useMove({
+  const {moveProps} = useMove({
     onMoveStart() {
       currentPosition.current = null;
     },

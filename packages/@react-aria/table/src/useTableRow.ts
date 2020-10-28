@@ -21,7 +21,8 @@ interface RowProps {
   node: Node<unknown>,
   ref?: RefObject<HTMLElement>,
   isVirtualized?: boolean,
-  isSelected?: boolean
+  isSelected?: boolean,
+  isDisabled?: boolean
 }
 
 interface RowAria {
@@ -33,7 +34,8 @@ export function useTableRow<T>(props: RowProps, state: TableState<T>): RowAria {
     node,
     ref,
     isVirtualized,
-    isSelected
+    isSelected,
+    isDisabled
   } = props;
 
   let {itemProps} = useSelectableItem({
@@ -44,7 +46,7 @@ export function useTableRow<T>(props: RowProps, state: TableState<T>): RowAria {
   });
 
   // TODO: move into useSelectableItem?
-  let {pressProps} = usePress(itemProps);
+  let {pressProps} = usePress({...itemProps, isDisabled});
 
   let rowProps: HTMLAttributes<HTMLElement> = {
     role: 'row',

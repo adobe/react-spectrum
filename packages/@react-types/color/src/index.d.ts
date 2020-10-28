@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DimensionValue, LabelableProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DimensionValue, DOMProps, LabelableProps, StyleProps} from '@react-types/shared';
 import {BaseSliderProps} from '@react-types/slider';
 import {Color} from '@react-stately/color';
-import {RefObject} from 'react';
 
 /** A list of supported color formats. */
 export type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hsb' | 'hsba';
@@ -29,18 +28,11 @@ export interface ColorWheelProps extends BaseSliderProps, Omit<StyleProps, 'widt
   onChange?: (value: Color) => void
 }
 
-export interface ColorWheelAriaProps extends ColorWheelProps {
-  inputRef: RefObject<HTMLElement>,
-  containerRef: RefObject<HTMLElement>,
-  innerRadius: number,
-  outerRadius: number
-}
-
-export interface SpectrumColorWheelProps extends ColorWheelProps {
+export interface SpectrumColorWheelProps extends ColorWheelProps, DOMProps, StyleProps, AriaLabelingProps {
   size?: DimensionValue
 }
 
-interface ColorSliderProps extends Omit<BaseSliderProps, 'minValue' | 'maxValue'>, LabelableProps, AriaLabelingProps {
+interface ColorSliderProps extends Omit<BaseSliderProps, 'minValue' | 'maxValue'>, LabelableProps {
   channel: ColorChannel,
   value?: string | Color,
   defaultValue?: string | Color,
@@ -49,3 +41,5 @@ interface ColorSliderProps extends Omit<BaseSliderProps, 'minValue' | 'maxValue'
   showValueLabel?: boolean
   // showTextField?: boolean, // do we want this? we didn't keep it for slider....
 }
+
+export interface SpectrumColorSliderProps extends ColorSliderProps, DOMProps, StyleProps, AriaLabelingProps {}

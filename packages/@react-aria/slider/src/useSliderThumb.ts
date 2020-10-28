@@ -74,7 +74,7 @@ export function useSliderThumb(
   stateRef.current = state;
   let reverseX = direction === 'rtl';
   let currentPosition = useRef<number>(null);
-  let moveProps = useMove({
+  let {moveProps} = useMove({
     onMoveStart() {
       currentPosition.current = null;
       state.setThumbDragging(index, true);

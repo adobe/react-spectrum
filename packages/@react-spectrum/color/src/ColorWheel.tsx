@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, dimensionValue} from '@react-spectrum/utils';
+import {classNames, dimensionValue, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {ColorThumb} from './ColorThumb';
+import {FocusableRef} from '@react-types/shared';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {SpectrumColorWheelProps} from '@react-types/color';
 import styles from '@adobe/spectrum-css-temp/components/colorwheel/vars.css';
@@ -28,14 +29,15 @@ for (let i = 0; i < 360; i++) {
 
 const WHEEL_THICKNESS = 24;
 
-function ColorWheel(props: SpectrumColorWheelProps) {
+function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
 
   let {isDisabled} = props;
   let size = props.size && dimensionValue(props.size);
+  let {styleProps} = useStyleProps(props);
 
   let inputRef = useRef(null);
-  let containerRef = useRef(null);
+  let containerRef = useFocusableRef(ref, inputRef);
 
   let [wheelRadius, setWheelRadius] = useState<number | null>(null);
 
@@ -81,16 +83,26 @@ function ColorWheel(props: SpectrumColorWheelProps) {
 
   return (
     <div
-      className={classNames(styles, 'spectrum-ColorWheel', {'is-disabled': isDisabled})}
+      className={
+        classNames(
+          styles,
+          'spectrum-ColorWheel',
+          {
+            'is-disabled': isDisabled
+          },
+          styleProps.className
+        )
+      }
       ref={containerRef}
       {...containerProps}
-      style={size && {
+      style={{
+        ...styleProps.style,
         // Workaround around https://github.com/adobe/spectrum-css/issues/1032
         // @ts-ignore
         'width': size,
         'height': size
       }}>
-      { wheelRadius && <>
+      {wheelRadius && <>
         <svg className={classNames(styles, 'spectrum-ColorWheel-wheel')} viewBox="0 0 160 160" aria-hidden="true">
           <defs>
             <mask id={maskId}>
@@ -114,9 +126,10 @@ function ColorWheel(props: SpectrumColorWheelProps) {
           {...thumbProps}>
           <input {...focusProps} className={classNames(styles, 'spectrum-ColorWheel-slider')} {...inputProps} ref={inputRef} />
         </ColorThumb>
-      </> }
+      </>}
     </div>
   );
 }
 
-export {ColorWheel};
+let _ColorWheel = React.forwardRef(ColorWheel);
+export {_ColorWheel as ColorWheel};
