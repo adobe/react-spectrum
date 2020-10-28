@@ -21,7 +21,8 @@ import {useSelectableItem} from '@react-aria/selection';
 interface GridCellProps {
   node: Node<unknown>,
   ref: RefObject<HTMLElement>,
-  isVirtualized?: boolean
+  isVirtualized?: boolean,
+  isDisabled?: boolean
 }
 
 interface GridCellAria {
@@ -32,7 +33,8 @@ export function useTableCell<T>(props: GridCellProps, state: TableState<T>): Gri
   let {
     node,
     ref,
-    isVirtualized
+    isVirtualized,
+    isDisabled
   } = props;
 
   // Handles focusing the cell. If there is a focusable child,
@@ -56,7 +58,7 @@ export function useTableCell<T>(props: GridCellProps, state: TableState<T>): Gri
   });
 
   // TODO: move into useSelectableItem?
-  let {pressProps} = usePress(itemProps);
+  let {pressProps} = usePress({...itemProps, isDisabled});
 
   // Grid cells can have focusable elements inside them. In this case, focus should
   // be marshalled to that element rather than focusing the cell itself.
