@@ -51,6 +51,10 @@ storiesOf('ColorSlider', module)
     () => <ColorSlider value={new Color('#ff0000')} channel={'red'} />
   )
   .add(
+    'custom width',
+    () => <ColorSlider defaultValue={new Color('#7f0000')} channel={'red'} width={300} />
+  )
+  .add(
     'rgba',
     () => {
       let [color, setColor] = useState(new Color('#ff00ff'));
