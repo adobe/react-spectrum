@@ -17,7 +17,8 @@ import {TableState} from '@react-stately/table';
 import {useId} from '@react-aria/utils';
 
 interface SelectionCheckboxProps {
-  key: Key
+  key: Key,
+  isDisabled?: boolean
 }
 
 interface SelectionCheckboxAria {
@@ -26,11 +27,15 @@ interface SelectionCheckboxAria {
 
 export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, state: TableState<T>): SelectionCheckboxAria {
   let {
-    key
+    key,
+    isDisabled
   } = props;
 
+  let manager = state.selectionManager;
   let checkboxId = useId();
-  let isSelected = state.selectionManager.isSelected(key);
+  let isSelected = state.selectionManager.isSelected(key) && !isDisabled;
+
+  let onChange = () => manager.select(key);
 
   return {
     checkboxProps: {
@@ -38,7 +43,7 @@ export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, stat
       'aria-label': 'Select',
       'aria-labelledby': `${checkboxId} ${getRowLabelledBy(state, key)}`,
       isSelected,
-      onChange: () => state.selectionManager.toggleSelection(key)
+      onChange
     }
   };
 }

@@ -55,55 +55,71 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
 
         let cssDirection = direction === 'rtl' ? 'right' : 'left';
 
-        let lowerTrack = (<div
-          className={classNames(styles, 'spectrum-Slider-track')}
-          style={{
-            width: `${state.getThumbPercent(0) * 100}%`,
-            // TODO not sure if it has advantages, but this could also be implemented as CSS calc():
-            // .track::before {
-            //    background-size: calc((1/ (var(--width)/100)) * 100%);
-            //    width: calc(var(--width) * 1%)M
-            // }
-            // @ts-ignore
-            '--spectrum-track-background-size': `${(1 / state.getThumbPercent(0)) * 100}%`,
-            '--spectrum-track-background-position': direction === 'ltr' ? '0' : '100%'
-          }} />);
-        let upperTrack = (<div
-          className={classNames(styles, 'spectrum-Slider-track')}
-          style={{
-            width: `${(1 - state.getThumbPercent(0)) * 100}%`,
-            // @ts-ignore
-            '--spectrum-track-background-size': `${(1 / (1 - state.getThumbPercent(0))) * 100}%`,
-            '--spectrum-track-background-position': direction === 'ltr' ? '100%' : '0'
-          }} />);
+        let lowerTrack = (
+          <div
+            className={classNames(styles, 'spectrum-Slider-track')}
+            style={{
+              width: `${state.getThumbPercent(0) * 100}%`,
+              // TODO not sure if it has advantages, but this could also be implemented as CSS calc():
+              // .track::before {
+              //    background-size: calc((1/ (var(--width)/100)) * 100%);
+              //    width: calc(var(--width) * 1%)M
+              // }
+              // @ts-ignore
+              '--spectrum-track-background-size': `${(1 / state.getThumbPercent(0)) * 100}%`,
+              '--spectrum-track-background-position': direction === 'ltr' ? '0' : '100%'
+            }} />
+        );
+        let upperTrack = (
+          <div
+            className={classNames(styles, 'spectrum-Slider-track')}
+            style={{
+              width: `${(1 - state.getThumbPercent(0)) * 100}%`,
+              // @ts-ignore
+              '--spectrum-track-background-size': `${(1 / (1 - state.getThumbPercent(0))) * 100}%`,
+              '--spectrum-track-background-position': direction === 'ltr' ? '100%' : '0'
+            }} />
+        );
 
-        let handle = (<div
-          className={classNames(styles, 'spectrum-Slider-handle', {'is-hovered': isHovered, 'is-dragged': state.isThumbDragging(0)})}
-          style={{
-            [cssDirection]: `${state.getThumbPercent(0) * 100}%`
-          }}
-          {...mergeProps(thumbProps, hoverProps)}
-          role="presentation">
-          <VisuallyHidden>
-            <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRef} {...inputProps} />
-          </VisuallyHidden>
-        </div>);
+        let handle = (
+          <div
+            className={classNames(styles, 'spectrum-Slider-handle', {'is-hovered': isHovered, 'is-dragged': state.isThumbDragging(0)})}
+            style={{
+              [cssDirection]: `${state.getThumbPercent(0) * 100}%`
+            }}
+            {...mergeProps(thumbProps, hoverProps)}
+            role="presentation">
+            <VisuallyHidden>
+              <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRef} {...inputProps} />
+            </VisuallyHidden>
+          </div>
+        );
 
         let filledTrack = null;
         if (isFilled && fillOffset != null) {
           let width = state.getThumbPercent(0) - state.getValuePercent(fillOffset);
           let isRightOfOffset = width > 0;
           let offset = isRightOfOffset ? state.getValuePercent(fillOffset) : state.getThumbPercent(0);
-          filledTrack = (<div
-            className={classNames(styles, 'spectrum-Slider-fill', {'spectrum-Slider-fill--right': isRightOfOffset})}
-            style={{
-              [cssDirection]: `${offset * 100}%`,
-              width: `${Math.abs(width) * 100}%`
-            }} />);
+          filledTrack = (
+            <div
+              className={classNames(styles, 'spectrum-Slider-fill', {'spectrum-Slider-fill--right': isRightOfOffset})}
+              style={{
+                [cssDirection]: `${offset * 100}%`,
+                width: `${Math.abs(width) * 100}%`
+              }} />
+          );
         }
-        return  (<>{lowerTrack}{ticks}<FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
-          {handle}
-        </FocusRing>{upperTrack}{filledTrack}</>);
+        return  (
+          <>
+            {lowerTrack}
+            {ticks}
+            <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
+              {handle}
+            </FocusRing>
+            {upperTrack}
+            {filledTrack}
+          </>
+        );
       }}
     </SliderBase>
   );

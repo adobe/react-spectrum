@@ -12,7 +12,7 @@
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useViewportSize} from '@react-aria/utils';
 import {ModalProps} from '@react-types/overlays';
 import modalStyles from '@adobe/spectrum-css-temp/components/modal/vars.css';
 import {Overlay} from './Overlay';
@@ -20,7 +20,6 @@ import overrideStyles from './overlays.css';
 import React, {forwardRef, HTMLAttributes, ReactNode, RefObject} from 'react';
 import {Underlay} from './Underlay';
 import {useModal, useOverlay, usePreventScroll} from '@react-aria/overlays';
-import {useViewportSize} from '@react-spectrum/utils';
 
 interface ModalWrapperProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode,

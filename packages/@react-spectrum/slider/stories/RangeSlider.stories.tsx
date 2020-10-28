@@ -16,7 +16,7 @@ import React, {useState} from 'react';
 import {SpectrumRangeSliderProps} from '@react-types/slider';
 import {storiesOf} from '@storybook/react';
 
-storiesOf('RangeSlider', module)
+storiesOf('Slider/RangeSlider', module)
   .add(
     'Default',
     () => render({'aria-label': 'Label'})
@@ -64,19 +64,19 @@ storiesOf('RangeSlider', module)
   .add(
     'min/max',
     () => render({label: 'Label', minValue: 30, maxValue: 70})
-  )
-  .add(
-    'ticks',
-    () => render({label: 'Label', tickCount: 4})
-  )
-  .add(
-    'showTickLabels: true',
-    () => render({label: 'Label', tickCount: 4, showTickLabels: true})
-  )
-  .add(
-    'tickLabels',
-    () => render({label: 'Label', tickCount: 3, showTickLabels: true, tickLabels: ['A', 'B', 'C']})
   );
+  // .add(
+  //   'ticks',
+  //   () => render({label: 'Label', tickCount: 4})
+  // )
+  // .add(
+  //   'showTickLabels: true',
+  //   () => render({label: 'Label', tickCount: 4, showTickLabels: true})
+  // )
+  // .add(
+  //   'tickLabels',
+  //   () => render({label: 'Label', tickCount: 3, showTickLabels: true, tickLabels: ['A', 'B', 'C']})
+  // );
 
 function render(props: SpectrumRangeSliderProps = {}) {
   if (props.onChange == null) {

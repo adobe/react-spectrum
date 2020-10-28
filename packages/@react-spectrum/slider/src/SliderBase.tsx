@@ -14,7 +14,7 @@ import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils'
 import {FocusableRef} from '@react-types/shared';
 import React, {CSSProperties, HTMLAttributes, MutableRefObject, ReactNode, useRef} from 'react';
 import {SliderState, useSliderState} from '@react-stately/slider';
-import {SpectrumBarSliderBase, SpectrumSliderTicksBase} from '@react-types/slider';
+import {SpectrumBarSliderBase} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useNumberFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -28,7 +28,7 @@ export interface SliderBaseChildArguments {
   state: SliderState
 }
 
-export interface SliderBaseProps extends SpectrumBarSliderBase<number[]>, SpectrumSliderTicksBase {
+export interface SliderBaseProps extends SpectrumBarSliderBase<number[]> {
   children: (SliderBaseChildArguments) => ReactNode,
   classes?: string[] | Object,
   style?: CSSProperties,
@@ -38,7 +38,8 @@ export interface SliderBaseProps extends SpectrumBarSliderBase<number[]>, Spectr
 function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {
-    tickCount, showTickLabels, tickLabels, isDisabled, count,
+    // tickCount, showTickLabels, tickLabels,
+    isDisabled, count,
     children, classes, style,
     labelPosition = 'top', valueLabel, showValueLabel = !!props.label,
     formatOptions,
@@ -95,24 +96,26 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
   let domRef = useFocusableRef(ref, inputRefs[0]);
 
   let ticks = null;
-  if (tickCount > 0) {
-    let tickList = [];
-    for (let i = 0; i < tickCount; i++) {
-      let tickLabel = tickLabels ? tickLabels[i] : state.getFormattedValue(state.getPercentValue(i / (tickCount - 1)));
-      tickList.push(
-        <div className={classNames(styles, 'spectrum-Slider-tick')} key={i}>
-          {showTickLabels &&
-            <div className={classNames(styles, 'spectrum-Slider-tickLabel')}>
-              {tickLabel}
-            </div>
-          }
-        </div>
-      );
-    }
-    ticks = (<div className={classNames(styles, 'spectrum-Slider-ticks')}>
-      {tickList}
-    </div>);
-  }
+  // if (tickCount > 0) {
+  //   let tickList = [];
+  //   for (let i = 0; i < tickCount; i++) {
+  //     let tickLabel = tickLabels ? tickLabels[i] : state.getFormattedValue(state.getPercentValue(i / (tickCount - 1)));
+  //     tickList.push(
+  //       <div className={classNames(styles, 'spectrum-Slider-tick')} key={i}>
+  //         {showTickLabels &&
+  //           <div className={classNames(styles, 'spectrum-Slider-tickLabel')}>
+  //             {tickLabel}
+  //           </div>
+  //         }
+  //       </div>
+  //     );
+  //   }
+  //   ticks = (
+  //     <div className={classNames(styles, 'spectrum-Slider-ticks')}>
+  //       {tickList}
+  //     </div>
+  //   );
+  // }
 
   let formatter = useNumberFormatter(formatOptions);
 
@@ -141,15 +144,17 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
   }
 
   let labelNode = <label className={classNames(styles, 'spectrum-Slider-label')} {...labelProps}>{props.label}</label>;
-  let valueNode = (<div
-    className={classNames(styles, 'spectrum-Slider-value')}
-    // TODO really?
-    role="textbox"
-    aria-readonly="true"
-    aria-labelledby={labelProps.id}
-    style={maxLabelLength && {width: `${maxLabelLength}ch`, minWidth: `${maxLabelLength}ch`}}>
-    {displayValue}
-  </div>);
+  let valueNode = (
+    <div
+      className={classNames(styles, 'spectrum-Slider-value')}
+      // TODO really?
+      role="textbox"
+      aria-readonly="true"
+      aria-labelledby={labelProps.id}
+      style={maxLabelLength && {width: `${maxLabelLength}ch`, minWidth: `${maxLabelLength}ch`}}>
+      {displayValue}
+    </div>
+  );
 
   return (
     <div

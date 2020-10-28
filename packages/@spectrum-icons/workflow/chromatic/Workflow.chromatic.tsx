@@ -10,42 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-import Icon3DMaterials from '../3DMaterials';
 import Add from '../Add';
-import Alert from '../Alert';
-import Bell from '../Bell';
+import Alert from '@spectrum-icons/workflow/Alert';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import {Flex} from "@react-spectrum/layout";
 
 storiesOf('Icons/Workflow', module)
   .add(
     'icon: Add with sizes',
     () => renderIconSizes(Add, {'aria-label': 'Add'})
   )
-  .add(
-    'icon: Bell with sizes',
-    () => renderIconSizes(Bell, {'aria-label': 'Bell'})
-  )
-  .add(
-    'icon: _3DMaterials with sizes',
-
-    () => renderIconSizes(Icon3DMaterials, {'aria-label': '3D Materials'})
-  )
-  .add(
-    'icon: Alert negative',
-    () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'negative'})
-  )
-  .add(
-    'icon: Alert informative',
-    () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'informative'})
-  )
-  .add(
-    'icon: Alert positive',
-    () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'positive'})
-  )
-  .add(
-    'icon: Alert notice',
-    () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'notice'})
+  .add('Colors',
+    () => (
+      <Flex gap="size-200">
+        <Alert aria-label="info default" />
+        <Alert color="informative" aria-label="info alert" />
+        <Alert color="negative" aria-label="negative alert" />
+        <Alert color="positive" aria-label="positive alert" />
+        <Alert color="notice" aria-label="notice alert" />
+      </Flex>
+    )
   );
 
 function renderIconSizes(Component, props) {

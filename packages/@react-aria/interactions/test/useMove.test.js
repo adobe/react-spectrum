@@ -18,7 +18,7 @@ import {useMove} from '../';
 const EXAMPLE_ELEMENT_TESTID = 'example';
 
 function Example(props) {
-  let moveProps = useMove(props);
+  let {moveProps} = useMove(props);
   return <div tabIndex={-1} {...moveProps} data-testid={EXAMPLE_ELEMENT_TESTID}>{props.children}</div>;
 }
 
