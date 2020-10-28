@@ -1,0 +1,74 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: This release includes a new `useMove` interaction hook for handling drags across mouse, touch, and keyboard! In addition, we’ve fixed many bugs since our last release, and worked on several new components to be released soon. Thanks to all of the contributors!
+date: 2020-10-29
+---
+
+# October 29, 2020 Release
+
+This release includes a new `useMove` interaction hook for handling drags across mouse, touch, and keyboard! See [our docs](https://react-spectrum.adobe.com/react-aria/useMove.html) for examples on how to take advantage of it. In addition, we’ve fixed many bugs since our last release, and worked on several new components to be released soon. As always, a huge thank you to all our contributors for the new features, fixes and updates. 🤩
+
+## New features
+- `useMove` interaction hook - [@mischnic](https://github.com/mischnic) - [PR](https://github.com/adobe/react-spectrum/pull/1106)
+- Semantic colors for icons - [@LFDanLu](https://github.com/LFDanLu) -  [PR](https://github.com/adobe/react-spectrum/pull/1182)
+
+## Fixed
+- Update label css to stop shifts in position - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/984)
+- Improve scrolling issues with modals and trays in mobile Safari - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1105)
+- Only add `aria-describedby` in `useTooltipTrigger` when open - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/1150)
+- Constrain `Tooltip` position to the relative target - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1127)
+- Improve clean up of `user-select` on in `usePress` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1185)
+- Removed `readOnly` from `Slider` - [@mischnic](https://github.com/mischnic) - [PR](https://github.com/adobe/react-spectrum/pull/1083)
+- Fix `usePreventScroll` on iOS with React 17 - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1196)
+- Improve onBlur handling within `FocusScope` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1188)
+- Fix text selection after dismissing a dialog - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1187)
+
+## Docs
+
+Add links for Spectrum dimension values - [@filmaj](https://github.com/filmaj) - [PR](https://github.com/adobe/react-spectrum/pull/1180)
+
+
+## Released packages
+
+```
+ - @adobe/react-spectrum@3.5.0
+ - @react-aria/focus@3.2.3
+ - @react-aria/i18n@3.1.3
+ - @react-aria/interactions@3.3.0
+ - @react-aria/listbox@3.2.2
+ - @react-aria/overlays@3.5.0
+ - @react-aria/select@3.2.2
+ - @react-aria/selection@3.3.0
+ - @react-aria/slider@3.0.0-alpha.3
+ - @react-aria/table@3.0.0-alpha.8
+ - @react-aria/tooltip@3.0.1
+ - @react-aria/utils@3.4.0
+ - @react-aria/virtualizer@3.3.0
+ - @react-spectrum/icon@3.3.0
+ - @react-spectrum/listbox@3.3.0
+ - @react-spectrum/overlays@3.3.0
+ - @react-spectrum/slider@3.0.0-alpha.0
+ - @react-spectrum/table@3.0.0-alpha.8
+ - @react-spectrum/utils@3.4.0
+ - @react-stately/layout@3.2.0
+ - @react-stately/selection@3.3.0
+ - @react-stately/slider@3.0.0-alpha.3
+ - @react-stately/table@3.0.0-alpha.7
+ - @react-types/overlays@3.3.0
+ - @react-types/provider@3.2.0
+ - @react-types/shared@3.3.0
+ - @react-types/slider@3.0.0-alpha.2
+ - @react-types/table@3.0.0-rc.6
+ - react-aria@3.1.0
+ ```
