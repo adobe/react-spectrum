@@ -25,20 +25,20 @@ export interface SpectrumBarSliderBase<T> extends BaseSliderProps, ValueBase<T>,
   valueLabel?: ReactNode
 }
 
-export interface SpectrumSliderTicksBase {
-  /** Enables tick marks if > 0. Ticks will be evenly distributed between the min and max values. */
-  tickCount?: number,
+// export interface SpectrumSliderTicksBase {
+//   /** Enables tick marks if > 0. Ticks will be evenly distributed between the min and max values. */
+//   tickCount?: number,
+//
+//   /** Enables tick labels. */
+//   showTickLabels?: boolean,
+//   /**
+//    * By default, labels are formatted using the slider's number formatter,
+//    * but you can use the tickLabels prop to override these with custom labels.
+//    */
+//   tickLabels?: Array<ReactNode>
+// }
 
-  /** Enables tick labels. */
-  showTickLabels?: boolean,
-  /**
-   * By default, labels are formatted using the slider's number formatter,
-   * but you can use the tickLabels prop to override these with custom labels.
-   */
-  tickLabels?: Array<ReactNode>
-}
-
-export interface SpectrumSliderProps extends SpectrumBarSliderBase<number>, SpectrumSliderTicksBase {
+export interface SpectrumSliderProps extends SpectrumBarSliderBase<number> {
   /**
    * Whether a fill color is shown between the start of the slider and the current value.
    * @see https://spectrum.adobe.com/page/slider/#Fill.
@@ -58,4 +58,4 @@ export interface SpectrumSliderProps extends SpectrumBarSliderBase<number>, Spec
   trackGradient?: string[]
 }
 
-export interface SpectrumRangeSliderProps extends SpectrumBarSliderBase<RangeValue<number>>, SpectrumSliderTicksBase { }
+export interface SpectrumRangeSliderProps extends SpectrumBarSliderBase<RangeValue<number>> { }
