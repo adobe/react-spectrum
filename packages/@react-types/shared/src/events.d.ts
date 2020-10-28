@@ -100,3 +100,29 @@ export interface FocusableProps extends FocusEvents, KeyboardEvents {
   /** Whether the element should receive focus on render. */
   autoFocus?: boolean
 }
+
+interface BaseMoveEvent {
+  pointerType: PointerType
+}
+
+interface MoveStartEvent extends BaseMoveEvent{
+  type: 'movestart'
+}
+
+interface MoveMoveEvent extends BaseMoveEvent{
+  type: 'move',
+  deltaX: number,
+  deltaY: number
+}
+
+interface MoveEndEvent extends BaseMoveEvent{
+  type: 'moveend'
+}
+
+export type MoveEvent = MoveStartEvent | MoveMoveEvent | MoveEndEvent;
+
+export interface MoveEvents {
+  onMoveStart?: (e: MoveStartEvent) => void,
+  onMove: (e: MoveMoveEvent) => void,
+  onMoveEnd?: (e: MoveEndEvent) => void
+}
