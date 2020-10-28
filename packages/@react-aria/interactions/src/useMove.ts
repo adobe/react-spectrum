@@ -44,6 +44,10 @@ export function useMove(props: MoveEvents): MoveResult {
       state.current.didMove = false;
     };
     let move = (pointerType: PointerType, deltaX: number, deltaY: number) => {
+      if (deltaX === 0 && deltaY === 0) {
+        return;
+      }
+
       if (!state.current.didMove) {
         state.current.didMove = true;
         onMoveStart?.({
