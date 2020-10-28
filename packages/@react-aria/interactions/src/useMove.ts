@@ -16,9 +16,15 @@ import React, {HTMLAttributes, useMemo, useRef} from 'react';
 import {useGlobalListeners} from '@react-aria/utils';
 
 interface MoveResult {
+  /** Props to spread on the target element. */
   moveProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Handles move interactions across mouse, touch, and keyboard, including dragging with
+ * the mouse or touch, and using the arrow keys. Normalizes behavior across browsers and
+ * platforms, and ignores emulated mouse events on touch devices.
+ */
 export function useMove(props: MoveEvents): MoveResult {
   let {onMoveStart, onMove, onMoveEnd} = props;
 
@@ -38,6 +44,10 @@ export function useMove(props: MoveEvents): MoveResult {
       state.current.didMove = false;
     };
     let move = (pointerType: PointerType, deltaX: number, deltaY: number) => {
+      if (deltaX === 0 && deltaY === 0) {
+        return;
+      }
+
       if (!state.current.didMove) {
         state.current.didMove = true;
         onMoveStart?.({
