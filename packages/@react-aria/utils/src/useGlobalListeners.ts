@@ -32,12 +32,14 @@ export function useGlobalListeners(): GlobalListeners {
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
+    // this will never be a different object from its first instance
+    let listeners = globalListeners.current;
     return () => {
-      globalListeners.current.forEach((value, key) => {
+      listeners.forEach((value, key) => {
         removeGlobalListener(value.eventTarget, value.type, key, value.options);
       });
     };
-  }, [removeGlobalListener]);
+  }, [removeGlobalListener, globalListeners]);
 
   return {addGlobalListener, removeGlobalListener};
 }
