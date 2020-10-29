@@ -18,7 +18,6 @@ import {
   RefObject,
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState
@@ -187,11 +186,11 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
    * The reason we have to do this is because the user is not as limited when the field is empty, the set of allowed characters
    * is at the maximum amount. Once a user enters a numeral, we determine the system and close off the allowed set.
    * This means we can't block the values before they make it to state and cause a render, thereby moving selection to an
-   * undesirable location.Z
+   * undesirable location.
    */
   let selection = useRef({selectionStart: state.inputValue.length, selectionEnd: state.inputValue.length, value: state.inputValue});
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     let inTextField = selection.current.value || '';
     let newTextField = state.inputValue;
     ref.current.setSelectionRange(selection.current.selectionEnd + newTextField.length - inTextField.length, selection.current.selectionEnd + newTextField.length - inTextField.length);
