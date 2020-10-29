@@ -74,7 +74,7 @@ export function useSplitView(props: SplitViewAriaProps, state: SplitViewState): 
   const handleStateRef = useRef<SplitViewHandleState>(null);
   handleStateRef.current = handleState;
   const currentPosition = useRef<number>(null);
-  const moveProps = useMove({
+  const {moveProps} = useMove({
     onMoveStart() {
       // console.log("start")
       handleState.setDragging(true);

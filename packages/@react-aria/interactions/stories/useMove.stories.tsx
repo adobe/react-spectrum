@@ -24,7 +24,7 @@ function useClampedMove(props) {
 
   let {getCurrentState, onMoveTo, onMoveStart, onMoveEnd, reverseX = false, reverseY = false} = props;
 
-  let moveProps = useMove({
+  let {moveProps} = useMove({
     onMoveStart(e) {
       currentPosition.current = null;
       onMoveStart?.(e);
@@ -67,13 +67,13 @@ storiesOf('useMove', module)
   .add(
     'Log',
     () => {
-      let props = useMove({
+      let {moveProps} = useMove({
         onMoveStart(e) { action('onMoveStart')(JSON.stringify(e)); },
         onMove(e) { action('onMove')(JSON.stringify(e)); },
         onMoveEnd(e) { action('onMoveEnd')(JSON.stringify(e)); }
       });
 
-      return <div {...props} style={{width: '200px', height: '200px', background: 'white', border: '1px solid black', touchAction: 'none'}} />;
+      return <div {...moveProps} style={{width: '200px', height: '200px', background: 'white', border: '1px solid black', touchAction: 'none'}} />;
     }
   )
   .add(
@@ -108,12 +108,12 @@ storiesOf('useMove', module)
       let [ballState, setBallState] = useState({x: 0, y: 0, color: 'black'});
       let [boxState, setBoxState] = useState({x: 100, y: 100, color: 'grey'});
 
-      let ballProps = useMove({
+      let {moveProps: ballProps} = useMove({
         onMoveStart() { setBallState((state) => ({...state, color: 'red'})); },
         onMove(e) { setBallState((state) => ({...state, x: state.x + e.deltaX, y: state.y + e.deltaY})); },
         onMoveEnd() { setBallState((state) => ({...state, color: 'black'})); }
       });
-      let boxProps = useMove({
+      let {moveProps: boxProps} = useMove({
         onMoveStart() { setBoxState((state) => ({...state, color: 'orange'})); },
         onMove(e) { setBoxState((state) => ({...state, x: state.x + e.deltaX, y: state.y + e.deltaY})); },
         onMoveEnd() { setBoxState((state) => ({...state, color: 'grey'})); }

@@ -1758,5 +1758,24 @@ describe('usePress', function () {
       act(() => {jest.advanceTimersByTime(300);});
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
     });
+
+    it('should remove user-select: none from html element if pressable component unmounts', function () {
+      let {getByText, unmount} = render(
+        <Example
+          onPressStart={handler}
+          onPressEnd={handler}
+          onPressChange={handler}
+          onPress={handler}
+          onPressUp={handler} />
+      );
+
+      let el = getByText('test');
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      expect(document.documentElement.style.webkitUserSelect).toBe('none');
+
+      unmount();
+      act(() => {jest.advanceTimersByTime(300);});
+      expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
+    });
   });
 });

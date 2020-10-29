@@ -1,0 +1,159 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/interactions';
+import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-aria/interactions/package.json';
+
+```jsx import
+import {useMove} from '@react-aria/interactions';
+```
+
+---
+category: Interactions
+keywords: [move interactions, move events, drag, touch, mouse, keyboard, aria]
+---
+
+# useMove
+
+<p>{docs.exports.useMove.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useMove']} />
+
+## API
+
+<FunctionAPI function={docs.exports.useMove} links={docs.links} />
+
+## Features
+
+`useMove` handles move interactions across mouse, touch, and keyboard. A move interaction starts when a
+user presses down with a mouse or their finger on the target, and ends when they lift their pointer. Move
+events are fired as the pointer moves around, and specify the distance that the pointer traveled since the last
+event. In addition, move events are fired when the user focuses the target element and uses the arrow keys.
+
+* Handles mouse and touch events
+* Handles arrow key presses
+* Uses pointer events where available, with fallbacks to mouse and touch events
+* Ignores emulated mouse events in mobile browsers
+* Handles disabling text selection on mobile while the press interaction is active
+* Normalizes many cross browser inconsistencies
+
+## Usage
+
+`useMove` returns props that you should spread onto the target element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useMove.return.id].properties} />
+</TypeContext.Provider>
+
+`useMove` supports the following event handlers:
+
+<TypeContext.Provider value={typesDocs.links}>
+  <InterfaceType properties={typesDocs.exports.MoveEvents.properties} />
+</TypeContext.Provider>
+
+Each of these handlers is fired with a `MoveEvent`, which exposes information about the target and the
+type of event that triggered the interaction.
+
+<TypeContext.Provider value={typesDocs.links}>
+  <InterfaceType properties={typesDocs.exports.MoveMoveEvent.properties} />
+</TypeContext.Provider>
+
+## Example
+
+This example shows a ball that can be moved by dragging with a mouse or touch, or by tabbing to it and using
+the arrow keys on your keyboard. The movement is clamped so that the ball cannot be dragged outside a box.
+In addition, all of the move events are logged below so that you can inspect what is going on.
+
+```tsx example
+function Example() {
+  const CONTAINER_SIZE = 200;
+  const BALL_SIZE = 30;
+
+  let [events, setEvents] = React.useState([]);
+  let [color, setColor] = React.useState('black');
+  let [position, setPosition] = React.useState({
+    x: 0,
+    y: 0
+  });
+
+  let clamp = pos => Math.min(Math.max(pos, 0), CONTAINER_SIZE - BALL_SIZE);
+  let {moveProps} = useMove({
+    onMoveStart(e) {
+      setColor('red');
+      setEvents(events => [`move start with pointerType = ${e.pointerType}`, ...events]);
+    },
+    onMove(e) {
+      setPosition(({x, y}) => {
+        // Normally, we want to allow the user to continue
+        // dragging outside the box such that they need to
+        // drag back over the ball again before it moves.
+        // This is handled below by clamping during render.
+        // If using the keyboard, however, we need to clamp
+        // here so that dragging outside the container and
+        // then using the arrow keys works as expected.
+        if (e.pointerType === 'keyboard') {
+          x = clamp(x);
+          y = clamp(y);
+        }
+
+        x += e.deltaX;
+        y += e.deltaY;
+        return {x, y};
+      });
+
+      setEvents(events => [`move with pointerType = ${e.pointerType}, deltaX = ${e.deltaX}, deltaY = ${e.deltaY}`, ...events]);
+    },
+    onMoveEnd(e) {
+      setColor('black');
+      setEvents(events => [`move end with pointerType = ${e.pointerType}`, ...events]);
+    }
+  });
+
+  return (
+    <>
+      <div
+        style={{
+          width: CONTAINER_SIZE,
+          height: CONTAINER_SIZE,
+          background: 'white',
+          border: '1px solid black',
+          position: 'relative',
+          touchAction: 'none'
+        }}>
+        <div
+          {...moveProps}
+          tabIndex={0}
+          style={{
+            width: BALL_SIZE,
+            height: BALL_SIZE,
+            borderRadius: '100%',
+            position: 'absolute',
+            left: clamp(position.x),
+            top: clamp(position.y),
+            background: color
+          }} />
+      </div>
+      <ul
+        style={{
+          maxHeight: '200px',
+          overflow: 'auto'
+        }}>
+        {events.map((e, i) => <li key={i}>{e}</li>)}
+      </ul>
+    </>
+  );
+}
+```

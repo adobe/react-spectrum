@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames} from '@react-spectrum/utils';
-import {ColorSliderProps} from '@react-types/color';
+import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {ColorThumb} from './ColorThumb';
 import {Flex} from '@react-spectrum/layout';
+import {FocusableRef} from '@react-types/shared';
 import {Label} from '@react-spectrum/label';
 import React, {useRef, useState} from 'react';
+import {SpectrumColorSliderProps} from '@react-types/color';
 import styles from '@adobe/spectrum-css-temp/components/colorslider/vars.css';
 import {useColorSlider} from '@react-aria/color';
 import {useColorSliderState} from '@react-stately/color';
@@ -23,16 +24,18 @@ import {useFocus, useFocusVisible} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function ColorSlider(props: ColorSliderProps) {
+function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
 
   let {isDisabled, channel, orientation, showValueLabel = true} = props;
   let vertical = orientation === 'vertical';
 
+  let {styleProps} = useStyleProps(props);
   let {direction} = useLocale();
 
   let inputRef = useRef();
   let trackRef = useRef();
+  let domRef = useFocusableRef(ref, inputRef);
 
   // The default label should be localized...
   let defaultLabel = channel[0].toUpperCase() + channel.slice(1);
@@ -46,7 +49,7 @@ function ColorSlider(props: ColorSliderProps) {
   let ariaLabel = props['aria-label'] ?? (labelText == null ? defaultLabel : undefined);
 
   let state = useColorSliderState(props);
-  let {inputProps, thumbProps, containerProps, trackProps, labelProps, generateBackground} = useColorSlider({
+  let {inputProps, thumbProps, containerProps, trackProps, labelProps, gradientProps} = useColorSlider({
     ...props,
     label: labelText,
     'aria-label': ariaLabel,
@@ -78,17 +81,28 @@ function ColorSlider(props: ColorSliderProps) {
   }
 
   return (
-    <div>
+    <div
+      ref={domRef}
+      {...styleProps}
+      className={classNames(styles, 'spectrum-ColorSlider-container')}>
       <Flex direction="row" justifyContent={alignLabel}>
         {labelText && <Label {...labelProps}>{labelText}</Label>}
         {/* TODO: is it on purpose that aria-labelledby isn't passed through? */}
         {showValueLabel && <Label aria-labelledby={labelProps.id}>{state.getThumbValueLabel(0)}</Label>}
       </Flex>
-      <div className={classNames(styles, 'spectrum-ColorSlider', {'is-disabled': isDisabled, 'spectrum-ColorSlider--vertical': vertical})} {...containerProps}>
+      <div
+        {...containerProps}
+        className={classNames(
+          styles,
+          'spectrum-ColorSlider', {
+            'is-disabled': isDisabled,
+            'spectrum-ColorSlider--vertical': vertical
+          }
+        )
+      }>
         <div className={classNames(styles, 'spectrum-ColorSlider-checkerboard')} role="presentation" ref={trackRef} {...trackProps}>
-          <div className={classNames(styles, 'spectrum-ColorSlider-gradient')} role="presentation" style={{background: generateBackground()}} />
+          <div className={classNames(styles, 'spectrum-ColorSlider-gradient')} role="presentation" {...gradientProps} />
         </div>
-
         <ColorThumb
           value={state.getDisplayColor()}
           isFocused={isFocused && isFocusVisible}
@@ -100,7 +114,9 @@ function ColorSlider(props: ColorSliderProps) {
           <input {...inputProps} {...focusProps} ref={inputRef} className={classNames(styles, 'spectrum-ColorSlider-slider')} />
         </ColorThumb>
       </div>
-    </div>);
+    </div>
+  );
 }
 
-export {ColorSlider};
+let _ColorSlider = React.forwardRef(ColorSlider);
+export {_ColorSlider as ColorSlider};

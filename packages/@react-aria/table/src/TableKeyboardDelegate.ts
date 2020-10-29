@@ -89,7 +89,7 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
         return child.key;
       }
 
-      let firstItem = this.collection.getItem(this.collection.getFirstKey());
+      let firstItem = this.collection.getItem(this.getFirstKey());
       return [...firstItem.childNodes][startItem.index].key;
     }
 
@@ -98,8 +98,8 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
       key = startItem.parentKey;
     }
 
-    // Find the next enabled item
-    key = this.findNextKey(item => item.type === 'item' && !this.disabledKeys.has(item.key), key);
+    // Find the next item
+    key = this.findNextKey(item => item.type === 'item', key);
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the next row.
       if (this.isCell(startItem)) {
@@ -133,8 +133,8 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
       key = startItem.parentKey;
     }
 
-    // Find the previous enabled item
-    key = this.findPreviousKey(item => item.type === 'item' && !this.disabledKeys.has(item.key), key);
+    // Find the previous item
+    key = this.findPreviousKey(item => item.type === 'item', key);
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the previous row.
       if (this.isCell(startItem)) {
@@ -282,8 +282,8 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
       }
     }
 
-    // Find the first enabled row
-    key = this.findNextKey(item => item.type === 'item' && !this.disabledKeys.has(item.key));
+    // Find the first row
+    key = this.findNextKey(item => item.type === 'item');
 
     // If global flag is set, focus the first cell in the first row.
     if (key != null && item && this.isCell(item) && global) {
@@ -312,8 +312,8 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
       }
     }
 
-    // Find the last enabled row
-    key = this.findPreviousKey(item => item.type === 'item' && !this.disabledKeys.has(item.key));
+    // Find the last row
+    key = this.findPreviousKey(item => item.type === 'item');
 
     // If global flag is set, focus the last cell in the last row.
     if (key != null && item && this.isCell(item) && global) {
@@ -375,16 +375,23 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
 
   getKeyPageBelow(key: Key) {
     let itemRect = this.getItemRect(key);
+
     if (!itemRect) {
       return null;
     }
 
     let pageHeight = this.getPageHeight();
-    let pageY = Math.min(this.getContentHeight() - pageHeight, itemRect.y + pageHeight);
+    let pageY = Math.min(this.getContentHeight(), itemRect.y + pageHeight);
 
     while (itemRect && itemRect.maxY < pageY) {
-      key = this.getKeyBelow(key);
-      itemRect = this.getItemRect(key);
+      let nextKey = this.getKeyBelow(key);
+      itemRect = this.getItemRect(nextKey);
+
+      // Guard against case where maxY of the last key is barely less than pageY due to rounding
+      // and thus it attempts to set key to null
+      if (nextKey != null) {
+        key = nextKey;
+      }
     }
 
     return key;
