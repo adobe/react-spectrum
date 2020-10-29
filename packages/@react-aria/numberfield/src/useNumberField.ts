@@ -12,7 +12,17 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {clearAnnouncer} from '@react-aria/live-announcer';
-import {HTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useMemo, useState} from 'react';
+import {
+  HTMLAttributes,
+  LabelHTMLAttributes,
+  RefObject,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
@@ -172,6 +182,42 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   let intlOptions = useMemo(() => numberFormatter.resolvedOptions(), [numberFormatter]);
   let hasDecimals = intlOptions.maximumFractionDigits > 0;
 
+  /**
+   * Selection is to track where the cursor is in the input so we can restore that position + some offset after render.
+   * The reason we have to do this is because the user is not as limited when the field is empty, the set of allowed characters
+   * is at the maximum amount. Once a user enters a numeral, we determine the system and close off the allowed set.
+   * This means we can't block the values before they make it to state and cause a render, thereby moving selection to an
+   * undesirable location.
+   */
+  let selection = useRef({selectionStart: state.inputValue.length - 1, selectionEnd: state.inputValue.length - 1, value: state.inputValue});
+
+  useLayoutEffect(() => {
+    let inTextField = selection.current.value || '';
+    let newTextField = state.inputValue;
+    ref.current.setSelectionRange(selection.current.selectionEnd + newTextField.length - inTextField.length, selection.current.selectionEnd + newTextField.length - inTextField.length);
+  },[ref, state.inputValue, selection.current]);
+
+  let setSelection = (e) => {
+    selection.current = {
+      selectionStart: e.target.selectionStart,
+      selectionEnd: e.target.selectionEnd,
+      value: state.inputValue
+    };
+  };
+
+  /**
+   * This forces a rerender if a value was entered that "changed" the input
+   * we may already have that value in state and are using the clean version for display though
+   * as a result we wouldn't render and the cursor would fly to the end of the string.
+   */
+  let [, setReRender] = useState({});
+  let onChange = (e) => {
+    let changed = state.setValue(e);
+    if (!changed) {
+      setReRender({});
+    }
+  };
+
   let {labelProps, inputProps} = useTextField(
     {
       label,
@@ -188,7 +234,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       placeholder: formatMessage('Enter a number'),
       type: 'text',
       inputMode: hasDecimals ? 'decimal' : 'numeric',
-      onChange: state.setValue
+      onChange,
+      onKeyDown: setSelection
     }, ref);
 
   const inputFieldProps = mergeProps(spinButtonProps, inputProps, focusProps, {onWheel});

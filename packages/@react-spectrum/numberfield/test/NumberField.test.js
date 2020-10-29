@@ -935,10 +935,10 @@ describe('NumberField', function () {
   });
 
   it.each`
-    Name              | props                                                    | locale     | keystrokes    | expected
-    ${'US Euros'}     | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['4', '2']} | ${['4', '42', '€42.00']}
-    ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['4', '2']} | ${['4', '42', '42,00 €']}
-    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['٤', '٢']} | ${['٤', '٤٢', '٤٢٫٠٠ €']}
+    Name              | props                                                    | locale     | keystrokes              | expected
+    ${'US Euros'}     | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['4', '2', '.', '1']} | ${['4', '42', '42.', '42.1', '€42.10']}
+    ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['4', '2', ',', '1']} | ${['4', '42', '42,', '42,1', '42,10 €']}
+    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['٤', '٢', ',', '١']} | ${['٤', '٤٢', '٤٢٫', '٤٢٫١', '٤٢٫١٠ €']}
   `('$Name typing in locale stays consistent', ({props, locale, keystrokes, expected}) => {
     let {textField} = renderNumberField({showStepper: true, onChange: onChangeSpy, ...props}, locale);
 
@@ -950,14 +950,51 @@ describe('NumberField', function () {
     typeText(textField, keystrokes[1]);
     expect(onChangeSpy).not.toHaveBeenCalled();
     expect(textField).toHaveAttribute('value', expected[1]);
-    act(() => {textField.blur();});
-    expect(onChangeSpy).toHaveBeenCalledWith(42);
-    // after blur, we should go to the formatted version
+    typeText(textField, keystrokes[2]);
+    expect(onChangeSpy).not.toHaveBeenCalled();
     expect(textField).toHaveAttribute('value', expected[2]);
+    typeText(textField, keystrokes[3]);
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    expect(textField).toHaveAttribute('value', expected[3]);
+    act(() => {textField.blur();});
+    expect(onChangeSpy).toHaveBeenCalledWith(42.1);
+    // after blur, we should go to the formatted version
+    expect(textField).toHaveAttribute('value', expected[4]);
   });
 
   it.each`
-    Name              | props                                                    | locale
+    Name              | props | locale     | keystrokes                   | expected
+    ${'US Euros'}     | ${{}} | ${'en-US'} | ${['1', ',', '0', '0', '0']} | ${['1', '1,', '1,0', '1,00', '1,000']}
+    ${'French Euros'} | ${{}} | ${'fr-FR'} | ${['1', '.', '0', '0', '0']} | ${['1', '1.', '1.0', '1.00', '1.000']}
+    ${'Arabic Euros'} | ${{}} | ${'ar-AE'} | ${['١', '.', '0', '0', '0']} | ${['١', '١٬', '١٬٠', '١٬٠٠', '١٬٠٠٠']}
+  `('$Name typing group characters works', ({props, locale, keystrokes, expected}) => {
+    let {textField} = renderNumberField({showStepper: true, onChange: onChangeSpy, ...props}, locale);
+
+    act(() => {textField.focus();});
+    expect(textField).toHaveAttribute('value', '');
+    typeText(textField, keystrokes[0]);
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    expect(textField).toHaveAttribute('value', expected[0]);
+    typeText(textField, keystrokes[1]);
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    expect(textField).toHaveAttribute('value', expected[1]);
+    typeText(textField, keystrokes[2]);
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    expect(textField).toHaveAttribute('value', expected[2]);
+    typeText(textField, keystrokes[3]);
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    expect(textField).toHaveAttribute('value', expected[3]);
+    typeText(textField, keystrokes[4]);
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    expect(textField).toHaveAttribute('value', expected[4]);
+    act(() => {textField.blur();});
+    expect(onChangeSpy).toHaveBeenCalledWith(1000);
+    // after blur, we should go to the formatted version
+    expect(textField).toHaveAttribute('value', expected[5]);
+  });
+
+  it.each`
+    Name              | props                                                                      | locale
     ${'US Euros'}     | ${{defaultValue: 10, formatOptions: {style: 'currency', currency: 'SAR'}}} | ${'en-US'}
   `('$Name typing in locale stays consistent', ({props, locale}) => {
     let {textField} = renderNumberField({showStepper: true, onChange: onChangeSpy, ...props}, locale);

@@ -17,7 +17,7 @@ import {useControlledState} from '@react-stately/utils';
 import {useNumberFormatter, useNumberParser} from '@react-aria/i18n';
 
 export interface NumberFieldState {
-  setValue: (val: number | string) => void,
+  setValue: (val: number | string) => boolean,
   increment: () => void,
   decrement: () => void,
   incrementToMax: () => void,
@@ -76,6 +76,7 @@ export function useNumberFieldState(
     minusSign = minValue >= 0 || !minusSign ? '' : minusSign;
     plusSign = maxValue <= 0 || !plusSign ? '' : plusSign;
     let decimal = allParts.find(p => p.type === 'decimal')?.value;
+    let group = allParts.find(p => p.type === 'group')?.value;
     // this is a string ready for any regex so we can identify allowed characters, minus is excluded because of the way it can be handled
     let validCharacters = allParts.reduce((chars, p) => {
       if (p.type === 'decimal' && intlOptions.maximumFractionDigits === 0) {
@@ -92,9 +93,9 @@ export function useNumberFieldState(
       }
       return chars + p.value;
     }, '');
-    return {minusSign, plusSign, decimal, validCharacters, literals};
+    return {minusSign, plusSign, decimal, validCharacters, literals, group};
   }, [inputValueFormatter, minValue, maxValue, intlOptions]);
-  let {minusSign, plusSign, decimal, validCharacters, literals} = symbols;
+  let {minusSign, plusSign, decimal, validCharacters, literals, group} = symbols;
 
   // javascript doesn't recognize NaN === NaN, so multiple onChanges will get fired if we don't ignore consecutive ones
   // in addition, if the input starts with a number, then we'll count that as the last val dispatched, we only need to calculate it the first time
@@ -271,13 +272,25 @@ export function useNumberFieldState(
     strippedValue = replaceAllButFirstOccurrence(strippedValue, plusSign);
     strippedValue = replaceAllButFirstOccurrence(strippedValue, decimal);
 
+
     return strippedValue;
   }, [inputValue, currentNumeralSystem, decimal, minusSign, plusSign, validCharacters]);
 
-  let setValue = (value: string) => {
+  let setValue = (value: string): boolean => {
     let numeralSystem = determineNumeralSystem(value);
     setCurrentNumeralSystem(numeralSystem);
-    setInputValue(value);
+    // replacements
+    // in arab numeral system, their decimal character is 1643, but most keyboards don't type that
+    // instead they use the , (44) character or apparently the (1548) character
+    let result = value;
+    if (numeralSystem === 'arab') {
+      result = result.replace(',', decimal);
+      result = result.replace(String.fromCharCode(1548), decimal);
+      result = result.replace('.', group);
+    }
+
+    setInputValue(result);
+    return result !== inputValue;
   };
 
   let commitInputValue = () => {
