@@ -528,8 +528,9 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name properly will return the same number from onChange as is displayed', () => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 10, formatOptions: {maximumFractionDigits: 2}});
+    let {textField} = renderNumberField({key: 'foo', onChange: onChangeSpy, defaultValue: 10, formatOptions: {maximumFractionDigits: 2}});
 
+    act(() => {textField.focus();});
     expect(textField).toHaveAttribute('value', '10');
     typeText(textField, '.01');
     expect(textField).toHaveAttribute('value', '10.01');
@@ -965,8 +966,8 @@ describe('NumberField', function () {
   it.each`
     Name              | props | locale     | keystrokes                   | expected
     ${'US Euros'}     | ${{}} | ${'en-US'} | ${['1', ',', '0', '0', '0']} | ${['1', '1,', '1,0', '1,00', '1,000']}
-    ${'French Euros'} | ${{}} | ${'fr-FR'} | ${['1', '.', '0', '0', '0']} | ${['1', '1.', '1.0', '1.00', '1.000']}
-    ${'Arabic Euros'} | ${{}} | ${'ar-AE'} | ${['١', '.', '0', '0', '0']} | ${['١', '١٬', '١٬٠', '١٬٠٠', '١٬٠٠٠']}
+    ${'French Euros'} | ${{}} | ${'fr-FR'} | ${['1', ' ', '0', '0', '0']} | ${['1', '1 ', '1 0', '1 00', '1 000']}
+    ${'Arabic Euros'} | ${{}} | ${'ar-AE'} | ${['١', '.', '٠', '٠', '٠']} | ${['١', '١٬', '١٬٠', '١٬٠٠', '١٬٠٠٠']}
   `('$Name typing group characters works', ({props, locale, keystrokes, expected}) => {
     let {textField} = renderNumberField({showStepper: true, onChange: onChangeSpy, ...props}, locale);
 

@@ -288,6 +288,7 @@ export function useNumberFieldState(
       result = result.replace(String.fromCharCode(1548), decimal);
       result = result.replace('.', group);
     }
+    // not sure what to do about fr-FR group character being   (char code 8239)
 
     setInputValue(result);
     return result !== inputValue;
