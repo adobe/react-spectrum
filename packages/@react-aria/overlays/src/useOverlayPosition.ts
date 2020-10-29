@@ -148,7 +148,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     return () => {
       visualViewport?.removeEventListener('resize', onResize);
     };
-  }, [updatePosition])
+  }, [updatePosition]);
 
   let close = useCallback(() => {
     if (!isResizing.current) {
