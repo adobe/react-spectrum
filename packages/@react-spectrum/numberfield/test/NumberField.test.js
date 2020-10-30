@@ -12,6 +12,7 @@
 
 import {act, fireEvent, render, within} from '@testing-library/react';
 import {chain} from '@react-aria/utils';
+import messages from '../../../@react-aria/numberfield/intl/*';
 import {NumberField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
@@ -19,7 +20,6 @@ import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
-import messages from '../../../@react-aria/numberfield/intl/*';
 
 // for some reason hu-HU isn't supported in jsdom/node
 let locales = Object.keys(messages).map(locale => locale.replace('.json', '')).filter(locale => locale !== 'hu-HU');
