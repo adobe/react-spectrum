@@ -19,6 +19,10 @@ import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
+import messages from '../../../@react-aria/numberfield/intl/*';
+
+// for some reason hu-HU isn't supported in jsdom/node
+let locales = Object.keys(messages).map(locale => locale.replace('.json', '')).filter(locale => locale !== 'hu-HU');
 
 // a note for these tests, text selection is not working in jsdom, so on focus will not select the value already
 // in the numberfield
@@ -1160,7 +1164,7 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('aria-readonly', 'true');
     expect(textField).toHaveAttribute('aria-required', 'true');
     expect(textField).toHaveAttribute('aria-disabled', 'true');
-    expect(textField).toHaveAttribute('role', 'spinbutton');
+    expect(textField).toHaveAttribute('role', 'textfield');
 
     // TODO: check aria-controls
     expect(incrementButton).toHaveAttribute('aria-label', 'Increment');
@@ -1246,8 +1250,9 @@ describe('NumberField', function () {
     ${'NumberField'} | ${{label: 'this is the stepper that never ends'}}
   `('$Name supports labels', ({props}) => {
     let {getByLabelText, getByRole} = render(<Provider theme={theme} locale="en-US"><NumberField {...props} /></Provider>);
-    let spinButton = getByRole('spinbutton');
+    let spinButton = getByRole('textfield');
     expect(getByLabelText(props.label)).toBe(spinButton);
+    expect(spinButton).toHaveAttribute('aria-roledescription', 'Spin button number field');
   });
 
   it.each`
@@ -1325,5 +1330,45 @@ describe('NumberField', function () {
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '٤٢');
     expect(onChangeSpy).toHaveBeenCalledWith(42);
+  });
+
+  it.each(locales)('%s formats', (locale) => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: -52, formatOptions: {style: 'currency', currency: 'USD'}}, locale);
+
+    let formatter = new Intl.NumberFormat(locale, {style: 'currency', currency: 'USD'});
+    expect(textField).toHaveAttribute('value', formatter.format(-52));
+  });
+
+  it.each(locales)('%s can have latin numerals entered', (locale) => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD'}}, locale);
+
+    act(() => {textField.focus();});
+    typeText(textField, '21');
+    act(() => {textField.blur();});
+
+    let formatter = new Intl.NumberFormat(locale + '-u-nu-latn', {style: 'currency', currency: 'USD'});
+    expect(textField).toHaveAttribute('value', formatter.format(21));
+  });
+
+  it.each(locales)('%s can have arabic numerals entered', (locale) => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD'}}, locale);
+
+    act(() => {textField.focus();});
+    typeText(textField, '٢١');
+    act(() => {textField.blur();});
+
+    let formatter = new Intl.NumberFormat(locale + '-u-nu-arab', {style: 'currency', currency: 'USD'});
+    expect(textField).toHaveAttribute('value', formatter.format(21));
+  });
+
+  it.each(locales)('%s can have hanidec numerals entered', (locale) => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD'}}, locale);
+
+    act(() => {textField.focus();});
+    typeText(textField, '二一');
+    act(() => {textField.blur();});
+
+    let formatter = new Intl.NumberFormat(locale + '-u-nu-hanidec', {style: 'currency', currency: 'USD'});
+    expect(textField).toHaveAttribute('value', formatter.format(21));
   });
 });

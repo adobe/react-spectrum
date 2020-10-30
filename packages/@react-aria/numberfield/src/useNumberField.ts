@@ -150,8 +150,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
 
   let onWheel = useCallback((e) => {
     // If the input isn't supposed to receive input, do nothing.
-    // If the ctrolKey is pressed, this is a zoom event, do nothing.
-    // TODO: add focus
+    // If the ctrlKey is pressed, this is a zoom event, do nothing.
     if (isDisabled || isReadOnly || e.ctrlKey) {
       return;
     }
@@ -237,7 +236,17 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       onKeyDown: setSelection
     }, ref);
 
-  const inputFieldProps = mergeProps(spinButtonProps, inputProps, focusProps, {onWheel});
+  const inputFieldProps = mergeProps(
+    spinButtonProps,
+    inputProps,
+    focusProps,
+    {
+      onWheel,
+      // override the spinbutton role, we can't focus a spin button with
+      role: 'textfield',
+      'aria-roledescription': formatMessage('Spin button number field')
+    }
+  );
   return {
     numberFieldProps: {
       role: 'group',

@@ -48,7 +48,7 @@ export function useNumberParser(numeralOverride): NumberParser {
       .replace(numberData.current.decimal, '.')
       .replace(numberData.current.numeral, numberData.current.index);
     return value ? +value : NaN;
-  }, []);
+  }, [locale]);
 
   return  {parse};
 }

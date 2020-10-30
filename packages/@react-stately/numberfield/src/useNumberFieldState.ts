@@ -62,7 +62,7 @@ export function useNumberFieldState(
   let inputValueFormatter = useNumberFormatter(formatOptions, numeralOverride);
   let intlOptions = useMemo(() => inputValueFormatter.resolvedOptions(), [inputValueFormatter]);
 
-  let isMaxRange = useMemo(() => minValue === Number.MIN_SAFE_INTEGER && maxValue === Number.MAX_SAFE_INTEGER, [minValue, maxValue]);
+  let isMaxRange = minValue === Number.MIN_SAFE_INTEGER && maxValue === Number.MAX_SAFE_INTEGER;
 
   // TODO should all of this kind of logic be moved into useNumberParser?
   let symbols = useMemo(() => {
@@ -223,6 +223,9 @@ export function useNumberFieldState(
     let parts = inputValueFormatter.formatToParts(value);
     let strippedValue = parts.map((part) => {
       // list from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/formatToParts
+      // this is meant to turn the formatted number into something that the parser can handle
+      // unfortunately not every locale acts the same, in tr-TR-u-nu-arab, a comma is the decimal and the number parser can't handle that
+      // so we always return a '.' in the decimal case. If done for all, then latin doesn't parse correctly :(
       switch (part.type) {
         case 'currency':
         case 'nan':
@@ -235,6 +238,9 @@ export function useNumberFieldState(
         case 'minusSign':
         case 'plusSign':
         case 'decimal':
+          if (currentNumeralSystem === 'arab') {
+            return '.';
+          }
         case 'fraction':
         case 'integer':
         default:

@@ -1,5 +1,7 @@
 {
   "Decrement": "Minska",
   "Enter a number": "Ange ett tal",
-  "Increment": "Öka"
+  "Increment": "Öka",
+  "Empty": "Empty",
+  "Spin button number field": "Spin button number field"
 }
