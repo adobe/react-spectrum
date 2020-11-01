@@ -1485,8 +1485,14 @@ describe('ComboBox', function () {
   describe('controlled combobox', function () {
     describe('controlled by both selectedKey and inputValue', function () {
       it('does not update state', function () {
-        let {getByRole} = renderComboBox({selectedKey: '2', inputValue: 'T', isOpen: true});
+        let {getByRole} = renderComboBox({selectedKey: '2', inputValue: 'T'});
         let combobox = getByRole('combobox');
+        let button = getByRole('button');
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
 
         expect(combobox.value).toBe('T');
         typeText(combobox, 'w');
@@ -1553,8 +1559,14 @@ describe('ComboBox', function () {
 
     describe('controlled by selectedKey', function () {
       it('updates inputValue state but not selectedKey', function () {
-        let {getByRole} = renderComboBox({selectedKey: '2', isOpen: true});
+        let {getByRole} = renderComboBox({selectedKey: '2'});
         let combobox = getByRole('combobox');
+        let button = getByRole('button');
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
 
         expect(combobox.value).toBe('Two');
         expect(onInputChange).toHaveBeenLastCalledWith('Two');
@@ -1609,8 +1621,14 @@ describe('ComboBox', function () {
 
     describe('controlled by inputValue', function () {
       it('updates selectedKey but not not inputValue', function () {
-        let {getByRole} = renderComboBox({defaultSelectedKey: '3', inputValue: 'T', isOpen: true});
+        let {getByRole} = renderComboBox({defaultSelectedKey: '3', inputValue: 'T'});
         let combobox = getByRole('combobox');
+        let button = getByRole('button');
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
 
         expect(combobox.value).toBe('T');
 
@@ -1667,7 +1685,7 @@ describe('ComboBox', function () {
 
         let {getByRole} = render(
           <Provider theme={theme}>
-            <ComboBox items={customFilterItems} label="Combobox" isOpen>
+            <ComboBox items={customFilterItems} label="Combobox">
               {(item) => <Item>{item.name}</Item>}
             </ComboBox>
           </Provider>
@@ -1678,6 +1696,13 @@ describe('ComboBox', function () {
         });
 
         let combobox = getByRole('combobox');
+        let button = getByRole('button');
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
         expect(combobox.value).toBe('');
 
         let listbox = getByRole('listbox');
