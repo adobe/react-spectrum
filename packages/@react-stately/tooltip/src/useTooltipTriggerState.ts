@@ -100,7 +100,7 @@ export function useTooltipTriggerState(props: TooltipTriggerProps): TooltipTrigg
         globalWarmUpTimeout = null;
         globalWarmedUp = true;
         showTooltip();
-      }, TOOLTIP_DELAY);
+      }, delay);
     } else if (!isOpen) {
       showTooltip();
     }
