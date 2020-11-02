@@ -172,7 +172,7 @@ export function useMove(props: MoveEvents): MoveResult {
       };
     }
 
-    let triggetKeyboardMove = (deltaX: number, deltaY: number) => {
+    let triggerKeyboardMove = (deltaX: number, deltaY: number) => {
       start();
       move('keyboard', deltaX, deltaY);
       end('keyboard');
@@ -184,25 +184,25 @@ export function useMove(props: MoveEvents): MoveResult {
         case 'ArrowLeft':
           e.preventDefault();
           e.stopPropagation();
-          triggetKeyboardMove(-1, 0);
+          triggerKeyboardMove(-1, 0);
           break;
         case 'Right':
         case 'ArrowRight':
           e.preventDefault();
           e.stopPropagation();
-          triggetKeyboardMove(1, 0);
+          triggerKeyboardMove(1, 0);
           break;
         case 'Up':
         case 'ArrowUp':
           e.preventDefault();
           e.stopPropagation();
-          triggetKeyboardMove(0, -1);
+          triggerKeyboardMove(0, -1);
           break;
         case 'Down':
         case 'ArrowDown':
           e.preventDefault();
           e.stopPropagation();
-          triggetKeyboardMove(0, 1);
+          triggerKeyboardMove(0, 1);
           break;
       }
     };
