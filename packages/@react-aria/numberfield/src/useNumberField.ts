@@ -164,17 +164,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   }, [isReadOnly, isDisabled, decrement, increment, direction]);
 
   /**
-   * General outline for figuring out what to parse in on change
-   * use previous formatted text that was in the input
-   * new character is typed, match 'parts' from format to parts in previous text
-   * the first 'part' that's an integer to the last 'part' that's an integer or fraction, minus any 'groups' should be the new number we want to parse (not sure about minus sign vs parens).
-   */
-
-  /**
-   * General outline for cursor position
-   * focus, select everything from first 'part' that's an integer to last 'part' that's integer or fraction
-   * after typing a character, place cursor after that character, helps to know previous position, maybe get from keyup? Or maybe keydown, though not optimal
-   * what happens if a selection is made and a chunk is deleted or replaced out of the number? What if it includes the currency symbol or one paren out of two used in accounting representation.
+   * This block determines the inputMode, if hasDecimal then 'decimal', otherwise 'numeric'.
    */
   let numberFormatter = useNumberFormatter(formatOptions);
   let intlOptions = useMemo(() => numberFormatter.resolvedOptions(), [numberFormatter]);

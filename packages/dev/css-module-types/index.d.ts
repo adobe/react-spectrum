@@ -18,21 +18,3 @@ declare module '*.css' {
   const content: CSSModule;
   export default content;
 }
-
-declare namespace Intl {
-  interface NumberFormatOptions {
-    currencySign?: string
-  }
-  interface ResolvedNumberFormatOptions {
-    currencySign?: string
-  }
-  // eslint-disable-next-line no-undef
-  type NumberFormatPartTypesExtension = NumberFormatPartTypes | 'unit'
-  interface NumberFormatPartExtension {
-    type: NumberFormatPartTypesExtension,
-    value: string
-  }
-  interface NumberFormat {
-    formatToParts(number?: number): NumberFormatPartExtension[]
-  }
-}

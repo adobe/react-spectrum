@@ -164,7 +164,6 @@ export function useSpinButton(
       role: 'spinbutton',
       'aria-valuenow': !isNaN(value) ? value : null,
       // by having a message, this prevents iOS VO from reading off '50%' for an empty field
-      // i'm not sure what other cases there are, where we want the spin button to read it
       'aria-valuetext': textValue === '' ? formatMessage('Empty') : textValue,
       'aria-valuemin': minValue,
       'aria-valuemax': maxValue,

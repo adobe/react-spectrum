@@ -27,7 +27,6 @@ import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
 import {useProviderProps} from '@react-spectrum/provider';
 
-// TODO: where should ref go
 function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
@@ -119,7 +118,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
       </div>
     </FocusRing>
   );
-  // how to ignore a right click on the stepper buttons to prevent focus of just them
+  // TODO: how to ignore a right click on the stepper buttons to prevent focus of just them
 
   if (label) {
     let labelWrapperClass = classNames(
