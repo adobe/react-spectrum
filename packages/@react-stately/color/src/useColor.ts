@@ -10,6 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useColorSlider';
-export * from './useColorWheel';
-export * from './useHexColorField';
+import {Color} from './Color';
+import {ColorInput} from '@react-types/color';
+import {useMemo} from 'react';
+
+export function useColor(value: ColorInput) {
+  return useMemo(() => {
+    if (typeof value === 'string') {
+      try {
+        return new Color(value);
+      } catch (err) {
+        return undefined;
+      }
+    }
+    return value;
+  }, [value]);
+}

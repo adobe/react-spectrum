@@ -69,6 +69,10 @@ export class Color {
     }
   }
 
+  toHexInt(): number {
+    return this.value.toRGB().toInt();
+  }
+
   getChannelValue(channel: ColorChannel): number {
     if (channel in this.value) {
       return this.value[channel];
@@ -111,6 +115,7 @@ interface ColorValue {
   toRGB(): ColorValue,
   toHSB(): ColorValue,
   toHSL(): ColorValue,
+  toInt(): number,
   toString(format: ColorFormat | 'css'): string,
   clone(): ColorValue
 }
@@ -162,6 +167,9 @@ class RGBColor implements ColorValue {
     }
   }
 
+  toInt() {
+    return this.red << 16 | this.green << 8 | this.blue;
+  }
 
   toRGB(): ColorValue {
     return this;
@@ -209,6 +217,10 @@ class HSBColor implements ColorValue {
       default:
         throw new Error('Unsupported color format: ' + format);
     }
+  }
+
+  toInt(): number {
+    throw new Error('Not implemented');
   }
 
   toRGB(): ColorValue {
@@ -274,6 +286,10 @@ class HSLColor implements ColorValue {
       default:
         throw new Error('Unsupported color format: ' + format);
     }
+  }
+
+  toInt(): number {
+    throw new Error('Not implemented');
   }
 
   toRGB(): ColorValue {
