@@ -38,7 +38,7 @@ describe('useHexColorField', function () {
     expect(inputFieldProps.id).toBeTruthy();
     expect(inputFieldProps.role).toBe('spinbutton');
     expect(inputFieldProps['aria-valuenow']).toBeNull();
-    expect(inputFieldProps['aria-valuetext']).toBeNull();
+    expect(inputFieldProps['aria-valuetext']).toBe('Empty');
     expect(inputFieldProps['aria-valuemin']).toBe(0x000000);
     expect(inputFieldProps['aria-valuemax']).toBe(0xFFFFFF);
     expect(inputFieldProps['aria-required']).toBeNull();
@@ -77,12 +77,12 @@ describe('useHexColorField', function () {
     let {inputFieldProps} = renderHexColorFieldHook({validationState: 'invalid'});
     expect(inputFieldProps['aria-invalid']).toBe(true);
   });
-  
+
   it('should return prop for required', function () {
     let {inputFieldProps} = renderHexColorFieldHook({isRequired: true});
     expect(inputFieldProps['aria-required']).toBe(true);
   });
-  
+
   it('should return prop for readonly', function () {
     let {inputFieldProps} = renderHexColorFieldHook({isReadOnly: true});
     expect(inputFieldProps['aria-readonly']).toBe(true);

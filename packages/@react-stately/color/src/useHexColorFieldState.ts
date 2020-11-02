@@ -34,10 +34,9 @@ export function useHexColorFieldState(
     step = 1,
     value,
     defaultValue,
-    onChange,
-    validationState
+    onChange
   } = props;
-  
+
   let initialValue = useColor(value);
   let initialDefaultValue = useColor(defaultValue);
   let [colorValue, setColorValue] = useControlledState<Color>(initialValue, initialDefaultValue, onChange);
@@ -98,8 +97,7 @@ export function useHexColorFieldState(
     increment,
     incrementToMax,
     decrement,
-    decrementToMin,
-    validationState
+    decrementToMin
   };
 }
 
@@ -107,7 +105,7 @@ function addColorValue(color: Color, step: number) {
   let newColor = color ? color : MIN_COLOR;
   let colorInt = newColor.toHexInt();
   let newColorString = color ? color.toString('hex') : '';
-  
+
   let clampInt = Math.min(Math.max(colorInt + step, MIN_COLOR_INT), MAX_COLOR_INT);
   if (clampInt !== colorInt) {
     newColorString = `#${clampInt.toString(16).padStart(6, '0').toUpperCase()}`;
