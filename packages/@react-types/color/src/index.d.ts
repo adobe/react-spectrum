@@ -10,7 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DimensionValue, DOMProps, LabelableProps, StyleProps} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  AriaValidationProps,
+  DimensionValue,
+  DOMProps,
+  FocusableDOMProps,
+  FocusableProps,
+  InputBase,
+  LabelableProps,
+  SpectrumLabelableProps,
+  StyleProps,
+  TextInputBase,
+  TextInputDOMProps,
+  Validation
+} from '@react-types/shared';
 import {BaseSliderProps} from '@react-types/slider';
 import {Color} from '@react-stately/color';
 
@@ -19,6 +33,21 @@ export type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hs
 
 /** A list of color channels. */
 export type ColorChannel = 'hue' | 'saturation' | 'brightness' | 'lightness' | 'red' | 'green' | 'blue' | 'alpha';
+
+export type ColorInput = string | Color;
+
+export interface HexColorFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
+  value?: ColorInput,
+  defaultValue?: ColorInput,
+  onChange?: (color: Color) => void,
+  step?: number
+}
+
+export interface AriaHexColorFieldProps extends HexColorFieldProps, AriaLabelingProps, FocusableDOMProps, TextInputDOMProps, AriaValidationProps {}
+
+export interface SpectrumHexColorFieldProps extends AriaHexColorFieldProps, SpectrumLabelableProps, StyleProps {
+  isQuiet?: boolean
+}
 
 export interface ColorWheelProps extends BaseSliderProps, Omit<StyleProps, 'width' | 'height'> {
   step?: number,
