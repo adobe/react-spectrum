@@ -10,23 +10,65 @@
  * governing permissions and limitations under the License.
  */
 
-import {useCallback, useEffect, useRef} from 'react';
+import {useCallback, useEffect, useMemo, useRef} from 'react';
 import {useLocale} from './context';
 
 type NumberParser = {
-  parse: (value:string) => number
+  parse: (value:string) => number,
+  symbols: {
+    minusSign: string,
+    plusSign: string,
+    decimal: string,
+    validCharacters: string,
+    literals: string,
+    group: string
+  }
 }
 
 /**
  * Provides localized number parsing for the current locale.
  * Idea from https://observablehq.com/@mbostock/localized-number-parsing.
  */
-export function useNumberParser(numeralOverride): NumberParser {
+export function useNumberParser(formatter, numeralOverride): NumberParser {
   let {locale} = useLocale();
   if (numeralOverride && locale.indexOf('-u-nu-') === -1) {
     locale = `${locale}-${numeralOverride}`;
   }
   const numberData = useRef({group: null, decimal: null, numeral: null, index: null});
+
+  let intlOptions = useMemo(() => formatter.resolvedOptions(), [formatter]);
+  let symbols = useMemo(() => {
+    // Get the minus sign of the current locale to filter the input value
+    // Automatically updates the minus sign when numberFormatter changes
+    // won't work for currency accounting, but we have validCharacters for that in the pattern
+    let allParts = formatter.formatToParts(-1000.1);
+    let minusSign = allParts.find(p => p.type === 'minusSign')?.value;
+    let posAllParts = formatter.formatToParts(1000.1);
+    let plusSign = posAllParts.find(p => p.type === 'plusSign')?.value;
+
+    let decimal = allParts.find(p => p.type === 'decimal')?.value;
+    let group = allParts.find(p => p.type === 'group')?.value;
+    // this is a string ready for a regex so we can identify allowed to type characters, signs are excluded because
+    // the user needs to decide if it's allowed based on min/max values which parsing doesn't care about
+    let validCharacters = allParts.filter(p => {
+      if (p.type === 'decimal' && intlOptions.maximumFractionDigits === 0) {
+        return false;
+      }
+      if (p.type === 'fraction' || p.type === 'integer' || p.type === 'minusSign' || p.type === 'plusSign') {
+        return false;
+      }
+      return true;
+    }).map(p => p.value).join('');
+    // this set is also for a regex, it's all literals that might be in the string we want to eventually parse that
+    // don't contribute to the numerical value
+    let literals = allParts.filter(p => {
+      if (p.type === 'decimal' || p.type === 'fraction' || p.type === 'integer' || p.type === 'minusSign' || p.type === 'plusSign') {
+        return false;
+      }
+      return true;
+    }).map(p => p.value).join('');
+    return {minusSign, plusSign, decimal, validCharacters, literals, group};
+  }, [formatter, intlOptions]);
 
   useEffect(() => {
     const parts = new Intl.NumberFormat(locale).formatToParts(12345.6);
@@ -47,8 +89,10 @@ export function useNumberParser(numeralOverride): NumberParser {
       .replace(numberData.current.group, '')
       .replace(numberData.current.decimal, '.')
       .replace(numberData.current.numeral, numberData.current.index);
-    return value ? +value : NaN;
+
+    let newValue = value ? +value : NaN;
+    return newValue;
   }, [locale]);
 
-  return  {parse};
+  return  {parse, symbols};
 }

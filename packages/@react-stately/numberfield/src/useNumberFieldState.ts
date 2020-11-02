@@ -14,7 +14,7 @@ import {clamp} from '@react-aria/utils';
 import {NumberFieldProps} from '@react-types/numberfield';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
-import {useNumberFormatter, useNumberParser} from '@react-aria/i18n';
+import {useLocale, useNumberFormatter, useNumberParser} from '@react-aria/i18n';
 
 export interface NumberFieldState {
   setValue: (val: number | string) => boolean,
@@ -40,6 +40,7 @@ const CURRENCY_SIGN_REGEX = new RegExp('^\\(.*\\)$');
 export function useNumberFieldState(
   props: NumberFieldProps
 ): NumberFieldState {
+  let {locale} = useLocale();
   let {minValue = Number.MIN_SAFE_INTEGER, maxValue = Number.MAX_SAFE_INTEGER, step, formatOptions, value, defaultValue, onChange} = props;
   let [currentNumeralSystem, setCurrentNumeralSystem] = useState<string | undefined>();
 
@@ -58,44 +59,15 @@ export function useNumberFieldState(
       numeralOverride = '';
       break;
   }
-  let numberParser = useNumberParser(numeralOverride);
   let inputValueFormatter = useNumberFormatter(formatOptions, numeralOverride);
+  let numberParser = useNumberParser(inputValueFormatter, numeralOverride);
   let intlOptions = useMemo(() => inputValueFormatter.resolvedOptions(), [inputValueFormatter]);
 
   let isMaxRange = minValue === Number.MIN_SAFE_INTEGER && maxValue === Number.MAX_SAFE_INTEGER;
 
-  // TODO should all of this kind of logic be moved into useNumberParser?
-  let symbols = useMemo(() => {
-    // Get the minus sign of the current locale to filter the input value
-    // Automatically updates the minus sign when numberFormatter changes
-    // won't work for currency accounting, but we have validCharacters for that in the pattern
-    let allParts = inputValueFormatter.formatToParts(-1000.1);
-    let posAllParts = inputValueFormatter.formatToParts(1000.1);
-    let minusSign = allParts.find(p => p.type === 'minusSign')?.value;
-    let plusSign = posAllParts.find(p => p.type === 'plusSign')?.value;
-    minusSign = minValue >= 0 || !minusSign ? '' : minusSign;
-    plusSign = maxValue <= 0 || !plusSign ? '' : plusSign;
-    let decimal = allParts.find(p => p.type === 'decimal')?.value;
-    let group = allParts.find(p => p.type === 'group')?.value;
-    // this is a string ready for any regex so we can identify allowed characters, minus is excluded because of the way it can be handled
-    let validCharacters = allParts.reduce((chars, p) => {
-      if (p.type === 'decimal' && intlOptions.maximumFractionDigits === 0) {
-        return chars;
-      }
-      if (p.type === 'fraction' || p.type === 'integer' || p.type === 'minusSign' || p.type === 'plusSign') {
-        return chars;
-      }
-      return chars + p.value;
-    }, '');
-    let literals = allParts.reduce((chars, p) => {
-      if (p.type === 'decimal' || p.type === 'fraction' || p.type === 'integer' || p.type === 'minusSign' || p.type === 'plusSign') {
-        return chars;
-      }
-      return chars + p.value;
-    }, '');
-    return {minusSign, plusSign, decimal, validCharacters, literals, group};
-  }, [inputValueFormatter, minValue, maxValue, intlOptions]);
-  let {minusSign, plusSign, decimal, validCharacters, literals, group} = symbols;
+  let {minusSign, plusSign, decimal, validCharacters, literals, group} = numberParser.symbols;
+  minusSign = minValue >= 0 || !minusSign ? '' : minusSign;
+  plusSign = maxValue <= 0 || !plusSign ? '' : plusSign;
 
   // javascript doesn't recognize NaN === NaN, so multiple onChanges will get fired if we don't ignore consecutive ones
   // in addition, if the input starts with a number, then we'll count that as the last val dispatched, we only need to calculate it the first time
@@ -115,6 +87,8 @@ export function useNumberFieldState(
     }
     lastValDispatched.current = val;
   }, [lastValDispatched, onChange]);
+
+
   let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, smartOnChange);
 
   let initialInputValue = isNaN(numberValue) ? '' : inputValueFormatter.format(numberValue);
@@ -161,12 +135,6 @@ export function useNumberFieldState(
     });
   }, [setNumberValue, minValue, maxValue, step, isMaxRange, intlOptions]);
 
-  let incrementToMax = useCallback(() => {
-    if (maxValue != null) {
-      setNumberValue(clamp(maxValue, minValue, maxValue, step));
-    }
-  }, [maxValue, setNumberValue, minValue, step]);
-
   let decrement = useCallback(() => {
     setNumberValue((previousValue) => {
       let prev = previousValue;
@@ -195,27 +163,22 @@ export function useNumberFieldState(
     });
   }, [setNumberValue, minValue, maxValue, step, isMaxRange, intlOptions]);
 
+  let incrementToMax = useCallback(() => {
+    if (maxValue != null) {
+      setNumberValue(clamp(maxValue, minValue, maxValue, step));
+    }
+  }, [maxValue, setNumberValue, minValue, step]);
+
   let decrementToMin = useCallback(() => {
     if (minValue != null) {
       setNumberValue(clamp(minValue, minValue, maxValue, step));
     }
   }, [minValue, setNumberValue, maxValue, step]);
 
-  let determineNumeralSystem = (value: string): string => {
-    for (let i in [...value]) {
-      let char = value[i];
-      let system = Object.keys(numberingSystems).find(key => numberingSystems[key].some(numeral => numeral === char));
-      if (system) {
-        return system;
-      }
-    }
-    return undefined;
-  };
-
-  // not sure best way to go about this given that numbers can have
+  // given that numbers can have
   // max/min sigfigs and decimals, and some of the
-  // formats have defaults, like currency
-  // so take the approach of formatting our value
+  // formats have defaults, like currency,
+  // take the approach of formatting our value
   // then joining together the relevant parts
   // then parsing that joined result back to a number
   // this should round us as the formatter does
@@ -252,7 +215,7 @@ export function useNumberFieldState(
       result = -1 * result;
     }
     // because the {style: 'percent'} adds two zeros to the end, we need to divide by 100 in that very specific case
-    // otherwise we'll accidentally add 2 zeros when we format for real
+    // otherwise we'll accidentally add yet another 2 zeros when we format for real
     // use * 100 represented this way in order to avoid javascript giving 2.109999999 in place of 2.11
     if (intlOptions?.style === 'percent') {
       result = result / 1000 * 10;
@@ -260,13 +223,7 @@ export function useNumberFieldState(
     return result;
   };
 
-  let replaceAllButFirstOccurrence = (val: string, char: string) => {
-    let first = val.indexOf(char);
-    let prefix = val.substring(0, first + 1);
-    let suffix = val.substring(first + 1).replace(char, '');
-    return prefix + suffix;
-  };
-
+  // this remove any not allowed characters from the input value
   let cleanInputValue = useMemo(() => {
     let numerals = numberingSystems[currentNumeralSystem || 'latin'].join('');
     if (!currentNumeralSystem) {
@@ -285,16 +242,23 @@ export function useNumberFieldState(
   let setValue = (value: string): boolean => {
     let numeralSystem = determineNumeralSystem(value);
     setCurrentNumeralSystem(numeralSystem);
-    // replacements
-    // in arab numeral system, their decimal character is 1643, but most keyboards don't type that
-    // instead they use the , (44) character or apparently the (1548) character
+    // replacements - need to do them as early as possible
+    // Note to anyone who finds a bug with it, Bulgarian US Dollar currency formatting has decimals in the currency symbol,
+    // we need to be careful not to remove those.
+    // In arab numeral system, their decimal character is 1643, but most keyboards don't type that
+    // instead they use the , (44) character or apparently the (1548) character.
     let result = value;
     if (numeralSystem === 'arab') {
       result = result.replace(',', decimal);
       result = result.replace(String.fromCharCode(1548), decimal);
       result = result.replace('.', group);
     }
-    // not sure what to do about fr-FR group character being char code 8239
+
+    // fr-FR group character is char code 8239, but that's not a key on the french keyboard,
+    // so allow 'period' as a group char and replace it with a space
+    if (locale === 'fr-FR') {
+      result = result.replace('.', String.fromCharCode(8239));
+    }
 
     setInputValue(result);
     return result !== inputValue;
@@ -380,8 +344,27 @@ function handleDecimalOperation(operator, value1, value2) {
   return result;
 }
 
+let replaceAllButFirstOccurrence = (val: string, char: string) => {
+  let first = val.indexOf(char);
+  let prefix = val.substring(0, first + 1);
+  let suffix = val.substring(first + 1).replace(char, '');
+  return prefix + suffix;
+};
+
+let determineNumeralSystem = (value: string): string => {
+  for (let i in [...value]) {
+    let char = value[i];
+    let system = Object.keys(numberingSystems).find(key => numberingSystems[key].some(numeral => numeral === char));
+    if (system) {
+      return system;
+    }
+  }
+  return undefined;
+};
+
 // eslint-disable-next-line jsdoc/require-description-complete-sentence
 /**
+ * These are handy examples of what formatToParts gives for anyone working on this file.
  * example -3500 in accounting
  * 0: {type: "literal", value: "("}
  * 1: {type: "currency", value: "€"}
