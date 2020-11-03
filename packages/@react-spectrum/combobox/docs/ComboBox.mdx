@@ -15,18 +15,18 @@ import packageData from '@react-spectrum/combobox/package.json';
 import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 
 ```jsx import
-  import Add from '@spectrum-icons/workflow/Add';
-  import Alert from '@spectrum-icons/workflow/Alert';
-  import Bell from '@spectrum-icons/workflow/Bell';
-  import {ComboBox, Item, Section} from '@react-spectrum/combobox';
-  import Draw from '@spectrum-icons/workflow/Draw';
-  import {Flex} from '@react-spectrum/layout';
-  import {Text} from '@react-spectrum/text';
+import Add from '@spectrum-icons/workflow/Add';
+import Alert from '@spectrum-icons/workflow/Alert';
+import Bell from '@spectrum-icons/workflow/Bell';
+import {ComboBox, Item, Section} from '@react-spectrum/combobox';
+import Draw from '@spectrum-icons/workflow/Draw';
+import {Flex} from '@react-spectrum/layout';
+import {Text} from '@react-spectrum/text';
 ```
 
 ---
 category: Pickers
-keywords: []
+keywords: [collections, dropdown]
 ---
 
 # ComboBox
@@ -41,7 +41,6 @@ keywords: []
  ]} />
 
 ## Example
-
 ```tsx example
 <ComboBox label="Favorite Animal">
   <Item key="red panda">Red Panda</Item>
@@ -246,7 +245,7 @@ accessibility. If the field is labeled by a separate element, an `aria-labelledb
 the `id` of the labeling element instead.
 
 ### Internationalization
-In order to internationalize a TextField, a localized string should be passed to the `label` or `aria-label` prop.
+In order to internationalize a ComboBox, a localized string should be passed to the `label` or `aria-label` prop.
 When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
 
 ## Selection
@@ -360,7 +359,7 @@ function Example() {
 ## Events
 ComboBox supports selection via mouse, keyboard, and touch. You can handle all of these via the `onSelectionChange`
 prop. ComboBox will pass the selected `key` to the `onSelectionChange` handler.
-Additionally, ComboBox also accepts an `onInputChange` prop which is triggered whenever the value is edited by the user, whether through typing or option
+Additionally, ComboBox accepts an `onInputChange` prop which is triggered whenever the value is edited by the user, whether through typing or option
 selection.
 
 The example below uses `onSelectionChange` and `onInputChange` to update the selection and input value stored in React state.
@@ -474,15 +473,14 @@ function Example() {
 ```
 
 ## Custom Filtering
-By default, ComboBox uses a "contains" filtering strategy when deciding what items to display in the dropdown menu. This filtering strategy can be overwritten
-// TODO, talk about the default filter strategy and how to set own,
+By default, ComboBox uses a string "contains" filtering strategy when deciding what items to display in the dropdown menu. This filtering strategy can be overwritten
+by filtering the list of items yourself and passing the filtered list to the ComboBox via the `items` prop.
+
+The example below uses a string "startsWith" filter function obtained from `react-aria`s `useFilter` hook to display items that start with the ComboBox's current input
+value only.
 
 ```tsx example
 function Example() {
-  let {startsWith} = useFilter({sensitivity: 'base'});
-  let [filterValue, setFilterValue] = React.useState('');
-  let filteredItems = React.useMemo(() => customFilterItems.filter(item => startsWith(item.name, filterValue)), [props.items, filterValue]);
-
   let options = [
     {id: 1, email: 'fake@email.com'},
     {id: 2, email: 'anotherfake@email.com'},
@@ -495,12 +493,16 @@ function Example() {
     {id: 9, email: 'subscribe@email.com'}
   ];
 
+  let {startsWith} = useFilter({sensitivity: 'base'});
+  let [filterValue, setFilterValue] = React.useState('');
+  let filteredItems = React.useMemo(() => options.filter(item => startsWith(item.name, filterValue)), [options, filterValue]);
+
   return (
     <ComboBox
       label="To:"
-      items={options}
+      items={filteredItems}
       value={filterValue}
-      onInputChange={setValue}
+      onInputChange={setFilterValue}
       placeholder="Enter recipient email"
       allowsCustomValue>
       {item => <Item>{item.email}</Item>}
@@ -509,13 +511,174 @@ function Example() {
 }
 ```
 
+## Trigger options
+By default, the ComboBox's menu is opened when the user types into the input field ("input"). There are two other supported modes: one where the menu opens when the ComboBox is focused ("focus") and
+the other where the menu only opens when the user clicks or taps on the ComboBox's field button ("manual"). These can be set by providing "focus" or "manual" to the `menuTrigger` prop.
+Guidelines on when to use a specific mode can be found [here](https://spectrum.adobe.com/page/combo-box/#Menu-trigger).
+
+```tsx example
+<ComboBox label="Select action" menuTrigger="focus">
+  <Item textValue="Add to queue">
+    <Add />
+    <Text>Add to queue</Text>
+    <Text slot="description">Add to current watch queue.</Text>
+  </Item>
+  <Item textValue="Add review">
+    <Draw />
+    <Text>Add review</Text>
+    <Text slot="description">Post a review for the episode.</Text>
+  </Item>
+    <Item textValue="Subscribe to series">
+    <Bell />
+    <Text>Subscribe to series</Text>
+    <Text slot="description">Add series to your subscription list and be notified when a new episode airs.</Text>
+  </Item>
+  <Item textValue="Report">
+    <Alert />
+    <Text>Report</Text>
+    <Text slot="description">Report an issue/violation.</Text>
+  </Item>
+</ComboBox>
+```
+```tsx example
+<ComboBox label="Select action" menuTrigger="manual">
+  <Item textValue="Add to queue">
+    <Add />
+    <Text>Add to queue</Text>
+    <Text slot="description">Add to current watch queue.</Text>
+  </Item>
+  <Item textValue="Add review">
+    <Draw />
+    <Text>Add review</Text>
+    <Text slot="description">Post a review for the episode.</Text>
+  </Item>
+    <Item textValue="Subscribe to series">
+    <Bell />
+    <Text>Subscribe to series</Text>
+    <Text slot="description">Add series to your subscription list and be notified when a new episode airs.</Text>
+  </Item>
+  <Item textValue="Report">
+    <Alert />
+    <Text>Report</Text>
+    <Text slot="description">Report an issue/violation.</Text>
+  </Item>
+</ComboBox>
+```
+
 ## Props
 
 <PropTable component={docs.exports.ComboBox} links={docs.links} />
 
 ## Visual options
 
-// add isQuiet, isDisabled, customWidth, label direction and alignment, menu open state, readonly?
+### Label alignment and position
+[View guidelines](https://spectrum.adobe.com/page/combo-box/#Label-position)
 
-### Sample Option
-[View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
+By default, the label is positioned above the ComboBox. The `labelPosition` prop can be used to position the label to the side.
+The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the ComboBox and "end" refers to the right most edge.
+For right-to-left (RTL) languages, this is flipped.
+
+```tsx example
+<ComboBox label="Favorite Animal" labelPosition="side" labelAlign="end">
+  <Item key="red panda">Red Panda</Item>
+  <Item key="cat">Cat</Item>
+  <Item key="dog">Dog</Item>
+  <Item key="aardvark">Aardvark</Item>
+  <Item key="kangaroo">Kangaroo</Item>
+  <Item key="snake">Snake</Item>
+</ComboBox>
+```
+
+### Quiet
+[View guidelines](https://spectrum.adobe.com/page/combo-box/#Quiet)
+
+```tsx example
+<ComboBox label="Favorite Animal" isQuiet>
+  <Item key="red panda">Red Panda</Item>
+  <Item key="cat">Cat</Item>
+  <Item key="dog">Dog</Item>
+  <Item key="aardvark">Aardvark</Item>
+  <Item key="kangaroo">Kangaroo</Item>
+  <Item key="snake">Snake</Item>
+</ComboBox>
+```
+
+### Disabled
+[View guidelines](https://spectrum.adobe.com/page/combo-box/#Disabled)
+
+```tsx example
+<ComboBox label="Favorite Animal" isDisabled>
+  <Item key="red panda">Red Panda</Item>
+  <Item key="cat">Cat</Item>
+  <Item key="dog">Dog</Item>
+  <Item key="aardvark">Aardvark</Item>
+  <Item key="kangaroo">Kangaroo</Item>
+  <Item key="snake">Snake</Item>
+</ComboBox>
+```
+
+### Read only
+[View guidelines](https://spectrum.adobe.com/page/combo-box/#Read-only)
+
+```tsx example
+<ComboBox label="Favorite Animal" isReadOnly>
+  <Item key="red panda">Red Panda</Item>
+  <Item key="cat">Cat</Item>
+  <Item key="dog">Dog</Item>
+  <Item key="aardvark">Aardvark</Item>
+  <Item key="kangaroo">Kangaroo</Item>
+  <Item key="snake">Snake</Item>
+</ComboBox>
+```
+
+### Custom widths
+[View guidelines](https://spectrum.adobe.com/page/combo-box/#Width)
+
+```tsx example
+<ComboBox label="Favorite Animal" width="size-6000">
+  <Item key="red panda">Red Panda</Item>
+  <Item key="cat">Cat</Item>
+  <Item key="dog">Dog</Item>
+  <Item key="aardvark">Aardvark</Item>
+  <Item key="kangaroo">Kangaroo</Item>
+  <Item key="snake">Snake</Item>
+</ComboBox>
+```
+
+### Menu direction
+```tsx example
+<ComboBox label="Favorite Animal" direction="top">
+  <Item key="red panda">Red Panda</Item>
+  <Item key="cat">Cat</Item>
+  <Item key="dog">Dog</Item>
+  <Item key="aardvark">Aardvark</Item>
+  <Item key="kangaroo">Kangaroo</Item>
+  <Item key="snake">Snake</Item>
+</ComboBox>
+```
+
+### Menu state
+The open state of the menu can be controlled via the `defaultOpen` and `isOpen` props.
+
+```tsx example
+function Example() {
+  let [open, setOpen] = React.useState(false);
+  let [favorite, setFavorite] = React.useState("red panda");
+
+  return (
+    <ComboBox
+      label="Favorite Animal"
+      isOpen={open}
+      onOpenChange={setOpen}
+      selectedKey={favorite}
+      onSelectionChange={selected => setFavorite(selected)}>
+      <Item key="red panda">Red Panda</Item>
+      <Item key="cat">Cat</Item>
+      <Item key="dog">Dog</Item>
+      <Item key="aardvark">Aardvark</Item>
+      <Item key="kangaroo">Kangaroo</Item>
+      <Item key="snake">Snake</Item>
+    </ComboBox>
+  );
+}
+```
