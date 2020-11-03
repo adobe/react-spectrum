@@ -20,11 +20,11 @@ let node = null;
 let clearTimeoutId = null;
 const LIVEREGION_TIMEOUT_DELAY = 1000;
 
-type TAriaLive = 'assertive' | 'off' | 'polite' | undefined;
+type AriaLive = 'assertive' | 'off' | 'polite';
 
-interface IMessageProps {
+interface MessageProps {
   message: string,
-  'aria-live': TAriaLive
+  'aria-live': AriaLive
 }
 
 /**
@@ -32,7 +32,7 @@ interface IMessageProps {
  */
 export function announce(
   message: string,
-  assertiveness: TAriaLive = 'assertive',
+  assertiveness: AriaLive = 'assertive',
   timeout = LIVEREGION_TIMEOUT_DELAY
 ) {
   ensureInstance(announcer => announcer.announce(message, assertiveness, timeout));
@@ -41,7 +41,7 @@ export function announce(
 /**
  * Stops all queued announcements.
  */
-export function clearAnnouncer(assertiveness: TAriaLive) {
+export function clearAnnouncer(assertiveness: AriaLive) {
   ensureInstance(announcer => announcer.clear(assertiveness));
 }
 
@@ -77,7 +77,7 @@ const LiveRegionAnnouncer = React.forwardRef((props, ref) => {
   let [assertiveMessage, setAssertiveMessage] = useState('');
   let [politeMessage, setPoliteMessage] = useState('');
 
-  let clear = (assertiveness: TAriaLive) => {
+  let clear = (assertiveness: AriaLive) => {
     if (!assertiveness || assertiveness === 'assertive') {
       setAssertiveMessage('');
     }
@@ -89,7 +89,7 @@ const LiveRegionAnnouncer = React.forwardRef((props, ref) => {
 
   let announce = (
     message, 
-    assertiveness: TAriaLive = 'assertive',
+    assertiveness: AriaLive = 'assertive',
     timeout = LIVEREGION_TIMEOUT_DELAY
   ) => {
     if (clearTimeoutId) {
@@ -123,7 +123,7 @@ const LiveRegionAnnouncer = React.forwardRef((props, ref) => {
   );
 });
 
-function MessageAlternator({message = '', 'aria-live': ariaLive}: IMessageProps) {
+function MessageAlternator({message = '', 'aria-live': ariaLive}: MessageProps) {
   let messagesRef = useRef(['', '']);
   let indexRef = useRef(0);
 
@@ -141,7 +141,7 @@ function MessageAlternator({message = '', 'aria-live': ariaLive}: IMessageProps)
   );
 }
 
-function MessageBlock({message = '', 'aria-live': ariaLive}: IMessageProps) {
+function MessageBlock({message = '', 'aria-live': ariaLive}: MessageProps) {
   return (
     <VisuallyHidden
       aria-live={ariaLive}
