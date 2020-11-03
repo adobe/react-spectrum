@@ -11,13 +11,51 @@
   align-self: stretch;
 }
 
-.label {
-  color: #8b8b8b;
+.label,
+div[style='isolation: isolate; color-scheme: light;'] .label  {
+  color: #707070;
 }
 
-.value {
+.value,
+div[style='isolation: isolate; color-scheme: light;'] .value {
   color: #585858;
   margin-left: auto;
+}
+
+div[style='isolation: isolate; color-scheme: dark;'] .label {
+  color: #b0b0b0;
+}
+
+div[style='isolation: isolate; color-scheme: dark;'] .value {
+  color: #9a9a9a;
+}
+
+div[style='isolation: isolate; color-scheme: dark;'] .label {
+  color: #b0b0b0;
+}
+
+div[style='isolation: isolate; color-scheme: dark;'] .value {
+  color: #9a9a9a;
+}
+
+@media screen and (prefers-color-scheme: light) {
+  div[style='isolation: isolate; color-scheme: light dark;'] .label {
+    color: #707070;
+  }
+  
+  div[style='isolation: isolate; color-scheme: light dark;'] .value {
+    color: #585858;
+  }
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  div[style='isolation: isolate; color-scheme: light dark;'] .label {
+    color: #b0b0b0;
+  }
+  
+  div[style='isolation: isolate; color-scheme: light dark;'] .value {
+    color: #9a9a9a;
+  }
 }
 
 .thumb {
@@ -42,12 +80,17 @@
   justify-content: center;
 }
 
+.thumbHandle label {
+  color: #707070;
+}
+
 .thumbFocusVisible .thumbHandle {
   box-shadow: 0 0 0 2px #f5f5f5, 0 0 0 4px #2c83eb;
 }
 
 .thumbFocused {
   border-color: #2c83eb;
+  z-index: 1;
 }
 
 .thumbDisabled {

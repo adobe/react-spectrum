@@ -12,14 +12,14 @@
 
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
-import {intlMessages, useSlider, useSliderThumb} from '@react-aria/slider';
 import React, {CSSProperties, HTMLAttributes, MutableRefObject, ReactNode, useRef} from 'react';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import {SpectrumBarSliderBase} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
-import {useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
+import {useNumberFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useSlider, useSliderThumb} from '@react-aria/slider';
 
 export interface SliderBaseChildArguments {
   inputRefs: MutableRefObject<undefined>[],
@@ -48,8 +48,6 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
   } = props;
 
   let {styleProps} = useStyleProps(otherProps);
-
-  let formatMessage = useMessageFormatter(intlMessages);
 
   // Assumes that DEFAULT_MIN_VALUE and DEFAULT_MAX_VALUE are both positive, this value needs to be passed to useSliderState, so
   // getThumbMinValue/getThumbMaxValue cannot be used here.
@@ -89,8 +87,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
       index: i,
       isDisabled: props.isDisabled,
       trackRef,
-      inputRef: inputRefs[i],
-      'aria-label': (count === 2 ? formatMessage(i === 0 ? 'minimum' : 'maximum') : undefined)
+      inputRef: inputRefs[i]
     }, state);
 
     inputProps[i] = v.inputProps;
@@ -156,8 +153,9 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
               aria-live="off"
               aria-labelledby={`${labelProps.id} ${inputProps[0].id}`}
               htmlFor={inputProps[0].id}>
-              {`${state.getThumbValueLabel(0)} – `}
+              {state.getThumbValueLabel(0)}
             </output>
+            {' – '}
             <output
               {...outputPressProps}
               aria-live="off"

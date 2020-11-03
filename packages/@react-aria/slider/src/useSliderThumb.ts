@@ -1,11 +1,13 @@
 import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import React, {ChangeEvent, HTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {sliderIds} from './utils';
 import {SliderState} from '@react-stately/slider';
 import {SliderThumbProps} from '@react-types/slider';
 import {useFocusable} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useMove} from '@react-aria/interactions';
 
 interface SliderThumbAria {
@@ -40,8 +42,19 @@ export function useSliderThumb(
     isDisabled,
     validationState,
     trackRef,
-    inputRef
+    inputRef,
+    'aria-label': ariaLabel
   } = opts;
+
+  // Provide minimum and maximum aria-label when there are more than one slider thumb.
+  let formatMessage = useMessageFormatter(intlMessages);
+  if (state.values.length === 2 && !ariaLabel) {
+    if (index === 0) {
+      ariaLabel = formatMessage('minimum');
+    } else if (index === 1) {
+      ariaLabel = formatMessage('maximum');
+    }
+  }
 
   let isVertical = opts.orientation === 'vertical';
 
@@ -51,6 +64,7 @@ export function useSliderThumb(
   let labelId = sliderIds.get(state);
   const {labelProps, fieldProps} = useLabel({
     ...opts,
+    'aria-label': ariaLabel,
     'aria-labelledby': `${labelId} ${opts['aria-labelledby'] ?? ''}`.trim()
   });
 
