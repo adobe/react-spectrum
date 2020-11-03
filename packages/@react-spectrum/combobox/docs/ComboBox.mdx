@@ -22,6 +22,7 @@ import {ComboBox, Item, Section} from '@react-spectrum/combobox';
 import Draw from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
 import {Text} from '@react-spectrum/text';
+import {useFilter} from '@react-aria/i18n';
 ```
 
 ---
@@ -80,13 +81,13 @@ function Example() {
 
   return (
     <>
+      <p>Topic id: {majorId}</p>
       <ComboBox
         label="Pick a engineering major"
         defaultItems={options}
         onSelectionChange={setMajorId}>
         {item => <Item>{item.name}</Item>}
       </ComboBox>
-      <p>Topic id: {majorId}</p>
     </>
   );
 }
@@ -162,6 +163,7 @@ function Example() {
 
   return (
     <ComboBox
+      width="size-3600"
       label="Pick a engineering major"
       defaultItems={options}
       placeholder="Search engineering majors">
@@ -391,6 +393,8 @@ function Example() {
 
   return (
     <>
+      <p>Current selected major id: {majorId}</p>
+      <p>Current input text: {value}</p>
       <ComboBox
         label="Pick a engineering major"
         defaultItems={options}
@@ -399,8 +403,6 @@ function Example() {
         onInputChange={onInputChange}>
         {item => <Item>{item.name}</Item>}
       </ComboBox>
-      <p>Current selected major id: {majorId}</p>
-      <p>Current input text: {value}</p>
     </>
   );
 }
@@ -459,6 +461,7 @@ function Example() {
 
   return (
     <ComboBox
+      width="size-3600"
       label="To:"
       validationState={isValid ? 'valid' : 'invalid'}
       defaultItems={options}
@@ -495,10 +498,11 @@ function Example() {
 
   let {startsWith} = useFilter({sensitivity: 'base'});
   let [filterValue, setFilterValue] = React.useState('');
-  let filteredItems = React.useMemo(() => options.filter(item => startsWith(item.name, filterValue)), [options, filterValue]);
+  let filteredItems = React.useMemo(() => options.filter(item => startsWith(item.email, filterValue)), [options, filterValue]);
 
   return (
     <ComboBox
+      width="size-3600"
       label="To:"
       items={filteredItems}
       value={filterValue}
