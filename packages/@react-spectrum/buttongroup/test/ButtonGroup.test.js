@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, render, within} from '@testing-library/react';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '../';
 import {Provider} from '@react-spectrum/provider';
-import React from 'react';
-import {render, within} from '@testing-library/react';
+import React, {useEffect, useRef} from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 
@@ -46,7 +46,6 @@ describe('ButtonGroup', function () {
     jest.clearAllMocks();
   });
 
-  // Skipping v2 tests since they don't work in the repo yet
   it.each`
     Name               | Component        | props
     ${'ButtonGroup'}   | ${ButtonGroup}   | ${{}}
@@ -124,5 +123,62 @@ describe('ButtonGroup', function () {
     expect(buttonGroup).toHaveAttribute('class', expect.stringContaining('spectrum-ButtonGroup--vertical'));
   });
 
+  describe('resizing', () => {
+    it('goes vertical if there is not enough room after buttongroup gets a new size', () => {
+      let setUp = ({buttonGroup, button1, button2, button3}) => {
+        // can't do anything about first render, so this starts with the resize
+        jest.spyOn(buttonGroup, 'offsetWidth', 'get').mockImplementationOnce(() => 88).mockImplementation(() => 90);
+        jest.spyOn(button1, 'offsetLeft', 'get').mockImplementation(() => 0);
+        jest.spyOn(button1, 'offsetWidth', 'get').mockImplementation(() => 30);
+        jest.spyOn(button2, 'offsetLeft', 'get').mockImplementation(() => 30);
+        jest.spyOn(button2, 'offsetWidth', 'get').mockImplementation(() => 30);
+        jest.spyOn(button3, 'offsetLeft', 'get').mockImplementation(() => 60);
+        jest.spyOn(button3, 'offsetWidth', 'get').mockImplementation(() => 30);
+
+      };
+      let {getByTestId} = render(<ButtonGroupWithRefs setUp={setUp} showThird />);
+      let buttonGroup = getByTestId(buttonGroupId);
+      expect(buttonGroup).not.toHaveAttribute('class', expect.stringContaining('spectrum-ButtonGroup--vertical'));
+
+      // ResizeObserver not actually implemented in jsdom, so rely on the fallback to window resize listener
+      act(() => {window.dispatchEvent(new Event('resize'));});
+      expect(buttonGroup).toHaveAttribute('class', expect.stringContaining('spectrum-ButtonGroup--vertical'));
+
+      act(() => {window.dispatchEvent(new Event('resize'));});
+      expect(buttonGroup).not.toHaveAttribute('class', expect.stringContaining('spectrum-ButtonGroup--vertical'));
+    });
+    // can't test children being added because i don't have access to the ref in time
+  });
+
 // Test that it handles the useEffect wrapping?
 });
+
+function ButtonGroupWithRefs(props) {
+  let buttonGroup = useRef();
+  let button1 = useRef();
+  let button2 = useRef();
+  let button3 = useRef();
+  useEffect(() => {
+      props.setUp({
+        buttonGroup: buttonGroup.current.UNSAFE_getDOMNode(),
+        button1: button1.current.UNSAFE_getDOMNode(),
+        button2: button2.current.UNSAFE_getDOMNode(),
+        button3: button3.current.UNSAFE_getDOMNode()
+      })
+  }, []);
+  return (
+    <Provider theme={theme}>
+      <ButtonGroup ref={buttonGroup} data-testid={buttonGroupId} {...props}>
+        <Button ref={button1} onPress={onPressSpy1} variant="primary">
+          Button1
+        </Button>
+        <Button ref={button2} onPress={onPressSpy2} variant="primary">
+          Button2
+        </Button>
+        <Button ref={button3} onPress={onPressSpy3} variant="primary">
+          Button3
+        </Button>
+      </ButtonGroup>
+    </Provider>
+  )
+}

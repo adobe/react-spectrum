@@ -50,10 +50,36 @@ storiesOf('ButtonGroup', module)
   .add(
     'align: center, orientation: vertical',
     () => render({align: 'center', orientation: 'vertical'})
+  )
+  .add(
+    'resizeable container',
+    () => (
+      <div style={{minWidth: '100px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+        {render({})}
+      </div>
+    )
+  )
+  .add(
+    'constant container, changing siblings',
+    () => (
+      <ExpandingSibling />
+    )
   );
 
 function render(props) {
   return <Component {...props} />;
+}
+
+let ExpandingSibling = (props = {}) => {
+  let [isExpanded, setIsExpanded] = useState(false);
+  return (
+    <div style={{display: 'flex', width: '1000px', overflow: "hidden", padding: '10px', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+      <div style={{paddingRight: isExpanded ? '200px' : '10px'}}>
+        <Button variant="secondary" onPress={() => setIsExpanded(prev => !prev)}>{isExpanded ? 'Shrink' : 'Expand'}</Button>
+      </div>
+      {render(props)}
+    </div>
+  )
 }
 
 let Component = (props) => {
