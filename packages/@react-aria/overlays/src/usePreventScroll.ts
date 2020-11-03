@@ -11,7 +11,7 @@
  */
 
 import {chain, getScrollParent} from '@react-aria/utils';
-import {useEffect} from 'react';
+import {useLayoutEffect} from 'react';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
@@ -38,7 +38,7 @@ const visualViewport = typeof window !== 'undefined' && window.visualViewport;
 export function usePreventScroll(options: PreventScrollOptions = {}) {
   let {isDisabled} = options;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isDisabled) {
       return;
     }
@@ -56,7 +56,7 @@ export function usePreventScroll(options: PreventScrollOptions = {}) {
 function preventScrollStandard() {
   return chain(
     setStyle(document.documentElement, 'paddingRight', `${window.innerWidth - document.documentElement.clientWidth}px`),
-    setStyle(document.documentElement, 'overflow', 'hidden'),
+    setStyle(document.documentElement, 'overflow', 'hidden')
   );
 }
 

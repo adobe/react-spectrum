@@ -69,23 +69,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     focus
   } = options;
 
-  let onSelect = (e: PressEvent | PointerEvent) => {
-    if (manager.selectionMode === 'none') {
-      return;
-    }
-
-    if (manager.selectionMode === 'single') {
-      if (manager.isSelected(key) && !manager.disallowEmptySelection) {
-        manager.toggleSelection(key);
-      } else {
-        manager.replaceSelection(key);
-      }
-    } else if (e.shiftKey) {
-      manager.extendSelection(key);
-    } else if (manager) {
-      manager.toggleSelection(key);
-    }
-  };
+  let onSelect = (e: PressEvent | PointerEvent) => manager.select(key, e);
 
   // Focus the associated DOM node when this item becomes the focusedKey
   let isFocused = key === manager.focusedKey;
@@ -100,7 +84,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   }, [ref, isFocused, manager.focusedKey, manager.isFocused, shouldUseVirtualFocus]);
 
   let itemProps: SelectableItemAria['itemProps'] = {
-    tabIndex: isFocused ? 0 : -1,
+    tabIndex: isFocused && !shouldUseVirtualFocus ? 0 : -1,
     onFocus(e) {
       if (e.target === ref.current) {
         manager.setFocusedKey(key);

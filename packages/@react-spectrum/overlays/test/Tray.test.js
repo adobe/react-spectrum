@@ -10,14 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render, waitFor} from '@testing-library/react';
 import {Dialog} from '@react-spectrum/dialog';
-import {fireEvent, render, waitFor} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {Tray} from '../';
 
 describe('Tray', function () {
+  beforeAll(() => jest.useFakeTimers());
+  afterAll(() => jest.useRealTimers());
+
   it('should render nothing if isOpen is not set', function () {
     let {getByRole} = render(
       <Provider theme={theme}>
@@ -60,6 +63,7 @@ describe('Tray', function () {
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
     }); // wait for animation
+    act(() => {jest.runAllTimers();});
 
     let dialog = await getByRole('dialog');
     fireEvent.keyDown(dialog, {key: 'Escape'});
@@ -79,6 +83,7 @@ describe('Tray', function () {
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
     }); // wait for animation
+    act(() => {jest.runAllTimers();});
 
     fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
@@ -98,11 +103,15 @@ describe('Tray', function () {
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
     }); // wait for animation
+    act(() => {jest.runAllTimers();});
 
     let dialog = await getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
-
-    dialog.blur();
+    // The iOS Safari workaround blurs and refocuses the dialog after 0.5s
     expect(onClose).toHaveBeenCalledTimes(1);
+
+    act(() => {dialog.blur();});
+    // (The iOS Safari workaround) + (the actual onClose) = 2
+    expect(onClose).toHaveBeenCalledTimes(2);
   });
 });

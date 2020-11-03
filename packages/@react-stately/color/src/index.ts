@@ -11,3 +11,7 @@
  */
 
 export * from './Color';
+export * from './useColor';
+export * from './useColorSliderState';
+export * from './useColorWheelState';
+export * from './useHexColorFieldState';

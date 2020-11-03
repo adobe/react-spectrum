@@ -15,14 +15,17 @@ import {HTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import {TableState} from '@react-stately/table';
+import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 import {useTableCell} from './useTableCell';
+
 
 interface ColumnHeaderProps {
   node: Node<unknown>,
   ref: RefObject<HTMLElement>,
   isVirtualized?: boolean,
-  colspan?: number
+  colspan?: number,
+  isDisabled?: boolean
 }
 
 interface ColumnHeaderAria {
@@ -30,16 +33,18 @@ interface ColumnHeaderAria {
 }
 
 export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>): ColumnHeaderAria {
-  let {node, colspan} = props;
+  let {node, colspan, ref, isDisabled} = props;
   let {gridCellProps} = useTableCell(props, state);
 
   let {pressProps} = usePress({
-    isDisabled: !node.props.allowsSorting,
+    isDisabled: !node.props.allowsSorting || isDisabled,
     onPress() {
       state.sort(node.key);
     }
   });
 
+  // Needed to pick up the focusable context, enabling things like Tooltips for example
+  let {focusableProps} = useFocusable({}, ref);
   let ariaSort: HTMLAttributes<HTMLElement>['aria-sort'] = null;
   if (node.props.allowsSorting) {
     ariaSort = state.sortDescriptor?.column === node.key ? state.sortDescriptor.direction : 'none';
@@ -47,7 +52,7 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
 
   return {
     columnHeaderProps: {
-      ...mergeProps(gridCellProps, pressProps),
+      ...mergeProps(gridCellProps, pressProps, focusableProps),
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),
       'aria-colspan': colspan && colspan > 1 ? colspan : null,

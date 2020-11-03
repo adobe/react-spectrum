@@ -594,7 +594,7 @@ describe('Menu', function () {
       fireEvent.keyDown(menu, {key: 'B'});
       expect(document.activeElement).toBe(menuItems[1]);
 
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       fireEvent.keyDown(menu, {key: 'B'});
       expect(document.activeElement).toBe(menuItems[1]);
@@ -614,7 +614,7 @@ describe('Menu', function () {
       fireEvent.keyDown(menu, {key: 'E'});
       expect(document.activeElement).toBe(menuItems[4]);
 
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       fireEvent.keyDown(menu, {key: 'B'});
       expect(document.activeElement).toBe(menuItems[4]);
@@ -710,7 +710,7 @@ describe('Menu', function () {
         </Provider>
       );
 
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       let menu = tree.getByRole('menu');
 

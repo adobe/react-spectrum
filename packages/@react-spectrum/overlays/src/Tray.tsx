@@ -12,7 +12,7 @@
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useViewportSize} from '@react-aria/utils';
 import {Overlay} from './Overlay';
 import overrideStyles from './overlays.css';
 import React, {forwardRef, HTMLAttributes, ReactNode, RefObject, useEffect, useRef, useState} from 'react';
@@ -20,7 +20,6 @@ import {TrayProps} from '@react-types/overlays';
 import trayStyles from '@adobe/spectrum-css-temp/components/tray/vars.css';
 import {Underlay} from './Underlay';
 import {useModal, useOverlay, usePreventScroll} from '@react-aria/overlays';
-import {useViewportSize} from '@react-spectrum/utils';
 
 interface TrayWrapperProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode,
@@ -76,7 +75,7 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
   // is up, so use the VisualViewport API to ensure the tray is displayed above the keyboard.
   let viewport = useViewportSize();
   let [height, setHeight] = useState(viewport.height);
-  let timeoutRef = useRef<NodeJS.Timeout>();
+  let timeoutRef = useRef<any>();
 
   useEffect(() => {
     clearTimeout(timeoutRef.current);
