@@ -61,7 +61,7 @@ interface AriaBaseButtonProps<T extends ElementType = 'button'> extends Focusabl
 
 export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps, AriaBaseButtonProps<T> {}
 
-export interface AriaToggleButtonProps<T extends ElementType = 'button'> extends ToggleButtonProps, LinkButtonProps, AriaBaseButtonProps<T> {}
+export interface AriaToggleButtonProps<T extends ElementType = 'button'> extends ToggleButtonProps, AriaBaseButtonProps<T> {}
 
 export interface SpectrumButtonProps extends AriaBaseButtonProps, ButtonProps, LinkButtonProps, StyleProps {
   /** The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button. */
