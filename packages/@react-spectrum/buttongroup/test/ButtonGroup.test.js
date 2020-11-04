@@ -159,12 +159,12 @@ function ButtonGroupWithRefs(props) {
   let button2 = useRef();
   let button3 = useRef();
   useEffect(() => {
-      props.setUp({
-        buttonGroup: buttonGroup.current.UNSAFE_getDOMNode(),
-        button1: button1.current.UNSAFE_getDOMNode(),
-        button2: button2.current.UNSAFE_getDOMNode(),
-        button3: button3.current.UNSAFE_getDOMNode()
-      })
+    props.setUp({
+      buttonGroup: buttonGroup.current.UNSAFE_getDOMNode(),
+      button1: button1.current.UNSAFE_getDOMNode(),
+      button2: button2.current.UNSAFE_getDOMNode(),
+      button3: button3.current.UNSAFE_getDOMNode()
+    });
   }, []);
   return (
     <Provider theme={theme}>

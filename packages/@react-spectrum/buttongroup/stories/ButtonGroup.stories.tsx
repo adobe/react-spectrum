@@ -73,14 +73,14 @@ function render(props) {
 let ExpandingSibling = (props = {}) => {
   let [isExpanded, setIsExpanded] = useState(false);
   return (
-    <div style={{display: 'flex', width: '1000px', overflow: "hidden", padding: '10px', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+    <div style={{display: 'flex', flexWrap: 'nowrap', width: '1000px', overflow: 'hidden', padding: '10px', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
       <div style={{paddingRight: isExpanded ? '200px' : '10px'}}>
         <Button variant="secondary" onPress={() => setIsExpanded(prev => !prev)}>{isExpanded ? 'Shrink' : 'Expand'}</Button>
       </div>
       {render(props)}
     </div>
-  )
-}
+  );
+};
 
 let Component = (props) => {
   let [show, setShow] = useState(false);
