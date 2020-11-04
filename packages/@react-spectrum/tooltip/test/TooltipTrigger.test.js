@@ -905,4 +905,54 @@ describe('TooltipTrigger', function () {
       expect(button).not.toHaveAttribute('aria-describedBy');
     });
   });
+
+  describe('triggerAction = focus', () => {
+    it('will open for focus', () => {
+      let {getByRole, getByLabelText} = render(
+        <Provider theme={theme}>
+          <TooltipTrigger delay={0} triggerAction="focus">
+            <ActionButton aria-label="trigger" />
+            <Tooltip>Helpful information.</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+
+      let button = getByLabelText('trigger');
+      act(() => {
+        button.focus();
+      });
+      let tooltip = getByRole('tooltip');
+      expect(tooltip).toBeVisible();
+
+      // won't close if the mouse hovers and leaves
+      fireEvent.mouseEnter(button);
+      fireEvent.mouseMove(button);
+      fireEvent.mouseLeave(button);
+      expect(tooltip).toBeVisible();
+      act(() => {
+        button.blur();
+      });
+      act(() => {
+        jest.advanceTimersByTime(CLOSE_TIME);
+      });
+
+      expect(tooltip).not.toBeInTheDocument();
+    });
+
+    it('will not open for hover', () => {
+      let {getByRole, getByLabelText} = render(
+        <Provider theme={theme}>
+          <TooltipTrigger delay={0} triggerAction="focus">
+            <ActionButton aria-label="trigger" />
+            <Tooltip>Helpful information.</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+      fireEvent.mouseMove(document.body);
+      let button = getByLabelText('trigger');
+      fireEvent.mouseEnter(button);
+      fireEvent.mouseMove(button);
+      expect(() => getByRole('tooltip')).toThrow();
+    });
+  });
 });

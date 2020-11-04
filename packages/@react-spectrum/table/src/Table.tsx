@@ -213,7 +213,7 @@ function Table<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLD
 
         if (item.props.hideHeader) {
           return (
-            <TooltipTrigger placement="top">
+            <TooltipTrigger placement="top" triggerAction="focus">
               <TableColumnHeader column={item} />
               <Tooltip placement="top">{item.rendered}</Tooltip>
             </TooltipTrigger>

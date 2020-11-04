@@ -37,7 +37,8 @@ interface TooltipTriggerAria {
  */
 export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTriggerState, ref: RefObject<HTMLElement>) : TooltipTriggerAria {
   let {
-    isDisabled
+    isDisabled,
+    triggerAction = 'default'
   } = props;
 
   let tooltipId = useId();
@@ -76,6 +77,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
   }, [ref, state]);
 
   let onHoverStart = () => {
+    if (triggerAction === 'focus') {
+      return;
+    }
     // In chrome, if you hover a trigger, then another element obscures it, due to keyboard
     // interactions for example, hover will end. When hover is restored after that element disappears,
     // focus moves on for example, then the tooltip will reopen. We check the modality to know if the hover
@@ -89,6 +93,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
   };
 
   let onHoverEnd = () => {
+    if (triggerAction === 'focus') {
+      return;
+    }
     // no matter how the trigger is left, we should close the tooltip
     isFocused.current = false;
     isHovered.current = false;

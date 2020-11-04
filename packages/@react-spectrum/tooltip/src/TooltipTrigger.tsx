@@ -27,7 +27,8 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
     children,
     crossOffset = DEFAULT_CROSS_OFFSET,
     isDisabled,
-    offset = DEFAULT_OFFSET
+    offset = DEFAULT_OFFSET,
+    triggerAction,
   } = props;
 
   let [trigger, tooltip] = React.Children.toArray(children);
@@ -38,7 +39,8 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
   let overlayRef = useRef<HTMLDivElement>();
 
   let {triggerProps, tooltipProps} = useTooltipTrigger({
-    isDisabled
+    isDisabled,
+    triggerAction
   }, state, tooltipTriggerRef);
 
   let {overlayProps, arrowProps, placement} = useOverlayPosition({

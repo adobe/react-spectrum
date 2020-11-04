@@ -59,6 +59,10 @@ storiesOf('TooltipTrigger', module)
     () => render({delay: 0})
   )
   .add(
+    'focus only',
+    () => render({triggerAction: 'focus'})
+  )
+  .add(
     'multiple tooltips',
     () => renderMultipleTriggers({placement: 'start'})
   )
