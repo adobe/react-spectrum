@@ -180,5 +180,5 @@ function ButtonGroupWithRefs(props) {
         </Button>
       </ButtonGroup>
     </Provider>
-  )
+  );
 }
