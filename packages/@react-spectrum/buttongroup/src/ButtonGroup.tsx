@@ -65,7 +65,7 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
         yield computeHasOverflow();
       });
     }
-  }, [domRef, orientation, scale, setHasOverflow, props.children]);
+  }, [domRef, orientation, scale, setHasOverflow, children]);
 
   // There are two main reasons we need to remeasure:
   // 1. Internal changes: Check for initial overflow or when orientation/scale/children change (from checkForOverflow dep array)

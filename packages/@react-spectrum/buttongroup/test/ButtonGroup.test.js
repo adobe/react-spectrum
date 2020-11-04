@@ -136,7 +136,7 @@ describe('ButtonGroup', function () {
         jest.spyOn(button3, 'offsetWidth', 'get').mockImplementation(() => 30);
 
       };
-      let {getByTestId} = render(<ButtonGroupWithRefs setUp={setUp} showThird />);
+      let {getByTestId} = render(<ButtonGroupWithRefs setUp={setUp} />);
       let buttonGroup = getByTestId(buttonGroupId);
       expect(buttonGroup).not.toHaveAttribute('class', expect.stringContaining('spectrum-ButtonGroup--vertical'));
 
