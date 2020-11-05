@@ -13,8 +13,8 @@ governing permissions and limitations under the License.
 .spectrum-Tabs {
   border-block-end-color: var(--spectrum-tabs-rule-color);
 
-  &.spectrum-Tabs--isCollapsed button {
-    &:focus-ring {
+  &.spectrum-Tabs--isCollapsed {
+    :focus-ring {
       /* FieldButton Picker focus ring override */
       box-shadow: none;
 

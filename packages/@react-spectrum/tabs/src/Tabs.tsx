@@ -101,7 +101,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
     checkShouldCollapse();
   }, [props.children, checkShouldCollapse]);
 
-  useResizeObserver({ref: wrapperRef.current && wrapperRef, onResize: checkShouldCollapse});
+  useResizeObserver({ref: wrapperRef, onResize: checkShouldCollapse});
 
   let tablist = (
     <TabList
