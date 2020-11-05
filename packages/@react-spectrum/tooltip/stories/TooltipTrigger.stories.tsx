@@ -104,7 +104,7 @@ storiesOf('TooltipTrigger', module)
   )
   .add(
     'tooltrip trigger inside action group',
-    () => ActionGroupTrigger({})
+    () => ActionGroupTrigger()
   )
   .add(
     'crossoffset examples',

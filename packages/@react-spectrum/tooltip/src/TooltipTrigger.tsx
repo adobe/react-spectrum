@@ -73,7 +73,13 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
 
 // Support TooltipTrigger inside components using CollectionBuilder.
 TooltipTrigger.getCollectionNode = function* (props: SpectrumTooltipTriggerProps) {
-  let [trigger, tooltip] = React.Children.toArray(props.children) as [ReactElement, ReactElement];
+  let childArray: ReactElement[] = [];
+  React.Children.forEach(props.children, child => {
+    if (React.isValidElement(child)) {
+      childArray.push(child);
+    }
+  });
+  let [trigger, tooltip] = childArray as [ReactElement, ReactElement];
   yield {
     element: trigger,
     wrapper: (element) => (
