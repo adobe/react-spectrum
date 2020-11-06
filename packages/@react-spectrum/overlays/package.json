@@ -36,8 +36,8 @@
     "@react-aria/utils": "^3.4.0",
     "@react-spectrum/utils": "^3.4.0",
     "@react-stately/overlays": "^3.1.1",
-    "@react-types/overlays": "^3.2.1",
-    "@react-types/shared": "^3.2.1",
+    "@react-types/overlays": "^3.3.0",
+    "@react-types/shared": "^3.3.0",
     "react-transition-group": "^4.4.1"
   },
   "devDependencies": {
