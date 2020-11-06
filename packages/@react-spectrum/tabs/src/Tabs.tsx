@@ -68,7 +68,8 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
         setSelectedTab(selectedTab);
       }
     }
-  }, [children, state.selectedKey, ref]);
+    // collapse is in the dep array so selectedTab can be updated for TabLine positioning
+  }, [children, state.selectedKey, collapse, ref]);
 
   let checkShouldCollapse = useCallback(() => {
     let computeShouldCollapse = () => {
@@ -100,7 +101,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
 
   useEffect(() => {
     checkShouldCollapse();
-  }, [props.children, checkShouldCollapse]);
+  }, [children, checkShouldCollapse]);
 
   useResizeObserver({ref: wrapperRef, onResize: checkShouldCollapse});
 
