@@ -372,12 +372,19 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     handlers = mergeProps(typeSelectProps, handlers);
   }
 
+  // If nothing is focused within the collection, make the collection itself tabbable.
+  // This will be marshalled to either the first or last item depending on where focus came from.
+  // If using virtual focus, don't set a tabIndex at all so that VoiceOver on iOS 14 doesn't try
+  // to move real DOM focus to the element anyway.
+  let tabIndex: number;
+  if (!shouldUseVirtualFocus) {
+    tabIndex = manager.focusedKey == null ? 0 : -1;
+  }
+
   return {
     collectionProps: {
       ...handlers,
-      // If nothing is focused within the collection, make the collection itself tabbable.
-      // This will be marshalled to either the first or last item depending on where focus came from.
-      tabIndex: manager.focusedKey == null && !shouldUseVirtualFocus ? 0 : -1
+      tabIndex
     }
   };
 }

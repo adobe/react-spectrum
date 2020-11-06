@@ -22,7 +22,7 @@ import {Label} from '@react-spectrum/label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from '@react-aria/utils';
-import React, {cloneElement, forwardRef, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, useImperativeHandle, useRef} from 'react';
+import React, {cloneElement, forwardRef, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, TextareaHTMLAttributes, useImperativeHandle, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFormProps} from '@react-spectrum/form';
@@ -33,9 +33,9 @@ interface TextFieldBaseProps extends SpectrumTextFieldProps {
   wrapperChildren?: ReactElement | ReactElement[],
   inputClassName?: string,
   multiLine?: boolean,
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
-  inputProps: InputHTMLAttributes<HTMLInputElement & HTMLTextAreaElement>,
-  inputRef?: RefObject<HTMLInputElement & HTMLTextAreaElement>
+  labelProps?: LabelHTMLAttributes<HTMLLabelElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
+  inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>
 }
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
@@ -62,7 +62,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let domRef = useRef<HTMLDivElement>(null);
-  let defaultInputRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null);
+  let defaultInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   inputRef = inputRef || defaultInputRef;
 
   // Expose imperative interface for ref
@@ -124,7 +124,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
         <ElementType
           {...mergeProps(inputProps, hoverProps)}
-          ref={inputRef}
+          ref={inputRef as any}
           rows={multiLine ? 1 : undefined}
           className={
             classNames(
