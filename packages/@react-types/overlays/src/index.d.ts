@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {HTMLAttributes, ReactElement, ReactNode} from 'react';
+import {HTMLAttributes, MutableRefObject, ReactElement, ReactNode} from 'react';
 import {StyleProps} from '@react-types/shared';
 
 export type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom start' | 'bottom end' |
@@ -72,7 +72,7 @@ export interface OverlayProps {
   onExit?: () => void,
   onExiting?: () => void,
   onExited?: () => void,
-  nodeRef: React.MutableRefObject<HTMLElement>
+  nodeRef: MutableRefObject<HTMLElement>
 }
 
 export interface ModalProps extends StyleProps, Omit<OverlayProps, 'nodeRef'> {

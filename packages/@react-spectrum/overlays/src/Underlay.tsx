@@ -11,14 +11,14 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import React from 'react';
+import React, {Ref} from 'react';
 import underlayStyles from '@adobe/spectrum-css-temp/components/underlay/vars.css';
 
 interface UnderlayProps {
   isOpen?: boolean
 }
 
-function Underlay({isOpen}: UnderlayProps, ref: React.Ref<HTMLDivElement>) {
+function Underlay({isOpen}: UnderlayProps, ref: Ref<HTMLDivElement>) {
   return (
     <div ref={ref} className={classNames(underlayStyles, 'spectrum-Underlay', {'is-open': isOpen})} />
   );
