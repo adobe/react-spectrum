@@ -11,36 +11,21 @@
  */
 
 import {disableTextSelection, restoreTextSelection}  from './textSelection';
+import {MoveEvents, PointerType} from '@react-types/shared';
 import React, {HTMLAttributes, useMemo, useRef} from 'react';
 import {useGlobalListeners} from '@react-aria/utils';
 
-export interface BaseMoveEvent {
-  pointerType: 'mouse' | 'pen' | 'touch' | 'keyboard'
+interface MoveResult {
+  /** Props to spread on the target element. */
+  moveProps: HTMLAttributes<HTMLElement>
 }
 
-export interface MoveStartEvent extends BaseMoveEvent{
-  type: 'movestart'
-}
-
-export interface MoveMoveEvent extends BaseMoveEvent{
-  type: 'move',
-  deltaX: number,
-  deltaY: number
-}
-
-export interface MoveEndEvent extends BaseMoveEvent{
-  type: 'moveend'
-}
-
-export type MoveEvent = MoveStartEvent | MoveMoveEvent | MoveEndEvent;
-
-export interface MoveProps {
-  onMoveStart?: (e: MoveStartEvent) => void,
-  onMove: (e: MoveMoveEvent) => void,
-  onMoveEnd?: (e: MoveEndEvent) => void
-}
-
-export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
+/**
+ * Handles move interactions across mouse, touch, and keyboard, including dragging with
+ * the mouse or touch, and using the arrow keys. Normalizes behavior across browsers and
+ * platforms, and ignores emulated mouse events on touch devices.
+ */
+export function useMove(props: MoveEvents): MoveResult {
   let {onMoveStart, onMove, onMoveEnd} = props;
 
   let state = useRef<{
@@ -58,7 +43,11 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
       disableTextSelection();
       state.current.didMove = false;
     };
-    let move = (pointerType: BaseMoveEvent['pointerType'], deltaX: number, deltaY: number) => {
+    let move = (pointerType: PointerType, deltaX: number, deltaY: number) => {
+      if (deltaX === 0 && deltaY === 0) {
+        return;
+      }
+
       if (!state.current.didMove) {
         state.current.didMove = true;
         onMoveStart?.({
@@ -73,7 +62,7 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
         deltaY: deltaY
       });
     };
-    let end = (pointerType: BaseMoveEvent['pointerType']) => {
+    let end = (pointerType: PointerType) => {
       restoreTextSelection();
       if (state.current.didMove) {
         onMoveEnd?.({
@@ -122,17 +111,18 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
         let touch = [...e.changedTouches].findIndex(({identifier}) => identifier === state.current.id);
         if (touch >= 0) {
           end('touch');
+          state.current.id = null;
           removeGlobalListener(window, 'touchmove', onTouchMove);
           removeGlobalListener(window, 'touchend', onTouchEnd);
           removeGlobalListener(window, 'touchcancel', onTouchEnd);
         }
       };
       moveProps.onTouchStart = (e: React.TouchEvent) => {
-        if (e.targetTouches.length === 0) {
+        if (e.changedTouches.length === 0 || state.current.id != null) {
           return;
         }
 
-        let {pageX, pageY, identifier} = e.targetTouches[0];
+        let {pageX, pageY, identifier} = e.changedTouches[0];
         start();
         e.stopPropagation();
         e.preventDefault();
@@ -146,7 +136,7 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
       let onPointerMove = (e: PointerEvent) => {
         if (e.pointerId === state.current.id) {
           // @ts-ignore
-          let pointerType: BaseMoveEvent['pointerType'] = e.pointerType || 'mouse';
+          let pointerType: PointerType = e.pointerType || 'mouse';
 
           // Problems with PointerEvent#movementX/movementY:
           // 1. it is always 0 on macOS Safari.
@@ -159,8 +149,9 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
       let onPointerUp = (e: PointerEvent) => {
         if (e.pointerId === state.current.id) {
             // @ts-ignore
-          let pointerType: BaseMoveEvent['pointerType'] = e.pointerType || 'mouse';
+          let pointerType: PointerType = e.pointerType || 'mouse';
           end(pointerType);
+          state.current.id = null;
           removeGlobalListener(window, 'pointermove', onPointerMove, false);
           removeGlobalListener(window, 'pointerup', onPointerUp, false);
           removeGlobalListener(window, 'pointercancel', onPointerUp, false);
@@ -168,7 +159,7 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
       };
 
       moveProps.onPointerDown = (e: React.PointerEvent) => {
-        if (e.button === 0) {
+        if (e.button === 0 && state.current.id == null) {
           start();
           e.stopPropagation();
           e.preventDefault();
@@ -181,7 +172,7 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
       };
     }
 
-    let triggetKeyboardMove = (deltaX: number, deltaY: number) => {
+    let triggerKeyboardMove = (deltaX: number, deltaY: number) => {
       start();
       move('keyboard', deltaX, deltaY);
       end('keyboard');
@@ -193,31 +184,31 @@ export function useMove(props: MoveProps): HTMLAttributes<HTMLElement> {
         case 'ArrowLeft':
           e.preventDefault();
           e.stopPropagation();
-          triggetKeyboardMove(-1, 0);
+          triggerKeyboardMove(-1, 0);
           break;
         case 'Right':
         case 'ArrowRight':
           e.preventDefault();
           e.stopPropagation();
-          triggetKeyboardMove(1, 0);
+          triggerKeyboardMove(1, 0);
           break;
         case 'Up':
         case 'ArrowUp':
           e.preventDefault();
           e.stopPropagation();
-          triggetKeyboardMove(0, -1);
+          triggerKeyboardMove(0, -1);
           break;
         case 'Down':
         case 'ArrowDown':
           e.preventDefault();
           e.stopPropagation();
-          triggetKeyboardMove(0, 1);
+          triggerKeyboardMove(0, 1);
           break;
       }
     };
 
     return moveProps;
-  }, [state, onMoveStart, onMove, onMoveEnd]);
+  }, [state, onMoveStart, onMove, onMoveEnd, addGlobalListener, removeGlobalListener]);
 
-  return moveProps;
+  return {moveProps};
 }

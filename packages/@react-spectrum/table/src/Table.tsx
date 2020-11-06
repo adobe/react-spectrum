@@ -27,14 +27,21 @@ import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import {TableLayout} from '@react-stately/layout';
 import {TableState, useTableState} from '@react-stately/table';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useHover} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useTable, useTableCell, useTableColumnHeader, useTableRow, useTableRowGroup, useTableRowHeader, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 const DEFAULT_HEADER_HEIGHT = {
   medium: 34,
   large: 40
+};
+
+const DEFAULT_HIDE_HEADER_CELL_WIDTH = {
+  medium: 36,
+  large: 44
 };
 
 const ROW_HEIGHTS = {
@@ -51,6 +58,8 @@ const ROW_HEIGHTS = {
     large: 60
   }
 };
+
+const SELECTION_CELL_DEFAULT_WIDTH = 55;
 
 const TableContext = React.createContext<TableState<unknown>>(null);
 function useTableContext() {
@@ -80,7 +89,15 @@ function Table<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLD
       : DEFAULT_HEADER_HEIGHT[scale],
     estimatedHeadingHeight: props.overflowMode === 'wrap'
       ? DEFAULT_HEADER_HEIGHT[scale]
-      : null
+      : null,
+    getDefaultWidth: ({hideHeader, isSelectionCell, showDivider}) => {
+      if (hideHeader) {
+        let width = DEFAULT_HIDE_HEADER_CELL_WIDTH[scale];
+        return showDivider ? width + 1 : width;
+      } else if (isSelectionCell) {
+        return SELECTION_CELL_DEFAULT_WIDTH;
+      }
+    }
   }), [props.overflowMode, scale, density]);
   let {direction} = useLocale();
   layout.collection = state.collection;
@@ -192,6 +209,15 @@ function Table<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLD
       case 'column':
         if (item.props.isSelectionCell) {
           return <TableSelectAllCell column={item} />;
+        }
+
+        if (item.props.hideHeader) {
+          return (
+            <TooltipTrigger placement="top">
+              <TableColumnHeader column={item} />
+              <Tooltip placement="top">{item.rendered}</Tooltip>
+            </TooltipTrigger>
+          );
         }
 
         return <TableColumnHeader column={item} />;
@@ -372,7 +398,8 @@ function TableColumnHeader({column}) {
               'is-sortable': columnProps.allowsSorting,
               'is-sorted-desc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'descending',
               'is-sorted-asc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'ascending',
-              'is-hovered': isHovered
+              'is-hovered': isHovered,
+              'spectrum-Table-cell--hideHeader': columnProps.hideHeader
             },
             classNames(
               stylesOverrides,
@@ -384,10 +411,14 @@ function TableColumnHeader({column}) {
             )
           )
         }>
-        {column.rendered}
+        {columnProps.hideHeader ?
+          <VisuallyHidden>{column.rendered}</VisuallyHidden> :
+          column.rendered
+        }
         {columnProps.allowsSorting &&
           <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />
         }
+
       </div>
     </FocusRing>
   );
@@ -396,34 +427,43 @@ function TableColumnHeader({column}) {
 function TableSelectAllCell({column}) {
   let ref = useRef();
   let state = useTableContext();
+  let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
     ref,
     colspan: column.colspan,
-    isVirtualized: true
+    isVirtualized: true,
+    // Disable click from focusing the div for selectionMode = "single" since there won't be a "Select All" checkbox available
+    isDisabled: isSingleSelectionMode
   }, state);
 
   let {checkboxProps} = useTableSelectAllCheckbox(state);
   let {hoverProps, isHovered} = useHover({});
 
   return (
-    <div
-      {...mergeProps(columnHeaderProps, hoverProps)}
-      ref={ref}
-      className={
-        classNames(
-          styles,
-          'spectrum-Table-headCell',
-          'spectrum-Table-checkboxCell',
-          {
-            'is-hovered': isHovered
-          }
-        )
-      }>
-      <Checkbox
-        {...checkboxProps}
-        UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />
-    </div>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <div
+        {...mergeProps(columnHeaderProps, hoverProps)}
+        aria-disabled={isSingleSelectionMode}
+        ref={ref}
+        className={
+          classNames(
+            styles,
+            'spectrum-Table-headCell',
+            'spectrum-Table-checkboxCell',
+            {
+              'is-hovered': isHovered
+            }
+          )
+        }>
+        <Checkbox
+          {...checkboxProps}
+          isDisabled={isSingleSelectionMode}
+          isEmphasized
+          UNSAFE_style={{visibility: isSingleSelectionMode ? 'hidden' : 'visible'}}
+          UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />
+      </div>
+    </FocusRing>
   );
 }
 
@@ -440,12 +480,14 @@ function TableRowGroup({children, ...otherProps}) {
 function TableRow({item, children, ...otherProps}) {
   let ref = useRef();
   let state = useTableContext();
-  let isSelected = state.selectionManager.isSelected(item.key);
+  let isDisabled = state.disabledKeys.has(item.key);
+  let isSelected = state.selectionManager.isSelected(item.key) && !isDisabled;
   let {rowProps} = useTableRow({
     node: item,
     isSelected,
     ref,
-    isVirtualized: true
+    isVirtualized: true,
+    isDisabled
   }, state);
 
   // The row should show the focus background style when any cell inside it is focused.
@@ -455,7 +497,7 @@ function TableRow({item, children, ...otherProps}) {
     focusProps: focusWithinProps
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({});
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let props = mergeProps(
     rowProps,
     otherProps,
@@ -476,7 +518,8 @@ function TableRow({item, children, ...otherProps}) {
             'is-selected': isSelected,
             'is-focused': isFocusVisibleWithin,
             'focus-ring': isFocusVisible,
-            'is-hovered': isHovered
+            'is-hovered': isHovered,
+            'is-disabled': isDisabled
           }
         )
       }>
@@ -497,14 +540,19 @@ function TableHeaderRow({item, children, ...otherProps}) {
 function TableCheckboxCell({cell}) {
   let ref = useRef();
   let state = useTableContext();
+  let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
     ref,
-    isVirtualized: true
+    isVirtualized: true,
+    isDisabled
   }, state);
 
   let {checkboxProps} = useTableSelectionCheckbox(
-    {key: cell.parentKey},
+    {
+      key: cell.parentKey,
+      isDisabled
+    },
     state
   );
 
@@ -518,6 +566,9 @@ function TableCheckboxCell({cell}) {
             styles,
             'spectrum-Table-cell',
             'spectrum-Table-checkboxCell',
+            {
+              'is-disabled': isDisabled
+            },
             classNames(
               stylesOverrides,
               'react-spectrum-Table-cell'
@@ -526,6 +577,8 @@ function TableCheckboxCell({cell}) {
         {state.selectionManager.selectionMode !== 'none' &&
           <Checkbox
             {...checkboxProps}
+            isEmphasized
+            isDisabled={isDisabled}
             UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />
         }
       </div>
@@ -536,10 +589,12 @@ function TableCheckboxCell({cell}) {
 function TableCell({cell}) {
   let ref = useRef();
   let state = useTableContext();
+  let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
     ref,
-    isVirtualized: true
+    isVirtualized: true,
+    isDisabled
   }, state);
 
   return (
@@ -553,10 +608,12 @@ function TableCell({cell}) {
 function TableRowHeader({cell}) {
   let ref = useRef();
   let state = useTableContext();
+  let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {rowHeaderProps} = useTableRowHeader({
     node: cell,
     ref,
-    isVirtualized: true
+    isVirtualized: true,
+    isDisabled
   }, state);
 
   return (
@@ -568,7 +625,9 @@ function TableRowHeader({cell}) {
 }
 
 function TableCellBase({cell, cellRef, ...otherProps}) {
+  let state = useTableContext();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
+  let isDisabled = state.disabledKeys.has(cell.parentKey);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -580,7 +639,9 @@ function TableCellBase({cell, cellRef, ...otherProps}) {
             styles,
             'spectrum-Table-cell',
             {
-              'spectrum-Table-cell--divider': columnProps.showDivider
+              'spectrum-Table-cell--divider': columnProps.showDivider,
+              'spectrum-Table-cell--hideHeader': columnProps.hideHeader,
+              'is-disabled': isDisabled
             },
             classNames(
               stylesOverrides,
@@ -592,7 +653,13 @@ function TableCellBase({cell, cellRef, ...otherProps}) {
             )
           )
         }>
-        <span className={classNames(styles, 'spectrum-Table-cellContents')}>
+        <span
+          className={
+            classNames(
+              styles,
+              'spectrum-Table-cellContents'
+            )
+        }>
           {cell.rendered}
         </span>
       </div>

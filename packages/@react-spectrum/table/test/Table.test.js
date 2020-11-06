@@ -11,6 +11,8 @@
  */
 
 import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
+import {ActionButton} from '@react-spectrum/button';
+import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {CRUDExample} from '../stories/CRUDExample';
 import {getFocusableTreeWalker} from '@react-aria/focus';
@@ -66,6 +68,10 @@ describe('Table', function () {
   afterAll(function () {
     offsetWidth.mockReset();
     offsetHeight.mockReset();
+  });
+
+  afterEach(() => {
+    act(() => {jest.runAllTimers();});
   });
 
   let render = (children, scale = 'medium') => renderComponent(
@@ -669,9 +675,9 @@ describe('Table', function () {
 
   describe('keyboard focus', function () {
     // locale is being set here, since we can't nest them, use original render function
-    let renderTable = (locale = 'en-US') => renderComponent(
+    let renderTable = (locale = 'en-US', props = {}) => renderComponent(
       <Provider locale={locale} theme={theme}>
-        <Table aria-label="Table">
+        <Table aria-label="Table" {...props}>
           <TableHeader columns={columns}>
             {column => <Column>{column.name}</Column>}
           </TableHeader>
@@ -810,6 +816,13 @@ describe('Table', function () {
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(getCell(tree, 'Baz'));
       });
+
+      it('should allow the user to focus disabled cells', function () {
+        let tree = renderTable('en-US', {disabledKeys: ['Foo 1']});
+        focusCell(tree, 'Bar 1');
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(getCell(tree, 'Baz 1'));
+      });
     });
 
     describe('ArrowLeft', function () {
@@ -896,6 +909,13 @@ describe('Table', function () {
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(getCell(tree, 'Foo'));
       });
+
+      it('should allow the user to focus disabled cells', function () {
+        let tree = renderTable('en-US', {disabledKeys: ['Foo 1']});
+        focusCell(tree, 'Bar 1');
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
+      });
     });
 
     describe('ArrowUp', function () {
@@ -938,6 +958,13 @@ describe('Table', function () {
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(getCell(tree, 'Tiered One Header'));
       });
+
+      it('should allow the user to focus disabled rows', function () {
+        let tree = renderTable('en-US', {disabledKeys: ['Foo 1']});
+        focusCell(tree, 'Bar 2');
+        moveFocus('ArrowUp');
+        expect(document.activeElement).toBe(getCell(tree, 'Bar 1'));
+      });
     });
 
     describe('ArrowDown', function () {
@@ -969,6 +996,13 @@ describe('Table', function () {
         focusCell(tree, 'Bar');
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(getCell(tree, 'Bar 1'));
+      });
+
+      it('should allow the user to focus disabled cells', function () {
+        let tree = renderTable('en-US', {disabledKeys: ['Foo 2']});
+        focusCell(tree, 'Bar 1');
+        moveFocus('ArrowDown');
+        expect(document.activeElement).toBe(getCell(tree, 'Bar 2'));
       });
     });
 
@@ -1026,27 +1060,47 @@ describe('Table', function () {
         expect(document.activeElement).toBe(getCell(tree, 'Foo 25'));
         moveFocus('PageDown');
         expect(document.activeElement).toBe(getCell(tree, 'Foo 49'));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(getCell(tree, 'Foo 73'));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(getCell(tree, 'Foo 97'));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(getCell(tree, 'Foo 100'));
       });
 
       it('should focus the row a page below', function () {
         let tree = renderMany();
         act(() => {tree.getAllByRole('row')[1].focus();});
         moveFocus('PageDown');
-        expect(document.activeElement).toBe(tree.getAllByRole('row')[25]);
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: 'Foo 25'}));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: 'Foo 49'}));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: 'Foo 73'}));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: 'Foo 97'}));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: 'Foo 100'}));
       });
     });
 
     describe('PageUp', function () {
-      it('should focus the cell a page below', function () {
+      it('should focus the cell a page above', function () {
         let tree = renderMany();
         focusCell(tree, 'Foo 25');
         moveFocus('PageUp');
         expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
+        focusCell(tree, 'Foo 12');
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
       });
 
-      it('should focus the row a page below', function () {
+      it('should focus the row a page above', function () {
         let tree = renderMany();
         act(() => {tree.getAllByRole('row')[25].focus();});
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[1]);
+        act(() => {tree.getAllByRole('row')[12].focus();});
         moveFocus('PageUp');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[1]);
       });
@@ -1433,8 +1487,8 @@ describe('Table', function () {
   });
 
   describe('selection', function () {
-    let renderJSX = (onSelectionChange, items = manyItems) => (
-      <Table aria-label="Table" onSelectionChange={onSelectionChange} selectionMode="multiple">
+    let renderJSX = (props, items = manyItems) => (
+      <Table aria-label="Table" selectionMode="multiple" {...props}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -1448,7 +1502,7 @@ describe('Table', function () {
       </Table>
     );
 
-    let renderTable = (onSelectionChange, items = manyItems) => render(renderJSX(onSelectionChange, items));
+    let renderTable = (props, items = manyItems) => render(renderJSX(props, items));
 
     let checkSelection = (onSelectionChange, selectedKeys) => {
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -1479,7 +1533,7 @@ describe('Table', function () {
     describe('row selection', function () {
       it('should select a row from checkbox', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
@@ -1492,7 +1546,7 @@ describe('Table', function () {
 
       it('should select a row by pressing on a cell', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
@@ -1505,7 +1559,7 @@ describe('Table', function () {
 
       it('should select a row by pressing the Space key on a row', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
@@ -1518,7 +1572,7 @@ describe('Table', function () {
 
       it('should select a row by pressing the Enter key on a row', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
@@ -1531,7 +1585,7 @@ describe('Table', function () {
 
       it('should select a row by pressing the Space key on a cell', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
@@ -1544,7 +1598,7 @@ describe('Table', function () {
 
       it('should select a row by pressing the Enter key on a cell', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
@@ -1557,7 +1611,7 @@ describe('Table', function () {
 
       it('should support selecting multiple with a pointer', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         checkSelectAll(tree, 'unchecked');
 
@@ -1591,7 +1645,7 @@ describe('Table', function () {
 
       it('should support selecting multiple with the Space key', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         checkSelectAll(tree, 'unchecked');
 
@@ -1622,12 +1676,58 @@ describe('Table', function () {
         checkRowSelection(rows.slice(2), false);
         checkSelectAll(tree, 'indeterminate');
       });
+
+      it('should not allow selection of a disabled row via checkbox click', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, disabledKeys: ['Foo 1']});
+
+        let row = tree.getAllByRole('row')[1];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        act(() => userEvent.click(within(row).getByRole('checkbox')));
+
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(row).toHaveAttribute('aria-selected', 'false');
+
+        let checkbox = tree.getByLabelText('Select All');
+        expect(checkbox.checked).toBeFalsy();
+      });
+
+      it('should not allow selection of a disabled row by pressing on a cell', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, disabledKeys: ['Foo 1']});
+
+        let row = tree.getAllByRole('row')[1];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        act(() => triggerPress(getCell(tree, 'Baz 1')));
+
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(row).toHaveAttribute('aria-selected', 'false');
+
+        let checkbox = tree.getByLabelText('Select All');
+        expect(checkbox.checked).toBeFalsy();
+      });
+
+      it('should not allow the user to select a disabled row via keyboard', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, disabledKeys: ['Foo 1']});
+
+        let row = tree.getAllByRole('row')[1];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        act(() => {fireEvent.keyDown(row, {key: ' '});});
+        act(() => {fireEvent.keyDown(row, {key: 'Enter'});});
+
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(row).toHaveAttribute('aria-selected', 'false');
+
+        let checkbox = tree.getByLabelText('Select All');
+        expect(checkbox.checked).toBeFalsy();
+      });
     });
 
     describe('range selection', function () {
       it('should support selecting a range with a pointer', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         checkSelectAll(tree, 'unchecked');
 
@@ -1649,7 +1749,7 @@ describe('Table', function () {
 
       it('should anchor range selections with a pointer', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         checkSelectAll(tree, 'unchecked');
 
@@ -1682,7 +1782,7 @@ describe('Table', function () {
 
       it('should extend a selection with Shift + ArrowDown', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         checkSelectAll(tree, 'unchecked');
 
@@ -1701,7 +1801,7 @@ describe('Table', function () {
 
       it('should extend a selection with Shift + ArrowUp', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         checkSelectAll(tree, 'unchecked');
 
@@ -1720,7 +1820,7 @@ describe('Table', function () {
 
       it('should extend a selection with Ctrl + Shift + Home', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         checkSelectAll(tree, 'unchecked');
 
@@ -1742,7 +1842,7 @@ describe('Table', function () {
 
       it('should extend a selection with Ctrl + Shift + End', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         checkSelectAll(tree, 'unchecked');
 
@@ -1763,7 +1863,7 @@ describe('Table', function () {
 
       it('should extend a selection with Shift + PageDown', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         checkSelectAll(tree, 'unchecked');
 
@@ -1784,7 +1884,7 @@ describe('Table', function () {
 
       it('should extend a selection with Shift + PageUp', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         checkSelectAll(tree, 'unchecked');
 
@@ -1803,12 +1903,36 @@ describe('Table', function () {
         checkRowSelection(rows.slice(1, 11), true);
         checkRowSelection(rows.slice(11), false);
       });
+
+      it('should not include disabled rows within a range selection', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, disabledKeys: ['Foo 3', 'Foo 16']});
+        checkSelectAll(tree, 'unchecked');
+
+        let rows = tree.getAllByRole('row');
+        checkRowSelection(rows.slice(1), false);
+        act(() => triggerPress(getCell(tree, 'Baz 1')));
+
+        onSelectionChange.mockReset();
+        act(() => triggerPress(getCell(tree, 'Baz 20'), {shiftKey: true}));
+
+        checkSelection(onSelectionChange, [
+          'Foo 1', 'Foo 2', 'Foo 4', 'Foo 5', 'Foo 6', 'Foo 7', 'Foo 8', 'Foo 9', 'Foo 10',
+          'Foo 11', 'Foo 12', 'Foo 13', 'Foo 14', 'Foo 15', 'Foo 17', 'Foo 18', 'Foo 19', 'Foo 20'
+        ]);
+
+        checkRowSelection(rows.slice(1, 3), true);
+        checkRowSelection(rows.slice(3, 4), false);
+        checkRowSelection(rows.slice(4, 16), true);
+        checkRowSelection(rows.slice(16, 17), false);
+        checkRowSelection(rows.slice(17, 21), true);
+      });
     });
 
     describe('select all', function () {
       it('should support selecting all via the checkbox', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         checkSelectAll(tree, 'unchecked');
 
@@ -1825,7 +1949,7 @@ describe('Table', function () {
 
       it('should support selecting all via ctrl + A', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         checkSelectAll(tree, 'unchecked');
 
@@ -1842,7 +1966,7 @@ describe('Table', function () {
 
       it('should deselect an item after selecting all', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         checkSelectAll(tree, 'unchecked');
 
@@ -1867,7 +1991,7 @@ describe('Table', function () {
 
       it('should shift click on an item after selecting all', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         checkSelectAll(tree, 'unchecked');
 
@@ -1887,7 +2011,7 @@ describe('Table', function () {
 
       it('should support clearing selection via checkbox', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         checkSelectAll(tree, 'unchecked');
 
@@ -1908,7 +2032,7 @@ describe('Table', function () {
 
       it('should support clearing selection via Escape', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         checkSelectAll(tree, 'unchecked');
 
@@ -1926,9 +2050,26 @@ describe('Table', function () {
         checkSelectAll(tree, 'unchecked');
       });
 
+      it('should only call onSelectionChange if there are selections to clear', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        checkSelectAll(tree, 'unchecked');
+        fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'Escape'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+
+        userEvent.click(tree.getByLabelText('Select All'));
+        checkSelectAll(tree, 'checked');
+        expect(onSelectionChange).toHaveBeenLastCalledWith('all');
+
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'Escape'});
+        expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set());
+      });
+
       it('should automatically select new items when select all is active', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange);
+        let tree = renderTable({onSelectionChange});
 
         checkSelectAll(tree, 'unchecked');
 
@@ -1939,7 +2080,7 @@ describe('Table', function () {
         checkSelectAll(tree, 'checked');
         checkRowSelection(rows.slice(1), true);
 
-        rerender(tree, renderJSX(onSelectionChange, [
+        rerender(tree, renderJSX({onSelectionChange}, [
           {foo: 'Foo 0', bar: 'Bar 0', baz: 'Baz 0'},
           ...manyItems
         ]));
@@ -1952,7 +2093,7 @@ describe('Table', function () {
 
       it('manually selecting all should not auto select new items', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable(onSelectionChange, items);
+        let tree = renderTable({onSelectionChange}, items);
 
         checkSelectAll(tree, 'unchecked');
 
@@ -1965,7 +2106,7 @@ describe('Table', function () {
         triggerPress(rows[2]);
         checkSelectAll(tree, 'checked');
 
-        rerender(tree, renderJSX(onSelectionChange, [
+        rerender(tree, renderJSX({onSelectionChange}, [
           {foo: 'Foo 0', bar: 'Bar 0', baz: 'Baz 0'},
           ...items
         ]));
@@ -1977,6 +2118,245 @@ describe('Table', function () {
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         checkRowSelection(rows.slice(2), true);
         checkSelectAll(tree, 'indeterminate');
+      });
+
+      it('should not included disabled rows when selecting all', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, disabledKeys: ['Foo 3']});
+
+        checkSelectAll(tree, 'unchecked');
+
+        let rows = tree.getAllByRole('row');
+        checkRowSelection(rows.slice(1), false);
+
+        act(() => userEvent.click(tree.getByLabelText('Select All')));
+
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
+        checkRowSelection(rows.slice(1, 3), true);
+        checkRowSelection(rows.slice(3, 4), false);
+        checkRowSelection(rows.slice(4, 20), true);
+      });
+    });
+  });
+
+  describe('single selection', function () {
+    let renderJSX = (props, items = manyItems) => (
+      <Table aria-label="Table" selectionMode="single" {...props}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </Table>
+    );
+
+    let renderTable = (props, items = manyItems) => render(renderJSX(props, items));
+
+    let checkSelection = (onSelectionChange, selectedKeys) => {
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(selectedKeys));
+    };
+
+    let checkRowSelection = (rows, selected) => {
+      for (let row of rows) {
+        expect(row).toHaveAttribute('aria-selected', '' + selected);
+      }
+    };
+
+    let pressWithKeyboard = (element, key = ' ') => {
+      act(() => {
+        fireEvent.keyDown(element, {key});
+        element.focus();
+        fireEvent.keyUp(element, {key});
+      });
+    };
+
+    describe('row selection', function () {
+      it('should select a row from checkbox', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let row = tree.getAllByRole('row')[1];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        act(() => userEvent.click(within(row).getByRole('checkbox')));
+
+        checkSelection(onSelectionChange, ['Foo 1']);
+        expect(row).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('should select a row by pressing on a cell', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let row = tree.getAllByRole('row')[1];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        act(() => triggerPress(getCell(tree, 'Baz 1')));
+
+        checkSelection(onSelectionChange, ['Foo 1']);
+        expect(row).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('should select a row by pressing the Space key on a row', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let row = tree.getAllByRole('row')[1];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        act(() => {fireEvent.keyDown(row, {key: ' '});});
+
+        checkSelection(onSelectionChange, ['Foo 1']);
+        expect(row).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('should select a row by pressing the Enter key on a row', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let row = tree.getAllByRole('row')[1];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        act(() => {fireEvent.keyDown(row, {key: 'Enter'});});
+
+        checkSelection(onSelectionChange, ['Foo 1']);
+        expect(row).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('should select a row by pressing the Space key on a cell', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let row = tree.getAllByRole('row')[1];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        act(() => {fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: ' '});});
+
+        checkSelection(onSelectionChange, ['Foo 1']);
+        expect(row).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('should select a row by pressing the Enter key on a cell', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let row = tree.getAllByRole('row')[1];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        act(() => {fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'Enter'});});
+
+        checkSelection(onSelectionChange, ['Foo 1']);
+        expect(row).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('will only select one if pointer is used to click on multiple rows', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let rows = tree.getAllByRole('row');
+        checkRowSelection(rows.slice(1), false);
+        act(() => triggerPress(getCell(tree, 'Baz 1')));
+
+        checkSelection(onSelectionChange, ['Foo 1']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+        checkRowSelection(rows.slice(2), false);
+
+        onSelectionChange.mockReset();
+        act(() => triggerPress(getCell(tree, 'Baz 2')));
+
+        checkSelection(onSelectionChange, ['Foo 2']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+        checkRowSelection(rows.slice(3), false);
+
+        // Deselect
+        onSelectionChange.mockReset();
+        act(() => triggerPress(getCell(tree, 'Baz 2')));
+
+        checkSelection(onSelectionChange, []);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+        checkRowSelection(rows.slice(2), false);
+      });
+
+      it('will only select one if pointer is used to click on multiple checkboxes', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let rows = tree.getAllByRole('row');
+        checkRowSelection(rows.slice(1), false);
+        act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
+
+        checkSelection(onSelectionChange, ['Foo 1']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+        checkRowSelection(rows.slice(2), false);
+
+        onSelectionChange.mockReset();
+        act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
+
+        checkSelection(onSelectionChange, ['Foo 2']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+        checkRowSelection(rows.slice(3), false);
+
+        // Deselect
+        onSelectionChange.mockReset();
+        act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
+
+        checkSelection(onSelectionChange, []);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+        checkRowSelection(rows.slice(2), false);
+      });
+
+      it('should support selecting single row only with the Space key', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let rows = tree.getAllByRole('row');
+        checkRowSelection(rows.slice(1), false);
+        pressWithKeyboard(getCell(tree, 'Baz 1'));
+
+        checkSelection(onSelectionChange, ['Foo 1']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+        checkRowSelection(rows.slice(2), false);
+
+        onSelectionChange.mockReset();
+        pressWithKeyboard(getCell(tree, 'Baz 2'));
+
+        checkSelection(onSelectionChange, ['Foo 2']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+        checkRowSelection(rows.slice(3), false);
+
+        // Deselect
+        onSelectionChange.mockReset();
+        pressWithKeyboard(getCell(tree, 'Baz 2'));
+
+        checkSelection(onSelectionChange, []);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+        checkRowSelection(rows.slice(2), false);
+      });
+
+      it('should not select a disabled row from checkbox or keyboard interaction', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, disabledKeys: ['Foo 1']});
+
+        let row = tree.getAllByRole('row')[1];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        act(() => userEvent.click(within(row).getByRole('checkbox')));
+        act(() => triggerPress(getCell(tree, 'Baz 1')));
+        act(() => {fireEvent.keyDown(row, {key: ' '});});
+        act(() => {fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: ' '});});
+        act(() => {fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'Enter'});});
+
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        expect(onSelectionChange).not.toHaveBeenCalled();
       });
     });
   });
@@ -3120,5 +3500,112 @@ describe('Table', function () {
         expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
       }
     });
+  });
+
+  describe('headerless columns', function () {
+
+    let renderTable = (props, scale, showDivider = false) => render(
+      <Table aria-label="Table" data-testid="test" {...props}>
+        <TableHeader>
+          <Column key="foo">Foo</Column>
+          <Column key="addAction" hideHeader showDivider={showDivider}>
+            Add Item
+          </Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>Foo 1</Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Add />
+              </ActionButton>
+            </Cell>
+          </Row>
+        </TableBody>
+      </Table>
+      , scale);
+
+    it('renders  table with headerless column with default scale', function () {
+      let {getByRole} = renderTable();
+      let grid = getByRole('grid');
+      expect(grid).toBeVisible();
+      expect(grid).toHaveAttribute('aria-label', 'Table');
+      expect(grid).toHaveAttribute('data-testid', 'test');
+
+      expect(grid).toHaveAttribute('aria-rowcount', '2');
+      expect(grid).toHaveAttribute('aria-colcount', '2');
+      let rowgroups = within(grid).getAllByRole('rowgroup');
+      expect(rowgroups).toHaveLength(2);
+
+      let headerRows = within(rowgroups[0]).getAllByRole('row');
+      expect(headerRows).toHaveLength(1);
+      expect(headerRows[0]).toHaveAttribute('aria-rowindex', '1');
+
+      let headers = within(grid).getAllByRole('columnheader');
+      expect(headers).toHaveLength(2);
+      let className = headers[1].className;
+      expect(className.includes('spectrum-Table-cell--hideHeader')).toBeTruthy();
+      expect(headers[0]).toHaveTextContent('Foo');
+      // visually hidden syle
+      expect(headers[1].childNodes[0].style.clipPath).toBe('inset(50%)');
+      expect(headers[1].childNodes[0].style.width).toBe('1px');
+      expect(headers[1].childNodes[0].style.height).toBe('1px');
+      expect(headers[1]).not.toBeEmptyDOMElement();
+
+
+      let rows = within(rowgroups[1]).getAllByRole('row');
+      expect(rows).toHaveLength(1);
+      // The width of headerless column
+      expect(rows[0].childNodes[1].style.width).toBe('36px');
+      let rowheader = within(rows[0]).getByRole('rowheader');
+      expect(rowheader).toHaveTextContent('Foo 1');
+      let actionCell = within(rows[0]).getAllByRole('gridcell');
+      expect(actionCell).toHaveLength(1);
+      let buttons = within(actionCell[0]).getAllByRole('button');
+      expect(buttons).toHaveLength(1);
+      className = actionCell[0].className;
+      expect(className.includes('spectrum-Table-cell--hideHeader')).toBeTruthy();
+    });
+
+    it('renders table with headerless column with large scale', function () {
+      let {getByRole} = renderTable({}, 'large');
+      let grid = getByRole('grid');
+      expect(grid).toBeVisible();
+      expect(grid).toHaveAttribute('aria-label', 'Table');
+      expect(grid).toHaveAttribute('data-testid', 'test');
+      let rowgroups = within(grid).getAllByRole('rowgroup');
+      let rows = within(rowgroups[1]).getAllByRole('row');
+      expect(rows).toHaveLength(1);
+      // The width of headerless column
+      expect(rows[0].childNodes[1].style.width).toBe('44px');
+    });
+
+    it('renders table with headerless column and divider', function () {
+      let {getByRole} = renderTable({}, undefined, true);
+      let grid = getByRole('grid');
+      expect(grid).toBeVisible();
+      let rowgroups = within(grid).getAllByRole('rowgroup');
+      expect(rowgroups).toHaveLength(2);
+      let rows = within(rowgroups[1]).getAllByRole('row');
+      expect(rows).toHaveLength(1);
+      // The width of headerless column with divider
+      expect(rows[0].childNodes[1].style.width).toBe('37px');
+    });
+
+    it('renders table with headerless column with tooltip', function () {
+      let {getByRole} = renderTable({}, 'large');
+      let grid = getByRole('grid');
+      expect(grid).toBeVisible();
+      expect(grid).toHaveAttribute('aria-label', 'Table');
+      expect(grid).toHaveAttribute('data-testid', 'test');
+      let headers = within(grid).getAllByRole('columnheader');
+      let headerlessColumn = headers[1];
+      act(() => {
+        headerlessColumn.focus();
+      });
+      let tooltip = getByRole('tooltip');
+      expect(tooltip).toBeVisible();
+    });
+
   });
 });

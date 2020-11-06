@@ -130,11 +130,13 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
     },
     nextButtonProps: {
       onPress: () => state.focusNextMonth(),
-      'aria-label': formatMessage('next')
+      'aria-label': formatMessage('next'),
+      isDisabled: props.isDisabled || state.isNextMonthInvalid()
     },
     prevButtonProps: {
       onPress: () => state.focusPreviousMonth(),
-      'aria-label': formatMessage('previous')
+      'aria-label': formatMessage('previous'),
+      isDisabled: props.isDisabled || state.isPreviousMonthInvalid()
     },
     calendarBodyProps: {
       ref: calendarBody,
