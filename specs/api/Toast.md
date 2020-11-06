@@ -74,7 +74,7 @@ interface ToastContainerProps {
         - Should there be an option to portal?
 
       - How would this affect theming? Would we get the theme from the nearest container or should it receive the theming from the top most Provider?
-  **/
+  */
   positioning: ?
 }
 
