@@ -22,74 +22,74 @@ import {Tabs} from '..';
 storiesOf('Tabs', module)
   .add(
     'Default',
-    () => render()
+    () => render({'aria-label': 'Default'})
   )
   .add(
     'with falsy item key',
-    () => renderWithFalsyKey()
+    () => renderWithFalsyKey({'aria-label': 'with falsy item key'})
   )
   .add(
     'defaultSelectedKey: val2',
-    () => render({defaultSelectedKey: 'val2'})
+    () => render({'aria-label': 'defaultSelectedKey: val2', defaultSelectedKey: 'val2'})
   )
   .add(
     'controlled: selectedKey: val3',
-    () => render({selectedKey: 'val3'})
+    () => render({'aria-label': 'controlled: selectedKey: val3', selectedKey: 'val3'})
   )
   .add(
     'orientation: vertical',
-    () => render({orientation: 'vertical'}))
+    () => render({'aria-label': 'orientation: vertical', orientation: 'vertical'}))
   .add(
     'density: compact',
-    () => render({density: 'compact'}))
+    () => render({'aria-label': 'density: compact', density: 'compact'}))
   .add(
     'isQuiet',
-    () => render({isQuiet: true}))
+    () => render({'aria-label': 'isQuiet', isQuiet: true}))
   .add(
     'isQuiet, density: compact',
-    () => render({isQuiet: true, density: 'compact'})
+    () => render({'aria-label': 'isQuiet, density: compact', isQuiet: true, density: 'compact'})
   )
   .add(
     'density: compact, orientation: vertical',
-    () => render({density: 'compact', orientation: 'vertical'})
+    () => render({'aria-label': 'density: compact, orientation: vertical', density: 'compact', orientation: 'vertical'})
   )
   .add(
     'icons',
-    () => renderWithIcons())
+    () => renderWithIcons({'aria-label': 'icons'}))
   .add(
     'icons, density: compact',
-    () => renderWithIcons({density: 'compact'})
+    () => renderWithIcons({'aria-label': 'icons, density: compact', density: 'compact'})
   )
   .add(
     'icons, orientation: vertical',
-    () => renderWithIcons({orientation: 'vertical'})
+    () => renderWithIcons({'aria-label': 'icons, orientation: vertical', orientation: 'vertical'})
   )
   .add(
     'icons, density: compact, orientation: vertical',
-    () => renderWithIcons({orientation: 'vertical', density: 'compact'})
+    () => renderWithIcons({'aria-label': 'icons, density: compact, orientation: vertical', orientation: 'vertical', density: 'compact'})
   )
   .add(
     'disable all tabs',
-    () => render({isDisabled: true}))
+    () => render({'aria-label': 'disable all tabs', isDisabled: true}))
   .add(
     'keyboardActivation: manual',
-    () => render({keyboardActivation: 'manual'})
+    () => render({'aria-label': 'keyboardActivation: manual', keyboardActivation: 'manual'})
   )
   .add(
     'overflowMode: dropdown',
-    () => render({overflowMode: 'dropdown'})
+    () => render({'aria-label': 'overflowMode: dropdown', overflowMode: 'dropdown'})
   )
   .add(
     'overflowMode: dropdown, density: compact',
-    () => render({overflowMode: 'dropdown', density: 'compact'})
+    () => render({'aria-label': 'overflowMode: dropdown, density: compact', overflowMode: 'dropdown', density: 'compact'})
   )
   .add(
     'overflowMode: dropdown, orientation: vertical',
-    () => render({overflowMode: 'dropdown', orientation: 'vertical'})
+    () => render({'aria-label': 'overflowMode: dropdown, orientation: vertical', overflowMode: 'dropdown', orientation: 'vertical'})
   )
   .add(
     'middle disabled',
-    () => render({disabledKeys: ['val2']})
+    () => render({'aria-label': 'middle disabled', disabledKeys: ['val2']})
   );
 
 function render(props = {}) {
