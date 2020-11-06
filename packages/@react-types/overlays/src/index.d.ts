@@ -90,7 +90,8 @@ export interface PopoverProps extends StyleProps, Omit<OverlayProps, 'nodeRef'> 
   hideArrow?: boolean,
   isOpen?: boolean,
   onClose?: () => void,
-  shouldCloseOnBlur?: boolean
+  shouldCloseOnBlur?: boolean,
+  isNonModal?: boolean
 }
 
 export interface TrayProps extends StyleProps, Omit<OverlayProps, 'nodeRef'>  {
@@ -98,7 +99,8 @@ export interface TrayProps extends StyleProps, Omit<OverlayProps, 'nodeRef'>  {
   isOpen?: boolean,
   onClose?: () => void,
   shouldCloseOnBlur?: boolean,
-  isFixedHeight?: boolean
+  isFixedHeight?: boolean,
+  isNonModal?: boolean
 }
 
 export interface OverlayTriggerProps {
