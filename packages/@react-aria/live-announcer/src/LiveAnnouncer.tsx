@@ -20,28 +20,17 @@ let node = null;
 let clearTimeoutId = null;
 const LIVEREGION_TIMEOUT_DELAY = 1000;
 
-type AriaLive = 'assertive' | 'off' | 'polite';
-
-interface MessageProps {
-  message: string,
-  'aria-live': AriaLive
-}
-
 /**
  * Announces the message using screen reader technology.
  */
-export function announce(
-  message: string,
-  assertiveness: AriaLive = 'assertive',
-  timeout = LIVEREGION_TIMEOUT_DELAY
-) {
+export function announce(message: string, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY) {
   ensureInstance(announcer => announcer.announce(message, assertiveness, timeout));
 }
 
 /**
  * Stops all queued announcements.
  */
-export function clearAnnouncer(assertiveness: AriaLive) {
+export function clearAnnouncer(assertiveness) {
   ensureInstance(announcer => announcer.clear(assertiveness));
 }
 
@@ -77,7 +66,7 @@ const LiveRegionAnnouncer = React.forwardRef((props, ref) => {
   let [assertiveMessage, setAssertiveMessage] = useState('');
   let [politeMessage, setPoliteMessage] = useState('');
 
-  let clear = (assertiveness: AriaLive) => {
+  let clear = (assertiveness) => {
     if (!assertiveness || assertiveness === 'assertive') {
       setAssertiveMessage('');
     }
@@ -87,11 +76,7 @@ const LiveRegionAnnouncer = React.forwardRef((props, ref) => {
     }
   };
 
-  let announce = (
-    message, 
-    assertiveness: AriaLive = 'assertive',
-    timeout = LIVEREGION_TIMEOUT_DELAY
-  ) => {
+  let announce = (message, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY) => {
     if (clearTimeoutId) {
       clearTimeout(clearTimeoutId);
       clearTimeoutId = null;
@@ -123,7 +108,7 @@ const LiveRegionAnnouncer = React.forwardRef((props, ref) => {
   );
 });
 
-function MessageAlternator({message = '', 'aria-live': ariaLive}: MessageProps) {
+function MessageAlternator({message = '', 'aria-live': ariaLive}) {
   let messagesRef = useRef(['', '']);
   let indexRef = useRef(0);
 
@@ -141,7 +126,7 @@ function MessageAlternator({message = '', 'aria-live': ariaLive}: MessageProps) 
   );
 }
 
-function MessageBlock({message = '', 'aria-live': ariaLive}: MessageProps) {
+function MessageBlock({message = '', 'aria-live': ariaLive}) {
   return (
     <VisuallyHidden
       aria-live={ariaLive}
