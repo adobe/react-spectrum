@@ -35,6 +35,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
     isDisabled,
     isQuiet,
     density,
+    children,
     ...otherProps
   } = props;
 
@@ -56,7 +57,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
     if (state.selectionManager.isEmpty || !state.collection.getItem(state.selectedKey)) {
       state.selectionManager.replaceSelection(state.collection.getFirstKey());
     }
-  }, [state]);
+  }, [state.selectionManager, state.selectedKey, state.collection]);
 
   useEffect(() => {
     if (ref.current) {
@@ -67,7 +68,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
         setSelectedTab(selectedTab);
       }
     }
-  }, [props.children, state, ref]);
+  }, [children, state.selectedKey, ref]);
 
   let checkShouldCollapse = useCallback(() => {
     let computeShouldCollapse = () => {
