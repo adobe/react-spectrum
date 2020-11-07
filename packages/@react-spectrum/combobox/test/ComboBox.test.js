@@ -636,14 +636,32 @@ describe('ComboBox', function () {
         expect(onOpenChange).not.toHaveBeenCalled();
       });
 
-      it('doesn\'t close the menu when there are no matching items if isOpen and inputValue are controlled', function () {
-        let {getByRole, rerender} = render(<ExampleComboBox isOpen inputValue="One" />);
+      it('doesn\'t close the menu when there are no matching items if isOpen and items are controlled', function () {
+        let Test = (props) => (
+          <Provider theme={theme}>
+            <ComboBox label="Combobox" {...props}>
+              {item => <Item>{item.name}</Item>}
+            </ComboBox>
+          </Provider>
+        );
+
+        let {getByRole, rerender} = render(
+          <Test isOpen items={[{id: 1, name: 'One'}]} />
+        );
+
+        act(() => {
+          jest.runAllTimers();
+        });
 
         let listbox = getByRole('listbox');
         let items = within(listbox).getAllByRole('option');
         expect(items).toHaveLength(1);
 
-        rerender(<ExampleComboBox isOpen inputValue="Onez" />);
+        rerender(<Test isOpen items={[]} />);
+
+        act(() => {
+          jest.runAllTimers();
+        });
 
         act(() => jest.runAllTimers());
         expect(() => getByRole('listbox')).not.toThrow();

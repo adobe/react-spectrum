@@ -77,24 +77,27 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   let isInitialRender = useRef(true);
   let lastSelectedKey = useRef(null);
   useEffect(() => {
-    // If open state or inputValue is uncontrolled,
-    // open and close automatically when the input value changes.
-    if (props.isOpen === undefined || props.inputValue === undefined) {
-      // Open the menu if focused, there are items in the collection, and the input value changed.
-      if (
-        isFocused &&
-        filteredCollection.size > 0 &&
-        !triggerState.isOpen &&
-        inputValue !== lastValue.current &&
-        menuTrigger !== 'manual'
-      ) {
-        open();
-      }
+    // If open state or inputValue is uncontrolled, open and close automatically when the input value changes,
+    // the input is if focused, and there are items in the collection.
+    if (
+      isFocused &&
+      filteredCollection.size > 0 &&
+      !triggerState.isOpen &&
+      inputValue !== lastValue.current &&
+      menuTrigger !== 'manual' &&
+      (props.isOpen === undefined || props.inputValue === undefined)
+    ) {
+      open();
+    }
 
-      // Close the menu if the collection is empty.
-      if (!allowsEmptyCollection && triggerState.isOpen && filteredCollection.size === 0) {
-        triggerState.close();
-      }
+    // Close the menu if the collection is empty and either open state or items are uncontrolled.
+    if (
+      !allowsEmptyCollection &&
+      triggerState.isOpen &&
+      filteredCollection.size === 0 &&
+      (props.isOpen === undefined || props.items === undefined)
+    ) {
+      triggerState.close();
     }
 
     // Close when an item is selected, if open state or selectedKey is uncontrolled.
