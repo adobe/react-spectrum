@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useIsMobileDevice, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {Label} from '@react-spectrum/label';
@@ -62,7 +62,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
     incrementButtonProps,
     decrementButtonProps
   } = useNumberField(props, state, inputRef);
-  let isMobile = useMediaQuery('(max-width: 700px)');
+  let isMobile = useIsMobileDevice();
   let showStepperButtons = showStepper && !isMobile;
 
   let className = classNames(

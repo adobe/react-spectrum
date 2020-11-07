@@ -24,10 +24,7 @@ I've divided up the file into css for the steppers vs css for the input to make 
     &:disabled {
       border-color: var(--spectrum-textfield-border-color-disabled);
     }
-  }
 
-  .spectrum-Stepper-stepUp,
-  .spectrum-Stepper-stepDown {
     &:hover:not(:disabled) {
       /* Keep the border on hover */
       border-color: var(--spectrum-textfield-border-color);
