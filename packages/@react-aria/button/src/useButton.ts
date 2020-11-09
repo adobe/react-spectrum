@@ -32,14 +32,13 @@ export interface ButtonAria<T> {
   isPressed: boolean
 }
 
+/* eslint-disable no-redeclare */
 /**
  * Provides the behavior and accessibility implementation for a button component. Handles mouse, keyboard, and touch interactions,
  * focus behavior, and ARIA props for both native button elements and custom element types.
  * @param props - Props to be applied to the button.
  * @param ref - A ref to a DOM element for the button.
  */
-
-/* eslint-disable no-redeclare */
 function useButton(props: AriaButtonProps<'a'>, ref: RefObject<HTMLAnchorElement>): ButtonAria<AnchorHTMLAttributes<HTMLAnchorElement>>;
 function useButton(props: AriaButtonProps<'button'>, ref: RefObject<HTMLButtonElement>): ButtonAria<ButtonHTMLAttributes<HTMLButtonElement>>;
 function useButton(props: AriaButtonProps<'div'>, ref: RefObject<HTMLDivElement>): ButtonAria<HTMLAttributes<HTMLDivElement>>;
@@ -47,6 +46,7 @@ function useButton(props: AriaButtonProps<'input'>, ref: RefObject<HTMLInputElem
 function useButton(props: AriaButtonProps<'span'>, ref: RefObject<HTMLSpanElement>): ButtonAria<HTMLAttributes<HTMLSpanElement>>;
 function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<HTMLElement>): ButtonAria<HTMLAttributes<HTMLElement>>;
 function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<any>): ButtonAria<HTMLAttributes<any>> {
+/* eslint-enable no-redeclare */
   let {
     elementType = 'button',
     isDisabled,
