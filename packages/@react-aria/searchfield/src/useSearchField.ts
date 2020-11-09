@@ -28,17 +28,21 @@ interface SearchFieldAria {
   clearButtonProps: AriaButtonProps
 }
 
+function useSearchField(props: AriaSearchFieldProps, state: SearchFieldState, inputRef: RefObject<HTMLTextAreaElement>): SearchFieldAria;
+/* eslint-disable no-redeclare */
+function useSearchField(props: AriaSearchFieldProps, state: SearchFieldState, inputRef: RefObject<HTMLInputElement>): SearchFieldAria;
 /**
  * Provides the behavior and accessibility implementation for a search field.
  * @param props - Props for the search field.
  * @param state - State for the search field, as returned by `useSearchFieldState`.
  * @param inputRef - A ref to the input element.
  */
-export function useSearchField(
+function useSearchField(
   props: AriaSearchFieldProps,
   state: SearchFieldState,
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>
+  inputRef: RefObject<any>
 ): SearchFieldAria {
+  /* eslint-enable no-redeclare */
   let formatMessage = useMessageFormatter(intlMessages);
   let {
     isDisabled,
@@ -107,3 +111,5 @@ export function useSearchField(
     }
   };
 }
+
+export {useSearchField};

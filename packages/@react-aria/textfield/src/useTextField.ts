@@ -11,38 +11,48 @@
  */
 
 import {AriaTextFieldProps} from '@react-types/textfield';
-import {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject, TextareaHTMLAttributes} from 'react';
+import {
+  ChangeEvent,
+  InputHTMLAttributes,
+  LabelHTMLAttributes,
+  RefObject,
+  TextareaHTMLAttributes
+} from 'react';
 import {ElementType} from 'react';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {useFocusable} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
 
-interface TextFieldAria {
+interface TextFieldAria<T> {
   /** Props for the input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
+  inputProps: T,
   /** Props for the text field's visible label element (if any). */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>
 }
 
-interface AriaTextFieldOptions extends AriaTextFieldProps {
+interface AriaTextFieldOptions<T> extends AriaTextFieldProps {
   /**
    * The HTML element used to render the input, e.g. 'input', or 'textarea'.
    * It determines whether certain HTML attributes will be included in `inputProps`.
    * For example, [`type`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-type).
    * @default 'input'
    */
-  inputElementType?: ElementType
+  inputElementType?: T
 }
 
+function useTextField(props: AriaTextFieldOptions<'input'>, ref: RefObject<HTMLInputElement>): TextFieldAria<InputHTMLAttributes<HTMLInputElement>>;
+/* eslint-disable no-redeclare */
+function useTextField(props: AriaTextFieldOptions<'textarea'>, ref: RefObject<HTMLTextAreaElement>): TextFieldAria<TextareaHTMLAttributes<HTMLTextAreaElement>>;
 /**
  * Provides the behavior and accessibility implementation for a text field.
  * @param props - Props for the text field.
  * @param ref - Ref to the HTML input or textarea element.
  */
-export function useTextField(
-  props: AriaTextFieldOptions,
+function useTextField(
+  props: AriaTextFieldOptions<ElementType>,
   ref: RefObject<HTMLInputElement | HTMLTextAreaElement>
-): TextFieldAria {
+): TextFieldAria<InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>> {
+  /* eslint-enable no-redeclare */
   let {
     inputElementType = 'input',
     isDisabled = false,
@@ -85,6 +95,9 @@ export function useTextField(
         placeholder: props.placeholder,
         inputMode: props.inputMode,
 
+        rows: props.rows,
+        cols: props.cols,
+
         // Clipboard events
         onCopy: props.onCopy,
         onCut: props.onCut,
@@ -107,3 +120,5 @@ export function useTextField(
     )
   };
 }
+
+export {useTextField};

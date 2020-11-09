@@ -125,7 +125,7 @@ export interface TextInputDOMProps extends DOMProps {
    * Handler that is called when a text composition system starts a new text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionstart_event).
    */
   onCompositionStart?: CompositionEventHandler<HTMLInputElement>,
-  
+
   /**
    * Handler that is called when a text composition system completes or cancels the current text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionend_event).
    */
@@ -151,4 +151,91 @@ export interface TextInputDOMProps extends DOMProps {
    * Handler that is called when the input value is modified. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/input_event).
    */
   onInput?: FormEventHandler<HTMLInputElement>
+}
+
+// DOM props that apply to all text areas
+// Ensure this is synced with useTextField
+export interface TextAreaDOMProps extends DOMProps {
+  /**
+   * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
+   */
+  autoComplete?: string,
+
+  /**
+   * The maximum number of characters supported by the input. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefmaxlength).
+   */
+  maxLength?: number,
+
+  /**
+   * The minimum number of characters required by the input. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefminlength).
+   */
+  minLength?: number,
+
+  /**
+   * The name of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  name?: string,
+
+  /**
+   * Content that appears in the input when it is empty. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefplaceholder).
+   */
+  placeholder?: string,
+
+  // Clipboard events
+  /**
+   * Handler that is called when the user copies text. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncopy).
+   */
+  onCopy?: ClipboardEventHandler<HTMLInputElement>,
+
+  /**
+   * Handler that is called when the user cuts text. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncut).
+   */
+  onCut?: ClipboardEventHandler<HTMLInputElement>,
+
+  /**
+   * Handler that is called when the user pastes text. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/onpaste).
+   */
+  onPaste?: ClipboardEventHandler<HTMLInputElement>,
+
+  // Composition events
+  /**
+   * Handler that is called when a text composition system starts a new text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionstart_event).
+   */
+  onCompositionStart?: CompositionEventHandler<HTMLInputElement>,
+
+  /**
+   * Handler that is called when a text composition system completes or cancels the current text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionend_event).
+   */
+  onCompositionEnd?: CompositionEventHandler<HTMLInputElement>,
+
+  /**
+   * Handler that is called when a new character is received in the current text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionupdate_event).
+   */
+  onCompositionUpdate?: CompositionEventHandler<HTMLInputElement>,
+
+  // Selection events
+  /**
+   * Handler that is called when text in the input is selected. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/select_event).
+   */
+  onSelect?: ReactEventHandler<HTMLInputElement>,
+
+  // Input events
+  /**
+   * Handler that is called when the input value is about to be modified. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/beforeinput_event).
+   */
+  onBeforeInput?: FormEventHandler<HTMLInputElement>,
+  /**
+   * Handler that is called when the input value is modified. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/input_event).
+   */
+  onInput?: FormEventHandler<HTMLInputElement>,
+
+  /**
+   * The number of visible text lines for the control. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea).
+   */
+  rows?: number,
+  /**
+   * The visible width of the text control, in average character widths. If it is specified, it must be a positive integer. If it is not specified, the default value is 20.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea).
+   */
+  cols?: number
 }

@@ -27,9 +27,9 @@ import {useMenuTrigger} from '@react-aria/menu';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
-export interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
+export interface AriaComboBoxProps<T, W> extends ComboBoxProps<T> {
   buttonRef: RefObject<HTMLElement>,
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  inputRef: W,
   popoverRef: RefObject<HTMLDivElement>,
   listBoxRef: RefObject<HTMLElement>,
   keyboardDelegate?: KeyboardDelegate
@@ -48,7 +48,11 @@ function isAppleDevice() {
     : false;
 }
 
-export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState<T>): ComboBoxAria {
+function useComboBox<T>(props: AriaComboBoxProps<T, RefObject<HTMLInputElement>>, state: ComboBoxState<T>): ComboBoxAria;
+/* eslint-disable no-redeclare */
+function useComboBox<T>(props: AriaComboBoxProps<T, RefObject<HTMLTextAreaElement>>, state: ComboBoxState<T>): ComboBoxAria;
+function useComboBox<T>(props: AriaComboBoxProps<T, RefObject<any>>, state: ComboBoxState<T>): ComboBoxAria {
+  /* eslint-enable no-redeclare */
   let {
     buttonRef,
     popoverRef,
@@ -293,3 +297,5 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     listBoxProps: mergeProps(menuProps, listBoxProps)
   };
 }
+
+export {useComboBox};

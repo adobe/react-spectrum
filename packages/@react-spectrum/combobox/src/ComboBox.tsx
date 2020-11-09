@@ -54,7 +54,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
   let listBoxRef = useRef();
-  let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
+  let inputRef = useRef<HTMLInputElement>();
   let domRef = useFocusableRef(ref, inputRef);
 
   let {contains} = useFilter({sensitivity: 'base'});
