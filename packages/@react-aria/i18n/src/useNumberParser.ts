@@ -41,10 +41,12 @@ export function useNumberParser(formatter, numeralOverride): NumberParser {
     // Get the minus sign of the current locale to filter the input value
     // Automatically updates the minus sign when numberFormatter changes
     // won't work for currency accounting, but we have validCharacters for that in the pattern
-    let allParts = formatter.formatToParts(-1000.1);
+    // Note: some locale's don't add a group symbol until there is a ten thousands place
+    let allParts = formatter.formatToParts(-10000.1);
     let minusSign = allParts.find(p => p.type === 'minusSign')?.value;
-    let posAllParts = formatter.formatToParts(1000.1);
+    let posAllParts = formatter.formatToParts(10000.1);
     let plusSign = posAllParts.find(p => p.type === 'plusSign')?.value;
+    console.log(allParts, formatter.resolvedOptions());
 
     let decimal = allParts.find(p => p.type === 'decimal')?.value;
     let group = allParts.find(p => p.type === 'group')?.value;

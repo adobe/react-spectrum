@@ -50,11 +50,10 @@ We’d like to have the input and output of the `NumberField` be a number as thi
 If a consumer of our library needs the formatted string version of the value, they can pass the value from `onChange` through  `useNumberFormatter` with the same options that they pass into `NumberField` and they should get the same string that is being displayed in the input.
 
 #### Example Behavior
-In an uncontrolled NumberField with `defaultValue` of 50 and style `percent`, when a user focuses, the `%` sign should stay, but not be removable.
-The entire text should be selected, so that the user can begin typing a new number.
-They type `34.56`, we have parse at each step and fire onChange for each newly parsed number (progression example: 3, 34, 34.5, 34.56).
+In an uncontrolled NumberField with `defaultValue` of 50 and style `percent`, when a user focuses, the entire text should be selected, so that the user can begin typing a new number.
+They type `34.56`, we fire onChange only on a blur.
 Only characters that are valid numerals or separators can be typed, other keys like letters are ignored.
-When they blur, the `%` reappears after formatting according to the `formatOptions` again.
+When they blur, the `%` reappears after formatting according to the `formatOptions` again. The user should be able to type any valid symbols that the formatter would add.
 
 If they typed something invalid (invalid combination of valid characters) at any point, we fail to parse it into parts,
 then we do not set the state to that value and we do not fire `onChange`.

@@ -223,7 +223,7 @@ export function useNumberFieldState(
     return result;
   };
 
-  // this remove any not allowed characters from the input value
+  // this removes any not allowed characters from the input value
   let cleanInputValue = useMemo(() => {
     let numerals = numberingSystems[currentNumeralSystem || 'latin'].join('');
     if (!currentNumeralSystem) {

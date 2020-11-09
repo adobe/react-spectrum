@@ -29,6 +29,7 @@ let locales = Object.keys(messages).map(locale => locale.replace('.json', '')).f
 
 describe('NumberField', function () {
   let onChangeSpy = jest.fn();
+  let windowSpy;
 
   beforeAll(() => {
     jest.useFakeTimers();
@@ -36,6 +37,10 @@ describe('NumberField', function () {
 
   afterAll(() => {
     jest.useRealTimers();
+  });
+
+  beforeEach(() => {
+    windowSpy = jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
   });
 
   afterEach(() => {
@@ -435,6 +440,19 @@ describe('NumberField', function () {
     ${'NumberField'}
   `('$Name can hide step buttons', () => {
     let {textField, incrementButton, decrementButton} = renderNumberField({showStepper: false});
+
+    expect(textField).toBeDefined();
+    expect(incrementButton).not.toBeDefined();
+    expect(decrementButton).not.toBeDefined();
+  });
+
+  // TODO: mobile eventually won't auto hide
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name step buttons automatically hidden for mobile', () => {
+    windowSpy.mockImplementation(() => 600);
+    let {textField, incrementButton, decrementButton} = renderNumberField({});
 
     expect(textField).toBeDefined();
     expect(incrementButton).not.toBeDefined();
@@ -869,7 +887,6 @@ describe('NumberField', function () {
     typeText(textField, '16');
     expect(textField).toHaveAttribute('value', '16');
     act(() => {textField.blur();});
-    expect(textField).toHaveAttribute('value', '20');
     expect(textField).toHaveAttribute('value', '20');
     expect(onChangeSpy).toHaveBeenLastCalledWith(20);
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
@@ -1370,5 +1387,18 @@ describe('NumberField', function () {
 
     let formatter = new Intl.NumberFormat(locale + '-u-nu-hanidec', {style: 'currency', currency: 'USD'});
     expect(textField).toHaveAttribute('value', formatter.format(21));
+  });
+
+  describe('locale specific', () => {
+    describe('spanish (spain)', () => {
+      it('can determine the group symbol', () => {
+        let {textField} = renderNumberField({onChange: onChangeSpy}, 'es-ES');
+        act(() => {textField.focus();});
+        typeText(textField, '123.456.789');
+        expect(textField).toHaveAttribute('value', '123.456.789');
+        act(() => {textField.blur();});
+        expect(textField).toHaveAttribute('value', '123.456.789');
+      });
+    });
   });
 });
