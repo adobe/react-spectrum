@@ -17,6 +17,7 @@ import {
   CollectionBase,
   DimensionValue,
   DOMProps,
+  FocusableProps,
   InputBase,
   LabelableProps,
   SingleSelection,
@@ -40,7 +41,7 @@ export interface SelectProps<T> extends CollectionBase<T>, AsyncLoadable, InputB
   shouldFlip?: boolean
 }
 
-export interface AriaSelectProps<T> extends SelectProps<T>, DOMProps, AriaLabelingProps {}
+export interface AriaSelectProps<T> extends SelectProps<T>, DOMProps, AriaLabelingProps, FocusableProps {}
 
 export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabelableProps, StyleProps {
   /** Whether the textfield should be displayed with a quiet style. */
