@@ -19,6 +19,7 @@ let supportsSignDisplay = false;
 try {
   // @ts-ignore
   supportsSignDisplay = (new Intl.NumberFormat('de-DE', {signDisplay: 'exceptZero'})).resolvedOptions().signDisplay === 'exceptZero';
+  // eslint-disable-next-line no-empty
 } catch (e) {}
 
 /**
