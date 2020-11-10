@@ -13,7 +13,7 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaSelectProps} from '@react-types/select';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {HTMLAttributes, RefObject, useMemo} from 'react';
+import {FocusEvent, HTMLAttributes, RefObject, useMemo} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
 import {SelectState} from '@react-stately/select';
@@ -27,7 +27,16 @@ interface AriaSelectOptions<T> extends AriaSelectProps<T> {
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate,
+  /**
+   * The trigger of the select.
+   */
+  triggerRef: RefObject<HTMLElement>,
+  /**
+   * The popup reference.
+   */
+  popoverRef: RefObject<HTMLDivElement>
+
 }
 
 interface SelectAria {
@@ -50,9 +59,11 @@ interface SelectAria {
  * @param props - Props for the select.
  * @param state - State for the select, as returned by `useListState`.
  */
-export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<HTMLElement>): SelectAria {
+export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>): SelectAria {
   let {
-    keyboardDelegate
+    keyboardDelegate,
+    triggerRef,
+    popoverRef
   } = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
@@ -65,7 +76,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
       type: 'listbox'
     },
     state,
-    ref
+    triggerRef
   );
 
   let {typeSelectProps} = useTypeSelect({
@@ -90,7 +101,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
       ...labelProps,
       onClick: () => {
         if (!props.isDisabled) {
-          ref.current.focus();
+          triggerRef.current.focus();
 
           // Show the focus ring so the user knows where focus went
           setInteractionModality('keyboard');
@@ -104,12 +115,31 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
         triggerProps['aria-label'] && !triggerProps['aria-labelledby'] ? triggerProps.id : null,
         valueId
       ].filter(Boolean).join(' '),
-      onFocus() {
+      onFocus(e: FocusEvent) {
+        if (state.isFocused) {
+          return;
+        }
+
+        if (props.onFocus) {
+          props.onFocus(e);
+        }
+
         state.setFocused(true);
       },
-      onBlur() {
+      onBlur(e: FocusEvent) {
+        if (e.relatedTarget === triggerRef.current || popoverRef.current?.contains(e.relatedTarget as HTMLElement)) {
+          return;
+        }
+
+        if (props.onBlur) {
+          props.onBlur(e);
+        }
+
         state.setFocused(false);
-      }
+      },
+      onFocusChange: props.onFocusChange,
+      onKeyDown: props.onKeyDown,
+      onKeyUp: props.onKeyUp
     }),
     valueProps: {
       id: valueId
