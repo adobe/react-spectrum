@@ -15,8 +15,11 @@ import {useLocale} from './context';
 
 let formatterCache = new Map<string, Intl.NumberFormat>();
 
-// @ts-ignore
-const supportsSignDisplay = (new Intl.NumberFormat('de-DE', {signDisplay: 'exceptZero'})).resolvedOptions().signDisplay === 'exceptZero';
+let supportsSignDisplay = false;
+try {
+  // @ts-ignore
+  supportsSignDisplay = (new Intl.NumberFormat('de-DE', {signDisplay: 'exceptZero'})).resolvedOptions().signDisplay === 'exceptZero';
+} catch (e) {}
 
 /**
  * Provides localized number formatting for the current locale. Automatically updates when the locale changes,
