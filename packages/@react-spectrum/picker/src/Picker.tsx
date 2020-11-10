@@ -55,7 +55,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     isRequired,
     necessityIndicator,
     menuWidth,
-    name
+    name,
+    autoFocus
   } = props;
 
   let {styleProps} = useStyleProps(props);
@@ -72,8 +73,10 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let layout = useListBoxLayout(state);
   let {labelProps, triggerProps, valueProps, menuProps} = useSelect({
     ...props,
-    keyboardDelegate: layout
-  }, state, unwrapDOMRef(triggerRef));
+    keyboardDelegate: layout,
+    triggerRef: unwrapDOMRef(triggerRef),
+    popoverRef: unwrapDOMRef(popoverRef)
+  }, state);
 
   let isMobile = useIsMobileDevice();
   let {overlayProps, placement, updatePosition} = useOverlayPosition({
@@ -198,6 +201,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
           isQuiet={isQuiet}
           isDisabled={isDisabled}
           validationState={validationState}
+          autoFocus={autoFocus}
           UNSAFE_className={classNames(styles, 'spectrum-Dropdown-trigger', {'is-hovered': isHovered})}>
           <SlotProvider
             slots={{
