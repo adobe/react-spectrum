@@ -271,7 +271,10 @@ export function usePress(props: PressHookProps): PressResult {
 
         // Due to browser inconsistencies, especially on mobile browsers, we prevent
         // default on pointer down and handle focusing the pressable element ourselves.
-        e.preventDefault();
+        if (shouldPreventDefault(e.target as Element)) {
+          e.preventDefault();
+        }
+
         e.stopPropagation();
         if (!state.isPressed) {
           state.isPressed = true;
@@ -297,7 +300,9 @@ export function usePress(props: PressHookProps): PressResult {
           // Chrome and Firefox on touch Windows devices require mouse down events
           // to be canceled in addition to pointer events, or an extra asynchronous
           // focus event will be fired.
-          e.preventDefault();
+          if (shouldPreventDefault(e.target as Element)) {
+            e.stopPropagation();
+          }
         }
       };
 
@@ -372,7 +377,10 @@ export function usePress(props: PressHookProps): PressResult {
 
         // Due to browser inconsistencies, especially on mobile browsers, we prevent
         // default on mouse down and handle focusing the pressable element ourselves.
-        e.preventDefault();
+        if (shouldPreventDefault(e.target as Element)) {
+          e.preventDefault();
+        }
+
         e.stopPropagation();
         if (state.ignoreEmulatedMouseEvents) {
           return;
@@ -613,4 +621,9 @@ function isOverTarget(point: EventPoint, target: HTMLElement) {
     (point.clientX || 0) <= (rect.right || 0) &&
     (point.clientY || 0) >= (rect.top || 0) &&
     (point.clientY || 0) <= (rect.bottom || 0);
+}
+
+function shouldPreventDefault(target: Element) {
+  // We cannot prevent default if the target is inside a draggable element.
+  return !target.closest('[draggable="true"]');
 }

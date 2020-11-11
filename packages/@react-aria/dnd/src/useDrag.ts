@@ -27,7 +27,7 @@ interface DragOptions {
 
 interface DragResult {
   dragProps: HTMLAttributes<HTMLElement>,
-  dragButtonProps: HTMLAttributes<HTMLElement>
+  dragButtonProps: PressEvents
 }
 
 export function useDrag(options: DragOptions): DragResult {
@@ -92,8 +92,8 @@ export function useDrag(options: DragOptions): DragResult {
     }
   };
 
-  let onKeyDown = (e: KeyboardEvent) => {
-    if (e.key !== 'Enter') {
+  let onPress = (e: PressEvent) => {
+    if (e.pointerType !== 'keyboard' && e.pointerType !== 'virtual') {
       return;
     }
 
@@ -122,8 +122,7 @@ export function useDrag(options: DragOptions): DragResult {
       onDragEnd
     },
     dragButtonProps: {
-      tabIndex: 0,
-      onKeyDown
+      onPress
     }
   };
 }

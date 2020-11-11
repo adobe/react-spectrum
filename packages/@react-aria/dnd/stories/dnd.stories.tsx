@@ -19,6 +19,7 @@ import {useDrag, useDrop, useDroppableCollection} from '..';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import {Item} from '@react-stately/collections';
 import {useListState} from '@react-stately/list';
+import {useButton} from '@react-aria/button';
 
 storiesOf('Drag and Drop', module)
   .add(
@@ -67,10 +68,14 @@ function Draggable() {
     onDragEnd: action('onDragEnd')
   });
 
+  let ref = React.useRef();
+  let {buttonProps} = useButton({...dragButtonProps, elementType: 'div'}, ref);
+
   return (
     <div
+      ref={ref}
       {...dragProps}
-      {...dragButtonProps}
+      {...buttonProps}
       style={{
         background: 'red',
         padding: 10
