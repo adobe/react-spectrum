@@ -12,3 +12,4 @@
 
 export * from './useColorSlider';
 export * from './useColorWheel';
+export * from './useHexColorField';
