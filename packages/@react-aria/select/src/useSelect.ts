@@ -29,13 +29,9 @@ interface AriaSelectOptions<T> extends AriaSelectProps<T> {
    */
   keyboardDelegate?: KeyboardDelegate,
   /**
-   * The trigger of the select.
-   */
-  triggerRef: RefObject<HTMLElement>,
-  /**
    * The popup reference.
    */
-  popoverRef: RefObject<HTMLDivElement>
+  popoverRef?: RefObject<HTMLDivElement>
 
 }
 
@@ -59,10 +55,9 @@ interface SelectAria {
  * @param props - Props for the select.
  * @param state - State for the select, as returned by `useListState`.
  */
-export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>): SelectAria {
+export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<HTMLElement>): SelectAria {
   let {
     keyboardDelegate,
-    triggerRef,
     popoverRef
   } = props;
 
@@ -76,7 +71,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>)
       type: 'listbox'
     },
     state,
-    triggerRef
+    ref
   );
 
   let {typeSelectProps} = useTypeSelect({
@@ -101,7 +96,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>)
       ...labelProps,
       onClick: () => {
         if (!props.isDisabled) {
-          triggerRef.current.focus();
+          ref.current.focus();
 
           // Show the focus ring so the user knows where focus went
           setInteractionModality('keyboard');
@@ -127,7 +122,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>)
         state.setFocused(true);
       },
       onBlur(e: FocusEvent) {
-        if (e.relatedTarget === triggerRef.current || popoverRef.current?.contains(e.relatedTarget as HTMLElement)) {
+        if (popoverRef && (e.relatedTarget === ref.current || popoverRef.current?.contains(e.relatedTarget as HTMLElement))) {
           return;
         }
 
