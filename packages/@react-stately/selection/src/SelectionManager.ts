@@ -64,6 +64,20 @@ export class SelectionManager implements MultipleSelectionManager {
   }
 
   /**
+   * Whether focus is currently within a cell in the collection.
+   */
+  get isFocusWithinCell(): boolean {
+    return this.state.isFocusWithinCell;
+  }
+
+  /**
+   * Sets whether focus is currently within a cell in the collection.
+   */
+  setFocusWithinCell(isFocused: boolean) {
+    this.state.setFocusWithinCell(isFocused);
+  }
+
+  /**
    * The current focused key in the collection.
    */
   get focusedKey(): Key {

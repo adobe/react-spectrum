@@ -44,6 +44,8 @@ export function useTableCell<T>(props: GridCellProps, state: TableState<T>): Gri
     let focusable = treeWalker.firstChild() as HTMLElement;
     if (focusable) {
       focusSafely(focusable);
+      focusable.onblur = () => state.selectionManager.setFocusWithinCell(false);
+      state.selectionManager.setFocusWithinCell(true);
     } else {
       focusSafely(ref.current);
     }

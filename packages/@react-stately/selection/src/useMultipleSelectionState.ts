@@ -29,6 +29,8 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
   // But we also need to trigger a react re-render. So, we have both a ref (sync) and state (async).
   let isFocusedRef = useRef(false);
   let [, setFocused] = useState(false);
+  let isFocusWithinCellRef = useRef(false);
+  let [, setFocusWithinCell] = useState(false);
   let focusedKeyRef = useRef(null);
   let [, setFocusedKey] = useState(null);
   let selectedKeysProp = useMemo(() => convertSelection(props.selectedKeys), [props.selectedKeys]);
@@ -51,6 +53,13 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
     setFocused(f) {
       isFocusedRef.current = f;
       setFocused(f);
+    },
+    get isFocusWithinCell() {
+      return isFocusWithinCellRef.current;
+    },
+    setFocusWithinCell(f) {
+      isFocusWithinCellRef.current = f;
+      setFocusWithinCell(f);
     },
     get focusedKey() {
       return focusedKeyRef.current;

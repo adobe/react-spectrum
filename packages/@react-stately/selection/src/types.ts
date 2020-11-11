@@ -18,6 +18,10 @@ export interface FocusState {
   readonly isFocused: boolean,
   /** Sets whether the collection is focused. */
   setFocused(isFocused: boolean): void,
+  /** Whether focus is currently within a cell in the collection. */
+  readonly isFocusWithinCell: boolean,
+  /** Sets whether focus is currently within a cell in the collection. */
+  setFocusWithinCell(isFocused: boolean): void,
   /** The current focused key in the collection. */
   readonly focusedKey: Key,
   /** Sets the focused key. */

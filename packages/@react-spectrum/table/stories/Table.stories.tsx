@@ -25,6 +25,7 @@ import {Link} from '@react-spectrum/link';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
+import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList} from '@react-stately/data';
 
 let columns = [
@@ -727,6 +728,45 @@ storiesOf('Table', module)
             </Cell>
             <Cell>Two</Cell>
             <Cell>Three</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    )
+  )
+  .add('table with textfields and buttons',
+    () => (
+      <Table aria-label="Table" selectionMode="none">
+        <TableHeader>
+          <Column isRowHeader minWidth={200}>First Name</Column>
+          <Column isRowHeader>Last Name</Column>
+          <Column>Birthday</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>Sam</Cell>
+            <Cell>Smith</Cell>
+            <Cell>May 3</Cell>
+          </Row>
+          <Row>
+            <Cell>Julia</Cell>
+            <Cell>Jones</Cell>
+            <Cell>February 10</Cell>
+          </Row>
+          <Row>
+            <Cell>John</Cell>
+            <Cell>Doe</Cell>
+            <Cell>December 12</Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <TextField width={150} aria-label="table textfield" />
+            </Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Delete />
+              </ActionButton>
+            </Cell>
+            <Cell>December 12</Cell>
           </Row>
         </TableBody>
       </Table>
