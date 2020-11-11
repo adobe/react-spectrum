@@ -20,6 +20,10 @@ import {ListKeyboardDelegate} from '@react-aria/selection';
 import {Item} from '@react-stately/collections';
 import {useListState} from '@react-stately/list';
 import {useButton} from '@react-aria/button';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {ActionButton} from '@react-spectrum/button';
+import {Heading} from '@react-spectrum/text';
+import {Content} from '@react-spectrum/view';
 
 storiesOf('Drag and Drop', module)
   .add(
@@ -45,6 +49,28 @@ storiesOf('Drag and Drop', module)
           <Item>Two</Item>
           <Item>Three</Item>
         </DroppableCollection>
+      </Flex>
+    )
+  )
+  .add(
+    'In dialog',
+    () => (
+      <Flex direction="column" gap="size-200" alignItems="center">
+        <Draggable />
+        <DialogTrigger isDismissable>
+          <ActionButton>Open dialog</ActionButton>
+          <Dialog>
+            <Heading>Dialog</Heading>
+            <Content>
+              <Flex direction="column" gap="size-200" alignItems="center">
+                <Draggable />
+                <Droppable />
+                <Droppable />
+              </Flex>
+            </Content>
+          </Dialog>
+        </DialogTrigger>
+        <Droppable />
       </Flex>
     )
   );

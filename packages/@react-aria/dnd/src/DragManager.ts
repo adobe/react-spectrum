@@ -263,6 +263,10 @@ class DragSession {
 function findValidDropTargets(options: DragTarget) {
   let types = options.items.map(item => item.type);
   return [...dropTargets].filter(target => {
+    if (target.element.closest('[aria-hidden="true"]')) {
+      return false;
+    }
+
     if (typeof target.getDropOperation === 'function') {
       return target.getDropOperation(types, options.allowedDropOperations) !== 'cancel';
     }
