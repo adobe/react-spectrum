@@ -74,7 +74,8 @@ module.exports = {
     'importSpectrumCSS': 'readonly',
     'jest': true,
     'expect': true,
-    'JSX': 'readonly'
+    'JSX': 'readonly',
+    'NodeJS': 'readonly'
   },
   settings: {
     jsdoc: {

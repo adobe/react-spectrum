@@ -89,9 +89,12 @@ export function installPointerEvent() {
  * @param value The text.
  */
 export function typeText(el: HTMLElement, value: string, opts?: ITypeOpts) {
+  let skipClick = document.activeElement === el;
   for (let char of value) {
     act(() => {
-      userEvent.type(el, char, opts);
+      userEvent.type(el, char, {skipClick, ...opts});
     });
+
+    skipClick = true;
   }
 }
