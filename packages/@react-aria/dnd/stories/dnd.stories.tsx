@@ -16,6 +16,9 @@ import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {useDrag, useDrop, useDroppableCollection} from '..';
+import {ListKeyboardDelegate} from '@react-aria/selection';
+import {Item} from '@react-stately/collections';
+import {useListState} from '@react-stately/list';
 
 storiesOf('Drag and Drop', module)
   .add(
@@ -23,6 +26,10 @@ storiesOf('Drag and Drop', module)
     () => (
       <Flex direction="column" gap="size-200" alignItems="center">
         <Draggable />
+        <Droppable />
+        <input />
+        <Droppable type="text/html" />
+        <input />
         <Droppable />
       </Flex>
     )
@@ -32,13 +39,17 @@ storiesOf('Drag and Drop', module)
     () => (
       <Flex direction="column" gap="size-200" alignItems="center">
         <Draggable />
-        <DroppableCollection />
+        <DroppableCollection>
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </DroppableCollection>
       </Flex>
     )
   );
 
 function Draggable() {
-  let {dragProps} = useDrag({
+  let {dragProps, dragButtonProps} = useDrag({
     getItems() {
       return [{
         type: 'text/plain',
@@ -59,6 +70,7 @@ function Draggable() {
   return (
     <div
       {...dragProps}
+      {...dragButtonProps}
       style={{
         background: 'red',
         padding: 10
@@ -68,9 +80,11 @@ function Draggable() {
   );
 }
 
-function Droppable() {
+function Droppable({type}: any) {
+  let ref = React.useRef();
   let onDrop = action('onDrop');
   let {dropProps, isDropTarget} = useDrop({
+    ref,
     onDropEnter: action('onDropEnter'),
     // onDropMove: action('onDropMove'),
     onDropExit: action('onDropExit'),
@@ -81,13 +95,14 @@ function Droppable() {
       console.log(e, items);
     },
     getDropOperation(types, allowedOperations) {
-      return 'copy';
+      return !type || types.includes(type) ? 'copy' : 'cancel';
     }
   });
 
   return (
     <div
       {...dropProps}
+      ref={ref}
       style={{
         background: isDropTarget ? 'blue' : 'gray',
         padding: 20
@@ -97,11 +112,14 @@ function Droppable() {
   );
 }
 
-function DroppableCollection() {
+function DroppableCollection(props) {
   let ref = React.useRef<HTMLElement>(null);
   let [target, setTarget] = React.useState(null);
   let onDrop = action('onDrop');
+  let state = useListState(props);
   let {collectionProps} = useDroppableCollection({
+    ref,
+    keyboardDelegate: new ListKeyboardDelegate(state.collection, new Set(), ref),
     onDropEnter: chain(action('onDropEnter'), console.log, e => setTarget(e.target)),
     // onDropMove: action('onDropMove'),
     onDropExit: chain(action('onDropExit'), console.log, e => setTarget(null)),
@@ -180,6 +198,8 @@ function DroppableCollection() {
       if (next) {
         let nextRect = next.getBoundingClientRect();
         y += targetRect.height + (nextRect.top - targetRect.bottom) / 2;
+      } else {
+        y += targetRect.height;
       }
     } else if (target.dropPosition === 'before') {
       let prev = targetElement.previousElementSibling as HTMLElement;
@@ -207,9 +227,11 @@ function DroppableCollection() {
         width: 100,
         position: 'relative'
       }}>
-      <div data-key="1" style={{background: target?.key === '1' && target?.dropPosition === 'on' ? 'blue' : 'purple', padding: 10}}>One</div>
-      <div data-key="2" style={{background: target?.key === '2' && target?.dropPosition === 'on' ? 'blue' : 'purple', marginTop: 50, padding: 10}}>Two</div>
-      <div data-key="3" style={{background: target?.key === '3' && target?.dropPosition === 'on' ? 'blue' : 'purple', marginTop: 50, padding: 10}}>Three</div>
+      {[...state.collection].map(item =>
+        (<div data-key={item.key} style={{background: target?.key === item.key && target?.dropPosition === 'on' ? 'blue' : 'purple', padding: 10, margin: '5px 0'}}>
+          {item.rendered}
+        </div>)
+      )}
       {targetPosition != null &&
         <div style={{width: '100%', height: 2, background: 'blue', position: 'absolute', top: targetPosition - 1}} />
       }

@@ -11,10 +11,12 @@
  */
 
 import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropMoveEvent, DropOperation} from './types';
-import {DragEvent, HTMLAttributes, useRef, useState} from 'react';
+import {DragEvent, HTMLAttributes, RefObject, useEffect, useRef, useState} from 'react';
+import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
 
 interface DropOptions {
+  ref: RefObject<HTMLElement>,
   getDropOperation?: (types: string[], allowedOperations: DropOperation[]) => DropOperation,
   getDropOperationForPoint?: (types: string[], allowedOperations: DropOperation[], x: number, y: number) => DropOperation,
   onDropEnter?: (e: DropEnterEvent) => void,
@@ -104,7 +106,7 @@ export function useDrop(options: DropOptions): DropResult {
     state.dropEffect = DROP_OPERATION_TO_DROP_EFFECT[dropOperation] || 'none';
     e.dataTransfer.dropEffect = state.dropEffect;
 
-    if (typeof options.onDropEnter === 'function') {
+    if (typeof options.onDropEnter === 'function' && dropOperation !== 'cancel') {
       let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
       options.onDropEnter({
         type: 'dropenter',
@@ -113,7 +115,9 @@ export function useDrop(options: DropOptions): DropResult {
       });
     }
 
-    setDropTarget(true);
+    if (dropOperation !== 'cancel') {
+      setDropTarget(true);
+    }
   };
 
   let onDragLeave = (e: DragEvent) => {
@@ -122,7 +126,7 @@ export function useDrop(options: DropOptions): DropResult {
       return;
     }
 
-    if (typeof options.onDropExit === 'function') {
+    if (typeof options.onDropExit === 'function' && state.dropEffect !== 'none') {
       let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
       options.onDropExit({
         type: 'dropexit',
@@ -173,7 +177,6 @@ export function useDrop(options: DropOptions): DropResult {
         x: e.clientX - rect.x,
         y: e.clientY - rect.y
       });
-
     }
 
     state.dragEnterCount = 0;
@@ -181,12 +184,38 @@ export function useDrop(options: DropOptions): DropResult {
     clearTimeout(state.dropActivateTimer);
   };
 
+  let optionsRef = useRef(options);
+  optionsRef.current = options;
+
+  useEffect(() => DragManager.registerDropTarget({
+    element: optionsRef.current.ref.current,
+    getDropOperation: optionsRef.current.getDropOperation,
+    onDropEnter(e) {
+      setDropTarget(true);
+      if (typeof optionsRef.current.onDropEnter === 'function') {
+        optionsRef.current.onDropEnter(e);
+      }
+    },
+    onDropExit(e) {
+      setDropTarget(false);
+      if (typeof optionsRef.current.onDropExit === 'function') {
+        optionsRef.current.onDropExit(e);
+      }
+    },
+    onDrop(e) {
+      if (typeof optionsRef.current.onDrop === 'function') {
+        optionsRef.current.onDrop(e);
+      }
+    }
+  }), [optionsRef]);
+
   return {
     dropProps: {
       onDragEnter,
       onDragOver,
       onDragLeave,
-      onDrop
+      onDrop,
+      tabIndex: -1
     },
     isDropTarget
   };

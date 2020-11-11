@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonHTMLAttributes, DragEvent, HTMLAttributes, useRef} from 'react';
+import {ButtonHTMLAttributes, DragEvent, HTMLAttributes, KeyboardEvent, useRef} from 'react';
 import {DragEndEvent, DragItem, DragMoveEvent, DragStartEvent, DropOperation} from './types';
+import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
+import {PressEvent, PressEvents} from '@react-types/shared';
 
 interface DragOptions {
   onDragStart?: (e: DragStartEvent) => void,
@@ -25,7 +27,7 @@ interface DragOptions {
 
 interface DragResult {
   dragProps: HTMLAttributes<HTMLElement>,
-  dragButtonProps: ButtonHTMLAttributes<HTMLButtonElement>
+  dragButtonProps: HTMLAttributes<HTMLElement>
 }
 
 export function useDrag(options: DragOptions): DragResult {
@@ -90,6 +92,28 @@ export function useDrag(options: DragOptions): DragResult {
     }
   };
 
+  let onKeyDown = (e: KeyboardEvent) => {
+    if (e.key !== 'Enter') {
+      return;
+    }
+
+    if (typeof options.onDragStart === 'function') {
+      let rect = (e.target as HTMLElement).getBoundingClientRect();
+      options.onDragStart({
+        type: 'dragstart',
+        x: rect.x + (rect.width / 2),
+        y: rect.y + (rect.height / 2)
+      });
+    }
+
+    DragManager.beginDragging({
+      element: e.target as HTMLElement,
+      items: options.getItems(),
+      allowedDropOperations: options.getAllowedDropOperations(),
+      onDragEnd: options.onDragEnd
+    });
+  };
+
   return {
     dragProps: {
       draggable: 'true',
@@ -97,6 +121,9 @@ export function useDrag(options: DragOptions): DragResult {
       onDrag,
       onDragEnd
     },
-    dragButtonProps: {}
+    dragButtonProps: {
+      tabIndex: 0,
+      onKeyDown
+    }
   };
 }

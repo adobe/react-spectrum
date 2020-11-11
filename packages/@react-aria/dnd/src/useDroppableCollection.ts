@@ -11,8 +11,9 @@
  */
 
 import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation} from './types';
-import {HTMLAttributes, Key, useRef} from 'react';
+import {HTMLAttributes, Key, KeyboardEvent, RefObject, useRef} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
+import {mergeProps} from '@react-aria/utils';
 import {useDrop} from './useDrop';
 
 type DropPosition = 'on' | 'before' | 'after';
@@ -42,7 +43,8 @@ interface DroppableCollectionDropEvent extends DropEvent {
 }
 
 interface DroppableCollectionOptions {
-  // keyboardDelegate: KeyboardDelegate,
+  ref: RefObject<HTMLElement>,
+  keyboardDelegate: KeyboardDelegate,
   getDropTargetFromPoint: (x: number, y: number) => DropTarget | null,
   getAllowedDropPositions?: (key: Key) => DropPosition[],
   getDropOperation?: (target: DropTarget, types: string[], allowedOperations: DropOperation[]) => DropOperation,
@@ -58,6 +60,7 @@ interface DroppableCollectionResult {
 }
 
 export function useDroppableCollection(options: DroppableCollectionOptions): DroppableCollectionResult {
+  let {keyboardDelegate} = options;
   let state = useRef({
     target: null,
     dropOperation: null,
@@ -65,6 +68,7 @@ export function useDroppableCollection(options: DroppableCollectionOptions): Dro
   }).current;
 
   let {dropProps} = useDrop({
+    ref: options.ref,
     onDropEnter(e) {
       state.target = options.getDropTargetFromPoint(e.x, e.y);
       if (state.target && typeof options.onDropEnter === 'function') {
@@ -114,7 +118,6 @@ export function useDroppableCollection(options: DroppableCollectionOptions): Dro
       return state.dropOperation;
     },
     onDropExit(e) {
-      console.log(e);
       if (state.target && typeof options.onDropExit === 'function') {
         options.onDropExit({
           type: 'dropexit',
@@ -150,10 +153,107 @@ export function useDroppableCollection(options: DroppableCollectionOptions): Dro
     }
   });
 
-  return {
-    collectionProps: {
-      ...dropProps
+  let setTarget = (target: DropTarget) => {
+    if (state.target && typeof options.onDropExit === 'function') {
+      options.onDropExit({
+        type: 'dropexit',
+        x: 0, // todo
+        y: 0,
+        target: state.target
+      });
     }
+
+    state.target = target;
+
+    if (state.target && typeof options.onDropEnter === 'function') {
+      options.onDropEnter({
+        type: 'dropenter',
+        x: 0, // todo
+        y: 0,
+        target: state.target
+      });
+    }
+  };
+
+  let getAllowedDropPositions = (key: Key) => typeof options.getAllowedDropPositions === 'function'
+      ? options.getAllowedDropPositions(key)
+      : ['before', 'on', 'after'];
+
+  let onKeyDown = (e: KeyboardEvent) => {
+    switch (e.key) {
+      case 'ArrowDown': {
+        if (keyboardDelegate.getKeyBelow) {
+          e.preventDefault();
+
+          let nextKey = state.target != null
+            ? keyboardDelegate.getKeyBelow(state.target.key)
+            : keyboardDelegate.getFirstKey();
+
+          if (state.target) {
+            let allowedDropPositions = getAllowedDropPositions(state.target.key);
+            let positionIndex = allowedDropPositions.indexOf(state.target.dropPosition);
+            let nextDropPosition = allowedDropPositions[positionIndex + 1] as DropPosition;
+            if (positionIndex < allowedDropPositions.length - 1 && !(nextDropPosition === 'after' && nextKey != null && getAllowedDropPositions(nextKey).includes('before'))) {
+              setTarget({
+                key: state.target.key,
+                dropPosition: nextDropPosition
+              });
+
+              return;
+            }
+          }
+
+          if (nextKey == null) {
+            nextKey = keyboardDelegate.getFirstKey();
+          }
+
+          setTarget({
+            key: nextKey,
+            dropPosition: getAllowedDropPositions(nextKey)[0] as any
+          });
+        }
+        break;
+      }
+      case 'ArrowUp': {
+        if (keyboardDelegate.getKeyAbove) {
+          e.preventDefault();
+
+          let nextKey = state.target != null
+            ? keyboardDelegate.getKeyAbove(state.target.key)
+            : keyboardDelegate.getLastKey();
+
+          if (state.target) {
+            let allowedDropPositions = getAllowedDropPositions(state.target.key);
+            let positionIndex = allowedDropPositions.indexOf(state.target.dropPosition);
+            let nextDropPosition = allowedDropPositions[positionIndex - 1] as DropPosition;
+            if (positionIndex > 0 && nextDropPosition !== 'after') {
+              setTarget({
+                key: state.target.key,
+                dropPosition: nextDropPosition
+              });
+
+              return;
+            }
+          }
+
+          if (nextKey == null) {
+            nextKey = keyboardDelegate.getLastKey();
+          }
+
+          setTarget({
+            key: nextKey,
+            dropPosition: 'on' as any
+          });
+        }
+      }
+        break;
+    }
+  };
+
+  return {
+    collectionProps: mergeProps(dropProps, {
+      onKeyDown
+    })
   };
 }
 
