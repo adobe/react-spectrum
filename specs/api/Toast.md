@@ -63,16 +63,15 @@ The core approach to handle queuing is as follows:
 - Setup a global state that tracks what toast is visible, what toasts are in queue, and contains functions for adding/removing toasts.
   - This state would be provided by a `useToastContainerState` hook and made available to child components via context.
 - A spectrum component called `ToastContainer` would be made available for `@react-spectrum` package consumers. It would sets up a context to provide this global state to all children
-    - This component would need to be high up in the component tree (i.e. Provider level) so that the context would be available to components that may want to add a Toast to the queue.
-      - Sample usage: `state.addToast(<Toast variant='warning'...>)`
+  - This component would need to be high up in the component tree (i.e. Provider level) so that the context would be available to components that may want to add a Toast to the queue.
+    - Sample usage: `state.addToast(<Toast variant='warning'...>)`
 
 ```typescript
 interface ToastContainerProps {
   /**
     Some prop that allow the user to specify where the container should be located on the page. Open questions are as follows:
       - Where to position the ToastContainer? Would the toast appear at the bottom of the container it was placed in or portalled out so it is at the bottom of the screen?
-        - Should there be an option to portal?
-
+      - Should there be an option to portal?
       - How would this affect theming? Would we get the theme from the nearest container or should it receive the theming from the top most Provider?
   */
   positioning: ?
@@ -103,7 +102,6 @@ interface ToastContainerState {
 
 function useToastContainerState(): ToastContainerState;
 
-
 interface ToastContainerAria {
   // TODO: Accesibility review
   role: 'region',
@@ -132,15 +130,15 @@ Toasts are used to display temporary notifications to an end user. Common causes
   - Error toast shown if authentication fails during login.
 
 ## Research
-  I looked at MaterialUI, Ant Design, and React Bootstrap for API inspiration. They had similar looking APIs for the most part, each with some form of toast variant, toast timeout, onClose handler, positioning handling, transition customization, and message customization. Ant Design differed from the other two libraries by having users render a toast via `notification.[variant](config)` instead of the typical `<Toast />` format. Ant Design also didn't have a controlled `open/show` prop on its toast, instead featuring a `notification.open/close` api.
+Looked at MaterialUI, Ant Design, and React Bootstrap for API inspiration. They had similar looking APIs for the most part, each with some form of toast variant, toast timeout, onClose handler, positioning handling, transition customization, and message customization. Ant Design differed from the other two libraries by having users render a toast via `notification.[variant](config)` instead of the typical `<Toast />` format. Ant Design also didn't have a controlled `open/show` prop on its toast, instead featuring a `notification.open/close` api.
 
-  None of the libraries handled queuing out of the box. The end user was made responsible for Toast visibility and ordering.
+None of the libraries handled queuing out of the box. The end user was made responsible for Toast visibility and ordering.
 
 ## Open Questions
 
 Where is the line drawn for spectrum behavior here?
   - Do we consider the queue [logic](https://spectrum.adobe.com/page/toast/#Priority-queue) as something to exclude from the hooks entirely? Or is the existence of a queue and only allowing a single toast to be displayed at a time also something we would want to exclude from the hooks?
-    - How much end user customization would we want to allow for the priority logic? Would we want to allow a user to define their own priority logic?
+  - How much end user customization would we want to allow for the priority logic? Would we want to allow a user to define their own priority logic?
 
 How flexible do we want toast customization to be?
   - Positioning? Should it always be placed at the bottom or should we give users the ability to customize positioning freely?
