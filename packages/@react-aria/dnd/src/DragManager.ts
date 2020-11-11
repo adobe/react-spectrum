@@ -20,14 +20,17 @@ interface DropTarget {
   getDropOperation?: (types: string[], allowedOperations: DropOperation[]) => DropOperation,
   onDropEnter?: (e: DropEnterEvent) => void,
   onDropExit?: (e: DropExitEvent) => void,
+  onDropActivate?: (e: DropActivateEvent) => void,
   onDrop?: (e: DropEvent) => void,
   onKeyDown?: (e: KeyboardEvent) => void
 }
 
 export function registerDropTarget(target: DropTarget) {
   dropTargets.set(target.element, target);
+  dragSession?.updateValidDropTargets();
   return () => {
     dropTargets.delete(target.element);
+    dragSession?.updateValidDropTargets();
   };
 }
 
@@ -61,11 +64,34 @@ export function drop() {
   dragSession = null;
 }
 
+const CANCELED_EVENTS = [
+  'pointerdown',
+  'pointermove',
+  'pointerenter',
+  'pointerleave',
+  'pointerover',
+  'pointerout',
+  'pointerup',
+  'mousedown',
+  'mousemove',
+  'mouseenter',
+  'mouseleave',
+  'mouseover',
+  'mouseout',
+  'mouseup',
+  'click',
+  'touchstart',
+  'touchmove',
+  'touchend',
+  'keyup'
+];
+
 class DragSession {
   dragTarget: DragTarget;
   validDropTargets: DropTarget[];
   currentDropTarget: DropTarget;
   dropOperation: DropOperation;
+  mutationObserver: MutationObserver;
 
   constructor(target: DragTarget) {
     this.dragTarget = target;
@@ -81,26 +107,25 @@ class DragSession {
 
   setup() {
     document.addEventListener('keydown', this.onKeyDown, true);
-    document.addEventListener('keyup', this.cancelEvent, true);
     document.addEventListener('focus', this.onFocus, true);
     document.addEventListener('blur', this.onBlur, true);
-    document.addEventListener('pointerdown', this.cancelEvent, true);
-    document.addEventListener('pointerup', this.cancelEvent, true);
-    document.addEventListener('mousedown', this.cancelEvent, true);
-    document.addEventListener('mouseup', this.cancelEvent, true);
-    document.addEventListener('click', this.cancelEvent, true);
+    for (let event of CANCELED_EVENTS) {
+      document.addEventListener(event, this.cancelEvent, true);
+    }
+
+    this.mutationObserver = new MutationObserver(() => this.updateValidDropTargets());
+    this.mutationObserver.observe(document.body, {subtree: true, attributes: true, attributeFilter: ['aria-hidden']});
   }
 
   teardown() {
     document.removeEventListener('keydown', this.onKeyDown, true);
-    document.removeEventListener('keyup', this.cancelEvent, true);
     document.removeEventListener('focus', this.onFocus, true);
     document.removeEventListener('blur', this.onBlur, true);
-    document.removeEventListener('pointerdown', this.cancelEvent, true);
-    document.removeEventListener('pointerup', this.cancelEvent, true);
-    document.removeEventListener('mousedown', this.cancelEvent, true);
-    document.removeEventListener('mouseup', this.cancelEvent, true);
-    document.removeEventListener('click', this.cancelEvent, true);
+    for (let event of CANCELED_EVENTS) {
+      document.removeEventListener(event, this.cancelEvent, true);
+    }
+
+    this.mutationObserver.disconnect();
   }
 
   onKeyDown(e: KeyboardEvent) {
@@ -112,7 +137,11 @@ class DragSession {
     }
 
     if (e.key === 'Enter') {
-      this.drop();
+      if (e.altKey) {
+        this.activate();
+      } else {
+        this.drop();
+      }
       return;
     }
 
@@ -155,6 +184,13 @@ class DragSession {
     e.stopImmediatePropagation();
   }
 
+  updateValidDropTargets() {
+    this.validDropTargets = findValidDropTargets(this.dragTarget);
+    if (!this.validDropTargets.includes(this.currentDropTarget)) {
+      this.setCurrentDropTarget(this.validDropTargets[0]);
+    }
+  }
+
   next() {
     if (!this.currentDropTarget) {
       this.setCurrentDropTarget(this.validDropTargets[0]);
@@ -163,7 +199,7 @@ class DragSession {
 
     let index = this.validDropTargets.indexOf(this.currentDropTarget);
     if (index < 0) {
-      this.setCurrentDropTarget(null);
+      this.setCurrentDropTarget(this.validDropTargets[0]);
       return;
     }
 
@@ -184,7 +220,7 @@ class DragSession {
 
     let index = this.validDropTargets.indexOf(this.currentDropTarget);
     if (index < 0) {
-      this.setCurrentDropTarget(null);
+      this.setCurrentDropTarget(this.validDropTargets[this.validDropTargets.length - 1]);
       return;
     }
 
@@ -277,6 +313,17 @@ class DragSession {
     }
 
     this.end();
+  }
+
+  activate() {
+    if (this.currentDropTarget && typeof this.currentDropTarget.onDropActivate === 'function') {
+      let rect = this.currentDropTarget.element.getBoundingClientRect();
+      this.currentDropTarget.onDropActivate({
+        type: 'dropactivate',
+        x: rect.left + (rect.width / 2),
+        y: rect.top + (rect.height / 2)
+      });
+    }
   }
 }
 

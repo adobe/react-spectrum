@@ -26,7 +26,8 @@ import {Heading} from '@react-spectrum/text';
 import {Content} from '@react-spectrum/view';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
 import {mergeProps} from '@react-aria/utils';
-import {usePress} from '@react-aria/interactions';
+import {PressResponder, usePress} from '@react-aria/interactions';
+import {unwrapDOMRef} from '@react-spectrum/utils';
 
 storiesOf('Drag and Drop', module)
   .add(
@@ -60,8 +61,7 @@ storiesOf('Drag and Drop', module)
     () => (
       <Flex direction="column" gap="size-200" alignItems="center">
         <Draggable />
-        <DialogTrigger isDismissable>
-          <ActionButton>Open dialog</ActionButton>
+        <DialogButton>
           <Dialog>
             <Heading>Dialog</Heading>
             <Content>
@@ -72,7 +72,7 @@ storiesOf('Drag and Drop', module)
               </Flex>
             </Content>
           </Dialog>
-        </DialogTrigger>
+        </DialogButton>
         <Droppable />
       </Flex>
     )
@@ -137,6 +137,7 @@ function Droppable({type}: any) {
     <div
       {...dropProps}
       ref={ref}
+      tabIndex={-1}
       style={{
         background: isDropTarget ? 'blue' : 'gray',
         padding: 20
@@ -303,5 +304,25 @@ function CollectionItem({item, isDropTarget, selectionManager}) {
       }}>
       {item.rendered}
     </div>
+  );
+}
+
+function DialogButton({children}) {
+  let [isOpen, setOpen] = React.useState(false);
+  let ref = React.useRef();
+  let {dropProps, isDropTarget} = useDrop({
+    ref: unwrapDOMRef(ref),
+    onDropActivate() {
+      setOpen(true);
+    }
+  });
+
+  return (
+    <DialogTrigger isDismissable isOpen={isOpen} onOpenChange={setOpen}>
+      <PressResponder {...dropProps} isPressed={isDropTarget}>
+        <ActionButton ref={ref}>Open dialog</ActionButton>
+      </PressResponder>
+      {children}
+    </DialogTrigger>
   );
 }

@@ -206,6 +206,11 @@ export function useDrop(options: DropOptions): DropResult {
       if (typeof optionsRef.current.onDrop === 'function') {
         optionsRef.current.onDrop(e);
       }
+    },
+    onDropActivate(e) {
+      if (typeof optionsRef.current.onDropActivate === 'function') {
+        optionsRef.current.onDropActivate(e);
+      }
     }
   }), [optionsRef]);
 
@@ -214,8 +219,7 @@ export function useDrop(options: DropOptions): DropResult {
       onDragEnter,
       onDragOver,
       onDragLeave,
-      onDrop,
-      tabIndex: -1
+      onDrop
     },
     isDropTarget
   };

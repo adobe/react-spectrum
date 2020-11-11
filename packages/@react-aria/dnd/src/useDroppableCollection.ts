@@ -264,6 +264,16 @@ export function useDroppableCollection(options: DroppableCollectionOptions): Dro
     onDropExit(e) {
       setTarget(null);
     },
+    onDropActivate(e) {
+      if (state.target?.dropPosition === 'on' && typeof options.onDropActivate === 'function') {
+        options.onDropActivate({
+          type: 'dropactivate',
+          x: e.x, // todo
+          y: e.y,
+          target: state.target
+        });
+      }
+    },
     onDrop(e) {
       if (state.target && typeof options.onDrop === 'function') {
         options.onDrop({
