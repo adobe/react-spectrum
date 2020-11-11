@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import * as DragManager from './DragManager';
 import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation} from './types';
-import {HTMLAttributes, Key, KeyboardEvent, RefObject, useRef} from 'react';
+import {HTMLAttributes, Key, RefObject, useEffect, useRef} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {useDrop} from './useDrop';
@@ -177,7 +178,7 @@ export function useDroppableCollection(options: DroppableCollectionOptions): Dro
 
   let getAllowedDropPositions = (key: Key) => typeof options.getAllowedDropPositions === 'function'
       ? options.getAllowedDropPositions(key)
-      : ['before', 'on', 'after'];
+      : ['before', 'on', 'after'] as DropPosition[];
 
   let onKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
@@ -192,7 +193,7 @@ export function useDroppableCollection(options: DroppableCollectionOptions): Dro
           if (state.target) {
             let allowedDropPositions = getAllowedDropPositions(state.target.key);
             let positionIndex = allowedDropPositions.indexOf(state.target.dropPosition);
-            let nextDropPosition = allowedDropPositions[positionIndex + 1] as DropPosition;
+            let nextDropPosition = allowedDropPositions[positionIndex + 1];
             if (positionIndex < allowedDropPositions.length - 1 && !(nextDropPosition === 'after' && nextKey != null && getAllowedDropPositions(nextKey).includes('before'))) {
               setTarget({
                 key: state.target.key,
@@ -225,7 +226,7 @@ export function useDroppableCollection(options: DroppableCollectionOptions): Dro
           if (state.target) {
             let allowedDropPositions = getAllowedDropPositions(state.target.key);
             let positionIndex = allowedDropPositions.indexOf(state.target.dropPosition);
-            let nextDropPosition = allowedDropPositions[positionIndex - 1] as DropPosition;
+            let nextDropPosition = allowedDropPositions[positionIndex - 1];
             if (positionIndex > 0 && nextDropPosition !== 'after') {
               setTarget({
                 key: state.target.key,
@@ -245,15 +246,41 @@ export function useDroppableCollection(options: DroppableCollectionOptions): Dro
             dropPosition: 'on' as any
           });
         }
-      }
         break;
+      }
     }
   };
 
+  useEffect(() => DragManager.registerDropTarget({
+    element: options.ref.current,
+    // getDropOperation: optionsRef.current.getDropOperation,
+    onDropEnter(e) {
+      let key = keyboardDelegate.getFirstKey();
+      setTarget({
+        key,
+        dropPosition: getAllowedDropPositions(key)[0]
+      });
+    },
+    onDropExit(e) {
+      setTarget(null);
+    },
+    onDrop(e) {
+      if (state.target && typeof options.onDrop === 'function') {
+        options.onDrop({
+          type: 'drop',
+          x: e.x, // todo
+          y: e.y,
+          target: state.target,
+          items: e.items,
+          dropOperation: e.dropOperation
+        });
+      }
+    },
+    onKeyDown
+  }), []);
+
   return {
-    collectionProps: mergeProps(dropProps, {
-      onKeyDown
-    })
+    collectionProps: dropProps
   };
 }
 

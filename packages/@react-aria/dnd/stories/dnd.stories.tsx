@@ -24,6 +24,9 @@ import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {ActionButton} from '@react-spectrum/button';
 import {Heading} from '@react-spectrum/text';
 import {Content} from '@react-spectrum/view';
+import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
+import {mergeProps} from '@react-aria/utils';
+import {usePress} from '@react-aria/interactions';
 
 storiesOf('Drag and Drop', module)
   .add(
@@ -147,10 +150,11 @@ function DroppableCollection(props) {
   let ref = React.useRef<HTMLElement>(null);
   let [target, setTarget] = React.useState(null);
   let onDrop = action('onDrop');
-  let state = useListState(props);
+  let state = useListState({...props, selectionMode: 'multiple'});
+  let keyboardDelegate = new ListKeyboardDelegate(state.collection, new Set(), ref);
   let {collectionProps} = useDroppableCollection({
     ref,
-    keyboardDelegate: new ListKeyboardDelegate(state.collection, new Set(), ref),
+    keyboardDelegate,
     onDropEnter: chain(action('onDropEnter'), console.log, e => setTarget(e.target)),
     // onDropMove: action('onDropMove'),
     onDropExit: chain(action('onDropExit'), console.log, e => setTarget(null)),
@@ -223,7 +227,7 @@ function DroppableCollection(props) {
     if (target.dropPosition === 'after') {
       let next = targetElement.nextElementSibling as HTMLElement;
       while (next && !next.dataset.key) {
-        next = targetElement.nextElementSibling as HTMLElement;
+        next = next.nextElementSibling as HTMLElement;
       }
 
       if (next) {
@@ -235,7 +239,7 @@ function DroppableCollection(props) {
     } else if (target.dropPosition === 'before') {
       let prev = targetElement.previousElementSibling as HTMLElement;
       while (prev && !prev.dataset.key) {
-        prev = targetElement.previousElementSibling as HTMLElement;
+        prev = prev.previousElementSibling as HTMLElement;
       }
 
       if (prev) {
@@ -247,9 +251,15 @@ function DroppableCollection(props) {
     setTargetPosition(y);
   }, [target]);
 
+  let {collectionProps: selectionProps} = useSelectableCollection({
+    selectionManager: state.selectionManager,
+    keyboardDelegate,
+    ref
+  });
+
   return (
     <div
-      {...collectionProps}
+      {...mergeProps(collectionProps, selectionProps)}
       ref={ref}
       style={{
         border: '1px solid gray',
@@ -259,13 +269,39 @@ function DroppableCollection(props) {
         position: 'relative'
       }}>
       {[...state.collection].map(item =>
-        (<div data-key={item.key} style={{background: target?.key === item.key && target?.dropPosition === 'on' ? 'blue' : 'purple', padding: 10, margin: '5px 0'}}>
-          {item.rendered}
-        </div>)
+        (<CollectionItem
+          key={item.key}
+          item={item}
+          isDropTarget={target?.key === item.key && target?.dropPosition === 'on'}
+          selectionManager={state.selectionManager} />)
       )}
       {targetPosition != null &&
         <div style={{width: '100%', height: 2, background: 'blue', position: 'absolute', top: targetPosition - 1}} />
       }
+    </div>
+  );
+}
+
+function CollectionItem({item, isDropTarget, selectionManager}) {
+  let ref = React.useRef();
+  let {itemProps} = useSelectableItem({
+    selectionManager,
+    key: item.key,
+    ref
+  });
+
+  let {pressProps} = usePress(itemProps);
+
+  return (
+    <div
+      {...pressProps}
+      ref={ref}
+      style={{
+        background: isDropTarget ? 'blue' : selectionManager.isSelected(item.key) ? 'green' : 'purple',
+        padding: 10,
+        margin: '5px 0'
+      }}>
+      {item.rendered}
     </div>
   );
 }

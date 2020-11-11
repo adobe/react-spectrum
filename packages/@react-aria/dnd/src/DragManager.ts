@@ -12,7 +12,7 @@
 
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropMoveEvent, DropOperation} from './types';
 
-const dropTargets = new Set<DropTarget>();
+const dropTargets = new Map<Element, DropTarget>();
 let dragSession: DragSession = null;
 
 interface DropTarget {
@@ -20,13 +20,14 @@ interface DropTarget {
   getDropOperation?: (types: string[], allowedOperations: DropOperation[]) => DropOperation,
   onDropEnter?: (e: DropEnterEvent) => void,
   onDropExit?: (e: DropExitEvent) => void,
-  onDrop?: (e: DropEvent) => void
+  onDrop?: (e: DropEvent) => void,
+  onKeyDown?: (e: KeyboardEvent) => void
 }
 
 export function registerDropTarget(target: DropTarget) {
-  dropTargets.add(target);
+  dropTargets.set(target.element, target);
   return () => {
-    dropTargets.delete(target);
+    dropTargets.delete(target.element);
   };
 }
 
@@ -73,30 +74,37 @@ class DragSession {
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onFocus = this.onFocus.bind(this);
     this.onBlur = this.onBlur.bind(this);
+    this.cancelEvent = this.cancelEvent.bind(this);
 
     this.setup();
   }
 
   setup() {
     document.addEventListener('keydown', this.onKeyDown, true);
+    document.addEventListener('keyup', this.cancelEvent, true);
     document.addEventListener('focus', this.onFocus, true);
     document.addEventListener('blur', this.onBlur, true);
+    document.addEventListener('pointerdown', this.cancelEvent, true);
+    document.addEventListener('pointerup', this.cancelEvent, true);
+    document.addEventListener('mousedown', this.cancelEvent, true);
+    document.addEventListener('mouseup', this.cancelEvent, true);
+    document.addEventListener('click', this.cancelEvent, true);
   }
 
   teardown() {
     document.removeEventListener('keydown', this.onKeyDown, true);
+    document.removeEventListener('keyup', this.cancelEvent, true);
     document.removeEventListener('focus', this.onFocus, true);
     document.removeEventListener('blur', this.onBlur, true);
+    document.removeEventListener('pointerdown', this.cancelEvent, true);
+    document.removeEventListener('pointerup', this.cancelEvent, true);
+    document.removeEventListener('mousedown', this.cancelEvent, true);
+    document.removeEventListener('mouseup', this.cancelEvent, true);
+    document.removeEventListener('click', this.cancelEvent, true);
   }
 
   onKeyDown(e: KeyboardEvent) {
-    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-      return;
-    }
-
-    e.preventDefault();
-    e.stopPropagation();
-    e.stopImmediatePropagation();
+    this.cancelEvent(e);
 
     if (e.key === 'Escape') {
       this.cancel();
@@ -108,18 +116,22 @@ class DragSession {
       return;
     }
 
-    if (e.key !== 'Tab' || e.metaKey || e.altKey || e.ctrlKey) {
-      return;
+    if (e.key === 'Tab' && !(e.metaKey || e.altKey || e.ctrlKey)) {
+      if (e.shiftKey) {
+        this.previous();
+      } else {
+        this.next();
+      }
     }
 
-    if (e.shiftKey) {
-      this.previous();
-    } else {
-      this.next();
+    if (typeof this.currentDropTarget?.onKeyDown === 'function') {
+      this.currentDropTarget.onKeyDown(e);
     }
   }
 
   onFocus(e: FocusEvent) {
+    this.cancelEvent(e);
+
     let dropTarget = this.validDropTargets.find(target => target.element === e.target);
     if (!dropTarget) {
       this.currentDropTarget?.element.focus();
@@ -130,9 +142,17 @@ class DragSession {
   }
 
   onBlur(e: FocusEvent) {
+    this.cancelEvent(e);
+
     if (!e.relatedTarget) {
       this.currentDropTarget?.element.focus();
     }
+  }
+
+  cancelEvent(e: Event) {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
   }
 
   next() {
@@ -262,7 +282,7 @@ class DragSession {
 
 function findValidDropTargets(options: DragTarget) {
   let types = options.items.map(item => item.type);
-  return [...dropTargets].filter(target => {
+  return [...dropTargets.values()].filter(target => {
     if (target.element.closest('[aria-hidden="true"]')) {
       return false;
     }
