@@ -257,16 +257,20 @@ function renderMultipleTriggers(props = {}) {
 }
 
 function ActionGroupTrigger() {
+  let [key, setKey] = useState('');
   return (
-    <ActionGroup
-      selectionMode="single"
-      disallowEmptySelection
-      onSelectionChange={(sel) => console.log(sel)}>
-      <TooltipTrigger delay={0}>
-        <Item key="Key">Trigger Tooltip</Item>
-        <Tooltip>Tooltip is inside an ActionGroup</Tooltip>
-      </TooltipTrigger>
-    </ActionGroup>
+    <Flex direction="column">
+      <div>Click the trigger to log the trigger's key:{key}</div>
+      <ActionGroup
+        selectionMode="single"
+        disallowEmptySelection
+        onSelectionChange={() => setKey('Key')}>
+        <TooltipTrigger delay={0}>
+          <Item key={key}>Trigger Tooltip</Item>
+          <Tooltip>Tooltip is inside an ActionGroup</Tooltip>
+        </TooltipTrigger>
+      </ActionGroup>
+    </Flex>    
   );
 }
 
