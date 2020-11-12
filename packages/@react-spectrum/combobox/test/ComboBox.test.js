@@ -843,11 +843,13 @@ describe('ComboBox', function () {
         jest.runAllTimers();
       });
 
+      // ComboBox menu doesn't close here since selectedKey is controlled and hasn't changed
       expect(() => getByRole('listbox')).not.toThrow();
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenCalledWith(null);
       expect(onOpenChange).toHaveBeenCalledTimes(1);
 
+      // Update the selectedKey prop, which triggers closing the menu.
       rerender(<ExampleComboBox allowsCustomValue selectedKey="1" />);
 
       act(() => {
@@ -920,12 +922,6 @@ describe('ComboBox', function () {
     it('does not close the menu on selection if isOpen is controlled', function () {
       let {getByRole} = renderComboBox({isOpen: true});
 
-      let button = getByRole('button');
-      act(() => {
-        triggerPress(button);
-        jest.runAllTimers();
-      });
-
       let listbox = getByRole('listbox');
       let items = within(listbox).getAllByRole('option');
 
@@ -937,6 +933,8 @@ describe('ComboBox', function () {
       expect(() => getByRole('listbox')).not.toThrow();
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenCalledWith('2');
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
+      expect(onOpenChange).toHaveBeenLastCalledWith(false);
     });
   });
 
@@ -1636,13 +1634,6 @@ describe('ComboBox', function () {
 
       let combobox = getByRole('combobox');
       act(() => {
-        combobox.focus();
-        fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
-        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
-        jest.runAllTimers();
-      });
-
-      act(() => {
         fireEvent.change(combobox, {target: {value: ''}});
         jest.runAllTimers();
       });
@@ -1651,8 +1642,10 @@ describe('ComboBox', function () {
       expect(onInputChange).toHaveBeenCalledWith('');
       expect(onSelectionChange).not.toHaveBeenCalled();
 
+      // Re-render to trigger update.
       rerender(<ExampleComboBox inputValue="" selectedKey={null} />);
 
+      // onInputChange should not have been called again based on the selectedKey prop change.
       expect(onInputChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).not.toHaveBeenCalled();
     });
