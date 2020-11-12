@@ -68,6 +68,7 @@ export function useTabs<T>(props: TabsAriaProps<T>, state: SingleSelectListState
       ...collectionProps,
       role: 'tablist',
       'aria-label': ariaLabel,
+      'aria-orientation': orientation,
       tabIndex: undefined
     },
     tabPanelProps: {
