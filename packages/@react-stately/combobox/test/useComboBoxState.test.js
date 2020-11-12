@@ -32,7 +32,7 @@ describe('useComboBoxState tests', function () {
       act(() => {
         result.current.open();
       });
-      expect(result.current.isOpen).toBe(false);
+      expect(result.current.isOpen).toBe(true);
       expect(onOpenChange).toHaveBeenCalledWith(true);
 
       act(() => result.current.close());
