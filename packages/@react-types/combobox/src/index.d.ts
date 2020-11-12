@@ -13,19 +13,17 @@
 import {CollectionBase, DOMProps, FocusableProps, InputBase, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase, Validation} from '@react-types/shared';
 
 export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, InputBase, TextInputBase, DOMProps, Validation, FocusableProps {
+  defaultItems?: Iterable<T>,
   isOpen?: boolean,
   defaultOpen?: boolean,
   onOpenChange?: (isOpen: boolean) => void,
   inputValue?: string,
   defaultInputValue?: string,
   onInputChange?: (value: string) => void,
-  onFilter?: (value: string) => void,
   allowsCustomValue?: boolean,
-  onCustomValue?: (value: string) => void,
   completionMode?: 'suggest' | 'complete',
   menuTrigger?: 'focus' | 'input' | 'manual',
-  shouldFlip?: boolean,
-  shouldSelectOnBlur?: boolean
+  shouldFlip?: boolean
 }
 
 export interface SpectrumComboBoxProps<T> extends ComboBoxProps<T>, SpectrumLabelableProps, StyleProps {
