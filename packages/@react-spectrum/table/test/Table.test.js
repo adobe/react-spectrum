@@ -1258,6 +1258,12 @@ describe('Table', function () {
         // Focus shouldn't have moved to the John cell and all the text should be registered
         expect(textfield.value).toBe('John  ');
         expect(document.activeElement).toBe(textfield);
+
+        // Moving out to a focusable cell should restore typeselect
+        moveFocus('ArrowUp');
+        expect(document.activeElement).toBe(getCell(tree, 'John'));
+        moveFocus('S');
+        expect(document.activeElement).toBe(getCell(tree, 'Sam'));
       });
     });
 
