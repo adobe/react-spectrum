@@ -91,7 +91,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   let triggerProps = mergeProps(mergeProps(menuTriggerProps, fieldProps), typeSelectProps);
   let valueId = useId();
 
-  let onKeyDown = props.onKeyDown ? chain(triggerProps.onKeyDown, props.onKeyDown) : triggerProps.onKeyDown;
+  let onKeyDown = chain(triggerProps.onKeyDown, props.onKeyDown);
 
   return {
     labelProps: {
