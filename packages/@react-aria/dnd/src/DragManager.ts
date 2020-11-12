@@ -161,7 +161,7 @@ class DragSession {
   onFocus(e: FocusEvent) {
     this.cancelEvent(e);
 
-    let dropTarget = this.validDropTargets.find(target => target.element === e.target);
+    let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
     if (!dropTarget) {
       this.currentDropTarget?.element.focus();
       return;
@@ -234,6 +234,10 @@ class DragSession {
   }
 
   setCurrentDropTarget(dropTarget: DropTarget) {
+    if (dropTarget === this.currentDropTarget) {
+      return;
+    }
+
     if (this.currentDropTarget && typeof this.currentDropTarget.onDropExit === 'function') {
       let rect = this.currentDropTarget.element.getBoundingClientRect();
       this.currentDropTarget.onDropExit({

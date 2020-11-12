@@ -149,6 +149,7 @@ function Droppable({type}: any) {
 
 function DroppableCollection(props) {
   let ref = React.useRef<HTMLElement>(null);
+  let betweenRef = React.useRef<HTMLElement>(null);
   let [target, setTarget] = React.useState(null);
   let onDrop = action('onDrop');
   let state = useListState({...props, selectionMode: 'multiple'});
@@ -156,7 +157,19 @@ function DroppableCollection(props) {
   let {collectionProps} = useDroppableCollection({
     ref,
     keyboardDelegate,
-    onDropEnter: chain(action('onDropEnter'), console.log, e => setTarget(e.target)),
+    onDropEnter: chain(action('onDropEnter'), console.log, e => {
+      setTarget(e.target);
+
+      // Wait a frame before moving focus.
+      requestAnimationFrame(() => {
+        if (e.target.dropPosition === 'on') {
+          state.selectionManager.setFocusedKey(e.target.key);
+        } else {
+          state.selectionManager.setFocusedKey(null);
+          betweenRef.current.focus();
+        }
+      });
+    }),
     // onDropMove: action('onDropMove'),
     onDropExit: chain(action('onDropExit'), console.log, e => setTarget(null)),
     onDropActivate: chain(action('onDropActivate'), console.log),
@@ -277,7 +290,7 @@ function DroppableCollection(props) {
           selectionManager={state.selectionManager} />)
       )}
       {targetPosition != null &&
-        <div style={{width: '100%', height: 2, background: 'blue', position: 'absolute', top: targetPosition - 1}} />
+        <div ref={betweenRef} tabIndex={-1} style={{width: '100%', height: 2, background: 'blue', position: 'absolute', top: targetPosition - 1}} />
       }
     </div>
   );
