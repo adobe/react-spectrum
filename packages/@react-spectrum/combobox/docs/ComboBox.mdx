@@ -408,6 +408,85 @@ function Example() {
 }
 ```
 
+### Fully controlled ComboBox
+
+When a ComboBox has multiple controlled properties (e.g. `isOpen`, `inputValue`, `selectedKey`), it is important to note that an update to one of these properties will
+not automatically update the others. Each interaction done in the ComboBox will only trigger its associated event handler. For example, typing in the field will only
+trigger `onInputChange` whereas selecting an item from the ComboBox menu will only trigger `onSelectionChange` so it is your responsibility to update the other
+controlled properties accordingly.
+
+The below example demonstrates how you would construct the same example above in a completely controlled fashion.
+
+```tsx example
+import {useTreeData} from '@react-stately/data';
+
+function Example() {
+  let options = [
+    {id: 1, name: 'Aerospace'},
+    {id: 2, name: 'Mechanical'},
+    {id: 3, name: 'Civil'},
+    {id: 4, name: 'Biomedical'},
+    {id: 5, name: 'Nuclear'},
+    {id: 6, name: 'Industrial'},
+    {id: 7, name: 'Chemical'},
+    {id: 8, name: 'Agricultural'},
+    {id: 9, name: 'Electrical'}
+  ];
+
+  let [fieldState, setFieldState] = React.useState({
+    isOpen: false,
+    selectedKey: '',
+    inputValue: ''
+  });
+
+  let list = useTreeData({
+    initialItems: options
+  });
+
+  let onSelectionChange = (key) => {
+    setFieldState({
+      isOpen: false,
+      inputValue: list.getItem(key)?.value.name ?? '',
+      selectedKey: key
+    });
+  };
+
+  let onInputChange = (value) => {
+    setFieldState(prevState => ({
+      isOpen: true,
+      inputValue: value,
+      selectedKey: value === '' ? null : prevState.selectedKey
+    }));
+  };
+
+  let onOpenChange = (isOpen) => {
+    setFieldState(prevState => ({
+      isOpen,
+      inputValue: prevState.inputValue,
+      selectedKey: prevState.selectedKey
+    }));
+  };
+
+  return (
+     <>
+      <p>Current selected major id: {fieldState.selectedKey}</p>
+      <p>Current input text: {fieldState.inputValue}</p>
+       <ComboBox
+        label="Pick a engineering major"
+        defaultItems={list.items}
+        selectedKey={fieldState.selectedKey}
+        inputValue={fieldState.inputValue}
+        isOpen={fieldState.isOpen}
+        onOpenChange={onOpenChange}
+        onSelectionChange={onSelectionChange}
+        onInputChange={onInputChange}>
+        {item => <Item>{item.value.name}</Item>}
+      </ComboBox>
+     </>
+  );
+}
+```
+
 ## Complex items
 Items within ComboBox also allow for additional content used to better communicate options. Icons and descriptions can be added to the `children` of `Item` as shown in the example below.
 If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
