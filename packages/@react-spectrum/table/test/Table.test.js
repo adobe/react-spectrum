@@ -1130,6 +1130,13 @@ describe('Table', function () {
               <Cell>Doe</Cell>
               <Cell>December 12</Cell>
             </Row>
+            <Row>
+              <Cell>
+                <input data-testid="input" />
+              </Cell>
+              <Cell>Doe</Cell>
+              <Cell>December 12</Cell>
+            </Row>
           </TableBody>
         </Table>
       );
@@ -1232,6 +1239,25 @@ describe('Table', function () {
 
         moveFocus('S');
         expect(document.activeElement).toBe(getCell(tree, 'Sam'));
+      });
+
+      it('doesn\'t trigger typeselect if focus is within a element in a cell', function () {
+        let tree = renderTypeSelect();
+        let textfield = tree.getByTestId('input');
+        let textfieldCell = textfield;
+
+        // Find the cell wrapping the input so we can focus it
+        while (textfieldCell && !/gridcell|rowheader|columnheader/.test(textfieldCell.getAttribute('role'))) {
+          textfieldCell = textfieldCell.parentElement;
+        }
+        textfieldCell.focus();
+        // Focus moves to the inner child when cell is focused
+        expect(document.activeElement).toBe(textfield);
+        typeText(document.activeElement, 'John  ');
+
+        // Focus shouldn't have moved to the John cell and all the text should be registered
+        expect(textfield.value).toBe('John  ');
+        expect(document.activeElement).toBe(textfield);
       });
     });
 

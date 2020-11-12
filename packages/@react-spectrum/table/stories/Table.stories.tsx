@@ -758,10 +758,10 @@ storiesOf('Table', module)
             <Cell>December 12</Cell>
           </Row>
           <Row>
-            <Cell>
+            <Cell textValue="Textfield">
               <TextField width={150} aria-label="table textfield" />
             </Cell>
-            <Cell>
+            <Cell textValue="Action Button">
               <ActionButton isQuiet>
                 <Delete />
               </ActionButton>
