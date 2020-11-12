@@ -16,14 +16,17 @@ import CrossSmall from '@spectrum-icons/ui/CrossSmall';
 import {DOMProps, FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React from 'react';
+import React, {JSXElementConstructor} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
 
 interface ClearButtonProps extends ButtonProps, DOMProps, StyleProps {
+  elementType?: string | JSXElementConstructor<any>,
   focusClassName?: string,
-  variant?: 'overBackground'
+  variant?: 'overBackground',
+  excludeFromTabOrder?: boolean,
+  preventFocus?: boolean
 }
 
 function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
@@ -33,16 +36,26 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
     variant,
     autoFocus,
     isDisabled,
+    preventFocus,
+    elementType = preventFocus ? 'div' : 'button',
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
-  let {buttonProps, isPressed} = useButton(props, domRef);
+  let {buttonProps, isPressed} = useButton({...props, elementType}, domRef);
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
 
+  // For cases like the clear button in a search field, remove the tabIndex so
+  // iOS 14 with VoiceOver doesn't focus the button and hide the keyboard when
+  // moving the cursor over the clear button.
+  if (preventFocus) {
+    delete buttonProps.tabIndex;
+  }
+
+  let ElementType = elementType;
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring', focusClassName)} autoFocus={autoFocus}>
-      <button
+      <ElementType
         {...styleProps}
         {...mergeProps(buttonProps, hoverProps)}
         ref={domRef}
@@ -59,7 +72,7 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
           )
         }>
         {children}
-      </button>
+      </ElementType>
     </FocusRing>
   );
 }

@@ -4,3 +4,5 @@ packages/@spectrum-icons/workflow/**
 packages/@spectrum-icons/illustrations/**
 node_modules
 packages/*/*/dist
+packages/react-aria/dist
+packages/react-stately/dist

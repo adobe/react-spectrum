@@ -19,16 +19,21 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
+    "@react-aria/i18n": "^3.1.2",
     "@react-aria/interactions": "^3.2.0",
     "@react-aria/listbox": "^3.1.0",
+    "@react-aria/live-announcer": "3.0.0-alpha.1",
     "@react-aria/menu": "^3.1.0",
+    "@react-aria/overlays": "^3.4.0",
     "@react-aria/selection": "^3.1.0",
     "@react-aria/textfield": "^3.1.0",
     "@react-aria/utils": "^3.1.0",
+    "@react-stately/collections": "^3.2.1",
     "@react-stately/combobox": "^3.0.0-alpha.1",
     "@react-stately/layout": "^3.1.0",
     "@react-types/button": "^3.1.0",
-    "@react-types/combobox": "^3.0.0-alpha.1"
+    "@react-types/combobox": "^3.0.0-alpha.1",
+    "@react-types/shared": "^3.2.1"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1"
