@@ -1134,7 +1134,7 @@ describe('Table', function () {
               <Cell>
                 <input data-testid="input" />
               </Cell>
-              <Cell>Doe</Cell>
+              <Cell>King</Cell>
               <Cell>December 12</Cell>
             </Row>
           </TableBody>
@@ -1250,7 +1250,7 @@ describe('Table', function () {
         while (textfieldCell && !/gridcell|rowheader|columnheader/.test(textfieldCell.getAttribute('role'))) {
           textfieldCell = textfieldCell.parentElement;
         }
-        textfieldCell.focus();
+        act(() => textfieldCell.focus());
         // Focus moves to the inner child when cell is focused
         expect(document.activeElement).toBe(textfield);
         typeText(document.activeElement, 'John  ');

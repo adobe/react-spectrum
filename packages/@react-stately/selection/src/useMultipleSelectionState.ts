@@ -30,7 +30,6 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
   let isFocusedRef = useRef(false);
   let [, setFocused] = useState(false);
   let isFocusWithinCellRef = useRef(false);
-  let [, setFocusWithinCell] = useState(false);
   let focusedKeyRef = useRef(null);
   let [, setFocusedKey] = useState(null);
   let selectedKeysProp = useMemo(() => convertSelection(props.selectedKeys), [props.selectedKeys]);
@@ -54,12 +53,11 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
       isFocusedRef.current = f;
       setFocused(f);
     },
-    get isFocusWithinCell() {
+    get isFocusWithinItem() {
       return isFocusWithinCellRef.current;
     },
-    setFocusWithinCell(f) {
+    setFocusWithinItem(f) {
       isFocusWithinCellRef.current = f;
-      setFocusWithinCell(f);
     },
     get focusedKey() {
       return focusedKeyRef.current;

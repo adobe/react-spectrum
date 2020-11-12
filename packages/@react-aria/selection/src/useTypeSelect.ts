@@ -48,7 +48,7 @@ export function useTypeSelect(options: TypeSelectOptions): TypeSelectAria {
 
   let onKeyDown = (e: KeyboardEvent) => {
     let character = getStringForKey(e.key);
-    if (!character || e.ctrlKey || e.metaKey || selectionManager.isFocusWithinCell) {
+    if (!character || e.ctrlKey || e.metaKey || selectionManager.isFocusWithinItem) {
       return;
     }
 
