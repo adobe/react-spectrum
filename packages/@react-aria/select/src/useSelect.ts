@@ -12,7 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaSelectProps} from '@react-types/select';
-import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {FocusEvent, HTMLAttributes, RefObject, useMemo} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
@@ -91,6 +91,8 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   let triggerProps = mergeProps(mergeProps(menuTriggerProps, fieldProps), typeSelectProps);
   let valueId = useId();
 
+  let onKeyDown = props.onKeyDown ? chain(triggerProps.onKeyDown, props.onKeyDown) : triggerProps.onKeyDown;
+
   return {
     labelProps: {
       ...labelProps,
@@ -133,7 +135,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
         state.setFocused(false);
       },
       onFocusChange: props.onFocusChange,
-      onKeyDown: props.onKeyDown,
+      onKeyDown: onKeyDown,
       onKeyUp: props.onKeyUp
     }),
     valueProps: {
