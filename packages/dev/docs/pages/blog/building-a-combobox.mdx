@@ -78,20 +78,15 @@ left/right arrow key presses.
 #### VoiceOver
 
 VoiceOver as a whole doesn't seem to work very well with `aria-activedescendant`, failing to announce when the focused ComboBox item changed in a variety of situations. In Safari, changes to the `aria-activedescendant` aren't announced
-as long as the input is empty. In Chrome, VoiceOver only announces changes to `aria-activedescendant` if `aria-selected="true"` is applied to the focused item. If your list of options is organized into separate sections, VoiceOver doesn't announce at changes to the focused item
-for all browsers. In Firefox, VoiceOver only announces the first item you focused and well you get the picture.
+as long as the input is empty. In Chrome, VoiceOver only announces changes to `aria-activedescendant` if `aria-selected="true"` is applied to the focused item. In Firefox, VoiceOver only announces the first item you focused. If the list of options is organized into separate sections,
+VoiceOver doesn't announce changes to the focused item for all browsers.
 
-Item focus wasn't the only
-// List some other issues such as number options available aren't announced, section titles aren't announced, selection isn't announced
+Announcing item focus wasn't the only issue encountered. VoiceOver doesn't announce the number of options currently available in the menu or the current section title, information that an end user would find helpful when navigating the ComboBox menu.
+When selecting an option from the menu, an announcement of the item's name is made but the fact that it is now "selected" is omitted.
 
-As a workaround, we made use of [ARIA live-regions](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions). By setting up a visually hidden region in the DOM that has two `div`s with `aria-live="polite"` and `aria-live="assertive"`
-we are able to have the screen reader announce custom messages by updating the contents of said `div`s when updates occur in the ComboBox.
-
-to broadcast when a new ComboBox menu item is focused. It also announces when focus has been moved into a new menu section, when a item is selected,
-and how options are available in the current section.
-
-
-- wrap up with links to some of the bugs filed
+As a workaround, we made use of [ARIA live-regions](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions). When the ComboBox's menu is opened for the first time, we create two visually hidden `aria-live` regions in the DOM with two `div`s, one with `aria-live="polite"` and the other `aria-live="assertive"`
+so that we have control over how the message should be announced to the user. Then whenever updates occur in the ComboBox, we can have the screen reader announce custom messages by updating the contents of said `div`s. This allows us to fill in the announcement gaps mentioned previously as well as standardize the
+announcement experience over each of the browsers. If you are interested in using this LiveAnnouncer yourself, check out `LiveAnnouncer` in `@react-aria/live`.
 
 ## Conclusion
 
