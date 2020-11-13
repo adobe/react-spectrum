@@ -38,23 +38,17 @@ export function useInteractOutside(props: InteractOutsideProps) {
     let onPointerDown = (e) => {
       if (isValidEvent(e, ref)) {
         state.isPointerDown = true;
-        // Due to browser inconsistencies, we prevent
-        // default on pointer down. FF will otherwise try to start text selection.
-        if (e.button === 0) {
-          e.preventDefault();
-        }
       }
     };
-
+    /*
+    // FF bug https://bugzilla.mozilla.org/show_bug.cgi?id=1675846 prevents us from using this pointerevent
+    // once it's fixed we can uncomment
     // Use pointer events if available. Otherwise, fall back to mouse and touch events.
     if (typeof PointerEvent !== 'undefined') {
       let onPointerUp = (e) => {
         if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
           state.isPointerDown = false;
           onInteractOutside(e);
-          if (e.button === 0) {
-            e.preventDefault();
-          }
         }
       };
 
@@ -66,42 +60,35 @@ export function useInteractOutside(props: InteractOutsideProps) {
         document.removeEventListener('pointerdown', onPointerDown, true);
         document.removeEventListener('pointerup', onPointerUp, true);
       };
-    } else {
-      let onMouseUp = (e) => {
-        if (state.ignoreEmulatedMouseEvents) {
-          state.ignoreEmulatedMouseEvents = false;
-        } else if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
-          state.isPointerDown = false;
-          onInteractOutside(e);
-          if (e.button === 0) {
-            e.preventDefault();
-          }
-        }
-      };
+    } else {*/
+    let onMouseUp = (e) => {
+      if (state.ignoreEmulatedMouseEvents) {
+        state.ignoreEmulatedMouseEvents = false;
+      } else if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
+        state.isPointerDown = false;
+        onInteractOutside(e);
+      }
+    };
 
-      let onTouchEnd = (e) => {
-        state.ignoreEmulatedMouseEvents = true;
-        if (onInteractOutside && state.isPointerDown && isValidEvent(e, ref)) {
-          state.isPointerDown = false;
-          onInteractOutside(e);
-          if (e.button === 0) {
-            e.preventDefault();
-          }
-        }
-      };
+    let onTouchEnd = (e) => {
+      state.ignoreEmulatedMouseEvents = true;
+      if (onInteractOutside && state.isPointerDown && isValidEvent(e, ref)) {
+        state.isPointerDown = false;
+        onInteractOutside(e);
+      }
+    };
 
-      document.addEventListener('mousedown', onPointerDown, true);
-      document.addEventListener('mouseup', onMouseUp, true);
-      document.addEventListener('touchstart', onPointerDown, true);
-      document.addEventListener('touchend', onTouchEnd, true);
+    document.addEventListener('mousedown', onPointerDown, true);
+    document.addEventListener('mouseup', onMouseUp, true);
+    document.addEventListener('touchstart', onPointerDown, true);
+    document.addEventListener('touchend', onTouchEnd, true);
 
-      return () => {
-        document.removeEventListener('mousedown', onPointerDown, true);
-        document.removeEventListener('mouseup', onMouseUp, true);
-        document.removeEventListener('touchstart', onPointerDown, true);
-        document.removeEventListener('touchend', onTouchEnd, true);
-      };
-    }
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown, true);
+      document.removeEventListener('mouseup', onMouseUp, true);
+      document.removeEventListener('touchstart', onPointerDown, true);
+      document.removeEventListener('touchend', onTouchEnd, true);
+    };
   }, [onInteractOutside, ref, state.ignoreEmulatedMouseEvents, state.isPointerDown]);
 }
 

@@ -10,16 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-.react-spectrum-TabPanel--horizontal {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-}
+import {Node} from '@react-types/shared';
 
-.react-spectrum-TabPanel--vertical {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 100%;
+const cache = new WeakMap<Iterable<unknown>, number>();
+
+export function getItemCount<T>(collection: Iterable<Node<T>>): number {
+  let count = cache.get(collection);
+  if (count != null) {
+    return count;
+  }
+
+  count = 0;
+  for (let item of collection) {
+    if (item.type === 'section') {
+      count += getItemCount(item.childNodes);
+    } else {
+      count++;
+    }
+  }
+
+  cache.set(collection, count);
+  return count;
 }
