@@ -40,7 +40,7 @@ since the tray can display more items on the screen and grants users a larger hi
 screen including the ComboBox, we included an input field within the tray so that end users could still type to filter the available items. So far so good. However,
 when we tested the ComboBox's tray input on iOS Safari, the tray's bottom half was covered by the onscreen keyboard and we could not scroll the hidden items into view.
 
-It turns out that when the onscreen keyboard appears, iOS Safari does not shrink the browser window to accommodate it unlike other mobile browsers. Instead, Safari pushes the window upwards and
+It turns out that iOS Safari does not shrink the browser window to accommodate the onscreen keyboard unlike other mobile browsers. Instead, Safari pushes the window upwards and
 partially off screen. At the time, we had been relying on `window.innerHeight` to inform us on how tall the tray should be but now we had to find a different way of tracking the available window
 space for the tray.
 
@@ -48,25 +48,48 @@ Luckily for us, iOS 13 added support for the VisualViewport API. By querying `wi
 when the onscreen keyboard was opened or dismissed by listening to the VisualViewport's `resize` event. Leveraging these two allowed us to create a tray that properly adjusts to the presence of iOS onscreen keyboard.
 If you'd like to track the visual viewport size in your own app, you can use the `useViewportSize` hook available in the `@react-aria/utils` package.
 
-
 ## Accessibility
 
-- Mention that we used 1.2 spec (link here)
-  - mention how we came up against issues with the spec
-    - didn't cover our use cases exactly (portal, sections)
+To ensure that our ComboBox is accessible, we followed the [WAI-ARIA 1.2 combobox spec](https://www.w3.org/TR/wai-aria-practices-1.2/#combobox). Unfortunately, differences between our implementation and the spec arose
+as we built ComboBox and subsequent testing sessions revealed varied support across screen readers. Here are just a couple of the challenges we faced and the solutions we came up with to address them.
 
-- talk about crawling the DOM and aria hidden
-  - due to portals we need to hide everything but the input and popover otherwise focus moves from input to the element next to the input in DOM
-  - discuss approach taken
+### Portals
 
-- talk about some accessibility tools/browser differences
-  - voiceover just didn't really work with aria-activedescendant
-    - link to dequeue's combobo
-    - list some of the browser specific behaviors
-      - link codesandbox made from 1.2 spec with changes to add sections?
-  - NVDA
-    - didn't announce text cursor movement
+One significant difference between the WAI-ARIA 1.2 ComboBox spec and our ComboBox implementation was the usage of React Portals for the menu. In the [example](https://www.w3.org/TR/wai-aria-practices-1.2/examples/combobox/combobox-autocomplete-list.html)
+provided by the spec, the combobox menu is a sibling to the combobox, allowing for easy focus navigation between the the two elements when using a screenreader. The same couldn't be said for our ComboBox menu since
+it is portalled to the end of the document, meaning there could be any number of elements that a screenreader user would have to navigate through just to move from the combobox input to the menu itself. Furthermore, we had to figure out
+a way to make the combobox input and the combobox menu the only elements accessible to screen readers while the menu is open so that a screen reader user wouldn't accidentally leave the combobox context.
+
+The solution that we came up with was to crawl the DOM and apply `aria-hidden` to every element that wasn't the combobox input or menu. To crawl the DOM we used a [TreeWalker](https://developer.mozilla.org/en-US/docs/Web/API/TreeWalker),
+setting up a node filter to determine if a node should be left visible, hidden, or skipped in the case where its parent was already hidden. In addition, we watch for any changes in the DOM while the menu is open
+via a [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver), hiding those new elements if need be. When the menu closes, every node that we modified is reverted back to its previous state.
+Check out our `ariaHideOutside` hook in `@react-aria/overlays` if you'd like to learn more.
+
+### Differences in screen readers
+
+Just like browsers, screen readers can be quite varied in behavior and may require deliberate tooling to ensure a consistent degree of functionality.
+
+#### NVDA
+
+Initially, our ComboBox would automatically focus the first item in the menu whenever opened so the user wouldn't have to issue another keypress to begin menu navigation. However, when we tested the ComboBox using NVDA we discovered that
+character deletions and text cursor movement in the ComboBox input weren't being announced at all. NVDA would only resume announcing if no menu items were being focused, so we ended up clearing menu item focus on any changes to the input or
+left/right arrow key presses.
+
+#### VoiceOver
+
+VoiceOver as a whole doesn't seem to work very well with `aria-activedescendant`, failing to announce when the focused ComboBox item changed in a variety of situations. In Safari, changes to the `aria-activedescendant` aren't announced
+as long as the input is empty. In Chrome, VoiceOver only announces changes to `aria-activedescendant` if `aria-selected="true"` is applied to the focused item. If your list of options is organized into separate sections, VoiceOver doesn't announce at all for all browsers.
+VoiceOver in Firefox only announced the first item you focused and well you get the picture.
+
+As a workaround, we make use of a [ARIA live-region](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions) to broadcast when a new ComboBox menu item is focused. It also announces when focus has been moved into a new menu section, when a item is selected,
+and how options are available in the current section.
+
+
 
 - wrap up with links to some of the bugs filed
 
 ## Conclusion
+
+// Specs are a good guideline
+// It is important to test across many different assistive tech
+Just like browsers, screen readers can be quite varied in behavior. From testing we also discovered that support for the WAI-ARIA 1.2 combobox spec behavior isn't consistent among screen readers.
