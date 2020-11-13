@@ -318,6 +318,7 @@ describe('Tabs', function () {
 
     tabpanel = getByRole('tabpanel');
     expect(tabpanel).toHaveTextContent(items[2].children);
+    expect(tabpanel).toHaveAttribute('aria-labelledby', `${picker.id}`);
   });
 
   it('doesn\'t collapse when it can render all the tabs horizontally', function () {
@@ -407,6 +408,7 @@ describe('Tabs', function () {
 
     let picker = getByRole('button');
     expect(picker).toBeTruthy();
+    expect(tabpanel).toHaveAttribute('aria-labelledby', `${picker.id}`);
 
     spy.mockImplementationOnce(function () {
       if (this instanceof HTMLDivElement) {
@@ -439,6 +441,7 @@ describe('Tabs', function () {
     tabpanel = getByRole('tabpanel');
     expect(tabpanel).toBeTruthy();
     expect(tabpanel).toHaveTextContent(items[1].children);
+    expect(tabpanel).toHaveAttribute('aria-labelledby', items[1].id);
 
     tablist = getByRole('tablist');
     expect(tablist).toBeTruthy();
