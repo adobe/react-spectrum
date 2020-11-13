@@ -12,9 +12,9 @@ export default BlogPostLayout;
 
 ---
 keywords: [combobox, accessibility, mobile, react spectrum, react, spectrum, interactions, touch]
-description: TODO
+description: In this post we take a deeper look into some of the challenges faced when building an accessible and mobile friendly ComboBox.
 date: 2020-08-25
-author: 'Daniel Lu'
+author: '[Daniel Lu](https://github.com/LFDanLu)'
 ---
 
 # Building a ComboBox
@@ -57,10 +57,10 @@ as we built ComboBox and subsequent testing sessions revealed varied support acr
 
 One significant difference between the WAI-ARIA 1.2 ComboBox spec and our ComboBox implementation was the usage of React Portals for the menu. In the [example](https://www.w3.org/TR/wai-aria-practices-1.2/examples/combobox/combobox-autocomplete-list.html)
 provided by the spec, the combobox menu is a sibling to the combobox, allowing for easy focus navigation between the the two elements when using a screenreader. The same couldn't be said for our ComboBox menu since
-it is portalled to the end of the document, meaning there could be any number of elements that a screenreader user would have to navigate through just to move from the combobox input to the menu itself. Furthermore, we had to figure out
-a way to make the combobox input and the combobox menu the only elements accessible to screen readers while the menu is open so that a screen reader user wouldn't accidentally leave the combobox context.
+it is portalled to the end of the document, meaning there could be any number of elements that a screenreader user would have to navigate through just to move from the ComboBox input to the menu itself. Furthermore, we had to figure out
+a way to make the ComboBox input and the ComboBox menu the only elements accessible to screen readers while the menu is open so that a screen reader user wouldn't accidentally leave the ComboBox context.
 
-The solution that we came up with was to crawl the DOM and apply `aria-hidden` to every element that wasn't the combobox input or menu. To crawl the DOM we used a [TreeWalker](https://developer.mozilla.org/en-US/docs/Web/API/TreeWalker),
+The solution that we came up with was to crawl the DOM and apply `aria-hidden` to every element that wasn't the ComboBox input or menu. To crawl the DOM we used a [TreeWalker](https://developer.mozilla.org/en-US/docs/Web/API/TreeWalker),
 setting up a node filter to determine if a node should be left visible, hidden, or skipped in the case where its parent was already hidden. In addition, we watch for any changes in the DOM while the menu is open
 via a [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver), hiding those new elements if need be. When the menu closes, every node that we modified is reverted back to its previous state.
 Check out our `ariaHideOutside` hook in `@react-aria/overlays` if you'd like to learn more.
@@ -72,7 +72,7 @@ Just like browsers, screen readers can be quite varied in behavior and may requi
 #### NVDA
 
 Initially, our ComboBox would automatically focus the first item in the menu whenever opened so the user wouldn't have to issue another keypress to begin menu navigation. However, when we tested the ComboBox using NVDA we discovered that
-character deletions and text cursor movement in the ComboBox input weren't being announced at all. NVDA would only resume announcing if no menu items were being focused, so we ended up clearing menu item focus on any changes to the input or
+character deletions and text cursor movement in the ComboBox input weren't being announced at all. NVDA would only resume announcing if no menu items were being focused, so we ended up clearing menu item focus on any changes to the input text or
 left/right arrow key presses.
 
 #### VoiceOver
@@ -90,6 +90,5 @@ announcement experience over each of the browsers. If you are interested in usin
 
 ## Conclusion
 
-// Specs are a good guideline
-// It is important to test across many different assistive tech
-Just like browsers, screen readers can be quite varied in behavior. From testing we also discovered that support for the WAI-ARIA 1.2 combobox spec behavior isn't consistent among screen readers.
+If there is one takeaway, it is that cross browser and device testing is extremely important when building a component. A solution that may work in one browser and device combo may result in a broken experience in another. Browsers, devices, and assistive technologies each have their own behavioral quirks that often are only made apparent
+after thorough testing.
