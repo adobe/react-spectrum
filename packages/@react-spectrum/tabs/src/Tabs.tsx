@@ -10,18 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, Node, Orientation, StyleProps} from '@react-types/shared';
+import {classNames, SlotProvider, unwrapDOMRef, useStyleProps, useValueEffect} from '@react-spectrum/utils';
+import {DOMProps, Node, Orientation} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
+import {Item, Picker} from '@react-spectrum/picker';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {HTMLAttributes, Key, MutableRefObject, useCallback, useEffect, useRef, useState} from 'react';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
+import {SpectrumPickerProps} from '@react-types/select';
 import {SpectrumTabsProps} from '@react-types/tabs';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
-import tabsStyles from './tabs.css';
+import {Text} from '@react-spectrum/text';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
+import {useResizeObserver} from '@react-aria/utils';
 import {useTab, useTabs} from '@react-aria/tabs';
 
 export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
@@ -32,57 +35,120 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
     isDisabled,
     isQuiet,
     density,
+    children,
     ...otherProps
   } = props;
+
   let ref = useRef<HTMLDivElement>();
+  let wrapperRef = useRef<HTMLDivElement>();
   let state = useSingleSelectListState<T>({
     ...props,
     onSelectionChange
   });
 
+  let {direction} = useLocale();
   let {styleProps} = useStyleProps(otherProps);
   let {tabListProps, tabPanelProps} = useTabs(props, state, ref);
+  let [collapse, setCollapse] = useValueEffect(false);
   let [selectedTab, setSelectedTab] = useState<HTMLElement>();
 
   useEffect(() => {
-    let tabs: HTMLElement[] = Array.from(ref.current.querySelectorAll('.' + styles['spectrum-Tabs-item']));
-    setSelectedTab(tabs.find((tab) => tab.dataset.key === state.selectedKey));
-  }, [props.children, state.selectedKey]);
+    // Ensure a tab is always selected (in case no selected key was specified or if selected item was deleted from collection)
+    if (state.selectionManager.isEmpty || !state.collection.getItem(state.selectedKey)) {
+      state.selectionManager.replaceSelection(state.collection.getFirstKey());
+    }
+  }, [state.selectionManager, state.selectedKey, state.collection]);
+
+  useEffect(() => {
+    if (ref.current) {
+      let tabs: HTMLElement[] = Array.from(ref.current.querySelectorAll('.' + styles['spectrum-Tabs-item']));
+      let selectedTab = tabs.find((tab) => tab.dataset.key === state.selectedKey);
+
+      if (selectedTab != null) {
+        setSelectedTab(selectedTab);
+      }
+    }
+    // collapse is in the dep array so selectedTab can be updated for TabLine positioning
+  }, [children, state.selectedKey, collapse, ref]);
+
+  let checkShouldCollapse = useCallback(() => {
+    let computeShouldCollapse = () => {
+      if (wrapperRef.current) {
+        let tabsComponent = wrapperRef.current;
+        let tabs = Array.from(ref.current.children);
+        // The last child is the TabLine so we look at the second to last child for the last Tab
+        let lastTab = tabs[tabs.length - 2];
+
+        let end = direction === 'rtl' ? 'left' : 'right';
+        let farEdgeTabList = tabsComponent.getBoundingClientRect()[end];
+        let farEdgeLastTab = lastTab?.getBoundingClientRect()[end];
+        let shouldCollapse = direction === 'rtl' ? farEdgeLastTab < farEdgeTabList : farEdgeTabList < farEdgeLastTab;
+
+        return shouldCollapse;
+      }
+    };
+
+    if (orientation !== 'vertical') {
+      setCollapse(function* () {
+        // Make Tabs render in non-collapsed state
+        yield false;
+
+        // Compute if Tabs should collapse and update
+        yield computeShouldCollapse();
+      });
+    }
+  }, [ref, wrapperRef, direction, orientation, setCollapse]);
+
+  useEffect(() => {
+    checkShouldCollapse();
+  }, [children, checkShouldCollapse]);
+
+  useResizeObserver({ref: wrapperRef, onResize: checkShouldCollapse});
+
+  let tablist = (
+    <TabList
+      {...tabListProps}
+      ref={ref}
+      orientation={orientation}
+      density={density}
+      isQuiet={isQuiet}
+      isDisabled={isDisabled}
+      state={state}
+      selectedTab={selectedTab} />
+  );
 
   return (
     <div
       {...styleProps}
       className={classNames(
-        tabsStyles,
-        'react-spectrum-TabPanel',
-        `react-spectrum-TabPanel--${orientation}`,
+        styles,
+        'spectrum-TabsPanel',
+        `spectrum-TabsPanel--${orientation}`,
         styleProps.className
       )}>
-      <div
-        {...styleProps}
-        {...tabListProps}
-        ref={ref}
-        className={classNames(
-          styles,
-          'spectrum-Tabs',
-          `spectrum-Tabs--${orientation}`,
-          {'spectrum-Tabs--quiet': isQuiet},
-          density ? `spectrum-Tabs--${density}` : '',
-          styleProps.className
-        )}>
-        {[...state.collection].map((item) => (
-          <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
-        ))}
-        {selectedTab && <TabLine orientation={orientation} selectedTab={selectedTab} />}
-      </div>
-      <div {...tabPanelProps} className="react-spectrum-TabPanel-body">
+      {orientation === 'vertical' && tablist}
+      {orientation !== 'vertical' &&
+        <CollapsibleTabList
+          {...props}
+          tabListclassName={classNames(
+            styles,
+            'spectrum-TabsPanel-tabs'
+          )}
+          wrapperRef={wrapperRef}
+          collapse={collapse}
+          tabListProps={tabListProps}
+          state={state}
+          selectedTab={selectedTab}
+          ref={ref} />
+      }
+      <div {...tabPanelProps}>
         {state.selectedItem && state.selectedItem.props.children}
       </div>
     </div>
   );
 }
 
-interface TabProps<T> extends DOMProps, StyleProps {
+interface TabProps<T> extends DOMProps {
   item: Node<T>,
   state: SingleSelectListState<T>,
   isDisabled?: boolean,
@@ -90,8 +156,7 @@ interface TabProps<T> extends DOMProps, StyleProps {
 }
 
 export function Tab<T>(props: TabProps<T>) {
-  let {item, state, isDisabled: propsDisabled, ...otherProps} = props;
-  let {styleProps} = useStyleProps(otherProps);
+  let {item, state, isDisabled: propsDisabled} = props;
   let {key, rendered} = item;
   let isDisabled = propsDisabled || state.disabledKeys.has(key);
 
@@ -103,15 +168,9 @@ export function Tab<T>(props: TabProps<T>) {
   });
   let isSelected = state.selectedKey === key;
 
-  let icon = item.props.icon ? React.cloneElement(item.props.icon, {
-    size: 'S',
-    UNSAFE_className: classNames(styles, 'spectrum-Icon')
-  }) : undefined;
-
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
-        {...styleProps}
         {...mergeProps(tabProps, hoverProps)}
         ref={ref}
         className={classNames(
@@ -121,40 +180,230 @@ export function Tab<T>(props: TabProps<T>) {
             'is-selected': isSelected,
             'is-disabled': isDisabled,
             'is-hovered': isHovered
-          },
-          styleProps.className
+          }
         )}>
-        {icon}
-        {rendered && <span className={classNames(styles, 'spectrum-Tabs-itemLabel')}>{rendered}</span>}
+        <SlotProvider
+          slots={{
+            icon: {
+              size: 'S',
+              UNSAFE_className: classNames(styles, 'spectrum-Icon')
+            },
+            text: {
+              UNSAFE_className: classNames(styles, 'spectrum-Tabs-itemLabel')
+            }
+          }}>
+          {typeof rendered === 'string'
+            ? <Text>{rendered}</Text>
+            : rendered}
+        </SlotProvider>
       </div>
     </FocusRing>
   );
 }
 
-function TabLine({orientation, selectedTab}) {
+interface TabLineProps {
+  orientation?: Orientation,
+  selectedTab?: HTMLElement,
+  selectedKey?: Key
+}
+
+function TabLine(props: TabLineProps) {
+  let {
+    orientation,
+    // Is either the tab node (non-collapsed) or the picker node (collapsed)
+    selectedTab,
+    // selectedKey is provided so that the TabLine styles are updated when the TabPicker's width updates from a selection change
+    selectedKey
+  } = props;
+
   let verticalSelectionIndicatorOffset = 12;
   let {direction} = useLocale();
   let {scale} = useProvider();
 
   let [style, setStyle] = useState({
     width: undefined,
-    height: undefined,
-    transform: undefined
+    height: undefined
   });
 
   useLayoutEffect(() => {
-    let styleObj = {transform: undefined, width: undefined, height: undefined};
-    styleObj.transform = orientation === 'vertical'
-      ? `translateY(${selectedTab.offsetTop + verticalSelectionIndicatorOffset / 2}px)`
-      : `translateX(${selectedTab.offsetLeft}px) `;
+    if (selectedTab) {
+      let styleObj = {transform: undefined, width: undefined, height: undefined};
+      // In RTL, calculate the transform from the right edge of the tablist so that resizing the window doesn't break the Tabline position due to offsetLeft changes
+      let offset = direction === 'rtl' ? -1 * ((selectedTab.offsetParent as HTMLElement)?.offsetWidth - selectedTab.offsetWidth - selectedTab.offsetLeft) : selectedTab.offsetLeft;
+      styleObj.transform = orientation === 'vertical'
+        ? `translateY(${selectedTab.offsetTop + verticalSelectionIndicatorOffset / 2}px)`
+        : `translateX(${offset}px)`;
 
-    if (orientation === 'horizontal') {
-      styleObj.width = `${selectedTab.offsetWidth}px`;
-    } else {
-      styleObj.height = `${selectedTab.offsetHeight - verticalSelectionIndicatorOffset}px`;
+      if (orientation === 'horizontal') {
+        styleObj.width = `${selectedTab.offsetWidth}px`;
+      } else {
+        styleObj.height = `${selectedTab.offsetHeight - verticalSelectionIndicatorOffset}px`;
+      }
+      setStyle(styleObj);
     }
-    setStyle(styleObj);
-  }, [direction, setStyle, selectedTab, orientation, scale]);
+
+  }, [direction, setStyle, selectedTab, orientation, scale, verticalSelectionIndicatorOffset, selectedKey]);
 
   return <div className={classNames(styles, 'spectrum-Tabs-selectionIndicator')} role="presentation" style={style} />;
+}
+
+interface CollapsibleTabListProps<T> extends TabListProps<T>, TabPickerProps<T> {
+  tabListProps?: HTMLAttributes<HTMLElement>,
+  wrapperRef: MutableRefObject<HTMLDivElement>,
+  collapse?: boolean,
+  tabListclassName?: string
+}
+
+const CollapsibleTabList = React.forwardRef(function <T> (props: CollapsibleTabListProps<T>, ref: MutableRefObject<HTMLDivElement>) {
+  let {
+    tabListProps,
+    density,
+    isQuiet,
+    isDisabled,
+    state,
+    selectedTab,
+    wrapperRef,
+    collapse,
+    tabListclassName
+  } = props;
+
+  return (
+    <div
+      ref={wrapperRef}
+      className={classNames(
+        styles,
+        'spectrum-TabsPanel-collapseWrapper'
+      )}>
+      {collapse && <TabPicker {...props} className={tabListclassName} />}
+      {!collapse && (
+        <TabList
+          {...tabListProps}
+          density={density}
+          isQuiet={isQuiet}
+          isDisabled={isDisabled}
+          state={state}
+          selectedTab={selectedTab}
+          ref={ref}
+          orientation="horizontal"
+          className={tabListclassName} />
+      )}
+    </div>
+  );
+});
+
+interface TabListProps<T> {
+  isQuiet?: boolean,
+  density?: 'compact',
+  isDisabled?: boolean,
+  orientation?: Orientation,
+  state: SingleSelectListState<T>,
+  selectedTab: HTMLElement,
+  className?: string
+}
+
+const TabList = React.forwardRef(function <T> (props: TabListProps<T>, ref: MutableRefObject<HTMLDivElement>) {
+  let {
+    isQuiet,
+    density,
+    state,
+    isDisabled,
+    orientation,
+    selectedTab,
+    className,
+    ...otherProps
+  } = props;
+
+  return (
+    <div
+      {...otherProps}
+      ref={ref}
+      className={classNames(
+        styles,
+        'spectrum-Tabs',
+        `spectrum-Tabs--${orientation}`,
+        {
+          'spectrum-Tabs--quiet': isQuiet,
+          [`spectrum-Tabs--${density}`]: density
+        },
+        className
+      )}>
+      {[...state.collection].map((item) => (
+        <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
+      ))}
+      <TabLine orientation={orientation} selectedTab={selectedTab} />
+    </div>
+  );
+});
+
+interface TabPickerProps<T> extends SpectrumPickerProps<T> {
+  density?: 'compact',
+  state: SingleSelectListState<T>,
+  className?: string
+}
+
+function TabPicker<T>(props: TabPickerProps<T>) {
+  let {
+    isDisabled,
+    isQuiet,
+    state,
+    'aria-labelledby': ariaLabeledBy,
+    'aria-label': ariaLabel,
+    density,
+    className
+  } = props;
+
+  let ref = useRef();
+  let [pickerNode, setPickerNode] = useState(null);
+
+  useEffect(() => {
+    let node = unwrapDOMRef(ref);
+    setPickerNode(node.current);
+  }, [ref]);
+
+  let items = [...state.collection].map((item) => ({
+    rendered: item.rendered,
+    textValue: item.textValue,
+    key: item.key
+  }));
+
+  let pickerProps = {
+    'aria-labelledby': ariaLabeledBy,
+    'aria-label': ariaLabel
+  };
+
+  // TODO: Figure out if tabListProps should go onto the div here, v2 doesn't do it
+  return (
+    <div
+      className={classNames(
+        styles,
+        'spectrum-Tabs',
+        'spectrum-Tabs--horizontal',
+        'spectrum-Tabs--isCollapsed',
+        {
+          'spectrum-Tabs--quiet': isQuiet,
+          [`spectrum-Tabs--${density}`]: density
+        },
+        className
+      )}>
+      <SlotProvider
+        slots={{
+          button: {
+            focusRingStyles: styles
+          }
+        }}>
+        <Picker
+          {...pickerProps}
+          items={items}
+          ref={ref}
+          isQuiet
+          isDisabled={isDisabled}
+          selectedKey={state.selectedKey}
+          disabledKeys={state.disabledKeys}
+          onSelectionChange={state.setSelectedKey}>
+          {item => <Item key={item.key} textValue={item.textValue}>{item.rendered}</Item>}
+        </Picker>
+        {pickerNode && <TabLine orientation="horizontal" selectedTab={pickerNode} selectedKey={state.selectedKey} />}
+      </SlotProvider>
+    </div>
+  );
 }
