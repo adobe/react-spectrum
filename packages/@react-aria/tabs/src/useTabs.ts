@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 import {HTMLAttributes, Key, RefObject, useMemo} from 'react';
+import {mergeProps, useId, useLabels} from '@react-aria/utils';
 import {SingleSelectListState} from '@react-stately/list';
 import {TabAriaProps, TabsAriaProps} from '@react-types/tabs';
 import {TabsKeyboardDelegate} from './TabsKeyboardDelegate';
-import {useId} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
@@ -29,7 +29,6 @@ const tabsIds = new WeakMap<SingleSelectListState<unknown>, string>();
 
 export function useTabs<T>(props: TabsAriaProps<T>, state: SingleSelectListState<T>, ref): TabsAria {
   let {
-    'aria-label': ariaLabel,
     orientation = 'horizontal',
     keyboardActivation = 'automatic'
   } = props;
@@ -54,20 +53,16 @@ export function useTabs<T>(props: TabsAriaProps<T>, state: SingleSelectListState
     disallowEmptySelection: true
   });
 
-  // Ensure a tab is always selected
-  if (manager.isEmpty) {
-    manager.replaceSelection(delegate.getFirstKey());
-  }
-
   // Compute base id for all tabs
   let tabsId = useId();
   tabsIds.set(state, tabsId);
 
+  let tabListLabelProps = useLabels({...props, id: tabsId});
+
   return {
     tabListProps: {
-      ...collectionProps,
+      ...mergeProps(collectionProps, tabListLabelProps),
       role: 'tablist',
-      'aria-label': ariaLabel,
       'aria-orientation': orientation,
       tabIndex: undefined
     },
