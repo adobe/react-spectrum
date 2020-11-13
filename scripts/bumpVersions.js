@@ -34,6 +34,12 @@ let excludedPackages = new Set([
   '@react-spectrum/docs'
 ]);
 
+let monopackages = new Set([
+  '@adobe/react-spectrum',
+  'react-aria',
+  'react-stately'
+]);
+
 class VersionManager {
   constructor() {
     // Get dependency tree from yarn workspaces
@@ -106,6 +112,11 @@ class VersionManager {
       let name = parts.join('/');
       let pkg = JSON.parse(fs.readFileSync(`packages/${name}/package.json`, 'utf8'));
       this.changedPackages.add(name);
+    }
+
+    // Always bump monopackages
+    for (let pkg of monopackages) {
+      this.changedPackages.add(pkg);
     }
   }
 

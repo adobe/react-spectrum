@@ -79,7 +79,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
-        {...mergeProps(optionProps, shouldFocusOnHover ? hoverProps : {})}
+        {...mergeProps(optionProps, shouldFocusOnHover ? {} : hoverProps)}
         ref={ref}
         className={classNames(
           styles,
