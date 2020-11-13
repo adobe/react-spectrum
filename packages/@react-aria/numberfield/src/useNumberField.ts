@@ -11,9 +11,11 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
+import {AriaNumberFieldProps} from '@react-types/numberfield';
 import {clearAnnouncer} from '@react-aria/live-announcer';
 import {
   HTMLAttributes,
+  InputHTMLAttributes,
   LabelHTMLAttributes,
   RefObject,
   useCallback,
@@ -25,12 +27,16 @@ import {
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
-import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFieldState} from '@react-stately/numberfield';
+import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
 import {useFocus, useFocusWithin} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
-import {useSpinButton} from '@react-aria/spinbutton';
 import {useTextField} from '@react-aria/textfield';
+
+interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
+  decrementAriaLabel?: string,
+  incrementAriaLabel?: string
+}
 
 /**
  * From https://github.com/filamentgroup/formcore/blob/master/js/numeric-input.js#L20.
@@ -39,7 +45,7 @@ import {useTextField} from '@react-aria/textfield';
 
 interface NumberFieldAria {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
-  inputFieldProps: HTMLAttributes<HTMLInputElement>,
+  inputFieldProps: InputHTMLAttributes<HTMLInputElement>,
   numberFieldProps: HTMLAttributes<HTMLDivElement>,
   incrementButtonProps: AriaButtonProps,
   decrementButtonProps: AriaButtonProps

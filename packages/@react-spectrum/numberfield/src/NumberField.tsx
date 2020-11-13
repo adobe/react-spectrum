@@ -53,7 +53,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
   // or we figure out some way to take the styleprops out of otherProps...?
   let {styleProps} = useStyleProps(props);
   let state = useNumberFieldState(props);
-  let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
+  let inputRef = useRef<HTMLInputElement>();
   let domRef = useRef<HTMLDivElement>(null);
   let {
     numberFieldProps,

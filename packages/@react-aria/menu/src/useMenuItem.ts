@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {getItemCount} from '@react-stately/collections';
 import {HTMLAttributes, Key, RefObject} from 'react';
 import {isFocusVisible, useHover, usePress} from '@react-aria/interactions';
 import {mergeProps, useSlotId} from '@react-aria/utils';
@@ -102,7 +103,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
   if (isVirtualized) {
     ariaProps['aria-posinset'] = state.collection.getItem(key).index;
-    ariaProps['aria-setsize'] = state.collection.size;
+    ariaProps['aria-setsize'] = getItemCount(state.collection);
   }
 
   let onKeyDown = (e: KeyboardEvent) => {
