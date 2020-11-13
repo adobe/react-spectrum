@@ -906,11 +906,11 @@ describe('TooltipTrigger', function () {
     });
   });
 
-  describe('triggerAction = focus', () => {
+  describe('trigger = focus', () => {
     it('will open for focus', () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger delay={0} triggerAction="focus">
+          <TooltipTrigger delay={0} trigger="focus">
             <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
@@ -942,7 +942,7 @@ describe('TooltipTrigger', function () {
     it('will not open for hover', () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger delay={0} triggerAction="focus">
+          <TooltipTrigger delay={0} trigger="focus">
             <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>

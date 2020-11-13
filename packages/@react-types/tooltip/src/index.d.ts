@@ -41,9 +41,8 @@ export interface TooltipTriggerProps extends OverlayTriggerProps {
 
   /**
    * By default, opens for both focus and hover. Can be made to open only for focus.
-   * @default 'default'
    */
-  triggerAction?: 'default' | 'focus'
+  trigger?: 'focus'
 }
 
 export interface SpectrumTooltipTriggerProps extends TooltipTriggerProps, PositionProps {

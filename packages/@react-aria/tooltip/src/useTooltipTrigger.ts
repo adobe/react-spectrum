@@ -38,7 +38,7 @@ interface TooltipTriggerAria {
 export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTriggerState, ref: RefObject<HTMLElement>) : TooltipTriggerAria {
   let {
     isDisabled,
-    triggerAction = 'default'
+    trigger
   } = props;
 
   let tooltipId = useId();
@@ -77,7 +77,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
   }, [ref, state]);
 
   let onHoverStart = () => {
-    if (triggerAction === 'focus') {
+    if (trigger === 'focus') {
       return;
     }
     // In chrome, if you hover a trigger, then another element obscures it, due to keyboard
@@ -93,7 +93,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
   };
 
   let onHoverEnd = () => {
-    if (triggerAction === 'focus') {
+    if (trigger === 'focus') {
       return;
     }
     // no matter how the trigger is left, we should close the tooltip
