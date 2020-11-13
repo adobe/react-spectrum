@@ -63,6 +63,8 @@ describe('Tabs', function () {
     let tablist = container.getByRole('tablist');
     expect(tablist).toBeTruthy();
 
+    expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
+
     let tabs = within(tablist).getAllByRole('tab');
     expect(tabs.length).toBe(3);
 
@@ -87,6 +89,8 @@ describe('Tabs', function () {
     let tabs = within(tablist).getAllByRole('tab');
     let selectedItem = tabs[0];
 
+    expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
+
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
     act(() => {selectedItem.focus();});
     fireEvent.keyDown(selectedItem, {key: 'ArrowRight', code: 39, charCode: 39});
@@ -109,6 +113,8 @@ describe('Tabs', function () {
     let selectedItem = tabs[0];
     act(() => {selectedItem.focus();});
 
+    expect(tablist).toHaveAttribute('aria-orientation', 'vertical');
+
     /** Doesn't change selection because it's vertical tabs. */
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(selectedItem, {key: 'ArrowRight', code: 39, charCode: 39});
@@ -129,6 +135,9 @@ describe('Tabs', function () {
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
     act(() => {firstItem.focus();});
+
+    expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
+
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(firstItem, {key: 'ArrowLeft', code: 37, charCode: 37});
     let lastItem = tabs[tabs.length - 1];
@@ -143,6 +152,9 @@ describe('Tabs', function () {
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
     act(() => {firstItem.focus();});
+
+    expect(tablist).toHaveAttribute('aria-orientation', 'vertical');
+
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(firstItem, {key: 'End', code: 35, charCode: 35});
     let lastItem = tabs[tabs.length - 1];
