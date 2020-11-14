@@ -19,7 +19,7 @@ import {RefObject, SyntheticEvent, useEffect, useRef} from 'react';
 
 interface InteractOutsideProps {
   ref: RefObject<Element>,
-  onInteractOutside?: (e: SyntheticEvent) => void
+  onInteractOutside?: (e: SyntheticEvent) => void,
   /** Whether the interact outside events should be disabled. */
   isDisabled?: boolean
 }
@@ -29,7 +29,7 @@ interface InteractOutsideProps {
  * when a user clicks outside them.
  */
 export function useInteractOutside(props: InteractOutsideProps) {
-  let {ref, onInteractOutside,isDisabled} = props;
+  let {ref, onInteractOutside, isDisabled} = props;
   let stateRef = useRef({
     isPointerDown: false,
     ignoreEmulatedMouseEvents: false
