@@ -173,7 +173,7 @@ describe('useInteractOutside', function () {
     });
   });
   describe('disable interact outside events', function () {
-    it('does not handle pointer events events if disabled', function () {
+    it('does not handle pointer events if disabled', function () {
       let onInteractOutside = jest.fn();
       render(
         <Example isDisabled onInteractOutside={onInteractOutside} />
@@ -184,7 +184,7 @@ describe('useInteractOutside', function () {
       expect(onInteractOutside).not.toHaveBeenCalled();
     });
 
-    it('does not handle touch events events if disabled', function () {
+    it('does not handle touch events if disabled', function () {
       let onInteractOutside = jest.fn();
       render(
         <Example isDisabled onInteractOutside={onInteractOutside} />
@@ -195,7 +195,7 @@ describe('useInteractOutside', function () {
       expect(onInteractOutside).not.toHaveBeenCalled();
     });
 
-    it('does not handle mouse events events if disabled', function () {
+    it('does not handle mouse events if disabled', function () {
       let onInteractOutside = jest.fn();
       render(
         <Example isDisabled onInteractOutside={onInteractOutside} />
