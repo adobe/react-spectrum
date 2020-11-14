@@ -11,17 +11,11 @@
  */
 
 import * as DragManager from './DragManager';
-import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation} from './types';
+import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, DropPosition, DropTarget} from './types';
 import {HTMLAttributes, Key, RefObject, useEffect, useRef} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {useDrop} from './useDrop';
-
-type DropPosition = 'on' | 'before' | 'after';
-interface DropTarget {
-  key: Key,
-  dropPosition: DropPosition
-}
 
 interface DroppableCollectionEnterEvent extends DropEnterEvent {
   target: DropTarget

@@ -13,3 +13,5 @@
 export * from './useDrag';
 export * from './useDrop';
 export * from './useDroppableCollection';
+export * from './useDroppableItem';
+export * from './useInsertionIndicator';

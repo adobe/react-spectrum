@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {Key} from 'react';
+
 export interface DragDropEvent {
   // Relative to the target element's position
   x: number,
@@ -61,4 +63,10 @@ export interface DropEvent extends DragDropEvent {
   type: 'drop',
   dropOperation: DropOperation,
   items: DropItem[]
+}
+
+export type DropPosition = 'on' | 'before' | 'after';
+export interface DropTarget {
+  key: Key,
+  dropPosition: DropPosition
 }

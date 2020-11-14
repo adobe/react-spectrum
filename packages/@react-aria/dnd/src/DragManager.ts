@@ -10,10 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+import {announce} from '@react-aria/live-announcer';
+import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropMoveEvent, DropOperation} from './types';
+import {getInteractionModality} from '@react-aria/interactions';
+import {useCallback, useEffect, useState} from 'react';
 
 const dropTargets = new Map<Element, DropTarget>();
 let dragSession: DragSession = null;
+let subscriptions = new Set<() => void>();
 
 interface DropTarget {
   element: HTMLElement,
@@ -47,21 +52,38 @@ export function beginDragging(options: DragTarget) {
   }
 
   dragSession = new DragSession(options);
-  dragSession.next();
-}
+  requestAnimationFrame(() => {
+    dragSession.setup();
+  });
 
-export function cancelDrag() {
-  if (!dragSession) {
-    throw new Error('Not currently dragging');
+  if (getInteractionModality() === 'keyboard') {
+    dragSession.next();
   }
 
-  dragSession.cancel();
-  dragSession = null;
+  for (let cb of subscriptions) {
+    cb();
+  }
 }
 
-export function drop() {
-  dragSession.drop();
+export function useIsDragging() {
+  let [isDragging, setDragging] = useState(!!dragSession);
+
+  useEffect(() => {
+    let cb = () => setDragging(!!dragSession);
+    subscriptions.add(cb);
+    return () => {
+      subscriptions.delete(cb);
+    };
+  }, []);
+
+  return isDragging;
+}
+
+function endDragging() {
   dragSession = null;
+  for (let cb of subscriptions) {
+    cb();
+  }
 }
 
 const CANCELED_EVENTS = [
@@ -79,12 +101,26 @@ const CANCELED_EVENTS = [
   'mouseover',
   'mouseout',
   'mouseup',
-  'click',
   'touchstart',
   'touchmove',
   'touchend',
   'keyup'
 ];
+
+const CLICK_EVENTS = [
+  'pointerup',
+  'mouseup',
+  'touchend'
+];
+
+const MESSAGES = {
+  keyboard: {
+    start: 'Started dragging. Press Tab to navigate to a drop target, then press Enter to drop, or press Escape to cancel.'
+  },
+  virtual: {
+    start: 'Started dragging. Navigate to a drop target, then click or press Enter to drop.'
+  }
+};
 
 class DragSession {
   dragTarget: DragTarget;
@@ -92,6 +128,7 @@ class DragSession {
   currentDropTarget: DropTarget;
   dropOperation: DropOperation;
   mutationObserver: MutationObserver;
+  restoreAriaHidden: () => void;
 
   constructor(target: DragTarget) {
     this.dragTarget = target;
@@ -100,32 +137,43 @@ class DragSession {
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onFocus = this.onFocus.bind(this);
     this.onBlur = this.onBlur.bind(this);
+    this.onClick = this.onClick.bind(this);
     this.cancelEvent = this.cancelEvent.bind(this);
-
-    this.setup();
   }
 
   setup() {
     document.addEventListener('keydown', this.onKeyDown, true);
     document.addEventListener('focus', this.onFocus, true);
     document.addEventListener('blur', this.onBlur, true);
+    document.addEventListener('click', this.onClick, true);
+
     for (let event of CANCELED_EVENTS) {
       document.addEventListener(event, this.cancelEvent, true);
     }
 
+    this.restoreAriaHidden = ariaHideOutside([
+      this.dragTarget.element,
+      ...this.validDropTargets.map(target => target.element)
+    ]);
+
     this.mutationObserver = new MutationObserver(() => this.updateValidDropTargets());
     this.mutationObserver.observe(document.body, {subtree: true, attributes: true, attributeFilter: ['aria-hidden']});
+
+    announce(MESSAGES[getInteractionModality()].start);
   }
 
   teardown() {
     document.removeEventListener('keydown', this.onKeyDown, true);
     document.removeEventListener('focus', this.onFocus, true);
     document.removeEventListener('blur', this.onBlur, true);
+    document.removeEventListener('click', this.onClick, true);
+
     for (let event of CANCELED_EVENTS) {
       document.removeEventListener(event, this.cancelEvent, true);
     }
 
     this.mutationObserver.disconnect();
+    this.restoreAriaHidden();
   }
 
   onKeyDown(e: KeyboardEvent) {
@@ -161,6 +209,10 @@ class DragSession {
   onFocus(e: FocusEvent) {
     this.cancelEvent(e);
 
+    if (e.target === this.dragTarget.element) {
+      return;
+    }
+
     let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
     if (!dropTarget) {
       this.currentDropTarget?.element.focus();
@@ -178,17 +230,54 @@ class DragSession {
     }
   }
 
+  onClick(e: MouseEvent) {
+    this.cancelEvent(e);
+    console.log(e);
+
+    if (e.detail !== 0) {
+      return;
+    }
+
+    if (e.target === this.dragTarget.element) {
+      this.cancel();
+      return;
+    }
+
+    let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
+    console.log(dropTarget);
+    if (dropTarget) {
+      this.setCurrentDropTarget(dropTarget);
+      this.drop();
+    }
+  }
+
   cancelEvent(e: Event) {
-    e.preventDefault();
+    // Allow default for events that might cancel a click event
+    if (!CLICK_EVENTS.includes(e.type)) {
+      e.preventDefault();
+    }
+
     e.stopPropagation();
     e.stopImmediatePropagation();
   }
 
   updateValidDropTargets() {
+    this.mutationObserver.disconnect();
+    if (this.restoreAriaHidden) {
+      this.restoreAriaHidden();
+    }
+
     this.validDropTargets = findValidDropTargets(this.dragTarget);
-    if (!this.validDropTargets.includes(this.currentDropTarget)) {
+    if (this.currentDropTarget && !this.validDropTargets.includes(this.currentDropTarget)) {
       this.setCurrentDropTarget(this.validDropTargets[0]);
     }
+
+    this.restoreAriaHidden = ariaHideOutside([
+      this.dragTarget.element,
+      ...this.validDropTargets.map(target => target.element)
+    ]);
+
+    this.mutationObserver.observe(document.body, {subtree: true, attributes: true, attributeFilter: ['aria-hidden']});
   }
 
   next() {
@@ -203,13 +292,18 @@ class DragSession {
       return;
     }
 
+    // If we've reached the end of the valid drop targets, cycle back to the original drag target.
+    // This lets the user cancel the drag in case they don't have an Escape key (e.g. iPad keyboard case).
     if (index === this.validDropTargets.length - 1) {
-      index = 0;
+      if (!this.dragTarget.element.closest('[aria-hidden="true"]')) {
+        this.setCurrentDropTarget(null);
+        this.dragTarget.element.focus();
+      } else {
+        this.setCurrentDropTarget(this.validDropTargets[0]);
+      }
     } else {
-      index++;
+      this.setCurrentDropTarget(this.validDropTargets[index + 1]);
     }
-
-    this.setCurrentDropTarget(this.validDropTargets[index]);
   }
 
   previous() {
@@ -224,13 +318,18 @@ class DragSession {
       return;
     }
 
+    // If we've reached the start of the valid drop targets, cycle back to the original drag target.
+    // This lets the user cancel the drag in case they don't have an Escape key (e.g. iPad keyboard case).
     if (index === 0) {
-      index = this.validDropTargets.length - 1;
+      if (!this.dragTarget.element.closest('[aria-hidden="true"]')) {
+        this.setCurrentDropTarget(null);
+        this.dragTarget.element.focus();
+      } else {
+        this.setCurrentDropTarget(this.validDropTargets[this.validDropTargets.length - 1]);
+      }
     } else {
-      index--;
+      this.setCurrentDropTarget(this.validDropTargets[index - 1]);
     }
-
-    this.setCurrentDropTarget(this.validDropTargets[index]);
   }
 
   setCurrentDropTarget(dropTarget: DropTarget) {
@@ -278,12 +377,16 @@ class DragSession {
     }
 
     this.setCurrentDropTarget(null);
-    dragSession = null;
+    endDragging();
   }
 
   cancel() {
     this.end();
-    this.dragTarget.element.focus();
+    if (!this.dragTarget.element.closest('[aria-hidden="true"]')) {
+      this.dragTarget.element.focus();
+    }
+
+    announce('Drop canceled.');
   }
 
   drop() {
@@ -317,6 +420,7 @@ class DragSession {
     }
 
     this.end();
+    announce('Drop complete.');
   }
 
   activate() {

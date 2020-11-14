@@ -10,11 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonHTMLAttributes, DragEvent, HTMLAttributes, KeyboardEvent, useRef} from 'react';
+import {ButtonHTMLAttributes, DragEvent, HTMLAttributes, KeyboardEvent, useEffect, useRef, useState} from 'react';
 import {DragEndEvent, DragItem, DragMoveEvent, DragStartEvent, DropOperation} from './types';
 import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
 import {PressEvent, PressEvents} from '@react-types/shared';
+import {useId} from '@react-aria/utils';
+import {useInteractionModality} from '@react-aria/interactions';
 
 interface DragOptions {
   onDragStart?: (e: DragStartEvent) => void,
@@ -27,14 +29,31 @@ interface DragOptions {
 
 interface DragResult {
   dragProps: HTMLAttributes<HTMLElement>,
-  dragButtonProps: PressEvents
+  dragButtonProps: PressEvents,
+  isDragging: boolean
 }
+
+const MESSAGES = {
+  keyboard: {
+    start: 'Press Enter to start dragging.',
+    end: 'Dragging. Press Enter to cancel drag.'
+  },
+  touch: {
+    start: 'Double tap to start dragging.',
+    end: 'Dragging. Double tap to cancel drag.'
+  },
+  virtual: {
+    start: 'Click to start dragging.',
+    end: 'Dragging. Click to cancel drag.'
+  }
+};
 
 export function useDrag(options: DragOptions): DragResult {
   let state = useRef({
     x: 0,
     y: 0
   }).current;
+  let [isDragging, setDragging] = useState(false);
 
   let onDragStart = (e: DragEvent) => {
     let items = options.getItems();
@@ -62,6 +81,12 @@ export function useDrag(options: DragOptions): DragResult {
 
     state.x = e.clientX;
     state.y = e.clientY;
+
+    // Wait a frame before we set dragging to true so that the browser has time to
+    // render the preview image before we update the element that has been dragged.
+    requestAnimationFrame(() => {
+      setDragging(true);
+    });
   };
 
   let onDrag = (e: DragEvent) => {
@@ -90,6 +115,8 @@ export function useDrag(options: DragOptions): DragResult {
         dropOperation: DROP_EFFECT_TO_DROP_OPERATION[e.dataTransfer.dropEffect]
       });
     }
+
+    setDragging(false);
   };
 
   let onPress = (e: PressEvent) => {
@@ -110,9 +137,37 @@ export function useDrag(options: DragOptions): DragResult {
       element: e.target as HTMLElement,
       items: options.getItems(),
       allowedDropOperations: options.getAllowedDropOperations(),
-      onDragEnd: options.onDragEnd
+      onDragEnd(e) {
+        setDragging(false);
+        if (typeof options.onDragEnd === 'function') {
+          options.onDragEnd(e);
+        }
+      }
     });
+
+    setDragging(true);
   };
+
+  let descriptionId = useId();
+  let modality: string = useInteractionModality() || 'virtual';
+  if (modality === 'pointer') {
+    modality = 'virtual';
+  }
+
+  if (modality === 'virtual' && 'ontouchstart' in window) {
+    modality = 'touch';
+  }
+
+  useEffect(() => {
+    let description = document.createElement('div');
+    description.id = descriptionId;
+    description.style.display = 'none';
+    description.textContent = !isDragging ? MESSAGES[modality].start : MESSAGES[modality].end;
+    document.body.appendChild(description);
+    return () => {
+      description.remove();
+    };
+  }, [isDragging, descriptionId, modality]);
 
   return {
     dragProps: {
@@ -122,7 +177,9 @@ export function useDrag(options: DragOptions): DragResult {
       onDragEnd
     },
     dragButtonProps: {
-      onPress
-    }
+      onPress,
+      'aria-describedby': descriptionId
+    },
+    isDragging
   };
 }

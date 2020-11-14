@@ -19,7 +19,11 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
+    "@react-aria/interactions": "3.3.0",
+    "@react-aria/live-announcer": "3.0.0-alpha.1",
+    "@react-aria/overlays": "3.5.0",
     "@react-aria/utils": "3.4.0",
+    "@react-aria/visually-hidden": "3.2.1",
     "@react-types/shared": "3.3.0"
   },
   "peerDependencies": {

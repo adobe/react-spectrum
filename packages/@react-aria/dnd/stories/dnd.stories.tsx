@@ -15,7 +15,7 @@ import {chain} from '@react-aria/utils';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {useDrag, useDrop, useDroppableCollection} from '..';
+import {useDrag, useDrop, useDroppableCollection, useDroppableItem, useInsertionIndicator} from '..';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import {Item} from '@react-stately/collections';
 import {useListState} from '@react-stately/list';
@@ -28,6 +28,7 @@ import {useSelectableCollection, useSelectableItem} from '@react-aria/selection'
 import {mergeProps} from '@react-aria/utils';
 import {PressResponder, usePress} from '@react-aria/interactions';
 import {unwrapDOMRef} from '@react-spectrum/utils';
+import {useListBox, useOption} from '@react-aria/listbox';
 
 storiesOf('Drag and Drop', module)
   .add(
@@ -79,7 +80,7 @@ storiesOf('Drag and Drop', module)
   );
 
 function Draggable() {
-  let {dragProps, dragButtonProps} = useDrag({
+  let {dragProps, dragButtonProps, isDragging} = useDrag({
     getItems() {
       return [{
         type: 'text/plain',
@@ -107,6 +108,7 @@ function Draggable() {
       {...buttonProps}
       style={{
         background: 'red',
+        opacity: isDragging ? 0.5 : 1,
         padding: 10
       }}>
       Drag me
@@ -133,11 +135,12 @@ function Droppable({type}: any) {
     }
   });
 
+  let {buttonProps} = useButton({elementType: 'div'}, ref);
+
   return (
     <div
-      {...dropProps}
+      {...mergeProps(dropProps, buttonProps)}
       ref={ref}
-      tabIndex={-1}
       style={{
         background: isDropTarget ? 'blue' : 'gray',
         padding: 20
@@ -158,15 +161,14 @@ function DroppableCollection(props) {
     ref,
     keyboardDelegate,
     onDropEnter: chain(action('onDropEnter'), console.log, e => {
-      setTarget(e.target);
-
       // Wait a frame before moving focus.
       requestAnimationFrame(() => {
+        setTarget(e.target);
+
         if (e.target.dropPosition === 'on') {
           state.selectionManager.setFocusedKey(e.target.key);
         } else {
           state.selectionManager.setFocusedKey(null);
-          betweenRef.current.focus();
         }
       });
     }),
@@ -226,7 +228,7 @@ function DroppableCollection(props) {
     }
   });
 
-  let [targetPosition, setTargetPosition] = React.useState(null);
+  /* let [targetPosition, setTargetPosition] = React.useState(null);
   React.useEffect(() => {
     if (!target || target.dropPosition === 'on') {
       setTargetPosition(null);
@@ -263,17 +265,17 @@ function DroppableCollection(props) {
     }
 
     setTargetPosition(y);
-  }, [target]);
+  }, [target]); */
 
-  let {collectionProps: selectionProps} = useSelectableCollection({
-    selectionManager: state.selectionManager,
-    keyboardDelegate,
-    ref
-  });
+  let {listBoxProps} = useListBox({
+    ...props,
+    'aria-label': 'List',
+    keyboardDelegate
+  }, state, ref);
 
   return (
     <div
-      {...mergeProps(collectionProps, selectionProps)}
+      {...mergeProps(collectionProps, listBoxProps)}
       ref={ref}
       style={{
         border: '1px solid gray',
@@ -282,41 +284,67 @@ function DroppableCollection(props) {
         width: 100,
         position: 'relative'
       }}>
-      {[...state.collection].map(item =>
-        (<CollectionItem
-          key={item.key}
-          item={item}
-          isDropTarget={target?.key === item.key && target?.dropPosition === 'on'}
-          selectionManager={state.selectionManager} />)
-      )}
-      {targetPosition != null &&
-        <div ref={betweenRef} tabIndex={-1} style={{width: '100%', height: 2, background: 'blue', position: 'absolute', top: targetPosition - 1}} />
-      }
+      {[...state.collection].map(item => (
+        <>
+          <InsertionIndicator
+            isActive={target?.key === item.key && target?.dropPosition === 'before'}
+            collection={state.collection}
+            target={{key: item.key, dropPosition: 'before'}} />
+          <CollectionItem
+            key={item.key}
+            item={item}
+            isDropTarget={target?.key === item.key && target?.dropPosition === 'on'}
+            state={state} />
+          {state.collection.getKeyAfter(item.key) == null &&
+            <InsertionIndicator
+              isActive={target?.key === item.key && target?.dropPosition === 'after'}
+              collection={state.collection}
+              target={{key: item.key, dropPosition: 'after'}} />
+          }
+        </>
+      ))}
     </div>
   );
 }
 
-function CollectionItem({item, isDropTarget, selectionManager}) {
+function CollectionItem({item, state, isDropTarget}) {
   let ref = React.useRef();
-  let {itemProps} = useSelectableItem({
-    selectionManager,
+  let {optionProps} = useOption({
     key: item.key,
-    ref
-  });
+    isSelected: state.selectionManager.isSelected(item.key)
+  }, state, ref);
 
-  let {pressProps} = usePress(itemProps);
+  let {dropProps} = useDroppableItem();
 
   return (
     <div
-      {...pressProps}
+      {...mergeProps(optionProps, dropProps)}
       ref={ref}
       style={{
-        background: isDropTarget ? 'blue' : selectionManager.isSelected(item.key) ? 'green' : 'purple',
+        background: isDropTarget ? 'blue' : state.selectionManager.isSelected(item.key) ? 'green' : 'purple',
         padding: 10,
         margin: '5px 0'
       }}>
       {item.rendered}
     </div>
+  );
+}
+
+function InsertionIndicator(props) {
+  let ref = React.useRef();
+  let {insertionIndicatorProps} = useInsertionIndicator(props, ref);
+
+  return (
+    <div
+      ref={ref}
+      role="option"
+      {...insertionIndicatorProps}
+      style={{
+        width: '100%',
+        height: 2,
+        marginBottom: -2,
+        background: props.isActive ? 'blue' : 'transparent'
+      }} />
   );
 }
 

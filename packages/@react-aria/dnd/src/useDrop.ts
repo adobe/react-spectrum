@@ -11,9 +11,12 @@
  */
 
 import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropMoveEvent, DropOperation} from './types';
-import {DragEvent, HTMLAttributes, RefObject, useEffect, useRef, useState} from 'react';
+import {DragEvent, HTMLAttributes, RefObject, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
+import {useDroppableItem} from './useDroppableItem';
+import {useId} from '@react-aria/utils';
+import {useInteractionModality} from '@react-aria/interactions';
 
 interface DropOptions {
   ref: RefObject<HTMLElement>,
@@ -214,8 +217,11 @@ export function useDrop(options: DropOptions): DropResult {
     }
   }), [optionsRef]);
 
+  let {dropProps} = useDroppableItem();
+
   return {
     dropProps: {
+      ...dropProps,
       onDragEnter,
       onDragOver,
       onDragLeave,
