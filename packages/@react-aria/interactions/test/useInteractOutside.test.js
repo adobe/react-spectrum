@@ -172,4 +172,38 @@ describe('useInteractOutside', function () {
       expect(onInteractOutside).not.toHaveBeenCalled();
     });
   });
+  describe('disable interact outside events', function () {
+    it('does not handle pointer events events if disabled', function () {
+      let onInteractOutside = jest.fn();
+      render(
+        <Example isDisabled onInteractOutside={onInteractOutside} />
+      );
+
+      fireEvent(document.body, pointerEvent('mousedown'));
+      fireEvent(document.body, pointerEvent('mouseup'));
+      expect(onInteractOutside).not.toHaveBeenCalled();
+    });
+
+    it('does not handle touch events events if disabled', function () {
+      let onInteractOutside = jest.fn();
+      render(
+        <Example isDisabled onInteractOutside={onInteractOutside} />
+      );
+
+      fireEvent.touchStart(document.body);
+      fireEvent.touchEnd(document.body);
+      expect(onInteractOutside).not.toHaveBeenCalled();
+    });
+
+    it('does not handle mouse events events if disabled', function () {
+      let onInteractOutside = jest.fn();
+      render(
+        <Example isDisabled onInteractOutside={onInteractOutside} />
+      );
+
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body);
+      expect(onInteractOutside).not.toHaveBeenCalled();
+    });
+  });
 });
