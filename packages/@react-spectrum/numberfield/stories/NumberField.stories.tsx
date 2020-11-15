@@ -64,8 +64,16 @@ storiesOf('NumberField', module)
     () => render({validationState: 'invalid'})
   )
   .add(
+    'validationState: valid',
+    () => render({validationState: 'valid'})
+  )
+  .add(
     'validationState: invalid, isQuiet',
     () => render({validationState: 'invalid', isQuiet: true})
+  )
+  .add(
+    'validationState: valid, isQuiet',
+    () => render({validationState: 'valid', isQuiet: true})
   )
   .add(
     'minValue = 0, maxValue = 20',
@@ -98,6 +106,18 @@ storiesOf('NumberField', module)
   .add(
     'isQuiet, showStepper = false',
     () => render({isQuiet: true, showStepper: false})
+  )
+  .add(
+    'required',
+    () => render({isRequired: true})
+  )
+  .add(
+    'optional',
+    () => render({necessityIndicator: 'label'})
+  )
+  .add(
+    'required with label',
+    () => render({isRequired: true, necessityIndicator: 'label'})
   )
   .add(
     'controlled',
