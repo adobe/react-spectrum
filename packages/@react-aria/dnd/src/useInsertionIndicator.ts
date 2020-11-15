@@ -11,15 +11,16 @@
  */
 
 import {Collection, Node} from '@react-types/shared';
-import {DropTarget} from './types';
+import * as DragManager from './DragManager';
+import {DropOperation, DropTarget} from './types';
 import {HTMLAttributes, Key, RefObject, useEffect} from 'react';
 import {useDroppableItem} from './useDroppableItem';
-import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 interface InsertionIndicatorProps {
   collection: Collection<Node<unknown>>,
   target: DropTarget,
-  isActive: boolean
+  isActive: boolean,
+  getDropOperation?: (target: DropTarget, types: string[], allowedOperations: DropOperation[]) => DropOperation
 }
 
 interface InsertionIndicatorAria {
@@ -27,15 +28,16 @@ interface InsertionIndicatorAria {
 }
 
 export function useInsertionIndicator(props: InsertionIndicatorProps, ref: RefObject<HTMLElement>): InsertionIndicatorAria {
-  let {collection, target, isActive} = props;
+  let {collection, target, isActive, getDropOperation} = props;
 
+  let dragSession = DragManager.useDragSession();
   useEffect(() => {
-    if (isActive) {
+    if (dragSession && isActive) {
       ref.current.focus();
     }
-  }, [isActive, ref]);
+  }, [dragSession, isActive, ref]);
 
-  let {dropProps} = useDroppableItem();
+  let {dropProps} = useDroppableItem({ref, target, getDropOperation});
 
   let before = target.dropPosition === 'before'
     ? collection.getKeyBefore(target.key)
@@ -54,15 +56,9 @@ export function useInsertionIndicator(props: InsertionIndicatorProps, ref: RefOb
     label = `Insert before ${getText(after)}`;
   }
 
-  let {visuallyHiddenProps} = useVisuallyHidden();
-  if (isActive) {
-    visuallyHiddenProps = {};
-  }
-
   return {
     insertionIndicatorProps: {
       ...dropProps,
-      ...visuallyHiddenProps,
       'aria-roledescription': 'insertion indicator',
       'aria-label': label,
       tabIndex: -1

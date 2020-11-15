@@ -10,10 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, useLayoutEffect} from 'react';
+import {DropOperation, DropTarget} from './types';
+import {HTMLAttributes, RefObject, useEffect, useLayoutEffect} from 'react';
 import * as DragManager from './DragManager';
 import {useId} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
+import {useVirtualDrop} from './useVirtualDrop';
+
+interface DroppableItemOptions {
+  ref: RefObject<HTMLElement>,
+  target: DropTarget,
+  getDropOperation?: (target: DropTarget, types: string[], allowedOperations: DropOperation[]) => DropOperation
+}
 
 interface DroppableItemResult {
   dropProps: HTMLAttributes<HTMLElement>
@@ -25,43 +33,31 @@ const MESSAGES = {
   virtual: 'Click to drop.'
 };
 
-export function useDroppableItem(): DroppableItemResult {
-  let descriptionId = useId();
-  let modality: string = useInteractionModality() || 'virtual';
-  if (modality === 'pointer') {
-    modality = 'virtual';
-  }
+export function useDroppableItem(options: DroppableItemOptions): DroppableItemResult {
+  let {dropProps} = useVirtualDrop();
 
-  if (modality === 'virtual' && 'ontouchstart' in window) {
-    modality = 'touch';
-  }
-
-  let isKeyboardDragging = DragManager.useIsDragging();
-
-  useLayoutEffect(() => {
-    if (!isKeyboardDragging) {
-      return;
+  useEffect(() => {
+    if (options.target) {
+      DragManager.registerDropItem({
+        element: options.ref.current,
+        target: options.target
+      });
     }
+  }, []);
 
-    let description = document.createElement('div');
-    description.id = descriptionId;
-    description.style.display = 'none';
-    description.textContent = MESSAGES[modality];
-    document.body.appendChild(description);
-    return () => {
-      description.remove();
-    };
-  }, [modality, descriptionId, isKeyboardDragging]);
+  let dragSession = DragManager.useDragSession();
+  let isValidDropTarget = dragSession && typeof options.getDropOperation === 'function'
+    ? options.getDropOperation(
+        options.target,
+        dragSession.dragTarget.items.map(i => i.type),
+        dragSession.dragTarget.allowedDropOperations
+      ) !== 'cancel'
+    : true;
 
   return {
     dropProps: {
-      'aria-describedby': isKeyboardDragging ? descriptionId : undefined,
-      // Mobile Safari does not properly bubble click events on elements except links or inputs
-      // unless there is an onclick handler bound directly to the element itself. By adding this
-      // handler, React will take care of adding that for us, and we are able to handle document
-      // level click events in the DragManager.
-      // See https://www.quirksmode.org/blog/archives/2010/09/click_event_del.html
-      onClick: () => {}
+      ...dropProps,
+      'aria-hidden': isValidDropTarget ? undefined : 'true'
     }
   };
 }

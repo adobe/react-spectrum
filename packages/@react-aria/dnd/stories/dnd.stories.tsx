@@ -50,9 +50,9 @@ storiesOf('Drag and Drop', module)
       <Flex direction="column" gap="size-200" alignItems="center">
         <Draggable />
         <DroppableCollection>
-          <Item>One</Item>
-          <Item>Two</Item>
-          <Item>Three</Item>
+          <Item key="1">One</Item>
+          <Item key="2">Two</Item>
+          <Item key="3">Three</Item>
         </DroppableCollection>
       </Flex>
     )
@@ -152,25 +152,28 @@ function Droppable({type}: any) {
 
 function DroppableCollection(props) {
   let ref = React.useRef<HTMLElement>(null);
-  let betweenRef = React.useRef<HTMLElement>(null);
   let [target, setTarget] = React.useState(null);
   let onDrop = action('onDrop');
   let state = useListState({...props, selectionMode: 'multiple'});
   let keyboardDelegate = new ListKeyboardDelegate(state.collection, new Set(), ref);
+  let getDropOperation = (target, types, allowedOperations) => {
+    if (target.key === '2') {
+      return 'cancel';
+    }
+
+    return target.dropPosition !== 'on' ? 'copy' : 'move';
+  };
+
   let {collectionProps} = useDroppableCollection({
     ref,
     keyboardDelegate,
     onDropEnter: chain(action('onDropEnter'), console.log, e => {
-      // Wait a frame before moving focus.
-      requestAnimationFrame(() => {
-        setTarget(e.target);
-
-        if (e.target.dropPosition === 'on') {
-          state.selectionManager.setFocusedKey(e.target.key);
-        } else {
-          state.selectionManager.setFocusedKey(null);
-        }
-      });
+      setTarget(e.target);
+      if (e.target.dropPosition === 'on') {
+        state.selectionManager.setFocusedKey(e.target.key);
+      } else {
+        state.selectionManager.setFocusedKey(null);
+      }
     }),
     // onDropMove: action('onDropMove'),
     onDropExit: chain(action('onDropExit'), console.log, e => setTarget(null)),
@@ -223,9 +226,7 @@ function DroppableCollection(props) {
         };
       }
     },
-    getDropOperation(target, types, allowedOperations) {
-      return target.dropPosition !== 'on' ? 'copy' : 'move';
-    }
+    getDropOperation
   });
 
   /* let [targetPosition, setTargetPosition] = React.useState(null);
@@ -289,17 +290,21 @@ function DroppableCollection(props) {
           <InsertionIndicator
             isActive={target?.key === item.key && target?.dropPosition === 'before'}
             collection={state.collection}
-            target={{key: item.key, dropPosition: 'before'}} />
+            target={{key: item.key, dropPosition: 'before'}}
+            getDropOperation={getDropOperation} />
           <CollectionItem
             key={item.key}
             item={item}
             isDropTarget={target?.key === item.key && target?.dropPosition === 'on'}
-            state={state} />
+            state={state}
+            target={{key: item.key, dropPosition: 'on'}}
+            getDropOperation={getDropOperation} />
           {state.collection.getKeyAfter(item.key) == null &&
             <InsertionIndicator
               isActive={target?.key === item.key && target?.dropPosition === 'after'}
               collection={state.collection}
-              target={{key: item.key, dropPosition: 'after'}} />
+              target={{key: item.key, dropPosition: 'after'}}
+              getDropOperation={getDropOperation} />
           }
         </>
       ))}
@@ -307,14 +312,14 @@ function DroppableCollection(props) {
   );
 }
 
-function CollectionItem({item, state, isDropTarget}) {
+function CollectionItem({item, state, isDropTarget, target, getDropOperation}) {
   let ref = React.useRef();
   let {optionProps} = useOption({
     key: item.key,
     isSelected: state.selectionManager.isSelected(item.key)
   }, state, ref);
 
-  let {dropProps} = useDroppableItem();
+  let {dropProps} = useDroppableItem({ref, target, getDropOperation});
 
   return (
     <div
@@ -343,7 +348,8 @@ function InsertionIndicator(props) {
         width: '100%',
         height: 2,
         marginBottom: -2,
-        background: props.isActive ? 'blue' : 'transparent'
+        background: props.isActive ? 'blue' : 'transparent',
+        outline: 'none'
       }} />
   );
 }

@@ -12,22 +12,23 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
-import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropMoveEvent, DropOperation} from './types';
+import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropMoveEvent, DropOperation, DropTarget as DroppableCollectionTarget} from './types';
 import {getInteractionModality} from '@react-aria/interactions';
 import {useCallback, useEffect, useState} from 'react';
 
-const dropTargets = new Map<Element, DropTarget>();
+let dropTargets = new Map<Element, DropTarget>();
+let dropItems = new Map<Element, DroppableItem>();
 let dragSession: DragSession = null;
 let subscriptions = new Set<() => void>();
 
 interface DropTarget {
   element: HTMLElement,
   getDropOperation?: (types: string[], allowedOperations: DropOperation[]) => DropOperation,
-  onDropEnter?: (e: DropEnterEvent) => void,
-  onDropExit?: (e: DropExitEvent) => void,
-  onDropActivate?: (e: DropActivateEvent) => void,
-  onDrop?: (e: DropEvent) => void,
-  onKeyDown?: (e: KeyboardEvent) => void
+  onDropEnter?: (e: DropEnterEvent, target?: DroppableCollectionTarget) => void,
+  onDropExit?: (e: DropExitEvent, target?: DroppableCollectionTarget) => void,
+  onDropActivate?: (e: DropActivateEvent, target?: DroppableCollectionTarget) => void,
+  onDrop?: (e: DropEvent, target?: DroppableCollectionTarget) => void,
+  onKeyDown?: (e: KeyboardEvent, dragTarget: DragTarget) => void
 }
 
 export function registerDropTarget(target: DropTarget) {
@@ -36,6 +37,18 @@ export function registerDropTarget(target: DropTarget) {
   return () => {
     dropTargets.delete(target.element);
     dragSession?.updateValidDropTargets();
+  };
+}
+
+interface DroppableItem {
+  element: HTMLElement,
+  target: DroppableCollectionTarget
+}
+
+export function registerDropItem(item: DroppableItem) {
+  dropItems.set(item.element, item);
+  return () => {
+    dropItems.delete(item.element);
   };
 }
 
@@ -65,18 +78,18 @@ export function beginDragging(options: DragTarget) {
   }
 }
 
-export function useIsDragging() {
-  let [isDragging, setDragging] = useState(!!dragSession);
+export function useDragSession() {
+  let [session, setSession] = useState(dragSession);
 
   useEffect(() => {
-    let cb = () => setDragging(!!dragSession);
+    let cb = () => setSession(dragSession);
     subscriptions.add(cb);
     return () => {
       subscriptions.delete(cb);
     };
   }, []);
 
-  return isDragging;
+  return session;
 }
 
 function endDragging() {
@@ -126,6 +139,7 @@ class DragSession {
   dragTarget: DragTarget;
   validDropTargets: DropTarget[];
   currentDropTarget: DropTarget;
+  currentDropItem: DroppableItem;
   dropOperation: DropOperation;
   mutationObserver: MutationObserver;
   restoreAriaHidden: () => void;
@@ -202,7 +216,7 @@ class DragSession {
     }
 
     if (typeof this.currentDropTarget?.onKeyDown === 'function') {
-      this.currentDropTarget.onKeyDown(e);
+      this.currentDropTarget.onKeyDown(e, this.dragTarget);
     }
   }
 
@@ -219,7 +233,8 @@ class DragSession {
       return;
     }
 
-    this.setCurrentDropTarget(dropTarget);
+    let item = dropItems.get(e.target as HTMLElement);
+    this.setCurrentDropTarget(dropTarget, item);
   }
 
   onBlur(e: FocusEvent) {
@@ -232,7 +247,6 @@ class DragSession {
 
   onClick(e: MouseEvent) {
     this.cancelEvent(e);
-    console.log(e);
 
     if (e.detail !== 0) {
       return;
@@ -244,10 +258,10 @@ class DragSession {
     }
 
     let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
-    console.log(dropTarget);
     if (dropTarget) {
-      this.setCurrentDropTarget(dropTarget);
-      this.drop();
+      let item = dropItems.get(e.target as HTMLElement);
+      this.setCurrentDropTarget(dropTarget, item);
+      this.drop(item);
     }
   }
 
@@ -332,8 +346,8 @@ class DragSession {
     }
   }
 
-  setCurrentDropTarget(dropTarget: DropTarget) {
-    if (dropTarget === this.currentDropTarget) {
+  setCurrentDropTarget(dropTarget: DropTarget, item?: DroppableItem) {
+    if (dropTarget === this.currentDropTarget && item === this.currentDropItem) {
       return;
     }
 
@@ -343,7 +357,7 @@ class DragSession {
         type: 'dropexit',
         x: rect.left + (rect.width / 2),
         y: rect.top + (rect.height / 2)
-      });
+      }, this.currentDropItem?.target);
     }
 
     if (dropTarget) {
@@ -353,13 +367,16 @@ class DragSession {
           type: 'dropenter',
           x: rect.left + (rect.width / 2),
           y: rect.top + (rect.height / 2)
-        });
+        }, item?.target);
       }
 
-      dropTarget.element.focus();
+      if (dropTarget !== this.currentDropTarget) {
+        dropTarget.element.focus();
+      }
     }
 
     this.currentDropTarget = dropTarget;
+    this.currentDropItem = item;
   }
 
   end() {
@@ -389,7 +406,7 @@ class DragSession {
     announce('Drop canceled.');
   }
 
-  drop() {
+  drop(item?: DroppableItem) {
     if (!this.currentDropTarget) {
       this.cancel();
       return;
@@ -416,7 +433,7 @@ class DragSession {
         y: rect.top + (rect.height / 2),
         items,
         dropOperation: this.dragTarget.allowedDropOperations[0] // TODO
-      });
+      }, item?.target);
     }
 
     this.end();

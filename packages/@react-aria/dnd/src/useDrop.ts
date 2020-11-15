@@ -17,6 +17,7 @@ import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, D
 import {useDroppableItem} from './useDroppableItem';
 import {useId} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
+import {useVirtualDrop} from './useVirtualDrop';
 
 interface DropOptions {
   ref: RefObject<HTMLElement>,
@@ -37,6 +38,11 @@ interface DropResult {
 }
 
 const DROP_ACTIVATE_TIMEOUT = 800;
+const MESSAGES = {
+  keyboard: 'Press Enter to drop. Press Escape to cancel drag.',
+  touch: 'Double tap to drop.',
+  virtual: 'Click to drop.'
+};
 
 export function useDrop(options: DropOptions): DropResult {
   let [isDropTarget, setDropTarget] = useState(false);
@@ -59,15 +65,6 @@ export function useDrop(options: DropOptions): DropResult {
     state.x = e.clientX;
     state.y = e.clientY;
 
-    if (typeof options.onDropMove === 'function') {
-      let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      options.onDropMove({
-        type: 'dropmove',
-        x: state.x - rect.x,
-        y: state.y - rect.y
-      });
-    }
-
     if (typeof options.getDropOperationForPoint === 'function') {
       let allowedOperations = effectAllowedToOperations(e.dataTransfer.effectAllowed);
       let types = [...e.dataTransfer.types];
@@ -77,6 +74,15 @@ export function useDrop(options: DropOptions): DropResult {
     }
 
     e.dataTransfer.dropEffect = state.dropEffect;
+
+    if (typeof options.onDropMove === 'function') {
+      let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      options.onDropMove({
+        type: 'dropmove',
+        x: state.x - rect.x,
+        y: state.y - rect.y
+      });
+    }
 
     clearTimeout(state.dropActivateTimer);
 
@@ -106,6 +112,16 @@ export function useDrop(options: DropOptions): DropResult {
       dropOperation = options.getDropOperation(types, allowedOperations);
     }
 
+    if (dropOperation !== 'cancel') {
+      setDropTarget(true);
+    }
+
+    if (typeof options.getDropOperationForPoint === 'function') {
+      let types = [...e.dataTransfer.types];
+      let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      dropOperation = options.getDropOperationForPoint(types, allowedOperations, e.clientX - rect.x, e.clientY - rect.y);
+    }
+
     state.dropEffect = DROP_OPERATION_TO_DROP_EFFECT[dropOperation] || 'none';
     e.dataTransfer.dropEffect = state.dropEffect;
 
@@ -116,10 +132,6 @@ export function useDrop(options: DropOptions): DropResult {
         x: e.clientX - rect.x,
         y: e.clientY - rect.y
       });
-    }
-
-    if (dropOperation !== 'cancel') {
-      setDropTarget(true);
     }
   };
 
@@ -190,7 +202,7 @@ export function useDrop(options: DropOptions): DropResult {
   let optionsRef = useRef(options);
   optionsRef.current = options;
 
-  useEffect(() => DragManager.registerDropTarget({
+  useLayoutEffect(() => DragManager.registerDropTarget({
     element: optionsRef.current.ref.current,
     getDropOperation: optionsRef.current.getDropOperation,
     onDropEnter(e) {
@@ -217,7 +229,7 @@ export function useDrop(options: DropOptions): DropResult {
     }
   }), [optionsRef]);
 
-  let {dropProps} = useDroppableItem();
+  let {dropProps} = useVirtualDrop();
 
   return {
     dropProps: {
