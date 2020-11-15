@@ -332,11 +332,11 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name decrement value when scrolling downwards or left in LTR', () => {
-
+    // downwards is reverse natural scroll? i don't know how to describe it
     let {textField} = renderNumberField({onChange: onChangeSpy});
 
     act(() => {textField.focus();});
-    fireEvent.wheel(textField, {deltaY: 10});
+    fireEvent.wheel(textField, {deltaY: -10});
     expect(onChangeSpy).toHaveBeenCalledWith(-1);
     fireEvent.wheel(textField, {deltaX: -10});
     expect(onChangeSpy).toHaveBeenLastCalledWith(-2);
@@ -350,7 +350,7 @@ describe('NumberField', function () {
     let {textField} = renderNumberField({onChange: onChangeSpy});
 
     act(() => {textField.focus();});
-    fireEvent.wheel(textField, {deltaY: -10});
+    fireEvent.wheel(textField, {deltaY: 10});
     expect(onChangeSpy).toHaveBeenLastCalledWith(1);
     fireEvent.wheel(textField, {deltaX: 10});
     expect(onChangeSpy).toHaveBeenLastCalledWith(2);
@@ -364,7 +364,7 @@ describe('NumberField', function () {
     let {textField} = renderNumberField({onChange: onChangeSpy}, 'ar-AE');
 
     act(() => {textField.focus();});
-    fireEvent.wheel(textField, {deltaY: 10});
+    fireEvent.wheel(textField, {deltaY: -10});
     expect(onChangeSpy).toHaveBeenCalledWith(-1);
     fireEvent.wheel(textField, {deltaX: 10});
     expect(onChangeSpy).toHaveBeenLastCalledWith(-2);
@@ -378,7 +378,7 @@ describe('NumberField', function () {
     let {textField} = renderNumberField({onChange: onChangeSpy}, 'ar-AE');
 
     act(() => {textField.focus();});
-    fireEvent.wheel(textField, {deltaY: -10});
+    fireEvent.wheel(textField, {deltaY: 10});
     expect(onChangeSpy).toHaveBeenCalledWith(1);
     fireEvent.wheel(textField, {deltaX: -10});
     expect(onChangeSpy).toHaveBeenLastCalledWith(2);

@@ -161,7 +161,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     e.preventDefault();
 
     let isRTL = direction === 'rtl';
-    if (e.deltaY < 0 || (isRTL ? e.deltaX < 0 : e.deltaX > 0)) {
+    if (e.deltaY > 0 || (isRTL ? e.deltaX < 0 : e.deltaX > 0)) {
       increment();
     } else {
       decrement();
