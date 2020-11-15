@@ -29,6 +29,9 @@ export interface NumberFieldState {
   currentNumeralSystem?: string
 }
 
+let MAX_SAFE_FLOAT = (Number.MAX_SAFE_INTEGER + 1) / 128 - 1;
+let MIN_SAFE_FLOAT = (Number.MIN_SAFE_INTEGER - 1) / 128 + 1;
+
 export function useNumberFieldState(
   props: NumberFieldProps
 ): NumberFieldState {
@@ -39,6 +42,15 @@ export function useNumberFieldState(
   let inputValueFormatter = useNumberFormatter(formatOptions, currentNumeralSystem);
   let numberParser = useNumberParser(formatOptions, currentNumeralSystem);
   let intlOptions = useMemo(() => inputValueFormatter.resolvedOptions(), [inputValueFormatter]);
+
+  // Number.MAX_SAFE_INTEGER - 0.01 is still Number.MAX_SAFE_INTEGER, so decrement/increment won't work on it for the percent formatting
+  // anything with a step smaller than 1 will have this problem
+  // unfortunately, finding the safe max/min is non-trivial, so we'll need to rely on people setting max/min correctly for their step size
+  // we can include it for percent though
+  if (intlOptions.style === 'percent' && isNaN(step)) {
+    maxValue = MAX_SAFE_FLOAT;
+    minValue = MIN_SAFE_FLOAT;
+  }
 
   let isMaxRange = minValue === Number.MIN_SAFE_INTEGER && maxValue === Number.MAX_SAFE_INTEGER;
 
@@ -90,7 +102,7 @@ export function useNumberFieldState(
           // unless the min/max range is at maximum, then start from 0
           prev = 0;
         } else if (minValue === Number.MIN_SAFE_INTEGER) {
-          // or if the direction we want to start from is unbound, start from the bound
+          // or if the direction we want to start from is unbound, start from the upper bound
           prev = maxValue;
         }
       }
@@ -119,7 +131,7 @@ export function useNumberFieldState(
         if (isMaxRange) {
           prev = 0;
         } else if (maxValue === Number.MAX_SAFE_INTEGER) {
-          // or if the direction we want to start from is unbound, start from the bound
+          // or if the direction we want to start from is unbound, start from the lower bound
           prev = minValue;
         }
       }

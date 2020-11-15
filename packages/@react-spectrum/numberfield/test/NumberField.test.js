@@ -927,6 +927,29 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
+  `('goes to valid max on `end` for percent', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, defaultValue: 0.1, formatOptions: {style: 'percent'}});
+
+    expect(textField).toHaveAttribute('value', '10%');
+    act(() => {textField.focus();});
+    fireEvent.keyDown(textField, {key: 'End'});
+    fireEvent.keyUp(textField, {key: 'End'});
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '7,036,874,417,766,300%');
+    expect(onChangeSpy).toHaveBeenCalledWith(70368744177663);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    act(() => {textField.focus();});
+    fireEvent.keyDown(textField, {key: 'ArrowDown'});
+    fireEvent.keyUp(textField, {key: 'ArrowDown'});
+    expect(textField).toHaveAttribute('value', '7,036,874,417,766,299%');
+    expect(onChangeSpy).toHaveBeenLastCalledWith(70368744177662.99);
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    act(() => {textField.blur();});
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
   `('goes to valid min on `home`', () => {
     let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, defaultValue: 10});
 
@@ -954,6 +977,29 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '-9,007,199,254,740,990');
     expect(onChangeSpy).toHaveBeenCalledWith(-9007199254740990);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('goes to valid min on `home` for percent', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, defaultValue: 0.1, formatOptions: {style: 'percent'}});
+
+    expect(textField).toHaveAttribute('value', '10%');
+    act(() => {textField.focus();});
+    fireEvent.keyDown(textField, {key: 'Home'});
+    fireEvent.keyUp(textField, {key: 'Home'});
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '-7,036,874,417,766,300%');
+    expect(onChangeSpy).toHaveBeenCalledWith(-70368744177663);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    act(() => {textField.focus();});
+    fireEvent.keyDown(textField, {key: 'ArrowUp'});
+    fireEvent.keyUp(textField, {key: 'ArrowUp'});
+    expect(textField).toHaveAttribute('value', '-7,036,874,417,766,299%');
+    expect(onChangeSpy).toHaveBeenLastCalledWith(-70368744177662.99);
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    act(() => {textField.blur();});
   });
 
   it.each`
