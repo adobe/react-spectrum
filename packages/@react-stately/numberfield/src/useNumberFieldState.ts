@@ -11,13 +11,13 @@
  */
 
 import {clamp} from '@react-aria/utils';
+import {cleanString, determineNumeralSystem, useLocale, useNumberFormatter, useNumberParser} from '@react-aria/i18n';
 import {NumberFieldProps} from '@react-types/numberfield';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
-import {useLocale, useNumberFormatter, useNumberParser} from '@react-aria/i18n';
 
 export interface NumberFieldState {
-  setValue: (val: number | string) => boolean,
+  setValue: (val: number | string) => void,
   increment: () => void,
   decrement: () => void,
   incrementToMax: () => void,
@@ -29,45 +29,20 @@ export interface NumberFieldState {
   currentNumeralSystem?: string
 }
 
-let numberingSystems = {
-  arab: [...('٠١٢٣٤٥٦٧٨٩')],
-  hanidec: [...('〇一二三四五六七八九')],
-  latin: [...('0123456789')]
-};
-
-const CURRENCY_SIGN_REGEX = new RegExp('^\\(.*\\)$');
-
 export function useNumberFieldState(
   props: NumberFieldProps
 ): NumberFieldState {
   let {locale} = useLocale();
   let {minValue = Number.MIN_SAFE_INTEGER, maxValue = Number.MAX_SAFE_INTEGER, step, formatOptions, value, defaultValue, onChange} = props;
-  let [currentNumeralSystem, setCurrentNumeralSystem] = useState<string | undefined>();
+  let [currentNumeralSystem, setCurrentNumeralSystem] = useState<'arab' | 'hanidec' | 'latn' | undefined>();
 
-  let numeralOverride;
-  switch (currentNumeralSystem) {
-    case 'arab':
-      numeralOverride = 'u-nu-arab';
-      break;
-    case 'hanidec':
-      numeralOverride = 'u-nu-hanidec';
-      break;
-    case 'latin':
-      numeralOverride = 'u-nu-latn';
-      break;
-    default:
-      numeralOverride = '';
-      break;
-  }
-  let inputValueFormatter = useNumberFormatter(formatOptions, numeralOverride);
-  let numberParser = useNumberParser(inputValueFormatter, numeralOverride);
+  let inputValueFormatter = useNumberFormatter(formatOptions, currentNumeralSystem);
+  let numberParser = useNumberParser(formatOptions, currentNumeralSystem);
   let intlOptions = useMemo(() => inputValueFormatter.resolvedOptions(), [inputValueFormatter]);
 
   let isMaxRange = minValue === Number.MIN_SAFE_INTEGER && maxValue === Number.MAX_SAFE_INTEGER;
 
-  let {minusSign, plusSign, decimal, validCharacters, literals, group} = numberParser.symbols;
-  minusSign = minValue >= 0 || !minusSign ? '' : minusSign;
-  plusSign = maxValue <= 0 || !plusSign ? '' : plusSign;
+  let {minusSign, plusSign} = numberParser.symbols;
 
   // javascript doesn't recognize NaN === NaN, so multiple onChanges will get fired if we don't ignore consecutive ones
   // in addition, if the input starts with a number, then we'll count that as the last val dispatched, we only need to calculate it the first time
@@ -91,10 +66,9 @@ export function useNumberFieldState(
 
   let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, smartOnChange);
 
-  let initialInputValue = isNaN(numberValue) ? '' : inputValueFormatter.format(numberValue);
-  let [inputValue, setInputValue] = useState(initialInputValue);
-
   let textValue = inputValueFormatter.format(numberValue);
+  let [inputValue, setInputValue] = useState(() => isNaN(numberValue) ? '' : textValue);
+
 
   // this updates the field only if the formatter or number has changed,
   // this should only run after increment, decrement, blur
@@ -103,7 +77,7 @@ export function useNumberFieldState(
   useEffect(() => {
     setInputValue(isNaN(numberValue) ? '' : textValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formatOptions, setInputValue, numberValue]);
+  }, [formatOptions, setInputValue, numberValue, locale]);
 
 
   let increment = useCallback(() => {
@@ -175,93 +149,20 @@ export function useNumberFieldState(
     }
   }, [minValue, setNumberValue, maxValue, step]);
 
-  // given that numbers can have
-  // max/min sigfigs and decimals, and some of the
-  // formats have defaults, like currency,
-  // take the approach of formatting our value
-  // then joining together the relevant parts
-  // then parsing that joined result back to a number
-  // this should round us as the formatter does
-  let roundValueUsingFormatter = (value: number): number => {
-    let parts = inputValueFormatter.formatToParts(value);
-    let strippedValue = parts.map((part) => {
-      // list from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/formatToParts
-      // this is meant to turn the formatted number into something that the parser can handle
-      // unfortunately not every locale acts the same, in tr-TR-u-nu-arab, a comma is the decimal and the number parser can't handle that
-      // so we always return a '.' in the decimal case. If done for all, then latin doesn't parse correctly :(
-      switch (part.type) {
-        case 'currency':
-        case 'nan':
-        case 'percentSign':
-        case 'group':
-        case 'infinity':
-        case 'literal':
-        case 'unit': // this is supported in chrome :-/ for {style: 'unit', unit: 'percent', signDisplay: 'always'}
-          return '';
-        case 'minusSign':
-        case 'plusSign':
-        case 'decimal':
-          if (currentNumeralSystem === 'arab') {
-            return '.';
-          }
-        case 'fraction':
-        case 'integer':
-        default:
-          return part.value;
-      }
-    }).join('');
-    let result = numberParser.parse(strippedValue);
-    if (intlOptions?.currencySign === 'accounting' && value < 0) {
-      result = -1 * result;
-    }
-    // because the {style: 'percent'} adds two zeros to the end, we need to divide by 100 in that very specific case
-    // otherwise we'll accidentally add yet another 2 zeros when we format for real
-    // use * 100 represented this way in order to avoid javascript giving 2.109999999 in place of 2.11
-    if (intlOptions?.style === 'percent') {
-      result = result / 1000 * 10;
-    }
-    return result;
-  };
-
   // this removes any not allowed characters from the input value
-  let cleanInputValue = useMemo(() => {
-    let numerals = numberingSystems[currentNumeralSystem || 'latin'].join('');
-    if (!currentNumeralSystem) {
-      numerals = `${numerals}${numberingSystems['hanidec'].join('')}${numberingSystems['arab'].join('')}`;
-    }
-    let invalidChars = new RegExp(`[^${minusSign}${plusSign}${numerals}${validCharacters}]`, 'g');
-    let strippedValue = inputValue.replace(invalidChars, '');
-    strippedValue = replaceAllButFirstOccurrence(strippedValue, minusSign);
-    strippedValue = replaceAllButFirstOccurrence(strippedValue, plusSign);
-    strippedValue = replaceAllButFirstOccurrence(strippedValue, decimal);
+  let cleanInputValue = cleanString(inputValue, numberParser.symbols, locale, currentNumeralSystem);
+  // Number parser doesn't know about min/max, so we must remove it ourselves
+  if (minValue >= 0) {
+    cleanInputValue = cleanInputValue.replace(minusSign, '');
+  }
+  if (maxValue <= 0) {
+    cleanInputValue = cleanInputValue.replace(plusSign, '');
+  }
 
-
-    return strippedValue;
-  }, [inputValue, currentNumeralSystem, decimal, minusSign, plusSign, validCharacters]);
-
-  let setValue = (value: string): boolean => {
+  let setValue = (value: string) => {
     let numeralSystem = determineNumeralSystem(value);
     setCurrentNumeralSystem(numeralSystem);
-    // replacements - need to do them as early as possible
-    // Note to anyone who finds a bug with it, Bulgarian US Dollar currency formatting has decimals in the currency symbol,
-    // we need to be careful not to remove those.
-    // In arab numeral system, their decimal character is 1643, but most keyboards don't type that
-    // instead they use the , (44) character or apparently the (1548) character.
-    let result = value;
-    if (numeralSystem === 'arab') {
-      result = result.replace(',', decimal);
-      result = result.replace(String.fromCharCode(1548), decimal);
-      result = result.replace('.', group);
-    }
-
-    // fr-FR group character is char code 8239, but that's not a key on the french keyboard,
-    // so allow 'period' as a group char and replace it with a space
-    if (locale === 'fr-FR') {
-      result = result.replace('.', String.fromCharCode(8239));
-    }
-
-    setInputValue(result);
-    return result !== inputValue;
+    setInputValue(value);
   };
 
   let commitInputValue = () => {
@@ -271,21 +172,11 @@ export function useNumberFieldState(
       setInputValue('');
       return;
     }
-    // to parse the number, we need to remove anything that isn't actually part of the number, for example we want '-10.40' not '-10.40 USD'
-    let parseReady = cleanInputValue.replace(new RegExp(`[${literals}]`, 'g'), '');
-    let newValue = numberParser.parse(parseReady);
+    let newValue = numberParser.parse(cleanInputValue);
     // if it failed to parse, then reset input to formatted version of current number
     if (isNaN(newValue)) {
       setInputValue(inputValueFormatter.format(numberValue));
       return;
-    }
-    // accounting will always be stripped to a positive number, so if it's accounting and has a () around everything, then we need to make it negative again
-    if (intlOptions?.currencySign === 'accounting' && CURRENCY_SIGN_REGEX.test(cleanInputValue)) {
-      newValue = -1 * newValue;
-    }
-    // when reading the number, if it's a percent, then it should be interpreted as being divided by 100
-    if (intlOptions?.style === 'percent') {
-      newValue = newValue / 100;
     }
 
     let clampedValue;
@@ -294,7 +185,7 @@ export function useNumberFieldState(
     } else {
       clampedValue = clamp(numberValue, minValue, maxValue, step);
     }
-    clampedValue = roundValueUsingFormatter(clampedValue);
+    clampedValue = numberParser.round(clampedValue);
     let result = isNaN(clampedValue) ? '' : inputValueFormatter.format(clampedValue);
     setNumberValue(clampedValue);
     // in a controlled state, the numberValue won't change, so we won't go back to our old input without help
@@ -343,24 +234,6 @@ function handleDecimalOperation(operator, value1, value2) {
 
   return result;
 }
-
-let replaceAllButFirstOccurrence = (val: string, char: string) => {
-  let first = val.indexOf(char);
-  let prefix = val.substring(0, first + 1);
-  let suffix = val.substring(first + 1).replace(char, '');
-  return prefix + suffix;
-};
-
-let determineNumeralSystem = (value: string): string => {
-  for (let i in [...value]) {
-    let char = value[i];
-    let system = Object.keys(numberingSystems).find(key => numberingSystems[key].some(numeral => numeral === char));
-    if (system) {
-      return system;
-    }
-  }
-  return undefined;
-};
 
 // eslint-disable-next-line jsdoc/require-description-complete-sentence
 /**

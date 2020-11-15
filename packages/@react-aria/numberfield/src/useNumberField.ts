@@ -38,11 +38,6 @@ interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
   incrementAriaLabel?: string
 }
 
-/**
- * From https://github.com/filamentgroup/formcore/blob/master/js/numeric-input.js#L20.
- * Can't use this because with type="number" we can't have things like $ in the field and they just stay blank.
- */
-
 interface NumberFieldAria {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   inputFieldProps: InputHTMLAttributes<HTMLInputElement>,
@@ -133,6 +128,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   const canStep = isDisabled || isReadOnly;
 
   // pressing the stepper buttons should send focus to the input except in the case of touch
+  // so that pressing and holding on the steppers will auto step after a delay
   let onPressStart = (e) => {
     if (e.pointerType !== 'virtual') {
       ref.current.focus();
@@ -161,6 +157,9 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       return;
     }
 
+    // stop scrolling the page
+    e.preventDefault();
+
     let isRTL = direction === 'rtl';
     if (e.deltaY < 0 || (isRTL ? e.deltaX < 0 : e.deltaX > 0)) {
       increment();
@@ -171,6 +170,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
 
   /**
    * This block determines the inputMode, if hasDecimal then 'decimal', otherwise 'numeric'.
+   * This will affect the software keyboard that is shown. 'decimal' has a decimal character on the keyboard
+   * and 'numeric' does not.
    */
   let numberFormatter = useNumberFormatter(formatOptions);
   let intlOptions = useMemo(() => numberFormatter.resolvedOptions(), [numberFormatter]);
@@ -189,7 +190,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     let inTextField = selection.current.value || '';
     let newTextField = state.inputValue;
     ref.current.setSelectionRange(selection.current.selectionEnd + newTextField.length - inTextField.length, selection.current.selectionEnd + newTextField.length - inTextField.length);
-  }, [ref, state.inputValue, selection.current]);
+  }, [ref, state.inputValue, selection]);
 
   let setSelection = (e) => {
     selection.current = {
@@ -199,17 +200,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     };
   };
 
-  /**
-   * This forces a rerender if a value was entered that "changed" the input
-   * we may already have that value in state and are using the clean version for display though
-   * as a result we wouldn't render and the cursor would fly to the end of the string.
-   */
-  let [, setReRender] = useState({});
   let onChange = (e) => {
-    let changed = state.setValue(e);
-    if (!changed) {
-      setReRender({});
-    }
+    state.setValue(e);
   };
 
   let {labelProps, inputProps} = useTextField(
@@ -226,7 +218,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       'aria-labelledby': props['aria-labelledby'] || null,
       id: inputId,
       placeholder: formatMessage('Enter a number'),
-      type: 'text',
+      type: 'text', // Can't use type="number" because then we can't have things like $ in the field.
       inputMode: hasDecimals ? 'decimal' : 'numeric',
       onChange,
       onKeyDown: setSelection
@@ -238,7 +230,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     focusProps,
     {
       onWheel,
-      // override the spinbutton role, we can't focus a spin button with
+      // override the spinbutton role, we can't focus a spin button with VO
       role: 'textfield',
       'aria-roledescription': formatMessage('Spin button number field')
     }

@@ -27,12 +27,27 @@ try {
  * and handles caching of the number formatter for performance.
  * @param options - Formatting options.
  */
-export function useNumberFormatter(options?: Intl.NumberFormatOptions, numeralOverride?: string): Intl.NumberFormat {
+export function useNumberFormatter(options?: Intl.NumberFormatOptions, numeralSystem?: 'arab' | 'hanidec' | 'latn'): Intl.NumberFormat {
   let {locale} = useLocale();
   // this makes ar-AE go to Eastern arabic numerals in Safari like it does in Chrome and FF
   // https://bugs.webkit.org/show_bug.cgi?id=218139
-  if (numeralOverride && locale.indexOf('-u-nu-') === -1) {
-    locale = `${locale}-${numeralOverride}`;
+  if (numeralSystem && locale.indexOf('-u-nu-') === -1) {
+    switch (numeralSystem) {
+      case 'arab':
+        locale = `${locale}-u-nu-arab`;
+        break;
+      case 'hanidec':
+        locale = `${locale}-u-nu-hanidec`;
+        break;
+      case 'latn':
+        locale = `${locale}-u-nu-latn`;
+        break;
+      default:
+        break;
+    }
+  }
+  if (!options) {
+    options = {};
   }
 
   let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
