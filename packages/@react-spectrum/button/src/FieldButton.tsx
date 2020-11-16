@@ -12,7 +12,6 @@
 
 import {ButtonProps} from '@react-types/button';
 import {classNames, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {CSSModule} from '@react-types/provider';
 import {DOMProps, FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';

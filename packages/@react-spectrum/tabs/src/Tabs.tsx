@@ -16,7 +16,7 @@ import {FocusRing} from '@react-aria/focus';
 import {Item, Picker} from '@react-spectrum/picker';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import React, {HTMLAttributes, Key, MutableRefObject, useCallback, useEffect, useRef, useState} from 'react';
-import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
+import {SingleSelectListState} from '@react-stately/list';
 import {SpectrumPickerProps} from '@react-types/select';
 import {SpectrumTabsProps} from '@react-types/tabs';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
@@ -26,12 +26,12 @@ import {useLocale} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useResizeObserver} from '@react-aria/utils';
 import {useTab, useTabs} from '@react-aria/tabs';
+import {useTabsState} from '@react-stately/tabs';
 
 export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
   props = useProviderProps(props);
   let {
     orientation = 'horizontal' as Orientation,
-    onSelectionChange,
     isDisabled,
     isQuiet,
     density,
@@ -41,23 +41,13 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
 
   let ref = useRef<HTMLDivElement>();
   let wrapperRef = useRef<HTMLDivElement>();
-  let state = useSingleSelectListState<T>({
-    ...props,
-    onSelectionChange
-  });
+  let state = useTabsState(props);
 
   let {direction} = useLocale();
   let {styleProps} = useStyleProps(otherProps);
   let {tabListProps, tabPanelProps} = useTabs(props, state, ref);
   let [collapse, setCollapse] = useValueEffect(false);
   let [selectedTab, setSelectedTab] = useState<HTMLElement>();
-
-  useEffect(() => {
-    // Ensure a tab is always selected (in case no selected key was specified or if selected item was deleted from collection)
-    if (state.selectionManager.isEmpty || !state.collection.getItem(state.selectedKey)) {
-      state.selectionManager.replaceSelection(state.collection.getFirstKey());
-    }
-  }, [state.selectionManager, state.selectedKey, state.collection]);
 
   useEffect(() => {
     if (ref.current) {
