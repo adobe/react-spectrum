@@ -410,6 +410,27 @@ describe('Tabs', function () {
     expect(picker).toBeTruthy();
     expect(tabpanel).toHaveAttribute('aria-labelledby', `${picker.id}`);
 
+    rerender(
+      <Provider theme={theme}>
+        <Tabs aria-label="Test Tabs" items={newItems} orientation="vertical">
+          {item => (
+            <Item key={item.name} title={item.name}>
+              {item.children}
+            </Item>
+          )}
+        </Tabs>
+      </Provider>
+    );
+
+    tablist = getByRole('tablist');
+    expect(tablist).toBeTruthy();
+    expect(() => getByRole('button')).toThrow();
+
+    tabpanel = getByRole('tabpanel');
+    expect(tabpanel).toBeTruthy();
+    expect(tabpanel).toHaveTextContent(items[0].children);
+    expect(tabpanel).toHaveAttribute('aria-labelledby', items[0].id);
+
     spy.mockImplementationOnce(function () {
       if (this instanceof HTMLDivElement) {
         return {

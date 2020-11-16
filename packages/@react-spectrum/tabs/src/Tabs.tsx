@@ -107,7 +107,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
 
   // When the tabs are collapsed, the tabPanel should be labelled by the Picker button element.
   let collapsibleTabListId = useId();
-  if (collapse) {
+  if (collapse && orientation !== 'vertical') {
     tabPanelProps['aria-labelledby'] = collapsibleTabListId;
   }
 
