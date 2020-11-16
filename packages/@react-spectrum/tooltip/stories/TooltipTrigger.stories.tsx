@@ -12,7 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
-import {ActionGroup, Item} from '@adobe/react-spectrum';
+import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import {Flex} from '@react-spectrum/layout';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -257,20 +257,18 @@ function renderMultipleTriggers(props = {}) {
 }
 
 function ActionGroupTrigger() {
-  let [key, setKey] = useState('');
+  let onSelectionChange = action('onSelectionChange');
+
   return (
-    <Flex direction="column">
-      <div>Click the trigger to log the trigger's key:{key}</div>
-      <ActionGroup
-        selectionMode="single"
-        disallowEmptySelection
-        onSelectionChange={() => setKey('Key')}>
-        <TooltipTrigger delay={0}>
-          <Item key={key}>Trigger Tooltip</Item>
-          <Tooltip>Tooltip is inside an ActionGroup</Tooltip>
-        </TooltipTrigger>
-      </ActionGroup>
-    </Flex>    
+    <ActionGroup
+      selectionMode="single"
+      disallowEmptySelection
+      onSelectionChange={s => onSelectionChange([...s])}>
+      <TooltipTrigger delay={0}>
+        <Item key="item1">Trigger Tooltip</Item>
+        <Tooltip>Tooltip is inside an ActionGroup</Tooltip>
+      </TooltipTrigger>
+    </ActionGroup>
   );
 }
 
