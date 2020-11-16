@@ -23,7 +23,7 @@ let subscriptions = new Set<() => void>();
 
 interface DropTarget {
   element: HTMLElement,
-  getDropOperation?: (types: string[], allowedOperations: DropOperation[]) => DropOperation,
+  getDropOperation?: (types: string[], allowedOperations: DropOperation[], target?: DroppableCollectionTarget) => DropOperation,
   onDropEnter?: (e: DropEnterEvent, target?: DroppableCollectionTarget) => void,
   onDropExit?: (e: DropExitEvent, target?: DroppableCollectionTarget) => void,
   onDropActivate?: (e: DropActivateEvent, target?: DroppableCollectionTarget) => void,
@@ -157,8 +157,8 @@ class DragSession {
 
   setup() {
     document.addEventListener('keydown', this.onKeyDown, true);
-    document.addEventListener('focus', this.onFocus, true);
-    document.addEventListener('blur', this.onBlur, true);
+    window.addEventListener('focus', this.onFocus, true);
+    window.addEventListener('blur', this.onBlur, true);
     document.addEventListener('click', this.onClick, true);
 
     for (let event of CANCELED_EVENTS) {
@@ -178,8 +178,8 @@ class DragSession {
 
   teardown() {
     document.removeEventListener('keydown', this.onKeyDown, true);
-    document.removeEventListener('focus', this.onFocus, true);
-    document.removeEventListener('blur', this.onBlur, true);
+    window.removeEventListener('focus', this.onFocus, true);
+    window.removeEventListener('blur', this.onBlur, true);
     document.removeEventListener('click', this.onClick, true);
 
     for (let event of CANCELED_EVENTS) {
@@ -418,7 +418,7 @@ class DragSession {
 
     if (typeof this.currentDropTarget.getDropOperation === 'function') {
       let types = this.dragTarget.items.map(item => item.type);
-      this.dropOperation = this.currentDropTarget.getDropOperation(types, this.dragTarget.allowedDropOperations);
+      this.dropOperation = this.currentDropTarget.getDropOperation(types, this.dragTarget.allowedDropOperations, item?.target);
     } else {
       // TODO: show menu ??
       this.dropOperation = this.dragTarget.allowedDropOperations[0];
@@ -436,7 +436,7 @@ class DragSession {
         x: rect.left + (rect.width / 2),
         y: rect.top + (rect.height / 2),
         items,
-        dropOperation: this.dragTarget.allowedDropOperations[0] // TODO
+        dropOperation: this.dropOperation
       }, item?.target);
     }
 

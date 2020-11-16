@@ -363,6 +363,7 @@ function DraggableCollectionExample() {
   });
 
   let onDragEnd = (keys, e) => {
+    console.log(keys, e);
     if (e.dropOperation === 'move') {
       list.remove(...keys);
     }
@@ -442,9 +443,9 @@ function DraggableCollection(props) {
           state={state}
           isDragging={isDragging}
           onDragStart={() => setDragging(true)}
-          onDragEnd={(e) => {
+          onDragEnd={(keys, e) => {
             setDragging(false);
-            props.onDragEnd?.([...state.selectionManager.selectedKeys], e);
+            props.onDragEnd?.(keys, e);
           }} />
       ))}
     </div>
@@ -462,16 +463,28 @@ function DraggableCollectionItem({item, state, isDragging, onDragStart, onDragEn
 
   let {dragProps, dragButtonProps} = useDrag({
     getItems() {
+      // Ensure that the item itself is always added to the drag even if not selected.
+      // Sometimes with a screen reader, the selection added in onPressStart below
+      // isn't updated by the time this is called.
+      let keys = new Set([...state.selectionManager.selectedKeys]);
+      keys.add(item.key);
+
       return [{
         type: 'application/json',
-        data: JSON.stringify([...state.selectionManager.selectedKeys].map(key => state.collection.getItem(key)?.textValue))
+        data: JSON.stringify([...keys].map(key => state.collection.getItem(key)?.textValue))
       }];
     },
     renderPreview() {
       return <div />;
     },
     onDragStart,
-    onDragEnd
+    onDragEnd(e) {
+      // Ensure that the item itself is always added to the drag even if not selected.
+      // On touch devices we don't select until touch up, which is after the drag started.
+      let keys = new Set([...state.selectionManager.selectedKeys]);
+      keys.add(item.key);
+      onDragEnd([...keys], e);
+    }
   });
 
   let buttonRef = React.useRef();

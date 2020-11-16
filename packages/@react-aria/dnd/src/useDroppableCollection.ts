@@ -237,9 +237,9 @@ export function useDroppableCollection(options: DroppableCollectionOptions): Dro
 
     DragManager.registerDropTarget({
       element: state.options.ref.current,
-      getDropOperation(types, allowedOperations) {
-        if (state.target) {
-          return state.options.getDropOperation(state.target, types, allowedOperations);
+      getDropOperation(types, allowedOperations, target) {
+        if (target || state.target) {
+          return state.options.getDropOperation(target || state.target, types, allowedOperations);
         }
 
         // TODO: check if ANY of the options can accept a drop??
@@ -273,7 +273,7 @@ export function useDroppableCollection(options: DroppableCollectionOptions): Dro
             y: e.y,
             target: target || state.target,
             items: e.items,
-            dropOperation: state.dropOperation
+            dropOperation: e.dropOperation
           });
         }
       },

@@ -50,9 +50,11 @@ const MESSAGES = {
 
 export function useDrag(options: DragOptions): DragResult {
   let state = useRef({
+    options,
     x: 0,
     y: 0
   }).current;
+  state.options = options;
   let [isDragging, setDragging] = useState(false);
 
   let onDragStart = (e: DragEvent) => {
@@ -124,9 +126,9 @@ export function useDrag(options: DragOptions): DragResult {
       return;
     }
 
-    if (typeof options.onDragStart === 'function') {
+    if (typeof state.options.onDragStart === 'function') {
       let rect = (e.target as HTMLElement).getBoundingClientRect();
-      options.onDragStart({
+      state.options.onDragStart({
         type: 'dragstart',
         x: rect.x + (rect.width / 2),
         y: rect.y + (rect.height / 2)
@@ -135,14 +137,14 @@ export function useDrag(options: DragOptions): DragResult {
 
     DragManager.beginDragging({
       element: e.target as HTMLElement,
-      items: options.getItems(),
-      allowedDropOperations: typeof options.getAllowedDropOperations === 'function'
-        ? options.getAllowedDropOperations()
+      items: state.options.getItems(),
+      allowedDropOperations: typeof state.options.getAllowedDropOperations === 'function'
+        ? state.options.getAllowedDropOperations()
         : ['move', 'copy', 'link'],
       onDragEnd(e) {
         setDragging(false);
-        if (typeof options.onDragEnd === 'function') {
-          options.onDragEnd(e);
+        if (typeof state.options.onDragEnd === 'function') {
+          state.options.onDragEnd(e);
         }
       }
     });
