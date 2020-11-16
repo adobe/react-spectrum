@@ -44,6 +44,7 @@ interface AriaOptionProps {
 
   /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean,
+  shouldDeselectOnPressUp?: boolean,
 
   /** Whether the option should be focused when the user hovers over it. */
   shouldFocusOnHover?: boolean,
@@ -67,6 +68,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     isDisabled,
     key,
     shouldSelectOnPressUp,
+    shouldDeselectOnPressUp,
     shouldFocusOnHover,
     isVirtualized,
     shouldUseVirtualFocus
@@ -101,7 +103,8 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     ref,
     shouldSelectOnPressUp,
     isVirtualized,
-    shouldUseVirtualFocus
+    shouldUseVirtualFocus,
+    shouldDeselectOnPressUp
   });
 
   let {pressProps} = usePress({...itemProps, isDisabled, preventFocusOnPress: shouldUseVirtualFocus});

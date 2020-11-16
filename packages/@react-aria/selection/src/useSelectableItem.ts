@@ -34,6 +34,7 @@ interface SelectableItemOptions {
    * item causes the UI to disappear immediately (e.g. menus).
    */
   shouldSelectOnPressUp?: boolean,
+  shouldDeselectOnPressUp?: boolean,
   /**
    * Whether the option is contained in a virtual scroller.
    */
@@ -64,6 +65,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     key,
     ref,
     shouldSelectOnPressUp,
+    shouldDeselectOnPressUp,
     isVirtualized,
     shouldUseVirtualFocus,
     focus
@@ -149,14 +151,21 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     };
   } else {
     // On touch, it feels strange to select on touch down, so we special case this.
+    let updateOnPress = useRef(false);
     itemProps.onPressStart = (e) => {
+      if (shouldDeselectOnPressUp && manager.isSelected(key) && e.pointerType !== 'keyboard') {
+        updateOnPress.current = true;
+        return;
+      }
+
       if (e.pointerType !== 'touch') {
+        updateOnPress.current = false;
         onSelect(e);
       }
     };
 
     itemProps.onPress = (e) => {
-      if (e.pointerType === 'touch') {
+      if (e.pointerType === 'touch' || updateOnPress.current) {
         onSelect(e);
       }
     };
