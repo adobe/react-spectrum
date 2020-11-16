@@ -31,6 +31,9 @@ interface ComboBoxStateProps<T> extends ComboBoxProps<T> {
   shouldCloseOnBlur?: boolean
 }
 
+/**
+ * Provides state management for a combobox.
+ */
 export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>): ComboBoxState<T> {
   let {
     defaultFilter,

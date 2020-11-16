@@ -48,6 +48,12 @@ function isAppleDevice() {
     : false;
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a combobox component.
+ * A combobox combines a text entry with a picker menu, allowing users to filter longer lists to only the selections matching a query.
+ * @param props - Props for the combobox.
+ * @param state - State for the select, as returned by `useComboBoxState`.
+ */
 export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState<T>): ComboBoxAria {
   let {
     buttonRef,
