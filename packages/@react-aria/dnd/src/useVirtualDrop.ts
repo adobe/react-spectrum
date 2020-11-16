@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, useLayoutEffect} from 'react';
 import * as DragManager from './DragManager';
+import {HTMLAttributes, useLayoutEffect} from 'react';
 import {useId} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
 

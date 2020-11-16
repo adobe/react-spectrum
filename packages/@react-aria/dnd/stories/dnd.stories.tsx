@@ -11,7 +11,8 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {chain} from '@react-aria/utils';
+import {chain, useId} from '@react-aria/utils';
+import {classNames} from '@react-spectrum/utils';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -29,6 +30,13 @@ import {mergeProps} from '@react-aria/utils';
 import {PressResponder, usePress} from '@react-aria/interactions';
 import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useListBox, useOption} from '@react-aria/listbox';
+import dropIndicatorStyles from '@adobe/spectrum-css-temp/components/dropindicator/vars.css';
+import dropzoneStyles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
+import dndStyles from './dnd.css';
+import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
+import Folder from '@spectrum-icons/workflow/Folder';
+import {FocusRing} from '@react-aria/focus';
+import {useListData} from '@react-stately/data';
 
 storiesOf('Drag and Drop', module)
   .add(
@@ -47,12 +55,18 @@ storiesOf('Drag and Drop', module)
   .add(
     'Collection',
     () => (
-      <Flex direction="column" gap="size-200" alignItems="center">
+      <Flex direction="row" gap="size-200" alignItems="center">
         <Draggable />
         <DroppableCollection>
-          <Item key="1">One</Item>
+          <Item key="1" textValue="One">
+            <Folder size="S" />
+            <span>One</span>
+          </Item>
           <Item key="2">Two</Item>
-          <Item key="3">Three</Item>
+          <Item key="3" textValue="Three">
+            <Folder size="S" />
+            <span>Three</span>
+          </Item>
         </DroppableCollection>
       </Flex>
     )
@@ -75,6 +89,15 @@ storiesOf('Drag and Drop', module)
           </Dialog>
         </DialogButton>
         <Droppable />
+      </Flex>
+    )
+  )
+  .add(
+    'Draggable collection',
+    () => (
+      <Flex direction="row" gap="size-200" alignItems="center">
+        <DraggableCollectionExample />
+        <DroppableCollectionExample />
       </Flex>
     )
   );
@@ -102,17 +125,16 @@ function Draggable() {
   let {buttonProps} = useButton({...dragButtonProps, elementType: 'div'}, ref);
 
   return (
-    <div
-      ref={ref}
-      {...dragProps}
-      {...buttonProps}
-      style={{
-        background: 'red',
-        opacity: isDragging ? 0.5 : 1,
-        padding: 10
-      }}>
-      Drag me
-    </div>
+    <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
+      <div
+        ref={ref}
+        {...dragProps}
+        {...buttonProps}
+        className={classNames(dndStyles, 'draggable', {'is-dragging': isDragging})}>
+        <ShowMenu size="XS" />
+        <span>Drag me</span>
+      </div>
+    </FocusRing>
   );
 }
 
@@ -131,7 +153,7 @@ function Droppable({type}: any) {
       console.log(e, items);
     },
     getDropOperation(types, allowedOperations) {
-      return !type || types.includes(type) ? 'copy' : 'cancel';
+      return !type || types.includes(type) ? allowedOperations[0] : 'cancel';
     }
   });
 
@@ -141,10 +163,7 @@ function Droppable({type}: any) {
     <div
       {...mergeProps(dropProps, buttonProps)}
       ref={ref}
-      style={{
-        background: isDropTarget ? 'blue' : 'gray',
-        padding: 20
-      }}>
+      className={classNames(dropzoneStyles, 'spectrum-Dropzone', {'is-dragged': isDropTarget})}>
       Drop here
     </div>
   );
@@ -157,11 +176,11 @@ function DroppableCollection(props) {
   let state = useListState({...props, selectionMode: 'multiple'});
   let keyboardDelegate = new ListKeyboardDelegate(state.collection, new Set(), ref);
   let getDropOperation = (target, types, allowedOperations) => {
-    if (target.key === '2') {
+    if (target.key === '2' && target.dropPosition === 'on') {
       return 'cancel';
     }
 
-    return target.dropPosition !== 'on' ? 'copy' : 'move';
+    return target.dropPosition !== 'on' ? allowedOperations[0] : 'copy';
   };
 
   let {collectionProps} = useDroppableCollection({
@@ -180,8 +199,7 @@ function DroppableCollection(props) {
     onDropActivate: chain(action('onDropActivate'), console.log),
     onDrop: async e => {
       onDrop(e);
-      let items = await Promise.all(e.items.map(async item => ({type: item.type, data: await item.getData()})));
-      console.log(e, items);
+      props.onDrop?.(e);
     },
     getDropTargetFromPoint(x, y) {
       let rect = ref.current.getBoundingClientRect();
@@ -214,59 +232,22 @@ function DroppableCollection(props) {
             closestDir = dir;
           }
         }
-      }
 
-      let element = document.elementFromPoint(x, y);
+        if (y >= r.top + 10 && y <= r.bottom - 10) {
+          closestDir = 'on';
+        }
+      }
 
       let key = closest?.dataset.key;
       if (key) {
         return {
           key,
-          dropPosition: closest === element ? 'on' : closestDir
+          dropPosition: closestDir
         };
       }
     },
     getDropOperation
   });
-
-  /* let [targetPosition, setTargetPosition] = React.useState(null);
-  React.useEffect(() => {
-    if (!target || target.dropPosition === 'on') {
-      setTargetPosition(null);
-      return;
-    }
-
-    let targetElement = ref.current.querySelector(`[data-key="${target.key}"]`);
-    if (!targetElement) {return;}
-    let targetRect = targetElement.getBoundingClientRect();
-    let rect = ref.current.getBoundingClientRect();
-    let y = targetRect.y - rect.y;
-    if (target.dropPosition === 'after') {
-      let next = targetElement.nextElementSibling as HTMLElement;
-      while (next && !next.dataset.key) {
-        next = next.nextElementSibling as HTMLElement;
-      }
-
-      if (next) {
-        let nextRect = next.getBoundingClientRect();
-        y += targetRect.height + (nextRect.top - targetRect.bottom) / 2;
-      } else {
-        y += targetRect.height;
-      }
-    } else if (target.dropPosition === 'before') {
-      let prev = targetElement.previousElementSibling as HTMLElement;
-      while (prev && !prev.dataset.key) {
-        prev = prev.previousElementSibling as HTMLElement;
-      }
-
-      if (prev) {
-        let prevRect = prev.getBoundingClientRect();
-        y -= (targetRect.top - prevRect.bottom) / 2;
-      }
-    }
-
-    setTargetPosition(y);
-  }, [target]); */
 
   let {listBoxProps} = useListBox({
     ...props,
@@ -279,15 +260,13 @@ function DroppableCollection(props) {
       {...mergeProps(collectionProps, listBoxProps)}
       ref={ref}
       style={{
-        border: '1px solid gray',
         display: 'flex',
-        flexDirection: 'column',
-        width: 100,
-        position: 'relative'
+        flexDirection: 'column'
       }}>
       {[...state.collection].map(item => (
         <>
           <InsertionIndicator
+            key={item.key + '-before'}
             isActive={target?.key === item.key && target?.dropPosition === 'before'}
             collection={state.collection}
             target={{key: item.key, dropPosition: 'before'}}
@@ -301,6 +280,7 @@ function DroppableCollection(props) {
             getDropOperation={getDropOperation} />
           {state.collection.getKeyAfter(item.key) == null &&
             <InsertionIndicator
+              key={item.key + '-after'}
               isActive={target?.key === item.key && target?.dropPosition === 'after'}
               collection={state.collection}
               target={{key: item.key, dropPosition: 'after'}}
@@ -322,16 +302,14 @@ function CollectionItem({item, state, isDropTarget, target, getDropOperation}) {
   let {dropProps} = useDroppableItem({ref, target, getDropOperation});
 
   return (
-    <div
-      {...mergeProps(optionProps, dropProps)}
-      ref={ref}
-      style={{
-        background: isDropTarget ? 'blue' : state.selectionManager.isSelected(item.key) ? 'green' : 'purple',
-        padding: 10,
-        margin: '5px 0'
-      }}>
-      {item.rendered}
-    </div>
+    <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
+      <div
+        {...mergeProps(optionProps, dropProps)}
+        ref={ref}
+        className={classNames(dndStyles, 'droppable', {'is-drop-target': isDropTarget, 'is-selected': state.selectionManager.isSelected(item.key)})}>
+        {item.rendered}
+      </div>
+    </FocusRing>
   );
 }
 
@@ -344,11 +322,12 @@ function InsertionIndicator(props) {
       ref={ref}
       role="option"
       {...insertionIndicatorProps}
+      className={props.isActive ? classNames(dropIndicatorStyles, 'spectrum-DropIndicator', 'spectrum-DropIndicator--horizontal') : null}
       style={{
         width: '100%',
+        marginLeft: 0,
         height: 2,
         marginBottom: -2,
-        background: props.isActive ? 'blue' : 'transparent',
         outline: 'none'
       }} />
   );
@@ -371,5 +350,162 @@ function DialogButton({children}) {
       </PressResponder>
       {children}
     </DialogTrigger>
+  );
+}
+
+function DraggableCollectionExample() {
+  let list = useListData({
+    initialItems: [
+      {id: 'foo', text: 'Foo'},
+      {id: 'bar', text: 'Bar'},
+      {id: 'baz', text: 'Baz'}
+    ]
+  });
+
+  let onDragEnd = (keys, e) => {
+    if (e.dropOperation === 'move') {
+      list.remove(...keys);
+    }
+  };
+
+  console.log(list.selectedKeys);
+
+  return (
+    <DraggableCollection items={list.items} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} onDragEnd={onDragEnd}>
+      {item => <Item>{item.text}</Item>}
+    </DraggableCollection>
+  );
+}
+
+function DroppableCollectionExample() {
+  let id = React.useRef(3);
+  let list = useListData({
+    initialItems: [
+      {id: '1', type: 'folder', text: 'One'},
+      {id: '2', type: 'item', text: 'Two'},
+      {id: '3', type: 'folder', text: 'Three'}
+    ]
+  });
+
+  let onDrop = async (e) => {
+    let data = JSON.parse(await e.items[0].getData());
+    if (e.target.dropPosition !== 'on') {
+      let items = data.map(item => ({
+        id: String(++id.current),
+        type: 'item',
+        text: item
+      }));
+
+      if (e.target.dropPosition === 'before') {
+        list.insertBefore(e.target.key, ...items);
+      } else {
+        list.insertAfter(e.target.key, ...items);
+      }
+    }
+  };
+
+  return (
+    <DroppableCollection items={list.items} onDrop={onDrop}>
+      {item => (
+        <Item textValue={item.text}>
+          {item.type === 'folder' && <Folder size="S" />}
+          <span>{item.text}</span>
+        </Item>
+      )}
+    </DroppableCollection>
+  );
+}
+
+function DraggableCollection(props) {
+  let ref = React.useRef<HTMLElement>(null);
+  let state = useListState({...props, selectionMode: 'multiple'});
+  let [isDragging, setDragging] = React.useState(false);
+
+  let {listBoxProps} = useListBox({
+    ...props,
+    'aria-label': 'Draggable list'
+  }, state, ref);
+
+  return (
+    <div
+      ref={ref}
+      {...listBoxProps}
+      role="grid"
+      style={{
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+      {[...state.collection].map(item => (
+        <DraggableCollectionItem
+          key={item.key}
+          item={item}
+          state={state}
+          isDragging={isDragging}
+          onDragStart={() => setDragging(true)}
+          onDragEnd={(e) => {
+            setDragging(false);
+            props.onDragEnd?.([...state.selectionManager.selectedKeys], e);
+          }} />
+      ))}
+    </div>
+  );
+}
+
+function DraggableCollectionItem({item, state, isDragging, onDragStart, onDragEnd}) {
+  let ref = React.useRef();
+  let isSelected = state.selectionManager.isSelected(item.key);
+  let {optionProps} = useOption({
+    key: item.key,
+    isSelected,
+    shouldDeselectOnPressUp: true
+  }, state, ref);
+
+  let {dragProps, dragButtonProps} = useDrag({
+    getItems() {
+      return [{
+        type: 'application/json',
+        data: JSON.stringify([...state.selectionManager.selectedKeys].map(key => state.collection.getItem(key)?.textValue))
+      }];
+    },
+    renderPreview() {
+      return <div />;
+    },
+    onDragStart,
+    onDragEnd
+  });
+
+  let buttonRef = React.useRef();
+  let {buttonProps} = useButton({
+    ...dragButtonProps,
+    elementType: 'div',
+    onPressStart() {
+      if (!isSelected) {
+        state.selectionManager.select(item.key);
+      }
+    }
+  }, buttonRef);
+  let id = useId();
+
+  return (
+    <div role="row">
+      <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
+        <div
+          {...mergeProps(optionProps, dragProps)}
+          role="gridcell"
+          aria-labelledby={id}
+          ref={ref}
+          className={classNames(dndStyles, 'draggable', {
+            'is-dragging': isDragging && isSelected,
+            'is-selected': isSelected
+          })}>
+          <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
+            <div {...buttonProps} ref={buttonRef} aria-label="drag" className={classNames(dndStyles, 'drag-handle')}>
+              <ShowMenu size="XS" />
+            </div>
+          </FocusRing>
+          <span id={id}>{item.rendered}</span>
+        </div>
+      </FocusRing>
+    </div>
   );
 }

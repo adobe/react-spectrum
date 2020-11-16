@@ -1,0 +1,83 @@
+.draggable {
+  width: var(--spectrum-alias-single-line-width);
+  border: 1px solid var(--spectrum-global-color-gray-300);;
+  box-sizing: border-box;
+  height: var(--spectrum-global-dimension-static-size-500);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spectrum-global-dimension-static-size-150);
+  border-radius: var(--spectrum-alias-border-radius-regular);
+  background: var(--spectrum-global-color-gray-50);
+  margin: 4px 0;
+
+  &.is-selected {
+    background: var(--spectrum-alias-highlight-hover);
+  }
+
+  &.is-dragging {
+    background: var(--spectrum-global-color-gray-75);
+    border-color: var(--spectrum-global-color-gray-200);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-ring {
+    border-color: var(--spectrum-dropzone-border-color-selected-hover);
+    box-shadow: 0 0 0 1px var(--spectrum-dropzone-border-color-selected-hover);
+  }
+
+  span {
+    margin-left: var(--spectrum-global-dimension-static-size-100);
+  }
+}
+
+.droppable {
+  width: var(--spectrum-alias-single-line-width);
+  border: 1px solid var(--spectrum-global-color-gray-300);;
+  box-sizing: border-box;
+  height: var(--spectrum-global-dimension-static-size-500);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spectrum-global-dimension-static-size-150);
+  border-radius: var(--spectrum-alias-border-radius-regular);
+  background: var(--spectrum-global-color-gray-50);
+  margin: 4px 0;
+
+  &.is-selected {
+    background: var(--spectrum-alias-highlight-hover);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-ring {
+    border-color: var(--spectrum-dropzone-border-color-selected-hover);
+    box-shadow: 0 0 0 1px var(--spectrum-dropzone-border-color-selected-hover);
+  }
+
+  &.is-drop-target {
+    border-color: var(--spectrum-dropzone-border-color-selected-hover);
+    background-color: var(--spectrum-dropzone-background-color-selected-hover);
+    box-shadow: 0 0 0 1px var(--spectrum-dropzone-border-color-selected-hover);
+  }
+
+  span {
+    margin-left: var(--spectrum-global-dimension-static-size-100);
+  }
+}
+
+.drag-handle {
+  height: 20px;
+  border-radius: var(--spectrum-alias-border-radius-small);
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-ring {
+    box-shadow: 0 0 0 2px var(--spectrum-dropzone-border-color-selected-hover);
+  }
+}

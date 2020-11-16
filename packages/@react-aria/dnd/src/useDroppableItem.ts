@@ -13,8 +13,6 @@
 import {DropOperation, DropTarget} from './types';
 import {HTMLAttributes, RefObject, useEffect, useLayoutEffect} from 'react';
 import * as DragManager from './DragManager';
-import {useId} from '@react-aria/utils';
-import {useInteractionModality} from '@react-aria/interactions';
 import {useVirtualDrop} from './useVirtualDrop';
 
 interface DroppableItemOptions {
@@ -26,12 +24,6 @@ interface DroppableItemOptions {
 interface DroppableItemResult {
   dropProps: HTMLAttributes<HTMLElement>
 }
-
-const MESSAGES = {
-  keyboard: 'Press Enter to drop. Press Escape to cancel drag.',
-  touch: 'Double tap to drop.',
-  virtual: 'Click to drop.'
-};
 
 export function useDroppableItem(options: DroppableItemOptions): DroppableItemResult {
   let {dropProps} = useVirtualDrop();

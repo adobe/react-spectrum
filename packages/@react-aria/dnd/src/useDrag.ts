@@ -136,7 +136,9 @@ export function useDrag(options: DragOptions): DragResult {
     DragManager.beginDragging({
       element: e.target as HTMLElement,
       items: options.getItems(),
-      allowedDropOperations: options.getAllowedDropOperations(),
+      allowedDropOperations: typeof options.getAllowedDropOperations === 'function'
+        ? options.getAllowedDropOperations()
+        : ['move', 'copy', 'link'],
       onDragEnd(e) {
         setDragging(false);
         if (typeof options.onDragEnd === 'function') {

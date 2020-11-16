@@ -276,6 +276,10 @@ class DragSession {
   }
 
   updateValidDropTargets() {
+    if (!this.mutationObserver) {
+      return;
+    }
+
     this.mutationObserver.disconnect();
     if (this.restoreAriaHidden) {
       this.restoreAriaHidden();
