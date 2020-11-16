@@ -115,7 +115,10 @@ export function usePress(props: PressHookProps): PressResult {
     pointerType: null
   });
 
-  let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
+  let propsRef = useRef(props);
+  propsRef.current = props;
+
+  let {addGlobalListener, removeGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
   let pressProps = useMemo(() => {
     let state = ref.current;
@@ -124,6 +127,7 @@ export function usePress(props: PressHookProps): PressResult {
         return;
       }
 
+      let {onPressStart, onPressChange} = propsRef.current;
       if (onPressStart) {
         onPressStart({
           type: 'pressstart',
@@ -149,6 +153,7 @@ export function usePress(props: PressHookProps): PressResult {
 
       state.ignoreClickAfterPress = true;
 
+      let {onPressEnd, onPressChange, onPress} = propsRef.current;
       if (onPressEnd) {
         onPressEnd({
           type: 'pressend',
@@ -183,6 +188,7 @@ export function usePress(props: PressHookProps): PressResult {
         return;
       }
 
+      let {onPressUp} = propsRef.current;
       if (onPressUp) {
         onPressUp({
           type: 'pressup',
@@ -307,13 +313,9 @@ export function usePress(props: PressHookProps): PressResult {
           if (shouldPreventDefault(e.target as Element)) {
             e.preventDefault();
           }
-        }
-      };
 
-      let unbindEvents = () => {
-        removeGlobalListener(document, 'pointermove', onPointerMove, false);
-        removeGlobalListener(document, 'pointerup', onPointerUp, false);
-        removeGlobalListener(document, 'pointercancel', onPointerCancel, false);
+          e.stopPropagation();
+        }
       };
 
       pressProps.onPointerUp = (e) => {
@@ -356,12 +358,12 @@ export function usePress(props: PressHookProps): PressResult {
           state.isOverTarget = false;
           state.activePointerId = null;
           state.pointerType = null;
-          unbindEvents();
+          removeAllGlobalListeners();
           restoreTextSelection();
         }
       };
 
-      let onPointerCancel = (e: PointerEvent) => {
+      let cancel = (e: EventBase) => {
         if (state.isPressed) {
           if (state.isOverTarget) {
             triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
@@ -370,9 +372,18 @@ export function usePress(props: PressHookProps): PressResult {
           state.isOverTarget = false;
           state.activePointerId = null;
           state.pointerType = null;
-          unbindEvents();
+          removeAllGlobalListeners();
           restoreTextSelection();
         }
+      };
+
+      let onPointerCancel = (e: PointerEvent) => {
+        cancel(e);
+      };
+
+      pressProps.onDragStart = (e) => {
+        // Safari does not call onPointerCancel when a drag starts, whereas Chrome and Firefox do.
+        cancel(e);
       };
     } else {
       pressProps.onMouseDown = (e) => {
