@@ -108,6 +108,16 @@ storiesOf('Picker', module)
     )
   )
   .add(
+    'isDisabled, selectedKey',
+    () => (
+      <Picker label="Test" isDisabled selectedKey="One" onSelectionChange={action('selectionChange')}>
+        <Item key="One">One</Item>
+        <Item key="Two">Two</Item>
+        <Item key="Three">Three</Item>
+      </Picker>
+    )
+  )
+  .add(
     'labelAlign: end',
     () => (
       <Picker direction="top" label="Test" labelAlign="end" onSelectionChange={action('selectionChange')}>

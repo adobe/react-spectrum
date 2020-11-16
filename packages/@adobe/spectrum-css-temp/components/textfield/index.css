@@ -89,7 +89,8 @@ governing permissions and limitations under the License.
   */
   -moz-appearance: textfield;
 
-  &::placeholder {
+  &::placeholder,
+  &.is-placeholder {
     font-weight: var(--spectrum-textfield-placeholder-text-font-weight);
     font-style: var(--spectrum-textfield-placeholder-text-font-style);
     transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
@@ -107,7 +108,8 @@ governing permissions and limitations under the License.
   }
 
   &:lang(ja), &:lang(zh), &:lang(ko) {
-    &::placeholder {
+    &::placeholder,
+    &.is-placeholder {
        font-style: normal;
     }
     &::-ms-input-placeholder { /* added to work with Edge, same as above */
@@ -127,7 +129,8 @@ governing permissions and limitations under the License.
 
     /* The opacity must be set to 1 */
     opacity: 1;
-    &::placeholder {
+    &::placeholder,
+    &.is-placeholder {
       font-weight: var(--spectrum-textfield-placeholder-text-font-weight);
     }
   }

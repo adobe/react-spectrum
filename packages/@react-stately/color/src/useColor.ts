@@ -10,16 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-.react-spectrum-TabPanel--horizontal {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-}
+import {Color} from './Color';
+import {ColorInput} from '@react-types/color';
+import {useMemo} from 'react';
 
-.react-spectrum-TabPanel--vertical {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 100%;
+export function useColor(value: ColorInput) {
+  return useMemo(() => {
+    if (typeof value === 'string') {
+      try {
+        return new Color(value);
+      } catch (err) {
+        return undefined;
+      }
+    }
+    return value;
+  }, [value]);
 }
