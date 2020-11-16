@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {focusSafely} from '@react-aria/focus';
-import {HTMLAttributes, Key, RefObject, useEffect} from 'react';
+import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
+import {HTMLAttributes, Key, RefObject, useEffect, useRef} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressEvent} from '@react-types/shared';
 import {PressProps} from '@react-aria/interactions';
@@ -93,6 +93,36 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       onFocus(e) {
         if (e.target === ref.current) {
           manager.setFocusedKey(key);
+        }
+      },
+      onKeyDown(e) {
+        if (e.key !== 'Tab') {
+          return;
+        }
+
+        let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
+        walker.currentNode = document.activeElement;
+        let next: Node;
+        if (e.shiftKey) {
+          if (document.activeElement === ref.current) {
+            let last: Node;
+            do {
+              last = walker.lastChild();
+              if (last) {
+                next = last;
+              }
+            } while (last);
+          } else {
+            next = walker.previousNode();
+          }
+        } else {
+          next = walker.nextNode();
+        }
+
+        if (next) {
+          e.preventDefault();
+          e.stopPropagation();
+          next.focus();
         }
       }
     };
