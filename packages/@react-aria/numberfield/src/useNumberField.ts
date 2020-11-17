@@ -200,6 +200,21 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
    */
   let selection = useRef({selectionStart: state.inputValue.length, selectionEnd: state.inputValue.length, value: state.inputValue, forward: false});
 
+  /**
+   * This forces a rerender if a value was entered that "changed" the input
+   * we may already have that value in state and are using the clean version for display though
+   * as a result we wouldn't render and the cursor would fly to the end of the string.
+   * Example: start with '$10.00' in the input, place cursor after `1`, type an invalid character
+   * 'a', the text field looks the same, but without this, the cursor will move the end.
+   */
+  let [isReRender, setReRender] = useState({});
+  let onChange = (e) => {
+    let changed = state.setValue(e);
+    if (!changed) {
+      setReRender({});
+    }
+  };
+
   useEffect(() => {
     // Used to make sure we don't try to set selection if the cursor isn't in the field. It causes Safari to autofocus the field.
     if (!isFocused.current) {
@@ -207,7 +222,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     }
     let inTextField = selection.current.value || '';
     let newTextField = state.inputValue;
-    if(selection.current.forward) {
+    if (selection.current.forward) {
       ref.current.setSelectionRange(
         selection.current.selectionStart,
         selection.current.selectionStart
@@ -218,7 +233,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
         selection.current.selectionEnd + newTextField.length - inTextField.length
       );
     }
-  }, [ref, state.inputValue, selection, isFocused]);
+  }, [ref, state.inputValue, selection, isFocused, isReRender]);
 
   /**
    * The Delete key is special, it removes the character in front of it, we need to take note of which direction we're affecting
@@ -235,10 +250,6 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       value: state.inputValue,
       forward
     };
-  };
-
-  let onChange = (e) => {
-    state.setValue(e);
   };
 
   let {labelProps, inputProps} = useTextField(
@@ -258,7 +269,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       type: 'text', // Can't use type="number" because then we can't have things like $ in the field.
       inputMode: hasDecimals ? 'decimal' : 'numeric',
       onChange,
-      onKeyDown: setSelection
+      onKeyDown: setSelection,
+      onPaste: setSelection
     }, ref);
 
   const inputFieldProps = mergeProps(

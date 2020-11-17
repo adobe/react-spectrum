@@ -17,7 +17,7 @@ import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
 export interface NumberFieldState {
-  setValue: (val: number | string) => void,
+  setValue: (val: number | string) => boolean,
   increment: () => void,
   decrement: () => void,
   incrementToMax: () => void,
@@ -177,6 +177,8 @@ export function useNumberFieldState(
     let numeralSystem = determineNumeralSystem(value);
     setCurrentNumeralSystem(numeralSystem);
     setInputValue(value);
+
+    return value === inputValue;
   };
 
   let commitInputValue = () => {
