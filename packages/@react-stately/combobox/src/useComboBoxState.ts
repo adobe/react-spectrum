@@ -19,8 +19,11 @@ import {useEffect, useMemo, useRef, useState} from 'react';
 import {useMenuTriggerState} from '@react-stately/menu';
 
 export interface ComboBoxState<T> extends SelectState<T> {
+  /** The current value of the ComboBox input. */
   inputValue: string,
+  /** Sets the value of the ComboBox input. */
   setInputValue(value: string): void,
+  /** Function that when called handles updating the ComboBox's input value and selected key. */
   commit(): void
 }
 
