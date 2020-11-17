@@ -222,7 +222,7 @@ export function useNumberFieldState(
   };
 }
 
-function handleDecimalOperation(operator, value1, value2) {
+function handleDecimalOperation(operator: '-' | '+', value1: number, value2: number): number {
   let result = operator === '+' ? value1 + value2 : value1 - value2;
 
   // Check if we have decimals

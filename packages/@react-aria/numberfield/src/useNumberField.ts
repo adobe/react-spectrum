@@ -13,6 +13,7 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
 import {clearAnnouncer} from '@react-aria/live-announcer';
+import {FocusableRefValue} from '@react-types/shared';
 import {
   HTMLAttributes,
   InputHTMLAttributes,
@@ -35,7 +36,9 @@ import {useTextField} from '@react-aria/textfield';
 
 interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
   decrementAriaLabel?: string,
-  incrementAriaLabel?: string
+  incrementAriaLabel?: string,
+  incrementRef?: RefObject<FocusableRefValue<HTMLButtonElement>>,
+  decrementRef?: RefObject<FocusableRefValue<HTMLButtonElement>>
 }
 
 interface NumberFieldAria {
@@ -58,7 +61,9 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     autoFocus,
     validationState,
     label,
-    formatOptions
+    formatOptions,
+    incrementRef,
+    decrementRef
   } = props;
 
   let {
@@ -77,7 +82,12 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   const inputId = useId();
 
   let {focusProps} = useFocus({
-    onBlur: () => {
+    onBlur: (e) => {
+      let incrementButton = incrementRef.current && incrementRef.current.UNSAFE_getDOMNode();
+      let decrementButton = decrementRef.current && decrementRef.current.UNSAFE_getDOMNode();
+      if ((incrementButton && decrementButton) && (e.relatedTarget === incrementButton || e.relatedTarget === decrementButton)) {
+        return;
+      }
       // Set input value to normalized valid value
       commitInputValue();
     }

@@ -96,6 +96,10 @@ storiesOf('NumberField', module)
     () => render({step: 5})
   )
   .add(
+    'step = 3 with min = 2, max = 20',
+    () => render({step: 3, minValue: 2, maxValue: 20})
+  )
+  .add(
     'autoFocus',
     () => render({autoFocus: true})
   )

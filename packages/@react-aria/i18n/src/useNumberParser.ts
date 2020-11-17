@@ -163,13 +163,13 @@ export function useNumberParser(options?: Intl.NumberFormatOptions, numeralSyste
   // then joining together the relevant parts
   // then parsing that joined result back to a number
   // this should round us as the formatter does
+  // might be able to do it using resolved options from intl formatter,
+  // and then using toFixed and toPrecision with fraction digits and significant digits respectively
   let round = (value: number): number => {
     let parts = formatter.formatToParts(value);
     let strippedValue = parts.map((part) => {
       // list from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/formatToParts
       // this is meant to turn the formatted number into something that the parser can handle
-      // unfortunately not every locale acts the same, in tr-TR-u-nu-arab, a comma is the decimal and the number parser can't handle that
-      // so we always return a '.' in the decimal case. If done for all, then latin doesn't parse correctly :(
       switch (part.type) {
         case 'decimal':
         case 'minusSign':
@@ -183,7 +183,9 @@ export function useNumberParser(options?: Intl.NumberFormatOptions, numeralSyste
         case 'group':
         case 'infinity':
         case 'literal':
-        case 'unit': // this is supported in chrome :-/ for {style: 'unit', unit: 'percent', signDisplay: 'always'}
+        // 'unit' is supported in chrome :-/ for {style: 'unit', unit: 'percent', signDisplay: 'always'} but isn't in the official spec
+        // so we added it to our TS definitions
+        case 'unit':
         default:
           return '';
       }

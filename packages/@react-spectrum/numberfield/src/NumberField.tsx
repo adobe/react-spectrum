@@ -11,10 +11,10 @@
  */
 
 import {classNames, useIsMobileDevice, useStyleProps} from '@react-spectrum/utils';
+import {FocusableRefValue, LabelPosition} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {Label} from '@react-spectrum/label';
-import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from '@react-aria/utils';
 import React, {RefObject, useRef} from 'react';
@@ -55,13 +55,15 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
   let state = useNumberFieldState(props);
   let inputRef = useRef<HTMLInputElement>();
   let domRef = useRef<HTMLDivElement>(null);
+  let incrementRef = useRef<FocusableRefValue<HTMLButtonElement>>();
+  let decrementRef = useRef<FocusableRefValue<HTMLButtonElement>>();
   let {
     numberFieldProps,
     labelProps,
     inputFieldProps,
     incrementButtonProps,
     decrementButtonProps
-  } = useNumberField(props, state, inputRef);
+  } = useNumberField({...props, incrementRef, decrementRef}, state, inputRef);
   let isMobile = useIsMobileDevice();
   let showStepperButtons = showStepper && !isMobile;
 
@@ -111,8 +113,8 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
         <span
           className={classNames(stepperStyle, 'spectrum-Stepper-buttons')}
           role="presentation">
-          <StepButton direction="up" isQuiet={isQuiet} {...incrementButtonProps} />
-          <StepButton direction="down" isQuiet={isQuiet} {...decrementButtonProps} />
+          <StepButton direction="up" isQuiet={isQuiet} ref={incrementRef} {...incrementButtonProps} />
+          <StepButton direction="down" isQuiet={isQuiet} ref={decrementRef} {...decrementButtonProps} />
         </span>
         }
       </div>

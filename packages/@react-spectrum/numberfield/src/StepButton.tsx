@@ -15,6 +15,7 @@ import {AriaButtonProps} from '@react-types/button';
 import ChevronDownSmall from '@spectrum-icons/ui/ChevronDownSmall';
 import ChevronUpSmall from '@spectrum-icons/ui/ChevronUpSmall';
 import {classNames} from '@react-spectrum/utils';
+import {FocusableRef} from '@react-types/shared';
 import {PressResponder, useHover} from '@react-aria/interactions';
 import React from 'react';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
@@ -24,7 +25,7 @@ interface StepButtonProps extends AriaButtonProps {
   direction: 'up' | 'down'
 }
 
-function StepButton({isQuiet, direction, ...props}: StepButtonProps) {
+function StepButton({isQuiet, direction, ...props}: StepButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   let {hoverProps, isHovered} = useHover({});
   return (
     <PressResponder {...hoverProps}>
@@ -41,9 +42,12 @@ function StepButton({isQuiet, direction, ...props}: StepButtonProps) {
           )
         }
         {...props}
+        ref={ref}
         isQuiet={isQuiet}>
-        {direction === 'up' && <ChevronUpSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-stepUpIcon')} />}
-        {direction === 'down' && <ChevronDownSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-stepDownIcon')} />}
+        {direction === 'up' &&
+        <ChevronUpSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-stepUpIcon')} />}
+        {direction === 'down' &&
+        <ChevronDownSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-stepDownIcon')} />}
       </ActionButton>
     </PressResponder>
   );
@@ -52,5 +56,5 @@ function StepButton({isQuiet, direction, ...props}: StepButtonProps) {
 /**
  * Buttons for NumberField.
  */
-let _StepButton = StepButton;
+let _StepButton = React.forwardRef(StepButton);
 export {_StepButton as StepButton};
