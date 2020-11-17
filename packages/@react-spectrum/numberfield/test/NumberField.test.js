@@ -652,6 +652,20 @@ describe('NumberField', function () {
   });
 
   it.each`
+    Name                           | value   | result
+    ${'NumberField down positive'} | ${'6'}  | ${'5'}
+    ${'NumberField up positive'}   | ${'8'}  | ${'10'}
+    ${'NumberField down negative'} | ${'-8'} | ${'-10'}
+    ${'NumberField up negative'}   | ${'-6'} | ${'-5'}
+  `('$Name rounds to step on commit', ({value, result}) => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, step: 5});
+    act(() => {textField.focus();});
+    typeText(textField, value);
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', result);
+  });
+
+  it.each`
     Name
     ${'NumberField'}
   `('$Name properly formats percents', () => {

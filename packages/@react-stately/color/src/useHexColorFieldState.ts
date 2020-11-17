@@ -17,7 +17,7 @@ import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';
 import {useEffect, useState} from 'react';
 
-export interface HexColorFieldState extends Omit<NumberFieldState, 'value' | 'setValue'> {
+export interface HexColorFieldState extends Omit<NumberFieldState, 'value' | 'setValue' | 'minValue' | 'maxValue'> {
   colorValue: Color,
   setInputValue: (value: string) => void
 }

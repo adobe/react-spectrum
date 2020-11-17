@@ -18,8 +18,12 @@ export function clamp(value: number, min: number = -Infinity, max: number = Infi
   // TODO: should this be its own function?
   if (!isNaN(step)) {
     // have to avoid Math.round(num / multiple) * multiple; because it can give results like "0.3000000000000004" for Round(.2 + .1, .1)
-    let diff = newValue % step;
-    return diff > step / 2 ? (newValue - diff + step) : newValue - diff;
+    let diff = Math.abs(newValue % step);
+    if (value >= 0) {
+      return diff > step / 2 ? (newValue - diff + step) : newValue - diff;
+    } else {
+      return diff > step / 2 ? (newValue + diff - step) : newValue + diff;
+    }
   }
   return newValue;
 }
