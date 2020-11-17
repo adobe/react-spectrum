@@ -12,9 +12,9 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
-import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropMoveEvent, DropOperation, DropTarget as DroppableCollectionTarget} from './types';
+import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropOperation, DropTarget as DroppableCollectionTarget} from './types';
 import {getInteractionModality} from '@react-aria/interactions';
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 
 let dropTargets = new Map<Element, DropTarget>();
 let dropItems = new Map<Element, DroppableItem>();

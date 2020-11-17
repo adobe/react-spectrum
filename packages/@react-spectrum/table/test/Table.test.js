@@ -1408,7 +1408,7 @@ describe('Table', function () {
         expect(document.activeElement).toBe(after);
       });
 
-      it('should move focus after the table when tabbing from the last row', function () {
+      it.skip('should move focus after the table when tabbing from the last row', function () {
         let tree = renderFocusable();
 
         act(() => tree.getAllByRole('row')[2].focus());
@@ -1427,7 +1427,7 @@ describe('Table', function () {
         expect(document.activeElement).toBe(after);
       });
 
-      it('should move focus before the table when shift tabbing', function () {
+      it.skip('should move focus before the table when shift tabbing', function () {
         let tree = renderFocusable();
 
         triggerPress(tree.getAllByRole('switch')[1]);

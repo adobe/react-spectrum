@@ -10,13 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropMoveEvent, DropOperation} from './types';
-import {DragEvent, HTMLAttributes, RefObject, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import {DragEvent, HTMLAttributes, RefObject, useLayoutEffect, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
-import {useDroppableItem} from './useDroppableItem';
-import {useId} from '@react-aria/utils';
-import {useInteractionModality} from '@react-aria/interactions';
+import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropMoveEvent, DropOperation} from './types';
 import {useVirtualDrop} from './useVirtualDrop';
 
 interface DropOptions {

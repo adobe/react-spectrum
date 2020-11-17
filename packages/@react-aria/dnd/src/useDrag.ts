@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonHTMLAttributes, DragEvent, HTMLAttributes, KeyboardEvent, useEffect, useRef, useState} from 'react';
+import {AriaButtonProps} from '@react-types/button';
 import {DragEndEvent, DragItem, DragMoveEvent, DragStartEvent, DropOperation} from './types';
+import {DragEvent, HTMLAttributes, useEffect, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
-import {PressEvent, PressEvents} from '@react-types/shared';
+import {PressEvent} from '@react-types/shared';
 import {useId} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
 
@@ -29,7 +30,7 @@ interface DragOptions {
 
 interface DragResult {
   dragProps: HTMLAttributes<HTMLElement>,
-  dragButtonProps: PressEvents,
+  dragButtonProps: AriaButtonProps,
   isDragging: boolean
 }
 

@@ -124,7 +124,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         if (next) {
           e.preventDefault();
           e.stopPropagation();
-          next.focus();
+          (next as HTMLElement).focus();
         }
       }
     };
@@ -137,6 +137,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // we want to be able to have the pointer down on the trigger that opens the menu and
   // the pointer up on the menu item rather than requiring a separate press.
   // For keyboard events, selection still occurs on key down.
+  let updateOnPress = useRef(false);
   if (shouldSelectOnPressUp) {
     itemProps.onPressStart = (e) => {
       if (e.pointerType === 'keyboard') {
@@ -151,7 +152,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     };
   } else {
     // On touch, it feels strange to select on touch down, so we special case this.
-    let updateOnPress = useRef(false);
     itemProps.onPressStart = (e) => {
       if (shouldDeselectOnPressUp && manager.isSelected(key) && e.pointerType !== 'keyboard') {
         updateOnPress.current = true;

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {DropOperation, DropTarget} from './types';
-import {HTMLAttributes, RefObject, useEffect, useLayoutEffect} from 'react';
 import * as DragManager from './DragManager';
+import {DropOperation, DropTarget} from './types';
+import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useVirtualDrop} from './useVirtualDrop';
 
 interface DroppableItemOptions {
@@ -30,7 +30,7 @@ export function useDroppableItem(options: DroppableItemOptions): DroppableItemRe
 
   useEffect(() => {
     if (options.target) {
-      DragManager.registerDropItem({
+      return DragManager.registerDropItem({
         element: options.ref.current,
         target: options.target
       });

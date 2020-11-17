@@ -11,32 +11,31 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ActionButton} from '@react-spectrum/button';
 import {chain, useId} from '@react-aria/utils';
 import {classNames} from '@react-spectrum/utils';
-import {Flex} from '@react-spectrum/layout';
-import React from 'react';
-import {storiesOf} from '@storybook/react';
-import {useDrag, useDrop, useDroppableCollection, useDroppableItem, useInsertionIndicator} from '..';
-import {ListKeyboardDelegate} from '@react-aria/selection';
-import {Item} from '@react-stately/collections';
-import {useListState} from '@react-stately/list';
-import {useButton} from '@react-aria/button';
-import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import {ActionButton} from '@react-spectrum/button';
-import {Heading} from '@react-spectrum/text';
 import {Content} from '@react-spectrum/view';
-import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
-import {mergeProps} from '@react-aria/utils';
-import {PressResponder, usePress} from '@react-aria/interactions';
-import {unwrapDOMRef} from '@react-spectrum/utils';
-import {useListBox, useOption} from '@react-aria/listbox';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import dndStyles from './dnd.css';
 import dropIndicatorStyles from '@adobe/spectrum-css-temp/components/dropindicator/vars.css';
 import dropzoneStyles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
-import dndStyles from './dnd.css';
-import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
-import Folder from '@spectrum-icons/workflow/Folder';
+import {Flex} from '@react-spectrum/layout';
 import {FocusRing} from '@react-aria/focus';
+import Folder from '@spectrum-icons/workflow/Folder';
+import {Heading} from '@react-spectrum/text';
+import {Item} from '@react-stately/collections';
+import {ListKeyboardDelegate} from '@react-aria/selection';
+import {mergeProps} from '@react-aria/utils';
+import {PressResponder} from '@react-aria/interactions';
+import React from 'react';
+import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
+import {storiesOf} from '@storybook/react';
+import {unwrapDOMRef} from '@react-spectrum/utils';
+import {useButton} from '@react-aria/button';
+import {useDrag, useDrop, useDroppableCollection, useDroppableItem, useInsertionIndicator} from '..';
+import {useListBox, useOption} from '@react-aria/listbox';
 import {useListData} from '@react-stately/data';
+import {useListState} from '@react-stately/list';
 
 storiesOf('Drag and Drop', module)
   .add(
@@ -129,7 +128,7 @@ function Draggable() {
       <div
         ref={ref}
         {...dragProps}
-        {...buttonProps}
+        {...buttonProps as React.HTMLAttributes<HTMLElement>}
         className={classNames(dndStyles, 'draggable', {'is-dragging': isDragging})}>
         <ShowMenu size="XS" />
         <span>Drag me</span>
@@ -170,7 +169,7 @@ function Droppable({type}: any) {
 }
 
 function DroppableCollection(props) {
-  let ref = React.useRef<HTMLElement>(null);
+  let ref = React.useRef<HTMLDivElement>(null);
   let [target, setTarget] = React.useState(null);
   let onDrop = action('onDrop');
   let state = useListState({...props, selectionMode: 'multiple'});
@@ -195,7 +194,7 @@ function DroppableCollection(props) {
       }
     }),
     // onDropMove: action('onDropMove'),
-    onDropExit: chain(action('onDropExit'), console.log, e => setTarget(null)),
+    onDropExit: chain(action('onDropExit'), console.log, () => setTarget(null)),
     onDropActivate: chain(action('onDropActivate'), console.log),
     onDrop: async e => {
       onDrop(e);
@@ -322,6 +321,7 @@ function InsertionIndicator(props) {
     <div
       ref={ref}
       role="option"
+      aria-selected="false"
       {...insertionIndicatorProps}
       className={props.isActive ? classNames(dropIndicatorStyles, 'spectrum-DropIndicator', 'spectrum-DropIndicator--horizontal') : null}
       style={{
@@ -419,7 +419,7 @@ function DroppableCollectionExample() {
 }
 
 function DraggableCollection(props) {
-  let ref = React.useRef<HTMLElement>(null);
+  let ref = React.useRef<HTMLDivElement>(null);
   let state = useListState({...props, selectionMode: 'multiple'});
   let [isDragging, setDragging] = React.useState(false);
 
@@ -513,7 +513,11 @@ function DraggableCollectionItem({item, state, isDragging, onDragStart, onDragEn
             'is-selected': isSelected
           })}>
           <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
-            <div {...buttonProps} ref={buttonRef} aria-label="drag" className={classNames(dndStyles, 'drag-handle')}>
+            <div
+              {...buttonProps as React.HTMLAttributes<HTMLElement>}
+              ref={buttonRef}
+              aria-label="drag"
+              className={classNames(dndStyles, 'drag-handle')}>
               <ShowMenu size="XS" />
             </div>
           </FocusRing>

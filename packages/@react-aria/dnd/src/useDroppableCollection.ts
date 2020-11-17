@@ -12,9 +12,8 @@
 
 import * as DragManager from './DragManager';
 import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, DropPosition, DropTarget} from './types';
-import {HTMLAttributes, Key, RefObject, useCallback, useEffect, useRef} from 'react';
+import {HTMLAttributes, Key, RefObject, useEffect, useRef} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
 import {useDrop} from './useDrop';
 
 interface DroppableCollectionEnterEvent extends DropEnterEvent {
@@ -252,7 +251,7 @@ export function useDroppableCollection(options: DroppableCollectionOptions): Dro
           dropPosition: getAllowedDropPositions(key)[0]
         });
       },
-      onDropExit(e) {
+      onDropExit() {
         setTarget(null);
       },
       onDropActivate(e) {
