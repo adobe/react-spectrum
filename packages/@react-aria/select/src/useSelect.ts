@@ -12,8 +12,8 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaSelectProps} from '@react-types/select';
-import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {HTMLAttributes, RefObject, useMemo} from 'react';
+import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {FocusEvent, HTMLAttributes, RefObject, useMemo} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
 import {SelectState} from '@react-stately/select';
@@ -85,6 +85,8 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   let triggerProps = mergeProps(mergeProps(menuTriggerProps, fieldProps), typeSelectProps);
   let valueId = useId();
 
+  let onKeyDown = chain(triggerProps.onKeyDown, props.onKeyDown);
+
   return {
     labelProps: {
       ...labelProps,
@@ -104,12 +106,30 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
         triggerProps['aria-label'] && !triggerProps['aria-labelledby'] ? triggerProps.id : null,
         valueId
       ].filter(Boolean).join(' '),
-      onFocus() {
+      onFocus(e: FocusEvent) {
+        if (state.isFocused) {
+          return;
+        }
+
+        if (props.onFocus) {
+          props.onFocus(e);
+        }
+
         state.setFocused(true);
       },
-      onBlur() {
+      onBlur(e: FocusEvent) {
+        if (state.isOpen) {
+          return;
+        }
+
+        if (props.onBlur) {
+          props.onBlur(e);
+        }
+
         state.setFocused(false);
-      }
+      },
+      onKeyDown: onKeyDown,
+      onKeyUp: props.onKeyUp
     }),
     valueProps: {
       id: valueId

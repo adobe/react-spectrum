@@ -497,6 +497,17 @@ storiesOf('Picker', module)
     () => (
       <AsyncLoadingExample />
     )
+  ).add( 
+    'focus', 
+    () => (
+      <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
+        <input placeholder="Shift tab here" />
+        <Picker label="Focus-Test" items={flatOptions} autoFocus onFocus={action('focus')} onBlur={action('blur')} onKeyDown={action('keydown')} onKeyUp={action('keyup')}>
+          {item => <Item>{item.name}</Item>}
+        </Picker>
+        <input placeholder="Tab here" />
+      </div>
+    ) 
   );
 
 function AsyncLoadingExample() {
