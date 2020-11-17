@@ -88,6 +88,12 @@ export function useHexColorField(
   return {
     labelProps,
     inputFieldProps: mergeProps(inputProps, spinButtonProps, {
+      role: 'textbox',
+      'aria-valuemax': null,
+      'aria-valuemin': null,
+      'aria-valuenow': null,
+      'aria-valuetext': null,
+      value: inputProps.value || spinButtonProps['aria-valuetext'] || '',
       autoCorrect: 'off',
       onBlur: commitInputValue,
       onWheel

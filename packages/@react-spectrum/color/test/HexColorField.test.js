@@ -40,7 +40,7 @@ describe('HexColorField', function () {
     let hexColorField = getByLabelText('Primary Color');
     let label = getByText('Primary Color');
     expect(hexColorField).toBeInTheDocument();
-    expect(getByRole('spinbutton')).toBe(hexColorField);
+    expect(getByRole('textbox')).toBe(hexColorField);
     expect(hexColorField).toHaveAttribute('type', 'text');
     expect(hexColorField).toHaveAttribute('autocomplete', 'off');
     expect(hexColorField).toHaveAttribute('autocorrect', 'off');
@@ -64,7 +64,7 @@ describe('HexColorField', function () {
 
   it('should allow placeholder', function () {
     let {getByPlaceholderText, getByRole} = renderComponent({placeholder: 'Enter a color'});
-    expect(getByRole('spinbutton')).toBe(getByPlaceholderText('Enter a color'));
+    expect(getByRole('textbox')).toBe(getByPlaceholderText('Enter a color'));
   });
 
   it('should show valid validation state', function () {

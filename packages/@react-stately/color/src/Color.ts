@@ -91,6 +91,65 @@ export class Color {
     throw new Error('Unsupported color channel: ' + channel);
   }
 
+  alphaBlend(color1: Color, color2: Color) {
+    let r1: number, g1: number, b1: number, a1: number;
+    let r2: number, g2: number, b2: number;
+    
+    r1 = color1.getChannelValue('red');
+    g1 = color1.getChannelValue('green');
+    b1 = color1.getChannelValue('blue');
+    a1 = color1.getChannelValue('alpha');
+    
+    r2 = color2.getChannelValue('red');
+    g2 = color2.getChannelValue('green');
+    b2 = color2.getChannelValue('blue');
+    
+    let r3 = r2 + (r1 - r2) * a1;
+    let g3 = g2 + (g1 - g2) * a1;
+    let b3 = b2 + (b1 - b2) * a1;
+      
+    return new Color(`rgb(${r3}, ${g3}, ${b3})`);
+  }
+
+  luminance() {
+    let a = [this.getChannelValue('red'), this.getChannelValue('green'), this.getChannelValue('blue')].map((v) => {
+      v /= 255;
+      return v <= 0.03928
+          ? v / 12.92
+          : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    return (a[0] * 0.2126) + (a[1] * 0.7152) + (a[2] * 0.0722);
+  }
+
+  contrast(comparisonColor: Color): number {
+    let colorLum = this.alphaBlend(this, comparisonColor).luminance();
+    let comparisonColorLum = comparisonColor.luminance();
+
+    if (colorLum > comparisonColorLum) {
+      return (colorLum + 0.05) / (comparisonColorLum + 0.05);
+    }
+
+    return (comparisonColorLum + 0.05) / (colorLum + 0.05);
+  }
+
+  wcagComplianceLevel(comparisonColor: Color): string {
+    let contrastRatio = this.contrast(comparisonColor);
+    if (contrastRatio > 7) {
+      return 'AAA';
+    }
+
+    return (contrastRatio > 4.5) ? 'AA' : '';
+  }
+
+  isDark() {
+    var yiq = (this.getChannelValue('red') * 299 + this.getChannelValue('green') * 587 + this.getChannelValue('blue') * 114) / 1000;
+    return yiq < 128;
+  }
+
+  isLight() {
+    return !this.isDark();
+  }
+
   static getRange(channel: ColorChannel) {
     switch (channel) {
       case 'hue':

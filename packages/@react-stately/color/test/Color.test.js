@@ -162,4 +162,61 @@ describe('Color', function () {
     expect(newColor.getChannelValue('lightness')).toBe(color.getChannelValue('lightness'));
     expect(newColor.getChannelValue('alpha')).toBe(color.getChannelValue('alpha'));
   });
+
+  it('luminance', () => {
+    const color1 = new Color('#757575');
+    const color2 = new Color('#767676');
+    const black = new Color('#000000');
+    const white = new Color('#FFFFFF');
+
+    expect(black.luminance()).toEqual(0);
+    expect(white.luminance()).toEqual(1);
+
+    expect(color1.luminance() < color2.luminance()).toBe(true);
+  });
+
+  it('contrast', () => {
+    let color1 = new Color('#757575');
+    let color2 = new Color('#767676');
+    let black = new Color('#000000');
+    let white = new Color('#FFFFFF');
+
+    expect(color1.contrast(white) > color1.contrast(black)).toBe(true);
+    expect(color2.contrast(white) < color2.contrast(black)).toBe(true);
+
+    color1 = new Color('rgba(0, 0, 0, 0.53)');
+    color2 = new Color('rgba(0, 0, 0, 0.54)');
+
+    expect(Math.round(color1.contrast(white) * 100) / 100).toBe(4.42);
+    expect(Math.round(color2.contrast(white) * 100) / 100).toBe(4.59);
+  });
+
+  it('wcagComplianceLevel', () => {
+    let color = new Color('rgba(0, 0, 0, 0.66)');
+    let white = new Color('#FFFFFF');
+
+    expect(color.wcagComplianceLevel(white)).toBe('AAA');
+
+    color = new Color('rgba(0, 0, 0, 0.54)');
+
+    expect(color.wcagComplianceLevel(white)).toBe('AA');
+
+    color = new Color('rgba(0, 0, 0, 0.53)');
+
+    expect(color.wcagComplianceLevel(white)).toBe('');
+
+    color = new Color('#767676');
+
+    expect(color.wcagComplianceLevel(white)).toBe('AA');
+
+    color = new Color('#777');
+
+    expect(color.wcagComplianceLevel(white)).toBe('');
+
+    color = new Color('#595959');
+    expect(color.wcagComplianceLevel(white)).toBe('AAA');
+
+    color = new Color('#5A5A5A');
+    expect(color.wcagComplianceLevel(white)).toBe('AA');
+  });
 });
