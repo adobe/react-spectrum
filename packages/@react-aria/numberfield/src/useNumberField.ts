@@ -81,6 +81,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
 
   const inputId = useId();
 
+  let isFocused = useRef(false);
   let {focusProps} = useFocus({
     onBlur: (e) => {
       let incrementButton = incrementRef.current && incrementRef.current.UNSAFE_getDOMNode();
@@ -90,7 +91,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       }
       // Set input value to normalized valid value
       commitInputValue();
-    }
+    },
+    onFocusChange: value => isFocused.current = value
   });
 
   let [isFocusWithin, setFocusWithin] = useState(false);
@@ -111,6 +113,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       isDisabled,
       isReadOnly,
       isRequired,
+      // use prop min/maxValue so that aria doesn't read off huge numbers in default case
       maxValue,
       minValue,
       onIncrement: increment,
@@ -135,7 +138,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
 
   incrementAriaLabel = incrementAriaLabel || formatMessage('Increment');
   decrementAriaLabel = decrementAriaLabel || formatMessage('Decrement');
-  const canStep = isDisabled || isReadOnly;
+  const cannotStep = isDisabled || isReadOnly;
 
   // pressing the stepper buttons should send focus to the input except in the case of touch
   // so that pressing and holding on the steppers will auto step after a delay
@@ -149,14 +152,15 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     'aria-label': incrementAriaLabel,
     'aria-controls': inputId,
     excludeFromTabOrder: true,
-    isDisabled: canStep || value >= maxValue,
+    // use state min/maxValue because otherwise in default story, steppers will never disable
+    isDisabled: cannotStep || value >= state.maxValue,
     onPressStart
   });
   const decrementButtonProps: AriaButtonProps = mergeProps(decButtonProps, {
     'aria-label': decrementAriaLabel,
     'aria-controls': inputId,
     excludeFromTabOrder: true,
-    isDisabled: canStep || value <= minValue,
+    isDisabled: cannotStep || value <= state.minValue,
     onPressStart
   });
 
@@ -194,19 +198,42 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
    * This means we can't block the values before they make it to state and cause a render, thereby moving selection to an
    * undesirable location.
    */
-  let selection = useRef({selectionStart: state.inputValue.length, selectionEnd: state.inputValue.length, value: state.inputValue});
+  let selection = useRef({selectionStart: state.inputValue.length, selectionEnd: state.inputValue.length, value: state.inputValue, forward: false});
 
   useEffect(() => {
+    // Used to make sure we don't try to set selection if the cursor isn't in the field. It causes Safari to autofocus the field.
+    if (!isFocused.current) {
+      return;
+    }
     let inTextField = selection.current.value || '';
     let newTextField = state.inputValue;
-    ref.current.setSelectionRange(selection.current.selectionEnd + newTextField.length - inTextField.length, selection.current.selectionEnd + newTextField.length - inTextField.length);
-  }, [ref, state.inputValue, selection]);
+    if(selection.current.forward) {
+      ref.current.setSelectionRange(
+        selection.current.selectionStart,
+        selection.current.selectionStart
+      );
+    } else {
+      ref.current.setSelectionRange(
+        selection.current.selectionEnd + newTextField.length - inTextField.length,
+        selection.current.selectionEnd + newTextField.length - inTextField.length
+      );
+    }
+  }, [ref, state.inputValue, selection, isFocused]);
 
+  /**
+   * The Delete key is special, it removes the character in front of it, we need to take note of which direction we're affecting
+   * characters.
+   */
   let setSelection = (e) => {
+    let forward = false;
+    if (e.key === 'Delete') {
+      forward = true;
+    }
     selection.current = {
       selectionStart: e.target.selectionStart,
       selectionEnd: e.target.selectionEnd,
-      value: state.inputValue
+      value: state.inputValue,
+      forward
     };
   };
 

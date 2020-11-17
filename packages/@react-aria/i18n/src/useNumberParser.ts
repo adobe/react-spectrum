@@ -49,7 +49,7 @@ export let determineNumeralSystem = (value: string): NumberingSystems => {
   return undefined;
 };
 
-let CURRENCY_SIGN_REGEX = new RegExp('^\\(.*\\)$');
+let CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
 
 let replaceAllButFirstOccurrence = (val: string, char: string) => {
   let first = val.indexOf(char);
@@ -126,6 +126,7 @@ export function useNumberParser(options?: Intl.NumberFormatOptions, numeralSyste
   }, [formatter, intlOptions, locale]);
 
   const parse = useCallback((value:string): number => {
+    // assuming a clean string
     // to parse the number, we need to remove anything that isn't actually part of the number, for example we want '-10.40' not '-10.40 USD'
     let fullySanitizedValue = value.replace(new RegExp(`[${symbols.literals}]`, 'g'), '');
     // first match the prefix/suffix wrapper of everything that isn't a number
@@ -191,7 +192,7 @@ export function useNumberParser(options?: Intl.NumberFormatOptions, numeralSyste
       }
     }).join('');
     let result = parse(strippedValue);
-    if (intlOptions?.currencySign === 'accounting' && value < 0) {
+    if (!symbols.minusSign && intlOptions?.currencySign === 'accounting' && value < 0) {
       result = -1 * result;
     }
     return result;

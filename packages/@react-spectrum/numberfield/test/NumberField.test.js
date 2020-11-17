@@ -796,6 +796,41 @@ describe('NumberField', function () {
   });
 
   it.each`
+    Name
+    ${'NumberField'}
+  `('$Name can edit a currencySign accounting in a locale that does not use the parenthesis notation', () => {
+    let {textField, incrementButton} = renderNumberField({
+      onChange: onChangeSpy,
+      showStepper: true,
+      defaultValue: -10,
+      formatOptions: {style: 'currency', currency: 'USD', currencySign: 'accounting'}
+    }, 'el-GR');
+
+    expect(textField).toHaveAttribute('value', '-10,00 $');
+    triggerPress(incrementButton);
+    expect(textField).toHaveAttribute('value', '-9,00 $');
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(-9);
+
+    act(() => {
+      textField.focus();
+    });
+    textField.setSelectionRange(1, 2);
+    typeText(textField, '{backspace}');
+    textField.setSelectionRange(1, 1);
+    typeText(textField, '1');
+    textField.setSelectionRange(2, 2);
+    typeText(textField, '8');
+    expect(textField).toHaveAttribute('value', '-18,00 $');
+    act(() => {
+      textField.blur();
+    });
+    expect(textField).toHaveAttribute('value', '-18,00 $');
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    expect(onChangeSpy).toHaveBeenLastCalledWith(-18);
+  });
+
+  it.each`
     Name              | props                                                    | locale     | expected
     ${'US Euros'}     | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${'€10.00'}
     ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${'١٠٫٠٠ €'}
