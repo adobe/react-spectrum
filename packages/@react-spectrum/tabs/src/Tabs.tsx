@@ -14,7 +14,7 @@ import {classNames, SlotProvider, unwrapDOMRef, useStyleProps, useValueEffect} f
 import {DOMProps, Node, Orientation} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {Item, Picker} from '@react-spectrum/picker';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {mergeProps, useId, useLayoutEffect} from '@react-aria/utils';
 import React, {HTMLAttributes, Key, MutableRefObject, useCallback, useEffect, useRef, useState} from 'react';
 import {SingleSelectListState} from '@react-stately/list';
 import {SpectrumPickerProps} from '@react-types/select';
@@ -93,6 +93,12 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
 
   useResizeObserver({ref: wrapperRef, onResize: checkShouldCollapse});
 
+  // When the tabs are collapsed, the tabPanel should be labelled by the Picker button element.
+  let collapsibleTabListId = useId();
+  if (collapse && orientation !== 'vertical') {
+    tabPanelProps['aria-labelledby'] = collapsibleTabListId;
+  }
+
   return (
     <div
       {...styleProps}
@@ -116,6 +122,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
       {orientation !== 'vertical' &&
         <CollapsibleTabList
           {...props}
+          id={collapsibleTabListId}
           wrapperRef={wrapperRef}
           collapse={collapse}
           tabListProps={tabListProps}
@@ -332,7 +339,8 @@ function TabPicker<T>(props: TabPickerProps<T>) {
     'aria-labelledby': ariaLabeledBy,
     'aria-label': ariaLabel,
     density,
-    className
+    className,
+    id
   } = props;
 
   let ref = useRef();
@@ -376,6 +384,7 @@ function TabPicker<T>(props: TabPickerProps<T>) {
         }}>
         <Picker
           {...pickerProps}
+          id={id}
           items={items}
           ref={ref}
           isQuiet
