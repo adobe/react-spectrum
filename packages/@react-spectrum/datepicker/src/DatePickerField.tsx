@@ -58,7 +58,7 @@ export function DatePickerField(props: SpectrumDatePickerProps) {
     },
     classNames(
       inputgroupStyles,
-      'spectrum-InputGroup-field',
+      'spectrum-InputGroup-input',
       {
         'is-disabled': isDisabled,
         'is-invalid': isInvalid

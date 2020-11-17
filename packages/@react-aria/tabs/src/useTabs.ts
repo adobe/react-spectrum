@@ -9,13 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {HTMLAttributes, Key, RefObject, useMemo, useState} from 'react';
-import {mergeProps, useId} from '@react-aria/utils';
+
+import {AriaTabProps, AriaTabsProps} from '@react-types/tabs';
+import {HTMLAttributes, Key, RefObject, useMemo} from 'react';
+import {mergeProps, useId, useLabels} from '@react-aria/utils';
 import {SingleSelectListState} from '@react-stately/list';
-import {TabAriaProps, TabsAriaProps} from '@react-types/tabs';
 import {TabsKeyboardDelegate} from './TabsKeyboardDelegate';
-import {useFocusWithin, usePress} from '@react-aria/interactions';
+import {TabsState} from '@react-stately/tabs';
 import {useLocale} from '@react-aria/i18n';
+import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
 
 interface TabsAria {
@@ -27,10 +29,8 @@ interface TabsAria {
 
 const tabsIds = new WeakMap<SingleSelectListState<unknown>, string>();
 
-export function useTabs<T>(props: TabsAriaProps<T>, state: SingleSelectListState<T>, ref): TabsAria {
+export function useTabs<T>(props: AriaTabsProps<T>, state: TabsState<T>, ref): TabsAria {
   let {
-    isDisabled,
-    'aria-label': ariaLabel,
     orientation = 'horizontal',
     keyboardActivation = 'automatic'
   } = props;
@@ -55,28 +55,18 @@ export function useTabs<T>(props: TabsAriaProps<T>, state: SingleSelectListState
     disallowEmptySelection: true
   });
 
-  // Ensure a tab is always selected
-  if (manager.isEmpty) {
-    manager.replaceSelection(delegate.getFirstKey());
-  }
-
   // Compute base id for all tabs
   let tabsId = useId();
   tabsIds.set(state, tabsId);
 
-  let [isFocusWithin, setFocusWithin] = useState(false);
-  let {focusWithinProps} = useFocusWithin({
-    onFocusWithinChange: setFocusWithin
-  });
-  let tabIndex = isFocusWithin ? -1 : 0;
+  let tabListLabelProps = useLabels({...props, id: tabsId});
 
   return {
     tabListProps: {
-      ...mergeProps(focusWithinProps, collectionProps),
+      ...mergeProps(collectionProps, tabListLabelProps),
       role: 'tablist',
-      'aria-disabled': isDisabled,
-      'aria-label': ariaLabel,
-      tabIndex: isDisabled ? null : tabIndex
+      'aria-orientation': orientation,
+      tabIndex: undefined
     },
     tabPanelProps: {
       id: generateId(state, selectedKey, 'tabpanel'),
@@ -93,7 +83,7 @@ interface TabAria {
 }
 
 export function useTab<T>(
-  props: TabAriaProps<T>,
+  props: AriaTabProps<T>,
   state: SingleSelectListState<T>,
   ref: RefObject<HTMLElement>
 ): TabAria {
@@ -115,12 +105,17 @@ export function useTab<T>(
   let tabPanelId = generateId(state, key, 'tabpanel');
   let {tabIndex} = pressProps;
 
+  // selected tab should have tabIndex=0, when it initializes
+  if (isSelected && !isDisabled) {
+    tabIndex = 0;
+  }
+
   return {
     tabProps: {
       ...pressProps,
       id: tabId,
       'aria-selected': isSelected,
-      'aria-disabled': isDisabled,
+      'aria-disabled': isDisabled || undefined,
       'aria-controls': isSelected ? tabPanelId : undefined,
       tabIndex: isDisabled ? undefined : tabIndex,
       role: 'tab'
