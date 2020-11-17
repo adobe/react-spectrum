@@ -25,15 +25,16 @@ import {TextFieldBase} from '@react-spectrum/textfield';
 import {useFormProps} from '@react-spectrum/form';
 import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
-import {useProviderProps} from '@react-spectrum/provider';
+import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
+  let provider = useProvider();
   let {
     isQuiet,
     isDisabled,
-    showStepper = true,
+    hideStepper,
     autoFocus,
     isRequired,
     necessityIndicator,
@@ -64,8 +65,8 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
     incrementButtonProps,
     decrementButtonProps
   } = useNumberField({...props, incrementRef, decrementRef}, state, inputRef);
-  let isMobile = useIsMobileDevice();
-  let showStepperButtons = showStepper && !isMobile;
+  let isMobile = provider.scale === 'large';
+  let showStepper = !(hideStepper || isMobile);
 
   let className = classNames(
     inputgroupStyles,
@@ -81,7 +82,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
       {
         'spectrum-Stepper--quiet': isQuiet,
         'is-invalid': props.validationState === 'invalid',
-        'spectrum-Stepper--showStepper': showStepperButtons
+        'spectrum-Stepper--showStepper': showStepper
       },
       styleProps.className
     )
@@ -109,7 +110,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
           label={null}
           labelProps={labelProps}
           inputProps={inputFieldProps} />
-        {showStepperButtons &&
+        {showStepper &&
         <span
           className={classNames(stepperStyle, 'spectrum-Stepper-buttons')}
           role="presentation">

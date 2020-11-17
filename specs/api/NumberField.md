@@ -14,7 +14,7 @@ interface NumberField extends InputBase, TextInputBase, ValueBase<number>, Range
   isQuiet?: boolean,
   decrementAriaLabel?: string,
   incrementAriaLabel?: string,
-  showStepper?: boolean,
+  hideStepper?: boolean,
   formatOptions?: Intl.NumberFormatOptions
 }
 
@@ -26,7 +26,7 @@ interface NumberField extends InputBase, TextInputBase, ValueBase<number>, Range
 | `max`            | `maxValue`           |           |
 | `decrementTitle` | `decrementAriaLabel` |           |
 | `incrementTitle` | `incrementAriaLabel` |           |
-| -                | `showStepper`        | added     |
+| -                | `hideStepper`        | added     |
 | -                | `formatOptions`      | added     |
 ```
 

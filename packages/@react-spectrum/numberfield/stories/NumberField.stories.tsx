@@ -36,6 +36,10 @@ storiesOf('NumberField', module)
     () => render({value: 10})
   )
   .add(
+    'maximumFractionDigits = 0',
+    () => render({formatOptions: {maximumFractionDigits: 0}})
+  )
+  .add(
     'currency',
     () => render({formatOptions: {style: 'currency', currency: 'EUR'}})
   )
@@ -104,12 +108,12 @@ storiesOf('NumberField', module)
     () => render({autoFocus: true})
   )
   .add(
-    'showStepper = false',
-    () => render({showStepper: false})
+    'hideStepper',
+    () => render({hideStepper: true})
   )
   .add(
-    'isQuiet, showStepper = false',
-    () => render({isQuiet: true, showStepper: false})
+    'isQuiet, hideStepper',
+    () => render({isQuiet: true, hideStepper: true})
   )
   .add(
     'required',

@@ -29,7 +29,6 @@ let locales = Object.keys(messages).map(locale => locale.replace('.json', '')).f
 
 describe('NumberField', function () {
   let onChangeSpy = jest.fn();
-  let windowSpy;
 
   beforeAll(() => {
     jest.useFakeTimers();
@@ -39,9 +38,6 @@ describe('NumberField', function () {
     jest.useRealTimers();
   });
 
-  beforeEach(() => {
-    windowSpy = jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-  });
 
   afterEach(() => {
     onChangeSpy.mockClear();
@@ -49,8 +45,9 @@ describe('NumberField', function () {
     act(() => {jest.runAllTimers();});
   });
 
-  function renderNumberField(props = {}, locale = 'en-US') {
-    let {container, debug, rerender} = render(<Provider theme={theme} locale={locale}><NumberField aria-label="labelled" {...props} /></Provider>);
+  function renderNumberField(props = {}, providerProps = {}) {
+    let {locale = 'en-US', scale = 'medium'} = providerProps;
+    let {container, debug, rerender} = render(<Provider theme={theme} scale={scale} locale={locale}><NumberField aria-label="labelled" {...props} /></Provider>);
 
     container = within(container).queryByRole('group');
     let textField = container.firstChild;
@@ -361,7 +358,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name decrement value when scrolling right in RTL', () => {
-    let {textField} = renderNumberField({onChange: onChangeSpy}, 'ar-AE');
+    let {textField} = renderNumberField({onChange: onChangeSpy}, {locale: 'ar-AE'});
 
     act(() => {textField.focus();});
     fireEvent.wheel(textField, {deltaY: -10});
@@ -375,7 +372,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name increment value when scrolling left in RTL', () => {
-    let {textField} = renderNumberField({onChange: onChangeSpy}, 'ar-AE');
+    let {textField} = renderNumberField({onChange: onChangeSpy}, {locale: 'ar-AE'});
 
     act(() => {textField.focus();});
     fireEvent.wheel(textField, {deltaY: 10});
@@ -439,7 +436,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name can hide step buttons', () => {
-    let {textField, incrementButton, decrementButton} = renderNumberField({showStepper: false});
+    let {textField, incrementButton, decrementButton} = renderNumberField({hideStepper: true});
 
     expect(textField).toBeDefined();
     expect(incrementButton).not.toBeDefined();
@@ -451,8 +448,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name step buttons automatically hidden for mobile', () => {
-    windowSpy.mockImplementation(() => 600);
-    let {textField, incrementButton, decrementButton} = renderNumberField({});
+    let {textField, incrementButton, decrementButton} = renderNumberField({}, {scale: 'large'});
 
     expect(textField).toBeDefined();
     expect(incrementButton).not.toBeDefined();
@@ -571,7 +567,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name properly formats defaultValue', () => {
-    let {textField} = renderNumberField({showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
+    let {textField} = renderNumberField({defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
     expect(textField).toHaveAttribute('value', '€10.00');
   });
@@ -580,7 +576,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name will not call onChange with NaN before a valid input has been typed', () => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, formatOptions: {style: 'currency', currency: 'EUR'}});
+    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'EUR'}});
     act(() => {textField.focus();});
     typeText(textField, '-');
     userEvent.type(textField, '{backspace}');
@@ -608,7 +604,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name will not call onChange with NaN twice in a row', () => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, formatOptions: {style: 'currency', currency: 'EUR'}});
+    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'EUR'}});
     act(() => {textField.focus();});
     typeText(textField, '-');
     userEvent.type(textField, '{backspace}');
@@ -622,7 +618,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name if an invalid input is left, then revert to last good value', () => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, formatOptions: {style: 'currency', currency: 'EUR'}});
+    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'EUR'}});
     act(() => {textField.focus();});
     typeText(textField, '-1');
     expect(onChangeSpy).not.toHaveBeenCalled();
@@ -648,7 +644,7 @@ describe('NumberField', function () {
     ${'NumberField'}        | ${'98.543213'} | ${'98.54321'}
     ${'NumberField rounds'} | ${'98.543216'} | ${'98.54322'}
   `('$Name can have specified fraction digits', ({value, result}) => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, formatOptions: {maximumFractionDigits: 5}});
+    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {maximumFractionDigits: 5}});
     act(() => {textField.focus();});
     typeText(textField, value);
     act(() => {textField.blur();});
@@ -659,7 +655,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name properly formats percents', () => {
-    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, showStepper: true, defaultValue: 0.1, formatOptions: {style: 'percent'}});
+    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, defaultValue: 0.1, formatOptions: {style: 'percent'}});
 
     expect(textField).toHaveAttribute('value', '10%');
     act(() => {textField.focus();});
@@ -692,7 +688,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name properly formats percents as a unit', () => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, value: 10, formatOptions: {style: 'unit', unit: 'percent', signDisplay: 'always'}});
+    let {textField} = renderNumberField({onChange: onChangeSpy, value: 10, formatOptions: {style: 'unit', unit: 'percent', signDisplay: 'always'}});
 
     expect(textField).toHaveAttribute('value', '+10%');
     textField.setSelectionRange(2, 3);
@@ -710,7 +706,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name properly formats value', () => {
-    let {textField} = renderNumberField({showStepper: true, value: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
+    let {textField} = renderNumberField({value: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
     expect(textField).toHaveAttribute('value', '€10.00');
   });
@@ -719,7 +715,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name properly formats value when value changes', () => {
-    let {textField, incrementButton, decrementButton} = renderNumberField({showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
+    let {textField, incrementButton, decrementButton} = renderNumberField({defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
     expect(textField).toHaveAttribute('value', '€10.00');
     triggerPress(incrementButton);
@@ -744,7 +740,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name keeps formatting on focus', () => {
-    let {textField} = renderNumberField({showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
+    let {textField} = renderNumberField({defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
     expect(textField).toHaveAttribute('value', '€10.00');
     act(() => {textField.focus();});
@@ -755,7 +751,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name properly formats currencySign accounting', () => {
-    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, showStepper: true, defaultValue: -10, formatOptions: {style: 'currency', currency: 'USD', currencySign: 'accounting'}});
+    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, defaultValue: -10, formatOptions: {style: 'currency', currency: 'USD', currencySign: 'accounting'}});
 
     expect(textField).toHaveAttribute('value', '($10.00)');
     triggerPress(incrementButton);
@@ -801,10 +797,9 @@ describe('NumberField', function () {
   `('$Name can edit a currencySign accounting in a locale that does not use the parenthesis notation', () => {
     let {textField, incrementButton} = renderNumberField({
       onChange: onChangeSpy,
-      showStepper: true,
       defaultValue: -10,
       formatOptions: {style: 'currency', currency: 'USD', currencySign: 'accounting'}
-    }, 'el-GR');
+    }, {locale: 'el-GR'});
 
     expect(textField).toHaveAttribute('value', '-10,00 $');
     triggerPress(incrementButton);
@@ -837,7 +832,7 @@ describe('NumberField', function () {
     ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${'10,00 €'}
     ${'US JPY'}       | ${{formatOptions: {style: 'currency', currency: 'JPY'}}} | ${'en-US'} | ${'¥10'}
   `('$Name keeps formatted value on focus', ({props, locale, expected}) => {
-    let {textField} = renderNumberField({showStepper: true, defaultValue: 10, ...props}, locale);
+    let {textField} = renderNumberField({defaultValue: 10, ...props}, {locale});
 
     expect(textField).toHaveAttribute('value', expected);
     act(() => {textField.focus();});
@@ -855,7 +850,7 @@ describe('NumberField', function () {
     ${'French Euros negative'} | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['-10,00 €', '-9,00 €', '-11,00 €']}
     ${'Arabic Euros negative'} | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['\u061C-\u0661\u0660\u066B\u0660\u0660\xA0\u20AC', '\u061C-\u0669\u066B\u0660\u0660\xA0\u20AC', '\u061C-\u0661\u0661\u066B\u0660\u0660\xA0\u20AC']}
   `('$Name pressing increment & decrement keeps formatting', ({props, locale, expected}) => {
-    let {textField, incrementButton, decrementButton} = renderNumberField({showStepper: true, minValue: -15, ...props}, locale);
+    let {textField, incrementButton, decrementButton} = renderNumberField({minValue: -15, ...props}, {locale});
 
     expect(textField).toHaveAttribute('value', expected[0]);
     triggerPress(incrementButton);
@@ -871,7 +866,7 @@ describe('NumberField', function () {
     ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['10,00 €', '11,00 €', '9,00 €', '9,00 €']}
     ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['١٠٫٠٠ €', '١١٫٠٠ €', '٩٫٠٠ €', '٩٫٠٠ €']}
   `('$Name pressing up arrow & down arrow keeps focus state formatting', ({props, locale, expected}) => {
-    let {textField} = renderNumberField({showStepper: true, defaultValue: 10, ...props}, locale);
+    let {textField} = renderNumberField({defaultValue: 10, ...props}, {locale});
 
     act(() => {textField.focus();});
     expect(textField).toHaveAttribute('value', expected[0]);
@@ -892,7 +887,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name sets invalid input value to valid number value on blur', () => {
-    let {textField} = renderNumberField({showStepper: true, defaultValue: 10});
+    let {textField} = renderNumberField({defaultValue: 10});
 
     expect(textField).toHaveAttribute('value', '10');
     typeText(textField, '-');
@@ -907,7 +902,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name sets invalid input value to valid step on blur', () => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, defaultValue: 10, step: 10});
+    let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 10, step: 10});
 
     expect(textField).toHaveAttribute('value', '10');
     act(() => {textField.focus();});
@@ -931,7 +926,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('goes to valid max on `end`', () => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, defaultValue: 10});
+    let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 10});
 
     expect(textField).toHaveAttribute('value', '10');
     act(() => {textField.focus();});
@@ -947,7 +942,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('goes to valid step max on `end`', () => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, defaultValue: 10, step: 10});
+    let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 10, step: 10});
 
     expect(textField).toHaveAttribute('value', '10');
     act(() => {textField.focus();});
@@ -963,7 +958,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('goes to valid max on `end` for percent', () => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, defaultValue: 0.1, formatOptions: {style: 'percent'}});
+    let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 0.1, formatOptions: {style: 'percent'}});
 
     expect(textField).toHaveAttribute('value', '10%');
     act(() => {textField.focus();});
@@ -986,7 +981,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('goes to valid min on `home`', () => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, defaultValue: 10});
+    let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 10});
 
     expect(textField).toHaveAttribute('value', '10');
     act(() => {textField.focus();});
@@ -1002,7 +997,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('goes to valid step min on `home`', () => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, defaultValue: 10, step: 10});
+    let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 10, step: 10});
 
     expect(textField).toHaveAttribute('value', '10');
     act(() => {textField.focus();});
@@ -1018,7 +1013,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('goes to valid min on `home` for percent', () => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, showStepper: true, defaultValue: 0.1, formatOptions: {style: 'percent'}});
+    let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 0.1, formatOptions: {style: 'percent'}});
 
     expect(textField).toHaveAttribute('value', '10%');
     act(() => {textField.focus();});
@@ -1043,7 +1038,7 @@ describe('NumberField', function () {
     ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['4', '2', ',', '1']} | ${['4', '42', '42,', '42,1', '42,10 €']}
     ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['٤', '٢', ',', '١']} | ${['٤', '٤٢', '٤٢٫', '٤٢٫١', '٤٢٫١٠ €']}
   `('$Name typing in locale stays consistent', ({props, locale, keystrokes, expected}) => {
-    let {textField} = renderNumberField({showStepper: true, onChange: onChangeSpy, ...props}, locale);
+    let {textField} = renderNumberField({onChange: onChangeSpy, ...props}, {locale});
 
     act(() => {textField.focus();});
     expect(textField).toHaveAttribute('value', '');
@@ -1071,7 +1066,7 @@ describe('NumberField', function () {
     ${'French Euros'} | ${{}} | ${'fr-FR'} | ${['1', ' ', '0', '0', '0']} | ${['1', '1 ', '1 0', '1 00', '1 000']}
     ${'Arabic Euros'} | ${{}} | ${'ar-AE'} | ${['١', '.', '٠', '٠', '٠']} | ${['١', '١٬', '١٬٠', '١٬٠٠', '١٬٠٠٠']}
   `('$Name typing group characters works', ({props, locale, keystrokes, expected}) => {
-    let {textField} = renderNumberField({showStepper: true, onChange: onChangeSpy, ...props}, locale);
+    let {textField} = renderNumberField({onChange: onChangeSpy, ...props}, {locale});
 
     act(() => {textField.focus();});
     expect(textField).toHaveAttribute('value', '');
@@ -1100,7 +1095,7 @@ describe('NumberField', function () {
     Name              | props                                                                      | locale
     ${'US Euros'}     | ${{defaultValue: 10, formatOptions: {style: 'currency', currency: 'SAR'}}} | ${'en-US'}
   `('$Name typing in locale stays consistent', ({props, locale}) => {
-    let {textField} = renderNumberField({showStepper: true, onChange: onChangeSpy, ...props}, locale);
+    let {textField} = renderNumberField({onChange: onChangeSpy, ...props}, {locale});
     expect(textField).toHaveAttribute('value', 'SAR 10.00');
 
     act(() => {textField.focus();});
@@ -1111,7 +1106,7 @@ describe('NumberField', function () {
   });
 
   it('advances automatically if the arrows are held down', () => {
-    let {textField, incrementButton, decrementButton} = renderNumberField({showStepper: true, defaultValue: 10, onChange: onChangeSpy});
+    let {textField, incrementButton, decrementButton} = renderNumberField({defaultValue: 10, onChange: onChangeSpy});
 
     act(() => {textField.focus();});
     fireEvent.mouseDown(incrementButton);
@@ -1151,7 +1146,7 @@ describe('NumberField', function () {
   });
 
   it('advances automatically to the limit and not beyond', () => {
-    let {textField, incrementButton, decrementButton} = renderNumberField({showStepper: true, defaultValue: 10, minValue: 0, maxValue: 20, onChange: onChangeSpy});
+    let {textField, incrementButton, decrementButton} = renderNumberField({defaultValue: 10, minValue: 0, maxValue: 20, onChange: onChangeSpy});
 
     act(() => {textField.focus();});
     fireEvent.mouseDown(incrementButton);
@@ -1172,7 +1167,7 @@ describe('NumberField', function () {
   });
 
   it('advances increment starting from undefined', () => {
-    let {textField, incrementButton} = renderNumberField({showStepper: true, onChange: onChangeSpy});
+    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy});
 
     act(() => {textField.focus();});
     fireEvent.mouseDown(incrementButton);
@@ -1184,7 +1179,7 @@ describe('NumberField', function () {
   });
 
   it('advances decrement starting from undefined', () => {
-    let {textField, decrementButton} = renderNumberField({showStepper: true, onChange: onChangeSpy});
+    let {textField, decrementButton} = renderNumberField({onChange: onChangeSpy});
 
     act(() => {textField.focus();});
     fireEvent.mouseDown(decrementButton);
@@ -1346,7 +1341,11 @@ describe('NumberField', function () {
     function NumberFieldControlled(props) {
       let {onChange} = props;
       let [value, setValue] = useState(10);
-      return <NumberField {...props} label="you shall not change" formatOptions={{style: 'currency', currency: 'EUR'}} value={value} onChange={chain(setValue, onChange)} />;
+      return (
+        <Provider theme={theme} scale="medium" locale="en-US">
+          <NumberField {...props} label="you shall not change" formatOptions={{style: 'currency', currency: 'EUR'}} value={value} onChange={chain(setValue, onChange)} />
+        </Provider>
+      );
     }
     let {container} = render(<NumberFieldControlled onChange={onChangeSpy} />);
     container = within(container).queryByRole('group');
@@ -1462,14 +1461,14 @@ describe('NumberField', function () {
   });
 
   it.each(locales)('%s formats', (locale) => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: -52, formatOptions: {style: 'currency', currency: 'USD'}}, locale);
+    let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: -52, formatOptions: {style: 'currency', currency: 'USD'}}, {locale});
 
     let formatter = new Intl.NumberFormat(locale, {style: 'currency', currency: 'USD'});
     expect(textField).toHaveAttribute('value', formatter.format(-52));
   });
 
   it.each(locales)('%s can have latin numerals entered', (locale) => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD'}}, locale);
+    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD'}}, {locale});
 
     act(() => {textField.focus();});
     typeText(textField, '21');
@@ -1480,7 +1479,7 @@ describe('NumberField', function () {
   });
 
   it.each(locales)('%s can have arabic numerals entered', (locale) => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD'}}, locale);
+    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD'}}, {locale});
 
     act(() => {textField.focus();});
     typeText(textField, '٢١');
@@ -1491,7 +1490,7 @@ describe('NumberField', function () {
   });
 
   it.each(locales)('%s can have hanidec numerals entered', (locale) => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD'}}, locale);
+    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD'}}, {locale});
 
     act(() => {textField.focus();});
     typeText(textField, '二一');
@@ -1504,7 +1503,7 @@ describe('NumberField', function () {
   describe('locale specific', () => {
     describe('spanish (spain)', () => {
       it('can determine the group symbol', () => {
-        let {textField} = renderNumberField({onChange: onChangeSpy}, 'es-ES');
+        let {textField} = renderNumberField({onChange: onChangeSpy}, {locale: 'es-ES'});
         act(() => {textField.focus();});
         typeText(textField, '123.456.789');
         expect(textField).toHaveAttribute('value', '123.456.789');
