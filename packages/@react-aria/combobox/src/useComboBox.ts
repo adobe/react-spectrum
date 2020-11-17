@@ -28,17 +28,26 @@ import {useMessageFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
 export interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
+  /** The ref for the combobox menu trigger button.  */
   buttonRef: RefObject<HTMLElement>,
+  /** The ref for the combobox input element. */
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  /** The ref for the combobox menu popover. */
   popoverRef: RefObject<HTMLDivElement>,
+  /** The ref for the combobox menu. */
   listBoxRef: RefObject<HTMLElement>,
+  /** An optional keyboard delegate implementation for combobox, to override the default. */
   keyboardDelegate?: KeyboardDelegate
 }
 
 interface ComboBoxAria {
+  /** Props for the combobox menu trigger button. */
   buttonProps: AriaButtonProps,
+  /** Props for the combobox input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Props for the combobox menu. */
   listBoxProps: HTMLAttributes<HTMLElement>,
+  /** Props for the combobox label element. */
   labelProps: HTMLAttributes<HTMLElement>
 }
 
