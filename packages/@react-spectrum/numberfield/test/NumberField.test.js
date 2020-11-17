@@ -135,6 +135,7 @@ describe('NumberField', function () {
     typeText(textField, '5.2');
     expect(textField).toHaveAttribute('value', '52');
     act(() => {textField.blur();});
+    expect(onChangeSpy).toHaveBeenCalledWith(0.52);
     expect(textField).toHaveAttribute('value', '52%');
     expect(onChangeSpy).toHaveBeenCalledWith(0.52);
   });
@@ -671,10 +672,12 @@ describe('NumberField', function () {
   `('$Name properly formats percents', () => {
     let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, defaultValue: 0.1, formatOptions: {style: 'percent'}});
 
+    expect(textField).toHaveAttribute('inputMode', 'numeric');
     expect(textField).toHaveAttribute('value', '10%');
     act(() => {textField.focus();});
     userEvent.clear(textField);
     typeText(textField, '25');
+    expect(textField).toHaveAttribute('value', '25');
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '25%');
     expect(onChangeSpy).toHaveBeenLastCalledWith(0.25);
