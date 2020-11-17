@@ -261,7 +261,8 @@ function DroppableCollection(props) {
       ref={ref}
       style={{
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        outline: 'none'
       }}>
       {[...state.collection].map(item => (
         <>

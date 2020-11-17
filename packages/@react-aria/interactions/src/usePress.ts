@@ -103,6 +103,8 @@ export function usePress(props: PressHookProps): PressResult {
     ref: _, // Removing `ref` from `domProps` because TypeScript is dumb,
     ...domProps
   } = usePressResponderContext(props);
+  let propsRef = useRef<PressHookProps>(null);
+  propsRef.current = {onPress, onPressChange, onPressStart, onPressEnd, onPressUp, isDisabled};
 
   let [isPressed, setPressed] = useState(false);
   let ref = useRef<PressState>({
@@ -115,19 +117,16 @@ export function usePress(props: PressHookProps): PressResult {
     pointerType: null
   });
 
-  let propsRef = useRef(props);
-  propsRef.current = props;
-
   let {addGlobalListener, removeGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
   let pressProps = useMemo(() => {
     let state = ref.current;
     let triggerPressStart = (originalEvent: EventBase, pointerType: PointerType) => {
+      let {onPressStart, onPressChange, isDisabled} = propsRef.current;
       if (isDisabled) {
         return;
       }
 
-      let {onPressStart, onPressChange} = propsRef.current;
       if (onPressStart) {
         onPressStart({
           type: 'pressstart',
@@ -147,13 +146,13 @@ export function usePress(props: PressHookProps): PressResult {
     };
 
     let triggerPressEnd = (originalEvent: EventBase, pointerType: PointerType, wasPressed = true) => {
+      let {onPressEnd, onPressChange, onPress, isDisabled} = propsRef.current;
       if (isDisabled) {
         return;
       }
 
       state.ignoreClickAfterPress = true;
 
-      let {onPressEnd, onPressChange, onPress} = propsRef.current;
       if (onPressEnd) {
         onPressEnd({
           type: 'pressend',
@@ -184,11 +183,11 @@ export function usePress(props: PressHookProps): PressResult {
     };
 
     let triggerPressUp = (originalEvent: EventBase, pointerType: PointerType) => {
+      let {onPressUp, isDisabled} = propsRef.current;
       if (isDisabled) {
         return;
       }
 
-      let {onPressUp} = propsRef.current;
       if (onPressUp) {
         onPressUp({
           type: 'pressup',
@@ -558,7 +557,7 @@ export function usePress(props: PressHookProps): PressResult {
     }
 
     return pressProps;
-  }, [isDisabled, onPressStart, onPressChange, onPressEnd, onPress, onPressUp, addGlobalListener, preventFocusOnPress, removeGlobalListener]);
+  }, [addGlobalListener, isDisabled, preventFocusOnPress, removeGlobalListener, removeAllGlobalListeners]);
 
   // Remove user-select: none in case component unmounts immediately after pressStart
   // eslint-disable-next-line arrow-body-style
