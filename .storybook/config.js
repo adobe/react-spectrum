@@ -1,4 +1,3 @@
-import 'chromatic';
 import {configure, addDecorator, addParameters} from '@storybook/react';
 import {configureActions} from '@storybook/addon-actions';
 import React from 'react';
