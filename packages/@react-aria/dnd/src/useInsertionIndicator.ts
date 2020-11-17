@@ -61,6 +61,7 @@ export function useInsertionIndicator(props: InsertionIndicatorProps, ref: RefOb
       ...dropProps,
       'aria-roledescription': 'insertion indicator',
       'aria-label': label,
+      'aria-hidden': !dragSession ? 'true' : dropProps['aria-hidden'],
       tabIndex: -1
     }
   };

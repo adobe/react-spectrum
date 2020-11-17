@@ -38,11 +38,6 @@ interface DropResult {
 }
 
 const DROP_ACTIVATE_TIMEOUT = 800;
-const MESSAGES = {
-  keyboard: 'Press Enter to drop. Press Escape to cancel drag.',
-  touch: 'Double tap to drop.',
-  virtual: 'Click to drop.'
-};
 
 export function useDrop(options: DropOptions): DropResult {
   let [isDropTarget, setDropTarget] = useState(false);
