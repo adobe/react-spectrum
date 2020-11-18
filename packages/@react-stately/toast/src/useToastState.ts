@@ -10,29 +10,57 @@
  * governing permissions and limitations under the License.
  */
 
-import {ToastStateBase} from '@react-types/toast';
-import {useState} from 'react';
+import {ReactNode, useRef, useState} from 'react';
+import {Timer} from './';
+import {ToastProps, ToastState, ToastStateValue} from '@react-types/toast';
 
-
-interface ToastStateProps extends React.HTMLAttributes<HTMLElement> {
-  value?: ToastStateBase[]
+interface ToastStateProps {
+  value?: ToastStateValue[]
 }
 
-export function useToastState(props?: ToastStateProps) {
-  const [toasts, setToasts] = useState(props && props.value || []);
+const TOAST_TIMEOUT = 5000;
 
-  const onAdd = (content, options) => {
+export function useToastState(props?: ToastStateProps): ToastState {
+  const [toasts, setToasts] = useState(props && props.value || []);
+  const toastsRef = useRef(toasts);
+  toastsRef.current = toasts;
+
+  const onAdd = (content: ReactNode, options: ToastProps) => {
     let tempToasts = [...toasts];
+    let timer;
+
+    // set timer to remove toasts
+    if (!(options.actionLabel || options.timeout === 0)) {
+      if (options.timeout < 0) {
+        options.timeout = TOAST_TIMEOUT;
+      }
+      timer = new Timer(() => onRemove(options.toastKey), options.timeout || TOAST_TIMEOUT);
+    }
+
     tempToasts.push({
       content,
-      props: options
+      props: options,
+      timer
+    });
+    setToasts(tempToasts);
+
+
+  };
+
+  const onRemove = (toastKey: string) => {
+    let tempToasts = [...toastsRef.current].filter(item => {
+      if (item.props.toastKey === toastKey && item.timer) {
+        item.timer.clear();
+      }
+      return item.props.toastKey !== toastKey;
     });
     setToasts(tempToasts);
   };
 
   return {
     onAdd,
-    toasts,
-    setToasts
+    onRemove,
+    setToasts,
+    toasts
   };
 }

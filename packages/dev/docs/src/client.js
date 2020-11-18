@@ -11,97 +11,207 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {attachToToC} from './attachToToC';
-import {BreadcrumbItem, Breadcrumbs} from '@react-spectrum/breadcrumbs';
-import {Content, Header} from '@react-spectrum/view';
-import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import {Divider} from '@react-spectrum/divider';
 import docsStyle from './docs.css';
-import highlightCss from './syntax-highlight.css';
-import {Pressable} from '@react-aria/interactions';
-import React, {useEffect, useRef, useState} from 'react';
+import {listen} from 'quicklink';
+import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
-import {ThemeProvider, ThemeSwitcher} from './ThemeSwitcher';
+import {ThemeSwitcher} from './ThemeSwitcher';
+import {watchModals} from '@react-aria/aria-modal-polyfill';
 
-let links = document.querySelectorAll(':not([hidden]) table a[data-link]');
-for (let link of links) {
-  let container = document.createElement('span');
+window.addEventListener('load', () => listen());
+window.addEventListener('load', () => watchModals());
 
-  ReactDOM.render(
-    <ThemeProvider UNSAFE_className={docsStyle.inlineProvider}>
-      <DialogTrigger type="popover">
-        <Pressable>
-          <a href={link.href} data-link={link.dataset.link} className={link.className} onClick={e => e.preventDefault()}>{link.textContent}</a>
-        </Pressable>
-        <LinkPopover id={link.dataset.link} />
-      </DialogTrigger>
-    </ThemeProvider>
-  , container);
+let title = document.querySelector('h1');
 
-  link.parentNode.replaceChild(container, link);
+// Size the title to fit the available space.
+function updateTitleFontSize() {
+  let fontSize = parseInt(window.getComputedStyle(title).fontSize, 10);
+
+  // Constrain font size to 58px, or 10% of the window width, whichever is smaller.
+  let maxFontSize = Math.min(58, Math.round(window.innerWidth * 0.1));
+  if (fontSize > maxFontSize) {
+    fontSize = maxFontSize;
+    title.style.fontSize = maxFontSize + 'px';
+  }
+
+  // If the font size is less than the maximum font size,
+  // increase the font size until it overflows.
+  while (fontSize < maxFontSize && title.scrollWidth <= title.clientWidth) {
+    fontSize++;
+    title.style.fontSize = fontSize + 'px';
+  }
+
+  // Reduce the font size until it doesn't overflow.
+  while (title.scrollWidth > title.clientWidth) {
+    fontSize--;
+    title.style.fontSize = fontSize + 'px';
+  }
 }
 
-function LinkPopover({id}) {
-  let ref = useRef();
-  let [breadcrumbs, setBreadcrumbs] = useState([document.getElementById(id)]);
+updateTitleFontSize();
 
-  useEffect(() => {
-    let links = ref.current.querySelectorAll('[data-link]');
-    for (let link of links) {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        setBreadcrumbs([...breadcrumbs, document.getElementById(link.dataset.link)]);
-      });
-    }
-  }, [breadcrumbs]);
-
-  return (
-    <Dialog UNSAFE_className={highlightCss.spectrum}>
-      <Header>
-        <Breadcrumbs isHeading headingAriaLevel={3}>
-          {breadcrumbs.map((b, i) => (
-            <BreadcrumbItem
-              onPress={() => setBreadcrumbs(breadcrumbs.slice(0, i + 1))}>
-              {b.dataset.title}
-            </BreadcrumbItem>
-          ))}
-        </Breadcrumbs>
-      </Header>
-      <Divider size="M" />
-      <Content>
-        <div ref={ref} dangerouslySetInnerHTML={{__html: breadcrumbs[breadcrumbs.length -  1].innerHTML}} />
-      </Content>
-    </Dialog>
-  );
+// Use ResizeObserver where available to detect size changes not related to window resizing, e.g. font loading.
+if (typeof ResizeObserver !== 'undefined') {
+  let observer = new ResizeObserver(() => {
+    // Avoid updating the layout during the resize event and creating circular notifications.
+    requestAnimationFrame(updateTitleFontSize);
+  });
+  observer.observe(title);
+} else {
+  window.addEventListener('resize', updateTitleFontSize);
 }
 
 function Hamburger() {
-  let onPress = () => {
-    document.querySelector('.' + docsStyle.nav).classList.toggle(docsStyle.visible);
+  let onPress = (event) => {
+    let nav = document.querySelector('.' + docsStyle.nav);
+    let main = document.querySelector('main');
+    let themeSwitcher = event.target.nextElementSibling;
+ 
+    nav.classList.toggle(docsStyle.visible);
+
+    if (nav.classList.contains(docsStyle.visible)) {
+      event.target.setAttribute('aria-pressed', 'true');
+      main.setAttribute('aria-hidden', 'true');
+      themeSwitcher.setAttribute('aria-hidden', 'true');
+      themeSwitcher.querySelector('button').tabIndex = -1;
+      nav.tabIndex = -1;
+      nav.focus();
+    } else {
+      event.target.setAttribute('aria-pressed', 'false');
+      main.removeAttribute('aria-hidden');
+      themeSwitcher.removeAttribute('aria-hidden');
+      themeSwitcher.querySelector('button').removeAttribute('tabindex');
+      nav.removeAttribute('tabindex');
+    }
   };
 
   useEffect(() => {
+    let mediaQueryList = window.matchMedia('(max-width: 1020px)');
     let nav = document.querySelector('.' + docsStyle.nav);
     let main = document.querySelector('main');
-    let onClick = () => {
+    let hamburgerButton = document.querySelector('.' + docsStyle.hamburgerButton);
+    let themeSwitcher = hamburgerButton.nextElementSibling;
+
+    /* remove visible className and aria-attributes that make nav behave as a modal */ 
+    let removeVisible = (isNotResponsive = false) => {
+      hamburgerButton.setAttribute('aria-pressed', 'false');
+
+      if (nav.contains(document.activeElement) && !isNotResponsive) {
+        hamburgerButton.focus();
+      }
+
       nav.classList.remove(docsStyle.visible);
+      main.removeAttribute('aria-hidden');
+      themeSwitcher.removeAttribute('aria-hidden');
+      themeSwitcher.querySelector('button').removeAttribute('tabindex');
+      nav.removeAttribute('tabindex');
     };
 
+    /* collapse nav when underlying content is clicked */
+    let onClick = () => removeVisible();
+
+    /* collapse expanded nav when esc key is pressed */
+    let onKeydownEsc = (event) => {
+      if (event.keyCode === 27) {
+        removeVisible();
+      }
+    };
+
+    /* trap keyboard focus within expanded nav */
+    let onKeydownTab = (event) => {
+      if (event.keyCode === 9 && nav.classList.contains(docsStyle.visible)) {
+        let tabbables = nav.querySelectorAll('button, a[href]');
+        let first = tabbables[0];
+        let last = tabbables[tabbables.length - 1];
+
+        if (event.shiftKey && event.target === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && event.target === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    /* restore default behavior when responsive media query no longer matches */
+    let mediaQueryTest = (event) => {
+      if (!event.matches) {
+        removeVisible(true);
+      }
+    };
+
+    hamburgerButton.setAttribute('aria-pressed', 'false');
+    
     main.addEventListener('click', onClick);
+    document.addEventListener('keydown', onKeydownEsc);
+    nav.addEventListener('keydown', onKeydownTab);
+
+    let useEventListener = typeof mediaQueryList.addEventListener === 'function';
+    if (useEventListener) {
+      mediaQueryList.addEventListener('change', mediaQueryTest);
+    } else {
+      mediaQueryList.addListener(mediaQueryTest);
+    }
+
     return () => {
       main.removeEventListener('click', onClick);
+      document.removeEventListener('keydown', onKeydownEsc);
+      nav.removeEventListener('keydown', onKeydownTab);
+
+      if (useEventListener) {
+        mediaQueryList.removeEventListener('change', mediaQueryTest);
+      } else {
+        mediaQueryList.removeListener(mediaQueryTest);
+      }
     };
   }, []);
 
   return (
-    <ActionButton icon={<ShowMenu />} onPress={onPress} />
+    <ActionButton UNSAFE_className={docsStyle.hamburgerButton} onPress={onPress} aria-label="Open navigation panel">
+      <ShowMenu />
+    </ActionButton>
   );
 }
 
 ReactDOM.render(<>
   <Hamburger />
   <ThemeSwitcher />
-</>, document.getElementById('header'));
+</>, document.querySelector('.' + docsStyle.pageHeader));
 
-attachToToC();
+document.addEventListener('mousedown', (e) => {
+  // Prevent focusing on links to other pages with the mouse to avoid flash of focus ring during navigation.
+  let link = e.target.closest('a');
+  if (link && (link.host !== location.host || link.pathname !== location.pathname)) {
+    e.preventDefault();
+  }
+
+  // Add mouse focus class to summary elements on mouse down to prevent native browser focus from showing.
+  if (e.target.tagName === 'SUMMARY') {
+    e.target.classList.add(docsStyle.mouseFocus);
+  }
+});
+
+// Remove mouse focus class on blur of a summary element.
+document.addEventListener('blur', (e) => {
+  if (e.target.tagName === 'SUMMARY') {
+    e.target.classList.remove(docsStyle.mouseFocus);
+  }
+}, true);
+
+let sidebar = document.querySelector('.' + docsStyle.nav);
+let lastSelectedItem = sessionStorage.getItem('sidebarSelectedItem');
+let lastScrollPosition = sessionStorage.getItem('sidebarScrollPosition');
+
+// If we have a recorded scroll position, and the last selected item is in the sidebar
+// (e.g. we're in the same category), then restore the scroll position.
+if (lastSelectedItem && lastScrollPosition && [...sidebar.querySelectorAll('a')].some(a => a.pathname === lastSelectedItem)) {
+  sidebar.scrollTop = parseInt(lastScrollPosition, 10);
+}
+
+// Save scroll position of the sidebar when we're about to navigate
+window.addEventListener('pagehide', () => {
+  sessionStorage.setItem('sidebarSelectedItem', location.pathname);
+  sessionStorage.setItem('sidebarScrollPosition', sidebar.scrollTop);
+});

@@ -13,8 +13,10 @@
 import {action} from '@storybook/addon-actions';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
+import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import {Text} from '@react-spectrum/text';
 
 storiesOf('Button', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -24,7 +26,36 @@ storiesOf('Button', module)
   )
   .add(
     'with icon',
-    () => render({icon: <Bell />, variant: 'primary'})
+    () => (
+      <Flex gap="size-200">
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          variant="primary">
+          <Bell />
+          <Text>Default</Text>
+        </Button>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isDisabled
+          variant="primary">
+          <Text>Disabled</Text>
+          <Bell />
+        </Button>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isQuiet
+          variant="primary">
+          <Bell />
+          <Text>Quiet</Text>
+        </Button>
+      </Flex>
+    )
   )
   .add(
     'variant: overBackground',
@@ -53,11 +84,15 @@ storiesOf('Button', module)
   .add(
     'element: a, href: \'//example.com\', target: \'_self\'',
     () => render({elementType: 'a', href: '//example.com', target: '_self', variant: 'primary'})
+  )
+  .add(
+    'element: a, rel: \'noopener noreferrer\'',
+    () => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', variant: 'primary'})
   );
 
 function render(props: any = {}) {
   return (
-    <div>
+    <Flex gap="size-200">
       <Button
         onPress={action('press')}
         onPressStart={action('pressstart')}
@@ -83,6 +118,6 @@ function render(props: any = {}) {
         Quiet
       </Button>
       )}
-    </div>
+    </Flex>
   );
 }

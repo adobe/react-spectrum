@@ -37,6 +37,7 @@ function render(props: any = {}) {
         Default
       </LogicButton>
       <LogicButton
+        marginStart="10px"
         onPress={action('press')}
         onPressStart={action('pressstart')}
         onPressEnd={action('pressend')}

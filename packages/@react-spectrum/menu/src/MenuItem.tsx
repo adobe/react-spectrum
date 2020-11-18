@@ -11,63 +11,82 @@
  */
 
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
-import React, {useRef} from 'react';
-import {SpectrumMenuItemProps} from '@react-types/menu';
+import {mergeProps} from '@react-aria/utils';
+import {Node} from '@react-types/shared';
+import React, {Key, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
+import {TreeState} from '@react-stately/tree';
+import {useHover} from '@react-aria/interactions';
 import {useMenuContext} from './context';
 import {useMenuItem} from '@react-aria/menu';
 
-export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
+interface MenuItemProps<T> {
+  item: Node<T>,
+  state: TreeState<T>,
+  isVirtualized?: boolean,
+  onAction?: (key: Key) => void
+}
+
+/** @private */
+export function MenuItem<T>(props: MenuItemProps<T>) {
   let {
     item,
     state,
-    ...otherProps
+    isVirtualized,
+    onAction
   } = props;
-
-  let menuProps = useMenuContext();
 
   let {
     onClose,
     closeOnSelect
-  } = menuProps;
+  } = useMenuContext();
 
   let {
     rendered,
-    isSelected,
-    isDisabled,
     key
   } = item;
 
-  let ref = useRef<HTMLDivElement>();
-  let {menuItemProps} = useMenuItem(
+  let isSelected = state.selectionManager.isSelected(key);
+  let isDisabled = state.disabledKeys.has(key);
+
+  let ref = useRef<HTMLLIElement>();
+  let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps} = useMenuItem(
     {
       isSelected,
       isDisabled,
+      'aria-label': item['aria-label'],
       key,
-      ...otherProps
-    }, 
-    ref, 
+      onClose,
+      closeOnSelect,
+      isVirtualized,
+      onAction
+    },
     state,
-    onClose,
-    closeOnSelect
+    ref
   );
+  let {hoverProps, isHovered} = useHover({isDisabled});
+
+  let contents = typeof rendered === 'string'
+    ? <Text>{rendered}</Text>
+    : rendered;
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div
-        {...filterDOMProps(otherProps)}
-        {...menuItemProps}
+      <li
+        {...mergeProps(menuItemProps, hoverProps)}
         ref={ref}
         className={classNames(
           styles,
           'spectrum-Menu-item',
           {
             'is-disabled': isDisabled,
-            'is-selected': isSelected
+            'is-selected': isSelected,
+            'is-selectable': state.selectionManager.selectionMode !== 'none',
+            'is-hovered': isHovered
           }
         )}>
         <Grid
@@ -76,31 +95,29 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
               styles,
               'spectrum-Menu-itemGrid'
             )
-          }  
-          slots={{
-            text: styles['spectrum-Menu-itemLabel'],
-            end: styles['spectrum-Menu-end'],
-            icon: styles['spectrum-Menu-icon'],
-            description: styles['spectrum-Menu-description'],
-            keyboard: styles['spectrum-Menu-keyboard']}}>
-          {!Array.isArray(rendered) && (
-            <Text>
-              {rendered}
-            </Text>
-          )}
-          {Array.isArray(rendered) && rendered}
-          {isSelected && 
-            <CheckmarkMedium 
-              slot="end" 
-              UNSAFE_className={
-                classNames(
-                  styles, 
-                  'spectrum-Menu-checkmark'
-                )
-              } />
-          }
-        </Grid>  
-      </div>
+          }>
+          <SlotProvider
+            slots={{
+              text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
+              end: {UNSAFE_className: styles['spectrum-Menu-end'], ...descriptionProps},
+              icon: {UNSAFE_className: styles['spectrum-Menu-icon']},
+              description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps},
+              keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard'], ...keyboardShortcutProps}
+            }}>
+            {contents}
+            {isSelected &&
+              <CheckmarkMedium
+                slot="checkmark"
+                UNSAFE_className={
+                      classNames(
+                        styles,
+                        'spectrum-Menu-checkmark'
+                      )
+                    } />
+                }
+          </SlotProvider>
+        </Grid>
+      </li>
     </FocusRing>
   );
 }

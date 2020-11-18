@@ -10,36 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
-import {Direction} from '@react-types/shared';
+import {isRTL} from './utils';
+import {Locale, useDefaultLocale} from './useDefaultLocale';
 import React, {ReactNode, useContext} from 'react';
-import {useDefaultLocale} from './useDefaultLocale';
 
 interface ProviderProps {
-  locale?: string,
-  children: ReactNode
+  /** Contents that should have the locale applied. */
+  children: ReactNode,
+  /** The locale to apply to the children. */
+  locale?: string
 }
 
-interface LocaleContext {
-  locale: string,
-  direction: Direction
-}
+const I18nContext = React.createContext<Locale>(null);
 
-const I18nContext = React.createContext<LocaleContext>({
-  locale: 'en-US',
-  direction: 'ltr'
-});
-
-export function Provider(props: ProviderProps) {
+/**
+ * Provides the locale for the application to all child components.
+ */
+export function I18nProvider(props: ProviderProps) {
   let {locale, children} = props;
   let defaultLocale = useDefaultLocale();
-  if (!locale) {
-    locale = defaultLocale;
-  }
 
-  let value: LocaleContext = {
+  let value: Locale = locale ? {
     locale,
     direction: isRTL(locale) ? 'rtl' : 'ltr'
-  };
+  } : defaultLocale;
 
   return (
     <I18nContext.Provider value={value}>
@@ -48,25 +42,11 @@ export function Provider(props: ProviderProps) {
   );
 }
 
-export function useLocale() {
-  return useContext(I18nContext);
-}
-
-// https://en.wikipedia.org/wiki/Right-to-left
-const RTL_SCRIPTS = new Set(['Arab', 'Syrc', 'Samr', 'Mand', 'Thaa', 'Mend', 'Nkoo', 'Adlm', 'Rohg', 'Hebr']);
-const RTL_LANGS = new Set(['ae', 'ar', 'arc', 'bcc', 'bqi', 'ckb', 'dv', 'fa', 'glk', 'he', 'ku', 'mzn', 'nqo', 'pnb', 'ps', 'sd', 'ug', 'ur', 'yi']);
-
-function isRTL(locale) {
-  // If the Intl.Locale API is available, use it to get the script for the locale.
-  // This is more accurate than guessing by language, since languages can be written in multiple scripts.
-  // @ts-ignore
-  if (Intl.Locale) {
-    // @ts-ignore
-    let script = new Intl.Locale(locale).maximize().script;
-    return RTL_SCRIPTS.has(script);
-  }
-
-  // If not, just guess by the language (first part of the locale)
-  let lang = locale.split('-')[0];
-  return RTL_LANGS.has(lang);
+/**
+ * Returns the current locale and layout direction.
+ */
+export function useLocale(): Locale {
+  let defaultLocale = useDefaultLocale();
+  let context = useContext(I18nContext);
+  return context || defaultLocale;
 }

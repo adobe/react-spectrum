@@ -10,13 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-.react-spectrum-Datepicker-field.react-spectrum-Datepicker-field {
+.react-spectrum-Datepicker-field {
   /* needs to override the style from Textfield */
   width: auto;
 }
 
 .react-spectrum-Datepicker-endField {
   flex: 1;
+}
+
+.react-spectrum-Datepicker-endField .react-spectrum-Datepicker-input {
+  border-inline-start-width: 0;
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
 }
 
 .react-spectrum-Datepicker-input {
@@ -26,6 +32,7 @@
   width: auto !important;
   min-width: 0 !important;
 }
+
 
 .react-spectrum-Datepicker-literal {
   white-space: pre;

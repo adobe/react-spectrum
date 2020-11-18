@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 :root {
   --spectrum-menu-selected-color: var(--spectrum-global-color-blue-600);
+  --spectrum-selectlist-divider-color: var(--spectrum-global-color-gray-300);
 }
 
 
@@ -39,8 +40,6 @@ governing permissions and limitations under the License.
   }
 
   &.is-selected {
-    color: var(--spectrum-menu-selected-color);
-
     .spectrum-Menu-checkmark {
       color: var(--spectrum-selectlist-option-icon-color-selected);
     }
@@ -65,4 +64,8 @@ governing permissions and limitations under the License.
 
 .spectrum-Menu-divider {
   background-color: var(--spectrum-selectlist-divider-color);
+}
+
+.spectrum-Menu-description {
+  color: var(--spectrum-global-color-gray-700);
 }

@@ -10,62 +10,59 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes} from 'react';
-import {ListLayout} from '@react-stately/collections';
-import {MenuProps} from '@react-types/menu';
-import {Orientation} from '@react-types/shared';
+import {AriaMenuProps} from '@react-types/menu';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {HTMLAttributes, RefObject} from 'react';
+import {KeyboardDelegate} from '@react-types/shared';
 import {TreeState} from '@react-stately/tree';
-import {useId} from '@react-aria/utils';
-import {useSelectableCollection} from '@react-aria/selection';
+import {useSelectableList} from '@react-aria/selection';
 
 interface MenuAria {
-  menuProps: AllHTMLAttributes<HTMLElement>,
-  menuItemProps: AllHTMLAttributes<HTMLElement>
+  /** Props for the menu element. */
+  menuProps: HTMLAttributes<HTMLElement>
 }
 
-interface MenuState<T> extends TreeState<T> {}
+interface AriaMenuOptions<T> extends AriaMenuProps<T> {
+  /** Whether the menu uses virtual scrolling. */
+  isVirtualized?: boolean,
 
-interface MenuLayout<T> extends ListLayout<T> {}
+  /**
+   * An optional keyboard delegate implementation for type to select,
+   * to override the default.
+   */
+  keyboardDelegate?: KeyboardDelegate
+}
 
-export function useMenu<T>(props: MenuProps<T>, state: MenuState<T>, layout: MenuLayout<T>): MenuAria {
+/**
+ * Provides the behavior and accessibility implementation for a menu component.
+ * A menu displays a list of actions or options that a user can choose.
+ * @param props - Props for the menu.
+ * @param state - State for the menu, as returned by `useListState`.
+ */
+export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuAria {
   let {
-    'aria-orientation': ariaOrientation = 'vertical' as Orientation,
-    role = 'menu',
-    id,
-    selectionMode,
-    autoFocus,
-    wrapAround,
-    focusStrategy
+    shouldFocusWrap = true,
+    ...otherProps
   } = props;
 
-  let menuId = useId(id);
-
-  let {listProps} = useSelectableCollection({
-    selectionManager: state.selectionManager,
-    keyboardDelegate: layout,
-    autoFocus,
-    focusStrategy,
-    wrapAround
-  });
-
-  let menuItemRole = 'menuitem';
-  if (role === 'listbox') {
-    menuItemRole = 'option';
-  } else if (selectionMode === 'single') {
-    menuItemRole = 'menuitemradio';
-  } else if (selectionMode === 'multiple') {
-    menuItemRole = 'menuitemcheckbox';
+  if (!props['aria-label'] && !props['aria-labelledby']) {
+    console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
   }
 
+  let domProps = filterDOMProps(props, {labelable: true});
+  let {listProps} = useSelectableList({
+    ...otherProps,
+    ref,
+    selectionManager: state.selectionManager,
+    collection: state.collection,
+    disabledKeys: state.disabledKeys,
+    shouldFocusWrap
+  });
+
   return {
-    menuProps: {
-      ...listProps,
-      id: menuId,
-      role,
-      'aria-orientation': ariaOrientation
-    },
-    menuItemProps: {
-      role: menuItemRole
-    }
+    menuProps: mergeProps(domProps, {
+      role: 'menu',
+      ...listProps
+    })
   };
 }

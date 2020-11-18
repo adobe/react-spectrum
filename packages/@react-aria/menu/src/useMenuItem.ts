@@ -10,80 +10,172 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, RefObject} from 'react';
-import {MenuItemProps} from '@react-types/menu';
-import {mergeProps, useId} from '@react-aria/utils';
+import {getItemCount} from '@react-stately/collections';
+import {HTMLAttributes, Key, RefObject} from 'react';
+import {isFocusVisible, useHover, usePress} from '@react-aria/interactions';
+import {mergeProps, useSlotId} from '@react-aria/utils';
+import {PressEvent} from '@react-types/shared';
 import {TreeState} from '@react-stately/tree';
-import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface MenuItemAria {
-  menuItemProps: AllHTMLAttributes<HTMLElement>
+  /** Props for the menu item element. */
+  menuItemProps: HTMLAttributes<HTMLElement>,
+
+  /** Props for the main text element inside the menu item. */
+  labelProps: HTMLAttributes<HTMLElement>,
+
+  /** Props for the description text element inside the menu item, if any. */
+  descriptionProps: HTMLAttributes<HTMLElement>,
+
+  /** Props for the keyboard shortcut text element inside the item, if any. */
+  keyboardShortcutProps: HTMLAttributes<HTMLElement>
 }
 
-interface MenuState<T> extends TreeState<T> {}
+interface AriaMenuItemProps {
+  /** Whether the menu item is disabled. */
+  isDisabled?: boolean,
 
-export function useMenuItem<T>(props: MenuItemProps<T>, ref: RefObject<HTMLElement>, state: MenuState<T>, onClose?: () => void, closeOnSelect?: boolean): MenuItemAria {
+  /** Whether the menu item is selected. */
+  isSelected?: boolean,
+
+  /** A screen reader only label for the menu item. */
+  'aria-label'?: string,
+
+  /** The unique key for the menu item. */
+  key?: Key,
+
+  /** Handler that is called when the menu should close after selecting an item. */
+  onClose?: () => void,
+
+  /**
+   * Whether the menu should close when the menu item is selected.
+   * @default true
+   */
+  closeOnSelect?: boolean,
+
+  /** Whether the menu item is contained in a virtual scrolling menu. */
+  isVirtualized?: boolean,
+
+  /** Handler that is called when the user activates the item. */
+  onAction?: (key: Key) => void
+}
+
+/**
+ * Provides the behavior and accessibility implementation for an item in a menu.
+ * See `useMenu` for more details about menus.
+ * @param props - Props for the item.
+ * @param state - State for the menu, as returned by `useTreeState`.
+ */
+export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuItemAria {
   let {
     isSelected,
     isDisabled,
     key,
-    role = 'menuitem'
+    onClose,
+    closeOnSelect = true,
+    isVirtualized,
+    onAction
   } = props;
 
-  let {itemProps} = useSelectableItem({
-    selectionManager: state.selectionManager,
-    itemKey: key,
-    itemRef: ref
-  });
+  let role = 'menuitem';
+  if (state.selectionManager.selectionMode === 'single') {
+    role = 'menuitemradio';
+  } else if (state.selectionManager.selectionMode === 'multiple') {
+    role = 'menuitemcheckbox';
+  }
+
+  let labelId = useSlotId();
+  let descriptionId = useSlotId();
+  let keyboardId = useSlotId();
 
   let ariaProps = {
     'aria-disabled': isDisabled,
-    id: useId(),
-    role
+    role,
+    'aria-label': props['aria-label'],
+    'aria-labelledby': labelId,
+    'aria-describedby': [descriptionId, keyboardId].filter(Boolean).join(' ') || undefined
   };
 
-  if (role === 'option') {
-    ariaProps['aria-selected'] = isSelected ? 'true' : 'false';
-  } else if (role === 'menuitemradio' || role === 'menuitemcheckbox') {
-    ariaProps['aria-checked'] = isSelected ? 'true' : 'false';
+  if (state.selectionManager.selectionMode !== 'none') {
+    ariaProps['aria-checked'] = isSelected;
   }
 
-  let onKeyDown = (e) => {
+  if (isVirtualized) {
+    ariaProps['aria-posinset'] = state.collection.getItem(key).index;
+    ariaProps['aria-setsize'] = getItemCount(state.collection);
+  }
+
+  let onKeyDown = (e: KeyboardEvent) => {
+    // Ignore repeating events, which may have started on the menu trigger before moving
+    // focus to the menu item. We want to wait for a second complete key press sequence.
+    if (e.repeat) {
+      return;
+    }
+
     switch (e.key) {
       case ' ':
-        if (!isDisabled) {
-          if (role === 'menuitem') {
-            if (closeOnSelect) {
-              onClose && onClose();
-            }
-          }
+        if (!isDisabled && state.selectionManager.selectionMode === 'none' && closeOnSelect && onClose) {
+          onClose();
         }
         break;
       case 'Enter':
-        if (!isDisabled) {
-          onClose && onClose();
+        if (!isDisabled && closeOnSelect && onClose) {
+          onClose();
         }
         break;
     }
-  }; 
+  };
 
-  let onPress = (e) => {
+  let onPressStart = (e: PressEvent) => {
+    if (e.pointerType === 'keyboard' && onAction) {
+      onAction(key);
+    }
+  };
+
+  let onPressUp = (e: PressEvent) => {
     if (e.pointerType !== 'keyboard') {
-      if (closeOnSelect) {
-        onClose && onClose();
+      if (onAction) {
+        onAction(key);
+      }
+
+      if (closeOnSelect && onClose) {
+        onClose();
       }
     }
   };
 
-  let onMouseOver = () => state.selectionManager.setFocusedKey(key);
-  let {pressProps} = usePress(mergeProps({onPress, onKeyDown, isDisabled}, itemProps));
+  let {itemProps} = useSelectableItem({
+    selectionManager: state.selectionManager,
+    key,
+    ref,
+    shouldSelectOnPressUp: true
+  });
+
+  let {pressProps} = usePress(mergeProps({onPressStart, onPressUp, onKeyDown, isDisabled}, itemProps));
+  let {hoverProps} = useHover({
+    isDisabled,
+    onHoverStart() {
+      if (!isFocusVisible()) {
+        state.selectionManager.setFocused(true);
+        state.selectionManager.setFocusedKey(key);
+      }
+    }
+  });
 
   return {
     menuItemProps: {
       ...ariaProps,
-      ...pressProps,
-      onMouseOver
+      ...mergeProps(pressProps, hoverProps)
+    },
+    labelProps: {
+      id: labelId
+    },
+    descriptionProps: {
+      id: descriptionId
+    },
+    keyboardShortcutProps: {
+      id: keyboardId
     }
   };
 }

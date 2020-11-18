@@ -28,8 +28,9 @@ export function CalendarTableBody({state}: CalendarTableBodyProps) {
               [...new Array(7).keys()].map(dayIndex => (
                 <CalendarCell
                   key={dayIndex}
+                  colIndex={dayIndex + 1}
                   state={state}
-                  {...state.getCellOptions(weekIndex, dayIndex)} />
+                  date={state.getCellDate(weekIndex, dayIndex)} />
                 )
               )
             }

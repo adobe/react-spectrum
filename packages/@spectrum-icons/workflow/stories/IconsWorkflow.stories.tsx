@@ -12,6 +12,7 @@
 
 import Icon3DMaterials from '../3DMaterials';
 import Add from '../Add';
+import Alert from '../Alert';
 import Bell from '../Bell';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -19,16 +20,32 @@ import {storiesOf} from '@storybook/react';
 storiesOf('Icons/Workflow', module)
   .add(
     'icon: Add with sizes',
-    () => renderIconSizes(Add, {alt: 'Add'})
+    () => renderIconSizes(Add, {'aria-label': 'Add'})
   )
   .add(
     'icon: Bell with sizes',
-    () => renderIconSizes(Bell, {alt: 'Bell'})
+    () => renderIconSizes(Bell, {'aria-label': 'Bell'})
   )
   .add(
     'icon: _3DMaterials with sizes',
 
-    () => renderIconSizes(Icon3DMaterials, {alt: '3D Materials'})
+    () => renderIconSizes(Icon3DMaterials, {'aria-label': '3D Materials'})
+  )
+  .add(
+    'icon: Alert negative',
+    () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'negative'})
+  )
+  .add(
+    'icon: Alert informative',
+    () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'informative'})
+  )
+  .add(
+    'icon: Alert positive',
+    () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'positive'})
+  )
+  .add(
+    'icon: Alert notice',
+    () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'notice'})
   );
 
 function renderIconSizes(Component, props) {

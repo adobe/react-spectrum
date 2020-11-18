@@ -10,25 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, ViewStyleProps} from '@react-types/shared';
-import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import {HTMLElement} from 'react-dom';
-import React, {ReactElement, RefObject} from 'react';
+import {ClearSlots, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
+import {FooterProps} from '@react-types/view';
+import React, {forwardRef} from 'react';
 
-export interface FooterProps extends DOMProps, ViewStyleProps {
-  children: ReactElement | ReactElement[]
-}
-
-export const Footer = React.forwardRef((props: FooterProps, ref: RefObject<HTMLElement>) => {
+function Footer(props: FooterProps, ref: DOMRef) {
+  props = useSlotProps(props, 'footer');
   let {
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps({slot: 'footer', ...otherProps});
+  let {styleProps} = useStyleProps(otherProps);
+  let domRef = useDOMRef(ref);
 
   return (
-    <footer {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
-      {children}
+    <footer {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
+      <ClearSlots>
+        {children}
+      </ClearSlots>
     </footer>
   );
-});
+}
+
+/**
+ * Footer represents a footer within a Spectrum container.
+ */
+const _Footer = forwardRef(Footer);
+export {_Footer as Footer};

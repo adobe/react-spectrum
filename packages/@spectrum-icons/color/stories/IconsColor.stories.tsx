@@ -17,7 +17,7 @@ import {storiesOf} from '@storybook/react';
 storiesOf('Icons/Color', module)
   .add(
     'Color icon with sizes',
-    () => renderIconSizes(CalendarCheckColor, {alt: 'Adobe Analytics Color'})
+    () => renderIconSizes(CalendarCheckColor, {'aria-label': 'Adobe Analytics Color'})
   );
 
 function renderIconSizes(Component, props) {

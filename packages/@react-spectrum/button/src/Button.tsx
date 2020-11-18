@@ -10,13 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import React, {cloneElement} from 'react';
+import {mergeProps} from '@react-aria/utils';
+import React from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
+import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
+import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 
 // todo: CSS hasn't caught up yet, map
@@ -24,20 +27,21 @@ let VARIANT_MAPPING = {
   negative: 'warning'
 };
 
-function Button(props: SpectrumButtonProps, ref: FocusableRef) {
+function Button(props: SpectrumButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   props = useProviderProps(props);
+  props = useSlotProps(props, 'button');
   let {
     elementType: ElementType = 'button',
     children,
     variant,
     isQuiet,
     isDisabled,
-    icon,
     autoFocus,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
 
   let buttonVariant = variant;
@@ -48,9 +52,8 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <ElementType
-        {...filterDOMProps(otherProps)}
         {...styleProps}
-        {...buttonProps}
+        {...mergeProps(buttonProps, hoverProps)}
         ref={domRef}
         className={
           classNames(
@@ -60,23 +63,26 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
             {
               'spectrum-Button--quiet': isQuiet,
               'is-disabled': isDisabled,
-              'is-active': isPressed
+              'is-active': isPressed,
+              'is-hovered': isHovered
             },
             styleProps.className
           )
         }>
-        {icon && cloneElement(
-          icon,
-          {
-            size: 'S',
-            UNSAFE_className: classNames(
-              styles,
-              'spectrum-Icon',
-              icon.props && icon.props.UNSAFE_className
-            )
-          }
-        )}
-        <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
+        <SlotProvider
+          slots={{
+            icon: {
+              size: 'S',
+              UNSAFE_className: classNames(styles, 'spectrum-Icon')
+            },
+            text: {
+              UNSAFE_className: classNames(styles, 'spectrum-Button-label')
+            }
+          }}>
+          {typeof children === 'string'
+            ? <Text>{children}</Text>
+            : children}
+        </SlotProvider>
       </ElementType>
     </FocusRing>
   );

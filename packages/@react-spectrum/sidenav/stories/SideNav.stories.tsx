@@ -40,18 +40,50 @@ storiesOf('SideNav', module)
   .add(
     'Default',
     () => (
-      <SideNav UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')} items={flatItems} itemKey="name">
-        {item => <Item>{item.name}</Item>}
+      <SideNav items={flatItems} UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')}>
+        {item => <Item key={item.name}>{item.name}</Item>}
       </SideNav>
     )
   )
   .add(
-    'With sections',
+    'with default selected item',
     () => (
-      <SideNav UNSAFE_className={snStyles['storybook-SideNav']} items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+      <SideNav selectionMode="single" defaultSelectedKeys={['Kangaroo']} items={flatItems} UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')}>
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </SideNav>
+    )
+  )
+  .add(
+    'with selected item (controlled)',
+    () => (
+      <SideNav selectionMode="single" selectedKeys={['Kangaroo']} items={flatItems} UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')}>
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </SideNav>
+    )
+  )
+  .add(
+    'with disabled items',
+    () => (
+      <SideNav selectionMode="single" disabledKeys={['Kangaroo']} UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')} items={flatItems}>
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </SideNav>
+    )
+  )
+  .add(
+    'with keyboard selection wrapping',
+    () => (
+      <SideNav selectionMode="single" items={flatItems} UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')} shouldFocusWrap>
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </SideNav>
+    )
+  )
+  .add(
+    'Default with sections',
+    () => (
+      <SideNav UNSAFE_className={snStyles['storybook-SideNav']} items={withSection} onSelectionChange={action('onSelectionChange')}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </SideNav>

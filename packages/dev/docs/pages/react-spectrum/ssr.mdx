@@ -1,0 +1,81 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+---
+category: Concepts
+keywords: [ssr, server side rendering, spectrum, next.js, gatsby]
+order: 4
+---
+
+# Server Side Rendering
+
+This page describes how to use React Spectrum with server side rendering, including frameworks like Next.js and Gatsby.
+
+## Introduction
+
+**Server side rendering**, or SSR, is the process of rendering components to HTML on the server, rather than rendering them only on the client. **Static rendering** is a similar approach, but pre-renders pages to HTML at build time rather than on each request. These techniques can help improve perceived loading performance and SEO. React Spectrum supports both of these approaches, either through a custom implementation or via frameworks like [Next.js](https://nextjs.org) and [Gatsby](https://www.gatsbyjs.com).
+
+## SSR Provider
+
+In React, SSR works by rendering the component to HTML on the server, and then **hydrating** the DOM tree with events and state on the client. This enables applications to both render complete HTML in advance for performance and SEO, but also support rich interactions on the client.
+
+In order to make React Spectrum components work with SSR, you will need to wrap your application in an [SSRProvider](../react-aria/SSRProvider.html) component. This signals to all nested React Spectrum components that they are being rendered in an SSR context.
+
+```tsx
+import {SSRProvider, Provider, defaultTheme} from '@adobe/react-spectrum';
+
+<SSRProvider>
+  <Provider theme={defaultTheme} locale={locale}>
+    <App />
+  </Provider>
+</SSRProvider>
+```
+
+Wrapping your application in an `SSRProvider` ensures that the HTML generated on the server matches the DOM structure hydrated on the client. Specifically, it affects four things: id generation for accessibility, media queries, feature detection, and automatic locale selection.
+
+When using SSR, only a single copy of React Spectrum can be on the page at a time. This is in contrast to client-side rendering, where multiple copies from different parts of an app can coexist. Internally, many components rely on auto-generated ids to link related elements via ARIA attributes. When server side rendering, these ids need to be consistent so they match between the server and client, and this would not be possible with multiple copies of React Spectrum.
+
+Media queries and DOM feature detection cannot be performed on the server because they depend on specific browser parameters that aren’t sent as part of the request. In cases where these affect the rendering of a particular component, this check is delayed until just after hydration is completed. This ensures that the rendering is consistent between the server and hydrated DOM, but updated immediately after the page becomes interactive.
+
+Finally, when using server side rendering, the `locale` prop should be set explicitly on the `Provider` rather than relying on automatic locale selection. This could be done by using the `Accept-Language` HTTP header, which the browser sends to the server with the user’s desired language. You could also use an in-application setting for this if available, or separate locale-specific URLs, for example.
+
+## Next.js
+
+[Next.js](https://nextjs.org) is a framework for building websites and web applications with React. It supports both server side rendering as well as static rendering. In addition to using an `SSRProvider`, a small amount of configuration is required to get React Spectrum’s CSS working with Next.js.
+
+First, you’ll need to install a couple Next.js plugins:
+
+```
+yarn add next-compose-plugins @zeit/next-css next-transpile-modules
+```
+
+With these installed, add the following to your `next.config.js` file. This will ensure that React Spectrum’s CSS is loaded properly by Next.js.
+
+```tsx
+const withPlugins = require('next-compose-plugins');
+const withCSS = require('@zeit/next-css');
+const withTM = require('next-transpile-modules')([
+  '@adobe/react-spectrum',
+  '@spectrum-icons/.*',
+  '@react-spectrum/.*'
+]);
+
+module.exports = withPlugins([withCSS, withTM], {
+  // Your Next.js configuration
+});
+```
+
+For an example of a working Next.js app using React Spectrum, see [this repo](https://github.com/devongovett/rsp-next).
+
+## Gatsby
+
+[Gatsby](https://www.gatsbyjs.com) is a static site generator built with React. Gatsby works out of the box with React Spectrum without any additional configuration. For an example of a working Gatsby site using React Spectrum, see [this repo](https://github.com/devongovett/rsp-gatsby).

@@ -9,129 +9,191 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 import {ActionButton} from '@react-spectrum/button';
-import {BreadcrumbItem} from './';
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import {DOMProps, DOMRef} from '@react-types/shared';
+import {BreadcrumbItem} from './BreadcrumbItem';
+import {classNames, useDOMRef, useStyleProps, useValueEffect} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
-import React, {useEffect, useRef, useState} from 'react';
+import {Menu, MenuTrigger} from '@react-spectrum/menu';
+import React, {Key, ReactElement, useCallback, useRef} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useResizeObserver} from '@react-aria/utils';
 
-const MIN_VISIBLE_ITEMS = 2;
+const MIN_VISIBLE_ITEMS = 1;
 const MAX_VISIBLE_ITEMS = 4;
 
-function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
+function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   props = useProviderProps(props);
   let {
-    size = 'M',
+    size = 'L',
+    isMultiline,
     children,
-    isHeading,
-    headingAriaLevel,
     showRoot,
     isDisabled,
-    maxVisibleItems = MAX_VISIBLE_ITEMS,
+    onAction,
     ...otherProps
   } = props;
 
-  let childArray = React.Children.toArray(children);
-  let isCollapsible = maxVisibleItems === 'auto';
+  // Not using React.Children.toArray because it mutates the key prop.
+  let childArray: ReactElement[] = [];
+  React.Children.forEach(children, child => {
+    if (React.isValidElement(child)) {
+      childArray.push(child);
+    }
+  });
 
   let domRef = useDOMRef(ref);
-  let listRef = useRef(null);
+  let listRef = useRef<HTMLUListElement>(null);
 
-  const [visibleItems, setVisibleItems] = useState(isCollapsible ? childArray.length : maxVisibleItems);
-  
-  let {breadcrumbProps} = useBreadcrumbs(props);
+  let [visibleItems, setVisibleItems] = useValueEffect(childArray.length);
+
+  let {navProps} = useBreadcrumbs(props);
   let {styleProps} = useStyleProps(otherProps);
 
-  useEffect(() => {
-    let listItems = [...listRef.current.children];
-    let childrenWidthTotals = listItems.reduce((acc, item, index) => (
-      [...acc, acc[index] + item.getBoundingClientRect().width]
-    ), [0]);
+  let updateOverflow = useCallback(() => {
+    let computeVisibleItems = (visibleItems: number) => {
+      let listItems = Array.from(listRef.current.children) as HTMLLIElement[];
+      let containerWidth = listRef.current.offsetWidth;
+      let isShowingMenu = childArray.length > visibleItems;
+      let calculatedWidth = 0;
+      let newVisibleItems = 0;
+      let maxVisibleItems = MAX_VISIBLE_ITEMS;
 
-    let onResize = () => {
-      if (isCollapsible && listRef.current) {
-        let containerWidth = listRef.current.getBoundingClientRect().width;
-        let index = childrenWidthTotals.findIndex(totalWidth => totalWidth > containerWidth);
+      if (showRoot) {
+        calculatedWidth += listItems.shift().offsetWidth;
+        newVisibleItems++;
+      }
 
-        let visibleItemsCount;
-        let minVisibleItems = showRoot ? MIN_VISIBLE_ITEMS + 1 : MIN_VISIBLE_ITEMS;
+      if (isShowingMenu) {
+        calculatedWidth += listItems.shift().offsetWidth;
+        maxVisibleItems--;
+      }
 
-        if (index ===  -1) {
-          visibleItemsCount = childArray.length;
-        } else if (index < minVisibleItems) {
-          visibleItemsCount = minVisibleItems;
-        } else {
-          visibleItemsCount = index;
+      if (showRoot && calculatedWidth >= containerWidth) {
+        newVisibleItems--;
+      }
+
+      // TODO: what if multiline and only one breadcrumb??
+      if (isMultiline) {
+        listItems.pop();
+        newVisibleItems++;
+      } else {
+        // Ensure the last breadcrumb isn't truncated when we measure it.
+        let last = listItems.pop();
+        last.style.overflow = 'visible';
+
+        calculatedWidth += last.offsetWidth;
+        if (calculatedWidth < containerWidth) {
+          newVisibleItems++;
         }
 
-        setVisibleItems(visibleItemsCount);
+        last.style.overflow = '';
+      }
+
+      for (let breadcrumb of listItems.reverse()) {
+        calculatedWidth += breadcrumb.offsetWidth;
+        if (calculatedWidth < containerWidth) {
+          newVisibleItems++;
+        }
+      }
+
+      return Math.max(MIN_VISIBLE_ITEMS, Math.min(maxVisibleItems, newVisibleItems));
+    };
+
+    setVisibleItems(function *() {
+      // Update to show all items.
+      yield childArray.length;
+
+      // Measure, and update to show the items that fit.
+      let newVisibleItems = computeVisibleItems(childArray.length);
+      yield newVisibleItems;
+
+      // If the number of items is less than the number of children,
+      // then update again to ensure that the menu fits.
+      if (newVisibleItems < childArray.length && newVisibleItems > 1) {
+        yield computeVisibleItems(newVisibleItems);
+      }
+    });
+  }, [listRef, children, setVisibleItems, showRoot, isMultiline]);
+
+  useResizeObserver({ref: domRef, onResize: updateOverflow});
+
+  useLayoutEffect(updateOverflow, [children]);
+
+  let contents = childArray;
+  if (childArray.length > visibleItems) {
+    let selectedItem = childArray[childArray.length - 1];
+    let selectedKey = selectedItem.key ?? childArray.length - 1;
+    let onMenuAction = (key: Key) => {
+      // Don't fire onAction when clicking on the last item
+      if (key !== selectedKey && onAction) {
+        onAction(key);
       }
     };
 
-    window.addEventListener('resize', onResize);
-    onResize();
-    return () => {
-      window.removeEventListener('resize', onResize);
-    };
-  }, [isCollapsible, childArray.length, listRef, showRoot]);
-
-  if (childArray.length > visibleItems) {
-    let rootItems = showRoot ? [childArray[0]] : [];
-
-    // TODO: replace with menu component
     let menuItem = (
       <BreadcrumbItem key="menu">
-        <Menu isDisabled={isDisabled}>{childArray}</Menu>
+        <MenuTrigger>
+          <ActionButton
+            aria-label="…"
+            isQuiet
+            isDisabled={isDisabled}>
+            <FolderBreadcrumb />
+          </ActionButton>
+          <Menu selectionMode="single" selectedKeys={[selectedKey]} onAction={onMenuAction}>
+            {childArray}
+          </Menu>
+        </MenuTrigger>
       </BreadcrumbItem>
     );
-    rootItems.push(menuItem);
-  
-    let restItems = childArray.slice(-visibleItems + rootItems.length);
 
-    childArray = [
-      ...rootItems,
-      ...restItems
-    ];
+    contents = [menuItem];
+    let breadcrumbs = [...childArray];
+    let endItems = visibleItems;
+    if (showRoot && visibleItems > 1) {
+      contents.unshift(breadcrumbs.shift());
+      endItems--;
+    }
+    contents.push(...breadcrumbs.slice(-endItems));
   }
 
-  let lastIndex = childArray.length - 1;
-  let breadcrumbItems = childArray.map((child, index) => {
+  let lastIndex = contents.length - 1;
+  let breadcrumbItems = contents.map((child, index) => {
     let isCurrent = index === lastIndex;
+    let key = child.key ?? index;
+    let onPress = () => {
+      if (onAction) {
+        onAction(key);
+      }
+    };
+
     return (
       <li
-        key={child.key}
+        key={key}
         className={
           classNames(
             styles,
             'spectrum-Breadcrumbs-item'
           )
         }>
-        {React.cloneElement(
-          child,
-          {
-            isCurrent,
-            isHeading: isCurrent && isHeading,
-            headingAriaLevel,
-            isDisabled
-          }
-        )}
+        <BreadcrumbItem
+          isCurrent={isCurrent}
+          isDisabled={isDisabled}
+          onPress={onPress}>
+          {child.props.children}
+        </BreadcrumbItem>
       </li>
     );
   });
 
-  // TODO: replace menu with select
   return (
     <nav
-      {...filterDOMProps(otherProps)}
       {...styleProps}
-      {...breadcrumbProps}
+      {...navProps}
       ref={domRef}>
       <ul
         ref={listRef}
@@ -140,8 +202,10 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
             styles,
             'spectrum-Breadcrumbs',
             {
-              'spectrum-Breadcrumbs--compact': size === 'S',
-              'spectrum-Breadcrumbs--multiline': size === 'L',
+              'spectrum-Breadcrumbs--small': size === 'S',
+              'spectrum-Breadcrumbs--medium': size === 'M',
+              'spectrum-Breadcrumbs--multiline': isMultiline,
+              'spectrum-Breadcrumbs--showRoot': showRoot,
               'is-disabled': isDisabled
             },
             styleProps.className
@@ -153,35 +217,8 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
   );
 }
 
+/**
+ * Breadcrumbs show hierarchy and navigational context for a user’s location within an application.
+ */
 let _Breadcrumbs = React.forwardRef(Breadcrumbs);
 export {_Breadcrumbs as Breadcrumbs};
-
-// temporary replacement for menu and select component
-interface MenuProps extends DOMProps {
-  label?: any,
-  isDisabled?: boolean,
-  children?: any
-}
-
-const Menu = React.forwardRef((props: MenuProps) => {
-  let {
-    children,
-    label = '',
-    isDisabled
-  } = props;
-
-  return (
-    <DialogTrigger type="popover">
-      <ActionButton
-        aria-label="…"
-        icon={<FolderBreadcrumb />}
-        isDisabled={isDisabled}
-        isQuiet>
-        {label && React.cloneElement(label, {isCurrent: undefined})}
-      </ActionButton>
-      <Dialog>
-        {children.map((child) => React.cloneElement(child, {isCurrent: undefined}))}
-      </Dialog>
-    </DialogTrigger>
-  );
-});

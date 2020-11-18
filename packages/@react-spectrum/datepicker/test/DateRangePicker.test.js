@@ -10,22 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, getAllByRole as getAllByRoleInContainer, render} from '@testing-library/react';
+import {act, fireEvent, getAllByRole as getAllByRoleInContainer, render} from '@testing-library/react';
 import {DateRangePicker} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
-
 describe('DateRangePicker', function () {
-  afterEach(cleanup);
-
+  // there are live announcers, we need to be able to get rid of them after each test or get a warning in the console about act()
+  beforeAll(() => jest.useFakeTimers());
+  afterAll(() => jest.useRealTimers());
+  afterEach(() => {
+    act(() => {
+      jest.runAllTimers();
+    });
+  });
   describe('basics', function () {
     it('should render a DateRangePicker with a specified date range', function () {
       let {getAllByRole} = render(<DateRangePicker value={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}} />);
@@ -364,7 +364,7 @@ describe('DateRangePicker', function () {
 
       let startMonth = getAllByLabelText('Month')[0];
       expect(startMonth).toHaveTextContent('2');
-      startMonth.focus();
+      act(() => {startMonth.focus();});
       fireEvent.keyDown(startMonth, {key: 'ArrowDown'});
 
       expect(startMonth).toHaveTextContent('1'); // uncontrolled
@@ -373,7 +373,7 @@ describe('DateRangePicker', function () {
 
       let endYear = getAllByLabelText('Year')[1];
       expect(endYear).toHaveTextContent('2019');
-      endYear.focus();
+      act(() => {endYear.focus();});
       fireEvent.keyDown(endYear, {key: 'ArrowUp'});
 
       expect(endYear).toHaveTextContent('2020'); // uncontrolled
@@ -391,7 +391,7 @@ describe('DateRangePicker', function () {
 
       let startMonth = getAllByLabelText('Month')[0];
       expect(startMonth).toHaveTextContent('2');
-      startMonth.focus();
+      act(() => {startMonth.focus();});
       fireEvent.keyDown(startMonth, {key: 'ArrowDown'});
 
       expect(startMonth).toHaveTextContent('2'); // controlled
@@ -400,7 +400,7 @@ describe('DateRangePicker', function () {
 
       let endYear = getAllByLabelText('Year')[1];
       expect(endYear).toHaveTextContent('2019');
-      endYear.focus();
+      act(() => {endYear.focus();});
       fireEvent.keyDown(endYear, {key: 'ArrowUp'});
 
       expect(endYear).toHaveTextContent('2019'); // controlled
@@ -417,7 +417,7 @@ describe('DateRangePicker', function () {
       );
 
       let startMonth = getAllByLabelText('Month')[0];
-      startMonth.focus();
+      act(() => {startMonth.focus();});
       fireEvent.keyDown(startMonth, {key: '8'});
 
       expect(startMonth).toHaveTextContent('8'); // uncontrolled
@@ -428,7 +428,7 @@ describe('DateRangePicker', function () {
 
       let endYear = getAllByLabelText('Year')[1];
       expect(endYear).toHaveTextContent('2019');
-      endYear.focus();
+      act(() => {endYear.focus();});
       fireEvent.keyDown(endYear, {key: '2'});
       fireEvent.keyDown(endYear, {key: '0'});
       fireEvent.keyDown(endYear, {key: '2'});
@@ -448,7 +448,7 @@ describe('DateRangePicker', function () {
       );
 
       let startMonth = getAllByLabelText('Month')[0];
-      startMonth.focus();
+      act(() => {startMonth.focus();});
       fireEvent.keyDown(startMonth, {key: '8'});
 
       expect(startMonth).toHaveTextContent('2'); // controlled
@@ -459,7 +459,7 @@ describe('DateRangePicker', function () {
 
       let endDay = getAllByLabelText('Day')[1];
       expect(endDay).toHaveTextContent('6');
-      endDay.focus();
+      act(() => {endDay.focus();});
       fireEvent.keyDown(endDay, {key: '4'});
 
       expect(endDay).toHaveTextContent('6'); // controlled
@@ -477,7 +477,7 @@ describe('DateRangePicker', function () {
 
       let endYear = getAllByLabelText('Year')[1];
       expect(endYear).toHaveTextContent('2019');
-      endYear.focus();
+      act(() => {endYear.focus();});
       fireEvent.keyDown(endYear, {key: 'Backspace'});
 
       expect(endYear).toHaveTextContent('201'); // uncontrolled
@@ -495,7 +495,7 @@ describe('DateRangePicker', function () {
 
       let endYear = getAllByLabelText('Year')[1];
       expect(endYear).toHaveTextContent('2019');
-      endYear.focus();
+      act(() => {endYear.focus();});
       fireEvent.keyDown(endYear, {key: 'Backspace'});
 
       expect(endYear).toHaveTextContent('2019'); // controlled
@@ -650,7 +650,7 @@ describe('DateRangePicker', function () {
       expect(endDate).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
 
       let segments = getAllByRole('spinbutton');
-      segments[0].focus();
+      act(() => {segments[0].focus();});
 
       fireEvent.keyDown(document.activeElement, {key: '2'});
       expect(startDate).toHaveTextContent(`2/1/${new Date().getFullYear()}`);

@@ -10,11 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {SpectrumTextFieldProps, TextFieldProps} from '@react-types/textfield';
+import {AriaTextFieldProps, SpectrumTextFieldProps, TextFieldProps} from '@react-types/textfield';
 
 export interface SearchFieldProps extends TextFieldProps {
+  /** Handler that is called when the SearchField is submitted. */
   onSubmit?: (value: string) => void,
+
+  /** Handler that is called when the clear button is pressed. */
   onClear?: () => void
 }
 
-interface SpectrumSearchFieldProps extends SearchFieldProps, SpectrumTextFieldProps {}
+export interface AriaSearchFieldProps extends SearchFieldProps, AriaTextFieldProps {}
+export interface SpectrumSearchFieldProps extends AriaSearchFieldProps, SpectrumTextFieldProps {}

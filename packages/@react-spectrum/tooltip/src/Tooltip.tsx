@@ -10,26 +10,46 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import React, {RefObject, useRef} from 'react';
+import AlertSmall from '@spectrum-icons/ui/AlertSmall';
+import {classNames, createDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import InfoSmall from '@spectrum-icons/ui/InfoSmall';
+import {mergeProps} from '@react-aria/utils';
+import React, {useContext, useImperativeHandle, useRef} from 'react';
 import {SpectrumTooltipProps} from '@react-types/tooltip';
 import styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';
+import SuccessSmall from '@spectrum-icons/ui/SuccessSmall';
+import {TooltipContext} from './context';
 import {useTooltip} from '@react-aria/tooltip';
 
-export const Tooltip = React.forwardRef((props: SpectrumTooltipProps, ref: RefObject<HTMLDivElement>) => {
-  ref = ref || useRef();
+let iconMap = {
+  info: InfoSmall,
+  positive: SuccessSmall,
+  negative: AlertSmall
+};
+
+function Tooltip(props: SpectrumTooltipProps, ref: DOMRef) {
+  let {ref: overlayRef, arrowProps, ...tooltipProviderProps} = useContext(TooltipContext);
+  let defaultRef = useRef();
+  overlayRef = overlayRef || defaultRef;
+  props = mergeProps(props, tooltipProviderProps);
   let {
     variant = 'neutral',
-    placement = 'right',
+    placement = 'top',
     isOpen,
+    showIcon,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let {tooltipProps} = useTooltip(props);
 
+  // Sync ref with overlayRef from context.
+  useImperativeHandle(ref, () => createDOMRef(overlayRef));
+
+  let Icon = iconMap[variant];
+
   return (
     <div
-      {...filterDOMProps(otherProps)}
       {...styleProps}
       {...tooltipProps}
       className={classNames(
@@ -42,13 +62,20 @@ export const Tooltip = React.forwardRef((props: SpectrumTooltipProps, ref: RefOb
         },
         styleProps.className
       )}
-      ref={ref}>
+      ref={overlayRef}>
+      {showIcon && variant !== 'neutral' && <Icon UNSAFE_className={classNames(styles, 'spectrum-Tooltip-typeIcon')} aria-hidden />}
       {props.children && (
         <span className={classNames(styles, 'spectrum-Tooltip-label')}>
           {props.children}
         </span>
       )}
-      <span className={classNames(styles, 'spectrum-Tooltip-tip')} />
+      <span {...arrowProps} className={classNames(styles, 'spectrum-Tooltip-tip')} />
     </div>
   );
-});
+}
+
+/**
+ * Display container for Tooltip content. Has a directional arrow dependent on its placement.
+ */
+let _Tooltip = React.forwardRef(Tooltip);
+export {_Tooltip as Tooltip};

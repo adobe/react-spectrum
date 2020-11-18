@@ -11,40 +11,44 @@
  */
 
 import {ButtonProps} from '@react-types/button';
-import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
-import {FocusableRef} from '@react-types/shared';
+import {classNames, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {DOMProps, FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React, {cloneElement, ReactElement} from 'react';
+import React, {RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
+import {useHover} from '@react-aria/interactions';
 
-interface FieldButtonProps extends ButtonProps {
+interface FieldButtonProps extends ButtonProps, DOMProps, StyleProps {
   isQuiet?: boolean,
-  icon?: ReactElement,
-  validationState?: 'valid' | 'invalid'
+  isActive?: boolean,
+  validationState?: 'valid' | 'invalid',
+  focusRingClass?: string
 }
 
 // @private
 function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
+  props = useSlotProps(props, 'button');
   let {
-    elementType: ElementType = 'button',
     isQuiet,
     isDisabled,
     validationState,
-    icon,
     children,
     autoFocus,
+    isActive,
+    focusRingClass,
     ...otherProps
   } = props;
-  let domRef = useFocusableRef(ref);
+  let domRef = useFocusableRef(ref) as RefObject<HTMLButtonElement>;
   let {buttonProps, isPressed} = useButton(props, domRef);
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
-      <ElementType
-        {...mergeProps(filterDOMProps(otherProps), buttonProps)}
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring', focusRingClass)} autoFocus={autoFocus}>
+      <button
+        {...mergeProps(buttonProps, hoverProps)}
         ref={domRef}
         className={
           classNames(
@@ -52,16 +56,24 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
             'spectrum-FieldButton',
             {
               'spectrum-FieldButton--quiet': isQuiet,
-              'is-active': isPressed,
+              'is-active': isActive || isPressed,
               'is-disabled': isDisabled,
-              'is-invalid': validationState === 'invalid'
+              'is-invalid': validationState === 'invalid',
+              'is-hovered': isHovered
             },
             styleProps.className
           )
         }>
-        {cloneElement(icon, {size: 'S'})}
-        <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
-      </ElementType>
+        <SlotProvider
+          slots={{
+            icon: {
+              size: 'S',
+              UNSAFE_className: classNames(styles, 'spectrum-Icon')
+            }
+          }}>
+          {children}
+        </SlotProvider>
+      </button>
     </FocusRing>
   );
 }

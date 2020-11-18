@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Table-headCell {
   color: var(--spectrum-table-header-text-color);
-  background-color: var(--spectrum-table-header-background-color);
+  background-color: var(--spectrum-alias-background-color-default);
 
   &.is-sortable {
     .spectrum-Table-sortedIcon {
@@ -109,30 +109,46 @@ tbody.spectrum-Table-body {
 
 .spectrum-Table-row {
   border-bottom: 1px solid var(--spectrum-table-cell-border-color);
-  background-color: var(--spectrum-table-row-background-color);
+  box-sizing: border-box;
 
-  &:hover {
+  .spectrum-Table-cellWrapper {
+    /* Add an opaque background so that the transparent background
+     * on the cell doesn't allow other cells to show through sticky cells. */
+    background-color: var(--spectrum-table-background-color);
+  }
+
+  /* We apply background color to the cell rather than the row so that
+   * cells can overlap (e.g. sticky row headers). */
+  &:hover .spectrum-Table-cell {
     background-color: var(--spectrum-table-row-background-color-hover);
   }
 
-  &:focus-ring,
-  &.is-focused {
+  &:focus-ring .spectrum-Table-cell,
+  &.is-focused .spectrum-Table-cell {
     background-color: var(--spectrum-table-row-background-color-hover);
   }
 
-  &:active {
+  &:focus-ring {
+    &:before {
+      background: var(--spectrum-selectlist-option-focus-indicator-color);
+    }
+  }
+
+  &:active .spectrum-Table-cell:not(.is-disabled) {
     background-color: var(--spectrum-table-row-background-color-down);
   }
 
   &.is-selected {
-    background-color: var(--spectrum-table-row-background-color-selected);
+    .spectrum-Table-cell {
+      background-color: var(--spectrum-table-row-background-color-selected);
+    }
 
-    &:hover {
+    &:hover .spectrum-Table-cell {
       background-color: var(--spectrum-table-row-background-color-selected-hover);
     }
 
-    &:focus-ring,
-    &.is-focused {
+    &:focus-ring .spectrum-Table-cell,
+    &.is-focused .spectrum-Table-cell {
       background-color: var(--spectrum-table-row-background-color-selected-key-focus);
     }
   }
@@ -151,8 +167,8 @@ tbody.spectrum-Table-body {
 }
 
 .spectrum-Table-cell--divider {
-  border-right-style: solid;
-  border-right-color: var(--spectrum-table-divider-border-color);
+  border-inline-end-style: solid;
+  border-inline-end-color: var(--spectrum-table-divider-border-color);
 }
 
 .spectrum-Table--quiet {
@@ -171,30 +187,34 @@ tbody.spectrum-Table-body {
   }
 
   .spectrum-Table-row {
-    background-color: var(--spectrum-table-quiet-row-background-color);
+    .spectrum-Table-cellWrapper {
+      background-color: var(--spectrum-alias-background-color-default);
+    }
 
-    &:hover {
+    &:hover .spectrum-Table-cell {
       background-color: var(--spectrum-table-quiet-row-background-color-hover);
     }
 
-    &:focus-ring,
-    &.is-focused {
+    &:focus-ring .spectrum-Table-cell,
+    &.is-focused .spectrum-Table-cell {
       background-color: var(--spectrum-table-quiet-row-background-color-hover);
     }
 
-    &:active {
+    &:active .spectrum-Table-cell:not(.is-disabled) {
       background-color: var(--spectrum-table-quiet-row-background-color-down);
     }
 
     &.is-selected {
-      background-color: var(--spectrum-table-quiet-row-background-color-selected);
+      .spectrum-Table-cell {
+        background-color: var(--spectrum-table-quiet-row-background-color-selected);
+      }
 
-      &:hover {
+      &:hover .spectrum-Table-cell {
         background-color: var(--spectrum-table-quiet-row-background-color-selected-hover);
       }
 
-      &:focus-ring,
-      &.is-focused {
+      &:focus-ring .spectrum-Table-cell,
+      &.is-focused .spectrum-Table-cell {
         background-color: var(--spectrum-table-quiet-row-background-color-selected-key-focus);
       }
     }

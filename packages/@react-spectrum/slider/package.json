@@ -1,0 +1,56 @@
+{
+  "name": "@react-spectrum/slider",
+  "version": "3.0.0-alpha.0",
+  "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "targets": {
+    "main": {
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    },
+    "module": {
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.6.2",
+    "@react-aria/focus": "^3.2.3",
+    "@react-aria/i18n": "^3.1.3",
+    "@react-aria/interactions": "^3.3.0",
+    "@react-aria/slider": "3.0.0-alpha.3",
+    "@react-aria/utils": "^3.4.0",
+    "@react-aria/visually-hidden": "3.2.1",
+    "@react-spectrum/utils": "^3.4.0",
+    "@react-stately/slider": "3.0.0-alpha.3",
+    "@react-types/shared": "^3.3.0",
+    "@react-types/slider": "3.0.0-alpha.2"
+  },
+  "devDependencies": {
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0",
+    "@react-spectrum/provider": "^3.0.0-rc.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -10,18 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {BreadcrumbItem} from '../';
-import {cleanup, render} from '@testing-library/react';
+import {BreadcrumbItem} from '../src/BreadcrumbItem';
 import React from 'react';
-import {triggerPress} from '@react-spectrum/test-utils'; 
+import {render} from '@testing-library/react';
+import {triggerPress} from '@react-spectrum/test-utils';
 
 // v3 component
-describe('Breadcrumbs', function () {
-
-  afterEach(() => {
-    cleanup();
-  });
-
+describe('BreadcrumbItem', function () {
   it('Handles defaults', () => {
     let {getByText} = render(<BreadcrumbItem >Breadcrumb item</BreadcrumbItem>);
     let breadcrumbItem = getByText('Breadcrumb item');

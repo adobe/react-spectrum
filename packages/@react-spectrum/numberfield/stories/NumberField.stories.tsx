@@ -12,7 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {NumberField} from '../src';
-import React from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('NumberField', module)
@@ -20,6 +20,10 @@ storiesOf('NumberField', module)
   .add(
     'default',
     () => render({onChange: action('onChange')})
+  )
+  .add(
+    'number formatter',
+    () => render({formatOptions: {style: 'currency', currency: 'EUR'}})
   )
   .add(
     'isQuiet',
@@ -30,12 +34,25 @@ storiesOf('NumberField', module)
     () => render({minValue: 0, maxValue: 20})
   )
   .add(
+    'minValue = 0, defaultValue = 0',
+    () => render({minValue: 0, defaultValue: 0})
+  )
+  .add(
     'autoFocus',
     () => render({autoFocus: true})
+  )
+  .add(
+    'controlled',
+    () => <NumberFieldControlled />
   );
 
 function render(props: any = {}) {
   return (
     <NumberField {...props} UNSAFE_className="custom_classname" />
   );
+}
+
+function NumberFieldControlled(props) {
+  let [value, setValue] = useState(10);
+  return <NumberField {...props} formatOptions={{style: 'currency', currency: 'EUR'}} value={value} onChange={setValue} />;
 }

@@ -59,8 +59,20 @@ storiesOf('RadioGroup', module)
     () => render({}, [{}, {isDisabled: true}, {}])
   )
   .add(
+    'isDisabled on one radio horizontal',
+    () => render({orientation: 'horizontal'}, [{}, {isDisabled: true}, {}])
+  )
+  .add(
     'isRequired',
     () => render({isRequired: true})
+  )
+  .add(
+    'isRequired, necessityIndicator: label',
+    () => render({isRequired: true, necessityIndicator: 'label'})
+  )
+  .add(
+    'necessityIndicator: label, labelPosition: side',
+    () => render({necessityIndicator: 'label', labelPosition: 'side'})
   )
   .add(
     'isReadOnly',

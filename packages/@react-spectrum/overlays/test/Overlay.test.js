@@ -10,25 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
 import {Overlay} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
+import {render} from '@testing-library/react';
+import {theme} from '@react-spectrum/theme-default';
 
 function ExampleOverlay() {
   return <span data-testid="contents">Overlay</span>;
 }
 
 describe('Overlay', function () {
-  afterEach(cleanup);
-
   it('should render nothing if isOpen is not set', function () {
     let overlayRef = React.createRef();
     render(
@@ -56,6 +48,5 @@ describe('Overlay', function () {
     let overlayNode = overlayRef.current.UNSAFE_getDOMNode();
     expect(overlayNode).not.toBe(providerRef.current);
     expect(overlayNode.parentNode).toBe(document.body);
-    expect(overlayNode).toHaveStyle('position: absolute; z-index: 100000');
   });
 });

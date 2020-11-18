@@ -10,20 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup} from '@testing-library/react';
 import React from 'react';
-import {renderHook} from 'react-hooks-testing-library';
+import {renderHook} from '@testing-library/react-hooks';
 import {useProgressBar} from '../';
 
 describe('useProgressBar', function () {
-  afterEach(cleanup);
-
   let renderProgressBarHook = (props) => {
     let {result} = renderHook(() => useProgressBar(props));
     return result.current;
   };
 
   it('with default props if no props are provided', () => {
+    let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {progressBarProps} = renderProgressBarHook({});
     expect(progressBarProps.role).toBe('progressbar');
     expect(progressBarProps['aria-valuemin']).toBe(0);
@@ -32,6 +30,7 @@ describe('useProgressBar', function () {
     expect(progressBarProps['aria-valuetext']).toBe('0%');
     expect(progressBarProps['aria-label']).toBeUndefined();
     expect(progressBarProps['aria-labelledby']).toBeUndefined();
+    expect(consoleWarnSpy).toHaveBeenLastCalledWith('If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility');
   });
 
   it('supports labeling', () => {
@@ -41,13 +40,13 @@ describe('useProgressBar', function () {
   });
 
   it('with value of 25%', () => {
-    let {progressBarProps} = renderProgressBarHook({value: 25});
+    let {progressBarProps} = renderProgressBarHook({value: 25, 'aria-label': 'mandatory label'});
     expect(progressBarProps['aria-valuenow']).toBe(25);
     expect(progressBarProps['aria-valuetext']).toBe('25%');
   });
 
   it('with indeterminate prop', () => {
-    let {progressBarProps} = renderProgressBarHook({isIndeterminate: true});
+    let {progressBarProps} = renderProgressBarHook({isIndeterminate: true, 'aria-label': 'mandatory label'});
     expect(progressBarProps['aria-valuemin']).toBe(0);
     expect(progressBarProps['aria-valuemax']).toBe(100);
     expect(progressBarProps['aria-valuenow']).toBeUndefined();
@@ -55,7 +54,7 @@ describe('useProgressBar', function () {
   });
 
   it('with custom text value', () => {
-    let props = {value: 25, textValue: '¥25'};
+    let props = {value: 25, valueLabel: '¥25'};
     let {progressBarProps} = renderProgressBarHook(props);
     expect(progressBarProps['aria-valuenow']).toBe(25);
     expect(progressBarProps['aria-valuetext']).toBe('¥25');

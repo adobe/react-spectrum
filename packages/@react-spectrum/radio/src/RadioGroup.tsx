@@ -10,34 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, LabelPosition} from '@react-types/shared';
 import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import React, {useContext} from 'react';
+import {RadioContext} from './context';
+import React from 'react';
 import {SpectrumRadioGroupProps} from '@react-types/radio';
 import styles from '@adobe/spectrum-css-temp/components/fieldgroup/vars.css';
 import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useRadioGroup} from '@react-aria/radio';
 import {useRadioGroupState} from '@react-stately/radio';
-
-interface RadioGroupContext {
-  isDisabled?: boolean,
-  isRequired?: boolean,
-  isReadOnly?: boolean,
-  isEmphasized?: boolean,
-  name?: string,
-  validationState?: 'valid' | 'invalid',
-  selectedRadio?: string,
-  setSelectedRadio?: (value: string) => void
-}
-
-const RadioContext = React.createContext<RadioGroupContext | null>(null);
-
-export function useRadioProvider(): RadioGroupContext {
-  return useContext(RadioContext);
-}
 
 function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
@@ -59,12 +43,11 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
-  let {selectedRadio, setSelectedRadio} = useRadioGroupState(props);
-  let {radioGroupProps, labelProps, radioProps} = useRadioGroup(props);
+  let state = useRadioGroupState(props);
+  let {radioGroupProps, labelProps} = useRadioGroup(props, state);
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
       {...styleProps}
       {...radioGroupProps}
       className={
@@ -111,9 +94,7 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
             isReadOnly,
             isDisabled,
             validationState,
-            name: radioProps.name,
-            selectedRadio,
-            setSelectedRadio
+            state
           }}>
           {children}
         </RadioContext.Provider>
@@ -122,5 +103,9 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
   );
 }
 
+/**
+ * Radio groups allow users to select a single option from a list of mutually exclusive options.
+ * All possible options are exposed up front for users to compare.
+ */
 const _RadioGroup = React.forwardRef(RadioGroup);
 export {_RadioGroup as RadioGroup};

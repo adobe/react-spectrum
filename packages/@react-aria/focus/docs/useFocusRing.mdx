@@ -1,0 +1,90 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/focus';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
+import packageData from '@react-aria/focus/package.json';
+
+```tsx import
+import {useFocusRing} from '@react-aria/focus';
+```
+
+---
+category: Focus
+keywords: [focus ring, keyboard focus, focus management, aria]
+---
+
+# useFocusRing
+
+<p>{docs.exports.useFocusRing.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useFocusRing']} />
+
+## API
+
+<FunctionAPI links={docs.links} function={docs.exports.useFocusRing} />
+
+## Introduction
+
+The `useFocusRing` hook returns whether a focus ring should be displayed to indicate keyboard focus for a component.
+This helps keyboard users determine which element on a page or in an application has keyboard focus as they
+navigate around. Focus rings are only visible when interacting with a keyboard so as not to distract mouse
+and touch screen users.
+
+If CSS classes are being used for styling, see the [FocusRing](FocusRing.html) component for a shortcut.
+
+## Options
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useFocusRing.parameters[0].value.id].properties} />
+</TypeContext.Provider>
+
+## Result
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useFocusRing.return.id].properties} />
+</TypeContext.Provider>
+
+## Example
+
+This example shows how to use `useFocusRing` to adjust styling when keyboard focus is on a button.
+Specifically, the `outline` property is used to create the focus ring when `isFocusVisible` is true.
+
+See [useCheckbox](useCheckbox.html#styling), [useRadioGroup](useRadioGroup.html#styling), and
+[useSwitch](useSwitch.html#example) for more advanced examples of focus rings with other styling
+techniques.
+
+```tsx example
+function Example() {
+  let {isFocusVisible, focusProps} = useFocusRing();
+
+  return (
+    <button
+      {...focusProps}
+      style={{
+        WebkitAppearance: 'none',
+        appearance: 'none',
+        background: 'green',
+        border: 'none',
+        color: 'white',
+        fontSize: 14,
+        padding: '4px 8px',
+        outline: isFocusVisible ? '2px solid dodgerblue' : 'none',
+        outlineOffset: 2
+      }}>
+      Test
+    </button>
+  );
+}
+```

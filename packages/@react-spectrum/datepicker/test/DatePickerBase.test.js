@@ -10,22 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import {DatePicker, DateRangePicker} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
-
 describe('DatePickerBase', function () {
-  afterEach(cleanup);
-
   describe('basics', function () {
     it.each`
       Name                   | Component            | numSegments
@@ -262,7 +254,7 @@ describe('DatePickerBase', function () {
       let {getAllByRole} = render(<Component />);
 
       let segments = getAllByRole('spinbutton');
-      segments[0].focus();
+      act(() => {segments[0].focus();});
 
       for (let i = 0; i < segments.length; i++) {
         expect(segments[i]).toHaveFocus();
@@ -287,7 +279,7 @@ describe('DatePickerBase', function () {
       );
 
       let segments = getAllByRole('spinbutton');
-      segments[0].focus();
+      act(() => {segments[0].focus();});
 
       for (let i = 0; i < segments.length; i++) {
         expect(segments[i]).toHaveFocus();

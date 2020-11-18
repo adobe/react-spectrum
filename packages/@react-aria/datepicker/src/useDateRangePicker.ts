@@ -17,7 +17,6 @@ import {HTMLAttributes, useMemo} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useId, useLabels} from '@react-aria/utils';
-import {SpectrumBaseDialogProps} from '@react-types/dialog';
 import {useDatePicker} from './useDatePicker';
 import {useMessageFormatter} from '@react-aria/i18n';
 
@@ -35,12 +34,13 @@ interface DateRangePickerAria {
     descProps?: DateFieldDescProps
   },
   buttonProps: HTMLAttributes<HTMLElement>,
-  dialogProps: SpectrumBaseDialogProps,
+  dialogProps:  HTMLAttributes<HTMLElement> & {role?: 'dialog' | 'alertdialog'},
   descProps: DateFieldDescProps
 }
 
 export function useDateRangePicker(props: DateRangePickerProps & DOMProps, state: DateRangePickerState): DateRangePickerAria {
   let formatMessage = useMessageFormatter(intlMessages);
+  // @ts-ignore
   let {groupProps, buttonProps, fieldProps, dialogProps, descProps} = useDatePicker({
     ...props,
     ...useLabels(props, formatMessage('dateRange'))

@@ -10,24 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonHTMLAttributes, InputHTMLAttributes, RefObject} from 'react';
-import {chain} from '@react-aria/utils';
+import {AriaButtonProps} from '@react-types/button';
+import {AriaSearchFieldProps} from '@react-types/searchfield';
+import {InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
-import {PressProps} from '@react-aria/interactions';
-import {SearchFieldProps} from '@react-types/searchfield';
 import {SearchFieldState} from '@react-stately/searchfield';
-import {TextInputDOMProps} from '@react-types/shared';
 import {useMessageFormatter} from '@react-aria/i18n';
+import {useTextField} from '@react-aria/textfield';
 
 interface SearchFieldAria {
-  searchFieldProps: InputHTMLAttributes<HTMLInputElement>,
-  clearButtonProps: ButtonHTMLAttributes<HTMLButtonElement> & PressProps
+  /** Props for the text field's visible label element (if any). */
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  /** Props for the input element. */
+  inputProps: InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>,
+  /** Props for the clear button. */
+  clearButtonProps: AriaButtonProps
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a search field.
+ * @param props - Props for the search field.
+ * @param state - State for the search field, as returned by `useSearchFieldState`.
+ * @param inputRef - A ref to the input element.
+ */
 export function useSearchField(
-  props: SearchFieldProps & TextInputDOMProps,
+  props: AriaSearchFieldProps,
   state: SearchFieldState,
-  searchFieldRef: RefObject<HTMLInputElement & HTMLTextAreaElement>
+  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>
 ): SearchFieldAria {
   let formatMessage = useMessageFormatter(intlMessages);
   let {
@@ -62,19 +72,38 @@ export function useSearchField(
 
   let onClearButtonClick = () => {
     state.setValue('');
-    searchFieldRef.current.focus();
+
+    if (onClear) {
+      onClear();
+    }
   };
 
+  let onPressStart = () => {
+    // this is in PressStart for mobile so that touching the clear button doesn't remove focus from
+    // the input and close the keyboard
+    inputRef.current.focus();
+  };
+
+  let {labelProps, inputProps} = useTextField({
+    ...props,
+    value: state.value,
+    onChange: state.setValue,
+    onKeyDown,
+    type
+  }, inputRef);
+
   return {
-    searchFieldProps: {
-      value: state.value,
-      onKeyDown,
-      type
+    labelProps,
+    inputProps: {
+      ...inputProps,
+      // already handled by useSearchFieldState
+      defaultValue: undefined
     },
     clearButtonProps: {
       'aria-label': formatMessage('Clear search'),
-      tabIndex: -1,
-      onPress: chain(onClearButtonClick, props.onClear)
+      excludeFromTabOrder: true,
+      onPress: onClearButtonClick,
+      onPressStart
     }
   };
 }

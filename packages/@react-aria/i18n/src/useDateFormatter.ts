@@ -13,7 +13,13 @@
 import {useLocale} from './context';
 
 let formatterCache = new Map<string, Intl.DateTimeFormat>();
-export function useDateFormatter(options?: Intl.DateTimeFormatOptions) {
+
+/**
+ * Provides localized date formatting for the current locale. Automatically updates when the locale changes,
+ * and handles caching of the date formatter for performance.
+ * @param options - Formatting options.
+ */
+export function useDateFormatter(options?: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
   let {locale} = useLocale();
 
   let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');

@@ -12,7 +12,6 @@
 
 import {
   Dispatch,
-  MouseEventHandler,
   MutableRefObject,
   ReactElement,
   SetStateAction
@@ -24,13 +23,13 @@ export interface SplitViewStatelyProps {
   onResize?: (primarySize: number) => void,
   onResizeEnd?: (primarySize: number) => void,
   primarySize?: number,
-  defaultPrimarySize?: number,
+  defaultPrimarySize?: number
 }
 
 export interface SplitViewHandleState {
   offset: number,
   dragging: boolean,
-  hovered: boolean
+  hovered: boolean,
   setOffset: (value: number) => void,
   setDragging: (value: boolean) => void,
   setHover: (value: boolean) => void,
@@ -55,7 +54,6 @@ export interface SplitViewState {
 
 export interface SplitViewAriaProps {
   id?: string,
-  onMouseDown?: MouseEventHandler,
   allowsResizing?: boolean,
   orientation?: Orientation,
   primaryPane?: 0 | 1,

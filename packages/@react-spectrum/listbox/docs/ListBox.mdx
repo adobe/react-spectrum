@@ -1,0 +1,338 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/listbox';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/listbox/package.json';
+
+```jsx import
+import {ListBox, Section, Item} from '@react-spectrum/listbox';
+import {Flex} from '@react-spectrum/layout';
+import Book from '@spectrum-icons/workflow/Book';
+import BulkEditUsers from '@spectrum-icons/workflow/BulkEditUsers';
+import Draw from '@spectrum-icons/workflow/Draw';
+import {Text} from '@react-spectrum/text';
+```
+
+---
+category: Collections
+---
+
+# ListBox
+
+<p>{docs.exports.ListBox.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ListBox, Item, Section']} />
+
+## Example
+
+```tsx example
+<ListBox width="size-2400" aria-label="Alignment">
+  <Item>Left</Item>
+  <Item>Middle</Item>
+  <Item>Right</Item>
+</ListBox>
+```
+
+## Content
+A ListBox displays a list of options, and allows users to select one or more of them. It follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections. Similar to [Picker](Picker.html), ListBox accepts `<Item>` elements as children, each with a `key` prop. Basic usage of the ListBox, seen in the example above, shows multiple options populated with a string. Static collections, as in this example, can be used when the full list of options is known ahead of time.
+
+Dynamic collections, as shown below, can be used when the options come from an external data source such as an API call, or update over time. Providing the data in this way allows for ListBox to automatically cache the rendering of each item, which dramatically improves performance.
+
+As seen below, an iterable list of options is passed to the Listbox using the `items` prop. Each item accepts a key prop, which is passed to the `onSelectionChange` handler, when present, to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and a `key` prop is not required. See the [Events](#events) section for more detail on selection. By default, selection is not enabled, however this can be changed using the `selectionMode` prop. See [Selection](#selection) for more information.
+
+```tsx example
+function Example() {
+  let options = [
+    {id: 1, name: 'Aardvark'},
+    {id: 2, name: 'Cat'},
+    {id: 3, name: 'Dog'},
+    {id: 4, name: 'Kangaroo'},
+    {id: 5, name: 'Koala'},
+    {id: 6, name: 'Penguin'},
+    {id: 7, name: 'Snake'},
+    {id: 8, name: 'Turtle'},
+    {id: 9, name: 'Wombat'}
+  ];
+  let [animalId, setAnimalId] = React.useState();
+
+  return (
+    <>
+      <ListBox width="size-2400" aria-label="Animals" items={options} selectionMode="single" onSelectionChange={setAnimalId}>
+        {item => <Item>{item.name}</Item>}
+      </ListBox>
+      <p>Animal id: {animalId}</p>
+    </>
+  );
+}
+```
+### Accessibility
+ListBoxes should be labeled using the `aria-label` prop.  If the ListBox is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+
+### Internationalization
+To internationalize a ListBox, a localized string should be passed to the `children` of each `Item`.
+For languages that are read right to left (e.g. Hebrew and Arabic), the layout of the ListBox is flipped.
+
+## Selection
+ListBox supports no selection, single and multiple selection modes using the `selectionMode` prop. Setting selected options can be done by using the `defaultSelectedKeys` or `selectedKeys` prop. The selected key corresponds to the `key` of an item. See <a href="#events" title="Events">Events</a> for more details on selection events.
+
+```tsx example
+function Example() {
+  let options = [
+    {name: 'Koala'},
+    {name: 'Kangaroo'},
+    {name: 'Platypus'},
+    {name: 'Bald Eagle'},
+    {name: 'Bison'},
+    {name: 'Skunk'}
+  ];
+  let [animal, setAnimal] = React.useState(['Bison']);
+
+  return (
+    <Flex flexDirection="row" gap="size-350">
+      <ListBox
+        selectionMode="multiple"
+        aria-label="Pick an animal"
+        items={options}
+        defaultSelectedKeys={['Bison', 'Koala']}
+        width="size-2400">
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </ListBox>
+
+      <ListBox
+        selectionMode="multiple"
+        aria-label="Pick an animal"
+        items={options}
+        selectedKeys={animal}
+        onSelectionChange={selected => setAnimal(Array.from(selected))}
+        width="size-2400">
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </ListBox>
+    </Flex>
+  );
+}
+```
+## Sections
+ListBox supports sections in order to group options. Sections can be used by wrapping groups of Items in a `Section` component. Each `Section` takes a `title` and `key` prop.
+
+### Static Items
+```tsx example
+<ListBox width="size-2400" aria-label="Pick your favorite" selectionMode="single">
+  <Section title="Animals">
+    <Item key="Aardvark">Aardvark</Item>
+    <Item key="Kangaroo">Kangaroo</Item>
+    <Item key="Snake">Snake</Item>
+  </Section>
+  <Section title="People">
+    <Item key="Danni">Danni</Item>
+    <Item key="Devon">Devon</Item>
+    <Item key="Ross">Ross</Item>
+  </Section>
+</ListBox>
+```
+### Dynamic Items
+Sections used with dynamic items are populated from a hierarchical data structure. Similarly to the props on `ListBox`, `Section` takes an array of data using the `items` prop.
+
+```tsx example
+function Example() {
+  let options = [
+    {name: 'Australian', children: [
+      {id: 2, name: 'Koala'},
+      {id: 3, name: 'Kangaroo'},
+      {id: 4, name: 'Platypus'}
+    ]},
+    {name: 'American', children: [
+      {id: 6, name: 'Bald Eagle'},
+      {id: 7, name: 'Bison'},
+      {id: 8, name: 'Skunk'}
+    ]}
+  ];
+  let [selected, setSelected] = React.useState(new Set());
+
+  return (
+    <ListBox
+      aria-label="Pick an animal"
+      items={options}
+      selectedKeys={selected}
+      selectionMode="single"
+      onSelectionChange={setSelected}
+      width="size-2400">
+      {item => (
+        <Section key={item.name} items={item.children} title={item.name}>
+          {item => <Item>{item.name}</Item>}
+        </Section>
+      )}
+    </ListBox>
+  );
+}
+```
+
+## Events
+ListBox supports selection via mouse, keyboard, and touch. You can handle all of these via the `onSelectionChange`
+prop. ListBox will pass the selected `key` to the `onSelectionChange` handler.
+
+The following example uses an `onSelectionChange` handler to update the selection stored in React state.
+
+```tsx example
+function StaticExample() {
+  let [frequency, setFrequency] = React.useState(new Set());
+
+  return (
+    <>
+      <ListBox
+        aria-label="Choose frequency"
+        selectionMode="single"
+        onSelectionChange={selected => setFrequency(selected)}
+        width="size-2400">
+        <Item key="Rarely">Rarely</Item>
+        <Item key="Sometimes">Sometimes</Item>
+        <Item key="Always">Always</Item>
+      </ListBox>
+      <p>You selected: {[...frequency][0]}</p>
+    </>
+  );
+}
+```
+
+When using ListBox with dynamic items, selection works much the same way using `key`. However, if your data already has an `id` property (as is common with many data sets), ListBox can use that id without needing to specify a `key` prop. The below example shows ListBox using the id of each item from the `items` array as the selected value without the need for `key`. Note that `key` will always take precedence if set.
+
+```tsx example
+function DynamicExample() {
+  let [animalId, setAnimalId] = React.useState(new Set());
+  let options = [
+    {id: 1, name: 'Aardvark'},
+    {id: 2, name: 'Cat'},
+    {id: 3, name: 'Dog'},
+    {id: 4, name: 'Kangaroo'},
+    {id: 5, name: 'Koala'},
+    {id: 6, name: 'Penguin'},
+    {id: 7, name: 'Snake'},
+    {id: 8, name: 'Turtle'},
+    {id: 9, name: 'Wombat'}
+  ];
+
+  return (
+    <>
+      <ListBox
+        selectionMode="single"
+        aria-label="Pick an animal"
+        items={options}
+        onSelectionChange={selected => setAnimalId(selected)}
+        width="size-2400">
+        {item => <Item>{item.name}</Item>}
+      </ListBox>
+      <p>Your favorite animal has id: {[...animalId][0]}</p>
+    </>
+  );
+}
+```
+
+## Complex Items
+Items within ListBox also allow for additional content used to better communicate options. Icons and descriptions can be added to the `children` of `Item` as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+
+```tsx example
+<ListBox width="size-2400" aria-label="Options" selectionMode="single">
+  <Section title="Permission">
+    <Item textValue="Read">
+      <Book size="S" />
+      <Text>Read</Text>
+      <Text slot="description">Read Only</Text>
+    </Item>
+    <Item textValue="Write">
+      <Draw size="S" />
+      <Text>Write</Text>
+      <Text slot="description">Read and Write Only</Text>
+    </Item>
+    <Item textValue="Admin">
+      <BulkEditUsers size="S" />
+      <Text>Admin</Text>
+      <Text slot="description">Full access</Text>
+    </Item>
+  </Section>
+</ListBox>
+```
+## Asynchronous loading
+
+ListBox supports loading data asynchronously, and will display a progress circle when the `isLoading` prop is set.
+It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle loading the data.
+See the docs for more information.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+function AsyncLoadingExample() {
+  let list = useAsyncList({
+    async load({signal, cursor}) {
+      // If no cursor is available, then we're loading the first page.
+      // Otherwise, the cursor is the next URL to load, as returned from the previous page.
+      let res = await fetch(cursor || 'https://pokeapi.co/api/v2/pokemon', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <Flex maxHeight="size-2400">
+      <ListBox
+        aria-label="Pick a Pokemon"
+        items={list.items}
+        isLoading={list.isLoading}
+        onLoadMore={list.loadMore}
+        width="size-2400">
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </ListBox>
+    </Flex>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.ListBox} links={docs.links} />
+
+## Visual options
+### Loading
+
+```tsx example
+<ListBox
+  isLoading
+  aria-label="Choose frequency"
+  selectionMode="single"
+  onSelectionChange={selected => setFrequency(selected)}
+  width="size-1200">
+</ListBox>
+```
+
+### Disabled
+Use the `disabledKeys` prop to specify which item keys to disable in the ListBox.
+
+```tsx example
+<ListBox width="size-2400" aria-label="Pick your favorite" disabledKeys={["Snake", "Ross"]} selectionMode="single">
+  <Section title="Animals">
+    <Item key="Aardvark">Aardvark</Item>
+    <Item key="Kangaroo">Kangaroo</Item>
+    <Item key="Snake">Snake</Item>
+  </Section>
+  <Section title="People">
+    <Item key="Danni">Danni</Item>
+    <Item key="Devon">Devon</Item>
+    <Item key="Ross">Ross</Item>
+  </Section>
+</ListBox>
+```

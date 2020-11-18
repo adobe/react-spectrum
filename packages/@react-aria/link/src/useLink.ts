@@ -10,59 +10,59 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, RefObject, SyntheticEvent} from 'react';
-import {DOMProps, PressEvent} from '@react-types/shared';
-import {LinkProps} from '@react-types/link';
-import {useId} from '@react-aria/utils';
+import {AriaLinkProps} from '@react-types/link';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {HTMLAttributes, RefObject} from 'react';
 import {usePress} from '@react-aria/interactions';
 
-export interface AriaLinkProps extends LinkProps, DOMProps {
+export interface AriaLinkOptions extends AriaLinkProps {
+  /** Whether the link is disabled. */
   isDisabled?: boolean,
-  href?: string,
-  tabIndex?: number,
-  onPress?: (e: PressEvent) => void,
-  onClick?: (e: SyntheticEvent) => void,
-  ref: RefObject<HTMLElement | null>
+  /**
+   * The HTML element used to render the link, e.g. 'a', or 'span'.
+   * @default 'a'
+   */
+  elementType?: string
 }
 
 export interface LinkAria {
-  linkProps: AllHTMLAttributes<HTMLDivElement>
+  /** Props for the link element. */
+  linkProps: HTMLAttributes<HTMLElement>
 }
 
-export function useLink(props: AriaLinkProps): LinkAria {
+/**
+ * Provides the behavior and accessibility implementation for a link component.
+ * A link allows a user to navigate to another page or resource within a web page
+ * or application.
+ */
+export function useLink(props: AriaLinkOptions, ref: RefObject<HTMLElement>): LinkAria {
   let {
-    id,
-    href,
-    tabIndex = 0,
-    children,
+    elementType = 'a',
     onPress,
     onPressStart,
     onPressEnd,
+    // @ts-ignore
     onClick: deprecatedOnClick,
     isDisabled,
-    ref
+    ...otherProps
   } = props;
 
-  let linkProps: AllHTMLAttributes<HTMLDivElement>;
-  if (typeof children === 'string') {
+  let linkProps: HTMLAttributes<HTMLElement>;
+  if (elementType !== 'a') {
     linkProps = {
       role: 'link',
-      tabIndex: !isDisabled ? tabIndex : undefined,
-      'aria-disabled': isDisabled || undefined
+      tabIndex: !isDisabled ? 0 : undefined
     };
   }
 
-  if (href) {
-    console.warn('href is deprecated, please use an anchor element as children');
-  }
-
   let {pressProps} = usePress({onPress, onPressStart, onPressEnd, isDisabled, ref});
+  let domProps = filterDOMProps(otherProps, {labelable: true});
 
   return {
-    linkProps: {
+    linkProps: mergeProps(domProps, {
       ...pressProps,
       ...linkProps,
-      id: useId(id),
+      'aria-disabled': isDisabled || undefined,
       onClick: (e) => {
         pressProps.onClick(e);
         if (deprecatedOnClick) {
@@ -70,6 +70,6 @@ export function useLink(props: AriaLinkProps): LinkAria {
           console.warn('onClick is deprecated, please use onPress');
         }
       }
-    }
+    })
   };
 }

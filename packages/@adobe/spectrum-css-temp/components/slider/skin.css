@@ -10,9 +10,19 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+:root {
+  --spectrum-slider-focus-ring-size-key-focus: var(--spectrum-alias-focus-ring-size);
+
+    /* todo: remove when fixed */
+  --spectrum-slider-handle-border-color-key-focus: var(--spectrum-global-color-gray-800);
+  --spectrum-slider-handle-focus-ring-color-key-focus: var(--spectrum-alias-focus-color);
+}
+
 .spectrum-Slider-track {
   &::before {
     background: var(--spectrum-slider-track-color);
+    background-size: var(--spectrum-track-background-size);
+    background-position: var(--spectrum-track-background-position);
   }
 }
 
@@ -49,7 +59,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Slider-handle {
   border-color: var(--spectrum-slider-handle-border-color);
-  background: var(--spectrum-alias-background-color-default);
+  background: var(--spectrum-slider-handle-background-color);
 
   &:hover {
     border-color: var(--spectrum-slider-handle-border-color-hover);
@@ -57,6 +67,10 @@ governing permissions and limitations under the License.
 
   &.is-focused {
     border-color: var(--spectrum-slider-handle-border-color-key-focus);
+
+    &:before {
+      box-shadow: 0 0 0 var(--spectrum-slider-focus-ring-size-key-focus) var(--spectrum-slider-handle-focus-ring-color-key-focus);
+    }
   }
 
   &:active,
@@ -83,11 +97,6 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Slider-handle {
-  &.is-focused {
-    border-color: var(--spectrum-slider-handle-border-color-key-focus);
-    background: var(--spectrum-slider-handle-background-color-key-focus);
-  }
-
   &.is-dragged {
     border-color: var(--spectrum-slider-handle-border-color-down);
     background: var(--spectrum-slider-handle-background-color-down);
@@ -148,6 +157,10 @@ governing permissions and limitations under the License.
 
 .spectrum-Dial-handle {
   box-shadow: none;
+
+  &:before {
+    display: none;
+  }
 
   &::after {
     background-color: var(--spectrum-dial-handle-marker-color);
@@ -289,5 +302,24 @@ governing permissions and limitations under the License.
         }
       }
     }
+  }
+}
+
+.spectrum-Slider--label-side {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+
+  & > * {
+    display: inline-block;
+  }
+
+  & .spectrum-Slider-labelContainer {
+    padding-top: 0;
+    flex-shrink: 0;
+  }
+
+  & .spectrum-Slider-label {
+    margin-inline-end: var(--spectrum-slider-label-gap-x);
   }
 }

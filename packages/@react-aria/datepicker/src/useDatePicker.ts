@@ -10,14 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaButtonProps} from '@react-types/button';
+import {AriaDialogProps} from '@react-types/dialog';
 import {DatePickerProps, DateRangePickerProps} from '@react-types/datepicker';
 import {DatePickerState, DateRangePickerState} from '@react-stately/datepicker';
 import {DOMProps} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useId, useLabels} from '@react-aria/utils';
 import {HTMLAttributes, KeyboardEvent} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useId, useLabels} from '@react-aria/utils';
-import {SpectrumBaseDialogProps} from '@react-types/dialog';
 import {useMemo} from 'react';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
@@ -29,12 +30,9 @@ interface DateFieldDescProps extends DOMProps {
 
 interface DatePickerAria {
   groupProps: HTMLAttributes<HTMLElement>,
-  fieldProps: DOMProps & {
-    'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
-    'aria-invalid'?: boolean | 'false' | 'true'
-  },
-  buttonProps: HTMLAttributes<HTMLElement>,
-  dialogProps: SpectrumBaseDialogProps,
+  fieldProps: HTMLAttributes<HTMLElement>,
+  buttonProps: AriaButtonProps,
+  dialogProps: AriaDialogProps,
   descProps: DateFieldDescProps
 }
 
@@ -47,6 +45,7 @@ export function useDatePicker(props: DatePickerAriaProps, state: DatePickerState
   let formatMessage = useMessageFormatter(intlMessages);
   let labels = useLabels(props, formatMessage('date'));
   let labelledBy = labels['aria-labelledby'] || labels.id;
+  let domProps = filterDOMProps(props, {labelable: true});
   let dateValueDescription = useMemo(
     () => {
       if (state.value) {
@@ -82,13 +81,13 @@ export function useDatePicker(props: DatePickerAriaProps, state: DatePickerState
   };
 
   return {
-    groupProps: {
+    groupProps: mergeProps(domProps, {
       role: 'group',
       'aria-describedby': dateValueDescription ? descId : null,
       'aria-disabled': props.isDisabled || null,
       ...mergeProps(pressProps, {onKeyDown}),
       ...labels
-    },
+    }),
     descProps: {
       children: dateValueDescription,
       hidden: true,
@@ -102,6 +101,7 @@ export function useDatePicker(props: DatePickerAriaProps, state: DatePickerState
       'aria-labelledby': labelledBy
     },
     buttonProps: {
+      excludeFromTabOrder: true,
       id: buttonId,
       'aria-describedby': dateValueDescription ? descId : null,
       'aria-haspopup': 'dialog',
@@ -109,7 +109,8 @@ export function useDatePicker(props: DatePickerAriaProps, state: DatePickerState
       'aria-labelledby': `${labelledBy} ${buttonId}`
     },
     dialogProps: {
-      id: dialogId
+      id: dialogId,
+      'aria-labelledby': `${labelledBy} ${buttonId}`
     }
   };
 }

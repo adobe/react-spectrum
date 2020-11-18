@@ -18,13 +18,11 @@ interface ButtonBase extends DOMProps, StyleProps, PressEvents, FocusableProps {
 }
 
 interface Button extends ButtonBase {
-  icon?: ReactElement,
   variant: 'cta' | 'overBackground' | 'primary' | 'secondary' | 'negative', // no default, must choose
   isQuiet?: boolean
 }
 
 interface ActionButton extends ButtonBase {
-  icon?: ReactElement,
   isQuiet?: boolean,
   isSelected?: boolean,
   holdAffordance?: boolean,

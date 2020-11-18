@@ -11,4 +11,4 @@
  */
 
 export * from './useButton';
-export * from './useButtonGroup';
+export * from './useToggleButton';

@@ -10,19 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import {SpectrumLogicButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
+import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef) {
+function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   props = useProviderProps(props);
   let {
-    elementType: ElementType = 'button',
     variant,
     children,
     isDisabled,
@@ -31,14 +32,14 @@ function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef) {
   } = props;
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
-      <ElementType
-        {...filterDOMProps(otherProps)}
+      <button
         {...styleProps}
-        {...buttonProps}
+        {...mergeProps(buttonProps, hoverProps)}
         ref={domRef}
         className={
           classNames(
@@ -47,16 +48,20 @@ function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef) {
             {
               [`spectrum-LogicButton--${variant}`]: variant,
               'is-disabled': isDisabled,
-              'is-active': isPressed
+              'is-active': isPressed,
+              'is-hovered': isHovered
             },
             styleProps.className
           )
         }>
         <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
-      </ElementType>
+      </button>
     </FocusRing>
   );
 }
 
+/**
+ * A LogicButton displays an operator within a boolean logic sequence.
+ */
 let _LogicButton = React.forwardRef(LogicButton);
 export {_LogicButton as LogicButton};

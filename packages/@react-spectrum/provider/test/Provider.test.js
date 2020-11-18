@@ -13,9 +13,14 @@
 // needs to be imported first
 import MatchMediaMock from 'jest-matchmedia-mock';
 // eslint-disable-next-line rulesdir/sort-imports
-import {cleanup, render} from '@testing-library/react';
+import {act, render} from '@testing-library/react';
+import {Button} from '@react-spectrum/button';
+import {Checkbox} from '@react-spectrum/checkbox';
 import {Provider} from '../';
 import React from 'react';
+import {Switch} from '@react-spectrum/switch';
+import {triggerPress} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 
 let theme = {
   global: {},
@@ -34,7 +39,6 @@ describe('Provider', () => {
   });
   afterEach(() => {
     matchMedia.clear();
-    cleanup();
   });
 
   it('Uses OS theme by default - dark', () => {
@@ -56,6 +60,30 @@ describe('Provider', () => {
     let {getByTestId} = render(<Provider theme={theme} colorScheme="dark" data-testid="testid"><div>hello</div></Provider>);
     let provider = getByTestId('testid');
     expect(provider.classList.contains('spectrum--dark')).toBeTruthy();
+  });
+
+  it('Provider passes props to children', () => {
+    let onChangeSpy = jest.fn();
+    let {getByLabelText} = render(
+      <Provider theme={theme} isReadOnly>
+        <Checkbox onChange={onChangeSpy}>Test Checkbox</Checkbox>
+        <Switch onChange={onChangeSpy}>Test Switch</Switch>
+      </Provider>
+    );
+
+    let checkbox = getByLabelText('Test Checkbox');
+    let switchComponent = getByLabelText('Test Switch');
+
+    expect(switchComponent).toHaveAttribute('readonly');
+    expect(checkbox).toHaveAttribute('readonly');
+
+    act(() => {
+      userEvent.click(checkbox);
+      userEvent.click(switchComponent);
+    });
+
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    onChangeSpy.mockClear();
   });
 
   it('Nested providers follow their ancestors by default, not the OS', () => {
@@ -110,6 +138,44 @@ describe('Provider', () => {
     expect(provider2.classList.contains('spectrum--light')).toBeTruthy();
   });
 
+  it('Nested providers pass props to children', () => {
+    let onPressSpy = jest.fn();
+    let {getByRole} = render(
+      <Provider theme={theme} isDisabled>
+        <Provider isQuiet>
+          <Button onPress={onPressSpy}>Hello!</Button>
+        </Provider>
+      </Provider>
+    );
+    let button = getByRole('button');
+    triggerPress(button);
+    expect(onPressSpy).not.toHaveBeenCalled();
+    expect(button.classList.contains('spectrum-Button--quiet')).toBeTruthy();
+    onPressSpy.mockClear();
+  });
+
+  it('will render an available color scheme automatically if the previous does not exist on the new theme', () => {
+    matchMedia.useMediaQuery(mediaQueryDark);
+    let {getByTestId} = render(
+      <Provider theme={theme} data-testid="testid1">
+        <Provider
+          theme={{
+            global: {},
+            light: {'spectrum--light': 'spectrum--light'},
+            medium: {'spectrum--medium': 'spectrum--medium'},
+            large: {'spectrum--large': 'spectrum--large'}
+          }}
+          data-testid="testid2">
+          <Button>Hello!</Button>
+        </Provider>
+      </Provider>
+    );
+    let provider1 = getByTestId('testid1');
+    let provider2 = getByTestId('testid2');
+    expect(provider1.classList.contains('spectrum--dark')).toBeTruthy();
+    expect(provider2.classList.contains('spectrum--light')).toBeTruthy();
+  });
+
   it('Provider will rerender if the OS preferred changes and it is on auto', () => {
     matchMedia.useMediaQuery(mediaQueryLight);
     let {getByTestId} = render(
@@ -124,7 +190,10 @@ describe('Provider', () => {
     expect(provider1.classList.contains('spectrum--light')).toBeTruthy();
     expect(provider2.classList.contains('spectrum--light')).toBeTruthy();
 
-    matchMedia.useMediaQuery(mediaQueryDark);
+    act(() => {
+      matchMedia.useMediaQuery(mediaQueryDark);
+    });
+    
     expect(provider1.classList.contains('spectrum--dark')).toBeTruthy();
     expect(provider2.classList.contains('spectrum--dark')).toBeTruthy();
   });

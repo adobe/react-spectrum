@@ -13,8 +13,10 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '../';
 import Add from '@spectrum-icons/workflow/Add';
+import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import {Text} from '@react-spectrum/text';
 
 storiesOf('Button/ActionButton', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -24,39 +26,49 @@ storiesOf('Button/ActionButton', module)
   )
   .add(
     'icon',
-    () => render({icon: <Add />})
+    () => (
+      <Flex gap="size-100">
+        <ActionButton
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}>
+          <Add />
+          <Text>Default</Text>
+        </ActionButton>
+        <ActionButton
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isDisabled>
+          <Text>Disabled</Text>
+          <Add />
+        </ActionButton>
+      </Flex>
+    )
   )
   .add(
     'icon only',
-    () => renderNoText({icon: <Add />})
+    () => (
+      <Flex gap="size-100">
+        <ActionButton
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}>
+          <Add />
+        </ActionButton>
+        <ActionButton
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isDisabled>
+          <Add />
+        </ActionButton>
+      </Flex>
+    )
   )
   .add(
-    'holdAffordance',
-    () => render({holdAffordance: true})
-  )
-  .add(
-    'selected',
-    () => render({isSelected: true})
-  )
-  .add(
-    'selected, isEmphasized',
-    () => render({isEmphasized: true, isSelected: true})
-  )
-  .add(
-    'quiet,',
+    'isQuiet',
     () => render({isQuiet: true})
-  )
-  .add(
-    'quiet, selected',
-    () => render({isQuiet: true, isSelected: true})
-  )
-  .add(
-    'quiet, isEmphasized',
-    () => render({isQuiet: true, isEmphasized: true})
-  )
-  .add(
-    'quiet, selected, isEmphasized',
-    () => render({isQuiet: true, isEmphasized: true, isSelected: true})
   )
   .add(
     'autoFocus',
@@ -65,7 +77,7 @@ storiesOf('Button/ActionButton', module)
 
 function render(props = {}) {
   return (
-    <div>
+    <Flex gap="size-100">
       <ActionButton
         onPress={action('press')}
         onPressStart={action('pressstart')}
@@ -81,24 +93,6 @@ function render(props = {}) {
         {...props}>
         Disabled
       </ActionButton>
-    </div>
-  );
-}
-
-function renderNoText(props = {}) {
-  return (
-    <div>
-      <ActionButton
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        {...props} />
-      <ActionButton
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        isDisabled
-        {...props} />
-    </div>
+    </Flex>
   );
 }

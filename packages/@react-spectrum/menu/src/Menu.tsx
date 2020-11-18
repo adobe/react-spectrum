@@ -10,85 +10,84 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import {CollectionView} from '@react-aria/collections';
-import {Item, ListLayout, Section} from '@react-stately/collections';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import {MenuContext} from './context';
-import {MenuDivider} from './MenuDivider';
-import {MenuHeading} from './MenuHeading';
 import {MenuItem} from './MenuItem';
+import {MenuSection} from './MenuSection';
 import {mergeProps} from '@react-aria/utils';
-import React, {Fragment, useContext, useMemo} from 'react';
+import React, {ReactElement, useContext, useEffect} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenu} from '@react-aria/menu';
-import {useProvider} from '@react-spectrum/provider';
-import {useTreeState} from '@react-stately/tree'; 
+import {useTreeState} from '@react-stately/tree';
 
-export {Item, Section};
-
-export function Menu<T>(props: SpectrumMenuProps<T>) {
-  let {scale} = useProvider();
-  let layout = useMemo(() => 
-    new ListLayout({
-      estimatedRowHeight: scale === 'large' ? 48 : 32,
-      estimatedHeadingHeight: scale === 'large' ? 31 : 25
-    })
-  , [scale]);
-
+function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
   let contextProps = useContext(MenuContext);
   let completeProps = {
-    ...mergeProps(contextProps, props),
-    selectionMode: props.selectionMode || 'single'
+    ...mergeProps(contextProps, props)
   };
 
+  let domRef = useDOMRef(ref);
   let state = useTreeState(completeProps);
-  let {menuProps, menuItemProps} = useMenu(completeProps, state, layout);
+  let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
-  let menuContext = mergeProps(menuProps, completeProps);
+
+  // Sync ref from <MenuTrigger> context with DOM ref.
+  useEffect(() => {
+    if (contextProps && contextProps.ref) {
+      contextProps.ref.current = domRef.current;
+      return () => {
+        contextProps.ref.current = null;
+      };
+    }
+  }, [contextProps, domRef]);
 
   return (
-    <MenuContext.Provider value={menuContext}>
-      <CollectionView
-        {...filterDOMProps(completeProps)}
-        {...styleProps}
-        {...menuProps}
-        focusedKey={state.selectionManager.focusedKey}
-        sizeToFit="height"
-        className={
-          classNames(
-            styles, 
-            'spectrum-Menu',
-            styleProps.className
-          )
-        }
-        layout={layout}
-        collection={state.tree}>
-        {(type, item) => {
-          if (type === 'section') {
-            // Only render the Divider if it isn't the first Heading (extra equality check to guard against rerenders)
-            if (item.key === state.tree.getKeys().next().value) {
-              return (
-                <MenuHeading item={item} />
-              );
-            } else {
-              return (
-                <Fragment>
-                  <MenuDivider />
-                  <MenuHeading item={item} />
-                </Fragment>
-              );
-            }
-          }
-
-          return (   
-            <MenuItem
-              {...menuItemProps}
+    <ul
+      {...menuProps}
+      {...styleProps}
+      ref={domRef}
+      className={
+        classNames(
+          styles,
+          'spectrum-Menu',
+          styleProps.className
+        )
+      }>
+      {[...state.collection].map(item => {
+        if (item.type === 'section') {
+          return (
+            <MenuSection
+              key={item.key}
               item={item}
-              state={state} />
+              state={state}
+              onAction={completeProps.onAction} />
           );
-        }}
-      </CollectionView>
-    </MenuContext.Provider>
+        }
+
+        let menuItem = (
+          <MenuItem
+            key={item.key}
+            item={item}
+            state={state}
+            onAction={completeProps.onAction} />
+        );
+
+        if (item.wrapper) {
+          menuItem = item.wrapper(menuItem);
+        }
+
+        return menuItem;
+      })}
+    </ul>
   );
 }
+
+/**
+ * Menus display a list of actions or options that a user can choose.
+ */
+// forwardRef doesn't support generic parameters, so cast the result to the correct type
+// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
+const _Menu = React.forwardRef(Menu) as <T>(props: SpectrumMenuProps<T> & {ref?: DOMRef<HTMLUListElement>}) => ReactElement;
+export {_Menu as Menu};

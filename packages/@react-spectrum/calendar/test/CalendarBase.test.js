@@ -10,34 +10,35 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render} from '@testing-library/react';
 import {Calendar, RangeCalendar} from '../';
-import {cleanup, fireEvent, render} from '@testing-library/react';
 import {getDaysInMonth} from 'date-fns';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import V2Calendar from '@react/react-spectrum/Calendar';
-
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
 
 let cellFormatter = new Intl.DateTimeFormat('en-US', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
 let headingFormatter = new Intl.DateTimeFormat('en-US', {month: 'long', year: 'numeric'});
 let keyCodes = {'Enter': 13, ' ': 32, 'PageUp': 33, 'PageDown': 34, 'End': 35, 'Home': 36, 'ArrowLeft': 37, 'ArrowUp': 38, 'ArrowRight': 39, 'ArrowDown': 40};
 
 describe('CalendarBase', () => {
-  afterEach(cleanup);
-
-  beforeEach(() => {
+  beforeAll(() => {
+    jest.useFakeTimers();
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
-  afterEach(() => {
+  afterAll(() => {
+    jest.useRealTimers();
     window.requestAnimationFrame.mockRestore();
+  });
+
+  afterEach(() => {
+    // clear any live announcers
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   describe('basics', () => {
@@ -126,7 +127,7 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{}}
       ${'v2 Calendar'}       | ${V2Calendar}    | ${{}}
       ${'v2 range Calendar'} | ${V2Calendar}    | ${{selectionType: 'range'}}
-    `('$Name should focus today if autoFocus is set and there is no selected value', ({Calendar, Name}) => {
+    `('$Name should focus today if autoFocus is set and there is no selected value', ({Name, Calendar}) => {
       const isV2 = Calendar === V2Calendar;
       let {getByRole, getByLabelText} = render(<Calendar autoFocus />);
 
@@ -151,6 +152,39 @@ describe('CalendarBase', () => {
 
       let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
       expect(gridCells.length).toBe(18);
+    });
+
+    it.each`
+      Name                    | Calendar              | props
+      ${'v3 Calendar'}        | ${Calendar}           | ${{defaultValue: new Date(2019, 1, 10), minValue: new Date(2019, 1, 3), maxValue: new Date(2019, 2, 20)}}
+      ${'v3 RangeCalendar'}   | ${RangeCalendar}      | ${{defaultValue: {start: new Date(2019, 1, 10), end: new Date(2019, 1, 15)}, minValue: new Date(2019, 1, 3), maxValue: new Date(2019, 2, 20)}}
+    `('$Name should disable the previous button if outside valid date range', ({Calendar, props}) => {
+      let {getByLabelText} = render(<Calendar {...props} />);
+
+      expect(getByLabelText('Previous')).toHaveAttribute('disabled');
+      expect(getByLabelText('Next')).not.toHaveAttribute('disabled');
+    });
+
+    it.each`
+      Name                    | Calendar              | props
+      ${'v3 Calendar'}        | ${Calendar}           | ${{defaultValue: new Date(2019, 2, 10), minValue: new Date(2019, 1, 3), maxValue: new Date(2019, 2, 20)}}
+      ${'v3 RangeCalendar'}   | ${RangeCalendar}      | ${{defaultValue: {start: new Date(2019, 2, 10), end: new Date(2019, 2, 15)}, minValue: new Date(2019, 1, 3), maxValue: new Date(2019, 2, 20)}}
+    `('$Name should disable the next button if outside valid date range', ({Calendar, props}) => {
+      let {getByLabelText} = render(<Calendar {...props} />);
+
+      expect(getByLabelText('Previous')).not.toHaveAttribute('disabled');
+      expect(getByLabelText('Next')).toHaveAttribute('disabled');
+    });
+
+    it.each`
+      Name                    | Calendar              | props
+      ${'v3 Calendar'}        | ${Calendar}           | ${{defaultValue: new Date(2019, 2, 10), minValue: new Date(2019, 1, 3), maxValue: new Date(2019, 1, 20)}}
+      ${'v3 RangeCalendar'}   | ${RangeCalendar}      | ${{defaultValue: {start: new Date(2019, 2, 10), end: new Date(2019, 2, 15)}, minValue: new Date(2019, 1, 3), maxValue: new Date(2019, 1, 20)}}
+    `('$Name should disable both the next and previous buttons if outside valid date range', ({Calendar, props}) => {
+      let {getByLabelText} = render(<Calendar {...props} />);
+
+      expect(getByLabelText('Previous')).toHaveAttribute('disabled');
+      expect(getByLabelText('Next')).toHaveAttribute('disabled');
     });
 
     it.each`
@@ -196,12 +230,12 @@ describe('CalendarBase', () => {
   describe('labeling', () => {
     it.each`
       Name                   | Calendar         | props
-      ${'v3 Calendar'}       | ${Calendar}      | ${{}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{}}
-      ${'v2 Calendar'}       | ${V2Calendar}    | ${{}}
-      ${'v2 range Calendar'} | ${V2Calendar}    | ${{selectionType: 'range'}}
-    `('$Name should be labeled by month heading by default', ({Calendar, props}) => {
-      let {getByRole} = render(<Calendar {...props} />);
+      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new Date(2019, 5, 5)}}}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new Date(2019, 5, 5), end: new Date(2019, 5, 5)}}}
+      ${'v2 Calendar'}       | ${V2Calendar}    | ${{defaultValue: new Date(2019, 5, 5)}}
+      ${'v2 range Calendar'} | ${V2Calendar}    | ${{defaultValue: new Date(2019, 5, 5), selectionType: 'range'}}
+    `('$Name should be labeled by month heading by default', async ({Calendar, props}) => {
+      let {getByRole} = render(<Calendar  {...props} />);
       let calendar = getByRole('group');
       let heading = getByRole('heading');
       let body = getByRole('grid');
@@ -279,8 +313,9 @@ describe('CalendarBase', () => {
   });
 
   describe('keyboard navigation', () => {
-    function testKeyboard(Calendar, defaultValue, key, value, month, props, opts) {
+    async function testKeyboard(Calendar, defaultValue, key, value, month, props, opts) {
       let isV2 = Calendar === V2Calendar;
+
       // For range calendars, convert the value to a range of one day
       if (Calendar === RangeCalendar) {
         defaultValue = {start: defaultValue, end: defaultValue};
@@ -288,8 +323,8 @@ describe('CalendarBase', () => {
         defaultValue = [defaultValue, defaultValue];
       }
 
-      let {getAllByLabelText, getByRole, getByLabelText} = render(<Calendar defaultValue={defaultValue} autoFocus {...props} />);
-      let grid = getByRole('grid');
+      let {getByRole, getAllByRole, getByLabelText, getAllByLabelText, unmount} = render(<Calendar defaultValue={defaultValue} autoFocus {...props} />);
+      let grid = getAllByRole('grid')[0]; // get by role will see two, role=grid and implicit <table> which also has role=grid
 
       let cell = getAllByLabelText('selected', {exact: false}).filter(cell => cell.role !== 'grid')[0];
       if (isV2) {
@@ -299,7 +334,9 @@ describe('CalendarBase', () => {
         expect(document.activeElement).toBe(cell);
       }
 
-      fireEvent.keyDown(grid, {key, keyCode: keyCodes[key], ...opts});
+      fireEvent.keyDown(document.activeElement, {key, keyCode: keyCodes[key], ...opts});
+      fireEvent.keyUp(document.activeElement, {key, keyCode: keyCodes[key], ...opts});
+
       cell = getByLabelText(value, {exact: false});
       if (isV2) {
         expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
@@ -311,7 +348,12 @@ describe('CalendarBase', () => {
       let heading = getByRole('heading');
       expect(heading).toHaveTextContent(month);
 
-      cleanup();
+      // clear any live announcers
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      unmount();
     }
 
     it.each`
@@ -320,12 +362,12 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{}}
       ${'v2 Calendar'}        | ${V2Calendar}     | ${{}}
       ${'v2 range Calendar'}  | ${V2Calendar}     | ${{selectionType: 'range'}}
-    `('$Name should move the focused date by one day with the left/right arrows', ({Calendar, props}) => {
-      testKeyboard(Calendar, new Date(2019, 5, 5), 'ArrowLeft', 'Tuesday, June 4, 2019', 'June 2019', props);
-      testKeyboard(Calendar, new Date(2019, 5, 5), 'ArrowRight', 'Thursday, June 6, 2019', 'June 2019', props);
+    `('$Name should move the focused date by one day with the left/right arrows', async ({Calendar, props}) => {
+      await testKeyboard(Calendar, new Date(2019, 5, 5), 'ArrowLeft', 'Tuesday, June 4, 2019', 'June 2019', props);
+      await testKeyboard(Calendar, new Date(2019, 5, 5), 'ArrowRight', 'Thursday, June 6, 2019', 'June 2019', props);
 
-      testKeyboard(Calendar, new Date(2019, 5, 1), 'ArrowLeft', 'Friday, May 31, 2019', 'May 2019', props);
-      testKeyboard(Calendar, new Date(2019, 5, 30), 'ArrowRight', 'Monday, July 1, 2019', 'July 2019', props);
+      await testKeyboard(Calendar, new Date(2019, 5, 1), 'ArrowLeft', 'Friday, May 31, 2019', 'May 2019', props);
+      await testKeyboard(Calendar, new Date(2019, 5, 30), 'ArrowRight', 'Monday, July 1, 2019', 'July 2019', props);
     });
 
     it.each`
@@ -334,12 +376,12 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{}}
       ${'v2 Calendar'}        | ${V2Calendar}     | ${{}}
       ${'v2 range Calendar'}  | ${V2Calendar}     | ${{selectionType: 'range'}}
-    `('$Name should move the focused date by one week with the up/down arrows', ({Calendar, props}) => {
-      testKeyboard(Calendar, new Date(2019, 5, 12), 'ArrowUp', 'Wednesday, June 5, 2019', 'June 2019', props);
-      testKeyboard(Calendar, new Date(2019, 5, 12), 'ArrowDown', 'Wednesday, June 19, 2019', 'June 2019', props);
+    `('$Name should move the focused date by one week with the up/down arrows', async ({Calendar, props}) => {
+      await testKeyboard(Calendar, new Date(2019, 5, 12), 'ArrowUp', 'Wednesday, June 5, 2019', 'June 2019', props);
+      await testKeyboard(Calendar, new Date(2019, 5, 12), 'ArrowDown', 'Wednesday, June 19, 2019', 'June 2019', props);
 
-      testKeyboard(Calendar, new Date(2019, 5, 5), 'ArrowUp', 'Wednesday, May 29, 2019', 'May 2019', props);
-      testKeyboard(Calendar, new Date(2019, 5, 26), 'ArrowDown', 'Wednesday, July 3, 2019', 'July 2019', props);
+      await testKeyboard(Calendar, new Date(2019, 5, 5), 'ArrowUp', 'Wednesday, May 29, 2019', 'May 2019', props);
+      await testKeyboard(Calendar, new Date(2019, 5, 26), 'ArrowDown', 'Wednesday, July 3, 2019', 'July 2019', props);
     });
 
     it.each`
@@ -348,9 +390,9 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{}}
       ${'v2 Calendar'}        | ${V2Calendar}     | ${{}}
       ${'v2 range Calendar'}  | ${V2Calendar}     | ${{selectionType: 'range'}}
-    `('$Name should move the focused date to the start or end of the month with the home/end keys', ({Calendar, props}) => {
-      testKeyboard(Calendar, new Date(2019, 5, 12), 'Home', 'Saturday, June 1, 2019', 'June 2019', props);
-      testKeyboard(Calendar, new Date(2019, 5, 12), 'End', 'Sunday, June 30, 2019', 'June 2019', props);
+    `('$Name should move the focused date to the start or end of the month with the home/end keys', async ({Calendar, props}) => {
+      await testKeyboard(Calendar, new Date(2019, 5, 12), 'Home', 'Saturday, June 1, 2019', 'June 2019', props);
+      await testKeyboard(Calendar, new Date(2019, 5, 12), 'End', 'Sunday, June 30, 2019', 'June 2019', props);
     });
 
     it.each`
@@ -359,9 +401,9 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{}}
       ${'v2 Calendar'}        | ${V2Calendar}     | ${{}}
       ${'v2 range Calendar'}  | ${V2Calendar}     | ${{selectionType: 'range'}}
-    `('$Name should move the focused date by one month with the page up/page down keys', ({Calendar, props}) => {
-      testKeyboard(Calendar, new Date(2019, 5, 5), 'PageUp', 'Sunday, May 5, 2019', 'May 2019', props);
-      testKeyboard(Calendar, new Date(2019, 5, 5), 'PageDown', 'Friday, July 5, 2019', 'July 2019', props);
+    `('$Name should move the focused date by one month with the page up/page down keys', async ({Calendar, props}) => {
+      await testKeyboard(Calendar, new Date(2019, 5, 5), 'PageUp', 'Sunday, May 5, 2019', 'May 2019', props);
+      await testKeyboard(Calendar, new Date(2019, 5, 5), 'PageDown', 'Friday, July 5, 2019', 'July 2019', props);
     });
 
     // v2 tests disabled until next release
@@ -375,9 +417,9 @@ describe('CalendarBase', () => {
       Name                    | Calendar          | props
       ${'v3 Calendar'}        | ${Calendar}       | ${{}}
       ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{}}
-    `('$Name should move the focused date by one year with the shift + page up/shift + page down keys', ({Calendar, props}) => {
-      testKeyboard(Calendar, new Date(2019, 5, 5), 'PageUp', 'Tuesday, June 5, 2018', 'June 2018', props, {shiftKey: true});
-      testKeyboard(Calendar, new Date(2019, 5, 5), 'PageDown', 'Friday, June 5, 2020', 'June 2020', props, {shiftKey: true});
+    `('$Name should move the focused date by one year with the shift + page up/shift + page down keys', async ({Calendar, props}) => {
+      await testKeyboard(Calendar, new Date(2019, 5, 5), 'PageUp', 'Tuesday, June 5, 2018', 'June 2018', props, {shiftKey: true});
+      await testKeyboard(Calendar, new Date(2019, 5, 5), 'PageDown', 'Friday, June 5, 2020', 'June 2020', props, {shiftKey: true});
     });
 
     it.each`
@@ -386,17 +428,17 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{minValue: new Date(2019, 5, 2), maxValue: new Date(2019, 5, 8)}}
       ${'v2 Calendar'}        | ${V2Calendar}     | ${{min: new Date(2019, 5, 5), max: new Date(2019, 5, 8)}}
       ${'v2 range Calendar'}  | ${V2Calendar}     | ${{selectionType: 'range', min: new Date(2019, 5, 5), max: new Date(2019, 5, 8)}}
-    `('$Name should not move the focused date outside the valid range', ({Calendar, props}) => {
-      testKeyboard(Calendar, new Date(2019, 5, 2), 'ArrowLeft', 'Sunday, June 2, 2019 selected', 'June 2019', props);
-      testKeyboard(Calendar, new Date(2019, 5, 8), 'ArrowRight', 'Saturday, June 8, 2019 selected', 'June 2019', props);
-      testKeyboard(Calendar, new Date(2019, 5, 5), 'ArrowUp', 'Wednesday, June 5, 2019 selected', 'June 2019', props);
-      testKeyboard(Calendar, new Date(2019, 5, 5), 'ArrowDown', 'Wednesday, June 5, 2019 selected', 'June 2019', props);
-      testKeyboard(Calendar, new Date(2019, 5, 5), 'Home', 'Wednesday, June 5, 2019 selected', 'June 2019', props);
-      testKeyboard(Calendar, new Date(2019, 5, 5), 'End', 'Wednesday, June 5, 2019 selected', 'June 2019', props);
-      testKeyboard(Calendar, new Date(2019, 5, 5), 'PageUp', 'Wednesday, June 5, 2019 selected', 'June 2019', props);
-      testKeyboard(Calendar, new Date(2019, 5, 5), 'PageDown', 'Wednesday, June 5, 2019 selected', 'June 2019', props);
-      testKeyboard(Calendar, new Date(2019, 5, 5), 'PageUp', 'Wednesday, June 5, 2019 selected', 'June 2019', props, {shiftKey: true});
-      testKeyboard(Calendar, new Date(2019, 5, 5), 'PageDown', 'Wednesday, June 5, 2019 selected', 'June 2019', props, {shiftKey: true});
+    `('$Name should not move the focused date outside the valid range', async ({Calendar, props}) => {
+      await testKeyboard(Calendar, new Date(2019, 5, 2), 'ArrowLeft', 'Sunday, June 2, 2019 selected', 'June 2019', props);
+      await testKeyboard(Calendar, new Date(2019, 5, 8), 'ArrowRight', 'Saturday, June 8, 2019 selected', 'June 2019', props);
+      await testKeyboard(Calendar, new Date(2019, 5, 5), 'ArrowUp', 'Wednesday, June 5, 2019 selected', 'June 2019', props);
+      await testKeyboard(Calendar, new Date(2019, 5, 5), 'ArrowDown', 'Wednesday, June 5, 2019 selected', 'June 2019', props);
+      await testKeyboard(Calendar, new Date(2019, 5, 5), 'Home', 'Wednesday, June 5, 2019 selected', 'June 2019', props);
+      await testKeyboard(Calendar, new Date(2019, 5, 5), 'End', 'Wednesday, June 5, 2019 selected', 'June 2019', props);
+      await testKeyboard(Calendar, new Date(2019, 5, 5), 'PageUp', 'Wednesday, June 5, 2019 selected', 'June 2019', props);
+      await testKeyboard(Calendar, new Date(2019, 5, 5), 'PageDown', 'Wednesday, June 5, 2019 selected', 'June 2019', props);
+      await testKeyboard(Calendar, new Date(2019, 5, 5), 'PageUp', 'Wednesday, June 5, 2019 selected', 'June 2019', props, {shiftKey: true});
+      await testKeyboard(Calendar, new Date(2019, 5, 5), 'PageDown', 'Wednesday, June 5, 2019 selected', 'June 2019', props, {shiftKey: true});
     });
   });
 
@@ -414,7 +456,7 @@ describe('CalendarBase', () => {
       );
 
       let headers = getAllByRole('columnheader');
-      expect(headers[0]).toHaveTextContent('Su');
+      expect(headers[0]).toHaveTextContent('S');
 
       rerender(
         <Provider theme={theme} locale="de-DE">
@@ -423,7 +465,7 @@ describe('CalendarBase', () => {
       );
 
       headers = getAllByRole('columnheader');
-      expect(headers[0]).toHaveTextContent('Mo');
+      expect(headers[0]).toHaveTextContent('M');
     });
 
     it.each`

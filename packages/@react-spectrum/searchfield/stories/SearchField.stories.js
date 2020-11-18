@@ -51,6 +51,11 @@ storiesOf('SearchField', module)
     {info}
   )
   .add(
+    'isReadOnly',
+    () => renderSearchLandmark(render({defaultValue: 'React', isReadOnly: true})),
+    {info}
+  )
+  .add(
     'isRequired: true',
     () => render({isRequired: true})
   )
@@ -70,6 +75,16 @@ storiesOf('SearchField', module)
   .add(
     'isQuiet, icon: refresh',
     () => renderSearchLandmark(render({defaultValue: 'React', icon: <Refresh />, isQuiet: true})),
+    {info}
+  )
+  .add(
+    'validationState=invalid',
+    () => renderSearchLandmark(render({defaultValue: 'React', validationState: 'invalid'})),
+    {info}
+  )
+  .add(
+    'validationState=valid',
+    () => renderSearchLandmark(render({defaultValue: 'React', validationState: 'valid'})),
     {info}
   )
   .add(

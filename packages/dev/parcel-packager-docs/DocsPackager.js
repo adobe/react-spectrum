@@ -11,6 +11,7 @@
  */
 
 const {Packager} = require('@parcel/plugin');
+const v8 = require('v8');
 
 module.exports = new Packager({
   async package({bundle, bundleGraph, options}) {
@@ -24,7 +25,7 @@ module.exports = new Packager({
     let code = new Map(await Promise.all(promises));
     let cache = new Map();
     try {
-      var result = processAsset(bundle.getMainEntry());
+      var result = processAsset(bundle.getEntryAssets()[0]);
     } catch (err) {
       console.log(err.stack);
     }
@@ -54,102 +55,117 @@ module.exports = new Packager({
 
       let deps = bundleGraph.getDependencies(asset);
       for (let dep of deps) {
-        if (dep.symbols.get('*') === '*') {
-          let resolved = bundleGraph.getDependencyResolution(dep);
+        let wildcard = dep.symbols.get('*');
+        if (wildcard && wildcard.local === '*') {
+          let resolved = bundleGraph.getDependencyResolution(dep, bundle);
           Object.assign(res, processAsset(resolved));
         }
       }
     }
 
     function processCode(asset, obj) {
-      let res = {};
       let application;
       let paramStack = [];
-      for (let exp in obj) {
-        res[exp] = walk(obj[exp], (t, k, recurse) => {
-          if (t && t.type === 'reference') {
-            let dep = bundleGraph.getDependencies(asset).find(d => d.moduleSpecifier === t.specifier);
-            let res = bundleGraph.getDependencyResolution(dep);
-            let result = res ? processAsset(res)[t.imported] : null;
-            if (result) {
-              t = result;
-            } else {
-              return {
-                type: 'identifier',
-                name: t.local
-              };
-            }
-          }
-
-          if (t && t.type === 'application') {
-            application = recurse(t.typeParameters);
-          }
-
-          let hasParams = false;
-          if (t && (t.type === 'alias' || t.type === 'interface') && t.typeParameters && application) {
-            let params = Object.assign({}, paramStack[paramStack.length - 1]);
-            t.typeParameters.forEach((p, i) => {
-              let v = application[i] || p.default;
-              params[p.name] = v;
-            });
-
-            paramStack.push(params);
-            hasParams = true;
-          }
-
-          t = recurse(t);
-
-          if (hasParams) {
-            paramStack.pop();
-          }
-
-          let params = paramStack[paramStack.length - 1];
-          if (t && t.type === 'application') {
-            application = null;
-            if (t.base.type !== 'identifier') {
-              return t.base;
-            }
-          }
-
-          if (t && t.type === 'identifier' && params && params[t.name]) {
-            return params[t.name];
-          }
-
-          if (t && t.type === 'interface') {
-            let merged = mergeInterface(t);
-            if (!nodes[t.id]) {
-              nodes[t.id] = merged;
-            }
-
-            if (!k || k === 'props' || k === 'extends' || k === 'base') {
-              return merged;
-            }
-
+      let keyStack = [];
+      return walk(obj, (t, k, recurse) => {
+        if (t && t.type === 'reference') {
+          let dep = bundleGraph.getDependencies(asset).find(d => d.moduleSpecifier === t.specifier);
+          let res = bundleGraph.getDependencyResolution(dep, bundle);
+          let result = res ? processAsset(res)[t.imported] : null;
+          if (result) {
+            t = result;
+          } else {
             return {
-              type: 'link',
-              id: t.id
+              type: 'identifier',
+              name: t.local
             };
           }
+        }
 
-          if (t && t.type === 'alias') {
-            if (k === 'base') {
-              return t.value;
-            }
+        if (t && t.type === 'application') {
+          application = recurse(t.typeParameters);
+        }
 
-            if (!nodes[t.id]) {
-              nodes[t.id] = t;
-            }
+        let hasParams = false;
+        if (t && (t.type === 'alias' || t.type === 'interface') && t.typeParameters && application) {
+          let params = Object.assign({}, paramStack[paramStack.length - 1]);
+          t.typeParameters.forEach((p, i) => {
+            let v = application[i] || p.default;
+            params[p.name] = v;
+          });
 
-            return {
-              type: 'link',
-              id: t.id
-            };
+          paramStack.push(params);
+          hasParams = true;
+        }
+
+        keyStack.push(k);
+        t = recurse(t);
+        keyStack.pop();
+
+        if (hasParams) {
+          paramStack.pop();
+        }
+
+        let params = paramStack[paramStack.length - 1];
+        if (t && t.type === 'application') {
+          application = null;
+          if (t.base && t.base.type !== 'identifier' && t.base.type !== 'link') {
+            return t.base;
+          }
+        }
+
+        if (t && t.type === 'identifier' && t.name === 'Omit' && application) {
+          return omit(application[0], application[1]);
+        }
+
+        if (t && t.type === 'identifier' && params && params[t.name]) {
+          return params[t.name];
+        }
+
+        if (t && t.type === 'interface') {
+          let merged = mergeInterface(t);
+          if (!nodes[t.id]) {
+            nodes[t.id] = merged;
           }
 
-          return t;
-        });
-      }
-      return res;
+          // Return merged interface if the parent is a component or an interface we're extending.
+          if (!k || k === 'props' || k === 'extends') {
+            return merged;
+          }
+
+          // If the key is "base", then it came from a generic type application, so we need to
+          // check one level above. If that was a component or extended interface, return the
+          // merged interface.
+          let lastKey = keyStack[keyStack.length - 1];
+          if (k === 'base' && (lastKey === 'props' || lastKey === 'extends')) {
+            return merged;
+          }
+
+          // Otherwise return a type link.
+          return {
+            type: 'link',
+            id: t.id
+          };
+        }
+
+        if (t && t.type === 'alias') {
+          let lastKey = keyStack[keyStack.length - 1];
+          if (k === 'base' && (lastKey === 'props' || lastKey === 'extends')) {
+            return t.value;
+          }
+
+          if (!nodes[t.id]) {
+            nodes[t.id] = t;
+          }
+
+          return {
+            type: 'link',
+            id: t.id
+          };
+        }
+
+        return t;
+      });
     }
 
     let links = {};
@@ -157,7 +173,8 @@ module.exports = new Packager({
 
     function walkLinks(obj) {
       walk(obj, (t, k, recurse) => {
-        if (t && t.type === 'link') {
+        // don't follow the link if it's already in links, that's circular
+        if (t && t.type === 'link' && !links[t.id]) {
           links[t.id] = nodes[t.id];
           walkLinks(nodes[t.id]);
         }
@@ -171,26 +188,56 @@ module.exports = new Packager({
 });
 
 async function parse(asset) {
-  let code = await asset.getCode();
-  return [asset.id, JSON.parse(code)];
+  let buffer = await asset.getBuffer();
+  return [asset.id, v8.deserialize(buffer)];
 }
+// cache things in pre-visit order so the references exist
+function walk(obj, fn) {
+  // cache so we don't recompute
+  let cache = new Map();
+  // circular is to make sure we don't traverse over an object we visited earlier in the recursion
+  let circular = new Set();
 
-function walk(obj, fn, k = null) {
-  let recurse = (obj) => {
-    if (Array.isArray(obj)) {
-      return obj.map((item, i) => walk(item, fn, k));
-    } else if (obj && typeof obj === 'object') {
-      let res = {};
-      for (let key in obj) {
-        res[key] = walk(obj[key], fn, key);
+  let visit = (obj, fn, k = null) => {
+    let recurse = (obj) => {
+      if (circular.has(obj)) {
+        return {
+          type: 'link',
+          id: obj.id
+        };
       }
-      return res;
-    } else {
-      return obj;
-    }
+      if (cache.has(obj)) {
+        return cache.get(obj);
+      }
+      if (Array.isArray(obj)) {
+        let resultArray = [];
+        cache.set(obj, resultArray);
+        obj.forEach((item, i) => resultArray[i] = visit(item, fn, k));
+        return resultArray;
+      } else if (obj && typeof obj === 'object') {
+        circular.add(obj);
+        let res = {};
+        cache.set(obj, res);
+        for (let key in obj) {
+          res[key] = visit(obj[key], fn, key);
+        }
+        circular.delete(obj);
+        return res;
+      } else {
+        // don't cache things like null/undefined
+        return obj;
+      }
+    };
+
+    return fn(obj, k, recurse);
   };
 
-  return fn(obj, k, recurse);
+  let res = {};
+  for (let k in obj) {
+    res[k] = visit(obj[k], fn);
+  }
+
+  return res;
 }
 
 function mergeInterface(obj) {
@@ -209,7 +256,8 @@ function mergeInterface(obj) {
     name: obj.name,
     properties,
     typeParameters: obj.typeParameters,
-    extends: []
+    extends: [],
+    description: obj.description
   };
 }
 
@@ -219,4 +267,37 @@ function merge(a, b) {
       a[key] = b[key];
     }
   }
+}
+
+function omit(obj, toOmit) {
+  if (obj.type === 'interface' || obj.type === 'object') {
+    let keys = new Set();
+    if (toOmit.type === 'string' && toOmit.value) {
+      keys.add(toOmit.value);
+    } else if (toOmit.type === 'union') {
+      for (let e of toOmit.elements) {
+        if (e.type === 'string' && e.value) {
+          keys.add(e.value);
+        }
+      }
+    }
+
+    if (keys.size === 0) {
+      return obj;
+    }
+
+    let properties = {};
+    for (let key in obj.properties) {
+      if (!keys.has(key)) {
+        properties[key] = obj.properties[key];
+      }
+    }
+
+    return {
+      ...obj,
+      properties
+    };
+  }
+
+  return obj;
 }

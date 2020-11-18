@@ -11,8 +11,8 @@
  */
 
 import {Checkbox} from '../';
-import {cleanup, render} from '@testing-library/react';
 import React from 'react';
+import {render} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import V2Checkbox from '@react/react-spectrum/Checkbox';
 
@@ -22,7 +22,6 @@ describe('Checkbox', function () {
 
   afterEach(() => {
     onChangeSpy.mockClear();
-    cleanup();
   });
 
   it.each`
@@ -137,23 +136,39 @@ describe('Checkbox', function () {
 
   it.each`
     Name                       | Component      | props
+    ${'Checkbox'}              | ${Checkbox}    | ${{onChange: onChangeSpy, validationState: 'invalid', 'aria-errormessage': 'test'}}
+  `('$Name passes through aria-errormessage', function ({Component, props}) {
+    let {getByRole} = render(<Component {...props}>Click Me</Component>);
+
+    let checkbox = getByRole('checkbox');
+    expect(checkbox).toHaveAttribute('aria-invalid', 'true');
+    expect(checkbox).toHaveAttribute('aria-errormessage', 'test');
+  });
+
+  it.each`
+    Name                       | Component      | props
     ${'Checkbox'}              | ${Checkbox}    | ${{onChange: onChangeSpy, isIndeterminate: true}}
     ${'Checkbox isEmphasized'} | ${Checkbox}    | ${{onChange: onChangeSpy, isIndeterminate: true, isEmphasized: true}}
     ${'V2Checkbox'}            | ${V2Checkbox}  | ${{onChange: onChangeSpy, indeterminate: true}}
     ${'V2Checkbox quiet'}      | ${V2Checkbox}  | ${{onChange: onChangeSpy, indeterminate: true, quiet: true}}
-  `('$Name can be indeterminate (this one is weird) it is controlled, but not via isSelected', function ({Component, props}) {
+  `('$Name can be indeterminate', function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
     expect(checkbox).toHaveAttribute('aria-checked', 'mixed');
+    expect(checkbox.indeterminate).toBeTruthy();
     expect(checkbox.checked).toBeFalsy();
 
     userEvent.click(checkbox);
+    expect(checkbox).toHaveAttribute('aria-checked', 'mixed');
+    expect(checkbox.indeterminate).toBeTruthy();
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy).toHaveBeenCalled();
     expect(onChangeSpy.mock.calls[0][0]).toBe(true);
 
     userEvent.click(checkbox);
+    expect(checkbox).toHaveAttribute('aria-checked', 'mixed');
+    expect(checkbox.indeterminate).toBeTruthy();
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy.mock.calls[1][0]).toBe(false);
 
@@ -170,15 +185,56 @@ describe('Checkbox', function () {
     expect(checkbox).toHaveAttribute('aria-label', props['aria-label']);
   });
 
-  /* This one is different, aria-hidden is getting applied to the label, not to the input, because it's the root */
   it.each`
     Name                       | Component      | props
-    ${'Checkbox'}              | ${Checkbox}    | ${{onChange: onChangeSpy, 'aria-hidden': true, 'data-testid': 'target'}}
+    ${'Checkbox'}              | ${Checkbox}    | ${{onChange: onChangeSpy, 'aria-labelledby': 'test'}}
+    ${'V2Checkbox'}            | ${V2Checkbox}  | ${{onChange: onChangeSpy, 'aria-labelledby': 'test'}}
+  `('$Name supports aria-labelledby', function ({Component, props}) {
+    let {getByRole} = render(
+      <>
+        <span id="test">Test</span>
+        <Component {...props} />
+      </>
+    );
+
+    let checkbox = getByRole('checkbox');
+    expect(checkbox).toHaveAttribute('aria-labelledby', props['aria-labelledby']);
+  });
+
+  it.each`
+    Name                       | Component      | props
+    ${'Checkbox'}              | ${Checkbox}    | ${{onChange: onChangeSpy, 'aria-describedby': 'test'}}
+    ${'V2Checkbox'}            | ${V2Checkbox}  | ${{onChange: onChangeSpy, 'aria-describedby': 'test'}}
+  `('$Name supports aria-describedby', function ({Component, props}) {
+    let {getByRole} = render(
+      <>
+        <span id="test">Test</span>
+        <Component {...props}>Hi</Component>
+      </>
+    );
+
+    let checkbox = getByRole('checkbox');
+    expect(checkbox).toHaveAttribute('aria-describedby', props['aria-describedby']);
+  });
+
+  it.each`
+    Name                       | Component      | props
+    ${'Checkbox'}              | ${Checkbox}    | ${{onChange: onChangeSpy, 'data-testid': 'target'}}
   `('$Name supports additional props', function ({Component, props}) {
     let {getByTestId} = render(<Component {...props}>Click Me</Component>);
 
     let checkboxLabel = getByTestId('target');
-    expect(checkboxLabel).toHaveAttribute('aria-hidden', 'true');
+    expect(checkboxLabel).toBeInTheDocument();
+  });
+
+  it.each`
+    Name                       | Component      | props
+    ${'Checkbox'}              | ${Checkbox}    | ${{onChange: onChangeSpy, excludeFromTabOrder: true}}
+  `('$Name supports excludeFromTabOrder', function ({Component, props}) {
+    let {getByRole} = render(<Component {...props}>Hi</Component>);
+
+    let checkbox = getByRole('checkbox');
+    expect(checkbox).toHaveAttribute('tabIndex', '-1');
   });
 
   it.each`

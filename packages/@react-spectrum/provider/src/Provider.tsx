@@ -10,16 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import classNames from 'classnames';
-import configureTypekit from './configureTypekit';
+import clsx from 'clsx';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, shouldKeepSpectrumClassNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {Provider as I18nProvider, useLocale} from '@react-aria/i18n';
-import {ModalProvider, useModalProvider} from '@react-aria/dialog';
+import {filterDOMProps} from '@react-aria/utils';
+import {I18nProvider, useLocale} from '@react-aria/i18n';
+import {ModalProvider, useModalProvider} from '@react-aria/overlays';
 import {ProviderContext, ProviderProps} from '@react-types/provider';
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
+import {
+  shouldKeepSpectrumClassNames,
+  useDOMRef,
+  useStyleProps
+} from '@react-spectrum/utils';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
-import {ToastProvider} from '@react-spectrum/toast';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/index.css';
 import {useColorScheme, useScale} from './mediaQueries';
 // @ts-ignore
@@ -38,15 +41,15 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let autoColorScheme = useColorScheme(theme, defaultColorScheme);
   let autoScale = useScale(theme);
   let {locale: prevLocale} = useLocale();
+  // if the new theme doesn't support the prevColorScheme, we must resort to the auto
+  let usePrevColorScheme = !!theme[prevColorScheme];
 
   // importance of color scheme props > parent > auto:(OS > default > omitted)
   let {
-    colorScheme = prevColorScheme || autoColorScheme,
+    colorScheme = usePrevColorScheme ? prevColorScheme : autoColorScheme,
     scale = prevContext ? prevContext.scale : autoScale,
-    typekitId,
     locale = prevContext ? prevLocale : null,
     children,
-    toastPlacement,
     isQuiet,
     isEmphasized,
     isDisabled,
@@ -56,35 +59,33 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     ...otherProps
   } = props;
 
-  // Merge options with parent provider
-  let context = Object.assign({}, prevContext, {
+  // select only the props with values so undefined props don't overwrite prevContext values
+  let currentProps = {
     version,
     theme,
     colorScheme,
     scale,
-    toastPlacement,
     isQuiet,
     isEmphasized,
     isDisabled,
     isRequired,
     isReadOnly,
     validationState
-  });
+  };
+  let filteredProps = {};
+  Object.entries(currentProps).forEach(([key, value]) => value !== undefined && (filteredProps[key] = value));
 
-  useEffect(() => {
-    configureTypekit(typekitId);
-  }, [typekitId]);
+  // Merge options with parent provider
+  let context = Object.assign({}, prevContext, filteredProps);
 
   // Only wrap in a DOM node if the theme, colorScheme, or scale changed
   let contents = children;
   let domProps = filterDOMProps(otherProps);
   let {styleProps} = useStyleProps(otherProps);
-  if (!prevContext || theme !== prevContext.theme || colorScheme !== prevContext.colorScheme || scale !== prevContext.scale || Object.keys(domProps).length > 0 || otherProps.UNSAFE_className || Object.keys(styleProps.style).length > 0) {
+  if (!prevContext || props.locale || theme !== prevContext.theme || colorScheme !== prevContext.colorScheme || scale !== prevContext.scale || Object.keys(domProps).length > 0 || otherProps.UNSAFE_className || Object.keys(styleProps.style).length > 0) {
     contents = (
-      <ProviderWrapper {...props} ref={ref}>
-        <ToastProvider>
-          {contents}
-        </ToastProvider>
+      <ProviderWrapper {...props} UNSAFE_style={{isolation: !prevContext ? 'isolate' : undefined, ...styleProps.style}} ref={ref}>
+        {contents}
       </ProviderWrapper>
     );
   }
@@ -100,10 +101,19 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
+/**
+ * Provider is the container for all React Spectrum applications.
+ * It defines the theme, locale, and other application level settings,
+ * and can also be used to provide common properties to a group of components.
+ */
 let _Provider = React.forwardRef(Provider);
 export {_Provider as Provider};
 
-const ProviderWrapper = React.forwardRef(function ProviderWrapper({children, ...otherProps}: ProviderProps, ref: DOMRef<HTMLDivElement>) {
+const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
+  let {
+    children,
+    ...otherProps
+  } = props;
   let {locale, direction} = useLocale();
   let {theme, colorScheme, scale} = useProvider();
   let {modalProviderProps} = useModalProvider();
@@ -113,7 +123,7 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper({children, ...
   let themeKey = Object.keys(theme[colorScheme])[0];
   let scaleKey = Object.keys(theme[scale])[0];
 
-  let className = classNames(
+  let className = clsx(
     styleProps.className,
     styles['spectrum'],
     typographyStyles['spectrum'],
@@ -128,12 +138,33 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper({children, ...
     }
   );
 
+  let style = {
+    ...styleProps.style,
+    // This ensures that browser native UI like scrollbars are rendered in the right color scheme.
+    // See https://web.dev/color-scheme/.
+    colorScheme: props.colorScheme ?? Object.keys(theme).filter(k => k === 'light' || k === 'dark').join(' ')
+  };
+
+  let hasWarned = useRef(false);
+  useEffect(() => {
+    if (direction && domRef.current) {
+      let closestDir = domRef.current.parentElement.closest('[dir]');
+      let dir = closestDir && closestDir.getAttribute('dir');
+      if (dir && dir !== direction && !hasWarned.current) {
+        console.warn(`Language directions cannot be nested. ${direction} inside ${dir}.`);
+        hasWarned.current = true;
+      }
+    }
+  }, [direction, domRef, hasWarned]);
+
+
   return (
     <div
       {...filterDOMProps(otherProps)}
       {...styleProps}
       {...modalProviderProps}
       className={className}
+      style={style}
       lang={locale}
       dir={direction}
       ref={domRef}>

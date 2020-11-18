@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import dark from '@adobe/spectrum-css-temp/vars/spectrum-dark.css';
+/// <reference types="css-module-types" />
+
+import darkest from '@adobe/spectrum-css-temp/vars/spectrum-darkest.css';
 import global from '@adobe/spectrum-css-temp/vars/spectrum-global.css';
 import large from '@adobe/spectrum-css-temp/vars/spectrum-large.css';
 import light from '@adobe/spectrum-css-temp/vars/spectrum-light.css';
@@ -20,7 +22,7 @@ import {Theme} from '@react-types/provider';
 export let theme: Theme = {
   global,
   light,
-  dark,
+  dark: darkest,
   medium,
   large
 };

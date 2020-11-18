@@ -2,71 +2,90 @@ version: 2.1
 orbs:
   azure-cli: circleci/azure-cli@1.1.0
 jobs:
-  build:
+  install:
     docker:
-      - image: circleci/node:12.10
+      - image: circleci/node:12
+    resource_class: large
 
-    working_directory: ~/react-spectrum-v3
+    working_directory: ~/react-spectrum
     steps:
       - checkout
       - restore_cache:
-          key: yarn-cache-{{ checksum "yarn.lock" }}
+          key: rsp-yarn-{{ checksum "yarn.lock" }}
 
       - run:
           name: Write npmrc
           command: |
-            cp .circleci/.npmrc .npmrc
+            if [ $NPM_PASSWORD ]; then
+              cp .circleci/.npmrc .npmrc
+            fi
 
       - run:
           name: build
           command: |
-            make adobe_setup
+            if [ $NPM_PASSWORD ]; then
+              make adobe_setup
+            fi
             yarn --pure-lockfile
 
       - save_cache:
          paths:
            - node_modules
-         key: yarn-cache-{{ checksum "yarn.lock" }}
+         key: rsp-yarn-{{ checksum "yarn.lock" }}
 
       - save_cache:
           paths:
-            - ~/react-spectrum-v3
-          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+            - ~/react-spectrum
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
   test:
     docker:
-      - image: circleci/node:12.10
+      - image: circleci/node:12
 
-    working_directory: ~/react-spectrum-v3
+    working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: test
-          command: make ci-test
+          command: yarn ci-test
+
+  test_17:
+    docker:
+      - image: circleci/node:12
+
+    working_directory: ~/react-spectrum
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: test
+          command: yarn ci-test-17
 
   lint:
     docker:
-      - image: circleci/node:12.10
+      - image: circleci/node:12
 
-    working_directory: ~/react-spectrum-v3
+    working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: lint
-          command: make lint
+          command: yarn lint
 
   storybook:
     docker:
-      - image: circleci/node:12.10
+      - image: circleci/node:12
+    resource_class: large
 
-    working_directory: ~/react-spectrum-v3
+    working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: build storybook
@@ -76,18 +95,58 @@ jobs:
           root: dist
           paths:
             - '*/storybook/'
-  docs:
-    docker:
-      - image: circleci/node:12.10
 
-    working_directory: ~/react-spectrum-v3
+  storybook-17:
+    docker:
+      - image: circleci/node:12
+    resource_class: large
+
+    working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build storybook-17
+          command: make storybook-17
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - '*/storybook-17/'
+
+  docs:
+    docker:
+      - image: circleci/node:12
+    resource_class: xlarge
+
+    working_directory: ~/react-spectrum
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: build docs
           command: make website
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - '*/docs/'
+
+  docs-production:
+    docker:
+      - image: circleci/node:12
+    resource_class: large
+
+    working_directory: ~/react-spectrum
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build docs
+          command: make website-production
 
       - persist_to_workspace:
           root: dist
@@ -101,44 +160,108 @@ jobs:
           at: /tmp/dist
       - run:
           name: deploy
-          command: az storage blob upload-batch -d reactspectrum -s /tmp/dist --account-name reactspectrum
+          command: |
+            if [ $AZURE_STORAGE_SAS_TOKEN ]; then
+              az storage blob upload-batch -d reactspectrum -s /tmp/dist --account-name reactspectrum
+            fi
+
+  deploy-production:
+    executor: azure-cli/azure-docker
+    steps:
+      - attach_workspace:
+          at: /tmp/dist
+      - run:
+          name: deploy
+          command: az storage blob upload-batch -d "\$web" -s /tmp/dist/production/docs --account-name reactspectrum
 
   comment:
     docker:
-      - image: circleci/node:12.10
-    working_directory: ~/react-spectrum-v3
+      - image: circleci/node:12
+    working_directory: ~/react-spectrum
     steps:
       - checkout
       - restore_cache:
-          key: yarn-cache-{{ checksum "yarn.lock" }}
+          key: rsp-yarn-{{ checksum "yarn.lock" }}
 
       - run:
           name: comment on pr
-          command: node .circleci/comment.js
+          command: |
+            if [ $GITHUB_TOKEN ]; then
+              node .circleci/comment.js
+            fi
+
+  publish-nightly:
+    docker:
+      - image: circleci/node:12
+    resource_class: xlarge
+    working_directory: ~/react-spectrum
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Authenticate with npm
+          command: |
+            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+            git update-index --skip-worktree .npmrc
+      - run:
+          name: Publish
+          command: make publish-nightly
 
 workflows:
   version: 2
-  test:
+  commit:
     jobs:
-      - build
+      - install
       - test:
           requires:
-            - build
+            - install
+      - test_17:
+          requires:
+            - install
       - lint:
           requires:
-            - build
+            - install
       - storybook:
           requires:
-            - build
+            - install
+      - storybook-17:
+          requires:
+            - install
       - docs:
           requires:
-            - build
+            - install
+      - docs-production:
+          filters:
+            branches:
+              only: main
+          requires:
+            - install
       - deploy:
           requires:
             - lint
             - test
+            - test_17
             - storybook
+            - storybook-17
             - docs
+      - deploy-production:
+          filters:
+            branches:
+              only: main
+          requires:
+            - docs-production
       - comment:
           requires:
             - deploy
+
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 9 * * *" # 02:00 PDT
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - install
+      - publish-nightly

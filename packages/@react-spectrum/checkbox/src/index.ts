@@ -10,4 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+/// <reference types="css-module-types" />
+
 export * from './Checkbox';
+export * from './CheckboxGroup';

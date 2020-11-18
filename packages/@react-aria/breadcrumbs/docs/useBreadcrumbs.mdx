@@ -1,0 +1,265 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/breadcrumbs';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
+import packageData from '@react-aria/breadcrumbs/package.json';
+
+```jsx import
+import {useBreadcrumbs, useBreadcrumbItem} from '@react-aria/breadcrumbs';
+```
+
+---
+category: Navigation
+keywords: [breadcrumbs, aria]
+---
+
+# useBreadcrumbs
+
+<p>{docs.exports.useBreadcrumbs.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useBreadcrumbs', 'useBreadcrumbItem']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices/#breadcrumb'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useBreadcrumbs} links={docs.links} />
+<FunctionAPI function={docs.exports.useBreadcrumbItem} links={docs.links} />
+
+## Features
+
+Breadcrumbs provide a list of links to parent pages of the current page in heirarchical order.
+`useBreadcrumbs` and `useBreadcrumbItem` help implement these in an accessible way.
+
+* Support for mouse, touch, and keyboard interactions on breadcrumbs
+* Support for navigation links via `<a>` elements or custom element types via ARIA
+* Localized ARIA labeling support for landmark navigation region
+* Support for disabled breadcrumbs
+* Support for breadcrumbs as a heading
+
+## Anatomy
+
+Breadcrumbs consist of a navigation landmark element and a list of links. The last link
+represents the current page in the hierarchy, with the previous links representing the
+parent pages of the current page. Each of these parent links can be clicked, tapped, or
+triggered via the <kbd>Enter</kbd> key to navigate to that page. Optionally, breadcrumbs can be used
+in place of a page title, in which case the last breadcrumb acts as a heading.
+
+`useBreadcrumbs` returns props to be spread onto the navigation element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useBreadcrumbs.return.id].properties} />
+</TypeContext.Provider>
+
+`useBreadcrumbItem` returns props to spread onto the individual breadcrumb links:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useBreadcrumbItem.return.id].properties} />
+</TypeContext.Provider>
+
+## Example
+
+This example displays a basic list of breadcrumbs using an HTML
+[&lt;nav&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/nav)
+element, and a [&lt;ol&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol)
+for the list of links. Each link is a span because we are handling the interactions
+locally via `onPress`. `useBreadcrumbItem` automatically handles exposing these
+spans as links to assistive technology.
+
+The chevrons between each link are rendered using a span with `aria-hidden="true"` so that
+screen readers do not pick them up. You could also render them similarly using SVG icons,
+CSS `:after`, or other techniques.
+
+The last link is non-interactive since it represents the current page. This is
+passed to the last breadcrumb item by cloning the element and adding the `isCurrent`
+prop.
+
+```tsx example
+function Breadcrumbs(props) {
+  let {navProps} = useBreadcrumbs(props);
+  let children = React.Children.toArray(props.children);
+
+  return (
+    <nav {...navProps}>
+      <ol style={{display: 'flex', listStyle: 'none', margin: 0, padding: 0}}>
+        {children.map((child, i) =>
+          React.cloneElement(child, {isCurrent: i === children.length - 1})
+        )}
+      </ol>
+    </nav>
+  )
+}
+
+function BreadcrumbItem(props) {
+  let ref = React.useRef();
+  let {itemProps} = useBreadcrumbItem({...props, elementType: 'span'}, ref);
+  return (
+    <li>
+      <span
+        {...itemProps}
+        ref={ref}
+        style={{
+          color: 'var(--blue)',
+          textDecoration: props.isCurrent ? null : 'underline',
+          fontWeight: props.isCurrent ? 'bold' : null,
+          cursor: props.isCurrent ? 'default' : 'pointer'
+        }}>
+        {props.children}
+      </span>
+      {!props.isCurrent &&
+        <span aria-hidden="true" style={{padding: '0 5px'}}>{'›'}</span>
+      }
+    </li>
+  );
+}
+
+<Breadcrumbs>
+  <BreadcrumbItem onPress={() => alert('Pressed Folder 1')}>Folder 1</BreadcrumbItem>
+  <BreadcrumbItem onPress={() => alert('Pressed Folder 2')}>Folder 2</BreadcrumbItem>
+  <BreadcrumbItem>Folder 3</BreadcrumbItem>
+</Breadcrumbs>
+```
+
+## Navigation links
+
+This example is similar to the previous one, except the individual breadcrumbs
+are native navigation links to other pages rather than handled by JavaScript.
+
+```tsx example
+function Breadcrumbs(props) {
+  // Same as in the previous example...
+///- begin collapse -///
+  let {navProps} = useBreadcrumbs(props);
+  let children = React.Children.toArray(props.children);
+
+  return (
+    <nav {...navProps}>
+      <ol style={{display: 'flex', listStyle: 'none', margin: 0, padding: 0}}>
+        {children.map((child, i) =>
+          React.cloneElement(child, {isCurrent: i === children.length - 1})
+        )}
+      </ol>
+    </nav>
+  );
+///- end collapse -///
+}
+
+function BreadcrumbItem(props) {
+  let ref = React.useRef();
+  let {itemProps} = useBreadcrumbItem(props, ref);
+  return (
+    <li>
+      <a
+        {...itemProps}
+        ref={ref}
+        href={props.href}
+        style={{
+          color: 'var(--blue)',
+          fontWeight: props.isCurrent ? 'bold' : null,
+          cursor: props.isCurrent ? 'default' : 'pointer'
+        }}>
+        {props.children}
+      </a>
+      {!props.isCurrent &&
+        <span aria-hidden="true" style={{padding: '0 5px'}}>{'›'}</span>
+      }
+    </li>
+  );
+}
+
+<Breadcrumbs>
+  <BreadcrumbItem href="/">Home</BreadcrumbItem>
+  <BreadcrumbItem href="/react-aria">React Aria</BreadcrumbItem>
+  <BreadcrumbItem>useBreadcrumbs</BreadcrumbItem>
+</Breadcrumbs>
+```
+
+## Breadcrumbs as a heading
+
+If you use breadcrumbs in the context where a heading would normally be used,
+you should make sure that the proper `elementType` for each breadcrumb is communicated to
+`useBreadcrumbItem` so that you receive the correct `breadcrumbItemProps` to spread on your breadcrumb.
+This can be seen in the example below where we specify that the last breadcrumb has elementType `h3` and all other
+breadcrumbs are of type `a`.
+
+```tsx example
+function Breadcrumbs(props) {
+  let {navProps} = useBreadcrumbs(props);
+  let children = React.Children.toArray(props.children);
+
+  return (
+    <nav {...navProps}>
+      <ol style={{display: 'flex', listStyle: 'none', margin: 0, padding: 0}}>
+        {children.map((child, i) =>
+          React.cloneElement(child, {
+            isCurrent: i === children.length - 1,
+            elementType: i === children.length - 1 ? 'h3' : 'a'
+          })
+        )}
+      </ol>
+    </nav>
+  );
+}
+
+function BreadcrumbItem(props) {
+  let ref = React.useRef();
+  let {itemProps} = useBreadcrumbItem(props, ref);
+  let breadcrumbContent;
+  if (props.isCurrent) {
+    breadcrumbContent = (
+      <h3
+        {...itemProps}
+        ref={ref}
+        style={{
+          margin: 0,
+          fontSize: '1em',
+          color: 'var(--blue)'
+        }}>
+        {props.children}
+      </h3>
+    );
+  } else {
+    breadcrumbContent = (
+      <>
+        <a
+          {...itemProps}
+          ref={ref}
+          href={props.href}
+          style={{
+            color: props.isDisabled ? 'var(--gray)' : 'var(--blue)',
+            fontWeight: props.isCurrent ? 'bold' : null,
+            cursor: props.isCurrent ? 'default' : 'pointer'
+          }}>
+          {props.children}
+        </a>
+        <span aria-hidden="true" style={{padding: '0 5px'}}>{'›'}</span>
+      </>
+    );
+  }
+
+  return (
+    <li>
+      {breadcrumbContent}
+    </li>
+  );
+}
+
+<Breadcrumbs>
+  <BreadcrumbItem href="/">Home</BreadcrumbItem>
+  <BreadcrumbItem href="/react-aria">React Aria</BreadcrumbItem>
+  <BreadcrumbItem>useBreadcrumbs</BreadcrumbItem>
+</Breadcrumbs>
+```

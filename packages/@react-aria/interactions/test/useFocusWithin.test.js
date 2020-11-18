@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
+import {act, render} from '@testing-library/react';
 import React from 'react';
 import {useFocusWithin} from '../';
 
@@ -20,8 +20,6 @@ function Example(props) {
 }
 
 describe('useFocusWithin', function () {
-  afterEach(cleanup);
-
   it('handles focus events on the target itself', function () {
     let events = [];
     let addEvent = (e) => events.push({type: e.type, target: e.target});
@@ -33,8 +31,8 @@ describe('useFocusWithin', function () {
     );
 
     let el = tree.getByTestId('example');
-    el.focus();
-    el.blur();
+    act(() => {el.focus();});
+    act(() => {el.blur();});
 
     expect(events).toEqual([
       {type: 'focus', target: el},
@@ -58,16 +56,14 @@ describe('useFocusWithin', function () {
 
     let el = tree.getByTestId('example');
     let child = tree.getByTestId('child');
-    child.focus();
-    el.focus();
-    child.focus();
-    child.blur();
+    act(() => {child.focus();});
+    act(() => {el.focus();});
+    act(() => {child.focus();});
+    act(() => {child.blur();});
 
     expect(events).toEqual([
       {type: 'focus', target: child},
       {type: 'focuschange', isFocused: true},
-      {type: 'focus', target: el},
-      {type: 'focus', target: child},
       {type: 'blur', target: child},
       {type: 'focuschange', isFocused: false}
     ]);
@@ -87,13 +83,38 @@ describe('useFocusWithin', function () {
     );
 
     let child = tree.getByTestId('child');
-    child.focus();
-    child.blur();
+    act(() => {child.focus();});
+    act(() => {child.blur();});
 
     expect(events).toEqual([]);
   });
 
-  it('events do not bubble by default', function () {
+  it('events do not bubble when stopPropagation is called', function () {
+    let onWrapperFocus = jest.fn();
+    let onWrapperBlur = jest.fn();
+    let onInnerFocus = jest.fn(e => e.stopPropagation());
+    let onInnerBlur = jest.fn(e => e.stopPropagation());
+    let tree = render(
+      <div onFocus={onWrapperFocus} onBlur={onWrapperBlur}>
+        <Example
+          onFocusWithin={onInnerFocus}
+          onBlurWithin={onInnerBlur}>
+          <div data-testid="child" tabIndex={-1} />
+        </Example>
+      </div>
+    );
+
+    let child = tree.getByTestId('child');
+    act(() => {child.focus();});
+    act(() => {child.blur();});
+
+    expect(onInnerFocus).toHaveBeenCalledTimes(1);
+    expect(onInnerBlur).toHaveBeenCalledTimes(1);
+    expect(onWrapperFocus).not.toHaveBeenCalled();
+    expect(onWrapperBlur).not.toHaveBeenCalled();
+  });
+
+  it('events bubble by default', function () {
     let onWrapperFocus = jest.fn();
     let onWrapperBlur = jest.fn();
     let onInnerFocus = jest.fn();
@@ -109,33 +130,8 @@ describe('useFocusWithin', function () {
     );
 
     let child = tree.getByTestId('child');
-    child.focus();
-    child.blur();
-
-    expect(onInnerFocus).toHaveBeenCalledTimes(1);
-    expect(onInnerBlur).toHaveBeenCalledTimes(1);
-    expect(onWrapperFocus).not.toHaveBeenCalled();
-    expect(onWrapperBlur).not.toHaveBeenCalled();
-  });
-
-  it('events bubble when continuePropagation is called', function () {
-    let onWrapperFocus = jest.fn();
-    let onWrapperBlur = jest.fn();
-    let onInnerFocus = jest.fn(e => e.continuePropagation());
-    let onInnerBlur = jest.fn(e => e.continuePropagation());
-    let tree = render(
-      <div onFocus={onWrapperFocus} onBlur={onWrapperBlur}>
-        <Example
-          onFocusWithin={onInnerFocus}
-          onBlurWithin={onInnerBlur}>
-          <div data-testid="child" tabIndex={-1} />
-        </Example>
-      </div>
-    );
-
-    let child = tree.getByTestId('child');
-    child.focus();
-    child.blur();
+    act(() => {child.focus();});
+    act(() => {child.blur();});
 
     expect(onInnerFocus).toHaveBeenCalledTimes(1);
     expect(onInnerBlur).toHaveBeenCalledTimes(1);

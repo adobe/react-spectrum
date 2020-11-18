@@ -1,0 +1,35 @@
+{
+  "name": "@react-stately/color",
+  "version": "3.0.0-alpha.1",
+  "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
+  "private": true,
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.6.2",
+    "@react-aria/utils": "^3.2.1",
+    "@react-stately/numberfield": "^3.0.0-alpha.1",
+    "@react-stately/slider": "^3.0.0-alpha.3",
+    "@react-stately/utils": "^3.1.0",
+    "@react-types/color": "^3.0.0-alpha.1",
+    "@react-types/numberfield": "^3.0.0-alpha.1"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

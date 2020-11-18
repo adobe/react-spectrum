@@ -2,34 +2,22 @@
   "presets": [
     "@babel/preset-typescript",
     "@babel/preset-react",
-    "@parcel/babel-preset-env"
+    ["@parcel/babel-preset-env",
+      {
+        "loose": true
+      }
+    ]
   ],
   "env": {
     "storybook": {
       "presets": [
-        "@babel/preset-typescript",
-        "@babel/preset-react",
         [
-          "@babel/preset-env",
+          "@parcel/babel-preset-env",
           {
-            "useBuiltIns": "usage",
-            "corejs": 3
-          }
-        ]
-      ]
-    },
-    "test": {
-      "plugins": [
-        "@babel/plugin-transform-runtime"
-      ],
-      "presets": [
-        "@babel/preset-typescript",
-        "@babel/preset-react",
-        [
-          "@babel/preset-env",
-          {
-            "useBuiltIns": "entry",
-            "corejs": 3
+            "loose": true,
+            "targets": {
+              "esmodules": true
+            }
           }
         ]
       ]
@@ -48,18 +36,17 @@
               "data-testid"
             ]
           }
-        ],
-        [
-          "@babel/plugin-transform-runtime",
-          {
-            "useESModules": true,
-            "version": "^7.6.2"
-          }
         ]
       ]
     }
   },
   "plugins": [
+    [
+      "@parcel/babel-plugin-transform-runtime",
+      {
+        "version": "^7.6.2"
+      }
+    ],
     [
       "@babel/plugin-proposal-decorators",
       {
@@ -69,15 +56,12 @@
     [
       "@babel/plugin-proposal-class-properties",
       {
-        "loose": false
+        "loose": true
       }
     ],
     "@babel/plugin-proposal-export-default-from",
     "@babel/plugin-proposal-export-namespace-from",
-    "@babel/plugin-proposal-object-rest-spread",
     "@babel/plugin-syntax-class-properties",
-    "@babel/plugin-syntax-object-rest-spread",
-    "@babel/plugin-transform-async-to-generator",
     "transform-glob-import",
     "babel-plugin-macros"
   ],

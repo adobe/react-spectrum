@@ -10,5 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './BreadcrumbItem';
+/// <reference types="css-module-types" />
+
 export * from './Breadcrumbs';
+export {Item} from '@react-stately/collections';

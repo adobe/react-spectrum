@@ -18,7 +18,7 @@ import {CalendarTableBody} from './CalendarTableBody';
 import {CalendarTableHeader} from './CalendarTableHeader';
 import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import ChevronRight from '@spectrum-icons/ui/ChevronRightLarge';
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
@@ -52,7 +52,6 @@ export function CalendarBase(props: CalendarBaseProps) {
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
       {...styleProps}
       {...calendarProps}
       className={
@@ -70,21 +69,21 @@ export function CalendarBase(props: CalendarBaseProps) {
         <ActionButton
           {...prevButtonProps}
           UNSAFE_className={classNames(styles, 'spectrum-Calendar-prevMonth')}
-          isQuiet
-          isDisabled={props.isDisabled}
-          icon={direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />} />
+          isQuiet>
+          {direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}
+        </ActionButton>
         <ActionButton
           {...nextButtonProps}
           UNSAFE_className={classNames(styles, 'spectrum-Calendar-nextMonth')}
-          isQuiet
-          isDisabled={props.isDisabled}
-          icon={direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />} />
+          isQuiet>
+          {direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />}
+        </ActionButton>
       </div>
       <table
         {...calendarBodyProps}
         className={classNames(styles, 'spectrum-Calendar-body', 'spectrum-Calendar-table')}>
         <VisuallyHidden elementType="caption" {...captionProps} />
-        <CalendarTableHeader weekStart={state.weekStart} />
+        <CalendarTableHeader weekDays={state.weekDays} />
         <CalendarTableBody state={state} />
       </table>
     </div>

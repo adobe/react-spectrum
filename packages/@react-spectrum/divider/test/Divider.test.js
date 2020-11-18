@@ -10,17 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
 import {Divider} from '../';
 import React from 'react';
+import {render} from '@testing-library/react';
 import Rule from '@react/react-spectrum/Rule';
 
 describe('Divider', function () {
-
-  afterEach(() => {
-    cleanup();
-  });
-
   it.each`
     Name         | Component  | props
     ${'Divider'} | ${Divider} | ${{}}
@@ -51,6 +46,40 @@ describe('Divider', function () {
     expect(divider).toBeTruthy();
     expect(divider).toHaveAttribute('aria-orientation', 'vertical');
     expect(divider).toHaveAttribute('aria-label', 'divides');
+  });
+
+  it.each`
+    Name         | Component  | props
+    ${'Divider'} | ${Divider} | ${{orientation: 'vertical'}}
+    ${'Divider'} | ${Divider} | ${{orientation: 'vertical', size: 'M'}}
+    ${'Divider'} | ${Divider} | ${{orientation: 'vertical', size: 'S'}}
+  `('$Name supports aria-labelledby', function ({Component, props}) {
+    let {getByRole} = render(
+      <>
+        <span id="test">Test</span>
+        <Component {...props} aria-labelledby="test" />
+      </>
+    );
+
+    let divider = getByRole('separator');
+    expect(divider).toHaveAttribute('aria-labelledby', 'test');
+  });
+
+  it.each`
+    Name         | Component  | props
+    ${'Divider'} | ${Divider} | ${{orientation: 'vertical'}}
+    ${'Divider'} | ${Divider} | ${{orientation: 'vertical', size: 'M'}}
+    ${'Divider'} | ${Divider} | ${{orientation: 'vertical', size: 'S'}}
+  `('$Name supports custom data attributes', function ({Component, props}) {
+    let {getByRole} = render(
+      <>
+        <span id="test">Test</span>
+        <Component {...props} data-testid="test" />
+      </>
+    );
+
+    let divider = getByRole('separator');
+    expect(divider).toHaveAttribute('data-testid', 'test');
   });
 
   it.each`

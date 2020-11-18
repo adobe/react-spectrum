@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
 import React, {useRef} from 'react';
+import {render} from '@testing-library/react';
 import V2Well from '@react/react-spectrum/Well';
 import {Well} from '../';
 
@@ -30,10 +30,6 @@ let refExists = (ComponentToCheck, children, props) => {
 };
 
 describe('Well', () => {
-  afterEach(function () {
-    cleanup();
-  });
-
   it.each`
     Name      | Component   | props
     ${'v3'}   | ${Well}     | ${{UNSAFE_className: 'myClass', 'data-testid': 'wellV3'}}
@@ -67,5 +63,18 @@ describe('Well', () => {
     let {ref} = refExists(Well, 'Well Text', {'data-testid': 'wellForwardRef'});
     expect(ref.current.UNSAFE_getDOMNode()).toHaveAttribute('data-testid', 'wellForwardRef');
     expect(ref.current.UNSAFE_getDOMNode().textContent.includes('Well Text')).toBeTruthy();
+  });
+
+  it('v3 supports aria-label with a role', function () {
+    let {getByText} = render(<Well role="region" aria-label="well">Well</Well>);
+    let well = getByText('Well');
+    expect(well).toHaveAttribute('role', 'region');
+    expect(well).toHaveAttribute('aria-label', 'well');
+  });
+
+  it('v3 warns user if label is provided without a role', function () {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    render(<Well aria-label="well">Well</Well>);
+    expect(spyWarn).toHaveBeenCalledWith('A labelled Well must have a role.');
   });
 });

@@ -11,19 +11,21 @@
  */
 
 import CalendarIcon from '@spectrum-icons/workflow/Calendar';
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './index.css';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusRing, FocusScope, useFocusManager} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 import {RangeCalendar} from '@react-spectrum/calendar';
 import React, {useRef} from 'react';
 import {SpectrumDateRangePickerProps} from '@react-types/datepicker';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {useDateRangePicker} from '@react-aria/datepicker';
 import {useDateRangePickerState} from '@react-stately/datepicker';
+import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
@@ -40,6 +42,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let state = useDateRangePickerState(props);
   let {groupProps, buttonProps, dialogProps, startFieldProps, endFieldProps, descProps} = useDateRangePicker(props, state);
   let {value, setDate, selectDateRange, isOpen, setOpen} = state;
@@ -53,28 +56,28 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
     {
       'spectrum-InputGroup--quiet': isQuiet,
       'is-invalid': state.validationState === 'invalid',
-      'is-disabled': isDisabled
+      'is-disabled': isDisabled,
+      'is-hovered': isHovered
     },
     styleProps.className
   );
 
   return (
-    <FocusRing 
+    <FocusRing
       within
       isTextInput
       focusClass={classNames(styles, 'is-focused')}
       focusRingClass={classNames(styles, 'focus-ring')}
       autoFocus={autoFocus}>
-      <div 
-        {...filterDOMProps(otherProps)}
+      <div
         {...styleProps}
-        {...groupProps}
+        {...mergeProps(groupProps, hoverProps)}
         className={className}
         ref={targetRef}>
         {descProps && descProps.children && <span {...descProps} />}
         <FocusScope autoFocus={autoFocus}>
           <DatePickerField
-            {...startFieldProps}
+            {...startFieldProps as any}
             isQuiet={props.isQuiet}
             isDisabled={isDisabled}
             isReadOnly={isReadOnly}
@@ -87,7 +90,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
             UNSAFE_className={classNames(styles, 'spectrum-Datepicker-startField')} />
           <DateRangeDash />
           <DatePickerField
-            {...endFieldProps}
+            {...endFieldProps as any}
             isQuiet={props.isQuiet}
             isDisabled={isDisabled}
             isReadOnly={isReadOnly}
@@ -107,7 +110,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
               )
             )} />
         </FocusScope>
-        <DialogTrigger 
+        <DialogTrigger
           type="popover"
           mobileType="tray"
           placement={direction === 'rtl' ? 'bottom right' : 'bottom left'}
@@ -120,8 +123,9 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
             UNSAFE_className={classNames(styles, 'spectrum-FieldButton')}
             isQuiet={isQuiet}
             validationState={state.validationState}
-            icon={<CalendarIcon />}
-            isDisabled={isDisabled || isReadOnly} />
+            isDisabled={isDisabled || isReadOnly}>
+            <CalendarIcon />
+          </FieldButton>
           <Dialog UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')} {...dialogProps}>
             <Content>
               <RangeCalendar
@@ -144,7 +148,7 @@ function DateRangeDash() {
   };
 
   return (
-    <div 
+    <div
       role="presentation"
       data-testid="date-range-dash"
       className={classNames(styles, 'spectrum-Datepicker--rangeDash')}

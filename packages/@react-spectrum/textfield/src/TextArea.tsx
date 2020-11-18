@@ -10,11 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain} from '@react-aria/utils';
-import React, {RefObject, useRef} from 'react';
+import {chain, useLayoutEffect} from '@react-aria/utils';
+import React, {RefObject, useCallback, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
+import {useControlledState} from '@react-stately/utils';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useTextField} from '@react-aria/textfield';
 
 function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
@@ -27,32 +29,49 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     ...otherProps
   } = props;
 
-  let textfieldRef = useRef<TextFieldRef>(null);
-  textfieldRef = ref || textfieldRef;
+  // not in stately because this is so we know when to re-measure, which is a spectrum design
+  let [inputValue, setInputValue] = useControlledState(props.value, props.defaultValue, () => {});
 
-  let onHeightChange = () => {
+  let inputRef = useRef<HTMLTextAreaElement>();
+
+  let onHeightChange = useCallback(() => {
     if (isQuiet) {
-      let input = textfieldRef.current.getInputElement();
+      let input = inputRef.current;
       input.style.height = 'auto';
       input.style.height = `${input.scrollHeight}px`;
     }
-  };
+  }, [isQuiet, inputRef]);
+
+  useLayoutEffect(() => {
+    if (inputRef.current) {
+      onHeightChange();
+    }
+  }, [onHeightChange, inputValue, inputRef]);
+
+
+  let {labelProps, inputProps} = useTextField({
+    ...props,
+    onChange: chain(onChange, setInputValue),
+    inputElementType: 'textarea'
+  }, inputRef);
 
   return (
     <TextFieldBase
       {...otherProps}
-      ref={textfieldRef}
+      ref={ref}
+      inputRef={inputRef}
+      labelProps={labelProps}
+      inputProps={inputProps}
       multiLine
       isDisabled={isDisabled}
       isQuiet={isQuiet}
       isReadOnly={isReadOnly}
-      isRequired={isRequired}
-      onChange={chain(onChange, onHeightChange)} />
+      isRequired={isRequired} />
   );
 }
 
 /**
- * Text areas are multiline text inputs, useful for cases where users have 
+ * TextAreas are multiline text inputs, useful for cases where users have
  * a sizable amount of text to enter. They allow for all customizations that
  * are available to text fields.
  */

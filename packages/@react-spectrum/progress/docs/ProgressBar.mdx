@@ -1,0 +1,148 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/progress';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/progress/package.json';
+
+```jsx import
+import {Flex} from '@react-spectrum/layout';
+import {ProgressBar} from '@react-spectrum/progress';
+import {View} from '@react-spectrum/view';
+```
+
+---
+category: Status
+keywords: [progress bar]
+---
+
+# ProgressBar
+
+<p>{docs.exports.ProgressBar.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ProgressBar']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/progress-bar/'}
+  ]} />
+
+## Example
+
+```tsx example
+<ProgressBar label="Loading…" value={50} />
+```
+
+## Value
+
+ProgressBars are controlled with the `value` prop.
+By default, the `value` prop represents the current percentage of progress, as the minimum and maximum values default to 0 and 100, respectively.
+
+```tsx example
+<ProgressBar label="Loading…" value={25} />
+```
+
+Alternatively, a different scale can be used by setting the `minValue` and `maxValue` props.
+
+```tsx example
+<ProgressBar label="Loading…" minValue={50} maxValue={150} value={100} />
+```
+
+Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
+`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
+
+```tsx example
+<ProgressBar label="Loading…" formatOptions={{style: 'currency', currency: 'JPY'}} value={60} />
+```
+
+### Indeterminate
+[View guidelines](https://spectrum.adobe.com/page/progress-bar/#Indeterminate)
+
+By default, ProgressBars are determinate. Use a determinate ProgressBar when progress can be calculated against a specific goal.
+
+```tsx example
+<ProgressBar label="Loading…" value={50} />
+```
+
+Use an indeterminate ProgressBar when the wait time or effort to completion can not be determined.
+
+```tsx example
+<ProgressBar label="Loading…" isIndeterminate />
+```
+
+### Accessibility
+
+Depending on the visualization being used (i.e. depending on the `showValueLabel` prop), a `label`, `aria-label`, or `aria-labelledby` prop is required.
+
+If using the over background variant, ensure the background offers enough contrast for the ProgressBar to be legible and meets color contrast guidelines.
+
+### Internationalization
+
+To internationalize a ProgressBar, a localized string should be passed to the `label` prop, `aria-label` prop, or value of the associated `aria-labelledby` element.
+
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout, for both determinate and indeterminate options, is automatically flipped. In addition,
+ProgressBar automatically uses the current locale to format the value label.
+
+## Labeling
+[View guidelines](https://spectrum.adobe.com/page/progress-bar/#Label)
+
+Labels and value labels are shown by default on top, but they can also be moved to the side or hidden as needed.
+The label text should be in sentence case.
+
+```tsx example
+<Flex direction="column" maxWidth="size-3000" gap="size-300">
+  <ProgressBar label="Loading…" value={30} />
+  <ProgressBar label="Loading…" labelPosition="side" value={30} />
+  <ProgressBar label="Loading…" showValueLabel={false} value={30} />
+</Flex>
+```
+
+By default, the value label is formatted as a percentage. This can be customized using the following props.
+
+* `showValueLabel`: Allows you to display or hide the value label.
+* `formatOptions`: Allows you to customize the format of the value.
+* `valueLabel`: Allows you to customize the value label to any string.
+
+```tsx example
+<Flex direction="column" maxWidth="size-3000" gap="size-300">
+  <ProgressBar label="Loading…" showValueLabel={false} value={30} />
+  <ProgressBar label="Loading…" valueLabel="30 of 60 dogs" value={30} />
+  <ProgressBar label="Loading…" formatOptions={{style: 'percent', minimumFractionDigits: 2}} value={30.123} />
+</Flex>
+```
+
+## Props
+
+<PropTable component={docs.exports.ProgressBar} links={docs.links} />
+
+## Visual options
+
+### Over background
+[View guidelines](https://spectrum.adobe.com/page/progress-bar/#Over-background-variant)
+
+When a ProgressBar needs to be placed on top of a colored background, use the `overBackground` variant.
+
+```tsx example
+<View backgroundColor="positive" padding="size-300">
+  <ProgressBar label="Loading…" variant="overBackground" value={5} />
+</View>
+```
+
+### Size
+[View guidelines](https://spectrum.adobe.com/page/progress-bar/#Size)
+
+```tsx example
+<Flex direction="column" gap="size-300">
+  <ProgressBar label="Small" size="S" value={70} />
+  <ProgressBar label="Large" size="L" value={70} />
+</Flex>
+```

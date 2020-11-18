@@ -1,0 +1,70 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/i18n';
+import {ClassAPI, HeaderInfo, TypeContext, FunctionAPI, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-aria/i18n/package.json';
+
+```tsx import
+import {useDateFormatter} from '@react-aria/i18n';
+```
+
+---
+category: Internationalization
+keywords: [date, time, i18n, aria, localization]
+---
+
+# useDateFormatter
+
+<p>{docs.exports.useDateFormatter.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useDateFormatter']} />
+
+## Introduction
+
+`useDateFormatter` wraps a builtin browser [Intl.DateTimeFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat)
+object to provide a React Hook that integrates with the i18n system in React Aria. It handles formatting dates for the current locale,
+updating when the locale changes, and caching of date formatters for performance. See the
+[Intl.DateTimeFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) docs for
+information on formatting options.
+
+## API
+
+<FunctionAPI function={docs.exports.useDateFormatter} links={docs.links} />
+
+## Example
+
+This example displays the current date for two locales: USA, and Russia. Two instances of the `CurrentDate` component are rendered,
+using the [I18nProvider](I18nProvider.html) to specify the locale to display.
+
+```tsx example
+import {I18nProvider} from '@react-aria/i18n';
+
+function CurrentDate() {
+  let formatter = useDateFormatter();
+
+  return (
+    <p>{formatter.format(new Date())}</p>
+  );
+}
+
+<>
+  <I18nProvider locale="en-US">
+    <CurrentDate />
+  </I18nProvider>
+  <I18nProvider locale="ru-RU">
+    <CurrentDate />
+  </I18nProvider>
+</>
+```

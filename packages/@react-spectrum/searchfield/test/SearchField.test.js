@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render, within} from '@testing-library/react';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
-import {cleanup, fireEvent, render, within} from '@testing-library/react';
 import React from 'react';
 import {SearchField} from '../';
 import {triggerPress} from '@react-spectrum/test-utils';
@@ -22,7 +22,7 @@ let testId = 'test-id';
 let inputText = 'blah';
 
 function renderComponent(Component, props) {
-  return render(<Component {...props} data-testid={testId} />);
+  return render(<Component aria-label="the label" {...props} data-testid={testId} />);
 }
 
 // Note: Running this test suite will result in some warnings of the following class:
@@ -41,7 +41,6 @@ describe('Search', () => {
     onFocus.mockClear();
     onSubmit.mockClear();
     onClear.mockClear();
-    cleanup();
   });
 
   it.each`
@@ -60,22 +59,10 @@ describe('Search', () => {
     expect(clearButton).toBeNull();
   });
 
+  // omitting v2 because the v3 icon we use doesn't accept className, only UNSAFE_className
   it.each`
     Name                | Component
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 SearchField'} | ${V2SearchField}
-  `('$Name supports overriding role and type of search input', ({Component}) => {
-    let tree = renderComponent(Component, {role: 'menuitem'});
-    let outerDiv = tree.getByRole('menuitem');
-    expect(outerDiv).toBeTruthy();
-
-    expect(tree.queryByRole('search')).toBeNull();
-  });
-
-  it.each`
-    Name                | Component
-    ${'v3 SearchField'} | ${SearchField}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name should support custom icons', ({Component}) => {
     let icon = <Checkmark data-testid="testicon" />;
     let tree = renderComponent(Component, {icon});
@@ -94,7 +81,6 @@ describe('Search', () => {
   it.each`
     Name                | Component
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name should display the clear button icon only if text is present', ({Component}) => {
     let tree = renderComponent(Component, {defaultValue: inputText});
     let clearButton = tree.getByLabelText('Clear search');
@@ -122,8 +108,12 @@ describe('Search', () => {
     expect(onSubmit).toBeCalledTimes(1);
     expect(onSubmit).toHaveBeenLastCalledWith(inputText);
 
-    fireEvent.change(input, {target: {value: ''}});
-    fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});
+    act(() => {
+      fireEvent.change(input, {target: {value: ''}});
+    });
+    act(() => {
+      fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});
+    });
     expect(onSubmit).toBeCalledTimes(2);
     expect(onSubmit).toHaveBeenLastCalledWith('');
   });
@@ -133,7 +123,7 @@ describe('Search', () => {
   it.each`
     Name                | Component        | props
     ${'v3 SearchField'} | ${SearchField}   | ${{isDisabled: true}}
-  `('$Name doesn\'t submits the textfield value when enter is pressed but field is disabled', ({Component, props}) => {
+  `('$Name doesn\'t submit the textfield value when enter is pressed but field is disabled', ({Component, props}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onSubmit, ...props});
     let input = tree.getByTestId(testId);
     fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});
@@ -202,7 +192,6 @@ describe('Search', () => {
   it.each`
     Name                | Component
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name clears the input field if the clear button is pressed and the field is uncontrolled', ({Component}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onChange, onClear});
     let input = tree.getByTestId(testId);
@@ -258,7 +247,6 @@ describe('Search', () => {
   it.each`
     Name                | Component        | props
     ${'v3 SearchField'} | ${SearchField}   | ${{isDisabled: true}}
-    ${'v2 SearchField'} | ${V2SearchField} | ${{disabled: true}}
   `('$Name doesn\'t clear the input field if the clear button is pressed and the field is disabled', ({Component, props}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onChange, onClear, ...props});
     let input = tree.getByTestId(testId);
@@ -272,5 +260,28 @@ describe('Search', () => {
     if (Component === SearchField) {
       expect(onClear).toBeCalledTimes(0);
     }
+  });
+
+  it('SearchField doesn\'t show clear button if isReadOnly is true', () => {
+    let tree = renderComponent(SearchField, {isReadOnly: true, value: 'puppy'});
+    let clearButton = tree.queryByLabelText('Clear search');
+    expect(clearButton).toBe(null);
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 SearchField'} | ${SearchField}
+    ${'v2 SearchField'} | ${V2SearchField}
+  `('$Name should support aria-label', ({Component}) => {
+    let tree = renderComponent(Component, {'aria-label': 'Test'});
+    expect(tree.getByRole('searchbox')).toHaveAttribute('aria-label', 'Test');
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 SearchField'} | ${SearchField}
+  `('$Name should support excludeFromTabOrder', ({Component}) => {
+    let tree = renderComponent(Component, {excludeFromTabOrder: true});
+    expect(tree.getByRole('searchbox')).toHaveAttribute('tabIndex', '-1');
   });
 });

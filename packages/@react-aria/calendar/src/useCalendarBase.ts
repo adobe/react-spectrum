@@ -15,30 +15,19 @@ import {CalendarAria} from './types';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarStateBase} from '@react-stately/calendar';
 import {DOMProps} from '@react-types/shared';
-import {format} from 'date-fns';
+import {filterDOMProps, mergeProps, useId, useLabels, useUpdateEffect} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {KeyboardEvent, useCallback, useEffect, useRef} from 'react';
+import {KeyboardEvent, useRef} from 'react';
 import {useDateFormatter, useLocale, useMessageFormatter} from '@react-aria/i18n';
-import {useId, useLabels, useUpdateEffect} from '@react-aria/utils';
-
-// Returns the id for a specific cell date
-export function getCellId(date: Date, calendarId: string): string {
-  return `${calendarId}-${format(date, 'YYYY-MM-DD')}`;
-}
-
-const calendarIds = new WeakMap<CalendarStateBase, string>();
-export function getCalendarId(state: CalendarStateBase): string {
-  return calendarIds.get(state);
-}
 
 export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: CalendarStateBase, selectedDateDescription: string): CalendarAria {
   let {
-    autoFocus = false,
     isReadOnly = false,
     isDisabled = false
   } = props;
 
+  let domProps = filterDOMProps(props, {labelable: true});
   let formatMessage = useMessageFormatter(intlMessages);
   let monthFormatter = useDateFormatter({month: 'long', year: 'numeric'});
   let calendarBody = useRef(null); // TODO: should this be in RSP?
@@ -47,30 +36,9 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
   let captionId = useId();
   let {direction} = useLocale();
 
-  // Store calendarId so that useCalendarCell can access it.
-  // Kinda hacky, but it's the easiest way to get the id from the cell.
-  calendarIds.set(state, calendarId);
-
-  let focusFocusedDateCell = useCallback(() => {
-    const focusedCell = calendarBody.current.querySelector(`#${getCellId(state.focusedDate, calendarId)}`);
-    if (focusedCell && focusedCell !== document.activeElement) {
-      focusedCell.focus();
-    }
-  }, [state.focusedDate, calendarId]);
-
-  useEffect(() => {
-    // focus the calendar body when mounting
-    if (autoFocus) {
-      focusFocusedDateCell();
-    }
-    // omitting focusFocusedDateCell method from dependencies
-    // so that autoFocus does not restore focus with a month change from Previous or Next button 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoFocus]);
-
   // Announce when the current month changes
   useUpdateEffect(() => {
-    // announce the new month with a change from the Previous or Next button 
+    // announce the new month with a change from the Previous or Next button
     if (!state.isFocused) {
       announce(monthFormatter.format(state.currentMonth));
     }
@@ -85,14 +53,6 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
     }
     // handle an update to the caption that describes the currently selected range, to announce the new value
   }, [selectedDateDescription]);
-
-  // Ensure that the focused date moves focus to the focused date cell within the calendar.
-  useUpdateEffect(() => {
-    if (state.isFocused) {
-      focusFocusedDateCell();
-    }
-    // handling focused date change initiated from within the calendar table
-  }, [state.focusedDate, state.isFocused, focusFocusedDateCell]);
 
   let onKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
@@ -160,21 +120,23 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
   });
 
   return {
-    calendarProps: {
+    calendarProps: mergeProps(domProps, {
       ...labelProps,
       id: calendarId,
       role: 'group'
-    },
+    }),
     calendarTitleProps: {
       id: calendarTitleId
     },
     nextButtonProps: {
       onPress: () => state.focusNextMonth(),
-      'aria-label': formatMessage('next')
+      'aria-label': formatMessage('next'),
+      isDisabled: props.isDisabled || state.isNextMonthInvalid()
     },
     prevButtonProps: {
       onPress: () => state.focusPreviousMonth(),
-      'aria-label': formatMessage('previous')
+      'aria-label': formatMessage('previous'),
+      isDisabled: props.isDisabled || state.isPreviousMonthInvalid()
     },
     calendarBodyProps: {
       ref: calendarBody,

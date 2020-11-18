@@ -11,8 +11,8 @@
  */
 
 jest.mock('@react-aria/live-announcer');
+import {act, fireEvent, render} from '@testing-library/react';
 import {announce} from '@react-aria/live-announcer';
-import {cleanup, fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import {useSpinButton} from '../';
 
@@ -22,8 +22,6 @@ function Example(props) {
 }
 
 describe('useSpinButton', function () {
-  afterEach(cleanup);
-
   it('should have role="spinbutton" and aria props', function () {
     let res = render(<Example value={2} textValue="2 items" minValue={1} maxValue={3} />);
     let el = res.getByTestId('test');
@@ -115,13 +113,13 @@ describe('useSpinButton', function () {
   it('should announce on value change while focused', function () {
     let res = render(<Example value={2} />);
     let el = res.getByTestId('test');
-    el.focus();
+    act(() => {el.focus();});
 
     res.rerender(<Example value={3} />);
     expect(announce).toHaveBeenCalledTimes(1);
     expect(announce).toHaveBeenCalledWith('3');
 
-    el.blur();
+    act(() => {el.blur();});
 
     res.rerender(<Example value={4} />);
     expect(announce).toHaveBeenCalledTimes(1);
@@ -130,7 +128,7 @@ describe('useSpinButton', function () {
   it('should announce on textValue change while focused', function () {
     let res = render(<Example value={2} textValue="2 items" />);
     let el = res.getByTestId('test');
-    el.focus();
+    act(() => {el.focus();});
 
     res.rerender(<Example value={3} textValue="3 items" />);
     expect(announce).toHaveBeenCalledTimes(1);

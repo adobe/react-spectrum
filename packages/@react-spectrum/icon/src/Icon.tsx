@@ -10,51 +10,72 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, IconColorValue, StyleProps} from '@react-types/shared';
+import {baseStyleProps, classNames, StyleHandlers, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
 
-type Scale = 'M' | 'L'
-
-interface IconProps extends DOMProps, StyleProps {
-  alt?: string,
+interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
+  /**
+   * A screen reader only label for the Icon.
+   */
+  'aria-label'?: string,
+  /**
+   * The content to display. Should be an SVG.
+   */
   children: ReactElement,
+  /**
+   * Size of Icon (changes based on scale).
+   */
   size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' |'XL' | 'XXL',
-  scale?: Scale,
-  color?: string,
-  slot?: string
+  /**
+   * A slot to place the icon in.
+   * @default 'icon'
+   */
+  slot?: string,
+  /**
+   * Indicates whether the element is exposed to an accessibility API.
+   */
+  'aria-hidden'?: boolean | 'false' | 'true',
+  /**
+   * Color of the Icon.
+   */
+  color?: IconColorValue
 }
 
+export type IconPropsWithoutChildren = Omit<IconProps, 'children'>;
+
+function iconColorValue(value: IconColorValue) {
+  return `var(--spectrum-semantic-${value}-color-icon)`;
+}
+
+const iconStyleProps: StyleHandlers = {
+  ...baseStyleProps,
+  color: ['color', iconColorValue]
+};
+
+/**
+ * Spectrum icons are clear, minimal, and consistent across platforms. They follow the focused and rational principles of the design system in both metaphor and style.
+ */
 export function Icon(props: IconProps) {
+  props = useSlotProps(props, 'icon');
   let {
     children,
-    alt,
-    scale,
-    color,
     size,
     'aria-label': ariaLabel,
     'aria-hidden': ariaHidden,
-    role = 'img',
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps({slot: 'icon', ...otherProps});
+  let {styleProps} = useStyleProps(otherProps, iconStyleProps);
 
   let provider = useProvider();
-  let pscale = 'M';
-  let pcolor = 'LIGHT';
+  let scale = 'M';
   if (provider !== null) {
-    pscale = provider.scale === 'large' ? 'L' : 'M';
-    pcolor = provider.colorScheme === 'dark' ? 'DARK' : 'LIGHT';
+    scale = provider.scale === 'large' ? 'L' : 'M';
   }
-  if (scale === undefined) {
-    scale = pscale as Scale;
-  }
-  if (color === undefined) {
-    color = pcolor;
-  }
-  if (!ariaHidden || ariaHidden === 'false') {
+  if (!ariaHidden) {
     ariaHidden = undefined;
   }
 
@@ -64,12 +85,10 @@ export function Icon(props: IconProps) {
   return React.cloneElement(children, {
     ...filterDOMProps(otherProps),
     ...styleProps,
-    scale: 'M',
-    color,
     focusable: 'false',
-    'aria-label': ariaLabel || alt,
-    'aria-hidden': (ariaLabel || alt ? ariaHidden : true),
-    role,
+    'aria-label': ariaLabel,
+    'aria-hidden': (ariaLabel ? (ariaHidden || undefined) : true),
+    role: 'img',
     className: classNames(
       styles,
       children.props.className,

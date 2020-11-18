@@ -11,7 +11,7 @@
  */
 
 import {clamp} from '@react-aria/utils';
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {ProgressBarProps} from '@react-types/progress';
 import React, {CSSProperties, HTMLAttributes} from 'react';
@@ -53,7 +53,7 @@ function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement
     barStyle.width = `${Math.round(percentage * 100)}%`;
   }
 
-  // Ideally this should be in useProgressBar, but children 
+  // Ideally this should be in useProgressBar, but children
   // are not supported in ProgressCircle which shares that hook...
   if (!label && !ariaLabel && !ariaLabelledby) {
     console.warn('If you do not provide a visible label via children, you must specify an aria-label or aria-labelledby attribute for accessibility');
@@ -61,7 +61,6 @@ function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
       {...styleProps}
       {...barProps}
       ref={domRef}

@@ -123,7 +123,12 @@ When reading the following descriptions, also keep in mind that:
   - Each item in the menu has `tabindex` set to `-1`, except in a menubar, where the first item has `tabindex` set to 0.
 - When a [`menuitemcheckbox`](https://www.w3.org/TR/wai-aria-1.1/#menuitemcheckbox) or [`menuitemradio`](https://www.w3.org/TR/wai-aria-1.1/#menuitemradio) is checked, [`aria-checked`](https://www.w3.org/TR/wai-aria-1.1/#aria-checked) is set to `true`.
 - When a menu item is disabled, [`aria-disabled`](https://www.w3.org/TR/wai-aria-1.1/#aria-disabled) is set to true.
-- Items in a menu may be divided into groups by placing an element with a role of [separator](https://www.w3.org/TR/wai-aria-1.1/#separator) between groups. For example, this technique should be used when a menu contains a set of [`menuitemradio`](https://www.w3.org/TR/wai-aria-1.1/#menuitemradio) items.
+- Items in a menu may be divided into groups:
+    - The simplest to define a group is by placing an element with a role of [separator](https://www.w3.org/TR/wai-aria-1.1/#separator) between groups.
+    For example, this technique should be used when a menu contains a set of [`menuitemradio`](https://www.w3.org/TR/wai-aria-1.1/#menuitemradio) items.
+    - To define a labelled group, items should be contained within an element with the role of [`group`](https://www.w3.org/TR/wai-aria-1.1/#group).
+    The group element should be labelled using [`aria-label`](https://www.w3.org/TR/wai-aria-1.1/#aria-label) or with [`aria-labelledby`](https://www.w3.org/TR/wai-aria-1.1/#aria-labelledby) referencing a visible text element heading, included as a child of the group, by `id`.
+    Since a `menu` does not normally expect a text node or heading as a descendant, this visible text element heading should be removed from the accessibility tree as a standalone accessibility object using [`aria-hidden`](https://www.w3.org/TR/wai-aria-1.1/#aria-hidden).
 - All [separators](https://www.w3.org/TR/wai-aria-1.1/#separator) should have [`aria-orientation`](https://www.w3.org/TR/wai-aria-1.1/#aria-orientation) consistent with the separator's orientation.
 - If a `menubar` has a visible label, the element with role `menubar` has [`aria-labelledby`](https://www.w3.org/TR/wai-aria-1.1/#aria-labelledby) set to a value that refers to the labelling element. Otherwise, the `menubar` element has a label provided by [`aria-label`](https://www.w3.org/TR/wai-aria-1.1/#aria-label).
 - If a `menubar` is vertically oriented, it has [`aria-orientation`](https://www.w3.org/TR/wai-aria-1.1/#aria-orientation) set to `vertical`. The default value of `aria-orientation` for a `menubar` is `horizontal`.

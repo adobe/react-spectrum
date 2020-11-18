@@ -10,18 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
 import {ProgressCircle} from '../';
 import React from 'react';
+import {render} from '@testing-library/react';
 import V2ProgressCircle from '@react/react-spectrum/Wait';
 
 
 describe('ProgressCircle', function () {
-
-  afterEach(() => {
-    cleanup();
-  });
-
   it.each`
     Name                  | Component           | props
     ${'ProgressCircle'}   | ${ProgressCircle}   | ${{}}
@@ -165,5 +160,11 @@ describe('ProgressCircle', function () {
     let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(<ProgressCircle value={25} />);
     expect(spyWarn).toHaveBeenCalledWith('ProgressCircle requires an aria-label or aria-labelledby attribute for accessibility');
+  });
+
+  it('supports custom DOM props', function () {
+    let {getByTestId} = render(<ProgressCircle value={25} aria-label="Progress" data-testid="test" />);
+    let progressBar = getByTestId('test');
+    expect(progressBar).toBeInTheDocument();
   });
 });

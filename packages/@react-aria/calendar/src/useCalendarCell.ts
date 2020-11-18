@@ -10,40 +10,49 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarCellOptions, CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {getCalendarId, getCellId} from './useCalendarBase';
-import {HTMLAttributes} from 'react';
+import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
+import {HTMLAttributes, RefObject, useEffect} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {PressProps, useFocus, usePress} from '@react-aria/interactions';
+import {isSameDay, isToday} from 'date-fns';
+import {PressProps, usePress} from '@react-aria/interactions';
 import {useDateFormatter, useMessageFormatter} from '@react-aria/i18n';
+
+export interface AriaCalendarCellProps {
+  date: Date,
+  colIndex: number
+}
 
 interface CalendarCellAria {
   cellProps: PressProps & HTMLAttributes<HTMLElement>,
-  cellDateProps: HTMLAttributes<HTMLElement>
+  buttonProps: HTMLAttributes<HTMLElement>
 }
 
-export function useCalendarCell(props: CalendarCellOptions, state: CalendarState | RangeCalendarState): CalendarCellAria {
+export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarState | RangeCalendarState, ref: RefObject<HTMLElement>): CalendarCellAria {
+  let {colIndex, date} = props;
   let formatMessage = useMessageFormatter(intlMessages);
   let dateFormatter = useDateFormatter({weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
+  let isSelected = state.isSelected(date);
+  let isFocused = state.isCellFocused(date);
+  let isDisabled = state.isCellDisabled(date);
 
   // aria-label should be localize Day of week, Month, Day and Year without Time.
-  let label = dateFormatter.format(props.cellDate);
-  if (props.isToday) {
+  let label = dateFormatter.format(date);
+  if (isToday(date)) {
     // If date is today, set appropriate string depending on selected state:
-    label = formatMessage(props.isSelected ? 'todayDateSelected' : 'todayDate', {
-      date: props.cellDate
+    label = formatMessage(isSelected ? 'todayDateSelected' : 'todayDate', {
+      date
     });
-  } else if (props.isSelected) {
+  } else if (isSelected) {
     // If date is selected but not today:
     label = formatMessage('dateSelected', {
-      date: props.cellDate
+      date
     });
   }
 
   // When a cell is focused and this is a range calendar, add a prompt to help
   // screenreader users know that they are in a range selection mode.
-  if ('anchorDate' in state && props.isFocused && !props.isReadOnly) {
+  if ('anchorDate' in state && isFocused && !state.isReadOnly) {
     let rangeSelectionPrompt = '';
 
     // If selection has started add "click to finish selecting range"
@@ -62,50 +71,49 @@ export function useCalendarCell(props: CalendarCellOptions, state: CalendarState
 
   let {pressProps} = usePress({
     onPress: () => {
-      if (!props.isDisabled) {
-        state.selectDate(props.cellDate);
-        state.setFocusedDate(props.cellDate);
-      }
-    }
-  });
-
-  let {focusProps} = useFocus({
-    onFocus: (event) => {
-      if (!props.isDisabled) {
-        state.setFocusedDate(props.cellDate);
-        event.continuePropagation();
+      if (!isDisabled) {
+        state.selectDate(date);
+        state.setFocusedDate(date);
       }
     }
   });
 
   let onMouseEnter = () => {
     if ('highlightDate' in state) {
-      state.highlightDate(props.cellDate);
+      state.highlightDate(date);
     }
   };
 
-  let tabIndex =  null;
-  if (!props.isDisabled) {
-    const focusedDate = state.focusedDate;
-    focusedDate.setHours(0, 0, 0, 0);
-    tabIndex = props.isFocused || props.cellDate.valueOf() === focusedDate.valueOf() ? 0 : -1;
+  let tabIndex = null;
+  if (!isDisabled) {
+    tabIndex = isSameDay(date, state.focusedDate) ? 0 : -1;
   }
+
+  // Focus the button in the DOM when the state updates.
+  useEffect(() => {
+    if (isFocused && ref.current) {
+      ref.current.focus();
+    }
+  }, [isFocused, ref]);
 
   return {
     cellProps: {
-      onMouseEnter: props.isDisabled ? null : onMouseEnter,
+      onMouseEnter: isDisabled ? null : onMouseEnter,
       role: 'gridcell',
-      'aria-colindex': props.colIndex,
-      'aria-disabled': props.isDisabled || null,
-      'aria-selected': props.isSelected
+      'aria-colindex': colIndex,
+      'aria-disabled': isDisabled || null,
+      'aria-selected': isSelected
     },
-    cellDateProps: {
+    buttonProps: {
       ...pressProps,
-      ...focusProps,
+      onFocus() {
+        if (!isDisabled) {
+          state.setFocusedDate(date);
+        }
+      },
       tabIndex,
-      id: getCellId(props.cellDate, getCalendarId(state)),
       role: 'button',
-      'aria-disabled': props.isDisabled || null,
+      'aria-disabled': isDisabled || null,
       'aria-label': label
     }
   };

@@ -10,44 +10,46 @@
  * governing permissions and limitations under the License.
  */
 
-import classNames from 'classnames';
+import clsx from 'clsx';
 import {mergeProps} from '@react-aria/utils';
-import React, {ReactElement, useState} from 'react';
-import {useFocus, useFocusVisible, useFocusWithin} from '@react-aria/interactions';
+import React, {ReactElement} from 'react';
+import {useFocusRing} from './useFocusRing';
 
 interface FocusRingProps {
-  children?: ReactElement,
+  /** Child element to apply CSS classes to. */
+  children: ReactElement,
+  /** CSS class to apply when the element is focused. */
   focusClass?: string,
+  /** CSS class to apply when the element has keyboard focus. */
   focusRingClass?: string,
+  /**
+   * Whether to show the focus ring when something
+   * inside the container element has focus (true), or
+   * only if the container itself has focus (false).
+   * @default false
+   */
   within?: boolean,
+  /** Whether the element is a text input. */
   isTextInput?: boolean,
+  /** Whether the element will be auto focused. */
   autoFocus?: boolean
 }
 
+/**
+ * A utility component that applies a CSS class when an element has keyboard focus.
+ * Focus rings are visible only when the user is interacting with a keyboard,
+ * not with a mouse, touch, or other input methods.
+ */
 export function FocusRing(props: FocusRingProps) {
-  let {children, focusClass, focusRingClass, within} = props;
-  let [isFocused, setFocused] = useState(false);
-  let [isFocusWithin, setFocusWithin] = useState(false);
-  let {isFocusVisible} = useFocusVisible(props);
-  let {focusProps} = useFocus({
-    isDisabled: within,
-    onFocusChange: setFocused,
-    onFocus: e => e.continuePropagation(),
-    onBlur: e => e.continuePropagation()
-  });
-  let {focusWithinProps} = useFocusWithin({
-    isDisabled: !within,
-    onFocusWithinChange: setFocusWithin,
-    onFocusWithin: e => e.continuePropagation(),
-    onBlurWithin: e => e.continuePropagation()
-  });
+  let {children, focusClass, focusRingClass} = props;
+  let {isFocused, isFocusVisible, focusProps} = useFocusRing(props);
   let child = React.Children.only(children);
 
   return React.cloneElement(child, mergeProps(child.props, {
-    ...(within ? focusWithinProps : focusProps),
-    className: classNames({
-      [focusClass || '']: (within ? isFocusWithin : isFocused),
-      [focusRingClass || '']: (within ? isFocusWithin : isFocused) && isFocusVisible
+    ...focusProps,
+    className: clsx({
+      [focusClass || '']: isFocused,
+      [focusRingClass || '']: isFocusVisible
     })
   }));
 }

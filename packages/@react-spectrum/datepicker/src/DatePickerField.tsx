@@ -16,14 +16,13 @@ import {classNames} from '@react-spectrum/utils';
 import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './index.css';
 import {DOMProps} from '@react-types/shared';
-import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
-import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import {SpectrumDatePickerProps} from '@react-types/datepicker';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useDateField} from '@react-aria/datepicker';
 import {useDatePickerFieldState} from '@react-stately/datepicker';
+import {useStyleProps} from '@react-spectrum/utils';
 
 interface DateFieldDescProps extends DOMProps {
   children?: string,
@@ -43,10 +42,6 @@ export function DatePickerField(props: SpectrumDatePickerProps & {descProps?: Da
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let {fieldProps, segmentProps} = useDateField(props);
-  let domProps = mergeProps(
-    filterDOMProps(otherProps),
-    fieldProps
-  );
 
   let isInvalid = validationState === 'invalid';
   let textfieldClass = classNames(
@@ -70,7 +65,7 @@ export function DatePickerField(props: SpectrumDatePickerProps & {descProps?: Da
     },
     classNames(
       inputgroupStyles,
-      'spectrum-InputGroup-field',
+      'spectrum-InputGroup-input',
       {
         'is-disabled': isDisabled,
         'is-invalid': isInvalid
@@ -96,7 +91,7 @@ export function DatePickerField(props: SpectrumDatePickerProps & {descProps?: Da
   }
 
   return (
-    <div {...domProps} {...styleProps} className={textfieldClass}>
+    <div {...fieldProps} {...styleProps} className={textfieldClass}>
       {descProps && descProps.children && <span {...descProps} />}
       <div role="presentation" className={inputClass}>
         {state.segments.map((segment, i) =>

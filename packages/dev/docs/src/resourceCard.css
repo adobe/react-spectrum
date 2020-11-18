@@ -12,7 +12,7 @@
 
 .resourceCard {
   width: 224px;
-  margin: 2px 16px 2px 2px;
+  flex: 0 0 auto;
   box-shadow: 0 0 0 1px var(--spectrum-global-color-gray-300);
   transition: 125ms ease-in-out;
   height: 64px;
@@ -27,6 +27,12 @@
     box-shadow: 0 0 0 1px var(--spectrum-global-color-gray-400);
     transition: 125ms ease-in-out;
   }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--spectrum-alias-border-color-focus);
+  }
+
   @media screen and (max-width: 960px) {
     margin-bottom: 16px;
   }
@@ -35,9 +41,9 @@
     background: rgba(203, 56, 55, 0.1);
   }
 
-  .gitImage, .spectrumImage {
+  .gitImage, .spectrumImage, .w3cImage {
     background-color: var(--spectrum-global-color-gray-200);
-    fill: black;
+    fill: var(--spectrum-global-color-gray-900);
   }
 
   .cardContent {
@@ -60,7 +66,9 @@
   }
 }
 
-.resourceCard img, svg {
-  width: 64px;
-  height: 64px;
+.resourceCard {
+  img, svg {
+    width: 64px;
+    height: 64px;
+  }
 }

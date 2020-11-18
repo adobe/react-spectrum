@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
 import {fireEvent} from '@testing-library/react';
 import React from 'react';
+import {render} from '@testing-library/react';
 import {Tag} from '../';
 import {Tag as V2Tag} from '@react/react-spectrum/TagList';
 
@@ -20,7 +20,6 @@ import {Tag as V2Tag} from '@react/react-spectrum/TagList';
 describe('Tag', function () {
   let onRemoveSpy = jest.fn();
   afterEach(() => {
-    cleanup();
     onRemoveSpy.mockClear();
   });
 
@@ -29,11 +28,10 @@ describe('Tag', function () {
    ${'Tag'}      | ${Tag}            | ${{}}
    ${'V2Tag'}    | ${V2Tag}          | ${{}}
   `('$Name allows custom props to be passed through to the tag', function ({Component, props}) {
-    let {container} = render(<Component {...props} data-foo="bar" aria-hidden>Cool Tag</Component>);
+    let {container} = render(<Component {...props} data-foo="bar">Cool Tag</Component>);
 
     let tag = container.firstElementChild;
     expect(tag).toHaveAttribute('data-foo', 'bar');
-    expect(tag).toHaveAttribute('aria-hidden', 'true');
   });
 
   it.each`
