@@ -11,6 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ActionButton} from '@react-spectrum/button';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
@@ -19,10 +20,11 @@ import Cut from '@spectrum-icons/workflow/Cut';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker, Section} from '../';
 import Paste from '@spectrum-icons/workflow/Paste';
-import React from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 import {useAsyncList} from '@react-stately/data';
+
 
 let flatOptions = [
   {id: 1, name: 'Aardvark'},
@@ -497,7 +499,8 @@ storiesOf('Picker', module)
     () => (
       <AsyncLoadingExample />
     )
-  );
+  )
+  .add('resize', () => <ResizePicker />);
 
 function AsyncLoadingExample() {
   interface Pokemon {
@@ -523,4 +526,19 @@ function AsyncLoadingExample() {
       {item => <Item key={item.name}>{item.name}</Item>}
     </Picker>
   );
+}
+
+function ResizePicker() {
+  const [state, setState] = useState(true);
+
+  return (<div>
+    <div style={{width: state ? '200px' : '300px'}}>
+      <Picker label="Choose A" UNSAFE_style={{width: '100%'}}>
+        <Item key="rarely">A1</Item>
+        <Item key="sometimes">A2</Item>
+        <Item key="always">A3</Item>
+      </Picker>
+    </div>
+    <ActionButton onPress={() => setState(!state)}>Toggle size</ActionButton>
+  </div>);
 }
