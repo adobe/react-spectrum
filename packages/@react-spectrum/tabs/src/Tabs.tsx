@@ -356,7 +356,7 @@ function TabPicker<T>(props: TabPickerProps<T>) {
   let items = [...state.collection].map((item) => ({
     rendered: item.rendered,
     textValue: item.textValue,
-    key: item.key
+    id: item.key
   }));
 
   let pickerProps = {

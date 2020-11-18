@@ -73,9 +73,9 @@ See the [Events](#events) section for more detail on selection.
 ```tsx example
 function Example() {
   let tabs = [
-    {id: '1', name: 'Founding of Rome', children: 'Arma virumque cano, Troiae qui primus ab oris.'},
-    {id: '2', name: 'Monarchy and Republic', children: 'Senatus Populusque Romanus.'},
-    {id: '3', name: 'Empire', children: 'Alea jacta est.'}
+    {id: 1, name: 'Founding of Rome', children: 'Arma virumque cano, Troiae qui primus ab oris.'},
+    {id: 2, name: 'Monarchy and Republic', children: 'Senatus Populusque Romanus.'},
+    {id: 3, name: 'Empire', children: 'Alea jacta est.'}
   ];
   let [tabId, setTabId] = React.useState('1');
 
@@ -141,9 +141,9 @@ Setting a selected tab can be done by using the `defaultSelectedKey` or `selecte
 ```tsx example
 function Example() {
   let tabs = [
-    {id: '1', name: 'Keyboard Settings', children: 'No keyboard detected.'},
-    {id: '2', name: 'Mouse Settings', children: 'No mouse detected.'},
-    {id: '3', name: 'Gamepad Settings', children: 'No gamepad detected'}
+    {id: 1, name: 'Keyboard Settings', children: 'No keyboard detected.'},
+    {id: 2, name: 'Mouse Settings', children: 'No mouse detected.'},
+    {id: 3, name: 'Gamepad Settings', children: 'No gamepad detected'}
   ];
   let [tab, setTab] = React.useState("2");
 
