@@ -49,12 +49,21 @@ export interface AriaTabsProps<T> extends TabsProps<T>, DOMProps, AriaLabelingPr
 }
 
 export interface SpectrumTabsProps<T> extends AriaTabsProps<T>, StyleProps {
+  /** Whether the Tabs should be displayed with a quiet style. */
   isQuiet?: boolean,
-  density?: 'compact',
-  overflowMode?: 'dropdown' | 'scrolling',
-  isEmphasized?: boolean,
+  /**
+   * Sets the amount of space between the Tab and the Tab rail.
+   * @default 'regular'
+   */
+  density?: 'compact' | 'regular',
+  // overflowMode?: 'dropdown' | 'scrolling',
+  // isEmphasized?: boolean,
+  /** Whether Tabs is disabled. */
   isDisabled?: boolean,
+  /** Handler that is called when the tab selection changes. */
   onSelectionChange?: (selectedItem: Key) => void,
+  /** The currently selected Tab key in the collection (controlled). */
   selectedKey?: Key,
+  /** The initial selected Tab key in the collection (uncontrolled). */
   defaultSelectedKey?: Key
 }
