@@ -11,12 +11,18 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ErrorBoundary} from '@react-spectrum/story-utils';
 import {RangeSlider} from '../';
 import React, {useState} from 'react';
 import {SpectrumRangeSliderProps} from '@react-types/slider';
 import {storiesOf} from '@storybook/react';
 
+let message = 'Your browser may not support this set of format options.'
+
 storiesOf('Slider/RangeSlider', module)
+  .addDecorator(story => (
+    <ErrorBoundary message={message}>{story()}</ErrorBoundary>
+  ))
   .add(
     'Default',
     () => render({'aria-label': 'Label'})
