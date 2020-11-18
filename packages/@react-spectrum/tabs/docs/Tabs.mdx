@@ -1,0 +1,445 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/tabs';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/tabs/package.json';
+
+```jsx import
+import {Flex} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
+import {Item, Tabs} from '@react-spectrum/tabs';
+```
+
+---
+category: Collection
+keywords: [tabs, collections]
+---
+
+# Tabs
+
+<p>{docs.exports.Tabs.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Tabs', 'Item']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/tabs/'}
+  ]} />
+
+## Example
+```tsx example
+import {Content, Text} from '@react-spectrum/text';
+
+<Tabs aria-label="History of Ancient Rome">
+  <Item title="Founding of Rome" key="FoR">
+    <Content marginTop="size-250" marginStart="size-125">
+      <Text>Arma virumque cano, Troiae qui primus ab oris.</Text>
+    </Content>
+  </Item>
+  <Item title="Monarchy and Republic" key="MaR">
+    <Content marginTop="size-250" marginStart="size-125">
+      <Text>Senatus Populusque Romanus.</Text>
+    </Content>
+  </Item>
+  <Item title="Empire" key="libraries">
+    <Content marginTop="size-250" marginStart="size-125">
+      <Text>Alea jacta est.</Text>
+    </Content>
+  </Item>
+</Tabs>
+```
+
+## Content
+Tabs follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections. Similar to [Menu](MenuTrigger.html), Tabs accepts `<Item>` elements as children,
+each with a `key` prop. However, unlike the other Collection components, the Tab itself is defined via props passed to the `<Item>` element whereas the contents of the Tab's panel are defined by the `<Item>` element's children.
+This can be seen in the example above, where each Tab's rendered title mirrors the string provided to the `<Item>`'s `title` prop and the content of each Tab populated by the `<Item>`'s child.
+Static collections, as in this example, can be used when the full list of tabs and their contents is known ahead of time.
+
+Dynamic collections, as shown below, can be used when the options come from an external data source such as an API call, or update over time. As seen below, an iterable list of options is passed to the Tabs using the `items` prop.
+Each item accepts a key prop, which is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and a `key` prop is not required.
+See the [Events](#events) section for more detail on selection.
+
+```tsx example
+function Example() {
+  let tabs = [
+    {id: '1', name: 'Founding of Rome', children: 'Arma virumque cano, Troiae qui primus ab oris.'},
+    {id: '2', name: 'Monarchy and Republic', children: 'Senatus Populusque Romanus.'},
+    {id: '3', name: 'Empire', children: 'Alea jacta est.'}
+  ];
+  let [tabId, setTabId] = React.useState('1');
+
+  return (
+    <>
+      <p>Current tab id: {tabId}</p>
+      <Tabs aria-label="History of Ancient Rome" items={tabs} onSelectionChange={setTabId}>
+        {item => (
+          <Item title={item.name}>
+            <Content marginTop="size-250" marginStart="size-125">
+              <Text>
+                {item.children}
+              </Text>
+            </Content>
+          </Item>
+        )}
+      </Tabs>
+    </>
+  );
+}
+```
+
+### Internationalization
+To internationalize Tabs, a localized string should be passed to the `title` or `textValue` of each `Item`. Any text content within the Tab's panel should also be localized accordingly.
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of Tabs is automatically flipped.
+
+## Labeling
+### Accessibility
+Tabs should be labeled using `aria-label` or `aria-labelledby` to identify the tab list for accessibility.
+
+```tsx example
+<>
+  <span id="label-1">History of Rome</span>
+  <Tabs aria-labelledby="label-1">
+    <Item title="Founding of Rome" key="FoR">
+      <Content marginTop="size-250" marginStart="size-125">
+        <Text>
+          Arma virumque cano, Troiae qui primus ab oris.
+        </Text>
+      </Content>
+    </Item>
+    <Item title="Monarchy and Republic" key="MaR">
+      <Content marginTop="size-250" marginStart="size-125">
+        <Text>
+          Senatus Populusque Romanus.
+        </Text>
+      </Content>
+    </Item>
+    <Item title="Empire" key="libraries">
+      <Content marginTop="size-250" marginStart="size-125">
+        <Text>
+          Alea jacta est.
+        </Text>
+      </Content>
+    </Item>
+  </Tabs>
+</>
+```
+
+## Selection
+Setting a selected tab can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `key` of an item. See [Events](#events) for more details on selection events.
+
+```tsx example
+function Example() {
+  let tabs = [
+    {id: '1', name: 'Keyboard Settings', children: 'No keyboard detected.'},
+    {id: '2', name: 'Mouse Settings', children: 'No mouse detected.'},
+    {id: '3', name: 'Gamepad Settings', children: 'No gamepad detected'}
+  ];
+  let [tab, setTab] = React.useState("2");
+
+  return (
+    <Flex gap="size-150" wrap>
+      <span id="label-2">Settings (uncontrolled)</span>
+      <Tabs aria-labelledby="label-2" items={tabs} defaultSelectedKey="2">
+         {item => (
+          <Item title={item.name}>
+            <Content marginTop="size-250" marginStart="size-125">
+              <Text>
+                {item.children}
+              </Text>
+            </Content>
+          </Item>
+        )}
+      </Tabs>
+      <span id="label-3">Settings (controlled)</span>
+      <Tabs aria-labelledby="label-3" items={tabs} selectedKey={tab} onSelectionChange={setTab}>
+         {item => (
+          <Item title={item.name}>
+            <Content marginTop="size-250" marginStart="size-125">
+              <Text>
+                {item.children}
+              </Text>
+            </Content>
+          </Item>
+        )}
+      </Tabs>
+    </Flex>
+  );
+}
+```
+
+## Events
+Tabs supports tab selection via mouse, keyboard, and touch. You can handle all of these via the `onSelectionChange` prop. Tabs will pass the selected `key` to the `onSelectionChange` handler.
+
+The following example uses an `onSelectionChange` handler to update the tab selection stored in React state.
+
+```tsx example
+function Example() {
+  let tabs = [
+    {name: 'Triassic', children: 'The Triassic ranges roughly from 252 million to 201 million years ago, preceding the Jurassic Period.'},
+    {name: 'Jurassic', children: 'The Jurassic ranges from 200 million years to 145 million years ago.'},
+    {name: 'Cretaceous', children: 'The Cretaceous is the longest period of the Mesozoic, spanning from 145 million to 66 years ago.'}
+  ];
+  let [timePeriod, setTimePeriod] = React.useState('Triassic');
+
+  return (
+    <>
+      <p>Selected time period: {tab}</p>
+      <Tabs aria-label="Mesozoic time periods" items={tabs} selectedKey={timePeriod} onSelectionChange={setTimePeriod}>
+        {item => (
+          <Item title={item.name} key={item.name}>
+            <Content marginTop="size-250" marginStart="size-125">
+              <Text>
+                {item.children}
+              </Text>
+            </Content>
+          </Item>
+        )}
+      </Tabs>
+    </>
+  );
+}
+```
+
+### Keyboard Activation
+By default, pressing the arrow keys while focus is on a Tab will switch selection to the adjacent tab in that direction, updating the content displayed accordingly. If you would like to prevent selection change
+from happening automatically you can set the `keyboardActivation` prop to "manual". This will prevent tab selection from changing until the end user presses the `Enter` or `Space` key.
+
+```tsx example
+function Example() {
+  let tabs = [
+    {name: 'Triassic', children: 'The Triassic ranges roughly from 252 million to 201 million years ago, preceding the Jurassic Period.'},
+    {name: 'Jurassic', children: 'The Jurassic ranges from 200 million years to 145 million years ago.'},
+    {name: 'Cretaceous', children: 'The Cretaceous is the longest period of the Mesozoic, spanning from 145 million to 66 years ago.'}
+  ];
+
+  return (
+    <Tabs aria-label="Mesozoic time periods" items={tabs} keyboardActivation="manual">
+      {item => (
+        <Item title={item.name} key={item.name}>
+          <Content marginTop="size-250" marginStart="size-125">
+            <Text>
+              {item.children}
+            </Text>
+          </Content>
+        </Item>
+      )}
+    </Tabs>
+  );
+}
+```
+
+## Complex Items
+Items within Tabs allow for a degree of customization. The `title` prop accepts any renderable node, allowing for things like icons to be added to the Tab title. Be sure to include a `textValue` prop to your item so that typeahead
+still works if the Tabs [collapse](#collapse-overflow-behavior).
+
+```tsx example
+import AppleFiles from '@spectrum-icons/workflow/AppleFiles';
+import Book from '@spectrum-icons/workflow/Book';
+import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import Unauthorized from '@spectrum-icons/illustrations/Unauthorized';
+import UserShare from '@spectrum-icons/workflow/UserShare';
+
+function Example() {
+  let unauthorizedPage = (
+    <Content marginTop="size-250">
+      <Heading>Files</Heading>
+      <IllustratedMessage>
+        <Heading>Error 401: Unauthorized</Heading>
+        <Content>You don’t have access to this page. Please login to view.</Content>
+        <Unauthorized />
+      </IllustratedMessage>
+    </Content>
+  );
+
+  let tabs = [
+    {
+      name: 'Your files',
+      icon: <AppleFiles />,
+      children: unauthorizedPage
+    },
+    {
+      name: 'Shared with you',
+      icon: <UserShare />,
+      children: unauthorizedPage
+    },
+    {
+      name: 'Libraries',
+      icon: <Book />,
+      children: unauthorizedPage
+    }
+  ];
+
+  return (
+    <Tabs aria-label="File Library" items={tabs}>
+      {item => (
+        <Item
+          key={item.name}
+          title={
+            <>
+              {item.icon}
+              <Text>{item.name}</Text>
+            </>
+          }
+          textValue={item.name}>
+          {item.children}
+        </Item>
+      )}
+    </Tabs>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.Tabs} links={docs.links} />
+
+## Visual options
+### Density
+[View guidelines](https://spectrum.adobe.com/page/tabs/#Density)
+
+```tsx example
+<Tabs aria-label="Chat log density example" density="compact">
+  <Item title="John Doe" key="item1">
+    <Content marginTop="size-250" marginStart="size-125">
+      <Text>There is no prior chat history with John Doe.</Text>
+    </Content>
+  </Item>
+  <Item title="Jane Doe" key="item2">
+    <Content marginTop="size-250" marginStart="size-125">
+      <Text>There is no prior chat history with Jane Doe.</Text>
+    </Content>
+  </Item>
+  <Item title="Joe Bloggs" key="item3">
+    <Content marginTop="size-250" marginStart="size-125">
+      <Text>There is no prior chat history with Joe Bloggs.</Text>
+    </Content>
+  </Item>
+</Tabs>
+```
+
+### Quiet
+[View guidelines](https://spectrum.adobe.com/page/tabs/#Quiet)
+
+```tsx example
+<Tabs aria-label="Chat log quiet example" isQuiet>
+  <Item title="John Doe" key="item1">
+    <Content marginTop="size-250" marginStart="size-125">
+      <Text>There is no prior chat history with John Doe.</Text>
+    </Content>
+  </Item>
+  <Item title="Jane Doe" key="item2">
+    <Content marginTop="size-250" marginStart="size-125">
+      <Text>There is no prior chat history with Jane Doe.</Text>
+    </Content>
+  </Item>
+  <Item title="Joe Bloggs" key="item3">
+    <Content marginTop="size-250" marginStart="size-125">
+      <Text>There is no prior chat history with Joe Bloggs.</Text>
+    </Content>
+  </Item>
+</Tabs>
+```
+
+### Disabled
+[View guidelines](https://spectrum.adobe.com/page/tabs/#Disabled)
+
+```tsx example
+<Flex direction="column" rowGap="size-150">
+  <Tabs aria-label="Chat log single tab disabled example" disabledKeys={['item2']}>
+    <Item title="John Doe" key="item1">
+      <Content marginTop="size-250" marginStart="size-125">
+        <Text>There is no prior chat history with John Doe.</Text>
+      </Content>
+    </Item>
+    <Item title="Jane Doe" key="item2">
+      <Content marginTop="size-250" marginStart="size-125">
+        <Text>There is no prior chat history with Jane Doe.</Text>
+      </Content>
+    </Item>
+    <Item title="Joe Bloggs" key="item3">
+      <Content marginTop="size-250" marginStart="size-125">
+        <Text>There is no prior chat history with Joe Bloggs.</Text>
+      </Content>
+    </Item>
+  </Tabs>
+  <Tabs aria-label="Chat log all tabs disabled example" isDisabled>
+    <Item title="John Doe" key="item1">
+      <Content marginTop="size-250" marginStart="size-125">
+        <Text>There is no prior chat history with John Doe.</Text>
+      </Content>
+    </Item>
+    <Item title="Jane Doe" key="item2">
+      <Content marginTop="size-250" marginStart="size-125">
+        <Text>There is no prior chat history with Jane Doe.</Text>
+      </Content>
+    </Item>
+    <Item title="Joe Bloggs" key="item3">
+      <Content marginTop="size-250" marginStart="size-125">
+        <Text>There is no prior chat history with Joe Bloggs.</Text>
+      </Content>
+    </Item>
+  </Tabs>
+</Flex>
+```
+
+### Orientation
+[View guidelines](https://spectrum.adobe.com/page/tabs/#Orientation)
+
+```tsx example
+<Tabs aria-label="Chat log orientation example" orientation="vertical">
+  <Item title="John Doe" key="item1">
+    <Content marginTop="size-250" marginStart="size-125">
+      <Text>There is no prior chat history with John Doe.</Text>
+    </Content>
+  </Item>
+  <Item title="Jane Doe" key="item2">
+    <Content marginTop="size-250" marginStart="size-125">
+      <Text>There is no prior chat history with Jane Doe.</Text>
+    </Content>
+  </Item>
+  <Item title="Joe Bloggs" key="item3">
+    <Content marginTop="size-250" marginStart="size-125">
+      <Text>There is no prior chat history with Joe Bloggs.</Text>
+    </Content>
+  </Item>
+</Tabs>
+```
+
+### Collapse (overflow behavior)
+[View guidelines](https://spectrum.adobe.com/page/tabs/#Too-many-tabs)
+
+If there isn't enough horizontal room to render every tab on a single line, Tabs will collapse all tabs into a picker menu. Note that this does not apply to vertical Tabs.
+
+Resize the div below to see the above behavior.
+
+```tsx example
+<div style={{minWidth: '100px', width: '300px', height: '400px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+  <Tabs aria-label="Chat log orientation example" orientation="vertical">
+    <Item title="John Doe" key="item1">
+      <Content marginTop="size-250" marginStart="size-125">
+        <Text>There is no prior chat history with John Doe.</Text>
+      </Content>
+    </Item>
+    <Item title="Jane Doe" key="item2">
+      <Content marginTop="size-250" marginStart="size-125">
+        <Text>There is no prior chat history with Jane Doe.</Text>
+      </Content>
+    </Item>
+    <Item title="Joe Bloggs" key="item3">
+      <Content marginTop="size-250" marginStart="size-125">
+        <Text>There is no prior chat history with Joe Bloggs.</Text>
+      </Content>
+    </Item>
+  </Tabs>
+</div>
+```
