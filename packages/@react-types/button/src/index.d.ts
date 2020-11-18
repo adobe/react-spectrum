@@ -29,7 +29,15 @@ interface ToggleButtonProps extends ButtonProps {
   onChange?: (isSelected: boolean) => void
 }
 
-export interface LinkButtonProps {
+export interface AriaButtonElementTypeProps<T extends ElementType = 'button'> {
+  /**
+   * The HTML element or React element used to render the button, e.g. 'div', 'a', or `RouterLink`.
+   * @default 'button'
+   */
+  elementType?: T | JSXElementConstructor<any>
+}
+
+export interface LinkButtonProps<T extends ElementType = 'button'> extends AriaButtonElementTypeProps<T> {
   /** A URL to link to if elementType="a". */
   href?: string,
   /** The target window for the link. */
@@ -38,7 +46,7 @@ export interface LinkButtonProps {
   rel?: string
 }
 
-interface AriaBaseButtonProps<T extends ElementType = 'button'> extends FocusableDOMProps, AriaLabelingProps {
+interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
   /** Indicates whether the element, or another grouping element it controls, is currently expanded or collapsed. */
   'aria-expanded'?: boolean,
   /** Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by an element. */
@@ -51,17 +59,11 @@ interface AriaBaseButtonProps<T extends ElementType = 'button'> extends Focusabl
    * The behavior of the button when used in an HTML form.
    * @default 'button'
    */
-  type?: 'button' | 'submit' | 'reset',
-  /**
-   * The HTML element or React element used to render the button, e.g. 'div', 'a', or `RouterLink`.
-   * @default 'button'
-   */
-  elementType?: T | JSXElementConstructor<any>
+  type?: 'button' | 'submit' | 'reset'
 }
 
-export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps, AriaBaseButtonProps<T> {}
-
-export interface AriaToggleButtonProps<T extends ElementType = 'button'> extends ToggleButtonProps, AriaBaseButtonProps<T> {}
+export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}
+export interface AriaToggleButtonProps<T extends ElementType = 'button'> extends ToggleButtonProps, AriaBaseButtonProps, AriaButtonElementTypeProps<T> {}
 
 export interface SpectrumButtonProps extends AriaBaseButtonProps, ButtonProps, LinkButtonProps, StyleProps {
   /** The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button. */
