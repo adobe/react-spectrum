@@ -29,7 +29,7 @@ interface AriaSelectOptions<T> extends AriaSelectProps<T> {
    */
   keyboardDelegate?: KeyboardDelegate,
   /**
-   An optional reference to the popover allowing to better control onBlur
+   An optional reference to the popover allowing to better control onBlur.
    */
   popoverRef?: RefObject<HTMLElement>
 }
