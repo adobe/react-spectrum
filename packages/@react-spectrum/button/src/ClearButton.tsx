@@ -64,6 +64,7 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
             'spectrum-ClearButton',
             {
               [`spectrum-ClearButton--${variant}`]: variant,
+              'is-disabled': isDisabled,
               'is-active': isPressed,
               'is-hovered': isHovered
             },
