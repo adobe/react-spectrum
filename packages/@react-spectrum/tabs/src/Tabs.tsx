@@ -315,7 +315,7 @@ const TabList = React.forwardRef(function <T> (props: TabListProps<T>, ref: Muta
         `spectrum-Tabs--${orientation}`,
         {
           'spectrum-Tabs--quiet': isQuiet,
-          [`spectrum-Tabs--compact`]: density === 'compact'
+          ['spectrum-Tabs--compact']: density === 'compact'
         },
         className
       )}>
@@ -374,7 +374,7 @@ function TabPicker<T>(props: TabPickerProps<T>) {
         'spectrum-Tabs--isCollapsed',
         {
           'spectrum-Tabs--quiet': isQuiet,
-          [`spectrum-Tabs--compact`]: density === 'compact'
+          ['spectrum-Tabs--compact']: density === 'compact'
         },
         className
       )}>
