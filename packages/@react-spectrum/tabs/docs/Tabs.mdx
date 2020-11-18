@@ -43,7 +43,7 @@ import {Text} from '@react-spectrum/text';
 
 <Tabs aria-label="History of Ancient Rome">
   <Item title="Founding of Rome" key="FoR">
-    <Content marginTop="size-250" marginStart="size-125" marginBottom="size-250">
+    <Content marginTop="size-250" marginStart="size-125">
       <Text>Arma virumque cano, Troiae qui primus ab oris.</Text>
     </Content>
   </Item>
@@ -150,7 +150,7 @@ function Example() {
   return (
     <Flex gap="size-150" wrap>
       <span id="label-2">Settings (uncontrolled)</span>
-      <Tabs aria-labelledby="label-2" items={tabs} defaultSelectedKey="2">
+      <Tabs aria-labelledby="label-2" items={tabs} defaultSelectedKey="2" marginBottom="size-400">
          {item => (
           <Item title={item.name}>
             <Content marginTop="size-250" marginStart="size-125">
