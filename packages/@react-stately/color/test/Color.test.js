@@ -190,33 +190,4 @@ describe('Color', function () {
     expect(Math.round(color1.contrast(white) * 100) / 100).toBe(4.42);
     expect(Math.round(color2.contrast(white) * 100) / 100).toBe(4.59);
   });
-
-  it('wcagComplianceLevel', () => {
-    let color = new Color('rgba(0, 0, 0, 0.66)');
-    let white = new Color('#FFFFFF');
-
-    expect(color.wcagComplianceLevel(white)).toBe('AAA');
-
-    color = new Color('rgba(0, 0, 0, 0.54)');
-
-    expect(color.wcagComplianceLevel(white)).toBe('AA');
-
-    color = new Color('rgba(0, 0, 0, 0.53)');
-
-    expect(color.wcagComplianceLevel(white)).toBe('');
-
-    color = new Color('#767676');
-
-    expect(color.wcagComplianceLevel(white)).toBe('AA');
-
-    color = new Color('#777');
-
-    expect(color.wcagComplianceLevel(white)).toBe('');
-
-    color = new Color('#595959');
-    expect(color.wcagComplianceLevel(white)).toBe('AAA');
-
-    color = new Color('#5A5A5A');
-    expect(color.wcagComplianceLevel(white)).toBe('AA');
-  });
 });

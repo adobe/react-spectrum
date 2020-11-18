@@ -132,15 +132,6 @@ export class Color {
     return (comparisonColorLum + 0.05) / (colorLum + 0.05);
   }
 
-  wcagComplianceLevel(comparisonColor: Color): string {
-    let contrastRatio = this.contrast(comparisonColor);
-    if (contrastRatio > 7) {
-      return 'AAA';
-    }
-
-    return (contrastRatio > 4.5) ? 'AA' : '';
-  }
-
   isDark() {
     var yiq = (this.getChannelValue('red') * 299 + this.getChannelValue('green') * 587 + this.getChannelValue('blue') * 114) / 1000;
     return yiq < 128;
