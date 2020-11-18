@@ -24,7 +24,6 @@ export interface SliderBaseChildArguments {
   inputRefs: MutableRefObject<undefined>[],
   thumbProps: HTMLAttributes<HTMLElement>[],
   inputProps: HTMLAttributes<HTMLElement>[],
-  ticks: ReactNode,
   state: SliderState
 }
 
@@ -95,7 +94,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
 
   let domRef = useFocusableRef(ref, inputRefs[0]);
 
-  let ticks = null;
+  // let ticks = null;
   // if (tickCount > 0) {
   //   let tickList = [];
   //   for (let i = 0; i < tickCount; i++) {
@@ -183,7 +182,6 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
           inputRefs,
           thumbProps,
           inputProps,
-          ticks,
           state
         })}
       </div>
