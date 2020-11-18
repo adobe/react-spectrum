@@ -34,7 +34,7 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
     orientation = 'horizontal' as Orientation,
     isDisabled,
     isQuiet,
-    density,
+    density = 'regular',
     children,
     ...otherProps
   } = props;
@@ -285,7 +285,7 @@ const CollapsibleTabList = React.forwardRef(function <T> (props: CollapsibleTabL
 
 interface TabListProps<T> {
   isQuiet?: boolean,
-  density?: 'compact',
+  density?: 'compact' | 'regular',
   isDisabled?: boolean,
   orientation?: Orientation,
   state: SingleSelectListState<T>,
@@ -315,7 +315,7 @@ const TabList = React.forwardRef(function <T> (props: TabListProps<T>, ref: Muta
         `spectrum-Tabs--${orientation}`,
         {
           'spectrum-Tabs--quiet': isQuiet,
-          [`spectrum-Tabs--${density}`]: density
+          [`spectrum-Tabs--compact`]: density === 'compact'
         },
         className
       )}>
@@ -328,7 +328,7 @@ const TabList = React.forwardRef(function <T> (props: TabListProps<T>, ref: Muta
 });
 
 interface TabPickerProps<T> extends SpectrumPickerProps<T> {
-  density?: 'compact',
+  density?: 'compact' | 'regular',
   state: SingleSelectListState<T>,
   className?: string
 }
@@ -374,7 +374,7 @@ function TabPicker<T>(props: TabPickerProps<T>) {
         'spectrum-Tabs--isCollapsed',
         {
           'spectrum-Tabs--quiet': isQuiet,
-          [`spectrum-Tabs--${density}`]: density
+          [`spectrum-Tabs--compact`]: density === 'compact'
         },
         className
       )}>

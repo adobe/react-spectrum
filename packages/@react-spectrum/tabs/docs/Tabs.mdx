@@ -211,8 +211,9 @@ function Example() {
 ```
 
 ### Keyboard Activation
-By default, pressing the arrow keys while focus is on a Tab will switch selection to the adjacent tab in that direction, updating the content displayed accordingly. If you would like to prevent selection change
-from happening automatically you can set the `keyboardActivation` prop to "manual". This will prevent tab selection from changing until the end user presses the `Enter` or `Space` key.
+By default, pressing the arrow keys while focus is on a Tab will switch selection to the adjacent Tab in that direction, updating the content displayed accordingly. If you would like to prevent selection change
+from happening automatically you can set the `keyboardActivation` prop to "manual". This will prevent tab selection from changing on arrow key press, requiring a subsequent `Enter` or `Space` key press to confirm
+tab selection.
 
 ```tsx example
 function Example() {
