@@ -21,7 +21,7 @@ import {Item, Tabs} from '@react-spectrum/tabs';
 ```
 
 ---
-category: Collection
+category: Collections
 keywords: [tabs, collections]
 ---
 
@@ -38,7 +38,8 @@ keywords: [tabs, collections]
 
 ## Example
 ```tsx example
-import {Content, Text} from '@react-spectrum/text';
+import {Content} from '@react-spectrum/view';
+import {Text} from '@react-spectrum/text';
 
 <Tabs aria-label="History of Ancient Rome">
   <Item title="Founding of Rome" key="FoR">
@@ -60,7 +61,7 @@ import {Content, Text} from '@react-spectrum/text';
 ```
 
 ## Content
-Tabs follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections. Similar to [Menu](MenuTrigger.html), Tabs accepts `<Item>` elements as children,
+Tabs follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections. Similar to [Menu](Menu.html), Tabs accepts `<Item>` elements as children,
 each with a `key` prop. However, unlike the other Collection components, the Tab itself is defined via props passed to the `<Item>` element whereas the contents of the Tab's panel are defined by the `<Item>` element's children.
 This can be seen in the example above, where each Tab's rendered title mirrors the string provided to the `<Item>`'s `title` prop and the content of each Tab populated by the `<Item>`'s child.
 Static collections, as in this example, can be used when the full list of tabs and their contents is known ahead of time.
