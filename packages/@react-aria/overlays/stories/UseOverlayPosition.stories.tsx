@@ -45,10 +45,10 @@ function Trigger(props: {
           margin: 0,
           listStyleType: 'none'
         }}>
-        <li>Hello Hello Hello Hello Hello</li>
-        <li>Hello Hello Hello</li>
+        <li>Hello Hello</li>
+        <li>Hello Hello</li>
         <li>Hello</li>
-        <li>Hello Hello Hello</li>
+        <li>Hello Hello</li>
         <li>Hello</li>
       </ul>
     </div>
@@ -69,8 +69,8 @@ storiesOf('UseOverlayPosition', module)
   .add('document.body container bottom', () => <Trigger withPortal placement="bottom" />)
   .add('document.body container bottom left', () => <Trigger withPortal placement="bottom left" />)
   .add('document.body container bottom right', () => <Trigger withPortal placement="bottom right" />)
-  .add('document.body small trigger bottom left', () => <Trigger buttonWidth={100} withPortal placement="bottom left" />)
-  .add('document.body small trigger bottom right', () => <Trigger buttonWidth={100} withPortal placement="bottom right" />)
+  .add('document.body small trigger bottom left', () => <Trigger buttonWidth={80} withPortal placement="bottom left" />)
+  .add('document.body small trigger bottom right', () => <Trigger buttonWidth={80} withPortal placement="bottom right" />)
   .add('document.body container top', () => <Trigger withPortal placement="top" />)
   .add('positioned container bottom', () => <Trigger withPortal={false} placement="bottom" />)
   .add('positioned container bottom left', () => <Trigger withPortal={false} placement="bottom left" />)
