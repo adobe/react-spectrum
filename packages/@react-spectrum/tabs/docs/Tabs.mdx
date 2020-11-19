@@ -248,17 +248,18 @@ still works if the Tabs [collapse](#collapse-overflow-behavior).
 import AppleFiles from '@spectrum-icons/workflow/AppleFiles';
 import Book from '@spectrum-icons/workflow/Book';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import Unauthorized from '@spectrum-icons/illustrations/Unauthorized';
+import Unavailable from '@spectrum-icons/illustrations/Unavailable';
 import UserShare from '@spectrum-icons/workflow/UserShare';
 
 function Example() {
-  let unauthorizedPage = (heading) => (
+  let unauthorizedPage = (props) => (
     <Content marginTop="size-250">
-      <Heading marginStart="size-125">{heading}</Heading>
+      <Heading marginStart="size-125">{props.heading}</Heading>
       <IllustratedMessage>
-        <Heading>Error 401: Unauthorized</Heading>
-        <Content>You don’t have access to this page. Please login to view.</Content>
-        <Unauthorized />
+        {props.errorMessage}
+        {props.illustratedMessage}
       </IllustratedMessage>
     </Content>
   );
@@ -267,17 +268,41 @@ function Example() {
     {
       name: 'Your files',
       icon: <AppleFiles />,
-      children: unauthorizedPage('Files')
+      children: unauthorizedPage({
+        heading: 'Files',
+        illustratedMessage: <Unauthorized />,
+        errorMessage: (
+          <>
+            <Heading>Error 401: Unauthorized</Heading>
+            <Content>You don’t have access to this page. Please login to view.</Content>
+          </>
+        )
+      })
     },
     {
       name: 'Shared with you',
       icon: <UserShare />,
-      children: unauthorizedPage('Shared Files')
+      children: unauthorizedPage({
+        heading: 'Shared Files',
+        illustratedMessage: <NoSearchResults />,
+        errorMessage: (
+          <Heading>No Results.</Heading>
+        )
+      })
     },
     {
       name: 'Libraries',
       icon: <Book />,
-      children: unauthorizedPage('Available Libraries')
+      children: unauthorizedPage({
+        heading: 'Available Libraries',
+        illustratedMessage: <Unavailable />,
+        errorMessage: (
+          <>
+            <Heading>Error 503: Service Unavailable</Heading>
+            <Content>This page isn’t available right now. Try visiting this page again later.</Content>
+          </>
+        )
+      })
     }
   ];
 

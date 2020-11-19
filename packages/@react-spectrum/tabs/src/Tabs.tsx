@@ -394,7 +394,7 @@ function TabPicker<T>(props: TabPickerProps<T>) {
           selectedKey={state.selectedKey}
           disabledKeys={state.disabledKeys}
           onSelectionChange={state.setSelectedKey}>
-          {item => <Item key={item.key} textValue={item.textValue}>{item.rendered}</Item>}
+          {item => <Item textValue={item.textValue}>{item.rendered}</Item>}
         </Picker>
         {pickerNode && <TabLine orientation="horizontal" selectedTab={pickerNode} selectedKey={state.selectedKey} />}
       </SlotProvider>
