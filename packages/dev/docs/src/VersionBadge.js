@@ -10,15 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Image';
-export * from './Highlights';
-export * from './Layout';
-export * from './PropTable';
-export * from './VersionBadge';
-export * from './HeaderInfo';
-export * from './ResourceCard';
-export * from './types';
-export * from './FunctionAPI';
-export * from './TypeLink';
-export * from './ClassAPI';
-export * from './PostListing';
+
+import badgeStyles from '@adobe/spectrum-css-temp/components/label/vars.css';
+import clsx from 'clsx';
+import React from 'react';
+
+export function VersionBadge(props) {
+  let {
+    version = ''
+  } = props;
+
+  let versionMap = {
+    'alpha': 'spectrum-Label--green',
+    'beta': 'spectrum-Label--blue',
+    'rc': 'spectrum-Label--green'
+  };
+
+  let preRelease = version.match(/(alpha)|(beta)|(rc)/);
+
+  if (!preRelease) {
+    return null;
+  }
+
+  return (
+    <span className={clsx(badgeStyles['spectrum-Label'], badgeStyles[versionMap[preRelease[0]]])}>{preRelease[0]}</span>
+  );
+}
