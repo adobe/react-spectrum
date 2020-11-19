@@ -52,7 +52,7 @@ export function useSlider(
   // Attach id of the label to the state so it can be accessed by useSliderThumb.
   sliderIds.set(state, labelProps.id ?? fieldProps.id);
 
-  let {direction, locale} = useLocale();
+  let {direction} = useLocale();
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
