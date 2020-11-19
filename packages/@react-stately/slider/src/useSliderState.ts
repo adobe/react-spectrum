@@ -63,6 +63,12 @@ export const DEFAULT_MIN_VALUE = 0;
 export const DEFAULT_MAX_VALUE = 100;
 export const DEFAULT_STEP_VALUE = 1;
 
+/**
+ * Provides state management for a slider component. Stores values for all thumbs
+ * and formats values for localization. Also provides methods to update the position
+ * of any thumbs.
+ * @param props
+ */
 export function useSliderState(props: SliderProps): SliderState {
   const {isDisabled, minValue = DEFAULT_MIN_VALUE, maxValue = DEFAULT_MAX_VALUE, formatOptions, step = DEFAULT_STEP_VALUE} = props;
 

@@ -1,5 +1,5 @@
 import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
-import React, {ChangeEvent, HTMLAttributes, useCallback, useEffect, useRef} from 'react';
+import React, {ChangeEvent, HTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
 import {sliderIds} from './utils';
 import {SliderState} from '@react-stately/slider';
 import {SliderThumbProps} from '@react-types/slider';
@@ -20,8 +20,8 @@ interface SliderThumbAria {
 }
 
 export interface SliderThumbOptions extends SliderThumbProps {
-  trackRef: React.RefObject<HTMLElement>,
-  inputRef: React.RefObject<HTMLInputElement>
+  trackRef: RefObject<HTMLElement>,
+  inputRef: RefObject<HTMLInputElement>
 }
 
 /**

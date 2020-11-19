@@ -11,7 +11,7 @@
  */
 
 import {clamp, mergeProps, useGlobalListeners} from '@react-aria/utils';
-import React, {HTMLAttributes, useRef} from 'react';
+import React, {HTMLAttributes, RefObject, useRef} from 'react';
 import {sliderIds} from './utils';
 import {SliderProps} from '@react-types/slider';
 import {SliderState} from '@react-stately/slider';
@@ -43,7 +43,7 @@ interface SliderAria {
 export function useSlider(
   props: SliderProps,
   state: SliderState,
-  trackRef: React.RefObject<HTMLElement>
+  trackRef: RefObject<HTMLElement>
 ): SliderAria {
   let {labelProps, fieldProps} = useLabel(props);
 
@@ -52,7 +52,8 @@ export function useSlider(
   // Attach id of the label to the state so it can be accessed by useSliderThumb.
   sliderIds.set(state, labelProps.id ?? fieldProps.id);
 
-  let {direction} = useLocale();
+  let {direction, locale} = useLocale();
+  console.log(locale, direction);
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
