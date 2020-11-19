@@ -380,6 +380,10 @@ function TabPicker<T>(props: TabPickerProps<T>) {
       )}>
       <SlotProvider
         slots={{
+          icon: {
+            size: 'S',
+            UNSAFE_className: classNames(styles, 'spectrum-Icon')
+          },
           button: {
             focusRingClass: classNames(styles, 'focus-ring')
           }
