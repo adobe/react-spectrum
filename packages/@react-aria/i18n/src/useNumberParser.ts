@@ -240,7 +240,8 @@ export let cleanString = (value: string, symbols, locale, numeralSystem): string
   if (!numeralSystem) {
     numerals = `${numerals}${numberingSystems['hanidec'].join('')}${numberingSystems['arab'].join('')}`;
   }
-  let invalidChars = new RegExp(`[^${minusSign}${plusSign}${numerals}${validCharacters}]`, 'g');
+  // 'u' flag is necessary for unicode
+  let invalidChars = new RegExp(`[^${minusSign}${plusSign}${numerals}${validCharacters}\\p{White_Space}]`, 'gu');
   let strippedValue = result.replace(invalidChars, '');
   strippedValue = replaceAllButFirstOccurrence(strippedValue, minusSign);
   strippedValue = replaceAllButFirstOccurrence(strippedValue, plusSign);

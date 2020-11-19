@@ -1480,6 +1480,21 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledWith(42);
   });
 
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name can type any kind of whitespace', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'SAR'}});
+    expect(textField).toHaveAttribute('value', '');
+
+    act(() => {textField.focus();});
+    typeText(textField, 'SAR 21.00');
+    expect(textField).toHaveAttribute('value', 'SAR 21.00');
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', 'SAR 21.00');
+    expect(onChangeSpy).toHaveBeenCalledWith(21);
+  });
+
   it.each(locales)('%s formats', (locale) => {
     let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: -52, formatOptions: {style: 'currency', currency: 'USD'}}, {locale});
 
