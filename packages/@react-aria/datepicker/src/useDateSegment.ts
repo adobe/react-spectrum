@@ -13,13 +13,14 @@
 import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
 import {DatePickerProps} from '@react-types/datepicker';
 import {DOMProps} from '@react-types/shared';
-import {HTMLAttributes, MouseEvent, useState} from 'react';
+import {HTMLAttributes, useState} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
 import {useDateFormatter, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useFocusManager} from '@react-aria/focus';
 import {useMediaQuery} from '@react-spectrum/utils';
+import {usePress} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
 
 interface DateSegmentAria {
@@ -159,6 +160,14 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
     setEnteredKeys('');
   };
 
+  let {pressProps} = usePress({
+    onPressStart: (e) => {
+      if (e.pointerType === 'mouse') {
+        e.target.focus();
+      }
+    }
+  });
+
   let touchPropOverrides = useMediaQuery('(hover: none) and (pointer: coarse)') ? {
     role: 'textbox',
     'aria-valuemax': null,
@@ -172,6 +181,7 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
     segmentProps: mergeProps(spinButtonProps, {
       id,
       ...touchPropOverrides,
+      ...pressProps,
       'aria-controls': props['aria-controls'],
       'aria-haspopup': props['aria-haspopup'],
       'aria-invalid': props['aria-invalid'],
@@ -179,8 +189,7 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
       'aria-labelledby': `${props['aria-labelledby']} ${id}`,
       tabIndex: props.isDisabled ? undefined : 0,
       onKeyDown,
-      onFocus,
-      onMouseDown: (e: MouseEvent) => e.stopPropagation()
+      onFocus
     })
   };
 }

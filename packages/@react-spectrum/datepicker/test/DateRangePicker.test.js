@@ -12,10 +12,23 @@
 
 import {act, fireEvent, getAllByRole as getAllByRoleInContainer, render} from '@testing-library/react';
 import {DateRangePicker} from '../';
+import {installPointerEvent} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
+
+
+function pointerEvent(type, opts) {
+  let evt = new Event(type, {bubbles: true, cancelable: true});
+  Object.assign(evt, {
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false,
+    button: opts.button || 0
+  }, opts);
+  return evt;
+}
 
 describe('DateRangePicker', function () {
   // there are live announcers, we need to be able to get rid of them after each test or get a warning in the console about act()
@@ -325,6 +338,7 @@ describe('DateRangePicker', function () {
   });
 
   describe('focus management', function () {
+    installPointerEvent();
     it('should focus the last segment of each field on mouse down', function () {
       let {getByLabelText} = render(<DateRangePicker />);
       let startDate = getByLabelText('Start Date');
@@ -332,10 +346,12 @@ describe('DateRangePicker', function () {
       let startSegments = getAllByRoleInContainer(startDate, 'spinbutton');
       let endSegments = getAllByRoleInContainer(endDate, 'spinbutton');
 
-      fireEvent.mouseDown(startDate);
+      fireEvent(startDate, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      triggerPress(startDate);
       expect(startSegments[startSegments.length - 1]).toHaveFocus();
 
-      fireEvent.mouseDown(endDate);
+      fireEvent(endDate, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      triggerPress(endDate);
       expect(endSegments[endSegments.length - 1]).toHaveFocus();
     });
 
@@ -345,7 +361,8 @@ describe('DateRangePicker', function () {
       let endDate = getByLabelText('End Date');
       let endSegments = getAllByRoleInContainer(endDate, 'spinbutton');
 
-      fireEvent.mouseDown(rangeDash);
+      fireEvent(rangeDash, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      triggerPress(rangeDash);
       expect(endSegments[0]).toHaveFocus();
     });
   });

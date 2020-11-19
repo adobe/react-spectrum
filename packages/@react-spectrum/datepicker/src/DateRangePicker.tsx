@@ -25,7 +25,7 @@ import {SpectrumDateRangePickerProps} from '@react-types/datepicker';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {useDateRangePicker} from '@react-aria/datepicker';
 import {useDateRangePickerState} from '@react-stately/datepicker';
-import {useHover} from '@react-aria/interactions';
+import {useHover, usePress} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
@@ -142,16 +142,19 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
 
 function DateRangeDash() {
   let focusManager = useFocusManager();
-  let onMouseDown = (e) => {
-    e.preventDefault();
-    focusManager.focusNext({from: e.target});
-  };
+  let {pressProps} = usePress({
+    onPressStart: (e) => {
+      if (e.pointerType === 'mouse') {
+        focusManager.focusNext({from: e.target as HTMLElement});
+      }
+    }
+  });
 
   return (
     <div
       role="presentation"
       data-testid="date-range-dash"
       className={classNames(styles, 'spectrum-Datepicker--rangeDash')}
-      onMouseDown={onMouseDown} />
+      {...pressProps} />
   );
 }

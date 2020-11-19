@@ -12,10 +12,22 @@
 
 import {act, fireEvent, render} from '@testing-library/react';
 import {DatePicker, DateRangePicker} from '../';
+import {installPointerEvent} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
+
+function pointerEvent(type, opts) {
+  let evt = new Event(type, {bubbles: true, cancelable: true});
+  Object.assign(evt, {
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false,
+    button: opts.button || 0
+  }, opts);
+  return evt;
+}
 
 describe('DatePickerBase', function () {
   describe('basics', function () {
@@ -246,6 +258,8 @@ describe('DatePickerBase', function () {
   });
 
   describe('focus management', function () {
+    installPointerEvent();
+
     it.each`
       Name                   | Component
       ${'DatePicker'}        | ${DatePicker}
@@ -301,7 +315,7 @@ describe('DatePickerBase', function () {
       let literals = getAllByText('/');
       let segments = getAllByRole('spinbutton');
 
-      fireEvent.mouseDown(literals[0]);
+      fireEvent(literals[0], pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       expect(segments[1]).toHaveFocus();
     });
 
@@ -324,10 +338,10 @@ describe('DatePickerBase', function () {
 
       let {getAllByTestId} = render(<Component formatOptions={format} />);
 
-      fireEvent.mouseDown(getAllByTestId('weekday')[0]);
+      fireEvent(getAllByTestId('weekday')[0], pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       expect(getAllByTestId('month')[0]).toHaveFocus();
 
-      fireEvent.mouseDown(getAllByTestId('era')[0]);
+      fireEvent(getAllByTestId('era')[0], pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       expect(getAllByTestId('hour')[0]).toHaveFocus();
     });
 
