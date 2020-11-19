@@ -27,7 +27,7 @@ let VARIANT_MAPPING = {
   negative: 'warning'
 };
 
-function Button(props: SpectrumButtonProps, ref: FocusableRef) {
+function Button(props: SpectrumButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'button');
   let {
