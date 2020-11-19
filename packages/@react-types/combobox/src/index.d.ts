@@ -31,11 +31,11 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
   onInputChange?: (value: string) => void,
   /** Whether the ComboBox allows a non-item matching input value to be set. */
   allowsCustomValue?: boolean,
-  /**
-   * Whether the Combobox should only suggest matching options or autocomplete the field with the nearest matching option.
-   * @default 'suggest'
-   */
-  completionMode?: 'suggest' | 'complete',
+  // /**
+  //  * Whether the Combobox should only suggest matching options or autocomplete the field with the nearest matching option.
+  //  * @default 'suggest'
+  //  */
+  // completionMode?: 'suggest' | 'complete',
   /**
    * The interaction required to display the ComboBox menu.
    * @default 'input'

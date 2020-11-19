@@ -266,15 +266,15 @@ function Example() {
     {id: 8, name: 'Adobe Fresco'},
     {id: 9, name: 'Adobe Dreamweaver'}
   ];
-  let [productId, setProductId] = React.useState('9');
+  let [productId, setProductId] = React.useState(9);
 
   return (
     <Flex gap="size-150" wrap>
       <ComboBox
         label="Pick an Adobe product (uncontrolled)"
         defaultItems={options}
-        defaultSelectedKey="9">
-        {item => <Item key={item.name}>{item.name}</Item>}
+        defaultSelectedKey={9}>
+        {item => <Item>{item.name}</Item>}
       </ComboBox>
 
       <ComboBox
@@ -282,7 +282,7 @@ function Example() {
         defaultItems={options}
         selectedKey={productId}
         onSelectionChange={selected => setProductId(selected)}>
-        {item => <Item key={item.name}>{item.name}</Item>}
+        {item => <Item>{item.name}</Item>}
       </ComboBox>
     </Flex>
   );
@@ -558,7 +558,7 @@ function Example() {
 By default, ComboBox uses a string "contains" filtering strategy when deciding what items to display in the dropdown menu. This filtering strategy can be overwritten
 by filtering the list of items yourself and passing the filtered list to the ComboBox via the `items` prop.
 
-The example below uses a string "startsWith" filter function obtained from `react-aria`s `useFilter` hook to display items that start with the ComboBox's current input
+The example below uses a string "startsWith" filter function obtained from the `useFilter` hook to display items that start with the ComboBox's current input
 value only.
 
 ```tsx example
@@ -718,7 +718,7 @@ For right-to-left (RTL) languages, this is flipped.
 [View guidelines](https://spectrum.adobe.com/page/combo-box/#Width)
 
 ```tsx example
-<ComboBox label="Favorite Animal" width="size-6000">
+<ComboBox label="Favorite Animal" width="size-6000" maxWidth="100%">
   <Item key="red panda">Red Panda</Item>
   <Item key="cat">Cat</Item>
   <Item key="dog">Dog</Item>
