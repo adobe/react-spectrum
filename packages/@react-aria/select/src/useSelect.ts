@@ -12,7 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaSelectProps} from '@react-types/select';
-import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useMemo} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
@@ -68,6 +68,27 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     ref
   );
 
+  let onKeyDown = (e: KeyboardEvent) => {
+    if (keyboardDelegate) {
+      switch (e.key) {
+        case 'ArrowLeft': {
+          let key = state.selectedKey ? keyboardDelegate.getKeyAbove(state.selectedKey) : keyboardDelegate.getFirstKey();
+          if (key) {
+            state.setSelectedKey(key);
+          }
+          break;
+        }
+        case 'ArrowRight': {
+          let key = state.selectedKey ? keyboardDelegate.getKeyBelow(state.selectedKey) : keyboardDelegate.getFirstKey();
+          if (key) {
+            state.setSelectedKey(key);
+          }
+          break;
+        }
+      }  
+    }
+  };
+
   let {typeSelectProps} = useTypeSelect({
     keyboardDelegate: delegate,
     selectionManager: state.selectionManager,
@@ -99,6 +120,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     },
     triggerProps: mergeProps(domProps, {
       ...triggerProps,
+      onKeyDown: chain(triggerProps.onKeyDown, onKeyDown),
       'aria-labelledby': [
         triggerProps['aria-labelledby'],
         triggerProps['aria-label'] && !triggerProps['aria-labelledby'] ? triggerProps.id : null,
