@@ -6,7 +6,7 @@ import {StoryMultiSlider, StoryThumb} from './StoryMultiSlider';
 import {StoryRangeSlider} from './StoryRangeSlider';
 import {StorySlider} from './StorySlider';
 
-let message = 'Your browser may not support this set of format options.'
+let message = 'Your browser may not support this set of format options.';
 
 storiesOf('Slider (hooks)', module)
   .addDecorator(story => (

@@ -18,7 +18,7 @@ import {Slider} from '../';
 import {SpectrumSliderProps} from '@react-types/slider';
 import {storiesOf} from '@storybook/react';
 
-let message = 'Your browser may not support this set of format options.'
+let message = 'Your browser may not support this set of format options.';
 
 storiesOf('Slider', module)
   .addDecorator(story => (
