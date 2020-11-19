@@ -53,7 +53,6 @@ export function useSlider(
   sliderIds.set(state, labelProps.id ?? fieldProps.id);
 
   let {direction, locale} = useLocale();
-  console.log(locale, direction);
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
