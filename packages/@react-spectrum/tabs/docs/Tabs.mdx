@@ -15,13 +15,14 @@ import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/tabs/package.json';
 
 ```jsx import
+import {Button} from '@react-spectrum/button';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {Item, Tabs} from '@react-spectrum/tabs';
 ```
 
 ---
-category: Collections
+category: Navigation
 keywords: [tabs, collections]
 ---
 
@@ -77,7 +78,7 @@ function Example() {
     {id: 2, name: 'Monarchy and Republic', children: 'Senatus Populusque Romanus.'},
     {id: 3, name: 'Empire', children: 'Alea jacta est.'}
   ];
-  let [tabId, setTabId] = React.useState('1');
+  let [tabId, setTabId] = React.useState(1);
 
   return (
     <>
@@ -99,41 +100,13 @@ function Example() {
 ```
 
 ### Internationalization
-To internationalize Tabs, a localized string should be passed to the `title` or [`textValue`](#complex-items) of each `Item`. Any text content within the Tab's panel should also be localized accordingly.
+To internationalize Tabs, a localized string should be passed to the `title` of each item. Any text content within the Tab's panel should also be localized accordingly.
 For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of Tabs is automatically flipped.
 
 ## Labeling
 ### Accessibility
-Tabs should be labeled using `aria-label` or `aria-labelledby` to identify the tab list for accessibility.
-
-```tsx example
-<>
-  <span id="label-1">History of Rome</span>
-  <Tabs aria-labelledby="label-1">
-    <Item title="Founding of Rome" key="FoR">
-      <Content marginTop="size-250" marginStart="size-125">
-        <Text>
-          Arma virumque cano, Troiae qui primus ab oris.
-        </Text>
-      </Content>
-    </Item>
-    <Item title="Monarchy and Republic" key="MaR">
-      <Content marginTop="size-250" marginStart="size-125">
-        <Text>
-          Senatus Populusque Romanus.
-        </Text>
-      </Content>
-    </Item>
-    <Item title="Empire" key="libraries">
-      <Content marginTop="size-250" marginStart="size-125">
-        <Text>
-          Alea jacta est.
-        </Text>
-      </Content>
-    </Item>
-  </Tabs>
-</>
-```
+While an `aria-label` is not explicitly required for a tab list, Tabs should be labeled using a `aria-label` in the absence of an ancestor [landmark](https://www.w3.org/WAI/GL/wiki/Using_ARIA_landmarks_to_identify_regions_of_a_page).
+This will prevent screen readers from announcing non-focused tabs, allowing for a more focused accessibilty experience.
 
 ## Selection
 Setting a selected tab can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `key` of an item. See [Events](#events) for more details on selection events.
@@ -145,12 +118,12 @@ function Example() {
     {id: 2, name: 'Mouse Settings', children: 'No mouse detected.'},
     {id: 3, name: 'Gamepad Settings', children: 'No gamepad detected'}
   ];
-  let [tab, setTab] = React.useState("2");
+  let [tab, setTab] = React.useState(2);
 
   return (
     <Flex gap="size-150" wrap>
       <span id="label-2">Settings (uncontrolled)</span>
-      <Tabs aria-labelledby="label-2" items={tabs} defaultSelectedKey="2" marginBottom="size-400">
+      <Tabs aria-labelledby="label-2" items={tabs} defaultSelectedKey={2} marginBottom="size-400">
          {item => (
           <Item title={item.name}>
             <Content marginTop="size-250" marginStart="size-125">
@@ -179,7 +152,7 @@ function Example() {
 ```
 
 ## Events
-Tabs supports tab selection via mouse, keyboard, and touch. You can handle all of these via the `onSelectionChange` prop. Tabs will pass the selected `key` to the `onSelectionChange` handler.
+Tabs supports selection via mouse, keyboard, and touch. You can handle all of these via the `onSelectionChange` prop. Tabs will pass the selected `key` to the `onSelectionChange` handler.
 
 The following example uses an `onSelectionChange` handler to update the tab selection stored in React state.
 
@@ -267,7 +240,7 @@ function Example() {
   let tabs = [
     {
       name: 'Your files',
-      icon: <AppleFiles />,
+      icon: <AppleFiles size="S" />,
       children: unauthorizedPage({
         heading: 'Files',
         illustratedMessage: <Unauthorized />,
@@ -281,7 +254,7 @@ function Example() {
     },
     {
       name: 'Shared with you',
-      icon: <UserShare />,
+      icon: <UserShare size="S" />,
       children: unauthorizedPage({
         heading: 'Shared Files',
         illustratedMessage: <NoSearchResults />,
@@ -292,7 +265,7 @@ function Example() {
     },
     {
       name: 'Libraries',
-      icon: <Book />,
+      icon: <Book size="S" />,
       children: unauthorizedPage({
         heading: 'Available Libraries',
         illustratedMessage: <Unavailable />,
@@ -325,6 +298,9 @@ function Example() {
   );
 }
 ```
+
+### Internationalization
+To internationalize a complex tab, any text content within the `title` and `textValue` of each item should be replaced with a localized string.
 
 ## Props
 
@@ -447,26 +423,37 @@ function Example() {
 
 If there isn't enough horizontal room to render every tab on a single line, Tabs will collapse all tabs into a picker menu. Note that this does not apply to vertical Tabs.
 
-Resize the div below to see the above behavior.
+Try the example below to see the above behavior.
 
 ```tsx example
-<div style={{minWidth: '100px', width: '300px', height: '100px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-  <Tabs aria-label="Chat log collapse example">
-    <Item title="John Doe" key="item1">
-      <Content marginTop="size-250" marginStart="size-125">
-        <Text>There is no prior chat history with John Doe.</Text>
-      </Content>
-    </Item>
-    <Item title="Jane Doe" key="item2">
-      <Content marginTop="size-250" marginStart="size-125">
-        <Text>There is no prior chat history with Jane Doe.</Text>
-      </Content>
-    </Item>
-    <Item title="Joe Bloggs" key="item3">
-      <Content marginTop="size-250" marginStart="size-125">
-        <Text>There is no prior chat history with Joe Bloggs.</Text>
-      </Content>
-    </Item>
-  </Tabs>
-</div>
+function Example() {
+  let [collapse, setCollapse] = React.useState(false)
+
+  return (
+    <>
+      <div style={{width: collapse ? '100px' : '300px', marginBottom: '50px', height: '150px', maxWidth: '100%'}}>
+        <Tabs aria-label="Chat log collapse example">
+          <Item title="John Doe" key="item1">
+            <Content marginTop="size-250" marginStart="size-125">
+              <Text>There is no prior chat history with John Doe.</Text>
+            </Content>
+          </Item>
+          <Item title="Jane Doe" key="item2">
+            <Content marginTop="size-250" marginStart="size-125">
+              <Text>There is no prior chat history with Jane Doe.</Text>
+            </Content>
+          </Item>
+          <Item title="Joe Bloggs" key="item3">
+            <Content marginTop="size-250" marginStart="size-125">
+              <Text>There is no prior chat history with Joe Bloggs.</Text>
+            </Content>
+          </Item>
+        </Tabs>
+      </div>
+      <Button onPress={() => setCollapse((collapse) => !collapse)}>
+        Flip tab container size.
+      </Button>
+    </>
+  );
+}
 ```
