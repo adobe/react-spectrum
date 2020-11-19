@@ -38,6 +38,9 @@ export function useInteractOutside(props: InteractOutsideProps) {
 
   useEffect(() => {
     let onPointerDown = (e) => {
+      if (isDisabled) {
+        return;
+      }
       if (isValidEvent(e, ref)) {
         state.isPointerDown = true;
       }
