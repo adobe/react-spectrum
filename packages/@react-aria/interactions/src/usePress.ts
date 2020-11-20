@@ -23,6 +23,12 @@ import {PointerType, PressEvents} from '@react-types/shared';
 import {PressResponderContext} from './context';
 import {useGlobalListeners} from '@react-aria/utils';
 
+const isSafari =
+  typeof window !== 'undefined' && window.navigator != null
+    ? /Safari/.test(window.navigator.userAgent) &&
+    !/Chrome/.test(window.navigator.userAgent)
+    : false;
+
 export interface PressProps extends PressEvents {
   /** Whether the target is in a controlled press state (e.g. an overlay it triggers is open). */
   isPressed?: boolean,
@@ -115,7 +121,9 @@ export function usePress(props: PressHookProps): PressResult {
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
-  let pressProps = useMemo(() => {
+  let lastTriggerStart = useRef<any>();
+
+  let {pressProps, cleanup} = useMemo(() => {
     let state = ref.current;
     let triggerPressStart = (originalEvent: EventBase, pointerType: PointerType) => {
       if (isDisabled) {
@@ -132,6 +140,13 @@ export function usePress(props: PressHookProps): PressResult {
           ctrlKey: originalEvent.ctrlKey
         });
       }
+      lastTriggerStart.current = {
+        pointerType,
+        currentTarget: originalEvent.currentTarget as HTMLElement,
+        shiftKey: originalEvent.shiftKey,
+        metaKey: originalEvent.metaKey,
+        ctrlKey: originalEvent.ctrlKey
+      };
 
       if (onPressChange) {
         onPressChange(true);
@@ -140,8 +155,8 @@ export function usePress(props: PressHookProps): PressResult {
       setPressed(true);
     };
 
-    let triggerPressEnd = (originalEvent: EventBase, pointerType: PointerType, wasPressed = true) => {
-      if (isDisabled) {
+    let triggerPressEnd = (originalEvent: EventBase, pointerType: PointerType, wasPressed = true, overrideDisabled = false) => {
+      if (isDisabled && !overrideDisabled) {
         return;
       }
 
@@ -261,8 +276,9 @@ export function usePress(props: PressHookProps): PressResult {
         }
       }
     };
+    let unbindEvents;
 
-    if (typeof PointerEvent !== 'undefined') {
+    if (typeof PointerEvent !== 'undefined' && !isSafari) {
       pressProps.onPointerDown = (e) => {
         // Only handle left clicks
         if (e.button !== 0) {
@@ -301,7 +317,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
       };
 
-      let unbindEvents = () => {
+      unbindEvents = () => {
         removeGlobalListener(document, 'pointermove', onPointerMove, false);
         removeGlobalListener(document, 'pointerup', onPointerUp, false);
         removeGlobalListener(document, 'pointercancel', onPointerCancel, false);
@@ -428,7 +444,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         let pointerType: PointerType = isVirtualClick(e) ? 'virtual' : 'mouse';
-        if (isOverTarget(e, state.target)) {
+        if (state.target && isOverTarget(e, state.target)) {
           triggerPressEnd(createEvent(state.target, e), pointerType);
         } else if (state.isOverTarget) {
           triggerPressEnd(createEvent(state.target, e), pointerType, false);
@@ -532,8 +548,26 @@ export function usePress(props: PressHookProps): PressResult {
       };
     }
 
-    return pressProps;
+    return {pressProps, cleanup: {unbindEvents, triggerPressStart, triggerPressEnd, triggerPressUp}};
   }, [isDisabled, onPressStart, onPressChange, onPressEnd, onPress, onPressUp, addGlobalListener, preventFocusOnPress, removeGlobalListener]);
+
+  // cleanup if the element we're interacting with becomes disabled
+  useEffect(() => {
+    let state = ref.current;
+    if (isDisabled && state.isPressed) {
+      cleanup.triggerPressEnd(lastTriggerStart.current, lastTriggerStart.current.pointerType, true, true);
+      if (cleanup.unbindEvents) {
+        cleanup.unbindEvents();
+      }
+      restoreTextSelection();
+      state.isPressed = false;
+      state.isOverTarget = false;
+      state.activePointerId = null;
+      state.ignoreEmulatedMouseEvents = false;
+      state.ignoreClickAfterPress = false;
+      state.target = null;
+    }
+  }, [isDisabled, cleanup]);
 
   // Remove user-select: none in case component unmounts immediately after pressStart
   // eslint-disable-next-line arrow-body-style

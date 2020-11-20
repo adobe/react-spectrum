@@ -17,6 +17,14 @@
 
 import {HoverEvents} from '@react-types/shared';
 import {HTMLAttributes, useEffect, useMemo, useRef, useState} from 'react';
+import {restoreTextSelection} from "./textSelection";
+
+
+const isSafari =
+  typeof window !== 'undefined' && window.navigator != null
+    ? /Safari/.test(window.navigator.userAgent) &&
+    !/Chrome/.test(window.navigator.userAgent)
+    : false;
 
 export interface HoverProps extends HoverEvents {
   /** Whether the hover events should be disabled. */
@@ -58,7 +66,7 @@ function setupGlobalTouchEvents() {
     return;
   }
 
-  if (typeof PointerEvent !== 'undefined') {
+  if (typeof PointerEvent !== 'undefined' && !isSafari) {
     document.addEventListener('pointerup', handleGlobalPointerEvent);
   } else {
     document.addEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
@@ -99,7 +107,9 @@ export function useHover(props: HoverProps): HoverResult {
 
   useEffect(setupGlobalTouchEvents, []);
 
-  let hoverProps = useMemo(() => {
+  let lastTriggerStart = useRef<any>();
+
+  let {hoverProps, cleanup} = useMemo(() => {
     let triggerHoverStart = (event, pointerType) => {
       if (isDisabled || pointerType === 'touch' || state.isHovered) {
         return;
@@ -115,6 +125,10 @@ export function useHover(props: HoverProps): HoverResult {
           pointerType
         });
       }
+      lastTriggerStart.current = {
+        target,
+        pointerType
+      };
 
       if (onHoverChange) {
         onHoverChange(true);
@@ -123,8 +137,8 @@ export function useHover(props: HoverProps): HoverResult {
       setHovered(true);
     };
 
-    let triggerHoverEnd = (event, pointerType) => {
-      if (isDisabled || pointerType === 'touch' || !state.isHovered) {
+    let triggerHoverEnd = (event, pointerType, overrideDisabled = false) => {
+      if ((isDisabled && !overrideDisabled) || pointerType === 'touch' || !state.isHovered) {
         return;
       }
 
@@ -148,7 +162,7 @@ export function useHover(props: HoverProps): HoverResult {
 
     let hoverProps: HTMLAttributes<HTMLElement> = {};
 
-    if (typeof PointerEvent !== 'undefined') {
+    if (typeof PointerEvent !== 'undefined' && !isSafari) {
       hoverProps.onPointerEnter = (e) => {
         if (globalIgnoreEmulatedMouseEvents && e.pointerType === 'mouse') {
           return;
@@ -176,9 +190,25 @@ export function useHover(props: HoverProps): HoverResult {
       hoverProps.onMouseLeave = (e) => {
         triggerHoverEnd(e, 'mouse');
       };
+
+      // Safari won't fire onMouseEnter in certain cases
+      hoverProps.onMouseMove = (e) => {
+        if (!state.isHovered) {
+          triggerHoverStart(e, 'mouse')
+        }
+      }
     }
-    return hoverProps;
+    return {hoverProps, cleanup: {triggerHoverStart, triggerHoverEnd}};
   }, [onHoverStart, onHoverChange, onHoverEnd, isDisabled, state]);
+
+  // cleanup if the element we're interacting with becomes disabled
+  useEffect(() => {
+    if (isDisabled && state.isHovered) {
+      cleanup.triggerHoverEnd(lastTriggerStart.current, lastTriggerStart.current.pointerType, true);
+      state.isHovered = false;
+      state.ignoreEmulatedMouseEvents = false;
+    }
+  }, [isDisabled, cleanup]);
 
   return {
     hoverProps,

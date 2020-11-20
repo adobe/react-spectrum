@@ -25,10 +25,10 @@ interface StepButtonProps extends AriaButtonProps {
   direction: 'up' | 'down'
 }
 
-function StepButton({isQuiet, direction, ...props}: StepButtonProps, ref: FocusableRef<HTMLButtonElement>) {
-  let {hoverProps, isHovered} = useHover({});
+function StepButton({isQuiet, direction, isDisabled, ...props}: StepButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+  let {hoverProps, isHovered} = useHover({isDisabled});
   return (
-    <PressResponder {...hoverProps}>
+    <PressResponder {...hoverProps} isDisabled={isDisabled}>
       <ActionButton
         UNSAFE_className={
           classNames(
@@ -42,6 +42,7 @@ function StepButton({isQuiet, direction, ...props}: StepButtonProps, ref: Focusa
           )
         }
         {...props}
+        isDisabled={isDisabled}
         ref={ref}
         isQuiet={isQuiet}>
         {direction === 'up' &&
