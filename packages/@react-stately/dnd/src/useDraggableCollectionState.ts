@@ -53,7 +53,7 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
       return props.getItems(getKeys(key));
     },
     renderPreview(key) {
-      return props.renderPreview(getKeys(key));
+      return props.renderPreview(getKeys(key), key);
     },
     startDrag(key, event) {
       let keys = getKeys(key);

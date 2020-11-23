@@ -27,6 +27,7 @@ import {Item} from '@react-stately/collections';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import {mergeProps} from '@react-aria/utils';
 import {PressResponder} from '@react-aria/interactions';
+import {Provider, useProvider} from '@react-spectrum/provider';
 import React from 'react';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {storiesOf} from '@storybook/react';
@@ -109,9 +110,6 @@ function Draggable() {
         type: 'text/plain',
         data: 'hello world'
       }];
-    },
-    renderPreview() {
-      return <div />;
     },
     getAllowedDropOperations() {
       return ['copy'];
@@ -417,6 +415,7 @@ function DroppableCollectionExample() {
 function DraggableCollection(props) {
   let ref = React.useRef<HTMLDivElement>(null);
   let state = useListState({...props, selectionMode: 'multiple'});
+  let provider = useProvider();
   let dragState = useDraggableCollectionState({
     selectionManager: state.selectionManager,
     getItems(keys) {
@@ -425,8 +424,21 @@ function DraggableCollection(props) {
         data: JSON.stringify([...keys].map(key => state.collection.getItem(key)?.textValue))
       }];
     },
-    renderPreview() {
-      return <div />;
+    renderPreview(selectedKeys, draggedKey) {
+      let item = state.collection.getItem(draggedKey);
+      return (
+        <Provider {...provider}>
+          <div className={classNames(dndStyles, 'draggable', 'is-drag-preview', {'is-dragging-multiple': selectedKeys.size > 1})}>
+            <div className={classNames(dndStyles, 'drag-handle')}>
+              <ShowMenu size="XS" />
+            </div>
+            <span>{item.rendered}</span>
+            {selectedKeys.size > 1 &&
+              <div className={classNames(dndStyles, 'badge')}>{selectedKeys.size}</div>
+            }
+          </div>
+        </Provider>
+      );
     },
     onDragStart: action('onDragStart'),
     onDragEnd: chain(action('onDragEnd'), props.onDragEnd)

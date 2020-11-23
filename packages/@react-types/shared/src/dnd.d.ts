@@ -118,6 +118,6 @@ export interface DraggableCollectionProps {
   onDragMove?: (e: DraggableCollectionMoveEvent) => void,
   onDragEnd?: (e: DraggableCollectionEndEvent) => void,
   getItems: (keys: Set<Key>) => DragItem[],
-  renderPreview: (keys: Set<Key>) => JSX.Element,
+  renderPreview?: (selectedKeys: Set<Key>, draggedKey: Key) => JSX.Element,
   getAllowedDropOperations?: () => DropOperation[]
 }
