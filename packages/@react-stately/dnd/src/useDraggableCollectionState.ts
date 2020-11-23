@@ -31,8 +31,15 @@ export interface DraggableCollectionState {
 export function useDraggableCollectionState(props: DraggableCollectionOptions): DraggableCollectionState {
   let [draggingKeys, setDraggingKeys] = useState(new Set<Key>());
   let getKeys = (key: Key) => {
-    // Ensure that the item itself is always added to the drag even if not selected.
-    let keys = new Set([...props.selectionManager.selectedKeys]);
+    // The clicked item is always added to the drag. If it is selected, then all of the
+    // other selected items are also dragged. If it is not selected, the only the clicked
+    // item is dragged. This matches native macOS behavior.
+    let keys = new Set(
+      props.selectionManager.isSelected(key)
+        ? props.selectionManager.selectedKeys
+        : []
+    );
+
     keys.add(key);
     return keys;
   };
@@ -50,7 +57,6 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
     },
     startDrag(key, event) {
       let keys = getKeys(key);
-
       setDraggingKeys(keys);
 
       if (typeof props.onDragStart === 'function') {

@@ -463,7 +463,7 @@ function DraggableCollectionItem({item, state, dragState}) {
   let {optionProps} = useOption({
     key: item.key,
     isSelected,
-    shouldDeselectOnPressUp: true
+    shouldSelectOnPressUp: true
   }, state, ref);
 
   let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
