@@ -54,6 +54,7 @@
 
 .react-spectrum-DatePicker-cell:focus {
   background-color: var(--spectrum-alias-text-highlight-color);
+  caret-color: transparent;
   outline: none;
 }
 

@@ -187,6 +187,9 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
       'aria-invalid': props['aria-invalid'],
       'aria-label': messageFormatter(segment.type),
       'aria-labelledby': `${props['aria-labelledby']} ${id}`,
+      contentEditable: !props.isDisabled,
+      suppressContentEditableWarning: !props.isDisabled,
+      inputMode: props.isDisabled ? undefined : 'numeric',
       tabIndex: props.isDisabled ? undefined : 0,
       onKeyDown,
       onFocus

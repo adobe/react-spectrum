@@ -45,6 +45,11 @@ describe('DatePickerBase', function () {
 
       let segments = getAllByRole('spinbutton');
       expect(segments.length).toBe(numSegments);
+      for (let segment of segments) {
+        expect(segment).not.toHaveAttribute('aria-disabled');
+        expect(segment).toHaveAttribute('contentEditable', 'true');
+        expect(segment).toHaveAttribute('inputMode', 'numeric');
+      }
 
       let button = getAllByRole('button')[0];
       expect(button).toBeVisible();
@@ -63,6 +68,8 @@ describe('DatePickerBase', function () {
       let segments = getAllByRole('spinbutton');
       for (let segment of segments) {
         expect(segment).toHaveAttribute('aria-disabled', 'true');
+        expect(segment).not.toHaveAttribute('contentEditable', 'true');
+        expect(segment).not.toHaveAttribute('inputMode', 'numeric');
       }
 
       let button = getAllByRole('button')[0];
