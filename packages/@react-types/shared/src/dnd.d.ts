@@ -10,70 +10,93 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, ReactNode} from 'react';
+import {Key} from 'react';
 
-export interface DndBase {
-  dragDelegate?: DragDelegate,
-  dropDelegate?: DropDelegate
+export interface DragDropEvent {
+  // Relative to the target element's position
+  x: number,
+  y: number
 }
 
-// TODO: move this somewhere - enums in .d.ts files don't work well
-export enum DropOperation {
-  /** The drop is not allowed. */
-  NONE = 0,
+export type DropOperation = 'copy' | 'link' | 'move' | 'cancel';
 
-  /** The dropped data can be moved between the source and destination. */
-  MOVE = 1 << 0,
-
-  /** The dropped data can be copied between the source and destination. */
-  COPY = 1 << 1,
-
-  /** The dropped data can be shared between the source and destination. */
-  LINK = 1 << 2,
-
-  /** All types of drops are allowed. */
-  ALL = MOVE | COPY | LINK
+export interface DragItem {
+  type: string, // mime type
+  data: string
 }
 
-export enum DropPosition {
-  ON = 1 << 0,
-  BETWEEN = 1 << 1,
-  ANY = ON | BETWEEN
+export interface DragStartEvent extends DragDropEvent {
+  type: 'dragstart'
 }
 
-export interface DragTarget {
-  /** The type of view being dragged. */
+export interface DragMoveEvent extends DragDropEvent {
+  type: 'dragmove'
+}
+
+export interface DragEndEvent extends DragDropEvent {
+  type: 'dragend',
+  dropOperation: DropOperation
+}
+
+export interface DropEnterEvent extends DragDropEvent {
+  type: 'dropenter'
+}
+
+export interface DropMoveEvent extends DragDropEvent {
+  type: 'dropmove'
+}
+
+export interface DropActivateEvent extends DragDropEvent {
+  type: 'dropactivate'
+}
+
+export interface DropExitEvent extends DragDropEvent {
+  type: 'dropexit'
+}
+
+export interface DropItem {
   type: string,
-
-  /** The key of the view being dragged. */
-  key: Key
+  getData: () => Promise<string | File>
 }
 
+export interface DropEvent extends DragDropEvent {
+  type: 'drop',
+  dropOperation: DropOperation,
+  items: DropItem[]
+}
+
+export type DropPosition = 'on' | 'before' | 'after';
 export interface DropTarget {
-  /** The type of view being dropped on or between. */
-  type: string,
-
-  /**
-   * The key of the view being dropped on or between.
-   * If null, it represents the entire collection view.
-   */
-  key: Key | null,
-
+  key: Key,
   dropPosition: DropPosition
 }
 
-export interface DragDelegate {
-  shouldAllowDrag(target: DragTarget): boolean,
-  prepareDragData(target: DragTarget, dataTransfer: DataTransfer): void,
-  getAllowedDropOperations(target: DropTarget): DropOperation,
-  renderDragView(items: Array<any>): ReactNode,
-  onDragEnd(target: DropTarget, dropOperation: DropOperation): void
+interface DroppableCollectionEnterEvent extends DropEnterEvent {
+  target: DropTarget
 }
 
-export interface DropDelegate {
-  shouldAcceptDrop(target: DropTarget, types: Set<string>): boolean,
-  getAllowedDropPositions(target: DropTarget): DropPosition,
-  overrideDropTarget(target: DropTarget): DropTarget,
-  getDropOperation(target: DropTarget, allowedOperations: DropOperation): DropOperation,
-  onDrop(target: DropTarget, dataTransfer: DataTransfer, dropOperation: DropOperation): void
+interface DroppableCollectionMoveEvent extends DropMoveEvent {
+  target: DropTarget
+}
+
+interface DroppableCollectionActivateEvent extends DropActivateEvent {
+  target: DropTarget
+}
+
+interface DroppableCollectionExitEvent extends DropExitEvent {
+  target: DropTarget
+}
+
+interface DroppableCollectionDropEvent extends DropEvent {
+  target: DropTarget
+}
+
+interface DroppableCollectionProps {
+  getAllowedDropPositions?: (key: Key) => DropPosition[],
+  getDropOperation?: (target: DropTarget, types: string[], allowedOperations: DropOperation[]) => DropOperation,
+  onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
+  onDropMove?: (e: DroppableCollectionMoveEvent) => void,
+  onDropActivate?: (e: DroppableCollectionActivateEvent) => void,
+  onDropExit?: (e: DroppableCollectionExitEvent) => void,
+  onDrop?: (e: DroppableCollectionDropEvent) => void
 }

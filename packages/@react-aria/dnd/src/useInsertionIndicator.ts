@@ -12,32 +12,25 @@
 
 import {Collection, Node} from '@react-types/shared';
 import * as DragManager from './DragManager';
-import {DropOperation, DropTarget} from './types';
+import {DroppableCollectionState} from '@react-stately/dnd';
+import {DropTarget} from '@react-types/shared';
 import {HTMLAttributes, Key, RefObject, useEffect} from 'react';
 import {useDroppableItem} from './useDroppableItem';
 
 interface InsertionIndicatorProps {
   collection: Collection<Node<unknown>>,
-  target: DropTarget,
-  isActive: boolean,
-  getDropOperation?: (target: DropTarget, types: string[], allowedOperations: DropOperation[]) => DropOperation
+  target: DropTarget
 }
 
 interface InsertionIndicatorAria {
   insertionIndicatorProps: HTMLAttributes<HTMLElement>
 }
 
-export function useInsertionIndicator(props: InsertionIndicatorProps, ref: RefObject<HTMLElement>): InsertionIndicatorAria {
-  let {collection, target, isActive, getDropOperation} = props;
+export function useInsertionIndicator(props: InsertionIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): InsertionIndicatorAria {
+  let {collection, target} = props;
 
   let dragSession = DragManager.useDragSession();
-  useEffect(() => {
-    if (dragSession && isActive) {
-      ref.current.focus();
-    }
-  }, [dragSession, isActive, ref]);
-
-  let {dropProps} = useDroppableItem({ref, target, getDropOperation});
+  let {dropProps} = useDroppableItem(props, state, ref);
 
   let before = target.dropPosition === 'before'
     ? collection.getKeyBefore(target.key)

@@ -11,12 +11,12 @@
  */
 
 import * as DragManager from './DragManager';
-import {DropOperation, DropTarget} from './types';
+import {DropOperation, DropTarget} from '@react-types/shared';
+import {DroppableCollectionState} from '@react-stately/dnd';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useVirtualDrop} from './useVirtualDrop';
 
 interface DroppableItemOptions {
-  ref: RefObject<HTMLElement>,
   target: DropTarget,
   getDropOperation?: (target: DropTarget, types: string[], allowedOperations: DropOperation[]) => DropOperation
 }
@@ -25,17 +25,13 @@ interface DroppableItemResult {
   dropProps: HTMLAttributes<HTMLElement>
 }
 
-export function useDroppableItem(options: DroppableItemOptions): DroppableItemResult {
+export function useDroppableItem(options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DroppableItemResult {
   let {dropProps} = useVirtualDrop();
 
-  useEffect(() => {
-    if (options.target) {
-      return DragManager.registerDropItem({
-        element: options.ref.current,
-        target: options.target
-      });
-    }
-  }, []);
+  useEffect(() => DragManager.registerDropItem({
+    element: ref.current,
+    target: options.target
+  }), []);
 
   let dragSession = DragManager.useDragSession();
   let isValidDropTarget = dragSession && typeof options.getDropOperation === 'function'
@@ -45,6 +41,13 @@ export function useDroppableItem(options: DroppableItemOptions): DroppableItemRe
         dragSession.dragTarget.allowedDropOperations
       ) !== 'cancel'
     : true;
+
+  let isDropTarget = state.isDropTarget(options.target);
+  useEffect(() => {
+    if (dragSession && isDropTarget) {
+      ref.current.focus();
+    }
+  }, [isDropTarget, dragSession, ref]);
 
   return {
     dropProps: {

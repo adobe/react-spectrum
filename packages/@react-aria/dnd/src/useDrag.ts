@@ -11,11 +11,10 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {DragEndEvent, DragItem, DragMoveEvent, DragStartEvent, DropOperation} from './types';
+import {DragEndEvent, DragItem, DragMoveEvent, DragStartEvent, DropOperation, PressEvent} from '@react-types/shared';
 import {DragEvent, HTMLAttributes, useEffect, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
-import {PressEvent} from '@react-types/shared';
 import {useId} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
 

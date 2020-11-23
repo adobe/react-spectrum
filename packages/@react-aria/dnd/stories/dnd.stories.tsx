@@ -33,6 +33,7 @@ import {storiesOf} from '@storybook/react';
 import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useButton} from '@react-aria/button';
 import {useDrag, useDrop, useDroppableCollection, useDroppableItem, useInsertionIndicator} from '..';
+import {useDroppableCollectionState} from '@react-stately/dnd';
 import {useListBox, useOption} from '@react-aria/listbox';
 import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
@@ -170,7 +171,6 @@ function Droppable({type}: any) {
 
 function DroppableCollection(props) {
   let ref = React.useRef<HTMLDivElement>(null);
-  let [target, setTarget] = React.useState(null);
   let onDrop = action('onDrop');
   let state = useListState({...props, selectionMode: 'multiple'});
   let keyboardDelegate = new ListKeyboardDelegate(state.collection, new Set(), ref);
@@ -182,19 +182,12 @@ function DroppableCollection(props) {
     return target.dropPosition !== 'on' ? allowedOperations[0] : 'copy';
   };
 
+  let dropState = useDroppableCollectionState({});
   let {collectionProps} = useDroppableCollection({
-    ref,
     keyboardDelegate,
-    onDropEnter: chain(action('onDropEnter'), console.log, e => {
-      setTarget(e.target);
-      if (e.target.dropPosition === 'on') {
-        state.selectionManager.setFocusedKey(e.target.key);
-      } else {
-        state.selectionManager.setFocusedKey(null);
-      }
-    }),
+    onDropEnter: chain(action('onDropEnter'), console.log),
     // onDropMove: action('onDropMove'),
-    onDropExit: chain(action('onDropExit'), console.log, () => setTarget(null)),
+    onDropExit: chain(action('onDropExit'), console.log),
     onDropActivate: chain(action('onDropActivate'), console.log),
     onDrop: async e => {
       onDrop(e);
@@ -246,7 +239,7 @@ function DroppableCollection(props) {
       }
     },
     getDropOperation
-  });
+  }, dropState, ref);
 
   let {listBoxProps} = useListBox({
     ...props,
@@ -267,24 +260,22 @@ function DroppableCollection(props) {
         <>
           <InsertionIndicator
             key={item.key + '-before'}
-            isActive={target?.key === item.key && target?.dropPosition === 'before'}
             collection={state.collection}
+            collectionRef={ref}
             target={{key: item.key, dropPosition: 'before'}}
-            getDropOperation={getDropOperation} />
+            dropState={dropState} />
           <CollectionItem
             key={item.key}
             item={item}
-            isDropTarget={target?.key === item.key && target?.dropPosition === 'on'}
             state={state}
-            target={{key: item.key, dropPosition: 'on'}}
-            getDropOperation={getDropOperation} />
+            dropState={dropState} />
           {state.collection.getKeyAfter(item.key) == null &&
             <InsertionIndicator
               key={item.key + '-after'}
-              isActive={target?.key === item.key && target?.dropPosition === 'after'}
               collection={state.collection}
               target={{key: item.key, dropPosition: 'after'}}
-              getDropOperation={getDropOperation} />
+              collectionRef={ref}
+              dropState={dropState} />
           }
         </>
       ))}
@@ -292,21 +283,26 @@ function DroppableCollection(props) {
   );
 }
 
-function CollectionItem({item, state, isDropTarget, target, getDropOperation}) {
+function CollectionItem({item, state, dropState}) {
   let ref = React.useRef();
   let {optionProps} = useOption({
     key: item.key,
     isSelected: state.selectionManager.isSelected(item.key)
   }, state, ref);
 
-  let {dropProps} = useDroppableItem({ref, target, getDropOperation});
+  let {dropProps} = useDroppableItem({
+    target: {key: item.key, dropPosition: 'on'}
+  }, dropState, ref);
 
   return (
     <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
       <div
         {...mergeProps(optionProps, dropProps)}
         ref={ref}
-        className={classNames(dndStyles, 'droppable', {'is-drop-target': isDropTarget, 'is-selected': state.selectionManager.isSelected(item.key)})}>
+        className={classNames(dndStyles, 'droppable', {
+          'is-drop-target': dropState.isDropTarget({key: item.key, dropPosition: 'on'}),
+          'is-selected': state.selectionManager.isSelected(item.key)
+        })}>
         {item.rendered}
       </div>
     </FocusRing>
@@ -315,7 +311,7 @@ function CollectionItem({item, state, isDropTarget, target, getDropOperation}) {
 
 function InsertionIndicator(props) {
   let ref = React.useRef();
-  let {insertionIndicatorProps} = useInsertionIndicator(props, ref);
+  let {insertionIndicatorProps} = useInsertionIndicator(props, props.dropState, ref);
 
   return (
     <div
@@ -323,7 +319,10 @@ function InsertionIndicator(props) {
       role="option"
       aria-selected="false"
       {...insertionIndicatorProps}
-      className={props.isActive ? classNames(dropIndicatorStyles, 'spectrum-DropIndicator', 'spectrum-DropIndicator--horizontal') : null}
+      className={props.dropState.isDropTarget(props.target)
+        ? classNames(dropIndicatorStyles, 'spectrum-DropIndicator', 'spectrum-DropIndicator--horizontal')
+        : null
+      }
       style={{
         width: '100%',
         marginLeft: 0,
@@ -364,13 +363,10 @@ function DraggableCollectionExample() {
   });
 
   let onDragEnd = (keys, e) => {
-    console.log(keys, e);
     if (e.dropOperation === 'move') {
       list.remove(...keys);
     }
   };
-
-  console.log(list.selectedKeys);
 
   return (
     <DraggableCollection items={list.items} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} onDragEnd={onDragEnd}>
