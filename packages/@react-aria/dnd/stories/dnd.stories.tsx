@@ -32,8 +32,8 @@ import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {storiesOf} from '@storybook/react';
 import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useButton} from '@react-aria/button';
-import {useDrag, useDrop, useDroppableCollection, useDroppableItem, useInsertionIndicator} from '..';
-import {useDroppableCollectionState} from '@react-stately/dnd';
+import {useDrag, useDraggableItem, useDrop, useDroppableCollection, useDroppableItem, useInsertionIndicator} from '..';
+import {useDraggableCollectionState, useDroppableCollectionState} from '@react-stately/dnd';
 import {useListBox, useOption} from '@react-aria/listbox';
 import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
@@ -362,9 +362,9 @@ function DraggableCollectionExample() {
     ]
   });
 
-  let onDragEnd = (keys, e) => {
+  let onDragEnd = (e) => {
     if (e.dropOperation === 'move') {
-      list.remove(...keys);
+      list.remove(...e.keys);
     }
   };
 
@@ -417,7 +417,20 @@ function DroppableCollectionExample() {
 function DraggableCollection(props) {
   let ref = React.useRef<HTMLDivElement>(null);
   let state = useListState({...props, selectionMode: 'multiple'});
-  let [isDragging, setDragging] = React.useState(false);
+  let dragState = useDraggableCollectionState({
+    selectionManager: state.selectionManager,
+    getItems(keys) {
+      return [{
+        type: 'application/json',
+        data: JSON.stringify([...keys].map(key => state.collection.getItem(key)?.textValue))
+      }];
+    },
+    renderPreview() {
+      return <div />;
+    },
+    onDragStart: action('onDragStart'),
+    onDragEnd: chain(action('onDragEnd'), props.onDragEnd)
+  });
 
   let {listBoxProps} = useListBox({
     ...props,
@@ -438,18 +451,13 @@ function DraggableCollection(props) {
           key={item.key}
           item={item}
           state={state}
-          isDragging={isDragging}
-          onDragStart={() => setDragging(true)}
-          onDragEnd={(keys, e) => {
-            setDragging(false);
-            props.onDragEnd?.(keys, e);
-          }} />
+          dragState={dragState} />
       ))}
     </div>
   );
 }
 
-function DraggableCollectionItem({item, state, isDragging, onDragStart, onDragEnd}) {
+function DraggableCollectionItem({item, state, dragState}) {
   let ref = React.useRef();
   let isSelected = state.selectionManager.isSelected(item.key);
   let {optionProps} = useOption({
@@ -458,31 +466,7 @@ function DraggableCollectionItem({item, state, isDragging, onDragStart, onDragEn
     shouldDeselectOnPressUp: true
   }, state, ref);
 
-  let {dragProps, dragButtonProps} = useDrag({
-    getItems() {
-      // Ensure that the item itself is always added to the drag even if not selected.
-      // Sometimes with a screen reader, the selection added in onPressStart below
-      // isn't updated by the time this is called.
-      let keys = new Set([...state.selectionManager.selectedKeys]);
-      keys.add(item.key);
-
-      return [{
-        type: 'application/json',
-        data: JSON.stringify([...keys].map(key => state.collection.getItem(key)?.textValue))
-      }];
-    },
-    renderPreview() {
-      return <div />;
-    },
-    onDragStart,
-    onDragEnd(e) {
-      // Ensure that the item itself is always added to the drag even if not selected.
-      // On touch devices we don't select until touch up, which is after the drag started.
-      let keys = new Set([...state.selectionManager.selectedKeys]);
-      keys.add(item.key);
-      onDragEnd([...keys], e);
-    }
-  });
+  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
 
   let buttonRef = React.useRef();
   let {buttonProps} = useButton({
@@ -505,7 +489,7 @@ function DraggableCollectionItem({item, state, isDragging, onDragStart, onDragEn
           aria-labelledby={id}
           ref={ref}
           className={classNames(dndStyles, 'draggable', {
-            'is-dragging': isDragging && isSelected,
+            'is-dragging': dragState.isDragging(item.key),
             'is-selected': isSelected
           })}>
           <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>

@@ -91,7 +91,7 @@ interface DroppableCollectionDropEvent extends DropEvent {
   target: DropTarget
 }
 
-interface DroppableCollectionProps {
+export interface DroppableCollectionProps {
   getAllowedDropPositions?: (key: Key) => DropPosition[],
   getDropOperation?: (target: DropTarget, types: string[], allowedOperations: DropOperation[]) => DropOperation,
   onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
@@ -99,4 +99,25 @@ interface DroppableCollectionProps {
   onDropActivate?: (e: DroppableCollectionActivateEvent) => void,
   onDropExit?: (e: DroppableCollectionExitEvent) => void,
   onDrop?: (e: DroppableCollectionDropEvent) => void
+}
+
+interface DraggableCollectionStartEvent extends DragStartEvent {
+  keys: Set<Key>
+}
+
+interface DraggableCollectionMoveEvent extends DragMoveEvent {
+  keys: Set<Key>
+}
+
+interface DraggableCollectionEndEvent extends DragEndEvent {
+  keys: Set<Key>
+}
+
+export interface DraggableCollectionProps {
+  onDragStart?: (e: DraggableCollectionStartEvent) => void,
+  onDragMove?: (e: DraggableCollectionMoveEvent) => void,
+  onDragEnd?: (e: DraggableCollectionEndEvent) => void,
+  getItems: (keys: Set<Key>) => DragItem[],
+  renderPreview: (keys: Set<Key>) => JSX.Element,
+  getAllowedDropOperations?: () => DropOperation[]
 }
