@@ -2,18 +2,33 @@ import {AriaLabelingProps, AriaValidationProps, FocusableDOMProps, FocusableProp
 import {ReactNode} from 'react';
 
 export interface BaseSliderProps extends RangeInputBase<number>, LabelableProps, AriaLabelingProps {
+  /**
+   * The orientation of the Slider.
+   * @default 'horizontal'
+   */
   orientation?: Orientation,
+  /** Whether the whole Slider is disabled. */
   isDisabled?: boolean,
+  /**
+   * The display format of the value label.
+   */
   formatOptions?: Intl.NumberFormatOptions
 }
 
 export interface SliderProps extends BaseSliderProps, ValueBase<number[]> {
+  /** Fired when the slider stops moving, due to being let go. */
   onChangeEnd?: (value: number[]) => void
 }
 
 export interface SliderThumbProps extends AriaLabelingProps, FocusableDOMProps, FocusableProps, Validation, AriaValidationProps, LabelableProps {
+  /**
+   * The orientation of the Slider.
+   * @default 'horizontal'
+   */
   orientation?: Orientation,
+  /** Whether the Thumb is disabled. */
   isDisabled?: boolean,
+  /** Index of the thumb for accessing purposes. */
   index: number
 }
 

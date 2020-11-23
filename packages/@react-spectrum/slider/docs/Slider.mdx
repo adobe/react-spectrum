@@ -40,8 +40,8 @@ category: Forms
 
 ## Value
 
-Sliders are controlled with the `value` and `defaultValue` props which must fall between
-the minimum and maximum values which default of 0 and 100, respectively.
+Sliders are controlled with the `value` and `defaultValue` props. This value must fall between
+the Slider's minimum and maximum values, each of which default to 0 and 100 respectively.
 
 ```tsx example
 function Example() {
@@ -70,7 +70,7 @@ Alternatively, a different scale can be used by setting the `minValue` and `maxV
   defaultValue={100} />
 ```
 
-Values are formatted as plainly by default, but this can be modified by using the `formatOptions` prop to specify a different format.
+The slider value can be formatted by using the `formatOptions` prop.
 `formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
 
 ```tsx example
@@ -138,6 +138,7 @@ By default, the value label is formatted as a plain number. This can be customiz
     defaultValue={0.8912} />
 </Flex>
 ```
+
 ## Props
 
 <PropTable component={docs.exports.Slider} links={docs.links} />
@@ -155,7 +156,7 @@ By default, the value label is formatted as a plain number. This can be customiz
 ```
 
 ### Disabled
-[View guidelines](https://spectrum.adobe.com/page/slider/#Semantic-colors)
+[View guidelines](https://spectrum.adobe.com/page/slider/#Disabled)
 
 ```tsx example
 <Slider label="Cookies to share" defaultValue={25} isDisabled />
