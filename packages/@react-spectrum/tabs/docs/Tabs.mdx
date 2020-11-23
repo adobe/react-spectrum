@@ -63,7 +63,7 @@ import {Text} from '@react-spectrum/text';
 
 ## Content
 Tabs follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections. Similar to [Menu](Menu.html), Tabs accepts `<Item>` elements as children,
-each with a `key` prop. However, unlike the other Collection components, the Tab itself is defined via props passed to the `<Item>` element whereas the contents of the Tab's panel are defined by the `<Item>` element's children.
+each with a `key` prop. The content of the Tab itself is defined via props passed to the `<Item>` element whereas the contents of the Tab's panel are defined by the `<Item>` element's children.
 This can be seen in the example above, where each Tab's rendered title mirrors the string provided to the `<Item>`'s `title` prop and the content of each Tab is populated by the `<Item>`'s children.
 Static collections, as in this example, can be used when the full list of tabs and their contents is known ahead of time.
 
@@ -212,95 +212,6 @@ function Example() {
   );
 }
 ```
-
-## Complex Items
-Items within Tabs allow for a degree of customization. The `title` prop accepts any renderable node, allowing for things like icons to be added to the Tab title. Be sure to include a `textValue` prop to your item so that typeahead
-still works if the Tabs [collapse](#collapse-overflow-behavior).
-
-```tsx example
-import AppleFiles from '@spectrum-icons/workflow/AppleFiles';
-import Book from '@spectrum-icons/workflow/Book';
-import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
-import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
-import Unauthorized from '@spectrum-icons/illustrations/Unauthorized';
-import Unavailable from '@spectrum-icons/illustrations/Unavailable';
-import UserShare from '@spectrum-icons/workflow/UserShare';
-
-function Example() {
-  let unauthorizedPage = (props) => (
-    <Content marginTop="size-250">
-      <Heading marginStart="size-125">{props.heading}</Heading>
-      <IllustratedMessage>
-        {props.errorMessage}
-        {props.illustratedMessage}
-      </IllustratedMessage>
-    </Content>
-  );
-
-  let tabs = [
-    {
-      name: 'Your files',
-      icon: <AppleFiles />,
-      children: unauthorizedPage({
-        heading: 'Files',
-        illustratedMessage: <Unauthorized />,
-        errorMessage: (
-          <>
-            <Heading>Error 401: Unauthorized</Heading>
-            <Content>You don’t have access to this page. Please login to view.</Content>
-          </>
-        )
-      })
-    },
-    {
-      name: 'Shared with you',
-      icon: <UserShare />,
-      children: unauthorizedPage({
-        heading: 'Shared Files',
-        illustratedMessage: <NoSearchResults />,
-        errorMessage: (
-          <Heading>No Results.</Heading>
-        )
-      })
-    },
-    {
-      name: 'Libraries',
-      icon: <Book />,
-      children: unauthorizedPage({
-        heading: 'Available Libraries',
-        illustratedMessage: <Unavailable />,
-        errorMessage: (
-          <>
-            <Heading>Error 503: Service Unavailable</Heading>
-            <Content>This page isn’t available right now. Try visiting this page again later.</Content>
-          </>
-        )
-      })
-    }
-  ];
-
-  return (
-    <Tabs aria-label="File Library" items={tabs}>
-      {item => (
-        <Item
-          key={item.name}
-          title={
-            <>
-              {item.icon}
-              <Text>{item.name}</Text>
-            </>
-          }
-          textValue={item.name}>
-          {item.children}
-        </Item>
-      )}
-    </Tabs>
-  );
-}
-```
-
-### Internationalization
-To internationalize a complex tab, any text content within the `title` and `textValue` of each item should be replaced with a localized string.
 
 ## Props
 
