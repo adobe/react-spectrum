@@ -10,16 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-.react-spectrum-TabPanel--horizontal {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-}
-
-.react-spectrum-TabPanel--vertical {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 100%;
-}
+export * from './src';

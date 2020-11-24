@@ -30,6 +30,19 @@ const isMobileSafari =
 // @ts-ignore
 const visualViewport = typeof window !== 'undefined' && window.visualViewport;
 
+// HTML input types that do not cause the software keyboard to appear.
+const nonTextInputTypes = new Set([
+  'checkbox',
+  'radio',
+  'range',
+  'color',
+  'file',
+  'image',
+  'button',
+  'submit',
+  'reset'
+]);
+
 /**
  * Prevents scrolling on the document body on mount, and
  * restores it on unmount. Also ensures that content does not
@@ -123,7 +136,7 @@ function preventScrollMobileSafari() {
 
   let onTouchEnd = (e: TouchEvent) => {
     let target = e.target as HTMLElement;
-    if (target.tagName === 'INPUT') {
+    if (target instanceof HTMLInputElement && !nonTextInputTypes.has(target.type)) {
       e.preventDefault();
 
       // Apply a transform to trick Safari into thinking the input is at the top of the page
@@ -139,7 +152,7 @@ function preventScrollMobileSafari() {
 
   let onFocus = (e: FocusEvent) => {
     let target = e.target as HTMLElement;
-    if (target.tagName === 'INPUT') {
+    if (target instanceof HTMLInputElement && !nonTextInputTypes.has(target.type)) {
       // Transform also needs to be applied in the focus event in cases where focus moves
       // other than tapping on an input directly, e.g. the next/previous buttons in the
       // software keyboard. In these cases, it seems applying the transform in the focus event

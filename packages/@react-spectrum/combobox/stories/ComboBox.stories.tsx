@@ -21,6 +21,7 @@ import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 import {TextField} from '@react-spectrum/textfield';
 import {useFilter} from '@react-aria/i18n';
+import {useTreeData} from '@react-stately/data';
 
 let items = [
   {name: 'Aardvark', id: '1'},
@@ -366,6 +367,12 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
+    'inputValue, selectedKey, and isOpen (controlled)',
+    () => (
+      <AllControlledOpenComboBox selectedKey="2" inputValue="Kangaroo" disabledKeys={['2', '6']} />
+    )
+  )
+  .add(
     'custom filter',
     () => (
       <CustomFilterComboBox />
@@ -396,27 +403,36 @@ let CustomFilterComboBox = (props) => {
   );
 };
 
-let AllControlledComboBox = (props) => {
-  let [fieldState, setFieldState] = React.useState({selectedKey: props.selectedKey, inputValue: props.inputValue});
+function AllControlledComboBox(props) {
+  let [fieldState, setFieldState] = React.useState({
+    selectedKey: props.selectedKey,
+    inputValue: props.inputValue
+  });
 
-  let onSelectionChange = (key) => {
-    setFieldState(prevState => ({inputValue: prevState.inputValue, selectedKey: key}));
+  let list = useTreeData({
+    initialItems: withSection
+  });
+
+  let onSelectionChange = (key: React.Key) => {
+    setFieldState({
+      inputValue: list.getItem(key)?.value.name ?? '',
+      selectedKey: key
+    });
   };
 
-  let onInputChange = (value) => {
-    setFieldState(prevState => ({inputValue: value, selectedKey: prevState.selectedKey}));
+  let onInputChange = (value: string) => {
+    setFieldState(prevState => ({
+      inputValue: value,
+      selectedKey: value === '' ? null : prevState.selectedKey
+    }));
   };
 
   let setSnake = () => {
-    if (!props.disabledKeys.includes('3')) {
-      setFieldState({inputValue: 'Snake', selectedKey: '3'});
-    }
+    setFieldState({inputValue: 'Snake', selectedKey: '3'});
   };
 
   let setRoss = () => {
-    if (!props.disabledKeys.includes('6')) {
-      setFieldState({inputValue: 'Ross', selectedKey: '6'});
-    }
+    setFieldState({inputValue: 'Ross', selectedKey: '6'});
   };
 
   let clearAll = () => {
@@ -438,16 +454,16 @@ let AllControlledComboBox = (props) => {
           <Text>Clear key</Text>
         </Button>
       </ButtonGroup>
-      <ComboBox {...props} selectedKey={fieldState.selectedKey} inputValue={fieldState.inputValue} defaultItems={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')}>
-        {(item: any) => (
-          <Section items={item.children} title={item.name}>
-            {(item: any) => <Item>{item.name}</Item>}
+      <ComboBox disabledKeys={props.disabledKeys} selectedKey={fieldState.selectedKey} inputValue={fieldState.inputValue} defaultItems={list.items} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')}>
+        {item => (
+          <Section items={item.children} title={item.value.name}>
+            {item => <Item>{item.value.name}</Item>}
           </Section>
         )}
       </ComboBox>
     </div>
   );
-};
+}
 
 let ControlledKeyComboBox = (props) => {
   let [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
@@ -560,6 +576,54 @@ let ControlledOpenCombobox = (props) => {
     </Flex>
   );
 };
+
+function AllControlledOpenComboBox(props) {
+  let [fieldState, setFieldState] = React.useState({
+    isOpen: false,
+    selectedKey: props.selectedKey,
+    inputValue: props.inputValue
+  });
+
+  let list = useTreeData({
+    initialItems: withSection
+  });
+
+  let onSelectionChange = (key: React.Key) => {
+    setFieldState({
+      isOpen: false,
+      inputValue: list.getItem(key)?.value.name ?? '',
+      selectedKey: key
+    });
+  };
+
+  let onInputChange = (value: string) => {
+    setFieldState(prevState => ({
+      isOpen: true,
+      inputValue: value,
+      selectedKey: value === '' ? null : prevState.selectedKey
+    }));
+  };
+
+  let onOpenChange = (isOpen: boolean) => {
+    setFieldState(prevState => ({
+      isOpen,
+      inputValue: prevState.inputValue,
+      selectedKey: prevState.selectedKey
+    }));
+  };
+
+  return (
+    <div>
+      <ComboBox disabledKeys={props.disabledKeys} selectedKey={fieldState.selectedKey} inputValue={fieldState.inputValue} defaultItems={list.items} label="Combobox" isOpen={fieldState.isOpen} onOpenChange={onOpenChange} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')}>
+        {item => (
+          <Section items={item.children} title={item.value.name}>
+            {item => <Item>{item.value.name}</Item>}
+          </Section>
+        )}
+      </ComboBox>
+    </div>
+  );
+}
 
 function render(props = {}) {
   return (
