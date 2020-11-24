@@ -7,7 +7,10 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. -->
 
-import comboboxExampleImage from 'url:../assets/combobox-example.png';
+import comboboxAccessibilityUrl from 'url:../assets/combobox-accessibility.mp4';
+import comboboxScrollingUrl from 'url:../assets/combobox-scrolling-safari.mov';
+import comboboxVisualViewportUrl from 'url:../assets/combobox-visual-viewport.mov';
+import comboboxExampleImageUrl from 'url:../assets/combobox-example.png';
 import screenreaderSpreadsheetImageUrl from 'url:../assets/screenreader-spreadsheet-combobox.png';
 
 import {BlogPostLayout, Video, Image} from '@react-spectrum/docs';
@@ -30,7 +33,7 @@ for toggling the open state of the popover menu.
 
 While the above may seem rather straight forward, a combobox contains a significant amount of complexity. In this blog post, we'll be covering the challenges we encountered with regards to ComboBox's mobile experience and accessibility.
 
-<Image src={comboboxExampleImage} alt="Screenshot of example ComboBox, select a major" style={{maxWidth: 'min(100%, 780px)', display: 'block', margin: '20px auto'}} />
+<Image src={comboboxExampleImageUrl} alt="Screenshot of example ComboBox, select a major" style={{maxWidth: 'min(50%, 350px)', display: 'block', margin: '20px auto'}} />
 
 ## Mobile experience
 
@@ -49,7 +52,7 @@ Luckily for us, iOS 13 added support for the VisualViewport API. By querying `wi
 when the onscreen keyboard was opened or dismissed by listening to the VisualViewport's `resize` event. Leveraging these two allowed us to create a tray that properly adjusts to the presence of iOS onscreen keyboard.
 If you'd like to track the visual viewport size in your own app, you can use the `useViewportSize` hook available in the `@react-aria/utils` package.
 
-// TODO make video of before and after using the api (have Before and After in text above the combobox)
+<Video src={comboboxVisualViewportUrl} loop autoPlay muted style={{maxWidth: 'min(30%, 350px)', display: 'block', margin: '20px auto'}} />
 
 ### Page Scrolling
 
@@ -58,7 +61,7 @@ now that our ComboBox tray sizes itself to fit in the visual viewport, users cou
 or root element of the document. This preserves the user's ability to scroll through the options in the tray but blocks any attempt to scroll the page itself until the tray is closed. If you are building your own overlays and would like to prevent this kind of
 document scrolling behavior, check out the `usePreventScroll` hook in the `react-aria/overlays` package.
 
-// TODO make video of before and after (have Before and After in text above the combobox)
+<Video src={comboboxScrollingUrl} loop autoPlay muted style={{maxWidth: 'min(30%, 350px)', display: 'block', margin: '20px auto'}} />
 
 ## Accessibility
 
@@ -118,7 +121,7 @@ we only trigger the LiveAnnouncer on Apple devices to avoid announcement overlap
 
 If you are interested in using this LiveAnnouncer yourself, check out `LiveAnnouncer` in `@react-aria/live-announcer`. Otherwise, the `useComboBox` hook provides you with all of the custom messaging out of the box.
 
-// TODO For video here, stick to the realistic example
+<Video src={comboboxAccessibilityUrl} loop style={{maxWidth: 'min(90%, 700px)', display: 'block', margin: '20px auto'}} />
 
 ## Conclusion
 
