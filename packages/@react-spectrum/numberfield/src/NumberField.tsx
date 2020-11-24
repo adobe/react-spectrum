@@ -11,10 +11,10 @@
  */
 
 import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {FocusableRefValue, LabelPosition} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {Label} from '@react-spectrum/label';
+import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from '@react-aria/utils';
 import React, {RefObject, useRef} from 'react';
@@ -56,8 +56,8 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
   let state = useNumberFieldState(props);
   let inputRef = useRef<HTMLInputElement>();
   let domRef = useRef<HTMLDivElement>(null);
-  let incrementRef = useRef<FocusableRefValue<HTMLButtonElement>>();
-  let decrementRef = useRef<FocusableRefValue<HTMLButtonElement>>();
+  let incrementRef = useRef<HTMLDivElement>();
+  let decrementRef = useRef<HTMLDivElement>();
   let {
     numberFieldProps,
     labelProps,
@@ -66,7 +66,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
     decrementButtonProps
   } = useNumberField({...props, incrementRef, decrementRef}, state, inputRef);
   let isMobile = provider.scale === 'large';
-  let showStepper = !(hideStepper || isMobile);
+  let showStepper = !hideStepper && !(isMobile && isQuiet);
 
   let className = classNames(
     inputgroupStyles,
@@ -82,7 +82,8 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
       {
         'spectrum-Stepper--quiet': isQuiet,
         'is-invalid': props.validationState === 'invalid',
-        'spectrum-Stepper--showStepper': showStepper
+        'spectrum-Stepper--showStepper': showStepper,
+        'spectrum-Stepper--isMobile': isMobile
       },
       styleProps.className
     )
@@ -103,6 +104,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
         {/* remove label from props since we render it out here already */}
         <TextFieldBase
           {...otherProps}
+          UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-field', otherProps.UNSAFE_className)}
           isQuiet={isQuiet}
           inputClassName={classNames(stepperStyle, 'spectrum-Stepper-input')}
           inputRef={inputRef}
@@ -111,12 +113,10 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
           labelProps={labelProps}
           inputProps={inputFieldProps} />
         {showStepper &&
-        <span
-          className={classNames(stepperStyle, 'spectrum-Stepper-buttons')}
-          role="presentation">
-          <StepButton direction="up" isQuiet={isQuiet} ref={incrementRef} {...incrementButtonProps} />
-          <StepButton direction="down" isQuiet={isQuiet} ref={decrementRef} {...decrementButtonProps} />
-        </span>
+          <>
+            <StepButton direction="up" isQuiet={isQuiet} ref={incrementRef} {...incrementButtonProps} />
+            <StepButton direction="down" isQuiet={isQuiet} ref={decrementRef} {...decrementButtonProps} />
+          </>
         }
       </div>
     </FocusRing>

@@ -13,7 +13,6 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
 import {clearAnnouncer} from '@react-aria/live-announcer';
-import {FocusableRefValue} from '@react-types/shared';
 import {
   HTMLAttributes,
   InputHTMLAttributes,
@@ -37,8 +36,8 @@ import {useTextField} from '@react-aria/textfield';
 interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
   decrementAriaLabel?: string,
   incrementAriaLabel?: string,
-  incrementRef?: RefObject<FocusableRefValue<HTMLButtonElement>>,
-  decrementRef?: RefObject<FocusableRefValue<HTMLButtonElement>>
+  incrementRef?: RefObject<HTMLDivElement>,
+  decrementRef?: RefObject<HTMLDivElement>
 }
 
 interface NumberFieldAria {
@@ -84,8 +83,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   let isFocused = useRef(false);
   let {focusProps} = useFocus({
     onBlur: (e) => {
-      let incrementButton = incrementRef.current && incrementRef.current.UNSAFE_getDOMNode();
-      let decrementButton = decrementRef.current && decrementRef.current.UNSAFE_getDOMNode();
+      let incrementButton = incrementRef.current;
+      let decrementButton = decrementRef.current;
       if ((incrementButton && decrementButton) && (e.relatedTarget === incrementButton || e.relatedTarget === decrementButton)) {
         return;
       }

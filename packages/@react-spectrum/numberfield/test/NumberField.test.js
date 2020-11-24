@@ -444,12 +444,22 @@ describe('NumberField', function () {
     expect(decrementButton).not.toBeDefined();
   });
 
-  // TODO: mobile eventually won't auto hide
   it.each`
     Name
     ${'NumberField'}
-  `('$Name step buttons automatically hidden for mobile', () => {
+  `('$Name step buttons show for mobile', () => {
     let {textField, incrementButton, decrementButton} = renderNumberField({}, {scale: 'large'});
+
+    expect(textField).toBeDefined();
+    expect(incrementButton).toBeDefined();
+    expect(decrementButton).toBeDefined();
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name step buttons hide for mobile quiet', () => {
+    let {textField, incrementButton, decrementButton} = renderNumberField({isQuiet: true}, {scale: 'large'});
 
     expect(textField).toBeDefined();
     expect(incrementButton).not.toBeDefined();
@@ -1282,8 +1292,8 @@ describe('NumberField', function () {
   `('$Name isReadOnly cannot be stepped', () => {
     let {textField, incrementButton, decrementButton} = renderNumberField({defaultValue: 100, isReadOnly: true});
     expect(textField).toHaveAttribute('value', '100');
-    expect(incrementButton).toBeDisabled();
-    expect(decrementButton).toBeDisabled();
+    expect(incrementButton).toHaveAttribute('aria-disabled');
+    expect(decrementButton).toHaveAttribute('aria-disabled');
   });
 
   it.each`
@@ -1409,16 +1419,16 @@ describe('NumberField', function () {
   `('$Name will re-enable the steppers if the value causing it to be disabled is deleted', () => {
     let {textField, decrementButton, incrementButton} = renderNumberField({onChange: onChangeSpy, defaultValue: 1, maxValue: 1});
     expect(textField).toHaveAttribute('value', '1');
-    expect(incrementButton).toBeDisabled();
-    expect(decrementButton).toBeEnabled();
+    expect(incrementButton).toHaveAttribute('aria-disabled');
+    expect(decrementButton).not.toHaveAttribute('aria-disabled');
 
     act(() => {textField.focus();});
     userEvent.clear(textField);
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '');
     expect(onChangeSpy).toHaveBeenCalledWith(NaN);
-    expect(incrementButton).toBeEnabled();
-    expect(decrementButton).toBeEnabled();
+    expect(incrementButton).not.toHaveAttribute('aria-disabled');
+    expect(decrementButton).not.toHaveAttribute('aria-disabled');
   });
 
   it.each`

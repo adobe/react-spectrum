@@ -60,8 +60,20 @@ storiesOf('NumberField', module)
     () => render({formatOptions: {style: 'unit', unit: 'percent', signDisplay: 'always'}})
   )
   .add(
+    'disabled',
+    () => render({isDisabled: true})
+  )
+  .add(
     'isQuiet',
     () => render({isQuiet: true})
+  )
+  .add(
+    'quiet disabled',
+    () => render({isQuiet: true, isDisabled: true})
+  )
+  .add(
+    'readonly',
+    () => render({defaultValue: 10, isReadOnly: true})
   )
   .add(
     'validationState: invalid',
