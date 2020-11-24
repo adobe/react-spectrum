@@ -125,5 +125,8 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
   );
 }
 
+/**
+ * Sliders allow users to select a value or values within a range of values.
+ */
 const _Slider = React.forwardRef(Slider);
 export {_Slider as Slider};

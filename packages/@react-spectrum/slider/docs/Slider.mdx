@@ -80,17 +80,6 @@ The slider value can be formatted by using the `formatOptions` prop.
   defaultValue={60} />
 ```
 
-### Accessibility
-
-Depending on the visualization being used (i.e. depending on the `showValueLabel` prop), a `label`, `aria-label`, or `aria-labelledby` prop is required.
-
-### Internationalization
-
-To internationalize a Slider, a localized string should be passed to the `label` prop, `aria-label` prop, or value of the associated `aria-labelledby` element.
-
-For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the slider is automatically flipped. In addition,
-Slider automatically uses the current locale to format the value label.
-
 ## Labeling
 Value labels are shown above the Slider by default, but they can also be moved to the side or hidden as needed.
 The label text should be in sentence case.
@@ -119,25 +108,42 @@ By default, the value label is formatted as a plain number. This can be customiz
 * `valueLabel`: Allows you to customize the value label to any string.
 
 ```tsx example
-<Flex direction="column" maxWidth="size-3000" gap="size-300">
-  <Slider
-    label="Cookies to buy"
-    showValueLabel={false}
-    defaultValue={90} />
+function Example() {
+  let [donuts, setDonuts] = React.useState(54);
+  return (
+    <Flex direction="column" maxWidth="size-3000" gap="size-300">
+      <Slider
+        label="Cookies to buy"
+        showValueLabel={false}
+        defaultValue={90} />
 
-  <Slider
-    label="Donuts to buy"
-    maxValue={60}
-    valueLabel="54 of 60 Donuts"
-    defaultValue={54} />
+      <Slider
+        label="Donuts to buy"
+        maxValue={60}
+        valueLabel={`${donuts} of 60 Donuts`}
+        value={donuts}
+        onChange={setDonuts} />
 
-  <Slider
-    label="Percent donus eaten"
-    maxValue={1}
-    formatOptions={{style: 'percent', minimumFractionDigits: 2}}
-    defaultValue={0.8912} />
-</Flex>
+      <Slider
+        label="Percent donus eaten"
+        maxValue={1}
+        formatOptions={{style: 'percent', minimumFractionDigits: 2}}
+        defaultValue={0.8912} />
+    </Flex>
+  );
+}
 ```
+
+### Accessibility
+
+Depending on the visualization being used (i.e. depending on the `showValueLabel` prop), a `label`, `aria-label`, or `aria-labelledby` prop is required.
+
+### Internationalization
+
+To internationalize a Slider, a localized string should be passed to the `label` prop, `aria-label` prop, or value of the associated `aria-labelledby` element.
+
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the slider is automatically flipped. In addition,
+Slider automatically uses the current locale to format the value label.
 
 ## Props
 

@@ -20,7 +20,9 @@ interface SliderThumbAria {
 }
 
 export interface SliderThumbOptions extends SliderThumbProps {
+  /** A ref to the track element. */
   trackRef: RefObject<HTMLElement>,
+  /** A ref to the thumb input element. */
   inputRef: RefObject<HTMLInputElement>
 }
 
