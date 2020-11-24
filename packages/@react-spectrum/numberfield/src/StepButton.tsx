@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import Add from '@spectrum-icons/workflow/Add';
 import {AriaButtonProps} from '@react-types/button';
 import ChevronDownSmall from '@spectrum-icons/ui/ChevronDownSmall';
 import ChevronUpSmall from '@spectrum-icons/ui/ChevronUpSmall';
 import {classNames} from '@react-spectrum/utils';
-import CrossSmall from '@spectrum-icons/ui/CrossSmall'; // we need the Add icon that's in workflow
-import DashSmall from '@spectrum-icons/ui/DashSmall';
+import Remove from '@spectrum-icons/workflow/Remove';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React, {RefObject} from 'react';
@@ -31,8 +31,8 @@ interface StepButtonProps extends AriaButtonProps {
 
 let iconMap = {
   large: {
-    up: CrossSmall,
-    down: DashSmall
+    up: Add,
+    down: Remove
   },
   medium: {
     up: ChevronUpSmall,
@@ -69,9 +69,9 @@ function StepButton(props: StepButtonProps, ref: RefObject<HTMLDivElement>) {
         ref={ref}
         tabIndex={props.excludeFromTabOrder && !props.isDisabled ? -1 : undefined}>
         {direction === 'up' &&
-        <UpIcon UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon spectrum-Stepper-stepUpIcon')} />}
+        <UpIcon UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon spectrum-Stepper-stepUpIcon')} {...(scale === 'large' ? {size: 'S'} : {})} />}
         {direction === 'down' &&
-        <DownIcon UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon spectrum-Stepper-stepDownIcon')} />}
+        <DownIcon UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon spectrum-Stepper-stepDownIcon')} {...(scale === 'large' ? {size: 'S'} : {})} />}
       </div>
     </FocusRing>
   );
