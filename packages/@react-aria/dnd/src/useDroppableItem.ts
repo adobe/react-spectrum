@@ -11,14 +11,13 @@
  */
 
 import * as DragManager from './DragManager';
-import {DropOperation, DropTarget} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
+import {DropTarget} from '@react-types/shared';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useVirtualDrop} from './useVirtualDrop';
 
 interface DroppableItemOptions {
-  target: DropTarget,
-  getDropOperation?: (target: DropTarget, types: string[], allowedOperations: DropOperation[]) => DropOperation
+  target: DropTarget
 }
 
 interface DroppableItemResult {
@@ -34,13 +33,11 @@ export function useDroppableItem(options: DroppableItemOptions, state: Droppable
   }), []);
 
   let dragSession = DragManager.useDragSession();
-  let isValidDropTarget = dragSession && typeof options.getDropOperation === 'function'
-    ? options.getDropOperation(
-        options.target,
-        dragSession.dragTarget.items.map(i => i.type),
-        dragSession.dragTarget.allowedDropOperations
-      ) !== 'cancel'
-    : true;
+  let isValidDropTarget = dragSession && state.getDropOperation(
+    options.target,
+    dragSession.dragTarget.items.map(i => i.type),
+    dragSession.dragTarget.allowedDropOperations
+  ) !== 'cancel';
 
   let isDropTarget = state.isDropTarget(options.target);
   useEffect(() => {

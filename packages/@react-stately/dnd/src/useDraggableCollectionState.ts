@@ -19,7 +19,6 @@ interface DraggableCollectionOptions extends DraggableCollectionProps {
 }
 
 export interface DraggableCollectionState {
-  draggingKeys: Set<Key>,
   isDragging(key: Key): boolean,
   getItems(key: Key): DragItem[],
   renderPreview(key: Key): JSX.Element,
@@ -45,7 +44,6 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
   };
 
   return {
-    draggingKeys,
     isDragging(key) {
       return draggingKeys.has(key);
     },

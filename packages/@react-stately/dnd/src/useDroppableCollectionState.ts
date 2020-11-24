@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {DroppableCollectionProps, DropTarget} from '@react-types/shared';
+import {DroppableCollectionProps, DropOperation, DropTarget} from '@react-types/shared';
 import {useState} from 'react';
 
 export interface DroppableCollectionState {
   target: DropTarget,
   setTarget(target: DropTarget): void,
-  isDropTarget(target: DropTarget): boolean
+  isDropTarget(target: DropTarget): boolean,
+  getDropOperation(target: DropTarget, types: string[], allowedOperations: DropOperation[]): DropOperation
 }
 
 export function useDroppableCollectionState(props: DroppableCollectionProps): DroppableCollectionState  {
@@ -47,6 +48,11 @@ export function useDroppableCollectionState(props: DroppableCollectionProps): Dr
     },
     isDropTarget(dropTarget) {
       return target?.key === dropTarget.key && target?.dropPosition === dropTarget.dropPosition;
+    },
+    getDropOperation(target, types, allowedOperations) {
+      return typeof props.getDropOperation === 'function'
+        ? props.getDropOperation(target, types, allowedOperations)
+        : allowedOperations[0];
     }
   };
 }
