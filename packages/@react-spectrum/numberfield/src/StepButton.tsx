@@ -15,10 +15,10 @@ import {AriaButtonProps} from '@react-types/button';
 import ChevronDownSmall from '@spectrum-icons/ui/ChevronDownSmall';
 import ChevronUpSmall from '@spectrum-icons/ui/ChevronUpSmall';
 import {classNames} from '@react-spectrum/utils';
-import Remove from '@spectrum-icons/workflow/Remove';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React, {RefObject} from 'react';
+import Remove from '@spectrum-icons/workflow/Remove';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
@@ -29,25 +29,12 @@ interface StepButtonProps extends AriaButtonProps {
   direction: 'up' | 'down'
 }
 
-let iconMap = {
-  large: {
-    up: Add,
-    down: Remove
-  },
-  medium: {
-    up: ChevronUpSmall,
-    down: ChevronDownSmall
-  }
-};
-
 function StepButton(props: StepButtonProps, ref: RefObject<HTMLDivElement>) {
   props = useProviderProps(props);
   let {scale} = useProvider();
   let {direction, isDisabled, isQuiet} = props;
   let {buttonProps, isPressed} = useButton({...props, elementType: 'div'}, ref);
   let {hoverProps, isHovered} = useHover(props);
-  let UpIcon = iconMap[scale].up;
-  let DownIcon = iconMap[scale].down;
   return (
     <FocusRing focusRingClass={classNames(stepperStyle, 'focus-ring')}>
       <div
@@ -68,10 +55,14 @@ function StepButton(props: StepButtonProps, ref: RefObject<HTMLDivElement>) {
         {...mergeProps(hoverProps, buttonProps)}
         ref={ref}
         tabIndex={props.excludeFromTabOrder && !props.isDisabled ? -1 : undefined}>
-        {direction === 'up' &&
-        <UpIcon UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon spectrum-Stepper-stepUpIcon')} {...(scale === 'large' ? {size: 'S'} : {})} />}
-        {direction === 'down' &&
-        <DownIcon UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon spectrum-Stepper-stepDownIcon')} {...(scale === 'large' ? {size: 'S'} : {})} />}
+        {direction === 'up' && scale === 'large' &&
+        <Add UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon spectrum-Stepper-stepUpIcon')} size="S" />}
+        {direction === 'up' && scale === 'medium' &&
+        <ChevronUpSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon spectrum-Stepper-stepUpIcon')} />}
+        {direction === 'down' && scale === 'large' &&
+        <Remove UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon spectrum-Stepper-stepDownIcon')} size="S" />}
+        {direction === 'down' && scale === 'medium' &&
+        <ChevronDownSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon spectrum-Stepper-stepDownIcon')} />}
       </div>
     </FocusRing>
   );
