@@ -31,6 +31,7 @@ export interface NumberFieldState {
   currentNumeralSystem?: string
 }
 
+// for two decimal points of precision
 let MAX_SAFE_FLOAT = (Number.MAX_SAFE_INTEGER + 1) / 128 - 1;
 let MIN_SAFE_FLOAT = (Number.MIN_SAFE_INTEGER - 1) / 128 + 1;
 
@@ -39,6 +40,8 @@ export function useNumberFieldState(
 ): NumberFieldState {
   let {locale} = useLocale();
   let {minValue = Number.MIN_SAFE_INTEGER, maxValue = Number.MAX_SAFE_INTEGER, step, formatOptions, value, defaultValue, onChange} = props;
+  let isMaxRange = isNaN(props.minValue) && isNaN(props.maxValue);
+
   let [currentNumeralSystem, setCurrentNumeralSystem] = useState<'arab' | 'hanidec' | 'latn' | undefined>();
 
   let inputValueFormatter = useNumberFormatter(formatOptions, currentNumeralSystem);
@@ -50,11 +53,10 @@ export function useNumberFieldState(
   // unfortunately, finding the safe max/min is non-trivial, so we'll need to rely on people setting max/min correctly for their step size
   // we can include it for percent though
   if (intlOptions.style === 'percent' && isNaN(step)) {
-    maxValue = MAX_SAFE_FLOAT;
-    minValue = MIN_SAFE_FLOAT;
+    maxValue = isNaN(props.maxValue) ? MAX_SAFE_FLOAT : props.maxValue;
+    minValue = isNaN(props.minValue) ? MIN_SAFE_FLOAT : props.maxValue;
   }
 
-  let isMaxRange = minValue === Number.MIN_SAFE_INTEGER && maxValue === Number.MAX_SAFE_INTEGER;
 
   let {minusSign, plusSign} = numberParser.symbols;
 
@@ -98,19 +100,16 @@ export function useNumberFieldState(
     setNumberValue((previousValue) => {
       let prev = previousValue;
       if (isNaN(prev)) {
-        // if the input is empty, start from the min value when incrementing
-        prev = minValue;
-        if (isMaxRange) {
-          // unless the min/max range is at maximum, then start from 0
-          prev = 0;
-        } else if (minValue === Number.MIN_SAFE_INTEGER) {
-          // or if the direction we want to start from is unbound, start from the upper bound
-          prev = maxValue;
+        // if the input is empty, start from 0
+        prev = 0;
+        if (!isNaN(props.minValue) && prev < props.minValue) {
+          // unless zero is less than the min value, then start well below it so we clamp to the min
+          prev = -Infinity;
         }
       }
 
       let clampStep = !isNaN(step) ? step : 1;
-      if (intlOptions.style === 'percent') {
+      if (intlOptions.style === 'percent' && isNaN(step)) {
         clampStep = 0.01;
       }
       const newValue = clamp(
@@ -128,17 +127,14 @@ export function useNumberFieldState(
       let prev = previousValue;
       // if the input is empty, start from the max value when decrementing
       if (isNaN(prev)) {
-        prev = maxValue;
-        // unless the min/max range is at maximum, then start from 0
-        if (isMaxRange) {
-          prev = 0;
-        } else if (maxValue === Number.MAX_SAFE_INTEGER) {
-          // or if the direction we want to start from is unbound, start from the lower bound
-          prev = minValue;
+        prev = 0;
+        // unless zero is greater than the max value, then start well above it so we clamp to the max
+        if (!isNaN(props.maxValue) && prev > maxValue) {
+          prev = Infinity;
         }
       }
       let clampStep = !isNaN(step) ? step : 1;
-      if (intlOptions.style === 'percent') {
+      if (intlOptions.style === 'percent' && isNaN(step)) {
         clampStep = 0.01;
       }
       const newValue = clamp(

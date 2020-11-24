@@ -498,7 +498,7 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
-  `('$Name starting from empty field, will start at the minValue if defined and not the smallest allowed', () => {
+  `('$Name starting from empty field, will start at 0 and not the smallest allowed', () => {
     let {
       textField,
       incrementButton,
@@ -507,9 +507,9 @@ describe('NumberField', function () {
 
     expect(textField).toHaveAttribute('value', '');
     triggerPress(incrementButton);
-    expect(textField).toHaveAttribute('value', '4');
+    expect(textField).toHaveAttribute('value', '3');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledWith(4);
+    expect(onChangeSpy).toHaveBeenCalledWith(3);
 
     act(() => {textField.focus();});
     userEvent.clear(textField);
@@ -527,7 +527,7 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
-  `('$Name starting from empty field, will start at the maxValue if defined and not the largest allowed', () => {
+  `('$Name starting from empty field, will start at 0 and not the largest allowed', () => {
     let {
       textField,
       incrementButton,
@@ -536,9 +536,9 @@ describe('NumberField', function () {
 
     expect(textField).toHaveAttribute('value', '');
     triggerPress(decrementButton);
-    expect(textField).toHaveAttribute('value', '2');
+    expect(textField).toHaveAttribute('value', '-1');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledWith(2);
+    expect(onChangeSpy).toHaveBeenCalledWith(-1);
 
     act(() => {textField.focus();});
     userEvent.clear(textField);
@@ -548,9 +548,9 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenLastCalledWith(NaN);
 
     triggerPress(incrementButton);
-    expect(textField).toHaveAttribute('value', '3');
+    expect(textField).toHaveAttribute('value', '1');
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
-    expect(onChangeSpy).toHaveBeenLastCalledWith(3);
+    expect(onChangeSpy).toHaveBeenLastCalledWith(1);
   });
 
   it.each`
@@ -1059,6 +1059,62 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '-7,036,874,417,766,299%');
     expect(onChangeSpy).toHaveBeenLastCalledWith(-70368744177662.99);
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    act(() => {textField.blur();});
+  });
+
+  it.each`
+    Name                               | direction    | props                                         | expected
+    ${'unbound'}                       | ${'up'}      | ${{minValue: undefined, maxValue: undefined}} | ${1}
+    ${'unbound'}                       | ${'down'}    | ${{minValue: undefined, maxValue: undefined}} | ${-1}
+    ${'negative lower bound'}          | ${'up'}      | ${{minValue: -5, maxValue: undefined}}        | ${1}
+    ${'negative lower bound'}          | ${'down'}    | ${{minValue: -5, maxValue: undefined}}        | ${-1}
+    ${'positive lower bound'}          | ${'up'}      | ${{minValue: 5, maxValue: undefined}}         | ${5}
+    ${'positive lower bound'}          | ${'down'}    | ${{minValue: 5, maxValue: undefined}}         | ${5}
+    ${'positive upper bound'}          | ${'up'}      | ${{minValue: undefined, maxValue: 5}}         | ${1}
+    ${'positive upper bound'}          | ${'down'}    | ${{minValue: undefined, maxValue: 5}}         | ${-1}
+    ${'negative upper bound'}          | ${'up'}      | ${{minValue: undefined, maxValue: -5}}        | ${-5}
+    ${'negative upper bound'}          | ${'down'}    | ${{minValue: undefined, maxValue: -5}}        | ${-5}
+    ${'negative lower positive upper'} | ${'up'}      | ${{minValue: -5, maxValue: 5}}                | ${1}
+    ${'negative lower positive upper'} | ${'down'}    | ${{minValue: -5, maxValue: 5}}                | ${-1}
+    ${'negative lower negative upper'} | ${'up'}      | ${{minValue: -15, maxValue: -5}}              | ${-5}
+    ${'negative lower negative upper'} | ${'down'}    | ${{minValue: -15, maxValue: -5}}              | ${-5}
+    ${'positive lower positive upper'} | ${'up'}      | ${{minValue: 5, maxValue: 15}}                | ${5}
+    ${'positive lower positive upper'} | ${'down'}    | ${{minValue: 5, maxValue: 15}}                | ${5}
+  `('$direction $Name starts from the right place', ({direction, props, expected}) => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, ...props});
+    let key = direction === 'up' ? 'ArrowUp' : 'ArrowDown';
+    act(() => {textField.focus();});
+    fireEvent.keyDown(textField, {key});
+    fireEvent.keyUp(textField, {key});
+    expect(onChangeSpy).toHaveBeenCalledWith(expected);
+    act(() => {textField.blur();});
+  });
+
+  it.each`
+    Name                               | direction    | props                                         | expected
+    ${'unbound'}                       | ${'up'}      | ${{minValue: undefined, maxValue: undefined}} | ${3}
+    ${'unbound'}                       | ${'down'}    | ${{minValue: undefined, maxValue: undefined}} | ${-3}
+    ${'negative lower bound'}          | ${'up'}      | ${{minValue: -5, maxValue: undefined}}        | ${3}
+    ${'negative lower bound'}          | ${'down'}    | ${{minValue: -5, maxValue: undefined}}        | ${-3}
+    ${'positive lower bound'}          | ${'up'}      | ${{minValue: 5, maxValue: undefined}}         | ${6}
+    ${'positive lower bound'}          | ${'down'}    | ${{minValue: 5, maxValue: undefined}}         | ${6}
+    ${'positive upper bound'}          | ${'up'}      | ${{minValue: undefined, maxValue: 5}}         | ${3}
+    ${'positive upper bound'}          | ${'down'}    | ${{minValue: undefined, maxValue: 5}}         | ${-3}
+    ${'negative upper bound'}          | ${'up'}      | ${{minValue: undefined, maxValue: -5}}        | ${-6}
+    ${'negative upper bound'}          | ${'down'}    | ${{minValue: undefined, maxValue: -5}}        | ${-6}
+    ${'negative lower positive upper'} | ${'up'}      | ${{minValue: -5, maxValue: 5}}                | ${3}
+    ${'negative lower positive upper'} | ${'down'}    | ${{minValue: -5, maxValue: 5}}                | ${-3}
+    ${'negative lower negative upper'} | ${'up'}      | ${{minValue: -15, maxValue: -5}}              | ${-6}
+    ${'negative lower negative upper'} | ${'down'}    | ${{minValue: -15, maxValue: -5}}              | ${-6}
+    ${'positive lower positive upper'} | ${'up'}      | ${{minValue: 5, maxValue: 15}}                | ${6}
+    ${'positive lower positive upper'} | ${'down'}    | ${{minValue: 5, maxValue: 15}}                | ${6}
+  `('$direction $Name step 3 starts from the right place', ({direction, props, expected}) => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, step:3, ...props});
+    let key = direction === 'up' ? 'ArrowUp' : 'ArrowDown';
+    act(() => {textField.focus();});
+    fireEvent.keyDown(textField, {key});
+    fireEvent.keyUp(textField, {key});
+    expect(onChangeSpy).toHaveBeenCalledWith(expected);
     act(() => {textField.blur();});
   });
 
