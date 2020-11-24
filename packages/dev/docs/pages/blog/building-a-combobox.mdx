@@ -7,6 +7,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. -->
 
+import comboboxExampleImage from 'url:../assets/combobox-example.png';
 import screenreaderSpreadsheetImageUrl from 'url:../assets/screenreader-spreadsheet-combobox.png';
 
 import {BlogPostLayout, Video, Image} from '@react-spectrum/docs';
@@ -24,12 +25,12 @@ author: '[Daniel Lu](https://github.com/LFDanLu)'
 ## Intro
 
 As of INSERT DATE HERE, React Spectrum ComboBox has been released as an alpha. For those who may be unfamiliar with a combobox, it is an input field that has a popover menu associated with it. The popover menu contains
-a list of values within that a user may select as the value for the combobox and is often filtered to display possible matches to the user's current
-input text. Finally, there is a button accompanying the input field used for toggling the open state of the popover menu.
+a list of values within that a user may select as the value for the combobox and is often filtered to display possible matches to the user's current input text. Finally, there is a button accompanying the input field used
+for toggling the open state of the popover menu.
 
 While the above may seem rather straight forward, a combobox contains a significant amount of complexity. In this blog post, we'll be covering the challenges we encountered with regards to ComboBox's mobile experience and accessibility.
 
-// TODO: Put screen shot here of a combobox, make it realistic example
+<Image src={comboboxExampleImage} alt="Screenshot of example ComboBox, select a major" style={{maxWidth: 'min(100%, 780px)', display: 'block', margin: '20px auto'}} />
 
 ## Mobile experience
 
@@ -68,22 +69,23 @@ as we built ComboBox and subsequent testing sessions revealed varied support acr
 
 One significant difference between the WAI-ARIA 1.2 ComboBox spec and our ComboBox implementation was the usage of React Portals for the menu. In the [example](https://www.w3.org/TR/wai-aria-practices-1.2/examples/combobox/combobox-autocomplete-list.html)
 provided by the spec, the combobox menu is a sibling to the combobox, allowing for easy navigation between the the two elements when using a screenreader. The same couldn't be said for our ComboBox menu since
-it is portalled to the end of the document, meaning there could be any number of elements that a screenreader user would have to navigate through just to move from the ComboBox input to the menu itself.
+it is portalled to the end of the document, meaning there could be any number of elements that a screenreader user would have to navigate through just to move from the ComboBox input to the menu itself. For touch screen reader users, it would be particularly problematic
+since they may not have access to a physical keyboard and thus can't use the arrow keys as to navigate through menu items.
 
 This put us in a bind because removing the portal strategy wasn't really an option. If we didn't portal the popover menu out to the end of the document, we'd run into the risk of the combobox's menu being cut off if the combobox's parent has `overflow: hidden` or `overflow: scroll`
-set. For touch screen readers, it would be particularly problematic since they may not have access to a physical keyboard and thus would have a much harder time navigating through the menu items (TODO expand here after comment is replied to) .
-Therefore, we had to figure out a way to make the ComboBox input and the ComboBox menu the only elements accessible to screen readers while the menu is open so that a screen reader user wouldn't accidentally leave the ComboBox context.
+set. Therefore, we had to figure out a way to make the ComboBox input and the ComboBox menu the only elements accessible to screen readers while the menu is open so that a screen reader user wouldn't accidentally leave the ComboBox context.
 
 The solution that we came up with was to crawl the DOM and apply `aria-hidden` to every element that wasn't the ComboBox input or menu. To crawl the DOM we used a [TreeWalker](https://developer.mozilla.org/en-US/docs/Web/API/TreeWalker),
 setting up a node filter to determine if a node should be left visible, hidden, or skipped in the case where its parent was already hidden. In addition, we watch for any changes in the DOM while the menu is open
 via a [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver), hiding those new elements if need be. When the menu closes, every node that we modified is reverted back to its previous state.
 Check out our `ariaHideOutside` hook in `@react-aria/overlays` if you'd like to learn more.
 
-### Dropdown menu vs tray
+### Mobile implementation divergence
 
-Another difference that
-// TODO finish this section
-
+Another divergence between the WAI-ARIA 1.2 ComboBox spec and our ComboBox implementation came as a result of our mobile implementation. Initially, we considered the outer input and the tray input as both being individual combo boxes that mirror each others state. This became increasingly complicated as we tried to
+manage things like focus and internal state between the two inputs, resulting in several tray input specific affordances added to our `useComboBox` hook, reducing the aria hook's generality by introducing this React Spectrum specific behavior. Interacting with the tray input with a screen reader was also problematic
+since the screen reader would detect that the input had `role="combobox"` and thus erroneously state "double tap to close", a touch action usually reserved for focusing an input. After some deliberation, we decided to alter the accessibility implementation for the mobile experience, removing the outer combo box input in favor for a button that
+looks like a combo box. Tapping the button opens the tray that contains the actual combo box input, albeit with `role="searchbox"` instead of `role="combobox"` to avoid the aforementioned screen reader announcement.
 
 ### Differences in screen readers
 
