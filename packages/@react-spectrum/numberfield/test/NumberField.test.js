@@ -1109,7 +1109,7 @@ describe('NumberField', function () {
     ${'positive lower positive upper'} | ${'up'}      | ${{minValue: 5, maxValue: 15}}                | ${6}
     ${'positive lower positive upper'} | ${'down'}    | ${{minValue: 5, maxValue: 15}}                | ${6}
   `('$direction $Name step 3 starts from the right place', ({direction, props, expected}) => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, step:3, ...props});
+    let {textField} = renderNumberField({onChange: onChangeSpy, step: 3, ...props});
     let key = direction === 'up' ? 'ArrowUp' : 'ArrowDown';
     act(() => {textField.focus();});
     fireEvent.keyDown(textField, {key});
