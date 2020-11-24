@@ -83,10 +83,6 @@ I've divided up the file into css for the steppers vs css for the input to make 
   }
 
   &:focus-ring {
-    .spectrum-Stepper-buttons {
-      box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
-    }
-
     &:invalid,
     &.is-invalid {
         box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
@@ -106,10 +102,6 @@ I've divided up the file into css for the steppers vs css for the input to make 
       }
 
     &.focus-ring {
-      .spectrum-Stepper-buttons {
-        box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
-      }
-
       &:invalid,
       &.is-invalid {
           box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
@@ -134,9 +126,6 @@ I've divided up the file into css for the steppers vs css for the input to make 
     }
   }
   &.spectrum-Stepper--quiet {
-    .spectrum-Stepper-buttons {
-      box-shadow: none;
-    }
     .spectrum-Stepper-button {
       &:disabled,
       &.is-disabled {
@@ -145,26 +134,16 @@ I've divided up the file into css for the steppers vs css for the input to make 
     }
 
     &:focus {
-      .spectrum-Stepper-buttons {
-        box-shadow: none;
-      }
       .spectrum-Stepper-button--stepDown {
         border-color: var(--spectrum-textfield-border-color-key-focus);
       }
     }
     &.focus-ring {
-      .spectrum-Stepper-buttons {
-        box-shadow: none;
-
-      }
       .spectrum-Stepper-button--stepDown {
         box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-key-focus);
       }
 
       &:focus {
-        .spectrum-Stepper-buttons {
-          box-shadow: none;
-        }
         .spectrum-Stepper-button--stepDown {
           border-color: var(--spectrum-textfield-border-color-key-focus);
         }
@@ -172,10 +151,6 @@ I've divided up the file into css for the steppers vs css for the input to make 
 
       &:invalid,
       &.is-invalid {
-        .spectrum-Stepper-buttons {
-          box-shadow: none;
-        }
-
         .spectrum-Stepper-button--stepDown {
           box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
         }
@@ -184,45 +159,29 @@ I've divided up the file into css for the steppers vs css for the input to make 
 
     &:invalid,
     &.is-invalid {
-      .spectrum-Stepper-buttons {
-        box-shadow: none;
-      }
-
       .spectrum-Stepper-button--stepDown {
         border-color: var(--spectrum-textfield-border-color-error);
       }
     }
 
     &.is-focused {
-      .spectrum-Stepper-buttons {
-        box-shadow: none;
-      }
       .spectrum-Stepper-button--stepDown {
         border-color: var(--spectrum-textfield-border-color-key-focus);
       }
 
       &:focus {
-        .spectrum-Stepper-buttons {
-          box-shadow: none;
-        }
         .spectrum-Stepper-button--stepDown {
           border-color: var(--spectrum-textfield-border-color-key-focus);
         }
       }
 
       &.focus-ring {
-        .spectrum-Stepper-buttons {
-          box-shadow: none;
-        }
         .spectrum-Stepper-button--stepDown {
           box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-key-focus);
         }
 
         &:invalid,
         &.is-invalid {
-          .spectrum-Stepper-buttons {
-            box-shadow: none;
-          }
           .spectrum-Stepper-button--stepDown {
             box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
           }
@@ -231,10 +190,6 @@ I've divided up the file into css for the steppers vs css for the input to make 
 
       &:invalid,
       &.is-invalid {
-        .spectrum-Stepper-buttons {
-          box-shadow: none;
-        }
-
         .spectrum-Stepper-button--stepDown {
           border-color: var(--spectrum-textfield-border-color-error);
         }
@@ -242,26 +197,17 @@ I've divided up the file into css for the steppers vs css for the input to make 
     }
 
     &.is-invalid {
-      .spectrum-Stepper-buttons {
-        box-shadow: none;
-      }
       .spectrum-Stepper-button--stepDown {
         border-color: var(--spectrum-textfield-border-color-error);
       }
 
       &:focus {
-        .spectrum-Stepper-buttons {
-          box-shadow: none;
-        }
         .spectrum-Stepper-button--stepDown {
           border-color: var(--spectrum-textfield-border-color-error);
         }
       }
 
       &.focus-ring {
-        .spectrum-Stepper-buttons {
-          box-shadow: none;
-        }
         .spectrum-Stepper-button--stepDown {
           box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
         }

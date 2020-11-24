@@ -140,6 +140,10 @@ storiesOf('NumberField', module)
     () => render({isRequired: true, necessityIndicator: 'label'})
   )
   .add(
+    'custom width',
+    () => render({width: 'size-3000'})
+  )
+  .add(
     'controlled',
     () => <NumberFieldControlled />
   )
