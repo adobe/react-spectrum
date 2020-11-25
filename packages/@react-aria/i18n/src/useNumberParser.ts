@@ -205,10 +205,11 @@ export function useNumberParser(options?: Intl.NumberFormatOptions, numeralSyste
 export let cleanString = (value: string, symbols, locale, numeralSystem): string => {
   let {minusSign = '', plusSign = '', validCharacters, group, decimal, currency} = symbols;
 
-  // Note to anyone who finds a bug with it, Bulgarian US Dollar currency formatting has decimals in the currency symbol,
-  // we need to be careful not to remove those. If there is a currency symbol in the string, make a note
-  // that way after we replace a bunch of characters 1:1, we can put back the correct currency symbol.
-  // Do not try to replace it after deleting various characters in the string.
+  /**
+   * Some currency symbols contain characters used in other parts of the number, like decimal characters.
+   * For example, the Bulgarian USD symbol is `щ.д.`. We don't want to remove those while we're cleaning
+   * the rest of the string. Store the start of the currency symbol so we can restore it later.
+   */
   let indexOfCurrency;
   if (currency) {
     indexOfCurrency = value.indexOf(currency);
@@ -229,9 +230,10 @@ export let cleanString = (value: string, symbols, locale, numeralSystem): string
     result = result.replace('.', String.fromCharCode(8239));
   }
 
-  // This is a safe place to make this check, every character has been replaced with exactly one new one.
-  // If we do it any later than this, some characters are deleted and we'd need to do more math to figure out where
-  // the currency symbol has ended up.
+  /**
+   * Up until now we've replaced characters 1:1, not altering the length of the string.
+   * We are safe to restore the currency symbol now.
+   */
   if (currency && indexOfCurrency !== -1) {
     result = result.substring(0, indexOfCurrency) + currency + result.substring(indexOfCurrency + currency.length, result.length);
   }
