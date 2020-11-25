@@ -53,7 +53,7 @@ import {Text} from '@react-spectrum/text';
       <Text>Senatus Populusque Romanus.</Text>
     </Content>
   </Item>
-  <Item title="Empire" key="libraries">
+  <Item title="Empire" key="Emp">
     <Content marginTop="size-250" marginStart="size-125">
       <Text>Alea jacta est.</Text>
     </Content>
@@ -106,7 +106,7 @@ For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout o
 ## Labeling
 ### Accessibility
 While an `aria-label` is not explicitly required for a tab list, Tabs should be labeled using a `aria-label` in the absence of an ancestor [landmark](https://www.w3.org/WAI/GL/wiki/Using_ARIA_landmarks_to_identify_regions_of_a_page).
-This will prevent screen readers from announcing non-focused tabs, allowing for a more focused accessibilty experience.
+This will prevent screen readers from announcing non-focused tabs, allowing for a more focused experience.
 
 ## Selection
 Setting a selected tab can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `key` of an item. See [Events](#events) for more details on selection events.
@@ -332,7 +332,7 @@ function Example() {
 ### Collapse (overflow behavior)
 [View guidelines](https://spectrum.adobe.com/page/tabs/#Too-many-tabs)
 
-If there isn't enough horizontal room to render every tab on a single line, Tabs will collapse all tabs into a picker menu. Note that this does not apply to vertical Tabs.
+If there isn't enough horizontal room to render every tab on a single line, the component will collapse all tabs into a `Picker`. Note that this does not apply to vertical Tabs.
 
 Try the example below to see the above behavior.
 
@@ -362,7 +362,7 @@ function Example() {
         </Tabs>
       </div>
       <Button onPress={() => setCollapse((collapse) => !collapse)}>
-        Flip tab container size.
+        Toggle tab container size.
       </Button>
     </>
   );

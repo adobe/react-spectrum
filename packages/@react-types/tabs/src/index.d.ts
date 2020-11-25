@@ -58,7 +58,7 @@ export interface SpectrumTabsProps<T> extends AriaTabsProps<T>, StyleProps {
   density?: 'compact' | 'regular',
   // overflowMode?: 'dropdown' | 'scrolling',
   // isEmphasized?: boolean,
-  /** Whether Tabs is disabled. */
+  /** Whether Tabs are disabled. */
   isDisabled?: boolean,
   /** Handler that is called when the tab selection changes. */
   onSelectionChange?: (selectedItem: Key) => void,
