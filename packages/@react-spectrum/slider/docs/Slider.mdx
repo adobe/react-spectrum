@@ -127,8 +127,9 @@ function Example() {
       <Slider
         label="Percent donus eaten"
         maxValue={1}
-        formatOptions={{style: 'percent', minimumFractionDigits: 2}}
-        defaultValue={0.8912} />
+        step={0.001}
+        formatOptions={{style: 'percent', minimumFractionDigits: 1}}
+        defaultValue={0.891} />
     </Flex>
   );
 }
