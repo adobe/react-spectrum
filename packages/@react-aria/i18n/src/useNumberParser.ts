@@ -156,16 +156,15 @@ export function useNumberParser(options?: Intl.NumberFormatOptions, numeralSyste
     return newValue;
   }, [symbols, intlOptions]);
 
-
-  // given that numbers can have
-  // max/min sigfigs and decimals, and some of the
-  // formats have defaults, like currency,
-  // take the approach of formatting our value
-  // then joining together the relevant parts
-  // then parsing that joined result back to a number
-  // this should round us as the formatter does
-  // might be able to do it using resolved options from intl formatter,
-  // and then using toFixed and toPrecision with fraction digits and significant digits respectively
+  /**
+   * We could round by using toFixed and toPrecision with intlOptions fraction digits and significant digits
+   * respectively. However, it's hard to enforce the minimum's intlOptions also supports and it would take
+   * multiple trips from number to string and back again to accomplish.
+   * Instead, we format the number using the same format options that are passed in, strip it of everything
+   * that doesn't contribute to the numerical value, and parse it back to a number. This ensures the same
+   * rounding that the formatter will perform.
+   * @param value
+   */
   let round = (value: number): number => {
     let parts = formatter.formatToParts(value);
     let strippedValue = parts.map((part) => {
