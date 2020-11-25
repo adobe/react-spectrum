@@ -10,13 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {Field} from '@react-spectrum/label';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
-import {Label} from '@react-spectrum/label';
-import {LabelPosition} from '@react-types/shared';
-import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import {mergeProps} from '@react-aria/utils';
 import React, {RefObject, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import {StepButton} from './StepButton';
@@ -27,7 +25,7 @@ import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
-function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElement>) {
+function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let provider = useProvider();
@@ -36,11 +34,6 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
     isDisabled,
     hideStepper,
     autoFocus,
-    isRequired,
-    necessityIndicator,
-    label,
-    labelPosition = 'top' as LabelPosition,
-    labelAlign,
     // value/defaultValue/onChange can't be spread onto TextfieldBase
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     value,
@@ -50,12 +43,14 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
     onChange,
     ...otherProps
   } = props;
-  // either we don't pass otherProps to input... seems not ideal
-  // or we figure out some way to take the styleprops out of otherProps...?
+  let fieldProps = Object.assign({}, props);
+  // TS won't remove onChange from the type, so when using fieldProps below, cast it as omitted
+  delete fieldProps['onChange'];
+
   let {styleProps} = useStyleProps(props);
   let state = useNumberFieldState(props);
   let inputRef = useRef<HTMLInputElement>();
-  let domRef = useRef<HTMLDivElement>(null);
+  let domRef = useFocusableRef<HTMLElement>(ref, inputRef);
   let incrementRef = useRef<HTMLDivElement>();
   let decrementRef = useRef<HTMLDivElement>();
   let {
@@ -83,82 +78,48 @@ function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElem
         'spectrum-Stepper--quiet': isQuiet,
         'is-invalid': props.validationState === 'invalid',
         'spectrum-Stepper--showStepper': showStepper,
-        'spectrum-Stepper--isMobile': isMobile
-      },
-      styleProps.className
+        'spectrum-Stepper--isMobile': isMobile,
+        // because FocusRing won't pass along the className from Field, we have to handle that ourselves
+        [styleProps.className]: !props.label
+      }
     )
   );
+  // TODO: how to ignore a right click on the stepper buttons to prevent focus of just them
 
-  let numberfield = (
-    <FocusRing
-      within
-      isTextInput
-      focusClass={classNames(inputgroupStyles, 'is-focused', classNames(stepperStyle, 'is-focused'))}
-      focusRingClass={classNames(inputgroupStyles, 'focus-ring', classNames(stepperStyle, 'focus-ring'))}
-      autoFocus={autoFocus}>
-      <div
-        {...styleProps}
-        {...numberFieldProps}
-        ref={ref}
-        className={className}>
-        {/* remove label from props since we render it out here already */}
-        <TextFieldBase
-          {...otherProps}
-          UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-field', otherProps.UNSAFE_className)}
-          isQuiet={isQuiet}
-          inputClassName={classNames(stepperStyle, 'spectrum-Stepper-input')}
-          inputRef={inputRef}
-          validationState={props.validationState}
-          label={null}
-          labelProps={labelProps}
-          inputProps={inputFieldProps} />
-        {showStepper &&
+  return (
+    <Field
+      {...fieldProps as Omit<SpectrumNumberFieldProps, 'onChange'>}
+      labelProps={labelProps}
+      ref={domRef}
+      noForwardRef>
+      <FocusRing
+        within
+        isTextInput
+        focusClass={classNames(inputgroupStyles, 'is-focused', classNames(stepperStyle, 'is-focused'))}
+        focusRingClass={classNames(inputgroupStyles, 'focus-ring', classNames(stepperStyle, 'focus-ring'))}
+        autoFocus={autoFocus}>
+        <div
+          {...(props.label ? {style: {width: '100%'}} : styleProps)}
+          {...numberFieldProps}
+          {...(props.label ? {} : {ref: domRef as RefObject<HTMLDivElement>})}
+          className={className}>
+          <TextFieldBase
+            UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-field', otherProps.UNSAFE_className)}
+            isQuiet={isQuiet}
+            inputClassName={classNames(stepperStyle, 'spectrum-Stepper-input')}
+            inputRef={inputRef}
+            validationState={props.validationState}
+            inputProps={inputFieldProps} />
+          {showStepper &&
           <>
             <StepButton direction="up" isQuiet={isQuiet} ref={incrementRef} {...incrementButtonProps} />
             <StepButton direction="down" isQuiet={isQuiet} ref={decrementRef} {...decrementButtonProps} />
           </>
-        }
-      </div>
-    </FocusRing>
+          }
+        </div>
+      </FocusRing>
+    </Field>
   );
-  // TODO: how to ignore a right click on the stepper buttons to prevent focus of just them
-
-  if (label) {
-    let labelWrapperClass = classNames(
-      labelStyles,
-      'spectrum-Field',
-      {
-        'spectrum-Field--positionTop': labelPosition === 'top',
-        'spectrum-Field--positionSide': labelPosition === 'side'
-      },
-      styleProps.className
-    );
-
-    numberfield = React.cloneElement(numberfield, mergeProps(numberfield.props, {
-      className: classNames(labelStyles, 'spectrum-Field-field')
-    }));
-
-    return (
-      <div
-        {...styleProps}
-        ref={domRef}
-        className={labelWrapperClass}>
-        <Label
-          {...labelProps}
-          labelPosition={labelPosition}
-          labelAlign={labelAlign}
-          isRequired={isRequired}
-          necessityIndicator={necessityIndicator}>
-          {label}
-        </Label>
-        {numberfield}
-      </div>
-    );
-  }
-
-  return React.cloneElement(numberfield, mergeProps(numberfield.props, {
-    ...styleProps
-  }));
 }
 
 

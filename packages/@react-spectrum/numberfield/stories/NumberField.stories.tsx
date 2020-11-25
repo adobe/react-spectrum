@@ -140,8 +140,24 @@ storiesOf('NumberField', module)
     () => render({isRequired: true, necessityIndicator: 'label'})
   )
   .add(
+    'label top end',
+    () => render({isRequired: true, labelPosition: 'top', labelAlign: 'end'})
+  )
+  .add(
+    'label side',
+    () => render({isRequired: true, labelPosition: 'side'})
+  )
+  .add(
+    'no visible label',
+    () => renderNoLabel({isRequired: true, 'aria-label': 'Enter numbers'})
+  )
+  .add(
     'custom width',
     () => render({width: 'size-3000'})
+  )
+  .add(
+    'custom width no visible label',
+    () => renderNoLabel({width: 'size-3000', isRequired: true, 'aria-label': 'Enter numbers'})
   )
   .add(
     'controlled',
@@ -155,6 +171,12 @@ storiesOf('NumberField', module)
 function render(props: any = {}) {
   return (
     <NumberField {...props} onChange={action('onChange')} UNSAFE_className="custom_classname" label="Enter numbers" />
+  );
+}
+
+function renderNoLabel(props: any = {}) {
+  return (
+    <NumberField {...props} onChange={action('onChange')} UNSAFE_className="custom_classname" />
   );
 }
 

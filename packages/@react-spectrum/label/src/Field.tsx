@@ -17,7 +17,7 @@ import {mergeProps} from '@react-aria/utils';
 import React, {RefObject} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 
-function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
+function Field(props: SpectrumFieldProps & {noForwardRef?: boolean}, ref: RefObject<HTMLElement>) {
   let {
     label,
     labelPosition = 'top',
@@ -28,6 +28,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     children,
     labelProps,
     elementType,
+    noForwardRef,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -67,10 +68,11 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     );
   }
 
-  return React.cloneElement(children, mergeProps(children.props, {
-    ...styleProps,
-    ref
-  }));
+  let forwardingProps = {...styleProps} as any;
+  if (!noForwardRef) {
+    forwardingProps.ref = ref;
+  }
+  return React.cloneElement(children, mergeProps(children.props, forwardingProps));
 }
 
 let _Field = React.forwardRef(Field);
