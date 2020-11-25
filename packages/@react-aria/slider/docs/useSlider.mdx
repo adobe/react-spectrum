@@ -233,7 +233,7 @@ function Slider(props) {
           <div
             className="filledRail"
             style={{
-              insetInlineStart: `${state.getValuePercent(Math.min(value, origin)) * 100}%`,
+              left: `${state.getValuePercent(Math.min(value, origin)) * 100}%`,
               width: `${(state.getValuePercent(Math.max(value, origin)) - state.getValuePercent(Math.min(value, origin))) * 100}%`
             }} />
           <div ref={trackRef} className="track" {...trackProps} />
@@ -241,7 +241,7 @@ function Slider(props) {
             <div
               className="thumb"
               style={{
-                insetInlineStart: `${state.getThumbPercent(0) * 100}%`
+                left: `${state.getThumbPercent(0) * 100}%`
               }}>
               <div {...thumbProps} className="thumbHandle">
                 <VisuallyHidden><input className="input" ref={inputRef} {...inputProps} /></VisuallyHidden>
