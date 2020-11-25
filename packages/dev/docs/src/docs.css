@@ -184,8 +184,13 @@ html, body {
   text-decoration: none;
 }
 
+.nav .sideNavItem {
+  justify-content: space-between;
+}
+
 .sideNavItem span {
   margin-left: 10px;
+  cursor: pointer;
 }
 
 .sideNavItem:focus {
