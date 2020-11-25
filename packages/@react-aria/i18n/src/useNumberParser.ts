@@ -128,7 +128,7 @@ export function useNumberParser(options?: Intl.NumberFormatOptions, numeralSyste
   const parse = useCallback((value:string): number => {
     // assuming a clean string
     // to parse the number, we need to remove anything that isn't actually part of the number, for example we want '-10.40' not '-10.40 USD'
-    let fullySanitizedValue = value.replace(new RegExp(`[${symbols.literals}]`, 'g'), '');
+    let fullySanitizedValue = value.replace(new RegExp(`[${symbols.literals}\\p{White_Space}]`, 'gu'), '');
     // first match the prefix/suffix wrapper of everything that isn't a number
     // then preserve that as we'll need to put it back together as the current input value
     // with the actual numerals, parse them into a number

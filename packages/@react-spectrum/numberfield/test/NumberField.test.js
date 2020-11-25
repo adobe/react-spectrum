@@ -586,6 +586,20 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
+  `('$Name properly formats defaultValue', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'EUR'}});
+
+    act(() => {textField.focus();});
+    typeText(textField, '12 .83');
+    act(() => {textField.blur();});
+
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(12.83);
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
   `('$Name will not call onChange with NaN before a valid input has been typed', () => {
     let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'EUR'}});
     act(() => {textField.focus();});
