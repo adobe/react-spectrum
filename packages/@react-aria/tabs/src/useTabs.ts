@@ -9,11 +9,13 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
+import {AriaTabProps, AriaTabsProps} from '@react-types/tabs';
 import {HTMLAttributes, Key, RefObject, useMemo} from 'react';
 import {mergeProps, useId, useLabels} from '@react-aria/utils';
 import {SingleSelectListState} from '@react-stately/list';
-import {TabAriaProps, TabsAriaProps} from '@react-types/tabs';
 import {TabsKeyboardDelegate} from './TabsKeyboardDelegate';
+import {TabsState} from '@react-stately/tabs';
 import {useLocale} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
@@ -27,7 +29,7 @@ interface TabsAria {
 
 const tabsIds = new WeakMap<SingleSelectListState<unknown>, string>();
 
-export function useTabs<T>(props: TabsAriaProps<T>, state: SingleSelectListState<T>, ref): TabsAria {
+export function useTabs<T>(props: AriaTabsProps<T>, state: TabsState<T>, ref): TabsAria {
   let {
     orientation = 'horizontal',
     keyboardActivation = 'automatic'
@@ -81,7 +83,7 @@ interface TabAria {
 }
 
 export function useTab<T>(
-  props: TabAriaProps<T>,
+  props: AriaTabProps<T>,
   state: SingleSelectListState<T>,
   ref: RefObject<HTMLElement>
 ): TabAria {
@@ -106,7 +108,7 @@ export function useTab<T>(
   // selected tab should have tabIndex=0, when it initializes
   if (isSelected && !isDisabled) {
     tabIndex = 0;
-  }  
+  }
 
   return {
     tabProps: {

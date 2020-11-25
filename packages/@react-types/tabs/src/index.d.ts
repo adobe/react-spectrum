@@ -21,14 +21,16 @@ import {
 } from '@react-types/shared';
 import {Key} from 'react';
 
-export interface TabAriaProps<T> {
+export interface AriaTabProps<T> {
   /** Collection node for the tab. */
   item: Node<T>,
   /** Whether the tab should be disabled. */
   isDisabled?: boolean
 }
 
-export interface TabsAriaProps<T> extends CollectionBase<T>, SingleSelection, AriaLabelingProps {
+export interface TabsProps<T> extends CollectionBase<T>, SingleSelection {}
+
+export interface AriaTabsProps<T> extends TabsProps<T>, DOMProps, AriaLabelingProps {
   /**
    * Whether tabs are activated automatically on focus or manually.
    * @default 'automatic'
@@ -46,7 +48,7 @@ export interface TabsAriaProps<T> extends CollectionBase<T>, SingleSelection, Ar
   isDisabled?: boolean
 }
 
-export interface SpectrumTabsProps<T> extends TabsAriaProps<T>, DOMProps, StyleProps {
+export interface SpectrumTabsProps<T> extends AriaTabsProps<T>, StyleProps {
   isQuiet?: boolean,
   density?: 'compact',
   overflowMode?: 'dropdown' | 'scrolling',
