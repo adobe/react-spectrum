@@ -17,22 +17,24 @@ import React from 'react';
 
 export function VersionBadge(props) {
   let {
-    version = ''
+    version = '',
+    size = 'small'
   } = props;
 
   let versionMap = {
-    'alpha': 'spectrum-Label--green',
+    'alpha': 'spectrum-Label--blue',
     'beta': 'spectrum-Label--blue',
     'rc': 'spectrum-Label--green'
   };
 
   let preRelease = version.match(/(alpha)|(beta)|(rc)/);
+  let sizeClass = `spectrum-Label--${size}`;
 
   if (!preRelease) {
     return null;
   }
 
   return (
-    <span className={clsx(badgeStyles['spectrum-Label'], badgeStyles[versionMap[preRelease[0]]])}>{preRelease[0]}</span>
+    <span className={clsx(badgeStyles['spectrum-Label'], badgeStyles[sizeClass], badgeStyles[versionMap[preRelease[0]]])}>{preRelease[0]}</span>
   );
 }
