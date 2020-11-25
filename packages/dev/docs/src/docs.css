@@ -184,6 +184,10 @@ html, body {
   text-decoration: none;
 }
 
+.sideNavItem span {
+  margin-left: 10px;
+}
+
 .sideNavItem:focus {
   background-color: var(--spectrum-sidenav-item-background-color-key-focus);
   color: var(--spectrum-sidenav-item-text-color-key-focus);
