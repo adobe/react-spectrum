@@ -17,6 +17,7 @@ import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '../src';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
+import {Flex} from "@react-spectrum/layout";
 
 storiesOf('NumberField', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
@@ -166,6 +167,10 @@ storiesOf('NumberField', module)
   .add(
     'currency switcher',
     () => <NumberFieldWithCurrencySelect />
+  )
+  .add(
+    'flexed',
+    () => renderSet()
   );
 
 function render(props: any = {}) {
@@ -177,6 +182,17 @@ function render(props: any = {}) {
 function renderNoLabel(props: any = {}) {
   return (
     <NumberField {...props} onChange={action('onChange')} UNSAFE_className="custom_classname" />
+  );
+}
+
+function renderSet() {
+  return (
+    <Flex width="100%" gap="size-200" alignItems="end">
+      <NumberField label="Grows" flexGrow={1} />
+      <NumberField label="Static" />
+      <NumberField aria-label="Grows" flexGrow={1} />
+      <NumberField aria-label="Static" />
+    </Flex>
   );
 }
 
