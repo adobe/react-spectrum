@@ -49,6 +49,7 @@ describe('NumberField', function () {
     let {locale = 'en-US', scale = 'medium'} = providerProps;
     let {container, debug, rerender} = render(<Provider theme={theme} scale={scale} locale={locale}><NumberField aria-label="labelled" {...props} /></Provider>);
 
+    let root = props.label ? container.firstChild.firstChild : undefined;
     container = within(container).queryByRole('group');
     let textField = container.firstChild;
     let buttons = within(container).queryAllByRole('button');
@@ -56,6 +57,7 @@ describe('NumberField', function () {
     let decrementButton = buttons[1];
     textField = textField.firstChild;
     return {
+      root,
       container,
       textField,
       buttons,
@@ -84,6 +86,28 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('inputMode', 'decimal');
     expect(incrementButton).toBeTruthy();
     expect(decrementButton).toBeTruthy();
+  });
+
+  it('attaches a user provided ref to the outer div', function () {
+    let ref = React.createRef();
+    let {container, textField} = renderNumberField({ref});
+
+    expect(ref.current.UNSAFE_getDOMNode()).toBe(container);
+    act(() => {
+      ref.current.focus();
+    });
+    expect(document.activeElement).toBe(textField);
+  });
+
+  it('attaches a user provided ref to the outer div with a label', function () {
+    let ref = React.createRef();
+    let {root, textField} = renderNumberField({ref, label: 'Visually labelled'});
+
+    expect(ref.current.UNSAFE_getDOMNode()).toBe(root);
+    act(() => {
+      ref.current.focus();
+    });
+    expect(document.activeElement).toBe(textField);
   });
 
   it.each`
