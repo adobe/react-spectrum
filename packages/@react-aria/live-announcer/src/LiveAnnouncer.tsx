@@ -10,28 +10,38 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {Fragment, useImperativeHandle, useState} from 'react';
+import React, {Fragment, ReactNode, RefObject, useImperativeHandle, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
+
+type Assertiveness = 'assertive' | 'polite';
+interface Announcer {
+  announce(message: string, assertiveness: Assertiveness, timeout: number): void,
+  clear(assertiveness: Assertiveness): void
+}
 
 /* Inspired by https://github.com/AlmeroSteyn/react-aria-live */
 const LIVEREGION_TIMEOUT_DELAY = 7000;
 
-let liveRegionAnnouncer = React.createRef();
+let liveRegionAnnouncer = React.createRef<Announcer>();
 let node: HTMLElement = null;
 let messageId = 0;
 
 /**
  * Announces the message using screen reader technology.
  */
-export function announce(message: string, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY) {
+export function announce(
+  message: string,
+  assertiveness: Assertiveness = 'assertive',
+  timeout = LIVEREGION_TIMEOUT_DELAY
+) {
   ensureInstance(announcer => announcer.announce(message, assertiveness, timeout));
 }
 
 /**
  * Stops all queued announcements.
  */
-export function clearAnnouncer(assertiveness) {
+export function clearAnnouncer(assertiveness: Assertiveness) {
   ensureInstance(announcer => announcer.clear(assertiveness));
 }
 
@@ -49,7 +59,7 @@ export function destroyAnnouncer() {
 /**
  * Ensures we only have one instance of the announcer so that we don't have elements competing.
  */
-function ensureInstance(callback: (announcer:any) => void) {
+function ensureInstance(callback: (announcer: Announcer) => void) {
   if (!liveRegionAnnouncer.current) {
     node = document.createElement('div');
     node.dataset.liveAnnouncer = 'true';
@@ -64,11 +74,11 @@ function ensureInstance(callback: (announcer:any) => void) {
   }
 }
 
-const LiveRegionAnnouncer = React.forwardRef((props, ref) => {
+const LiveRegionAnnouncer = React.forwardRef((_, ref: RefObject<Announcer>) => {
   let [assertiveMessages, setAssertiveMessages] = useState([]);
   let [politeMessages, setPoliteMessages] = useState([]);
 
-  let clear = (assertiveness) => {
+  let clear = (assertiveness: Assertiveness) => {
     if (!assertiveness || assertiveness === 'assertive') {
       setAssertiveMessages([]);
     }
@@ -115,7 +125,12 @@ const LiveRegionAnnouncer = React.forwardRef((props, ref) => {
   );
 });
 
-function MessageBlock({children, 'aria-live': ariaLive}) {
+interface MessageBlockProps {
+   children: ReactNode,
+   'aria-live': Assertiveness
+ }
+
+function MessageBlock({children, 'aria-live': ariaLive}: MessageBlockProps) {
   return (
     <VisuallyHidden
       role="log"
