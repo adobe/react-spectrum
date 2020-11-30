@@ -3703,6 +3703,19 @@
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
 
+"@react-aria/button@3.2.2":
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/@react-aria/button/-/button-3.2.2.tgz#b10c1700e6b085a48b5a2ff4ffa46feb9931c34c"
+  integrity sha512-iXJo58ST06wnh2zNpnyVgEHY8QulVGDO9LQRfBg/v3ZIIu0FAzag7dTzSijeZpppFuWM197YrFYTEouPXzhk4w==
+  dependencies:
+    "@babel/runtime" "^7.6.2"
+    "@react-aria/focus" "^3.2.2"
+    "@react-aria/i18n" "^3.1.2"
+    "@react-aria/interactions" "^3.2.1"
+    "@react-aria/utils" "^3.3.0"
+    "@react-stately/toggle" "^3.2.1"
+    "@react-types/button" "^3.2.1"
+
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.0.tgz#ecdf48d532c58ea477acfcab80348424f8d0662f"
