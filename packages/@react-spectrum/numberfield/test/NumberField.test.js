@@ -1405,14 +1405,14 @@ describe('NumberField', function () {
       formatOptions: {style: 'currency', currency: 'EUR'}
     });
 
-    expect(textField).toHaveAttribute('aria-valuenow', '100');
-    expect(textField).toHaveAttribute('aria-valuetext', '€100.00');
-    expect(textField).toHaveAttribute('aria-valuemin', '0');
-    expect(textField).toHaveAttribute('aria-valuemax', '100');
+    expect(textField).not.toHaveAttribute('aria-valuenow', '100');
+    expect(textField).not.toHaveAttribute('aria-valuetext', '€100.00');
+    expect(textField).not.toHaveAttribute('aria-valuemin', '0');
+    expect(textField).not.toHaveAttribute('aria-valuemax', '100');
     expect(textField).toHaveAttribute('aria-readonly', 'true');
     expect(textField).toHaveAttribute('aria-required', 'true');
     expect(textField).toHaveAttribute('aria-disabled', 'true');
-    expect(textField).toHaveAttribute('role', 'textfield');
+    expect(textField).not.toHaveAttribute('role');
 
     // TODO: check aria-controls
     expect(incrementButton).toHaveAttribute('aria-label', 'Increment');
@@ -1502,7 +1502,7 @@ describe('NumberField', function () {
     ${'NumberField'} | ${{label: 'this is the stepper that never ends'}}
   `('$Name supports labels', ({props}) => {
     let {getByLabelText, getByRole} = render(<Provider theme={theme} locale="en-US"><NumberField {...props} /></Provider>);
-    let spinButton = getByRole('textfield');
+    let spinButton = getByRole('textbox');
     expect(getByLabelText(props.label)).toBe(spinButton);
     expect(spinButton).toHaveAttribute('aria-roledescription', 'Spin button number field');
   });
