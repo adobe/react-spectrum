@@ -482,12 +482,12 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
-  `('$Name step buttons hide for mobile quiet', () => {
+  `('$Name step buttons show for mobile quiet', () => {
     let {textField, incrementButton, decrementButton} = renderNumberField({isQuiet: true}, {scale: 'large'});
 
     expect(textField).toBeDefined();
-    expect(incrementButton).not.toBeDefined();
-    expect(decrementButton).not.toBeDefined();
+    expect(incrementButton).toBeDefined();
+    expect(decrementButton).toBeDefined();
   });
 
   it.each`

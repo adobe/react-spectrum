@@ -16,17 +16,17 @@ import {Field} from '@react-spectrum/label';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
+import {mergeProps} from '@react-aria/utils';
 import React, {HTMLAttributes, InputHTMLAttributes, RefObject, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import {StepButton} from './StepButton';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {useFormProps} from '@react-spectrum/form';
+import {useHover} from '@react-aria/interactions';
 import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
-import {useHover} from "@react-aria/interactions";
-import {mergeProps} from "@react-aria/utils";
 
 function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
