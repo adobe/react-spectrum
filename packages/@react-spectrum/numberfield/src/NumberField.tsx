@@ -25,6 +25,8 @@ import {useFormProps} from '@react-spectrum/form';
 import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
+import {useHover} from "@react-aria/interactions";
+import {mergeProps} from "@react-aria/utils";
 
 function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
@@ -53,7 +55,9 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
     decrementButtonProps
   } = useNumberField({...props, incrementRef, decrementRef}, state, inputRef);
   let isMobile = provider.scale === 'large';
-  let showStepper = !hideStepper && !(isMobile && isQuiet);
+  let showStepper = !hideStepper;
+
+  let {isHovered, hoverProps} = useHover({isDisabled});
 
   let className = classNames(
     inputgroupStyles,
@@ -71,6 +75,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
         'is-invalid': props.validationState === 'invalid',
         'spectrum-Stepper--showStepper': showStepper,
         'spectrum-Stepper--isMobile': isMobile,
+        'spectrum-Stepper--isHovered': isHovered,
         // because FocusRing won't pass along the className from Field, we have to handle that ourselves
         [style.className]: !props.label && style.className
       }
@@ -85,7 +90,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
       ref={domRef}>
       <NumberFieldInput
         {...props}
-        numberFieldProps={numberFieldProps}
+        numberFieldProps={mergeProps(numberFieldProps, hoverProps)}
         inputProps={inputFieldProps}
         inputRef={inputRef}
         incrementProps={incrementButtonProps}
@@ -128,9 +133,7 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
     validationState,
     label
   } = props;
-  let provider = useProvider();
-  let isMobile = provider.scale === 'large';
-  let showStepper = !hideStepper && !(isMobile && isQuiet);
+  let showStepper = !hideStepper;
 
   return (
     <FocusRing

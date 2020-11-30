@@ -26,7 +26,8 @@ I've divided up the file into css for the steppers vs css for the input to make 
   .spectrum-Stepper-icon {
     fill: var(--spectrum-actionbutton-icon-color);
   }
-  &:hover {
+  &:hover,
+  &.is-hovered {
     background-color: var(--spectrum-actionbutton-background-color-hover);
     border-color: var(--spectrum-actionbutton-border-color-hover);
     color: var(--spectrum-actionbutton-text-color-hover);
@@ -50,6 +51,16 @@ I've divided up the file into css for the steppers vs css for the input to make 
 
     .spectrum-Stepper-icon {
       fill: var(--spectrum-textfield-text-color-disabled);
+    }
+  }
+}
+.spectrum-Stepper.spectrum-Stepper--isHovered {
+  .spectrum-Stepper-button {
+    border-color: var(--spectrum-actionbutton-border-color-hover);
+
+    &:disabled,
+    &.is-disabled {
+      border-color: var(--spectrum-textfield-border-color-disabled);
     }
   }
 }
@@ -209,6 +220,96 @@ I've divided up the file into css for the steppers vs css for the input to make 
 
       &.focus-ring {
         .spectrum-Stepper-button--stepDown {
+          box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
+        }
+      }
+    }
+  }
+
+  &.spectrum-Stepper--quiet.spectrum-Stepper--isMobile {
+    .spectrum-Stepper-button {
+      &:disabled,
+      &.is-disabled {
+        border-color: var(--spectrum-textfield-quiet-border-color-disabled);
+      }
+    }
+
+    &:focus {
+      .spectrum-Stepper-button {
+        border-color: var(--spectrum-textfield-border-color-key-focus);
+      }
+    }
+    &.focus-ring {
+      .spectrum-Stepper-button {
+        box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-key-focus);
+      }
+
+      &:focus {
+        .spectrum-Stepper-button {
+          border-color: var(--spectrum-textfield-border-color-key-focus);
+        }
+      }
+
+      &:invalid,
+      &.is-invalid {
+        .spectrum-Stepper-button {
+          box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
+        }
+      }
+    }
+
+    &:invalid,
+    &.is-invalid {
+      .spectrum-Stepper-button {
+        border-color: var(--spectrum-textfield-border-color-error);
+      }
+    }
+
+    &.is-focused {
+      .spectrum-Stepper-button {
+        border-color: var(--spectrum-textfield-border-color-key-focus);
+      }
+
+      &:focus {
+        .spectrum-Stepper-button {
+          border-color: var(--spectrum-textfield-border-color-key-focus);
+        }
+      }
+
+      &.focus-ring {
+        .spectrum-Stepper-button {
+          box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-key-focus);
+        }
+
+        &:invalid,
+        &.is-invalid {
+          .spectrum-Stepper-button {
+            box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
+          }
+        }
+      }
+
+      &:invalid,
+      &.is-invalid {
+        .spectrum-Stepper-button {
+          border-color: var(--spectrum-textfield-border-color-error);
+        }
+      }
+    }
+
+    &.is-invalid {
+      .spectrum-Stepper-button {
+        border-color: var(--spectrum-textfield-border-color-error);
+      }
+
+      &:focus {
+        .spectrum-Stepper-button {
+          border-color: var(--spectrum-textfield-border-color-error);
+        }
+      }
+
+      &.focus-ring {
+        .spectrum-Stepper-button {
           box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
         }
       }
