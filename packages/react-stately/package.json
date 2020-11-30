@@ -1,6 +1,6 @@
 {
   "name": "react-stately",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -20,9 +20,9 @@
   },
   "dependencies": {
     "@react-stately/checkbox": "^3.0.1",
-    "@react-stately/collections": "^3.2.1",
-    "@react-stately/data": "^3.1.1",
-    "@react-stately/list": "^3.2.1",
+    "@react-stately/collections": "^3.3.0",
+    "@react-stately/data": "^3.1.2",
+    "@react-stately/list": "^3.2.2",
     "@react-stately/menu": "^3.2.1",
     "@react-stately/overlays": "^3.1.1",
     "@react-stately/radio": "^3.2.1",
@@ -30,7 +30,7 @@
     "@react-stately/select": "^3.1.1",
     "@react-stately/selection": "^3.2.1",
     "@react-stately/toggle": "^3.2.1",
-    "@react-stately/tooltip": "^3.0.0",
+    "@react-stately/tooltip": "^3.0.1",
     "@react-stately/tree": "^3.1.2"
   },
   "publishConfig": {
