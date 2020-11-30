@@ -206,7 +206,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   };
 }
 
-export function filterCollection<T extends object>(collection: Collection<Node<T>>, inputValue: string, filter: FilterFn): Collection<Node<T>> {
+function filterCollection<T extends object>(collection: Collection<Node<T>>, inputValue: string, filter: FilterFn): Collection<Node<T>> {
   return new ListCollection(filterNodes(collection, inputValue, filter));
 }
 
