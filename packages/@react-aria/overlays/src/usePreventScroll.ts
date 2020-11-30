@@ -11,7 +11,7 @@
  */
 
 import {chain, getScrollParent} from '@react-aria/utils';
-import {useLayoutEffect} from 'react';
+import {useLayoutEffect, useEffect} from 'react';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
@@ -51,7 +51,8 @@ const nonTextInputTypes = new Set([
 export function usePreventScroll(options: PreventScrollOptions = {}) {
   let {isDisabled} = options;
 
-  useLayoutEffect(() => {
+  const useUniversalEffect = visualViewport ? useLayoutEffect : useEffect;
+  useUniversalEffect(() => {
     if (isDisabled) {
       return;
     }
