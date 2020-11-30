@@ -139,9 +139,9 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let resizeRef = useMemo(() => unwrapDOMRef(triggerRef), [triggerRef]);
 
   let onResize = useCallback(() => {
-    let width = triggerRef.current.UNSAFE_getDOMNode().offsetWidth;
+    let width = resizeRef.current.offsetWidth;
     setButtonWidth(width);
-  }, [triggerRef, setButtonWidth]);
+  }, [resizeRef, setButtonWidth]);
 
   useResizeObserver({
     ref: resizeRef,
