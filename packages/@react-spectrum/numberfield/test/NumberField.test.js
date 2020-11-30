@@ -83,7 +83,7 @@ describe('NumberField', function () {
     expect(container).toHaveAttribute('role', 'group');
     expect(textField).toBeTruthy();
     expect(textField).toHaveAttribute('type', 'text');
-    expect(textField).toHaveAttribute('inputMode', 'decimal');
+    expect(textField).toHaveAttribute('inputMode', 'text');
     expect(incrementButton).toBeTruthy();
     expect(decrementButton).toBeTruthy();
   });
@@ -113,10 +113,27 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
-  `('$Name switches to numeric inputMode if maximumFractionDigits is 0 and cannot type decimal', () => {
+  `('$Name switches to decimal inputMode if no negative numbers', () => {
     let {
       textField
-    } = renderNumberField({onChange: onChangeSpy, formatOptions: {maximumFractionDigits: 0}});
+    } = renderNumberField({onChange: onChangeSpy, minValue: 0});
+
+    expect(textField).toHaveAttribute('inputMode', 'decimal');
+
+    act(() => {textField.focus();});
+    typeText(textField, '-5.2');
+    expect(textField).toHaveAttribute('value', '5.2');
+    act(() => {textField.blur();});
+    expect(onChangeSpy).toHaveBeenCalledWith(5.2);
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name switches to numeric inputMode if maximumFractionDigits is 0 and no negative numbers', () => {
+    let {
+      textField
+    } = renderNumberField({onChange: onChangeSpy, formatOptions: {maximumFractionDigits: 0}, minValue: 0});
 
     expect(textField).toHaveAttribute('inputMode', 'numeric');
 
@@ -133,7 +150,7 @@ describe('NumberField', function () {
   `('$Name switches to numeric for currencies that have no decimals', () => {
     let {
       textField
-    } = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'JPY'}});
+    } = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'JPY'}, minValue: 0});
 
     expect(textField).toHaveAttribute('inputMode', 'numeric');
 

@@ -189,6 +189,10 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   let numberFormatter = useNumberFormatter(formatOptions);
   let intlOptions = useMemo(() => numberFormatter.resolvedOptions(), [numberFormatter]);
   let hasDecimals = intlOptions.maximumFractionDigits > 0;
+  let inputMode: 'decimal' | 'numeric' | 'text' = hasDecimals ? 'decimal' : 'numeric';
+  if (state.minValue < 0) { // iOS - neither allows negative signs, so use full keyboard
+    inputMode = 'text';
+  }
 
   let {onChange, onKeyDown, onPaste} = useSelectionControlledTextfield({setValue: state.setValue, value: state.inputValue, isFocused}, ref);
 
@@ -207,7 +211,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       id: inputId,
       placeholder: formatMessage('Enter a number'),
       type: 'text', // Can't use type="number" because then we can't have things like $ in the field.
-      inputMode: hasDecimals ? 'decimal' : 'numeric',
+      inputMode,
       onChange,
       onKeyDown,
       onPaste

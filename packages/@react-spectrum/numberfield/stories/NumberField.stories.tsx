@@ -57,6 +57,10 @@ storiesOf('NumberField', module)
     () => render({formatOptions: {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 3}})
   )
   .add(
+    'minValue = 0, 0 fraction digits',
+    () => render({minValue: 0, formatOptions: {maximumFractionDigits: 0}})
+  )
+  .add(
     'percent using sign',
     () => render({formatOptions: {style: 'unit', unit: 'percent', signDisplay: 'always'}})
   )
