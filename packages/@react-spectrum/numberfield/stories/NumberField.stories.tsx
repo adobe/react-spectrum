@@ -12,12 +12,12 @@
 
 import {action} from '@storybook/addon-actions';
 import {chain} from '@react-aria/utils';
+import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '../src';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
-import {Flex} from "@react-spectrum/layout";
 
 storiesOf('NumberField', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
