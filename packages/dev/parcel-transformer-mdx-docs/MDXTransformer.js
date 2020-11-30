@@ -36,6 +36,9 @@ const IMPORT_MAPPINGS = {
 module.exports = new Transformer({
   async transform({asset, options}) {
     let exampleCode = [];
+    let assetPackage = await asset.getPackage();
+    let preReleaseParts = assetPackage.version.match(/(alpha)|(beta)|(rc)/);
+    let preRelease = preReleaseParts ? preReleaseParts[0] : '';
     const extractExamples = () => (tree, file) => (
       flatMap(tree, node => {
         if (node.type === 'code') {
@@ -92,7 +95,7 @@ module.exports = new Transformer({
             node.meta = 'example';
 
             return [
-              ...transformExample(node),
+              ...transformExample(node, preRelease),
               {
                 type: 'jsx',
                 value: `<div id="${id}" />`
@@ -110,7 +113,7 @@ module.exports = new Transformer({
             ];
           }
 
-          return transformExample(node);
+          return transformExample(node, preRelease);
         }
 
         return [node];
@@ -249,6 +252,7 @@ module.exports = new Transformer({
     asset.meta.image = image;
     asset.meta.order = order;
     asset.meta.isMDX = true;
+    asset.meta.preRelease = preRelease;
     asset.isSplittable = false;
 
     // Generate the client bundle. We always need the client script,
@@ -326,7 +330,7 @@ export default {};
   }
 });
 
-function transformExample(node) {
+function transformExample(node, preRelease) {
   if (node.lang !== 'tsx') {
     return responsiveCode(node);
   }
@@ -340,8 +344,10 @@ function transformExample(node) {
     plugins: ['jsx', 'typescript']
   });
 
-  // Replace individual package imports in the code with monorepo imports if building for production
-  if (process.env.DOCS_ENV === 'production') {
+  /* Replace individual package imports in the code
+   * with monorepo imports if building for production and not a pre-release
+   */
+  if (process.env.DOCS_ENV === 'production' && !preRelease) {
     let specifiers = [];
     let last;
 
