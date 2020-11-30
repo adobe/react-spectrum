@@ -533,15 +533,14 @@ function ResizePicker() {
 
   return (
     <Flex direction="column" gap="size-200" alignItems="start">
-      <div>
         <div style={{width: state ? '200px' : '300px'}}>
-          <Picker label="Choose A" UNSAFE_style={{width: '100%'}}>
+          <Picker label="Choose A" width="100%">
             <Item key="rarely">A1</Item>
             <Item key="sometimes">A2</Item>
             <Item key="always">A3</Item>
           </Picker>
         </div>
         <ActionButton onPress={() => setState(!state)}>Toggle size</ActionButton>
-      </div>
-    </Flex>);
+    </Flex>
+  );
 }
