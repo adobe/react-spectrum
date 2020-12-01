@@ -55,7 +55,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     isRequired,
     necessityIndicator,
     menuWidth,
-    name
+    name,
+    autoFocus
   } = props;
 
   let {styleProps} = useStyleProps(props);
@@ -212,6 +213,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
           isQuiet={isQuiet}
           isDisabled={isDisabled}
           validationState={validationState}
+          autoFocus={autoFocus}
           UNSAFE_className={classNames(styles, 'spectrum-Dropdown-trigger', {'is-hovered': isHovered})}>
           <SlotProvider
             slots={{
