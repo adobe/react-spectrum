@@ -12,7 +12,7 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, dimensionValue, SlotProvider, unwrapDOMRef, useDOMRef, useIsMobileDevice, useStyleProps} from '@react-spectrum/utils';
+import {classNames, dimensionValue, SlotProvider, unwrapDOMRef, useDOMRef, useIsMobileDevice, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRef, DOMRefValue, FocusableRefValue, LabelPosition} from '@react-types/shared';
 import {FieldButton} from '@react-spectrum/button';
@@ -28,7 +28,7 @@ import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder, useHover} from '@react-aria/interactions';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useCallback, useMemo, useRef, useState} from 'react';
+import React, {ReactElement, useCallback, useRef, useState} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
 import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
 import {Text} from '@react-spectrum/text';
@@ -64,6 +64,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
 
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
+  let unwrappedTriggerRef = useUnwrapDOMRef(triggerRef);
   let listboxRef = useRef();
 
   // We create the listbox layout in Picker and pass it to ListBoxBase below
@@ -73,11 +74,11 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let {labelProps, triggerProps, valueProps, menuProps} = useSelect({
     ...props,
     keyboardDelegate: layout
-  }, state, unwrapDOMRef(triggerRef));
+  }, state, unwrappedTriggerRef);
 
   let isMobile = useIsMobileDevice();
   let {overlayProps, placement, updatePosition} = useOverlayPosition({
-    targetRef: unwrapDOMRef(triggerRef),
+    targetRef: unwrappedTriggerRef,
     overlayRef: unwrapDOMRef(popoverRef),
     scrollRef: listboxRef,
     placement: `${direction} ${align}` as Placement,
@@ -129,22 +130,18 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let {scale} = useProvider();
   useLayoutEffect(() => {
     if (!isMobile) {
-      let width = triggerRef.current.UNSAFE_getDOMNode().offsetWidth;
+      let width = unwrappedTriggerRef.current.offsetWidth;
       setButtonWidth(width);
     }
-  }, [scale, isMobile, triggerRef, state.selectedKey]);
-
-  // Make sure we only unwrap if the trigger changes otherwise we'll retrigger
-  // the observer too often
-  let resizeRef = useMemo(() => unwrapDOMRef(triggerRef), [triggerRef]);
+  }, [scale, isMobile, unwrappedTriggerRef, state.selectedKey]);
 
   let onResize = useCallback(() => {
-    let width = resizeRef.current.offsetWidth;
+    let width = unwrappedTriggerRef.current.offsetWidth;
     setButtonWidth(width);
-  }, [resizeRef, setButtonWidth]);
+  }, [unwrappedTriggerRef, setButtonWidth]);
 
   useResizeObserver({
-    ref: resizeRef,
+    ref: unwrappedTriggerRef,
     onResize: onResize
   });
 
@@ -202,7 +199,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       <HiddenSelect
         isDisabled={isDisabled}
         state={state}
-        triggerRef={unwrapDOMRef(triggerRef)}
+        triggerRef={unwrappedTriggerRef}
         label={label}
         name={name} />
       <PressResponder {...mergeProps(hoverProps, triggerProps)}>
