@@ -12,7 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, unwrapDOMRef, useFocusableRef, useIsMobileDevice} from '@react-spectrum/utils';
+import {classNames, unwrapDOMRef, useFocusableRef, useIsMobileDevice, useResizeObserver} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
@@ -23,15 +23,14 @@ import {MobileComboBox} from './MobileComboBox';
 import {Placement} from '@react-types/overlays';
 import {Popover} from '@react-spectrum/overlays';
 import {PressResponder, useHover} from '@react-aria/interactions';
-import React, {InputHTMLAttributes, ReactElement, RefObject, useRef, useState} from 'react';
+import React, {InputHTMLAttributes, ReactElement, RefObject, useCallback, useRef, useState} from 'react';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter} from '@react-aria/i18n';
-import {useLayoutEffect} from '@react-aria/utils';
-import {useProvider, useProviderProps} from '@react-spectrum/provider';
+import {useProviderProps} from '@react-spectrum/provider';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
@@ -86,13 +85,17 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
 
   // Measure the width of the inputfield and the button to inform the width of the menu (below).
   let [menuWidth, setMenuWidth] = useState(null);
-  let {scale} = useProvider();
 
-  useLayoutEffect(() => {
+  let onResize = useCallback(() => {
     let buttonWidth = buttonRef.current.UNSAFE_getDOMNode().offsetWidth;
     let inputWidth = inputRef.current.offsetWidth;
     setMenuWidth(buttonWidth + inputWidth);
-  }, [scale, buttonRef, inputRef]);
+  }, [buttonRef, inputRef, setMenuWidth]);
+
+  useResizeObserver({
+    ref: domRef,
+    onResize: onResize
+  });
 
   let style = {
     ...overlayProps.style,

@@ -12,7 +12,16 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, dimensionValue, SlotProvider, unwrapDOMRef, useDOMRef, useIsMobileDevice, useStyleProps} from '@react-spectrum/utils';
+import {
+  classNames,
+  dimensionValue,
+  SlotProvider,
+  unwrapDOMRef,
+  useDOMRef,
+  useIsMobileDevice,
+  useStyleProps,
+  useUnwrapDOMRef
+} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRef, DOMRefValue, FocusableRefValue, LabelPosition} from '@react-types/shared';
 import {FieldButton} from '@react-spectrum/button';
@@ -134,9 +143,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     }
   }, [scale, isMobile, triggerRef, state.selectedKey]);
 
-  // Make sure we only unwrap if the trigger changes otherwise we'll retrigger
-  // the observer too often
-  let resizeRef = useMemo(() => unwrapDOMRef(triggerRef), [triggerRef]);
+  let resizeRef = useUnwrapDOMRef(triggerRef);
 
   let onResize = useCallback(() => {
     let width = resizeRef.current.offsetWidth;
