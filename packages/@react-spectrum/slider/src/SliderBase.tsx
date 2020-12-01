@@ -37,7 +37,6 @@ export interface SliderBaseProps extends SpectrumBarSliderBase<number[]> {
 function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {
-    // tickCount, showTickLabels, tickLabels,
     isDisabled, count,
     children, classes, style,
     labelPosition = 'top', valueLabel, showValueLabel = !!props.label,
@@ -93,28 +92,6 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
   }
 
   let domRef = useFocusableRef(ref, inputRefs[0]);
-
-  // let ticks = null;
-  // if (tickCount > 0) {
-  //   let tickList = [];
-  //   for (let i = 0; i < tickCount; i++) {
-  //     let tickLabel = tickLabels ? tickLabels[i] : state.getFormattedValue(state.getPercentValue(i / (tickCount - 1)));
-  //     tickList.push(
-  //       <div className={classNames(styles, 'spectrum-Slider-tick')} key={i}>
-  //         {showTickLabels &&
-  //           <div className={classNames(styles, 'spectrum-Slider-tickLabel')}>
-  //             {tickLabel}
-  //           </div>
-  //         }
-  //       </div>
-  //     );
-  //   }
-  //   ticks = (
-  //     <div className={classNames(styles, 'spectrum-Slider-ticks')}>
-  //       {tickList}
-  //     </div>
-  //   );
-  // }
 
   let formatter = useNumberFormatter(formatOptions);
 

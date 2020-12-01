@@ -65,18 +65,6 @@ storiesOf('Slider/RangeSlider', module)
     'min/max',
     () => render({label: 'Label', minValue: 30, maxValue: 70})
   );
-  // .add(
-  //   'ticks',
-  //   () => render({label: 'Label', tickCount: 4})
-  // )
-  // .add(
-  //   'showTickLabels: true',
-  //   () => render({label: 'Label', tickCount: 4, showTickLabels: true})
-  // )
-  // .add(
-  //   'tickLabels',
-  //   () => render({label: 'Label', tickCount: 3, showTickLabels: true, tickLabels: ['A', 'B', 'C']})
-  // );
 
 function render(props: SpectrumRangeSliderProps = {}) {
   if (props.onChange == null) {
