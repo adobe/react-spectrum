@@ -16,7 +16,6 @@ import {
   classNames,
   dimensionValue,
   SlotProvider,
-  unwrapDOMRef,
   useDOMRef,
   useIsMobileDevice,
   useStyleProps,
@@ -43,7 +42,7 @@ import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useFormProps} from '@react-spectrum/form';
 import {useMessageFormatter} from '@react-aria/i18n';
-import {useProvider, useProviderProps} from '@react-spectrum/provider';
+import {useProviderProps} from '@react-spectrum/provider';
 import {useSelectState} from '@react-stately/select';
 
 function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
@@ -72,7 +71,9 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let domRef = useDOMRef(ref);
 
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
+  let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
   let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
+  let unwrappedTriggerRef = useUnwrapDOMRef(triggerRef);
   let listboxRef = useRef();
 
   // We create the listbox layout in Picker and pass it to ListBoxBase below
@@ -82,12 +83,12 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let {labelProps, triggerProps, valueProps, menuProps} = useSelect({
     ...props,
     keyboardDelegate: layout
-  }, state, unwrapDOMRef(triggerRef));
+  }, state, unwrappedTriggerRef);
 
   let isMobile = useIsMobileDevice();
   let {overlayProps, placement, updatePosition} = useOverlayPosition({
-    targetRef: unwrapDOMRef(triggerRef),
-    overlayRef: unwrapDOMRef(popoverRef),
+    targetRef: unwrappedTriggerRef,
+    overlayRef: unwrappedPopoverRef,
     scrollRef: listboxRef,
     placement: `${direction} ${align}` as Placement,
     shouldFlip: shouldFlip,
@@ -135,23 +136,14 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
 
   // Measure the width of the button to inform the width of the menu (below).
   let [buttonWidth, setButtonWidth] = useState(null);
-  let {scale} = useProvider();
-  useLayoutEffect(() => {
-    if (!isMobile) {
-      let width = triggerRef.current.UNSAFE_getDOMNode().offsetWidth;
-      setButtonWidth(width);
-    }
-  }, [scale, isMobile, triggerRef, state.selectedKey]);
-
-  let resizeRef = useUnwrapDOMRef(triggerRef);
 
   let onResize = useCallback(() => {
-    let width = resizeRef.current.offsetWidth;
+    let width = unwrappedTriggerRef.current.offsetWidth;
     setButtonWidth(width);
-  }, [resizeRef, setButtonWidth]);
+  }, [unwrappedTriggerRef, setButtonWidth]);
 
   useResizeObserver({
-    ref: resizeRef,
+    ref: unwrappedTriggerRef,
     onResize: onResize
   });
 
@@ -209,7 +201,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       <HiddenSelect
         isDisabled={isDisabled}
         state={state}
-        triggerRef={unwrapDOMRef(triggerRef)}
+        triggerRef={unwrappedTriggerRef}
         label={label}
         name={name} />
       <PressResponder {...mergeProps(hoverProps, triggerProps)}>
