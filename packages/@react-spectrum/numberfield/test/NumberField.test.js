@@ -1340,20 +1340,20 @@ describe('NumberField', function () {
     act(() => {textField.focus();});
     typeText(textField, '1');
     triggerPress(incrementButton);
-    expect(onChangeSpy).toHaveBeenCalledWith(0.001);
+    expect(onChangeSpy).toHaveBeenCalledWith(1.001);
     triggerPress(incrementButton);
-    expect(onChangeSpy).toHaveBeenCalledWith(0.002);
+    expect(onChangeSpy).toHaveBeenCalledWith(1.002);
     triggerPress(incrementButton);
-    expect(onChangeSpy).toHaveBeenCalledWith(0.003);
+    expect(onChangeSpy).toHaveBeenCalledWith(1.003);
     triggerPress(incrementButton);
-    expect(onChangeSpy).toHaveBeenCalledWith(0.004);
+    expect(onChangeSpy).toHaveBeenCalledWith(1.004);
     act(() => {textField.blur();});
   });
 
   it.each`
     Name
     ${'v3 NumberField'}
-  `('$Name will not commit current uncommitted value when stepper buttons are pressed', () => {
+  `('$Name will commit current uncommitted value when stepper buttons are pressed', () => {
     let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, step: 5});
 
     act(() => {textField.focus();});
@@ -1366,19 +1366,13 @@ describe('NumberField', function () {
     userEvent.clear(textField);
     typeText(textField, '3');
     triggerPress(incrementButton);
-    expect(onChangeSpy).toHaveBeenLastCalledWith(10);
+    expect(onChangeSpy).toHaveBeenLastCalledWith(5);
     act(() => {textField.blur();});
 
     act(() => {textField.focus();});
     userEvent.clear(textField);
     act(() => {textField.blur();});
     expect(onChangeSpy).toHaveBeenLastCalledWith(NaN);
-
-    act(() => {textField.focus();});
-    typeText(textField, '3');
-    triggerPress(incrementButton);
-    expect(onChangeSpy).toHaveBeenLastCalledWith(5);
-    act(() => {textField.blur();});
   });
 
   // not sure why this one won't work, it looked like select() was added to jsdom 5 years ago

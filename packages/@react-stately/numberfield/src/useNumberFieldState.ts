@@ -18,8 +18,8 @@ import {useControlledState} from '@react-stately/utils';
 
 export interface NumberFieldState {
   setValue: (val: number | string) => void,
-  increment: () => void,
-  decrement: () => void,
+  increment: (isChained?: boolean) => void,
+  decrement: (isChained?: boolean) => void,
   incrementToMax: () => void,
   decrementToMin: () => void,
   commitInputValue: () => void,
@@ -95,69 +95,19 @@ export function useNumberFieldState(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formatOptions, setInputValue, numberValue, locale]);
 
-
-  let increment = useCallback(() => {
-    setNumberValue((previousValue) => {
-      let prev = previousValue;
-      if (isNaN(prev)) {
-        // if the input is empty, start from 0
-        prev = 0;
-        if (!isNaN(props.minValue) && prev < props.minValue) {
-          // unless zero is less than the min value, then start well below it so we clamp to the min
-          prev = -Infinity;
-        }
-      }
-
-      let clampStep = !isNaN(step) ? step : 1;
-      if (intlOptions.style === 'percent' && isNaN(step)) {
-        clampStep = 0.01;
-      }
-      const newValue = clamp(
-        handleDecimalOperation('+', prev, clampStep),
-        minValue,
-        maxValue,
-        step
-      );
-      return newValue;
-    });
-  }, [setNumberValue, minValue, maxValue, step, isMaxRange, intlOptions]);
-
-  let decrement = useCallback(() => {
-    setNumberValue((previousValue) => {
-      let prev = previousValue;
-      // if the input is empty, start from the max value when decrementing
-      if (isNaN(prev)) {
-        prev = 0;
-        // unless zero is greater than the max value, then start well above it so we clamp to the max
-        if (!isNaN(props.maxValue) && prev > maxValue) {
-          prev = Infinity;
-        }
-      }
-      let clampStep = !isNaN(step) ? step : 1;
-      if (intlOptions.style === 'percent' && isNaN(step)) {
-        clampStep = 0.01;
-      }
-      const newValue = clamp(
-        handleDecimalOperation('-', prev, clampStep),
-        minValue,
-        maxValue,
-        step
-      );
-      return newValue;
-    });
-  }, [setNumberValue, minValue, maxValue, step, isMaxRange, intlOptions]);
-
-  let incrementToMax = useCallback(() => {
-    if (maxValue != null) {
-      setNumberValue(clamp(maxValue, minValue, maxValue, step));
+  let parse = (value: string): number => {
+    // Set to empty state if input value is empty
+    if (!value.length) {
+      return NaN;
     }
-  }, [maxValue, setNumberValue, minValue, step]);
-
-  let decrementToMin = useCallback(() => {
-    if (minValue != null) {
-      setNumberValue(clamp(minValue, minValue, maxValue, step));
+    let newValue = numberParser.parse(value);
+    // if it failed to parse, then reset input to formatted version of current number
+    if (isNaN(newValue)) {
+      return NaN;
     }
-  }, [minValue, setNumberValue, maxValue, step]);
+
+    return newValue;
+  };
 
   // this removes any not allowed characters from the input value
   let cleanInputValue = cleanString(inputValue, numberParser.symbols, locale, currentNumeralSystem);
@@ -168,6 +118,8 @@ export function useNumberFieldState(
   if (maxValue <= 0) {
     cleanInputValue = cleanInputValue.replace(plusSign, '');
   }
+  let currentlyParsed = parse(cleanInputValue);
+
 
   let setValue = (value: string) => {
     let numeralSystem = determineNumeralSystem(value);
@@ -182,16 +134,15 @@ export function useNumberFieldState(
       setInputValue('');
       return;
     }
-    let newValue = numberParser.parse(cleanInputValue);
     // if it failed to parse, then reset input to formatted version of current number
-    if (isNaN(newValue)) {
+    if (isNaN(currentlyParsed)) {
       setInputValue(inputValueFormatter.format(numberValue));
       return;
     }
 
     let clampedValue;
-    if (!isNaN(newValue)) {
-      clampedValue = clamp(newValue, minValue, maxValue, step);
+    if (!isNaN(currentlyParsed)) {
+      clampedValue = clamp(currentlyParsed, minValue, maxValue, step);
     } else {
       clampedValue = clamp(numberValue, minValue, maxValue, step);
     }
@@ -205,6 +156,77 @@ export function useNumberFieldState(
       setInputValue(inputValueFormatter.format(numberValue));
     }
   };
+
+  let increment = useCallback((isChained: boolean = false) => {
+    setNumberValue((previousValue) => {
+      let prev = !isChained ? currentlyParsed : previousValue;
+      if (isNaN(prev)) {
+        // if the input is empty, start from 0
+        prev = 0;
+        if (!isNaN(props.minValue) && prev < props.minValue) {
+          // unless zero is less than the min value, then start well below it so we clamp to the min
+          prev = -Infinity;
+        }
+      }
+
+      let clampStep = !isNaN(step) ? step : 1;
+      if (intlOptions.style === 'percent' && isNaN(step)) {
+        clampStep = 0.01;
+      }
+      let clampedValue = clamp(prev, minValue, maxValue, step);
+      if (clampedValue > prev) {
+        return clampedValue;
+      }
+      const newValue = clamp(
+        handleDecimalOperation('+', prev, clampStep),
+        minValue,
+        maxValue,
+        step
+      );
+      return newValue;
+    });
+  }, [setNumberValue, minValue, maxValue, step, isMaxRange, intlOptions, currentlyParsed]);
+
+  let decrement = useCallback((isChained: boolean = false) => {
+    setNumberValue((previousValue) => {
+      let prev = !isChained ? currentlyParsed : previousValue;
+      // if the input is empty, start from the max value when decrementing
+      if (isNaN(prev)) {
+        prev = 0;
+        // unless zero is greater than the max value, then start well above it so we clamp to the max
+        if (!isNaN(props.maxValue) && prev > maxValue) {
+          prev = Infinity;
+        }
+      }
+      let clampStep = !isNaN(step) ? step : 1;
+      if (intlOptions.style === 'percent' && isNaN(step)) {
+        clampStep = 0.01;
+      }
+      let clampedValue = clamp(prev, minValue, maxValue, step);
+      if (clampedValue < prev) {
+        return clampedValue;
+      }
+      const newValue = clamp(
+        handleDecimalOperation('-', prev, clampStep),
+        minValue,
+        maxValue,
+        step
+      );
+      return newValue;
+    });
+  }, [setNumberValue, minValue, maxValue, step, isMaxRange, intlOptions, currentlyParsed]);
+
+  let incrementToMax = useCallback(() => {
+    if (maxValue != null) {
+      setNumberValue(clamp(maxValue, minValue, maxValue, step));
+    }
+  }, [maxValue, setNumberValue, minValue, step]);
+
+  let decrementToMin = useCallback(() => {
+    if (minValue != null) {
+      setNumberValue(clamp(minValue, minValue, maxValue, step));
+    }
+  }, [minValue, setNumberValue, maxValue, step]);
 
   return {
     setValue,
