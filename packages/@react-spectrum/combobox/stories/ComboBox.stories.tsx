@@ -24,6 +24,7 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 import {TextField} from '@react-spectrum/textfield';
+import {useAsyncList} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
 import {useTreeData} from '@react-stately/data';
 
@@ -264,6 +265,14 @@ storiesOf('ComboBox', module)
     () => render({validationState: 'valid', defaultSelectedKey: 'two'})
   )
   .add(
+    'validationState: invalid, isQuiet',
+    () => render({validationState: 'invalid', isQuiet: true, defaultSelectedKey: 'two'})
+  )
+  .add(
+    'validationState: valid, isQuiet',
+    () => render({validationState: 'valid', isQuiet: true, defaultSelectedKey: 'two'})
+  )
+  .add(
     'placeholder',
     () => render({placeholder: 'Select an item...'})
   )
@@ -411,7 +420,72 @@ storiesOf('ComboBox', module)
     () => (
       <CustomFilterComboBox />
     )
+    )
+  .add(
+    'isLoading',
+    () => (
+      <ComboBox label="Combobox" isLoading defaultItems={[]}>
+        {item => <Item>{item.name}</Item>}
+      </ComboBox>
+    )
+  )
+  .add(
+    'isLoading, validationState: invalid',
+    () => (
+      <ComboBox label="Combobox" isLoading validationState="invalid" defaultItems={[]}>
+        {item => <Item>{item.name}</Item>}
+      </ComboBox>
+    )
+  )
+  .add(
+    'isLoading, isQuiet',
+    () => (
+      <ComboBox label="Combobox" isLoading isQuiet defaultItems={[]}>
+        {item => <Item>{item.name}</Item>}
+      </ComboBox>
+    )
+  )
+  .add(
+    'isLoading, isQuiet, validationState: invalid',
+    () => (
+      <ComboBox label="Combobox" isLoading isQuiet validationState="invalid" defaultItems={[]}>
+        {item => <Item>{item.name}</Item>}
+      </ComboBox>
+    )
+  )
+  .add(
+    'async loading',
+    () => (
+      <AsyncLoadingExample />
+    )
   );
+
+function AsyncLoadingExample() {
+  interface Pokemon {
+    name: string,
+    url: string
+  }
+
+  let list = useAsyncList<Pokemon>({
+    async load({signal, cursor}) {
+      let res = await fetch(cursor || 'https://pokeapi.co/api/v2/pokemon', {signal});
+      let json = await res.json();
+      // The API is too fast sometimes, so make it take longer so we can see the spinner
+      await new Promise(resolve => setTimeout(resolve, cursor ? 500 : 1000));
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    // TODO: ask what exactly onLoad should look like and what exactly it does
+    <ComboBox label="Pick a Pokemon" defaultItems={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
+      {item => <Item key={item.name}>{item.name}</Item>}
+    </ComboBox>
+  );
+}
 
 let customFilterItems = [
   {name: 'The first item', id: '1'},

@@ -23,6 +23,8 @@ import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from '@react-aria/utils';
 import React, {cloneElement, forwardRef, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, TextareaHTMLAttributes, useImperativeHandle, useRef} from 'react';
+// TODO: figure out if ProgressCircle should go into ComboBox (add a prop to pass a free form element to the validation icon spot?) or stay here. Will also affect css.
+import {ProgressCircle} from '@react-spectrum/progress';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFormProps} from '@react-spectrum/form';
@@ -32,10 +34,12 @@ import {useProviderProps} from '@react-spectrum/provider';
 interface TextFieldBaseProps extends SpectrumTextFieldProps {
   wrapperChildren?: ReactElement | ReactElement[],
   inputClassName?: string,
+  validationIconClassName?: string,
   multiLine?: boolean,
   labelProps?: LabelHTMLAttributes<HTMLLabelElement>,
   inputProps: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
-  inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>
+  inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  isLoading?: boolean
 }
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
@@ -58,6 +62,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     labelProps,
     inputProps,
     inputRef,
+    isLoading,
+    validationIconClassName,
     ...otherProps
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
@@ -103,9 +109,21 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       {
         'is-invalid': isInvalid,
         'is-valid': validationState === 'valid'
-      }
+      },
+      validationIconClassName
     )
   });
+
+  // TODO: ask what it should look like in large scale (should it shift from size=S to size=M)?
+  let loading = (
+    <ProgressCircle
+      size="S"
+      isIndeterminate
+      UNSAFE_className={classNames(
+        styles,
+        'spectrum-Textfield-circleLoader'
+      )} />
+  );
 
   let textField = (
     <div
@@ -116,6 +134,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
           {
             'is-invalid': isInvalid,
             'is-valid': validationState === 'valid',
+            'is-loading': isLoading,
             'spectrum-Textfield--quiet': isQuiet,
             'spectrum-Textfield--multiline': multiLine
           }
@@ -139,7 +158,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
           } />
       </FocusRing>
       {icon}
-      {validationState ? validation : null}
+      {validationState && !isLoading ? validation : null}
+      {isLoading && loading}
       {wrapperChildren}
     </div>
   );

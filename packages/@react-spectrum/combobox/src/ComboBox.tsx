@@ -155,7 +155,8 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     triggerRef,
     autoFocus,
     style,
-    className
+    className,
+    isLoading
   } = props;
   let {hoverProps, isHovered} = useHover({});
 
@@ -198,9 +199,16 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
               'spectrum-InputGroup-input'
             )
           }
+          validationIconClassName={
+            classNames(
+              styles,
+              'spectrum-InputGroup-validationIcon'
+            )
+          }
           isDisabled={isDisabled}
           isQuiet={isQuiet}
-          validationState={validationState} />
+          validationState={validationState}
+          isLoading={isLoading} />
         <PressResponder preventFocusOnPress>
           <FieldButton
             {...triggerProps}

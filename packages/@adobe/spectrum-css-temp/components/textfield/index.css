@@ -163,6 +163,10 @@ governing permissions and limitations under the License.
     padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
+  .spectrum-Textfield.is-loading & {
+    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-loader-circle-small-width) + var(--spectrum-textfield-icon-margin-left));
+  }
+
   .spectrum-Textfield--multiline & {
     height: var(--spectrum-textfield-multiline-height);
     min-height: var(--spectrum-textfield-multiline-min-height);
@@ -241,5 +245,15 @@ governing permissions and limitations under the License.
   &.spectrum-Textfield--multiline {
     height: var(--spectrum-textfield-height);
     min-height: var(--spectrum-textfield-height);
+  }
+}
+
+.spectrum-Textfield-circleLoader {
+  position: absolute;
+  bottom: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-loader-circle-small-width) / 2));
+  inset-inline-end: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-loader-circle-small-width) / 2));
+
+  .spectrum-Textfield--quiet & {
+    inset-inline-end: var(--spectrum-global-dimension-size-10);
   }
 }
