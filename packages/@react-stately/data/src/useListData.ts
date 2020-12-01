@@ -18,8 +18,13 @@ interface ListOptions<T> {
   initialItems?: T[],
   /** The keys for the initially selected items. */
   initialSelectedKeys?: 'all' | Iterable<Key>,
+  /** The initial text to filter the list by. */
+  initialFilterText?: string,
   /** A function that returns a unique key for an item object. */
-  getKey?: (item: T) => Key
+  getKey?: (item: T) => Key,
+  // TODO: not sure if we need the below?
+  /** A function that returns whether a item matches the current filter text. */
+  filter?: (item: T, filterText: string) => boolean
 }
 
 export interface ListData<T> {
@@ -31,6 +36,9 @@ export interface ListData<T> {
 
   /** Sets the selected keys. */
   setSelectedKeys(keys: Selection): void,
+
+  /** Sets the filter text. */
+  setFilter(filterText: string): void,
 
   /**
    * Gets an item from the list by key.
@@ -100,7 +108,8 @@ export interface ListData<T> {
 
 export interface ListState<T> {
   items: T[],
-  selectedKeys: Selection
+  selectedKeys: Selection,
+  filterText: string
 }
 
 /**
@@ -111,11 +120,13 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
   let {
     initialItems = [],
     initialSelectedKeys,
-    getKey = (item: any) => item.id || item.key
+    getKey = (item: any) => item.id || item.key,
+    initialFilterText = ''
   } = options;
   let [state, setState] = useState<ListState<T>>({
     items: initialItems,
-    selectedKeys: initialSelectedKeys === 'all' ? 'all' : new Set(initialSelectedKeys || [])
+    selectedKeys: initialSelectedKeys === 'all' ? 'all' : new Set(initialSelectedKeys || []),
+    filterText: initialFilterText
   });
 
   return {
@@ -145,6 +156,12 @@ export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (
       dispatch(state => ({
         ...state,
         selectedKeys
+      }));
+    },
+    setFilter(filterText: string) {
+      dispatch(state => ({
+        ...state,
+        filterText
       }));
     },
     insert(index: number, ...values: T[]) {

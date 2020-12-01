@@ -116,9 +116,11 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     )
   });
 
-  // TODO: ask what it should look like in large scale (should it shift from size=S to size=M)?
+  // TODO: Should this be in TextFieldBase or in ComboBox? Will we have other async loading textfields other than combobox?
   let loading = (
     <ProgressCircle
+      // TODO: formatMessage this string if we decide to keep in TextFieldBase
+      aria-label="Loading..."
       size="S"
       isIndeterminate
       UNSAFE_className={classNames(

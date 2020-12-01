@@ -19,6 +19,8 @@ interface AsyncListOptions<T, C> {
   initialSelectedKeys?: Iterable<Key>,
   /** The initial sort descriptor. */
   initialSortDescriptor?: SortDescriptor,
+  /** The initial filter text. */
+  initialFilterText?: string,
   /** A function that returns a unique key for an item object. */
   getKey?: (item: T) => Key,
   /** A function that loads the data for the items in the list. */
@@ -41,7 +43,9 @@ interface AsyncListLoadOptions<T, C> {
   /** An abort signal used to notify the load function that the request has been aborted. */
   signal: AbortSignal,
   /** The pagination cursor returned from the last page load. */
-  cursor?: C
+  cursor?: C,
+  // TODO: ask if this is what we want?
+  filterText?: string
 }
 
 interface AsyncListStateUpdate<T, C> {
@@ -222,7 +226,8 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     sort,
     initialSelectedKeys,
     initialSortDescriptor,
-    getKey = (item: any) => item.id || item.key
+    getKey = (item: any) => item.id || item.key,
+    initialFilterText
   } = options;
 
   let [data, dispatch] = useReducer<Reducer<AsyncListState<T, C>, Action<T, C>>>(reducer, {
@@ -230,7 +235,8 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     error: null,
     items: [],
     selectedKeys: new Set(initialSelectedKeys),
-    sortDescriptor: initialSortDescriptor
+    sortDescriptor: initialSortDescriptor,
+    filterText: initialFilterText
   });
 
   const dispatchFetch = async (action: Action<T, C>, fn: AsyncListLoadFunction<T, C>) => {
@@ -243,7 +249,8 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
         selectedKeys: data.selectedKeys,
         sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
         signal: abortController.signal,
-        cursor: action.type === 'loadingMore' ? data.cursor : null
+        cursor: action.type === 'loadingMore' ? data.cursor : null,
+        filterText: data.filterText
       });
       dispatch({type: 'success', ...response, abortController});
     } catch (e) {

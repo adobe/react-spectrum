@@ -466,22 +466,44 @@ function AsyncLoadingExample() {
     url: string
   }
 
+  let {startsWith} = useFilter({sensitivity: 'base'});
+  // let [filterValue, setFilterValue] = React.useState('');
+
   let list = useAsyncList<Pokemon>({
-    async load({signal, cursor}) {
+    async load({signal, cursor, filterText}) {
+      console.log('filterText', filterText);
       let res = await fetch(cursor || 'https://pokeapi.co/api/v2/pokemon', {signal});
       let json = await res.json();
+      console.log('json', json.results.length);
       // The API is too fast sometimes, so make it take longer so we can see the spinner
       await new Promise(resolve => setTimeout(resolve, cursor ? 500 : 1000));
+
+      let filteredOptions = json.results.filter(option => {
+        return startsWith(option.name, filterText)
+      });
+
       return {
-        items: json.results,
+        items: filteredOptions,
         cursor: json.next
       };
-    }
+    },
+    initialFilterText: 'B'
   });
 
+  let onInputChange = (text) => {
+    list.setFilter(text);
+    // list.reload();
+  }
+
   return (
-    // TODO: ask what exactly onLoad should look like and what exactly it does
-    <ComboBox label="Pick a Pokemon" defaultItems={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
+    <ComboBox
+      label="Pick a Pokemon"
+      defaultInputValue="B"
+      items={list.items}
+      // inputValue={filterValue}
+      onInputChange={onInputChange}
+      isLoading={list.isLoading}
+      onLoadMore={list.loadMore}>
       {item => <Item key={item.name}>{item.name}</Item>}
     </ComboBox>
   );

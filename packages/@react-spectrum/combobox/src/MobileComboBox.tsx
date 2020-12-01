@@ -159,6 +159,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
 
   let loading = (
     <ProgressCircle
+      aria-label={formatMessage('loading')}
       size="S"
       isIndeterminate
       UNSAFE_className={classNames(
