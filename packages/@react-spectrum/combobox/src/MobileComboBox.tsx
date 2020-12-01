@@ -29,6 +29,7 @@ import intlMessages from '../intl/*.json';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {mergeProps, useId} from '@react-aria/utils';
+import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactNode, RefObject, useCallback, useRef} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality, useHover} from '@react-aria/interactions';
@@ -53,7 +54,8 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
   let {
     isQuiet,
     isDisabled,
-    validationState
+    validationState,
+    isLoading
   } = props;
 
   let {contains} = useFilter({sensitivity: 'base'});
@@ -96,7 +98,8 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           isDisabled={isDisabled}
           isPlaceholder={!state.inputValue}
           validationState={validationState}
-          onPress={() => state.open()}>
+          onPress={() => state.open()}
+          isLoading={isLoading}>
           {state.inputValue || props.placeholder || ''}
         </ComboBoxButton>
       </Field>
@@ -117,7 +120,8 @@ interface ComboBoxButtonProps extends AriaButtonProps {
   validationState?: ValidationState,
   children?: ReactNode,
   style?: React.CSSProperties,
-  className?: string
+  className?: string,
+  isLoading?: boolean
 }
 
 const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxButtonProps, ref: RefObject<HTMLElement>) {
@@ -128,7 +132,8 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
     validationState,
     children,
     style,
-    className
+    className,
+    isLoading
   } = props;
   let formatMessage = useMessageFormatter(intlMessages);
   let valueId = useId();
@@ -144,9 +149,27 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
       {
         'is-invalid': validationState === 'invalid',
         'is-valid': validationState === 'valid'
-      }
+      },
+      classNames(
+        styles,
+        'spectrum-InputGroup-input-validationIcon'
+      )
     )
   });
+
+  let loading = (
+    <ProgressCircle
+      size="S"
+      isIndeterminate
+      UNSAFE_className={classNames(
+        textfieldStyles,
+        'spectrum-Textfield-circleLoader',
+        classNames(
+          styles,
+          'spectrum-InputGroup-input-circleLoader'
+        )
+      )} />
+  );
 
   let {hoverProps, isHovered} = useHover({});
   let {buttonProps, isPressed} = useButton({
@@ -194,6 +217,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
               {
                 'is-invalid': validationState === 'invalid',
                 'is-valid': validationState === 'valid',
+                'is-loading': isLoading,
                 'spectrum-Textfield--quiet': isQuiet
               },
               classNames(
@@ -234,7 +258,8 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
               {children}
             </span>
           </div>
-          {validationState ? validation : null}
+          {validationState && !isLoading ? validation : null}
+          {isLoading && loading}
         </div>
         <div
           className={
@@ -274,7 +299,8 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     isDisabled,
     validationState,
     label,
-    overlayProps
+    overlayProps,
+    isLoading
   } = props;
 
   let inputRef = useRef<HTMLInputElement>();
@@ -371,6 +397,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           inputProps={inputProps}
           inputRef={inputRef}
           isDisabled={isDisabled}
+          isLoading={isLoading}
           validationState={validationState}
           wrapperChildren={(state.inputValue !== '' && !props.isReadOnly) && clearButton}
           UNSAFE_className={
@@ -380,7 +407,8 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
               'spectrum-Textfield',
               {
                 'is-invalid': validationState === 'invalid',
-                'is-valid': validationState === 'valid'
+                'is-valid': validationState === 'valid',
+                'is-loading': isLoading
               },
               classNames(
                 comboboxStyles,

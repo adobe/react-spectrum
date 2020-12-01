@@ -164,7 +164,7 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Textfield.is-loading & {
-    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-loader-circle-small-width) + var(--spectrum-textfield-icon-margin-left));
+    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
   .spectrum-Textfield--multiline & {
@@ -248,12 +248,14 @@ governing permissions and limitations under the License.
   }
 }
 
+/* same positioning as invalid icon */
 .spectrum-Textfield-circleLoader {
   position: absolute;
   bottom: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-loader-circle-small-width) / 2));
-  inset-inline-end: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-loader-circle-small-width) / 2));
+  /* can't use padding right since it breaks the circle loader so add here */
+  inset-inline-end: calc(calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-icon-alert-medium-width) / 2)) + calc(var(--spectrum-textfield-padding-x, var(--spectrum-global-dimension-size-150)) / 2));
 
   .spectrum-Textfield--quiet & {
-    inset-inline-end: var(--spectrum-global-dimension-size-10);
+    padding-inline-end: 0;
   }
 }

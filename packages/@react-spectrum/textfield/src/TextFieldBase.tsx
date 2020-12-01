@@ -35,6 +35,7 @@ interface TextFieldBaseProps extends SpectrumTextFieldProps {
   wrapperChildren?: ReactElement | ReactElement[],
   inputClassName?: string,
   validationIconClassName?: string,
+  loadingCircleClassName?: string,
   multiLine?: boolean,
   labelProps?: LabelHTMLAttributes<HTMLLabelElement>,
   inputProps: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
@@ -64,6 +65,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     inputRef,
     isLoading,
     validationIconClassName,
+    loadingCircleClassName,
     ...otherProps
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
@@ -121,7 +123,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       isIndeterminate
       UNSAFE_className={classNames(
         styles,
-        'spectrum-Textfield-circleLoader'
+        'spectrum-Textfield-circleLoader',
+        loadingCircleClassName
       )} />
   );
 

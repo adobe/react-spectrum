@@ -42,6 +42,10 @@ governing permissions and limitations under the License.
   &.is-valid .spectrum-ClearButton {
     inset-inline-end: calc(var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-padding-x) / 2 + var(--spectrum-global-dimension-size-150));
   }
+
+  &.is-loading .spectrum-ClearButton {
+    inset-inline-end: calc(var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-padding-x));
+  }
 }
 
 .spectrum-Search-input {
@@ -72,6 +76,10 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Textfield.spectrum-Search.is-valid & {
+    padding-inline-end: calc(var(--spectrum-search-padding-right) + var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
+  }
+
+  .spectrum-Textfield.spectrum-Search.is-loading & {
     padding-inline-end: calc(var(--spectrum-search-padding-right) + var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 }

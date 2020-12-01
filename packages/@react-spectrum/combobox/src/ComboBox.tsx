@@ -202,7 +202,13 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
           validationIconClassName={
             classNames(
               styles,
-              'spectrum-InputGroup-validationIcon'
+              'spectrum-InputGroup-input-validationIcon'
+            )
+          }
+          loadingCircleClassName={
+            classNames(
+              styles,
+              'spectrum-InputGroup-input-circleLoader'
             )
           }
           isDisabled={isDisabled}

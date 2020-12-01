@@ -52,7 +52,12 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-InputGroup-field {
-    .spectrum-InputGroup-validationIcon {
+    .spectrum-InputGroup-input-validationIcon {
+      padding-inline-end: 0;
+      inset-inline-end: var(--spectrum-combobox-validation-icon-right);
+    }
+
+    .spectrum-InputGroup-input-circleLoader {
       padding-inline-end: 0;
       inset-inline-end: var(--spectrum-combobox-validation-icon-right);
     }
@@ -104,9 +109,14 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-InputGroup-field {
-    .spectrum-InputGroup-validationIcon {
+    .spectrum-InputGroup-input-validationIcon {
       padding-inline-end: 0;
       inset-inline-end: 0;
+    }
+
+    .spectrum-InputGroup-input-circleLoader {
+      padding-inline-end: 0;
+      inset-inline-end: var(--spectrum-global-dimension-size-10);
     }
   }
 }
