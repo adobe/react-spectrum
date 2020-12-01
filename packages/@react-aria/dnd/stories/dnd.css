@@ -65,7 +65,7 @@
 
 .droppable {
   width: var(--spectrum-alias-single-line-width);
-  border: 1px solid var(--spectrum-global-color-gray-300);;
+  border: 1px solid var(--spectrum-global-color-gray-300);
   box-sizing: border-box;
   height: var(--spectrum-global-dimension-static-size-500);
   display: flex;
@@ -73,7 +73,6 @@
   padding: 0 var(--spectrum-global-dimension-static-size-150);
   border-radius: var(--spectrum-alias-border-radius-regular);
   background: var(--spectrum-global-color-gray-50);
-  margin: 4px 0;
 
   &.is-selected {
     background: var(--spectrum-alias-highlight-hover);
@@ -108,6 +107,19 @@
   }
 
   &:focus-ring {
+    box-shadow: 0 0 0 2px var(--spectrum-dropzone-border-color-selected-hover);
+  }
+}
+
+.droppable-collection {
+  display: flex;
+  flex-direction: column;
+  outline: none;
+  border-radius: var(--spectrum-alias-border-radius-regular);
+  padding: 8px;
+
+  &.is-drop-target {
+    background-color: var(--spectrum-dropzone-background-color-selected-hover);
     box-shadow: 0 0 0 2px var(--spectrum-dropzone-border-color-selected-hover);
   }
 }

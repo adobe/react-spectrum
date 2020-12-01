@@ -29,8 +29,15 @@ export function useDroppableItem(options: DroppableItemOptions, state: Droppable
 
   useEffect(() => DragManager.registerDropItem({
     element: ref.current,
-    target: options.target
-  }), []);
+    target: options.target,
+    getDropOperation(types, allowedOperations) {
+      return state.getDropOperation(
+        options.target,
+        types,
+        allowedOperations
+      );
+    }
+  }), [ref, options.target, state]);
 
   let dragSession = DragManager.useDragSession();
   let isValidDropTarget = dragSession && state.getDropOperation(
@@ -49,7 +56,7 @@ export function useDroppableItem(options: DroppableItemOptions, state: Droppable
   return {
     dropProps: {
       ...dropProps,
-      'aria-hidden': isValidDropTarget ? undefined : 'true'
+      'aria-hidden': !dragSession || isValidDropTarget ? undefined : 'true'
     }
   };
 }

@@ -66,10 +66,17 @@ export interface DropEvent extends DragDropEvent {
 }
 
 export type DropPosition = 'on' | 'before' | 'after';
-export interface DropTarget {
+interface RootDropTarget {
+  type: 'root'
+}
+
+interface ItemDropTarget {
+  type: 'item',
   key: Key,
   dropPosition: DropPosition
 }
+
+export type DropTarget = RootDropTarget | ItemDropTarget;
 
 interface DroppableCollectionEnterEvent extends DropEnterEvent {
   target: DropTarget

@@ -14,46 +14,59 @@ import {Collection, Node} from '@react-types/shared';
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {DropTarget} from '@react-types/shared';
-import {HTMLAttributes, Key, RefObject, useEffect} from 'react';
+import {getDroppableCollectionId} from './utils';
+import {HTMLAttributes, Key, RefObject} from 'react';
 import {useDroppableItem} from './useDroppableItem';
+import {useId} from '@react-aria/utils';
 
-interface InsertionIndicatorProps {
+interface DropIndicatorProps {
   collection: Collection<Node<unknown>>,
   target: DropTarget
 }
 
-interface InsertionIndicatorAria {
-  insertionIndicatorProps: HTMLAttributes<HTMLElement>
+interface DropIndicatorAria {
+  dropIndicatorProps: HTMLAttributes<HTMLElement>
 }
 
-export function useInsertionIndicator(props: InsertionIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): InsertionIndicatorAria {
+export function useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DropIndicatorAria {
   let {collection, target} = props;
 
   let dragSession = DragManager.useDragSession();
   let {dropProps} = useDroppableItem(props, state, ref);
-
-  let before = target.dropPosition === 'before'
-    ? collection.getKeyBefore(target.key)
-    : target.key;
-  let after = target.dropPosition === 'after'
-    ? collection.getKeyAfter(target.key)
-    : target.key;
-
+  let id = useId();
   let getText = (key: Key) => collection.getItem(key)?.textValue;
+
   let label = '';
-  if (before && after) {
-    label = `Insert between ${getText(before)} and ${getText(after)}`;
-  } else if (before) {
-    label = `Insert after ${getText(before)}`;
-  } else if (after) {
-    label = `Insert before ${getText(after)}`;
+  let labelledBy: string;
+  if (target.type === 'root') {
+    label = 'Drop on';
+    labelledBy = `${id} ${getDroppableCollectionId(state)}`;
+  } else if (target.dropPosition === 'on') {
+    label = `Drop on ${getText(target.key)}`;
+  } else {
+    let before = target.dropPosition === 'before'
+      ? collection.getKeyBefore(target.key)
+      : target.key;
+    let after = target.dropPosition === 'after'
+      ? collection.getKeyAfter(target.key)
+      : target.key;
+
+    if (before && after) {
+      label = `Insert between ${getText(before)} and ${getText(after)}`;
+    } else if (before) {
+      label = `Insert after ${getText(before)}`;
+    } else if (after) {
+      label = `Insert before ${getText(after)}`;
+    }
   }
 
   return {
-    insertionIndicatorProps: {
+    dropIndicatorProps: {
       ...dropProps,
-      'aria-roledescription': 'insertion indicator',
+      id,
+      'aria-roledescription': 'drop indicator',
       'aria-label': label,
+      'aria-labelledby': labelledBy,
       'aria-hidden': !dragSession ? 'true' : dropProps['aria-hidden'],
       tabIndex: -1
     }

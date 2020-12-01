@@ -11,8 +11,8 @@
  */
 
 import {DragEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragStartEvent} from '@react-types/shared';
-import {MultipleSelectionManager} from '@react-stately/selection';
 import {Key, useState} from 'react';
+import {MultipleSelectionManager} from '@react-stately/selection';
 
 interface DraggableCollectionOptions extends DraggableCollectionProps {
   selectionManager: MultipleSelectionManager

@@ -10,9 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useDrag';
-export * from './useDrop';
-export * from './useDroppableCollection';
-export * from './useDroppableItem';
-export * from './useDropIndicator';
-export * from './useDraggableItem';
+import {DroppableCollectionState} from '@react-stately/dnd';
+import {useId} from '@react-aria/utils';
+
+const droppableCollectionIds = new WeakMap<DroppableCollectionState, string>();
+
+export function useDroppableCollectionId(state: DroppableCollectionState) {
+  let id = useId();
+  droppableCollectionIds.set(state, id);
+  return id;
+}
+
+export function getDroppableCollectionId(state: DroppableCollectionState) {
+  let id = droppableCollectionIds.get(state);
+  if (!id) {
+    throw new Error('Droppable item outside a droppable collection');
+  }
+
+  return id;
+}

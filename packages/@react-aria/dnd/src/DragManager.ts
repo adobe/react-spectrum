@@ -12,7 +12,7 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
-import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropOperation, DropTarget as DroppableCollectionTarget} from './types';
+import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropOperation, DropTarget as DroppableCollectionTarget} from '@react-types/shared';
 import {getInteractionModality} from '@react-aria/interactions';
 import {useEffect, useState} from 'react';
 
@@ -23,8 +23,8 @@ let subscriptions = new Set<() => void>();
 
 interface DropTarget {
   element: HTMLElement,
-  getDropOperation?: (types: string[], allowedOperations: DropOperation[], target?: DroppableCollectionTarget) => DropOperation,
-  onDropEnter?: (e: DropEnterEvent, target?: DroppableCollectionTarget) => void,
+  getDropOperation?: (types: string[], allowedOperations: DropOperation[]) => DropOperation,
+  onDropEnter?: (e: DropEnterEvent, dragTarget: DragTarget, target?: DroppableCollectionTarget) => void,
   onDropExit?: (e: DropExitEvent, target?: DroppableCollectionTarget) => void,
   onDropActivate?: (e: DropActivateEvent, target?: DroppableCollectionTarget) => void,
   onDrop?: (e: DropEvent, target?: DroppableCollectionTarget) => void,
@@ -42,7 +42,8 @@ export function registerDropTarget(target: DropTarget) {
 
 interface DroppableItem {
   element: HTMLElement,
-  target: DroppableCollectionTarget
+  target: DroppableCollectionTarget,
+  getDropOperation?: (types: string[], allowedOperations: DropOperation[]) => DropOperation
 }
 
 export function registerDropItem(item: DroppableItem) {
@@ -67,11 +68,11 @@ export function beginDragging(options: DragTarget) {
   dragSession = new DragSession(options);
   requestAnimationFrame(() => {
     dragSession.setup();
-  });
 
-  if (getInteractionModality() === 'keyboard') {
-    dragSession.next();
-  }
+    if (getInteractionModality() === 'keyboard') {
+      dragSession.next();
+    }
+  });
 
   for (let cb of subscriptions) {
     cb();
@@ -146,7 +147,6 @@ class DragSession {
 
   constructor(target: DragTarget) {
     this.dragTarget = target;
-    this.validDropTargets = findValidDropTargets(target);
 
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onFocus = this.onFocus.bind(this);
@@ -165,13 +165,8 @@ class DragSession {
       document.addEventListener(event, this.cancelEvent, true);
     }
 
-    this.restoreAriaHidden = ariaHideOutside([
-      this.dragTarget.element,
-      ...this.validDropTargets.map(target => target.element)
-    ]);
-
     this.mutationObserver = new MutationObserver(() => this.updateValidDropTargets());
-    this.mutationObserver.observe(document.body, {subtree: true, attributes: true, attributeFilter: ['aria-hidden']});
+    this.updateValidDropTargets();
 
     announce(MESSAGES[getInteractionModality()].start);
   }
@@ -290,9 +285,26 @@ class DragSession {
       this.setCurrentDropTarget(this.validDropTargets[0]);
     }
 
+    // Find valid drop items within collections
+    let types = this.dragTarget.items.map(item => item.type);
+    let validDropItems = [...dropItems.values()].filter(item => {
+      if (typeof item.getDropOperation === 'function') {
+        return item.getDropOperation(types, this.dragTarget.allowedDropOperations) !== 'cancel';
+      }
+
+      return true;
+    });
+
+    // Filter out drop targets that contain valid items. We don't want to stop hiding elements
+    // other than the drop items that exist inside the collection.
+    let visibleDropTargets = this.validDropTargets.filter(target =>
+      !validDropItems.some(item => target.element.contains(item.element))
+    );
+
     this.restoreAriaHidden = ariaHideOutside([
       this.dragTarget.element,
-      ...this.validDropTargets.map(target => target.element)
+      ...validDropItems.map(item => item.element),
+      ...visibleDropTargets.map(target => target.element)
     ]);
 
     this.mutationObserver.observe(document.body, {subtree: true, attributes: true, attributeFilter: ['aria-hidden']});
@@ -371,7 +383,7 @@ class DragSession {
           type: 'dropenter',
           x: rect.left + (rect.width / 2),
           y: rect.top + (rect.height / 2)
-        }, item?.target);
+        }, this.dragTarget, item?.target);
       }
 
       if (dropTarget !== this.currentDropTarget) {
@@ -416,9 +428,12 @@ class DragSession {
       return;
     }
 
-    if (typeof this.currentDropTarget.getDropOperation === 'function') {
+    if (typeof item?.getDropOperation === 'function') {
       let types = this.dragTarget.items.map(item => item.type);
-      this.dropOperation = this.currentDropTarget.getDropOperation(types, this.dragTarget.allowedDropOperations, item?.target);
+      this.dropOperation = item.getDropOperation(types, this.dragTarget.allowedDropOperations);
+    } else if (typeof this.currentDropTarget.getDropOperation === 'function') {
+      let types = this.dragTarget.items.map(item => item.type);
+      this.dropOperation = this.currentDropTarget.getDropOperation(types, this.dragTarget.allowedDropOperations);
     } else {
       // TODO: show menu ??
       this.dropOperation = this.dragTarget.allowedDropOperations[0];
