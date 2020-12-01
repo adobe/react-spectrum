@@ -37,7 +37,7 @@ import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder, useHover} from '@react-aria/interactions';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useCallback, useMemo, useRef, useState} from 'react';
+import React, {ReactElement, useCallback, useRef, useState} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
 import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
 import {Text} from '@react-spectrum/text';

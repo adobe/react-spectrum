@@ -11,10 +11,10 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import Alert from '@spectrum-icons/workflow/Alert';
 import Bell from '@spectrum-icons/workflow/Bell';
-import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {ComboBox, Item, Section} from '../';
 import Copy from '@spectrum-icons/workflow/Copy';
