@@ -33,6 +33,10 @@ function StepButton(props: StepButtonProps, ref: RefObject<HTMLDivElement>) {
   props = useProviderProps(props);
   let {scale} = useProvider();
   let {direction, isDisabled, isQuiet} = props;
+  /**
+   * Must use div for now because Safari pointer event bugs on disabled form elements.
+   * Link https://bugs.webkit.org/show_bug.cgi?id=219188.
+   */
   let {buttonProps, isPressed} = useButton({...props, elementType: 'div'}, ref);
   let {hoverProps, isHovered} = useHover(props);
   return (
