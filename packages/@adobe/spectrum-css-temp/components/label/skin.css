@@ -36,7 +36,9 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Label--green {
-  background-color: var(--spectrum-label-colored-green-background-color);
+  /* this color is not accessible in dark mode */
+  /* background-color: var(--spectrum-label-colored-green-background-color); */
+  background-color: var(--spectrum-global-color-static-green-700);
 }
 
 .spectrum-Label--blue, .spectrum-Label--active, .spectrum-Label--and  {

@@ -263,30 +263,30 @@ storiesOf('Picker', module)
       <Picker label="Test" onSelectionChange={action('selectionChange')}>
         <Section title="Section 1">
           <Item textValue="Copy">
-            <Copy size="S" />
+            <Copy />
             <Text>Copy</Text>
           </Item>
           <Item textValue="Cut">
-            <Cut size="S" />
+            <Cut />
             <Text>Cut</Text>
           </Item>
           <Item textValue="Paste">
-            <Paste size="S" />
+            <Paste />
             <Text>Paste</Text>
           </Item>
         </Section>
         <Section title="Section 2">
           <Item textValue="Puppy">
-            <AlignLeft size="S" />
+            <AlignLeft />
             <Text>Puppy</Text>
             <Text slot="description">Puppy description super long as well geez</Text>
           </Item>
           <Item textValue="Doggo with really really really long long long text">
-            <AlignCenter size="S" />
+            <AlignCenter />
             <Text>Doggo with really really really long long long text</Text>
           </Item>
           <Item textValue="Floof">
-            <AlignRight size="S" />
+            <AlignRight />
             <Text>Floof</Text>
           </Item>
         </Section>
