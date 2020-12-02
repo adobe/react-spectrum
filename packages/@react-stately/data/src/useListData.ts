@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, useState} from 'react';
+import {Key, useMemo, useState} from 'react';
 import {Selection} from '@react-types/shared';
 
 interface ListOptions<T> {
@@ -110,7 +110,6 @@ export interface ListData<T> {
 
 export interface ListState<T> {
   items: T[],
-  filteredItems: T[],
   selectedKeys: Selection,
   filterText: string
 }
@@ -124,24 +123,25 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
     initialItems = [],
     initialSelectedKeys,
     getKey = (item: any) => item.id || item.key,
-    filterFn = (item: any, filterText) => true,
+    filterFn,
     initialFilterText = ''
   } = options;
 
   // Store both items and filteredItems in state so we can go back to the unfiltered list
   let [state, setState] = useState<ListState<T>>({
     items: initialItems,
-    filteredItems: initialItems.filter(item => filterFn(item, initialFilterText)),
     selectedKeys: initialSelectedKeys === 'all' ? 'all' : new Set(initialSelectedKeys || []),
     filterText: initialFilterText
   });
 
-  // Don't include filteredItems in return
+  let filteredItems = useMemo(() => {
+    return filterFn ? state.items.filter(item => filterFn(item, state.filterText)) : state.items
+  }, [state.items, state.filterText, filterFn]);
+
   return {
-    items: state.filteredItems,
-    selectedKeys: state.selectedKeys,
-    filterText: state.filterText,
-    ...createListActions({getKey, filterFn}, setState),
+    ...state,
+    items: filteredItems,
+    ...createListActions({getKey}, setState),
     getItem(key: Key) {
       return state.items.find(item => getKey(item) === key);
     }
@@ -160,7 +160,7 @@ function insert<T>(state: ListState<T>, index: number, ...values: T[]): ListStat
 }
 
 export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (state: ListState<T>) => ListState<T>) => void): Omit<ListData<T>, 'items' | 'selectedKeys' | 'getItem' | 'filterText'> {
-  let {getKey, filterFn} = opts;
+  let {getKey} = opts;
   return {
     setSelectedKeys(selectedKeys: Selection) {
       dispatch(state => ({
@@ -171,9 +171,6 @@ export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (
     setFilter(filterText: string) {
       dispatch(state => ({
         ...state,
-        // Problem here is that we actually lose items that are filtered out so clearing the input doesn't restore the original list,
-        // thus added filteredItems
-        filteredItems: state.items.filter(item => filterFn(item, filterText)),
         filterText
       }));
     },

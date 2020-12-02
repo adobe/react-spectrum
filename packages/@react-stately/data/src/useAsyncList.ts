@@ -11,7 +11,7 @@
  */
 
 import {createListActions, ListData, ListState} from './useListData';
-import {Key, Reducer, useEffect, useReducer} from 'react';
+import {Key, Reducer, useEffect, useMemo, useReducer} from 'react';
 import {Selection, SortDescriptor} from '@react-types/shared';
 
 interface AsyncListOptions<T, C> {
@@ -29,7 +29,9 @@ interface AsyncListOptions<T, C> {
    * An optional function that performs sorting. If not provided,
    * then `sortDescriptor` is passed to the `load` function.
    */
-  sort?: AsyncListLoadFunction<T, C>
+  sort?: AsyncListLoadFunction<T, C>,
+  /** A function that returns whether a item matches the current filter text. */
+  filterFn?: (item: T, filterText: string) => boolean
 }
 
 type AsyncListLoadFunction<T, C> = (state: AsyncListLoadOptions<T, C>) => Promise<AsyncListStateUpdate<T, C>>;
@@ -228,8 +230,8 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     initialSelectedKeys,
     initialSortDescriptor,
     getKey = (item: any) => item.id || item.key,
-    initialFilterText,
-    filterFn = (item: any, filterText) => true
+    initialFilterText = '',
+    filterFn
   } = options;
 
   let [data, dispatch] = useReducer<Reducer<AsyncListState<T, C>, Action<T, C>>>(reducer, {
@@ -265,8 +267,13 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  let filteredItems = useMemo(() => {
+    return filterFn ? data.items.filter(item => filterFn(item, data.filterText)) : data.items
+  }, [data.items, data.filterText, filterFn]);
+
   return {
-    items: data.items,
+    // items: data.items,
+    items: filteredItems,
     selectedKeys: data.selectedKeys,
     sortDescriptor: data.sortDescriptor,
     isLoading: data.state === 'loading' || data.state === 'loadingMore' || data.state === 'sorting',
@@ -289,7 +296,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     sort(sortDescriptor: SortDescriptor) {
       dispatchFetch({type: 'sorting', sortDescriptor}, sort || load);
     },
-    ...createListActions({...options, getKey, filterFn}, fn => {
+    ...createListActions({...options, getKey}, fn => {
       dispatch({type: 'update', updater: fn});
     })
   };

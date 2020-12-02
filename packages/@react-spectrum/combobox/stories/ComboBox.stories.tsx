@@ -459,8 +459,15 @@ storiesOf('ComboBox', module)
       <ListDataExample />
     )
   )
+  // TODO: test pagination via scrolling with this
   .add(
-    'async loading',
+    'client side filtering with useAsyncList',
+    () => (
+      <AsyncLoadingClientExample />
+    )
+  )
+  .add(
+    'server side filtering with useAsyncList',
     () => (
       <AsyncLoadingExample />
     )
@@ -486,6 +493,46 @@ function ListDataExample() {
   )
 }
 
+function AsyncLoadingClientExample() {
+  interface Pokemon {
+    name: string,
+    url: string
+  }
+
+  let {contains} = useFilter({sensitivity: 'base'});
+
+  let list = useAsyncList<Pokemon>({
+    async load({signal, cursor, filterText}) {
+      let res = await fetch(cursor || 'https://pokeapi.co/api/v2/pokemon', {signal});
+      let json = await res.json();
+      // The API is too fast sometimes, so make it take longer so we can see the spinner
+      await new Promise(resolve => setTimeout(resolve, cursor ? 500 : 1000));
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    },
+    filterFn(item, text) {
+      return contains(item.name, text);
+    },
+    initialFilterText: 'B'
+  });
+
+  return (
+    <ComboBox
+      label="Pick a Pokemon"
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={list.setFilter}
+      isLoading={list.isLoading}
+      onLoadMore={list.loadMore}>
+      {item => <Item key={item.name}>{item.name}</Item>}
+    </ComboBox>
+  );
+}
+
+
 function AsyncLoadingExample() {
   interface Pokemon {
     name: string,
@@ -497,6 +544,10 @@ function AsyncLoadingExample() {
 
   let list = useAsyncList<Pokemon>({
     async load({signal, cursor, filterText}) {
+
+      // Find api that can actually filter server side w/ query
+
+
       console.log('filterText', filterText);
       let res = await fetch(cursor || 'https://pokeapi.co/api/v2/pokemon', {signal});
       let json = await res.json();
@@ -504,16 +555,12 @@ function AsyncLoadingExample() {
       // The API is too fast sometimes, so make it take longer so we can see the spinner
       await new Promise(resolve => setTimeout(resolve, cursor ? 500 : 1000));
 
-      let filteredOptions = json.results.filter(option => {
-        return startsWith(option.name, filterText)
-      });
-
       return {
         items: filteredOptions,
         cursor: json.next
       };
     },
-    initialFilterText: 'B'
+    // initialFilterText: 'B'
   });
 
   let onInputChange = (text) => {
