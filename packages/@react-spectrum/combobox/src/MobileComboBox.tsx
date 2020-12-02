@@ -301,9 +301,12 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     validationState,
     label,
     overlayProps,
-    isLoading
+    isLoading,
+    onLoadMore
   } = props;
 
+  let isLoadingInitial = isLoading && state.collection.size === 0;
+  let isLoadingMore = isLoading && state.collection.size > 0;
   let inputRef = useRef<HTMLInputElement>();
   let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
   let popoverRef = useRef<HTMLDivElement>();
@@ -398,7 +401,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           inputProps={inputProps}
           inputRef={inputRef}
           isDisabled={isDisabled}
-          isLoading={isLoading}
+          isLoading={isLoadingInitial}
           validationState={validationState}
           wrapperChildren={(state.inputValue !== '' && !props.isReadOnly) && clearButton}
           UNSAFE_className={
@@ -409,7 +412,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
               {
                 'is-invalid': validationState === 'invalid',
                 'is-valid': validationState === 'valid',
-                'is-loading': isLoading
+                'is-loading': isLoadingInitial
               },
               classNames(
                 comboboxStyles,
@@ -450,7 +453,9 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
             )
           }
           ref={listBoxRef}
-          onScroll={onScroll} />
+          onScroll={onScroll}
+          isLoading={isLoadingMore}
+          onLoadMore={onLoadMore} />
         <DismissButton onDismiss={() => state.commit()} />
       </div>
     </FocusScope>

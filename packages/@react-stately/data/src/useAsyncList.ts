@@ -170,7 +170,6 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
           // We're already loading, and another load was triggered at the same time.
           // We need to abort the previous load and start a new one.
           data.abortController.abort();
-
           return {
             ...data,
             state: action.type,
@@ -182,7 +181,6 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
           // TODO: Ask if this is appropriate, I want to cancel prior loads if the user is rapidly typing
           // but "update" also covers a bunch of other actions (like item insertion)
           // Was loading but update happened, so abort previous load.
-
           data.abortController.abort();
           return {
             ...data,

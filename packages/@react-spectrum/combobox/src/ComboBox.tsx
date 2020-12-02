@@ -49,6 +49,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     menuTrigger = 'input',
     shouldFlip = true,
     direction = 'bottom',
+    isLoading,
     onLoadMore
   } = props;
 
@@ -61,8 +62,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({...props, defaultFilter: contains});
   let layout = useListBoxLayout(state);
-  let isLoadingInitial = props.isLoading && state.collection.size === 0;
-  let isLoadingMore = props.isLoading && state.collection.size > 0;
+  let isLoadingInitial = isLoading && state.collection.size === 0;
+  let isLoadingMore = isLoading && state.collection.size > 0;
 
   let {buttonProps, inputProps, listBoxProps, labelProps} = useComboBox(
     {
