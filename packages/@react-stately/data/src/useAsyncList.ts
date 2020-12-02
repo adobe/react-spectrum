@@ -170,6 +170,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
           // We're already loading, and another load was triggered at the same time.
           // We need to abort the previous load and start a new one.
           data.abortController.abort();
+
           return {
             ...data,
             state: action.type,
@@ -181,6 +182,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
           // TODO: Ask if this is appropriate, I want to cancel prior loads if the user is rapidly typing
           // but "update" also covers a bunch of other actions (like item insertion)
           // Was loading but update happened, so abort previous load.
+
           data.abortController.abort();
           return {
             ...data,
@@ -219,6 +221,16 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
             // Reset items to an empty list if loading, but not when sorting.
             items: action.type === 'loading' ? [] : data.items,
             abortController: action.abortController
+          };
+        case 'update':
+          // TODO: Ask if this is appropriate
+          // Scenario is if menu is open and is attempting to load more items and user begins to type
+          // Cancel previous load and thats it? Additional load will need to be triggered by user action (either more typing or scrolling down the list)
+          data.abortController.abort();
+
+          return {
+            ...data,
+            ...action.updater(data)
           };
         default:
           throw new Error(`Invalid action "${action.type}" in state "${data.state}"`);
@@ -271,11 +283,18 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     }
   };
 
-  // Handle initial load and subsequent reloads on filterText changes
+  // Handle initial load
   useEffect(() => {
     dispatchFetch({type: 'loading'}, load);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data.filterText]);
+  }, []);
+
+  // Reload on changes to filter text but only if performing server side filtering
+  useEffect(() => {
+    if (!filterFn) {
+      dispatchFetch({type: 'loading'}, load);
+    }
+  }, [data.filterText, filterFn]);
 
   let filteredItems = useMemo(() => {
     return filterFn ? data.items.filter(item => filterFn(item, data.filterText)) : data.items
@@ -295,8 +314,9 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
       dispatchFetch({type: 'loading'}, load);
     },
     loadMore() {
-      // Ignore if already loading more.
-      if (data.state === 'loadingMore' || data.cursor == null) {
+      // Ignore if already loading or loading more.
+      // TODO: ask if this is appropriate
+      if (data.state === 'loadingMore' || data.state === 'loading' || data.cursor == null) {
         return;
       }
 
