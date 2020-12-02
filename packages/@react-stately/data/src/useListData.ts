@@ -22,20 +22,25 @@ interface ListOptions<T> {
   initialFilterText?: string,
   /** A function that returns a unique key for an item object. */
   getKey?: (item: T) => Key,
-  // TODO: not sure if we need the below?
   /** A function that returns whether a item matches the current filter text. */
-  filter?: (item: T, filterText: string) => boolean
+  filterFn?: (item: T, filterText: string) => boolean
 }
 
 export interface ListData<T> {
   /** The items in the list. */
   items: T[],
 
+  /** The items in the list after being filtered. */
+  filteredItems: T[],
+
   /** The keys of the currently selected items in the list. */
   selectedKeys: Selection,
 
   /** Sets the selected keys. */
   setSelectedKeys(keys: Selection): void,
+
+  /** The current filter text. */
+  filterText: string,
 
   /** Sets the filter text. */
   setFilter(filterText: string): void,
@@ -108,6 +113,7 @@ export interface ListData<T> {
 
 export interface ListState<T> {
   items: T[],
+  filteredItems: T[],
   selectedKeys: Selection,
   filterText: string
 }
@@ -121,17 +127,19 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
     initialItems = [],
     initialSelectedKeys,
     getKey = (item: any) => item.id || item.key,
+    filterFn = (item: any, filterText) => true,
     initialFilterText = ''
   } = options;
   let [state, setState] = useState<ListState<T>>({
     items: initialItems,
+    filteredItems: initialItems.filter(item => filterFn(item, initialFilterText)),
     selectedKeys: initialSelectedKeys === 'all' ? 'all' : new Set(initialSelectedKeys || []),
     filterText: initialFilterText
   });
 
   return {
     ...state,
-    ...createListActions({getKey}, setState),
+    ...createListActions({getKey, filterFn}, setState),
     getItem(key: Key) {
       return state.items.find(item => getKey(item) === key);
     }
@@ -149,8 +157,8 @@ function insert<T>(state: ListState<T>, index: number, ...values: T[]): ListStat
   };
 }
 
-export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (state: ListState<T>) => ListState<T>) => void): Omit<ListData<T>, 'items' | 'selectedKeys' | 'getItem'> {
-  let {getKey} = opts;
+export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (state: ListState<T>) => ListState<T>) => void): Omit<ListData<T>, 'items' | 'selectedKeys' | 'getItem' | 'filterText'> {
+  let {getKey, filterFn} = opts;
   return {
     setSelectedKeys(selectedKeys: Selection) {
       dispatch(state => ({
@@ -161,6 +169,9 @@ export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (
     setFilter(filterText: string) {
       dispatch(state => ({
         ...state,
+        // Problem here is that we actually lose items that are filtered out so clearing the input doesn't restore the original list,
+        // thus added filteredItems
+        filteredItems: state.items.filter(item => filterFn(item, filterText)),
         filterText
       }));
     },

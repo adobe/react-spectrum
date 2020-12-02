@@ -26,7 +26,7 @@ import {Text} from '@react-spectrum/text';
 import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
-import {useTreeData} from '@react-stately/data';
+import {useListData, useTreeData} from '@react-stately/data';
 
 let items = [
   {name: 'Aardvark', id: '1'},
@@ -454,11 +454,38 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
+    'filtering with useListData',
+    () => (
+      <ListDataExample />
+    )
+  )
+  .add(
     'async loading',
     () => (
       <AsyncLoadingExample />
     )
   );
+
+function ListDataExample() {
+  let {contains} = useFilter();
+  let list = useListData({
+    initialItems: items,
+    filterFn(item, text) {
+      console.log('item', item, text, contains(item.name, text));
+      return contains(item.name, text);
+    }
+  });
+
+  return (
+    <ComboBox
+      label="ComboBox"
+      items={list.filteredItems}
+      inputValue={list.filterText}
+      onInputChange={list.setFilter}>
+      {item => <Item>{item.name}</Item>}
+    </ComboBox>
+  )
+}
 
 function AsyncLoadingExample() {
   interface Pokemon {
