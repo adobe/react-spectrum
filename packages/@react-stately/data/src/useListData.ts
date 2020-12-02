@@ -40,7 +40,7 @@ export interface ListData<T> {
   filterText: string,
 
   /** Sets the filter text. */
-  setFilter(filterText: string): void,
+  setFilterText(filterText: string): void,
 
   /**
    * Gets an item from the list by key.
@@ -134,9 +134,9 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
     filterText: initialFilterText
   });
 
-  let filteredItems = useMemo(() => {
-    return filterFn ? state.items.filter(item => filterFn(item, state.filterText)) : state.items
-  }, [state.items, state.filterText, filterFn]);
+  let filteredItems = useMemo(
+    () => filterFn ? state.items.filter(item => filterFn(item, state.filterText)) : state.items,
+    [state.items, state.filterText, filterFn]);
 
   return {
     ...state,
@@ -168,7 +168,7 @@ export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (
         selectedKeys
       }));
     },
-    setFilter(filterText: string) {
+    setFilterText(filterText: string) {
       dispatch(state => ({
         ...state,
         filterText

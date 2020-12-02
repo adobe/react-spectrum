@@ -288,15 +288,16 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
   }, []);
 
   // Reload on changes to filter text but only if performing server side filtering
+  // Kinda weird since it will trigger a reload when user selects a option
   useEffect(() => {
     if (!filterFn) {
       dispatchFetch({type: 'loading'}, load);
     }
   }, [data.filterText, filterFn]);
 
-  let filteredItems = useMemo(() => {
-    return filterFn ? data.items.filter(item => filterFn(item, data.filterText)) : data.items
-  }, [data.items, data.filterText, filterFn]);
+  let filteredItems = useMemo(
+    () => filterFn ? data.items.filter(item => filterFn(item, data.filterText)) : data.items,
+    [data.items, data.filterText, filterFn]);
 
   return {
     items: filteredItems,

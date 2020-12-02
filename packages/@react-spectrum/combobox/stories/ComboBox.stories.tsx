@@ -487,10 +487,10 @@ function ListDataExample() {
       label="ComboBox"
       items={list.items}
       inputValue={list.filterText}
-      onInputChange={list.setFilter}>
+      onInputChange={list.setFilterText}>
       {item => <Item>{item.name}</Item>}
     </ComboBox>
-  )
+  );
 }
 
 function AsyncLoadingClientExample() {
@@ -503,7 +503,6 @@ function AsyncLoadingClientExample() {
 
   let list = useAsyncList<Pokemon>({
     async load({signal, cursor}) {
-      console.log('cursor', cursor);
       let res = await fetch(cursor || 'https://pokeapi.co/api/v2/pokemon', {signal});
       let json = await res.json();
       // The API is too fast sometimes, so make it take longer so we can see the spinner
@@ -525,7 +524,7 @@ function AsyncLoadingClientExample() {
       label="Pick a Pokemon"
       items={list.items}
       inputValue={list.filterText}
-      onInputChange={list.setFilter}
+      onInputChange={list.setFilterText}
       isLoading={list.isLoading}
       onLoadMore={list.loadMore}>
       {item => <Item key={item.name}>{item.name}</Item>}
@@ -542,7 +541,6 @@ function AsyncLoadingExample() {
 
   let list = useAsyncList<StarWarsChar>({
     async load({signal, cursor, filterText}) {
-      console.log('cursor', cursor)
       let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
       // The API is too fast sometimes, so make it take longer so we can see the spinner
@@ -560,7 +558,7 @@ function AsyncLoadingExample() {
       label="Star Wars Character Lookup"
       items={list.items}
       inputValue={list.filterText}
-      onInputChange={list.setFilter}
+      onInputChange={list.setFilterText}
       isLoading={list.isLoading}
       onLoadMore={list.loadMore}>
       {item => <Item key={item.name}>{item.name}</Item>}
@@ -577,7 +575,7 @@ let customFilterItems = [
 let CustomFilterComboBox = (props) => {
   let {startsWith} = useFilter({sensitivity: 'base'});
   let [filterValue, setFilterValue] = React.useState('');
-  let filteredItems = React.useMemo(() => customFilterItems.filter(item => startsWith(item.name, filterValue)), [props.items, filterValue]);
+  let filteredItems = React.useMemo(() => customFilterItems.filter(item => startsWith(item.name, filterValue)), [props.items, filterValue, startsWith]);
 
   return (
     <ComboBox
