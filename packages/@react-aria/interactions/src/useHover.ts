@@ -98,8 +98,9 @@ export function useHover(props: HoverProps): HoverResult {
   }).current;
 
   useEffect(setupGlobalTouchEvents, []);
+  let lastTriggerStart = useRef<any>();
 
-  let hoverProps = useMemo(() => {
+  let {hoverProps, cleanup} = useMemo(() => {
     let triggerHoverStart = (event, pointerType) => {
       if (isDisabled || pointerType === 'touch' || state.isHovered) {
         return;
@@ -115,6 +116,10 @@ export function useHover(props: HoverProps): HoverResult {
           pointerType
         });
       }
+      lastTriggerStart.current = {
+        target,
+        pointerType
+      };
 
       if (onHoverChange) {
         onHoverChange(true);
@@ -123,8 +128,8 @@ export function useHover(props: HoverProps): HoverResult {
       setHovered(true);
     };
 
-    let triggerHoverEnd = (event, pointerType) => {
-      if (isDisabled || pointerType === 'touch' || !state.isHovered) {
+    let triggerHoverEnd = (event, pointerType, overrideDisabled = false) => {
+      if ((isDisabled && !overrideDisabled) || pointerType === 'touch' || !state.isHovered) {
         return;
       }
 
@@ -138,6 +143,7 @@ export function useHover(props: HoverProps): HoverResult {
           pointerType
         });
       }
+      lastTriggerStart.current = {};
 
       if (onHoverChange) {
         onHoverChange(false);
@@ -176,9 +182,27 @@ export function useHover(props: HoverProps): HoverResult {
       hoverProps.onMouseLeave = (e) => {
         triggerHoverEnd(e, 'mouse');
       };
+
+      // Safari won't fire onMouseEnter in certain cases
+      hoverProps.onMouseMove = (e) => {
+        if (!state.isHovered) {
+          triggerHoverStart(e, 'mouse');
+        }
+      };
     }
-    return hoverProps;
+    return {hoverProps, cleanup: {triggerHoverStart, triggerHoverEnd}};
   }, [onHoverStart, onHoverChange, onHoverEnd, isDisabled, state]);
+
+  // cleanup if the element we're interacting with becomes disabled
+  useEffect(() => {
+    if (isDisabled && state.isHovered) {
+      if (lastTriggerStart.current) {
+        cleanup.triggerHoverEnd(lastTriggerStart.current, lastTriggerStart.current.pointerType, true);
+      }
+      state.isHovered = false;
+      state.ignoreEmulatedMouseEvents = false;
+    }
+  }, [isDisabled, cleanup]);
 
   return {
     hoverProps,

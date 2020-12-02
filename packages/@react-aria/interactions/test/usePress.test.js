@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, render} from '@testing-library/react';
-import {installPointerEvent} from '@react-spectrum/test-utils';
+// import {installPointerEvent} from '@react-spectrum/test-utils';
 import React from 'react';
 import {usePress} from '../';
 
@@ -21,6 +21,7 @@ function Example(props) {
   return <ElementType {...pressProps} tabIndex="0">test</ElementType>;
 }
 
+/*
 function pointerEvent(type, opts) {
   let evt = new Event(type, {bubbles: true, cancelable: true});
   Object.assign(evt, {
@@ -31,6 +32,7 @@ function pointerEvent(type, opts) {
   }, opts);
   return evt;
 }
+*/
 
 describe('usePress', function () {
   beforeAll(() => {
@@ -49,6 +51,7 @@ describe('usePress', function () {
 
   // TODO: JSDOM doesn't yet support pointer events. Once they do, convert these tests.
   // https://github.com/jsdom/jsdom/issues/2527
+  /*
   describe('pointer events', function () {
     installPointerEvent();
 
@@ -379,6 +382,7 @@ describe('usePress', function () {
       expect(document.activeElement).toBe(el);
     });
   });
+  */
 
   describe('mouse events', function () {
     it('should fire press events based on mouse events', function () {

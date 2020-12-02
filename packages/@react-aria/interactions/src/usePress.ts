@@ -115,7 +115,9 @@ export function usePress(props: PressHookProps): PressResult {
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
-  let pressProps = useMemo(() => {
+  let lastTriggerStart = useRef<any>();
+
+  let {pressProps, cleanup} = useMemo(() => {
     let state = ref.current;
     let triggerPressStart = (originalEvent: EventBase, pointerType: PointerType) => {
       if (isDisabled) {
@@ -132,6 +134,13 @@ export function usePress(props: PressHookProps): PressResult {
           ctrlKey: originalEvent.ctrlKey
         });
       }
+      lastTriggerStart.current = {
+        pointerType,
+        currentTarget: originalEvent.currentTarget as HTMLElement,
+        shiftKey: originalEvent.shiftKey,
+        metaKey: originalEvent.metaKey,
+        ctrlKey: originalEvent.ctrlKey
+      };
 
       if (onPressChange) {
         onPressChange(true);
@@ -140,8 +149,8 @@ export function usePress(props: PressHookProps): PressResult {
       setPressed(true);
     };
 
-    let triggerPressEnd = (originalEvent: EventBase, pointerType: PointerType, wasPressed = true) => {
-      if (isDisabled) {
+    let triggerPressEnd = (originalEvent: EventBase, pointerType: PointerType, wasPressed = true, overrideDisabled = false) => {
+      if (isDisabled && !overrideDisabled) {
         return;
       }
 
@@ -157,6 +166,7 @@ export function usePress(props: PressHookProps): PressResult {
           ctrlKey: originalEvent.ctrlKey
         });
       }
+      lastTriggerStart.current = {};
 
       if (onPressChange) {
         onPressChange(false);
@@ -262,278 +272,295 @@ export function usePress(props: PressHookProps): PressResult {
       }
     };
 
-    if (typeof PointerEvent !== 'undefined') {
-      pressProps.onPointerDown = (e) => {
-        // Only handle left clicks
-        if (e.button !== 0) {
-          return;
-        }
+    // if (typeof PointerEvent !== 'undefined') {
+    //   pressProps.onPointerDown = (e) => {
+    //     // Only handle left clicks
+    //     if (e.button !== 0) {
+    //       return;
+    //     }
+    //
+    //     // Due to browser inconsistencies, especially on mobile browsers, we prevent
+    //     // default on pointer down and handle focusing the pressable element ourselves.
+    //     e.preventDefault();
+    //     e.stopPropagation();
+    //     if (!state.isPressed) {
+    //       state.isPressed = true;
+    //       state.isOverTarget = true;
+    //       state.activePointerId = e.pointerId;
+    //       state.target = e.currentTarget;
+    //
+    //       if (!isDisabled && !preventFocusOnPress) {
+    //         focusWithoutScrolling(e.currentTarget);
+    //       }
+    //
+    //       disableTextSelection();
+    //       triggerPressStart(e, e.pointerType);
+    //
+    //       addGlobalListener(document, 'pointermove', onPointerMove, false);
+    //       addGlobalListener(document, 'pointerup', onPointerUp, false);
+    //       addGlobalListener(document, 'pointercancel', onPointerCancel, false);
+    //     }
+    //   };
+    //
+    //   pressProps.onMouseDown = (e) => {
+    //     if (e.button === 0) {
+    //       // Chrome and Firefox on touch Windows devices require mouse down events
+    //       // to be canceled in addition to pointer events, or an extra asynchronous
+    //       // focus event will be fired.
+    //       e.preventDefault();
+    //     }
+    //   };
+    //
+    //   let unbindEvents = () => {
+    //     removeGlobalListener(document, 'pointermove', onPointerMove, false);
+    //     removeGlobalListener(document, 'pointerup', onPointerUp, false);
+    //     removeGlobalListener(document, 'pointercancel', onPointerCancel, false);
+    //   };
+    //
+    //   pressProps.onPointerUp = (e) => {
+    //     // Only handle left clicks
+    //     // Safari on iOS sometimes fires pointerup events, even
+    //     // when the touch isn't over the target, so double check.
+    //     if (e.button === 0 && isOverTarget(e, e.currentTarget)) {
+    //       triggerPressUp(e, e.pointerType as PointerType);
+    //     }
+    //   };
+    //
+    //   // Safari on iOS < 13.2 does not implement pointerenter/pointerleave events correctly.
+    //   // Use pointer move events instead to implement our own hit testing.
+    //   // See https://bugs.webkit.org/show_bug.cgi?id=199803
+    //   let onPointerMove = (e: PointerEvent) => {
+    //     if (e.pointerId !== state.activePointerId) {
+    //       return;
+    //     }
+    //
+    //     if (isOverTarget(e, state.target)) {
+    //       if (!state.isOverTarget) {
+    //         state.isOverTarget = true;
+    //         triggerPressStart(createEvent(state.target, e), e.pointerType as PointerType);
+    //       }
+    //     } else if (state.isOverTarget) {
+    //       state.isOverTarget = false;
+    //       triggerPressEnd(createEvent(state.target, e), e.pointerType as PointerType, false);
+    //     }
+    //   };
+    //
+    //   let onPointerUp = (e: PointerEvent) => {
+    //     if (e.pointerId === state.activePointerId && state.isPressed && e.button === 0) {
+    //       if (isOverTarget(e, state.target)) {
+    //         triggerPressEnd(createEvent(state.target, e), e.pointerType as PointerType);
+    //       } else if (state.isOverTarget) {
+    //         triggerPressEnd(createEvent(state.target, e), e.pointerType as PointerType, false);
+    //       }
+    //
+    //       state.isPressed = false;
+    //       state.isOverTarget = false;
+    //       state.activePointerId = null;
+    //       unbindEvents();
+    //       restoreTextSelection();
+    //     }
+    //   };
+    //
+    //   let onPointerCancel = (e: PointerEvent) => {
+    //     if (state.isPressed) {
+    //       if (state.isOverTarget) {
+    //         triggerPressEnd(createEvent(state.target, e), e.pointerType as PointerType, false);
+    //       }
+    //       state.isPressed = false;
+    //       state.isOverTarget = false;
+    //       state.activePointerId = null;
+    //       unbindEvents();
+    //       restoreTextSelection();
+    //     }
+    //   };
+    // } else {
+    pressProps.onMouseDown = (e) => {
+      // Only handle left clicks
+      if (e.button !== 0) {
+        return;
+      }
 
-        // Due to browser inconsistencies, especially on mobile browsers, we prevent
-        // default on pointer down and handle focusing the pressable element ourselves.
-        e.preventDefault();
-        e.stopPropagation();
-        if (!state.isPressed) {
-          state.isPressed = true;
-          state.isOverTarget = true;
-          state.activePointerId = e.pointerId;
-          state.target = e.currentTarget;
+      // Due to browser inconsistencies, especially on mobile browsers, we prevent
+      // default on mouse down and handle focusing the pressable element ourselves.
+      e.preventDefault();
+      e.stopPropagation();
+      if (state.ignoreEmulatedMouseEvents) {
+        return;
+      }
 
-          if (!isDisabled && !preventFocusOnPress) {
-            focusWithoutScrolling(e.currentTarget);
-          }
+      state.isPressed = true;
+      state.isOverTarget = true;
+      state.target = e.currentTarget;
 
-          disableTextSelection();
-          triggerPressStart(e, e.pointerType);
+      if (!isDisabled && !preventFocusOnPress) {
+        focusWithoutScrolling(e.currentTarget);
+      }
 
-          addGlobalListener(document, 'pointermove', onPointerMove, false);
-          addGlobalListener(document, 'pointerup', onPointerUp, false);
-          addGlobalListener(document, 'pointercancel', onPointerCancel, false);
-        }
-      };
+      triggerPressStart(e, isVirtualClick(e.nativeEvent) ? 'virtual' : 'mouse');
 
-      pressProps.onMouseDown = (e) => {
-        if (e.button === 0) {
-          // Chrome and Firefox on touch Windows devices require mouse down events
-          // to be canceled in addition to pointer events, or an extra asynchronous
-          // focus event will be fired.
-          e.preventDefault();
-        }
-      };
+      addGlobalListener(document, 'mouseup', onMouseUp, false);
+    };
 
-      let unbindEvents = () => {
-        removeGlobalListener(document, 'pointermove', onPointerMove, false);
-        removeGlobalListener(document, 'pointerup', onPointerUp, false);
-        removeGlobalListener(document, 'pointercancel', onPointerCancel, false);
-      };
-
-      pressProps.onPointerUp = (e) => {
-        // Only handle left clicks
-        // Safari on iOS sometimes fires pointerup events, even
-        // when the touch isn't over the target, so double check.
-        if (e.button === 0 && isOverTarget(e, e.currentTarget)) {
-          triggerPressUp(e, e.pointerType as PointerType);
-        }
-      };
-
-      // Safari on iOS < 13.2 does not implement pointerenter/pointerleave events correctly.
-      // Use pointer move events instead to implement our own hit testing.
-      // See https://bugs.webkit.org/show_bug.cgi?id=199803
-      let onPointerMove = (e: PointerEvent) => {
-        if (e.pointerId !== state.activePointerId) {
-          return;
-        }
-
-        if (isOverTarget(e, state.target)) {
-          if (!state.isOverTarget) {
-            state.isOverTarget = true;
-            triggerPressStart(createEvent(state.target, e), e.pointerType as PointerType);
-          }
-        } else if (state.isOverTarget) {
-          state.isOverTarget = false;
-          triggerPressEnd(createEvent(state.target, e), e.pointerType as PointerType, false);
-        }
-      };
-
-      let onPointerUp = (e: PointerEvent) => {
-        if (e.pointerId === state.activePointerId && state.isPressed && e.button === 0) {
-          if (isOverTarget(e, state.target)) {
-            triggerPressEnd(createEvent(state.target, e), e.pointerType as PointerType);
-          } else if (state.isOverTarget) {
-            triggerPressEnd(createEvent(state.target, e), e.pointerType as PointerType, false);
-          }
-
-          state.isPressed = false;
-          state.isOverTarget = false;
-          state.activePointerId = null;
-          unbindEvents();
-          restoreTextSelection();
-        }
-      };
-
-      let onPointerCancel = (e: PointerEvent) => {
-        if (state.isPressed) {
-          if (state.isOverTarget) {
-            triggerPressEnd(createEvent(state.target, e), e.pointerType as PointerType, false);
-          }
-          state.isPressed = false;
-          state.isOverTarget = false;
-          state.activePointerId = null;
-          unbindEvents();
-          restoreTextSelection();
-        }
-      };
-    } else {
-      pressProps.onMouseDown = (e) => {
-        // Only handle left clicks
-        if (e.button !== 0) {
-          return;
-        }
-
-        // Due to browser inconsistencies, especially on mobile browsers, we prevent
-        // default on mouse down and handle focusing the pressable element ourselves.
-        e.preventDefault();
-        e.stopPropagation();
-        if (state.ignoreEmulatedMouseEvents) {
-          return;
-        }
-
-        state.isPressed = true;
+    pressProps.onMouseEnter = (e) => {
+      e.stopPropagation();
+      if (state.isPressed && !state.ignoreEmulatedMouseEvents) {
         state.isOverTarget = true;
-        state.target = e.currentTarget;
+        triggerPressStart(e, 'mouse');
+      }
+    };
 
-        if (!isDisabled && !preventFocusOnPress) {
-          focusWithoutScrolling(e.currentTarget);
-        }
+    pressProps.onMouseLeave = (e) => {
+      e.stopPropagation();
+      if (state.isPressed && !state.ignoreEmulatedMouseEvents) {
+        state.isOverTarget = false;
+        triggerPressEnd(e, 'mouse', false);
+      }
+    };
 
-        triggerPressStart(e, isVirtualClick(e.nativeEvent) ? 'virtual' : 'mouse');
+    pressProps.onMouseUp = (e) => {
+      if (!state.ignoreEmulatedMouseEvents && e.button === 0) {
+        triggerPressUp(e, isVirtualClick(e.nativeEvent) ? 'virtual' : 'mouse');
+      }
+    };
 
-        addGlobalListener(document, 'mouseup', onMouseUp, false);
-      };
+    let onMouseUp = (e: MouseEvent) => {
+      // Only handle left clicks
+      if (e.button !== 0) {
+        return;
+      }
 
-      pressProps.onMouseEnter = (e) => {
-        e.stopPropagation();
-        if (state.isPressed && !state.ignoreEmulatedMouseEvents) {
+      state.isPressed = false;
+      removeGlobalListener(document, 'mouseup', onMouseUp, false);
+
+      if (state.ignoreEmulatedMouseEvents) {
+        state.ignoreEmulatedMouseEvents = false;
+        return;
+      }
+
+      let pointerType: PointerType = isVirtualClick(e) ? 'virtual' : 'mouse';
+      if (isOverTarget(e, state.target)) {
+        triggerPressEnd(createEvent(state.target, e), pointerType);
+      } else if (state.isOverTarget) {
+        triggerPressEnd(createEvent(state.target, e), pointerType, false);
+      }
+
+      state.isOverTarget = false;
+    };
+
+    pressProps.onTouchStart = (e) => {
+      e.stopPropagation();
+      let touch = getTouchFromEvent(e.nativeEvent);
+      if (!touch) {
+        return;
+      }
+      state.activePointerId = touch.identifier;
+      state.ignoreEmulatedMouseEvents = true;
+      state.isOverTarget = true;
+      state.isPressed = true;
+      state.target = e.currentTarget;
+
+      // Due to browser inconsistencies, especially on mobile browsers, we prevent default
+      // on the emulated mouse event and handle focusing the pressable element ourselves.
+      if (!isDisabled && !preventFocusOnPress) {
+        focusWithoutScrolling(e.currentTarget);
+      }
+
+      disableTextSelection();
+      triggerPressStart(e, 'touch');
+
+      addGlobalListener(window, 'scroll', onScroll, true);
+    };
+
+    pressProps.onTouchMove = (e) => {
+      e.stopPropagation();
+      if (!state.isPressed) {
+        return;
+      }
+
+      let touch = getTouchById(e.nativeEvent, state.activePointerId);
+      if (touch && isOverTarget(touch, e.currentTarget)) {
+        if (!state.isOverTarget) {
           state.isOverTarget = true;
-          triggerPressStart(e, 'mouse');
+          triggerPressStart(e, 'touch');
         }
-      };
-
-      pressProps.onMouseLeave = (e) => {
-        e.stopPropagation();
-        if (state.isPressed && !state.ignoreEmulatedMouseEvents) {
-          state.isOverTarget = false;
-          triggerPressEnd(e, 'mouse', false);
-        }
-      };
-
-      pressProps.onMouseUp = (e) => {
-        if (!state.ignoreEmulatedMouseEvents && e.button === 0) {
-          triggerPressUp(e, isVirtualClick(e.nativeEvent) ? 'virtual' : 'mouse');
-        }
-      };
-
-      let onMouseUp = (e: MouseEvent) => {
-        // Only handle left clicks
-        if (e.button !== 0) {
-          return;
-        }
-
-        state.isPressed = false;
-        removeGlobalListener(document, 'mouseup', onMouseUp, false);
-
-        if (state.ignoreEmulatedMouseEvents) {
-          state.ignoreEmulatedMouseEvents = false;
-          return;
-        }
-
-        let pointerType: PointerType = isVirtualClick(e) ? 'virtual' : 'mouse';
-        if (isOverTarget(e, state.target)) {
-          triggerPressEnd(createEvent(state.target, e), pointerType);
-        } else if (state.isOverTarget) {
-          triggerPressEnd(createEvent(state.target, e), pointerType, false);
-        }
-
+      } else if (state.isOverTarget) {
         state.isOverTarget = false;
-      };
+        triggerPressEnd(e, 'touch', false);
+      }
+    };
 
-      pressProps.onTouchStart = (e) => {
-        e.stopPropagation();
-        let touch = getTouchFromEvent(e.nativeEvent);
-        if (!touch) {
-          return;
-        }
-        state.activePointerId = touch.identifier;
-        state.ignoreEmulatedMouseEvents = true;
-        state.isOverTarget = true;
-        state.isPressed = true;
-        state.target = e.currentTarget;
+    pressProps.onTouchEnd = (e) => {
+      e.stopPropagation();
+      if (!state.isPressed) {
+        return;
+      }
 
-        // Due to browser inconsistencies, especially on mobile browsers, we prevent default
-        // on the emulated mouse event and handle focusing the pressable element ourselves.
-        if (!isDisabled && !preventFocusOnPress) {
-          focusWithoutScrolling(e.currentTarget);
-        }
+      let touch = getTouchById(e.nativeEvent, state.activePointerId);
+      if (touch && isOverTarget(touch, e.currentTarget)) {
+        triggerPressUp(e, 'touch');
+        triggerPressEnd(e, 'touch');
+      } else if (state.isOverTarget) {
+        triggerPressEnd(e, 'touch', false);
+      }
 
-        disableTextSelection();
-        triggerPressStart(e, 'touch');
+      state.isPressed = false;
+      state.activePointerId = null;
+      state.isOverTarget = false;
+      state.ignoreEmulatedMouseEvents = true;
+      restoreTextSelection();
+      removeGlobalListener(window, 'scroll', onScroll, true);
+    };
 
-        addGlobalListener(window, 'scroll', onScroll, true);
-      };
+    pressProps.onTouchCancel = (e) => {
+      e.stopPropagation();
+      if (state.isPressed) {
+        cancelTouchEvent(e, 'touch');
+      }
+    };
 
-      pressProps.onTouchMove = (e) => {
-        e.stopPropagation();
-        if (!state.isPressed) {
-          return;
-        }
+    let onScroll = (e: Event) => {
+      if (state.isPressed && (e.target as HTMLElement).contains(state.target)) {
+        cancelTouchEvent({
+          currentTarget: state.target,
+          shiftKey: false,
+          ctrlKey: false,
+          metaKey: false
+        }, 'touch');
+      }
+    };
 
-        let touch = getTouchById(e.nativeEvent, state.activePointerId);
-        if (touch && isOverTarget(touch, e.currentTarget)) {
-          if (!state.isOverTarget) {
-            state.isOverTarget = true;
-            triggerPressStart(e, 'touch');
-          }
-        } else if (state.isOverTarget) {
-          state.isOverTarget = false;
-          triggerPressEnd(e, 'touch', false);
-        }
-      };
+    let cancelTouchEvent = (e: EventBase, pointerType: PointerType) => {
+      if (state.isOverTarget) {
+        triggerPressEnd(e, pointerType, false);
+      }
 
-      pressProps.onTouchEnd = (e) => {
-        e.stopPropagation();
-        if (!state.isPressed) {
-          return;
-        }
+      state.isPressed = false;
+      state.activePointerId = null;
+      state.isOverTarget = false;
+      restoreTextSelection();
+      window.removeEventListener('scroll', onScroll, true);
+    };
+    // }
 
-        let touch = getTouchById(e.nativeEvent, state.activePointerId);
-        if (touch && isOverTarget(touch, e.currentTarget)) {
-          triggerPressUp(e, 'touch');
-          triggerPressEnd(e, 'touch');
-        } else if (state.isOverTarget) {
-          triggerPressEnd(e, 'touch', false);
-        }
-
-        state.isPressed = false;
-        state.activePointerId = null;
-        state.isOverTarget = false;
-        state.ignoreEmulatedMouseEvents = true;
-        restoreTextSelection();
-        removeGlobalListener(window, 'scroll', onScroll, true);
-      };
-
-      pressProps.onTouchCancel = (e) => {
-        e.stopPropagation();
-        if (state.isPressed) {
-          cancelTouchEvent(e, 'touch');
-        }
-      };
-
-      let onScroll = (e: Event) => {
-        if (state.isPressed && (e.target as HTMLElement).contains(state.target)) {
-          cancelTouchEvent({
-            currentTarget: state.target,
-            shiftKey: false,
-            ctrlKey: false,
-            metaKey: false
-          }, 'touch');
-        }
-      };
-
-      let cancelTouchEvent = (e: EventBase, pointerType: PointerType) => {
-        if (state.isOverTarget) {
-          triggerPressEnd(e, pointerType, false);
-        }
-
-        state.isPressed = false;
-        state.activePointerId = null;
-        state.isOverTarget = false;
-        restoreTextSelection();
-        window.removeEventListener('scroll', onScroll, true);
-      };
-    }
-
-    return pressProps;
+    return {pressProps, cleanup: {triggerPressStart, triggerPressUp, triggerPressEnd}};
   }, [isDisabled, onPressStart, onPressChange, onPressEnd, onPress, onPressUp, addGlobalListener, preventFocusOnPress, removeGlobalListener]);
+
+  // cleanup if the element we're interacting with becomes disabled
+  useEffect(() => {
+    let state = ref.current;
+    if (isDisabled && state.isPressed) {
+      if (lastTriggerStart.current) {
+        cleanup.triggerPressEnd(lastTriggerStart.current, lastTriggerStart.current.pointerType, true, true);
+      }
+      restoreTextSelection();
+      state.isPressed = false;
+      state.isOverTarget = false;
+      state.activePointerId = null;
+      state.ignoreEmulatedMouseEvents = false;
+      state.ignoreClickAfterPress = false;
+      state.target = null;
+    }
+  }, [isDisabled, cleanup]);
 
   // Remove user-select: none in case component unmounts immediately after pressStart
   // eslint-disable-next-line arrow-body-style
