@@ -59,7 +59,8 @@ interface AsyncListStateUpdate<T, C> {
   cursor?: C
 }
 
-interface AsyncListState<T, C> extends ListState<T> {
+// TODO: figure out if we want filteredItems here
+interface AsyncListState<T, C> extends Omit<ListState<T>, 'filteredItems'> {
   state: 'loading' | 'sorting' | 'loadingMore' | 'error' | 'idle',
   items: T[],
   // disabledKeys?: Iterable<Key>,
@@ -227,7 +228,8 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     initialSelectedKeys,
     initialSortDescriptor,
     getKey = (item: any) => item.id || item.key,
-    initialFilterText
+    initialFilterText,
+    filterFn = (item: any, filterText) => true
   } = options;
 
   let [data, dispatch] = useReducer<Reducer<AsyncListState<T, C>, Action<T, C>>>(reducer, {
@@ -269,6 +271,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     sortDescriptor: data.sortDescriptor,
     isLoading: data.state === 'loading' || data.state === 'loadingMore' || data.state === 'sorting',
     error: data.error,
+    filterText: data.filterText,
     getItem(key: Key) {
       return data.items.find(item => getKey(item) === key);
     },
@@ -286,7 +289,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     sort(sortDescriptor: SortDescriptor) {
       dispatchFetch({type: 'sorting', sortDescriptor}, sort || load);
     },
-    ...createListActions({...options, getKey}, fn => {
+    ...createListActions({...options, getKey, filterFn}, fn => {
       dispatch({type: 'update', updater: fn});
     })
   };

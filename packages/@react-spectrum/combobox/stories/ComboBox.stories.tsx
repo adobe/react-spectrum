@@ -524,9 +524,8 @@ function AsyncLoadingExample() {
   return (
     <ComboBox
       label="Pick a Pokemon"
-      defaultInputValue="B"
       items={list.items}
-      // inputValue={filterValue}
+      inputValue={list.filterText}
       onInputChange={onInputChange}
       isLoading={list.isLoading}
       onLoadMore={list.loadMore}>
