@@ -143,19 +143,14 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       let width = unwrappedTriggerRef.current.offsetWidth;
       setButtonWidth(width);
     }
-  }, [unwrappedTriggerRef, setButtonWidth]);
+  }, [unwrappedTriggerRef, setButtonWidth, isMobile]);
 
   useResizeObserver({
     ref: unwrappedTriggerRef,
     onResize: onResize
   });
 
-  useLayoutEffect(() => {
-    if (!isMobile) {
-      let width = unwrappedTriggerRef.current.offsetWidth;
-      setButtonWidth(width);
-    }
-  }, [scale, isMobile, unwrappedTriggerRef, state.selectedKey]);
+  useLayoutEffect(onResize, [scale, state.selectedKey, onResize]);
 
   let overlay;
   if (isMobile) {
