@@ -30,9 +30,6 @@ export interface ListData<T> {
   /** The items in the list. */
   items: T[],
 
-  /** The items in the list after being filtered. */
-  filteredItems: T[],
-
   /** The keys of the currently selected items in the list. */
   selectedKeys: Selection,
 
@@ -130,6 +127,8 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
     filterFn = (item: any, filterText) => true,
     initialFilterText = ''
   } = options;
+
+  // Store both items and filteredItems in state so we can go back to the unfiltered list
   let [state, setState] = useState<ListState<T>>({
     items: initialItems,
     filteredItems: initialItems.filter(item => filterFn(item, initialFilterText)),
@@ -137,8 +136,11 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
     filterText: initialFilterText
   });
 
+  // Don't include filteredItems in return
   return {
-    ...state,
+    items: state.filteredItems,
+    selectedKeys: state.selectedKeys,
+    filterText: state.filterText,
     ...createListActions({getKey, filterFn}, setState),
     getItem(key: Key) {
       return state.items.find(item => getKey(item) === key);

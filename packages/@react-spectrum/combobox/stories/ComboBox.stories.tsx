@@ -467,11 +467,10 @@ storiesOf('ComboBox', module)
   );
 
 function ListDataExample() {
-  let {contains} = useFilter();
+  let {contains} = useFilter({sensitivity: 'base'});
   let list = useListData({
     initialItems: items,
     filterFn(item, text) {
-      console.log('item', item, text, contains(item.name, text));
       return contains(item.name, text);
     }
   });
@@ -479,7 +478,7 @@ function ListDataExample() {
   return (
     <ComboBox
       label="ComboBox"
-      items={list.filteredItems}
+      items={list.items}
       inputValue={list.filterText}
       onInputChange={list.setFilter}>
       {item => <Item>{item.name}</Item>}
