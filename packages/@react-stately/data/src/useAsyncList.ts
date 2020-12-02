@@ -177,6 +177,15 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
             items: action.type === 'loading' ? [] : data.items,
             abortController: action.abortController
           };
+        case 'update':
+          // TODO: Ask if this is appropriate, I want to cancel prior loads if the user is rapidly typing
+          // but "update" also covers a bunch of other actions (like item insertion)
+          // Was loading but update happened, so abort previous load.
+          data.abortController.abort();
+          return {
+            ...data,
+            ...action.updater(data)
+          };
         default:
           throw new Error(`Invalid action "${action.type}" in state "${data.state}"`);
       }
@@ -262,17 +271,17 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     }
   };
 
+  // Handle initial load and subsequent reloads on filterText changes
   useEffect(() => {
     dispatchFetch({type: 'loading'}, load);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [data.filterText]);
 
   let filteredItems = useMemo(() => {
     return filterFn ? data.items.filter(item => filterFn(item, data.filterText)) : data.items
   }, [data.items, data.filterText, filterFn]);
 
   return {
-    // items: data.items,
     items: filteredItems,
     selectedKeys: data.selectedKeys,
     sortDescriptor: data.sortDescriptor,
