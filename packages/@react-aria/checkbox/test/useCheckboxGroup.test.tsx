@@ -10,21 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaCheckboxGroupProps, AriaCheckboxProps} from '@react-types/checkbox';
+import {AriaCheckboxGroupItemProps, AriaCheckboxGroupProps} from '@react-types/checkbox';
 import {CheckboxGroupState, useCheckboxGroupState} from '@react-stately/checkbox';
 import React, {useRef} from 'react';
 import {render} from '@testing-library/react';
 import {useCheckboxGroup, useCheckboxGroupItem} from '../';
 import userEvent from '@testing-library/user-event';
 
-function Checkbox({checkboxGroupState, ...props}: AriaCheckboxProps & { checkboxGroupState: CheckboxGroupState }) {
+function Checkbox({checkboxGroupState, ...props}: AriaCheckboxGroupItemProps & { checkboxGroupState: CheckboxGroupState }) {
   const ref = useRef<HTMLInputElement>();
   const {children} = props;
   const {inputProps} = useCheckboxGroupItem(props, checkboxGroupState, ref);
   return <label>{children}<input ref={ref} {...inputProps} /></label>;
 }
 
-function CheckboxGroup({groupProps, checkboxProps}: {groupProps: AriaCheckboxGroupProps, checkboxProps: AriaCheckboxProps[]}) {
+function CheckboxGroup({groupProps, checkboxProps}: {groupProps: AriaCheckboxGroupProps, checkboxProps: AriaCheckboxGroupItemProps[]}) {
   const state = useCheckboxGroupState(groupProps);
   const {groupProps: checkboxGroupProps, labelProps} = useCheckboxGroup(groupProps, state);
   return (
