@@ -146,10 +146,6 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
     UNSAFE_className: classNames(
       textfieldStyles,
       'spectrum-Textfield-validationIcon',
-      {
-        'is-invalid': validationState === 'invalid',
-        'is-valid': validationState === 'valid'
-      },
       classNames(
         styles,
         'spectrum-InputGroup-input-validationIcon'
@@ -200,7 +196,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
             {
               'spectrum-InputGroup--quiet': isQuiet,
               'is-disabled': isDisabled,
-              'is-invalid': validationState === 'invalid',
+              'spectrum-InputGroup--invalid': validationState === 'invalid',
               'is-hovered': isHovered
             },
             classNames(
@@ -216,9 +212,9 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
               textfieldStyles,
               'spectrum-Textfield',
               {
-                'is-invalid': validationState === 'invalid',
-                'is-valid': validationState === 'valid',
-                'is-loading': isLoading,
+                'spectrum-Textfield--invalid': validationState === 'invalid',
+                'spectrum-Textfield--valid': validationState === 'valid',
+                'spectrum-Textfield--loading': isLoading,
                 'spectrum-Textfield--quiet': isQuiet
               },
               classNames(
@@ -271,7 +267,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
                 'spectrum-FieldButton--quiet': isQuiet,
                 'is-active': isPressed,
                 'is-disabled': isDisabled,
-                'is-invalid': validationState === 'invalid',
+                'spectrum-FieldButton--invalid': validationState === 'invalid',
                 'is-hovered': isHovered
               },
               classNames(
@@ -410,9 +406,9 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
               'spectrum-Search',
               'spectrum-Textfield',
               {
-                'is-invalid': validationState === 'invalid',
-                'is-valid': validationState === 'valid',
-                'is-loading': isLoadingInitial
+                'spectrum-Search--invalid': validationState === 'invalid',
+                'spectrum-Search--valid': validationState === 'valid',
+                'spectrum-Search--loading': isLoadingInitial
               },
               classNames(
                 comboboxStyles,

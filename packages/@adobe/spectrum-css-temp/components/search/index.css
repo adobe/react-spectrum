@@ -35,15 +35,15 @@ governing permissions and limitations under the License.
     padding-inline-end: var(--spectrum-search-quiet-padding-right);
   }
 
-  &.is-invalid .spectrum-ClearButton {
+  &.spectrum-Search--invalid .spectrum-ClearButton {
     inset-inline-end: calc(var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-padding-x));
   }
 
-  &.is-valid .spectrum-ClearButton {
+  &.spectrum-Search--valid .spectrum-ClearButton {
     inset-inline-end: calc(var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-padding-x) / 2 + var(--spectrum-global-dimension-size-150));
   }
 
-  &.is-loading .spectrum-ClearButton {
+  &.spectrum-Search--loading .spectrum-ClearButton {
     inset-inline-end: calc(var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-padding-x));
   }
 }
@@ -71,15 +71,15 @@ governing permissions and limitations under the License.
     -webkit-appearance: none;
   }
 
-  .spectrum-Textfield.spectrum-Search.is-invalid & {
+  .spectrum-Textfield.spectrum-Search--invalid & {
     padding-inline-end: calc(var(--spectrum-search-padding-right) + var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
-  .spectrum-Textfield.spectrum-Search.is-valid & {
+  .spectrum-Textfield.spectrum-Search--valid & {
     padding-inline-end: calc(var(--spectrum-search-padding-right) + var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
-  .spectrum-Textfield.spectrum-Search.is-loading & {
+  .spectrum-Textfield.spectrum-Search--loading & {
     padding-inline-end: calc(var(--spectrum-search-padding-right) + var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 }

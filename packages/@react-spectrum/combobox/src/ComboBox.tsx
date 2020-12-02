@@ -185,7 +185,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
             {
               'spectrum-InputGroup--quiet': isQuiet,
               'is-disabled': isDisabled,
-              'is-invalid': validationState === 'invalid',
+              'spectrum-InputGroup--invalid': validationState === 'invalid',
               'is-hovered': isHovered
             },
             className

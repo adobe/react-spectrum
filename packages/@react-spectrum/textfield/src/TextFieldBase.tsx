@@ -108,10 +108,6 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     UNSAFE_className: classNames(
       styles,
       'spectrum-Textfield-validationIcon',
-      {
-        'is-invalid': isInvalid,
-        'is-valid': validationState === 'valid'
-      },
       validationIconClassName
     )
   });
@@ -137,9 +133,9 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
           styles,
           'spectrum-Textfield',
           {
-            'is-invalid': isInvalid,
-            'is-valid': validationState === 'valid',
-            'is-loading': isLoading,
+            'spectrum-Textfield--invalid': isInvalid,
+            'spectrum-Textfield--valid': validationState === 'valid',
+            'spectrum-Textfield--loading': isLoading,
             'spectrum-Textfield--quiet': isQuiet,
             'spectrum-Textfield--multiline': multiLine
           }

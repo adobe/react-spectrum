@@ -293,7 +293,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     if (!filterFn) {
       dispatchFetch({type: 'loading'}, load);
     }
-  }, [data.filterText, filterFn]);
+  }, [data.filterText, filterFn, load, dispatchFetch]);
 
   let filteredItems = useMemo(
     () => filterFn ? data.items.filter(item => filterFn(item, data.filterText)) : data.items,

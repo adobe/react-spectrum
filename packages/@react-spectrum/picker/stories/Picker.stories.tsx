@@ -487,7 +487,7 @@ storiesOf('Picker', module)
   .add(
     'isLoading more',
     () => (
-      <Picker label="Test" isLoading isOpen items={flatOptions}>
+      <Picker label="Test" isLoading items={flatOptions}>
         {item => <Item>{item.name}</Item>}
       </Picker>
     )
