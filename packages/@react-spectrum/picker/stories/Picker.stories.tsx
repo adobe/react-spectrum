@@ -500,7 +500,14 @@ storiesOf('Picker', module)
       <AsyncLoadingExample />
     )
   )
-  .add('resize', () => <ResizePicker />);
+  .add('resize', () => <ResizePicker />)
+  .add('autofocus', () => (
+    <Picker label="Test" autoFocus>
+      <Item key="One">One</Item>
+      <Item key="Two">Two</Item>
+      <Item key="Three">Three</Item>
+    </Picker>
+  ));
 
 function AsyncLoadingExample() {
   interface Pokemon {
