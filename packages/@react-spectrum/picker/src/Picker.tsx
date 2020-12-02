@@ -42,7 +42,7 @@ import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useFormProps} from '@react-spectrum/form';
 import {useMessageFormatter} from '@react-aria/i18n';
-import {useProviderProps} from '@react-spectrum/provider';
+import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSelectState} from '@react-stately/select';
 
 function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
@@ -136,16 +136,26 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
 
   // Measure the width of the button to inform the width of the menu (below).
   let [buttonWidth, setButtonWidth] = useState(null);
+  let {scale} = useProvider();
 
   let onResize = useCallback(() => {
-    let width = unwrappedTriggerRef.current.offsetWidth;
-    setButtonWidth(width);
+    if (!isMobile) {
+      let width = unwrappedTriggerRef.current.offsetWidth;
+      setButtonWidth(width);
+    }
   }, [unwrappedTriggerRef, setButtonWidth]);
 
   useResizeObserver({
     ref: unwrappedTriggerRef,
     onResize: onResize
   });
+
+  useLayoutEffect(() => {
+    if (!isMobile) {
+      let width = unwrappedTriggerRef.current.offsetWidth;
+      setButtonWidth(width);
+    }
+  }, [scale, isMobile, unwrappedTriggerRef, state.selectedKey]);
 
   let overlay;
   if (isMobile) {

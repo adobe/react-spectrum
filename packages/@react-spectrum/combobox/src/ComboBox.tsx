@@ -12,7 +12,14 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, unwrapDOMRef, useFocusableRef, useIsMobileDevice, useResizeObserver} from '@react-spectrum/utils';
+import {
+  classNames,
+  unwrapDOMRef,
+  useFocusableRef,
+  useIsMobileDevice,
+  useResizeObserver,
+  useUnwrapDOMRef
+} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
@@ -23,14 +30,22 @@ import {MobileComboBox} from './MobileComboBox';
 import {Placement} from '@react-types/overlays';
 import {Popover} from '@react-spectrum/overlays';
 import {PressResponder, useHover} from '@react-aria/interactions';
-import React, {InputHTMLAttributes, ReactElement, RefObject, useCallback, useRef, useState} from 'react';
+import React, {
+  InputHTMLAttributes,
+  ReactElement,
+  RefObject,
+  useCallback,
+  useRef,
+  useState
+} from 'react';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter} from '@react-aria/i18n';
-import {useProviderProps} from '@react-spectrum/provider';
+import {useLayoutEffect} from '@react-aria/utils';
+import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
@@ -51,7 +66,9 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   } = props;
 
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
+  let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
   let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
+  let unwrappedButtonRef = useUnwrapDOMRef(buttonRef);
   let listBoxRef = useRef();
   let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
   let domRef = useFocusableRef(ref, inputRef);
@@ -64,8 +81,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     {
       ...props,
       keyboardDelegate: layout,
-      buttonRef: unwrapDOMRef(buttonRef),
-      popoverRef: unwrapDOMRef(popoverRef),
+      buttonRef: unwrappedButtonRef,
+      popoverRef: unwrappedPopoverRef,
       listBoxRef,
       inputRef: inputRef,
       menuTrigger
@@ -74,8 +91,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   );
 
   let {overlayProps, placement} = useOverlayPosition({
-    targetRef: unwrapDOMRef(buttonRef),
-    overlayRef: unwrapDOMRef(popoverRef),
+    targetRef: unwrappedButtonRef,
+    overlayRef: unwrappedPopoverRef,
     scrollRef: listBoxRef,
     placement: `${direction} end` as Placement,
     shouldFlip: shouldFlip,
@@ -85,17 +102,24 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
 
   // Measure the width of the inputfield and the button to inform the width of the menu (below).
   let [menuWidth, setMenuWidth] = useState(null);
+  let {scale} = useProvider();
 
   let onResize = useCallback(() => {
-    let buttonWidth = buttonRef.current.UNSAFE_getDOMNode().offsetWidth;
+    let buttonWidth = unwrappedButtonRef.current.offsetWidth;
     let inputWidth = inputRef.current.offsetWidth;
     setMenuWidth(buttonWidth + inputWidth);
-  }, [buttonRef, inputRef, setMenuWidth]);
+  }, [unwrappedButtonRef, inputRef, setMenuWidth]);
 
   useResizeObserver({
     ref: domRef,
     onResize: onResize
   });
+
+  useLayoutEffect(() => {
+    let buttonWidth = unwrappedButtonRef.current.offsetWidth;
+    let inputWidth = inputRef.current.offsetWidth;
+    setMenuWidth(buttonWidth + inputWidth);
+  }, [scale, unwrappedButtonRef, inputRef]);
 
   let style = {
     ...overlayProps.style,
