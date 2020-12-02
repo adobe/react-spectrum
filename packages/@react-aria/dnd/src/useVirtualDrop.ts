@@ -11,8 +11,8 @@
  */
 
 import * as DragManager from './DragManager';
-import {HTMLAttributes, useLayoutEffect} from 'react';
-import {useId} from '@react-aria/utils';
+import {HTMLAttributes} from 'react';
+import {useDescription} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
 
 interface VirtualDropResult {
@@ -26,7 +26,6 @@ const MESSAGES = {
 };
 
 export function useVirtualDrop(): VirtualDropResult {
-  let descriptionId = useId();
   let modality: string = useInteractionModality() || 'virtual';
   if (modality === 'pointer') {
     modality = 'virtual';
@@ -37,24 +36,11 @@ export function useVirtualDrop(): VirtualDropResult {
   }
 
   let dragSession = DragManager.useDragSession();
-  useLayoutEffect(() => {
-    if (!dragSession) {
-      return;
-    }
-
-    let description = document.createElement('div');
-    description.id = descriptionId;
-    description.style.display = 'none';
-    description.textContent = MESSAGES[modality];
-    document.body.appendChild(description);
-    return () => {
-      description.remove();
-    };
-  }, [modality, descriptionId, dragSession]);
+  let descriptionProps = useDescription(dragSession ? MESSAGES[modality] : '');
 
   return {
     dropProps: {
-      'aria-describedby': dragSession ? descriptionId : undefined,
+      ...descriptionProps,
       // Mobile Safari does not properly bubble click events on elements except links or inputs
       // unless there is an onclick handler bound directly to the element itself. By adding this
       // handler, React will take care of adding that for us, and we are able to handle document

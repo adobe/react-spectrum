@@ -12,11 +12,11 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {DragEndEvent, DragItem, DragMoveEvent, DragStartEvent, DropOperation, PressEvent} from '@react-types/shared';
-import {DragEvent, HTMLAttributes, useEffect, useRef, useState} from 'react';
+import {DragEvent, HTMLAttributes, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
 import ReactDOM from 'react-dom';
-import {useId} from '@react-aria/utils';
+import {useDescription} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
 
 interface DragOptions {
@@ -187,7 +187,6 @@ export function useDrag(options: DragOptions): DragResult {
     setDragging(true);
   };
 
-  let descriptionId = useId();
   let modality: string = useInteractionModality() || 'virtual';
   if (modality === 'pointer') {
     modality = 'virtual';
@@ -197,16 +196,7 @@ export function useDrag(options: DragOptions): DragResult {
     modality = 'touch';
   }
 
-  useEffect(() => {
-    let description = document.createElement('div');
-    description.id = descriptionId;
-    description.style.display = 'none';
-    description.textContent = !isDragging ? MESSAGES[modality].start : MESSAGES[modality].end;
-    document.body.appendChild(description);
-    return () => {
-      description.remove();
-    };
-  }, [isDragging, descriptionId, modality]);
+  let descriptionProps = useDescription(!isDragging ? MESSAGES[modality].start : MESSAGES[modality].end);
 
   return {
     dragProps: {
@@ -216,8 +206,8 @@ export function useDrag(options: DragOptions): DragResult {
       onDragEnd
     },
     dragButtonProps: {
-      onPress,
-      'aria-describedby': descriptionId
+      ...descriptionProps,
+      onPress
     },
     isDragging
   };
