@@ -114,11 +114,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     onResize: onResize
   });
 
-  useLayoutEffect(() => {
-    let buttonWidth = unwrappedButtonRef.current.offsetWidth;
-    let inputWidth = inputRef.current.offsetWidth;
-    setMenuWidth(buttonWidth + inputWidth);
-  }, [scale, unwrappedButtonRef, inputRef]);
+  useLayoutEffect(onResize, [scale, onResize]);
 
   let style = {
     ...overlayProps.style,
