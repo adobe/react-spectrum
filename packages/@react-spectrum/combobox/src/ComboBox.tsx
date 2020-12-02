@@ -14,7 +14,6 @@ import {AriaButtonProps} from '@react-types/button';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {
   classNames,
-  unwrapDOMRef,
   useFocusableRef,
   useIsMobileDevice,
   useResizeObserver,
