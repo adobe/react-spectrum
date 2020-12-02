@@ -122,16 +122,23 @@ function Checkbox(props) {
   let ref = React.useRef();
   let {inputProps} = useCheckboxGroupItem(props, state, ref);
 
+  let isDisabled = state.isDisabled || props.isDisabled;
+  let isSelected = state.isSelected(props.value);
+
   return (
-    <label style={{display: 'block'}}>
-      <input {...inputProps} />
+    <label
+      style={{
+        display: 'block',
+        color: (isDisabled && 'slategray') || (isSelected && 'royalblue'),
+      }}>
+      <input {...inputProps} ref={ref} />
       {children}
     </label>
   );
 }
 
 <CheckboxGroup label="Favorite sports">
-  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="soccer" isDisabled>Soccer</Checkbox>
   <Checkbox value="baseball">Baseball</Checkbox>
   <Checkbox value="basketball">Basketball</Checkbox>
 </CheckboxGroup>
