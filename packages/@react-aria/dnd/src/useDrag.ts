@@ -77,35 +77,38 @@ export function useDrag(options: DragOptions): DragResult {
     // If there is a renderPreview function, use it to render a custom preview image that will
     // appear under the pointer while dragging. If not, the element itself is dragged by the browser.
     if (typeof options.renderPreview === 'function') {
-      // Create an off-screen div to render the preview into.
-      let node = document.createElement('div');
-      node.style.zIndex = '-100';
-      node.style.position = 'absolute';
-      node.style.top = '0';
-      node.style.left = '-100000px';
-      document.body.appendChild(node);
+      let preview = options.renderPreview(items);
+      if (preview) {
+        // Create an off-screen div to render the preview into.
+        let node = document.createElement('div');
+        node.style.zIndex = '-100';
+        node.style.position = 'absolute';
+        node.style.top = '0';
+        node.style.left = '-100000px';
+        document.body.appendChild(node);
 
-      // Call renderPreview to get a JSX element, and render it into the div with React DOM.
-      ReactDOM.render(options.renderPreview(items), node);
+        // Call renderPreview to get a JSX element, and render it into the div with React DOM.
+        ReactDOM.render(preview, node);
 
-      // Compute the offset that the preview will appear under the mouse.
-      // If possible, this is based on the point the user clicked on the target.
-      // If the preview is much smaller, then just use the center point of the preview.
-      let size = node.getBoundingClientRect();
-      let rect = e.currentTarget.getBoundingClientRect();
-      let x = e.clientX - rect.x;
-      let y = e.clientY - rect.y;
-      if (x > size.width || y > size.height) {
-        x = size.width / 2;
-        y = size.height / 2;
+        // Compute the offset that the preview will appear under the mouse.
+        // If possible, this is based on the point the user clicked on the target.
+        // If the preview is much smaller, then just use the center point of the preview.
+        let size = node.getBoundingClientRect();
+        let rect = e.currentTarget.getBoundingClientRect();
+        let x = e.clientX - rect.x;
+        let y = e.clientY - rect.y;
+        if (x > size.width || y > size.height) {
+          x = size.width / 2;
+          y = size.height / 2;
+        }
+
+        e.dataTransfer.setDragImage(node, x, y);
+
+        // Remove the preview from the DOM after a frame so the browser has time to paint.
+        requestAnimationFrame(() => {
+          document.body.removeChild(node);
+        });
       }
-
-      e.dataTransfer.setDragImage(node, x, y);
-
-      // Remove the preview from the DOM after a frame so the browser has time to paint.
-      requestAnimationFrame(() => {
-        document.body.removeChild(node);
-      });
     }
 
     if (typeof options.onDragStart === 'function') {
