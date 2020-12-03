@@ -11,8 +11,12 @@
  */
 
 import docStyles from './docs.css';
+import {Modal} from '@react-spectrum/overlays';
 import path from 'path';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {theme} from '@react-spectrum/theme-default';
+import {usePress} from '@react-aria/interactions';
 
 export const ImageContext = React.createContext();
 
@@ -64,19 +68,11 @@ export function Video({src, ...otherProps}) {
   );
 }
 
-import {Modal} from '@react-spectrum/overlays';
-import {usePress} from '@react-aria/interactions';
-import {Provider} from '@react-spectrum/provider'
-import {theme} from '@react-spectrum/theme-default';
-
 export function ImageModal({children}) {
   let [trigger, contents] = React.Children.toArray(children);
   let [isOpen, setOpen] = React.useState(false);
-
   let {pressProps} = usePress({
-    onPress: () => {
-      setOpen(true)
-    }
+    onPress: () => setOpen(true)
   });
 
   trigger = React.cloneElement(trigger, pressProps);
@@ -87,5 +83,5 @@ export function ImageModal({children}) {
         {contents}
       </Modal>
     </Provider>
-  )
+  );
 }
