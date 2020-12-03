@@ -5,18 +5,18 @@ orbs:
 executors:
   default-executor:
     docker:
-      - image: cimg/node:13.7
+      - image: cimg/node:15.3
     working_directory: ~/react-spectrum
 
   large-executor:
     docker:
-      - image: cimg/node:13.7
+      - image: cimg/node:15.3
     resource_class: large
     working_directory: ~/react-spectrum
 
   xlarge-executor:
     docker:
-      - image: cimg/node:13.7
+      - image: cimg/node:15.3
     resource_class: xlarge
     working_directory: ~/react-spectrum
 

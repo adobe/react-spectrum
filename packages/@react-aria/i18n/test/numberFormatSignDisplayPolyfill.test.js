@@ -16,7 +16,7 @@ function verify(locale, options, signDisplay, v) {
   let a = new Intl.NumberFormat(locale, options);
   let b = new Intl.NumberFormat(locale, {...options, signDisplay});
 
-  expect(b.format(v)).toBe(numberFormatSignDisplayPolyfill(a, signDisplay, v));
+  expect(numberFormatSignDisplayPolyfill(a, signDisplay, v)).toBe(b.format(v));
 }
 
 let signDisplayValues = ['always', 'auto', 'never', 'exceptZero'];
