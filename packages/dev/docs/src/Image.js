@@ -63,3 +63,29 @@ export function Video({src, ...otherProps}) {
     <video src={url} playsInline className={docStyles.video} {...otherProps} />
   );
 }
+
+import {Modal} from '@react-spectrum/overlays';
+import {usePress} from '@react-aria/interactions';
+import {Provider} from '@react-spectrum/provider'
+import {theme} from '@react-spectrum/theme-default';
+
+export function ImageModal({children}) {
+  let [trigger, contents] = React.Children.toArray(children);
+  let [isOpen, setOpen] = React.useState(false);
+
+  let {pressProps} = usePress({
+    onPress: () => {
+      setOpen(true)
+    }
+  });
+
+  trigger = React.cloneElement(trigger, pressProps);
+  return (
+    <Provider theme={theme}>
+      {trigger}
+      <Modal isDismissable isOpen={isOpen} onClose={() => setOpen(false)} UNSAFE_style={{overflow: 'scroll'}}>
+        {contents}
+      </Modal>
+    </Provider>
+  )
+}

@@ -95,7 +95,21 @@ looks like a combo box. Tapping the button opens the tray that contains the actu
 Just like browsers, screen readers can be quite varied in behavior and may require deliberate tooling to ensure a consistent degree of functionality. While automated accessibility tools can be useful for ensuring that your component meets baseline accessibility guidelines,
 manual testing is irreplaceable for surfacing these behavioral differences, illustrated in part by the image below.
 
-<Image src={screenreaderSpreadsheetImageUrl} alt="Screenshot of ComboBox screen reader vs browser test matrix" style={{maxWidth: 'min(100%, 780px)', display: 'block', margin: '20px auto'}} />
+```tsx import
+import screenreaderSpreadsheetImageUrl from 'url:../assets/screenreader-spreadsheet-combobox.png';
+import {Image, ImageContext, ImageModal} from '@react-spectrum/docs';
+
+ReactDOM.render((
+  <ImageContext.Provider value="">
+    <ImageModal>
+      <Image src={screenreaderSpreadsheetImageUrl} alt="Screenshot of ComboBox screen reader vs browser test matrix" style={{maxWidth: 'min(100%, 780px)', display: 'block', margin: '20px auto', cursor: 'zoom-in'}} />
+      <Image src={screenreaderSpreadsheetImageUrl} alt="Screenshot of ComboBox screen reader vs browser test matrix" style={{maxWidth: 'initial'}} />
+    </ImageModal>
+  </ImageContext.Provider>
+), document.getElementById('spreadsheet-image'));
+```
+
+<div id="spreadsheet-image" />
 
 #### NVDA
 
@@ -121,7 +135,7 @@ we only trigger the LiveAnnouncer on Apple devices to avoid announcement overlap
 
 If you are interested in using this LiveAnnouncer yourself, check out `LiveAnnouncer` in `@react-aria/live-announcer`. Otherwise, the `useComboBox` hook provides you with all of the custom messaging out of the box. See the video below for a sneak peek!
 
-<Video src={comboboxAccessibilityUrl} alt="Demo of VoiceOver announcement in ComboBox" style={{maxWidth: 'min(90%, 700px)', display: 'block', margin: '20px auto'}} />
+<Video src={comboboxAccessibilityUrl} alt="Demo of VoiceOver announcement in ComboBox" style={{maxWidth: 'min(90%, 700px)', display: 'block', margin: '20px auto'}} controls />
 
 ## Conclusion
 
