@@ -11,10 +11,14 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import Add from '@spectrum-icons/workflow/Add';
+import Alert from '@spectrum-icons/workflow/Alert';
+import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {ComboBox, Item, Section} from '../';
 import Copy from '@spectrum-icons/workflow/Copy';
+import Draw from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -102,6 +106,36 @@ storiesOf('ComboBox', module)
             {(item: any) => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
+      </ComboBox>
+    )
+  )
+  .add(
+    'complex items',
+    () => (
+      <ComboBox label="Select action">
+        <Item textValue="Add to queue">
+          <Add />
+          <Text>Add to queue</Text>
+          <Text slot="description">Add to current watch queue.</Text>
+        </Item>
+        <Item textValue="Add review">
+          <Draw />
+          <Text>Add review</Text>
+          <Text slot="description">Post a review for the episode.</Text>
+        </Item>
+        <Item textValue="Subscribe to series">
+          <Bell />
+          <Text>Subscribe to series</Text>
+          <Text slot="description">
+            Add series to your subscription list and be notified when a new episode
+            airs.
+          </Text>
+        </Item>
+        <Item textValue="Report">
+          <Alert />
+          <Text>Report</Text>
+          <Text slot="description">Report an issue/violation.</Text>
+        </Item>
       </ComboBox>
     )
   )
