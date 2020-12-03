@@ -185,6 +185,7 @@ export function useHover(props: HoverProps): HoverResult {
 
       // React won't fire onMouseEnter on a button if the previous target for onMouseLeave was a disabled button
       // https://github.com/facebook/react/issues/10109
+      // this appears to be fixed in react 17
       hoverProps.onMouseMove = (e) => {
         if (!state.isHovered) {
           triggerHoverStart(e, 'mouse');
