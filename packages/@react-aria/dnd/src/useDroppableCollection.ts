@@ -15,6 +15,7 @@ import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {HTMLAttributes, Key, RefObject, useEffect, useRef} from 'react';
 import {mergeProps} from '@react-aria/utils';
+import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
 import {useDroppableCollectionId} from './utils';
 
@@ -37,14 +38,16 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
   localState.props = props;
   localState.state = state;
 
+  let autoScroll = useAutoScroll(ref);
   let {dropProps} = useDrop({
     ref,
     onDropEnter(e) {
       let target = props.getDropTargetFromPoint(e.x, e.y);
       state.setTarget(target);
     },
-    onDropMove() {
+    onDropMove(e) {
       state.setTarget(localState.nextTarget);
+      autoScroll.move(e.x, e.y);
     },
     getDropOperationForPoint(types, allowedOperations, x, y) {
       let target = props.getDropTargetFromPoint(x, y);
@@ -55,6 +58,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       }
 
       if (state.isDropTarget(target)) {
+        localState.nextTarget = target;
         return localState.dropOperation;
       }
 
@@ -75,6 +79,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     },
     onDropExit() {
       state.setTarget(null);
+      autoScroll.stop();
     },
     onDropActivate(e) {
       if (state.target?.type === 'item' && state.target?.dropPosition === 'on' && typeof props.onDropActivate === 'function') {

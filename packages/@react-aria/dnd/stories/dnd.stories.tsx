@@ -39,6 +39,11 @@ import {useListBox, useOption} from '@react-aria/listbox';
 import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
 
+let manyItems = [];
+for (let i = 0; i < 20; i++) {
+  manyItems.push({id: '' + i, type: 'item', text: 'Item ' + i});
+}
+
 storiesOf('Drag and Drop', module)
   .add(
     'Default',
@@ -96,7 +101,7 @@ storiesOf('Drag and Drop', module)
   .add(
     'Draggable collection',
     () => (
-      <Flex direction="row" gap="size-200" alignItems="center">
+      <Flex direction="row" gap="size-200" alignItems="center" wrap>
         <DraggableCollectionExample />
         <DroppableListBoxExample />
       </Flex>
@@ -105,9 +110,18 @@ storiesOf('Drag and Drop', module)
   .add(
     'Droppable grid',
     () => (
-      <Flex direction="row" gap="size-200" alignItems="center">
+      <Flex direction="row" gap="size-200" alignItems="center" wrap>
         <DraggableCollectionExample />
         <DroppableGridExample />
+      </Flex>
+    )
+  )
+  .add(
+    'Droppable grid with many items',
+    () => (
+      <Flex direction="row" gap="size-200" alignItems="center" wrap>
+        <DraggableCollectionExample />
+        <DroppableGridExample items={manyItems} />
       </Flex>
     )
   );
@@ -135,8 +149,7 @@ function Draggable() {
     <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
       <div
         ref={ref}
-        {...dragProps}
-        {...buttonProps as React.HTMLAttributes<HTMLElement>}
+        {...mergeProps(dragProps, buttonProps)}
         className={classNames(dndStyles, 'draggable', {'is-dragging': isDragging})}>
         <ShowMenu size="XS" />
         <span>Drag me</span>

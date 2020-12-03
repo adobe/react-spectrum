@@ -116,7 +116,10 @@
   flex-direction: column;
   outline: none;
   border-radius: var(--spectrum-alias-border-radius-regular);
-  padding: 8px;
+  padding: 8px 12px;
+  max-height: 300px;
+  overflow: auto;
+  position: relative;
 
   &.is-drop-target {
     background-color: var(--spectrum-dropzone-background-color-selected-hover);

@@ -29,10 +29,10 @@ import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
-export function DroppableGridExample() {
-  let id = React.useRef(3);
+export function DroppableGridExample(props) {
+  let id = React.useRef(props.items?.length || 3);
   let list = useListData({
-    initialItems: [
+    initialItems: props.items || [
       {id: '1', type: 'folder', text: 'One'},
       {id: '2', type: 'item', text: 'Two'},
       {id: '3', type: 'folder', text: 'Three'}
