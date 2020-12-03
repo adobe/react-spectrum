@@ -1,12 +1,17 @@
 import {action} from '@storybook/addon-actions';
+import {ErrorBoundary} from '@react-spectrum/story-utils';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {StoryMultiSlider, StoryThumb} from './StoryMultiSlider';
 import {StoryRangeSlider} from './StoryRangeSlider';
 import {StorySlider} from './StorySlider';
 
+let message = 'Your browser may not support this set of format options.';
 
 storiesOf('Slider (hooks)', module)
+  .addDecorator(story => (
+    <ErrorBoundary message={message}>{story()}</ErrorBoundary>
+  ))
   .add(
     'single',
     () => <StorySlider label="Size" onChange={action('onChange')} onChangeEnd={action('onChangeEnd')} showTip />
