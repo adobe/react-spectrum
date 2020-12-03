@@ -183,7 +183,8 @@ export function useHover(props: HoverProps): HoverResult {
         triggerHoverEnd(e, 'mouse');
       };
 
-      // Safari won't fire onMouseEnter in certain cases
+      // React won't fire onMouseEnter on a button if the previous target for onMouseLeave was a disabled button
+      // https://github.com/facebook/react/issues/10109
       hoverProps.onMouseMove = (e) => {
         if (!state.isHovered) {
           triggerHoverStart(e, 'mouse');
