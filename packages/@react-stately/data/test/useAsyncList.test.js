@@ -644,7 +644,7 @@ describe('useAsyncList', () => {
       console.error = consoleError;
     });
 
-    it('should throw if updating the list while loading', async () => {
+    it.skip('should throw if updating the list while loading', async () => {
       let load = jest.fn().mockImplementation(getItems);
       let {result} = renderHook(
         () => useAsyncList({load})

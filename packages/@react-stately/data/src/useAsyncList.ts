@@ -11,7 +11,7 @@
  */
 
 import {createListActions, ListData, ListState} from './useListData';
-import {Key, Reducer, useEffect, useMemo, useReducer} from 'react';
+import {Key, Reducer, useEffect, useMemo, useReducer, useRef} from 'react';
 import {Selection, SortDescriptor} from '@react-types/shared';
 
 interface AsyncListOptions<T, C> {
@@ -46,7 +46,7 @@ interface AsyncListLoadOptions<T, C> {
   signal: AbortSignal,
   /** The pagination cursor returned from the last page load. */
   cursor?: C,
-  // TODO: ask if this is what we want?
+  /** The current filter text used to perform server side filtering. */
   filterText?: string
 }
 
@@ -61,8 +61,7 @@ interface AsyncListStateUpdate<T, C> {
   cursor?: C
 }
 
-// TODO: figure out if we want filteredItems here
-interface AsyncListState<T, C> extends Omit<ListState<T>, 'filteredItems'> {
+interface AsyncListState<T, C> extends ListState<T> {
   state: 'loading' | 'sorting' | 'loadingMore' | 'error' | 'idle',
   items: T[],
   // disabledKeys?: Iterable<Key>,
@@ -281,22 +280,18 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     }
   };
 
-  // Handle initial load
-  useEffect(() => {
-    dispatchFetch({type: 'loading'}, load);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Reload on changes to filter text but only if performing server side filtering
+  let isInitialLoad = useRef(true);
+  // Handle initial load and reload on changes to filter text but only if performing server side filtering
   // Kinda weird since it will trigger a reload when user selects a option
   useEffect(() => {
-    if (!filterFn) {
+    if (isInitialLoad.current || !filterFn) {
       dispatchFetch({type: 'loading'}, load);
     }
-  }, [data.filterText, filterFn, load, dispatchFetch]);
+    isInitialLoad.current = false;
+  }, [data.filterText, filterFn, load]);
 
   let filteredItems = useMemo(
-    () => filterFn ? data.items.filter(item => filterFn(item, data.filterText)) : data.items,
+    () => !!filterFn ? data.items.filter(item => filterFn(item, data.filterText)) : data.items,
     [data.items, data.filterText, filterFn]);
 
   return {
