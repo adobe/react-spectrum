@@ -13,7 +13,7 @@ import comboboxVisualViewportUrl from 'url:../assets/combobox-visual-viewport.mp
 import comboboxExampleImageUrl from 'url:../assets/combobox-example.png';
 import screenreaderSpreadsheetImageUrl from 'url:../assets/screenreader-spreadsheet-combobox.png';
 
-import {BlogPostLayout, Video, Image} from '@react-spectrum/docs';
+import {BlogPostLayout, Video, Image, ImageModal} from '@react-spectrum/docs';
 export default BlogPostLayout;
 
 ---
@@ -99,13 +99,20 @@ manual testing is irreplaceable for surfacing these behavioral differences, illu
 import screenreaderSpreadsheetImageUrl from 'url:../assets/screenreader-spreadsheet-combobox.png';
 import {Image, ImageContext, ImageModal} from '@react-spectrum/docs';
 
+function Blah() {
+  let publicUrl = React.useContext(ImageContext);
+  return (
+    <ImageContext.Provider value={publicUrl || ''}>
+      <ImageModal>
+        <img src={screenreaderSpreadsheetImageUrl} alt="Screenshot of ComboBox screen reader vs browser test matrix" style={{maxWidth: 'min(100%, 780px)', display: 'block', margin: '20px auto', cursor: 'zoom-in'}} />
+        <img src={screenreaderSpreadsheetImageUrl} alt="Screenshot of ComboBox screen reader vs browser test matrix" style={{maxWidth: 'initial'}} />
+      </ImageModal>
+    </ImageContext.Provider>
+  )
+}
+
 ReactDOM.render((
-  <ImageContext.Provider value="">
-    <ImageModal>
-      <Image src={screenreaderSpreadsheetImageUrl} alt="Screenshot of ComboBox screen reader vs browser test matrix" style={{maxWidth: 'min(100%, 780px)', display: 'block', margin: '20px auto', cursor: 'zoom-in'}} />
-      <Image src={screenreaderSpreadsheetImageUrl} alt="Screenshot of ComboBox screen reader vs browser test matrix" style={{maxWidth: 'initial'}} />
-    </ImageModal>
-  </ImageContext.Provider>
+  <Blah />
 ), document.getElementById('spreadsheet-image'));
 ```
 
