@@ -207,15 +207,15 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         // TODO: check if ANY of the options can accept a drop??
         return 'move';
       },
-      onDropEnter(e, drag, target) {
-        if (!target) {
-          target = nextValidTarget(null, drag.items, drag.allowedDropOperations, getNextTarget);
-        }
-
+      onDropEnter(e, drag) {
+        let target = nextValidTarget(null, drag.items, drag.allowedDropOperations, getNextTarget);
         localState.state.setTarget(target);
       },
       onDropExit() {
         localState.state.setTarget(null);
+      },
+      onDropTargetEnter(target) {
+        localState.state.setTarget(target);
       },
       onDropActivate(e) {
         if (

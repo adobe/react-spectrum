@@ -24,8 +24,9 @@ let subscriptions = new Set<() => void>();
 interface DropTarget {
   element: HTMLElement,
   getDropOperation?: (types: string[], allowedOperations: DropOperation[]) => DropOperation,
-  onDropEnter?: (e: DropEnterEvent, dragTarget: DragTarget, target?: DroppableCollectionTarget) => void,
-  onDropExit?: (e: DropExitEvent, target?: DroppableCollectionTarget) => void,
+  onDropEnter?: (e: DropEnterEvent, dragTarget: DragTarget) => void,
+  onDropExit?: (e: DropExitEvent) => void,
+  onDropTargetEnter?: (target?: DroppableCollectionTarget) => void,
   onDropActivate?: (e: DropActivateEvent, target?: DroppableCollectionTarget) => void,
   onDrop?: (e: DropEvent, target?: DroppableCollectionTarget) => void,
   onKeyDown?: (e: KeyboardEvent, dragTarget: DragTarget) => void
@@ -363,36 +364,43 @@ class DragSession {
   }
 
   setCurrentDropTarget(dropTarget: DropTarget, item?: DroppableItem) {
-    if (dropTarget === this.currentDropTarget && item === this.currentDropItem) {
-      return;
-    }
-
-    if (this.currentDropTarget && typeof this.currentDropTarget.onDropExit === 'function') {
-      let rect = this.currentDropTarget.element.getBoundingClientRect();
-      this.currentDropTarget.onDropExit({
-        type: 'dropexit',
-        x: rect.left + (rect.width / 2),
-        y: rect.top + (rect.height / 2)
-      }, this.currentDropItem?.target);
-    }
-
-    if (dropTarget) {
-      if (typeof dropTarget.onDropEnter === 'function') {
-        let rect = dropTarget.element.getBoundingClientRect();
-        dropTarget.onDropEnter({
-          type: 'dropenter',
+    if (dropTarget !== this.currentDropTarget) {
+      if (this.currentDropTarget && typeof this.currentDropTarget.onDropExit === 'function') {
+        let rect = this.currentDropTarget.element.getBoundingClientRect();
+        this.currentDropTarget.onDropExit({
+          type: 'dropexit',
           x: rect.left + (rect.width / 2),
           y: rect.top + (rect.height / 2)
-        }, this.dragTarget, item?.target);
+        });
       }
 
-      if (dropTarget !== this.currentDropTarget) {
-        dropTarget.element.focus();
+      if (dropTarget) {
+        if (typeof dropTarget.onDropEnter === 'function') {
+          let rect = dropTarget.element.getBoundingClientRect();
+          dropTarget.onDropEnter({
+            type: 'dropenter',
+            x: rect.left + (rect.width / 2),
+            y: rect.top + (rect.height / 2)
+          }, this.dragTarget);
+        }
+
+        if (!item) {
+          dropTarget?.element.focus();
+        }
       }
+
+      this.currentDropTarget = dropTarget;
     }
 
-    this.currentDropTarget = dropTarget;
-    this.currentDropItem = item;
+
+    if (item !== this.currentDropItem) {
+      if (item && typeof this.currentDropTarget.onDropTargetEnter === 'function') {
+        this.currentDropTarget.onDropTargetEnter(item?.target);
+      }
+
+      item?.element.focus();
+      this.currentDropItem = item;
+    }
   }
 
   end() {

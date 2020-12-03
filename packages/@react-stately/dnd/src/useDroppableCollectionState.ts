@@ -26,6 +26,10 @@ export function useDroppableCollectionState(props: DroppableCollectionProps): Dr
   return {
     target,
     setTarget(newTarget) {
+      if (this.isDropTarget(newTarget)) {
+        return;
+      }
+
       if (target && typeof props.onDropExit === 'function') {
         props.onDropExit({
           type: 'dropexit',
@@ -47,6 +51,10 @@ export function useDroppableCollectionState(props: DroppableCollectionProps): Dr
       setTarget(newTarget);
     },
     isDropTarget(dropTarget) {
+      if (!dropTarget) {
+        return !target;
+      }
+
       switch (dropTarget.type) {
         case 'root':
           return target?.type === 'root';
