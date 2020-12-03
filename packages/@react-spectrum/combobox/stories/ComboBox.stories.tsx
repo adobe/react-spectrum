@@ -543,9 +543,6 @@ function AsyncLoadingExample() {
     async load({signal, cursor, filterText}) {
       let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
-      // The API is too fast sometimes, so make it take longer so we can see the spinner
-      await new Promise(resolve => setTimeout(resolve, cursor ? 500 : 1000));
-
       return {
         items: json.results,
         cursor: json.next

@@ -288,10 +288,11 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
       dispatchFetch({type: 'loading'}, load);
     }
     isInitialLoad.current = false;
-  }, [data.filterText, filterFn, load]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.filterText, filterFn]);
 
   let filteredItems = useMemo(
-    () => !!filterFn ? data.items.filter(item => filterFn(item, data.filterText)) : data.items,
+    () => filterFn ? data.items.filter(item => filterFn(item, data.filterText)) : data.items,
     [data.items, data.filterText, filterFn]);
 
   return {
