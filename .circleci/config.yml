@@ -1,13 +1,28 @@
 version: 2.1
 orbs:
   azure-cli: circleci/azure-cli@1.1.0
+
+executors:
+  default-executor:
+    docker:
+      - image: cimg/node:13
+    working_directory: ~/react-spectrum
+
+  large-executor:
+    docker:
+      - image: cimg/node:13
+    resource_class: large
+    working_directory: ~/react-spectrum
+
+  xlarge-executor:
+    docker:
+      - image: cimg/node:13
+    resource_class: xlarge
+    working_directory: ~/react-spectrum
+
 jobs:
   install:
-    docker:
-      - image: circleci/node:12
-    resource_class: large
-
-    working_directory: ~/react-spectrum
+    executor: large-executor
     steps:
       - checkout
       - restore_cache:
@@ -39,10 +54,7 @@ jobs:
           key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
   test:
-    docker:
-      - image: circleci/node:12
-
-    working_directory: ~/react-spectrum
+    executor: default-executor
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
@@ -52,10 +64,7 @@ jobs:
           command: yarn ci-test
 
   test_17:
-    docker:
-      - image: circleci/node:12
-
-    working_directory: ~/react-spectrum
+    executor: default-executor
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
@@ -65,10 +74,7 @@ jobs:
           command: yarn ci-test-17
 
   lint:
-    docker:
-      - image: circleci/node:12
-
-    working_directory: ~/react-spectrum
+    executor: default-executor
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
@@ -78,11 +84,7 @@ jobs:
           command: yarn lint
 
   storybook:
-    docker:
-      - image: circleci/node:12
-    resource_class: large
-
-    working_directory: ~/react-spectrum
+    executor: large-executor
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
@@ -97,11 +99,7 @@ jobs:
             - '*/storybook/'
 
   storybook-17:
-    docker:
-      - image: circleci/node:12
-    resource_class: large
-
-    working_directory: ~/react-spectrum
+    executor: large-executor
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
@@ -116,11 +114,7 @@ jobs:
             - '*/storybook-17/'
 
   docs:
-    docker:
-      - image: circleci/node:12
-    resource_class: xlarge
-
-    working_directory: ~/react-spectrum
+    executor: xlarge-executor
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
@@ -135,11 +129,7 @@ jobs:
             - '*/docs/'
 
   docs-production:
-    docker:
-      - image: circleci/node:12
-    resource_class: large
-
-    working_directory: ~/react-spectrum
+    executor: large-executor
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
@@ -175,9 +165,7 @@ jobs:
           command: az storage blob upload-batch -d "\$web" -s /tmp/dist/production/docs --account-name reactspectrum
 
   comment:
-    docker:
-      - image: circleci/node:12
-    working_directory: ~/react-spectrum
+    executor: default-executor
     steps:
       - checkout
       - restore_cache:
@@ -191,10 +179,7 @@ jobs:
             fi
 
   publish-nightly:
-    docker:
-      - image: circleci/node:12
-    resource_class: xlarge
-    working_directory: ~/react-spectrum
+    executor: xlarge-executor
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
