@@ -77,6 +77,7 @@ export function DroppableListBox(props) {
   let keyboardDelegate = new ListKeyboardDelegate(state.collection, new Set(), ref);
 
   let dropState = useDroppableCollectionState({
+    collection: state.collection,
     getDropOperation(target, types, allowedOperations) {
       if (target.type === 'root') {
         return 'move';

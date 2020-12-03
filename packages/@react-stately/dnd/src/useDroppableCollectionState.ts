@@ -10,8 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {DropOperation, DroppableCollectionProps, DropTarget} from '@react-types/shared';
+import {Collection, DropOperation, DroppableCollectionProps, DropTarget, ItemDropTarget} from '@react-types/shared';
 import {useState} from 'react';
+
+interface DroppableCollectionStateOptions extends DroppableCollectionProps {
+  collection: Collection<unknown>
+}
 
 export interface DroppableCollectionState {
   target: DropTarget,
@@ -20,8 +24,18 @@ export interface DroppableCollectionState {
   getDropOperation(target: DropTarget, types: string[], allowedOperations: DropOperation[]): DropOperation
 }
 
-export function useDroppableCollectionState(props: DroppableCollectionProps): DroppableCollectionState  {
+export function useDroppableCollectionState(props: DroppableCollectionStateOptions): DroppableCollectionState  {
   let [target, setTarget] = useState<DropTarget>(null);
+
+  let getOppositeTarget = (target: ItemDropTarget): ItemDropTarget => {
+    if (target.dropPosition === 'before') {
+      let key = props.collection.getKeyBefore(target.key);
+      return key != null ? {type: 'item', key, dropPosition: 'after'} : null;
+    } else if (target.dropPosition === 'after') {
+      let key = props.collection.getKeyAfter(target.key);
+      return key != null ? {type: 'item', key, dropPosition: 'before'} : null;
+    }
+  };
 
   return {
     target,
@@ -51,16 +65,24 @@ export function useDroppableCollectionState(props: DroppableCollectionProps): Dr
       setTarget(newTarget);
     },
     isDropTarget(dropTarget) {
-      if (!dropTarget) {
-        return !target;
+      if (isEqualDropTarget(dropTarget, target)) {
+        return true;
       }
 
-      switch (dropTarget.type) {
-        case 'root':
-          return target?.type === 'root';
-        case 'item':
-          return target?.type === 'item' && target?.key === dropTarget.key && target?.dropPosition === dropTarget.dropPosition;
+      // Check if the targets point at the same point between two items, one referring before, and the other after.
+      if (
+        dropTarget?.type === 'item' &&
+        target?.type === 'item' &&
+        dropTarget.key !== target.key &&
+        dropTarget.dropPosition !== target.dropPosition &&
+        dropTarget.dropPosition !== 'on' &&
+        target.dropPosition !== 'on'
+      ) {
+        return isEqualDropTarget(getOppositeTarget(dropTarget), target) ||
+          isEqualDropTarget(dropTarget, getOppositeTarget(target));
       }
+
+      return false;
     },
     getDropOperation(target, types, allowedOperations) {
       return typeof props.getDropOperation === 'function'
@@ -68,4 +90,17 @@ export function useDroppableCollectionState(props: DroppableCollectionProps): Dr
         : allowedOperations[0];
     }
   };
+}
+
+function isEqualDropTarget(a: DropTarget, b: DropTarget) {
+  if (!a) {
+    return !b;
+  }
+
+  switch (a.type) {
+    case 'root':
+      return b?.type === 'root';
+    case 'item':
+      return b?.type === 'item' && b?.key === a.key && b?.dropPosition === a.dropPosition;
+  }
 }

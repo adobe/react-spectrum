@@ -70,7 +70,7 @@ interface RootDropTarget {
   type: 'root'
 }
 
-interface ItemDropTarget {
+export interface ItemDropTarget {
   type: 'item',
   key: Key,
   dropPosition: DropPosition
