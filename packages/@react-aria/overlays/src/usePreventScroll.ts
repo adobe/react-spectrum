@@ -10,21 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, useLayoutEffect} from '@react-aria/utils';
+import {chain, getScrollParent, isIOS, useLayoutEffect} from '@react-aria/utils';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
   isDisabled?: boolean
 }
-
-const isMobileSafari =
-  typeof window !== 'undefined' && window.navigator != null
-    ? /AppleWebKit/.test(window.navigator.userAgent) && (
-      /^(iPhone|iPad)$/.test(window.navigator.platform) ||
-      // iPadOS 13 lies and says its a Mac, but we can distinguish by detecting touch support.
-      (window.navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-    )
-    : false;
 
 // @ts-ignore
 const visualViewport = typeof window !== 'undefined' && window.visualViewport;
@@ -55,7 +46,7 @@ export function usePreventScroll(options: PreventScrollOptions = {}) {
       return;
     }
 
-    if (isMobileSafari) {
+    if (isIOS()) {
       return preventScrollMobileSafari();
     } else {
       return preventScrollStandard();
