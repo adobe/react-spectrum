@@ -112,8 +112,6 @@
 }
 
 .droppable-collection {
-  display: flex;
-  flex-direction: column;
   outline: none;
   border-radius: var(--spectrum-alias-border-radius-regular);
   padding: 8px 12px;
@@ -124,5 +122,14 @@
   &.is-drop-target {
     background-color: var(--spectrum-dropzone-background-color-selected-hover);
     box-shadow: 0 0 0 2px var(--spectrum-dropzone-border-color-selected-hover);
+  }
+
+  &.is-virtualized {
+    padding: 0;
+    width: calc(var(--spectrum-alias-single-line-width) + 24px);
+
+    > div > div {
+      overflow: visible !important;
+    }
   }
 }

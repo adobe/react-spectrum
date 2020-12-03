@@ -27,17 +27,21 @@ interface DroppableItemResult {
 export function useDroppableItem(options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DroppableItemResult {
   let {dropProps} = useVirtualDrop();
 
-  useEffect(() => DragManager.registerDropItem({
-    element: ref.current,
-    target: options.target,
-    getDropOperation(types, allowedOperations) {
-      return state.getDropOperation(
-        options.target,
-        types,
-        allowedOperations
-      );
+  useEffect(() => {
+    if (ref.current) {
+      return DragManager.registerDropItem({
+        element: ref.current,
+        target: options.target,
+        getDropOperation(types, allowedOperations) {
+          return state.getDropOperation(
+            options.target,
+            types,
+            allowedOperations
+          );
+        }
+      });
     }
-  }), [ref, options.target, state]);
+  }, [ref, options.target, state]);
 
   let dragSession = DragManager.useDragSession();
   let isValidDropTarget = dragSession && state.getDropOperation(
@@ -48,7 +52,7 @@ export function useDroppableItem(options: DroppableItemOptions, state: Droppable
 
   let isDropTarget = state.isDropTarget(options.target);
   useEffect(() => {
-    if (dragSession && isDropTarget) {
+    if (dragSession && isDropTarget && ref.current) {
       ref.current.focus();
     }
   }, [isDropTarget, dragSession, ref]);

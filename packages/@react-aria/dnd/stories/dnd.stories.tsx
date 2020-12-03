@@ -38,6 +38,7 @@ import {useDraggableCollectionState} from '@react-stately/dnd';
 import {useListBox, useOption} from '@react-aria/listbox';
 import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
+import {VirtualizedListBoxExample} from './VirtualizedListBox';
 
 let manyItems = [];
 for (let i = 0; i < 20; i++) {
@@ -122,6 +123,15 @@ storiesOf('Drag and Drop', module)
       <Flex direction="row" gap="size-200" alignItems="center" wrap>
         <DraggableCollectionExample />
         <DroppableGridExample items={manyItems} />
+      </Flex>
+    )
+  )
+  .add(
+    'Virtualized',
+    () => (
+      <Flex direction="row" gap="size-200" alignItems="center" wrap>
+        <DraggableCollectionExample />
+        <VirtualizedListBoxExample items={manyItems} />
       </Flex>
     )
   );
