@@ -73,7 +73,7 @@ for (let image of images) {
   ReactDOM.render(
     <ThemeProvider UNSAFE_className={docsStyle.inlineProvider}>
       <ImageModal>
-        <img ref={ref} src={image.src} className={image.className} alt={image.alt} />
+        <img src={image.src} className={image.className} alt={image.alt} />
         <img src={image.src} alt={image.alt} />
       </ImageModal>
     </ThemeProvider>
