@@ -13,7 +13,7 @@ import comboboxVisualViewportUrl from 'url:../assets/combobox-visual-viewport.mp
 import comboboxExampleImageUrl from 'url:../assets/combobox-example.png';
 import screenreaderSpreadsheetImageUrl from 'url:../assets/screenreader-spreadsheet-combobox.png';
 
-import {BlogPostLayout, Video, Image, ImageModal} from '@react-spectrum/docs';
+import {BlogPostLayout, Video, Image, ExpandableImage} from '@react-spectrum/docs';
 export default BlogPostLayout;
 
 ---
@@ -95,28 +95,9 @@ looks like a combo box. Tapping the button opens the tray that contains the actu
 Just like browsers, screen readers can be quite varied in behavior and may require deliberate tooling to ensure a consistent degree of functionality. While automated accessibility tools can be useful for ensuring that your component meets baseline accessibility guidelines,
 manual testing is irreplaceable for surfacing these behavioral differences, illustrated in part by the image below.
 
-```tsx import
-import screenreaderSpreadsheetImageUrl from 'url:../assets/screenreader-spreadsheet-combobox.png';
-import {Image, ImageContext, ImageModal} from '@react-spectrum/docs';
-
-function Blah() {
-  let publicUrl = React.useContext(ImageContext);
-  return (
-    <ImageContext.Provider value={publicUrl || ''}>
-      <ImageModal>
-        <Image src={screenreaderSpreadsheetImageUrl} alt="Screenshot of ComboBox screen reader vs browser test matrix" style={{maxWidth: 'min(100%, 780px)', display: 'block', margin: '20px auto', cursor: 'zoom-in'}} />
-        <Image src={screenreaderSpreadsheetImageUrl} alt="Screenshot of ComboBox screen reader vs browser test matrix" style={{maxWidth: 'initial'}} />
-      </ImageModal>
-    </ImageContext.Provider>
-  )
-}
-
-ReactDOM.render((
-  <Blah />
-), document.getElementById('spreadsheet-image'));
-```
-
-<div id="spreadsheet-image" />
+<div>
+<ExpandableImage id="blah" src={screenreaderSpreadsheetImageUrl} alt="Screenshot of ComboBox screen reader vs browser test matrix" />
+</div>
 
 #### NVDA
 

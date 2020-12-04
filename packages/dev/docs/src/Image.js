@@ -11,12 +11,8 @@
  */
 
 import docStyles from './docs.css';
-import {Modal} from '@react-spectrum/overlays';
 import path from 'path';
-import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {theme} from '@react-spectrum/theme-default';
-import {usePress} from '@react-aria/interactions';
 
 export const ImageContext = React.createContext();
 
@@ -57,6 +53,17 @@ export function Image({src, ...otherProps}) {
   );
 }
 
+export function ExpandableImage({src, ...otherProps}) {
+  let publicUrl = React.useContext(ImageContext);
+  let baseUrl = publicUrl.replace(/\/$/, '');
+  let url = baseUrl + '/' + path.basename(src);
+
+  return (
+    // eslint-disable-next-line jsx-a11y/alt-text
+    <img src={url} className={docStyles.video} data-img="expand-img" {...otherProps} />
+  );
+}
+
 export function Video({src, ...otherProps}) {
   let publicUrl = React.useContext(ImageContext);
   let baseUrl = publicUrl.replace(/\/$/, '');
@@ -65,23 +72,5 @@ export function Video({src, ...otherProps}) {
   return (
     // eslint-disable-next-line jsx-a11y/media-has-caption
     <video src={url} playsInline className={docStyles.video} {...otherProps} />
-  );
-}
-
-export function ImageModal({children}) {
-  let [trigger, contents] = React.Children.toArray(children);
-  let [isOpen, setOpen] = React.useState(false);
-  let {pressProps} = usePress({
-    onPress: () => setOpen(true)
-  });
-
-  trigger = React.cloneElement(trigger, pressProps);
-  return (
-    <Provider theme={theme}>
-      {trigger}
-      <Modal isDismissable isOpen={isOpen} onClose={() => setOpen(false)} UNSAFE_style={{overflow: 'scroll'}}>
-        {contents}
-      </Modal>
-    </Provider>
   );
 }

@@ -17,12 +17,16 @@ import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import docsStyle from './docs.css';
 import highlightCss from './syntax-highlight.css';
+import {Modal} from '@react-spectrum/overlays';
 import {Pressable} from '@react-aria/interactions';
 import React, {useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {ThemeProvider} from './ThemeSwitcher';
+import {usePress} from '@react-aria/interactions';
 
 let links = document.querySelectorAll('a[data-link]');
+let images = document.querySelectorAll('img[data-img]');
+
 for (let link of links) {
   if (link.closest('[hidden]')) {
     continue;
@@ -44,6 +48,39 @@ for (let link of links) {
   , container);
 
   link.parentNode.replaceChild(container, link);
+}
+
+function ImageModal({children}) {
+  let [trigger, contents] = React.Children.toArray(children);
+  let [isOpen, setOpen] = React.useState(false);
+  let {pressProps} = usePress({
+    onPress: () => setOpen(true)
+  });
+
+  trigger = React.cloneElement(trigger, pressProps);
+  return (
+    <>
+      {trigger}
+      <Modal isDismissable isOpen={isOpen} onClose={() => setOpen(false)} UNSAFE_style={{overflow: 'scroll'}}>
+        {contents}
+      </Modal>
+    </>
+  );
+}
+
+for (let image of images) {
+  let container = document.createElement('span');
+
+  ReactDOM.render(
+    <ThemeProvider UNSAFE_className={docsStyle.inlineProvider}>
+      <ImageModal>
+        <img src={image.src} className={image.className} alt={image.alt} role="button" style={{maxWidth: 'min(100%, 780px)', display: 'block', margin: '20px auto', cursor: 'zoom-in'}} />
+        <img src={image.src} alt={image.alt} />
+      </ImageModal>
+    </ThemeProvider>
+  , container);
+
+  image.parentNode.replaceChild(container, image);
 }
 
 function LinkPopover({id}) {
