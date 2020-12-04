@@ -111,6 +111,10 @@ html, body {
   padding-bottom: 0;
 }
 
+.expandableImage {
+  cursor: zoom-in;
+}
+
 .video {
   max-width: 100%;
   margin: 20px 0;

@@ -74,7 +74,7 @@ for (let image of images) {
   ReactDOM.render(
     <ThemeProvider UNSAFE_className={docsStyle.inlineProvider}>
       <ImageModal>
-        <img src={image.src} className={image.className} alt={image.alt} role="button" style={{maxWidth: 'min(100%, 780px)', display: 'block', margin: '20px auto', cursor: 'zoom-in'}} />
+        <img src={image.src} className={image.className} alt={image.alt} style={image.cssText} />
         <img src={image.src} alt={image.alt} />
       </ImageModal>
     </ThemeProvider>

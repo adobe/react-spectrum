@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import clsx from 'clsx';
 import docStyles from './docs.css';
 import path from 'path';
 import React from 'react';
+
 
 export const ImageContext = React.createContext();
 
@@ -60,7 +62,16 @@ export function ExpandableImage({src, ...otherProps}) {
 
   return (
     // eslint-disable-next-line jsx-a11y/alt-text
-    <img src={url} className={docStyles.video} data-img="expand-img" {...otherProps} />
+    <img
+      src={url}
+      className={
+        clsx(
+          docStyles.video,
+          docStyles.expandableImage
+        )
+      }
+      data-img="expand-img"
+      {...otherProps} />
   );
 }
 
