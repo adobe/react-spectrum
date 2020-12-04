@@ -70,11 +70,13 @@ function ImageModal({children}) {
 
 for (let image of images) {
   let container = document.createElement('span');
+  let url = image.src.replace(/.*\/\/[^\/]*/, '');
+
   ReactDOM.render(
     <ThemeProvider UNSAFE_className={docsStyle.inlineProvider}>
       <ImageModal>
-        <img src={image.src} className={image.className} alt={image.alt} />
-        <img src={image.src} alt={image.alt} />
+        <img src={url} className={image.className} alt={image.alt} />
+        <img src={url} alt={image.alt} />
       </ImageModal>
     </ThemeProvider>
   , container);
