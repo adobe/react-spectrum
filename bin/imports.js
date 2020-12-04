@@ -59,9 +59,9 @@ module.exports = function (context) {
           let depPkg = JSON.parse(fs.readFileSync(depPath, 'utf8'));
 
           if (pkgName === '@react-spectrum/provider') {
-            pkg.peerDependencies = insertObject(pkg.peerDependencies, pkgName, depPkg.version);
+            pkg.peerDependencies = insertObject(pkg.peerDependencies, pkgName, `^${depPkg.version}`);
           } else {
-            pkg.dependencies = insertObject(pkg.dependencies, pkgName, depPkg.version);
+            pkg.dependencies = insertObject(pkg.dependencies, pkgName, `^${depPkg.version}`);
           }
 
           fs.writeFileSync(pkgPath, JSON.stringify(pkg, false, 2) + '\n');
