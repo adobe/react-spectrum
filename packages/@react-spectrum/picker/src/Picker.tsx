@@ -23,12 +23,12 @@ import intlMessages from '../intl/*.json';
 import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder, useHover} from '@react-aria/interactions';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useRef, useState} from 'react';
+import React, {ReactElement, useCallback, useMemo, useRef, useState} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
 import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
 import {Text} from '@react-spectrum/text';
@@ -55,7 +55,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     isRequired,
     necessityIndicator,
     menuWidth,
-    name
+    name,
+    autoFocus
   } = props;
 
   let {styleProps} = useStyleProps(props);
@@ -134,6 +135,20 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     }
   }, [scale, isMobile, triggerRef, state.selectedKey]);
 
+  // Make sure we only unwrap if the trigger changes otherwise we'll retrigger
+  // the observer too often
+  let resizeRef = useMemo(() => unwrapDOMRef(triggerRef), [triggerRef]);
+
+  let onResize = useCallback(() => {
+    let width = resizeRef.current.offsetWidth;
+    setButtonWidth(width);
+  }, [resizeRef, setButtonWidth]);
+
+  useResizeObserver({
+    ref: resizeRef,
+    onResize: onResize
+  });
+
   let overlay;
   if (isMobile) {
     overlay = (
@@ -198,6 +213,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
           isQuiet={isQuiet}
           isDisabled={isDisabled}
           validationState={validationState}
+          autoFocus={autoFocus}
           UNSAFE_className={classNames(styles, 'spectrum-Dropdown-trigger', {'is-hovered': isHovered})}>
           <SlotProvider
             slots={{

@@ -21,7 +21,7 @@ export interface TooltipTriggerProps extends OverlayTriggerProps {
   isDisabled?: boolean,
 
   /**
-   * The delay time for the tooltip to show up. [See guidelines](https://spectrum.corp.adobe.com/page/tooltip/#Immediate-or-delayed-appearance).
+   * The delay time for the tooltip to show up. [See guidelines](https://spectrum.adobe.com/page/tooltip/#Immediate-or-delayed-appearance).
    */
   delay?: number,
 
@@ -37,7 +37,12 @@ export interface TooltipTriggerProps extends OverlayTriggerProps {
    * anchor element.
    * @default 0
    */
-  crossOffset?: number
+  crossOffset?: number,
+
+  /**
+   * By default, opens for both focus and hover. Can be made to open only for focus.
+   */
+  trigger?: 'focus'
 }
 
 export interface SpectrumTooltipTriggerProps extends TooltipTriggerProps, PositionProps {
@@ -53,7 +58,7 @@ export interface AriaTooltipProps extends TooltipProps, DOMProps, AriaLabelingPr
 
 export interface SpectrumTooltipProps extends AriaTooltipProps, StyleProps {
   /**
-   * The [visual style](https://spectrum.corp.adobe.com/page/tooltip/#Semantic-variants) of the Tooltip.
+   * The [visual style](https://spectrum.adobe.com/page/tooltip/#Semantic-variants) of the Tooltip.
    */
   variant?: 'neutral' | 'positive' | 'negative' | 'info',
 
