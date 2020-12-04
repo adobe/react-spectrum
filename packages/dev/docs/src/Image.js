@@ -44,34 +44,19 @@ export function Hero({wide, narrow, wide2x, narrow2x, wideWebp, narrowWebp, wide
   );
 }
 
-export function Image({src, ...otherProps}) {
+export function Image({src, expandable, ...otherProps}) {
   let publicUrl = React.useContext(ImageContext);
   let baseUrl = publicUrl.replace(/\/$/, '');
   let url = baseUrl + '/' + path.basename(src);
 
-  return (
-    // eslint-disable-next-line jsx-a11y/alt-text
-    <img src={url} className={docStyles.video} {...otherProps} />
+  let className = clsx(
+    docStyles.video,
+    expandable && docStyles.expandableImage
   );
-}
-
-export function ExpandableImage({src, ...otherProps}) {
-  let publicUrl = React.useContext(ImageContext);
-  let baseUrl = publicUrl.replace(/\/$/, '');
-  let url = baseUrl + '/' + path.basename(src);
 
   return (
     // eslint-disable-next-line jsx-a11y/alt-text
-    <img
-      src={url}
-      className={
-        clsx(
-          docStyles.video,
-          docStyles.expandableImage
-        )
-      }
-      data-img="expand-img"
-      {...otherProps} />
+    <img src={url} className={className} data-img={expandable ? 'expand-img' : null} {...otherProps} />
   );
 }
 
