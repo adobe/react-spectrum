@@ -70,11 +70,10 @@ function ImageModal({children}) {
 
 for (let image of images) {
   let container = document.createElement('span');
-
   ReactDOM.render(
     <ThemeProvider UNSAFE_className={docsStyle.inlineProvider}>
       <ImageModal>
-        <img src={image.src} className={image.className} alt={image.alt} style={image.cssText} />
+        <img ref={ref} src={image.src} className={image.className} alt={image.alt} />
         <img src={image.src} alt={image.alt} />
       </ImageModal>
     </ThemeProvider>
