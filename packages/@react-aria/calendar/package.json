@@ -21,7 +21,7 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/i18n": "^3.1.0",
     "@react-aria/interactions": "^3.1.0",
-    "@react-aria/live-announcer": "3.0.0-alpha.0",
+    "@react-aria/live-announcer": "^3.0.0-alpha.0",
     "@react-aria/utils": "^3.1.0",
     "@react-stately/calendar": "^3.0.0-alpha.1",
     "@react-types/button": "^3.1.0",
