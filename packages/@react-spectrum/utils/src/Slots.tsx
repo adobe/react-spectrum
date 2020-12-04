@@ -11,7 +11,7 @@
  */
 
 import {mergeProps} from '@react-aria/utils';
-import React, {useContext, useMemo, useRef} from 'react';
+import React, {useContext, useMemo} from 'react';
 
 interface SlotProps {
   slot?: string
@@ -33,18 +33,20 @@ export function cssModuleToSlots(cssModule) {
 }
 
 export function SlotProvider(props) {
-  let stableEmptyObject = useRef({});
-  let parentSlots = useContext(SlotContext) || stableEmptyObject.current;
+  let parentSlots = useContext(SlotContext);
   let {slots = {}, children} = props;
 
   // Merge props for each slot from parent context and props
-  let value = useMemo(() =>
-    Object.keys(parentSlots)
+  let value = useMemo(() => {
+    let slotObj = parentSlots || {};
+    return (
+      Object.keys(slotObj)
       .concat(Object.keys(slots))
       .reduce((o, p) => ({
         ...o,
-        [p]: mergeProps(parentSlots[p] || {}, slots[p] || {})}), {})
-      , [parentSlots, slots]);
+        [p]: mergeProps(slotObj[p] || {}, slots[p] || {})}), {})
+    );
+  }, [parentSlots, slots]);
 
   return (
     <SlotContext.Provider value={value}>

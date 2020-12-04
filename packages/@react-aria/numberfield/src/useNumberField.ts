@@ -141,7 +141,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
         handleInputScrollWheel
       );
     };
-  }, [inputId, isReadOnly, isDisabled, decrement, increment]);
+  }, [inputId, isReadOnly, isDisabled, decrement, increment, ref]);
 
   let domProps = filterDOMProps(props, {labelable: true});
   let {labelProps, inputProps} = useTextField(

@@ -119,9 +119,12 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
         crossOffset
       })
     );
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
   // Update position when anything changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(updatePosition, deps);
 
   // Update position on window resize
