@@ -8,6 +8,7 @@ module.exports = {
     '@storybook/addon-links',
     '@storybook/addon-a11y',
     '@storybook/addon-knobs',
+    'storybook-dark-mode',
     './custom-addons/provider/register',
     './theme.register'
   ],

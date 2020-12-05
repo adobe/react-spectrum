@@ -150,6 +150,7 @@
     "regenerator-runtime": "0.13.3",
     "rimraf": "^2.6.3",
     "sinon": "^7.3.1",
+    "storybook-dark-mode": "^1.0.3",
     "style-loader": "^0.23.1",
     "tempy": "^0.5.0",
     "typescript": "^3.8.3",
