@@ -1,5 +1,5 @@
 
-const webpackconfig = require('./webpack1.config.js');
+const webpackconfig = require('./webpack-chromatic.config.js');
 
 module.exports = {
   stories: ['../packages/**/chromatic/**/*.chromatic.@(js|jsx|ts|tsx)'],

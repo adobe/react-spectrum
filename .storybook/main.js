@@ -1,5 +1,5 @@
 
-const webpackconfig = require('./webpack1.config.js');
+const webpackconfig = require('./webpack-storybook.config.js');
 
 module.exports = {
   stories: ['../packages/**/stories/**/*.stories.@(js|jsx|ts|tsx)'],
