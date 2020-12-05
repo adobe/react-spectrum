@@ -12,23 +12,12 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionGroup} from '../';
-import BookIcon from '@spectrum-icons/workflow/Book';
-import CopyIcon from '@spectrum-icons/workflow/Copy';
-import DeleteIcon from '@spectrum-icons/workflow/Delete';
-import DocumentIcon from '@spectrum-icons/workflow/Document';
-import DrawIcon from '@spectrum-icons/workflow/Draw';
+import {ActionGroupBoth, ActionGroupIconOnly, ActionGroupTextOnly, iconMap} from './utils';
+import {Button} from '@react-spectrum/button';
 import {Flex} from '@react-spectrum/layout';
-import InfoIcon from '@spectrum-icons/workflow/Info';
 import {Item} from '@react-stately/collections';
-import PropertiesIcon from '@spectrum-icons/workflow/Properties';
 import React from 'react';
-import SettingsIcon from '@spectrum-icons/workflow/Settings';
-import {storiesOf} from '@storybook/react';
-import {Text} from '@react-spectrum/text';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
-import ViewCardIcon from '@spectrum-icons/workflow/ViewCard';
-import ViewGridIcon from '@spectrum-icons/workflow/ViewGrid';
-import ViewListIcon from '@spectrum-icons/workflow/ViewList';
 
 const docItems = [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}];
 const editItems = [{children: 'Edit', name: '1'}, {children: 'Copy', name: '2'}, {children: 'Delete', name: '3'}];
@@ -37,263 +26,170 @@ const viewItems = [{children: 'Grid view', name: '1'}, {children: 'List view', n
 const dataItems = [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}];
 let onSelectionChange = action('onSelectionChange');
 
-let iconMap = {
-  'Document setup': DocumentIcon,
-  'Settings': SettingsIcon,
-  'Grid view': ViewGridIcon,
-  'List view': ViewListIcon,
-  'Gallery view': ViewCardIcon,
-  'Edit': DrawIcon,
-  'Copy': CopyIcon,
-  'Delete': DeleteIcon,
-  'Properties': PropertiesIcon,
-  'Info': InfoIcon,
-  'Keywords': BookIcon
+
+export default {
+  title: 'ActionGroup',
+  parameters: {
+    providerSwitcher: {status: 'negative'}
+  }
 };
 
-storiesOf('ActionGroup', module)
-  .addParameters({providerSwitcher: {status: 'negative'}})
-  .add(
-    'default',
-    () => (
-      <Flex direction="column" gap="size-200" width="100%" margin="size-100">
-        <ActionGroup onAction={action('onAction')}>
-          {
-            docItems.map((itemProps) => (
-              <Item key={itemProps.name} textValue={itemProps.name} {...itemProps} />
-            ))
-          }
-        </ActionGroup>
-        <ActionGroup onAction={action('onAction')}>
-          {
-            docItems.map((itemProps) => {
-              let IconElement = iconMap[itemProps.children];
-              return (
-                <Item key={itemProps.name} textValue={itemProps.name}>
-                  <Text>{itemProps.children}</Text>
-                  <IconElement />
-                </Item>
-              );
-            })
-          }
-        </ActionGroup>
-        <ActionGroup onAction={action('onAction')}>
-          {
-            docItems.map((itemProps) => {
-              let IconElement = iconMap[itemProps.children];
-              return (
-                <Item key={itemProps.name} textValue={itemProps.name} aria-label={itemProps.children}>
-                  <IconElement />
-                </Item>
-              );
-            })
-          }
-        </ActionGroup>
-      </Flex>
-    )
-  )
-  .add(
-    'with falsy item key',
-    () => (
-      <ActionGroup onAction={action('onAction')}>
-        <Item key="add">Add</Item>
-        <Item key="">Delete</Item>
-        <Item key="edit">Edit</Item>
-      </ActionGroup>
-    )
-  )
-  .add(
-    'isDisabled',
-    () => render({isDisabled: true, defaultSelectedKeys: ['1']}, docItems)
-  )
-  .add(
-    'compact',
-    () => render({density: 'compact', defaultSelectedKeys: ['1']}, viewItems)
-  )
-  .add(
-    'isJustified',
-    () => render({isJustified: true, defaultSelectedKeys: ['1']}, viewItems2)
-  )
-  .add(
-    'compact, isJustified',
-    () => render({density: 'compact', isJustified: true, defaultSelectedKeys: ['1']}, viewItems2)
-  )
-  .add(
-    'isQuiet',
-    () => render({isQuiet: true, defaultSelectedKeys: ['1']}, editItems)
-  )
-  .add(
-    'compact, isQuiet',
-    () => render({density: 'compact', isQuiet: true, defaultSelectedKeys: ['1']}, editItems)
-  )
-  .add(
-    'isEmphasized',
-    () => render({isEmphasized: true, defaultSelectedKeys: ['1']}, docItems)
-  )
-  .add(
-    'compact, isEmphasized',
-    () => render({isEmphasized: true, density: 'compact', defaultSelectedKeys: ['1']}, viewItems)
-  )
-  .add(
-    'isQuiet, isEmphasized',
-    () => render({isEmphasized: true, isQuiet: true, defaultSelectedKeys: ['1']}, viewItems)
-  )
-  .add(
-    'selectionMode: multiple',
-    () => render({selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  .add(
-    'selectionMode: single, disallowEmptySelection',
-    () => render({selectionMode: 'single', disallowEmptySelection: true, defaultSelectedKeys: ['1']}, dataItems)
-  )
-  .add(
-    'selectionMode: multiple, isQuiet',
-    () => render({isQuiet: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  .add(
-    'selectionMode: multiple, isQuiet, compact',
-    () => render({isQuiet: true, density: 'compact', selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  .add(
-    'selectionMode: multiple, isEmphasized',
-    () => render({isEmphasized: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  .add(
-    'selectionMode: multiple, isEmphasized, compact',
-    () => render({isEmphasized: true, density: 'compact', selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  .add(
-    'selectionMode: multiple, isEmphasized, isQuiet',
-    () => render({isEmphasized: true, isQuiet: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  .add(
-    'selectionMode: multiple, isEmphasized, isQuiet, compact',
-    () => render({isEmphasized: true, isQuiet: true, density: 'compact', selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  // no selection mode none, it's covered in the default story visually
-  .add(
-    'vertical',
-    () => render({orientation: 'vertical', defaultSelectedKeys: ['1']}, docItems)
-  )
-  .add(
-    'vertical, isJustified',
-    () => render({isJustified: true, orientation: 'vertical', defaultSelectedKeys: ['1']}, docItems)
-  )
-  .add(
-    'vertical, compact',
-    () => render({density: 'compact', orientation: 'vertical', defaultSelectedKeys: ['1']}, viewItems)
-  )
-  .add(
-    'vertical, isJustified, compact',
-    () => render({isJustified: true, density: 'compact', orientation: 'vertical', defaultSelectedKeys: ['1']}, viewItems)
-  )
-  .add(
-    'vertical, isQuiet',
-    () => render({isQuiet: true, orientation: 'vertical', defaultSelectedKeys: ['1']}, editItems)
-  )
-  .add(
-    'vertical, isQuiet, compact',
-    () => render({isQuiet: true, density: 'compact', orientation: 'vertical', defaultSelectedKeys: ['1']}, viewItems)
-  )
-  .add(
-    'disabledKeys',
-    () => render({disabledKeys: ['1', '2'], selectionMode: 'multiple'}, dataItems)
-  )
-  .add(
-    'dynamic default',
-    () => (
-      <ActionGroup onAction={action('onAction')} items={viewItems}>
-        {item => <Item key={item.name} textValue={item.name}>{item.children}</Item>}
-      </ActionGroup>
-    )
-  )
-  .add(
-    'dynamic single selection',
-    () => (
-      <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} items={viewItems}>
-        {item => <Item key={item.name} textValue={item.name}>{item.children}</Item>}
-      </ActionGroup>
-    )
-  )
-  .add(
-    'with tooltips',
-    () => renderTooltips({})
-  );
+const Template = (args) => (
+  <Flex rowGap="size-300" margin="size-100" width="100%" direction="column">
+    <ActionGroupTextOnly {...args} />
+    <ActionGroupBoth {...args} />
+    <ActionGroupIconOnly {...args} />
+  </Flex>
+);
+
+export const PropDefaults = Template.bind({});
+PropDefaults.storyName = 'default';
+PropDefaults.args = {items: docItems};
+export const IsDisabled = Template.bind({});
+IsDisabled.storyName = 'isDisabled';
+IsDisabled.args = {isDisabled: true, defaultSelectedKeys: ['1'], items: docItems};
+export const Compact = Template.bind({});
+Compact.storyName = 'compact';
+Compact.args = {density: 'compact', defaultSelectedKeys: ['1'], items: viewItems};
+export const IsJustified = Template.bind({});
+IsJustified.storyName = 'isJustified';
+IsJustified.args = {isJustified: true, defaultSelectedKeys: ['1'], items: viewItems2};
+export const CompactIsJustified = Template.bind({});
+CompactIsJustified.storyName = 'compact, isJustified';
+CompactIsJustified.args = {density: 'compact', isJustified: true, defaultSelectedKeys: ['1'], items: viewItems2};
+export const IsQuiet = Template.bind({});
+IsQuiet.storyName = 'isQuiet';
+IsQuiet.args = {isQuiet: true, defaultSelectedKeys: ['1'], items: editItems};
+export const CompactIsQuiet = Template.bind({});
+CompactIsQuiet.storyName = 'compact, isQuiet';
+CompactIsQuiet.args = {density: 'compact', isQuiet: true, defaultSelectedKeys: ['1'], items: editItems};
+export const IsEmphasized = Template.bind({});
+IsEmphasized.storyName = 'isEmphasized';
+IsEmphasized.args = {isEmphasized: true, defaultSelectedKeys: ['1'], items: docItems};
+export const CompactIsEmphasized = Template.bind({});
+CompactIsEmphasized.storyName = 'compact, isEmphasized';
+CompactIsEmphasized.args = {density: 'compact', isEmphasized: true, defaultSelectedKeys: ['1'], items: viewItems};
+export const IsQuietIsEmphasized = Template.bind({});
+IsQuietIsEmphasized.storyName = 'isQuiet, isEmphasized';
+IsQuietIsEmphasized.args = {isQuiet: true, isEmphasized: true, defaultSelectedKeys: ['1'], items: viewItems};
+
+export const SelectionModeMultiple = Template.bind({});
+SelectionModeMultiple.storyName = 'selectionMode: multiple';
+SelectionModeMultiple.args = {selectionMode: 'multiple', defaultSelectedKeys: ['1', '2'], items: dataItems};
+export const SelectionModeSingleDisallowEmptySelection = Template.bind({});
+SelectionModeSingleDisallowEmptySelection.storyName = 'selectionMode: single, disallowEmptySelection';
+SelectionModeSingleDisallowEmptySelection.args = {selectionMode: 'single', disallowEmptySelection: true, defaultSelectedKeys: ['1'], items: dataItems};
+export const SelectionModeMultipleIsQuiet = Template.bind({});
+SelectionModeMultipleIsQuiet.storyName = 'selectionMode: multiple, isQuiet';
+SelectionModeMultipleIsQuiet.args = {selectionMode: 'multiple', isQuiet: true, defaultSelectedKeys: ['1', '2'], items: dataItems};
+export const SelectionModeMultipleCompactIsQuiet = Template.bind({});
+SelectionModeMultipleCompactIsQuiet.storyName = 'selectionMode: multiple, isQuiet, compact';
+SelectionModeMultipleCompactIsQuiet.args = {density: 'compact', selectionMode: 'multiple', isQuiet: true, defaultSelectedKeys: ['1', '2'], items: dataItems};
+export const SelectionModeMultipleIsEmphasized = Template.bind({});
+SelectionModeMultipleIsEmphasized.storyName = 'selectionMode: multiple, isEmphasized';
+SelectionModeMultipleIsEmphasized.args = {isEmphasized: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2'], items: dataItems};
+export const SelectionModeMultipleCompactIsEmphasized = Template.bind({});
+SelectionModeMultipleCompactIsEmphasized.storyName = 'selectionMode: multiple, isEmphasized, compact';
+SelectionModeMultipleCompactIsEmphasized.args = {density: 'compact', isEmphasized: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2'], items: dataItems};
+export const SelectionModeMultipleIsQuietIsEmphasized = Template.bind({});
+SelectionModeMultipleIsQuietIsEmphasized.storyName = 'selectionMode: multiple, isEmphasized, isQuiet';
+SelectionModeMultipleIsQuietIsEmphasized.args = {isQuiet: true, isEmphasized: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2'], items: dataItems};
+export const SelectionModeMultipleCompactIsQuietIsEmphasized = Template.bind({});
+SelectionModeMultipleCompactIsQuietIsEmphasized.storyName = 'selectionMode: multiple, isEmphasized, isQuiet, compact';
+SelectionModeMultipleCompactIsQuietIsEmphasized.args = {density: 'compact', isQuiet: true, isEmphasized: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2'], items: dataItems};
+export const SelectionModeNone = Template.bind({});
+SelectionModeNone.storyName = 'selectionMode: none';
+SelectionModeNone.args = {selectionMode: 'none', items: editItems};
+
+export const Vertical = Template.bind({});
+Vertical.storyName = 'vertical';
+Vertical.args = {orientation: 'vertical', items: docItems};
+export const VerticalIsJustified = Template.bind({});
+VerticalIsJustified.storyName = 'vertical, isJustified';
+VerticalIsJustified.args = {orientation: 'vertical', isJustified: true, defaultSelectedKeys: ['1'], items: docItems};
+export const VerticalCompact = Template.bind({});
+VerticalCompact.storyName = 'vertical, compact';
+VerticalCompact.args = {orientation: 'vertical', density: 'compact', defaultSelectedKeys: ['1'], items: viewItems};
+export const VerticalIsJustifiedCompact = Template.bind({});
+VerticalIsJustifiedCompact.storyName = 'vertical, isJustified, compact';
+VerticalIsJustifiedCompact.args = {orientation: 'vertical', isJustified: true, density: 'compact', defaultSelectedKeys: ['1'], items: viewItems};
+export const VerticalIsQuiet = Template.bind({});
+VerticalIsQuiet.storyName = 'vertical, isQuiet';
+VerticalIsQuiet.args = {orientation: 'vertical', isQuiet: true, defaultSelectedKeys: ['1'], items: editItems};
+export const VerticalCompactIsQuiet = Template.bind({});
+VerticalCompactIsQuiet.storyName = 'vertical, isQuiet, compact';
+VerticalCompactIsQuiet.args = {orientation: 'vertical', density: 'compact', isQuiet: true, defaultSelectedKeys: ['1'], items: viewItems};
+
+export const DisabledKeys = Template.bind({});
+DisabledKeys.storyName = 'disabledKeys';
+DisabledKeys.args = {disabledKeys: ['1', '2'], seclectionMode: 'multiple', items: dataItems};
 
 
-function render(props, items) {
-  return (
-    <Flex gap="size-300" margin="size-100" width="100%" direction="column">
-      {renderText(props, items)}
-      {renderBoth(props, items)}
-      {renderIcons(props, items)}
-    </Flex>
-  );
-}
+export const FalsyKey = () => (
+  <ActionGroup onAction={action('onAction')}>
+    <Item key="add">Add</Item>
+    <Item key="">Delete</Item>
+    <Item key="edit">Edit</Item>
+  </ActionGroup>
+);
+FalsyKey.storyName = 'with falsy item key';
 
-function renderText(props, items: any = docItems) {
-  return (
-    <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>
-      {
-        items.map((itemProps) => (
-          <Item key={itemProps.name} textValue={itemProps.name} {...itemProps} />
-        ))
-      }
+export const WithTooltips = () => (
+  <ActionGroup selectionMode="single" onSelectionChange={onSelectionChange} items={docItems}>
+    {(item) => {
+      let IconElement = iconMap[item.children];
+      return (
+        <TooltipTrigger>
+          <Item key={item.name} textValue={item.children} aria-label={item.children}>
+            <IconElement />
+          </Item>
+          <Tooltip>{item.children}</Tooltip>
+        </TooltipTrigger>
+      );
+    }}
+  </ActionGroup>
+);
+WithTooltips.storyName = 'with tooltips';
+
+const TestDefaultTemplate = (args) => (
+  <ActionGroup {...args}>
+    <Item key="1">Click me 1</Item>
+    <Item key="2">Click me 2</Item>
+  </ActionGroup>
+);
+export const TestDefault = TestDefaultTemplate.bind({});
+TestDefault.storyName = 'test default';
+
+const TestTemplate = (args) => (
+  <ActionGroup {...args} >
+    <Item data-testid="button-1" key="1">Click me 1</Item>
+    <Item data-testid="button-2" key="">Click me 2</Item>
+    <Item data-testid="button-3" key="3">Click me 3</Item>
+  </ActionGroup>
+);
+export const TestThreeButtons = TestTemplate.bind({});
+TestThreeButtons.storyName = 'test three buttons';
+
+const TestTemplate4 = (args) => (
+  <ActionGroup {...args} >
+    <Item key="0" data-testid="button-1">Click me 1</Item>
+    <Item key="1" data-testid="button-2">Click me 2</Item>
+    <Item key="2" data-testid="button-3">Click me 3</Item>
+    <Item key="3" data-testid="button-4">Click me 4</Item>
+  </ActionGroup>
+);
+export const TestFourButtons = TestTemplate4.bind({});
+TestFourButtons.storyName = 'test four buttons';
+
+const TestTemplateFocus = (args) => (
+  <>
+    <Button variant="primary" aria-label="ButtonBefore" />
+    <ActionGroup {...args}>
+      <Item key="1">Click me 1</Item>
+      <Item key="2">Click me 2</Item>
     </ActionGroup>
-  );
-}
-
-function renderBoth(props, items: any = docItems) {
-  return (
-    <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>
-      {
-        items.map((itemProps) => {
-          let IconElement = iconMap[itemProps.children];
-          return (
-            <Item key={itemProps.name} textValue={itemProps.name} aria-label={itemProps.children}>
-              <Text>{itemProps.children}</Text>
-              <IconElement />
-            </Item>
-          );
-        })
-      }
-    </ActionGroup>
-  );
-}
-
-function renderIcons(props, items: any = docItems) {
-  return (
-    <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>
-      {
-        items.map((itemProps) => {
-          let IconElement = iconMap[itemProps.children];
-          return (
-            <Item key={itemProps.name} textValue={itemProps.name} aria-label={itemProps.children}>
-              <IconElement />
-            </Item>
-          );
-        })
-      }
-    </ActionGroup>
-  );
-}
-
-function renderTooltips(props, items: any = docItems) {
-  return (
-    <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>
-      {
-        items.map((itemProps) => {
-          let IconElement = iconMap[itemProps.children];
-          return (
-            <TooltipTrigger>
-              <Item key={itemProps.name} textValue={itemProps.children} aria-label={itemProps.children}>
-                <IconElement />
-              </Item>
-              <Tooltip>{itemProps.children}</Tooltip>
-            </TooltipTrigger>
-          );
-        })
-      }
-    </ActionGroup>
-  );
-}
+    <Button variant="primary" aria-label="ButtonAfter" />
+  </>
+);
+export const TestWithExternalFocus = TestTemplateFocus.bind({});
+TestWithExternalFocus.storyName = 'test with external focusables';

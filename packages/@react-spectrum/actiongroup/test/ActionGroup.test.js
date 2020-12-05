@@ -12,11 +12,11 @@
 
 import {act, fireEvent, render} from '@testing-library/react';
 import {ActionGroup} from '../';
-import {Button} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {TestDefault, TestFourButtons, TestThreeButtons, TestWithExternalFocus} from '../stories/ActionGroup.stories';
 import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {triggerPress} from '@react-spectrum/test-utils';
@@ -108,10 +108,7 @@ expect.extend({
 function renderComponent(props) {
   return render(
     <Provider theme={theme} locale="de-DE">
-      <ActionGroup {...props}>
-        <Item key="1">Click me 1</Item>
-        <Item key="2">Click me 2</Item>
-      </ActionGroup>
+      <TestDefault {...props} />
     </Provider>
   );
 }
@@ -119,12 +116,7 @@ function renderComponent(props) {
 function renderComponentWithExtraInputs(props) {
   return render(
     <Provider theme={theme} locale="de-DE">
-      <Button variant="primary" aria-label="ButtonBefore" />
-      <ActionGroup {...props}>
-        <Item key="1">Click me 1</Item>
-        <Item key="2">Click me 2</Item>
-      </ActionGroup>
-      <Button variant="primary" aria-label="ButtonAfter" />
+      <TestWithExternalFocus {...props} />
     </Provider>
   );
 }
@@ -204,23 +196,19 @@ describe('ActionGroup', function () {
   });
 
   it.each`
-    Name                                                   | props                                         | orders
-    ${'(left/right arrows, ltr + horizontal) ActionGroup'} | ${{locale: 'de-DE'}}                          | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
-    ${'(left/right arrows, rtl + horizontal) ActionGroup'} | ${{locale: 'ar-AE'}}                          | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.forward}]}
-    ${'(up/down arrows, ltr + horizontal) ActionGroup'}    | ${{locale: 'de-DE'}}                          | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-    ${'(up/down arrows, rtl + horizontal) ActionGroup'}    | ${{locale: 'ar-AE'}}                          | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-    ${'(left/right arrows, ltr + vertical) ActionGroup'}   | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
-    ${'(left/right arrows, rtl + vertical) ActionGroup'}   | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
-    ${'(up/down arrows, ltr + vertical) ActionGroup'}      | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-    ${'(up/down arrows, rtl + vertical) ActionGroup'}      | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-  `('$Name shifts button focus in the correct direction on key press', function ({Name, props, orders}) {
+    Name                                                   | providerProps        | props                        | orders
+    ${'(left/right arrows, ltr + horizontal) ActionGroup'} | ${{locale: 'de-DE'}} | ${{}}                        | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
+    ${'(left/right arrows, rtl + horizontal) ActionGroup'} | ${{locale: 'ar-AE'}} | ${{}}                        | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.forward}]}
+    ${'(up/down arrows, ltr + horizontal) ActionGroup'}    | ${{locale: 'de-DE'}} | ${{}}                        | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+    ${'(up/down arrows, rtl + horizontal) ActionGroup'}    | ${{locale: 'ar-AE'}} | ${{}}                        | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+    ${'(left/right arrows, ltr + vertical) ActionGroup'}   | ${{locale: 'de-DE'}} | ${{orientation: 'vertical'}} | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
+    ${'(left/right arrows, rtl + vertical) ActionGroup'}   | ${{locale: 'ar-AE'}} | ${{orientation: 'vertical'}} | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
+    ${'(up/down arrows, ltr + vertical) ActionGroup'}      | ${{locale: 'de-DE'}} | ${{orientation: 'vertical'}} | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+    ${'(up/down arrows, rtl + vertical) ActionGroup'}      | ${{locale: 'ar-AE'}} | ${{orientation: 'vertical'}} | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+  `('$Name shifts button focus in the correct direction on key press', function ({Name, providerProps, props, orders}) {
     let tree = render(
-      <Provider theme={theme} locale={props.locale}>
-        <ActionGroup orientation={props.orientation} >
-          <Item data-testid="button-1" key="1">Click me 1</Item>
-          <Item data-testid="button-2" key="">Click me 2</Item>
-          <Item data-testid="button-3" key="3">Click me 3</Item>
-        </ActionGroup>
+      <Provider theme={theme} {...providerProps}>
+        <TestThreeButtons {...props} />
       </Provider>
     );
 
@@ -233,24 +221,19 @@ describe('ActionGroup', function () {
   });
 
   it.each`
-    Name                     | props                | disabledKeys   | orders
-    ${'middle disabled'}     | ${{locale: 'de-DE'}} | ${['1']}       | ${[{action: () => {userEvent.tab();}, result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
-    ${'first disabled'}      | ${{locale: 'de-DE'}} | ${['0']}       | ${[{action: () => {userEvent.tab();}, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}]}
-    ${'last disabled'}       | ${{locale: 'de-DE'}} | ${['2']}       | ${[{action: () => {userEvent.tab();}, result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
-    ${'1&2 disabled'}        | ${{locale: 'de-DE'}} | ${['0', '1']}  | ${[{action: () => {userEvent.tab();}, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}]}
-    ${'rtl middle disabled'} | ${{locale: 'ar-AE'}} | ${['1']}       | ${[{action: () => {userEvent.tab();}, result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
-    ${'rtl first disabled'}  | ${{locale: 'ar-AE'}} | ${['0']}       | ${[{action: () => {userEvent.tab();}, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}]}
-    ${'rtl last disabled'}   | ${{locale: 'ar-AE'}} | ${['2']}       | ${[{action: () => {userEvent.tab();}, result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
-    ${'rtl 1&2 disabled'}    | ${{locale: 'ar-AE'}} | ${['0', '1']}  | ${[{action: () => {userEvent.tab();}, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}]}
-
-  `('$Name skips disabled keys', function ({Name, props, disabledKeys, orders}) {
+    Name                     | providerProps        | props                        | orders
+    ${'middle disabled'}     | ${{locale: 'de-DE'}} | ${{disabledKeys: ['']}}      | ${[{action: () => {userEvent.tab();}, result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
+    ${'first disabled'}      | ${{locale: 'de-DE'}} | ${{disabledKeys: ['1']}}     | ${[{action: () => {userEvent.tab();}, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}]}
+    ${'last disabled'}       | ${{locale: 'de-DE'}} | ${{disabledKeys: ['3']}}     | ${[{action: () => {userEvent.tab();}, result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
+    ${'1&2 disabled'}        | ${{locale: 'de-DE'}} | ${{disabledKeys: ['1', '']}} | ${[{action: () => {userEvent.tab();}, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}]}
+    ${'rtl middle disabled'} | ${{locale: 'ar-AE'}} | ${{disabledKeys: ['']}}      | ${[{action: () => {userEvent.tab();}, result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
+    ${'rtl first disabled'}  | ${{locale: 'ar-AE'}} | ${{disabledKeys: ['1']}}     | ${[{action: () => {userEvent.tab();}, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}]}
+    ${'rtl last disabled'}   | ${{locale: 'ar-AE'}} | ${{disabledKeys: ['3']}}     | ${[{action: () => {userEvent.tab();}, result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
+    ${'rtl 1&2 disabled'}    | ${{locale: 'ar-AE'}} | ${{disabledKeys: ['1', '']}} | ${[{action: () => {userEvent.tab();}, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}]}
+  `('$Name skips disabled keys', function ({Name, providerProps, props, orders}) {
     let tree = render(
-      <Provider theme={theme} locale={props.locale}>
-        <ActionGroup disabledKeys={disabledKeys}>
-          <Item key="0" data-testid="button-1">Click me 1</Item>
-          <Item key="1" data-testid="button-2">Click me 2</Item>
-          <Item key="2" data-testid="button-3">Click me 3</Item>
-        </ActionGroup>
+      <Provider theme={theme} {...providerProps}>
+        <TestThreeButtons {...props} />
       </Provider>
     );
 
@@ -263,18 +246,13 @@ describe('ActionGroup', function () {
   });
 
   it.each`
-    Name                         | props                | disabledKeys   | orders
-    ${'middle two disabled'}     | ${{locale: 'de-DE'}} | ${['1', '2']}  | ${[{action: () => {userEvent.tab();}, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1', '-1']}]}
-    ${'rtl middle two disabled'} | ${{locale: 'de-DE'}} | ${['1', '2']}  | ${[{action: () => {userEvent.tab();}, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1', '-1']}]}
-  `('$Name skips multiple disabled keys', function ({Name, props, disabledKeys, orders}) {
+    Name                         | providerProps        | props                         | orders
+    ${'middle two disabled'}     | ${{locale: 'de-DE'}} | ${{disabledKeys: ['1', '2']}} | ${[{action: () => {userEvent.tab();}, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1', '-1']}]}
+    ${'rtl middle two disabled'} | ${{locale: 'de-DE'}} | ${{disabledKeys: ['1', '2']}} | ${[{action: () => {userEvent.tab();}, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1', '-1']}]}
+  `('$Name skips multiple disabled keys', function ({Name, providerProps, props, orders}) {
     let tree = render(
-      <Provider theme={theme} locale={props.locale}>
-        <ActionGroup disabledKeys={disabledKeys}>
-          <Item key="0" data-testid="button-1">Click me 1</Item>
-          <Item key="1" data-testid="button-2">Click me 2</Item>
-          <Item key="2" data-testid="button-3">Click me 3</Item>
-          <Item key="3" data-testid="button-4">Click me 4</Item>
-        </ActionGroup>
+      <Provider theme={theme} {...providerProps}>
+        <TestFourButtons {...props} />
       </Provider>
     );
 

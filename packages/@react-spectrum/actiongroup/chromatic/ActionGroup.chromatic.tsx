@@ -10,23 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionGroup} from '../';
-import BookIcon from '@spectrum-icons/workflow/Book';
-import CopyIcon from '@spectrum-icons/workflow/Copy';
-import DeleteIcon from '@spectrum-icons/workflow/Delete';
-import DocumentIcon from '@spectrum-icons/workflow/Document';
-import DrawIcon from '@spectrum-icons/workflow/Draw';
+import {ActionGroupBoth, ActionGroupIconOnly, ActionGroupTextOnly} from '../stories/utils';
 import {Flex} from '@react-spectrum/layout';
-import InfoIcon from '@spectrum-icons/workflow/Info';
-import {Item} from '@react-stately/collections';
-import PropertiesIcon from '@spectrum-icons/workflow/Properties';
 import React from 'react';
-import SettingsIcon from '@spectrum-icons/workflow/Settings';
-import {storiesOf} from '@storybook/react';
-import {Text} from '@react-spectrum/text';
-import ViewCardIcon from '@spectrum-icons/workflow/ViewCard';
-import ViewGridIcon from '@spectrum-icons/workflow/ViewGrid';
-import ViewListIcon from '@spectrum-icons/workflow/ViewList';
+
 
 const docItems = [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}];
 const editItems = [{children: 'Edit', name: '1'}, {children: 'Copy', name: '2'}, {children: 'Delete', name: '3'}];
@@ -34,180 +21,97 @@ const viewItems2 = [{children: 'Grid view', name: '1'}, {children: 'List view', 
 const viewItems = [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}];
 const dataItems = [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}];
 
-let iconMap = {
-  'Document setup': DocumentIcon,
-  'Settings': SettingsIcon,
-  'Grid view': ViewGridIcon,
-  'List view': ViewListIcon,
-  'Gallery view': ViewCardIcon,
-  'Edit': DrawIcon,
-  'Copy': CopyIcon,
-  'Delete': DeleteIcon,
-  'Properties': PropertiesIcon,
-  'Info': InfoIcon,
-  'Keywords': BookIcon
+
+export default {
+  title: 'ActionGroup'
 };
 
-storiesOf('ActionGroup', module)
-  .add(
-    'default',
-    () => render({}, docItems)
-  )
-  .add(
-    'isDisabled',
-    () => render({isDisabled: true, defaultSelectedKeys: ['1']}, docItems)
-  )
-  .add(
-    'compact',
-    () => render({density: 'compact', defaultSelectedKeys: ['1']}, viewItems)
-  )
-  .add(
-    'isJustified',
-    () => render({isJustified: true, defaultSelectedKeys: ['1']}, viewItems2)
-  )
-  .add(
-    'compact, isJustified',
-    () => render({density: 'compact', isJustified: true, defaultSelectedKeys: ['1']}, viewItems2)
-  )
-  .add(
-    'isQuiet',
-    () => render({isQuiet: true, defaultSelectedKeys: ['1']}, editItems)
-  )
-  .add(
-    'compact, isQuiet',
-    () => render({density: 'compact', isQuiet: true, defaultSelectedKeys: ['1']}, editItems)
-  )
-  .add(
-    'isEmphasized',
-    () => render({isEmphasized: true, defaultSelectedKeys: ['1']}, docItems)
-  )
-  .add(
-    'compact, isEmphasized',
-    () => render({isEmphasized: true, density: 'compact', defaultSelectedKeys: ['1']}, viewItems)
-  )
-  .add(
-    'isQuiet, isEmphasized',
-    () => render({isEmphasized: true, isQuiet: true, defaultSelectedKeys: ['1']}, viewItems)
-  )
-  .add(
-    'selectionMode: multiple',
-    () => render({selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  .add(
-    'selectionMode: single, disallowEmptySelection',
-    () => render({selectionMode: 'single', disallowEmptySelection: true, defaultSelectedKeys: ['1']}, dataItems)
-  )
-  .add(
-    'selectionMode: multiple, isQuiet',
-    () => render({isQuiet: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  .add(
-    'selectionMode: multiple, isQuiet, compact',
-    () => render({isQuiet: true, density: 'compact', selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  .add(
-    'selectionMode: multiple, isEmphasized',
-    () => render({isEmphasized: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  .add(
-    'selectionMode: multiple, isEmphasized, compact',
-    () => render({isEmphasized: true, density: 'compact', selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  .add(
-    'selectionMode: multiple, isEmphasized, isQuiet',
-    () => render({isEmphasized: true, isQuiet: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  .add(
-    'selectionMode: multiple, isEmphasized, isQuiet, compact',
-    () => render({isEmphasized: true, isQuiet: true, density: 'compact', selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  .add(
-    'selectionMode: none',
-    () => render({selectionMode: 'none'}, editItems)
-  )
-  .add(
-    'vertical',
-    () => render({orientation: 'vertical', defaultSelectedKeys: ['1']}, docItems)
-  )
-  .add(
-    'vertical, isJustified',
-    () => render({isJustified: true, orientation: 'vertical', defaultSelectedKeys: ['1']}, docItems)
-  )
-  .add(
-    'vertical, compact',
-    () => render({density: 'compact', orientation: 'vertical', defaultSelectedKeys: ['1']}, viewItems)
-  )
-  .add(
-    'vertical, isJustified, compact',
-    () => render({isJustified: true, density: 'compact', orientation: 'vertical', defaultSelectedKeys: ['1']}, viewItems)
-  )
-  .add(
-    'vertical, isQuiet',
-    () => render({isQuiet: true, orientation: 'vertical', defaultSelectedKeys: ['1']}, editItems)
-  )
-  .add(
-    'vertical, isQuiet, compact',
-    () => render({isQuiet: true, density: 'compact', orientation: 'vertical', defaultSelectedKeys: ['1']}, viewItems)
-  )
-  .add(
-    'disabledKeys',
-    () => render({disabledKeys: ['1', '2'], selectionMode: 'multiple'}, dataItems)
-  );
+const Template = (args) => (
+  <Flex rowGap="size-300" margin="size-100" width="100%" direction="column">
+    <ActionGroupTextOnly {...args} />
+    <ActionGroupBoth {...args} />
+    <ActionGroupIconOnly {...args} />
+  </Flex>
+);
 
+export const PropDefaults = Template.bind({});
+PropDefaults.storyName = 'default';
+PropDefaults.args = {items: docItems};
+export const IsDisabled = Template.bind({});
+IsDisabled.storyName = 'isDisabled';
+IsDisabled.args = {isDisabled: true, defaultSelectedKeys: ['1'], items: docItems};
+export const Compact = Template.bind({});
+Compact.storyName = 'compact';
+Compact.args = {density: 'compact', defaultSelectedKeys: ['1'], items: viewItems};
+export const IsJustified = Template.bind({});
+IsJustified.storyName = 'isJustified';
+IsJustified.args = {isJustified: true, defaultSelectedKeys: ['1'], items: viewItems2};
+export const CompactIsJustified = Template.bind({});
+CompactIsJustified.storyName = 'compact, isJustified';
+CompactIsJustified.args = {density: 'compact', isJustified: true, defaultSelectedKeys: ['1'], items: viewItems2};
+export const IsQuiet = Template.bind({});
+IsQuiet.storyName = 'isQuiet';
+IsQuiet.args = {isQuiet: true, defaultSelectedKeys: ['1'], items: editItems};
+export const CompactIsQuiet = Template.bind({});
+CompactIsQuiet.storyName = 'compact, isQuiet';
+CompactIsQuiet.args = {density: 'compact', isQuiet: true, defaultSelectedKeys: ['1'], items: editItems};
+export const IsEmphasized = Template.bind({});
+IsEmphasized.storyName = 'isEmphasized';
+IsEmphasized.args = {isEmphasized: true, defaultSelectedKeys: ['1'], items: docItems};
+export const CompactIsEmphasized = Template.bind({});
+CompactIsEmphasized.storyName = 'compact, isEmphasized';
+CompactIsEmphasized.args = {density: 'compact', isEmphasized: true, defaultSelectedKeys: ['1'], items: viewItems};
+export const IsQuietIsEmphasized = Template.bind({});
+IsQuietIsEmphasized.storyName = 'isQuiet, isEmphasized';
+IsQuietIsEmphasized.args = {isQuiet: true, isEmphasized: true, defaultSelectedKeys: ['1'], items: viewItems};
 
-function render(props, items) {
-  return (
-    <Flex rowGap="size-300" margin="size-100" width="100%" direction="column">
-      {renderText(props, items)}
-      {renderBoth(props, items)}
-      {renderIcons(props, items)}
-    </Flex>
-  );
-}
+export const SelectionModeMultiple = Template.bind({});
+SelectionModeMultiple.storyName = 'selectionMode: multiple';
+SelectionModeMultiple.args = {selectionMode: 'multiple', defaultSelectedKeys: ['1', '2'], items: dataItems};
+export const SelectionModeSingleDisallowEmptySelection = Template.bind({});
+SelectionModeSingleDisallowEmptySelection.storyName = 'selectionMode: single, disallowEmptySelection';
+SelectionModeSingleDisallowEmptySelection.args = {selectionMode: 'single', disallowEmptySelection: true, defaultSelectedKeys: ['1'], items: dataItems};
+export const SelectionModeMultipleIsQuiet = Template.bind({});
+SelectionModeMultipleIsQuiet.storyName = 'selectionMode: multiple, isQuiet';
+SelectionModeMultipleIsQuiet.args = {selectionMode: 'multiple', isQuiet: true, defaultSelectedKeys: ['1', '2'], items: dataItems};
+export const SelectionModeMultipleCompactIsQuiet = Template.bind({});
+SelectionModeMultipleCompactIsQuiet.storyName = 'selectionMode: multiple, isQuiet, compact';
+SelectionModeMultipleCompactIsQuiet.args = {density: 'compact', selectionMode: 'multiple', isQuiet: true, defaultSelectedKeys: ['1', '2'], items: dataItems};
+export const SelectionModeMultipleIsEmphasized = Template.bind({});
+SelectionModeMultipleIsEmphasized.storyName = 'selectionMode: multiple, isEmphasized';
+SelectionModeMultipleIsEmphasized.args = {isEmphasized: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2'], items: dataItems};
+export const SelectionModeMultipleCompactIsEmphasized = Template.bind({});
+SelectionModeMultipleCompactIsEmphasized.storyName = 'selectionMode: multiple, isEmphasized, compact';
+SelectionModeMultipleCompactIsEmphasized.args = {density: 'compact', isEmphasized: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2'], items: dataItems};
+export const SelectionModeMultipleIsQuietIsEmphasized = Template.bind({});
+SelectionModeMultipleIsQuietIsEmphasized.storyName = 'selectionMode: multiple, isEmphasized, isQuiet';
+SelectionModeMultipleIsQuietIsEmphasized.args = {isQuiet: true, isEmphasized: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2'], items: dataItems};
+export const SelectionModeMultipleCompactIsQuietIsEmphasized = Template.bind({});
+SelectionModeMultipleCompactIsQuietIsEmphasized.storyName = 'selectionMode: multiple, isEmphasized, isQuiet, compact';
+SelectionModeMultipleCompactIsQuietIsEmphasized.args = {density: 'compact', isQuiet: true, isEmphasized: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2'], items: dataItems};
+export const SelectionModeNone = Template.bind({});
+SelectionModeNone.storyName = 'selectionMode: none';
+SelectionModeNone.args = {selectionMode: 'none', items: editItems};
 
-function renderText(props, items: any = docItems) {
-  return (
-    <ActionGroup selectionMode="single" {...props}>
-      {
-        items.map((itemProps) => (
-          <Item key={itemProps.name} textValue={itemProps.name} {...itemProps} />
-        ))
-      }
-    </ActionGroup>
-  );
-}
+export const Vertical = Template.bind({});
+Vertical.storyName = 'vertical';
+Vertical.args = {orientation: 'vertical', items: docItems};
+export const VerticalIsJustified = Template.bind({});
+VerticalIsJustified.storyName = 'vertical, isJustified';
+VerticalIsJustified.args = {orientation: 'vertical', isJustified: true, defaultSelectedKeys: ['1'], items: docItems};
+export const VerticalCompact = Template.bind({});
+VerticalCompact.storyName = 'vertical, compact';
+VerticalCompact.args = {orientation: 'vertical', density: 'compact', defaultSelectedKeys: ['1'], items: viewItems};
+export const VerticalIsJustifiedCompact = Template.bind({});
+VerticalIsJustifiedCompact.storyName = 'vertical, isJustified, compact';
+VerticalIsJustifiedCompact.args = {orientation: 'vertical', isJustified: true, density: 'compact', defaultSelectedKeys: ['1'], items: viewItems};
+export const VerticalIsQuiet = Template.bind({});
+VerticalIsQuiet.storyName = 'vertical, isQuiet';
+VerticalIsQuiet.args = {orientation: 'vertical', isQuiet: true, defaultSelectedKeys: ['1'], items: editItems};
+export const VerticalCompactIsQuiet = Template.bind({});
+VerticalCompactIsQuiet.storyName = 'vertical, isQuiet, compact';
+VerticalCompactIsQuiet.args = {orientation: 'vertical', density: 'compact', isQuiet: true, defaultSelectedKeys: ['1'], items: viewItems};
 
-function renderBoth(props, items: any = docItems) {
-  return (
-    <ActionGroup selectionMode="single" {...props}>
-      {
-        items.map((itemProps) => {
-          let IconElement = iconMap[itemProps.children];
-          return (
-            <Item key={itemProps.name} textValue={itemProps.name}>
-              <Text>{itemProps.children}</Text>
-              <IconElement />
-            </Item>
-          );
-        })
-      }
-    </ActionGroup>
-  );
-}
-
-function renderIcons(props, items: any = docItems) {
-  return (
-    <ActionGroup selectionMode="single" {...props}>
-      {
-        items.map((itemProps) => {
-          let IconElement = iconMap[itemProps.children];
-          return (
-            <Item key={itemProps.name} textValue={itemProps.name}>
-              <IconElement />
-            </Item>
-          );
-        })
-      }
-    </ActionGroup>
-  );
-}
+export const DisabledKeys = Template.bind({});
+DisabledKeys.storyName = 'disabledKeys';
+DisabledKeys.args = {disabledKeys: ['1', '2'], seclectionMode: 'multiple', items: dataItems};
