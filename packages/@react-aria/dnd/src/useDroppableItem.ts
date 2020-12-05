@@ -13,6 +13,7 @@
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {DropTarget} from '@react-types/shared';
+import {getTypes} from './utils';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useVirtualDrop} from './useVirtualDrop';
 
@@ -46,7 +47,7 @@ export function useDroppableItem(options: DroppableItemOptions, state: Droppable
   let dragSession = DragManager.useDragSession();
   let isValidDropTarget = dragSession && state.getDropOperation(
     options.target,
-    dragSession.dragTarget.items.map(i => i.type),
+    getTypes(dragSession.dragTarget.items),
     dragSession.dragTarget.allowedDropOperations
   ) !== 'cancel';
 

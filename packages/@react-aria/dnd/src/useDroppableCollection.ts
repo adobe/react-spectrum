@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {DragItem, DropOperation, DroppableCollectionProps, DropPosition, DropTarget, KeyboardDelegate} from '@react-types/shared';
 import * as DragManager from './DragManager';
+import {DropOperation, DroppableCollectionProps, DropPosition, DropTarget, KeyboardDelegate} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
+import {getTypes} from './utils';
 import {HTMLAttributes, Key, RefObject, useEffect, useRef} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {useAutoScroll} from './useAutoScroll';
@@ -192,23 +193,27 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
     let nextValidTarget = (
       target: DropTarget,
-      items: DragItem[],
+      types: Set<string>,
       allowedDropOperations: DropOperation[],
       getNextTarget: (target: DropTarget, wrap: boolean) => DropTarget,
       wrap = true
     ): DropTarget => {
-      let types = items.map(item => item.type);
+      let seenRoot = 0;
       let operation: DropOperation;
       do {
         target = getNextTarget(target, wrap);
         operation = localState.state.getDropOperation(target, types, allowedDropOperations);
+        if (target.type === 'root') {
+          seenRoot++;
+        }
       } while (
         target &&
         operation === 'cancel' &&
-        !localState.state.isDropTarget(target)
+        !localState.state.isDropTarget(target) &&
+        seenRoot < 2
       );
 
-      if (operation === 'cancel' && !wrap) {
+      if (operation === 'cancel') {
         return null;
       }
 
@@ -222,11 +227,14 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           return localState.state.getDropOperation(localState.state.target, types, allowedOperations);
         }
 
-        // TODO: check if ANY of the options can accept a drop??
-        return 'move';
+        // Check if any of the targets accept the drop.
+        // TODO: should we have a faster way of doing this or e.g. for pagination?
+        let target = nextValidTarget(null, types, allowedOperations, getNextTarget);
+        return target ? 'move' : 'cancel';
       },
       onDropEnter(e, drag) {
-        let target = nextValidTarget(null, drag.items, drag.allowedDropOperations, getNextTarget);
+        let types = getTypes(drag.items);
+        let target = nextValidTarget(null, types, drag.allowedDropOperations, getNextTarget);
         localState.state.setTarget(target);
       },
       onDropExit() {
@@ -263,31 +271,32 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       },
       onKeyDown(e, drag) {
         let {keyboardDelegate} = localState.props;
+        let types = getTypes(drag.items);
         switch (e.key) {
           case 'ArrowDown': {
             if (keyboardDelegate.getKeyBelow) {
-              let target = nextValidTarget(localState.state.target, drag.items, drag.allowedDropOperations, getNextTarget);
+              let target = nextValidTarget(localState.state.target, types, drag.allowedDropOperations, getNextTarget);
               localState.state.setTarget(target);
             }
             break;
           }
           case 'ArrowUp': {
             if (keyboardDelegate.getKeyAbove) {
-              let target = nextValidTarget(localState.state.target, drag.items, drag.allowedDropOperations, getPreviousTarget);
+              let target = nextValidTarget(localState.state.target, types, drag.allowedDropOperations, getPreviousTarget);
               localState.state.setTarget(target);
             }
             break;
           }
           case 'Home': {
             if (keyboardDelegate.getFirstKey) {
-              let target = nextValidTarget(null, drag.items, drag.allowedDropOperations, getNextTarget);
+              let target = nextValidTarget(null, types, drag.allowedDropOperations, getNextTarget);
               localState.state.setTarget(target);
             }
             break;
           }
           case 'End': {
             if (keyboardDelegate.getLastKey) {
-              let target = nextValidTarget(null, drag.items, drag.allowedDropOperations, getPreviousTarget);
+              let target = nextValidTarget(null, types, drag.allowedDropOperations, getPreviousTarget);
               localState.state.setTarget(target);
             }
             break;
@@ -296,7 +305,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
             if (keyboardDelegate.getKeyPageBelow) {
               let target = localState.state.target;
               if (!target) {
-                target = nextValidTarget(null, drag.items, drag.allowedDropOperations, getNextTarget);
+                target = nextValidTarget(null, types, drag.allowedDropOperations, getNextTarget);
               } else {
                 // If on the root, go to the item a page below the top. Otherwise a page below the current item.
                 let nextKey = keyboardDelegate.getKeyPageBelow(
@@ -320,11 +329,10 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
                 // If the target does not accept the drop, find the next valid target.
                 // If no next valid target, find the previous valid target.
-                let types = drag.items.map(item => item.type);
                 let operation = localState.state.getDropOperation(target, types, drag.allowedDropOperations);
                 if (operation === 'cancel') {
-                  target = nextValidTarget(target, drag.items, drag.allowedDropOperations, getNextTarget, false)
-                    ?? nextValidTarget(target, drag.items, drag.allowedDropOperations, getPreviousTarget, false);
+                  target = nextValidTarget(target, types, drag.allowedDropOperations, getNextTarget, false)
+                    ?? nextValidTarget(target, types, drag.allowedDropOperations, getPreviousTarget, false);
                 }
               }
 
@@ -339,7 +347,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
             let target = localState.state.target;
             if (!target) {
-              target = nextValidTarget(null, drag.items, drag.allowedDropOperations, getPreviousTarget);
+              target = nextValidTarget(null, types, drag.allowedDropOperations, getPreviousTarget);
             } else if (target.type === 'item') {
               // If at the top already, switch to the root. Otherwise navigate a page up.
               if (target.key === keyboardDelegate.getFirstKey()) {
@@ -363,11 +371,10 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
               // If the target does not accept the drop, find the previous valid target.
               // If no next valid target, find the next valid target.
-              let types = drag.items.map(item => item.type);
               let operation = localState.state.getDropOperation(target, types, drag.allowedDropOperations);
               if (operation === 'cancel') {
-                target = nextValidTarget(target, drag.items, drag.allowedDropOperations, getPreviousTarget, false)
-                  ?? nextValidTarget(target, drag.items, drag.allowedDropOperations, getNextTarget, false);
+                target = nextValidTarget(target, types, drag.allowedDropOperations, getPreviousTarget, false)
+                  ?? nextValidTarget(target, types, drag.allowedDropOperations, getNextTarget, false);
               }
             }
 

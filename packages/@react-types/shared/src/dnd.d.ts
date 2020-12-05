@@ -21,8 +21,8 @@ export interface DragDropEvent {
 export type DropOperation = 'copy' | 'link' | 'move' | 'cancel';
 
 export interface DragItem {
-  type: string, // mime type
-  data: string
+  types: Iterable<string>,
+  getData(type: string): string
 }
 
 export interface DragStartEvent extends DragDropEvent {
@@ -55,8 +55,8 @@ export interface DropExitEvent extends DragDropEvent {
 }
 
 export interface DropItem {
-  type: string,
-  getData: () => Promise<string | File>
+  types: Set<string>,
+  getData(type: string): Promise<string>
 }
 
 export interface DropEvent extends DragDropEvent {
@@ -100,7 +100,7 @@ interface DroppableCollectionDropEvent extends DropEvent {
 
 export interface DroppableCollectionProps {
   getAllowedDropPositions?: (key: Key) => DropPosition[],
-  getDropOperation?: (target: DropTarget, types: string[], allowedOperations: DropOperation[]) => DropOperation,
+  getDropOperation?: (target: DropTarget, types: Set<string>, allowedOperations: DropOperation[]) => DropOperation,
   onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
   onDropMove?: (e: DroppableCollectionMoveEvent) => void,
   onDropActivate?: (e: DroppableCollectionActivateEvent) => void,

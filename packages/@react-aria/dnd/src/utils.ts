@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {DragItem} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {useId} from '@react-aria/utils';
 
@@ -28,4 +29,15 @@ export function getDroppableCollectionId(state: DroppableCollectionState) {
   }
 
   return id;
+}
+
+export function getTypes(items: DragItem[]): Set<string> {
+  let types = new Set<string>();
+  for (let item of items) {
+    for (let type of item.types) {
+      types.add(type);
+    }
+  }
+
+  return types;
 }

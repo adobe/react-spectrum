@@ -134,14 +134,24 @@ storiesOf('Drag and Drop', module)
         <VirtualizedListBoxExample items={manyItems} />
       </Flex>
     )
+  )
+  .add(
+    'Multiple collection drop targets',
+    () => (
+      <Flex direction="row" gap="size-200" alignItems="center" wrap>
+        <DraggableCollectionExample />
+        <VirtualizedListBoxExample items={manyItems.map(item => ({...item, type: 'folder'}))} accept="folder" />
+        <VirtualizedListBoxExample items={manyItems} accept="item" />
+      </Flex>
+    )
   );
 
 function Draggable() {
   let {dragProps, dragButtonProps, isDragging} = useDrag({
     getItems() {
       return [{
-        type: 'text/plain',
-        data: 'hello world'
+        types: ['text/plain'],
+        getData: () => 'hello world'
       }];
     },
     getAllowedDropOperations() {
@@ -170,20 +180,15 @@ function Draggable() {
 
 function Droppable({type}: any) {
   let ref = React.useRef();
-  let onDrop = action('onDrop');
   let {dropProps, isDropTarget} = useDrop({
     ref,
     onDropEnter: action('onDropEnter'),
     // onDropMove: action('onDropMove'),
     onDropExit: action('onDropExit'),
     onDropActivate: action('onDropActivate'),
-    onDrop: async e => {
-      onDrop(e);
-      let items = await Promise.all(e.items.map(async item => ({type: item.type, data: await item.getData()})));
-      console.log(e, items);
-    },
+    onDrop: action('onDrop'),
     getDropOperation(types, allowedOperations) {
-      return !type || types.includes(type) ? allowedOperations[0] : 'cancel';
+      return !type || types.has(type) ? allowedOperations[0] : 'cancel';
     }
   });
 
@@ -222,9 +227,9 @@ function DialogButton({children}) {
 function DraggableCollectionExample() {
   let list = useListData({
     initialItems: [
-      {id: 'foo', text: 'Foo'},
-      {id: 'bar', text: 'Bar'},
-      {id: 'baz', text: 'Baz'}
+      {id: 'foo', type: 'folder', text: 'Foo'},
+      {id: 'bar', type: 'folder', text: 'Bar'},
+      {id: 'baz', type: 'item', text: 'Baz'}
     ]
   });
 
@@ -236,7 +241,12 @@ function DraggableCollectionExample() {
 
   return (
     <DraggableCollection items={list.items} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} onDragEnd={onDragEnd}>
-      {item => <Item>{item.text}</Item>}
+      {item => (
+        <Item textValue={item.text}>
+          {item.type === 'folder' && <Folder size="S" />}
+          <span>{item.text}</span>
+        </Item>
+      )}
     </DraggableCollection>
   );
 }
@@ -248,10 +258,17 @@ function DraggableCollection(props) {
   let dragState = useDraggableCollectionState({
     selectionManager: state.selectionManager,
     getItems(keys) {
-      return [{
-        type: 'application/json',
-        data: JSON.stringify([...keys].map(key => state.collection.getItem(key)?.textValue))
-      }];
+      return [...keys].map(key => {
+        let item = state.collection.getItem(key);
+
+        return {
+          // @ts-ignore
+          types: ['text/plain', item.value.type],
+          getData() {
+            return item.textValue;
+          }
+        };
+      });
     },
     renderPreview(selectedKeys, draggedKey) {
       let item = state.collection.getItem(draggedKey);

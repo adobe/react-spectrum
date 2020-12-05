@@ -43,13 +43,30 @@ export function VirtualizedListBoxExample(props) {
   });
 
   let onDrop = async (e: DroppableCollectionDropEvent) => {
-    let data = JSON.parse(await e.items[0].getData() as string);
     if (e.target.type === 'root' || e.target.dropPosition !== 'on') {
-      let items = data.map(item => ({
-        id: String(++id.current),
-        type: 'item',
-        text: item
-      }));
+      let items = [];
+      for (let item of e.items) {
+        let type: string;
+        if (props.accept) {
+          if (item.types.has(props.accept)) {
+            type = props.accept;
+          }
+        } else if (item.types.has('folder')) {
+          type = 'folder';
+        } else if (item.types.has('item')) {
+          type = 'item';
+        }
+
+        if (!type) {
+          continue;
+        }
+
+        items.push({
+          id: String(++id.current),
+          type,
+          text: await item.getData(type)
+        });
+      }
 
       if (e.target.type === 'root') {
         list.prepend(...items);
@@ -62,7 +79,7 @@ export function VirtualizedListBoxExample(props) {
   };
 
   return (
-    <VirtualizedListBox items={list.items} onDrop={onDrop}>
+    <VirtualizedListBox items={list.items} onDrop={onDrop} accept={props.accept}>
       {item => (
         <Item textValue={item.text}>
           {item.type === 'folder' && <Folder size="S" />}
@@ -74,6 +91,7 @@ export function VirtualizedListBoxExample(props) {
 }
 
 const Context = React.createContext(null);
+const acceptedTypes = ['item', 'folder'];
 
 export function VirtualizedListBox(props) {
   let ref = React.useRef<HTMLDivElement>(null);
@@ -83,6 +101,16 @@ export function VirtualizedListBox(props) {
   let dropState = useDroppableCollectionState({
     collection: state.collection,
     getDropOperation(target, types, allowedOperations) {
+      if (props.accept) {
+        // Don't accept if types includes both items and folders.
+        let rejected = acceptedTypes.filter(type => type !== props.accept);
+        if (!types.has(props.accept) || rejected.some(type => types.has(type))) {
+          return 'cancel';
+        }
+      } else if (acceptedTypes.some(type => types.has(type))) {
+        return 'cancel';
+      }
+
       if (target.type === 'root') {
         return 'move';
       }

@@ -21,7 +21,7 @@ export interface DroppableCollectionState {
   target: DropTarget,
   setTarget(target: DropTarget): void,
   isDropTarget(target: DropTarget): boolean,
-  getDropOperation(target: DropTarget, types: string[], allowedOperations: DropOperation[]): DropOperation
+  getDropOperation(target: DropTarget, types: Set<string>, allowedOperations: DropOperation[]): DropOperation
 }
 
 export function useDroppableCollectionState(props: DroppableCollectionStateOptions): DroppableCollectionState  {

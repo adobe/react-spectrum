@@ -40,13 +40,26 @@ export function DroppableGridExample(props) {
   });
 
   let onDrop = async (e: DroppableCollectionDropEvent) => {
-    let data = JSON.parse(await e.items[0].getData() as string);
     if (e.target.type === 'root' || e.target.dropPosition !== 'on') {
-      let items = data.map(item => ({
-        id: String(++id.current),
-        type: 'item',
-        text: item
-      }));
+      let items = [];
+      for (let item of e.items) {
+        let type: string;
+        if (item.types.has('folder')) {
+          type = 'folder';
+        } else if (item.types.has('item')) {
+          type = 'item';
+        }
+
+        if (!type) {
+          continue;
+        }
+
+        items.push({
+          id: String(++id.current),
+          type,
+          text: await item.getData(type)
+        });
+      }
 
       if (e.target.type === 'root') {
         list.prepend(...items);

@@ -14,6 +14,7 @@ import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropOperation, DropTarget as DroppableCollectionTarget} from '@react-types/shared';
 import {getInteractionModality} from '@react-aria/interactions';
+import {getTypes} from './utils';
 import {useEffect, useState} from 'react';
 
 let dropTargets = new Map<Element, DropTarget>();
@@ -23,7 +24,7 @@ let subscriptions = new Set<() => void>();
 
 interface DropTarget {
   element: HTMLElement,
-  getDropOperation?: (types: string[], allowedOperations: DropOperation[]) => DropOperation,
+  getDropOperation?: (types: Set<string>, allowedOperations: DropOperation[]) => DropOperation,
   onDropEnter?: (e: DropEnterEvent, dragTarget: DragTarget) => void,
   onDropExit?: (e: DropExitEvent) => void,
   onDropTargetEnter?: (target?: DroppableCollectionTarget) => void,
@@ -44,7 +45,7 @@ export function registerDropTarget(target: DropTarget) {
 interface DroppableItem {
   element: HTMLElement,
   target: DroppableCollectionTarget,
-  getDropOperation?: (types: string[], allowedOperations: DropOperation[]) => DropOperation
+  getDropOperation?: (types: Set<string>, allowedOperations: DropOperation[]) => DropOperation
 }
 
 export function registerDropItem(item: DroppableItem) {
@@ -287,7 +288,7 @@ class DragSession {
     }
 
     // Find valid drop items within collections
-    let types = this.dragTarget.items.map(item => item.type);
+    let types = getTypes(this.dragTarget.items);
     let validDropItems = [...dropItems.values()].filter(item => {
       if (typeof item.getDropOperation === 'function') {
         return item.getDropOperation(types, this.dragTarget.allowedDropOperations) !== 'cancel';
@@ -437,10 +438,10 @@ class DragSession {
     }
 
     if (typeof item?.getDropOperation === 'function') {
-      let types = this.dragTarget.items.map(item => item.type);
+      let types = getTypes(this.dragTarget.items);
       this.dropOperation = item.getDropOperation(types, this.dragTarget.allowedDropOperations);
     } else if (typeof this.currentDropTarget.getDropOperation === 'function') {
-      let types = this.dragTarget.items.map(item => item.type);
+      let types = getTypes(this.dragTarget.items);
       this.dropOperation = this.currentDropTarget.getDropOperation(types, this.dragTarget.allowedDropOperations);
     } else {
       // TODO: show menu ??
@@ -449,8 +450,8 @@ class DragSession {
 
     if (typeof this.currentDropTarget.onDrop === 'function') {
       let items = this.dragTarget.items.map(item => ({
-        type: item.type,
-        getData: () => Promise.resolve(item.data)
+        types: new Set(item.types),
+        getData: (type: string) => Promise.resolve(item.getData(type))
       }));
 
       let rect = this.currentDropTarget.element.getBoundingClientRect();
@@ -480,7 +481,7 @@ class DragSession {
 }
 
 function findValidDropTargets(options: DragTarget) {
-  let types = options.items.map(item => item.type);
+  let types = getTypes(options.items);
   return [...dropTargets.values()].filter(target => {
     if (target.element.closest('[aria-hidden="true"]')) {
       return false;

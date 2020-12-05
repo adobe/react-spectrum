@@ -11,10 +11,10 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
+import {CUSTOM_DRAG_TYPE, DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED, NATIVE_DRAG_TYPES} from './constants';
 import {DragEndEvent, DragItem, DragMoveEvent, DragStartEvent, DropOperation, PressEvent} from '@react-types/shared';
 import {DragEvent, HTMLAttributes, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
-import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
 import ReactDOM from 'react-dom';
 import {useDescription} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
@@ -59,9 +59,56 @@ export function useDrag(options: DragOptions): DragResult {
   let [isDragging, setDragging] = useState(false);
 
   let onDragStart = (e: DragEvent) => {
+    // The HTML5 drag and drop API doesn't support more than one item of a given type per drag.
+    // In addition, only a small set of types are supported natively for transfer between applications.
+    // We allow for both multiple items, as well as multiple representations of a single item.
+    // In order to make our API work with the native API, we serialize all items to JSON and
+    // store as a single native item. We only need to do this if there is more than one item
+    // of the same type, or if an item has more than one representation. Otherwise the native
+    // API is sufficient.
     let items = options.getItems();
+    let groupedByType = new Map<string, string[]>();
+    let needsCustomData = false;
+    let customData = [];
     for (let item of items) {
-      e.dataTransfer.items.add(item.data, item.type);
+      let types = [...item.types];
+      if (types.length > 1) {
+        needsCustomData = true;
+      }
+
+      let dataByType = {};
+      for (let type of types) {
+        let typeItems = groupedByType.get(type);
+        if (!typeItems) {
+          typeItems = [];
+          groupedByType.set(type, typeItems);
+        } else {
+          needsCustomData = true;
+        }
+
+        let data = item.getData(type);
+        dataByType[type] = data;
+        typeItems.push(data);
+      }
+
+      customData.push(dataByType);
+    }
+
+    for (let [type, items] of groupedByType) {
+      if (NATIVE_DRAG_TYPES.has(type)) {
+        // Only one item of a given type can be set on a data transfer.
+        // Join all of the items together separated by newlines.
+        let data = items.join('\n');
+        e.dataTransfer.items.add(data, type);
+      } else {
+        // Set data to the first item so we have access to the list of types.
+        e.dataTransfer.items.add(items[0], type);
+      }
+    }
+
+    if (needsCustomData) {
+      let data = JSON.stringify(customData);
+      e.dataTransfer.items.add(data, CUSTOM_DRAG_TYPE);
     }
 
     if (typeof options.getAllowedDropOperations === 'function') {
