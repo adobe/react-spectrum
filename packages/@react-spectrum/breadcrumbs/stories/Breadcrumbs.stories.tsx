@@ -14,7 +14,6 @@ import {action} from '@storybook/addon-actions';
 import {Breadcrumbs} from '../';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {Content, Heading, Text} from '@adobe/react-spectrum';
 // import {Heading} from '@react-spectrum/text';
 import {Item} from '@react-stately/collections';
 import React from 'react';
@@ -193,8 +192,7 @@ let folders = [
   {id: 3, label: 'March 2020 Assets'}
 ];
 
-let DynamicBreadcrumbs = (props = {}) => {
-
+let DynamicBreadcrumbs = () => {
   let [breadcrumbs, setBreadcrumbs] = React.useState(folders);
   let addBreadcrumb = () => {
     let newBreadcrumbs = [...breadcrumbs];
@@ -214,17 +212,17 @@ let DynamicBreadcrumbs = (props = {}) => {
 
   return (
     <div>
-    <Breadcrumbs>
-      {breadcrumbs.map(f => <Item key={f.id}>{f.label}</Item>)}
-    </Breadcrumbs>
-    <ButtonGroup marginEnd="30px">
-      <Button variant="secondary" onPress={() => addBreadcrumb()}>
-        <Text>Add Breadcrumb</Text>
-      </Button>
-      <Button variant="secondary" onPress={() => removeBreadcrumb()}>
-        <Text>Remove Breadcrumb</Text>
-      </Button>
-    </ButtonGroup>
-  </div>
+      <Breadcrumbs>
+        {breadcrumbs.map(f => <Item key={f.id}>{f.label}</Item>)}
+      </Breadcrumbs>
+      <ButtonGroup marginEnd="30px">
+        <Button variant="secondary" onPress={() => addBreadcrumb()}>
+          Add Breadcrumb
+        </Button>
+        <Button variant="secondary" onPress={() => removeBreadcrumb()}>
+          Remove Breadcrumb
+        </Button>
+      </ButtonGroup>
+    </div>
   );
 };
