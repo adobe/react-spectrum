@@ -34,7 +34,8 @@
     "skipLibCheck": false
   },
   "include": [
-    "packages"
+    "packages",
+    ".storybook/**/*"
   ],
   "exclude": [
     "**/node_modules"
