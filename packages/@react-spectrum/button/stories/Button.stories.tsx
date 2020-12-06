@@ -15,9 +15,44 @@ import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
+import {SpectrumButtonProps} from '@react-types/button';
+import {Meta} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 
+const meta: Meta<SpectrumButtonProps> = {
+  title: 'Button',
+  component: Button,
+  parameters: {
+    argTypes: {
+      onPress: {action: 'press'},
+      onPressStart: {action: 'pressstart'},
+      onPressEnd: {action: 'pressend'}
+    },
+    providerSwitcher: {status: 'positive'}
+  }
+};
+
+export default meta;
+
+const Template = (args: SpectrumButtonProps) => (
+  <Button {...args}>
+    Default
+  </Button>
+);
+
+export const CTAButton = Template.bind({});
+CTAButton.storyName = 'cta button';
+CTAButton.args = {variant: 'cta'};
+export const PrimaryButton = Template.bind({});
+PrimaryButton.storyName = 'primary button';
+PrimaryButton.args = {variant: 'cta'};
+export const SecondaryButton = Template.bind({});
+SecondaryButton.storyName = 'secondary button';
+SecondaryButton.args = {variant: 'cta'};
+export const OverBackGroundButton = Template.bind({});
+OverBackGroundButton.storyName = 'overBackground button';
+OverBackGroundButton.args = {variant: 'cta'};
+/*
 storiesOf('Button', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
   .add(
@@ -89,6 +124,7 @@ storiesOf('Button', module)
     'element: a, rel: \'noopener noreferrer\'',
     () => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', variant: 'primary'})
   );
+  */
 
 function render(props: any = {}) {
   return (

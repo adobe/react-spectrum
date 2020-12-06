@@ -21,8 +21,6 @@ import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
-import V2Button from '@react/react-spectrum/Button';
-import V2ButtonGroup from '@react/react-spectrum/ButtonGroup';
 
 // Describes the tabIndex values of button 1 (column 1), 2, and 3 as focus is moved forward or back.
 // e.g. button2Focused describes button 2 having tabindex=0 while all other buttons have -1
@@ -148,7 +146,6 @@ describe('ActionGroup', function () {
   it.each`
   Name               | ComponentGroup   | Component   | props
   ${'ActionGroup'}   | ${ActionGroup}   | ${Item}     | ${{selectionMode: 'multiple'}}
-  ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button} | ${{multiple: true, role: 'toolbar'}}
   `('$Name handles multiple selection', function ({ComponentGroup, Component, props}) {
     let {getByRole, getAllByRole} = render(
       <Provider theme={theme} locale="de-DE">
@@ -166,7 +163,6 @@ describe('ActionGroup', function () {
   it.each`
     Name               | ComponentGroup   | Component   | props
     ${'ActionGroup'}   | ${ActionGroup}   | ${Item}     | ${{orientation: 'vertical'}}
-    ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button} | ${{orientation: 'vertical', role: 'toolbar'}}
   `('$Name handles vertical', function ({ComponentGroup, Component, props}) {
     let {getByTestId} = render(
       <Provider theme={theme} locale="de-DE">
@@ -182,7 +178,6 @@ describe('ActionGroup', function () {
   it.each`
     Name               | ComponentGroup   | Component   | props
     ${'ActionGroup'}   | ${ActionGroup}   | ${Item}     | ${{selectionMode: 'single', isDisabled: true}}
-    ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button} | ${{disabled: true}}
   `('$Name handles disabled', function ({ComponentGroup, Component, props}) {
     let {getByRole} = render(
       <Provider theme={theme} locale="de-DE">
