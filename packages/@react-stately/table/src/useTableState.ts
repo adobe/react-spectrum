@@ -51,7 +51,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     showSelectionCheckboxes: props.showSelectionCheckboxes && selectionState.selectionMode !== 'none',
     selectionMode: selectionState.selectionMode,
     columns: []
-  }), [props.children, props.showSelectionCheckboxes, selectionState.selectionMode]);
+  }), [props.showSelectionCheckboxes, selectionState.selectionMode]);
 
   let collection = useCollection<T, TableCollection<T>>(
     props,
@@ -59,12 +59,13 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     context
   );
 
+  let {focusedKey, setFocusedKey} = selectionState;
   // Reset focused key if that item is deleted from the collection.
   useEffect(() => {
-    if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
-      selectionState.setFocusedKey(null);
+    if (focusedKey != null && !collection.getItem(focusedKey)) {
+      setFocusedKey(null);
     }
-  }, [collection, selectionState.focusedKey]);
+  }, [collection, focusedKey, setFocusedKey]);
 
   return {
     collection,

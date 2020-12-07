@@ -317,16 +317,18 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
     headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
   }, [bodyRef]);
 
-  let onVisibleRectChange = useCallback((rect: Rect) => {
-    state.setVisibleRect(rect);
+  let {setVisibleRect, virtualizer} = state;
 
-    if (!collection.body.props.isLoading && collection.body.props.onLoadMore && state.virtualizer.contentSize.height > rect.height * 2) {
-      let scrollOffset = state.virtualizer.contentSize.height - rect.height * 2;
+  let onVisibleRectChange = useCallback((rect: Rect) => {
+    setVisibleRect(rect);
+
+    if (!collection.body.props.isLoading && collection.body.props.onLoadMore && virtualizer.contentSize.height > rect.height * 2) {
+      let scrollOffset = virtualizer.contentSize.height - rect.height * 2;
       if (rect.y > scrollOffset) {
         collection.body.props.onLoadMore();
       }
     }
-  }, [collection.body.props, state.setVisibleRect, state.virtualizer]);
+  }, [collection.body.props, setVisibleRect, virtualizer]);
 
   return (
     <div
