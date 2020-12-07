@@ -12,7 +12,7 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
-import {classNames, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {DOMProps, DOMRef, Node, StyleProps} from '@react-types/shared';
 import {ListState, useListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
@@ -97,7 +97,7 @@ interface ActionGroupItemProps<T> extends DOMProps, StyleProps {
 
 function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, onAction}: ActionGroupItemProps<T>) {
   let ref = useRef();
-  let {buttonProps} = useActionGroupItem({key: item.key}, state, unwrapDOMRef(ref));
+  let {buttonProps} = useActionGroupItem({key: item.key}, state, useUnwrapDOMRef(ref));
   isDisabled = isDisabled || state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key);
   let {hoverProps, isHovered} = useHover({isDisabled});

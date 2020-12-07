@@ -17,7 +17,7 @@ import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overla
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, useEffect, useRef} from 'react';
 import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
-import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
+import {useMediaQuery, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 
 function DialogTrigger(props: SpectrumDialogTriggerProps) {
@@ -148,7 +148,7 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, isKeyboa
   let overlayRef = useRef<DOMRefValue<HTMLDivElement>>();
   let {overlayProps: popoverProps, placement, arrowProps} = useOverlayPosition({
     targetRef: targetRef || triggerRef,
-    overlayRef: unwrapDOMRef(overlayRef),
+    overlayRef: useUnwrapDOMRef(overlayRef),
     placement: props.placement,
     containerPadding: props.containerPadding,
     offset: props.offset,

@@ -86,21 +86,6 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     placement: undefined
   });
 
-  let deps = [
-    shouldUpdatePosition,
-    placement,
-    overlayRef.current,
-    targetRef.current,
-    scrollRef.current,
-    containerPadding,
-    shouldFlip,
-    boundaryElement,
-    offset,
-    crossOffset,
-    isOpen,
-    direction
-  ];
-
   let updatePosition = useCallback(() => {
     if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !scrollRef.current || !boundaryElement) {
       return;
@@ -120,12 +105,10 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       })
     );
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
+  }, [shouldUpdatePosition, placement, overlayRef, targetRef, scrollRef, containerPadding, shouldFlip, boundaryElement, offset, crossOffset, isOpen, direction]);
 
   // Update position when anything changes
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(updatePosition, deps);
+  useEffect(updatePosition, [updatePosition]);
 
   // Update position on window resize
   useResize(updatePosition);

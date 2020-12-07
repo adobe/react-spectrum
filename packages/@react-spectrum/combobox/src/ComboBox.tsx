@@ -12,7 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, unwrapDOMRef, useFocusableRef, useIsMobileDevice} from '@react-spectrum/utils';
+import {classNames, useFocusableRef, useIsMobileDevice, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
@@ -52,7 +52,9 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   } = props;
 
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
+  let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
   let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
+  let unwrappedButtonRef = useUnwrapDOMRef(buttonRef);
   let listBoxRef = useRef();
   let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
   let domRef = useFocusableRef(ref, inputRef);
@@ -65,8 +67,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     {
       ...props,
       keyboardDelegate: layout,
-      buttonRef: unwrapDOMRef(buttonRef),
-      popoverRef: unwrapDOMRef(popoverRef),
+      buttonRef: unwrappedButtonRef,
+      popoverRef: unwrappedPopoverRef,
       listBoxRef,
       inputRef: inputRef,
       menuTrigger
@@ -75,8 +77,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   );
 
   let {overlayProps, placement} = useOverlayPosition({
-    targetRef: unwrapDOMRef(buttonRef),
-    overlayRef: unwrapDOMRef(popoverRef),
+    targetRef: unwrappedButtonRef,
+    overlayRef: unwrappedPopoverRef,
     scrollRef: listBoxRef,
     placement: `${direction} end` as Placement,
     shouldFlip: shouldFlip,
