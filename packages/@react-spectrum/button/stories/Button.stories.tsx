@@ -10,48 +10,36 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
-import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
-import {Flex} from '@react-spectrum/layout';
+import {Meta} from '@storybook/react';
 import React from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
-import {Meta} from '@storybook/react';
-import {Text} from '@react-spectrum/text';
 
 const meta: Meta<SpectrumButtonProps> = {
   title: 'Button',
   component: Button,
   parameters: {
-    providerSwitcher: {status: 'positive'}
-  },
-  argTypes: {
-    onPress: {action: 'press'},
-    onPressStart: {action: 'pressstart'},
-    onPressEnd: {action: 'pressend'}
+    providerSwitcher: {status: 'positive'},
+    actions: {argTypesRegex: '^on.*'}
   }
 };
 
 export default meta;
 
-const Template = (args: SpectrumButtonProps) => (
-  <Button {...args}>
-    Default
-  </Button>
-);
+const Template = (args: SpectrumButtonProps) => <Button {...args} />;
 
 export const CTAButton = Template.bind({});
 CTAButton.storyName = 'cta button';
-CTAButton.args = {variant: 'cta'};
+CTAButton.args = {variant: 'cta', children: 'Default'};
 export const PrimaryButton = Template.bind({});
 PrimaryButton.storyName = 'primary button';
-PrimaryButton.args = {variant: 'cta'};
+PrimaryButton.args = {variant: 'primary', children: 'Default'};
 export const SecondaryButton = Template.bind({});
 SecondaryButton.storyName = 'secondary button';
-SecondaryButton.args = {variant: 'cta'};
+SecondaryButton.args = {variant: 'secondary', children: 'Default'};
 export const OverBackGroundButton = Template.bind({});
 OverBackGroundButton.storyName = 'overBackground button';
-OverBackGroundButton.args = {variant: 'cta'};
+OverBackGroundButton.args = {variant: 'overBackground', children: 'Default'};
 /*
 storiesOf('Button', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -124,7 +112,7 @@ storiesOf('Button', module)
     'element: a, rel: \'noopener noreferrer\'',
     () => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', variant: 'primary'})
   );
-  */
+
 
 function render(props: any = {}) {
   return (
@@ -157,3 +145,4 @@ function render(props: any = {}) {
     </Flex>
   );
 }
+*/

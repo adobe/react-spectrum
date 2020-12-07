@@ -4,6 +4,7 @@ const webpackconfig = require('./webpack-storybook.config.js');
 module.exports = {
   stories: ['../packages/**/stories/**/*.stories.@(js|jsx|ts|tsx)'],
   addons: [
+    '@storybook/addon-docs',
     '@storybook/addon-actions',
     '@storybook/addon-a11y',
     '@storybook/addon-knobs',
@@ -12,8 +13,7 @@ module.exports = {
     './theme.register'
   ],
   typescript: {
-    check: false,
-    reactDocgen: false
+    check: false
   },
   webpackFinal: async (config) => {
     let custom = webpackconfig();

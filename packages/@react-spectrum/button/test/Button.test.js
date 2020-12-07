@@ -11,7 +11,7 @@
  */
 
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
-import {CTAButton} from '../stories/Button.stories';
+import * as Buttons from '../stories/Button.stories';
 import {fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import {triggerPress} from '@react-spectrum/test-utils';
@@ -31,11 +31,11 @@ describe('Button', function () {
   });
 
   it.each`
-    Name               | Component      | props
-    ${'ActionButton'}  | ${ActionButton}| ${{onPress: onPressSpy}}
-    ${'Button'}        | ${Button}      | ${{onPress: onPressSpy}}
-    ${'LogicButton'}   | ${LogicButton} | ${{onPress: onPressSpy}}
-    ${'CTAButton'}     | ${CTAButton}   | ${{onPress: onPressSpy}}
+    Name               | Component              | props
+    ${'ActionButton'}  | ${ActionButton}        | ${{onPress: onPressSpy}}
+    ${'Button'}        | ${Button}              | ${{onPress: onPressSpy}}
+    ${'LogicButton'}   | ${LogicButton}         | ${{onPress: onPressSpy}}
+    ${'CTAButton'}     | ${Buttons.CTAButton}   | ${{...Buttons.CTAButton.args, onPress: onPressSpy}}
   `('$Name handles defaults', function ({Component, props}) {
     let {getByRole, getByText} = render(<Component {...props}>Click Me</Component>);
 

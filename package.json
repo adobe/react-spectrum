@@ -74,6 +74,7 @@
     "@spectrum-css/vars": "^2.3.0",
     "@storybook/addon-a11y": "^6.1.10",
     "@storybook/addon-actions": "^6.1.10",
+    "@storybook/addon-docs": "^6.1.10",
     "@storybook/addon-knobs": "^6.1.10",
     "@storybook/addon-links": "^6.1.10",
     "@storybook/react": "^6.1.10",
