@@ -23,12 +23,12 @@ const meta: Meta<SpectrumButtonProps> = {
   title: 'Button',
   component: Button,
   parameters: {
-    argTypes: {
-      onPress: {action: 'press'},
-      onPressStart: {action: 'pressstart'},
-      onPressEnd: {action: 'pressend'}
-    },
     providerSwitcher: {status: 'positive'}
+  },
+  argTypes: {
+    onPress: {action: 'press'},
+    onPressStart: {action: 'pressstart'},
+    onPressEnd: {action: 'pressend'}
   }
 };
 
