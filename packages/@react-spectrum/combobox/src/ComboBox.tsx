@@ -222,5 +222,8 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
   );
 });
 
+/**
+ * ComboBoxes combine a text entry with a picker menu, allowing users to filter longer lists to only the selections matching a query.
+ */
 const _ComboBox = React.forwardRef(ComboBox) as <T>(props: SpectrumComboBoxProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
 export {_ComboBox as ComboBox};
