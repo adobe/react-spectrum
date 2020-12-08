@@ -298,9 +298,7 @@ function focusElement(element: HTMLElement | null, scroll = false) {
     }
   } else if (element != null) {
     try {
-      requestAnimationFrame(() => {
-        element.focus();
-      });
+      element.focus();
     } catch (err) {
       // ignore
     }
