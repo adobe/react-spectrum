@@ -12,7 +12,15 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, dimensionValue, SlotProvider, useDOMRef, useIsMobileDevice, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
+import {
+  classNames,
+  dimensionValue,
+  SlotProvider,
+  useDOMRef,
+  useIsMobileDevice,
+  useStyleProps,
+  useUnwrapDOMRef
+} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRef, DOMRefValue, FocusableRefValue, LabelPosition} from '@react-types/shared';
 import {FieldButton} from '@react-spectrum/button';
@@ -130,23 +138,20 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   // Measure the width of the button to inform the width of the menu (below).
   let [buttonWidth, setButtonWidth] = useState(null);
   let {scale} = useProvider();
-  useLayoutEffect(() => {
-    if (!isMobile) {
-      let width = triggerRef.current.UNSAFE_getDOMNode().offsetWidth;
-      setButtonWidth(width);
-    }
-  }, [scale, isMobile, triggerRef, state.selectedKey]);
-
 
   let onResize = useCallback(() => {
-    let width = unwrappedTriggerRef.current.offsetWidth;
-    setButtonWidth(width);
-  }, [unwrappedTriggerRef, setButtonWidth]);
+    if (!isMobile) {
+      let width = unwrappedTriggerRef.current.offsetWidth;
+      setButtonWidth(width);
+    }
+  }, [unwrappedTriggerRef, setButtonWidth, isMobile]);
 
   useResizeObserver({
     ref: unwrappedTriggerRef,
     onResize: onResize
   });
+
+  useLayoutEffect(onResize, [scale, state.selectedKey, onResize]);
 
   let overlay;
   if (isMobile) {
