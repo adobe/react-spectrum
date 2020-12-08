@@ -10,18 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {BreadcrumbItemProps} from '@react-types/breadcrumbs';
-import {DOMProps} from '@react-types/shared';
+import {AriaBreadcrumbItemProps} from '@react-types/breadcrumbs';
 import {HTMLAttributes, RefObject} from 'react';
 import {useLink} from '@react-aria/link';
-
-interface AriaBreadcrumbItemProps extends BreadcrumbItemProps, DOMProps {
-  /**
-   * The HTML element used to render the breadcrumb link, e.g. 'a', or 'span'.
-   * @default 'a'
-   */
-  elementType?: string
-}
 
 interface BreadcrumbItemAria {
   /** Props for the breadcrumb item link element. */
