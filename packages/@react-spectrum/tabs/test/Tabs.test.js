@@ -83,6 +83,14 @@ describe('Tabs', function () {
     }
   });
 
+  it('attaches a user provided ref to the outer div', function () {
+    let ref = React.createRef();
+    let container = renderComponent({ref});
+    let tablist = container.getByRole('tablist');
+
+    expect(ref.current.UNSAFE_getDOMNode()).toBe(tablist.parentElement.parentElement);
+  });
+
   it('allows user to change tab item select via left/right arrow keys with horizontal tabs', function () {
     let container = renderComponent({orientation: 'horizontal'});
     let tablist = container.getByRole('tablist');

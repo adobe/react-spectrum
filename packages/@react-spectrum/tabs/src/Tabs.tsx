@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, unwrapDOMRef, useStyleProps, useValueEffect} from '@react-spectrum/utils';
-import {DOMProps, Node, Orientation} from '@react-types/shared';
+import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useStyleProps, useValueEffect} from '@react-spectrum/utils';
+import {DOMProps, DOMRef, Node, Orientation} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {Item, Picker} from '@react-spectrum/picker';
 import {mergeProps, useId, useLayoutEffect} from '@react-aria/utils';
-import React, {HTMLAttributes, Key, MutableRefObject, useCallback, useEffect, useRef, useState} from 'react';
+import React, {HTMLAttributes, Key, MutableRefObject, ReactElement, useCallback, useEffect, useRef, useState} from 'react';
 import {SingleSelectListState} from '@react-stately/list';
 import {SpectrumPickerProps} from '@react-types/select';
 import {SpectrumTabsProps} from '@react-types/tabs';
@@ -28,43 +28,44 @@ import {useResizeObserver} from '@react-aria/utils';
 import {useTab, useTabs} from '@react-aria/tabs';
 import {useTabsState} from '@react-stately/tabs';
 
-export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
+function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {
     orientation = 'horizontal' as Orientation,
     isDisabled,
     isQuiet,
-    density,
+    density = 'regular',
     children,
     ...otherProps
   } = props;
 
-  let ref = useRef<HTMLDivElement>();
+  let domRef = useDOMRef(ref);
+  let tablistRef = useRef<HTMLDivElement>();
   let wrapperRef = useRef<HTMLDivElement>();
   let state = useTabsState(props);
 
   let {direction} = useLocale();
   let {styleProps} = useStyleProps(otherProps);
-  let {tabListProps, tabPanelProps} = useTabs(props, state, ref);
+  let {tabListProps, tabPanelProps} = useTabs(props, state, tablistRef);
   let [collapse, setCollapse] = useValueEffect(false);
   let [selectedTab, setSelectedTab] = useState<HTMLElement>();
 
   useEffect(() => {
-    if (ref.current) {
-      let selectedTab: HTMLElement = ref.current.querySelector(`[data-key="${state.selectedKey}"]`);
+    if (tablistRef.current) {
+      let selectedTab: HTMLElement = tablistRef.current.querySelector(`[data-key="${state.selectedKey}"]`);
 
       if (selectedTab != null) {
         setSelectedTab(selectedTab);
       }
     }
     // collapse is in the dep array so selectedTab can be updated for TabLine positioning
-  }, [children, state.selectedKey, collapse, ref]);
+  }, [children, state.selectedKey, collapse, tablistRef]);
 
   let checkShouldCollapse = useCallback(() => {
     let computeShouldCollapse = () => {
       if (wrapperRef.current) {
         let tabsComponent = wrapperRef.current;
-        let tabs = ref.current.querySelectorAll('[role="tab"]');
+        let tabs = tablistRef.current.querySelectorAll('[role="tab"]');
         let lastTab = tabs[tabs.length - 1];
 
         let end = direction === 'rtl' ? 'left' : 'right';
@@ -85,7 +86,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
         yield computeShouldCollapse();
       });
     }
-  }, [ref, wrapperRef, direction, orientation, setCollapse]);
+  }, [tablistRef, wrapperRef, direction, orientation, setCollapse]);
 
   useEffect(() => {
     checkShouldCollapse();
@@ -102,6 +103,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
   return (
     <div
       {...styleProps}
+      ref={domRef}
       className={classNames(
         styles,
         'spectrum-TabsPanel',
@@ -111,7 +113,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
       {orientation === 'vertical' &&
         <TabList
           {...tabListProps}
-          ref={ref}
+          ref={tablistRef}
           orientation={orientation}
           density={density}
           isQuiet={isQuiet}
@@ -128,7 +130,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
           tabListProps={tabListProps}
           state={state}
           selectedTab={selectedTab}
-          ref={ref} />
+          ref={tablistRef} />
       }
       <div {...tabPanelProps}>
         {state.selectedItem && state.selectedItem.props.children}
@@ -283,7 +285,7 @@ const CollapsibleTabList = React.forwardRef(function <T> (props: CollapsibleTabL
 
 interface TabListProps<T> {
   isQuiet?: boolean,
-  density?: 'compact',
+  density?: 'compact' | 'regular',
   isDisabled?: boolean,
   orientation?: Orientation,
   state: SingleSelectListState<T>,
@@ -313,7 +315,7 @@ const TabList = React.forwardRef(function <T> (props: TabListProps<T>, ref: Muta
         `spectrum-Tabs--${orientation}`,
         {
           'spectrum-Tabs--quiet': isQuiet,
-          [`spectrum-Tabs--${density}`]: density
+          ['spectrum-Tabs--compact']: density === 'compact'
         },
         className
       )}>
@@ -326,7 +328,7 @@ const TabList = React.forwardRef(function <T> (props: TabListProps<T>, ref: Muta
 });
 
 interface TabPickerProps<T> extends SpectrumPickerProps<T> {
-  density?: 'compact',
+  density?: 'compact' | 'regular',
   state: SingleSelectListState<T>,
   className?: string
 }
@@ -354,7 +356,7 @@ function TabPicker<T>(props: TabPickerProps<T>) {
   let items = [...state.collection].map((item) => ({
     rendered: item.rendered,
     textValue: item.textValue,
-    key: item.key
+    id: item.key
   }));
 
   let pickerProps = {
@@ -372,12 +374,16 @@ function TabPicker<T>(props: TabPickerProps<T>) {
         'spectrum-Tabs--isCollapsed',
         {
           'spectrum-Tabs--quiet': isQuiet,
-          [`spectrum-Tabs--${density}`]: density
+          ['spectrum-Tabs--compact']: density === 'compact'
         },
         className
       )}>
       <SlotProvider
         slots={{
+          icon: {
+            size: 'S',
+            UNSAFE_className: classNames(styles, 'spectrum-Icon')
+          },
           button: {
             focusRingClass: classNames(styles, 'focus-ring')
           }
@@ -392,10 +398,18 @@ function TabPicker<T>(props: TabPickerProps<T>) {
           selectedKey={state.selectedKey}
           disabledKeys={state.disabledKeys}
           onSelectionChange={state.setSelectedKey}>
-          {item => <Item key={item.key} textValue={item.textValue}>{item.rendered}</Item>}
+          {item => <Item textValue={item.textValue}>{item.rendered}</Item>}
         </Picker>
         {pickerNode && <TabLine orientation="horizontal" selectedTab={pickerNode} selectedKey={state.selectedKey} />}
       </SlotProvider>
     </div>
   );
 }
+
+/**
+ * Tabs organize content into multiple sections and allow users to navigate between them. The content under the set of tabs should be related and form a coherent unit.
+ */
+// forwardRef doesn't support generic parameters, so cast the result to the correct type
+// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
+const _Tabs = React.forwardRef(Tabs) as <T>(props: SpectrumTabsProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+export {_Tabs as Tabs};
