@@ -14,7 +14,7 @@ const findUp = require('find-up');
 const path = require('path');
 const fs = require('fs');
 const Module = require('module');
-const substrings = ['alpha', 'beta', 'rc'];
+const substrings = ['-', '+'];
 
 module.exports = function (context) {
   let processNode = (node) => {
