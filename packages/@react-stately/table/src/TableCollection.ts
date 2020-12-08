@@ -176,6 +176,7 @@ export class TableCollection<T> implements ITableCollection<T> {
 
           // Adjust shifted indices
           for (let i = col.length; i < column.length; i++) {
+            // eslint-disable-next-line max-depth
             if (column[i] && seen.has(column[i])) {
               seen.get(column[i]).index = i;
             }
@@ -218,7 +219,7 @@ export class TableCollection<T> implements ITableCollection<T> {
               childNodes: [],
               textValue: null
             };
-
+            // eslint-disable-next-line max-depth
             if (row.length > 0) {
               row[row.length - 1].nextKey = placeholder.key;
               placeholder.prevKey = row[row.length - 1].key;
