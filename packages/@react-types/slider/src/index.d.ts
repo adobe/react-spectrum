@@ -12,13 +12,12 @@ export interface BaseSliderProps extends RangeInputBase<number>, LabelableProps,
   /**
    * The display format of the value label.
    */
-  formatOptions?: Intl.NumberFormatOptions
-}
-
-export interface SliderProps extends BaseSliderProps, ValueBase<number[]> {
+  formatOptions?: Intl.NumberFormatOptions,
   /** Fired when the slider stops moving, due to being let go. */
   onChangeEnd?: (value: number[]) => void
 }
+
+export interface SliderProps extends BaseSliderProps, ValueBase<number[]> {}
 
 export interface SliderThumbProps extends AriaLabelingProps, FocusableDOMProps, FocusableProps, Validation, AriaValidationProps, LabelableProps {
   /**
@@ -33,14 +32,28 @@ export interface SliderThumbProps extends AriaLabelingProps, FocusableDOMProps, 
 }
 
 export interface SpectrumBarSliderBase<T> extends BaseSliderProps, ValueBase<T>, StyleProps {
+  /**
+   * The label's overall position relative to the element it is labeling.
+   * @default 'top'
+   */
   labelPosition?: LabelPosition,
   /** Whether the value's label is displayed. True by default if there's a `label`, false by default if not. */
   showValueLabel?: boolean,
   /** The content to display as the value's label. Overrides default formatted number. */
-  valueLabel?: ReactNode
+  valueLabel?: ReactNode,
+  /**
+   * The slider's minimum value.
+   * @default '0'
+   */
+  minValue?: number,
+  /**
+   * The slider's maximum value.
+   * @default '100'
+   */
+  maxValue?: number
 }
 
-export interface SpectrumSliderProps extends SpectrumBarSliderBase<number> {
+export interface SpectrumSliderProps extends Omit<SpectrumBarSliderBase<number>, 'onChange' | 'onChangeEnd'> {
   /**
    * Whether a fill color is shown between the start of the slider and the current value.
    * @see https://spectrum.adobe.com/page/slider/#Fill.
@@ -57,7 +70,13 @@ export interface SpectrumSliderProps extends SpectrumBarSliderBase<number> {
    * @example trackGradient={['red 20%', 'green 40%']}
    * @see https://spectrum.adobe.com/page/slider/#Gradient.
    */
-  trackGradient?: string[]
+  trackGradient?: string[],
+  /**
+   * Handler that is called when the value changes.
+   */
+  onChange?: (value: number) => void,
+  /** Fired when the slider stops moving, due to being let go. */
+  onChangeEnd?: (value: number) => void
 }
 
 export interface SpectrumRangeSliderProps extends SpectrumBarSliderBase<RangeValue<number>> { }

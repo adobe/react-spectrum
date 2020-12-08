@@ -16,44 +16,45 @@ import packageData from '@react-spectrum/slider/package.json';
 
 ```jsx import
 import {Flex} from '@react-spectrum/layout';
-import {Slider} from '@react-spectrum/slider';
+import {RangeSlider} from '@react-spectrum/slider';
 ```
 
 ---
 category: Forms
 ---
 
-# Slider
+# Slider - RangeSlider
 
-<p>{docs.exports.Slider.description}</p>
+<p>{docs.exports.RangeSlider.description}</p>
 
 <HeaderInfo
-  packageData={packageData}
-  componentNames={['Slider']}
-  sourceData={[{type: 'Spectrum', url: 'https://spectrum.adobe.com/page/slider/'}]} />
+packageData={packageData}
+componentNames={['RangeSlider']}
+sourceData={[{type: 'Spectrum', url: 'https://spectrum.adobe.com/page/slider/'}]} />
 
 ## Example
 
 ```tsx example
-<Slider label="Cookies to buy" defaultValue={12} />
+<RangeSlider label="Cookies to buy" defaultValue={{start: 12, end: 36}} />
 ```
 
 ## Value
 
-Sliders are controlled with the `value` and `defaultValue` props. This value must fall between
-the Slider's minimum and maximum values, which default to 0 and 100 respectively.
+RangeSliders are controlled with the `value` and `defaultValue` props.
+This value consists of two parts, start and end, both must fall between
+the RangeSlider's minimum and maximum values, which default to 0 and 100 respectively.
 
 ```tsx example
 function Example() {
-  let [value, setValue] = React.useState(25);
+  let [value, setValue] = React.useState({start: 25, end: 75});
   return (
     <Flex gap="size-150">
-      <Slider
-        label="Cookies to buy (Uncontrolled)"
-        defaultValue={25} />
-      <Slider
-        label="Cookies to buy (Controlled)"
-        value={value}
+      <RangeSlider
+        label="Size Range (Uncontrolled)"
+        defaultValue={{start: 25, end: 75}} />
+      <RangeSlider
+        label="Size Range (Controlled)"
+        value={{start: value, end: value}}
         onChange={setValue} />
     </Flex>
   );
@@ -63,21 +64,21 @@ function Example() {
 Alternatively, a different scale can be used by setting the `minValue` and `maxValue` props.
 
 ```tsx example
-<Slider
-  label="Cookies to buy"
+<RangeSlider
+  label="Size Range"
   minValue={50}
   maxValue={150}
-  defaultValue={100} />
+  defaultValue={{start: 75, end: 100}} />
 ```
 
 The slider value can be formatted by using the `formatOptions` prop.
 `formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
 
 ```tsx example
-<Slider
-  label="Currency"
+<RangeSlider
+  label="Price Range"
   formatOptions={{style: 'currency', currency: 'JPY'}}
-  defaultValue={60} />
+  defaultValue={{start: 75, end: 100}} />
 ```
 
 ## Labeling
@@ -86,10 +87,19 @@ The label text should be in sentence case.
 
 ```tsx example
 <Flex direction="column" maxWidth="size-3000" gap="size-300">
-  <Slider label="Cookies to buy" defaultValue={25} />
-  <Slider label="Donuts to buy" labelPosition="side" defaultValue={25} />
-  <Slider label="Pastries to buy" showValueLabel={false} defaultValue={25} />
+  <RangeSlider label="Jeans Price Range" formatOptions={{style: 'currency', currency: 'USD'}} defaultValue={{start: 75, end: 100}} />
+  <RangeSlider label="Shoes Price Range" formatOptions={{style: 'currency', currency: 'USD'}} labelPosition="side" defaultValue={{start: 50, end: 100}} />
+  <RangeSlider label="Hats Price Range" formatOptions={{style: 'currency', currency: 'USD'}} showValueLabel={false} defaultValue={{start: 15, end: 30}} />
 </Flex>
+```
+
+The value label can be updated via the `valueLabel` prop in cases where showing a different scale makes sense. The `valueLabel`
+should be appropriately translated.
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState({start: 15, end: 60});
+  return <RangeSlider label="Distance" marginBottom="size-300" value={value} onChange={setValue} valueLabel={`${value.start} to ${value.end} away`} />
+}
 ```
 
 By default, the value label is formatted as a plain number. This can be customized using the following props.
@@ -103,24 +113,24 @@ function Example() {
   let [donuts, setDonuts] = React.useState(54);
   return (
     <Flex direction="column" maxWidth="size-3000" gap="size-300">
-      <Slider
+      <RangeSlider
         label="Cookies to buy"
         showValueLabel={false}
-        defaultValue={90} />
+        defaultValue={{start: 75, end: 100}} />
 
-      <Slider
-        label="Donuts to buy"
-        maxValue={60}
-        valueLabel={`${donuts} of 60 Donuts`}
+      <RangeSlider
+        label="Distance"
+        maxValue={{start: 15, end: 60}}
+        valueLabel={`${value.start}m to ${value.end}m away`}
         value={donuts}
         onChange={setDonuts} />
 
-      <Slider
+      <RangeSlider
         label="Percent donus eaten"
         maxValue={1}
         step={0.001}
         formatOptions={{style: 'percent', minimumFractionDigits: 1}}
-        defaultValue={0.891} />
+        defaultValue={{start: .75, end: 1}} />
     </Flex>
   );
 }
@@ -148,8 +158,8 @@ Slider automatically uses the current locale to format the value label.
 
 ```tsx example
 <Flex direction="column" gap="size-300">
-  <Slider label="Opacity" maxValue={1} formatOptions={{style: 'percent'}} defaultValue={0.9} step={0.01} isFilled />
-  <Slider label="Exposure" minValue={-5} maxValue={5} defaultValue={1.83} formatOptions={{signDisplay: 'always'}} step={0.01} fillOffset={0} isFilled />
+  <RangeSlider label="Opacity" maxValue={1} formatOptions={{style: 'percent'}} defaultValue={{start:0.5, end: 0.7}} step={0.01} isFilled />
+  <RangeSlider label="Exposure" minValue={-5} maxValue={5} defaultValue={{start: 1.83, end: 3.00}} formatOptions={{signDisplay: 'always'}} step={0.01} fillOffset={0} isFilled />
 </Flex>
 ```
 
@@ -157,5 +167,5 @@ Slider automatically uses the current locale to format the value label.
 [View guidelines](https://spectrum.adobe.com/page/slider/#Disabled)
 
 ```tsx example
-<Slider label="Cookies to share" defaultValue={25} isDisabled />
+<RangeSlider label="Cookies to share" defaultValue={{start: 25, end: 50}} isDisabled />
 ```

@@ -31,7 +31,7 @@ interface SliderAria {
 }
 
 /**
- * Provides behavior and accessibility for a slider component.
+ * Provides the behavior and accessibility implementation for a slider component representing one or more values.
  *
  * @param props Props for the slider.
  * @param state State for the slider, as returned by `useSliderState`.

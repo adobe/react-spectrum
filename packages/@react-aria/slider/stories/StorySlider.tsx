@@ -7,9 +7,9 @@ import {useSlider, useSliderThumb} from '@react-aria/slider';
 import {ValueBase} from '@react-types/shared';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-interface StorySliderProps extends BaseSliderProps, ValueBase<number> {
+interface StorySliderProps extends BaseSliderProps, Omit<ValueBase<number>, 'onChange'> {
   origin?: number,
-  onChangeEnd?: (value: number) => void,
+  onChange?: (value: number[]) => void,
   showTip?: boolean
 }
 
@@ -22,8 +22,8 @@ export function StorySlider(props: StorySliderProps) {
     ...props,
     value: props.value == null ? undefined :  [props.value],
     defaultValue: props.defaultValue == null ? undefined : [props.defaultValue],
-    onChange: props.onChange == null ? undefined : (vals: number[]) => props.onChange(vals[0]),
-    onChangeEnd: props.onChangeEnd == null ? undefined : (vals: number[]) => props.onChangeEnd(vals[0])
+    onChange: props.onChange == null ? undefined : (vals: number[]) => props.onChange(vals),
+    onChangeEnd: props.onChangeEnd == null ? undefined : (vals: number[]) => props.onChangeEnd(vals)
   };
 
   const state = useSliderState(multiProps);

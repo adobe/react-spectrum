@@ -93,6 +93,8 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivE
     </SliderBase>);
 }
 
-
+/**
+ * RangeSliders allow users to quickly select a subset range. They should be used when the upper and lower bounds to the range are invariable.
+ */
 const _RangeSlider = React.forwardRef(RangeSlider);
 export {_RangeSlider as RangeSlider};

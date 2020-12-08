@@ -23,7 +23,7 @@ import {useLocale} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
-  let {onChange, value, defaultValue, isFilled, fillOffset, trackGradient, ...otherProps} = props;
+  let {onChange, onChangeEnd, value, defaultValue, isFilled, fillOffset, trackGradient, ...otherProps} = props;
 
   let baseProps: Omit<SliderBaseProps, 'children'> = {
     ...otherProps,
@@ -31,8 +31,11 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
     // Normalize `value: number[]` to `value: number`
     value: value != null ? [value] : undefined,
     defaultValue: defaultValue != null ? [defaultValue] : undefined,
-    onChange(v) {
+    onChange: (v: number[]): void => {
       onChange?.(v[0]);
+    },
+    onChangeEnd: (v: number[]): void => {
+      onChangeEnd?.(v[0]);
     }
   };
 
@@ -125,7 +128,7 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
 }
 
 /**
- * Sliders allow users to select a value or values within a range of values.
+ * Sliders allow users to quickly select a value within a range. They should be used when the upper and lower bounds to the range are invariable.
  */
 const _Slider = React.forwardRef(Slider);
 export {_Slider as Slider};
