@@ -129,7 +129,7 @@ function Checkbox(props) {
     <label
       style={{
         display: 'block',
-        color: (isDisabled && 'slategray') || (isSelected && 'royalblue'),
+        color: (isDisabled && 'var(--gray)') || (isSelected && 'var(--blue)'),
       }}>
       <input {...inputProps} ref={ref} />
       {children}
