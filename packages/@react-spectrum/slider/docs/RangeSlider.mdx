@@ -35,7 +35,7 @@ sourceData={[{type: 'Spectrum', url: 'https://spectrum.adobe.com/page/slider/'}]
 ## Example
 
 ```tsx example
-<RangeSlider label="Cookies to buy" defaultValue={{start: 12, end: 36}} />
+<RangeSlider label="Range" defaultValue={{start: 12, end: 36}} />
 ```
 
 ## Value
@@ -50,11 +50,11 @@ function Example() {
   return (
     <Flex gap="size-150">
       <RangeSlider
-        label="Size Range (Uncontrolled)"
+        label="Range (Uncontrolled)"
         defaultValue={{start: 25, end: 75}} />
       <RangeSlider
-        label="Size Range (Controlled)"
-        value={{start: value, end: value}}
+        label="Range (Controlled)"
+        value={value}
         onChange={setValue} />
     </Flex>
   );
@@ -65,7 +65,7 @@ Alternatively, a different scale can be used by setting the `minValue` and `maxV
 
 ```tsx example
 <RangeSlider
-  label="Size Range"
+  label="Range"
   minValue={50}
   maxValue={150}
   defaultValue={{start: 75, end: 100}} />
@@ -93,15 +93,6 @@ The label text should be in sentence case.
 </Flex>
 ```
 
-The value label can be updated via the `valueLabel` prop in cases where showing a different scale makes sense. The `valueLabel`
-should be appropriately translated.
-```tsx example
-function Example() {
-  let [value, setValue] = React.useState({start: 15, end: 60});
-  return <RangeSlider label="Distance" marginBottom="size-300" value={value} onChange={setValue} valueLabel={`${value.start} to ${value.end} away`} />
-}
-```
-
 By default, the value label is formatted as a plain number. This can be customized using the following props.
 
 * `showValueLabel`: Allows you to display or hide the value label.
@@ -110,23 +101,23 @@ By default, the value label is formatted as a plain number. This can be customiz
 
 ```tsx example
 function Example() {
-  let [donuts, setDonuts] = React.useState(54);
+  let [meters, setMeters] = React.useState({start: 15, end: 60});
   return (
     <Flex direction="column" maxWidth="size-3000" gap="size-300">
       <RangeSlider
-        label="Cookies to buy"
+        label="showValueLabel"
         showValueLabel={false}
         defaultValue={{start: 75, end: 100}} />
 
       <RangeSlider
-        label="Distance"
-        maxValue={{start: 15, end: 60}}
-        valueLabel={`${value.start}m to ${value.end}m away`}
-        value={donuts}
-        onChange={setDonuts} />
+        label="valueLabel"
+        maxValue={200}
+        valueLabel={`${meters.start}m to ${meters.end}m away`}
+        value={meters}
+        onChange={setMeters} />
 
       <RangeSlider
-        label="Percent donus eaten"
+        label="formatOptions"
         maxValue={1}
         step={0.001}
         formatOptions={{style: 'percent', minimumFractionDigits: 1}}
@@ -149,23 +140,13 @@ Slider automatically uses the current locale to format the value label.
 
 ## Props
 
-<PropTable component={docs.exports.Slider} links={docs.links} />
+<PropTable component={docs.exports.RangeSlider} links={docs.links} />
 
 ## Visual options
-
-### Fill
-[View guidelines](https://spectrum.adobe.com/page/slider/#Fill)
-
-```tsx example
-<Flex direction="column" gap="size-300">
-  <RangeSlider label="Opacity" maxValue={1} formatOptions={{style: 'percent'}} defaultValue={{start:0.5, end: 0.7}} step={0.01} isFilled />
-  <RangeSlider label="Exposure" minValue={-5} maxValue={5} defaultValue={{start: 1.83, end: 3.00}} formatOptions={{signDisplay: 'always'}} step={0.01} fillOffset={0} isFilled />
-</Flex>
-```
 
 ### Disabled
 [View guidelines](https://spectrum.adobe.com/page/slider/#Disabled)
 
 ```tsx example
-<RangeSlider label="Cookies to share" defaultValue={{start: 25, end: 50}} isDisabled />
+<RangeSlider label="Price Filter" defaultValue={{start: 25, end: 50}} isDisabled />
 ```
