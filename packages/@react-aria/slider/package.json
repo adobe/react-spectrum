@@ -24,9 +24,9 @@
     "@react-aria/label": "^3.1.1",
     "@react-aria/utils": "^3.4.0",
     "@react-stately/radio": "^3.2.1",
-    "@react-stately/slider": "^3.0.0-alpha.3",
+    "@react-stately/slider": "3.0.0-alpha.3",
     "@react-types/radio": "^3.1.1",
-    "@react-types/slider": "^3.0.0-alpha.2"
+    "@react-types/slider": "3.0.0-alpha.2"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1"

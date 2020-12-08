@@ -22,7 +22,7 @@
     "@react-stately/menu": "^3.1.0",
     "@react-stately/select": "^3.1.0",
     "@react-stately/utils": "^3.1.0",
-    "@react-types/combobox": "^3.0.0-alpha.0",
+    "@react-types/combobox": "3.0.0-alpha.0",
     "@react-types/shared": "^3.1.0"
   },
   "peerDependencies": {

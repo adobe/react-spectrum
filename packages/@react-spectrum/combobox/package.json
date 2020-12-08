@@ -33,7 +33,7 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/button": "^3.3.0",
-    "@react-aria/combobox": "^3.0.0-alpha.0",
+    "@react-aria/combobox": "3.0.0-alpha.0",
     "@react-aria/dialog": "^3.1.2",
     "@react-aria/focus": "^3.1.0",
     "@react-aria/i18n": "^3.2.0",
@@ -48,16 +48,16 @@
     "@react-spectrum/textfield": "^3.1.4",
     "@react-spectrum/utils": "^3.5.0",
     "@react-stately/collections": "^3.3.0",
-    "@react-stately/combobox": "^3.0.0-alpha.0",
+    "@react-stately/combobox": "3.0.0-alpha.0",
     "@react-types/button": "^3.3.0",
-    "@react-types/combobox": "^3.0.0-alpha.0",
+    "@react-types/combobox": "3.0.0-alpha.0",
     "@react-types/overlays": "^3.4.0",
     "@react-types/shared": "^3.1.0",
     "@react-types/textfield": "^3.2.2",
     "@spectrum-icons/ui": "^3.1.0"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1",
