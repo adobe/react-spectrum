@@ -11,12 +11,16 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
+import Add from '@spectrum-icons/workflow/Add';
+import Alert from '@spectrum-icons/workflow/Alert';
+import Bell from '@spectrum-icons/workflow/Bell';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {ComboBox, Item, Section} from '../';
 import Copy from '@spectrum-icons/workflow/Copy';
+import Draw from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
-import React from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 import {TextField} from '@react-spectrum/textfield';
@@ -102,6 +106,36 @@ storiesOf('ComboBox', module)
             {(item: any) => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
+      </ComboBox>
+    )
+  )
+  .add(
+    'complex items',
+    () => (
+      <ComboBox label="Select action">
+        <Item textValue="Add to queue">
+          <Add />
+          <Text>Add to queue</Text>
+          <Text slot="description">Add to current watch queue.</Text>
+        </Item>
+        <Item textValue="Add review">
+          <Draw />
+          <Text>Add review</Text>
+          <Text slot="description">Post a review for the episode.</Text>
+        </Item>
+        <Item textValue="Subscribe to series">
+          <Bell />
+          <Text>Subscribe to series</Text>
+          <Text slot="description">
+            Add series to your subscription list and be notified when a new episode
+            airs.
+          </Text>
+        </Item>
+        <Item textValue="Report">
+          <Alert />
+          <Text>Report</Text>
+          <Text slot="description">Report an issue/violation.</Text>
+        </Item>
       </ComboBox>
     )
   )
@@ -308,6 +342,10 @@ storiesOf('ComboBox', module)
         </ComboBox>
       </Flex>
     )
+  )
+  .add(
+    'resize',
+    () => <ResizeCombobox />
   )
   .add(
     'in small div',
@@ -622,6 +660,26 @@ function AllControlledOpenComboBox(props) {
         )}
       </ComboBox>
     </div>
+  );
+}
+
+function ResizeCombobox() {
+  let [size, setSize] = useState(true);
+
+  return (
+    <Flex direction="column" gap="size-200" alignItems="start">
+      <div style={{width: size ? '200px' : '300px'}}>
+        <ComboBox label="Combobox" {...actions} width="100%">
+          <Item key="one">Item One</Item>
+          <Item key="two" textValue="Item Two">
+            <Copy size="S" />
+            <Text>Item Two</Text>
+          </Item>
+          <Item key="three">Item Three</Item>
+        </ComboBox>
+      </div>
+      <ActionButton onPress={() => setSize(prev => !prev)}>Toggle size</ActionButton>
+    </Flex>
   );
 }
 

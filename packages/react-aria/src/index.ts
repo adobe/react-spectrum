@@ -15,7 +15,7 @@ export {useButton, useToggleButton} from '@react-aria/button';
 export {useCheckbox, useCheckboxGroup, useCheckboxGroupItem} from '@react-aria/checkbox';
 export {useDialog} from '@react-aria/dialog';
 export {FocusRing, FocusScope, useFocusManager, useFocusRing, useFocusable} from '@react-aria/focus';
-export {I18nProvider, useCollator, useDateFormatter, useLocale, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
+export {I18nProvider, useCollator, useDateFormatter, useFilter, useLocale, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
 export {useFocus, useFocusVisible, useFocusWithin, useHover, useInteractOutside, useKeyboard, useMove, usePress} from '@react-aria/interactions';
 export {useLabel} from '@react-aria/label';
 export {useLink} from '@react-aria/link';
