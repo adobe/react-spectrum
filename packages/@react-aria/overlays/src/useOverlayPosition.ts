@@ -104,7 +104,6 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
         crossOffset
       })
     );
-
   }, [shouldUpdatePosition, placement, overlayRef, targetRef, scrollRef, containerPadding, shouldFlip, boundaryElement, offset, crossOffset, isOpen, direction]);
 
   // Update position when anything changes
