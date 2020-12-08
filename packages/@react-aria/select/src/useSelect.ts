@@ -71,14 +71,14 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   let onKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
       case 'ArrowLeft': {
-        let key = state.selectedKey ? delegate.getKeyAbove(state.selectedKey) : delegate.getFirstKey();
+        let key = state.selectedKey != null ? delegate.getKeyAbove(state.selectedKey) : delegate.getFirstKey();
         if (key) {
           state.setSelectedKey(key);
         }
         break;
       }
       case 'ArrowRight': {
-        let key = state.selectedKey ? delegate.getKeyBelow(state.selectedKey) : delegate.getFirstKey();
+        let key = state.selectedKey != null ? delegate.getKeyBelow(state.selectedKey) : delegate.getFirstKey();
         if (key) {
           state.setSelectedKey(key);
         }
