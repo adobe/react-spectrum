@@ -60,7 +60,7 @@ storiesOf('Slider (hooks)', module)
     '3 thumbs',
     () => (
       <StoryMultiSlider
-        label="Ticks"
+        label="Three thumbs"
         onChange={action('onChange')}
         onChangeEnd={action('onChangeEnd')}
         defaultValue={[10, 40, 80]}>
@@ -74,7 +74,7 @@ storiesOf('Slider (hooks)', module)
     '3 thumbs with disabled',
     () => (
       <StoryMultiSlider
-        label="Ticks"
+        label="Three thumbs"
         onChange={action('onChange')}
         onChangeEnd={action('onChangeEnd')}
         defaultValue={[10, 40, 80]}>
@@ -88,7 +88,7 @@ storiesOf('Slider (hooks)', module)
     '3 thumbs with aria-label',
     () => (
       <StoryMultiSlider
-        aria-label="Ticks"
+        aria-label="Three thumbs"
         onChange={action('onChange')}
         onChangeEnd={action('onChangeEnd')}
         defaultValue={[10, 40, 80]}>
