@@ -547,9 +547,10 @@ function AsyncLoadingExample() {
     async load({signal, cursor, filterText}) {
       let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
+
       return {
         items: json.results,
-        cursor: json.next
+        cursor: json.next.replace(/^http:\/\//i, 'https://')
       };
     }
   });
