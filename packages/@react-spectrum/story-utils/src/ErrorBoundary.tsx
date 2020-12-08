@@ -10,22 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, StyleProps} from '@react-types/shared';
-import {ReactNode} from 'react';
+import React from 'react';
 
-export interface HeadingProps extends DOMProps, StyleProps {
-  /**
-   * Heading content.
-   */
-  children: ReactNode,
-  /**
-   * A slot to place the heading in.
-   * @default 'heading'
-   */
-  slot?: string,
-  /**
-   * Sets heading level, h1 through h6.
-   * @default 3
-   */
-  level?: 1 | 2 | 3 | 4 | 5 | 6
+export class ErrorBoundary extends React.Component<{message: string}, {hasError: boolean}> {
+  constructor(props) {
+    super(props);
+    this.state = {hasError: false};
+  }
+
+  static getDerivedStateFromError() {
+    // Update state so the next render will show the fallback UI.
+    return {hasError: true};
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // You can render any custom fallback UI
+      return <div>{this.props.message}</div>;
+    }
+
+    return this.props.children;
+  }
 }
