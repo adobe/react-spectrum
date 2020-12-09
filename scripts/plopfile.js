@@ -45,18 +45,18 @@ module.exports = function (plop) {
     }, {
       type: 'input',
       name: 'packageName',
-      message: 'package name',
+      message: 'package name, all lowercase (e.g. textfield)',
       validate: (answer) => answer.length > 0
     }, {
       type: 'input',
       name: 'componentName',
-      message: 'component name, please use appropriate uppercase',
+      message: 'component name, please use appropriate uppercase (e.g. TextField)',
       validate: (answer) => answer.length > 0,
       when: ({projectType}) => projectType === rspProject
     }, {
       type: 'input',
       name: 'componentCSS',
-      message: 'component css module name, blank if N/A',
+      message: 'component css module name, blank if N/A. If unsure, check @adobe/spectrum-css-temp/components for a module containing the desired css (e.g. textfield)',
       validate: (answer) => answer.length > 0,
       when: ({projectType, scopes}) => projectType === rspProject && scopes.includes('@react-spectrum')
     }],
