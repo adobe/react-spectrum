@@ -16,6 +16,7 @@ import {Content, View} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import docsStyle from './docs.css';
+import {FocusScope} from '@react-aria/focus';
 import highlightCss from './syntax-highlight.css';
 import {Modal} from '@react-spectrum/overlays';
 import {Pressable} from '@react-aria/interactions';
@@ -62,7 +63,9 @@ function ImageModal({children}) {
     <>
       {trigger}
       <Modal isDismissable isOpen={isOpen} onClose={() => setOpen(false)} UNSAFE_style={{overflow: 'scroll'}}>
-        {contents}
+        <FocusScope contain restoreFocus autoFocus>
+          {contents}
+        </FocusScope>
       </Modal>
     </>
   );
@@ -75,8 +78,10 @@ for (let image of images) {
   ReactDOM.render(
     <ThemeProvider UNSAFE_className={docsStyle.inlineProvider}>
       <ImageModal>
-        <img src={url} className={image.className} alt={image.alt} />
-        <img src={url} alt={image.alt} />
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role */}
+        <img role="button" tabIndex={0} src={url} className={image.className} alt={image.alt} />
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role */}
+        <img role="button" tabIndex={0} src={url} alt={image.alt} />
       </ImageModal>
     </ThemeProvider>
   , container);
