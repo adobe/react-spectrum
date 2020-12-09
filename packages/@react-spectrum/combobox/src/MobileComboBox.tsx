@@ -268,7 +268,7 @@ interface ComboBoxTrayProps extends SpectrumComboBoxProps<unknown> {
 
 function ComboBoxTray(props: ComboBoxTrayProps) {
   let {
-    completionMode = 'suggest',
+    // completionMode = 'suggest',
     menuTrigger = 'input',
     state,
     isDisabled,
@@ -287,7 +287,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   let {inputProps, listBoxProps, labelProps} = useComboBox(
     {
       ...props,
-      completionMode,
+      // completionMode,
       keyboardDelegate: layout,
       buttonRef: unwrapDOMRef(buttonRef),
       popoverRef: popoverRef,
