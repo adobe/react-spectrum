@@ -16,7 +16,9 @@ import {ActionGroupBoth, ActionGroupIconOnly, ActionGroupTextOnly, iconMap} from
 import {Button} from '@react-spectrum/button';
 import {Flex} from '@react-spectrum/layout';
 import {Item} from '@react-stately/collections';
+import {Meta, Story} from '@storybook/react';
 import React from 'react';
+import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 
 const docItems = [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}];
@@ -27,14 +29,16 @@ const dataItems = [{children: 'Properties', name: '1'}, {children: 'Info', name:
 let onSelectionChange = action('onSelectionChange');
 
 
-export default {
+const meta: Meta = {
   title: 'ActionGroup',
   parameters: {
     providerSwitcher: {status: 'negative'}
   }
 };
 
-const Template = (args) => (
+export default meta;
+
+const Template: Story<SpectrumActionGroupProps<object>> = (args) => (
   <Flex rowGap="size-300" margin="size-100" width="100%" direction="column">
     <ActionGroupTextOnly {...args} />
     <ActionGroupBoth {...args} />
@@ -122,7 +126,7 @@ VerticalCompactIsQuiet.args = {orientation: 'vertical', density: 'compact', isQu
 
 export const DisabledKeys = Template.bind({});
 DisabledKeys.storyName = 'disabledKeys';
-DisabledKeys.args = {disabledKeys: ['1', '2'], seclectionMode: 'multiple', items: dataItems};
+DisabledKeys.args = {disabledKeys: ['1', '2'], selectionMode: 'multiple', items: dataItems};
 
 
 export const FalsyKey = () => (
@@ -151,7 +155,7 @@ export const WithTooltips = () => (
 );
 WithTooltips.storyName = 'with tooltips';
 
-const TestDefaultTemplate = (args) => (
+const TestDefaultTemplate: Story<SpectrumActionGroupProps<object>> = (args) => (
   <ActionGroup {...args}>
     <Item key="1">Click me 1</Item>
     <Item key="2">Click me 2</Item>
@@ -160,7 +164,7 @@ const TestDefaultTemplate = (args) => (
 export const TestDefault = TestDefaultTemplate.bind({});
 TestDefault.storyName = 'test default';
 
-const TestTemplate = (args) => (
+const TestTemplate: Story<SpectrumActionGroupProps<object>> = (args) => (
   <ActionGroup {...args} >
     <Item data-testid="button-1" key="1">Click me 1</Item>
     <Item data-testid="button-2" key="">Click me 2</Item>
@@ -170,7 +174,7 @@ const TestTemplate = (args) => (
 export const TestThreeButtons = TestTemplate.bind({});
 TestThreeButtons.storyName = 'test three buttons';
 
-const TestTemplate4 = (args) => (
+const TestTemplate4: Story<SpectrumActionGroupProps<object>> = (args) => (
   <ActionGroup {...args} >
     <Item key="0" data-testid="button-1">Click me 1</Item>
     <Item key="1" data-testid="button-2">Click me 2</Item>
@@ -181,7 +185,7 @@ const TestTemplate4 = (args) => (
 export const TestFourButtons = TestTemplate4.bind({});
 TestFourButtons.storyName = 'test four buttons';
 
-const TestTemplateFocus = (args) => (
+const TestTemplateFocus: Story<SpectrumActionGroupProps<object>> = (args) => (
   <>
     <Button variant="primary" aria-label="ButtonBefore" />
     <ActionGroup {...args}>

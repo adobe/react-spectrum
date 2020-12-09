@@ -122,9 +122,9 @@ function setupGlobalFocusEvents() {
   // a preceding user event (e.g. screen reader focus). Overriding the focus
   // method on HTMLElement.prototype is a bit hacky, but works.
   let focus = HTMLElement.prototype.focus;
-  HTMLElement.prototype.focus = function () {
+  HTMLElement.prototype.focus = function (...args) {
     hasEventBeforeFocus = true;
-    focus.apply(this, arguments);
+    focus.apply(this, args);
   };
 
   document.addEventListener('keydown', handleKeyboardEvent, true);

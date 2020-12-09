@@ -31,7 +31,9 @@
       "es2017.intl",
       "esnext.intl"
     ],
-    "skipLibCheck": false
+    "skipLibCheck": false,
+    // this should fix the typings of storybook CSF args
+    "strictBindCallApply": true
   },
   "include": [
     "packages"

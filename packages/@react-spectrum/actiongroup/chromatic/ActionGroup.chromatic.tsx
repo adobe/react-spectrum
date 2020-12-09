@@ -12,7 +12,9 @@
 
 import {ActionGroupBoth, ActionGroupIconOnly, ActionGroupTextOnly} from '../stories/utils';
 import {Flex} from '@react-spectrum/layout';
+import {Meta, Story} from '@storybook/react';
 import React from 'react';
+import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 
 
 const docItems = [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}];
@@ -22,11 +24,13 @@ const viewItems = [{children: 'Grid view', name: '1'}, {children: 'List view', n
 const dataItems = [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}];
 
 
-export default {
+const meta: Meta = {
   title: 'ActionGroup'
 };
 
-const Template = (args) => (
+export default meta;
+
+const Template: Story<SpectrumActionGroupProps<object>> = (args) => (
   <Flex rowGap="size-300" margin="size-100" width="100%" direction="column">
     <ActionGroupTextOnly {...args} />
     <ActionGroupBoth {...args} />
@@ -114,4 +118,4 @@ VerticalCompactIsQuiet.args = {orientation: 'vertical', density: 'compact', isQu
 
 export const DisabledKeys = Template.bind({});
 DisabledKeys.storyName = 'disabledKeys';
-DisabledKeys.args = {disabledKeys: ['1', '2'], seclectionMode: 'multiple', items: dataItems};
+DisabledKeys.args = {disabledKeys: ['1', '2'], selectionMode: 'multiple', items: dataItems};
