@@ -21,8 +21,8 @@ import {useMessageFormatter} from '@react-aria/i18n';
 export function useStepList<T>(props: AriaStepListProps<T>): StepListAria {
   const formatMessage = useMessageFormatter(intlMessages);
   const listProps: HTMLAttributes<HTMLElement> = {
-    ...filterDOMProps(props),
-    'aria-label': formatMessage('steplist')
+    'aria-label': formatMessage('steplist'),
+    ...filterDOMProps(props)
   };
 
   return {
