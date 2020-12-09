@@ -12,16 +12,20 @@
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import { Spectrum{{~componentName}}Props} from '@react-types/{{packageName}}';
+import {filterDOMProps} from '@react-aria/utils';
 import React from 'react';
+import {Spectrum{{~componentName}}Props} from '@react-types/{{packageName}}';
+{{#if componentCSS}}
 import styles from '@adobe/spectrum-css-temp/components/{{componentCSS}}/vars.css';
+{{/if}}
 import {use {{~componentName~}} } from '@react-aria/{{packageName}}';
 import {use {{~componentName~}} State} from '@react-stately/{{packageName}}';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function {{componentName}}(props: Spectrum{{componentName}}Props, ref: DOMRef) {
+function {{componentName}}(props: Spectrum{{componentName}}Props, ref: DOMRef<HTMLDivElement>) {
+  // Grabs specific props from the closest Provider (see https://react-spectrum.adobe.com/react-spectrum/Provider.html#property-groups). Remove if your component doesn't support any of the listed props.
   props = useProviderProps(props);
+  // Handles RSP specific style options, UNSAFE_style, and UNSAFE_className props (see https://react-spectrum.adobe.com/react-spectrum/styling.html#style-props)
   let {styleProps} = useStyleProps(props);
   let state = use{{componentName}}State(props);
   let ariaProps = use{{componentName}}(props, state);
@@ -33,14 +37,16 @@ function {{componentName}}(props: Spectrum{{componentName}}Props, ref: DOMRef) {
       {...ariaProps}
       {...styleProps}
       ref={domRef}
-      className={classNames(styles, '', styleProps.className)}>
-
-    </div>
+      {{#if componentCSS}}
+      className={classNames(styles, '', styleProps.className)} />
+      {{else}}
+      className={styleProps.className} />
+      {{/if}}
   );
 }
 
 /**
- * TODO: Description here
+ * TODO: Add description of component here.
  */
 const _{{componentName}} = React.forwardRef({{componentName}});
 export {_{{componentName}} as {{componentName~}} };

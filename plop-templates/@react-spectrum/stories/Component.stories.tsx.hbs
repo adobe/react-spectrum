@@ -22,9 +22,8 @@ storiesOf('{{componentName}}', module)
     () => render({})
   );
 
-function render(props:{{componentName}}Props = {}) {
+function render(props: {{componentName}}Props) {
   return (
-    <{{componentName}} {...props} onClick={action('onClick')}>
-    </{{componentName}}>
+    <{{componentName}} {...props} onChange={action('onChange')} />
   );
 }
