@@ -44,8 +44,7 @@ export function StepListItem(props: StepListItemProps) {
   };
   let {linkProps, stepStateProps, stepStateText} = useStepListItem({...props, isFocused});
   let {hoverProps, isHovered} = useHover(props);
-  const canUserSelect = !isDisabled && isNavigable; 
-  const selectionProps = canUserSelect ? {
+  const selectionProps = isNavigable ? {
     onClick: () => onItemSelected(itemKey)
   } : {};
  

@@ -13,10 +13,12 @@
 import {HTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {StepListAria, StepListProps, StepListState} from '@react-types/steplist';
+import {StepListAria} from '@react-types/steplist';
 import {useMessageFormatter} from '@react-aria/i18n';
 
-export function useStepList<T>(props: StepListProps<T>, state: StepListState<T>): StepListAria {
+// We don't appear to need any props to this?  It is just providing the default aria-label 
+// As all the aria heavy lifting is do in `useStepListItem`
+export function useStepList(/* <T>( props: StepListProps<T>, state: StepListState<T> */): StepListAria {
   const formatMessage = useMessageFormatter(intlMessages);
   const listProps: HTMLAttributes<HTMLElement> = {
     'aria-label': formatMessage('steplist')

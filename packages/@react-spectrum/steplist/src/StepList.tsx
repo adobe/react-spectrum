@@ -26,7 +26,7 @@ function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef
   props = useProviderProps(props);
   let {styleProps} = useStyleProps(props);
   let state = useStepListState(props);
-  let ariaProps = useStepList(props, state);
+  let ariaProps = useStepList(); // useStepList(props, state);
   let domRef = useDOMRef(ref) as Ref<HTMLOListElement>;
   const {children, isEmphasized, isReadOnly} = props;
   // Not using React.Children.toArray because it mutates the key prop.

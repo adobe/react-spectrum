@@ -29,7 +29,7 @@ export function useStepListState<T extends object>(props: AriaStepListProps<T>):
     ...selectState,
     setSelectedKey: (key) => {
       const prevKey = prevStep(key);
-      if (!isCompleted(prevKey)) {
+      if (prevKey && !isCompleted(prevKey)) {
         setLastCompletedStep(prevKey);  
       }
       setSelectedKey(key);
@@ -40,6 +40,9 @@ export function useStepListState<T extends object>(props: AriaStepListProps<T>):
   };
 
   function isCompleted(step: Key) {
+    if (step === undefined) {
+      return false;
+    }
     return keys.indexOf(step) < keys.indexOf(lastCompletedStep);
   }
 
@@ -51,7 +54,7 @@ export function useStepListState<T extends object>(props: AriaStepListProps<T>):
   function prevStep(step: Key) {
     const prevIdx = keys.indexOf(step) - 1;
     if (prevIdx >= 0) {
-      return keys[keys.indexOf(prevIdx)]; 
+      return keys[prevIdx]; 
     }
     return undefined;
   }
