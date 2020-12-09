@@ -10,26 +10,52 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, DOMRef, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, DOMRef, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
 import {SpectrumBadgeProps} from '@react-types/$badge';
 import React from 'react';
-import styles from '@adobe/spectrum-css-temp/components/badge/vars.css';
+import styles from '@adobe/spectrum-css-temp/components/label/vars.css';
+import {Text} from '@react-spectrum/text';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function Badge(props: SpectrumBadgeProps, ref: DOMRef) {
-  props = useProviderProps(props);
+  let {
+    children,
+    variant,
+    size,
+    anchorEdge,
+    ...otherProps
+  } = useProviderProps(props);
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
+  let isTextOnly = React.Children.toArray(props.children).every(c => !React.isValidElement(c));
 
   return (
-    <div
+    <span
       {...filterDOMProps(props)}
       {...styleProps}
       ref={domRef}
-      className={classNames(styles, '', styleProps.className)}>
-
-    </div>
+      className={classNames(
+          styles,
+          'spectrum-Badge',
+          `spectrum-Badge--${variant}`,
+          styleProps.className)}>
+      {children}
+      <SlotProvider
+        slots={{
+          icon: {
+            size: 'S',
+            UNSAFE_className: classNames(styles, 'spectrum-Icon')
+          },
+          text: {
+            UNSAFE_className: classNames(styles, 'spectrum-Label')
+          }
+        }}>
+        {typeof children === 'string' || isTextOnly
+          ? <Text>{children}</Text>
+          : children}
+      </SlotProvider>
+    </span>
   );
 }
 
