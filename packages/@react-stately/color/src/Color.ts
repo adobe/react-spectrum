@@ -132,15 +132,6 @@ export class Color {
     return (comparisonColorLum + 0.05) / (colorLum + 0.05);
   }
 
-  isDark() {
-    var yiq = (this.getChannelValue('red') * 299 + this.getChannelValue('green') * 587 + this.getChannelValue('blue') * 114) / 1000;
-    return yiq < 128;
-  }
-
-  isLight() {
-    return !this.isDark();
-  }
-
   static getRange(channel: ColorChannel) {
     switch (channel) {
       case 'hue':
