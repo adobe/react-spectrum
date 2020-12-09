@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, CollectionBase, Orientation, SingleSelection} from '@react-types/shared';
 import {DOMProps, Node, StyleProps} from '@react-types/shared';
-import {HTMLAttributes, Key, ReactNode} from 'react';
+import {HTMLAttributes, Key} from 'react';
 import {SingleSelectListState} from '@react-stately/list';
 
 export interface SingleSelectListProps<T> extends CollectionBase<T>, SingleSelection {
@@ -52,16 +52,12 @@ interface StepListAria {
   listProps: HTMLAttributes<HTMLElement>
 }
 
-interface StepListItemProps {
-  itemKey: Key,
-  isComplete: boolean,
-  isCurrent: boolean,
+interface StepListItemProps<T> {
   isDisabled: boolean,
   isEmphasized: boolean,
   isReadOnly: boolean,
-  isNavigable: boolean,
-  children: ReactNode,
-  onItemSelected: (key: Key) => void
+  state: StepListState<T>,
+  item: Node<T>
 }
 
 interface StepListItemAria {

@@ -10,19 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
+
+import {AriaStepListProps, StepListAria} from '@react-types/steplist';
+import {filterDOMProps} from '@react-aria/utils';
 import {HTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {StepListAria} from '@react-types/steplist';
 import {useMessageFormatter} from '@react-aria/i18n';
 
-// We don't appear to need any props to this?  It is just providing the default aria-label 
-// As all the aria heavy lifting is do in `useStepListItem`
-export function useStepList(/* <T>( props: StepListProps<T>, state: StepListState<T> */): StepListAria {
+export function useStepList<T>(props: AriaStepListProps<T>): StepListAria {
   const formatMessage = useMessageFormatter(intlMessages);
   const listProps: HTMLAttributes<HTMLElement> = {
+    ...filterDOMProps(props),
     'aria-label': formatMessage('steplist')
   };
+
   return {
     listProps
   };

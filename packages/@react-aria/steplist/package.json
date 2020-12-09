@@ -20,6 +20,9 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/i18n": "3.2.0",
+    "@react-aria/interactions": "3.3.2",
+    "@react-aria/selection": "3.3.1",
+    "@react-aria/utils": "3.4.1",
     "@react-types/shared": "3.3.0",
     "@react-types/steplist": "^3.0.0-alpha.1"
   },

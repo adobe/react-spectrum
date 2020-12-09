@@ -12,8 +12,6 @@
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
-import {getChildrenSafe} from './utils';
 import React, {Ref} from 'react';
 import {SpectrumStepListProps} from '@react-types/steplist';
 import {StepListItem} from './StepListItem';
@@ -26,31 +24,21 @@ function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef
   props = useProviderProps(props);
   let {styleProps} = useStyleProps(props);
   let state = useStepListState(props);
-  let ariaProps = useStepList(); // useStepList(props, state);
+  let {listProps} = useStepList(props);
   let domRef = useDOMRef(ref) as Ref<HTMLOListElement>;
-  const {children, isEmphasized, isReadOnly} = props;
-  // Not using React.Children.toArray because it mutates the key prop.
-  const childArray = getChildrenSafe<T>(children);
-  const stepListItems = childArray.map((child, index) => {
-    let key = child.key ?? index;
-    return (
-      <StepListItem
-        itemKey={key}
-        isCurrent={key === state.selectedKey}
-        isComplete={state.isCompleted(key)}
-        isDisabled={false}
-        isEmphasized={isEmphasized}
-        isReadOnly={isReadOnly}
-        isNavigable={state.isNavigable(key)}
-        onItemSelected={state.setSelectedKey}>
-        {child.props.children}
-      </StepListItem>
-    );
-  });
+ 
+  const {isDisabled, isEmphasized, isReadOnly} = props;
+  const stepListItems = [...state.collection].map((item) => (<StepListItem
+    key={item.key}
+    isDisabled={isDisabled}
+    isEmphasized={isEmphasized}
+    isReadOnly={isReadOnly}
+    item={item}
+    state={state} />)
+  );
   return (
     <ol
-      {...ariaProps.listProps}
-      {...filterDOMProps(props)}
+      {...listProps}
       {...styleProps}
       ref={domRef}
       className={classNames(styles, 'spectrum-Steplist', styleProps.className, {

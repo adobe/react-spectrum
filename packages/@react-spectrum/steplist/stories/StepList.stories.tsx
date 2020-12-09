@@ -15,6 +15,7 @@ import {Item} from '@react-stately/collections';
 import React, {Key, useState} from 'react';
 import {StepList} from '../';
 import {storiesOf} from '@storybook/react';
+import {useAsyncList} from '@react-stately/data';
 
 const options = [{
   key: 'cat', value: 'Cat'
@@ -42,6 +43,9 @@ storiesOf('StepList', module)
   )
   .add('Disabled', 
     () => Disabled()
+  )
+  .add('AsyncItems',
+    () => AsyncItems()
   );
 
 function render(props = {}) {
@@ -96,4 +100,21 @@ function Disabled() {
       {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
     </StepList>
   );
+}
+
+function AsyncItems() {
+  type PokeMon = { name: string };
+  let list = useAsyncList<PokeMon>({
+    async load({signal}) {
+      let res = await fetch('https://pokeapi.co/api/v2/pokemon', {signal});
+      let json = await res.json();
+      return {items: json.results.slice(0, 8)};
+    }
+  });
+  const [selectedKey, setSelectedKey] = useState<Key>('venusaur');
+  return (<div>
+    <StepList size="S" lastCompletedStep="charmeleon" items={list.items} selectedKey={selectedKey} onSelectionChange={setSelectedKey}>
+      {(item: PokeMon) => <Item key={item.name}>{item.name}</Item>}
+    </StepList>
+  </div>);
 }

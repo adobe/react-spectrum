@@ -24,16 +24,12 @@ import {useStepListItem} from '@react-aria/steplist';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 // import {useLocale} from '@react-aria/i18n';
 
-export function StepListItem(props: StepListItemProps) {
+export function StepListItem<T>(props: StepListItemProps<T>) {
   let {
-    itemKey,
-    children,
     isDisabled,
-    isCurrent,
-    isComplete,
     isEmphasized,
-    isNavigable,
-    onItemSelected
+    item,
+    state
   } = props;
 
   // let {direction} = useLocale();
@@ -42,12 +38,11 @@ export function StepListItem(props: StepListItemProps) {
     onBlur: () => setFocused(false),
     onFocus: () => setFocused(true)
   };
-  let {linkProps, stepStateProps, stepStateText} = useStepListItem({...props, isFocused});
+  let {linkProps, stepStateProps, stepStateText} = useStepListItem({...props, isFocused}, state);
   let {hoverProps, isHovered} = useHover(props);
-  const selectionProps = isNavigable ? {
-    onClick: () => onItemSelected(itemKey)
-  } : {};
- 
+  const itemKey = item.key;
+  const isCompleted = state.isCompleted(itemKey);
+  const isCurrent = state.selectedKey === itemKey;  
   return (
     <li
       {...mergeProps(hoverProps, focusProps)}
@@ -60,13 +55,13 @@ export function StepListItem(props: StepListItemProps) {
           'is-disabled': !isCurrent && isDisabled,
           'is-hovered': isHovered,
           'is-emphasized': isEmphasized && isCurrent,
-          'is-complete': isComplete
+          'is-complete': isCompleted
         }
       )}>
-      <a {...mergeProps(selectionProps, linkProps)}>
+      <a {...linkProps}>
         <VisuallyHidden {...stepStateProps}>{stepStateText}</VisuallyHidden>
         <div className={classNames(styles, 'spectrum-Steplist-label')}>
-          {children}
+          {item.rendered}
         </div>
         <span className={classNames(styles, 'spectrum-Steplist-markerContainer')} >
           <span className={classNames(styles, 'spectrum-Steplist-marker')} />
