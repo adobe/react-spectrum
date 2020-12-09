@@ -44,7 +44,7 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivE
 
   return (
     <SliderBase {...baseProps} classes={'spectrum-Slider--range'} ref={ref}>
-      {({state, thumbProps, inputRefs, inputProps, ticks}: SliderBaseChildArguments) => {
+      {({state, thumbProps, inputRefs, inputProps}: SliderBaseChildArguments) => {
         let cssDirection = direction === 'rtl' ? 'right' : 'left';
 
         let lowerTrack = (
@@ -88,7 +88,6 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivE
         return (
           <>
             {lowerTrack}
-            {ticks}
             <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
               {handles[0]}
             </FocusRing>

@@ -19,7 +19,9 @@ import {RefObject, SyntheticEvent, useEffect, useRef} from 'react';
 
 interface InteractOutsideProps {
   ref: RefObject<Element>,
-  onInteractOutside?: (e: SyntheticEvent) => void
+  onInteractOutside?: (e: SyntheticEvent) => void,
+  /** Whether the interact outside events should be disabled. */
+  isDisabled?: boolean
 }
 
 /**
@@ -27,7 +29,7 @@ interface InteractOutsideProps {
  * when a user clicks outside them.
  */
 export function useInteractOutside(props: InteractOutsideProps) {
-  let {ref, onInteractOutside} = props;
+  let {ref, onInteractOutside, isDisabled} = props;
   let stateRef = useRef({
     isPointerDown: false,
     ignoreEmulatedMouseEvents: false
@@ -36,6 +38,9 @@ export function useInteractOutside(props: InteractOutsideProps) {
 
   useEffect(() => {
     let onPointerDown = (e) => {
+      if (isDisabled) {
+        return;
+      }
       if (isValidEvent(e, ref)) {
         state.isPointerDown = true;
       }
@@ -62,6 +67,9 @@ export function useInteractOutside(props: InteractOutsideProps) {
       };
     } else {*/
     let onMouseUp = (e) => {
+      if (isDisabled) {
+        return;
+      }
       if (state.ignoreEmulatedMouseEvents) {
         state.ignoreEmulatedMouseEvents = false;
       } else if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
@@ -71,6 +79,9 @@ export function useInteractOutside(props: InteractOutsideProps) {
     };
 
     let onTouchEnd = (e) => {
+      if (isDisabled) {
+        return;
+      }
       state.ignoreEmulatedMouseEvents = true;
       if (onInteractOutside && state.isPointerDown && isValidEvent(e, ref)) {
         state.isPointerDown = false;
@@ -89,7 +100,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
       document.removeEventListener('touchstart', onPointerDown, true);
       document.removeEventListener('touchend', onTouchEnd, true);
     };
-  }, [onInteractOutside, ref, state.ignoreEmulatedMouseEvents, state.isPointerDown]);
+  }, [onInteractOutside, ref, state.ignoreEmulatedMouseEvents, state.isPointerDown, isDisabled]);
 }
 
 function isValidEvent(event, ref) {
