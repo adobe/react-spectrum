@@ -10,16 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, DOMRef, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {mergeProps} from '@react-aria/utils';
-import { {{~componentName}}Props} from '@react-types/${{packageName}}';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import { Spectrum{{~componentName}}Props} from '@react-types/{{packageName}}';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/{{componentCSS}}/vars.css';
 import {use {{~componentName~}} } from '@react-aria/{{packageName}}';
 import {use {{~componentName~}} State} from '@react-stately/{{packageName}}';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function {{componentName}}(props: {{componentName}}Props, ref: DOMRef) {
+function {{componentName}}(props: Spectrum{{componentName}}Props, ref: DOMRef) {
   props = useProviderProps(props);
   let {styleProps} = useStyleProps(props);
   let state = use{{componentName}}State(props);
@@ -38,5 +39,8 @@ function {{componentName}}(props: {{componentName}}Props, ref: DOMRef) {
   );
 }
 
+/**
+ * TODO: Description here
+ */
 const _{{componentName}} = React.forwardRef({{componentName}});
 export {_{{componentName}} as {{componentName~}} };
