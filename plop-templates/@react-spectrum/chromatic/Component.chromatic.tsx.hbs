@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import { {{~componentName~}} , {{componentName~}} Props} from '../';
+import { {{~componentName~}} } from '../';
 import React from 'react';
+import {Spectrum{{~componentName}}Props} from '@react-types/{{packageName}}';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('{{componentName}}', module)
@@ -20,7 +21,7 @@ storiesOf('{{componentName}}', module)
     () => render({})
   );
 
-function render(props:{{componentName}}Props = {}) {
+function render(props: Spectrum{{componentName}}Props = {}) {
   return (
     <{{componentName}} {...props}>
     </{{componentName}}>
