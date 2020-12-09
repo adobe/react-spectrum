@@ -645,4 +645,24 @@ describe('ActionGroup', function () {
     expect(tooltip).toBeVisible();
     expect(button).toHaveAttribute('aria-describedby', tooltip.id);
   });
+
+  it('no inifite loop if all keys are diabled', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <input type="text" id="foo" autoFocus />
+        <ActionGroup disabledKeys={['test1', 'test2']}>
+          <Item key="test1">Hi</Item>
+          <Item key="test2">Bye</Item>
+        </ActionGroup>
+        <input type="text" id="bar" />
+      </Provider>
+    );
+
+    let inputs = tree.getAllByRole('textbox');
+    expect(document.activeElement).toBe(inputs[0]);
+    userEvent.tab();
+    expect(document.activeElement).toBe(inputs[1]);
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(inputs[0]);
+  });
 });
