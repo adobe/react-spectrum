@@ -12,7 +12,7 @@
 
 import Bell from '@spectrum-icons/workflow/src/Bell';
 import {Button} from '../';
-import {Meta} from '@storybook/react';
+import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import {Text} from '@react-spectrum/text';
@@ -28,17 +28,10 @@ const meta: Meta<SpectrumButtonProps> = {
 
 export default meta;
 
-const Template = (args: SpectrumButtonProps) => <Button {...args} />;
-const BackgroundTemplate = (args: SpectrumButtonProps) => (
+const Template: Story<SpectrumButtonProps> = (args) => <Button {...args} />;
+const BackgroundTemplate: Story<SpectrumButtonProps> = (args) => (
   <div  style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
     <Button {...args} />
-  </div>
-);
-
-const LinkTemplate = (args: SpectrumButtonProps) => <Button elementType="a" href="//example.com" target="_self" {...args} />;
-const BackgroundLinkTemplate = (args: SpectrumButtonProps) => (
-  <div  style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
-    <Button elementType="a" href="//example.com" target="_self" {...args} />
   </div>
 );
 
@@ -126,129 +119,23 @@ WithBothNegativeButton.storyName = 'with both negativeButton button';
 WithBothNegativeButton.args = {...NegativeButton.args, children: <><Bell /><Text>Default</Text></>};
 
 
-export const LinkCTAButton = LinkTemplate.bind({});
+export const LinkCTAButton = Template.bind({});
 LinkCTAButton.storyName = 'link cta button';
-LinkCTAButton.args = {...CTAButton.args};
-export const LinkPrimaryButton = LinkTemplate.bind({});
+LinkCTAButton.args = {...CTAButton.args, elementType: 'a', href: '//example.com', target: '_self'};
+export const LinkPrimaryButton = Template.bind({});
 LinkPrimaryButton.storyName = 'link primary button';
-LinkPrimaryButton.args = {...PrimaryButton.args};
-export const LinkSecondaryButton = LinkTemplate.bind({});
+LinkPrimaryButton.args = {...LinkCTAButton.args, ...PrimaryButton.args};
+export const LinkSecondaryButton = Template.bind({});
 LinkSecondaryButton.storyName = 'link secondary button';
-LinkSecondaryButton.args = {...SecondaryButton.args};
-export const LinkOverBackGroundButton = BackgroundLinkTemplate.bind({});
+LinkSecondaryButton.args = {...LinkCTAButton.args, ...SecondaryButton.args};
+export const LinkOverBackGroundButton = BackgroundTemplate.bind({});
 LinkOverBackGroundButton.storyName = 'link overBackground button';
-LinkOverBackGroundButton.args = {...OverBackGroundButton.args};
-export const LinkNegativeButton = LinkTemplate.bind({});
+LinkOverBackGroundButton.args = {...LinkCTAButton.args, ...OverBackGroundButton.args};
+export const LinkNegativeButton = Template.bind({});
 LinkNegativeButton.storyName = 'link negativeButton button';
-LinkNegativeButton.args = {...NegativeButton.args};
+LinkNegativeButton.args = {...LinkCTAButton.args, ...NegativeButton.args};
 
-export const NoOpenerLinkButton = LinkTemplate.bind({});
-NoOpenerLinkButton.storyName = 'no opener link button';
-NoOpenerLinkButton.args = {...PrimaryButton.args, target: undefined, rel: 'noopener noreferrer'};
+export const NoOpenerNoReferrerLinkButton = Template.bind({});
+NoOpenerNoReferrerLinkButton.storyName = 'noopener noreferrer link button';
+NoOpenerNoReferrerLinkButton.args = {...LinkCTAButton.args, target: undefined, rel: 'noopener noreferrer'};
 
-/*
-storiesOf('Button', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'variant: cta',
-    () => render({variant: 'cta'})
-  )
-  .add(
-    'with icon',
-    () => (
-      <Flex gap="size-200">
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          variant="primary">
-          <Bell />
-          <Text>Default</Text>
-        </Button>
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isDisabled
-          variant="primary">
-          <Text>Disabled</Text>
-          <Bell />
-        </Button>
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isQuiet
-          variant="primary">
-          <Bell />
-          <Text>Quiet</Text>
-        </Button>
-      </Flex>
-    )
-  )
-  .add(
-    'variant: overBackground',
-    () => (
-      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
-        {render({variant: 'overBackground'})}
-      </div>
-    )
-  )
-  .add(
-    'variant: primary',
-    () => render({variant: 'primary'})
-  )
-  .add(
-    'variant: secondary',
-    () => render({variant: 'secondary'})
-  )
-  .add(
-    'variant: negative',
-    () => render({variant: 'negative'})
-  )
-  .add(
-    'element: a',
-    () => render({elementType: 'a', variant: 'primary'})
-  )
-  .add(
-    'element: a, href: \'//example.com\', target: \'_self\'',
-    () => render({elementType: 'a', href: '//example.com', target: '_self', variant: 'primary'})
-  )
-  .add(
-    'element: a, rel: \'noopener noreferrer\'',
-    () => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', variant: 'primary'})
-  );
-
-
-function render(props: any = {}) {
-  return (
-    <Flex gap="size-200">
-      <Button
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        {...props}>
-        Default
-      </Button>
-      <Button
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        isDisabled
-        {...props}>
-        Disabled
-      </Button>
-      {props.variant !== 'cta' && (
-      <Button
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        isQuiet
-        {...props}>
-        Quiet
-      </Button>
-      )}
-    </Flex>
-  );
-}
-*/
