@@ -15,13 +15,21 @@ governing permissions and limitations under the License.
 :root {
   /* The width of a step */
   --spectrum-steplist-step-width: 80px;
+  /* The color of the complete marker */
+  --spectrum-steplist-complete-marker-color: var(--spectrum-global-color-gray-600);
+  /* The color of the selected marker */
+  --spectrum-steplist-current-marker-color: var(--spectrum-global-color-gray-900);
 
   /* The diameter of the marker */
   --spectrum-steplist-marker-diameter: 8px;
+  --spectrum-steplist-marker-diameter-medium: 16px;
+
+  --spectrum-steplist-marker-font-size-medium: 12px;
 
   /* The width of the hit area */
   --spectrum-steplist-marker-hitArea: 20px;
-
+  --spectrum-steplist-market-hitArea-medium: 28px;
+  
   /* The height of the line */
   --spectrum-steplist-segment-height: 2px;
 
@@ -66,7 +74,7 @@ governing permissions and limitations under the License.
 }
 
 /* Small (w/o label or tooltip) */
-.spectrum-Steplist--small {
+.spectrum-Steplist--xsmall {
   padding: var(--spectrum-steplist-small-topPadding) 0;
 
   .spectrum-Steplist-item {
@@ -96,6 +104,12 @@ governing permissions and limitations under the License.
     }
   }
 }
+
+/* Small (w/o label or tooltip) */
+.spectrum-Steplist--small {
+}
+
+
 
 .spectrum-Steplist-item {
   outline: none;
@@ -133,6 +147,9 @@ governing permissions and limitations under the License.
     }
     .spectrum-Steplist-marker {
       border: none;
+    }
+    .spectrum-Steplist-marker {
+      background-color: var(--spectrum-global-color-gray-900);
     }
   }
 }
@@ -265,3 +282,64 @@ governing permissions and limitations under the License.
     margin-left: calc(calc(var(--spectrum-steplist-marker-hitArea) / 2) * -1);
   }
 }
+
+
+
+/* Medium */
+.spectrum-Steplist--medium {
+  counter-reset: listItemCount;
+  li {
+    counter-increment: listItemCount;
+  }
+  .spectrum-Steplist-markerContainer {
+    width: var(--spectrum-steplist-marker-hitArea-medium);
+    height: var(--spectrum-steplist-marker-hitArea-medium);
+  
+    margin-left: calc(calc(var(--spectrum-steplist-marker-hitArea-medium) / 2) * -1);
+  }
+  .spectrum-Steplist-marker {
+    margin-top: calc(calc(var(--spectrum-steplist-marker-diameter-medium) / 2) * -1);
+    margin-left: calc(calc(var(--spectrum-steplist-marker-diameter-medium) / 2) * -1);
+  
+    width: var(--spectrum-steplist-marker-diameter-medium);
+    height: var(--spectrum-steplist-marker-diameter-medium);
+  
+    border-radius: var(--spectrum-steplist-marker-diameter-medium);
+    text-align: center;
+    line-height: var(--spectrum-steplist-marker-diameter-medium);
+  }
+  .spectrum-Steplist-item {
+    &.is-complete .spectrum-Steplist-marker,
+    &.is-selected .spectrum-Steplist-marker {
+      border: none;
+    }
+
+    &.is-complete .spectrum-Steplist-marker::before,
+    &.is-selected .spectrum-Steplist-marker::before {
+      content: counter(listItemCount);
+      font-size: var(--spectrum-steplist-marker-font-size-medium);
+    }
+
+    &.is-hovered {
+      &.is-navigable .spectrum-Steplist-marker::before {
+        content: counter(listItemCount);
+        font-size: var(--spectrum-steplist-marker-font-size-medium);
+      }
+    }
+  }
+  .spectrum-Steplist-segment {
+    right: calc(var(--spectrum-steplist-step-width) - calc(var(--spectrum-steplist-marker-diameter-medium) / 4));
+    width: calc(var(--spectrum-steplist-step-width) + calc(var(--spectrum-steplist-marker-diameter-medium) / 2));
+    bottom: calc((((var(--spectrum-steplist-segment-height) * 2) + var(--spectrum-steplist-marker-diameter-medium)) / 2) * -1) ;
+  }  
+}
+.spectrum-Steplist--medium .spectrum-Steplist-item:last-child {
+  .spectrum-Steplist-markerContainer {
+    margin-right: calc(calc(var(--spectrum-steplist-marker-hitArea-medium) / 2) * -1);
+  }
+  .spectrum-Steplist-segment {
+    right: var(--spectrum-steplist-marker-diameter-medium);
+  }
+}
+
+

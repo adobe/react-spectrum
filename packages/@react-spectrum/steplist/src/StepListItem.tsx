@@ -38,6 +38,7 @@ export function StepListItem<T>(props: StepListItemProps<T>) {
   const itemKey = item.key;
   const isCompleted = state.isCompleted(itemKey);
   const isCurrent = state.selectedKey === itemKey;  
+  const isNavigable = state.isNavigable(itemKey);
   return (
     <li
       {...mergeProps(hoverProps)}
@@ -50,7 +51,8 @@ export function StepListItem<T>(props: StepListItemProps<T>) {
           'is-disabled': !isCurrent && isDisabled,
           'is-hovered': isHovered,
           'is-emphasized': isEmphasized && isCurrent,
-          'is-complete': isCompleted
+          'is-complete': isCompleted,
+          'is-navigable': isNavigable
         }
       )}>
       <a {...linkProps}>

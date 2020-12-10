@@ -21,6 +21,7 @@ import {useStepList} from '@react-aria/steplist';
 import {useStepListState} from '@react-stately/steplist';
 
 function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef) {
+  const {size = 'M'} = props;
   props = useProviderProps(props);
   let {styleProps} = useStyleProps(props);
   let state = useStepListState(props);
@@ -42,7 +43,11 @@ function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef
       {...styleProps}
       ref={domRef}
       className={classNames(styles, 'spectrum-Steplist', styleProps.className, {
-        'spectrum-Steplist--interactive': !isReadOnly
+        'spectrum-Steplist--interactive': !isReadOnly,
+        'spectrum-Steplist--small': size === 'S',
+        'spectrum-Steplist--medium': size === 'M',
+        'spectrum-Steplist--large': size === 'L',
+        'spectrum-Steplist--xlarge': size === 'XL'
       })}>
       {stepListItems}
     </ol>
