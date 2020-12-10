@@ -11,7 +11,11 @@
  */
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+{{#if (includes scopes "@react-types")}}
 import {DOMRef} from '@react-types/shared';
+{{else}}
+import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
+{{/if}}
 import {filterDOMProps} from '@react-aria/utils';
 import React from 'react';
 {{#if (includes scopes "@react-types")}}
@@ -29,7 +33,8 @@ import {use {{~componentName~}} State} from '@react-stately/{{packageName}}';
 import {useProviderProps} from '@react-spectrum/provider';
 
 {{#unless (includes scopes "@react-types")}}
-export interface Spectrum{{componentName}}Props {
+export interface Spectrum{{componentName}}Props extends DOMProps, StyleProps {
+  onChange?: any
 }
 {{/unless}}
 
