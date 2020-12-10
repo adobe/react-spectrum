@@ -71,7 +71,7 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
         console.warn(`${key} is unsupported on individual <Checkbox> elements within a <CheckboxGroup>. Please apply these props to the group instead.`);
       }
     }
-    if (!props.value) {
+    if (props.value == null) {
       console.warn('A <Checkbox> element within a <CheckboxGroup> requires a `value` property.');
     }
   }
