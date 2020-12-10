@@ -1,13 +1,13 @@
-import {HtmlHTMLAttributes} from 'react';
+import {HtmlHTMLAttributes, useState} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import {StepListItemAria, StepListItemProps, StepListState} from '@react-types/steplist';
+import {useFocus, usePress} from '@react-aria/interactions';
 import {useMessageFormatter} from '@react-aria/i18n';
-import {usePress} from '@react-aria/interactions';
 
-export function useStepListItem<T>(props: StepListItemProps<T> & { isFocused: boolean }, state: StepListState<T>): StepListItemAria {
-  const {isDisabled, isFocused, item} = props;
+export function useStepListItem<T>(props: StepListItemProps<T>, state: StepListState<T>): StepListItemAria {
+  const {isDisabled, item} = props;
   const {key} = item;
   const isCurrent = state.selectedKey === key;
   const isComplete = state.isCompleted(key);
@@ -18,6 +18,8 @@ export function useStepListItem<T>(props: StepListItemProps<T> & { isFocused: bo
       state.setSelectedKey(key);
     }
   }});
+  let [isFocused, setFocused] = useState(false);
+  const {focusProps} = useFocus({onFocusChange: setFocused});
   
   const linkProps: HtmlHTMLAttributes<HTMLElement> = {
     role: 'link'
@@ -45,7 +47,7 @@ export function useStepListItem<T>(props: StepListItemProps<T> & { isFocused: bo
   }
 
   return {
-    linkProps: mergeProps(pressProps, linkProps),
+    linkProps: mergeProps(pressProps, linkProps, focusProps),
     stepStateText,
     stepStateProps: {}
   };

@@ -18,54 +18,57 @@ import {useSingleSelectListState} from '@react-stately/list';
 
 export function useStepListState<T extends object>(props: AriaStepListProps<T>): StepListState<T> {
   let selectState = useSingleSelectListState<T>(props);
-  let [lastCompletedStep, setLastCompletedStep] = useControlledState<Key>(props.lastCompletedStep, props.defaultCompletedStep, props.onLastCompletedStepChange);
-  const collection = selectState.collection as Collection<Node<T>>;
-  const keys = useMemo<Key[]>(() => iterToArr(collection.getKeys()), [collection]);
-  const {setSelectedKey} = selectState;
-  if (keys.indexOf(selectState.selectedKey) > keys.indexOf(lastCompletedStep)) {
-    setLastCompletedStep(selectState.selectedKey);
+  let [lastCompletedStep, setLastCompletedStep] = useControlledState<Key>(props.lastCompletedStep, props.defaultLastCompletedStep, props.onLastCompletedStepChange);
+  const {setSelectedKey: realSetSelectedKey, selectedKey, collection} = selectState;
+  const {prevKeyMap, indexMap} = useMemo(() => buildKeysMaps(collection), [collection]);
+  const disabledKeys = useMemo(() => new Set(props.disabledKeys), [props.disabledKeys]);
+  const selectedIdx = indexMap.get(selectedKey);
+  if (selectedIdx > 0 && selectedIdx > (indexMap.get(lastCompletedStep) ?? -1) + 1) {
+    setLastCompletedStep(prevKeyMap.get(selectedKey));
   }
-  const sls: StepListState<T> = {
-    ...selectState,
-    setSelectedKey: (key) => {
-      const prevKey = prevStep(key);
-      if (prevKey && !isCompleted(prevKey)) {
-        setLastCompletedStep(prevKey);  
-      }
-      setSelectedKey(key);
-    },
-    setLastCompletedStep,
-    isCompleted,
-    isNavigable
-  };
-
+  
   function isCompleted(step: Key) {
     if (step === undefined) {
       return false;
     }
-    return keys.indexOf(step) < keys.indexOf(lastCompletedStep);
+    return indexMap.get(step) <= indexMap.get(lastCompletedStep);
   }
 
   function isNavigable(step: Key) {
-    return !props.isDisabled && !props.isReadOnly &&
-    (isCompleted(step) || isCompleted(prevStep(step)));
+    return !props.isDisabled && !disabledKeys.has(step) && !props.isReadOnly &&
+    (isCompleted(step) || isCompleted(prevKeyMap.get(step)));
   }
 
-  function prevStep(step: Key) {
-    const prevIdx = keys.indexOf(step) - 1;
-    if (prevIdx >= 0) {
-      return keys[prevIdx]; 
+  function setSelectedKey(key: Key) {
+    const prevKey = prevKeyMap.get(key);
+    if (prevKey && !isCompleted(prevKey)) {
+      setLastCompletedStep(prevKey);  
     }
-    return undefined;
+    realSetSelectedKey(key);
   }
 
-  return sls;
+  return {
+    ...selectState,
+    setSelectedKey,
+    setLastCompletedStep,
+    isCompleted,
+    isNavigable
+  };
 }
 
-function iterToArr<T>(iter: Iterable<T>): T[] {
-  const arr = [];
-  for (const i of iter) {
-    arr.push(i);
+function buildKeysMaps<T>(coll: Collection<Node<T>>): { indexMap: Map<Key, number>, prevKeyMap: Map<Key, Key> } {
+  const indexMap = new Map<Key, number>();
+  const prevKeyMap = new Map<Key, Key>();
+  let i = 0;
+  let prev: Node<T> = undefined;
+  for (const item of coll) {
+    indexMap.set(item.key, i);
+    prevKeyMap.set(item.key, prev?.key);
+    prev = item;
+    i++;
   }
-  return arr;
+  return {
+    indexMap,
+    prevKeyMap
+  };
 }

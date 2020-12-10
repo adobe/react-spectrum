@@ -88,7 +88,7 @@ function UncontrolledSelection() {
 
 function ReadOnly() {
   return (
-    <StepList size="S" isReadOnly defaultSelectedKey={options[1].key} defaultCompletedStep={options[2].key}>
+    <StepList size="S" isReadOnly defaultSelectedKey={options[1].key} defaultLastCompletedStep={options[1].key}>
       {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
     </StepList>
   );
@@ -96,7 +96,7 @@ function ReadOnly() {
 
 function Disabled() {
   return (
-    <StepList size="S" isDisabled defaultSelectedKey={options[1].key} defaultCompletedStep={options[2].key}>
+    <StepList size="S" isDisabled defaultSelectedKey={options[1].key} defaultLastCompletedStep={options[1].key}>
       {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
     </StepList>
   );

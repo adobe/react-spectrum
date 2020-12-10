@@ -24,7 +24,7 @@ interface StepListProps<T> extends CollectionBase<T>, SingleSelection, SingleSel
   /** The key of the last completed step (controlled). */
   lastCompletedStep?: Key,
   /** The key of the initially last completed step (uncontrolled). */
-  defaultCompletedStep?: Key,
+  defaultLastCompletedStep?: Key,
   /** Callback for when the last completed step changes. */
   onLastCompletedStepChange?: (key: Key) => void,
   /** Whether the step list is disabled. Steps will not be focusable or interactive. */

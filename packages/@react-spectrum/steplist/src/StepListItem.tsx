@@ -16,7 +16,7 @@
 import {classNames} from '@react-spectrum/utils';
 // import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React, {useState} from 'react';
+import React from 'react';
 import {StepListItemProps} from '@react-types/steplist';
 import styles from '@adobe/spectrum-css-temp/components/steplist/vars.css';
 import {useHover} from '@react-aria/interactions';
@@ -33,19 +33,14 @@ export function StepListItem<T>(props: StepListItemProps<T>) {
   } = props;
 
   // let {direction} = useLocale();
-  let [isFocused, setFocused] = useState(false);
-  const focusProps = {
-    onBlur: () => setFocused(false),
-    onFocus: () => setFocused(true)
-  };
-  let {linkProps, stepStateProps, stepStateText} = useStepListItem({...props, isFocused}, state);
+  let {linkProps, stepStateProps, stepStateText} = useStepListItem({...props}, state);
   let {hoverProps, isHovered} = useHover(props);
   const itemKey = item.key;
   const isCompleted = state.isCompleted(itemKey);
   const isCurrent = state.selectedKey === itemKey;  
   return (
     <li
-      {...mergeProps(hoverProps, focusProps)}
+      {...mergeProps(hoverProps)}
       key={itemKey}
       className={classNames(
         styles,
