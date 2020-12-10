@@ -10,7 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+{{#if (includes scopes "@react-types")}}
 import {Aria{{~componentName}}Props} from '@react-types/{{packageName}}';
+{{else}}
+export interface Aria{{componentName}}Props {
+}
+{{/if}}
 
 interface Aria{{componentName}}Options extends Aria{{~componentName}}Props {
 }
@@ -23,6 +28,6 @@ interface {{componentName}}Aria {
  * @param props - Props for the {{componentName}}.
  * @param state - State for the {{componentName}}.
  */
-export function use{{componentName}}(props: Aria{{componentName}}Options, state /*: type me */): {{componentName}}Aria {
+export function use{{componentName}}(props: Aria{{componentName}}Options, state /* type me */): {{componentName}}Aria {
   return {};
 }

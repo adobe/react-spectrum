@@ -18,6 +18,7 @@ export interface {{componentName}}Props {
   onChange?: any
 }
 
+{{#if (includes scopes "@react-aria")}}
 export interface Aria{{componentName}}Props extends {{componentName}}Props, DOMProps {
 
 }
@@ -25,3 +26,8 @@ export interface Aria{{componentName}}Props extends {{componentName}}Props, DOMP
 export interface Spectrum{{componentName}}Props extends Aria{{componentName}}Props, StyleProps {
 
 }
+{{else}}
+export interface Spectrum{{componentName}}Props extends {{componentName}}Props, DOMProps, StyleProps {
+
+}
+{{/if}}

@@ -12,8 +12,16 @@
 
 import { {{~componentName~}} } from '../';
 import React from 'react';
+{{#if (includes scopes "@react-types")}}
 import {Spectrum{{~componentName}}Props} from '@react-types/{{packageName}}';
+{{/if}}
 import {storiesOf} from '@storybook/react';
+
+{{#unless (includes scopes "@react-types")}}
+interface Spectrum{{componentName}}Props {
+
+}
+{{/unless}}
 
 storiesOf('{{componentName}}', module)
   .add(

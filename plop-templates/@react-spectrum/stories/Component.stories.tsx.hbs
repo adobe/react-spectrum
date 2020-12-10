@@ -11,8 +11,12 @@
  */
 
 import {action} from '@storybook/addon-actions';
+{{#if (includes scopes "@react-types")}}
 import { {{~componentName~}}} from '../';
-import { {{~componentName}}Props} from '@react-types/{{packageName}}';
+import { Spectrum{{~componentName}}Props} from '@react-types/{{packageName}}';
+{{else}}
+import { {{~componentName~}}, Spectrum{{~componentName}}Props} from '../';
+{{/if}}
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -22,7 +26,7 @@ storiesOf('{{componentName}}', module)
     () => render({})
   );
 
-function render(props: {{componentName}}Props) {
+function render(props: Spectrum{{componentName}}Props) {
   return (
     <{{componentName}} {...props} onChange={action('onChange')} />
   );

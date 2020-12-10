@@ -13,16 +13,14 @@
 import { {{~componentName~}} } from '../';
 import {render} from '@testing-library/react';
 import React from 'react';
-import V2{{componentName}} from '@react/react-spectrum/{{componentName}}';
 
 describe('{{componentName}}', function () {
   it.each`
     Name | Component      | props
     ${'{{componentName}}'} | ${ {{~componentName~}} }| $\{{}}
-    ${'V2{{componentName}}'}      | ${V2 {{~componentName~}} }      | $\{{}}
   `('$Name handles defaults', function ({Component, props}) {
     let tree = render(<Component {...props} />);
 
-    expect(true).toBeTruthy();
+    expect(tree).toBeTruthy();
   });
 });

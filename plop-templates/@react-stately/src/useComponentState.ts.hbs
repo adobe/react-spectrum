@@ -10,8 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import { {{~componentName}}Props} from '@react-types/{{packageName}}';
 import {useControlledState} from '@react-stately/utils';
+{{#if (includes scopes "@react-types")}}
+import { {{~componentName}}Props} from '@react-types/{{packageName}}';
+{{else}}
+export interface {{componentName}}Props {
+  value?: any,
+  defaultValue?: any,
+  onChange?: any
+}
+{{/if}}
 
 export interface {{componentName}}State {
 

@@ -21,6 +21,10 @@ module.exports = function (plop) {
     return string.replace(match, replacement);
   });
 
+  plop.setHelper('includes', function (array, string) {
+    return array.includes(string)
+  });
+
   // controller generator
   plop.setGenerator('component', {
     description: 'add new component',
@@ -64,6 +68,7 @@ module.exports = function (plop) {
     actions: function (data) {
       let {projectType, scopes, scopeName, packageName, componentName, componentCSS} = data;
       let actions = [];
+
       if (projectType === rspProject) {
         if (scopes.includes('@react-aria')) {
           actions.push({
@@ -71,7 +76,7 @@ module.exports = function (plop) {
             templateFiles: '../plop-templates/@react-aria/**',
             base: '../plop-templates/@react-aria/',
             destination: `../packages/@react-aria/${packageName}`,
-            data: {componentName}
+            data: {componentName, scopes}
           });
           actions.push({
             type: 'renameMany',
@@ -86,7 +91,7 @@ module.exports = function (plop) {
             templateFiles: '../plop-templates/@react-spectrum/**',
             base: '../plop-templates/@react-spectrum/',
             destination: `../packages/@react-spectrum/${packageName}`,
-            data: {packageName, componentName, componentCSS}
+            data: {packageName, componentName, componentCSS, scopes}
           });
           actions.push({
             type: 'renameMany',
@@ -101,7 +106,7 @@ module.exports = function (plop) {
             templateFiles: '../plop-templates/@react-stately/**',
             base: '../plop-templates/@react-stately/',
             destination: `../packages/@react-stately/${packageName}`,
-            data: {packageName, componentName}
+            data: {packageName, componentName, scopes}
           });
           actions.push({
             type: 'renameMany',
@@ -116,7 +121,7 @@ module.exports = function (plop) {
             templateFiles: '../plop-templates/@react-types/**',
             base: '../plop-templates/@react-types/',
             destination: `../packages/@react-types/${packageName}`,
-            data: {packageName, componentName}
+            data: {packageName, componentName, scopes}
           });
           actions.push({
             type: 'renameMany',
