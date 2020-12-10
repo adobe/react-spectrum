@@ -10,15 +10,40 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTextFieldProps, SpectrumTextFieldProps, TextFieldProps} from '@react-types/textfield';
+import {
+  AriaTextFieldProps,
+  SpectrumTextFieldProps,
+  TextFieldProps,
+} from "@react-types/textfield";
+import {
+  DOMProps,
+  StyleProps,
+  SpectrumLabelableProps,
+} from "@react-types/shared";
+import { SpectrumPickerProps } from "@react-types/select";
+import { ReactElement, ReactNode } from "react";
 
 export interface SearchFieldProps extends TextFieldProps {
   /** Handler that is called when the SearchField is submitted. */
-  onSubmit?: (value: string) => void,
+  onSubmit?: (value: string) => void;
 
   /** Handler that is called when the clear button is pressed. */
-  onClear?: () => void
+  onClear?: () => void;
 }
 
-export interface AriaSearchFieldProps extends SearchFieldProps, AriaTextFieldProps {}
-export interface SpectrumSearchFieldProps extends AriaSearchFieldProps, SpectrumTextFieldProps {}
+export interface AriaSearchFieldProps
+  extends SearchFieldProps,
+    AriaTextFieldProps {}
+export interface SpectrumSearchFieldProps
+  extends AriaSearchFieldProps,
+    SpectrumTextFieldProps {}
+
+interface SpectrumSearchWithinProps
+  extends SpectrumLabelableProps,
+    DOMProps,
+    StyleProps {
+  children: ReactNode;
+  /** Propagated to both children */
+  isDisabled?: boolean;
+  isQuiet?: boolean;
+}
