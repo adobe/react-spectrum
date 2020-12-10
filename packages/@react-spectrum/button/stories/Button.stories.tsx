@@ -13,7 +13,7 @@
 import Bell from '@spectrum-icons/workflow/src/Bell';
 import {Button} from '../';
 import {Meta, Story} from '@storybook/react';
-import React from 'react';
+import React, {ElementType} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import {Text} from '@react-spectrum/text';
 
@@ -28,114 +28,115 @@ const meta: Meta<SpectrumButtonProps> = {
 
 export default meta;
 
-const Template: Story<SpectrumButtonProps> = (args) => <Button {...args} />;
-const BackgroundTemplate: Story<SpectrumButtonProps> = (args) => (
+// can't handle generics unless it's done like this https://stackoverflow.com/questions/63659736/how-to-create-generic-typescript-function-that-binds-arguments-for-storybook-con
+const Template = <T extends ElementType = 'button'>(): Story<SpectrumButtonProps<T>> => (args) => <Button {...args} />;
+const BackgroundTemplate = <T extends ElementType = 'button'>(): Story<SpectrumButtonProps<T>> => (args) => (
   <div  style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
     <Button {...args} />
   </div>
 );
 
-export const CTAButton = Template.bind({});
+export const CTAButton = Template<'button'>().bind({});
 CTAButton.storyName = 'cta button';
 CTAButton.args = {variant: 'cta', children: 'Default'};
-export const PrimaryButton = Template.bind({});
+export const PrimaryButton = Template<'button'>().bind({});
 PrimaryButton.storyName = 'primary button';
 PrimaryButton.args = {variant: 'primary', children: 'Default'};
-export const SecondaryButton = Template.bind({});
+export const SecondaryButton = Template<'button'>().bind({});
 SecondaryButton.storyName = 'secondary button';
 SecondaryButton.args = {variant: 'secondary', children: 'Default'};
-export const OverBackGroundButton = BackgroundTemplate.bind({});
+export const OverBackGroundButton = BackgroundTemplate<'button'>().bind({});
 OverBackGroundButton.storyName = 'overBackground button';
 OverBackGroundButton.args = {variant: 'overBackground', children: 'Default'};
-export const NegativeButton = Template.bind({});
-NegativeButton.storyName = 'negativeButton button';
+export const NegativeButton = Template<'button'>().bind({});
+NegativeButton.storyName = 'negative button';
 NegativeButton.args = {variant: 'negative', children: 'Default'};
 
-export const DisabledCTAButton = Template.bind({});
+export const DisabledCTAButton = Template<'button'>().bind({});
 DisabledCTAButton.storyName = 'disabled cta button';
 DisabledCTAButton.args = {...CTAButton.args, isDisabled: true};
-export const DisabledPrimaryButton = Template.bind({});
+export const DisabledPrimaryButton = Template<'button'>().bind({});
 DisabledPrimaryButton.storyName = 'disabled primary button';
 DisabledPrimaryButton.args = {...PrimaryButton.args, isDisabled: true};
-export const DisabledSecondaryButton = Template.bind({});
+export const DisabledSecondaryButton = Template<'button'>().bind({});
 DisabledSecondaryButton.storyName = 'disabled secondary button';
 DisabledSecondaryButton.args = {...SecondaryButton.args, isDisabled: true};
-export const DisabledOverBackGroundButton = BackgroundTemplate.bind({});
+export const DisabledOverBackGroundButton = BackgroundTemplate<'button'>().bind({});
 DisabledOverBackGroundButton.storyName = 'disabled overbackground button';
 DisabledOverBackGroundButton.args = {...OverBackGroundButton.args, isDisabled: true};
-export const DisabledNegativeButton = Template.bind({});
-DisabledNegativeButton.storyName = 'disabled negativeButton button';
+export const DisabledNegativeButton = Template<'button'>().bind({});
+DisabledNegativeButton.storyName = 'disabled negative button';
 DisabledNegativeButton.args = {...NegativeButton.args, isDisabled: true};
 
 
-export const WithTextCTAButton = Template.bind({});
+export const WithTextCTAButton = Template<'button'>().bind({});
 WithTextCTAButton.storyName = 'with text cta button';
 WithTextCTAButton.args = {...CTAButton.args, children: <Text>Default</Text>};
-export const WithTextPrimaryButton = Template.bind({});
+export const WithTextPrimaryButton = Template<'button'>().bind({});
 WithTextPrimaryButton.storyName = 'with text primary button';
 WithTextPrimaryButton.args = {...PrimaryButton.args, children: <Text>Default</Text>};
-export const WithTextSecondaryButton = Template.bind({});
+export const WithTextSecondaryButton = Template<'button'>().bind({});
 WithTextSecondaryButton.storyName = 'with text secondary button';
 WithTextSecondaryButton.args = {...SecondaryButton.args, children: <Text>Default</Text>};
-export const WithTextOverBackGroundButton = BackgroundTemplate.bind({});
+export const WithTextOverBackGroundButton = BackgroundTemplate<'button'>().bind({});
 WithTextOverBackGroundButton.storyName = 'with text overBackground button';
 WithTextOverBackGroundButton.args = {...OverBackGroundButton.args, children: <Text>Default</Text>};
-export const WithTextNegativeButton = Template.bind({});
-WithTextNegativeButton.storyName = 'with text negativeButton button';
+export const WithTextNegativeButton = Template<'button'>().bind({});
+WithTextNegativeButton.storyName = 'with text negative button';
 WithTextNegativeButton.args = {...NegativeButton.args, children: <Text>Default</Text>};
 
 
-export const WithIconCTAButton = Template.bind({});
+export const WithIconCTAButton = Template<'button'>().bind({});
 WithIconCTAButton.storyName = 'with icon cta button';
 WithIconCTAButton.args = {...CTAButton.args, children: <Bell />, 'aria-label': 'Default'};
-export const WithIconPrimaryButton = Template.bind({});
+export const WithIconPrimaryButton = Template<'button'>().bind({});
 WithIconPrimaryButton.storyName = 'with icon primary button';
 WithIconPrimaryButton.args = {...PrimaryButton.args, children: <Bell />, 'aria-label': 'Default'};
-export const WithIconSecondaryButton = Template.bind({});
+export const WithIconSecondaryButton = Template<'button'>().bind({});
 WithIconSecondaryButton.storyName = 'with icon secondary button';
 WithIconSecondaryButton.args = {...SecondaryButton.args, children: <Bell />, 'aria-label': 'Default'};
-export const WithIconOverBackGroundButton = BackgroundTemplate.bind({});
+export const WithIconOverBackGroundButton = BackgroundTemplate<'button'>().bind({});
 WithIconOverBackGroundButton.storyName = 'with icon overBackground button';
 WithIconOverBackGroundButton.args = {...OverBackGroundButton.args, children: <Bell />, 'aria-label': 'Default'};
-export const WithIconNegativeButton = Template.bind({});
-WithIconNegativeButton.storyName = 'with icon negativeButton button';
+export const WithIconNegativeButton = Template<'button'>().bind({});
+WithIconNegativeButton.storyName = 'with icon negative button';
 WithIconNegativeButton.args = {...NegativeButton.args, children: <Bell />, 'aria-label': 'Default'};
 
 
-export const WithBothCTAButton = Template.bind({});
+export const WithBothCTAButton = Template<'button'>().bind({});
 WithBothCTAButton.storyName = 'with both cta button';
 WithBothCTAButton.args = {...CTAButton.args, children: <><Bell /><Text>Default</Text></>};
-export const WithBothPrimaryButton = Template.bind({});
+export const WithBothPrimaryButton = Template<'button'>().bind({});
 WithBothPrimaryButton.storyName = 'with both primary button';
 WithBothPrimaryButton.args = {...PrimaryButton.args, children: <><Bell /><Text>Default</Text></>};
-export const WithBothSecondaryButton = Template.bind({});
+export const WithBothSecondaryButton = Template<'button'>().bind({});
 WithBothSecondaryButton.storyName = 'with both secondary button';
 WithBothSecondaryButton.args = {...SecondaryButton.args, children: <><Bell /><Text>Default</Text></>};
-export const WithBothOverBackGroundButton = BackgroundTemplate.bind({});
+export const WithBothOverBackGroundButton = BackgroundTemplate<'button'>().bind({});
 WithBothOverBackGroundButton.storyName = 'with both overBackground button';
 WithBothOverBackGroundButton.args = {...OverBackGroundButton.args, children: <><Bell /><Text>Default</Text></>};
-export const WithBothNegativeButton = Template.bind({});
-WithBothNegativeButton.storyName = 'with both negativeButton button';
+export const WithBothNegativeButton = Template<'button'>().bind({});
+WithBothNegativeButton.storyName = 'with both negative button';
 WithBothNegativeButton.args = {...NegativeButton.args, children: <><Bell /><Text>Default</Text></>};
 
 
-export const LinkCTAButton = Template.bind({});
+export const LinkCTAButton = Template<'a'>().bind({});
 LinkCTAButton.storyName = 'link cta button';
-LinkCTAButton.args = {...CTAButton.args, elementType: 'a', href: '//example.com', target: '_self'};
-export const LinkPrimaryButton = Template.bind({});
+LinkCTAButton.args = {variant: 'cta', elementType: 'a', href: '//example.com', target: '_self'};
+export const LinkPrimaryButton = Template<'a'>().bind({});
 LinkPrimaryButton.storyName = 'link primary button';
-LinkPrimaryButton.args = {...LinkCTAButton.args, ...PrimaryButton.args};
-export const LinkSecondaryButton = Template.bind({});
+LinkPrimaryButton.args = {...LinkCTAButton.args, variant: 'primary'};
+export const LinkSecondaryButton = Template<'a'>().bind({});
 LinkSecondaryButton.storyName = 'link secondary button';
-LinkSecondaryButton.args = {...LinkCTAButton.args, ...SecondaryButton.args};
-export const LinkOverBackGroundButton = BackgroundTemplate.bind({});
+LinkSecondaryButton.args = {...LinkCTAButton.args, variant: 'secondary'};
+export const LinkOverBackGroundButton = BackgroundTemplate<'a'>().bind({});
 LinkOverBackGroundButton.storyName = 'link overBackground button';
-LinkOverBackGroundButton.args = {...LinkCTAButton.args, ...OverBackGroundButton.args};
-export const LinkNegativeButton = Template.bind({});
-LinkNegativeButton.storyName = 'link negativeButton button';
-LinkNegativeButton.args = {...LinkCTAButton.args, ...NegativeButton.args};
+LinkOverBackGroundButton.args = {...LinkCTAButton.args, variant: 'overBackground'};
+export const LinkNegativeButton = Template<'a'>().bind({});
+LinkNegativeButton.storyName = 'link negative button';
+LinkNegativeButton.args = {...LinkCTAButton.args, variant: 'negative'};
 
-export const NoOpenerNoReferrerLinkButton = Template.bind({});
+export const NoOpenerNoReferrerLinkButton = Template<'a'>().bind({});
 NoOpenerNoReferrerLinkButton.storyName = 'noopener noreferrer link button';
 NoOpenerNoReferrerLinkButton.args = {...LinkCTAButton.args, target: undefined, rel: 'noopener noreferrer'};
 
