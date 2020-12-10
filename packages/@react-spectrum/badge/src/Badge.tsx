@@ -32,23 +32,21 @@ function Badge(props: SpectrumBadgeProps, ref: DOMRef) {
 
   return (
     <span
-      {...filterDOMProps(props)}
-      {...styleProps}
-      ref={domRef}
-      className={classNames(
-          styles,
-          'spectrum-Badge',
-          `spectrum-Badge--${variant}`,
-          styleProps.className)}>
-      {children}
+    className={classNames(
+      styles,
+      'spectrum-Label',
+      `spectrum-Label--${variant}`,
+      styleProps.className
+    )}
+    ref={domRef}>
       <SlotProvider
         slots={{
           icon: {
             size: 'S',
-            UNSAFE_className: classNames(styles, 'spectrum-Icon')
+            UNSAFE_className: classNames(styles, styleProps, 'spectrum-Icon')
           },
           text: {
-            UNSAFE_className: classNames(styles, 'spectrum-Label')
+            UNSAFE_className: classNames(styles, styleProps, 'spectrum-Label', `spectrum-Label-${variant}`)
           }
         }}>
         {typeof children === 'string' || isTextOnly
