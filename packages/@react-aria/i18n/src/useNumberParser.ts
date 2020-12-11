@@ -65,19 +65,7 @@ let replaceAllButFirstOccurrence = (val: string, char: string) => {
 export function useNumberParser(options?: Intl.NumberFormatOptions, numeralSystem?: NumberingSystems): NumberParser {
   let {locale} = useLocale();
   if (numeralSystem && locale.indexOf('-u-nu-') === -1) {
-    switch (numeralSystem) {
-      case 'arab':
-        locale = `${locale}-u-nu-arab`;
-        break;
-      case 'hanidec':
-        locale = `${locale}-u-nu-hanidec`;
-        break;
-      case 'latn':
-        locale = `${locale}-u-nu-latn`;
-        break;
-      default:
-        break;
-    }
+    locale = `${locale}-u-nu-${numeralSystem}`;
   }
 
   let formatter = useNumberFormatter(options, numeralSystem);
