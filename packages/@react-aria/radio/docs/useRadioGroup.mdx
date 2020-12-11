@@ -114,11 +114,12 @@ function RadioGroup(props) {
 function Radio(props) {
   let {children} = props;
   let state = React.useContext(RadioContext);
-  let {inputProps} = useRadio(props, state);
+  let ref = useRef(null);
+  let {inputProps} = useRadio(props, state, ref);
 
   return (
     <label style={{display: 'block'}}>
-      <input {...inputProps} />
+      <input {...inputProps} ref={ref} />
       {children}
     </label>
   );
@@ -169,7 +170,8 @@ function RadioGroup(props) {
 function Radio(props) {
   let {children} = props;
   let state = React.useContext(RadioContext);
-  let {inputProps} = useRadio(props, state);
+  let ref = useRef(null);
+  let {inputProps} = useRadio(props, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
   let isSelected = state.selectedValue === props.value;
@@ -178,7 +180,7 @@ function Radio(props) {
   return (
     <label style={{display: 'flex', alignItems: 'center'}}>
       <VisuallyHidden>
-        <input {...inputProps} {...focusProps} />
+        <input {...inputProps} {...focusProps} ref={ref} />
       </VisuallyHidden>
       <svg
         width={24}
