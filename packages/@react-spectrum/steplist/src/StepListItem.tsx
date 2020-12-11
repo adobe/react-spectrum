@@ -37,20 +37,20 @@ export function StepListItem<T>(props: StepListItemProps<T>) {
   let {hoverProps, isHovered} = useHover(props);
   const itemKey = item.key;
   const isCompleted = state.isCompleted(itemKey);
-  const isCurrent = state.selectedKey === itemKey;  
+  const isSelected = state.selectedKey === itemKey;  
   const isNavigable = state.isNavigable(itemKey);
+  const isItemDisabled = state.disabledKeys.has(itemKey);
   return (
     <li
       {...mergeProps(hoverProps)}
-      key={itemKey}
       className={classNames(
         styles,
         'spectrum-Steplist-item',
         {
-          'is-selected': isCurrent,
-          'is-disabled': !isCurrent && isDisabled,
+          'is-selected': isSelected,
+          'is-disabled': !isSelected && (isDisabled || isItemDisabled),
           'is-hovered': isHovered,
-          'is-emphasized': isEmphasized && isCurrent,
+          'is-emphasized': isEmphasized && isSelected,
           'is-complete': isCompleted,
           'is-navigable': isNavigable
         }
