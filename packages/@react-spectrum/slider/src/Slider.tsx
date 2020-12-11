@@ -50,7 +50,7 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
         // @ts-ignore
         {'--spectrum-slider-track-color': trackGradient && `linear-gradient(to ${direction === 'ltr' ? 'right' : 'left'}, ${trackGradient.join(', ')})`}
       }>
-      {({inputRefs: [inputRef], thumbProps: [thumbProps], inputProps: [inputProps], ticks, state}: SliderBaseChildArguments) => {
+      {({inputRefs: [inputRef], thumbProps: [thumbProps], inputProps: [inputProps], state}: SliderBaseChildArguments) => {
         fillOffset = fillOffset != null ? clamp(fillOffset, state.getThumbMinValue(0), state.getThumbMaxValue(0)) : fillOffset;
 
         let cssDirection = direction === 'rtl' ? 'right' : 'left';
@@ -112,7 +112,6 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
         return  (
           <>
             {lowerTrack}
-            {ticks}
             <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
               {handle}
             </FocusRing>
