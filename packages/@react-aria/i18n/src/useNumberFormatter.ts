@@ -32,19 +32,7 @@ export function useNumberFormatter(options?: Intl.NumberFormatOptions, numeralSy
   // this makes ar-AE go to Eastern arabic numerals in Safari like it does in Chrome and FF
   // https://bugs.webkit.org/show_bug.cgi?id=218139
   if (numeralSystem && locale.indexOf('-u-nu-') === -1) {
-    switch (numeralSystem) {
-      case 'arab':
-        locale = `${locale}-u-nu-arab`;
-        break;
-      case 'hanidec':
-        locale = `${locale}-u-nu-hanidec`;
-        break;
-      case 'latn':
-        locale = `${locale}-u-nu-latn`;
-        break;
-      default:
-        break;
-    }
+    locale = `${locale}-u-nu-${numeralSystem}`;
   }
   if (!options) {
     options = {};
