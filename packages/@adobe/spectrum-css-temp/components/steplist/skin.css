@@ -19,13 +19,14 @@ governing permissions and limitations under the License.
   /* Default Marker Style is 'incomplete' */
   .spectrum-Steplist-marker {
     border-color: var(--spectrum-steplist-incomplete-marker-color);
-        color: var(--spectrum-global-color-gray-50)
-
+    color: var(--spectrum-global-color-gray-50)
   }
 
   /* Default Line Style is 'incomplete' */
   .spectrum-Steplist-segment {
-    border-bottom-color: var(--spectrum-steplist-incomplete-segment-color)
+    .spectrum-Steplist-chevron {
+      color: var(--spectrum-steplist-incomplete-marker-color);
+    }
   }
 
   .spectrum-Steplist-item {
@@ -71,7 +72,6 @@ governing permissions and limitations under the License.
       &.is-hovered {
         &.is-navigable {
           .spectrum-Steplist-marker {
-            border: none;
             background-color: var(--spectrum-steplist-current-marker-color)
           }
         }      

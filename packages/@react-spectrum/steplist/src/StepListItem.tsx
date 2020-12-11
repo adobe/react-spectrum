@@ -22,6 +22,7 @@ import styles from '@adobe/spectrum-css-temp/components/steplist/vars.css';
 import {useHover} from '@react-aria/interactions';
 import {useStepListItem} from '@react-aria/steplist';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
+import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 // import {useLocale} from '@react-aria/i18n';
 
 export function StepListItem<T>(props: StepListItemProps<T>) {
@@ -31,6 +32,7 @@ export function StepListItem<T>(props: StepListItemProps<T>) {
     item,
     state
   } = props;
+
 
   // let {direction} = useLocale();
   let {linkProps, stepStateProps, stepStateText} = useStepListItem({...props}, state);
@@ -57,14 +59,14 @@ export function StepListItem<T>(props: StepListItemProps<T>) {
       )}>
       <a {...linkProps}>
         <VisuallyHidden {...stepStateProps}>{stepStateText}</VisuallyHidden>
-        <div className={classNames(styles, 'spectrum-Steplist-label')}>
+        <span className={classNames(styles, 'spectrum-Steplist-label')}>
           {item.rendered}
-        </div>
-        <span className={classNames(styles, 'spectrum-Steplist-markerContainer')} >
-          <span className={classNames(styles, 'spectrum-Steplist-marker')} />
         </span>
+        <span className={classNames(styles, 'spectrum-Steplist-marker')} />
       </a>
-      <span className={classNames(styles, 'spectrum-Steplist-segment')} />
+      <span className={classNames(styles, 'spectrum-Steplist-segment')} >
+        <ChevronRightMedium UNSAFE_className={classNames(styles, 'spectrum-Steplist-chevron')} />
+      </span>
     </li>
   );
 }

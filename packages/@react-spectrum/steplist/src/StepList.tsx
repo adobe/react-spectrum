@@ -56,5 +56,3 @@ function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef
 
 const _StepList = React.forwardRef(StepList);
 export {_StepList as StepList};
-
-export type {SpectrumStepListProps};

@@ -28,10 +28,6 @@ const options = [{
 }];
 
 storiesOf('StepList', module)
-  .add(
-    'Does nothing!',
-    () => render({})
-  )
   .add('Controlled selection', 
     () => ControlledSelection()
   )
@@ -47,18 +43,10 @@ storiesOf('StepList', module)
   .add('AsyncItems',
     () => AsyncItems()
   )
-  .add('Medium Size', Medium);
-
-function render(props = {}) {
-  return (
-    <StepList defaultSelectedKey="offers" lastCompletedStep="details" {...props} size="S">
-      <Item key="details">Details</Item>
-      <Item key="offers">Select offers</Item>
-      <Item key="fallback">Fallback offer</Item>
-      <Item key="summary">Summary</Item>
-    </StepList>
-  );
-}
+  .add('Medium Size', Medium)
+  .add('Small Size', Small)
+  .add('Large Size', Large)
+  .add('Extra Large Size', XLarge);
 
 function ControlledSelection() {
   const [selectedIdx, setSelected] = useState(0);
@@ -68,7 +56,7 @@ function ControlledSelection() {
   }
   const currKey = options[selectedIdx].key;
   return (<div>
-    <StepList size="S" selectedKey={currKey} onSelectionChange={handleSelectionChange}>
+    <StepList size="M" selectedKey={currKey} onSelectionChange={handleSelectionChange}>
       {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
     </StepList>
     <div style={{padding: 20}}>
@@ -81,7 +69,7 @@ function ControlledSelection() {
 
 function UncontrolledSelection() {
   return (
-    <StepList size="S" defaultSelectedKey={options[3].key}>
+    <StepList size="M" defaultSelectedKey={options[3].key}>
       {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
     </StepList>
   );
@@ -89,7 +77,7 @@ function UncontrolledSelection() {
 
 function ReadOnly() {
   return (
-    <StepList size="S" isReadOnly defaultSelectedKey={options[1].key} defaultLastCompletedStep={options[1].key}>
+    <StepList size="M" isReadOnly defaultSelectedKey={options[1].key} defaultLastCompletedStep={options[1].key}>
       {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
     </StepList>
   );
@@ -97,7 +85,7 @@ function ReadOnly() {
 
 function Disabled() {
   return (
-    <StepList size="S" isDisabled defaultSelectedKey={options[1].key} defaultLastCompletedStep={options[1].key}>
+    <StepList size="M" isDisabled defaultSelectedKey={options[1].key} defaultLastCompletedStep={options[1].key}>
       {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
     </StepList>
   );
@@ -105,8 +93,40 @@ function Disabled() {
 
 function Medium() {
   return (
-    <StepList size="M" defaultSelectedKey={options[1].key} defaultLastCompletedStep={options[1].key}>
-      {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
+    <StepList size="M" defaultSelectedKey="fallback" defaultLastCompletedStep="fallback">
+      <Item key="offer">Offer</Item>
+      <Item key="fallback">Fallback</Item>
+      <Item key="summary">Summary</Item>
+    </StepList>
+  );
+}
+
+function Small() {
+  return (
+    <StepList size="S" defaultSelectedKey="fallback" defaultLastCompletedStep="fallback">
+      <Item key="offer">Offer</Item>
+      <Item key="fallback">Fallback</Item>
+      <Item key="summary">Summary</Item>
+    </StepList>
+  );
+}
+
+function Large() {
+  return (
+    <StepList size="L" defaultSelectedKey="fallback" defaultLastCompletedStep="fallback">
+      <Item key="offer">Offer</Item>
+      <Item key="fallback">Fallback</Item>
+      <Item key="summary">Summary</Item>
+    </StepList>
+  );
+}
+
+function XLarge() {
+  return (
+    <StepList size="XL" defaultSelectedKey="fallback" defaultLastCompletedStep="fallback">
+      <Item key="offer">Offer</Item>
+      <Item key="fallback">Fallback</Item>
+      <Item key="summary">Summary</Item>
     </StepList>
   );
 }
