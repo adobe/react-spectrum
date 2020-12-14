@@ -52,7 +52,8 @@ interface SelectAria {
  */
 export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<HTMLElement>): SelectAria {
   let {
-    keyboardDelegate
+    keyboardDelegate,
+    isDisabled
   } = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
@@ -62,6 +63,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
+      isDisabled,
       type: 'listbox'
     },
     state,
@@ -81,8 +83,12 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     labelElementType: 'span'
   });
 
+  typeSelectProps.onKeyDown = typeSelectProps.onKeyDownCapture;
+  delete typeSelectProps.onKeyDownCapture;
+
   let domProps = filterDOMProps(props, {labelable: true});
-  let triggerProps = mergeProps(mergeProps(menuTriggerProps, fieldProps), typeSelectProps);
+  let triggerProps = mergeProps(typeSelectProps, menuTriggerProps, fieldProps);
+
   let valueId = useId();
 
   return {
