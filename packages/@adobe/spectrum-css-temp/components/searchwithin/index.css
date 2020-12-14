@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import '../commons/index.css';
+@import "../commons/index.css";
 
 :root {
   --spectrum-searchwithin-width: 250px;
@@ -21,18 +21,25 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-SearchWithin {
-  width: var(--spectrum-searchwithin-width);
   display: inline-flex;
   position: relative;
-
+  &.is-focused {
+    .spectrum-Textfield,
+    button {
+      border-color: var(--spectrum-textfield-border-color-key-focus);
+    }
+  }
   .spectrum-Dropdown {
     width: auto;
     min-width: 0;
   }
 
-  .spectrum-Dropdown-trigger {
-    border-top-right-radius: var(--spectrum-searchwithin-border-radius);
-    border-bottom-right-radius: var(--spectrum-searchwithin-border-radius);
+  button {
+    border-top-left-radius: var(--spectrum-searchwithin-border-radius);
+    border-bottom-left-radius: var(--spectrum-searchwithin-border-radius);
+    width: unset;
+    contain: unset;
+    justify-content: unset;
   }
 
   .spectrum-Dropdown-label {
@@ -42,12 +49,20 @@ governing permissions and limitations under the License.
 
   .spectrum-Textfield {
     flex: 1;
-    margin-left: calc(var(--spectrum-textfield-border-size) * -1); /* hides left border */
-    border-top-left-radius: var(--spectrum-searchwithin-border-radius);
-    border-bottom-left-radius: var(--spectrum-searchwithin-border-radius);
+    margin-left: calc(
+      var(--spectrum-textfield-border-size) * -1
+    ); /* hides left border */
+    border-top-right-radius: var(--spectrum-searchwithin-border-radius);
+    border-bottom-right-radius: var(--spectrum-searchwithin-border-radius);
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
       position: relative; /* shows left border */
+    }
+
+    input {
+      border-top-right-radius: var(--spectrum-searchwithin-border-radius);
+      border-bottom-right-radius: var(--spectrum-searchwithin-border-radius);
     }
   }
 

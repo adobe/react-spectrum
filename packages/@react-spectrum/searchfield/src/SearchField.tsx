@@ -10,30 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
-import { classNames, useSlotProps } from "@react-spectrum/utils";
-import { ClearButton } from "@react-spectrum/button";
-import Magnifier from "@spectrum-icons/ui/Magnifier";
-import React, { forwardRef, RefObject, useRef } from "react";
-import { SpectrumSearchFieldProps } from "@react-types/searchfield";
-import styles from "@adobe/spectrum-css-temp/components/search/vars.css";
-import { TextFieldBase } from "@react-spectrum/textfield";
-import { TextFieldRef } from "@react-types/textfield";
-import { useProviderProps } from "@react-spectrum/provider";
-import { useSearchField } from "@react-aria/searchfield";
-import { useSearchFieldState } from "@react-stately/searchfield";
+import {classNames, useSlotProps} from '@react-spectrum/utils';
+import {ClearButton} from '@react-spectrum/button';
+import Magnifier from '@spectrum-icons/ui/Magnifier';
+import React, {forwardRef, RefObject, useRef} from 'react';
+import {SpectrumSearchFieldProps} from '@react-types/searchfield';
+import styles from '@adobe/spectrum-css-temp/components/search/vars.css';
+import {TextFieldBase} from '@react-spectrum/textfield';
+import {TextFieldRef} from '@react-types/textfield';
+import {useProviderProps} from '@react-spectrum/provider';
+import {useSearchField} from '@react-aria/searchfield';
+import {useSearchFieldState} from '@react-stately/searchfield';
 
 function SearchField(
   props: SpectrumSearchFieldProps,
   ref: RefObject<TextFieldRef>
 ) {
   props = useProviderProps(props);
-  props = useSlotProps(props, "searchfield");
+  props = useSlotProps(props, 'searchfield');
 
   let defaultIcon = (
     <Magnifier
       data-testid="searchicon"
-      UNSAFE_className={classNames(styles, "spectrum-Search-icon")}
-    />
+      UNSAFE_className={classNames(styles, 'spectrum-Search-icon')} />
   );
 
   let {
@@ -45,7 +44,7 @@ function SearchField(
 
   let state = useSearchFieldState(props);
   let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
-  let { labelProps, inputProps, clearButtonProps } = useSearchField(
+  let {labelProps, inputProps, clearButtonProps} = useSearchField(
     props,
     state,
     inputRef
@@ -55,9 +54,8 @@ function SearchField(
     <ClearButton
       {...clearButtonProps}
       preventFocus
-      UNSAFE_className={classNames(styles, "spectrum-ClearButton")}
-      isDisabled={isDisabled}
-    />
+      UNSAFE_className={classNames(styles, 'spectrum-ClearButton')}
+      isDisabled={isDisabled} />
   );
 
   return (
@@ -67,23 +65,22 @@ function SearchField(
       inputProps={inputProps}
       UNSAFE_className={classNames(
         styles,
-        "spectrum-Search",
-        "spectrum-Textfield",
+        'spectrum-Search',
+        'spectrum-Textfield',
         {
-          "is-disabled": isDisabled,
-          "is-quiet": props.isQuiet,
-          "is-invalid": props.validationState === "invalid",
-          "is-valid": props.validationState === "valid",
+          'is-disabled': isDisabled,
+          'is-quiet': props.isQuiet,
+          'is-invalid': props.validationState === 'invalid',
+          'is-valid': props.validationState === 'valid'
         },
         UNSAFE_className
       )}
-      inputClassName={classNames(styles, "spectrum-Search-input")}
+      inputClassName={classNames(styles, 'spectrum-Search-input')}
       ref={ref}
       inputRef={inputRef}
       isDisabled={isDisabled}
       icon={icon}
-      wrapperChildren={state.value !== "" && !props.isReadOnly && clearButton}
-    />
+      wrapperChildren={state.value !== '' && !props.isReadOnly && clearButton} />
   );
 }
 
@@ -91,4 +88,4 @@ function SearchField(
  * A SearchField is a text field designed for searches.
  */
 let _SearchField = forwardRef(SearchField);
-export { _SearchField as SearchField };
+export {_SearchField as SearchField};

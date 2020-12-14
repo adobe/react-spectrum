@@ -42,7 +42,7 @@ interface SpectrumSearchWithinProps
   extends SpectrumLabelableProps,
     DOMProps,
     StyleProps {
-  children: ReactNode;
+  children: [ReactElement, ReactElement];
   /** Propagated to both children */
   isDisabled?: boolean;
   isQuiet?: boolean;

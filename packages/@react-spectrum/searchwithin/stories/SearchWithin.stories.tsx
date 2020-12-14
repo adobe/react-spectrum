@@ -10,34 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import { action } from "@storybook/addon-actions";
-import { SearchWithin } from "../";
-import { Picker } from "@react-spectrum/picker";
-import { SearchField } from "@react-spectrum/searchfield";
-import { Item } from "@react-stately/collections/src/Item";
-
-import React from "react";
-import { storiesOf } from "@storybook/react";
+import {Item} from '@react-stately/collections/src/Item';
+import {Picker} from '@react-spectrum/picker';
+import React from 'react';
+import {SearchField} from '@react-spectrum/searchfield';
+import {SearchWithin} from '../';
+import {storiesOf} from '@storybook/react';
 
 let flatOptions = [
-  { id: 1, name: "Aardvark" },
-  { id: 2, name: "Kangaroo" },
-  { id: 3, name: "Snake" },
-  { id: 4, name: "Danni" },
-  { id: 5, name: "Devon" },
-  { id: 6, name: "Ross" },
-  { id: 7, name: "Puppy" },
-  { id: 8, name: "Doggo" },
-  { id: 9, name: "Floof" },
+  {id: 1, name: 'Aardvark'},
+  {id: 2, name: 'Kangaroo'},
+  {id: 3, name: 'Snake'},
+  {id: 4, name: 'Danni'},
+  {id: 5, name: 'Devon'},
+  {id: 6, name: 'Ross'},
+  {id: 7, name: 'Puppy'},
+  {id: 8, name: 'Doggo'},
+  {id: 9, name: 'Floof'}
 ];
 
-let children = (
-  <>
+storiesOf('SearchWithin', module).add('default', () => (
+  <SearchWithin >
     <SearchField />
     <Picker items={flatOptions}>{(item) => <Item>{item.name}</Item>}</Picker>
-  </>
-);
-
-storiesOf("SearchWithin", module).add("name me", () => (
-  <SearchWithin children={children}></SearchWithin>
+  </SearchWithin>
 ));
