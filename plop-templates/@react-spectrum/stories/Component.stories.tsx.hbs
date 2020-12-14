@@ -12,10 +12,10 @@
 
 import {action} from '@storybook/addon-actions';
 {{#if (includes scopes "@react-types")}}
-import { {{~componentName~}}} from '../';
-import {Spectrum{{~componentName}}Props} from '@react-types/{{packageName}}';
+import { {{~componentName~}} } from '../';
+import {Spectrum{{componentName}}Props} from '@react-types/{{packageName}}';
 {{else}}
-import { {{~componentName~}}, Spectrum{{~componentName}}Props} from '../';
+import { {{~componentName}}, Spectrum{{componentName}}Props} from '../';
 {{/if}}
 import React from 'react';
 import {storiesOf} from '@storybook/react';

@@ -11,13 +11,13 @@
  */
 
 {{#if (includes scopes "@react-types")}}
-import {Aria{{~componentName}}Props} from '@react-types/{{packageName}}';
+import {Aria{{componentName}}Props} from '@react-types/{{packageName}}';
 {{else}}
 export interface Aria{{componentName}}Props {
 }
 {{/if}}
 
-interface Aria{{componentName}}Options extends Aria{{~componentName}}Props {
+interface Aria{{componentName}}Options extends Aria{{componentName}}Props {
 }
 
 interface {{componentName}}Aria {

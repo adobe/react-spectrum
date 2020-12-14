@@ -19,16 +19,16 @@ import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React from 'react';
 {{#if (includes scopes "@react-types")}}
-import {Spectrum{{~componentName}}Props} from '@react-types/{{packageName}}';
+import {Spectrum{{componentName}}Props} from '@react-types/{{packageName}}';
 {{/if}}
 {{#if componentCSS}}
 import styles from '@adobe/spectrum-css-temp/components/{{componentCSS}}/vars.css';
 {{/if}}
 {{#if (includes scopes "@react-aria")}}
-import {use {{~componentName~}} } from '@react-aria/{{packageName}}';
+import {use{{componentName~}}} from '@react-aria/{{packageName}}';
 {{/if}}
 {{#if (includes scopes "@react-stately")}}
-import {use {{~componentName~}} State} from '@react-stately/{{packageName}}';
+import {use{{componentName}}State} from '@react-stately/{{packageName}}';
 {{/if}}
 import {useProviderProps} from '@react-spectrum/provider';
 
@@ -71,4 +71,4 @@ function {{componentName}}(props: Spectrum{{componentName}}Props, ref: DOMRef<HT
  * TODO: Add description of component here.
  */
 const _{{componentName}} = React.forwardRef({{componentName}});
-export {_{{componentName}} as {{componentName~}} };
+export {_{{componentName}} as {{componentName~}}};
