@@ -14,30 +14,11 @@ import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
 import {OverlayTriggerProps, PositionProps} from '@react-types/overlays';
 import {ReactElement, ReactNode} from 'react';
 
-export interface TooltipTriggerProps extends OverlayTriggerProps {
+export interface TooltipTriggerProps {
   /**
    * Whether the tooltip should be disabled, independent from the trigger.
    */
   isDisabled?: boolean,
-
-  /**
-   * The delay time for the tooltip to show up. [See guidelines](https://spectrum.adobe.com/page/tooltip/#Immediate-or-delayed-appearance).
-   */
-  delay?: number,
-
-  /**
-   * The additional offset applied along the main axis between the element and its
-   * anchor element.
-   * @default 7
-   */
-  offset?: number,
-
-  /**
-   * The additional offset applied along the cross axis between the element and its
-   * anchor element.
-   * @default 0
-   */
-  crossOffset?: number,
 
   /**
    * By default, opens for both focus and hover. Can be made to open only for focus.
@@ -45,12 +26,19 @@ export interface TooltipTriggerProps extends OverlayTriggerProps {
   trigger?: 'focus'
 }
 
-export interface SpectrumTooltipTriggerProps extends TooltipTriggerProps, PositionProps {
+export interface TooltipTriggerStateProps extends OverlayTriggerProps {
+  /**
+   * The delay time for the tooltip to show up. [See guidelines](https://spectrum.adobe.com/page/tooltip/#Immediate-or-delayed-appearance).
+   * @default 1500
+   */
+  delay?: number
+}
+
+export interface SpectrumTooltipTriggerProps extends TooltipTriggerProps, TooltipTriggerStateProps, PositionProps {
   children: [ReactElement, ReactElement]
 }
 
 export interface TooltipProps {
-  children: ReactNode,
   isOpen?: boolean
 }
 
@@ -71,5 +59,7 @@ export interface SpectrumTooltipProps extends AriaTooltipProps, StyleProps {
   /**
    * Whether the element is rendered.
    */
-  showIcon?: boolean
+  showIcon?: boolean,
+
+  children: ReactNode
 }

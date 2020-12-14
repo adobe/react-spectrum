@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {TooltipTriggerProps} from '@react-types/tooltip';
+import {TooltipTriggerStateProps} from '@react-types/tooltip';
 import {useEffect, useMemo} from 'react';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
@@ -41,7 +41,7 @@ let globalCooldownTimeout = null;
  * methods to toggle this state. Ensures only one tooltip is open at a time and controls
  * the delay for showing a tooltip.
  */
-export function useTooltipTriggerState(props: TooltipTriggerProps): TooltipTriggerState {
+export function useTooltipTriggerState(props: TooltipTriggerStateProps): TooltipTriggerState {
   let {delay = TOOLTIP_DELAY} = props;
   let {isOpen, open, close} = useOverlayTriggerState(props);
   let id = useMemo(() => `${++tooltipId}`, []);
