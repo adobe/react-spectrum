@@ -545,12 +545,16 @@ function AsyncLoadingExample() {
 
   let list = useAsyncList<StarWarsChar>({
     async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
       let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
       return {
         items: json.results,
-        cursor: json.next.replace(/^http:\/\//i, 'https://')
+        cursor: json.next
       };
     }
   });
