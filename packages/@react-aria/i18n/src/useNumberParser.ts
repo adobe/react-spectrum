@@ -10,25 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
+import {NumberFormatOptions, NumeralSystem, useNumberFormatter} from './useNumberFormatter';
 import {useCallback, useMemo} from 'react';
 import {useLocale} from './context';
-import {useNumberFormatter} from './useNumberFormatter';
 
-type NumberParser = {
+interface NumberParser {
+  /** Parses a cleaned string into the number it represents. */
   parse: (value: string) => number,
+  /** Rounds a number using the current formatter. */
   round: (value: number) => number,
   symbols: {
     minusSign: string,
-    plusSign: string,
-    decimal: string,
-    currency: string,
-    validCharacters: string,
-    literals: string,
-    group: string
-  }
+    plusSign: string
+  },
+  /** This removes any not allowed characters from the string. */
+  clean: (value: string) => string
 }
-
-type NumberingSystems = 'latn' | 'hanidec' | 'arab'
 
 // known supported numbering systems
 let numberingSystems = {
@@ -38,16 +35,16 @@ let numberingSystems = {
 };
 
 
-export let determineNumeralSystem = (value: string): NumberingSystems => {
+export function determineNumeralSystem(value: string): NumeralSystem {
   for (let i in [...value]) {
     let char = value[i];
     let system = Object.keys(numberingSystems).find(key => numberingSystems[key].some(numeral => numeral === char));
     if (system) {
-      return system as 'latn' | 'hanidec' | 'arab';
+      return system as NumeralSystem;
     }
   }
   return undefined;
-};
+}
 
 let CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
 
@@ -62,13 +59,14 @@ let replaceAllButFirstOccurrence = (val: string, char: string) => {
  * Provides localized number parsing for the current locale.
  * Idea from https://observablehq.com/@mbostock/localized-number-parsing.
  */
-export function useNumberParser(options?: Intl.NumberFormatOptions, numeralSystem?: NumberingSystems): NumberParser {
+export function useNumberParser(options: NumberFormatOptions = {}): NumberParser {
+  let {numeralSystem} = options;
   let {locale} = useLocale();
   if (numeralSystem && locale.indexOf('-u-nu-') === -1) {
     locale = `${locale}-u-nu-${numeralSystem}`;
   }
 
-  let formatter = useNumberFormatter(options, numeralSystem);
+  let formatter = useNumberFormatter(options);
   let intlOptions = useMemo(() => formatter.resolvedOptions(), [formatter]);
 
   let symbols = useMemo(() => {
@@ -153,88 +151,57 @@ export function useNumberParser(options?: Intl.NumberFormatOptions, numeralSyste
    * rounding that the formatter will perform.
    * @param value
    */
-  let round = (value: number): number => {
-    let parts = formatter.formatToParts(value);
-    let strippedValue = parts.map((part) => {
-      // list from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/formatToParts
-      // this is meant to turn the formatted number into something that the parser can handle
-      switch (part.type) {
-        case 'decimal':
-        case 'minusSign':
-        case 'plusSign':
-        case 'fraction':
-        case 'integer':
-          return part.value;
-        case 'currency':
-        case 'nan':
-        case 'percentSign':
-        case 'group':
-        case 'infinity':
-        case 'literal':
-        // 'unit' is supported in chrome :-/ for {style: 'unit', unit: 'percent', signDisplay: 'always'} but isn't in the official spec
-        // so we added it to our TS definitions
-        case 'unit':
-        default:
-          return '';
-      }
-    }).join('');
-    let result = parse(strippedValue);
-    if (!symbols.minusSign && intlOptions?.currencySign === 'accounting' && value < 0) {
-      result = -1 * result;
+  let round = (value: number): number => parse(formatter.format(value));
+
+  let clean = (value: string): string => {
+    let {minusSign = '', plusSign = '', validCharacters, group, decimal, currency} = symbols;
+
+    /**
+     * Some currency symbols contain characters used in other parts of the number, like decimal characters.
+     * For example, the Bulgarian USD symbol is `щ.д.`. We don't want to remove those while we're cleaning
+     * the rest of the string. Store the start of the currency symbol so we can restore it later.
+     */
+    let indexOfCurrency;
+    if (currency) {
+      indexOfCurrency = value.indexOf(currency);
     }
-    return result;
+
+    // In arab numeral system, their decimal character is 1643, but most keyboards don't type that
+    // instead they use the , (44) character or apparently the (1548) character.
+    let result = value;
+    if (numeralSystem === 'arab') {
+      result = result.replace(',', decimal);
+      result = result.replace(String.fromCharCode(1548), decimal);
+      result = result.replace('.', group);
+    }
+
+    // fr-FR group character is char code 8239, but that's not a key on the french keyboard,
+    // so allow 'period' as a group char and replace it with a space
+    if (locale === 'fr-FR') {
+      result = result.replace('.', String.fromCharCode(8239));
+    }
+
+    /**
+     * Up until now we've replaced characters 1:1, not altering the length of the string.
+     * We are safe to restore the currency symbol now.
+     */
+    if (currency && indexOfCurrency !== -1) {
+      result = result.substring(0, indexOfCurrency) + currency + result.substring(indexOfCurrency + currency.length, result.length);
+    }
+
+    let numerals = numberingSystems[numeralSystem || 'latn'].join('');
+    if (!numeralSystem) {
+      numerals = `${numerals}${numberingSystems['hanidec'].join('')}${numberingSystems['arab'].join('')}`;
+    }
+    // 'u' flag is necessary for unicode
+    let invalidChars = new RegExp(`[^${minusSign}${plusSign}${numerals}${validCharacters}\\p{White_Space}]`, 'gu');
+    let strippedValue = result.replace(invalidChars, '');
+    strippedValue = replaceAllButFirstOccurrence(strippedValue, minusSign);
+    strippedValue = replaceAllButFirstOccurrence(strippedValue, plusSign);
+    strippedValue = replaceAllButFirstOccurrence(strippedValue, decimal);
+
+    return strippedValue;
   };
 
-  return  {parse, round, symbols};
+  return  {parse, round, symbols: {minusSign: symbols.minusSign, plusSign: symbols.plusSign}, clean};
 }
-
-// this removes any not allowed characters from the string
-export let cleanString = (value: string, symbols, locale, numeralSystem): string => {
-  let {minusSign = '', plusSign = '', validCharacters, group, decimal, currency} = symbols;
-
-  /**
-   * Some currency symbols contain characters used in other parts of the number, like decimal characters.
-   * For example, the Bulgarian USD symbol is `щ.д.`. We don't want to remove those while we're cleaning
-   * the rest of the string. Store the start of the currency symbol so we can restore it later.
-   */
-  let indexOfCurrency;
-  if (currency) {
-    indexOfCurrency = value.indexOf(currency);
-  }
-
-  // In arab numeral system, their decimal character is 1643, but most keyboards don't type that
-  // instead they use the , (44) character or apparently the (1548) character.
-  let result = value;
-  if (numeralSystem === 'arab') {
-    result = result.replace(',', decimal);
-    result = result.replace(String.fromCharCode(1548), decimal);
-    result = result.replace('.', group);
-  }
-
-  // fr-FR group character is char code 8239, but that's not a key on the french keyboard,
-  // so allow 'period' as a group char and replace it with a space
-  if (locale === 'fr-FR') {
-    result = result.replace('.', String.fromCharCode(8239));
-  }
-
-  /**
-   * Up until now we've replaced characters 1:1, not altering the length of the string.
-   * We are safe to restore the currency symbol now.
-   */
-  if (currency && indexOfCurrency !== -1) {
-    result = result.substring(0, indexOfCurrency) + currency + result.substring(indexOfCurrency + currency.length, result.length);
-  }
-
-  let numerals = numberingSystems[numeralSystem || 'latn'].join('');
-  if (!numeralSystem) {
-    numerals = `${numerals}${numberingSystems['hanidec'].join('')}${numberingSystems['arab'].join('')}`;
-  }
-  // 'u' flag is necessary for unicode
-  let invalidChars = new RegExp(`[^${minusSign}${plusSign}${numerals}${validCharacters}\\p{White_Space}]`, 'gu');
-  let strippedValue = result.replace(invalidChars, '');
-  strippedValue = replaceAllButFirstOccurrence(strippedValue, minusSign);
-  strippedValue = replaceAllButFirstOccurrence(strippedValue, plusSign);
-  strippedValue = replaceAllButFirstOccurrence(strippedValue, decimal);
-
-  return strippedValue;
-};

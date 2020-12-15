@@ -12,7 +12,6 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
-import {clearAnnouncer} from '@react-aria/live-announcer';
 import {
   HTMLAttributes,
   InputHTMLAttributes,
@@ -34,6 +33,7 @@ import {useLocale, useMessageFormatter, useNumberFormatter} from '@react-aria/i1
 import {useTextField} from '@react-aria/textfield';
 
 interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
+  inputRef?:  RefObject<HTMLInputElement>,
   decrementAriaLabel?: string,
   incrementAriaLabel?: string,
   incrementRef?: RefObject<HTMLDivElement>,
@@ -48,7 +48,7 @@ interface NumberFieldAria {
   decrementButtonProps: AriaButtonProps
 }
 
-export function useNumberField(props: NumberFieldProps, state: NumberFieldState, ref: RefObject<HTMLInputElement>): NumberFieldAria {
+export function useNumberField(props: NumberFieldProps, state: NumberFieldState): NumberFieldAria {
   let {
     decrementAriaLabel,
     incrementAriaLabel,
@@ -62,7 +62,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     label,
     formatOptions,
     incrementRef,
-    decrementRef
+    decrementRef,
+    inputRef
   } = props;
 
   let {
@@ -96,10 +97,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
 
   let [isFocusWithin, setFocusWithin] = useState(false);
   let {focusWithinProps} = useFocusWithin({
-    onFocusWithinChange: setFocusWithin,
-    onBlurWithin: () => {
-      clearAnnouncer('assertive');
-    }
+    onFocusWithinChange: setFocusWithin
   });
 
 
@@ -112,7 +110,10 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       isDisabled,
       isReadOnly,
       isRequired,
-      // use prop min/maxValue so that aria doesn't read off huge numbers in default case
+      // Use prop min/maxValue so that aria doesn't read off huge numbers in default case.
+      // State has a max and min value based off safe numbers that javascript can handle
+      // we don't want to set those very large values for aria-valuemin/max when spin buttons
+      // work with VO.
       maxValue,
       minValue,
       onIncrement: increment,
@@ -125,15 +126,15 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   );
 
   useEffect(() => {
-    // if the focus is within the numberfield and it's not the input, then it's on one of the buttons
-    // if the value is at the boundary min/max, then move the focus back to the input because the button
-    // they are on has become disabled
-    if (isFocusWithin && ref.current && document.activeElement !== ref.current) {
+    // If the focus is within the numberfield and it's not the input, then it's on one of the buttons.
+    // If the value is at the boundary min/max, then move the focus back to the input because the button
+    // focus is on has become disabled.
+    if (isFocusWithin && inputRef.current && document.activeElement !== inputRef.current) {
       if (value <= minValue || value >= maxValue) {
-        ref.current.focus();
+        inputRef.current.focus();
       }
     }
-  }, [isFocusWithin, ref, value, minValue, maxValue]);
+  }, [isFocusWithin, inputRef, value, minValue, maxValue]);
 
   incrementAriaLabel = incrementAriaLabel || formatMessage('Increment');
   decrementAriaLabel = decrementAriaLabel || formatMessage('Decrement');
@@ -143,7 +144,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   // so that pressing and holding on the steppers will auto step after a delay
   let onPressStart = (e) => {
     if (e.pointerType !== 'virtual') {
-      ref.current.focus();
+      inputRef.current.focus();
     }
   };
 
@@ -194,7 +195,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     inputMode = 'text';
   }
 
-  let {onChange, onKeyDown, onPaste} = useSelectionControlledTextfield({setValue: state.setValue, value: state.inputValue, isFocused}, ref);
+  let {onChange, onKeyDown, onPaste} = useSelectionControlledTextfield({setValue: state.setValue, value: state.inputValue, isFocused}, inputRef);
 
   let {labelProps, inputProps} = useTextField(
     {
@@ -215,7 +216,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       onChange,
       onKeyDown,
       onPaste
-    }, ref);
+    }, inputRef);
 
   const inputFieldProps = mergeProps(
     spinButtonProps,

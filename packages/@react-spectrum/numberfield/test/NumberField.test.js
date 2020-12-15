@@ -1353,12 +1353,13 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'v3 NumberField'}
-  `('$Name will commit current uncommitted value when stepper buttons are pressed', () => {
+  `('$Name will start with uncommitted value when stepper buttons are pressed', () => {
     let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, step: 5});
 
     act(() => {textField.focus();});
     typeText(textField, '2');
     triggerPress(incrementButton);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(5);
     act(() => {textField.blur();});
 
@@ -1366,13 +1367,64 @@ describe('NumberField', function () {
     userEvent.clear(textField);
     typeText(textField, '3');
     triggerPress(incrementButton);
-    expect(onChangeSpy).toHaveBeenLastCalledWith(5);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
     act(() => {textField.blur();});
 
     act(() => {textField.focus();});
     userEvent.clear(textField);
     act(() => {textField.blur();});
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenLastCalledWith(NaN);
+  });
+
+  it.each`
+    Name
+    ${'v3 NumberField'}
+  `('$Name adjust the text field value if the resulting number is the same - inc', () => {
+    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy});
+
+    act(() => {textField.focus();});
+    typeText(textField, '2');
+    expect(textField).toHaveAttribute('value', '2');
+    triggerPress(incrementButton);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(3);
+    expect(textField).toHaveAttribute('value', '3');
+    act(() => {textField.blur();});
+
+    act(() => {textField.focus();});
+    userEvent.clear(textField);
+    typeText(textField, '2');
+    expect(textField).toHaveAttribute('value', '2');
+    triggerPress(incrementButton);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(textField).toHaveAttribute('value', '3');
+    act(() => {textField.blur();});
+  });
+
+  it.each`
+    Name
+    ${'v3 NumberField'}
+  `('$Name adjust the text field value if the resulting number is the same - dec', () => {
+    let {textField, decrementButton} = renderNumberField({onChange: onChangeSpy});
+
+    act(() => {textField.focus();});
+    typeText(textField, '2');
+    expect(textField).toHaveAttribute('value', '2');
+    triggerPress(decrementButton);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(1);
+    expect(textField).toHaveAttribute('value', '1');
+    act(() => {textField.blur();});
+
+    act(() => {textField.focus();});
+    userEvent.clear(textField);
+    typeText(textField, '2');
+    expect(textField).toHaveAttribute('value', '2');
+    triggerPress(decrementButton);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(textField).toHaveAttribute('value', '1');
+    act(() => {textField.blur();});
   });
 
   // not sure why this one won't work, it looked like select() was added to jsdom 5 years ago

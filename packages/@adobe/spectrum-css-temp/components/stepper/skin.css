@@ -10,12 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/*
-classes were inverted in the input section from how they used to be written because I don't have good access to putting focus classes on the input
-if the stepper buttons aren't being shown, none of this is needed
-I've divided up the file into css for the steppers vs css for the input to make that easier to follow
-*/
-
 /* TODO: ReadOnly */
 
 .spectrum-Stepper-button {

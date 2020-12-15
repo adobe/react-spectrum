@@ -37,9 +37,6 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
     isDisabled,
     hideStepper
   } = props;
-  let fieldProps = Object.assign({}, props);
-  // TS won't remove onChange from the type, so when using fieldProps below, cast it as omitted
-  delete fieldProps['onChange'];
 
   let {styleProps: style} = useStyleProps(props);
   let state = useNumberFieldState(props);
@@ -53,7 +50,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
     inputFieldProps,
     incrementButtonProps,
     decrementButtonProps
-  } = useNumberField({...props, incrementRef, decrementRef}, state, inputRef);
+  } = useNumberField({...props, incrementRef, decrementRef, inputRef}, state);
   let isMobile = provider.scale === 'large';
   let showStepper = !hideStepper;
 
@@ -85,7 +82,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
 
   return (
     <Field
-      {...fieldProps as Omit<SpectrumNumberFieldProps, 'onChange'>}
+      {...props as Omit<SpectrumNumberFieldProps, 'onChange'>}
       labelProps={labelProps}
       ref={domRef}>
       <NumberFieldInput

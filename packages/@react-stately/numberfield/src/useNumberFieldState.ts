@@ -10,8 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp} from '@react-aria/utils';
-import {cleanString, determineNumeralSystem, useLocale, useNumberFormatter, useNumberParser} from '@react-aria/i18n';
+import {clamp, roundToStep} from '@react-aria/utils';
+import {
+  determineNumeralSystem,
+  NumeralSystem,
+  useLocale,
+  useNumberFormatter,
+  useNumberParser
+} from '@react-aria/i18n';
 import {NumberFieldProps} from '@react-types/numberfield';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
@@ -40,18 +46,18 @@ export function useNumberFieldState(
 ): NumberFieldState {
   let {locale} = useLocale();
   let {minValue = Number.MIN_SAFE_INTEGER, maxValue = Number.MAX_SAFE_INTEGER, step, formatOptions, value, defaultValue, onChange} = props;
-  let isMaxRange = isNaN(props.minValue) && isNaN(props.maxValue);
 
-  let [currentNumeralSystem, setCurrentNumeralSystem] = useState<'arab' | 'hanidec' | 'latn' | undefined>();
+  let [currentNumeralSystem, setCurrentNumeralSystem] = useState<NumeralSystem | undefined>();
 
-  let inputValueFormatter = useNumberFormatter(formatOptions, currentNumeralSystem);
-  let numberParser = useNumberParser(formatOptions, currentNumeralSystem);
+  let inputValueFormatter = useNumberFormatter({...formatOptions, numeralSystem: currentNumeralSystem});
+  let numberParser = useNumberParser({...formatOptions, numeralSystem: currentNumeralSystem});
   let intlOptions = useMemo(() => inputValueFormatter.resolvedOptions(), [inputValueFormatter]);
 
   // Number.MAX_SAFE_INTEGER - 0.01 is still Number.MAX_SAFE_INTEGER, so decrement/increment won't work on it for the percent formatting
   // anything with a step smaller than 1 will have this problem
   // unfortunately, finding the safe max/min is non-trivial, so we'll need to rely on people setting max/min correctly for their step size
   // we can include it for percent though
+  // can look for a method to run locally to figure it out https://stackoverflow.com/questions/45929493/node-js-maximum-safe-floating-point-number
   if (intlOptions.style === 'percent' && isNaN(step)) {
     maxValue = isNaN(props.maxValue) ? MAX_SAFE_FLOAT : props.maxValue;
     minValue = isNaN(props.minValue) ? MIN_SAFE_FLOAT : props.maxValue;
@@ -110,7 +116,7 @@ export function useNumberFieldState(
   };
 
   // this removes any not allowed characters from the input value
-  let cleanInputValue = cleanString(inputValue, numberParser.symbols, locale, currentNumeralSystem);
+  let cleanInputValue = numberParser.clean(inputValue);
   // Number parser doesn't know about min/max, so we must remove it ourselves
   if (minValue >= 0) {
     cleanInputValue = cleanInputValue.replace(minusSign, '');
@@ -142,10 +148,11 @@ export function useNumberFieldState(
 
     let clampedValue;
     if (!isNaN(currentlyParsed)) {
-      clampedValue = clamp(currentlyParsed, minValue, maxValue, step);
+      clampedValue = clamp(currentlyParsed, minValue, maxValue);
     } else {
-      clampedValue = clamp(numberValue, minValue, maxValue, step);
+      clampedValue = clamp(numberValue, minValue, maxValue);
     }
+    clampedValue = roundToStep(clampedValue, step);
     clampedValue = numberParser.round(clampedValue);
     let result = isNaN(clampedValue) ? '' : inputValueFormatter.format(clampedValue);
     setNumberValue(clampedValue);
@@ -156,6 +163,25 @@ export function useNumberFieldState(
       setInputValue(inputValueFormatter.format(numberValue));
     }
   };
+
+  let safeNextStep = useCallback((operation, prev) => {
+    let clampStep = !isNaN(step) ? step : 1;
+    if (intlOptions.style === 'percent' && isNaN(step)) {
+      clampStep = 0.01;
+    }
+    let clampedValue = clamp(prev, minValue, maxValue);
+    clampedValue = roundToStep(clampedValue, step);
+    if (clampedValue > prev) {
+      return clampedValue;
+    }
+    let newValue = clamp(
+      handleDecimalOperation(operation, prev, clampStep),
+      minValue,
+      maxValue
+    );
+    newValue = roundToStep(newValue, step);
+    return newValue;
+  }, [minValue, maxValue, step, intlOptions]);
 
   let increment = useCallback((isChained: boolean = false) => {
     setNumberValue((previousValue) => {
@@ -168,24 +194,18 @@ export function useNumberFieldState(
           prev = -Infinity;
         }
       }
+      let newValue = safeNextStep('+', prev);
 
-      let clampStep = !isNaN(step) ? step : 1;
-      if (intlOptions.style === 'percent' && isNaN(step)) {
-        clampStep = 0.01;
+      // if we've arrived at the same value that was previously in the state, the
+      // input value should be updated to match
+      // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
+      // you'd be at 5, then incrementing to 5 again, so no re-render would happen and 4 would be left in the input
+      if (newValue === previousValue) {
+        setInputValue(inputValueFormatter.format(newValue));
       }
-      let clampedValue = clamp(prev, minValue, maxValue, step);
-      if (clampedValue > prev) {
-        return clampedValue;
-      }
-      const newValue = clamp(
-        handleDecimalOperation('+', prev, clampStep),
-        minValue,
-        maxValue,
-        step
-      );
       return newValue;
     });
-  }, [setNumberValue, minValue, maxValue, step, isMaxRange, intlOptions, currentlyParsed]);
+  }, [setNumberValue, currentlyParsed, safeNextStep]);
 
   let decrement = useCallback((isChained: boolean = false) => {
     setNumberValue((previousValue) => {
@@ -198,33 +218,24 @@ export function useNumberFieldState(
           prev = Infinity;
         }
       }
-      let clampStep = !isNaN(step) ? step : 1;
-      if (intlOptions.style === 'percent' && isNaN(step)) {
-        clampStep = 0.01;
+      let newValue = safeNextStep('-', prev);
+
+      if (newValue === previousValue) {
+        setInputValue(inputValueFormatter.format(newValue));
       }
-      let clampedValue = clamp(prev, minValue, maxValue, step);
-      if (clampedValue < prev) {
-        return clampedValue;
-      }
-      const newValue = clamp(
-        handleDecimalOperation('-', prev, clampStep),
-        minValue,
-        maxValue,
-        step
-      );
       return newValue;
     });
-  }, [setNumberValue, minValue, maxValue, step, isMaxRange, intlOptions, currentlyParsed]);
+  }, [setNumberValue, currentlyParsed, safeNextStep]);
 
   let incrementToMax = useCallback(() => {
     if (maxValue != null) {
-      setNumberValue(clamp(maxValue, minValue, maxValue, step));
+      setNumberValue(roundToStep(clamp(maxValue, minValue, maxValue), step));
     }
   }, [maxValue, setNumberValue, minValue, step]);
 
   let decrementToMin = useCallback(() => {
     if (minValue != null) {
-      setNumberValue(clamp(minValue, minValue, maxValue, step));
+      setNumberValue(roundToStep(clamp(minValue, minValue, maxValue), step));
     }
   }, [minValue, setNumberValue, maxValue, step]);
 

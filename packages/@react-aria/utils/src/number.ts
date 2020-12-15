@@ -13,17 +13,20 @@
 /**
  * Takes a value and forces it to the closest min/max if it's outside. Also forces it to the closest valid step.
  */
-export function clamp(value: number, min: number = -Infinity, max: number = Infinity, step?: number): number {
+export function clamp(value: number, min: number = -Infinity, max: number = Infinity): number {
   let newValue = Math.min(Math.max(value, min), max);
-  // TODO: should this be its own function?
+  return newValue;
+}
+
+export function roundToStep(value: number, step: number): number {
   if (!isNaN(step)) {
     // have to avoid Math.round(num / multiple) * multiple; because it can give results like "0.3000000000000004" for Round(.2 + .1, .1)
-    let diff = Math.abs(newValue % step);
-    if (newValue >= 0 || value === -Infinity) {
-      return diff > (step / 2) ? (newValue - diff + step) : newValue - diff;
+    let diff = Math.abs(value % step);
+    if (value >= 0) {
+      return diff > (step / 2) ? (value - diff + step) : value - diff;
     } else {
-      return diff > (step / 2) ? (newValue + diff - step) : newValue + diff;
+      return diff > (step / 2) ? (value + diff - step) : value + diff;
     }
   }
-  return newValue;
+  return value;
 }
