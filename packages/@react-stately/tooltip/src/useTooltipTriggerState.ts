@@ -27,7 +27,7 @@ export interface TooltipTriggerState {
    */
   open(immediate?: boolean): void,
   /** Hides the tooltip. */
-  close(): void
+  close(immediate?: boolean): void
 }
 
 let tooltips = {};
@@ -54,7 +54,7 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
   let closeOpenTooltips = () => {
     for (let hideTooltipId in tooltips) {
       if (hideTooltipId !== id) {
-        tooltips[hideTooltipId]();
+        tooltips[hideTooltipId](true);
         delete tooltips[hideTooltipId];
       }
     }
@@ -77,8 +77,12 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
     }
   };
 
-  let hideTooltip = () => {
-    if (!closeTimeout.current) {
+  let hideTooltip = (immediate?: boolean) => {
+    if (immediate) {
+      clearTimeout(closeTimeout.current);
+      closeTimeout.current = null;
+      close();
+    } else if (!closeTimeout.current) {
       closeTimeout.current = setTimeout(() => {
         closeTimeout.current = null;
         close();
