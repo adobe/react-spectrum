@@ -31,7 +31,7 @@ export function useTooltip(props: AriaTooltipProps, state?: TooltipTriggerState)
 
   let {hoverProps} = useHover({
     onHoverStart: () => state?.open(true),
-    onHoverEnd: state?.close
+    onHoverEnd: () => state?.close()
   });
 
   return {
