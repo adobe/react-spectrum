@@ -60,7 +60,7 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivE
         let upperTrack = (
           <div
             className={classNames(styles, 'spectrum-Slider-track')}
-            style={{[cssDirection]: `${state.getThumbPercent(1) * 100}%`, width: `${(1 - state.getThumbPercent(1)) * 100}%`}} />
+            style={{width: `${(1 - state.getThumbPercent(1)) * 100}%`}} />
         );
 
         let handles = [0, 1].map(i => (

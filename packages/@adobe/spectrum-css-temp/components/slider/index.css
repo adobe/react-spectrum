@@ -66,10 +66,10 @@ governing permissions and limitations under the License.
   z-index: auto;
 
   min-block-size: var(--spectrum-slider-height);
-  min-inline-size: var(--spectrum-slider-min-width);
+  min-inline-size: var(--spectrum-global-dimension-size-2400);
 
   /* These calculations prevent the track from spilling outside of the control */
-  inline-size: calc(100% - calc(var(--spectrum-slider-controls-margin) * 2));
+  inline-size: calc(100% - calc(var(--spectrum-slider-controls-margin)));
   margin-inline-start: var(--spectrum-slider-controls-margin);
   min-block-size: var(--spectrum-slider-height);
 
@@ -303,6 +303,7 @@ governing permissions and limitations under the License.
   position: relative;
 
   inline-size: auto;
+  margin-inline-end: calc(var(--spectrum-slider-label-gap-x) / 2 * -1);
 
   padding-block-start: var(--spectrum-fieldlabel-padding-top);
 
@@ -323,6 +324,10 @@ governing permissions and limitations under the License.
   cursor: default;
   font-feature-settings: "tnum";
   text-align: end;
+
+  &:only-child {
+    text-align: start;
+  }
 }
 
 .spectrum-Slider-value {

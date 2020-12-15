@@ -45,11 +45,11 @@ storiesOf('Slider', module)
   )
   .add(
     'custom width',
-    () => render({label: 'Label', width: '200px'})
+    () => render({label: 'Label', width: '300px'})
   )
   .add(
     'label overflow',
-    () => render({label: 'This is a rather long label for this narrow slider element.', maxValue: 1000, width: '100px'})
+    () => render({label: 'This is a rather long label for this narrow slider element.', maxValue: 1000, width: '200px'})
   )
   .add(
     'showValueLabel: false',
