@@ -10,18 +10,211 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render} from '@testing-library/react';
 import React from 'react';
-import {renderHook} from '@testing-library/react-hooks';
-import {useTooltip} from '../';
+import {useInteractionModality} from '@react-aria/interactions';
+import {useTooltip, useTooltipTrigger} from '../';
+import {useTooltipTriggerState} from '@react-stately/tooltip';
 
-describe.skip('useTooltip', function () {
-  let renderTooltipHook = (props) => {
-    let {result} = renderHook(() => useTooltip(props));
-    return result.current;
-  };
+describe('useTooltip', function () {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+  it('opens tooltip on hover after delay', function () {
+    jest.useFakeTimers('modern');
 
-  it('handles defaults', function () {
-    let {tooltipProps} = renderTooltipHook({children: 'Test Tooltip'});
-    expect(tooltipProps.role).toBe('tooltip');
+    function Test() {
+      useInteractionModality();
+
+      const state = useTooltipTriggerState();
+      const {triggerProps, tooltipProps} = useTooltipTrigger({}, state);
+      const {tooltipProps: finalTooltipProps} = useTooltip(tooltipProps);
+
+      return (
+        <div>
+          <span {...triggerProps}>{'Trigger'}</span>
+          {state.isOpen && <span {...finalTooltipProps}>{'Tooltip'}</span>}
+        </div>
+      );
+    }
+
+    const {container, queryByRole} = render(<Test />);
+    const triggerElement = container.firstChild.firstChild;
+
+    // trigger pointer modality
+    fireEvent.mouseMove(container);
+
+    fireEvent.mouseEnter(triggerElement);
+
+    expect(queryByRole('tooltip')).toBeNull();
+    act(jest.runAllTimers);
+    expect(queryByRole('tooltip')).not.toBeNull();
+  });
+  it('opens tooltip immediately on hover with `delay: 0`', function () {
+    function Test() {
+      useInteractionModality();
+
+      const state = useTooltipTriggerState({delay: 0});
+      const {triggerProps, tooltipProps} = useTooltipTrigger({}, state);
+      const {tooltipProps: finalTooltipProps} = useTooltip(tooltipProps);
+
+      return (
+        <div>
+          <span {...triggerProps}>{'Trigger'}</span>
+          {state.isOpen && <span {...finalTooltipProps}>{'Tooltip'}</span>}
+        </div>
+      );
+    }
+
+    const {container, queryByRole} = render(<Test />);
+    const triggerElement = container.firstChild.firstChild;
+
+    // trigger pointer modality
+    fireEvent.mouseMove(container);
+
+    fireEvent.mouseEnter(triggerElement);
+
+    expect(queryByRole('tooltip')).not.toBeNull();
+  });
+
+  it('hides tooltip when trigger gets unhovered', function () {
+    jest.useFakeTimers('modern');
+
+    function Test() {
+      useInteractionModality();
+
+      const state = useTooltipTriggerState({delay: 0});
+      const {triggerProps, tooltipProps} = useTooltipTrigger({}, state);
+      const {tooltipProps: finalTooltipProps} = useTooltip(tooltipProps);
+
+      return (
+        <div>
+          <span {...triggerProps}>{'Trigger'}</span>
+          {state.isOpen && <span {...finalTooltipProps}>{'Tooltip'}</span>}
+        </div>
+      );
+    }
+
+    const {container, queryByRole} = render(<Test />);
+    const triggerElement = container.firstChild.firstChild;
+
+    // trigger pointer modality
+    fireEvent.mouseMove(container);
+
+    fireEvent.mouseEnter(triggerElement);
+    expect(queryByRole('tooltip')).not.toBeNull();
+
+    fireEvent.mouseLeave(triggerElement);
+    act(jest.runAllTimers);
+    expect(queryByRole('tooltip')).toBeNull();
+
+  });
+
+  it('keeps tooltip open when it gets hovered', function () {
+    jest.useFakeTimers('modern');
+
+    function Test() {
+      useInteractionModality();
+
+      const state = useTooltipTriggerState({delay: 0});
+      const {triggerProps, tooltipProps} = useTooltipTrigger({}, state);
+      const {tooltipProps: finalTooltipProps} = useTooltip(tooltipProps, state);
+
+      return (
+        <div>
+          <span {...triggerProps}>{'Trigger'}</span>
+          {state.isOpen && <span {...finalTooltipProps}>{'Tooltip'}</span>}
+        </div>
+      );
+    }
+
+    const {container, getByRole} = render(<Test />);
+    const triggerElement = container.firstChild.firstChild;
+
+    // trigger pointer modality
+    fireEvent.mouseMove(container);
+
+    fireEvent.mouseEnter(triggerElement);
+
+    const tooltipElement = getByRole('tooltip');
+    fireEvent.mouseLeave(triggerElement);
+    fireEvent.mouseEnter(tooltipElement);
+    expect(getByRole('tooltip')).not.toBeNull();
+
+    act(jest.runAllTimers);
+    expect(getByRole('tooltip')).not.toBeNull();
+  });
+
+  it('hides tooltip when it gets unhovered', function () {
+    jest.useFakeTimers('modern');
+
+    function Test() {
+      useInteractionModality();
+
+      const state = useTooltipTriggerState({delay: 0});
+      const {triggerProps, tooltipProps} = useTooltipTrigger({}, state);
+      const {tooltipProps: finalTooltipProps} = useTooltip(tooltipProps, state);
+
+      return (
+        <div>
+          <span {...triggerProps}>{'Trigger'}</span>
+          {state.isOpen && <span {...finalTooltipProps}>{'Tooltip'}</span>}
+        </div>
+      );
+    }
+
+    const {container, queryByRole} = render(<Test />);
+    const triggerElement = container.firstChild.firstChild;
+
+    // trigger pointer modality
+    fireEvent.mouseMove(container);
+
+    fireEvent.mouseEnter(triggerElement);
+
+    const tooltipElement = queryByRole('tooltip');
+    fireEvent.mouseLeave(triggerElement);
+    fireEvent.mouseEnter(tooltipElement);
+    expect(queryByRole('tooltip')).not.toBeNull();
+
+    fireEvent.mouseLeave(tooltipElement);
+    act(jest.runAllTimers);
+    expect(queryByRole('tooltip')).toBeNull();
+  });
+
+  it('keeps tooltip open when hover returns to trigger from the tooltip', function () {
+    jest.useFakeTimers('modern');
+
+    function Test() {
+      useInteractionModality();
+
+      const state = useTooltipTriggerState({delay: 0});
+      const {triggerProps, tooltipProps} = useTooltipTrigger({}, state);
+      const {tooltipProps: finalTooltipProps} = useTooltip(tooltipProps, state);
+
+      return (
+        <div>
+          <span {...triggerProps}>{'Trigger'}</span>
+          {state.isOpen && <span {...finalTooltipProps}>{'Tooltip'}</span>}
+        </div>
+      );
+    }
+
+    const {container, getByRole} = render(<Test />);
+    const triggerElement = container.firstChild.firstChild;
+
+    // trigger pointer modality
+    fireEvent.mouseMove(container);
+
+    fireEvent.mouseEnter(triggerElement);
+
+    const tooltipElement = getByRole('tooltip');
+    fireEvent.mouseLeave(triggerElement);
+    fireEvent.mouseEnter(tooltipElement);
+    expect(getByRole('tooltip')).not.toBeNull();
+
+    fireEvent.mouseLeave(tooltipElement);
+    fireEvent.mouseEnter(triggerElement);
+    act(jest.runAllTimers);
+    expect(getByRole('tooltip')).not.toBeNull();
   });
 });

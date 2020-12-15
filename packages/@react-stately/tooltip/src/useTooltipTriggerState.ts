@@ -11,7 +11,7 @@
  */
 
 import {TooltipTriggerProps} from '@react-types/tooltip';
-import {useEffect, useMemo} from 'react';
+import {useEffect, useMemo, useRef} from 'react';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
 const TOOLTIP_DELAY = 1500; // this seems to be a 1.5 second delay, check with design
@@ -41,10 +41,11 @@ let globalCooldownTimeout = null;
  * methods to toggle this state. Ensures only one tooltip is open at a time and controls
  * the delay for showing a tooltip.
  */
-export function useTooltipTriggerState(props: TooltipTriggerProps): TooltipTriggerState {
+export function useTooltipTriggerState(props: TooltipTriggerProps = {}): TooltipTriggerState {
   let {delay = TOOLTIP_DELAY} = props;
   let {isOpen, open, close} = useOverlayTriggerState(props);
   let id = useMemo(() => `${++tooltipId}`, []);
+  let closeTimeout = useRef<ReturnType<typeof setTimeout>>();
 
   let ensureTooltipEntry = () => {
     tooltips[id] = hideTooltip;
@@ -60,6 +61,8 @@ export function useTooltipTriggerState(props: TooltipTriggerProps): TooltipTrigg
   };
 
   let showTooltip = () => {
+    clearTimeout(closeTimeout.current);
+    closeTimeout.current = null;
     closeOpenTooltips();
     ensureTooltipEntry();
     globalWarmedUp = true;
@@ -75,7 +78,13 @@ export function useTooltipTriggerState(props: TooltipTriggerProps): TooltipTrigg
   };
 
   let hideTooltip = () => {
-    close();
+    if (!closeTimeout.current) {
+      closeTimeout.current = setTimeout(() => {
+        closeTimeout.current = null;
+        close();
+      }, TOOLTIP_COOLDOWN);
+    }
+
     if (globalWarmUpTimeout) {
       clearTimeout(globalWarmUpTimeout);
       globalWarmUpTimeout = null;
@@ -119,14 +128,12 @@ export function useTooltipTriggerState(props: TooltipTriggerProps): TooltipTrigg
   return {
     isOpen,
     open: (immediate) => {
-      if (!immediate && delay > 0) {
+      if (!immediate && delay > 0 && !closeTimeout.current) {
         warmupTooltip();
       } else {
         showTooltip();
       }
     },
-    close: () => {
-      hideTooltip();
-    }
+    close: hideTooltip
   };
 }
