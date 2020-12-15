@@ -77,7 +77,7 @@ describe('useTooltip', function () {
     expect(queryByRole('tooltip')).not.toBeNull();
   });
 
-  it('hides tooltip when trigger gets unhovered', function () {
+  it('hides tooltip when hover leaves the trigger', function () {
     jest.useFakeTimers('modern');
 
     function Test() {
@@ -145,7 +145,7 @@ describe('useTooltip', function () {
     expect(getByRole('tooltip')).not.toBeNull();
   });
 
-  it('hides tooltip when it gets unhovered', function () {
+  it('hides tooltip when hover leaves', function () {
     jest.useFakeTimers('modern');
 
     function Test() {
