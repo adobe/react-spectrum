@@ -55,12 +55,15 @@ sliders that can be styled as needed.
 * Internationalized number formatting as a percentage or value
 * Support for multiple thumbs, e.g. a group of range values
 * Support for both horizontal and vertical orientations
+* Prevents text selection while dragging
 
 ## Anatomy
 
 Sliders consist of a track element showing the range of available values,
-one or more thumb thumbs showing the current values, and a label.
-Thumbs can be dragged to allow a user to change their value. In addition, the
+one or more thumb thumbs showing the current values, an
+optional [&lt;output&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/output)
+element displaying the current values textually, and a label.
+The thumbs can be dragged to allow a user to change their value. In addition, the
 track can be clicked to move the nearest thumb to that position.
 
 ### useSlider hook
@@ -103,7 +106,8 @@ function Slider(props) {
   let {
     containerProps,
     trackProps,
-    labelProps
+    labelProps,
+    outputProps
   } = useSlider(props, state, trackRef);
 
   return (
@@ -114,9 +118,9 @@ function Slider(props) {
         {props.label &&
           <label {...labelProps}>{props.label}</label>
         }
-        <div style={{flex: '1 0 auto', textAlign: 'end'}}>
+        <output {...outputProps} style={{flex: '1 0 auto', textAlign: 'end'}}>
           {state.getThumbValueLabel(0)}
-        </div>
+        </output>
       </div>
       <div style={{position: 'relative', width: '100%'}}>
         <div style={{
@@ -194,7 +198,8 @@ function RangeSlider(props) {
   let {
     containerProps,
     trackProps,
-    labelProps
+    labelProps,
+    outputProps
   } = useSlider(props, state, trackRef);
 
   return (
@@ -205,9 +210,9 @@ function RangeSlider(props) {
         {props.label &&
           <label {...labelProps}>{props.label}</label>
         }
-        <div style={{flex: '1 0 auto', textAlign: 'end'}}>
+        <output {...outputProps} style={{flex: '1 0 auto', textAlign: 'end'}}>
           {`${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`}
-        </div>
+        </output>
       </div>
       <div style={{position: 'relative', width: '100%'}}>
         <div style={{
