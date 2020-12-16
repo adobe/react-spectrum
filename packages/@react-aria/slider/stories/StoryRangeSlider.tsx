@@ -8,13 +8,10 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 
 interface StoryRangeSliderProps extends SliderProps {
-  minLabel?: string,
-  maxLabel?: string,
   showTip?: boolean
 }
 
 export function StoryRangeSlider(props: StoryRangeSliderProps) {
-  const {minLabel, maxLabel} = props;
   const trackRef = React.useRef<HTMLDivElement>(null);
   const minInputRef = React.useRef<HTMLInputElement>(null);
   const maxInputRef = React.useRef<HTMLInputElement>(null);
@@ -25,12 +22,12 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
   }
 
   const {
-    trackProps, labelProps, containerProps
+    trackProps, labelProps, containerProps, outputProps
   } = useSlider(props, state, trackRef);
 
   const {thumbProps: minThumbProps, inputProps: minInputProps} = useSliderThumb({
     index: 0,
-    'aria-label': minLabel ?? 'Minimum',
+    'aria-label': 'Minimum',
     isDisabled: props.isDisabled,
     trackRef,
     inputRef: minInputRef
@@ -38,7 +35,7 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
 
   const {thumbProps: maxThumbProps, inputProps: maxInputProps} = useSliderThumb({
     index: 1,
-    'aria-label': maxLabel ?? 'Maximum',
+    'aria-label': 'Maximum',
     isDisabled: props.isDisabled,
     trackRef,
     inputRef: maxInputRef
@@ -48,11 +45,11 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
     <div {...containerProps} className={styles.slider}>
       <div className={styles.sliderLabel}>
         {props.label && <label {...labelProps} className={styles.label}>{props.label}</label>}
-        <div className={styles.value}>
+        <output {...outputProps} className={styles.value}>
           {state.getThumbValueLabel(0)}
           {' to '}
           {state.getThumbValueLabel(1)}
-        </div>
+        </output>
       </div>
       <div className={styles.trackContainer}>
         {
