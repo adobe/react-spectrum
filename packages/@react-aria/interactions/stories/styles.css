@@ -1,0 +1,8 @@
+body {
+  height: 50px !important;
+  width: 50px !important;
+}
+
+.react-spectrum-stories {
+  min-height: initial !important;
+}
