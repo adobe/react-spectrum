@@ -31,14 +31,6 @@ div[style='isolation: isolate; color-scheme: dark;'] .value {
   color: #9a9a9a;
 }
 
-div[style='isolation: isolate; color-scheme: dark;'] .label {
-  color: #b0b0b0;
-}
-
-div[style='isolation: isolate; color-scheme: dark;'] .value {
-  color: #9a9a9a;
-}
-
 @media screen and (prefers-color-scheme: light) {
   div[style='isolation: isolate; color-scheme: light dark;'] .label {
     color: #707070;
