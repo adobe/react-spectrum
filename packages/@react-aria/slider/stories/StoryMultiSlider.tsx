@@ -17,7 +17,10 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
   const trackRef = React.useRef<HTMLDivElement>(null);
   const state = useSliderState(props);
   const {
-    trackProps, labelProps, containerProps
+    trackProps,
+    labelProps,
+    containerProps,
+    outputProps
   } = useSlider(props, state, trackRef);
 
   const numThumbs = React.Children.count(children);
@@ -29,7 +32,9 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
     <div {...containerProps} className={styles.slider}>
       <div className={styles.sliderLabel}>
         {props.label && <label {...labelProps} className={styles.label}>{props.label}</label>}
-        <div className={styles.value}>{JSON.stringify(state.values)}</div>
+        <output {...outputProps} className={styles.value}>
+          {JSON.stringify(state.values)}
+        </output>
       </div>
       {
         // We make rail and all thumbs children of the trackRef.  That means dragging on the thumb

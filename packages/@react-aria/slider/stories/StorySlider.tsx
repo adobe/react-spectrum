@@ -30,7 +30,8 @@ export function StorySlider(props: StorySliderProps) {
   const {
     containerProps,
     trackProps,
-    labelProps
+    labelProps,
+    outputProps
   } = useSlider(multiProps, state, trackRef);
 
   const {thumbProps, inputProps} = useSliderThumb({
@@ -46,7 +47,7 @@ export function StorySlider(props: StorySliderProps) {
     <div className={styles.slider} {...containerProps}>
       <div className={styles.sliderLabel}>
         {props.label && <label {...labelProps} className={styles.label}>{props.label}</label>}
-        <div className={styles.value}>{state.getThumbValueLabel(0)}</div>
+        <output {...outputProps} className={styles.value}>{state.getThumbValueLabel(0)}</output>
       </div>
       <div className={styles.trackContainer}>
         {
