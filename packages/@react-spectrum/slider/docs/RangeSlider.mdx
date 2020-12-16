@@ -40,7 +40,7 @@ sourceData={[{type: 'Spectrum', url: 'https://spectrum.adobe.com/page/slider/'}]
 
 ## Value
 
-RangeSliders are controlled with the `value` and `defaultValue` props.
+RangeSliders are controlled with the `value` prop and uncontrolled with the `defaultValue` prop.
 This value consists of two parts, `start` and `end`. Both parts must fall between
 the RangeSlider's minimum and maximum values, which default to 0 and 100 respectively.
 
@@ -50,10 +50,10 @@ function Example() {
   return (
     <Flex gap="size-150">
       <RangeSlider
-        label="Range (Uncontrolled)"
+        label="Range (uncontrolled)"
         defaultValue={{start: 25, end: 75}} />
       <RangeSlider
-        label="Range (Controlled)"
+        label="Range (controlled)"
         value={value}
         onChange={setValue} />
     </Flex>
@@ -76,7 +76,7 @@ The slider value can be formatted by using the `formatOptions` prop.
 
 ```tsx example
 <RangeSlider
-  label="Price Range"
+  label="Price range"
   formatOptions={{style: 'currency', currency: 'JPY'}}
   defaultValue={{start: 75, end: 100}} />
 ```
@@ -86,10 +86,10 @@ Value labels are shown above the Slider by default, but they can also be moved t
 The label text should be in sentence case.
 
 ```tsx example
-<Flex direction="column" maxWidth="size-3000" gap="size-300">
-  <RangeSlider label="Jeans Price Range" formatOptions={{style: 'currency', currency: 'USD'}} defaultValue={{start: 75, end: 100}} />
-  <RangeSlider label="Shoes Price Range" formatOptions={{style: 'currency', currency: 'USD'}} labelPosition="side" defaultValue={{start: 50, end: 100}} />
-  <RangeSlider label="Hats Price Range" formatOptions={{style: 'currency', currency: 'USD'}} showValueLabel={false} defaultValue={{start: 15, end: 30}} />
+<Flex direction="column" maxWidth="size-5000" gap="size-300">
+  <RangeSlider label="Jeans price range" formatOptions={{style: 'currency', currency: 'USD'}} defaultValue={{start: 75, end: 100}} />
+  <RangeSlider label="Shoes price range" formatOptions={{style: 'currency', currency: 'USD'}} labelPosition="side" defaultValue={{start: 50, end: 100}} />
+  <RangeSlider label="Hats price range" formatOptions={{style: 'currency', currency: 'USD'}} showValueLabel={false} defaultValue={{start: 15, end: 30}} />
 </Flex>
 ```
 
@@ -110,18 +110,18 @@ function Example() {
         defaultValue={{start: 75, end: 100}} />
 
       <RangeSlider
-        label="Search Radius"
-        maxValue={200}
-        valueLabel={`${meters.start}m to ${meters.end}m away`}
-        value={meters}
-        onChange={setMeters} />
-
-      <RangeSlider
         label="Cacao percentage"
         maxValue={1}
         step={0.001}
         formatOptions={{style: 'percent', minimumFractionDigits: 1}}
         defaultValue={{start: .75, end: 1}} />
+
+      <RangeSlider
+        label="Search radius"
+        maxValue={200}
+        valueLabel={`${meters.start}m to ${meters.end}m away`}
+        value={meters}
+        onChange={setMeters} />
     </Flex>
   );
 }
@@ -148,5 +148,5 @@ Slider automatically uses the current locale to format the value label.
 [View guidelines](https://spectrum.adobe.com/page/slider/#Disabled)
 
 ```tsx example
-<RangeSlider label="Price Filter" defaultValue={{start: 25, end: 50}} isDisabled />
+<RangeSlider label="Price filter" defaultValue={{start: 25, end: 50}} isDisabled />
 ```

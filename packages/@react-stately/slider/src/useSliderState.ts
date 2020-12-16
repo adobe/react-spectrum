@@ -132,7 +132,7 @@ export const DEFAULT_STEP_VALUE = 1;
 
 /**
  * Provides state management for a slider component. Stores values for all thumbs
- * and formats values for localization. Also provides methods to update the position
+ * and formats values for localization and provides methods to update the position
  * of any thumbs.
  * @param props
  */
