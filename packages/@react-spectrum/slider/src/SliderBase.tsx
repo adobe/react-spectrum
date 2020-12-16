@@ -65,7 +65,8 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     }
   }
 
-  let state = useSliderState({...props, formatOptions});
+  const formatter = useNumberFormatter(formatOptions);
+  const state = useSliderState({...props, formatter});
   let trackRef = useRef();
   let {
     containerProps,
@@ -92,8 +93,6 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
   }
 
   let domRef = useFocusableRef(ref, inputRefs[0]);
-
-  let formatter = useNumberFormatter(formatOptions);
 
   let displayValue = valueLabel;
   let maxLabelLength = undefined;

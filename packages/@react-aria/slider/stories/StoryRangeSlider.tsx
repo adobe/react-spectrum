@@ -2,6 +2,7 @@ import {FocusRing} from '@react-aria/focus';
 import React from 'react';
 import {SliderProps} from '@react-types/slider';
 import styles from './story-slider.css';
+import {useNumberFormatter} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 import {useSliderState} from '@react-stately/slider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
@@ -18,7 +19,8 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
   const trackRef = React.useRef<HTMLDivElement>(null);
   const minInputRef = React.useRef<HTMLInputElement>(null);
   const maxInputRef = React.useRef<HTMLInputElement>(null);
-  const state = useSliderState(props);
+  const formatter = useNumberFormatter(props.formatOptions);
+  const state = useSliderState({...props, formatter});
 
   if (state.values.length !== 2) {
     throw new Error('Must specify an array of two numbers');

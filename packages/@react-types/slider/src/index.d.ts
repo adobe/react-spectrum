@@ -11,6 +11,10 @@ export interface SliderProps extends BaseSliderProps, ValueBase<number[]> {
   onChangeEnd?: (value: number[]) => void
 }
 
+export interface SliderStateProps extends SliderProps {
+  formatter?: Intl.NumberFormat
+}
+
 export interface SliderThumbProps extends AriaLabelingProps, FocusableDOMProps, FocusableProps, Validation, AriaValidationProps, LabelableProps {
   orientation?: Orientation,
   isDisabled?: boolean,
