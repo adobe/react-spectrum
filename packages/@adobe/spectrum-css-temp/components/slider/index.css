@@ -56,6 +56,16 @@ governing permissions and limitations under the License.
 
   user-select: none;
   touch-action: none;
+
+  width: var(--spectrum-global-dimension-size-2400);
+
+  &.spectrum-Slider--label-side {
+    width: auto;
+
+    /* .spectrum-Slider-controls {
+      inline-size: calc(var(--spectrum-global-dimension-size-2400) - calc(var(--spectrum-slider-controls-margin)));
+    }*/
+  }
 }
 
 .spectrum-Slider-controls {
@@ -66,7 +76,7 @@ governing permissions and limitations under the License.
   z-index: auto;
 
   min-block-size: var(--spectrum-slider-height);
-  min-inline-size: var(--spectrum-global-dimension-size-2400);
+  min-inline-size: var(--spectrum-slider-min-width);
 
   /* These calculations prevent the track from spilling outside of the control */
   inline-size: calc(100% - calc(var(--spectrum-slider-controls-margin)));
@@ -325,6 +335,7 @@ governing permissions and limitations under the License.
   font-feature-settings: "tnum";
   text-align: end;
 
+  /* When the value is the only child of the label container it's a side label value and we set text-align: start */
   &:only-child {
     text-align: start;
   }
