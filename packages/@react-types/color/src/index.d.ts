@@ -66,6 +66,7 @@ interface ColorSliderProps extends Omit<BaseSliderProps<string | Color>, 'minVal
   value?: string | Color,
   defaultValue?: string | Color,
   onChange?: (value: Color) => void,
+  onChangeEnd?: (value: Color) => void,
   /** Whether the value's label is displayed. True by default, false by default if not. */
   showValueLabel?: boolean
   // showTextField?: boolean, // do we want this? we didn't keep it for slider....

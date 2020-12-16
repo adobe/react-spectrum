@@ -7,7 +7,7 @@ import {useSlider, useSliderThumb} from '@react-aria/slider';
 import {ValueBase} from '@react-types/shared';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-interface StorySliderProps extends BaseSliderProps<number[]>, Omit<ValueBase<number>, 'onChange'> {
+interface StorySliderProps extends BaseSliderProps, Omit<ValueBase<number>, 'onChange'> {
   origin?: number,
   onChange?: (value: number[]) => void,
   showTip?: boolean
