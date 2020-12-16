@@ -2,7 +2,6 @@ import {FocusRing} from '@react-aria/focus';
 import React from 'react';
 import {SliderProps} from '@react-types/slider';
 import styles from './story-slider.css';
-import {usePress} from '@react-aria/interactions';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 import {useSliderState} from '@react-stately/slider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
@@ -16,7 +15,6 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
   const trackRef = React.useRef<HTMLDivElement>(null);
   const minInputRef = React.useRef<HTMLInputElement>(null);
   const maxInputRef = React.useRef<HTMLInputElement>(null);
-  const inputRefs = [minInputRef, maxInputRef];
   const state = useSliderState(props);
 
   if (state.values.length !== 2) {
@@ -24,11 +22,12 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
   }
 
   const {
-    trackProps, labelProps, containerProps
+    trackProps, labelProps, containerProps, outputProps
   } = useSlider(props, state, trackRef);
 
   const {thumbProps: minThumbProps, inputProps: minInputProps} = useSliderThumb({
     index: 0,
+    'aria-label': 'Minimum',
     isDisabled: props.isDisabled,
     trackRef,
     inputRef: minInputRef
@@ -36,37 +35,21 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
 
   const {thumbProps: maxThumbProps, inputProps: maxInputProps} = useSliderThumb({
     index: 1,
+    'aria-label': 'Maximum',
     isDisabled: props.isDisabled,
     trackRef,
     inputRef: maxInputRef
   }, state);
 
-  // Pressing the displayValue should focus the corresponding input.
-  let {pressProps: outputPressProps} = usePress({
-    onPress: (e) => inputRefs.find(inputRef => inputRef.current.id === e.target.getAttribute('for')).current.focus()
-  });
-
   return (
     <div {...containerProps} className={styles.slider}>
       <div className={styles.sliderLabel}>
-        {props.label && <label {...labelProps} htmlFor={minInputProps.id} className={styles.label}>{props.label}</label>}
-        <div className={styles.value}>
-          <output
-            {...outputPressProps}
-            aria-live="off"
-            aria-labelledby={`${props.label ? labelProps.id : containerProps.id} ${minInputProps.id}`}
-            htmlFor={minInputProps.id}>
-            {state.getThumbValueLabel(0)}
-          </output>
+        {props.label && <label {...labelProps} className={styles.label}>{props.label}</label>}
+        <output {...outputProps} className={styles.value}>
+          {state.getThumbValueLabel(0)}
           {' to '}
-          <output
-            {...outputPressProps}
-            aria-live="off"
-            aria-labelledby={`${props.label ? labelProps.id : containerProps.id} ${maxInputProps.id}`}
-            htmlFor={maxInputProps.id}>
-            {state.getThumbValueLabel(1)}
-          </output>
-        </div>
+          {state.getThumbValueLabel(1)}
+        </output>
       </div>
       <div className={styles.trackContainer}>
         {

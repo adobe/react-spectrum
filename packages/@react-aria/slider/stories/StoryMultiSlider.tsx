@@ -4,7 +4,6 @@ import React from 'react';
 import {SliderProps, SliderThumbProps} from '@react-types/slider';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import styles from './story-slider.css';
-import {usePress} from '@react-aria/interactions';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
@@ -18,7 +17,10 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
   const trackRef = React.useRef<HTMLDivElement>(null);
   const state = useSliderState(props);
   const {
-    trackProps, labelProps, containerProps
+    trackProps,
+    labelProps,
+    containerProps,
+    outputProps
   } = useSlider(props, state, trackRef);
 
   const numThumbs = React.Children.count(children);
@@ -26,32 +28,13 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
     throw new Error('You must have the same number of StoryThumb as the number of values in `defaultValue` or `value`.');
   }
 
-  // Pressing the displayValue should focus the corresponding input.
-  let {pressProps: outputPressProps} = usePress({
-    onPress: (e) => e.target.ownerDocument && e.target.ownerDocument.getElementById(e.target.getAttribute('for')).focus()
-  });
-
   return (
     <div {...containerProps} className={styles.slider}>
       <div className={styles.sliderLabel}>
-        {props.label && <label {...labelProps} htmlFor={`${containerProps.id}-thumb-0`} className={styles.label}>{props.label}</label>}
-        <div className={styles.value}>
-          [
-          {
-            state.values.map((value, index) => (
-              <output
-                key={`${containerProps.id}-output-${index}`}
-                {...outputPressProps}
-                aria-live="off"
-                aria-labelledby={`${(props.label ? labelProps.id : containerProps.id)} ${containerProps.id}-thumb-${index}`}
-                htmlFor={`${containerProps.id}-thumb-${index}`}>
-                {value}
-                {index < state.values.length - 1 && ','}
-              </output>
-            ))
-          }
-          ]
-        </div>
+        {props.label && <label {...labelProps} className={styles.label}>{props.label}</label>}
+        <output {...outputProps} className={styles.value}>
+          {JSON.stringify(state.values)}
+        </output>
       </div>
       {
         // We make rail and all thumbs children of the trackRef.  That means dragging on the thumb
@@ -62,7 +45,6 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
         <div className={styles.rail} />
         {React.Children.map(children, ((child, index) =>
           React.cloneElement(child as React.ReactElement, {
-            id: `${containerProps.id}-thumb-${index}`,
             __context: {
               sliderProps: props,
               state,
@@ -91,13 +73,12 @@ export function StoryThumb(props: StoryThumbProps) {
     throw new Error('Cannot use StoryThumb outside of a StoryMultiSlider!');
   }
 
-  const {label, isDisabled, id} = props;
+  const {label, isDisabled} = props;
   const context = (props as any).__context as SliderStateContext;
   const {index, state, sliderProps} = context;
   const inputRef = React.useRef<HTMLInputElement>(null);
   const {inputProps, thumbProps, labelProps} = useSliderThumb({
     index,
-    id,
     ...props,
     isDisabled: sliderProps.isDisabled || props.isDisabled,
     trackRef: context.trackRef,
