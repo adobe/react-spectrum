@@ -61,10 +61,6 @@ governing permissions and limitations under the License.
 
   &.spectrum-Slider--label-side {
     width: auto;
-
-    /* .spectrum-Slider-controls {
-      inline-size: calc(var(--spectrum-global-dimension-size-2400) - calc(var(--spectrum-slider-controls-margin)));
-    }*/
   }
 }
 
