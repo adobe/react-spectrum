@@ -27,7 +27,7 @@ export interface SliderBaseChildArguments {
   state: SliderState
 }
 
-export interface SliderBaseProps extends SpectrumBarSliderBase<number[]> {
+export interface SliderBaseProps<T = number[]> extends SpectrumBarSliderBase<T> {
   children: (SliderBaseChildArguments) => ReactNode,
   classes?: string[] | Object,
   style?: CSSProperties,

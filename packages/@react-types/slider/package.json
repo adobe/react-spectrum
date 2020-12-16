@@ -9,6 +9,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@react-spectrum/slider": "3.0.0-alpha.0",
     "@react-types/shared": "^3.3.0"
   },
   "peerDependencies": {

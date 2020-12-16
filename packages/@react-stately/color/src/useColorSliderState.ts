@@ -44,6 +44,9 @@ export function useColorSliderState(props: ColorSliderProps): ColorSliderState {
     value: [color.getChannelValue(channel)],
     onChange([v]) {
       setColor(color.withChannelValue(channel, v));
+    },
+    onChangeEnd([v]) {
+      setColor(color.withChannelValue(channel, v));
     }
   });
 

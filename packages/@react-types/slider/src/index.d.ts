@@ -1,7 +1,20 @@
-import {AriaLabelingProps, AriaValidationProps, FocusableDOMProps, FocusableProps, LabelableProps, LabelPosition, Orientation, RangeInputBase, RangeValue, StyleProps, Validation, ValueBase} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  AriaValidationProps,
+  FocusableDOMProps,
+  FocusableProps,
+  LabelableProps,
+  LabelPosition,
+  Orientation,
+  RangeInputBase,
+  RangeValue,
+  StyleProps,
+  Validation,
+  ValueBase
+} from '@react-types/shared';
 import {ReactNode} from 'react';
 
-export interface BaseSliderProps extends RangeInputBase<number>, LabelableProps, AriaLabelingProps {
+export interface BaseSliderProps<T = number[]> extends RangeInputBase<number>, LabelableProps, AriaLabelingProps {
   /**
    * The orientation of the Slider.
    * @default 'horizontal'
@@ -14,10 +27,26 @@ export interface BaseSliderProps extends RangeInputBase<number>, LabelableProps,
    */
   formatOptions?: Intl.NumberFormatOptions,
   /** Fired when the slider stops moving, due to being let go. */
-  onChangeEnd?: (value: number[]) => void
+  onChangeEnd?: (value: T) => void
 }
 
-export interface SliderProps extends BaseSliderProps, ValueBase<number[]> {}
+export interface SliderProps<T = number[]> extends BaseSliderProps<T>, ValueBase<T> {
+  /**
+   * The slider's minimum value.
+   * @default 0
+   */
+  minValue?: number,
+  /**
+   * The slider's maximum value.
+   * @default 100
+   */
+  maxValue?: number,
+  /**
+   * The slider's step value.
+   * @default 1
+   */
+  step?: number
+}
 
 export interface SliderThumbProps extends AriaLabelingProps, FocusableDOMProps, FocusableProps, Validation, AriaValidationProps, LabelableProps {
   /**
@@ -31,7 +60,7 @@ export interface SliderThumbProps extends AriaLabelingProps, FocusableDOMProps, 
   index: number
 }
 
-export interface SpectrumBarSliderBase<T> extends BaseSliderProps, ValueBase<T>, StyleProps {
+export interface SpectrumBarSliderBase<T> extends BaseSliderProps<T>, ValueBase<T>, StyleProps {
   /**
    * The label's overall position relative to the element it is labeling.
    * @default 'top'
@@ -43,17 +72,22 @@ export interface SpectrumBarSliderBase<T> extends BaseSliderProps, ValueBase<T>,
   valueLabel?: ReactNode,
   /**
    * The slider's minimum value.
-   * @default '0'
+   * @default 0
    */
   minValue?: number,
   /**
    * The slider's maximum value.
-   * @default '100'
+   * @default 100
    */
-  maxValue?: number
+  maxValue?: number,
+  /**
+   * The slider's step value.
+   * @default 1
+   */
+  step?: number
 }
 
-export interface SpectrumSliderProps extends Omit<SpectrumBarSliderBase<number>, 'onChange' | 'onChangeEnd'> {
+export interface SpectrumSliderProps extends SpectrumBarSliderBase<number> {
   /**
    * Whether a fill color is shown between the start of the slider and the current value.
    * @see https://spectrum.adobe.com/page/slider/#Fill.
@@ -70,13 +104,7 @@ export interface SpectrumSliderProps extends Omit<SpectrumBarSliderBase<number>,
    * @example trackGradient={['red 20%', 'green 40%']}
    * @see https://spectrum.adobe.com/page/slider/#Gradient.
    */
-  trackGradient?: string[],
-  /**
-   * Handler that is called when the value changes.
-   */
-  onChange?: (value: number) => void,
-  /** Fired when the slider stops moving, due to being let go. */
-  onChangeEnd?: (value: number) => void
+  trackGradient?: string[]
 }
 
 export interface SpectrumRangeSliderProps extends SpectrumBarSliderBase<RangeValue<number>> { }

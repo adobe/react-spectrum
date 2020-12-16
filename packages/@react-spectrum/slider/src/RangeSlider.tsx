@@ -24,9 +24,9 @@ import {useLocale} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
-  let {onChange, value, defaultValue, ...otherProps} = props;
+  let {onChange, onChangeEnd, value, defaultValue, ...otherProps} = props;
 
-  let baseProps: Omit<SliderBaseProps, 'children'> = {
+  let baseProps: Omit<SliderBaseProps<number[]>, 'children'> = {
     ...otherProps,
     count: 2,
     value: value != null ? [value.start, value.end] : undefined,
@@ -36,6 +36,9 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivE
       : [props.minValue ?? DEFAULT_MIN_VALUE, props.maxValue ?? DEFAULT_MAX_VALUE],
     onChange(v) {
       onChange?.({start: v[0], end: v[1]});
+    },
+    onChangeEnd(v) {
+      onChangeEnd?.({start: v[0], end: v[1]});
     }
   };
 

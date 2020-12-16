@@ -49,7 +49,7 @@ export interface SpectrumHexColorFieldProps extends AriaHexColorFieldProps, Spec
   isQuiet?: boolean
 }
 
-export interface ColorWheelProps extends BaseSliderProps, Omit<StyleProps, 'width' | 'height'> {
+export interface ColorWheelProps extends BaseSliderProps<string | Color>, Omit<StyleProps, 'width' | 'height'> {
   step?: number,
   // overriding these to allow passing string:
   value?: string | Color,
@@ -61,7 +61,7 @@ export interface SpectrumColorWheelProps extends ColorWheelProps, DOMProps, Styl
   size?: DimensionValue
 }
 
-interface ColorSliderProps extends Omit<BaseSliderProps, 'minValue' | 'maxValue'>, LabelableProps {
+interface ColorSliderProps extends Omit<BaseSliderProps<string | Color>, 'minValue' | 'maxValue'>, LabelableProps {
   channel: ColorChannel,
   value?: string | Color,
   defaultValue?: string | Color,
