@@ -36,7 +36,6 @@ keywords: [slider, range, aria]
     {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-1.2/#slider'}
   ]} />
 
-
 ## API
 
 <FunctionAPI function={docs.exports.useSlider} links={docs.links} />
@@ -49,22 +48,20 @@ HTML element can be used to build a slider, however it is
 very difficult to style cross browser. `useSlider` and `useSliderThumb` help achieve accessible
 sliders that can be styled as needed.
 
-
-* Exposed to assistive technology as a `group` and `slider` via ARIA, and touch screen readers with hidden native inputs
+* Support for mouse, touch, and keyboard via the [useMove](../react-aria/useMove.html) hook
+* Exposed to assistive technology as a `group` of `slider` elements via ARIA
+* Slider thumbs use hidden native input elements to support touch screen readers
 * Labeling support for accessibility
 * Internationalized number formatting as a percentage or value
 * Support for multiple thumbs, e.g. a group of range values
 * Support for both horizontal and vertical orientations
-* Support for touch [useMove](../react-aria/useMove.html)
 
 ## Anatomy
 
 Sliders consist of a track element showing the range of available values,
-a thumb or multiple thumbs showing the current value(s), and a label.
-Thumbs consist of an indicator that designates a position on the track.
-The track element represents the value(s) visually, the thumbs represent individual
-values with `role=slider`. The group of value(s) is represented by the wrapping element
-with `role=group`.
+one or more thumb thumbs showing the current values, and a label.
+Thumbs can be dragged to allow a user to change their value. In addition, the
+track can be clicked to move the nearest thumb to that position.
 
 ### useSlider hook
 `useSlider` returns three sets of props that you should spread onto the appropriate element:
@@ -77,6 +74,7 @@ If there is no visual label, an `aria-label` or `aria-labelledby` prop must be p
 to identify the element to screen readers.
 
 ### useSliderThumb hook
+
 `useSliderThumb` returns three sets of props that you should spread onto the appropriate element:
 
 <TypeContext.Provider value={docs.links}>
@@ -84,9 +82,9 @@ to identify the element to screen readers.
 </TypeContext.Provider>
 
 If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
-to identify the element to screen readers.
+to identify each thumb to screen readers.
 
-Slider thumb value(s) are managed by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useSliderState} />.
+Slider state is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useSliderState} /> hook.
 
 ## Examples
 
@@ -94,51 +92,9 @@ Slider thumb value(s) are managed by <TypeLink links={statelyDocs.links} type={s
 
 ```tsx example
 import {useSliderState} from '@react-stately/slider';
-import {useFocusWithin} from '@react-aria/interactions';
+import {useFocusRing} from '@react-aria/focus';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
-
-function Thumb(props) {
-  let {state, trackRef, index, ...otherprops} = props;
-  let inputRef = React.useRef(null);
-  let {thumbProps, inputProps} = useSliderThumb({
-    index,
-    isDisabled: props.isDisabled,
-    trackRef,
-    inputRef
-  }, state);
-
-  let [focus, setFocus] = React.useState(false);
-  let {focusWithinProps} = useFocusWithin({onFocusWithinChange: setFocus});
-  return (
-    <div
-      {...focusWithinProps}
-      style={{
-        position: 'absolute',
-        top: '4px',
-        transform: 'translateX(-50%)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        left: `${state.getThumbPercent(index) * 100}%`
-      }}>
-      <div
-        {...thumbProps}
-        style={{
-          width: '20px',
-          height: '20px',
-          borderRadius: '50%',
-          border: `2px solid ${focus ? 'orange' : 'grey'}`,
-          boxSizing: 'border-box',
-          backgroundColor: 'var(--spectrum-global-color-gray-100)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-        <VisuallyHidden><input ref={inputRef} {...inputProps} /></VisuallyHidden>
-      </div>
-    </div>
-  );
-}
+import {mergeProps} from '@react-aria/utils';
 
 function Slider(props) {
   let trackRef = React.useRef(null);
@@ -151,36 +107,74 @@ function Slider(props) {
   } = useSlider(props, state, trackRef);
 
   return (
-      <div
-        style={{position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '300px'}}
-        {...containerProps}>
-        <div style={{display: 'flex', alignSelf: 'stretch'}}>
-          {props.label && <label {...labelProps}>{props.label}</label>}
-          <div style={{flex: '1 0 auto', textAlign: 'end'}}>{state.getThumbValueLabel(0)}</div>
-        </div>
-        <div style={{position: 'relative', width: '100%'}}>
-          {
-            // We make rail, filledRail, and track siblings in the DOM, so that trackRef has no children.
-            // User must click on the trackRef to drag by track, and so it comes last in the DOM.
-          }
-          <div style={{
-            position: 'absolute',
-            backgroundColor: 'grey',
-            height: '3px',
-            top: '13px',
-            width: '100%'
-          }} />
-          <div
-            ref={trackRef}
-            style={{
-              position: 'relative',
-              height: '30px',
-              width:' 100%'
-            }}
-            {...trackProps} />
-          <Thumb index={0} state={state} trackRef={trackRef} />
+    <div
+      {...containerProps}
+      style={{position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', width: 300, touchAction: 'none'}}>
+      <div style={{display: 'flex', alignSelf: 'stretch'}}>
+        {props.label &&
+          <label {...labelProps}>{props.label}</label>
+        }
+        <div style={{flex: '1 0 auto', textAlign: 'end'}}>
+          {state.getThumbValueLabel(0)}
         </div>
       </div>
+      <div style={{position: 'relative', width: '100%'}}>
+        <div style={{
+          position: 'absolute',
+          backgroundColor: 'gray',
+          height: 3,
+          top: 13,
+          width: '100%'
+        }} />
+        <div
+          {...trackProps}
+          ref={trackRef}
+          style={{
+            position: 'relative',
+            height: 30,
+            width:' 100%'
+          }} />
+        <Thumb index={0} state={state} trackRef={trackRef} />
+      </div>
+    </div>
+  );
+}
+
+function Thumb(props) {
+  let {state, trackRef, index} = props;
+  let inputRef = React.useRef(null);
+  let {thumbProps, inputProps} = useSliderThumb({
+    index,
+    trackRef,
+    inputRef
+  }, state);
+
+  let {focusProps, isFocusVisible} = useFocusRing();
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: 4,
+        transform: 'translateX(-50%)',
+        left: `${state.getThumbPercent(index) * 100}%`
+      }}>
+      <div
+        {...thumbProps}
+        style={{
+          width: 20,
+          height: 20,
+          borderRadius: '50%',
+          backgroundColor: isFocusVisible
+            ? 'orange'
+            : state.isThumbDragging(index)
+              ? 'dimgrey'
+              : 'gray'
+        }}>
+        <VisuallyHidden>
+          <input ref={inputRef} {...mergeProps(inputProps, focusProps)} />
+        </VisuallyHidden>
+      </div>
+    </div>
   );
 }
 
@@ -193,49 +187,6 @@ function Slider(props) {
 
 ### Multi Thumb
 ```tsx example
-function Thumb(props) {
-  let {state, trackRef, index, ...otherprops} = props;
-  let inputRef = React.useRef(null);
-  let {thumbProps, inputProps} = useSliderThumb({
-    index,
-    isDisabled: props.isDisabled,
-    trackRef,
-    inputRef
-  }, state);
-
-  let [focus, setFocus] = React.useState(false);
-  let {focusWithinProps} = useFocusWithin({onFocusWithinChange: setFocus});
-  return (
-    <div
-      {...focusWithinProps}
-      style={{
-        position: 'absolute',
-        top: '4px',
-        transform: 'translateX(-50%)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        left: `${state.getThumbPercent(index) * 100}%`
-      }}>
-      <div
-        {...thumbProps}
-        style={{
-          width: '20px',
-          height: '20px',
-          borderRadius: '50%',
-          border: `2px solid ${focus ? 'orange' : 'grey'}`,
-          boxSizing: 'border-box',
-          backgroundColor: 'var(--spectrum-global-color-gray-100)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-        <VisuallyHidden><input ref={inputRef} {...inputProps} /></VisuallyHidden>
-      </div>
-    </div>
-  );
-}
-
 function RangeSlider(props) {
   let trackRef = React.useRef(null);
 
@@ -247,35 +198,79 @@ function RangeSlider(props) {
   } = useSlider(props, state, trackRef);
 
   return (
-      <div
-        style={{position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '300px'}}
-        {...containerProps}>
-        <div style={{display: 'flex', alignSelf: 'stretch'}}>
-          {props.label && <label {...labelProps}>{props.label}</label>}
-          <div style={{flex: '1 0 auto', textAlign: 'end'}}>{`${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`}</div>
-        </div>
-        <div style={{position: 'relative', width: '100%'}}>
-          <div style={{
-            position: 'absolute',
-            backgroundColor: 'grey',
-            height: '3px',
-            top: '13px',
-            width: '100%'
-          }} />
-          <div
-            ref={trackRef}
-            style={{
-              position: 'relative',
-              height: '30px',
-              width:' 100%'
-            }}
-            {...trackProps} />
-          <Thumb index={0} state={state} trackRef={trackRef} />
-          <Thumb index={1} state={state} trackRef={trackRef} />
+    <div
+      {...containerProps}
+      style={{position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', width: 300, touchAction: 'none'}}>
+      <div style={{display: 'flex', alignSelf: 'stretch'}}>
+        {props.label &&
+          <label {...labelProps}>{props.label}</label>
+        }
+        <div style={{flex: '1 0 auto', textAlign: 'end'}}>
+          {`${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`}
         </div>
       </div>
+      <div style={{position: 'relative', width: '100%'}}>
+        <div style={{
+          position: 'absolute',
+          backgroundColor: 'grey',
+          height: 3,
+          top: 13,
+          width: '100%'
+        }} />
+        <div
+          {...trackProps}
+          ref={trackRef}
+          style={{
+            position: 'relative',
+            height: 30,
+            width:' 100%'
+          }} />
+        <Thumb index={0} state={state} trackRef={trackRef} />
+        <Thumb index={1} state={state} trackRef={trackRef} />
+      </div>
+    </div>
   );
 }
+
+///- begin collapse -///
+function Thumb(props) {
+  let {state, trackRef, index} = props;
+  let inputRef = React.useRef(null);
+  let {thumbProps, inputProps} = useSliderThumb({
+    index,
+    trackRef,
+    inputRef
+  }, state);
+
+  let {focusProps, isFocusVisible} = useFocusRing();
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: 4,
+        transform: 'translateX(-50%)',
+        left: `${state.getThumbPercent(index) * 100}%`
+      }}>
+      <div
+        {...thumbProps}
+        style={{
+          width: 20,
+          height: 20,
+          borderRadius: '50%',
+          backgroundColor: isFocusVisible
+            ? 'orange'
+            : state.isThumbDragging(index)
+              ? 'dimgrey'
+              : 'gray'
+        }}>
+        <VisuallyHidden>
+          <input ref={inputRef} {...mergeProps(inputProps, focusProps)} />
+        </VisuallyHidden>
+      </div>
+    </div>
+  );
+}
+///- end collapse -///
 
 <RangeSlider
   label="Price Range"
