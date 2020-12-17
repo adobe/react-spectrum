@@ -45,11 +45,15 @@ storiesOf('Slider', module)
   )
   .add(
     'custom width',
-    () => render({label: 'Label', width: '200px'})
+    () => render({label: 'Label', width: '300px'})
+  )
+  .add(
+    'custom width small',
+    () => render({label: 'Label', width: '30px'})
   )
   .add(
     'label overflow',
-    () => render({label: 'This is a rather long label for this narrow slider element.', maxValue: 1000, width: '100px'})
+    () => render({label: 'This is a rather long label for this narrow slider element.', maxValue: 1000, width: '300px'})
   )
   .add(
     'showValueLabel: false',
@@ -74,6 +78,14 @@ storiesOf('Slider', module)
   .add(
     'labelPosition: side',
     () => render({label: 'Label', labelPosition: 'side'})
+  )
+  .add(
+    'labelPosition: side, customWidth',
+    () => render({label: 'Label', labelPosition: 'side', width: '400px'})
+  )
+  .add(
+    'labelPosition: side, customWidth small',
+    () => render({label: 'Label', labelPosition: 'side', width: '30px'})
   )
   .add(
     'min/max',

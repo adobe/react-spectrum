@@ -67,7 +67,8 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     }
   }
 
-  let state = useSliderState({...props, formatOptions});
+  const formatter = useNumberFormatter(formatOptions);
+  const state = useSliderState({...props, numberFormatter: formatter});
   let trackRef = useRef();
   let {
     containerProps,
@@ -78,8 +79,6 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
 
   let inputRef = useRef();
   let domRef = useFocusableRef(ref, inputRef);
-
-  let formatter = useNumberFormatter(formatOptions);
 
   let displayValue = valueLabel;
   let maxLabelLength = undefined;
@@ -128,7 +127,8 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
       className={classNames(styles,
         'spectrum-Slider',
         {
-          'spectrum-Slider--label-side': labelPosition === 'side',
+          'spectrum-Slider--positionTop': labelPosition === 'top',
+          'spectrum-Slider--positionSide': labelPosition === 'side',
           'is-disabled': isDisabled
         },
         classes,

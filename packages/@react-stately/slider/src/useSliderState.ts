@@ -13,7 +13,6 @@
 import {clamp} from '@react-aria/utils';
 import {SliderProps} from '@react-types/slider';
 import {useControlledState} from '@react-stately/utils';
-import {useNumberFormatter} from '@react-aria/i18n';
 import {useRef, useState} from 'react';
 
 export interface SliderState {
@@ -130,14 +129,18 @@ export const DEFAULT_MIN_VALUE = 0;
 export const DEFAULT_MAX_VALUE = 100;
 export const DEFAULT_STEP_VALUE = 1;
 
+export interface SliderStateProps extends SliderProps {
+  numberFormatter: Intl.NumberFormat
+}
+
 /**
  * Provides state management for a slider component. Stores values for all thumbs
  * and formats values for localization and provides methods to update the position
  * of any thumbs.
  * @param props
  */
-export function useSliderState(props: SliderProps): SliderState {
-  const {isDisabled, minValue = DEFAULT_MIN_VALUE, maxValue = DEFAULT_MAX_VALUE, formatOptions, step = DEFAULT_STEP_VALUE} = props;
+export function useSliderState(props: SliderStateProps): SliderState {
+  const {isDisabled, minValue = DEFAULT_MIN_VALUE, maxValue = DEFAULT_MAX_VALUE, numberFormatter: formatter, step = DEFAULT_STEP_VALUE} = props;
 
   const [values, setValues] = useControlledState<number[]>(
     props.value as any,
@@ -152,8 +155,6 @@ export function useSliderState(props: SliderProps): SliderState {
   valuesRef.current = values;
   const isDraggingsRef = useRef<boolean[]>(null);
   isDraggingsRef.current = isDraggings;
-
-  const formatter = useNumberFormatter(formatOptions);
 
   function getValuePercent(value: number) {
     return (value - minValue) / (maxValue - minValue);

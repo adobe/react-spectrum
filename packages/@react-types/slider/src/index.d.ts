@@ -22,10 +22,6 @@ export interface BaseSliderProps<T = number[]> extends RangeInputBase<number>, L
   orientation?: Orientation,
   /** Whether the whole Slider is disabled. */
   isDisabled?: boolean,
-  /**
-   * The display format of the value label.
-   */
-  formatOptions?: Intl.NumberFormatOptions,
   /** Fired when the slider stops moving, due to being let go. */
   onChangeEnd?: (value: T) => void
 }
@@ -61,6 +57,10 @@ export interface SliderThumbProps extends AriaLabelingProps, FocusableDOMProps, 
 }
 
 export interface SpectrumBarSliderBase<T> extends BaseSliderProps<T>, ValueBase<T>, StyleProps {
+  /**
+   * The display format of the value label.
+   */
+  formatOptions?: Intl.NumberFormatOptions,
   /**
    * The label's overall position relative to the element it is labeling.
    * @default 'top'
