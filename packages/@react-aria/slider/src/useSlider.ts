@@ -11,23 +11,26 @@
  */
 
 import {clamp, mergeProps, useGlobalListeners} from '@react-aria/utils';
-import React, {HTMLAttributes, useRef} from 'react';
-import {sliderIds} from './utils';
+import {getSliderThumbId, sliderIds} from './utils';
+import React, {HTMLAttributes, LabelHTMLAttributes, OutputHTMLAttributes, useRef} from 'react';
+import {setInteractionModality, useMove} from '@react-aria/interactions';
 import {SliderProps} from '@react-types/slider';
 import {SliderState} from '@react-stately/slider';
 import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
-import {useMove} from '@react-aria/interactions';
 
 interface SliderAria {
   /** Props for the label element. */
-  labelProps: HTMLAttributes<HTMLElement>,
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
 
   /** Props for the root element of the slider component; groups slider inputs. */
   containerProps: HTMLAttributes<HTMLElement>,
 
   /** Props for the track element. */
-  trackProps: HTMLAttributes<HTMLElement>
+  trackProps: HTMLAttributes<HTMLElement>,
+
+  /** Props for the output element, displaying the value of the slider thumbs. */
+  outputProps: OutputHTMLAttributes<HTMLOutputElement>
 }
 
 /**
@@ -149,6 +152,17 @@ export function useSlider(
     }
   };
 
+  if (labelProps.htmlFor) {
+    // Override the `for` attribute to point to the first thumb instead of the group element.
+    labelProps.htmlFor = labelProps.htmlFor ? getSliderThumbId(state, 0) : undefined,
+    labelProps.onClick = () => {
+      // Safari does not focus <input type="range"> elements when clicking on an associated <label>,
+      // so do it manually. In addition, make sure we show the focus ring.
+      document.getElementById(getSliderThumbId(state, 0))?.focus();
+      setInteractionModality('keyboard');
+    };
+  }
+
   return {
     labelProps,
     // The root element of the Slider will have role="group" to group together
@@ -162,6 +176,11 @@ export function useSlider(
       onMouseDown(e: React.MouseEvent<HTMLElement>) { onDownTrack(e, undefined, e.clientX, e.clientY); },
       onPointerDown(e: React.PointerEvent<HTMLElement>) { onDownTrack(e, e.pointerId, e.clientX, e.clientY); },
       onTouchStart(e: React.TouchEvent<HTMLElement>) { onDownTrack(e, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY); }
-    }, moveProps)
+    }, moveProps),
+    outputProps: {
+      htmlFor: state.values.map((_, index) => getSliderThumbId(state, index)).join(' '),
+      'aria-labelledby': labelProps.id,
+      'aria-live': 'off'
+    }
   };
 }

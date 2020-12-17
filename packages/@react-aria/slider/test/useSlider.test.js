@@ -3,17 +3,24 @@ import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils
 import * as React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
 import {useRef} from 'react';
-import {useSlider} from '../src';
+import {useSlider, useSliderThumb} from '../src';
 import {useSliderState} from '@react-stately/slider';
 
 describe('useSlider', () => {
+  let numberFormatter = new Intl.NumberFormat('en-US', {});
   describe('aria labels', () => {
     function renderUseSlider(sliderProps) {
       return renderHook(() => {
         let trackRef = useRef(null);
-        let state = useSliderState(sliderProps);
+        let inputRef = useRef(null);
+        let state = useSliderState({...sliderProps, numberFormatter});
         let props = useSlider(sliderProps, state, trackRef);
-        return {state, props, trackRef};
+        let {inputProps} = useSliderThumb({
+          index: 0,
+          trackRef,
+          inputRef
+        }, state);
+        return {state, props, trackRef, inputProps};
       }).result;
     }
 
@@ -23,10 +30,10 @@ describe('useSlider', () => {
         label: 'Slider'
       });
 
-      let {labelProps, containerProps} = result.current.props;
+      let {props: {labelProps, containerProps}, inputProps} = result.current;
 
       expect(containerProps.role).toBe('group');
-      expect(containerProps.id).toBe(labelProps.htmlFor);
+      expect(labelProps.htmlFor).toBe(inputProps.id);
     });
 
     it('should have the right labels when setting aria-label', () => {
@@ -60,7 +67,7 @@ describe('useSlider', () => {
 
     function Example(props) {
       let trackRef = useRef(null);
-      let state = useSliderState(props);
+      let state = useSliderState({...props, numberFormatter});
       stateRef.current = state;
       let {trackProps} = useSlider(props, state, trackRef);
       return <div data-testid="track" ref={trackRef} {...trackProps} />;
@@ -178,7 +185,7 @@ describe('useSlider', () => {
 
     function Example(props) {
       let trackRef = useRef(null);
-      let state = useSliderState(props);
+      let state = useSliderState({...props, numberFormatter});
       stateRef.current = state;
       let {trackProps} = useSlider(props, state, trackRef);
       return <div data-testid="track" ref={trackRef} {...trackProps} />;

@@ -10,24 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp, mergeProps} from '@react-aria/utils';
+import {clamp} from '@react-aria/utils';
 import {classNames} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
-import {FocusRing} from '@react-aria/focus';
 import React from 'react';
 import {SliderBase, SliderBaseChildArguments, SliderBaseProps} from './SliderBase';
+import {SliderThumb} from './SliderThumb';
 import {SpectrumSliderProps} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
-import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
   let {onChange, value, defaultValue, isFilled, fillOffset, trackGradient, ...otherProps} = props;
 
   let baseProps: Omit<SliderBaseProps, 'children'> = {
     ...otherProps,
-    count: 1,
     // Normalize `value: number[]` to `value: number`
     value: value != null ? [value] : undefined,
     defaultValue: defaultValue != null ? [defaultValue] : undefined,
@@ -37,7 +34,6 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
   };
 
   let {direction} = useLocale();
-  let {isHovered, hoverProps} = useHover({});
 
   return (
     <SliderBase
@@ -50,9 +46,8 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
         // @ts-ignore
         {'--spectrum-slider-track-color': trackGradient && `linear-gradient(to ${direction === 'ltr' ? 'right' : 'left'}, ${trackGradient.join(', ')})`}
       }>
-      {({inputRefs: [inputRef], thumbProps: [thumbProps], inputProps: [inputProps], state}: SliderBaseChildArguments) => {
+      {({trackRef, inputRef, state}: SliderBaseChildArguments) => {
         fillOffset = fillOffset != null ? clamp(fillOffset, state.getThumbMinValue(0), state.getThumbMaxValue(0)) : fillOffset;
-
         let cssDirection = direction === 'rtl' ? 'right' : 'left';
 
         let lowerTrack = (
@@ -81,20 +76,6 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
             }} />
         );
 
-        let handle = (
-          <div
-            className={classNames(styles, 'spectrum-Slider-handle', {'is-hovered': isHovered, 'is-dragged': state.isThumbDragging(0)})}
-            style={{
-              [cssDirection]: `${state.getThumbPercent(0) * 100}%`
-            }}
-            {...mergeProps(thumbProps, hoverProps)}
-            role="presentation">
-            <VisuallyHidden>
-              <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRef} {...inputProps} />
-            </VisuallyHidden>
-          </div>
-        );
-
         let filledTrack = null;
         if (isFilled && fillOffset != null) {
           let width = state.getThumbPercent(0) - state.getValuePercent(fillOffset);
@@ -109,12 +90,16 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
               }} />
           );
         }
+
         return  (
           <>
             {lowerTrack}
-            <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
-              {handle}
-            </FocusRing>
+            <SliderThumb
+              index={0}
+              isDisabled={props.isDisabled}
+              trackRef={trackRef}
+              inputRef={inputRef}
+              state={state} />
             {upperTrack}
             {filledTrack}
           </>
