@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import {GridCollection} from '@react-stately/grid';
 import {TableCollection as ITableCollection, TableNode} from '@react-types/table';
 import {Key} from 'react';
 
@@ -18,17 +19,153 @@ interface GridCollectionOptions {
 
 const ROW_HEADER_COLUMN_KEY = 'row-header-column-' + Math.random().toString(36).slice(2);
 
-export class TableCollection<T> implements ITableCollection<T> {
-  private keyMap: Map<Key, TableNode<T>>;
+function buildHeaderRows<T>(keyMap: Map<Key, TableNode<T>>, columnNodes: TableNode<T>[]) {
+  let columns = [];
+  let seen = new Map();
+  for (let column of columnNodes) {
+    let parentKey = column.parentKey;
+    let col = [column];
+
+    while (parentKey) {
+      let parent: TableNode<T> = keyMap.get(parentKey);
+
+      // If we've already seen this parent, than it is shared
+      // with a previous column. If the current column is taller
+      // than the previous column, than we need to shift the parent
+      // in the previous column so it's level with the current column.
+      if (seen.has(parent)) {
+        parent.colspan++;
+
+        let {column, index} = seen.get(parent);
+        if (index > col.length) {
+          break;
+        }
+
+        for (let i = index; i < col.length; i++) {
+          column.splice(i, 0, null);
+        }
+
+        // Adjust shifted indices
+        for (let i = col.length; i < column.length; i++) {
+          if (column[i] && seen.has(column[i])) {
+            seen.get(column[i]).index = i;
+          }
+        }
+      } else {
+        parent.colspan = 1;
+        col.push(parent);
+        seen.set(parent, {column: col, index: col.length - 1});
+      }
+
+      parentKey = parent.parentKey;
+    }
+
+    columns.push(col);
+    column.index = columns.length - 1;
+  }
+
+  let maxLength = Math.max(...columns.map(c => c.length));
+  let headerRows = Array(maxLength).fill(0).map(() => []);
+
+  // Convert columns into rows.
+  let colIndex = 0;
+  for (let column of columns) {
+    let i = maxLength - 1;
+    for (let item of column) {
+      if (item) {
+        // Fill the space up until the current column with a placeholder
+        let row = headerRows[i];
+        let rowLength = row.reduce((p, c) => p + c.colspan, 0);
+        if (rowLength < colIndex) {
+          let placeholder: TableNode<T> = {
+            type: 'placeholder',
+            key: 'placeholder-' + item.key,
+            colspan: colIndex - rowLength,
+            index: rowLength,
+            value: null,
+            rendered: null,
+            level: i,
+            hasChildNodes: false,
+            childNodes: [],
+            textValue: null
+          };
+
+          if (row.length > 0) {
+            row[row.length - 1].nextKey = placeholder.key;
+            placeholder.prevKey = row[row.length - 1].key;
+          }
+
+          row.push(placeholder);
+        }
+
+        if (row.length > 0) {
+          row[row.length - 1].nextKey = item.key;
+          item.prevKey = row[row.length - 1].key;
+        }
+
+        item.level = i;
+        item.index = colIndex;
+        row.push(item);
+      }
+
+      i--;
+    }
+
+    colIndex++;
+  }
+
+  // Add placeholders at the end of each row that is shorter than the maximum
+  let i = 0;
+  for (let row of headerRows) {
+    let rowLength = row.reduce((p, c) => p + c.colspan, 0);
+    if (rowLength < columnNodes.length) {
+      let placeholder: TableNode<T> = {
+        type: 'placeholder',
+        key: 'placeholder-' + row[row.length - 1].key,
+        colspan: columnNodes.length - rowLength,
+        index: rowLength,
+        value: null,
+        rendered: null,
+        level: i,
+        hasChildNodes: false,
+        childNodes: [],
+        textValue: null,
+        prevKey: row[row.length - 1].key
+      };
+
+      row.push(placeholder);
+    }
+
+    i++;
+  }
+
+  return headerRows.map((childNodes, index) => {
+    let row: TableNode<T> = {
+      type: 'headerrow',
+      key: 'headerrow-' + index,
+      index,
+      value: null,
+      rendered: null,
+      level: 0,
+      hasChildNodes: true,
+      childNodes,
+      textValue: null
+    };
+
+    return row;
+  });
+}
+
+export class TableCollection<T> extends GridCollection<T> implements ITableCollection<T> {
   headerRows: TableNode<T>[];
   columns: TableNode<T>[];
   rowHeaderColumnKeys: Set<Key>;
   body: TableNode<T>;
 
   constructor(nodes: Iterable<TableNode<T>>, prev?: TableCollection<T>, opts?: GridCollectionOptions) {
-    this.keyMap = new Map(prev?.keyMap) || new Map();
-    this.columns = [];
-    this.rowHeaderColumnKeys = new Set();
+    let rowHeaderColumnKeys: Set<Key> = new Set();
+    let body: TableNode<T>;
+    let columns = [];
 
     // Add cell for selection checkboxes if needed.
     if (opts?.showSelectionCheckboxes) {
@@ -47,253 +184,67 @@ export class TableCollection<T> implements ITableCollection<T> {
         }
       };
 
-      this.keyMap.set(rowHeaderColumn.key, rowHeaderColumn);
-      this.columns.unshift(rowHeaderColumn);
+      columns.unshift(rowHeaderColumn);
     }
 
-    let visit = (node: TableNode<T>) => {
-      // If the node is the same object as the previous node for the same key,
-      // we can skip this node and its children. We always visit columns though,
-      // because we depend on order to build the columns array.
-      let prevNode = this.keyMap.get(node.key);
-      if (node.type !== 'column' && node === prevNode) {
-        return;
-      }
+    let currentRowIndex = 0;
+    let rows = [];
+    let columnKeyMap = new Map();
+    let newVisit = (node: TableNode<T>) => {
+      switch (node.type) {
+        case 'body':
+          body = node;
+          break;
+        case 'column':
+          columnKeyMap.set(node.key, node);
+          if (!node.hasChildNodes) {
+            columns.push(node);
 
-      this.keyMap.set(node.key, node);
-
-      if (node.type === 'column' && !node.hasChildNodes) {
-        this.columns.push(node);
-
-        if (node.props.isRowHeader) {
-          this.rowHeaderColumnKeys.add(node.key);
-        }
-      }
-
-      if (node.type === 'cell') {
-        node.column = this.columns[node.index];
-      }
-
-      let childKeys = new Set();
-      let last: TableNode<T>;
-      for (let child of node.childNodes) {
-        childKeys.add(child.key);
-
-        if (last) {
-          last.nextKey = child.key;
-          child.prevKey = last.key;
-        } else {
-          child.prevKey = null;
-        }
-
-        visit(child);
-        last = child;
-      }
-
-      if (last) {
-        last.nextKey = null;
-      }
-
-      // Remove deleted nodes and their children from the key map
-      if (prevNode) {
-        for (let child of prevNode.childNodes) {
-          if (!childKeys.has(child.key)) {
-            remove(child);
+            if (node.props.isRowHeader) {
+              rowHeaderColumnKeys.add(node.key);
+            }
           }
-        }
+          break;
+        case 'item':
+          // dont increment first time seeing an item
+          if (rows.length) {
+            currentRowIndex += 1;
+          }
+          rows.push({type: 'item', key: node.key, childNodes: []});
+          break;
+        case 'cell':
+          rows[currentRowIndex].childNodes.push(node);
+          node.column = columns[node.index];
+          break;
       }
-    };
-
-    let remove = (node: TableNode<T>) => {
-      this.keyMap.delete(node.key);
       for (let child of node.childNodes) {
-        if (this.keyMap.get(child.key) === child) {
-          remove(child);
-        }
+        newVisit(child);
       }
     };
 
-    let bodyKeys = new Set();
-    let last: TableNode<T>;
     for (let node of nodes) {
-      if (last) {
-        last.nextKey = node.key;
-        node.prevKey = last.key;
-      } else {
-        node.prevKey = null;
-      }
-
-      visit(node);
-      if (node.type !== 'column') {
-        bodyKeys.add(node.key);
-      }
-
-      if (node.type === 'body') {
-        this.body = node;
-      }
-
-      last = node;
+      newVisit(node);
     }
+    let headerRows = buildHeaderRows(columnKeyMap, columns);
+    headerRows.reverse().forEach(row => rows.unshift(row));
 
-
-    if (last) {
-      last.nextKey = null;
-    }
+    super({columnCount: columns.length, items: rows});
+    this.columns = columns;
+    this.rowHeaderColumnKeys = rowHeaderColumnKeys;
+    this.body = body; // used to read TableBody props
 
     // Default row header column to the first one.
     if (this.rowHeaderColumnKeys.size === 0) {
       this.rowHeaderColumnKeys.add(this.columns[opts?.showSelectionCheckboxes ? 1 : 0].key);
     }
-
-    this.headerRows = this.buildHeaderRows();
   }
 
-  buildHeaderRows() {
-    let columns = [];
-    let seen = new Map();
-    for (let column of this.columns) {
-      let parentKey = column.parentKey;
-      let col = [column];
-
-      while (parentKey) {
-        let parent: TableNode<T> = this.keyMap.get(parentKey);
-
-        // If we've already seen this parent, than it is shared
-        // with a previous column. If the current column is taller
-        // than the previous column, than we need to shift the parent
-        // in the previous column so it's level with the current column.
-        if (seen.has(parent)) {
-          parent.colspan++;
-
-          let {column, index} = seen.get(parent);
-          if (index > col.length) {
-            break;
-          }
-
-          for (let i = index; i < col.length; i++) {
-            column.splice(i, 0, null);
-          }
-
-          // Adjust shifted indices
-          for (let i = col.length; i < column.length; i++) {
-            if (column[i] && seen.has(column[i])) {
-              seen.get(column[i]).index = i;
-            }
-          }
-        } else {
-          parent.colspan = 1;
-          col.push(parent);
-          seen.set(parent, {column: col, index: col.length - 1});
-        }
-
-        parentKey = parent.parentKey;
-      }
-
-      columns.push(col);
-      column.index = columns.length - 1;
-    }
-
-    let maxLength = Math.max(...columns.map(c => c.length));
-    let headerRows = Array(maxLength).fill(0).map(() => []);
-
-    // Convert columns into rows.
-    let colIndex = 0;
-    for (let column of columns) {
-      let i = maxLength - 1;
-      for (let item of column) {
-        if (item) {
-          // Fill the space up until the current column with a placeholder
-          let row = headerRows[i];
-          let rowLength = row.reduce((p, c) => p + c.colspan, 0);
-          if (rowLength < colIndex) {
-            let placeholder: TableNode<T> = {
-              type: 'placeholder',
-              key: 'placeholder-' + item.key,
-              colspan: colIndex - rowLength,
-              index: rowLength,
-              value: null,
-              rendered: null,
-              level: i,
-              hasChildNodes: false,
-              childNodes: [],
-              textValue: null
-            };
-
-            if (row.length > 0) {
-              row[row.length - 1].nextKey = placeholder.key;
-              placeholder.prevKey = row[row.length - 1].key;
-            }
-
-            row.push(placeholder);
-            this.keyMap.set(placeholder.key, placeholder);
-          }
-
-          if (row.length > 0) {
-            row[row.length - 1].nextKey = item.key;
-            item.prevKey = row[row.length - 1].key;
-          }
-
-          item.level = i;
-          item.index = colIndex;
-          row.push(item);
-        }
-
-        i--;
-      }
-
-      colIndex++;
-    }
-
-    // Add placeholders at the end of each row that is shorter than the maximum
-    let i = 0;
-    for (let row of headerRows) {
-      let rowLength = row.reduce((p, c) => p + c.colspan, 0);
-      if (rowLength < this.columns.length) {
-        let placeholder: TableNode<T> = {
-          type: 'placeholder',
-          key: 'placeholder-' + row[row.length - 1].key,
-          colspan: this.columns.length - rowLength,
-          index: rowLength,
-          value: null,
-          rendered: null,
-          level: i,
-          hasChildNodes: false,
-          childNodes: [],
-          textValue: null,
-          prevKey: row[row.length - 1].key
-        };
-
-        row.push(placeholder);
-        this.keyMap.set(placeholder.key, placeholder);
-      }
-
-      i++;
-    }
-
-    return headerRows.map((childNodes, index) => {
-      let row: TableNode<T> = {
-        type: 'headerrow',
-        key: 'headerrow-' + index,
-        index,
-        value: null,
-        rendered: null,
-        level: 0,
-        hasChildNodes: true,
-        childNodes,
-        textValue: null
-      };
-
-      this.keyMap.set(row.key, row);
-      return row;
-    });
+  getHeaderRows() {
+    return this.rows.filter(row => row.type === 'headerrow');
   }
 
-  *[Symbol.iterator]() {
-    yield* this.body.childNodes;
-  }
-
-  get size() {
-    return [...this.body.childNodes].length;
+  getBody() {
+    return this.rows.filter(row => row.type !== 'headerrow');
   }
 
   getKeys() {

@@ -13,30 +13,27 @@
 import {AriaLabelingProps, DOMProps, KeyboardDelegate, Node} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {gridIds} from './utils';
+import {GridKeyboardDelegate} from './GridKeyboardDelegate';
+import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject, useMemo} from 'react';
-import {Layout} from '@react-stately/virtualizer';
-import {TableKeyboardDelegate} from './TableKeyboardDelegate';
-import {TableState} from '@react-stately/table';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useSelectableCollection} from '@react-aria/selection';
 
-interface GridProps<T> extends DOMProps, AriaLabelingProps {
+interface GridProps extends DOMProps, AriaLabelingProps {
   ref: RefObject<HTMLElement>,
   isVirtualized?: boolean,
-  keyboardDelegate?: KeyboardDelegate,
-  layout?: Layout<Node<T>>
+  keyboardDelegate?: KeyboardDelegate
 }
 
 interface GridAria {
   gridProps: HTMLAttributes<HTMLElement>
 }
 
-export function useTable<T>(props: GridProps<T>, state: TableState<T>): GridAria {
+export function useGrid<T>(props: GridProps, state: GridState<T>): GridAria {
   let {
     ref,
     isVirtualized,
-    keyboardDelegate,
-    layout
+    keyboardDelegate
   } = props;
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
@@ -47,14 +44,13 @@ export function useTable<T>(props: GridProps<T>, state: TableState<T>): GridAria
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let {direction} = useLocale();
-  let delegate = useMemo(() => keyboardDelegate || new TableKeyboardDelegate({
+  let delegate = useMemo(() => keyboardDelegate || new GridKeyboardDelegate({
     collection: state.collection,
     disabledKeys: state.disabledKeys,
     ref,
     direction,
-    collator,
-    layout
-  }), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator, layout]);
+    collator
+  }), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator]);
   let {collectionProps} = useSelectableCollection({
     ref,
     selectionManager: state.selectionManager,
@@ -74,7 +70,7 @@ export function useTable<T>(props: GridProps<T>, state: TableState<T>): GridAria
 
   if (isVirtualized) {
     gridProps['aria-rowcount'] = state.collection.size;
-    gridProps['aria-colcount'] = state.collection.columns.length;
+    gridProps['aria-colcount'] = state.collection.columnCount;
   }
 
   return {

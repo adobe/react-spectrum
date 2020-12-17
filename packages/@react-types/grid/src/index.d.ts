@@ -10,13 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useTable';
-export * from './useTableColumnHeader';
-export * from './useTableRowGroup';
-export * from './useTableRowHeader';
-export * from './useTableSelectionCheckbox';
+import {Collection, Node} from '@react-types/shared';
+import {Key} from 'react';
 
-// TODO are these needed?
-export {useGridRow as useTableRow} from '@react-aria/grid';
-export {useGridCell as useTableCell} from '@react-aria/grid';
-export {useGridRowGroup as useTableRowGroup} from '@react-aria/grid';
+export interface GridCollection<T> extends Collection<Node<T>> {
+  columnCount: number,
+  rows: GridNode<T>[]
+}
+
+export interface GridRow<T> {
+  key?: Key,
+  type: string,
+  childNodes: Iterable<Node<T>>
+}
+
+export interface GridNode<T> extends Node<T> {
+  column?: GridNode<T>,
+  colspan?: number
+}

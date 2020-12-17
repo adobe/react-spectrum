@@ -119,7 +119,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let y = 0;
     let width = 0;
     let children: LayoutNode[] = [];
-    for (let headerRow of this.collection.headerRows) {
+    for (let headerRow of this.collection.getHeaderRows()) {
       let layoutNode = this.buildChild(headerRow, 0, y);
       layoutNode.layoutInfo.parentKey = 'header';
       y = layoutNode.layoutInfo.rect.maxY;
@@ -230,7 +230,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let startY = y;
     let width = 0;
     let children: LayoutNode[] = [];
-    for (let node of this.collection.body.childNodes) {
+    for (let node of this.collection.getBody()) {
       let layoutNode = this.buildChild(node, 0, y);
       layoutNode.layoutInfo.parentKey = 'body';
       y = layoutNode.layoutInfo.rect.maxY;

@@ -10,13 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useTable';
-export * from './useTableColumnHeader';
-export * from './useTableRowGroup';
-export * from './useTableRowHeader';
-export * from './useTableSelectionCheckbox';
+import {GridState} from '@react-stately/grid';
+import {Key} from 'react';
 
-// TODO are these needed?
-export {useGridRow as useTableRow} from '@react-aria/grid';
-export {useGridCell as useTableCell} from '@react-aria/grid';
-export {useGridRowGroup as useTableRowGroup} from '@react-aria/grid';
+export const gridIds = new WeakMap<GridState<unknown>, string>();
+
+function normalizeKey(key: Key): string {
+  if (typeof key === 'string') {
+    return key.replace(/\s*/g, '');
+  }
+
+  return '' + key;
+}
+
+export function getCellId<T>(state: GridState<T>, rowKey: Key, columnKey: Key) {
+  let gridId = gridIds.get(state);
+  if (!gridId) {
+    throw new Error('Unknown grid');
+  }
+
+  return `${gridId}-${normalizeKey(rowKey)}-${normalizeKey(columnKey)}`;
+}
+

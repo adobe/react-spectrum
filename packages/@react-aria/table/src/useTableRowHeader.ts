@@ -14,7 +14,7 @@ import {getCellId} from './utils';
 import {HTMLAttributes, RefObject} from 'react';
 import {TableNode} from '@react-types/table';
 import {TableState} from '@react-stately/table';
-import {useTableCell} from './useTableCell';
+import {useGridCell} from '@react-aria/grid';
 
 interface RowHeaderProps {
   node: TableNode<unknown>,
@@ -28,7 +28,7 @@ interface RowHeaderAria {
 }
 
 export function useTableRowHeader<T>(props: RowHeaderProps, state: TableState<T>): RowHeaderAria {
-  let {gridCellProps} = useTableCell(props, state);
+  let {gridCellProps} = useGridCell(props, state);
 
   let columnKey = props.node.column.key;
   return {

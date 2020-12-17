@@ -32,6 +32,7 @@ import {useHover} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useTable, useTableCell, useTableColumnHeader, useTableRow, useTableRowGroup, useTableRowHeader, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
+import {useGridCell, useGridRow, useGridRowGroup} from '@react-aria/grid';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 const DEFAULT_HEADER_HEIGHT = {
@@ -468,7 +469,7 @@ function TableSelectAllCell({column}) {
 }
 
 function TableRowGroup({children, ...otherProps}) {
-  let {rowGroupProps} = useTableRowGroup();
+  let {rowGroupProps} = useGridRowGroup();
 
   return (
     <div {...rowGroupProps} {...otherProps}>
@@ -482,7 +483,7 @@ function TableRow({item, children, ...otherProps}) {
   let state = useTableContext();
   let isDisabled = state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key) && !isDisabled;
-  let {rowProps} = useTableRow({
+  let {rowProps} = useGridRow({
     node: item,
     isSelected,
     ref,
@@ -541,7 +542,7 @@ function TableCheckboxCell({cell}) {
   let ref = useRef();
   let state = useTableContext();
   let isDisabled = state.disabledKeys.has(cell.parentKey);
-  let {gridCellProps} = useTableCell({
+  let {gridCellProps} = useGridCell({
     node: cell,
     ref,
     isVirtualized: true,
@@ -590,7 +591,7 @@ function TableCell({cell}) {
   let ref = useRef();
   let state = useTableContext();
   let isDisabled = state.disabledKeys.has(cell.parentKey);
-  let {gridCellProps} = useTableCell({
+  let {gridCellProps} = useGridCell({
     node: cell,
     ref,
     isVirtualized: true,

@@ -10,13 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useTable';
-export * from './useTableColumnHeader';
-export * from './useTableRowGroup';
-export * from './useTableRowHeader';
-export * from './useTableSelectionCheckbox';
-
-// TODO are these needed?
-export {useGridRow as useTableRow} from '@react-aria/grid';
-export {useGridCell as useTableCell} from '@react-aria/grid';
-export {useGridRowGroup as useTableRowGroup} from '@react-aria/grid';
+export * from './GridKeyboardDelegate';
+export * from './useGrid';
+export * from './useGridRowGroup';
+export * from './useGridRow';
+export * from './useGridCell';

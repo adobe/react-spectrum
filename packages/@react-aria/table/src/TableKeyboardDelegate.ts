@@ -14,6 +14,7 @@ import {Direction, KeyboardDelegate, Node} from '@react-types/shared';
 import {Key, RefObject} from 'react';
 import {Layout, Rect} from '@react-stately/virtualizer';
 import {TableCollection} from '@react-types/table';
+import {GridKeyboardDelegate} from '@react-aria/grid';
 
 interface TableKeyboardDelegateOptions<T> {
   collection: TableCollection<T>,
@@ -24,55 +25,24 @@ interface TableKeyboardDelegateOptions<T> {
   layout?: Layout<Node<T>>
 }
 
-export class TableKeyboardDelegate<T> implements KeyboardDelegate {
-  private collection: TableCollection<T>;
-  private disabledKeys: Set<Key>;
-  private ref: RefObject<HTMLElement>;
-  private direction: Direction;
-  private collator: Intl.Collator;
-  private layout: Layout<Node<T>>;
+export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T> implements TableKeyboardDelegateOptions<T> {
 
-  constructor(options: TableKeyboardDelegateOptions<T>) {
-    this.collection = options.collection;
-    this.disabledKeys = options.disabledKeys;
-    this.ref = options.ref;
-    this.direction = options.direction;
-    this.collator = options.collator;
-    this.layout = options.layout;
+  // constructor(options: TableKeyboardDelegateOptions<T>) {
+  //   super(options);
+  //   this.collection = options.collection;
+  //   this.disabledKeys = options.disabledKeys;
+  //   this.ref = options.ref;
+  //   this.direction = options.direction;
+  //   this.collator = options.collator;
+  //   this.layout = options.layout;
+  // }
+
+  protected isCell(node: Node<T>) {
+    return node.type === 'cell' || node.type === 'rowheader' || node.type === 'column';
   }
 
-  private isCell(node: Node<T>) {
-    return node.type === 'cell' || node.type === 'rowheader';
-  }
-
-  private findPreviousKey(pred: (item: Node<T>) => boolean, fromKey?: Key) {
-    let key = fromKey != null
-      ? this.collection.getKeyBefore(fromKey)
-      : this.collection.getLastKey();
-
-    while (key != null) {
-      let item = this.collection.getItem(key);
-      if (pred(item)) {
-        return key;
-      }
-
-      key = this.collection.getKeyBefore(key);
-    }
-  }
-
-  private findNextKey(pred: (item: Node<T>) => boolean, fromKey?: Key) {
-    let key = fromKey != null
-      ? this.collection.getKeyAfter(fromKey)
-      : this.collection.getFirstKey();
-
-    while (key != null) {
-      let item = this.collection.getItem(key);
-      if (pred(item)) {
-        return key;
-      }
-
-      key = this.collection.getKeyAfter(key);
-    }
+  getKeyBelow(key: Key) {
+    return super.getKeyBelow(key);
   }
 
   getKeyBelow(key: Key) {
@@ -93,23 +63,7 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
       return [...firstItem.childNodes][startItem.index].key;
     }
 
-    // If focus was on a cell, start searching from the parent row
-    if (this.isCell(startItem)) {
-      key = startItem.parentKey;
-    }
-
-    // Find the next item
-    key = this.findNextKey(item => item.type === 'item', key);
-    if (key != null) {
-      // If focus was on a cell, focus the cell with the same index in the next row.
-      if (this.isCell(startItem)) {
-        let item = this.collection.getItem(key);
-        return [...item.childNodes][startItem.index].key;
-      }
-
-      // Otherwise, focus the next row
-      return key;
-    }
+    return super.getKeyBelow(key);
   }
 
   getKeyAbove(key: Key) {
@@ -128,22 +82,9 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
       return;
     }
 
-    // If focus is on a cell, start searching from the parent row
-    if (this.isCell(startItem)) {
-      key = startItem.parentKey;
-    }
-
-    // Find the previous item
-    key = this.findPreviousKey(item => item.type === 'item', key);
-    if (key != null) {
-      // If focus was on a cell, focus the cell with the same index in the previous row.
-      if (this.isCell(startItem)) {
-        let item = this.collection.getItem(key);
-        return [...item.childNodes][startItem.index].key;
-      }
-
-      // Otherwise, focus the previous row
-      return key;
+    let superKey = super.getKeyAbove(key);
+    if (superKey) {
+      return superKey;
     }
 
     // If no item was found, and focus was on a cell, then focus the
@@ -155,7 +96,7 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
     // If focus was on a row, then focus the first column header.
     return this.collection.columns[0].key;
   }
-
+  //
   private findNextColumnKey(column: Node<T>) {
     // Search following columns
     let key = this.findNextKey(item => item.type === 'column', column.key);
@@ -164,7 +105,7 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     // Wrap around to the first column
-    let row = this.collection.headerRows[column.level];
+    let row = this.collection.getHeaderRows()[column.level];
     for (let item of row.childNodes) {
       if (item.type === 'column') {
         return item.key;
@@ -180,7 +121,7 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     // Wrap around to the last column
-    let row = this.collection.headerRows[column.level];
+    let row = this.collection.getHeaderRows()[column.level];
     let childNodes = [...row.childNodes];
     for (let i = childNodes.length - 1; i >= 0; i--) {
       let item = childNodes[i];
@@ -203,29 +144,7 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
         : this.findNextColumnKey(item);
     }
 
-    // If focus is on a row, focus the first child cell.
-    if (item.type === 'item') {
-      let children = [...item.childNodes];
-      return this.direction === 'rtl'
-        ? children[children.length - 1].key
-        : children[0].key;
-    }
-
-    // If focus is on a cell, focus the next cell if any,
-    // otherwise focus the parent row.
-    if (this.isCell(item)) {
-      let parent = this.collection.getItem(item.parentKey);
-      let children = [...parent.childNodes];
-      let next = this.direction === 'rtl'
-        ? children[item.index - 1]
-        : children[item.index + 1];
-
-      if (next) {
-        return next.key;
-      }
-
-      return item.parentKey;
-    }
+    return super.getKeyRightOf(key);
   }
 
   getKeyLeftOf(key: Key) {
@@ -241,160 +160,7 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
         : this.findPreviousColumnKey(item);
     }
 
-    // If focus is on a row, focus the last child cell.
-    if (item.type === 'item') {
-      let children = [...item.childNodes];
-      return this.direction === 'rtl'
-        ? children[0].key
-        : children[children.length - 1].key;
-    }
-
-    // If focus is on a cell, focus the previous cell if any,
-    // otherwise focus the parent row.
-    if (this.isCell(item)) {
-      let parent = this.collection.getItem(item.parentKey);
-      let children = [...parent.childNodes];
-      let prev = this.direction === 'rtl'
-        ? children[item.index + 1]
-        : children[item.index - 1];
-
-      if (prev) {
-        return prev.key;
-      }
-
-      return parent.key;
-    }
-  }
-
-  getFirstKey(key?: Key, global?: boolean) {
-    let item: Node<T>;
-    if (key != null) {
-      item = this.collection.getItem(key);
-      if (!item) {
-        return;
-      }
-
-      // If global flag is not set, and a cell is currently focused,
-      // move focus to the first cell in the parent row.
-      if (this.isCell(item) && !global) {
-        let parent = this.collection.getItem(item.parentKey);
-        return [...parent.childNodes][0].key;
-      }
-    }
-
-    // Find the first row
-    key = this.findNextKey(item => item.type === 'item');
-
-    // If global flag is set, focus the first cell in the first row.
-    if (key != null && item && this.isCell(item) && global) {
-      let item = this.collection.getItem(key);
-      key = [...item.childNodes][0].key;
-    }
-
-    // Otherwise, focus the row itself.
-    return key;
-  }
-
-  getLastKey(key?: Key, global?: boolean) {
-    let item: Node<T>;
-    if (key != null) {
-      item = this.collection.getItem(key);
-      if (!item) {
-        return;
-      }
-
-      // If global flag is not set, and a cell is currently focused,
-      // move focus to the last cell in the parent row.
-      if (this.isCell(item) && !global) {
-        let parent = this.collection.getItem(item.parentKey);
-        let children = [...parent.childNodes];
-        return children[children.length - 1].key;
-      }
-    }
-
-    // Find the last row
-    key = this.findPreviousKey(item => item.type === 'item');
-
-    // If global flag is set, focus the last cell in the last row.
-    if (key != null && item && this.isCell(item) && global) {
-      let item = this.collection.getItem(key);
-      let children = [...item.childNodes];
-      key = children[children.length - 1].key;
-    }
-
-    // Otherwise, focus the row itself.
-    return key;
-  }
-
-  private getItem(key: Key): HTMLElement {
-    return this.ref.current.querySelector(`[data-key="${key}"]`);
-  }
-
-  private getItemRect(key: Key): Rect {
-    if (this.layout) {
-      return this.layout.getLayoutInfo(key)?.rect;
-    }
-
-    let item = this.getItem(key);
-    if (item) {
-      return new Rect(item.offsetLeft, item.offsetTop, item.offsetWidth, item.offsetHeight);
-    }
-  }
-
-  private getPageHeight(): number {
-    if (this.layout) {
-      return this.layout.virtualizer?.visibleRect.height;
-    }
-
-    return this.ref?.current?.offsetHeight;
-  }
-
-  private getContentHeight(): number {
-    if (this.layout) {
-      return this.layout.getContentSize().height;
-    }
-
-    return this.ref?.current?.scrollHeight;
-  }
-
-  getKeyPageAbove(key: Key) {
-    let itemRect = this.getItemRect(key);
-    if (!itemRect) {
-      return null;
-    }
-
-    let pageY = Math.max(0, itemRect.maxY - this.getPageHeight());
-
-    while (itemRect && itemRect.y > pageY) {
-      key = this.getKeyAbove(key);
-      itemRect = this.getItemRect(key);
-    }
-
-    return key;
-  }
-
-  getKeyPageBelow(key: Key) {
-    let itemRect = this.getItemRect(key);
-
-    if (!itemRect) {
-      return null;
-    }
-
-    let pageHeight = this.getPageHeight();
-    let pageY = Math.min(this.getContentHeight(), itemRect.y + pageHeight);
-
-    while (itemRect && itemRect.maxY < pageY) {
-      let nextKey = this.getKeyBelow(key);
-      itemRect = this.getItemRect(nextKey);
-
-      // Guard against case where maxY of the last key is barely less than pageY due to rounding
-      // and thus it attempts to set key to null
-      if (nextKey != null) {
-        key = nextKey;
-      }
-    }
-
-    return key;
+    return super.getKeyLeftOf(key);
   }
 
   getKeyForSearch(search: string, fromKey?: Key) {
