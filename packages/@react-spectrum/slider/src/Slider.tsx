@@ -47,7 +47,7 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
       }}
       style={
         // @ts-ignore
-        {'--spectrum-slider-track-color': trackGradient && `linear-gradient(to ${direction === 'ltr' ? 'right' : 'left'}, ${trackGradient.join(', ')})`}
+        {'--spectrum-slider-track-gradient': trackGradient && `linear-gradient(to ${direction === 'ltr' ? 'right' : 'left'}, ${trackGradient.join(', ')})`}
       }>
       {({trackRef, inputRef, state}: SliderBaseChildArguments) => {
         fillOffset = fillOffset != null ? clamp(fillOffset, state.getThumbMinValue(0), state.getThumbMaxValue(0)) : fillOffset;
