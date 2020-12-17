@@ -10,20 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useId';
-export * from './chain';
-export * from './mergeProps';
-export * from './filterDOMProps';
-export * from './findLastIndex';
-export * from './focusWithoutScrolling';
-export * from './getOffset';
-export * from './number';
-export * from './runAfterTransition';
-export * from './useDrag1D';
-export * from './useGlobalListeners';
-export * from './useLabels';
-export * from './useUpdateEffect';
-export * from './useLayoutEffect';
-export * from './useResizeObserver';
-export * from './getScrollParent';
-export * from './useViewportSize';
+/**
+ * Is the reverse of Array.prototype.findIndex() by starting from the end of the
+ * array and finding the first match and returning the index of the found item.
+ */
+export function findLastIndex(array: any[], predicate: (v: number) => boolean): number {
+  var reverseIndex = array.slice().reverse().findIndex(predicate);
+  var count = array.length - 1;
+  return reverseIndex >= 0 ? count - reverseIndex : reverseIndex;
+}

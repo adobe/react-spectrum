@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp, mergeProps, useGlobalListeners} from '@react-aria/utils';
+import {clamp, findLastIndex, mergeProps, useGlobalListeners} from '@react-aria/utils';
 import {getSliderThumbId, sliderIds} from './utils';
 import React, {HTMLAttributes, LabelHTMLAttributes, OutputHTMLAttributes, useRef} from 'react';
 import {setInteractionModality, useMove} from '@react-aria/interactions';
@@ -115,9 +115,11 @@ export function useSlider(
       }
       let value = state.getPercentValue(percent);
 
+      // Figure out if the click is past all the thumbs to move last thumb when thumbs are stacked.
+      const isPastLastThumb = state.values.every(v => v - value < 0);
       // Only compute the diff for thumbs that are editable, as only they can be dragged
       const minDiff = Math.min(...state.values.map((v, index) => state.isThumbEditable(index) ? Math.abs(v - value) : Number.POSITIVE_INFINITY));
-      const index = state.values.findIndex(v => Math.abs(v - value) === minDiff);
+      const index = isPastLastThumb ? findLastIndex(state.values, v => Math.abs(v - value) === minDiff) : state.values.findIndex(v => Math.abs(v - value) === minDiff);
       if (minDiff !== Number.POSITIVE_INFINITY && index >= 0) {
         // Don't unfocus anything
         e.preventDefault();

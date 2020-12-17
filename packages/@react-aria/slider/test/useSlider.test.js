@@ -240,6 +240,32 @@ describe('useSlider', () => {
       expect(stateRef.current.values).toEqual([40, 80]);
     });
 
+    it('should allow you to set value of before thumbs when thumbs stacked', () => {
+      let onChangeSpy = jest.fn();
+      let onChangeEndSpy = jest.fn();
+
+      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[40, 40]} />);
+
+      let track = screen.getByTestId('track');
+      fireEvent.pointerDown(track, {pageX: 20, clientX: 20});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([20, 40]);
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([20, 40]);
+    });
+
+    it('should allow you to set value of after thumbs when thumbs stacked', () => {
+      let onChangeSpy = jest.fn();
+      let onChangeEndSpy = jest.fn();
+
+      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[40, 40]} />);
+
+      let track = screen.getByTestId('track');
+      fireEvent.pointerDown(track, {pageX: 60, clientX: 60});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([40, 60]);
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([40, 60]);
+    });
+
     it('should not allow you to set value if disabled', () => {
       let onChangeSpy = jest.fn();
       let onChangeEndSpy = jest.fn();
