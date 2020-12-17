@@ -94,7 +94,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
         // https://github.com/tc39/ecma402/issues/393
         // https://github.com/tc39/proposal-intl-numberformat-v3#formatrange-ecma-402-393
         displayValue = `${state.getThumbValueLabel(0)} – ${state.getThumbValueLabel(1)}`;
-        maxLabelLength = 2 + 2 * Math.max(
+        maxLabelLength = 3 + 2 * Math.max(
           maxLabelLength,
           [...formatter.format(state.getThumbMinValue(1))].length, [...formatter.format(state.getThumbMaxValue(1))].length
         );
