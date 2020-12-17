@@ -40,7 +40,8 @@ export function useSliderThumb(
     isDisabled,
     validationState,
     trackRef,
-    inputRef
+    inputRef,
+    'aria-label': ariaLabel
   } = opts;
 
   let isVertical = opts.orientation === 'vertical';
@@ -49,10 +50,13 @@ export function useSliderThumb(
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
   let labelId = sliderIds.get(state);
+  let id = getSliderThumbId(state, index);
+  let thumbId = `${id}-thumb`;
   const {labelProps, fieldProps} = useLabel({
     ...opts,
-    id: getSliderThumbId(state, index),
-    'aria-labelledby': `${labelId} ${opts['aria-labelledby'] ?? ''}`.trim()
+    id,
+    'aria-label': undefined,
+    'aria-labelledby': `${labelId} ${opts['aria-labelledby'] ?? ''} ${ariaLabel ? thumbId : ''}`.trim()
   });
 
   const value = state.values[index];
@@ -165,6 +169,8 @@ export function useSliderThumb(
     thumbProps: !isDisabled ? mergeProps(
       moveProps,
       {
+        id: thumbId,
+        'aria-label': ariaLabel,
         onMouseDown: () => {onDown(null);},
         onPointerDown: (e: React.PointerEvent) => {onDown(e.pointerId);},
         onTouchStart: (e: React.TouchEvent) => {onDown(e.changedTouches[0].identifier);}

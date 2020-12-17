@@ -37,6 +37,7 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
   let {containerProps, trackProps, labelProps} = useSlider(props, state, trackRef);
   let {inputProps, thumbProps} = useSliderThumb({
     ...props,
+    'aria-label': undefined,
     index: 0
   }, state);
 
