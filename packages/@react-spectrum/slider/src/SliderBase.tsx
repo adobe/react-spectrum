@@ -152,7 +152,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
         })}
       </div>
       {labelPosition === 'side' &&
-        <div className={classNames(styles, 'spectrum-Slider-labelContainer')} role="presentation">
+        <div className={classNames(styles, 'spectrum-Slider-valueLabelContainer')} role="presentation">
           {showValueLabel && valueNode}
         </div>
       }
