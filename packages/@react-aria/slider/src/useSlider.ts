@@ -174,13 +174,13 @@ export function useSlider(
     },
     trackProps: mergeProps({
       onMouseDown(e: React.MouseEvent<HTMLElement>) {
-        if (e.button !== 0) {
+        if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
           return;
         }
         onDownTrack(e, undefined, e.clientX, e.clientY);
       },
       onPointerDown(e: React.PointerEvent<HTMLElement>) {
-        if (e.pointerType === 'mouse' && e.button !== 0) {
+        if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
           return;
         }
         onDownTrack(e, e.pointerId, e.clientX, e.clientY);
