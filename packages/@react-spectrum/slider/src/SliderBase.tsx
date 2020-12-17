@@ -128,7 +128,8 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
       className={classNames(styles,
         'spectrum-Slider',
         {
-          'spectrum-Slider--label-side': labelPosition === 'side',
+          'spectrum-Slider--positionTop': labelPosition === 'top',
+          'spectrum-Slider--positionSide': labelPosition === 'side',
           'is-disabled': isDisabled
         },
         classes,
