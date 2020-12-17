@@ -1,8 +1,21 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {BaseSliderProps, SliderProps} from '@react-types/slider';
 import {DEFAULT_MIN_VALUE, useSliderState} from '@react-stately/slider';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
 import styles from './story-slider.css';
+import {useNumberFormatter} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 import {ValueBase} from '@react-types/shared';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
@@ -10,7 +23,8 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 interface StorySliderProps extends BaseSliderProps, ValueBase<number> {
   origin?: number,
   onChangeEnd?: (value: number) => void,
-  showTip?: boolean
+  showTip?: boolean,
+  formatOptions?: Intl.NumberFormatOptions
 }
 
 export function StorySlider(props: StorySliderProps) {
@@ -25,8 +39,8 @@ export function StorySlider(props: StorySliderProps) {
     onChange: props.onChange == null ? undefined : (vals: number[]) => props.onChange(vals[0]),
     onChangeEnd: props.onChangeEnd == null ? undefined : (vals: number[]) => props.onChangeEnd(vals[0])
   };
-
-  const state = useSliderState(multiProps);
+  const formatter = useNumberFormatter(props.formatOptions);
+  const state = useSliderState({...multiProps, numberFormatter: formatter});
   const {
     containerProps,
     trackProps,

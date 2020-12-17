@@ -7,12 +7,13 @@ import {useSlider, useSliderThumb} from '../src';
 import {useSliderState} from '@react-stately/slider';
 
 describe('useSlider', () => {
+  let numberFormatter = new Intl.NumberFormat('en-US', {});
   describe('aria labels', () => {
     function renderUseSlider(sliderProps) {
       return renderHook(() => {
         let trackRef = useRef(null);
         let inputRef = useRef(null);
-        let state = useSliderState(sliderProps);
+        let state = useSliderState({...sliderProps, numberFormatter});
         let props = useSlider(sliderProps, state, trackRef);
         let {inputProps} = useSliderThumb({
           index: 0,
@@ -66,7 +67,7 @@ describe('useSlider', () => {
 
     function Example(props) {
       let trackRef = useRef(null);
-      let state = useSliderState(props);
+      let state = useSliderState({...props, numberFormatter});
       stateRef.current = state;
       let {trackProps} = useSlider(props, state, trackRef);
       return <div data-testid="track" ref={trackRef} {...trackProps} />;
@@ -184,7 +185,7 @@ describe('useSlider', () => {
 
     function Example(props) {
       let trackRef = useRef(null);
-      let state = useSliderState(props);
+      let state = useSliderState({...props, numberFormatter});
       stateRef.current = state;
       let {trackProps} = useSlider(props, state, trackRef);
       return <div data-testid="track" ref={trackRef} {...trackProps} />;

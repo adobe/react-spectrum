@@ -7,6 +7,7 @@ import {useSlider, useSliderThumb} from '../src';
 import {useSliderState} from '@react-stately/slider';
 
 describe('useSliderThumb', () => {
+  let numberFormatter = new Intl.NumberFormat('en-US', {});
   describe('aria labels', () => {
     it('should have the right labels with Slider-level label', () => {
       let result = renderHook(() => {
@@ -19,7 +20,7 @@ describe('useSliderThumb', () => {
           maxValue: 200,
           step: 2
         };
-        let state = useSliderState(sliderProps);
+        let state = useSliderState({...sliderProps, numberFormatter});
         let {labelProps, containerProps} = useSlider(sliderProps, state, trackRef);
         let props = useSliderThumb({
           index: 0,
@@ -44,7 +45,7 @@ describe('useSliderThumb', () => {
           maxValue: 200,
           step: 2
         };
-        let state = useSliderState(sliderProps);
+        let state = useSliderState({...sliderProps, numberFormatter});
         let {labelProps, containerProps} = useSlider(sliderProps, state, trackRef);
         let props = useSliderThumb({
           index: 0,
@@ -70,7 +71,7 @@ describe('useSliderThumb', () => {
           maxValue: 200,
           step: 2
         };
-        let state = useSliderState(sliderProps);
+        let state = useSliderState({...sliderProps, numberFormatter});
         let {labelProps, containerProps} = useSlider(sliderProps, state, trackRef);
         let props0 = useSliderThumb({
           index: 0,
@@ -116,7 +117,7 @@ describe('useSliderThumb', () => {
       let trackRef = useRef(null);
       let input0Ref = useRef(null);
       let input1Ref = useRef(null);
-      let state = useSliderState(props);
+      let state = useSliderState({...props, numberFormatter});
       stateRef.current = state;
       let {trackProps, thumbProps: commonThumbProps} = useSlider(props, state, trackRef);
       let {inputProps: input0Props, thumbProps: thumb0Props} = useSliderThumb({
@@ -278,7 +279,7 @@ describe('useSliderThumb', () => {
     function Example(props) {
       let trackRef = useRef(null);
       let inputRef = useRef(null);
-      let state = useSliderState(props);
+      let state = useSliderState({...props, numberFormatter});
       stateRef.current = state;
       let {trackProps} = useSlider(props, state, trackRef);
       let {inputProps, thumbProps} = useSliderThumb({
