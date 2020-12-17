@@ -56,14 +56,11 @@ describe('ColorSlider', () => {
     expect(slider).toHaveAttribute('step', '1');
   });
 
-  it('sets aria-label when label is disabled', () => {
+  it('sets aria-label when label is disbaled', () => {
     let {getByRole} = render(<ColorSlider defaultValue={new Color('#000000')} channel="red" label={null} />);
-    let group = getByRole('group');
     let slider = getByRole('slider');
 
-    expect(group).toHaveAttribute('aria-label', 'Red');
-    expect(slider.parentElement).not.toHaveAttribute('aria-label', 'Red');
-    expect(slider).toHaveAttribute('aria-labelledby', `${group.id}`);
+    expect(slider).toHaveAttribute('aria-label', 'Red');
   });
 
   it('the slider is focusable', () => {
