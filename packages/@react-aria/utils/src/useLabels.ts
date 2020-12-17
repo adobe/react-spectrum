@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps} from '@react-types/shared';
-import {useId} from './useId';
+import {useHiddenText} from './useHiddenText';
 
 /**
  * Merges aria-label and aria-labelledby into aria-labelledby when both exist.
@@ -20,17 +20,19 @@ import {useId} from './useId';
  */
 export function useLabels(props: DOMProps & AriaLabelingProps, defaultLabel?: string): DOMProps & AriaLabelingProps {
   let {
-    id,
     'aria-label': label,
     'aria-labelledby': labelledBy
   } = props;
 
-  // If there is both an aria-label and aria-labelledby,
-  // combine them by pointing to the element itself.
-  id = useId(id);
+  // If there is both an aria-label and aria-labelledby, create a hidden span element
+  // that holds the label and reference that in aria-labelledby. Normally we'd use a
+  // self reference to the element itself, but this is currently broken in Chrome.
+  // See https://bugs.chromium.org/p/chromium/issues/detail?id=1159567
+  let hiddenLabelId = useHiddenText(labelledBy && label ? label : undefined);
   if (labelledBy && label) {
-    let ids = new Set([...labelledBy.trim().split(/\s+/), id]);
+    let ids = new Set([...labelledBy.trim().split(/\s+/), hiddenLabelId]);
     labelledBy = [...ids].join(' ');
+    label = undefined;
   } else if (labelledBy) {
     labelledBy = labelledBy.trim().split(/\s+/).join(' ');
   }
@@ -41,7 +43,6 @@ export function useLabels(props: DOMProps & AriaLabelingProps, defaultLabel?: st
   }
 
   return {
-    id,
     'aria-label': label,
     'aria-labelledby': labelledBy
   };
