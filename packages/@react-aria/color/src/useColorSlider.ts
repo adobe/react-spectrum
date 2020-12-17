@@ -37,6 +37,7 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
   let {containerProps, trackProps, labelProps} = useSlider(props, state, trackRef);
   let {inputProps, thumbProps} = useSliderThumb({
     ...props,
+    // Avoid label being repeated on the thumb since it will already be labeled by the group
     'aria-label': undefined,
     index: 0
   }, state);
