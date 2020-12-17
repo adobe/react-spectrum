@@ -22,14 +22,15 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 
 interface StoryMultiSliderProps extends SliderProps {
-  children: React.ReactNode
+  children: React.ReactNode,
+  formatOptions?: Intl.NumberFormatOptions
 }
 
 export function StoryMultiSlider(props: StoryMultiSliderProps) {
   const {children} = props;
   const trackRef = React.useRef<HTMLDivElement>(null);
   const formatter = useNumberFormatter(props.formatOptions);
-  const state = useSliderState({...props, formatter});
+  const state = useSliderState({...props, numberFormatter: formatter});
   const {
     trackProps, labelProps, containerProps
   } = useSlider(props, state, trackRef);

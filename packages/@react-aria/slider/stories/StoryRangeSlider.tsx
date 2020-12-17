@@ -11,7 +11,8 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 interface StoryRangeSliderProps extends SliderProps {
   minLabel?: string,
   maxLabel?: string,
-  showTip?: boolean
+  showTip?: boolean,
+  formatOptions?: Intl.NumberFormatOptions
 }
 
 export function StoryRangeSlider(props: StoryRangeSliderProps) {
@@ -20,7 +21,7 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
   const minInputRef = React.useRef<HTMLInputElement>(null);
   const maxInputRef = React.useRef<HTMLInputElement>(null);
   const formatter = useNumberFormatter(props.formatOptions);
-  const state = useSliderState({...props, formatter});
+  const state = useSliderState({...props, numberFormatter: formatter});
 
   if (state.values.length !== 2) {
     throw new Error('Must specify an array of two numbers');

@@ -66,7 +66,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
   }
 
   const formatter = useNumberFormatter(formatOptions);
-  const state = useSliderState({...props, formatter});
+  const state = useSliderState({...props, numberFormatter: formatter});
   let trackRef = useRef();
   let {
     containerProps,

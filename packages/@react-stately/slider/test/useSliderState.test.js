@@ -14,22 +14,19 @@ import {act, renderHook} from '@testing-library/react-hooks';
 import {useSliderState} from '../';
 
 describe('useSliderState', () => {
+  let numberFormatter = new Intl.NumberFormat('en-US', {});
   it('should allow setting and reading values, percentages, and labels', () => {
     let formatOptions = {
       style: 'currency',
       currency: 'USD'
     };
-    let formatter = new Intl.NumberFormat('en-US', formatOptions);
+    let numberFormatter = new Intl.NumberFormat('en-US', formatOptions);
     let result = renderHook(() => useSliderState({
       defaultValue: [50],
       minValue: 10,
       maxValue: 200,
       step: 10,
-      formatOptions: {
-        style: 'currency',
-        currency: 'USD'
-      },
-      formatter
+      numberFormatter
     })).result;
 
     expect(result.current.getThumbValue(0)).toBe(50);
@@ -66,7 +63,8 @@ describe('useSliderState', () => {
     let result = renderHook(() => useSliderState({
       defaultValue: [50, 70, 90],
       minValue: 10,
-      maxValue: 200
+      maxValue: 200,
+      numberFormatter
     })).result;
 
     expect(result.current.values).toEqual([50, 70, 90]);
@@ -94,7 +92,8 @@ describe('useSliderState', () => {
     let onChangeSpy = jest.fn();
     let result = renderHook(() => useSliderState({
       onChangeEnd: onChangeEndSpy,
-      onChange: onChangeSpy
+      onChange: onChangeSpy,
+      numberFormatter
     })).result;
 
     expect(result.current.values).toEqual([0]);
@@ -125,7 +124,8 @@ describe('useSliderState', () => {
     let onChangeSpy = jest.fn();
     let result = renderHook(() => useSliderState({
       onChangeEnd: onChangeEndSpy,
-      onChange: onChangeSpy
+      onChange: onChangeSpy,
+      numberFormatter
     })).result;
 
     expect(result.current.values).toEqual([0]);

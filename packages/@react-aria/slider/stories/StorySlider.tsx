@@ -23,7 +23,8 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 interface StorySliderProps extends BaseSliderProps, ValueBase<number> {
   origin?: number,
   onChangeEnd?: (value: number) => void,
-  showTip?: boolean
+  showTip?: boolean,
+  formatOptions?: Intl.NumberFormatOptions
 }
 
 export function StorySlider(props: StorySliderProps) {
@@ -39,7 +40,7 @@ export function StorySlider(props: StorySliderProps) {
     onChangeEnd: props.onChangeEnd == null ? undefined : (vals: number[]) => props.onChangeEnd(vals[0])
   };
   const formatter = useNumberFormatter(props.formatOptions);
-  const state = useSliderState({...multiProps, formatter});
+  const state = useSliderState({...multiProps, numberFormatter: formatter});
   const {
     containerProps,
     trackProps,

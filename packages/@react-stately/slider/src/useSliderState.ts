@@ -11,7 +11,7 @@
  */
 
 import {clamp} from '@react-aria/utils';
-import {SliderStateProps} from '@react-types/slider';
+import {SliderProps} from '@react-types/slider';
 import {useControlledState} from '@react-stately/utils';
 import {useRef, useState} from 'react';
 
@@ -62,8 +62,12 @@ export const DEFAULT_MIN_VALUE = 0;
 export const DEFAULT_MAX_VALUE = 100;
 export const DEFAULT_STEP_VALUE = 1;
 
+export interface SliderStateProps extends SliderProps {
+  numberFormatter: Intl.NumberFormat
+}
+
 export function useSliderState(props: SliderStateProps): SliderState {
-  const {isDisabled, minValue = DEFAULT_MIN_VALUE, maxValue = DEFAULT_MAX_VALUE, formatter, step = DEFAULT_STEP_VALUE} = props;
+  const {isDisabled, minValue = DEFAULT_MIN_VALUE, maxValue = DEFAULT_MAX_VALUE, numberFormatter: formatter, step = DEFAULT_STEP_VALUE} = props;
 
   const [values, setValues] = useControlledState<number[]>(
     props.value as any,
@@ -127,9 +131,6 @@ export function useSliderState(props: SliderStateProps): SliderState {
   }
 
   function getFormattedValue(value: number) {
-    if (!formatter) {
-      return value.toString();
-    }
     return formatter.format(value);
   }
 
