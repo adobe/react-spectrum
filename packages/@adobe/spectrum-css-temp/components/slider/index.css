@@ -79,12 +79,17 @@ governing permissions and limitations under the License.
     align-items: center;
     width: auto;
 
+
     .spectrum-Slider-controls {
       flex: 1;
       width: var(--spectrum-component-single-line-width);
     }
     .spectrum-Slider-labelContainer {
       margin-inline-end: calc(var(--spectrum-slider-label-gap-x) / 2);
+    }
+
+    &:only-child {
+      text-align: start;
     }
 
   }
@@ -353,11 +358,6 @@ governing permissions and limitations under the License.
   cursor: default;
   font-feature-settings: "tnum";
   text-align: end;
-
-  /* When the value is the only child of the label container it's a side label value and we set text-align: start */
-  &:only-child {
-    text-align: start;
-  }
 }
 
 .spectrum-Slider-value {
