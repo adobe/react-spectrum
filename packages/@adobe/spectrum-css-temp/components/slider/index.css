@@ -88,7 +88,7 @@ governing permissions and limitations under the License.
       margin-inline-end: calc(var(--spectrum-slider-label-gap-x) / 2);
     }
 
-    &:only-child {
+    .spectrum-Slider-value {
       text-align: start;
     }
 
