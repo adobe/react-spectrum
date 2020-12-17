@@ -15,6 +15,11 @@ import {mergeProps} from '@react-aria/utils';
 import React, {HTMLAttributes, MutableRefObject, ReactNode, RefObject, useContext, useEffect} from 'react';
 import {useFocus, useKeyboard} from '@react-aria/interactions';
 
+interface FocusableResult {
+  /** Props to spread on the target element. */
+  focusableProps: HTMLAttributes<HTMLElement>
+}
+
 interface FocusableOptions extends FocusableProps, FocusableDOMProps {
   /** Whether focus should be disabled. */
   isDisabled?: boolean
@@ -69,7 +74,7 @@ export {_FocusableProvider as FocusableProvider};
 /**
  * Used to make an element focusable and capable of auto focus.
  */
-export function useFocusable(props: FocusableOptions, domRef: RefObject<HTMLElement>) {
+export function useFocusable(props: FocusableOptions, domRef: RefObject<HTMLElement>): FocusableResult {
   let {focusProps} = useFocus(props);
   let {keyboardProps} = useKeyboard(props);
   let interactions = mergeProps(focusProps, keyboardProps);
@@ -86,7 +91,7 @@ export function useFocusable(props: FocusableOptions, domRef: RefObject<HTMLElem
     focusableProps: mergeProps(
       {
         ...interactions,
-        tabIndex: props.excludeFromTabOrder && !props.isDisabled ? -1 : undefined
+        tabIndex: props.tabIndex ?? (props.excludeFromTabOrder && !props.isDisabled ? -1 : undefined)
       },
       interactionProps
     )
