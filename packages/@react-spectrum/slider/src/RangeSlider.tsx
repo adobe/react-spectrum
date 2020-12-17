@@ -44,7 +44,6 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivE
     <SliderBase {...baseProps} classes={'spectrum-Slider--range'} ref={ref}>
       {({trackRef, inputRef, state}: SliderBaseChildArguments) => {
         let cssDirection = direction === 'rtl' ? 'right' : 'left';
-
         return (
           <>
             <div
@@ -72,7 +71,6 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivE
             <div
               className={classNames(styles, 'spectrum-Slider-track')}
               style={{
-                [cssDirection]: `${state.getThumbPercent(1) * 100}%`,
                 width: `${(1 - state.getThumbPercent(1)) * 100}%`
               }} />
           </>

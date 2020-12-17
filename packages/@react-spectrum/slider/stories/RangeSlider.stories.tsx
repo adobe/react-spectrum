@@ -41,7 +41,7 @@ storiesOf('Slider/RangeSlider', module)
   )
   .add(
     'label overflow',
-    () => render({label: 'This is a rather long label for this narrow slider element.', maxValue: 1000, width: '100px'})
+    () => render({label: 'This is a rather long label for this narrow slider element.', maxValue: 1000, width: '300px'})
   )
   .add(
     'showValueLabel: false',
