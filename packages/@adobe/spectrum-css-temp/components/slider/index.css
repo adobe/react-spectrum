@@ -617,15 +617,15 @@ governing permissions and limitations under the License.
   &::after {
     content: '';
     display: block;
-    width: var(--spectrum-slider-controls-margin);
+    inline-size: var(--spectrum-slider-controls-margin);
     position: absolute;
-    height: 100%;
+    block-size: 100%;
   }
   &::before {
-    left: calc(var(--spectrum-slider-controls-margin) * -1);
+    inset-inline-start: calc(var(--spectrum-slider-controls-margin) * -1);
   }
   &::after {
-    right: calc(var(--spectrum-slider-controls-margin) * -1);
+    inset-inline-end: calc(var(--spectrum-slider-controls-margin) * -1);
   }
 }
 
