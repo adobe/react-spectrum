@@ -84,7 +84,9 @@ export interface SpectrumBarSliderBase<T> extends BaseSliderProps<T>, ValueBase<
    * The slider's step value.
    * @default 1
    */
-  step?: number
+  step?: number,
+  /** A function that returns the content to display as the value's label. Overrides default formatted number. */
+  getValueLabel?: (value: T) => string
 }
 
 export interface SpectrumSliderProps extends SpectrumBarSliderBase<number> {

@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ErrorBoundary} from '@react-spectrum/story-utils';
 import {Flex} from '@adobe/react-spectrum';
-import React, {useState} from 'react';
+import React from 'react';
 import {Slider} from '../';
 import {SpectrumSliderProps} from '@react-types/slider';
 import {storiesOf} from '@storybook/react';
@@ -70,10 +70,11 @@ storiesOf('Slider', module)
   )
   .add(
     'custom valueLabel',
-    () => {
-      let [state, setState] = useState(0);
-      return render({label: 'Label', value: state, onChange: setState, valueLabel: `A ${state} B`});
-    }
+    () => render({label: 'Label', getValueLabel: state => `A ${state} B`})
+  )
+  .add(
+    'custom valueLabel with label overflow',
+    () => render({label: 'This is a rather long label for this narrow slider element.', getValueLabel: state => `A ${state} B`})
   )
   .add(
     'labelPosition: side',

@@ -362,6 +362,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Slider-value {
   margin-inline-start: var(--spectrum-slider-label-gap-x);
+  white-space: nowrap;
 }
 
 .spectrum-Slider-ticks {
