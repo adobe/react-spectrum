@@ -102,7 +102,8 @@ import {mergeProps} from '@react-aria/utils';
 function Slider(props) {
   let trackRef = React.useRef(null);
 
-  let state = useSliderState(props);
+  let numberFormatter = new Intl.NumberFormat('en-US', props.formatOptions);
+  let state = useSliderState({...props, numberFormatter});
   let {
     containerProps,
     trackProps,
@@ -194,7 +195,8 @@ function Thumb(props) {
 function RangeSlider(props) {
   let trackRef = React.useRef(null);
 
-  let state = useSliderState(props);
+  let numberFormatter = new Intl.NumberFormat('en-US', props.formatOptions);
+  let state = useSliderState({...props, numberFormatter});
   let {
     containerProps,
     trackProps,
