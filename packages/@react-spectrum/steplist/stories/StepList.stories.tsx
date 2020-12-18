@@ -31,6 +31,9 @@ storiesOf('StepList', module)
   .add('Controlled selection', 
     () => ControlledSelection()
   )
+  .add('Controlled selection vertical', 
+    () => ControlledSelectionVertical()
+  )
   .add('Uncontrolled selection', 
     () => UncontrolledSelection()
   )
@@ -46,7 +49,11 @@ storiesOf('StepList', module)
   .add('Medium Size', Medium)
   .add('Small Size', Small)
   .add('Large Size', Large)
-  .add('Extra Large Size', XLarge);
+  .add('Extra Large Size', XLarge)
+  .add('Medium Size Vertical', MediumVert)
+  .add('Small Size Vertical', SmallVert)
+  .add('Large Size Vertical', LargeVert)
+  .add('Extra Large Size Vertical', XLargeVert);
 
 function ControlledSelection() {
   const [selectedIdx, setSelected] = useState(0);
@@ -56,7 +63,7 @@ function ControlledSelection() {
   }
   const currKey = options[selectedIdx].key;
   return (<div>
-    <StepList size="M" selectedKey={currKey} onSelectionChange={handleSelectionChange}>
+    <StepList isEmphasized size="M" selectedKey={currKey} onSelectionChange={handleSelectionChange}>
       {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
     </StepList>
     <div style={{padding: 20}}>
@@ -66,6 +73,23 @@ function ControlledSelection() {
   </div>);
 }
 
+function ControlledSelectionVertical() {
+  const [selectedIdx, setSelected] = useState(0);
+  function handleSelectionChange(key: Key) {
+    const selectedIdx = options.findIndex(o => o.key === key);
+    setSelected(selectedIdx);
+  }
+  const currKey = options[selectedIdx].key;
+  return (<div>
+    <StepList isEmphasized orientation="vertical" size="M" selectedKey={currKey} onSelectionChange={handleSelectionChange}>
+      {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
+    </StepList>
+    <div style={{padding: 20}}>
+      <button onClick={() => setSelected(Math.max(0, selectedIdx - 1))}>Back</button>
+      <button onClick={() => setSelected(Math.min(options.length - 1, selectedIdx + 1))}>Next</button>
+    </div>    
+  </div>);
+}
 
 function UncontrolledSelection() {
   return (
@@ -124,6 +148,47 @@ function Large() {
 function XLarge() {
   return (
     <StepList size="XL" defaultSelectedKey="fallback" defaultLastCompletedStep="fallback">
+      <Item key="offer">Offer</Item>
+      <Item key="fallback">Fallback</Item>
+      <Item key="summary">Summary</Item>
+    </StepList>
+  );
+}
+
+
+function MediumVert() {
+  return (
+    <StepList orientation="vertical" size="M" defaultSelectedKey="fallback" defaultLastCompletedStep="fallback">
+      <Item key="offer">Offer</Item>
+      <Item key="fallback">Fallback</Item>
+      <Item key="summary">Summary</Item>
+    </StepList>
+  );
+}
+
+function SmallVert() {
+  return (
+    <StepList orientation="vertical" size="S" defaultSelectedKey="fallback" defaultLastCompletedStep="fallback">
+      <Item key="offer">Offer</Item>
+      <Item key="fallback">Fallback</Item>
+      <Item key="summary">Summary</Item>
+    </StepList>
+  );
+}
+
+function LargeVert() {
+  return (
+    <StepList orientation="vertical" size="L" defaultSelectedKey="fallback" defaultLastCompletedStep="fallback">
+      <Item key="offer">Offer</Item>
+      <Item key="fallback">Fallback</Item>
+      <Item key="summary">Summary</Item>
+    </StepList>
+  );
+}
+
+function XLargeVert() {
+  return (
+    <StepList orientation="vertical" size="XL" defaultSelectedKey="fallback" defaultLastCompletedStep="fallback">
       <Item key="offer">Offer</Item>
       <Item key="fallback">Fallback</Item>
       <Item key="summary">Summary</Item>
