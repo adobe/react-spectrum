@@ -115,29 +115,40 @@ export function useSlider(
       }
       let value = state.getPercentValue(percent);
 
-      let index;
-      let split = state.values.findIndex(v => value - v < 0);
-      if (split === -1) {
-        index = state.values.length - 1;
+      const {less, greater} = state.values.reduce((acc, v, index) => {
+        if (state.isThumbEditable(index)) {
+          let distance = value - v;
+          if (distance > 0 && Math.abs(distance) < acc.less.distance) {
+            acc.less.distance = Math.abs(distance);
+            acc.less.index = index;
+          } else if (distance > 0 && Math.abs(distance) === acc.less.distance && index > acc.less.index) {
+            acc.less.index = index;
+          } else if (distance <= 0 && Math.abs(distance) < acc.greater.distance) {
+            acc.greater.distance = Math.abs(distance);
+            acc.greater.index = index;
+          } else if (distance <= 0 && Math.abs(distance) === acc.greater.distance && index < acc.greater.index) {
+            acc.greater.index = index;
+          }
+        }
+        return acc;
+      }, {less: {distance: Number.POSITIVE_INFINITY, index: NaN}, greater: {distance: Number.POSITIVE_INFINITY, index: NaN}});
+      let closestThumb;
+      if (less.distance < greater.distance) {
+        closestThumb = less.index;
       } else {
-        let lastLeft = state.values[split - 1];
-        let firstRight = state.values[split];
-        if (Math.abs(lastLeft - value) < Math.abs(firstRight - value) && state.isThumbEditable(split - 1) || !state.isThumbEditable(split))
-          index = split - 1;
-        else
-          index = split;
+        closestThumb = greater.index;
       }
 
-      if (index >= 0) {
+      if (!isNaN(closestThumb)) {
         // Don't unfocus anything
         e.preventDefault();
 
-        realTimeTrackDraggingIndex.current = index;
-        state.setFocusedThumb(index);
+        realTimeTrackDraggingIndex.current = closestThumb;
+        state.setFocusedThumb(closestThumb);
         currentPointer.current = id;
 
         state.setThumbDragging(realTimeTrackDraggingIndex.current, true);
-        state.setThumbValue(index, value);
+        state.setThumbValue(closestThumb, value);
 
         addGlobalListener(window, 'mouseup', onUpTrack, false);
         addGlobalListener(window, 'touchend', onUpTrack, false);
