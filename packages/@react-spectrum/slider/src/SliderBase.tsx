@@ -40,7 +40,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     classes,
     style,
     labelPosition = 'top',
-    valueLabel,
+    getValueLabel,
     showValueLabel = !!props.label,
     formatOptions,
     ...otherProps
@@ -80,10 +80,31 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
   let inputRef = useRef();
   let domRef = useFocusableRef(ref, inputRef);
 
-  let displayValue = valueLabel;
+  let displayValue = '';
   let maxLabelLength = undefined;
 
-  if (!displayValue) {
+  if (typeof getValueLabel === 'function') {
+    displayValue = getValueLabel(state.values);
+    switch (state.values.length) {
+      case 1:
+        maxLabelLength = Math.max(
+          getValueLabel([state.getThumbMinValue(0)]).length,
+          getValueLabel([state.getThumbMaxValue(0)]).length
+        );
+        break;
+      case 2:
+        // Try all possible combinations of min and max values.
+        maxLabelLength = Math.max(
+          getValueLabel([state.getThumbMinValue(0), state.getThumbMinValue(1)]).length,
+          getValueLabel([state.getThumbMinValue(0), state.getThumbMaxValue(1)]).length,
+          getValueLabel([state.getThumbMaxValue(0), state.getThumbMinValue(1)]).length,
+          getValueLabel([state.getThumbMaxValue(0), state.getThumbMaxValue(1)]).length
+        );
+        break;
+      default:
+        throw new Error('Only sliders with 1 or 2 handles are supported!');
+    }
+  } else {
     maxLabelLength = Math.max([...formatter.format(state.getThumbMinValue(0))].length, [...formatter.format(state.getThumbMaxValue(0))].length);
     switch (state.values.length) {
       case 1:
@@ -94,7 +115,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
         // https://github.com/tc39/ecma402/issues/393
         // https://github.com/tc39/proposal-intl-numberformat-v3#formatrange-ecma-402-393
         displayValue = `${state.getThumbValueLabel(0)} – ${state.getThumbValueLabel(1)}`;
-        maxLabelLength = 2 + 2 * Math.max(
+        maxLabelLength = 3 + 2 * Math.max(
           maxLabelLength,
           [...formatter.format(state.getThumbMinValue(1))].length, [...formatter.format(state.getThumbMaxValue(1))].length
         );
