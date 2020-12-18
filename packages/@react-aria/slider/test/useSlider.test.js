@@ -30,10 +30,10 @@ describe('useSlider', () => {
         label: 'Slider'
       });
 
-      let {props: {labelProps, containerProps}, inputProps} = result.current;
+      let {props: {labelProps, containerProps}} = result.current;
 
       expect(containerProps.role).toBe('group');
-      expect(labelProps.htmlFor).toBe(inputProps.id);
+      expect(labelProps.htmlFor).toBe(undefined); // https://bugs.webkit.org/show_bug.cgi?id=172464
     });
 
     it('should have the right labels when setting aria-label', () => {

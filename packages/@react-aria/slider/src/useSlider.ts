@@ -153,8 +153,11 @@ export function useSlider(
   };
 
   if (labelProps.htmlFor) {
-    // Override the `for` attribute to point to the first thumb instead of the group element.
-    labelProps.htmlFor = labelProps.htmlFor ? getSliderThumbId(state, 0) : undefined,
+    // Ideally the `for` attribute should point to the first thumb, but VoiceOver on iOS
+    // causes this to override the `aria-labelledby` on the thumb. This causes the first
+    // thumb to only be announced as the slider label rather than its individual name as well.
+    // See https://bugs.webkit.org/show_bug.cgi?id=172464.
+    delete labelProps.htmlFor;
     labelProps.onClick = () => {
       // Safari does not focus <input type="range"> elements when clicking on an associated <label>,
       // so do it manually. In addition, make sure we show the focus ring.

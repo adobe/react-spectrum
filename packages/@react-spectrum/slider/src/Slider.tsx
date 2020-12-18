@@ -21,7 +21,7 @@ import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useLocale} from '@react-aria/i18n';
 
 function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
-  let {onChange, value, defaultValue, isFilled, fillOffset, trackGradient, ...otherProps} = props;
+  let {onChange, value, defaultValue, isFilled, fillOffset, trackGradient, getValueLabel, ...otherProps} = props;
 
   let baseProps: Omit<SliderBaseProps, 'children'> = {
     ...otherProps,
@@ -30,7 +30,8 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
     defaultValue: defaultValue != null ? [defaultValue] : undefined,
     onChange(v) {
       onChange?.(v[0]);
-    }
+    },
+    getValueLabel: getValueLabel ? ([v]) => getValueLabel(v) : undefined
   };
 
   let {direction} = useLocale();
