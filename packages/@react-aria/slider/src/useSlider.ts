@@ -133,7 +133,7 @@ export function useSlider(
         }
       }
 
-      // Confirm that the found closedt thumb is editable, not disabled, and move it
+      // Confirm that the found closest thumb is editable, not disabled, and move it
       if (closestThumb >= 0 && state.isThumbEditable(closestThumb)) {
         // Don't unfocus anything
         e.preventDefault();
