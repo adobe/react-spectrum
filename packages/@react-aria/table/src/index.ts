@@ -12,11 +12,11 @@
 
 export * from './useTable';
 export * from './useTableColumnHeader';
+export * from './useTableRow';
 export * from './useTableRowGroup';
 export * from './useTableRowHeader';
 export * from './useTableSelectionCheckbox';
 
 // TODO are these needed?
-export {useGridRow as useTableRow} from '@react-aria/grid';
 export {useGridCell as useTableCell} from '@react-aria/grid';
 export {useGridRowGroup as useTableRowGroup} from '@react-aria/grid';

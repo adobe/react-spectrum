@@ -33,19 +33,13 @@ export class GridCollection<T> implements IGridCollection<T> {
       // we can skip this node and its children. We always visit columns though,
       // because we depend on order to build the columns array.
       let prevNode = this.keyMap.get(node.key);
-      // if (node.type !== 'column' && node === prevNode) { // TODO remove column type check?
-      //   return;
-      // }
 
       this.keyMap.set(node.key, node);
 
       let childKeys = new Set();
       let last: GridNode<T>;
-      let index = 0;
       for (let child of node.childNodes) {
         childKeys.add(child.key);
-        // child.parentKey = node.key; // todo does this go here?
-        child.index = index++;
 
         if (last) {
           last.nextKey = child.key;

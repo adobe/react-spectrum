@@ -190,7 +190,7 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
     let currentRowIndex = 0;
     let rows = [];
     let columnKeyMap = new Map();
-    let newVisit = (node: TableNode<T>) => {
+    let visit = (node: TableNode<T>) => {
       switch (node.type) {
         case 'body':
           body = node;
@@ -218,12 +218,12 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
           break;
       }
       for (let child of node.childNodes) {
-        newVisit(child);
+        visit(child);
       }
     };
 
     for (let node of nodes) {
-      newVisit(node);
+      visit(node);
     }
     let headerRows = buildHeaderRows(columnKeyMap, columns);
     headerRows.reverse().forEach(row => rows.unshift(row));

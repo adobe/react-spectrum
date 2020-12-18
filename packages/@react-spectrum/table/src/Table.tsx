@@ -364,7 +364,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
 }
 
 function TableHeader({children, ...otherProps}) {
-  let {rowGroupProps} = useTableRowGroup();
+  let {rowGroupProps} = useGridRowGroup();
 
   return (
     <div {...rowGroupProps} {...otherProps} className={classNames(styles, 'spectrum-Table-head')}>
@@ -483,7 +483,7 @@ function TableRow({item, children, ...otherProps}) {
   let state = useTableContext();
   let isDisabled = state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key) && !isDisabled;
-  let {rowProps} = useGridRow({
+  let {rowProps} = useTableRow({
     node: item,
     isSelected,
     ref,
@@ -673,7 +673,7 @@ function CenteredWrapper({children}) {
   return (
     <div
       role="row"
-      aria-rowindex={state.collection.headerRows.length + state.collection.size + 1}
+      aria-rowindex={state.collection.getHeaderRows().length + state.collection.size + 1}
       className={classNames(stylesOverrides, 'react-spectrum-Table-centeredWrapper')}>
       <div role="rowheader" aria-colspan={state.collection.columns.length}>
         {children}

@@ -11,55 +11,16 @@
  */
 
 import {getRowLabelledBy} from './utils';
-import {HTMLAttributes, RefObject} from 'react';
-import {Node} from '@react-types/shared';
+import {GridRowAria, GridRowProps, useGridRow} from '@react-aria/grid';
 import {TableState} from '@react-stately/table';
-import {usePress} from '@react-aria/interactions';
-import {useSelectableItem} from '@react-aria/selection';
 
-interface RowProps {
-  node: Node<unknown>,
-  ref?: RefObject<HTMLElement>,
-  isVirtualized?: boolean,
-  isSelected?: boolean,
-  isDisabled?: boolean
-}
-
-interface RowAria {
-  rowProps: HTMLAttributes<HTMLElement>
-}
-
-export function useTableRow<T>(props: RowProps, state: TableState<T>): RowAria {
-  let {
-    node,
-    ref,
-    isVirtualized,
-    isSelected,
-    isDisabled
-  } = props;
-
-  let {itemProps} = useSelectableItem({
-    selectionManager: state.selectionManager,
-    key: node.key,
-    ref,
-    isVirtualized
-  });
-
-  // TODO: move into useSelectableItem?
-  let {pressProps} = usePress({...itemProps, isDisabled});
-
-  let rowProps: HTMLAttributes<HTMLElement> = {
-    role: 'row',
-    'aria-selected': isSelected,
-    'aria-labelledby': getRowLabelledBy(state, node.key),
-    ...pressProps
-  };
-
-  if (isVirtualized) {
-    rowProps['aria-rowindex'] = node.index + state.collection.headerRows.length + 1; // aria-rowindex is 1 based
-  }
-
+export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T>): GridRowAria {
+  let {node} = props;
+  let {rowProps} = useGridRow(props, state);
   return {
-    rowProps
+    rowProps: {
+      ...rowProps,
+      'aria-labelledby': getRowLabelledBy(state, node.key)
+    }
   };
 }

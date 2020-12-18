@@ -17,7 +17,7 @@ import {Node} from '@react-types/shared';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
-interface GridRowProps<T> {
+export interface GridRowProps<T> {
   node: Node<T>,
   ref?: RefObject<HTMLElement>,
   isVirtualized?: boolean,
@@ -25,7 +25,7 @@ interface GridRowProps<T> {
   isDisabled?: boolean
 }
 
-interface GridRowAria {
+export interface GridRowAria {
   rowProps: HTMLAttributes<HTMLElement>
 }
 
@@ -51,7 +51,6 @@ export function useGridRow<T>(props: GridRowProps<T>, state: GridState<T>): Grid
   let rowProps: HTMLAttributes<HTMLElement> = {
     role: 'row',
     'aria-selected': isSelected,
-    'aria-labelledby': node.props ? node.props['aria-labelledby'] : null,
     ...pressProps
   };
 
