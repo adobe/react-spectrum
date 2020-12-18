@@ -44,7 +44,9 @@ describe('Slider', function () {
 
     let label = document.getElementById(labelId);
     expect(label).toHaveTextContent(/^The Label$/);
-    expect(label).toHaveAttribute('for', getByRole('slider').id);
+    // https://bugs.webkit.org/show_bug.cgi?id=172464
+    // expect(label).toHaveAttribute('for', getByRole('slider').id);
+    expect(label).not.toHaveAttribute('for');
 
     // Shows value as well
     let output = getByRole('status');
@@ -143,10 +145,10 @@ describe('Slider', function () {
     expect(renders).toStrictEqual([50, 55]);
   });
 
-  it('supports a custom valueLabel', function () {
+  it('supports a custom getValueLabel', function () {
     function Test() {
       let [value, setValue] = useState(50);
-      return (<Slider label="The Label" value={value} onChange={setValue} valueLabel={`A${value}B`} />);
+      return (<Slider label="The Label" value={value} onChange={setValue} getValueLabel={value => `A${value}B`} />);
     }
 
     let {getByRole} = render(<Test />);

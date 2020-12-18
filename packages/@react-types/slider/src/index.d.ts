@@ -12,7 +12,6 @@ import {
   Validation,
   ValueBase
 } from '@react-types/shared';
-import {ReactNode} from 'react';
 
 export interface BaseSliderProps<T = number[]> extends RangeInputBase<number>, LabelableProps, AriaLabelingProps {
   /**
@@ -68,8 +67,8 @@ export interface SpectrumBarSliderBase<T> extends BaseSliderProps<T>, ValueBase<
   labelPosition?: LabelPosition,
   /** Whether the value's label is displayed. True by default if there's a `label`, false by default if not. */
   showValueLabel?: boolean,
-  /** The content to display as the value's label. Overrides default formatted number. */
-  valueLabel?: ReactNode,
+  /** A function that returns the content to display as the value's label. Overrides default formatted number. */
+  getValueLabel?: (value: T) => string
   /**
    * The slider's minimum value.
    * @default 0
