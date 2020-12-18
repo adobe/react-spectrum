@@ -51,7 +51,7 @@ describe('RangeSlider', function () {
     let output = getByRole('status');
     expect(output).toHaveTextContent('0 – 100');
     expect(output).toHaveAttribute('for', getAllByRole('slider').map(s => s.id).join(' '));
-    expect(output).toHaveAttribute('aria-labelledby', label.id);
+    expect(output).not.toHaveAttribute('aria-labelledby');
     expect(output).toHaveAttribute('aria-live', 'off');
   });
 

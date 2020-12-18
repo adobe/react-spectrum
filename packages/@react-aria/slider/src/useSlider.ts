@@ -203,7 +203,6 @@ export function useSlider(
     }, moveProps),
     outputProps: {
       htmlFor: state.values.map((_, index) => getSliderThumbId(state, index)).join(' '),
-      'aria-labelledby': labelProps.id,
       'aria-live': 'off'
     }
   };
