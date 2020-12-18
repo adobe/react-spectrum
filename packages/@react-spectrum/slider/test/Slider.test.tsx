@@ -44,7 +44,9 @@ describe('Slider', function () {
 
     let label = document.getElementById(labelId);
     expect(label).toHaveTextContent(/^The Label$/);
-    expect(label).toHaveAttribute('for', getByRole('slider').id);
+    // https://bugs.webkit.org/show_bug.cgi?id=172464
+    // expect(label).toHaveAttribute('for', getByRole('slider').id);
+    expect(label).not.toHaveAttribute('for');
 
     // Shows value as well
     let output = getByRole('status');
