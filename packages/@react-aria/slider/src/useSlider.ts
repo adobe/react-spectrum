@@ -166,6 +166,8 @@ export function useSlider(
     };
   }
 
+  const outputId = `${fieldProps.id}-output`;
+
   return {
     labelProps,
     // The root element of the Slider will have role="group" to group together
@@ -182,7 +184,8 @@ export function useSlider(
     }, moveProps),
     outputProps: {
       htmlFor: state.values.map((_, index) => getSliderThumbId(state, index)).join(' '),
-      'aria-labelledby': labelProps.id,
+      id: outputId,
+      'aria-labelledby': `${labelProps.id || fieldProps.id} ${outputId}`,
       'aria-live': 'off'
     }
   };

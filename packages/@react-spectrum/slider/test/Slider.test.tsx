@@ -52,7 +52,7 @@ describe('Slider', function () {
     let output = getByRole('status');
     expect(output).toHaveTextContent('0');
     expect(output).toHaveAttribute('for', getByRole('slider').id);
-    expect(output).toHaveAttribute('aria-labelledby', label.id);
+    expect(output).toHaveAttribute('aria-labelledby', `${label.id} ${output.id}`);
     expect(output).toHaveAttribute('aria-live', 'off');
   });
 
