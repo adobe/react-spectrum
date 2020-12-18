@@ -91,7 +91,7 @@ storiesOf('Slider (hooks)', module)
         label="9 thumbs - 5 disabled"
         onChange={action('onChange')}
         onChangeEnd={action('onChangeEnd')}
-        defaultValue={[5, 10, 15, 30, 35, 40, 50, 75, 80]}>
+        defaultValue={[5, 10, 15, 30, 35, 40, 50, 75, 90]}>
         <StoryThumb label="A" isDisabled />
         <StoryThumb label="B" />
         <StoryThumb label="C" />
