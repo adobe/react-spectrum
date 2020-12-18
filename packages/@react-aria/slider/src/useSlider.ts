@@ -192,13 +192,22 @@ export function useSlider(
       ...fieldProps
     },
     trackProps: mergeProps({
-      onMouseDown(e: React.MouseEvent<HTMLElement>) { onDownTrack(e, undefined, e.clientX, e.clientY); },
-      onPointerDown(e: React.PointerEvent<HTMLElement>) { onDownTrack(e, e.pointerId, e.clientX, e.clientY); },
+      onMouseDown(e: React.MouseEvent<HTMLElement>) {
+        if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+          return;
+        }
+        onDownTrack(e, undefined, e.clientX, e.clientY);
+      },
+      onPointerDown(e: React.PointerEvent<HTMLElement>) {
+        if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
+          return;
+        }
+        onDownTrack(e, e.pointerId, e.clientX, e.clientY);
+      },
       onTouchStart(e: React.TouchEvent<HTMLElement>) { onDownTrack(e, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY); }
     }, moveProps),
     outputProps: {
       htmlFor: state.values.map((_, index) => getSliderThumbId(state, index)).join(' '),
-      'aria-labelledby': labelProps.id,
       'aria-live': 'off'
     }
   };
