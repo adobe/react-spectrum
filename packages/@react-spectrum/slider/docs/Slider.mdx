@@ -96,7 +96,7 @@ By default, the value label is formatted as a plain number. This can be customiz
 
 * `showValueLabel`: Allows you to display or hide the value label.
 * `formatOptions`: Allows you to customize the format of the value.
-* `valueLabel`: Allows you to customize the value label to any string.
+* `getValueLabel`: Allows you to customize the value label string based on the slider's current value.
 
 ```tsx example
 function Example() {
@@ -118,7 +118,7 @@ function Example() {
       <Slider
         label="Donuts to buy"
         maxValue={60}
-        valueLabel={`${donuts} of 60 Donuts`}
+        getValueLabel={(value) => `${value} of 60 Donuts`}
         value={donuts}
         onChange={setDonuts} />
     </Flex>

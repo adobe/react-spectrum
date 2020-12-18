@@ -12,7 +12,6 @@ import {
   Validation,
   ValueBase
 } from '@react-types/shared';
-import {ReactNode} from 'react';
 
 export interface BaseSliderProps<T = number[]> extends RangeInputBase<number>, LabelableProps, AriaLabelingProps {
   /**

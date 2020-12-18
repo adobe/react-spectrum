@@ -97,7 +97,7 @@ By default, the value label is formatted as a plain number. This can be customiz
 
 * `showValueLabel`: Allows you to display or hide the value label.
 * `formatOptions`: Allows you to customize the format of the value.
-* `valueLabel`: Allows you to customize the value label to any string.
+* `getValueLabel`: Allows you to customize the value label string based on the slider's current value.
 
 ```tsx example
 function Example() {
@@ -119,7 +119,7 @@ function Example() {
       <RangeSlider
         label="Search radius"
         maxValue={200}
-        valueLabel={`${meters.start}m to ${meters.end}m away`}
+        getValueLabel={(value) => `${value.start}m to ${value.end}m away`}
         value={meters}
         onChange={setMeters} />
     </Flex>
