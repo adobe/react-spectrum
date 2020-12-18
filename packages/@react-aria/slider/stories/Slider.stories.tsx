@@ -85,6 +85,26 @@ storiesOf('Slider (hooks)', module)
     )
   )
   .add(
+    '8 thumbs with disabled',
+    () => (
+      <StoryMultiSlider
+        label="9 thumbs - 5 disabled"
+        onChange={action('onChange')}
+        onChangeEnd={action('onChangeEnd')}
+        defaultValue={[5, 10, 15, 30, 35, 40, 50, 75, 80]}>
+        <StoryThumb label="A" isDisabled />
+        <StoryThumb label="B" />
+        <StoryThumb label="C" />
+        <StoryThumb label="D" isDisabled />
+        <StoryThumb label="E" isDisabled />
+        <StoryThumb label="F" />
+        <StoryThumb label="G" />
+        <StoryThumb label="H" isDisabled />
+        <StoryThumb label="I" isDisabled />
+      </StoryMultiSlider>
+    )
+  )
+  .add(
     '3 thumbs with aria-label',
     () => (
       <StoryMultiSlider

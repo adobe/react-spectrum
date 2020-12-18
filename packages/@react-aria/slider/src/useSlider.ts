@@ -115,12 +115,20 @@ export function useSlider(
       }
       let value = state.getPercentValue(percent);
 
-      // Figure out if the click is past all the thumbs to move last thumb when thumbs are stacked.
-      const isPastLastThumb = state.values.every(v => v - value < 0);
-      // Only compute the diff for thumbs that are editable, as only they can be dragged
-      const minDiff = Math.min(...state.values.map((v, index) => state.isThumbEditable(index) ? Math.abs(v - value) : Number.POSITIVE_INFINITY));
-      const index = isPastLastThumb ? findLastIndex(state.values, v => Math.abs(v - value) === minDiff) : state.values.findIndex(v => Math.abs(v - value) === minDiff);
-      if (minDiff !== Number.POSITIVE_INFINITY && index >= 0) {
+      let index;
+      let split = state.values.findIndex(v => value - v < 0);
+      if (split === -1) {
+        index = state.values.length - 1;
+      } else {
+        let lastLeft = state.values[split - 1];
+        let firstRight = state.values[split];
+        if (Math.abs(lastLeft - value) < Math.abs(firstRight - value) && state.isThumbEditable(split - 1) || !state.isThumbEditable(split))
+          index = split - 1;
+        else
+          index = split;
+      }
+
+      if (index >= 0) {
         // Don't unfocus anything
         e.preventDefault();
 

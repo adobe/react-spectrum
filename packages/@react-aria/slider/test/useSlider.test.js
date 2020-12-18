@@ -266,6 +266,42 @@ describe('useSlider', () => {
       expect(stateRef.current.values).toEqual([40, 60]);
     });
 
+    it('should allow you to set value of before thumbs when many thumbs and stacked', () => {
+      let onChangeSpy = jest.fn();
+      let onChangeEndSpy = jest.fn();
+
+      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[25, 25, 50, 75, 75]} />);
+
+      let track = screen.getByTestId('track');
+      fireEvent.pointerDown(track, {pageX: 70, clientX: 70});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([25, 25, 50, 70, 75]);
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([25, 25, 50, 70, 75]);
+
+      fireEvent.pointerDown(track, {pageX: 20, clientX: 20});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([20, 25, 50, 70, 75]);
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([20, 25, 50, 70, 75]);
+    });
+
+    it('should allow you to set value of after thumbs when many thumbs and stacked', () => {
+      let onChangeSpy = jest.fn();
+      let onChangeEndSpy = jest.fn();
+
+      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[25, 25, 50, 75, 75]} />);
+
+      let track = screen.getByTestId('track');
+      fireEvent.pointerDown(track, {pageX: 80, clientX: 80});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([25, 25, 50, 75, 80]);
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([25, 25, 50, 75, 80]);
+
+      fireEvent.pointerDown(track, {pageX: 30, clientX: 30});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([25, 30, 50, 75, 80]);
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([25, 30, 50, 75, 80]);
+    });
+
     it('should not allow you to set value if disabled', () => {
       let onChangeSpy = jest.fn();
       let onChangeEndSpy = jest.fn();
