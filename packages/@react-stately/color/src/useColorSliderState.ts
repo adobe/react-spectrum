@@ -14,6 +14,7 @@ import {Color} from './Color';
 import {ColorSliderProps} from '@react-types/color';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import {useControlledState} from '@react-stately/utils';
+import {useNumberFormatter} from '@react-aria/i18n';
 
 export interface ColorSliderState extends SliderState {
   value: Color,
@@ -35,12 +36,14 @@ export function useColorSliderState(props: ColorSliderProps): ColorSliderState {
   if (value == null && defaultValue == null) {
     throw new Error('useColorSliderState requires a value or defaultValue');
   }
+  let numberFormatter = useNumberFormatter();
 
   let [color, setColor] = useControlledState(value && normalizeColor(value), defaultValue && normalizeColor(defaultValue), onChange);
 
   let sliderState = useSliderState({
     ...Color.getRange(channel),
     ...otherProps,
+    numberFormatter,
     value: [color.getChannelValue(channel)],
     onChange([v]) {
       setColor(color.withChannelValue(channel, v));

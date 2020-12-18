@@ -56,6 +56,43 @@ governing permissions and limitations under the License.
 
   user-select: none;
   touch-action: none;
+
+  width: var(--spectrum-global-dimension-size-2400);
+  min-inline-size: var(--spectrum-slider-min-width);
+
+
+  &.spectrum-Slider--positionTop {
+    display: inline-flex;
+    flex-direction: column;
+    width: var(--spectrum-component-single-line-width);
+
+    .spectrum-Slider-controls {
+      /* If the user overrides the width of the field, propagate to the inner component */
+      width: calc(100% - calc(var(--spectrum-slider-controls-margin)) * 2);
+    }
+  }
+
+  /* The side label variant of Field is inline, and fills as much space as needed
+   * by default. If an explicit width is set, then the field flexes to fill available space. */
+  &.spectrum-Slider--positionSide {
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+
+
+    .spectrum-Slider-controls {
+      flex: 1;
+      width: var(--spectrum-component-single-line-width);
+    }
+    .spectrum-Slider-labelContainer {
+      margin-inline-end: calc(var(--spectrum-slider-label-gap-x) / 2);
+    }
+
+    .spectrum-Slider-value {
+      text-align: start;
+    }
+
+  }
 }
 
 .spectrum-Slider-controls {
@@ -66,10 +103,9 @@ governing permissions and limitations under the License.
   z-index: auto;
 
   min-block-size: var(--spectrum-slider-height);
-  min-inline-size: var(--spectrum-slider-min-width);
 
   /* These calculations prevent the track from spilling outside of the control */
-  inline-size: calc(100% - calc(var(--spectrum-slider-controls-margin) * 2));
+  inline-size: calc(100% - calc(var(--spectrum-slider-controls-margin)));
   margin-inline-start: var(--spectrum-slider-controls-margin);
   min-block-size: var(--spectrum-slider-height);
 
@@ -304,7 +340,6 @@ governing permissions and limitations under the License.
 
   inline-size: auto;
 
-  padding-block-start: var(--spectrum-fieldlabel-padding-top);
 
   font-size: var(--spectrum-text-size-text-label);
   line-height: var(--spectrum-line-height-text-label);
@@ -327,6 +362,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Slider-value {
   margin-inline-start: var(--spectrum-slider-label-gap-x);
+  white-space: nowrap;
 }
 
 .spectrum-Slider-ticks {

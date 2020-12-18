@@ -12,34 +12,36 @@
 
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
-import React, {CSSProperties, HTMLAttributes, MutableRefObject, ReactNode, useRef} from 'react';
+import React, {CSSProperties, ReactNode, RefObject, useRef} from 'react';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import {SpectrumBarSliderBase} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useNumberFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useSlider, useSliderThumb} from '@react-aria/slider';
+import {useSlider} from '@react-aria/slider';
 
 export interface SliderBaseChildArguments {
-  inputRefs: MutableRefObject<undefined>[],
-  thumbProps: HTMLAttributes<HTMLElement>[],
-  inputProps: HTMLAttributes<HTMLElement>[],
+  inputRef: RefObject<HTMLInputElement>,
+  trackRef: RefObject<HTMLElement>,
   state: SliderState
 }
 
 export interface SliderBaseProps extends SpectrumBarSliderBase<number[]> {
-  children: (SliderBaseChildArguments) => ReactNode,
+  children: (opts: SliderBaseChildArguments) => ReactNode,
   classes?: string[] | Object,
-  style?: CSSProperties,
-  count: 1 | 2
+  style?: CSSProperties
 }
 
 function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {
-    isDisabled, count,
-    children, classes, style,
-    labelPosition = 'top', valueLabel, showValueLabel = !!props.label,
+    isDisabled,
+    children,
+    classes,
+    style,
+    labelPosition = 'top',
+    getValueLabel,
+    showValueLabel = !!props.label,
     formatOptions,
     ...otherProps
   } = props;
@@ -65,39 +67,44 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     }
   }
 
-  let state = useSliderState({...props, formatOptions});
+  const formatter = useNumberFormatter(formatOptions);
+  const state = useSliderState({...props, numberFormatter: formatter});
   let trackRef = useRef();
   let {
     containerProps,
     trackProps,
-    labelProps
+    labelProps,
+    outputProps
   } = useSlider(props, state, trackRef);
 
-  let inputRefs = [];
-  let thumbProps = [];
-  let inputProps = [];
-  for (let i = 0; i < count; i++) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    inputRefs[i] = useRef();
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    let v = useSliderThumb({
-      index: i,
-      isDisabled: props.isDisabled,
-      trackRef,
-      inputRef: inputRefs[i]
-    }, state);
+  let inputRef = useRef();
+  let domRef = useFocusableRef(ref, inputRef);
 
-    inputProps[i] = v.inputProps;
-    thumbProps[i] = v.thumbProps;
-  }
-
-  let domRef = useFocusableRef(ref, inputRefs[0]);
-
-  let formatter = useNumberFormatter(formatOptions);
-
-  let displayValue = valueLabel;
+  let displayValue = '';
   let maxLabelLength = undefined;
-  if (!displayValue) {
+
+  if (typeof getValueLabel === 'function') {
+    displayValue = getValueLabel(state.values);
+    switch (state.values.length) {
+      case 1:
+        maxLabelLength = Math.max(
+          getValueLabel([state.getThumbMinValue(0)]).length,
+          getValueLabel([state.getThumbMaxValue(0)]).length
+        );
+        break;
+      case 2:
+        // Try all possible combinations of min and max values.
+        maxLabelLength = Math.max(
+          getValueLabel([state.getThumbMinValue(0), state.getThumbMinValue(1)]).length,
+          getValueLabel([state.getThumbMinValue(0), state.getThumbMaxValue(1)]).length,
+          getValueLabel([state.getThumbMaxValue(0), state.getThumbMinValue(1)]).length,
+          getValueLabel([state.getThumbMaxValue(0), state.getThumbMaxValue(1)]).length
+        );
+        break;
+      default:
+        throw new Error('Only sliders with 1 or 2 handles are supported!');
+    }
+  } else {
     maxLabelLength = Math.max([...formatter.format(state.getThumbMinValue(0))].length, [...formatter.format(state.getThumbMaxValue(0))].length);
     switch (state.values.length) {
       case 1:
@@ -107,9 +114,8 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
         // This should really use the NumberFormat#formatRange proposal...
         // https://github.com/tc39/ecma402/issues/393
         // https://github.com/tc39/proposal-intl-numberformat-v3#formatrange-ecma-402-393
-        displayValue = `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`;
-
-        maxLabelLength = 2 + 2 * Math.max(
+        displayValue = `${state.getThumbValueLabel(0)} – ${state.getThumbValueLabel(1)}`;
+        maxLabelLength = 3 + 2 * Math.max(
           maxLabelLength,
           [...formatter.format(state.getThumbMinValue(1))].length, [...formatter.format(state.getThumbMaxValue(1))].length
         );
@@ -119,17 +125,21 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     }
   }
 
-  let labelNode = <label className={classNames(styles, 'spectrum-Slider-label')} {...labelProps}>{props.label}</label>;
+  let labelNode = (
+    <label
+      className={classNames(styles, 'spectrum-Slider-label')}
+      {...labelProps}>
+      {props.label}
+    </label>
+  );
+
   let valueNode = (
-    <div
+    <output
+      {...outputProps}
       className={classNames(styles, 'spectrum-Slider-value')}
-      // TODO really?
-      role="textbox"
-      aria-readonly="true"
-      aria-labelledby={labelProps.id}
       style={maxLabelLength && {width: `${maxLabelLength}ch`, minWidth: `${maxLabelLength}ch`}}>
       {displayValue}
-    </div>
+    </output>
   );
 
   return (
@@ -138,7 +148,8 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
       className={classNames(styles,
         'spectrum-Slider',
         {
-          'spectrum-Slider--label-side': labelPosition === 'side',
+          'spectrum-Slider--positionTop': labelPosition === 'top',
+          'spectrum-Slider--positionSide': labelPosition === 'side',
           'is-disabled': isDisabled
         },
         classes,
@@ -156,9 +167,8 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
       }
       <div className={classNames(styles, 'spectrum-Slider-controls')} ref={trackRef} {...trackProps} role="presentation">
         {children({
-          inputRefs,
-          thumbProps,
-          inputProps,
+          trackRef,
+          inputRef,
           state
         })}
       </div>
