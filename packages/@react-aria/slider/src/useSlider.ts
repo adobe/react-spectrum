@@ -115,19 +115,30 @@ export function useSlider(
       }
       let value = state.getPercentValue(percent);
 
-      // Only compute the diff for thumbs that are editable, as only they can be dragged
-      const minDiff = Math.min(...state.values.map((v, index) => state.isThumbEditable(index) ? Math.abs(v - value) : Number.POSITIVE_INFINITY));
-      const index = state.values.findIndex(v => Math.abs(v - value) === minDiff);
-      if (minDiff !== Number.POSITIVE_INFINITY && index >= 0) {
+      let closestThumb;
+      let split = state.values.findIndex(v => value - v < 0);
+      if (split === -1) {
+        closestThumb = state.values.length - 1;
+      } else {
+        let lastLeft = state.values[split - 1];
+        let firstRight = state.values[split];
+        if (Math.abs(lastLeft - value) < Math.abs(firstRight - value)) {
+          closestThumb = split - 1;
+        } else {
+          closestThumb = split;
+        }
+      }
+
+      if (closestThumb >= 0 && state.isThumbEditable(closestThumb)) {
         // Don't unfocus anything
         e.preventDefault();
 
-        realTimeTrackDraggingIndex.current = index;
-        state.setFocusedThumb(index);
+        realTimeTrackDraggingIndex.current = closestThumb;
+        state.setFocusedThumb(closestThumb);
         currentPointer.current = id;
 
         state.setThumbDragging(realTimeTrackDraggingIndex.current, true);
-        state.setThumbValue(index, value);
+        state.setThumbValue(closestThumb, value);
 
         addGlobalListener(window, 'mouseup', onUpTrack, false);
         addGlobalListener(window, 'touchend', onUpTrack, false);
