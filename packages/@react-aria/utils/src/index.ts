@@ -14,7 +14,6 @@ export * from './useId';
 export * from './chain';
 export * from './mergeProps';
 export * from './filterDOMProps';
-export * from './findLastIndex';
 export * from './focusWithoutScrolling';
 export * from './getOffset';
 export * from './number';
