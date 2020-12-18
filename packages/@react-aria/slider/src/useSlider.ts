@@ -122,10 +122,11 @@ export function useSlider(
       } else {
         let lastLeft = state.values[split - 1];
         let firstRight = state.values[split];
-        if (Math.abs(lastLeft - value) < Math.abs(firstRight - value))
+        if (Math.abs(lastLeft - value) < Math.abs(firstRight - value)) {
           closestThumb = split - 1;
-        else
+        } else {
           closestThumb = split;
+        }
       }
 
       if (closestThumb >= 0 && state.isThumbEditable(closestThumb)) {
