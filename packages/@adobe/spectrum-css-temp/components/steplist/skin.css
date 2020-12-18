@@ -55,7 +55,6 @@ governing permissions and limitations under the License.
     &.is-selected {
       .spectrum-Steplist-marker {
         color: var(--spectrum-global-color-gray-50);
-        border-bottom-color: var(--spectrum-steplist-complete-segment-color)
       }
     }
     &.is-hovered {
