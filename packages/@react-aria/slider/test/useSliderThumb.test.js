@@ -88,15 +88,11 @@ describe('useSliderThumb', () => {
         return {props0, props1, labelProps, containerProps};
       }).result;
 
-      let {inputProps: inputProps0, thumbProps: thumbProps0} = result.current.props0;
-      let {inputProps: inputProps1, thumbProps: thumbProps1} = result.current.props1;
+      let {inputProps: inputProps0} = result.current.props0;
+      let {inputProps: inputProps1} = result.current.props1;
       let labelId = result.current.containerProps.id;
-      expect(thumbProps0.id).toBe(`${inputProps0.id}-thumb`);
-      expect(thumbProps1.id).toBe(`${inputProps1.id}-thumb`);
-      expect(thumbProps0['aria-label']).toBe('thumb0');
-      expect(thumbProps1['aria-label']).toBe('thumb1');
-      expect(inputProps0).toMatchObject({type: 'range', step: 2, value: 50, min: 10, max: 70, 'aria-labelledby': `${labelId} ${thumbProps0.id}`});
-      expect(inputProps1).toMatchObject({type: 'range', step: 2, value: 70, min: 50, max: 200, 'aria-labelledby': `${labelId} ${thumbProps1.id}`});
+      expect(inputProps0).toMatchObject({type: 'range', step: 2, value: 50, min: 10, max: 70, 'aria-label': 'thumb0',  'aria-labelledby': `${labelId} ${inputProps0.id}`});
+      expect(inputProps1).toMatchObject({type: 'range', step: 2, value: 70, min: 50, max: 200, 'aria-label': 'thumb1', 'aria-labelledby': `${labelId} ${inputProps1.id}`});
     });
   });
 

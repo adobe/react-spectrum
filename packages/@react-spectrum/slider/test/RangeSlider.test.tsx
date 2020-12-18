@@ -31,17 +31,15 @@ describe('RangeSlider', function () {
   });
 
   it('supports label', function () {
-    let {getAllByRole, getByLabelText, getByRole} = render(<RangeSlider label="The Label" />);
+    let {getAllByRole, getByRole} = render(<RangeSlider label="The Label" />);
 
     let group = getByRole('group');
     let labelId = group.getAttribute('aria-labelledby');
     let [leftSlider, rightSlider] = getAllByRole('slider');
-    let leftThumb = getByLabelText('Minimum');
-    let rightThumb = getByLabelText('Maximum');
-    expect(leftThumb).toHaveAttribute('id', `${leftSlider.id}-thumb`);
-    expect(rightThumb).toHaveAttribute('id', `${rightSlider.id}-thumb`);
-    expect(leftSlider.getAttribute('aria-labelledby')).toBe(`${labelId} ${leftThumb.id}`);
-    expect(rightSlider.getAttribute('aria-labelledby')).toBe(`${labelId} ${rightThumb.id}`);
+    expect(leftSlider.getAttribute('aria-label')).toBe('Minimum');
+    expect(rightSlider.getAttribute('aria-label')).toBe('Maximum');
+    expect(leftSlider.getAttribute('aria-labelledby')).toBe(`${labelId} ${leftSlider.id}`);
+    expect(rightSlider.getAttribute('aria-labelledby')).toBe(`${labelId} ${rightSlider.id}`);
 
     let label = document.getElementById(labelId);
     expect(label).toHaveTextContent('The Label');
