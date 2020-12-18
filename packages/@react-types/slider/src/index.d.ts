@@ -55,7 +55,7 @@ export interface SliderThumbProps extends AriaLabelingProps, FocusableDOMProps, 
   index: number
 }
 
-export interface SpectrumBarSliderBase<T> extends BaseSliderProps<T>, ValueBase<T>, StyleProps {
+export interface SpectrumBarSliderBase<T> extends SliderProps<T>, ValueBase<T>, StyleProps {
   /**
    * The display format of the value label.
    */
@@ -68,22 +68,7 @@ export interface SpectrumBarSliderBase<T> extends BaseSliderProps<T>, ValueBase<
   /** Whether the value's label is displayed. True by default if there's a `label`, false by default if not. */
   showValueLabel?: boolean,
   /** A function that returns the content to display as the value's label. Overrides default formatted number. */
-  getValueLabel?: (value: T) => string,
-  /**
-   * The slider's minimum value.
-   * @default 0
-   */
-  minValue?: number,
-  /**
-   * The slider's maximum value.
-   * @default 100
-   */
-  maxValue?: number,
-  /**
-   * The slider's step value.
-   * @default 1
-   */
-  step?: number
+  getValueLabel?: (value: T) => string
 }
 
 export interface SpectrumSliderProps extends SpectrumBarSliderBase<number> {
