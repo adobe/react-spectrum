@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp, findLastIndex, mergeProps, useGlobalListeners} from '@react-aria/utils';
+import {clamp, mergeProps, useGlobalListeners} from '@react-aria/utils';
 import {getSliderThumbId, sliderIds} from './utils';
 import React, {HTMLAttributes, LabelHTMLAttributes, OutputHTMLAttributes, useRef} from 'react';
 import {setInteractionModality, useMove} from '@react-aria/interactions';
