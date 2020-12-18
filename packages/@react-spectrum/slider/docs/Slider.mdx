@@ -96,34 +96,25 @@ By default, the value label is formatted as a plain number. This can be customiz
 
 * `showValueLabel`: Allows you to display or hide the value label.
 * `formatOptions`: Allows you to customize the format of the value.
-* `valueLabel`: Allows you to customize the value label to any string.
+* `getValueLabel`: Allows you to provide a custom function to format the value label.
 
 ```tsx example
-function Example() {
-  let [donuts, setDonuts] = React.useState(54);
-  return (
-    <Flex direction="column" maxWidth="size-3000" gap="size-300">
-      <Slider
-        label="Cookies to buy"
-        showValueLabel={false}
-        defaultValue={90} />
-
-      <Slider
-        label="Percent donus eaten"
-        maxValue={1}
-        step={0.001}
-        formatOptions={{style: 'percent', minimumFractionDigits: 1}}
-        defaultValue={0.891} />
-
-      <Slider
-        label="Donuts to buy"
-        maxValue={60}
-        valueLabel={`${donuts} of 60 Donuts`}
-        value={donuts}
-        onChange={setDonuts} />
-    </Flex>
-  );
-}
+<Flex direction="column" maxWidth="size-3000" gap="size-300">
+  <Slider
+    label="Cookies to buy"
+    showValueLabel={false}
+    defaultValue={90} />
+  <Slider
+    label="Percent donus eaten"
+    maxValue={1}
+    step={0.001}
+    formatOptions={{style: 'percent', minimumFractionDigits: 1}}
+    defaultValue={0.891} />
+  <Slider
+    label="Donuts to buy"
+    maxValue={60}
+    getValueLabel={donuts => `${donuts} of 60 Donuts`} />
+</Flex>
 ```
 
 ### Accessibility

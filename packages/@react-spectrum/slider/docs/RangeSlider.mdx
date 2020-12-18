@@ -97,34 +97,28 @@ By default, the value label is formatted as a plain number. This can be customiz
 
 * `showValueLabel`: Allows you to display or hide the value label.
 * `formatOptions`: Allows you to customize the format of the value.
-* `valueLabel`: Allows you to customize the value label to any string.
+* `getValueLabel`: Allows you to provide a custom function to format the value label.
 
 ```tsx example
-function Example() {
-  let [meters, setMeters] = React.useState({start: 15, end: 60});
-  return (
-    <Flex direction="column" maxWidth="size-3000" gap="size-300">
-      <RangeSlider
-        label="Level range"
-        showValueLabel={false}
-        defaultValue={{start: 75, end: 100}} />
+<Flex direction="column" maxWidth="size-3000" gap="size-300">
+  <RangeSlider
+    label="Level range"
+    showValueLabel={false}
+    defaultValue={{start: 75, end: 100}} />
 
-      <RangeSlider
-        label="Cacao percentage"
-        maxValue={1}
-        step={0.001}
-        formatOptions={{style: 'percent', minimumFractionDigits: 1}}
-        defaultValue={{start: .75, end: 1}} />
+  <RangeSlider
+    label="Cacao percentage"
+    maxValue={1}
+    step={0.001}
+    formatOptions={{style: 'percent', minimumFractionDigits: 1}}
+    defaultValue={{start: .75, end: 1}} />
 
-      <RangeSlider
-        label="Search radius"
-        maxValue={200}
-        valueLabel={`${meters.start}m to ${meters.end}m away`}
-        value={meters}
-        onChange={setMeters} />
-    </Flex>
-  );
-}
+  <RangeSlider
+    label="Search radius"
+    maxValue={200}
+    getValueLabel={meters => `${meters.start}m to ${meters.end}m away`}
+    defaultValue={{start: 15, end: 60}} />
+</Flex>
 ```
 
 ### Accessibility

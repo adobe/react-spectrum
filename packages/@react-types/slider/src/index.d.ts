@@ -68,7 +68,7 @@ export interface SpectrumBarSliderBase<T> extends BaseSliderProps<T>, ValueBase<
   /** Whether the value's label is displayed. True by default if there's a `label`, false by default if not. */
   showValueLabel?: boolean,
   /** A function that returns the content to display as the value's label. Overrides default formatted number. */
-  getValueLabel?: (value: T) => string
+  getValueLabel?: (value: T) => string,
   /**
    * The slider's minimum value.
    * @default 0
