@@ -367,7 +367,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Slider-value {
-  margin-inline-start: var(--spectrum-slider-label-gap-x);
+  margin-inline-start: calc(var(--spectrum-slider-label-gap-x) / 2);
   white-space: nowrap;
 }
 
