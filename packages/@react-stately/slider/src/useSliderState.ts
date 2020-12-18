@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp} from '@react-aria/utils';
+import {clamp, snapValueToStep} from '@react-aria/utils';
 import {SliderProps} from '@react-types/slider';
 import {useControlledState} from '@react-stately/utils';
 import {useRef, useState} from 'react';
@@ -183,7 +183,7 @@ export function useSliderState(props: SliderStateProps): SliderState {
     const thisMax = getThumbMaxValue(index);
 
     // Round value to multiple of step, clamp value between min and max
-    value = clamp(getRoundedValue(value), thisMin, thisMax);
+    value = snapValueToStep(value, thisMin, thisMax, step);
     valuesRef.current = replaceIndex(valuesRef.current, index, value);
     setValues(valuesRef.current);
   }
