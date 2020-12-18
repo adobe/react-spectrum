@@ -115,31 +115,20 @@ export function useSlider(
       }
       let value = state.getPercentValue(percent);
 
-      const {less, greater} = state.values.reduce((acc, v, index) => {
-        if (state.isThumbEditable(index)) {
-          let distance = value - v;
-          if (distance > 0 && Math.abs(distance) < acc.less.distance) {
-            acc.less.distance = Math.abs(distance);
-            acc.less.index = index;
-          } else if (distance > 0 && Math.abs(distance) === acc.less.distance && index > acc.less.index) {
-            acc.less.index = index;
-          } else if (distance <= 0 && Math.abs(distance) < acc.greater.distance) {
-            acc.greater.distance = Math.abs(distance);
-            acc.greater.index = index;
-          } else if (distance <= 0 && Math.abs(distance) === acc.greater.distance && index < acc.greater.index) {
-            acc.greater.index = index;
-          }
-        }
-        return acc;
-      }, {less: {distance: Number.POSITIVE_INFINITY, index: NaN}, greater: {distance: Number.POSITIVE_INFINITY, index: NaN}});
       let closestThumb;
-      if (less.distance < greater.distance) {
-        closestThumb = less.index;
+      let split = state.values.findIndex(v => value - v < 0);
+      if (split === -1) {
+        closestThumb = state.values.length - 1;
       } else {
-        closestThumb = greater.index;
+        let lastLeft = state.values[split - 1];
+        let firstRight = state.values[split];
+        if (Math.abs(lastLeft - value) < Math.abs(firstRight - value))
+          closestThumb = split - 1;
+        else
+          closestThumb = split;
       }
 
-      if (!isNaN(closestThumb)) {
+      if (closestThumb >= 0 && state.isThumbEditable(closestThumb)) {
         // Don't unfocus anything
         e.preventDefault();
 
