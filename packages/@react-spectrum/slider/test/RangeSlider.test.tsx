@@ -162,7 +162,7 @@ describe('RangeSlider', function () {
   it('supports a custom valueLabel', function () {
     function Test() {
       let [value, setValue] = useState({start: 10, end: 40});
-      return (<RangeSlider label="The Label" value={value} onChange={setValue} valueLabel={`A${value.start}B${value.end}C`} />);
+      return (<RangeSlider label="The Label" value={value} onChange={setValue} getValueLabel={value => `A${value.start}B${value.end}C`} />);
     }
 
     let {getAllByRole, getByRole} = render(<Test />);

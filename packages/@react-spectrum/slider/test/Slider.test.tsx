@@ -145,10 +145,10 @@ describe('Slider', function () {
     expect(renders).toStrictEqual([50, 55]);
   });
 
-  it('supports a custom valueLabel', function () {
+  it('supports a custom getValueLabel', function () {
     function Test() {
       let [value, setValue] = useState(50);
-      return (<Slider label="The Label" value={value} onChange={setValue} valueLabel={`A${value}B`} />);
+      return (<Slider label="The Label" value={value} onChange={setValue} getValueLabel={value => `A${value}B`} />);
     }
 
     let {getByRole} = render(<Test />);

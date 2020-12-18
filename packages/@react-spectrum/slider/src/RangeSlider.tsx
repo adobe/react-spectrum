@@ -23,7 +23,7 @@ import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
 function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
-  let {onChange, value, defaultValue, ...otherProps} = props;
+  let {onChange, value, defaultValue, getValueLabel, ...otherProps} = props;
 
   let baseProps: Omit<SliderBaseProps, 'children'> = {
     ...otherProps,
@@ -34,7 +34,8 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivE
       : [props.minValue ?? DEFAULT_MIN_VALUE, props.maxValue ?? DEFAULT_MAX_VALUE],
     onChange(v) {
       onChange?.({start: v[0], end: v[1]});
-    }
+    },
+    getValueLabel: getValueLabel ? ([start, end]) => getValueLabel({start, end}) : undefined
   };
 
   let formatter = useMessageFormatter(intlMessages);
