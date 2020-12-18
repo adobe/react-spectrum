@@ -185,7 +185,7 @@ export function useSlider(
     outputProps: {
       htmlFor: state.values.map((_, index) => getSliderThumbId(state, index)).join(' '),
       id: outputId,
-      'aria-labelledby': `${labelProps.id} ${outputId}`,
+      'aria-labelledby': `${labelProps.id || fieldProps.id} ${outputId}`,
       'aria-live': 'off'
     }
   };
