@@ -165,9 +165,19 @@ export function useSliderThumb(
     thumbProps: !isDisabled ? mergeProps(
       moveProps,
       {
-        onMouseDown: () => {onDown(null);},
-        onPointerDown: (e: React.PointerEvent) => {onDown(e.pointerId);},
-        onTouchStart: (e: React.TouchEvent) => {onDown(e.changedTouches[0].identifier);}
+        onMouseDown: (e: React.MouseEvent<HTMLElement>) => {
+          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+            return;
+          }
+          onDown(null);
+        },
+        onPointerDown: (e: React.PointerEvent<HTMLElement>) => {
+          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+            return;
+          }
+          onDown(e.pointerId);
+        },
+        onTouchStart: (e: React.TouchEvent<HTMLElement>) => {onDown(e.changedTouches[0].identifier);}
       }
     ) : {},
     labelProps
