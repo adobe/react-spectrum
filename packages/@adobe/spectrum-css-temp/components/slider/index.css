@@ -59,7 +59,7 @@ governing permissions and limitations under the License.
 
   width: var(--spectrum-global-dimension-size-2400);
   min-inline-size: var(--spectrum-slider-min-width);
-
+  flex-shrink: 0;
 
   &.spectrum-Slider--positionTop {
     display: inline-flex;
