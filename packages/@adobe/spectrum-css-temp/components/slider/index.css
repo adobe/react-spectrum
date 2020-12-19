@@ -184,10 +184,6 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Slider--range {
-  .spectrum-Slider-value {
-    user-select: text;
-  }
-
   .spectrum-Slider-track {
     &:first-of-type {
       padding-block: 0;
