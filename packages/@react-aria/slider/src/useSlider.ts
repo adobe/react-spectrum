@@ -115,13 +115,17 @@ export function useSlider(
       }
       let value = state.getPercentValue(percent);
 
+      // to find the closet thumb we split the array based on the first thumb position to the "right/end" of the click.
       let closestThumb;
       let split = state.values.findIndex(v => value - v < 0);
-      if (split === -1) {
+      if (split === 0) { // If the index is zero then the closetThumb is the first one
+        closestThumb = split;
+      } else if (split === -1) { // If no index is found they've clicked past all the thumbs
         closestThumb = state.values.length - 1;
       } else {
         let lastLeft = state.values[split - 1];
         let firstRight = state.values[split];
+        // Pick the last left/start thumb, unless they are stacked on top of each other, then pick the right/end one
         if (Math.abs(lastLeft - value) < Math.abs(firstRight - value)) {
           closestThumb = split - 1;
         } else {
@@ -129,6 +133,7 @@ export function useSlider(
         }
       }
 
+      // Confirm that the found closest thumb is editable, not disabled, and move it
       if (closestThumb >= 0 && state.isThumbEditable(closestThumb)) {
         // Don't unfocus anything
         e.preventDefault();
