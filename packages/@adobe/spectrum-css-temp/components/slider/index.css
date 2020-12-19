@@ -84,8 +84,13 @@ governing permissions and limitations under the License.
       flex: 1;
       width: var(--spectrum-component-single-line-width);
     }
+
     .spectrum-Slider-labelContainer {
       margin-inline-end: calc(var(--spectrum-slider-label-gap-x) / 2);
+    }
+
+    .spectrum-Slider-valueLabelContainer {
+      margin-inline-start: calc(var(--spectrum-slider-label-gap-x) / 2);
     }
 
     .spectrum-Slider-value {
@@ -330,7 +335,8 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Slider-labelContainer {
+.spectrum-Slider-labelContainer,
+.spectrum-Slider-valueLabelContainer {
   display: flex;
   position: relative;
 
@@ -357,7 +363,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Slider-value {
-  margin-inline-start: var(--spectrum-slider-label-gap-x);
+  margin-inline-start: calc(var(--spectrum-slider-label-gap-x) / 2);
+  white-space: nowrap;
 }
 
 .spectrum-Slider-ticks {
@@ -605,5 +612,22 @@ governing permissions and limitations under the License.
     .spectrum-Slider-value {
       cursor: inherit;
     }
+  }
+}
+
+.spectrum-Slider-controls {
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    inline-size: var(--spectrum-slider-controls-margin);
+    position: absolute;
+    block-size: 100%;
+  }
+  &::before {
+    inset-inline-start: calc(var(--spectrum-slider-controls-margin) * -1);
+  }
+  &::after {
+    inset-inline-end: calc(var(--spectrum-slider-controls-margin) * -1);
   }
 }

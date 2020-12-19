@@ -40,8 +40,7 @@ export function useSliderThumb(
     isDisabled,
     validationState,
     trackRef,
-    inputRef,
-    'aria-label': ariaLabel
+    inputRef
   } = opts;
 
   let isVertical = opts.orientation === 'vertical';
@@ -50,16 +49,10 @@ export function useSliderThumb(
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
   let labelId = sliderIds.get(state);
-  let id = getSliderThumbId(state, index);
-  let thumbId = ariaLabel ? `${id}-thumb` : undefined;
   const {labelProps, fieldProps} = useLabel({
     ...opts,
-    id,
-    // Override due to a Chrome bug where aria-labelledby cannot be a self-reference.
-    // Instead, we put the label on the thumb element and point to it with aria-labelledby.
-    // See https://bugs.chromium.org/p/chromium/issues/detail?id=1159567
-    'aria-label': undefined,
-    'aria-labelledby': `${labelId} ${opts['aria-labelledby'] ?? ''} ${ariaLabel ? thumbId : ''}`.trim()
+    id: getSliderThumbId(state, index),
+    'aria-labelledby': `${labelId} ${opts['aria-labelledby'] ?? ''}`.trim()
   });
 
   const value = state.values[index];
@@ -172,8 +165,6 @@ export function useSliderThumb(
     thumbProps: !isDisabled ? mergeProps(
       moveProps,
       {
-        id: thumbId,
-        'aria-label': ariaLabel,
         onMouseDown: () => {onDown(null);},
         onPointerDown: (e: React.PointerEvent) => {onDown(e.pointerId);},
         onTouchStart: (e: React.TouchEvent) => {onDown(e.changedTouches[0].identifier);}

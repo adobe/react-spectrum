@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ErrorBoundary} from '@react-spectrum/story-utils';
 import {RangeSlider} from '../';
-import React, {useState} from 'react';
+import React from 'react';
 import {SpectrumRangeSliderProps} from '@react-types/slider';
 import {storiesOf} from '@storybook/react';
 
@@ -58,10 +58,11 @@ storiesOf('Slider/RangeSlider', module)
   )
   .add(
     'custom valueLabel',
-    () => {
-      let [state, setState] = useState({start: 20, end: 50});
-      return render({label: 'Label', value: state, onChange: setState, valueLabel: `${state.start} <-> ${state.end}`});
-    }
+    () => render({label: 'Label', getValueLabel: (value) => `${value.start} <-> ${value.end}`})
+  )
+  .add(
+    'custom valueLabel with label overflow',
+    () => render({label: 'This is a rather long label for this narrow slider element.', getValueLabel: (value) => `${value.start} <-> ${value.end}`})
   )
   .add(
     'labelPosition: side',
