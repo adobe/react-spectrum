@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, MultipleSelection, Node, SectionProps, Sortable, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, MultipleSelection, SectionProps, Sortable, StyleProps} from '@react-types/shared';
 import {GridCollection} from '@react-types/grid';
+import {GridNode} from '@react-types/grid';
 import {Key, ReactElement, ReactNode} from 'react';
 
 export interface TableProps<T> extends MultipleSelection, Sortable {
@@ -79,14 +80,9 @@ export interface CellProps {
 export type CellElement = ReactElement<CellProps>;
 export type CellRenderer = (columnKey: Key) => CellElement;
 
-export interface TableCollection<T> extends GridCollection<TableNode<T>> {
-  headerRows: TableNode<T>[],
-  columns: TableNode<T>[],
+export interface TableCollection<T> extends GridCollection<T> {
+  headerRows: GridNode<T>[],
+  columns: GridNode<T>[],
   rowHeaderColumnKeys: Set<Key>,
-  body: TableNode<T>
-}
-
-export interface TableNode<T> extends Node<T> {
-  column?: TableNode<T>,
-  colspan?: number
+  body: GridNode<T>
 }

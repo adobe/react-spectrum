@@ -13,7 +13,6 @@
 export * from './useTable';
 export * from './useTableColumnHeader';
 export * from './useTableRow';
-export * from './useTableRowGroup';
 export * from './useTableRowHeader';
 export * from './useTableSelectionCheckbox';
 

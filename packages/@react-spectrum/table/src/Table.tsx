@@ -15,6 +15,7 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
+import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
@@ -22,17 +23,17 @@ import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useContext, useMemo, useRef} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
-import {SpectrumColumnProps, SpectrumTableProps, TableNode} from '@react-types/table';
+import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import {TableLayout} from '@react-stately/layout';
 import {TableState, useTableState} from '@react-stately/table';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
+import {useGridCell, useGridRowGroup} from '@react-aria/grid';
 import {useHover} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
-import {useTable, useTableCell, useTableColumnHeader, useTableRow, useTableRowGroup, useTableRowHeader, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
-import {useGridCell, useGridRow, useGridRowGroup} from '@react-aria/grid';
+import {useTable, useTableColumnHeader, useTableRow, useTableRowHeader, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 const DEFAULT_HEADER_HEIGHT = {
@@ -111,7 +112,7 @@ function Table<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLD
   }, state);
 
   // This overrides collection view's renderWrapper to support DOM heirarchy.
-  type View = ReusableView<TableNode<T>, unknown>;
+  type View = ReusableView<GridNode<T>, unknown>;
   let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
     let style = layoutInfoToStyle(reusableView.layoutInfo, direction, parent && parent.layoutInfo);
     if (style.overflow === 'hidden') {
@@ -180,7 +181,7 @@ function Table<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLD
     );
   };
 
-  let renderView = (type: string, item: TableNode<T>) => {
+  let renderView = (type: string, item: GridNode<T>) => {
     switch (type) {
       case 'header':
       case 'rowgroup':
@@ -673,7 +674,7 @@ function CenteredWrapper({children}) {
   return (
     <div
       role="row"
-      aria-rowindex={state.collection.getHeaderRows().length + state.collection.size + 1}
+      aria-rowindex={state.collection.headerRows.length + state.collection.size + 1}
       className={classNames(stylesOverrides, 'react-spectrum-Table-centeredWrapper')}>
       <div role="rowheader" aria-colspan={state.collection.columns.length}>
         {children}

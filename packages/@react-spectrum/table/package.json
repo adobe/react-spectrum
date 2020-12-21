@@ -50,6 +50,7 @@
     "@react-stately/list": "3.2.2",
     "@react-stately/table": "3.0.0-alpha.7",
     "@react-stately/virtualizer": "^3.1.2",
+    "@react-types/grid": "3.0.0-alpha.1",
     "@react-types/shared": "^3.3.0",
     "@react-types/table": "3.0.0-rc.6",
     "@spectrum-icons/ui": "^3.2.0"

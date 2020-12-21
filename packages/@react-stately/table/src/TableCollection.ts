@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 import {GridCollection} from '@react-stately/grid';
-import {TableCollection as ITableCollection, TableNode} from '@react-types/table';
+import {GridNode} from '@react-types/grid';
+import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key} from 'react';
 
 interface GridCollectionOptions {
@@ -19,7 +20,7 @@ interface GridCollectionOptions {
 
 const ROW_HEADER_COLUMN_KEY = 'row-header-column-' + Math.random().toString(36).slice(2);
 
-function buildHeaderRows<T>(keyMap: Map<Key, TableNode<T>>, columnNodes: TableNode<T>[]) {
+function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode<T>[]): GridNode<T>[] {
   let columns = [];
   let seen = new Map();
   for (let column of columnNodes) {
@@ -27,7 +28,7 @@ function buildHeaderRows<T>(keyMap: Map<Key, TableNode<T>>, columnNodes: TableNo
     let col = [column];
 
     while (parentKey) {
-      let parent: TableNode<T> = keyMap.get(parentKey);
+      let parent: GridNode<T> = keyMap.get(parentKey);
 
       // If we've already seen this parent, than it is shared
       // with a previous column. If the current column is taller
@@ -77,7 +78,7 @@ function buildHeaderRows<T>(keyMap: Map<Key, TableNode<T>>, columnNodes: TableNo
         let row = headerRows[i];
         let rowLength = row.reduce((p, c) => p + c.colspan, 0);
         if (rowLength < colIndex) {
-          let placeholder: TableNode<T> = {
+          let placeholder: GridNode<T> = {
             type: 'placeholder',
             key: 'placeholder-' + item.key,
             colspan: colIndex - rowLength,
@@ -119,7 +120,7 @@ function buildHeaderRows<T>(keyMap: Map<Key, TableNode<T>>, columnNodes: TableNo
   for (let row of headerRows) {
     let rowLength = row.reduce((p, c) => p + c.colspan, 0);
     if (rowLength < columnNodes.length) {
-      let placeholder: TableNode<T> = {
+      let placeholder: GridNode<T> = {
         type: 'placeholder',
         key: 'placeholder-' + row[row.length - 1].key,
         colspan: columnNodes.length - rowLength,
@@ -140,7 +141,7 @@ function buildHeaderRows<T>(keyMap: Map<Key, TableNode<T>>, columnNodes: TableNo
   }
 
   return headerRows.map((childNodes, index) => {
-    let row: TableNode<T> = {
+    let row: GridNode<T> = {
       type: 'headerrow',
       key: 'headerrow-' + index,
       index,
@@ -156,20 +157,20 @@ function buildHeaderRows<T>(keyMap: Map<Key, TableNode<T>>, columnNodes: TableNo
   });
 }
 
-export class TableCollection<T> extends GridCollection<T> implements ITableCollection<T> {
-  headerRows: TableNode<T>[];
-  columns: TableNode<T>[];
+export class TableCollection<T> extends GridCollection<T> {
+  headerRows: GridNode<T>[];
+  columns: GridNode<T>[];
   rowHeaderColumnKeys: Set<Key>;
-  body: TableNode<T>;
+  body: GridNode<T>;
 
-  constructor(nodes: Iterable<TableNode<T>>, prev?: TableCollection<T>, opts?: GridCollectionOptions) {
+  constructor(nodes: Iterable<GridNode<T>>, prev?: TableCollection<T>, opts?: GridCollectionOptions) {
     let rowHeaderColumnKeys: Set<Key> = new Set();
-    let body: TableNode<T>;
+    let body: GridNode<T>;
     let columns = [];
 
     // Add cell for selection checkboxes if needed.
     if (opts?.showSelectionCheckboxes) {
-      let rowHeaderColumn: TableNode<T> = {
+      let rowHeaderColumn: GridNode<T> = {
         type: 'column',
         key: ROW_HEADER_COLUMN_KEY,
         value: null,
@@ -190,7 +191,7 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
     let currentRowIndex = 0;
     let rows = [];
     let columnKeyMap = new Map();
-    let visit = (node: TableNode<T>) => {
+    let visit = (node: GridNode<T>) => {
       switch (node.type) {
         case 'body':
           body = node;
@@ -225,13 +226,15 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
     for (let node of nodes) {
       visit(node);
     }
-    let headerRows = buildHeaderRows(columnKeyMap, columns);
-    headerRows.reverse().forEach(row => rows.unshift(row));
+    let headerRows = buildHeaderRows(columnKeyMap, columns) as GridNode<T>[];
+    // headerRows.reverse().forEach(row => rows.unshift(row));
+    headerRows.forEach((row, i) => rows.splice(i, 0, row));
 
     super({columnCount: columns.length, items: rows});
     this.columns = columns;
     this.rowHeaderColumnKeys = rowHeaderColumnKeys;
     this.body = body; // used to read TableBody props
+    this.headerRows = headerRows;
 
     // Default row header column to the first one.
     if (this.rowHeaderColumnKeys.size === 0) {
@@ -239,12 +242,12 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
     }
   }
 
-  getHeaderRows() {
-    return this.rows.filter(row => row.type === 'headerrow');
+  *[Symbol.iterator]() {
+    yield* this.body.childNodes;
   }
 
-  getBody() {
-    return this.rows.filter(row => row.type !== 'headerrow');
+  get size() {
+    return [...this.body.childNodes].length;
   }
 
   getKeys() {

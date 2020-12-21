@@ -12,13 +12,12 @@
 
 import {CollectionBase, MultipleSelection, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
 import {GridState, useGridState} from '@react-stately/grid';
-import {Key, useMemo} from 'react';
 import {TableCollection as ITableCollection} from '@react-types/table';
+import {Key, useMemo} from 'react';
 import {TableCollection} from './TableCollection';
 import {useCollection} from '@react-stately/collections';
-import {useMultipleSelectionState} from '@react-stately/selection';
 
-export interface TableState<T> extends GridState<T> {
+export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   collection: ITableCollection<T>,
   showSelectionCheckboxes: boolean,
   sortDescriptor: SortDescriptor,
@@ -41,13 +40,13 @@ const OPPOSITE_SORT_DIRECTION = {
 };
 
 export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T>  {
-  let selectionState = useMultipleSelectionState(props); // todo should rely on grid collection call but how to set up context?
+  let {selectionMode = 'none'} = props;
 
   let context = useMemo(() => ({
-    showSelectionCheckboxes: props.showSelectionCheckboxes && selectionState.selectionMode !== 'none',
-    selectionMode: selectionState.selectionMode,
+    showSelectionCheckboxes: props.showSelectionCheckboxes && selectionMode !== 'none',
+    selectionMode,
     columns: []
-  }), [props.children, props.showSelectionCheckboxes, selectionState.selectionMode]);
+  }), [props.children, props.showSelectionCheckboxes, selectionMode]);
 
   let collection = useCollection<T, TableCollection<T>>(
     props,

@@ -10,14 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, KeyboardDelegate, Node} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, KeyboardDelegate} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {gridIds} from './utils';
+import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject, useMemo} from 'react';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useSelectableCollection} from '@react-aria/selection';
+
+const gridIds = new WeakMap<GridState<unknown, GridCollection<unknown>>, string>();
 
 interface GridProps extends DOMProps, AriaLabelingProps {
   ref: RefObject<HTMLElement>,
@@ -29,7 +31,7 @@ interface GridAria {
   gridProps: HTMLAttributes<HTMLElement>
 }
 
-export function useGrid<T>(props: GridProps, state: GridState<T>): GridAria {
+export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<T>>): GridAria {
   let {
     ref,
     isVirtualized,

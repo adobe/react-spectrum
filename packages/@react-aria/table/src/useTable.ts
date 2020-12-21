@@ -73,7 +73,7 @@ export function useTable<T>(props: GridProps<T>, state: TableState<T>): GridAria
   });
 
   if (isVirtualized) {
-    gridProps['aria-rowcount'] = state.collection.size;
+    gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
     gridProps['aria-colcount'] = state.collection.columns.length;
   }
 

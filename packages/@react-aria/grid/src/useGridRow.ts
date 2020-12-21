@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-// import {getRowLabelledBy} from './utils';
 import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject} from 'react';
 import {Node} from '@react-types/shared';
@@ -29,7 +28,7 @@ export interface GridRowAria {
   rowProps: HTMLAttributes<HTMLElement>
 }
 
-export function useGridRow<T>(props: GridRowProps<T>, state: GridState<T>): GridRowAria {
+export function useGridRow<T, C extends GridState<T>>(props: GridRowProps<T>, state: C): GridRowAria {
   let {
     node,
     ref,

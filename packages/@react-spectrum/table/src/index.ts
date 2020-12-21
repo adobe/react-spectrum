@@ -27,5 +27,3 @@ export {
   Row,
   Cell
 } from '@react-stately/table';
-
-export * from './Grid';

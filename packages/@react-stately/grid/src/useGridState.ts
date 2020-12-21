@@ -6,17 +6,17 @@ import {GridCollection} from '@react-types/grid';
 import {Key, useEffect, useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 
-export interface GridState<T> {
-  collection: GridCollection<T>,
+export interface GridState<T, C extends GridCollection<T>> {
+  collection: C,
   disabledKeys: Set<Key>,
   selectionManager: SelectionManager
 }
 
-interface GridStateOptions<T> extends CollectionBase<T>, MultipleSelection {
-  collection: GridCollection<T>
+interface GridStateOptions<T, C extends GridCollection<T>> extends CollectionBase<T>, MultipleSelection {
+  collection: C
 }
 
-export function useGridState<T extends object>(props: GridStateOptions<T>): GridState<T> {
+export function useGridState<T extends object, C extends GridCollection<T>>(props: GridStateOptions<T, C>): GridState<T, C> {
   let {collection} = props;
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>

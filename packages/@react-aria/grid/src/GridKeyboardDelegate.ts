@@ -11,26 +11,28 @@
  */
 
 import {Direction, KeyboardDelegate, Node} from '@react-types/shared';
+import {GridCollection} from '@react-types/grid';
 import {Key, RefObject} from 'react';
 import {Layout, Rect} from '@react-stately/virtualizer';
-import {GridCollection} from '@react-types/grid';
 
-export interface GridKeyboardDelegateOptions<T, C extends GridCollection<T>> {
+export interface GridKeyboardDelegateOptions<T, C> {
   collection: C,
   disabledKeys: Set<Key>,
   ref?: RefObject<HTMLElement>,
   direction: Direction,
   collator?: Intl.Collator,
-  layout?: Layout<Node<T>>
+  layout?: Layout<Node<T>>,
+  focusMode?: 'row' | 'cell'
 }
 
 export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements KeyboardDelegate {
   collection: C;
-  private disabledKeys: Set<Key>;
-  private ref: RefObject<HTMLElement>;
-  private direction: Direction;
-  private collator: Intl.Collator;
-  private layout: Layout<Node<T>>;
+  protected disabledKeys: Set<Key>;
+  protected ref: RefObject<HTMLElement>;
+  protected direction: Direction;
+  protected collator: Intl.Collator;
+  protected layout: Layout<Node<T>>;
+  protected focusMode;
 
   constructor(options: GridKeyboardDelegateOptions<T, C>) {
     this.collection = options.collection;
@@ -39,26 +41,45 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     this.direction = options.direction;
     this.collator = options.collator;
     this.layout = options.layout;
+    this.focusMode = options.focusMode || 'row';
   }
 
   protected isCell(node: Node<T>) {
     return node.type === 'cell';
-    // return node.type === 'cell' || node.type === 'rowheader';
   }
 
-  private findPreviousKey(fromKey?: Key) {
+  protected isRow(node: Node<T>) {
+    return node.type === 'row' || node.type === 'item';
+  }
+
+  protected findPreviousKey(fromKey?: Key, pred?: (item: Node<T>) => boolean) {
     let key = fromKey != null
       ? this.collection.getKeyBefore(fromKey)
       : this.collection.getLastKey();
 
-    return key;
+    while (key != null) {
+      let item = this.collection.getItem(key);
+      if (!pred || pred(item)) {
+        return key;
+      }
+
+      key = this.collection.getKeyBefore(key);
+    }
   }
 
-  private findNextKey(fromKey?: Key) {
+  protected findNextKey(fromKey?: Key, pred?: (item: Node<T>) => boolean) {
     let key = fromKey != null
       ? this.collection.getKeyAfter(fromKey)
       : this.collection.getFirstKey();
-    return key;
+
+    while (key != null) {
+      let item = this.collection.getItem(key);
+      if (!pred || pred(item)) {
+        return key;
+      }
+
+      key = this.collection.getKeyAfter(key);
+    }
   }
 
   getKeyBelow(key: Key) {
@@ -118,7 +139,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // If focus is on a row, focus the first child cell.
-    if (item.type === 'item') {   // TODO change this to item.type !== 'cell' ??
+    if (this.isRow(item)) {
       let children = [...item.childNodes];
       return this.direction === 'rtl'
         ? children[children.length - 1].key
@@ -138,7 +159,10 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
         return next.key;
       }
 
-      return item.parentKey;
+      // focus row only if focusMode is set to row
+      if (this.focusMode === 'row') {
+        return item.parentKey;
+      }
     }
   }
 
@@ -149,7 +173,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // If focus is on a row, focus the last child cell.
-    if (item.type === 'item') {
+    if (this.isRow(item)) {
       let children = [...item.childNodes];
       return this.direction === 'rtl'
         ? children[0].key
@@ -169,7 +193,10 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
         return prev.key;
       }
 
-      return parent.key;
+      // focus row only if focusMode is set to row
+      if (this.focusMode === 'row') {
+        return item.parentKey;
+      }
     }
   }
 
@@ -199,7 +226,9 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Otherwise, focus the row itself.
-    return key;
+    if (this.focusMode === 'row') {
+      return key;
+    }
   }
 
   getLastKey(key?: Key, global?: boolean) {
@@ -230,7 +259,9 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Otherwise, focus the row itself.
-    return key;
+    if (this.focusMode === 'row') {
+      return key;
+    }
   }
 
   private getItem(key: Key): HTMLElement {
@@ -321,6 +352,22 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
 
     let hasWrapped = false;
     while (key != null) {
+      let item = collection.getItem(key);
+
+      // Check the first cell of each row (assumes first cell is row key)
+      let childNodes = [...item.childNodes];
+      let cell = childNodes.length ? childNodes[0] : null;
+      if (cell && cell.textValue) {
+        let substring = cell.textValue.slice(0, search.length);
+        if (this.collator.compare(substring, search) === 0) {
+          // If we started on a cell, end on the matching cell. Otherwise, end on the row.
+          let fromItem = fromKey != null ? collection.getItem(fromKey) : startItem;
+          return fromItem.type === 'cell'
+            ? cell.key
+            : item.key;
+        }
+      }
+
       key = this.getKeyBelow(key);
 
       // Wrap around when reaching the end of the collection

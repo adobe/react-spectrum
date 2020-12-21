@@ -10,39 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {Direction, KeyboardDelegate, Node} from '@react-types/shared';
-import {Key, RefObject} from 'react';
-import {Layout, Rect} from '@react-stately/virtualizer';
-import {TableCollection} from '@react-types/table';
 import {GridKeyboardDelegate} from '@react-aria/grid';
+import {Key} from 'react';
+import {Node} from '@react-types/shared';
+import {TableCollection} from '@react-types/table';
 
-interface TableKeyboardDelegateOptions<T> {
-  collection: TableCollection<T>,
-  disabledKeys: Set<Key>,
-  ref?: RefObject<HTMLElement>,
-  direction: Direction,
-  collator?: Intl.Collator,
-  layout?: Layout<Node<T>>
-}
-
-export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T> implements TableKeyboardDelegateOptions<T> {
-
-  // constructor(options: TableKeyboardDelegateOptions<T>) {
-  //   super(options);
-  //   this.collection = options.collection;
-  //   this.disabledKeys = options.disabledKeys;
-  //   this.ref = options.ref;
-  //   this.direction = options.direction;
-  //   this.collator = options.collator;
-  //   this.layout = options.layout;
-  // }
+export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableCollection<T>> {
 
   protected isCell(node: Node<T>) {
     return node.type === 'cell' || node.type === 'rowheader' || node.type === 'column';
-  }
-
-  getKeyBelow(key: Key) {
-    return super.getKeyBelow(key);
   }
 
   getKeyBelow(key: Key) {
@@ -82,8 +58,9 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T> implements
       return;
     }
 
+    // only return above row key if not header row
     let superKey = super.getKeyAbove(key);
-    if (superKey) {
+    if (superKey && this.collection.getItem(superKey).type !== 'headerrow') {
       return superKey;
     }
 
@@ -96,16 +73,16 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T> implements
     // If focus was on a row, then focus the first column header.
     return this.collection.columns[0].key;
   }
-  //
+
   private findNextColumnKey(column: Node<T>) {
     // Search following columns
-    let key = this.findNextKey(item => item.type === 'column', column.key);
+    let key = this.findNextKey(column.key, item => item.type === 'column');
     if (key != null) {
       return key;
     }
 
     // Wrap around to the first column
-    let row = this.collection.getHeaderRows()[column.level];
+    let row = this.collection.headerRows[column.level];
     for (let item of row.childNodes) {
       if (item.type === 'column') {
         return item.key;
@@ -115,13 +92,13 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T> implements
 
   private findPreviousColumnKey(column: Node<T>) {
     // Search previous columns
-    let key = this.findPreviousKey(item => item.type === 'column', column.key);
+    let key = this.findPreviousKey(column.key, item => item.type === 'column');
     if (key != null) {
       return key;
     }
 
     // Wrap around to the last column
-    let row = this.collection.getHeaderRows()[column.level];
+    let row = this.collection.headerRows[column.level];
     let childNodes = [...row.childNodes];
     for (let i = childNodes.length - 1; i >= 0; i--) {
       let item = childNodes[i];
