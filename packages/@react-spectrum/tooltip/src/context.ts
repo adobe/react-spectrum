@@ -13,8 +13,10 @@
 import {PlacementAxis} from '@react-types/overlays';
 import React, {HTMLAttributes, RefObject} from 'react';
 import {StyleProps} from '@react-types/shared';
+import {TooltipTriggerState} from '@react-stately/tooltip';
 
 interface TooltipContextProps extends StyleProps {
+  state?: TooltipTriggerState
   ref?: RefObject<HTMLDivElement>,
   placement?: PlacementAxis,
   arrowProps?: HTMLAttributes<HTMLElement>
