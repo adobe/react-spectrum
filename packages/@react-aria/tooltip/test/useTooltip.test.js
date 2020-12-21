@@ -32,19 +32,18 @@ describe('useTooltip', function () {
 
       return (
         <div>
-          <span {...triggerProps}>{'Trigger'}</span>
+          <button type="button" {...triggerProps}>{'Trigger'}</button>
           {state.isOpen && <span {...finalTooltipProps}>{'Tooltip'}</span>}
         </div>
       );
     }
 
     const {container, queryByRole} = render(<Test />);
-    const triggerElement = container.firstChild.firstChild;
 
     // trigger pointer modality
     fireEvent.mouseMove(container);
 
-    fireEvent.mouseEnter(triggerElement);
+    fireEvent.mouseEnter(queryByRole('button'));
 
     expect(queryByRole('tooltip')).toBeNull();
     act(jest.runAllTimers);
@@ -60,19 +59,18 @@ describe('useTooltip', function () {
 
       return (
         <div>
-          <span {...triggerProps}>{'Trigger'}</span>
+          <button type="button" {...triggerProps}>{'Trigger'}</button>
           {state.isOpen && <span {...finalTooltipProps}>{'Tooltip'}</span>}
         </div>
       );
     }
 
     const {container, queryByRole} = render(<Test />);
-    const triggerElement = container.firstChild.firstChild;
 
     // trigger pointer modality
     fireEvent.mouseMove(container);
 
-    fireEvent.mouseEnter(triggerElement);
+    fireEvent.mouseEnter(queryByRole('button'));
 
     expect(queryByRole('tooltip')).not.toBeNull();
   });
@@ -89,22 +87,21 @@ describe('useTooltip', function () {
 
       return (
         <div>
-          <span {...triggerProps}>{'Trigger'}</span>
+          <button type="button" {...triggerProps}>{'Trigger'}</button>
           {state.isOpen && <span {...finalTooltipProps}>{'Tooltip'}</span>}
         </div>
       );
     }
 
     const {container, queryByRole} = render(<Test />);
-    const triggerElement = container.firstChild.firstChild;
 
     // trigger pointer modality
     fireEvent.mouseMove(container);
 
-    fireEvent.mouseEnter(triggerElement);
+    fireEvent.mouseEnter(queryByRole('button'));
     expect(queryByRole('tooltip')).not.toBeNull();
 
-    fireEvent.mouseLeave(triggerElement);
+    fireEvent.mouseLeave(queryByRole('button'));
     act(jest.runAllTimers);
     expect(queryByRole('tooltip')).toBeNull();
 
@@ -122,22 +119,21 @@ describe('useTooltip', function () {
 
       return (
         <div>
-          <span {...triggerProps}>{'Trigger'}</span>
+          <button type="button" {...triggerProps}>{'Trigger'}</button>
           {state.isOpen && <span {...finalTooltipProps}>{'Tooltip'}</span>}
         </div>
       );
     }
 
     const {container, getByRole} = render(<Test />);
-    const triggerElement = container.firstChild.firstChild;
 
     // trigger pointer modality
     fireEvent.mouseMove(container);
 
-    fireEvent.mouseEnter(triggerElement);
+    fireEvent.mouseEnter(getByRole('button'));
 
     const tooltipElement = getByRole('tooltip');
-    fireEvent.mouseLeave(triggerElement);
+    fireEvent.mouseLeave(getByRole('button'));
     fireEvent.mouseEnter(tooltipElement);
     expect(getByRole('tooltip')).not.toBeNull();
 
@@ -157,22 +153,21 @@ describe('useTooltip', function () {
 
       return (
         <div>
-          <span {...triggerProps}>{'Trigger'}</span>
+          <button type="button" {...triggerProps}>{'Trigger'}</button>
           {state.isOpen && <span {...finalTooltipProps}>{'Tooltip'}</span>}
         </div>
       );
     }
 
     const {container, queryByRole} = render(<Test />);
-    const triggerElement = container.firstChild.firstChild;
 
     // trigger pointer modality
     fireEvent.mouseMove(container);
 
-    fireEvent.mouseEnter(triggerElement);
+    fireEvent.mouseEnter(queryByRole('button'));
 
     const tooltipElement = queryByRole('tooltip');
-    fireEvent.mouseLeave(triggerElement);
+    fireEvent.mouseLeave(queryByRole('button'));
     fireEvent.mouseEnter(tooltipElement);
     expect(queryByRole('tooltip')).not.toBeNull();
 
@@ -193,27 +188,26 @@ describe('useTooltip', function () {
 
       return (
         <div>
-          <span {...triggerProps}>{'Trigger'}</span>
+          <button type="button" {...triggerProps}>{'Trigger'}</button>
           {state.isOpen && <span {...finalTooltipProps}>{'Tooltip'}</span>}
         </div>
       );
     }
 
     const {container, getByRole} = render(<Test />);
-    const triggerElement = container.firstChild.firstChild;
 
     // trigger pointer modality
     fireEvent.mouseMove(container);
 
-    fireEvent.mouseEnter(triggerElement);
+    fireEvent.mouseEnter(getByRole('button'));
 
     const tooltipElement = getByRole('tooltip');
-    fireEvent.mouseLeave(triggerElement);
+    fireEvent.mouseLeave(getByRole('button'));
     fireEvent.mouseEnter(tooltipElement);
     expect(getByRole('tooltip')).not.toBeNull();
 
     fireEvent.mouseLeave(tooltipElement);
-    fireEvent.mouseEnter(triggerElement);
+    fireEvent.mouseEnter(getByRole('button'));
     act(jest.runAllTimers);
     expect(getByRole('tooltip')).not.toBeNull();
   });
