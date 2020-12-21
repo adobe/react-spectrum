@@ -11,7 +11,6 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {DEFAULT_MAX_VALUE, DEFAULT_MIN_VALUE} from '@react-stately/slider';
 import {FocusableRef} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -31,7 +30,7 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivE
     defaultValue: defaultValue != null
       ? [defaultValue.start, defaultValue.end]
       // make sure that useSliderState knows we have two handles
-      : [props.minValue ?? DEFAULT_MIN_VALUE, props.maxValue ?? DEFAULT_MAX_VALUE],
+      : [props.minValue ?? 0, props.maxValue ?? 100],
     onChange(v) {
       onChange?.({start: v[0], end: v[1]});
     },

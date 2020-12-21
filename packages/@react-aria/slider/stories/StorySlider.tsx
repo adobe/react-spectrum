@@ -10,19 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {BaseSliderProps, SliderProps} from '@react-types/slider';
-import {DEFAULT_MIN_VALUE, useSliderState} from '@react-stately/slider';
+import {AriaSliderProps} from '@react-types/slider';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
 import styles from './story-slider.css';
 import {useNumberFormatter} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
-import {ValueBase} from '@react-types/shared';
+import {useSliderState} from '@react-stately/slider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-interface StorySliderProps extends BaseSliderProps, Omit<ValueBase<number>, 'onChange'> {
+interface StorySliderProps extends AriaSliderProps<number> {
   origin?: number,
-  onChange?: (value: number[]) => void,
   showTip?: boolean,
   formatOptions?: Intl.NumberFormatOptions
 }
@@ -30,19 +28,19 @@ interface StorySliderProps extends BaseSliderProps, Omit<ValueBase<number>, 'onC
 export function StorySlider(props: StorySliderProps) {
   const trackRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const origin = props.origin ?? props.minValue ?? DEFAULT_MIN_VALUE;
+  const origin = props.origin ?? props.minValue ?? 0;
 
-  const multiProps: SliderProps = {
+  const multiProps: AriaSliderProps = {
     ...props,
     value: props.value == null ? undefined :  [props.value],
     defaultValue: props.defaultValue == null ? undefined : [props.defaultValue],
-    onChange: props.onChange == null ? undefined : (vals: number[]) => props.onChange(vals),
-    onChangeEnd: props.onChangeEnd == null ? undefined : (vals: number[]) => props.onChangeEnd(vals)
+    onChange: props.onChange == null ? undefined : (vals: number[]) => props.onChange(vals[0]),
+    onChangeEnd: props.onChangeEnd == null ? undefined : (vals: number[]) => props.onChangeEnd(vals[0])
   };
   const formatter = useNumberFormatter(props.formatOptions);
   const state = useSliderState({...multiProps, numberFormatter: formatter});
   const {
-    containerProps,
+    groupProps,
     trackProps,
     labelProps,
     outputProps
@@ -58,7 +56,7 @@ export function StorySlider(props: StorySliderProps) {
   const value = state.values[0];
 
   return (
-    <div className={styles.slider} {...containerProps}>
+    <div className={styles.slider} {...groupProps}>
       <div className={styles.sliderLabel}>
         {props.label && <label {...labelProps} className={styles.label}>{props.label}</label>}
         <output {...outputProps} className={styles.value}>{state.getThumbValueLabel(0)}</output>

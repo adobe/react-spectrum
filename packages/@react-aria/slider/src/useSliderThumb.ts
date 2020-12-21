@@ -1,25 +1,25 @@
+import {AriaSliderThumbProps} from '@react-types/slider';
 import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
 import {getSliderThumbId, sliderIds} from './utils';
-import React, {ChangeEvent, HTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
+import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
 import {SliderState} from '@react-stately/slider';
-import {SliderThumbProps} from '@react-types/slider';
 import {useFocusable} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
 import {useMove} from '@react-aria/interactions';
 
 interface SliderThumbAria {
-  /** Props for the range input. */
-  inputProps: HTMLAttributes<HTMLElement>,
-
   /** Props for the root thumb element; handles the dragging motion. */
   thumbProps: HTMLAttributes<HTMLElement>,
 
+  /** Props for the range input. */
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
+
   /** Props for the label element for this thumb. */
-  labelProps: HTMLAttributes<HTMLElement>
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>
 }
 
-export interface SliderThumbOptions extends SliderThumbProps {
+interface SliderThumbOptions extends AriaSliderThumbProps {
   /** A ref to the track element. */
   trackRef: RefObject<HTMLElement>,
   /** A ref to the thumb input element. */
