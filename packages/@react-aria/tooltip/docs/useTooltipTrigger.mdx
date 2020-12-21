@@ -83,8 +83,8 @@ Two instances of the example are rendered to demonstrate the behavior of the del
 import {useTooltipTriggerState} from '@react-stately/tooltip';
 import {mergeProps} from '@react-aria/utils';
 
-function Tooltip(props) {
-  let {tooltipProps} = useTooltip(props);
+function Tooltip({state, ...props}) {
+  let {tooltipProps} = useTooltip(props, state);
 
   return (
     <span
@@ -112,7 +112,7 @@ function Example(props) {
 
   return (
     <span style={{position: 'relative'}}>
-      <button ref={ref} {...triggerProps}>I have a tooltip</button>
+      <button ref={ref} state={state} {...triggerProps}>I have a tooltip</button>
       {state.isOpen && (
         <Tooltip {...tooltipProps} >
           And the tooltip tells you more information.
