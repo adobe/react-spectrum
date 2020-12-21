@@ -48,7 +48,7 @@ the RangeSlider's minimum and maximum values, which default to 0 and 100 respect
 function Example() {
   let [value, setValue] = React.useState({start: 25, end: 75});
   return (
-    <Flex gap="size-150">
+    <Flex gap="size-150" wrap>
       <RangeSlider
         label="Range (uncontrolled)"
         defaultValue={{start: 25, end: 75}} />

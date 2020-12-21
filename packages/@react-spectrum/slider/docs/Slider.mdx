@@ -21,6 +21,7 @@ import {Slider} from '@react-spectrum/slider';
 
 ---
 category: Sliders
+after_version: 3.0.0-alpha.0
 ---
 
 # Slider
@@ -47,7 +48,7 @@ the Slider's minimum and maximum values, which default to 0 and 100 respectively
 function Example() {
   let [value, setValue] = React.useState(25);
   return (
-    <Flex gap="size-150">
+    <Flex gap="size-150" wrap>
       <Slider
         label="Cookies to buy (Uncontrolled)"
         defaultValue={25} />

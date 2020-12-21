@@ -21,8 +21,9 @@ import {useSlider, useSliderThumb} from '@react-aria/slider';
 ```
 
 ---
-category: Forms
+category: Sliders
 keywords: [slider, range, aria]
+after_version: 3.0.0-alpha.3
 ---
 
 # useSlider
@@ -54,6 +55,8 @@ sliders that can be styled as needed.
 * Pressing on the track moves the nearest thumb to that position
 * Supports using the arrow keys, as well as page up/down, home, and end keys
 * Support for both horizontal and vertical orientations
+* Support for custom min, max, and step values with handling for rounding errors
+* Support for disabling the whole slider or individual thumbs
 * Prevents text selection while dragging
 * Exposed to assistive technology as a `group` of `slider` elements via ARIA
 * Slider thumbs use hidden native input elements to support touch screen readers
