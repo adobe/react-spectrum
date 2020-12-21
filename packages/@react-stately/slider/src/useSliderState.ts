@@ -125,11 +125,11 @@ export interface SliderState {
   readonly step: number
 }
 
-export const DEFAULT_MIN_VALUE = 0;
-export const DEFAULT_MAX_VALUE = 100;
-export const DEFAULT_STEP_VALUE = 1;
+const DEFAULT_MIN_VALUE = 0;
+const DEFAULT_MAX_VALUE = 100;
+const DEFAULT_STEP_VALUE = 1;
 
-export interface SliderStateProps extends SliderProps {
+interface SliderStateOptions extends SliderProps {
   numberFormatter: Intl.NumberFormat
 }
 
@@ -139,7 +139,7 @@ export interface SliderStateProps extends SliderProps {
  * of any thumbs.
  * @param props
  */
-export function useSliderState(props: SliderStateProps): SliderState {
+export function useSliderState(props: SliderStateOptions): SliderState {
   const {isDisabled, minValue = DEFAULT_MIN_VALUE, maxValue = DEFAULT_MAX_VALUE, numberFormatter: formatter, step = DEFAULT_STEP_VALUE} = props;
 
   const [values, setValues] = useControlledState<number[]>(
@@ -149,7 +149,7 @@ export function useSliderState(props: SliderStateProps): SliderState {
   );
   const [isDraggings, setDraggings] = useState<boolean[]>(new Array(values.length).fill(false));
   const isEditablesRef = useRef<boolean[]>(new Array(values.length).fill(true));
-  const [focusedIndex, setFocusedIndex] = useState<number|undefined>(undefined);
+  const [focusedIndex, setFocusedIndex] = useState<number | undefined>(undefined);
 
   const valuesRef = useRef<number[]>(null);
   valuesRef.current = values;

@@ -121,7 +121,7 @@ function Slider(props) {
   let numberFormatter = useNumberFormatter(props.formatOptions);
   let state = useSliderState({...props, numberFormatter});
   let {
-    containerProps,
+    groupProps,
     trackProps,
     labelProps,
     outputProps
@@ -129,7 +129,7 @@ function Slider(props) {
 
   return (
     <div
-      {...containerProps}
+      {...groupProps}
       style={{position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', width: 300, touchAction: 'none'}}>
       {/* Create a flex container for the label and output element. */}
       <div style={{display: 'flex', alignSelf: 'stretch'}}>
@@ -220,7 +220,7 @@ function RangeSlider(props) {
   let numberFormatter = useNumberFormatter(props.formatOptions);
   let state = useSliderState({...props, numberFormatter});
   let {
-    containerProps,
+    groupProps,
     trackProps,
     labelProps,
     outputProps
@@ -228,7 +228,7 @@ function RangeSlider(props) {
 
   return (
     <div
-      {...containerProps}
+      {...groupProps}
       style={{position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', width: 300, touchAction: 'none'}}>
       <div style={{display: 'flex', alignSelf: 'stretch'}}>
         {props.label &&
@@ -323,13 +323,13 @@ function VerticalSlider(props) {
   let numberFormatter = useNumberFormatter(props.formatOptions);
   let state = useSliderState({...props, numberFormatter});
   let {
-    containerProps,
+    groupProps,
     trackProps
   } = useSlider({...props, orientation: 'vertical'}, state, trackRef);
 
   return (
     <div
-      {...containerProps}
+      {...groupProps}
       style={{height: 150, touchAction: 'none'}}>
       <div
         {...trackProps}

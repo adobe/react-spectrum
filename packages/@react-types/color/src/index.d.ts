@@ -25,8 +25,8 @@ import {
   TextInputDOMProps,
   Validation
 } from '@react-types/shared';
-import {BaseSliderProps} from '@react-types/slider';
 import {Color} from '@react-stately/color';
+import {SliderProps} from '@react-types/slider';
 
 /** A list of supported color formats. */
 export type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hsb' | 'hsba';
@@ -49,22 +49,20 @@ export interface SpectrumHexColorFieldProps extends AriaHexColorFieldProps, Spec
   isQuiet?: boolean
 }
 
-export interface ColorWheelProps extends BaseSliderProps<string | Color>, Omit<StyleProps, 'width' | 'height'> {
+export interface ColorWheelProps extends Omit<SliderProps<string | Color>, 'minValue' | 'maxValue'>, Omit<StyleProps, 'width' | 'height'> {
   step?: number,
-  // overriding these to allow passing string:
-  value?: string | Color,
-  defaultValue?: string | Color,
-  onChange?: (value: Color) => void
+  // overriding these to only include color
+  onChange?: (value: Color) => void,
+  onChangeEnd?: (value: Color) => void
 }
 
 export interface SpectrumColorWheelProps extends ColorWheelProps, DOMProps, StyleProps, AriaLabelingProps {
   size?: DimensionValue
 }
 
-interface ColorSliderProps extends Omit<BaseSliderProps<string | Color>, 'minValue' | 'maxValue'>, LabelableProps {
+interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'minValue' | 'maxValue'> {
   channel: ColorChannel,
-  value?: string | Color,
-  defaultValue?: string | Color,
+  // overriding these to only include color
   onChange?: (value: Color) => void,
   onChangeEnd?: (value: Color) => void,
   /** Whether the value's label is displayed. True by default, false by default if not. */
