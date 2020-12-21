@@ -16,7 +16,7 @@ import {StyleProps} from '@react-types/shared';
 import {TooltipTriggerState} from '@react-stately/tooltip';
 
 interface TooltipContextProps extends StyleProps {
-  state?: TooltipTriggerState
+  state?: TooltipTriggerState,
   ref?: RefObject<HTMLDivElement>,
   placement?: PlacementAxis,
   arrowProps?: HTMLAttributes<HTMLElement>
