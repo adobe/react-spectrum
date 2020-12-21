@@ -115,19 +115,35 @@ export function useSlider(
       }
       let value = state.getPercentValue(percent);
 
-      // Only compute the diff for thumbs that are editable, as only they can be dragged
-      const minDiff = Math.min(...state.values.map((v, index) => state.isThumbEditable(index) ? Math.abs(v - value) : Number.POSITIVE_INFINITY));
-      const index = state.values.findIndex(v => Math.abs(v - value) === minDiff);
-      if (minDiff !== Number.POSITIVE_INFINITY && index >= 0) {
+      // to find the closet thumb we split the array based on the first thumb position to the "right/end" of the click.
+      let closestThumb;
+      let split = state.values.findIndex(v => value - v < 0);
+      if (split === 0) { // If the index is zero then the closetThumb is the first one
+        closestThumb = split;
+      } else if (split === -1) { // If no index is found they've clicked past all the thumbs
+        closestThumb = state.values.length - 1;
+      } else {
+        let lastLeft = state.values[split - 1];
+        let firstRight = state.values[split];
+        // Pick the last left/start thumb, unless they are stacked on top of each other, then pick the right/end one
+        if (Math.abs(lastLeft - value) < Math.abs(firstRight - value)) {
+          closestThumb = split - 1;
+        } else {
+          closestThumb = split;
+        }
+      }
+
+      // Confirm that the found closest thumb is editable, not disabled, and move it
+      if (closestThumb >= 0 && state.isThumbEditable(closestThumb)) {
         // Don't unfocus anything
         e.preventDefault();
 
-        realTimeTrackDraggingIndex.current = index;
-        state.setFocusedThumb(index);
+        realTimeTrackDraggingIndex.current = closestThumb;
+        state.setFocusedThumb(closestThumb);
         currentPointer.current = id;
 
         state.setThumbDragging(realTimeTrackDraggingIndex.current, true);
-        state.setThumbValue(index, value);
+        state.setThumbValue(closestThumb, value);
 
         addGlobalListener(window, 'mouseup', onUpTrack, false);
         addGlobalListener(window, 'touchend', onUpTrack, false);
@@ -178,14 +194,22 @@ export function useSlider(
       ...fieldProps
     },
     trackProps: mergeProps({
-      onMouseDown(e: React.MouseEvent<HTMLElement>) { onDownTrack(e, undefined, e.clientX, e.clientY); },
-      onPointerDown(e: React.PointerEvent<HTMLElement>) { onDownTrack(e, e.pointerId, e.clientX, e.clientY); },
+      onMouseDown(e: React.MouseEvent<HTMLElement>) {
+        if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+          return;
+        }
+        onDownTrack(e, undefined, e.clientX, e.clientY);
+      },
+      onPointerDown(e: React.PointerEvent<HTMLElement>) {
+        if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
+          return;
+        }
+        onDownTrack(e, e.pointerId, e.clientX, e.clientY);
+      },
       onTouchStart(e: React.TouchEvent<HTMLElement>) { onDownTrack(e, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY); }
     }, moveProps),
     outputProps: {
       htmlFor: state.values.map((_, index) => getSliderThumbId(state, index)).join(' '),
-      id: outputId,
-      'aria-labelledby': `${labelProps.id || fieldProps.id} ${outputId}`,
       'aria-live': 'off'
     }
   };
