@@ -11,9 +11,9 @@
  */
 
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {DEFAULT_MAX_VALUE, DEFAULT_MIN_VALUE, SliderState, useSliderState} from '@react-stately/slider';
 import {FocusableRef} from '@react-types/shared';
 import React, {CSSProperties, ReactNode, RefObject, useRef} from 'react';
-import {SliderState, useSliderState} from '@react-stately/slider';
 import {SpectrumBarSliderBase} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useNumberFormatter} from '@react-aria/i18n';
@@ -43,15 +43,15 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     getValueLabel,
     showValueLabel = !!props.label,
     formatOptions,
+    minValue = DEFAULT_MIN_VALUE,
+    maxValue = DEFAULT_MAX_VALUE,
     ...otherProps
   } = props;
 
   let {styleProps} = useStyleProps(otherProps);
 
-  // Assumes that DEFAULT_MIN_VALUE and DEFAULT_MAX_VALUE are both positive, this value needs to be passed to useSliderState, so
-  // getThumbMinValue/getThumbMaxValue cannot be used here.
-  // `Math.abs(Math.sign(a) - Math.sign(b)) === 2` is true if the values have a different sign and neither is null.
-  let alwaysDisplaySign = props.minValue != null && props.maxValue != null && Math.abs(Math.sign(props.minValue) - Math.sign(props.maxValue)) === 2;
+  // `Math.abs(Math.sign(a) - Math.sign(b)) === 2` is true if the values have a different sign.
+  let alwaysDisplaySign = Math.abs(Math.sign(minValue) - Math.sign(maxValue)) === 2;
   if (alwaysDisplaySign) {
     if (formatOptions != null) {
       if (!('signDisplay' in formatOptions)) {
@@ -88,24 +88,24 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     switch (state.values.length) {
       case 1:
         maxLabelLength = Math.max(
-          getValueLabel([state.getThumbMinValue(0)]).length,
-          getValueLabel([state.getThumbMaxValue(0)]).length
+          getValueLabel([minValue]).length,
+          getValueLabel([maxValue]).length
         );
         break;
       case 2:
         // Try all possible combinations of min and max values.
         maxLabelLength = Math.max(
-          getValueLabel([state.getThumbMinValue(0), state.getThumbMinValue(1)]).length,
-          getValueLabel([state.getThumbMinValue(0), state.getThumbMaxValue(1)]).length,
-          getValueLabel([state.getThumbMaxValue(0), state.getThumbMinValue(1)]).length,
-          getValueLabel([state.getThumbMaxValue(0), state.getThumbMaxValue(1)]).length
+          getValueLabel([minValue, minValue]).length,
+          getValueLabel([minValue, maxValue]).length,
+          getValueLabel([maxValue, minValue]).length,
+          getValueLabel([maxValue, maxValue]).length
         );
         break;
       default:
         throw new Error('Only sliders with 1 or 2 handles are supported!');
     }
   } else {
-    maxLabelLength = Math.max([...formatter.format(state.getThumbMinValue(0))].length, [...formatter.format(state.getThumbMaxValue(0))].length);
+    maxLabelLength = Math.max([...formatter.format(minValue)].length, [...formatter.format(maxValue)].length);
     switch (state.values.length) {
       case 1:
         displayValue = state.getThumbValueLabel(0);
@@ -117,7 +117,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
         displayValue = `${state.getThumbValueLabel(0)} – ${state.getThumbValueLabel(1)}`;
         maxLabelLength = 3 + 2 * Math.max(
           maxLabelLength,
-          [...formatter.format(state.getThumbMinValue(1))].length, [...formatter.format(state.getThumbMaxValue(1))].length
+          [...formatter.format(minValue)].length, [...formatter.format(maxValue)].length
         );
         break;
       default:
@@ -173,7 +173,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
         })}
       </div>
       {labelPosition === 'side' &&
-        <div className={classNames(styles, 'spectrum-Slider-labelContainer')} role="presentation">
+        <div className={classNames(styles, 'spectrum-Slider-valueLabelContainer')} role="presentation">
           {showValueLabel && valueNode}
         </div>
       }
