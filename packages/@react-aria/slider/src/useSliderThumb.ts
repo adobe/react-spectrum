@@ -1,6 +1,6 @@
 import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
+import {getSliderThumbId, sliderIds} from './utils';
 import React, {ChangeEvent, HTMLAttributes, useCallback, useEffect, useRef} from 'react';
-import {sliderIds} from './utils';
 import {SliderState} from '@react-stately/slider';
 import {SliderThumbProps} from '@react-types/slider';
 import {useFocusable} from '@react-aria/focus';
@@ -51,6 +51,7 @@ export function useSliderThumb(
   let labelId = sliderIds.get(state);
   const {labelProps, fieldProps} = useLabel({
     ...opts,
+    id: getSliderThumbId(state, index),
     'aria-labelledby': `${labelId} ${opts['aria-labelledby'] ?? ''}`.trim()
   });
 
@@ -164,9 +165,19 @@ export function useSliderThumb(
     thumbProps: !isDisabled ? mergeProps(
       moveProps,
       {
-        onMouseDown: () => {onDown(null);},
-        onPointerDown: (e: React.PointerEvent) => {onDown(e.pointerId);},
-        onTouchStart: (e: React.TouchEvent) => {onDown(e.changedTouches[0].identifier);}
+        onMouseDown: (e: React.MouseEvent<HTMLElement>) => {
+          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+            return;
+          }
+          onDown(null);
+        },
+        onPointerDown: (e: React.PointerEvent<HTMLElement>) => {
+          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+            return;
+          }
+          onDown(e.pointerId);
+        },
+        onTouchStart: (e: React.TouchEvent<HTMLElement>) => {onDown(e.changedTouches[0].identifier);}
       }
     ) : {},
     labelProps

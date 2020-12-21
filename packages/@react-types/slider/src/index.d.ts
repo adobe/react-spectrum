@@ -1,10 +1,8 @@
 import {AriaLabelingProps, AriaValidationProps, FocusableDOMProps, FocusableProps, LabelableProps, LabelPosition, Orientation, RangeInputBase, RangeValue, StyleProps, Validation, ValueBase} from '@react-types/shared';
-import {ReactNode} from 'react';
 
 export interface BaseSliderProps extends RangeInputBase<number>, LabelableProps, AriaLabelingProps {
   orientation?: Orientation,
-  isDisabled?: boolean,
-  formatOptions?: Intl.NumberFormatOptions
+  isDisabled?: boolean
 }
 
 export interface SliderProps extends BaseSliderProps, ValueBase<number[]> {
@@ -18,25 +16,16 @@ export interface SliderThumbProps extends AriaLabelingProps, FocusableDOMProps, 
 }
 
 export interface SpectrumBarSliderBase<T> extends BaseSliderProps, ValueBase<T>, StyleProps {
+  /**
+   * The display format of the value label.
+   */
+  formatOptions?: Intl.NumberFormatOptions,
   labelPosition?: LabelPosition,
   /** Whether the value's label is displayed. True by default if there's a `label`, false by default if not. */
   showValueLabel?: boolean,
-  /** The content to display as the value's label. Overrides default formatted number. */
-  valueLabel?: ReactNode
+  /** A function that returns the content to display as the value's label. Overrides default formatted number. */
+  getValueLabel?: (value: T) => string
 }
-
-// export interface SpectrumSliderTicksBase {
-//   /** Enables tick marks if > 0. Ticks will be evenly distributed between the min and max values. */
-//   tickCount?: number,
-//
-//   /** Enables tick labels. */
-//   showTickLabels?: boolean,
-//   /**
-//    * By default, labels are formatted using the slider's number formatter,
-//    * but you can use the tickLabels prop to override these with custom labels.
-//    */
-//   tickLabels?: Array<ReactNode>
-// }
 
 export interface SpectrumSliderProps extends SpectrumBarSliderBase<number> {
   /**

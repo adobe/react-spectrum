@@ -11,23 +11,26 @@
  */
 
 import {clamp, mergeProps, useGlobalListeners} from '@react-aria/utils';
-import React, {HTMLAttributes, useRef} from 'react';
-import {sliderIds} from './utils';
+import {getSliderThumbId, sliderIds} from './utils';
+import React, {HTMLAttributes, LabelHTMLAttributes, OutputHTMLAttributes, useRef} from 'react';
+import {setInteractionModality, useMove} from '@react-aria/interactions';
 import {SliderProps} from '@react-types/slider';
 import {SliderState} from '@react-stately/slider';
 import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
-import {useMove} from '@react-aria/interactions';
 
 interface SliderAria {
   /** Props for the label element. */
-  labelProps: HTMLAttributes<HTMLElement>,
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
 
   /** Props for the root element of the slider component; groups slider inputs. */
   containerProps: HTMLAttributes<HTMLElement>,
 
   /** Props for the track element. */
-  trackProps: HTMLAttributes<HTMLElement>
+  trackProps: HTMLAttributes<HTMLElement>,
+
+  /** Props for the output element, displaying the value of the slider thumbs. */
+  outputProps: OutputHTMLAttributes<HTMLOutputElement>
 }
 
 /**
@@ -112,19 +115,35 @@ export function useSlider(
       }
       let value = state.getPercentValue(percent);
 
-      // Only compute the diff for thumbs that are editable, as only they can be dragged
-      const minDiff = Math.min(...state.values.map((v, index) => state.isThumbEditable(index) ? Math.abs(v - value) : Number.POSITIVE_INFINITY));
-      const index = state.values.findIndex(v => Math.abs(v - value) === minDiff);
-      if (minDiff !== Number.POSITIVE_INFINITY && index >= 0) {
+      // to find the closet thumb we split the array based on the first thumb position to the "right/end" of the click.
+      let closestThumb;
+      let split = state.values.findIndex(v => value - v < 0);
+      if (split === 0) { // If the index is zero then the closetThumb is the first one
+        closestThumb = split;
+      } else if (split === -1) { // If no index is found they've clicked past all the thumbs
+        closestThumb = state.values.length - 1;
+      } else {
+        let lastLeft = state.values[split - 1];
+        let firstRight = state.values[split];
+        // Pick the last left/start thumb, unless they are stacked on top of each other, then pick the right/end one
+        if (Math.abs(lastLeft - value) < Math.abs(firstRight - value)) {
+          closestThumb = split - 1;
+        } else {
+          closestThumb = split;
+        }
+      }
+
+      // Confirm that the found closest thumb is editable, not disabled, and move it
+      if (closestThumb >= 0 && state.isThumbEditable(closestThumb)) {
         // Don't unfocus anything
         e.preventDefault();
 
-        realTimeTrackDraggingIndex.current = index;
-        state.setFocusedThumb(index);
+        realTimeTrackDraggingIndex.current = closestThumb;
+        state.setFocusedThumb(closestThumb);
         currentPointer.current = id;
 
         state.setThumbDragging(realTimeTrackDraggingIndex.current, true);
-        state.setThumbValue(index, value);
+        state.setThumbValue(closestThumb, value);
 
         addGlobalListener(window, 'mouseup', onUpTrack, false);
         addGlobalListener(window, 'touchend', onUpTrack, false);
@@ -149,6 +168,20 @@ export function useSlider(
     }
   };
 
+  if (labelProps.htmlFor) {
+    // Ideally the `for` attribute should point to the first thumb, but VoiceOver on iOS
+    // causes this to override the `aria-labelledby` on the thumb. This causes the first
+    // thumb to only be announced as the slider label rather than its individual name as well.
+    // See https://bugs.webkit.org/show_bug.cgi?id=172464.
+    delete labelProps.htmlFor;
+    labelProps.onClick = () => {
+      // Safari does not focus <input type="range"> elements when clicking on an associated <label>,
+      // so do it manually. In addition, make sure we show the focus ring.
+      document.getElementById(getSliderThumbId(state, 0))?.focus();
+      setInteractionModality('keyboard');
+    };
+  }
+
   return {
     labelProps,
     // The root element of the Slider will have role="group" to group together
@@ -159,9 +192,23 @@ export function useSlider(
       ...fieldProps
     },
     trackProps: mergeProps({
-      onMouseDown(e: React.MouseEvent<HTMLElement>) { onDownTrack(e, undefined, e.clientX, e.clientY); },
-      onPointerDown(e: React.PointerEvent<HTMLElement>) { onDownTrack(e, e.pointerId, e.clientX, e.clientY); },
+      onMouseDown(e: React.MouseEvent<HTMLElement>) {
+        if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+          return;
+        }
+        onDownTrack(e, undefined, e.clientX, e.clientY);
+      },
+      onPointerDown(e: React.PointerEvent<HTMLElement>) {
+        if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
+          return;
+        }
+        onDownTrack(e, e.pointerId, e.clientX, e.clientY);
+      },
       onTouchStart(e: React.TouchEvent<HTMLElement>) { onDownTrack(e, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY); }
-    }, moveProps)
+    }, moveProps),
+    outputProps: {
+      htmlFor: state.values.map((_, index) => getSliderThumbId(state, index)).join(' '),
+      'aria-live': 'off'
+    }
   };
 }
