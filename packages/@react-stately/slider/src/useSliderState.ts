@@ -134,8 +134,8 @@ export interface SliderStateProps extends SliderProps {
 }
 
 /**
- * Provides state management for a slider component. Stores values for all thumbs
- * and formats values for localization and provides methods to update the position
+ * Provides state management for a slider component. Stores values for all thumbs,
+ * formats values for localization, and provides methods to update the position
  * of any thumbs.
  * @param props
  */
