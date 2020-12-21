@@ -112,9 +112,9 @@ function Example(props) {
 
   return (
     <span style={{position: 'relative'}}>
-      <button ref={ref} state={state} {...triggerProps}>I have a tooltip</button>
+      <button ref={ref} {...triggerProps}>I have a tooltip</button>
       {state.isOpen && (
-        <Tooltip {...tooltipProps} >
+        <Tooltip state={state} {...tooltipProps}>
           And the tooltip tells you more information.
         </Tooltip>
       )}
