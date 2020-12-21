@@ -486,7 +486,7 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
     });
 
-    it.skip('once opened, it can be closed and opened instantly for a period of time',  () => {
+    it('once opened, it can be closed and opened instantly for a period of time',  () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger>
@@ -510,10 +510,15 @@ describe('TooltipTrigger', function () {
       let tooltip = getByRole('tooltip');
       expect(tooltip).toBeVisible();
       fireEvent.mouseLeave(button);
+      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+
       act(() => {
         jest.advanceTimersByTime(CLOSE_TIME);
       });
       expect(tooltip).not.toBeInTheDocument();
+      // change to pointer modality again
+      fireEvent.mouseMove(document.body);
       // it's been warmed up, so we can now instantly reopen for a short time
       fireEvent.mouseEnter(button);
       fireEvent.mouseMove(button);
@@ -522,15 +527,12 @@ describe('TooltipTrigger', function () {
 
       // close again
       fireEvent.mouseLeave(button);
+      // if we wait too long, we'll have to wait the full delay again
       act(() => {
-        jest.advanceTimersByTime(CLOSE_TIME);
+        jest.runAllTimers();
       });
       expect(tooltip).not.toBeInTheDocument();
 
-      // if we wait too long, we'll have to wait the full delay again
-      act(() => {
-        jest.advanceTimersByTime(TOOLTIP_COOLDOWN);
-      });
       fireEvent.mouseEnter(button);
       fireEvent.mouseMove(button);
       expect(() => getByRole('tooltip')).toThrow();
@@ -543,7 +545,7 @@ describe('TooltipTrigger', function () {
       // close again
       fireEvent.mouseLeave(button);
       act(() => {
-        jest.advanceTimersByTime(CLOSE_TIME);
+        jest.runAllTimers();
       });
       expect(tooltip).not.toBeInTheDocument();
     });
