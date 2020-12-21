@@ -60,6 +60,8 @@ governing permissions and limitations under the License.
   max-height: inherit;
 
   outline: none;
+
+  overflow: auto;
 }
 
 .spectrum-Dialog--small {
