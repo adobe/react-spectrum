@@ -32,8 +32,8 @@ describe('useTooltip', function () {
 
       return (
         <div>
-          <button type="button" {...triggerProps}>{'Trigger'}</button>
-          {state.isOpen && <span {...finalTooltipProps}>{'Tooltip'}</span>}
+          <button type="button" {...triggerProps}>Trigger</button>
+          {state.isOpen && <span {...finalTooltipProps}>Tooltip</span>}
         </div>
       );
     }
@@ -59,8 +59,8 @@ describe('useTooltip', function () {
 
       return (
         <div>
-          <button type="button" {...triggerProps}>{'Trigger'}</button>
-          {state.isOpen && <span {...finalTooltipProps}>{'Tooltip'}</span>}
+          <button type="button" {...triggerProps}>Trigger</button>
+          {state.isOpen && <span {...finalTooltipProps}>Tooltip</span>}
         </div>
       );
     }
@@ -87,8 +87,8 @@ describe('useTooltip', function () {
 
       return (
         <div>
-          <button type="button" {...triggerProps}>{'Trigger'}</button>
-          {state.isOpen && <span {...finalTooltipProps}>{'Tooltip'}</span>}
+          <button type="button" {...triggerProps}>Trigger</button>
+          {state.isOpen && <span {...finalTooltipProps}>Tooltip</span>}
         </div>
       );
     }
@@ -119,8 +119,8 @@ describe('useTooltip', function () {
 
       return (
         <div>
-          <button type="button" {...triggerProps}>{'Trigger'}</button>
-          {state.isOpen && <span {...finalTooltipProps}>{'Tooltip'}</span>}
+          <button type="button" {...triggerProps}>Trigger</button>
+          {state.isOpen && <span {...finalTooltipProps}>Tooltip</span>}
         </div>
       );
     }
@@ -153,8 +153,8 @@ describe('useTooltip', function () {
 
       return (
         <div>
-          <button type="button" {...triggerProps}>{'Trigger'}</button>
-          {state.isOpen && <span {...finalTooltipProps}>{'Tooltip'}</span>}
+          <button type="button" {...triggerProps}>Trigger</button>
+          {state.isOpen && <span {...finalTooltipProps}>Tooltip</span>}
         </div>
       );
     }
@@ -188,8 +188,8 @@ describe('useTooltip', function () {
 
       return (
         <div>
-          <button type="button" {...triggerProps}>{'Trigger'}</button>
-          {state.isOpen && <span {...finalTooltipProps}>{'Tooltip'}</span>}
+          <button type="button" {...triggerProps}>Trigger</button>
+          {state.isOpen && <span {...finalTooltipProps}>Tooltip</span>}
         </div>
       );
     }
