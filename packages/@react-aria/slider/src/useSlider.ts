@@ -182,8 +182,6 @@ export function useSlider(
     };
   }
 
-  const outputId = `${fieldProps.id}-output`;
-
   return {
     labelProps,
     // The root element of the Slider will have role="group" to group together
