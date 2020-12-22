@@ -62,11 +62,23 @@ governing permissions and limitations under the License.
     box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
   }
 
+  .spectrum-FieldButton {
+    &:focus {
+      box-shadow: 0 0 0 2px var(--spectrum-dropdown-border-color-key-focus);
+    }
+  }
+
   &.is-invalid,
   &:invalid {
     .spectrum-FieldButton,
     .spectrum-InputGroup-input {
       box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error);
+    }
+
+    .spectrum-FieldButton {
+      &:focus {
+        box-shadow: 0 0 0 2px var(--spectrum-dropdown-border-color-error);
+      }
     }
   }
 }

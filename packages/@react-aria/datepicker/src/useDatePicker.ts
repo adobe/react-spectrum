@@ -101,7 +101,6 @@ export function useDatePicker(props: DatePickerAriaProps, state: DatePickerState
       'aria-labelledby': labelledBy
     },
     buttonProps: {
-      excludeFromTabOrder: true,
       id: buttonId,
       'aria-describedby': dateValueDescription ? descId : null,
       'aria-haspopup': 'dialog',
