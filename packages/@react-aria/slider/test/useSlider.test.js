@@ -7,12 +7,13 @@ import {useSlider, useSliderThumb} from '../src';
 import {useSliderState} from '@react-stately/slider';
 
 describe('useSlider', () => {
+  let numberFormatter = new Intl.NumberFormat('en-US', {});
   describe('aria labels', () => {
     function renderUseSlider(sliderProps) {
       return renderHook(() => {
         let trackRef = useRef(null);
         let inputRef = useRef(null);
-        let state = useSliderState(sliderProps);
+        let state = useSliderState({...sliderProps, numberFormatter});
         let props = useSlider(sliderProps, state, trackRef);
         let {inputProps} = useSliderThumb({
           index: 0,
@@ -29,10 +30,10 @@ describe('useSlider', () => {
         label: 'Slider'
       });
 
-      let {props: {labelProps, containerProps}, inputProps} = result.current;
+      let {props: {labelProps, groupProps}} = result.current;
 
-      expect(containerProps.role).toBe('group');
-      expect(labelProps.htmlFor).toBe(inputProps.id);
+      expect(groupProps.role).toBe('group');
+      expect(labelProps.htmlFor).toBe(undefined); // https://bugs.webkit.org/show_bug.cgi?id=172464
     });
 
     it('should have the right labels when setting aria-label', () => {
@@ -41,11 +42,11 @@ describe('useSlider', () => {
         'aria-label': 'Slider'
       });
 
-      let {labelProps, containerProps} = result.current.props;
+      let {labelProps, groupProps} = result.current.props;
 
       expect(labelProps).toEqual({});
-      expect(containerProps.role).toBe('group');
-      expect(containerProps['aria-label']).toBe('Slider');
+      expect(groupProps.role).toBe('group');
+      expect(groupProps['aria-label']).toBe('Slider');
     });
   });
 
@@ -66,7 +67,7 @@ describe('useSlider', () => {
 
     function Example(props) {
       let trackRef = useRef(null);
-      let state = useSliderState(props);
+      let state = useSliderState({...props, numberFormatter});
       stateRef.current = state;
       let {trackProps} = useSlider(props, state, trackRef);
       return <div data-testid="track" ref={trackRef} {...trackProps} />;
@@ -184,7 +185,7 @@ describe('useSlider', () => {
 
     function Example(props) {
       let trackRef = useRef(null);
-      let state = useSliderState(props);
+      let state = useSliderState({...props, numberFormatter});
       stateRef.current = state;
       let {trackProps} = useSlider(props, state, trackRef);
       return <div data-testid="track" ref={trackRef} {...trackProps} />;
@@ -237,6 +238,74 @@ describe('useSlider', () => {
       fireEvent.pointerUp(track, {pageX: 40, clientX: 40});
       expect(onChangeEndSpy).toHaveBeenLastCalledWith([40, 80]);
       expect(stateRef.current.values).toEqual([40, 80]);
+    });
+
+    it('should allow you to set value of before thumbs when thumbs stacked', () => {
+      let onChangeSpy = jest.fn();
+      let onChangeEndSpy = jest.fn();
+
+      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[40, 40]} />);
+
+      let track = screen.getByTestId('track');
+      fireEvent.pointerDown(track, {pageX: 20, clientX: 20});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([20, 40]);
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([20, 40]);
+    });
+
+    it('should allow you to set value of after thumbs when thumbs stacked', () => {
+      let onChangeSpy = jest.fn();
+      let onChangeEndSpy = jest.fn();
+
+      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[40, 40]} />);
+
+      let track = screen.getByTestId('track');
+      fireEvent.pointerDown(track, {pageX: 60, clientX: 60});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([40, 60]);
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([40, 60]);
+    });
+
+    it('should allow you to set value of before thumbs when many thumbs and stacked', () => {
+      let onChangeSpy = jest.fn();
+      let onChangeEndSpy = jest.fn();
+
+      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[25, 25, 50, 75, 75]} />);
+
+      let track = screen.getByTestId('track');
+      fireEvent.pointerDown(track, {pageX: 70, clientX: 70});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([25, 25, 50, 70, 75]);
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      fireEvent.pointerUp(track, {pageX: 70, clientX: 70});
+      expect(onChangeEndSpy).toHaveBeenCalledWith([25, 25, 50, 70, 75]);
+      expect(stateRef.current.values).toEqual([25, 25, 50, 70, 75]);
+
+      fireEvent.pointerDown(track, {pageX: 20, clientX: 20});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([20, 25, 50, 70, 75]);
+      fireEvent.pointerUp(track, {pageX: 70, clientX: 70});
+      expect(onChangeEndSpy).toHaveBeenLastCalledWith([20, 25, 50, 70, 75]);
+      expect(stateRef.current.values).toEqual([20, 25, 50, 70, 75]);
+    });
+
+    it('should allow you to set value of after thumbs when many thumbs and stacked', () => {
+      let onChangeSpy = jest.fn();
+      let onChangeEndSpy = jest.fn();
+
+      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[25, 25, 50, 75, 75]} />);
+
+      let track = screen.getByTestId('track');
+      fireEvent.pointerDown(track, {pageX: 80, clientX: 80});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([25, 25, 50, 75, 80]);
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      fireEvent.pointerUp(track, {pageX: 80, clientX: 80});
+      expect(onChangeEndSpy).toHaveBeenCalledWith([25, 25, 50, 75, 80]);
+      expect(stateRef.current.values).toEqual([25, 25, 50, 75, 80]);
+
+      fireEvent.pointerDown(track, {pageX: 30, clientX: 30});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([25, 30, 50, 75, 80]);
+      fireEvent.pointerUp(track, {pageX: 80, clientX: 80});
+      expect(onChangeEndSpy).toHaveBeenLastCalledWith([25, 30, 50, 75, 80]);
+      expect(stateRef.current.values).toEqual([25, 30, 50, 75, 80]);
     });
 
     it('should not allow you to set value if disabled', () => {

@@ -26,7 +26,7 @@ export interface SliderBaseChildArguments {
   state: SliderState
 }
 
-export interface SliderBaseProps extends SpectrumBarSliderBase<number[]> {
+export interface SliderBaseProps<T = number[]> extends SpectrumBarSliderBase<T> {
   children: (opts: SliderBaseChildArguments) => ReactNode,
   classes?: string[] | Object,
   style?: CSSProperties
@@ -40,18 +40,18 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     classes,
     style,
     labelPosition = 'top',
-    valueLabel,
+    getValueLabel,
     showValueLabel = !!props.label,
     formatOptions,
+    minValue = 0,
+    maxValue = 100,
     ...otherProps
   } = props;
 
   let {styleProps} = useStyleProps(otherProps);
 
-  // Assumes that DEFAULT_MIN_VALUE and DEFAULT_MAX_VALUE are both positive, this value needs to be passed to useSliderState, so
-  // getThumbMinValue/getThumbMaxValue cannot be used here.
-  // `Math.abs(Math.sign(a) - Math.sign(b)) === 2` is true if the values have a different sign and neither is null.
-  let alwaysDisplaySign = props.minValue != null && props.maxValue != null && Math.abs(Math.sign(props.minValue) - Math.sign(props.maxValue)) === 2;
+  // `Math.abs(Math.sign(a) - Math.sign(b)) === 2` is true if the values have a different sign.
+  let alwaysDisplaySign = Math.abs(Math.sign(minValue) - Math.sign(maxValue)) === 2;
   if (alwaysDisplaySign) {
     if (formatOptions != null) {
       if (!('signDisplay' in formatOptions)) {
@@ -67,10 +67,16 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     }
   }
 
-  let state = useSliderState({...props, formatOptions});
+  const formatter = useNumberFormatter(formatOptions);
+  const state = useSliderState({
+    ...props,
+    numberFormatter: formatter,
+    minValue,
+    maxValue
+  });
   let trackRef = useRef();
   let {
-    containerProps,
+    groupProps,
     trackProps,
     labelProps,
     outputProps
@@ -79,13 +85,32 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
   let inputRef = useRef();
   let domRef = useFocusableRef(ref, inputRef);
 
-  let formatter = useNumberFormatter(formatOptions);
-
-  let displayValue = valueLabel;
+  let displayValue = '';
   let maxLabelLength = undefined;
 
-  if (!displayValue) {
-    maxLabelLength = Math.max([...formatter.format(state.getThumbMinValue(0))].length, [...formatter.format(state.getThumbMaxValue(0))].length);
+  if (typeof getValueLabel === 'function') {
+    displayValue = getValueLabel(state.values);
+    switch (state.values.length) {
+      case 1:
+        maxLabelLength = Math.max(
+          getValueLabel([minValue]).length,
+          getValueLabel([maxValue]).length
+        );
+        break;
+      case 2:
+        // Try all possible combinations of min and max values.
+        maxLabelLength = Math.max(
+          getValueLabel([minValue, minValue]).length,
+          getValueLabel([minValue, maxValue]).length,
+          getValueLabel([maxValue, minValue]).length,
+          getValueLabel([maxValue, maxValue]).length
+        );
+        break;
+      default:
+        throw new Error('Only sliders with 1 or 2 handles are supported!');
+    }
+  } else {
+    maxLabelLength = Math.max([...formatter.format(minValue)].length, [...formatter.format(maxValue)].length);
     switch (state.values.length) {
       case 1:
         displayValue = state.getThumbValueLabel(0);
@@ -95,9 +120,9 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
         // https://github.com/tc39/ecma402/issues/393
         // https://github.com/tc39/proposal-intl-numberformat-v3#formatrange-ecma-402-393
         displayValue = `${state.getThumbValueLabel(0)} – ${state.getThumbValueLabel(1)}`;
-        maxLabelLength = 2 + 2 * Math.max(
+        maxLabelLength = 3 + 2 * Math.max(
           maxLabelLength,
-          [...formatter.format(state.getThumbMinValue(1))].length, [...formatter.format(state.getThumbMaxValue(1))].length
+          [...formatter.format(minValue)].length, [...formatter.format(maxValue)].length
         );
         break;
       default:
@@ -128,7 +153,8 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
       className={classNames(styles,
         'spectrum-Slider',
         {
-          'spectrum-Slider--label-side': labelPosition === 'side',
+          'spectrum-Slider--positionTop': labelPosition === 'top',
+          'spectrum-Slider--positionSide': labelPosition === 'side',
           'is-disabled': isDisabled
         },
         classes,
@@ -137,7 +163,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
         ...style,
         ...styleProps.style
       }}
-      {...containerProps}>
+      {...groupProps}>
       {(props.label) &&
         <div className={classNames(styles, 'spectrum-Slider-labelContainer')} role="presentation">
           {props.label && labelNode}
@@ -152,7 +178,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
         })}
       </div>
       {labelPosition === 'side' &&
-        <div className={classNames(styles, 'spectrum-Slider-labelContainer')} role="presentation">
+        <div className={classNames(styles, 'spectrum-Slider-valueLabelContainer')} role="presentation">
           {showValueLabel && valueNode}
         </div>
       }

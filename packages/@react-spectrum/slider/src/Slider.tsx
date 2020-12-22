@@ -21,16 +21,20 @@ import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useLocale} from '@react-aria/i18n';
 
 function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
-  let {onChange, value, defaultValue, isFilled, fillOffset, trackGradient, ...otherProps} = props;
+  let {onChange, onChangeEnd, value, defaultValue, isFilled, fillOffset, trackGradient, getValueLabel, ...otherProps} = props;
 
   let baseProps: Omit<SliderBaseProps, 'children'> = {
     ...otherProps,
     // Normalize `value: number[]` to `value: number`
     value: value != null ? [value] : undefined,
     defaultValue: defaultValue != null ? [defaultValue] : undefined,
-    onChange(v) {
+    onChange: (v: number[]): void => {
       onChange?.(v[0]);
-    }
+    },
+    onChangeEnd: (v: number[]): void => {
+      onChangeEnd?.(v[0]);
+    },
+    getValueLabel: getValueLabel ? ([v]) => getValueLabel(v) : undefined
   };
 
   let {direction} = useLocale();
@@ -44,7 +48,7 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
       }}
       style={
         // @ts-ignore
-        {'--spectrum-slider-track-color': trackGradient && `linear-gradient(to ${direction === 'ltr' ? 'right' : 'left'}, ${trackGradient.join(', ')})`}
+        {'--spectrum-slider-track-gradient': trackGradient && `linear-gradient(to ${direction === 'ltr' ? 'right' : 'left'}, ${trackGradient.join(', ')})`}
       }>
       {({trackRef, inputRef, state}: SliderBaseChildArguments) => {
         fillOffset = fillOffset != null ? clamp(fillOffset, state.getThumbMinValue(0), state.getThumbMaxValue(0)) : fillOffset;
@@ -109,5 +113,8 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
   );
 }
 
+/**
+ * Sliders allow users to quickly select a value within a range. They should be used when the upper and lower bounds to the range are invariable.
+ */
 const _Slider = React.forwardRef(Slider);
 export {_Slider as Slider};

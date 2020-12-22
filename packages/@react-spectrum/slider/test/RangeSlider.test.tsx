@@ -43,13 +43,15 @@ describe('RangeSlider', function () {
 
     let label = document.getElementById(labelId);
     expect(label).toHaveTextContent('The Label');
-    expect(label).toHaveAttribute('for', getAllByRole('slider')[0].id);
+    // https://bugs.webkit.org/show_bug.cgi?id=172464
+    // expect(label).toHaveAttribute('for', getAllByRole('slider')[0].id);
+    expect(label).not.toHaveAttribute('for');
 
     // Shows value as well
     let output = getByRole('status');
     expect(output).toHaveTextContent('0 – 100');
     expect(output).toHaveAttribute('for', getAllByRole('slider').map(s => s.id).join(' '));
-    expect(output).toHaveAttribute('aria-labelledby', label.id);
+    expect(output).not.toHaveAttribute('aria-labelledby');
     expect(output).toHaveAttribute('aria-live', 'off');
   });
 
@@ -158,7 +160,7 @@ describe('RangeSlider', function () {
   it('supports a custom valueLabel', function () {
     function Test() {
       let [value, setValue] = useState({start: 10, end: 40});
-      return (<RangeSlider label="The Label" value={value} onChange={setValue} valueLabel={`A${value.start}B${value.end}C`} />);
+      return (<RangeSlider label="The Label" value={value} onChange={setValue} getValueLabel={value => `A${value.start}B${value.end}C`} />);
     }
 
     let {getAllByRole, getByRole} = render(<Test />);
