@@ -11,7 +11,7 @@
  */
 
 import {chain, getScrollParent} from '@react-aria/utils';
-import {useLayoutEffect, useEffect} from 'react';
+import {useEffect, useLayoutEffect} from 'react';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
