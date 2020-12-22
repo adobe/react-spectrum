@@ -16,6 +16,5 @@ export * from './useTableRow';
 export * from './useTableRowHeader';
 export * from './useTableSelectionCheckbox';
 
-// TODO are these needed?
 export {useGridCell as useTableCell} from '@react-aria/grid';
 export {useGridRowGroup as useTableRowGroup} from '@react-aria/grid';

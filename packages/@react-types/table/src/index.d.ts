@@ -11,8 +11,7 @@
  */
 
 import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, MultipleSelection, SectionProps, Sortable, StyleProps} from '@react-types/shared';
-import {GridCollection} from '@react-types/grid';
-import {GridNode} from '@react-types/grid';
+import {GridCollection, GridNode} from '@react-types/grid';
 import {Key, ReactElement, ReactNode} from 'react';
 
 export interface TableProps<T> extends MultipleSelection, Sortable {

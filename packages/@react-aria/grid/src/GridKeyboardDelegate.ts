@@ -103,7 +103,9 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       }
 
       // Otherwise, focus the next row
-      return key;
+      if (this.focusMode === 'row') {
+        return key;
+      }
     }
   }
 
@@ -128,7 +130,9 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       }
 
       // Otherwise, focus the previous row
-      return key;
+      if (this.focusMode === 'row') {
+        return key;
+      }
     }
   }
 

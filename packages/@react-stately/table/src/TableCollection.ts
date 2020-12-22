@@ -11,7 +11,6 @@
  */
 import {GridCollection} from '@react-stately/grid';
 import {GridNode} from '@react-types/grid';
-import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key} from 'react';
 
 interface GridCollectionOptions {
@@ -227,13 +226,12 @@ export class TableCollection<T> extends GridCollection<T> {
       visit(node);
     }
     let headerRows = buildHeaderRows(columnKeyMap, columns) as GridNode<T>[];
-    // headerRows.reverse().forEach(row => rows.unshift(row));
     headerRows.forEach((row, i) => rows.splice(i, 0, row));
 
     super({columnCount: columns.length, items: rows});
     this.columns = columns;
     this.rowHeaderColumnKeys = rowHeaderColumnKeys;
-    this.body = body; // used to read TableBody props
+    this.body = body;
     this.headerRows = headerRows;
 
     // Default row header column to the first one.
