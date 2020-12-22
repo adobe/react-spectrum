@@ -47,6 +47,12 @@ export function useColorSliderState(props: ColorSliderProps): ColorSliderState {
     value: [color.getChannelValue(channel)],
     onChange([v]) {
       setColor(color.withChannelValue(channel, v));
+    },
+    onChangeEnd([v]) {
+      // onChange will have already been called with the right value, this is just to trigger onChangEnd
+      if (props.onChangeEnd) {
+        props.onChangeEnd(color.withChannelValue(channel, v));
+      }
     }
   });
 

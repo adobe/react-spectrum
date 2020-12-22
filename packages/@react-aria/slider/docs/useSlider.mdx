@@ -1,0 +1,416 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/slider';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-aria/slider/package.json';
+import statelyDocs from 'docs:@react-stately/slider';
+import i18nDocs from 'docs:@react-aria/i18n';
+
+```jsx import
+import {useSlider, useSliderThumb} from '@react-aria/slider';
+```
+
+---
+category: Sliders
+keywords: [slider, range, aria]
+after_version: 3.0.0-alpha.3
+---
+
+# useSlider
+
+<p>{docs.exports.useSlider.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useSlider', 'useSliderThumb']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-1.2/#slider'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useSlider} links={docs.links} />
+<FunctionAPI function={docs.exports.useSliderThumb} links={docs.links} />
+
+## Features
+
+The [&lt;input type="range"&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range)
+HTML element can be used to build a slider, however it is
+very difficult to style cross browser. `useSlider` and `useSliderThumb` help achieve accessible
+sliders that can be styled as needed.
+
+* Support for one or multiple thumbs
+* Support for mouse, touch, and keyboard via the [useMove](../react-aria/useMove.html) hook
+* Multi-touch support for dragging multiple thumbs or multiple sliders at once
+* Pressing on the track moves the nearest thumb to that position
+* Supports using the arrow keys, as well as page up/down, home, and end keys
+* Support for both horizontal and vertical orientations
+* Support for custom min, max, and step values with handling for rounding errors
+* Support for disabling the whole slider or individual thumbs
+* Prevents text selection while dragging
+* Exposed to assistive technology as a `group` of `slider` elements via ARIA
+* Slider thumbs use hidden native input elements to support touch screen readers
+* Support for labeling both the slider as a whole and individual thumbs
+* Support for displaying the current thumb values using an `<output>` element
+* Internationalized number formatting as a percentage or value
+* Support for mirroring in RTL locales
+
+## Anatomy
+
+Sliders consist of a track element showing the range of available values,
+one or more thumbs showing the current values, an
+optional [&lt;output&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/output)
+element displaying the current values textually, and a label.
+The thumbs can be dragged to allow a user to change their value. In addition, the
+track can be clicked to move the nearest thumb to that position.
+
+### useSlider hook
+`useSlider` returns three sets of props that you should spread onto the appropriate element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useSlider.return.id].properties} />
+</TypeContext.Provider>
+
+If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
+to identify the element to screen readers.
+
+### useSliderThumb hook
+
+`useSliderThumb` returns three sets of props that you should spread onto the appropriate element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useSliderThumb.return.id].properties} />
+</TypeContext.Provider>
+
+If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
+to identify each thumb to screen readers.
+
+Slider state is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useSliderState} /> hook.
+
+## Examples
+
+### Single thumb
+
+This example shows how to build a simple horizontal slider with a single thumb. In addition, it includes a label
+which can be clicked to focus the slider thumb, and an `<output>` element to display the current slider value as
+text. This is formatted using a locale aware number formatter provided by the [useNumberFormatter](useNumberFormatter.html) hook.
+
+The `<input>` element inside the thumb is used to represent the slider to assistive technology, and is hidden from view
+using the [VisuallyHidden](VisuallyHidden.html) component. The thumb also uses the [useFocusRing](useFocusRing.html) hook to
+display using a different color when it is keyboard focused (try tabbing to it).
+
+```tsx example
+import {useSliderState} from '@react-stately/slider';
+import {useFocusRing} from '@react-aria/focus';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {mergeProps} from '@react-aria/utils';
+import {useNumberFormatter} from '@react-aria/i18n';
+
+function Slider(props) {
+  let trackRef = React.useRef(null);
+  let numberFormatter = useNumberFormatter(props.formatOptions);
+  let state = useSliderState({...props, numberFormatter});
+  let {
+    groupProps,
+    trackProps,
+    labelProps,
+    outputProps
+  } = useSlider(props, state, trackRef);
+
+  return (
+    <div
+      {...groupProps}
+      style={{position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', width: 300, touchAction: 'none'}}>
+      {/* Create a flex container for the label and output element. */}
+      <div style={{display: 'flex', alignSelf: 'stretch'}}>
+        {props.label &&
+          <label {...labelProps}>{props.label}</label>
+        }
+        <output {...outputProps} style={{flex: '1 0 auto', textAlign: 'end'}}>
+          {state.getThumbValueLabel(0)}
+        </output>
+      </div>
+      {/* The track element holds the visible track line and the thumb. */}
+      <div
+        {...trackProps}
+        ref={trackRef}
+        style={{
+          position: 'relative',
+          height: 30,
+          width:' 100%'
+        }}>
+        <div style={{
+          position: 'absolute',
+          backgroundColor: 'gray',
+          height: 3,
+          top: 13,
+          width: '100%'
+        }} />
+        <Thumb index={0} state={state} trackRef={trackRef} />
+      </div>
+    </div>
+  );
+}
+
+function Thumb(props) {
+  let {state, trackRef, index} = props;
+  let inputRef = React.useRef(null);
+  let {thumbProps, inputProps} = useSliderThumb({
+    index,
+    trackRef,
+    inputRef
+  }, state);
+
+  let {focusProps, isFocusVisible} = useFocusRing();
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: 4,
+        transform: 'translateX(-50%)',
+        left: `${state.getThumbPercent(index) * 100}%`
+      }}>
+      <div
+        {...thumbProps}
+        style={{
+          width: 20,
+          height: 20,
+          borderRadius: '50%',
+          backgroundColor: isFocusVisible
+            ? 'orange'
+            : state.isThumbDragging(index)
+              ? 'dimgrey'
+              : 'gray'
+        }}>
+        <VisuallyHidden>
+          <input ref={inputRef} {...mergeProps(inputProps, focusProps)} />
+        </VisuallyHidden>
+      </div>
+    </div>
+  );
+}
+
+<Slider
+  label="Opacity"
+  formatOptions={{style: 'percent'}}
+  maxValue={1}
+  step={0.01} />
+```
+
+### Multi thumb
+
+This example shows how to build a slider with multiple thumbs. The thumb component is the same one shown in the previous
+example. The main difference in this example is that there are two `<Thumb>` elements rendered with different `index` props.
+In addition, the `<output>` element uses `state.getThumbValueLabel` for each thumb to display the selected range.
+
+```tsx example
+function RangeSlider(props) {
+  let trackRef = React.useRef(null);
+
+  let numberFormatter = useNumberFormatter(props.formatOptions);
+  let state = useSliderState({...props, numberFormatter});
+  let {
+    groupProps,
+    trackProps,
+    labelProps,
+    outputProps
+  } = useSlider(props, state, trackRef);
+
+  return (
+    <div
+      {...groupProps}
+      style={{position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', width: 300, touchAction: 'none'}}>
+      <div style={{display: 'flex', alignSelf: 'stretch'}}>
+        {props.label &&
+          <label {...labelProps}>{props.label}</label>
+        }
+        <output {...outputProps} style={{flex: '1 0 auto', textAlign: 'end'}}>
+          {`${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`}
+        </output>
+      </div>
+      <div
+        {...trackProps}
+        ref={trackRef}
+        style={{
+          position: 'relative',
+          height: 30,
+          width:' 100%'
+        }}>
+        <div style={{
+          position: 'absolute',
+          backgroundColor: 'grey',
+          height: 3,
+          top: 13,
+          width: '100%'
+        }} />
+        <Thumb index={0} state={state} trackRef={trackRef} />
+        <Thumb index={1} state={state} trackRef={trackRef} />
+      </div>
+    </div>
+  );
+}
+
+///- begin collapse -///
+function Thumb(props) {
+  let {state, trackRef, index} = props;
+  let inputRef = React.useRef(null);
+  let {thumbProps, inputProps} = useSliderThumb({
+    index,
+    trackRef,
+    inputRef
+  }, state);
+
+  let {focusProps, isFocusVisible} = useFocusRing();
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: 4,
+        transform: 'translateX(-50%)',
+        left: `${state.getThumbPercent(index) * 100}%`
+      }}>
+      <div
+        {...thumbProps}
+        style={{
+          width: 20,
+          height: 20,
+          borderRadius: '50%',
+          backgroundColor: isFocusVisible
+            ? 'orange'
+            : state.isThumbDragging(index)
+              ? 'dimgrey'
+              : 'gray'
+        }}>
+        <VisuallyHidden>
+          <input ref={inputRef} {...mergeProps(inputProps, focusProps)} />
+        </VisuallyHidden>
+      </div>
+    </div>
+  );
+}
+///- end collapse -///
+
+<RangeSlider
+  label="Price Range"
+  formatOptions={{style: 'currency', currency: 'USD'}}
+  maxValue={500}
+  defaultValue={[100, 350]}
+  step={10} />
+```
+
+### Vertical orientation
+
+This example shows how to build a vertical slider. The main difference from horizontal sliders is the addition of the
+`orientation: 'vertical'` option to both `useSlider` and `useSliderThumb`, and the change to the handle positioning logic.
+Additionally, this example shows how to build a slider without a visible label or output element. This is done by simply
+not using the returned `labelProps` and `outputProps`. Note however, that when there is no visible label, an `aria-label`
+is required to label the slider for accessibility.
+
+```tsx example
+function VerticalSlider(props) {
+  let trackRef = React.useRef(null);
+
+  let numberFormatter = useNumberFormatter(props.formatOptions);
+  let state = useSliderState({...props, numberFormatter});
+  let {
+    groupProps,
+    trackProps
+  } = useSlider({...props, orientation: 'vertical'}, state, trackRef);
+
+  return (
+    <div
+      {...groupProps}
+      style={{height: 150, touchAction: 'none'}}>
+      <div
+        {...trackProps}
+        ref={trackRef}
+        style={{
+          position: 'relative',
+          width: 30,
+          height:' 100%'
+        }}>
+        <div style={{
+          position: 'absolute',
+          backgroundColor: 'gray',
+          width: 3,
+          left: 13,
+          height: '100%'
+        }} />
+        <Thumb index={0} state={state} trackRef={trackRef} />
+      </div>
+    </div>
+  );
+}
+
+function Thumb(props) {
+  let {state, trackRef, index} = props;
+  let inputRef = React.useRef(null);
+  let {thumbProps, inputProps} = useSliderThumb({
+    orientation: 'vertical',
+    index,
+    trackRef,
+    inputRef
+  }, state);
+
+  let {focusProps, isFocusVisible} = useFocusRing();
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        left: 4,
+        transform: 'translateY(-50%)',
+        // Flip the percentage so that 0% is at the bottom and 100% is at the top.
+        top: `${(1 - state.getThumbPercent(index)) * 100}%`
+      }}>
+      <div
+        {...thumbProps}
+        style={{
+          width: 20,
+          height: 20,
+          borderRadius: '50%',
+          backgroundColor: isFocusVisible
+            ? 'orange'
+            : state.isThumbDragging(index)
+              ? 'dimgrey'
+              : 'gray'
+        }}>
+        <VisuallyHidden>
+          <input ref={inputRef} {...mergeProps(inputProps, focusProps)} />
+        </VisuallyHidden>
+      </div>
+    </div>
+  );
+}
+
+<VerticalSlider
+  aria-label="Opacity"
+  formatOptions={{style: 'percent'}}
+  maxValue={1}
+  step={0.01} />
+```
+
+## Internationalization
+
+### Value formatting
+
+Formatting the value that should be displayed in the value label or `aria-valuetext`
+is handled by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useSliderState} />.
+The formatting can be controlled using the `formatOptions` prop.
+If you want to change locales, the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.I18nProvider} />
+must be somewhere in the hierarchy above the Slider.
+This will tell the formatter what locale to use.
+
+### RTL
+
+In right-to-left languages, the slider should be mirrored. The label is right-aligned,
+the value is left-aligned. Ensure that your CSS accounts for this.

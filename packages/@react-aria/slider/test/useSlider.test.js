@@ -30,9 +30,9 @@ describe('useSlider', () => {
         label: 'Slider'
       });
 
-      let {props: {labelProps, containerProps}} = result.current;
+      let {props: {labelProps, groupProps}} = result.current;
 
-      expect(containerProps.role).toBe('group');
+      expect(groupProps.role).toBe('group');
       expect(labelProps.htmlFor).toBe(undefined); // https://bugs.webkit.org/show_bug.cgi?id=172464
     });
 
@@ -42,11 +42,11 @@ describe('useSlider', () => {
         'aria-label': 'Slider'
       });
 
-      let {labelProps, containerProps} = result.current.props;
+      let {labelProps, groupProps} = result.current.props;
 
       expect(labelProps).toEqual({});
-      expect(containerProps.role).toBe('group');
-      expect(containerProps['aria-label']).toBe('Slider');
+      expect(groupProps.role).toBe('group');
+      expect(groupProps['aria-label']).toBe('Slider');
     });
   });
 

@@ -1,6 +1,6 @@
+import {AriaSliderProps} from '@react-types/slider';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
-import {SliderProps} from '@react-types/slider';
 import styles from './story-slider.css';
 import {useNumberFormatter} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
@@ -8,7 +8,7 @@ import {useSliderState} from '@react-stately/slider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 
-interface StoryRangeSliderProps extends SliderProps {
+interface StoryRangeSliderProps extends AriaSliderProps {
   showTip?: boolean,
   formatOptions?: Intl.NumberFormatOptions
 }
@@ -25,7 +25,7 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
   }
 
   const {
-    trackProps, labelProps, containerProps, outputProps
+    trackProps, labelProps, groupProps, outputProps
   } = useSlider(props, state, trackRef);
 
   const {thumbProps: minThumbProps, inputProps: minInputProps} = useSliderThumb({
@@ -45,7 +45,7 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
   }, state);
 
   return (
-    <div {...containerProps} className={styles.slider}>
+    <div {...groupProps} className={styles.slider}>
       <div className={styles.sliderLabel}>
         {props.label && <label {...labelProps} className={styles.label}>{props.label}</label>}
         <output {...outputProps} className={styles.value}>

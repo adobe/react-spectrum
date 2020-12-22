@@ -34,7 +34,7 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
   const {
     trackProps,
     labelProps,
-    containerProps,
+    groupProps,
     outputProps
   } = useSlider(props, state, trackRef);
 
@@ -44,7 +44,7 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
   }
 
   return (
-    <div {...containerProps} className={styles.slider}>
+    <div {...groupProps} className={styles.slider}>
       <div className={styles.sliderLabel}>
         {props.label && <label {...labelProps} className={styles.label}>{props.label}</label>}
         <output {...outputProps} className={styles.value}>
