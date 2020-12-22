@@ -60,7 +60,7 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
   });
 
   let state = useColorWheelState(props);
-  let {containerProps, inputProps, thumbProps, thumbPosition: {x, y}} = useColorWheel({
+  let {groupProps, inputProps, thumbProps, thumbPosition: {x, y}} = useColorWheel({
     ...props,
     inputRef,
     containerRef,
@@ -94,7 +94,7 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
         )
       }
       ref={containerRef}
-      {...containerProps}
+      {...groupProps}
       style={{
         ...styleProps.style,
         // Workaround around https://github.com/adobe/spectrum-css/issues/1032

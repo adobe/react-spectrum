@@ -10,19 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {BaseSliderProps, SliderProps} from '@react-types/slider';
-import {DEFAULT_MIN_VALUE, useSliderState} from '@react-stately/slider';
+import {AriaSliderProps} from '@react-types/slider';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
 import styles from './story-slider.css';
 import {useNumberFormatter} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
-import {ValueBase} from '@react-types/shared';
+import {useSliderState} from '@react-stately/slider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-interface StorySliderProps extends BaseSliderProps, ValueBase<number> {
+interface StorySliderProps extends AriaSliderProps<number> {
   origin?: number,
-  onChangeEnd?: (value: number) => void,
   showTip?: boolean,
   formatOptions?: Intl.NumberFormatOptions
 }
@@ -30,9 +28,9 @@ interface StorySliderProps extends BaseSliderProps, ValueBase<number> {
 export function StorySlider(props: StorySliderProps) {
   const trackRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const origin = props.origin ?? props.minValue ?? DEFAULT_MIN_VALUE;
+  const origin = props.origin ?? props.minValue ?? 0;
 
-  const multiProps: SliderProps = {
+  const multiProps: AriaSliderProps = {
     ...props,
     value: props.value == null ? undefined :  [props.value],
     defaultValue: props.defaultValue == null ? undefined : [props.defaultValue],
@@ -42,7 +40,7 @@ export function StorySlider(props: StorySliderProps) {
   const formatter = useNumberFormatter(props.formatOptions);
   const state = useSliderState({...multiProps, numberFormatter: formatter});
   const {
-    containerProps,
+    groupProps,
     trackProps,
     labelProps,
     outputProps
@@ -58,7 +56,7 @@ export function StorySlider(props: StorySliderProps) {
   const value = state.values[0];
 
   return (
-    <div className={styles.slider} {...containerProps}>
+    <div className={styles.slider} {...groupProps}>
       <div className={styles.sliderLabel}>
         {props.label && <label {...labelProps} className={styles.label}>{props.label}</label>}
         <output {...outputProps} className={styles.value}>{state.getThumbValueLabel(0)}</output>

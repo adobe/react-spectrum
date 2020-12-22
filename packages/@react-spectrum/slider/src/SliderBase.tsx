@@ -11,9 +11,9 @@
  */
 
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
-import {DEFAULT_MAX_VALUE, DEFAULT_MIN_VALUE, SliderState, useSliderState} from '@react-stately/slider';
 import {FocusableRef} from '@react-types/shared';
 import React, {CSSProperties, ReactNode, RefObject, useRef} from 'react';
+import {SliderState, useSliderState} from '@react-stately/slider';
 import {SpectrumBarSliderBase} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useNumberFormatter} from '@react-aria/i18n';
@@ -26,7 +26,7 @@ export interface SliderBaseChildArguments {
   state: SliderState
 }
 
-export interface SliderBaseProps extends SpectrumBarSliderBase<number[]> {
+export interface SliderBaseProps<T = number[]> extends SpectrumBarSliderBase<T> {
   children: (opts: SliderBaseChildArguments) => ReactNode,
   classes?: string[] | Object,
   style?: CSSProperties
@@ -43,8 +43,8 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     getValueLabel,
     showValueLabel = !!props.label,
     formatOptions,
-    minValue = DEFAULT_MIN_VALUE,
-    maxValue = DEFAULT_MAX_VALUE,
+    minValue = 0,
+    maxValue = 100,
     ...otherProps
   } = props;
 
@@ -68,10 +68,15 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
   }
 
   const formatter = useNumberFormatter(formatOptions);
-  const state = useSliderState({...props, numberFormatter: formatter});
+  const state = useSliderState({
+    ...props,
+    numberFormatter: formatter,
+    minValue,
+    maxValue
+  });
   let trackRef = useRef();
   let {
-    containerProps,
+    groupProps,
     trackProps,
     labelProps,
     outputProps
@@ -158,7 +163,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
         ...style,
         ...styleProps.style
       }}
-      {...containerProps}>
+      {...groupProps}>
       {(props.label) &&
         <div className={classNames(styles, 'spectrum-Slider-labelContainer')} role="presentation">
           {props.label && labelNode}
