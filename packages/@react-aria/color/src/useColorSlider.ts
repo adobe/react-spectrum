@@ -10,18 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaSliderThumbProps} from '@react-types/slider';
 import {ColorChannel} from '@react-types/color';
 import {ColorSliderState} from '@react-stately/color';
-import {HTMLAttributes} from 'react';
-import {SliderThumbOptions, useSlider, useSliderThumb} from '@react-aria/slider';
+import {HTMLAttributes, RefObject} from 'react';
 import {useLocale} from '@react-aria/i18n';
+import {useSlider, useSliderThumb} from '@react-aria/slider';
 
-interface ColorSliderAriaOptions extends Omit<SliderThumbOptions, 'index'> {
-  channel: ColorChannel
+interface ColorSliderAriaOptions extends Omit<AriaSliderThumbProps, 'index'> {
+  channel: ColorChannel,
+  trackRef: RefObject<HTMLElement>,
+  inputRef: RefObject<HTMLInputElement>
 }
 
 interface ColorSliderAria {
-  containerProps: HTMLAttributes<HTMLElement>,
+  groupProps: HTMLAttributes<HTMLElement>,
   trackProps: HTMLAttributes<HTMLElement>,
   inputProps: HTMLAttributes<HTMLElement>,
   thumbProps: HTMLAttributes<HTMLElement>,
@@ -34,7 +37,7 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
 
   let {direction} = useLocale();
 
-  let {containerProps, trackProps, labelProps} = useSlider(props, state, trackRef);
+  let {groupProps, trackProps, labelProps} = useSlider(props, state, trackRef);
   let {inputProps, thumbProps} = useSliderThumb({
     ...props,
     index: 0
@@ -70,7 +73,7 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
   };
 
   return {
-    containerProps,
+    groupProps,
     trackProps,
     inputProps,
     thumbProps,
