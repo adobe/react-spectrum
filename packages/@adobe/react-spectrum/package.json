@@ -44,6 +44,7 @@
     "@react-spectrum/provider": "^3.1.2",
     "@react-spectrum/radio": "^3.1.1",
     "@react-spectrum/searchfield": "^3.1.2",
+    "@react-spectrum/slider": "3.0.0-alpha.0",
     "@react-spectrum/statuslight": "^3.1.1",
     "@react-spectrum/switch": "^3.1.1",
     "@react-spectrum/text": "^3.1.1",
