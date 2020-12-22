@@ -61,5 +61,7 @@ export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabe
   /**
    * The name of the Picker input, used when submitting an HTML form.
    */
-  name?: string
+  name?: string,
+  /** Whether the element should receive focus on render. */
+  autoFocus?: boolean
 }

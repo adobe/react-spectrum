@@ -10,19 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonProps} from '@react-types/button';
+import {AriaButtonElementTypeProps, ButtonProps} from '@react-types/button';
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import CrossSmall from '@spectrum-icons/ui/CrossSmall';
 import {DOMProps, FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React, {JSXElementConstructor} from 'react';
+import React, {ElementType} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
 
-interface ClearButtonProps extends ButtonProps, DOMProps, StyleProps {
-  elementType?: string | JSXElementConstructor<any>,
+interface ClearButtonProps<T extends ElementType = 'button'> extends ButtonProps, AriaButtonElementTypeProps<T>, DOMProps, StyleProps {
   focusClassName?: string,
   variant?: 'overBackground',
   excludeFromTabOrder?: boolean,
@@ -37,7 +36,7 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
     autoFocus,
     isDisabled,
     preventFocus,
-    elementType = preventFocus ? 'div' : 'button',
+    elementType = preventFocus ? 'div' : 'button' as ElementType,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
@@ -65,6 +64,7 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
             'spectrum-ClearButton',
             {
               [`spectrum-ClearButton--${variant}`]: variant,
+              'is-disabled': isDisabled,
               'is-active': isPressed,
               'is-hovered': isHovered
             },

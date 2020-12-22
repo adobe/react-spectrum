@@ -11,13 +11,19 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ErrorBoundary} from '@react-spectrum/story-utils';
 import {Flex} from '@adobe/react-spectrum';
-import React, {useState} from 'react';
+import React from 'react';
 import {Slider} from '../';
 import {SpectrumSliderProps} from '@react-types/slider';
 import {storiesOf} from '@storybook/react';
 
+let message = 'Your browser may not support this set of format options.';
+
 storiesOf('Slider', module)
+  .addDecorator(story => (
+    <ErrorBoundary message={message}>{story()}</ErrorBoundary>
+  ))
   .add(
     'Default',
     () => render({'aria-label': 'Label'})
@@ -39,11 +45,15 @@ storiesOf('Slider', module)
   )
   .add(
     'custom width',
-    () => render({label: 'Label', width: '200px'})
+    () => render({label: 'Label', width: '300px'})
+  )
+  .add(
+    'custom width small',
+    () => render({label: 'Label', width: '30px'})
   )
   .add(
     'label overflow',
-    () => render({label: 'This is a rather long label for this narrow slider element.', maxValue: 1000, width: '100px'})
+    () => render({label: 'This is a rather long label for this narrow slider element.', maxValue: 1000, width: '300px'})
   )
   .add(
     'showValueLabel: false',
@@ -60,14 +70,23 @@ storiesOf('Slider', module)
   )
   .add(
     'custom valueLabel',
-    () => {
-      let [state, setState] = useState(0);
-      return render({label: 'Label', value: state, onChange: setState, valueLabel: `A ${state} B`});
-    }
+    () => render({label: 'Label', getValueLabel: state => `A ${state} B`})
+  )
+  .add(
+    'custom valueLabel with label overflow',
+    () => render({label: 'This is a rather long label for this narrow slider element.', getValueLabel: state => `A ${state} B`})
   )
   .add(
     'labelPosition: side',
     () => render({label: 'Label', labelPosition: 'side'})
+  )
+  .add(
+    'labelPosition: side, customWidth',
+    () => render({label: 'Label', labelPosition: 'side', width: '400px'})
+  )
+  .add(
+    'labelPosition: side, customWidth small',
+    () => render({label: 'Label', labelPosition: 'side', width: '30px'})
   )
   .add(
     'min/max',
@@ -85,23 +104,6 @@ storiesOf('Slider', module)
     'fillOffset',
     () => render({label: 'Exposure', isFilled: true, fillOffset: 0, defaultValue: 0, minValue: -7, maxValue: 5})
   )
-  // .add(
-  //   'ticks',
-  //   () => render({label: 'Label', tickCount: 4})
-  // )
-  // .add(
-  //   'showTickLabels: true',
-  //   () => render({label: 'Label', tickCount: 4, showTickLabels: true})
-  // )
-  // .add(
-  //   'showTickLabels, custom formatOptions',
-  //   // @ts-ignore
-  //   () => render({label: 'Label', tickCount: 5, showTickLabels: true, minValue: -10, maxValue: 10, width: '200px', formatOptions: {style: 'unit', unit: 'centimeter'}})
-  // )
-  // .add(
-  //   'tickLabels',
-  //   () => render({label: 'Label', tickCount: 3, showTickLabels: true, tickLabels: ['A', 'B', 'C']})
-  // )
   .add(
     'trackGradient',
     () => render({label: 'Label', trackGradient: ['blue', 'red']})
