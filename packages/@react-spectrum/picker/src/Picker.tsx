@@ -84,7 +84,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let {labelProps, triggerProps, valueProps, menuProps} = useSelect({
     ...props,
     keyboardDelegate: layout,
-    popoverRef: unwrapDOMRef(popoverRef)
+    popoverRef: unwrappedPopoverRef
   }, state, unwrappedTriggerRef);
 
   let isMobile = useIsMobileDevice();
