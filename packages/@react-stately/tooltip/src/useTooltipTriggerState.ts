@@ -11,32 +11,40 @@
  */
 
 import {TooltipTriggerProps} from '@react-types/tooltip';
-import {useEffect} from 'react';
-import {useId} from '@react-aria/utils';
+import {useEffect, useMemo} from 'react';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
-export const TOOLTIP_DELAY = 1500; // this seems to be a 1.5 second delay, check with design
-export const TOOLTIP_COOLDOWN = 500;
-
-interface TooltipTriggerStateProps extends TooltipTriggerProps {}
+const TOOLTIP_DELAY = 1500; // this seems to be a 1.5 second delay, check with design
+const TOOLTIP_COOLDOWN = 500;
 
 export interface TooltipTriggerState {
+  /** Whether the tooltip is currently showing. */
   isOpen: boolean,
-  open: (immediate?: boolean) => void,
-  close: () => void
+  /**
+   * Shows the tooltip. By default, the tooltip becomes visible after a delay
+   * depending on a global warmup timer. The `immediate` option shows the
+   * tooltip immediately instead.
+   */
+  open(immediate?: boolean): void,
+  /** Hides the tooltip. */
+  close(): void
 }
 
 let tooltips = {};
+let tooltipId = 0;
 let globalWarmedUp = false;
 let globalWarmUpTimeout = null;
 let globalCooldownTimeout = null;
 
-
-export function useTooltipTriggerState(props: TooltipTriggerStateProps): TooltipTriggerState {
+/**
+ * Manages state for a tooltip trigger. Tracks whether the tooltip is open, and provides
+ * methods to toggle this state. Ensures only one tooltip is open at a time and controls
+ * the delay for showing a tooltip.
+ */
+export function useTooltipTriggerState(props: TooltipTriggerProps): TooltipTriggerState {
   let {delay = TOOLTIP_DELAY} = props;
   let {isOpen, open, close} = useOverlayTriggerState(props);
-  // this is a unique id for the tooltips in the map, it's not a dom id
-  let id = useId();
+  let id = useMemo(() => `${++tooltipId}`, []);
 
   let ensureTooltipEntry = () => {
     tooltips[id] = hideTooltip;
@@ -92,7 +100,7 @@ export function useTooltipTriggerState(props: TooltipTriggerStateProps): Tooltip
         globalWarmUpTimeout = null;
         globalWarmedUp = true;
         showTooltip();
-      }, TOOLTIP_DELAY);
+      }, delay);
     } else if (!isOpen) {
       showTooltip();
     }
@@ -106,7 +114,7 @@ export function useTooltipTriggerState(props: TooltipTriggerStateProps): Tooltip
         delete tooltips[id];
       }
     };
-  }, []);
+  }, [id]);
 
   return {
     isOpen,

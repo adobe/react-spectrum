@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
+import {fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {TextArea, TextField} from '../';
+import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 import V2SearchField from '@react/react-spectrum/Search';
 import V2TextArea from '@react/react-spectrum/Textarea';
@@ -71,7 +72,7 @@ describe('Shared TextField behavior', () => {
       input = tree.getAllByTestId(testId)[0];
     }
     expect(input.value).toBe('');
-    act(() => {userEvent.type(input, inputText);});
+    typeText(input, inputText);
     expect(input.value).toBe(inputText);
     if (Name === 'v3 TextArea') {
       expect(input).not.toHaveAttribute('type');
@@ -137,7 +138,7 @@ describe('Shared TextField behavior', () => {
     } else {
       input = tree.getAllByTestId(testId)[0];
     }
-    act(() => {fireEvent.change(input, {target: {value: inputText}});});
+    fireEvent.change(input, {target: {value: inputText}});
     expect(onChange).toHaveBeenCalledTimes(1);
 
     if (Component === V2SearchField) {
@@ -169,9 +170,9 @@ describe('Shared TextField behavior', () => {
     } else {
       input = tree.getAllByTestId(testId)[0];
     }
-    act(() => {fireEvent.focus(input);});
+    fireEvent.focus(input);
     expect(onFocus).toHaveBeenCalledTimes(1);
-    act(() => {userEvent.click(input);});
+    userEvent.click(input);
     expect(onFocus).toHaveBeenCalledTimes(2);
   });
 
@@ -212,7 +213,7 @@ describe('Shared TextField behavior', () => {
     } else {
       input = tree.getAllByTestId(testId)[0];
     }
-    act(() => {userEvent.type(input, newValue);});
+    userEvent.type(input, newValue);
     expect(onChange).toHaveBeenCalledTimes(newValue.length);
   });
 
@@ -235,7 +236,7 @@ describe('Shared TextField behavior', () => {
       input = tree.getAllByTestId(testId)[0];
     }
     expect(input.value).toBe(value);
-    act(() => {userEvent.type(input, newValue);});
+    userEvent.type(input, newValue);
     expect(input.value).toBe(value);
     expect(onChange).toHaveBeenCalledTimes(newValue.length);
   });
@@ -348,7 +349,7 @@ describe('Shared TextField behavior', () => {
       input = tree.getAllByTestId(testId)[0];
     }
     expect(input).toHaveAttribute('readonly');
-    act(() => {userEvent.click(input);});
+    userEvent.click(input);
     expect(document.activeElement).toEqual(input);
 
     // Note: simulating text input via fireEvent or "type"(userEvent library) still causes the input value to change
@@ -372,7 +373,7 @@ describe('Shared TextField behavior', () => {
       input = tree.getAllByTestId(testId)[0];
     }
     expect(input).toHaveAttribute('disabled');
-    act(() => {userEvent.click(input);});
+    userEvent.click(input);
     expect(document.activeElement).not.toEqual(input);
     // Note: simulating text input via fireEvent or "type"(userEvent library) still causes the input value to change
     // Seems like this is a framework issue rather than a bug with TextField so omitting the test case

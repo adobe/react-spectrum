@@ -31,6 +31,7 @@ import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css'
 import {theme} from '@react-spectrum/theme-default';
 import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+import {VersionBadge} from './VersionBadge';
 
 const TLD = 'react-spectrum.adobe.com';
 const HERO = {
@@ -225,6 +226,7 @@ const CATEGORY_ORDER = [
   '...',
   'Content',
   'Internationalization',
+  'Server Side Rendering',
   'Utilities'
 ];
 
@@ -313,7 +315,7 @@ function Nav({currentPageName, pages}) {
   let title = currentParts.length > 1 ? dirToTitle(currentPageName) : 'React Spectrum';
   let currentPageIsIndex = isIndex.test(currentPageName);
 
-  function SideNavItem({name, url, title}) {
+  function SideNavItem({name, url, title, preRelease}) {
     const isCurrentPage = !currentPageIsIndex && name === currentPageName;
     return (
       <li className={clsx(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: isCurrentPage || (name === blogIndex && isBlog)})}>
@@ -321,20 +323,22 @@ function Nav({currentPageName, pages}) {
           className={clsx(sideNavStyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)}
           href={url}
           aria-current={isCurrentPage ? 'page' : null}
-          {...getAnchorProps(url)}>{title}</a>
+          {...getAnchorProps(url)}>{title}
+          <VersionBadge version={preRelease} />
+        </a>
       </li>
     );
   }
 
   return (
-    <nav className={docStyles.nav}>
+    <nav className={docStyles.nav} aria-labelledby="nav-title-id">
       <header>
         {currentParts.length > 1 &&
           <a href="../index.html" className={docStyles.backBtn}>
             <ChevronLeft aria-label="Back" />
           </a>
         }
-        <a href={isBlog ? '/index.html' : './index.html'} className={docStyles.homeBtn}>
+        <a href={isBlog ? '/index.html' : './index.html'} className={docStyles.homeBtn} id="nav-title-id">
           <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe">
             <polygon points="19,0 30,0 30,26" />
             <polygon points="11.1,0 0,0 0,26" />
@@ -353,7 +357,7 @@ function Nav({currentPageName, pages}) {
             <li className={sideNavStyles['spectrum-SideNav-item']}>
               <h3 className={sideNavStyles['spectrum-SideNav-heading']} id={headingId}>{key}</h3>
               <ul className={sideNavStyles['spectrum-SideNav']} aria-labelledby={headingId}>
-                {pageMap[key].sort((a, b) => a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
+                {pageMap[key].sort((a, b) => (a.order || 0) < (b.order || 0) || a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
               </ul>
             </li>
           );
@@ -408,6 +412,7 @@ export function Layout(props) {
   return (
     <BaseLayout {...props}>
       <article className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, {[docStyles.inCategory]: !props.currentPage.name.endsWith('index.html')})}>
+        <VersionBadge version={props.currentPage.preRelease} size="large" />
         {props.children}
       </article>
     </BaseLayout>

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import {FocusScope, useFocusManager} from '../';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -38,7 +38,7 @@ describe('FocusScope', function () {
       let input2 = getByTestId('input2');
       let input3 = getByTestId('input3');
 
-      input1.focus();
+      act(() => {input1.focus();});
       expect(document.activeElement).toBe(input1);
 
       fireEvent.keyDown(document.activeElement, {key: 'Tab'});
@@ -77,7 +77,7 @@ describe('FocusScope', function () {
       let input2 = getByTestId('input2');
       let input3 = getByTestId('input3');
 
-      input1.focus();
+      act(() => {input1.focus();});
       expect(document.activeElement).toBe(input1);
 
       fireEvent.keyDown(document.activeElement, {key: 'Tab'});
@@ -114,7 +114,7 @@ describe('FocusScope', function () {
       let input2 = getByTestId('input2');
       let input3 = getByTestId('input3');
 
-      input1.focus();
+      act(() => {input1.focus();});
       expect(document.activeElement).toBe(input1);
 
       fireEvent.keyDown(document.activeElement, {key: 'Tab'});
@@ -147,7 +147,7 @@ describe('FocusScope', function () {
 
       let input1 = getByTestId('input1');
 
-      input1.focus();
+      act(() => {input1.focus();});
       expect(document.activeElement).toBe(input1);
 
       fireEvent.keyDown(document.activeElement, {key: 'Tab', altKey: true});
@@ -177,7 +177,7 @@ describe('FocusScope', function () {
       let input5 = getByTestId('input5');
       let input6 = getByTestId('input6');
 
-      input1.focus();
+      act(() => {input1.focus();});
       expect(document.activeElement).toBe(input1);
 
       fireEvent.keyDown(document.activeElement, {key: 'Tab'});
@@ -198,7 +198,7 @@ describe('FocusScope', function () {
       fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
       expect(document.activeElement).toBe(input1);
 
-      input4.focus();
+      act(() => {input4.focus();});
       expect(document.activeElement).toBe(input4);
 
       fireEvent.keyDown(document.activeElement, {key: 'Tab'});
@@ -236,7 +236,7 @@ describe('FocusScope', function () {
       let input2 = getByTestId('input2');
       let outside = getByTestId('outside');
 
-      input1.focus();
+      act(() => {input1.focus();});
       fireEvent.focusIn(input1); // jsdom doesn't fire this automatically
       expect(document.activeElement).toBe(input1);
 
@@ -244,10 +244,10 @@ describe('FocusScope', function () {
       fireEvent.focusIn(input2);
       expect(document.activeElement).toBe(input2);
 
-      input2.blur();
-      expect(document.activeElement).toBe(document.body);
+      act(() => {input2.blur();});
+      expect(document.activeElement).toBe(input2);
 
-      outside.focus();
+      act(() => {outside.focus();});
       fireEvent.focusIn(outside);
       expect(document.activeElement).toBe(input2);
     });
@@ -265,7 +265,7 @@ describe('FocusScope', function () {
       let input1 = getByTestId('input1');
       let input2 = getByTestId('input2');
 
-      input1.focus();
+      act(() => {input1.focus();});
       fireEvent.focusIn(input1); // jsdom doesn't fire this automatically
       expect(document.activeElement).toBe(input1);
 
@@ -273,9 +273,36 @@ describe('FocusScope', function () {
       fireEvent.focusIn(input2);
       expect(document.activeElement).toBe(input2);
 
-      input2.blur();
-      expect(document.activeElement).toBe(document.body);
+      act(() => {input2.blur();});
+      expect(document.activeElement).toBe(input2);
       fireEvent.focusOut(input2);
+      expect(document.activeElement).toBe(input2);
+    });
+
+    it('uses document.activeElement instead of e.relatedTarget on blur to determine if focus is still in scope', function () {
+      let {getByTestId} = render(
+        <div>
+          <FocusScope contain>
+            <input data-testid="input1" />
+            <input data-testid="input2" />
+          </FocusScope>
+        </div>
+      );
+
+      let input1 = getByTestId('input1');
+      let input2 = getByTestId('input2');
+
+      act(() => {input1.focus();});
+      fireEvent.focusIn(input1); // jsdom doesn't fire this automatically
+      expect(document.activeElement).toBe(input1);
+
+      act(() => {
+        // set document.activeElement to input2
+        input2.focus();
+        // if onBlur didn't fallback to checking document.activeElement, this would reset focus to input1
+        fireEvent.blur(input1, {relatedTarget: null});
+      });
+
       expect(document.activeElement).toBe(input2);
     });
   });
@@ -300,7 +327,7 @@ describe('FocusScope', function () {
       let {getByTestId, rerender} = render(<Test />);
 
       let outside = getByTestId('outside');
-      outside.focus();
+      act(() => {outside.focus();});
 
       rerender(<Test show />);
 
@@ -333,7 +360,7 @@ describe('FocusScope', function () {
       let {getByTestId, rerender} = render(<Test />);
 
       let trigger = getByTestId('trigger');
-      trigger.focus();
+      act(() => {trigger.focus();});
 
       rerender(<Test show />);
 
@@ -341,7 +368,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input1);
 
       let input3 = getByTestId('input3');
-      input3.focus();
+      act(() => {input3.focus();});
 
       fireEvent.keyDown(input3, {key: 'Tab'});
       expect(document.activeElement).toBe(getByTestId('after'));
@@ -368,7 +395,7 @@ describe('FocusScope', function () {
       let {getByTestId, rerender} = render(<Test />);
 
       let trigger = getByTestId('trigger');
-      trigger.focus();
+      act(() => {trigger.focus();});
 
       rerender(<Test show />);
 
@@ -377,6 +404,41 @@ describe('FocusScope', function () {
 
       fireEvent.keyDown(input1, {key: 'Tab', shiftKey: true});
       expect(document.activeElement).toBe(getByTestId('before'));
+    });
+
+    it('should skip over elements within the scope when moving focus to the next element', function () {
+      function Test({show}) {
+        return (
+          <div>
+            <input data-testid="before" />
+            <button data-testid="trigger" />
+            {show &&
+              <FocusScope restoreFocus autoFocus>
+                <input data-testid="input1" />
+                <input data-testid="input2" />
+                <input data-testid="input3" />
+              </FocusScope>
+            }
+            <input data-testid="after" />
+          </div>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test />);
+
+      let trigger = getByTestId('trigger');
+      act(() => {trigger.focus();});
+
+      rerender(<Test show />);
+
+      let input1 = getByTestId('input1');
+      expect(document.activeElement).toBe(input1);
+
+      let input3 = getByTestId('input3');
+      act(() => {input3.focus();});
+
+      fireEvent.keyDown(input3, {key: 'Tab'});
+      expect(document.activeElement).toBe(getByTestId('after'));
     });
   });
 
@@ -436,7 +498,7 @@ describe('FocusScope', function () {
       let item2 = getByTestId('item2');
       let item3 = getByTestId('item3');
 
-      item1.focus();
+      act(() => {item1.focus();});
 
       fireEvent.click(item1);
       expect(document.activeElement).toBe(item2);
@@ -473,7 +535,7 @@ describe('FocusScope', function () {
       let item2 = getByTestId('item2');
       let item3 = getByTestId('item3');
 
-      item1.focus();
+      act(() => {item1.focus();});
 
       fireEvent.click(item1);
       expect(document.activeElement).toBe(item2);
@@ -509,7 +571,7 @@ describe('FocusScope', function () {
       let item1 = getByTestId('item1');
       let item3 = getByTestId('item3');
 
-      item1.focus();
+      act(() => {item1.focus();});
 
       fireEvent.click(item1);
       expect(document.activeElement).toBe(item3);
@@ -540,7 +602,7 @@ describe('FocusScope', function () {
       let item2 = getByTestId('item2');
       let item3 = getByTestId('item3');
 
-      item3.focus();
+      act(() => {item3.focus();});
 
       fireEvent.click(item3);
       expect(document.activeElement).toBe(item2);
@@ -577,7 +639,7 @@ describe('FocusScope', function () {
       let item2 = getByTestId('item2');
       let item3 = getByTestId('item3');
 
-      item3.focus();
+      act(() => {item3.focus();});
 
       fireEvent.click(item3);
       expect(document.activeElement).toBe(item2);
@@ -613,7 +675,7 @@ describe('FocusScope', function () {
       let item1 = getByTestId('item1');
       let item3 = getByTestId('item3');
 
-      item3.focus();
+      act(() => {item3.focus();});
 
       fireEvent.click(item3);
       expect(document.activeElement).toBe(item1);
@@ -646,14 +708,14 @@ describe('FocusScope', function () {
       let {getByTestId, rerender} = render(<Test />);
       // Set a focused node and make first FocusScope the active scope
       let input1 = getByTestId('input1');
-      input1.focus();
+      act(() => {input1.focus();});
       fireEvent.focusIn(input1);
       expect(document.activeElement).toBe(input1);
 
       rerender(<Test show />);
       expect(document.activeElement).toBe(input1);
       let input3 = getByTestId('input3');
-      input3.focus();
+      act(() => {input3.focus();});
       fireEvent.focusIn(input3);
       expect(document.activeElement).toBe(input3);
     });

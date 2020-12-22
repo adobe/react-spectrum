@@ -81,7 +81,7 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
   getNextKey(key) {
     do {
       key = this.collection.getKeyAfter(key);
-      if (!key) {
+      if (key == null) {
         key = this.collection.getFirstKey();
       }
     } while (this.disabledKeys.has(key));
@@ -91,7 +91,7 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
   getPreviousKey(key) {
     do {
       key = this.collection.getKeyBefore(key);
-      if (!key) {
+      if (key == null) {
         key = this.collection.getLastKey();
       }
     } while (this.disabledKeys.has(key));

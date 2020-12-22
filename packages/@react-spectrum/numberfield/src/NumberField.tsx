@@ -35,7 +35,7 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
   } = props;
   let {styleProps} = useStyleProps(props);
   let state = useNumberFieldState(otherProps);
-  let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
+  let inputRef = useRef<HTMLInputElement>();
   let {
     numberFieldProps,
     labelProps,

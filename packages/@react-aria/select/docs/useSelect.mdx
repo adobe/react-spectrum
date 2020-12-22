@@ -189,8 +189,9 @@ function ListBoxPopup({state, ...otherProps}) {
 
   // Get props for the listbox
   let {listBoxProps} = useListBox({
-    autoFocus: state.focusStrategy,
-    disallowEmptySelection: true
+    autoFocus: state.focusStrategy || true,
+    disallowEmptySelection: true,
+    ...otherProps
   }, state, ref);
 
   // Handle events that should cause the popup to close,

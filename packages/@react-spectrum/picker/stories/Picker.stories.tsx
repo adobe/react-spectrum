@@ -11,6 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ActionButton} from '@react-spectrum/button';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
@@ -19,10 +20,11 @@ import Cut from '@spectrum-icons/workflow/Cut';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker, Section} from '../';
 import Paste from '@spectrum-icons/workflow/Paste';
-import React from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 import {useAsyncList} from '@react-stately/data';
+
 
 let flatOptions = [
   {id: 1, name: 'Aardvark'},
@@ -48,7 +50,6 @@ let withSection = [
     {name: 'Ross'}
   ]}
 ];
-
 
 storiesOf('Picker', module)
   .add(
@@ -102,6 +103,16 @@ storiesOf('Picker', module)
     'isDisabled',
     () => (
       <Picker label="Test" isDisabled onSelectionChange={action('selectionChange')}>
+        <Item key="One">One</Item>
+        <Item key="Two">Two</Item>
+        <Item key="Three">Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'isDisabled, selectedKey',
+    () => (
+      <Picker label="Test" isDisabled selectedKey="One" onSelectionChange={action('selectionChange')}>
         <Item key="One">One</Item>
         <Item key="Two">Two</Item>
         <Item key="Three">Three</Item>
@@ -254,33 +265,44 @@ storiesOf('Picker', module)
       <Picker label="Test" onSelectionChange={action('selectionChange')}>
         <Section title="Section 1">
           <Item textValue="Copy">
-            <Copy size="S" />
+            <Copy />
             <Text>Copy</Text>
           </Item>
           <Item textValue="Cut">
-            <Cut size="S" />
+            <Cut />
             <Text>Cut</Text>
           </Item>
           <Item textValue="Paste">
-            <Paste size="S" />
+            <Paste />
             <Text>Paste</Text>
           </Item>
         </Section>
         <Section title="Section 2">
           <Item textValue="Puppy">
-            <AlignLeft size="S" />
+            <AlignLeft />
             <Text>Puppy</Text>
             <Text slot="description">Puppy description super long as well geez</Text>
           </Item>
           <Item textValue="Doggo with really really really long long long text">
-            <AlignCenter size="S" />
+            <AlignCenter />
             <Text>Doggo with really really really long long long text</Text>
           </Item>
           <Item textValue="Floof">
-            <AlignRight size="S" />
+            <AlignRight />
             <Text>Floof</Text>
           </Item>
         </Section>
+      </Picker>
+    )
+  )
+  .add(
+    'falsy item key',
+    () => (
+      <Picker label="Test" onSelectionChange={action('selectionChange')}>
+        <Item key="">None</Item>
+        <Item key="One">One</Item>
+        <Item key="Two">Two</Item>
+        <Item key="Three">Three</Item>
       </Picker>
     )
   )
@@ -477,7 +499,15 @@ storiesOf('Picker', module)
     () => (
       <AsyncLoadingExample />
     )
-  );
+  )
+  .add('resize', () => <ResizePicker />)
+  .add('autofocus', () => (
+    <Picker label="Test" autoFocus>
+      <Item key="One">One</Item>
+      <Item key="Two">Two</Item>
+      <Item key="Three">Three</Item>
+    </Picker>
+  ));
 
 function AsyncLoadingExample() {
   interface Pokemon {
@@ -502,5 +532,22 @@ function AsyncLoadingExample() {
     <Picker label="Pick a Pokemon" items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
       {item => <Item key={item.name}>{item.name}</Item>}
     </Picker>
+  );
+}
+
+function ResizePicker() {
+  const [state, setState] = useState(true);
+
+  return (
+    <Flex direction="column" gap="size-200" alignItems="start">
+      <div style={{width: state ? '200px' : '300px'}}>
+        <Picker label="Choose A" width="100%">
+          <Item key="rarely">A1</Item>
+          <Item key="sometimes">A2</Item>
+          <Item key="always">A3</Item>
+        </Picker>
+      </div>
+      <ActionButton onPress={() => setState(!state)}>Toggle size</ActionButton>
+    </Flex>
   );
 }

@@ -10,14 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
-import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {AriaLabelingProps, DOMProps, IconColorValue, StyleProps} from '@react-types/shared';
+import {baseStyleProps, classNames, StyleHandlers, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
-
-type Scale = 'M' | 'L'
 
 interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
   /**
@@ -40,8 +38,23 @@ interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
   /**
    * Indicates whether the element is exposed to an accessibility API.
    */
-  'aria-hidden'?: boolean
+  'aria-hidden'?: boolean | 'false' | 'true',
+  /**
+   * Color of the Icon.
+   */
+  color?: IconColorValue
 }
+
+export type IconPropsWithoutChildren = Omit<IconProps, 'children'>;
+
+function iconColorValue(value: IconColorValue) {
+  return `var(--spectrum-semantic-${value}-color-icon)`;
+}
+
+const iconStyleProps: StyleHandlers = {
+  ...baseStyleProps,
+  color: ['color', iconColorValue]
+};
 
 /**
  * Spectrum icons are clear, minimal, and consistent across platforms. They follow the focused and rational principles of the design system in both metaphor and style.
@@ -55,7 +68,7 @@ export function Icon(props: IconProps) {
     'aria-hidden': ariaHidden,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
+  let {styleProps} = useStyleProps(otherProps, iconStyleProps);
 
   let provider = useProvider();
   let scale = 'M';

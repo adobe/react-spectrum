@@ -48,8 +48,10 @@ governing permissions and limitations under the License.
   /* Font smoothing for Firefox */
   -moz-osx-font-smoothing: grayscale;
 
-  /* Correct the inability to style clickable types in iOS and Safari. */
-  -webkit-appearance: button;
+  button& {
+    /* Correct the inability to style clickable types in iOS and Safari. */
+    -webkit-appearance: button;
+  }
 
   /* Adjacent buttons should be aligned correctly */
   vertical-align: top;
@@ -104,6 +106,7 @@ governing permissions and limitations under the License.
 
     transition: background var(--spectrum-global-animation-duration-100) ease-out,
                 fill var(--spectrum-global-animation-duration-100) ease-out;
+    box-sizing: initial;
   }
 
 }

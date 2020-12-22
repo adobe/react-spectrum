@@ -66,22 +66,22 @@ function RenderProvider() {
       <Button
         onPress={() => toastContext.neutral('Toast is default', {onClose: action('onClose')})}
         variant="secondary">
-          Show Default Toast
+        Show Default Toast
       </Button>
       <Button
         onPress={() => toastContext.positive('Toast is positive', {onClose: action('onClose')})}
         variant="primary">
-          Show Primary Toast
+        Show Primary Toast
       </Button>
       <Button
         onPress={() => toastContext.negative('Toast is negative', {onClose: action('onClose')})}
         variant="negative">
-          Show Negative Toast
+        Show Negative Toast
       </Button>
       <Button
         onPress={() => toastContext.info('Toast is info', {onClose: action('onClose')})}
         variant="cta">
-          Show info Toast
+        Show info Toast
       </Button>
     </div>
   );
@@ -95,22 +95,22 @@ function RenderProviderTimers() {
       <Button
         onPress={() => toastContext.neutral('Toast defaults to 5 second timeout', {onClose: action('onClose')})}
         variant="secondary">
-          Show Default Toast
+        Show Default Toast
       </Button>
       <Button
         onPress={() => toastContext.neutral('Actionable Toast defaults to no timeout', {onClose: action('onClose'), onAction: action('onAction'), shouldCloseOnAction: true, actionLabel: 'no timeout'})}
         variant="secondary">
-          Show Actionable Toast
+        Show Actionable Toast
       </Button>
       <Button
         onPress={() => toastContext.neutral('Toast has a 7 second timeout', {onClose: action('onClose'), timeout: 7000})}
         variant="secondary">
-          Show 7 Second Timeout Toast
+        Show 7 Second Timeout Toast
       </Button>
       <Button
         onPress={() => toastContext.neutral('Toast with "timeout=0" has no timeout', {onClose: action('onClose'), timeout: 0})}
         variant="secondary">
-          Show No Timeout Toast
+        Show No Timeout Toast
       </Button>
     </div>
   );

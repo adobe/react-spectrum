@@ -36,13 +36,15 @@ describe('useComboBox', function () {
   it('should return default props for all the button group elements', function () {
     let props = {
       label: 'test label',
-      buttonRef: {current: true},
-      textFieldRef: {current: true},
+      popoverRef: React.createRef(),
+      buttonRef: React.createRef(),
+      inputRef: React.createRef(),
+      listBoxRef: React.createRef(),
       layout: mockLayout
     };
 
     let {result} = renderHook(() => useComboBox(props, useSingleSelectListState(defaultProps)));
-    let {triggerProps, inputProps, listBoxProps, labelProps} = result.current;
+    let {buttonProps, inputProps, listBoxProps, labelProps} = result.current;
 
     expect(labelProps.id).toBeTruthy();
     expect(labelProps.htmlFor).toBe(inputProps.id);
@@ -53,18 +55,14 @@ describe('useComboBox', function () {
     expect(inputProps['aria-controls']).toBeFalsy();
     expect(inputProps['aria-activedescendant']).toBeFalsy();
     expect(listBoxProps.id).toBeTruthy();
-    expect(listBoxProps['aria-labelledby']).toBe(triggerProps.id);
-    expect(triggerProps.id).toBeTruthy();
-    expect(triggerProps.excludeFromTabOrder).toBeTruthy();
-    expect(triggerProps['aria-haspopup']).toBeTruthy();
-    expect(triggerProps['aria-expanded']).toBeFalsy();
-    expect(triggerProps['aria-controls']).toBeFalsy();
-    expect(triggerProps['onPress']).toBeTruthy();
-    expect(triggerProps['onPressStart']).toBeTruthy();
-    expect(triggerProps['onKeyDown']).toBeTruthy();
+    expect(listBoxProps['aria-labelledby']).toBe(`${labelProps.id} ${listBoxProps.id}`);
+    expect(buttonProps.id).toBeTruthy();
+    expect(buttonProps.excludeFromTabOrder).toBeTruthy();
+    expect(buttonProps['aria-haspopup']).toBeTruthy();
+    expect(buttonProps['aria-expanded']).toBeFalsy();
+    expect(buttonProps['aria-controls']).toBeFalsy();
+    expect(buttonProps['onPress']).toBeTruthy();
+    expect(buttonProps['onPressStart']).toBeTruthy();
+    expect(buttonProps['onKeyDown']).toBeTruthy();
   });
-
-  // TODO: test some of the useEffects?
-  // TODO: test when state.isOpen is true?
-  // Most of these are already tested in Combobox test
 });

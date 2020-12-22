@@ -31,3 +31,36 @@ export function isRTL(locale: string) {
   let lang = locale.split('-')[0];
   return RTL_LANGS.has(lang);
 }
+
+export function numberFormatSignDisplayPolyfill(numberFormat: Intl.NumberFormat, signDisplay: 'always' | 'exceptZero' | 'auto' | 'never', num: number) {
+  if (signDisplay === 'auto') {
+    return numberFormat.format(num);
+  } else if (signDisplay === 'never') {
+    return numberFormat.format(Math.abs(num));
+  } else {
+    let needsPositiveSign = false;
+    if (signDisplay === 'always') {
+      needsPositiveSign = num > 0 || Object.is(num, 0);
+    } else if (signDisplay === 'exceptZero') {
+      if (Object.is(num, -0) || Object.is(num, 0)) {
+        num = Math.abs(num);
+      } else {
+        needsPositiveSign = num > 0;
+      }
+    }
+
+    if (needsPositiveSign) {
+      let negative = numberFormat.format(-num);
+      let noSign = numberFormat.format(num);
+      // ignore RTL/LTR marker character
+      let minus = negative.replace(noSign, '').replace(/\u200e|\u061C/, '');
+      if ([...minus].length !== 1) {
+        console.warn('@react-aria/i18n polyfill for NumberFormat signDisplay: Unsupported case');
+      }
+      let positive = negative.replace(noSign, '!!!').replace(minus, '+').replace('!!!', noSign);
+      return positive;
+    } else {
+      return numberFormat.format(num);
+    }
+  }
+}

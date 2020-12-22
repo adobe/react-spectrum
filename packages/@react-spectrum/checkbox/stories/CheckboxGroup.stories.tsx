@@ -67,6 +67,14 @@ storiesOf('CheckboxGroup', module)
     () => render({isRequired: true})
   )
   .add(
+    'isRequired, necessityIndicator: label',
+    () => render({isRequired: true, necessityIndicator: 'label'})
+  )
+  .add(
+    'necessityIndicator: label, labelPosition: side',
+    () => render({necessityIndicator: 'label', labelPosition: 'side'})
+  )
+  .add(
     'isReadOnly',
     () => render({isReadOnly: true})
   )

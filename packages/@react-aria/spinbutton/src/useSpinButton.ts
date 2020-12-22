@@ -33,9 +33,9 @@ export interface SpinbuttonAria {
 }
 
 export function useSpinButton(
-  props: SpinButtonProps,
+  props: SpinButtonProps
 ): SpinbuttonAria {
-  const _async = useRef<NodeJS.Timeout>();
+  const _async = useRef<number>();
   let {
     value,
     textValue,
@@ -127,7 +127,7 @@ export function useSpinButton(
     (initialStepDelay: number) => {
       onIncrement();
       // Start spinning after initial delay
-      _async.current = setTimeout(
+      _async.current = window.setTimeout(
         () => onIncrementPressStart(60),
         initialStepDelay
       );
@@ -139,7 +139,7 @@ export function useSpinButton(
     (initialStepDelay: number) => {
       onDecrement();
       // Start spinning after initial delay
-      _async.current = setTimeout(
+      _async.current = window.setTimeout(
         () => onDecrementPressStart(60),
         initialStepDelay
       );

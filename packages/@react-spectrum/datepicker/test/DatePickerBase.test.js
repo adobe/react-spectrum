@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render} from '@testing-library/react';
 import {DatePicker, DateRangePicker} from '../';
-import {fireEvent, render} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -137,8 +137,8 @@ describe('DatePickerBase', function () {
       expect(button).toHaveAttribute('aria-expanded', 'true');
       expect(button).toHaveAttribute('aria-controls', dialogId);
 
-      // Focuses the calendar body
-      expect(document.activeElement).toHaveAttribute('role', 'grid');
+      // Focuses the calendar date
+      expect(document.activeElement.parentElement).toHaveAttribute('role', 'gridcell');
     });
 
     it.each`
@@ -173,8 +173,8 @@ describe('DatePickerBase', function () {
       expect(button).toHaveAttribute('aria-expanded', 'true');
       expect(button).toHaveAttribute('aria-controls', dialogId);
 
-      // Focuses the calendar body
-      expect(document.activeElement).toHaveAttribute('role', 'grid');
+      // Focuses the calendar date
+      expect(document.activeElement.parentElement).toHaveAttribute('role', 'gridcell');
     });
 
     it.each`
@@ -210,8 +210,8 @@ describe('DatePickerBase', function () {
       expect(button).toHaveAttribute('aria-expanded', 'true');
       expect(button).toHaveAttribute('aria-controls', dialogId);
 
-      // Focuses the calendar body
-      expect(document.activeElement).toHaveAttribute('role', 'grid');
+      // Focuses the calendar date
+      expect(document.activeElement.parentElement).toHaveAttribute('role', 'gridcell');
     });
   });
 
@@ -224,7 +224,7 @@ describe('DatePickerBase', function () {
       let {getAllByRole} = render(<Component />);
 
       let segments = getAllByRole('spinbutton');
-      segments[0].focus();
+      act(() => {segments[0].focus();});
 
       for (let i = 0; i < segments.length; i++) {
         expect(segments[i]).toHaveFocus();
@@ -249,7 +249,7 @@ describe('DatePickerBase', function () {
       );
 
       let segments = getAllByRole('spinbutton');
-      segments[0].focus();
+      act(() => {segments[0].focus();});
 
       for (let i = 0; i < segments.length; i++) {
         expect(segments[i]).toHaveFocus();

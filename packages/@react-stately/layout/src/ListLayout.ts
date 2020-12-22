@@ -15,7 +15,7 @@ import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-statel
 import {Key} from 'react';
 // import { DragTarget, DropTarget, DropPosition } from '@react-types/shared';
 
-type ListLayoutOptions<T> = {
+export type ListLayoutOptions<T> = {
   /** The height of a row in px. */
   rowHeight?: number,
   estimatedRowHeight?: number,
@@ -134,6 +134,14 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       let layoutNode = this.buildChild(node, 0, y);
       y = layoutNode.layoutInfo.rect.maxY;
       nodes.push(layoutNode);
+    }
+
+    if (nodes.length === 0) {
+      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.rowHeight || this.estimatedRowHeight);
+      let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
+      this.layoutInfos.set('placeholder', placeholder);
+      nodes.push({layoutInfo: placeholder});
+      y = placeholder.rect.maxY;
     }
 
     if (this.isLoading) {
@@ -348,7 +356,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     let collection = this.collection;
 
     key = collection.getKeyBefore(key);
-    while (key) {
+    while (key != null) {
       let item = collection.getItem(key);
       if (item.type === 'item' && !this.disabledKeys.has(item.key)) {
         return key;
@@ -362,7 +370,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     let collection = this.collection;
 
     key = collection.getKeyAfter(key);
-    while (key) {
+    while (key != null) {
       let item = collection.getItem(key);
       if (item.type === 'item' && !this.disabledKeys.has(item.key)) {
         return key;
@@ -374,29 +382,35 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
   getKeyPageAbove(key: Key) {
     let layoutInfo = this.getLayoutInfo(key);
-    let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
-    while (layoutInfo && layoutInfo.rect.y > pageY && layoutInfo) {
-      let keyAbove = this.getKeyAbove(layoutInfo.key);
-      layoutInfo = this.getLayoutInfo(keyAbove);
-    }
 
     if (layoutInfo) {
-      return layoutInfo.key;
+      let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
+      while (layoutInfo && layoutInfo.rect.y > pageY && layoutInfo) {
+        let keyAbove = this.getKeyAbove(layoutInfo.key);
+        layoutInfo = this.getLayoutInfo(keyAbove);
+      }
+
+      if (layoutInfo) {
+        return layoutInfo.key;
+      }
     }
 
     return this.getFirstKey();
   }
 
   getKeyPageBelow(key: Key) {
-    let layoutInfo = this.getLayoutInfo(key);
-    let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
-    while (layoutInfo && layoutInfo.rect.y < pageY) {
-      let keyBelow = this.getKeyBelow(layoutInfo.key);
-      layoutInfo = this.getLayoutInfo(keyBelow);
-    }
+    let layoutInfo = this.getLayoutInfo(key != null ? key : this.getFirstKey());
 
     if (layoutInfo) {
-      return layoutInfo.key;
+      let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
+      while (layoutInfo && layoutInfo.rect.y < pageY) {
+        let keyBelow = this.getKeyBelow(layoutInfo.key);
+        layoutInfo = this.getLayoutInfo(keyBelow);
+      }
+
+      if (layoutInfo) {
+        return layoutInfo.key;
+      }
     }
 
     return this.getLastKey();
@@ -405,7 +419,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   getFirstKey() {
     let collection = this.collection;
     let key = collection.getFirstKey();
-    while (key) {
+    while (key != null) {
       let item = collection.getItem(key);
       if (item.type === 'item' && !this.disabledKeys.has(item.key)) {
         return key;
@@ -418,7 +432,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   getLastKey() {
     let collection = this.collection;
     let key = collection.getLastKey();
-    while (key) {
+    while (key != null) {
       let item = collection.getItem(key);
       if (item.type === 'item' && !this.disabledKeys.has(item.key)) {
         return key;
@@ -435,7 +449,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
     let collection = this.collection;
     let key = fromKey || this.getFirstKey();
-    while (key) {
+    while (key != null) {
       let item = collection.getItem(key);
       let substring = item.textValue.slice(0, search.length);
       if (item.textValue && this.collator.compare(substring, search) === 0) {

@@ -10,61 +10,137 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp} from '@react-aria/utils';
+import {clamp, snapValueToStep} from '@react-aria/utils';
 import {SliderProps} from '@react-types/slider';
 import {useControlledState} from '@react-stately/utils';
-import {useNumberFormatter} from '@react-aria/i18n';
 import {useRef, useState} from 'react';
 
 export interface SliderState {
-  // Values managed by the slider
+  /**
+   * Values managed by the slider by thumb index.
+   */
   readonly values: number[],
-  getThumbValue: (index: number) => number,
+  /**
+   * Get the value for the specified thumb.
+   * @param index
+   */
+  getThumbValue(index: number): number,
 
-  // Sets value for thumb.  The actually value set will be clamped and
-  // rounded according to min/max/step
-  setThumbValue: (index: number, value: number) => void,
+  /**
+   * Sets the value for the specified thumb.
+   * The actual value set will be clamped and rounded according to min/max/step.
+   * @param index
+   * @param value
+   */
+  setThumbValue(index: number, value: number): void,
 
-  // Sets value for thumb by percent offset (between 0 and 1)
-  setThumbPercent: (index: number, percent: number) => void,
+  /**
+   * Sets value for the specified thumb by percent offset (between 0 and 1).
+   * @param index
+   * @param percent
+   */
+  setThumbPercent(index: number, percent: number): void,
 
-  // Whether a specific index is being dragged
-  isThumbDragging: (index: number) => boolean,
-  setThumbDragging: (index: number, dragging: boolean) => void,
+  /**
+   * Whether the specific thumb is being dragged.
+   * @param index
+   */
+  isThumbDragging(index: number): boolean,
+  /**
+   * Set is dragging on the specified thumb.
+   * @param index
+   * @param dragging
+   */
+  setThumbDragging(index: number, dragging: boolean): void,
 
-  // Currently-focused index
+  /**
+   * Currently-focused thumb index.
+   */
   readonly focusedThumb: number | undefined,
-  setFocusedThumb: (index: number | undefined) => void,
+  /**
+   * Set focused true on specified thumb. This will remove focus from
+   * any thumb that had it before.
+   * @param index
+   */
+  setFocusedThumb(index: number | undefined): void,
 
-  // Returns the value offset as a percentage from 0 to 1.
-  getThumbPercent: (index: number) => number,
-  getValuePercent: (value: number) => number,
+  /**
+   * Returns the specified thumb's value as a percentage from 0 to 1.
+   * @param index
+   */
+  getThumbPercent(index: number): number,
 
-  // Returns the string label for the value, per props.formatOptions
-  getThumbValueLabel: (index: number) => string,
-  getFormattedValue: (value: number) => string,
+  /**
+   * Returns the value as a percent between the min and max of the slider.
+   * @param index
+   */
+  getValuePercent(value: number): number,
 
-  // Returns the min and max values for the index
-  getThumbMinValue: (index: number) => number,
-  getThumbMaxValue: (index: number) => number,
+  /**
+   * Returns the string label for the specified thumb's value, per props.formatOptions.
+   * @param index
+   */
+  getThumbValueLabel(index: number): string,
 
-  // Converts a percent along track (between 0 and 1) to the corresponding value
-  getPercentValue: (percent: number) => number,
+  /**
+   * Returns the string label for the value, per props.formatOptions.
+   * @param index
+   */
+  getFormattedValue(value: number): string,
 
-  // editable
-  isThumbEditable: (index: number) => boolean,
-  setThumbEditable: (index: number, editable: boolean) => void,
+  /**
+   * Returns the min allowed value for the specified thumb.
+   * @param index
+   */
+  getThumbMinValue(index: number): number,
 
-  // The step amount for the slider
+  /**
+   * Returns the max allowed value for the specified thumb.
+   * @param index
+   */
+  getThumbMaxValue(index: number): number,
+
+  /**
+   * Converts a percent along track (between 0 and 1) to the corresponding value.
+   * @param percent
+   */
+  getPercentValue(percent: number): number,
+
+  /**
+   * Returns if the specified thumb is editable.
+   * @param index
+   */
+  isThumbEditable(index: number): boolean,
+
+  /**
+   * Set the specified thumb's editable state.
+   * @param index
+   * @param editable
+   */
+  setThumbEditable(index: number, editable: boolean): void,
+
+  /**
+   * The step amount for the slider.
+   */
   readonly step: number
 }
 
-export const DEFAULT_MIN_VALUE = 0;
-export const DEFAULT_MAX_VALUE = 100;
-export const DEFAULT_STEP_VALUE = 1;
+const DEFAULT_MIN_VALUE = 0;
+const DEFAULT_MAX_VALUE = 100;
+const DEFAULT_STEP_VALUE = 1;
 
-export function useSliderState(props: SliderProps): SliderState {
-  let {isReadOnly, isDisabled, minValue = DEFAULT_MIN_VALUE, maxValue = DEFAULT_MAX_VALUE, formatOptions, step = DEFAULT_STEP_VALUE} = props;
+interface SliderStateOptions extends SliderProps {
+  numberFormatter: Intl.NumberFormat
+}
+
+/**
+ * Provides state management for a slider component. Stores values for all thumbs,
+ * formats values for localization, and provides methods to update the position
+ * of any thumbs.
+ * @param props
+ */
+export function useSliderState(props: SliderStateOptions): SliderState {
+  const {isDisabled, minValue = DEFAULT_MIN_VALUE, maxValue = DEFAULT_MAX_VALUE, numberFormatter: formatter, step = DEFAULT_STEP_VALUE} = props;
 
   const [values, setValues] = useControlledState<number[]>(
     props.value as any,
@@ -73,13 +149,12 @@ export function useSliderState(props: SliderProps): SliderState {
   );
   const [isDraggings, setDraggings] = useState<boolean[]>(new Array(values.length).fill(false));
   const isEditablesRef = useRef<boolean[]>(new Array(values.length).fill(true));
-  const [focusedIndex, setFocusedIndex] = useState<number|undefined>(undefined);
+  const [focusedIndex, setFocusedIndex] = useState<number | undefined>(undefined);
 
-  // We keep some of the dragging state on refs as well, because they are read by event
-  // handlers.  In useDrag1D, the same drag event handler is used for the entire drag motion,
-  // so the state object within their closure is already stale.
-  const realTimeDragging = useRef(false);
-  const formatter = useNumberFormatter(formatOptions);
+  const valuesRef = useRef<number[]>(null);
+  valuesRef.current = values;
+  const isDraggingsRef = useRef<boolean[]>(null);
+  isDraggingsRef.current = isDraggings;
 
   function getValuePercent(value: number) {
     return (value - minValue) / (maxValue - minValue);
@@ -101,31 +176,31 @@ export function useSliderState(props: SliderProps): SliderState {
   }
 
   function updateValue(index: number, value: number) {
-    if (isReadOnly || isDisabled || !isThumbEditable(index)) {
+    if (isDisabled || !isThumbEditable(index)) {
       return;
     }
     const thisMin = getThumbMinValue(index);
     const thisMax = getThumbMaxValue(index);
 
     // Round value to multiple of step, clamp value between min and max
-    value = clamp(getRoundedValue(value), thisMin, thisMax);
-
-    const newValues = replaceIndex(values, index, value);
-    setValues(newValues);
-
-    if (props.onChangeEnd && !realTimeDragging.current) {
-      // If not in the middle of dragging, call onChangeEnd
-      props.onChangeEnd(newValues);
-    }
+    value = snapValueToStep(value, thisMin, thisMax, step);
+    valuesRef.current = replaceIndex(valuesRef.current, index, value);
+    setValues(valuesRef.current);
   }
 
   function updateDragging(index: number, dragging: boolean) {
-    if (isReadOnly || isDisabled || !isThumbEditable(index)) {
+    if (isDisabled || !isThumbEditable(index)) {
       return;
     }
-    const newDraggings = replaceIndex(isDraggings, index, dragging);
-    setDraggings(newDraggings);
-    realTimeDragging.current = newDraggings.some(Boolean);
+
+    const wasDragging = isDraggingsRef.current[index];
+    isDraggingsRef.current = replaceIndex(isDraggingsRef.current, index, dragging);
+    setDraggings(isDraggingsRef.current);
+
+    // Call onChangeEnd if no handles are dragging.
+    if (props.onChangeEnd && wasDragging && !isDraggingsRef.current.some(Boolean)) {
+      props.onChangeEnd(valuesRef.current);
+    }
   }
 
   function getFormattedValue(value: number) {
@@ -168,5 +243,9 @@ export function useSliderState(props: SliderProps): SliderState {
 }
 
 function replaceIndex<T>(array: T[], index: number, value: T) {
+  if (array[index] === value) {
+    return array;
+  }
+
   return [...array.slice(0, index), value, ...array.slice(index + 1)];
 }

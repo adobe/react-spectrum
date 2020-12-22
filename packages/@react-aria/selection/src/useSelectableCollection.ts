@@ -72,7 +72,11 @@ interface SelectableCollectionOptions {
    * Whether typeahead is disabled.
    * @default false
    */
-  disallowTypeAhead?: boolean
+  disallowTypeAhead?: boolean,
+  /**
+   * Whether the collection items should use virtual focus instead of being focused directly.
+   */
+  shouldUseVirtualFocus?: boolean
 }
 
 interface SelectableCollectionAria {
@@ -93,7 +97,8 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     disallowEmptySelection = false,
     disallowSelectAll = false,
     selectOnFocus = false,
-    disallowTypeAhead = false
+    disallowTypeAhead = false,
+    shouldUseVirtualFocus
   } = options;
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -112,7 +117,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
             ? delegate.getKeyBelow(manager.focusedKey)
             : delegate.getFirstKey();
 
-          if (nextKey) {
+          if (nextKey != null) {
             manager.setFocusedKey(nextKey);
             if (manager.selectionMode === 'single' && selectOnFocus) {
               manager.replaceSelection(nextKey);
@@ -138,7 +143,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
             ? delegate.getKeyAbove(manager.focusedKey)
             : delegate.getLastKey();
 
-          if (nextKey) {
+          if (nextKey != null) {
             manager.setFocusedKey(nextKey);
             if (manager.selectionMode === 'single' && selectOnFocus) {
               manager.replaceSelection(nextKey);
@@ -161,7 +166,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         if (delegate.getKeyLeftOf) {
           e.preventDefault();
           let nextKey = delegate.getKeyLeftOf(manager.focusedKey);
-          if (nextKey) {
+          if (nextKey != null) {
             manager.setFocusedKey(nextKey);
             if (manager.selectionMode === 'single' && selectOnFocus) {
               manager.replaceSelection(nextKey);
@@ -177,7 +182,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         if (delegate.getKeyRightOf) {
           e.preventDefault();
           let nextKey = delegate.getKeyRightOf(manager.focusedKey);
-          if (nextKey) {
+          if (nextKey != null) {
             manager.setFocusedKey(nextKey);
             if (manager.selectionMode === 'single' && selectOnFocus) {
               manager.replaceSelection(nextKey);
@@ -219,7 +224,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         if (delegate.getKeyPageBelow) {
           e.preventDefault();
           let nextKey = delegate.getKeyPageBelow(manager.focusedKey);
-          if (nextKey) {
+          if (nextKey != null) {
             manager.setFocusedKey(nextKey);
             if (e.shiftKey && manager.selectionMode === 'multiple') {
               manager.extendSelection(nextKey);
@@ -231,7 +236,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         if (delegate.getKeyPageAbove) {
           e.preventDefault();
           let nextKey = delegate.getKeyPageAbove(manager.focusedKey);
-          if (nextKey) {
+          if (nextKey != null) {
             manager.setFocusedKey(nextKey);
             if (e.shiftKey && manager.selectionMode === 'multiple') {
               manager.extendSelection(nextKey);
@@ -338,7 +343,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       manager.setFocusedKey(focusedKey);
 
       // If no default focus key is selected, focus the collection itself.
-      if (focusedKey == null) {
+      if (focusedKey == null && !shouldUseVirtualFocus) {
         focusSafely(ref.current);
       }
     }
@@ -367,12 +372,19 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     handlers = mergeProps(typeSelectProps, handlers);
   }
 
+  // If nothing is focused within the collection, make the collection itself tabbable.
+  // This will be marshalled to either the first or last item depending on where focus came from.
+  // If using virtual focus, don't set a tabIndex at all so that VoiceOver on iOS 14 doesn't try
+  // to move real DOM focus to the element anyway.
+  let tabIndex: number;
+  if (!shouldUseVirtualFocus) {
+    tabIndex = manager.focusedKey == null ? 0 : -1;
+  }
+
   return {
     collectionProps: {
       ...handlers,
-      // If nothing is focused within the collection, make the collection itself tabbable.
-      // This will be marshalled to either the first or last item depending on where focus came from.
-      tabIndex: manager.focusedKey == null ? 0 : -1
+      tabIndex
     }
   };
 }

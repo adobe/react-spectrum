@@ -1,4 +1,3 @@
-import 'storybook-chromatic';
 import {configure, addDecorator, addParameters} from '@storybook/react';
 import {configureActions} from '@storybook/addon-actions';
 import React from 'react';
@@ -22,7 +21,7 @@ addParameters({
 addDecorator(withA11y);
 
 addDecorator(story => (
-  <VerticalCenter style={{textAlign: 'left', alignItems: 'center', minHeight: '100vh', boxSizing: 'border-box', display: 'flex', justifyContent: 'center'}}>
+  <VerticalCenter style={{alignItems: 'center', minHeight: '100vh', boxSizing: 'border-box', display: 'flex', justifyContent: 'center'}}>
     {story()}
   </VerticalCenter>
 ));

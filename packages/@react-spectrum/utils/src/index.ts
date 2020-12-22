@@ -11,6 +11,7 @@
  */
 
 /// <reference types="css-module-types" />
+/// <reference path="./ResizeObserver.d.ts" />
 
 export * from './classNames';
 export * from './getWrappedElement';
@@ -20,4 +21,5 @@ export * from './styleProps';
 export * from './Slots';
 export * from './useHasChild';
 export * from './useResizeObserver';
-
+export * from './useIsMobileDevice';
+export * from './useValueEffect';

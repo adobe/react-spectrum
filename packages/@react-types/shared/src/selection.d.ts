@@ -35,7 +35,9 @@ export interface MultipleSelection {
   /** The initial selected keys in the collection (uncontrolled). */
   defaultSelectedKeys?: 'all' | Iterable<Key>,
   /** Handler that is called when the selection changes. */
-  onSelectionChange?: (keys: Selection) => any
+  onSelectionChange?: (keys: Selection) => any,
+  /** The currently disabled keys in the collection (controlled). */
+  disabledKeys?: Iterable<Key>
 }
 
 export type FocusStrategy = 'first' | 'last';

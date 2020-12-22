@@ -10,18 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent} from '@testing-library/react';
+/// <reference types="css-module-types" />
 
-// Triggers a "press" event on an element.
-// TODO: move to somewhere more common
-export function triggerPress(element, opts = {}) {
-  act(() => {
-    fireEvent.mouseDown(element, {detail: 1, ...opts});
-  });
-  act(() => {
-    fireEvent.mouseUp(element, {detail: 1, ...opts});
-  });
-  act(() => {
-    fireEvent.click(element, {detail: 1, ...opts});
-  });
-}
+export * from './ErrorBoundary';

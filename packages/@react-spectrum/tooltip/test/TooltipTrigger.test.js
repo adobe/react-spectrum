@@ -16,7 +16,11 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '../';
-import {TOOLTIP_COOLDOWN, TOOLTIP_DELAY} from '@react-stately/tooltip';
+import {triggerPress} from '@react-spectrum/test-utils';
+
+// Sync with useTooltipTriggerState.ts
+const TOOLTIP_DELAY = 1500;
+const TOOLTIP_COOLDOWN = 500;
 
 let CLOSE_TIME = 350;
 
@@ -84,6 +88,8 @@ describe('TooltipTrigger', function () {
           </TooltipTrigger>
         </Provider>
       );
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body);
 
       let button = getByLabelText('trigger');
       fireEvent.mouseEnter(button);
@@ -101,7 +107,7 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
     });
 
-    it('if hovered and focused, will not hide if hover leaves',  () => {
+    it('if hovered and focused, will hide if hover leaves',  () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
@@ -130,11 +136,11 @@ describe('TooltipTrigger', function () {
 
       // remove hover
       fireEvent.mouseLeave(button);
-      expect(onOpenChange).toHaveBeenCalledTimes(1);
+      expect(onOpenChange).toHaveBeenCalledTimes(2);
       act(() => {
         jest.runAllTimers();
       });
-      expect(tooltip).toBeVisible();
+      expect(tooltip).not.toBeInTheDocument();
 
       // remove focus
       act(() => {
@@ -148,7 +154,7 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
     });
 
-    it('if hovered and focused, will not hide if focus leaves',  () => {
+    it('if hovered and focused, will hide if focus leaves',  () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
@@ -179,11 +185,11 @@ describe('TooltipTrigger', function () {
       act(() => {
         button.blur();
       });
-      expect(onOpenChange).toHaveBeenCalledTimes(1);
+      expect(onOpenChange).toHaveBeenCalledTimes(2);
       act(() => {
         jest.runAllTimers();
       });
-      expect(tooltip).toBeVisible();
+      expect(tooltip).not.toBeInTheDocument();
 
       // remove hover
       fireEvent.mouseLeave(button);
@@ -238,6 +244,8 @@ describe('TooltipTrigger', function () {
           <input type="text" />
         </Provider>
       );
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body);
 
       let button = getByLabelText('trigger');
       let input = getByRole('textbox');
@@ -275,16 +283,15 @@ describe('TooltipTrigger', function () {
           </TooltipTrigger>
         </Provider>
       );
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body);
 
       let button = getByLabelText('trigger');
-      act(() => {
-        button.focus();
-      });
+      fireEvent.mouseEnter(button);
       expect(onOpenChange).toHaveBeenCalledWith(true);
       let tooltip = getByRole('tooltip');
       expect(tooltip).toBeVisible();
-      fireEvent.mouseDown(document.activeElement, {button: 0});
-      fireEvent.mouseUp(document.activeElement, {button: 0});
+      triggerPress(button);
       expect(onOpenChange).toHaveBeenCalledWith(false);
       act(() => {
         jest.advanceTimersByTime(CLOSE_TIME);
@@ -298,6 +305,39 @@ describe('TooltipTrigger', function () {
       });
       expect(() => getByRole('tooltip')).toThrow();
     });
+  });
+
+  it('is closed if the trigger is clicked with the keyboard',  () => {
+    let {getByRole, getByLabelText} = render(
+      <Provider theme={theme}>
+        <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
+          <ActionButton aria-label="trigger" />
+          <Tooltip>Helpful information.</Tooltip>
+        </TooltipTrigger>
+      </Provider>
+    );
+
+    let button = getByLabelText('trigger');
+    act(() => {
+      button.focus();
+    });
+    expect(onOpenChange).toHaveBeenCalledWith(true);
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toBeVisible();
+    fireEvent.keyDown(button, {key: 'Enter'});
+    fireEvent.keyUp(button, {key: 'Enter'});
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+    act(() => {
+      jest.advanceTimersByTime(CLOSE_TIME);
+    });
+    expect(tooltip).not.toBeInTheDocument();
+    act(() => {
+      button.blur();
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(() => getByRole('tooltip')).toThrow();
   });
 
   describe('delay', () => {
@@ -337,6 +377,8 @@ describe('TooltipTrigger', function () {
           </TooltipTrigger>
         </Provider>
       );
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body);
 
       let button = getByLabelText('trigger');
       fireEvent.mouseEnter(button);
@@ -436,6 +478,8 @@ describe('TooltipTrigger', function () {
           </TooltipTrigger>
         </Provider>
       );
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body);
 
       let button = getByLabelText('trigger');
       fireEvent.mouseEnter(button);
@@ -487,6 +531,71 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
     });
   });
+
+  describe('custom delay', () => {
+    it('opens immediately for focus',  () => {
+      let {getByRole, getByLabelText} = render(
+        <Provider theme={theme}>
+          <TooltipTrigger onOpenChange={onOpenChange} delay={350}>
+            <ActionButton aria-label="trigger" />
+            <Tooltip>Helpful information.</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+
+      let button = getByLabelText('trigger');
+      act(() => {
+        button.focus();
+      });
+      expect(onOpenChange).toHaveBeenCalled();
+      let tooltip = getByRole('tooltip');
+      expect(tooltip).toBeVisible();
+      act(() => {
+        button.blur();
+      });
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+      act(() => {
+        jest.advanceTimersByTime(CLOSE_TIME);
+      });
+      expect(tooltip).not.toBeInTheDocument();
+    });
+
+    it('opens for hover',  () => {
+      let {getByRole, getByLabelText} = render(
+        <Provider theme={theme}>
+          <TooltipTrigger onOpenChange={onOpenChange} delay={350}>
+            <ActionButton aria-label="trigger" />
+            <Tooltip>Helpful information.</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body);
+
+      let button = getByLabelText('trigger');
+      fireEvent.mouseEnter(button);
+      fireEvent.mouseMove(button);
+      expect(onOpenChange).not.toHaveBeenCalled();
+      expect(() => getByRole('tooltip')).toThrow();
+      // run half way through the timers and see if it's appeared
+      act(() => {jest.advanceTimersByTime(350 / 2);});
+      expect(onOpenChange).not.toHaveBeenCalled();
+      expect(() => getByRole('tooltip')).toThrow();
+      // finish the full amount of time, now it should be visible, note this is still way before the default opening time
+      act(() => {jest.advanceTimersByTime(350 / 2);});
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      let tooltip = getByRole('tooltip');
+      expect(tooltip).toBeVisible();
+      fireEvent.mouseLeave(button);
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+      act(() => {
+        jest.advanceTimersByTime(CLOSE_TIME);
+      });
+      expect(tooltip).not.toBeInTheDocument();
+    });
+  });
+
+
   describe('multiple tooltips', () => {
     it('can only show one tooltip at a time', () => {
       let helpfulText = 'Helpful information.';
@@ -567,6 +676,26 @@ describe('TooltipTrigger', function () {
       expect(() => getByText(helpfulText)).toThrow();
       fireEvent.mouseLeave(badButton);
     });
+  });
+
+  it('supports a ref on the Tooltip', () => {
+    let ref = React.createRef();
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <TooltipTrigger>
+          <ActionButton>Trigger</ActionButton>
+          <Tooltip ref={ref}>Helpful information.</Tooltip>
+        </TooltipTrigger>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    act(() => {
+      button.focus();
+    });
+
+    let tooltip = getByRole('tooltip');
+    expect(ref.current.UNSAFE_getDOMNode()).toBe(tooltip);
   });
 
   describe('overlay properties', () => {
@@ -678,6 +807,7 @@ describe('TooltipTrigger', function () {
       });
       expect(getByText(helpfulText)).toBeVisible();
 
+      fireEvent.mouseMove(document.body);
       // we've used focus to open one, now we can use hover to try and open a second one
       fireEvent.mouseEnter(badButton);
       fireEvent.mouseMove(badButton);
@@ -705,6 +835,7 @@ describe('TooltipTrigger', function () {
       let badButton = getByLabelText('bad-trigger');
       expect(getByText(helpfulText)).toBeVisible();
 
+      fireEvent.mouseMove(document.body);
       // open a second one through interaction
       fireEvent.mouseEnter(badButton);
       fireEvent.mouseMove(badButton);
@@ -763,12 +894,65 @@ describe('TooltipTrigger', function () {
           </TooltipTrigger>
         </Provider>
       );
+      fireEvent.mouseMove(document.body);
       let button = getByLabelText('trigger');
+      expect(button).not.toHaveAttribute('aria-describedBy');
       fireEvent.mouseEnter(button);
       fireEvent.mouseMove(button);
       let tooltip = getByRole('tooltip');
       expect(button).toHaveAttribute('aria-describedBy', tooltip.id);
       fireEvent.mouseLeave(button);
+      expect(button).not.toHaveAttribute('aria-describedBy');
+    });
+  });
+
+  describe('trigger = focus', () => {
+    it('will open for focus', () => {
+      let {getByRole, getByLabelText} = render(
+        <Provider theme={theme}>
+          <TooltipTrigger delay={0} trigger="focus">
+            <ActionButton aria-label="trigger" />
+            <Tooltip>Helpful information.</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+
+      let button = getByLabelText('trigger');
+      act(() => {
+        button.focus();
+      });
+      let tooltip = getByRole('tooltip');
+      expect(tooltip).toBeVisible();
+
+      // won't close if the mouse hovers and leaves
+      fireEvent.mouseEnter(button);
+      fireEvent.mouseMove(button);
+      fireEvent.mouseLeave(button);
+      expect(tooltip).toBeVisible();
+      act(() => {
+        button.blur();
+      });
+      act(() => {
+        jest.advanceTimersByTime(CLOSE_TIME);
+      });
+
+      expect(tooltip).not.toBeInTheDocument();
+    });
+
+    it('will not open for hover', () => {
+      let {getByRole, getByLabelText} = render(
+        <Provider theme={theme}>
+          <TooltipTrigger delay={0} trigger="focus">
+            <ActionButton aria-label="trigger" />
+            <Tooltip>Helpful information.</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+      fireEvent.mouseMove(document.body);
+      let button = getByLabelText('trigger');
+      fireEvent.mouseEnter(button);
+      fireEvent.mouseMove(button);
+      expect(() => getByRole('tooltip')).toThrow();
     });
   });
 });

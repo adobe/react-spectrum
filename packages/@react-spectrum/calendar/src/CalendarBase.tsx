@@ -69,28 +69,23 @@ export function CalendarBase(props: CalendarBaseProps) {
         <ActionButton
           {...prevButtonProps}
           UNSAFE_className={classNames(styles, 'spectrum-Calendar-prevMonth')}
-          isQuiet
-          isDisabled={props.isDisabled}>
+          isQuiet>
           {direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}
         </ActionButton>
         <ActionButton
           {...nextButtonProps}
           UNSAFE_className={classNames(styles, 'spectrum-Calendar-nextMonth')}
-          isQuiet
-          isDisabled={props.isDisabled}>
+          isQuiet>
           {direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />}
         </ActionButton>
       </div>
-      <div
+      <table
         {...calendarBodyProps}
-        className={classNames(styles, 'spectrum-Calendar-body')}>
-        <table
-          className={classNames(styles, 'spectrum-Calendar-table')}>
-          <VisuallyHidden elementType="caption" {...captionProps} />
-          <CalendarTableHeader weekStart={state.weekStart} />
-          <CalendarTableBody state={state} />
-        </table>
-      </div>
+        className={classNames(styles, 'spectrum-Calendar-body', 'spectrum-Calendar-table')}>
+        <VisuallyHidden elementType="caption" {...captionProps} />
+        <CalendarTableHeader weekDays={state.weekDays} />
+        <CalendarTableBody state={state} />
+      </table>
     </div>
   );
 }

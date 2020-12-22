@@ -13,7 +13,7 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {HTMLAttributes, LabelHTMLAttributes, RefObject, useEffect, useState} from 'react';
+import {HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, RefObject, useEffect, useState} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {NumberFieldState} from '@react-stately/numberfield';
@@ -29,7 +29,7 @@ interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
 
 interface NumberFieldAria {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
-  inputFieldProps: HTMLAttributes<HTMLInputElement>,
+  inputFieldProps: InputHTMLAttributes<HTMLInputElement>,
   numberFieldProps: HTMLAttributes<HTMLDivElement>,
   incrementButtonProps: AriaButtonProps,
   decrementButtonProps: AriaButtonProps
@@ -129,13 +129,14 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       }
     };
 
-    document.getElementById(inputId).addEventListener(
+    let inputRef = ref.current;
+    inputRef.addEventListener(
       'wheel',
       handleInputScrollWheel,
       {passive: false}
     );
     return () => {
-      document.getElementById(inputId).removeEventListener(
+      inputRef.removeEventListener(
         'wheel',
         handleInputScrollWheel
       );
@@ -144,7 +145,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
 
   let domProps = filterDOMProps(props, {labelable: true});
   let {labelProps, inputProps} = useTextField(
-    mergeProps(focusProps, {
+    mergeProps({
       autoFocus,
       isDisabled,
       isReadOnly,
@@ -160,7 +161,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       onChange: state.setValue
     }), ref);
 
-  const inputFieldProps = mergeProps(spinButtonProps, inputProps);
+  const inputFieldProps = mergeProps(focusProps, spinButtonProps, inputProps);
   return {
     numberFieldProps: mergeProps(domProps, {
       role: 'group',

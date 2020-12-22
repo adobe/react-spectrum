@@ -95,13 +95,16 @@ const AXIS_SIZE = {
 
 const PARSED_PLACEMENT_CACHE = {};
 
+// @ts-ignore
+let visualViewport = typeof window !== 'undefined' && window.visualViewport;
+
 function getContainerDimensions(containerNode: Element): Dimensions {
   let width = 0, height = 0, top = 0, left = 0;
   let scroll: Position = {};
 
   if (containerNode.tagName === 'BODY') {
-    width = document.documentElement.clientWidth;
-    height = document.documentElement.clientHeight;
+    width = visualViewport?.width ?? document.documentElement.clientWidth;
+    height = visualViewport?.height ?? document.documentElement.clientHeight;
 
     scroll.top =
       getScrollTop(ownerDocument(containerNode).documentElement) ||
@@ -184,27 +187,45 @@ function computePosition(
   overlaySize: Offset,
   placementInfo: ParsedPlacement,
   offset: number,
-  crossOffset: number
+  crossOffset: number,
+  containerOffsetWithBoundary: Offset,
+  isContainerPositioned: boolean
 ) {
   let {placement, crossPlacement, axis, crossAxis, size, crossSize} = placementInfo;
   let position: Position = {};
 
-  position[crossAxis] = childOffset[crossAxis] + crossOffset;
+  // button position
+  position[crossAxis] = childOffset[crossAxis];
   if (crossPlacement === 'center') {
+    //  + (button size / 2) - (overlay size / 2)
+    // at this point the overlay center should match the button center
     position[crossAxis] += (childOffset[crossSize] - overlaySize[crossSize]) / 2;
   } else if (crossPlacement !== crossAxis) {
+    //  + (button size) - (overlay size)
+    // at this point the overlay bottom should match the button bottom
     position[crossAxis] += (childOffset[crossSize] - overlaySize[crossSize]);
-  }
+  }/* else {
+    the overlay top should match the button top
+  } */
+  // add the crossOffset from props
+  position[crossAxis] += crossOffset;
 
-  // Ensure overlay sticks to target(ignore for overlays smaller than target)
-  if (childOffset[crossSize] < overlaySize[crossSize]) {
-    let positionForPositiveSideOverflow = Math.min(position[crossAxis], childOffset[crossAxis]);
-    position[crossAxis] = Math.max(positionForPositiveSideOverflow, childOffset[crossAxis] - overlaySize[crossSize] + childOffset[crossSize]);
-  }
+  // this is button center position - the overlay size + half of the button to align bottom of overlay with button center
+  let minViablePosition = childOffset[crossAxis] + (childOffset[crossSize] / 2) - overlaySize[crossSize];
+  // this is button position of center, aligns top of overlay with button center
+  let maxViablePosition = childOffset[crossAxis] + (childOffset[crossSize] / 2);
+
+  // clamp it into the range of the min/max positions
+  position[crossAxis] = Math.min(Math.max(minViablePosition, position[crossAxis]), maxViablePosition);
 
   // Floor these so the position isn't placed on a partial pixel, only whole pixels. Shouldn't matter if it was floored or ceiled, so chose one.
   if (placement === axis) {
-    position[FLIPPED_DIRECTION[axis]] = Math.floor(boundaryDimensions[size] - childOffset[axis] + offset);
+    // If the container is positioned (non-static), then we use the container's actual
+    // height, as `bottom` will be relative to this height.  But if the container is static,
+    // then it can only be the `document.body`, and `bottom` will be relative to _its_
+    // container, which should be as large as boundaryDimensions.
+    const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary[size] : boundaryDimensions[size]);
+    position[FLIPPED_DIRECTION[axis]] = Math.floor(containerHeight - childOffset[axis] + offset);
   } else {
     position[axis] = Math.floor(childOffset[axis] + childOffset[size] + offset);
   }
@@ -221,8 +242,18 @@ function getMaxHeight(
   padding: number
 ) {
   return position.top != null
-    ? Math.max(0, boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top + containerOffsetWithBoundary.top - position.top - margins.top - margins.bottom - padding)
-    : Math.max(0, childOffset.top - boundaryDimensions.top - boundaryDimensions.scroll.top - containerOffsetWithBoundary.top - margins.top - margins.bottom - padding);
+    // We want the distance between the top of the overlay to the bottom of the boundary
+    ? Math.max(0,
+      (boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top) // this is the bottom of the boundary
+      - (containerOffsetWithBoundary.top + position.top) // this is the top of the overlay
+      - (margins.top + margins.bottom + padding) // save additional space for margin and padding
+    )
+    // We want the distance between the top of the trigger to the top of the boundary
+    : Math.max(0,
+      (childOffset.top + containerOffsetWithBoundary.top) // this is the top of the trigger
+      - (boundaryDimensions.top + boundaryDimensions.scroll.top) // this is the top of the boundary
+      - (margins.top + margins.bottom + padding) // save additional space for margin and padding
+    );
 }
 
 function getAvailableSpace(
@@ -252,11 +283,12 @@ export function calculatePositionInternal(
   boundaryDimensions: Dimensions,
   containerOffsetWithBoundary: Offset,
   offset: number,
-  crossOffset: number
+  crossOffset: number,
+  isContainerPositioned: boolean
 ): PositionResult {
   let placementInfo = parsePlacement(placementInput);
   let {size, crossAxis, crossSize, placement, crossPlacement} = placementInfo;
-  let position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, offset, crossOffset);
+  let position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, offset, crossOffset, containerOffsetWithBoundary, isContainerPositioned);
   let normalizedOffset = offset;
   let space = getAvailableSpace(
     boundaryDimensions,
@@ -270,7 +302,7 @@ export function calculatePositionInternal(
   // Check if the scroll size of the overlay is greater than the available space to determine if we need to flip
   if (flip && scrollSize[size] > space) {
     let flippedPlacementInfo = parsePlacement(`${FLIPPED_DIRECTION[placement]} ${crossPlacement}` as Placement);
-    let flippedPosition = computePosition(childOffset, boundaryDimensions, overlaySize, flippedPlacementInfo, offset, crossOffset);
+    let flippedPosition = computePosition(childOffset, boundaryDimensions, overlaySize, flippedPlacementInfo, offset, crossOffset, containerOffsetWithBoundary, isContainerPositioned);
     let flippedSpace = getAvailableSpace(
       boundaryDimensions,
       containerOffsetWithBoundary,
@@ -302,12 +334,12 @@ export function calculatePositionInternal(
 
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
 
-  position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, normalizedOffset, crossOffset);
+  position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, normalizedOffset, crossOffset, containerOffsetWithBoundary, isContainerPositioned);
   delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, padding);
   position[crossAxis] += delta;
 
   let arrowPosition: Position = {};
-  arrowPosition[crossAxis] = childOffset[crossSize] > overlaySize[crossSize] ? null : (childOffset[crossAxis] - position[crossAxis] + childOffset[crossSize] / 2);
+  arrowPosition[crossAxis] = (childOffset[crossAxis] - position[crossAxis] + childOffset[crossSize] / 2);
 
   return {
     position,
@@ -336,6 +368,8 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
 
   let container = overlayNode.offsetParent || document.body;
   let isBodyContainer = container.tagName === 'BODY';
+  const containerPositionStyle = window.getComputedStyle(container).position;
+  let isContainerPositioned = !!containerPositionStyle && containerPositionStyle !== 'static';
   let childOffset: Offset = isBodyContainer ? getOffset(targetNode) : getPosition(targetNode, container);
 
   if (!isBodyContainer) {
@@ -363,6 +397,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     boundaryDimensions,
     containerOffsetWithBoundary,
     offset,
-    crossOffset
+    crossOffset,
+    isContainerPositioned
   );
 }

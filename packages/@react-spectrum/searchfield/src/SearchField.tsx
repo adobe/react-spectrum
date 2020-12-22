@@ -43,12 +43,13 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
   } = props;
 
   let state = useSearchFieldState(props);
-  let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
+  let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
   let {labelProps, inputProps, clearButtonProps} = useSearchField(props, state, inputRef);
 
   let clearButton = (
     <ClearButton
       {...clearButtonProps}
+      preventFocus
       UNSAFE_className={
         classNames(
           styles,
@@ -58,7 +59,6 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
       isDisabled={isDisabled} />
   );
 
-  // SearchField is essentially a controlled TextField so we filter out prop.value and prop.defaultValue in favor of state.value
   return (
     <TextFieldBase
       {...otherProps}
@@ -68,9 +68,12 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
         classNames(
           styles,
           'spectrum-Search',
+          'spectrum-Textfield',
           {
             'is-disabled': isDisabled,
-            'is-quiet': props.isQuiet
+            'is-quiet': props.isQuiet,
+            'is-invalid': props.validationState === 'invalid',
+            'is-valid': props.validationState === 'valid'
           },
           UNSAFE_className
         )

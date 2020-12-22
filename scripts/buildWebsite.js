@@ -63,9 +63,8 @@ async function build() {
   for (let p of packages) {
     let json = JSON.parse(fs.readFileSync(path.join(packagesDir, p), 'utf8'));
     if (!json.private && json.name !== '@adobe/react-spectrum') {
-      pkg.dependencies[json.name] = 'latest';
-
       let docsDir = path.join(packagesDir, path.dirname(p), 'docs');
+      let hasDocs = false;
       if (fs.existsSync(docsDir)) {
         let contents = fs.readdirSync(docsDir);
         for (let file of contents) {
@@ -76,12 +75,18 @@ async function build() {
             let contents = fs.readFileSync(docFile, 'utf8');
             let m = contents.match(/after_version:\s*(.*)/);
             if (!m || semver.gt(json.version, m[1])) {
-              fs.copySync(docFile, destFile)
+              fs.copySync(docFile, destFile);
+              hasDocs = true;
             }
           } else {
             fs.copySync(docFile, destFile);
+            hasDocs = true;
           }
         }
+      }
+
+      if (hasDocs) {
+        pkg.dependencies[json.name] = 'latest';
       }
     }
   }
@@ -103,8 +108,17 @@ async function build() {
   let babelPatch = patches.find(name => name.startsWith('@babel'));
   fs.copySync(path.join(__dirname, '..', 'patches', babelPatch), path.join(dir, 'patches', babelPatch));
 
-  // Install and build
+  // Install dependencies from npm
   await run('yarn', {cwd: dir, stdio: 'inherit'});
+
+  // Copy package.json for each package into docs dir so we can find the correct version numbers
+  for (let p of packages) {
+    if (fs.existsSync(path.join(dir, 'node_modules', p))) {
+      fs.copySync(path.join(dir, 'node_modules', p), path.join(dir, 'docs', p));
+    }
+  }
+
+  // Build the website
   await run('yarn', ['build'], {cwd: dir, stdio: 'inherit'});
 
   // Copy the build back into dist, and delete the temp dir.
