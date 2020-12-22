@@ -145,7 +145,7 @@ describe('useModal', function () {
       let res = render(
         <div id="alternateContainer" data-testid="alternate-container">
           <Example container={() => document.getElementById('alternateContainer')}>
-            <div id="nestedContainer"/>
+            <div id="nestedContainer" />
           </Example>
         </div>
       );
@@ -156,7 +156,7 @@ describe('useModal', function () {
       res.rerender(
         <div id="alternateContainer" data-testid="alternate-container">
           <Example showModal container={() => document.getElementById('alternateContainer')}>
-            <div id="nestedContainer"/>
+            <div id="nestedContainer" />
           </Example>
         </div>
       );
@@ -169,7 +169,7 @@ describe('useModal', function () {
         res.rerender(
           <div id="alternateContainer" data-testid="alternate-container">
             <Example showModal container={() => document.getElementById('alternateContainer')}>
-              <div id="nestedContainer"/>
+              <div id="nestedContainer" />
               <Modal
                 container={() => document.getElementById('nestedContainer')}
                 providerId="inner-modal-provider"
