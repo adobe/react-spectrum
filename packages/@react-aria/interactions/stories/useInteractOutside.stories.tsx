@@ -11,12 +11,14 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import React, {useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {storiesOf} from '@storybook/react';
-import './styles.css';
 import {useInteractOutside} from '../';
 
 storiesOf('useInteractOutside', module)
+  .addDecorator(story => (
+    <BodyStyler>{story()}</BodyStyler>
+  ))
   .add(
     'outside body',
     () => <Demo />
@@ -26,5 +28,21 @@ function Demo() {
   let ref = useRef();
   let onInteractOutside = action('outside');
   useInteractOutside({ref, onInteractOutside});
-  return <div ref={ref}  />;
+  return <div ref={ref} style={{marginInlineStart: '50px', marginBlockStart: '50px'}}>Click anywhere but here</div>;
+}
+
+function BodyStyler(props) {
+  useEffect(() => {
+    let story: HTMLElement = document.querySelector('.react-spectrum-story');
+    let prev = {body: {height: document.body.style.height, width: document.body.style.width}, story: {minHeight: story.style.minHeight}};
+    document.body.style.height = '50px';
+    document.body.style.width = '50px';
+    story.style.minHeight = 'initial';
+    return () => {
+      document.body.style.height = prev.body.height;
+      document.body.style.width = prev.body.width;
+      story.style.minHeight = prev.story.minHeight;
+    };
+  });
+  return props.children;
 }
