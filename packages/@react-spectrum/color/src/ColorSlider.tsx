@@ -49,7 +49,7 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
   let ariaLabel = props['aria-label'] ?? (labelText == null ? defaultLabel : undefined);
 
   let state = useColorSliderState(props);
-  let {inputProps, thumbProps, containerProps, trackProps, labelProps, gradientProps} = useColorSlider({
+  let {inputProps, thumbProps, groupProps, trackProps, labelProps, gradientProps} = useColorSlider({
     ...props,
     label: labelText,
     'aria-label': ariaLabel,
@@ -91,7 +91,7 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
         {showValueLabel && <Label aria-labelledby={labelProps.id}>{state.getThumbValueLabel(0)}</Label>}
       </Flex>
       <div
-        {...containerProps}
+        {...groupProps}
         className={classNames(
           styles,
           'spectrum-ColorSlider', {
