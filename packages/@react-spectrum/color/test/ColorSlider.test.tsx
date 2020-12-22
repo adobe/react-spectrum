@@ -56,7 +56,7 @@ describe('ColorSlider', () => {
     expect(slider).toHaveAttribute('step', '1');
   });
 
-  it('sets aria-label when label is disbaled', () => {
+  it('sets aria-label when label is disabled', () => {
     let {getByRole} = render(<ColorSlider defaultValue={new Color('#000000')} channel="red" label={null} />);
     let slider = getByRole('slider');
 
