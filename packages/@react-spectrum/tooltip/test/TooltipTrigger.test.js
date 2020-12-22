@@ -20,7 +20,6 @@ import {triggerPress} from '@react-spectrum/test-utils';
 
 // Sync with useTooltipTriggerState.ts
 const TOOLTIP_DELAY = 1500;
-const TOOLTIP_COOLDOWN = 500;
 
 let CLOSE_TIME = 350;
 
