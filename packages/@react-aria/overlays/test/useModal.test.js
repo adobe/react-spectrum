@@ -21,7 +21,7 @@ function ModalDOM(props) {
 
 function Modal(props) {
   return (
-    <OverlayContainer data-testid={props.providerId || 'modal-provider'}>
+    <OverlayContainer getContainerRootElement={props.container} data-testid={props.providerId || 'modal-provider'}>
       <ModalDOM modalId={props.modalId}>{props.children}</ModalDOM>
     </OverlayContainer>
   );
@@ -32,7 +32,7 @@ function Example(props) {
     <OverlayProvider data-testid="root-provider">
       This is the root provider.
       {props.showModal &&
-        <Modal>{props.children}</Modal>
+        <Modal container={props.container}>{props.children}</Modal>
       }
     </OverlayProvider>
   );
@@ -87,5 +87,103 @@ describe('useModal', function () {
 
     res.rerender(<Example />);
     expect(rootProvider).not.toHaveAttribute('aria-hidden');
+  });
+
+  it('can specify a different container from the default document.body', function () {
+    let res = render(
+      <div id="alternateContainer" data-testid="alternate-container">
+        <Example container={() => document.getElementById('alternateContainer')} />
+      </div>
+    );
+    let rootProvider = res.getByTestId('root-provider');
+
+    expect(rootProvider).not.toHaveAttribute('aria-hidden');
+
+    res.rerender(
+      <div id="alternateContainer" data-testid="alternate-container">
+        <Example showModal container={() => document.getElementById('alternateContainer')} />
+      </div>
+    );
+
+    let modalProvider = res.getByTestId('modal-provider');
+
+    expect(rootProvider).toHaveAttribute('aria-hidden', 'true');
+    expect(modalProvider).not.toHaveAttribute('aria-hidden');
+
+    res.rerender(
+      <div id="alternateContainer" data-testid="alternate-container">
+        <Example showModal container={() => document.getElementById('alternateContainer')}>
+          <Modal providerId="inner-modal-provider" modalId="inner-modal">Inner</Modal>
+        </Example>
+      </div>
+    );
+
+    let innerModalProvider = res.getByTestId('inner-modal-provider');
+
+    expect(rootProvider).toHaveAttribute('aria-hidden', 'true');
+    expect(modalProvider).toHaveAttribute('aria-hidden');
+    expect(innerModalProvider).not.toHaveAttribute('aria-hidden');
+
+    res.rerender(
+      <div id="alternateContainer" data-testid="alternate-container">
+        <Example container={() => document.getElementById('alternateContainer')} />
+      </div>
+    );
+    expect(rootProvider).not.toHaveAttribute('aria-hidden');
+  });
+
+  describe('error state', function () {
+    const consoleError = console.error;
+    beforeEach(() => {
+      console.error = jest.fn();
+    });
+
+    afterEach(() => {
+      console.error = consoleError;
+    });
+    it('if inside another container, throws an error', function () {
+      let res = render(
+        <div id="alternateContainer" data-testid="alternate-container">
+          <Example container={() => document.getElementById('alternateContainer')}>
+            <div id="nestedContainer"/>
+          </Example>
+        </div>
+      );
+      let rootProvider = res.getByTestId('root-provider');
+
+      expect(rootProvider).not.toHaveAttribute('aria-hidden');
+
+      res.rerender(
+        <div id="alternateContainer" data-testid="alternate-container">
+          <Example showModal container={() => document.getElementById('alternateContainer')}>
+            <div id="nestedContainer"/>
+          </Example>
+        </div>
+      );
+
+      let modalProvider = res.getByTestId('modal-provider');
+
+      expect(rootProvider).toHaveAttribute('aria-hidden', 'true');
+      expect(modalProvider).not.toHaveAttribute('aria-hidden');
+      expect(() =>
+        res.rerender(
+          <div id="alternateContainer" data-testid="alternate-container">
+            <Example showModal container={() => document.getElementById('alternateContainer')}>
+              <div id="nestedContainer"/>
+              <Modal
+                container={() => document.getElementById('nestedContainer')}
+                providerId="inner-modal-provider"
+                modalId="inner-modal">
+                Inner
+              </Modal>
+            </Example>
+          </div>
+        )
+      ).toThrow();
+      expect(console.error).toHaveBeenCalledWith(
+        expect.stringContaining('The root container element must not be inside another container.'),
+        expect.anything()
+      );
+    });
   });
 });
