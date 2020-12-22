@@ -36,7 +36,7 @@ function ColorWheel(props: ColorWheelProps) {
   let inputRef = useRef(null);
   let containerRef = useRef(null);
 
-  let {inputProps, containerProps, thumbPosition: {x, y}, thumbProps} = useColorWheel({
+  let {inputProps, groupProps, thumbPosition: {x, y}, thumbProps} = useColorWheel({
     ...props,
     inputRef,
     containerRef,
@@ -44,7 +44,7 @@ function ColorWheel(props: ColorWheelProps) {
     outerRadius: THUMB_RADIUS + 3
   }, state);
 
-  return (<div data-testid="container" {...containerProps} ref={containerRef}>
+  return (<div data-testid="container" {...groupProps} ref={containerRef}>
     <div data-testid="thumb" {...thumbProps} style={{transform: `translate(${x}, ${y})`}}>
       <input {...inputProps} ref={inputRef} />
     </div>

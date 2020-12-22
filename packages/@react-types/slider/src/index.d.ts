@@ -1,42 +1,77 @@
-import {AriaLabelingProps, AriaValidationProps, FocusableDOMProps, FocusableProps, LabelableProps, LabelPosition, Orientation, RangeInputBase, RangeValue, StyleProps, Validation, ValueBase} from '@react-types/shared';
-import {ReactNode} from 'react';
+import {
+  AriaLabelingProps,
+  AriaValidationProps,
+  DOMProps,
+  FocusableDOMProps,
+  FocusableProps,
+  LabelableProps,
+  LabelPosition,
+  Orientation,
+  RangeInputBase,
+  RangeValue,
+  StyleProps,
+  Validation,
+  ValueBase
+} from '@react-types/shared';
 
-export interface BaseSliderProps extends RangeInputBase<number>, LabelableProps, AriaLabelingProps {
+export interface SliderProps<T = number[]> extends RangeInputBase<number>, ValueBase<T>, LabelableProps {
+  /**
+   * The orientation of the Slider.
+   * @default 'horizontal'
+   */
   orientation?: Orientation,
+  /** Whether the whole Slider is disabled. */
   isDisabled?: boolean,
-  formatOptions?: Intl.NumberFormatOptions
+  /** Fired when the slider stops moving, due to being let go. */
+  onChangeEnd?: (value: T) => void,
+  // These are duplicated from ValueBase to define defaults for the docs.
+  /**
+   * The slider's minimum value.
+   * @default 0
+   */
+  minValue?: number,
+  /**
+   * The slider's maximum value.
+   * @default 100
+   */
+  maxValue?: number,
+  /**
+   * The slider's step value.
+   * @default 1
+   */
+  step?: number
 }
 
-export interface SliderProps extends BaseSliderProps, ValueBase<number[]> {
-  onChangeEnd?: (value: number[]) => void
-}
-
-export interface SliderThumbProps extends AriaLabelingProps, FocusableDOMProps, FocusableProps, Validation, AriaValidationProps, LabelableProps {
+export interface SliderThumbProps extends FocusableProps, Validation, LabelableProps {
+  /**
+   * The orientation of the Slider.
+   * @default 'horizontal'
+   */
   orientation?: Orientation,
+  /** Whether the Thumb is disabled. */
   isDisabled?: boolean,
+  /** Index of the thumb for accessing purposes. */
   index: number
 }
 
-export interface SpectrumBarSliderBase<T> extends BaseSliderProps, ValueBase<T>, StyleProps {
+export interface AriaSliderProps<T = number[]> extends SliderProps<T>, DOMProps, AriaLabelingProps {}
+export interface AriaSliderThumbProps extends SliderThumbProps, DOMProps, FocusableDOMProps, AriaLabelingProps, AriaValidationProps {}
+
+export interface SpectrumBarSliderBase<T> extends AriaSliderProps<T>, ValueBase<T>, StyleProps {
+  /**
+   * The display format of the value label.
+   */
+  formatOptions?: Intl.NumberFormatOptions,
+  /**
+   * The label's overall position relative to the element it is labeling.
+   * @default 'top'
+   */
   labelPosition?: LabelPosition,
   /** Whether the value's label is displayed. True by default if there's a `label`, false by default if not. */
   showValueLabel?: boolean,
-  /** The content to display as the value's label. Overrides default formatted number. */
-  valueLabel?: ReactNode
+  /** A function that returns the content to display as the value's label. Overrides default formatted number. */
+  getValueLabel?: (value: T) => string
 }
-
-// export interface SpectrumSliderTicksBase {
-//   /** Enables tick marks if > 0. Ticks will be evenly distributed between the min and max values. */
-//   tickCount?: number,
-//
-//   /** Enables tick labels. */
-//   showTickLabels?: boolean,
-//   /**
-//    * By default, labels are formatted using the slider's number formatter,
-//    * but you can use the tickLabels prop to override these with custom labels.
-//    */
-//   tickLabels?: Array<ReactNode>
-// }
 
 export interface SpectrumSliderProps extends SpectrumBarSliderBase<number> {
   /**
