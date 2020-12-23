@@ -45,12 +45,15 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
   let {
     value,
     isRequired,
-    isReadOnly,
-    isDisabled,
     children,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby
   } = props;
+
+  const isDisabled = props.isDisabled || state.isDisabled;
+  
+  // Individual radios cannot be readonly
+  const isReadOnly = state.isReadOnly;
 
   let hasChildren = children != null;
   let hasAriaLabel = ariaLabel != null || ariaLabelledby != null;
