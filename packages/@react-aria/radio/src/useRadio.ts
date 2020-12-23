@@ -86,7 +86,7 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
       name: radioGroupNames.get(state),
       tabIndex,
       disabled: isDisabled,
-      readOnly: isReadOnly,
+      'aria-readonly': isReadOnly || undefined,
       required: isRequired,
       checked,
       value,
