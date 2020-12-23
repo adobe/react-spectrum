@@ -104,8 +104,6 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   let triggerProps = mergeProps(mergeProps(menuTriggerProps, fieldProps), typeSelectProps);
   let valueId = useId();
 
-  let onKeyDown = chain(triggerProps.onKeyDown, props.onKeyDown);
-
   return {
     labelProps: {
       ...labelProps,
@@ -120,7 +118,8 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     },
     triggerProps: mergeProps(domProps, {
       ...triggerProps,
-      onKeyDown: chain(triggerProps.onKeyDown, onKeyDown),
+      onKeyDown: chain(triggerProps.onKeyDown, onKeyDown, props.onKeyDown),
+      onKeyUp: props.onKeyUp,
       'aria-labelledby': [
         triggerProps['aria-labelledby'],
         triggerProps['aria-label'] && !triggerProps['aria-labelledby'] ? triggerProps.id : null,
@@ -147,9 +146,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
         }
 
         state.setFocused(false);
-      },
-      onKeyDown: onKeyDown,
-      onKeyUp: props.onKeyUp
+      }
     }),
     valueProps: {
       id: valueId
