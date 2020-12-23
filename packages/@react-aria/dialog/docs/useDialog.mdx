@@ -165,20 +165,22 @@ function ModalDialog(props) {
 
 function Example() {
   let state = useOverlayTriggerState({});
+  let openButtonRef = React.useRef();
+  let closeButtonRef = React.useRef();
 
   // useButton ensures that focus management is handled correctly,
   // across all browsers. Focus is restored to the button once the
   // dialog closes.
   let {buttonProps: openButtonProps} = useButton({
     onPress: () => state.open()
-  });
+  }, openButtonRef);
 
   let {buttonProps: closeButtonProps} = useButton({
     onPress: () => state.close()
-  });
+  }, closeButtonRef);
 
   return <>
-    <button {...openButtonProps}>Open Dialog</button>
+    <button {...openButtonProps} ref={openButtonRef}>Open Dialog</button>
     {state.isOpen &&
       <OverlayContainer>
         <ModalDialog
@@ -195,6 +197,7 @@ function Example() {
             </label>
             <button
               {...closeButtonProps}
+              ref={closeButtonRef}
               style={{marginTop: 10}}>
               Submit
             </button>
