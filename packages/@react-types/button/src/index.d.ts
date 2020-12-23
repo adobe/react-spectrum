@@ -65,7 +65,7 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
 export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}
 export interface AriaToggleButtonProps<T extends ElementType = 'button'> extends ToggleButtonProps, AriaBaseButtonProps, AriaButtonElementTypeProps<T> {}
 
-export interface SpectrumButtonProps extends AriaBaseButtonProps, ButtonProps, LinkButtonProps, StyleProps {
+export interface SpectrumButtonProps<T extends ElementType = 'button'> extends AriaBaseButtonProps, ButtonProps, LinkButtonProps<T>, StyleProps {
   /** The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button. */
   variant: 'cta' | 'overBackground' | 'primary' | 'secondary' | 'negative',
   /** Whether the button should be displayed with a quiet style. */

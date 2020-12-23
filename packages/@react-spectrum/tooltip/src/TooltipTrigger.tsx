@@ -59,6 +59,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
       {trigger}
       <TooltipContext.Provider
         value={{
+          state,
           placement,
           ref: overlayRef,
           UNSAFE_style: overlayProps.style,

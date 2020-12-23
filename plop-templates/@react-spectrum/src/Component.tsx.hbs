@@ -10,33 +10,65 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, DOMRef, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {mergeProps} from '@react-aria/utils';
-import { {{~componentName}}Props} from '@react-types/${{packageName}}';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+{{#if (includes scopes "@react-types")}}
+import {DOMRef} from '@react-types/shared';
+{{else}}
+import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
+{{/if}}
+import {filterDOMProps} from '@react-aria/utils';
 import React from 'react';
+{{#if (includes scopes "@react-types")}}
+import {Spectrum{{componentName}}Props} from '@react-types/{{packageName}}';
+{{/if}}
+{{#if componentCSS}}
 import styles from '@adobe/spectrum-css-temp/components/{{componentCSS}}/vars.css';
-import {use {{~componentName~}} } from '@react-aria/{{packageName}}';
-import {use {{~componentName~}} State} from '@react-stately/{{packageName}}';
+{{/if}}
+{{#if (includes scopes "@react-aria")}}
+import {use{{componentName~}}} from '@react-aria/{{packageName}}';
+{{/if}}
+{{#if (includes scopes "@react-stately")}}
+import {use{{componentName}}State} from '@react-stately/{{packageName}}';
+{{/if}}
 import {useProviderProps} from '@react-spectrum/provider';
 
-function {{componentName}}(props: {{componentName}}Props, ref: DOMRef) {
+{{#unless (includes scopes "@react-types")}}
+export interface Spectrum{{componentName}}Props extends DOMProps, StyleProps {
+  onChange?: any
+}
+{{/unless}}
+
+function {{componentName}}(props: Spectrum{{componentName}}Props, ref: DOMRef<HTMLDivElement>) {
+  // Grabs specific props from the closest Provider (see https://react-spectrum.adobe.com/react-spectrum/Provider.html#property-groups). Remove if your component doesn't support any of the listed props.
   props = useProviderProps(props);
+  // Handles RSP specific style options, UNSAFE_style, and UNSAFE_className props (see https://react-spectrum.adobe.com/react-spectrum/styling.html#style-props)
   let {styleProps} = useStyleProps(props);
+  {{#if (includes scopes "@react-stately")}}
   let state = use{{componentName}}State(props);
+  {{/if}}
+  {{#if (includes scopes "@react-aria")}}
   let ariaProps = use{{componentName}}(props, state);
+  {{/if}}
   let domRef = useDOMRef(ref);
 
   return (
     <div
       {...filterDOMProps(props)}
+      {{#if (includes scopes "@react-aria")}}
       {...ariaProps}
+      {{/if}}
       {...styleProps}
       ref={domRef}
-      className={classNames(styles, '', styleProps.className)}>
-
-    </div>
+      {{#if componentCSS}}
+      className={classNames(styles, '', styleProps.className)} />
+      {{else}}
+      className={styleProps.className} />
+      {{/if}}
   );
 }
 
+/**
+ * TODO: Add description of component here.
+ */
 const _{{componentName}} = React.forwardRef({{componentName}});
-export {_{{componentName}} as {{componentName~}} };
+export {_{{componentName}} as {{componentName~}}};

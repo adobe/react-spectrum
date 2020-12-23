@@ -1,23 +1,41 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
 import {SliderProps, SliderThumbProps} from '@react-types/slider';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import styles from './story-slider.css';
+import {useNumberFormatter} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 
 interface StoryMultiSliderProps extends SliderProps {
-  children: React.ReactNode
+  children: React.ReactNode,
+  formatOptions?: Intl.NumberFormatOptions
 }
 
 export function StoryMultiSlider(props: StoryMultiSliderProps) {
   const {children} = props;
   const trackRef = React.useRef<HTMLDivElement>(null);
-  const state = useSliderState(props);
+  const formatter = useNumberFormatter(props.formatOptions);
+  const state = useSliderState({...props, numberFormatter: formatter});
   const {
-    trackProps, labelProps, containerProps
+    trackProps,
+    labelProps,
+    groupProps,
+    outputProps
   } = useSlider(props, state, trackRef);
 
   const numThumbs = React.Children.count(children);
@@ -26,10 +44,12 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
   }
 
   return (
-    <div {...containerProps} className={styles.slider}>
+    <div {...groupProps} className={styles.slider}>
       <div className={styles.sliderLabel}>
         {props.label && <label {...labelProps} className={styles.label}>{props.label}</label>}
-        <div className={styles.value}>{JSON.stringify(state.values)}</div>
+        <output {...outputProps} className={styles.value}>
+          {JSON.stringify(state.values)}
+        </output>
       </div>
       {
         // We make rail and all thumbs children of the trackRef.  That means dragging on the thumb
