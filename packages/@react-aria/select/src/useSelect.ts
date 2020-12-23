@@ -27,11 +27,7 @@ interface AriaSelectOptions<T> extends AriaSelectProps<T> {
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate,
-  /**
-   * An optional reference to the popover allowing to better control onBlur.
-   */
-  popoverRef?: RefObject<HTMLElement>
+  keyboardDelegate?: KeyboardDelegate
 }
 
 interface SelectAria {
@@ -56,8 +52,7 @@ interface SelectAria {
  */
 export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<HTMLElement>): SelectAria {
   let {
-    keyboardDelegate,
-    popoverRef
+    keyboardDelegate
   } = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
@@ -142,7 +137,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     menuProps: {
       ...menuProps,
       onBlur: (e) => {
-        if (e.relatedTarget === ref.current || popoverRef?.current?.contains(e.relatedTarget as HTMLElement)) {
+        if (e.currentTarget.contains(e.relatedTarget as Node)) {
           return;
         }
 
