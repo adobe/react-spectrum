@@ -11,6 +11,7 @@
  */
 
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
+import {GridCollection} from '@react-types/grid';
 import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject} from 'react';
 import {isFocusVisible, usePress} from '@react-aria/interactions';
@@ -29,7 +30,7 @@ interface GridCellAria {
   gridCellProps: HTMLAttributes<HTMLElement>
 }
 
-export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridCellAria {
+export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps, state: GridState<T, C>): GridCellAria {
   let {
     node,
     ref,

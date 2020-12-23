@@ -12,11 +12,12 @@
 
 import {getRowLabelledBy} from './utils';
 import {GridRowAria, GridRowProps, useGridRow} from '@react-aria/grid';
+import {TableCollection} from '@react-types/table';
 import {TableState} from '@react-stately/table';
 
 export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T>): GridRowAria {
   let {node} = props;
-  let {rowProps} = useGridRow<T, TableState<T>>(props, state);
+  let {rowProps} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state);
   return {
     rowProps: {
       ...rowProps,

@@ -23,7 +23,7 @@ export class GridCollection<T> implements IGridCollection<T> {
   columnCount: number;
   rows: GridNode<T>[];
 
-  constructor(opts?: GridCollectionOptions<T>) { // TODO what to do with columnCount
+  constructor(opts?: GridCollectionOptions<T>, nodePopulate?: (cell: GridNode<T>) => GridNode<T>) {
     this.keyMap = new Map();
     this.columnCount = opts?.columnCount;
     this.rows = [];
@@ -33,6 +33,9 @@ export class GridCollection<T> implements IGridCollection<T> {
       // we can skip this node and its children. We always visit columns though,
       // because we depend on order to build the columns array.
       let prevNode = this.keyMap.get(node.key);
+      if (nodePopulate) {
+        node = nodePopulate(node);
+      }
 
       this.keyMap.set(node.key, node);
 
@@ -79,7 +82,6 @@ export class GridCollection<T> implements IGridCollection<T> {
     opts.items.forEach((node, i) => {
       let rowNode = {
         level: 0,
-        index: i,
         key: 'row-' + i,
         type: 'row',
         value: undefined,
@@ -87,7 +89,8 @@ export class GridCollection<T> implements IGridCollection<T> {
         childNodes: [...node.childNodes],
         rendered: undefined,
         textValue: undefined,
-        ...node
+        ...node,
+        index: i
       } as GridNode<T>;
 
       if (last) {

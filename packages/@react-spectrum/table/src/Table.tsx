@@ -29,11 +29,10 @@ import stylesOverrides from './table.css';
 import {TableLayout} from '@react-stately/layout';
 import {TableState, useTableState} from '@react-stately/table';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
-import {useGridCell, useGridRowGroup} from '@react-aria/grid';
 import {useHover} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
-import {useTable, useTableColumnHeader, useTableRow, useTableRowHeader, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
+import {useTable, useTableCell, useTableColumnHeader, useTableRow, useTableRowGroup, useTableRowHeader, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 const DEFAULT_HEADER_HEIGHT = {
@@ -365,7 +364,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
 }
 
 function TableHeader({children, ...otherProps}) {
-  let {rowGroupProps} = useGridRowGroup();
+  let {rowGroupProps} = useTableRowGroup();
 
   return (
     <div {...rowGroupProps} {...otherProps} className={classNames(styles, 'spectrum-Table-head')}>
@@ -470,7 +469,7 @@ function TableSelectAllCell({column}) {
 }
 
 function TableRowGroup({children, ...otherProps}) {
-  let {rowGroupProps} = useGridRowGroup();
+  let {rowGroupProps} = useTableRowGroup();
 
   return (
     <div {...rowGroupProps} {...otherProps}>
@@ -543,7 +542,7 @@ function TableCheckboxCell({cell}) {
   let ref = useRef();
   let state = useTableContext();
   let isDisabled = state.disabledKeys.has(cell.parentKey);
-  let {gridCellProps} = useGridCell({
+  let {gridCellProps} = useTableCell({
     node: cell,
     ref,
     isVirtualized: true,
@@ -592,7 +591,7 @@ function TableCell({cell}) {
   let ref = useRef();
   let state = useTableContext();
   let isDisabled = state.disabledKeys.has(cell.parentKey);
-  let {gridCellProps} = useGridCell({
+  let {gridCellProps} = useTableCell({
     node: cell,
     ref,
     isVirtualized: true,
