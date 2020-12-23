@@ -22,10 +22,10 @@ export interface RadioGroupState {
    */
   readonly name: string,
 
-  /** Whether the checkbox group is disabled. */
+  /** Whether the radio group is disabled. */
   readonly isDisabled: boolean,
 
-  /** Whether the checkbox group is read only. */
+  /** Whether the radio group is read only. */
   readonly isReadOnly: boolean,
 
   /** The currently selected value. */
