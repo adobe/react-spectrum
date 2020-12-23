@@ -35,7 +35,8 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
     isDisabled,
     orientation = 'horizontal' as Orientation
   } = props;
-  if (state.disabledKeys.size === state.collection.size) {
+  let allKeys = [...state.collection.getKeys()];
+  if (!allKeys.some(key => !state.disabledKeys.has(key))) {
     isDisabled = true;
   }
 

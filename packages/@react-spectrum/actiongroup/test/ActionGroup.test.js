@@ -646,11 +646,11 @@ describe('ActionGroup', function () {
     expect(button).toHaveAttribute('aria-describedby', tooltip.id);
   });
 
-  it('no inifite loop if all keys are diabled', function () {
+  it('no infinite loop if all keys are disabled', function () {
     let tree = render(
       <Provider theme={theme}>
         <input type="text" id="foo" autoFocus />
-        <ActionGroup disabledKeys={['test1', 'test2']}>
+        <ActionGroup disabledKeys={['test1', 'test2']} selectionMode="single">
           <Item key="test1">Hi</Item>
           <Item key="test2">Bye</Item>
         </ActionGroup>
@@ -658,6 +658,53 @@ describe('ActionGroup', function () {
       </Provider>
     );
 
+    let actiongroup = tree.getByRole('radiogroup');
+    expect(actiongroup).toHaveAttribute('aria-disabled', 'true');
+    let inputs = tree.getAllByRole('textbox');
+    expect(document.activeElement).toBe(inputs[0]);
+    userEvent.tab();
+    expect(document.activeElement).toBe(inputs[1]);
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(inputs[0]);
+  });
+
+  it('not disabled if extraneous disabledKeys are provided', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <input type="text" id="foo" autoFocus />
+        <ActionGroup disabledKeys={['test1', 'foo']} selectionMode="single">
+          <Item key="test1">Hi</Item>
+          <Item key="test2">Bye</Item>
+        </ActionGroup>
+        <input type="text" id="bar" />
+      </Provider>
+    );
+
+    let actiongroup = tree.getByRole('radiogroup');
+    expect(actiongroup).not.toHaveAttribute('aria-disabled', 'true');
+    let inputs = tree.getAllByRole('textbox');
+    let buttons = tree.getAllByRole('radio');
+    expect(document.activeElement).toBe(inputs[0]);
+    userEvent.tab();
+    expect(document.activeElement).toBe(buttons[1]);
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(inputs[0]);
+  });
+
+  it('is disabled if extraneous disabledKeys are provided in addition to all keys being disabled', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <input type="text" id="foo" autoFocus />
+        <ActionGroup disabledKeys={['test1', 'test2', 'foo']} selectionMode="single">
+          <Item key="test1">Hi</Item>
+          <Item key="test2">Bye</Item>
+        </ActionGroup>
+        <input type="text" id="bar" />
+      </Provider>
+    );
+
+    let actiongroup = tree.getByRole('radiogroup');
+    expect(actiongroup).toHaveAttribute('aria-disabled', 'true');
     let inputs = tree.getAllByRole('textbox');
     expect(document.activeElement).toBe(inputs[0]);
     userEvent.tab();

@@ -23,7 +23,8 @@ export class ActionGroupKeyboardDelegate<T> implements KeyboardDelegate {
     this.collection = collection;
     this.flipDirection = direction === 'rtl' && orientation === 'horizontal';
     this.disabledKeys = disabledKeys;
-    this.isDisabled = collection.size === disabledKeys.size;
+    let allKeys = [...collection.getKeys()];
+    this.isDisabled = !allKeys.some(key => !disabledKeys.has(key));
   }
 
   getKeyLeftOf(key: Key) {
