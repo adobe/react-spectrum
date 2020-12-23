@@ -67,7 +67,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
       'aria-invalid': validationState === 'invalid' || undefined,
       'aria-errormessage': props['aria-errormessage'],
       'aria-controls': props['aria-controls'],
-      'aria-readonly': isReadOnly,
+      'aria-readonly': isReadOnly || undefined,
       onChange,
       disabled: isDisabled,
       required: isRequired,
