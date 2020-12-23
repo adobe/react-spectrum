@@ -1566,6 +1566,50 @@ describe('Picker', function () {
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Two');
     });
+
+    it('move selection on Arrow-Left/Right', function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Picker label="Test" onSelectionChange={onSelectionChange}>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let picker = getByRole('button');
+      act(() => {picker.focus();});
+      expect(picker).toHaveTextContent('Select an option…');
+      fireEvent.keyDown(picker, {key: 'ArrowLeft'});
+      act(() => jest.runAllTimers());
+      
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(picker).toHaveTextContent('One');
+
+      fireEvent.keyDown(picker, {key: 'ArrowLeft'});
+      expect(picker).toHaveTextContent('One');
+
+      fireEvent.keyDown(picker, {key: 'ArrowRight'});
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(picker).toHaveTextContent('Two');
+
+      fireEvent.keyDown(picker, {key: 'ArrowRight'});
+      expect(onSelectionChange).toHaveBeenCalledTimes(3);
+      expect(picker).toHaveTextContent('Three');
+
+      fireEvent.keyDown(picker, {key: 'ArrowRight'});
+      expect(onSelectionChange).toHaveBeenCalledTimes(3);
+      expect(picker).toHaveTextContent('Three');
+
+      fireEvent.keyDown(picker, {key: 'ArrowLeft'});
+      expect(onSelectionChange).toHaveBeenCalledTimes(4);
+      expect(picker).toHaveTextContent('Two');
+
+      fireEvent.keyDown(picker, {key: 'ArrowLeft'});
+      expect(onSelectionChange).toHaveBeenCalledTimes(5);
+      expect(picker).toHaveTextContent('One');
+    });
   });
 
   describe('type to select', function () {
