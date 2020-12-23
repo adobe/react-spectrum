@@ -16,7 +16,7 @@ A library of React Hooks that provides accessible UI primitives for your design 
 
 ### React Stately
 
-A library of React Hooks that provides cross-platform state management for your design system.
+A library of React Hooks that provides cross-platform state management for your design system.  
 
 [More information about React Stately](https://react-spectrum.adobe.com/react-stately/index.html)
 
