@@ -187,7 +187,6 @@ export class TableCollection<T> extends GridCollection<T> {
       columns.unshift(rowHeaderColumn);
     }
 
-    let currentRowIndex = 0;
     let rows = [];
     let columnKeyMap = new Map();
     let visit = (node: GridNode<T>) => {
@@ -206,16 +205,8 @@ export class TableCollection<T> extends GridCollection<T> {
           }
           break;
         case 'item':
-          // dont increment first time seeing an item
-          if (rows.length) {
-            currentRowIndex += 1;
-          }
-          rows.push({type: 'item', key: node.key, childNodes: []});
-          break;
-        case 'cell':
-          rows[currentRowIndex].childNodes.push(node);
-          node.column = columns[node.index];
-          break;
+          rows.push(node);
+          return; // do not go into childNodes
       }
       for (let child of node.childNodes) {
         visit(child);
@@ -228,7 +219,12 @@ export class TableCollection<T> extends GridCollection<T> {
     let headerRows = buildHeaderRows(columnKeyMap, columns) as GridNode<T>[];
     headerRows.forEach((row, i) => rows.splice(i, 0, row));
 
-    super({columnCount: columns.length, items: rows});
+    super(
+      {columnCount: columns.length, items: rows},
+      node => {
+        node.column = columns[node.index];
+        return node;
+      });
     this.columns = columns;
     this.rowHeaderColumnKeys = rowHeaderColumnKeys;
     this.body = body;

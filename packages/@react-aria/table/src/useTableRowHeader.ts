@@ -11,13 +11,13 @@
  */
 
 import {getCellId} from './utils';
+import {GridNode} from '@react-types/grid';
 import {HTMLAttributes, RefObject} from 'react';
-import {TableNode} from '@react-types/table';
 import {TableState} from '@react-stately/table';
 import {useGridCell} from '@react-aria/grid';
 
 interface RowHeaderProps {
-  node: TableNode<unknown>,
+  node: GridNode<unknown>,
   ref: RefObject<HTMLElement>,
   isVirtualized?: boolean,
   isDisabled?: boolean

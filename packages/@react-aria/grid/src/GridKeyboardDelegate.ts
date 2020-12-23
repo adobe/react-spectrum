@@ -339,7 +339,6 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return key;
   }
 
-  // TODO unsure what this does
   getKeyForSearch(search: string, fromKey?: Key) {
     if (!this.collator) {
       return null;
@@ -358,17 +357,11 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     while (key != null) {
       let item = collection.getItem(key);
 
-      // Check the first cell of each row (assumes first cell is row key)
-      let childNodes = [...item.childNodes];
-      let cell = childNodes.length ? childNodes[0] : null;
-      if (cell && cell.textValue) {
-        let substring = cell.textValue.slice(0, search.length);
+      // check row text value for match
+      if (item.textValue) {
+        let substring = item.textValue.slice(0, search.length);
         if (this.collator.compare(substring, search) === 0) {
-          // If we started on a cell, end on the matching cell. Otherwise, end on the row.
-          let fromItem = fromKey != null ? collection.getItem(fromKey) : startItem;
-          return fromItem.type === 'cell'
-            ? cell.key
-            : item.key;
+          return item.key;
         }
       }
 
