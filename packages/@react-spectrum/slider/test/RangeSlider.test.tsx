@@ -36,13 +36,23 @@ describe('RangeSlider', function () {
     let group = getByRole('group');
     let labelId = group.getAttribute('aria-labelledby');
     let [leftSlider, rightSlider] = getAllByRole('slider');
-    expect(leftSlider.getAttribute('aria-labelledby')).toBe(labelId);
-    expect(rightSlider.getAttribute('aria-labelledby')).toBe(labelId);
+    expect(leftSlider.getAttribute('aria-label')).toBe('Minimum');
+    expect(rightSlider.getAttribute('aria-label')).toBe('Maximum');
+    expect(leftSlider.getAttribute('aria-labelledby')).toBe(`${labelId} ${leftSlider.id}`);
+    expect(rightSlider.getAttribute('aria-labelledby')).toBe(`${labelId} ${rightSlider.id}`);
 
-    expect(document.getElementById(labelId)).toHaveTextContent(/^The Label$/);
+    let label = document.getElementById(labelId);
+    expect(label).toHaveTextContent('The Label');
+    // https://bugs.webkit.org/show_bug.cgi?id=172464
+    // expect(label).toHaveAttribute('for', getAllByRole('slider')[0].id);
+    expect(label).not.toHaveAttribute('for');
 
     // Shows value as well
-    expect(group.textContent).toBe('The Label0 - 100');
+    let output = getByRole('status');
+    expect(output).toHaveTextContent('0 – 100');
+    expect(output).toHaveAttribute('for', getAllByRole('slider').map(s => s.id).join(' '));
+    expect(output).not.toHaveAttribute('aria-labelledby');
+    expect(output).toHaveAttribute('aria-live', 'off');
   });
 
   it('supports showValueLabel: false', function () {
@@ -50,6 +60,7 @@ describe('RangeSlider', function () {
     let group = getByRole('group');
 
     expect(group.textContent).toBe('The Label');
+    expect(() => getByRole('status')).toThrow();
   });
 
   it('supports disabled', function () {
@@ -97,16 +108,21 @@ describe('RangeSlider', function () {
   });
 
   it('supports defaultValue', function () {
-    let {getAllByRole} = render(<RangeSlider label="The Label" defaultValue={{start: 20, end: 40}} />);
+    let {getAllByRole, getByRole} = render(<RangeSlider label="The Label" defaultValue={{start: 20, end: 40}} />);
 
     let [sliderLeft, sliderRight] = getAllByRole('slider');
+
+    let output = getByRole('status');
+    expect(output).toHaveTextContent('20 – 40');
 
     expect(sliderLeft).toHaveProperty('value', '20');
     expect(sliderRight).toHaveProperty('value', '40');
     fireEvent.change(sliderLeft, {target: {value: '30'}});
     expect(sliderLeft).toHaveProperty('value', '30');
+    expect(output).toHaveTextContent('30 – 40');
     fireEvent.change(sliderRight, {target: {value: '50'}});
     expect(sliderRight).toHaveProperty('value', '50');
+    expect(output).toHaveTextContent('30 – 50');
   });
 
   it('can be controlled', function () {
@@ -119,8 +135,11 @@ describe('RangeSlider', function () {
       return (<RangeSlider label="The Label" value={value} onChange={setValue} />);
     }
 
-    let {getAllByRole} = render(<Test />);
+    let {getAllByRole, getByRole} = render(<Test />);
     let [sliderLeft, sliderRight] = getAllByRole('slider');
+
+    let output = getByRole('status');
+    expect(output).toHaveTextContent('20 – 40');
 
     expect(sliderLeft).toHaveProperty('value', '20');
     expect(sliderLeft).toHaveAttribute('aria-valuetext', '20');
@@ -129,9 +148,11 @@ describe('RangeSlider', function () {
     fireEvent.change(sliderLeft, {target: {value: '30'}});
     expect(sliderLeft).toHaveProperty('value', '30');
     expect(sliderLeft).toHaveAttribute('aria-valuetext', '30');
+    expect(output).toHaveTextContent('30 – 40');
     fireEvent.change(sliderRight, {target: {value: '50'}});
     expect(sliderRight).toHaveProperty('value', '50');
     expect(sliderRight).toHaveAttribute('aria-valuetext', '50');
+    expect(output).toHaveTextContent('30 – 50');
 
     expect(renders).toStrictEqual([{start: 20, end: 40}, {start: 30, end: 40}, {start: 30, end: 50}]);
   });
@@ -139,23 +160,23 @@ describe('RangeSlider', function () {
   it('supports a custom valueLabel', function () {
     function Test() {
       let [value, setValue] = useState({start: 10, end: 40});
-      return (<RangeSlider label="The Label" value={value} onChange={setValue} valueLabel={`A${value.start}B${value.end}C`} />);
+      return (<RangeSlider label="The Label" value={value} onChange={setValue} getValueLabel={value => `A${value.start}B${value.end}C`} />);
     }
 
     let {getAllByRole, getByRole} = render(<Test />);
 
-    let group = getByRole('group');
     let [sliderLeft, sliderRight] = getAllByRole('slider');
 
-    expect(group.textContent).toBe('The LabelA10B40C');
-    // TODO should aria-valuetext be formatted as well?
+    let output = getByRole('status');
+    expect(output).toHaveTextContent('A10B40C');
+
     expect(sliderLeft).toHaveAttribute('aria-valuetext', '10');
     expect(sliderRight).toHaveAttribute('aria-valuetext', '40');
     fireEvent.change(sliderLeft, {target: {value: '5'}});
     expect(sliderLeft).toHaveAttribute('aria-valuetext', '5');
-    expect(group.textContent).toBe('The LabelA5B40C');
+    expect(output).toHaveTextContent('A5B40C');
     fireEvent.change(sliderRight, {target: {value: '60'}});
-    expect(group.textContent).toBe('The LabelA5B60C');
+    expect(output).toHaveTextContent('A5B60C');
     expect(sliderRight).toHaveAttribute('aria-valuetext', '60');
   });
 
@@ -169,17 +190,18 @@ describe('RangeSlider', function () {
           defaultValue={{start: 10, end: 20}} />
       );
 
-      let group = getByRole('group');
       let [sliderLeft, sliderRight] = getAllByRole('slider');
 
-      expect(group.textContent).toBe('The Label+10 - +20');
+      let output = getByRole('status');
+      expect(output).toHaveTextContent('+10 – +20');
+
       expect(sliderLeft).toHaveAttribute('aria-valuetext', '+10');
       expect(sliderRight).toHaveAttribute('aria-valuetext', '+20');
       fireEvent.change(sliderLeft, {target: {value: '-35'}});
       expect(sliderLeft).toHaveAttribute('aria-valuetext', '-35');
-      expect(group.textContent).toBe('The Label-35 - +20');
+      expect(output).toHaveTextContent('-35 – +20');
       fireEvent.change(sliderRight, {target: {value: '0'}});
-      expect(group.textContent).toBe('The Label-35 - 0');
+      expect(output).toHaveTextContent('-35 – 0');
       expect(sliderRight).toHaveAttribute('aria-valuetext', '0');
     });
 
@@ -194,17 +216,18 @@ describe('RangeSlider', function () {
           formatOptions={{style: 'percent'}} />
       );
 
-      let group = getByRole('group');
       let [sliderLeft, sliderRight] = getAllByRole('slider');
 
-      expect(group.textContent).toBe('The Label20% - 60%');
+      let output = getByRole('status');
+      expect(output).toHaveTextContent('20% – 60%');
+
       expect(sliderLeft).toHaveAttribute('aria-valuetext', '20%');
       expect(sliderRight).toHaveAttribute('aria-valuetext', '60%');
       fireEvent.change(sliderLeft, {target: {value: '0.3'}});
-      expect(group.textContent).toBe('The Label30% - 60%');
+      expect(output).toHaveTextContent('30% – 60%');
       expect(sliderLeft).toHaveAttribute('aria-valuetext', '30%');
       fireEvent.change(sliderRight, {target: {value: '0.7'}});
-      expect(group.textContent).toBe('The Label30% - 70%');
+      expect(output).toHaveTextContent('30% – 70%');
       expect(sliderRight).toHaveAttribute('aria-valuetext', '70%');
     });
   });
@@ -471,6 +494,20 @@ describe('RangeSlider', function () {
       expect(onChangeSpy).not.toHaveBeenCalled();
       fireEvent.mouseUp(thumbRight, {pageX: 90});
       expect(onChangeSpy).not.toHaveBeenCalled();
+    });
+
+    it('clicking on the label should focus the first thumb', () => {
+      let {getByText, getAllByRole} = render(
+        <RangeSlider
+          label="The Label"
+          defaultValue={{start: 40, end: 70}} />
+      );
+
+      let label = getByText('The Label');
+      let thumbs = getAllByRole('slider');
+
+      fireEvent.click(label);
+      expect(document.activeElement).toBe(thumbs[0]);
     });
   });
 });

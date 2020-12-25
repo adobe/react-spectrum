@@ -10,20 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {{{componentName}}} from '../';
+import { {{~componentName~}} } from '../';
 import {render} from '@testing-library/react';
 import React from 'react';
-import V2{{componentName}} from '@react/react-spectrum/{{componentName}}';
-
 
 describe('{{componentName}}', function () {
   it.each`
     Name | Component      | props
-    ${'{{componentName}}'} | ${ {{~componentName~}} }| $\{{}}
-    ${'V2{{componentName}}'}      | ${V2 {{~componentName~}} }      | $\{{}}
+    ${'{{componentName}}'} | ${ {{~componentName~}} } | $\{{}}
   `('$Name handles defaults', function ({Component, props}) {
-    let {getByRole, getByText} = render(<Component {...props}></Component>);
+    let tree = render(<Component {...props} />);
 
-    expect(true).toBeTruthy();
+    expect(tree).toBeTruthy();
   });
 });

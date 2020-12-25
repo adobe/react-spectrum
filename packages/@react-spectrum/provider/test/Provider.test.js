@@ -74,8 +74,8 @@ describe('Provider', () => {
     let checkbox = getByLabelText('Test Checkbox');
     let switchComponent = getByLabelText('Test Switch');
 
-    expect(switchComponent).toHaveAttribute('readonly');
-    expect(checkbox).toHaveAttribute('readonly');
+    expect(switchComponent).toHaveAttribute('aria-readonly', 'true');
+    expect(checkbox).toHaveAttribute('aria-readonly', 'true');
 
     act(() => {
       userEvent.click(checkbox);

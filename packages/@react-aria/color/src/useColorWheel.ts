@@ -25,7 +25,7 @@ interface ColorWheelAriaProps extends ColorWheelProps {
 
 interface ColorWheelAria {
   thumbProps: HTMLAttributes<HTMLElement>,
-  containerProps: HTMLAttributes<HTMLElement>,
+  groupProps: HTMLAttributes<HTMLElement>,
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   thumbPosition: {x: number, y: number}
 }
@@ -193,7 +193,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
   });
 
   return {
-    containerProps: isDisabled ? {} : mergeProps({
+    groupProps: isDisabled ? {} : mergeProps({
       onMouseDown: (e: React.MouseEvent) => {onTrackDown(undefined, e.pageX, e.pageY);},
       onPointerDown: (e: React.PointerEvent) => {onTrackDown(e.pointerId, e.pageX, e.pageY);},
       onTouchStart: (e: React.TouchEvent) => {onTrackDown(e.changedTouches[0].identifier, e.changedTouches[0].pageX, e.changedTouches[0].pageY);}
