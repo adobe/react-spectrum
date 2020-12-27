@@ -71,7 +71,7 @@ Users may reveal the tooltip by hovering or focusing the trigger.
 </TypeContext.Provider>
 
 Tooltip state is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTooltipTriggerState} />
-hook in `@react-stately/tooltip`. The state object should be passed as an option to `useTooltipTrigger`.
+hook in `@react-stately/tooltip`. The state object should be passed as an option to `useTooltipTrigger` and `useTooltip`.
 
 ## Example
 
@@ -83,8 +83,8 @@ Two instances of the example are rendered to demonstrate the behavior of the del
 import {useTooltipTriggerState} from '@react-stately/tooltip';
 import {mergeProps} from '@react-aria/utils';
 
-function Tooltip(props) {
-  let {tooltipProps} = useTooltip(props);
+function Tooltip({state, ...props}) {
+  let {tooltipProps} = useTooltip(props, state);
 
   return (
     <span
@@ -114,7 +114,7 @@ function Example(props) {
     <span style={{position: 'relative'}}>
       <button ref={ref} {...triggerProps}>I have a tooltip</button>
       {state.isOpen && (
-        <Tooltip {...tooltipProps} >
+        <Tooltip state={state} {...tooltipProps}>
           And the tooltip tells you more information.
         </Tooltip>
       )}
