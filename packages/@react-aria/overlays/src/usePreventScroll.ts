@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent} from '@react-aria/utils';
-import {useEffect, useLayoutEffect} from 'react';
+import {chain, getScrollParent, useLayoutEffect} from '@react-aria/utils';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
@@ -51,8 +50,7 @@ const nonTextInputTypes = new Set([
 export function usePreventScroll(options: PreventScrollOptions = {}) {
   let {isDisabled} = options;
 
-  const useUniversalEffect = visualViewport ? useLayoutEffect : useEffect;
-  useUniversalEffect(() => {
+  useLayoutEffect(() => {
     if (isDisabled) {
       return;
     }
