@@ -309,7 +309,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
         }
 
         items = updateTree(items, key, () => null);
-        return updateTree(items, toParentKey, parentNode => ({
+        const finalItems = updateTree(items, toParentKey, parentNode => ({
           key: parentNode.key,
           parentKey: parentNode.parentKey,
           value: parentNode.value,
@@ -319,6 +319,14 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
             ...parentNode.children.slice(index)
           ]
         }));
+
+        const collectNodesForMap = (items: TreeNode<T>['children']) => items.forEach(i => {
+          map.set(i.key, i);
+          collectNodesForMap(i.children);
+        });
+        collectNodesForMap(finalItems);
+
+        return finalItems;
       });
     },
     update(oldKey: Key, newValue: T) {

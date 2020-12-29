@@ -540,4 +540,24 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[1].children[0]).toBe(initialResult.items[0].children[1].children[0]);
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
   });
+
+  it('should move an item to a same parent more time', function () {
+    let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
+
+    act(() => {
+      result.current.move('Sam', 'David', 0);
+    });
+
+    expect(result.current.items[0].children[0].key).toBe('Sam');
+    expect(result.current.items[0].children[1].key).toBe('John');
+    expect(result.current.items[0].children[2].key).toBe('Jane');
+
+    act(() => {
+      result.current.move('Sam', 'David', 1);
+    });
+
+    expect(result.current.items[0].children[0].key).toBe('John');
+    expect(result.current.items[0].children[1].key).toBe('Sam');
+    expect(result.current.items[0].children[2].key).toBe('Jane');
+  });
 });
