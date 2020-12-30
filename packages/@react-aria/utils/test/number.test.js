@@ -4,7 +4,7 @@ describe('number utils', () => {
   describe('clamp', () => {
     it('should constrain value between min and max', () => {
       expect(clamp(5, -1, 1)).toBe(1);
-      expect(clamp(-5, -1, 1)).toBe(1);
+      expect(clamp(-5, -1, 1)).toBe(-1);
     });
   });
 
