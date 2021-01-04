@@ -58,7 +58,9 @@ export function useTypeSelect(options: TypeSelectOptions): TypeSelectAria {
     // which should cycle through the selection/deselection of the focused item.
     if (character === ' ' && state.search.trim().length > 0) {
       e.preventDefault();
-      e.stopPropagation();
+      if (!('continuePropagation' in e)) {
+        e.stopPropagation();
+      }
     }
 
     state.search += character;
