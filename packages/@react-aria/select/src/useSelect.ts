@@ -12,8 +12,8 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaSelectProps} from '@react-types/select';
-import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {HTMLAttributes, RefObject, useMemo} from 'react';
+import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {FocusEvent, HTMLAttributes, RefObject, useMemo} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
 import {SelectState} from '@react-stately/select';
@@ -70,6 +70,25 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     ref
   );
 
+  let onKeyDown = (e: KeyboardEvent) => {
+    switch (e.key) {
+      case 'ArrowLeft': {
+        let key = state.selectedKey != null ? delegate.getKeyAbove(state.selectedKey) : delegate.getFirstKey();
+        if (key) {
+          state.setSelectedKey(key);
+        }
+        break;
+      }
+      case 'ArrowRight': {
+        let key = state.selectedKey != null ? delegate.getKeyBelow(state.selectedKey) : delegate.getFirstKey();
+        if (key) {
+          state.setSelectedKey(key);
+        }
+        break;
+      }
+    }
+  };
+
   let {typeSelectProps} = useTypeSelect({
     keyboardDelegate: delegate,
     selectionManager: state.selectionManager,
@@ -105,15 +124,33 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     },
     triggerProps: mergeProps(domProps, {
       ...triggerProps,
+      onKeyDown: chain(triggerProps.onKeyDown, onKeyDown, props.onKeyDown),
+      onKeyUp: props.onKeyUp,
       'aria-labelledby': [
         triggerProps['aria-labelledby'],
         triggerProps['aria-label'] && !triggerProps['aria-labelledby'] ? triggerProps.id : null,
         valueId
       ].filter(Boolean).join(' '),
-      onFocus() {
+      onFocus(e: FocusEvent) {
+        if (state.isFocused) {
+          return;
+        }
+
+        if (props.onFocus) {
+          props.onFocus(e);
+        }
+
         state.setFocused(true);
       },
-      onBlur() {
+      onBlur(e: FocusEvent) {
+        if (state.isOpen) {
+          return;
+        }
+
+        if (props.onBlur) {
+          props.onBlur(e);
+        }
+
         state.setFocused(false);
       }
     }),
@@ -122,6 +159,16 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     },
     menuProps: {
       ...menuProps,
+      onBlur: (e) => {
+        if (e.currentTarget.contains(e.relatedTarget as Node)) {
+          return;
+        }
+
+        if (props.onBlur) {
+          props.onBlur(e);
+        }
+        state.setFocused(false);
+      },
       'aria-labelledby': [
         fieldProps['aria-labelledby'],
         triggerProps['aria-label'] && !fieldProps['aria-labelledby'] ? triggerProps.id : null
