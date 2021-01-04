@@ -18,9 +18,13 @@ governing permissions and limitations under the License.
   --spectrum-slider-handle-focus-ring-color-key-focus: var(--spectrum-alias-focus-color);
 }
 
+.spectrum-Slider {
+  --spectrum-slider-track-gradient: var(--spectrum-slider-track-color);
+}
+
 .spectrum-Slider-track {
   &::before {
-    background: var(--spectrum-slider-track-color);
+    background: var(--spectrum-slider-track-gradient);
     background-size: var(--spectrum-track-background-size);
     background-position: var(--spectrum-track-background-position);
   }

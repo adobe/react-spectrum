@@ -11,88 +11,80 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {DEFAULT_MAX_VALUE, DEFAULT_MIN_VALUE} from '@react-stately/slider';
 import {FocusableRef} from '@react-types/shared';
-import {FocusRing} from '@react-aria/focus';
-import {mergeProps} from '@react-aria/utils';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import React from 'react';
 import {SliderBase, SliderBaseChildArguments, SliderBaseProps} from './SliderBase';
+import {SliderThumb} from './SliderThumb';
 import {SpectrumRangeSliderProps} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
-import {useHover} from '@react-aria/interactions';
-import {useLocale} from '@react-aria/i18n';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
 function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
-  let {onChange, value, defaultValue, ...otherProps} = props;
+  let {onChange, onChangeEnd, value, defaultValue, getValueLabel, ...otherProps} = props;
 
-  let baseProps: Omit<SliderBaseProps, 'children'> = {
+  let baseProps: Omit<SliderBaseProps<number[]>, 'children'> = {
     ...otherProps,
-    count: 2,
     value: value != null ? [value.start, value.end] : undefined,
     defaultValue: defaultValue != null
       ? [defaultValue.start, defaultValue.end]
       // make sure that useSliderState knows we have two handles
-      : [props.minValue ?? DEFAULT_MIN_VALUE, props.maxValue ?? DEFAULT_MAX_VALUE],
+      : [props.minValue ?? 0, props.maxValue ?? 100],
     onChange(v) {
       onChange?.({start: v[0], end: v[1]});
-    }
+    },
+    onChangeEnd(v) {
+      onChangeEnd?.({start: v[0], end: v[1]});
+    },
+    getValueLabel: getValueLabel ? ([start, end]) => getValueLabel({start, end}) : undefined
   };
 
+  let formatter = useMessageFormatter(intlMessages);
   let {direction} = useLocale();
-  let hovers = [useHover({}), useHover({})];
 
   return (
     <SliderBase {...baseProps} classes={'spectrum-Slider--range'} ref={ref}>
-      {({state, thumbProps, inputRefs, inputProps}: SliderBaseChildArguments) => {
+      {({trackRef, inputRef, state}: SliderBaseChildArguments) => {
         let cssDirection = direction === 'rtl' ? 'right' : 'left';
-
-        let lowerTrack = (
-          <div
-            className={classNames(styles, 'spectrum-Slider-track')}
-            style={{width: `${state.getThumbPercent(0) * 100}%`}} />
-        );
-        let middleTrack = (
-          <div
-            className={classNames(styles, 'spectrum-Slider-track')}
-            style={{[cssDirection]: `${state.getThumbPercent(0) * 100}%`, width: `${Math.abs(state.getThumbPercent(0) - state.getThumbPercent(1)) * 100}%`}} />
-        );
-        let upperTrack = (
-          <div
-            className={classNames(styles, 'spectrum-Slider-track')}
-            style={{[cssDirection]: `${state.getThumbPercent(1) * 100}%`, width: `${(1 - state.getThumbPercent(1)) * 100}%`}} />
-        );
-
-        let handles = [0, 1].map(i => (
-          <div
-            className={classNames(styles, 'spectrum-Slider-handle', {'is-hovered': hovers[i].isHovered, 'is-dragged': state.isThumbDragging(i)})}
-            style={{[cssDirection]: `${state.getThumbPercent(i) * 100}%`}}
-            {...mergeProps(thumbProps[i], hovers[i].hoverProps)}
-            role="presentation">
-            <VisuallyHidden>
-              <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRefs[i]} {...inputProps[i]} />
-            </VisuallyHidden>
-          </div>
-        ));
-
         return (
           <>
-            {lowerTrack}
-            <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
-              {handles[0]}
-            </FocusRing>
-            {middleTrack}
-            <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
-              {handles[1]}
-            </FocusRing>
-            {upperTrack}
+            <div
+              className={classNames(styles, 'spectrum-Slider-track')}
+              style={{width: `${state.getThumbPercent(0) * 100}%`}} />
+            <SliderThumb
+              index={0}
+              aria-label={formatter('minimum')}
+              isDisabled={props.isDisabled}
+              trackRef={trackRef}
+              inputRef={inputRef}
+              state={state} />
+            <div
+              className={classNames(styles, 'spectrum-Slider-track')}
+              style={{
+                [cssDirection]: `${state.getThumbPercent(0) * 100}%`,
+                width: `${Math.abs(state.getThumbPercent(0) - state.getThumbPercent(1)) * 100}%`
+              }} />
+            <SliderThumb
+              index={1}
+              aria-label={formatter('maximum')}
+              isDisabled={props.isDisabled}
+              trackRef={trackRef}
+              state={state} />
+            <div
+              className={classNames(styles, 'spectrum-Slider-track')}
+              style={{
+                width: `${(1 - state.getThumbPercent(1)) * 100}%`
+              }} />
           </>
         );
       }}
-
-    </SliderBase>);
+    </SliderBase>
+  );
 }
 
-
+/**
+ * RangeSliders allow users to quickly select a subset range. They should be used when the upper and lower bounds to the range are invariable.
+ */
 const _RangeSlider = React.forwardRef(RangeSlider);
 export {_RangeSlider as RangeSlider};
