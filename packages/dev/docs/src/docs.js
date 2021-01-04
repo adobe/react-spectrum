@@ -78,10 +78,12 @@ for (let image of images) {
   ReactDOM.render(
     <ThemeProvider UNSAFE_className={docsStyle.inlineProvider}>
       <ImageModal>
-        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role */}
-        <img role="button" tabIndex={0} src={url} className={image.className} alt={image.alt} />
-        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role */}
-        <img role="button" tabIndex={0} src={url} alt={image.alt} />
+        <button>
+          <img src={url} className={image.className} alt={image.alt} />
+        </button>
+        <button>
+          <img src={url} alt={image.alt} />
+        </button>
       </ImageModal>
     </ThemeProvider>
   , container);
