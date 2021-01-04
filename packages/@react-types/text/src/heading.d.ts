@@ -25,6 +25,7 @@ export interface HeadingProps extends DOMProps, StyleProps {
   slot?: string,
   /**
    * Sets heading level, h1 through h6.
+   * @default 3
    */
   level?: 1 | 2 | 3 | 4 | 5 | 6
 }

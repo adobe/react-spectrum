@@ -22,6 +22,11 @@ export interface ColorSliderState extends SliderState {
   getDisplayColor(c?: Color): Color
 }
 
+
+interface ColorSliderStateOptions extends ColorSliderProps {
+  numberFormatter: Intl.NumberFormat
+}
+
 function normalizeColor(v: string | Color) {
   if (typeof v === 'string') {
     return new Color(v);
@@ -30,8 +35,8 @@ function normalizeColor(v: string | Color) {
   }
 }
 
-export function useColorSliderState(props: ColorSliderProps): ColorSliderState {
-  let {channel, value, defaultValue, onChange, ...otherProps} = props;
+export function useColorSliderState(props: ColorSliderStateOptions): ColorSliderState {
+  let {channel, value, defaultValue, onChange, numberFormatter, ...otherProps} = props;
   if (value == null && defaultValue == null) {
     throw new Error('useColorSliderState requires a value or defaultValue');
   }
@@ -41,9 +46,16 @@ export function useColorSliderState(props: ColorSliderProps): ColorSliderState {
   let sliderState = useSliderState({
     ...Color.getRange(channel),
     ...otherProps,
+    numberFormatter,
     value: [color.getChannelValue(channel)],
     onChange([v]) {
       setColor(color.withChannelValue(channel, v));
+    },
+    onChangeEnd([v]) {
+      // onChange will have already been called with the right value, this is just to trigger onChangEnd
+      if (props.onChangeEnd) {
+        props.onChangeEnd(color.withChannelValue(channel, v));
+      }
     }
   });
 
