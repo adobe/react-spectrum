@@ -197,7 +197,7 @@ describe('CheckboxGroup', () => {
     expect(checkboxes[2]).not.toHaveAttribute('disabled');
   });
 
-  it('sets readOnly on each checkbox', () => {
+  it('sets aria-readonly="true" on each checkbox', () => {
     let {getAllByRole} = render(
       <Provider theme={theme}>
         <CheckboxGroup label="Favorite Pet" isReadOnly>
@@ -209,9 +209,9 @@ describe('CheckboxGroup', () => {
     );
 
     let checkboxes = getAllByRole('checkbox');
-    expect(checkboxes[0]).toHaveAttribute('readonly');
-    expect(checkboxes[1]).toHaveAttribute('readonly');
-    expect(checkboxes[2]).toHaveAttribute('readonly');
+    expect(checkboxes[0]).toHaveAttribute('aria-readonly', 'true');
+    expect(checkboxes[1]).toHaveAttribute('aria-readonly', 'true');
+    expect(checkboxes[2]).toHaveAttribute('aria-readonly', 'true');
   });
 
   it('should not update state for readonly checkbox', () => {

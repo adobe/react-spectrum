@@ -52,9 +52,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
     }
   };
 
-  let handleHide = () => {
+  let handleHide = (immediate?: boolean) => {
     if (!isHovered.current && !isFocused.current) {
-      state.close();
+      state.close(immediate);
     }
   };
 
@@ -64,7 +64,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
         // Escape after clicking something can give it keyboard focus
         // dismiss tooltip on esc key press
         if (e.key === 'Escape') {
-          state.close();
+          state.close(true);
         }
       }
     };
@@ -106,7 +106,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
     // no matter how the trigger is pressed, we should close the tooltip
     isFocused.current = false;
     isHovered.current = false;
-    handleHide();
+    handleHide(true);
   };
 
   let onFocus = () => {
@@ -120,7 +120,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
   let onBlur = () => {
     isFocused.current = false;
     isHovered.current = false;
-    handleHide();
+    handleHide(true);
   };
 
   let {hoverProps} = useHover({
