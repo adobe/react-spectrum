@@ -21,7 +21,7 @@ import styles from '@adobe/spectrum-css-temp/components/colorslider/vars.css';
 import {useColorSlider} from '@react-aria/color';
 import {useColorSliderState} from '@react-stately/color';
 import {useFocus, useFocusVisible} from '@react-aria/interactions';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale, useNumberFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivElement>) {
@@ -48,8 +48,9 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
   }
   let ariaLabel = props['aria-label'] ?? (labelText == null ? defaultLabel : undefined);
 
-  let state = useColorSliderState(props);
-  let {inputProps, thumbProps, containerProps, trackProps, labelProps, gradientProps} = useColorSlider({
+  let numberFormatter = useNumberFormatter();
+  let state = useColorSliderState({...props, numberFormatter});
+  let {inputProps, thumbProps, groupProps, trackProps, labelProps, gradientProps} = useColorSlider({
     ...props,
     label: labelText,
     'aria-label': ariaLabel,
@@ -91,7 +92,7 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
         {showValueLabel && <Label aria-labelledby={labelProps.id}>{state.getThumbValueLabel(0)}</Label>}
       </Flex>
       <div
-        {...containerProps}
+        {...groupProps}
         className={classNames(
           styles,
           'spectrum-ColorSlider', {
