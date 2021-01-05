@@ -38,7 +38,9 @@ interface ComboBoxStateProps<T> extends ComboBoxProps<T> {
 }
 
 /**
- * Provides state management for a combobox.
+ * Provides state management for a ComboBox component. Handles building a collection
+ * of items from props and manages the option selection state of the ComboBox. Also tracks the input value,
+ * focus state, and other properties of the ComboBox.
  */
 export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>): ComboBoxState<T> {
   let {

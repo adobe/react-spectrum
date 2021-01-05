@@ -28,26 +28,26 @@ import {useMessageFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
 export interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
-  /** The ref for the combobox menu trigger button.  */
+  /** The ref for the ComboBox menu trigger button.  */
   buttonRef: RefObject<HTMLElement>,
-  /** The ref for the combobox input element. */
+  /** The ref for the ComboBox input element. */
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
-  /** The ref for the combobox menu popover. */
+  /** The ref for the ComboBox menu popover. */
   popoverRef: RefObject<HTMLDivElement>,
-  /** The ref for the combobox menu. */
+  /** The ref for the ComboBox menu. */
   listBoxRef: RefObject<HTMLElement>,
-  /** An optional keyboard delegate implementation for combobox, to override the default. */
+  /** An optional keyboard delegate implementation for ComboBox, to override the default. */
   keyboardDelegate?: KeyboardDelegate
 }
 
 interface ComboBoxAria {
-  /** Props for the combobox menu trigger button. */
+  /** Props for the ComboBox menu trigger button. */
   buttonProps: AriaButtonProps,
-  /** Props for the combobox input element. */
+  /** Props for the ComboBox input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  /** Props for the combobox menu. */
+  /** Props for the ComboBox menu. */
   listBoxProps: HTMLAttributes<HTMLElement>,
-  /** Props for the combobox label element. */
+  /** Props for the ComboBox label element. */
   labelProps: HTMLAttributes<HTMLElement>
 }
 
@@ -58,9 +58,9 @@ function isAppleDevice() {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a combobox component.
- * A combobox combines a text entry with a picker menu, allowing users to filter longer lists to only the selections matching a query.
- * @param props - Props for the combobox.
+ * Provides the behavior and accessibility implementation for a ComboBox component.
+ * A ComboBox combines a text entry with a picker menu, allowing users to filter longer lists to only the selections matching a query.
+ * @param props - Props for the ComboBox.
  * @param state - State for the select, as returned by `useComboBoxState`.
  */
 export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState<T>): ComboBoxAria {
@@ -161,7 +161,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     autoComplete: 'off'
   }, inputRef);
 
-  // Press handlers for the combobox button
+  // Press handlers for the ComboBox button
   let onPress = (e: PressEvent) => {
     if (e.pointerType === 'touch') {
       // Focus the input field in case it isn't focused yet
@@ -189,7 +189,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     'aria-labelledby': props['aria-labelledby'] || labelProps.id
   });
 
-  // If a touch happens on direct center of combobox input, might be virtual click from iPad so open combobox menu
+  // If a touch happens on direct center of ComboBox input, might be virtual click from iPad so open ComboBox menu
   let lastEventTime = useRef(0);
   let onTouchEnd = (e: TouchEvent) => {
     if (isDisabled || isReadOnly) {

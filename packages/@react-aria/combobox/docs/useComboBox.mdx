@@ -44,27 +44,27 @@ keywords: [combobox, aria]
 
 ## Features
 
-There is no native element to implement a combobox in HTML. `useComboBox` helps achieve accessible combobox components that can
+There is no native element to implement a ComboBox in HTML. `useComboBox` helps achieve accessible ComboBox components that can
 be styled as needed.
 
-* Exposed to assistive technology as a combobox
+* Exposed to assistive technology as a ComboBox
 * Support for selecting a single option
 * Support for disabled options
 * Support for sections
 * Labeling support for accessibility
 * Support for mouse, touch, and keyboard interactions
-* Keyboard support for opening the combobox menu using the arrow keys, including automatically focusing
+* Keyboard support for opening the ComboBox menu using the arrow keys, including automatically focusing
   the first or last item accordingly
-* Virtual focus management for combobox menu option navigation
+* Virtual focus management for ComboBox menu option navigation
 * VoiceOver announcement enhancements for option focusing, filtering, and selection
 
 ## Anatomy
 
-A combobox consists of a label, an input which displays the current value, a listbox popup, and a button
+A ComboBox consists of a label, an input which displays the current value, a listbox popup, and a button
 used to toggle the listbox popup open state. Users can type within the input to filter the available options
 within the listbox popup. The listbox popup may be opened by a variety of input field interactions specified
-by the `menuTrigger` prop provided to `useComboBox`, or by clicking or touching the combobox trigger button. `useComboBox` handles exposing
-the correct ARIA attributes for accessibility for each of the components comprising the combobox. It should be combined
+by the `menuTrigger` prop provided to `useComboBox`, or by clicking or touching the ComboBox trigger button. `useComboBox` handles exposing
+the correct ARIA attributes for accessibility for each of the components comprising the ComboBox. It should be combined
 with [useListBox](useListBox.html), which handles the implementation of the popup listbox,
 and [useButton](useButton.html) which handles the button press handlers returned by `useComboBox`.
 
@@ -77,12 +77,12 @@ and [useButton](useButton.html) which handles the button press handlers returned
 State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useComboBoxState} /> hook from `@react-stately/select`.
 The state object should be passed as an option to `useComboBox`.
 
-If the combobox does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to
+If the ComboBox does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to
 identify it to assistive technology.
 
 ## State management
 
-`useComboBox` requires knowledge of the options in the combobox in order to handle keyboard
+`useComboBox` requires knowledge of the options in the ComboBox in order to handle keyboard
 navigation and other interactions. It does this using the <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Collection} />
 interface, which is a generic interface to access sequential unique keyed data. You can
 implement this interface yourself, e.g. by using a prop to pass a list of item objects,
@@ -95,21 +95,21 @@ In addition, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useCo
 manages the state necessary for single selection and exposes
 a <TypeLink links={selectionDocs.links} type={selectionDocs.exports.SelectionManager} />,
 which makes use of the collection to provide an interface to update the selection state.
-It also holds state to track if the popup is open, if the combobox is focused, and the current input value.
+It also holds state to track if the popup is open, if the ComboBox is focused, and the current input value.
 For more information about selection, see [Selection](/react-stately/selection.html).
 
 ## Example
 
-This example uses an `<input>` element for the combobox text input and a `<button>` element for the combobox menu trigger. A `<span>`
+This example uses an `<input>` element for the ComboBox text input and a `<button>` element for the ComboBox menu trigger. A `<span>`
 is included within the `<button>` to display the dropdown arrow icon (hidden from screen readers with `aria-hidden`).
 A "contains" filter function is obtained from <TypeLink links={i18nDocs.links} type={i18nDocs.exports.useFilter} /> and is passed to <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useComboBoxState} /> so
-that the combobox list can be filtered based on the option text and the current combobox input text.
+that the ComboBox list can be filtered based on the option text and the current ComboBox input text.
 
 The listbox popup uses <TypeLink links={listboxDocs.links} type={listboxDocs.exports.useListBox} />
 and <TypeLink links={listboxDocs.links} type={listboxDocs.exports.useOption} /> to render the
 list of options. A hidden &lt;<TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.DismissButton} />&gt;
 is added at the start and end of the popup to allow screen reader users to dismiss the popup. Note that `shouldUseVirtualFocus` is passed to `useListBox`
-and `useOption` so that browser focus remains within the combobox `<input>` element even when interacting with the combobox menu options.
+and `useOption` so that browser focus remains within the ComboBox `<input>` element even when interacting with the ComboBox menu options.
 
 This example does not do any advanced popover positioning or portaling to escape its visual container.
 See [useOverlayTrigger](useOverlayTrigger.html) for an example of how to implement this
@@ -152,7 +152,7 @@ function ComboBox(props) {
     state
   );
 
-  // Get props for the combobox trigger button based on the button props from useComboBox
+  // Get props for the ComboBox trigger button based on the button props from useComboBox
   let {buttonProps} = useButton(triggerProps, triggerRef);
 
   return (
@@ -307,6 +307,6 @@ content that is passed into the select.
 
 ### RTL
 
-In right-to-left languages, the combobox should be mirrored. The trigger button should be on the left,
-and the input element should be on the right. In addition, the content of combobox options should
+In right-to-left languages, the ComboBox should be mirrored. The trigger button should be on the left,
+and the input element should be on the right. In addition, the content of ComboBox options should
 flip. Ensure that your CSS accounts for this.
