@@ -51,7 +51,9 @@ be styled as needed.
 * Support for selecting a single option
 * Support for disabled options
 * Support for sections
+* Support for custom user input values
 * Labeling support for accessibility
+* Required and invalid states exposed to assistive technology via ARIA
 * Support for mouse, touch, and keyboard interactions
 * Keyboard support for opening the ComboBox menu using the arrow keys, including automatically focusing
   the first or last item accordingly
@@ -300,7 +302,7 @@ function Option({item, state, shouldUseVirtualFocus}) {
 
 ## Internationalization
 
-`useComboBox` and `useListBox` handle some aspects of internationalization automatically.
+`useComboBox` handles some aspects of internationalization automatically.
 For example, the item focus, count, and selection VoiceOver announcements are formatted to match the current locale.
 You are responsible for localizing all labels and option
 content that is passed into the select.
