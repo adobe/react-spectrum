@@ -11,8 +11,15 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-aria/combobox';
-import {FunctionAPI, HeaderInfo, renderHTMLfromMarkdown} from '@react-spectrum/docs';
+import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
+import {FunctionAPI, HeaderInfo, InterfaceType, renderHTMLfromMarkdown, TypeContext, TypeLink} from '@react-spectrum/docs';
+import i18nDocs from 'docs:@react-aria/i18n';
+import listboxDocs from 'docs:@react-aria/listbox';
+import overlaysDocs from 'docs:@react-aria/overlays';
 import packageData from '@react-aria/combobox/package.json';
+import selectionDocs from 'docs:@react-stately/selection';
+import statelyDocs from 'docs:@react-stately/combobox';
+
 
 ```jsx import
 import {useComboBox} from '@react-aria/combobox';
@@ -37,13 +44,79 @@ keywords: [combobox, aria]
 
 ## Features
 
+There is no native element to implement a combobox in HTML. `useComboBox` helps achieve accessible combobox components that can
+be styled as needed.
+
+* Exposed to assistive technology as a combobox
+* Support for selecting a single option
+* Support for disabled options
+* Support for sections
+* Labeling support for accessibility
+* Support for mouse, touch, and keyboard interactions
+* Keyboard support for opening the combobox menu using the arrow keys, including automatically focusing
+  the first or last item accordingly
+* Virtual focus management for combobox menu option navigation
+* VoiceOver announcement enhancements for option focusing, filtering, and selection
+
 ## Anatomy
 
-## Example
+A combobox consists of a label, an input which displays the current value, a listbox popup, and a button
+used to toggle the listbox popup open state. Users can type within the input to filter the available options
+within the listbox popup. The listbox popup may be opened by a variety of input field interactions specified
+by the `menuTrigger` prop provided to `useComboBox`, or by clicking or touching the combobox trigger button. `useComboBox` handles exposing
+the correct ARIA attributes for accessibility for each of the components comprising the combobox. It should be combined
+with [useListBox](useListBox.html), which handles the implementation of the popup listbox,
+and [useButton](useButton.html) which handles the button press handlers returned by `useComboBox`.
+
+`useComboBox` returns props that you should spread onto the appropriate elements:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useComboBox.return.id].properties} />
+</TypeContext.Provider>
+
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useComboBoxState} /> hook from `@react-stately/select`.
+The state object should be passed as an option to `useComboBox`.
+
+If the combobox does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to
+identify it to assistive technology.
 
 ## State management
 
+`useComboBox` requires knowledge of the options in the combobox in order to handle keyboard
+navigation and other interactions. It does this using the <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Collection} />
+interface, which is a generic interface to access sequential unique keyed data. You can
+implement this interface yourself, e.g. by using a prop to pass a list of item objects,
+but <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useComboBoxState} /> from
+`@react-stately/combobox` implements a JSX based interface for building collections instead.
+See [Collection Components](/react-stately/collections.html) for more information,
+and [Collection Interface](/react-stately/Collection.html) for internal details.
+
+In addition, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useComboBoxState} />
+manages the state necessary for single selection and exposes
+a <TypeLink links={selectionDocs.links} type={selectionDocs.exports.SelectionManager} />,
+which makes use of the collection to provide an interface to update the selection state.
+It also holds state to track if the popup is open, if the combobox is focused, and the current input value.
+For more information about selection, see [Selection](/react-stately/selection.html).
+
 ## Example
+
+This example uses an `<input>` element for the combobox text input and a `<button>` element for the combobox menu trigger. A `<span>`
+is included within the `<button>` to display the dropdown arrow icon (hidden from screen readers with `aria-hidden`).
+A "contains" filter function is obtained from <TypeLink links={i18nDocs.links} type={i18nDocs.exports.useFilter} /> and is passed to <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useComboBoxState} /> so
+that the combobox list can be filtered based on the option text and the current combobox input text.
+
+The listbox popup uses <TypeLink links={listboxDocs.links} type={listboxDocs.exports.useListBox} />
+and <TypeLink links={listboxDocs.links} type={listboxDocs.exports.useOption} /> to render the
+list of options. A hidden &lt;<TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.DismissButton} />&gt;
+is added at the start and end of the popup to allow screen reader users to dismiss the popup. Note that `shouldUseVirtualFocus` is passed to `useListBox`
+and `useOption` so that browser focus remains within the combobox `<input>` element even when interacting with the combobox menu options.
+
+This example does not do any advanced popover positioning or portaling to escape its visual container.
+See [useOverlayTrigger](useOverlayTrigger.html) for an example of how to implement this
+using <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlayPosition} />.
+
+In addition, see [useListBox](useListBox.html) for examples of sections (option groups), and more complex
+options.
 
 ```tsx example
 import {Item} from '@react-stately/collections';
@@ -51,15 +124,11 @@ import {mergeProps} from '@react-aria/utils';
 import {useButton} from '@react-aria/button';
 import {useComboBoxState} from '@react-stately/combobox'
 import {useFilter} from '@react-aria/i18n';
-import {useFocusVisible} from '@react-aria/interactions';
 import {useListBox, useOption} from '@react-aria/listbox';
 import {useOverlay, DismissButton} from '@react-aria/overlays';
 
 function ComboBox(props) {
-  // Set up interation modality tracking
-  useFocusVisible();
-
-  // Get a basic "contains" filter function for input value and option text comparision
+  // Get a basic "contains" filter function for input value and option text comparison
   let {contains} = useFilter({sensitivity: 'base'});
 
   // Create state based on the incoming props and the filter function
@@ -231,4 +300,13 @@ function Option({item, state, shouldUseVirtualFocus}) {
 
 ## Internationalization
 
+`useComboBox` and `useListBox` handle some aspects of internationalization automatically.
+For example, the item focus, count, and selection VoiceOver announcements are formatted to match the current locale.
+You are responsible for localizing all labels and option
+content that is passed into the select.
+
 ### RTL
+
+In right-to-left languages, the combobox should be mirrored. The trigger button should be on the left,
+and the input element should be on the right. In addition, the content of combobox options should
+flip. Ensure that your CSS accounts for this.

@@ -29,8 +29,11 @@ export interface ComboBoxState<T> extends SelectState<T> {
 
 type FilterFn = (textValue: string, inputValue: string) => boolean;
 interface ComboBoxStateProps<T> extends ComboBoxProps<T> {
+  /** The filter function used to determine if a option should be included in the ComboBox list. */
   defaultFilter?: FilterFn,
+  /** Whether the ComboBox allows the menu to be open when the collection is empty. */
   allowsEmptyCollection?: boolean,
+  /** Whether the ComboBox menu should close on blur. */
   shouldCloseOnBlur?: boolean
 }
 
