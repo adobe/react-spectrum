@@ -42,7 +42,8 @@ describe('NumberField', function () {
   afterEach(() => {
     onChangeSpy.mockClear();
     // there's an announcer, make sure to run through it
-    act(() => {jest.runAllTimers();});
+    // make sure only to run the pending timers, spin button can cause an infinite loop if we run all
+    act(() => {jest.runOnlyPendingTimers();});
   });
 
   function renderNumberField(props = {}, providerProps = {}) {
@@ -1316,6 +1317,17 @@ describe('NumberField', function () {
     act(() => {jest.advanceTimersByTime(400 + 60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenLastCalledWith(3);
+    fireEvent.mouseUp(incrementButton);
+  });
+
+  it('advances increment starting from undefined where min is defined', () => {
+    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, minValue: 20});
+
+    act(() => {textField.focus();});
+    fireEvent.mouseDown(incrementButton);
+    act(() => {jest.advanceTimersByTime(400 + 60);});
+    expect(onChangeSpy).toHaveBeenCalledTimes(3);
+    expect(onChangeSpy).toHaveBeenLastCalledWith(22);
     fireEvent.mouseUp(incrementButton);
   });
 

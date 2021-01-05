@@ -28,7 +28,7 @@ import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
-import {useFocus, useFocusWithin} from '@react-aria/interactions';
+import {useFocus} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
@@ -95,12 +95,6 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     onFocusChange: value => isFocused.current = value
   });
 
-  let [isFocusWithin, setFocusWithin] = useState(false);
-  let {focusWithinProps} = useFocusWithin({
-    onFocusWithinChange: setFocusWithin
-  });
-
-
   const {
     spinButtonProps,
     incrementButtonProps: incButtonProps,
@@ -125,23 +119,11 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     }
   );
 
-  useEffect(() => {
-    // If the focus is within the numberfield and it's not the input, then it's on one of the buttons.
-    // If the value is at the boundary min/max, then move the focus back to the input because the button
-    // focus is on has become disabled.
-    if (isFocusWithin && inputRef.current && document.activeElement !== inputRef.current) {
-      if (value <= minValue || value >= maxValue) {
-        inputRef.current.focus();
-      }
-    }
-  }, [isFocusWithin, inputRef, value, minValue, maxValue]);
-
   incrementAriaLabel = incrementAriaLabel || formatMessage('Increment');
   decrementAriaLabel = decrementAriaLabel || formatMessage('Decrement');
   const cannotStep = isDisabled || isReadOnly;
 
-  // pressing the stepper buttons should send focus to the input except in the case of touch
-  // so that pressing and holding on the steppers will auto step after a delay
+  // pressing the stepper buttons should send focus to the input
   let onPressStart = (e) => {
     if (e.pointerType !== 'virtual') {
       inputRef.current.focus();
@@ -237,8 +219,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     numberFieldProps: {
       role: 'group',
       'aria-disabled': isDisabled,
-      'aria-invalid': validationState === 'invalid' ? 'true' : undefined,
-      ...focusWithinProps
+      'aria-invalid': validationState === 'invalid' ? 'true' : undefined
     },
     labelProps,
     inputFieldProps,

@@ -128,12 +128,12 @@ export function useSpinButton(
   }, [textValue, value, formatMessage]);
 
   const onIncrementPressStart = useCallback(
-    (initialStepDelay: number, isChained: boolean = false) => {
-      onIncrement(isChained);
+    (initialStepDelay: number, isSpinning: boolean = false) => {
+      onIncrement(isSpinning);
       // Start spinning after initial delay
       _async.current = window.setTimeout(
         () => {
-          if (isNaN(maxValue) || value < maxValue) {
+          if (isNaN(maxValue) || isNaN(value) || value < maxValue) {
             onIncrementPressStart(60, true);
           }
         },
@@ -144,12 +144,12 @@ export function useSpinButton(
   );
 
   const onDecrementPressStart = useCallback(
-    (initialStepDelay: number, isChained: boolean = false) => {
-      onDecrement(isChained);
+    (initialStepDelay: number, isSpinning: boolean = false) => {
+      onDecrement(isSpinning);
       // Start spinning after initial delay
       _async.current = window.setTimeout(
         () => {
-          if (isNaN(minValue) || value > minValue) {
+          if (isNaN(minValue) || isNaN(value) || value > minValue) {
             onDecrementPressStart(60, true);
           }
         },

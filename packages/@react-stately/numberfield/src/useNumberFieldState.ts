@@ -24,8 +24,8 @@ import {useControlledState} from '@react-stately/utils';
 
 export interface NumberFieldState {
   setValue: (val: number | string) => void,
-  increment: (isChained?: boolean) => void,
-  decrement: (isChained?: boolean) => void,
+  increment: (isSpinning?: boolean) => void,
+  decrement: (isSpinning?: boolean) => void,
   incrementToMax: () => void,
   decrementToMin: () => void,
   commitInputValue: () => void,
@@ -101,7 +101,7 @@ export function useNumberFieldState(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formatOptions, setInputValue, numberValue, locale]);
 
-  let parse = (value: string): number => {
+  let parse = useCallback((value: string): number => {
     // Set to empty state if input value is empty
     if (!value.length) {
       return NaN;
@@ -113,10 +113,10 @@ export function useNumberFieldState(
     }
 
     return newValue;
-  };
+  }, [numberParser]);
 
   // this removes any not allowed characters from the input value
-  let cleanInputValue = numberParser.clean(inputValue);
+  let cleanInputValue = useMemo(() => numberParser.clean(inputValue), [numberParser, inputValue]);
   // Number parser doesn't know about min/max, so we must remove it ourselves
   if (minValue >= 0) {
     cleanInputValue = cleanInputValue.replace(minusSign, '');
@@ -124,7 +124,7 @@ export function useNumberFieldState(
   if (maxValue <= 0) {
     cleanInputValue = cleanInputValue.replace(plusSign, '');
   }
-  let currentlyParsed = parse(cleanInputValue);
+  let currentlyParsed = useMemo(() => parse(cleanInputValue), [parse, cleanInputValue]);
 
 
   let setValue = (value: string) => {
@@ -183,9 +183,9 @@ export function useNumberFieldState(
     return newValue;
   }, [minValue, maxValue, step, intlOptions]);
 
-  let increment = useCallback((isChained: boolean = false) => {
+  let increment = useCallback((isSpinning: boolean = false) => {
     setNumberValue((previousValue) => {
-      let prev = !isChained ? currentlyParsed : previousValue;
+      let prev = !isSpinning ? currentlyParsed : previousValue;
       if (isNaN(prev)) {
         // if the input is empty, start from 0
         prev = 0;
@@ -205,11 +205,11 @@ export function useNumberFieldState(
       }
       return newValue;
     });
-  }, [setNumberValue, currentlyParsed, safeNextStep]);
+  }, [setNumberValue, currentlyParsed, safeNextStep, inputValueFormatter]);
 
-  let decrement = useCallback((isChained: boolean = false) => {
+  let decrement = useCallback((isSpinning: boolean = false) => {
     setNumberValue((previousValue) => {
-      let prev = !isChained ? currentlyParsed : previousValue;
+      let prev = !isSpinning ? currentlyParsed : previousValue;
       // if the input is empty, start from the max value when decrementing
       if (isNaN(prev)) {
         prev = 0;
@@ -225,7 +225,7 @@ export function useNumberFieldState(
       }
       return newValue;
     });
-  }, [setNumberValue, currentlyParsed, safeNextStep]);
+  }, [setNumberValue, currentlyParsed, safeNextStep, inputValueFormatter]);
 
   let incrementToMax = useCallback(() => {
     if (maxValue != null) {
