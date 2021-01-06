@@ -30,3 +30,28 @@ export function roundToStep(value: number, step: number): number {
   }
   return value;
 }
+
+export function snapValueToStep(value: number, min: number, max: number, step: number): number {
+  let remainder = ((value - min) % step);
+  let snappedValue = Math.abs(remainder) * 2 >= step
+    ? (value - Math.abs(remainder)) + step
+    : value - remainder;
+
+  if (snappedValue < min) {
+    snappedValue = min;
+  } else if (snappedValue > max) {
+    snappedValue = min + Math.floor((max - min) / step) * step;
+  }
+
+  // correct floating point behavior by rounding to step precision
+  let string = step.toString();
+  let index = string.indexOf('.');
+  let precision = index >= 0 ? string.length - index : 0;
+
+  if (precision > 0) {
+    let pow = Math.pow(10, precision);
+    snappedValue = Math.round(snappedValue * pow) / pow;
+  }
+
+  return snappedValue;
+}
