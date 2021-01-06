@@ -67,6 +67,15 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     }
   };
 
+  let toggle = (focusStrategy?: FocusStrategy) => {
+    // If the menu is closed and there is nothing to display, early return so toggle isn't called to prevent extraneous onOpenChange
+    if (!(allowsEmptyCollection || filteredCollection.size > 0) && !triggerState.isOpen) {
+      return;
+    }
+
+    triggerState.toggle(focusStrategy);
+  }
+
   let lastValue = useRef(inputValue);
   let resetInputValue = () => {
     let itemText = collection.getItem(selectedKey)?.textValue ?? '';
@@ -191,6 +200,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
   return {
     ...triggerState,
+    toggle,
     open,
     selectionManager,
     selectedKey,

@@ -451,6 +451,23 @@ describe('ComboBox', function () {
         listbox = getByRole('listbox');
         expect(combobox).not.toHaveAttribute('aria-activedescendant');
       });
+
+      it('does\'t render the menu if there are\'t any items to show', function () {
+        let {getByRole} = renderComboBox({defaultInputValue: 'gibberish'});
+
+        let button = getByRole('button');
+        let combobox = getByRole('combobox');
+        expect(() => getByRole('listbox')).toThrow();
+
+        act(() => {
+          combobox.focus();
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        expect(() => getByRole('listbox')).toThrow();
+        expect(onOpenChange).not.toHaveBeenCalled();
+      });
     });
 
     describe('keyboard input', function () {
