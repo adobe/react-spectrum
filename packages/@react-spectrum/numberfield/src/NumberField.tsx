@@ -17,13 +17,13 @@ import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {mergeProps} from '@react-aria/utils';
+import {PressResponder, useHover} from '@react-aria/interactions';
 import React, {HTMLAttributes, InputHTMLAttributes, RefObject, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import {StepButton} from './StepButton';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {useFormProps} from '@react-spectrum/form';
-import {useHover} from '@react-aria/interactions';
 import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
@@ -153,8 +153,12 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
           inputProps={inputProps} />
         {showStepper &&
         <>
-          <StepButton direction="up" isQuiet={isQuiet} ref={incrementRef} {...incrementProps} />
-          <StepButton direction="down" isQuiet={isQuiet} ref={decrementRef} {...decrementProps} />
+          <PressResponder preventFocusOnPress>
+            <StepButton direction="up" isQuiet={isQuiet} ref={incrementRef} {...incrementProps} />
+          </PressResponder>
+          <PressResponder preventFocusOnPress>
+            <StepButton direction="down" isQuiet={isQuiet} ref={decrementRef} {...decrementProps} />
+          </PressResponder>
         </>
         }
       </div>
