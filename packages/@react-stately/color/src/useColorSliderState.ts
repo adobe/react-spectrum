@@ -14,13 +14,17 @@ import {Color} from './Color';
 import {ColorSliderProps} from '@react-types/color';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import {useControlledState} from '@react-stately/utils';
-import {useNumberFormatter} from '@react-aria/i18n';
 
 export interface ColorSliderState extends SliderState {
   value: Color,
   setValue(value: string | Color): void,
   /** Returns the color that should be displayed in the slider instead of `value` or the optional parameter. */
   getDisplayColor(c?: Color): Color
+}
+
+
+interface ColorSliderStateOptions extends ColorSliderProps {
+  numberFormatter: Intl.NumberFormat
 }
 
 function normalizeColor(v: string | Color) {
@@ -31,12 +35,11 @@ function normalizeColor(v: string | Color) {
   }
 }
 
-export function useColorSliderState(props: ColorSliderProps): ColorSliderState {
-  let {channel, value, defaultValue, onChange, ...otherProps} = props;
+export function useColorSliderState(props: ColorSliderStateOptions): ColorSliderState {
+  let {channel, value, defaultValue, onChange, numberFormatter, ...otherProps} = props;
   if (value == null && defaultValue == null) {
     throw new Error('useColorSliderState requires a value or defaultValue');
   }
-  let numberFormatter = useNumberFormatter();
 
   let [color, setColor] = useControlledState(value && normalizeColor(value), defaultValue && normalizeColor(defaultValue), onChange);
 
@@ -47,6 +50,12 @@ export function useColorSliderState(props: ColorSliderProps): ColorSliderState {
     value: [color.getChannelValue(channel)],
     onChange([v]) {
       setColor(color.withChannelValue(channel, v));
+    },
+    onChangeEnd([v]) {
+      // onChange will have already been called with the right value, this is just to trigger onChangEnd
+      if (props.onChangeEnd) {
+        props.onChangeEnd(color.withChannelValue(channel, v));
+      }
     }
   });
 

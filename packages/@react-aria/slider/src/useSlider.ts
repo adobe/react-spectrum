@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaSliderProps} from '@react-types/slider';
 import {clamp, mergeProps, useGlobalListeners} from '@react-aria/utils';
 import {getSliderThumbId, sliderIds} from './utils';
-import React, {HTMLAttributes, LabelHTMLAttributes, OutputHTMLAttributes, useRef} from 'react';
+import React, {HTMLAttributes, LabelHTMLAttributes, OutputHTMLAttributes, RefObject, useRef} from 'react';
 import {setInteractionModality, useMove} from '@react-aria/interactions';
-import {SliderProps} from '@react-types/slider';
 import {SliderState} from '@react-stately/slider';
 import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
@@ -24,7 +24,7 @@ interface SliderAria {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
 
   /** Props for the root element of the slider component; groups slider inputs. */
-  containerProps: HTMLAttributes<HTMLElement>,
+  groupProps: HTMLAttributes<HTMLElement>,
 
   /** Props for the track element. */
   trackProps: HTMLAttributes<HTMLElement>,
@@ -34,7 +34,7 @@ interface SliderAria {
 }
 
 /**
- * Provides behavior and accessibility for a slider component.
+ * Provides the behavior and accessibility implementation for a slider component representing one or more values.
  *
  * @param props Props for the slider.
  * @param state State for the slider, as returned by `useSliderState`.
@@ -44,9 +44,9 @@ interface SliderAria {
  * the track.
  */
 export function useSlider(
-  props: SliderProps,
+  props: AriaSliderProps,
   state: SliderState,
-  trackRef: React.RefObject<HTMLElement>
+  trackRef: RefObject<HTMLElement>
 ): SliderAria {
   let {labelProps, fieldProps} = useLabel(props);
 
@@ -187,7 +187,7 @@ export function useSlider(
     // The root element of the Slider will have role="group" to group together
     // all the thumb inputs in the Slider.  The label of the Slider will
     // be used to label the group.
-    containerProps: {
+    groupProps: {
       role: 'group',
       ...fieldProps
     },

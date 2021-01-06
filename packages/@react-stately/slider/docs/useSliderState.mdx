@@ -10,39 +10,32 @@ governing permissions and limitations under the License. -->
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-stately/{{packageName}}';
+import docs from 'docs:@react-stately/slider';
 import {ClassAPI, HeaderInfo, TypeContext, FunctionAPI, TypeLink} from '@react-spectrum/docs';
-import packageData from '@react-stately/{{packageName}}/package.json';
+import packageData from '@react-stately/slider/package.json';
 
 ---
-category: Category Name
-keywords: []
+category: Sliders
+keywords: [slider, range, input, state]
+after_version: 3.0.0-alpha.3
 ---
 
-# use{{componentName}}State
+# useSliderState
 
-<p>{docs.exports.use{{componentName}}State.description}</p>
+<p>{docs.exports.useSliderState.description}</p>
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['use{{componentName}}State']} />
+  componentNames={['useSliderState']} />
 
 ## API
 
-<FunctionAPI function={docs.exports.use{{componentName}}State} links={docs.links} />
-
-## Introduction
-
-*Give some background for the hook if needed.*
-
-## Options
-
-*Include ClassAPI if this stately hook takes options (see useAsyncList for an example)*
+<FunctionAPI function={docs.exports.useSliderState} links={docs.links} />
 
 ## Interface
 
-<ClassAPI links={docs.links} class={docs.links[docs.exports.use{{componentName}}State.return.id]} />
+<ClassAPI links={docs.links} class={docs.links[docs.exports.useSliderState.return.id]} />
 
 ## Example
 
-*Link to other docs if hook is being used elsewhere, otherwise show an example of usage.*
+See the docs for [useSlider](/react-aria/useSlider.html) in react-aria for an example of `useSliderState`.

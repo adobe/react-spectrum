@@ -10,18 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaSliderThumbProps} from '@react-types/slider';
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React, {RefObject, useRef} from 'react';
 import {SliderState} from '@react-stately/slider';
-import {SliderThumbOptions, useSliderThumb} from '@react-aria/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
+import {useSliderThumb} from '@react-aria/slider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-interface SliderThumbProps extends Omit<SliderThumbOptions, 'inputRef'> {
+interface SliderThumbProps extends AriaSliderThumbProps {
+  trackRef: RefObject<HTMLElement>,
   inputRef?: RefObject<HTMLInputElement>,
   state: SliderState
 }
