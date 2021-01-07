@@ -635,7 +635,7 @@ function AllControlledOpenComboBox(props) {
   let onSelectionChange = (key: React.Key) => {
     setFieldState(prevState => ({
       isOpen: false,
-      inputValue: list.getItem(key)?.value.name ?? props.allowsCustomValue ? prevState.inputValue : '',
+      inputValue: list.getItem(key)?.value.name ?? (props.allowsCustomValue ? prevState.inputValue : ''),
       selectedKey: key
     }));
   };
