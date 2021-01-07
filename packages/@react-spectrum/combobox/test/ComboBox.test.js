@@ -349,6 +349,25 @@ describe('ComboBox', function () {
         expect(combobox).toHaveAttribute('aria-expanded', 'false');
         expect(combobox).not.toHaveAttribute('aria-controls');
       });
+
+      it('remains open even if a default key is provided', function () {
+        let {getByRole} = renderComboBox({defaultOpen: true, defaultSelectedKey: '2'});
+
+        let combobox = getByRole('combobox');
+        act(() => {
+          combobox.focus();
+          jest.runAllTimers();
+        });
+
+        expect(combobox).toHaveAttribute('aria-expanded', 'true');
+        expect(combobox).toHaveAttribute('aria-controls');
+
+        // Previously, onOpenChange would get called with false due to useComboBoxState initializing lastSelectedKey ref to null
+        // causing triggerState.close() to be called
+        let listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+        expect(onOpenChange).toBeCalledTimes(0);
+      });
     });
 
     describe('button click', function () {
