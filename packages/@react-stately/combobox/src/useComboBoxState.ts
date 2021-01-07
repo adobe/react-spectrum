@@ -162,13 +162,15 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     } else {
       lastSelectedKey.current = null;
       setSelectedKey(null);
+
+      // If previous key was already null, need to manually call onSelectionChange since it won't be triggered by a setSelectedKey call
+      // This allows the application to control whether or not to close the menu on custom value commit
+      if (selectedKey === null && props.onSelectionChange) {
+        props.onSelectionChange(null);
+      }
+
       // Should close menu ourselves if component open state is uncontrolled and therefore won't be closed by a user defined event handler
-      // Also handle closing if previous selectedKey was null and commitCustomValue is triggered again since setSelectedKey(null) won't trigger onSelectionChange since the selectedKey remains as "null"
-      // (scenario: selectedKey is null to begin with and user enters a custom value and hits enter)
-      // TODO: This logic is kinda weird to be honest since the application is responsible for controlling the open state only part of the time.
-      // perhaps we should bring back the concept of onCustomValueChange so users can specify exactly what happens when a custom value is entered?
-      // perhaps we should always close the menu?
-      shouldClose = props.isOpen == null || selectedKey === null;
+      shouldClose = props.isOpen == null;
     }
 
     // Close if no other event will be fired. Otherwise, allow the

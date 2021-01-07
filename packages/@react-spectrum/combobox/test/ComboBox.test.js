@@ -876,6 +876,7 @@ describe('ComboBox', function () {
         });
 
         let onSelectionChangeHandler = (key) => {
+          onSelectionChange(key);
           setFieldState(prevState => ({
             isOpen: true,
             inputValue: prevState.inputValue,
@@ -932,6 +933,8 @@ describe('ComboBox', function () {
 
       // ComboBox menu doesn't close here since onSelectionChangeHandler never sets isOpen to false
       expect(() => getByRole('listbox')).not.toThrow();
+      expect(onSelectionChange).toHaveBeenCalledWith(null);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
 
       // Trigger another custom value submission
       typeText(combobox, 'n');
@@ -944,9 +947,9 @@ describe('ComboBox', function () {
         jest.runAllTimers();
       });
 
-      // Now that selectedKey has changed to be null from the first custom value call
-      // the menu should be closed via commitCustomValue's shouldClose logic
-      expect(() => getByRole('listbox')).toThrow();
+      // Check that onSelectionChange is called again even though the key is still null
+      expect(onSelectionChange).toHaveBeenCalledWith(null);
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
     });
 
     it('doesn\'t focus the first key if the previously focused key is filtered out of the list', function () {
