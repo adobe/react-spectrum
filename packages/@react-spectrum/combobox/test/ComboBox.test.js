@@ -839,7 +839,7 @@ describe('ComboBox', function () {
     });
 
     it('closes menu and resets selected key if allowsCustomValue=true and no item is focused', function () {
-      let {getByRole, rerender} = render(<ExampleComboBox allowsCustomValue selectedKey="2" />);
+      let {getByRole} = render(<ExampleComboBox allowsCustomValue selectedKey="2" />);
 
       let combobox = getByRole('combobox');
       act(() => combobox.focus());
@@ -860,24 +860,93 @@ describe('ComboBox', function () {
         jest.runAllTimers();
       });
 
-      // ComboBox menu doesn't close here since selectedKey is controlled and hasn't changed
-      expect(() => getByRole('listbox')).not.toThrow();
-      expect(onSelectionChange).toHaveBeenCalledTimes(1);
-      expect(onSelectionChange).toHaveBeenCalledWith(null);
-      expect(onOpenChange).toHaveBeenCalledTimes(1);
-
-      // Update the selectedKey prop, which triggers closing the menu.
-      rerender(<ExampleComboBox allowsCustomValue selectedKey="1" />);
-
-      act(() => {
-        jest.runAllTimers();
-      });
-
       expect(() => getByRole('listbox')).toThrow();
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenCalledWith(null);
       expect(onOpenChange).toHaveBeenCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
+
+    it('defers closing menu to user handlers if allowsCustomValue=true, no item is focused, and isOpen is controlled', function () {
+      let ControlledComboBox = (props) => {
+        let [fieldState, setFieldState] = React.useState({
+          isOpen: false,
+          inputValue: '',
+          selectedKey: '2'
+        });
+
+        let onSelectionChangeHandler = (key) => {
+          setFieldState(prevState => ({
+            isOpen: true,
+            inputValue: prevState.inputValue,
+            selectedKey: key
+          }));
+        };
+
+        let onInputChangeHandler = (value) => {
+          setFieldState(prevState => ({
+            isOpen: true,
+            inputValue: value,
+            selectedKey: prevState.selectedKey
+          }));
+        };
+
+        let onOpenChangeHandler = (isOpen) => {
+          setFieldState(prevState => ({
+            isOpen,
+            inputValue: prevState.inputValue,
+            selectedKey: prevState.selectedKey
+          }));
+        };
+
+        return (
+          <ComboBox label="Combobox" selectedKey={fieldState.selectedKey} allowsCustomValue isOpen={fieldState.isOpen} inputValue={fieldState.inputValue} onInputChange={onInputChangeHandler} onSelectionChange={onSelectionChangeHandler} onOpenChange={onOpenChangeHandler}>
+            <Item key="1">One</Item>
+            <Item key="2">Two</Item>
+            <Item key="3">Three</Item>
+          </ComboBox>
+        );
+      };
+
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <ControlledComboBox />
+        </Provider>
+      );
+
+      let combobox = getByRole('combobox');
+      typeText(combobox, 'O');
+
+      // Menu should be displayed since onInputChangeHandler sets fieldState.isOpen to true
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeTruthy();
+
+      expect(document.activeElement).toBe(combobox);
+      expect(combobox).not.toHaveAttribute('aria-activedescendant');
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+        jest.runAllTimers();
+      });
+
+      // ComboBox menu doesn't close here since onSelectionChangeHandler never sets isOpen to false
+      expect(() => getByRole('listbox')).not.toThrow();
+
+      // Trigger another custom value submission
+      typeText(combobox, 'n');
+      listbox = getByRole('listbox');
+      expect(listbox).toBeTruthy();
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+        jest.runAllTimers();
+      });
+
+      // Now that selectedKey has changed to be null from the first custom value call
+      // the menu should be closed via commitCustomValue's shouldClose logic
+      expect(() => getByRole('listbox')).toThrow();
     });
 
     it('doesn\'t focus the first key if the previously focused key is filtered out of the list', function () {

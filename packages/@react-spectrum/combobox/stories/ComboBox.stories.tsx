@@ -411,6 +411,12 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
+    'inputValue, selectedKey, isOpen, allowsCustomValue (controlled)',
+    () => (
+      <AllControlledOpenComboBox selectedKey="2" inputValue="Kangaroo" disabledKeys={['2', '6']} allowsCustomValue />
+    )
+  )
+  .add(
     'custom filter',
     () => (
       <CustomFilterComboBox />
@@ -627,11 +633,11 @@ function AllControlledOpenComboBox(props) {
   });
 
   let onSelectionChange = (key: React.Key) => {
-    setFieldState({
+    setFieldState(prevState => ({
       isOpen: false,
-      inputValue: list.getItem(key)?.value.name ?? '',
+      inputValue: list.getItem(key)?.value.name ?? props.allowsCustomValue ? prevState.inputValue : '',
       selectedKey: key
-    });
+    }));
   };
 
   let onInputChange = (value: string) => {
@@ -652,7 +658,7 @@ function AllControlledOpenComboBox(props) {
 
   return (
     <div>
-      <ComboBox disabledKeys={props.disabledKeys} selectedKey={fieldState.selectedKey} inputValue={fieldState.inputValue} defaultItems={list.items} label="Combobox" isOpen={fieldState.isOpen} onOpenChange={onOpenChange} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')}>
+      <ComboBox allowsCustomValue={props.allowsCustomValue} disabledKeys={props.disabledKeys} selectedKey={fieldState.selectedKey} inputValue={fieldState.inputValue} defaultItems={list.items} label="Combobox" isOpen={fieldState.isOpen} onOpenChange={onOpenChange} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')}>
         {item => (
           <Section items={item.children} title={item.value.name}>
             {item => <Item>{item.value.name}</Item>}
