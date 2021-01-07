@@ -1,5 +1,5 @@
 import {fireEvent, render, screen} from '@testing-library/react';
-import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
+import {installMouseEvent} from '@react-spectrum/test-utils';
 import * as React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
 import {useRef} from 'react';
@@ -170,164 +170,164 @@ describe('useSlider', () => {
     });
   });
 
-  describe('interactions on track using pointerEvents', () => {
-    let widthStub;
-    beforeAll(() => {
-      widthStub = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
-    });
-    afterAll(() => {
-      widthStub.mockReset();
-    });
-
-    installPointerEvent();
-
-    let stateRef = React.createRef();
-
-    function Example(props) {
-      let trackRef = useRef(null);
-      let state = useSliderState({...props, numberFormatter});
-      stateRef.current = state;
-      let {trackProps} = useSlider(props, state, trackRef);
-      return <div data-testid="track" ref={trackRef} {...trackProps} />;
-    }
-
-    it('should allow you to set value of closest thumb by clicking on track', () => {
-      let onChangeSpy = jest.fn();
-      let onChangeEndSpy = jest.fn();
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} />);
-
-      let track = screen.getByTestId('track');
-      fireEvent.pointerDown(track, {pageX: 20, clientX: 20});
-      fireEvent.pointerUp(track, {pageX: 20, clientX: 20});
-
-      expect(onChangeSpy).toHaveBeenLastCalledWith([20, 80]);
-      expect(onChangeEndSpy).toHaveBeenLastCalledWith([20, 80]);
-      expect(stateRef.current.values).toEqual([20, 80]);
-
-      track = screen.getByTestId('track');
-      fireEvent.pointerDown(track, {pageX: 90, clientX: 90});
-      fireEvent.pointerUp(track, {pageX: 90, clientX: 90});
-
-      expect(onChangeSpy).toHaveBeenLastCalledWith([20, 90]);
-      expect(onChangeEndSpy).toHaveBeenLastCalledWith([20, 90]);
-      expect(stateRef.current.values).toEqual([20, 90]);
-    });
-
-    it('should allow you to set value of closest thumb by dragging on track', () => {
-      let onChangeSpy = jest.fn();
-      let onChangeEndSpy = jest.fn();
-
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} />);
-
-      let track = screen.getByTestId('track');
-      fireEvent.pointerDown(track, {pageX: 20, clientX: 20});
-      expect(onChangeSpy).toHaveBeenLastCalledWith([20, 80]);
-      expect(onChangeEndSpy).not.toHaveBeenCalled();
-      expect(stateRef.current.values).toEqual([20, 80]);
-
-      fireEvent.pointerMove(track, {pageX: 30, clientX: 30});
-      expect(onChangeSpy).toHaveBeenLastCalledWith([30, 80]);
-      expect(onChangeEndSpy).not.toHaveBeenCalled();
-      expect(stateRef.current.values).toEqual([30, 80]);
-
-      fireEvent.pointerMove(track, {pageX: 40, clientX: 40});
-      expect(onChangeSpy).toHaveBeenLastCalledWith([40, 80]);
-      expect(onChangeEndSpy).not.toHaveBeenCalled();
-      expect(stateRef.current.values).toEqual([40, 80]);
-
-      fireEvent.pointerUp(track, {pageX: 40, clientX: 40});
-      expect(onChangeEndSpy).toHaveBeenLastCalledWith([40, 80]);
-      expect(stateRef.current.values).toEqual([40, 80]);
-    });
-
-    it('should allow you to set value of before thumbs when thumbs stacked', () => {
-      let onChangeSpy = jest.fn();
-      let onChangeEndSpy = jest.fn();
-
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[40, 40]} />);
-
-      let track = screen.getByTestId('track');
-      fireEvent.pointerDown(track, {pageX: 20, clientX: 20});
-      expect(onChangeSpy).toHaveBeenLastCalledWith([20, 40]);
-      expect(onChangeEndSpy).not.toHaveBeenCalled();
-      expect(stateRef.current.values).toEqual([20, 40]);
-    });
-
-    it('should allow you to set value of after thumbs when thumbs stacked', () => {
-      let onChangeSpy = jest.fn();
-      let onChangeEndSpy = jest.fn();
-
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[40, 40]} />);
-
-      let track = screen.getByTestId('track');
-      fireEvent.pointerDown(track, {pageX: 60, clientX: 60});
-      expect(onChangeSpy).toHaveBeenLastCalledWith([40, 60]);
-      expect(onChangeEndSpy).not.toHaveBeenCalled();
-      expect(stateRef.current.values).toEqual([40, 60]);
-    });
-
-    it('should allow you to set value of before thumbs when many thumbs and stacked', () => {
-      let onChangeSpy = jest.fn();
-      let onChangeEndSpy = jest.fn();
-
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[25, 25, 50, 75, 75]} />);
-
-      let track = screen.getByTestId('track');
-      fireEvent.pointerDown(track, {pageX: 70, clientX: 70});
-      expect(onChangeSpy).toHaveBeenLastCalledWith([25, 25, 50, 70, 75]);
-      expect(onChangeEndSpy).not.toHaveBeenCalled();
-      fireEvent.pointerUp(track, {pageX: 70, clientX: 70});
-      expect(onChangeEndSpy).toHaveBeenCalledWith([25, 25, 50, 70, 75]);
-      expect(stateRef.current.values).toEqual([25, 25, 50, 70, 75]);
-
-      fireEvent.pointerDown(track, {pageX: 20, clientX: 20});
-      expect(onChangeSpy).toHaveBeenLastCalledWith([20, 25, 50, 70, 75]);
-      fireEvent.pointerUp(track, {pageX: 70, clientX: 70});
-      expect(onChangeEndSpy).toHaveBeenLastCalledWith([20, 25, 50, 70, 75]);
-      expect(stateRef.current.values).toEqual([20, 25, 50, 70, 75]);
-    });
-
-    it('should allow you to set value of after thumbs when many thumbs and stacked', () => {
-      let onChangeSpy = jest.fn();
-      let onChangeEndSpy = jest.fn();
-
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[25, 25, 50, 75, 75]} />);
-
-      let track = screen.getByTestId('track');
-      fireEvent.pointerDown(track, {pageX: 80, clientX: 80});
-      expect(onChangeSpy).toHaveBeenLastCalledWith([25, 25, 50, 75, 80]);
-      expect(onChangeEndSpy).not.toHaveBeenCalled();
-      fireEvent.pointerUp(track, {pageX: 80, clientX: 80});
-      expect(onChangeEndSpy).toHaveBeenCalledWith([25, 25, 50, 75, 80]);
-      expect(stateRef.current.values).toEqual([25, 25, 50, 75, 80]);
-
-      fireEvent.pointerDown(track, {pageX: 30, clientX: 30});
-      expect(onChangeSpy).toHaveBeenLastCalledWith([25, 30, 50, 75, 80]);
-      fireEvent.pointerUp(track, {pageX: 80, clientX: 80});
-      expect(onChangeEndSpy).toHaveBeenLastCalledWith([25, 30, 50, 75, 80]);
-      expect(stateRef.current.values).toEqual([25, 30, 50, 75, 80]);
-    });
-
-    it('should not allow you to set value if disabled', () => {
-      let onChangeSpy = jest.fn();
-      let onChangeEndSpy = jest.fn();
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} isDisabled />);
-
-      let track = screen.getByTestId('track');
-      fireEvent.pointerDown(track, {pageX: 20, clientX: 20});
-      expect(onChangeSpy).not.toHaveBeenCalled();
-      expect(onChangeEndSpy).not.toHaveBeenCalled();
-      expect(stateRef.current.values).toEqual([10, 80]);
-
-      fireEvent.pointerMove(track, {pageX: 30, clientX: 30});
-      expect(onChangeSpy).not.toHaveBeenCalled();
-      expect(onChangeEndSpy).not.toHaveBeenCalled();
-      expect(stateRef.current.values).toEqual([10, 80]);
-
-      fireEvent.pointerUp(track, {pageX: 40, clientX: 40});
-      expect(onChangeSpy).not.toHaveBeenCalled();
-      expect(onChangeEndSpy).not.toHaveBeenCalled();
-      expect(stateRef.current.values).toEqual([10, 80]);
-    });
-  });
+  // describe('interactions on track using pointerEvents', () => {
+  //   let widthStub;
+  //   beforeAll(() => {
+  //     widthStub = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
+  //   });
+  //   afterAll(() => {
+  //     widthStub.mockReset();
+  //   });
+  //
+  //   installPointerEvent();
+  //
+  //   let stateRef = React.createRef();
+  //
+  //   function Example(props) {
+  //     let trackRef = useRef(null);
+  //     let state = useSliderState({...props, numberFormatter});
+  //     stateRef.current = state;
+  //     let {trackProps} = useSlider(props, state, trackRef);
+  //     return <div data-testid="track" ref={trackRef} {...trackProps} />;
+  //   }
+  //
+  //   it('should allow you to set value of closest thumb by clicking on track', () => {
+  //     let onChangeSpy = jest.fn();
+  //     let onChangeEndSpy = jest.fn();
+  //     render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} />);
+  //
+  //     let track = screen.getByTestId('track');
+  //     fireEvent.pointerDown(track, {pageX: 20, clientX: 20});
+  //     fireEvent.pointerUp(track, {pageX: 20, clientX: 20});
+  //
+  //     expect(onChangeSpy).toHaveBeenLastCalledWith([20, 80]);
+  //     expect(onChangeEndSpy).toHaveBeenLastCalledWith([20, 80]);
+  //     expect(stateRef.current.values).toEqual([20, 80]);
+  //
+  //     track = screen.getByTestId('track');
+  //     fireEvent.pointerDown(track, {pageX: 90, clientX: 90});
+  //     fireEvent.pointerUp(track, {pageX: 90, clientX: 90});
+  //
+  //     expect(onChangeSpy).toHaveBeenLastCalledWith([20, 90]);
+  //     expect(onChangeEndSpy).toHaveBeenLastCalledWith([20, 90]);
+  //     expect(stateRef.current.values).toEqual([20, 90]);
+  //   });
+  //
+  //   it('should allow you to set value of closest thumb by dragging on track', () => {
+  //     let onChangeSpy = jest.fn();
+  //     let onChangeEndSpy = jest.fn();
+  //
+  //     render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} />);
+  //
+  //     let track = screen.getByTestId('track');
+  //     fireEvent.pointerDown(track, {pageX: 20, clientX: 20});
+  //     expect(onChangeSpy).toHaveBeenLastCalledWith([20, 80]);
+  //     expect(onChangeEndSpy).not.toHaveBeenCalled();
+  //     expect(stateRef.current.values).toEqual([20, 80]);
+  //
+  //     fireEvent.pointerMove(track, {pageX: 30, clientX: 30});
+  //     expect(onChangeSpy).toHaveBeenLastCalledWith([30, 80]);
+  //     expect(onChangeEndSpy).not.toHaveBeenCalled();
+  //     expect(stateRef.current.values).toEqual([30, 80]);
+  //
+  //     fireEvent.pointerMove(track, {pageX: 40, clientX: 40});
+  //     expect(onChangeSpy).toHaveBeenLastCalledWith([40, 80]);
+  //     expect(onChangeEndSpy).not.toHaveBeenCalled();
+  //     expect(stateRef.current.values).toEqual([40, 80]);
+  //
+  //     fireEvent.pointerUp(track, {pageX: 40, clientX: 40});
+  //     expect(onChangeEndSpy).toHaveBeenLastCalledWith([40, 80]);
+  //     expect(stateRef.current.values).toEqual([40, 80]);
+  //   });
+  //
+  //   it('should allow you to set value of before thumbs when thumbs stacked', () => {
+  //     let onChangeSpy = jest.fn();
+  //     let onChangeEndSpy = jest.fn();
+  //
+  //     render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[40, 40]} />);
+  //
+  //     let track = screen.getByTestId('track');
+  //     fireEvent.pointerDown(track, {pageX: 20, clientX: 20});
+  //     expect(onChangeSpy).toHaveBeenLastCalledWith([20, 40]);
+  //     expect(onChangeEndSpy).not.toHaveBeenCalled();
+  //     expect(stateRef.current.values).toEqual([20, 40]);
+  //   });
+  //
+  //   it('should allow you to set value of after thumbs when thumbs stacked', () => {
+  //     let onChangeSpy = jest.fn();
+  //     let onChangeEndSpy = jest.fn();
+  //
+  //     render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[40, 40]} />);
+  //
+  //     let track = screen.getByTestId('track');
+  //     fireEvent.pointerDown(track, {pageX: 60, clientX: 60});
+  //     expect(onChangeSpy).toHaveBeenLastCalledWith([40, 60]);
+  //     expect(onChangeEndSpy).not.toHaveBeenCalled();
+  //     expect(stateRef.current.values).toEqual([40, 60]);
+  //   });
+  //
+  //   it('should allow you to set value of before thumbs when many thumbs and stacked', () => {
+  //     let onChangeSpy = jest.fn();
+  //     let onChangeEndSpy = jest.fn();
+  //
+  //     render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[25, 25, 50, 75, 75]} />);
+  //
+  //     let track = screen.getByTestId('track');
+  //     fireEvent.pointerDown(track, {pageX: 70, clientX: 70});
+  //     expect(onChangeSpy).toHaveBeenLastCalledWith([25, 25, 50, 70, 75]);
+  //     expect(onChangeEndSpy).not.toHaveBeenCalled();
+  //     fireEvent.pointerUp(track, {pageX: 70, clientX: 70});
+  //     expect(onChangeEndSpy).toHaveBeenCalledWith([25, 25, 50, 70, 75]);
+  //     expect(stateRef.current.values).toEqual([25, 25, 50, 70, 75]);
+  //
+  //     fireEvent.pointerDown(track, {pageX: 20, clientX: 20});
+  //     expect(onChangeSpy).toHaveBeenLastCalledWith([20, 25, 50, 70, 75]);
+  //     fireEvent.pointerUp(track, {pageX: 70, clientX: 70});
+  //     expect(onChangeEndSpy).toHaveBeenLastCalledWith([20, 25, 50, 70, 75]);
+  //     expect(stateRef.current.values).toEqual([20, 25, 50, 70, 75]);
+  //   });
+  //
+  //   it('should allow you to set value of after thumbs when many thumbs and stacked', () => {
+  //     let onChangeSpy = jest.fn();
+  //     let onChangeEndSpy = jest.fn();
+  //
+  //     render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[25, 25, 50, 75, 75]} />);
+  //
+  //     let track = screen.getByTestId('track');
+  //     fireEvent.pointerDown(track, {pageX: 80, clientX: 80});
+  //     expect(onChangeSpy).toHaveBeenLastCalledWith([25, 25, 50, 75, 80]);
+  //     expect(onChangeEndSpy).not.toHaveBeenCalled();
+  //     fireEvent.pointerUp(track, {pageX: 80, clientX: 80});
+  //     expect(onChangeEndSpy).toHaveBeenCalledWith([25, 25, 50, 75, 80]);
+  //     expect(stateRef.current.values).toEqual([25, 25, 50, 75, 80]);
+  //
+  //     fireEvent.pointerDown(track, {pageX: 30, clientX: 30});
+  //     expect(onChangeSpy).toHaveBeenLastCalledWith([25, 30, 50, 75, 80]);
+  //     fireEvent.pointerUp(track, {pageX: 80, clientX: 80});
+  //     expect(onChangeEndSpy).toHaveBeenLastCalledWith([25, 30, 50, 75, 80]);
+  //     expect(stateRef.current.values).toEqual([25, 30, 50, 75, 80]);
+  //   });
+  //
+  //   it('should not allow you to set value if disabled', () => {
+  //     let onChangeSpy = jest.fn();
+  //     let onChangeEndSpy = jest.fn();
+  //     render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} isDisabled />);
+  //
+  //     let track = screen.getByTestId('track');
+  //     fireEvent.pointerDown(track, {pageX: 20, clientX: 20});
+  //     expect(onChangeSpy).not.toHaveBeenCalled();
+  //     expect(onChangeEndSpy).not.toHaveBeenCalled();
+  //     expect(stateRef.current.values).toEqual([10, 80]);
+  //
+  //     fireEvent.pointerMove(track, {pageX: 30, clientX: 30});
+  //     expect(onChangeSpy).not.toHaveBeenCalled();
+  //     expect(onChangeEndSpy).not.toHaveBeenCalled();
+  //     expect(stateRef.current.values).toEqual([10, 80]);
+  //
+  //     fireEvent.pointerUp(track, {pageX: 40, clientX: 40});
+  //     expect(onChangeSpy).not.toHaveBeenCalled();
+  //     expect(onChangeEndSpy).not.toHaveBeenCalled();
+  //     expect(stateRef.current.values).toEqual([10, 80]);
+  //   });
+  // });
 });

@@ -47,22 +47,22 @@ function setGlobalIgnoreEmulatedMouseEvents() {
   }, 50);
 }
 
-function handleGlobalPointerEvent(e) {
-  if (e.pointerType === 'touch') {
-    setGlobalIgnoreEmulatedMouseEvents();
-  }
-}
+// function handleGlobalPointerEvent(e) {
+//   if (e.pointerType === 'touch') {
+//     setGlobalIgnoreEmulatedMouseEvents();
+//   }
+// }
 
 function setupGlobalTouchEvents() {
   if (typeof document === 'undefined') {
     return;
   }
 
-  if (typeof PointerEvent !== 'undefined') {
-    document.addEventListener('pointerup', handleGlobalPointerEvent);
-  } else {
-    document.addEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
-  }
+  // if (typeof PointerEvent !== 'undefined') {
+  //   document.addEventListener('pointerup', handleGlobalPointerEvent);
+  // } else {
+  document.addEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
+  // }
 
   hoverCount++;
   return () => {
@@ -71,11 +71,11 @@ function setupGlobalTouchEvents() {
       return;
     }
 
-    if (typeof PointerEvent !== 'undefined') {
-      document.removeEventListener('pointerup', handleGlobalPointerEvent);
-    } else {
-      document.removeEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
-    }
+    // if (typeof PointerEvent !== 'undefined') {
+    //   document.removeEventListener('pointerup', handleGlobalPointerEvent);
+    // } else {
+    document.removeEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
+    // }
   };
 }
 
@@ -154,44 +154,44 @@ export function useHover(props: HoverProps): HoverResult {
 
     let hoverProps: HTMLAttributes<HTMLElement> = {};
 
-    if (typeof PointerEvent !== 'undefined') {
-      hoverProps.onPointerEnter = (e) => {
-        if (globalIgnoreEmulatedMouseEvents && e.pointerType === 'mouse') {
-          return;
-        }
+    // if (typeof PointerEvent !== 'undefined') {
+    //   hoverProps.onPointerEnter = (e) => {
+    //     if (globalIgnoreEmulatedMouseEvents && e.pointerType === 'mouse') {
+    //       return;
+    //     }
+    //
+    //     triggerHoverStart(e, e.pointerType);
+    //   };
+    //
+    //   hoverProps.onPointerLeave = (e) => {
+    //     triggerHoverEnd(e, e.pointerType);
+    //   };
+    // } else {
+    hoverProps.onTouchStart = () => {
+      state.ignoreEmulatedMouseEvents = true;
+    };
 
-        triggerHoverStart(e, e.pointerType);
-      };
+    hoverProps.onMouseEnter = (e) => {
+      if (!state.ignoreEmulatedMouseEvents && !globalIgnoreEmulatedMouseEvents) {
+        triggerHoverStart(e, 'mouse');
+      }
 
-      hoverProps.onPointerLeave = (e) => {
-        triggerHoverEnd(e, e.pointerType);
-      };
-    } else {
-      hoverProps.onTouchStart = () => {
-        state.ignoreEmulatedMouseEvents = true;
-      };
+      state.ignoreEmulatedMouseEvents = false;
+    };
 
-      hoverProps.onMouseEnter = (e) => {
-        if (!state.ignoreEmulatedMouseEvents && !globalIgnoreEmulatedMouseEvents) {
-          triggerHoverStart(e, 'mouse');
-        }
+    hoverProps.onMouseLeave = (e) => {
+      triggerHoverEnd(e, 'mouse');
+    };
 
-        state.ignoreEmulatedMouseEvents = false;
-      };
-
-      hoverProps.onMouseLeave = (e) => {
-        triggerHoverEnd(e, 'mouse');
-      };
-
-      // React won't fire onMouseEnter on a button if the previous target for onMouseLeave was a disabled button
-      // https://github.com/facebook/react/issues/10109
-      // this appears to be fixed in react 17
-      hoverProps.onMouseMove = (e) => {
-        if (!state.isHovered) {
-          triggerHoverStart(e, 'mouse');
-        }
-      };
-    }
+    // React won't fire onMouseEnter on a button if the previous target for onMouseLeave was a disabled button
+    // https://github.com/facebook/react/issues/10109
+    // this appears to be fixed in react 17
+    hoverProps.onMouseMove = (e) => {
+      if (!state.isHovered) {
+        triggerHoverStart(e, 'mouse');
+      }
+    };
+    // }
     return {hoverProps, cleanup: {triggerHoverStart, triggerHoverEnd}};
   }, [onHoverStart, onHoverChange, onHoverEnd, isDisabled, state]);
 

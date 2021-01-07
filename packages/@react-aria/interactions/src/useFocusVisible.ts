@@ -136,15 +136,15 @@ function setupGlobalFocusEvents() {
   window.addEventListener('focus', handleFocusEvent, true);
   window.addEventListener('blur', handleWindowBlur, false);
 
-  if (typeof PointerEvent !== 'undefined') {
-    document.addEventListener('pointerdown', handlePointerEvent, true);
-    document.addEventListener('pointermove', handlePointerEvent, true);
-    document.addEventListener('pointerup', handlePointerEvent, true);
-  } else {
-    document.addEventListener('mousedown', handlePointerEvent, true);
-    document.addEventListener('mousemove', handlePointerEvent, true);
-    document.addEventListener('mouseup', handlePointerEvent, true);
-  }
+  // if (typeof PointerEvent !== 'undefined') {
+  //   document.addEventListener('pointerdown', handlePointerEvent, true);
+  //   document.addEventListener('pointermove', handlePointerEvent, true);
+  //   document.addEventListener('pointerup', handlePointerEvent, true);
+  // } else {
+  document.addEventListener('mousedown', handlePointerEvent, true);
+  document.addEventListener('mousemove', handlePointerEvent, true);
+  document.addEventListener('mouseup', handlePointerEvent, true);
+  // }
 
   hasSetupGlobalListeners = true;
 }

@@ -1,5 +1,17 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {fireEvent, render, screen} from '@testing-library/react';
-import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
+import {installMouseEvent} from '@react-spectrum/test-utils';
 import * as React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
 import {useRef} from 'react';
@@ -8,6 +20,7 @@ import {useSliderState} from '@react-stately/slider';
 
 describe('useSliderThumb', () => {
   let numberFormatter = new Intl.NumberFormat('en-US', {});
+
   describe('aria labels', () => {
     it('should have the right labels with Slider-level label', () => {
       let result = renderHook(() => {
@@ -34,6 +47,7 @@ describe('useSliderThumb', () => {
       let labelId = result.current.labelProps.id;
       expect(inputProps).toMatchObject({type: 'range', step: 2, value: 50, min: 10, max: 200, 'aria-labelledby': `${labelId}`});
     });
+
     it('should have the right labels with Slider thumb label', () => {
       let result = renderHook(() => {
         let trackRef = React.createRef(null);
@@ -60,6 +74,7 @@ describe('useSliderThumb', () => {
       let labelId = result.current.groupProps.id;
       expect(inputProps).toMatchObject({type: 'range', step: 2, value: 50, min: 10, max: 200, 'aria-labelledby': `${labelId} ${labelProps.id}`, id: labelProps.htmlFor});
     });
+
     it('should have the right labels with Slider thumb aria-label', () => {
       let result = renderHook(() => {
         let trackRef = React.createRef(null);
@@ -143,63 +158,64 @@ describe('useSliderThumb', () => {
       );
     }
 
-    describe('using PointerEvents', () => {
-      installPointerEvent();
+    // describe('using PointerEvents', () => {
+    //   installPointerEvent();
+    //
+    //   it('can be moved by dragging', () => {
+    //     let onChangeSpy = jest.fn();
+    //     let onChangeEndSpy = jest.fn();
+    //     render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} />);
+    //
+    //     // Drag thumb0
+    //     let thumb0 = screen.getByTestId('thumb0');
+    //     fireEvent.pointerDown(thumb0, {clientX: 10, pageX: 10});
+    //     expect(onChangeSpy).not.toHaveBeenCalled();
+    //     expect(onChangeEndSpy).not.toHaveBeenCalled();
+    //     expect(stateRef.current.values).toEqual([10, 80]);
+    //
+    //     fireEvent.pointerMove(thumb0, {clientX: 20, pageX: 20});
+    //     expect(onChangeSpy).toHaveBeenLastCalledWith([20, 80]);
+    //     expect(onChangeEndSpy).not.toHaveBeenCalled();
+    //     expect(stateRef.current.values).toEqual([20, 80]);
+    //
+    //     fireEvent.pointerMove(thumb0, {clientX: 30, pageX: 30});
+    //     expect(onChangeSpy).toHaveBeenLastCalledWith([30, 80]);
+    //     expect(onChangeEndSpy).not.toHaveBeenCalled();
+    //     expect(stateRef.current.values).toEqual([30, 80]);
+    //
+    //     fireEvent.pointerMove(thumb0, {clientX: 40, pageX: 40});
+    //     fireEvent.pointerUp(thumb0, {clientX: 40, pageX: 40});
+    //     expect(onChangeSpy).toHaveBeenLastCalledWith([40, 80]);
+    //     expect(onChangeEndSpy).toHaveBeenLastCalledWith([40, 80]);
+    //     expect(stateRef.current.values).toEqual([40, 80]);
+    //
+    //     onChangeSpy.mockClear();
+    //     onChangeEndSpy.mockClear();
+    //
+    //     // Drag thumb1 past thumb0
+    //     let thumb1 = screen.getByTestId('thumb1');
+    //     fireEvent.pointerDown(thumb1, {clientX: 80, pageX: 80});
+    //     expect(onChangeSpy).not.toHaveBeenCalled();
+    //     expect(onChangeEndSpy).not.toHaveBeenCalled();
+    //     expect(stateRef.current.values).toEqual([40, 80]);
+    //
+    //     fireEvent.pointerMove(thumb1, {clientX: 60, pageX: 60});
+    //     expect(onChangeSpy).toHaveBeenLastCalledWith([40, 60]);
+    //     expect(onChangeEndSpy).not.toHaveBeenCalled();
+    //     expect(stateRef.current.values).toEqual([40, 60]);
+    //
+    //     fireEvent.pointerMove(thumb1, {clientX: 30, pageX: 30});
+    //     expect(onChangeSpy).toHaveBeenLastCalledWith([40, 40]);
+    //     expect(onChangeEndSpy).not.toHaveBeenCalled();
+    //     expect(stateRef.current.values).toEqual([40, 40]);
+    //
+    //     fireEvent.pointerUp(thumb1, {clientX: 30, pageX: 30});
+    //     expect(onChangeSpy).toHaveBeenLastCalledWith([40, 40]);
+    //     expect(onChangeEndSpy).toHaveBeenLastCalledWith([40, 40]);
+    //     expect(stateRef.current.values).toEqual([40, 40]);
+    //   });
+    // });
 
-      it('can be moved by dragging', () => {
-        let onChangeSpy = jest.fn();
-        let onChangeEndSpy = jest.fn();
-        render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} />);
-
-        // Drag thumb0
-        let thumb0 = screen.getByTestId('thumb0');
-        fireEvent.pointerDown(thumb0, {clientX: 10, pageX: 10});
-        expect(onChangeSpy).not.toHaveBeenCalled();
-        expect(onChangeEndSpy).not.toHaveBeenCalled();
-        expect(stateRef.current.values).toEqual([10, 80]);
-
-        fireEvent.pointerMove(thumb0, {clientX: 20, pageX: 20});
-        expect(onChangeSpy).toHaveBeenLastCalledWith([20, 80]);
-        expect(onChangeEndSpy).not.toHaveBeenCalled();
-        expect(stateRef.current.values).toEqual([20, 80]);
-
-        fireEvent.pointerMove(thumb0, {clientX: 30, pageX: 30});
-        expect(onChangeSpy).toHaveBeenLastCalledWith([30, 80]);
-        expect(onChangeEndSpy).not.toHaveBeenCalled();
-        expect(stateRef.current.values).toEqual([30, 80]);
-
-        fireEvent.pointerMove(thumb0, {clientX: 40, pageX: 40});
-        fireEvent.pointerUp(thumb0, {clientX: 40, pageX: 40});
-        expect(onChangeSpy).toHaveBeenLastCalledWith([40, 80]);
-        expect(onChangeEndSpy).toHaveBeenLastCalledWith([40, 80]);
-        expect(stateRef.current.values).toEqual([40, 80]);
-
-        onChangeSpy.mockClear();
-        onChangeEndSpy.mockClear();
-
-        // Drag thumb1 past thumb0
-        let thumb1 = screen.getByTestId('thumb1');
-        fireEvent.pointerDown(thumb1, {clientX: 80, pageX: 80});
-        expect(onChangeSpy).not.toHaveBeenCalled();
-        expect(onChangeEndSpy).not.toHaveBeenCalled();
-        expect(stateRef.current.values).toEqual([40, 80]);
-
-        fireEvent.pointerMove(thumb1, {clientX: 60, pageX: 60});
-        expect(onChangeSpy).toHaveBeenLastCalledWith([40, 60]);
-        expect(onChangeEndSpy).not.toHaveBeenCalled();
-        expect(stateRef.current.values).toEqual([40, 60]);
-
-        fireEvent.pointerMove(thumb1, {clientX: 30, pageX: 30});
-        expect(onChangeSpy).toHaveBeenLastCalledWith([40, 40]);
-        expect(onChangeEndSpy).not.toHaveBeenCalled();
-        expect(stateRef.current.values).toEqual([40, 40]);
-
-        fireEvent.pointerUp(thumb1, {clientX: 30, pageX: 30});
-        expect(onChangeSpy).toHaveBeenLastCalledWith([40, 40]);
-        expect(onChangeEndSpy).toHaveBeenLastCalledWith([40, 40]);
-        expect(stateRef.current.values).toEqual([40, 40]);
-      });
-    });
     describe('using MouseEvents', () => {
       it('can be moved by dragging', () => {
         let onChangeSpy = jest.fn();
@@ -255,7 +271,6 @@ describe('useSliderThumb', () => {
         expect(stateRef.current.values).toEqual([40, 40]);
       });
     });
-
   });
 
   describe('interactions on thumbs, where track contains thumbs', () => {
@@ -294,34 +309,34 @@ describe('useSliderThumb', () => {
       );
     }
 
-    describe('using PointerEvents', () => {
-      installPointerEvent();
-
-      it('can be moved by dragging', () => {
-        let onChangeSpy = jest.fn();
-        let onChangeEndSpy = jest.fn();
-        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10]} />);
-
-        // Drag thumb
-        let thumb0 = screen.getByTestId('thumb');
-        fireEvent.pointerDown(thumb0, {clientX: 10, pageX: 10});
-        expect(onChangeSpy).not.toHaveBeenCalled();
-        expect(onChangeEndSpy).not.toHaveBeenCalled();
-        expect(stateRef.current.values).toEqual([10]);
-
-        fireEvent.pointerMove(thumb0, {clientX: 20, pageX: 20});
-        expect(onChangeSpy).toHaveBeenLastCalledWith([20]);
-        expect(onChangeEndSpy).not.toHaveBeenCalled();
-        expect(stateRef.current.values).toEqual([20]);
-
-        fireEvent.pointerMove(thumb0, {clientX: 40, pageX: 40});
-        fireEvent.pointerUp(thumb0, {clientX: 40, pageX: 40});
-        expect(onChangeSpy).toHaveBeenLastCalledWith([40]);
-        expect(onChangeEndSpy).toHaveBeenLastCalledWith([40]);
-        expect(stateRef.current.values).toEqual([40]);
-        expect(onChangeEndSpy).toBeCalledTimes(1);
-      });
-    });
+    // describe('using PointerEvents', () => {
+    //   installPointerEvent();
+    //
+    //   it('can be moved by dragging', () => {
+    //     let onChangeSpy = jest.fn();
+    //     let onChangeEndSpy = jest.fn();
+    //     render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10]} />);
+    //
+    //     // Drag thumb
+    //     let thumb0 = screen.getByTestId('thumb');
+    //     fireEvent.pointerDown(thumb0, {clientX: 10, pageX: 10});
+    //     expect(onChangeSpy).not.toHaveBeenCalled();
+    //     expect(onChangeEndSpy).not.toHaveBeenCalled();
+    //     expect(stateRef.current.values).toEqual([10]);
+    //
+    //     fireEvent.pointerMove(thumb0, {clientX: 20, pageX: 20});
+    //     expect(onChangeSpy).toHaveBeenLastCalledWith([20]);
+    //     expect(onChangeEndSpy).not.toHaveBeenCalled();
+    //     expect(stateRef.current.values).toEqual([20]);
+    //
+    //     fireEvent.pointerMove(thumb0, {clientX: 40, pageX: 40});
+    //     fireEvent.pointerUp(thumb0, {clientX: 40, pageX: 40});
+    //     expect(onChangeSpy).toHaveBeenLastCalledWith([40]);
+    //     expect(onChangeEndSpy).toHaveBeenLastCalledWith([40]);
+    //     expect(stateRef.current.values).toEqual([40]);
+    //     expect(onChangeEndSpy).toBeCalledTimes(1);
+    //   });
+    // });
 
     describe('using MouseEvents', () => {
       it('can be moved by dragging', () => {

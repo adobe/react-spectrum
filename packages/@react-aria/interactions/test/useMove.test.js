@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, render} from '@testing-library/react';
-import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
+import {installMouseEvent} from '@react-spectrum/test-utils';
 import React from 'react';
 import {useMove} from '../';
 
@@ -285,109 +285,109 @@ describe('useMove', function () {
     });
   });
 
-  describe('pointer events', function () {
-    installPointerEvent();
-
-    it('responds to pointer events', function () {
-      let events = [];
-      let addEvent = (e) => events.push(e);
-      let tree = render(
-        <Example
-          onMoveStart={addEvent}
-          onMove={addEvent}
-          onMoveEnd={addEvent} />
-      );
-
-      let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
-
-      fireEvent.pointerDown(el, {pointerType: 'pen', pointerId: 1, pageX: 1, pageY: 30});
-      expect(events).toStrictEqual([]);
-      fireEvent.pointerMove(el, {pointerType: 'pen', pointerId: 1, pageX: 10, pageY: 25});
-      expect(events).toStrictEqual([{type: 'movestart', pointerType: 'pen'}, {type: 'move', pointerType: 'pen', deltaX: 9, deltaY: -5}]);
-      fireEvent.pointerUp(el, {pointerType: 'pen', pointerId: 1});
-      expect(events).toStrictEqual([{type: 'movestart', pointerType: 'pen'}, {type: 'move', pointerType: 'pen', deltaX: 9, deltaY: -5}, {type: 'moveend', pointerType: 'pen'}]);
-    });
-
-    it('doesn\'t respond to right click', function () {
-      let events = [];
-      let addEvent = (e) => events.push(e);
-      let tree = render(
-        <Example
-          onMoveStart={addEvent}
-          onMove={addEvent}
-          onMoveEnd={addEvent} />
-      );
-
-      let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
-
-      fireEvent.pointerDown(el, {pointerType: 'pen', pointerId: 1, pageX: 1, pageY: 30, button: 2});
-      expect(events).toStrictEqual([]);
-      fireEvent.pointerMove(el, {pointerType: 'pen', pointerId: 1, pageX: 10, pageY: 25, button: 2});
-      expect(events).toStrictEqual([]);
-      fireEvent.pointerUp(el, {pointerType: 'pen', pointerId: 1, pageX: 10, pageY: 25, button: 2});
-      expect(events).toStrictEqual([]);
-    });
-
-    it('ends with pointercancel', function () {
-      let events = [];
-      let addEvent = (e) => events.push(e);
-      let tree = render(
-        <Example
-          onMoveStart={addEvent}
-          onMove={addEvent}
-          onMoveEnd={addEvent} />
-      );
-
-      let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
-
-      fireEvent.pointerDown(el, {pointerType: 'pen', pointerId: 1, pageX: 1, pageY: 30});
-      expect(events).toStrictEqual([]);
-      fireEvent.pointerMove(el, {pointerType: 'pen', pointerId: 1, pageX: 10, pageY: 25});
-      expect(events).toStrictEqual([{type: 'movestart', pointerType: 'pen'}, {type: 'move', pointerType: 'pen', deltaX: 9, deltaY: -5}]);
-      fireEvent.pointerCancel(el, {pointerType: 'pen', pointerId: 1});
-      expect(events).toStrictEqual([{type: 'movestart', pointerType: 'pen'}, {type: 'move', pointerType: 'pen', deltaX: 9, deltaY: -5}, {type: 'moveend', pointerType: 'pen'}]);
-    });
-
-    it('doesn\'t fire anything when tapping', function () {
-      let events = [];
-      let addEvent = (e) => events.push(e);
-      let tree = render(
-        <Example
-          onMoveStart={addEvent}
-          onMove={addEvent}
-          onMoveEnd={addEvent} />
-      );
-
-      let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
-
-      fireEvent.pointerDown(el, {pointerType: 'pen', pointerId: 1, pageX: 1, pageY: 30});
-      fireEvent.pointerUp(el, {pointerType: 'pen', pointerId: 1, pageX: 1, pageY: 30});
-      expect(events).toStrictEqual([]);
-    });
-
-    it('ignores any additional pointers', function () {
-      let events = [];
-      let addEvent = (e) => events.push(e);
-      let tree = render(
-        <Example
-          onMoveStart={addEvent}
-          onMove={addEvent}
-          onMoveEnd={addEvent} />
-      );
-
-      let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
-
-      fireEvent.pointerDown(el, {pointerType: 'pen', pointerId: 1, pageX: 1, pageY: 30});
-
-      fireEvent.pointerDown(el, {pointerType: 'pen', pointerId: 3, pageX: 1, pageY: 30});
-      fireEvent.pointerMove(el, {pointerType: 'pen', pointerId: 3, pageX: 1, pageY: 40});
-      fireEvent.pointerUp(el, {pointerType: 'pen', pointerId: 3, pageX: 1, pageY: 40});
-
-      expect(events).toStrictEqual([]);
-      fireEvent.pointerMove(el, {pointerType: 'pen', pointerId: 1, pageX: 10, pageY: 25});
-      expect(events).toStrictEqual([{type: 'movestart', pointerType: 'pen'}, {type: 'move', pointerType: 'pen', deltaX: 9, deltaY: -5}]);
-      fireEvent.pointerUp(el, {pointerType: 'pen', pointerId: 1});
-      expect(events).toStrictEqual([{type: 'movestart', pointerType: 'pen'}, {type: 'move', pointerType: 'pen', deltaX: 9, deltaY: -5}, {type: 'moveend', pointerType: 'pen'}]);
-    });
-  });
+  // describe('pointer events', function () {
+  //   installPointerEvent();
+  //
+  //   it('responds to pointer events', function () {
+  //     let events = [];
+  //     let addEvent = (e) => events.push(e);
+  //     let tree = render(
+  //       <Example
+  //         onMoveStart={addEvent}
+  //         onMove={addEvent}
+  //         onMoveEnd={addEvent} />
+  //     );
+  //
+  //     let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
+  //
+  //     fireEvent.pointerDown(el, {pointerType: 'pen', pointerId: 1, pageX: 1, pageY: 30});
+  //     expect(events).toStrictEqual([]);
+  //     fireEvent.pointerMove(el, {pointerType: 'pen', pointerId: 1, pageX: 10, pageY: 25});
+  //     expect(events).toStrictEqual([{type: 'movestart', pointerType: 'pen'}, {type: 'move', pointerType: 'pen', deltaX: 9, deltaY: -5}]);
+  //     fireEvent.pointerUp(el, {pointerType: 'pen', pointerId: 1});
+  //     expect(events).toStrictEqual([{type: 'movestart', pointerType: 'pen'}, {type: 'move', pointerType: 'pen', deltaX: 9, deltaY: -5}, {type: 'moveend', pointerType: 'pen'}]);
+  //   });
+  //
+  //   it('doesn\'t respond to right click', function () {
+  //     let events = [];
+  //     let addEvent = (e) => events.push(e);
+  //     let tree = render(
+  //       <Example
+  //         onMoveStart={addEvent}
+  //         onMove={addEvent}
+  //         onMoveEnd={addEvent} />
+  //     );
+  //
+  //     let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
+  //
+  //     fireEvent.pointerDown(el, {pointerType: 'pen', pointerId: 1, pageX: 1, pageY: 30, button: 2});
+  //     expect(events).toStrictEqual([]);
+  //     fireEvent.pointerMove(el, {pointerType: 'pen', pointerId: 1, pageX: 10, pageY: 25, button: 2});
+  //     expect(events).toStrictEqual([]);
+  //     fireEvent.pointerUp(el, {pointerType: 'pen', pointerId: 1, pageX: 10, pageY: 25, button: 2});
+  //     expect(events).toStrictEqual([]);
+  //   });
+  //
+  //   it('ends with pointercancel', function () {
+  //     let events = [];
+  //     let addEvent = (e) => events.push(e);
+  //     let tree = render(
+  //       <Example
+  //         onMoveStart={addEvent}
+  //         onMove={addEvent}
+  //         onMoveEnd={addEvent} />
+  //     );
+  //
+  //     let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
+  //
+  //     fireEvent.pointerDown(el, {pointerType: 'pen', pointerId: 1, pageX: 1, pageY: 30});
+  //     expect(events).toStrictEqual([]);
+  //     fireEvent.pointerMove(el, {pointerType: 'pen', pointerId: 1, pageX: 10, pageY: 25});
+  //     expect(events).toStrictEqual([{type: 'movestart', pointerType: 'pen'}, {type: 'move', pointerType: 'pen', deltaX: 9, deltaY: -5}]);
+  //     fireEvent.pointerCancel(el, {pointerType: 'pen', pointerId: 1});
+  //     expect(events).toStrictEqual([{type: 'movestart', pointerType: 'pen'}, {type: 'move', pointerType: 'pen', deltaX: 9, deltaY: -5}, {type: 'moveend', pointerType: 'pen'}]);
+  //   });
+  //
+  //   it('doesn\'t fire anything when tapping', function () {
+  //     let events = [];
+  //     let addEvent = (e) => events.push(e);
+  //     let tree = render(
+  //       <Example
+  //         onMoveStart={addEvent}
+  //         onMove={addEvent}
+  //         onMoveEnd={addEvent} />
+  //     );
+  //
+  //     let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
+  //
+  //     fireEvent.pointerDown(el, {pointerType: 'pen', pointerId: 1, pageX: 1, pageY: 30});
+  //     fireEvent.pointerUp(el, {pointerType: 'pen', pointerId: 1, pageX: 1, pageY: 30});
+  //     expect(events).toStrictEqual([]);
+  //   });
+  //
+  //   it('ignores any additional pointers', function () {
+  //     let events = [];
+  //     let addEvent = (e) => events.push(e);
+  //     let tree = render(
+  //       <Example
+  //         onMoveStart={addEvent}
+  //         onMove={addEvent}
+  //         onMoveEnd={addEvent} />
+  //     );
+  //
+  //     let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
+  //
+  //     fireEvent.pointerDown(el, {pointerType: 'pen', pointerId: 1, pageX: 1, pageY: 30});
+  //
+  //     fireEvent.pointerDown(el, {pointerType: 'pen', pointerId: 3, pageX: 1, pageY: 30});
+  //     fireEvent.pointerMove(el, {pointerType: 'pen', pointerId: 3, pageX: 1, pageY: 40});
+  //     fireEvent.pointerUp(el, {pointerType: 'pen', pointerId: 3, pageX: 1, pageY: 40});
+  //
+  //     expect(events).toStrictEqual([]);
+  //     fireEvent.pointerMove(el, {pointerType: 'pen', pointerId: 1, pageX: 10, pageY: 25});
+  //     expect(events).toStrictEqual([{type: 'movestart', pointerType: 'pen'}, {type: 'move', pointerType: 'pen', deltaX: 9, deltaY: -5}]);
+  //     fireEvent.pointerUp(el, {pointerType: 'pen', pointerId: 1});
+  //     expect(events).toStrictEqual([{type: 'movestart', pointerType: 'pen'}, {type: 'move', pointerType: 'pen', deltaX: 9, deltaY: -5}, {type: 'moveend', pointerType: 'pen'}]);
+  //   });
+  // });
 });

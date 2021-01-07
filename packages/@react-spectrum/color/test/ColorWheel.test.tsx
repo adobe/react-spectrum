@@ -13,7 +13,7 @@
 import {act, fireEvent, render} from '@testing-library/react';
 import {Color} from '@react-stately/color';
 import {ColorWheel} from '../';
-import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
+import {installMouseEvent} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -156,17 +156,17 @@ describe('ColorWheel', () => {
     });
   });
 
+  // ${'Pointer Events'} | ${installPointerEvent}| ${[
+  //   (el, {pageX, pageY}) => fireEvent.pointerDown(el, {button: 0, pointerId: 1, pageX, pageY}),
+  //   (el, {pageX, pageY}) => fireEvent.pointerMove(el, {button: 0, pointerId: 1, pageX, pageY}),
+  //   (el, {pageX, pageY}) => fireEvent.pointerUp(el, {button: 0, pointerId: 1, pageX, pageY})
+  // ]}
   describe.each`
     type                | prepare               | actions
     ${'Mouse Events'}   | ${installMouseEvent}  | ${[
       (el, {pageX, pageY}) => fireEvent.mouseDown(el, {button: 0, pageX, pageY}),
       (el, {pageX, pageY}) => fireEvent.mouseMove(el, {button: 0, pageX, pageY}),
       (el, {pageX, pageY}) => fireEvent.mouseUp(el, {button: 0, pageX, pageY})
-    ]}
-    ${'Pointer Events'} | ${installPointerEvent}| ${[
-      (el, {pageX, pageY}) => fireEvent.pointerDown(el, {button: 0, pointerId: 1, pageX, pageY}),
-      (el, {pageX, pageY}) => fireEvent.pointerMove(el, {button: 0, pointerId: 1, pageX, pageY}),
-      (el, {pageX, pageY}) => fireEvent.pointerUp(el, {button: 0, pointerId: 1, pageX, pageY})
     ]}
     ${'Touch Events'}   | ${() => {}}           | ${[
       (el, {pageX, pageY}) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1, pageX, pageY}]}),
