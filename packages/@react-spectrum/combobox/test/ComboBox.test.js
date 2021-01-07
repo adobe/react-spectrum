@@ -2401,6 +2401,19 @@ describe('ComboBox', function () {
       expect(button).toHaveAttribute('aria-labelledby', `label-id ${getByText('Test').id} ${getByText('Two').id}`);
     });
 
+    it('readonly combobox should not open on press', function () {
+      let {getByRole, getByTestId} = renderComboBox({isReadOnly: true});
+      let button = getByRole('button');
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      expect(button).toHaveAttribute('aria-expanded', 'false');
+      expect(() => getByTestId('tray')).toThrow();
+    });
+
     it('opening the tray autofocuses the tray input', function () {
       let {getByRole, getByTestId} = renderComboBox();
       let button = getByRole('button');
