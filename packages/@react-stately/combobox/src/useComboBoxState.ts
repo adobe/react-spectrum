@@ -204,6 +204,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       // Close here if the selected key is already the focused key. Otherwise
       // fire onSelectionChange to allow the application to control the closing.
       if (selectedKey === selectionManager.focusedKey) {
+        resetInputValue();
         triggerState.close();
       } else {
         setSelectedKey(selectionManager.focusedKey);

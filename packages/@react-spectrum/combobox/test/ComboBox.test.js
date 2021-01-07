@@ -857,6 +857,47 @@ describe('ComboBox', function () {
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
     });
 
+    it('resets input text if reselecting a selected option with Enter', function () {
+      let {getByRole} = renderComboBox({defaultSelectedKey: '2'});
+
+      let combobox = getByRole('combobox');
+      expect(combobox.value).toBe('Two');
+      expect(onInputChange).toHaveBeenCalledTimes(1);
+      expect(onInputChange).toHaveBeenLastCalledWith('Two');
+
+      act(() => {
+        combobox.focus();
+        fireEvent.change(combobox, {target: {value: 'Tw'}});
+        jest.runAllTimers();
+      });
+
+      expect(onInputChange).toHaveBeenCalledTimes(2);
+      expect(onInputChange).toHaveBeenLastCalledWith('Tw');
+      expect(combobox.value).toBe('Tw');
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(1);
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+      });
+
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+        jest.runAllTimers();
+      });
+
+      expect(() => getByRole('listbox')).toThrow();
+      expect(combobox.value).toBe('Two');
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+      expect(onInputChange).toHaveBeenCalledTimes(3);
+      expect(onInputChange).toHaveBeenLastCalledWith('Two');
+    });
+
     it('closes menu and resets selected key if allowsCustomValue=true and no item is focused', function () {
       let {getByRole} = render(<ExampleComboBox allowsCustomValue selectedKey="2" />);
 
