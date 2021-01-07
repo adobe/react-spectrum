@@ -178,7 +178,7 @@ storiesOf('ComboBox', module)
   )
   .add(
     'isOpen',
-    () => <ControlledOpenCombobox isOpen />,
+    () => <ControlledOpenCombobox isOpen allowsCustomValue />,
     {note: 'Combobox needs focus to show dropdown.'}
   )
   .add(

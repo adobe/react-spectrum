@@ -47,8 +47,22 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     props.onInputChange
   );
 
+  let onSelectionChange = (key) => {
+    if (props.onSelectionChange) {
+      props.onSelectionChange(key);
+    }
+
+    // If open state or selectedKey is uncontrolled and key is the same, close the menu (scenario: user clicks on already selected option)
+    if (props.isOpen === undefined || props.selectedKey === undefined) {
+      if (key === selectedKey) {
+        triggerState.close();
+      }
+    }
+  };
+
   let {collection, selectionManager, selectedKey, setSelectedKey, selectedItem, disabledKeys} = useSingleSelectListState({
     ...props,
+    onSelectionChange,
     items: props.items ?? props.defaultItems
   });
 
@@ -169,8 +183,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
         props.onSelectionChange(null);
       }
 
-      // Should close menu ourselves if component open state is uncontrolled and therefore won't be closed by a user defined event handler
-      shouldClose = props.isOpen == null;
+      // Should close menu ourselves if component open state or selected key is uncontrolled and therefore won't be closed by a user defined event handler
+      shouldClose = props.isOpen == null || props.selectedKey === undefined;
     }
 
     // Close if no other event will be fired. Otherwise, allow the
