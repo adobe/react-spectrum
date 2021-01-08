@@ -898,6 +898,41 @@ describe('ComboBox', function () {
       expect(onInputChange).toHaveBeenLastCalledWith('Two');
     });
 
+    it('resets input text if reselecting a selected option with click', function () {
+      let {getByRole} = renderComboBox({defaultSelectedKey: '2'});
+
+      let combobox = getByRole('combobox');
+      expect(combobox.value).toBe('Two');
+      expect(onInputChange).toHaveBeenCalledTimes(1);
+      expect(onInputChange).toHaveBeenLastCalledWith('Two');
+
+      act(() => {
+        combobox.focus();
+        fireEvent.change(combobox, {target: {value: 'Tw'}});
+        jest.runAllTimers();
+      });
+
+      expect(onInputChange).toHaveBeenCalledTimes(2);
+      expect(onInputChange).toHaveBeenLastCalledWith('Tw');
+      expect(combobox.value).toBe('Tw');
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(1);
+
+      act(() => {
+        triggerPress(items[0]);
+        jest.runAllTimers();
+      });
+
+      expect(() => getByRole('listbox')).toThrow();
+      expect(combobox.value).toBe('Two');
+      // selectionManager.select from useSingleSelectListState always calls onSelectionChange even if the key is the same
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenLastCalledWith('2');
+      expect(onInputChange).toHaveBeenCalledTimes(3);
+      expect(onInputChange).toHaveBeenLastCalledWith('Two');
+    });
+
     it('closes menu and resets selected key if allowsCustomValue=true and no item is focused', function () {
       let {getByRole} = render(<ExampleComboBox allowsCustomValue selectedKey="2" />);
 

@@ -52,9 +52,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       props.onSelectionChange(key);
     }
 
-    // If open state or selectedKey is uncontrolled and key is the same, close the menu (scenario: user clicks on already selected option)
+    // If open state or selectedKey is uncontrolled and key is the same, reset the inputValue and close the menu
+    // (scenario: user clicks on already selected option)
     if (props.isOpen === undefined || props.selectedKey === undefined) {
       if (key === selectedKey) {
+        resetInputValue();
         triggerState.close();
       }
     }
@@ -201,7 +203,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
   let commit = () => {
     if (triggerState.isOpen && selectionManager.focusedKey != null) {
-      // Close here if the selected key is already the focused key. Otherwise
+      // Reset inputValue and close menu here if the selected key is already the focused key. Otherwise
       // fire onSelectionChange to allow the application to control the closing.
       if (selectedKey === selectionManager.focusedKey) {
         resetInputValue();
