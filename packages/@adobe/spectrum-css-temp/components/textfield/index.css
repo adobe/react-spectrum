@@ -116,6 +116,12 @@ governing permissions and limitations under the License.
        font-style: normal;
     }
   }
+  /* placeholder gets clipped for arabic script in Chrome */
+  &:lang(ar) {
+    &::placeholder {
+      text-indent: 1px;
+    }
+  }
 
   &:hover {
     &::placeholder {
