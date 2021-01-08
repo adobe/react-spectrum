@@ -24,8 +24,8 @@ import {useControlledState} from '@react-stately/utils';
 
 export interface NumberFieldState {
   setValue: (val: number | string) => void,
-  increment: (isSpinning?: boolean) => void,
-  decrement: (isSpinning?: boolean) => void,
+  increment: () => void,
+  decrement: () => void,
   incrementToMax: () => void,
   decrementToMin: () => void,
   commitInputValue: () => void,
@@ -183,9 +183,11 @@ export function useNumberFieldState(
     return newValue;
   }, [minValue, maxValue, step, intlOptions]);
 
-  let increment = useCallback((isSpinning: boolean = false) => {
+  let currentValue = useRef(currentlyParsed);
+  currentValue.current = currentlyParsed;
+  let increment = useCallback(() => {
     setNumberValue((previousValue) => {
-      let prev = !isSpinning ? currentlyParsed : previousValue;
+      let prev = currentValue.current;
       if (isNaN(prev)) {
         // if the input is empty, start from 0
         prev = 0;
@@ -203,13 +205,14 @@ export function useNumberFieldState(
       if (newValue === previousValue) {
         setInputValue(inputValueFormatter.format(newValue));
       }
+
       return newValue;
     });
-  }, [setNumberValue, currentlyParsed, safeNextStep, inputValueFormatter]);
+  }, [setNumberValue, currentValue, safeNextStep, inputValueFormatter]);
 
-  let decrement = useCallback((isSpinning: boolean = false) => {
+  let decrement = useCallback(() => {
     setNumberValue((previousValue) => {
-      let prev = !isSpinning ? currentlyParsed : previousValue;
+      let prev = currentValue.current;
       // if the input is empty, start from the max value when decrementing
       if (isNaN(prev)) {
         prev = 0;
@@ -223,9 +226,10 @@ export function useNumberFieldState(
       if (newValue === previousValue) {
         setInputValue(inputValueFormatter.format(newValue));
       }
+
       return newValue;
     });
-  }, [setNumberValue, currentlyParsed, safeNextStep, inputValueFormatter]);
+  }, [setNumberValue, currentValue, safeNextStep, inputValueFormatter]);
 
   let incrementToMax = useCallback(() => {
     if (maxValue != null) {

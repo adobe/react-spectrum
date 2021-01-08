@@ -21,10 +21,10 @@ import {useMessageFormatter} from '@react-aria/i18n';
 
 export interface SpinButtonProps extends InputBase, Validation, ValueBase<number>, RangeInputBase<number> {
   textValue?: string,
-  onIncrement?: (isChained?: boolean) => void,
-  onIncrementPage?: (isChained?: boolean) => void,
-  onDecrement?: (isChained?: boolean) => void,
-  onDecrementPage?: (isChained?: boolean) => void,
+  onIncrement?: () => void,
+  onIncrementPage?: () => void,
+  onDecrement?: () => void,
+  onDecrementPage?: () => void,
   onDecrementToMin?: () => void,
   onIncrementToMax?: () => void
 }
@@ -128,13 +128,13 @@ export function useSpinButton(
   }, [textValue, value, formatMessage]);
 
   const onIncrementPressStart = useCallback(
-    (initialStepDelay: number, isSpinning: boolean = false) => {
-      onIncrement(isSpinning);
+    (initialStepDelay: number) => {
+      onIncrement();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
         () => {
           if (isNaN(maxValue) || isNaN(value) || value < maxValue) {
-            onIncrementPressStart(60, true);
+            onIncrementPressStart(60);
           }
         },
         initialStepDelay
@@ -144,13 +144,13 @@ export function useSpinButton(
   );
 
   const onDecrementPressStart = useCallback(
-    (initialStepDelay: number, isSpinning: boolean = false) => {
-      onDecrement(isSpinning);
+    (initialStepDelay: number) => {
+      onDecrement();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
         () => {
           if (isNaN(minValue) || isNaN(value) || value > minValue) {
-            onDecrementPressStart(60, true);
+            onDecrementPressStart(60);
           }
         },
         initialStepDelay
