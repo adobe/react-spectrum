@@ -60,13 +60,13 @@ function StepButton(props: StepButtonProps, ref: RefObject<HTMLDivElement>) {
         ref={ref}
         tabIndex={props.excludeFromTabOrder && !props.isDisabled ? -1 : undefined}>
         {direction === 'up' && scale === 'large' &&
-        <Add UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon spectrum-Stepper-stepUpIcon')} size="S" />}
+        <Add UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon', 'spectrum-Stepper-stepUpIcon')} size="S" />}
         {direction === 'up' && scale === 'medium' &&
-        <ChevronUpSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon spectrum-Stepper-stepUpIcon')} />}
+        <ChevronUpSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon', 'spectrum-Stepper-stepUpIcon')} />}
         {direction === 'down' && scale === 'large' &&
-        <Remove UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon spectrum-Stepper-stepDownIcon')} size="S" />}
+        <Remove UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon', 'spectrum-Stepper-stepDownIcon')} size="S" />}
         {direction === 'down' && scale === 'medium' &&
-        <ChevronDownSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon spectrum-Stepper-stepDownIcon')} />}
+        <ChevronDownSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon', 'spectrum-Stepper-stepDownIcon')} />}
       </div>
     </FocusRing>
   );

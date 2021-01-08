@@ -104,10 +104,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
       isDisabled,
       isReadOnly,
       isRequired,
-      // Use prop min/maxValue so that aria doesn't read off huge numbers in default case.
-      // State has a max and min value based off safe numbers that javascript can handle
-      // we don't want to set those very large values for aria-valuemin/max when spin buttons
-      // work with VO.
+      // Use min/maxValue prop instead of stately.
       maxValue,
       minValue,
       onIncrement: increment,

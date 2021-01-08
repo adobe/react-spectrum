@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 @import '../commons/index.css';
+@import '../button/index.css';
 
 :root {
   --spectrum-stepper-button-height: calc(var(--spectrum-component-single-line-height) / 2);
@@ -20,94 +21,6 @@ governing permissions and limitations under the License.
   --spectrum-stepper-border-size-reset: 0;
   --spectrum-stepper-border-size-default: 1px;
 }
-
-
-%spectrum-BaseButton {
-   /* Contain halo */
-   position: relative;
-
-   display: inline-flex;
-   box-sizing: border-box;
-
-   align-items: center;
-   justify-content: center;
-
-   /* Show the button overflow in Edge. */
-   overflow: visible;
-
-   /* Remove button the margin in Firefox and Safari. */
-   margin: 0;
-
-   border-style: solid;
-
-   /* Remove the inheritance of text transform on button in Edge, Firefox, and IE. */
-   text-transform: none;
-   -webkit-font-smoothing: antialiased;
-   /* Font smoothing for Firefox */
-   -moz-osx-font-smoothing: grayscale;
-
-   button& {
-     /* Correct the inability to style clickable types in iOS and Safari. */
-     -webkit-appearance: button;
-   }
-
-   /* Adjacent buttons should be aligned correctly */
-   vertical-align: top;
-
-   transition: background var(--spectrum-global-animation-duration-100) ease-out,
-   border-color var(--spectrum-global-animation-duration-100) ease-out,
-   color var(--spectrum-global-animation-duration-100) ease-out,
-   box-shadow var(--spectrum-global-animation-duration-100) ease-out;
-
-   text-decoration: none;
-   font-family: var(--spectrum-font-family-base);
-
-   line-height: var(--spectrum-button-line-height);
-
-   user-select: none;
-   -webkit-user-select: none;
-   touch-action: none; /* prevent touch scrolling on buttons */
-
-   cursor: default;
-
-   isolation: isolate;
-
-   &:focus {
-     outline: none;
-   }
-   &:focus-ring {
-     z-index: 3;
-   }
-
-   /* Fix Firefox */
-   &::-moz-focus-inner {
-     border: 0;
-
-     /* Remove the inner border and padding for button in Firefox. */
-     border-style: none;
-     padding: 0;
-
-     /* Use uppercase PX so values don't get converted to rem */
-     margin-block-start: -2PX;
-     margin-block-end: -2PX;
-   }
-
-   &:disabled,
-   &.is-disabled {
-     cursor: default;
-   }
-
-   .spectrum-Stepper-icon {
-     max-block-size: 100%;
-     flex-shrink: 0;
-     order: 0; /* always be before the label, regardless of DOM order */
-
-     transition: background var(--spectrum-global-animation-duration-100) ease-out,
-     fill var(--spectrum-global-animation-duration-100) ease-out;
-     box-sizing: initial;
-   }
-
- }
 
 .spectrum-Stepper {
   display: inline-grid;
@@ -147,6 +60,16 @@ governing permissions and limitations under the License.
   &:hover,
   &:active {
     box-shadow: none;
+  }
+
+  .spectrum-Stepper-icon {
+    max-block-size: 100%;
+    flex-shrink: 0;
+    order: 0; /* always be before the label, regardless of DOM order */
+
+    transition: background var(--spectrum-global-animation-duration-100) ease-out,
+                fill var(--spectrum-global-animation-duration-100) ease-out;
+    box-sizing: initial;
   }
 }
 
