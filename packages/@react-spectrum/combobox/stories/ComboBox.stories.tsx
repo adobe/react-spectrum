@@ -608,7 +608,7 @@ let ControlledOpenCombobox = (props) => {
   return (
     <Flex direction="column">
       <TextField label="Email" />
-      <ComboBox label="Combobox" isOpen={isOpen} {...actions} onOpenChange={setOpen}>
+      <ComboBox label="Combobox" {...props} isOpen={isOpen} {...actions} onOpenChange={setOpen}>
         <Item key="one">Item One</Item>
         <Item key="two" textValue="Item Two">
           <Copy size="S" />
