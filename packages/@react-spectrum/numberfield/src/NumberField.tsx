@@ -17,8 +17,9 @@ import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {mergeProps} from '@react-aria/utils';
+import {NumeralSystem, useLocale, useNumberFormatter, useNumberParser} from '@react-aria/i18n';
 import {PressResponder, useHover} from '@react-aria/interactions';
-import React, {HTMLAttributes, InputHTMLAttributes, RefObject, useRef} from 'react';
+import React, {HTMLAttributes, InputHTMLAttributes, RefObject, useRef, useState} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import {StepButton} from './StepButton';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
@@ -35,11 +36,18 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
   let {
     isQuiet,
     isDisabled,
-    hideStepper
+    hideStepper,
+    formatOptions
   } = props;
 
   let {styleProps: style} = useStyleProps(props);
-  let state = useNumberFieldState(props);
+
+  let {locale} = useLocale();
+  let [currentNumeralSystem, setCurrentNumeralSystem] = useState<NumeralSystem | undefined>();
+  let inputValueFormatter = useNumberFormatter({...formatOptions, numeralSystem: currentNumeralSystem});
+  let numberParser = useNumberParser({...formatOptions, numeralSystem: currentNumeralSystem});
+
+  let state = useNumberFieldState({...props, locale, inputValueFormatter, numberParser});
   let inputRef = useRef<HTMLInputElement>();
   let domRef = useFocusableRef<HTMLElement>(ref, inputRef);
   let incrementRef = useRef<HTMLDivElement>();
@@ -50,7 +58,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
     inputFieldProps,
     incrementButtonProps,
     decrementButtonProps
-  } = useNumberField({...props, incrementRef, decrementRef, inputRef}, state);
+  } = useNumberField({...props, incrementRef, decrementRef, inputRef, setCurrentNumeralSystem}, state);
   let isMobile = provider.scale === 'large';
   let showStepper = !hideStepper;
 

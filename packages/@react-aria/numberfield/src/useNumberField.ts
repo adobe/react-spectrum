@@ -13,10 +13,19 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
 import {
+  determineNumeralSystem,
+  NumeralSystem,
+  useLocale,
+  useMessageFormatter,
+  useNumberFormatter
+} from '@react-aria/i18n';
+import {
+  Dispatch,
   HTMLAttributes,
   InputHTMLAttributes,
   LabelHTMLAttributes,
   RefObject,
+  SetStateAction,
   useCallback,
   useEffect,
   useMemo,
@@ -29,7 +38,6 @@ import {mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
 import {useFocus} from '@react-aria/interactions';
-import {useLocale, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
 interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
@@ -37,7 +45,8 @@ interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
   decrementAriaLabel?: string,
   incrementAriaLabel?: string,
   incrementRef?: RefObject<HTMLDivElement>,
-  decrementRef?: RefObject<HTMLDivElement>
+  decrementRef?: RefObject<HTMLDivElement>,
+  setCurrentNumeralSystem: Dispatch<SetStateAction<NumeralSystem>>
 }
 
 interface NumberFieldAria {
@@ -63,7 +72,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     formatOptions,
     incrementRef,
     decrementRef,
-    inputRef
+    inputRef,
+    setCurrentNumeralSystem
   } = props;
 
   let {
@@ -165,7 +175,15 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     inputMode = 'text';
   }
 
-  let {onChange, onKeyDown, onPaste} = useSelectionControlledTextfield({setValue: state.setValue, value: state.inputValue, isFocused}, inputRef);
+  let {onChange, onKeyDown, onPaste} = useSelectionControlledTextfield(
+    {
+      setValue: state.setValue,
+      value: state.inputValue,
+      isFocused,
+      setCurrentNumeralSystem
+    },
+    inputRef
+  );
 
   let {labelProps, inputProps} = useTextField(
     {
@@ -217,7 +235,19 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
 }
 
 
-let useSelectionControlledTextfield = ({setValue, value, isFocused}: {setValue: (string) => void, value: string, isFocused: RefObject<boolean>}, ref: RefObject<HTMLInputElement>) => {
+let useSelectionControlledTextfield = (
+  {
+    setValue,
+    value,
+    isFocused,
+    setCurrentNumeralSystem
+  }: {
+    setValue: (string) => void,
+    value: string,
+    isFocused: RefObject<boolean>,
+    setCurrentNumeralSystem: Dispatch<SetStateAction<NumeralSystem>>
+  }, ref: RefObject<HTMLInputElement>
+) => {
   /**
    * Selection is to track where the cursor is in the input so we can restore that position + some offset after render.
    * The reason we have to do this is because the user is not as limited when the field is empty, the set of allowed characters
@@ -234,6 +264,8 @@ let useSelectionControlledTextfield = ({setValue, value, isFocused}: {setValue: 
    */
   let [isReRender, setReRender] = useState({});
   let onChange = (nextValue) => {
+    let numeralSystem = determineNumeralSystem(nextValue);
+    setCurrentNumeralSystem(numeralSystem);
     setValue(nextValue);
     if (nextValue !== value) {
       setReRender({});

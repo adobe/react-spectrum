@@ -11,13 +11,6 @@
  */
 
 import {clamp, roundToStep} from '@react-aria/utils';
-import {
-  determineNumeralSystem,
-  NumeralSystem,
-  useLocale,
-  useNumberFormatter,
-  useNumberParser
-} from '@react-aria/i18n';
 import {NumberFieldProps} from '@react-types/numberfield';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
@@ -33,8 +26,27 @@ export interface NumberFieldState {
   maxValue: number,
   value: number,
   inputValue: string,
-  textValue?: string,
-  currentNumeralSystem?: string
+  textValue?: string
+}
+
+// I don't know how to remove this one so it's not duplicated and not being imported from aria, should it be in react-types? shared?
+interface NumberParser {
+  /** Parses a cleaned string into the number it represents. */
+  parse: (value: string) => number,
+  /** Rounds a number using the current formatter. */
+  round: (value: number) => number,
+  symbols: {
+    minusSign: string,
+    plusSign: string
+  },
+  /** This removes any not allowed characters from the string. */
+  clean: (value: string) => string
+}
+
+export interface NumberFieldStateProps extends NumberFieldProps {
+  inputValueFormatter: Intl.NumberFormat,
+  numberParser: NumberParser,
+  locale: string
 }
 
 // for two decimal points of precision
@@ -42,15 +54,21 @@ let MAX_SAFE_FLOAT = (Number.MAX_SAFE_INTEGER + 1) / 128 - 1;
 let MIN_SAFE_FLOAT = (Number.MIN_SAFE_INTEGER - 1) / 128 + 1;
 
 export function useNumberFieldState(
-  props: NumberFieldProps
+  props: NumberFieldStateProps
 ): NumberFieldState {
-  let {locale} = useLocale();
-  let {minValue = Number.MIN_SAFE_INTEGER, maxValue = Number.MAX_SAFE_INTEGER, step, formatOptions, value, defaultValue, onChange} = props;
+  let {
+    minValue = Number.MIN_SAFE_INTEGER,
+    maxValue = Number.MAX_SAFE_INTEGER,
+    step,
+    formatOptions,
+    value,
+    defaultValue,
+    onChange,
+    inputValueFormatter,
+    numberParser,
+    locale
+  } = props;
 
-  let [currentNumeralSystem, setCurrentNumeralSystem] = useState<NumeralSystem | undefined>();
-
-  let inputValueFormatter = useNumberFormatter({...formatOptions, numeralSystem: currentNumeralSystem});
-  let numberParser = useNumberParser({...formatOptions, numeralSystem: currentNumeralSystem});
   let intlOptions = useMemo(() => inputValueFormatter.resolvedOptions(), [inputValueFormatter]);
 
   // Number.MAX_SAFE_INTEGER - 0.01 is still Number.MAX_SAFE_INTEGER, so decrement/increment won't work on it for the percent formatting
@@ -128,8 +146,6 @@ export function useNumberFieldState(
 
 
   let setValue = (value: string) => {
-    let numeralSystem = determineNumeralSystem(value);
-    setCurrentNumeralSystem(numeralSystem);
     setInputValue(value);
   };
 
@@ -254,8 +270,7 @@ export function useNumberFieldState(
     value: numberValue,
     inputValue: cleanInputValue,
     commitInputValue,
-    textValue: textValue === 'NaN' ? '' : textValue,
-    currentNumeralSystem
+    textValue: textValue === 'NaN' ? '' : textValue
   };
 }
 
