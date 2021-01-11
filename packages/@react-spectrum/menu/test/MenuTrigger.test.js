@@ -853,8 +853,10 @@ describe('MenuTrigger', function () {
         let selectedItem = menuItems[1];
         expect(selectedItem).toBe(document.activeElement);
       
-        triggerPress(button);
-        jest.runAllTimers();
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
 
         expect(menu).not.toBeInTheDocument();
 
@@ -864,8 +866,10 @@ describe('MenuTrigger', function () {
         menuItems = within(menu).getAllByRole('menuitem');
         selectedItem = menuItems[1];
         expect(selectedItem).toBe(document.activeElement);
-        triggerPress(button);
-        jest.runAllTimers();
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
         expect(menu).not.toBeInTheDocument();
 
         // Opening menu via up alt+arrowDown still autofocuses the selected item
