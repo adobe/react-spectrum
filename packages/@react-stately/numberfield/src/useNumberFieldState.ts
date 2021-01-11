@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp, roundToStep} from '@react-aria/utils';
+import {clamp, roundToStep, useControlledState} from '@react-stately/utils';
 import {NumberFieldProps} from '@react-types/numberfield';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {useControlledState} from '@react-stately/utils';
 
 export interface NumberFieldState {
   setValue: (val: number | string) => void,
