@@ -498,7 +498,7 @@ storiesOf('MenuTrigger', module)
               onPress={action('press')}
               onPressStart={action('pressstart')}
               onPressEnd={action('pressend')}>
-                Menu Button
+              Menu Button
             </ActionButton>
             {defaultMenu}
           </MenuTrigger>
