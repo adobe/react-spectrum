@@ -504,6 +504,7 @@ storiesOf('MenuTrigger', module)
           </MenuTrigger>
         </div>
       </>
+    )
   );
 
 let customMenuItem = (item) => {
