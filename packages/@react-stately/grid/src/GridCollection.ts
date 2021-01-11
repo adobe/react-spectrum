@@ -15,7 +15,8 @@ import {Key} from 'react';
 
 interface GridCollectionOptions<T> {
   columnCount: number,
-  items: GridRow<T>[]
+  items: GridRow<T>[],
+  visitNode?: (cell: GridNode<T>) => GridNode<T>
 }
 
 export class GridCollection<T> implements IGridCollection<T> {
@@ -23,7 +24,7 @@ export class GridCollection<T> implements IGridCollection<T> {
   columnCount: number;
   rows: GridNode<T>[];
 
-  constructor(opts?: GridCollectionOptions<T>, nodePopulate?: (cell: GridNode<T>) => GridNode<T>) {
+  constructor(opts?: GridCollectionOptions<T>) {
     this.keyMap = new Map();
     this.columnCount = opts?.columnCount;
     this.rows = [];
@@ -33,8 +34,8 @@ export class GridCollection<T> implements IGridCollection<T> {
       // we can skip this node and its children. We always visit columns though,
       // because we depend on order to build the columns array.
       let prevNode = this.keyMap.get(node.key);
-      if (nodePopulate) {
-        node = nodePopulate(node);
+      if (opts.visitNode) {
+        node = opts.visitNode(node);
       }
 
       this.keyMap.set(node.key, node);

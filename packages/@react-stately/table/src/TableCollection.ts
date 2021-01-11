@@ -219,12 +219,14 @@ export class TableCollection<T> extends GridCollection<T> {
     let headerRows = buildHeaderRows(columnKeyMap, columns) as GridNode<T>[];
     headerRows.forEach((row, i) => rows.splice(i, 0, row));
 
-    super(
-      {columnCount: columns.length, items: rows},
-      node => {
+    super({
+      columnCount: columns.length,
+      items: rows,
+      visitNode: node => {
         node.column = columns[node.index];
         return node;
-      });
+      }
+    });
     this.columns = columns;
     this.rowHeaderColumnKeys = rowHeaderColumnKeys;
     this.body = body;
