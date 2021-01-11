@@ -1,0 +1,40 @@
+{
+  "name": "react-stately",
+  "version": "3.2.0",
+  "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "prepublishOnly": "mkdir -p dist; cp src/index.ts dist/types.d.ts; grep -v '^export type' src/index.ts > dist/module.js; babel --root-mode upward src/index.ts -o dist/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@react-stately/checkbox": "^3.0.1",
+    "@react-stately/collections": "^3.3.0",
+    "@react-stately/data": "^3.1.2",
+    "@react-stately/list": "^3.2.2",
+    "@react-stately/menu": "^3.2.1",
+    "@react-stately/overlays": "^3.1.1",
+    "@react-stately/radio": "^3.2.1",
+    "@react-stately/searchfield": "^3.1.1",
+    "@react-stately/select": "^3.1.1",
+    "@react-stately/selection": "^3.2.1",
+    "@react-stately/slider": "^3.0.0",
+    "@react-stately/toggle": "^3.2.1",
+    "@react-stately/tooltip": "^3.0.1",
+    "@react-stately/tree": "^3.1.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

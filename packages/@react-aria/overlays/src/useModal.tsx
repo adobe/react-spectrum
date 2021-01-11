@@ -37,7 +37,7 @@ const Context = React.createContext<ModalContext | null>(null);
 export function ModalProvider(props: ModalProviderProps) {
   let {children} = props;
   let parent = useContext(Context);
-  let [modalCount, setModalCount] = useState(parent ? parent.modalCount : 0);
+  let [modalCount, setModalCount] = useState(0);
   let context = useMemo(() => ({
     parent,
     modalCount,
@@ -123,6 +123,10 @@ interface ModalAriaProps extends HTMLAttributes<HTMLElement> {
   'data-ismodal': boolean
 }
 
+interface ModalOptions {
+  isDisabled?: boolean
+}
+
 interface ModalAria {
   /** Props for the modal content element. */
   modalProps: ModalAriaProps
@@ -134,7 +138,7 @@ interface ModalAria {
  * other types of overlays to ensure that only the top-most modal is
  * accessible at once.
  */
-export function useModal(): ModalAria {
+export function useModal(options?: ModalOptions): ModalAria {
   // Add aria-hidden to all parent providers on mount, and restore on unmount.
   let context = useContext(Context);
   if (!context) {
@@ -142,7 +146,7 @@ export function useModal(): ModalAria {
   }
 
   useEffect(() => {
-    if (!context || !context.parent) {
+    if (options?.isDisabled || !context || !context.parent) {
       return;
     }
 
@@ -154,11 +158,11 @@ export function useModal(): ModalAria {
         context.parent.removeModal();
       }
     };
-  }, [context, context.parent]);
+  }, [context, context.parent, options?.isDisabled]);
 
   return {
     modalProps: {
-      'data-ismodal': true
+      'data-ismodal': !options?.isDisabled
     }
   };
 }

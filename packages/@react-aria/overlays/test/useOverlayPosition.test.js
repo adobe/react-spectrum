@@ -67,6 +67,25 @@ describe('useOverlayPosition', function () {
     `);
   });
 
+  it('should position the overlay relative to the trigger at top', function () {
+    let res = render(<Example placement="top" />);
+    let overlay = res.getByTestId('overlay');
+    let arrow = res.getByTestId('arrow');
+
+    expect(overlay).toHaveStyle(`
+      position: absolute;
+      z-index: 100000;
+      left: 12px;
+      bottom: 518px;
+      max-height: 238px;
+    `);
+
+    expect(overlay).toHaveTextContent('placement: top');
+    expect(arrow).toHaveStyle(`
+      left: 48px;
+    `);
+  });
+
   it('should update the position on window resize', function () {
     let res = render(<Example triggerTop={400} />);
     let overlay = res.getByTestId('overlay');
@@ -143,5 +162,95 @@ describe('useOverlayPosition', function () {
 
     fireEvent.scroll(document.body);
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('useOverlayPosition with positioned container', () => {
+  let stubs = [];
+  let realGetBoundingClientRect = window.HTMLElement.prototype.getBoundingClientRect;
+  let realGetComputedStyle = window.getComputedStyle;
+  beforeEach(() => {
+    Object.defineProperty(HTMLElement.prototype, 'clientHeight', {configurable: true, value: 768});
+    Object.defineProperty(HTMLElement.prototype, 'clientWidth', {configurable: true, value: 500});
+    stubs.push(
+      jest.spyOn(window.HTMLElement.prototype, 'offsetParent', 'get').mockImplementation(function () {
+        // Make sure container is is the offsetParent of overlay
+        if (this.attributes.getNamedItem('data-testid')?.value === 'overlay') {
+          return document.querySelector('[data-testid="container"]');
+        } else {
+          return null;
+        }
+      }),
+      jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+        if (this.attributes.getNamedItem('data-testid')?.value === 'container') {
+          // Say, overlay is positioned somewhere
+          return {
+            top: 150,
+            left: 0,
+            width: 400,
+            height: 400
+          };
+        } else {
+          return realGetBoundingClientRect.apply(this);
+        }
+      }),
+      jest.spyOn(window, 'getComputedStyle').mockImplementation(element => {
+        if (element.attributes.getNamedItem('data-testid')?.value === 'container') {
+          const sty = realGetComputedStyle(element);
+          sty.position = 'relative';
+          return sty;
+        } else {
+          return realGetComputedStyle(element);
+        }
+      })
+    );
+  });
+
+  afterEach(() => {
+    stubs.forEach(stub => stub.mockReset());
+    stubs.length = 0;
+  });
+
+  it('should position the overlay relative to the trigger', function () {
+    let res = render(<Example />);
+    let overlay = res.getByTestId('overlay');
+    let arrow = res.getByTestId('arrow');
+
+    // Usually top is at 350, but because container is already offset by 150,
+    // top should only be 200.
+    expect(overlay).toHaveStyle(`
+      position: absolute;
+      z-index: 100000;
+      left: 12px;
+      top: 200px;
+      max-height: 406px;
+    `);
+
+    expect(overlay).toHaveTextContent('placement: bottom');
+    expect(arrow).toHaveStyle(`
+      left: 48px;
+    `);
+  });
+
+  it('should position the overlay relative to the trigger at top', function () {
+    let res = render(<Example placement="top" />);
+    let overlay = res.getByTestId('overlay');
+    let arrow = res.getByTestId('arrow');
+
+    // Expect bottom to be at 300; the top of the trigger is 250; container positioned
+    // at 150, so relative to container it is 100, from the bottom of the container
+    // of height 400 is 300.
+    expect(overlay).toHaveStyle(`
+      position: absolute;
+      z-index: 100000;
+      left: 12px;
+      bottom: 300px;
+      max-height: 238px;
+    `);
+
+    expect(overlay).toHaveTextContent('placement: top');
+    expect(arrow).toHaveStyle(`
+      left: 48px;
+    `);
   });
 });

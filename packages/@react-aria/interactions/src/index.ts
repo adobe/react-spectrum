@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './usePress';
-export * from './useInteractOutside';
 export * from './Pressable';
 export * from './PressResponder';
-export * from './useKeyboard';
 export * from './useFocus';
-export * from './useFocusWithin';
 export * from './useFocusVisible';
+export * from './useFocusWithin';
 export * from './useHover';
+export * from './useInteractOutside';
+export * from './useKeyboard';
 export * from './useLongPress';
+export * from './useMove';
+export * from './usePress';

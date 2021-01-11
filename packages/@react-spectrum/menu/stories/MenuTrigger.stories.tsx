@@ -364,7 +364,7 @@ storiesOf('MenuTrigger', module)
             onPress={action('press')}
             onPressStart={action('pressstart')}
             onPressEnd={action('pressend')}>
-              Menu Button
+            Menu Button
           </ActionButton>
           <Menu onAction={action('action')}>
             <Section title="Section 1">
@@ -432,7 +432,7 @@ storiesOf('MenuTrigger', module)
                 onPress={action('press')}
                 onPressStart={action('pressstart')}
                 onPressEnd={action('pressend')}>
-                  Menu Button
+                Menu Button
               </ActionButton>
               <Menu items={withSection} onAction={action('action')}>
                 {item => (
@@ -463,7 +463,7 @@ storiesOf('MenuTrigger', module)
               onPress={action('press')}
               onPressStart={action('pressstart')}
               onPressEnd={action('pressend')}>
-                Menu Button
+              Menu Button
             </ActionButton>
             <Menu items={withSection} onAction={action('action')} disabledKeys={['Snake', 'Ross']}>
               {item => (
@@ -477,7 +477,18 @@ storiesOf('MenuTrigger', module)
         </div>
       </>
     )
-  ).add(
+  )
+  .add(
+    'with falsy key',
+    () => render(
+      <Menu onAction={action('onAction')}>
+        <Item key="1">One</Item>
+        <Item key="">Two</Item>
+        <Item key="3">Three</Item>
+      </Menu>
+    )
+  )
+  .add(
     'MenuTrigger with trigger="longPress"',
     () => (
       <>
@@ -493,7 +504,6 @@ storiesOf('MenuTrigger', module)
           </MenuTrigger>
         </div>
       </>
-    )
   );
 
 let customMenuItem = (item) => {
@@ -517,7 +527,7 @@ function render(menu, {isDisabled, ...props}: any = {}, menuProps = {}) {
           onPress={action('press')}
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}>
-            Menu Button
+          Menu Button
         </ActionButton>
         {menuRender}
       </MenuTrigger>

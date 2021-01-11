@@ -11,32 +11,41 @@
  */
 
 import {TooltipTriggerProps} from '@react-types/tooltip';
-import {useEffect} from 'react';
-import {useId} from '@react-aria/utils';
+import {useEffect, useMemo, useRef} from 'react';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
-export const TOOLTIP_DELAY = 1500; // this seems to be a 1.5 second delay, check with design
-export const TOOLTIP_COOLDOWN = 500;
-
-interface TooltipTriggerStateProps extends TooltipTriggerProps {}
+const TOOLTIP_DELAY = 1500; // this seems to be a 1.5 second delay, check with design
+const TOOLTIP_COOLDOWN = 500;
 
 export interface TooltipTriggerState {
+  /** Whether the tooltip is currently showing. */
   isOpen: boolean,
-  open: (immediate?: boolean) => void,
-  close: () => void
+  /**
+   * Shows the tooltip. By default, the tooltip becomes visible after a delay
+   * depending on a global warmup timer. The `immediate` option shows the
+   * tooltip immediately instead.
+   */
+  open(immediate?: boolean): void,
+  /** Hides the tooltip. */
+  close(immediate?: boolean): void
 }
 
 let tooltips = {};
+let tooltipId = 0;
 let globalWarmedUp = false;
 let globalWarmUpTimeout = null;
 let globalCooldownTimeout = null;
 
-
-export function useTooltipTriggerState(props: TooltipTriggerStateProps): TooltipTriggerState {
+/**
+ * Manages state for a tooltip trigger. Tracks whether the tooltip is open, and provides
+ * methods to toggle this state. Ensures only one tooltip is open at a time and controls
+ * the delay for showing a tooltip.
+ */
+export function useTooltipTriggerState(props: TooltipTriggerProps = {}): TooltipTriggerState {
   let {delay = TOOLTIP_DELAY} = props;
   let {isOpen, open, close} = useOverlayTriggerState(props);
-  // this is a unique id for the tooltips in the map, it's not a dom id
-  let id = useId();
+  let id = useMemo(() => `${++tooltipId}`, []);
+  let closeTimeout = useRef<ReturnType<typeof setTimeout>>();
 
   let ensureTooltipEntry = () => {
     tooltips[id] = hideTooltip;
@@ -45,13 +54,15 @@ export function useTooltipTriggerState(props: TooltipTriggerStateProps): Tooltip
   let closeOpenTooltips = () => {
     for (let hideTooltipId in tooltips) {
       if (hideTooltipId !== id) {
-        tooltips[hideTooltipId]();
+        tooltips[hideTooltipId](true);
         delete tooltips[hideTooltipId];
       }
     }
   };
 
   let showTooltip = () => {
+    clearTimeout(closeTimeout.current);
+    closeTimeout.current = null;
     closeOpenTooltips();
     ensureTooltipEntry();
     globalWarmedUp = true;
@@ -66,8 +77,18 @@ export function useTooltipTriggerState(props: TooltipTriggerStateProps): Tooltip
     }
   };
 
-  let hideTooltip = () => {
-    close();
+  let hideTooltip = (immediate?: boolean) => {
+    if (immediate) {
+      clearTimeout(closeTimeout.current);
+      closeTimeout.current = null;
+      close();
+    } else if (!closeTimeout.current) {
+      closeTimeout.current = setTimeout(() => {
+        closeTimeout.current = null;
+        close();
+      }, TOOLTIP_COOLDOWN);
+    }
+
     if (globalWarmUpTimeout) {
       clearTimeout(globalWarmUpTimeout);
       globalWarmUpTimeout = null;
@@ -92,7 +113,7 @@ export function useTooltipTriggerState(props: TooltipTriggerStateProps): Tooltip
         globalWarmUpTimeout = null;
         globalWarmedUp = true;
         showTooltip();
-      }, TOOLTIP_DELAY);
+      }, delay);
     } else if (!isOpen) {
       showTooltip();
     }
@@ -106,19 +127,17 @@ export function useTooltipTriggerState(props: TooltipTriggerStateProps): Tooltip
         delete tooltips[id];
       }
     };
-  }, []);
+  }, [id]);
 
   return {
     isOpen,
     open: (immediate) => {
-      if (!immediate && delay > 0) {
+      if (!immediate && delay > 0 && !closeTimeout.current) {
         warmupTooltip();
       } else {
         showTooltip();
       }
     },
-    close: () => {
-      hideTooltip();
-    }
+    close: hideTooltip
   };
 }

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {getItemCount} from '@react-stately/collections';
 import {getItemId} from './utils';
 import {HTMLAttributes, Key, RefObject} from 'react';
 import {isFocusVisible, useHover, usePress} from '@react-aria/interactions';
@@ -98,7 +99,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
 
   if (isVirtualized) {
     optionProps['aria-posinset'] = state.collection.getItem(key).index + 1;
-    optionProps['aria-setsize'] = state.collection.size;
+    optionProps['aria-setsize'] = getItemCount(state.collection);
   }
 
   let {itemProps} = useSelectableItem({
@@ -110,7 +111,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     shouldUseVirtualFocus
   });
 
-  let {pressProps} = usePress({...itemProps, isDisabled});
+  let {pressProps} = usePress({...itemProps, isDisabled, preventFocusOnPress: shouldUseVirtualFocus});
 
   let {hoverProps} = useHover({
     isDisabled: isDisabled || !shouldFocusOnHover,

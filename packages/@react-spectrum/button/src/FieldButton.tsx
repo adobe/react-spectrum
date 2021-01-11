@@ -11,7 +11,7 @@
  */
 
 import {ButtonProps} from '@react-types/button';
-import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
@@ -23,11 +23,13 @@ import {useHover} from '@react-aria/interactions';
 interface FieldButtonProps extends ButtonProps, DOMProps, StyleProps {
   isQuiet?: boolean,
   isActive?: boolean,
-  validationState?: 'valid' | 'invalid'
+  validationState?: 'valid' | 'invalid',
+  focusRingClass?: string
 }
 
 // @private
 function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
+  props = useSlotProps(props, 'button');
   let {
     isQuiet,
     isDisabled,
@@ -35,6 +37,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
     children,
     autoFocus,
     isActive,
+    focusRingClass,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref) as RefObject<HTMLButtonElement>;
@@ -43,7 +46,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
   let {styleProps} = useStyleProps(otherProps);
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring', focusRingClass)} autoFocus={autoFocus}>
       <button
         {...mergeProps(buttonProps, hoverProps)}
         ref={domRef}

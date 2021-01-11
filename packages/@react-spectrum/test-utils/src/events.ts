@@ -18,14 +18,66 @@ const LONG_PRESS_DEFAULT_THRESHOLD_IN_MS = 500;
 // Triggers a "press" event on an element.
 // TODO: move to somewhere more common
 export function triggerPress(element, opts = {}) {
-  act(() => {
-    fireEvent.mouseDown(element, {detail: 1, ...opts});
+  fireEvent.mouseDown(element, {detail: 1, ...opts});
+  fireEvent.mouseUp(element, {detail: 1, ...opts});
+  fireEvent.click(element, {detail: 1, ...opts});
+}
+
+/**
+ * Enables reading pageX/pageY from fireEvent.mouse*(..., {pageX: ..., pageY: ...}).
+ */
+export function installMouseEvent() {
+  beforeAll(() => {
+    let oldMouseEvent = MouseEvent;
+    // @ts-ignore
+    global.MouseEvent = class FakeMouseEvent extends MouseEvent {
+      _init: {pageX: number, pageY: number};
+      constructor(name, init) {
+        super(name, init);
+        this._init = init;
+      }
+      get pageX() {
+        return this._init.pageX;
+      }
+      get pageY() {
+        return this._init.pageY;
+      }
+    };
+    // @ts-ignore
+    global.MouseEvent.oldMouseEvent = oldMouseEvent;
   });
-  act(() => {
-    fireEvent.mouseUp(element, {detail: 1, ...opts});
+  afterAll(() => {
+    // @ts-ignore
+    global.MouseEvent = global.MouseEvent.oldMouseEvent;
   });
-  act(() => {
-    fireEvent.click(element, {detail: 1, ...opts});
+}
+
+export function installPointerEvent() {
+  beforeAll(() => {
+    // @ts-ignore
+    global.PointerEvent = class FakePointerEvent extends MouseEvent {
+      _init: {pageX: number, pageY: number, pointerType: string, pointerId: number};
+      constructor(name, init) {
+        super(name, init);
+        this._init = init;
+      }
+      get pointerType() {
+        return this._init.pointerType;
+      }
+      get pointerId() {
+        return this._init.pointerId;
+      }
+      get pageX() {
+        return this._init.pageX;
+      }
+      get pageY() {
+        return this._init.pageY;
+      }
+    };
+  });
+  afterAll(() => {
+    // @ts-ignore
+    delete global.PointerEvent;
   });
 }
 
@@ -46,10 +98,13 @@ export function triggerTouchPress(element) {
  * @param value The text.
  */
 export function typeText(el: HTMLElement, value: string, opts?: ITypeOpts) {
+  let skipClick = document.activeElement === el;
   for (let char of value) {
     act(() => {
-      userEvent.type(el, char, opts);
+      userEvent.type(el, char, {skipClick, ...opts});
     });
+
+    skipClick = true;
   }
 }
 

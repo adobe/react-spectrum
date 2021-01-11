@@ -20,9 +20,9 @@
 
 .spectrum-Tray-wrapper {
   inset-inline-start: 0;
-  /* Positioned at the bottom of the window */
+  /* Positioned at the top of the window */
   position: fixed;
-  bottom: 0;
+  top: 0;
 
   display: flex;
   justify-content: center;
@@ -30,11 +30,9 @@
 
   /* On mobile browsers, vh units are fixed based on the maximum height of the screen.
    * However, when you scroll, the toolbar and address bar shrink, making the viewport resize.
-   * We use the fill-available value to counteract this where supported. */
-  height: 100vh;
-  height: -moz-available;
-  height: -webkit-fill-available;
-  height: fill-available;
+   * The visual viewport also shrinks when the keyboard is displayed. We use the VisualViewport
+   * API in JS to set this CSS variable to ensure the height is correct. */
+  height: var(--spectrum-visual-viewport-height);
 
   /* Don't catch clicks */
   pointer-events: none;
@@ -52,10 +50,12 @@
   width: var(--spectrum-tray-width);
   max-width: var(--spectrum-tray-max-width);
   min-height: var(--spectrum-tray-min-height);
-  max-height: calc(100% - var(--spectrum-tray-margin-top));
+  max-height: calc(var(--spectrum-visual-viewport-height) - var(--spectrum-tray-margin-top));
   position: absolute;
   bottom: 0;
   outline: none;
+  display: flex;
+  flex-direction: column;
   padding-bottom: env(safe-area-inset-bottom);
 
   border-radius: var(--spectrum-tray-full-width-border-radius) var(--spectrum-tray-full-width-border-radius) var(--spectrum-tray-border-radius) var(--spectrum-tray-border-radius);
@@ -76,6 +76,11 @@
 
     transform: translateY(0);
   }
+}
+
+.spectrum-Tray--fixedHeight {
+  height: calc(var(--spectrum-visual-viewport-height) - var(--spectrum-tray-margin-top));
+  top: var(--spectrum-tray-margin-top);
 }
 
 /* Should match --spectrum-tray-max-width above */

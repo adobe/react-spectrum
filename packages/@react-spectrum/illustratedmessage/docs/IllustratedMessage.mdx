@@ -29,9 +29,7 @@ keywords: [illustrated message]
 
 <p>{docs.exports.IllustratedMessage.description}</p>
 
-<HeaderInfo
-  packageData={packageData}
-  componentNames={['IllustratedMessage']} />
+<HeaderInfo packageData={packageData} componentNames={['IllustratedMessage']} />
 
 ## Example
 
@@ -40,7 +38,7 @@ import NotFound from '@spectrum-icons/illustrations/NotFound';
 
 <IllustratedMessage>
   <NotFound />
-  <Heading>No Results</Heading>
+  <Heading>No results</Heading>
   <Content>Try another search</Content>
 </IllustratedMessage>
 ```
@@ -56,7 +54,7 @@ import Upload from '@spectrum-icons/illustrations/Upload';
 
 <IllustratedMessage>
   <Upload />
-  <Heading>Drag and Drop Your File</Heading>
+  <Heading>Drag and Drop your file</Heading>
   <Content>Select a File from your computer<br /> or Search Adobe Stock</Content>
 </IllustratedMessage>
 ```
@@ -83,9 +81,21 @@ If you pass an SVG in yourself, you'll need to ensure that the `role` prop is se
 
 <PropTable component={docs.exports.IllustratedMessage} links={docs.links} />
 
-## Example Illustrations
+## Example illustrations
 
 The below examples make use of illustrations included in the [@spectrum-icons/illustrations](http://npmjs.com/@spectrum-icons/illustrations) package.
+
+### No search results
+
+```tsx example
+import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
+
+<IllustratedMessage>
+  <NoSearchResults />
+  <Heading>No matching results</Heading>
+  <Content>Try another search.</Content>
+</IllustratedMessage>
+```
 
 ### 403 Forbidden
 
@@ -95,11 +105,11 @@ import Unauthorized from '@spectrum-icons/illustrations/Unauthorized';
 <IllustratedMessage>
   <Unauthorized />
   <Heading>Error 403: Access not allowed</Heading>
-  <Content>You do not permission to this page. Try checking the URL or visit a different page.</Content>
+  <Content>You do not have permission to access this page. Try checking the URL or visit a different page.</Content>
 </IllustratedMessage>
 ```
 
-### 404 Not Found
+### 404 Not found
 
 ```tsx example
 <IllustratedMessage>
@@ -109,7 +119,7 @@ import Unauthorized from '@spectrum-icons/illustrations/Unauthorized';
 </IllustratedMessage>
 ```
 
-### 500 Internal Server Error
+### 500 Internal server error
 
 ```tsx example
 import Error from '@spectrum-icons/illustrations/Error';
@@ -121,26 +131,26 @@ import Error from '@spectrum-icons/illustrations/Error';
 </IllustratedMessage>
 ```
 
-### 503 Service Unavailable
+### 503 Service unavailable
 
 ```tsx example
 import Unavailable from '@spectrum-icons/illustrations/Unavailable';
 
 <IllustratedMessage>
   <Unavailable />
-  <Heading>Error 503: Service Unavailable</Heading>
+  <Heading>Error 503: Service unavailable</Heading>
   <Content>This page isn't working. Try a different page or try again later.</Content>
 </IllustratedMessage>
 ```
 
-### 504 Gateway Timeout
+### 504 Gateway timeout
 
 ```tsx example
 import Timeout from '@spectrum-icons/illustrations/Timeout';
 
 <IllustratedMessage>
   <Timeout />
-  <Heading>Error 504: Server Timeout</Heading>
+  <Heading>Error 504: Server timeout</Heading>
   <Content>The server took too long. Please try again later.</Content>
 </IllustratedMessage>
 ```

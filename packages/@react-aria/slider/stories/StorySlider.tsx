@@ -1,41 +1,53 @@
-import {BaseSliderProps, SliderProps} from '@react-types/slider';
-import {DEFAULT_MIN_VALUE, useSliderState} from '@react-stately/slider';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {AriaSliderProps} from '@react-types/slider';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
 import styles from './story-slider.css';
+import {useNumberFormatter} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
-import {ValueBase} from '@react-types/shared';
+import {useSliderState} from '@react-stately/slider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-interface StorySliderProps extends BaseSliderProps, ValueBase<number> {
+interface StorySliderProps extends AriaSliderProps<number> {
   origin?: number,
-  onChangeEnd?: (value: number) => void,
-  showTip?: boolean
+  showTip?: boolean,
+  formatOptions?: Intl.NumberFormatOptions
 }
 
 export function StorySlider(props: StorySliderProps) {
   const trackRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const origin = props.origin ?? props.minValue ?? DEFAULT_MIN_VALUE;
+  const origin = props.origin ?? props.minValue ?? 0;
 
-  const multiProps: SliderProps = {
+  const multiProps: AriaSliderProps = {
     ...props,
     value: props.value == null ? undefined :  [props.value],
     defaultValue: props.defaultValue == null ? undefined : [props.defaultValue],
     onChange: props.onChange == null ? undefined : (vals: number[]) => props.onChange(vals[0]),
     onChangeEnd: props.onChangeEnd == null ? undefined : (vals: number[]) => props.onChangeEnd(vals[0])
   };
-
-  const state = useSliderState(multiProps);
+  const formatter = useNumberFormatter(props.formatOptions);
+  const state = useSliderState({...multiProps, numberFormatter: formatter});
   const {
-    containerProps,
+    groupProps,
     trackProps,
-    labelProps
+    labelProps,
+    outputProps
   } = useSlider(multiProps, state, trackRef);
 
   const {thumbProps, inputProps} = useSliderThumb({
     index: 0,
-    isReadOnly: props.isReadOnly,
     isDisabled: props.isDisabled,
     trackRef,
     inputRef
@@ -44,10 +56,10 @@ export function StorySlider(props: StorySliderProps) {
   const value = state.values[0];
 
   return (
-    <div className={styles.slider} {...containerProps}>
+    <div className={styles.slider} {...groupProps}>
       <div className={styles.sliderLabel}>
         {props.label && <label {...labelProps} className={styles.label}>{props.label}</label>}
-        <div className={styles.value}>{state.getThumbValueLabel(0)}</div>
+        <output {...outputProps} className={styles.value}>{state.getThumbValueLabel(0)}</output>
       </div>
       <div className={styles.trackContainer}>
         {
@@ -69,9 +81,10 @@ export function StorySlider(props: StorySliderProps) {
               'left': `${state.getThumbPercent(0) * 100}%`
             }}>
             {/* We put thumbProps on thumbHandle, so that you cannot drag by the tip */}
-            <div {...thumbProps} className={styles.thumbHandle} />
+            <div {...thumbProps} className={styles.thumbHandle}>
+              <VisuallyHidden><input className={styles.input} ref={inputRef} {...inputProps} /></VisuallyHidden>
+            </div>
             {props.showTip && <div className={styles.tip}>{state.getThumbValueLabel(0)}</div>}
-            <VisuallyHidden isFocusable><input className={styles.input} ref={inputRef} {...inputProps} /></VisuallyHidden>
           </div>
         </FocusRing>
       </div>

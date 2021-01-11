@@ -11,39 +11,40 @@
  */
 
 import AlertSmall from '@spectrum-icons/ui/AlertSmall';
-import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {classNames, createDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import InfoSmall from '@spectrum-icons/ui/InfoSmall';
 import {mergeProps} from '@react-aria/utils';
-import React, {RefObject, useRef} from 'react';
+import React, {useContext, useImperativeHandle, useRef} from 'react';
 import {SpectrumTooltipProps} from '@react-types/tooltip';
 import styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';
 import SuccessSmall from '@spectrum-icons/ui/SuccessSmall';
+import {TooltipContext} from './context';
 import {useTooltip} from '@react-aria/tooltip';
-import {useTooltipProvider} from './TooltipTrigger';
 
 let iconMap = {
-  neutral: '',
   info: InfoSmall,
   positive: SuccessSmall,
   negative: AlertSmall
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function Tooltip(props: SpectrumTooltipProps, ref: RefObject<HTMLDivElement>) {
+function Tooltip(props: SpectrumTooltipProps, ref: DOMRef) {
+  let {ref: overlayRef, arrowProps, state, ...tooltipProviderProps} = useContext(TooltipContext);
   let defaultRef = useRef();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ref = ref || defaultRef; // need to figure out how to merge?
-  let {ref: overlayRef, ...tooltipProviderProps} = useTooltipProvider();
+  overlayRef = overlayRef || defaultRef;
   props = mergeProps(props, tooltipProviderProps);
   let {
     variant = 'neutral',
-    placement = 'right',
+    placement = 'top',
     isOpen,
     showIcon,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let {tooltipProps} = useTooltip(props);
+  let {tooltipProps} = useTooltip(props, state);
+
+  // Sync ref with overlayRef from context.
+  useImperativeHandle(ref, () => createDOMRef(overlayRef));
 
   let Icon = iconMap[variant];
 
@@ -68,11 +69,10 @@ function Tooltip(props: SpectrumTooltipProps, ref: RefObject<HTMLDivElement>) {
           {props.children}
         </span>
       )}
-      <span className={classNames(styles, 'spectrum-Tooltip-tip')} />
+      <span {...arrowProps} className={classNames(styles, 'spectrum-Tooltip-tip')} />
     </div>
   );
 }
-
 
 /**
  * Display container for Tooltip content. Has a directional arrow dependent on its placement.

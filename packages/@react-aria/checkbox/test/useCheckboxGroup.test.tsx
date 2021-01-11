@@ -10,21 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render} from '@testing-library/react';
-import {AriaCheckboxGroupProps, AriaCheckboxProps} from '@react-types/checkbox';
+import {AriaCheckboxGroupItemProps, AriaCheckboxGroupProps} from '@react-types/checkbox';
 import {CheckboxGroupState, useCheckboxGroupState} from '@react-stately/checkbox';
 import React, {useRef} from 'react';
+import {render} from '@testing-library/react';
 import {useCheckboxGroup, useCheckboxGroupItem} from '../';
 import userEvent from '@testing-library/user-event';
 
-function Checkbox({checkboxGroupState, ...props}: AriaCheckboxProps & { checkboxGroupState: CheckboxGroupState }) {
+function Checkbox({checkboxGroupState, ...props}: AriaCheckboxGroupItemProps & { checkboxGroupState: CheckboxGroupState }) {
   const ref = useRef<HTMLInputElement>();
   const {children} = props;
   const {inputProps} = useCheckboxGroupItem(props, checkboxGroupState, ref);
   return <label>{children}<input ref={ref} {...inputProps} /></label>;
 }
 
-function CheckboxGroup({groupProps, checkboxProps}: {groupProps: AriaCheckboxGroupProps, checkboxProps: AriaCheckboxProps[]}) {
+function CheckboxGroup({groupProps, checkboxProps}: {groupProps: AriaCheckboxGroupProps, checkboxProps: AriaCheckboxGroupItemProps[]}) {
   const state = useCheckboxGroupState(groupProps);
   const {groupProps: checkboxGroupProps, labelProps} = useCheckboxGroup(groupProps, state);
   return (
@@ -68,7 +68,7 @@ describe('useCheckboxGroup', () => {
     expect(checkboxes[2].checked).toBe(false);
 
     let dragons = getByLabelText('Dragons');
-    act(() => {userEvent.click(dragons);});
+    userEvent.click(dragons);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(['dragons']);
 
@@ -218,7 +218,7 @@ describe('useCheckboxGroup', () => {
     expect(checkboxes[0]).not.toHaveAttribute('disabled');
   });
 
-  it('sets readOnly on each checkbox', () => {
+  it('sets aria-readonly="true" on each checkbox', () => {
     let {getAllByRole} = render(
       <CheckboxGroup
         groupProps={{label: 'Favorite Pet', isReadOnly: true}}
@@ -230,9 +230,9 @@ describe('useCheckboxGroup', () => {
     );
 
     let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];
-    expect(checkboxes[0]).toHaveAttribute('readonly');
-    expect(checkboxes[0]).toHaveAttribute('readonly');
-    expect(checkboxes[0]).toHaveAttribute('readonly');
+    expect(checkboxes[0]).toHaveAttribute('aria-readonly', 'true');
+    expect(checkboxes[1]).toHaveAttribute('aria-readonly', 'true');
+    expect(checkboxes[2]).toHaveAttribute('aria-readonly', 'true');
   });
 
   it('should not update state for readonly checkbox', () => {
@@ -251,7 +251,7 @@ describe('useCheckboxGroup', () => {
     let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];
     let dragons = getByLabelText('Dragons');
 
-    act(() => {userEvent.click(dragons);});
+    userEvent.click(dragons);
 
     expect(groupOnChangeSpy).toHaveBeenCalledTimes(0);
     expect(checkboxOnChangeSpy).toHaveBeenCalledTimes(0);

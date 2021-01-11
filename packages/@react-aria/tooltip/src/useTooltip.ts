@@ -11,25 +11,32 @@
  */
 
 import {AriaTooltipProps} from '@react-types/tooltip';
-import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes} from 'react';
+import {TooltipTriggerState} from '@react-stately/tooltip';
+import {useHover} from '@react-aria/interactions';
 
 interface TooltipAria {
+  /**
+   * Props for the tooltip element.
+   */
   tooltipProps: HTMLAttributes<HTMLElement>
 }
 
-export function useTooltip(props: AriaTooltipProps): TooltipAria {
-  let {
-    id,
-    role = 'tooltip'
-  } = props;
+/**
+ * Provides the accessibility implementation for a Tooltip component.
+ */
+export function useTooltip(props: AriaTooltipProps, state?: TooltipTriggerState): TooltipAria {
+  let domProps = filterDOMProps(props, {labelable: true});
 
-  let domProps = filterDOMProps(props);
+  let {hoverProps} = useHover({
+    onHoverStart: () => state?.open(true),
+    onHoverEnd: () => state?.close()
+  });
 
   return {
-    tooltipProps: mergeProps(domProps, {
-      role,
-      id: useId(id)
+    tooltipProps: mergeProps(domProps, hoverProps, {
+      role: 'tooltip'
     })
   };
 }

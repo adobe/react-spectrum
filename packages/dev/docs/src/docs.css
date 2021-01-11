@@ -184,6 +184,15 @@ html, body {
   text-decoration: none;
 }
 
+.nav .sideNavItem {
+  justify-content: space-between;
+}
+
+.sideNavItem span {
+  margin-left: 10px;
+  cursor: pointer;
+}
+
 .sideNavItem:focus {
   background-color: var(--spectrum-sidenav-item-background-color-key-focus);
   color: var(--spectrum-sidenav-item-text-color-key-focus);
@@ -722,11 +731,15 @@ h2.sectionHeader {
     left: auto;
     right: 100%;
     z-index: 100;
-    transition: transform 200ms;
+    transition: transform 200ms, visibility 0s 200ms;
+    visibility: hidden;
+    outline: 0;
   }
 
   .nav.visible {
     transform: translateX(100%);
+    transition-delay: 0ms;
+    visibility: unset;
   }
 
   main:before {

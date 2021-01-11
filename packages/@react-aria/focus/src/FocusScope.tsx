@@ -239,24 +239,23 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
           focusFirstInScope(activeScope.current);
         }
       } else {
-        e.stopPropagation();
         activeScope = scopeRef;
         focusedNode.current = e.target;
       }
     };
 
     let onBlur = (e) => {
-      e.stopPropagation();
-      let isInAnyScope = isElementInAnyScope(e.relatedTarget, scopes);
+      // Firefox doesn't shift focus back to the Dialog properly without this
+      raf.current = requestAnimationFrame(() => {
+        // Use document.activeElement instead of e.relatedTarget so we can tell if user clicked into iframe
+        let isInAnyScope = isElementInAnyScope(document.activeElement, scopes);
 
-      if (!isInAnyScope) {
-        activeScope = scopeRef;
-        focusedNode.current = e.target;
-        // Firefox doesn't shift focus back to the Dialog properly without this
-        raf.current = requestAnimationFrame(() => {
+        if (!isInAnyScope) {
+          activeScope = scopeRef;
+          focusedNode.current = e.target;
           focusedNode.current.focus();
-        });
-      }
+        }
+      });
     };
 
     document.addEventListener('keydown', onKeyDown, false);
@@ -274,7 +273,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
     return () => cancelAnimationFrame(raf.current);
-  }, []);
+  }, [raf]);
 }
 
 function isElementInAnyScope(element: Element, scopes: Set<RefObject<HTMLElement[]>>) {

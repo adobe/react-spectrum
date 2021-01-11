@@ -23,10 +23,10 @@ function template(iconName) {
   }
   return (
 `import {${iconName} as IconComponent} from '@adobe/react-spectrum-workflow/dist/${importName}';
-import {Icon} from '@react-spectrum/icon';
+import {Icon, IconPropsWithoutChildren} from '@react-spectrum/icon';
 import React from 'react';
 
-export default function ${iconRename}(props) {
+export default function ${iconRename}(props: IconPropsWithoutChildren) {
   return <Icon {...props}><IconComponent /></Icon>;
 }
 `
