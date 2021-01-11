@@ -24,11 +24,14 @@ import {DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared'
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusRing} from '@react-aria/focus';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {MobileComboBox} from './MobileComboBox';
 import {Placement} from '@react-types/overlays';
 import {Popover} from '@react-spectrum/overlays';
 import {PressResponder, useHover} from '@react-aria/interactions';
+import {ProgressCircle} from '@react-spectrum/progress';
 import React, {
   InputHTMLAttributes,
   ReactElement,
@@ -40,10 +43,12 @@ import React, {
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
+import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter} from '@react-aria/i18n';
 import {useLayoutEffect} from '@react-aria/utils';
+import {useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
@@ -188,6 +193,22 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     isLoading
   } = props;
   let {hoverProps, isHovered} = useHover({});
+  let formatMessage = useMessageFormatter(intlMessages);
+
+  let loading = (
+    <ProgressCircle
+      aria-label={formatMessage('loading')}
+      size="S"
+      isIndeterminate
+      UNSAFE_className={classNames(
+        textfieldStyles,
+        'spectrum-Textfield-circleLoader',
+        classNames(
+          styles,
+          'spectrum-InputGroup-input-circleLoader'
+        )
+      )} />
+  );
 
   return (
     <FocusRing
@@ -234,16 +255,11 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
               'spectrum-InputGroup-input-validationIcon'
             )
           }
-          loadingCircleClassName={
-            classNames(
-              styles,
-              'spectrum-InputGroup-input-circleLoader'
-            )
-          }
           isDisabled={isDisabled}
           isQuiet={isQuiet}
           validationState={validationState}
-          isLoading={isLoading} />
+          isLoading={isLoading}
+          loadingIcon={loading} />
         <PressResponder preventFocusOnPress>
           <FieldButton
             {...triggerProps}

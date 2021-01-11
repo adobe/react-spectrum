@@ -359,6 +359,21 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
       isDisabled={isDisabled} />
   );
 
+  let loading = (
+    <ProgressCircle
+      aria-label={formatMessage('loading')}
+      size="S"
+      isIndeterminate
+      UNSAFE_className={classNames(
+        textfieldStyles,
+        'spectrum-Textfield-circleLoader',
+        classNames(
+          styles,
+          'spectrum-InputGroup-input-circleLoader'
+        )
+      )} />
+  );
+
   // Close the software keyboard on scroll to give the user a bigger area to scroll.
   // But only do this if scrolling with touch, otherwise it can cause issues with touch
   // screen readers.
@@ -398,6 +413,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={isLoadingInitial}
+          loadingIcon={loading}
           validationState={validationState}
           wrapperChildren={(state.inputValue !== '' && !props.isReadOnly) && clearButton}
           UNSAFE_className={

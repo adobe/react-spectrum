@@ -22,8 +22,6 @@ import {Label} from '@react-spectrum/label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from '@react-aria/utils';
-// TODO: figure out if ProgressCircle should go into ComboBox (add a prop to pass a free form element to the validation icon spot?) or stay here. Will also affect css.
-import {ProgressCircle} from '@react-spectrum/progress';
 import React, {cloneElement, forwardRef, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, TextareaHTMLAttributes, useImperativeHandle, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
@@ -35,11 +33,11 @@ interface TextFieldBaseProps extends SpectrumTextFieldProps {
   wrapperChildren?: ReactElement | ReactElement[],
   inputClassName?: string,
   validationIconClassName?: string,
-  loadingCircleClassName?: string,
   multiLine?: boolean,
   labelProps?: LabelHTMLAttributes<HTMLLabelElement>,
   inputProps: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
   inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  loadingIcon?: ReactElement,
   isLoading?: boolean
 }
 
@@ -64,8 +62,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     inputProps,
     inputRef,
     isLoading,
+    loadingIcon,
     validationIconClassName,
-    loadingCircleClassName,
     ...otherProps
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
@@ -112,20 +110,6 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     )
   });
 
-  // TODO: Should this be in TextFieldBase or in ComboBox? Will we have other async loading textfields other than combobox?
-  let loading = (
-    <ProgressCircle
-      // TODO: formatMessage this string if we decide to keep in TextFieldBase
-      aria-label="Loading..."
-      size="S"
-      isIndeterminate
-      UNSAFE_className={classNames(
-        styles,
-        'spectrum-Textfield-circleLoader',
-        loadingCircleClassName
-      )} />
-  );
-
   let textField = (
     <div
       className={
@@ -160,7 +144,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       </FocusRing>
       {icon}
       {validationState && !isLoading ? validation : null}
-      {isLoading && loading}
+      {isLoading && loadingIcon}
       {wrapperChildren}
     </div>
   );
