@@ -481,7 +481,7 @@ function ListDataExample() {
   let {contains} = useFilter({sensitivity: 'base'});
   let list = useListData({
     initialItems: items,
-    filterFn(item, text) {
+    filter(item, text) {
       return contains(item.name, text);
     }
   });
@@ -517,7 +517,7 @@ function AsyncLoadingClientExample() {
         cursor: json.next
       };
     },
-    filterFn(item, text) {
+    filter(item, text) {
       return contains(item.name, text);
     },
     initialFilterText: 'B'

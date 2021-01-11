@@ -23,7 +23,7 @@ interface ListOptions<T> {
   /** A function that returns a unique key for an item object. */
   getKey?: (item: T) => Key,
   /** A function that returns whether a item matches the current filter text. */
-  filterFn?: (item: T, filterText: string) => boolean
+  filter?: (item: T, filterText: string) => boolean
 }
 
 export interface ListData<T> {
@@ -123,7 +123,7 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
     initialItems = [],
     initialSelectedKeys,
     getKey = (item: any) => item.id || item.key,
-    filterFn,
+    filter,
     initialFilterText = ''
   } = options;
 
@@ -135,8 +135,8 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
   });
 
   let filteredItems = useMemo(
-    () => filterFn ? state.items.filter(item => filterFn(item, state.filterText)) : state.items,
-    [state.items, state.filterText, filterFn]);
+    () => filter ? state.items.filter(item => filter(item, state.filterText)) : state.items,
+    [state.items, state.filterText, filter]);
 
   return {
     ...state,

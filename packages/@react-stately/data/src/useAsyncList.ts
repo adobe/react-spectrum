@@ -31,7 +31,7 @@ interface AsyncListOptions<T, C> {
    */
   sort?: AsyncListLoadFunction<T, C>,
   /** A function that returns whether a item matches the current filter text. */
-  filterFn?: (item: T, filterText: string) => boolean
+  filter?: (item: T, filterText: string) => boolean
 }
 
 type AsyncListLoadFunction<T, C> = (state: AsyncListLoadOptions<T, C>) => Promise<AsyncListStateUpdate<T, C>>;
@@ -249,7 +249,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     initialSortDescriptor,
     getKey = (item: any) => item.id || item.key,
     initialFilterText = '',
-    filterFn
+    filter
   } = options;
 
   let [data, dispatch] = useReducer<Reducer<AsyncListState<T, C>, Action<T, C>>>(reducer, {
@@ -284,16 +284,16 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
   // Handle initial load and reload on changes to filter text but only if performing server side filtering
   // Kinda weird since it will trigger a reload when user selects a option
   useEffect(() => {
-    if (isInitialLoad.current || !filterFn) {
+    if (isInitialLoad.current || !filter) {
       dispatchFetch({type: 'loading'}, load);
     }
     isInitialLoad.current = false;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data.filterText, filterFn]);
+  }, [data.filterText, filter]);
 
   let filteredItems = useMemo(
-    () => filterFn ? data.items.filter(item => filterFn(item, data.filterText)) : data.items,
-    [data.items, data.filterText, filterFn]);
+    () => filter ? data.items.filter(item => filter(item, data.filterText)) : data.items,
+    [data.items, data.filterText, filter]);
 
   return {
     items: filteredItems,

@@ -12,8 +12,7 @@
 
 import {AsyncLoadable, CollectionBase, DOMProps, FocusableProps, InputBase, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase, Validation} from '@react-types/shared';
 
-// TODO: Should AsyncLoadable go in ComboBoxProps or SpectrumComboBoxProps
-export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, InputBase, TextInputBase, DOMProps, Validation, FocusableProps, AsyncLoadable {
+export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, InputBase, TextInputBase, DOMProps, Validation, FocusableProps {
   /** The list of ComboBox items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of ComboBox items (controlled). */
@@ -49,7 +48,7 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
   shouldFlip?: boolean
 }
 
-export interface SpectrumComboBoxProps<T> extends ComboBoxProps<T>, SpectrumLabelableProps, StyleProps {
+export interface SpectrumComboBoxProps<T> extends ComboBoxProps<T>, SpectrumLabelableProps, StyleProps, AsyncLoadable {
   /** Whether the ComboBox should be displayed with a quiet style. */
   isQuiet?: boolean,
   /**
