@@ -19,6 +19,7 @@ import {
   useResizeObserver,
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
+import comboboxStyles from './combobox.css';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
@@ -71,6 +72,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     onLoadMore
   } = props;
 
+  let formatMessage = useMessageFormatter(intlMessages);
+  let isAsync = isLoading != null;
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
   let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
@@ -80,7 +83,13 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   let domRef = useFocusableRef(ref, inputRef);
 
   let {contains} = useFilter({sensitivity: 'base'});
-  let state = useComboBoxState({...props, defaultFilter: contains});
+  let state = useComboBoxState(
+    {
+      ...props,
+      defaultFilter: contains,
+      allowsEmptyCollection: isAsync
+    }
+  );
   let layout = useListBoxLayout(state);
 
   let {buttonProps, inputProps, listBoxProps, labelProps} = useComboBox(
@@ -158,7 +167,13 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           // Set max height: inherit so Tray scrolling works
           UNSAFE_style={{maxHeight: 'inherit'}}
           shouldUseVirtualFocus
-          onLoadMore={onLoadMore} />
+          isLoading={isLoading}
+          onLoadMore={onLoadMore}
+          renderEmptyState={() => isAsync && (
+            <span className={classNames(comboboxStyles, 'no-results')}>
+              {formatMessage('noResults')}
+            </span>
+          )} />
         <DismissButton onDismiss={() => state.close()} />
       </Popover>
     </>
