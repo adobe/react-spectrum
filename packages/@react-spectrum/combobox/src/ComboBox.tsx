@@ -82,8 +82,6 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({...props, defaultFilter: contains});
   let layout = useListBoxLayout(state);
-  let isLoadingInitial = isLoading && state.collection.size === 0;
-  let isLoadingMore = isLoading && state.collection.size > 0;
 
   let {buttonProps, inputProps, listBoxProps, labelProps} = useComboBox(
     {
@@ -135,7 +133,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
       <Field {...props} labelProps={labelProps} ref={domRef}>
         <ComboBoxInput
           {...props}
-          isLoading={isLoadingInitial}
+          isLoading={isLoading}
           inputProps={inputProps}
           inputRef={inputRef}
           triggerProps={buttonProps}
@@ -160,7 +158,6 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           // Set max height: inherit so Tray scrolling works
           UNSAFE_style={{maxHeight: 'inherit'}}
           shouldUseVirtualFocus
-          isLoading={isLoadingMore}
           onLoadMore={onLoadMore} />
         <DismissButton onDismiss={() => state.close()} />
       </Popover>
