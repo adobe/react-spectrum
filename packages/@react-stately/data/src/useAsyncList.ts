@@ -107,7 +107,6 @@ interface AsyncListData<T> extends ListData<T> {
 }
 
 function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncListState<T, C> {
-  console.log('in reducer data state and action type', data.state, action.type, data.items);
   switch (data.state) {
     case 'idle':
     case 'error':
@@ -289,7 +288,6 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
   const dispatchFetch = async (action: Action<T, C>, fn: AsyncListLoadFunction<T, C>) => {
     let abortController = new AbortController();
     try {
-      console.log('in dispatchFetch', action.filterText, data.state, action.type);
       dispatch({...action, abortController});
       let response = await fn({
         items: data.items.slice(),
@@ -330,7 +328,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     },
     loadMore() {
       // Ignore if already loading more or if performing server side filtering.
-      if (data.state === 'loadingMore' || data.cursor == null) {
+      if (data.state === 'loadingMore' || (data.state === 'filtering' && !filter) || data.cursor == null) {
         return;
       }
 
@@ -343,7 +341,6 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
       dispatch({type: 'update', updater: fn});
     }),
     setFilterText(filterText: string) {
-      console.log('filterText', filterText, filter, data.items);
       if (filter && data.items.length > 0) {
         // If client side filtering and items already exist, don't sent a fetch request, just update filterText
         dispatch({type: 'filtering', filterText});
