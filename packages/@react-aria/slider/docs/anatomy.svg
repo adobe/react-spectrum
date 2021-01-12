@@ -3,17 +3,17 @@
   <desc>Shows a slider with labels pointing to its parts including the label, group, track, thumb, and output elements.</desc>
   <g transform="translate(-36 -40)">
     <g transform="translate(-130 401)">
-      <rect width="20" height="19" transform="translate(413 -343)" fill="red" opacity="0" /><text transform="translate(423 -348)" fill="#4a6fc3" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <text transform="translate(423 -348)" fill="#4a6fc3" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
         <tspan x="-17.544" y="0">Output</tspan>
       </text>
       <path d="M-6714-361.5a2.5,2.5,0,0,1,2-2.45V-380h1v16.049a2.5,2.5,0,0,1,2,2.45,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-6714-361.5Z" transform="translate(7134.5 37)" fill="#a2b6e1" />
     </g>
     <g transform="translate(-348 401)">
-      <rect width="20" height="19" transform="translate(392 -343)" fill="red" opacity="0" /><text transform="translate(402 -348)" fill="#4a6fc3" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <text transform="translate(402 -348)" fill="#4a6fc3" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
         <tspan x="-13.826" y="0">Label</tspan>
       </text>
       <path d="M-6496-361.5a2.5,2.5,0,0,1,2-2.449V-380h1v16.051a2.5,2.5,0,0,1,2,2.449,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-6496-361.5Z" transform="translate(6895.5 37)" fill="#a2b6e1" />
-      <rect width="20" height="19" transform="translate(392 -343)" fill="red" opacity="0" /><text transform="translate(402 -348)" fill="#4a6fc3" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <text transform="translate(402 -348)" fill="#4a6fc3" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
         <tspan x="-13.826" y="0">Label</tspan>
       </text>
     </g><text transform="translate(40 93)" fill="#718dcf" font-size="18" font-family="Adobe-Clean">
@@ -28,13 +28,13 @@
       <path d="M 12 3 C 7.037380218505859 3 3 7.037380218505859 3 12 C 3 16.96261978149414 7.037380218505859 21 12 21 C 16.96261978149414 21 21 16.96261978149414 21 12 C 21 7.037380218505859 16.96261978149414 3 12 3 M 12 0 C 18.62742042541504 0 24 5.372579574584961 24 12 C 24 18.62742042541504 18.62742042541504 24 12 24 C 5.372579574584961 24 0 18.62742042541504 0 12 C 0 5.372579574584961 5.372579574584961 0 12 0 Z" stroke="none" fill="#4a6fc3" />
     </g>
     <g transform="translate(-284 468.5)">
-      <rect width="20" height="23" transform="translate(354 -352.5)" fill="red" opacity="0" /><text transform="translate(364 -316.5)" fill="#4a6fc3" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <text transform="translate(364 -316.5)" fill="#4a6fc3" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
         <tspan x="-13.435" y="0">Track</tspan>
       </text>
       <path d="M-6750-422.5v-20.051a2.5,2.5,0,0,1-2-2.449,2.5,2.5,0,0,1,2.5-2.5,2.5,2.5,0,0,1,2.5,2.5,2.5,2.5,0,0,1-2,2.449V-422.5Z" transform="translate(7113.5 93)" fill="#a2b6e1" />
     </g>
     <g transform="translate(-168 468.5)">
-      <rect width="20" height="23" transform="translate(354 -352.5)" fill="red" opacity="0" /><text transform="translate(364 -316.5)" fill="#4a6fc3" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <text transform="translate(364 -316.5)" fill="#4a6fc3" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
         <tspan x="-18.128" y="0">Thumb</tspan>
       </text>
       <path d="M-6674-424.5v-18.049a2.5,2.5,0,0,1-2-2.45,2.5,2.5,0,0,1,2.5-2.5,2.5,2.5,0,0,1,2.5,2.5,2.5,2.5,0,0,1-2,2.45v18.05Z" transform="translate(7037.5 95)" fill="#a2b6e1" />
@@ -44,7 +44,7 @@
       <rect x="0.5" y="0.5" width="271" height="29" rx="3.5" fill="none" />
     </g>
     <g transform="translate(-228 424)">
-      <rect width="20" height="19" transform="translate(392 -343)" fill="red" opacity="0" /><text transform="translate(402 -348)" fill="#4a6fc3" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <text transform="translate(402 -348)" fill="#4a6fc3" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
         <tspan x="-15.854" y="0">Group</tspan>
       </text>
       <path d="M-6496-361.5a2.5,2.5,0,0,1,2-2.449V-380h1v16.051a2.5,2.5,0,0,1,2,2.449,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-6496-361.5Z" transform="translate(6895.5 37)" fill="#a2b6e1" />

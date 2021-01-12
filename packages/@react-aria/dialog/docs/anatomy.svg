@@ -25,13 +25,13 @@
       </text>
     </g>
     <g transform="translate(-318 401)">
-      <rect width="20" height="83" transform="translate(392 -343)" fill="red" opacity="0" /><text transform="translate(402 -348)" fill="#496ec2" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <text transform="translate(402 -348)" fill="#496ec2" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
         <tspan x="-10.699" y="0">Title</tspan>
       </text>
       <path d="M-682-298.5a2.5,2.5,0,0,1,2-2.449V-381h1v80.05a2.5,2.5,0,0,1,2,2.449,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-682-298.5Z" transform="translate(1081.5 38)" fill="#718dcf" />
     </g>
     <g transform="translate(-230 401)">
-      <rect width="20" height="55" transform="translate(392 -343)" fill="red" opacity="0" /><text transform="translate(402 -348)" fill="#496ec2" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <text transform="translate(402 -348)" fill="#496ec2" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
         <tspan x="-16.874" y="0">Dialog</tspan>
       </text>
       <path d="M-770-326.5a2.5,2.5,0,0,1,2-2.45V-381h1v52.049a2.5,2.5,0,0,1,2,2.45,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-770-326.5Z" transform="translate(1169.5 38)" fill="#718dcf" />

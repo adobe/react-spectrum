@@ -3,12 +3,11 @@
   <desc>Shows a checkbox component with labels pointing to its parts, including the input, and label elements.</desc>
   <g transform="translate(-72 -88)">
     <g transform="translate(127 88)">
-      <rect width="95" height="48" fill="red" opacity="0" /><text transform="translate(36 30)" fill="#4a6fc3" font-size="21" font-family="Adobe-Clean">
+      <text transform="translate(36 30)" fill="#4a6fc3" font-size="21" font-family="Adobe-Clean">
         <tspan x="0" y="0">Subscribe</tspan>
       </text>
       <path d="M3,0H18a3,3,0,0,1,3,3V18a3,3,0,0,1-3,3H3a3,3,0,0,1-3-3V3A3,3,0,0,1,3,0Z" transform="translate(0 13.5)" fill="#718dcf" />
       <g transform="translate(3 16.5)">
-        <rect width="15" height="15" fill="#f0f" opacity="0" />
         <path d="M5.617,14a1.53,1.53,0,0,1-1.224-.625L.839,8.505A1.681,1.681,0,0,1,.59,6.876,1.567,1.567,0,0,1,1.835,5.861a1.525,1.525,0,0,1,1.452.648l2.33,3.232,6.1-8.1A1.525,1.525,0,0,1,13.165.991,1.567,1.567,0,0,1,14.41,2.006a1.681,1.681,0,0,1-.249,1.63L6.841,13.375A1.53,1.53,0,0,1,5.617,14Z" transform="translate(0 0)" fill="#fafafa" />
       </g>
     </g>
@@ -18,7 +17,7 @@
       <path d="M-7607-395.5v-39.05a2.5,2.5,0,0,1-2-2.45,2.5,2.5,0,0,1,2.5-2.5,2.5,2.5,0,0,1,2.5,2.5,2.5,2.5,0,0,1-2,2.45v39.05Z" transform="translate(760.5 -7928.5) rotate(-90)" fill="#a2b6e1" />
     </g>
     <g transform="translate(-57 80)">
-      <rect width="23" height="20" transform="translate(160 22)" fill="red" opacity="0" /><text transform="translate(156 35)" fill="#4a6fc3" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <text transform="translate(156 35)" fill="#4a6fc3" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
         <tspan x="-26.299" y="0">Input</tspan>
       </text>
       <path d="M-2458.95-69H-2479v-1h20.05a2.5,2.5,0,0,1,2.45-2,2.5,2.5,0,0,1,2.5,2.5,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-2458.95-69Z" transform="translate(2639 101.5)" fill="#a2b6e1" />
