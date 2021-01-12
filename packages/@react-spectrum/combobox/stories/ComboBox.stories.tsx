@@ -507,7 +507,6 @@ function AsyncLoadingClientExample() {
 
   let list = useAsyncList<Pokemon>({
     async load({signal, cursor}) {
-      console.log('cursor', cursor)
       let res = await fetch(cursor || 'https://pokeapi.co/api/v2/pokemon', {signal});
       let json = await res.json();
       // The API is too fast sometimes, so make it take longer so we can see the spinner
@@ -523,7 +522,7 @@ function AsyncLoadingClientExample() {
     },
     initialFilterText: 'B'
   });
-  console.log('items', list.items);
+
   return (
     <ComboBox
       label="Pick a Pokemon"

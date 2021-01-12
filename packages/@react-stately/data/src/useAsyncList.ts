@@ -11,7 +11,7 @@
  */
 
 import {createListActions, ListData, ListState} from './useListData';
-import {Key, Reducer, useEffect, useMemo, useReducer, useRef} from 'react';
+import {Key, Reducer, useEffect, useMemo, useReducer} from 'react';
 import {Selection, SortDescriptor} from '@react-types/shared';
 
 interface AsyncListOptions<T, C> {
@@ -83,7 +83,8 @@ interface Action<T, C> {
   error?: Error,
   abortController?: AbortController,
   updater?: (state: ListState<T>) => ListState<T>,
-  cursor?: C
+  cursor?: C,
+  filterText?: string
 }
 
 interface AsyncListData<T> extends ListData<T> {
@@ -106,6 +107,7 @@ interface AsyncListData<T> extends ListData<T> {
 }
 
 function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncListState<T, C> {
+  console.log('in reducer data state and action type', data.state, action.type, data.items);
   switch (data.state) {
     case 'idle':
     case 'error':
@@ -114,15 +116,22 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
         case 'loadingMore':
         case 'sorting':
         case 'filtering':
-          // console.log('action.type 0', action.type, action.filterText);
+          // If there isn't a abortController provided by the action and it is a filtering action (aka clientside filtering), it is an filterText update
+          if (!action.abortController && action.type === 'filtering') {
+            return {
+              ...data,
+              filterText: action.filterText ?? data.filterText
+            };
+          }
+
           return {
             ...data,
-            ...(action.updater && action.updater(data)),
+            filterText: action.filterText ?? data.filterText,
             state: action.type,
             // Reset items to an empty list if loading, but not when sorting.
             items: action.type === 'loading' ? [] : data.items,
             sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
-            abortController: action.abortController,
+            abortController: action.abortController
           };
         case 'update':
           return {
@@ -171,27 +180,27 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
         case 'loadingMore':
         case 'sorting':
         case 'filtering':
+          // If there isn't a abortController provided by the action and it is a filtering action (aka clientside filtering), it is an filterText update
+          if (!action.abortController && action.type === 'filtering') {
+            return {
+              ...data,
+              filterText: action.filterText ?? data.filterText
+              // TODO: should this be a return to idle?
+              // state: 'idle'
+            };
+          }
+
           // We're already loading, and another load was triggered at the same time.
           // We need to abort the previous load and start a new one.
           data.abortController.abort();
-          // console.log('action.type 1', action.type, action.filterText);
           return {
             ...data,
-            ...(action.updater && action.updater(data)),
+            filterText: action.filterText ?? data.filterText,
             state: action.type,
             // Reset items to an empty list if loading, but not when sorting.
             items: action.type === 'loading' ? [] : data.items,
-            abortController: action.abortController,
+            abortController: action.abortController
           };
-        // case 'update':
-        //   // TODO: Ask if this is appropriate, I want to cancel prior loads if the user is rapidly typing
-        //   // but "update" also covers a bunch of other actions (like item insertion)
-        //   // Was loading but update happened, so abort previous load.
-        //   data.abortController.abort();
-        //   return {
-        //     ...data,
-        //     ...action.updater(data)
-        //   };
         default:
           throw new Error(`Invalid action "${action.type}" in state "${data.state}"`);
       }
@@ -216,11 +225,9 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
           };
         case 'loading':
         case 'sorting':
-        // case 'filtering':
           // We're already loading more, and another load was triggered at the same time.
           // We need to abort the previous load more and start a new one.
           data.abortController.abort();
-          // console.log('action.type 2', action.type, action.filterText);
           return {
             ...data,
             state: 'loading',
@@ -228,25 +235,22 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
             items: action.type === 'loading' ? [] : data.items,
             abortController: action.abortController
           };
-        // case 'update':
-        //   // TODO: Ask if this is appropriate
-        //   // Scenario is if menu is open and is attempting to load more items and user begins to type
-        //   // Cancel previous load and thats it? Additional load will need to be triggered by user action (either more typing or scrolling down the list)
-        //   data.abortController.abort();
-
-        //   return {
-        //     ...data,
-        //     ...action.updater(data)
-        //   };
         case 'filtering':
+          // If there isn't a abortController provided by the action (aka client side filtering), it is an filterText update
+          if (!action.abortController) {
+            return {
+              ...data,
+              filterText: action.filterText ?? data.filterText
+            };
+          }
+
           // We're already loading more, and filter text was changed at the same time.
           // We need to abort the previous load more and start a new one.
           data.abortController.abort();
-          // console.log('action.type 3', action.type, action.filterText);
           return {
             ...data,
-            ...(action.updater && action.updater(data)),
-            state: 'filtering',
+            filterText: action.filterText ?? data.filterText,
+            state: data.cursor ? data.state : 'filtering',
             items: data.items,
             abortController: action.abortController
           };
@@ -285,16 +289,15 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
   const dispatchFetch = async (action: Action<T, C>, fn: AsyncListLoadFunction<T, C>) => {
     let abortController = new AbortController();
     try {
+      console.log('in dispatchFetch', action.filterText, data.state, action.type);
       dispatch({...action, abortController});
-      // console.log('actionType', action.type, action.cursor);
       let response = await fn({
         items: data.items.slice(),
         selectedKeys: data.selectedKeys,
         sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
         signal: abortController.signal,
-        // Retain cursor if loadingMore or if "filtering" happens within a client side filtering combobox
-        cursor: action.type === 'loadingMore' || (action.type === 'filtering' && filter)? data.cursor : null,
-        filterText: data.filterText
+        cursor: action.type === 'loadingMore' ? data.cursor : null,
+        filterText: action.filterText ?? data.filterText
       });
       dispatch({type: 'success', ...response, abortController});
     } catch (e) {
@@ -302,25 +305,13 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     }
   };
 
-  let isInitialLoad = useRef(true);
-  // Handle initial load and reload on changes to filter text but only if performing server side filtering
-  // Kinda weird since it will trigger a reload when user selects a option
   useEffect(() => {
-    if (isInitialLoad.current) {
-      dispatchFetch({type: 'loading'}, load);
-    } else if (!filter) {
-      // console.log("gawkjeKJGKJEBKGBWEKGJBWEKGJB")
-      dispatchFetch({type: 'filtering'}, load);
-    }
-    isInitialLoad.current = false;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter, data.filterText]);
+    dispatchFetch({type: 'loading'}, load);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   let filteredItems = useMemo(
-    () => {
-      // console.log('in useMemo', data.items.length, data.items);
-      return filter ? data.items.filter(item => filter(item, data.filterText)) : data.items
-    },
+    () =>  filter ? data.items.filter(item => filter(item, data.filterText)) : data.items,
     [data.items, data.filterText, filter]);
 
   return {
@@ -339,14 +330,10 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     },
     loadMore() {
       // Ignore if already loading more.
+      console.log('trying to loadMore');
       if (data.state === 'loadingMore' || data.cursor == null) {
         return;
       }
-      // // Ignore if already loading or loading more.
-      // // TODO: ask if this is appropriate
-      // if (data.state === 'loadingMore' || data.state === 'loading' || data.cursor == null) {
-      //   return;
-      // }
 
       dispatchFetch({type: 'loadingMore'}, load);
     },
@@ -357,7 +344,13 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
       dispatch({type: 'update', updater: fn});
     }),
     setFilterText(filterText: string) {
-      dispatchFetch({type: 'filtering', updater: state => ({...state, filterText})}, load);
+      console.log('filterText', filterText, filter, data.items);
+      if (filter && data.items.length > 0) {
+        // If client side filtering and items already exist, don't sent a fetch request, just update filterText
+        dispatch({type: 'filtering', filterText});
+      } else {
+        dispatchFetch({type: 'filtering', filterText}, load);
+      }
     }
   };
 }
