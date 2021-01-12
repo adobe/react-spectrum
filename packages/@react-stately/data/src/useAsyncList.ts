@@ -329,9 +329,8 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
       dispatchFetch({type: 'loading'}, load);
     },
     loadMore() {
-      // Ignore if already loading more.
-      console.log('trying to loadMore');
-      if (data.state === 'loadingMore' || data.cursor == null) {
+      // Ignore if already loading more or if performing server side filtering.
+      if (data.state === 'loadingMore' || (data.state === 'filtering' && !filter) || data.cursor == null) {
         return;
       }
 
