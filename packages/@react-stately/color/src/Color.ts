@@ -11,9 +11,15 @@
  */
 
 import {clamp} from '@react-aria/utils';
-import {ColorChannel, ColorFormat} from '@react-types/color';
+import {ColorChannel, ColorFormat, Color as IColor} from '@react-types/color';
 
-export class Color {
+interface ColorChannelRange {
+  minValue: number,
+  maxValue: number,
+  step: number
+}
+
+class ColorImpl implements IColor {
   private value: ColorValue;
 
   constructor(value: string) {
@@ -25,31 +31,31 @@ export class Color {
     }
   }
 
-  private static fromColorValue(value: ColorValue): Color {
-    let x: Color = Object.create(Color.prototype);
+  private static fromColorValue(value: ColorValue) {
+    let x: ColorImpl = Object.create(ColorImpl.prototype);
     x.value = value;
     return x;
   }
 
-  toFormat(format: ColorFormat): Color {
+  toFormat(format: ColorFormat): IColor {
     switch (format) {
       case 'hex':
       case 'hexa':
       case 'rgb':
       case 'rgba':
-        return Color.fromColorValue(this.value.toRGB());
+        return ColorImpl.fromColorValue(this.value.toRGB());
       case 'hsl':
       case 'hsla':
-        return Color.fromColorValue(this.value.toHSL());
+        return ColorImpl.fromColorValue(this.value.toHSL());
       case 'hsb':
       case 'hsba':
-        return Color.fromColorValue(this.value.toHSB());
+        return ColorImpl.fromColorValue(this.value.toHSB());
       default:
         throw new Error('Invalid color format: ' + format);
     }
   }
 
-  toString(format: ColorFormat | 'css') {
+  toString(format: ColorFormat | 'css'): string {
     switch (format) {
       case 'css':
         return this.value.toString('css');
@@ -81,9 +87,9 @@ export class Color {
     throw new Error('Unsupported color channel: ' + channel);
   }
 
-  withChannelValue(channel: ColorChannel, value: number): Color {
+  withChannelValue(channel: ColorChannel, value: number): IColor {
     if (channel in this.value) {
-      let x = Color.fromColorValue(this.value.clone());
+      let x = ColorImpl.fromColorValue(this.value.clone());
       x.value[channel] = value;
       return x;
     }
@@ -91,7 +97,7 @@ export class Color {
     throw new Error('Unsupported color channel: ' + channel);
   }
 
-  static getRange(channel: ColorChannel) {
+  static getRange(channel: ColorChannel): ColorChannelRange {
     switch (channel) {
       case 'hue':
         return {minValue: 0, maxValue: 360, step: 1};
@@ -110,6 +116,34 @@ export class Color {
     }
   }
 }
+
+// We cannot simply export the class defined above because TypeScript says it's incompatible
+// with the `Color` interface defined in @react-types/color due to the private `value` property.
+// However, we need to use the interface defined there to avoid a circular dependency between
+// @react-types/color and @react-stately/color.
+//
+// JavaScript classes are represented by TypeScript with two types: the interface for
+// the static properties/methods and the constructor, and the interface for the instance
+// properties/methods. The `implements` keyword only specifies the interface for the instance
+// properties/methods though. There is also no way to specify the return type of a class constructor
+// so that it returns the interface instead of the class.
+//
+// In order to fix this, we need to emulate what TypeScript does when defining classes, and define
+// the two separate interfaces ourselves. We define an interface for the constructor and static methods
+// so that the constructor returns the interface rather than the class type. Then we export the class
+// by casting it to this interface. This is the actual value that is imported and can be constructed.
+// In addition, we re-export the `Color` interface from @react-types/color as a type using the same
+// name as the `Color` value. This is ok because types and values have separate namespaces. When used
+// as a type, this will refer to the `Color` interface, and when used as a value, it will refer to the
+// class defined above, which has a constructor that returns the expected interface type.
+
+interface ColorConstructable {
+  new(value: string): IColor,
+  getRange(channel: ColorChannel): ColorChannelRange
+}
+
+export let Color = ColorImpl as ColorConstructable;
+export type Color = IColor; // eslint-disable-line no-redeclare
 
 interface ColorValue {
   toRGB(): ColorValue,

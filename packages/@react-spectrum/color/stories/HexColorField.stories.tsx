@@ -91,7 +91,7 @@ function HexColorFieldPopover(props: any = {}) {
         UNSAFE_style={{
           background: colorString
         }} >{colorString}</ActionButton>
-      <Dialog 
+      <Dialog
         width="size-3600"
         height="size-1600" >
         <View padding="size-300">
