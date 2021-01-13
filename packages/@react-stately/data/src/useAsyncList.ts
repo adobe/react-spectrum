@@ -184,8 +184,6 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
             return {
               ...data,
               filterText: action.filterText ?? data.filterText
-              // TODO: should this be a return to idle?
-              // state: 'idle'
             };
           }
 
@@ -249,7 +247,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
           return {
             ...data,
             filterText: action.filterText ?? data.filterText,
-            state: data.cursor ? data.state : 'filtering',
+            state: 'loading',
             items: data.items,
             abortController: action.abortController
           };
@@ -297,6 +295,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
         cursor: action.type === 'loadingMore' ? data.cursor : null,
         filterText: action.filterText ?? data.filterText
       });
+
       dispatch({type: 'success', ...response, abortController});
     } catch (e) {
       dispatch({type: 'error', error: e, abortController});
