@@ -1,3 +1,12 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
 - Start Date: 2019-05-13
 - RFC PR: (leave this empty, to be filled in later)
 - Authors: Daniel Lu
@@ -7,8 +16,8 @@
 ## Summary
 
 <!-- One-paragraph explanation of the feature. -->
- 
-As of May 2019, the vast majority of the tests in React Spectrum are so called "shallow" tests, tests that by design do not render the component in a DOM and constrain the test writer to testing the component as an isolated unit. However, with the advent of React Spectrum v3, it has become apparent that this level of testing is no longer adequate. In response, updates need to be made to the kinds of tests we write in order to ensure code quality moving forward. These updates include a proposed paradigm shift of majority "shallow" to majority "mount" tests, test frameworks that fit the React Hooks world, and explorations for automated UI testing via headless browsers. 
+
+As of May 2019, the vast majority of the tests in React Spectrum are so called "shallow" tests, tests that by design do not render the component in a DOM and constrain the test writer to testing the component as an isolated unit. However, with the advent of React Spectrum v3, it has become apparent that this level of testing is no longer adequate. In response, updates need to be made to the kinds of tests we write in order to ensure code quality moving forward. These updates include a proposed paradigm shift of majority "shallow" to majority "mount" tests, test frameworks that fit the React Hooks world, and explorations for automated UI testing via headless browsers.
 
 ## Motivation
 
@@ -17,17 +26,17 @@ outcome? -->
 
 To understand the impetus behind this testing reform, one must understand the proposed changes occurring with React Spectrum v3. Here is a list that covers a couple of them:
 
-1. [Architecture changes powered by React Hooks](https://github.com/adobe/react-spectrum/blob/master/rfcs/2019-v3-architecture.md)
+1. [Architecture changes powered by React Hooks](https://github.com/adobe/react-spectrum/blob/main/rfcs/2019-v3-architecture.md)
 2. CSS Modules for styling flexibility
 3. Minor/major api changes for many of the current components
 
-With change comes bugs, and that's a lot of change. Short of exhaustively manually testing each and every component, we need a way to ensure that the components still work as expected, a responsibility which typically falls upon an automated test suite. 
+With change comes bugs, and that's a lot of change. Short of exhaustively manually testing each and every component, we need a way to ensure that the components still work as expected, a responsibility which typically falls upon an automated test suite.
 
 ### Issues with v2 test suite
-Luckily for us, many of the changes in v3 don't affect component functionality, so theoretically a functional test suite for React Spectrum v2 could cover v3 with minimal changes. Unfortunately, this is where our current "shallow" test suite falls short. Many of the tests rely heavily on css class name selectors to target specific elements, class names that would become unavailable once they undergo css modularization. Additionally, due to the nature of "shallow" tests, tests would occasionally access the component's props for assertion purposes, interact with a component's internal methods to simulate behavior, or modify state/props directly, all of which would break due to component implementation changes made in v3. 
+Luckily for us, many of the changes in v3 don't affect component functionality, so theoretically a functional test suite for React Spectrum v2 could cover v3 with minimal changes. Unfortunately, this is where our current "shallow" test suite falls short. Many of the tests rely heavily on css class name selectors to target specific elements, class names that would become unavailable once they undergo css modularization. Additionally, due to the nature of "shallow" tests, tests would occasionally access the component's props for assertion purposes, interact with a component's internal methods to simulate behavior, or modify state/props directly, all of which would break due to component implementation changes made in v3.
 
 ### Gaps in coverage
-Aside from the v2 test suite's incompatibility with the v3 changes, we also need to address some holes in our current testing framework. First, we need to be able to test React Hooks. While Hooks may seem like standard functions, they cannot be tested without being wrapped within functional components. Secondly, very few of our tests render the components in a DOM. Testing without a DOM creates a false sense of security as it does not render a true UI experience. To test effectively we would want tests to run in as close to a production environment as possible. Ideally, this sentiment includes supporting tests runs in a wide array of browser types but whether these test could/would be the same mount style tests written to run against JSDOM is still a point of exploration.    
+Aside from the v2 test suite's incompatibility with the v3 changes, we also need to address some holes in our current testing framework. First, we need to be able to test React Hooks. While Hooks may seem like standard functions, they cannot be tested without being wrapped within functional components. Secondly, very few of our tests render the components in a DOM. Testing without a DOM creates a false sense of security as it does not render a true UI experience. To test effectively we would want tests to run in as close to a production environment as possible. Ideally, this sentiment includes supporting tests runs in a wide array of browser types but whether these test could/would be the same mount style tests written to run against JSDOM is still a point of exploration.
 
 ### End Goal:
 
@@ -63,18 +72,18 @@ Note: The following serves mainly as a guideline. Tests should be constructed to
 
 The majority of the tests that will be written after this transition will be mount style tests using the React Testing Library. Each test will be scoped at a component level, with exceptions made for integration testing of several components if those components prove to be tightly coupled. Tests should cover general component behavior as seen from an end user's perspective, with all interactions done via simulated events (clicks, keyboard interactions, etc) and not by direct function calls. For the most part, this style of test writing will be enforced by the React Testing Library itself. Shallow style tests can still be written in Enzyme for situations that require it (testing bits of internal component logic or forcing prop/state changes) but should be avoided if at all possible.
 
-The second kind of tests will be those written against the state/behavior hooks described [here](https://github.com/adobe/react-spectrum/blob/master/rfcs/2019-v3-architecture.md#architecture). Since hooks are basically functions, tests will cover the standard input-output test cases. These tests will be written using the React Hooks Testing Library so we won't have to write our own hook wrapping test harnesses.
+The second kind of tests will be those written against the state/behavior hooks described [here](https://github.com/adobe/react-spectrum/blob/main/rfcs/2019-v3-architecture.md#architecture). Since hooks are basically functions, tests will cover the standard input-output test cases. These tests will be written using the React Hooks Testing Library so we won't have to write our own hook wrapping test harnesses.
 
-A tentative third type of test would be UI tests that could run against a real browser. Ideally, we would be able to reuse the mount tests and run them in browser but the viability of this has not been fully explored yet. If this ends up being impossible, 
-[Jest Puppeteer](https://github.com/smooth-code/jest-puppeteer) may prove to be a reasonable framework for writing automated tests that run in headless Chrome. UI tests are typically quite expensive to write and maintain, so further discussions regarding their usage will need to be had before committing. 
+A tentative third type of test would be UI tests that could run against a real browser. Ideally, we would be able to reuse the mount tests and run them in browser but the viability of this has not been fully explored yet. If this ends up being impossible,
+[Jest Puppeteer](https://github.com/smooth-code/jest-puppeteer) may prove to be a reasonable framework for writing automated tests that run in headless Chrome. UI tests are typically quite expensive to write and maintain, so further discussions regarding their usage will need to be had before committing.
 
 ### Where will tests live?
 
-With the new package based structure proposed in v3, tests should live near the code they test. For example, component tests should be located in `packages/@react-spectrum/COMPONENT/tests` and hooks tests should be located in `@react-stately` or `@react-aria` respectively. See [here](https://github.com/adobe/react-spectrum/blob/master/rfcs/2019-v3-architecture.md#packages-and-file-structure) for a visual diagram.
+With the new package based structure proposed in v3, tests should live near the code they test. For example, component tests should be located in `packages/@react-spectrum/COMPONENT/tests` and hooks tests should be located in `@react-stately` or `@react-aria` respectively. See [here](https://github.com/adobe/react-spectrum/blob/main/rfcs/2019-v3-architecture.md#packages-and-file-structure) for a visual diagram.
 
-### When should the tests be written? 
+### When should the tests be written?
 
-Ideally, tests would be written alongside and submitted with the code it tests. 
+Ideally, tests would be written alongside and submitted with the code it tests.
 
 ### When would the tests run?
 
@@ -98,7 +107,7 @@ Once we are comfortable with test stability and fidelity, the pull request build
 ## Documentation
 
 <!--
-    How will this RFC be documented? Does it need a formal announcement to explain 
+    How will this RFC be documented? Does it need a formal announcement to explain
 		the motivation?
 -->
 
@@ -108,8 +117,8 @@ Since this is a major change that introduces several new testing frameworks, we 
 
 <!--
     Why should we *not* do this? Consider why adding this into React-Spectrum
-    might not benefit the project or the community. Attempt to think 
-    about any opposing viewpoints that reviewers might bring up. 
+    might not benefit the project or the community. Attempt to think
+    about any opposing viewpoints that reviewers might bring up.
 
     Any change has potential downsides, including increased maintenance
     burden, incompatibility with other tools, breaking existing user
@@ -118,7 +127,7 @@ Since this is a major change that introduces several new testing frameworks, we 
 -->
 
 - Time consuming to refactor all the v2 tests
-- Introduces new frameworks and test writing styles that current contributors will have to learn 
+- Introduces new frameworks and test writing styles that current contributors will have to learn
 - Unknown test fidelity (false positives? doesn't catch bugs?)
 - Potentially longer test runs that may slow down pull request process
 
@@ -141,7 +150,7 @@ This change should only affect contributors to React Spectrum, since they will b
     projects have already implemented a similar feature.
 -->
 
-When it comes to testing, there are a plethora of alternative frameworks that exist for consideration. Enzyme's "mount" was rejected in favor of the React Testing Library simply because React Testing Library is designed to restrict the user from being able to test implementation details. Enzyme provides the tester with too many ways to interact with a component's internal state/methods, resulting in tests that are over reliant on component implementation. 
+When it comes to testing, there are a plethora of alternative frameworks that exist for consideration. Enzyme's "mount" was rejected in favor of the React Testing Library simply because React Testing Library is designed to restrict the user from being able to test implementation details. Enzyme provides the tester with too many ways to interact with a component's internal state/methods, resulting in tests that are over reliant on component implementation.
 
 For in browser UI testing, Puppeteer edges out the typical Selenium webdriver testing frameworks since it has cleaner integration with Jest and doesn't require us to handle webdriver versioning. Running Enzyme tests in multiple browsers with Karma was investigated in the following [repository](https://git.corp.adobe.com/engage/UE_POC) but proved to be incredibly slow. Disclaimer: I'm not a Webpack expert so it is entirely possible that it was my configuration that made Karma slow.
 
@@ -156,7 +165,7 @@ Jest snapshot testing was also considered, but was deemed to possibly too noisy.
     need to know before you can finalize this RFC?
 
     List the questions that you'd like reviewers to focus on. When
-    you've received the answers and updated the design to reflect them, 
+    you've received the answers and updated the design to reflect them,
     you can remove this section.
 -->
 

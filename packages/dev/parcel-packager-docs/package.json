@@ -1,0 +1,12 @@
+{
+  "name": "parcel-packager-docs",
+  "version": "1.0.0",
+  "private": true,
+  "main": "DocsPackager.js",
+  "engines": {
+    "parcel": ">= 2.0.0-alpha.3.2"
+  },
+  "dependencies": {
+    "@parcel/plugin": "nightly"
+  }
+}

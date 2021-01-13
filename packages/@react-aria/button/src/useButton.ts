@@ -1,23 +1,52 @@
-import {ButtonProps} from '@react-types/button';
-import {chain, mergeProps} from '@react-aria/utils';
-import {RefObject} from 'react';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {
+  AnchorHTMLAttributes,
+  ButtonHTMLAttributes,
+  ElementType,
+  HTMLAttributes,
+  InputHTMLAttributes,
+  RefObject
+} from 'react';
+import {AriaButtonProps} from '@react-types/button';
+import {filterDOMProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria/utils';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
-interface AriaButtonProps extends ButtonProps {
-  isSelected?: boolean,
-  validationState?: 'valid' | 'invalid', // used by FieldButton (e.g. DatePicker, ComboBox)
-  'aria-expanded'?: boolean | 'false' | 'true',
-  'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
-  type?: 'button' | 'submit'
-}
 
-interface ButtonAria {
-  buttonProps: React.ButtonHTMLAttributes<HTMLButtonElement>,
+export interface ButtonAria<T> {
+  /** Props for the button element. */
+  buttonProps: T,
+  /** Whether the button is currently pressed. */
   isPressed: boolean
 }
 
-export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): ButtonAria {
+/* eslint-disable no-redeclare */
+export function useButton(props: AriaButtonProps<'a'>, ref: RefObject<HTMLAnchorElement>): ButtonAria<AnchorHTMLAttributes<HTMLAnchorElement>>;
+export function useButton(props: AriaButtonProps<'button'>, ref: RefObject<HTMLButtonElement>): ButtonAria<ButtonHTMLAttributes<HTMLButtonElement>>;
+export function useButton(props: AriaButtonProps<'div'>, ref: RefObject<HTMLDivElement>): ButtonAria<HTMLAttributes<HTMLDivElement>>;
+export function useButton(props: AriaButtonProps<'input'>, ref: RefObject<HTMLInputElement>): ButtonAria<InputHTMLAttributes<HTMLInputElement>>;
+export function useButton(props: AriaButtonProps<'span'>, ref: RefObject<HTMLSpanElement>): ButtonAria<HTMLAttributes<HTMLSpanElement>>;
+export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<HTMLElement>): ButtonAria<HTMLAttributes<HTMLElement>>;
+/**
+ * Provides the behavior and accessibility implementation for a button component. Handles mouse, keyboard, and touch interactions,
+ * focus behavior, and ARIA props for both native button elements and custom element types.
+ * @param props - Props to be applied to the button.
+ * @param ref - A ref to a DOM element for the button.
+ */
+export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<any>): ButtonAria<HTMLAttributes<any>> {
+/* eslint-enable no-redeclare */
   let {
     elementType = 'button',
     isDisabled,
@@ -28,27 +57,27 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     // @ts-ignore
     onClick: deprecatedOnClick,
     href,
-    tabIndex,
-    isSelected,
-    validationState,
-    'aria-expanded': ariaExpanded,
-    'aria-haspopup': ariaHasPopup,
+    target,
+    rel,
     type = 'button'
   } = props;
   let additionalProps;
   if (elementType !== 'button') {
     additionalProps = {
       role: 'button',
-      tabIndex: isDisabled ? undefined : (tabIndex || 0),
-      'aria-disabled': isDisabled || undefined,
-      href: elementType === 'a' && isDisabled ? undefined : href
+      tabIndex: isDisabled ? undefined : 0,
+      href: elementType === 'a' && isDisabled ? undefined : href,
+      target: elementType === 'a' ? target : undefined,
+      type: elementType === 'input' ? type : undefined,
+      disabled: elementType === 'input' ? isDisabled : undefined,
+      'aria-disabled': !isDisabled || elementType === 'input' ? undefined : isDisabled,
+      rel: elementType === 'a' ? rel : undefined
     };
   }
 
   let {pressProps, isPressed} = usePress({
-    // Safari does not focus buttons automatically when interacting with them, so do it manually
-    onPressStart: chain(onPressStart, (e) => e.target.focus()),
-    onPressEnd: chain(onPressEnd, (e) => e.target.focus()),
+    onPressStart,
+    onPressEnd,
     onPressChange,
     onPress,
     isDisabled,
@@ -56,14 +85,16 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
   });
 
   let {focusableProps} = useFocusable(props, ref);
-  let handlers = mergeProps(pressProps, focusableProps);
+  let buttonProps = mergeProps(focusableProps, pressProps);
+  buttonProps = mergeProps(buttonProps, filterDOMProps(props, {labelable: true}));
 
   return {
     isPressed, // Used to indicate press state for visual
-    buttonProps: mergeProps(handlers, {
-      'aria-haspopup': ariaHasPopup,
-      'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
-      'aria-invalid': validationState === 'invalid' ? true : null,
+    buttonProps: mergeProps(buttonProps, {
+      'aria-haspopup': props['aria-haspopup'],
+      'aria-expanded': props['aria-expanded'],
+      'aria-controls': props['aria-controls'],
+      'aria-pressed': props['aria-pressed'],
       disabled: isDisabled,
       type,
       ...(additionalProps || {}),

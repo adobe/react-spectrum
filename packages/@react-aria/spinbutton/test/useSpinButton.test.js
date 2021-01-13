@@ -1,6 +1,18 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 jest.mock('@react-aria/live-announcer');
+import {act, fireEvent, render} from '@testing-library/react';
 import {announce} from '@react-aria/live-announcer';
-import {cleanup, fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import {useSpinButton} from '../';
 
@@ -10,8 +22,6 @@ function Example(props) {
 }
 
 describe('useSpinButton', function () {
-  afterEach(cleanup);
-
   it('should have role="spinbutton" and aria props', function () {
     let res = render(<Example value={2} textValue="2 items" minValue={1} maxValue={3} />);
     let el = res.getByTestId('test');
@@ -103,13 +113,13 @@ describe('useSpinButton', function () {
   it('should announce on value change while focused', function () {
     let res = render(<Example value={2} />);
     let el = res.getByTestId('test');
-    el.focus();
+    act(() => {el.focus();});
 
     res.rerender(<Example value={3} />);
     expect(announce).toHaveBeenCalledTimes(1);
     expect(announce).toHaveBeenCalledWith('3');
 
-    el.blur();
+    act(() => {el.blur();});
 
     res.rerender(<Example value={4} />);
     expect(announce).toHaveBeenCalledTimes(1);
@@ -118,7 +128,7 @@ describe('useSpinButton', function () {
   it('should announce on textValue change while focused', function () {
     let res = render(<Example value={2} textValue="2 items" />);
     let el = res.getByTestId('test');
-    el.focus();
+    act(() => {el.focus();});
 
     res.rerender(<Example value={3} textValue="3 items" />);
     expect(announce).toHaveBeenCalledTimes(1);

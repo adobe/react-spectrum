@@ -1,13 +1,15 @@
 {
   "name": "@react-stately/searchfield",
-  "version": "3.0.0-rc.1",
+  "version": "3.1.1",
   "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "sideEffects": false,
   "repository": {
@@ -16,14 +18,12 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-stately/utils": "^3.0.0-rc.1",
-    "@react-types/shared": "^3.0.0-rc.1"
+    "@react-stately/utils": "^3.1.1",
+    "@react-types/searchfield": "^3.1.1",
+    "@react-types/shared": "^3.2.1"
   },
   "peerDependencies": {
-    "react": "^16.8.0"
-  },
-  "devDependencies": {
-    "react": "^16.8.0"
+    "react": "^16.8.0 || ^17.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"

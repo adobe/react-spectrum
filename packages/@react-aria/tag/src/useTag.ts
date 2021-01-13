@@ -1,11 +1,24 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {ButtonHTMLAttributes, HTMLAttributes, KeyboardEvent, ReactNode} from 'react';
+import {DOMProps, Removable} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useId} from '@react-aria/utils';
-import {Removable} from '@react-types/shared';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 
-export interface AriaTagProps extends Removable<ReactNode, void> {
+export interface AriaTagProps extends Removable<ReactNode, void>, DOMProps {
   children?: ReactNode,
   isDisabled?: boolean,
   validationState?: 'invalid' | 'valid',
@@ -44,14 +57,16 @@ export function useTag(props: AriaTagProps): TagAria {
     onPress: e => onRemove(children, e)
   };
 
+  let domProps = filterDOMProps(props);
   return {
-    tagProps: {
+    tagProps: mergeProps(domProps, {
       'aria-selected': !isDisabled && isSelected,
       'aria-invalid': validationState === 'invalid' || undefined,
+      'aria-errormessage': props['aria-errormessage'],
       onKeyDown: !isDisabled && isRemovable ? onKeyDown : null,
       role: role === 'gridcell' ? 'row' : null,
       tabIndex: isDisabled ? -1 : 0
-    },
+    }),
     labelProps: {
       id: tagId,
       role

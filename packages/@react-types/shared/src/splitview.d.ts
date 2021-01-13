@@ -1,23 +1,35 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {
   Dispatch,
-  MouseEventHandler,
   MutableRefObject,
   ReactElement,
   SetStateAction
 } from 'react';
+import {Orientation} from './orientation';
 
 export interface SplitViewStatelyProps {
   allowsCollapsing?: boolean,
   onResize?: (primarySize: number) => void,
   onResizeEnd?: (primarySize: number) => void,
   primarySize?: number,
-  defaultPrimarySize?: number,
+  defaultPrimarySize?: number
 }
 
 export interface SplitViewHandleState {
   offset: number,
   dragging: boolean,
-  hovered: boolean
+  hovered: boolean,
   setOffset: (value: number) => void,
   setDragging: (value: boolean) => void,
   setHover: (value: boolean) => void,
@@ -42,9 +54,8 @@ export interface SplitViewState {
 
 export interface SplitViewAriaProps {
   id?: string,
-  onMouseDown?: MouseEventHandler,
   allowsResizing?: boolean,
-  orientation?: 'horizontal' | 'vertical',
+  orientation?: Orientation,
   primaryPane?: 0 | 1,
   primaryMinSize?: number,
   primaryMaxSize?: number,
@@ -57,7 +68,7 @@ export interface SplitViewAriaProps {
 
 export interface SplitViewProps {
   children: [ReactElement, ReactElement],
-  orientation?: 'horizontal' | 'vertical',
+  orientation?: Orientation,
   allowsResizing?: boolean,
   allowsCollapsing?: boolean,
   onResize?: (primarySize: number) => void,

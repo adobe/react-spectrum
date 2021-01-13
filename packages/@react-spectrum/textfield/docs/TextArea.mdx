@@ -1,0 +1,193 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/textfield';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/textfield/package.json';
+
+```jsx import
+import {TextArea} from '@react-spectrum/textfield';
+import {Flex} from '@react-spectrum/layout';
+```
+
+---
+category: Forms
+keywords: [text area, input]
+---
+
+# TextArea
+
+<p>{docs.exports.TextArea.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['TextArea']}
+  sourceData={[]} />
+
+## Example
+
+```tsx example
+<TextArea label="Description" />
+```
+
+## Value
+
+A TextArea's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
+Alternatively, a controlled value can be provided using the `value` prop.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState('This is on a wait list');
+
+  return (
+    <Flex gap="size-150" wrap>
+      <TextArea
+        label="Notes (Uncontrolled)"
+        defaultValue="This is on a wait list" />
+
+      <TextArea
+        label="Notes (Controlled)"
+        value={value}
+        onChange={setValue} />
+    </Flex>
+  );
+}
+```
+
+Placeholder text that describes the expected value or formatting for the TextArea can be provided using the `placeholder` prop.
+Placeholder text will only appear when the TextArea is empty, and should not be used as a substitute for labeling the component with a visible label.
+
+```tsx example
+<TextArea placeholder="abc@adobe.com, def@adobe.com" label="List of emails" />
+```
+
+## Labeling
+
+A visual label should be provided for the TextArea using the `label` prop. If the TextArea is required, the `isRequired` and
+`necessityIndicator` props can be used to show a required state.
+
+```tsx example
+<Flex gap="size-150" wrap>
+  <TextArea label="Address" />
+  <TextArea label="Address" isRequired necessityIndicator="icon" />
+  <TextArea label="Address" isRequired necessityIndicator="label" />
+  <TextArea label="Address" necessityIndicator="label" />
+</Flex>
+```
+
+### Accessibility
+
+If a visible label isn't specified, an `aria-label` must be provided to the TextArea for
+accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using
+the `id` of the labeling element instead.
+
+
+### Internationalization
+
+In order to internationalize a TextArea, a localized string should be passed to the `label` or `aria-label` prop.
+When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
+
+## Events
+
+TextArea accepts an `onChange` prop which is triggered whenever the value is edited by the user.
+For a full list of supported events, see the [Props](#props) table below.
+
+The example below uses `onChange` to update a separate `pre` element with the same text entered into the TextArea.
+```tsx example
+function Example() {
+  let [text, setText] = React.useState();
+
+  return (
+    <Flex direction="column">
+      <TextArea
+        placeholder="Enter some text"
+        onChange={setText}
+        label="Your text"
+      />
+      <pre>Mirrored text: {text}</pre>
+    </Flex>
+  );
+}
+```
+
+## Validation
+
+TextAreas can display a validation state to communicate to the user whether the current value is valid or invalid.
+Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the TextArea via the `validationState` prop.
+
+The example below illustrates how one would validate if the user entered more than 20 characters into the TextArea.
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState('Lorem ipsum dolor sit');
+  let isValid = React.useMemo(() => value.length <= 20, [value]);
+
+  return (
+    <TextArea
+      validationState={isValid ? 'valid' : 'invalid'}
+      value={value}
+      placeholder="Enter a description"
+      onChange={setValue}
+      label="Description" />
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.TextArea} links={docs.links} />
+
+## Visual options
+
+### Quiet
+
+[View guidelines](https://spectrum.adobe.com/page/text-area/#Quiet)
+
+In addition to changing the visual style of the TextArea, the `isQuiet` prop removes the ability to manually resize the TextArea.
+To compensate, the TextArea automatically adjusts its own height to accommodate for additional lines of text.
+
+```tsx example
+<TextArea label="Email" placeholder="Email Address" isQuiet />
+```
+
+### Disabled
+
+[View guidelines](https://spectrum.adobe.com/page/text-area/#Disabled)
+
+```tsx example
+<TextArea label="Email" placeholder="Email Address" isDisabled />
+```
+
+### Read only
+
+The `isReadOnly` boolean prop makes the TextArea's text content immutable. Unlike `isDisabled` the TextArea remains focusable
+and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<TextArea label="Email" defaultValue="abc@adobe.com" isReadOnly />
+```
+
+### Label alignment and position
+[View guidelines](https://spectrum.adobe.com/page/text-area/#Label-position)
+
+By default, the label is positioned above the TextArea. The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the TextArea and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+
+```tsx example
+<TextArea label="Search" labelPosition="side" labelAlign="end" />
+```
+
+### Custom width
+
+[View guidelines](https://spectrum.adobe.com/page/text-area/#Width)
+
+```tsx example
+<TextArea label="Email" width="size-3600" maxWidth="100%" />
+```

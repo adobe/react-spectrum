@@ -1,3 +1,12 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
 - Start Date: 2019-05-31
 - RFC PR: (leave this empty, to be filled in later)
 - Authors: Devon Govett
@@ -71,7 +80,7 @@ There are three “layers” of custom theming that might be needed for differen
 
 1. **Global color palette customization** — in its simplest form, a theme consists of variable definitions for all global colors in the color palette. These variables propagate to all components automatically, via the definitions already present in Spectrum DNA. Spectrum design has a tool called [Leonardo](https://git.corp.adobe.com/pages/Spectrum/leonardo/index.html) which can be used to generate accessible color palettes. Additional tooling could be developed to help users build custom color palettes and visualize the results on components in realtime.
 2. **Component customization** — building on a customizable global color palette, this layer allows customizing individual component variables. For example, Coca Cola might want to change the CTA button background to be red instead of blue. This can be accomplished using CSS variable fallback. The CSS for each component can be built such that it refers to the original variable name in addition to the mapped unique global variable name. This way, a minimal build of unique variables can be included in a theme by default, but custom themes can override individual component variables as needed.
-3. **Custom DOM structure or behavior** — for very advanced use cases, sometimes it is necessary to change the DOM structure or CSS classes of a component in order to implement the desired visual style. For example, if a new visual state is needed, custom logic to enable/disable that state would be needed, along with potentially new CSS classes applied to various elements in the component. To implement this, the component rendering would need to be overridden. However, much of the behavior, accessibility, etc. could be reused using the hooks defined in the [architecture RFC](https://github.com/adobe/react-spectrum/blob/master/rfcs/2019-v3-architecture.md).
+3. **Custom DOM structure or behavior** — for very advanced use cases, sometimes it is necessary to change the DOM structure or CSS classes of a component in order to implement the desired visual style. For example, if a new visual state is needed, custom logic to enable/disable that state would be needed, along with potentially new CSS classes applied to various elements in the component. To implement this, the component rendering would need to be overridden. However, much of the behavior, accessibility, etc. could be reused using the hooks defined in the [architecture RFC](https://github.com/adobe/react-spectrum/blob/main/rfcs/2019-v3-architecture.md).
 
 All together, a theme definition could look like the following. It must define values for all of the spectrum global variables at a minimum, but can additionally define overrides for individual component variables as well.
 
@@ -148,7 +157,7 @@ In order to assist applications with the upgrade process, we will support an opt
 
 ## Documentation
 
-This is a pretty big change to the way React Spectrum is implemented, and has downstream effects for applications consuming it. Detailed documentation on how to migrate to React Spectrum v3 will be important. 
+This is a pretty big change to the way React Spectrum is implemented, and has downstream effects for applications consuming it. Detailed documentation on how to migrate to React Spectrum v3 will be important.
 
 - The documentation on how to use `Provider` to specify what themes to include will need to be updated to refer to CSS modules instead of using string theme names.
 - Documentation on how to convert an existing app from using environment variables to specify what themes to include to using CSS module imports should be written for the v3 migration guide.

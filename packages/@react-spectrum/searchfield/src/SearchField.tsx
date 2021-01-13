@@ -1,3 +1,15 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {classNames} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
@@ -13,8 +25,8 @@ import {useSearchFieldState} from '@react-stately/searchfield';
 function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
   let defaultIcon = (
-    <Magnifier 
-      data-testid="searchicon" 
+    <Magnifier
+      data-testid="searchicon"
       UNSAFE_className={
         classNames(
           styles,
@@ -31,13 +43,13 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
   } = props;
 
   let state = useSearchFieldState(props);
-  let textfieldRef = useRef<TextFieldRef>();
-  textfieldRef = ref || textfieldRef;
-  let {searchFieldProps, clearButtonProps} = useSearchField(props, state, unwrapInputRef(textfieldRef));
+  let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
+  let {labelProps, inputProps, clearButtonProps} = useSearchField(props, state, inputRef);
 
   let clearButton = (
     <ClearButton
       {...clearButtonProps}
+      preventFocus
       UNSAFE_className={
         classNames(
           styles,
@@ -47,44 +59,36 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
       isDisabled={isDisabled} />
   );
 
-  // SearchField is essentially a controlled TextField so we filter out prop.value and prop.defaultValue in favor of state.value
   return (
     <TextFieldBase
       {...otherProps}
-      {...searchFieldProps as any}
+      labelProps={labelProps}
+      inputProps={inputProps}
       UNSAFE_className={
         classNames(
           styles,
           'spectrum-Search',
+          'spectrum-Textfield',
           {
             'is-disabled': isDisabled,
-            'is-quiet': props.isQuiet
+            'is-quiet': props.isQuiet,
+            'is-invalid': props.validationState === 'invalid',
+            'is-valid': props.validationState === 'valid'
           },
           UNSAFE_className
         )
       }
-      inputClassName={
-        classNames(
-          styles,
-          'spectrum-Search-input'
-        )
-      }
-      ref={textfieldRef}
+      inputClassName={classNames(styles, 'spectrum-Search-input')}
+      ref={ref}
+      inputRef={inputRef}
       isDisabled={isDisabled}
       icon={icon}
-      onChange={state.setValue}
-      value={state.value}
-      wrapperChildren={state.value !== '' && clearButton} />
+      wrapperChildren={(state.value !== '' && !props.isReadOnly) && clearButton} />
   );
 }
 
+/**
+ * A SearchField is a text field designed for searches.
+ */
 let _SearchField = forwardRef(SearchField);
 export {_SearchField as SearchField};
-
-function unwrapInputRef(ref: RefObject<TextFieldRef>) {
-  return {
-    get current() {
-      return ref.current && ref.current.getInputElement();
-    }
-  };
-}

@@ -1,5 +1,17 @@
-import {cleanup, render} from '@testing-library/react';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import React, {useRef} from 'react';
+import {render} from '@testing-library/react';
 import V2Well from '@react/react-spectrum/Well';
 import {Well} from '../';
 
@@ -18,10 +30,6 @@ let refExists = (ComponentToCheck, children, props) => {
 };
 
 describe('Well', () => {
-  afterEach(function () {
-    cleanup();
-  });
-
   it.each`
     Name      | Component   | props
     ${'v3'}   | ${Well}     | ${{UNSAFE_className: 'myClass', 'data-testid': 'wellV3'}}
@@ -55,5 +63,18 @@ describe('Well', () => {
     let {ref} = refExists(Well, 'Well Text', {'data-testid': 'wellForwardRef'});
     expect(ref.current.UNSAFE_getDOMNode()).toHaveAttribute('data-testid', 'wellForwardRef');
     expect(ref.current.UNSAFE_getDOMNode().textContent.includes('Well Text')).toBeTruthy();
+  });
+
+  it('v3 supports aria-label with a role', function () {
+    let {getByText} = render(<Well role="region" aria-label="well">Well</Well>);
+    let well = getByText('Well');
+    expect(well).toHaveAttribute('role', 'region');
+    expect(well).toHaveAttribute('aria-label', 'well');
+  });
+
+  it('v3 warns user if label is provided without a role', function () {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    render(<Well aria-label="well">Well</Well>);
+    expect(spyWarn).toHaveBeenCalledWith('A labelled Well must have a role.');
   });
 });

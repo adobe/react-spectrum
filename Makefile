@@ -2,81 +2,93 @@
 
 SHELL := /bin/bash
 PATH := ./node_modules/.bin:$(PATH)
-NPM_REGISTRY=https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/
-SERVER=root@react-spectrum.corp.adobe.com
 
 all: node_modules
+
+adobe_setup:
+	mkdir packages/dev/v2-test-deps
+	cp scripts/v2-package.json packages/dev/v2-test-deps/package.json
 
 node_modules: package.json
 	yarn install
 	touch $@
 
-# using this won't generate icons and definitions, but will allow us to run things like cleaning beforehand
-install_no_postinstall:
-	NOYARNPOSTINSTALL=1 yarn install
-
-# --ci keeps it from opening the browser tab automatically
-run:
-	NODE_ENV=storybook start-storybook -p 9003 --ci -c ".storybook-v3"
+run_chromatic:
+	NODE_ENV=storybook start-storybook -p 9004 --ci -c ".chromatic"
 
 clean:
 	yarn clean:icons
-	rm -rf dist storybook-static storybook-static-v3 public src/dist
-	$(MAKE) clean_docs
+	rm -rf dist public src/dist
 
 clean_all:
 	$(MAKE) clean
 	$(MAKE) clean_node_modules
 
 clean_node_modules:
-	$(MAKE) clean_project_node_modules
-	$(MAKE) clean_docs_node_modules
-
-clean_project_node_modules:
 	rm -rf node_modules
 	rm -rf packages/*/*/node_modules
 
-# --prefix needs to come before the command that npm is to run, otherwise documentation seems to indicate that it will write node_modules to that location
-docs:
-	cd documentation && yarn --no-lockfile
-	cd documentation && yarn build
+packages/@spectrum-icons/workflow/src: packages/@spectrum-icons/workflow/package.json
+	yarn workspace @spectrum-icons/workflow make-icons
+	touch $@
 
-docs_local:
-	cd documentation && yarn --no-lockfile
-	cd documentation && yarn develop
+packages/@spectrum-icons/workflow/%.js: packages/@spectrum-icons/workflow/src/%.tsx
+	yarn workspace @spectrum-icons/workflow build-icons
+	touch $@
 
-clean_docs:
-	rm -rf documentation/public
+workflow-icons: $(addprefix packages/@spectrum-icons/workflow/, $(notdir $(addsuffix .js, $(basename $(wildcard packages/@spectrum-icons/workflow/src/*.tsx)))))
 
-# in order to pick up new changes to local components, this should be run before `docs_local` or `docs`
-clean_docs_node_modules:
-	rm -rf documentation/node_modules
+packages/@spectrum-icons/color/src: packages/@spectrum-icons/color/package.json
+	yarn workspace @spectrum-icons/color make-icons
 
-lint:
-	yarn check-types
-	eslint packages --ext .js,.ts,.tsx
-	node lint-packages.js
+packages/@spectrum-icons/color/%.js: packages/@spectrum-icons/color/src/%.tsx
+	yarn workspace @spectrum-icons/color build-icons
 
-test:
-	yarn jest
+color-icons: $(addprefix packages/@spectrum-icons/color/, $(notdir $(addsuffix .js, $(basename $(wildcard packages/@spectrum-icons/color/src/*.tsx)))))
 
-ci-test: lint
-	yarn jest --maxWorkers=2
+packages/@spectrum-icons/ui/src: packages/@spectrum-icons/ui/package.json
+	yarn workspace @spectrum-icons/ui make-icons
+	touch $@
+
+packages/@spectrum-icons/ui/%.js: packages/@spectrum-icons/ui/src/%.tsx
+	yarn workspace @spectrum-icons/ui build-icons
+
+ui-icons: packages/@spectrum-icons/ui/src $(addprefix packages/@spectrum-icons/ui/, $(notdir $(addsuffix .js, $(basename $(wildcard packages/@spectrum-icons/ui/src/*.tsx)))))
+
+packages/@spectrum-icons/illustrations/%.js: packages/@spectrum-icons/illustrations/src/%.tsx
+	yarn workspace @spectrum-icons/illustrations build-icons
+
+illustrations: packages/@spectrum-icons/illustrations/src $(addprefix packages/@spectrum-icons/illustrations/, $(notdir $(addsuffix .js, $(basename $(wildcard packages/@spectrum-icons/illustrations/src/*.tsx)))))
+
+icons: packages/@spectrum-icons/workflow/src packages/@spectrum-icons/color/src packages/@spectrum-icons/ui/src packages/@spectrum-icons/illustrations/src
+	@$(MAKE) workflow-icons
+	@$(MAKE) color-icons
+	@$(MAKE) ui-icons
+	@$(MAKE) illustrations
 
 storybook:
-	NODE_ENV=storybook yarn build-storybook
+	NODE_ENV=production yarn build:storybook
 
-deploy: storybook docs
-	ssh -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null $(SERVER) mkdir -p "~/rsp"
-	scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -r documentation/public/* "$(SERVER):~/rsp/."
-	scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -r public/* "$(SERVER):~/rsp/."
+storybook-17:
+	yarn build:storybook-17
 
 # for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:
 	$(MAKE) publish
 
 publish: build
-	lerna publish from-package --yes --registry $(NPM_REGISTRY)
+	yarn publish
+
+publish-nightly: build
+	yarn publish:nightly
 
 build:
 	parcel build packages/@react-{spectrum,aria,stately}/*/ --no-minify
+
+website:
+	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs
+
+website-production:
+	node scripts/buildWebsite.js
+	cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
+	node scripts/brotli.js

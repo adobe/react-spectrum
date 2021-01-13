@@ -1,0 +1,55 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/text';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/text/package.json';
+
+```jsx import
+import {Heading} from '@react-spectrum/text';
+```
+
+---
+category: Content
+---
+
+# Heading
+
+<p>{docs.exports.Heading.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Heading']}
+  sourceData={[]} />
+
+## Example
+
+```tsx example
+<Heading level={4}>Edit</Heading>
+```
+
+## Content
+
+The `Heading` component represents a heading within a Spectrum container
+such as a [Dialog](Dialog.html). `Heading` provides no specific styling by
+itself, but receives styling from the parent container. In addition,
+`Heading` will be automatically placed within the container's layout
+according to Spectrum guidelines.
+
+See [Dialog](Dialog.html#examples) for examples of how to use the
+`Heading` component in the context of a Spectrum container.
+See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements) for more
+information about the semantics of heading elements.
+
+## Props
+
+<PropTable component={docs.exports.Heading} links={docs.links} />

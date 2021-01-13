@@ -1,8 +1,19 @@
-import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, DimensionValue, StyleProps, ViewStyleProps} from '@react-types/shared';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, DimensionValue, Direction, StyleProps, ViewStyleProps} from '@react-types/shared';
 import {CSSProperties, HTMLAttributes} from 'react';
 import {useLocale} from '@react-aria/i18n';
 
-type Direction = 'ltr' | 'rtl';
 type StyleName = string | string[] | ((dir: Direction) => string);
 type StyleHandler = (value: any) => string;
 export interface StyleHandlers {
@@ -13,8 +24,8 @@ export const baseStyleProps: StyleHandlers = {
   margin: ['margin', dimensionValue],
   marginStart: [rtl('marginLeft', 'marginRight'), dimensionValue],
   marginEnd: [rtl('marginRight', 'marginLeft'), dimensionValue],
-  marginLeft: ['marginLeft', dimensionValue],
-  marginRight: ['marginRight', dimensionValue],
+  // marginLeft: ['marginLeft', dimensionValue],
+  // marginRight: ['marginRight', dimensionValue],
   marginTop: ['marginTop', dimensionValue],
   marginBottom: ['marginBottom', dimensionValue],
   marginX: [['marginLeft', 'marginRight'], dimensionValue],
@@ -25,7 +36,29 @@ export const baseStyleProps: StyleHandlers = {
   minHeight: ['minHeight', dimensionValue],
   maxWidth: ['maxWidth', dimensionValue],
   maxHeight: ['maxHeight', dimensionValue],
-  isHidden: ['display', hiddenValue]
+  isHidden: ['display', hiddenValue],
+  alignSelf: ['alignSelf', passthroughStyle],
+  justifySelf: ['justifySelf', passthroughStyle],
+  position: ['position', anyValue],
+  zIndex: ['zIndex', anyValue],
+  top: ['top', dimensionValue],
+  bottom: ['bottom', dimensionValue],
+  start: [rtl('left', 'right'), dimensionValue],
+  end: [rtl('right', 'left'), dimensionValue],
+  left: ['left', dimensionValue],
+  right: ['right', dimensionValue],
+  order: ['order', anyValue],
+  flex: ['flex', flexValue],
+  flexGrow: ['flexGrow', passthroughStyle],
+  flexShrink: ['flexShrink', passthroughStyle],
+  flexBasis: ['flexBasis', passthroughStyle],
+  gridArea: ['gridArea', passthroughStyle],
+  gridColumn: ['gridColumn', passthroughStyle],
+  gridColumnEnd: ['gridColumnEnd', passthroughStyle],
+  gridColumnStart: ['gridColumnStart', passthroughStyle],
+  gridRow: ['gridRow', passthroughStyle],
+  gridRowEnd: ['gridRowEnd', passthroughStyle],
+  gridRowStart: ['gridRowStart', passthroughStyle]
 };
 
 export const viewStyleProps: StyleHandlers = {
@@ -66,7 +99,8 @@ export const viewStyleProps: StyleHandlers = {
   paddingTop: ['paddingTop', dimensionValue],
   paddingBottom: ['paddingBottom', dimensionValue],
   paddingX: [['paddingLeft', 'paddingRight'], dimensionValue],
-  paddingY: [['paddingTop', 'paddingBottom'], dimensionValue]
+  paddingY: [['paddingTop', 'paddingBottom'], dimensionValue],
+  overflow: ['overflow', passthroughStyle]
 };
 
 const borderStyleProps = {
@@ -83,12 +117,13 @@ function rtl(ltr: string, rtl: string) {
   );
 }
 
-function dimensionValue(value: DimensionValue) {
+const UNIT_RE = /(%|px|em|rem|vw|vh|auto|cm|mm|in|pt|pc|ex|ch|rem|vmin|vmax|fr)$/;
+export function dimensionValue(value: DimensionValue) {
   if (typeof value === 'number') {
     return value + 'px';
   }
 
-  if (/(%|px|em|rem)$/.test(value)) {
+  if (UNIT_RE.test(value)) {
     return value;
   }
 
@@ -124,6 +159,18 @@ function hiddenValue(value: boolean) {
   return value ? 'none' : undefined;
 }
 
+function anyValue(value: any) {
+  return value;
+}
+
+function flexValue(value: boolean | number | string) {
+  if (typeof value === 'boolean') {
+    return value ? '1' : undefined;
+  }
+
+  return '' + value;
+}
+
 export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers, direction: Direction) {
   let style: CSSProperties = {};
   for (let key in props) {
@@ -157,7 +204,7 @@ export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers
   return style;
 }
 
-export function useStyleProps(props: StyleProps, handlers: StyleHandlers = baseStyleProps) {
+export function useStyleProps<T extends StyleProps>(props: T, handlers: StyleHandlers = baseStyleProps) {
   let {
     UNSAFE_className,
     UNSAFE_style,
@@ -197,4 +244,8 @@ export function useStyleProps(props: StyleProps, handlers: StyleHandlers = baseS
   return {
     styleProps
   };
+}
+
+export function passthroughStyle(value) {
+  return value;
 }

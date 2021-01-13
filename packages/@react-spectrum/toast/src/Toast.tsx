@@ -1,31 +1,29 @@
-/*************************************************************************
-* ADOBE CONFIDENTIAL
-* ___________________
-*
-* Copyright 2019 Adobe
-* All Rights Reserved.
-*
-* NOTICE: All information contained herein is, and remains
-* the property of Adobe and its suppliers, if any. The intellectual
-* and technical concepts contained herein are proprietary to Adobe
-* and its suppliers and are protected by all applicable intellectual
-* property laws, including trade secret and copyright laws.
-* Dissemination of this information or reproduction of this material
-* is strictly forbidden unless prior written permission is obtained
-* from Adobe.
-**************************************************************************/
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button, ClearButton} from '@react-spectrum/button';
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import CrossMedium from '@spectrum-icons/ui/CrossMedium';
 import {DOMRef} from '@react-types/shared';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import React from 'react';
-import {SpectrumToastProps} from '@react-types/toast';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
+import toastContainerStyles from './toastContainer.css';
+import {ToastProps, ToastState} from '@react-types/toast';
 import {useToast} from '@react-aria/toast';
+
+interface SpectrumToastProps extends ToastProps, ToastState {}
 
 export const ICONS = {
   info: InfoMedium,
@@ -35,31 +33,35 @@ export const ICONS = {
 
 function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   let {
+    actionLabel,
+    children,
+    onRemove,
+    variant,
+    ...otherProps
+  } = props;
+  let {
     actionButtonProps,
     closeButtonProps,
     iconProps,
     toastProps
-  } = useToast(props);
-  let {
-    actionLabel,
-    children,
-    variant,
-    ...otherProps
-  } = props;
+  } = useToast({...otherProps, variant}, {onRemove});
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
   let Icon = ICONS[variant];
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
       {...styleProps}
       {...toastProps}
       ref={domRef}
       className={classNames(styles,
         'spectrum-Toast',
         {['spectrum-Toast--' + variant]: variant},
-        styleProps.className
+        styleProps.className,
+        classNames(
+          toastContainerStyles,
+          'spectrum-Toast'
+        )
       )}>
       {Icon &&
         <Icon

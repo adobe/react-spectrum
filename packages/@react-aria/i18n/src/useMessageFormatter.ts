@@ -1,9 +1,34 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import IntlMessageFormat from 'intl-messageformat';
 import {useLocale} from './context';
 
+type MessageFormatterStrings = {
+  [lang: string]: {
+    [key: string]: string
+  }
+};
+
+type FormatMessage = (key: string, variables?: {[key: string]: any}) => string;
+
 const formatterCache = new Map();
 
-export function useMessageFormatter(strings) {
+/**
+ * Handles formatting ICU Message strings to create localized strings for the current locale.
+ * Automatically updates when the locale changes, and handles caching of messages for performance.
+ * @param strings - A mapping of languages to strings by key.
+ */
+export function useMessageFormatter(strings: MessageFormatterStrings): FormatMessage {
   let {locale: currentLocale} = useLocale();
 
   // Check the cache
@@ -23,7 +48,7 @@ export function useMessageFormatter(strings) {
 
   // Create a new message formatter
   let cache = {};
-  let formatMessage = (key, variables, formats) => {
+  let formatMessage = (key, variables) => {
     let message = cache[key + '.' + currentLocale];
     if (!message) {
       let msg = localeStrings[key];
@@ -31,7 +56,7 @@ export function useMessageFormatter(strings) {
         throw new Error(`Could not find intl message ${key} in ${currentLocale} locale`);
       }
 
-      message = new IntlMessageFormat(msg, currentLocale, formats);
+      message = new IntlMessageFormat(msg, currentLocale);
       cache[key] = message;
     }
 

@@ -31,7 +31,7 @@ governing permissions and limitations under the License.
   display: inline-flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  min-width: var(--spectrum-component-single-line-width);
+  min-width: calc(2.5 * var(--spectrum-dropdown-height));
   border-radius: var(--spectrum-border-radius);
 
   .spectrum-FieldButton {
@@ -40,6 +40,7 @@ governing permissions and limitations under the License.
     border-start-start-radius: var(--spectrum-combobox-fieldbutton-border-top-left-radius);
     border-end-start-radius: var(--spectrum-combobox-fieldbutton-border-bottom-left-radius);
     border-width: 1px;
+    flex-shrink: 0;
   }
 
   &.is-disabled {
@@ -50,14 +51,18 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-InputGroup-field {
+  flex: 1 1 auto;
+}
+
+.spectrum-InputGroup-input {
   border-start-end-radius: var(--spectrum-combobox-textfield-border-top-right-radius);
   border-end-end-radius: var(--spectrum-combobox-textfield-border-bottom-right-radius);
   border-inline-end: var(--spectrum-combobox-field-border-width-right);
-  flex: 1;
 }
 
 .spectrum-InputGroup--quiet {
   border-radius: var(--spectrum-combobox-quiet-fieldbutton-border-radius);
+  min-width: calc(2 * var(--spectrum-dropdown-height));
 
   .spectrum-FieldButton {
     inline-size: auto;

@@ -162,7 +162,7 @@ governing permissions and limitations under the License.
   width: var(--spectrum-steplist-marker-hitArea);
   height: var(--spectrum-steplist-marker-hitArea);
 
-  margin-left: calc(-1 * calc(var(--spectrum-steplist-marker-hitArea) / 2));
+  margin-left: calc(calc(var(--spectrum-steplist-marker-hitArea) / 2) * -1);
 }
 
 /* Circle step marker */
@@ -173,8 +173,8 @@ governing permissions and limitations under the License.
   position: absolute;
   top: 50%;
   left: 50%;
-  margin-top: calc(-1 * calc(var(--spectrum-steplist-marker-diameter) / 2));
-  margin-left: calc(-1 * calc(var(--spectrum-steplist-marker-diameter) / 2));
+  margin-top: calc(calc(var(--spectrum-steplist-marker-diameter) / 2) * -1);
+  margin-left: calc(calc(var(--spectrum-steplist-marker-diameter) / 2) * -1);
 
   width: var(--spectrum-steplist-marker-diameter);
   height: var(--spectrum-steplist-marker-diameter);
@@ -195,7 +195,7 @@ governing permissions and limitations under the License.
 
   box-sizing: content-box;
   width: calc(calc(var(--spectrum-steplist-step-width) * 1.5) - calc(var(--spectrum-steplist-marker-diameter) * 2));
-  bottom: calc(-1 * calc(var(--spectrum-steplist-segment-height) / 2));
+  bottom: calc(calc(var(--spectrum-steplist-segment-height) / 2) * -1);
 
   /* Default is dashed */
   border-bottom-width: var(--spectrum-steplist-segment-height);
@@ -232,7 +232,7 @@ governing permissions and limitations under the License.
     right: 0;
 
     margin-left: 0;
-    margin-right: calc(-1 * calc(var(--spectrum-steplist-marker-hitArea) / 2));
+    margin-right: calc(calc(var(--spectrum-steplist-marker-hitArea) / 2) * -1);
   }
 
   .spectrum-Steplist-segment {
@@ -262,6 +262,6 @@ governing permissions and limitations under the License.
 
     /* Override last-child bits */
     margin-right: 0;
-    margin-left: calc(-1 * calc(var(--spectrum-steplist-marker-hitArea) / 2));
+    margin-left: calc(calc(var(--spectrum-steplist-marker-hitArea) / 2) * -1);
   }
 }

@@ -1,0 +1,197 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/menu';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/menu/package.json';
+
+```jsx import
+import {ActionButton} from '@react-spectrum/button'
+import {Item, Menu, MenuTrigger, Section} from '@react-spectrum/menu';
+import {Flex} from '@react-spectrum/layout';
+
+```
+
+---
+category: Collections
+keywords: [menu, dropdown, action menu]
+---
+
+# MenuTrigger
+
+<p>{docs.exports.MenuTrigger.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['MenuTrigger', 'Menu']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/popovers/'}
+  ]} />
+
+## Example
+
+```tsx example
+<MenuTrigger>
+  <ActionButton>
+      Edit
+  </ActionButton>
+  <Menu>
+    <Item>Cut</Item>
+    <Item>Copy</Item>
+    <Item>Paste</Item>
+  </Menu>
+</MenuTrigger>
+```
+
+## Content
+
+The MenuTrigger accepts exactly two children: the Menu and the element which
+triggers the opening of the Menu. The trigger element must be the first child passed into
+the MenuTrigger and should support press events.
+
+## Events
+
+MenuTrigger accepts an `onOpenChange` handler which is triggered whenever the Menu is opened or closed.
+
+```tsx example
+function Example() {
+  let [isOpen, setIsOpen] = React.useState(false);
+
+  return (
+    <Flex gap="size-100" alignItems="center">
+      <MenuTrigger onOpenChange={setIsOpen}>
+        <ActionButton>
+            Edit
+        </ActionButton>
+        <Menu>
+          <Item key="cut">Cut</Item>
+          <Item key="copy">Copy</Item>
+          <Item key="paste">Paste</Item>
+        </Menu>
+      </MenuTrigger>
+      <div>Currently open: {isOpen.toString()}</div>
+    </Flex>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.MenuTrigger} links={docs.links} />
+
+## Visual options
+
+### Align and direction
+
+[View guidelines](https://spectrum.adobe.com/page/popovers/#Placement)
+
+The `align` prop aligns the Menu relative to the trigger and the `direction` prop controls the direction the Menu will render.
+
+```tsx example
+import More from '@spectrum-icons/workflow/More';
+
+<Flex gap="size-100">
+  <MenuTrigger align="start">
+    <ActionButton aria-label="More options">
+      <More />
+    </ActionButton>
+    <Menu>
+      <Item key="cut">Cut</Item>
+      <Item key="copy">Copy</Item>
+      <Item key="paste">Paste</Item>
+    </Menu>
+  </MenuTrigger>
+  <MenuTrigger align="end" direction="top" shouldFlip={false}>
+    <ActionButton>
+      Edit options
+    </ActionButton>
+    <Menu>
+      <Item key="cut">Cut</Item>
+      <Item key="copy">Copy</Item>
+      <Item key="paste">Paste</Item>
+    </Menu>
+  </MenuTrigger>
+</Flex>
+```
+
+
+### Close on selection
+
+By default, the Menu closes when an item is selected. To change this, set the `closeOnSelect` prop to `false`. This might be useful when multiple selection is used. See [menu selection](./Menu.html#Selection) for more information.
+
+```tsx example
+<MenuTrigger closeOnSelect={false}>
+  <ActionButton>
+    View
+  </ActionButton>
+  <Menu selectionMode="multiple">
+    <Item key="side">Side bar</Item>
+    <Item key="options">Page options</Item>
+    <Item key="edit">Edit Panel</Item>
+  </Menu>
+</MenuTrigger>
+```
+
+### Flipping
+By default, the Menu flips direction automatically upon opening when space is limited. To change this, set the `shouldFlip` prop to `false`. Try scrolling the viewport close to the edge of the trigger in the example to see this in action.
+
+```tsx example
+<Flex gap="size-100">
+  <MenuTrigger shouldFlip>
+    <ActionButton aria-label="More options">
+      <More />
+    </ActionButton>
+    <Menu>
+      <Item key="cut">Cut</Item>
+      <Item key="copy">Copy</Item>
+      <Item key="paste">Paste</Item>
+    </Menu>
+    </MenuTrigger>
+    <MenuTrigger shouldFlip={false}>
+      <ActionButton>
+        Edit
+      </ActionButton>
+      <Menu>
+        <Item key="cut">Cut</Item>
+        <Item key="copy">Copy</Item>
+        <Item key="paste">Paste</Item>
+      </Menu>
+  </MenuTrigger>
+</Flex>
+```
+
+### Open
+
+The `isOpen` and `defaultOpen` props on the MenuTrigger control whether the Menu is open by default.
+They apply controlled and uncontrolled behavior on the Menu respectively.
+
+```tsx example
+function Example() {
+  let [open, setOpen] = React.useState(false);
+  let [selection, setSelection] = React.useState('');
+
+  return (
+    <MenuTrigger
+      isOpen={open}
+      onOpenChange={setOpen}
+      onSelectionChange={setSelection}>
+      <ActionButton>
+        View
+      </ActionButton>
+      <Menu selectionMode="multiple">
+        <Item key="side">Side bar</Item>
+        <Item key="options">Page options</Item>
+        <Item key="edit">Edit Panel</Item>
+      </Menu>
+    </MenuTrigger>
+  );
+}

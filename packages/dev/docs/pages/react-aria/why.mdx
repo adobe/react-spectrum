@@ -1,0 +1,94 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import style from '@react-spectrum/docs/src/docs.css';
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+---
+category: Introduction
+---
+
+# Why React Aria?
+
+This page discusses why React Aria exists, and the problems it solves.
+
+## Motivation
+
+Design systems are now more popular than ever, and many companies both large and small are implementing their own
+component libraries from scratch. Modern view libraries like React allow teams to build and maintain
+these components more easily than ever before, but it is still **extraordinarily difficult** to do so in a fully
+accessible way with interactions that work across many types of devices.
+
+The web is a very unique platform. It runs across a very wide variety of devices and interaction models, and
+because there is no well defined platform aesthetic, every company usually needs to style each component in
+their design system to match their brand. There are very few built-in UI controls in the browser, and those
+that do exist are very hard to style. This leads to web developers at every company needing to rebuild every
+control from scratch. This represents **millions of dollars** of investment for each company to **duplicate
+work** that many other companies are also doing.
+
+The fully styleable primitives that the web offers (e.g. `<div>`) are quite powerful, but they lack semantic
+meaning. This means that **accessibility is often missing** because assistive technology cannot make sense of the
+div soup that we use to implement our components. Even if you use [ARIA](https://www.w3.org/TR/wai-aria-1.2/)
+to provide semantics, you still need to implement all of the behavior for each component from scratch
+using JavaScript, and this can be tricky to do across many devices and interaction models.
+
+Unfortunately, many companies and teams don't have the resources or time to prioritize features like
+accessibility, internationalization, full keyboard navigation, touch interactions, and more.
+This leads to many web apps having sub-par accessibility and interactions, and contributes to the
+perception of the web as an inferior app platform compared to native apps.
+
+## React Aria
+
+React Aria separates the behavior and accessibility implementation for many common UI components out into
+[React Hooks](https://reactjs.org/docs/hooks-intro.html), which enables them to be reused easily between
+design systems. You remain in complete control over the rendering and styling aspects of your components,
+but get most of the [behavior](interactions.html), [accessibility](accessibility.html), and
+[internationalization](internationalization.html) support for free.
+
+Rather than starting with only divs and building everything yourself, you start with elements that have semantic meaning,
+behavior, and interactions built in. This allows you to **build components more quickly**, and ensures that they work well
+across mouse, touch, and keyboard interactions, as well as with screen readers and other assistive technology.
+
+## Customization
+
+The main reason developers need to create their own component libraries from scratch is styling. Built-in browser UI controls
+are not customizable enough, and in many cases do not exist at all. Because of this, React Aria is intentionally very low level:
+unlike many open source component libraries, it provides **no rendering at all**, just behavior and accessibility.
+We impose no specific DOM structure or styling methodology.
+The hooks are small and **composable**, which allows you to combine them together and achieve your design with only the
+features you need in your component.
+
+Most components have behavior that is consistent even across design systems. The
+[WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/) published by the W3C specifies
+the expected keyboard and accessibility behavior for most common components. In addition, touch and mouse behavior
+is usually quite consistent regardless of the design. A button is still a button, even if it looks a little different.
+
+That said, some customization across design systems may be warrented in some cases. Since you are in full control over
+the rendering of your components, you can choose to override certain props returned by React Aria hooks to add additional
+behavior as needed. For example, you might have a custom keyboard shortcut in a component, so you could chain a custom
+`onKeyDown` handler with the one returned by a React Aria hook in order to implement this.
+
+## Learn more
+
+You can learn more about the architecture that React Aria is a part of on the [architecture](../architecture.html) page.
+
+In addition, the following talk from React Europe discusses how React Aria came to be, its architecture, high quality
+cross-device interactions, and how we can share behavior between design systems.
+
+<div className={style.responsiveVideo}>
+  <iframe
+    title="YouTube embedded video: Design system and accessibility - Devon Govett aka @devongovett at @ReactEurope 2020"
+    width="840"
+    height="471"
+    src="https://www.youtube.com/embed/dxDcBB7Xoxs"
+    frameborder="0"
+    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen />
+</div>

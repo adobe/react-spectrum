@@ -1,5 +1,17 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import HelpMedium from '@spectrum-icons/ui/HelpMedium';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import intlMessages from '../intl';
@@ -36,7 +48,6 @@ export function Alert(props: SpectrumAlertProps) {
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
       {...styleProps}
       className={
         classNames(
@@ -47,7 +58,7 @@ export function Alert(props: SpectrumAlertProps) {
         )
       }
       role="alert">
-      <Icon UNSAFE_className={classNames(styles, 'spectrum-Alert-icon')} alt={iconAlt} />
+      <Icon UNSAFE_className={classNames(styles, 'spectrum-Alert-icon')} aria-label={iconAlt} />
       <div className={classNames(styles, 'spectrum-Alert-header')}>{title}</div>
       <div className={classNames(styles, 'spectrum-Alert-content')}>{children}</div>
     </div>

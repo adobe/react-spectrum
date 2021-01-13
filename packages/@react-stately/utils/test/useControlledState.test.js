@@ -1,13 +1,22 @@
-import {act, renderHook} from 'react-hooks-testing-library';
-import {cleanup, render} from '@testing-library/react';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {act, renderHook} from '@testing-library/react-hooks';
+import {act as actDOM, render} from '@testing-library/react';
 import React, {useEffect, useState} from 'react';
 import {useControlledState} from '../src';
 import userEvent from '@testing-library/user-event';
 
 describe('useControlledState tests', function () {
-
-  afterEach(() => cleanup());
-
   it('can handle default setValue behavior, wont invoke onChange for the same value twice in a row', () => {
     let onChangeSpy = jest.fn();
     let {result} = renderHook(() => useControlledState(undefined, 'defaultValue', onChangeSpy));
@@ -59,7 +68,7 @@ describe('useControlledState tests', function () {
 
     let TestComponent = (props) => {
       let [state, setState] = useControlledState(props.value, props.defaultValue, props.onChange);
-      useEffect(() => renderSpy());
+      useEffect(() => renderSpy(), [state]);
       return <button onClick={() => setState((prev) => prev + 1)} data-testid={state} />;
     };
 
@@ -71,9 +80,12 @@ describe('useControlledState tests', function () {
     let {getByRole, getByTestId} = render(<TestComponentWrapper defaultValue={5} />);
     let button = getByRole('button');
     getByTestId('5');
-    userEvent.click(button);
+    expect(renderSpy).toBeCalledTimes(1);
+    actDOM(() =>
+      userEvent.click(button)
+    );
     getByTestId('6');
-    expect(renderSpy.mock.calls.length).toBe(1);
+    expect(renderSpy).toBeCalledTimes(2);
   });
 
   it('can handle controlled setValue behavior', () => {
@@ -119,6 +131,36 @@ describe('useControlledState tests', function () {
     }));
     [value, setValue] = result.current;
     expect(value).toBe('controlledValue');
+    expect(onChangeSpy).not.toHaveBeenCalled();
+  });
+
+  it('can handle controlled callback setValue behavior after prop change', () => {
+    let onChangeSpy = jest.fn();
+    let propValue = 'controlledValue';
+    let {result, rerender} = renderHook(() => useControlledState(propValue, 'defaultValue', onChangeSpy));
+    let [value, setValue] = result.current;
+    expect(value).toBe('controlledValue');
+    expect(onChangeSpy).not.toHaveBeenCalled();
+
+    propValue = 'updated';
+    rerender();
+
+    act(() => setValue((prevValue) => {
+      expect(prevValue).toBe('updated');
+      return 'newValue';
+    }));
+    [value, setValue] = result.current;
+    expect(value).toBe('updated');
+    expect(onChangeSpy).toHaveBeenLastCalledWith('newValue');
+
+    onChangeSpy.mockClear();
+
+    act(() => setValue((prevValue) => {
+      expect(prevValue).toBe('updated');
+      return 'updated';
+    }));
+    [value, setValue] = result.current;
+    expect(value).toBe('updated');
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
 

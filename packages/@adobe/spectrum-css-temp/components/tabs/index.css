@@ -17,6 +17,21 @@ governing permissions and limitations under the License.
   --spectrum-tabs-compact-item-height: calc(var(--spectrum-tabs-quiet-compact-height) - var(--spectrum-tabs-rule-height));
 }
 
+.spectrum-TabsPanel {
+  display: flex;
+  /* This is so TabsPanel can collapse with wrapping block/flex containers out of the box. If end user wants to place element next to tabpanel,
+  they must include flex: 1 1 auto and min-width: 0 on the Tabs component. */
+  width: 100%;
+}
+
+.spectrum-TabsPanel--horizontal {
+  flex-direction: column;
+}
+
+.spectrum-TabsPanel--vertical {
+  flex-direction: row;
+}
+
 .spectrum-Tabs {
   display: flex;
 
@@ -29,6 +44,8 @@ governing permissions and limitations under the License.
 
   /* Friends should align to the top of the tabs */
   vertical-align: top;
+
+  outline: none;
 }
 
 .spectrum-Tabs-item {
@@ -37,7 +54,7 @@ governing permissions and limitations under the License.
 
   box-sizing: border-box;
 
-  height: var(--spectrum-tabs-item-height);
+  block-size: var(--spectrum-tabs-item-height);
   line-height: var(--spectrum-tabs-item-height);
 
   /* Float above the tab line */
@@ -47,7 +64,7 @@ governing permissions and limitations under the License.
   white-space: nowrap;
 
   transition: color var(--spectrum-global-animation-duration-100) ease-out;
-  cursor: pointer;
+  cursor: default;
   outline: none;
 
   &.is-disabled {
@@ -60,12 +77,10 @@ governing permissions and limitations under the License.
 
   .spectrum-Icon {
     /* Vertical centering */
-    height: var(--spectrum-tabs-item-height);
+    block-size: var(--spectrum-tabs-item-height);
 
     & + .spectrum-Tabs-itemLabel {
-      /* icons are inexplicably offset by 3px. Subtract this value from the icon-gap
-         to correct the gap in CSS */
-      margin-left: calc(var(--spectrum-tabs-icon-gap) - var(--spectrum-global-dimension-size-40));
+      margin-inline-start: var(--spectrum-tabs-icon-gap);
     }
   }
 
@@ -76,10 +91,10 @@ governing permissions and limitations under the License.
 
     box-sizing: border-box;
 
-    height: var(--spectrum-tabs-focus-ring-height);
-    margin-top: calc(calc(var(--spectrum-tabs-focus-ring-height) / -2) + calc(var(--spectrum-tabs-rule-height) / 2));
-    left: calc(-1 * var(--spectrum-tabs-focus-ring-padding-x));
-    right: calc(-1 * var(--spectrum-tabs-focus-ring-padding-x));
+    block-size: var(--spectrum-tabs-focus-ring-height);
+    margin-block-start: calc(calc(var(--spectrum-tabs-focus-ring-height) / -2) + calc(var(--spectrum-tabs-rule-height) / 2));
+    inset-inline-start: calc(var(--spectrum-tabs-focus-ring-padding-x) * -1);
+    inset-inline-end: calc(var(--spectrum-tabs-focus-ring-padding-x) * -1);
     border: var(--spectrum-tabs-focus-ring-size) solid transparent;
     border-radius: var(--spectrum-tabs-focus-ring-border-radius);
 
@@ -88,7 +103,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tabs-itemLabel {
-  cursor: pointer;
+  cursor: default;
   vertical-align: top;
   display: inline-block;
 
@@ -103,7 +118,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Tabs-selectionIndicator {
   position: absolute;
-  left: 0;
+  inset-inline-start: 0;
 
   /* Be below the tab */
   z-index: 0;
@@ -111,17 +126,26 @@ governing permissions and limitations under the License.
   transition: transform var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out;
   transform-origin: top left;
 
+
+  [dir='ltr'] .spectrum-Tabs--horizontal & {
+    transform: translateX(var(--spectrum-tabs-focus-ring-padding-x));
+  }
+
+  [dir='rtl'] .spectrum-Tabs--horizontal & {
+    transform: translateX(calc(var(--spectrum-tabs-focus-ring-padding-x) * -1));
+  }
+
   border-radius: var(--spectrum-tabs-rule-border-radius);
 }
 
 .spectrum-Tabs--compact {
   .spectrum-Tabs-item {
-    height: var(--spectrum-tabs-compact-item-height);
+    block-size: var(--spectrum-tabs-compact-item-height);
     line-height: var(--spectrum-tabs-compact-item-height);
 
     .spectrum-Icon {
       /* Vertical centering */
-      height: var(--spectrum-tabs-compact-item-height);
+      block-size: var(--spectrum-tabs-compact-item-height);
     }
   }
 }
@@ -129,30 +153,59 @@ governing permissions and limitations under the License.
 .spectrum-Tabs--horizontal {
   align-items: center;
 
-  border-bottom: var(--spectrum-tabs-rule-height) solid;
+  border-block-end: var(--spectrum-tabs-rule-height) solid;
 
   .spectrum-Tabs-item {
     vertical-align: top;
 
     /* Target anything since React likes to add lots of happy <div>s around all things */
     & + *:not(.spectrum-Tabs-selectionIndicator) {
-      margin-left: var(--spectrum-tabs-item-gap);
+      margin-inline-start: var(--spectrum-tabs-item-gap);
     }
   }
 
   .spectrum-Tabs-selectionIndicator {
     position: absolute;
-    bottom: 0;
-    height: var(--spectrum-tabs-rule-height);
+    block-size: var(--spectrum-tabs-rule-height);
 
-    bottom: calc(-1 * var(--spectrum-tabs-rule-height));
+    inset-block-end: calc(var(--spectrum-tabs-rule-height) * -1);
   }
 
+  &.spectrum-Tabs--isCollapsed {
+    inset-inline-start: 0;
+    block-size: var(--spectrum-tabs-item-height);
+
+    /* FieldButton Picker focus ring override */
+    & button {
+      &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+
+        box-sizing: border-box;
+
+        block-size: var(--spectrum-tabs-focus-ring-height);
+        margin-block-start: calc(calc(var(--spectrum-tabs-focus-ring-height) / -2) + calc(var(--spectrum-tabs-rule-height) / 2));
+        inset-inline-start: calc(var(--spectrum-tabs-focus-ring-padding-x) * -1);
+        inset-inline-end: calc(var(--spectrum-tabs-focus-ring-padding-x) * -1);
+        border: var(--spectrum-tabs-focus-ring-size) solid transparent;
+        border-radius: var(--spectrum-tabs-focus-ring-border-radius);
+
+        pointer-events: none;
+      }
+    }
+
+    &.spectrum-Tabs--compact {
+      & button {
+        height: calc(var(--spectrum-tabs-compact-item-height));
+      }
+    }
+  }
 
   &.spectrum-Tabs--compact {
     /* The ActionButton is taller than the tabs, so don't push tabs around */
     box-sizing: content-box;
-    height: var(--spectrum-tabs-compact-item-height);
+    block-size: var(--spectrum-tabs-compact-item-height);
     align-items: end;
   }
 }
@@ -166,41 +219,55 @@ governing permissions and limitations under the License.
   display: inline-flex;
   flex-direction: column;
   padding: 0;
-  border-left: var(--spectrum-tabs-vertical-rule-width) solid;
+  border-inline-start: var(--spectrum-tabs-vertical-rule-width) solid;
 
   .spectrum-Tabs-item {
-    height: var(--spectrum-tabs-vertical-item-height);
+    block-size: var(--spectrum-tabs-vertical-item-height);
     padding: 0 var(--spectrum-tabs-focus-ring-padding-x);
     /* Subtract focus ring padding from margin-left since the padding value already offsets tabs-items */
-    margin-left: calc(var(--spectrum-tabs-vertical-item-margin-left) - var(--spectrum-tabs-focus-ring-padding-x));
-    margin-bottom: var(--spectrum-tabs-vertical-item-gap);
+    margin-inline-start: calc(var(--spectrum-tabs-vertical-item-margin-left) - var(--spectrum-tabs-focus-ring-padding-x));
+    margin-block-end: var(--spectrum-tabs-vertical-item-gap);
 
     &::before {
       /* padding is included in click area of tab items, so only need to offset by the size of the focus ring's border */
-      left: calc(-1 * var(--spectrum-tabs-focus-ring-size));
-      right: calc(-1 * var(--spectrum-tabs-focus-ring-size));
-      margin-top: calc(calc(var(--spectrum-tabs-focus-ring-height) / -2));
+      inset-inline-start: calc(var(--spectrum-tabs-focus-ring-size) * -1);
+      inset-inline-end: calc(var(--spectrum-tabs-focus-ring-size) * -1);
+      margin-block-start: calc(calc(var(--spectrum-tabs-focus-ring-height) / -2));
     }
   }
 
   &.spectrum-Tabs--compact {
     .spectrum-Tabs-item {
-      height: var(--spectrum-tabs-compact-vertical-item-height);
+      block-size: var(--spectrum-tabs-compact-vertical-item-height);
       line-height: var(--spectrum-tabs-compact-vertical-item-height);
-      margin-bottom: var(--spectrum-tabs-compact-vertical-item-gap);
+      margin-block-end: var(--spectrum-tabs-compact-vertical-item-gap);
 
       .spectrum-Icon {
         /* Vertical centering */
-        height: var(--spectrum-tabs-compact-vertical-item-height);
+        block-size: var(--spectrum-tabs-compact-vertical-item-height);
       }
     }
   }
 
   .spectrum-Tabs-selectionIndicator {
     position: absolute;
-    left: 0px;
-    width: var(--spectrum-tabs-vertical-rule-width);
+    inline-size: var(--spectrum-tabs-vertical-rule-width);
 
-    left: calc(-1 * var(--spectrum-tabs-vertical-rule-width));
+    inset-inline-start: calc(var(--spectrum-tabs-vertical-rule-width) * -1);
   }
+}
+
+.spectrum-TabsPanel-collapseWrapper {
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 0%;
+  overflow: hidden;
+  position: relative;
+}
+
+.spectrum-TabsPanel-tabs {
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 0%;
 }

@@ -1,8 +1,32 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {DOMProps, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 export interface SpectrumStatusLightProps extends DOMProps, StyleProps {
-  children: ReactNode,
+  /** The content to display as the label. */
+  children?: ReactNode,
+  /**
+   * The variant changes the color of the status light.
+   * When status lights have a semantic meaning, they should use the variant for semantic colors.
+   */
   variant: 'positive' | 'negative' | 'notice' | 'info' | 'neutral' | 'celery' | 'chartreuse' | 'yellow' | 'magenta' | 'fuchsia' | 'purple' | 'indigo' | 'seafoam',
-  isDisabled?: boolean
+  /** Whether the status light is disabled. */
+  isDisabled?: boolean,
+  /**
+   * An accessibility role for the status light. Should be set when the status
+   * can change at runtime, and no more than one status light will update simultaneously.
+   * For cases where multiple statuses can change at the same time, use a Toast instead.
+   */
+  role?: 'status'
 }

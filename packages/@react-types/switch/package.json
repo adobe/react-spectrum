@@ -1,17 +1,21 @@
 {
   "name": "@react-types/switch",
-  "version": "3.0.0-rc.1",
+  "version": "3.1.1",
   "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
   "types": "src/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/checkbox": "^3.0.0-rc.1",
-    "@react-types/shared": "^3.0.0-rc.1"
+    "@react-types/checkbox": "^3.2.1",
+    "@react-types/shared": "^3.2.1"
   },
   "peerDependencies": {
-    "react": "^16.8.0"
+    "react": "^16.8.0 || ^17.0.0-rc.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

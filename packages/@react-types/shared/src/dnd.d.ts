@@ -1,3 +1,15 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {Key, ReactNode} from 'react';
 
 export interface DndBase {
@@ -30,10 +42,10 @@ export enum DropPosition {
 }
 
 export interface DragTarget {
-  /** The type of view being dragged */
+  /** The type of view being dragged. */
   type: string,
 
-  /** The key of the view being dragged */
+  /** The key of the view being dragged. */
   key: Key
 }
 
@@ -41,11 +53,11 @@ export interface DropTarget {
   /** The type of view being dropped on or between. */
   type: string,
 
-  /** 
-   * The key of the view being dropped on or between. 
+  /**
+   * The key of the view being dropped on or between.
    * If null, it represents the entire collection view.
    */
-  key: Key | null
+  key: Key | null,
 
   dropPosition: DropPosition
 }
