@@ -1019,9 +1019,8 @@ describe('useAsyncList', () => {
         .fn()
         .mockImplementationOnce(getFilterItems)
         .mockImplementationOnce(() => new Promise((resolve) => {
-            setTimeout(() => resolve({items: additionalItems}), 100);
-          })
-        )
+          setTimeout(() => resolve({items: additionalItems}), 100);
+        }))
         // This one will never be called
         .mockImplementationOnce(mockSecondCall);
       let {result, waitForNextUpdate} = renderHook(() => useAsyncList({load, initialFilterText, filter: filterFn}));
