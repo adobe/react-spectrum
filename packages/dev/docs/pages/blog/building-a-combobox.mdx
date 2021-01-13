@@ -27,7 +27,7 @@ author: '[Daniel Lu](https://github.com/LFDanLu)'
 
 <Image src={comboboxExampleImageUrl} alt="Screenshot of example ComboBox, select a major" style={{maxWidth: 'min(50%, 350px)', display: 'block', margin: '20px auto'}} />
 
-As of November 30th, [React Spectrum ComboBox](../react-spectrum/ComboBox.html) has been released as an alpha. For those who may be unfamiliar with a combobox, it is an input field that has a popover menu associated with it. The popover menu contains
+The [React Spectrum ComboBox](../react-spectrum/ComboBox.html) was released as an alpha component on November 30th. For those who may be unfamiliar with a combobox, it is an input field that has a popover menu associated with it. The popover menu contains
 a list of values within that a user may select as the value for the combobox and is often filtered to display possible matches to the user's current input text. Finally, there is a button accompanying the input field used
 for toggling the open state of the popover menu.
 
@@ -111,13 +111,14 @@ Announcing item focus wasn't the only issue we encountered. VoiceOver doesn't an
 When selecting an option from the menu, an announcement of the item's name is made but the fact that it is now "selected" is omitted.
 
 As a workaround, we made use of [ARIA live-regions](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions). When the ComboBox's menu is opened for the first time, we create two visually hidden `aria-live` regions in the DOM with two `div` elements, one with `aria-live="polite"` and the other `aria-live="assertive"`
-so that we have control over how the message should be announced to the user. Then whenever updates occur in the ComboBox, we can have the screen reader announce custom messages by updating the contents of said `div` elements.
+so that we have control over how the message should be announced to the user. Then whenever updates occur in the ComboBox, we can have the screen reader announce custom messages by updating the contents of said `div` elements. Thankfully, the bulk of this functionality was setup already in
+React Aria's `LiveAnnouncer`, allowing us to reuse it for our ComboBox after some updates.
 
 Special care was taken such that the messages themselves only contained relevant and concise information tailored to the current state of the ComboBox at any given time. For example, the ComboBox only announces the current section name and item count when the user enters a new section in the menu.
 When the user then moves to a different option in the same section, only the newly focused item name is announced. Similarly, the total option count is only announced when number of options available in the menu changes. Since many of these messages were added to fill in gaps in VoiceOver's announcement,
-we only trigger the LiveAnnouncer on Apple devices to avoid announcement overlap on other screen readers.
+we only trigger the `LiveAnnouncer` on Apple devices to avoid announcement overlap on other screen readers.
 
-If you are interested in using this LiveAnnouncer yourself, check out `LiveAnnouncer` in `@react-aria/live-announcer`. Otherwise, the [useComboBox](../react-aria/useComboBox.html) hook provides you with all of the custom messaging out of the box. See the video below for a sneak peek!
+If you are interested in using this `LiveAnnouncer` yourself, check out `LiveAnnouncer` in `@react-aria/live-announcer`. Otherwise, the [useComboBox](../react-aria/useComboBox.html) hook provides you with all of the custom messaging out of the box. See the video below for a sneak peek!
 
 <Video src={comboboxAccessibilityUrl} alt="Demo of VoiceOver announcement in ComboBox" style={{maxWidth: 'min(90%, 700px)', display: 'block', margin: '20px auto'}} controls />
 
