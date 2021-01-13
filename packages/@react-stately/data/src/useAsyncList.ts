@@ -247,7 +247,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
           return {
             ...data,
             filterText: action.filterText ?? data.filterText,
-            state: 'loading',
+            state: 'filtering',
             items: data.items,
             abortController: action.abortController
           };

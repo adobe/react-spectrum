@@ -893,6 +893,7 @@ describe('useAsyncList', () => {
       expect(load).toHaveBeenCalledTimes(3);
       expect(result.current.isLoading).toBe(false);
       expect(result.current.items).toEqual(itemsSecondCall);
+      expect(result.current.filterText).toBe('Jo');
     });
 
     it('shouldn\'t abort previous loads when the filter text changes (client side filtering)', async () => {
@@ -955,17 +956,122 @@ describe('useAsyncList', () => {
       // Load isn't called again because it is client side filtering
       expect(load).toHaveBeenCalledTimes(2);
       expect(result.current.isLoading).toBe(false);
-      console.log('results.current', result.current.items);
       // Should have the original set of items + the newly loaded ones
       expect(result.current.items).toEqual(filterItems.concat(additionalItems));
+      expect(result.current.filterText).toBe('');
     });
 
-    it ('shouldn\'t call loadMore if filtering is happening (server side filtering)', async () => {
+    it('shouldn\'t call loadMore if filtering is happening (server side filtering)', async () => {
+      let isAborted = false;
+      let load = jest
+        .fn()
+        .mockImplementationOnce(getFilterItems)
+        .mockImplementationOnce(({signal}) => new Promise((resolve, reject) => {
+          signal.addEventListener('abort', () => {
+            isAborted = true;
+            reject();
+          });
 
+          setTimeout(() => resolve({items: itemsSecondCall}), 100);
+        }))
+        .mockImplementationOnce(mockFirstCall);
+
+      let {result, waitForNextUpdate} = renderHook(() => useAsyncList({load}));
+
+      await act(async () => {
+        jest.runAllTimers();
+        await waitForNextUpdate();
+      });
+
+      expect(load).toHaveBeenCalledTimes(1);
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.items).toEqual(filterItems);
+
+      await act(async () => {
+        result.current.setFilterText('Jo');
+        await waitForNextUpdate();
+      });
+
+      expect(load).toHaveBeenCalledTimes(2);
+      expect(result.current.isLoading).toBe(true);
+      expect(result.current.items).toEqual(filterItems);
+      expect(isAborted).toBe(false);
+
+      await act(async () => {
+        result.current.loadMore();
+        jest.runAllTimers();
+      });
+
+      // loadMore calls are ignored if filtering is happening
+      // so load is only called twice, abort isnt' called, and the items from the
+      // original filtering fetch are returned
+      expect(isAborted).toBe(false);
+      expect(load).toHaveBeenCalledTimes(2);
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.items).toEqual(itemsSecondCall);
+      expect(result.current.filterText).toBe('Jo');
     });
 
-    it ('should call loadMore if filtering is happening (client side filtering)', async () => {
+    it('should call loadMore if filtering is happening (client side filtering)', async () => {
+      let additionalItems = [{id: '10', name: 'Yoyoyo'}];
+      let initialFilterText = 'Jo';
+      let load = jest
+        .fn()
+        .mockImplementationOnce(getFilterItems)
+        .mockImplementationOnce(() => new Promise((resolve) => {
+            setTimeout(() => resolve({items: additionalItems}), 100);
+          })
+        )
+        // This one will never be called
+        .mockImplementationOnce(mockSecondCall);
+      let {result, waitForNextUpdate} = renderHook(() => useAsyncList({load, initialFilterText, filter: filterFn}));
 
+      expect(load).toHaveBeenCalledTimes(1);
+      expect(result.current.isLoading).toBe(true);
+      expect(result.current.items).toEqual([]);
+
+      await act(async () => {
+        jest.runAllTimers();
+        await waitForNextUpdate();
+      });
+
+      expect(result.current.isLoading).toBe(false);
+      // Should be all items from the original filter list that contain 'Jo'
+      expect(result.current.items).toEqual(itemsSecondCall);
+
+      await act(async () => {
+        result.current.setFilterText('');
+        await waitForNextUpdate();
+      });
+
+      // No load is called and loading state doesn't change because it is client side filtering
+      expect(load).toHaveBeenCalledTimes(1);
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.items).toEqual(filterItems);
+      expect(result.current.filterText).toBe('');
+
+      await act(async () => {
+        result.current.loadMore();
+        await waitForNextUpdate();
+      });
+
+      expect(load).toHaveBeenCalledTimes(2);
+      expect(result.current.isLoading).toBe(true);
+      // items should still be filterItems because loadMore hasn't finished
+      expect(result.current.items).toEqual(filterItems);
+      expect(result.current.filterText).toBe('');
+
+      await act(async () => {
+        jest.runAllTimers();
+        await waitForNextUpdate();
+      });
+
+      // Load isn't called again because it is client side filtering
+      expect(load).toHaveBeenCalledTimes(2);
+      expect(result.current.isLoading).toBe(false);
+      // Should have the original set of items + the newly loaded ones
+      expect(result.current.items).toEqual(filterItems.concat(additionalItems));
+      expect(result.current.filterText).toBe('');
     });
   });
 });
