@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color} from './Color';
 import {HexColorFieldProps, Color as IColor} from '@react-types/color';
 import {NumberFieldState} from '@react-stately/numberfield';
+import {parseColor} from './Color';
 import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';
 import {useEffect, useState} from 'react';
@@ -22,8 +22,8 @@ export interface HexColorFieldState extends Omit<NumberFieldState, 'value' | 'se
   setInputValue: (value: string) => void
 }
 
-const MIN_COLOR = new Color('#000000');
-const MAX_COLOR = new Color('#FFFFFF');
+const MIN_COLOR = parseColor('#000000');
+const MAX_COLOR = parseColor('#FFFFFF');
 const MIN_COLOR_INT = MIN_COLOR.toHexInt();
 const MAX_COLOR_INT = MAX_COLOR.toHexInt();
 
@@ -48,10 +48,10 @@ export function useHexColorFieldState(
   useEffect(() => {
     setInputValue(inputValue => {
       // Parse color from current inputValue.
-      // Only update the input value if the new colorValue is not equivalent.
+      // Only update the input value if the parseColorValue is not equivalent.
       if (!inputValue.length && colorValue) { return colorValue.toString('hex'); }
       try {
-        let currentColor = new Color(inputValue.startsWith('#') ? inputValue : `#${inputValue}`);
+        let currentColor = parseColor(inputValue.startsWith('#') ? inputValue : `#${inputValue}`);
         if (currentColor.toHexInt() !== colorValue?.toHexInt()) {
           return colorValue ? colorValue.toString('hex') : '';
         }
@@ -75,7 +75,7 @@ export function useHexColorFieldState(
         return;
       }
       try {
-        let newColor = new Color(value.startsWith('#') ? value : `#${value}`);
+        let newColor = parseColor(value.startsWith('#') ? value : `#${value}`);
         setColorValue((prevColor: IColor) => {
           setInputValue(value);
           return prevColor && prevColor.toHexInt() === newColor.toHexInt() ? prevColor : newColor;
@@ -111,7 +111,7 @@ function addColorValue(color: IColor, step: number) {
   let clampInt = Math.min(Math.max(colorInt + step, MIN_COLOR_INT), MAX_COLOR_INT);
   if (clampInt !== colorInt) {
     newColorString = `#${clampInt.toString(16).padStart(6, '0').toUpperCase()}`;
-    newColor = new Color(newColorString);
+    newColor = parseColor(newColorString);
   }
   return newColor;
 }

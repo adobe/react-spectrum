@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color} from './Color';
 import {ColorWheelProps, Color as IColor} from '@react-types/color';
+import {parseColor} from './Color';
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
 
@@ -31,13 +31,13 @@ export interface ColorWheelState {
 
 function normalizeColor(v: string | IColor) {
   if (typeof v === 'string') {
-    return new Color(v);
+    return parseColor(v);
   } else {
     return v;
   }
 }
 
-const DEFAULT_COLOR = new Color('hsl(0, 100%, 50%)');
+const DEFAULT_COLOR = parseColor('hsl(0, 100%, 50%)');
 
 function roundToStep(value: number, step: number): number {
   return Math.round(value / step) * step;
