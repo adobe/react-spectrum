@@ -12,10 +12,10 @@ interface SliderThumbAria {
   /** Props for the root thumb element; handles the dragging motion. */
   thumbProps: HTMLAttributes<HTMLElement>,
 
-  /** Props for the range input. */
+  /** Props for the visually hidden range input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
 
-  /** Props for the label element for this thumb. */
+  /** Props for the label element for this thumb (optional). */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>
 }
 
