@@ -223,6 +223,9 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       }
     } else if (shouldCloseOnBlur) {
       commitCustomValue();
+      // Close menu if blurring away from the combobox
+      // Specifically handles case where user clicks away from the field
+      triggerState.close();
     }
 
     setFocusedState(isFocused);

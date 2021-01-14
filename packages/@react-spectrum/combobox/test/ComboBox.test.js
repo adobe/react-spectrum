@@ -1392,6 +1392,43 @@ describe('ComboBox', function () {
       expect(queryByRole('listbox')).toBeFalsy();
     });
 
+    it('closes and commits selection on blur (clicking to blur)', function () {
+      let {queryByRole, getAllByRole, getByRole} = render(
+        <Provider theme={theme}>
+          <ComboBox label="Test" onOpenChange={onOpenChange} onInputChange={onInputChange} onSelectionChange={onSelectionChange} defaultSelectedKey="2">
+            <Item key="1">Bulbasaur</Item>
+            <Item key="2">Squirtle</Item>
+            <Item key="3">Charmander</Item>
+          </ComboBox>
+          <Button variant="secondary">Focus move</Button>
+        </Provider>
+      );
+
+      let button = getAllByRole('button')[0];
+      let combobox = getByRole('combobox');
+      act(() => {
+        userEvent.click(button);
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+
+      act(() => {
+        fireEvent.change(combobox, {target: {value: 'Bulba'}});
+        jest.runAllTimers();
+        combobox.blur();
+        jest.runAllTimers();
+      });
+
+      // ComboBox value should reset to the selected key value and menu should be closed
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+      expect(onInputChange).toHaveBeenLastCalledWith('Squirtle');
+      expect(combobox.value).toBe('Squirtle');
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+      expect(queryByRole('listbox')).toBeFalsy();
+    });
+
     it('closes and commits custom value', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
