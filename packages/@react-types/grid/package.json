@@ -1,6 +1,6 @@
 {
-  "name": "@react-types/table",
-  "version": "3.0.0-rc.6",
+  "name": "@react-types/grid",
+  "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",
@@ -9,7 +9,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/grid": "3.0.0-alpha.1",
+    "@react-stately/grid": "3.0.0-alpha.1",
+    "@react-stately/table": "3.0.0-alpha.7",
     "@react-types/shared": "^3.3.0"
   },
   "peerDependencies": {
