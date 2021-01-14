@@ -147,7 +147,7 @@ export function useSlider(
 
         addGlobalListener(window, 'mouseup', onUpTrack, false);
         addGlobalListener(window, 'touchend', onUpTrack, false);
-        addGlobalListener(window, 'pointerup', onUpTrack, false);
+        // addGlobalListener(window, 'pointerup', onUpTrack, false);
       } else {
         realTimeTrackDraggingIndex.current = null;
       }
@@ -164,7 +164,7 @@ export function useSlider(
 
       removeGlobalListener(window, 'mouseup', onUpTrack, false);
       removeGlobalListener(window, 'touchend', onUpTrack, false);
-      removeGlobalListener(window, 'pointerup', onUpTrack, false);
+      // removeGlobalListener(window, 'pointerup', onUpTrack, false);
     }
   };
 
@@ -198,12 +198,12 @@ export function useSlider(
         }
         onDownTrack(e, undefined, e.clientX, e.clientY);
       },
-      onPointerDown(e: React.PointerEvent<HTMLElement>) {
-        if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
-          return;
-        }
-        onDownTrack(e, e.pointerId, e.clientX, e.clientY);
-      },
+      // onPointerDown(e: React.PointerEvent<HTMLElement>) {
+      //   if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
+      //     return;
+      //   }
+      //   onDownTrack(e, e.pointerId, e.clientX, e.clientY);
+      // },
       onTouchStart(e: React.TouchEvent<HTMLElement>) { onDownTrack(e, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY); }
     }, moveProps),
     outputProps: {

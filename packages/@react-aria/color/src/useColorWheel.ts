@@ -125,7 +125,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       state.setDragging(true);
       addGlobalListener(window, 'mouseup', onThumbUp, false);
       addGlobalListener(window, 'touchend', onThumbUp, false);
-      addGlobalListener(window, 'pointerup', onThumbUp, false);
+      // addGlobalListener(window, 'pointerup', onThumbUp, false);
     }
   };
 
@@ -139,7 +139,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
 
       removeGlobalListener(window, 'mouseup', onThumbUp, false);
       removeGlobalListener(window, 'touchend', onThumbUp, false);
-      removeGlobalListener(window, 'pointerup', onThumbUp, false);
+      // removeGlobalListener(window, 'pointerup', onThumbUp, false);
     }
   };
 
@@ -159,7 +159,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
 
       addGlobalListener(window, 'mouseup', onTrackUp, false);
       addGlobalListener(window, 'touchend', onTrackUp, false);
-      addGlobalListener(window, 'pointerup', onTrackUp, false);
+      // addGlobalListener(window, 'pointerup', onTrackUp, false);
     }
   };
 
@@ -173,7 +173,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
 
       removeGlobalListener(window, 'mouseup', onTrackUp, false);
       removeGlobalListener(window, 'touchend', onTrackUp, false);
-      removeGlobalListener(window, 'pointerup', onTrackUp, false);
+      // removeGlobalListener(window, 'pointerup', onTrackUp, false);
     }
   };
 
@@ -195,12 +195,12 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
   return {
     groupProps: isDisabled ? {} : mergeProps({
       onMouseDown: (e: React.MouseEvent) => {onTrackDown(undefined, e.pageX, e.pageY);},
-      onPointerDown: (e: React.PointerEvent) => {onTrackDown(e.pointerId, e.pageX, e.pageY);},
+      // onPointerDown: (e: React.PointerEvent) => {onTrackDown(e.pointerId, e.pageX, e.pageY);},
       onTouchStart: (e: React.TouchEvent) => {onTrackDown(e.changedTouches[0].identifier, e.changedTouches[0].pageX, e.changedTouches[0].pageY);}
     }, movePropsContainer),
     thumbProps: isDisabled ? {} : mergeProps({
       onMouseDown: () => {onThumbDown(undefined);},
-      onPointerDown: (e: React.PointerEvent) => {onThumbDown(e.pointerId);},
+      // onPointerDown: (e: React.PointerEvent) => {onThumbDown(e.pointerId);},
       onTouchStart: (e: React.TouchEvent) => {onThumbDown(e.changedTouches[0].identifier);}
     }, movePropsThumb, keyboardProps),
     inputProps: {

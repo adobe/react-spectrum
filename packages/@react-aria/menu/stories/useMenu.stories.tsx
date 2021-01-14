@@ -17,7 +17,7 @@ import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {useButton} from '@react-aria/button';
-import {useFocus} from '@react-aria/interactions';
+import {useFocus, useInteractOutside} from '@react-aria/interactions';
 import {useMenu, useMenuItem, useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
 import {useTreeState} from '@react-stately/tree';
@@ -92,6 +92,7 @@ function MenuPopup(props) {
     },
     overlayRef
   );
+  useInteractOutside({ref: overlayRef, onInteractOutside: () => console.log('onInteractOutside')});
 
   // Wrap in <FocusScope> so that focus is restored back to the
   // trigger when the menu is closed. In addition, add hidden
