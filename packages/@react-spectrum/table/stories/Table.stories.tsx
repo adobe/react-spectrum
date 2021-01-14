@@ -735,8 +735,13 @@ storiesOf('Table', module)
     )
   )
   .add(
-    'async filter loading',
+    'async client side filter loading',
     () => <ProjectListTable />,
+    {chromatic: {disable: true}}
+  )
+  .add(
+    'async server side filter loading',
+    () => <AsyncServerFilterTable />,
     {chromatic: {disable: true}}
   );
 
@@ -908,5 +913,85 @@ function ProjectListTable() {
         </Table>
       </View>
     </>
+  );
+}
+
+function AsyncServerFilterTable() {
+  interface Item {
+    name: string,
+    height: string,
+    mass: string
+  }
+
+  let columns = [
+    {
+      name: 'Name',
+      key: 'name',
+      minWidth: 200
+    },
+    {
+      name: 'Height',
+      key: 'height'
+    },
+    {
+      name: 'Mass',
+      key: 'mass'
+    }
+  ];
+
+  let list = useAsyncList<Item>({
+    getKey: (item) => item.name,
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  const onChange = (value) => {
+    list.setFilterText(value);
+  };
+  return (
+    <div>
+      <SearchField
+        marginStart={'size-200'}
+        marginBottom={'size-200'}
+        marginTop={'size-200'}
+        width={'size-3600'}
+        aria-label={'Search by name'}
+        placeholder={'Search by name'}
+        defaultValue={list.filterText}
+        onChange={(onChange)} />
+      <Table
+        aria-label={'Star Wars Characters'}
+        height={200}
+        width={600}
+        isQuiet
+        sortDescriptor={list.sortDescriptor}
+        onSortChange={list.sort}>
+        <TableHeader columns={columns}>
+          {(column) => {
+            const {name, ...columnProps} = column;
+            return <Column {...columnProps}>{name}</Column>;
+          }}
+        </TableHeader>
+        <TableBody
+          items={list.items}
+          isLoading={list.isLoading}
+          onLoadMore={list.loadMore}>
+          {(item) => (
+            <Row key={item.name}>{(key) => <Cell>{item[key]}</Cell>}</Row>
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
