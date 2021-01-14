@@ -464,7 +464,8 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           }
           ref={listBoxRef}
           onScroll={onScroll}
-          onLoadMore={onLoadMore} />
+          onLoadMore={onLoadMore}
+          isLoading={isLoading} />
         <DismissButton onDismiss={() => state.commit()} />
       </div>
     </FocusScope>
