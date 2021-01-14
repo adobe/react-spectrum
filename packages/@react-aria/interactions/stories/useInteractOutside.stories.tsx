@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import React, {useEffect, useRef} from 'react';
 import {storiesOf} from '@storybook/react';
-import {useInteractOutside} from '../';
+import {useInteractOutside, usePress} from '../';
 
 storiesOf('useInteractOutside', module)
   .addDecorator(story => (
@@ -45,4 +45,46 @@ function BodyStyler(props) {
     };
   });
   return props.children;
+}
+
+// in separate storiesOf so it doesn't get the <BodyStyler>
+storiesOf('useInteractOutside', module)
+  .add('clicking button should fire onInteractOutside',
+    () => <App />
+  );
+
+
+function MyButton() {
+  let ref = React.useRef(null);
+  let {pressProps} = usePress({ref});
+
+  return (
+    <button {...pressProps} ref={ref}>
+      My Button
+    </button>
+  );
+}
+
+function App() {
+  let ref = React.useRef(null);
+
+  useInteractOutside({
+    // Clicking on "My Button" should fire this callback
+    onInteractOutside: () => console.log('clicked outside of orange div'),
+    ref
+  });
+
+  return (
+    <div className="App">
+      <div>Clicking 'My Button' should fire onInteractOutside</div>
+      <div
+        ref={ref}
+        style={{
+          width: '100px',
+          height: '100px',
+          background: 'orange'
+        }} />
+      <MyButton />
+    </div>
+  );
 }

@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '../';
 import Add from '@spectrum-icons/workflow/Add';
 import {Flex} from '@react-spectrum/layout';
-import React from 'react';
+import React, {useRef, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 
@@ -73,6 +73,10 @@ storiesOf('Button/ActionButton', module)
   .add(
     'autoFocus',
     () => render({autoFocus: true})
+  )
+  .add(
+    'Safari: press start not fired after press end on disabled form element',
+    () => <DisabledButtonBug />
   );
 
 function render(props = {}) {
@@ -96,3 +100,34 @@ function render(props = {}) {
     </Flex>
   );
 }
+
+// https://codesandbox.io/s/eloquent-herschel-pgwci?file=/index.html
+function DisabledButtonBug() {
+  let fooRef = useRef();
+  let fooPressStart = () => {
+    console.log('press start foo');
+    console.log(fooRef.current);
+    if (fooRef.current) {
+      fooRef.current.UNSAFE_getDOMNode().disabled = true;
+    }
+  };
+  let fooPressEnd = () => {
+    console.log('press end foo');
+  };
+
+
+  let barPressStart = () => {
+    console.log('press start bar');
+  };
+  let barPressEnd = () => {
+    console.log('press end bar');
+  };
+  return (
+    <Flex>
+      <ActionButton ref={fooRef} onPressStart={fooPressStart} onPress={fooPressEnd}>Foo</ActionButton>
+      <ActionButton onPressStart={barPressStart} onPress={barPressEnd}>Bar</ActionButton>
+    </Flex>
+  );
+}
+
+
