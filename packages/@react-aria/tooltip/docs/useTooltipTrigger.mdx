@@ -14,6 +14,7 @@ import docs from 'docs:@react-aria/tooltip';
 import statelyDocs from 'docs:@react-stately/tooltip';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-aria/tooltip/package.json';
+import Anatomy from './anatomy.svg';
 
 ```jsx import
 import {useTooltipTrigger} from '@react-aria/tooltip';
@@ -55,7 +56,9 @@ fully accessible tooltips that can be styled as needed.
 
 ## Anatomy
 
-A tooltip consists of two parts, the trigger element and the tooltip itself.
+<Anatomy />
+
+A tooltip consists of two parts: the trigger element and the tooltip itself.
 Users may reveal the tooltip by hovering or focusing the trigger.
 
 `useTooltipTrigger` returns props to be spread onto its target trigger and the tooltip:
@@ -71,7 +74,7 @@ Users may reveal the tooltip by hovering or focusing the trigger.
 </TypeContext.Provider>
 
 Tooltip state is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTooltipTriggerState} />
-hook in `@react-stately/tooltip`. The state object should be passed as an option to `useTooltipTrigger`.
+hook in `@react-stately/tooltip`. The state object should be passed as an option to `useTooltipTrigger` and `useTooltip`.
 
 ## Example
 
@@ -83,8 +86,8 @@ Two instances of the example are rendered to demonstrate the behavior of the del
 import {useTooltipTriggerState} from '@react-stately/tooltip';
 import {mergeProps} from '@react-aria/utils';
 
-function Tooltip(props) {
-  let {tooltipProps} = useTooltip(props);
+function Tooltip({state, ...props}) {
+  let {tooltipProps} = useTooltip(props, state);
 
   return (
     <span
@@ -114,7 +117,7 @@ function Example(props) {
     <span style={{position: 'relative'}}>
       <button ref={ref} {...triggerProps}>I have a tooltip</button>
       {state.isOpen && (
-        <Tooltip {...tooltipProps} >
+        <Tooltip state={state} {...tooltipProps}>
           And the tooltip tells you more information.
         </Tooltip>
       )}
