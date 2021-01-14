@@ -11,7 +11,7 @@
  */
 
 import {createListActions, ListData, ListState} from './useListData';
-import {Key, Reducer, useEffect, useReducer} from 'react';
+import {Key, Reducer, useEffect, useMemo, useReducer} from 'react';
 import {Selection, SortDescriptor} from '@react-types/shared';
 
 interface AsyncListOptions<T, C> {
@@ -19,6 +19,8 @@ interface AsyncListOptions<T, C> {
   initialSelectedKeys?: Iterable<Key>,
   /** The initial sort descriptor. */
   initialSortDescriptor?: SortDescriptor,
+  /** The initial filter text. */
+  initialFilterText?: string,
   /** A function that returns a unique key for an item object. */
   getKey?: (item: T) => Key,
   /** A function that loads the data for the items in the list. */
@@ -27,7 +29,9 @@ interface AsyncListOptions<T, C> {
    * An optional function that performs sorting. If not provided,
    * then `sortDescriptor` is passed to the `load` function.
    */
-  sort?: AsyncListLoadFunction<T, C>
+  sort?: AsyncListLoadFunction<T, C>,
+  /** A function that returns whether a item matches the current filter text. */
+  filter?: (item: T, filterText: string) => boolean
 }
 
 type AsyncListLoadFunction<T, C> = (state: AsyncListLoadOptions<T, C>) => Promise<AsyncListStateUpdate<T, C>>;
@@ -41,7 +45,9 @@ interface AsyncListLoadOptions<T, C> {
   /** An abort signal used to notify the load function that the request has been aborted. */
   signal: AbortSignal,
   /** The pagination cursor returned from the last page load. */
-  cursor?: C
+  cursor?: C,
+  /** The current filter text used to perform server side filtering. */
+  filterText?: string
 }
 
 interface AsyncListStateUpdate<T, C> {
@@ -56,7 +62,7 @@ interface AsyncListStateUpdate<T, C> {
 }
 
 interface AsyncListState<T, C> extends ListState<T> {
-  state: 'loading' | 'sorting' | 'loadingMore' | 'error' | 'idle',
+  state: 'loading' | 'sorting' | 'loadingMore' | 'error' | 'idle' | 'filtering',
   items: T[],
   // disabledKeys?: Iterable<Key>,
   selectedKeys: Selection,
@@ -68,7 +74,7 @@ interface AsyncListState<T, C> extends ListState<T> {
   cursor?: C
 }
 
-type ActionType = 'success' | 'error' | 'loading' | 'loadingMore' | 'sorting' | 'update';
+type ActionType = 'success' | 'error' | 'loading' | 'loadingMore' | 'sorting' | 'update' | 'filtering';
 interface Action<T, C> {
   type: ActionType,
   items?: Iterable<T>,
@@ -77,7 +83,8 @@ interface Action<T, C> {
   error?: Error,
   abortController?: AbortController,
   updater?: (state: ListState<T>) => ListState<T>,
-  cursor?: C
+  cursor?: C,
+  filterText?: string
 }
 
 interface AsyncListData<T> extends ListData<T> {
@@ -107,8 +114,18 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
         case 'loading':
         case 'loadingMore':
         case 'sorting':
+        case 'filtering':
+          // If there isn't a abortController provided by the action and it is a filtering action (aka clientside filtering), it is an filterText update
+          if (!action.abortController && action.type === 'filtering') {
+            return {
+              ...data,
+              filterText: action.filterText ?? data.filterText
+            };
+          }
+
           return {
             ...data,
+            filterText: action.filterText ?? data.filterText,
             state: action.type,
             // Reset items to an empty list if loading, but not when sorting.
             items: action.type === 'loading' ? [] : data.items,
@@ -128,6 +145,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
       }
     case 'loading':
     case 'sorting':
+    case 'filtering':
       switch (action.type) {
         case 'success':
           // Ignore if there is a newer abortcontroller in state.
@@ -160,11 +178,21 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
         case 'loading':
         case 'loadingMore':
         case 'sorting':
+        case 'filtering':
+          // If there isn't a abortController provided by the action and it is a filtering action (aka clientside filtering), it is an filterText update
+          if (!action.abortController && action.type === 'filtering') {
+            return {
+              ...data,
+              filterText: action.filterText ?? data.filterText
+            };
+          }
+
           // We're already loading, and another load was triggered at the same time.
           // We need to abort the previous load and start a new one.
           data.abortController.abort();
           return {
             ...data,
+            filterText: action.filterText ?? data.filterText,
             state: action.type,
             // Reset items to an empty list if loading, but not when sorting.
             items: action.type === 'loading' ? [] : data.items,
@@ -204,6 +232,25 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
             items: action.type === 'loading' ? [] : data.items,
             abortController: action.abortController
           };
+        case 'filtering':
+          // If there isn't a abortController provided by the action (aka client side filtering), it is an filterText update
+          if (!action.abortController) {
+            return {
+              ...data,
+              filterText: action.filterText ?? data.filterText
+            };
+          }
+
+          // We're already loading more, and filter text was changed at the same time.
+          // We need to abort the previous load more and start a new one.
+          data.abortController.abort();
+          return {
+            ...data,
+            filterText: action.filterText ?? data.filterText,
+            state: 'filtering',
+            items: data.items,
+            abortController: action.abortController
+          };
         default:
           throw new Error(`Invalid action "${action.type}" in state "${data.state}"`);
       }
@@ -222,7 +269,9 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     sort,
     initialSelectedKeys,
     initialSortDescriptor,
-    getKey = (item: any) => item.id || item.key
+    getKey = (item: any) => item.id || item.key,
+    initialFilterText = '',
+    filter
   } = options;
 
   let [data, dispatch] = useReducer<Reducer<AsyncListState<T, C>, Action<T, C>>>(reducer, {
@@ -230,21 +279,23 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     error: null,
     items: [],
     selectedKeys: new Set(initialSelectedKeys),
-    sortDescriptor: initialSortDescriptor
+    sortDescriptor: initialSortDescriptor,
+    filterText: initialFilterText
   });
 
   const dispatchFetch = async (action: Action<T, C>, fn: AsyncListLoadFunction<T, C>) => {
     let abortController = new AbortController();
     try {
       dispatch({...action, abortController});
-
       let response = await fn({
         items: data.items.slice(),
         selectedKeys: data.selectedKeys,
         sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
         signal: abortController.signal,
-        cursor: action.type === 'loadingMore' ? data.cursor : null
+        cursor: action.type === 'loadingMore' ? data.cursor : null,
+        filterText: action.filterText ?? data.filterText
       });
+
       dispatch({type: 'success', ...response, abortController});
     } catch (e) {
       dispatch({type: 'error', error: e, abortController});
@@ -256,12 +307,18 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  let filteredItems = useMemo(
+    () =>  filter ? data.items.filter(item => filter(item, data.filterText)) : data.items,
+    [data.items, data.filterText, filter]);
+
   return {
-    items: data.items,
+    items: filteredItems,
     selectedKeys: data.selectedKeys,
     sortDescriptor: data.sortDescriptor,
-    isLoading: data.state === 'loading' || data.state === 'loadingMore' || data.state === 'sorting',
+    // TODO: add isFiltering? This is so we can have the loading icon in the textfield when filter text changes instead of in the listbox
+    isLoading: data.state === 'loading' || data.state === 'loadingMore' || data.state === 'sorting' || data.state === 'filtering',
     error: data.error,
+    filterText: data.filterText,
     getItem(key: Key) {
       return data.items.find(item => getKey(item) === key);
     },
@@ -269,8 +326,8 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
       dispatchFetch({type: 'loading'}, load);
     },
     loadMore() {
-      // Ignore if already loading more.
-      if (data.state === 'loadingMore' || data.cursor == null) {
+      // Ignore if already loading more or if performing server side filtering.
+      if (data.state === 'loadingMore' || (data.state === 'filtering' && !filter) || data.cursor == null) {
         return;
       }
 
@@ -281,6 +338,14 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     },
     ...createListActions({...options, getKey}, fn => {
       dispatch({type: 'update', updater: fn});
-    })
+    }),
+    setFilterText(filterText: string) {
+      if (filter && data.items.length > 0) {
+        // If client side filtering and items already exist, don't sent a fetch request, just update filterText
+        dispatch({type: 'filtering', filterText});
+      } else {
+        dispatchFetch({type: 'filtering', filterText}, load);
+      }
+    }
   };
 }

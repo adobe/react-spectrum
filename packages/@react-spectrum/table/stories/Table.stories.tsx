@@ -23,9 +23,11 @@ import {HidingColumns} from './HidingColumns';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
 import React from 'react';
+import {SearchField} from '@react-spectrum/searchfield';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {useAsyncList} from '@react-stately/data';
+import {View} from '@react-spectrum/view';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -731,6 +733,11 @@ storiesOf('Table', module)
         </TableBody>
       </Table>
     )
+  )
+  .add(
+    'async filter loading',
+    () => <ProjectListTable />,
+    {chromatic: {disable: true}}
   );
 
 function AsyncLoadingExample() {
@@ -790,5 +797,116 @@ function AsyncLoadingExample() {
         </TableBody>
       </Table>
     </div>
+  );
+}
+
+let COLUMNS = [
+  {
+    name: 'Name',
+    key: 'name',
+    minWidth: 200
+  },
+  {
+    name: 'Owner',
+    key: 'ownerName'
+  }
+];
+
+async function getCollectionItems(): Promise<any> {
+  const result = [
+    {
+      id: 'xx',
+      name: 'abc',
+      ownerName: 'xx'
+    },
+    {
+      id: 'aa',
+      name: 'efg',
+      ownerName: 'aa'
+    },
+    {
+      id: 'yy',
+      name: 'abcd',
+      ownerName: 'yy'
+    },
+    {
+      id: 'bb',
+      name: 'efgh',
+      ownerName: 'bb'
+    },
+    {
+      id: 'zz',
+      name: 'abce',
+      ownerName: 'zz'
+    },
+    {
+      id: 'cc',
+      name: 'efgi',
+      ownerName: 'cc'
+    }
+  ];
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(result);
+    }, 5);
+  });
+}
+
+function ProjectListTable() {
+  interface Item {
+    id: string,
+    name: string,
+    ownerName: string
+  }
+
+  let list = useAsyncList<Item>({
+    getKey: (item) => item.id,
+    async load() {
+      let projects = await getCollectionItems();
+      return {items: projects};
+    },
+    filter(item, string) {
+      return string === '' ? true : item.name.includes(string);
+    }
+  });
+
+  const onChange = (value) => {
+    list.setFilterText(value);
+  };
+  return (
+    <>
+      <SearchField
+        marginStart={'size-200'}
+        marginBottom={'size-200'}
+        marginTop={'size-200'}
+        width={'size-3600'}
+        aria-label={'Search by name'}
+        placeholder={'Search by name'}
+        defaultValue={list.filterText}
+        onChange={(onChange)} />
+      <View flexGrow={1} height={700} overflow="hidden">
+        <Table
+          aria-label={'Project list'}
+          height={'100%'}
+          isQuiet
+          sortDescriptor={list.sortDescriptor}
+          onSortChange={list.sort}>
+          <TableHeader columns={COLUMNS}>
+            {(column) => {
+              const {name, ...columnProps} = column;
+              return <Column {...columnProps}>{name}</Column>;
+            }}
+          </TableHeader>
+          <TableBody
+            items={list.items}
+            isLoading={list.isLoading}
+            onLoadMore={list.loadMore}>
+            {(item) => (
+              <Row key={item.id}>{(key) => <Cell>{item[key]}</Cell>}</Row>
+            )}
+          </TableBody>
+        </Table>
+      </View>
+    </>
   );
 }
