@@ -248,14 +248,15 @@ governing permissions and limitations under the License.
   }
 }
 
+
 /* same positioning as invalid icon */
-.spectrum-Textfield-circleLoader {
+.spectrum-Textfield--loading .spectrum-Textfield-circleLoader {
   position: absolute;
   bottom: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-loader-circle-small-width) / 2));
   /* can't use padding right since it breaks the circle loader so add here */
   inset-inline-end: calc(calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-icon-alert-medium-width) / 2)) + calc(var(--spectrum-textfield-padding-x, var(--spectrum-global-dimension-size-150)) / 2));
 
-  .spectrum-Textfield--quiet & {
+  .spectrum-Textfield--quiet& {
     padding-inline-end: 0;
   }
 }
