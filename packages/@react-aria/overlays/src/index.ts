@@ -17,3 +17,4 @@ export * from './usePreventScroll';
 export * from './useModal';
 export * from './DismissButton';
 export * from './ariaHideOutside';
+export * from './useUnderlay';
