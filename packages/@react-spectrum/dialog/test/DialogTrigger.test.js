@@ -30,6 +30,7 @@ describe('DialogTrigger', function () {
   beforeAll(() => {
     jest.useFakeTimers();
   });
+
   afterAll(() => {
     jest.useRealTimers();
   });
@@ -566,13 +567,10 @@ describe('DialogTrigger', function () {
     }); // wait for animation
 
     triggerPress(document.body);
+    act(() => jest.runAllTimers());
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
-
-    act(() => {
-      jest.runAllTimers();
-    });
 
     await waitFor(() => {
       expect(dialog).not.toBeInTheDocument();
@@ -637,13 +635,10 @@ describe('DialogTrigger', function () {
     }); // wait for animation
 
     triggerPress(document.body);
+    act(() => jest.runAllTimers());
     expect(modal).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
-
-    act(() => {
-      jest.runAllTimers();
-    });
 
     await waitFor(() => {
       expect(modal).not.toBeInTheDocument();
@@ -675,6 +670,7 @@ describe('DialogTrigger', function () {
       expect(dialog).toBeVisible();
     }); // wait for animation
     triggerPress(document.body);
+    act(() => jest.runAllTimers());
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);

@@ -35,6 +35,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
     ignoreEmulatedMouseEvents: false
   });
   let state = stateRef.current;
+  let raf = useRef<number>();
 
   useEffect(() => {
     let onPointerDown = (e) => {
@@ -54,7 +55,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
         }
         if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
           state.isPointerDown = false;
-          requestAnimationFrame(() => {
+          raf.current = requestAnimationFrame(() => {
             onInteractOutside(e);
           });
         }
@@ -77,7 +78,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
           state.ignoreEmulatedMouseEvents = false;
         } else if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
           state.isPointerDown = false;
-          requestAnimationFrame(() => {
+          raf.current = requestAnimationFrame(() => {
             onInteractOutside(e);
           });
         }
@@ -90,7 +91,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
         state.ignoreEmulatedMouseEvents = true;
         if (onInteractOutside && state.isPointerDown && isValidEvent(e, ref)) {
           state.isPointerDown = false;
-          requestAnimationFrame(() => {
+          raf.current = requestAnimationFrame(() => {
             onInteractOutside(e);
           });
         }
@@ -109,6 +110,15 @@ export function useInteractOutside(props: InteractOutsideProps) {
       };
     }
   }, [onInteractOutside, ref, state.ignoreEmulatedMouseEvents, state.isPointerDown, isDisabled]);
+
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => {
+      if (raf) {
+        cancelAnimationFrame(raf.current);
+      }
+    };
+  }, []);
 }
 
 function isValidEvent(event, ref) {

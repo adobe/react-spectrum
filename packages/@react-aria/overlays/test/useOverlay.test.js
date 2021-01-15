@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
+import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
 import {useOverlay} from '../';
 
@@ -21,6 +22,19 @@ function Example(props) {
 }
 
 describe('useOverlay', function () {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
+  beforeEach(() => {
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+  });
+
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    window.requestAnimationFrame.mockRestore();
+  });
+
   it('should not focus the overlay if a child is focused', function () {
     let res = render(
       <Example isOpen>
@@ -32,36 +46,78 @@ describe('useOverlay', function () {
     expect(document.activeElement).toBe(input);
   });
 
-  it('should hide the overlay when clicking outside if isDismissble is true', function () {
-    let onClose = jest.fn();
-    render(<Example isOpen onClose={onClose} isDismissable />);
-    fireEvent.mouseDown(document.body);
-    fireEvent.mouseUp(document.body);
-    expect(onClose).toHaveBeenCalledTimes(1);
-  });
+  describe.each`
+    type                | prepare               | actions
+    ${'Mouse Events'}   | ${installMouseEvent}  | ${[
+      (el) => fireEvent.mouseDown(el, {button: 0}),
+      (el) => fireEvent.mouseUp(el, {button: 0})
+    ]}
+    ${'Pointer Events'} | ${installPointerEvent}| ${[
+      (el) => fireEvent.pointerDown(el, {button: 0, pointerId: 1}),
+      (el) => fireEvent.pointerUp(el, {button: 0, pointerId: 1})
+    ]}
+    ${'Touch Events'}   | ${() => {}}           | ${[
+      (el) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1}]}),
+      (el) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]})
+    ]}
+  `('$type', ({actions: [start, end], prepare}) => {
+    prepare();
 
-  it('should hide the overlay when clicking outside if shouldCloseOnInteractOutside returns true', function () {
-    let onClose = jest.fn();
-    render(<Example isOpen onClose={onClose} isDismissable shouldCloseOnInteractOutside={target => target === document.body} />);
-    fireEvent.mouseDown(document.body);
-    fireEvent.mouseUp(document.body);
-    expect(onClose).toHaveBeenCalledTimes(1);
-  });
+    it('should hide the overlay when clicking outside if isDismissble is true', function () {
+      let onClose = jest.fn();
+      render(<Example isOpen onClose={onClose} isDismissable />);
+      start(document.body);
+      end(document.body);
+      act(() => jest.runAllTimers());
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
 
-  it('should not hide the overlay when clicking outside if shouldCloseOnInteractOutside returns false', function () {
-    let onClose = jest.fn();
-    render(<Example isOpen onClose={onClose} isDismissable shouldCloseOnInteractOutside={target => target !== document.body} />);
-    fireEvent.mouseDown(document.body);
-    fireEvent.mouseUp(document.body);
-    expect(onClose).toHaveBeenCalledTimes(0);
-  });
+    it('should hide the overlay when clicking outside if shouldCloseOnInteractOutside returns true', function () {
+      let onClose = jest.fn();
+      render(<Example isOpen onClose={onClose} isDismissable shouldCloseOnInteractOutside={target => target === document.body} />);
+      start(document.body);
+      end(document.body);
+      act(() => jest.runOnlyPendingTimers());
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
 
-  it('should not hide the overlay when clicking outside if isDismissable is false', function () {
-    let onClose = jest.fn();
-    render(<Example isOpen onClose={onClose} isDismissable={false} />);
-    fireEvent.mouseDown(document.body);
-    fireEvent.mouseUp(document.body);
-    expect(onClose).toHaveBeenCalledTimes(0);
+    it('should not hide the overlay when clicking outside if shouldCloseOnInteractOutside returns false', function () {
+      let onClose = jest.fn();
+      render(<Example isOpen onClose={onClose} isDismissable shouldCloseOnInteractOutside={target => target !== document.body} />);
+      start(document.body);
+      end(document.body);
+      act(() => jest.runOnlyPendingTimers());
+      expect(onClose).toHaveBeenCalledTimes(0);
+    });
+
+    it('should not hide the overlay when clicking outside if isDismissable is false', function () {
+      let onClose = jest.fn();
+      render(<Example isOpen onClose={onClose} isDismissable={false} />);
+      start(document.body);
+      end(document.body);
+      act(() => jest.runOnlyPendingTimers());
+      expect(onClose).toHaveBeenCalledTimes(0);
+    });
+
+    it('should only hide the top-most overlay', function () {
+      let onCloseFirst = jest.fn();
+      let onCloseSecond = jest.fn();
+      render(<Example isOpen onClose={onCloseFirst} isDismissable />);
+      let second = render(<Example isOpen onClose={onCloseSecond} isDismissable />);
+
+      start(document.body);
+      end(document.body);
+      act(() => jest.runOnlyPendingTimers());
+      expect(onCloseSecond).toHaveBeenCalledTimes(1);
+      expect(onCloseFirst).not.toHaveBeenCalled();
+
+      second.unmount();
+
+      start(document.body);
+      end(document.body);
+      act(() => jest.runOnlyPendingTimers());
+      expect(onCloseFirst).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('should hide the overlay when pressing the escape key', function () {
@@ -77,24 +133,7 @@ describe('useOverlay', function () {
     let res = render(<Example isOpen onClose={onClose} isDismissable={false} />);
     let el = res.getByTestId('test');
     fireEvent.keyDown(el, {key: 'Escape'});
+    act(() => jest.runOnlyPendingTimers());
     expect(onClose).toHaveBeenCalledTimes(1);
-  });
-
-  it('should only hide the top-most overlay', function () {
-    let onCloseFirst = jest.fn();
-    let onCloseSecond = jest.fn();
-    render(<Example isOpen onClose={onCloseFirst} isDismissable />);
-    let second = render(<Example isOpen onClose={onCloseSecond} isDismissable />);
-
-    fireEvent.mouseDown(document.body);
-    fireEvent.mouseUp(document.body);
-    expect(onCloseSecond).toHaveBeenCalledTimes(1);
-    expect(onCloseFirst).not.toHaveBeenCalled();
-
-    second.unmount();
-
-    fireEvent.mouseDown(document.body);
-    fireEvent.mouseUp(document.body);
-    expect(onCloseFirst).toHaveBeenCalledTimes(1);
   });
 });

@@ -19,6 +19,16 @@ import {Tray} from '../';
 
 describe('Tray', function () {
   beforeAll(() => jest.useFakeTimers());
+
+  beforeEach(() => {
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+  });
+
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    window.requestAnimationFrame.mockRestore();
+  });
+
   afterAll(() => jest.useRealTimers());
 
   it('should render nothing if isOpen is not set', function () {
@@ -67,6 +77,7 @@ describe('Tray', function () {
 
     let dialog = await getByRole('dialog');
     fireEvent.keyDown(dialog, {key: 'Escape'});
+    fireEvent.keyUp(dialog, {key: 'Escape'});
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
@@ -87,6 +98,7 @@ describe('Tray', function () {
 
     fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
+    act(() => {jest.runAllTimers();});
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 

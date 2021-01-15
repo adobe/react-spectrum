@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import {installPointerEvent} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
 import {useInteractOutside} from '../';
@@ -28,6 +28,19 @@ function pointerEvent(type, opts) {
 }
 
 describe('useInteractOutside', function () {
+  beforeAll(() => jest.useFakeTimers());
+
+  beforeEach(() => {
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+  });
+
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    window.requestAnimationFrame.mockRestore();
+  });
+
+  afterAll(() => jest.useRealTimers());
+
   // TODO: JSDOM doesn't yet support pointer events. Once they do, convert these tests.
   // https://github.com/jsdom/jsdom/issues/2527
   describe('pointer events', function () {

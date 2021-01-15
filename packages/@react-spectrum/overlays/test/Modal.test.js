@@ -10,13 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render, waitFor} from '@testing-library/react';
+import {act, fireEvent, render, waitFor} from '@testing-library/react';
 import {Modal} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 
 describe('Modal', function () {
+  beforeAll(() => jest.useFakeTimers());
+
+  beforeEach(() => {
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+  });
+
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    window.requestAnimationFrame.mockRestore();
+  });
+
+  afterAll(() => jest.useRealTimers());
+
   it('should render nothing if isOpen is not set', function () {
     let {getByRole} = render(
       <Provider theme={theme}>
@@ -63,9 +76,11 @@ describe('Modal', function () {
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
     }); // wait for animation
+    act(() => {jest.runAllTimers();});
 
     let dialog = getByRole('dialog');
     fireEvent.keyDown(dialog, {key: 'Escape'});
+    fireEvent.keyUp(dialog, {key: 'Escape'});
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
@@ -82,7 +97,9 @@ describe('Modal', function () {
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
     }); // wait for animation
+    act(() => {jest.runAllTimers();});
 
+    fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
     expect(onClose).toHaveBeenCalledTimes(0);
   });
@@ -100,6 +117,7 @@ describe('Modal', function () {
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
     }); // wait for animation
+    act(() => {jest.runAllTimers();});
 
     fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
