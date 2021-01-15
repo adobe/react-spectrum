@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import {installPointerEvent} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
 import {useInteractOutside} from '../';
