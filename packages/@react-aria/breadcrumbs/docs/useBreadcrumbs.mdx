@@ -13,6 +13,7 @@ export default Layout;
 import docs from 'docs:@react-aria/breadcrumbs';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
 import packageData from '@react-aria/breadcrumbs/package.json';
+import Anatomy from './anatomy.svg';
 
 ```jsx import
 import {useBreadcrumbs, useBreadcrumbItem} from '@react-aria/breadcrumbs';
@@ -52,8 +53,10 @@ Breadcrumbs provide a list of links to parent pages of the current page in heira
 
 ## Anatomy
 
-Breadcrumbs consist of a navigation landmark element and a list of links. The last link
-represents the current page in the hierarchy, with the previous links representing the
+<Anatomy />
+
+Breadcrumbs consist of a navigation landmark element and a list of links, typically with a visual separator
+icon between each item. The last link represents the current page in the hierarchy, with the previous links representing the
 parent pages of the current page. Each of these parent links can be clicked, tapped, or
 triggered via the <kbd>Enter</kbd> key to navigate to that page. Optionally, breadcrumbs can be used
 in place of a page title, in which case the last breadcrumb acts as a heading.

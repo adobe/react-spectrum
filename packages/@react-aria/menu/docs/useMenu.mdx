@@ -16,6 +16,7 @@ import selectionDocs from 'docs:@react-stately/selection';
 import treeDocs from 'docs:@react-stately/tree';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-aria/menu/package.json';
+import Anatomy from './menu-anatomy.svg';
 
 ```jsx import
 import {useMenu, useMenuSection, useMenuItem} from '@react-aria/menu';
@@ -63,6 +64,8 @@ Note: `useMenu` only handles the menu itself. For a dropdown menu, combine with 
 * Virtualized scrolling support for performance with long lists
 
 ## Anatomy
+
+<Anatomy />
 
 A menu consists of a container element, with a list of menu items or groups inside.
 `useMenu`, `useMenuItem`, and `useMenuSection` handle exposing this to assistive
