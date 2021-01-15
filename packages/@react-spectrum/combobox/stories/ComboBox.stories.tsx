@@ -20,6 +20,7 @@ import {ComboBox, Item, Section} from '../';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Draw from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
+import {mergeProps} from '@react-aria/utils';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
@@ -436,8 +437,7 @@ let CustomFilterComboBox = (props) => {
 
   return (
     <ComboBox
-      {...actions}
-      {...props}
+      {...mergeProps(props, actions)}
       label="Combobox"
       items={filteredItems}
       inputValue={filterValue}
@@ -538,7 +538,7 @@ let ControlledKeyComboBox = (props) => {
           <Text>Clear key</Text>
         </Button>
       </ButtonGroup>
-      <ComboBox {...props} selectedKey={selectedKey} defaultItems={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')}>
+      <ComboBox {...mergeProps(props, actions)} selectedKey={selectedKey} defaultItems={withSection} label="Combobox" onSelectionChange={onSelectionChange}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}
@@ -570,7 +570,7 @@ let ControlledValueComboBox = (props) => {
           <Text>Clear field</Text>
         </Button>
       </ButtonGroup>
-      <ComboBox {...props} inputValue={value} defaultItems={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onValueChange} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')}>
+      <ComboBox {...mergeProps(props, actions)} inputValue={value} defaultItems={withSection} label="Combobox" onInputChange={onValueChange}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}
@@ -591,7 +591,7 @@ let CustomValueComboBox = (props) => {
   return (
     <div>
       <div>Selected Key: {selectedKey}</div>
-      <ComboBox {...props} selectedKey={selectedKey} defaultItems={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} marginTop={20}>
+      <ComboBox {...mergeProps(props, actions)} selectedKey={selectedKey} defaultItems={withSection} label="Combobox" onSelectionChange={onSelectionChange} marginTop={20}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}
@@ -608,7 +608,7 @@ let ControlledOpenCombobox = (props) => {
   return (
     <Flex direction="column">
       <TextField label="Email" />
-      <ComboBox label="Combobox" {...props} isOpen={isOpen} {...actions} onOpenChange={setOpen}>
+      <ComboBox label="Combobox" {...mergeProps(props, actions)} isOpen={isOpen} onOpenChange={setOpen}>
         <Item key="one">Item One</Item>
         <Item key="two" textValue="Item Two">
           <Copy size="S" />
@@ -691,7 +691,7 @@ function ResizeCombobox() {
 
 function render(props = {}) {
   return (
-    <ComboBox label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} {...props}>
+    <ComboBox label="Combobox" {...mergeProps(props, actions)}>
       <Item key="one">Item One</Item>
       <Item key="two" textValue="Item Two">
         <Copy size="S" />
