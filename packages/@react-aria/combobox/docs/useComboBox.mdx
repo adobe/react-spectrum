@@ -511,12 +511,13 @@ function ControlledComboBox() {
     {name: 'Snake', id: '6'}
   ];
 
-  // Store ComboBox input value, selected option, and open state
+  // Store ComboBox input value, selected option, open state, and items
   // in a state tracker
   let [fieldState, setFieldState] = React.useState({
     isOpen: false,
     selectedKey: '',
-    inputValue: ''
+    inputValue: '',
+    items: optionList
   });
 
   // Implement custom filtering logic and control what items are
@@ -528,20 +529,23 @@ function ControlledComboBox() {
   // Specify how each of the ComboBox values should change when an
   // option is selected from the menu
   let onSelectionChange = (key) => {
-    setFieldState({
+    setFieldState(prevState => ({
       isOpen: false,
-      inputValue: filteredItems.find(option => option.id === key)?.name ?? '',
-      selectedKey: key
-    });
+      inputValue: prevState.items.find(option => option.id === key)?.name ?? '',
+      selectedKey: key,
+      items: prevState.items
+    }));
   };
 
   // Specify how each of the ComboBox values should change when the input
   // field is altered by the end user
   let onInputChange = (value) => {
+    let filteredItems = optionList.filter(item => startsWith(item.name, value));
     setFieldState(prevState => ({
-      isOpen: true,
+      isOpen: filteredItems.length > 0 ? true : false,
       inputValue: value,
-      selectedKey: value === '' ? null : prevState.selectedKey
+      selectedKey: value === '' ? null : prevState.selectedKey,
+      items: filteredItems
     }));
   };
 
@@ -551,7 +555,8 @@ function ControlledComboBox() {
     setFieldState(prevState => ({
       isOpen,
       inputValue: prevState.inputValue,
-      selectedKey: prevState.selectedKey
+      selectedKey: prevState.selectedKey,
+      items: prevState.items
     }));
   };
 
