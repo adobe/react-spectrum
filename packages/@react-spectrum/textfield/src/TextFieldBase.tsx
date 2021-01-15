@@ -37,7 +37,7 @@ interface TextFieldBaseProps extends SpectrumTextFieldProps {
   labelProps?: LabelHTMLAttributes<HTMLLabelElement>,
   inputProps: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
   inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>,
-  loadingIcon?: ReactElement,
+  loadingIndicator?: ReactElement,
   isLoading?: boolean
 }
 
@@ -62,7 +62,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     inputProps,
     inputRef,
     isLoading,
-    loadingIcon,
+    loadingIndicator,
     validationIconClassName,
     ...otherProps
   } = props;
@@ -119,7 +119,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
           {
             'spectrum-Textfield--invalid': isInvalid,
             'spectrum-Textfield--valid': validationState === 'valid',
-            'spectrum-Textfield--loading': isLoading,
+            'spectrum-Textfield--loadable': loadingIndicator,
             'spectrum-Textfield--quiet': isQuiet,
             'spectrum-Textfield--multiline': multiLine
           }
@@ -144,7 +144,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       </FocusRing>
       {icon}
       {validationState && !isLoading ? validation : null}
-      {isLoading && loadingIcon}
+      {isLoading && loadingIndicator}
       {wrapperChildren}
     </div>
   );

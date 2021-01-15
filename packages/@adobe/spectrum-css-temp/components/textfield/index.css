@@ -163,7 +163,7 @@ governing permissions and limitations under the License.
     padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
-  .spectrum-Textfield--loading & {
+  .spectrum-Textfield--loadable & {
     padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
@@ -250,7 +250,7 @@ governing permissions and limitations under the License.
 
 
 /* same positioning as invalid icon */
-.spectrum-Textfield--loading .spectrum-Textfield-circleLoader {
+.spectrum-Textfield--loadable .spectrum-Textfield-circleLoader {
   position: absolute;
   bottom: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-loader-circle-small-width) / 2));
   /* can't use padding right since it breaks the circle loader so add here */

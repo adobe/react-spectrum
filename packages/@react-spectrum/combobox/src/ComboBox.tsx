@@ -271,7 +271,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
           isQuiet={isQuiet}
           validationState={validationState}
           isLoading={isLoading}
-          loadingIcon={loading} />
+          loadingIndicator={isLoading != null && loading} />
         <PressResponder preventFocusOnPress>
           <FieldButton
             {...triggerProps}

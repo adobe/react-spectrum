@@ -30,7 +30,7 @@ import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {mergeProps, useId} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {HTMLAttributes, ReactNode, RefObject, useCallback, useRef} from 'react';
+import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useRef} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality, useHover} from '@react-aria/interactions';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
@@ -58,6 +58,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     isLoading
   } = props;
 
+  let formatMessage = useMessageFormatter(intlMessages);
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({
     ...props,
@@ -83,6 +84,21 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     }
   };
 
+  let loading = (
+    <ProgressCircle
+      aria-label={formatMessage('loading')}
+      size="S"
+      isIndeterminate
+      UNSAFE_className={classNames(
+        textfieldStyles,
+        'spectrum-Textfield-circleLoader',
+        classNames(
+          styles,
+          'spectrum-InputGroup-input-circleLoader'
+        )
+      )} />
+  );
+
   return (
     <>
       <Field
@@ -99,13 +115,15 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           isPlaceholder={!state.inputValue}
           validationState={validationState}
           onPress={() => state.open()}
-          isLoading={isLoading}>
+          isLoading={isLoading}
+          loadingIndicator={isLoading != null && loading}>
           {state.inputValue || props.placeholder || ''}
         </ComboBoxButton>
       </Field>
       <Tray isOpen={state.isOpen} onClose={state.commit} isFixedHeight isNonModal {...overlayProps}>
         <ComboBoxTray
           {...props}
+          loadingIndicator={isLoading != null && loading}
           overlayProps={overlayProps}
           state={state} />
       </Tray>
@@ -121,7 +139,8 @@ interface ComboBoxButtonProps extends AriaButtonProps {
   children?: ReactNode,
   style?: React.CSSProperties,
   className?: string,
-  isLoading?: boolean
+  isLoading?: boolean,
+  loadingIndicator?: ReactElement
 }
 
 const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxButtonProps, ref: RefObject<HTMLElement>) {
@@ -133,7 +152,8 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
     children,
     style,
     className,
-    isLoading
+    isLoading,
+    loadingIndicator
   } = props;
   let formatMessage = useMessageFormatter(intlMessages);
   let valueId = useId();
@@ -152,21 +172,6 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
       )
     )
   });
-
-  let loading = (
-    <ProgressCircle
-      aria-label={formatMessage('loading')}
-      size="S"
-      isIndeterminate
-      UNSAFE_className={classNames(
-        textfieldStyles,
-        'spectrum-Textfield-circleLoader',
-        classNames(
-          styles,
-          'spectrum-InputGroup-input-circleLoader'
-        )
-      )} />
-  );
 
   let {hoverProps, isHovered} = useHover({});
   let {buttonProps, isPressed} = useButton({
@@ -214,7 +219,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
               {
                 'spectrum-Textfield--invalid': validationState === 'invalid',
                 'spectrum-Textfield--valid': validationState === 'valid',
-                'spectrum-Textfield--loading': isLoading,
+                'spectrum-Textfield--loadable': loadingIndicator,
                 'spectrum-Textfield--quiet': isQuiet
               },
               classNames(
@@ -256,7 +261,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
             </span>
           </div>
           {validationState && !isLoading ? validation : null}
-          {isLoading && loading}
+          {isLoading && loadingIndicator}
         </div>
         <div
           className={
@@ -285,7 +290,8 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
 
 interface ComboBoxTrayProps extends SpectrumComboBoxProps<unknown> {
   state: ComboBoxState<unknown>,
-  overlayProps: HTMLAttributes<HTMLElement>
+  overlayProps: HTMLAttributes<HTMLElement>,
+  loadingIndicator?: ReactElement
 }
 
 function ComboBoxTray(props: ComboBoxTrayProps) {
@@ -298,7 +304,8 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     label,
     overlayProps,
     isLoading,
-    onLoadMore
+    onLoadMore,
+    loadingIndicator
   } = props;
 
   let inputRef = useRef<HTMLInputElement>();
@@ -357,21 +364,6 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
       isDisabled={isDisabled} />
   );
 
-  let loading = (
-    <ProgressCircle
-      aria-label={formatMessage('loading')}
-      size="S"
-      isIndeterminate
-      UNSAFE_className={classNames(
-        textfieldStyles,
-        'spectrum-Textfield-circleLoader',
-        classNames(
-          styles,
-          'spectrum-InputGroup-input-circleLoader'
-        )
-      )} />
-  );
-
   // Close the software keyboard on scroll to give the user a bigger area to scroll.
   // But only do this if scrolling with touch, otherwise it can cause issues with touch
   // screen readers.
@@ -411,7 +403,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={isLoading}
-          loadingIcon={loading}
+          loadingIndicator={loadingIndicator}
           validationState={validationState}
           wrapperChildren={(state.inputValue !== '' && !props.isReadOnly) && clearButton}
           UNSAFE_className={
@@ -422,7 +414,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
               {
                 'spectrum-Search--invalid': validationState === 'invalid',
                 'spectrum-Search--valid': validationState === 'valid',
-                'spectrum-Search--loading': isLoading
+                'spectrum-Search--loadable': loadingIndicator
               },
               classNames(
                 comboboxStyles,
