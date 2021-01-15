@@ -55,7 +55,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     isQuiet,
     isDisabled,
     validationState,
-    isLoading
+    loadingState
   } = props;
 
   let formatMessage = useMessageFormatter(intlMessages);
@@ -84,7 +84,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     }
   };
 
-  let loading = (
+  let loadingCircle = (
     <ProgressCircle
       aria-label={formatMessage('loading')}
       size="S"
@@ -115,15 +115,15 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           isPlaceholder={!state.inputValue}
           validationState={validationState}
           onPress={() => state.open()}
-          isLoading={isLoading}
-          loadingIndicator={isLoading != null && loading}>
+          isLoading={loadingState === 'loading' || loadingState === 'filtering'}
+          loadingIndicator={loadingState != null && loadingCircle}>
           {state.inputValue || props.placeholder || ''}
         </ComboBoxButton>
       </Field>
       <Tray isOpen={state.isOpen} onClose={state.commit} isFixedHeight isNonModal {...overlayProps}>
         <ComboBoxTray
           {...props}
-          loadingIndicator={isLoading != null && loading}
+          loadingIndicator={loadingState != null && loadingCircle}
           overlayProps={overlayProps}
           state={state} />
       </Tray>
@@ -303,7 +303,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     validationState,
     label,
     overlayProps,
-    isLoading,
+    loadingState,
     onLoadMore,
     loadingIndicator
   } = props;
@@ -402,7 +402,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           inputProps={inputProps}
           inputRef={inputRef}
           isDisabled={isDisabled}
-          isLoading={isLoading}
+          isLoading={loadingState === 'loading' || loadingState === 'filtering'}
           loadingIndicator={loadingIndicator}
           validationState={validationState}
           wrapperChildren={(state.inputValue !== '' && !props.isReadOnly) && clearButton}
@@ -457,7 +457,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           ref={listBoxRef}
           onScroll={onScroll}
           onLoadMore={onLoadMore}
-          isLoading={isLoading} />
+          isLoading={loadingState === 'loadingMore'} />
         <DismissButton onDismiss={() => state.commit()} />
       </div>
     </FocusScope>

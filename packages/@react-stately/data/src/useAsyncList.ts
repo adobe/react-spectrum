@@ -61,8 +61,9 @@ interface AsyncListStateUpdate<T, C> {
   cursor?: C
 }
 
+type State = 'loading' | 'sorting' | 'loadingMore' | 'error' | 'idle' | 'filtering';
 interface AsyncListState<T, C> extends ListState<T> {
-  state: 'loading' | 'sorting' | 'loadingMore' | 'error' | 'idle' | 'filtering',
+  state: State,
   items: T[],
   // disabledKeys?: Iterable<Key>,
   selectedKeys: Selection,
@@ -103,7 +104,8 @@ interface AsyncListData<T> extends ListData<T> {
   /** Loads the next page of data in the list. */
   loadMore(): void,
   /** Triggers sorting for the list. */
-  sort(descriptor: SortDescriptor): void
+  sort(descriptor: SortDescriptor): void,
+  state: State
 }
 
 function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncListState<T, C> {
@@ -306,8 +308,8 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     items: filteredItems,
     selectedKeys: data.selectedKeys,
     sortDescriptor: data.sortDescriptor,
-    // TODO: add isFiltering? This is so we can have the loading icon in the textfield when filter text changes instead of in the listbox
     isLoading: data.state === 'loading' || data.state === 'loadingMore' || data.state === 'sorting' || data.state === 'filtering',
+    state: data.state,
     error: data.error,
     filterText: data.filterText,
     getItem(key: Key) {

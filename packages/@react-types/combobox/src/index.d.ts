@@ -48,12 +48,14 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
   shouldFlip?: boolean
 }
 
-export interface SpectrumComboBoxProps<T> extends ComboBoxProps<T>, SpectrumLabelableProps, StyleProps, AsyncLoadable {
+export interface SpectrumComboBoxProps<T> extends ComboBoxProps<T>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
   /** Whether the ComboBox should be displayed with a quiet style. */
   isQuiet?: boolean,
   /**
    * Direction the menu will render relative to the ComboBox.
    * @default 'bottom'
    */
-  direction?: 'bottom' | 'top'
+  direction?: 'bottom' | 'top',
+  /** The current loading state of the ComboBox. Determines whether or not the progress circle should be shown. */
+  loadingState?: 'loading' | 'sorting' | 'loadingMore' | 'error' | 'idle' | 'filtering'
 }

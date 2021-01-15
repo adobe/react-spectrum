@@ -424,38 +424,22 @@ storiesOf('ComboBox', module)
     () => (
       <CustomFilterComboBox />
     )
-    )
-  .add(
-    'isLoading',
-    () => (
-      <ComboBox label="Combobox" isLoading defaultItems={[]}>
-        {item => <Item>{item.name}</Item>}
-      </ComboBox>
-    )
   )
   .add(
-    'isLoading, validationState: invalid',
-    () => (
-      <ComboBox label="Combobox" isLoading validationState="invalid" defaultItems={[]}>
-        {item => <Item>{item.name}</Item>}
-      </ComboBox>
-    )
+    'loadingState',
+    () => <LoadingExamples />
   )
   .add(
-    'isLoading, isQuiet',
-    () => (
-      <ComboBox label="Combobox" isLoading isQuiet defaultItems={[]}>
-        {item => <Item>{item.name}</Item>}
-      </ComboBox>
-    )
+    'loadingState = "loading", validationState: invalid',
+    () => <LoadingExamples validationState="invalid" />
   )
   .add(
-    'isLoading, isQuiet, validationState: invalid',
-    () => (
-      <ComboBox label="Combobox" isLoading isQuiet validationState="invalid" defaultItems={[]}>
-        {item => <Item>{item.name}</Item>}
-      </ComboBox>
-    )
+    'loadingState = "loading", isQuiet',
+    () => <LoadingExamples isQuiet />
+  )
+  .add(
+    'loadingState = "loading", isQuiet, validationState: invalid',
+    () => <LoadingExamples isQuiet validationState="invalid" />
   )
   .add(
     'filtering with useListData',
@@ -476,6 +460,22 @@ storiesOf('ComboBox', module)
       <AsyncLoadingExample />
     )
   );
+
+function LoadingExamples(props) {
+  return (
+    <Flex gap="size-300" direction="column" >
+      <ComboBox {...props} label="Combobox (loading)" loadingState="loading" defaultItems={items} >
+        {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
+      <ComboBox {...props} label="Combobox (filtering)" loadingState="filtering" defaultItems={items}>
+        {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
+      <ComboBox {...props} label="Combobox (loading more)" loadingState="loadingMore" defaultItems={items}>
+        {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
+    </Flex>
+  );
+}
 
 function ListDataExample() {
   let {contains} = useFilter({sensitivity: 'base'});
@@ -529,7 +529,7 @@ function AsyncLoadingClientExample() {
       items={list.items}
       inputValue={list.filterText}
       onInputChange={list.setFilterText}
-      isLoading={list.isLoading}
+      loadingState={list.state}
       onLoadMore={list.loadMore}>
       {item => <Item key={item.name}>{item.name}</Item>}
     </ComboBox>
@@ -565,7 +565,7 @@ function AsyncLoadingExample() {
       items={list.items}
       inputValue={list.filterText}
       onInputChange={list.setFilterText}
-      isLoading={list.isLoading}
+      loadingState={list.state}
       onLoadMore={list.loadMore}
       onOpenChange={action('onOpenChange')}>
       {item => <Item key={item.name}>{item.name}</Item>}

@@ -68,12 +68,12 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     menuTrigger = 'input',
     shouldFlip = true,
     direction = 'bottom',
-    isLoading,
+    loadingState,
     onLoadMore
   } = props;
 
   let formatMessage = useMessageFormatter(intlMessages);
-  let isAsync = isLoading != null;
+  let isAsync = loadingState != null;
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
   let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
@@ -142,7 +142,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
       <Field {...props} labelProps={labelProps} ref={domRef}>
         <ComboBoxInput
           {...props}
-          isLoading={isLoading}
+          loadingState={loadingState}
           inputProps={inputProps}
           inputRef={inputRef}
           triggerProps={buttonProps}
@@ -167,7 +167,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           // Set max height: inherit so Tray scrolling works
           UNSAFE_style={{maxHeight: 'inherit'}}
           shouldUseVirtualFocus
-          isLoading={isLoading}
+          isLoading={loadingState === 'loadingMore'}
           onLoadMore={onLoadMore}
           renderEmptyState={() => isAsync && (
             <span className={classNames(comboboxStyles, 'no-results')}>
@@ -202,12 +202,12 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     autoFocus,
     style,
     className,
-    isLoading
+    loadingState
   } = props;
   let {hoverProps, isHovered} = useHover({});
   let formatMessage = useMessageFormatter(intlMessages);
 
-  let loading = (
+  let loadingCircle = (
     <ProgressCircle
       aria-label={formatMessage('loading')}
       size="S"
@@ -270,8 +270,8 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
           isDisabled={isDisabled}
           isQuiet={isQuiet}
           validationState={validationState}
-          isLoading={isLoading}
-          loadingIndicator={isLoading != null && loading} />
+          isLoading={loadingState === 'loading' || loadingState === 'filtering'}
+          loadingIndicator={loadingState != null && loadingCircle} />
         <PressResponder preventFocusOnPress>
           <FieldButton
             {...triggerProps}
