@@ -259,9 +259,6 @@ governing permissions and limitations under the License.
 
 .spectrum-TabsPanel-collapseWrapper {
   display: flex;
-  flex-grow: 1;
-  flex-shrink: 0;
-  flex-basis: 0%;
   overflow: hidden;
   position: relative;
 }
@@ -270,4 +267,11 @@ governing permissions and limitations under the License.
   flex-grow: 1;
   flex-shrink: 0;
   flex-basis: 0%;
+}
+
+.spectrum-TabsPanel-tabpanel {
+  flex-grow: 1;
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
 }
