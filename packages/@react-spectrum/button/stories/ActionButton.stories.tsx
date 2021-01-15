@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '../';
 import Add from '@spectrum-icons/workflow/Add';
 import {Flex} from '@react-spectrum/layout';
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 
@@ -103,13 +103,10 @@ function render(props = {}) {
 
 // https://codesandbox.io/s/eloquent-herschel-pgwci?file=/index.html
 function DisabledButtonBug() {
-  let fooRef = useRef();
+  let [fooDisabled, setFooDisabled] = useState<boolean>();
   let fooPressStart = () => {
     console.log('press start foo');
-    console.log(fooRef.current);
-    if (fooRef.current) {
-      fooRef.current.UNSAFE_getDOMNode().disabled = true;
-    }
+    setFooDisabled(true);
   };
   let fooPressEnd = () => {
     console.log('press end foo');
@@ -124,7 +121,7 @@ function DisabledButtonBug() {
   };
   return (
     <Flex>
-      <ActionButton ref={fooRef} onPressStart={fooPressStart} onPress={fooPressEnd}>Foo</ActionButton>
+      <ActionButton isDisabled={fooDisabled} onPressStart={fooPressStart} onPress={fooPressEnd}>Foo</ActionButton>
       <ActionButton onPressStart={barPressStart} onPress={barPressEnd}>Bar</ActionButton>
     </Flex>
   );
