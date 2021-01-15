@@ -222,33 +222,24 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
           };
         case 'loading':
         case 'sorting':
-          // We're already loading more, and another load was triggered at the same time.
-          // We need to abort the previous load more and start a new one.
-          data.abortController.abort();
-          return {
-            ...data,
-            state: 'loading',
-            // Reset items to an empty list if loading, but not when sorting.
-            items: action.type === 'loading' ? [] : data.items,
-            abortController: action.abortController
-          };
         case 'filtering':
           // If there isn't a abortController provided by the action (aka client side filtering), it is an filterText update
-          if (!action.abortController) {
+          if (!action.abortController && action.type === 'filtering') {
             return {
               ...data,
               filterText: action.filterText ?? data.filterText
             };
           }
 
-          // We're already loading more, and filter text was changed at the same time.
+          // We're already loading more, and another load was triggered at the same time.
           // We need to abort the previous load more and start a new one.
           data.abortController.abort();
           return {
             ...data,
             filterText: action.filterText ?? data.filterText,
-            state: 'filtering',
-            items: data.items,
+            state: action.type,
+            // Reset items to an empty list if loading, but not when sorting.
+            items: action.type === 'loading' ? [] : data.items,
             abortController: action.abortController
           };
         default:
