@@ -45,8 +45,7 @@ interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
   decrementAriaLabel?: string,
   incrementAriaLabel?: string,
   incrementRef?: RefObject<HTMLDivElement>,
-  decrementRef?: RefObject<HTMLDivElement>,
-  setCurrentNumeralSystem: Dispatch<SetStateAction<NumeralSystem>>
+  decrementRef?: RefObject<HTMLDivElement>
 }
 
 interface NumberFieldAria {
@@ -72,8 +71,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     formatOptions,
     incrementRef,
     decrementRef,
-    inputRef,
-    setCurrentNumeralSystem
+    inputRef
   } = props;
 
   let {
@@ -83,7 +81,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     decrementToMin,
     value,
     commitInputValue,
-    textValue
+    textValue,
+    setCurrentNumeralSystem
   } = state;
 
   const formatMessage = useMessageFormatter(intlMessages);

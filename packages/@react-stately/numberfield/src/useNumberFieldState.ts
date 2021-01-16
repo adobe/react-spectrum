@@ -12,6 +12,7 @@
 
 import {clamp, roundToStep, useControlledState} from '@react-stately/utils';
 import {NumberFieldProps} from '@react-types/numberfield';
+import {NumberParser, NumeralSystem} from '@react-types/shared';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 export interface NumberFieldState {
@@ -25,27 +26,17 @@ export interface NumberFieldState {
   maxValue: number,
   value: number,
   inputValue: string,
-  textValue?: string
-}
-
-// I don't know how to remove this one so it's not duplicated and not being imported from aria, should it be in react-types? shared?
-interface NumberParser {
-  /** Parses a cleaned string into the number it represents. */
-  parse: (value: string) => number,
-  /** Rounds a number using the current formatter. */
-  round: (value: number) => number,
-  symbols: {
-    minusSign: string,
-    plusSign: string
-  },
-  /** This removes any not allowed characters from the string. */
-  clean: (value: string) => string
+  textValue?: string,
+  currentNumeralSystem?: NumeralSystem,
+  setCurrentNumeralSystem: (val: NumeralSystem) => void
 }
 
 export interface NumberFieldStateProps extends NumberFieldProps {
   inputValueFormatter: Intl.NumberFormat,
   numberParser: NumberParser,
-  locale: string
+  locale: string,
+  currentNumeralSystem?: NumeralSystem,
+  setCurrentNumeralSystem: (val: NumeralSystem) => void
 }
 
 // for two decimal points of precision
@@ -65,7 +56,9 @@ export function useNumberFieldState(
     onChange,
     inputValueFormatter,
     numberParser,
-    locale
+    locale,
+    currentNumeralSystem,
+    setCurrentNumeralSystem
   } = props;
 
   let intlOptions = useMemo(() => inputValueFormatter.resolvedOptions(), [inputValueFormatter]);
@@ -269,7 +262,9 @@ export function useNumberFieldState(
     value: numberValue,
     inputValue: cleanInputValue,
     commitInputValue,
-    textValue: textValue === 'NaN' ? '' : textValue
+    textValue: textValue === 'NaN' ? '' : textValue,
+    currentNumeralSystem,
+    setCurrentNumeralSystem
   };
 }
 

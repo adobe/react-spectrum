@@ -47,7 +47,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
   let inputValueFormatter = useNumberFormatter({...formatOptions, numeralSystem: currentNumeralSystem});
   let numberParser = useNumberParser({...formatOptions, numeralSystem: currentNumeralSystem});
 
-  let state = useNumberFieldState({...props, locale, inputValueFormatter, numberParser});
+  let state = useNumberFieldState({...props, locale, inputValueFormatter, numberParser, currentNumeralSystem, setCurrentNumeralSystem});
   let inputRef = useRef<HTMLInputElement>();
   let domRef = useFocusableRef<HTMLElement>(ref, inputRef);
   let incrementRef = useRef<HTMLDivElement>();
@@ -58,7 +58,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
     inputFieldProps,
     incrementButtonProps,
     decrementButtonProps
-  } = useNumberField({...props, incrementRef, decrementRef, inputRef, setCurrentNumeralSystem}, state);
+  } = useNumberField({...props, incrementRef, decrementRef, inputRef}, state);
   let isMobile = provider.scale === 'large';
   let showStepper = !hideStepper;
 
