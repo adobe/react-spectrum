@@ -1,0 +1,73 @@
+<svg style="max-height: 97px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 172 97">
+  <title>Tooltip trigger anatomy diagram</title>
+  <desc>Shows a tooltip trigger component with labels pointing to its parts, including the tooltip, and trigger elements.</desc>
+  <g transform="translate(-83 -24)">
+    <g transform="translate(149 73)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-500)" stroke-width="1.5">
+      <rect width="48" height="48" rx="6" stroke="none" />
+      <rect x="0.75" y="0.75" width="46.5" height="46.5" rx="5.25" fill="none" />
+    </g>
+    <g transform="translate(41 -154)">
+      <path d="M-4012,154h12l-6,6Zm-25,0a4,4,0,0,1-4-4V122a4,4,0,0,1,4-4h62a4,4,0,0,1,4,4v28a4,4,0,0,1-4,4Z" transform="translate(4137 62)" fill="var(--anatomy-gray-700)" /><text transform="translate(131 204)" fill="var(--anatomy-gray-50)" font-size="18" font-family="Adobe-Clean">
+        <tspan x="-13.23" y="0">Flip</tspan>
+      </text>
+    </g>
+    <g transform="translate(-38 2)">
+      <text transform="translate(156 35)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+        <tspan x="-34.333" y="0">Tooltip</tspan>
+      </text>
+      <circle cx="2.5" cy="2.5" r="2.5" transform="translate(180 29.5)" fill="var(--anatomy-gray-500)" />
+      <rect width="21" height="1" transform="translate(160 31.5)" fill="var(--anatomy-gray-500)" />
+    </g>
+    <g transform="translate(149 73)">
+      <g transform="translate(11.381 11.381)">
+        <g transform="translate(22.007 11.276)" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-700)" stroke-width="1">
+          <rect width="1.789" height="1.789" rx="0.25" stroke="none" />
+          <rect x="0.5" y="0.5" width="0.789" height="0.789" rx="0.25" fill="none" />
+        </g>
+        <g transform="translate(19.026 11.276)" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-700)" stroke-width="1">
+          <rect width="1.789" height="1.789" rx="0.25" stroke="none" />
+          <rect x="0.5" y="0.5" width="0.789" height="0.789" rx="0.25" fill="none" />
+        </g>
+        <g transform="translate(16.045 11.276)" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-700)" stroke-width="1">
+          <rect width="1.789" height="1.789" rx="0.25" stroke="none" />
+          <rect x="0.5" y="0.5" width="0.789" height="0.789" rx="0.25" fill="none" />
+        </g>
+        <g transform="translate(13.064 11.276)" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-700)" stroke-width="1">
+          <rect width="1.789" height="1.789" rx="0.25" stroke="none" />
+          <rect x="0.5" y="0.5" width="0.789" height="0.789" rx="0.25" fill="none" />
+        </g>
+        <g transform="translate(10.083 11.276)" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-700)" stroke-width="1">
+          <rect width="1.789" height="1.789" rx="0.25" stroke="none" />
+          <rect x="0.5" y="0.5" width="0.789" height="0.789" rx="0.25" fill="none" />
+        </g>
+        <g transform="translate(7.102 11.276)" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-700)" stroke-width="1">
+          <rect width="1.789" height="1.789" rx="0.25" stroke="none" />
+          <rect x="0.5" y="0.5" width="0.789" height="0.789" rx="0.25" fill="none" />
+        </g>
+        <g transform="translate(4.121 11.276)" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-700)" stroke-width="1">
+          <rect width="1.789" height="1.789" rx="0.25" stroke="none" />
+          <rect x="0.5" y="0.5" width="0.789" height="0.789" rx="0.25" fill="none" />
+        </g>
+        <g transform="translate(1.14 11.276)" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-700)" stroke-width="1">
+          <rect width="1.789" height="1.789" rx="0.25" stroke="none" />
+          <rect x="0.5" y="0.5" width="0.789" height="0.789" rx="0.25" fill="none" />
+        </g>
+        <path d="M4.8,20.9H19.811a.6.6,0,0,0,.421-1.018l-7.5-7.5a.6.6,0,0,0-.844,0l-7.5,7.5A.6.6,0,0,0,4.8,20.9Z" transform="translate(0.161 1.7)" fill="var(--anatomy-gray-700)" stroke="rgba(0,0,0,0)" stroke-width="1" />
+        <path d="M12.729,10.522l7.5-7.5a.584.584,0,0,0,.176-.417.6.6,0,0,0-.6-.6H4.8a.6.6,0,0,0-.6.6.584.584,0,0,0,.176.417l7.5,7.5A.6.6,0,0,0,12.729,10.522ZM7.514,3.788H17.1L12.307,8.581Z" transform="translate(0.161 -0.263)" fill="var(--anatomy-gray-700)" stroke="rgba(0,0,0,0)" stroke-width="1" />
+      </g>
+    </g>
+    <g transform="translate(-38 2)">
+      <text transform="translate(156 35)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+        <tspan x="-34.333" y="0">Tooltip</tspan>
+      </text>
+      <circle cx="2.5" cy="2.5" r="2.5" transform="translate(180 29.5)" fill="var(--anatomy-gray-500)" />
+      <rect width="21" height="1" transform="translate(160 31.5)" fill="var(--anatomy-gray-500)" />
+    </g><text transform="translate(254 101)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <tspan x="-35.282" y="0">Trigger</tspan>
+    </text>
+    <g transform="translate(0 -18)">
+      <circle cx="2.5" cy="2.5" r="2.5" transform="translate(189 112.5)" fill="var(--anatomy-gray-500)" />
+      <rect width="21" height="1" transform="translate(194 114.5)" fill="var(--anatomy-gray-500)" />
+    </g>
+  </g>
+</svg>

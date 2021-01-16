@@ -13,6 +13,7 @@ export default Layout;
 import docs from 'docs:@react-aria/textfield';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
 import packageData from '@react-aria/textfield/package.json';
+import Anatomy from './anatomy.svg';
 
 ```jsx import
 import {useTextField} from '@react-aria/textfield';
@@ -41,7 +42,7 @@ keywords: [textfield, textbox, input, label, aria]
 ## Features
 
 Text fields can be built with [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input)
-or [&lt;textarea&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea) 
+or [&lt;textarea&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea)
 and [&lt;label&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label) elements,
 but you must manually ensure that they are semantically connected via ids for accessibility.
 `useTextField` helps automate this, and handle other accessibility features while
@@ -53,6 +54,8 @@ allowing for custom styling.
 * Required and invalid states exposed to assistive technology via ARIA
 
 ## Anatomy
+
+<Anatomy />
 
 Text fields consist of an input element and a label. `useTextField` automatically manages
 the relationship between the two elements using the `for` attribute on the `<label>` element

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color} from '@react-stately/color';
+import {parseColor} from '@react-stately/color';
 import React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
 import {useHexColorField} from '../';
@@ -50,7 +50,7 @@ describe('useHexColorField', function () {
   });
 
   it('should return props for colorValue provided', function () {
-    let colorValue = new Color('#ff88a0');
+    let colorValue = parseColor('#ff88a0');
     let {inputFieldProps} = renderHexColorFieldHook({}, {colorValue});
     expect(inputFieldProps['aria-valuenow']).toBe(colorValue.toHexInt());
     expect(inputFieldProps['aria-valuetext']).toBe('#FF88A0');

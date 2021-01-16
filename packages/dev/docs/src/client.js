@@ -13,7 +13,7 @@
 import {ActionButton} from '@react-spectrum/button';
 import docsStyle from './docs.css';
 import {listen} from 'quicklink';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {ThemeSwitcher} from './ThemeSwitcher';
@@ -63,22 +63,24 @@ if (typeof ResizeObserver !== 'undefined') {
 }
 
 function Hamburger() {
+  let [isPressed, setIsPressed] = useState(false);
+
   let onPress = (event) => {
     let nav = document.querySelector('.' + docsStyle.nav);
     let main = document.querySelector('main');
     let themeSwitcher = event.target.nextElementSibling;
- 
+
     nav.classList.toggle(docsStyle.visible);
 
     if (nav.classList.contains(docsStyle.visible)) {
-      event.target.setAttribute('aria-pressed', 'true');
+      setIsPressed(true);
       main.setAttribute('aria-hidden', 'true');
       themeSwitcher.setAttribute('aria-hidden', 'true');
       themeSwitcher.querySelector('button').tabIndex = -1;
       nav.tabIndex = -1;
       nav.focus();
     } else {
-      event.target.setAttribute('aria-pressed', 'false');
+      setIsPressed(false);
       main.removeAttribute('aria-hidden');
       themeSwitcher.removeAttribute('aria-hidden');
       themeSwitcher.querySelector('button').removeAttribute('tabindex');
@@ -93,7 +95,7 @@ function Hamburger() {
     let hamburgerButton = document.querySelector('.' + docsStyle.hamburgerButton);
     let themeSwitcher = hamburgerButton.nextElementSibling;
 
-    /* remove visible className and aria-attributes that make nav behave as a modal */ 
+    /* remove visible className and aria-attributes that make nav behave as a modal */
     let removeVisible = (isNotResponsive = false) => {
       hamburgerButton.setAttribute('aria-pressed', 'false');
 
@@ -142,8 +144,6 @@ function Hamburger() {
       }
     };
 
-    hamburgerButton.setAttribute('aria-pressed', 'false');
-    
     main.addEventListener('click', onClick);
     document.addEventListener('keydown', onKeydownEsc);
     nav.addEventListener('keydown', onKeydownTab);
@@ -169,9 +169,11 @@ function Hamburger() {
   }, []);
 
   return (
-    <ActionButton UNSAFE_className={docsStyle.hamburgerButton} onPress={onPress} aria-label="Open navigation panel">
-      <ShowMenu />
-    </ActionButton>
+    <div className={docsStyle.hamburgerButton} title="Open navigation panel" role="presentation">
+      <ActionButton onPress={onPress} aria-label="Open navigation panel" aria-pressed={isPressed ? isPressed : undefined}>
+        <ShowMenu />
+      </ActionButton>
+    </div>
   );
 }
 
