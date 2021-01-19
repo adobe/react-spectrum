@@ -271,7 +271,4 @@ governing permissions and limitations under the License.
 
 .spectrum-TabsPanel-tabpanel {
   flex-grow: 1;
-  display: flex;
-  align-items: stretch;
-  flex-direction: column;
 }
