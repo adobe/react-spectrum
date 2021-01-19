@@ -12,11 +12,11 @@
 
 import {HTMLAttributes} from 'react';
 
-interface RowGroupAria {
+interface GridRowGroupAria {
   rowGroupProps: HTMLAttributes<HTMLElement>
 }
 
-export function useTableRowGroup(): RowGroupAria {
+export function useGridRowGroup(): GridRowGroupAria {
   return {
     rowGroupProps: {
       role: 'rowgroup'

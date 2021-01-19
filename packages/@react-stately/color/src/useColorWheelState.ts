@@ -10,34 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color} from './Color';
-import {ColorWheelProps} from '@react-types/color';
+import {ColorWheelProps, Color as IColor} from '@react-types/color';
+import {parseColor} from './Color';
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
 
 export interface ColorWheelState {
-  readonly value: Color,
-  setValue(value: string | Color): void,
+  readonly value: IColor,
+  setValue(value: string | IColor): void,
 
   readonly hue: number,
   setHue(value: number): void,
 
-  increment(minStepSize?: number),
-  decrement(minStepSize?: number),
+  increment(minStepSize?: number): void,
+  decrement(minStepSize?: number): void,
 
   isDragging: boolean,
   setDragging(value: boolean): void
 }
 
-function normalizeColor(v: string | Color) {
+function normalizeColor(v: string | IColor) {
   if (typeof v === 'string') {
-    return new Color(v);
+    return parseColor(v);
   } else {
     return v;
   }
 }
 
-const DEFAULT_COLOR = new Color('hsl(0, 100%, 50%)');
+const DEFAULT_COLOR = parseColor('hsl(0, 100%, 50%)');
 
 function roundToStep(value: number, step: number): number {
   return Math.round(value / step) * step;

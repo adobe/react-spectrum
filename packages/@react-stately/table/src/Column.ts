@@ -11,7 +11,8 @@
  */
 
 import {CollectionBuilderContext} from './useTableState';
-import {ColumnProps, TableNode} from '@react-types/table';
+import {ColumnProps} from '@react-types/table';
+import {GridNode} from '@react-types/grid';
 import {PartialNode} from '@react-stately/collections';
 import React, {ReactElement} from 'react';
 
@@ -19,7 +20,7 @@ function Column<T>(props: ColumnProps<T>): ReactElement { // eslint-disable-line
   return null;
 }
 
-Column.getCollectionNode = function* getCollectionNode<T>(props: ColumnProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>, void, TableNode<T>[]> {
+Column.getCollectionNode = function* getCollectionNode<T>(props: ColumnProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>, void, GridNode<T>[]> {
   let {title, children, childColumns} = props;
   let fullNodes = yield {
     type: 'column',
