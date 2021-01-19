@@ -16,6 +16,7 @@ import selectionDocs from 'docs:@react-stately/selection';
 import statelyDocs from 'docs:@react-stately/list';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-aria/listbox/package.json';
+import Anatomy from './anatomy.svg';
 
 ```jsx import
 import {useListBox, useListBoxSection, useOption} from '@react-aria/listbox';
@@ -65,6 +66,8 @@ Note: `useListBox` only handles the list itself. For a dropdown similar to a `<s
 * Virtualized scrolling support for performance with long lists
 
 ## Anatomy
+
+<Anatomy />
 
 A listbox consists of a container element, with a list of options or groups inside.
 `useListBox`, `useOption`, and `useListBoxSection` handle exposing this to assistive

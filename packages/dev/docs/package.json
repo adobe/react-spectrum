@@ -4,7 +4,7 @@
   "private": true,
   "source": "src/index.js",
   "dependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
+    "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
     "@mdx-js/react": "^1.5.5",
     "@react-aria/aria-modal-polyfill": "^3.1.0",
     "@react-aria/interactions": "^3.1.0",

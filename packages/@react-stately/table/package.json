@@ -19,8 +19,10 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-stately/collections": "^3.2.1",
+    "@react-stately/grid": "3.0.0-alpha.1",
     "@react-stately/selection": "^3.3.0",
     "@react-stately/utils": "^3.1.1",
+    "@react-types/grid": "3.0.0-alpha.1",
     "@react-types/shared": "^3.3.0",
     "@react-types/table": "3.0.0-rc.6"
   },
