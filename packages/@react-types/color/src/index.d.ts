@@ -25,7 +25,6 @@ import {
   TextInputDOMProps,
   Validation
 } from '@react-types/shared';
-import {Color} from '@react-stately/color';
 import {SliderProps} from '@react-types/slider';
 
 /** A list of supported color formats. */
@@ -33,6 +32,14 @@ export type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hs
 
 /** A list of color channels. */
 export type ColorChannel = 'hue' | 'saturation' | 'brightness' | 'lightness' | 'red' | 'green' | 'blue' | 'alpha';
+
+export interface Color {
+  toFormat(format: ColorFormat): Color,
+  toString(format: ColorFormat | 'css'): string,
+  toHexInt(): number,
+  getChannelValue(channel: ColorChannel): number,
+  withChannelValue(channel: ColorChannel, value: number): Color
+}
 
 export type ColorInput = string | Color;
 
