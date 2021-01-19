@@ -321,7 +321,8 @@ function Option({item, state, shouldUseVirtualFocus}) {
 
 The following example shows how you would create a controlled ComboBox, controlling everything from the selected value (`selectedKey`)
 to the combobox options (`items`). By passing in `inputValue`, `selectedKey`, `isOpen`, and `items` to the `useComboBoxState` hook you can control
-what exactly your ComboBox should display.
+what exactly your ComboBox should display. For example, note that the item filtering for the controlled ComboBox below now follows a "starts with"
+filter strategy, accomplished by controlling the exact set of items available to the ComboBox whenever the input value updates.
 
 It is important to note that you don't have to control every single aspect of a ComboBox. If you decide to only control a single property of the
 ComboBox, be sure to provide the change handler for that prop as well e.g. controlling `selectedKey` would require `onSelectionChange` to be passed to `useComboBox` as well.
