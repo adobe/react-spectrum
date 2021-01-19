@@ -11,7 +11,7 @@
  */
 
 import {act, renderHook} from '@testing-library/react-hooks';
-import {Color} from '../src/Color';
+import {parseColor} from '../src/Color';
 import {useHexColorFieldState} from '../';
 
 describe('useHexColorFieldState tests', function () {
@@ -29,10 +29,10 @@ describe('useHexColorFieldState tests', function () {
     Name                                   | props
     ${'6-length hex string'}               | ${{defaultValue: '#aabbcc'}}
     ${'3-length hex string'}               | ${{defaultValue: '#abc'}}
-    ${'Color object'}                      | ${{defaultValue: new Color('#aabbcc')}}
+    ${'Color object'}                      | ${{defaultValue: parseColor('#aabbcc')}}
     ${'6-length hex string (controlled)'}  | ${{value: '#aabbcc'}}
     ${'3-length hex string (controlled)'}  | ${{value: '#abc'}}
-    ${'Color object (controlled)'}         | ${{value: new Color('#aabbcc')}}
+    ${'Color object (controlled)'}         | ${{value: parseColor('#aabbcc')}}
   `('should accept $Name as value', function ({props}) {
     let {result} = renderHook(() => useHexColorFieldState(props));
     expect(result.current.colorValue.getChannelValue('red')).toBe(170);
@@ -127,7 +127,7 @@ describe('useHexColorFieldState tests', function () {
     expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
     expect(result.current.inputValue).toBe('#AABBCC');
 
-    let newColor = new Color('#cba');
+    let newColor = parseColor('#cba');
     act(() => result.current.setInputValue('#cba'));
     expect(onChangeSpy).toHaveBeenCalledWith(newColor);
     expect(result.current.colorValue.getChannelValue('red')).toBe(204);
@@ -147,7 +147,7 @@ describe('useHexColorFieldState tests', function () {
     expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
     expect(result.current.inputValue).toBe('#AABBCC');
 
-    let newColor = new Color('#cba');
+    let newColor = parseColor('#cba');
     act(() => result.current.setInputValue('#cba'));
     expect(onChangeSpy).toHaveBeenCalledWith(newColor);
     expect(result.current.colorValue.getChannelValue('red')).toBe(170);
