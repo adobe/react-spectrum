@@ -16,8 +16,8 @@ import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import {TableState} from '@react-stately/table';
 import {useFocusable} from '@react-aria/focus';
+import {useGridCell} from '@react-aria/grid';
 import {usePress} from '@react-aria/interactions';
-import {useTableCell} from './useTableCell';
 
 
 interface ColumnHeaderProps {
@@ -34,7 +34,7 @@ interface ColumnHeaderAria {
 
 export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>): ColumnHeaderAria {
   let {node, colspan, ref, isDisabled} = props;
-  let {gridCellProps} = useTableCell(props, state);
+  let {gridCellProps} = useGridCell(props, state);
 
   let {pressProps} = usePress({
     isDisabled: !node.props.allowsSorting || isDisabled,
