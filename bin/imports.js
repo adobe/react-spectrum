@@ -14,6 +14,7 @@ const findUp = require('find-up');
 const path = require('path');
 const fs = require('fs');
 const Module = require('module');
+const substrings = ['-', '+'];
 
 module.exports = function (context) {
   let processNode = (node) => {
@@ -57,11 +58,12 @@ module.exports = function (context) {
           }
 
           let depPkg = JSON.parse(fs.readFileSync(depPath, 'utf8'));
+          let pkgVersion = substrings.some(v => depPkg.version.includes(v)) ?  depPkg.version : `^${depPkg.version}`;
 
           if (pkgName === '@react-spectrum/provider') {
-            pkg.peerDependencies = insertObject(pkg.peerDependencies, pkgName, depPkg.version);
+            pkg.peerDependencies = insertObject(pkg.peerDependencies, pkgName, pkgVersion);
           } else {
-            pkg.dependencies = insertObject(pkg.dependencies, pkgName, depPkg.version);
+            pkg.dependencies = insertObject(pkg.dependencies, pkgName, pkgVersion);
           }
 
           fs.writeFileSync(pkgPath, JSON.stringify(pkg, false, 2) + '\n');
