@@ -19,7 +19,7 @@ import {
 } from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Label} from '@react-spectrum/label';
-import {LabelPosition} from '@react-types/shared';
+import {LabelPosition, PressEvents} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from '@react-aria/utils';
 import React, {cloneElement, forwardRef, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, TextareaHTMLAttributes, useImperativeHandle, useRef} from 'react';
@@ -29,7 +29,7 @@ import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 
-interface TextFieldBaseProps extends SpectrumTextFieldProps {
+interface TextFieldBaseProps extends SpectrumTextFieldProps, PressEvents {
   wrapperChildren?: ReactElement | ReactElement[],
   inputClassName?: string,
   validationIconClassName?: string,

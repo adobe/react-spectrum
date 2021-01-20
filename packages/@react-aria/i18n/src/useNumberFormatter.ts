@@ -22,13 +22,25 @@ try {
   // eslint-disable-next-line no-empty
 } catch (e) {}
 
+export type NumeralSystem = 'arab' | 'hanidec' | 'latn';
+
+export interface NumberFormatOptions extends Intl.NumberFormatOptions {
+  /** Overrides the CLDR or browser default numeral system for the current locale. */
+  numeralSystem?: NumeralSystem
+}
+
 /**
  * Provides localized number formatting for the current locale. Automatically updates when the locale changes,
  * and handles caching of the number formatter for performance.
  * @param options - Formatting options.
  */
-export function useNumberFormatter(options?: Intl.NumberFormatOptions): Intl.NumberFormat {
+export function useNumberFormatter(options: NumberFormatOptions = {}): Intl.NumberFormat {
+  let {numeralSystem} = options;
   let {locale} = useLocale();
+
+  if (numeralSystem && locale.indexOf('-u-nu-') === -1) {
+    locale = `${locale}-u-nu-${numeralSystem}`;
+  }
 
   let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
   if (formatterCache.has(cacheKey)) {

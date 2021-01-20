@@ -392,7 +392,10 @@
   --spectrum-tool-high-emphasis-touch-hit-x: var(--spectrum-global-dimension-static-size-50);
   --spectrum-tool-high-emphasis-touch-hit-y: var(--spectrum-global-dimension-static-size-50);
   --spectrum-tooltip-padding-bottom: 6px;
-  --spectrum-tooltip-content-max-width: 126px;
+  /* BEGIN RSP PATCH */
+  /* Old value is deprecated, bumping to new value for now: https://git.corp.adobe.com/Spectrum/spectrum-dna/blob/53f6efb0d81ec6829048a53a9e8389b450f46dee/data/elements/tooltip/TooltipBase.mjs#L36 */
+  --spectrum-tooltip-content-max-width: var(--spectrum-global-dimension-size-2000);
+  /* END RSP PATCH */
   --spectrum-tooltip-info-padding-bottom: 6px;
   --spectrum-tooltip-info-content-max-width: 126px;
   --spectrum-tooltip-negative-padding-bottom: 6px;
