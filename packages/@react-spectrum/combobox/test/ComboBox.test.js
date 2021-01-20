@@ -3464,5 +3464,4 @@ describe('ComboBox', function () {
       });
     });
   });
-
 });
