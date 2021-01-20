@@ -13,24 +13,13 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
 import {
-  determineNumeralSystem,
-  NumeralSystem,
-  useLocale,
-  useMessageFormatter,
-  useNumberFormatter
-} from '@react-aria/i18n';
-import {
-  Dispatch,
   HTMLAttributes,
   InputHTMLAttributes,
   LabelHTMLAttributes,
   RefObject,
-  SetStateAction,
   useCallback,
-  useEffect,
   useMemo,
-  useRef,
-  useState
+  useRef
 } from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -38,6 +27,11 @@ import {mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
 import {useFocus} from '@react-aria/interactions';
+import {
+  useLocale,
+  useMessageFormatter,
+  useNumberFormatter
+} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
 interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
@@ -79,10 +73,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     incrementToMax,
     decrement,
     decrementToMin,
-    value,
-    commitInputValue,
-    textValue,
-    setCurrentNumeralSystem
+    numberValue,
+    commitInputValue
   } = state;
 
   const formatMessage = useMessageFormatter(intlMessages);
@@ -120,8 +112,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
       onIncrementToMax: incrementToMax,
       onDecrement: decrement,
       onDecrementToMin: decrementToMin,
-      value,
-      textValue
+      value: numberValue
     }
   );
 
@@ -134,13 +125,13 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     'aria-controls': inputId,
     excludeFromTabOrder: true,
     // use state min/maxValue because otherwise in default story, steppers will never disable
-    isDisabled: cannotStep || value >= state.maxValue
+    isDisabled: cannotStep || numberValue >= state.maxValue
   });
   const decrementButtonProps: AriaButtonProps = mergeProps(decButtonProps, {
     'aria-label': decrementAriaLabel,
     'aria-controls': inputId,
     excludeFromTabOrder: true,
-    isDisabled: cannotStep || value <= state.minValue
+    isDisabled: cannotStep || numberValue <= state.minValue
   });
 
   let onWheel = useCallback((e) => {
@@ -174,15 +165,20 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     inputMode = 'text';
   }
 
-  let {onChange, onKeyDown, onPaste} = useSelectionControlledTextfield(
-    {
-      setValue: state.setValue,
-      value: state.inputValue,
-      isFocused,
-      setCurrentNumeralSystem
-    },
-    inputRef
-  );
+  let onBeforeInput = e => {
+    let nextValue =
+      e.target.value.slice(0, e.target.selectionStart) +
+      e.data +
+      e.target.value.slice(e.target.selectionEnd);
+
+    if (!state.validate(nextValue)) {
+      e.preventDefault();
+    }
+  };
+
+  let onChange = value => {
+    state.setInputValue(value);
+  };
 
   let {labelProps, inputProps} = useTextField(
     {
@@ -201,8 +197,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
       type: 'text', // Can't use type="number" because then we can't have things like $ in the field.
       inputMode,
       onChange,
-      onKeyDown,
-      onPaste
+      onBeforeInput
     }, inputRef);
 
   const inputFieldProps = mergeProps(
@@ -232,80 +227,3 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     decrementButtonProps
   };
 }
-
-
-let useSelectionControlledTextfield = (
-  {
-    setValue,
-    value,
-    isFocused,
-    setCurrentNumeralSystem
-  }: {
-    setValue: (string) => void,
-    value: string,
-    isFocused: RefObject<boolean>,
-    setCurrentNumeralSystem: Dispatch<SetStateAction<NumeralSystem>>
-  }, ref: RefObject<HTMLInputElement>
-) => {
-  /**
-   * Selection is to track where the cursor is in the input so we can restore that position + some offset after render.
-   * The reason we have to do this is because the user is not as limited when the field is empty, the set of allowed characters
-   * is at the maximum amount. Once a user enters a numeral, we determine the system and close off the allowed set.
-   * This means we can't block the values before they make it to state and cause a render, thereby moving selection to an
-   * undesirable location.
-   */
-  let selection = useRef({selectionStart: value.length, selectionEnd: value.length, value, forward: false});
-
-  /**
-   * Forces a rerender when the typed character doesn't cause a state change.
-   * Example: start with '$10.00' in the input, place cursor after `1`, type an invalid character
-   * 'a', the text field looks the same, but without this, the cursor will move the end.
-   */
-  let [isReRender, setReRender] = useState({});
-  let onChange = (nextValue) => {
-    let numeralSystem = determineNumeralSystem(nextValue);
-    setCurrentNumeralSystem(numeralSystem);
-    setValue(nextValue);
-    if (nextValue !== value) {
-      setReRender({});
-    }
-  };
-
-  useEffect(() => {
-    // Make sure we don't try to set selection if the cursor isn't in the field. It causes Safari to autofocus the field.
-    if (!isFocused.current) {
-      return;
-    }
-    let inTextField = selection.current.value || '';
-    let newTextField = value;
-    if (selection.current.forward) {
-      ref.current.setSelectionRange(
-        selection.current.selectionStart,
-        selection.current.selectionStart
-      );
-    } else {
-      ref.current.setSelectionRange(
-        selection.current.selectionEnd + newTextField.length - inTextField.length,
-        selection.current.selectionEnd + newTextField.length - inTextField.length
-      );
-    }
-  }, [ref, value, selection, isFocused, isReRender]);
-
-  /**
-   * The Delete key is special, it removes the character in front of it, we need to take note of which direction we're affecting
-   * characters.
-   */
-  let setSelection = (e) => {
-    let forward = false;
-    if (e.key === 'Delete') {
-      forward = true;
-    }
-    selection.current = {
-      selectionStart: e.target.selectionStart,
-      selectionEnd: e.target.selectionEnd,
-      value,
-      forward
-    };
-  };
-  return {onChange, onKeyDown: setSelection, onPaste: setSelection};
-};

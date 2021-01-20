@@ -778,7 +778,7 @@ describe('NumberField', function () {
 
     expect(textField).toHaveAttribute('value', '+10%');
     textField.setSelectionRange(2, 3);
-    typeText(textField, '{backspace}');
+    userEvent.type(textField, '{backspace}');
     expect(textField).toHaveAttribute('value', '+1%');
     expect(onChangeSpy).not.toHaveBeenCalled();
     textField.setSelectionRange(2, 3);
@@ -847,7 +847,7 @@ describe('NumberField', function () {
 
     act(() => {textField.focus();});
     textField.setSelectionRange(2, 3);
-    typeText(textField, '{backspace}');
+    userEvent.type(textField, '{backspace}');
     textField.setSelectionRange(2, 2);
     typeText(textField, '1');
     textField.setSelectionRange(3, 3);
@@ -860,7 +860,7 @@ describe('NumberField', function () {
 
     act(() => {textField.focus();});
     textField.setSelectionRange(7, 8);
-    typeText(textField, '{backspace}');
+    userEvent.type(textField, '{backspace}');
     expect(textField).toHaveAttribute('value', '($18.00');
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '$18.00');
@@ -897,7 +897,7 @@ describe('NumberField', function () {
       textField.focus();
     });
     textField.setSelectionRange(1, 2);
-    typeText(textField, '{backspace}');
+    userEvent.type(textField, '{backspace}');
     textField.setSelectionRange(1, 1);
     typeText(textField, '1');
     textField.setSelectionRange(2, 2);
@@ -1178,7 +1178,7 @@ describe('NumberField', function () {
     Name              | props                                                    | locale     | keystrokes              | expected
     ${'US Euros'}     | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['4', '2', '.', '1']} | ${['4', '42', '42.', '42.1', '€42.10']}
     ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['4', '2', ',', '1']} | ${['4', '42', '42,', '42,1', '42,10 €']}
-    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['٤', '٢', ',', '١']} | ${['٤', '٤٢', '٤٢٫', '٤٢٫١', '٤٢٫١٠ €']}
+    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['٤', '٢', ',', '١']} | ${['٤', '٤٢', '٤٢,', '٤٢,١', '٤٢٫١٠ €']}
   `('$Name typing in locale stays consistent', ({props, locale, keystrokes, expected}) => {
     let {textField} = renderNumberField({onChange: onChangeSpy, ...props}, {locale});
 
@@ -1204,9 +1204,9 @@ describe('NumberField', function () {
 
   it.each`
     Name              | props | locale     | keystrokes                   | expected
-    ${'US Euros'}     | ${{}} | ${'en-US'} | ${['1', ',', '0', '0', '0']} | ${['1', '1,', '1,0', '1,00', '1,000']}
-    ${'French Euros'} | ${{}} | ${'fr-FR'} | ${['1', ' ', '0', '0', '0']} | ${['1', '1 ', '1 0', '1 00', '1 000']}
-    ${'Arabic Euros'} | ${{}} | ${'ar-AE'} | ${['١', '.', '٠', '٠', '٠']} | ${['١', '١٬', '١٬٠', '١٬٠٠', '١٬٠٠٠']}
+    ${'US Euros'}     | ${{}} | ${'en-US'} | ${['1', ',', '0', '0', '0']} | ${['1', '1,', '1,0', '1,00', '1,000', '1,000']}
+    ${'French Euros'} | ${{}} | ${'fr-FR'} | ${['1', ' ', '0', '0', '0']} | ${['1', '1 ', '1 0', '1 00', '1 000', '1 000']}
+    ${'Arabic Euros'} | ${{}} | ${'ar-AE'} | ${['١', '.', '٠', '٠', '٠']} | ${['١', '١.', '١.٠', '١.٠٠', '١.٠٠٠', '١٬٠٠٠']}
   `('$Name typing group characters works', ({props, locale, keystrokes, expected}) => {
     let {textField} = renderNumberField({onChange: onChangeSpy, ...props}, {locale});
 
