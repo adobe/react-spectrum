@@ -38,7 +38,7 @@ describe('useHexColorField', function () {
     expect(inputFieldProps.id).toBeTruthy();
     expect(inputFieldProps.role).toBe('spinbutton');
     expect(inputFieldProps['aria-valuenow']).toBeNull();
-    expect(inputFieldProps['aria-valuetext']).toBeNull();
+    expect(inputFieldProps['aria-valuetext']).toBe('Empty');
     expect(inputFieldProps['aria-valuemin']).toBe(0x000000);
     expect(inputFieldProps['aria-valuemax']).toBe(0xFFFFFF);
     expect(inputFieldProps['aria-required']).toBeNull();

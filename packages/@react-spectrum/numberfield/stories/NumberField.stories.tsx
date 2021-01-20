@@ -11,48 +11,242 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {chain} from '@react-aria/utils';
+import {Flex} from '@react-spectrum/layout';
+import {Form} from '@react-spectrum/form';
+import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '../src';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('NumberField', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
+  .addDecorator(story => (
+    <ErrorBoundary>{story()}</ErrorBoundary>
+  ))
   .add(
     'default',
-    () => render({onChange: action('onChange')})
+    () => render({})
   )
   .add(
-    'number formatter',
+    'defaultValue: 10',
+    () => render({defaultValue: 10})
+  )
+  .add(
+    'value: 10',
+    () => render({value: 10})
+  )
+  .add(
+    'maximumFractionDigits = 0',
+    () => render({formatOptions: {maximumFractionDigits: 0}})
+  )
+  .add(
+    'currency',
     () => render({formatOptions: {style: 'currency', currency: 'EUR'}})
+  )
+  .add(
+    'percent',
+    () => render({formatOptions: {style: 'percent'}})
+  )
+  .add(
+    'percent min = 2 max = 2 fraction digits',
+    () => render({formatOptions: {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2}})
+  )
+  .add(
+    'percent min = 2 max = 3 fraction digits',
+    () => render({formatOptions: {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 3}})
+  )
+  .add(
+    'minValue = 0, 0 fraction digits',
+    () => render({minValue: 0, formatOptions: {maximumFractionDigits: 0}})
+  )
+  .add(
+    'percent using sign',
+    () => render({formatOptions: {style: 'unit', unit: 'percent', signDisplay: 'always'}})
+  )
+  .add(
+    'disabled',
+    () => render({isDisabled: true})
   )
   .add(
     'isQuiet',
     () => render({isQuiet: true})
   )
   .add(
+    'quiet disabled',
+    () => render({isQuiet: true, isDisabled: true})
+  )
+  .add(
+    'readonly',
+    () => render({defaultValue: 10, isReadOnly: true})
+  )
+  .add(
+    'validationState: invalid',
+    () => render({validationState: 'invalid'})
+  )
+  .add(
+    'validationState: valid',
+    () => render({validationState: 'valid'})
+  )
+  .add(
+    'validationState: invalid, isQuiet',
+    () => render({validationState: 'invalid', isQuiet: true})
+  )
+  .add(
+    'validationState: valid, isQuiet',
+    () => render({validationState: 'valid', isQuiet: true})
+  )
+  .add(
     'minValue = 0, maxValue = 20',
     () => render({minValue: 0, maxValue: 20})
+  )
+  .add(
+    'minValue = -50, maxValue = -20',
+    () => render({minValue: -50, maxValue: -20})
+  )
+  .add(
+    'minValue = 20, maxValue = 50',
+    () => render({minValue: 20, maxValue: 50})
   )
   .add(
     'minValue = 0, defaultValue = 0',
     () => render({minValue: 0, defaultValue: 0})
   )
   .add(
+    'step = 5',
+    () => render({step: 5})
+  )
+  .add(
+    'step = 3 with min = 2, max = 20',
+    () => render({step: 3, minValue: 2, maxValue: 20})
+  )
+  .add(
     'autoFocus',
     () => render({autoFocus: true})
   )
   .add(
+    'hideStepper',
+    () => render({hideStepper: true})
+  )
+  .add(
+    'isQuiet, hideStepper',
+    () => render({isQuiet: true, hideStepper: true})
+  )
+  .add(
+    'required',
+    () => render({isRequired: true})
+  )
+  .add(
+    'optional',
+    () => render({necessityIndicator: 'label'})
+  )
+  .add(
+    'required with label',
+    () => render({isRequired: true, necessityIndicator: 'label'})
+  )
+  .add(
+    'label top end',
+    () => render({isRequired: true, labelPosition: 'top', labelAlign: 'end'})
+  )
+  .add(
+    'label side',
+    () => render({isRequired: true, labelPosition: 'side'})
+  )
+  .add(
+    'no visible label',
+    () => renderNoLabel({isRequired: true, 'aria-label': 'Enter numbers'})
+  )
+  .add(
+    'custom width',
+    () => render({width: 'size-3000'})
+  )
+  .add(
+    'custom width no visible label',
+    () => renderNoLabel({width: 'size-3000', isRequired: true, 'aria-label': 'Enter numbers'})
+  )
+  .add(
     'controlled',
     () => <NumberFieldControlled />
+  )
+  .add(
+    'currency switcher',
+    () => <NumberFieldWithCurrencySelect />
+  )
+  .add(
+    'flexed',
+    () => renderSet()
   );
 
 function render(props: any = {}) {
   return (
-    <NumberField {...props} UNSAFE_className="custom_classname" />
+    <NumberField {...props} onChange={action('onChange')} UNSAFE_className="custom_classname" label="Enter numbers" />
+  );
+}
+
+function renderNoLabel(props: any = {}) {
+  return (
+    <NumberField {...props} onChange={action('onChange')} UNSAFE_className="custom_classname" />
+  );
+}
+
+function renderSet() {
+  return (
+    <Flex width="100%" gap="size-200" alignItems="end">
+      <NumberField label="Grows" flexGrow={1} />
+      <NumberField label="Static" />
+      <NumberField aria-label="Grows" flexGrow={1} />
+      <NumberField aria-label="Static" />
+    </Flex>
   );
 }
 
 function NumberFieldControlled(props) {
   let [value, setValue] = useState(10);
-  return <NumberField {...props} formatOptions={{style: 'currency', currency: 'EUR'}} value={value} onChange={setValue} />;
+  return <NumberField {...props} formatOptions={{style: 'currency', currency: 'EUR'}} value={value} onChange={chain(setValue, action('onChange'))} label="Enter numbers" />;
+}
+
+function NumberFieldWithCurrencySelect(props) {
+  let [value, setValue] = useState(10);
+  let [currency, setCurrency] = useState('EUR');
+  let [currencySign, setCurrencySign] = useState('standard');
+  return (
+    <Form>
+      <NumberField label="Monies" {...props} formatOptions={{style: 'currency', currency, currencySign}} value={value} onChange={chain(setValue, action('onChange'))} />
+      <Picker
+        onSelectionChange={item => setCurrency(String(item))}
+        label="Choose Currency"
+        defaultSelectedKey={currency}
+        items={[{label: 'Euro', value: 'EUR'}, {label: 'US Dollar', value: 'USD'}, {label: 'Japanese Yen', value: 'JPY'}, {label: 'Saudi Riyal', value: 'SAR'}]}>
+        {item => <Item key={item.value}>{item.label}</Item>}
+      </Picker>
+      <Picker
+        onSelectionChange={item => setCurrencySign(String(item))}
+        label="Currency Sign"
+        defaultSelectedKey={currencySign}
+        items={[{label: 'Standard', value: 'standard'}, {label: 'Accounting', value: 'accounting'}]}>
+        {item => <Item key={item.value}>{item.label}</Item>}
+      </Picker>
+    </Form>
+  );
+}
+
+class ErrorBoundary extends React.Component<{}, {hasError: boolean}> {
+  constructor(props) {
+    super(props);
+    this.state = {hasError: false};
+  }
+
+  static getDerivedStateFromError() {
+    // Update state so the next render will show the fallback UI.
+    return {hasError: true};
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // You can render any custom fallback UI
+      return <div>Your browser may not support this set of Intl.Format options.</div>;
+    }
+
+    return this.props.children;
+  }
 }
