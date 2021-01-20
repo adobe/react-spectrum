@@ -23,7 +23,7 @@ governing permissions and limitations under the License.
   --spectrum-datepicker-range-dash-padding-top: 0;
   --spectrum-datepicker-range-dash-line-height: calc(var(--spectrum-textfield-height) - var(--spectrum-global-dimension-size-100));
 
-  --spectrum-combobox-button-width: calc(var(--spectrum-global-dimension-size-400) + var(--spectrum-global-dimension-size-25));
+  --spectrum-combobox-button-width: var(--spectrum-global-dimension-size-400);
 }
 
 .spectrum-InputGroup {
