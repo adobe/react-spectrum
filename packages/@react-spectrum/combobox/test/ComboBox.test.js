@@ -2239,6 +2239,59 @@ describe('ComboBox', function () {
     expect(combobox).toHaveAttribute('aria-invalid', 'true');
   });
 
+  describe('loadingState', function () {
+    it.each`
+      LoadingState   | ValidationState
+      ${'loading'}   | ${null}
+      ${'filtering'} | ${null}
+      ${'loading'}   | ${'invalid'}
+      ${'filtering'} | ${'invalid'}
+    `('should render the loading swirl in the input field when loadingState="$LoadingState" and validationState="$ValidationState"', ({LoadingState, ValidationState}) => {
+      let {getByRole} = renderComboBox({loadingState: LoadingState, validationState: ValidationState});
+      let button = getByRole('button');
+      let progressSpinner = getByRole('progressbar');
+
+      expect(progressSpinner).toBeTruthy();
+      expect(progressSpinner).toHaveAttribute('aria-label', 'Loading...');
+
+      let combobox = getByRole('combobox');
+      if (ValidationState) {
+        expect(combobox).toHaveAttribute('aria-invalid', 'true');
+      }
+
+      // validation icon should no be present
+      expect(() => within(combobox).getByRole('img', {hidden: true})).toThrow();
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      expect(() => within(listbox).getByRole('progressbar')).toThrow();
+    });
+
+    it('should render the loading swirl in the listbox when loadingState="loadingMore"', function () {
+      let {getByRole} = renderComboBox({loadingState: 'loadingMore'});
+      let button = getByRole('button');
+
+      expect(() => getByRole('progressbar')).toThrow();
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+
+      let progressSpinner = within(listbox).getByRole('progressbar');
+      expect(progressSpinner).toBeTruthy();
+      expect(progressSpinner).toHaveAttribute('aria-label', 'Loading more…');
+    });
+  });
+
   describe('mobile combobox', function () {
     beforeEach(() => {
       jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 600);
@@ -2914,6 +2967,78 @@ describe('ComboBox', function () {
         expect(document.activeElement).toBe(getByRole('button'));
       });
     });
+
+    describe('isLoading', function () {
+      it.each`
+        LoadingState   | ValidationState
+        ${'loading'}   | ${null}
+        ${'filtering'} | ${null}
+        ${'loading'}   | ${'invalid'}
+        ${'filtering'} | ${'invalid'}
+      `('should render the loading swirl in the tray input field when loadingState="$LoadingState" and validationState="$ValidationState"', ({LoadingState, ValidationState}) => {
+        let {getByRole, getByTestId} = renderComboBox({loadingState: LoadingState, validationState: ValidationState, defaultInputValue: 'O'});
+        let button = getByRole('button');
+        let progressSpinner = getByRole('progressbar');
+
+        expect(progressSpinner).toBeTruthy();
+        expect(progressSpinner).toHaveAttribute('aria-label', 'Loading...');
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        let tray = getByTestId('tray');
+        expect(tray).toBeVisible();
+
+        let trayProgressSpinner = within(tray).getByRole('progressbar');
+        expect(trayProgressSpinner).toBeTruthy();
+        expect(trayProgressSpinner).toHaveAttribute('aria-label', 'Loading...');
+
+        let clearButton = within(tray).getByLabelText('Clear');
+        expect(clearButton).toBeTruthy();
+
+        let listbox = getByRole('listbox');
+        expect(() => within(listbox).getByRole('progressbar')).toThrow();
+
+        if (ValidationState) {
+          let trayInput = within(tray).getByRole('searchbox');
+          expect(trayInput).toHaveAttribute('aria-invalid', 'true');
+        }
+
+        // validation icon should not be present, only img is the clear button
+        expect(within(tray).getAllByRole('img', {hidden: true})).toHaveLength(1);
+      });
+
+      it('should render the loading swirl in the listbox when loadingState="loadingMore"', function () {
+        let {getByRole, getByTestId} = renderComboBox({loadingState: 'loadingMore', validationState: 'invalid'});
+        let button = getByRole('button');
+
+        expect(() => getByRole('progressbar')).toThrow();
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        let tray = getByTestId('tray');
+        expect(tray).toBeVisible();
+
+        let allProgressSpinners = within(tray).getAllByRole('progressbar');
+        expect(allProgressSpinners.length).toBe(1);
+
+        let validationIcon = within(tray).getByRole('img', {hidden: true});
+        expect(validationIcon).toBeTruthy();
+
+        let trayInput = within(tray).getByRole('searchbox');
+        expect(trayInput).toHaveAttribute('aria-invalid', 'true');
+
+        let listbox = getByRole('listbox');
+        let progressSpinner = within(listbox).getByRole('progressbar');
+        expect(progressSpinner).toBeTruthy();
+        expect(progressSpinner).toHaveAttribute('aria-label', 'Loading more…');
+      });
+    });
   });
 
   describe('accessibility', function () {
@@ -3339,4 +3464,5 @@ describe('ComboBox', function () {
       });
     });
   });
+
 });
