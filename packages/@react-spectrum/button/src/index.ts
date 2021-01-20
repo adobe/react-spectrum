@@ -12,7 +12,12 @@
 
 /// <reference types="css-module-types" />
 
-export * from './Button';
+const isUxp = document.location.protocol === "plugin:";
+
+import {Button as WebButton} from './Button';
+import {Button as UXPButton} from "./UxpButton";
+export const Button: typeof WebButton = isUxp ? UXPButton : WebButton;
+
 export * from './ActionButton';
 export * from './FieldButton';
 export * from './LogicButton';
