@@ -21,7 +21,6 @@ import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
-import useUxpProps from './useUxpProps';
 
 // todo: CSS hasn't caught up yet, map
 let VARIANT_MAPPING = {
@@ -31,9 +30,8 @@ let VARIANT_MAPPING = {
 function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'button');
-  let uxpProps = useUxpProps(props);
   let {
-    elementType: ElementType = 'button',
+    elementType: ElementType = 'sp-button', // uxp
     children,
     variant,
     isQuiet,
@@ -56,8 +54,9 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
       <ElementType
         {...styleProps}
         {...mergeProps(buttonProps, hoverProps)}
-        {...uxpProps}
         ref={domRef}
+        quiet={ isQuiet }   // uxp
+        variant={ variant } // uxp
         className={
           classNames(
             styles,
