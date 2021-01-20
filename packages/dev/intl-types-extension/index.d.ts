@@ -10,18 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {testSSR} from '@react-spectrum/test-utils';
 
-describe('NumberField SSR', function () {
-  it('should render without errors', async function () {
-    await testSSR(__filename, `
-      import {NumberField} from '../';
-      import {Provider} from '@react-spectrum/provider';
-      import {theme} from '@react-spectrum/theme-default';
-
-      <Provider theme={theme}>
-        <NumberField aria-label="number" />
-      </Provider>
-    `);
-  });
-});
+declare namespace Intl {
+  interface NumberFormatOptions {
+    currencySign?: string
+  }
+  interface ResolvedNumberFormatOptions {
+    currencySign?: string
+  }
+  // eslint-disable-next-line no-undef
+  type NumberFormatPartTypesExtension = NumberFormatPartTypes | 'unit'
+  interface NumberFormatPartExtension {
+    type: NumberFormatPartTypesExtension,
+    value: string
+  }
+  interface NumberFormat {
+    formatToParts(number?: number): NumberFormatPartExtension[]
+  }
+}
