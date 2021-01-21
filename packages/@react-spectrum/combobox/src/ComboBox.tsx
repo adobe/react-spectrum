@@ -61,7 +61,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   let {
     menuTrigger = 'input',
     shouldFlip = true,
-    direction = 'bottom'
+    direction = 'bottom',
+    UNSAFE_className
   } = props;
 
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
@@ -126,6 +127,15 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
       <Field {...props} labelProps={labelProps} ref={domRef}>
         <ComboBoxInput
           {...props}
+          UNSAFE_className={
+            classNames(
+              styles,
+              {
+                'spectrum-InputGroup--menuOpen': state.isOpen
+              },
+              UNSAFE_className
+            )
+          }
           inputProps={inputProps}
           inputRef={inputRef}
           triggerProps={buttonProps}
@@ -177,7 +187,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     triggerRef,
     autoFocus,
     style,
-    className
+    UNSAFE_className
   } = props;
   let {hoverProps, isHovered} = useHover({});
 
@@ -202,7 +212,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
               'is-invalid': validationState === 'invalid',
               'is-hovered': isHovered
             },
-            className
+            UNSAFE_className
           )
         }>
         <TextFieldBase

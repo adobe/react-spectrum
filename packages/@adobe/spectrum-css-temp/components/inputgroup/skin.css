@@ -34,6 +34,30 @@ governing permissions and limitations under the License.
       }
     }
   }
+
+  &.spectrum-InputGroup--menuOpen {
+    .spectrum-FieldButton {
+      /* TODO: make vars at the top for these */
+      background-color: var(--spectrum-global-color-gray-200);
+      border-color: var(--spectrum-global-color-gray-400);
+
+      .spectrum-Dropdown-chevron {
+        color: var(--spectrum-global-color-gray-700);
+      }
+    }
+
+    &:hover {
+      &:not(.is-invalid):not(.is-focused):not(.is-disabled) {
+        .spectrum-FieldButton {
+          border-color: var(--spectrum-global-color-gray-500);
+
+          .spectrum-Dropdown-chevron {
+            color: var(--spectrum-global-color-gray-900);
+          }
+        }
+      }
+    }
+  }
 }
 
 .spectrum-InputGroup.is-focused {
