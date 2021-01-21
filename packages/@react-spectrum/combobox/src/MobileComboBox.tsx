@@ -13,6 +13,7 @@
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {AriaButtonProps} from '@react-types/button';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
+import {chain, mergeProps, useId} from '@react-aria/utils';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames, unwrapDOMRef} from '@react-spectrum/utils';
@@ -28,7 +29,6 @@ import {focusSafely} from '@react-aria/focus';
 import intlMessages from '../intl/*.json';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
-import {mergeProps, useId} from '@react-aria/utils';
 import React, {HTMLAttributes, ReactNode, RefObject, useCallback, useRef} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality, useHover} from '@react-aria/interactions';
@@ -101,7 +101,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           {state.inputValue || props.placeholder || ''}
         </ComboBoxButton>
       </Field>
-      <Tray isOpen={state.isOpen} onClose={state.commit} isFixedHeight isNonModal {...overlayProps}>
+      <Tray isOpen={state.isOpen} onClose={chain(state.commit, state.close)} isFixedHeight isNonModal {...overlayProps}>
         <ComboBoxTray
           {...props}
           overlayProps={overlayProps}
@@ -365,7 +365,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
             'tray-dialog'
           )
         }>
-        <DismissButton onDismiss={() => state.commit()} />
+        <DismissButton onDismiss={chain(state.commit, state.close)} />
         <TextFieldBase
           label={label}
           labelProps={labelProps}
@@ -423,7 +423,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           }
           ref={listBoxRef}
           onScroll={onScroll} />
-        <DismissButton onDismiss={() => state.commit()} />
+        <DismissButton onDismiss={chain(state.commit, state.close)} />
       </div>
     </FocusScope>
   );

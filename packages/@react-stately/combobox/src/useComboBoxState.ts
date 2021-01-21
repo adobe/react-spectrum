@@ -177,22 +177,18 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
   let commitCustomValue = () => {
     let shouldClose = false;
-    if (!allowsCustomValue) {
-      resetInputValue();
-      shouldClose = inputValue === lastValue.current;
-    } else {
-      lastSelectedKey.current = null;
-      setSelectedKey(null);
+    lastSelectedKey.current = null;
+    setSelectedKey(null);
 
-      // If previous key was already null, need to manually call onSelectionChange since it won't be triggered by a setSelectedKey call
-      // This allows the application to control whether or not to close the menu on custom value commit
-      if (selectedKey === null && props.onSelectionChange) {
-        props.onSelectionChange(null);
-      }
-
-      // Should close menu ourselves if component open state or selected key is uncontrolled and therefore won't be closed by a user defined event handler
-      shouldClose = props.isOpen == null || props.selectedKey === undefined;
+    // If previous key was already null, need to manually call onSelectionChange since it won't be triggered by a setSelectedKey call
+    // This allows the application to control whether or not to close the menu on custom value commit
+    if (selectedKey === null && props.onSelectionChange) {
+      props.onSelectionChange(null);
     }
+
+    // Should close menu ourselves if component open state or selected key is uncontrolled and therefore won't be closed by a user defined event handler
+    shouldClose = props.isOpen == null || props.selectedKey === undefined;
+
 
     // Close if no other event will be fired. Otherwise, allow the
     // application to control this based on that event.
@@ -211,7 +207,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       } else {
         setSelectedKey(selectionManager.focusedKey);
       }
-    } else {
+    } else if (allowsCustomValue) {
       commitCustomValue();
     }
   };
@@ -222,10 +218,14 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
         open();
       }
     } else if (shouldCloseOnBlur) {
-      commitCustomValue();
-      // Close menu if blurring away from the combobox
-      // Specifically handles case where user clicks away from the field
-      triggerState.close();
+      if (allowsCustomValue) {
+        commitCustomValue();
+      } else {
+        resetInputValue();
+        // Close menu if blurring away from the combobox
+        // Specifically handles case where user clicks away from the field
+        triggerState.close();
+      }
     }
 
     setFocusedState(isFocused);
