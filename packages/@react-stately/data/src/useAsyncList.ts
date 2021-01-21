@@ -12,7 +12,7 @@
 
 import {createListActions, ListData, ListState} from './useListData';
 import {Key, Reducer, useEffect, useMemo, useReducer} from 'react';
-import {Selection, SortDescriptor} from '@react-types/shared';
+import {LoadingState, Selection, SortDescriptor} from '@react-types/shared';
 
 interface AsyncListOptions<T, C> {
   /** The keys for the initially selected items. */
@@ -61,9 +61,8 @@ interface AsyncListStateUpdate<T, C> {
   cursor?: C
 }
 
-type State = 'loading' | 'sorting' | 'loadingMore' | 'error' | 'idle' | 'filtering';
 interface AsyncListState<T, C> extends ListState<T> {
-  state: State,
+  state: LoadingState,
   items: T[],
   // disabledKeys?: Iterable<Key>,
   selectedKeys: Selection,
@@ -105,7 +104,7 @@ interface AsyncListData<T> extends ListData<T> {
   loadMore(): void,
   /** Triggers sorting for the list. */
   sort(descriptor: SortDescriptor): void,
-  state: State
+  state: LoadingState
 }
 
 function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncListState<T, C> {

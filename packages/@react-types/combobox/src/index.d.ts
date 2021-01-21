@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncLoadable, CollectionBase, DOMProps, FocusableProps, InputBase, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase, Validation} from '@react-types/shared';
+import {AsyncLoadable, CollectionBase, DOMProps, FocusableProps, InputBase, LoadingState, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase, Validation} from '@react-types/shared';
 
 export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, InputBase, TextInputBase, DOMProps, Validation, FocusableProps {
   /** The list of ComboBox items (uncontrolled). */
@@ -57,5 +57,5 @@ export interface SpectrumComboBoxProps<T> extends ComboBoxProps<T>, SpectrumLabe
    */
   direction?: 'bottom' | 'top',
   /** The current loading state of the ComboBox. Determines whether or not the progress circle should be shown. */
-  loadingState?: 'loading' | 'sorting' | 'loadingMore' | 'error' | 'idle' | 'filtering'
+  loadingState?: LoadingState
 }
