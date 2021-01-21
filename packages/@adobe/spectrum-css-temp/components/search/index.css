@@ -43,8 +43,20 @@ governing permissions and limitations under the License.
     inset-inline-end: calc(var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-padding-x) / 2 + var(--spectrum-global-dimension-size-150));
   }
 
+  /* Flip clear button and circle loader position so circle loader is to the left of the clear button */
   &.spectrum-Search--loadable .spectrum-ClearButton {
-    inset-inline-end: calc(var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-padding-x));
+    inset-inline-end: 0
+  }
+
+  /* Flip clear button and circle loader position so circle loader is to the left of the clear button */
+  &.spectrum-Search--loadable .spectrum-Search-circleLoader {
+    inset-inline-end: calc(var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-padding-x) / 2 + var(--spectrum-global-dimension-size-150));
+  }
+
+  /* Move validation icons so that they sit to the left of the clear button (for async loading combobox tray, same position as loading indicator)  */
+  &.spectrum-Search--loadable .spectrum-Search-validationIcon {
+    inset-inline-end: calc(var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-padding-x) / 2 + var(--spectrum-global-dimension-size-150));
+    padding-inline-end: 0;
   }
 }
 

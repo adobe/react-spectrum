@@ -123,7 +123,6 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
       <Tray isOpen={state.isOpen} onClose={state.commit} isFixedHeight isNonModal {...overlayProps}>
         <ComboBoxTray
           {...props}
-          loadingIndicator={loadingState != null && loadingCircle}
           overlayProps={overlayProps}
           state={state} />
       </Tray>
@@ -304,8 +303,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     label,
     overlayProps,
     loadingState,
-    onLoadMore,
-    loadingIndicator
+    onLoadMore
   } = props;
 
   let inputRef = useRef<HTMLInputElement>();
@@ -364,6 +362,21 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
       isDisabled={isDisabled} />
   );
 
+  let loadingCircle = (
+    <ProgressCircle
+      aria-label={formatMessage('loading')}
+      size="S"
+      isIndeterminate
+      UNSAFE_className={classNames(
+        searchStyles,
+        'spectrum-Search-circleLoader',
+        classNames(
+          textfieldStyles,
+          'spectrum-Textfield-circleLoader'
+        )
+      )} />
+  );
+
   // Close the software keyboard on scroll to give the user a bigger area to scroll.
   // But only do this if scrolling with touch, otherwise it can cause issues with touch
   // screen readers.
@@ -403,18 +416,18 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={loadingState === 'loading' || loadingState === 'filtering'}
-          loadingIndicator={loadingIndicator}
+          loadingIndicator={loadingState != null && loadingCircle}
           validationState={validationState}
-          wrapperChildren={(state.inputValue !== '' && !props.isReadOnly) && clearButton}
+          wrapperChildren={!props.isReadOnly && clearButton}
           UNSAFE_className={
             classNames(
               searchStyles,
               'spectrum-Search',
               'spectrum-Textfield',
+              'spectrum-Search--loadable',
               {
                 'spectrum-Search--invalid': validationState === 'invalid',
-                'spectrum-Search--valid': validationState === 'valid',
-                'spectrum-Search--loadable': loadingIndicator
+                'spectrum-Search--valid': validationState === 'valid'
               },
               classNames(
                 comboboxStyles,
@@ -433,6 +446,12 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
                 searchStyles,
                 'spectrum-Search-input'
               )
+            )
+          }
+          validationIconClassName={
+            classNames(
+              searchStyles,
+              'spectrum-Search-validationIcon'
             )
           } />
         <ListBoxBase
