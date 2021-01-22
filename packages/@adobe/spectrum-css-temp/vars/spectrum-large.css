@@ -397,6 +397,7 @@
   /* padding for quiet textfield inputs following XD values (TextField beta 5.3) */
   --spectrum-textfield-quiet-padding-top: 9px;
   --spectrum-textfield-quiet-padding-bottom: 10px;
+  --spectrum-textfield-quiet-text-line-height: 20px;
   /* END RSP PATCH */
   --spectrum-tool-touch-hit-x: var(--spectrum-global-dimension-static-size-50);
   --spectrum-tool-touch-hit-y: var(--spectrum-global-dimension-static-size-50);

@@ -81,6 +81,7 @@ governing permissions and limitations under the License.
     .spectrum-Field-fieldInput--quiet {
       padding-top: var(--spectrum-textfield-quiet-padding-top);
       padding-bottom: var(--spectrum-textfield-quiet-padding-bottom);
+      line-height: var(--spectrum-textfield-quiet-text-line-height);
     }
   }
 
