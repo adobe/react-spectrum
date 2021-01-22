@@ -17,7 +17,7 @@ interface Symbols {
   plusSign: string,
   decimal: string,
   group: string,
-  literals: string,
+  literals: RegExp,
   numeral: RegExp,
   index: (v: string) => string
 }
@@ -80,15 +80,15 @@ class NumberParser {
     }
 
     // accounting will always be stripped to a positive number, so if it's accounting and has a () around everything, then we need to make it negative again
-    if (this.options?.currencySign === 'accounting' && CURRENCY_SIGN_REGEX.test(value)) {
+    if (this.options.currencySign === 'accounting' && CURRENCY_SIGN_REGEX.test(value)) {
       newValue = -1 * newValue;
     }
 
     // when reading the number, if it's a percent, then it should be interpreted as being divided by 100
-    if (this.options?.style === 'percent') {
+    if (this.options.style === 'percent') {
       newValue /= 100;
       // after dividing to get the percent value, javascript may get .0210999999 instead of .0211, so fix the number of fraction digits
-      newValue = +newValue.toFixed(this.options.maximumFractionDigits + 2);
+      newValue = +newValue.toFixed((this.options.maximumFractionDigits ?? 0) + 2);
     }
 
     return newValue;
@@ -96,7 +96,7 @@ class NumberParser {
 
   sanitize(value: string) {
     // Remove literals and whitespace, which are allowed anywhere in the string
-    value = value.replace(new RegExp(`[${this.symbols.literals}\\p{White_Space}]`, 'gu'), '');
+    value = value.replace(this.symbols.literals, '');
 
     // In arab numeral system, their decimal character is 1643, but most keyboards don't type that
     // instead they use the , (44) character or apparently the (1548) character.
@@ -141,24 +141,25 @@ class NumberParser {
   }
 }
 
+const nonLiteralParts = new Set(['decimal', 'fraction', 'integer', 'minusSign', 'plusSign', 'group']);
+
 function getSymbols(formatter: Intl.NumberFormat, intlOptions: Intl.ResolvedNumberFormatOptions): Symbols {
   // Note: some locale's don't add a group symbol until there is a ten thousands place
   let allParts = formatter.formatToParts(-10000.1);
   let minusSign = allParts.find(p => p.type === 'minusSign')?.value;
   let posAllParts = formatter.formatToParts(10000.1);
   let plusSign = posAllParts.find(p => p.type === 'plusSign')?.value;
+  let singularParts = formatter.formatToParts(1);
 
   let decimal = allParts.find(p => p.type === 'decimal')?.value;
   let group = allParts.find(p => p.type === 'group')?.value;
 
   // this set is also for a regex, it's all literals that might be in the string we want to eventually parse that
   // don't contribute to the numerical value
-  let literals = allParts.filter(p => {
-    if (p.type === 'decimal' || p.type === 'fraction' || p.type === 'integer' || p.type === 'minusSign' || p.type === 'plusSign' || p.type === 'group') {
-      return false;
-    }
-    return true;
-  }).map(p => p.value).join('');
+  let pluralLiterals = allParts.filter(p => !nonLiteralParts.has(p.type)).map(p => escapeRegex(p.value));
+  let singularLiterals = singularParts.filter(p => !nonLiteralParts.has(p.type)).map(p => escapeRegex(p.value));
+  let sortedLiterals = [...new Set([...singularLiterals, ...pluralLiterals])].sort((a, b) => b.length - a.length);
+  let literals = new RegExp(`${sortedLiterals.join('|')}|[\\p{White_Space}]`, 'gu');
 
   // These are for replacing non-latn characters with the latn equivalent
   let numerals = [...new Intl.NumberFormat(intlOptions.locale, {useGrouping: false}).format(9876543210)].reverse();
@@ -177,4 +178,8 @@ function replaceAll(str: string, find: string, replace: string) {
   }
 
   return str.split(find).join(replace);
+}
+
+function escapeRegex(string: string) {
+  return string.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
