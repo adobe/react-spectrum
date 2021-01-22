@@ -499,8 +499,8 @@ storiesOf('Picker', module)
     () => (
       <AsyncLoadingExample />
     )
-  ).add( 
-    'focus', 
+  ).add(
+    'focus',
     () => (
       <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
         <input placeholder="Shift tab here" />
@@ -518,7 +518,24 @@ storiesOf('Picker', module)
       <Item key="Two">Two</Item>
       <Item key="Three">Three</Item>
     </Picker>
-  ));
+  ))
+  .add(
+    '2 pickers',
+    () => (
+      <Flex>
+        <Picker label="Test1">
+          <Item key="One">One</Item>
+          <Item key="Two">Two</Item>
+          <Item key="Three">Three</Item>
+        </Picker>
+        <Picker label="Test2">
+          <Item key="One">One</Item>
+          <Item key="Two">Two</Item>
+          <Item key="Three">Three</Item>
+        </Picker>
+      </Flex>
+    )
+  );
 
 function AsyncLoadingExample() {
   interface Pokemon {

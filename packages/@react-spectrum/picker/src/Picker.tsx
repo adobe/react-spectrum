@@ -170,6 +170,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       width: menuWidth ? dimensionValue(menuWidth) : width,
       minWidth: isQuiet ? `calc(${buttonWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : buttonWidth
     };
+    let shouldCloseOnInteractOutside = (element) => !triggerRef.current?.UNSAFE_getDOMNode()?.contains(element);
 
     overlay = (
       <Popover
@@ -180,6 +181,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         placement={placement}
         hideArrow
         shouldCloseOnBlur
+        shouldCloseOnInteractOutside={shouldCloseOnInteractOutside}
         onClose={state.close}>
         {listbox}
       </Popover>

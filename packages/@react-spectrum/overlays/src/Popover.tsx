@@ -29,7 +29,8 @@ interface PopoverWrapperProps extends HTMLAttributes<HTMLElement> {
   onClose?: () => void,
   shouldCloseOnBlur?: boolean,
   isKeyboardDismissDisabled?: boolean,
-  isNonModal?: boolean
+  isNonModal?: boolean,
+  shouldCloseOnInteractOutside?: (element: HTMLElement) => boolean
 }
 
 /**
@@ -47,7 +48,7 @@ let arrowPlacement = {
 };
 
 function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, placement, arrowProps, onClose, shouldCloseOnBlur, hideArrow, isKeyboardDismissDisabled, isNonModal, ...otherProps} = props;
+  let {children, placement, arrowProps, onClose, shouldCloseOnBlur, shouldCloseOnInteractOutside, hideArrow, isKeyboardDismissDisabled, isNonModal, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
 
@@ -61,6 +62,7 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
         onClose={onClose}
         shouldCloseOnBlur={shouldCloseOnBlur}
         isKeyboardDismissDisabled={isKeyboardDismissDisabled}
+        shouldCloseOnInteractOutside={shouldCloseOnInteractOutside}
         hideArrow={hideArrow}
         isNonModal={isNonModal}>
         {children}
@@ -71,7 +73,7 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
 
 const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HTMLDivElement>) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {children, placement = 'bottom', arrowProps, isOpen, hideArrow, shouldCloseOnBlur, isKeyboardDismissDisabled, isNonModal, ...otherProps} = props;
+  let {children, placement = 'bottom', arrowProps, isOpen, hideArrow, shouldCloseOnBlur, shouldCloseOnInteractOutside, isKeyboardDismissDisabled, isNonModal, ...otherProps} = props;
   let {overlayProps} = useOverlay({...props, isDismissable: true}, ref);
   let {modalProps} = useModal({
     isDisabled: isNonModal

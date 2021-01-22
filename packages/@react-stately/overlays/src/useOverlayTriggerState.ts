@@ -34,13 +34,16 @@ export function useOverlayTriggerState(props: OverlayTriggerProps): OverlayTrigg
   return {
     isOpen,
     open() {
+      console.log('open')
       setOpen(true);
     },
     close() {
+      console.log('close')
       setOpen(false);
     },
     toggle() {
-      setOpen(!isOpen);
+      console.log('toggle')
+      setOpen(val => !val);
     }
   };
 }
