@@ -887,7 +887,7 @@ function ProjectListTable() {
         width={'size-3600'}
         aria-label={'Search by name'}
         placeholder={'Search by name'}
-        defaultValue={list.filterText}
+        value={filterText}
         onChange={(onChange)} />
       <View flexGrow={1} height={700} overflow="hidden">
         <Table
