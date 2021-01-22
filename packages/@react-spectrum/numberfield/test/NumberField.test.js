@@ -1667,8 +1667,8 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '');
 
     act(() => {textField.focus();});
-    typeText(textField, 'SAR 21.00');
-    expect(textField).toHaveAttribute('value', 'SAR 21.00');
+    typeText(textField, ' 21 . 00 ');
+    expect(textField).toHaveAttribute('value', ' 21 . 00 ');
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', 'SAR 21.00');
     expect(onChangeSpy).toHaveBeenCalledWith(21);
@@ -1712,6 +1712,157 @@ describe('NumberField', function () {
 
     let formatter = new Intl.NumberFormat(locale + '-u-nu-hanidec', {style: 'currency', currency: 'USD'});
     expect(textField).toHaveAttribute('value', formatter.format(21));
+  });
+
+  describe('beforeinput', () => {
+    let getTargetRanges = InputEvent.prototype.getTargetRanges;
+    beforeEach(() => {
+      InputEvent.prototype.getTargetRanges = () => {};
+    });
+
+    afterEach(() => {
+      InputEvent.prototype.getTargetRanges = getTargetRanges;
+    });
+
+    it.each(['deleteContentBackward', 'deleteContentForward', 'deleteContent', 'deleteByCut', 'deleteByDrag'])('allows %s of whole currency symbol', (inputType) => {
+      let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
+
+      act(() => {textField.focus();});
+      typeText(textField, '12');
+      act(() => {textField.blur();});
+
+      expect(textField).toHaveAttribute('value', 'USD 12.00');
+
+      act(() => {textField.focus();});
+      textField.setSelectionRange(0, 3);
+
+      // JSDOM doesn't support the beforeinput event
+      let e = new InputEvent('beforeinput', {cancelable: true});
+      e.inputType = inputType;
+      let proceed = fireEvent(textField, e);
+
+      expect(proceed).toBe(true);
+    });
+
+    it.each(['deleteContentBackward', 'deleteContentForward', 'deleteContent', 'deleteByCut', 'deleteByDrag'])('prevents %s of partial currency symbol', (inputType) => {
+      let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
+
+      act(() => {textField.focus();});
+      typeText(textField, '12');
+      act(() => {textField.blur();});
+
+      expect(textField).toHaveAttribute('value', 'USD 12.00');
+
+      act(() => {textField.focus();});
+      textField.setSelectionRange(1, 3);
+
+      // JSDOM doesn't support the beforeinput event
+      let e = new InputEvent('beforeinput', {cancelable: true});
+      e.inputType = inputType;
+      let proceed = fireEvent(textField, e);
+
+      expect(proceed).toBe(false);
+    });
+
+    it.each(['deleteContentBackward', 'deleteContentForward'])('prevents %s inside currency symbol', (inputType) => {
+      let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
+
+      act(() => {textField.focus();});
+      typeText(textField, '12');
+      act(() => {textField.blur();});
+
+      expect(textField).toHaveAttribute('value', 'USD 12.00');
+
+      act(() => {textField.focus();});
+      textField.setSelectionRange(1, 1);
+
+      // JSDOM doesn't support the beforeinput event
+      let e = new InputEvent('beforeinput', {cancelable: true});
+      e.inputType = inputType;
+      let proceed = fireEvent(textField, e);
+
+      expect(proceed).toBe(false);
+    });
+
+    it.each(['insertText', 'insertFromPaste', 'insertFromDrop', 'insertFromYank', 'insertReplacementText'])('allows %s of number inside number', (inputType) => {
+      let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
+
+      act(() => {textField.focus();});
+      typeText(textField, '12');
+      act(() => {textField.blur();});
+
+      expect(textField).toHaveAttribute('value', 'USD 12.00');
+
+      act(() => {textField.focus();});
+      textField.setSelectionRange(5, 5);
+
+      // JSDOM doesn't support the beforeinput event
+      let e = new InputEvent('beforeinput', {cancelable: true, data: '2'});
+      e.inputType = inputType;
+      let proceed = fireEvent(textField, e);
+
+      expect(proceed).toBe(true);
+    });
+
+    it.each(['insertText', 'insertFromPaste', 'insertFromDrop', 'insertFromYank', 'insertReplacementText'])('allows %s replacing whole number', (inputType) => {
+      let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
+
+      act(() => {textField.focus();});
+      typeText(textField, '12');
+      act(() => {textField.blur();});
+
+      expect(textField).toHaveAttribute('value', 'USD 12.00');
+
+      act(() => {textField.focus();});
+      textField.setSelectionRange(4, 10);
+
+      // JSDOM doesn't support the beforeinput event
+      let e = new InputEvent('beforeinput', {cancelable: true, data: '2'});
+      e.inputType = inputType;
+      let proceed = fireEvent(textField, e);
+
+      expect(proceed).toBe(true);
+    });
+
+    it.each(['insertText', 'insertFromPaste', 'insertFromDrop', 'insertFromYank', 'insertReplacementText'])('prevents %s of number inside currency symbol', (inputType) => {
+      let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
+
+      act(() => {textField.focus();});
+      typeText(textField, '12');
+      act(() => {textField.blur();});
+
+      expect(textField).toHaveAttribute('value', 'USD 12.00');
+
+      act(() => {textField.focus();});
+      textField.setSelectionRange(1, 1);
+
+      // JSDOM doesn't support the beforeinput event
+      let e = new InputEvent('beforeinput', {cancelable: true, data: '2'});
+      e.inputType = inputType;
+      let proceed = fireEvent(textField, e);
+
+      expect(proceed).toBe(false);
+    });
+
+    it.each(['historyUndo', 'historyRedo'])('allows %s', (inputType) => {
+      let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
+
+      act(() => {textField.focus();});
+      typeText(textField, '12');
+      act(() => {textField.blur();});
+
+      expect(textField).toHaveAttribute('value', 'USD 12.00');
+
+      act(() => {textField.focus();});
+      textField.setSelectionRange(2, 2);
+
+      // JSDOM doesn't support the beforeinput event
+      let e = new InputEvent('beforeinput', {cancelable: true});
+      e.inputType = inputType;
+      let proceed = fireEvent(textField, e);
+
+      expect(proceed).toBe(true);
+    });
   });
 
   describe('locale specific', () => {
