@@ -708,7 +708,6 @@ describe('useAsyncList', () => {
     const filterItems = [{id: 1, name: 'Bob'}, {id: 2, name: 'Joe'}, {id: 3, name: 'Bob Joe'}];
     const itemsFirstCall = [{id: 1, name: 'Bob'}, {id: 3, name: 'Bob Joe'}];
     const itemsSecondCall = [{id: 2, name: 'Joe'}, {id: 3, name: 'Bob Joe'}];
-    const filterFn = (item, text) => item.name.includes(text);
 
     function getFilterItems() {
       return new Promise(resolve => {
