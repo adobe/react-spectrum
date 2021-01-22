@@ -27,6 +27,7 @@ import {SearchField} from '@react-spectrum/searchfield';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {useAsyncList} from '@react-stately/data';
+import {useFilter} from '@react-aria/i18n';
 import {View} from '@react-spectrum/view';
 
 let columns = [
@@ -859,20 +860,19 @@ function ProjectListTable() {
     ownerName: string
   }
 
+  let {contains} = useFilter({sensitivity: 'base'});
+  let [filterText, setFilterText] = React.useState('');
   let list = useAsyncList<Item>({
-    getKey: (item) => item.id,
     async load() {
       let projects = await getCollectionItems();
       return {items: projects};
-    },
-    filter(item, string) {
-      return string === '' ? true : item.name.includes(string);
     }
   });
-
+  let filteredItems = React.useMemo(() => list.items.filter(item => contains(item.name, filterText)), [list.items, filterText, contains]);
   const onChange = (value) => {
-    list.setFilterText(value);
+    setFilterText(value);
   };
+
   return (
     <>
       <SearchField
@@ -898,9 +898,8 @@ function ProjectListTable() {
             }}
           </TableHeader>
           <TableBody
-            items={list.items}
-            isLoading={list.isLoading}
-            onLoadMore={list.loadMore}>
+            items={filteredItems}
+            isLoading={list.isLoading}>
             {(item) => (
               <Row key={item.id}>{(key) => <Cell>{item[key]}</Cell>}</Row>
             )}
