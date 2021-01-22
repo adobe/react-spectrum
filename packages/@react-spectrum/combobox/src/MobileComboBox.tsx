@@ -415,10 +415,10 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           inputProps={inputProps}
           inputRef={inputRef}
           isDisabled={isDisabled}
-          isLoading={loadingState === 'loading' || loadingState === 'filtering'}
+          isLoading={loadingState === 'filtering'}
           loadingIndicator={loadingState != null && loadingCircle}
           validationState={validationState}
-          wrapperChildren={!props.isReadOnly && clearButton}
+          wrapperChildren={(state.inputValue !== '' || loadingState === 'filtering') && !props.isReadOnly && clearButton}
           UNSAFE_className={
             classNames(
               searchStyles,
@@ -462,7 +462,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           layout={layout}
           state={state}
           shouldUseVirtualFocus
-          renderEmptyState={() => (
+          renderEmptyState={() => loadingState !== 'loading' && (
             <span className={classNames(comboboxStyles, 'no-results')}>
               {formatMessage('noResults')}
             </span>
@@ -476,7 +476,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           ref={listBoxRef}
           onScroll={onScroll}
           onLoadMore={onLoadMore}
-          isLoading={loadingState === 'loadingMore'} />
+          isLoading={loadingState === 'loading' || loadingState === 'loadingMore'} />
         <DismissButton onDismiss={() => state.commit()} />
       </div>
     </FocusScope>
