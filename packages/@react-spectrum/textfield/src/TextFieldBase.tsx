@@ -107,6 +107,20 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     )
   });
 
+  let labelClassName;
+  if (props.label && props.isQuiet) {
+    labelClassName = classNames(
+      labelStyles,
+      'spectrum-FieldLabel--quiet'
+    );
+
+    inputClassName = classNames(
+      labelStyles,
+      'spectrum-Field-fieldInput--quiet',
+      inputClassName
+    );
+  }
+
   let textField = (
     <div
       className={
@@ -144,7 +158,6 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     </div>
   );
 
-  console.log('label', label);
   if (label) {
     let labelWrapperClass = classNames(
       labelStyles,
@@ -167,6 +180,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
         className={labelWrapperClass}>
         <Label
           {...labelProps}
+          UNSAFE_className={labelClassName}
           labelPosition={labelPosition}
           labelAlign={labelAlign}
           isRequired={isRequired}
