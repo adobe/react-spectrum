@@ -29,9 +29,7 @@ interface AsyncListOptions<T, C> {
    * An optional function that performs sorting. If not provided,
    * then `sortDescriptor` is passed to the `load` function.
    */
-  sort?: AsyncListLoadFunction<T, C>,
-  /** A function that returns whether a item matches the current filter text. */
-  filter?: (item: T, filterText: string) => boolean
+  sort?: AsyncListLoadFunction<T, C>
 }
 
 type AsyncListLoadFunction<T, C> = (state: AsyncListLoadOptions<T, C>) => Promise<AsyncListStateUpdate<T, C>>;
@@ -116,14 +114,6 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
         case 'loadingMore':
         case 'sorting':
         case 'filtering':
-          // If there isn't a abortController provided by the action and it is a filtering action (aka clientside filtering), it is an filterText update
-          if (!action.abortController && action.type === 'filtering') {
-            return {
-              ...data,
-              filterText: action.filterText ?? data.filterText
-            };
-          }
-
           return {
             ...data,
             filterText: action.filterText ?? data.filterText,
@@ -180,14 +170,6 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
         case 'loadingMore':
         case 'sorting':
         case 'filtering':
-          // If there isn't a abortController provided by the action and it is a filtering action (aka clientside filtering), it is an filterText update
-          if (!action.abortController && action.type === 'filtering') {
-            return {
-              ...data,
-              filterText: action.filterText ?? data.filterText
-            };
-          }
-
           // We're already loading, and another load was triggered at the same time.
           // We need to abort the previous load and start a new one.
           data.abortController.abort();
@@ -224,14 +206,6 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
         case 'loading':
         case 'sorting':
         case 'filtering':
-          // If there isn't a abortController provided by the action (aka client side filtering), it is an filterText update
-          if (!action.abortController && action.type === 'filtering') {
-            return {
-              ...data,
-              filterText: action.filterText ?? data.filterText
-            };
-          }
-
           // We're already loading more, and another load was triggered at the same time.
           // We need to abort the previous load more and start a new one.
           data.abortController.abort();
@@ -262,8 +236,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     initialSelectedKeys,
     initialSortDescriptor,
     getKey = (item: any) => item.id || item.key,
-    initialFilterText = '',
-    filter
+    initialFilterText = ''
   } = options;
 
   let [data, dispatch] = useReducer<Reducer<AsyncListState<T, C>, Action<T, C>>>(reducer, {
@@ -299,12 +272,8 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  let filteredItems = useMemo(
-    () =>  filter ? data.items.filter(item => filter(item, data.filterText)) : data.items,
-    [data.items, data.filterText, filter]);
-
   return {
-    items: filteredItems,
+    items: data.items,
     selectedKeys: data.selectedKeys,
     sortDescriptor: data.sortDescriptor,
     isLoading: data.state === 'loading' || data.state === 'loadingMore' || data.state === 'sorting' || data.state === 'filtering',
@@ -319,7 +288,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     },
     loadMore() {
       // Ignore if already loading more or if performing server side filtering.
-      if (data.state === 'loadingMore' || (data.state === 'filtering' && !filter) || data.cursor == null) {
+      if (data.state === 'loadingMore' || data.state === 'filtering' || data.cursor == null) {
         return;
       }
 
@@ -332,12 +301,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
       dispatch({type: 'update', updater: fn});
     }),
     setFilterText(filterText: string) {
-      if (filter && data.items.length > 0) {
-        // If client side filtering and items already exist, don't sent a fetch request, just update filterText
-        dispatch({type: 'filtering', filterText});
-      } else {
-        dispatchFetch({type: 'filtering', filterText}, load);
-      }
+      dispatchFetch({type: 'filtering', filterText}, load);
     }
   };
 }
