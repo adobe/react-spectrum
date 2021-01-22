@@ -2479,7 +2479,7 @@ describe('ComboBox', function () {
       let listbox = getByRole('listbox');
       let trayInput = within(tray).getByRole('searchbox');
 
-      expect(within(tray).getByLabelText('Clear')).toBeTruthy();
+      expect(() => within(tray).getByLabelText('Clear')).toThrow();
 
       testComboBoxTrayOpen(trayInput, tray, listbox);
       typeText(trayInput, 'r');
@@ -2822,10 +2822,9 @@ describe('ComboBox', function () {
       let tray = getByTestId('tray');
       expect(tray).toBeVisible();
       let dismissButtons = within(tray).getAllByRole('button');
-      expect(dismissButtons.length).toBe(3);
+      expect(dismissButtons.length).toBe(2);
       expect(dismissButtons[0]).toHaveAttribute('aria-label', 'Dismiss');
-      expect(dismissButtons[1]).toHaveAttribute('aria-label', 'Clear');
-      expect(dismissButtons[2]).toHaveAttribute('aria-label', 'Dismiss');
+      expect(dismissButtons[1]).toHaveAttribute('aria-label', 'Dismiss');
 
       act(() => {
         triggerPress(dismissButtons[0]);
