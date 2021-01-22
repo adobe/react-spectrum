@@ -16,6 +16,7 @@ export * from './mergeProps';
 export * from './filterDOMProps';
 export * from './focusWithoutScrolling';
 export * from './getOffset';
+export * from './isElementVisible';
 export * from './number';
 export * from './runAfterTransition';
 export * from './useDrag1D';

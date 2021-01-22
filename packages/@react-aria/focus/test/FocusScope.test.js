@@ -105,6 +105,10 @@ describe('FocusScope', function () {
           <input data-testid="input1" />
           <div />
           <input data-testid="input2" />
+          <input data-testid="hiddenInput1" hidden />
+          <input style={{display: 'none'}} />
+          <input style={{visibility: 'hidden'}} />
+          <input style={{visibility: 'collapse'}} />
           <div tabIndex={-1} />
           <input data-testid="input3" />
         </FocusScope>
@@ -160,11 +164,17 @@ describe('FocusScope', function () {
           <FocusScope contain>
             <input data-testid="input1" />
             <input data-testid="input2" />
+            <input style={{display: 'none'}} />
+            <input style={{visibility: 'hidden'}} />
+            <input style={{visibility: 'collapse'}} />
             <input data-testid="input3" />
           </FocusScope>
           <FocusScope contain>
             <input data-testid="input4" />
             <input data-testid="input5" />
+            <input style={{display: 'none'}} />
+            <input style={{visibility: 'hidden'}} />
+            <input style={{visibility: 'collapse'}} />
             <input data-testid="input6" />
           </FocusScope>
         </div>
@@ -553,6 +563,9 @@ describe('FocusScope', function () {
           <FocusScope>
             <Item data-testid="item1" tabIndex={0} />
             <Item data-testid="item2" tabIndex={-1} />
+            <Item style={{display: 'none'}} />
+            <Item style={{visibility: 'hidden'}} />
+            <Item style={{visibility: 'collapse'}} />
             <Item data-testid="item3" tabIndex={0} />
           </FocusScope>
         );
@@ -657,6 +670,9 @@ describe('FocusScope', function () {
           <FocusScope>
             <Item data-testid="item1" tabIndex={0} />
             <Item data-testid="item2" tabIndex={-1} />
+            <Item style={{display: 'none'}} />
+            <Item style={{visibility: 'hidden'}} />
+            <Item style={{visibility: 'collapse'}} />
             <Item data-testid="item3" tabIndex={0} />
           </FocusScope>
         );

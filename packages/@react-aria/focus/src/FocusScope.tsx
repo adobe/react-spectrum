@@ -11,8 +11,8 @@
  */
 
 import {focusSafely} from './focusSafely';
+import {isElementVisible, useLayoutEffect} from '@react-aria/utils';
 import React, {ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
 
 // import {FocusScope, useFocusScope} from 'react-events/focus-scope';
 // export {FocusScope};
@@ -165,10 +165,10 @@ const focusableElements = [
   '[contenteditable]'
 ];
 
-const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(',') + ',[tabindex]';
+const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]),') + ',[tabindex]:not([hidden])';
 
 focusableElements.push('[tabindex]:not([tabindex="-1"])');
-const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([tabindex="-1"]),');
+const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]):not([tabindex="-1"]),');
 
 function getFocusableElementsInScope(scope: HTMLElement[], opts: FocusManagerOptions): HTMLElement[] {
   let res = [];
@@ -179,7 +179,10 @@ function getFocusableElementsInScope(scope: HTMLElement[], opts: FocusManagerOpt
     }
     res.push(...Array.from(node.querySelectorAll(selector)));
   }
-  return res;
+
+  // Filter to include only displayed and visible elements in the DOM,
+  // which accounts for elements hidden based on responsive layout.
+  return res.filter(node => isElementVisible(node));
 }
 
 function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolean) {
