@@ -144,6 +144,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     </div>
   );
 
+  console.log('label', label);
   if (label) {
     let labelWrapperClass = classNames(
       labelStyles,

@@ -71,6 +71,14 @@ governing permissions and limitations under the License.
       /* If the user overrides the width of the field, propagate to the inner component */
       width: 100%;
     }
+
+    .spectrum-FieldLabel--quiet {
+      padding-bottom: 0px;
+    }
+
+    .spectrum-Field-fieldInput--quiet {
+      padding-top: 0px;
+    }
   }
 
   /* The side label variant of Field is inline, and fills as much space as needed

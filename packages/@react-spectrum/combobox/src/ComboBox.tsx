@@ -24,6 +24,7 @@ import {DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared'
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusRing} from '@react-aria/focus';
+import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {MobileComboBox} from './MobileComboBox';
 import {Placement} from '@react-types/overlays';
@@ -122,9 +123,23 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     width: menuWidth
   };
 
+  let labelClassName;
+  let inputClassName;
+  if (props.label && props.isQuiet) {
+    labelClassName = classNames(
+      labelStyles,
+      'spectrum-FieldLabel--quiet'
+    );
+
+    inputClassName = classNames(
+      labelStyles,
+      'spectrum-Field-fieldInput--quiet'
+    );
+  }
+
   return (
     <>
-      <Field {...props} labelProps={labelProps} ref={domRef}>
+      <Field {...props} labelProps={labelProps} labelClassName={labelClassName} ref={domRef}>
         <ComboBoxInput
           {...props}
           UNSAFE_className={
@@ -136,6 +151,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
               UNSAFE_className
             )
           }
+          inputClassName={inputClassName}
           inputProps={inputProps}
           inputRef={inputRef}
           triggerProps={buttonProps}
@@ -171,7 +187,7 @@ interface ComboBoxInputProps extends SpectrumComboBoxProps<unknown> {
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   triggerProps: AriaButtonProps,
   triggerRef: RefObject<FocusableRefValue<HTMLElement>>,
-  className?: string,
+  inputClassName?: string,
   style?: React.CSSProperties
 }
 
@@ -187,7 +203,8 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     triggerRef,
     autoFocus,
     style,
-    UNSAFE_className
+    UNSAFE_className,
+    inputClassName
   } = props;
   let {hoverProps, isHovered} = useHover({});
 
@@ -227,7 +244,8 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
           inputClassName={
             classNames(
               styles,
-              'spectrum-InputGroup-input'
+              'spectrum-InputGroup-input',
+              inputClassName
             )
           }
           isDisabled={isDisabled}

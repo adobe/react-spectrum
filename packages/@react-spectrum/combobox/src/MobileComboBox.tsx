@@ -81,6 +81,20 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     }
   };
 
+  let labelClassName;
+  let inputClassName;
+  if (props.label && props.isQuiet) {
+    labelClassName = classNames(
+      labelStyles,
+      'spectrum-FieldLabel--quiet'
+    );
+
+    inputClassName = classNames(
+      labelStyles,
+      'spectrum-Field-fieldInput--quiet'
+    );
+  }
+
   return (
     <>
       <Field
@@ -88,7 +102,8 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
         labelProps={labelProps}
         elementType="span"
         ref={domRef}
-        includeNecessityIndicatorInAccessibilityName>
+        includeNecessityIndicatorInAccessibilityName
+        labelClassName={labelClassName}>
         <ComboBoxButton
           {...mergeProps(triggerProps, fieldProps)}
           ref={buttonRef}
@@ -96,7 +111,8 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           isDisabled={isDisabled}
           isPlaceholder={!state.inputValue}
           validationState={validationState}
-          onPress={() => state.open()}>
+          onPress={() => state.open()}
+          inputClassName={inputClassName}>
           {state.inputValue || props.placeholder || ''}
         </ComboBoxButton>
       </Field>
@@ -117,7 +133,8 @@ interface ComboBoxButtonProps extends AriaButtonProps {
   validationState?: ValidationState,
   children?: ReactNode,
   style?: React.CSSProperties,
-  className?: string
+  className?: string,
+  inputClassName?: string
 }
 
 const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxButtonProps, ref: RefObject<HTMLElement>) {
@@ -128,7 +145,8 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
     validationState,
     children,
     style,
-    className
+    className,
+    inputClassName
   } = props;
   let formatMessage = useMessageFormatter(intlMessages);
   let valueId = useId();
@@ -220,7 +238,8 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
                 classNames(
                   comboboxStyles,
                   'mobile-input'
-                )
+                ),
+                inputClassName
               )
             }>
             <span
