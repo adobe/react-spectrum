@@ -11,3 +11,4 @@
  */
 
 export * from './useControlledState';
+export * from './number';
