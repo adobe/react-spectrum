@@ -146,7 +146,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
             classNames(
               styles,
               {
-                'spectrum-InputGroup--menuOpen': state.isOpen
+                'spectrum-InputGroup--menuOpen': state.isOpen && !props.isQuiet
               },
               UNSAFE_className
             )

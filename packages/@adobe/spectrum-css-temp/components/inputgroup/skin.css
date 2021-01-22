@@ -37,7 +37,6 @@ governing permissions and limitations under the License.
 
   &.spectrum-InputGroup--menuOpen {
     .spectrum-FieldButton {
-      /* TODO: make vars at the top for these */
       background-color: var(--spectrum-global-color-gray-200);
       border-color: var(--spectrum-global-color-gray-400);
 
@@ -47,13 +46,15 @@ governing permissions and limitations under the License.
     }
 
     &:hover {
-      &:not(.is-invalid):not(.is-focused):not(.is-disabled) {
-        .spectrum-FieldButton {
-          border-color: var(--spectrum-global-color-gray-500);
-
-          .spectrum-Dropdown-chevron {
-            color: var(--spectrum-global-color-gray-900);
+      &:not(.is-invalid):not(.is-disabled) {
+        &:not(.is-focused){
+          .spectrum-FieldButton {
+            border-color: var(--spectrum-global-color-gray-500);
           }
+        }
+
+        .spectrum-FieldButton .spectrum-Dropdown-chevron {
+          color: var(--spectrum-global-color-gray-900);
         }
       }
     }
