@@ -59,8 +59,9 @@ function MenuButton(props) {
   let state = useMenuTriggerState(props);
 
   // Get props for the menu trigger and menu elements
-  let ref = React.useRef();
-  let shouldCloseOnInteractOutside = (element) => !ref.current?.contains(element);
+  let ref = React.useRef(null);
+
+  let shouldCloseOnInteractOutside = (element) => !ref?.current?.contains(element) ?? false;
   let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, ref);
 
   // Get props for the button based on the trigger props from useMenuTrigger
