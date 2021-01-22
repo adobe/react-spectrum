@@ -163,6 +163,7 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, isKeyboa
     ...triggerProps,
     ref: targetRef ? undefined : triggerRef
   };
+  let shouldCloseOnInteractOutside = (element) => !triggerRef.current?.contains(element);
 
   let overlay = (
     <Popover
@@ -172,6 +173,7 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, isKeyboa
       onClose={state.close}
       placement={placement}
       arrowProps={arrowProps}
+      shouldCloseOnInteractOutside={shouldCloseOnInteractOutside}
       isKeyboardDismissDisabled={isKeyboardDismissDisabled}
       hideArrow={hideArrow}>
       {typeof content === 'function' ? content(state.close) : content}
