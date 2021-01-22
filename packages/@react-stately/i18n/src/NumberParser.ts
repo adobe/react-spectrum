@@ -63,13 +63,10 @@ class NumberParser {
   }
 
   parse(value: string) {
-    // assuming a clean string
     // to parse the number, we need to remove anything that isn't actually part of the number, for example we want '-10.40' not '-10.40 USD'
     let fullySanitizedValue = this.sanitize(value);
 
-    // first match the prefix/suffix wrapper of everything that isn't a number
-    // then preserve that as we'll need to put it back together as the current input value
-    // with the actual numerals, parse them into a number
+    // Remove group characters, and replace decimal points and numerals with ASCII values.
     fullySanitizedValue = replaceAll(fullySanitizedValue, this.symbols.group, '')
       .replace(this.symbols.decimal, '.')
       .replace(this.symbols.numeral, this.symbols.index);
@@ -116,7 +113,6 @@ class NumberParser {
   }
 
   isValidPartialNumber(value: string, minValue: number = -Infinity, maxValue: number = Infinity): boolean {
-    // Remove literals and whitespace, which are allowed anywhere in the string
     value = this.sanitize(value);
 
     // Remove minus or plus sign, which must be at the start of the string.
