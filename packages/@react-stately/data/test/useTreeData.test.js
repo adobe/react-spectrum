@@ -489,7 +489,7 @@ describe('useTreeData', function () {
 
     expect(result.current.items).not.toBe(initialResult.items);
     expect(result.current.items).toHaveLength(1);
-    expect(result.current.items[0].value).toEqual({expanded: true, name: 'New David'});
+    expect(result.current.items[0].value).toEqual({expanded: true, name: 'Danny'});
     expect(result.current.items[0].parentKey).toBeUndefined();
   });
 
