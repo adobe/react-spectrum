@@ -479,6 +479,20 @@ describe('useTreeData', function () {
     expect(result.current.selectedKeys).toEqual(new Set());
   });
 
+  it('should update an root item', function () {
+    let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
+    let initialResult = result.current;
+
+    act(() => {
+      result.current.update('David', {expanded: true, name: 'New David'});
+    });
+
+    expect(result.current.items).not.toBe(initialResult.items);
+    expect(result.current.items).toHaveLength(1);
+    expect(result.current.items[0].value).toEqual({expanded: true, name: 'New David'});
+    expect(result.current.items[0].parentKey).toBeUndefined();
+  });
+
   it('should update an item', function () {
     let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
     let initialResult = result.current;

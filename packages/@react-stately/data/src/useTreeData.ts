@@ -325,7 +325,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
       setItems(items => updateTree(items, oldKey, oldNode => {
         let node: TreeNode<T> = {
           key: oldNode.key,
-          parentKey: oldNode.key,
+          parentKey: oldNode.parentKey,
           value: newValue,
           children: null
         };
