@@ -100,7 +100,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   };
 
   let isInitialRender = useRef(true);
-  let lastSelectedKey = useRef(props.selectedKey || props.defaultSelectedKey || null);
+  let lastSelectedKey = useRef(props.selectedKey ?? props.defaultSelectedKey ?? null);
   useEffect(() => {
     // If open state or inputValue is uncontrolled, open and close automatically when the input value changes,
     // the input is if focused, and there are items in the collection.
@@ -156,8 +156,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     // on initial render, even if it doesn't match the selected item's text.
     if (
       selectedKey !== lastSelectedKey.current &&
-      (props.inputValue === undefined || props.selectedKey === undefined) &&
-      !(isInitialRender.current && props.defaultInputValue !== undefined)
+      (props.inputValue === undefined || props.selectedKey === undefined)
     ) {
       resetInputValue();
     } else {
