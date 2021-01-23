@@ -14,6 +14,9 @@ import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {HTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 
 export interface SpinButtonProps extends InputBase, Validation, ValueBase<number>, RangeInputBase<number> {
@@ -51,6 +54,7 @@ export function useSpinButton(
     onDecrementToMin,
     onIncrementToMax
   } = props;
+  const formatMessage = useMessageFormatter(intlMessages);
 
   const clearAsync = () => clearTimeout(_async.current);
 
@@ -94,13 +98,13 @@ export function useSpinButton(
         }
         break;
       case 'Home':
-        if (minValue != null && onDecrementToMin) {
+        if (onDecrementToMin) {
           e.preventDefault();
           onDecrementToMin();
         }
         break;
       case 'End':
-        if (maxValue != null && onIncrementToMax) {
+        if (onIncrementToMax) {
           e.preventDefault();
           onIncrementToMax();
         }
@@ -119,20 +123,24 @@ export function useSpinButton(
 
   useEffect(() => {
     if (isFocused.current) {
-      announce(textValue || `${value}`);
+      announce(textValue === '' ? formatMessage('Empty') : textValue || `${value}`);
     }
-  }, [textValue, value]);
+  }, [textValue, value, formatMessage]);
 
   const onIncrementPressStart = useCallback(
     (initialStepDelay: number) => {
       onIncrement();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
-        () => onIncrementPressStart(60),
+        () => {
+          if (isNaN(maxValue) || isNaN(value) || value < maxValue) {
+            onIncrementPressStart(60);
+          }
+        },
         initialStepDelay
       );
     },
-    [onIncrement]
+    [onIncrement, maxValue, value]
   );
 
   const onDecrementPressStart = useCallback(
@@ -140,18 +148,23 @@ export function useSpinButton(
       onDecrement();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
-        () => onDecrementPressStart(60),
+        () => {
+          if (isNaN(minValue) || isNaN(value) || value > minValue) {
+            onDecrementPressStart(60);
+          }
+        },
         initialStepDelay
       );
     },
-    [onDecrement]
+    [onDecrement, minValue, value]
   );
 
   return {
     spinButtonProps: {
       role: 'spinbutton',
-      'aria-valuenow': typeof value === 'number' ? value : null,
-      'aria-valuetext': textValue || null,
+      'aria-valuenow': !isNaN(value) ? value : null,
+      // by having a message, this prevents iOS VO from reading off '50%' for an empty field
+      'aria-valuetext': textValue === '' || !textValue ? formatMessage('Empty') : textValue,
       'aria-valuemin': minValue,
       'aria-valuemax': maxValue,
       'aria-disabled': isDisabled || null,
@@ -163,11 +176,15 @@ export function useSpinButton(
     },
     incrementButtonProps: {
       onPressStart: () => onIncrementPressStart(400),
-      onPressEnd: clearAsync
+      onPressEnd: clearAsync,
+      onFocus,
+      onBlur
     },
     decrementButtonProps: {
       onPressStart: () => onDecrementPressStart(400),
-      onPressEnd: clearAsync
+      onPressEnd: clearAsync,
+      onFocus,
+      onBlur
     }
   };
 }

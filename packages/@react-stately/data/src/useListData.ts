@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, useState} from 'react';
+import {Key, useMemo, useState} from 'react';
 import {Selection} from '@react-types/shared';
 
 interface ListOptions<T> {
@@ -18,8 +18,12 @@ interface ListOptions<T> {
   initialItems?: T[],
   /** The keys for the initially selected items. */
   initialSelectedKeys?: 'all' | Iterable<Key>,
+  /** The initial text to filter the list by. */
+  initialFilterText?: string,
   /** A function that returns a unique key for an item object. */
-  getKey?: (item: T) => Key
+  getKey?: (item: T) => Key,
+  /** A function that returns whether a item matches the current filter text. */
+  filter?: (item: T, filterText: string) => boolean
 }
 
 export interface ListData<T> {
@@ -31,6 +35,12 @@ export interface ListData<T> {
 
   /** Sets the selected keys. */
   setSelectedKeys(keys: Selection): void,
+
+  /** The current filter text. */
+  filterText: string,
+
+  /** Sets the filter text. */
+  setFilterText(filterText: string): void,
 
   /**
    * Gets an item from the list by key.
@@ -100,7 +110,8 @@ export interface ListData<T> {
 
 export interface ListState<T> {
   items: T[],
-  selectedKeys: Selection
+  selectedKeys: Selection,
+  filterText: string
 }
 
 /**
@@ -111,15 +122,25 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
   let {
     initialItems = [],
     initialSelectedKeys,
-    getKey = (item: any) => item.id || item.key
+    getKey = (item: any) => item.id || item.key,
+    filter,
+    initialFilterText = ''
   } = options;
+
+  // Store both items and filteredItems in state so we can go back to the unfiltered list
   let [state, setState] = useState<ListState<T>>({
     items: initialItems,
-    selectedKeys: initialSelectedKeys === 'all' ? 'all' : new Set(initialSelectedKeys || [])
+    selectedKeys: initialSelectedKeys === 'all' ? 'all' : new Set(initialSelectedKeys || []),
+    filterText: initialFilterText
   });
+
+  let filteredItems = useMemo(
+    () => filter ? state.items.filter(item => filter(item, state.filterText)) : state.items,
+    [state.items, state.filterText, filter]);
 
   return {
     ...state,
+    items: filteredItems,
     ...createListActions({getKey}, setState),
     getItem(key: Key) {
       return state.items.find(item => getKey(item) === key);
@@ -138,13 +159,19 @@ function insert<T>(state: ListState<T>, index: number, ...values: T[]): ListStat
   };
 }
 
-export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (state: ListState<T>) => ListState<T>) => void): Omit<ListData<T>, 'items' | 'selectedKeys' | 'getItem'> {
+export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (state: ListState<T>) => ListState<T>) => void): Omit<ListData<T>, 'items' | 'selectedKeys' | 'getItem' | 'filterText'> {
   let {getKey} = opts;
   return {
     setSelectedKeys(selectedKeys: Selection) {
       dispatch(state => ({
         ...state,
         selectedKeys
+      }));
+    },
+    setFilterText(filterText: string) {
+      dispatch(state => ({
+        ...state,
+        filterText
       }));
     },
     insert(index: number, ...values: T[]) {
