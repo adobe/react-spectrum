@@ -32,10 +32,13 @@ import {useProviderProps} from '@react-spectrum/provider';
 interface TextFieldBaseProps extends SpectrumTextFieldProps, PressEvents {
   wrapperChildren?: ReactElement | ReactElement[],
   inputClassName?: string,
+  validationIconClassName?: string,
   multiLine?: boolean,
   labelProps?: LabelHTMLAttributes<HTMLLabelElement>,
   inputProps: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
-  inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>
+  inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  loadingIndicator?: ReactElement,
+  isLoading?: boolean
 }
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
@@ -58,6 +61,9 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     labelProps,
     inputProps,
     inputRef,
+    isLoading,
+    loadingIndicator,
+    validationIconClassName,
     ...otherProps
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
@@ -100,10 +106,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     UNSAFE_className: classNames(
       styles,
       'spectrum-Textfield-validationIcon',
-      {
-        'is-invalid': isInvalid,
-        'is-valid': validationState === 'valid'
-      }
+      validationIconClassName
     )
   });
 
@@ -114,8 +117,9 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
           styles,
           'spectrum-Textfield',
           {
-            'is-invalid': isInvalid,
-            'is-valid': validationState === 'valid',
+            'spectrum-Textfield--invalid': isInvalid,
+            'spectrum-Textfield--valid': validationState === 'valid',
+            'spectrum-Textfield--loadable': loadingIndicator,
             'spectrum-Textfield--quiet': isQuiet,
             'spectrum-Textfield--multiline': multiLine
           }
@@ -139,7 +143,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
           } />
       </FocusRing>
       {icon}
-      {validationState ? validation : null}
+      {validationState && !isLoading ? validation : null}
+      {isLoading && loadingIndicator}
       {wrapperChildren}
     </div>
   );

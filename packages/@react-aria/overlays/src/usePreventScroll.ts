@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent} from '@react-aria/utils';
-import {useLayoutEffect} from 'react';
+import {chain, getScrollParent, useLayoutEffect} from '@react-aria/utils';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
