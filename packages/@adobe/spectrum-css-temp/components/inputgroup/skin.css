@@ -53,8 +53,10 @@ governing permissions and limitations under the License.
           }
         }
 
-        .spectrum-FieldButton .spectrum-Dropdown-chevron {
-          color: var(--spectrum-global-color-gray-900);
+        .spectrum-FieldButton {
+          &:hover .spectrum-Dropdown-chevron {
+            color: var(--spectrum-global-color-gray-900);
+          }
         }
       }
     }
