@@ -11,15 +11,13 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton} from '@react-spectrum/button';
 import {Color} from '@react-types/color';
-import {Content, View} from '@react-spectrum/view';
-import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Flex} from '@react-spectrum/layout';
 import {HexColorField} from '../';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useId} from '@react-aria/utils';
+import {View} from '@react-spectrum/view';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 storiesOf('HexColorField', module)
@@ -66,67 +64,7 @@ storiesOf('HexColorField', module)
         value="#FF00AA"
         onChange={action('change')} />
     )
-  )
-  .add(
-    'as a popover',
-    () => (
-      <HexColorFieldPopover
-        label="Choose a color"
-        value="#ff0000"
-        step={256}
-        onChange={action('change')} />
-    )
-  )
-  .add(
-    'as a popover, defaults only',
-    () => <HexColorFieldPopover onChange={action('change')} />
   );
-
-function HexColorFieldPopover(props: any = {}) {
-  let [color, setColor] = useState(props.value ? new Color(props.value) : null);
-  let colorString = color ? color.toString('hex') : '';
-
-  function getForegroundColorString(color: Color) {
-    if (!color) {
-      return 'currentColor';
-    }
-  
-    const black = new Color('#000000');
-    const white = new Color('#FFFFFF');
-  
-    return color.contrast(white) > color.contrast(black)
-      ? white.toString('hex')
-      : black.toString('hex');
-  }
-
-  return (
-    <DialogTrigger type="popover">
-      <ActionButton
-        width="size-1600"
-        height="size-1600"
-        aria-label={colorString ? `Primary color: ${colorString}` : 'Primary color'}
-        UNSAFE_style={{
-          background: colorString,
-          color: getForegroundColorString(color)
-        }}>
-        {colorString}
-      </ActionButton>
-      <Dialog width="size-3600">
-        <Content>
-          {render({
-            ...props,
-            autoFocus: true,
-            value: color,
-            onChange: (newColor: Color) => {
-              setColor(newColor);
-              if (props.onChange) { props.onChange(newColor); }
-            }
-          })}
-        </Content>
-      </Dialog>
-    </DialogTrigger>
-  );
-}
 
 function ControlledHexColorField(props: any = {}) {
   let [color, setColor] = useState(props.value || null);

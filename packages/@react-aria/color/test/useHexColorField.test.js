@@ -51,7 +51,7 @@ describe('useHexColorField', function () {
 
   it('should return props for colorValue provided', function () {
     let colorValue = parseColor('#ff88a0');
-    let {inputFieldProps} = renderHexColorFieldHook({}, {colorValue});
+    let {inputFieldProps} = renderHexColorFieldHook({}, {colorValue, inputValue: colorValue.toString('hex')});
     expect(inputFieldProps['aria-valuenow']).toBeNull();
     expect(inputFieldProps['aria-valuetext']).toBeNull();
     expect(inputFieldProps['value']).toBe('#FF88A0');

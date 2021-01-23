@@ -36,7 +36,7 @@ export function useHexColorField(
     isReadOnly,
     isRequired
   } = props;
-  
+
   let {
     colorValue,
     inputValue,
@@ -93,7 +93,6 @@ export function useHexColorField(
       'aria-valuemin': null,
       'aria-valuenow': null,
       'aria-valuetext': null,
-      value: inputProps.value || spinButtonProps['aria-valuetext'] || '',
       autoCorrect: 'off',
       onBlur: commitInputValue,
       onWheel
