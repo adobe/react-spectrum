@@ -36,11 +36,11 @@ describe('useHexColorField', function () {
     expect(inputFieldProps.autoComplete).toBe('off');
     expect(inputFieldProps.autoCorrect).toBe('off');
     expect(inputFieldProps.id).toBeTruthy();
-    expect(inputFieldProps.role).toBe('spinbutton');
+    expect(inputFieldProps.role).toBe('textbox');
     expect(inputFieldProps['aria-valuenow']).toBeNull();
-    expect(inputFieldProps['aria-valuetext']).toBe('Empty');
-    expect(inputFieldProps['aria-valuemin']).toBe(0x000000);
-    expect(inputFieldProps['aria-valuemax']).toBe(0xFFFFFF);
+    expect(inputFieldProps['aria-valuetext']).toBeNull();
+    expect(inputFieldProps['aria-valuemin']).toBeNull();
+    expect(inputFieldProps['aria-valuemax']).toBeNull();
     expect(inputFieldProps['aria-required']).toBeNull();
     expect(inputFieldProps['aria-disabled']).toBeNull();
     expect(inputFieldProps['aria-readonly']).toBeNull();
@@ -51,9 +51,10 @@ describe('useHexColorField', function () {
 
   it('should return props for colorValue provided', function () {
     let colorValue = parseColor('#ff88a0');
-    let {inputFieldProps} = renderHexColorFieldHook({}, {colorValue});
-    expect(inputFieldProps['aria-valuenow']).toBe(colorValue.toHexInt());
-    expect(inputFieldProps['aria-valuetext']).toBe('#FF88A0');
+    let {inputFieldProps} = renderHexColorFieldHook({}, {colorValue, inputValue: colorValue.toString('hex')});
+    expect(inputFieldProps['aria-valuenow']).toBeNull();
+    expect(inputFieldProps['aria-valuetext']).toBeNull();
+    expect(inputFieldProps['value']).toBe('#FF88A0');
   });
 
   it('should return props for label', function () {
