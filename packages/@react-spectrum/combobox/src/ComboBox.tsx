@@ -63,7 +63,9 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     menuTrigger = 'input',
     shouldFlip = true,
     direction = 'bottom',
-    UNSAFE_className
+    UNSAFE_className,
+    label,
+    isQuiet
   } = props;
 
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
@@ -120,12 +122,13 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
 
   let style = {
     ...overlayProps.style,
-    width: menuWidth
+    width: isQuiet ? null : menuWidth,
+    minWidth: isQuiet ? `calc(${menuWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : menuWidth
   };
 
   let labelClassName;
   let inputClassName;
-  if (props.label && props.isQuiet) {
+  if (label && isQuiet) {
     labelClassName = classNames(
       labelStyles,
       'spectrum-FieldLabel--quiet'
@@ -160,6 +163,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
       <Popover
         isOpen={state.isOpen}
         UNSAFE_style={style}
+        UNSAFE_className={classNames(styles, 'spectrum-InputGroup-popover', {'spectrum-InputGroup-popover--quiet': isQuiet})}
         ref={popoverRef}
         placement={placement}
         hideArrow
@@ -173,8 +177,6 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           focusOnPointerEnter
           layout={layout}
           state={state}
-          // Set max height: inherit so Tray scrolling works
-          UNSAFE_style={{maxHeight: 'inherit'}}
           shouldUseVirtualFocus />
         <DismissButton onDismiss={() => state.close()} />
       </Popover>

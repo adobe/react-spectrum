@@ -95,6 +95,12 @@ governing permissions and limitations under the License.
   }
 }
 
+.spectrum-InputGroup-popover--quiet {
+  /* Define this var so it can be read from JS */
+  --spectrum-dropdown-quiet-offset: calc(var(--spectrum-dropdown-quiet-popover-offset-x) + var(--spectrum-popover-border-size));
+  margin-inline-end: calc(var(--spectrum-dropdown-quiet-offset) * -1);
+}
+
 .spectrum-Datepicker--range {
   border-radius: var(--spectrum-border-radius);
   /* Input Group */
