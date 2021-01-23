@@ -778,7 +778,7 @@ describe('NumberField', function () {
 
     expect(textField).toHaveAttribute('value', '+10%');
     textField.setSelectionRange(2, 3);
-    typeText(textField, '{backspace}');
+    userEvent.type(textField, '{backspace}');
     expect(textField).toHaveAttribute('value', '+1%');
     expect(onChangeSpy).not.toHaveBeenCalled();
     textField.setSelectionRange(2, 3);
@@ -847,7 +847,7 @@ describe('NumberField', function () {
 
     act(() => {textField.focus();});
     textField.setSelectionRange(2, 3);
-    typeText(textField, '{backspace}');
+    userEvent.type(textField, '{backspace}');
     textField.setSelectionRange(2, 2);
     typeText(textField, '1');
     textField.setSelectionRange(3, 3);
@@ -860,7 +860,7 @@ describe('NumberField', function () {
 
     act(() => {textField.focus();});
     textField.setSelectionRange(7, 8);
-    typeText(textField, '{backspace}');
+    userEvent.type(textField, '{backspace}');
     expect(textField).toHaveAttribute('value', '($18.00');
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '$18.00');
@@ -897,7 +897,7 @@ describe('NumberField', function () {
       textField.focus();
     });
     textField.setSelectionRange(1, 2);
-    typeText(textField, '{backspace}');
+    userEvent.type(textField, '{backspace}');
     textField.setSelectionRange(1, 1);
     typeText(textField, '1');
     textField.setSelectionRange(2, 2);
@@ -1178,7 +1178,7 @@ describe('NumberField', function () {
     Name              | props                                                    | locale     | keystrokes              | expected
     ${'US Euros'}     | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['4', '2', '.', '1']} | ${['4', '42', '42.', '42.1', '€42.10']}
     ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['4', '2', ',', '1']} | ${['4', '42', '42,', '42,1', '42,10 €']}
-    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['٤', '٢', ',', '١']} | ${['٤', '٤٢', '٤٢٫', '٤٢٫١', '٤٢٫١٠ €']}
+    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['٤', '٢', ',', '١']} | ${['٤', '٤٢', '٤٢,', '٤٢,١', '٤٢٫١٠ €']}
   `('$Name typing in locale stays consistent', ({props, locale, keystrokes, expected}) => {
     let {textField} = renderNumberField({onChange: onChangeSpy, ...props}, {locale});
 
@@ -1204,9 +1204,9 @@ describe('NumberField', function () {
 
   it.each`
     Name              | props | locale     | keystrokes                   | expected
-    ${'US Euros'}     | ${{}} | ${'en-US'} | ${['1', ',', '0', '0', '0']} | ${['1', '1,', '1,0', '1,00', '1,000']}
-    ${'French Euros'} | ${{}} | ${'fr-FR'} | ${['1', ' ', '0', '0', '0']} | ${['1', '1 ', '1 0', '1 00', '1 000']}
-    ${'Arabic Euros'} | ${{}} | ${'ar-AE'} | ${['١', '.', '٠', '٠', '٠']} | ${['١', '١٬', '١٬٠', '١٬٠٠', '١٬٠٠٠']}
+    ${'US Euros'}     | ${{}} | ${'en-US'} | ${['1', ',', '0', '0', '0']} | ${['1', '1,', '1,0', '1,00', '1,000', '1,000']}
+    ${'French Euros'} | ${{}} | ${'fr-FR'} | ${['1', ' ', '0', '0', '0']} | ${['1', '1 ', '1 0', '1 00', '1 000', '1 000']}
+    ${'Arabic Euros'} | ${{}} | ${'ar-AE'} | ${['١', '.', '٠', '٠', '٠']} | ${['١', '١.', '١.٠', '١.٠٠', '١.٠٠٠', '١٬٠٠٠']}
   `('$Name typing group characters works', ({props, locale, keystrokes, expected}) => {
     let {textField} = renderNumberField({onChange: onChangeSpy, ...props}, {locale});
 
@@ -1667,8 +1667,8 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '');
 
     act(() => {textField.focus();});
-    typeText(textField, 'SAR 21.00');
-    expect(textField).toHaveAttribute('value', 'SAR 21.00');
+    typeText(textField, ' 21 . 00 ');
+    expect(textField).toHaveAttribute('value', ' 21 . 00 ');
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', 'SAR 21.00');
     expect(onChangeSpy).toHaveBeenCalledWith(21);
@@ -1712,6 +1712,157 @@ describe('NumberField', function () {
 
     let formatter = new Intl.NumberFormat(locale + '-u-nu-hanidec', {style: 'currency', currency: 'USD'});
     expect(textField).toHaveAttribute('value', formatter.format(21));
+  });
+
+  describe('beforeinput', () => {
+    let getTargetRanges = InputEvent.prototype.getTargetRanges;
+    beforeEach(() => {
+      InputEvent.prototype.getTargetRanges = () => {};
+    });
+
+    afterEach(() => {
+      InputEvent.prototype.getTargetRanges = getTargetRanges;
+    });
+
+    it.each(['deleteContentBackward', 'deleteContentForward', 'deleteContent', 'deleteByCut', 'deleteByDrag'])('allows %s of whole currency symbol', (inputType) => {
+      let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
+
+      act(() => {textField.focus();});
+      typeText(textField, '12');
+      act(() => {textField.blur();});
+
+      expect(textField).toHaveAttribute('value', 'USD 12.00');
+
+      act(() => {textField.focus();});
+      textField.setSelectionRange(0, 3);
+
+      // JSDOM doesn't support the beforeinput event
+      let e = new InputEvent('beforeinput', {cancelable: true});
+      e.inputType = inputType;
+      let proceed = fireEvent(textField, e);
+
+      expect(proceed).toBe(true);
+    });
+
+    it.each(['deleteContentBackward', 'deleteContentForward', 'deleteContent', 'deleteByCut', 'deleteByDrag'])('prevents %s of partial currency symbol', (inputType) => {
+      let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
+
+      act(() => {textField.focus();});
+      typeText(textField, '12');
+      act(() => {textField.blur();});
+
+      expect(textField).toHaveAttribute('value', 'USD 12.00');
+
+      act(() => {textField.focus();});
+      textField.setSelectionRange(1, 3);
+
+      // JSDOM doesn't support the beforeinput event
+      let e = new InputEvent('beforeinput', {cancelable: true});
+      e.inputType = inputType;
+      let proceed = fireEvent(textField, e);
+
+      expect(proceed).toBe(false);
+    });
+
+    it.each(['deleteContentBackward', 'deleteContentForward'])('prevents %s inside currency symbol', (inputType) => {
+      let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
+
+      act(() => {textField.focus();});
+      typeText(textField, '12');
+      act(() => {textField.blur();});
+
+      expect(textField).toHaveAttribute('value', 'USD 12.00');
+
+      act(() => {textField.focus();});
+      textField.setSelectionRange(1, 1);
+
+      // JSDOM doesn't support the beforeinput event
+      let e = new InputEvent('beforeinput', {cancelable: true});
+      e.inputType = inputType;
+      let proceed = fireEvent(textField, e);
+
+      expect(proceed).toBe(false);
+    });
+
+    it.each(['insertText', 'insertFromPaste', 'insertFromDrop', 'insertFromYank', 'insertReplacementText'])('allows %s of number inside number', (inputType) => {
+      let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
+
+      act(() => {textField.focus();});
+      typeText(textField, '12');
+      act(() => {textField.blur();});
+
+      expect(textField).toHaveAttribute('value', 'USD 12.00');
+
+      act(() => {textField.focus();});
+      textField.setSelectionRange(5, 5);
+
+      // JSDOM doesn't support the beforeinput event
+      let e = new InputEvent('beforeinput', {cancelable: true, data: '2'});
+      e.inputType = inputType;
+      let proceed = fireEvent(textField, e);
+
+      expect(proceed).toBe(true);
+    });
+
+    it.each(['insertText', 'insertFromPaste', 'insertFromDrop', 'insertFromYank', 'insertReplacementText'])('allows %s replacing whole number', (inputType) => {
+      let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
+
+      act(() => {textField.focus();});
+      typeText(textField, '12');
+      act(() => {textField.blur();});
+
+      expect(textField).toHaveAttribute('value', 'USD 12.00');
+
+      act(() => {textField.focus();});
+      textField.setSelectionRange(4, 10);
+
+      // JSDOM doesn't support the beforeinput event
+      let e = new InputEvent('beforeinput', {cancelable: true, data: '2'});
+      e.inputType = inputType;
+      let proceed = fireEvent(textField, e);
+
+      expect(proceed).toBe(true);
+    });
+
+    it.each(['insertText', 'insertFromPaste', 'insertFromDrop', 'insertFromYank', 'insertReplacementText'])('prevents %s of number inside currency symbol', (inputType) => {
+      let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
+
+      act(() => {textField.focus();});
+      typeText(textField, '12');
+      act(() => {textField.blur();});
+
+      expect(textField).toHaveAttribute('value', 'USD 12.00');
+
+      act(() => {textField.focus();});
+      textField.setSelectionRange(1, 1);
+
+      // JSDOM doesn't support the beforeinput event
+      let e = new InputEvent('beforeinput', {cancelable: true, data: '2'});
+      e.inputType = inputType;
+      let proceed = fireEvent(textField, e);
+
+      expect(proceed).toBe(false);
+    });
+
+    it.each(['historyUndo', 'historyRedo'])('allows %s', (inputType) => {
+      let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
+
+      act(() => {textField.focus();});
+      typeText(textField, '12');
+      act(() => {textField.blur();});
+
+      expect(textField).toHaveAttribute('value', 'USD 12.00');
+
+      act(() => {textField.focus();});
+      textField.setSelectionRange(2, 2);
+
+      // JSDOM doesn't support the beforeinput event
+      let e = new InputEvent('beforeinput', {cancelable: true});
+      e.inputType = inputType;
+      let proceed = fireEvent(textField, e);
+
+      expect(proceed).toBe(true);
+    });
   });
 
   describe('locale specific', () => {

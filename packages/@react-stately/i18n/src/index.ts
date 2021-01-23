@@ -10,15 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {getNumberFormatter, NumberFormatOptions} from '@react-stately/i18n';
-import {useLocale} from './context';
+export type {NumberFormatOptions} from './NumberFormatter';
 
-/**
- * Provides localized number formatting for the current locale. Automatically updates when the locale changes,
- * and handles caching of the number formatter for performance.
- * @param options - Formatting options.
- */
-export function useNumberFormatter(options: NumberFormatOptions = {}): Intl.NumberFormat {
-  let {locale} = useLocale();
-  return getNumberFormatter(locale, options);
-}
+export {parseNumber, isValidPartialNumber} from './NumberParser';
+export {getNumberFormatter} from './NumberFormatter';
+export {getNumberingSystem} from './numberingSystems';
