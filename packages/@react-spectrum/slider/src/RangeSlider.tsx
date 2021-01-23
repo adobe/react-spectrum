@@ -11,7 +11,6 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {DEFAULT_MAX_VALUE, DEFAULT_MIN_VALUE} from '@react-stately/slider';
 import {FocusableRef} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -23,17 +22,20 @@ import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
 function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
-  let {onChange, value, defaultValue, getValueLabel, ...otherProps} = props;
+  let {onChange, onChangeEnd, value, defaultValue, getValueLabel, ...otherProps} = props;
 
-  let baseProps: Omit<SliderBaseProps, 'children'> = {
+  let baseProps: Omit<SliderBaseProps<number[]>, 'children'> = {
     ...otherProps,
     value: value != null ? [value.start, value.end] : undefined,
     defaultValue: defaultValue != null
       ? [defaultValue.start, defaultValue.end]
       // make sure that useSliderState knows we have two handles
-      : [props.minValue ?? DEFAULT_MIN_VALUE, props.maxValue ?? DEFAULT_MAX_VALUE],
+      : [props.minValue ?? 0, props.maxValue ?? 100],
     onChange(v) {
       onChange?.({start: v[0], end: v[1]});
+    },
+    onChangeEnd(v) {
+      onChangeEnd?.({start: v[0], end: v[1]});
     },
     getValueLabel: getValueLabel ? ([start, end]) => getValueLabel({start, end}) : undefined
   };
@@ -81,6 +83,8 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivE
   );
 }
 
-
+/**
+ * RangeSliders allow users to quickly select a subset range. They should be used when the upper and lower bounds to the range are invariable.
+ */
 const _RangeSlider = React.forwardRef(RangeSlider);
 export {_RangeSlider as RangeSlider};

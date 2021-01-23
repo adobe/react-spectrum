@@ -72,8 +72,8 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
           {
             'is-disabled': isDisabled,
             'is-quiet': props.isQuiet,
-            'is-invalid': props.validationState === 'invalid',
-            'is-valid': props.validationState === 'valid'
+            'spectrum-Search--invalid': props.validationState === 'invalid',
+            'spectrum-Search--valid': props.validationState === 'valid'
           },
           UNSAFE_className
         )

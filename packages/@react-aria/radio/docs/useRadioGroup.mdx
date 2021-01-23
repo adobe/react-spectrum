@@ -16,6 +16,7 @@ import focusDocs from 'docs:@react-aria/focus';
 import statelyDocs from 'docs:@react-stately/radio';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-aria/radio/package.json';
+import Anatomy from './anatomy.svg';
 
 ```jsx import
 import {useRadioGroup, useRadio} from '@react-aria/radio';
@@ -58,6 +59,8 @@ radio groups that can be styled as needed.
 * Group and radio labeling support for assistive technology
 
 ## Anatomy
+
+<Anatomy />
 
 A radio group consists of a set of radio buttons, and a label. Each radio
 includes a label and a visual selection indicator. A single radio button
@@ -114,11 +117,12 @@ function RadioGroup(props) {
 function Radio(props) {
   let {children} = props;
   let state = React.useContext(RadioContext);
-  let {inputProps} = useRadio(props, state);
+  let ref = useRef(null);
+  let {inputProps} = useRadio(props, state, ref);
 
   return (
     <label style={{display: 'block'}}>
-      <input {...inputProps} />
+      <input {...inputProps} ref={ref} />
       {children}
     </label>
   );
@@ -169,7 +173,8 @@ function RadioGroup(props) {
 function Radio(props) {
   let {children} = props;
   let state = React.useContext(RadioContext);
-  let {inputProps} = useRadio(props, state);
+  let ref = useRef(null);
+  let {inputProps} = useRadio(props, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
   let isSelected = state.selectedValue === props.value;
@@ -178,7 +183,7 @@ function Radio(props) {
   return (
     <label style={{display: 'flex', alignItems: 'center'}}>
       <VisuallyHidden>
-        <input {...inputProps} {...focusProps} />
+        <input {...inputProps} {...focusProps} ref={ref} />
       </VisuallyHidden>
       <svg
         width={24}

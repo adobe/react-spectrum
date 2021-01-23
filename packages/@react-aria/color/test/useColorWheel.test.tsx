@@ -11,9 +11,9 @@
  */
 
 import {act, fireEvent, render} from '@testing-library/react';
-import {Color, useColorWheelState} from '@react-stately/color';
 import {ColorWheelProps} from '@react-types/color';
 import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
+import {parseColor, useColorWheelState} from '@react-stately/color';
 import React, {useRef} from 'react';
 import {useColorWheel} from '../';
 import userEvent from '@testing-library/user-event';
@@ -36,7 +36,7 @@ function ColorWheel(props: ColorWheelProps) {
   let inputRef = useRef(null);
   let containerRef = useRef(null);
 
-  let {inputProps, containerProps, thumbPosition: {x, y}, thumbProps} = useColorWheel({
+  let {inputProps, groupProps, thumbPosition: {x, y}, thumbProps} = useColorWheel({
     ...props,
     inputRef,
     containerRef,
@@ -44,7 +44,7 @@ function ColorWheel(props: ColorWheelProps) {
     outerRadius: THUMB_RADIUS + 3
   }, state);
 
-  return (<div data-testid="container" {...containerProps} ref={containerRef}>
+  return (<div data-testid="container" {...groupProps} ref={containerRef}>
     <div data-testid="thumb" {...thumbProps} style={{transform: `translate(${x}, ${y})`}}>
       <input {...inputProps} ref={inputRef} />
     </div>
@@ -124,7 +124,7 @@ describe('useColorWheel', () => {
 
   describe('keyboard events', () => {
     it('left/right works', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
@@ -138,7 +138,7 @@ describe('useColorWheel', () => {
     });
 
     it('up/down works', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
@@ -152,7 +152,7 @@ describe('useColorWheel', () => {
     });
 
     it('doesn\'t work when disabled', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} isDisabled />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
@@ -164,7 +164,7 @@ describe('useColorWheel', () => {
     });
 
     it('wraps around', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
@@ -175,7 +175,7 @@ describe('useColorWheel', () => {
     });
 
     it('respects step', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} step={45} />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
@@ -189,7 +189,7 @@ describe('useColorWheel', () => {
     });
 
     it('can always get back to 0 even with step', () => {
-      let defaultColor = new Color('hsl(330, 100%, 50%)');
+      let defaultColor = parseColor('hsl(330, 100%, 50%)');
       let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} step={110} />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
@@ -203,7 +203,7 @@ describe('useColorWheel', () => {
     });
 
     it('steps with page up/down', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
@@ -238,7 +238,7 @@ describe('useColorWheel', () => {
     prepare();
 
     it('dragging the thumb works', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole, getByTestId} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
       let thumb = getByTestId('thumb');
       let slider = getByRole('slider');
@@ -261,7 +261,7 @@ describe('useColorWheel', () => {
     });
 
     it('dragging the thumb doesn\'t work when disabled', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole, getByTestId} = render(<ColorWheel isDisabled defaultValue={defaultColor} onChange={onChangeSpy} />);
       let thumb = getByTestId('thumb');
       let slider = getByRole('slider');
@@ -283,7 +283,7 @@ describe('useColorWheel', () => {
     });
 
     it('dragging the thumb respects the step', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByTestId} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} step={120} />);
       let thumb = getByTestId('thumb');
       let container = getByTestId('container');
@@ -299,7 +299,7 @@ describe('useColorWheel', () => {
     });
 
     it('clicking and dragging on the track works', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole, getByTestId} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
       let thumb = getByTestId('thumb');
       let slider = getByRole('slider');
@@ -323,7 +323,7 @@ describe('useColorWheel', () => {
     });
 
     it('clicking and dragging on the track doesn\'t work when disabled', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole, getByTestId} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} isDisabled />);
       let slider = getByRole('slider');
       let container = getByTestId('container');
@@ -344,7 +344,7 @@ describe('useColorWheel', () => {
     });
 
     it('clicking and dragging on the track respects the step', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByTestId} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} step={120} />);
       let thumb = getByTestId('thumb');
       let container = getByTestId('container');

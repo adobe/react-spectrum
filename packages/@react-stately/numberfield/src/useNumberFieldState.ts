@@ -10,160 +10,196 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp} from '@react-aria/utils';
-import {useCallback, useEffect, useRef, useState} from 'react';
-import {useControlledState} from '@react-stately/utils';
-import {useNumberFormatter, useNumberParser} from '@react-aria/i18n';
-import {ValidationState} from '@react-types/shared';
+import {clamp, roundToStep, useControlledState} from '@react-stately/utils';
+import {getNumberFormatter, getNumberingSystem, isValidPartialNumber, parseNumber} from '@react-stately/i18n';
+import {NumberFieldProps} from '@react-types/numberfield';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 export interface NumberFieldState {
-  setValue: (val: number | string) => void,
+  validate: (value: string) => boolean,
   increment: () => void,
   decrement: () => void,
   incrementToMax: () => void,
   decrementToMin: () => void,
   commitInputValue: () => void,
-  value: number,
-  inputValue: string,
-  validationState: ValidationState,
-  textValue?: string
+  minValue: number,
+  maxValue: number,
+  numberValue: number,
+  setInputValue: (val: string) => void,
+  inputValue: string
 }
 
-interface UseNumberFieldStateProps {
-  minValue?: number,
-  maxValue?: number,
-  step?: number,
-  defaultValue?: number,
-  onChange?: (value: string | number) => void,
-  value?: number,
-  formatOptions?: Intl.NumberFormatOptions
+interface NumberFieldStateProps extends NumberFieldProps {
+  locale: string
 }
+
+// for two decimal points of precision
+const MAX_SAFE_FLOAT = (Number.MAX_SAFE_INTEGER + 1) / 128 - 1;
+const MIN_SAFE_FLOAT = (Number.MIN_SAFE_INTEGER - 1) / 128 + 1;
 
 export function useNumberFieldState(
-  props: UseNumberFieldStateProps
+  props: NumberFieldStateProps
 ): NumberFieldState {
-  let {minValue, maxValue, step = 1, formatOptions, value, defaultValue, onChange} = props;
+  let {
+    minValue = Number.MIN_SAFE_INTEGER,
+    maxValue = Number.MAX_SAFE_INTEGER,
+    step,
+    formatOptions,
+    value,
+    defaultValue,
+    onChange,
+    locale
+  } = props;
 
-  const numberParser = useNumberParser();
-  const textValueFormatter = useNumberFormatter(formatOptions);
-  const inputValueFormatter = useNumberFormatter();
+  let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, onChange);
+  let [inputValue, setInputValue] = useState(() => isNaN(numberValue) ? '' : getNumberFormatter(locale, formatOptions).format(numberValue));
 
-  const [numberValue, setNumberValue] = useControlledState<number>(value, defaultValue || 0, onChange);
-  let initialInputValue = inputValueFormatter.format(numberValue);
-  const [inputValue, setInputValue] = useState(isNaN(value) && isNaN(defaultValue) ? '' : initialInputValue);
-  const [isValid, setIsValid] = useState(isInputValueValid(numberValue, maxValue, minValue));
+  let numberingSystem = useMemo(() => getNumberingSystem(inputValue), [inputValue]);
+  let formatter = useMemo(() => getNumberFormatter(locale, {...formatOptions, numberingSystem}), [locale, formatOptions, numberingSystem]);
+  let intlOptions = useMemo(() => formatter.resolvedOptions(), [formatter]);
+  let format = useCallback((value: number) => isNaN(value) ? '' : formatter.format(value), [formatter]);
 
-  const minusSign = useRef('-');
+  // Number.MAX_SAFE_INTEGER - 0.01 is still Number.MAX_SAFE_INTEGER, so decrement/increment won't work on it for the percent formatting
+  // anything with a step smaller than 1 will have this problem
+  // unfortunately, finding the safe max/min is non-trivial, so we'll need to rely on people setting max/min correctly for their step size
+  // we can include it for percent though
+  // can look for a method to run locally to figure it out https://stackoverflow.com/questions/45929493/node-js-maximum-safe-floating-point-number
+  if (intlOptions.style === 'percent') {
+    maxValue = isNaN(props.maxValue) ? MAX_SAFE_FLOAT : props.maxValue;
+    minValue = isNaN(props.minValue) ? MIN_SAFE_FLOAT : props.maxValue;
+  }
 
+  // Update the input value when the number value or format options change. This is done
+  // in a useEffect so that the controlled behavior is correct and we only update the
+  // textfield after prop changes.
   useEffect(() => {
-    // Get the minus sign of the current locale to filter the input value
-    // Automatically updates the minus sign when numberFormatter changes
-    minusSign.current = inputValueFormatter.formatToParts(-11).find(p => p.type === 'minusSign').value;
-  }, [inputValueFormatter]);
+    setInputValue(format(numberValue));
+  }, [numberValue, locale, formatOptions]);
 
-  let increment = () => {
+  // Store last parsed value in a ref so it can be used by increment/decrement below
+  let parsed = useRef(0);
+  parsed.current = useMemo(() => parseNumber(locale, formatOptions, inputValue), [locale, formatOptions, inputValue]);
+
+  let commitInputValue = () => {
+    // Set to empty state if input value is empty
+    if (!inputValue.length) {
+      setNumberValue(NaN);
+      setInputValue('');
+      return;
+    }
+
+    // if it failed to parse, then reset input to formatted version of current number
+    if (isNaN(parsed.current)) {
+      setInputValue(format(numberValue));
+      return;
+    }
+
+    // Clamp to min and max, round to the nearest step, and round to specified number of
+    // fraction digits according to formatOptions.
+    let clampedValue = clamp(parsed.current, minValue, maxValue);
+    clampedValue = roundToStep(clampedValue, step);
+    clampedValue = parseNumber(locale, formatOptions, format(clampedValue));
+    setNumberValue(clampedValue);
+
+    // in a controlled state, the numberValue won't change, so we won't go back to our old input without help
+    setInputValue(format(value === undefined ? clampedValue : numberValue));
+  };
+
+  let safeNextStep = useCallback((operation, prev) => {
+    let clampStep = !isNaN(step) ? step : 1;
+    if (intlOptions.style === 'percent' && isNaN(step)) {
+      clampStep = 0.01;
+    }
+    let clampedValue = clamp(prev, minValue, maxValue);
+    clampedValue = roundToStep(clampedValue, step);
+    if (clampedValue > prev) {
+      return clampedValue;
+    }
+    let newValue = clamp(
+      handleDecimalOperation(operation, prev, clampStep),
+      minValue,
+      maxValue
+    );
+    newValue = roundToStep(newValue, step);
+    return newValue;
+  }, [minValue, maxValue, step, intlOptions]);
+
+  let increment = useCallback(() => {
     setNumberValue((previousValue) => {
-      const newValue = clamp(
-        handleDecimalOperation('+', previousValue, step),
-        minValue,
-        maxValue
-      );
+      let prev = parsed.current;
+      if (isNaN(prev)) {
+        // if the input is empty, start from 0
+        prev = 0;
+        if (!isNaN(props.minValue) && prev < props.minValue) {
+          // unless zero is less than the min value, then start well below it so we clamp to the min
+          prev = -Infinity;
+        }
+      }
+      let newValue = safeNextStep('+', prev);
 
-      updateValidation(newValue);
-      setInputValue(inputValueFormatter.format(newValue));
+      // if we've arrived at the same value that was previously in the state, the
+      // input value should be updated to match
+      // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
+      // you'd be at 5, then incrementing to 5 again, so no re-render would happen and 4 would be left in the input
+      if (newValue === previousValue) {
+        setInputValue(format(newValue));
+      }
+
       return newValue;
     });
-  };
+  }, [setNumberValue, parsed, safeNextStep, formatter]);
+
+  let decrement = useCallback(() => {
+    setNumberValue((previousValue) => {
+      let prev = parsed.current;
+      // if the input is empty, start from the max value when decrementing
+      if (isNaN(prev)) {
+        prev = 0;
+        // unless zero is greater than the max value, then start well above it so we clamp to the max
+        if (!isNaN(props.maxValue) && prev > maxValue) {
+          prev = Infinity;
+        }
+      }
+      let newValue = safeNextStep('-', prev);
+
+      if (newValue === previousValue) {
+        setInputValue(format(newValue));
+      }
+
+      return newValue;
+    });
+  }, [setNumberValue, parsed, safeNextStep, formatter]);
 
   let incrementToMax = useCallback(() => {
     if (maxValue != null) {
-      setNumberValue(maxValue);
-      setInputValue(inputValueFormatter.format(maxValue));
+      setNumberValue(roundToStep(clamp(maxValue, minValue, maxValue), step));
     }
-  }, [inputValueFormatter, maxValue, setNumberValue]);
-
-  let decrement = () => {
-    setNumberValue((previousValue) => {
-      const newValue = clamp(
-        handleDecimalOperation('-', previousValue, step),
-        minValue,
-        maxValue
-      );
-
-      updateValidation(newValue);
-      setInputValue(inputValueFormatter.format(newValue));
-      return newValue;
-    });
-  };
+  }, [maxValue, setNumberValue, minValue, step]);
 
   let decrementToMin = useCallback(() => {
     if (minValue != null) {
-      setNumberValue(minValue);
-      setInputValue(inputValueFormatter.format(minValue));
+      setNumberValue(roundToStep(clamp(minValue, minValue, maxValue), step));
     }
-  }, [inputValueFormatter, minValue, setNumberValue]);
+  }, [minValue, setNumberValue, maxValue, step]);
 
-  let setValue = (value: string) => {
-    value = value.trim();
-    const newValue = numberParser.parse(value);
-
-    // If new value is not NaN then update the number value
-    if (!isNaN(newValue)) {
-      setNumberValue(newValue);
-    }
-
-    updateValidation(newValue);
-
-    // Update the input value if value:
-    // 1) is not NaN or
-    // 2) is equal to minus sign or
-    // 3) is empty
-    if (!isNaN(newValue) || value === minusSign.current  || value.length === 0) {
-      setInputValue(value);
-    }
-  };
-
-
-  let updateValidation = (value) => {
-    setIsValid(isInputValueValid(value, maxValue, minValue));
-  };
-
-  // Mostly used in onBlur event to set the input value to
-  // formatted numberValue. e.g. user types `-` then blurs.
-  // instead of leaving the only minus sign we set the input value back to valid value
-  const commitInputValue = () => {
-    // Do nothing if input value is empty
-    if (!inputValue.length) {return;}
-
-    const newValue = inputValueFormatter.format(numberValue);
-    updateValidation(newValue);
-    setInputValue(newValue);
-  };
+  let validate = (value: string) => isValidPartialNumber(locale, formatOptions, value, minValue, maxValue);
 
   return {
-    setValue,
+    validate,
     increment,
     incrementToMax,
     decrement,
     decrementToMin,
-    value: numberValue,
-    inputValue,
-    commitInputValue,
-    textValue: inputValue.length > 0 ? textValueFormatter.format(numberValue) : '',
-    validationState: !isValid ? 'invalid' : null
+    minValue,
+    maxValue,
+    numberValue,
+    setInputValue,
+    inputValue: inputValue,
+    commitInputValue
   };
 }
 
-function isInputValueValid(value:number, max, min): boolean {
-  return (
-    value !== null &&
-    !isNaN(value) &&
-    (!isNaN(max) ? value <= max : true) &&
-    (!isNaN(min) ? value >= min : true)
-  );
-}
-
-function handleDecimalOperation(operator, value1, value2) {
+function handleDecimalOperation(operator: '-' | '+', value1: number, value2: number): number {
   let result = operator === '+' ? value1 + value2 : value1 - value2;
 
   // Check if we have decimals

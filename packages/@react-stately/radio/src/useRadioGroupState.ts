@@ -22,6 +22,12 @@ export interface RadioGroupState {
    */
   readonly name: string,
 
+  /** Whether the radio group is disabled. */
+  readonly isDisabled: boolean,
+
+  /** Whether the radio group is read only. */
+  readonly isReadOnly: boolean,
+
   /** The currently selected value. */
   readonly selectedValue: string | null,
 
@@ -49,7 +55,7 @@ export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
   let [lastFocusedValue, setLastFocusedValue] = useState(null);
 
   let setSelectedValue = (value) => {
-    if (!props.isReadOnly) {
+    if (!props.isReadOnly && !props.isDisabled) {
       setSelected(value);
     }
   };
@@ -59,6 +65,8 @@ export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
     selectedValue,
     setSelectedValue,
     lastFocusedValue,
-    setLastFocusedValue
+    setLastFocusedValue,
+    isDisabled: props.isDisabled || false,
+    isReadOnly: props.isReadOnly || false
   };
 }

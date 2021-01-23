@@ -1,27 +1,29 @@
+import {AriaSliderThumbProps} from '@react-types/slider';
 import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
 import {getSliderThumbId, sliderIds} from './utils';
-import React, {ChangeEvent, HTMLAttributes, useCallback, useEffect, useRef} from 'react';
+import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
 import {SliderState} from '@react-stately/slider';
-import {SliderThumbProps} from '@react-types/slider';
 import {useFocusable} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
 import {useMove} from '@react-aria/interactions';
 
 interface SliderThumbAria {
-  /** Props for the range input. */
-  inputProps: HTMLAttributes<HTMLElement>,
-
   /** Props for the root thumb element; handles the dragging motion. */
   thumbProps: HTMLAttributes<HTMLElement>,
 
-  /** Props for the label element for this thumb. */
-  labelProps: HTMLAttributes<HTMLElement>
+  /** Props for the visually hidden range input element. */
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
+
+  /** Props for the label element for this thumb (optional). */
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>
 }
 
-export interface SliderThumbOptions extends SliderThumbProps {
-  trackRef: React.RefObject<HTMLElement>,
-  inputRef: React.RefObject<HTMLInputElement>
+interface SliderThumbOptions extends AriaSliderThumbProps {
+  /** A ref to the track element. */
+  trackRef: RefObject<HTMLElement>,
+  /** A ref to the thumb input element. */
+  inputRef: RefObject<HTMLInputElement>
 }
 
 /**
@@ -165,9 +167,19 @@ export function useSliderThumb(
     thumbProps: !isDisabled ? mergeProps(
       moveProps,
       {
-        onMouseDown: () => {onDown(null);},
-        onPointerDown: (e: React.PointerEvent) => {onDown(e.pointerId);},
-        onTouchStart: (e: React.TouchEvent) => {onDown(e.changedTouches[0].identifier);}
+        onMouseDown: (e: React.MouseEvent<HTMLElement>) => {
+          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+            return;
+          }
+          onDown(null);
+        },
+        onPointerDown: (e: React.PointerEvent<HTMLElement>) => {
+          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+            return;
+          }
+          onDown(e.pointerId);
+        },
+        onTouchStart: (e: React.TouchEvent<HTMLElement>) => {onDown(e.changedTouches[0].identifier);}
       }
     ) : {},
     labelProps
