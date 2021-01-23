@@ -11,7 +11,7 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {Color} from '@react-stately/color';
+import {Color} from '@react-types/color';
 import {DOMProps} from '@react-types/shared';
 import React, {ReactElement} from 'react';
 import stylesHandle from '@adobe/spectrum-css-temp/components/colorhandle/vars.css';

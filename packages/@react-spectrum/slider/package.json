@@ -37,14 +37,14 @@
     "@react-aria/interactions": "^3.3.0",
     "@react-aria/slider": "^3.0.0",
     "@react-aria/utils": "^3.5.0",
-    "@react-aria/visually-hidden": "3.2.1",
+    "@react-aria/visually-hidden": "^3.2.1",
     "@react-spectrum/utils": "^3.4.0",
     "@react-stately/slider": "^3.0.0",
     "@react-types/shared": "^3.3.0",
     "@react-types/slider": "^3.0.0"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0",

@@ -58,7 +58,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
               'spectrum-FieldButton--quiet': isQuiet,
               'is-active': isActive || isPressed,
               'is-disabled': isDisabled,
-              'is-invalid': validationState === 'invalid',
+              'spectrum-FieldButton--invalid': validationState === 'invalid',
               'is-hovered': isHovered
             },
             styleProps.className
