@@ -14,7 +14,8 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '../';
 import Add from '@spectrum-icons/workflow/Add';
 import {Flex} from '@react-spectrum/layout';
-import React from 'react';
+import {PressResponder, useHover} from '@react-aria/interactions';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 
@@ -73,6 +74,10 @@ storiesOf('Button/ActionButton', module)
   .add(
     'autoFocus',
     () => render({autoFocus: true})
+  )
+  .add(
+    'move from disabled button',
+    () => <App />
   );
 
 function render(props = {}) {
@@ -94,5 +99,31 @@ function render(props = {}) {
         Disabled
       </ActionButton>
     </Flex>
+  );
+}
+
+function App() {
+  let [isDisabled, setIsDisabled] = useState(false);
+  let {hoverProps: hoverProps1} = useHover({
+    onHoverStart: () => console.log('hover started 1'),
+    onHoverEnd: () => console.log('hover ended 1')
+  });
+  let {hoverProps: hoverProps2} = useHover({
+    onHoverStart: () => console.log('hover started 2'),
+    onHoverEnd: () => console.log('hover ended 2')
+  });
+  return (
+    <div>
+      <div>Must be in Safari. Hovering a disabled Button 1 from Button 2 results in hover started, but hovering from outside both buttons will result in no such call.</div>
+      <div>According to the bug, we should also see that clicking Button 1 and then moving to Button 2 shouldn't result in "hover started 2" but it does, so is this bug fixed?</div>
+      <Flex>
+        <PressResponder {...hoverProps1}>
+          <ActionButton onPressStart={() => setIsDisabled(true)} isDisabled={isDisabled} UNSAFE_style={{borderRight: 'none'}}>Button 1</ActionButton>
+        </PressResponder>
+        <PressResponder {...hoverProps2}>
+          <ActionButton onPress={() => setIsDisabled(false)} UNSAFE_style={{borderLeft: 'none'}}>Button 2</ActionButton>
+        </PressResponder>
+      </Flex>
+    </div>
   );
 }
