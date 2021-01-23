@@ -12,7 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
-import {Color} from '@react-stately/color';
+import {Color} from '@react-types/color';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Flex} from '@react-spectrum/layout';
 import {HexColorField} from '../';
@@ -61,7 +61,7 @@ storiesOf('HexColorField', module)
     'controlled value',
     () => (
       <ControlledHexColorField
-        value={new Color('#FF00AA')}
+        value="#FF00AA"
         onChange={action('change')} />
     )
   )
@@ -91,7 +91,7 @@ function HexColorFieldPopover(props: any = {}) {
         UNSAFE_style={{
           background: colorString
         }} >{colorString}</ActionButton>
-      <Dialog 
+      <Dialog
         width="size-3600"
         height="size-1600" >
         <View padding="size-300">

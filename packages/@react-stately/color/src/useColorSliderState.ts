@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color} from './Color';
-import {ColorSliderProps} from '@react-types/color';
+import {ColorSliderProps, Color as IColor} from '@react-types/color';
+import {getColorChannelRange, parseColor} from './Color';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import {useControlledState} from '@react-stately/utils';
 
 export interface ColorSliderState extends SliderState {
-  value: Color,
-  setValue(value: string | Color): void,
+  value: IColor,
+  setValue(value: string | IColor): void,
   /** Returns the color that should be displayed in the slider instead of `value` or the optional parameter. */
-  getDisplayColor(c?: Color): Color
+  getDisplayColor(c?: IColor): IColor
 }
 
 
@@ -27,9 +27,9 @@ interface ColorSliderStateOptions extends ColorSliderProps {
   numberFormatter: Intl.NumberFormat
 }
 
-function normalizeColor(v: string | Color) {
+function normalizeColor(v: string | IColor) {
   if (typeof v === 'string') {
-    return new Color(v);
+    return parseColor(v);
   } else {
     return v;
   }
@@ -44,7 +44,7 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
   let [color, setColor] = useControlledState(value && normalizeColor(value), defaultValue && normalizeColor(defaultValue), onChange);
 
   let sliderState = useSliderState({
-    ...Color.getRange(channel),
+    ...getColorChannelRange(channel),
     ...otherProps,
     numberFormatter,
     value: [color.getChannelValue(channel)],
@@ -65,10 +65,10 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
     setValue(value) {
       setColor(normalizeColor(value));
     },
-    getDisplayColor(c: Color = color) {
+    getDisplayColor(c: IColor = color) {
       switch (channel) {
         case 'hue':
-          return new Color(`hsl(${c.getChannelValue('hue')}, 100%, 50%)`);
+          return parseColor(`hsl(${c.getChannelValue('hue')}, 100%, 50%)`);
         case 'lightness':
           c = c.withChannelValue('saturation', 0);
         case 'brightness':

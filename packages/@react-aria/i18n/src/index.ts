@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+/// <reference types="intl-types-extension" />
+
 export * from './context';
 export * from './useMessageFormatter';
 export * from './useDateFormatter';
-export * from './useNumberParser';
 export * from './useNumberFormatter';
 export * from './useCollator';
 export * from './useFilter';

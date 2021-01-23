@@ -11,16 +11,14 @@
  */
 
 import {CollectionBase, MultipleSelection, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
+import {GridState, useGridState} from '@react-stately/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
-import {Key, useEffect, useMemo} from 'react';
-import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {Key, useMemo} from 'react';
 import {TableCollection} from './TableCollection';
 import {useCollection} from '@react-stately/collections';
 
-export interface TableState<T> {
+export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   collection: ITableCollection<T>,
-  disabledKeys: Set<Key>,
-  selectionManager: SelectionManager,
   showSelectionCheckboxes: boolean,
   sortDescriptor: SortDescriptor,
   sort(columnKey: Key): void
@@ -42,34 +40,25 @@ const OPPOSITE_SORT_DIRECTION = {
 };
 
 export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T>  {
-  let selectionState = useMultipleSelectionState(props);
-  let disabledKeys = useMemo(() =>
-    props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
-  , [props.disabledKeys]);
+  let {selectionMode = 'none'} = props;
 
   let context = useMemo(() => ({
-    showSelectionCheckboxes: props.showSelectionCheckboxes && selectionState.selectionMode !== 'none',
-    selectionMode: selectionState.selectionMode,
+    showSelectionCheckboxes: props.showSelectionCheckboxes && selectionMode !== 'none',
+    selectionMode,
     columns: []
-  }), [props.children, props.showSelectionCheckboxes, selectionState.selectionMode]);
+  }), [props.children, props.showSelectionCheckboxes, selectionMode]);
 
   let collection = useCollection<T, TableCollection<T>>(
     props,
     (nodes, prev) => new TableCollection(nodes, prev, context),
     context
   );
-
-  // Reset focused key if that item is deleted from the collection.
-  useEffect(() => {
-    if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
-      selectionState.setFocusedKey(null);
-    }
-  }, [collection, selectionState.focusedKey]);
+  let {disabledKeys, selectionManager} = useGridState({...props, collection});
 
   return {
     collection,
     disabledKeys,
-    selectionManager: new SelectionManager(collection, selectionState),
+    selectionManager,
     showSelectionCheckboxes: props.showSelectionCheckboxes || false,
     sortDescriptor: props.sortDescriptor,
     sort(columnKey: Key) {
