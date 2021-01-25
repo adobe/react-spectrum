@@ -23,7 +23,7 @@ export interface ComboBoxState<T> extends SelectState<T> {
   inputValue: string,
   /** Sets the value of the ComboBox input. */
   setInputValue(value: string): void,
-  /** Function that when called handles updating the ComboBox's input value and selected key. */
+  /** Selects the currently focused item and updates the input value. */
   commit(): void
 }
 

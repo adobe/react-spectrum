@@ -59,7 +59,7 @@ function isAppleDevice() {
 
 /**
  * Provides the behavior and accessibility implementation for a ComboBox component.
- * A ComboBox combines a text entry with a picker menu, allowing users to filter longer lists to only the selections matching a query.
+ * A ComboBox combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
  * @param props - Props for the ComboBox.
  * @param state - State for the select, as returned by `useComboBoxState`.
  */
