@@ -76,6 +76,8 @@ governing permissions and limitations under the License.
       padding-bottom: var(--spectrum-fieldlabel-quiet-padding-bottom);
       padding-top: var(--spectrum-fieldlabel-quiet-padding-top);
       line-height: var(--spectrum-fieldlabel-quiet-text-line-height);
+      /* Negative margin so the label is positioned properly */
+      margin-bottom: -3px;
     }
 
     .spectrum-Field-fieldInput--quiet {
