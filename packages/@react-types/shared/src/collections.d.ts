@@ -29,6 +29,7 @@ export interface ItemProps<T> {
 
 export type ItemElement<T> = ReactElement<ItemProps<T>>;
 export type ItemRenderer<T> = (item: T) => ItemElement<T>;
+export type LoadingState = 'loading' | 'sorting' | 'loadingMore' | 'error' | 'idle' | 'filtering';
 
 export interface AsyncLoadable {
   /** Whether the items are currently loading. */

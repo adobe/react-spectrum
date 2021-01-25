@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 @import '../commons/index.css';
+@import '../button/index.css';
 
 :root {
   --spectrum-stepper-button-height: calc(var(--spectrum-component-single-line-height) / 2);
@@ -22,105 +23,140 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Stepper {
-  display: inline-flex;
-  flex-direction: row-reverse;
-  flex-wrap: nowrap;
+  display: inline-grid;
+  grid-template-rows: auto auto;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'field increment'
+    'field decrement';
 
   width: var(--spectrum-component-single-line-width);
   line-height: 0;
   border-radius: var(--spectrum-border-radius);
   transition: border-color var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
 }
-.spectrum-Stepper::before {
-  content: '';
-}
 
-.spectrum-Stepper-buttons {
-  display: block;
-  border-radius: var(--spectrum-border-radius) 0 0 var(--spectrum-border-radius);
-  transition: box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
-}
 
-.spectrum-Stepper-stepUp,
-.spectrum-Stepper-stepDown {
-  position: relative;
-  display: block;
-  line-height: 0;
+.spectrum-Stepper-button {
+  @inherit: %spectrum-BaseButton;
 
   block-size: var(--spectrum-stepper-button-height);
   inline-size: var(--spectrum-stepper-button-width);
 
-  padding-inline-start: var(--spectrum-stepper-padding);
-  padding-inline-end: var(--spectrum-stepper-padding);
+  display: flex;
 
-  /* Avoid margin added by adjacent buttons */
-  margin: 0 !important;
-
+  border-style: solid;
   border-width: var(--spectrum-stepper-border-size-default);
-  border-inline-end-width: var(--spectrum-stepper-border-size-reset);
-  border-radius: var(--spectrum-border-radius) 0 0 var(--spectrum-border-radius);
 
-  .spectrum-Icon {
-    margin: 0 !important;
-    opacity: 1;
+  padding: var(--spectrum-button-padding-y) calc(var(--spectrum-button-primary-padding-x) - var(--spectrum-button-primary-border-size));
+
+  /* @hack: fix button text vertical alignment at 14px */
+  padding-block-end: calc(var(--spectrum-button-padding-y) + 1px);
+  padding-block-start: calc(var(--spectrum-button-padding-y) - 1px);
+
+  font-size: var(--spectrum-button-primary-text-size);
+  font-weight: var(--spectrum-button-primary-text-font-weight);
+
+  &:hover,
+  &:active {
+    box-shadow: none;
+  }
+
+  .spectrum-Stepper-icon {
+    max-block-size: 100%;
+    flex-shrink: 0;
+    order: 0; /* always be before the label, regardless of DOM order */
+
+    transition: background var(--spectrum-global-animation-duration-100) ease-out,
+                fill var(--spectrum-global-animation-duration-100) ease-out;
+    box-sizing: initial;
   }
 }
 
-.spectrum-Stepper-stepUp {
-  border-block-end: none;
-  border-radius: var(--spectrum-border-radius);
-  border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
-  border-end-start-radius: var(--spectrum-stepper-border-radius-reset);
-  border-end-end-radius: var(--spectrum-stepper-border-radius-reset);
-
-  .spectrum-Icon {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 3px;
-  }
+.spectrum-Stepper-button--stepUp {
+  grid-area: increment;
+  border-start-end-radius: var(--spectrum-border-radius);
 }
 
-.spectrum-Stepper-stepDown {
+.spectrum-Stepper-button--stepDown {
+  grid-area: decrement;
   border-block-start: none;
-  border-radius: var(--spectrum-border-radius);
-  border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
-  border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
-  border-end-end-radius: var(--spectrum-stepper-border-radius-reset);
-  border-block-end-width: var(--spectrum-stepper-border-size-default);
+  border-end-end-radius: var(--spectrum-border-radius);
 
   &:focus {
     border-block-start: none;
   }
+}
 
-  .spectrum-Icon {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 3px;
+.spectrum-Stepper-field {
+  grid-area: field;
+
+  inline-size: unset;
+  min-inline-size: unset;
+}
+
+.spectrum-Stepper--showStepper {
+  .spectrum-Stepper-input {
+    position: relative;
+
+    border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
+    border-end-end-radius: var(--spectrum-stepper-border-radius-reset);
   }
-}
 
-.spectrum-Stepper-input {
-  position: relative;
+  &.spectrum-Stepper--isMobile {
+    grid-template-rows: auto;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: 'decrement field increment';
 
-  flex: 1;
-
-  border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
-  border-end-start-radius: var(--spectrum-stepper-border-radius-reset);
-
-  z-index: 1;
-}
-
-.spectrum-Stepper--quiet {
-  border-radius: var(--spectrum-stepper-border-radius-reset);
-
-  .spectrum-Stepper-buttons {
-    .spectrum-ActionButton {
-      border-block-start: none;
-      border-inline-start: none;
-      border-inline-end: none;
-      border-radius: var(--spectrum-stepper-border-radius-reset);
+    .spectrum-Stepper-input {
+      border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
+      border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
+      border-end-start-radius: var(--spectrum-stepper-border-radius-reset);
+      border-end-end-radius: var(--spectrum-stepper-border-radius-reset);
+    }
+    .spectrum-Stepper-button--stepUp,
+    .spectrum-Stepper-button--stepDown {
+      block-size: var(--spectrum-textfield-height);
+      inline-size: var(--spectrum-actionbutton-min-width);
+      border-block-start-style: solid;
+      border-block-start-width: var(--spectrum-stepper-border-size-default);
+    }
+    .spectrum-Stepper-button--stepUp {
+      border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
+      border-start-end-radius: var(--spectrum-border-radius);
+      border-end-start-radius: var(--spectrum-stepper-border-radius-reset);
+      border-end-end-radius: var(--spectrum-border-radius);
+    }
+    .spectrum-Stepper-button--stepDown {
+      border-start-start-radius: var(--spectrum-border-radius);
+      border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
+      border-end-start-radius: var(--spectrum-border-radius);
+      border-end-end-radius: var(--spectrum-stepper-border-radius-reset);
     }
   }
 }
+
+.spectrum-Stepper.spectrum-Stepper--quiet {
+  border-radius: var(--spectrum-stepper-border-radius-reset);
+
+  .spectrum-Stepper-button {
+    border-block-start: none;
+    border-inline-start: none;
+    border-inline-end: none;
+    border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
+    border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
+    border-end-start-radius: var(--spectrum-stepper-border-radius-reset);
+    border-end-end-radius: var(--spectrum-stepper-border-radius-reset);
+  }
+  &:not(.spectrum-Stepper--isMobile) .spectrum-Stepper-button--stepUp {
+    border-block-end: none;
+  }
+  &:focus {
+    .spectrum-Stepper-button {
+      border-block-start: none;
+      border-inline-start: none;
+      border-inline-end: none;
+    }
+  }
+}
+
