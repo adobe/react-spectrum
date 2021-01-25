@@ -484,7 +484,7 @@ describe('useTreeData', function () {
     let initialResult = result.current;
 
     act(() => {
-      result.current.update('David', {expanded: true, name: 'New David'});
+      result.current.update('David', {expanded: true, name: 'Danny'});
     });
 
     expect(result.current.items).not.toBe(initialResult.items);
