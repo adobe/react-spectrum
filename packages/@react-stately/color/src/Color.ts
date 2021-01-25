@@ -11,113 +11,68 @@
  */
 
 import {clamp} from '@react-aria/utils';
-import {ColorChannel, ColorFormat} from '@react-types/color';
+import {ColorChannel, ColorFormat, Color as IColor} from '@react-types/color';
 
-export class Color {
-  private value: ColorValue;
+interface ColorChannelRange {
+  minValue: number,
+  maxValue: number,
+  step: number
+}
 
-  constructor(value: string) {
-    let parsed: ColorValue | void = RGBColor.parse(value) || HSBColor.parse(value) || HSLColor.parse(value);
-    if (parsed) {
-      this.value = parsed;
-    } else {
-      throw new Error('Invalid color value: ' + value);
-    }
+export function parseColor(value: string): IColor {
+  let res = RGBColor.parse(value) || HSBColor.parse(value) || HSLColor.parse(value);
+  if (res) {
+    return res;
   }
 
-  private static fromColorValue(value: ColorValue): Color {
-    let x: Color = Object.create(Color.prototype);
-    x.value = value;
-    return x;
-  }
+  throw new Error('Invalid color value: ' + value);
+}
 
-  toFormat(format: ColorFormat): Color {
-    switch (format) {
-      case 'hex':
-      case 'hexa':
-      case 'rgb':
-      case 'rgba':
-        return Color.fromColorValue(this.value.toRGB());
-      case 'hsl':
-      case 'hsla':
-        return Color.fromColorValue(this.value.toHSL());
-      case 'hsb':
-      case 'hsba':
-        return Color.fromColorValue(this.value.toHSB());
-      default:
-        throw new Error('Invalid color format: ' + format);
-    }
+export function getColorChannelRange(channel: ColorChannel): ColorChannelRange {
+  switch (channel) {
+    case 'hue':
+      return {minValue: 0, maxValue: 360, step: 1};
+    case 'saturation':
+    case 'lightness':
+    case 'brightness':
+      return {minValue: 0, maxValue: 100, step: 1};
+    case 'red':
+    case 'green':
+    case 'blue':
+      return {minValue: 0, maxValue: 255, step: 1};
+    case 'alpha':
+      return {minValue: 0, maxValue: 1, step: 0.01};
+    default:
+      throw new Error('Unknown color channel: ' + channel);
   }
+}
 
-  toString(format: ColorFormat | 'css') {
-    switch (format) {
-      case 'css':
-        return this.value.toString('css');
-      case 'hex':
-      case 'hexa':
-      case 'rgb':
-      case 'rgba':
-        return this.value.toRGB().toString(format);
-      case 'hsl':
-      case 'hsla':
-        return this.value.toHSL().toString(format);
-      case 'hsb':
-      case 'hsba':
-        return this.value.toHSB().toString(format);
-      default:
-        throw new Error('Invalid color format: ' + format);
-    }
-  }
+abstract class Color implements IColor {
+  abstract toFormat(format: ColorFormat): IColor;
+  abstract toString(format: ColorFormat | 'css'): string;
+  abstract clone(): Color;
 
   toHexInt(): number {
-    return this.value.toRGB().toInt();
+    return this.toFormat('rgb').toHexInt();
   }
 
   getChannelValue(channel: ColorChannel): number {
-    if (channel in this.value) {
-      return this.value[channel];
+    if (channel in this) {
+      return this[channel];
     }
 
     throw new Error('Unsupported color channel: ' + channel);
   }
 
-  withChannelValue(channel: ColorChannel, value: number): Color {
-    if (channel in this.value) {
-      let x = Color.fromColorValue(this.value.clone());
-      x.value[channel] = value;
+  withChannelValue(channel: ColorChannel, value: number): IColor {
+    if (channel in this) {
+      let x = this.clone();
+      x[channel] = value;
       return x;
     }
 
     throw new Error('Unsupported color channel: ' + channel);
   }
-
-  static getRange(channel: ColorChannel) {
-    switch (channel) {
-      case 'hue':
-        return {minValue: 0, maxValue: 360, step: 1};
-      case 'saturation':
-      case 'lightness':
-      case 'brightness':
-        return {minValue: 0, maxValue: 100, step: 1};
-      case 'red':
-      case 'green':
-      case 'blue':
-        return {minValue: 0, maxValue: 255, step: 1};
-      case 'alpha':
-        return {minValue: 0, maxValue: 1, step: 0.01};
-      default:
-        throw new Error('Unknown color channel: ' + channel);
-    }
-  }
-}
-
-interface ColorValue {
-  toRGB(): ColorValue,
-  toHSB(): ColorValue,
-  toHSL(): ColorValue,
-  toInt(): number,
-  toString(format: ColorFormat | 'css'): string,
-  clone(): ColorValue
 }
 
 const HEX_REGEX = /^#(?:([0-9a-f]{3})|([0-9a-f]{6}))$/i;
@@ -128,8 +83,10 @@ const HEX_REGEX = /^#(?:([0-9a-f]{3})|([0-9a-f]{6}))$/i;
 // - rgba(X, X, X, X)
 const RGB_REGEX = /rgb\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?)\)|rgba\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d(.\d+)?)\)/;
 
-class RGBColor implements ColorValue {
-  constructor(private red: number, private green: number, private blue: number, private alpha: number) {}
+class RGBColor extends Color {
+  constructor(private red: number, private green: number, private blue: number, private alpha: number) {
+    super();
+  }
 
   static parse(value: string): RGBColor | void {
     let m;
@@ -163,31 +120,30 @@ class RGBColor implements ColorValue {
       case 'rgba':
         return `rgba(${this.red}, ${this.green}, ${this.blue}, ${this.alpha})`;
       default:
-        throw new Error('Unsupported color format: ' + format);
+        return this.toFormat(format).toString(format);
     }
   }
 
-  toInt() {
+  toFormat(format: ColorFormat): IColor {
+    switch (format) {
+      case 'hex':
+      case 'hexa':
+      case 'rgb':
+      case 'rgba':
+        return this;
+      default:
+        throw new Error('Unsupported color conversion: rgb -> ' + format);
+    }
+  }
+
+  toHexInt(): number {
     return this.red << 16 | this.green << 8 | this.blue;
   }
 
-  toRGB(): ColorValue {
-    return this;
-  }
-
-  toHSB(): ColorValue {
-    throw new Error('Not implemented');
-  }
-
-  toHSL(): ColorValue {
-    throw new Error('Not implemented');
-  }
-
-  clone(): ColorValue {
+  clone(): Color {
     return new RGBColor(this.red, this.green, this.blue, this.alpha);
   }
 }
-
 
 // X = <negative/positive number with/without decimal places>
 // before/after a comma, 0 or more whitespaces are allowed
@@ -195,8 +151,10 @@ class RGBColor implements ColorValue {
 // - hsba(X, X%, X%, X)
 const HSB_REGEX = /hsb\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%)\)|hsba\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d(.\d+)?)\)/;
 
-class HSBColor implements ColorValue {
-  constructor(private hue: number, private saturation: number, private brightness: number, private alpha: number) {}
+class HSBColor extends Color {
+  constructor(private hue: number, private saturation: number, private brightness: number, private alpha: number) {
+    super();
+  }
 
   static parse(value: string): HSBColor | void {
     let m: RegExpMatchArray | void;
@@ -215,23 +173,24 @@ class HSBColor implements ColorValue {
       case 'hsba':
         return `hsba(${this.hue}, ${this.saturation}%, ${this.brightness}%, ${this.alpha})`;
       default:
-        throw new Error('Unsupported color format: ' + format);
+        return this.toFormat(format).toString(format);
     }
   }
 
-  toInt(): number {
-    throw new Error('Not implemented');
+  toFormat(format: ColorFormat): IColor {
+    switch (format) {
+      case 'hsb':
+      case 'hsba':
+        return this;
+      case 'hsl':
+      case 'hsla':
+        return this.toHSL();
+      default:
+        throw new Error('Unsupported color conversion: hsb -> ' + format);
+    }
   }
 
-  toRGB(): ColorValue {
-    throw new Error('Not implemented');
-  }
-
-  toHSB(): ColorValue {
-    return this;
-  }
-
-  toHSL(): ColorValue {
+  private toHSL(): Color {
     // determine the lightness in the range [0,100]
     var l = (2 - this.saturation / 100) * this.brightness / 2;
 
@@ -248,7 +207,7 @@ class HSBColor implements ColorValue {
     return new HSLColor(hue, saturation, lightness, this.alpha);
   }
 
-  clone(): ColorValue {
+  clone(): Color {
     return new HSBColor(this.hue, this.saturation, this.brightness, this.alpha);
   }
 }
@@ -264,8 +223,10 @@ function mod(n, m) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-class HSLColor implements ColorValue {
-  constructor(private hue: number, private saturation: number, private lightness: number, private alpha: number) {}
+class HSLColor extends Color {
+  constructor(private hue: number, private saturation: number, private lightness: number, private alpha: number) {
+    super();
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   static parse(value: string): HSLColor | void {
@@ -284,27 +245,21 @@ class HSLColor implements ColorValue {
       case 'hsla':
         return `hsla(${this.hue}, ${this.saturation}%, ${this.lightness}%, ${this.alpha})`;
       default:
-        throw new Error('Unsupported color format: ' + format);
+        return this.toFormat(format).toString(format);
     }
   }
 
-  toInt(): number {
-    throw new Error('Not implemented');
+  toFormat(format: ColorFormat): IColor {
+    switch (format) {
+      case 'hsl':
+      case 'hsla':
+        return this;
+      default:
+        throw new Error('Unsupported color conversion: hsl -> ' + format);
+    }
   }
 
-  toRGB(): ColorValue {
-    throw new Error('Not implemented');
-  }
-
-  toHSB(): ColorValue {
-    throw new Error('Not implemented');
-  }
-
-  toHSL(): ColorValue {
-    return this;
-  }
-
-  clone(): ColorValue {
+  clone(): Color {
     return new HSLColor(this.hue, this.saturation, this.lightness, this.alpha);
   }
 }

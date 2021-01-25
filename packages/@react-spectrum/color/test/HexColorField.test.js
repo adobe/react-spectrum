@@ -12,8 +12,8 @@
 
 import {act, fireEvent, render} from '@testing-library/react';
 import {chain} from '@react-aria/utils';
-import {Color} from '@react-stately/color';
 import {HexColorField} from '../';
+import {parseColor} from '@react-stately/color';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -33,14 +33,14 @@ function renderComponent(props) {
 describe('HexColorField', function () {
   it('should handle defaults', function () {
     let {
-      getByLabelText, 
+      getByLabelText,
       getByRole,
       getByText
     } = renderComponent({});
     let hexColorField = getByLabelText('Primary Color');
     let label = getByText('Primary Color');
     expect(hexColorField).toBeInTheDocument();
-    expect(getByRole('spinbutton')).toBe(hexColorField);
+    expect(getByRole('textbox')).toBe(hexColorField);
     expect(hexColorField).toHaveAttribute('type', 'text');
     expect(hexColorField).toHaveAttribute('autocomplete', 'off');
     expect(hexColorField).toHaveAttribute('autocorrect', 'off');
@@ -64,7 +64,7 @@ describe('HexColorField', function () {
 
   it('should allow placeholder', function () {
     let {getByPlaceholderText, getByRole} = renderComponent({placeholder: 'Enter a color'});
-    expect(getByRole('spinbutton')).toBe(getByPlaceholderText('Enter a color'));
+    expect(getByRole('textbox')).toBe(getByPlaceholderText('Enter a color'));
   });
 
   it('should show valid validation state', function () {
@@ -112,10 +112,10 @@ describe('HexColorField', function () {
     Name                                 | props
     ${'3-length hex string'}             | ${{defaultValue: '#abc'}}
     ${'6-length hex string'}             | ${{defaultValue: '#aabbcc'}}
-    ${'Color object'}                    | ${{defaultValue: new Color('#abc')}}
+    ${'Color object'}                    | ${{defaultValue: parseColor('#abc')}}
     ${'3-length hex string controlled'}  | ${{value: '#abc'}}
     ${'6-length hex string controlled'}  | ${{value: '#aabbcc'}}
-    ${'Color object controlled'}         | ${{value: new Color('#abc')}}
+    ${'Color object controlled'}         | ${{value: parseColor('#abc')}}
   `('should accept $Name as value', function ({props}) {
     let {getByLabelText} = renderComponent(props);
     let hexColorField = getByLabelText('Primary Color');
@@ -141,12 +141,12 @@ describe('HexColorField', function () {
     typeText(hexColorField, 'cba');
     expect(hexColorField.value).toBe('cba');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
-    expect(onChangeSpy).toHaveBeenCalledWith(new Color('#cba'));
+    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cba'));
 
     typeText(hexColorField, 'cba');
     expect(hexColorField.value).toBe('cbacba');
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
-    expect(onChangeSpy).toHaveBeenCalledWith(new Color('#cbacba'));
+    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cbacba'));
 
     act(() => {hexColorField.blur();});
     expect(hexColorField.value).toBe('#CBACBA');
@@ -175,7 +175,7 @@ describe('HexColorField', function () {
     });
     typeText(hexColorField, 'cba');
     expect(hexColorField.value).toBe('#AABBCC');
-    expect(onChangeSpy).toHaveBeenCalledWith(new Color('#cba'));
+    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cba'));
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
 
     act(() => {hexColorField.blur();});
@@ -193,10 +193,10 @@ describe('HexColorField', function () {
           label="Primary Color"
           value={color}
           onChange={chain(setColor, onChange)} />
-      ); 
+      );
     }
     let onChangeSpy = jest.fn();
-    let {getByLabelText} = render(<HexColorFieldControlled value={new Color('#abc')} onChange={onChangeSpy} />);
+    let {getByLabelText} = render(<HexColorFieldControlled value={parseColor('#abc')} onChange={onChangeSpy} />);
 
     let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe('#AABBCC');
@@ -213,7 +213,7 @@ describe('HexColorField', function () {
     typeText(hexColorField, 'cba');
     expect(hexColorField.value).toBe('cba');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
-    expect(onChangeSpy).toHaveBeenCalledWith(new Color('#cba'));
+    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cba'));
 
     act(() => {hexColorField.blur();});
     expect(hexColorField.value).toBe('#CCBBAA');
@@ -230,7 +230,7 @@ describe('HexColorField', function () {
     typeText(hexColorField, 'abc');
     expect(hexColorField.value).toBe('abc');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledWith(new Color('#abc'));
+    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#abc'));
 
     typeText(hexColorField, 'xyz8b');
     expect(hexColorField.value).toBe('abc8b');
@@ -250,7 +250,7 @@ describe('HexColorField', function () {
     typeText(hexColorField, 'fff');
     expect(hexColorField.value).toBe('fff');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledWith(new Color('#fff'));
+    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#fff'));
 
     typeText(hexColorField, 'fff');
     expect(hexColorField.value).toBe('ffffff');
@@ -259,8 +259,8 @@ describe('HexColorField', function () {
 
   it.each`
     Name                                | expected                 | key
-    ${'increment with arrow up key'}    | ${new Color('#AAAAAE')}  | ${'ArrowUp'}
-    ${'decrement with arrow down key'}  | ${new Color('#AAAAA6')}  | ${'ArrowDown'}
+    ${'increment with arrow up key'}    | ${parseColor('#AAAAAE')}  | ${'ArrowUp'}
+    ${'decrement with arrow down key'}  | ${parseColor('#AAAAA6')}  | ${'ArrowDown'}
   `('should handle $Name event', function ({expected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({
@@ -279,8 +279,8 @@ describe('HexColorField', function () {
 
   it.each`
     Name                                | expected                 | deltaY
-    ${'increment with mouse wheel'}     | ${new Color('#AAAAAE')}  | ${-10}
-    ${'decrement with mouse wheel'}     | ${new Color('#AAAAA6')}  | ${10}
+    ${'increment with mouse wheel'}     | ${parseColor('#AAAAAE')}  | ${-10}
+    ${'decrement with mouse wheel'}     | ${parseColor('#AAAAA6')}  | ${10}
   `('should handle $Name event', function ({expected, deltaY}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({
@@ -307,7 +307,7 @@ describe('HexColorField', function () {
     let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe(initExpected);
 
-    let maxColor = new Color('#FFFFFF');
+    let maxColor = parseColor('#FFFFFF');
     fireEvent.keyDown(hexColorField, {key});
     fireEvent.keyUp(hexColorField, {key});
     expect(onChangeSpy).toHaveBeenCalledWith(maxColor);
@@ -329,7 +329,7 @@ describe('HexColorField', function () {
     let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe(initExpected);
 
-    let minColor = new Color('#000000');
+    let minColor = parseColor('#000000');
     fireEvent.keyDown(hexColorField, {key});
     fireEvent.keyUp(hexColorField, {key});
     expect(onChangeSpy).toHaveBeenCalledWith(minColor);

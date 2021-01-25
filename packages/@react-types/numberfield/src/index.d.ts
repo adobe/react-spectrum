@@ -14,15 +14,15 @@ import {
   AriaLabelingProps,
   DOMProps,
   FocusableProps,
-  InputBase,
-  RangeInputBase,
+  InputBase, LabelableProps,
+  RangeInputBase, SpectrumLabelableProps,
   StyleProps,
   TextInputBase,
   Validation,
   ValueBase
 } from '@react-types/shared';
 
-export interface NumberFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number> {
+export interface NumberFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps {
   decrementAriaLabel?: string,
   incrementAriaLabel?: string,
   formatOptions?: Intl.NumberFormatOptions
@@ -30,8 +30,8 @@ export interface NumberFieldProps extends InputBase, Validation, FocusableProps,
 
 export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps {}
 
-export interface SpectrumNumberFieldProps extends AriaNumberFieldProps, StyleProps {
+export interface SpectrumNumberFieldProps extends AriaNumberFieldProps, StyleProps, SpectrumLabelableProps {
   isQuiet?: boolean,
-  showStepper?: boolean,
+  hideStepper?: boolean,
   formatOptions?: Intl.NumberFormatOptions
 }
