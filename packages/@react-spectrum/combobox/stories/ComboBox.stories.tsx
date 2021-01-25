@@ -24,8 +24,9 @@ import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 import {TextField} from '@react-spectrum/textfield';
+import {useAsyncList} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
-import {useTreeData} from '@react-stately/data';
+import {useListData, useTreeData} from '@react-stately/data';
 
 let items = [
   {name: 'Aardvark', id: '1'},
@@ -264,6 +265,14 @@ storiesOf('ComboBox', module)
     () => render({validationState: 'valid', defaultSelectedKey: 'two'})
   )
   .add(
+    'validationState: invalid, isQuiet',
+    () => render({validationState: 'invalid', isQuiet: true, defaultSelectedKey: 'two'})
+  )
+  .add(
+    'validationState: valid, isQuiet',
+    () => render({validationState: 'valid', isQuiet: true, defaultSelectedKey: 'two'})
+  )
+  .add(
     'placeholder',
     () => render({placeholder: 'Select an item...'})
   )
@@ -415,7 +424,108 @@ storiesOf('ComboBox', module)
     () => (
       <CustomFilterComboBox />
     )
+  )
+  .add(
+    'loadingState',
+    () => <LoadingExamples />
+  )
+  .add(
+    'loadingState = "loading", validationState: invalid',
+    () => <LoadingExamples validationState="invalid" />
+  )
+  .add(
+    'loadingState = "loading", isQuiet',
+    () => <LoadingExamples isQuiet />
+  )
+  .add(
+    'loadingState = "loading", isQuiet, validationState: invalid',
+    () => <LoadingExamples isQuiet validationState="invalid" />
+  )
+  .add(
+    'filtering with useListData',
+    () => (
+      <ListDataExample />
+    )
+  )
+  .add(
+    'server side filtering with useAsyncList',
+    () => (
+      <AsyncLoadingExample />
+    )
   );
+
+function LoadingExamples(props) {
+  return (
+    <Flex gap="size-300" direction="column" >
+      <ComboBox {...props} label="Combobox (loading)" loadingState="loading" defaultItems={items} >
+        {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
+      <ComboBox {...props} label="Combobox (filtering)" loadingState="filtering" defaultItems={items}>
+        {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
+      <ComboBox {...props} label="Combobox (loading more)" loadingState="loadingMore" defaultItems={items}>
+        {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
+    </Flex>
+  );
+}
+
+function ListDataExample() {
+  let {contains} = useFilter({sensitivity: 'base'});
+  let list = useListData({
+    initialItems: items,
+    filter(item, text) {
+      return contains(item.name, text);
+    }
+  });
+
+  return (
+    <ComboBox
+      label="ComboBox"
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={list.setFilterText}>
+      {item => <Item>{item.name}</Item>}
+    </ComboBox>
+  );
+}
+
+
+function AsyncLoadingExample() {
+  interface StarWarsChar {
+    name: string,
+    url: string
+  }
+
+  let list = useAsyncList<StarWarsChar>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <ComboBox
+      label="Star Wars Character Lookup"
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={list.setFilterText}
+      loadingState={list.state}
+      onLoadMore={list.loadMore}
+      onOpenChange={action('onOpenChange')}>
+      {item => <Item key={item.name}>{item.name}</Item>}
+    </ComboBox>
+  );
+}
 
 let customFilterItems = [
   {name: 'The first item', id: '1'},
@@ -426,7 +536,7 @@ let customFilterItems = [
 let CustomFilterComboBox = (props) => {
   let {startsWith} = useFilter({sensitivity: 'base'});
   let [filterValue, setFilterValue] = React.useState('');
-  let filteredItems = React.useMemo(() => customFilterItems.filter(item => startsWith(item.name, filterValue)), [props.items, filterValue]);
+  let filteredItems = React.useMemo(() => customFilterItems.filter(item => startsWith(item.name, filterValue)), [props.items, filterValue, startsWith]);
 
   return (
     <ComboBox

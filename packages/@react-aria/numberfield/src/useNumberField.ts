@@ -13,24 +13,14 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
 import {
-  determineNumeralSystem,
-  NumeralSystem,
-  useLocale,
-  useMessageFormatter,
-  useNumberFormatter
-} from '@react-aria/i18n';
-import {
-  Dispatch,
   HTMLAttributes,
   InputHTMLAttributes,
   LabelHTMLAttributes,
   RefObject,
-  SetStateAction,
   useCallback,
   useEffect,
   useMemo,
-  useRef,
-  useState
+  useRef
 } from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -38,6 +28,11 @@ import {mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
 import {useFocus} from '@react-aria/interactions';
+import {
+  useLocale,
+  useMessageFormatter,
+  useNumberFormatter
+} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
 interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
@@ -54,6 +49,13 @@ interface NumberFieldAria {
   numberFieldProps: HTMLAttributes<HTMLDivElement>,
   incrementButtonProps: AriaButtonProps,
   decrementButtonProps: AriaButtonProps
+}
+
+function supportsNativeBeforeInputEvent() {
+  return typeof window !== 'undefined' &&
+    window.InputEvent &&
+    // @ts-ignore
+    typeof InputEvent.prototype.getTargetRanges === 'function';
 }
 
 export function useNumberField(props: NumberFieldProps, state: NumberFieldState): NumberFieldAria {
@@ -79,10 +81,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     incrementToMax,
     decrement,
     decrementToMin,
-    value,
-    commitInputValue,
-    textValue,
-    setCurrentNumeralSystem
+    numberValue,
+    commitInputValue
   } = state;
 
   const formatMessage = useMessageFormatter(intlMessages);
@@ -120,8 +120,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
       onIncrementToMax: incrementToMax,
       onDecrement: decrement,
       onDecrementToMin: decrementToMin,
-      value,
-      textValue
+      value: numberValue
     }
   );
 
@@ -134,13 +133,13 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     'aria-controls': inputId,
     excludeFromTabOrder: true,
     // use state min/maxValue because otherwise in default story, steppers will never disable
-    isDisabled: cannotStep || value >= state.maxValue
+    isDisabled: cannotStep || numberValue >= state.maxValue
   });
   const decrementButtonProps: AriaButtonProps = mergeProps(decButtonProps, {
     'aria-label': decrementAriaLabel,
     'aria-controls': inputId,
     excludeFromTabOrder: true,
-    isDisabled: cannotStep || value <= state.minValue
+    isDisabled: cannotStep || numberValue <= state.minValue
   });
 
   let onWheel = useCallback((e) => {
@@ -174,15 +173,93 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     inputMode = 'text';
   }
 
-  let {onChange, onKeyDown, onPaste} = useSelectionControlledTextfield(
-    {
-      setValue: state.setValue,
-      value: state.inputValue,
-      isFocused,
-      setCurrentNumeralSystem
-    },
-    inputRef
-  );
+  let stateRef = useRef(state);
+  stateRef.current = state;
+
+  // All browsers implement the 'beforeinput' event natively except Firefox
+  // (currently behind a flag as of Firefox 84). React's polyfill does not
+  // run in all cases that the native event fires, e.g. when deleting text.
+  // Use the native event if available so that we can prevent invalid deletions.
+  // We do not attempt to polyfill this in Firefox since it would be very complicated,
+  // the benefit of doing so is fairly minor, and it's going to be natively supported soon.
+  useEffect(() => {
+    if (!supportsNativeBeforeInputEvent()) {
+      return;
+    }
+
+    let input = inputRef.current;
+
+    let onBeforeInput = (e: InputEvent) => {
+      let state = stateRef.current;
+
+      // Compute the next value of the input if the event is allowed to proceed.
+      // See https://www.w3.org/TR/input-events-2/#interface-InputEvent-Attributes for a full list of input types.
+      let nextValue: string;
+      switch (e.inputType) {
+        case 'historyUndo':
+        case 'historyRedo':
+          // Explicitly allow undo/redo. e.data is null in this case, but there's no need to validate,
+          // because presumably the input would have already been validated previously.
+          return;
+        case 'deleteContent':
+        case 'deleteByCut':
+        case 'deleteByDrag':
+          nextValue = input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd);
+          break;
+        case 'deleteContentForward':
+          // This is potentially incorrect, since the browser may actually delete more than a single UTF-16
+          // character. In reality, a full Unicode grapheme cluster consisting of multiple UTF-16 characters
+          // or code points may be deleted. However, in our currently supported locales, there are no such cases.
+          // If we support additional locales in the future, this may need to change.
+          nextValue = input.selectionEnd === input.selectionStart
+            ? input.value.slice(0, input.selectionStart + 1) + input.value.slice(input.selectionStart)
+            : input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd);
+          break;
+        case 'deleteContentBackward':
+          nextValue = input.selectionEnd === input.selectionStart
+            ? input.value.slice(0, input.selectionStart - 1) + input.value.slice(input.selectionStart)
+            : input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd);
+          break;
+        default:
+          if (e.data != null) {
+            nextValue =
+              input.value.slice(0, input.selectionStart) +
+              e.data +
+              input.value.slice(input.selectionEnd);
+          }
+          break;
+      }
+
+      // If we did not compute a value, or the new value is invalid, prevent the event
+      // so that the browser does not update the input text, move the selection, or add to
+      // the undo/redo stack.
+      if (nextValue == null || !state.validate(nextValue)) {
+        e.preventDefault();
+      }
+    };
+
+    input.addEventListener('beforeinput', onBeforeInput, false);
+    return () => {
+      input.removeEventListener('beforeinput', onBeforeInput, false);
+    };
+  }, [inputRef, stateRef]);
+
+  let onBeforeInput = !supportsNativeBeforeInputEvent()
+    ? e => {
+      let nextValue =
+        e.target.value.slice(0, e.target.selectionStart) +
+        e.data +
+        e.target.value.slice(e.target.selectionEnd);
+
+      if (!state.validate(nextValue)) {
+        e.preventDefault();
+      }
+    }
+    : null;
+
+  let onChange = value => {
+    state.setInputValue(value);
+  };
 
   let {labelProps, inputProps} = useTextField(
     {
@@ -201,8 +278,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
       type: 'text', // Can't use type="number" because then we can't have things like $ in the field.
       inputMode,
       onChange,
-      onKeyDown,
-      onPaste
+      onBeforeInput
     }, inputRef);
 
   const inputFieldProps = mergeProps(
@@ -232,80 +308,3 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     decrementButtonProps
   };
 }
-
-
-let useSelectionControlledTextfield = (
-  {
-    setValue,
-    value,
-    isFocused,
-    setCurrentNumeralSystem
-  }: {
-    setValue: (string) => void,
-    value: string,
-    isFocused: RefObject<boolean>,
-    setCurrentNumeralSystem: Dispatch<SetStateAction<NumeralSystem>>
-  }, ref: RefObject<HTMLInputElement>
-) => {
-  /**
-   * Selection is to track where the cursor is in the input so we can restore that position + some offset after render.
-   * The reason we have to do this is because the user is not as limited when the field is empty, the set of allowed characters
-   * is at the maximum amount. Once a user enters a numeral, we determine the system and close off the allowed set.
-   * This means we can't block the values before they make it to state and cause a render, thereby moving selection to an
-   * undesirable location.
-   */
-  let selection = useRef({selectionStart: value.length, selectionEnd: value.length, value, forward: false});
-
-  /**
-   * Forces a rerender when the typed character doesn't cause a state change.
-   * Example: start with '$10.00' in the input, place cursor after `1`, type an invalid character
-   * 'a', the text field looks the same, but without this, the cursor will move the end.
-   */
-  let [isReRender, setReRender] = useState({});
-  let onChange = (nextValue) => {
-    let numeralSystem = determineNumeralSystem(nextValue);
-    setCurrentNumeralSystem(numeralSystem);
-    setValue(nextValue);
-    if (nextValue !== value) {
-      setReRender({});
-    }
-  };
-
-  useEffect(() => {
-    // Make sure we don't try to set selection if the cursor isn't in the field. It causes Safari to autofocus the field.
-    if (!isFocused.current) {
-      return;
-    }
-    let inTextField = selection.current.value || '';
-    let newTextField = value;
-    if (selection.current.forward) {
-      ref.current.setSelectionRange(
-        selection.current.selectionStart,
-        selection.current.selectionStart
-      );
-    } else {
-      ref.current.setSelectionRange(
-        selection.current.selectionEnd + newTextField.length - inTextField.length,
-        selection.current.selectionEnd + newTextField.length - inTextField.length
-      );
-    }
-  }, [ref, value, selection, isFocused, isReRender]);
-
-  /**
-   * The Delete key is special, it removes the character in front of it, we need to take note of which direction we're affecting
-   * characters.
-   */
-  let setSelection = (e) => {
-    let forward = false;
-    if (e.key === 'Delete') {
-      forward = true;
-    }
-    selection.current = {
-      selectionStart: e.target.selectionStart,
-      selectionEnd: e.target.selectionEnd,
-      value,
-      forward
-    };
-  };
-  return {onChange, onKeyDown: setSelection, onPaste: setSelection};
-};
