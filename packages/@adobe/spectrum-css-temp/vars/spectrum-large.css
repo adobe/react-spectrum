@@ -200,7 +200,7 @@
   /* padding for quiet textfield input field labels following XD values (TextField beta 5.3) */
   --spectrum-fieldlabel-quiet-padding-top: 6px;
   --spectrum-fieldlabel-quiet-padding-bottom: 0px;
-  --spectrum-fieldlabel-quiet-text-line-height: 14px;
+  --spectrum-fieldlabel-quiet-text-line-height: 13px;
   /* END RSP PATCH */
   --spectrum-icon-arrow-down-small-height: 12px;
   --spectrum-icon-arrow-left-medium-height: 12px;
