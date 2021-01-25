@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {numberFormatSignDisplayPolyfill} from '../src/utils';
+import {numberFormatSignDisplayPolyfill} from '../src/NumberFormatter';
 
 function verify(locale, options, signDisplay, v) {
   let a = new Intl.NumberFormat(locale, options);
