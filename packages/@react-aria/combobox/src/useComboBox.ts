@@ -289,7 +289,11 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       // TODO: readd proper logic for completionMode = complete (aria-autocomplete: both)
       'aria-autocomplete': 'list',
       'aria-activedescendant': focusedItem ? getItemId(state, focusedItem.key) : undefined,
-      onTouchEnd
+      onTouchEnd,
+      // This disable's iOS's autocorrect suggestions, since the combo box provides its own suggestions.
+      autoCorrect: 'off',
+      // This disable's the macOS Safari spell check auto corrections.
+      spellCheck: 'false'
     }),
     listBoxProps: mergeProps(menuProps, listBoxProps)
   };
