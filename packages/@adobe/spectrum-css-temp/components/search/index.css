@@ -35,12 +35,28 @@ governing permissions and limitations under the License.
     padding-inline-end: var(--spectrum-search-quiet-padding-right);
   }
 
-  &.is-invalid .spectrum-ClearButton {
+  &.spectrum-Search--invalid .spectrum-ClearButton {
     inset-inline-end: calc(var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-padding-x));
   }
 
-  &.is-valid .spectrum-ClearButton {
+  &.spectrum-Search--valid .spectrum-ClearButton {
     inset-inline-end: calc(var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-padding-x) / 2 + var(--spectrum-global-dimension-size-150));
+  }
+
+  /* Flip clear button and circle loader position so circle loader is to the left of the clear button */
+  &.spectrum-Search--loadable .spectrum-ClearButton {
+    inset-inline-end: 0
+  }
+
+  /* Flip clear button and circle loader position so circle loader is to the left of the clear button */
+  &.spectrum-Search--loadable .spectrum-Search-circleLoader {
+    inset-inline-end: calc(var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-padding-x) / 2 + var(--spectrum-global-dimension-size-150));
+  }
+
+  /* Move validation icons so that they sit to the left of the clear button (for async loading combobox tray, same position as loading indicator)  */
+  &.spectrum-Search--loadable .spectrum-Search-validationIcon {
+    inset-inline-end: calc(var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-padding-x) / 2 + var(--spectrum-global-dimension-size-150));
+    padding-inline-end: 0;
   }
 }
 
@@ -67,11 +83,15 @@ governing permissions and limitations under the License.
     -webkit-appearance: none;
   }
 
-  .spectrum-Textfield.spectrum-Search.is-invalid & {
+  .spectrum-Textfield.spectrum-Search--invalid & {
     padding-inline-end: calc(var(--spectrum-search-padding-right) + var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
-  .spectrum-Textfield.spectrum-Search.is-valid & {
+  .spectrum-Textfield.spectrum-Search--valid & {
+    padding-inline-end: calc(var(--spectrum-search-padding-right) + var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
+  }
+
+  .spectrum-Textfield.spectrum-Search--loadable & {
     padding-inline-end: calc(var(--spectrum-search-padding-right) + var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 }
