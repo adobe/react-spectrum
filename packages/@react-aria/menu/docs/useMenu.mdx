@@ -128,7 +128,7 @@ import {mergeProps} from '@react-aria/utils';
 
 function Menu(props) {
   // Create state based on the incoming props
-  let state = useTreeState({...props, disabledKeys:['one'], selectionMode: 'none'});
+  let state = useTreeState({...props, selectionMode: 'none'});
 
   // Get props for the menu element
   let ref = React.useRef();
@@ -180,14 +180,14 @@ function MenuItem({item, state, onAction}) {
         color: isFocused ? 'white' : null,
         padding: '2px 5px',
         outline: 'none',
-        cursor: 'pointer'
+        cursor: isDisabled ? 'default' : 'pointer'
       }}>
       {item.rendered}
     </li>
   );
 }
 
-<Menu onAction={alert} aria-label="Actions">
+<Menu onAction={alert} aria-label="Actions" disabledKeys={['one']}>
   <Item key="one">One</Item>
   <Item key="two">Two</Item>
   <Item key="three">Three</Item>
