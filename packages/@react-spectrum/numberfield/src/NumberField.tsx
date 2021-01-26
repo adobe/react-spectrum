@@ -75,7 +75,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
         'is-invalid': props.validationState === 'invalid',
         'spectrum-Stepper--showStepper': showStepper,
         'spectrum-Stepper--isMobile': isMobile,
-        'spectrum-Stepper--isHovered': isHovered,
+        'is-hovered': isHovered,
         // because FocusRing won't pass along the className from Field, we have to handle that ourselves
         [style.className]: !props.label && style.className
       }
