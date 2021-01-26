@@ -2993,21 +2993,37 @@ describe('ComboBox', function () {
 
         let trayProgressSpinner = within(tray).getByRole('progressbar');
         expect(trayProgressSpinner).toBeTruthy();
-        expect(trayProgressSpinner).toHaveAttribute('aria-label', 'Loading...');
+
+        if (LoadingState === 'loading') {
+          expect(trayProgressSpinner).toHaveAttribute('aria-label', 'Loading more…');
+        } else {
+          expect(trayProgressSpinner).toHaveAttribute('aria-label', 'Loading...');
+        }
+
 
         let clearButton = within(tray).getByLabelText('Clear');
         expect(clearButton).toBeTruthy();
 
         let listbox = getByRole('listbox');
-        expect(() => within(listbox).getByRole('progressbar')).toThrow();
+
+        if (LoadingState === 'loading') {
+          expect(within(listbox).getByRole('progressbar')).toBeTruthy();
+        } else {
+          expect(() => within(listbox).getByRole('progressbar')).toThrow();
+        }
 
         if (ValidationState) {
           let trayInput = within(tray).getByRole('searchbox');
           expect(trayInput).toHaveAttribute('aria-invalid', 'true');
         }
 
-        // validation icon should not be present, only img is the clear button
-        expect(within(tray).getAllByRole('img', {hidden: true})).toHaveLength(1);
+        if (ValidationState && LoadingState === 'loading') {
+          // validation icon should be present along with the clear button
+          expect(within(tray).getAllByRole('img', {hidden: true})).toHaveLength(2);
+        } else {
+          // validation icon should not be present, only img is the clear button
+          expect(within(tray).getAllByRole('img', {hidden: true})).toHaveLength(1);
+        }
       });
 
       it('should render the loading swirl in the listbox when loadingState="loadingMore"', function () {
