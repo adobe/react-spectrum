@@ -108,21 +108,16 @@ governing permissions and limitations under the License.
     opacity: 1;
   }
 
-  &:lang(ja), &:lang(zh), &:lang(ko) {
+  /* placeholder gets clipped for synthetic italics, we rely on font-synthesis once
+   * chrome supports it https://bugs.chromium.org/p/chromium/issues/detail?id=509989
+   */
+  &:lang(ja), &:lang(zh), &:lang(ko), &:lang(ar), &:lang(he) {
     &::placeholder,
     &.is-placeholder {
        font-style: normal;
     }
     &::-ms-input-placeholder { /* added to work with Edge, same as above */
        font-style: normal;
-    }
-  }
-  /* placeholder gets clipped for synthetic italics, we rely on font-synthesis once
-   * chrome supports it https://bugs.chromium.org/p/chromium/issues/detail?id=509989
-   */
-  &:lang(ar), &:lang(ja), &:lang(zh), &:lang(ko), &:lang(he) {
-    &::placeholder {
-      font-style: normal;
     }
   }
 
