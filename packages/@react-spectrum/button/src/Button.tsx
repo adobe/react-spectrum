@@ -21,7 +21,7 @@ import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
-import useUxpProps from './useUxpProps';
+import useUxpProps from './uxp/useUxpProps';
 
 // todo: CSS hasn't caught up yet, map
 let VARIANT_MAPPING = {
