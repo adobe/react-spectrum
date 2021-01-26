@@ -98,7 +98,7 @@ governing permissions and limitations under the License.
 .spectrum-Stepper--showStepper {
   .spectrum-Stepper-input {
     position: relative;
-
+    border-inline-end: none;
     border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
     border-end-end-radius: var(--spectrum-stepper-border-radius-reset);
   }
@@ -109,6 +109,8 @@ governing permissions and limitations under the License.
     grid-template-areas: 'decrement field increment';
 
     .spectrum-Stepper-input {
+      border-inline-start: none;
+      border-inline-end: none;
       border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
       border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
       border-end-start-radius: var(--spectrum-stepper-border-radius-reset);
