@@ -120,7 +120,7 @@ governing permissions and limitations under the License.
   /* placeholder gets clipped for synthetic italics, we rely on font-synthesis once
    * chrome supports it https://bugs.chromium.org/p/chromium/issues/detail?id=509989
    */
-  &:lang(ar), &:lang(ja), &:lang(zh), &:lang(ko), &:lang(ko), &:lang(he) {
+  &:lang(ar), &:lang(ja), &:lang(zh), &:lang(ko), &:lang(he) {
     &::placeholder {
       font-style: normal;
     }
