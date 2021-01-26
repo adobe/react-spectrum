@@ -130,7 +130,7 @@ export function useNumberFieldState(
       if (isNaN(prev)) {
         // if the input is empty, start from 0
         prev = 0;
-        if (!isNaN(props.minValue) && prev < props.minValue) {
+        if (!isNaN(minValue) && prev < minValue) {
           // unless zero is less than the min value, then start well below it so we clamp to the min
           prev = -Infinity;
         }
@@ -147,7 +147,7 @@ export function useNumberFieldState(
 
       return newValue;
     });
-  }, [setNumberValue, parsed, safeNextStep, formatter]);
+  }, [setNumberValue, parsed, safeNextStep, format, minValue]);
 
   let decrement = useCallback(() => {
     setNumberValue((previousValue) => {
@@ -156,7 +156,7 @@ export function useNumberFieldState(
       if (isNaN(prev)) {
         prev = 0;
         // unless zero is greater than the max value, then start well above it so we clamp to the max
-        if (!isNaN(props.maxValue) && prev > maxValue) {
+        if (!isNaN(maxValue) && prev > maxValue) {
           prev = Infinity;
         }
       }
@@ -168,7 +168,7 @@ export function useNumberFieldState(
 
       return newValue;
     });
-  }, [setNumberValue, parsed, safeNextStep, formatter]);
+  }, [setNumberValue, parsed, safeNextStep, format, maxValue]);
 
   let incrementToMax = useCallback(() => {
     if (maxValue != null) {
@@ -192,9 +192,9 @@ export function useNumberFieldState(
     decrementToMin,
     minValue,
     maxValue,
-    numberValue,
+    numberValue: parsed.current,
     setInputValue,
-    inputValue: inputValue,
+    inputValue,
     commitInputValue
   };
 }
