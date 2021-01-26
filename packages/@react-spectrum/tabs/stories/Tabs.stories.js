@@ -15,7 +15,7 @@ import Bookmark from '@spectrum-icons/workflow/Bookmark';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import Calendar from '@spectrum-icons/workflow/Calendar';
-import {Content, Heading, Text} from '@adobe/react-spectrum';
+import {Content, Flex, Heading, Text} from '@adobe/react-spectrum';
 import Dashboard from '@spectrum-icons/workflow/Dashboard';
 import {Item, Tabs} from '..';
 import React from 'react';
@@ -112,6 +112,25 @@ storiesOf('Tabs', module)
   .add(
     'orientation flip',
     () => <OrientationFlip />
+  )
+  .add(
+    'testing: tabs in flex',
+    () => (
+      <Flex minHeight={400} minWidth={400} UNSAFE_style={{borderWidth: 1, borderStyle: 'solid', borderColor: 'var(--spectrum-global-color-gray-800)', padding: '10px'}}>
+        <Tabs>
+          <Item title="Tab 1">
+            <Content>
+              <Text>Hello World</Text>
+            </Content>
+          </Item>
+          <Item title="Tab 2">
+            <Content>
+              <Text>Goodbye World</Text>
+            </Content>
+          </Item>
+        </Tabs>
+      </Flex>
+    )
   );
 
 function render(props = {}) {
