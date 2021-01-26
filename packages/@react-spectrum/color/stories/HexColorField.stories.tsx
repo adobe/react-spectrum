@@ -11,14 +11,14 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton} from '@react-spectrum/button';
 import {Color} from '@react-types/color';
-import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Flex} from '@react-spectrum/layout';
 import {HexColorField} from '../';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
+import {useId} from '@react-aria/utils';
 import {View} from '@react-spectrum/view';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 storiesOf('HexColorField', module)
   .add(
@@ -64,50 +64,7 @@ storiesOf('HexColorField', module)
         value="#FF00AA"
         onChange={action('change')} />
     )
-  )
-  .add(
-    'as a popover',
-    () => (
-      <HexColorFieldPopover
-        label="Choose a color"
-        value="#ff0000"
-        step={255}
-        onChange={action('change')} />
-    )
-  )
-  .add(
-    'as a popover, defaults only',
-    () => <HexColorFieldPopover onChange={action('change')} />
   );
-
-function HexColorFieldPopover(props: any = {}) {
-  let [color, setColor] = useState(props.value || null);
-  let colorString = color ? color.toString('hex') : '';
-  return (
-    <DialogTrigger type="popover">
-      <ActionButton
-        width="size-1600"
-        height="size-1600"
-        UNSAFE_style={{
-          background: colorString
-        }} >{colorString}</ActionButton>
-      <Dialog
-        width="size-3600"
-        height="size-1600" >
-        <View padding="size-300">
-          {render({
-            ...props,
-            value: color,
-            onChange: (newColor: Color) => {
-              setColor(newColor);
-              if (props.onChange) { props.onChange(newColor); }
-            }
-          })}
-        </View>
-      </Dialog>
-    </DialogTrigger>
-  );
-}
 
 function ControlledHexColorField(props: any = {}) {
   let [color, setColor] = useState(props.value || null);
@@ -116,13 +73,21 @@ function ControlledHexColorField(props: any = {}) {
     if (props.onChange) { props.onChange(color); }
   };
   let style = color ? {backgroundColor: color.toString('rgb')} : {};
+  let id = useId();
   return (
     <Flex direction="row" gap="size-100" alignItems="end">
       <HexColorField
+        id={id}
         label="Primary Color"
         onChange={onChange}
         value={color} />
-      <View width="size-400" height="size-400" UNSAFE_style={style} />
+      <View width="size-400" height="size-400" UNSAFE_style={style}>
+        <VisuallyHidden>
+          <output htmlFor={id} aria-live="off">
+            {color ? color.toString('hex') : ''}
+          </output>
+        </VisuallyHidden>
+      </View>
     </Flex>
   );
 }

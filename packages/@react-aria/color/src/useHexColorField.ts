@@ -36,7 +36,7 @@ export function useHexColorField(
     isReadOnly,
     isRequired
   } = props;
-  
+
   let {
     colorValue,
     inputValue,
@@ -88,6 +88,11 @@ export function useHexColorField(
   return {
     labelProps,
     inputFieldProps: mergeProps(inputProps, spinButtonProps, {
+      role: 'textbox',
+      'aria-valuemax': null,
+      'aria-valuemin': null,
+      'aria-valuenow': null,
+      'aria-valuetext': null,
       autoCorrect: 'off',
       onBlur: commitInputValue,
       onWheel
