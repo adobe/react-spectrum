@@ -8,7 +8,7 @@ import {Text} from '@react-spectrum/text';
 import {themes, defaultTheme} from '../../constants';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 
-document.body.style.margin = 0;
+document.body.style.margin = '0';
 
 const providerValuesFromUrl = Object.entries(getQueryParams()).reduce((acc, [k, v]) => {
   if (k.includes('providerSwitcher-')) {

@@ -21,6 +21,7 @@ const initial = [
 ];
 
 let getKey = (item) => item.name;
+let filter = (item, text) => item.name.includes(text);
 
 describe('useListData', function () {
   it('should construct a list using initial data', function () {
@@ -288,5 +289,26 @@ describe('useListData', function () {
     expect(result.current.items[0]).toBe(initialResult.items[1]);
     expect(result.current.items[1]).toBe(initialResult.items[0]);
     expect(result.current.items[2]).toBe(initialResult.items[2]);
+  });
+
+  it('should support filtering', function () {
+    let {result} = renderHook(() => useListData({initialItems: initial, filter, initialFilterText: 'Sa'}));
+
+    expect(result.current.items).toHaveLength(1);
+    expect(result.current.items[0]).toEqual({name: 'Sam'});
+  });
+
+  it('should support updating the filter text', function () {
+    let {result} = renderHook(() => useListData({initialItems: initial, filter}));
+
+    expect(result.current.items).toHaveLength(3);
+    expect(result.current.items).toEqual(initial);
+
+    act(() => {
+      result.current.setFilterText('Da');
+    });
+
+    expect(result.current.items).toHaveLength(1);
+    expect(result.current.items[0]).toEqual({name: 'David'});
   });
 });

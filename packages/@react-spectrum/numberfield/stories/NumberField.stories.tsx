@@ -209,21 +209,29 @@ function NumberFieldWithCurrencySelect(props) {
   let [value, setValue] = useState(10);
   let [currency, setCurrency] = useState('EUR');
   let [currencySign, setCurrencySign] = useState('standard');
+  let [currencyDisplay, setCurrencyDisplay] = useState('symbol');
   return (
     <Form>
-      <NumberField label="Monies" {...props} formatOptions={{style: 'currency', currency, currencySign}} value={value} onChange={chain(setValue, action('onChange'))} />
+      <NumberField label="Monies" {...props} formatOptions={{style: 'currency', currency, currencySign, currencyDisplay}} value={value} onChange={chain(setValue, action('onChange'))} />
       <Picker
         onSelectionChange={item => setCurrency(String(item))}
         label="Choose Currency"
-        defaultSelectedKey={currency}
+        selectedKey={currency}
         items={[{label: 'Euro', value: 'EUR'}, {label: 'US Dollar', value: 'USD'}, {label: 'Japanese Yen', value: 'JPY'}, {label: 'Saudi Riyal', value: 'SAR'}]}>
         {item => <Item key={item.value}>{item.label}</Item>}
       </Picker>
       <Picker
         onSelectionChange={item => setCurrencySign(String(item))}
         label="Currency Sign"
-        defaultSelectedKey={currencySign}
+        selectedKey={currencySign}
         items={[{label: 'Standard', value: 'standard'}, {label: 'Accounting', value: 'accounting'}]}>
+        {item => <Item key={item.value}>{item.label}</Item>}
+      </Picker>
+      <Picker
+        onSelectionChange={item => setCurrencyDisplay(String(item))}
+        label="Currency Display"
+        selectedKey={currencyDisplay}
+        items={[{label: 'Symbol', value: 'symbol'}, {label: 'Narrow Symbol', value: 'narrowSymbol'}, {label: 'Code', value: 'code'}, {label: 'Name', value: 'name'}]}>
         {item => <Item key={item.value}>{item.label}</Item>}
       </Picker>
     </Form>

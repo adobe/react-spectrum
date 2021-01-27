@@ -10,15 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {getNumberFormatter, NumberFormatOptions} from '@react-stately/i18n';
-import {useLocale} from './context';
+export type NumberingSystem = 'arab' | 'hanidec' | 'latn';
 
-/**
- * Provides localized number formatting for the current locale. Automatically updates when the locale changes,
- * and handles caching of the number formatter for performance.
- * @param options - Formatting options.
- */
-export function useNumberFormatter(options: NumberFormatOptions = {}): Intl.NumberFormat {
-  let {locale} = useLocale();
-  return getNumberFormatter(locale, options);
+// known supported numbering systems
+const numberingSystems = {
+  arab: [...('٠١٢٣٤٥٦٧٨٩')],
+  hanidec: [...('〇一二三四五六七八九')],
+  latn: [...('0123456789')]
+};
+
+export function getNumberingSystem(value: string): NumberingSystem {
+  for (let i in [...value]) {
+    let char = value[i];
+    let system = Object.keys(numberingSystems)
+      .find(key => numberingSystems[key].some(numeral => numeral === char));
+
+    if (system) {
+      return system as NumberingSystem;
+    }
+  }
 }

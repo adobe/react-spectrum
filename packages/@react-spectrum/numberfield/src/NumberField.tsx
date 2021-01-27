@@ -17,14 +17,14 @@ import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {mergeProps} from '@react-aria/utils';
-import {NumeralSystem, useLocale, useNumberFormatter, useNumberParser} from '@react-aria/i18n';
 import {PressResponder, useHover} from '@react-aria/interactions';
-import React, {HTMLAttributes, InputHTMLAttributes, RefObject, useRef, useState} from 'react';
+import React, {HTMLAttributes, InputHTMLAttributes, RefObject, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import {StepButton} from './StepButton';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {useFormProps} from '@react-spectrum/form';
+import {useLocale} from '@react-aria/i18n';
 import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
@@ -36,18 +36,13 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
   let {
     isQuiet,
     isDisabled,
-    hideStepper,
-    formatOptions
+    hideStepper
   } = props;
 
   let {styleProps: style} = useStyleProps(props);
 
   let {locale} = useLocale();
-  let [currentNumeralSystem, setCurrentNumeralSystem] = useState<NumeralSystem | undefined>();
-  let inputValueFormatter = useNumberFormatter({...formatOptions, numeralSystem: currentNumeralSystem});
-  let numberParser = useNumberParser({...formatOptions, numeralSystem: currentNumeralSystem});
-
-  let state = useNumberFieldState({...props, locale, inputValueFormatter, numberParser, currentNumeralSystem, setCurrentNumeralSystem});
+  let state = useNumberFieldState({...props, locale});
   let inputRef = useRef<HTMLInputElement>();
   let domRef = useFocusableRef<HTMLElement>(ref, inputRef);
   let incrementRef = useRef<HTMLDivElement>();

@@ -23,16 +23,9 @@ const generateScopedName = (localName, resourcePath) => {
   return `${componentName}_${localName}_${contentHash}`;
 };
 
-module.exports = ({config}, env) => {
-  if (env === 'PRODUCTION') {
-    // see https://github.com/storybooks/storybook/issues/1570
-    config.plugins = config.plugins.filter(plugin => plugin.constructor.name !== 'UglifyJsPlugin')
-  }
-  config.plugins.push(new webpack.DefinePlugin({REACT_VERSION: JSON.stringify(reactVersion)}));
-
-  config.resolve.extensions.push('.ts', '.tsx');
-
-  return Object.assign(config, {
+module.exports = () => {
+  return {
+    plugins: [new webpack.DefinePlugin({REACT_VERSION: JSON.stringify(reactVersion)})],
     parallelism: 1,
     module: {
       rules: [
@@ -46,28 +39,6 @@ module.exports = ({config}, env) => {
           use: [
             { loader: require.resolve('babel-loader') },
           ]
-        },
-        {
-          test: /\.styl$/,
-          use: [
-            'style-loader',
-            'css-loader',
-            {
-              loader: 'stylus-loader',
-              options: {
-                paths: [__dirname + '/../node_modules'],
-                define: {
-                  'embedurl': require('stylus').url()
-                },
-                'resolve url': true,
-                set: {
-                  'include css': true
-                },
-                use: [require('svg-stylus')()]
-              }
-            }
-          ],
-          include: path.resolve(__dirname, '../')
         },
         {
           test: /packages[\\/].*\.css$/,
@@ -105,5 +76,5 @@ module.exports = ({config}, env) => {
         }
       ]
     }
-  });
+  };
 };
