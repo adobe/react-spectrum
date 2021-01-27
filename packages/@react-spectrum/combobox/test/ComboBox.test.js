@@ -144,6 +144,9 @@ describe('ComboBox', function () {
 
     let combobox = getByRole('combobox');
     expect(combobox).toHaveAttribute('placeholder', 'Select a topic...');
+    expect(combobox).toHaveAttribute('autoCorrect', 'off');
+    expect(combobox).toHaveAttribute('spellCheck', 'false');
+    expect(combobox).toHaveAttribute('autoComplete', 'off');
 
     let button = getByRole('button');
     expect(button).toHaveAttribute('aria-haspopup', 'listbox'); // i think we really want 'listbox'?
