@@ -38,9 +38,7 @@ import {useTextField} from '@react-aria/textfield';
 interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
   inputRef?:  RefObject<HTMLInputElement>,
   decrementAriaLabel?: string,
-  incrementAriaLabel?: string,
-  incrementRef?: RefObject<HTMLDivElement>,
-  decrementRef?: RefObject<HTMLDivElement>
+  incrementAriaLabel?: string
 }
 
 interface NumberFieldAria {
@@ -71,8 +69,6 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     validationState,
     label,
     formatOptions,
-    incrementRef,
-    decrementRef,
     inputRef
   } = props;
 
@@ -90,18 +86,11 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
 
   const inputId = useId();
 
-  let isFocused = useRef(false);
   let {focusProps} = useFocus({
-    onBlur: (e) => {
-      let incrementButton = incrementRef.current;
-      let decrementButton = decrementRef.current;
-      if ((incrementButton && decrementButton) && (e.relatedTarget === incrementButton || e.relatedTarget === decrementButton)) {
-        return;
-      }
+    onBlur: () => {
       // Set input value to normalized valid value
       commitInputValue();
-    },
-    onFocusChange: value => isFocused.current = value
+    }
   });
 
   const {
@@ -113,16 +102,33 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
       isDisabled,
       isReadOnly,
       isRequired,
-      // Use min/maxValue prop instead of stately.
       maxValue,
       minValue,
       onIncrement: increment,
       onIncrementToMax: incrementToMax,
       onDecrement: decrement,
       onDecrementToMin: decrementToMin,
-      value: numberValue
+      value: numberValue,
+      textValue: state.inputValue
     }
   );
+
+  let onButtonPressStart = (e) => {
+    // If focus is already on the input, keep it there so we don't hide the
+    // software keyboard when tapping the increment/decrement buttons.
+    if (document.activeElement === inputRef.current) {
+      return;
+    }
+
+    // Otherwise, when using a mouse, move focus to the input.
+    // On touch, or with a screen reader, focus the button so that the software
+    // keyboard does not appear and the screen reader cursor is not moved off the button.
+    if (e.pointerType === 'mouse') {
+      inputRef.current.focus();
+    } else {
+      e.target.focus();
+    }
+  };
 
   incrementAriaLabel = incrementAriaLabel || formatMessage('Increment');
   decrementAriaLabel = decrementAriaLabel || formatMessage('Decrement');
@@ -131,14 +137,18 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     'aria-label': incrementAriaLabel,
     'aria-controls': inputId,
     excludeFromTabOrder: true,
-    // use state min/maxValue because otherwise in default story, steppers will never disable
-    isDisabled: !state.canIncrement
+    preventFocusOnPress: true,
+    isDisabled: !state.canIncrement,
+    onPressStart: onButtonPressStart
   });
+
   const decrementButtonProps: AriaButtonProps = mergeProps(decButtonProps, {
     'aria-label': decrementAriaLabel,
     'aria-controls': inputId,
     excludeFromTabOrder: true,
-    isDisabled: !state.canDecrement
+    preventFocusOnPress: true,
+    isDisabled: !state.canDecrement,
+    onPressStart: onButtonPressStart
   });
 
   let onWheel = useCallback((e) => {
@@ -292,7 +302,9 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
       'aria-valuemax': null,
       'aria-valuemin': null,
       'aria-valuenow': null,
-      'aria-valuetext': null
+      'aria-valuetext': null,
+      autoCorrect: 'off',
+      spellCheck: 'false'
     }
   );
   return {

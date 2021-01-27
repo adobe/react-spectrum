@@ -57,8 +57,7 @@ function StepButton(props: StepButtonProps, ref: RefObject<HTMLDivElement>) {
           )
         }
         {...mergeProps(hoverProps, buttonProps)}
-        ref={ref}
-        tabIndex={props.excludeFromTabOrder && !props.isDisabled ? -1 : undefined}>
+        ref={ref}>
         {direction === 'up' && scale === 'large' &&
           <Add UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon', 'spectrum-Stepper-stepUpIcon')} size="S" />
         }

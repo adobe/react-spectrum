@@ -17,13 +17,13 @@ import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {mergeProps} from '@react-aria/utils';
-import {PressResponder, useHover} from '@react-aria/interactions';
 import React, {HTMLAttributes, InputHTMLAttributes, RefObject, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import {StepButton} from './StepButton';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {useFormProps} from '@react-spectrum/form';
+import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
@@ -45,15 +45,13 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
   let state = useNumberFieldState({...props, locale});
   let inputRef = useRef<HTMLInputElement>();
   let domRef = useFocusableRef<HTMLElement>(ref, inputRef);
-  let incrementRef = useRef<HTMLDivElement>();
-  let decrementRef = useRef<HTMLDivElement>();
   let {
     numberFieldProps,
     labelProps,
     inputFieldProps,
     incrementButtonProps,
     decrementButtonProps
-  } = useNumberField({...props, incrementRef, decrementRef, inputRef}, state);
+  } = useNumberField({...props, inputRef}, state);
   let isMobile = provider.scale === 'large';
   let showStepper = !hideStepper;
 
@@ -94,9 +92,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
         inputProps={inputFieldProps}
         inputRef={inputRef}
         incrementProps={incrementButtonProps}
-        incrementRef={incrementRef}
         decrementProps={decrementButtonProps}
-        decrementRef={decrementRef}
         className={className}
         style={style} />
     </Field>
@@ -109,9 +105,7 @@ interface NumberFieldInputProps extends SpectrumNumberFieldProps {
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   incrementProps: AriaButtonProps,
-  incrementRef: RefObject<HTMLDivElement>,
   decrementProps: AriaButtonProps,
-  decrementRef: RefObject<HTMLDivElement>,
   className?: string,
   style?: React.CSSProperties
 }
@@ -122,9 +116,7 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
     inputProps,
     inputRef,
     incrementProps,
-    incrementRef,
     decrementProps,
-    decrementRef,
     className,
     style,
     autoFocus,
@@ -156,12 +148,8 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
           inputProps={inputProps} />
         {showStepper &&
         <>
-          <PressResponder preventFocusOnPress>
-            <StepButton direction="up" isQuiet={isQuiet} ref={incrementRef} {...incrementProps} />
-          </PressResponder>
-          <PressResponder preventFocusOnPress>
-            <StepButton direction="down" isQuiet={isQuiet} ref={decrementRef} {...decrementProps} />
-          </PressResponder>
+          <StepButton direction="up" isQuiet={isQuiet} {...incrementProps} />
+          <StepButton direction="down" isQuiet={isQuiet} {...decrementProps} />
         </>
         }
       </div>

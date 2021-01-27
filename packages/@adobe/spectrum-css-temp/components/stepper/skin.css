@@ -104,6 +104,10 @@ governing permissions and limitations under the License.
       border-color: var(--spectrum-textfield-border-color-key-focus);
     }
 
+    .spectrum-Stepper-input {
+      border-color: var(--spectrum-textfield-border-color-key-focus);
+    }
+
     &.focus-ring {
       &:invalid,
       &.is-invalid {
