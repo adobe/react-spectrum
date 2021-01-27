@@ -10,22 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useFocusableRef, useSlotProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
-import {FocusRing} from '@react-aria/focus';
-import {mergeProps} from '@react-aria/utils';
 import React, {ElementType, ReactElement} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
-import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
-
-// todo: CSS hasn't caught up yet, map
-let VARIANT_MAPPING = {
-  negative: 'warning'
-};
 
 function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
@@ -40,53 +32,31 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
-  let {buttonProps, isPressed} = useButton(props, domRef);
-  let {hoverProps, isHovered} = useHover({isDisabled});
-  let {styleProps} = useStyleProps(otherProps);
-
-  let buttonVariant = variant;
-  if (VARIANT_MAPPING[variant]) {
-    buttonVariant = VARIANT_MAPPING[variant];
-  }
+  let {buttonProps} = useButton(props, domRef);
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
-      <ElementType
-        {...styleProps}
-        {...mergeProps(buttonProps, hoverProps)}
-        ref={domRef}
-        quiet={ isQuiet }   // uxp
-        variant={ variant } // uxp
-        className={
-          classNames(
-            styles,
-            'spectrum-Button',
-            `spectrum-Button--${buttonVariant}`,
-            {
-              'spectrum-Button--quiet': isQuiet,
-              'is-disabled': isDisabled,
-              'is-active': isPressed,
-              'is-hovered': isHovered
-            },
-            styleProps.className
-          )
-        }>
-        <SlotProvider
-          slots={{
-            icon: {
-              size: 'S',
-              UNSAFE_className: classNames(styles, 'spectrum-Icon')
-            },
-            text: {
-              UNSAFE_className: classNames(styles, 'spectrum-Button-label')
-            }
-          }}>
-          {typeof children === 'string'
-            ? <Text>{children}</Text>
-            : children}
-        </SlotProvider>
-      </ElementType>
-    </FocusRing>
+    <ElementType
+      {...buttonProps}
+      {...otherProps}
+      ref={domRef}
+      quiet={ isQuiet }   // uxp
+      variant={ variant } // uxp
+      >
+      <SlotProvider
+        slots={{
+          icon: {
+            size: 'S',
+            UNSAFE_className: classNames(styles, 'spectrum-Icon')
+          },
+          text: {
+            UNSAFE_className: classNames(styles, 'spectrum-Button-label')
+          }
+        }}>
+        {typeof children === 'string'
+          ? <Text>{children}</Text>
+          : children}
+      </SlotProvider>
+    </ElementType>
   );
 }
 
