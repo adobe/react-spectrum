@@ -23,7 +23,7 @@ import {Flex} from '@react-spectrum/layout';
 import {Item, Menu, MenuTrigger, Section} from '../';
 import {Keyboard, Text} from '@react-spectrum/text';
 import Paste from '@spectrum-icons/workflow/Paste';
-import React from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
 let iconMap = {
@@ -492,25 +492,41 @@ storiesOf('MenuTrigger', module)
   .add('double menu', () => (
     <Flex gap="size-100">
       <MenuTrigger>
-        <ActionButton
-          onPressStart={action('1onPressStart')}
-          onPressEnd={action('1onPressEnd')}
-          onPress={action('1onPress')}>
+        <ActionButton>
           Menu Button 1
         </ActionButton>
         {defaultMenu}
       </MenuTrigger>
       <MenuTrigger>
-        <ActionButton
-          onPressStart={action('2onPressStart')}
-          onPressEnd={action('2onPressEnd')}
-          onPress={action('2onPress')}>
+        <ActionButton>
           Menu Button 2
         </ActionButton>
         {defaultMenu}
       </MenuTrigger>
     </Flex>
-  ));
+  ))
+  .add('double menu controlled', () => <DoubleMenuControlled />);
+
+function DoubleMenuControlled() {
+  let [isOpen1, setIsOpen1] = useState(true);
+  let [isOpen2, setIsOpen2] = useState(true);
+  return (
+    <Flex gap="size-100">
+      <MenuTrigger isOpen={isOpen1} onOpenChange={setIsOpen1}>
+        <ActionButton>
+          Menu Button 1
+        </ActionButton>
+        {defaultMenu}
+      </MenuTrigger>
+      <MenuTrigger isOpen={isOpen2} onOpenChange={setIsOpen2}>
+        <ActionButton>
+          Menu Button 2
+        </ActionButton>
+        {defaultMenu}
+      </MenuTrigger>
+    </Flex>
+  );
+}
 
 let customMenuItem = (item) => {
   let Icon = iconMap[item.icon];

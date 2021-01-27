@@ -14,7 +14,7 @@ import {act, fireEvent, render, within} from '@testing-library/react';
 import {Button} from '@react-spectrum/button';
 import {Item, Menu, MenuTrigger, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
-import React from 'react';
+import React, {useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
@@ -758,5 +758,130 @@ describe('MenuTrigger', function () {
     );
     let checkmark = queryByRole('img', {hidden: true});
     expect(checkmark).toBeNull();
+  });
+
+  describe('2 menus', function () {
+    it('should close the first when the second opens', function () {
+      let onOpenChange1 = jest.fn();
+      let onOpenChange2 = jest.fn();
+      let {queryByTestId} = render(
+        <>
+          <Provider theme={theme}>
+            <MenuTrigger defaultOpen onOpenChange={onOpenChange1}>
+              <Button data-testid="button1">
+                {triggerText}
+              </Button>
+              <Menu items={withSection} data-testid="menu1">
+                {item => (
+                  <Section key={item.name} items={item.children} title={item.name}>
+                    {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                  </Section>
+                )}
+              </Menu>
+            </MenuTrigger>
+            <MenuTrigger onOpenChange={onOpenChange2}>
+              <Button data-testid="button2">
+                {triggerText}
+              </Button>
+              <Menu items={withSection} data-testid="menu2">
+                {item => (
+                  <Section key={item.name} items={item.children} title={item.name}>
+                    {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                  </Section>
+                )}
+              </Menu>
+            </MenuTrigger>
+          </Provider>
+        </>
+      );
+      act(() => {jest.runAllTimers();});
+      let menu1 = queryByTestId('menu1');
+      expect(onOpenChange1).not.toHaveBeenCalled(); // its "already" open
+      expect(onOpenChange1).toHaveBeenCalledTimes(0);
+      expect(onOpenChange2).not.toHaveBeenCalled();
+      expect(onOpenChange2).toHaveBeenCalledTimes(0);
+      expect(menu1).toBeVisible();
+      let button2 = queryByTestId('button2');
+      triggerPress(button2);
+      act(() => {jest.runAllTimers();});
+      expect(onOpenChange1).toHaveBeenCalledWith(false);
+      expect(onOpenChange1).toHaveBeenCalledTimes(1);
+      expect(onOpenChange2).toHaveBeenCalledWith(true);
+      expect(onOpenChange2).toHaveBeenCalledTimes(1);
+      let menu2 = queryByTestId('menu2');
+      expect(menu1).not.toBeInTheDocument();
+      expect(menu2).toBeVisible();
+    });
+
+    it('should close the first when the second opens if two are opened at once', function () {
+      let {queryByTestId} = render(
+        <>
+          <Provider theme={theme}>
+            <MenuTrigger defaultOpen>
+              <Button data-testid="button1">
+                {triggerText}
+              </Button>
+              <Menu items={withSection} data-testid="menu1">
+                {item => (
+                  <Section key={item.name} items={item.children} title={item.name}>
+                    {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                  </Section>
+                )}
+              </Menu>
+            </MenuTrigger>
+            <MenuTrigger defaultOpen>
+              <Button data-testid="button2">
+                {triggerText}
+              </Button>
+              <Menu items={withSection} data-testid="menu2">
+                {item => (
+                  <Section key={item.name} items={item.children} title={item.name}>
+                    {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                  </Section>
+                )}
+              </Menu>
+            </MenuTrigger>
+          </Provider>
+        </>
+      );
+      act(() => {jest.runAllTimers();});
+      let menu1 = queryByTestId('menu1');
+      expect(menu1).toBeNull();
+      let menu2 = queryByTestId('menu2');
+      expect(menu2).toBeVisible();
+    });
+
+    it('should work in the controlled case as well', function () {
+      function ControlledMenu(props) {
+        let [isOpen, setIsOpen] = useState(true);
+        return (
+          <MenuTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
+            <Button data-testid={`button${props.id}`}>
+              {triggerText}
+            </Button>
+            <Menu items={withSection} data-testid={`menu${props.id}`}>
+              {item => (
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                </Section>
+              )}
+            </Menu>
+          </MenuTrigger>
+        );
+      }
+      let {queryByTestId} = render(
+        <>
+          <Provider theme={theme}>
+            <ControlledMenu id="1" />
+            <ControlledMenu id="2" />
+          </Provider>
+        </>
+      );
+      act(() => {jest.runAllTimers();});
+      let menu1 = queryByTestId('menu1');
+      expect(menu1).toBeNull();
+      let menu2 = queryByTestId('menu2');
+      expect(menu2).toBeVisible();
+    });
   });
 });

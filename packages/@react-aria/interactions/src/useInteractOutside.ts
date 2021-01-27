@@ -15,7 +15,7 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {RefObject, SyntheticEvent, useEffect} from 'react';
+import {RefObject, SyntheticEvent, useEffect, useRef} from 'react';
 
 interface InteractOutsideProps {
   ref: RefObject<Element>,
@@ -30,6 +30,11 @@ interface InteractOutsideProps {
  */
 export function useInteractOutside(props: InteractOutsideProps) {
   let {ref, onInteractOutside, isDisabled} = props;
+  let stateRef = useRef({
+    isPointerDown: false,
+    ignoreEmulatedMouseEvents: false
+  });
+  let state = stateRef.current;
 
   useEffect(() => {
     if (!onInteractOutside) {
@@ -41,30 +46,66 @@ export function useInteractOutside(props: InteractOutsideProps) {
         return;
       }
       if (isValidEvent(e, ref)) {
-        onInteractOutside(e);
+        state.isPointerDown = true;
       }
     };
 
     // FF bug https://bugzilla.mozilla.org/show_bug.cgi?id=1675846 prevents us from using this pointerevent
     // once it's fixed we can uncomment
     // Use pointer events if available. Otherwise, fall back to mouse and touch events.
-    if (typeof PointerEvent !== 'undefined') {
+    /* if (typeof PointerEvent !== 'undefined') {
+      let onPointerUp = (e) => {
+        if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
+          state.isPointerDown = false;
+          onInteractOutside(e);
+        }
+      };
       // changing these to capture phase fixed combobox
       document.addEventListener('pointerdown', onPointerDown, true);
+      document.addEventListener('pointerup', onPointerUp, true);
 
       return () => {
         document.removeEventListener('pointerdown', onPointerDown, true);
+        document.removeEventListener('pointerup', onPointerUp, true);
       };
-    } else {
-      document.addEventListener('mousedown', onPointerDown, true);
-      document.addEventListener('touchstart', onPointerDown, true);
+    } else {*/
+    let onMouseUp = (e) => {
+      if (isDisabled) {
+        return;
+      }
+      if (state.ignoreEmulatedMouseEvents) {
+        state.ignoreEmulatedMouseEvents = false;
+      } else if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
+        state.isPointerDown = false;
+        onInteractOutside(e);
+      }
+    };
 
-      return () => {
-        document.removeEventListener('mousedown', onPointerDown, true);
-        document.removeEventListener('touchstart', onPointerDown, true);
-      };
-    }
-  }, [onInteractOutside, ref, isDisabled]);
+
+    let onTouchEnd = (e) => {
+      if (isDisabled) {
+        return;
+      }
+      state.ignoreEmulatedMouseEvents = true;
+      if (onInteractOutside && state.isPointerDown && isValidEvent(e, ref)) {
+        state.isPointerDown = false;
+        onInteractOutside(e);
+      }
+    };
+
+    document.addEventListener('mousedown', onPointerDown, true);
+    document.addEventListener('mouseup', onMouseUp, true);
+    document.addEventListener('touchstart', onPointerDown, true);
+    document.addEventListener('touchend', onTouchEnd, true);
+
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown, true);
+      document.removeEventListener('mouseup', onMouseUp, true);
+      document.removeEventListener('touchstart', onPointerDown, true);
+      document.removeEventListener('touchend', onTouchEnd, true);
+    };
+    // }
+  }, [onInteractOutside, ref, state.ignoreEmulatedMouseEvents, state.isPointerDown, isDisabled]);
 }
 
 function isValidEvent(event, ref) {

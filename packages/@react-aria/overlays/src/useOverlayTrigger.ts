@@ -15,6 +15,7 @@ import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {onCloseMap} from './useCloseOnScroll';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import {useId} from '@react-aria/utils';
+import {visibleOverlays} from './useOverlay';
 
 interface OverlayTriggerProps {
   /** Type of overlay that is opened by the trigger. */
@@ -44,6 +45,26 @@ export function useOverlayTrigger(props: OverlayTriggerProps, state: OverlayTrig
       onCloseMap.set(ref.current, state.close);
     }
   });
+
+  useEffect(() => {
+    if (isOpen === true && visibleOverlays.length > 1) {
+      // The last overlay is the one just opened.
+      // If we have two overlays open, then we need to determine if we're nested or not.
+      // Start from top of the stack (minus the one we just opened) and close it if it doesn't
+      // contain the trigger that opened the most recent overlay.
+      // Do this until we find one that does contain it or close everything.
+      let i = visibleOverlays.length - 2;
+      do {
+        let {ref: overlayRef, onClose} = visibleOverlays[i];
+        if (!overlayRef.current.contains(ref.current)) {
+          onClose();
+        } else {
+          break;
+        }
+        i--;
+      } while (i >= 0);
+    }
+  }, [isOpen]);
 
   // Aria 1.1 supports multiple values for aria-haspopup other than just menus.
   // https://www.w3.org/TR/wai-aria-1.1/#aria-haspopup

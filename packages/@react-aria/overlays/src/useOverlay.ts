@@ -49,7 +49,12 @@ interface OverlayAria {
   overlayProps: HTMLAttributes<HTMLElement>
 }
 
-const visibleOverlays: RefObject<HTMLElement>[] = [];
+interface OpenOverlay {
+  ref: RefObject<HTMLElement>,
+  onClose: () => void
+}
+
+export const visibleOverlays: OpenOverlay[] = [];
 
 /**
  * Provides the behavior for overlays such as dialogs, popovers, and menus.
@@ -62,11 +67,11 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
   useEffect(() => {
     if (isOpen) {
-      visibleOverlays.push(ref);
+      visibleOverlays.push({ref, onClose});
     }
 
     return () => {
-      let index = visibleOverlays.indexOf(ref);
+      let index = visibleOverlays.findIndex(({ref: openRef}) => ref === openRef);
       if (index >= 0) {
         visibleOverlays.splice(index, 1);
       }
@@ -75,7 +80,7 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
 
   // Only hide the overlay when it is the topmost visible overlay in the stack.
   let onHide = () => {
-    if (visibleOverlays[visibleOverlays.length - 1] === ref && onClose) {
+    if (visibleOverlays[visibleOverlays.length - 1].ref === ref && onClose) {
       onClose();
     }
   };

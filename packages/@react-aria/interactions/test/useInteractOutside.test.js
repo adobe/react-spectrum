@@ -33,6 +33,7 @@ describe('useInteractOutside', function () {
   describe('pointer events', function () {
     installPointerEvent();
 
+    /* TODO enable these ones pointer events are restored to useInteractOutside
     it('should fire interact outside events based on pointer events', function () {
       let onInteractOutside = jest.fn();
       let res = render(
@@ -62,7 +63,7 @@ describe('useInteractOutside', function () {
       fireEvent(document.body, pointerEvent('pointerdown', {button: 0}));
       fireEvent(document.body, pointerEvent('pointerup', {button: 0}));
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
-    });
+    });*/
 
     it('should not fire interact outside if there is a pointer up event without a pointer down first', function () {
       // Fire pointer down before component with useInteractOutside is mounted
