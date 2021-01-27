@@ -1539,7 +1539,7 @@ describe('NumberField', function () {
     let {getByLabelText, getByRole} = render(<Provider theme={theme} locale="en-US"><NumberField {...props} /></Provider>);
     let spinButton = getByRole('textbox');
     expect(getByLabelText(props.label)).toBe(spinButton);
-    expect(spinButton).toHaveAttribute('aria-roledescription', 'Spin button number field');
+    expect(spinButton).toHaveAttribute('aria-roledescription', 'Number field');
   });
 
   it.each`

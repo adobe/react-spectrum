@@ -108,12 +108,14 @@ export function useNumberFieldState(
   let safeNextStep = (operation: '+' | '-', minMax: number) => {
     let prev = parsed.current;
 
-    // if the input is empty, start from the min/max value when incrementing/decrementing,
-    // or zero if there is no min/max value defined.
     if (isNaN(prev)) {
+      // if the input is empty, start from the min/max value when incrementing/decrementing,
+      // or zero if there is no min/max value defined.
       let newValue = isNaN(minMax) ? 0 : minMax;
       return snapValueToStep(newValue, minValue, maxValue, clampStep);
     } else {
+      // otherwise, first snap the current value to the nearest step. if it moves in the direction
+      // we're going, use that value, otherwise add the step and snap that value.
       let newValue = snapValueToStep(prev, minValue, maxValue, clampStep);
       if ((operation === '+' && newValue > prev) || (operation === '-' && newValue < prev)) {
         return newValue;

@@ -288,7 +288,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
       onWheel,
       // override the spinbutton role, we can't focus a spin button with VO
       role: null,
-      'aria-roledescription': formatMessage('Spin button number field'),
+      'aria-roledescription': formatMessage('Number field'),
       'aria-valuemax': null,
       'aria-valuemin': null,
       'aria-valuenow': null,
