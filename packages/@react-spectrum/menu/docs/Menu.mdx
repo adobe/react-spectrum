@@ -295,6 +295,29 @@ within the Menu upon opening.
 
 ### Disabled
 
+To disable Menu items, pass an array of `key`s or `id`s into the `disabledKeys` prop.
+If an item has both `key` and `id` attributes, the `key` prop should be used for disabling.
+
+```tsx example
+<MenuTrigger>
+  <ActionButton>
+    Filter
+  </ActionButton>
+  <Menu
+    items={[
+      {name: 'tiff', key: 'tiff', id: 'a1b2c3'},
+      {name: 'png', key: 'png', id: 'g5h1j9'},
+      {name: 'jpg', key: 'jpg', id: 'p8k3i4'},
+      {name: 'PDF', key: 'pdf', id: 'j7i3a0'}
+    ]}
+    disabledKeys={['tiff', 'jpg']}>
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+```
+
+OR
+
 ```tsx example
 <MenuTrigger>
   <ActionButton>
