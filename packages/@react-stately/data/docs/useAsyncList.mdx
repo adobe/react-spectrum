@@ -177,14 +177,16 @@ let list = useAsyncList({
 ## Filtering
 
 There are many instances where your list of data should be filtered, such as user lookup or query searches.
-For server side filtering, this can be implemented by using the `filterText` passed to the `load` as an API parameter.
+For server side filtering, this can be implemented by levering the `filterText` passed to the `load` as an API parameter.
+`useAsyncList` then returns the state variable `filterText` and its setter `setFilterText`, allowing you to update the
+`filterText` used within `load` in response to any updates within your component.
 
 ### Server side filtering
 
 The example below shows how server side filtering could be implemented by using `filterText` in the `load` function and passing a parameter to the API.
-The input text of the ComboBox is controlled by providing `list.filterText` as the `inputValue` prop. By passing `list.setFilterText` to
+The input text of the ComboBox is controlled by providing `list.filterText` as the ComboBox's `inputValue` prop. By passing `list.setFilterText` to
 the ComboBox via the `onInputChange` prop, the `filterText` within `load` is updated whenever the end user modifies the ComboBox's
-input value, ensuring that the list of items is properly updated. Finally, the state of the list (`loading`, `loadingMore`, `filtering`, etc) is
+text, ensuring that the list of items is properly updated. Finally, the state of the list (`loading`, `loadingMore`, `filtering`, etc) is
 communicated to the ComboBox through `list.state`, allowing the ComboBox to display the appropriate visual feedback to an end user.
 
 ```tsx
