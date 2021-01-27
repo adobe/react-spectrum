@@ -221,7 +221,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
           // or code points may be deleted. However, in our currently supported locales, there are no such cases.
           // If we support additional locales in the future, this may need to change.
           nextValue = input.selectionEnd === input.selectionStart
-            ? input.value.slice(0, input.selectionStart + 1) + input.value.slice(input.selectionStart)
+            ? input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd + 1)
             : input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd);
           break;
         case 'deleteContentBackward':

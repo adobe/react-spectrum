@@ -1719,6 +1719,15 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', formatter.format(21));
   });
 
+  it.each(locales)('%s can have latin numerals entered with SAR', (locale) => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'SAR'}}, {locale});
+    act(() => {textField.focus();});
+    typeText(textField, '21');
+    act(() => {textField.blur();});
+    let formatter = new Intl.NumberFormat(locale + '-u-nu-latn', {style: 'currency', currency: 'SAR'});
+    expect(textField).toHaveAttribute('value', formatter.format(21));
+  });
+
   it.each(locales)('%s can have arabic numerals entered', (locale) => {
     let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD'}}, {locale});
 
@@ -1882,6 +1891,26 @@ describe('NumberField', function () {
 
       act(() => {textField.focus();});
       textField.setSelectionRange(2, 2);
+
+      // JSDOM doesn't support the beforeinput event
+      let e = new InputEvent('beforeinput', {cancelable: true});
+      e.inputType = inputType;
+      let proceed = fireEvent(textField, e);
+
+      expect(proceed).toBe(true);
+    });
+
+    it.each(['deleteContentForward'])('allows %s of starting plusSign', (inputType) => {
+      let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'unit', unit: 'percent', signDisplay: 'always'}});
+
+      act(() => {textField.focus();});
+      typeText(textField, '12');
+      act(() => {textField.blur();});
+
+      expect(textField).toHaveAttribute('value', '+12%');
+
+      act(() => {textField.focus();});
+      textField.setSelectionRange(0, 0);
 
       // JSDOM doesn't support the beforeinput event
       let e = new InputEvent('beforeinput', {cancelable: true});
