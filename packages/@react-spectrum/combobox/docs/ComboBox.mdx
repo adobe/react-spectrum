@@ -516,6 +516,54 @@ If a description is added, the prop `slot="description"` must be used to disting
 </ComboBox>
 ```
 
+## Asynchronous loading
+
+ComboBox supports loading data asynchronously, and will display a progress circle reflecting the current load state,
+dependent on the `loadingState` prop provided. It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle loading the data.
+See the docs for more information.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+function AsyncLoadingExample() {
+  let list = useAsyncList({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // If no cursor is available, then we're loading the first page,
+      // filtering the results returned via a query string that
+      // mirrors the ComboBox input text.
+      // Otherwise, the cursor is the next URL to load,
+      // as returned from the previous page.
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <ComboBox
+      label="Star Wars Character Lookup"
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={list.setFilterText}
+      loadingState={list.state}
+      onLoadMore={list.loadMore}
+      onOpenChange={action('onOpenChange')}>
+      {item => <Item key={item.name}>{item.name}</Item>}
+    </ComboBox>
+  );
+}
+```
+
 ## Validation
 ComboBox can display a validation state to communicate to the user whether the current value is valid or invalid.
 Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the ComboBox via the `validationState` prop.
