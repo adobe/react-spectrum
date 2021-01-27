@@ -126,20 +126,19 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
 
   incrementAriaLabel = incrementAriaLabel || formatMessage('Increment');
   decrementAriaLabel = decrementAriaLabel || formatMessage('Decrement');
-  const cannotStep = isDisabled || isReadOnly;
 
   const incrementButtonProps: AriaButtonProps = mergeProps(incButtonProps, {
     'aria-label': incrementAriaLabel,
     'aria-controls': inputId,
     excludeFromTabOrder: true,
     // use state min/maxValue because otherwise in default story, steppers will never disable
-    isDisabled: cannotStep || numberValue >= state.maxValue
+    isDisabled: !state.canIncrement
   });
   const decrementButtonProps: AriaButtonProps = mergeProps(decButtonProps, {
     'aria-label': decrementAriaLabel,
     'aria-controls': inputId,
     excludeFromTabOrder: true,
-    isDisabled: cannotStep || numberValue <= state.minValue
+    isDisabled: !state.canDecrement
   });
 
   let onWheel = useCallback((e) => {
@@ -169,7 +168,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
   let intlOptions = useMemo(() => numberFormatter.resolvedOptions(), [numberFormatter]);
   let hasDecimals = intlOptions.maximumFractionDigits > 0;
   let inputMode: 'decimal' | 'numeric' | 'text' = hasDecimals ? 'decimal' : 'numeric';
-  if (state.minValue < 0) { // iOS - neither allows negative signs, so use full keyboard
+  if (isNaN(state.minValue) || state.minValue < 0) { // iOS - neither allows negative signs, so use full keyboard
     inputMode = 'text';
   }
 
