@@ -1593,6 +1593,40 @@ describe('NumberField', function () {
     expect(decrementButton).toHaveAttribute('aria-disabled');
   });
 
+  it('should disable the steppers if the typed value is greater than the maximum step', () => {
+    let {textField, decrementButton, incrementButton} = renderNumberField({onChange: onChangeSpy, minValue: 2, maxValue: 21, step: 3});
+    expect(incrementButton).not.toHaveAttribute('aria-disabled');
+    expect(decrementButton).not.toHaveAttribute('aria-disabled');
+
+    act(() => {textField.focus();});
+
+    typeText(textField, '19');
+    expect(incrementButton).not.toHaveAttribute('aria-disabled');
+    expect(decrementButton).not.toHaveAttribute('aria-disabled');
+
+    act(() => userEvent.clear(textField));
+    typeText(textField, '20');
+    expect(incrementButton).toHaveAttribute('aria-disabled');
+    expect(decrementButton).not.toHaveAttribute('aria-disabled');
+  });
+
+  it('should disable the steppers if the typed value is greater than the minimum step', () => {
+    let {textField, decrementButton, incrementButton} = renderNumberField({onChange: onChangeSpy, minValue: 2, maxValue: 21, step: 3});
+    expect(incrementButton).not.toHaveAttribute('aria-disabled');
+    expect(decrementButton).not.toHaveAttribute('aria-disabled');
+
+    act(() => {textField.focus();});
+
+    typeText(textField, '3');
+    expect(incrementButton).not.toHaveAttribute('aria-disabled');
+    expect(decrementButton).not.toHaveAttribute('aria-disabled');
+
+    act(() => userEvent.clear(textField));
+    typeText(textField, '2');
+    expect(incrementButton).not.toHaveAttribute('aria-disabled');
+    expect(decrementButton).toHaveAttribute('aria-disabled');
+  });
+
   it.each`
     Name
     ${'NumberField'}

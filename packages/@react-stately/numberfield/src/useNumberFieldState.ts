@@ -174,9 +174,10 @@ export function useNumberFieldState(
     (
       isNaN(parsedValue) ||
       isNaN(maxValue) ||
+      snapValueToStep(parsedValue, minValue, maxValue, clampStep) > parsedValue ||
       handleDecimalOperation('+', parsedValue, clampStep) <= maxValue
     )
-  ), [isDisabled, isReadOnly, maxValue, clampStep, parsedValue]);
+  ), [isDisabled, isReadOnly, minValue, maxValue, clampStep, parsedValue]);
 
   let canDecrement = useMemo(() => (
     !isDisabled &&
@@ -184,9 +185,10 @@ export function useNumberFieldState(
     (
       isNaN(parsedValue) ||
       isNaN(minValue) ||
+      snapValueToStep(parsedValue, minValue, maxValue, clampStep) < parsedValue ||
       handleDecimalOperation('-', parsedValue, clampStep) >= minValue
     )
-  ), [isDisabled, isReadOnly, minValue, clampStep, parsedValue]);
+  ), [isDisabled, isReadOnly, minValue, maxValue, clampStep, parsedValue]);
 
   let validate = (value: string) => isValidPartialNumber(locale, formatOptions, value, minValue, maxValue);
 
