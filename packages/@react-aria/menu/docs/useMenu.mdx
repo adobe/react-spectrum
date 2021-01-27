@@ -162,7 +162,7 @@ function MenuItem({item, state, onAction}) {
 
   let {menuItemProps} = useMenuItem({
     key: item.key,
-    isDisabled: isDisabled,
+    isDisabled,
     onAction
   }, state, ref);
 
@@ -294,7 +294,7 @@ function MenuItem({item, state, onAction}) {
 
   let {menuItemProps} = useMenuItem({
     key: item.key,
-    isDisabled: isDisabled,
+    isDisabled,
     onAction
   }, state, ref);
   let [isFocused, setFocused] = React.useState(false);
@@ -389,7 +389,7 @@ function MenuItem({item, state, onAction}) {
     keyboardShortcutProps
   } = useMenuItem({
     key: item.key,
-    isDisabled: isDisabled,
+    isDisabled,
     onAction
   }, state, ref);
 
