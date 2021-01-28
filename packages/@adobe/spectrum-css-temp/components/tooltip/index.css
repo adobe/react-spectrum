@@ -14,7 +14,7 @@ governing permissions and limitations under the License.
 @import '../overlay/index.css';
 
 :root {
-  --spectrum-tooltip-target-offset: 3px;
+  --spectrum-tooltip-target-offset: var(--spectrum-global-dimension-size-40);
   /* This variable needs to be updated in Spectrum DNA. Using the height variable so it scales to spectrum-large */
   --spectrum-tooltip-tip-width: var(--spectrum-tooltip-tip-height);
 }
@@ -83,7 +83,7 @@ governing permissions and limitations under the License.
 .spectrum-Tooltip--right {
   margin-left: var(--spectrum-tooltip-target-offset);
   &.is-open {
-    @inherit: %spectrum-overlay--right--open;
+    /* @inherit: %spectrum-overlay--right--open; */
   }
   .spectrum-Tooltip-tip {
     right: 100%;
