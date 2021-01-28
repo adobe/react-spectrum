@@ -74,7 +74,8 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:focus {
+  &:focus,
+  &:active {
     .spectrum-Stepper-button {
       border-color: var(--spectrum-textfield-border-color-key-focus);
     }
