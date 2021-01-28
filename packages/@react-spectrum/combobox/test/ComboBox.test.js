@@ -92,21 +92,16 @@ let secondCallFilterItems = [
 function getFilterItems() {
   return Promise.resolve({
     items: initialFilterItems
-  })
-};
+  });
+}
 
 function mockSecondCall() {
   return Promise.resolve({
     items: secondCallFilterItems
-  })
-};
+  });
+}
 
-let load = jest
-  .fn()
-  .mockImplementationOnce(getFilterItems)
-  .mockImplementationOnce(mockSecondCall)
-  .mockImplementationOnce(mockSecondCall);
-
+let load;
 let AsyncComboBox = () => {
   let list = useAsyncList({
     load: load
@@ -175,6 +170,14 @@ describe('ComboBox', function () {
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.useFakeTimers();
+  });
+
+  beforeEach(() => {
+    load = jest
+      .fn()
+      .mockImplementationOnce(getFilterItems)
+      .mockImplementationOnce(mockSecondCall)
+      .mockImplementationOnce(mockSecondCall);
   });
 
   afterEach(() => {
@@ -3182,65 +3185,23 @@ describe('ComboBox', function () {
     });
 
     describe('mobile async loading', function () {
-      const initialFilterItems = [
-        {name: 'Aardvark', id: '1'},
-        {name: 'Kangaroo', id: '2'},
-        {name: 'Snake', id: '3'}
-      ];
-
-      const secondCallFilterItems = [
-        {name: 'Aardvark', id: '1'}
-      ];
-
-      function getFilterItems() {
-        return Promise.resolve({
-          items: initialFilterItems
-        })
-      }
-
-      function mockSecondCall() {
-        return Promise.resolve({
-          items: secondCallFilterItems
-        })
-      }
-
       it('async combobox works with useAsyncList', async () => {
-        let load = jest
-          .fn()
-          .mockImplementationOnce(getFilterItems)
-          .mockImplementationOnce(mockSecondCall);
-
-        let AsyncComboBox = () => {
-          let list = useAsyncList({
-            load: load
-          });
-
-          return (
-            <ComboBox
-              items={list.items}
-              label="Combobox"
-              inputValue={list.filterText}
-              onInputChange={list.setFilterText}
-              loadingState={list.state}
-              onLoadMore={list.loadMore}>
-              {(item) => <Item>{item.name}</Item>}
-            </ComboBox>
-          );
-        };
-
-        let {getByRole} = render(
+        let {getByRole, getByTestId, getByText} = render(
           <Provider theme={theme}>
             <AsyncComboBox />
           </Provider>
         );
 
-
         let button = getByRole('button');
         let progressSpinner = getByRole('progressbar');
         expect(progressSpinner).toBeTruthy();
-        expect(progressSpinner).toHaveAttribute('aria-label', 'Loading...');
 
-        await waitFor(() => expect(load).toHaveBeenCalledTimes(1))
+        await waitFor(() => expect(load).toHaveBeenCalledTimes(1));
+        expect(load).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            'filterText': ''
+          })
+        );
 
         act(() => {
           triggerPress(button);
@@ -3249,23 +3210,62 @@ describe('ComboBox', function () {
 
         expect(() => getByRole('progressbar')).toThrow();
 
+        let tray = getByTestId('tray');
+        expect(tray).toBeVisible();
+        expect(() => within(tray).getByRole('progressbar')).toThrow();
+
         let listbox = getByRole('listbox');
-        expect(listbox).toBeTruthy();
+        expect(() => within(listbox).getByRole('progressbar')).toThrow;
         let items = within(listbox).getAllByRole('option');
         expect(items).toHaveLength(3);
         expect(items[0]).toHaveTextContent('Aardvark');
         expect(items[1]).toHaveTextContent('Kangaroo');
         expect(items[2]).toHaveTextContent('Snake');
 
-        // TODO adapt this to mobile
-        let combobox = getByRole('combobox');
+        let trayInput = within(tray).getByRole('searchbox');
         act(() => {
-          combobox.focus();
-          fireEvent.change(combobox, {target: {value: ''}});
+          trayInput.focus();
+          fireEvent.change(trayInput, {target: {value: 'aard'}});
           jest.runAllTimers();
         });
+
+        let trayInputProgress = within(tray).getByRole('progressbar');
+        expect(trayInputProgress).toBeTruthy();
+        expect(() => within(listbox).getByRole('progressbar')).toThrow;
+
+        await waitFor(() => expect(load).toHaveBeenCalledTimes(2));
+        expect(load).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            'filterText': 'aard'
+          })
+        );
+        expect(() => within(tray).getByRole('progressbar')).toThrow();
+
+        items = within(listbox).getAllByRole('option');
+        expect(items).toHaveLength(1);
+        expect(items[0]).toHaveTextContent('Aardvark');
+
+        act(() => {
+          triggerPress(items[0]);
+          jest.runAllTimers();
+        });
+
+        progressSpinner = getByRole('progressbar');
+        expect(progressSpinner).toBeTruthy();
+        expect(progressSpinner).toHaveAttribute('aria-label', 'Loading...');
+
+        await waitFor(() => expect(load).toHaveBeenCalledTimes(3));
+        expect(load).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            'filterText': 'Aardvark'
+          })
+        );
+
+        expect(() => getByRole('progressbar')).toThrow();
+        expect(() => getByTestId('tray')).toThrow();
+        expect(button).toHaveAttribute('aria-labelledby', `${getByText('Combobox').id} ${getByText('Aardvark').id}`);
       });
-    })
+    });
   });
 
   describe('accessibility', function () {
