@@ -347,10 +347,11 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
 // scroll wheel needs to be added not passively so it's cancelable, small helper hook to remember that
 function useScrollWheel({onScroll, capture}: {onScroll: (e) => void, capture: boolean}, ref: RefObject<HTMLElement>) {
   useEffect(() => {
-    ref.current.addEventListener('wheel', onScroll, capture);
+    let elem = ref.current;
+    elem.addEventListener('wheel', onScroll, capture);
 
     return () => {
-      ref.current.removeEventListener('wheel', onScroll, capture);
+      elem.removeEventListener('wheel', onScroll, capture);
     };
   }, [onScroll, ref, capture]);
 }
