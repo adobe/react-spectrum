@@ -29,7 +29,6 @@ import {NumberFieldState} from '@react-stately/numberfield';
 import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
 import {useFocus} from '@react-aria/interactions';
 import {
-  useLocale,
   useMessageFormatter,
   useNumberFormatter
 } from '@react-aria/i18n';
@@ -82,7 +81,6 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
   } = state;
 
   const formatMessage = useMessageFormatter(intlMessages);
-  let {direction} = useLocale();
 
   const inputId = useId();
 
@@ -161,13 +159,13 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     // stop scrolling the page
     e.preventDefault();
 
-    let isRTL = direction === 'rtl';
-    if (e.deltaY > 0 || (isRTL ? e.deltaX < 0 : e.deltaX > 0)) {
+    if (e.deltaY > 0) {
       increment();
     } else {
       decrement();
     }
-  }, [isReadOnly, isDisabled, decrement, increment, direction]);
+  }, [isReadOnly, isDisabled, decrement, increment]);
+  useScrollWheel({onScroll: onWheel, capture: false}, inputRef);
 
   /**
    * This block determines the inputMode, if hasDecimal then 'decimal', otherwise 'numeric'.
@@ -322,7 +320,6 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     inputProps,
     focusProps,
     {
-      onWheel,
       // override the spinbutton role, we can't focus a spin button with VO
       role: null,
       'aria-roledescription': formatMessage('Number field'),
@@ -345,4 +342,15 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     incrementButtonProps,
     decrementButtonProps
   };
+}
+
+// scroll wheel needs to be added not passively so it's cancelable, small helper hook to remember that
+function useScrollWheel({onScroll, capture}: {onScroll: (e) => void, capture: boolean}, ref: RefObject<HTMLElement>) {
+  useEffect(() => {
+    ref.current.addEventListener('wheel', onScroll, capture);
+
+    return () => {
+      ref.current.removeEventListener('wheel', onScroll, capture);
+    };
+  }, [onScroll, ref, capture]);
 }
