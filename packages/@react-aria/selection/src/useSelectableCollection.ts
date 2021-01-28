@@ -13,17 +13,12 @@
 import {FocusEvent, HTMLAttributes, KeyboardEvent, RefObject, useEffect} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
+import {isMac, mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useTypeSelect} from './useTypeSelect';
 
-const isMac =
-  typeof window !== 'undefined' && window.navigator != null
-    ? /^Mac/.test(window.navigator.platform)
-    : false;
-
 function isCtrlKeyPressed(e: KeyboardEvent) {
-  if (isMac) {
+  if (isMac()) {
     return e.metaKey;
   }
 
