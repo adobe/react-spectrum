@@ -270,6 +270,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     state.setInputValue(value);
   };
 
+
+  let compositionStartState = useRef(null);
   let {labelProps, inputProps} = useTextField(
     {
       label,
@@ -287,7 +289,33 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
       type: 'text', // Can't use type="number" because then we can't have things like $ in the field.
       inputMode,
       onChange,
-      onBeforeInput
+      onBeforeInput,
+      onCompositionStart() {
+        // Chrome does not implement Input Events Level 2, which specifies the insertFromComposition
+        // and deleteByComposition inputType values for the beforeinput event. These are meant to occur
+        // at the end of a composition (e.g. Pinyin IME, Android auto correct, etc.), and crucially, are
+        // cancelable. The insertCompositionText and deleteCompositionText input types are not cancelable,
+        // nor would we want to cancel them because the input from the user is incomplete at that point.
+        // In Safari, insertFromComposition/deleteFromComposition will fire, however, allowing us to cancel
+        // the final composition result if it is invalid. As a fallback for Chrome and Firefox, which either
+        // don't support Input Events Level 2, or beforeinput at all, we store the state of the input when
+        // the compositionstart event fires, and undo the changes in compositionend (below) if it is invalid.
+        // Unfortunately, this messes up the undo/redo stack, but until insertFromComposition/deleteByComposition
+        // are implemented, there is no other way to prevent composed input.
+        // See https://bugs.chromium.org/p/chromium/issues/detail?id=1022204
+        let {value, selectionStart, selectionEnd} = inputRef.current;
+        compositionStartState.current = {value, selectionStart, selectionEnd};
+      },
+      onCompositionEnd() {
+        if (!state.validate(inputRef.current.value)) {
+          // Restore the input value in the DOM immediately so we can synchronously update the selection position.
+          // But also update the value in React state as well so it is correct for future updates.
+          let {value, selectionStart, selectionEnd} = compositionStartState.current;
+          inputRef.current.value = value;
+          inputRef.current.setSelectionRange(selectionStart, selectionEnd);
+          state.setInputValue(value);
+        }
+      }
     }, inputRef);
 
   const inputFieldProps = mergeProps(

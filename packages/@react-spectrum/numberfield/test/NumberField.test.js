@@ -1921,6 +1921,36 @@ describe('NumberField', function () {
     });
   });
 
+  it('handles compositionend events and undoes them if invalid', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy});
+
+    act(() => {textField.focus();});
+    typeText(textField, '123');
+    textField.setSelectionRange(1, 1);
+
+    // fire compositionstart and beforeinput
+    fireEvent.compositionStart(textField);
+    let e = new InputEvent('beforeinput', {cancelable: true});
+    e.inputType = 'insertCompositionText';
+    let proceed = fireEvent(textField, e);
+    expect(proceed).toBe(true);
+
+    // fire input event to update the value
+    fireEvent.input(textField, {data: 'ü'});
+
+    // manually update value and selection state because JSDOM won't
+    textField.value = '1ü23';
+    textField.setSelectionRange(2, 2);
+
+    // Fire compositionend
+    fireEvent.compositionEnd(textField);
+
+    // Value and selection should be reverted
+    expect(textField.value).toBe('123');
+    expect(textField.selectionStart).toBe(1);
+    expect(textField.selectionEnd).toBe(1);
+  });
+
   describe('locale specific', () => {
     describe('spanish (spain)', () => {
       it('can determine the group symbol', () => {
