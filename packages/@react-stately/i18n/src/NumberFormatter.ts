@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {NumberingSystem} from './numberingSystems';
-
 let formatterCache = new Map<string, Intl.NumberFormat>();
 
 let supportsSignDisplay = false;
@@ -23,7 +21,7 @@ try {
 
 export interface NumberFormatOptions extends Intl.NumberFormatOptions {
   /** Overrides default numeral system for the current locale. */
-  numberingSystem?: NumberingSystem
+  numberingSystem?: string
 }
 
 /**

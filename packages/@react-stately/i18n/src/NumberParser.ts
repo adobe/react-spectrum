@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {getNumberingSystem} from './numberingSystems';
-
 interface Symbols {
   minusSign: string,
   plusSign: string,
@@ -23,6 +21,7 @@ interface Symbols {
 }
 
 const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
+const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec'];
 
 export function parseNumber(locale: string, options: Intl.NumberFormatOptions, value: string) {
   return getNumberParser(locale, options, value).parse(value);
@@ -32,15 +31,32 @@ export function isValidPartialNumber(locale: string, options: Intl.NumberFormatO
   return getNumberParser(locale, options, value).isValidPartialNumber(value, minValue, maxValue);
 }
 
+export function getNumberingSystem(locale: string, options: Intl.NumberFormatOptions, value: string): string {
+  return getNumberParser(locale, options, value).options.numberingSystem;
+}
+
 const numberParserCache = new Map<string, NumberParser>();
 function getNumberParser(locale: string, options: Intl.NumberFormatOptions, value: string) {
-  if (!locale.includes('-u-nu-')) {
-    let numberingSystem = getNumberingSystem(value);
-    if (numberingSystem) {
-      locale = `${locale}-u-nu-${numberingSystem}`;
+  // First try the default numbering system for the provided locale
+  let defaultParser = getCachedNumberParser(locale, options);
+
+  // If that doesn't match, and the locale doesn't include a hard coded numbering system,
+  // try each of the other supported numbering systems until we find one that matches.
+  if (!locale.includes('-u-nu-') && !defaultParser.isValidPartialNumber(value)) {
+    for (let numberingSystem of NUMBERING_SYSTEMS) {
+      if (numberingSystem !== defaultParser.options.numberingSystem) {
+        let parser = getCachedNumberParser(locale + '-u-nu-' + numberingSystem, options);
+        if (parser.isValidPartialNumber(value)) {
+          return parser;
+        }
+      }
     }
   }
 
+  return defaultParser;
+}
+
+function getCachedNumberParser(locale: string, options: Intl.NumberFormatOptions) {
   let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
   let parser = numberParserCache.get(cacheKey);
   if (!parser) {
@@ -125,8 +141,6 @@ class NumberParser {
       value = value.slice(this.symbols.minusSign.length);
     } else if (this.symbols.plusSign && value.startsWith(this.symbols.plusSign) && maxValue > 0) {
       value = value.slice(this.symbols.plusSign.length);
-    } else if (this.options.currencySign === 'accounting') {
-      value = value.replace(/\(/, '').replace(/\)/, '');
     }
 
     // Numbers cannot start with a group separator

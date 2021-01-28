@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {isValidPartialNumber, parseNumber} from '../src/NumberParser';
+import {getNumberingSystem, isValidPartialNumber, parseNumber} from '../src/NumberParser';
 
 describe('NumberParser', function () {
   describe('parse', function () {
@@ -146,11 +146,21 @@ describe('NumberParser', function () {
     it('should support decimals', function () {
       expect(isValidPartialNumber('en-US', {style: 'decimal'}, '10.5')).toBe(true);
       expect(isValidPartialNumber('en-US', {style: 'decimal'}, '-10.5')).toBe(true);
+      expect(isValidPartialNumber('en-US', {style: 'decimal'}, '.')).toBe(true);
+      expect(isValidPartialNumber('en-US', {style: 'decimal'}, '.5')).toBe(true);
+
+      // Starting with arabic decimal point
+      expect(isValidPartialNumber('ar-AE', {style: 'decimal'}, '٫')).toBe(true);
+      expect(isValidPartialNumber('ar-AE', {style: 'decimal'}, '٫٥')).toBe(true);
+
+      // Arabic locale, starting with latin decimal point
+      expect(isValidPartialNumber('ar-AE', {style: 'decimal'}, '.')).toBe(true);
+      expect(isValidPartialNumber('ar-AE', {style: 'decimal'}, '.5')).toBe(true);
     });
 
     it('should support group characters', function () {
-      expect(isValidPartialNumber('en-US', {style: 'decimal'}, ',')).toBe(false);
-      expect(isValidPartialNumber('en-US', {style: 'decimal'}, ',000')).toBe(false);
+      expect(isValidPartialNumber('en-US', {style: 'decimal'}, ',')).toBe(true); // en-US-u-nu-arab uses commas as the decimal point character
+      expect(isValidPartialNumber('en-US', {style: 'decimal'}, ',000')).toBe(false); // latin numerals cannot follow arab decimal point
       expect(isValidPartialNumber('en-US', {style: 'decimal'}, '1,000')).toBe(true);
       expect(isValidPartialNumber('en-US', {style: 'decimal'}, '-1,000')).toBe(true);
       expect(isValidPartialNumber('en-US', {style: 'decimal'}, '1,000,000')).toBe(true);
@@ -210,6 +220,10 @@ describe('NumberParser', function () {
       expect(isValidPartialNumber('en-US', {style: 'currency', currency: 'USD'}, '(')).toBe(false);
       expect(isValidPartialNumber('en-US', {style: 'currency', currency: 'USD', currencySign: 'accounting'}, '(')).toBe(true);
       expect(isValidPartialNumber('en-US', {style: 'currency', currency: 'USD', currencySign: 'accounting'}, '($10)')).toBe(true);
+
+      // typing latin characters in arabic locale should work
+      expect(isValidPartialNumber('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}, '(')).toBe(true);
+      expect(isValidPartialNumber('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}, '(10)')).toBe(true);
     });
 
     it('should support units', function () {
@@ -230,6 +244,31 @@ describe('NumberParser', function () {
       expect(isValidPartialNumber('en-US', {style: 'percent', minimumFractionDigits: 2}, '10.5%')).toBe(true);
       expect(isValidPartialNumber('en-US', {style: 'percent'}, '%')).toBe(true);
       expect(isValidPartialNumber('en-US', {style: 'percent'}, '10 %')).toBe(true);
+    });
+  });
+
+  describe('getNumberingSystem', function () {
+    it('should return the default numbering system for a locale', function () {
+      expect(getNumberingSystem('en-US', {style: 'decimal'}, '12')).toBe('latn');
+      expect(getNumberingSystem('en-US', {style: 'decimal'}, '.')).toBe('latn');
+      expect(getNumberingSystem('en-US', {style: 'decimal'}, '12.5')).toBe('latn');
+
+      expect(getNumberingSystem('ar-AE', {style: 'decimal'}, '١٢')).toBe('arab');
+      expect(getNumberingSystem('ar-AE', {style: 'decimal'}, '٫')).toBe('arab');
+      expect(getNumberingSystem('ar-AE', {style: 'decimal'}, '١٫٢')).toBe('arab');
+    });
+
+    it('should support using non-default numbering systems for a locale', function () {
+      expect(getNumberingSystem('en-US', {style: 'decimal'}, '١٢')).toBe('arab');
+      expect(getNumberingSystem('en-US', {style: 'decimal'}, '٫')).toBe('arab');
+      expect(getNumberingSystem('en-US', {style: 'decimal'}, '١٫٢')).toBe('arab');
+
+      expect(getNumberingSystem('ar-AE', {style: 'decimal'}, '12')).toBe('latn');
+      expect(getNumberingSystem('ar-AE', {style: 'decimal'}, '.')).toBe('latn');
+      expect(getNumberingSystem('ar-AE', {style: 'decimal'}, '12.5')).toBe('latn');
+
+      expect(getNumberingSystem('en-US', {style: 'decimal'}, '一二')).toBe('hanidec');
+      expect(getNumberingSystem('en-US', {style: 'decimal'}, '一二.五')).toBe('hanidec');
     });
   });
 });

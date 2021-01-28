@@ -270,7 +270,6 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     state.setInputValue(value);
   };
 
-
   let compositionStartState = useRef(null);
   let {labelProps, inputProps} = useTextField(
     {

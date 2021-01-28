@@ -1945,7 +1945,7 @@ describe('NumberField', function () {
 
     // fire compositionstart and beforeinput
     fireEvent.compositionStart(textField);
-    let e = new InputEvent('beforeinput', {cancelable: true});
+    let e = new InputEvent('beforeinput', {cancelable: false, data: 'ü'});
     e.inputType = 'insertCompositionText';
     let proceed = fireEvent(textField, e);
     expect(proceed).toBe(true);
