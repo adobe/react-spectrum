@@ -880,6 +880,21 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
+  `('$Name can use accounting sign in arabic with latin numerals', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencySign: 'accounting'}}, {locale: 'ar-AE'});
+
+    act(() => {textField.focus();});
+    userEvent.type(textField, '(10)');
+    expect(textField).toHaveAttribute('value', '(10)');
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '(US$10.00)');
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenLastCalledWith(-10);
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
   `('$Name can edit a currencySign accounting in a locale that does not use the parenthesis notation', () => {
     let {textField, incrementButton} = renderNumberField({
       onChange: onChangeSpy,
