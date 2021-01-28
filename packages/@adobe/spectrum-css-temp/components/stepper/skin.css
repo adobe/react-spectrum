@@ -232,6 +232,15 @@ governing permissions and limitations under the License.
       &.is-disabled {
         border-color: var(--spectrum-textfield-quiet-border-color-disabled);
       }
+
+      &.is-active {
+        border-color: var(--spectrum-actionbutton-border-color-hover);
+        color: var(--spectrum-actionbutton-text-color-hover);
+
+        .spectrum-Stepper-icon {
+          fill: var(--spectrum-actionbutton-icon-color-hover);
+        }
+      }
     }
 
     &:focus {
