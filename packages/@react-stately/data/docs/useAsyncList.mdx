@@ -176,9 +176,9 @@ let list = useAsyncList({
 
 ## Filtering
 
-There are many instances where your list of data should be filtered, such as user lookup or query searches.
-For server side filtering, this can be implemented by levering the `filterText` passed to the `load` as an API parameter.
-`useAsyncList` then returns the state variable `filterText` and its setter `setFilterText`, allowing you to update the
+There are many instances where your list of data may need to be filtered, such as during user lookup or query searches.
+For server side filtering, this can be implemented by leveraging the `filterText` passed to the `load` as an API parameter.
+`useAsyncList` returns the state variable `filterText` and its setter `setFilterText`, allowing you to update the
 `filterText` used within `load` in response to any updates within your component.
 
 ### Server side filtering
