@@ -19,7 +19,7 @@ import {useOverlayPosition} from '@react-aria/overlays';
 import {useTooltipTrigger} from '@react-aria/tooltip';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
 
-const DEFAULT_OFFSET = 7; // Closest visual match to Spectrum's mocks
+const DEFAULT_OFFSET = -1; // Closest visual match to Spectrum's mocks
 const DEFAULT_CROSS_OFFSET = 0;
 
 function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
