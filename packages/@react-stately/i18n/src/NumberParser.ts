@@ -137,7 +137,7 @@ class NumberParser {
     value = this.sanitize(value);
 
     // Remove minus or plus sign, which must be at the start of the string.
-    if (this.symbols.minusSign && value.startsWith(this.symbols.minusSign) && minValue < 0) {
+    if (value.startsWith(this.symbols.minusSign) && minValue < 0) {
       value = value.slice(this.symbols.minusSign.length);
     } else if (this.symbols.plusSign && value.startsWith(this.symbols.plusSign) && maxValue > 0) {
       value = value.slice(this.symbols.plusSign.length);
@@ -163,7 +163,7 @@ const nonLiteralParts = new Set(['decimal', 'fraction', 'integer', 'minusSign', 
 function getSymbols(formatter: Intl.NumberFormat, intlOptions: Intl.ResolvedNumberFormatOptions): Symbols {
   // Note: some locale's don't add a group symbol until there is a ten thousands place
   let allParts = formatter.formatToParts(-10000.1);
-  let minusSign = allParts.find(p => p.type === 'minusSign')?.value;
+  let minusSign = allParts.find(p => p.type === 'minusSign')?.value ?? '-';
   let posAllParts = formatter.formatToParts(10000.1);
   let plusSign = posAllParts.find(p => p.type === 'plusSign')?.value;
   let singularParts = formatter.formatToParts(1);

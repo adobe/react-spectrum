@@ -73,8 +73,15 @@ describe('NumberParser', function () {
       });
 
       it('should support accounting format', function () {
+        expect(parseNumber('en-US', {currency: 'USD', style: 'currency', currencySign: 'accounting'}, '(1.50)')).toBe(-1.5);
         expect(parseNumber('en-US', {currency: 'USD', style: 'currency', currencySign: 'accounting'}, '($1.50)')).toBe(-1.5);
         expect(parseNumber('en-US', {currency: 'USD', style: 'currency', currencyDisplay: 'code', currencySign: 'accounting'}, '(USD 1.50)')).toBe(-1.5);
+      });
+
+      it('should support normal negative numbers in accounting format', function () {
+        expect(parseNumber('en-US', {currency: 'USD', style: 'currency', currencySign: 'accounting'}, '-1.5')).toBe(-1.5);
+        expect(parseNumber('en-US', {currency: 'USD', style: 'currency', currencySign: 'accounting'}, '-$1.50')).toBe(-1.5);
+        expect(parseNumber('en-US', {currency: 'USD', style: 'currency', currencyDisplay: 'code', currencySign: 'accounting'}, 'USD -1.50')).toBe(-1.5);
       });
 
       it('should return NaN for unknown currency symbols', function () {
@@ -220,10 +227,15 @@ describe('NumberParser', function () {
       expect(isValidPartialNumber('en-US', {style: 'currency', currency: 'USD'}, '(')).toBe(false);
       expect(isValidPartialNumber('en-US', {style: 'currency', currency: 'USD', currencySign: 'accounting'}, '(')).toBe(true);
       expect(isValidPartialNumber('en-US', {style: 'currency', currency: 'USD', currencySign: 'accounting'}, '($10)')).toBe(true);
+      expect(isValidPartialNumber('en-US', {style: 'currency', currency: 'USD', currencySign: 'accounting'}, '-')).toBe(true);
+      expect(isValidPartialNumber('en-US', {style: 'currency', currency: 'USD', currencySign: 'accounting'}, '-10')).toBe(true);
+      expect(isValidPartialNumber('en-US', {style: 'currency', currency: 'USD', currencySign: 'accounting'}, '-$10')).toBe(true);
 
       // typing latin characters in arabic locale should work
       expect(isValidPartialNumber('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}, '(')).toBe(true);
       expect(isValidPartialNumber('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}, '(10)')).toBe(true);
+      expect(isValidPartialNumber('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}, '-')).toBe(true);
+      expect(isValidPartialNumber('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}, '-10')).toBe(true);
     });
 
     it('should support units', function () {
