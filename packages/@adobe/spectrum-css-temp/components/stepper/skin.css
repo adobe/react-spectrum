@@ -120,6 +120,10 @@ governing permissions and limitations under the License.
       .spectrum-Stepper-button {
         border-color: var(--spectrum-textfield-border-color-error);
       }
+
+      .spectrum-Stepper-input {
+        border-color: var(--spectrum-textfield-border-color-error);
+      }
     }
   }
 
