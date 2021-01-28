@@ -121,10 +121,12 @@ class NumberParser {
     value = this.sanitize(value);
 
     // Remove minus or plus sign, which must be at the start of the string.
-    if (value.startsWith(this.symbols.minusSign) && minValue < 0) {
+    if (this.symbols.minusSign && value.startsWith(this.symbols.minusSign) && minValue < 0) {
       value = value.slice(this.symbols.minusSign.length);
-    } else if (value.startsWith(this.symbols.plusSign) && maxValue > 0) {
+    } else if (this.symbols.plusSign && value.startsWith(this.symbols.plusSign) && maxValue > 0) {
       value = value.slice(this.symbols.plusSign.length);
+    } else if (this.options.currencySign === 'accounting') {
+      value = value.replace(/\(/, '').replace(/\)/, '');
     }
 
     // Numbers cannot start with a group separator
