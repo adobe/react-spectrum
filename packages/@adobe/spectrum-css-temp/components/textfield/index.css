@@ -155,18 +155,6 @@ governing permissions and limitations under the License.
     box-shadow: none;
   }
 
-  .spectrum-Textfield--valid & {
-    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
-  }
-
-  .spectrum-Textfield--invalid & {
-    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
-  }
-
-  .spectrum-Textfield--loadable & {
-    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
-  }
-
   .spectrum-Textfield--multiline & {
     height: var(--spectrum-textfield-multiline-height);
     min-height: var(--spectrum-textfield-multiline-min-height);
@@ -187,6 +175,18 @@ governing permissions and limitations under the License.
     /* Treat all quiet inputs and textareas the same */
     resize: none;
     overflow-y: hidden;
+  }
+
+  .spectrum-Textfield--valid & {
+    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
+  }
+
+  .spectrum-Textfield--invalid & {
+    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
+  }
+
+  .spectrum-Textfield--loadable & {
+    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 }
 
