@@ -69,6 +69,7 @@ class NumberParser {
     // Remove group characters, and replace decimal points and numerals with ASCII values.
     fullySanitizedValue = replaceAll(fullySanitizedValue, this.symbols.group, '')
       .replace(this.symbols.decimal, '.')
+      .replace(this.symbols.minusSign, '-')
       .replace(this.symbols.numeral, this.symbols.index);
 
     let newValue = fullySanitizedValue ? +fullySanitizedValue : NaN;
@@ -94,6 +95,10 @@ class NumberParser {
   sanitize(value: string) {
     // Remove literals and whitespace, which are allowed anywhere in the string
     value = value.replace(this.symbols.literals, '');
+
+    // Replace the ASCII minus sign with the minus sign used in the current locale
+    // so that both are allowed in case the user's keyboard doesn't have the locale's minus sign.
+    value = value.replace('-', this.symbols.minusSign);
 
     // In arab numeral system, their decimal character is 1643, but most keyboards don't type that
     // instead they use the , (44) character or apparently the (1548) character.

@@ -38,6 +38,14 @@ describe('NumberParser', function () {
       expect(parseNumber('en-US', {style: 'decimal', signDisplay: 'always'}, '+10')).toBe(10);
     });
 
+    it('should support negative numbers with different minus signs', function () {
+      expect(parseNumber('en-US', {style: 'decimal'}, '-10')).toBe(-10);
+      expect(parseNumber('en-US', {style: 'decimal'}, '\u221210')).toBe(NaN);
+
+      expect(parseNumber('fi-FI', {style: 'decimal'}, '-10')).toBe(-10);
+      expect(parseNumber('fi-FI', {style: 'decimal'}, '\u221210')).toBe(-10);
+    });
+
     it('should return NaN for random characters', function () {
       expect(parseNumber('en-US', {style: 'decimal'}, 'g')).toBe(NaN);
       expect(parseNumber('en-US', {style: 'decimal'}, '1abc')).toBe(NaN);
@@ -159,6 +167,18 @@ describe('NumberParser', function () {
       expect(isValidPartialNumber('en-US', {style: 'decimal'}, '+10')).toBe(false);
       expect(isValidPartialNumber('en-US', {style: 'decimal', signDisplay: 'always'}, '+')).toBe(true);
       expect(isValidPartialNumber('en-US', {style: 'decimal', signDisplay: 'always'}, '+10')).toBe(true);
+    });
+
+    it('should support negative numbers with different minus signs', function () {
+      expect(isValidPartialNumber('en-US', {style: 'decimal'}, '-')).toBe(true);
+      expect(isValidPartialNumber('en-US', {style: 'decimal'}, '-10')).toBe(true);
+      expect(isValidPartialNumber('en-US', {style: 'decimal'}, '\u2212')).toBe(false);
+      expect(isValidPartialNumber('en-US', {style: 'decimal'}, '\u221210')).toBe(false);
+
+      expect(isValidPartialNumber('fi-FI', {style: 'decimal'}, '-')).toBe(true);
+      expect(isValidPartialNumber('fi-FI', {style: 'decimal'}, '-10')).toBe(true);
+      expect(isValidPartialNumber('fi-FI', {style: 'decimal'}, '\u2212')).toBe(true);
+      expect(isValidPartialNumber('fi-FI', {style: 'decimal'}, '\u221210')).toBe(true);
     });
 
     it('should return false for negative numbers if minValue >= 0', function () {
