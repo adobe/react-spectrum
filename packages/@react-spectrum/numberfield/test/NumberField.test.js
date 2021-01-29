@@ -84,7 +84,7 @@ describe('NumberField', function () {
     expect(container).toHaveAttribute('role', 'group');
     expect(textField).toBeTruthy();
     expect(textField).toHaveAttribute('type', 'text');
-    expect(textField).toHaveAttribute('inputMode', 'text');
+    expect(textField).toHaveAttribute('inputMode', 'numeric');
     expect(incrementButton).toBeTruthy();
     expect(decrementButton).toBeTruthy();
   });
@@ -112,20 +112,34 @@ describe('NumberField', function () {
   });
 
   it.each`
-    Name
-    ${'NumberField'}
-  `('$Name switches to decimal inputMode if no negative numbers', () => {
+    Name              | props                                                       | platform    | UA               | inputMode
+    ${'NumberField'}  | ${{}}                                                       | ${'iPhone'} | ${'AppleWebKit'} | ${'text'}
+    ${'NumberField'}  | ${{formatOptions: {maximumFractionDigits: 0}}}              | ${'iPhone'} | ${'AppleWebKit'} | ${'text'}
+    ${'NumberField'}  | ${{minValue: 0}}                                            | ${'iPhone'} | ${'AppleWebKit'} | ${'decimal'}
+    ${'NumberField'}  | ${{minValue: 0, formatOptions: {maximumFractionDigits: 0}}} | ${'iPhone'} | ${'AppleWebKit'} | ${'numeric'}
+    ${'NumberField'}  | ${{}}                                                       | ${'iPad'}   | ${'AppleWebKit'} | ${'numeric'}
+    ${'NumberField'}  | ${{formatOptions: {maximumFractionDigits: 0}}}              | ${'iPad'}   | ${'AppleWebKit'} | ${'numeric'}
+    ${'NumberField'}  | ${{minValue: 0}}                                            | ${'iPad'}   | ${'AppleWebKit'} | ${'numeric'}
+    ${'NumberField'}  | ${{minValue: 0, formatOptions: {maximumFractionDigits: 0}}} | ${'iPad'}   | ${'AppleWebKit'} | ${'numeric'}
+    ${'NumberField'}  | ${{}}                                                       | ${'Mac'}    | ${'AppleWebKit'} | ${'numeric'}
+    ${'NumberField'}  | ${{formatOptions: {maximumFractionDigits: 0}}}              | ${'Mac'}    | ${'AppleWebKit'} | ${'numeric'}
+    ${'NumberField'}  | ${{minValue: 0}}                                            | ${'Mac'}    | ${'AppleWebKit'} | ${'numeric'}
+    ${'NumberField'}  | ${{minValue: 0, formatOptions: {maximumFractionDigits: 0}}} | ${'Mac'}    | ${'AppleWebKit'} | ${'numeric'}
+    ${'NumberField'}  | ${{}}                                                       | ${'Linux'}  | ${'Android'}     | ${'numeric'}
+    ${'NumberField'}  | ${{formatOptions: {maximumFractionDigits: 0}}}              | ${'Linux'}  | ${'Android'}     | ${'numeric'}
+    ${'NumberField'}  | ${{minValue: 0}}                                            | ${'Linux'}  | ${'Android'}     | ${'decimal'}
+    ${'NumberField'}  | ${{minValue: 0, formatOptions: {maximumFractionDigits: 0}}} | ${'Linux'}  | ${'Android'}     | ${'numeric'}
+  `('$Name uses inputMode=$inputMode on $platform $UA with $props', ({props, platform, UA, inputMode}) => {
+    let platformMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => platform);
+    let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => UA);
+
     let {
       textField
-    } = renderNumberField({onChange: onChangeSpy, minValue: 0});
+    } = renderNumberField({onChange: onChangeSpy, ...props});
+    platformMock.mockRestore();
+    uaMock.mockRestore();
 
-    expect(textField).toHaveAttribute('inputMode', 'decimal');
-
-    act(() => {textField.focus();});
-    typeText(textField, '-5.2');
-    expect(textField).toHaveAttribute('value', '5.2');
-    act(() => {textField.blur();});
-    expect(onChangeSpy).toHaveBeenCalledWith(5.2);
+    expect(textField).toHaveAttribute('inputMode', inputMode);
   });
 
   it.each`

@@ -24,9 +24,10 @@ import {
 } from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useId} from '@react-aria/utils';
+import {isAndroid, isIPhone, mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
+import {TextInputDOMProps} from '@react-types/shared';
 import {useFocus} from '@react-aria/interactions';
 import {
   useMessageFormatter,
@@ -167,17 +168,32 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
   }, [isReadOnly, isDisabled, decrement, increment]);
   useScrollWheel({onScroll: onWheel, capture: false}, inputRef);
 
-  /**
-   * This block determines the inputMode, if hasDecimal then 'decimal', otherwise 'numeric'.
-   * This will affect the software keyboard that is shown. 'decimal' has a decimal character on the keyboard
-   * and 'numeric' does not.
-   */
+  // The inputMode attribute influences the software keyboard that is shown on touch devices.
+  // Browsers and operating systems are quite inconsistent about what keys are available, however.
+  // We choose between numeric and decimal based on whether we allow negative and fractional numbers,
+  // and based on testing on various devices to determine what keys are available in each inputMode.
   let numberFormatter = useNumberFormatter(formatOptions);
   let intlOptions = useMemo(() => numberFormatter.resolvedOptions(), [numberFormatter]);
   let hasDecimals = intlOptions.maximumFractionDigits > 0;
-  let inputMode: 'decimal' | 'numeric' | 'text' = hasDecimals ? 'decimal' : 'numeric';
-  if (isNaN(state.minValue) || state.minValue < 0) { // iOS - neither allows negative signs, so use full keyboard
-    inputMode = 'text';
+  let hasNegative = isNaN(state.minValue) || state.minValue < 0;
+  let inputMode: TextInputDOMProps['inputMode'] = 'numeric';
+  if (isIPhone()) {
+    // iPhone doesn't have a minus sign in either numeric or decimal.
+    // Note this is only for iPhone, not iPad, which always has both
+    // minus and decimal in numeric.
+    if (hasNegative) {
+      inputMode = 'text';
+    } else if (hasDecimals) {
+      inputMode = 'decimal';
+    }
+  } else if (isAndroid()) {
+    // Android numeric has both a decimal point and minus key.
+    // decimal does not have a minus key.
+    if (hasNegative) {
+      inputMode = 'numeric';
+    } else if (hasDecimals) {
+      inputMode = 'decimal';
+    }
   }
 
   let stateRef = useRef(state);
