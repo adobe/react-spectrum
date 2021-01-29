@@ -123,7 +123,7 @@ export function useSpinButton(
 
   useEffect(() => {
     if (isFocused.current) {
-      announce(textValue === '' ? formatMessage('Empty') : textValue || `${value}`);
+      announce((textValue === '' ? formatMessage('Empty') : textValue || `${value}`).replace('-', '−'), 'assertive');
     }
   }, [textValue, value, formatMessage]);
 
@@ -164,7 +164,7 @@ export function useSpinButton(
       role: 'spinbutton',
       'aria-valuenow': !isNaN(value) ? value : null,
       // by having a message, this prevents iOS VO from reading off '50%' for an empty field
-      'aria-valuetext': textValue === '' || !textValue ? formatMessage('Empty') : textValue,
+      'aria-valuetext': (textValue === '' || !textValue ? formatMessage('Empty') : textValue || `${value}`).replace('-', '−'),
       'aria-valuemin': minValue,
       'aria-valuemax': maxValue,
       'aria-disabled': isDisabled || null,
