@@ -43,15 +43,24 @@ export function getNumberFormatter(locale: string, options: NumberFormatOptions 
   let numberFormatter = new Intl.NumberFormat(locale, options);
   // @ts-ignore
   let {signDisplay} = options || {};
-  formatterCache.set(cacheKey, (!supportsSignDisplay && signDisplay != null) ? new Proxy(numberFormatter, {
-    get(target, property) {
-      if (property === 'format') {
-        return (v) => numberFormatSignDisplayPolyfill(numberFormatter, signDisplay, v);
-      } else {
-        return target[property];
+  if (!supportsSignDisplay && signDisplay != null) {
+    let proxy = new Proxy(numberFormatter, {
+      get(target, property) {
+        if (property === 'format') {
+          return (v) => numberFormatSignDisplayPolyfill(numberFormatter, signDisplay, v);
+        } else if (property === 'resolvedOptions') {
+          return () => ({...numberFormatter.resolvedOptions(), signDisplay});
+        } else {
+          return target[property];
+        }
       }
-    }
-  }) : numberFormatter);
+    });
+
+    formatterCache.set(cacheKey, proxy);
+    return proxy;
+  }
+
+  formatterCache.set(cacheKey, numberFormatter);
   return numberFormatter;
 }
 

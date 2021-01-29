@@ -62,7 +62,7 @@ storiesOf('NumberField', module)
   )
   .add(
     'percent using sign',
-    () => render({formatOptions: {style: 'unit', unit: 'percent', signDisplay: 'always'}})
+    () => render({formatOptions: {style: 'percent', signDisplay: 'always'}})
   )
   .add(
     'disabled',

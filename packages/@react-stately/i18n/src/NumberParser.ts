@@ -75,7 +75,7 @@ class NumberParser {
   constructor(locale: string, options: Intl.NumberFormatOptions = {}) {
     this.formatter = new Intl.NumberFormat(locale, options);
     this.options = this.formatter.resolvedOptions();
-    this.symbols = getSymbols(this.formatter, this.options);
+    this.symbols = getSymbols(this.formatter, this.options, options);
   }
 
   parse(value: string) {
@@ -160,13 +160,21 @@ class NumberParser {
 
 const nonLiteralParts = new Set(['decimal', 'fraction', 'integer', 'minusSign', 'plusSign', 'group']);
 
-function getSymbols(formatter: Intl.NumberFormat, intlOptions: Intl.ResolvedNumberFormatOptions): Symbols {
+function getSymbols(formatter: Intl.NumberFormat, intlOptions: Intl.ResolvedNumberFormatOptions, originalOptions: Intl.NumberFormatOptions): Symbols {
   // Note: some locale's don't add a group symbol until there is a ten thousands place
   let allParts = formatter.formatToParts(-10000.1);
-  let minusSign = allParts.find(p => p.type === 'minusSign')?.value ?? '-';
   let posAllParts = formatter.formatToParts(10000.1);
-  let plusSign = posAllParts.find(p => p.type === 'plusSign')?.value;
   let singularParts = formatter.formatToParts(1);
+
+  let minusSign = allParts.find(p => p.type === 'minusSign')?.value ?? '-';
+  let plusSign = posAllParts.find(p => p.type === 'plusSign')?.value;
+
+  // Safari does not support the signDisplay option, but our number parser polyfills it.
+  // If no plus sign was returned, but the original options contained signDisplay, default to the '+' character.
+  // @ts-ignore
+  if (!plusSign && (originalOptions?.signDisplay === 'exceptZero' || originalOptions?.signDisplay === 'always')) {
+    plusSign = '+';
+  }
 
   let decimal = allParts.find(p => p.type === 'decimal')?.value;
   let group = allParts.find(p => p.type === 'group')?.value;

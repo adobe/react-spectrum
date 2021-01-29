@@ -54,7 +54,7 @@ export function useNumberFieldState(
   let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, onChange);
   let [inputValue, setInputValue] = useState(() => isNaN(numberValue) ? '' : getNumberFormatter(locale, formatOptions).format(numberValue));
 
-  let numberingSystem = useMemo(() => getNumberingSystem(locale, formatOptions, inputValue), [inputValue]);
+  let numberingSystem = useMemo(() => getNumberingSystem(locale, formatOptions, inputValue), [locale, formatOptions, inputValue]);
   let formatter = useMemo(() => getNumberFormatter(locale, {...formatOptions, numberingSystem}), [locale, formatOptions, numberingSystem]);
   let intlOptions = useMemo(() => formatter.resolvedOptions(), [formatter]);
   let format = useCallback((value: number) => isNaN(value) ? '' : formatter.format(value), [formatter]);
