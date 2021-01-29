@@ -1584,7 +1584,6 @@ describe('Picker', function () {
       expect(picker).toHaveTextContent('Select an option…');
       fireEvent.keyDown(picker, {key: 'ArrowLeft'});
       act(() => jest.runAllTimers());
-      
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(picker).toHaveTextContent('One');
 
@@ -1769,6 +1768,21 @@ describe('Picker', function () {
       act(() => button.blur());
 
       expect(hiddenInput).toHaveAttribute('tabIndex', '0');
+    });
+
+    it('should apply tabindex="-1" to hidden input if Picker is disabled', function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Picker label="Test" isDisabled>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let hiddenInput = getByRole('textbox', {hidden: true});
+      expect(hiddenInput).toHaveAttribute('tabIndex', '-1');
     });
   });
 
