@@ -298,7 +298,6 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
       'aria-label': props['aria-label'] || null,
       'aria-labelledby': props['aria-labelledby'] || null,
       id: inputId,
-      placeholder: formatMessage('Enter a number'),
       type: 'text', // Can't use type="number" because then we can't have things like $ in the field.
       inputMode,
       onChange,

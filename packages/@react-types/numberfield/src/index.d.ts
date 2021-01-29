@@ -17,12 +17,11 @@ import {
   InputBase, LabelableProps,
   RangeInputBase, SpectrumLabelableProps,
   StyleProps,
-  TextInputBase,
   Validation,
   ValueBase
 } from '@react-types/shared';
 
-export interface NumberFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps {
+export interface NumberFieldProps extends InputBase, Validation, FocusableProps, ValueBase<number>, RangeInputBase<number>, LabelableProps {
   decrementAriaLabel?: string,
   incrementAriaLabel?: string,
   formatOptions?: Intl.NumberFormatOptions
