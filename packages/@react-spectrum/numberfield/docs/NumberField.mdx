@@ -1,0 +1,216 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/numberfield';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/numberfield/package.json';
+
+```jsx import
+import {NumberField} from '@react-spectrum/numberfield';
+import {Flex} from '@react-spectrum/layout';
+```
+
+---
+category: Forms
+keywords: [text field, input]
+---
+
+# NumberField
+
+<p>{docs.exports.NumberField.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['NumberField']}
+  sourceData={[]} />
+
+## Example
+
+```tsx example
+<NumberField label="Name" />
+```
+
+## Value
+
+A NumberField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
+Alternatively, a controlled value can be provided using the `value` prop.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState(15);
+
+  return (
+    <Flex gap="size-150" wrap>
+      <NumberField
+        label="Cookies (Uncontrolled)"
+        defaultValue={15} />
+
+      <NumberField
+        label="Cookies (Controlled)"
+        value={value}
+        onChange={setValue} />
+    </Flex>
+  );
+}
+```
+
+## Steps
+
+A NumberField can have a specified step size, as well as a min and max value. The steps will always start at the `minValue` or `0`
+and will not exceed the min or the max if they are specified.
+
+```tsx example
+<NumberField label="Cookies" step={3} minValue={-5} maxValue={21} />
+```
+
+## Labeling
+
+A visual label should be provided for the NumberField using the `label` prop. If the NumberField is required, the `isRequired` and
+`necessityIndicator` props can be used to show a required state.
+
+```tsx example
+<Flex gap="size-150" wrap>
+  <NumberField label="Cookies" />
+  <NumberField label="Cookies" isRequired necessityIndicator="icon" />
+  <NumberField label="Cookies" isRequired necessityIndicator="label" />
+  <NumberField label="Cookies" necessityIndicator="label" />
+</Flex>
+```
+
+### Accessibility
+
+If a visible label isn't specified, an `aria-label` must be provided to the NumberField for
+accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using
+the `id` of the labeling element instead.
+
+### Internationalization
+
+#### Label
+In order to internationalize a NumberField, a localized string should be passed to the `label` or `aria-label` prop.
+When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
+
+#### Value
+The NumberField value can be formatted by using the `formatOptions` prop.
+`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
+
+```tsx example
+<Flex gap="size-150" wrap>
+  <NumberField
+    label="Currency"
+    formatOptions={{style: 'currency', currency: 'JPY'}}
+    defaultValue={60} />
+  <NumberField
+    label="Percent"
+    maxValue={1}
+    step={0.001}
+    formatOptions={{style: 'percent', minimumFractionDigits: 1}}
+    defaultValue={0.891} />
+</Flex>
+```
+
+NumberField also supports three numeral systems, Latin digits, Arabic-Indic digits, and Hanidecimal. Regardless of the locale, these three
+can be parsed from typed input. In addition, the NumberField will automatically choose the starting numeral system based on the default for the locale.
+
+
+## Events
+
+NumberField accepts an `onChange` prop which is triggered whenever the value is edited by the user.
+For a full list of supported events, see the [Props](#props) table below.
+
+The example below uses `onChange` to update a separate `pre` element with the same text entered into the NumberField.
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState();
+
+  return (
+    <Flex direction="column" gap="size-150">
+      <NumberField
+        onChange={setValue}
+        label="Number of cookies to buy" />
+      <pre>How many cookies you are ordering: {value}</pre>
+    </Flex>
+  );
+}
+```
+
+## Validation
+
+NumberFields can display a validation state to communicate to the user whether the current value is valid or invalid.
+Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the NumberField via the `validationState` prop.
+
+The example below illustrates how one would validate if the user has entered a [FizzBuzz](https://en.wikipedia.org/wiki/Fizz_buzz) number into the NumberField.
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState(15);
+  let isValid = React.useMemo(() => value % 3 === 0 && value % 5 === 0, [value]);
+
+  return (
+    <NumberField
+      validationState={isValid ? 'valid' : 'invalid'}
+      value={value}
+      onChange={setValue}
+      label="FizzBuzz values only"
+    />
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.NumberField} links={docs.links} />
+
+## Visual options
+
+### Quiet
+
+```tsx example
+<NumberField label="Cookies" isQuiet />
+```
+
+### Hidden Steppers
+
+NumberField stepper buttons are optional.
+
+```tsx example
+<NumberField label="Cookies" hideStepper />
+```
+
+### Disabled
+
+```tsx example
+<NumberField label="Cookies" isDisabled />
+```
+
+### Read only
+
+The `isReadOnly` boolean prop makes the NumberField's text content immutable. Unlike `isDisabled` the NumberField remains focusable
+and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<NumberField label="Cookies" defaultValue="abc@adobe.com" isReadOnly />
+```
+
+### Label alignment and position
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Label-position)
+
+By default, the label is positioned above the NumberField. The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the NumberField and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+
+```tsx example
+<NumberField label="Cookies" labelPosition="side" labelAlign="end" />
+```
+### Custom width
+
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
+
+```tsx example
+<NumberField label="Cookies" width="size-3600" maxWidth="100%" />
+```

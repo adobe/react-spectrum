@@ -23,15 +23,21 @@ import {
 } from '@react-types/shared';
 
 export interface NumberFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps {
+  /** Accessible label for the decrement button. */
   decrementAriaLabel?: string,
+  /** Accessible label for the increment button. */
   incrementAriaLabel?: string,
+  /** The display format of the value. */
   formatOptions?: Intl.NumberFormatOptions
 }
 
 export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps {}
 
 export interface SpectrumNumberFieldProps extends AriaNumberFieldProps, StyleProps, SpectrumLabelableProps {
+  /** Whether the numberfield should be displayed with a quiet style. */
   isQuiet?: boolean,
+  /** Whether to hide the step buttons on the side of the input. */
   hideStepper?: boolean,
+  /** The display format of the value. */
   formatOptions?: Intl.NumberFormatOptions
 }
