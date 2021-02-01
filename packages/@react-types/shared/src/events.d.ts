@@ -12,19 +12,17 @@
 
 import {
   FocusEvent,
-  KeyboardEvent as ReactKeyboardEvent,
+  KeyboardEvent,
   SyntheticEvent
 } from 'react';
 
 // Event bubbling can be problematic in real-world applications, so the default for React Spectrum components
 // is not to propagate. This can be overridden by calling continuePropagation() on the event.
-export type BaseEvent<T extends SyntheticEvent> = T & {
+export type BaseEvent<T extends SyntheticEvent<HTMLElement>> = T & {
   /** @deprecated Use continuePropagation. */
   stopPropagation(): void,
   continuePropagation(): void
 }
-
-export type KeyboardEvent = BaseEvent<ReactKeyboardEvent<any>>;
 
 export type PointerType = 'mouse' | 'pen' | 'touch' | 'keyboard' | 'virtual';
 
@@ -52,11 +50,11 @@ export interface HoverEvent<T = HTMLElement> {
   target: T
 }
 
-export interface KeyboardEvents {
+export interface KeyboardEvents<T = HTMLElement> {
   /** Handler that is called when a key is pressed. */
-  onKeyDown?: (e: KeyboardEvent) => void,
+  onKeyDown?: (e: KeyboardEvent<T>) => void,
   /** Handler that is called when a key is released. */
-  onKeyUp?: (e: KeyboardEvent) => void
+  onKeyUp?: (e: KeyboardEvent<T>) => void
 }
 
 export interface FocusEvents<T = HTMLElement> {
@@ -96,7 +94,7 @@ export interface PressEvents<T = HTMLElement> {
   onPressUp?: (e: PressEvent<T>) => void
 }
 
-export interface FocusableProps<T = HTMLElement> extends FocusEvents<T>, KeyboardEvents {
+export interface FocusableProps<T = HTMLElement> extends FocusEvents<T>, KeyboardEvents<T> {
   /** Whether the element should receive focus on render. */
   autoFocus?: boolean
 }
