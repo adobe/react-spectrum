@@ -93,6 +93,7 @@ governing permissions and limitations under the License.
   &.is-placeholder {
     font-weight: var(--spectrum-textfield-placeholder-text-font-weight);
     font-style: var(--spectrum-textfield-placeholder-text-font-style);
+    font-synthesis: none;
     transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
     opacity: 1;
   }
@@ -107,7 +108,10 @@ governing permissions and limitations under the License.
     opacity: 1;
   }
 
-  &:lang(ja), &:lang(zh), &:lang(ko) {
+  /* placeholder gets clipped for synthetic italics, we rely on font-synthesis once
+   * chrome supports it https://bugs.chromium.org/p/chromium/issues/detail?id=509989
+   */
+  &:lang(ja), &:lang(zh), &:lang(ko), &:lang(ar), &:lang(he) {
     &::placeholder,
     &.is-placeholder {
        font-style: normal;
@@ -155,18 +159,6 @@ governing permissions and limitations under the License.
     box-shadow: none;
   }
 
-  .spectrum-Textfield--valid & {
-    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
-  }
-
-  .spectrum-Textfield--invalid & {
-    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
-  }
-
-  .spectrum-Textfield--loadable & {
-    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
-  }
-
   .spectrum-Textfield--multiline & {
     height: var(--spectrum-textfield-multiline-height);
     min-height: var(--spectrum-textfield-multiline-min-height);
@@ -187,6 +179,18 @@ governing permissions and limitations under the License.
     /* Treat all quiet inputs and textareas the same */
     resize: none;
     overflow-y: hidden;
+  }
+
+  .spectrum-Textfield--valid & {
+    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
+  }
+
+  .spectrum-Textfield--invalid & {
+    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
+  }
+
+  .spectrum-Textfield--loadable & {
+    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 }
 
