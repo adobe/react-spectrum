@@ -1769,21 +1769,6 @@ describe('Picker', function () {
 
       expect(hiddenInput).toHaveAttribute('tabIndex', '0');
     });
-
-    it('should apply tabindex="-1" to hidden input if Picker is disabled', function () {
-      let {getByRole} = render(
-        <Provider theme={theme}>
-          <Picker label="Test" isDisabled>
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
-          </Picker>
-        </Provider>
-      );
-
-      let hiddenInput = getByRole('textbox', {hidden: true});
-      expect(hiddenInput).toHaveAttribute('tabIndex', '-1');
-    });
   });
 
   describe('async loading', function () {

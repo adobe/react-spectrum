@@ -69,7 +69,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectProps, state: SelectSt
     },
     inputProps: {
       type: 'text',
-      tabIndex: modality == null || state.isFocused || state.isOpen || isDisabled ? -1 : 0,
+      tabIndex: modality == null || state.isFocused || state.isOpen ? -1 : 0,
       style: {fontSize: 16},
       onFocus: () => triggerRef.current.focus(),
       disabled: isDisabled

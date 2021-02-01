@@ -106,6 +106,7 @@ describe('FocusScope', function () {
           <div />
           <input data-testid="input2" />
           <div tabIndex={-1} />
+          <input disabled tabIndex={0} />
           <input data-testid="input3" />
         </FocusScope>
       );
