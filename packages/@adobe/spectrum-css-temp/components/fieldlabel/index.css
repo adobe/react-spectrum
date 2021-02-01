@@ -71,20 +71,6 @@ governing permissions and limitations under the License.
       /* If the user overrides the width of the field, propagate to the inner component */
       width: 100%;
     }
-
-    .spectrum-FieldLabel--quiet {
-      padding-bottom: var(--spectrum-fieldlabel-quiet-padding-bottom);
-      padding-top: var(--spectrum-fieldlabel-quiet-padding-top);
-      line-height: var(--spectrum-fieldlabel-quiet-text-line-height);
-      /* Negative margin so the label is positioned properly */
-      margin-bottom: -3px;
-    }
-
-    .spectrum-Field-fieldInput--quiet {
-      padding-top: var(--spectrum-textfield-quiet-padding-top);
-      padding-bottom: var(--spectrum-textfield-quiet-padding-bottom);
-      line-height: var(--spectrum-textfield-quiet-text-line-height);
-    }
   }
 
   /* The side label variant of Field is inline, and fills as much space as needed

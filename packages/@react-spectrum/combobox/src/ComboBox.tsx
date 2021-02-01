@@ -27,7 +27,6 @@ import {FieldButton} from '@react-spectrum/button';
 import {FocusRing} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {MobileComboBox} from './MobileComboBox';
 import {Placement} from '@react-types/overlays';
@@ -70,7 +69,6 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     shouldFlip = true,
     direction = 'bottom',
     UNSAFE_className,
-    label,
     isQuiet,
     loadingState,
     onLoadMore
@@ -142,23 +140,9 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     minWidth: isQuiet ? `calc(${menuWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : menuWidth
   };
 
-  let labelClassName;
-  let inputClassName;
-  if (label && isQuiet) {
-    labelClassName = classNames(
-      labelStyles,
-      'spectrum-FieldLabel--quiet'
-    );
-
-    inputClassName = classNames(
-      labelStyles,
-      'spectrum-Field-fieldInput--quiet'
-    );
-  }
-
   return (
     <>
-      <Field {...props} labelProps={labelProps} labelClassName={labelClassName} ref={domRef}>
+      <Field {...props} labelProps={labelProps} ref={domRef}>
         <ComboBoxInput
           {...props}
           UNSAFE_className={
@@ -170,7 +154,6 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
               UNSAFE_className
             )
           }
-          inputClassName={inputClassName}
           loadingState={loadingState}
           inputProps={inputProps}
           inputRef={inputRef}
