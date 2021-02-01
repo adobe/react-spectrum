@@ -149,7 +149,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           triggerRef={buttonRef} />
       </Field>
       <Popover
-        isOpen={state.isOpen && !!menuWidth}
+        isOpen={state.isOpen}
         UNSAFE_style={style}
         ref={popoverRef}
         placement={placement}

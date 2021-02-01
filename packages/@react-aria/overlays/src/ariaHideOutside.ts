@@ -85,7 +85,7 @@ export function ariaHideOutside(targets: HTMLElement[], root = document.body) {
 
       // If the parent element of the added nodes is not within one of the targets,
       // and not already inside a hidden node, hide all of the new children.
-      if (![...visibleNodes, ...hiddenNodes].filter(node => !!node).some(node => node.contains(change.target))) {
+      if (![...visibleNodes, ...hiddenNodes].some(node => node.contains(change.target))) {
         for (let node of change.addedNodes) {
           if ((node instanceof HTMLElement && node.dataset.liveAnnouncer === 'true')) {
             visibleNodes.add(node);
