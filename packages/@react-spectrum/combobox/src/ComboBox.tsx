@@ -68,7 +68,6 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     menuTrigger = 'input',
     shouldFlip = true,
     direction = 'bottom',
-    UNSAFE_className,
     isQuiet,
     loadingState,
     onLoadMore
@@ -145,15 +144,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
       <Field {...props} labelProps={labelProps} ref={domRef}>
         <ComboBoxInput
           {...props}
-          UNSAFE_className={
-            classNames(
-              styles,
-              {
-                'spectrum-InputGroup--menuOpen': state.isOpen && !props.isQuiet
-              },
-              UNSAFE_className
-            )
-          }
+          isOpen={state.isOpen}
           loadingState={loadingState}
           inputProps={inputProps}
           inputRef={inputRef}
@@ -214,7 +205,8 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     style,
     UNSAFE_className,
     inputClassName,
-    loadingState
+    loadingState,
+    isOpen
   } = props;
   let {hoverProps, isHovered} = useHover({});
   let formatMessage = useMessageFormatter(intlMessages);
@@ -285,7 +277,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
           validationState={validationState}
           isLoading={loadingState === 'loading' || loadingState === 'filtering'}
           loadingIndicator={loadingState != null && loadingCircle} />
-        <PressResponder preventFocusOnPress>
+        <PressResponder preventFocusOnPress isPressed={isOpen}>
           <FieldButton
             {...triggerProps}
             ref={triggerRef}
