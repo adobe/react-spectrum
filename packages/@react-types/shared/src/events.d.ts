@@ -24,7 +24,7 @@ export type BaseEvent<T extends SyntheticEvent> = T & {
   continuePropagation(): void
 }
 
-export type KeyboardEvent<T = HTMLElement> = BaseEvent<ReactKeyboardEvent<any>>;
+export type KeyboardEvent = BaseEvent<ReactKeyboardEvent<any>>;
 
 export type PointerType = 'mouse' | 'pen' | 'touch' | 'keyboard' | 'virtual';
 
@@ -52,11 +52,11 @@ export interface HoverEvent<T = HTMLElement> {
   target: T
 }
 
-export interface KeyboardEvents<T = HTMLElement> {
+export interface KeyboardEvents {
   /** Handler that is called when a key is pressed. */
-  onKeyDown?: (e: KeyboardEvent<T>) => void,
+  onKeyDown?: (e: KeyboardEvent) => void,
   /** Handler that is called when a key is released. */
-  onKeyUp?: (e: KeyboardEvent<T>) => void
+  onKeyUp?: (e: KeyboardEvent) => void
 }
 
 export interface FocusEvents<T = HTMLElement> {
@@ -96,7 +96,7 @@ export interface PressEvents<T = HTMLElement> {
   onPressUp?: (e: PressEvent<T>) => void
 }
 
-export interface FocusableProps<T = HTMLElement> extends FocusEvents<T>, KeyboardEvents<T> {
+export interface FocusableProps<T = HTMLElement> extends FocusEvents<T>, KeyboardEvents {
   /** Whether the element should receive focus on render. */
   autoFocus?: boolean
 }
