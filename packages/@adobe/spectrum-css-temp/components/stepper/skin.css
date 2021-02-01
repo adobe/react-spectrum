@@ -67,13 +67,6 @@ governing permissions and limitations under the License.
     }
   }
 
-  .spectrum-Stepper-button {
-    &:disabled,
-    &.is-disabled {
-      border-color: var(--spectrum-textfield-border-color-disabled);
-    }
-  }
-
   &:focus,
   &:active {
     .spectrum-Stepper-button {
@@ -83,6 +76,13 @@ governing permissions and limitations under the License.
     &:invalid,
     &.is-invalid {
       border-color: var(--spectrum-textfield-border-color-error);
+    }
+  }
+
+  .spectrum-Stepper-button {
+    &:disabled,
+    &.is-disabled {
+      border-color: var(--spectrum-textfield-border-color-disabled);
     }
   }
 
