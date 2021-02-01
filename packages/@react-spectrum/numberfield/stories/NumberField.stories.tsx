@@ -62,7 +62,7 @@ storiesOf('NumberField', module)
   )
   .add(
     'percent using sign',
-    () => render({formatOptions: {style: 'unit', unit: 'percent', signDisplay: 'always'}})
+    () => render({formatOptions: {style: 'percent', signDisplay: 'always'}})
   )
   .add(
     'disabled',
@@ -117,8 +117,8 @@ storiesOf('NumberField', module)
     () => render({step: 5})
   )
   .add(
-    'step = 3 with min = 2, max = 20',
-    () => render({step: 3, minValue: 2, maxValue: 20})
+    'step = 3 with min = 2, max = 21',
+    () => render({step: 3, minValue: 2, maxValue: 21})
   )
   .add(
     'autoFocus',

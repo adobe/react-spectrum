@@ -12,6 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
+import {Form} from '@react-spectrum/form';
 import Info from '@spectrum-icons/workflow/Info';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -120,6 +121,17 @@ storiesOf('TextArea', module)
   )
   .add('custom width, quiet',
     () => render({icon: <Info />, validationState: 'invalid', width: '300px', isQuiet: true})
+  )
+  .add(
+    'custom height with label',
+    () => (
+      <Form>
+        <TextArea label="Height size-2000" height="size-2000" />
+        <TextArea label="Height size-2000" height="size-2000" isQuiet />
+        <TextArea labelPosition="side" label="Height size-2000" height="size-2000" />
+        <TextArea labelPosition="side" label="Height size-2000" height="size-2000" isQuiet />
+      </Form>
+    )
   )
   .add('controlled interactive',
     () => <ControlledTextArea />

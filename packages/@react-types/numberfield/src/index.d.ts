@@ -30,7 +30,7 @@ export interface NumberFieldProps extends InputBase, Validation, FocusableProps,
 
 export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps {}
 
-export interface SpectrumNumberFieldProps extends AriaNumberFieldProps, StyleProps, SpectrumLabelableProps {
+export interface SpectrumNumberFieldProps extends AriaNumberFieldProps, StyleProps, SpectrumLabelableProps, Omit<AriaNumberFieldProps, 'placeholder'> {
   isQuiet?: boolean,
   hideStepper?: boolean,
   formatOptions?: Intl.NumberFormatOptions
