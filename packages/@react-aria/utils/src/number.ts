@@ -10,4 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-export {clamp, roundToStep, snapValueToStep} from '@react-stately/utils';
+export {clamp, snapValueToStep} from '@react-stately/utils';
