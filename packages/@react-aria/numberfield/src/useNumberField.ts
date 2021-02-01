@@ -162,7 +162,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
 
     if (e.deltaY > 0) {
       increment();
-    } else {
+    } else if (e.deltaY < 0) {
       decrement();
     }
   }, [isReadOnly, isDisabled, decrement, increment]);
