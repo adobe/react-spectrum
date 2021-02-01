@@ -83,7 +83,7 @@ governing permissions and limitations under the License.
 .spectrum-Tooltip--right {
   margin-left: var(--spectrum-tooltip-target-offset);
   &.is-open {
-    /* @inherit: %spectrum-overlay--right--open; */
+    @inherit: %spectrum-overlay--right--open;
   }
   .spectrum-Tooltip-tip {
     right: 100%;
