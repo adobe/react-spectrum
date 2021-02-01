@@ -19,7 +19,7 @@ import {useOverlayPosition} from '@react-aria/overlays';
 import {useTooltipTrigger} from '@react-aria/tooltip';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
 
-const DEFAULT_OFFSET = -1; // Closest visual match to Spectrum's mocks
+const DEFAULT_OFFSET = -1; // Offset needed to reach 4px/5px (med/large) distance between tooltip and trigger button
 const DEFAULT_CROSS_OFFSET = 0;
 
 function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
