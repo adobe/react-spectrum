@@ -36,7 +36,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
   let {
     isQuiet,
     isDisabled,
-    hideStepper
+    showStepper
   } = props;
 
   let {styleProps: style} = useStyleProps(props);
@@ -53,7 +53,6 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
     decrementButtonProps
   } = useNumberField({...props, inputRef}, state);
   let isMobile = provider.scale === 'large';
-  let showStepper = !hideStepper;
 
   let {isHovered, hoverProps} = useHover({isDisabled});
 

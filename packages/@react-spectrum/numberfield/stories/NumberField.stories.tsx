@@ -125,12 +125,12 @@ storiesOf('NumberField', module)
     () => render({autoFocus: true})
   )
   .add(
-    'hideStepper',
-    () => render({hideStepper: true})
+    'showStepper = false',
+    () => render({showStepper: false})
   )
   .add(
-    'isQuiet, hideStepper',
-    () => render({isQuiet: true, hideStepper: true})
+    'isQuiet, showStepper = false',
+    () => render({isQuiet: true, showStepper: false})
   )
   .add(
     'required',
@@ -179,30 +179,30 @@ storiesOf('NumberField', module)
 
 function render(props: any = {}) {
   return (
-    <NumberField {...props} onChange={action('onChange')} UNSAFE_className="custom_classname" label="Enter numbers" />
+    <NumberField showStepper {...props} onChange={action('onChange')} UNSAFE_className="custom_classname" label="Enter numbers" />
   );
 }
 
 function renderNoLabel(props: any = {}) {
   return (
-    <NumberField {...props} onChange={action('onChange')} UNSAFE_className="custom_classname" />
+    <NumberField showStepper {...props} onChange={action('onChange')} UNSAFE_className="custom_classname" />
   );
 }
 
 function renderSet() {
   return (
     <Flex width="100%" gap="size-200" alignItems="end">
-      <NumberField label="Grows" flexGrow={1} />
-      <NumberField label="Static" />
-      <NumberField aria-label="Grows" flexGrow={1} />
-      <NumberField aria-label="Static" />
+      <NumberField showStepper label="Grows" flexGrow={1} />
+      <NumberField showStepper label="Static" />
+      <NumberField showStepper aria-label="Grows" flexGrow={1} />
+      <NumberField showStepper aria-label="Static" />
     </Flex>
   );
 }
 
 function NumberFieldControlled(props) {
   let [value, setValue] = useState(10);
-  return <NumberField {...props} formatOptions={{style: 'currency', currency: 'EUR'}} value={value} onChange={chain(setValue, action('onChange'))} label="Enter numbers" />;
+  return <NumberField showStepper {...props} formatOptions={{style: 'currency', currency: 'EUR'}} value={value} onChange={chain(setValue, action('onChange'))} label="Enter numbers" />;
 }
 
 function NumberFieldWithCurrencySelect(props) {
@@ -212,7 +212,7 @@ function NumberFieldWithCurrencySelect(props) {
   let [currencyDisplay, setCurrencyDisplay] = useState('symbol');
   return (
     <Form>
-      <NumberField label="Monies" {...props} formatOptions={{style: 'currency', currency, currencySign, currencyDisplay}} value={value} onChange={chain(setValue, action('onChange'))} />
+      <NumberField label="Monies" showStepper {...props} formatOptions={{style: 'currency', currency, currencySign, currencyDisplay}} value={value} onChange={chain(setValue, action('onChange'))} />
       <Picker
         onSelectionChange={item => setCurrency(String(item))}
         label="Choose Currency"

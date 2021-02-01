@@ -32,6 +32,6 @@ export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLa
 
 export interface SpectrumNumberFieldProps extends AriaNumberFieldProps, StyleProps, SpectrumLabelableProps, Omit<AriaNumberFieldProps, 'placeholder'> {
   isQuiet?: boolean,
-  hideStepper?: boolean,
+  showStepper?: boolean,
   formatOptions?: Intl.NumberFormatOptions
 }
