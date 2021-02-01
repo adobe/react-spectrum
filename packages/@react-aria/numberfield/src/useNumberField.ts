@@ -24,7 +24,7 @@ import {
 } from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isAndroid, isIPhone, mergeProps, useId} from '@react-aria/utils';
+import {isAndroid, isIOS, isIPhone, mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
 import {TextInputDOMProps} from '@react-types/shared';
@@ -298,7 +298,6 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
       'aria-label': props['aria-label'] || null,
       'aria-labelledby': props['aria-labelledby'] || null,
       id: inputId,
-      placeholder: formatMessage('Enter a number'),
       type: 'text', // Can't use type="number" because then we can't have things like $ in the field.
       inputMode,
       onChange,
@@ -338,7 +337,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     {
       // override the spinbutton role, we can't focus a spin button with VO
       role: null,
-      'aria-roledescription': formatMessage('Number field'),
+      // ignore aria-roledescription on iOS so that required state will announce when it is present
+      'aria-roledescription': (!isIOS() ? formatMessage('Number field') : null),
       'aria-valuemax': null,
       'aria-valuemin': null,
       'aria-valuenow': null,
