@@ -18,17 +18,17 @@ import {
 
 // Event bubbling can be problematic in real-world applications, so the default for React Spectrum components
 // is not to propagate. This can be overridden by calling continuePropagation() on the event.
-export type BaseEvent<T extends SyntheticEvent<HTMLElement>> = T & {
+export type BaseEvent<T extends SyntheticEvent> = T & {
   /** @deprecated Use continuePropagation. */
   stopPropagation(): void,
   continuePropagation(): void
 }
 
-export type KeyboardEvent<T extends HTMLElement> = BaseEvent<ReactKeyboardEvent<T>>;
+export type KeyboardEvent<T = HTMLElement> = BaseEvent<ReactKeyboardEvent<any>>;
 
 export type PointerType = 'mouse' | 'pen' | 'touch' | 'keyboard' | 'virtual';
 
-export interface PressEvent<T extends HTMLElement = HTMLElement> {
+export interface PressEvent<T = HTMLElement> {
   /** The type of press event being fired. */
   type: 'pressstart' | 'pressend' | 'pressup' | 'press',
   /** The pointer type that triggered the press event. */
@@ -43,7 +43,7 @@ export interface PressEvent<T extends HTMLElement = HTMLElement> {
   metaKey: boolean
 }
 
-export interface HoverEvent<T extends HTMLElement= HTMLElement> {
+export interface HoverEvent<T = HTMLElement> {
   /** The type of hover event being fired. */
   type: 'hoverstart' | 'hoverend',
   /** The pointer type that triggered the hover event. */
@@ -52,14 +52,14 @@ export interface HoverEvent<T extends HTMLElement= HTMLElement> {
   target: T
 }
 
-export interface KeyboardEvents<T extends HTMLElement = HTMLElement> {
+export interface KeyboardEvents<T = HTMLElement> {
   /** Handler that is called when a key is pressed. */
   onKeyDown?: (e: KeyboardEvent<T>) => void,
   /** Handler that is called when a key is released. */
   onKeyUp?: (e: KeyboardEvent<T>) => void
 }
 
-export interface FocusEvents<T extends HTMLElement = HTMLElement> {
+export interface FocusEvents<T = HTMLElement> {
   /** Handler that is called when the element receives focus. */
   onFocus?: (e: FocusEvent<T>) => void,
   /** Handler that is called when the element loses focus. */
@@ -68,7 +68,7 @@ export interface FocusEvents<T extends HTMLElement = HTMLElement> {
   onFocusChange?: (isFocused: boolean) => void
 }
 
-export interface HoverEvents<T extends HTMLElement = HTMLElement> {
+export interface HoverEvents<T = HTMLElement> {
   /** Handler that is called when a hover interaction starts. */
   onHoverStart?: (e: HoverEvent<T>) => void,
   /** Handler that is called when a hover interaction ends. */
@@ -77,7 +77,7 @@ export interface HoverEvents<T extends HTMLElement = HTMLElement> {
   onHoverChange?: (isHovering: boolean) => void
 }
 
-export interface PressEvents<T extends HTMLElement = HTMLElement> {
+export interface PressEvents<T = HTMLElement> {
   /** Handler that is called when the press is released over the target. */
   onPress?: (e: PressEvent<T>) => void,
   /** Handler that is called when a press interaction starts. */
@@ -96,7 +96,7 @@ export interface PressEvents<T extends HTMLElement = HTMLElement> {
   onPressUp?: (e: PressEvent<T>) => void
 }
 
-export interface FocusableProps<T extends HTMLElement = HTMLElement> extends FocusEvents<T>, KeyboardEvents<T> {
+export interface FocusableProps<T = HTMLElement> extends FocusEvents<T>, KeyboardEvents<T> {
   /** Whether the element should receive focus on render. */
   autoFocus?: boolean
 }

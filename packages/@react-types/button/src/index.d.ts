@@ -13,14 +13,14 @@
 import {AriaLabelingProps, FocusableDOMProps, FocusableProps, PressEvents, StyleProps} from '@react-types/shared';
 import {ElementType, JSXElementConstructor, ReactNode} from 'react';
 
-interface ButtonProps<T extends HTMLElement = HTMLButtonElement> extends PressEvents<T>, FocusableProps<T> {
+interface ButtonProps<T = HTMLButtonElement> extends PressEvents<T>, FocusableProps<T> {
   /** Whether the button is disabled. */
   isDisabled?: boolean,
   /** The content to display in the button. */
   children?: ReactNode
 }
 
-interface ToggleButtonProps<T extends HTMLElement = HTMLButtonElement> extends ButtonProps<T> {
+interface ToggleButtonProps<T = HTMLButtonElement> extends ButtonProps<T> {
   /** Whether the element should be selected (controlled). */
   isSelected?: boolean,
   /** Whether the element should be selected (uncontrolled). */

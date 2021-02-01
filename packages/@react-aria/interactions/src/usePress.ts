@@ -23,7 +23,7 @@ import {PointerType, PressEvents} from '@react-types/shared';
 import {PressResponderContext} from './context';
 import {useGlobalListeners} from '@react-aria/utils';
 
-export interface PressProps<T extends HTMLElement = HTMLElement> extends PressEvents<T> {
+export interface PressProps<T = HTMLElement> extends PressEvents<T> {
   /** Whether the target is in a controlled press state (e.g. an overlay it triggers is open). */
   isPressed?: boolean,
   /** Whether the press events should be disabled. */
@@ -32,7 +32,7 @@ export interface PressProps<T extends HTMLElement = HTMLElement> extends PressEv
   preventFocusOnPress?: boolean
 }
 
-export interface PressHookProps<T extends HTMLElement = HTMLElement> extends PressProps<T> {
+export interface PressHookProps<T = HTMLElement> extends PressProps<T> {
   /** A ref to the target element. */
   ref?: RefObject<T>
 }
