@@ -135,12 +135,7 @@ governing permissions and limitations under the License.
 
       &.spectrum-InputGroup--invalid,
       &:invalid {
-        .spectrum-InputGroup-input {
-          box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error);
-        }
-
         .spectrum-FieldButton {
-          box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error);
           border-color: var(--spectrum-textfield-border-color-error);
         }
       }
@@ -154,6 +149,17 @@ governing permissions and limitations under the License.
       .spectrum-FieldButton {
         box-shadow: 0 1px 0 var(--spectrum-textfield-quiet-border-color-key-focus);
         border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
+      }
+
+      &.spectrum-InputGroup--invalid,
+      &:invalid {
+        .spectrum-InputGroup-input {
+          box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error);
+        }
+
+        .spectrum-FieldButton {
+          box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error);
+        }
       }
     }
   }
