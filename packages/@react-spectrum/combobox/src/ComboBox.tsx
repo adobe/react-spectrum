@@ -187,7 +187,6 @@ interface ComboBoxInputProps extends SpectrumComboBoxProps<unknown> {
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   triggerProps: AriaButtonProps,
   triggerRef: RefObject<FocusableRefValue<HTMLElement>>,
-  inputClassName?: string,
   style?: React.CSSProperties
 }
 
@@ -204,7 +203,6 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     autoFocus,
     style,
     UNSAFE_className,
-    inputClassName,
     loadingState,
     isOpen
   } = props;
@@ -262,8 +260,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
           inputClassName={
             classNames(
               styles,
-              'spectrum-InputGroup-input',
-              inputClassName
+              'spectrum-InputGroup-input'
             )
           }
           validationIconClassName={
