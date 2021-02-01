@@ -41,11 +41,6 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
   let defaultLabel = channel[0].toUpperCase() + channel.slice(1);
 
   let labelText = props.label;
-  if (props.label === undefined) {
-    if (!vertical) {
-      labelText = defaultLabel;
-    }
-  }
   let ariaLabel = props['aria-label'] ?? (labelText == null ? defaultLabel : undefined);
 
   let numberFormatter = useNumberFormatter();
@@ -85,12 +80,20 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
     <div
       ref={domRef}
       {...styleProps}
-      className={classNames(styles, 'spectrum-ColorSlider-container')}>
-      <Flex direction="row" justifyContent={alignLabel}>
-        {labelText && <Label {...labelProps}>{labelText}</Label>}
-        {/* TODO: is it on purpose that aria-labelledby isn't passed through? */}
-        {showValueLabel && <Label aria-labelledby={labelProps.id}>{state.getThumbValueLabel(0)}</Label>}
-      </Flex>
+      className={classNames(
+        styles,
+        {
+          'spectrum-ColorSlider-container--horizontal': !vertical,
+          'spectrum-ColorSlider-container--vertical': vertical
+        }
+      )}>
+      {!vertical &&
+        <Flex direction="row" justifyContent={alignLabel}>
+          {labelText && <Label {...labelProps}>{labelText}</Label>}
+          {/* TODO: is it on purpose that aria-labelledby isn't passed through? */}
+          {showValueLabel && <Label aria-labelledby={labelProps.id}>{state.getThumbValueLabel(0)}</Label>}
+        </Flex>
+      }
       <div
         {...groupProps}
         className={classNames(

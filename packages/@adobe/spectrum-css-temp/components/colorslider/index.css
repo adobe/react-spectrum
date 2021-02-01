@@ -29,8 +29,14 @@
   pointer-events: none;
 }
 
-.spectrum-ColorSlider-container {
+.spectrum-ColorSlider-container--horizontal {
   width: var(--spectrum-colorslider-default-length);
+}
+
+.spectrum-ColorSlider-container--vertical {
+  display: flex;
+  flex-direction: column;
+  height: var(--spectrum-colorslider-default-length);
 }
 
 .spectrum-ColorSlider {
@@ -62,7 +68,7 @@
   display: inline-block;
 
   width: var(--spectrum-colorslider-vertical-width);
-  height: var(--spectrum-colorslider-vertical-default-length);
+  flex: 1;
 
   .spectrum-ColorSlider-handle {
     left: 50%;
