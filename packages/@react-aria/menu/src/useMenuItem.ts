@@ -127,13 +127,13 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     }
   };
 
-  let onPressStart = (e: PressEvent) => {
+  let onPressStart = (e: PressEvent<HTMLElement>) => {
     if (e.pointerType === 'keyboard' && onAction) {
       onAction(key);
     }
   };
 
-  let onPressUp = (e: PressEvent) => {
+  let onPressUp = (e: PressEvent<HTMLElement>) => {
     if (e.pointerType !== 'keyboard') {
       if (onAction) {
         onAction(key);

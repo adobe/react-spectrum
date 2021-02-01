@@ -14,7 +14,7 @@ import {AriaLabelingProps, DOMProps, PressEvents, StyleProps} from '@react-types
 import {ItemProps} from '@react-types/shared';
 import {Key, ReactElement, ReactNode} from 'react';
 
-export interface BreadcrumbItemProps extends PressEvents {
+export interface BreadcrumbItemProps extends PressEvents<HTMLAnchorElement> {
   /** Whether the breadcrumb item represents the current page. */
   isCurrent?: boolean,
   /**

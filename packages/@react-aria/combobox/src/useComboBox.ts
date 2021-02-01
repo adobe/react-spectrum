@@ -105,7 +105,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
   };
 
-  let onBlur = (e: FocusEvent) => {
+  let onBlur = (e: FocusEvent<HTMLElement>) => {
     // Ignore blur if focused moved to the button or into the popover.
     if (e.relatedTarget === buttonRef.current || popoverRef.current?.contains(e.relatedTarget as HTMLElement)) {
       return;
@@ -118,7 +118,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     state.setFocused(false);
   };
 
-  let onFocus = (e: FocusEvent) => {
+  let onFocus = (e: FocusEvent<HTMLElement>) => {
     if (state.isFocused) {
       return;
     }
@@ -141,7 +141,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   }, inputRef);
 
   // Press handlers for the combobox button
-  let onPress = (e: PressEvent) => {
+  let onPress = (e: PressEvent<HTMLElement>) => {
     if (e.pointerType === 'touch') {
       // Focus the input field in case it isn't focused yet
       inputRef.current.focus();
@@ -149,7 +149,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
   };
 
-  let onPressStart = (e: PressEvent) => {
+  let onPressStart = (e: PressEvent<HTMLElement>) => {
     if (e.pointerType !== 'touch') {
       inputRef.current.focus();
       state.toggle((e.pointerType === 'keyboard' || e.pointerType === 'virtual') ? 'first' : null);

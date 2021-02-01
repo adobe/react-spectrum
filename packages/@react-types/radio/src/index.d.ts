@@ -38,7 +38,7 @@ export interface RadioGroupProps extends ValueBase<string>, InputBase, Validatio
   name?: string
 }
 
-export interface RadioProps extends FocusableProps {
+export interface RadioProps extends FocusableProps<HTMLInputElement> {
   /**
    * The value of the radio button, used when submitting an HTML form.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/radio#Value).

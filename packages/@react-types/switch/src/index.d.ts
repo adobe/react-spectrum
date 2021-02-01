@@ -13,7 +13,7 @@
 import {AriaLabelingProps, FocusableDOMProps, FocusableProps, InputBase, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
-interface SwitchBase extends InputBase, FocusableProps {
+interface SwitchBase extends InputBase, FocusableProps<HTMLInputElement> {
   /**
    * The content to render as the Switch's label.
    */

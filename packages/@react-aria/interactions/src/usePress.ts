@@ -23,7 +23,7 @@ import {PointerType, PressEvents} from '@react-types/shared';
 import {PressResponderContext} from './context';
 import {useGlobalListeners} from '@react-aria/utils';
 
-export interface PressProps extends PressEvents {
+export interface PressProps<T extends HTMLElement = HTMLElement> extends PressEvents<T> {
   /** Whether the target is in a controlled press state (e.g. an overlay it triggers is open). */
   isPressed?: boolean,
   /** Whether the press events should be disabled. */
@@ -32,41 +32,41 @@ export interface PressProps extends PressEvents {
   preventFocusOnPress?: boolean
 }
 
-export interface PressHookProps extends PressProps {
+export interface PressHookProps<T extends HTMLElement = HTMLElement> extends PressProps<T> {
   /** A ref to the target element. */
-  ref?: RefObject<HTMLElement>
+  ref?: RefObject<T>
 }
 
-interface PressState {
+interface PressState<T> {
   isPressed: boolean,
   ignoreEmulatedMouseEvents: boolean,
   ignoreClickAfterPress: boolean,
   activePointerId: any,
-  target: HTMLElement | null,
+  target: T | null,
   isOverTarget: boolean,
   userSelect?: string
 }
 
-interface EventBase {
-  currentTarget: EventTarget,
+interface EventBase<T>{
+  currentTarget: T & EventTarget,
   shiftKey: boolean,
   ctrlKey: boolean,
   metaKey: boolean
 }
 
-export interface PressResult {
+export interface PressResult<T> {
   /** Whether the target is currently pressed. */
   isPressed: boolean,
   /** Props to spread on the target element. */
-  pressProps: HTMLAttributes<HTMLElement>
+  pressProps: HTMLAttributes<T>
 }
 
-function usePressResponderContext(props: PressHookProps): PressHookProps {
+function usePressResponderContext<T extends HTMLElement>(props: PressHookProps<T>): PressHookProps<T> {
   // Consume context from <PressResponder> and merge with props.
   let context = useContext(PressResponderContext);
   if (context) {
     let {register, ...contextProps} = context;
-    props = mergeProps(contextProps, props) as PressHookProps;
+    props = mergeProps(contextProps, props) as PressHookProps<T>;
     register();
   }
 
@@ -88,7 +88,7 @@ function usePressResponderContext(props: PressHookProps): PressHookProps {
  * It normalizes behavior across browsers and platforms, and handles many nuances
  * of dealing with pointer and keyboard events.
  */
-export function usePress(props: PressHookProps): PressResult {
+export function usePress<T extends HTMLElement>(props: PressHookProps<T>): PressResult<T> {
   let {
     onPress,
     onPressChange,
@@ -104,7 +104,7 @@ export function usePress(props: PressHookProps): PressResult {
   } = usePressResponderContext(props);
 
   let [isPressed, setPressed] = useState(false);
-  let ref = useRef<PressState>({
+  let ref = useRef<PressState<T>>({
     isPressed: false,
     ignoreEmulatedMouseEvents: false,
     ignoreClickAfterPress: false,
@@ -117,7 +117,7 @@ export function usePress(props: PressHookProps): PressResult {
 
   let pressProps = useMemo(() => {
     let state = ref.current;
-    let triggerPressStart = (originalEvent: EventBase, pointerType: PointerType) => {
+    let triggerPressStart = (originalEvent: EventBase<T>, pointerType: PointerType) => {
       if (isDisabled) {
         return;
       }
@@ -126,7 +126,7 @@ export function usePress(props: PressHookProps): PressResult {
         onPressStart({
           type: 'pressstart',
           pointerType,
-          target: originalEvent.currentTarget as HTMLElement,
+          target: originalEvent.currentTarget,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
           ctrlKey: originalEvent.ctrlKey
@@ -140,7 +140,7 @@ export function usePress(props: PressHookProps): PressResult {
       setPressed(true);
     };
 
-    let triggerPressEnd = (originalEvent: EventBase, pointerType: PointerType, wasPressed = true) => {
+    let triggerPressEnd = (originalEvent: EventBase<T>, pointerType: PointerType, wasPressed = true) => {
       if (isDisabled) {
         return;
       }
@@ -151,7 +151,7 @@ export function usePress(props: PressHookProps): PressResult {
         onPressEnd({
           type: 'pressend',
           pointerType,
-          target: originalEvent.currentTarget as HTMLElement,
+          target: originalEvent.currentTarget,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
           ctrlKey: originalEvent.ctrlKey
@@ -168,7 +168,7 @@ export function usePress(props: PressHookProps): PressResult {
         onPress({
           type: 'press',
           pointerType,
-          target: originalEvent.currentTarget as HTMLElement,
+          target: originalEvent.currentTarget,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
           ctrlKey: originalEvent.ctrlKey
@@ -176,7 +176,7 @@ export function usePress(props: PressHookProps): PressResult {
       }
     };
 
-    let triggerPressUp = (originalEvent: EventBase, pointerType: PointerType) => {
+    let triggerPressUp = (originalEvent: EventBase<T>, pointerType: PointerType) => {
       if (isDisabled) {
         return;
       }
@@ -185,7 +185,7 @@ export function usePress(props: PressHookProps): PressResult {
         onPressUp({
           type: 'pressup',
           pointerType,
-          target: originalEvent.currentTarget as HTMLElement,
+          target: originalEvent.currentTarget,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
           ctrlKey: originalEvent.ctrlKey
@@ -193,7 +193,7 @@ export function usePress(props: PressHookProps): PressResult {
       }
     };
 
-    let pressProps: HTMLAttributes<HTMLElement> = {
+    let pressProps: HTMLAttributes<T> = {
       onKeyDown(e) {
         if (isValidKeyboardEvent(e.nativeEvent)) {
           e.preventDefault();
@@ -204,7 +204,7 @@ export function usePress(props: PressHookProps): PressResult {
           // after which focus moved to the current element. Ignore these events and
           // only handle the first key down event.
           if (!state.isPressed && !e.repeat) {
-            state.target = e.currentTarget as HTMLElement;
+            state.target = e.currentTarget;
             state.isPressed = true;
             triggerPressStart(e, 'keyboard');
 
@@ -519,7 +519,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
       };
 
-      let cancelTouchEvent = (e: EventBase, pointerType: PointerType) => {
+      let cancelTouchEvent = (e: EventBase<T>, pointerType: PointerType) => {
         if (state.isOverTarget) {
           triggerPressEnd(e, pointerType, false);
         }
@@ -593,9 +593,9 @@ function getTouchById(
   return null;
 }
 
-function createEvent(target: HTMLElement, e: EventBase): EventBase {
+function createEvent<T>(target: HTMLElement, e: EventBase<any>): EventBase<T> {
   return {
-    currentTarget: target,
+    currentTarget: target as unknown as T & EventTarget,
     shiftKey: e.shiftKey,
     ctrlKey: e.ctrlKey,
     metaKey: e.metaKey

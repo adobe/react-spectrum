@@ -39,7 +39,7 @@ export function useFocus(props: FocusProps): FocusResult {
 
   let onFocus, onBlur;
   if (props.onFocus || props.onFocusChange) {
-    onFocus = (e: FocusEvent) => {
+    onFocus = (e: FocusEvent<HTMLElement>) => {
       if (e.target === e.currentTarget) {
         if (props.onFocus) {
           props.onFocus(e);
@@ -53,7 +53,7 @@ export function useFocus(props: FocusProps): FocusResult {
   }
 
   if (props.onBlur || props.onFocusChange) {
-    onBlur = (e: FocusEvent) => {
+    onBlur = (e: FocusEvent<HTMLElement>) => {
       if (e.target === e.currentTarget) {
         if (props.onBlur) {
           props.onBlur(e);

@@ -13,7 +13,7 @@
 import {AriaLabelingProps, PressEvents, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
-export interface LinkProps extends PressEvents {
+export interface LinkProps extends PressEvents<HTMLAnchorElement> {
   /** The content to display in the link. */
   children: ReactNode
 }

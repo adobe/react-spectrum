@@ -13,14 +13,14 @@
 import {AriaLabelingProps, FocusableDOMProps, FocusableProps, PressEvents, StyleProps} from '@react-types/shared';
 import {ElementType, JSXElementConstructor, ReactNode} from 'react';
 
-interface ButtonProps extends PressEvents, FocusableProps {
+interface ButtonProps<T extends HTMLElement = HTMLButtonElement> extends PressEvents<T>, FocusableProps<T> {
   /** Whether the button is disabled. */
   isDisabled?: boolean,
   /** The content to display in the button. */
   children?: ReactNode
 }
 
-interface ToggleButtonProps extends ButtonProps {
+interface ToggleButtonProps<T extends HTMLElement = HTMLButtonElement> extends ButtonProps<T> {
   /** Whether the element should be selected (controlled). */
   isSelected?: boolean,
   /** Whether the element should be selected (uncontrolled). */
@@ -62,10 +62,12 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
   type?: 'button' | 'submit' | 'reset'
 }
 
-export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}
-export interface AriaToggleButtonProps<T extends ElementType = 'button'> extends ToggleButtonProps, AriaBaseButtonProps, AriaButtonElementTypeProps<T> {}
+type InferButtonElement<T extends ElementType> = T extends 'button' ? HTMLButtonElement : T extends 'a' ? HTMLAnchorElement : never;
 
-export interface SpectrumButtonProps<T extends ElementType = 'button'> extends AriaBaseButtonProps, ButtonProps, LinkButtonProps<T>, StyleProps {
+export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps<InferButtonElement<T>>, LinkButtonProps<T>, AriaBaseButtonProps {}
+export interface AriaToggleButtonProps<T extends ElementType = 'button'> extends ToggleButtonProps<InferButtonElement<T>>, AriaBaseButtonProps, AriaButtonElementTypeProps<T> {}
+
+export interface SpectrumButtonProps<T extends ElementType = 'button'> extends AriaBaseButtonProps, ButtonProps<InferButtonElement<T>>, LinkButtonProps<T>, StyleProps {
   /** The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button. */
   variant: 'cta' | 'overBackground' | 'primary' | 'secondary' | 'negative',
   /** Whether the button should be displayed with a quiet style. */

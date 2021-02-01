@@ -29,7 +29,7 @@ import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 
-interface TextFieldBaseProps extends SpectrumTextFieldProps, PressEvents {
+interface TextFieldBaseProps extends SpectrumTextFieldProps, PressEvents<HTMLInputElement | HTMLTextAreaElement> {
   wrapperChildren?: ReactElement | ReactElement[],
   inputClassName?: string,
   validationIconClassName?: string,

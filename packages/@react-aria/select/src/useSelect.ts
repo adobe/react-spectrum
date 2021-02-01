@@ -125,7 +125,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
         triggerProps['aria-label'] && !triggerProps['aria-labelledby'] ? triggerProps.id : null,
         valueId
       ].filter(Boolean).join(' '),
-      onFocus(e: FocusEvent) {
+      onFocus(e: FocusEvent<HTMLElement>) {
         if (state.isFocused) {
           return;
         }
@@ -136,7 +136,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
 
         state.setFocused(true);
       },
-      onBlur(e: FocusEvent) {
+      onBlur(e: FocusEvent<HTMLElement>) {
         if (state.isOpen) {
           return;
         }

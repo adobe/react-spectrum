@@ -22,7 +22,7 @@ import {
   ValueBase
 } from '@react-types/shared';
 
-export interface NumberFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps {
+export interface NumberFieldProps extends InputBase, Validation, FocusableProps<HTMLInputElement>, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps {
   decrementAriaLabel?: string,
   incrementAriaLabel?: string,
   formatOptions?: Intl.NumberFormatOptions
