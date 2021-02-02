@@ -137,7 +137,8 @@ storiesOf('TextArea', module)
   .add('controlled interactive',
     () => <ControlledTextArea />
   )
-  .add('in flex', () => renderInFlexRowAndBlock());
+  .add('in flex', () => renderInFlexRowAndBlock())
+  .add('in flex validation state', () => renderInFlexRowAndBlock({validationState: 'invalid'}));
 
 function render(props = {}) {
   return (
