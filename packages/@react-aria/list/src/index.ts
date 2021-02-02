@@ -11,4 +11,3 @@
  */
 
 export * from './useListItem';
-export * from './ListKeyboardDelegate';
