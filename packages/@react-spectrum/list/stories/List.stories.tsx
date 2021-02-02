@@ -1,12 +1,10 @@
+import {ActionButton} from '@react-spectrum/button';
+import {Flex} from '@react-spectrum/layout';
 import {Item, List} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
-import {ActionButton} from '@react-spectrum/button';
-import {Flex} from '@react-spectrum/layout';
-import {Text} from '@react-spectrum/text';
 import {View} from '@react-spectrum/view';
-
 
 
 storiesOf('List', module)

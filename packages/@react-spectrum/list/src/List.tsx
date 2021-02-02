@@ -62,10 +62,9 @@ function List(props, ref: DOMRef<HTMLDivElement>) {
       {...gridProps}
       ref={domRef}>
       {
-        [...collection].map(item => {
-          // console.log('item', item)
-          return <ListItem item={item} state={state} delegate={keyboardDelegate} />
-        })
+        [...collection].map(item =>
+          <ListItem item={item} state={state} delegate={keyboardDelegate} />
+        )
       }
     </div>
   );
@@ -73,10 +72,6 @@ function List(props, ref: DOMRef<HTMLDivElement>) {
 
 function ListItem({item, state, delegate}) {
   let ref = useRef();
-  // let {rowProps} = useGridRow({
-  //   node: item,
-  //   ref
-  // }, state);
   let {rowProps} = useGridRow({
     node: item,
     ref
@@ -88,9 +83,6 @@ function ListItem({item, state, delegate}) {
     ref
   }, state);
 
-  // console.log('row props', rowProps)
-  // console.log('item', item)
-  // let rendered = Array.isArray(item.rendered) ? item.rendered : [item.rendered];
   return (
     <div
       {...rowProps} >
