@@ -31,7 +31,7 @@ function HexColorField(props: SpectrumHexColorFieldProps, ref: RefObject<TextFie
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
   let {
     labelProps,
-    inputFieldProps
+    inputProps
   } = useHexColorField(otherProps, state, inputRef);
 
   return (
@@ -40,7 +40,7 @@ function HexColorField(props: SpectrumHexColorFieldProps, ref: RefObject<TextFie
       ref={ref}
       inputRef={inputRef}
       labelProps={labelProps}
-      inputProps={inputFieldProps} />
+      inputProps={inputProps} />
   );
 }
 

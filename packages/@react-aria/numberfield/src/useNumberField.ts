@@ -26,26 +26,25 @@ import {
 import intlMessages from '../intl/*.json';
 import {isAndroid, isIOS, isIPhone, mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
-import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
 import {TextInputDOMProps} from '@react-types/shared';
 import {useFocus} from '@react-aria/interactions';
 import {
   useMessageFormatter,
   useNumberFormatter
 } from '@react-aria/i18n';
+import {useSpinButton} from '@react-aria/spinbutton';
 import {useTextField} from '@react-aria/textfield';
 
-interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
-  inputRef?:  RefObject<HTMLInputElement>,
-  decrementAriaLabel?: string,
-  incrementAriaLabel?: string
-}
-
 interface NumberFieldAria {
+  /** Props for the label element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
-  inputFieldProps: InputHTMLAttributes<HTMLInputElement>,
-  numberFieldProps: HTMLAttributes<HTMLDivElement>,
+  /** Props for the group wrapper around the input and stepper buttons. */
+  groupProps: HTMLAttributes<HTMLElement>,
+  /** Props for the input element. */
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Props for the increment button, to be passed to [useButton](useButton.html). */
   incrementButtonProps: AriaButtonProps,
+  /** Props for the decrement button, to be passed to [useButton](useButton.html). */
   decrementButtonProps: AriaButtonProps
 }
 
@@ -56,7 +55,7 @@ function supportsNativeBeforeInputEvent() {
     typeof InputEvent.prototype.getTargetRanges === 'function';
 }
 
-export function useNumberField(props: NumberFieldProps, state: NumberFieldState): NumberFieldAria {
+export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldState, inputRef: RefObject<HTMLInputElement>): NumberFieldAria {
   let {
     decrementAriaLabel,
     incrementAriaLabel,
@@ -68,8 +67,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     autoFocus,
     validationState,
     label,
-    formatOptions,
-    inputRef
+    formatOptions
   } = props;
 
   let {
@@ -83,7 +81,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
 
   const formatMessage = useMessageFormatter(intlMessages);
 
-  const inputId = useId();
+  let inputId = useId();
 
   let {focusProps} = useFocus({
     onBlur: () => {
@@ -92,7 +90,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     }
   });
 
-  const {
+  let {
     spinButtonProps,
     incrementButtonProps: incButtonProps,
     decrementButtonProps: decButtonProps
@@ -132,7 +130,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
   incrementAriaLabel = incrementAriaLabel || formatMessage('Increment');
   decrementAriaLabel = decrementAriaLabel || formatMessage('Decrement');
 
-  const incrementButtonProps: AriaButtonProps = mergeProps(incButtonProps, {
+  let incrementButtonProps: AriaButtonProps = mergeProps(incButtonProps, {
     'aria-label': incrementAriaLabel,
     'aria-controls': inputId,
     excludeFromTabOrder: true,
@@ -141,7 +139,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     onPressStart: onButtonPressStart
   });
 
-  const decrementButtonProps: AriaButtonProps = mergeProps(decButtonProps, {
+  let decrementButtonProps: AriaButtonProps = mergeProps(decButtonProps, {
     'aria-label': decrementAriaLabel,
     'aria-controls': inputId,
     excludeFromTabOrder: true,
@@ -285,54 +283,53 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
   };
 
   let compositionStartState = useRef(null);
-  let {labelProps, inputProps} = useTextField(
-    {
-      label,
-      autoFocus,
-      isDisabled,
-      isReadOnly,
-      isRequired,
-      validationState,
-      value: state.inputValue,
-      autoComplete: 'off',
-      'aria-label': props['aria-label'] || null,
-      'aria-labelledby': props['aria-labelledby'] || null,
-      id: inputId,
-      type: 'text', // Can't use type="number" because then we can't have things like $ in the field.
-      inputMode,
-      onChange,
-      onBeforeInput,
-      onCompositionStart() {
-        // Chrome does not implement Input Events Level 2, which specifies the insertFromComposition
-        // and deleteByComposition inputType values for the beforeinput event. These are meant to occur
-        // at the end of a composition (e.g. Pinyin IME, Android auto correct, etc.), and crucially, are
-        // cancelable. The insertCompositionText and deleteCompositionText input types are not cancelable,
-        // nor would we want to cancel them because the input from the user is incomplete at that point.
-        // In Safari, insertFromComposition/deleteFromComposition will fire, however, allowing us to cancel
-        // the final composition result if it is invalid. As a fallback for Chrome and Firefox, which either
-        // don't support Input Events Level 2, or beforeinput at all, we store the state of the input when
-        // the compositionstart event fires, and undo the changes in compositionend (below) if it is invalid.
-        // Unfortunately, this messes up the undo/redo stack, but until insertFromComposition/deleteByComposition
-        // are implemented, there is no other way to prevent composed input.
-        // See https://bugs.chromium.org/p/chromium/issues/detail?id=1022204
-        let {value, selectionStart, selectionEnd} = inputRef.current;
-        compositionStartState.current = {value, selectionStart, selectionEnd};
-      },
-      onCompositionEnd() {
-        if (!state.validate(inputRef.current.value)) {
-          // Restore the input value in the DOM immediately so we can synchronously update the selection position.
-          // But also update the value in React state as well so it is correct for future updates.
-          let {value, selectionStart, selectionEnd} = compositionStartState.current;
-          inputRef.current.value = value;
-          inputRef.current.setSelectionRange(selectionStart, selectionEnd);
-          state.setInputValue(value);
-        }
+  let {labelProps, inputProps: textFieldProps} = useTextField({
+    label,
+    autoFocus,
+    isDisabled,
+    isReadOnly,
+    isRequired,
+    validationState,
+    value: state.inputValue,
+    autoComplete: 'off',
+    'aria-label': props['aria-label'] || null,
+    'aria-labelledby': props['aria-labelledby'] || null,
+    id: inputId,
+    type: 'text', // Can't use type="number" because then we can't have things like $ in the field.
+    inputMode,
+    onChange,
+    onBeforeInput,
+    onCompositionStart() {
+      // Chrome does not implement Input Events Level 2, which specifies the insertFromComposition
+      // and deleteByComposition inputType values for the beforeinput event. These are meant to occur
+      // at the end of a composition (e.g. Pinyin IME, Android auto correct, etc.), and crucially, are
+      // cancelable. The insertCompositionText and deleteCompositionText input types are not cancelable,
+      // nor would we want to cancel them because the input from the user is incomplete at that point.
+      // In Safari, insertFromComposition/deleteFromComposition will fire, however, allowing us to cancel
+      // the final composition result if it is invalid. As a fallback for Chrome and Firefox, which either
+      // don't support Input Events Level 2, or beforeinput at all, we store the state of the input when
+      // the compositionstart event fires, and undo the changes in compositionend (below) if it is invalid.
+      // Unfortunately, this messes up the undo/redo stack, but until insertFromComposition/deleteByComposition
+      // are implemented, there is no other way to prevent composed input.
+      // See https://bugs.chromium.org/p/chromium/issues/detail?id=1022204
+      let {value, selectionStart, selectionEnd} = inputRef.current;
+      compositionStartState.current = {value, selectionStart, selectionEnd};
+    },
+    onCompositionEnd() {
+      if (!state.validate(inputRef.current.value)) {
+        // Restore the input value in the DOM immediately so we can synchronously update the selection position.
+        // But also update the value in React state as well so it is correct for future updates.
+        let {value, selectionStart, selectionEnd} = compositionStartState.current;
+        inputRef.current.value = value;
+        inputRef.current.setSelectionRange(selectionStart, selectionEnd);
+        state.setInputValue(value);
       }
-    }, inputRef);
+    }
+  }, inputRef);
 
-  const inputFieldProps = mergeProps(
+  let inputProps = mergeProps(
     spinButtonProps,
-    inputProps,
+    textFieldProps,
     focusProps,
     {
       // override the spinbutton role, we can't focus a spin button with VO
@@ -347,14 +344,15 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
       spellCheck: 'false'
     }
   );
+
   return {
-    numberFieldProps: {
+    groupProps: {
       role: 'group',
       'aria-disabled': isDisabled,
       'aria-invalid': validationState === 'invalid' ? 'true' : undefined
     },
     labelProps,
-    inputFieldProps,
+    inputProps,
     incrementButtonProps,
     decrementButtonProps
   };
