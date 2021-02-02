@@ -165,6 +165,7 @@ function ControlledTextArea(props) {
 function renderInFlexRowAndBlock(props = {}) {
   return (
     <Flex direction="column" gap="size-300">
+      Align stretch
       <Flex gap="size-100">
         <TextArea
           label="Default"
@@ -181,6 +182,24 @@ function renderInFlexRowAndBlock(props = {}) {
           isQuiet
           {...props} />
       </Flex>
+      Align end
+      <Flex gap="size-100" alignItems="end">
+        <TextArea
+          label="Default"
+          placeholder="React"
+          {...props} />
+        <TextArea
+          label="Quiet"
+          placeholder="React"
+          isQuiet
+          {...props} />
+        <TextArea
+          label="Quiet"
+          placeholder="React"
+          isQuiet
+          {...props} />
+      </Flex>
+      Display block
       <div>
         <TextArea
           label="Default"
