@@ -9,20 +9,16 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import React, {useMemo, useRef} from 'react';
-import {CollectionBuilder} from '@react-stately/collections/src/CollectionBuilder';
-import {useCollection} from '@react-stately/collections';
-import {ListCollection, useListState} from '@react-stately/list';
-import {GridKeyboardDelegate, useGrid, useGridCell, useGridRow} from '@react-aria/grid';
-import {GridCollection, useGridState} from '@react-stately/grid';
-import {useDOMRef} from '@react-spectrum/utils';
-import {getFocusableTreeWalker} from '@react-aria/focus';
 import {DOMRef} from '@react-types/shared';
+import {GridCollection, useGridState} from '@react-stately/grid';
+import {GridKeyboardDelegate, useGrid, useGridRow} from '@react-aria/grid';
+import React, {useRef} from 'react';
 import {useCollator, useLocale} from '@react-aria/i18n';
-import {ListKeyboardDelegate, useListItem} from '@react-aria/list';
+import {useDOMRef} from '@react-spectrum/utils';
+import {useListItem} from '@react-aria/list';
+import {useListState} from '@react-stately/list';
 
-function List<T extends object>(props, ref: DOMRef<HTMLDivElement>) {
-  let {} = props;
+function List(props, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
   let {collection} = useListState(props);
 
@@ -60,7 +56,6 @@ function List<T extends object>(props, ref: DOMRef<HTMLDivElement>) {
     // focusMode: 'cell'
   }, state);
 
-  console.log('gridprops', gridProps)
   // TODO adding grid props makes the grid keyboard delegate the main keyboard listener?
   return (
     <div
@@ -84,8 +79,7 @@ function ListItem({item, state, delegate}) {
   // }, state);
   let {rowProps} = useGridRow({
     node: item,
-    ref,
-    preventFocusOnPress: true
+    ref
   }, state);
   let {listItemProps} = useListItem({
     node: item,

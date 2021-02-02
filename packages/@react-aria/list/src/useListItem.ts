@@ -24,17 +24,14 @@ interface ListItemOptions<> {
 }
 
 
-interface ListItemAria {
-  listItemProps: HTMLAttributes<HTMLElement>
-}
+// interface ListItemAria {
+//   listItemProps: HTMLAttributes<HTMLElement>
+// }
 
-export function useListItem<T, C extends GridCollection<T>>(props: ListItemOptions, state: GridState<T, C>): ListItemAria {
+export function useListItem<T, C extends GridCollection<T>>(props: ListItemOptions, state: GridState<T, C>) {
   let {
-    keyboardDelegate: delegate,
-    selectionManager: manager,
     node,
-    ref,
-    shouldFocusWrap = false
+    ref
   } = props;
   // console.log('kb', props.keyboardDelegate)
   // console.log('kb d', delegate)
@@ -56,7 +53,6 @@ export function useListItem<T, C extends GridCollection<T>>(props: ListItemOptio
         e.preventDefault();
         e.stopPropagation();
         focusable = walker.previousNode();
-        console.log('focusable', focusable);
         if (focusable) { // todo remove check once rows are not focusable
           focusable.focus();
         }
@@ -65,7 +61,6 @@ export function useListItem<T, C extends GridCollection<T>>(props: ListItemOptio
         e.preventDefault();
         e.stopPropagation();
         focusable = walker.nextNode();
-        console.log('focusable', focusable);
         if (focusable && focusable !== ref.current) {
           focusable.focus();
         }
