@@ -46,12 +46,12 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
   let inputRef = useRef<HTMLInputElement>();
   let domRef = useFocusableRef<HTMLElement>(ref, inputRef);
   let {
-    numberFieldProps,
+    groupProps,
     labelProps,
-    inputFieldProps,
+    inputProps,
     incrementButtonProps,
     decrementButtonProps
-  } = useNumberField({...props, inputRef}, state);
+  } = useNumberField(props, state, inputRef);
   let isMobile = provider.scale === 'large';
   let showStepper = !hideStepper;
 
@@ -88,8 +88,8 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
       ref={domRef}>
       <NumberFieldInput
         {...props}
-        numberFieldProps={mergeProps(numberFieldProps, hoverProps)}
-        inputProps={inputFieldProps}
+        groupProps={mergeProps(groupProps, hoverProps)}
+        inputProps={inputProps}
         inputRef={inputRef}
         incrementProps={incrementButtonProps}
         decrementProps={decrementButtonProps}
@@ -101,7 +101,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
 
 
 interface NumberFieldInputProps extends SpectrumNumberFieldProps {
-  numberFieldProps: HTMLAttributes<HTMLDivElement>,
+  groupProps: HTMLAttributes<HTMLDivElement>,
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   incrementProps: AriaButtonProps,
@@ -112,7 +112,7 @@ interface NumberFieldInputProps extends SpectrumNumberFieldProps {
 
 const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: NumberFieldInputProps, ref: RefObject<HTMLElement>) {
   let {
-    numberFieldProps,
+    groupProps,
     inputProps,
     inputRef,
     incrementProps,
@@ -135,7 +135,7 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
       focusRingClass={classNames(inputgroupStyles, 'focus-ring', classNames(stepperStyle, 'focus-ring'))}
       autoFocus={autoFocus}>
       <div
-        {...numberFieldProps}
+        {...groupProps}
         ref={ref as RefObject<HTMLDivElement>}
         {...(label ? {style: {...style, width: '100%'}} : {style})}
         className={className}>

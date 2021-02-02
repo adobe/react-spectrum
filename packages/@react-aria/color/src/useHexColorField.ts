@@ -23,7 +23,7 @@ import {useTextField} from '@react-aria/textfield';
 
 interface HexColorFieldAria {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
-  inputFieldProps: HTMLAttributes<HTMLInputElement>
+  inputProps: HTMLAttributes<HTMLInputElement>
 }
 
 export function useHexColorField(
@@ -87,7 +87,7 @@ export function useHexColorField(
 
   return {
     labelProps,
-    inputFieldProps: mergeProps(inputProps, spinButtonProps, {
+    inputProps: mergeProps(inputProps, spinButtonProps, {
       role: 'textbox',
       'aria-valuemax': null,
       'aria-valuemin': null,
