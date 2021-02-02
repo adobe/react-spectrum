@@ -217,7 +217,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
         open();
       }
     } else if (shouldCloseOnBlur) {
-      if (allowsCustomValue) {
+      let itemText = collection.getItem(selectedKey)?.textValue ?? '';
+      if (allowsCustomValue && inputValue !== itemText) {
         commitCustomValue();
       } else {
         resetInputValue();
