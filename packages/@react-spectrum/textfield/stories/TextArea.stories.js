@@ -17,6 +17,7 @@ import Info from '@spectrum-icons/workflow/Info';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextArea} from '../';
+import {Flex} from "@react-spectrum/layout";
 
 storiesOf('TextArea', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -135,7 +136,8 @@ storiesOf('TextArea', module)
   )
   .add('controlled interactive',
     () => <ControlledTextArea />
-  );
+  )
+  .add('in flex', () => renderInFlexRowAndBlock());
 
 function render(props = {}) {
   return (
@@ -157,5 +159,44 @@ function ControlledTextArea(props) {
       <TextArea label="megatron" value={value} onChange={setValue} {...props} isQuiet />
       <Button variant="primary" onPress={() => setValue('decepticons are evil transformers and should be kicked out of earth')}>Set Text</Button>
     </>
+  );
+}
+
+function renderInFlexRowAndBlock(props = {}) {
+  return (
+    <Flex direction="column" gap="size-300">
+      <Flex gap="size-100">
+        <TextArea
+          label="Default"
+          placeholder="React"
+          {...props} />
+        <TextArea
+          label="Quiet"
+          placeholder="React"
+          isQuiet
+          {...props} />
+        <TextArea
+          label="Quiet"
+          placeholder="React"
+          isQuiet
+          {...props} />
+      </Flex>
+      <div>
+        <TextArea
+          label="Default"
+          placeholder="React"
+          {...props} />
+        <TextArea
+          label="Quiet"
+          placeholder="React"
+          isQuiet
+          {...props} />
+        <TextArea
+          label="Quiet"
+          placeholder="React"
+          isQuiet
+          {...props} />
+      </div>
+    </Flex>
   );
 }
