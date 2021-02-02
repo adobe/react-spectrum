@@ -218,7 +218,10 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       }
     } else if (shouldCloseOnBlur) {
       if (allowsCustomValue) {
-        commitCustomValue();
+        let itemText = collection.getItem(selectedKey)?.textValue ?? '';
+        if (inputValue !== itemText) {
+          commitCustomValue();
+        }
       } else {
         resetInputValue();
         // Close menu if blurring away from the combobox
