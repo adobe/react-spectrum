@@ -1,5 +1,5 @@
 {
-  "Decrement": "Azalış",
-  "Increment": "Artış",
+  "decrease": "Decrease {fieldLabel}",
+  "increase": "Increase {fieldLabel}",
   "Number field": "Number field"
 }

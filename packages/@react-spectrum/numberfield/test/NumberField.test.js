@@ -1459,10 +1459,123 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('aria-required', 'true');
     expect(textField).toHaveAttribute('aria-disabled', 'true');
     expect(textField).not.toHaveAttribute('role');
+    expect(textField).toHaveAttribute('id', 'test-numberfield-id');
 
-    // TODO: check aria-controls
-    expect(incrementButton).toHaveAttribute('aria-label', 'Increment');
-    expect(decrementButton).toHaveAttribute('aria-label', 'Decrement');
+    expect(incrementButton).toHaveAttribute('aria-controls', textField.id);
+    expect(decrementButton).toHaveAttribute('aria-controls', textField.id);
+  });
+
+  describe('labeling', () => {
+    it('string label', () => {
+      let {textField, incrementButton, decrementButton} = renderNumberField({
+        label: 'Width',
+        'aria-label': null
+      });
+
+      expect(textField).toHaveAttribute('aria-labelledby');
+      expect(textField).toHaveAttribute('id');
+
+      let labelId = textField.getAttribute('aria-labelledby');
+      let label = document.getElementById(labelId);
+      expect(label).toHaveTextContent('Width');
+      expect(label).toHaveAttribute('for', textField.id);
+
+      expect(incrementButton).toHaveAttribute('aria-label', 'Increase Width');
+      expect(incrementButton).not.toHaveAttribute('id');
+      expect(incrementButton).not.toHaveAttribute('aria-labelledby');
+      expect(decrementButton).toHaveAttribute('aria-label', 'Decrease Width');
+      expect(decrementButton).not.toHaveAttribute('id');
+      expect(decrementButton).not.toHaveAttribute('aria-labelledby');
+    });
+
+    it('aria-label', () => {
+      let {textField, incrementButton, decrementButton} = renderNumberField({
+        'aria-label': 'Width'
+      });
+
+      expect(textField).not.toHaveAttribute('aria-labelledby');
+      expect(textField).toHaveAttribute('aria-label', 'Width');
+
+      expect(incrementButton).toHaveAttribute('aria-label', 'Increase Width');
+      expect(incrementButton).not.toHaveAttribute('id');
+      expect(incrementButton).not.toHaveAttribute('aria-labelledby');
+      expect(decrementButton).toHaveAttribute('aria-label', 'Decrease Width');
+      expect(decrementButton).not.toHaveAttribute('id');
+      expect(decrementButton).not.toHaveAttribute('aria-labelledby');
+    });
+
+    it('JSX label', () => {
+      let {textField, incrementButton, decrementButton} = renderNumberField({
+        label: <span>Width</span>,
+        'aria-label': null
+      });
+
+      expect(textField).toHaveAttribute('aria-labelledby');
+      expect(textField).toHaveAttribute('id');
+
+      let labelId = textField.getAttribute('aria-labelledby');
+      let label = document.getElementById(labelId);
+      expect(label).toHaveTextContent('Width');
+      expect(label).toHaveAttribute('for', textField.id);
+
+      expect(incrementButton).toHaveAttribute('aria-label', 'Increase');
+      expect(incrementButton).toHaveAttribute('id');
+      expect(incrementButton).toHaveAttribute('aria-labelledby', `${incrementButton.id} ${labelId}`);
+      expect(decrementButton).toHaveAttribute('aria-label', 'Decrease');
+      expect(decrementButton).toHaveAttribute('id');
+      expect(decrementButton).toHaveAttribute('aria-labelledby', `${decrementButton.id} ${labelId}`);
+    });
+
+    it('aria-labelledby', () => {
+      let {textField, incrementButton, decrementButton} = renderNumberField({
+        'aria-labelledby': 'label-id',
+        'aria-label': null
+      });
+
+      expect(textField).toHaveAttribute('aria-labelledby', 'label-id');
+      expect(textField).toHaveAttribute('id');
+
+      expect(incrementButton).toHaveAttribute('aria-label', 'Increase');
+      expect(incrementButton).toHaveAttribute('id');
+      expect(incrementButton).toHaveAttribute('aria-labelledby', `${incrementButton.id} label-id`);
+      expect(decrementButton).toHaveAttribute('aria-label', 'Decrease');
+      expect(decrementButton).toHaveAttribute('id');
+      expect(decrementButton).toHaveAttribute('aria-labelledby', `${decrementButton.id} label-id`);
+    });
+
+    it('custom incrementAriaLabel', () => {
+      let {textField, incrementButton, decrementButton} = renderNumberField({
+        'aria-label': 'Width',
+        incrementAriaLabel: 'Increment'
+      });
+
+      expect(textField).not.toHaveAttribute('aria-labelledby');
+      expect(textField).toHaveAttribute('aria-label', 'Width');
+
+      expect(incrementButton).toHaveAttribute('aria-label', 'Increment');
+      expect(incrementButton).not.toHaveAttribute('id');
+      expect(incrementButton).not.toHaveAttribute('aria-labelledby');
+      expect(decrementButton).toHaveAttribute('aria-label', 'Decrease Width');
+      expect(decrementButton).not.toHaveAttribute('id');
+      expect(decrementButton).not.toHaveAttribute('aria-labelledby');
+    });
+
+    it('custom decrementAriaLabel', () => {
+      let {textField, incrementButton, decrementButton} = renderNumberField({
+        'aria-label': 'Width',
+        decrementAriaLabel: 'Decrement'
+      });
+
+      expect(textField).not.toHaveAttribute('aria-labelledby');
+      expect(textField).toHaveAttribute('aria-label', 'Width');
+
+      expect(incrementButton).toHaveAttribute('aria-label', 'Increase Width');
+      expect(incrementButton).not.toHaveAttribute('id');
+      expect(incrementButton).not.toHaveAttribute('aria-labelledby');
+      expect(decrementButton).toHaveAttribute('aria-label', 'Decrement');
+      expect(decrementButton).not.toHaveAttribute('id');
+      expect(decrementButton).not.toHaveAttribute('aria-labelledby');
+    });
   });
 
   it.each`
