@@ -24,6 +24,7 @@ import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 import {useAsyncList} from '@react-stately/data';
+import {View} from '@react-spectrum/view';
 
 
 let flatOptions = [
@@ -499,8 +500,8 @@ storiesOf('Picker', module)
     () => (
       <AsyncLoadingExample />
     )
-  ).add( 
-    'focus', 
+  ).add(
+    'focus',
     () => (
       <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
         <input placeholder="Shift tab here" />
@@ -518,6 +519,17 @@ storiesOf('Picker', module)
       <Item key="Two">Two</Item>
       <Item key="Three">Three</Item>
     </Picker>
+  ))
+  .add('scrolling container', () => (
+    <View width="300px" height="size-500" overflow="auto">
+      <View width="500px">
+        <Picker label="Test" autoFocus>
+          <Item key="One">One</Item>
+          <Item key="Two">Two</Item>
+          <Item key="Three">Three</Item>
+        </Picker>
+      </View>
+    </View>
   ));
 
 function AsyncLoadingExample() {
