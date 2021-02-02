@@ -392,8 +392,6 @@ describe('NumberField', function () {
     act(() => {textField.focus();});
     fireEvent.wheel(textField, {deltaY: -10});
     expect(onChangeSpy).toHaveBeenCalledWith(-1);
-    fireEvent.wheel(textField, {deltaX: -10});
-    expect(onChangeSpy).toHaveBeenLastCalledWith(-2);
     act(() => {textField.blur();});
   });
 

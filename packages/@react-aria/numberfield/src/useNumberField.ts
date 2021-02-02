@@ -123,7 +123,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
 
     if (e.deltaY > 0) {
       increment();
-    } else {
+    } else if (e.deltaY < 0) {
       decrement();
     }
   }, [isReadOnly, isDisabled, decrement, increment]);
