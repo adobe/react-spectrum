@@ -43,6 +43,7 @@ export class GridCollection<T> implements IGridCollection<T> {
       let childKeys = new Set();
       let last: GridNode<T>;
       for (let child of node.childNodes) {
+        child.parentKey = node.key;
         childKeys.add(child.key);
 
         if (last) {

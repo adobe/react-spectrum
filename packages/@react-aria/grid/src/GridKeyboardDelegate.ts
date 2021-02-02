@@ -223,16 +223,14 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     // Find the first row
     key = this.findNextKey();
 
-    // If global flag is set, focus the first cell in the first row.
-    if (key != null && item && this.isCell(item) && global) {
+    // If global flag is set (or if focus mode is cell), focus the first cell in the first row.
+    if (key != null && item && this.isCell(item) && global || this.focusMode === 'cell') {
       let item = this.collection.getItem(key);
       key = [...item.childNodes][0].key;
     }
 
     // Otherwise, focus the row itself.
-    if (this.focusMode === 'row') {
-      return key;
-    }
+    return key;
   }
 
   getLastKey(key?: Key, global?: boolean) {
@@ -255,17 +253,15 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     // Find the last row
     key = this.findPreviousKey();
 
-    // If global flag is set, focus the last cell in the last row.
-    if (key != null && item && this.isCell(item) && global) {
+    // If global flag is set (or if focus mode is cell), focus the last cell in the last row.
+    if (key != null && item && this.isCell(item) && global || this.focusMode === 'cell') {
       let item = this.collection.getItem(key);
       let children = [...item.childNodes];
       key = children[children.length - 1].key;
     }
 
     // Otherwise, focus the row itself.
-    if (this.focusMode === 'row') {
-      return key;
-    }
+    return key;
   }
 
   private getItem(key: Key): HTMLElement {

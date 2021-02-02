@@ -23,7 +23,10 @@ interface GridCellProps {
   node: Node<unknown>,
   ref: RefObject<HTMLElement>,
   isVirtualized?: boolean,
-  isDisabled?: boolean
+  isDisabled?: boolean,
+
+  /* when a cell is focused, should the cell or it's first focusable item be focused */
+  focusMode?: 'child' | 'cell'
 }
 
 interface GridCellAria {
@@ -35,7 +38,8 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     node,
     ref,
     isVirtualized,
-    isDisabled
+    isDisabled,
+    focusMode = 'cell'
   } = props;
 
   // Handles focusing the cell. If there is a focusable child,
@@ -43,7 +47,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   let focus = () => {
     let treeWalker = getFocusableTreeWalker(ref.current);
     let focusable = treeWalker.firstChild() as HTMLElement;
-    if (focusable) {
+    if (focusable && focusMode === 'child') {
       focusSafely(focusable);
     } else {
       focusSafely(ref.current);
@@ -80,7 +84,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     // If the cell itself is focused, wait a frame so that focus finishes propagatating
     // up to the tree, and move focus to a focusable child if possible.
     requestAnimationFrame(() => {
-      if (document.activeElement === ref.current) {
+      if (focusMode === 'child' && document.activeElement === ref.current) {
         focus();
       }
     });
