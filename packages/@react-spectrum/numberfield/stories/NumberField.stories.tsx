@@ -42,19 +42,19 @@ storiesOf('NumberField', module)
   )
   .add(
     'currency',
-    () => render({formatOptions: {style: 'currency', currency: 'EUR'}})
+    () => render({formatOptions: {style: 'currency', currency: 'EUR'}, label: 'Price'})
   )
   .add(
     'percent',
-    () => render({formatOptions: {style: 'percent'}})
+    () => render({formatOptions: {style: 'percent'}, label: 'Tax'})
   )
   .add(
     'percent min = 2 max = 2 fraction digits',
-    () => render({formatOptions: {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2}})
+    () => render({formatOptions: {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2}, label: 'Tax'})
   )
   .add(
     'percent min = 2 max = 3 fraction digits',
-    () => render({formatOptions: {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 3}})
+    () => render({formatOptions: {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 3}, label: 'Tax'})
   )
   .add(
     'minValue = 0, 0 fraction digits',
@@ -62,7 +62,7 @@ storiesOf('NumberField', module)
   )
   .add(
     'percent using sign',
-    () => render({formatOptions: {style: 'percent', signDisplay: 'always'}})
+    () => render({formatOptions: {style: 'percent', signDisplay: 'always'}, label: 'Tax'})
   )
   .add(
     'disabled',
@@ -154,7 +154,16 @@ storiesOf('NumberField', module)
   )
   .add(
     'no visible label',
-    () => renderNoLabel({isRequired: true, 'aria-label': 'Enter numbers'})
+    () => renderNoLabel({isRequired: true, 'aria-label': 'Width'})
+  )
+  .add(
+    'aria-labelledby',
+    () => (
+      <>
+        <label htmlFor="numberfield" id="label">Width</label>
+        {renderNoLabel({isRequired: true, id: 'numberfield', 'aria-labelledby': 'label'})}
+      </>
+    )
   )
   .add(
     'custom width',
@@ -162,7 +171,7 @@ storiesOf('NumberField', module)
   )
   .add(
     'custom width no visible label',
-    () => renderNoLabel({width: 'size-3000', isRequired: true, 'aria-label': 'Enter numbers'})
+    () => renderNoLabel({width: 'size-3000', isRequired: true, 'aria-label': 'Width'})
   )
   .add(
     'controlled',
@@ -179,7 +188,7 @@ storiesOf('NumberField', module)
 
 function render(props: any = {}) {
   return (
-    <NumberField {...props} onChange={action('onChange')} UNSAFE_className="custom_classname" label="Enter numbers" />
+    <NumberField onChange={action('onChange')} UNSAFE_className="custom_classname" label="Width" {...props} />
   );
 }
 
@@ -202,7 +211,7 @@ function renderSet() {
 
 function NumberFieldControlled(props) {
   let [value, setValue] = useState(10);
-  return <NumberField {...props} formatOptions={{style: 'currency', currency: 'EUR'}} value={value} onChange={chain(setValue, action('onChange'))} label="Enter numbers" />;
+  return <NumberField {...props} formatOptions={{style: 'currency', currency: 'EUR'}} value={value} onChange={chain(setValue, action('onChange'))} label="Price" />;
 }
 
 function NumberFieldWithCurrencySelect(props) {
@@ -212,7 +221,7 @@ function NumberFieldWithCurrencySelect(props) {
   let [currencyDisplay, setCurrencyDisplay] = useState('symbol');
   return (
     <Form>
-      <NumberField label="Monies" {...props} formatOptions={{style: 'currency', currency, currencySign, currencyDisplay}} value={value} onChange={chain(setValue, action('onChange'))} />
+      <NumberField label="Price" {...props} formatOptions={{style: 'currency', currency, currencySign, currencyDisplay}} value={value} onChange={chain(setValue, action('onChange'))} />
       <Picker
         onSelectionChange={item => setCurrency(String(item))}
         label="Choose Currency"

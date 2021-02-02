@@ -57,6 +57,7 @@ function supportsNativeBeforeInputEvent() {
 
 export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldState, inputRef: RefObject<HTMLInputElement>): NumberFieldAria {
   let {
+    id,
     decrementAriaLabel,
     incrementAriaLabel,
     isDisabled,
@@ -81,7 +82,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
 
   const formatMessage = useMessageFormatter(intlMessages);
 
-  let inputId = useId();
+  let inputId = useId(id);
 
   let {focusProps} = useFocus({
     onBlur: () => {
@@ -109,44 +110,6 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
       textValue: state.inputValue
     }
   );
-
-  let onButtonPressStart = (e) => {
-    // If focus is already on the input, keep it there so we don't hide the
-    // software keyboard when tapping the increment/decrement buttons.
-    if (document.activeElement === inputRef.current) {
-      return;
-    }
-
-    // Otherwise, when using a mouse, move focus to the input.
-    // On touch, or with a screen reader, focus the button so that the software
-    // keyboard does not appear and the screen reader cursor is not moved off the button.
-    if (e.pointerType === 'mouse') {
-      inputRef.current.focus();
-    } else {
-      e.target.focus();
-    }
-  };
-
-  incrementAriaLabel = incrementAriaLabel || formatMessage('Increment');
-  decrementAriaLabel = decrementAriaLabel || formatMessage('Decrement');
-
-  let incrementButtonProps: AriaButtonProps = mergeProps(incButtonProps, {
-    'aria-label': incrementAriaLabel,
-    'aria-controls': inputId,
-    excludeFromTabOrder: true,
-    preventFocusOnPress: true,
-    isDisabled: !state.canIncrement,
-    onPressStart: onButtonPressStart
-  });
-
-  let decrementButtonProps: AriaButtonProps = mergeProps(decButtonProps, {
-    'aria-label': decrementAriaLabel,
-    'aria-controls': inputId,
-    excludeFromTabOrder: true,
-    preventFocusOnPress: true,
-    isDisabled: !state.canDecrement,
-    onPressStart: onButtonPressStart
-  });
 
   let onWheel = useCallback((e) => {
     // If the input isn't supposed to receive input, do nothing.
@@ -344,6 +307,64 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
       spellCheck: 'false'
     }
   );
+
+  let onButtonPressStart = (e) => {
+    // If focus is already on the input, keep it there so we don't hide the
+    // software keyboard when tapping the increment/decrement buttons.
+    if (document.activeElement === inputRef.current) {
+      return;
+    }
+
+    // Otherwise, when using a mouse, move focus to the input.
+    // On touch, or with a screen reader, focus the button so that the software
+    // keyboard does not appear and the screen reader cursor is not moved off the button.
+    if (e.pointerType === 'mouse') {
+      inputRef.current.focus();
+    } else {
+      e.target.focus();
+    }
+  };
+
+  // Determine the label for the increment and decrement buttons. There are 4 cases:
+  //
+  // 1. With a visible label that is a string: aria-label: `Increase ${props.label}`
+  // 2. With a visible label that is JSX: aria-label: 'Increase', aria-labelledby: '${incrementId} ${labelId}'
+  // 3. With an aria-label: aria-label: `Increase ${props['aria-label']}`
+  // 4. With an aria-labelledby: aria-label: 'Increase', aria-labelledby: `${incrementId} ${props['aria-labelledby']}`
+  //
+  // (1) and (2) could possibly be combined and both use aria-labelledby. However, placing the label in
+  // the aria-label string rather than using aria-labelledby gives more flexibility to translators to change
+  // the order or add additional words around the label if needed.
+  let fieldLabel = props['aria-label'] || (typeof props.label === 'string' ? props.label : '');
+  let ariaLabelledby: string;
+  if (!fieldLabel) {
+    ariaLabelledby = props.label != null ? labelProps.id : props['aria-labelledby'];
+  }
+
+  let incrementId = useId();
+  let decrementId = useId();
+
+  let incrementButtonProps: AriaButtonProps = mergeProps(incButtonProps, {
+    'aria-label': incrementAriaLabel || formatMessage('increase', {fieldLabel}).trim(),
+    id: ariaLabelledby && !incrementAriaLabel ? incrementId : null,
+    'aria-labelledby': ariaLabelledby && !incrementAriaLabel ? `${incrementId} ${ariaLabelledby}` : null,
+    'aria-controls': inputId,
+    excludeFromTabOrder: true,
+    preventFocusOnPress: true,
+    isDisabled: !state.canIncrement,
+    onPressStart: onButtonPressStart
+  });
+
+  let decrementButtonProps: AriaButtonProps = mergeProps(decButtonProps, {
+    'aria-label': decrementAriaLabel || formatMessage('decrease', {fieldLabel}).trim(),
+    id: ariaLabelledby && !decrementAriaLabel ? decrementId : null,
+    'aria-labelledby': ariaLabelledby && !decrementAriaLabel ? `${decrementId} ${ariaLabelledby}` : null,
+    'aria-controls': inputId,
+    excludeFromTabOrder: true,
+    preventFocusOnPress: true,
+    isDisabled: !state.canDecrement,
+    onPressStart: onButtonPressStart
+  });
 
   return {
     groupProps: {
