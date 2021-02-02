@@ -85,7 +85,7 @@ export function useHexColorFieldState(
     }
   };
 
-  let commitInputValue = () => {
+  let commit = () => {
     setInputValue(colorValue ? colorValue.toString('hex') : '');
   };
 
@@ -93,7 +93,7 @@ export function useHexColorFieldState(
     colorValue,
     inputValue,
     setInputValue: setFieldInputValue,
-    commitInputValue,
+    commit,
     increment,
     incrementToMax,
     decrement,

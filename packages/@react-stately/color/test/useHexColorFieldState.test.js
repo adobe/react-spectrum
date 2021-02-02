@@ -97,7 +97,7 @@ describe('useHexColorFieldState tests', function () {
     act(() => result.current.setInputValue('ab'));
     expect(result.current.inputValue).toBe('ab');
 
-    act(() => result.current.commitInputValue());
+    act(() => result.current.commit());
     expect(result.current.inputValue).toBe('#AABBCC');
     expect(onChangeSpy).not.toHaveBeenCalled();
   });

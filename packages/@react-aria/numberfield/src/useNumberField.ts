@@ -76,7 +76,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     decrement,
     decrementToMin,
     numberValue,
-    commitInputValue
+    commit
   } = state;
 
   const formatMessage = useMessageFormatter(intlMessages);
@@ -86,7 +86,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   let {focusProps} = useFocus({
     onBlur: () => {
       // Set input value to normalized valid value
-      commitInputValue();
+      commit();
     }
   });
 

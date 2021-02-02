@@ -41,7 +41,7 @@ export function useHexColorField(
     colorValue,
     inputValue,
     setInputValue,
-    commitInputValue,
+    commit,
     increment,
     decrement,
     incrementToMax,
@@ -94,7 +94,7 @@ export function useHexColorField(
       'aria-valuenow': null,
       'aria-valuetext': null,
       autoCorrect: 'off',
-      onBlur: commitInputValue,
+      onBlur: commit,
       onWheel
     })
   };

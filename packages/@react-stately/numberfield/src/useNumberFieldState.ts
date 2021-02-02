@@ -23,7 +23,7 @@ export interface NumberFieldState {
   decrementToMin: () => void,
   canIncrement: boolean,
   canDecrement: boolean,
-  commitInputValue: () => void,
+  commit: () => void,
   minValue: number,
   maxValue: number,
   numberValue: number,
@@ -76,7 +76,7 @@ export function useNumberFieldState(
   let parsed = useRef(0);
   parsed.current = parsedValue;
 
-  let commitInputValue = () => {
+  let commit = () => {
     // Set to empty state if input value is empty
     if (!inputValue.length) {
       setNumberValue(NaN);
@@ -207,7 +207,7 @@ export function useNumberFieldState(
     numberValue: parsedValue,
     setInputValue,
     inputValue,
-    commitInputValue
+    commit
   };
 }
 
