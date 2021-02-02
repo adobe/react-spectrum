@@ -12,12 +12,12 @@
 
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
+import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import Info from '@spectrum-icons/workflow/Info';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextArea} from '../';
-import {Flex} from "@react-spectrum/layout";
 
 storiesOf('TextArea', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
