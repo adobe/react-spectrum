@@ -85,6 +85,20 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     }
   };
 
+  let labelClassName;
+  let inputClassName;
+  if (props.label && props.isQuiet) {
+    labelClassName = classNames(
+      labelStyles,
+      'spectrum-FieldLabel--quiet'
+    );
+
+    inputClassName = classNames(
+      labelStyles,
+      'spectrum-Field-fieldInput--quiet'
+    );
+  }
+
   let loadingCircle = (
     <ProgressCircle
       aria-label={formatMessage('loading')}
@@ -107,7 +121,8 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
         labelProps={labelProps}
         elementType="span"
         ref={domRef}
-        includeNecessityIndicatorInAccessibilityName>
+        includeNecessityIndicatorInAccessibilityName
+        labelClassName={labelClassName}>
         <ComboBoxButton
           {...mergeProps(triggerProps, fieldProps)}
           ref={buttonRef}
@@ -116,6 +131,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           isPlaceholder={!state.inputValue}
           validationState={validationState}
           onPress={() => !isReadOnly && state.open()}
+          inputClassName={inputClassName}
           isLoading={loadingState === 'loading' || loadingState === 'filtering'}
           loadingIndicator={loadingState != null && loadingCircle}>
           {state.inputValue || props.placeholder || ''}
@@ -139,6 +155,7 @@ interface ComboBoxButtonProps extends AriaButtonProps {
   children?: ReactNode,
   style?: React.CSSProperties,
   className?: string,
+  inputClassName?: string,
   isLoading?: boolean,
   loadingIndicator?: ReactElement
 }
@@ -152,6 +169,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
     children,
     style,
     className,
+    inputClassName,
     isLoading,
     loadingIndicator
   } = props;
@@ -246,7 +264,8 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
                 classNames(
                   comboboxStyles,
                   'mobile-input'
-                )
+                ),
+                inputClassName
               )
             }>
             <span

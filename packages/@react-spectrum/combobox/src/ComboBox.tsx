@@ -27,6 +27,7 @@ import {FieldButton} from '@react-spectrum/button';
 import {FocusRing} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {MobileComboBox} from './MobileComboBox';
 import {Placement} from '@react-types/overlays';
@@ -68,6 +69,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     menuTrigger = 'input',
     shouldFlip = true,
     direction = 'bottom',
+    UNSAFE_className,
+    label,
     isQuiet,
     loadingState,
     onLoadMore
@@ -139,11 +142,35 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     minWidth: isQuiet ? `calc(${menuWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : menuWidth
   };
 
+  let labelClassName;
+  let inputClassName;
+  if (label && isQuiet) {
+    labelClassName = classNames(
+      labelStyles,
+      'spectrum-FieldLabel--quiet'
+    );
+
+    inputClassName = classNames(
+      labelStyles,
+      'spectrum-Field-fieldInput--quiet'
+    );
+  }
+
   return (
     <>
-      <Field {...props} labelProps={labelProps} ref={domRef}>
+      <Field {...props} labelProps={labelProps} labelClassName={labelClassName} ref={domRef}>
         <ComboBoxInput
           {...props}
+          UNSAFE_className={
+            classNames(
+              styles,
+              {
+                'spectrum-InputGroup--menuOpen': state.isOpen && !props.isQuiet
+              },
+              UNSAFE_className
+            )
+          }
+          inputClassName={inputClassName}
           isOpen={state.isOpen}
           loadingState={loadingState}
           inputProps={inputProps}
@@ -187,6 +214,7 @@ interface ComboBoxInputProps extends SpectrumComboBoxProps<unknown> {
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   triggerProps: AriaButtonProps,
   triggerRef: RefObject<FocusableRefValue<HTMLElement>>,
+  inputClassName?: string,
   style?: React.CSSProperties
 }
 
@@ -203,6 +231,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     autoFocus,
     style,
     UNSAFE_className,
+    inputClassName,
     loadingState,
     isOpen
   } = props;
@@ -260,7 +289,8 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
           inputClassName={
             classNames(
               styles,
-              'spectrum-InputGroup-input'
+              'spectrum-InputGroup-input',
+              inputClassName
             )
           }
           validationIconClassName={
