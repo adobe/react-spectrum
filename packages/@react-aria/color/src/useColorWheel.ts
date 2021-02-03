@@ -13,7 +13,7 @@
 import {ColorWheelProps} from '@react-types/color';
 import {ColorWheelState} from '@react-stately/color';
 import {focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
-import React, {HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
+import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 
 interface ColorWheelAriaProps extends ColorWheelProps {
@@ -209,7 +209,11 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       min: '0',
       max: '360',
       step: String(step),
-      disabled: isDisabled
+      disabled: isDisabled,
+      value: `${state.value.getChannelValue('hue')}`,
+      onChange: (e: ChangeEvent<HTMLInputElement>) => {
+        state.setHue(parseFloat(e.target.value));
+      }
     },
     thumbPosition: angleToCartesian(state.value.getChannelValue('hue'), thumbRadius)
   };

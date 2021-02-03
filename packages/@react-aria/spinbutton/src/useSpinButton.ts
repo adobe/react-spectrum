@@ -121,11 +121,17 @@ export function useSpinButton(
     isFocused.current = false;
   };
 
+  // Replace Unicode hyphen-minus (U+002D) with minus sign (U+2212).
+  // This ensures that macOS VoiceOver announces it as "minus" even with other characters between the minus sign
+  // and the number (e.g. currency symbol). Otherwise it announces nothing because it assumes the character is a hyphen.
+  // In addition, replace the empty string with the word "Empty" so that iOS VoiceOver does not read "50%" for an empty field.
+  textValue = textValue === '' ? formatMessage('Empty') : (textValue || `${value}`).replace('-', '\u2212');
+
   useEffect(() => {
     if (isFocused.current) {
-      announce(textValue === '' ? formatMessage('Empty') : textValue || `${value}`);
+      announce(textValue, 'assertive');
     }
-  }, [textValue, value, formatMessage]);
+  }, [textValue]);
 
   const onIncrementPressStart = useCallback(
     (initialStepDelay: number) => {
@@ -163,8 +169,7 @@ export function useSpinButton(
     spinButtonProps: {
       role: 'spinbutton',
       'aria-valuenow': !isNaN(value) ? value : null,
-      // by having a message, this prevents iOS VO from reading off '50%' for an empty field
-      'aria-valuetext': textValue === '' || !textValue ? formatMessage('Empty') : textValue,
+      'aria-valuetext': textValue,
       'aria-valuemin': minValue,
       'aria-valuemax': maxValue,
       'aria-disabled': isDisabled || null,

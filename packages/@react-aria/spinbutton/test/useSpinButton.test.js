@@ -117,7 +117,7 @@ describe('useSpinButton', function () {
 
     res.rerender(<Example value={3} />);
     expect(announce).toHaveBeenCalledTimes(1);
-    expect(announce).toHaveBeenCalledWith('3');
+    expect(announce).toHaveBeenCalledWith('3', 'assertive');
 
     act(() => {el.blur();});
 
@@ -132,6 +132,20 @@ describe('useSpinButton', function () {
 
     res.rerender(<Example value={3} textValue="3 items" />);
     expect(announce).toHaveBeenCalledTimes(1);
-    expect(announce).toHaveBeenCalledWith('3 items');
+    expect(announce).toHaveBeenCalledWith('3 items', 'assertive');
+  });
+
+  it('should substitute a minus sign for hyphen in the textValue for negative values', function () {
+    let res = render(<Example value={-2} textValue="-2 items" />);
+    let el = res.getByTestId('test');
+    expect(el).toHaveAttribute('aria-valuenow', '-2');
+    expect(el).toHaveAttribute('aria-valuetext', '−2 items');
+    act(() => {el.focus();});
+
+    res.rerender(<Example value={-3} textValue="-3 items" />);
+    expect(announce).toHaveBeenCalledTimes(1);
+    expect(announce).toHaveBeenCalledWith('−3 items', 'assertive');
+    expect(el).toHaveAttribute('aria-valuenow', '-3');
+    expect(el).toHaveAttribute('aria-valuetext', '−3 items');
   });
 });
