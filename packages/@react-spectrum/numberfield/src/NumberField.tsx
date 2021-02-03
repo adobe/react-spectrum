@@ -85,7 +85,14 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
     <Field
       {...props as Omit<SpectrumNumberFieldProps, 'onChange'>}
       labelProps={labelProps}
-      ref={domRef}>
+      ref={domRef}
+      wrapperClassName={classNames(
+        stepperStyle,
+        'spectrum-Stepper-container',
+        {
+          'spectrum-Stepper-container--isMobile': isMobile
+        }
+      )}>
       <NumberFieldInput
         {...props}
         groupProps={mergeProps(groupProps, hoverProps)}
