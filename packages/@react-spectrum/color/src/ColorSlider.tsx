@@ -23,6 +23,7 @@ import {useColorSliderState} from '@react-stately/color';
 import {useFocus, useFocusVisible} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+import Channel from '@spectrum-icons/workflow/src/Channel';
 
 function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
@@ -37,29 +38,20 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
   let trackRef = useRef();
   let domRef = useFocusableRef(ref, inputRef);
 
-  // The default label should be localized.
-  let formatMessage = useMessageFormatter(intlMessages);
-  let channelName = formatMessage(channel);
-  let defaultLabel = channelName[0].toUpperCase() + channelName.slice(1);
-
   let labelText = props.label;
-  if (props.label === undefined) {
-    if (!vertical) {
-      labelText = defaultLabel;
-    }
-  }
-
-  let ariaLabel = props['aria-label'] ?? (labelText == null ? defaultLabel : undefined);
 
   let numberFormatter = useNumberFormatter();
   let state = useColorSliderState({...props, numberFormatter});
   let {inputProps, thumbProps, groupProps, trackProps, labelProps, gradientProps} = useColorSlider({
     ...props,
-    label: labelText,
-    'aria-label': ariaLabel,
+    'aria-label': channel,
     trackRef,
     inputRef
   }, state);
+
+  if (props.label === undefined && !vertical) {
+    labelText = inputProps['aria-label'];
+  }
 
   let {isFocusVisible} = useFocusVisible();
   let [isFocused, setIsFocused] = useState(false);

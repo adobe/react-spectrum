@@ -14,7 +14,9 @@ import {AriaSliderThumbProps} from '@react-types/slider';
 import {ColorChannel} from '@react-types/color';
 import {ColorSliderState} from '@react-stately/color';
 import {HTMLAttributes, RefObject} from 'react';
-import {useLocale} from '@react-aria/i18n';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 
 interface ColorSliderAriaOptions extends Omit<AriaSliderThumbProps, 'index'> {
@@ -33,15 +35,31 @@ interface ColorSliderAria {
 }
 
 export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSliderState): ColorSliderAria {
-  let {trackRef, orientation, channel} = props;
+  let {trackRef, orientation, channel, 'aria-label': ariaLabel} = props;
 
   let {direction} = useLocale();
+
+  let formatMessage = useMessageFormatter(intlMessages);
+  let defaultLabel = formatMessage(channel);
+  defaultLabel = defaultLabel[0].toUpperCase() + defaultLabel.slice(1);
+
+  if (!ariaLabel || ariaLabel === channel) {
+    ariaLabel = defaultLabel;
+  }
 
   let {groupProps, trackProps, labelProps} = useSlider(props, state, trackRef);
   let {inputProps, thumbProps} = useSliderThumb({
     ...props,
+    'aria-label': ariaLabel,
     index: 0
   }, state);
+
+  if (groupProps['aria-label'] === undefined && groupProps['aria-labelledby'] === undefined) {
+    inputProps['aria-labelledby'] = inputProps['aria-labelledby'].replace(groupProps.id, '').trim();
+    if (inputProps['aria-labelledby'] === inputProps.id) {
+      inputProps['aria-labelledby'] = undefined;
+    }
+  }
 
   let generateBackground = () => {
     let value = state.getDisplayColor();

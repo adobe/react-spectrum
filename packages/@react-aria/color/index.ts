@@ -10,7 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-// @ts-ignore
-import _intlMessages from './intl/*.json';
 export * from './src';
-export {_intlMessages as intlMessages};
