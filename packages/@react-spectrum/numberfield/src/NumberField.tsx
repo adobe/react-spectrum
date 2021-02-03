@@ -129,8 +129,7 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
     autoFocus,
     isQuiet,
     hideStepper,
-    validationState,
-    label
+    validationState
   } = props;
   let showStepper = !hideStepper;
 
