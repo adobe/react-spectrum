@@ -39,7 +39,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     ref,
     isVirtualized,
     isDisabled,
-    focusMode = 'cell'
+    focusMode = 'child'
   } = props;
 
   // Handles focusing the cell. If there is a focusable child,
