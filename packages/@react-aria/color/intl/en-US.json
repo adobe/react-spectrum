@@ -1,0 +1,10 @@
+{
+  "hue": "hue",
+  "saturation": "saturation",
+  "lightness": "lightness",
+  "brightness": "brightness",
+  "red": "red",
+  "green": "green",
+  "blue": "blue",
+  "alpha": "alpha"
+}

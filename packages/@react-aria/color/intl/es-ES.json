@@ -1,0 +1,10 @@
+{
+  "hue": "matiz",
+  "saturation": "saturación",
+  "lightness": "claridad",
+  "brightness": "brillo",
+  "red": "rojo",
+  "green": "verde",
+  "blue": "azul",
+  "alpha": "alfa"
+}

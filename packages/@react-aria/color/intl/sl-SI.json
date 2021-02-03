@@ -1,0 +1,10 @@
+{
+  "hue": "odtenek",
+  "saturation": "nasičenost",
+  "lightness": "svetilnost",
+  "brightness": "svetlost",
+  "red": "rdeča",
+  "green": "zelena",
+  "blue": "modra",
+  "alpha": "alfa"
+}

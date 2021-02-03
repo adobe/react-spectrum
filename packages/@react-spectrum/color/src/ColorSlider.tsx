@@ -14,14 +14,14 @@ import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils'
 import {ColorThumb} from './ColorThumb';
 import {Flex} from '@react-spectrum/layout';
 import {FocusableRef} from '@react-types/shared';
+import {intlMessages, useColorSlider} from '@react-aria/color';
 import {Label} from '@react-spectrum/label';
 import React, {useRef, useState} from 'react';
 import {SpectrumColorSliderProps} from '@react-types/color';
 import styles from '@adobe/spectrum-css-temp/components/colorslider/vars.css';
-import {useColorSlider} from '@react-aria/color';
 import {useColorSliderState} from '@react-stately/color';
 import {useFocus, useFocusVisible} from '@react-aria/interactions';
-import {useLocale, useNumberFormatter} from '@react-aria/i18n';
+import {useLocale, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivElement>) {
@@ -37,10 +37,18 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
   let trackRef = useRef();
   let domRef = useFocusableRef(ref, inputRef);
 
-  // The default label should be localized...
-  let defaultLabel = channel[0].toUpperCase() + channel.slice(1);
+  // The default label should be localized.
+  let formatMessage = useMessageFormatter(intlMessages);
+  let channelName = formatMessage(channel);
+  let defaultLabel = channelName[0].toUpperCase() + channelName.slice(1);
 
   let labelText = props.label;
+  if (props.label === undefined) {
+    if (!vertical) {
+      labelText = defaultLabel;
+    }
+  }
+
   let ariaLabel = props['aria-label'] ?? (labelText == null ? defaultLabel : undefined);
 
   let numberFormatter = useNumberFormatter();

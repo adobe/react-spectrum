@@ -12,9 +12,12 @@
 
 import {ColorWheelProps} from '@react-types/color';
 import {ColorWheelState} from '@react-stately/color';
-import {focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 interface ColorWheelAriaProps extends ColorWheelProps {
   inputRef: RefObject<HTMLElement>,
@@ -53,7 +56,14 @@ function cartesianToAngle(x: number, y: number, radius: number): number {
 }
 
 export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState): ColorWheelAria {
-  let {inputRef, containerRef, isDisabled, step = 1, innerRadius, outerRadius} = props;
+  let {
+    inputRef,
+    containerRef,
+    isDisabled,
+    step = 1,
+    innerRadius,
+    outerRadius
+  } = props;
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
@@ -192,6 +202,15 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     }
   });
 
+  let formatMessage = useMessageFormatter(intlMessages);
+  let defaultLabel = formatMessage('hue');
+
+  let inputLabellingProps = useLabels({
+    ...props,
+    'aria-label': `${props['aria-label'] && props['aria-label'].toLowerCase() !== defaultLabel.toLowerCase() ? props['aria-label'] : ''} ${defaultLabel}`.trim(),
+    'aria-labelledby': props['aria-labelledby']
+  });
+
   return {
     groupProps: isDisabled ? {} : mergeProps({
       onMouseDown: (e: React.MouseEvent) => {onTrackDown(undefined, e.pageX, e.pageY);},
@@ -203,18 +222,20 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       onPointerDown: (e: React.PointerEvent) => {onThumbDown(e.pointerId);},
       onTouchStart: (e: React.TouchEvent) => {onThumbDown(e.changedTouches[0].identifier);}
     }, movePropsThumb, keyboardProps),
-    inputProps: {
-      type: 'range',
-      'aria-label': 'hue',
-      min: '0',
-      max: '360',
-      step: String(step),
-      disabled: isDisabled,
-      value: `${state.value.getChannelValue('hue')}`,
-      onChange: (e: ChangeEvent<HTMLInputElement>) => {
-        state.setHue(parseFloat(e.target.value));
+    inputProps: mergeProps(
+      inputLabellingProps, 
+      {
+        type: 'range',
+        min: '0',
+        max: '360',
+        step: String(step),
+        disabled: isDisabled,
+        value: `${state.value.getChannelValue('hue')}`,
+        onChange: (e: ChangeEvent<HTMLInputElement>) => {
+          state.setHue(parseFloat(e.target.value));
+        }
       }
-    },
+    ),
     thumbPosition: angleToCartesian(state.value.getChannelValue('hue'), thumbRadius)
   };
 }
