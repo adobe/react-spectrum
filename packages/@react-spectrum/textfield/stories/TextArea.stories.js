@@ -120,6 +120,9 @@ storiesOf('TextArea', module)
   .add('custom width',
     () => render({icon: <Info />, validationState: 'invalid', width: '300px'})
   )
+  .add('custom width small',
+    () => render({icon: <Info />, validationState: 'invalid', width: '30px'})
+  )
   .add('custom width, quiet',
     () => render({icon: <Info />, validationState: 'invalid', width: '300px', isQuiet: true})
   )
