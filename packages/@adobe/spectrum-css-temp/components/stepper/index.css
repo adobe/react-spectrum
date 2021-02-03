@@ -41,12 +41,14 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Stepper-container {
+  /* ensure we have higher specificity than .spectrum-Field */
   &.spectrum-Stepper-container {
-    inline-size: var(--spectrum-stepper-default-width-desktop);
+    /* override the default width of the field container, only with labelPosition=top. */
+    --spectrum-field-default-width: var(--spectrum-stepper-default-width-desktop);
   }
 
   &.spectrum-Stepper-container--isMobile {
-    inline-size: var(--spectrum-stepper-default-width-mobile);
+    --spectrum-field-default-width: var(--spectrum-stepper-default-width-mobile);
   }
 }
 

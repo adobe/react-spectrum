@@ -144,7 +144,7 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
       <div
         {...groupProps}
         ref={ref as RefObject<HTMLDivElement>}
-        {...(label ? {style: {...style, width: '100%'}} : {style})}
+        style={style}
         className={className}>
         <TextFieldBase
           UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-field')}
