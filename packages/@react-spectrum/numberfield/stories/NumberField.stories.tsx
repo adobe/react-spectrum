@@ -184,6 +184,10 @@ storiesOf('NumberField', module)
   .add(
     'flexed',
     () => renderSet()
+  )
+  .add(
+    'min width',
+    () => render({width: 0})
   );
 
 function render(props: any = {}) {

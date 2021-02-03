@@ -33,7 +33,8 @@ governing permissions and limitations under the License.
     'field increment'
     'field decrement';
 
-  width: var(--spectrum-stepper-default-width-desktop);
+  inline-size: var(--spectrum-stepper-default-width-desktop);
+  min-inline-size: unset;
   line-height: 0;
   border-radius: var(--spectrum-border-radius);
   transition: border-color var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
@@ -41,11 +42,11 @@ governing permissions and limitations under the License.
 
 .spectrum-Stepper-container {
   &.spectrum-Stepper-container {
-    width: var(--spectrum-stepper-default-width-desktop);
+    inline-size: var(--spectrum-stepper-default-width-desktop);
   }
 
   &.spectrum-Stepper-container--isMobile {
-    width: var(--spectrum-stepper-default-width-mobile);
+    inline-size: var(--spectrum-stepper-default-width-mobile);
   }
 }
 
@@ -104,7 +105,7 @@ governing permissions and limitations under the License.
   grid-area: field;
 
   inline-size: unset;
-  min-inline-size: unset;
+  min-inline-size: var(--spectrum-stepper-input-min-width);
 }
 
 .spectrum-Stepper--showStepper {
@@ -123,7 +124,7 @@ governing permissions and limitations under the License.
     grid-template-rows: auto;
     grid-template-columns: auto 1fr auto;
     grid-template-areas: 'decrement field increment';
-    width: var(--spectrum-stepper-default-width-mobile);
+    inline-size: var(--spectrum-stepper-default-width-mobile);
 
     .spectrum-Stepper-input {
       border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
