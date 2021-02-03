@@ -69,7 +69,6 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     menuTrigger = 'input',
     shouldFlip = true,
     direction = 'bottom',
-    UNSAFE_className,
     label,
     isQuiet,
     loadingState,
@@ -143,16 +142,10 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   };
 
   let labelClassName;
-  let inputClassName;
   if (label && isQuiet) {
     labelClassName = classNames(
       labelStyles,
       'spectrum-FieldLabel--quiet'
-    );
-
-    inputClassName = classNames(
-      labelStyles,
-      'spectrum-Field-fieldInput--quiet'
     );
   }
 
@@ -161,16 +154,6 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
       <Field {...props} labelProps={labelProps} labelClassName={labelClassName} ref={domRef}>
         <ComboBoxInput
           {...props}
-          UNSAFE_className={
-            classNames(
-              styles,
-              {
-                'spectrum-InputGroup--menuOpen': state.isOpen && !props.isQuiet
-              },
-              UNSAFE_className
-            )
-          }
-          inputClassName={inputClassName}
           isOpen={state.isOpen}
           loadingState={loadingState}
           inputProps={inputProps}
@@ -214,7 +197,6 @@ interface ComboBoxInputProps extends SpectrumComboBoxProps<unknown> {
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   triggerProps: AriaButtonProps,
   triggerRef: RefObject<FocusableRefValue<HTMLElement>>,
-  inputClassName?: string,
   style?: React.CSSProperties
 }
 
@@ -231,7 +213,6 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     autoFocus,
     style,
     UNSAFE_className,
-    inputClassName,
     loadingState,
     isOpen
   } = props;
@@ -289,8 +270,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
           inputClassName={
             classNames(
               styles,
-              'spectrum-InputGroup-input',
-              inputClassName
+              'spectrum-InputGroup-input'
             )
           }
           validationIconClassName={

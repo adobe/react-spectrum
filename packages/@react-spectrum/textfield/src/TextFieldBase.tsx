@@ -116,12 +116,6 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       labelStyles,
       'spectrum-FieldLabel--quiet'
     );
-
-    inputClassName = classNames(
-      labelStyles,
-      'spectrum-Field-fieldInput--quiet',
-      inputClassName
-    );
   }
 
   let textField = (
