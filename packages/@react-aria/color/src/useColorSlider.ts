@@ -44,6 +44,11 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
   let defaultLabel = formatMessage(channel);
   defaultLabel = defaultLabel[0].toUpperCase() + defaultLabel.slice(1);
 
+  if (props.label == null &&
+    ((!props['aria-label'] && !props['aria-labelledby']) || props['aria-label'] === channel)) {
+    props['aria-label'] = defaultLabel;
+  }
+
   let {groupProps, trackProps, labelProps, outputProps} = useSlider(props, state, trackRef);
   let {inputProps, thumbProps} = useSliderThumb({
     ...props,
