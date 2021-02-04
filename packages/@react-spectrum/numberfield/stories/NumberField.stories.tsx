@@ -174,6 +174,10 @@ storiesOf('NumberField', module)
     () => renderNoLabel({width: 'size-3000', isRequired: true, 'aria-label': 'Width'})
   )
   .add(
+    'custom width, labelPosition=side',
+    () => render({width: 'size-3000', labelPosition: 'side'})
+  )
+  .add(
     'controlled',
     () => <NumberFieldControlled />
   )
@@ -184,6 +188,10 @@ storiesOf('NumberField', module)
   .add(
     'flexed',
     () => renderSet()
+  )
+  .add(
+    'min width',
+    () => render({width: 0})
   );
 
 function render(props: any = {}) {

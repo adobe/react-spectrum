@@ -85,7 +85,14 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
     <Field
       {...props as Omit<SpectrumNumberFieldProps, 'onChange'>}
       labelProps={labelProps}
-      ref={domRef}>
+      ref={domRef}
+      wrapperClassName={classNames(
+        stepperStyle,
+        'spectrum-Stepper-container',
+        {
+          'spectrum-Stepper-container--isMobile': isMobile
+        }
+      )}>
       <NumberFieldInput
         {...props}
         groupProps={mergeProps(groupProps, hoverProps)}
@@ -122,8 +129,7 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
     autoFocus,
     isQuiet,
     hideStepper,
-    validationState,
-    label
+    validationState
   } = props;
   let showStepper = !hideStepper;
 
@@ -137,7 +143,7 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
       <div
         {...groupProps}
         ref={ref as RefObject<HTMLDivElement>}
-        {...(label ? {style: {...style, width: '100%'}} : {style})}
+        style={style}
         className={className}>
         <TextFieldBase
           UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-field')}
