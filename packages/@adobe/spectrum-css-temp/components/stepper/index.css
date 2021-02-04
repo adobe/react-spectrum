@@ -88,26 +88,27 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Stepper-button--stepUp {
-  grid-area: increment;
-  border-start-end-radius: var(--spectrum-border-radius);
-}
-
-.spectrum-Stepper-button--stepDown {
-  grid-area: decrement;
-  border-block-start: none;
-  border-end-end-radius: var(--spectrum-border-radius);
-
-  &:focus {
-    border-block-start: none;
+.spectrum-Stepper {
+  .spectrum-Stepper-button--stepUp {
+    grid-area: increment;
+    border-start-end-radius: var(--spectrum-border-radius);
   }
-}
 
-.spectrum-Stepper-field {
-  grid-area: field;
+  .spectrum-Stepper-button--stepDown {
+    grid-area: decrement;
+    border-block-start: none;
+    border-end-end-radius: var(--spectrum-border-radius);
 
-  inline-size: unset;
-  min-inline-size: var(--spectrum-stepper-input-min-width);
+    &:focus {
+      border-block-start: none;
+    }
+  }
+  .spectrum-Stepper-field {
+    grid-area: field;
+
+    inline-size: unset;
+    min-inline-size: var(--spectrum-stepper-input-min-width);
+  }
 }
 
 .spectrum-Stepper--showStepper {
