@@ -63,6 +63,10 @@ interface NumberFieldStateProps extends NumberFieldProps {
   locale: string
 }
 
+/**
+ * Provides state management for a number field component. Number fields allow users to enter a number,
+ * and increment or decrement the value using stepper buttons.
+ */
 export function useNumberFieldState(
   props: NumberFieldStateProps
 ): NumberFieldState {
