@@ -164,7 +164,7 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
 });
 
 /**
- * NumberField allow entering of numbers with steppers to increment and decrement that value.
+ * NumberField allows entering of numbers with steppers to increment and decrement that value.
  */
 let _NumberField = React.forwardRef(NumberField);
 export {_NumberField as NumberField};

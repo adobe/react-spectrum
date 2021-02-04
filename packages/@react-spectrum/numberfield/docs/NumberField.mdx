@@ -123,10 +123,11 @@ can be parsed from typed input. In addition, the NumberField will automatically 
 
 ## Events
 
-NumberField accepts an `onChange` prop which is triggered whenever the value is edited by the user.
+NumberField accepts an `onChange` prop which is triggered whenever the value is committed by the user. This happens on blur of the field
+or on interaction with the stepper functionality, arrow keys or stepper buttons.
 For a full list of supported events, see the [Props](#props) table below.
 
-The example below uses `onChange` to update a separate `pre` element with the same text entered into the NumberField.
+The example below uses `onChange` to update a separate `pre` element with the same values entered into the NumberField.
 ```tsx example
 function Example() {
   let [value, setValue] = React.useState();
@@ -136,7 +137,7 @@ function Example() {
       <NumberField
         onChange={setValue}
         label="Number of cookies to buy" />
-      <pre>How many cookies you are ordering: {value}</pre>
+      <pre>How many cookies you are ordering: {isNaN(value) ? 0 : value}</pre>
     </Flex>
   );
 }
@@ -196,7 +197,7 @@ The `isReadOnly` boolean prop makes the NumberField's text content immutable. Un
 and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
 
 ```tsx example
-<NumberField label="Cookies" defaultValue="abc@adobe.com" isReadOnly />
+<NumberField label="Cookies" defaultValue={15} isReadOnly />
 ```
 
 ### Label alignment and position
@@ -207,6 +208,7 @@ By default, the label is positioned above the NumberField. The `labelPosition` p
 ```tsx example
 <NumberField label="Cookies" labelPosition="side" labelAlign="end" />
 ```
+
 ### Custom width
 
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
