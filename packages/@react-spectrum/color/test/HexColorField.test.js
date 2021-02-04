@@ -102,7 +102,7 @@ describe('HexColorField', function () {
     let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe('');
 
-    // call commitInputValue to re-verify that a colorValue is not set in state
+    // call commit to re-verify that a colorValue is not set in state
     act(() => {hexColorField.focus();});
     act(() => {hexColorField.blur();});
     expect(hexColorField.value).toBe('');
