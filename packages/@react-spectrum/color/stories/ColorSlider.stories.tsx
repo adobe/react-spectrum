@@ -35,6 +35,10 @@ storiesOf('ColorSlider', module)
     () => <ColorSlider defaultValue="#7f0000" channel={'red'} label={null} showValueLabel={false} />
   )
   .add(
+    'aria-label with no label, no value label',
+    () => <ColorSlider defaultValue="#7f0000" channel={'red'} aria-label="Color Picker Channel: " label={null} showValueLabel={false} />
+  )
+  .add(
     'step',
     () => <ColorSlider defaultValue="hsl(0, 100%, 50%)" channel={'hue'} step={72} />
   )
@@ -62,51 +66,57 @@ storiesOf('ColorSlider', module)
     'rgba',
     () => {
       let [color, setColor] = useState(parseColor('#ff00ff'));
-      return (<Flex gap="size-500" alignItems="center">
-        <Flex direction="column">
-          <ColorSlider value={color} onChange={setColor} channel={'red'} />
-          <ColorSlider value={color} onChange={setColor} channel={'green'} />
-          <ColorSlider value={color} onChange={setColor} channel={'blue'} />
-          <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
+      return (<div role="group" aria-label="RGBa Color Picker">
+        <Flex gap="size-500" alignItems="center">
+          <Flex direction="column">
+            <ColorSlider value={color} onChange={setColor} channel={'red'} />
+            <ColorSlider value={color} onChange={setColor} channel={'green'} />
+            <ColorSlider value={color} onChange={setColor} channel={'blue'} />
+            <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
+          </Flex>
+          <Flex direction="column" alignItems="center"gap="size-100">
+            <div style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <Text>{color.toString('hexa')}</Text>
+          </Flex>
         </Flex>
-        <Flex direction="column" alignItems="center"gap="size-100">
-          <div style={{width: '100px', height: '100px', background: color.toString('css')}} />
-          <Text>{color.toString('hexa')}</Text>
-        </Flex>
-      </Flex>);
+      </div>);
     }
   )
   .add(
     'hsla',
     () => {
       let [color, setColor] = useState(parseColor('hsla(0, 100%, 50%, 0.5)'));
-      return (<Flex gap="size-500" alignItems="center">
-        <Flex direction="column">
-          <ColorSlider value={color} onChange={setColor} channel={'hue'} />
-          <ColorSlider value={color} onChange={setColor} channel={'saturation'} />
-          <ColorSlider value={color} onChange={setColor} channel={'lightness'} />
-          <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
+      return (<div role="group" aria-label="HSLAa Color Picker">
+        <Flex gap="size-500" alignItems="center">
+          <Flex direction="column">
+            <ColorSlider value={color} onChange={setColor} channel={'hue'} />
+            <ColorSlider value={color} onChange={setColor} channel={'saturation'} />
+            <ColorSlider value={color} onChange={setColor} channel={'lightness'} />
+            <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
+          </Flex>
+          <Flex direction="column" alignItems="center" gap="size-100">
+            <div style={{width: '100px', height: '100px', background: color.toString('css')}} />
+          </Flex>
         </Flex>
-        <Flex direction="column" alignItems="center" gap="size-100">
-          <div style={{width: '100px', height: '100px', background: color.toString('css')}} />
-        </Flex>
-      </Flex>);
+      </div>);
     }
   )
   .add(
     'hsba',
     () => {
       let [color, setColor] = useState(parseColor('hsba(0, 100%, 50%, 0.5)'));
-      return (<Flex gap="size-500" alignItems="center">
-        <Flex direction="column">
-          <ColorSlider value={color} onChange={setColor} channel={'hue'} />
-          <ColorSlider value={color} onChange={setColor} channel={'saturation'} />
-          <ColorSlider value={color} onChange={setColor} channel={'brightness'} />
-          <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
+      return (<div role="group" aria-label="HSBAa Color Picker">
+        <Flex gap="size-500" alignItems="center">
+          <Flex direction="column">
+            <ColorSlider value={color} onChange={setColor} channel={'hue'} />
+            <ColorSlider value={color} onChange={setColor} channel={'saturation'} />
+            <ColorSlider value={color} onChange={setColor} channel={'brightness'} />
+            <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
+          </Flex>
+          <Flex direction="column" alignItems="center" gap="size-100">
+            <div style={{width: '100px', height: '100px', background: color.toString('css')}} />
+          </Flex>
         </Flex>
-        <Flex direction="column" alignItems="center" gap="size-100">
-          <div style={{width: '100px', height: '100px', background: color.toString('css')}} />
-        </Flex>
-      </Flex>);
+      </div>);
     }
   );

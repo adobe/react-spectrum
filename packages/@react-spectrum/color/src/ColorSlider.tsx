@@ -42,13 +42,18 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
 
   let numberFormatter = useNumberFormatter();
   let state = useColorSliderState({...props, numberFormatter});
-  let {inputProps, thumbProps, groupProps, trackProps, labelProps, gradientProps} = useColorSlider({
+  let {inputProps, thumbProps, groupProps, trackProps, labelProps, outputProps, gradientProps} = useColorSlider({
     ...props,
     trackRef,
     inputRef
   }, state);
 
-  if (props.label == null && !vertical) {
+  // If no external label, aria-label or aria-labelledby is provided, 
+  // default to displaying the localized channel value.
+  if (props.label === undefined &&
+    props['aria-label'] === undefined &&
+    props['aria-labelledby'] === undefined &&
+    !vertical) {
     labelText = inputProps['aria-label'];
   }
 
@@ -89,8 +94,7 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
       {!vertical &&
         <Flex direction="row" justifyContent={alignLabel}>
           {labelText && <Label {...labelProps}>{labelText}</Label>}
-          {/* TODO: is it on purpose that aria-labelledby isn't passed through? */}
-          {showValueLabel && <Label aria-labelledby={labelProps.id}>{state.getThumbValueLabel(0)}</Label>}
+          {showValueLabel && <Label elementType="span"><output {...outputProps}>{state.getThumbValueLabel(0)}</output></Label>}
         </Flex>
       }
       {vertical && props.label != null && 
