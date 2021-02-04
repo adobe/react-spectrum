@@ -23,11 +23,12 @@ import {useColorSliderState} from '@react-stately/color';
 import {useFocus, useFocusVisible} from '@react-aria/interactions';
 import {useLocale, useNumberFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
 
-  let {isDisabled, channel, orientation, showValueLabel = true} = props;
+  let {isDisabled, orientation, showValueLabel = true} = props;
   let vertical = orientation === 'vertical';
 
   let {styleProps} = useStyleProps(props);
@@ -43,12 +44,11 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
   let state = useColorSliderState({...props, numberFormatter});
   let {inputProps, thumbProps, groupProps, trackProps, labelProps, gradientProps} = useColorSlider({
     ...props,
-    'aria-label': channel,
     trackRef,
     inputRef
   }, state);
 
-  if (props.label === undefined && !vertical) {
+  if (props.label == null && !vertical) {
     labelText = inputProps['aria-label'];
   }
 
@@ -92,6 +92,9 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
           {/* TODO: is it on purpose that aria-labelledby isn't passed through? */}
           {showValueLabel && <Label aria-labelledby={labelProps.id}>{state.getThumbValueLabel(0)}</Label>}
         </Flex>
+      }
+      {vertical && props.label != null && 
+        <VisuallyHidden elementType="label" {...labelProps}>{labelText}</VisuallyHidden>
       }
       <div
         {...groupProps}
