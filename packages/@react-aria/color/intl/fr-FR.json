@@ -1,0 +1,10 @@
+{
+  "hue": "teinte",
+  "saturation": "saturation",
+  "lightness": "clarté",
+  "brightness": "luminosité",
+  "red": "rouge",
+  "green": "vert",
+  "blue": "bleu",
+  "alpha": "alpha"
+}

@@ -1,0 +1,10 @@
+{
+  "hue": "värisävy",
+  "saturation": "kylläisyys",
+  "lightness": "valoisuus",
+  "brightness": "kirkkaus",
+  "red": "punainen",
+  "green": "vihreä",
+  "blue": "sininen",
+  "alpha": "alpha"
+}

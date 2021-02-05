@@ -23,11 +23,12 @@ import {useColorSliderState} from '@react-stately/color';
 import {useFocus, useFocusVisible} from '@react-aria/interactions';
 import {useLocale, useNumberFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
 
-  let {isDisabled, channel, orientation, showValueLabel = true} = props;
+  let {isDisabled, orientation, showValueLabel = true} = props;
   let vertical = orientation === 'vertical';
 
   let {styleProps} = useStyleProps(props);
@@ -37,21 +38,24 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
   let trackRef = useRef();
   let domRef = useFocusableRef(ref, inputRef);
 
-  // The default label should be localized...
-  let defaultLabel = channel[0].toUpperCase() + channel.slice(1);
-
   let labelText = props.label;
-  let ariaLabel = props['aria-label'] ?? (labelText == null ? defaultLabel : undefined);
 
   let numberFormatter = useNumberFormatter();
   let state = useColorSliderState({...props, numberFormatter});
-  let {inputProps, thumbProps, groupProps, trackProps, labelProps, gradientProps} = useColorSlider({
+  let {inputProps, thumbProps, groupProps, trackProps, labelProps, outputProps, gradientProps} = useColorSlider({
     ...props,
-    label: labelText,
-    'aria-label': ariaLabel,
     trackRef,
     inputRef
   }, state);
+
+  // If no external label, aria-label or aria-labelledby is provided, 
+  // default to displaying the localized channel value.
+  if (props.label === undefined &&
+    props['aria-label'] === undefined &&
+    props['aria-labelledby'] === undefined &&
+    !vertical) {
+    labelText = inputProps['aria-label'];
+  }
 
   let {isFocusVisible} = useFocusVisible();
   let [isFocused, setIsFocused] = useState(false);
@@ -90,9 +94,11 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
       {!vertical &&
         <Flex direction="row" justifyContent={alignLabel}>
           {labelText && <Label {...labelProps}>{labelText}</Label>}
-          {/* TODO: is it on purpose that aria-labelledby isn't passed through? */}
-          {showValueLabel && <Label aria-labelledby={labelProps.id}>{state.getThumbValueLabel(0)}</Label>}
+          {showValueLabel && <Label elementType="span"><output {...outputProps}>{state.getThumbValueLabel(0)}</output></Label>}
         </Flex>
+      }
+      {vertical && props.label != null && 
+        <VisuallyHidden elementType="label" {...labelProps}>{labelText}</VisuallyHidden>
       }
       <div
         {...groupProps}
