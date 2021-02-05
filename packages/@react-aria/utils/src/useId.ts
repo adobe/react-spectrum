@@ -53,6 +53,7 @@ export function useId(defaultId?: string): string {
 
 /**
  * Merges two ids.
+ * Different ids will trigger a side-effect and re-render components hooked up with `useId`.
  */
 export function mergeIds(a: string, b: string): string {
   if (a === b) {
