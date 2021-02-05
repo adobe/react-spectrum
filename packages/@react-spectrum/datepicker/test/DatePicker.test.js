@@ -41,7 +41,7 @@ describe('DatePicker', function () {
       expect(segments[0].textContent).toBe('2');
       expect(segments[0].getAttribute('aria-label')).toBe('Month');
       expect(segments[0].getAttribute('aria-valuenow')).toBe('2');
-      expect(segments[0].getAttribute('aria-valuetext')).toBe('2 - February');
+      expect(segments[0].getAttribute('aria-valuetext')).toBe('2 − February');
       expect(segments[0].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[0].getAttribute('aria-valuemax')).toBe('12');
 
