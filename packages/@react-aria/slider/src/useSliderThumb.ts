@@ -119,8 +119,8 @@ export function useSliderThumb(
     inputRef
   );
 
-  let currentPointer = useRef<number | null | undefined>(undefined);
-  let onDown = (id: number | null) => {
+  let currentPointer = useRef<number | undefined>(undefined);
+  let onDown = (id?: number) => {
     focusInput();
     currentPointer.current = id;
     state.setThumbDragging(index, true);
