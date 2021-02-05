@@ -172,6 +172,7 @@ function Example() {
 The default formatting style for `NumberField` is decimal, but you can configure various aspects via the `formatOptions`
 prop. All options supported by [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat)
 are supported, including configuration of minimum and maximum fraction digits, sign display, grouping separators, etc.
+Currently only standard notation is supported, though scientific, engineering, and compact notation may be supported in the future.
 
 The following example uses the `signDisplay` option to include the plus sign for positive numbers, for example to display
 an offset from some value. In addition, it always displays a minimum of 1 digit after the decimal point, and allows up to
@@ -199,7 +200,7 @@ be overridden with the `step` prop. [See below](#step-values) for details.
 ```tsx example
 <NumberField
   label="Sales tax"
-  defaultValue={0.5}
+  defaultValue={0.05}
   formatOptions={{
     style: 'percent'
   }} />
