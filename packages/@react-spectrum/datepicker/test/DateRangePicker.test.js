@@ -75,7 +75,7 @@ describe('DateRangePicker', function () {
       expect(segments[3].textContent).toBe('5');
       expect(segments[3].getAttribute('aria-label')).toBe('Month');
       expect(segments[3].getAttribute('aria-valuenow')).toBe('5');
-      expect(segments[3].getAttribute('aria-valuetext')).toBe('5 - May');
+      expect(segments[3].getAttribute('aria-valuetext')).toBe('5 − May');
       expect(segments[3].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[3].getAttribute('aria-valuemax')).toBe('12');
 
