@@ -36,7 +36,7 @@ keywords: [number field, input]
 ## Example
 
 ```tsx example
-<NumberField label="Name" />
+<NumberField label="Width" defaultValue={1024} />
 ```
 
 ## Value
@@ -63,13 +63,136 @@ function Example() {
 }
 ```
 
-## Steps
+## Number formatting
 
-A NumberField can have a specified step size, as well as a min and max value. The steps will always start at the `minValue` or `0`
-and will not exceed the min or the max if they are specified.
+The NumberField value can be formatted by using the `formatOptions` prop.
+`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
+Currently only standard notation is supported, though scientific, engineering, and compact notation may be supported in the future.
+
+NumberField supports three numeral systems, Latin digits, Arabic-Indic digits, and Han decimal system. Regardless of the locale, these three
+can be parsed from typed input. Initial rendering will appear in the default numeral system for the locale unless explicitly overridden [See](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/numberingSystem).
+
+### Decimals
+
+The following example uses the signDisplay option to include the plus sign for positive numbers, for example to display an offset from some value.
+In addition, it always displays a minimum of 1 digit after the decimal point, and allows up to 2 fraction digits.
+If the user enters more than 2 fraction digits, the result will be rounded.
 
 ```tsx example
-<NumberField label="Cookies" step={3} minValue={-5} maxValue={21} />
+<NumberField
+  label="Adjust exposure"
+  formatOptions={{
+    signDisplay: 'exceptZero',
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 2
+  }}
+  defaultValue={0} />
+```
+
+### Percentages
+
+The `style: 'percent'` option can be passed to the `formatOptions` prop to treat the value as a percentage. In this mode,
+the value is multiplied by 100 before it is displayed, i.e. `0.45` is displayed as `45%`. The reverse is also true: when the
+user enters a value, the `onChange` event will be triggered with the entered value divided by 100. When the percent option
+is enabled, the default step automatically changes to `0.01` such that incrementing and decrementing occurs by `1%`. This can
+be overridden with the `step` prop. [See below](#step-values) for details.
+
+```tsx example
+<NumberField
+  label="Sales tax"
+  formatOptions={{style: 'percent'}}
+  defaultValue={0.05} />
+```
+
+### Currency values
+
+The `style: 'currency'` option can be passed to the `formatOptions` prop to treat the value as a currency value. The `currency`
+option must also be passed to set the currency code (e.g. `USD`) to use. In addition, the `currencyDisplay` option can be
+used to choose whether to display the currency symbol, currency code, or currency name. Finally, the `currencySign` option
+can be set to `accounting` to use accounting notation for negative numbers, which uses parentheses rather than a minus sign
+in some locales.
+
+If you need to allow the user to change the currency, you should include a separate dropdown next to the NumberField.
+The NumberField itself will not determine the currency from the user input.
+
+```tsx example
+<NumberField
+  label="Transaction amount"
+  defaultValue={45}
+  formatOptions={{
+    style: 'currency',
+    currency: 'EUR',
+    currencyDisplay: 'code',
+    currencySign: 'accounting'
+  }} />
+```
+
+### Units
+
+The `style: 'unit'` option can be passed to the `formatOptions` prop to format the value with a unit of measurement. The `unit`
+option must also be passed to set which unit to use (e.g. `inch`). In addition, the `unitDisplay` option can be used to choose
+whether to display the unit in long, short, or narrow format.
+
+If you need to allow the user to change the unit, you should include a separate dropdown next to the number field.
+The number field itself will not determine the unit from the user input.
+
+**Note:** the unit style is not currently supported in Safari. A [polyfill](https://formatjs.io/docs/polyfills/intl-numberformat/)
+may be necessary.
+
+```tsx example
+<NumberField
+  label="Package width"
+  defaultValue={4}
+  formatOptions={{
+    style: 'unit',
+    unit: 'inch',
+    unitDisplay: 'long'
+  }} />
+```
+
+## Minimum and maximum values
+
+The `minValue` and `maxValue` props can be used to limit the entered value to a specific range. The value will be clamped
+when the user blurs the input field. In addition, the increment and decrement buttons will be disabled when the value is
+within one `step` value from the bounds ([see below](#step-values) for info about steps). Ranges can be open ended by only
+providing either `minValue` or `maxValue` rather than both.
+
+If a valid range is known ahead of time, it is a good idea to provide it to `NumberField` so it can optimize the experience.
+For example, when the minimum value is greater than or equal to zero, it is possible to use a numeric keyboard on iOS rather
+than a full text keyboard (necessary to enter a minus sign).
+
+```tsx example
+<NumberField
+  label="Enter your age"
+  minValue={0} />
+```
+
+## Step values
+
+The `step` prop can be used to snap the value to certain increments. If there is a `minValue` defined, the steps are calculated
+starting from the minimum. For example, if `minValue={2}`, and `step={3}`, the valid step values would be 2, 5, 8, 11, etc. If no
+`minValue` is defined, the steps are calculated starting from zero and extending in both directions. In other words, such that the
+values are evenly divisible by the step. If no `step` is defined, any decimal value may be typed, but incrementing and decrementing
+snaps the value to an integer.
+
+If the user types a value that is between two steps and blurs the input, the value will be snapped to the nearest step. When
+incrementing or decrementing, the value is snapped to the nearest step that is higher or lower, respectively.
+When incrementing or decrementing from an empty field, the value starts at the `minValue` or `maxValue`, respectively, if defined.
+Otherwise, the value starts from `0`.
+
+```tsx example
+<NumberField
+  label="Step"
+  step={10} />
+<NumberField
+  label="Step + minValue"
+  minValue={2}
+  step={3} />
+<NumberField
+  label="Step + minValue + maxValue"
+  minValue={2}
+  maxValue={21}
+  step={3} />
 ```
 
 ## Labeling
@@ -94,32 +217,8 @@ the `id` of the labeling element instead.
 
 ### Internationalization
 
-#### Label
 In order to internationalize a NumberField, a localized string should be passed to the `label` or `aria-label` prop.
 When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
-
-#### Value
-The NumberField value can be formatted by using the `formatOptions` prop.
-`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
-
-```tsx example
-<Flex gap="size-150" wrap>
-  <NumberField
-    label="Currency"
-    formatOptions={{style: 'currency', currency: 'JPY'}}
-    defaultValue={60} />
-  <NumberField
-    label="Percent"
-    maxValue={1}
-    step={0.001}
-    formatOptions={{style: 'percent', minimumFractionDigits: 1}}
-    defaultValue={0.891} />
-</Flex>
-```
-
-NumberField also supports three numeral systems, Latin digits, Arabic-Indic digits, and Hanidecimal. Regardless of the locale, these three
-can be parsed from typed input. In addition, the NumberField will automatically choose the starting numeral system based on the default for the locale.
-
 
 ## Events
 

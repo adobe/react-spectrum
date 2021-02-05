@@ -33,7 +33,7 @@ export interface NumberFieldProps extends InputBase, Validation, FocusableProps,
 
 export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps {}
 
-export interface SpectrumNumberFieldProps extends AriaNumberFieldProps, StyleProps, SpectrumLabelableProps, Omit<AriaNumberFieldProps, 'placeholder'> {
+export interface SpectrumNumberFieldProps extends Omit<AriaNumberFieldProps, 'placeholder'>, StyleProps, SpectrumLabelableProps {
   /** Whether the numberfield should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Whether to hide the step buttons on the side of the input. */
