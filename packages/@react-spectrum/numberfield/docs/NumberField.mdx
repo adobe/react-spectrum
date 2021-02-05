@@ -36,7 +36,7 @@ keywords: [number field, input]
 ## Example
 
 ```tsx example
-<NumberField label="Width" defaultValue={1024} />
+<NumberField label="Width" defaultValue={1024} minValue={0}  />
 ```
 
 ## Value
@@ -52,16 +52,43 @@ function Example() {
     <Flex gap="size-150" wrap>
       <NumberField
         label="Cookies (Uncontrolled)"
-        defaultValue={15} />
+        defaultValue={15}
+        minValue={0} />
 
       <NumberField
         label="Cookies (Controlled)"
         value={value}
-        onChange={setValue} />
+        onChange={setValue}
+        minValue={0} />
     </Flex>
   );
 }
 ```
+
+## Labeling
+
+A visual label should be provided for the NumberField using the `label` prop. If the NumberField is required, the `isRequired` and
+`necessityIndicator` props can be used to show a required state.
+
+```tsx example
+<Flex gap="size-150" wrap>
+  <NumberField label="Cookies" minValue={0} />
+  <NumberField label="Cookies" isRequired necessityIndicator="icon" minValue={0}  />
+  <NumberField label="Cookies" isRequired necessityIndicator="label" minValue={0}  />
+  <NumberField label="Cookies" necessityIndicator="label" minValue={0}  />
+</Flex>
+```
+
+### Accessibility
+
+If a visible label isn't specified, an `aria-label` must be provided to the NumberField for
+accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using
+the `id` of the labeling element instead.
+
+### Internationalization
+
+In order to internationalize a NumberField, a localized string should be passed to the `label` or `aria-label` prop.
+When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
 
 ## Number formatting
 
@@ -69,7 +96,7 @@ The NumberField value can be formatted by using the `formatOptions` prop.
 `formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
 Currently only standard notation is supported, though scientific, engineering, and compact notation may be supported in the future.
 
-NumberField supports three numeral systems, Latin digits, Arabic-Indic digits, and Han decimal system. Regardless of the locale, these three
+NumberField supports three numeral systems; Latin, Arabic-Indic, and Han decimal. Regardless of the locale, these three
 can be parsed from typed input. Initial rendering will appear in the default numeral system for the locale unless explicitly overridden [See](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/numberingSystem).
 
 ### Decimals
@@ -195,31 +222,6 @@ Otherwise, the value starts from `0`.
   step={3} />
 ```
 
-## Labeling
-
-A visual label should be provided for the NumberField using the `label` prop. If the NumberField is required, the `isRequired` and
-`necessityIndicator` props can be used to show a required state.
-
-```tsx example
-<Flex gap="size-150" wrap>
-  <NumberField label="Cookies" />
-  <NumberField label="Cookies" isRequired necessityIndicator="icon" />
-  <NumberField label="Cookies" isRequired necessityIndicator="label" />
-  <NumberField label="Cookies" necessityIndicator="label" />
-</Flex>
-```
-
-### Accessibility
-
-If a visible label isn't specified, an `aria-label` must be provided to the NumberField for
-accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using
-the `id` of the labeling element instead.
-
-### Internationalization
-
-In order to internationalize a NumberField, a localized string should be passed to the `label` or `aria-label` prop.
-When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
-
 ## Events
 
 NumberField accepts an `onChange` prop which is triggered whenever the value is committed by the user. This happens on blur of the field
@@ -235,7 +237,8 @@ function Example() {
     <Flex direction="column" gap="size-150">
       <NumberField
         onChange={setValue}
-        label="Number of cookies to buy" />
+        label="Number of cookies to buy"
+        minValue={0} />
       <pre>How many cookies you are ordering: {isNaN(value) ? 0 : value}</pre>
     </Flex>
   );
