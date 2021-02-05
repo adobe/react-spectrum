@@ -55,6 +55,10 @@ function supportsNativeBeforeInputEvent() {
     typeof InputEvent.prototype.getTargetRanges === 'function';
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a number field component.
+ * Number fields allow users to enter a number, and increment or decrement the value using stepper buttons.
+ */
 export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldState, inputRef: RefObject<HTMLInputElement>): NumberFieldAria {
   let {
     id,
