@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 .spectrum-InputGroup {
   &.is-focused {
-    &:not(.is-invalid):not(.is-disabled) {
+    &:not(.spectrum-InputGroup--invalid):not(.is-disabled) {
       .spectrum-InputGroup-input {
         border-color: var(--spectrum-textfield-border-color-key-focus);
       }
@@ -24,7 +24,7 @@ governing permissions and limitations under the License.
   }
 
   &:hover {
-    &:not(.is-invalid):not(.is-focused):not(.is-disabled) {
+    &:not(.spectrum-InputGroup--invalid):not(.is-focused):not(.is-disabled) {
       .spectrum-InputGroup-input {
         border-color: var(--spectrum-textfield-border-color-hover);
       }
@@ -42,7 +42,7 @@ governing permissions and limitations under the License.
     border-color: var(--spectrum-dropdown-border-color-key-focus);
   }
 
-  &.is-invalid,
+  &.spectrum-InputGroup--invalid,
   &:invalid {
     .spectrum-FieldButton,
     .spectrum-InputGroup-input {
@@ -69,6 +69,7 @@ governing permissions and limitations under the License.
   }
 
   &.is-invalid,
+  &.spectrum-InputGroup--invalid,
   &:invalid {
     .spectrum-FieldButton,
     .spectrum-InputGroup-input {
@@ -91,21 +92,21 @@ governing permissions and limitations under the License.
     &:active,
     &.is-selected,
     &:invalid,
-    &.is-invalid,
+    &.spectrum-FieldButton--invalid,
     &:disabled,
     &:disabled:hover {
       border-color: var(--spectrum-textfield-quiet-border-color);
     }
   }
 
-  &:hover:not(.is-invalid):not(.is-focused):not(.is-disabled) {
+  &:hover:not(.spectrum-InputGroup--invalid):not(.is-focused):not(.is-disabled) {
     .spectrum-FieldButton {
       border-color: var(--spectrum-textfield-quiet-border-color-hover);
     }
   }
 
   &.spectrum-InputGroup {
-    &.is-invalid,
+    &.spectrum-InputGroup--invalid,
     &:invalid {
       .spectrum-FieldButton,
       .spectrum-InputGroup-input {
@@ -113,8 +114,20 @@ governing permissions and limitations under the License.
       }
     }
 
-    /* Always add the 2px ring for keyboard focus for quiet inputgroups */
     &.is-focused {
+      .spectrum-FieldButton {
+        border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
+      }
+
+      &.spectrum-InputGroup--invalid,
+      &:invalid {
+        .spectrum-FieldButton {
+          border-color: var(--spectrum-textfield-border-color-error);
+        }
+      }
+    }
+
+    &:focus-ring {
       .spectrum-InputGroup-input {
         box-shadow: 0 1px 0 var(--spectrum-textfield-quiet-border-color-key-focus);
       }
@@ -124,11 +137,14 @@ governing permissions and limitations under the License.
         border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
       }
 
-      &.is-invalid,
+      &.spectrum-InputGroup--invalid,
       &:invalid {
+        .spectrum-InputGroup-input {
+          box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error);
+        }
+
         .spectrum-FieldButton {
           box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error);
-          border-color: var(--spectrum-textfield-border-color-error);
         }
       }
     }
@@ -153,7 +169,7 @@ governing permissions and limitations under the License.
     box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
 
     &:invalid,
-    &.is-invalid {
+    &.spectrum-InputGroup--invalid {
       box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error);
 
       .spectrum-FieldButton {
@@ -162,7 +178,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &.is-invalid {
+  &.spectrum-InputGroup--invalid {
     .spectrum-InputGroup-input {
       border-color: var(--spectrum-dropdown-border-color-error) !important;
     }
@@ -176,7 +192,7 @@ governing permissions and limitations under the License.
     }
     .spectrum-FieldButton {
       border-color: var(--spectrum-dropdown-border-color-error);
-      &.is-invalid {
+      &.spectrum-FieldButton--invalid {
         &:focus-ring {
           border-color: var(--spectrum-dropdown-border-color-error);
           box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error);
@@ -188,11 +204,11 @@ governing permissions and limitations under the License.
     &.is-focused {
       box-shadow: 0 1px 0 0 var(--spectrum-dropdown-border-color-key-focus);
 
-      &.is-invalid {
+      &.spectrum-InputGroup--invalid {
         .spectrum-FieldButton {
           box-shadow: none;
           border-color: var(--spectrum-dropdown-border-color-error);
-          &.is-invalid {
+          &.spectrum-FieldButton--invalid {
             &:focus-ring {
               box-shadow: 0 2px 0 0 var(--spectrum-dropdown-border-color-error);
             }

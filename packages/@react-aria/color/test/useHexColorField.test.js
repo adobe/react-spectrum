@@ -31,67 +31,68 @@ describe('useHexColorField', function () {
   };
 
   it('handles defaults', function () {
-    let {inputFieldProps} = renderHexColorFieldHook({});
-    expect(inputFieldProps.type).toBe('text');
-    expect(inputFieldProps.autoComplete).toBe('off');
-    expect(inputFieldProps.autoCorrect).toBe('off');
-    expect(inputFieldProps.id).toBeTruthy();
-    expect(inputFieldProps.role).toBe('spinbutton');
-    expect(inputFieldProps['aria-valuenow']).toBeNull();
-    expect(inputFieldProps['aria-valuetext']).toBeNull();
-    expect(inputFieldProps['aria-valuemin']).toBe(0x000000);
-    expect(inputFieldProps['aria-valuemax']).toBe(0xFFFFFF);
-    expect(inputFieldProps['aria-required']).toBeNull();
-    expect(inputFieldProps['aria-disabled']).toBeNull();
-    expect(inputFieldProps['aria-readonly']).toBeNull();
-    expect(inputFieldProps['aria-invalid']).toBeUndefined();
-    expect(inputFieldProps.disabled).toBe(false);
-    expect(inputFieldProps.readOnly).toBe(false);
+    let {inputProps} = renderHexColorFieldHook({});
+    expect(inputProps.type).toBe('text');
+    expect(inputProps.autoComplete).toBe('off');
+    expect(inputProps.autoCorrect).toBe('off');
+    expect(inputProps.id).toBeTruthy();
+    expect(inputProps.role).toBe('textbox');
+    expect(inputProps['aria-valuenow']).toBeNull();
+    expect(inputProps['aria-valuetext']).toBeNull();
+    expect(inputProps['aria-valuemin']).toBeNull();
+    expect(inputProps['aria-valuemax']).toBeNull();
+    expect(inputProps['aria-required']).toBeNull();
+    expect(inputProps['aria-disabled']).toBeNull();
+    expect(inputProps['aria-readonly']).toBeNull();
+    expect(inputProps['aria-invalid']).toBeUndefined();
+    expect(inputProps.disabled).toBe(false);
+    expect(inputProps.readOnly).toBe(false);
   });
 
   it('should return props for colorValue provided', function () {
     let colorValue = parseColor('#ff88a0');
-    let {inputFieldProps} = renderHexColorFieldHook({}, {colorValue});
-    expect(inputFieldProps['aria-valuenow']).toBe(colorValue.toHexInt());
-    expect(inputFieldProps['aria-valuetext']).toBe('#FF88A0');
+    let {inputProps} = renderHexColorFieldHook({}, {colorValue, inputValue: colorValue.toString('hex')});
+    expect(inputProps['aria-valuenow']).toBeNull();
+    expect(inputProps['aria-valuetext']).toBeNull();
+    expect(inputProps['value']).toBe('#FF88A0');
   });
 
   it('should return props for label', function () {
-    let {labelProps, inputFieldProps} = renderHexColorFieldHook({
+    let {labelProps, inputProps} = renderHexColorFieldHook({
       'aria-label': undefined,
       label: 'Secondary Color'
     });
     expect(labelProps.id).toBeTruthy();
-    expect(labelProps.htmlFor).toBe(inputFieldProps.id);
-    expect(inputFieldProps.id).toBeTruthy();
-    expect(inputFieldProps['aria-labelledby']).toBe(labelProps.id);
-    expect(inputFieldProps['aria-label']).toBeUndefined(); // because label prop is provided instead of aria-label
-    expect(typeof inputFieldProps.onChange).toBe('function');
-    expect(typeof inputFieldProps.onBlur).toBe('function');
-    expect(typeof inputFieldProps.onFocus).toBe('function');
-    expect(typeof inputFieldProps.onKeyDown).toBe('function');
-    expect(typeof inputFieldProps.onWheel).toBe('function');
+    expect(labelProps.htmlFor).toBe(inputProps.id);
+    expect(inputProps.id).toBeTruthy();
+    expect(inputProps['aria-labelledby']).toBe(labelProps.id);
+    expect(inputProps['aria-label']).toBeUndefined(); // because label prop is provided instead of aria-label
+    expect(typeof inputProps.onChange).toBe('function');
+    expect(typeof inputProps.onBlur).toBe('function');
+    expect(typeof inputProps.onFocus).toBe('function');
+    expect(typeof inputProps.onKeyDown).toBe('function');
+    expect(typeof inputProps.onWheel).toBe('function');
   });
 
   it('should return prop for invalid', function () {
-    let {inputFieldProps} = renderHexColorFieldHook({validationState: 'invalid'});
-    expect(inputFieldProps['aria-invalid']).toBe(true);
+    let {inputProps} = renderHexColorFieldHook({validationState: 'invalid'});
+    expect(inputProps['aria-invalid']).toBe(true);
   });
 
   it('should return prop for required', function () {
-    let {inputFieldProps} = renderHexColorFieldHook({isRequired: true});
-    expect(inputFieldProps['aria-required']).toBe(true);
+    let {inputProps} = renderHexColorFieldHook({isRequired: true});
+    expect(inputProps['aria-required']).toBe(true);
   });
 
   it('should return prop for readonly', function () {
-    let {inputFieldProps} = renderHexColorFieldHook({isReadOnly: true});
-    expect(inputFieldProps['aria-readonly']).toBe(true);
-    expect(inputFieldProps.readOnly).toBe(true);
+    let {inputProps} = renderHexColorFieldHook({isReadOnly: true});
+    expect(inputProps['aria-readonly']).toBe(true);
+    expect(inputProps.readOnly).toBe(true);
   });
 
   it('should return prop for disabled', function () {
-    let {inputFieldProps} = renderHexColorFieldHook({isDisabled: true});
-    expect(inputFieldProps['aria-disabled']).toBe(true);
-    expect(inputFieldProps.disabled).toBe(true);
+    let {inputProps} = renderHexColorFieldHook({isDisabled: true});
+    expect(inputProps['aria-disabled']).toBe(true);
+    expect(inputProps.disabled).toBe(true);
   });
 });

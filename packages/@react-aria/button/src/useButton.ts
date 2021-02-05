@@ -54,6 +54,8 @@ export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<an
     onPressStart,
     onPressEnd,
     onPressChange,
+    // @ts-ignore - undocumented
+    preventFocusOnPress,
     // @ts-ignore
     onClick: deprecatedOnClick,
     href,
@@ -81,6 +83,7 @@ export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<an
     onPressChange,
     onPress,
     isDisabled,
+    preventFocusOnPress,
     ref
   });
 
@@ -90,14 +93,13 @@ export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<an
 
   return {
     isPressed, // Used to indicate press state for visual
-    buttonProps: mergeProps(buttonProps, {
+    buttonProps: mergeProps(additionalProps, buttonProps, {
       'aria-haspopup': props['aria-haspopup'],
       'aria-expanded': props['aria-expanded'],
       'aria-controls': props['aria-controls'],
       'aria-pressed': props['aria-pressed'],
       disabled: isDisabled,
       type,
-      ...(additionalProps || {}),
       onClick: (e) => {
         if (deprecatedOnClick) {
           deprecatedOnClick(e);

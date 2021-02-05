@@ -13,7 +13,7 @@
 import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {ariaHideOutside} from '@react-aria/overlays';
-import {chain, mergeProps, useLabels} from '@react-aria/utils';
+import {chain, isAppleDevice, mergeProps, useLabels} from '@react-aria/utils';
 import {ComboBoxProps} from '@react-types/combobox';
 import {ComboBoxState} from '@react-stately/combobox';
 import {FocusEvent, HTMLAttributes, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
@@ -40,12 +40,6 @@ interface ComboBoxAria {
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   listBoxProps: HTMLAttributes<HTMLElement>,
   labelProps: HTMLAttributes<HTMLElement>
-}
-
-function isAppleDevice() {
-  return typeof window !== 'undefined' && window.navigator != null
-    ? /^(Mac|iPhone|iPad)/.test(window.navigator.platform)
-    : false;
 }
 
 export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState<T>): ComboBoxAria {
@@ -289,7 +283,11 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       // TODO: readd proper logic for completionMode = complete (aria-autocomplete: both)
       'aria-autocomplete': 'list',
       'aria-activedescendant': focusedItem ? getItemId(state, focusedItem.key) : undefined,
-      onTouchEnd
+      onTouchEnd,
+      // This disable's iOS's autocorrect suggestions, since the combo box provides its own suggestions.
+      autoCorrect: 'off',
+      // This disable's the macOS Safari spell check auto corrections.
+      spellCheck: 'false'
     }),
     listBoxProps: mergeProps(menuProps, listBoxProps)
   };

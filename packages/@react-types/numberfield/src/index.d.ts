@@ -14,24 +14,32 @@ import {
   AriaLabelingProps,
   DOMProps,
   FocusableProps,
-  InputBase,
-  RangeInputBase,
+  InputBase, LabelableProps,
+  RangeInputBase, SpectrumLabelableProps,
   StyleProps,
   TextInputBase,
   Validation,
   ValueBase
 } from '@react-types/shared';
 
-export interface NumberFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number> {
-  decrementAriaLabel?: string,
-  incrementAriaLabel?: string,
+export interface NumberFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps {
+  /**
+   * Formatting options for the value displayed in the number field.
+   * This also affects what characters are allowed to be typed by the user.
+   */
   formatOptions?: Intl.NumberFormatOptions
 }
 
-export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps {}
+export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps {
+  /** A custom aria-label for the decrement button. If not provided, the localized string "Decrement" is used. */
+  decrementAriaLabel?: string,
+  /** A custom aria-label for the increment button. If not provided, the localized string "Increment" is used. */
+  incrementAriaLabel?: string
+}
 
-export interface SpectrumNumberFieldProps extends AriaNumberFieldProps, StyleProps {
+export interface SpectrumNumberFieldProps extends AriaNumberFieldProps, StyleProps, SpectrumLabelableProps, Omit<AriaNumberFieldProps, 'placeholder'> {
+  /** Whether the number field should be displayed with a quiet style. */
   isQuiet?: boolean,
-  showStepper?: boolean,
-  formatOptions?: Intl.NumberFormatOptions
+  /** Whether to hide the increment and decrement buttons. */
+  hideStepper?: boolean
 }

@@ -44,6 +44,7 @@ describe('useAsyncList', () => {
     expect(args.selectedKeys).toEqual(new Set());
 
     expect(result.current.isLoading).toBe(true);
+    expect(result.current.state).toBe('loading');
     expect(result.current.items).toEqual([]);
 
     await act(async () => {
@@ -52,6 +53,7 @@ describe('useAsyncList', () => {
     });
 
     expect(result.current.isLoading).toBe(false);
+    expect(result.current.state).toBe('idle');
     expect(result.current.items).toEqual(ITEMS);
   });
 
@@ -62,6 +64,7 @@ describe('useAsyncList', () => {
     );
 
     expect(load).toHaveBeenCalledTimes(1);
+    expect(result.current.state).toBe('loading');
     expect(result.current.isLoading).toBe(true);
     expect(result.current.items).toEqual([]);
 
@@ -70,6 +73,7 @@ describe('useAsyncList', () => {
       await waitForNextUpdate();
     });
 
+    expect(result.current.state).toBe('idle');
     expect(result.current.isLoading).toBe(false);
     expect(result.current.items).toEqual(ITEMS);
 
@@ -78,6 +82,7 @@ describe('useAsyncList', () => {
       await waitForNextUpdate();
     });
 
+    expect(result.current.state).toBe('loadingMore');
     expect(load).toHaveBeenCalledTimes(2);
     let args = load.mock.calls[1][0];
     expect(args.items).toStrictEqual(ITEMS);
@@ -91,6 +96,7 @@ describe('useAsyncList', () => {
       await waitForNextUpdate();
     });
 
+    expect(result.current.state).toBe('idle');
     expect(result.current.isLoading).toBe(false);
     expect(result.current.items).toEqual([...ITEMS, ...ITEMS]);
   });
@@ -102,6 +108,7 @@ describe('useAsyncList', () => {
     );
 
     expect(load).toHaveBeenCalledTimes(1);
+    expect(result.current.state).toBe('loading');
     expect(result.current.isLoading).toBe(true);
     expect(result.current.items).toEqual([]);
 
@@ -110,6 +117,7 @@ describe('useAsyncList', () => {
       await waitForNextUpdate();
     });
 
+    expect(result.current.state).toBe('idle');
     expect(result.current.isLoading).toBe(false);
     expect(result.current.items).toEqual(ITEMS);
 
@@ -121,6 +129,7 @@ describe('useAsyncList', () => {
     });
 
     expect(result.current.isLoading).toBe(true);
+    expect(result.current.state).toBe('sorting');
     expect(result.current.items).toEqual(ITEMS);
 
     expect(load).toHaveBeenCalledTimes(2);
@@ -133,6 +142,7 @@ describe('useAsyncList', () => {
     });
 
     expect(result.current.isLoading).toBe(false);
+    expect(result.current.state).toBe('idle');
     expect(result.current.items).toEqual(ITEMS2);
   });
 
@@ -187,10 +197,13 @@ describe('useAsyncList', () => {
       load: loadSpyThatThrows
     }));
 
+    expect(result.current.state).toBe('loading');
+
     await act(async () => {
       await waitForNextUpdate();
     });
 
+    expect(result.current.state).toBe('error');
     expect(loadSpyThatThrows).toHaveBeenCalled();
     expect(result.current.error).toBeDefined();
     expect(result.current.error.message).toBe('error');
@@ -689,5 +702,217 @@ describe('useAsyncList', () => {
     expect(result.current.isLoading).toBe(false);
     expect(result.current.items).toEqual(ITEMS);
     expect(result.current.getItem(1)).toBe(ITEMS[0]);
+  });
+
+  describe('filtering', function () {
+    const filterItems = [{id: 1, name: 'Bob'}, {id: 2, name: 'Joe'}, {id: 3, name: 'Bob Joe'}];
+    const itemsFirstCall = [{id: 1, name: 'Bob'}, {id: 3, name: 'Bob Joe'}];
+    const itemsSecondCall = [{id: 2, name: 'Joe'}, {id: 3, name: 'Bob Joe'}];
+
+    function getFilterItems() {
+      return new Promise(resolve => {
+        setTimeout(() => resolve({items: filterItems, cursor: 3}), 100);
+      });
+    }
+
+    function mockFirstCall() {
+      return new Promise(resolve => {
+        setTimeout(() => resolve({items: itemsFirstCall, cursor: 3}), 100);
+      });
+    }
+
+    function mockSecondCall() {
+      return new Promise(resolve => {
+        setTimeout(() => resolve({items: itemsSecondCall, cursor: 3}), 100);
+      });
+    }
+
+    beforeAll(() => {
+      jest.useFakeTimers();
+    });
+
+    it('should accept initial filter text', async () => {
+      let load = jest.fn().mockImplementation(getFilterItems);
+      let initialFilterText = 'Blah';
+      let {result, waitForNextUpdate} = renderHook(() => useAsyncList({load, initialFilterText}));
+
+      expect(load).toHaveBeenCalledTimes(1);
+      let args = load.mock.calls[0][0];
+      expect(args.items).toEqual([]);
+      expect(args.selectedKeys).toEqual(new Set());
+
+      expect(result.current.state).toBe('loading');
+      expect(result.current.isLoading).toBe(true);
+      expect(result.current.items).toEqual([]);
+
+      await act(async () => {
+        jest.runAllTimers();
+        await waitForNextUpdate();
+      });
+
+      expect(result.current.state).toBe('idle');
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.items).toEqual(filterItems);
+      expect(result.current.filterText).toEqual('Blah');
+    });
+
+    it('should update the list of items when the filter text changes (server side filtering)', async () => {
+      let load = jest
+        .fn()
+        .mockImplementationOnce(mockFirstCall)
+        .mockImplementationOnce(mockSecondCall);
+      let initialFilterText = 'Bo';
+      let {result, waitForNextUpdate} = renderHook(() => useAsyncList({load, initialFilterText}));
+
+      expect(result.current.state).toBe('loading');
+      expect(load).toHaveBeenCalledTimes(1);
+      let args = load.mock.calls[0][0];
+      expect(args.items).toEqual([]);
+      expect(args.selectedKeys).toEqual(new Set());
+
+      expect(result.current.isLoading).toBe(true);
+      expect(result.current.items).toEqual([]);
+
+      await act(async () => {
+        jest.runAllTimers();
+        await waitForNextUpdate();
+      });
+
+      expect(result.current.state).toBe('idle');
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.items).toEqual(itemsFirstCall);
+      expect(result.current.filterText).toEqual('Bo');
+      expect(load).toHaveBeenCalledTimes(1);
+
+      await act(async () => {
+        result.current.setFilterText('Jo');
+        jest.runAllTimers();
+        await waitForNextUpdate();
+      });
+
+      expect(result.current.state).toBe('idle');
+      expect(load).toHaveBeenCalledTimes(2);
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.items).toEqual(itemsSecondCall);
+      expect(result.current.filterText).toEqual('Jo');
+    });
+
+    it('should abort previous loads when the filter text changes (server side filtering)', async () => {
+      let isAborted = false;
+      let load = jest
+        .fn()
+        .mockImplementationOnce(mockFirstCall)
+        .mockImplementationOnce(({signal}) => new Promise((resolve, reject) => {
+          signal.addEventListener('abort', () => {
+            isAborted = true;
+            reject();
+          });
+
+          setTimeout(() => resolve({items: filterItems}), 100);
+        }))
+        .mockImplementationOnce(mockSecondCall);
+      let {result, waitForNextUpdate} = renderHook(() => useAsyncList({load}));
+
+      expect(result.current.state).toBe('loading');
+      expect(load).toHaveBeenCalledTimes(1);
+      expect(result.current.isLoading).toBe(true);
+      expect(result.current.items).toEqual([]);
+
+      await act(async () => {
+        jest.runAllTimers();
+        await waitForNextUpdate();
+      });
+
+      expect(result.current.state).toBe('idle');
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.items).toEqual(itemsFirstCall);
+
+      await act(async () => {
+        result.current.loadMore();
+        await waitForNextUpdate();
+      });
+
+      expect(load).toHaveBeenCalledTimes(2);
+      expect(result.current.state).toBe('loadingMore');
+      expect(result.current.isLoading).toBe(true);
+      expect(result.current.items).toEqual(itemsFirstCall);
+      expect(isAborted).toBe(false);
+
+      await act(async () => {
+        result.current.setFilterText('Jo');
+        await waitForNextUpdate();
+      });
+
+      expect(isAborted).toBe(true);
+      expect(result.current.state).toBe('filtering');
+      expect(result.current.isLoading).toBe(true);
+      expect(result.current.items).toEqual(itemsFirstCall);
+
+      await act(async () => {
+        jest.runAllTimers();
+        await waitForNextUpdate();
+      });
+
+      expect(result.current.state).toBe('idle');
+      expect(load).toHaveBeenCalledTimes(3);
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.items).toEqual(itemsSecondCall);
+      expect(result.current.filterText).toBe('Jo');
+    });
+
+    it('shouldn\'t call loadMore if filtering is happening (server side filtering)', async () => {
+      let isAborted = false;
+      let load = jest
+        .fn()
+        .mockImplementationOnce(getFilterItems)
+        .mockImplementationOnce(({signal}) => new Promise((resolve, reject) => {
+          signal.addEventListener('abort', () => {
+            isAborted = true;
+            reject();
+          });
+
+          setTimeout(() => resolve({items: itemsSecondCall}), 100);
+        }))
+        .mockImplementationOnce(mockFirstCall);
+
+      let {result, waitForNextUpdate} = renderHook(() => useAsyncList({load}));
+      expect(result.current.state).toBe('loading');
+
+      await act(async () => {
+        jest.runAllTimers();
+        await waitForNextUpdate();
+      });
+
+      expect(load).toHaveBeenCalledTimes(1);
+      expect(result.current.state).toBe('idle');
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.items).toEqual(filterItems);
+
+      await act(async () => {
+        result.current.setFilterText('Jo');
+        await waitForNextUpdate();
+      });
+
+      expect(load).toHaveBeenCalledTimes(2);
+      expect(result.current.state).toBe('filtering');
+      expect(result.current.isLoading).toBe(true);
+      expect(result.current.items).toEqual(filterItems);
+      expect(isAborted).toBe(false);
+
+      await act(async () => {
+        result.current.loadMore();
+        jest.runAllTimers();
+      });
+
+      // loadMore calls are ignored if filtering is happening
+      // so load is only called twice, abort isnt' called, and the items from the
+      // original filtering fetch are returned
+      expect(isAborted).toBe(false);
+      expect(load).toHaveBeenCalledTimes(2);
+      expect(result.current.state).toBe('idle');
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.items).toEqual(itemsSecondCall);
+      expect(result.current.filterText).toBe('Jo');
+    });
   });
 });

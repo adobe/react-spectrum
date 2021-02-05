@@ -1,5 +1,5 @@
 {
-  "Decrement": "Reduser",
-  "Enter a number": "Oppgi et tall",
-  "Increment": "Øk"
+  "decrease": "Decrease {fieldLabel}",
+  "increase": "Increase {fieldLabel}",
+  "Number field": "Number field"
 }

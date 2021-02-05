@@ -10,292 +10,437 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-.spectrum-Stepper {
-  .spectrum-Stepper-input {
-    &:focus {
-      border-color: var(--spectrum-textfield-border-color-key-focus);
+/* TODO: ReadOnly */
 
-      + .spectrum-Stepper-buttons {
-        .spectrum-Stepper-stepUp,
-        .spectrum-Stepper-stepDown {
-          border-color: var(--spectrum-textfield-border-color-key-focus);
-        }
-      }
+.spectrum-Stepper-button {
+  background-color: var(--spectrum-actionbutton-background-color);
+  border-color: var(--spectrum-actionbutton-border-color);
+  color: var(--spectrum-actionbutton-text-color);
 
-      &:invalid,
-      &.is-invalid {
-        border-color: var(--spectrum-textfield-border-color-error);
+  .spectrum-Stepper-icon {
+    fill: var(--spectrum-actionbutton-icon-color);
+  }
+  &:hover,
+  &.is-hovered {
+    background-color: var(--spectrum-actionbutton-background-color-hover);
+    border-color: var(--spectrum-actionbutton-border-color-hover);
+    color: var(--spectrum-actionbutton-text-color-hover);
 
-        + .spectrum-Stepper-buttons {
-          .spectrum-Stepper-stepUp,
-          .spectrum-Stepper-stepDown {
-            border-color: var(--spectrum-textfield-border-color-error);
-          }
-        }
-      }
+    .spectrum-Stepper-icon {
+      fill: var(--spectrum-actionbutton-icon-color-hover);
     }
+  }
 
-    &:focus-ring {
-      box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
+  &.is-active {
+    background-color: var(--spectrum-actionbutton-background-color-down);
+    border-color: var(--spectrum-actionbutton-border-color-down);
+    color: var(--spectrum-actionbutton-text-color-down);
+  }
 
-      + .spectrum-Stepper-buttons {
-        box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
-      }
+  &:disabled,
+  &.is-disabled {
+    background-color: var(--spectrum-textfield-background-color-disabled);
+    border-color: var(--spectrum-textfield-border-color-disabled);
+    color: var(--spectrum-textfield-text-color-disabled);
 
-      &:invalid,
-      &.is-invalid {
-        box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
+    .spectrum-Stepper-icon {
+      fill: var(--spectrum-textfield-text-color-disabled);
+    }
+  }
+}
 
-        + .spectrum-Stepper-buttons {
-          box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
-        }
-      }
+.spectrum-Stepper-button.spectrum-Stepper-button--isQuiet {
+  background-color: unset;
+  &:hover {
+    background-color: unset;
+  }
+}
+
+.spectrum-Stepper {
+  .spectrum-Stepper-button {
+    border-color: var(--spectrum-textfield-border-color);
+  }
+
+  &.is-hovered {
+    .spectrum-Stepper-button {
+      border-color: var(--spectrum-actionbutton-border-color-hover);
+    }
+  }
+
+  &:focus,
+  &:active {
+    .spectrum-Stepper-button {
+      border-color: var(--spectrum-textfield-border-color-key-focus);
     }
 
     &:invalid,
     &.is-invalid {
       border-color: var(--spectrum-textfield-border-color-error);
+    }
+  }
 
-      + .spectrum-Stepper-buttons {
-        .spectrum-Stepper-stepUp,
-        .spectrum-Stepper-stepDown {
-          border-color: var(--spectrum-textfield-border-color-error);
-        }
-      }
+  .spectrum-Stepper-button {
+    &:disabled,
+    &.is-disabled {
+      border-color: var(--spectrum-textfield-border-color-disabled);
+    }
+  }
+
+  &:focus-ring {
+    &:invalid,
+    &.is-invalid {
+      box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
+    }
+  }
+
+  &:invalid,
+  &.is-invalid {
+    .spectrum-Stepper-button {
+      border-color: var(--spectrum-textfield-border-color-error);
     }
   }
 
   &.is-focused {
+    .spectrum-Stepper-button {
+      border-color: var(--spectrum-textfield-border-color-key-focus);
+    }
+
     .spectrum-Stepper-input {
       border-color: var(--spectrum-textfield-border-color-key-focus);
-      box-shadow: none;
-
-      + .spectrum-Stepper-buttons {
-        .spectrum-Stepper-stepUp,
-        .spectrum-Stepper-stepDown {
-          border-color: var(--spectrum-textfield-border-color-key-focus);
-        }
-      }
-
-      &.focus-ring {
-        box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
-
-        + .spectrum-Stepper-buttons {
-          box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
-        }
-
-        &:invalid,
-        &.is-invalid {
-          box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
-
-          + .spectrum-Stepper-buttons {
-            box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
-          }
-        }
-      }
-
-      &:invalid,
-      &.is-invalid {
-        border-color: var(--spectrum-textfield-border-color-error);
-
-        + .spectrum-Stepper-buttons {
-          .spectrum-Stepper-stepUp,
-          .spectrum-Stepper-stepDown {
-            border-color: var(--spectrum-textfield-border-color-error);
-          }
-        }
-      }
-    }
-  }
-
-  &.is-invalid {
-    .spectrum-Stepper-input {
-      border-color: var(--spectrum-textfield-border-color-error);
-      box-shadow: none;
-
-      + .spectrum-Stepper-buttons {
-        .spectrum-Stepper-stepUp,
-        .spectrum-Stepper-stepDown {
-          border-color: var(--spectrum-textfield-border-color-error);
-        }
-      }
-
-      &.focus-ring {
-        box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
-
-        + .spectrum-Stepper-buttons {
-          box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
-        }
-      }
-    }
-  }
-}
-
-.spectrum-Stepper-stepUp,
-.spectrum-Stepper-stepDown {
-  border-color: var(--spectrum-textfield-border-color);
-
-  &:disabled {
-    border-color: var(--spectrum-textfield-border-color-disabled);
-  }
-}
-
-.spectrum-Stepper-stepUp,
-.spectrum-Stepper-stepDown {
-  &:hover:not(:disabled) {
-    /* Keep the border on hover */
-    border-color: var(--spectrum-textfield-border-color);
-  }
-}
-
-.spectrum-Stepper--quiet {
-  .spectrum-Stepper-stepUp,
-  .spectrum-Stepper-stepDown {
-    &:disabled {
-      border-color: var(--spectrum-textfield-quiet-border-color-disabled);
-    }
-  }
-
-  .spectrum-Stepper-input {
-    box-shadow: none;
-
-    &:focus {
-      + .spectrum-Stepper-buttons {
-        .spectrum-Stepper-stepDown {
-          border-color: var(--spectrum-textfield-border-color-key-focus);
-        }
-      }
-
-      &:invalid,
-      &.is-invalid {
-        box-shadow: none;
-      }
     }
 
     &.focus-ring {
-      box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-key-focus);
+      &:invalid,
+      &.is-invalid {
+        box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
+      }
+    }
 
-      + .spectrum-Stepper-buttons {
-        box-shadow: none;
+    &:invalid,
+    &.is-invalid {
+      .spectrum-Stepper-button {
+        border-color: var(--spectrum-textfield-border-color-error);
+      }
 
-        .spectrum-Stepper-stepDown {
-          box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-key-focus);
+      .spectrum-Stepper-input {
+        border-color: var(--spectrum-textfield-border-color-error);
+      }
+    }
+  }
+
+  &.is-invalid {
+    .spectrum-Stepper-button {
+      border-color: var(--spectrum-textfield-border-color-error);
+    }
+
+    &.focus-ring {
+      box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
+    }
+  }
+  &.spectrum-Stepper--quiet {
+    .spectrum-Stepper-button {
+      &:disabled,
+      &.is-disabled {
+        border-color: var(--spectrum-textfield-quiet-border-color-disabled);
+      }
+    }
+
+    &:focus {
+      .spectrum-Stepper-button--stepDown {
+        border-color: var(--spectrum-textfield-border-color-key-focus);
+      }
+    }
+    &.focus-ring {
+      .spectrum-Stepper-button--stepDown {
+        box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-key-focus);
+      }
+
+      &:focus {
+        .spectrum-Stepper-button--stepDown {
+          border-color: var(--spectrum-textfield-border-color-key-focus);
         }
       }
 
       &:invalid,
       &.is-invalid {
-        box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
-
-        + .spectrum-Stepper-buttons {
-          box-shadow: none;
-
-          .spectrum-Stepper-stepDown {
-            box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
-          }
+        .spectrum-Stepper-button--stepDown {
+          box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
         }
       }
     }
 
     &:invalid,
     &.is-invalid {
-      border-color: var(--spectrum-textfield-border-color-error);
-
-      + .spectrum-Stepper-buttons {
-        box-shadow: none;
-
-        .spectrum-Stepper-stepDown {
-          border-color: var(--spectrum-textfield-border-color-error);
-        }
+      .spectrum-Stepper-button--stepDown {
+        border-color: var(--spectrum-textfield-border-color-error);
       }
     }
-  }
 
-  &.is-focused {
-    .spectrum-Stepper-input {
-      box-shadow: none;
+    &.is-focused {
+      .spectrum-Stepper-button--stepDown {
+        border-color: var(--spectrum-textfield-border-color-key-focus);
+      }
 
-      + .spectrum-Stepper-buttons {
-        box-shadow: none;
-        .spectrum-Stepper-stepDown {
+      &:focus {
+        .spectrum-Stepper-button--stepDown {
           border-color: var(--spectrum-textfield-border-color-key-focus);
         }
       }
 
-      &:focus {
-        + .spectrum-Stepper-buttons {
-          .spectrum-Stepper-stepDown {
-            border-color: var(--spectrum-textfield-border-color-key-focus);
-          }
-        }
-      }
-
       &.focus-ring {
-        border-color: var(--spectrum-textfield-border-color-key-focus);
-        box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-key-focus);
-
-        + .spectrum-Stepper-buttons {
-          box-shadow: none;
-          .spectrum-Stepper-stepDown {
-            box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-key-focus);
-          }
+        .spectrum-Stepper-button--stepDown {
+          box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-key-focus);
         }
 
         &:invalid,
         &.is-invalid {
-          box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
-
-          + .spectrum-Stepper-buttons {
-            box-shadow: none;
-            .spectrum-Stepper-stepDown {
-              box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
-            }
+          .spectrum-Stepper-button--stepDown {
+            box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
           }
         }
       }
 
       &:invalid,
       &.is-invalid {
+        .spectrum-Stepper-button--stepDown {
+          border-color: var(--spectrum-textfield-border-color-error);
+        }
+      }
+    }
+
+    &.is-invalid {
+      .spectrum-Stepper-button--stepDown {
         border-color: var(--spectrum-textfield-border-color-error);
+      }
 
-        + .spectrum-Stepper-buttons {
-          box-shadow: none;
+      &:focus {
+        .spectrum-Stepper-button--stepDown {
+          border-color: var(--spectrum-textfield-border-color-error);
+        }
+      }
 
-          .spectrum-Stepper-stepDown {
-            border-color: var(--spectrum-textfield-border-color-error);
-          }
+      &.focus-ring {
+        .spectrum-Stepper-button--stepDown {
+          box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
         }
       }
     }
   }
 
-  &.is-invalid {
-    .spectrum-Stepper-input {
-      border-color: var(--spectrum-textfield-border-color-error);
+  &.spectrum-Stepper--quiet.spectrum-Stepper--isMobile {
+    .spectrum-Stepper-button {
+      &:disabled,
+      &.is-disabled {
+        border-color: var(--spectrum-textfield-quiet-border-color-disabled);
+      }
 
-      + .spectrum-Stepper-buttons {
-        .spectrum-Stepper-stepDown {
-          border-color: var(--spectrum-textfield-border-color-error);
+      &.is-active {
+        border-color: var(--spectrum-actionbutton-border-color-hover);
+        color: var(--spectrum-actionbutton-text-color-hover);
+
+        .spectrum-Stepper-icon {
+          fill: var(--spectrum-actionbutton-icon-color-hover);
         }
+      }
+    }
+
+    &:focus {
+      .spectrum-Stepper-button {
+        border-color: var(--spectrum-textfield-border-color-key-focus);
+      }
+    }
+    &.focus-ring {
+      .spectrum-Stepper-button {
+        box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-key-focus);
       }
 
       &:focus {
-        + .spectrum-Stepper-buttons {
-          .spectrum-Stepper-stepDown {
-            border-color: var(--spectrum-textfield-border-color-error);
-          }
+        .spectrum-Stepper-button {
+          border-color: var(--spectrum-textfield-border-color-key-focus);
+        }
+      }
+
+      &:invalid,
+      &.is-invalid {
+        .spectrum-Stepper-button {
+          box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
+        }
+      }
+    }
+
+    &:invalid,
+    &.is-invalid {
+      .spectrum-Stepper-button {
+        border-color: var(--spectrum-textfield-border-color-error);
+      }
+    }
+
+    &.is-focused {
+      .spectrum-Stepper-button {
+        border-color: var(--spectrum-textfield-border-color-key-focus);
+      }
+
+      &:focus {
+        .spectrum-Stepper-button {
+          border-color: var(--spectrum-textfield-border-color-key-focus);
         }
       }
 
       &.focus-ring {
-        box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
+        .spectrum-Stepper-button {
+          box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-key-focus);
+        }
 
-        + .spectrum-Stepper-buttons {
-          box-shadow: none;
-          .spectrum-Stepper-stepDown {
+        &:invalid,
+        &.is-invalid {
+          .spectrum-Stepper-button {
             box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
           }
         }
+      }
+
+      &:invalid,
+      &.is-invalid {
+        .spectrum-Stepper-button {
+          border-color: var(--spectrum-textfield-border-color-error);
+        }
+      }
+    }
+
+    &.is-invalid {
+      .spectrum-Stepper-button {
+        border-color: var(--spectrum-textfield-border-color-error);
+      }
+
+      &:focus {
+        .spectrum-Stepper-button {
+          border-color: var(--spectrum-textfield-border-color-error);
+        }
+      }
+
+      &.focus-ring {
+        .spectrum-Stepper-button {
+          box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
+        }
+      }
+    }
+  }
+}
+
+
+
+
+.spectrum-Stepper.spectrum-Stepper--showStepper {
+  border-inline-start-width: 1px !important;
+  &:focus-ring {
+    box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
+    .spectrum-Stepper-input {
+      box-shadow: none;
+    }
+
+    &:invalid,
+    &.is-invalid {
+      box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
+      .spectrum-Stepper-input {
+        box-shadow: none;
+      }
+    }
+  }
+
+  &.is-focused {
+    &.focus-ring {
+      box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
+      .spectrum-Stepper-input {
+        box-shadow: none;
+      }
+
+      &:invalid,
+      &.is-invalid {
+        box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
+        .spectrum-Stepper-input {
+          box-shadow: none;
+        }
+      }
+    }
+  }
+}
+
+
+.spectrum-Stepper--quiet.spectrum-Stepper--showStepper {
+  &:focus {
+    box-shadow: none;
+    .spectrum-Stepper-input {
+      box-shadow: none;
+    }
+    &:invalid,
+    &.is-invalid {
+      box-shadow: none;
+      .spectrum-Stepper-input {
+        box-shadow: none;
+      }
+    }
+  }
+
+  &.focus-ring {
+    box-shadow: none;
+    .spectrum-Stepper-input {
+      box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-key-focus);
+    }
+
+    &:invalid,
+    &.is-invalid {
+      .spectrum-Stepper-input {
+        box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
+      }
+    }
+  }
+
+  &:invalid,
+  &.is-invalid {
+    box-shadow: none;
+    .spectrum-Stepper-input {
+      box-shadow: none;
+      border-color: var(--spectrum-textfield-border-color-error);
+    }
+  }
+
+  &.is-focused {
+    box-shadow: none;
+    .spectrum-Stepper-input {
+      box-shadow: none;
+    }
+    &.focus-ring {
+      box-shadow: none;
+      .spectrum-Stepper-input {
+        border-color: var(--spectrum-textfield-border-color-key-focus);
+        box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-key-focus);
+      }
+
+      &:invalid,
+      &.is-invalid {
+        box-shadow: none;
+        .spectrum-Stepper-input {
+          box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
+        }
+      }
+    }
+
+    &:invalid,
+    &.is-invalid {
+      box-shadow: none;
+      .spectrum-Stepper-input {
+        box-shadow: none;
+        border-color: var(--spectrum-textfield-border-color-error);
+      }
+    }
+  }
+
+  &.is-invalid {
+    &.focus-ring {
+      box-shadow: none;
+      .spectrum-Stepper-input {
+        border-color: var(--spectrum-textfield-border-color-error);
+        box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
       }
     }
   }

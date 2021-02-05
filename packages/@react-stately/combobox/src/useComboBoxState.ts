@@ -47,8 +47,24 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     props.onInputChange
   );
 
+  let onSelectionChange = (key) => {
+    if (props.onSelectionChange) {
+      props.onSelectionChange(key);
+    }
+
+    // If open state or selectedKey is uncontrolled and key is the same, reset the inputValue and close the menu
+    // (scenario: user clicks on already selected option)
+    if (props.isOpen === undefined || props.selectedKey === undefined) {
+      if (key === selectedKey) {
+        resetInputValue();
+        triggerState.close();
+      }
+    }
+  };
+
   let {collection, selectionManager, selectedKey, setSelectedKey, selectedItem, disabledKeys} = useSingleSelectListState({
     ...props,
+    onSelectionChange,
     items: props.items ?? props.defaultItems
   });
 
@@ -67,6 +83,15 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     }
   };
 
+  let toggle = (focusStrategy?: FocusStrategy) => {
+    // If the menu is closed and there is nothing to display, early return so toggle isn't called to prevent extraneous onOpenChange
+    if (!(allowsEmptyCollection || filteredCollection.size > 0) && !triggerState.isOpen) {
+      return;
+    }
+
+    triggerState.toggle(focusStrategy);
+  };
+
   let lastValue = useRef(inputValue);
   let resetInputValue = () => {
     let itemText = collection.getItem(selectedKey)?.textValue ?? '';
@@ -75,7 +100,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   };
 
   let isInitialRender = useRef(true);
-  let lastSelectedKey = useRef(null);
+  let lastSelectedKey = useRef(props.selectedKey ?? props.defaultSelectedKey ?? null);
   useEffect(() => {
     // If open state or inputValue is uncontrolled, open and close automatically when the input value changes,
     // the input is if focused, and there are items in the collection.
@@ -120,14 +145,18 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       }
     }
 
+    // If it is the intial render and inputValue isn't controlled nor has an intial value, set input to match current selected key if any
+    if (isInitialRender.current && (props.inputValue === undefined && props.defaultInputValue === undefined)) {
+      resetInputValue();
+    }
+
     // If the selectedKey changed, update the input value.
     // Do nothing if both inputValue and selectedKey are controlled.
     // In this case, it's the user's responsibility to update inputValue in onSelectionChange. In addition, we preserve the defaultInputValue
     // on initial render, even if it doesn't match the selected item's text.
     if (
       selectedKey !== lastSelectedKey.current &&
-      (props.inputValue === undefined || props.selectedKey === undefined) &&
-      !(isInitialRender.current && props.defaultInputValue !== undefined)
+      (props.inputValue === undefined || props.selectedKey === undefined)
     ) {
       resetInputValue();
     } else {
@@ -147,14 +176,18 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
   let commitCustomValue = () => {
     let shouldClose = false;
-    if (!allowsCustomValue) {
-      resetInputValue();
-      shouldClose = inputValue === lastValue.current;
-    } else {
-      lastSelectedKey.current = null;
-      setSelectedKey(null);
-      shouldClose = selectedKey === null;
+    lastSelectedKey.current = null;
+    setSelectedKey(null);
+
+    // If previous key was already null, need to manually call onSelectionChange since it won't be triggered by a setSelectedKey call
+    // This allows the application to control whether or not to close the menu on custom value commit
+    if (selectedKey === null && props.onSelectionChange) {
+      props.onSelectionChange(null);
     }
+
+    // Should close menu ourselves if component open state or selected key is uncontrolled and therefore won't be closed by a user defined event handler
+    shouldClose = props.isOpen == null || props.selectedKey === undefined;
+
 
     // Close if no other event will be fired. Otherwise, allow the
     // application to control this based on that event.
@@ -165,14 +198,15 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
   let commit = () => {
     if (triggerState.isOpen && selectionManager.focusedKey != null) {
-      // Close here if the selected key is already the focused key. Otherwise
+      // Reset inputValue and close menu here if the selected key is already the focused key. Otherwise
       // fire onSelectionChange to allow the application to control the closing.
       if (selectedKey === selectionManager.focusedKey) {
+        resetInputValue();
         triggerState.close();
       } else {
         setSelectedKey(selectionManager.focusedKey);
       }
-    } else {
+    } else if (allowsCustomValue) {
       commitCustomValue();
     }
   };
@@ -183,7 +217,15 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
         open();
       }
     } else if (shouldCloseOnBlur) {
-      commitCustomValue();
+      let itemText = collection.getItem(selectedKey)?.textValue ?? '';
+      if (allowsCustomValue && inputValue !== itemText) {
+        commitCustomValue();
+      } else {
+        resetInputValue();
+        // Close menu if blurring away from the combobox
+        // Specifically handles case where user clicks away from the field
+        triggerState.close();
+      }
     }
 
     setFocusedState(isFocused);
@@ -191,6 +233,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
   return {
     ...triggerState,
+    toggle,
     open,
     selectionManager,
     selectedKey,

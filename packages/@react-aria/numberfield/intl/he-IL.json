@@ -1,5 +1,5 @@
 {
-  "Decrement": "הפחתה",
-  "Enter a number": "הזן מספר",
-  "Increment": "תוספת"
+  "decrease": "Decrease {fieldLabel}",
+  "increase": "Increase {fieldLabel}",
+  "Number field": "Number field"
 }

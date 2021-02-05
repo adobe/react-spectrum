@@ -19,16 +19,20 @@ import {
   useResizeObserver,
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
+import comboboxStyles from './combobox.css';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusRing} from '@react-aria/focus';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {MobileComboBox} from './MobileComboBox';
 import {Placement} from '@react-types/overlays';
 import {Popover} from '@react-spectrum/overlays';
 import {PressResponder, useHover} from '@react-aria/interactions';
+import {ProgressCircle} from '@react-spectrum/progress';
 import React, {
   InputHTMLAttributes,
   ReactElement,
@@ -40,10 +44,12 @@ import React, {
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
+import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter} from '@react-aria/i18n';
 import {useLayoutEffect} from '@react-aria/utils';
+import {useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
@@ -61,9 +67,14 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   let {
     menuTrigger = 'input',
     shouldFlip = true,
-    direction = 'bottom'
+    direction = 'bottom',
+    isQuiet,
+    loadingState,
+    onLoadMore
   } = props;
 
+  let formatMessage = useMessageFormatter(intlMessages);
+  let isAsync = loadingState != null;
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
   let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
@@ -73,7 +84,13 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   let domRef = useFocusableRef(ref, inputRef);
 
   let {contains} = useFilter({sensitivity: 'base'});
-  let state = useComboBoxState({...props, defaultFilter: contains});
+  let state = useComboBoxState(
+    {
+      ...props,
+      defaultFilter: contains,
+      allowsEmptyCollection: isAsync
+    }
+  );
   let layout = useListBoxLayout(state);
 
   let {buttonProps, inputProps, listBoxProps, labelProps} = useComboBox(
@@ -118,7 +135,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
 
   let style = {
     ...overlayProps.style,
-    width: menuWidth
+    width: isQuiet ? null : menuWidth,
+    minWidth: isQuiet ? `calc(${menuWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : menuWidth
   };
 
   return (
@@ -126,6 +144,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
       <Field {...props} labelProps={labelProps} ref={domRef}>
         <ComboBoxInput
           {...props}
+          isOpen={state.isOpen}
+          loadingState={loadingState}
           inputProps={inputProps}
           inputRef={inputRef}
           triggerProps={buttonProps}
@@ -134,6 +154,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
       <Popover
         isOpen={state.isOpen}
         UNSAFE_style={style}
+        UNSAFE_className={classNames(styles, 'spectrum-InputGroup-popover', {'spectrum-InputGroup-popover--quiet': isQuiet})}
         ref={popoverRef}
         placement={placement}
         hideArrow
@@ -147,9 +168,14 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           focusOnPointerEnter
           layout={layout}
           state={state}
-          // Set max height: inherit so Tray scrolling works
-          UNSAFE_style={{maxHeight: 'inherit'}}
-          shouldUseVirtualFocus />
+          shouldUseVirtualFocus
+          isLoading={loadingState === 'loadingMore'}
+          onLoadMore={onLoadMore}
+          renderEmptyState={() => isAsync && (
+            <span className={classNames(comboboxStyles, 'no-results')}>
+              {formatMessage('noResults')}
+            </span>
+          )} />
         <DismissButton onDismiss={() => state.close()} />
       </Popover>
     </>
@@ -161,7 +187,6 @@ interface ComboBoxInputProps extends SpectrumComboBoxProps<unknown> {
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   triggerProps: AriaButtonProps,
   triggerRef: RefObject<FocusableRefValue<HTMLElement>>,
-  className?: string,
   style?: React.CSSProperties
 }
 
@@ -177,9 +202,27 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     triggerRef,
     autoFocus,
     style,
-    className
+    UNSAFE_className,
+    loadingState,
+    isOpen
   } = props;
   let {hoverProps, isHovered} = useHover({});
+  let formatMessage = useMessageFormatter(intlMessages);
+
+  let loadingCircle = (
+    <ProgressCircle
+      aria-label={formatMessage('loading')}
+      size="S"
+      isIndeterminate
+      UNSAFE_className={classNames(
+        textfieldStyles,
+        'spectrum-Textfield-circleLoader',
+        classNames(
+          styles,
+          'spectrum-InputGroup-input-circleLoader'
+        )
+      )} />
+  );
 
   return (
     <FocusRing
@@ -199,10 +242,10 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
             {
               'spectrum-InputGroup--quiet': isQuiet,
               'is-disabled': isDisabled,
-              'is-invalid': validationState === 'invalid',
+              'spectrum-InputGroup--invalid': validationState === 'invalid',
               'is-hovered': isHovered
             },
-            className
+            UNSAFE_className
           )
         }>
         <TextFieldBase
@@ -220,10 +263,18 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
               'spectrum-InputGroup-input'
             )
           }
+          validationIconClassName={
+            classNames(
+              styles,
+              'spectrum-InputGroup-input-validationIcon'
+            )
+          }
           isDisabled={isDisabled}
           isQuiet={isQuiet}
-          validationState={validationState} />
-        <PressResponder preventFocusOnPress>
+          validationState={validationState}
+          isLoading={loadingState === 'loading' || loadingState === 'filtering'}
+          loadingIndicator={loadingState != null && loadingCircle} />
+        <PressResponder preventFocusOnPress isPressed={isOpen}>
           <FieldButton
             {...triggerProps}
             ref={triggerRef}

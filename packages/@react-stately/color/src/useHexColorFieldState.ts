@@ -17,7 +17,7 @@ import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';
 import {useEffect, useState} from 'react';
 
-export interface HexColorFieldState extends Omit<NumberFieldState, 'value' | 'setValue'> {
+export interface HexColorFieldState extends Omit<NumberFieldState, 'numberValue' | 'validate' | 'minValue' | 'maxValue' | 'canIncrement' | 'canDecrement'> {
   colorValue: IColor,
   setInputValue: (value: string) => void
 }
@@ -34,8 +34,7 @@ export function useHexColorFieldState(
     step = 1,
     value,
     defaultValue,
-    onChange,
-    validationState
+    onChange
   } = props;
 
   let initialValue = useColor(value);
@@ -86,7 +85,7 @@ export function useHexColorFieldState(
     }
   };
 
-  let commitInputValue = () => {
+  let commit = () => {
     setInputValue(colorValue ? colorValue.toString('hex') : '');
   };
 
@@ -94,12 +93,11 @@ export function useHexColorFieldState(
     colorValue,
     inputValue,
     setInputValue: setFieldInputValue,
-    commitInputValue,
+    commit,
     increment,
     incrementToMax,
     decrement,
-    decrementToMin,
-    validationState
+    decrementToMin
   };
 }
 
