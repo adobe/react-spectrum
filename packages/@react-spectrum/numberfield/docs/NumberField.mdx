@@ -273,7 +273,7 @@ function Example() {
 ### Quiet
 
 ```tsx example
-<NumberField label="Cookies" isQuiet />
+<NumberField label="Cookies" isQuiet minValue={0} />
 ```
 
 ### Hidden Steppers
@@ -281,13 +281,13 @@ function Example() {
 NumberField stepper buttons are optional.
 
 ```tsx example
-<NumberField label="Cookies" hideStepper />
+<NumberField label="Cookies" hideStepper minValue={0} />
 ```
 
 ### Disabled
 
 ```tsx example
-<NumberField label="Cookies" isDisabled />
+<NumberField label="Cookies" isDisabled minValue={0} />
 ```
 
 ### Read only
@@ -296,7 +296,7 @@ The `isReadOnly` boolean prop makes the NumberField's text content immutable. Un
 and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
 
 ```tsx example
-<NumberField label="Cookies" defaultValue={15} isReadOnly />
+<NumberField label="Cookies" defaultValue={15} isReadOnly minValue={0} />
 ```
 
 ### Label alignment and position
@@ -305,7 +305,7 @@ and the contents can still be copied. See [the MDN docs](https://developer.mozil
 By default, the label is positioned above the NumberField. The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the NumberField and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
 
 ```tsx example
-<NumberField label="Cookies" labelPosition="side" labelAlign="end" />
+<NumberField label="Cookies" labelPosition="side" labelAlign="end" minValue={0} />
 ```
 
 ### Custom width
@@ -313,5 +313,5 @@ By default, the label is positioned above the NumberField. The `labelPosition` p
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
 
 ```tsx example
-<NumberField label="Cookies" width="size-3600" maxWidth="100%" />
+<NumberField label="Cookies" width="size-3600" maxWidth="100%" minValue={0} />
 ```
