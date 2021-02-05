@@ -88,7 +88,7 @@ governing permissions and limitations under the License.
   grid-area: increment;
   border-start-end-radius: var(--spectrum-border-radius);
   padding-block-start: calc(var(--spectrum-button-padding-y) + 1px);
-  padding-block-end: calc(var(--spectrum-button-padding-y) - 1px);
+  padding-block-end: calc(var(--spectrum-button-padding-y) - .5px);
 }
 
 .spectrum-Stepper-button--stepDown {
@@ -96,7 +96,7 @@ governing permissions and limitations under the License.
   border-block-start: none;
   border-end-end-radius: var(--spectrum-border-radius);
   padding-block-end: calc(var(--spectrum-button-padding-y) + 1px);
-  padding-block-start: calc(var(--spectrum-button-padding-y) - 1px);
+  padding-block-start: calc(var(--spectrum-button-padding-y) - .5px);
 
   &:focus {
     border-block-start: none;
