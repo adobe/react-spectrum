@@ -10,16 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorWheelProps} from '@react-types/color';
+import {AriaColorWheelProps} from '@react-types/color';
 import {ColorWheelState} from '@react-stately/color';
 import {focusWithoutScrolling, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
 import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
-import {useMessageFormatter} from '@react-aria/i18n';
 
-interface ColorWheelAriaProps extends ColorWheelProps {
+interface ColorWheelAriaProps extends AriaColorWheelProps {
   inputRef: RefObject<HTMLElement>,
   containerRef: RefObject<HTMLElement>,
   innerRadius: number,
@@ -202,14 +199,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     }
   });
 
-  let formatMessage = useMessageFormatter(intlMessages);
-  let defaultLabel = formatMessage('hue');
-
-  let inputLabellingProps = useLabels({
-    ...props,
-    'aria-label': `${props['aria-label'] && props['aria-label'].toLowerCase() !== defaultLabel.toLowerCase() ? props['aria-label'] : ''} ${defaultLabel}`.trim(),
-    'aria-labelledby': props['aria-labelledby']
-  });
+  let inputLabellingProps = useLabels(props);
 
   return {
     groupProps: isDisabled ? {} : mergeProps({
@@ -223,7 +213,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       onTouchStart: (e: React.TouchEvent) => {onThumbDown(e.changedTouches[0].identifier);}
     }, movePropsThumb, keyboardProps),
     inputProps: mergeProps(
-      inputLabellingProps, 
+      inputLabellingProps,
       {
         type: 'range',
         min: '0',
