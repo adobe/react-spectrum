@@ -199,7 +199,7 @@ than a full text keyboard (necessary to enter a minus sign).
 The `step` prop can be used to snap the value to certain increments. If there is a `minValue` defined, the steps are calculated
 starting from the minimum. For example, if `minValue={2}`, and `step={3}`, the valid step values would be 2, 5, 8, 11, etc. If no
 `minValue` is defined, the steps are calculated starting from zero and extending in both directions. In other words, such that the
-values are evenly divisible by the step. If no `step` is defined, any decimal value may be typed, but incrementing and decrementing
+values are evenly divisible by the step. A `step` can be any positive decimal. If no `step` is defined, any decimal value may be typed, but incrementing and decrementing
 snaps the value to an integer.
 
 If the user types a value that is between two steps and blurs the input, the value will be snapped to the nearest step. When
@@ -208,18 +208,20 @@ When incrementing or decrementing from an empty field, the value starts at the `
 Otherwise, the value starts from `0`.
 
 ```tsx example
-<NumberField
-  label="Step"
-  step={10} />
-<NumberField
-  label="Step + minValue"
-  minValue={2}
-  step={3} />
-<NumberField
-  label="Step + minValue + maxValue"
-  minValue={2}
-  maxValue={21}
-  step={3} />
+<Flex direction="column" gap="size-150">
+  <NumberField
+    label="Step"
+    step={10} />
+  <NumberField
+    label="Step + minValue"
+    minValue={2}
+    step={3} />
+  <NumberField
+    label="Step + minValue + maxValue"
+    minValue={2}
+    maxValue={21}
+    step={3} />
+</Flex>
 ```
 
 ## Events
