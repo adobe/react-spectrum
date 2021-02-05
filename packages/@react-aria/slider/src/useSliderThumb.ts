@@ -133,7 +133,7 @@ export function useSliderThumb(
 
   let onUp = (e) => {
     let id = e.pointerId ?? e.changedTouches?.[0].identifier;
-    if (id === currentPointer.current) {
+    if (id == currentPointer.current) {
       focusInput();
       state.setThumbDragging(index, false);
       removeGlobalListener(window, 'mouseup', onUp, false);

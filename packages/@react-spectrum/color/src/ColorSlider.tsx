@@ -106,17 +106,17 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
       }>
         <div className={classNames(styles, 'spectrum-ColorSlider-checkerboard')} role="presentation" ref={trackRef} {...trackProps}>
           <div className={classNames(styles, 'spectrum-ColorSlider-gradient')} role="presentation" {...gradientProps} />
-          <ColorThumb
-            value={state.getDisplayColor()}
-            isFocused={isFocused && isFocusVisible}
-            isDisabled={isDisabled}
-            isDragging={state.isThumbDragging(0)}
-            style={{[vertical ? 'top' : 'left']: `${thumbPosition * 100}%`}}
-            className={classNames(styles, 'spectrum-ColorSlider-handle')}
-            {...thumbProps}>
-            <input {...inputProps} {...focusProps} ref={inputRef} className={classNames(styles, 'spectrum-ColorSlider-slider')} />
-          </ColorThumb>
         </div>
+        <ColorThumb
+          value={state.getDisplayColor()}
+          isFocused={isFocused && isFocusVisible}
+          isDisabled={isDisabled}
+          isDragging={state.isThumbDragging(0)}
+          style={{[vertical ? 'top' : 'left']: `${thumbPosition * 100}%`}}
+          className={classNames(styles, 'spectrum-ColorSlider-handle')}
+          {...thumbProps}>
+          <input {...inputProps} {...focusProps} ref={inputRef} className={classNames(styles, 'spectrum-ColorSlider-slider')} />
+        </ColorThumb>
       </div>
     </div>
   );
