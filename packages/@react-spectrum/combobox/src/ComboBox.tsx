@@ -38,6 +38,7 @@ import React, {
   ReactElement,
   RefObject,
   useCallback,
+  useEffect,
   useRef,
   useState
 } from 'react';
@@ -208,6 +209,8 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
   } = props;
   let {hoverProps, isHovered} = useHover({});
   let formatMessage = useMessageFormatter(intlMessages);
+  let timeout = useRef(null);
+  let [showLoading, setLoading] = useState(false);
 
   let loadingCircle = (
     <ProgressCircle
@@ -223,6 +226,36 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
         )
       )} />
   );
+
+  let lastLoadingState = useRef(loadingState);
+  let lastInputValue = useRef(inputProps.value);
+  useEffect(() => {
+    let isLoading = loadingState === 'loading' || loadingState === 'filtering';
+
+    if (loadingState !== lastLoadingState.current) {
+      if (isLoading && !showLoading) {
+        // If the loadingState is loading or filtering, begin the timer to show the progress circle if it isn't visible
+        clearTimeout(timeout.current);
+        timeout.current = setTimeout(() => {
+          setLoading(true);
+        }, 1000);
+      } else if (!isLoading) {
+        // If loadingState is no longer loading or filtering, clear the timeout and hide the progress circle
+        clearTimeout(timeout.current);
+        setLoading(false)
+      }
+    } else if (lastInputValue.current !== inputProps.value && isLoading && !showLoading) {
+      // If input value changed and the loadingState was the same as before, the user is typing to filter.
+      // If the progress circle is not visible, reset the timer since it is a new load request
+      clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => {
+        setLoading(true)
+      }, 1000);
+    }
+
+    lastInputValue.current = inputProps.value;
+    lastLoadingState.current = loadingState;
+  }, [loadingState, inputProps.value, showLoading]);
 
   return (
     <FocusRing
@@ -272,7 +305,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
           isDisabled={isDisabled}
           isQuiet={isQuiet}
           validationState={validationState}
-          isLoading={loadingState === 'loading' || loadingState === 'filtering'}
+          isLoading={showLoading}
           loadingIndicator={loadingState != null && loadingCircle} />
         <PressResponder preventFocusOnPress isPressed={isOpen}>
           <FieldButton
