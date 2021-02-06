@@ -232,25 +232,19 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
   useEffect(() => {
     let isLoading = loadingState === 'loading' || loadingState === 'filtering';
 
-    if (loadingState !== lastLoadingState.current) {
-      if (isLoading && !showLoading) {
-        // If the loadingState is loading or filtering, begin the timer to show the progress circle if it isn't visible
+    if (isLoading && !showLoading) {
+      // If loading is happening and the loading circle is not displayed, start timer to show loading circle
+      // timer should reset if the input value changed (indicative of multiple filtering operations) or if the loadingState has changed (e.g. loading -> filtering or idle -> loading)
+      if (lastInputValue.current !== inputProps.value || loadingState !== lastLoadingState.current) {
         clearTimeout(timeout.current);
         timeout.current = setTimeout(() => {
           setLoading(true);
         }, 1000);
-      } else if (!isLoading) {
-        // If loadingState is no longer loading or filtering, clear the timeout and hide the progress circle
-        clearTimeout(timeout.current);
-        setLoading(false)
       }
-    } else if (lastInputValue.current !== inputProps.value && isLoading && !showLoading) {
-      // If input value changed and the loadingState was the same as before, the user is typing to filter.
-      // If the progress circle is not visible, reset the timer since it is a new load request
+    } else if (!isLoading) {
+      // If loading is no longer happening, clear any timers and hide the loading circle
+      setLoading(false);
       clearTimeout(timeout.current);
-      timeout.current = setTimeout(() => {
-        setLoading(true)
-      }, 1000);
     }
 
     lastInputValue.current = inputProps.value;
