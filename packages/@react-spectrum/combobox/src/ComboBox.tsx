@@ -247,7 +247,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     }
 
     lastLoadingState.current = loadingState;
-  }, [loadingState, inputProps.value, showLoading]);
+  }, [loadingState, showLoading]);
 
   return (
     <FocusRing

@@ -30,7 +30,7 @@ import intlMessages from '../intl/*.json';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useRef} from 'react';
+import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality, useHover} from '@react-aria/interactions';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
@@ -59,6 +59,8 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     loadingState
   } = props;
 
+  let timeout = useRef(null);
+  let [showLoading, setLoading] = useState(false);
   let formatMessage = useMessageFormatter(intlMessages);
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({
@@ -100,6 +102,28 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
       )} />
   );
 
+  let lastLoadingState = useRef(loadingState);
+  useEffect(() => {
+    let isLoading = loadingState === 'loading' || loadingState === 'filtering';
+
+    if (isLoading && !showLoading) {
+      // If loading is happening and the loading circle is not displayed, start timer to show loading circle
+      // timer should reset if the loadingState has changed (e.g. loading -> filtering or idle -> loading)
+      if (loadingState !== lastLoadingState.current) {
+        clearTimeout(timeout.current);
+        timeout.current = setTimeout(() => {
+          setLoading(true);
+        }, 1000);
+      }
+    } else if (!isLoading) {
+      // If loading is no longer happening, clear any timers and hide the loading circle
+      setLoading(false);
+      clearTimeout(timeout.current);
+    }
+
+    lastLoadingState.current = loadingState;
+  }, [loadingState, showLoading]);
+
   return (
     <>
       <Field
@@ -116,7 +140,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           isPlaceholder={!state.inputValue}
           validationState={validationState}
           onPress={() => !isReadOnly && state.open()}
-          isLoading={loadingState === 'loading' || loadingState === 'filtering'}
+          isLoading={showLoading}
           loadingIndicator={loadingState != null && loadingCircle}>
           {state.inputValue || props.placeholder || ''}
         </ComboBoxButton>
@@ -125,7 +149,8 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
         <ComboBoxTray
           {...props}
           overlayProps={overlayProps}
-          state={state} />
+          state={state}
+          showLoading={showLoading} />
       </Tray>
     </>
   );
@@ -291,7 +316,8 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
 interface ComboBoxTrayProps extends SpectrumComboBoxProps<unknown> {
   state: ComboBoxState<unknown>,
   overlayProps: HTMLAttributes<HTMLElement>,
-  loadingIndicator?: ReactElement
+  loadingIndicator?: ReactElement,
+  showLoading?: boolean
 }
 
 function ComboBoxTray(props: ComboBoxTrayProps) {
@@ -304,7 +330,8 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     label,
     overlayProps,
     loadingState,
-    onLoadMore
+    onLoadMore,
+    showLoading
   } = props;
 
   let inputRef = useRef<HTMLInputElement>();
@@ -416,7 +443,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           inputProps={inputProps}
           inputRef={inputRef}
           isDisabled={isDisabled}
-          isLoading={loadingState === 'filtering'}
+          isLoading={showLoading && loadingState === 'filtering'}
           loadingIndicator={loadingState != null && loadingCircle}
           validationState={validationState}
           wrapperChildren={(state.inputValue !== '' || loadingState === 'filtering') && !props.isReadOnly && clearButton}
