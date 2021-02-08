@@ -3383,7 +3383,7 @@ describe('ComboBox', function () {
 
     describe('isLoading', function () {
       it('tray input should render a loading circle after a delay of 1000ms if loadingState="filtering"', function () {
-        let {getByRole, getAllByRole, getByTestId, rerender} = render(<ExampleComboBox loadingState="loading" />);
+        let {getByRole, getByTestId, rerender} = render(<ExampleComboBox loadingState="loading" />);
         let button = getByRole('button');
         act(() => {jest.advanceTimersByTime(1000);});
         expect(() => getByRole('progressbar')).toThrow();
