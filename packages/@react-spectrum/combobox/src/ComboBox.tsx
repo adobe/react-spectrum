@@ -228,9 +228,8 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
       )} />
   );
 
+  let isLoading = loadingState === 'loading' || loadingState === 'filtering';
   useEffect(() => {
-    let isLoading = loadingState === 'loading' || loadingState === 'filtering';
-
     if (isLoading && !showLoading) {
       // If loading is happening and the loading circle is not displayed, start timer to show loading circle
       clearTimeout(timeout.current);
@@ -242,7 +241,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
       setShowLoading(false);
       clearTimeout(timeout.current);
     }
-  }, [loadingState, showLoading]);
+  }, [isLoading, showLoading]);
 
   return (
     <FocusRing

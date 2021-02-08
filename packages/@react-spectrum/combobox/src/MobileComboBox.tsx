@@ -377,13 +377,13 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
 
   useEffect(() => {
     if (loadingState === 'filtering' && !showLoading) {
-      // If loading is happening and the loading circle is not displayed, start timer to show loading circle
+      // If filtering is happening and the loading circle is not displayed, start timer to show loading circle
       clearTimeout(timeout.current);
       timeout.current = setTimeout(() => {
         setShowLoading(true);
       }, 1000);
     } else if (loadingState !== 'filtering') {
-      // If loading is no longer happening, clear any timers and hide the loading circle
+      // If filtering is no longer happening, clear any timers and hide the loading circle
       setShowLoading(false);
       clearTimeout(timeout.current);
     }
