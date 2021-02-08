@@ -56,11 +56,12 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     isDisabled,
     validationState,
     isReadOnly,
-    loadingState
+    loadingState,
+    menuTrigger
   } = props;
 
   let timeout = useRef(null);
-  let [showLoading, setLoading] = useState(false);
+  let [showLoading, setShowLoading] = useState(false);
   let formatMessage = useMessageFormatter(intlMessages);
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({
@@ -102,27 +103,20 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
       )} />
   );
 
-  // Initialize lastLoadingState as null so initial load will still setup the timeout below
-  let lastLoadingState = useRef(null);
   useEffect(() => {
     let isLoading = loadingState === 'loading' || loadingState === 'filtering';
 
     if (isLoading && !showLoading) {
       // If loading is happening and the loading circle is not displayed, start timer to show loading circle
-      // timer should reset if the loadingState has changed (e.g. loading -> filtering or idle -> loading)
-      if (loadingState !== lastLoadingState.current) {
-        clearTimeout(timeout.current);
-        timeout.current = setTimeout(() => {
-          setLoading(true);
-        }, 1000);
-      }
+      clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => {
+        setShowLoading(true);
+      }, 1000);
     } else if (!isLoading) {
       // If loading is no longer happening, clear any timers and hide the loading circle
-      setLoading(false);
+      setShowLoading(false);
       clearTimeout(timeout.current);
     }
-
-    lastLoadingState.current = loadingState;
   }, [loadingState, showLoading]);
 
   return (
@@ -141,7 +135,9 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           isPlaceholder={!state.inputValue}
           validationState={validationState}
           onPress={() => !isReadOnly && state.open()}
-          isLoading={showLoading}
+          // Only show loading circle in the mobile combobox button if menuTrigger is manual,
+          // otherwise rely on the tray to show current loading state
+          isLoading={showLoading && menuTrigger === 'manual'}
           loadingIndicator={loadingState != null && loadingCircle}>
           {state.inputValue || props.placeholder || ''}
         </ComboBoxButton>

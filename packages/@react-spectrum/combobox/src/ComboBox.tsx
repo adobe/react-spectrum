@@ -205,12 +205,13 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     style,
     UNSAFE_className,
     loadingState,
-    isOpen
+    isOpen,
+    menuTrigger
   } = props;
   let {hoverProps, isHovered} = useHover({});
   let formatMessage = useMessageFormatter(intlMessages);
   let timeout = useRef(null);
-  let [showLoading, setLoading] = useState(false);
+  let [showLoading, setShowLoading] = useState(false);
 
   let loadingCircle = (
     <ProgressCircle
@@ -227,27 +228,20 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
       )} />
   );
 
-  // Initialize lastLoadingState as null so initial load will still setup the timeout below
-  let lastLoadingState = useRef(null);
   useEffect(() => {
     let isLoading = loadingState === 'loading' || loadingState === 'filtering';
 
     if (isLoading && !showLoading) {
       // If loading is happening and the loading circle is not displayed, start timer to show loading circle
-      // timer should reset if the loadingState has changed (e.g. loading -> filtering or idle -> loading)
-      if (loadingState !== lastLoadingState.current) {
-        clearTimeout(timeout.current);
-        timeout.current = setTimeout(() => {
-          setLoading(true);
-        }, 1000);
-      }
+      clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => {
+        setShowLoading(true);
+      }, 1000);
     } else if (!isLoading) {
       // If loading is no longer happening, clear any timers and hide the loading circle
-      setLoading(false);
+      setShowLoading(false);
       clearTimeout(timeout.current);
     }
-
-    lastLoadingState.current = loadingState;
   }, [loadingState, showLoading]);
 
   return (
@@ -298,7 +292,8 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
           isDisabled={isDisabled}
           isQuiet={isQuiet}
           validationState={validationState}
-          isLoading={showLoading}
+          // loading circle should only be displayed if menu is open or if menuTrigger is "manual" (to stop circle from showing up when user selects an option)
+          isLoading={showLoading && (isOpen || menuTrigger === 'manual')}
           loadingIndicator={loadingState != null && loadingCircle} />
         <PressResponder preventFocusOnPress isPressed={isOpen}>
           <FieldButton

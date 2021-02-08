@@ -470,6 +470,9 @@ function LoadingExamples(props) {
       <ComboBox {...props} label="Combobox (filtering)" loadingState="filtering" defaultItems={items}>
         {(item: any) => <Item>{item.name}</Item>}
       </ComboBox>
+      <ComboBox {...props} label="Combobox (loading + menuTrigger manual)" loadingState="loading" menuTrigger="manual" defaultItems={items} >
+        {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
       <ComboBox {...props} label="Combobox (loading more)" loadingState="loadingMore" defaultItems={items}>
         {(item: any) => <Item>{item.name}</Item>}
       </ComboBox>
