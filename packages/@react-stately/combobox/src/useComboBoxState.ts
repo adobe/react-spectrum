@@ -106,7 +106,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     // the input is if focused, and there are items in the collection or allowEmptyCollection is true.
     if (
       isFocused &&
-      filteredCollection.size > 0 || allowsEmptyCollection &&
+      (filteredCollection.size > 0 || allowsEmptyCollection) &&
       !triggerState.isOpen &&
       inputValue !== lastValue.current &&
       menuTrigger !== 'manual' &&

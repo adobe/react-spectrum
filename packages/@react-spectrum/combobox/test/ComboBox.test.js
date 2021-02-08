@@ -2584,6 +2584,114 @@ describe('ComboBox', function () {
     expect(combobox).toHaveAttribute('aria-invalid', 'true');
   });
 
+  describe('loadingState', function () {
+    it('combobox should not render a loading circle if menu is not open', function () {
+      let {getByRole, rerender} = render(<ExampleComboBox loadingState="loading" />);
+      act(() => {jest.advanceTimersByTime(1000);});
+      expect(() => getByRole('progressbar')).toThrow();
+
+      rerender(<ExampleComboBox loadingState="filtering" />);
+
+      expect(() => getByRole('progressbar')).toThrow();
+    });
+
+    it('combobox should render a loading circle if menu is not open but menuTrigger is "manual"', function () {
+      let {getByRole, rerender} = render(<ExampleComboBox loadingState="loading" menuTrigger="manual" />);
+      let combobox = getByRole('combobox');
+      expect(() => getByRole('progressbar')).toThrow();
+
+      act(() => {jest.advanceTimersByTime(1000);});
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+
+      rerender(<ExampleComboBox loadingState="filtering" menuTrigger="manual" />);
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+
+      rerender(<ExampleComboBox loadingState="filtering" />);
+      expect(() => getByRole('progressbar')).toThrow();
+    });
+
+    it('combobox should not render a loading circle until a delay of 1000ms passes', function () {
+      let {getByRole} = renderComboBox({loadingState: 'loading'});
+      let combobox = getByRole('combobox');
+      act(() => {jest.advanceTimersByTime(1000);});
+      expect(() => getByRole('progressbar')).toThrow();
+
+      let button = getByRole('button');
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+    });
+
+    it('combobox should hide the loading circle when loadingState changes to a non-loading state', function () {
+      let {getByRole, rerender} = render(<ExampleComboBox loadingState="filtering" />);
+      let combobox = getByRole('combobox');
+      let button = getByRole('button');
+      expect(() => getByRole('progressbar')).toThrow();
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+      act(() => {jest.advanceTimersByTime(1000);});
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+
+      rerender(<ExampleComboBox loadingState="idle" />);
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      expect(() => getByRole('progressbar')).toThrow();
+    });
+
+    it('combobox should hide the loading circle when if the menu closes', function () {
+      let {getByRole} = render(<ExampleComboBox loadingState="filtering" />);
+      let combobox = getByRole('combobox');
+      let button = getByRole('button');
+      expect(() => getByRole('progressbar')).toThrow();
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+      act(() => {jest.advanceTimersByTime(1000);});
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+      expect(() => getByRole('progressbar')).toThrow();
+      expect(() => getByRole('listbox')).toThrow();
+    });
+
+    it('combobox cancels the 1000ms progress circle delay timer if the loading finishes first', function () {
+      let {getByRole, rerender} = render(<ExampleComboBox loadingState="loading" menuTrigger="manual" />);
+      expect(() => getByRole('progressbar')).toThrow();
+      act(() => {jest.advanceTimersByTime(500);});
+      expect(() => getByRole('progressbar')).toThrow();
+
+      rerender(<ExampleComboBox loadingState="idle" />);
+      act(() => {jest.advanceTimersByTime(500);});
+      expect(() => getByRole('progressbar')).toThrow();
+    });
+
+    it('combobox should not reset the 1000ms progress circle delay timer when loadingState changes from loading to filtering', function () {
+      let {getByRole, rerender} = render(<ExampleComboBox loadingState="loading" menuTrigger="manual" />);
+      let combobox = getByRole('combobox');
+
+      act(() => {jest.advanceTimersByTime(500);});
+      expect(() => getByRole('progressbar')).toThrow();
+
+      rerender(<ExampleComboBox loadingState="filtering" menuTrigger="manual" />);
+      expect(() => getByRole('progressbar')).toThrow();
+      act(() => {jest.advanceTimersByTime(500);});
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+    });
+  });
+
   describe('mobile combobox', function () {
     beforeEach(() => {
       jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 600);
@@ -3272,6 +3380,54 @@ describe('ComboBox', function () {
         expect(document.activeElement).toBe(getByRole('button'));
       });
     });
+
+    describe('isLoading', function () {
+      it('tray input should render a loading circle after a delay of 1000ms if loadingState="filtering"', function () {
+        let {getByRole, getAllByRole, getByTestId, rerender} = render(<ExampleComboBox loadingState="loading" />);
+        let button = getByRole('button');
+        act(() => {jest.advanceTimersByTime(1000);});
+        expect(() => getByRole('progressbar')).toThrow();
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        let tray = getByTestId('tray');
+        expect(tray).toBeVisible();
+        let listbox = getByRole('listbox');
+        expect(within(listbox).getByRole('progressbar')).toBeTruthy();
+        expect(within(tray).getAllByRole('progressbar').length).toBe(1);
+
+        rerender(<ExampleComboBox loadingState="filtering" />);
+        act(() => {jest.advanceTimersByTime(1000);});
+
+        expect(within(tray).getByRole('progressbar')).toBeTruthy();
+        expect(() => within(listbox).getByRole('progressbar')).toThrow();
+      });
+
+      it('tray input should hide the loading circle if loadingState is no longer "filtering"', function () {
+        let {getByRole, getByTestId, rerender} = render(<ExampleComboBox loadingState="filtering" />);
+        let button = getByRole('button');
+        act(() => {jest.advanceTimersByTime(1000);});
+        expect(() => getByRole('progressbar')).toThrow();
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        let tray = getByTestId('tray');
+        expect(tray).toBeVisible();
+        let listbox = getByRole('listbox');
+        expect(within(tray).getByRole('progressbar')).toBeTruthy();
+        expect(() => within(listbox).getByRole('progressbar')).toThrow();
+
+        rerender(<ExampleComboBox loadingState="idle" />);
+        expect(() => within(tray).getByRole('progressbar')).toThrow();
+      });
+    });
+
   });
 
   describe('accessibility', function () {
