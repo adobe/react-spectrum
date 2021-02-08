@@ -228,14 +228,13 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
   );
 
   let lastLoadingState = useRef(loadingState);
-  let lastInputValue = useRef(inputProps.value);
   useEffect(() => {
     let isLoading = loadingState === 'loading' || loadingState === 'filtering';
 
     if (isLoading && !showLoading) {
       // If loading is happening and the loading circle is not displayed, start timer to show loading circle
-      // timer should reset if the input value changed (indicative of multiple filtering operations) or if the loadingState has changed (e.g. loading -> filtering or idle -> loading)
-      if (lastInputValue.current !== inputProps.value || loadingState !== lastLoadingState.current) {
+      // timer should reset if the loadingState has changed (e.g. loading -> filtering or idle -> loading)
+      if (loadingState !== lastLoadingState.current) {
         clearTimeout(timeout.current);
         timeout.current = setTimeout(() => {
           setLoading(true);
@@ -247,7 +246,6 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
       clearTimeout(timeout.current);
     }
 
-    lastInputValue.current = inputProps.value;
     lastLoadingState.current = loadingState;
   }, [loadingState, inputProps.value, showLoading]);
 
