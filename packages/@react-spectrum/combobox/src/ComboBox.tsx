@@ -227,7 +227,8 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
       )} />
   );
 
-  let lastLoadingState = useRef(loadingState);
+  // Initialize lastLoadingState as null so initial load will still setup the timeout below
+  let lastLoadingState = useRef(null);
   useEffect(() => {
     let isLoading = loadingState === 'loading' || loadingState === 'filtering';
 

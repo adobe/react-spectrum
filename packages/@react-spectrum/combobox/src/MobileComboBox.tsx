@@ -102,7 +102,8 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
       )} />
   );
 
-  let lastLoadingState = useRef(loadingState);
+  // Initialize lastLoadingState as null so initial load will still setup the timeout below
+  let lastLoadingState = useRef(null);
   useEffect(() => {
     let isLoading = loadingState === 'loading' || loadingState === 'filtering';
 
