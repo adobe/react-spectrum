@@ -293,6 +293,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
           isQuiet={isQuiet}
           validationState={validationState}
           // loading circle should only be displayed if menu is open or if menuTrigger is "manual" (to stop circle from showing up when user selects an option)
+          // TODO: add special case for completionMode: complete as well
           isLoading={showLoading && (isOpen || menuTrigger === 'manual')}
           loadingIndicator={loadingState != null && loadingCircle} />
         <PressResponder preventFocusOnPress isPressed={isOpen}>
