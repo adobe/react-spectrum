@@ -12,8 +12,8 @@
 
 import {action} from '@storybook/addon-actions';
 import {Color} from '@react-types/color';
-import {Flex} from '@react-spectrum/layout';
 import {ColorField} from '../';
+import {Flex} from '@react-spectrum/layout';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useId} from '@react-aria/utils';
