@@ -11,15 +11,37 @@
  */
 
 import {HexColorFieldProps, Color as IColor} from '@react-types/color';
-import {NumberFieldState} from '@react-stately/numberfield';
 import {parseColor} from './Color';
 import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';
 import {useEffect, useState} from 'react';
 
-export interface HexColorFieldState extends Omit<NumberFieldState, 'numberValue' | 'validate' | 'minValue' | 'maxValue' | 'canIncrement' | 'canDecrement'> {
+export interface HexColorFieldState {
+  /**
+   * The current text value of the input. Updated as the user types,
+   * and formatted according to `formatOptions` on blur.
+   */
+  inputValue: string,
+  /**
+   * The currently parsed color value, or null if the field is empty.
+   * Updated based on the `inputValue` as the user types.
+   */
   colorValue: IColor,
-  setInputValue: (value: string) => void
+  /** Sets the current text value of the input. */
+  setInputValue(value: string): void,
+  /**
+   * Updates the input value based on the currently parsed color value.
+   * Typically this is called when the field is blurred.
+   */
+  commit(): void,
+  /** Increments the current input value to the next step boundary, and fires `onChange`. */
+  increment(): void,
+  /** Decrements the current input value to the next step boundary, and fires `onChange`. */
+  decrement(): void,
+  /** Sets the current value to the maximum color value, and fires `onChange`. */
+  incrementToMax(): void,
+  /** Sets the current value to the minimum color value, and fires `onChange`. */
+  decrementToMin(): void
 }
 
 const MIN_COLOR = parseColor('#000000');

@@ -34,24 +34,37 @@ export type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hs
 /** A list of color channels. */
 export type ColorChannel = 'hue' | 'saturation' | 'brightness' | 'lightness' | 'red' | 'green' | 'blue' | 'alpha';
 
+/** Represents a color value. */
 export interface Color {
+  /** Converts the color to the given color format, and returns a new Color object. */
   toFormat(format: ColorFormat): Color,
+  /** Converts the color to a string in the given format. */
   toString(format: ColorFormat | 'css'): string,
+  /** Converts the color to hex, and returns an integer representation. */
   toHexInt(): number,
+  /**
+   * Gets the numeric value for a given channel.
+   * Throws an error if the channel is unsupported in the current color format.
+   */
   getChannelValue(channel: ColorChannel): number,
+  /**
+   * Sets the numeric value for a given channel, and returns a new Color object.
+   * Throws an error if the channel is unsupported in the current color format.
+   */
   withChannelValue(channel: ColorChannel, value: number): Color
 }
 
-export type ColorInput = string | Color;
-
-export interface HexColorFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
-  value?: ColorInput,
-  defaultValue?: ColorInput,
+export interface HexColorFieldProps extends ValueBase<string | Color>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
+  /** Handler that is called when the value changes. */
   onChange?: (color: Color) => void,
+  /**
+   * The step value to increment and decrement the color by when using the arrow keys.
+   * @default 1
+   */
   step?: number
 }
 
-export interface AriaHexColorFieldProps extends HexColorFieldProps, AriaLabelingProps, FocusableDOMProps, TextInputDOMProps, AriaValidationProps {}
+export interface AriaHexColorFieldProps extends HexColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete'>, AriaValidationProps {}
 
 export interface SpectrumHexColorFieldProps extends AriaHexColorFieldProps, SpectrumLabelableProps, StyleProps {
   isQuiet?: boolean

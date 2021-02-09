@@ -27,7 +27,7 @@ interface HexColorFieldAria {
 }
 
 export function useHexColorField(
-  props: Omit<AriaHexColorFieldProps, 'value' | 'defaultValue' | 'onChange'>,
+  props: AriaHexColorFieldProps,
   state: HexColorFieldState,
   ref: RefObject<HTMLInputElement>
 ): HexColorFieldAria {

@@ -40,3 +40,27 @@ keywords: [hex color, input, color picker, aria]
 <FunctionAPI function={docs.exports.useHexColorField} links={docs.links} />
 
 ## Features
+
+## Example
+
+```tsx example
+import {useHexColorFieldState} from '@react-stately/color';
+
+function HexColorField(props) {
+  let state = useHexColorFieldState(props);
+  let inputRef = React.useRef();
+  let {
+    labelProps,
+    inputProps
+  } = useHexColorField(props, state, inputRef);
+
+  return (
+    <div style={{display: 'inline-flex', flexDirection: 'column'}}>
+      <label {...labelProps}>{props.label}</label>
+      <input {...inputProps} ref={inputRef} />
+    </div>
+  );
+}
+
+<HexColorField label="Color" />
+```
