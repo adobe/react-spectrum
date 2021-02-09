@@ -119,30 +119,35 @@ export function useFocusManager(): FocusManager {
 function createFocusManager(scopeRef: React.RefObject<HTMLElement[]>): FocusManager {
   return {
     focusNext(opts: FocusManagerOptions = {}) {
-      let node = opts.from || document.activeElement;
-      let focusable = getFocusableElementsInScope(scopeRef.current, opts);
-      let nextNode = focusable.find(n =>
-        !!(node.compareDocumentPosition(n) & (Node.DOCUMENT_POSITION_FOLLOWING | Node.DOCUMENT_POSITION_CONTAINED_BY))
-      );
-      if (!nextNode && opts.wrap) {
-        nextNode = focusable[0];
+      let scope = scopeRef.current;
+      let {from, tabbable, wrap} = opts; 
+      let node = from || document.activeElement;
+      let sentinel = scope[0].previousElementSibling;
+      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable});
+      walker.currentNode = isElementInScope(node, scope) ? node : sentinel;
+      let nextNode = walker.nextNode() as HTMLElement;
+      if (!(nextNode && isElementInScope(nextNode, scope)) && wrap) {
+        walker.currentNode = sentinel;
+        nextNode = walker.nextNode() as HTMLElement;
       }
-      if (nextNode) {
-        nextNode.focus();
+      if (nextNode && isElementInScope(nextNode, scope)) {
+        focusElement(nextNode, true);
       }
       return nextNode;
     },
     focusPrevious(opts: FocusManagerOptions = {}) {
-      let node = opts.from || document.activeElement;
-      let focusable = getFocusableElementsInScope(scopeRef.current, opts).reverse();
+      let scope = scopeRef.current;
+      let {from, tabbable, wrap} = opts; 
+      let node = from || document.activeElement;
+      let focusable = getFocusableElementsInScope(scope, {tabbable}).reverse();
       let previousNode = focusable.find(n =>
         !!(node.compareDocumentPosition(n) & (Node.DOCUMENT_POSITION_PRECEDING | Node.DOCUMENT_POSITION_CONTAINED_BY))
       );
-      if (!previousNode && opts.wrap) {
+      if (!previousNode && wrap) {
         previousNode = focusable[0];
       }
       if (previousNode) {
-        previousNode.focus();
+        focusElement(previousNode, true);
       }
       return previousNode;
     }
@@ -170,19 +175,23 @@ const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]),') + '
 focusableElements.push('[tabindex]:not([tabindex="-1"])');
 const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]):not([tabindex="-1"]),');
 
+function getScopeRoot(scope: HTMLElement[]) {
+  return scope.length ? scope[0].parentElement : null;
+}
+
 function getFocusableElementsInScope(scope: HTMLElement[], opts: FocusManagerOptions): HTMLElement[] {
   let res = [];
-  let selector = opts.tabbable ? TABBABLE_ELEMENT_SELECTOR : FOCUSABLE_ELEMENT_SELECTOR;
-  for (let node of scope) {
-    if (node.matches(selector)) {
-      res.push(node);
-    }
-    res.push(...Array.from(node.querySelectorAll(selector)));
+  if (!scope.length) {
+    return res;
   }
-
-  // Filter to include only displayed and visible elements in the DOM,
-  // which accounts for elements hidden based on responsive layout.
-  return res.filter(node => isElementVisible(node));
+  let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: opts.tabbable});
+  walker.currentNode = scope[0].previousElementSibling;
+  let node = walker.nextNode() as HTMLElement;
+  while (node && isElementInScope(node, scope)) {
+    res.push(node);
+    node = walker.nextNode() as HTMLElement;
+  }
+  return res;
 }
 
 function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolean) {
@@ -309,8 +318,10 @@ function focusElement(element: HTMLElement | null, scroll = false) {
 }
 
 function focusFirstInScope(scope: HTMLElement[]) {
-  let elements = getFocusableElementsInScope(scope, {tabbable: true});
-  focusElement(elements[0]);
+  let sentinel = scope[0].previousElementSibling;
+  let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: true});
+  walker.currentNode = sentinel;
+  focusElement(walker.nextNode() as HTMLElement);
 }
 
 function useAutoFocus(scopeRef: RefObject<HTMLElement[]>, autoFocus: boolean) {
@@ -408,7 +419,7 @@ export function getFocusableTreeWalker(root: HTMLElement, opts?: FocusManagerOpt
           return NodeFilter.FILTER_REJECT;
         }
 
-        if ((node as HTMLElement).matches(selector)) {
+        if ((node as HTMLElement).matches(selector) && isElementVisible(node as HTMLElement)) {
           return NodeFilter.FILTER_ACCEPT;
         }
 
