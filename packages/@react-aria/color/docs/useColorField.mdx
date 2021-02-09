@@ -16,43 +16,41 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@re
 import packageData from '@react-aria/color/package.json';
 
 ```jsx import
-import {useHexColorField} from '@react-aria/color';
+import {useColorField} from '@react-aria/color';
 ```
 
 ---
 category: Color
-keywords: [hex color, input, color picker, aria]
+keywords: [color, input, color picker, aria]
 ---
 
-# useHexColorField
+# useColorField
 
-<p>{docs.exports.useHexColorField.description}</p>
+<p>{docs.exports.useColorField.description}</p>
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['useHexColorField']}
+  componentNames={['useColorField']}
   sourceData={[
     {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices-1.2/#spinbutton'}
   ]} />
 
 ## API
 
-<FunctionAPI function={docs.exports.useHexColorField} links={docs.links} />
-
-## Features
+<FunctionAPI function={docs.exports.useColorField} links={docs.links} />
 
 ## Example
 
 ```tsx example
-import {useHexColorFieldState} from '@react-stately/color';
+import {useColorFieldState} from '@react-stately/color';
 
-function HexColorField(props) {
-  let state = useHexColorFieldState(props);
+function ColorField(props) {
+  let state = useColorFieldState(props);
   let inputRef = React.useRef();
   let {
     labelProps,
     inputProps
-  } = useHexColorField(props, state, inputRef);
+  } = useColorField(props, state, inputRef);
 
   return (
     <div style={{display: 'inline-flex', flexDirection: 'column'}}>
@@ -62,5 +60,5 @@ function HexColorField(props) {
   );
 }
 
-<HexColorField label="Color" />
+<ColorField label="Color" />
 ```

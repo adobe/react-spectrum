@@ -67,7 +67,7 @@ export interface Color {
   getChannelRange(channel: ColorChannel): ColorChannelRange
 }
 
-export interface HexColorFieldProps extends ValueBase<string | Color>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
+export interface ColorFieldProps extends ValueBase<string | Color>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
   /** Handler that is called when the value changes. */
   onChange?: (color: Color) => void,
   /**
@@ -77,9 +77,9 @@ export interface HexColorFieldProps extends ValueBase<string | Color>, InputBase
   step?: number
 }
 
-export interface AriaHexColorFieldProps extends HexColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete'>, AriaValidationProps {}
+export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete'>, AriaValidationProps {}
 
-export interface SpectrumHexColorFieldProps extends AriaHexColorFieldProps, SpectrumLabelableProps, StyleProps {
+export interface SpectrumColorFieldProps extends AriaColorFieldProps, SpectrumLabelableProps, StyleProps {
   isQuiet?: boolean
 }
 

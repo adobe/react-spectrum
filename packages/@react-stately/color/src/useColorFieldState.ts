@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color, HexColorFieldProps} from '@react-types/color';
+import {Color, ColorFieldProps} from '@react-types/color';
 import {parseColor} from './Color';
 import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';
 import {useEffect, useState} from 'react';
 
-export interface HexColorFieldState {
+export interface ColorFieldState {
   /**
    * The current text value of the input. Updated as the user types,
    * and formatted according to `formatOptions` on blur.
@@ -49,9 +49,13 @@ const MAX_COLOR = parseColor('#FFFFFF');
 const MIN_COLOR_INT = MIN_COLOR.toHexInt();
 const MAX_COLOR_INT = MAX_COLOR.toHexInt();
 
-export function useHexColorFieldState(
-  props: HexColorFieldProps
-): HexColorFieldState {
+/**
+ * Provides state management for a color field component. Color fields allow
+ * users to enter and adjust a hex color value.
+ */
+export function useColorFieldState(
+  props: ColorFieldProps
+): ColorFieldState {
   let {
     step = 1,
     value,

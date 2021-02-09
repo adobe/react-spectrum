@@ -13,14 +13,14 @@
 import {action} from '@storybook/addon-actions';
 import {Color} from '@react-types/color';
 import {Flex} from '@react-spectrum/layout';
-import {HexColorField} from '../';
+import {ColorField} from '../';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useId} from '@react-aria/utils';
 import {View} from '@react-spectrum/view';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-storiesOf('HexColorField', module)
+storiesOf('ColorField', module)
   .add(
     'Default',
     () => render()
@@ -60,7 +60,7 @@ storiesOf('HexColorField', module)
   .add(
     'controlled value',
     () => (
-      <ControlledHexColorField
+      <ControlledColorField
         value="#FF00AA"
         onChange={action('change')} />
     )
@@ -70,7 +70,7 @@ storiesOf('HexColorField', module)
     () => render({autoFocus: true})
   );
 
-function ControlledHexColorField(props: any = {}) {
+function ControlledColorField(props: any = {}) {
   let [color, setColor] = useState(props.value || null);
   let onChange = (color: Color) => {
     setColor(color);
@@ -80,7 +80,7 @@ function ControlledHexColorField(props: any = {}) {
   let id = useId();
   return (
     <Flex direction="row" gap="size-100" alignItems="end">
-      <HexColorField
+      <ColorField
         id={id}
         label="Primary Color"
         onChange={onChange}
@@ -98,7 +98,7 @@ function ControlledHexColorField(props: any = {}) {
 
 function render(props: any = {}) {
   return (
-    <HexColorField
+    <ColorField
       label="Primary Color"
       onChange={action('change')}
       {...props} />

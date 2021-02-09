@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaHexColorFieldProps} from '@react-types/color';
-import {HexColorFieldState} from '@react-stately/color';
+import {AriaColorFieldProps} from '@react-types/color';
+import {ColorFieldState} from '@react-stately/color';
 import {
   HTMLAttributes,
   LabelHTMLAttributes,
@@ -21,16 +21,20 @@ import {mergeProps, useId} from '@react-aria/utils';
 import {useSpinButton} from '@react-aria/spinbutton';
 import {useTextField} from '@react-aria/textfield';
 
-interface HexColorFieldAria {
+interface ColorFieldAria {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   inputProps: HTMLAttributes<HTMLInputElement>
 }
 
-export function useHexColorField(
-  props: AriaHexColorFieldProps,
-  state: HexColorFieldState,
+/**
+ * Provides the behavior and accessibility implementation for a color field component.
+ * Color fields allow users to enter and adjust a hex color value.
+ */
+export function useColorField(
+  props: AriaColorFieldProps,
+  state: ColorFieldState,
   ref: RefObject<HTMLInputElement>
-): HexColorFieldAria {
+): ColorFieldAria {
   let {
     isDisabled,
     isReadOnly,

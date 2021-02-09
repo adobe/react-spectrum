@@ -13,17 +13,17 @@
 import {parseColor} from '@react-stately/color';
 import React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
-import {useHexColorField} from '../';
+import {useColorField} from '../';
 
-describe('useHexColorField', function () {
+describe('useColorField', function () {
   let ref;
 
   beforeEach(() => {
     ref = React.createRef();
   });
 
-  let renderHexColorFieldHook = (props, state = {}) => {
-    let {result} = renderHook(() => useHexColorField({
+  let renderColorFieldHook = (props, state = {}) => {
+    let {result} = renderHook(() => useColorField({
       'aria-label': 'Primary Color',
       ...props
     }, state, ref));
@@ -31,7 +31,7 @@ describe('useHexColorField', function () {
   };
 
   it('handles defaults', function () {
-    let {inputProps} = renderHexColorFieldHook({});
+    let {inputProps} = renderColorFieldHook({});
     expect(inputProps.type).toBe('text');
     expect(inputProps.autoComplete).toBe('off');
     expect(inputProps.autoCorrect).toBe('off');
@@ -51,14 +51,14 @@ describe('useHexColorField', function () {
 
   it('should return props for colorValue provided', function () {
     let colorValue = parseColor('#ff88a0');
-    let {inputProps} = renderHexColorFieldHook({}, {colorValue, inputValue: colorValue.toString('hex')});
+    let {inputProps} = renderColorFieldHook({}, {colorValue, inputValue: colorValue.toString('hex')});
     expect(inputProps['aria-valuenow']).toBeNull();
     expect(inputProps['aria-valuetext']).toBeNull();
     expect(inputProps['value']).toBe('#FF88A0');
   });
 
   it('should return props for label', function () {
-    let {labelProps, inputProps} = renderHexColorFieldHook({
+    let {labelProps, inputProps} = renderColorFieldHook({
       'aria-label': undefined,
       label: 'Secondary Color'
     });
@@ -75,23 +75,23 @@ describe('useHexColorField', function () {
   });
 
   it('should return prop for invalid', function () {
-    let {inputProps} = renderHexColorFieldHook({validationState: 'invalid'});
+    let {inputProps} = renderColorFieldHook({validationState: 'invalid'});
     expect(inputProps['aria-invalid']).toBe(true);
   });
 
   it('should return prop for required', function () {
-    let {inputProps} = renderHexColorFieldHook({isRequired: true});
+    let {inputProps} = renderColorFieldHook({isRequired: true});
     expect(inputProps['aria-required']).toBe(true);
   });
 
   it('should return prop for readonly', function () {
-    let {inputProps} = renderHexColorFieldHook({isReadOnly: true});
+    let {inputProps} = renderColorFieldHook({isReadOnly: true});
     expect(inputProps['aria-readonly']).toBe(true);
     expect(inputProps.readOnly).toBe(true);
   });
 
   it('should return prop for disabled', function () {
-    let {inputProps} = renderHexColorFieldHook({isDisabled: true});
+    let {inputProps} = renderColorFieldHook({isDisabled: true});
     expect(inputProps['aria-disabled']).toBe(true);
     expect(inputProps.disabled).toBe(true);
   });

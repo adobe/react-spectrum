@@ -14,4 +14,4 @@
 
 export * from './ColorWheel';
 export * from './ColorSlider';
-export * from './HexColorField';
+export * from './ColorField';
