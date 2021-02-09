@@ -22,6 +22,9 @@ export interface ColorWheelState {
   readonly hue: number,
   setHue(value: number): void,
 
+  setHueFromPoint(x: number, y: number, radius: number): void,
+  getThumbPosition(radius: number): {x: number, y: number},
+
   increment(minStepSize?: number): void,
   decrement(minStepSize?: number): void,
 
@@ -56,6 +59,27 @@ function roundDown(v: number) {
   }
 }
 
+function degToRad(deg: number) {
+  return deg * Math.PI / 180;
+}
+
+function radToDeg(rad: number) {
+  return rad * 180 / Math.PI;
+}
+
+// 0deg = 3 o'clock. increases clockwise
+function angleToCartesian(angle: number, radius: number): {x: number, y: number} {
+  let rad = degToRad(360 - angle + 90);
+  let x = Math.sin(rad) * (radius);
+  let y = Math.cos(rad) * (radius);
+  return {x, y};
+}
+
+function cartesianToAngle(x: number, y: number, radius: number): number {
+  let deg = radToDeg(Math.atan2(y / radius, x / radius));
+  return (deg + 360) % 360;
+}
+
 export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
   let {defaultValue, onChange, step = 1} = props;
 
@@ -64,7 +88,6 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
   }
 
   let [value, setValue] = useControlledState(normalizeColor(props.value), normalizeColor(defaultValue), onChange);
-
   let [isDragging, setDragging] = useState(false);
 
   let hue = value.getChannelValue('hue');
@@ -84,10 +107,14 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     setValue(v) {
       setValue(normalizeColor(v));
     },
-
     hue,
     setHue,
-
+    setHueFromPoint(x, y, radius) {
+      setHue(cartesianToAngle(x, y, radius));
+    },
+    getThumbPosition(radius) {
+      return angleToCartesian(value.getChannelValue('hue'), radius);
+    },
     increment(minStepSize: number = 0) {
       let newValue = hue + Math.max(minStepSize, step);
       if (newValue > 360) {
@@ -106,7 +133,6 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
         setHue(hue - s);
       }
     },
-
     setDragging(value) {
       setDragging(value);
     },

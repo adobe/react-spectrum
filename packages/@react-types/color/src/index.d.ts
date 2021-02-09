@@ -23,7 +23,8 @@ import {
   StyleProps,
   TextInputBase,
   TextInputDOMProps,
-  Validation
+  Validation,
+  ValueBase
 } from '@react-types/shared';
 import {SliderProps} from '@react-types/slider';
 
@@ -56,16 +57,23 @@ export interface SpectrumHexColorFieldProps extends AriaHexColorFieldProps, Spec
   isQuiet?: boolean
 }
 
-export interface ColorWheelProps extends Omit<SliderProps<string | Color>, 'minValue' | 'maxValue'>, Omit<StyleProps, 'width' | 'height'> {
-  step?: number,
-  // overriding these to only include color
+export interface ColorWheelProps extends ValueBase<string | Color> {
+  /** Whether the ColorWheel is disabled. */
+  isDisabled?: boolean,
+  /** Handler that is called when the value changes, as the user drags. */
   onChange?: (value: Color) => void,
-  onChangeEnd?: (value: Color) => void
+  /** Handler that is called when the user stops dragging. */
+  onChangeEnd?: (value: Color) => void,
+  /**
+   * The ColorWheel's step value.
+   * @default 1
+   */
+  step?: number
 }
 
 export interface AriaColorWheelProps extends ColorWheelProps, DOMProps, AriaLabelingProps {}
 
-export interface SpectrumColorWheelProps extends AriaColorWheelProps, StyleProps {
+export interface SpectrumColorWheelProps extends AriaColorWheelProps, Omit<StyleProps, 'width' | 'height'> {
   size?: DimensionValue
 }
 

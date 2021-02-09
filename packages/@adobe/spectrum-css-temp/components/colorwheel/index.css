@@ -39,6 +39,10 @@
   touch-action: none;
   cursor: default;
 
+  .spectrum-ColorWheel-handle {
+    margin: 0;
+  }
+
   &.is-focused {
     z-index: 2;
 
@@ -83,9 +87,4 @@
 
 .spectrum-ColorWheel-slider {
   @extend %spectrum-ColorControl-hiddenField;
-}
-
-.spectrum-ColorWheel-handle {
-  left: 50%;
-  top: 50%;
 }

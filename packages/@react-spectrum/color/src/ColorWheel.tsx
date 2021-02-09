@@ -20,15 +20,10 @@ import {SpectrumColorWheelProps} from '@react-types/color';
 import styles from '@adobe/spectrum-css-temp/components/colorwheel/vars.css';
 import {useColorWheel} from '@react-aria/color';
 import {useColorWheelState} from '@react-stately/color';
-import {useFocus, useFocusVisible} from '@react-aria/interactions';
-import {useId, useResizeObserver} from '@react-aria/utils';
+import {useFocusRing} from '@react-aria/focus';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
-
-const SEGMENTS = [];
-for (let i = 0; i < 360; i++) {
-  SEGMENTS.push(<rect width="80" height="2" x="80" y="79" fill={`hsl(${i}, 100%, 50%)`} transform={`rotate(${i} 80 80)`} key={i} />);
-}
+import {useResizeObserver} from '@react-aria/utils';
 
 const WHEEL_THICKNESS = 24;
 
@@ -72,27 +67,14 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
   }
 
   let state = useColorWheelState(props);
-  let {groupProps, inputProps, thumbProps, thumbPosition: {x, y}} = useColorWheel({
+  let {trackProps, inputProps, thumbProps} = useColorWheel({
     ...props,
     'aria-label': ariaLabel,
-    inputRef,
-    containerRef,
     innerRadius: wheelRadius - WHEEL_THICKNESS,
     outerRadius: wheelRadius
-  }, state);
+  }, state, inputRef);
 
-  let {isFocusVisible} = useFocusVisible();
-  let [isFocused, setIsFocused] = useState(false);
-  let {focusProps} = useFocus({
-    isDisabled,
-    onFocusChange: setIsFocused
-  });
-
-  let maskId = useId();
-
-  // We are keeping the svg viewbox at 160x160 so that SEGMENTS can remain constant.
-  // Instead make sure that the track thickness remains constant after scaling.
-  let svgInnerRadius = 80 - (WHEEL_THICKNESS * (80 / wheelRadius));
+  let {focusProps, isFocusVisible} = useFocusRing();
 
   return (
     <div
@@ -107,7 +89,6 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
         )
       }
       ref={containerRef}
-      {...groupProps}
       style={{
         ...styleProps.style,
         // Workaround around https://github.com/adobe/spectrum-css/issues/1032
@@ -115,31 +96,16 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
         'width': size,
         'height': size
       }}>
-      {wheelRadius && <>
-        <svg className={classNames(styles, 'spectrum-ColorWheel-wheel')} viewBox="0 0 160 160" aria-hidden="true">
-          <defs>
-            <mask id={maskId}>
-              <circle cx="80" cy="80" r="80" fill="white" />
-              <circle cx="80" cy="80" r={svgInnerRadius} fill="black" />
-            </mask>
-          </defs>
-          <g className={classNames(styles, 'spectrum-ColorWheel-segment')} mask={`url(#${maskId})`}>
-            {SEGMENTS}
-          </g>
-          <circle cx="80" cy="80" r="79.5" className={classNames(styles, 'spectrum-ColorWheel-outerCircle')} mask={`url(#${maskId})`} />
-          <circle cx="80" cy="80" r={svgInnerRadius} className={classNames(styles, 'spectrum-ColorWheel-innerCircle')} />
-        </svg>
-        <ColorThumb
-          value={state.value}
-          isFocused={isFocused && isFocusVisible}
-          isDisabled={isDisabled}
-          isDragging={state.isDragging}
-          style={{transform: `translate(${x}px, ${y}px)`}}
-          className={classNames(styles, 'spectrum-ColorWheel-handle')}
-          {...thumbProps}>
-          <input {...focusProps} className={classNames(styles, 'spectrum-ColorWheel-slider')} {...inputProps} ref={inputRef} />
-        </ColorThumb>
-      </>}
+      <div {...trackProps} />
+      <ColorThumb
+        value={state.value}
+        isFocused={isFocusVisible}
+        isDisabled={isDisabled}
+        isDragging={state.isDragging}
+        className={classNames(styles, 'spectrum-ColorWheel-handle')}
+        {...thumbProps}>
+        <input {...focusProps} className={classNames(styles, 'spectrum-ColorWheel-slider')} {...inputProps} ref={inputRef} />
+      </ColorThumb>
     </div>
   );
 }
