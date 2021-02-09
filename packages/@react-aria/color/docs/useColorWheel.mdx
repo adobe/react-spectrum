@@ -1,0 +1,90 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/color';
+import statelyDocs from 'docs:@react-stately/color';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-aria/color/package.json';
+
+```jsx import
+import {useColorWheel} from '@react-aria/color';
+```
+
+---
+category: Color
+keywords: [color wheel, color picker, aria]
+---
+
+# useColorWheel
+
+<p>{docs.exports.useColorWheel.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useColorWheel']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices-1.2/#slider'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useColorWheel} links={docs.links} />
+
+## Features
+
+
+## Example
+
+```tsx example
+import {useColorWheelState} from '@react-stately/color';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {useFocusRing} from '@react-aria/focus';
+
+const RADIUS = 100;
+const TRACK_THICKNESS = 28;
+const THUMB_SIZE = 20;
+
+function ColorWheel(props) {
+  let state = useColorWheelState(props);
+  let inputRef = React.useRef(null);
+  let {trackProps, inputProps, thumbProps} = useColorWheel({
+    ...props,
+    outerRadius: RADIUS,
+    innerRadius: RADIUS - TRACK_THICKNESS
+  }, state, inputRef);
+
+  let {focusProps, isFocusVisible} = useFocusRing();
+
+  return (
+    <div style={{position: 'relative', display: 'inline-block'}}>
+      <div {...trackProps} />
+      <div
+        {...thumbProps}
+        style={{
+          ...thumbProps.style,
+          border: '2px solid white',
+          boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
+          width: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+          height: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+          borderRadius: '50%',
+          boxSizing: 'border-box'
+        }}>
+        <VisuallyHidden>
+          <input {...inputProps} {...focusProps} ref={inputRef} />
+        </VisuallyHidden>
+      </div>
+    </div>
+  );
+}
+
+<ColorWheel />
+```
