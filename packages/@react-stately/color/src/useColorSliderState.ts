@@ -10,18 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSliderProps, Color as IColor} from '@react-types/color';
+import {Color, ColorSliderProps} from '@react-types/color';
 import {parseColor} from './Color';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import {useControlledState} from '@react-stately/utils';
 
 export interface ColorSliderState extends SliderState {
   /** The current color value represented by the color slider. */
-  value: IColor,
+  value: Color,
   /** Sets the current color value. If a string is passed, it will be parsed to a Color. */
-  setValue(value: string | IColor): void,
+  setValue(value: string | Color): void,
   /** Returns the color that should be displayed in the slider instead of `value` or the optional parameter. */
-  getDisplayColor(c?: IColor): IColor
+  getDisplayColor(c?: Color): Color
 }
 
 
@@ -29,7 +29,7 @@ interface ColorSliderStateOptions extends ColorSliderProps {
   numberFormatter: Intl.NumberFormat
 }
 
-function normalizeColor(v: string | IColor) {
+function normalizeColor(v: string | Color) {
   if (typeof v === 'string') {
     return parseColor(v);
   } else {
@@ -67,7 +67,7 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
     setValue(value) {
       setColor(normalizeColor(value));
     },
-    getDisplayColor(c: IColor = color) {
+    getDisplayColor(c: Color = color) {
       switch (channel) {
         case 'hue':
           return parseColor(`hsl(${c.getChannelValue('hue')}, 100%, 50%)`);

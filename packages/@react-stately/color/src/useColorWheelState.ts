@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorWheelProps, Color as IColor} from '@react-types/color';
+import {Color, ColorWheelProps} from '@react-types/color';
 import {parseColor} from './Color';
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
 
 export interface ColorWheelState {
-  readonly value: IColor,
-  setValue(value: string | IColor): void,
+  readonly value: Color,
+  setValue(value: string | Color): void,
 
   readonly hue: number,
   setHue(value: number): void,
@@ -32,7 +32,7 @@ export interface ColorWheelState {
   setDragging(value: boolean): void
 }
 
-function normalizeColor(v: string | IColor) {
+function normalizeColor(v: string | Color) {
   if (typeof v === 'string') {
     return parseColor(v);
   } else {

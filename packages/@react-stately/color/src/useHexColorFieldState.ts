@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {HexColorFieldProps, Color as IColor} from '@react-types/color';
+import {Color, HexColorFieldProps} from '@react-types/color';
 import {parseColor} from './Color';
 import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';
@@ -26,7 +26,7 @@ export interface HexColorFieldState {
    * The currently parsed color value, or null if the field is empty.
    * Updated based on the `inputValue` as the user types.
    */
-  colorValue: IColor,
+  colorValue: Color,
   /** Sets the current text value of the input. */
   setInputValue(value: string): void,
   /**
@@ -61,7 +61,7 @@ export function useHexColorFieldState(
 
   let initialValue = useColor(value);
   let initialDefaultValue = useColor(defaultValue);
-  let [colorValue, setColorValue] = useControlledState<IColor>(initialValue, initialDefaultValue, onChange);
+  let [colorValue, setColorValue] = useControlledState<Color>(initialValue, initialDefaultValue, onChange);
 
   let initialInputValue = (value || defaultValue) && colorValue ? colorValue.toString('hex') : '';
   let [inputValue, setInputValue] = useState(initialInputValue);
@@ -83,10 +83,10 @@ export function useHexColorFieldState(
     });
   }, [inputValue, colorValue, setInputValue]);
 
-  let increment = () => setColorValue((prevColor: IColor) => addColorValue(prevColor, step));
-  let decrement = () => setColorValue((prevColor: IColor) => addColorValue(prevColor, -step));
-  let incrementToMax = () => setColorValue((prevColor: IColor) => addColorValue(prevColor, MAX_COLOR_INT));
-  let decrementToMin = () => setColorValue((prevColor: IColor) => addColorValue(prevColor, -MAX_COLOR_INT));
+  let increment = () => setColorValue((prevColor: Color) => addColorValue(prevColor, step));
+  let decrement = () => setColorValue((prevColor: Color) => addColorValue(prevColor, -step));
+  let incrementToMax = () => setColorValue((prevColor: Color) => addColorValue(prevColor, MAX_COLOR_INT));
+  let decrementToMin = () => setColorValue((prevColor: Color) => addColorValue(prevColor, -MAX_COLOR_INT));
 
   let setFieldInputValue = (value: string) => {
     value = value.match(/^#?[0-9a-f]{0,6}$/i)?.[0];
@@ -97,7 +97,7 @@ export function useHexColorFieldState(
       }
       try {
         let newColor = parseColor(value.startsWith('#') ? value : `#${value}`);
-        setColorValue((prevColor: IColor) => {
+        setColorValue((prevColor: Color) => {
           setInputValue(value);
           return prevColor && prevColor.toHexInt() === newColor.toHexInt() ? prevColor : newColor;
         });
@@ -123,7 +123,7 @@ export function useHexColorFieldState(
   };
 }
 
-function addColorValue(color: IColor, step: number) {
+function addColorValue(color: Color, step: number) {
   let newColor = color ? color : MIN_COLOR;
   let colorInt = newColor.toHexInt();
   let newColorString = color ? color.toString('hex') : '';
