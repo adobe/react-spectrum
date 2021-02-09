@@ -139,12 +139,28 @@ storiesOf('Progress/ProgressBar', module)
     )
   )
   .add(
+    'parent width 100px',
+    () => (
+      <span style={{width: '100px'}}>
+        {render()}
+      </span>
+    )
+  )
+  .add(
     'width: 300px',
     () => render({width: '300px'})
   )
   .add(
     'width: 300px, labelPosition: side, isIndeterminate: true',
     () => render({width: '300px', labelPosition: 'side', isIndeterminate: true})
+  )
+  .add(
+    'width: 30px',
+    () => render({width: '30px'})
+  )
+  .add(
+    'width: 30px, labelPosition: side, isIndeterminate: true',
+    () => render({width: '30px', labelPosition: 'side', isIndeterminate: true})
   )
   .add(
     'Using raw values for minValue, maxValue, and value',
