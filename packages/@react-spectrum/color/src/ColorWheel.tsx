@@ -41,19 +41,25 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
   let containerRef = useFocusableRef(ref, inputRef);
 
   let [wheelRadius, setWheelRadius] = useState<number | null>(null);
-
-  useEffect(() => {
-    // the size observer's fallback to the window resize event doesn't fire on mount
-    if (containerRef.current && wheelRadius == null) {
-      setWheelRadius(containerRef.current.offsetWidth / 2);
-    }
-  }, [containerRef, wheelRadius, setWheelRadius]);
+  let [wheelThickness, setWheelThickness] = useState(WHEEL_THICKNESS);
 
   let resizeHandler = useCallback(() => {
     if (containerRef.current) {
       setWheelRadius(containerRef.current.offsetWidth / 2);
+      let thickness = window.getComputedStyle(containerRef.current)
+        .getPropertyValue('--spectrum-colorwheel-track-thickness');
+      if (thickness) {
+        setWheelThickness(parseInt(thickness, 10));
+      }
     }
-  }, [containerRef, setWheelRadius]);
+  }, [containerRef, setWheelRadius, setWheelThickness]);
+
+  useEffect(() => {
+    // the size observer's fallback to the window resize event doesn't fire on mount
+    if (wheelRadius == null) {
+      resizeHandler();
+    }
+  }, [wheelRadius, resizeHandler]);
 
   useResizeObserver({
     ref: containerRef,
@@ -70,7 +76,7 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
   let {trackProps, inputProps, thumbProps} = useColorWheel({
     ...props,
     'aria-label': ariaLabel,
-    innerRadius: wheelRadius - WHEEL_THICKNESS,
+    innerRadius: wheelRadius - wheelThickness,
     outerRadius: wheelRadius
   }, state, inputRef);
 
@@ -96,7 +102,7 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
         'width': size,
         'height': size
       }}>
-      <div {...trackProps} />
+      <div {...trackProps} className={classNames(styles, 'spectrum-ColorWheel-gradient')} />
       <ColorThumb
         value={state.value}
         isFocused={isFocusVisible}

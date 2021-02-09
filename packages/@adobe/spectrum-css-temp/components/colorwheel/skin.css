@@ -7,15 +7,11 @@
   &.is-disabled {
     .spectrum-ColorWheel-gradient {
       background: var(--spectrum-colorwheel-fill-color-disabled) !important;
-    }
 
-    .spectrum-ColorWheel-outerCircle,
-    .spectrum-ColorWheel-innerCircle {
-      stroke: var(--spectrum-colorwheel-border-color-disabled);
-    }
-
-    .spectrum-ColorWheel-outerCircle {
-      fill: var(--spectrum-colorwheel-fill-color-disabled);
+      &:before,
+      &:after {
+        border-color: var(--spectrum-colorwheel-border-color-disabled);
+      }
     }
 
     /* hide all the little colored bits */
@@ -26,10 +22,8 @@
 }
 
 .spectrum-ColorWheel-gradient {
-  border-color: var(--spectrum-colorwheel-border-color);
-}
-
-.spectrum-ColorWheel-outerCircle,
-.spectrum-ColorWheel-innerCircle {
-  stroke: var(--spectrum-colorwheel-border-color);
+  &:before,
+  &:after {
+    border-color: var(--spectrum-colorwheel-border-color);
+  }
 }
