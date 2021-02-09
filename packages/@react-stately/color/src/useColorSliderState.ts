@@ -11,7 +11,7 @@
  */
 
 import {ColorSliderProps, Color as IColor} from '@react-types/color';
-import {getColorChannelRange, parseColor} from './Color';
+import {parseColor} from './Color';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import {useControlledState} from '@react-stately/utils';
 
@@ -46,7 +46,7 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
   let [color, setColor] = useControlledState(value && normalizeColor(value), defaultValue && normalizeColor(defaultValue), onChange);
 
   let sliderState = useSliderState({
-    ...getColorChannelRange(channel),
+    ...color.getChannelRange(channel),
     ...otherProps,
     numberFormatter,
     value: [color.getChannelValue(channel)],

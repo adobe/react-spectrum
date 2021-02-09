@@ -34,6 +34,15 @@ export type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hs
 /** A list of color channels. */
 export type ColorChannel = 'hue' | 'saturation' | 'brightness' | 'lightness' | 'red' | 'green' | 'blue' | 'alpha';
 
+export interface ColorChannelRange {
+  /** The minimum value of the color channel. */
+  minValue: number,
+  /** The maximum value of the color channel. */
+  maxValue: number,
+  /** The step value of the color channel, used when incrementing and decrementing. */
+  step: number
+}
+
 /** Represents a color value. */
 export interface Color {
   /** Converts the color to the given color format, and returns a new Color object. */
@@ -51,7 +60,11 @@ export interface Color {
    * Sets the numeric value for a given channel, and returns a new Color object.
    * Throws an error if the channel is unsupported in the current color format.
    */
-  withChannelValue(channel: ColorChannel, value: number): Color
+  withChannelValue(channel: ColorChannel, value: number): Color,
+  /**
+   * Gets the minimum, maximum, and step values for a given channel.
+   */
+  getChannelRange(channel: ColorChannel): ColorChannelRange
 }
 
 export interface HexColorFieldProps extends ValueBase<string | Color>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {

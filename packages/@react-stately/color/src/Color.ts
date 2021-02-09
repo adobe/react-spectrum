@@ -11,13 +11,7 @@
  */
 
 import {clamp} from '@react-aria/utils';
-import {ColorChannel, ColorFormat, Color as IColor} from '@react-types/color';
-
-interface ColorChannelRange {
-  minValue: number,
-  maxValue: number,
-  step: number
-}
+import {ColorChannel, ColorChannelRange, ColorFormat, Color as IColor} from '@react-types/color';
 
 export function parseColor(value: string): IColor {
   let res = RGBColor.parse(value) || HSBColor.parse(value) || HSLColor.parse(value);
@@ -28,29 +22,11 @@ export function parseColor(value: string): IColor {
   throw new Error('Invalid color value: ' + value);
 }
 
-export function getColorChannelRange(channel: ColorChannel): ColorChannelRange {
-  switch (channel) {
-    case 'hue':
-      return {minValue: 0, maxValue: 360, step: 1};
-    case 'saturation':
-    case 'lightness':
-    case 'brightness':
-      return {minValue: 0, maxValue: 100, step: 1};
-    case 'red':
-    case 'green':
-    case 'blue':
-      return {minValue: 0, maxValue: 255, step: 1};
-    case 'alpha':
-      return {minValue: 0, maxValue: 1, step: 0.01};
-    default:
-      throw new Error('Unknown color channel: ' + channel);
-  }
-}
-
 abstract class Color implements IColor {
   abstract toFormat(format: ColorFormat): IColor;
   abstract toString(format: ColorFormat | 'css'): string;
   abstract clone(): Color;
+  abstract getChannelRange(channel: ColorChannel): ColorChannelRange;
 
   toHexInt(): number {
     return this.toFormat('rgb').toHexInt();
@@ -143,6 +119,19 @@ class RGBColor extends Color {
   clone(): Color {
     return new RGBColor(this.red, this.green, this.blue, this.alpha);
   }
+
+  getChannelRange(channel: ColorChannel): ColorChannelRange {
+    switch (channel) {
+      case 'red':
+      case 'green':
+      case 'blue':
+        return {minValue: 0, maxValue: 255, step: 1};
+      case 'alpha':
+        return {minValue: 0, maxValue: 1, step: 0.01};
+      default:
+        throw new Error('Unknown color channel: ' + channel);
+    }
+  }
 }
 
 // X = <negative/positive number with/without decimal places>
@@ -210,6 +199,20 @@ class HSBColor extends Color {
   clone(): Color {
     return new HSBColor(this.hue, this.saturation, this.brightness, this.alpha);
   }
+
+  getChannelRange(channel: ColorChannel): ColorChannelRange {
+    switch (channel) {
+      case 'hue':
+        return {minValue: 0, maxValue: 360, step: 1};
+      case 'saturation':
+      case 'brightness':
+        return {minValue: 0, maxValue: 100, step: 1};
+      case 'alpha':
+        return {minValue: 0, maxValue: 1, step: 0.01};
+      default:
+        throw new Error('Unknown color channel: ' + channel);
+    }
+  }
 }
 
 // X = <negative/positive number with/without decimal places>
@@ -261,5 +264,19 @@ class HSLColor extends Color {
 
   clone(): Color {
     return new HSLColor(this.hue, this.saturation, this.lightness, this.alpha);
+  }
+
+  getChannelRange(channel: ColorChannel): ColorChannelRange {
+    switch (channel) {
+      case 'hue':
+        return {minValue: 0, maxValue: 360, step: 1};
+      case 'saturation':
+      case 'lightness':
+        return {minValue: 0, maxValue: 100, step: 1};
+      case 'alpha':
+        return {minValue: 0, maxValue: 1, step: 0.01};
+      default:
+        throw new Error('Unknown color channel: ' + channel);
+    }
   }
 }
