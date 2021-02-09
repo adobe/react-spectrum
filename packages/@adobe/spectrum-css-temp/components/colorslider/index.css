@@ -87,32 +87,28 @@
   }
 }
 
-.spectrum-ColorSlider-checkerboard {
-  background-size: var(--spectrum-global-dimension-static-size-200)
-    var(--spectrum-global-dimension-static-size-200);
-  background-position: 0 0, 0 var(--spectrum-global-dimension-static-size-100),
-    var(--spectrum-global-dimension-static-size-100)
-      calc(-1 * var(--spectrum-global-dimension-static-size-100)),
-    calc(-1 * var(--spectrum-global-dimension-static-size-100)) 0;
+.spectrum-ColorSlider-track {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--spectrum-colorslider-border-radius);
 
-  /* the floating inset box shadow must be a separate element since <canvas> won't take it */
+  /* The checkerboard is a separate element so that the gradient is overlaid on top. */
   &:before {
     content: "";
-    z-index: 1;
+    z-index: -1;
     position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
     border-radius: var(--spectrum-colorslider-border-radius);
+    background-size: var(--spectrum-global-dimension-static-size-200)
+      var(--spectrum-global-dimension-static-size-200);
+    background-position: 0 0, 0 var(--spectrum-global-dimension-static-size-100),
+      var(--spectrum-global-dimension-static-size-100)
+        calc(-1 * var(--spectrum-global-dimension-static-size-100)),
+      calc(-1 * var(--spectrum-global-dimension-static-size-100)) 0;
   }
-}
-
-.spectrum-ColorSlider-gradient,
-.spectrum-ColorSlider-checkerboard {
-  width: 100%;
-  height: 100%;
-  border-radius: var(--spectrum-colorslider-border-radius);
 }
 
 .spectrum-ColorSlider-slider {

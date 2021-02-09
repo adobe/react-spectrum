@@ -77,14 +77,17 @@ export interface SpectrumColorWheelProps extends AriaColorWheelProps, Omit<Style
   size?: DimensionValue
 }
 
-interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'minValue' | 'maxValue'> {
+export interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'minValue' | 'maxValue'> {
+  /** The color channel that the slider manipulates. */
   channel: ColorChannel,
-  // overriding these to only include color
+  /** Handler that is called when the value changes, as the user drags. */
   onChange?: (value: Color) => void,
+  /** Handler that is called when the user stops dragging. */
   onChangeEnd?: (value: Color) => void,
-  /** Whether the value's label is displayed. True by default, false by default if not. */
+  /** Whether the value label is displayed. True by default if there is a label, false by default if not. */
   showValueLabel?: boolean
-  // showTextField?: boolean, // do we want this? we didn't keep it for slider....
 }
 
-export interface SpectrumColorSliderProps extends ColorSliderProps, DOMProps, StyleProps, AriaLabelingProps {}
+export interface AriaColorSliderProps extends ColorSliderProps, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumColorSliderProps extends AriaColorSliderProps, StyleProps {}

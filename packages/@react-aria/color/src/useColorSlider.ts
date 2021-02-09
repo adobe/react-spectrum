@@ -10,27 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSliderThumbProps} from '@react-types/slider';
-import {ColorChannel} from '@react-types/color';
+import {AriaColorSliderProps} from '@react-types/color';
 import {ColorSliderState} from '@react-stately/color';
 import {HTMLAttributes, RefObject} from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 
-interface ColorSliderAriaOptions extends Omit<AriaSliderThumbProps, 'index'> {
-  channel: ColorChannel,
+interface ColorSliderAriaOptions extends AriaColorSliderProps {
+  /** A ref for the track element. */
   trackRef: RefObject<HTMLElement>,
+  /** A ref for the input element. */
   inputRef: RefObject<HTMLInputElement>
 }
 
 interface ColorSliderAria {
-  groupProps: HTMLAttributes<HTMLElement>,
-  trackProps: HTMLAttributes<HTMLElement>,
-  inputProps: HTMLAttributes<HTMLElement>,
-  thumbProps: HTMLAttributes<HTMLElement>,
+  /** Props for the label element. */
   labelProps: HTMLAttributes<HTMLElement>,
-  outputProps: HTMLAttributes<HTMLElement>,
-  gradientProps: HTMLAttributes<HTMLElement>
+  /** Props for the group element wrapping the track and the thumb. */
+  groupProps: HTMLAttributes<HTMLElement>,
+  /** Props for the track element. */
+  trackProps: HTMLAttributes<HTMLElement>,
+  /** Props for the thumb element. */
+  thumbProps: HTMLAttributes<HTMLElement>,
+  /** Props for the visually hidden range input element. */
+  inputProps: HTMLAttributes<HTMLElement>,
+  /** Props for the output element, displaying the value of the color slider. */
+  outputProps: HTMLAttributes<HTMLElement>
 }
 
 export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSliderState): ColorSliderAria {
@@ -87,15 +92,15 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
 
   return {
     groupProps,
-    trackProps,
-    inputProps,
-    thumbProps,
-    labelProps,
-    outputProps,
-    gradientProps: {
+    trackProps: {
+      ...trackProps,
       style: {
         background: generateBackground()
       }
-    }
+    },
+    inputProps,
+    thumbProps,
+    labelProps,
+    outputProps
   };
 }

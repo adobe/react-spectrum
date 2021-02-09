@@ -71,7 +71,7 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
 
   let numberFormatter = useNumberFormatter();
   let state = useColorSliderState({...props, numberFormatter});
-  let {inputProps, thumbProps, groupProps, trackProps, labelProps, outputProps, gradientProps} = useColorSlider({
+  let {inputProps, thumbProps, groupProps, trackProps, labelProps, outputProps} = useColorSlider({
     ...props,
     label,
     'aria-label': ariaLabel,
@@ -129,9 +129,7 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
           }
         )
       }>
-        <div className={classNames(styles, 'spectrum-ColorSlider-checkerboard')} role="presentation" ref={trackRef} {...trackProps}>
-          <div className={classNames(styles, 'spectrum-ColorSlider-gradient')} role="presentation" {...gradientProps} />
-        </div>
+        <div className={classNames(styles, 'spectrum-ColorSlider-track')} role="presentation" ref={trackRef} {...trackProps} />
         <ColorThumb
           value={state.getDisplayColor()}
           isFocused={isFocused && isFocusVisible}
