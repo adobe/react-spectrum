@@ -40,3 +40,204 @@ keywords: [color slider, color picker, aria]
 <FunctionAPI function={docs.exports.useColorSlider} links={docs.links} />
 
 ## Features
+
+## Example
+
+```tsx example export=true
+import {useColorSliderState} from '@react-stately/color';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {useNumberFormatter} from '@react-aria/i18n';
+import {useFocusRing} from '@react-aria/focus';
+
+const TRACK_THICKNESS = 28;
+const THUMB_SIZE = 20;
+
+function ColorSlider(props) {
+  let numberFormatter = useNumberFormatter({
+    style: props.channel === 'alpha' ? 'percent' : 'decimal'
+  });
+
+  let state = useColorSliderState({...props, numberFormatter});
+  let trackRef = React.useRef();
+  let inputRef = React.useRef();
+  let {groupProps, trackProps, thumbProps, inputProps, labelProps, outputProps} = useColorSlider({
+    ...props,
+    trackRef,
+    inputRef
+  }, state);
+
+  let {focusProps, isFocusVisible} = useFocusRing();
+
+  return (
+    <div
+      {...groupProps}
+      style={{
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        width: 300,
+        touchAction: 'none'
+      }}>
+      {/* Create a flex container for the label and output element. */}
+      <div style={{display: 'flex', alignSelf: 'stretch'}}>
+        {props.label && <label {...labelProps}>{props.label}</label>}
+        <output {...outputProps} style={{flex: '1 0 auto', textAlign: 'end'}}>
+          {state.getThumbValueLabel(0)}
+        </output>
+      </div>
+      {/* The track element holds the visible track line and the thumb. */}
+      <div
+        {...trackProps}
+        ref={trackRef}
+        style={{
+          ...trackProps.style,
+          position: 'relative',
+          height: TRACK_THICKNESS,
+          width: '100%',
+          borderRadius: 4
+        }}>
+        <div
+          {...thumbProps}
+          style={{
+            ...thumbProps.style,
+            position: 'absolute',
+            transform: 'translate(-50%, -50%)',
+            left: `${state.getThumbPercent(0) * 100}%`,
+            top: TRACK_THICKNESS / 2,
+            border: '2px solid white',
+            boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
+            width: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+            height: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+            borderRadius: '50%',
+            boxSizing: 'border-box',
+            background: state.getDisplayColor().toString('css')
+          }}>
+          <VisuallyHidden>
+            <input ref={inputRef} {...inputProps} {...focusProps} />
+          </VisuallyHidden>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+<ColorSlider channel="hue" label="Hue" defaultValue="hsl(0, 100%, 50%)" />
+```
+
+### Vertical
+
+```tsx example
+function ColorSlider(props) {
+  let numberFormatter = useNumberFormatter({
+    style: props.channel === 'alpha' ? 'percent' : 'decimal'
+  });
+
+  let state = useColorSliderState({...props, numberFormatter});
+  let trackRef = React.useRef();
+  let inputRef = React.useRef();
+  let {groupProps, trackProps, thumbProps, inputProps, labelProps, outputProps} = useColorSlider({
+    ...props,
+    orientation: 'vertical',
+    trackRef,
+    inputRef
+  }, state);
+
+  let {focusProps, isFocusVisible} = useFocusRing();
+
+  return (
+    <div
+      {...groupProps}
+      style={{
+        height: 200,
+        touchAction: 'none'
+      }}>
+      <div
+        {...trackProps}
+        ref={trackRef}
+        style={{
+          ...trackProps.style,
+          position: 'relative',
+          width: TRACK_THICKNESS,
+          height: '100%',
+          borderRadius: 4
+        }}>
+        <div
+          {...thumbProps}
+          style={{
+            ...thumbProps.style,
+            position: 'absolute',
+            transform: 'translate(-50%, -50%)',
+            top: `${(1 - state.getThumbPercent(0)) * 100}%`,
+            left: TRACK_THICKNESS / 2,
+            border: '2px solid white',
+            boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
+            width: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+            height: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+            borderRadius: '50%',
+            boxSizing: 'border-box',
+            background: state.getDisplayColor().toString('css')
+          }}>
+          <VisuallyHidden>
+            <input ref={inputRef} {...inputProps} {...focusProps} />
+          </VisuallyHidden>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+<ColorSlider channel="hue" aria-label="Hue" defaultValue="hsl(0, 100%, 50%)" />
+```
+
+## Usage
+
+### RGBA
+
+```tsx example
+import {parseColor} from '@react-stately/color';
+
+function Example() {
+  let [color, setColor] = React.useState(parseColor('#7f007f'));
+  return (
+    <>
+      <ColorSlider channel="red" label="Red" value={color} onChange={setColor} />
+      <ColorSlider channel="green" label="Green" value={color} onChange={setColor} />
+      <ColorSlider channel="blue" label="Blue" value={color} onChange={setColor} />
+      <ColorSlider channel="alpha" label="Alpha" value={color} onChange={setColor} />
+    </>
+  );
+}
+```
+
+### HSLA
+
+```tsx example
+function Example() {
+  let [color, setColor] = React.useState(parseColor('hsl(0, 100%, 50%)'));
+  return (
+    <>
+      <ColorSlider channel="hue" label="Hue" value={color} onChange={setColor} />
+      <ColorSlider channel="saturation" label="Saturation" value={color} onChange={setColor} />
+      <ColorSlider channel="lightness" label="Lightness" value={color} onChange={setColor} />
+      <ColorSlider channel="alpha" label="Alpha" value={color} onChange={setColor} />
+    </>
+  );
+}
+```
+
+### HSBA
+
+```tsx example
+function Example() {
+  let [color, setColor] = React.useState(parseColor('hsb(0, 100%, 50%)'));
+  return (
+    <>
+      <ColorSlider channel="hue" label="Hue" value={color} onChange={setColor} />
+      <ColorSlider channel="saturation" label="Saturation" value={color} onChange={setColor} />
+      <ColorSlider channel="brightness" label="Brightness" value={color} onChange={setColor} />
+      <ColorSlider channel="alpha" label="Alpha" value={color} onChange={setColor} />
+    </>
+  );
+}
+```
