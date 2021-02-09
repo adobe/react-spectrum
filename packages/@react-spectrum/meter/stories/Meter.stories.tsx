@@ -117,6 +117,22 @@ storiesOf('Meter', module)
     }
   )
   .add(
+    'parent width 100%',
+    () => (
+      <span style={{width: '100%'}}>
+        {render({value: 32})}
+      </span>
+    )
+  )
+  .add(
+    'width: 300px',
+    () => render({value: 32, width: '300px'})
+  )
+  .add(
+    'width: 300px, labelPosition: side',
+    () => render({value: 32, width: '300px', labelPosition: 'side'})
+  )
+  .add(
     'Using raw values for minValue, maxValue, and value',
     () => render({
       showValueLabel: true,

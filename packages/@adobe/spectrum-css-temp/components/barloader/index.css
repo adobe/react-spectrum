@@ -26,7 +26,8 @@ governing permissions and limitations under the License.
 .spectrum-BarLoader-track {
   /* Visually apply border radius to child elements */
   overflow: hidden;
-  width: var(--spectrum-barloader-large-width);
+  min-width: var(--spectrum-barloader-large-width);
+  inline-size: 100%;
   height: var(--spectrum-barloader-large-height);
   border-radius: var(--spectrum-barloader-large-border-radius);
   z-index: 1; /* to fix a weird webkit bug with rounded corners and masking */
