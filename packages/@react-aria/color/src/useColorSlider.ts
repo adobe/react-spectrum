@@ -43,6 +43,7 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
 
   let {direction} = useLocale();
 
+  // @ts-ignore - ignore unused incompatible props
   let {groupProps, trackProps, labelProps, outputProps} = useSlider(props, state, trackRef);
   let {inputProps, thumbProps} = useSliderThumb({
     index: 0,
