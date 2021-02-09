@@ -16,19 +16,29 @@ import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
 
 export interface ColorWheelState {
+  /** The current color value displayed by the color wheel. */
   readonly value: Color,
+  /** Sets the color value displayed by the color wheel, and triggers `onChange`. */
   setValue(value: string | Color): void,
 
+  /** The current value of the hue channel displayed by the color wheel. */
   readonly hue: number,
+  /** Sets the hue channel of the current color value and triggers `onChange`. */
   setHue(value: number): void,
 
+  /** Sets the hue channel of the current color value based on the given coordinates and radius of the color wheel, and triggers `onChange`. */
   setHueFromPoint(x: number, y: number, radius: number): void,
+  /** Returns the coordinates of the thumb relative to the center point of the color wheel. */
   getThumbPosition(radius: number): {x: number, y: number},
 
+  /** Increments the hue by the given amount (defaults to 1). */
   increment(minStepSize?: number): void,
+  /** Decrements the hue by the given amount (defaults to 1). */
   decrement(minStepSize?: number): void,
 
-  isDragging: boolean,
+  /** Whether the cxolor wheel is currently being dragged. */
+  readonly isDragging: boolean,
+  /** Sets whether the color wheel is being dragged. */
   setDragging(value: boolean): void
 }
 

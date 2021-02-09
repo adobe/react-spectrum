@@ -17,7 +17,7 @@ import {useControlledState} from '@react-stately/utils';
 
 export interface ColorSliderState extends SliderState {
   /** The current color value represented by the color slider. */
-  value: Color,
+  readonly value: Color,
   /** Sets the current color value. If a string is passed, it will be parsed to a Color. */
   setValue(value: string | Color): void,
   /** Returns the color that should be displayed in the slider instead of `value` or the optional parameter. */

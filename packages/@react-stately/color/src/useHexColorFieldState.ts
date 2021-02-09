@@ -21,12 +21,12 @@ export interface HexColorFieldState {
    * The current text value of the input. Updated as the user types,
    * and formatted according to `formatOptions` on blur.
    */
-  inputValue: string,
+  readonly inputValue: string,
   /**
    * The currently parsed color value, or null if the field is empty.
    * Updated based on the `inputValue` as the user types.
    */
-  colorValue: Color,
+  readonly colorValue: Color,
   /** Sets the current text value of the input. */
   setInputValue(value: string): void,
   /**
