@@ -34,6 +34,10 @@ interface ColorWheelAria {
 
 const PAGE_MIN_STEP_SIZE = 6;
 
+/**
+ * Provides the behavior and accessibility implementation for a color wheel component.
+ * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
+ */
 export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState, inputRef: RefObject<HTMLElement>): ColorWheelAria {
   let {
     isDisabled,

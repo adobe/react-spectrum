@@ -37,6 +37,10 @@ function normalizeColor(v: string | Color) {
   }
 }
 
+/**
+ * Provides state management for a color slider component.
+ * Color sliders allow users to adjust an individual channel of a color value.
+ */
 export function useColorSliderState(props: ColorSliderStateOptions): ColorSliderState {
   let {channel, value, defaultValue, onChange, numberFormatter, ...otherProps} = props;
   if (value == null && defaultValue == null) {

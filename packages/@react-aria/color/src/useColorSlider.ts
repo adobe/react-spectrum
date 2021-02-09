@@ -38,6 +38,10 @@ interface ColorSliderAria {
   outputProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a color slider component.
+ * Color sliders allow users to adjust an individual channel of a color value.
+ */
 export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSliderState): ColorSliderAria {
   let {trackRef, inputRef, orientation, channel} = props;
 

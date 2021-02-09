@@ -90,6 +90,10 @@ function cartesianToAngle(x: number, y: number, radius: number): number {
   return (deg + 360) % 360;
 }
 
+/**
+ * Provides state management for a color wheel component.
+ * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
+ */
 export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
   let {defaultValue, onChange, step = 1} = props;
 
