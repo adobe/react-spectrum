@@ -67,14 +67,13 @@ module.exports = new Transformer({
 
             if (/^\s*function (.|\n)*}\s*$/.test(code)) {
               let name = code.match(/^\s*function (.*?)\s*\(/)[1];
-              code = `(function () {
-                ${code}
-                ReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));
-              })();`;
+              code = `${code}\nReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));`;
             } else if (/^<(.|\n)*>$/m.test(code)) {
-              code = `(function () {
-                ${code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`)}
-              })();`;
+              code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`);
+            }
+
+            if (!options.includes('export=true')) {
+              code = `(function() {\n${code}\n})();`;
             }
 
             exampleCode.push(code);

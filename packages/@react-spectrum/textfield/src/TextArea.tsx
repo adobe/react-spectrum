@@ -37,8 +37,11 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
   let onHeightChange = useCallback(() => {
     if (isQuiet) {
       let input = inputRef.current;
+      let prevAlignment = input.style.alignSelf;
+      input.style.alignSelf = 'start';
       input.style.height = 'auto';
       input.style.height = `${input.scrollHeight}px`;
+      input.style.alignSelf = prevAlignment;
     }
   }, [isQuiet, inputRef]);
 

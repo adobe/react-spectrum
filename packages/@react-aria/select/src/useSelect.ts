@@ -73,6 +73,9 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   let onKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
       case 'ArrowLeft': {
+        // prevent scrolling containers
+        e.preventDefault();
+
         let key = state.selectedKey != null ? delegate.getKeyAbove(state.selectedKey) : delegate.getFirstKey();
         if (key) {
           state.setSelectedKey(key);
@@ -80,6 +83,9 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
         break;
       }
       case 'ArrowRight': {
+        // prevent scrolling containers
+        e.preventDefault();
+
         let key = state.selectedKey != null ? delegate.getKeyBelow(state.selectedKey) : delegate.getFirstKey();
         if (key) {
           state.setSelectedKey(key);
