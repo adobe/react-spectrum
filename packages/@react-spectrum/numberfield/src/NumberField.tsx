@@ -73,6 +73,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
       'spectrum-Stepper',
       {
         'spectrum-Stepper--quiet': isQuiet,
+        'is-disabled': isDisabled,
         'spectrum-Stepper--readonly': isReadOnly,
         'is-invalid': props.validationState === 'invalid',
         'spectrum-Stepper--showStepper': showStepper,
