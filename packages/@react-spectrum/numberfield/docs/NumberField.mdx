@@ -97,11 +97,11 @@ The NumberField value can be formatted by using the `formatOptions` prop.
 Currently only standard notation is supported, though scientific, engineering, and compact notation may be supported in the future.
 
 NumberField supports three numeral systems; Latin, Arabic-Indic, and Han decimal. Regardless of the locale, these three
-can be parsed from typed input. Initial rendering will appear in the default numeral system for the locale unless explicitly overridden [See](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/numberingSystem).
+can be parsed from typed input. Initial rendering will appear in the [default numeral system](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/numberingSystem) for the locale unless explicitly overridden.
 
 ### Decimals
 
-The following example uses the signDisplay option to include the plus sign for positive numbers, for example to display an offset from some value.
+The following example uses the `signDisplay` option to include the plus sign for positive numbers, for example to display an offset from some value.
 In addition, it always displays a minimum of 1 digit after the decimal point, and allows up to 2 fraction digits.
 If the user enters more than 2 fraction digits, the result will be rounded.
 
@@ -128,6 +128,7 @@ be overridden with the `step` prop. [See below](#step-values) for details.
 <NumberField
   label="Sales tax"
   formatOptions={{style: 'percent'}}
+  minValue={0}
   defaultValue={0.05} />
 ```
 
@@ -163,13 +164,14 @@ whether to display the unit in long, short, or narrow format.
 If you need to allow the user to change the unit, you should include a separate dropdown next to the number field.
 The number field itself will not determine the unit from the user input.
 
-**Note:** the unit style is not currently supported in Safari. A [polyfill](https://formatjs.io/docs/polyfills/intl-numberformat/)
+**Note:** The `unit` style is not currently supported in Safari. A [polyfill](https://formatjs.io/docs/polyfills/intl-numberformat/)
 may be necessary.
 
 ```tsx example
 <NumberField
   label="Package width"
   defaultValue={4}
+  minValue={0}
   formatOptions={{
     style: 'unit',
     unit: 'inch',
