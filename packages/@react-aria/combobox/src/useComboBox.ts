@@ -13,7 +13,7 @@
 import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {ariaHideOutside} from '@react-aria/overlays';
-import {chain, mergeProps, useLabels} from '@react-aria/utils';
+import {chain, isAppleDevice, mergeProps, useLabels} from '@react-aria/utils';
 import {ComboBoxProps} from '@react-types/combobox';
 import {ComboBoxState} from '@react-stately/combobox';
 import {FocusEvent, HTMLAttributes, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
@@ -49,12 +49,6 @@ interface ComboBoxAria {
   listBoxProps: HTMLAttributes<HTMLElement>,
   /** Props for the ComboBox label element. */
   labelProps: HTMLAttributes<HTMLElement>
-}
-
-function isAppleDevice() {
-  return typeof window !== 'undefined' && window.navigator != null
-    ? /^(Mac|iPhone|iPad)/.test(window.navigator.platform)
-    : false;
 }
 
 /**

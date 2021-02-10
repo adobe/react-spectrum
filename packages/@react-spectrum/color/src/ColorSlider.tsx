@@ -14,6 +14,8 @@ import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils'
 import {ColorThumb} from './ColorThumb';
 import {Flex} from '@react-spectrum/layout';
 import {FocusableRef} from '@react-types/shared';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Label} from '@react-spectrum/label';
 import React, {useRef, useState} from 'react';
 import {SpectrumColorSliderProps} from '@react-types/color';
@@ -21,13 +23,20 @@ import styles from '@adobe/spectrum-css-temp/components/colorslider/vars.css';
 import {useColorSlider} from '@react-aria/color';
 import {useColorSliderState} from '@react-stately/color';
 import {useFocus, useFocusVisible} from '@react-aria/interactions';
-import {useLocale, useNumberFormatter} from '@react-aria/i18n';
+import {useLocale, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
 
-  let {isDisabled, channel, orientation, showValueLabel = true} = props;
+  let {
+    isDisabled,
+    channel,
+    orientation,
+    label,
+    showValueLabel,
+    'aria-label': ariaLabel
+  } = props;
   let vertical = orientation === 'vertical';
 
   let {styleProps} = useStyleProps(props);
@@ -37,22 +46,34 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
   let trackRef = useRef();
   let domRef = useFocusableRef(ref, inputRef);
 
-  // The default label should be localized...
-  let defaultLabel = channel[0].toUpperCase() + channel.slice(1);
+  let formatMessage = useMessageFormatter(intlMessages);
 
-  let labelText = props.label;
-  if (props.label === undefined) {
-    if (!vertical) {
-      labelText = defaultLabel;
+  // If vertical and a label is provided, use it as an aria-label instead.
+  if (vertical && label) {
+    ariaLabel = ariaLabel || (typeof label === 'string' ? label : null);
+    label = null;
+  }
+
+  // If no external label, aria-label or aria-labelledby is provided,
+  // default to displaying the localized channel value.
+  if (ariaLabel === undefined && props['aria-labelledby'] === undefined) {
+    if (label === undefined && !vertical) {
+      label = formatMessage(channel);
+    } else if (label === null || vertical) {
+      ariaLabel = formatMessage(channel);
     }
   }
-  let ariaLabel = props['aria-label'] ?? (labelText == null ? defaultLabel : undefined);
+
+  // Show the value label by default if there is a visible label
+  if (showValueLabel == null) {
+    showValueLabel = !!label;
+  }
 
   let numberFormatter = useNumberFormatter();
   let state = useColorSliderState({...props, numberFormatter});
-  let {inputProps, thumbProps, groupProps, trackProps, labelProps, gradientProps} = useColorSlider({
+  let {inputProps, thumbProps, groupProps, trackProps, labelProps, outputProps, gradientProps} = useColorSlider({
     ...props,
-    label: labelText,
+    label,
     'aria-label': ariaLabel,
     trackRef,
     inputRef
@@ -73,9 +94,9 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
   let alignLabel;
   if (vertical) {
     alignLabel = 'center';
-  } else if (labelText != null && showValueLabel) {
+  } else if (label != null && showValueLabel) {
     alignLabel = 'space-between';
-  } else if (labelText != null) {
+  } else if (label != null) {
     alignLabel = 'flex-start';
   } else if (showValueLabel) {
     alignLabel = 'flex-end';
@@ -85,12 +106,19 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
     <div
       ref={domRef}
       {...styleProps}
-      className={classNames(styles, 'spectrum-ColorSlider-container')}>
-      <Flex direction="row" justifyContent={alignLabel}>
-        {labelText && <Label {...labelProps}>{labelText}</Label>}
-        {/* TODO: is it on purpose that aria-labelledby isn't passed through? */}
-        {showValueLabel && <Label aria-labelledby={labelProps.id}>{state.getThumbValueLabel(0)}</Label>}
-      </Flex>
+      className={classNames(
+        styles,
+        {
+          'spectrum-ColorSlider-container--horizontal': !vertical,
+          'spectrum-ColorSlider-container--vertical': vertical
+        }
+      )}>
+      {label &&
+        <Flex direction="row" justifyContent={alignLabel}>
+          {label && <Label {...labelProps}>{label}</Label>}
+          {showValueLabel && <Label elementType="span"><output {...outputProps}>{state.getThumbValueLabel(0)}</output></Label>}
+        </Flex>
+      }
       <div
         {...groupProps}
         className={classNames(

@@ -70,7 +70,6 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
         case 'hue':
           return parseColor(`hsl(${c.getChannelValue('hue')}, 100%, 50%)`);
         case 'lightness':
-          c = c.withChannelValue('saturation', 0);
         case 'brightness':
         case 'saturation':
         case 'red':
