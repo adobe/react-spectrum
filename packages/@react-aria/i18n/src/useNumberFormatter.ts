@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {getNumberFormatter, NumberFormatOptions} from '@react-stately/i18n';
+import {NumberFormatOptions, NumberFormatter} from '@spectrum-i18n/number';
 import {useLocale} from './context';
+import {useMemo} from 'react';
 
 /**
  * Provides localized number formatting for the current locale. Automatically updates when the locale changes,
@@ -20,5 +21,5 @@ import {useLocale} from './context';
  */
 export function useNumberFormatter(options: NumberFormatOptions = {}): Intl.NumberFormat {
   let {locale} = useLocale();
-  return getNumberFormatter(locale, options);
+  return useMemo(() => new NumberFormatter(locale, options), [locale, options]);
 }

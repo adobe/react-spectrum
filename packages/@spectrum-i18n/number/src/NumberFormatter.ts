@@ -20,16 +20,47 @@ try {
 } catch (e) {}
 
 export interface NumberFormatOptions extends Intl.NumberFormatOptions {
-  /** Overrides default numeral system for the current locale. */
+  /** Overrides default numbering system for the current locale. */
   numberingSystem?: string
 }
 
 /**
- * Provides localized number formatting for the current locale. Automatically updates when the locale changes,
- * and handles caching of the number formatter for performance.
- * @param options - Formatting options.
+ * A wrapper around Intl.NumberFormat providing additional options, polyfills, and caching for performance.
  */
-export function getNumberFormatter(locale: string, options: NumberFormatOptions = {}): Intl.NumberFormat {
+export class NumberFormatter implements Intl.NumberFormat {
+  private numberFormatter: Intl.NumberFormat;
+  private options: NumberFormatOptions;
+
+  constructor(locale: string, options: NumberFormatOptions = {}) {
+    this.numberFormatter = getCachedNumberFormatter(locale, options);
+    this.options = options;
+  }
+
+  format(value: number): string {
+    if (!supportsSignDisplay && this.options.signDisplay != null) {
+      return numberFormatSignDisplayPolyfill(this.numberFormatter, this.options.signDisplay, value);
+    }
+
+    return this.numberFormatter.format(value);
+  }
+
+  formatToParts(value: number): Intl.NumberFormatPart[] {
+    // TODO: implement signDisplay for formatToParts
+    // @ts-ignore
+    return this.numberFormatter.formatToParts(value);
+  }
+
+  resolvedOptions(): Intl.ResolvedNumberFormatOptions {
+    let options = this.numberFormatter.resolvedOptions();
+    if (!supportsSignDisplay && this.options.signDisplay != null) {
+      return {...options, signDisplay: this.options.signDisplay};
+    }
+
+    return options;
+  }
+}
+
+function getCachedNumberFormatter(locale: string, options: NumberFormatOptions = {}): Intl.NumberFormat {
   let {numberingSystem} = options;
   if (numberingSystem && locale.indexOf('-u-nu-') === -1) {
     locale = `${locale}-u-nu-${numberingSystem}`;
@@ -41,25 +72,6 @@ export function getNumberFormatter(locale: string, options: NumberFormatOptions 
   }
 
   let numberFormatter = new Intl.NumberFormat(locale, options);
-  // @ts-ignore
-  let {signDisplay} = options || {};
-  if (!supportsSignDisplay && signDisplay != null) {
-    let proxy = new Proxy(numberFormatter, {
-      get(target, property) {
-        if (property === 'format') {
-          return (v) => numberFormatSignDisplayPolyfill(numberFormatter, signDisplay, v);
-        } else if (property === 'resolvedOptions') {
-          return () => ({...numberFormatter.resolvedOptions(), signDisplay});
-        } else {
-          return target[property];
-        }
-      }
-    });
-
-    formatterCache.set(cacheKey, proxy);
-    return proxy;
-  }
-
   formatterCache.set(cacheKey, numberFormatter);
   return numberFormatter;
 }

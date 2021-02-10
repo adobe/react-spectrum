@@ -13,10 +13,12 @@
 
 declare namespace Intl {
   interface NumberFormatOptions {
-    currencySign?: string
+    currencySign?: string,
+    signDisplay?: 'always' | 'exceptZero' | 'auto' | 'never'
   }
   interface ResolvedNumberFormatOptions {
-    currencySign?: string
+    currencySign?: string,
+    signDisplay?: 'always' | 'exceptZero' | 'auto' | 'never'
   }
   // eslint-disable-next-line no-undef
   type NumberFormatPartTypesExtension = NumberFormatPartTypes | 'unit'

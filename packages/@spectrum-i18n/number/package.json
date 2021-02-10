@@ -1,5 +1,5 @@
 {
-  "name": "@react-stately/i18n",
+  "name": "@spectrum-i18n/number",
   "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
@@ -19,9 +19,6 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2"
-  },
-  "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"

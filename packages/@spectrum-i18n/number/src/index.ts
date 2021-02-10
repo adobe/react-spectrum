@@ -12,5 +12,5 @@
 
 export type {NumberFormatOptions} from './NumberFormatter';
 
-export {getNumberFormatter} from './NumberFormatter';
-export {getNumberingSystem, parseNumber, isValidPartialNumber} from './NumberParser';
+export {NumberFormatter} from './NumberFormatter';
+export {NumberParser} from './NumberParser';
