@@ -19,6 +19,29 @@ try {
   // eslint-disable-next-line no-empty
 } catch (e) {}
 
+let supportsUnit = false;
+try {
+  // @ts-ignore
+  supportsUnit = (new Intl.NumberFormat('de-DE', {style: 'unit', unit: 'degree'})).resolvedOptions().style === 'unit';
+  // eslint-disable-next-line no-empty
+} catch (e) {}
+
+// Polyfill for units since Safari doesn't support them yet. See https://bugs.webkit.org/show_bug.cgi?id=215438.
+// Currently only polyfilling the unit degree in narrow format for ColorSlider in our supported locales.
+// Values were determined by switching to each locale manually in Chrome.
+const UNITS = {
+  degree: {
+    narrow: {
+      default: '°',
+      'ja-JP': ' 度',
+      'zh-TW': '度',
+      'sl-SI': ' °'
+      // Arabic?? But Safari already doesn't use Arabic digits so might be ok...
+      // https://bugs.webkit.org/show_bug.cgi?id=218139
+    }
+  }
+};
+
 export interface NumberFormatOptions extends Intl.NumberFormatOptions {
   /** Overrides default numbering system for the current locale. */
   numberingSystem?: string
@@ -37,11 +60,20 @@ export class NumberFormatter implements Intl.NumberFormat {
   }
 
   format(value: number): string {
+    let res = '';
     if (!supportsSignDisplay && this.options.signDisplay != null) {
-      return numberFormatSignDisplayPolyfill(this.numberFormatter, this.options.signDisplay, value);
+      res = numberFormatSignDisplayPolyfill(this.numberFormatter, this.options.signDisplay, value);
+    } else {
+      res = this.numberFormatter.format(value);
     }
 
-    return this.numberFormatter.format(value);
+    if (this.options.style === 'unit' && !supportsUnit) {
+      let {unit, unitDisplay = 'short', locale} = this.resolvedOptions();
+      let values = UNITS[unit]?.[unitDisplay];
+      res += values[locale] || values.default;
+    }
+
+    return res;
   }
 
   formatToParts(value: number): Intl.NumberFormatPart[] {
@@ -53,7 +85,11 @@ export class NumberFormatter implements Intl.NumberFormat {
   resolvedOptions(): Intl.ResolvedNumberFormatOptions {
     let options = this.numberFormatter.resolvedOptions();
     if (!supportsSignDisplay && this.options.signDisplay != null) {
-      return {...options, signDisplay: this.options.signDisplay};
+      options = {...options, signDisplay: this.options.signDisplay};
+    }
+
+    if (!supportsUnit && this.options.style === 'unit') {
+      options = {...options, style: 'unit', unit: this.options.unit, unitDisplay: this.options.unitDisplay};
     }
 
     return options;
@@ -64,6 +100,17 @@ function getCachedNumberFormatter(locale: string, options: NumberFormatOptions =
   let {numberingSystem} = options;
   if (numberingSystem && locale.indexOf('-u-nu-') === -1) {
     locale = `${locale}-u-nu-${numberingSystem}`;
+  }
+
+  if (options.style === 'unit' && !supportsUnit) {
+    let {unit, unitDisplay = 'short'} = options;
+    if (!unit) {
+      throw new Error('unit option must be provided with style: "unit"');
+    }
+    if (!UNITS[unit]?.[unitDisplay]) {
+      throw new Error(`Unsupported unit ${unit} with unitDisplay = ${unitDisplay}`);
+    }
+    options = {...options, style: 'decimal'};
   }
 
   let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
