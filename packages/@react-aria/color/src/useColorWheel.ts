@@ -15,6 +15,7 @@ import {ColorWheelState} from '@react-stately/color';
 import {focusWithoutScrolling, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
 import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
+import {useLocale} from '@react-aria/i18n';
 
 interface ColorWheelAriaProps extends AriaColorWheelProps {
   /** The outer radius of the color wheel. */
@@ -43,7 +44,8 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     isDisabled,
     step = 1,
     innerRadius,
-    outerRadius
+    outerRadius,
+    'aria-label': ariaLabel
   } = props;
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
@@ -218,7 +220,17 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     }
   }, movePropsThumb, keyboardProps);
   let {x, y} = state.getThumbPosition(thumbRadius);
-  let inputLabellingProps = useLabels(props);
+
+  // Provide a default aria-label if none is given
+  let {locale} = useLocale();
+  if (ariaLabel == null && props['aria-labelledby'] == null) {
+    ariaLabel = state.value.getChannelName('hue', locale);
+  }
+
+  let inputLabellingProps = useLabels({
+    ...props,
+    'aria-label': ariaLabel
+  });
 
   return {
     trackProps: {
@@ -266,6 +278,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
         min: '0',
         max: '360',
         step: String(step),
+        'aria-valuetext': state.value.formatChannelValue('hue', locale),
         disabled: isDisabled,
         value: `${state.value.getChannelValue('hue')}`,
         onChange: (e: ChangeEvent<HTMLInputElement>) => {

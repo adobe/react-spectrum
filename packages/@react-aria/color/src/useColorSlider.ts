@@ -42,12 +42,17 @@ interface ColorSliderAria {
  * Color sliders allow users to adjust an individual channel of a color value.
  */
 export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSliderState): ColorSliderAria {
-  let {trackRef, inputRef, orientation, channel} = props;
+  let {trackRef, inputRef, orientation, channel, 'aria-label': ariaLabel} = props;
 
-  let {direction} = useLocale();
+  let {locale, direction} = useLocale();
+
+  // Provide a default aria-label if there is no other label provided.
+  if (!props.label && !ariaLabel && !props['aria-labelledby']) {
+    ariaLabel = state.value.getChannelName(channel, locale);
+  }
 
   // @ts-ignore - ignore unused incompatible props
-  let {groupProps, trackProps, labelProps, outputProps} = useSlider(props, state, trackRef);
+  let {groupProps, trackProps, labelProps, outputProps} = useSlider({...props, 'aria-label': ariaLabel}, state, trackRef);
   let {inputProps, thumbProps} = useSliderThumb({
     index: 0,
     orientation,

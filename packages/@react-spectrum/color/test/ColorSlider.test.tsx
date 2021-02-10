@@ -54,6 +54,18 @@ describe('ColorSlider', () => {
     expect(slider).toHaveAttribute('min', '0');
     expect(slider).toHaveAttribute('max', '255');
     expect(slider).toHaveAttribute('step', '1');
+    expect(slider).toHaveAttribute('aria-valuetext', '0');
+  });
+
+  it('sets aria-valuetext to formatted value', () => {
+    let {getByRole} = render(<ColorSlider defaultValue="hsl(10, 50%, 50%)" channel="hue" />);
+    let slider = getByRole('slider');
+
+    expect(slider).toHaveAttribute('type', 'range');
+    expect(slider).toHaveAttribute('min', '0');
+    expect(slider).toHaveAttribute('max', '360');
+    expect(slider).toHaveAttribute('step', '1');
+    expect(slider).toHaveAttribute('aria-valuetext', '10°');
   });
 
   describe('labeling', () => {
