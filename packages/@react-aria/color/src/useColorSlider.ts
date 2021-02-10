@@ -29,18 +29,22 @@ interface ColorSliderAria {
   inputProps: HTMLAttributes<HTMLElement>,
   thumbProps: HTMLAttributes<HTMLElement>,
   labelProps: HTMLAttributes<HTMLElement>,
+  outputProps: HTMLAttributes<HTMLElement>,
   gradientProps: HTMLAttributes<HTMLElement>
 }
 
 export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSliderState): ColorSliderAria {
-  let {trackRef, orientation, channel} = props;
+  let {trackRef, inputRef, orientation, channel} = props;
 
   let {direction} = useLocale();
 
-  let {groupProps, trackProps, labelProps} = useSlider(props, state, trackRef);
+  let {groupProps, trackProps, labelProps, outputProps} = useSlider(props, state, trackRef);
   let {inputProps, thumbProps} = useSliderThumb({
-    ...props,
-    index: 0
+    index: 0,
+    orientation,
+    isDisabled: props.isDisabled,
+    trackRef,
+    inputRef
   }, state);
 
   let generateBackground = () => {
@@ -87,6 +91,7 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
     inputProps,
     thumbProps,
     labelProps,
+    outputProps,
     gradientProps: {
       style: {
         background: generateBackground()

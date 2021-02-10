@@ -1,0 +1,10 @@
+{
+  "hue": "色合い",
+  "saturation": "鮮やかさ",
+  "lightness": "輝度",
+  "brightness": "明るさ",
+  "red": "赤",
+  "green": "緑",
+  "blue": "青",
+  "alpha": "アルファ"
+}
