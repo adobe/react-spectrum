@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* TODO: ReadOnly */
 
 .spectrum-Stepper-button {
   background-color: var(--spectrum-actionbutton-background-color);
@@ -49,7 +48,7 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Stepper-button.spectrum-Stepper-button--isQuiet {
+.spectrum-Stepper-button.spectrum-Stepper-button--quiet {
   background-color: unset;
   &:hover {
     background-color: unset;
@@ -441,6 +440,28 @@ governing permissions and limitations under the License.
       .spectrum-Stepper-input {
         border-color: var(--spectrum-textfield-border-color-error);
         box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
+      }
+    }
+  }
+}
+
+.spectrum-Stepper.spectrum-Stepper--quiet.spectrum-Stepper--readonly {
+  .spectrum-Stepper-button.spectrum-Stepper-button--stepDown {
+    &.is-disabled {
+      border-color: var(--spectrum-textfield-quiet-border-color);
+    }
+  }
+  &:hover {
+    .spectrum-Stepper-button.spectrum-Stepper-button--stepDown {
+      &.is-disabled {
+        border-color: var(--spectrum-actionbutton-border-color-hover);
+      }
+    }
+  }
+  &.is-focused {
+    .spectrum-Stepper-button.spectrum-Stepper-button--stepDown {
+      &.is-disabled {
+        border-color: var(--spectrum-actionbutton-border-color-key-focus);
       }
     }
   }

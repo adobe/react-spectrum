@@ -118,10 +118,6 @@ governing permissions and limitations under the License.
     border-end-end-radius: var(--spectrum-stepper-border-radius-reset);
   }
 
-  .spectrum-Stepper-button {
-    border-inline-start-style: none;
-  }
-
   &.spectrum-Stepper--isMobile {
     grid-template-rows: auto;
     grid-template-columns: auto 1fr auto;

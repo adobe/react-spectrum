@@ -28,6 +28,7 @@ import {useLocale} from '@react-aria/i18n';
 import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
+import styles from "@adobe/spectrum-css-temp/components/inputgroup/vars.css";
 
 function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
@@ -35,6 +36,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
   let provider = useProvider();
   let {
     isQuiet,
+    isReadOnly,
     isDisabled,
     hideStepper
   } = props;
@@ -63,13 +65,15 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
     {
       'spectrum-InputGroup--quiet': isQuiet,
       'is-invalid': props.validationState === 'invalid',
-      'is-disabled': isDisabled
+      'is-disabled': isDisabled,
+      'is-hovered': isHovered
     },
     classNames(
       stepperStyle,
       'spectrum-Stepper',
       {
         'spectrum-Stepper--quiet': isQuiet,
+        'spectrum-Stepper--readonly': isReadOnly,
         'is-invalid': props.validationState === 'invalid',
         'spectrum-Stepper--showStepper': showStepper,
         'spectrum-Stepper--isMobile': isMobile,
@@ -79,7 +83,6 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
       }
     )
   );
-  // TODO: how to ignore a right click on the stepper buttons to prevent focus of just them
 
   return (
     <Field
@@ -146,9 +149,31 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
         style={style}
         className={className}>
         <TextFieldBase
-          UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-field')}
+          UNSAFE_className={
+            classNames(
+              stepperStyle,
+              'spectrum-Stepper-field',
+              classNames(inputgroupStyles,
+                'spectrum-InputGroup-field'
+              )
+            )
+          }
           isQuiet={isQuiet}
-          inputClassName={classNames(stepperStyle, 'spectrum-Stepper-input')}
+          inputClassName={
+            classNames(
+              stepperStyle,
+              'spectrum-Stepper-input',
+              classNames(inputgroupStyles,
+                'spectrum-InputGroup-input'
+              )
+            )
+          }
+          validationIconClassName={
+            classNames(
+              inputgroupStyles,
+              'spectrum-InputGroup-input-validationIcon'
+            )
+          }
           inputRef={inputRef}
           validationState={validationState}
           inputProps={inputProps} />
