@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorWheelProps} from '@react-types/color';
+import {AriaColorWheelProps} from '@react-types/color';
 import {ColorWheelState} from '@react-stately/color';
-import {focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
 import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 
-interface ColorWheelAriaProps extends ColorWheelProps {
+interface ColorWheelAriaProps extends AriaColorWheelProps {
   inputRef: RefObject<HTMLElement>,
   containerRef: RefObject<HTMLElement>,
   innerRadius: number,
@@ -53,7 +53,14 @@ function cartesianToAngle(x: number, y: number, radius: number): number {
 }
 
 export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState): ColorWheelAria {
-  let {inputRef, containerRef, isDisabled, step = 1, innerRadius, outerRadius} = props;
+  let {
+    inputRef,
+    containerRef,
+    isDisabled,
+    step = 1,
+    innerRadius,
+    outerRadius
+  } = props;
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
@@ -192,6 +199,8 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     }
   });
 
+  let inputLabellingProps = useLabels(props);
+
   return {
     groupProps: isDisabled ? {} : mergeProps({
       onMouseDown: (e: React.MouseEvent) => {onTrackDown(undefined, e.pageX, e.pageY);},
@@ -203,18 +212,20 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       onPointerDown: (e: React.PointerEvent) => {onThumbDown(e.pointerId);},
       onTouchStart: (e: React.TouchEvent) => {onThumbDown(e.changedTouches[0].identifier);}
     }, movePropsThumb, keyboardProps),
-    inputProps: {
-      type: 'range',
-      'aria-label': 'hue',
-      min: '0',
-      max: '360',
-      step: String(step),
-      disabled: isDisabled,
-      value: `${state.value.getChannelValue('hue')}`,
-      onChange: (e: ChangeEvent<HTMLInputElement>) => {
-        state.setHue(parseFloat(e.target.value));
+    inputProps: mergeProps(
+      inputLabellingProps,
+      {
+        type: 'range',
+        min: '0',
+        max: '360',
+        step: String(step),
+        disabled: isDisabled,
+        value: `${state.value.getChannelValue('hue')}`,
+        onChange: (e: ChangeEvent<HTMLInputElement>) => {
+          state.setHue(parseFloat(e.target.value));
+        }
       }
-    },
+    ),
     thumbPosition: angleToCartesian(state.value.getChannelValue('hue'), thumbRadius)
   };
 }

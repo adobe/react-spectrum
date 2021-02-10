@@ -79,7 +79,6 @@ describe('useColorWheel', () => {
     let slider = getByRole('slider');
 
     expect(slider).toHaveAttribute('type', 'range');
-    expect(slider).toHaveAttribute('aria-label', 'hue');
     expect(slider).toHaveAttribute('min', '0');
     expect(slider).toHaveAttribute('max', '360');
     expect(slider).toHaveAttribute('step', '1');
