@@ -1463,6 +1463,35 @@ describe('ComboBox', function () {
       expect(() => getByRole('listbox')).toThrow();
     });
 
+    it('retains selected key on blur if input value matches', function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <ComboBox label="Test" allowsCustomValue selectedKey="2" onOpenChange={onOpenChange} onSelectionChange={onSelectionChange}>
+            <Item key="1">Bulbasaur</Item>
+            <Item key="2">Squirtle</Item>
+            <Item key="3">Charmander</Item>
+          </ComboBox>
+        </Provider>
+      );
+
+      let combobox = getByRole('combobox');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+
+      act(() => {
+        userEvent.click(combobox);
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement).toBe(combobox);
+
+      act(() => {
+        combobox.blur();
+        jest.runAllTimers();
+      });
+
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
     it('clears the input field if value doesn\'t match a combobox option and no item is focused (menuTrigger=manual case)', function () {
       let {getByRole, getAllByRole} = render(
         <Provider theme={theme}>

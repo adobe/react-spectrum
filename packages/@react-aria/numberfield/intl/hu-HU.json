@@ -1,5 +1,5 @@
 {
-  "Decrement": "Csökkentés",
-  "Increment": "Növelés",
+  "decrease": "Decrease {fieldLabel}",
+  "increase": "Increase {fieldLabel}",
   "Number field": "Number field"
 }

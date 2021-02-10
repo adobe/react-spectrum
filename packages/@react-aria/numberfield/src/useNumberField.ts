@@ -26,26 +26,25 @@ import {
 import intlMessages from '../intl/*.json';
 import {isAndroid, isIOS, isIPhone, mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
-import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
 import {TextInputDOMProps} from '@react-types/shared';
 import {useFocus} from '@react-aria/interactions';
 import {
   useMessageFormatter,
   useNumberFormatter
 } from '@react-aria/i18n';
+import {useSpinButton} from '@react-aria/spinbutton';
 import {useTextField} from '@react-aria/textfield';
 
-interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
-  inputRef?:  RefObject<HTMLInputElement>,
-  decrementAriaLabel?: string,
-  incrementAriaLabel?: string
-}
-
 interface NumberFieldAria {
+  /** Props for the label element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
-  inputFieldProps: InputHTMLAttributes<HTMLInputElement>,
-  numberFieldProps: HTMLAttributes<HTMLDivElement>,
+  /** Props for the group wrapper around the input and stepper buttons. */
+  groupProps: HTMLAttributes<HTMLElement>,
+  /** Props for the input element. */
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Props for the increment button, to be passed to [useButton](useButton.html). */
   incrementButtonProps: AriaButtonProps,
+  /** Props for the decrement button, to be passed to [useButton](useButton.html). */
   decrementButtonProps: AriaButtonProps
 }
 
@@ -56,8 +55,13 @@ function supportsNativeBeforeInputEvent() {
     typeof InputEvent.prototype.getTargetRanges === 'function';
 }
 
-export function useNumberField(props: NumberFieldProps, state: NumberFieldState): NumberFieldAria {
+/**
+ * Provides the behavior and accessibility implementation for a number field component.
+ * Number fields allow users to enter a number, and increment or decrement the value using stepper buttons.
+ */
+export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldState, inputRef: RefObject<HTMLInputElement>): NumberFieldAria {
   let {
+    id,
     decrementAriaLabel,
     incrementAriaLabel,
     isDisabled,
@@ -68,8 +72,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     autoFocus,
     validationState,
     label,
-    formatOptions,
-    inputRef
+    formatOptions
   } = props;
 
   let {
@@ -78,21 +81,21 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     decrement,
     decrementToMin,
     numberValue,
-    commitInputValue
+    commit
   } = state;
 
   const formatMessage = useMessageFormatter(intlMessages);
 
-  const inputId = useId();
+  let inputId = useId(id);
 
   let {focusProps} = useFocus({
     onBlur: () => {
       // Set input value to normalized valid value
-      commitInputValue();
+      commit();
     }
   });
 
-  const {
+  let {
     spinButtonProps,
     incrementButtonProps: incButtonProps,
     decrementButtonProps: decButtonProps
@@ -112,44 +115,6 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     }
   );
 
-  let onButtonPressStart = (e) => {
-    // If focus is already on the input, keep it there so we don't hide the
-    // software keyboard when tapping the increment/decrement buttons.
-    if (document.activeElement === inputRef.current) {
-      return;
-    }
-
-    // Otherwise, when using a mouse, move focus to the input.
-    // On touch, or with a screen reader, focus the button so that the software
-    // keyboard does not appear and the screen reader cursor is not moved off the button.
-    if (e.pointerType === 'mouse') {
-      inputRef.current.focus();
-    } else {
-      e.target.focus();
-    }
-  };
-
-  incrementAriaLabel = incrementAriaLabel || formatMessage('Increment');
-  decrementAriaLabel = decrementAriaLabel || formatMessage('Decrement');
-
-  const incrementButtonProps: AriaButtonProps = mergeProps(incButtonProps, {
-    'aria-label': incrementAriaLabel,
-    'aria-controls': inputId,
-    excludeFromTabOrder: true,
-    preventFocusOnPress: true,
-    isDisabled: !state.canIncrement,
-    onPressStart: onButtonPressStart
-  });
-
-  const decrementButtonProps: AriaButtonProps = mergeProps(decButtonProps, {
-    'aria-label': decrementAriaLabel,
-    'aria-controls': inputId,
-    excludeFromTabOrder: true,
-    preventFocusOnPress: true,
-    isDisabled: !state.canDecrement,
-    onPressStart: onButtonPressStart
-  });
-
   let onWheel = useCallback((e) => {
     // If the input isn't supposed to receive input, do nothing.
     // If the ctrlKey is pressed, this is a zoom event, do nothing.
@@ -162,7 +127,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
 
     if (e.deltaY > 0) {
       increment();
-    } else {
+    } else if (e.deltaY < 0) {
       decrement();
     }
   }, [isReadOnly, isDisabled, decrement, increment]);
@@ -285,54 +250,53 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
   };
 
   let compositionStartState = useRef(null);
-  let {labelProps, inputProps} = useTextField(
-    {
-      label,
-      autoFocus,
-      isDisabled,
-      isReadOnly,
-      isRequired,
-      validationState,
-      value: state.inputValue,
-      autoComplete: 'off',
-      'aria-label': props['aria-label'] || null,
-      'aria-labelledby': props['aria-labelledby'] || null,
-      id: inputId,
-      type: 'text', // Can't use type="number" because then we can't have things like $ in the field.
-      inputMode,
-      onChange,
-      onBeforeInput,
-      onCompositionStart() {
-        // Chrome does not implement Input Events Level 2, which specifies the insertFromComposition
-        // and deleteByComposition inputType values for the beforeinput event. These are meant to occur
-        // at the end of a composition (e.g. Pinyin IME, Android auto correct, etc.), and crucially, are
-        // cancelable. The insertCompositionText and deleteCompositionText input types are not cancelable,
-        // nor would we want to cancel them because the input from the user is incomplete at that point.
-        // In Safari, insertFromComposition/deleteFromComposition will fire, however, allowing us to cancel
-        // the final composition result if it is invalid. As a fallback for Chrome and Firefox, which either
-        // don't support Input Events Level 2, or beforeinput at all, we store the state of the input when
-        // the compositionstart event fires, and undo the changes in compositionend (below) if it is invalid.
-        // Unfortunately, this messes up the undo/redo stack, but until insertFromComposition/deleteByComposition
-        // are implemented, there is no other way to prevent composed input.
-        // See https://bugs.chromium.org/p/chromium/issues/detail?id=1022204
-        let {value, selectionStart, selectionEnd} = inputRef.current;
-        compositionStartState.current = {value, selectionStart, selectionEnd};
-      },
-      onCompositionEnd() {
-        if (!state.validate(inputRef.current.value)) {
-          // Restore the input value in the DOM immediately so we can synchronously update the selection position.
-          // But also update the value in React state as well so it is correct for future updates.
-          let {value, selectionStart, selectionEnd} = compositionStartState.current;
-          inputRef.current.value = value;
-          inputRef.current.setSelectionRange(selectionStart, selectionEnd);
-          state.setInputValue(value);
-        }
+  let {labelProps, inputProps: textFieldProps} = useTextField({
+    label,
+    autoFocus,
+    isDisabled,
+    isReadOnly,
+    isRequired,
+    validationState,
+    value: state.inputValue,
+    autoComplete: 'off',
+    'aria-label': props['aria-label'] || null,
+    'aria-labelledby': props['aria-labelledby'] || null,
+    id: inputId,
+    type: 'text', // Can't use type="number" because then we can't have things like $ in the field.
+    inputMode,
+    onChange,
+    onBeforeInput,
+    onCompositionStart() {
+      // Chrome does not implement Input Events Level 2, which specifies the insertFromComposition
+      // and deleteByComposition inputType values for the beforeinput event. These are meant to occur
+      // at the end of a composition (e.g. Pinyin IME, Android auto correct, etc.), and crucially, are
+      // cancelable. The insertCompositionText and deleteCompositionText input types are not cancelable,
+      // nor would we want to cancel them because the input from the user is incomplete at that point.
+      // In Safari, insertFromComposition/deleteFromComposition will fire, however, allowing us to cancel
+      // the final composition result if it is invalid. As a fallback for Chrome and Firefox, which either
+      // don't support Input Events Level 2, or beforeinput at all, we store the state of the input when
+      // the compositionstart event fires, and undo the changes in compositionend (below) if it is invalid.
+      // Unfortunately, this messes up the undo/redo stack, but until insertFromComposition/deleteByComposition
+      // are implemented, there is no other way to prevent composed input.
+      // See https://bugs.chromium.org/p/chromium/issues/detail?id=1022204
+      let {value, selectionStart, selectionEnd} = inputRef.current;
+      compositionStartState.current = {value, selectionStart, selectionEnd};
+    },
+    onCompositionEnd() {
+      if (!state.validate(inputRef.current.value)) {
+        // Restore the input value in the DOM immediately so we can synchronously update the selection position.
+        // But also update the value in React state as well so it is correct for future updates.
+        let {value, selectionStart, selectionEnd} = compositionStartState.current;
+        inputRef.current.value = value;
+        inputRef.current.setSelectionRange(selectionStart, selectionEnd);
+        state.setInputValue(value);
       }
-    }, inputRef);
+    }
+  }, inputRef);
 
-  const inputFieldProps = mergeProps(
+  let inputProps = mergeProps(
     spinButtonProps,
-    inputProps,
+    textFieldProps,
     focusProps,
     {
       // override the spinbutton role, we can't focus a spin button with VO
@@ -347,14 +311,73 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
       spellCheck: 'false'
     }
   );
+
+  let onButtonPressStart = (e) => {
+    // If focus is already on the input, keep it there so we don't hide the
+    // software keyboard when tapping the increment/decrement buttons.
+    if (document.activeElement === inputRef.current) {
+      return;
+    }
+
+    // Otherwise, when using a mouse, move focus to the input.
+    // On touch, or with a screen reader, focus the button so that the software
+    // keyboard does not appear and the screen reader cursor is not moved off the button.
+    if (e.pointerType === 'mouse') {
+      inputRef.current.focus();
+    } else {
+      e.target.focus();
+    }
+  };
+
+  // Determine the label for the increment and decrement buttons. There are 4 cases:
+  //
+  // 1. With a visible label that is a string: aria-label: `Increase ${props.label}`
+  // 2. With a visible label that is JSX: aria-label: 'Increase', aria-labelledby: '${incrementId} ${labelId}'
+  // 3. With an aria-label: aria-label: `Increase ${props['aria-label']}`
+  // 4. With an aria-labelledby: aria-label: 'Increase', aria-labelledby: `${incrementId} ${props['aria-labelledby']}`
+  //
+  // (1) and (2) could possibly be combined and both use aria-labelledby. However, placing the label in
+  // the aria-label string rather than using aria-labelledby gives more flexibility to translators to change
+  // the order or add additional words around the label if needed.
+  let fieldLabel = props['aria-label'] || (typeof props.label === 'string' ? props.label : '');
+  let ariaLabelledby: string;
+  if (!fieldLabel) {
+    ariaLabelledby = props.label != null ? labelProps.id : props['aria-labelledby'];
+  }
+
+  let incrementId = useId();
+  let decrementId = useId();
+
+  let incrementButtonProps: AriaButtonProps = mergeProps(incButtonProps, {
+    'aria-label': incrementAriaLabel || formatMessage('increase', {fieldLabel}).trim(),
+    id: ariaLabelledby && !incrementAriaLabel ? incrementId : null,
+    'aria-labelledby': ariaLabelledby && !incrementAriaLabel ? `${incrementId} ${ariaLabelledby}` : null,
+    'aria-controls': inputId,
+    excludeFromTabOrder: true,
+    preventFocusOnPress: true,
+    isDisabled: !state.canIncrement,
+    onPressStart: onButtonPressStart
+  });
+
+  let decrementButtonProps: AriaButtonProps = mergeProps(decButtonProps, {
+    'aria-label': decrementAriaLabel || formatMessage('decrease', {fieldLabel}).trim(),
+    id: ariaLabelledby && !decrementAriaLabel ? decrementId : null,
+    'aria-labelledby': ariaLabelledby && !decrementAriaLabel ? `${decrementId} ${ariaLabelledby}` : null,
+    'aria-controls': inputId,
+    excludeFromTabOrder: true,
+    preventFocusOnPress: true,
+    isDisabled: !state.canDecrement,
+    onPressStart: onButtonPressStart
+  });
+
   return {
-    numberFieldProps: {
+    groupProps: {
       role: 'group',
       'aria-disabled': isDisabled,
       'aria-invalid': validationState === 'invalid' ? 'true' : undefined
     },
     labelProps,
-    inputFieldProps,
+    inputProps,
     incrementButtonProps,
     decrementButtonProps
   };
