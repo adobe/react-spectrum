@@ -27,7 +27,6 @@ import {FieldButton} from '@react-spectrum/button';
 import {FocusRing} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {MobileComboBox} from './MobileComboBox';
 import {Placement} from '@react-types/overlays';
@@ -69,7 +68,6 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     menuTrigger = 'input',
     shouldFlip = true,
     direction = 'bottom',
-    label,
     isQuiet,
     loadingState,
     onLoadMore
@@ -141,17 +139,9 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     minWidth: isQuiet ? `calc(${menuWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : menuWidth
   };
 
-  let labelClassName;
-  if (label && isQuiet) {
-    labelClassName = classNames(
-      labelStyles,
-      'spectrum-FieldLabel--quiet'
-    );
-  }
-
   return (
     <>
-      <Field {...props} labelProps={labelProps} labelClassName={labelClassName} ref={domRef}>
+      <Field {...props} labelProps={labelProps} ref={domRef}>
         <ComboBoxInput
           {...props}
           isOpen={state.isOpen}

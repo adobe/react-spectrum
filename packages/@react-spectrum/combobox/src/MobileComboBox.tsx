@@ -85,14 +85,6 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     }
   };
 
-  let labelClassName;
-  if (props.label && props.isQuiet) {
-    labelClassName = classNames(
-      labelStyles,
-      'spectrum-FieldLabel--quiet'
-    );
-  }
-
   let loadingCircle = (
     <ProgressCircle
       aria-label={formatMessage('loading')}
@@ -115,8 +107,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
         labelProps={labelProps}
         elementType="span"
         ref={domRef}
-        includeNecessityIndicatorInAccessibilityName
-        labelClassName={labelClassName}>
+        includeNecessityIndicatorInAccessibilityName>
         <ComboBoxButton
           {...mergeProps(triggerProps, fieldProps)}
           ref={buttonRef}
