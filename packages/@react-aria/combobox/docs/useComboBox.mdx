@@ -170,39 +170,41 @@ function ComboBox(props) {
   let {buttonProps} = useButton(triggerProps, triggerRef);
 
   return (
-    <div style={{position: 'relative', display: 'inline-block'}}>
-      <div {...labelProps}>{props.label}</div>
-      <input
-        {...inputProps}
-        ref={inputRef}
-        style={{
-          height: 22,
-          boxSizing: 'border-box',
-          marginRight: 0
-        }} />
-      <button
-        {...buttonProps}
-        ref={triggerRef}
-        style={{
-          height: 22,
-          marginLeft: 0
-        }}>
-        <span
-          aria-hidden="true"
-          style={{padding: '0 2px'}}>
-          ▼
-        </span>
-      </button>
-      {state.isOpen &&
-        <ListBoxPopup
-          {...listBoxProps}
-          // Use virtual focus to get aria-activedescendant tracking and
-          // ensure focus doesn't leave the input field
-          shouldUseVirtualFocus
-          listBoxRef={listBoxRef}
-          popoverRef={popoverRef}
-          state={state} />
-      }
+    <div style={{display: 'inline-flex', flexDirection: 'column'}}>
+      <label {...labelProps}>{props.label}</label>
+      <div style={{position: 'relative', display: 'inline-block'}}>
+        <input
+          {...inputProps}
+          ref={inputRef}
+          style={{
+            height: 22,
+            boxSizing: 'border-box',
+            marginRight: 0
+          }} />
+        <button
+          {...buttonProps}
+          ref={triggerRef}
+          style={{
+            height: 22,
+            marginLeft: 0
+          }}>
+          <span
+            aria-hidden="true"
+            style={{padding: '0 2px'}}>
+            ▼
+          </span>
+        </button>
+        {state.isOpen &&
+          <ListBoxPopup
+            {...listBoxProps}
+            // Use virtual focus to get aria-activedescendant tracking and
+            // ensure focus doesn't leave the input field
+            shouldUseVirtualFocus
+            listBoxRef={listBoxRef}
+            popoverRef={popoverRef}
+            state={state} />
+        }
+      </div>
     </div>
   );
 }
@@ -401,10 +403,10 @@ any value within the field.
 
 By default, `useComboBoxState` uses the filter function passed to the `defaultFilter` prop (in the above example, a
 "contains" function from `useFilter`). The filter function can be overridden by users of the `ComboBox` component by
-using the `items` prop to control the filtered list. When `items` is provided rather than `defaultItems`, the `useComboBoxState`
+using the `items` prop to control the filtered list. When `items` is provided rather than `defaultItems`, `useComboBoxState`
 does no filtering of its own.
 
-The following example, makes the `inputValue` controlled, and updates the filtered list that is passed to the `items`
+The following example makes the `inputValue` controlled, and updates the filtered list that is passed to the `items`
 prop when the input changes value.
 
 ```tsx example
@@ -526,7 +528,9 @@ function ControlledComboBox() {
       {item => <Item>{item.name}</Item>}
     </ComboBox>
   )
-};
+}
+
+<ControlledComboBox />
 ```
 
 ### Menu trigger behavior
