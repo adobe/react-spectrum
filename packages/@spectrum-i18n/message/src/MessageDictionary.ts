@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import IntlMessageFormat from 'intl-messageformat';
-
 export type LocalizedStrings = {
   [lang: string]: {
     [key: string]: string
@@ -45,36 +43,6 @@ export class MessageDictionary {
     }
 
     return string;
-  }
-}
-
-/**
- * Formats ICU Message strings to create localized strings from a MessageDictionary.
- */
-export class MessageFormatter {
-  private locale: string;
-  private messages: MessageDictionary;
-  private cache: {[key: string]: IntlMessageFormat};
-
-  constructor(locale: string, messages: MessageDictionary) {
-    this.locale = locale;
-    this.messages = messages;
-    this.cache = {};
-  }
-
-  format(key: string, variables: object) {
-    let message = this.cache[key];
-    if (!message) {
-      let msg = this.messages.getStringForLocale(key, this.locale);
-      if (!msg) {
-        throw new Error(`Could not find intl message ${key} in ${this.locale} locale`);
-      }
-
-      message = new IntlMessageFormat(msg, this.locale);
-      this.cache[key] = message;
-    }
-
-    return message.format(variables);
   }
 }
 

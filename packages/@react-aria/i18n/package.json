@@ -21,7 +21,7 @@
     "@react-aria/ssr": "^3.0.1",
     "@react-aria/utils": "^3.4.0",
     "@react-types/shared": "^3.3.0",
-    "@spectrum-i18n/message-formatter": "3.0.0-alpha.1",
+    "@spectrum-i18n/message": "3.0.0-alpha.1",
     "@spectrum-i18n/number": "3.0.0-alpha.1"
   },
   "peerDependencies": {

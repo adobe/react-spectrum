@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {LocalizedStrings, MessageDictionary, MessageFormatter} from '@spectrum-i18n/message-formatter';
+import {LocalizedStrings, MessageDictionary, MessageFormatter} from '@spectrum-i18n/message';
 import {useCallback, useMemo} from 'react';
 import {useLocale} from './context';
 

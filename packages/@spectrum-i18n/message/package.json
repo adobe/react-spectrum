@@ -1,5 +1,5 @@
 {
-  "name": "@spectrum-i18n/message-formatter",
+  "name": "@spectrum-i18n/message",
   "version": "3.0.0-alpha.1",
   "private": true,
   "description": "Spectrum UI components in React",
