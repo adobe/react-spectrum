@@ -29,18 +29,22 @@ interface ColorSliderAria {
   inputProps: HTMLAttributes<HTMLElement>,
   thumbProps: HTMLAttributes<HTMLElement>,
   labelProps: HTMLAttributes<HTMLElement>,
+  outputProps: HTMLAttributes<HTMLElement>,
   gradientProps: HTMLAttributes<HTMLElement>
 }
 
 export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSliderState): ColorSliderAria {
-  let {trackRef, orientation, channel} = props;
+  let {trackRef, inputRef, orientation, channel} = props;
 
   let {direction} = useLocale();
 
-  let {groupProps, trackProps, labelProps} = useSlider(props, state, trackRef);
+  let {groupProps, trackProps, labelProps, outputProps} = useSlider(props, state, trackRef);
   let {inputProps, thumbProps} = useSliderThumb({
-    ...props,
-    index: 0
+    index: 0,
+    orientation,
+    isDisabled: props.isDisabled,
+    trackRef,
+    inputRef
   }, state);
 
   let generateBackground = () => {
@@ -56,8 +60,17 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
     switch (channel) {
       case 'hue':
         return `linear-gradient(to ${to}, rgb(255, 0, 0) 0%, rgb(255, 255, 0) 17%, rgb(0, 255, 0) 33%, rgb(0, 255, 255) 50%, rgb(0, 0, 255) 67%, rgb(255, 0, 255) 83%, rgb(255, 0, 0) 100%)`;
+      case 'lightness': {
+        // We have to add an extra color stop in the middle so that the hue shows up at all.
+        // Otherwise it will always just be black to white.
+        let min = state.getThumbMinValue(0);
+        let max = state.getThumbMaxValue(0);
+        let start = value.withChannelValue(channel, min).toString('css');
+        let middle = value.withChannelValue(channel, (max - min) / 2).toString('css');
+        let end = value.withChannelValue(channel, max).toString('css');
+        return `linear-gradient(to ${to}, ${start}, ${middle}, ${end})`;
+      }
       case 'saturation':
-      case 'lightness':
       case 'brightness':
       case 'red':
       case 'green':
@@ -78,6 +91,7 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
     inputProps,
     thumbProps,
     labelProps,
+    outputProps,
     gradientProps: {
       style: {
         background: generateBackground()

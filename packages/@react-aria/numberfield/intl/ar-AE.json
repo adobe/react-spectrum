@@ -1,6 +1,5 @@
 {
-  "Decrement": "نقصان",
-  "Enter a number": "أدخل رقماً",
-  "Increment": "زيادة",
-  "Spin button number field": "Spin button number field"
+  "decrease": "Decrease {fieldLabel}",
+  "increase": "Increase {fieldLabel}",
+  "Number field": "Number field"
 }
