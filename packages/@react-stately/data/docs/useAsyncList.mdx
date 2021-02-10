@@ -177,36 +177,24 @@ let list = useAsyncList({
 ## Filtering
 
 There are many instances where your list of data may need to be filtered, such as during user lookup or query searches.
-For server side filtering, this can be implemented by leveraging the `filterText` passed to the `load` as an API parameter.
-`useAsyncList` returns the state variable `filterText` and its setter `setFilterText`, allowing you to update the
-`filterText` used within `load` in response to any updates within your component.
+For server side filtering, this can be implemented by using the `filterText` option passed to the `load` function.
+The `setFilterText` method updates the current `filterText` value and triggers the `load` function. This allows
+you to reload the results with the new filter text.
 
 ### Server side filtering
 
 The example below shows how server side filtering could be implemented by using `filterText` in the `load` function and passing a parameter to the API.
-The input text of the ComboBox is controlled by providing `list.filterText` as the ComboBox's `inputValue` prop. By passing `list.setFilterText` to
-the ComboBox via the `onInputChange` prop, the `filterText` within `load` is updated whenever the end user modifies the ComboBox's
-text, ensuring that the list of items is properly updated. Finally, the state of the list (`loading`, `loadingMore`, `filtering`, etc) is
-communicated to the ComboBox through `list.state`, allowing the ComboBox to display the appropriate visual feedback to an end user.
+The input value of the ComboBox is controlled by providing `list.filterText` as the ComboBox's `inputValue` prop, and `list.setFilterText` as the `onInputChange` prop.
+The `loadingState` prop is also used to show the appropriate loading indicator depending on the state of the list.
 
 ```tsx
 let list = useAsyncList({
-  async load({signal, cursor, filterText}) {
-    if (cursor) {
-      cursor = cursor.replace(/^http:\/\//i, 'https://');
-    }
-
-    // If no cursor is available, then we're loading the first page,
-    // filtering the results returned via a query string that
-    // mirrors the ComboBox input text.
-    // Otherwise, the cursor is the next URL to load,
-    // as returned from the previous page.
-    let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+  async load({signal, filterText}) {
+    let res = await fetch(`https://swapi.dev/api/people/?search=${filterText}`, {signal});
     let json = await res.json();
 
     return {
-      items: json.results,
-      cursor: json.next
+      items: json.results
     };
   }
 });
@@ -216,8 +204,7 @@ let list = useAsyncList({
   items={list.items}
   inputValue={list.filterText}
   onInputChange={list.setFilterText}
-  loadingState={list.state}
-  onLoadMore={list.loadMore}>
+  loadingState={list.state}>
   {item => <Item key={item.name}>{item.name}</Item>}
 </ComboBox>
 ```
