@@ -60,7 +60,7 @@ describe('ColorWheel', () => {
     let slider = getByRole('slider');
 
     expect(slider).toHaveAttribute('type', 'range');
-    expect(slider).toHaveAttribute('aria-label', 'hue');
+    expect(slider).toHaveAttribute('aria-label', 'Hue');
     expect(slider).toHaveAttribute('min', '0');
     expect(slider).toHaveAttribute('max', '360');
     expect(slider).toHaveAttribute('step', '1');
@@ -101,6 +101,24 @@ describe('ColorWheel', () => {
     expect(document.activeElement).toBe(buttonB);
     userEvent.tab({shift: true});
     expect(document.activeElement).toBe(buttonA);
+  });
+
+  describe('labelling', () => {
+    it('should support a custom aria-label', () => {
+      let {getByRole} = render(<ColorWheel aria-label="Color hue" />);
+      let slider = getByRole('slider');
+
+      expect(slider).toHaveAttribute('aria-label', 'Color hue');
+      expect(slider).not.toHaveAttribute('aria-labelledby');
+    });
+
+    it('should support a custom aria-labelledby', () => {
+      let {getByRole} = render(<ColorWheel aria-labelledby="label-id" />);
+      let slider = getByRole('slider');
+
+      expect(slider).not.toHaveAttribute('aria-label');
+      expect(slider).toHaveAttribute('aria-labelledby', 'label-id');
+    });
   });
 
   describe('keyboard events', () => {
