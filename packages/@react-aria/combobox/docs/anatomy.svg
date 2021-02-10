@@ -1,0 +1,102 @@
+<svg style="max-height: 306px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="70 0 485 306">
+  <defs>
+    <clipPath id="a">
+      <rect width="5" height="30.5" fill="none" />
+    </clipPath>
+  </defs>
+  <g transform="translate(-193 -34)">
+    <g transform="translate(-928 -484)">
+      <g transform="translate(1172 587)" fill="var(--anatomy-gray-50)" stroke="#2680eb" stroke-width="1">
+        <path d="M5,0H186a0,0,0,0,1,0,0V40a0,0,0,0,1,0,0H5a5,5,0,0,1-5-5V5A5,5,0,0,1,5,0Z" stroke="none" />
+        <path d="M5,.5H185a.5.5,0,0,1,.5.5V39a.5.5,0,0,1-.5.5H5A4.5,4.5,0,0,1,.5,35V5A4.5,4.5,0,0,1,5,.5Z" fill="none" />
+      </g>
+      <g transform="translate(1352 587)" fill="var(--anatomy-gray-200)">
+        <path d="M 35 39.25 L 0.75 39.25 L 0.75 0.75 L 35 0.75 C 37.34346008300781 0.75 39.25 2.656539916992188 39.25 5 L 39.25 35 C 39.25 37.34346008300781 37.34346008300781 39.25 35 39.25 Z" stroke="none" />
+        <path d="M 1.5 1.5 L 1.5 38.5 L 35 38.5 C 36.92990875244141 38.5 38.5 36.92990875244141 38.5 35 L 38.5 5 C 38.5 3.070091247558594 36.92990875244141 1.5 35 1.5 L 1.5 1.5 M 0 0 L 35 0 C 37.76142120361328 0 40 2.238571166992188 40 5 L 40 35 C 40 37.76142120361328 37.76142120361328 40 35 40 L 0 40 L 0 0 Z" stroke="none" fill="var(--anatomy-gray-500)" />
+      </g>
+      <path d="M11,2a1,1,0,0,0-1.71-.71L6,4.59,2.71,1.29A1,1,0,1,0,1.29,2.71l4,4a1,1,0,0,0,1.41,0l4-4A1,1,0,0,0,11,2Z" transform="translate(1366.004 603.006)" fill="var(--anatomy-gray-600)" />
+      <g transform="translate(1172 587)" fill="none">
+        <path d="M5,0H215a5,5,0,0,1,5,5V35a5,5,0,0,1-5,5H5a5,5,0,0,1-5-5V5A5,5,0,0,1,5,0Z" stroke="none" />
+        <path d="M 5 1.5 C 3.070083618164062 1.5 1.5 3.070087432861328 1.5 5 L 1.5 35 C 1.5 36.92991256713867 3.070083618164062 38.5 5 38.5 L 215 38.5 C 216.9299163818359 38.5 218.5 36.92991256713867 218.5 35 L 218.5 5 C 218.5 3.070087432861328 216.9299163818359 1.5 215 1.5 L 5 1.5 M 5 0 L 215 0 C 217.7614135742188 0 220 2.23858642578125 220 5 L 220 35 C 220 37.76141357421875 217.7614135742188 40 215 40 L 5 40 C 2.238555908203125 40 0 37.76141357421875 0 35 L 0 5 C 0 2.23858642578125 2.238555908203125 0 5 0 Z" stroke="none" fill="var(--anatomy-gray-500)" />
+      </g>
+    </g>
+    <text transform="translate(244 93)" fill="var(--anatomy-gray-600)" font-size="15" font-family="Adobe-Clean">
+      <tspan x="0" y="0">Label</tspan>
+    </text>
+    <g transform="translate(248 51.5)" clip-path="url(#a)">
+      <circle cx="2.5" cy="2.5" r="2.5" transform="translate(0 25.5)" fill="var(--anatomy-gray-500)" />
+      <line y1="28" transform="translate(2.5)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1" />
+    </g>
+    <g transform="translate(354 82.5)" clip-path="url(#a)">
+      <circle cx="2.5" cy="2.5" r="2.5" transform="translate(0 25.5)" fill="var(--anatomy-gray-500)" />
+      <line y1="28" transform="translate(2.5)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1" />
+    </g>
+    <g transform="translate(437 161.5) rotate(180)" clip-path="url(#a)">
+      <circle cx="2.5" cy="2.5" r="2.5" transform="translate(0 25.5)" fill="var(--anatomy-gray-500)" />
+      <line y1="28" transform="translate(2.5)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1" />
+    </g>
+    <text transform="translate(237 47)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <tspan x="0" y="0">Label</tspan>
+    </text>
+    <text transform="translate(356 78)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <tspan x="-13.149" y="0">Input</tspan>
+    </text>
+    <text transform="translate(435 176)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <tspan x="-16.744" y="0">Button</tspan>
+    </text>
+    <text transform="translate(528 93)" fill="var(--anatomy-gray-600)" font-size="15" font-family="Adobe-Clean">
+      <tspan x="0" y="0">Label</tspan>
+    </text>
+    <g transform="translate(528 151)" fill="var(--anatomy-gray-50)">
+      <path d="M 215 153.25 L 5 153.25 C 2.656555652618408 153.25 0.75 151.3434448242188 0.75 149 L 0.75 5 C 0.75 2.656555652618408 2.656555652618408 0.75 5 0.75 L 215 0.75 C 217.3434448242188 0.75 219.25 2.656555652618408 219.25 5 L 219.25 149 C 219.25 151.3434448242188 217.3434448242188 153.25 215 153.25 Z" stroke="none" />
+      <path d="M 5 1.5 C 3.070083618164062 1.5 1.5 3.070083618164062 1.5 5 L 1.5 149 C 1.5 150.9299163818359 3.070083618164062 152.5 5 152.5 L 215 152.5 C 216.9299163818359 152.5 218.5 150.9299163818359 218.5 149 L 218.5 5 C 218.5 3.070083618164062 216.9299163818359 1.5 215 1.5 L 5 1.5 M 5 0 L 215 0 C 217.7614135742188 0 220 2.238555908203125 220 5 L 220 149 C 220 151.7614135742188 217.7614135742188 154 215 154 L 5 154 C 2.238555908203125 154 0 151.7614135742188 0 149 L 0 5 C 0 2.238555908203125 2.238555908203125 0 5 0 Z" stroke="none" fill="var(--anatomy-gray-500)" />
+    </g>
+    <g transform="translate(398 -60)">
+      <text transform="translate(145 245)" fill="var(--anatomy-gray-800)" font-size="17" font-family="Adobe-Clean">
+        <tspan x="0" y="0">Option one</tspan>
+      </text>
+      <rect width="220" height="48" transform="translate(130 216)" fill="none" />
+    </g>
+    <g transform="translate(398 -12)">
+      <text transform="translate(145 245)" fill="var(--anatomy-gray-800)" font-size="17" font-family="Adobe-Clean">
+        <tspan x="0" y="0">Option two</tspan>
+      </text>
+      <rect width="220" height="48" transform="translate(130 216)" fill="none" />
+    </g>
+    <g transform="translate(398 36)">
+      <text transform="translate(145 245)" fill="var(--anatomy-gray-800)" font-size="17" font-family="Adobe-Clean">
+        <tspan x="0" y="0">Option three</tspan>
+      </text>
+      <rect width="220" height="48" transform="translate(130 216)" fill="none" />
+    </g>
+    <g transform="translate(-644 -484)">
+      <g transform="translate(1172 587)" fill="var(--anatomy-gray-50)" stroke-width="1">
+        <path d="M5,0H186a0,0,0,0,1,0,0V40a0,0,0,0,1,0,0H5a5,5,0,0,1-5-5V5A5,5,0,0,1,5,0Z" stroke="none" />
+      </g>
+      <text transform="translate(1184 612)" fill="var(--anatomy-gray-700)" font-size="17" font-family="Adobe-Clean">
+        <tspan x="0" y="0">Op</tspan>
+      </text>
+      <line transform="translate(1184 612)" x1="24" y1="-16" x2="24" y2="6" stroke="var(--anatomy-gray-600)" />
+      <g transform="translate(1352 587)" fill="var(--anatomy-gray-200)">
+        <path d="M 35 39.25 L 0.75 39.25 L 0.75 0.75 L 35 0.75 C 37.34346008300781 0.75 39.25 2.656539916992188 39.25 5 L 39.25 35 C 39.25 37.34346008300781 37.34346008300781 39.25 35 39.25 Z" stroke="none" />
+        <path d="M 1.5 1.5 L 1.5 38.5 L 35 38.5 C 36.92990875244141 38.5 38.5 36.92990875244141 38.5 35 L 38.5 5 C 38.5 3.070091247558594 36.92990875244141 1.5 35 1.5 L 1.5 1.5 M 0 0 L 35 0 C 37.76142120361328 0 40 2.238571166992188 40 5 L 40 35 C 40 37.76142120361328 37.76142120361328 40 35 40 L 0 40 L 0 0 Z" stroke="none" fill="var(--anatomy-gray-500)" />
+      </g>
+      <path d="M11,2a1,1,0,0,0-1.71-.71L6,4.59,2.71,1.29A1,1,0,1,0,1.29,2.71l4,4a1,1,0,0,0,1.41,0l4-4A1,1,0,0,0,11,2Z" transform="translate(1366.004 603.006)" fill="var(--anatomy-gray-600)" />
+      <g transform="translate(1172 587)" fill="none">
+        <path d="M5,0H215a5,5,0,0,1,5,5V35a5,5,0,0,1-5,5H5a5,5,0,0,1-5-5V5A5,5,0,0,1,5,0Z" stroke="none" />
+        <path d="M 5 1.5 C 3.070083618164062 1.5 1.5 3.070087432861328 1.5 5 L 1.5 35 C 1.5 36.92991256713867 3.070083618164062 38.5 5 38.5 L 215 38.5 C 216.9299163818359 38.5 218.5 36.92991256713867 218.5 35 L 218.5 5 C 218.5 3.070087432861328 216.9299163818359 1.5 215 1.5 L 5 1.5 M 5 0 L 215 0 C 217.7614135742188 0 220 2.23858642578125 220 5 L 220 35 C 220 37.76141357421875 217.7614135742188 40 215 40 L 5 40 C 2.238555908203125 40 0 37.76141357421875 0 35 L 0 5 C 0 2.23858642578125 2.238555908203125 0 5 0 Z" stroke="none" fill="var(--anatomy-gray-500)" />
+      </g>
+    </g>
+    <text transform="translate(695 337)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <tspan x="-19.474" y="0">List box</tspan>
+    </text>
+    <g transform="translate(697 324.5) rotate(180)" clip-path="url(#a)">
+      <circle cx="2.5" cy="2.5" r="2.5" transform="translate(0 25.5)" fill="var(--anatomy-gray-500)" />
+      <line y1="28" transform="translate(2.5)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1" />
+    </g>
+    <text transform="translate(256 128)" fill="var(--anatomy-gray-700)" font-size="17" font-family="Adobe-Clean">
+      <tspan x="0" y="0">Op</tspan>
+    </text>
+    <line transform="translate(256 128)" x1="24" y1="-16" x2="24" y2="6" stroke="var(--anatomy-gray-600)" />
+  </g>
+</svg>

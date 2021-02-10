@@ -28,33 +28,33 @@ import {useMessageFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
 export interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
-  /** The ref for the ComboBox menu trigger button.  */
-  buttonRef: RefObject<HTMLElement>,
-  /** The ref for the ComboBox input element. */
+  /** The ref for the input element. */
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
-  /** The ref for the ComboBox menu popover. */
+  /** The ref for the list box popover. */
   popoverRef: RefObject<HTMLDivElement>,
-  /** The ref for the ComboBox menu. */
+  /** The ref for the list box. */
   listBoxRef: RefObject<HTMLElement>,
-  /** An optional keyboard delegate implementation for ComboBox, to override the default. */
+  /** The ref for the list box popup trigger button.  */
+  buttonRef: RefObject<HTMLElement>,
+  /** An optional keyboard delegate implementation, to override the default. */
   keyboardDelegate?: KeyboardDelegate
 }
 
 interface ComboBoxAria {
-  /** Props for the ComboBox menu trigger button. */
+  /** Props for the combo box menu trigger button. */
   buttonProps: AriaButtonProps,
-  /** Props for the ComboBox input element. */
+  /** Props for the combo box input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  /** Props for the ComboBox menu. */
+  /** Props for the combo box menu. */
   listBoxProps: HTMLAttributes<HTMLElement>,
-  /** Props for the ComboBox label element. */
+  /** Props for the combo box label element. */
   labelProps: HTMLAttributes<HTMLElement>
 }
 
 /**
- * Provides the behavior and accessibility implementation for a ComboBox component.
- * A ComboBox combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
- * @param props - Props for the ComboBox.
+ * Provides the behavior and accessibility implementation for a combo box component.
+ * A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
+ * @param props - Props for the combo box.
  * @param state - State for the select, as returned by `useComboBoxState`.
  */
 export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState<T>): ComboBoxAria {

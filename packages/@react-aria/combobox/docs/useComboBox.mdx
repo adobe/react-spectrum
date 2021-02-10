@@ -12,13 +12,14 @@ export default Layout;
 
 import docs from 'docs:@react-aria/combobox';
 import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
-import {FunctionAPI, HeaderInfo, InterfaceType, renderHTMLfromMarkdown, TypeContext, TypeLink} from '@react-spectrum/docs';
+import {FunctionAPI, HeaderInfo, InterfaceType, TypeContext, TypeLink} from '@react-spectrum/docs';
 import i18nDocs from 'docs:@react-aria/i18n';
 import listboxDocs from 'docs:@react-aria/listbox';
 import overlaysDocs from 'docs:@react-aria/overlays';
 import packageData from '@react-aria/combobox/package.json';
 import selectionDocs from 'docs:@react-stately/selection';
 import statelyDocs from 'docs:@react-stately/combobox';
+import Anatomy from './anatomy.svg';
 
 
 ```jsx import
@@ -32,7 +33,7 @@ keywords: [combobox, aria]
 
 # useComboBox
 
-<p>{renderHTMLfromMarkdown(docs.exports.useComboBox.description)}</p>
+<p>{docs.exports.useComboBox.description}</p>
 
 <HeaderInfo
   packageData={packageData}
@@ -44,31 +45,39 @@ keywords: [combobox, aria]
 
 ## Features
 
-A ComboBox can be built using the [&lt;datalist&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist) HTML element, but this is very limited in functionality and difficult to style.
-`useComboBox` helps achieve accessible ComboBox components that can be styled as needed.
+A combo box can be built using the [&lt;datalist&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist) HTML element, but this is very limited in functionality and difficult to style.
+`useComboBox` helps achieve accessible combo box components that can be styled as needed.
 
-* Exposed to assistive technology as a ComboBox
+* Support for filtering a list of options by typing
 * Support for selecting a single option
 * Support for disabled options
-* Support for sections
+* Support for groups of items in sections
 * Support for custom user input values
+* Support for controlled and uncontrolled options, selection, input value, and open state
+* Support for custom filter functions
+* Exposed to assistive technology as a `combobox` with ARIA
 * Labeling support for accessibility
 * Required and invalid states exposed to assistive technology via ARIA
 * Support for mouse, touch, and keyboard interactions
-* Keyboard support for opening the ComboBox menu using the arrow keys, including automatically focusing
+* Keyboard support for opening the combo box list box using the arrow keys, including automatically focusing
   the first or last item accordingly
-* Virtual focus management for ComboBox menu option navigation
+* Support for opening the list box when typing, on focus, or manually
+* Handles virtual clicks on the input from touch screen readers to toggle the list box
+* Virtual focus management for combo box list box option navigation
+* Hides elements outside the input and list box from assistive technology while the list box is open in a portal
 * Custom localized announcements for option focusing, filtering, and selection using an ARIA live region to work around VoiceOver bugs
 
 ## Anatomy
 
-A ComboBox consists of a label, an input which displays the current value, a listbox popup, an optional button
-used to toggle the listbox popup open state. Users can type within the input to filter the available options
-within the listbox popup. The listbox popup may be opened by a variety of input field interactions specified
-by the `menuTrigger` prop provided to `useComboBox`, or by clicking or touching the ComboBox trigger button. `useComboBox` handles exposing
-the correct ARIA attributes for accessibility for each of the components comprising the ComboBox. It should be combined
-with [useListBox](useListBox.html), which handles the implementation of the popup listbox,
-and [useButton](useButton.html) which handles the button press handlers returned by `useComboBox`.
+<Anatomy />
+
+A combo box consists of a label, an input which displays the current value, a list box popup, and an optional button
+used to toggle the list box popup open state. Users can type within the input to filter the available options
+within the list box. The list box popup may be opened by a variety of input field interactions specified
+by the `menuTrigger` prop provided to `useComboBox`, or by clicking or touching the button. `useComboBox` handles exposing
+the correct ARIA attributes for accessibility for each of the elements comprising the combo box. It should be combined
+with [useListBox](useListBox.html), which handles the implementation of the popup list box,
+and [useButton](useButton.html) which handles the button press interactions.
 
 `useComboBox` returns props that you should spread onto the appropriate elements:
 
@@ -76,15 +85,15 @@ and [useButton](useButton.html) which handles the button press handlers returned
   <InterfaceType properties={docs.links[docs.exports.useComboBox.return.id].properties} />
 </TypeContext.Provider>
 
-State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useComboBoxState} /> hook from `@react-stately/select`.
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useComboBoxState} /> hook from `@react-stately/combobox`.
 The state object should be passed as an option to `useComboBox`.
 
-If the ComboBox does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to
+If the combo box does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to
 identify it to assistive technology.
 
 ## State management
 
-`useComboBox` requires knowledge of the options in the ComboBox in order to handle keyboard
+`useComboBox` requires knowledge of the options in the combo box in order to handle keyboard
 navigation and other interactions. It does this using the <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Collection} />
 interface, which is a generic interface to access sequential unique keyed data. You can
 implement this interface yourself, e.g. by using a prop to pass a list of item objects,
@@ -97,21 +106,22 @@ In addition, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useCo
 manages the state necessary for single selection and exposes
 a <TypeLink links={selectionDocs.links} type={selectionDocs.exports.SelectionManager} />,
 which makes use of the collection to provide an interface to update the selection state.
-It also holds state to track if the popup is open, if the ComboBox is focused, and the current input value.
+It also holds state to track if the popup is open, if the combo box is focused, and the current input value.
 For more information about selection, see [Selection](/react-stately/selection.html).
 
 ## Example
 
-This example uses an `<input>` element for the ComboBox text input and a `<button>` element for the ComboBox menu trigger. A `<span>`
+This example uses an `<input>` element for the combo box text input and a `<button>` element for the list box popup trigger. A `<span>`
 is included within the `<button>` to display the dropdown arrow icon (hidden from screen readers with `aria-hidden`).
 A "contains" filter function is obtained from <TypeLink links={i18nDocs.links} type={i18nDocs.exports.useFilter} /> and is passed to <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useComboBoxState} /> so
-that the ComboBox list can be filtered based on the option text and the current ComboBox input text.
+that the list box can be filtered based on the option text and the current input text.
 
-The listbox popup uses <TypeLink links={listboxDocs.links} type={listboxDocs.exports.useListBox} />
+The list box popup uses <TypeLink links={listboxDocs.links} type={listboxDocs.exports.useListBox} />
 and <TypeLink links={listboxDocs.links} type={listboxDocs.exports.useOption} /> to render the
 list of options. A hidden &lt;<TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.DismissButton} />&gt;
-is added at the start and end of the popup to allow screen reader users to dismiss the popup. Note that `shouldUseVirtualFocus` is passed to `useListBox`
-and `useOption` so that browser focus remains within the ComboBox `<input>` element even when interacting with the ComboBox menu options.
+is added at the end of the popup to allow screen reader users to dismiss the popup easily, without navigating back through the entire list.
+Note that `shouldUseVirtualFocus` is passed to `useListBox` and `useOption` so that browser focus remains within the
+`<input>` element even when interacting with the list box options.
 
 This example does not do any advanced popover positioning or portaling to escape its visual container.
 See [useOverlayTrigger](useOverlayTrigger.html) for an example of how to implement this
@@ -120,7 +130,7 @@ using <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlay
 In addition, see [useListBox](useListBox.html) for examples of sections (option groups), and more complex
 options.
 
-```tsx example
+```tsx example export=true
 import {Item} from '@react-stately/collections';
 import {mergeProps} from '@react-aria/utils';
 import {useButton} from '@react-aria/button';
@@ -137,12 +147,12 @@ function ComboBox(props) {
   // Create state based on the incoming props and the filter function
   let state = useComboBoxState({...props, defaultFilter: contains});
 
-  // Get props for child elements from useComboBox
   let triggerRef = React.useRef();
   let inputRef = React.useRef();
   let listBoxRef = React.useRef();
   let popoverRef = React.useRef();
 
+  // Get props for child elements from useComboBox
   let {buttonProps: triggerProps, inputProps, listBoxProps, labelProps} = useComboBox(
     {
       ...props,
@@ -155,45 +165,46 @@ function ComboBox(props) {
     state
   );
 
-  // Get props for the ComboBox trigger button based on the button
-  // props from useComboBox
+  // Get props for the trigger button based on the
+  // button props from useComboBox
   let {buttonProps} = useButton(triggerProps, triggerRef);
 
   return (
-    <div style={{position: 'relative', display: 'inline-block'}}>
-      <div {...labelProps}>{props.label}</div>
-      <input
-        {...inputProps}
-        ref={inputRef}
-        style={{
-          borderRight: 0,
-          borderBottomRightRadius: 0,
-          borderTopRightRadius: 0
-        }} />
-      <button
-        {...buttonProps}
-        ref={triggerRef}
-        style={{
-          height: '21px',
-          borderBottomLeftRadius: 0,
-          borderTopLeftRadius: 0
-        }}>
-        <span
-          aria-hidden="true"
-          style={{paddingLeft: 5}}>
-          ▼
-        </span>
-      </button>
-      {state.isOpen &&
-        <ListBoxPopup
-          {...listBoxProps}
-          // Use virtual focus to get aria-activedescendant tracking and
-          // ensure focus doesn't leave the input field
-          shouldUseVirtualFocus
-          listBoxRef={listBoxRef}
-          popoverRef={popoverRef}
-          state={state} />
-      }
+    <div style={{display: 'inline-flex', flexDirection: 'column'}}>
+      <label {...labelProps}>{props.label}</label>
+      <div style={{position: 'relative', display: 'inline-block'}}>
+        <input
+          {...inputProps}
+          ref={inputRef}
+          style={{
+            height: 22,
+            boxSizing: 'border-box',
+            marginRight: 0
+          }} />
+        <button
+          {...buttonProps}
+          ref={triggerRef}
+          style={{
+            height: 22,
+            marginLeft: 0
+          }}>
+          <span
+            aria-hidden="true"
+            style={{padding: '0 2px'}}>
+            ▼
+          </span>
+        </button>
+        {state.isOpen &&
+          <ListBoxPopup
+            {...listBoxProps}
+            // Use virtual focus to get aria-activedescendant tracking and
+            // ensure focus doesn't leave the input field
+            shouldUseVirtualFocus
+            listBoxRef={listBoxRef}
+            popoverRef={popoverRef}
+            state={state} />
+        }
+      </div>
     </div>
   );
 }
@@ -207,8 +218,8 @@ function ListBoxPopup(props) {
     ...otherProps
   } = props;
 
-  // Get props for the listbox.
-  // Prevent focus moving to listbox via shouldUseVirtualFocus
+  // Get props for the list box.
+  // Prevent focus moving to list box via shouldUseVirtualFocus
   let {listBoxProps} = useListBox({
     autoFocus: state.focusStrategy,
     disallowEmptySelection: true,
@@ -225,7 +236,7 @@ function ListBoxPopup(props) {
     isDismissable: true
   }, popoverRef);
 
-  // Add hidden <DismissButton> components at the end of the list
+  // Add a hidden <DismissButton> component at the end of the list
   // to allow screen reader users to dismiss the popup easily.
   return (
     <div {...overlayProps} ref={popoverRef}>
@@ -274,14 +285,13 @@ function Option({item, state, shouldUseVirtualFocus}) {
   }, state, ref);
 
   let backgroundColor;
-  let color;
+  let color = 'black';
 
   if (isSelected) {
     backgroundColor = 'blueviolet';
     color = 'white';
   } else if (isFocused) {
     backgroundColor = 'gray';
-    color = 'black';
   } else if (isDisabled) {
     backgroundColor = 'transparent';
     color = 'gray';
@@ -315,190 +325,14 @@ function Option({item, state, shouldUseVirtualFocus}) {
 
 ## Usage
 
+The following examples show how to use the ComboBox component created in the above example.
+
 ### Uncontrolled
 
-The following example shows how you would create a uncontrolled ComboBox. The input value, selected option, and menu open state is completely
-uncontrolled, with the default input text set by the `defaultInputValue` prop and handled by `useComboBoxState`.
+The following example shows how you would create an uncontrolled ComboBox. The input value, selected option, and open state is completely
+uncontrolled, with the default input text set by the `defaultInputValue` prop.
 
 ```tsx example
-///- begin collapse -///
-function ComboBox(props) {
-  // Get a basic "contains" filter function for input value
-  // and option text comparison
-  let {contains} = useFilter({sensitivity: 'base'});
-
-  // Create state based on the incoming props and the filter function
-  let state = useComboBoxState({...props, defaultFilter: contains});
-
-  // Get props for child elements from useComboBox
-  let triggerRef = React.useRef();
-  let inputRef = React.useRef();
-  let listBoxRef = React.useRef();
-  let popoverRef = React.useRef();
-
-  let {buttonProps: triggerProps, inputProps, listBoxProps, labelProps} = useComboBox(
-    {
-      ...props,
-      inputRef,
-      buttonRef: triggerRef,
-      listBoxRef,
-      popoverRef,
-      menuTrigger: 'input',
-    },
-    state
-  );
-
-  // Get props for the ComboBox trigger button based on the button
-  // props from useComboBox
-  let {buttonProps} = useButton(triggerProps, triggerRef);
-
-  return (
-    <div style={{position: 'relative', display: 'inline-block'}}>
-      <div {...labelProps}>{props.label}</div>
-      <input
-        {...inputProps}
-        ref={inputRef}
-        style={{
-          borderRight: 0,
-          borderBottomRightRadius: 0,
-          borderTopRightRadius: 0
-        }} />
-      <button
-        {...buttonProps}
-        ref={triggerRef}
-        style={{
-          height: '21px',
-          borderBottomLeftRadius: 0,
-          borderTopLeftRadius: 0
-        }}>
-        <span
-          aria-hidden="true"
-          style={{paddingLeft: 5}}>
-          ▼
-        </span>
-      </button>
-      {state.isOpen &&
-        <ListBoxPopup
-          {...listBoxProps}
-          // Use virtual focus to get aria-activedescendant tracking and
-          // ensure focus doesn't leave the input field
-          shouldUseVirtualFocus
-          listBoxRef={listBoxRef}
-          popoverRef={popoverRef}
-          state={state} />
-      }
-    </div>
-  );
-}
-
-function ListBoxPopup(props) {
-  let {
-    popoverRef,
-    listBoxRef,
-    state,
-    shouldUseVirtualFocus,
-    ...otherProps
-  } = props;
-
-  // Get props for the listbox.
-  // Prevent focus moving to listbox via shouldUseVirtualFocus
-  let {listBoxProps} = useListBox({
-    autoFocus: state.focusStrategy,
-    disallowEmptySelection: true,
-    shouldUseVirtualFocus,
-    ...otherProps
-  }, state, listBoxRef);
-
-  // Handle events that should cause the popup to close,
-  // e.g. blur, clicking outside, or pressing the escape key.
-  let {overlayProps} = useOverlay({
-    onClose: () => state.close(),
-    shouldCloseOnBlur: true,
-    isOpen: state.isOpen,
-    isDismissable: true
-  }, popoverRef);
-
-  // Add hidden <DismissButton> components at the end of the list
-  // to allow screen reader users to dismiss the popup easily.
-  return (
-    <div {...overlayProps} ref={popoverRef}>
-      <ul
-        {...mergeProps(listBoxProps, otherProps)}
-        ref={listBoxRef}
-        style={{
-          position: 'absolute',
-          width: '100%',
-          margin: '4px 0 0 0',
-          padding: 0,
-          listStyle: 'none',
-          border: '1px solid gray',
-          background: 'lightgray'
-        }}>
-        {[...state.collection].map(item => (
-          <Option
-            shouldUseVirtualFocus
-            key={item.key}
-            item={item}
-            state={state} />
-        ))}
-      </ul>
-      <DismissButton onDismiss={() => state.close()} />
-    </div>
-  )
-}
-
-function Option({item, state, shouldUseVirtualFocus}) {
-  let ref = React.useRef();
-  let isDisabled = state.disabledKeys.has(item.key);
-  let isSelected = state.selectionManager.isSelected(item.key);
-  // Track focus via focusedKey state instead of with focus event listeners
-  // since focus never leaves the text input in a ComboBox
-  let isFocused = state.selectionManager.focusedKey === item.key;
-
-  // Get props for the option element.
-  // Prevent options from receiving browser focus via shouldUseVirtualFocus.
-  let {optionProps} = useOption({
-    key: item.key,
-    isDisabled,
-    isSelected,
-    shouldSelectOnPressUp: true,
-    shouldFocusOnHover: true,
-    shouldUseVirtualFocus
-  }, state, ref);
-
-  let backgroundColor;
-  let color;
-
-  if (isSelected) {
-    backgroundColor = 'blueviolet';
-    color = 'white';
-  } else if (isFocused) {
-    backgroundColor = 'gray';
-    color = 'black';
-  } else if (isDisabled) {
-    backgroundColor = 'transparent';
-    color = 'gray';
-  }
-
-  return (
-    <li
-      {...optionProps}
-      ref={ref}
-      style={{
-        background: backgroundColor,
-        color: color,
-        padding: '2px 5px',
-        outline: 'none',
-        cursor: 'pointer'
-      }}>
-      {item.rendered}
-    </li>
-  );
-}
-
-///- end collapse -///
-// Using the same ComboBox component code from the previous example...
-
 <ComboBox label="Favorite Animal" defaultInputValue="red">
   <Item key="red panda">Red Panda</Item>
   <Item key="cat">Cat</Item>
@@ -509,10 +343,111 @@ function Option({item, state, shouldUseVirtualFocus}) {
 </ComboBox>
 ```
 
-### Controlled
+### Dynamic collections
+
+ComboBox follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
+The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
+as shown below, can be used when the options come from an external data source such as an API call, or update over time.
+
+As seen below, an iterable list of options is passed to the ComboBox using the `defaultItems` prop. Each item accepts a `key` prop, which
+is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property,
+as shown in the example below, then this is used automatically and a `key` prop is not required.
+
+```tsx example
+function Example() {
+  let options = [
+    {id: 1, name: 'Aerospace'},
+    {id: 2, name: 'Mechanical'},
+    {id: 3, name: 'Civil'},
+    {id: 4, name: 'Biomedical'},
+    {id: 5, name: 'Nuclear'},
+    {id: 6, name: 'Industrial'},
+    {id: 7, name: 'Chemical'},
+    {id: 8, name: 'Agricultural'},
+    {id: 9, name: 'Electrical'}
+  ];
+  let [majorId, setMajorId] = React.useState();
+
+  return (
+    <>
+      <ComboBox
+        label="Pick a engineering major"
+        defaultItems={options}
+        onSelectionChange={setMajorId}>
+        {(item) => <Item>{item.name}</Item>}
+      </ComboBox>
+      <p>Selected topic id: {majorId}</p>
+    </>
+  );
+}
+```
+
+### Allow custom values
+
+By default, `useComboBoxState` doesn't allow users to specify a value that doesn't exist in the list of options and will revert the input value to
+the current selected value on blur. By specifying `allowsCustomValue`, this behavior is suppressed and the user is free to enter
+any value within the field.
+
+```tsx example
+<ComboBox label="Favorite Animal" allowsCustomValue>
+  <Item key="red panda">Red Panda</Item>
+  <Item key="cat">Cat</Item>
+  <Item key="dog">Dog</Item>
+  <Item key="aardvark">Aardvark</Item>
+  <Item key="kangaroo">Kangaroo</Item>
+  <Item key="snake">Snake</Item>
+</ComboBox>
+```
+
+### Custom filtering
+
+By default, `useComboBoxState` uses the filter function passed to the `defaultFilter` prop (in the above example, a
+"contains" function from `useFilter`). The filter function can be overridden by users of the `ComboBox` component by
+using the `items` prop to control the filtered list. When `items` is provided rather than `defaultItems`, `useComboBoxState`
+does no filtering of its own.
+
+The following example makes the `inputValue` controlled, and updates the filtered list that is passed to the `items`
+prop when the input changes value.
+
+```tsx example
+function Example() {
+  let options = [
+    {id: 1, email: 'fake@email.com'},
+    {id: 2, email: 'anotherfake@email.com'},
+    {id: 3, email: 'bob@email.com'},
+    {id: 4, email: 'joe@email.com'},
+    {id: 5, email: 'yourEmail@email.com'},
+    {id: 6, email: 'valid@email.com'},
+    {id: 7, email: 'spam@email.com'},
+    {id: 8, email: 'newsletter@email.com'},
+    {id: 9, email: 'subscribe@email.com'}
+  ];
+
+  let {startsWith} = useFilter({sensitivity: 'base'});
+  let [filterValue, setFilterValue] = React.useState('');
+  let filteredItems = React.useMemo(
+    () => options.filter((item) => startsWith(item.email, filterValue)),
+    [options, filterValue]
+  );
+
+  return (
+    <ComboBox
+      label="To:"
+      items={filteredItems}
+      inputValue={filterValue}
+      onInputChange={setFilterValue}
+      placeholder="Enter recipient email"
+      allowsCustomValue>
+      {(item) => <Item>{item.email}</Item>}
+    </ComboBox>
+  );
+}
+```
+
+### Fully controlled
 
 The following example shows how you would create a controlled ComboBox, controlling everything from the selected value (`selectedKey`)
-to the combobox options (`items`). By passing in `inputValue`, `selectedKey`, `isOpen`, and `items` to the `useComboBoxState` hook you can control
+to the combobox options (`items`). By passing in `inputValue`, `selectedKey`, `isOpen`, and `items` to the `ComboBox` you can control
 exactly what your ComboBox should display. For example, note that the item filtering for the controlled ComboBox below now follows a "starts with"
 filter strategy, accomplished by controlling the exact set of items available to the ComboBox whenever the input value updates.
 
@@ -520,179 +455,6 @@ It is important to note that you don't have to control every single aspect of a 
 ComboBox, be sure to provide the change handler for that prop as well e.g. controlling `selectedKey` would require `onSelectionChange` to be passed to `useComboBox` as well.
 
 ```tsx example
-///- begin collapse -///
-function ComboBox(props) {
-  // Get a basic "contains" filter function for input value and option text comparison
-  let {contains} = useFilter({sensitivity: 'base'});
-
-  // Create state based on the incoming props and the filter function
-  let state = useComboBoxState({...props, defaultFilter: contains});
-
-  // Get props for child elements from useComboBox
-  let triggerRef = React.useRef();
-  let inputRef = React.useRef();
-  let listBoxRef = React.useRef();
-  let popoverRef = React.useRef();
-
-  let {buttonProps: triggerProps, inputProps, listBoxProps, labelProps} = useComboBox(
-    {
-      ...props,
-      inputRef,
-      buttonRef: triggerRef,
-      listBoxRef,
-      popoverRef,
-      menuTrigger: 'input',
-    },
-    state
-  );
-
-  // Get props for the ComboBox trigger button based on the button props from useComboBox
-  let {buttonProps} = useButton(triggerProps, triggerRef);
-
-  return (
-    <div style={{position: 'relative', display: 'inline-block'}}>
-      <div {...labelProps}>{props.label}</div>
-      <input
-        {...inputProps}
-        ref={inputRef}
-        style={{
-          borderRight: 0,
-          borderBottomRightRadius: 0,
-          borderTopRightRadius: 0
-        }} />
-      <button
-        {...buttonProps}
-        ref={triggerRef}
-        style={{
-          height: '21px',
-          borderBottomLeftRadius: 0,
-          borderTopLeftRadius: 0
-        }}>
-        <span
-          aria-hidden="true"
-          style={{paddingLeft: 5}}>
-          ▼
-        </span>
-      </button>
-      {state.isOpen &&
-        <ListBoxPopup
-          {...listBoxProps}
-          // Use virtual focus to get aria-activedescendant tracking and
-          // ensure focus doesn't leave the input field
-          shouldUseVirtualFocus
-          listBoxRef={listBoxRef}
-          popoverRef={popoverRef}
-          state={state} />
-      }
-    </div>
-  );
-}
-
-function ListBoxPopup(props) {
-  let {
-    popoverRef,
-    listBoxRef,
-    state,
-    shouldUseVirtualFocus,
-    ...otherProps
-  } = props;
-
-  // Get props for the listbox. Prevent focus moving to listbox via shouldUseVirtualFocus
-  let {listBoxProps} = useListBox({
-    autoFocus: state.focusStrategy,
-    disallowEmptySelection: true,
-    shouldUseVirtualFocus,
-    ...otherProps
-  }, state, listBoxRef);
-
-  // Handle events that should cause the popup to close,
-  // e.g. blur, clicking outside, or pressing the escape key.
-  let {overlayProps} = useOverlay({
-    onClose: () => state.close(),
-    shouldCloseOnBlur: true,
-    isOpen: state.isOpen,
-    isDismissable: true
-  }, popoverRef);
-
-  // Add hidden <DismissButton> components at the end of the list
-  // to allow screen reader users to dismiss the popup easily.
-  return (
-    <div {...overlayProps} ref={popoverRef}>
-      <ul
-        {...mergeProps(listBoxProps, otherProps)}
-        ref={listBoxRef}
-        style={{
-          position: 'absolute',
-          width: '100%',
-          margin: '4px 0 0 0',
-          padding: 0,
-          listStyle: 'none',
-          border: '1px solid gray',
-          background: 'lightgray'
-        }}>
-        {[...state.collection].map(item => (
-          <Option
-            shouldUseVirtualFocus
-            key={item.key}
-            item={item}
-            state={state} />
-        ))}
-      </ul>
-      <DismissButton onDismiss={() => state.close()} />
-    </div>
-  )
-}
-
-function Option({item, state, shouldUseVirtualFocus}) {
-  let ref = React.useRef();
-  let isDisabled = state.disabledKeys.has(item.key);
-  let isSelected = state.selectionManager.isSelected(item.key);
-  // Track focus via focusedKey state instead of with focus event listeners
-  // since focus never leaves the text input in a ComboBox
-  let isFocused = state.selectionManager.focusedKey === item.key;
-
-  // Get props for the option element. Prevent options from recieving true focus via shouldUseVirtualFocus.
-  let {optionProps} = useOption({
-    key: item.key,
-    isDisabled,
-    isSelected,
-    shouldSelectOnPressUp: true,
-    shouldFocusOnHover: true,
-    shouldUseVirtualFocus
-  }, state, ref);
-
-  let backgroundColor;
-  let color;
-
-  if (isSelected) {
-    backgroundColor = 'blueviolet';
-    color = 'white';
-  } else if (isFocused) {
-    backgroundColor = 'gray';
-    color = 'black';
-  } else if (isDisabled) {
-    backgroundColor = 'transparent';
-    color = 'gray';
-  }
-
-  return (
-    <li
-      {...optionProps}
-      ref={ref}
-      style={{
-        background: backgroundColor,
-        color: color,
-        padding: '2px 5px',
-        outline: 'none',
-        cursor: 'pointer'
-      }}>
-      {item.rendered}
-    </li>
-  );
-}
-///- end collapse -///
-// Using the same ComboBox component code from the previous example...
-
 function ControlledComboBox() {
   let optionList = [
     {name: 'Red Panda', id: '1'},
@@ -719,7 +481,7 @@ function ControlledComboBox() {
   let filteredItems = React.useMemo(() => optionList.filter(item => startsWith(item.name, fieldState.inputValue)), [optionList, fieldState.inputValue]);
 
   // Specify how each of the ComboBox values should change when an
-  // option is selected from the menu
+  // option is selected from the list box
   let onSelectionChange = (key) => {
     setFieldState(prevState => ({
       isOpen: false,
@@ -730,18 +492,17 @@ function ControlledComboBox() {
   };
 
   // Specify how each of the ComboBox values should change when the input
-  // field is altered by the end user
+  // field is altered by the user
   let onInputChange = (value) => {
-    let filteredItems = optionList.filter(item => startsWith(item.name, value));
     setFieldState(prevState => ({
-      isOpen: filteredItems.length > 0 ? true : false,
+      isOpen: true,
       inputValue: value,
       selectedKey: value === '' ? null : prevState.selectedKey,
       items: filteredItems
     }));
   };
 
-  // Specify how each of the ComboBox values should change when the menu's
+  // Specify how each of the ComboBox values should change when the
   // open state is changed
   let onOpenChange = (isOpen) => {
     setFieldState(prevState => ({
@@ -760,206 +521,16 @@ function ControlledComboBox() {
       items={filteredItems}
       selectedKey={fieldState.selectedKey}
       inputValue={fieldState.inputValue}
-      isOpen={fieldState.isOpen}
+      isOpen={fieldState.isOpen && filteredItems.length > 0}
       onOpenChange={onOpenChange}
       onSelectionChange={onSelectionChange}
       onInputChange={onInputChange}>
       {item => <Item>{item.name}</Item>}
     </ComboBox>
   )
-};
+}
 
 <ControlledComboBox />
-```
-
-### Allow custom values
-
-By default, `useComboBoxState` doesn't allow users to specify a value that doesn't exist in the list of options and will revert the input value to
-the current selected value on blur. By specifying `allowsCustomValue`, this behavior is suppressed and the user is free to enter
-any value within the field.
-
-```tsx example
-///- begin collapse -///
-function ComboBox(props) {
-  // Get a basic "contains" filter function for input value and option text comparison
-  let {contains} = useFilter({sensitivity: 'base'});
-
-  // Create state based on the incoming props and the filter function
-  let state = useComboBoxState({...props, defaultFilter: contains});
-
-  // Get props for child elements from useComboBox
-  let triggerRef = React.useRef();
-  let inputRef = React.useRef();
-  let listBoxRef = React.useRef();
-  let popoverRef = React.useRef();
-
-  let {buttonProps: triggerProps, inputProps, listBoxProps, labelProps} = useComboBox(
-    {
-      ...props,
-      inputRef,
-      buttonRef: triggerRef,
-      listBoxRef,
-      popoverRef,
-      menuTrigger: 'input',
-    },
-    state
-  );
-
-  // Get props for the ComboBox trigger button based on the button props from useComboBox
-  let {buttonProps} = useButton(triggerProps, triggerRef);
-
-  return (
-    <div style={{position: 'relative', display: 'inline-block'}}>
-      <div {...labelProps}>{props.label}</div>
-      <input
-        {...inputProps}
-        ref={inputRef}
-        style={{
-          borderRight: 0,
-          borderBottomRightRadius: 0,
-          borderTopRightRadius: 0
-        }} />
-      <button
-        {...buttonProps}
-        ref={triggerRef}
-        style={{
-          height: '21px',
-          borderBottomLeftRadius: 0,
-          borderTopLeftRadius: 0
-        }}>
-        <span
-          aria-hidden="true"
-          style={{paddingLeft: 5}}>
-          ▼
-        </span>
-      </button>
-      {state.isOpen &&
-        <ListBoxPopup
-          {...listBoxProps}
-          // Use virtual focus to get aria-activedescendant tracking and
-          // ensure focus doesn't leave the input field
-          shouldUseVirtualFocus
-          listBoxRef={listBoxRef}
-          popoverRef={popoverRef}
-          state={state} />
-      }
-    </div>
-  );
-}
-
-function ListBoxPopup(props) {
-  let {
-    popoverRef,
-    listBoxRef,
-    state,
-    shouldUseVirtualFocus,
-    ...otherProps
-  } = props;
-
-  // Get props for the listbox. Prevent focus moving to listbox via shouldUseVirtualFocus
-  let {listBoxProps} = useListBox({
-    autoFocus: state.focusStrategy,
-    disallowEmptySelection: true,
-    shouldUseVirtualFocus,
-    ...otherProps
-  }, state, listBoxRef);
-
-  // Handle events that should cause the popup to close,
-  // e.g. blur, clicking outside, or pressing the escape key.
-  let {overlayProps} = useOverlay({
-    onClose: () => state.close(),
-    shouldCloseOnBlur: true,
-    isOpen: state.isOpen,
-    isDismissable: true
-  }, popoverRef);
-
-  // Add hidden <DismissButton> components at the end of the list
-  // to allow screen reader users to dismiss the popup easily.
-  return (
-    <div {...overlayProps} ref={popoverRef}>
-      <ul
-        {...mergeProps(listBoxProps, otherProps)}
-        ref={listBoxRef}
-        style={{
-          position: 'absolute',
-          width: '100%',
-          margin: '4px 0 0 0',
-          padding: 0,
-          listStyle: 'none',
-          border: '1px solid gray',
-          background: 'lightgray'
-        }}>
-        {[...state.collection].map(item => (
-          <Option
-            shouldUseVirtualFocus
-            key={item.key}
-            item={item}
-            state={state} />
-        ))}
-      </ul>
-      <DismissButton onDismiss={() => state.close()} />
-    </div>
-  )
-}
-
-function Option({item, state, shouldUseVirtualFocus}) {
-  let ref = React.useRef();
-  let isDisabled = state.disabledKeys.has(item.key);
-  let isSelected = state.selectionManager.isSelected(item.key);
-  // Track focus via focusedKey state instead of with focus event listeners
-  // since focus never leaves the text input in a ComboBox
-  let isFocused = state.selectionManager.focusedKey === item.key;
-
-  // Get props for the option element. Prevent options from receiving true focus via shouldUseVirtualFocus.
-  let {optionProps} = useOption({
-    key: item.key,
-    isDisabled,
-    isSelected,
-    shouldSelectOnPressUp: true,
-    shouldFocusOnHover: true,
-    shouldUseVirtualFocus
-  }, state, ref);
-
-  let backgroundColor;
-  let color;
-
-  if (isSelected) {
-    backgroundColor = 'blueviolet';
-    color = 'white';
-  } else if (isFocused) {
-    backgroundColor = 'gray';
-    color = 'black';
-  } else if (isDisabled) {
-    backgroundColor = 'transparent';
-    color = 'gray';
-  }
-
-  return (
-    <li
-      {...optionProps}
-      ref={ref}
-      style={{
-        background: backgroundColor,
-        color: color,
-        padding: '2px 5px',
-        outline: 'none',
-        cursor: 'pointer'
-      }}>
-      {item.rendered}
-    </li>
-  );
-}
-///- end collapse -///
-// Using the same ComboBox component code from the first example...
-
-<ComboBox label="Favorite Animal" allowsCustomValue>
-  <Item key="red panda">Red Panda</Item>
-  <Item key="cat">Cat</Item>
-  <Item key="dog">Dog</Item>
-  <Item key="aardvark">Aardvark</Item>
-  <Item key="kangaroo">Kangaroo</Item>
-  <Item key="snake">Snake</Item>
-</ComboBox>
 ```
 
 ### Menu trigger behavior
@@ -968,184 +539,11 @@ function Option({item, state, shouldUseVirtualFocus}) {
 
 * `input` (default): ComboBox menu opens when the user edits the input text.
 * `focus`: ComboBox menu opens when the user focuses the ComboBox input.
-* `manual`: ComboBox menu only opens when the user presses the trigger button.
+* `manual`: ComboBox menu only opens when the user presses the trigger button or uses the arrow keys.
 
 The example below has `menuTrigger` set to `focus`.
 
 ```tsx example
-///- begin collapse -///
-function ComboBox(props) {
-  // Get a basic "contains" filter function for input value and option text comparison
-  let {contains} = useFilter({sensitivity: 'base'});
-
-  // Create state based on the incoming props and the filter function
-  let state = useComboBoxState({...props, defaultFilter: contains});
-
-  // Get props for child elements from useComboBox
-  let triggerRef = React.useRef();
-  let inputRef = React.useRef();
-  let listBoxRef = React.useRef();
-  let popoverRef = React.useRef();
-
-  let {buttonProps: triggerProps, inputProps, listBoxProps, labelProps} = useComboBox(
-    {
-      ...props,
-      inputRef,
-      buttonRef: triggerRef,
-      listBoxRef,
-      popoverRef,
-      menuTrigger: 'input',
-    },
-    state
-  );
-
-  // Get props for the ComboBox trigger button based on the button props from useComboBox
-  let {buttonProps} = useButton(triggerProps, triggerRef);
-
-  return (
-    <div style={{position: 'relative', display: 'inline-block'}}>
-      <div {...labelProps}>{props.label}</div>
-      <input
-        {...inputProps}
-        ref={inputRef}
-        style={{
-          borderRight: 0,
-          borderBottomRightRadius: 0,
-          borderTopRightRadius: 0
-        }} />
-      <button
-        {...buttonProps}
-        ref={triggerRef}
-        style={{
-          height: '21px',
-          borderBottomLeftRadius: 0,
-          borderTopLeftRadius: 0
-        }}>
-        <span
-          aria-hidden="true"
-          style={{paddingLeft: 5}}>
-          ▼
-        </span>
-      </button>
-      {state.isOpen &&
-        <ListBoxPopup
-          {...listBoxProps}
-          // Use virtual focus to get aria-activedescendant tracking and
-          // ensure focus doesn't leave the input field
-          shouldUseVirtualFocus
-          listBoxRef={listBoxRef}
-          popoverRef={popoverRef}
-          state={state} />
-      }
-    </div>
-  );
-}
-
-function ListBoxPopup(props) {
-  let {
-    popoverRef,
-    listBoxRef,
-    state,
-    shouldUseVirtualFocus,
-    ...otherProps
-  } = props;
-
-  // Get props for the listbox. Prevent focus moving to listbox via shouldUseVirtualFocus
-  let {listBoxProps} = useListBox({
-    autoFocus: state.focusStrategy,
-    disallowEmptySelection: true,
-    shouldUseVirtualFocus,
-    ...otherProps
-  }, state, listBoxRef);
-
-  // Handle events that should cause the popup to close,
-  // e.g. blur, clicking outside, or pressing the escape key.
-  let {overlayProps} = useOverlay({
-    onClose: () => state.close(),
-    shouldCloseOnBlur: true,
-    isOpen: state.isOpen,
-    isDismissable: true
-  }, popoverRef);
-
-  // Add hidden <DismissButton> components at the end of the list
-  // to allow screen reader users to dismiss the popup easily.
-  return (
-    <div {...overlayProps} ref={popoverRef}>
-      <ul
-        {...mergeProps(listBoxProps, otherProps)}
-        ref={listBoxRef}
-        style={{
-          position: 'absolute',
-          width: '100%',
-          margin: '4px 0 0 0',
-          padding: 0,
-          listStyle: 'none',
-          border: '1px solid gray',
-          background: 'lightgray'
-        }}>
-        {[...state.collection].map(item => (
-          <Option
-            shouldUseVirtualFocus
-            key={item.key}
-            item={item}
-            state={state} />
-        ))}
-      </ul>
-      <DismissButton onDismiss={() => state.close()} />
-    </div>
-  )
-}
-
-function Option({item, state, shouldUseVirtualFocus}) {
-  let ref = React.useRef();
-  let isDisabled = state.disabledKeys.has(item.key);
-  let isSelected = state.selectionManager.isSelected(item.key);
-  // Track focus via focusedKey state instead of with focus event listeners
-  // since focus never leaves the text input in a ComboBox
-  let isFocused = state.selectionManager.focusedKey === item.key;
-
-  // Get props for the option element. Prevent options from recieving true focus via shouldUseVirtualFocus.
-  let {optionProps} = useOption({
-    key: item.key,
-    isDisabled,
-    isSelected,
-    shouldSelectOnPressUp: true,
-    shouldFocusOnHover: true,
-    shouldUseVirtualFocus
-  }, state, ref);
-
-  let backgroundColor;
-  let color;
-
-  if (isSelected) {
-    backgroundColor = 'blueviolet';
-    color = 'white';
-  } else if (isFocused) {
-    backgroundColor = 'gray';
-    color = 'black';
-  } else if (isDisabled) {
-    backgroundColor = 'transparent';
-    color = 'gray';
-  }
-
-  return (
-    <li
-      {...optionProps}
-      ref={ref}
-      style={{
-        background: backgroundColor,
-        color: color,
-        padding: '2px 5px',
-        outline: 'none',
-        cursor: 'pointer'
-      }}>
-      {item.rendered}
-    </li>
-  );
-}
-///- end collapse -///
-// Using the same ComboBox component code from the first example...
-
 <ComboBox label="Favorite Animal" menuTrigger="focus">
   <Item key="red panda">Red Panda</Item>
   <Item key="cat">Cat</Item>
@@ -1163,179 +561,6 @@ via the `disabledKeys` prop. This will prevent options with matching keys from b
 receiving keyboard focus as shown in the example below. Note that you are responsible for the styling of disabled options.
 
 ```tsx example
-///- begin collapse -///
-function ComboBox(props) {
-  // Get a basic "contains" filter function for input value and option text comparison
-  let {contains} = useFilter({sensitivity: 'base'});
-
-  // Create state based on the incoming props and the filter function
-  let state = useComboBoxState({...props, defaultFilter: contains});
-
-  // Get props for child elements from useComboBox
-  let triggerRef = React.useRef();
-  let inputRef = React.useRef();
-  let listBoxRef = React.useRef();
-  let popoverRef = React.useRef();
-
-  let {buttonProps: triggerProps, inputProps, listBoxProps, labelProps} = useComboBox(
-    {
-      ...props,
-      inputRef,
-      buttonRef: triggerRef,
-      listBoxRef,
-      popoverRef,
-      menuTrigger: 'input',
-    },
-    state
-  );
-
-  // Get props for the ComboBox trigger button based on the button props from useComboBox
-  let {buttonProps} = useButton(triggerProps, triggerRef);
-
-  return (
-    <div style={{position: 'relative', display: 'inline-block'}}>
-      <div {...labelProps}>{props.label}</div>
-      <input
-        {...inputProps}
-        ref={inputRef}
-        style={{
-          borderRight: 0,
-          borderBottomRightRadius: 0,
-          borderTopRightRadius: 0
-        }} />
-      <button
-        {...buttonProps}
-        ref={triggerRef}
-        style={{
-          height: '21px',
-          borderBottomLeftRadius: 0,
-          borderTopLeftRadius: 0
-        }}>
-        <span
-          aria-hidden="true"
-          style={{paddingLeft: 5}}>
-          ▼
-        </span>
-      </button>
-      {state.isOpen &&
-        <ListBoxPopup
-          {...listBoxProps}
-          // Use virtual focus to get aria-activedescendant tracking and
-          // ensure focus doesn't leave the input field
-          shouldUseVirtualFocus
-          listBoxRef={listBoxRef}
-          popoverRef={popoverRef}
-          state={state} />
-      }
-    </div>
-  );
-}
-
-function ListBoxPopup(props) {
-  let {
-    popoverRef,
-    listBoxRef,
-    state,
-    shouldUseVirtualFocus,
-    ...otherProps
-  } = props;
-
-  // Get props for the listbox. Prevent focus moving to listbox via shouldUseVirtualFocus
-  let {listBoxProps} = useListBox({
-    autoFocus: state.focusStrategy,
-    disallowEmptySelection: true,
-    shouldUseVirtualFocus,
-    ...otherProps
-  }, state, listBoxRef);
-
-  // Handle events that should cause the popup to close,
-  // e.g. blur, clicking outside, or pressing the escape key.
-  let {overlayProps} = useOverlay({
-    onClose: () => state.close(),
-    shouldCloseOnBlur: true,
-    isOpen: state.isOpen,
-    isDismissable: true
-  }, popoverRef);
-
-  // Add hidden <DismissButton> components at the end of the list
-  // to allow screen reader users to dismiss the popup easily.
-  return (
-    <div {...overlayProps} ref={popoverRef}>
-      <ul
-        {...mergeProps(listBoxProps, otherProps)}
-        ref={listBoxRef}
-        style={{
-          position: 'absolute',
-          width: '100%',
-          margin: '4px 0 0 0',
-          padding: 0,
-          listStyle: 'none',
-          border: '1px solid gray',
-          background: 'lightgray'
-        }}>
-        {[...state.collection].map(item => (
-          <Option
-            shouldUseVirtualFocus
-            key={item.key}
-            item={item}
-            state={state} />
-        ))}
-      </ul>
-      <DismissButton onDismiss={() => state.close()} />
-    </div>
-  )
-}
-
-function Option({item, state, shouldUseVirtualFocus}) {
-  let ref = React.useRef();
-  let isDisabled = state.disabledKeys.has(item.key);
-  let isSelected = state.selectionManager.isSelected(item.key);
-  // Track focus via focusedKey state instead of with focus event listeners
-  // since focus never leaves the text input in a ComboBox
-  let isFocused = state.selectionManager.focusedKey === item.key;
-
-  // Get props for the option element. Prevent options from receiving true focus via shouldUseVirtualFocus.
-  let {optionProps} = useOption({
-    key: item.key,
-    isDisabled,
-    isSelected,
-    shouldSelectOnPressUp: true,
-    shouldFocusOnHover: true,
-    shouldUseVirtualFocus
-  }, state, ref);
-
-  let backgroundColor;
-  let color;
-
-  if (isSelected) {
-    backgroundColor = 'blueviolet';
-    color = 'white';
-  } else if (isFocused) {
-    backgroundColor = 'gray';
-    color = 'black';
-  } else if (isDisabled) {
-    backgroundColor = 'transparent';
-    color = 'gray';
-  }
-
-  return (
-    <li
-      {...optionProps}
-      ref={ref}
-      style={{
-        background: backgroundColor,
-        color: color,
-        padding: '2px 5px',
-        outline: 'none',
-        cursor: 'pointer'
-      }}>
-      {item.rendered}
-    </li>
-  );
-}
-///- end collapse -///
-// Using the same ComboBox component code from the first example...
-
 <ComboBox label="Favorite Animal" disabledKeys={['cat', 'kangaroo']}>
   <Item key="red panda">Red Panda</Item>
   <Item key="cat">Cat</Item>
@@ -1351,7 +576,7 @@ function Option({item, state, shouldUseVirtualFocus}) {
 `useComboBox` handles some aspects of internationalization automatically.
 For example, the item focus, count, and selection VoiceOver announcements are localized.
 You are responsible for localizing all labels and option
-content that is passed into the select.
+content that is passed into the combo box.
 
 ### RTL
 
