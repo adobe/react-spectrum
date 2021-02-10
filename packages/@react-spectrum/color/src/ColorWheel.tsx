@@ -13,6 +13,8 @@
 import {classNames, dimensionValue, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {ColorThumb} from './ColorThumb';
 import {FocusableRef} from '@react-types/shared';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {SpectrumColorWheelProps} from '@react-types/color';
 import styles from '@adobe/spectrum-css-temp/components/colorwheel/vars.css';
@@ -20,6 +22,7 @@ import {useColorWheel} from '@react-aria/color';
 import {useColorWheelState} from '@react-stately/color';
 import {useFocus, useFocusVisible} from '@react-aria/interactions';
 import {useId, useResizeObserver} from '@react-aria/utils';
+import {useMessageFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 const SEGMENTS = [];
@@ -32,7 +35,10 @@ const WHEEL_THICKNESS = 24;
 function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
 
-  let {isDisabled} = props;
+  let {
+    isDisabled,
+    'aria-label': ariaLabel
+  } = props;
   let size = props.size && dimensionValue(props.size);
   let {styleProps} = useStyleProps(props);
 
@@ -59,9 +65,16 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
     onResize: resizeHandler
   });
 
+  // Provide a default aria-label if none is given
+  let formatMessage = useMessageFormatter(intlMessages);
+  if (ariaLabel == null && props['aria-labelledby'] == null) {
+    ariaLabel = formatMessage('hue');
+  }
+
   let state = useColorWheelState(props);
   let {groupProps, inputProps, thumbProps, thumbPosition: {x, y}} = useColorWheel({
     ...props,
+    'aria-label': ariaLabel,
     inputRef,
     containerRef,
     innerRadius: wheelRadius - WHEEL_THICKNESS,

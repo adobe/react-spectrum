@@ -1,0 +1,10 @@
+{
+  "hue": "Farbton",
+  "saturation": "Sättigung",
+  "lightness": "Leuchtkraft",
+  "brightness": "Helligkeit",
+  "red": "Rot",
+  "green": "Grün",
+  "blue": "Blau",
+  "alpha": "Alpha"
+}
