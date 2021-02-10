@@ -25,7 +25,7 @@ governing permissions and limitations under the License.
   --spectrum-datepicker-range-dash-padding-top: 0;
   --spectrum-datepicker-range-dash-line-height: calc(var(--spectrum-textfield-height) - var(--spectrum-global-dimension-size-100));
 
-  --spectrum-combobox-button-width: calc(var(--spectrum-global-dimension-size-400) + var(--spectrum-global-dimension-size-25));
+  --spectrum-combobox-button-width: var(--spectrum-global-dimension-size-400);
 }
 
 .spectrum-InputGroup {
@@ -119,6 +119,12 @@ governing permissions and limitations under the License.
       inset-inline-end: var(--spectrum-global-dimension-size-10);
     }
   }
+}
+
+.spectrum-InputGroup-popover--quiet {
+  /* Define this var so it can be read from JS */
+  --spectrum-dropdown-quiet-offset: calc(var(--spectrum-dropdown-quiet-popover-offset-x) + var(--spectrum-popover-border-size));
+  margin-inline-end: calc(var(--spectrum-dropdown-quiet-offset) * -1);
 }
 
 .spectrum-Datepicker--range {

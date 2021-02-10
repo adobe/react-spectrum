@@ -64,6 +64,10 @@ storiesOf('HexColorField', module)
         value="#FF00AA"
         onChange={action('change')} />
     )
+  )
+  .add(
+    'autofocus',
+    () => render({autoFocus: true})
   );
 
 function ControlledHexColorField(props: any = {}) {

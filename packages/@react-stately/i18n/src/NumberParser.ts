@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {getNumberingSystem} from './numberingSystems';
-
 interface Symbols {
   minusSign: string,
   plusSign: string,
@@ -23,6 +21,7 @@ interface Symbols {
 }
 
 const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
+const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec'];
 
 export function parseNumber(locale: string, options: Intl.NumberFormatOptions, value: string) {
   return getNumberParser(locale, options, value).parse(value);
@@ -32,15 +31,32 @@ export function isValidPartialNumber(locale: string, options: Intl.NumberFormatO
   return getNumberParser(locale, options, value).isValidPartialNumber(value, minValue, maxValue);
 }
 
+export function getNumberingSystem(locale: string, options: Intl.NumberFormatOptions, value: string): string {
+  return getNumberParser(locale, options, value).options.numberingSystem;
+}
+
 const numberParserCache = new Map<string, NumberParser>();
 function getNumberParser(locale: string, options: Intl.NumberFormatOptions, value: string) {
-  if (!locale.includes('-u-nu-')) {
-    let numberingSystem = getNumberingSystem(value);
-    if (numberingSystem) {
-      locale = `${locale}-u-nu-${numberingSystem}`;
+  // First try the default numbering system for the provided locale
+  let defaultParser = getCachedNumberParser(locale, options);
+
+  // If that doesn't match, and the locale doesn't include a hard coded numbering system,
+  // try each of the other supported numbering systems until we find one that matches.
+  if (!locale.includes('-u-nu-') && !defaultParser.isValidPartialNumber(value)) {
+    for (let numberingSystem of NUMBERING_SYSTEMS) {
+      if (numberingSystem !== defaultParser.options.numberingSystem) {
+        let parser = getCachedNumberParser(locale + '-u-nu-' + numberingSystem, options);
+        if (parser.isValidPartialNumber(value)) {
+          return parser;
+        }
+      }
     }
   }
 
+  return defaultParser;
+}
+
+function getCachedNumberParser(locale: string, options: Intl.NumberFormatOptions) {
   let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
   let parser = numberParserCache.get(cacheKey);
   if (!parser) {
@@ -59,7 +75,7 @@ class NumberParser {
   constructor(locale: string, options: Intl.NumberFormatOptions = {}) {
     this.formatter = new Intl.NumberFormat(locale, options);
     this.options = this.formatter.resolvedOptions();
-    this.symbols = getSymbols(this.formatter, this.options);
+    this.symbols = getSymbols(this.formatter, this.options, options);
   }
 
   parse(value: string) {
@@ -69,6 +85,7 @@ class NumberParser {
     // Remove group characters, and replace decimal points and numerals with ASCII values.
     fullySanitizedValue = replaceAll(fullySanitizedValue, this.symbols.group, '')
       .replace(this.symbols.decimal, '.')
+      .replace(this.symbols.minusSign, '-')
       .replace(this.symbols.numeral, this.symbols.index);
 
     let newValue = fullySanitizedValue ? +fullySanitizedValue : NaN;
@@ -95,6 +112,10 @@ class NumberParser {
     // Remove literals and whitespace, which are allowed anywhere in the string
     value = value.replace(this.symbols.literals, '');
 
+    // Replace the ASCII minus sign with the minus sign used in the current locale
+    // so that both are allowed in case the user's keyboard doesn't have the locale's minus sign.
+    value = value.replace('-', this.symbols.minusSign);
+
     // In arab numeral system, their decimal character is 1643, but most keyboards don't type that
     // instead they use the , (44) character or apparently the (1548) character.
     if (this.options.numberingSystem === 'arab') {
@@ -118,7 +139,7 @@ class NumberParser {
     // Remove minus or plus sign, which must be at the start of the string.
     if (value.startsWith(this.symbols.minusSign) && minValue < 0) {
       value = value.slice(this.symbols.minusSign.length);
-    } else if (value.startsWith(this.symbols.plusSign) && maxValue > 0) {
+    } else if (this.symbols.plusSign && value.startsWith(this.symbols.plusSign) && maxValue > 0) {
       value = value.slice(this.symbols.plusSign.length);
     }
 
@@ -139,13 +160,21 @@ class NumberParser {
 
 const nonLiteralParts = new Set(['decimal', 'fraction', 'integer', 'minusSign', 'plusSign', 'group']);
 
-function getSymbols(formatter: Intl.NumberFormat, intlOptions: Intl.ResolvedNumberFormatOptions): Symbols {
+function getSymbols(formatter: Intl.NumberFormat, intlOptions: Intl.ResolvedNumberFormatOptions, originalOptions: Intl.NumberFormatOptions): Symbols {
   // Note: some locale's don't add a group symbol until there is a ten thousands place
   let allParts = formatter.formatToParts(-10000.1);
-  let minusSign = allParts.find(p => p.type === 'minusSign')?.value;
   let posAllParts = formatter.formatToParts(10000.1);
-  let plusSign = posAllParts.find(p => p.type === 'plusSign')?.value;
   let singularParts = formatter.formatToParts(1);
+
+  let minusSign = allParts.find(p => p.type === 'minusSign')?.value ?? '-';
+  let plusSign = posAllParts.find(p => p.type === 'plusSign')?.value;
+
+  // Safari does not support the signDisplay option, but our number parser polyfills it.
+  // If no plus sign was returned, but the original options contained signDisplay, default to the '+' character.
+  // @ts-ignore
+  if (!plusSign && (originalOptions?.signDisplay === 'exceptZero' || originalOptions?.signDisplay === 'always')) {
+    plusSign = '+';
+  }
 
   let decimal = allParts.find(p => p.type === 'decimal')?.value;
   let group = allParts.find(p => p.type === 'group')?.value;
