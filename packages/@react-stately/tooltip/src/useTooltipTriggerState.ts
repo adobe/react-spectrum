@@ -122,6 +122,7 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
     return () => {
+      clearTimeout(closeTimeout.current);
       let tooltip = tooltips[id];
       if (tooltip) {
         delete tooltips[id];
