@@ -165,6 +165,7 @@ governing permissions and limitations under the License.
 
       &:invalid,
       &.is-invalid {
+         box-shadow: none;
         .spectrum-Stepper-button--stepDown {
           box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
         }
@@ -461,11 +462,27 @@ governing permissions and limitations under the License.
       }
     }
   }
+  &:disabled,
+  &.is-disabled {
+    .spectrum-Stepper-button.spectrum-Stepper-button--stepDown {
+      &.is-disabled {
+         border-color: var(--spectrum-textfield-quiet-border-color-disabled);
+       }
+    }
+  }
   &.is-focused {
     .spectrum-Stepper-button.spectrum-Stepper-button--stepDown {
       &.is-disabled {
         border-color: var(--spectrum-actionbutton-border-color-key-focus);
       }
+    }
+  }
+  &:invalid,
+  &.is-invalid {
+    .spectrum-Stepper-button.spectrum-Stepper-button--stepDown {
+      &.is-disabled {
+         border-color: var(--spectrum-textfield-border-color-error);
+       }
     }
   }
 }

@@ -74,6 +74,10 @@ governing permissions and limitations under the License.
       /* If the user overrides the width of the field, propagate to the inner component */
       width: 100%;
       flex: 1 1 auto;
+      &.spectrum-Field-field--noGrow {
+        /* some fields shouldn't try to fill the vertical space, such as in inputgroups */
+        flex: 0 0 auto;
+      }
     }
   }
 

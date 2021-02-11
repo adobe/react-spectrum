@@ -39,11 +39,17 @@ governing permissions and limitations under the License.
   border-radius: var(--spectrum-border-radius);
   transition: border-color var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
 
-  &:not(.spectrum-Stepper--quiet):not(.spectrum-Stepper--showStepper) .spectrum-Stepper-input {
-    border-inline-end-width: var(--spectrum-stepper-border-size-default);
-    border-inline-end-style: solid;
-    border-start-end-radius: var(--spectrum-border-radius);
-    border-end-end-radius: var(--spectrum-border-radius);
+  &:not(.spectrum-Stepper--quiet):not(.spectrum-Stepper--showStepper) {
+    .spectrum-Stepper-input {
+      border-inline-end-width: var(--spectrum-stepper-border-size-default);
+      border-inline-end-style: solid;
+      border-start-end-radius: var(--spectrum-border-radius);
+      border-end-end-radius: var(--spectrum-border-radius);
+    }
+
+    &.is-disabled .spectrum-Stepper-input {
+      border-inline-end-width: 0px;
+    }
   }
 
   &.is-disabled:not(.spectrum-Stepper--quiet) .spectrum-Stepper-input {
