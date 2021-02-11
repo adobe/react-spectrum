@@ -28,7 +28,6 @@ import {useLocale} from '@react-aria/i18n';
 import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
-import styles from "@adobe/spectrum-css-temp/components/inputgroup/vars.css";
 
 function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
@@ -64,7 +63,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
     'spectrum-InputGroup',
     {
       'spectrum-InputGroup--quiet': isQuiet,
-      'is-invalid': props.validationState === 'invalid',
+      'spectrum-InputGroup--invalid': props.validationState === 'invalid',
       'is-disabled': isDisabled,
       'is-hovered': isHovered
     },
