@@ -165,6 +165,10 @@ storiesOf('Progress/ProgressBar', module)
     () => render({width: '300px', value: 100})
   )
   .add(
+    'width: 300px, isIndeterminate: true',
+    () => render({width: '300px', isIndeterminate: true})
+  )
+  .add(
     'width: 300px, labelPosition: side',
     () => render({width: '300px', labelPosition: 'side'})
   )

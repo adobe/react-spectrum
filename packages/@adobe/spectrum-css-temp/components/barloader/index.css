@@ -22,6 +22,10 @@ governing permissions and limitations under the License.
   inline-size: var(--spectrum-barloader-large-width);
   vertical-align: top;
   isolation: isolate;
+
+  &.spectrum-BarLoader--indeterminate {
+    max-width: var(--spectrum-barloader-large-width);
+  }
 }
 
 .spectrum-BarLoader-track {
