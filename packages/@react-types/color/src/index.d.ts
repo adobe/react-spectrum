@@ -63,7 +63,9 @@ export interface ColorWheelProps extends Omit<SliderProps<string | Color>, 'minV
   onChangeEnd?: (value: Color) => void
 }
 
-export interface SpectrumColorWheelProps extends ColorWheelProps, DOMProps, StyleProps, AriaLabelingProps {
+export interface AriaColorWheelProps extends ColorWheelProps, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumColorWheelProps extends AriaColorWheelProps, StyleProps {
   size?: DimensionValue
 }
 

@@ -9,8 +9,6 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/grid": "3.0.0-alpha.1",
-    "@react-stately/table": "3.0.0-alpha.7",
     "@react-types/shared": "^3.3.0"
   },
   "peerDependencies": {
