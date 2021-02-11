@@ -28,20 +28,35 @@ import {useMessageFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
 export interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
-  buttonRef: RefObject<HTMLElement>,
+  /** The ref for the input element. */
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  /** The ref for the list box popover. */
   popoverRef: RefObject<HTMLDivElement>,
+  /** The ref for the list box. */
   listBoxRef: RefObject<HTMLElement>,
+  /** The ref for the list box popup trigger button.  */
+  buttonRef: RefObject<HTMLElement>,
+  /** An optional keyboard delegate implementation, to override the default. */
   keyboardDelegate?: KeyboardDelegate
 }
 
 interface ComboBoxAria {
+  /** Props for the combo box menu trigger button. */
   buttonProps: AriaButtonProps,
+  /** Props for the combo box input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Props for the combo box menu. */
   listBoxProps: HTMLAttributes<HTMLElement>,
+  /** Props for the combo box label element. */
   labelProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a combo box component.
+ * A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
+ * @param props - Props for the combo box.
+ * @param state - State for the select, as returned by `useComboBoxState`.
+ */
 export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState<T>): ComboBoxAria {
   let {
     buttonRef,
@@ -140,7 +155,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     autoComplete: 'off'
   }, inputRef);
 
-  // Press handlers for the combobox button
+  // Press handlers for the ComboBox button
   let onPress = (e: PressEvent) => {
     if (e.pointerType === 'touch') {
       // Focus the input field in case it isn't focused yet
@@ -168,7 +183,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     'aria-labelledby': props['aria-labelledby'] || labelProps.id
   });
 
-  // If a touch happens on direct center of combobox input, might be virtual click from iPad so open combobox menu
+  // If a touch happens on direct center of ComboBox input, might be virtual click from iPad so open ComboBox menu
   let lastEventTime = useRef(0);
   let onTouchEnd = (e: TouchEvent) => {
     if (isDisabled || isReadOnly) {
