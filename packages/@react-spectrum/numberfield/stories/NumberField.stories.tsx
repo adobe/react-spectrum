@@ -69,6 +69,10 @@ storiesOf('NumberField', module)
     () => render({isDisabled: true})
   )
   .add(
+    'readonly',
+    () => render({defaultValue: 10, isReadOnly: true})
+  )
+  .add(
     'isQuiet',
     () => render({isQuiet: true})
   )
@@ -77,8 +81,8 @@ storiesOf('NumberField', module)
     () => render({isQuiet: true, isDisabled: true})
   )
   .add(
-    'readonly',
-    () => render({defaultValue: 10, isReadOnly: true})
+    'quiet readonly',
+    () => render({isQuiet: true, isReadOnly: true})
   )
   .add(
     'validationState: invalid',
