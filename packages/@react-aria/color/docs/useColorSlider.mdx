@@ -72,8 +72,7 @@ function ColorSlider(props) {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        width: 300,
-        touchAction: 'none'
+        width: 300
       }}>
       {/* Create a flex container for the label and output element. */}
       <div style={{display: 'flex', alignSelf: 'stretch'}}>
@@ -88,7 +87,6 @@ function ColorSlider(props) {
         ref={trackRef}
         style={{
           ...trackProps.style,
-          position: 'relative',
           height: TRACK_THICKNESS,
           width: '100%',
           borderRadius: 4
@@ -97,9 +95,6 @@ function ColorSlider(props) {
           {...thumbProps}
           style={{
             ...thumbProps.style,
-            position: 'absolute',
-            transform: 'translate(-50%, -50%)',
-            left: `${state.getThumbPercent(0) * 100}%`,
             top: TRACK_THICKNESS / 2,
             border: '2px solid white',
             boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
@@ -145,15 +140,13 @@ function ColorSlider(props) {
     <div
       {...groupProps}
       style={{
-        height: 200,
-        touchAction: 'none'
+        height: 200
       }}>
       <div
         {...trackProps}
         ref={trackRef}
         style={{
           ...trackProps.style,
-          position: 'relative',
           width: TRACK_THICKNESS,
           height: '100%',
           borderRadius: 4
@@ -162,9 +155,6 @@ function ColorSlider(props) {
           {...thumbProps}
           style={{
             ...thumbProps.style,
-            position: 'absolute',
-            transform: 'translate(-50%, -50%)',
-            top: `${(1 - state.getThumbPercent(0)) * 100}%`,
             left: TRACK_THICKNESS / 2,
             border: '2px solid white',
             boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',

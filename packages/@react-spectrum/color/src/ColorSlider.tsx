@@ -23,7 +23,7 @@ import styles from '@adobe/spectrum-css-temp/components/colorslider/vars.css';
 import {useColorSlider} from '@react-aria/color';
 import {useColorSliderState} from '@react-stately/color';
 import {useFocus, useFocusVisible} from '@react-aria/interactions';
-import {useLocale, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
+import {useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivElement>) {
@@ -40,7 +40,6 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
   let vertical = orientation === 'vertical';
 
   let {styleProps} = useStyleProps(props);
-  let {direction} = useLocale();
 
   let inputRef = useRef();
   let trackRef = useRef();
@@ -86,11 +85,6 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
     onFocusChange: setIsFocused
   });
 
-  let thumbPosition = state.getThumbPercent(0);
-  if (vertical || direction === 'rtl') {
-    thumbPosition = 1 - thumbPosition;
-  }
-
   let alignLabel;
   if (vertical) {
     alignLabel = 'center';
@@ -135,7 +129,6 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
           isFocused={isFocused && isFocusVisible}
           isDisabled={isDisabled}
           isDragging={state.isThumbDragging(0)}
-          style={{[vertical ? 'top' : 'left']: `${thumbPosition * 100}%`}}
           className={classNames(styles, 'spectrum-ColorSlider-handle')}
           {...thumbProps}>
           <input {...inputProps} {...focusProps} ref={inputRef} className={classNames(styles, 'spectrum-ColorSlider-slider')} />

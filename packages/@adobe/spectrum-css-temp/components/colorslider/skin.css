@@ -20,4 +20,8 @@
     background: var(--spectrum-colorslider-fill-color-disabled) !important;
     box-shadow: inset 0 0 0 var(--spectrum-colorslider-border-size) var(--spectrum-colorslider-border-color-disabled);
   }
+
+  .spectrum-ColorSlider-handle {
+    margin: 0;
+  }
 }
