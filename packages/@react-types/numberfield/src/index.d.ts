@@ -37,8 +37,8 @@ export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLa
   incrementAriaLabel?: string
 }
 
-export interface SpectrumNumberFieldProps extends AriaNumberFieldProps, StyleProps, SpectrumLabelableProps, Omit<AriaNumberFieldProps, 'placeholder'> {
-  /** Whether the number field should be displayed with a quiet style. */
+export interface SpectrumNumberFieldProps extends Omit<AriaNumberFieldProps, 'placeholder'>, StyleProps, SpectrumLabelableProps {
+  /** Whether the numberfield should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Whether to hide the increment and decrement buttons. */
   hideStepper?: boolean
