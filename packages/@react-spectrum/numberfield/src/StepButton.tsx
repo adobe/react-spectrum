@@ -49,7 +49,7 @@ function StepButton(props: StepButtonProps, ref: RefObject<HTMLDivElement>) {
             {
               'spectrum-Stepper-button--stepUp': direction === 'up',
               'spectrum-Stepper-button--stepDown': direction === 'down',
-              'spectrum-Stepper-button--isQuiet': isQuiet,
+              'spectrum-Stepper-button--quiet': isQuiet,
               'is-hovered': isHovered,
               'is-active': isPressed,
               'is-disabled': isDisabled
