@@ -52,7 +52,7 @@ export interface Color {
   /** Converts the color to hex, and returns an integer representation. */
   toHexInt(): number,
   /**
-   * Gets the numeric value for a given channel.
+   * Returns the numeric value for a given channel.
    * Throws an error if the channel is unsupported in the current color format.
    */
   getChannelValue(channel: ColorChannel): number,
@@ -62,9 +62,18 @@ export interface Color {
    */
   withChannelValue(channel: ColorChannel, value: number): Color,
   /**
-   * Gets the minimum, maximum, and step values for a given channel.
+   * Returns the minimum, maximum, and step values for a given channel.
    */
-  getChannelRange(channel: ColorChannel): ColorChannelRange
+  getChannelRange(channel: ColorChannel): ColorChannelRange,
+  /**
+   * Returns a localized color channel name for a given channel and locale,
+   * for use in visual or accessibility labels.
+   */
+  getChannelName(channel: ColorChannel, locale: string): string,
+  /**
+   * Formats the numeric value for a given channel for display according to the provided locale.
+   */
+  formatChannelValue(channel: ColorChannel, locale: string): string
 }
 
 export interface ColorFieldProps extends ValueBase<string | Color>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {

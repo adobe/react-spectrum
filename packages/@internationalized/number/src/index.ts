@@ -10,16 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {NumberFormatOptions, NumberFormatter} from '@internationalized/number';
-import {useLocale} from './context';
-import {useMemo} from 'react';
+export type {NumberFormatOptions} from './NumberFormatter';
 
-/**
- * Provides localized number formatting for the current locale. Automatically updates when the locale changes,
- * and handles caching of the number formatter for performance.
- * @param options - Formatting options.
- */
-export function useNumberFormatter(options: NumberFormatOptions = {}): Intl.NumberFormat {
-  let {locale} = useLocale();
-  return useMemo(() => new NumberFormatter(locale, options), [locale, options]);
-}
+export {NumberFormatter} from './NumberFormatter';
+export {NumberParser} from './NumberParser';

@@ -12,6 +12,12 @@
 
 import {clamp} from '@react-aria/utils';
 import {ColorChannel, ColorChannelRange, ColorFormat, Color as IColor} from '@react-types/color';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {MessageDictionary} from '@internationalized/message';
+import {NumberFormatter} from '@internationalized/number';
+
+const messages = new MessageDictionary(intlMessages);
 
 export function parseColor(value: string): IColor {
   let res = RGBColor.parse(value) || HSBColor.parse(value) || HSLColor.parse(value);
@@ -27,6 +33,7 @@ abstract class Color implements IColor {
   abstract toString(format: ColorFormat | 'css'): string;
   abstract clone(): Color;
   abstract getChannelRange(channel: ColorChannel): ColorChannelRange;
+  abstract formatChannelValue(channel: ColorChannel, locale: string): string;
 
   toHexInt(): number {
     return this.toFormat('rgb').toHexInt();
@@ -48,6 +55,10 @@ abstract class Color implements IColor {
     }
 
     throw new Error('Unsupported color channel: ' + channel);
+  }
+
+  getChannelName(channel: ColorChannel, locale: string) {
+    return messages.getStringForLocale(channel, locale);
   }
 }
 
@@ -132,6 +143,24 @@ class RGBColor extends Color {
         throw new Error('Unknown color channel: ' + channel);
     }
   }
+
+  formatChannelValue(channel: ColorChannel, locale: string) {
+    let options: Intl.NumberFormatOptions;
+    let value = this.getChannelValue(channel);
+    switch (channel) {
+      case 'red':
+      case 'green':
+      case 'blue':
+        options = {style: 'decimal'};
+        break;
+      case 'alpha':
+        options = {style: 'percent'};
+        break;
+      default:
+        throw new Error('Unknown color channel: ' + channel);
+    }
+    return new NumberFormatter(locale, options).format(value);
+  }
 }
 
 // X = <negative/positive number with/without decimal places>
@@ -213,6 +242,27 @@ class HSBColor extends Color {
         throw new Error('Unknown color channel: ' + channel);
     }
   }
+
+  formatChannelValue(channel: ColorChannel, locale: string) {
+    let options: Intl.NumberFormatOptions;
+    let value = this.getChannelValue(channel);
+    switch (channel) {
+      case 'hue':
+        options = {style: 'unit', unit: 'degree', unitDisplay: 'narrow'};
+        break;
+      case 'saturation':
+      case 'brightness':
+        options = {style: 'percent'};
+        value /= 100;
+        break;
+      case 'alpha':
+        options = {style: 'percent'};
+        break;
+      default:
+        throw new Error('Unknown color channel: ' + channel);
+    }
+    return new NumberFormatter(locale, options).format(value);
+  }
 }
 
 // X = <negative/positive number with/without decimal places>
@@ -278,5 +328,26 @@ class HSLColor extends Color {
       default:
         throw new Error('Unknown color channel: ' + channel);
     }
+  }
+
+  formatChannelValue(channel: ColorChannel, locale: string) {
+    let options: Intl.NumberFormatOptions;
+    let value = this.getChannelValue(channel);
+    switch (channel) {
+      case 'hue':
+        options = {style: 'unit', unit: 'degree', unitDisplay: 'narrow'};
+        break;
+      case 'saturation':
+      case 'lightness':
+        options = {style: 'percent'};
+        value /= 100;
+        break;
+      case 'alpha':
+        options = {style: 'percent'};
+        break;
+      default:
+        throw new Error('Unknown color channel: ' + channel);
+    }
+    return new NumberFormatter(locale, options).format(value);
   }
 }

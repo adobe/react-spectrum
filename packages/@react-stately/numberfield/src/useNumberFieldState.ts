@@ -11,8 +11,8 @@
  */
 
 import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
-import {getNumberFormatter, getNumberingSystem, isValidPartialNumber, parseNumber} from '@react-stately/i18n';
 import {NumberFieldProps} from '@react-types/numberfield';
+import {NumberFormatter, NumberParser} from '@internationalized/number';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 export interface NumberFieldState {
@@ -84,10 +84,11 @@ export function useNumberFieldState(
   } = props;
 
   let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, onChange);
-  let [inputValue, setInputValue] = useState(() => isNaN(numberValue) ? '' : getNumberFormatter(locale, formatOptions).format(numberValue));
+  let [inputValue, setInputValue] = useState(() => isNaN(numberValue) ? '' : new NumberFormatter(locale, formatOptions).format(numberValue));
 
-  let numberingSystem = useMemo(() => getNumberingSystem(locale, formatOptions, inputValue), [locale, formatOptions, inputValue]);
-  let formatter = useMemo(() => getNumberFormatter(locale, {...formatOptions, numberingSystem}), [locale, formatOptions, numberingSystem]);
+  let numberParser = useMemo(() => new NumberParser(locale, formatOptions), [locale, formatOptions]);
+  let numberingSystem = useMemo(() => numberParser.getNumberingSystem(inputValue), [numberParser, inputValue]);
+  let formatter = useMemo(() => new NumberFormatter(locale, {...formatOptions, numberingSystem}), [locale, formatOptions, numberingSystem]);
   let intlOptions = useMemo(() => formatter.resolvedOptions(), [formatter]);
   let format = useCallback((value: number) => isNaN(value) ? '' : formatter.format(value), [formatter]);
 
@@ -104,7 +105,7 @@ export function useNumberFieldState(
   }, [numberValue, locale, formatOptions]);
 
   // Store last parsed value in a ref so it can be used by increment/decrement below
-  let parsedValue = useMemo(() => parseNumber(locale, formatOptions, inputValue), [locale, formatOptions, inputValue]);
+  let parsedValue = useMemo(() => numberParser.parse(inputValue), [numberParser, inputValue]);
   let parsed = useRef(0);
   parsed.current = parsedValue;
 
@@ -130,7 +131,7 @@ export function useNumberFieldState(
       clampedValue = snapValueToStep(parsed.current, minValue, maxValue, step);
     }
 
-    clampedValue = parseNumber(locale, formatOptions, format(clampedValue));
+    clampedValue = numberParser.parse(format(clampedValue));
     setNumberValue(clampedValue);
 
     // in a controlled state, the numberValue won't change, so we won't go back to our old input without help
@@ -224,7 +225,7 @@ export function useNumberFieldState(
     )
   ), [isDisabled, isReadOnly, minValue, maxValue, clampStep, parsedValue]);
 
-  let validate = (value: string) => isValidPartialNumber(locale, formatOptions, value, minValue, maxValue);
+  let validate = (value: string) => numberParser.isValidPartialNumber(value, minValue, maxValue);
 
   return {
     validate,

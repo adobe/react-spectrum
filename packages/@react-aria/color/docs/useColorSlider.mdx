@@ -44,22 +44,24 @@ keywords: [color slider, color picker, aria]
 ```tsx example export=true
 import {useColorSliderState} from '@react-stately/color';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
-import {useNumberFormatter} from '@react-aria/i18n';
+import {useLocale} from '@react-aria/i18n';
 import {useFocusRing} from '@react-aria/focus';
 
 const TRACK_THICKNESS = 28;
 const THUMB_SIZE = 20;
 
 function ColorSlider(props) {
-  let numberFormatter = useNumberFormatter({
-    style: props.channel === 'alpha' ? 'percent' : 'decimal'
-  });
-
-  let state = useColorSliderState({...props, numberFormatter});
+  let {locale} = useLocale();
+  let state = useColorSliderState({...props, locale});
   let trackRef = React.useRef();
   let inputRef = React.useRef();
+
+  // Default label to the channel name in the current locale
+  let label = props.label || state.value.getChannelName(props.channel, locale);
+
   let {trackProps, thumbProps, inputProps, labelProps, outputProps} = useColorSlider({
     ...props,
+    label,
     trackRef,
     inputRef
   }, state);
@@ -76,9 +78,9 @@ function ColorSlider(props) {
       }}>
       {/* Create a flex container for the label and output element. */}
       <div style={{display: 'flex', alignSelf: 'stretch'}}>
-        {props.label && <label {...labelProps}>{props.label}</label>}
+        <label {...labelProps}>{label}</label>
         <output {...outputProps} style={{flex: '1 0 auto', textAlign: 'end'}}>
-          {state.getThumbValueLabel(0)}
+          {state.value.formatChannelValue(props.channel, locale)}
         </output>
       </div>
       {/* The track element holds the visible track line and the thumb. */}
@@ -113,18 +115,15 @@ function ColorSlider(props) {
   );
 }
 
-<ColorSlider channel="hue" label="Hue" defaultValue="hsl(0, 100%, 50%)" />
+<ColorSlider channel="hue" defaultValue="hsl(0, 100%, 50%)" />
 ```
 
 ### Vertical
 
 ```tsx example
 function ColorSlider(props) {
-  let numberFormatter = useNumberFormatter({
-    style: props.channel === 'alpha' ? 'percent' : 'decimal'
-  });
-
-  let state = useColorSliderState({...props, numberFormatter});
+  let {locale} = useLocale();
+  let state = useColorSliderState({...props, locale});
   let trackRef = React.useRef();
   let inputRef = React.useRef();
   let {groupProps, trackProps, thumbProps, inputProps, labelProps, outputProps} = useColorSlider({
@@ -173,7 +172,7 @@ function ColorSlider(props) {
   );
 }
 
-<ColorSlider channel="hue" aria-label="Hue" defaultValue="hsl(0, 100%, 50%)" />
+<ColorSlider channel="hue" defaultValue="hsl(0, 100%, 50%)" />
 ```
 
 ## Usage
@@ -187,10 +186,10 @@ function Example() {
   let [color, setColor] = React.useState(parseColor('#7f007f'));
   return (
     <>
-      <ColorSlider channel="red" label="Red" value={color} onChange={setColor} />
-      <ColorSlider channel="green" label="Green" value={color} onChange={setColor} />
-      <ColorSlider channel="blue" label="Blue" value={color} onChange={setColor} />
-      <ColorSlider channel="alpha" label="Alpha" value={color} onChange={setColor} />
+      <ColorSlider channel="red" value={color} onChange={setColor} />
+      <ColorSlider channel="green" value={color} onChange={setColor} />
+      <ColorSlider channel="blue" value={color} onChange={setColor} />
+      <ColorSlider channel="alpha" value={color} onChange={setColor} />
     </>
   );
 }
@@ -203,10 +202,10 @@ function Example() {
   let [color, setColor] = React.useState(parseColor('hsl(0, 100%, 50%)'));
   return (
     <>
-      <ColorSlider channel="hue" label="Hue" value={color} onChange={setColor} />
-      <ColorSlider channel="saturation" label="Saturation" value={color} onChange={setColor} />
-      <ColorSlider channel="lightness" label="Lightness" value={color} onChange={setColor} />
-      <ColorSlider channel="alpha" label="Alpha" value={color} onChange={setColor} />
+      <ColorSlider channel="hue" value={color} onChange={setColor} />
+      <ColorSlider channel="saturation" value={color} onChange={setColor} />
+      <ColorSlider channel="lightness" value={color} onChange={setColor} />
+      <ColorSlider channel="alpha" value={color} onChange={setColor} />
     </>
   );
 }
@@ -219,10 +218,10 @@ function Example() {
   let [color, setColor] = React.useState(parseColor('hsb(0, 100%, 50%)'));
   return (
     <>
-      <ColorSlider channel="hue" label="Hue" value={color} onChange={setColor} />
-      <ColorSlider channel="saturation" label="Saturation" value={color} onChange={setColor} />
-      <ColorSlider channel="brightness" label="Brightness" value={color} onChange={setColor} />
-      <ColorSlider channel="alpha" label="Alpha" value={color} onChange={setColor} />
+      <ColorSlider channel="hue" value={color} onChange={setColor} />
+      <ColorSlider channel="saturation" value={color} onChange={setColor} />
+      <ColorSlider channel="brightness" value={color} onChange={setColor} />
+      <ColorSlider channel="alpha" value={color} onChange={setColor} />
     </>
   );
 }
