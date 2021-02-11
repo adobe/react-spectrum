@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {NumberFormatOptions, NumberFormatter} from '@spectrum-i18n/number';
+import {NumberFormatOptions, NumberFormatter} from '@internationalized/number';
 import {useLocale} from './context';
 import {useMemo} from 'react';
 

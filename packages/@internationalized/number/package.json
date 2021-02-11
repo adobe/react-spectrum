@@ -1,7 +1,7 @@
 {
-  "name": "@spectrum-i18n/number",
+  "name": "@internationalized/number",
   "version": "3.0.0-alpha.1",
-  "description": "Spectrum UI components in React",
+  "description": "Internationalized number formatting and parsing utilities",
   "license": "Apache-2.0",
   "private": true,
   "main": "dist/main.js",

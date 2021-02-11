@@ -14,8 +14,8 @@ import {clamp} from '@react-aria/utils';
 import {ColorChannel, ColorChannelRange, ColorFormat, Color as IColor} from '@react-types/color';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {MessageDictionary} from '@spectrum-i18n/message';
-import {NumberFormatter} from '@spectrum-i18n/number';
+import {MessageDictionary} from '@internationalized/message';
+import {NumberFormatter} from '@internationalized/number';
 
 const messages = new MessageDictionary(intlMessages);
 

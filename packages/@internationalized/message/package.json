@@ -1,8 +1,8 @@
 {
-  "name": "@spectrum-i18n/message",
+  "name": "@internationalized/message",
   "version": "3.0.0-alpha.1",
   "private": true,
-  "description": "Spectrum UI components in React",
+  "description": "Internationalized message formatting and locale negotiation",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",

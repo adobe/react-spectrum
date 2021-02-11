@@ -12,7 +12,7 @@
 
 import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
 import {NumberFieldProps} from '@react-types/numberfield';
-import {NumberFormatter, NumberParser} from '@spectrum-i18n/number';
+import {NumberFormatter, NumberParser} from '@internationalized/number';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 export interface NumberFieldState {
