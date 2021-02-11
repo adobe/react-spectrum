@@ -28,8 +28,9 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     children,
     labelProps,
     elementType,
+    noGrow,
     wrapperClassName,
-    
+
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
