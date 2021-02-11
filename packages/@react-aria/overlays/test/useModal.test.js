@@ -21,7 +21,7 @@ function ModalDOM(props) {
 
 function Modal(props) {
   return (
-    <OverlayContainer data-testid={props.providerId || 'modal-provider'}>
+    <OverlayContainer data-testid={props.providerId || 'modal-provider'} portalContainer={props.portalContainer}>
       <ModalDOM modalId={props.modalId}>{props.children}</ModalDOM>
     </OverlayContainer>
   );
@@ -87,5 +87,26 @@ describe('useModal', function () {
 
     res.rerender(<Example />);
     expect(rootProvider).not.toHaveAttribute('aria-hidden');
+  });
+});
+
+describe('OverlayContainer', () => {
+  it('should be able to render in a custom portalContainer', () => {
+    function Test(props) {
+      return (
+        <OverlayProvider data-testid="root-provider">
+          This is the root provider.
+          {props.showModal &&
+            <Modal portalContainer={document.querySelector('[data-testid="portal-container"]')}>{props.children}</Modal>
+          }
+          <div data-testid="portal-container" />
+        </OverlayProvider>
+      );
+    }
+
+    let {getByTestId, rerender} = render(<Test />);
+    rerender(<Test showModal>This is in portal container.</Test>);
+
+    expect(getByTestId('portal-container').textContent).toBe('This is in portal container.');
   });
 });

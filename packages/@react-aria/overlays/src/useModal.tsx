@@ -17,6 +17,11 @@ interface ModalProviderProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode
 }
 
+interface OverlayContainerProps extends ModalProviderProps {
+  /** @default document.body */
+  portalContainer?: HTMLElement
+}
+
 interface ModalContext {
   parent: ModalContext | null,
   modalCount: number,
@@ -113,9 +118,9 @@ export function OverlayProvider(props: ModalProviderProps) {
  * nested modal is opened. Only the top-most modal or overlay should
  * be accessible at once.
  */
-export function OverlayContainer(props: ModalProviderProps): React.ReactPortal {
+export function OverlayContainer({portalContainer = document.body, ...props}: OverlayContainerProps): React.ReactPortal {
   let contents = <OverlayProvider {...props} />;
-  return ReactDOM.createPortal(contents, document.body);
+  return ReactDOM.createPortal(contents, portalContainer);
 }
 
 interface ModalAriaProps extends HTMLAttributes<HTMLElement> {
