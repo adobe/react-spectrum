@@ -66,6 +66,10 @@ governing permissions and limitations under the License.
   inline-size: auto;
   min-width: fit-content;
 
+  .spectrum-BarLoader-track {
+    width: auto;
+  }
+
   .spectrum-BarLoader-label {
     margin-inline-end: var(--spectrum-barloader-large-label-gap-x);
     margin-bottom: 0;

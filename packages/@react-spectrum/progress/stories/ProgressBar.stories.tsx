@@ -109,6 +109,20 @@ storiesOf('Progress/ProgressBar', module)
     }
   )
   .add(
+    'long label',
+    () => {
+      const value = number('Value', 32, sliderOptions);
+      return render({value, label: 'Super long progress bar label. Sample label copy. Loading...'});
+    }
+  )
+  .add(
+    'long label, labelPosition: side',
+    () => {
+      const value = number('Value', 32, sliderOptions);
+      return render({value, labelPosition: 'side', label: 'Super long progress bar label. Sample label copy. Loading...'});
+    }
+  )
+  .add(
     'isIndeterminate: true',
     () => {
       const value = number('Value', 32, sliderOptions);
@@ -148,7 +162,11 @@ storiesOf('Progress/ProgressBar', module)
   )
   .add(
     'width: 300px',
-    () => render({width: '300px'})
+    () => render({width: '300px', value: 100})
+  )
+  .add(
+    'width: 300px, labelPosition: side',
+    () => render({width: '300px', labelPosition: 'side'})
   )
   .add(
     'width: 300px, labelPosition: side, isIndeterminate: true',
@@ -159,8 +177,16 @@ storiesOf('Progress/ProgressBar', module)
     () => render({width: '30px'})
   )
   .add(
-    'width: 30px, labelPosition: side, isIndeterminate: true',
-    () => render({width: '30px', labelPosition: 'side', isIndeterminate: true})
+    'width: 30px, labelPosition: side, long label',
+    () => render({width: '30px', labelPosition: 'side', label: 'Super long progress bar label. Sample label copy. Loading...'})
+  )
+  .add(
+    'width: 30px, labelPosition: side, isIndeterminate: true, long label, button on left',
+    () =>
+    <>
+      {render({width: '30px', labelPosition: 'side', isIndeterminate: true, label: 'Super long progress bar label. Sample label copy. Loading...'})}
+      <button>Confirm</button>
+    </>
   )
   .add(
     'Using raw values for minValue, maxValue, and value',
@@ -183,7 +209,5 @@ storiesOf('Progress/ProgressBar', module)
   );
 
 function render(props: any = {}) {
-  return (
-    <ProgressBar label="Loading…" {...props} />
-  );
+  return (<ProgressBar label="Loading…" {...props} />);
 }
