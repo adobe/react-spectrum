@@ -23,20 +23,49 @@ interface Symbols {
 const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
 const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec'];
 
-export function parseNumber(locale: string, options: Intl.NumberFormatOptions, value: string) {
-  return getNumberParser(locale, options, value).parse(value);
+/**
+ * A NumberParser can be used perform locale aware parsing of numbers from Unicode strings,
+ * as well as validation of partial user input. Automatically detects the numbering system
+ * used in the input, and supports parsing decimals, percentages, currency values, and units
+ * according to the locale.
+ */
+export class NumberParser {
+  locale: string;
+  options: Intl.NumberFormatOptions;
+
+  constructor(locale: string, options: Intl.NumberFormatOptions = {}) {
+    this.locale = locale;
+    this.options = options;
+  }
+
+  /**
+   * Parses the given string to a number. Returns NaN if a valid number could not be parsed.
+   */
+  parse(value: string): number {
+    return getNumberParserImpl(this.locale, this.options, value).parse(value);
+  }
+
+  /**
+   * Returns whether the given string could potentially be a valid number. This should be used to
+   * validate user input as the user types. If a `minValue` or `maxValue` is provided, the validity
+   * of the minus/plus sign characters can be checked.
+   */
+  isValidPartialNumber(value: string, minValue?: number, maxValue?: number): boolean {
+    return getNumberParserImpl(this.locale, this.options, value).isValidPartialNumber(value, minValue, maxValue);
+  }
+
+  /**
+   * Returns a numbering system for which the given string is valid in the current locale.
+   * If no numbering system could be detected, the default numbering system for the current
+   * locale is returned.
+   */
+  getNumberingSystem(value: string): string {
+    return getNumberParserImpl(this.locale, this.options, value).options.numberingSystem;
+  }
 }
 
-export function isValidPartialNumber(locale: string, options: Intl.NumberFormatOptions, value: string, minValue?: number, maxValue?: number) {
-  return getNumberParser(locale, options, value).isValidPartialNumber(value, minValue, maxValue);
-}
-
-export function getNumberingSystem(locale: string, options: Intl.NumberFormatOptions, value: string): string {
-  return getNumberParser(locale, options, value).options.numberingSystem;
-}
-
-const numberParserCache = new Map<string, NumberParser>();
-function getNumberParser(locale: string, options: Intl.NumberFormatOptions, value: string) {
+const numberParserCache = new Map<string, NumberParserImpl>();
+function getNumberParserImpl(locale: string, options: Intl.NumberFormatOptions, value: string) {
   // First try the default numbering system for the provided locale
   let defaultParser = getCachedNumberParser(locale, options);
 
@@ -60,14 +89,16 @@ function getCachedNumberParser(locale: string, options: Intl.NumberFormatOptions
   let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
   let parser = numberParserCache.get(cacheKey);
   if (!parser) {
-    parser = new NumberParser(locale, options);
+    parser = new NumberParserImpl(locale, options);
     numberParserCache.set(cacheKey, parser);
   }
 
   return parser;
 }
 
-class NumberParser {
+// The actual number parser implementation. Instances of this class are cached
+// based on the locale, options, and detected numbering system.
+class NumberParserImpl {
   formatter: Intl.NumberFormat;
   options: Intl.ResolvedNumberFormatOptions;
   symbols: Symbols;

@@ -1,9 +1,9 @@
 {
-  "name": "@react-stately/i18n",
+  "name": "@internationalized/message",
   "version": "3.0.0-alpha.1",
-  "description": "Spectrum UI components in React",
-  "license": "Apache-2.0",
   "private": true,
+  "description": "Internationalized message formatting and locale negotiation",
+  "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
@@ -18,10 +18,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2"
-  },
-  "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1"
+    "@babel/runtime": "^7.6.2",
+    "intl-messageformat": "^2.2.0"
   },
   "publishConfig": {
     "access": "public"

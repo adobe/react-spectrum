@@ -21,12 +21,13 @@ export interface ColorSliderState extends SliderState {
   /** Sets the current color value. If a string is passed, it will be parsed to a Color. */
   setValue(value: string | Color): void,
   /** Returns the color that should be displayed in the slider instead of `value` or the optional parameter. */
-  getDisplayColor(c?: Color): Color
+  getDisplayColor(): Color
 }
 
 
 interface ColorSliderStateOptions extends ColorSliderProps {
-  numberFormatter: Intl.NumberFormat
+  /** The locale to use for formatting the color channel value. */
+  locale: string
 }
 
 function normalizeColor(v: string | Color) {
@@ -42,17 +43,17 @@ function normalizeColor(v: string | Color) {
  * Color sliders allow users to adjust an individual channel of a color value.
  */
 export function useColorSliderState(props: ColorSliderStateOptions): ColorSliderState {
-  let {channel, value, defaultValue, onChange, numberFormatter, ...otherProps} = props;
+  let {channel, value, defaultValue, onChange, locale, ...otherProps} = props;
   if (value == null && defaultValue == null) {
     throw new Error('useColorSliderState requires a value or defaultValue');
   }
 
   let [color, setColor] = useControlledState(value && normalizeColor(value), defaultValue && normalizeColor(defaultValue), onChange);
-
   let sliderState = useSliderState({
     ...color.getChannelRange(channel),
     ...otherProps,
-    numberFormatter,
+    // Unused except in getThumbValueLabel, which is overridden below. null to appease TypeScript.
+    numberFormatter: null,
     value: [color.getChannelValue(channel)],
     onChange([v]) {
       setColor(color.withChannelValue(channel, v));
@@ -71,23 +72,26 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
     setValue(value) {
       setColor(normalizeColor(value));
     },
-    getDisplayColor(c: Color = color) {
+    getDisplayColor() {
       switch (channel) {
         case 'hue':
-          return parseColor(`hsl(${c.getChannelValue('hue')}, 100%, 50%)`);
+          return parseColor(`hsl(${color.getChannelValue('hue')}, 100%, 50%)`);
         case 'lightness':
         case 'brightness':
         case 'saturation':
         case 'red':
         case 'green':
         case 'blue':
-          return c.withChannelValue('alpha', 1);
+          return color.withChannelValue('alpha', 1);
         case 'alpha': {
-          return c;
+          return color;
         }
         default:
           throw new Error('Unknown color channel: ' + channel);
       }
+    },
+    getThumbValueLabel() {
+      return color.formatChannelValue(channel, locale);
     }
   };
 }
