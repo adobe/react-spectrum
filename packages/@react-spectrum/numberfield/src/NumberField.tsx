@@ -89,7 +89,6 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
       {...props as Omit<SpectrumNumberFieldProps, 'onChange'>}
       labelProps={labelProps}
       ref={domRef}
-      noGrow
       wrapperClassName={classNames(
         stepperStyle,
         'spectrum-Stepper-container',

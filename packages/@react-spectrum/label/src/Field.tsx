@@ -28,7 +28,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     children,
     labelProps,
     elementType,
-    noGrow,
     wrapperClassName,
 
     ...otherProps
@@ -50,10 +49,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     children = React.cloneElement(children, mergeProps(children.props, {
       className: classNames(
         labelStyles,
-        'spectrum-Field-field',
-        {
-          'spectrum-Field-field--noGrow': labelPosition === 'top' && noGrow
-        }
+        'spectrum-Field-field'
       )
     }));
 
