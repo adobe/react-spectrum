@@ -10,31 +10,32 @@ governing permissions and limitations under the License. -->
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-stately/select';
-import {ClassAPI, HeaderInfo, TypeContext, FunctionAPI, TypeLink} from '@react-spectrum/docs';
-import packageData from '@react-stately/select/package.json';
+import docs from 'docs:@react-stately/combobox';
+import {ClassAPI, HeaderInfo, FunctionAPI} from '@react-spectrum/docs';
+import packageData from '@react-stately/combobox/package.json';
 
 ---
 category: Pickers
-keywords: [select, state]
+keywords: [combobox, state]
+after_version: 3.0.0-alpha.0
 ---
 
-# useSelectState
+# useComboBoxState
 
-<p>{docs.exports.useSelectState.description}</p>
+<p>{docs.exports.useComboBoxState.description}</p>
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['useSelectState']} />
+  componentNames={['useComboBoxState']} />
 
 ## API
 
-<FunctionAPI function={docs.exports.useSelectState} links={docs.links} />
+<FunctionAPI function={docs.exports.useComboBoxState} links={docs.links} />
 
 ## Interface
 
-<ClassAPI links={docs.links} class={docs.links[docs.exports.useSelectState.return.base.id]} />
+<ClassAPI links={docs.links} class={docs.links[docs.exports.useComboBoxState.return.base.id]} />
 
 ## Example
 
-See the docs for [useSelect](/react-aria/useSelect.html) in react-aria for an example of `useSelectState`.
+See the docs for [useComboBox](/react-aria/useComboBox.html) in react-aria for an example of `useComboBoxState`.
