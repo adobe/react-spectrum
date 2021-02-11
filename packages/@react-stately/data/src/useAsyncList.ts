@@ -102,7 +102,8 @@ interface AsyncListData<T> extends ListData<T> {
   loadMore(): void,
   /** Triggers sorting for the list. */
   sort(descriptor: SortDescriptor): void,
-  state: LoadingState
+  /** The current loading state for the list. */
+  loadingState: LoadingState
 }
 
 function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncListState<T, C> {
@@ -277,7 +278,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     selectedKeys: data.selectedKeys,
     sortDescriptor: data.sortDescriptor,
     isLoading: data.state === 'loading' || data.state === 'loadingMore' || data.state === 'sorting' || data.state === 'filtering',
-    state: data.state,
+    loadingState: data.state,
     error: data.error,
     filterText: data.filterText,
     getItem(key: Key) {

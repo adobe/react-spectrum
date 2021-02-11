@@ -113,7 +113,7 @@ let AsyncComboBox = () => {
       label="Combobox"
       inputValue={list.filterText}
       onInputChange={list.setFilterText}
-      loadingState={list.state}
+      loadingState={list.loadingState}
       onLoadMore={list.loadMore}>
       {(item) => <Item>{item.name}</Item>}
     </ComboBox>

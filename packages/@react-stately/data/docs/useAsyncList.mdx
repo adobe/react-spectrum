@@ -204,7 +204,7 @@ let list = useAsyncList({
   items={list.items}
   inputValue={list.filterText}
   onInputChange={list.setFilterText}
-  loadingState={list.state}>
+  loadingState={list.loadingState}>
   {item => <Item key={item.name}>{item.name}</Item>}
 </ComboBox>
 ```
