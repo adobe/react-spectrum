@@ -203,7 +203,6 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     triggerRef,
     autoFocus,
     style,
-    UNSAFE_className,
     className,
     loadingState,
     isOpen
@@ -247,7 +246,6 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
               'spectrum-InputGroup--invalid': validationState === 'invalid',
               'is-hovered': isHovered
             },
-            UNSAFE_className,
             className
           )
         }>
