@@ -13,6 +13,7 @@
 import {AriaColorSliderProps} from '@react-types/color';
 import {ColorSliderState} from '@react-stately/color';
 import {HTMLAttributes, RefObject} from 'react';
+import {mergeProps} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 
@@ -26,8 +27,6 @@ interface ColorSliderAriaOptions extends AriaColorSliderProps {
 interface ColorSliderAria {
   /** Props for the label element. */
   labelProps: HTMLAttributes<HTMLElement>,
-  /** Props for the group element wrapping the track and the thumb. */
-  groupProps: HTMLAttributes<HTMLElement>,
   /** Props for the track element. */
   trackProps: HTMLAttributes<HTMLElement>,
   /** Props for the thumb element. */
@@ -96,9 +95,8 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
   };
 
   return {
-    groupProps,
     trackProps: {
-      ...trackProps,
+      ...mergeProps(groupProps, trackProps),
       style: {
         background: generateBackground()
       }

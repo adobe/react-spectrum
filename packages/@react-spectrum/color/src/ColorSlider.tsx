@@ -71,7 +71,7 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
 
   let numberFormatter = useNumberFormatter();
   let state = useColorSliderState({...props, numberFormatter});
-  let {inputProps, thumbProps, groupProps, trackProps, labelProps, outputProps} = useColorSlider({
+  let {inputProps, thumbProps, trackProps, labelProps, outputProps} = useColorSlider({
     ...props,
     label,
     'aria-label': ariaLabel,
@@ -120,7 +120,8 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
         </Flex>
       }
       <div
-        {...groupProps}
+        {...trackProps}
+        ref={trackRef}
         className={classNames(
           styles,
           'spectrum-ColorSlider', {
@@ -129,7 +130,6 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
           }
         )
       }>
-        <div className={classNames(styles, 'spectrum-ColorSlider-track')} role="presentation" ref={trackRef} {...trackProps} />
         <ColorThumb
           value={state.getDisplayColor()}
           isFocused={isFocused && isFocusVisible}

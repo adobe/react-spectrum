@@ -58,7 +58,7 @@ function ColorSlider(props) {
   let state = useColorSliderState({...props, numberFormatter});
   let trackRef = React.useRef();
   let inputRef = React.useRef();
-  let {groupProps, trackProps, thumbProps, inputProps, labelProps, outputProps} = useColorSlider({
+  let {trackProps, thumbProps, inputProps, labelProps, outputProps} = useColorSlider({
     ...props,
     trackRef,
     inputRef
@@ -68,9 +68,7 @@ function ColorSlider(props) {
 
   return (
     <div
-      {...groupProps}
       style={{
-        position: 'relative',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
