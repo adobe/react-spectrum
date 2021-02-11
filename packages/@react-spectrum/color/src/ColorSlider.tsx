@@ -38,7 +38,7 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
   let vertical = orientation === 'vertical';
 
   let {styleProps} = useStyleProps(props);
-  let {locale, direction} = useLocale();
+  let {locale} = useLocale();
 
   let inputRef = useRef();
   let trackRef = useRef();
