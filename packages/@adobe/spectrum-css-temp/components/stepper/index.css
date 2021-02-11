@@ -95,30 +95,31 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Stepper-button--stepUp {
-  grid-area: increment;
-  border-start-end-radius: var(--spectrum-border-radius);
-  padding-block-start: calc(var(--spectrum-button-padding-y) + 1px);
-  padding-block-end: calc(var(--spectrum-button-padding-y) - .5px);
-}
-
-.spectrum-Stepper-button--stepDown {
-  grid-area: decrement;
-  border-block-start: none;
-  border-end-end-radius: var(--spectrum-border-radius);
-  padding-block-end: calc(var(--spectrum-button-padding-y) + 1px);
-  padding-block-start: calc(var(--spectrum-button-padding-y) - .5px);
-
-  &:focus {
-    border-block-start: none;
+.spectrum-Stepper {
+  .spectrum-Stepper-button--stepUp {
+    grid-area: increment;
+    border-start-end-radius: var(--spectrum-border-radius);
+    padding-block-start: calc(var(--spectrum-button-padding-y) + 1px);
+    padding-block-end: calc(var(--spectrum-button-padding-y) - .5px);
   }
-}
 
-.spectrum-Stepper-field {
-  grid-area: field;
+  .spectrum-Stepper-button--stepDown {
+    grid-area: decrement;
+    border-block-start: none;
+    border-end-end-radius: var(--spectrum-border-radius);
+    padding-block-end: calc(var(--spectrum-button-padding-y) + 1px);
+    padding-block-start: calc(var(--spectrum-button-padding-y) - .5px);
 
-  inline-size: unset;
-  min-inline-size: var(--spectrum-stepper-input-min-width);
+    &:focus {
+      border-block-start: none;
+    }
+  }
+  .spectrum-Stepper-field {
+    grid-area: field;
+
+    inline-size: unset;
+    min-inline-size: var(--spectrum-stepper-input-min-width);
+  }
 }
 
 .spectrum-Stepper--showStepper {
