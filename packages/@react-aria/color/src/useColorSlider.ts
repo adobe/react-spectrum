@@ -10,34 +10,43 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSliderThumbProps} from '@react-types/slider';
-import {ColorChannel} from '@react-types/color';
+import {AriaColorSliderProps} from '@react-types/color';
 import {ColorSliderState} from '@react-stately/color';
 import {HTMLAttributes, RefObject} from 'react';
+import {mergeProps} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 
-interface ColorSliderAriaOptions extends Omit<AriaSliderThumbProps, 'index'> {
-  channel: ColorChannel,
+interface ColorSliderAriaOptions extends AriaColorSliderProps {
+  /** A ref for the track element. */
   trackRef: RefObject<HTMLElement>,
+  /** A ref for the input element. */
   inputRef: RefObject<HTMLInputElement>
 }
 
 interface ColorSliderAria {
-  groupProps: HTMLAttributes<HTMLElement>,
-  trackProps: HTMLAttributes<HTMLElement>,
-  inputProps: HTMLAttributes<HTMLElement>,
-  thumbProps: HTMLAttributes<HTMLElement>,
+  /** Props for the label element. */
   labelProps: HTMLAttributes<HTMLElement>,
-  outputProps: HTMLAttributes<HTMLElement>,
-  gradientProps: HTMLAttributes<HTMLElement>
+  /** Props for the track element. */
+  trackProps: HTMLAttributes<HTMLElement>,
+  /** Props for the thumb element. */
+  thumbProps: HTMLAttributes<HTMLElement>,
+  /** Props for the visually hidden range input element. */
+  inputProps: HTMLAttributes<HTMLElement>,
+  /** Props for the output element, displaying the value of the color slider. */
+  outputProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a color slider component.
+ * Color sliders allow users to adjust an individual channel of a color value.
+ */
 export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSliderState): ColorSliderAria {
   let {trackRef, inputRef, orientation, channel} = props;
 
   let {direction} = useLocale();
 
+  // @ts-ignore - ignore unused incompatible props
   let {groupProps, trackProps, labelProps, outputProps} = useSlider(props, state, trackRef);
   let {inputProps, thumbProps} = useSliderThumb({
     index: 0,
@@ -85,17 +94,31 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
     }
   };
 
+  let thumbPosition = state.getThumbPercent(0);
+  if (orientation === 'vertical' || direction === 'rtl') {
+    thumbPosition = 1 - thumbPosition;
+  }
+
   return {
-    groupProps,
-    trackProps,
-    inputProps,
-    thumbProps,
-    labelProps,
-    outputProps,
-    gradientProps: {
+    trackProps: {
+      ...mergeProps(groupProps, trackProps),
       style: {
+        position: 'relative',
+        touchAction: 'none',
         background: generateBackground()
       }
-    }
+    },
+    inputProps,
+    thumbProps: {
+      ...thumbProps,
+      style: {
+        touchAction: 'none',
+        position: 'absolute',
+        [orientation === 'vertical' ? 'top' : 'left']: `${thumbPosition * 100}%`,
+        transform: 'translate(-50%, -50%)'
+      }
+    },
+    labelProps,
+    outputProps
   };
 }

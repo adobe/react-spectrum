@@ -12,7 +12,7 @@
 
 import {act, fireEvent, render} from '@testing-library/react';
 import {chain} from '@react-aria/utils';
-import {HexColorField} from '../';
+import {ColorField} from '../';
 import {parseColor} from '@react-stately/color';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
@@ -23,33 +23,33 @@ import userEvent from '@testing-library/user-event';
 function renderComponent(props) {
   return render(
     <Provider theme={theme}>
-      <HexColorField
+      <ColorField
         label="Primary Color"
         {...props} />
     </Provider>
   );
 }
 
-describe('HexColorField', function () {
+describe('ColorField', function () {
   it('should handle defaults', function () {
     let {
       getByLabelText,
       getByRole,
       getByText
     } = renderComponent({});
-    let hexColorField = getByLabelText('Primary Color');
+    let colorField = getByLabelText('Primary Color');
     let label = getByText('Primary Color');
-    expect(hexColorField).toBeInTheDocument();
-    expect(getByRole('textbox')).toBe(hexColorField);
-    expect(hexColorField).toHaveAttribute('type', 'text');
-    expect(hexColorField).toHaveAttribute('autocomplete', 'off');
-    expect(hexColorField).toHaveAttribute('autocorrect', 'off');
-    expect(hexColorField).not.toHaveAttribute('readonly');
-    expect(hexColorField).not.toBeInvalid();
-    expect(hexColorField).not.toBeDisabled();
-    expect(hexColorField).not.toBeRequired();
-    expect(label).toHaveAttribute('for', hexColorField.id);
-    expect(hexColorField).toHaveAttribute('aria-labelledby', label.id);
+    expect(colorField).toBeInTheDocument();
+    expect(getByRole('textbox')).toBe(colorField);
+    expect(colorField).toHaveAttribute('type', 'text');
+    expect(colorField).toHaveAttribute('autocomplete', 'off');
+    expect(colorField).toHaveAttribute('autocorrect', 'off');
+    expect(colorField).not.toHaveAttribute('readonly');
+    expect(colorField).not.toBeInvalid();
+    expect(colorField).not.toBeDisabled();
+    expect(colorField).not.toBeRequired();
+    expect(label).toHaveAttribute('for', colorField.id);
+    expect(colorField).toHaveAttribute('aria-labelledby', label.id);
   });
 
   it('should handle aria-label prop', function () {
@@ -57,9 +57,9 @@ describe('HexColorField', function () {
       'aria-label': 'Custom label',
       label: undefined
     });
-    let hexColorField = getByLabelText('Custom label');
-    expect(hexColorField).toBeInTheDocument();
-    expect(hexColorField).not.toHaveAttribute('aria-labelledby');
+    let colorField = getByLabelText('Custom label');
+    expect(colorField).toBeInTheDocument();
+    expect(colorField).not.toHaveAttribute('aria-labelledby');
   });
 
   it('should allow placeholder', function () {
@@ -69,43 +69,43 @@ describe('HexColorField', function () {
 
   it('should show valid validation state', function () {
     let {getByLabelText} = renderComponent({validationState: 'valid'});
-    let hexColorField = getByLabelText('Primary Color');
-    expect(hexColorField).not.toBeInvalid();
+    let colorField = getByLabelText('Primary Color');
+    expect(colorField).not.toBeInvalid();
   });
 
   it('should show invalid validation state', function () {
     let {getByLabelText} = renderComponent({validationState: 'invalid'});
-    let hexColorField = getByLabelText('Primary Color');
-    expect(hexColorField).toBeInvalid();
+    let colorField = getByLabelText('Primary Color');
+    expect(colorField).toBeInvalid();
   });
 
   it('should be disabled', function () {
     let {getByLabelText} = renderComponent({isDisabled: true});
-    let hexColorField = getByLabelText('Primary Color');
-    expect(hexColorField).toBeDisabled();
+    let colorField = getByLabelText('Primary Color');
+    expect(colorField).toBeDisabled();
   });
 
   it('should be readonly', function () {
     let {getByLabelText} = renderComponent({isReadOnly: true});
-    let hexColorField = getByLabelText('Primary Color');
-    expect(hexColorField).toHaveAttribute('readonly');
+    let colorField = getByLabelText('Primary Color');
+    expect(colorField).toHaveAttribute('readonly');
   });
 
   it('should be required', function () {
     let {getByLabelText} = renderComponent({isRequired: true});
-    let hexColorField = getByLabelText(/Primary Color/);
-    expect(hexColorField).toBeRequired();
+    let colorField = getByLabelText(/Primary Color/);
+    expect(colorField).toBeRequired();
   });
 
   it('should be empty when invalid value is provided', function () {
     let {getByLabelText} = renderComponent({defaultValue: '#fffffffff'});
-    let hexColorField = getByLabelText('Primary Color');
-    expect(hexColorField.value).toBe('');
+    let colorField = getByLabelText('Primary Color');
+    expect(colorField.value).toBe('');
 
     // call commit to re-verify that a colorValue is not set in state
-    act(() => {hexColorField.focus();});
-    act(() => {hexColorField.blur();});
-    expect(hexColorField.value).toBe('');
+    act(() => {colorField.focus();});
+    act(() => {colorField.blur();});
+    expect(colorField.value).toBe('');
   });
 
   it.each`
@@ -118,38 +118,38 @@ describe('HexColorField', function () {
     ${'Color object controlled'}         | ${{value: parseColor('#abc')}}
   `('should accept $Name as value', function ({props}) {
     let {getByLabelText} = renderComponent(props);
-    let hexColorField = getByLabelText('Primary Color');
-    expect(hexColorField.value).toBe('#AABBCC');
+    let colorField = getByLabelText('Primary Color');
+    expect(colorField.value).toBe('#AABBCC');
   });
 
   it('should handle uncontrolled state', function () {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({defaultValue: '#abc', onChange: onChangeSpy});
 
-    let hexColorField = getByLabelText('Primary Color');
-    expect(hexColorField.value).toBe('#AABBCC');
+    let colorField = getByLabelText('Primary Color');
+    expect(colorField.value).toBe('#AABBCC');
 
     act(() => {
-      hexColorField.focus();
-      userEvent.clear(hexColorField);
+      colorField.focus();
+      userEvent.clear(colorField);
     });
     // should call onChange when input is cleared
-    expect(hexColorField.value).toBe('');
+    expect(colorField.value).toBe('');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(null);
 
-    typeText(hexColorField, 'cba');
-    expect(hexColorField.value).toBe('cba');
+    typeText(colorField, 'cba');
+    expect(colorField.value).toBe('cba');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cba'));
 
-    typeText(hexColorField, 'cba');
-    expect(hexColorField.value).toBe('cbacba');
+    typeText(colorField, 'cba');
+    expect(colorField.value).toBe('cbacba');
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cbacba'));
 
-    act(() => {hexColorField.blur();});
-    expect(hexColorField.value).toBe('#CBACBA');
+    act(() => {colorField.blur();});
+    expect(colorField.value).toBe('#CBACBA');
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
   });
 
@@ -157,38 +157,38 @@ describe('HexColorField', function () {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({value: '#abc', onChange: onChangeSpy});
 
-    let hexColorField = getByLabelText('Primary Color');
-    expect(hexColorField.value).toBe('#AABBCC');
+    let colorField = getByLabelText('Primary Color');
+    expect(colorField.value).toBe('#AABBCC');
 
     act(() => {
-      hexColorField.focus();
-      userEvent.clear(hexColorField);
+      colorField.focus();
+      userEvent.clear(colorField);
     });
     // should call onChange when input is cleared
-    expect(hexColorField.value).toBe('#AABBCC');
+    expect(colorField.value).toBe('#AABBCC');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(null);
 
     act(() => {
-      hexColorField.focus();
-      userEvent.type(hexColorField, '{selectall}');
+      colorField.focus();
+      userEvent.type(colorField, '{selectall}');
     });
-    typeText(hexColorField, 'cba');
-    expect(hexColorField.value).toBe('#AABBCC');
+    typeText(colorField, 'cba');
+    expect(colorField.value).toBe('#AABBCC');
     expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cba'));
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
 
-    act(() => {hexColorField.blur();});
-    expect(hexColorField.value).toBe('#AABBCC');
+    act(() => {colorField.blur();});
+    expect(colorField.value).toBe('#AABBCC');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should update value in controlled state', function () {
-    function HexColorFieldControlled(props) {
+    function ColorFieldControlled(props) {
       let {onChange} = props;
       let [color, setColor] = useState(props.value);
       return (
-        <HexColorField
+        <ColorField
           {...props}
           label="Primary Color"
           value={color}
@@ -196,64 +196,64 @@ describe('HexColorField', function () {
       );
     }
     let onChangeSpy = jest.fn();
-    let {getByLabelText} = render(<HexColorFieldControlled value={parseColor('#abc')} onChange={onChangeSpy} />);
+    let {getByLabelText} = render(<ColorFieldControlled value={parseColor('#abc')} onChange={onChangeSpy} />);
 
-    let hexColorField = getByLabelText('Primary Color');
-    expect(hexColorField.value).toBe('#AABBCC');
+    let colorField = getByLabelText('Primary Color');
+    expect(colorField.value).toBe('#AABBCC');
 
     act(() => {
-      hexColorField.focus();
-      userEvent.clear(hexColorField);
+      colorField.focus();
+      userEvent.clear(colorField);
     });
     // should call onChange when input is cleared
-    expect(hexColorField.value).toBe('');
+    expect(colorField.value).toBe('');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(null);
 
-    typeText(hexColorField, 'cba');
-    expect(hexColorField.value).toBe('cba');
+    typeText(colorField, 'cba');
+    expect(colorField.value).toBe('cba');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cba'));
 
-    act(() => {hexColorField.blur();});
-    expect(hexColorField.value).toBe('#CCBBAA');
+    act(() => {colorField.blur();});
+    expect(colorField.value).toBe('#CCBBAA');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should disallow invalid characters and revert back to last valid value', function () {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({onChange: onChangeSpy});
-    let hexColorField = getByLabelText('Primary Color');
-    expect(hexColorField.value).toBe('');
+    let colorField = getByLabelText('Primary Color');
+    expect(colorField.value).toBe('');
 
-    act(() => {hexColorField.focus();});
-    typeText(hexColorField, 'abc');
-    expect(hexColorField.value).toBe('abc');
+    act(() => {colorField.focus();});
+    typeText(colorField, 'abc');
+    expect(colorField.value).toBe('abc');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#abc'));
 
-    typeText(hexColorField, 'xyz8b');
-    expect(hexColorField.value).toBe('abc8b');
+    typeText(colorField, 'xyz8b');
+    expect(colorField.value).toBe('abc8b');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
 
-    act(() => {hexColorField.blur();});
-    expect(hexColorField.value).toBe('#AABBCC');
+    act(() => {colorField.blur();});
+    expect(colorField.value).toBe('#AABBCC');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should not trigger onChange when input changes to text of same color value', function () {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({onChange: onChangeSpy});
-    let hexColorField = getByLabelText('Primary Color');
-    expect(hexColorField.value).toBe('');
+    let colorField = getByLabelText('Primary Color');
+    expect(colorField.value).toBe('');
 
-    typeText(hexColorField, 'fff');
-    expect(hexColorField.value).toBe('fff');
+    typeText(colorField, 'fff');
+    expect(colorField.value).toBe('fff');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#fff'));
 
-    typeText(hexColorField, 'fff');
-    expect(hexColorField.value).toBe('ffffff');
+    typeText(colorField, 'fff');
+    expect(colorField.value).toBe('ffffff');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -268,13 +268,13 @@ describe('HexColorField', function () {
       onChange: onChangeSpy,
       step: 4
     });
-    let hexColorField = getByLabelText('Primary Color');
-    expect(hexColorField.value).toBe('#AAAAAA');
+    let colorField = getByLabelText('Primary Color');
+    expect(colorField.value).toBe('#AAAAAA');
 
-    fireEvent.keyDown(hexColorField, {key});
-    fireEvent.keyUp(hexColorField, {key});
+    fireEvent.keyDown(colorField, {key});
+    fireEvent.keyUp(colorField, {key});
     expect(onChangeSpy).toHaveBeenCalledWith(expected);
-    expect(hexColorField.value).toBe(expected.toString('hex'));
+    expect(colorField.value).toBe(expected.toString('hex'));
   });
 
   it.each`
@@ -288,13 +288,13 @@ describe('HexColorField', function () {
       onChange: onChangeSpy,
       step: 4
     });
-    let hexColorField = getByLabelText('Primary Color');
-    expect(hexColorField.value).toBe('#AAAAAA');
+    let colorField = getByLabelText('Primary Color');
+    expect(colorField.value).toBe('#AAAAAA');
 
-    fireEvent.wheel(hexColorField, {deltaY});
+    fireEvent.wheel(colorField, {deltaY});
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(expected);
-    expect(hexColorField.value).toBe(expected.toString('hex'));
+    expect(colorField.value).toBe(expected.toString('hex'));
   });
 
   it.each`
@@ -304,18 +304,18 @@ describe('HexColorField', function () {
   `('should $Name', function ({props, initExpected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({...props, onChange: onChangeSpy});
-    let hexColorField = getByLabelText('Primary Color');
-    expect(hexColorField.value).toBe(initExpected);
+    let colorField = getByLabelText('Primary Color');
+    expect(colorField.value).toBe(initExpected);
 
     let maxColor = parseColor('#FFFFFF');
-    fireEvent.keyDown(hexColorField, {key});
-    fireEvent.keyUp(hexColorField, {key});
+    fireEvent.keyDown(colorField, {key});
+    fireEvent.keyUp(colorField, {key});
     expect(onChangeSpy).toHaveBeenCalledWith(maxColor);
-    expect(hexColorField.value).toBe(maxColor.toString('hex'));
+    expect(colorField.value).toBe(maxColor.toString('hex'));
 
     // repeat action to make sure onChange is not called when already at max
-    fireEvent.keyDown(hexColorField, {key});
-    fireEvent.keyUp(hexColorField, {key});
+    fireEvent.keyDown(colorField, {key});
+    fireEvent.keyUp(colorField, {key});
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -326,18 +326,18 @@ describe('HexColorField', function () {
   `('should $Name', function ({props, initExpected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({...props, onChange: onChangeSpy});
-    let hexColorField = getByLabelText('Primary Color');
-    expect(hexColorField.value).toBe(initExpected);
+    let colorField = getByLabelText('Primary Color');
+    expect(colorField.value).toBe(initExpected);
 
     let minColor = parseColor('#000000');
-    fireEvent.keyDown(hexColorField, {key});
-    fireEvent.keyUp(hexColorField, {key});
+    fireEvent.keyDown(colorField, {key});
+    fireEvent.keyUp(colorField, {key});
     expect(onChangeSpy).toHaveBeenCalledWith(minColor);
-    expect(hexColorField.value).toBe(minColor.toString('hex'));
+    expect(colorField.value).toBe(minColor.toString('hex'));
 
     // repeat action to make sure onChange is not called when already at min
-    fireEvent.keyDown(hexColorField, {key});
-    fireEvent.keyUp(hexColorField, {key});
+    fireEvent.keyDown(colorField, {key});
+    fireEvent.keyUp(colorField, {key});
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 });
