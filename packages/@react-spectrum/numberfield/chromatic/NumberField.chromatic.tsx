@@ -124,7 +124,7 @@ const Template: Story<SpectrumNumberFieldProps> = (args) => (
       if (!key) {
         key = 'empty';
       }
-      return <NumberField key={key} {...args} {...c} label={key} />;
+      return <NumberField key={key} {...args} {...c} label={args['aria-label'] ? undefined : key} />;
     })}
   </Grid>
 );
