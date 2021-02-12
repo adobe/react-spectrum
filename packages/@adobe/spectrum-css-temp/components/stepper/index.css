@@ -151,6 +151,11 @@ governing permissions and limitations under the License.
     grid-template-areas: 'decrement field increment';
     inline-size: var(--spectrum-stepper-default-width-mobile);
 
+    &:not(.spectrum-Stepper--quiet):not(.is-disabled) .spectrum-Stepper-input {
+      border-inline-end-width: 1px;
+      border-inline-end-style: solid;
+    }
+
     .spectrum-Stepper-input {
       border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
       border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
@@ -166,6 +171,8 @@ governing permissions and limitations under the License.
       padding-block-start: 0px;
     }
     .spectrum-Stepper-button--stepUp {
+      border-inline-end-style: solid;
+      border-inline-start-style: none;
       border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
       border-start-end-radius: var(--spectrum-border-radius);
       border-end-start-radius: var(--spectrum-stepper-border-radius-reset);
