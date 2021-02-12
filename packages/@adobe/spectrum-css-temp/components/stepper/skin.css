@@ -78,6 +78,13 @@ governing permissions and limitations under the License.
       border-color: var(--spectrum-textfield-border-color-key-focus);
     }
 
+    &:disabled,
+    &.is-disabled {
+      .spectrum-Stepper-input {
+        border-color: var(--spectrum-textfield-border-color-disabled);
+      }
+    }
+
     &:invalid,
     &.is-invalid {
       border-color: var(--spectrum-textfield-border-color-error);
