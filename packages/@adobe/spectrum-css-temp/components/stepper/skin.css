@@ -81,7 +81,7 @@ governing permissions and limitations under the License.
     &:disabled,
     &.is-disabled {
       .spectrum-Stepper-input {
-        border-color: var(--spectrum-textfield-border-color-disabled);
+        border-color: var(--spectrum-textfield-quiet-border-color-disabled);
       }
     }
 
@@ -158,6 +158,12 @@ governing permissions and limitations under the License.
       &:disabled,
       &.is-disabled {
         border-color: var(--spectrum-textfield-quiet-border-color);
+      }
+    }
+    &:disabled,
+    &.is-disabled {
+      .spectrum-Stepper-button {
+        border-color: var(--spectrum-textfield-quiet-border-color-disabled);
       }
     }
 
