@@ -118,6 +118,19 @@ const meta: Meta = {
 export default meta;
 
 const Template: Story<SpectrumNumberFieldProps> = (args) => (
+  <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
+    {combinations.map(c => {
+      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      if (!key) {
+        key = 'empty';
+      }
+      return <NumberField key={key} {...args} {...c} label={args['aria-label'] ? undefined : key} />;
+    })}
+  </Grid>
+);
+
+
+const TemplateSmall: Story<SpectrumNumberFieldProps> = (args) => (
   <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -162,7 +175,7 @@ export const PropLabelSide = Template.bind({});
 PropLabelSide.storyName = 'label side';
 PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side', defaultValue: 10};
 
-export const PropCustomWidth = Template.bind({});
+export const PropCustomWidth = TemplateSmall.bind({});
 PropCustomWidth.storyName = 'custom width';
 PropCustomWidth.args = {...PropDefaults.args, width: 'size-3000'};
 
