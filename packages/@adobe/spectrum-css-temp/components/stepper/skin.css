@@ -157,7 +157,13 @@ governing permissions and limitations under the License.
     .spectrum-Stepper-button {
       &:disabled,
       &.is-disabled {
-        border-color: var(--spectrum-textfield-quiet-border-color-disabled);
+        border-color: var(--spectrum-textfield-quiet-border-color);
+      }
+    }
+
+    &:hover {
+      .spectrum-Stepper-button--stepDown {
+        border-color: var(--spectrum-textfield-quiet-border-color-hover);
       }
     }
 
