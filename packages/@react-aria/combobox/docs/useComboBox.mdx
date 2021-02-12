@@ -482,12 +482,15 @@ function ControlledComboBox() {
   // Specify how each of the ComboBox values should change when an
   // option is selected from the list box
   let onSelectionChange = (key) => {
-    setFieldState(prevState => ({
-      isOpen: false,
-      inputValue: prevState.items.find(option => option.id === key)?.name ?? '',
-      selectedKey: key,
-      items: prevState.items
-    }));
+    setFieldState(prevState => {
+      let selectedItem = prevState.items.find(option => option.id === key);
+      return ({
+        isOpen: false,
+        inputValue: selectedItem?.name ?? '',
+        selectedKey: key,
+        items: optionList.filter(item => startsWith(item.name, selectedItem?.name ?? ''))
+      })
+    });
   };
 
   // Specify how each of the ComboBox values should change when the input
