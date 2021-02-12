@@ -52,8 +52,17 @@ governing permissions and limitations under the License.
     }
   }
 
-  &.is-disabled:not(.spectrum-Stepper--quiet) .spectrum-Stepper-input {
-    border: none;
+  &.is-disabled:not(.spectrum-Stepper--quiet):not(.is-invalid) {
+    .spectrum-Stepper-input {
+      border: none;
+    }
+  }
+
+  &.is-disabled.is-invalid:not(.spectrum-Stepper--quiet):not(.spectrum-Stepper--showStepper) {
+    .spectrum-Stepper-input {
+      border-inline-end-width: 1px;
+      border-inline-end-style: solid;
+    }
   }
 }
 

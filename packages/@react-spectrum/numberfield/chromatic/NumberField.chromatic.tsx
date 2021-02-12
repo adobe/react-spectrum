@@ -118,7 +118,7 @@ const meta: Meta = {
 export default meta;
 
 const Template: Story<SpectrumNumberFieldProps> = (args) => (
-  <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
+  <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
       if (!key) {

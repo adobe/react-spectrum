@@ -462,6 +462,13 @@ governing permissions and limitations under the License.
       }
     }
   }
+  &:active {
+    .spectrum-Stepper-button.spectrum-Stepper-button--stepDown {
+      &.is-disabled {
+        border-color: var(--spectrum-textfield-quiet-border-color-down);
+      }
+    }
+  }
   &:disabled,
   &.is-disabled {
     .spectrum-Stepper-button.spectrum-Stepper-button--stepDown {
@@ -483,6 +490,51 @@ governing permissions and limitations under the License.
       &.is-disabled {
          border-color: var(--spectrum-textfield-border-color-error);
        }
+    }
+  }
+}
+
+.spectrum-Stepper.spectrum-Stepper--quiet.spectrum-Stepper--isMobile.spectrum-Stepper--readonly {
+  .spectrum-Stepper-button.spectrum-Stepper-button--stepUp {
+    &.is-disabled {
+      border-color: var(--spectrum-textfield-quiet-border-color);
+    }
+  }
+  &:hover {
+    .spectrum-Stepper-button.spectrum-Stepper-button--stepUp {
+      &.is-disabled {
+        border-color: var(--spectrum-actionbutton-border-color-hover);
+      }
+    }
+  }
+  &:active {
+    .spectrum-Stepper-button.spectrum-Stepper-button--stepUp {
+      &.is-disabled {
+        border-color: var(--spectrum-textfield-quiet-border-color-down);
+      }
+    }
+  }
+  &:disabled,
+  &.is-disabled {
+    .spectrum-Stepper-button.spectrum-Stepper-button--stepUp {
+      &.is-disabled {
+        border-color: var(--spectrum-textfield-quiet-border-color-disabled);
+      }
+    }
+  }
+  &.is-focused {
+    .spectrum-Stepper-button.spectrum-Stepper-button--stepUp {
+      &.is-disabled {
+        border-color: var(--spectrum-actionbutton-border-color-key-focus);
+      }
+    }
+  }
+  &:invalid,
+  &.is-invalid {
+    .spectrum-Stepper-button.spectrum-Stepper-button--stepUp {
+      &.is-disabled {
+        border-color: var(--spectrum-textfield-border-color-error);
+      }
     }
   }
 }
