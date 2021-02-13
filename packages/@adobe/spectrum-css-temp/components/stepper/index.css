@@ -151,9 +151,12 @@ governing permissions and limitations under the License.
     grid-template-areas: 'decrement field increment';
     inline-size: var(--spectrum-stepper-default-width-mobile);
 
-    &:not(.spectrum-Stepper--quiet):not(.is-disabled) .spectrum-Stepper-input {
-      border-inline-end-width: 1px;
-      border-inline-end-style: solid;
+    &:not(.spectrum-Stepper--quiet):not(.is-disabled),
+    &:not(.spectrum-Stepper--quiet).is-invalid {
+      .spectrum-Stepper-input {
+        border-inline-end-width: 1px;
+        border-inline-end-style: solid;
+      }
     }
 
     .spectrum-Stepper-input {
