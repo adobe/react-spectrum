@@ -39,9 +39,9 @@ export function useSingleSelectListState<T extends object>(props: SingleSelectLi
   let [selectedKey, setSelectedKey] = useControlledState(props.selectedKey, props.defaultSelectedKey ?? null, props.onSelectionChange);
   let selectedKeys = useMemo(() => selectedKey != null ? [selectedKey] : [], [selectedKey]);
   let {collection, disabledKeys, selectionManager} = useListState({
+    disallowEmptySelection: true,
     ...props,
     selectionMode: 'single',
-    disallowEmptySelection: true,
     selectedKeys,
     onSelectionChange: (keys: Set<Key>) => {
       let key = keys.values().next().value;
