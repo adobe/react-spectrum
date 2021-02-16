@@ -477,19 +477,20 @@ function ControlledComboBox() {
 
   // Implement custom filtering logic and control what items are
   // available to the ComboBox.
-  // Memoize filteredItems so it updates when the inputValue updates.
   let {startsWith} = useFilter({sensitivity: 'base'});
-  let filteredItems = React.useMemo(() => optionList.filter(item => startsWith(item.name, fieldState.inputValue)), [optionList, fieldState.inputValue]);
 
   // Specify how each of the ComboBox values should change when an
   // option is selected from the list box
   let onSelectionChange = (key) => {
-    setFieldState(prevState => ({
-      isOpen: false,
-      inputValue: prevState.items.find(option => option.id === key)?.name ?? '',
-      selectedKey: key,
-      items: prevState.items
-    }));
+    setFieldState(prevState => {
+      let selectedItem = prevState.items.find(option => option.id === key);
+      return ({
+        isOpen: false,
+        inputValue: selectedItem?.name ?? '',
+        selectedKey: key,
+        items: optionList.filter(item => startsWith(item.name, selectedItem?.name ?? ''))
+      })
+    });
   };
 
   // Specify how each of the ComboBox values should change when the input
@@ -499,7 +500,7 @@ function ControlledComboBox() {
       isOpen: true,
       inputValue: value,
       selectedKey: value === '' ? null : prevState.selectedKey,
-      items: filteredItems
+      items: optionList.filter(item => startsWith(item.name, value))
     }));
   };
 
@@ -519,10 +520,10 @@ function ControlledComboBox() {
   return (
     <ComboBox
       label="Favorite Animal"
-      items={filteredItems}
+      items={fieldState.items}
       selectedKey={fieldState.selectedKey}
       inputValue={fieldState.inputValue}
-      isOpen={fieldState.isOpen && filteredItems.length > 0}
+      isOpen={fieldState.isOpen && fieldState.items.length > 0}
       onOpenChange={onOpenChange}
       onSelectionChange={onSelectionChange}
       onInputChange={onInputChange}>
