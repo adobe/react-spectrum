@@ -171,7 +171,7 @@ export const PropLabelEnd = Template.bind({});
 PropLabelEnd.storyName = 'label end';
 PropLabelEnd.args = {...PropDefaults.args, labelAlign: 'end', defaultValue: 10};
 
-export const PropLabelSide = Template.bind({});
+export const PropLabelSide = TemplateSmall.bind({});
 PropLabelSide.storyName = 'label side';
 PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side', defaultValue: 10};
 
