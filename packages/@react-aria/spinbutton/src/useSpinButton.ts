@@ -135,6 +135,7 @@ export function useSpinButton(
 
   const onIncrementPressStart = useCallback(
     (initialStepDelay: number) => {
+      clearAsync();
       onIncrement();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
@@ -151,6 +152,7 @@ export function useSpinButton(
 
   const onDecrementPressStart = useCallback(
     (initialStepDelay: number) => {
+      clearAsync();
       onDecrement();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
