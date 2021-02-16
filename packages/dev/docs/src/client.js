@@ -68,7 +68,7 @@ function Hamburger() {
   let onPress = (event) => {
     let nav = document.querySelector('.' + docsStyle.nav);
     let main = document.querySelector('main');
-    let themeSwitcher = event.target.nextElementSibling;
+    let themeSwitcher = event.target.parentElement.nextElementSibling;
 
     nav.classList.toggle(docsStyle.visible);
 
