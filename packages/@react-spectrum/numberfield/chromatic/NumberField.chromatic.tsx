@@ -171,6 +171,14 @@ export const PropLabelEnd = Template.bind({});
 PropLabelEnd.storyName = 'label end';
 PropLabelEnd.args = {...PropDefaults.args, labelAlign: 'end', defaultValue: 10};
 
+export const PropMinValue = Template.bind({});
+PropMinValue.storyName = 'min value';
+PropMinValue.args = {...PropDefaults.args, minValue: 10, defaultValue: 10};
+
+export const PropMaxValue = Template.bind({});
+PropMaxValue.storyName = 'max value';
+PropMaxValue.args = {...PropDefaults.args, maxValue: 10, defaultValue: 10};
+
 export const PropLabelSide = TemplateSmall.bind({});
 PropLabelSide.storyName = 'label side';
 PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side', defaultValue: 10};
