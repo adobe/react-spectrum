@@ -212,7 +212,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       // Reset inputValue and close menu here if the selected key is already the focused key. Otherwise
       // fire onSelectionChange to allow the application to control the closing.
       if (selectedKey === selectionManager.focusedKey) {
-        if (props.selectedKey && props.isOpen) {
+        if (props.selectedKey !== undefined && props.isOpen !== undefined) {
           props.onSelectionChange(selectedKey);
         } else {
           resetInputValue();
@@ -238,7 +238,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       } else {
         // If selected key and open state are controlled, fire onSelectionChange so that application can control
         // closing the menu when blurring away from the combobox. Otherwise reset the input value and close the menu ourselves
-        if (props.selectedKey && props.isOpen) {
+        if (props.selectedKey !== undefined && props.isOpen !== undefined) {
           props.onSelectionChange(selectedKey);
         } else {
           resetInputValue();
