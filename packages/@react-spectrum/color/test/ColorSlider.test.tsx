@@ -54,6 +54,18 @@ describe('ColorSlider', () => {
     expect(slider).toHaveAttribute('min', '0');
     expect(slider).toHaveAttribute('max', '255');
     expect(slider).toHaveAttribute('step', '1');
+    expect(slider).toHaveAttribute('aria-valuetext', '0');
+  });
+
+  it('sets aria-valuetext to formatted value', () => {
+    let {getByRole} = render(<ColorSlider defaultValue="hsl(10, 50%, 50%)" channel="hue" />);
+    let slider = getByRole('slider');
+
+    expect(slider).toHaveAttribute('type', 'range');
+    expect(slider).toHaveAttribute('min', '0');
+    expect(slider).toHaveAttribute('max', '360');
+    expect(slider).toHaveAttribute('step', '1');
+    expect(slider).toHaveAttribute('aria-valuetext', '10°');
   });
 
   describe('labeling', () => {
@@ -404,7 +416,7 @@ describe('ColorSlider', () => {
       let {getByRole} = render(<ColorSlider channel="hue" defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
-      let container = getByRole('group').firstChild;
+      let container = getByRole('group');
 
       expect(document.activeElement).not.toBe(slider);
       start(container, {pageX: 50});
@@ -427,7 +439,7 @@ describe('ColorSlider', () => {
       let {getByRole} = render(<ColorSlider channel="hue" defaultValue={defaultColor} onChange={onChangeSpy} orientation="vertical" />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
-      let container = getByRole('group').firstChild;
+      let container = getByRole('group');
 
       expect(document.activeElement).not.toBe(slider);
       start(container, {pageY: 50});
@@ -449,7 +461,7 @@ describe('ColorSlider', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorSlider channel="hue" defaultValue={defaultColor} onChange={onChangeSpy} isDisabled />);
       let slider = getByRole('slider');
-      let container = getByRole('group').firstChild;
+      let container = getByRole('group');
 
       expect(document.activeElement).not.toBe(slider);
       start(container, {pageX: 50});
@@ -470,7 +482,7 @@ describe('ColorSlider', () => {
       let {getByRole} = render(<ColorSlider channel="saturation" defaultValue={defaultColor} onChange={onChangeSpy} step={25} />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
-      let container = getByRole('group').firstChild;
+      let container = getByRole('group');
 
       start(container, {pageX: 30});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
