@@ -25,7 +25,8 @@ governing permissions and limitations under the License.
   --spectrum-stepper-default-width-mobile: calc(var(--spectrum-component-single-line-height) * 5);
 }
 
-.spectrum-Stepper {
+/* increase specificity to not collide with InputGroup */
+.spectrum-Stepper.spectrum-Stepper {
   display: inline-grid;
   grid-template-rows: auto auto;
   grid-template-columns: 1fr auto;
@@ -38,7 +39,9 @@ governing permissions and limitations under the License.
   line-height: 0;
   border-radius: var(--spectrum-border-radius);
   transition: border-color var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
+}
 
+.spectrum-Stepper {
   &:not(.spectrum-Stepper--quiet):not(.spectrum-Stepper--showStepper) {
     .spectrum-Stepper-input {
       border-inline-end-width: var(--spectrum-stepper-border-size-default);
