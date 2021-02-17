@@ -15,7 +15,6 @@ governing permissions and limitations under the License.
 :root {
   /* Todo: move to DNA */
   --spectrum-combobox-quiet-fieldbutton-border-radius: 0;
-  --spectrum-combobox-field-border-width-right: 0;
   --spectrum-combobox-quiet-fieldbutton-padding-right: 0;
   --spectrum-combobox-quiet-fieldbutton-padding-left: var(--spectrum-global-dimension-size-130);
   --spectrum-combobox-validation-icon-right: var(--spectrum-global-dimension-size-100);
@@ -71,7 +70,7 @@ governing permissions and limitations under the License.
 .spectrum-InputGroup-input {
   border-start-end-radius: var(--spectrum-combobox-textfield-border-top-right-radius);
   border-end-end-radius: var(--spectrum-combobox-textfield-border-bottom-right-radius);
-  border-inline-end: var(--spectrum-combobox-field-border-width-right);
+  border-inline-end-style: none;
 }
 
 .spectrum-InputGroup--quiet {
