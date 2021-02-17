@@ -39,15 +39,30 @@ governing permissions and limitations under the License.
   border-radius: var(--spectrum-border-radius);
   transition: border-color var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
 
-  &:not(.spectrum-Stepper--quiet):not(.spectrum-Stepper--showStepper) .spectrum-Stepper-input {
-    border-inline-end-width: var(--spectrum-stepper-border-size-default);
-    border-inline-end-style: solid;
-    border-start-end-radius: var(--spectrum-border-radius);
-    border-end-end-radius: var(--spectrum-border-radius);
+  &:not(.spectrum-Stepper--quiet):not(.spectrum-Stepper--showStepper) {
+    .spectrum-Stepper-input {
+      border-inline-end-width: var(--spectrum-stepper-border-size-default);
+      border-inline-end-style: solid;
+      border-start-end-radius: var(--spectrum-border-radius);
+      border-end-end-radius: var(--spectrum-border-radius);
+    }
+
+    &.is-disabled .spectrum-Stepper-input {
+      border-inline-end-width: 0px;
+    }
   }
 
-  &.is-disabled:not(.spectrum-Stepper--quiet) .spectrum-Stepper-input {
-    border: none;
+  &.is-disabled:not(.spectrum-Stepper--quiet):not(.is-invalid) {
+    .spectrum-Stepper-input {
+      border: none;
+    }
+  }
+
+  &.is-disabled.is-invalid:not(.spectrum-Stepper--quiet):not(.spectrum-Stepper--showStepper) {
+    .spectrum-Stepper-input {
+      border-inline-end-width: 1px;
+      border-inline-end-style: solid;
+    }
   }
 }
 
@@ -136,6 +151,14 @@ governing permissions and limitations under the License.
     grid-template-areas: 'decrement field increment';
     inline-size: var(--spectrum-stepper-default-width-mobile);
 
+    &:not(.spectrum-Stepper--quiet):not(.is-disabled),
+    &:not(.spectrum-Stepper--quiet).is-invalid {
+      .spectrum-Stepper-input {
+        border-inline-end-width: 1px;
+        border-inline-end-style: solid;
+      }
+    }
+
     .spectrum-Stepper-input {
       border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
       border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
@@ -151,6 +174,8 @@ governing permissions and limitations under the License.
       padding-block-start: 0px;
     }
     .spectrum-Stepper-button--stepUp {
+      border-inline-end-style: solid;
+      border-inline-start-style: none;
       border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
       border-start-end-radius: var(--spectrum-border-radius);
       border-end-start-radius: var(--spectrum-stepper-border-radius-reset);
