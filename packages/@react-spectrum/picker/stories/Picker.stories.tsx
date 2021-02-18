@@ -285,6 +285,18 @@ storiesOf('Picker', module)
     )
   )
   .add(
+    'long item text',
+    () => (
+      <Picker label="Test" onSelectionChange={action('selectionChange')}>
+        <Item key="short">One</Item>
+        <Item key="long">your text here long long long long</Item>
+        <Item key="underscores">your_text_here_long_long_long_long</Item>
+        <Item key="hyphens">your-text-here-long-long-long-long</Item>
+        <Item key="singleWord">supercalifragilisticexpialidocious</Item>
+      </Picker>
+    )
+  )
+  .add(
     'no visible label',
     () => (
       <Picker aria-label="Test" onSelectionChange={action('selectionChange')}>
