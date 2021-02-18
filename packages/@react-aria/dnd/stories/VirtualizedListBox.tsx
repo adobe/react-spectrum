@@ -107,7 +107,7 @@ export function VirtualizedListBox(props) {
         if (!types.has(props.accept) || rejected.some(type => types.has(type))) {
           return 'cancel';
         }
-      } else if (acceptedTypes.some(type => types.has(type))) {
+      } else if (!acceptedTypes.some(type => types.has(type))) {
         return 'cancel';
       }
 
@@ -195,15 +195,7 @@ export function VirtualizedListBox(props) {
     keyboardDelegate: layout,
     isVirtualized: true
   }, state, ref);
-
   let isDropTarget = dropState.isDropTarget({type: 'root'});
-  let dropRef = React.useRef();
-  let {dropIndicatorProps} = useDropIndicator({
-    collection: state.collection,
-    target: {type: 'root'}
-  }, dropState, dropRef);
-
-  let {visuallyHiddenProps} = useVisuallyHidden();
 
   return (
     <Context.Provider value={{state, dropState}}>
@@ -219,12 +211,7 @@ export function VirtualizedListBox(props) {
         {(type, item) => (
           <>
             {state.collection.getKeyBefore(item.key) == null &&
-              <div
-                role="option"
-                aria-selected="false"
-                {...visuallyHiddenProps}
-                {...dropIndicatorProps}
-                ref={dropRef} />
+              <RootDropIndicator />
             }
             <InsertionIndicator
               key={item.key + '-before'}
@@ -278,6 +265,13 @@ function InsertionIndicator(props) {
   let ref = React.useRef();
   let {dropIndicatorProps} = useDropIndicator({...props, collection: state.collection}, dropState, ref);
 
+  // If aria-hidden, we are either not in a drag session or the drop target is invalid.
+  // In that case, there's no need to render anything at all unless we need to show the indicator visually.
+  // This can happen when dragging using the native DnD API as opposed to keyboard dragging.
+  if (!dropState.isDropTarget(props.target) && dropIndicatorProps['aria-hidden']) {
+    return null;
+  }
+
   return (
     <div
       role="option"
@@ -292,7 +286,32 @@ function InsertionIndicator(props) {
         width: 'calc(100% - 24px)',
         margin: '0 12px 0 12px',
         height: 2,
+        marginBottom: -2,
         outline: 'none'
       }} />
+  );
+}
+
+function RootDropIndicator(props) {
+  let {state, dropState} = React.useContext(Context);
+  let isDropTarget = dropState.isDropTarget({type: 'root'});
+  let dropRef = React.useRef();
+  let {dropIndicatorProps} = useDropIndicator({
+    collection: state.collection,
+    target: {type: 'root'}
+  }, dropState, dropRef);
+
+  let {visuallyHiddenProps} = useVisuallyHidden();
+  if (dropIndicatorProps['aria-hidden']) {
+    return null;
+  }
+
+  return (
+    <div
+      role="option"
+      aria-selected="false"
+      {...visuallyHiddenProps}
+      {...dropIndicatorProps}
+      ref={dropRef} />
   );
 }

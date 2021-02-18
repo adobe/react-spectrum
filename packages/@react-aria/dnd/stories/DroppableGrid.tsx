@@ -174,6 +174,7 @@ function DroppableGrid(props) {
     collection: state.collection,
     target: {type: 'root'}
   }, dropState, dropRef);
+  let {visuallyHiddenProps} = useVisuallyHidden();
 
   return (
     <div
@@ -181,13 +182,15 @@ function DroppableGrid(props) {
       ref={ref}
       className={classNames(dndStyles, 'droppable-collection', {'is-drop-target': isDropTarget})}
       role="grid">
-      <div role="row" aria-hidden={dropIndicatorProps['aria-hidden']}>
-        <div
-          role="gridcell"
-          aria-selected="false">
-          <div {...useVisuallyHidden().visuallyHiddenProps} role="button" tabIndex={-1} {...dropIndicatorProps} ref={dropRef} />
+      {!dropIndicatorProps['aria-hidden'] &&
+        <div role="row" aria-hidden={dropIndicatorProps['aria-hidden']}>
+          <div
+            role="gridcell"
+            aria-selected="false">
+            <div {...visuallyHiddenProps} role="button" tabIndex={-1} {...dropIndicatorProps} ref={dropRef} />
+          </div>
         </div>
-      </div>
+      }
       {[...state.collection].map(item => (
         <>
           <InsertionIndicator
@@ -250,6 +253,14 @@ function CollectionItem({item, state, dropState}) {
 function InsertionIndicator(props) {
   let ref = React.useRef();
   let {dropIndicatorProps} = useDropIndicator(props, props.dropState, ref);
+  let {visuallyHiddenProps} = useVisuallyHidden();
+
+  // If aria-hidden, we are either not in a drag session or the drop target is invalid.
+  // In that case, there's no need to render anything at all unless we need to show the indicator visually.
+  // This can happen when dragging using the native DnD API as opposed to keyboard dragging.
+  if (!props.dropState.isDropTarget(props.target) && dropIndicatorProps['aria-hidden']) {
+    return null;
+  }
 
   return (
     <div role="row" aria-hidden={dropIndicatorProps['aria-hidden']}>
@@ -267,7 +278,7 @@ function InsertionIndicator(props) {
           marginBottom: -2,
           outline: 'none'
         }}>
-        <div {...useVisuallyHidden().visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={ref} />
+        <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={ref} />
       </div>
     </div>
   );

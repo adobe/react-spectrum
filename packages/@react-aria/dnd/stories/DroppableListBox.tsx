@@ -174,18 +174,21 @@ export function DroppableListBox(props) {
     collection: state.collection,
     target: {type: 'root'}
   }, dropState, dropRef);
+  let {visuallyHiddenProps} = useVisuallyHidden();
 
   return (
     <div
       {...mergeProps(collectionProps, listBoxProps)}
       ref={ref}
       className={classNames(dndStyles, 'droppable-collection', {'is-drop-target': isDropTarget})}>
-      <div
-        role="option"
-        aria-selected="false"
-        {...useVisuallyHidden().visuallyHiddenProps}
-        {...dropIndicatorProps}
-        ref={dropRef} />
+      {!dropIndicatorProps['aria-hidden'] &&
+        <div
+          role="option"
+          aria-selected="false"
+          {...visuallyHiddenProps}
+          {...dropIndicatorProps}
+          ref={dropRef} />
+      }
       {[...state.collection].map(item => (
         <>
           <InsertionIndicator
@@ -243,6 +246,13 @@ function CollectionItem({item, state, dropState}) {
 function InsertionIndicator(props) {
   let ref = React.useRef();
   let {dropIndicatorProps} = useDropIndicator(props, props.dropState, ref);
+
+  // If aria-hidden, we are either not in a drag session or the drop target is invalid.
+  // In that case, there's no need to render anything at all unless we need to show the indicator visually.
+  // This can happen when dragging using the native DnD API as opposed to keyboard dragging.
+  if (!props.dropState.isDropTarget(props.target) && dropIndicatorProps['aria-hidden']) {
+    return null;
+  }
 
   return (
     <div

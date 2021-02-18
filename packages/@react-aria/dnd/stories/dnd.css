@@ -118,6 +118,8 @@
   max-height: 300px;
   overflow: auto;
   position: relative;
+  display: flex;
+  flex-direction: column;
 
   &.is-drop-target {
     background-color: var(--spectrum-dropzone-background-color-selected-hover);
