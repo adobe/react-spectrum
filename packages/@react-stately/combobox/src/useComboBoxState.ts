@@ -136,15 +136,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       triggerState.close();
     }
 
-    // Close when an item is selected, if open state or selectedKey is uncontrolled.
-    if (
-      selectedKey != null &&
-      selectedKey !== lastSelectedKey.current &&
-      (props.isOpen === undefined || props.selectedKey === undefined)
-    ) {
-      triggerState.close();
-    }
-
     // Clear focused key when input value changes.
     if (inputValue !== lastValue.current) {
       selectionManager.setFocusedKey(null);
@@ -172,6 +163,15 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       resetInputValue();
     } else {
       lastValue.current = inputValue;
+    }
+
+    // Close when an item is selected, if open state or selectedKey is uncontrolled.
+    if (
+      selectedKey != null &&
+      selectedKey !== lastSelectedKey.current &&
+      (props.isOpen === undefined || props.selectedKey === undefined)
+    ) {
+      triggerState.close();
     }
 
     isInitialRender.current = false;
@@ -212,7 +212,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       // Reset inputValue and close menu here if the selected key is already the focused key. Otherwise
       // fire onSelectionChange to allow the application to control the closing.
       if (selectedKey === selectionManager.focusedKey) {
-        if (props.selectedKey !== undefined && props.isOpen !== undefined) {
+        if (props.selectedKey !== undefined && props.isOpen !== undefined && props.inputValue !== undefined) {
           props.onSelectionChange(selectedKey);
         } else {
           resetInputValue();
@@ -236,9 +236,9 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       if (allowsCustomValue && inputValue !== itemText) {
         commitCustomValue();
       } else {
-        // If selected key and open state are controlled, fire onSelectionChange so that application can control
+        // If selected key, open state, and inputvalue are controlled, fire onSelectionChange so that application can control
         // closing the menu when blurring away from the combobox. Otherwise reset the input value and close the menu ourselves
-        if (props.selectedKey !== undefined && props.isOpen !== undefined) {
+        if (props.selectedKey !== undefined && props.isOpen !== undefined && props.inputValue !== undefined) {
           props.onSelectionChange(selectedKey);
         } else {
           resetInputValue();

@@ -415,6 +415,22 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
+    // Has a problem where commiting a value (via focusing a option and hitting Enter) doesn't close the menu (possibly fixed by moving "Close when an item is selected, if open state or selectedKey is uncontrolled." after the "If the selectedKey changed, update the input value" bit in useComboBoxState)
+    // Also has problem where typing an invalid value and blurring the field causes the menu to open
+    'inputValue and isOpen (controlled)',
+    () => (
+      <ControlledValueOpenCombobox />
+    )
+  )
+  .add(
+     // Has a problem where commiting a value that is already selected(via focusing a selected option and hitting Enter) doesn't reset the input value to that key
+     // Also blurring when there is a selected value but the user has modified the input value doesn't reset the input value
+    'selectedKey and isOpen (controlled)',
+    () => (
+      <ControlledKeyOpenCombobox />
+    )
+  )
+  .add(
     'inputValue, selectedKey, and isOpen (controlled)',
     () => (
       <AllControlledOpenComboBox selectedKey="2" inputValue="Kangaroo" disabledKeys={['2', '6']} />
@@ -728,6 +744,70 @@ let ControlledOpenCombobox = (props) => {
       </ComboBox>
       <TextField label="Name" />
     </Flex>
+  );
+};
+
+let ControlledValueOpenCombobox = (props) => {
+  let [fieldState, setFieldState] = React.useState({
+    isOpen: false,
+    inputValue: ''
+  });
+
+  let onInputChange = (value: string) => {
+    setFieldState({
+      isOpen: true,
+      inputValue: value
+    });
+  };
+
+  let onOpenChange = (isOpen: boolean) => {
+    setFieldState(prevState => ({
+      isOpen: isOpen,
+      inputValue: prevState.inputValue
+    }));
+  };
+
+  return (
+    <ComboBox label="Combobox" {...mergeProps(props, actions)} isOpen={fieldState.isOpen} onOpenChange={onOpenChange} inputValue={fieldState.inputValue} onInputChange={onInputChange}>
+      <Item key="one">Item One</Item>
+      <Item key="two" textValue="Item Two">
+        <Copy size="S" />
+        <Text>Item Two</Text>
+      </Item>
+      <Item key="three">Item Three</Item>
+    </ComboBox>
+  );
+};
+
+let ControlledKeyOpenCombobox = (props) => {
+  let [fieldState, setFieldState] = React.useState({
+    isOpen: false,
+    selectedKey: null
+  });
+
+  let onSelectionChange = (key: string) => {
+    setFieldState({
+      isOpen: false,
+      selectedKey: key
+    });
+  };
+
+  let onOpenChange = (isOpen: boolean) => {
+    setFieldState(prevState => ({
+      isOpen: isOpen,
+      selectedKey: prevState.selectedKey
+    }));
+  };
+
+  return (
+    <ComboBox label="Combobox" {...mergeProps(props, actions)} isOpen={fieldState.isOpen} onOpenChange={onOpenChange} selectedKey={fieldState.selectedKey} onSelectionChange={onSelectionChange}>
+      <Item key="one">Item One</Item>
+      <Item key="two" textValue="Item Two">
+        <Copy size="S" />
+        <Text>Item Two</Text>
+      </Item>
+      <Item key="three">Item Three</Item>
+    </ComboBox>
   );
 };
 
