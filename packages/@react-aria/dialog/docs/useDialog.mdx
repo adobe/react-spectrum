@@ -15,6 +15,7 @@ import overlaysDocs from 'docs:@react-aria/overlays';
 import focusDocs from 'docs:@react-aria/focus';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-aria/dialog/package.json';
+import Anatomy from './anatomy.svg';
 
 ---
 category: Overlays
@@ -53,6 +54,8 @@ helps achieve accessible dialogs that can be styled as needed.
 * Handles closing the dialog when interacting outside and pressing the <kbd>Escape</kbd> key, when combined with <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlay} />
 
 ## Anatomy
+
+<Anatomy />
 
 A dialog consists of a container element and an optional title. `useDialog` handles
 exposing this to assistive technology using ARIA. It can be combined

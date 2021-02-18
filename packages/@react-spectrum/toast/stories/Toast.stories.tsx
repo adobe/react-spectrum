@@ -16,7 +16,7 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Toast} from '../';
 import {ToastProps} from '@react-types/toast';
-import {useToastProvider} from '../';
+import {ToastProvider, useToastProvider} from '../';
 
 storiesOf('Toast', module)
   .add(
@@ -44,10 +44,10 @@ storiesOf('Toast', module)
     () => render({actionLabel: 'Undo', onAction: action('onAction'), shouldCloseOnAction: true, onClose: action('onClose')}, 'Close on untoasting of the toast')
   ).add(
     'add via provider',
-    () => <RenderProvider />
+    () => <ToastProvider><RenderProvider /></ToastProvider>
   ).add(
     'add via provider with timers',
-    () => <RenderProviderTimers />
+    () => <ToastProvider><RenderProviderTimers /></ToastProvider>
   );
 
 function render(props:ToastProps = {}, message:String) {

@@ -27,7 +27,7 @@ interface MenuSectionAria {
   /** Props for the heading element, if any. */
   headingProps: HTMLAttributes<HTMLElement>,
 
-  /** Props for the heading element, if any. */
+  /** Props for the group element. */
   groupProps: HTMLAttributes<HTMLElement>
 }
 
