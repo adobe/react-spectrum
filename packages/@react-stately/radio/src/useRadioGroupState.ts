@@ -15,8 +15,18 @@ import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
 
 export interface RadioGroupState {
-  /** The name for the group, used for native form submission. */
+  /**
+   * The name for the group, used for native form submission.
+   * @deprecated
+   * @private
+   */
   readonly name: string,
+
+  /** Whether the radio group is disabled. */
+  readonly isDisabled: boolean,
+
+  /** Whether the radio group is read only. */
+  readonly isReadOnly: boolean,
 
   /** The currently selected value. */
   readonly selectedValue: string | null,
@@ -28,7 +38,7 @@ export interface RadioGroupState {
   readonly lastFocusedValue: string | null,
 
   /** Sets the last focused value. */
-  setLastFocusedValue(value: string): void,
+  setLastFocusedValue(value: string): void
 }
 
 let instance = Math.round(Math.random() * 10000000000);
@@ -39,12 +49,13 @@ let i = 0;
  * and manages selection and focus state.
  */
 export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
+  // Preserved here for backward compatibility. React Aria now generates the name instead of stately.
   let name = useMemo(() => props.name || `radio-group-${instance}-${++i}`, [props.name]);
   let [selectedValue, setSelected] = useControlledState(props.value, props.defaultValue, props.onChange);
   let [lastFocusedValue, setLastFocusedValue] = useState(null);
 
   let setSelectedValue = (value) => {
-    if (!props.isReadOnly) {
+    if (!props.isReadOnly && !props.isDisabled) {
       setSelected(value);
     }
   };
@@ -54,6 +65,8 @@ export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
     selectedValue,
     setSelectedValue,
     lastFocusedValue,
-    setLastFocusedValue
+    setLastFocusedValue,
+    isDisabled: props.isDisabled || false,
+    isReadOnly: props.isReadOnly || false
   };
 }

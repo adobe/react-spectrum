@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import classNames from 'classnames';
+import clsx from 'clsx';
 import {mergeProps} from '@react-aria/utils';
 import React, {ReactElement} from 'react';
 import {useFocusRing} from './useFocusRing';
@@ -47,7 +47,7 @@ export function FocusRing(props: FocusRingProps) {
 
   return React.cloneElement(child, mergeProps(child.props, {
     ...focusProps,
-    className: classNames({
+    className: clsx({
       [focusClass || '']: isFocused,
       [focusRingClass || '']: isFocusVisible
     })

@@ -13,7 +13,7 @@
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
 import Add from '@spectrum-icons/workflow/Add';
-import {AlertDialog, Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {AlertDialog, Dialog, DialogContainer, useDialogContainer} from '@react-spectrum/dialog';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {Content} from '@react-spectrum/view';
@@ -23,7 +23,6 @@ import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import {Heading} from '@react-spectrum/text';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
-import {Modal} from '@react-spectrum/overlays';
 import More from '@spectrum-icons/workflow/More';
 import React, {useState} from 'react';
 import {TextField} from '@react-spectrum/textfield';
@@ -37,54 +36,19 @@ export function CRUDExample() {
     ]
   });
 
-  let [editingItem, setEditingItem] = useState(null);
-  let [deletingItem, setDeletingItem] = useState(null);
-
+  let [dialog, setDialog] = useState(null);
   let createItem = (item) => {
     list.prepend({...item, id: Date.now()});
-  };
-
-  let editItem = (id, item) => {
-    list.update(id, item);
-    setEditingItem(null);
-  };
-
-  let deleteItem = (item) => {
-    list.remove(item.id);
-    setDeletingItem(null);
-  };
-
-  let deleteSelectedItems = () => {
-    list.removeSelectedItems();
-  };
-
-  let onAction = (action, item) => {
-    switch (action) {
-      case 'edit':
-        setEditingItem(item);
-        break;
-      case 'delete':
-        setDeletingItem(item);
-        break;
-    }
   };
 
   let selectedCount = list.selectedKeys === 'all' ? list.items.length : list.selectedKeys.size;
 
   return (
     <Flex direction="column">
-      <ActionGroup marginBottom={8}>
-        <DialogTrigger>
-          <Item key="add" aria-label="Add item"><Add /></Item>
-          {onClose => <EditDialog item={null} onClose={onClose} onConfirm={createItem} />}
-        </DialogTrigger>
+      <ActionGroup marginBottom={8} onAction={action => setDialog({action})}>
+        <Item key="add" aria-label="Add item"><Add /></Item>
         {selectedCount > 0 &&
-          <DialogTrigger>
-            <Item key="delete" aria-label="Delete selected items"><Delete /></Item>
-            <AlertDialog title="Delete" variant="destructive" primaryActionLabel="Delete" onPrimaryAction={deleteSelectedItems}>
-              Are you sure you want to delete {selectedCount === 1 ? '1 item' : `${selectedCount} items`}?
-            </AlertDialog>
-          </DialogTrigger>
+          <Item key="bulk-delete" aria-label="Delete selected items"><Delete /></Item>
         }
       </ActionGroup>
       <Table aria-label="People" width={500} height={300} selectionMode="multiple" isQuiet selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
@@ -102,7 +66,7 @@ export function CRUDExample() {
                   {column === 'actions'
                     ? <MenuTrigger align="end">
                       <ActionButton isQuiet aria-label="Actions"><More /></ActionButton>
-                      <Menu onAction={action => onAction(action, item)}>
+                      <Menu onAction={action => setDialog({action, item})}>
                         <Item key="edit">Edit...</Item>
                         <Item key="delete">Delete...</Item>
                       </Menu>
@@ -115,22 +79,42 @@ export function CRUDExample() {
           }
         </TableBody>
       </Table>
-      <Modal isOpen={!!editingItem} onClose={() => setEditingItem(null)}>
-        <EditDialog
-          item={editingItem}
-          onClose={() => setEditingItem(null)}
-          onConfirm={item => editItem(editingItem.id, item)} />
-      </Modal>
-      <Modal isOpen={!!deletingItem} onClose={() => setDeletingItem(null)}>
-        <AlertDialog title="Delete" variant="destructive" primaryActionLabel="Delete" onPrimaryAction={() => deleteItem(deletingItem)}>
-          Are you sure you want to delete {deletingItem?.firstName} {deletingItem?.lastName}?
-        </AlertDialog>
-      </Modal>
+      <DialogContainer onDismiss={() => setDialog(null)}>
+        {dialog?.action === 'add' &&
+          <EditDialog
+            item={null}
+            onConfirm={createItem} />
+        }
+        {dialog?.action === 'edit' &&
+          <EditDialog
+            item={dialog.item}
+            onConfirm={item => list.update(dialog.item.id, item)} />
+        }
+        {dialog?.action === 'delete' &&
+          <AlertDialog
+            title="Delete"
+            variant="destructive"
+            primaryActionLabel="Delete"
+            onPrimaryAction={() => list.remove(dialog.item.id)}>
+            Are you sure you want to delete {dialog.item.firstName} {dialog.item.lastName}?
+          </AlertDialog>
+        }
+        {dialog?.action === 'bulk-delete' &&
+          <AlertDialog
+            title="Delete"
+            variant="destructive"
+            primaryActionLabel="Delete"
+            onPrimaryAction={() => list.removeSelectedItems()}>
+            Are you sure you want to delete {selectedCount === 1 ? '1 item' : `${selectedCount} items`}?
+          </AlertDialog>
+        }
+      </DialogContainer>
     </Flex>
   );
 }
 
-function EditDialog({item, onClose, onConfirm}) {
+function EditDialog({item, onConfirm}) {
+  let dialog = useDialogContainer();
   let [state, setState] = useState({
     firstName: '',
     lastName: '',
@@ -150,8 +134,8 @@ function EditDialog({item, onClose, onConfirm}) {
         </Form>
       </Content>
       <ButtonGroup>
-        <Button variant="secondary" onPress={onClose}>Cancel</Button>
-        <Button variant="cta" onPress={() => {onClose(); onConfirm(state);}}>{!item ? 'Create' : 'Save'}</Button>
+        <Button variant="secondary" onPress={dialog.dismiss}>Cancel</Button>
+        <Button variant="cta" onPress={() => {dialog.dismiss(); onConfirm(state);}}>{!item ? 'Create' : 'Save'}</Button>
       </ButtonGroup>
     </Dialog>
   );

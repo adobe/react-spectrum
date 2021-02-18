@@ -35,7 +35,7 @@ function Footer(props: FooterProps, ref: DOMRef) {
 }
 
 /**
- * Footer is used to position footer content within a component.
+ * Footer represents a footer within a Spectrum container.
  */
 const _Footer = forwardRef(Footer);
 export {_Footer as Footer};

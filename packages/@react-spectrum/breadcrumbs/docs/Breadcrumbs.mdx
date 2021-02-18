@@ -47,12 +47,13 @@ keywords: [collections, dropdown]
 
 ## Content
 Breadcrumbs follow the [Collection Components](../react-stately/collections.html) API, accepting only static children.
-Similar to the Menu, Breadcrumbs accept an `<Item>` component, each with a `key` prop which is passed to the `onAction` handler to identify the selected item.
-Basic usage of Breadcrumbs, seen in the example above, shows a list of <TypeLink links={docs.links} type={docs.exports.Item} /> components,
+Similar to [Menu](Menu.html), Breadcrumbs accepts &lt;<TypeLink links={docs.links} type={docs.exports.Item} />&gt; elements as children,
+each with a `key` prop, which is passed to the `onAction` handler to identify the selected item.
+Basic usage of Breadcrumbs, as seen in the example above, shows a list of <TypeLink links={docs.links} type={docs.exports.Item} /> elements,
 populated with a string. See [Events](#events) for more information.
 
 ### Internationalization
-In order to internationalize Breadcrumbs, the strings of all child items should be localized.
+In order to internationalize Breadcrumbs, the content of all child items should be localized.
 
 ## Events
 Use the `onAction` prop as a callback to handle press events on items.
@@ -111,8 +112,8 @@ Large (default)
 
 ### Multiline
 
-Use the `isMultiline` prop to place the selected item below the other items.
-This adds emphasis to the selected item as a page title or heading.
+Use the `isMultiline` prop to place the last item below the other items.
+This adds emphasis to the current location as a page title or heading.
 
 ```tsx example
 <Breadcrumbs isMultiline>
@@ -125,7 +126,7 @@ This adds emphasis to the selected item as a page title or heading.
 ### Root context
 [View guidelines](https://spectrum.adobe.com/page/breadcrumbs/#With-root-context)
 
-Some applications find that displaying the root item is useful for orienting users.
+Some applications find that always displaying the root item is useful to orient users.
 This variation keeps the root visible when other items are truncated into the menu.
 
 ```tsx example
@@ -142,7 +143,7 @@ This variation keeps the root visible when other items are truncated into the me
 
 ### Disabled
 
-Breadcrumbs in a disabled state shows that selection exists, but is not available in that circumstance.
+Breadcrumbs in a disabled state shows items, but indicates that navigation is not available.
 This can be used to maintain layout continuity.
 
 ```tsx example
@@ -156,7 +157,7 @@ This can be used to maintain layout continuity.
 ### Visible items (overflow behavior)
 [View guidelines](https://spectrum.adobe.com/page/breadcrumbs/#Truncation-and-overflow)
 
-Breadcrumb's overflow behavior collapses items into a menu when space is limited. Breadcrumbs will only show a maximum of 4 visible items including the root and Breadcrumb menu button, if either are visible. If the root item cannot be rendered in the available horizontal
+Breadcrumbs collapses items into a menu when space is limited. It will only show a maximum of 4 visible items including the root and menu button, if either are visible. If the root item cannot be rendered in the available horizontal
 space, it will be collapsed into the menu regardless of `showRoot`. Note that the last breadcrumb item will automatically
 truncate with an ellipsis instead of collapsing into the menu.
 

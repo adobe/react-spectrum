@@ -12,7 +12,15 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, dimensionValue, SlotProvider, unwrapDOMRef, useDOMRef, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
+import {
+  classNames,
+  dimensionValue,
+  SlotProvider,
+  useDOMRef,
+  useIsMobileDevice,
+  useStyleProps,
+  useUnwrapDOMRef
+} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRef, DOMRefValue, FocusableRefValue, LabelPosition} from '@react-types/shared';
 import {FieldButton} from '@react-spectrum/button';
@@ -23,11 +31,12 @@ import intlMessages from '../intl/*.json';
 import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
+import {PressResponder, useHover} from '@react-aria/interactions';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useLayoutEffect, useRef, useState} from 'react';
+import React, {ReactElement, useCallback, useRef, useState} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
 import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
 import {Text} from '@react-spectrum/text';
@@ -54,7 +63,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     isRequired,
     necessityIndicator,
     menuWidth,
-    name
+    name,
+    autoFocus
   } = props;
 
   let {styleProps} = useStyleProps(props);
@@ -62,7 +72,9 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let domRef = useDOMRef(ref);
 
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
+  let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
   let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
+  let unwrappedTriggerRef = useUnwrapDOMRef(triggerRef);
   let listboxRef = useRef();
 
   // We create the listbox layout in Picker and pass it to ListBoxBase below
@@ -72,16 +84,20 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let {labelProps, triggerProps, valueProps, menuProps} = useSelect({
     ...props,
     keyboardDelegate: layout
-  }, state, unwrapDOMRef(triggerRef));
+  }, state, unwrappedTriggerRef);
 
+  let isMobile = useIsMobileDevice();
   let {overlayProps, placement, updatePosition} = useOverlayPosition({
-    targetRef: unwrapDOMRef(triggerRef),
-    overlayRef: unwrapDOMRef(popoverRef),
+    targetRef: unwrappedTriggerRef,
+    overlayRef: unwrappedPopoverRef,
     scrollRef: listboxRef,
     placement: `${direction} ${align}` as Placement,
     shouldFlip: shouldFlip,
-    isOpen: state.isOpen
+    isOpen: state.isOpen && !isMobile,
+    onClose: state.close
   });
+
+  let {hoverProps, isHovered} = useHover({isDisabled});
 
   // Update position once the ListBox has rendered. This ensures that
   // it flips properly when it doesn't fit in the available space.
@@ -98,7 +114,6 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let isLoadingMore = props.isLoading && state.collection.size > 0;
 
   // On small screen devices, the listbox is rendered in a tray, otherwise a popover.
-  let isMobile = useMediaQuery('(max-width: 700px)');
   let listbox = (
     <FocusScope restoreFocus>
       <DismissButton onDismiss={() => state.close()} />
@@ -112,6 +127,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         layout={layout}
         state={state}
         width={isMobile ? '100%' : undefined}
+        // Set max height: inherit so Tray scrolling works
+        UNSAFE_style={{maxHeight: 'inherit'}}
         isLoading={isLoadingMore}
         onLoadMore={props.onLoadMore} />
       <DismissButton onDismiss={() => state.close()} />
@@ -121,12 +138,20 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   // Measure the width of the button to inform the width of the menu (below).
   let [buttonWidth, setButtonWidth] = useState(null);
   let {scale} = useProvider();
-  useLayoutEffect(() => {
+
+  let onResize = useCallback(() => {
     if (!isMobile) {
-      let width = triggerRef.current.UNSAFE_getDOMNode().offsetWidth;
+      let width = unwrappedTriggerRef.current.offsetWidth;
       setButtonWidth(width);
     }
-  }, [scale, isMobile, triggerRef, state.selectedKey]);
+  }, [unwrappedTriggerRef, setButtonWidth, isMobile]);
+
+  useResizeObserver({
+    ref: unwrappedTriggerRef,
+    onResize: onResize
+  });
+
+  useLayoutEffect(onResize, [scale, state.selectedKey, onResize]);
 
   let overlay;
   if (isMobile) {
@@ -180,47 +205,50 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         )
       }>
       <HiddenSelect
+        isDisabled={isDisabled}
         state={state}
-        triggerRef={unwrapDOMRef(triggerRef)}
+        triggerRef={unwrappedTriggerRef}
         label={label}
         name={name} />
-      <FieldButton
-        {...triggerProps}
-        ref={triggerRef}
-        isActive={state.isOpen}
-        isQuiet={isQuiet}
-        isDisabled={isDisabled}
-        validationState={validationState}
-        UNSAFE_className={classNames(styles, 'spectrum-Dropdown-trigger')}>
-        <SlotProvider
-          slots={{
-            icon: {UNSAFE_className: classNames(styles, 'spectrum-Icon'), size: 'S'},
-            text: {
-              ...valueProps,
-              UNSAFE_className: classNames(
-                styles,
-                'spectrum-Dropdown-label',
-                {'is-placeholder': !state.selectedItem}
-              )
-            },
-            description: {
-              isHidden: true
-            }
-          }}>
-          {contents}
-        </SlotProvider>
-        {isLoadingInitial &&
-          <ProgressCircle
-            isIndeterminate
-            size="S"
-            aria-label={formatMessage('loading')}
-            UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
-        }
-        {validationState === 'invalid' && !isLoadingInitial &&
-          <AlertMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-invalidIcon')} />
-        }
-        <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
-      </FieldButton>
+      <PressResponder {...mergeProps(hoverProps, triggerProps)}>
+        <FieldButton
+          ref={triggerRef}
+          isActive={state.isOpen}
+          isQuiet={isQuiet}
+          isDisabled={isDisabled}
+          validationState={validationState}
+          autoFocus={autoFocus}
+          UNSAFE_className={classNames(styles, 'spectrum-Dropdown-trigger', {'is-hovered': isHovered})}>
+          <SlotProvider
+            slots={{
+              icon: {UNSAFE_className: classNames(styles, 'spectrum-Icon'), size: 'S'},
+              text: {
+                ...valueProps,
+                UNSAFE_className: classNames(
+                  styles,
+                  'spectrum-Dropdown-label',
+                  {'is-placeholder': !state.selectedItem}
+                )
+              },
+              description: {
+                isHidden: true
+              }
+            }}>
+            {contents}
+          </SlotProvider>
+          {isLoadingInitial &&
+            <ProgressCircle
+              isIndeterminate
+              size="S"
+              aria-label={formatMessage('loading')}
+              UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
+          }
+          {validationState === 'invalid' && !isLoadingInitial &&
+            <AlertMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-invalidIcon')} />
+          }
+          <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
+        </FieldButton>
+      </PressResponder>
       {state.collection.size === 0 ? null : overlay}
     </div>
   );
@@ -275,8 +303,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
 }
 
 /**
-  * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
-  */
+ * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
+ */
 // forwardRef doesn't support generic parameters, so cast the result to the correct type
 // https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
 const _Picker = React.forwardRef(Picker) as <T>(props: SpectrumPickerProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;

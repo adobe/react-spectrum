@@ -25,6 +25,7 @@ import React from 'react';
 import SettingsIcon from '@spectrum-icons/workflow/Settings';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import ViewCardIcon from '@spectrum-icons/workflow/ViewCard';
 import ViewGridIcon from '@spectrum-icons/workflow/ViewGrid';
 import ViewListIcon from '@spectrum-icons/workflow/ViewList';
@@ -81,7 +82,7 @@ storiesOf('ActionGroup', module)
             docItems.map((itemProps) => {
               let IconElement = iconMap[itemProps.children];
               return (
-                <Item key={itemProps.name} textValue={itemProps.name}>
+                <Item key={itemProps.name} textValue={itemProps.name} aria-label={itemProps.children}>
                   <IconElement />
                 </Item>
               );
@@ -89,6 +90,16 @@ storiesOf('ActionGroup', module)
           }
         </ActionGroup>
       </Flex>
+    )
+  )
+  .add(
+    'with falsy item key',
+    () => (
+      <ActionGroup onAction={action('onAction')}>
+        <Item key="add">Add</Item>
+        <Item key="">Delete</Item>
+        <Item key="edit">Edit</Item>
+      </ActionGroup>
     )
   )
   .add(
@@ -159,10 +170,7 @@ storiesOf('ActionGroup', module)
     'selectionMode: multiple, isEmphasized, isQuiet, compact',
     () => render({isEmphasized: true, isQuiet: true, density: 'compact', selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
   )
-  .add(
-    'selectionMode: none',
-    () => render({selectionMode: 'none', onAction: action('onAction')}, editItems)
-  )
+  // no selection mode none, it's covered in the default story visually
   .add(
     'vertical',
     () => render({orientation: 'vertical', defaultSelectedKeys: ['1']}, docItems)
@@ -206,6 +214,10 @@ storiesOf('ActionGroup', module)
         {item => <Item key={item.name} textValue={item.name}>{item.children}</Item>}
       </ActionGroup>
     )
+  )
+  .add(
+    'with tooltips',
+    () => renderTooltips({})
   );
 
 
@@ -238,7 +250,7 @@ function renderBoth(props, items: any = docItems) {
         items.map((itemProps) => {
           let IconElement = iconMap[itemProps.children];
           return (
-            <Item key={itemProps.name} textValue={itemProps.name}>
+            <Item key={itemProps.name} textValue={itemProps.name} aria-label={itemProps.children}>
               <Text>{itemProps.children}</Text>
               <IconElement />
             </Item>
@@ -256,9 +268,29 @@ function renderIcons(props, items: any = docItems) {
         items.map((itemProps) => {
           let IconElement = iconMap[itemProps.children];
           return (
-            <Item key={itemProps.name} textValue={itemProps.name}>
+            <Item key={itemProps.name} textValue={itemProps.name} aria-label={itemProps.children}>
               <IconElement />
             </Item>
+          );
+        })
+      }
+    </ActionGroup>
+  );
+}
+
+function renderTooltips(props, items: any = docItems) {
+  return (
+    <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>
+      {
+        items.map((itemProps) => {
+          let IconElement = iconMap[itemProps.children];
+          return (
+            <TooltipTrigger>
+              <Item key={itemProps.name} textValue={itemProps.children} aria-label={itemProps.children}>
+                <IconElement />
+              </Item>
+              <Tooltip>{itemProps.children}</Tooltip>
+            </TooltipTrigger>
           );
         })
       }

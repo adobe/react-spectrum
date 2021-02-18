@@ -31,8 +31,8 @@ interface MenuTriggerAria {
 
 /**
  * Provides the behavior and accessibility implementation for a menu trigger.
- * @param props - props for the menu trigger
- * @param state - state for the menu trigger
+ * @param props - Props for the menu trigger.
+ * @param state - State for the menu trigger.
  */
 export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerState, ref: RefObject<HTMLElement>): MenuTriggerAria {
   let {

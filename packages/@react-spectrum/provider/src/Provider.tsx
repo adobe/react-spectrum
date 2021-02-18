@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import classNames from 'classnames';
+import clsx from 'clsx';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {I18nProvider, useLocale} from '@react-aria/i18n';
@@ -123,7 +123,7 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
   let themeKey = Object.keys(theme[colorScheme])[0];
   let scaleKey = Object.keys(theme[scale])[0];
 
-  let className = classNames(
+  let className = clsx(
     styleProps.className,
     styles['spectrum'],
     typographyStyles['spectrum'],

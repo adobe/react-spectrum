@@ -8,7 +8,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License. -->
 
 - Start Date: 2019-10-31
-- RFC PR: https://github.com/adobe-private/react-spectrum-v3/pull/149 and https://github.com/adobe-private/react-spectrum-v3/pull/263
+- RFC PR: https://github.com/adobe/react-spectrum/pull/149 and https://github.com/adobe/react-spectrum/pull/263
 - Authors: Rob Snow
 
 # React Spectrum v3 Slots Architecture

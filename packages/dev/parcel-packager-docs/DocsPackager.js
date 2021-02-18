@@ -114,6 +114,10 @@ module.exports = new Packager({
           }
         }
 
+        if (t && t.type === 'identifier' && t.name === 'Omit' && application) {
+          return omit(application[0], application[1]);
+        }
+
         if (t && t.type === 'identifier' && params && params[t.name]) {
           return params[t.name];
         }
@@ -169,7 +173,8 @@ module.exports = new Packager({
 
     function walkLinks(obj) {
       walk(obj, (t, k, recurse) => {
-        if (t && t.type === 'link') {
+        // don't follow the link if it's already in links, that's circular
+        if (t && t.type === 'link' && !links[t.id]) {
           links[t.id] = nodes[t.id];
           walkLinks(nodes[t.id]);
         }
@@ -186,30 +191,32 @@ async function parse(asset) {
   let buffer = await asset.getBuffer();
   return [asset.id, v8.deserialize(buffer)];
 }
-
 // cache things in pre-visit order so the references exist
 function walk(obj, fn) {
-  let cache = new Map();
+  // circular is to make sure we don't traverse over an object we visited earlier in the recursion
+  let circular = new Set();
 
   let visit = (obj, fn, k = null) => {
     let recurse = (obj) => {
-      if (cache.has(obj)) {
-        return cache.get(obj);
+      if (circular.has(obj)) {
+        return {
+          type: 'link',
+          id: obj.id
+        };
       }
       if (Array.isArray(obj)) {
         let resultArray = [];
-        cache.set(obj, resultArray);
         obj.forEach((item, i) => resultArray[i] = visit(item, fn, k));
         return resultArray;
       } else if (obj && typeof obj === 'object') {
+        circular.add(obj);
         let res = {};
-        cache.set(obj, res);
         for (let key in obj) {
           res[key] = visit(obj[key], fn, key);
         }
+        circular.delete(obj);
         return res;
       } else {
-        cache.set(obj, obj);
         return obj;
       }
     };
@@ -252,4 +259,37 @@ function merge(a, b) {
       a[key] = b[key];
     }
   }
+}
+
+function omit(obj, toOmit) {
+  if (obj.type === 'interface' || obj.type === 'object') {
+    let keys = new Set();
+    if (toOmit.type === 'string' && toOmit.value) {
+      keys.add(toOmit.value);
+    } else if (toOmit.type === 'union') {
+      for (let e of toOmit.elements) {
+        if (e.type === 'string' && e.value) {
+          keys.add(e.value);
+        }
+      }
+    }
+
+    if (keys.size === 0) {
+      return obj;
+    }
+
+    let properties = {};
+    for (let key in obj.properties) {
+      if (!keys.has(key)) {
+        properties[key] = obj.properties[key];
+      }
+    }
+
+    return {
+      ...obj,
+      properties
+    };
+  }
+
+  return obj;
 }

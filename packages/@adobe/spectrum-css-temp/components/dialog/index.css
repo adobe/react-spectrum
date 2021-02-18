@@ -30,7 +30,7 @@ governing permissions and limitations under the License.
   --spectrum-dialog-medium-width: 480px;
   --spectrum-dialog-large-width: 640px;
   --spectrum-dialog-max-width: 90vw;
-  --spectrum-dialog-max-height: 90vh;
+  --spectrum-dialog-max-height: 90%;
   --spectrum-dialog-hero-height: var(--spectrum-global-dimension-size-1600);
   --spectrum-dialog-alert-width: var(--spectrum-dialog-medium-width);
 
@@ -285,7 +285,7 @@ governing permissions and limitations under the License.
     padding-block-start: 0px;
   }
 
-  .spectrum-Dialog-footer {
+  .spectrum-Dialog-footer, .spectrum-Dialog-typeIcon, .spectrum-Dialog-closeButton {
     display: none;
   }
 

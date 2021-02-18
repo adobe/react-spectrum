@@ -39,6 +39,8 @@ You can install any React Aria package using a package manager like [npm](https:
 yarn add @react-aria/button
 ```
 
+We also offer a single package containing all React Aria hooks. See [below](#mono-package) for details.
+
 ## Building a component
 
 React Aria provides behavior and accessibility through React Hooks. Since **it does not provide any rendering**,
@@ -80,7 +82,7 @@ across mouse, touch, keyboard, and screen readers! See the [useButton](useButton
 ## Stateful components
 
 Many components are **stateless** — they display information to a user. Examples of stateless components include buttons,
-progress bars, and links. These components don't update as the user interacts when them.
+progress bars, and links. These components don't update as the user interacts with them.
 
 A **stateful** component has some state, and allows a user to interact with the component in order to update that state.
 Examples of stateful components include text fields, checkboxes, and selects.
@@ -95,7 +97,7 @@ Then, call the state hook from your component, and pass the resulting state obje
 You can also use the state in your rendering code to determine what visual state to display.
 
 This example shows a very simple checkbox component built with the [useCheckbox](useCheckbox.html) hook, along
-with [useToggleState](../react-stately/useToggleState.html) hook from react-stately.
+with the [useToggleState](../react-stately/useToggleState.html) hook from react-stately.
 
 ```tsx example
 import {useToggleState} from '@react-stately/toggle';
@@ -121,6 +123,31 @@ function Checkbox(props) {
 
 See the [useCheckbox](useCheckbox.html) docs for a full example of a custom styled checkbox.
 
+## Mono-package
+
+In addition to individual packages, we also offer a mono-package containing all of the React Aria hooks in a single
+package. This ensures that all packages use compatible versions and are upgraded together. If you release all components
+in your component library in a single package, or just want to get started easily without installing a lot of packages,
+the mono-package may be the way to go. It is available as the [react-aria](https://npmjs.com/package/react-aria) package
+on npm.
+
+```
+yarn add react-aria
+```
+
+Once installed, all hooks work the same way as the individual packages, but are imported from the `react-aria` package
+instead of individual packages.
+
+```tsx
+// Individual packages
+import {useButton} from '@react-aria/button';
+```
+
+```tsx
+// Monopackage
+import {useButton} from 'react-aria';
+```
+
 ## Next steps
 
 Now that you understand how to use the hooks in React Aria to build your own components, you can read the documentation
@@ -129,5 +156,5 @@ for the individual hooks to understand them in detail. We also have high level d
 
 For a complete example of a component library built with React Aria, check out [React Spectrum](../react-spectrum/index.html),
 which is an implementation of [Spectrum](https://spectrum.adobe.com/), Adobe's design system.
-The [source code](https://github.com/adobe-private/react-spectrum-v3/tree/master/packages/%40react-spectrum) is a good
+The [source code](https://github.com/adobe/react-spectrum/tree/main/packages/%40react-spectrum) is a good
 example of how the React Aria hooks are used in many real world components.

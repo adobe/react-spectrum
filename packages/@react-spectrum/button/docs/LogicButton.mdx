@@ -58,10 +58,10 @@ The following example uses an `onPress` handler to update the variant.
 
 ```tsx example
 function Example() {
-  let [variant, setVariant] = React.useState('or');
+  let [variant, setVariant] = React.useState('Or');
 
   return (
-    <LogicButton variant={variant} onPress={() => setVariant(variant === 'or' ? 'and' : 'or')}>{variant}</LogicButton>
+    <LogicButton variant={variant.toLowerCase()} onPress={() => setVariant(variant === 'Or' ? 'And' : 'Or')}>{variant}</LogicButton>
   );
 }
 ```

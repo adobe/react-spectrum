@@ -10,25 +10,54 @@
  * governing permissions and limitations under the License.
  */
 
-import {focusWithoutScrolling} from '@react-aria/utils';
+import {focusSafely} from '@react-aria/focus';
 import {HTMLAttributes, Key, RefObject, useEffect} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressEvent} from '@react-types/shared';
 import {PressProps} from '@react-aria/interactions';
 
 interface SelectableItemOptions {
+  /**
+   * An interface for reading and updating multiple selection state.
+   */
   selectionManager: MultipleSelectionManager,
+  /**
+   * A unique key for the item.
+   */
   key: Key,
+  /**
+   * Ref to the item.
+   */
   ref: RefObject<HTMLElement>,
+  /**
+   * By default, selection occurs on pointer down. This can be strange if selecting an
+   * item causes the UI to disappear immediately (e.g. menus).
+   */
   shouldSelectOnPressUp?: boolean,
+  /**
+   * Whether the option is contained in a virtual scroller.
+   */
   isVirtualized?: boolean,
-  focus?: () => void
+  /**
+   * Function to focus the item.
+   */
+  focus?: () => void,
+  /**
+   * Whether the option should use virtual focus instead of being focused directly.
+   */
+  shouldUseVirtualFocus?: boolean
 }
 
 interface SelectableItemAria {
+  /**
+   * Props to be spread on the item root node.
+   */
   itemProps: HTMLAttributes<HTMLElement> & PressProps
 }
 
+/**
+ * Handles interactions with an item in a selectable collection.
+ */
 export function useSelectableItem(options: SelectableItemOptions): SelectableItemAria {
   let {
     selectionManager: manager,
@@ -36,47 +65,38 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     ref,
     shouldSelectOnPressUp,
     isVirtualized,
+    shouldUseVirtualFocus,
     focus
   } = options;
 
-  let onSelect = (e: PressEvent | PointerEvent) => {
-    if (manager.selectionMode === 'none') {
-      return;
-    }
-
-    if (manager.selectionMode === 'single') {
-      if (manager.isSelected(key) && !manager.disallowEmptySelection) {
-        manager.toggleSelection(key);
-      } else {
-        manager.replaceSelection(key);
-      }
-    } else if (e.shiftKey) {
-      manager.extendSelection(key);
-    } else if (manager) {
-      manager.toggleSelection(key);
-    }
-  };
+  let onSelect = (e: PressEvent | PointerEvent) => manager.select(key, e);
 
   // Focus the associated DOM node when this item becomes the focusedKey
   let isFocused = key === manager.focusedKey;
   useEffect(() => {
-    if (isFocused && manager.isFocused && document.activeElement !== ref.current) {
+    if (isFocused && manager.isFocused && !shouldUseVirtualFocus && document.activeElement !== ref.current) {
       if (focus) {
         focus();
       } else {
-        focusWithoutScrolling(ref.current);
+        focusSafely(ref.current);
       }
     }
-  }, [ref, isFocused, manager.focusedKey, manager.isFocused]);
+  }, [ref, isFocused, manager.focusedKey, manager.isFocused, shouldUseVirtualFocus]);
 
-  let itemProps: SelectableItemAria['itemProps'] = {
-    tabIndex: isFocused ? 0 : -1,
-    onFocus(e) {
-      if (e.target === ref.current) {
-        manager.setFocusedKey(key);
+  // Set tabIndex to 0 if the element is focused, or -1 otherwise so that only the last focused
+  // item is tabbable.  If using virtual focus, don't set a tabIndex at all so that VoiceOver
+  // on iOS 14 doesn't try to move real DOM focus to the item anyway.
+  let itemProps: SelectableItemAria['itemProps'] = {};
+  if (!shouldUseVirtualFocus) {
+    itemProps = {
+      tabIndex: isFocused ? 0 : -1,
+      onFocus(e) {
+        if (e.target === ref.current) {
+          manager.setFocusedKey(key);
+        }
       }
-    }
-  };
+    };
+  }
 
   // By default, selection occurs on pointer down. This can be strange if selecting an
   // item causes the UI to disappear immediately (e.g. menus).
@@ -84,7 +104,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // onPress requires a pointer down event on the same element as pointer up. For menus,
   // we want to be able to have the pointer down on the trigger that opens the menu and
   // the pointer up on the menu item rather than requiring a separate press.
-  // For keyboard events, selection still occurrs on key down.
+  // For keyboard events, selection still occurs on key down.
   if (shouldSelectOnPressUp) {
     itemProps.onPressStart = (e) => {
       if (e.pointerType === 'keyboard') {

@@ -15,7 +15,6 @@ import Light from '@spectrum-icons/workflow/Light';
 import Moon from '@spectrum-icons/workflow/Moon';
 import {Provider} from '@react-spectrum/provider';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import ReactDOM from 'react-dom';
 import styles from './docs.css';
 import {theme} from '@react-spectrum/theme-default';
 
@@ -50,8 +49,18 @@ export function ThemeProvider({children, colorScheme: colorSchemeProp, UNSAFE_cl
   );
 }
 
+export function Snippet({children}) {
+  return <ThemeProvider UNSAFE_className={styles.snippet}>{children}</ThemeProvider>;
+}
+
 export function Example({children, colorScheme}) {
-  return <ThemeProvider colorScheme={colorScheme} UNSAFE_className={styles.example}>{children}</ThemeProvider>;
+  return (
+    <ThemeProvider colorScheme={colorScheme} UNSAFE_className={styles.example}>
+      <ErrorBoundary>
+        {children}
+      </ErrorBoundary>
+    </ThemeProvider>
+  );
 }
 
 export function ThemeSwitcher() {
@@ -63,7 +72,7 @@ export function ThemeSwitcher() {
   let label = colorScheme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
 
   return (
-    <div title={label}>
+    <div title={label} role="presentation">
       <ActionButton
         aria-label={label}
         onPress={onPress}>
@@ -71,4 +80,23 @@ export function ThemeSwitcher() {
       </ActionButton>
     </div>
   );
+}
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {error: null};
+  }
+
+  static getDerivedStateFromError(e) {
+    return {error: e.message};
+  }
+
+  render() {
+    if (this.state.error) {
+      return <div>An error occurred while rendering the example.</div>;
+    }
+
+    return this.props.children;
+  }
 }

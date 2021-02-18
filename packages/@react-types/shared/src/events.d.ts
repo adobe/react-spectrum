@@ -19,7 +19,7 @@ import {
 // Event bubbling can be problematic in real-world applications, so the default for React Spectrum components
 // is not to propagate. This can be overridden by calling continuePropagation() on the event.
 export type BaseEvent<T extends SyntheticEvent> = T & {
-  /** @deprecated use continuePropagation */
+  /** @deprecated Use continuePropagation. */
   stopPropagation(): void,
   continuePropagation(): void
 }
@@ -97,6 +97,41 @@ export interface PressEvents {
 }
 
 export interface FocusableProps extends FocusEvents, KeyboardEvents {
-  /** Whether the element should receive focus on render */
+  /** Whether the element should receive focus on render. */
   autoFocus?: boolean
+}
+
+interface BaseMoveEvent {
+  /** The pointer type that triggered the move event. */
+  pointerType: PointerType
+}
+
+export interface MoveStartEvent extends BaseMoveEvent {
+  /** The type of move event being fired. */
+  type: 'movestart'
+}
+
+export interface MoveMoveEvent extends BaseMoveEvent {
+  /** The type of move event being fired. */
+  type: 'move',
+  /** The amount moved in the X direction since the last event. */
+  deltaX: number,
+  /** The amount moved in the Y direction since the last event. */
+  deltaY: number
+}
+
+export interface MoveEndEvent extends BaseMoveEvent {
+  /** The type of move event being fired. */
+  type: 'moveend'
+}
+
+export type MoveEvent = MoveStartEvent | MoveMoveEvent | MoveEndEvent;
+
+export interface MoveEvents {
+  /** Handler that is called when a move interaction starts. */
+  onMoveStart?: (e: MoveStartEvent) => void,
+  /** Handler that is called when the element is moved. */
+  onMove?: (e: MoveMoveEvent) => void,
+  /** Handler that is called when a move interaction ends. */
+  onMoveEnd?: (e: MoveEndEvent) => void
 }

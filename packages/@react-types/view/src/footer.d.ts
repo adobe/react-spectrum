@@ -15,7 +15,7 @@ import {ReactNode} from 'react';
 
 export interface FooterProps extends DOMProps, StyleProps {
   /**
-   * Footer content
+   * Footer content.
    */
   children: ReactNode
 }

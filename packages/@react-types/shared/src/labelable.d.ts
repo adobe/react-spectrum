@@ -18,9 +18,7 @@ export type NecessityIndicator = 'icon' | 'label';
 
 export interface LabelableProps {
   /** The content to display as the label. */
-  label?: ReactNode,
-  /** Whether the label is labeling a required field or group. */
-  isRequired?: boolean
+  label?: ReactNode
 }
 
 export interface SpectrumLabelableProps extends LabelableProps {
@@ -38,5 +36,9 @@ export interface SpectrumLabelableProps extends LabelableProps {
    * Whether the required state should be shown as an icon or text.
    * @default 'icon'
    */
-  necessityIndicator?: NecessityIndicator
+  necessityIndicator?: NecessityIndicator,
+  /**
+   * Whether the label is labeling a required field or group.
+   */
+  isRequired?: boolean
 }

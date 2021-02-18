@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, render} from '@testing-library/react';
 import React from 'react';
-import {render} from '@testing-library/react';
 import {useFocusWithin} from '../';
 
 function Example(props) {
@@ -31,8 +31,8 @@ describe('useFocusWithin', function () {
     );
 
     let el = tree.getByTestId('example');
-    el.focus();
-    el.blur();
+    act(() => {el.focus();});
+    act(() => {el.blur();});
 
     expect(events).toEqual([
       {type: 'focus', target: el},
@@ -56,10 +56,10 @@ describe('useFocusWithin', function () {
 
     let el = tree.getByTestId('example');
     let child = tree.getByTestId('child');
-    child.focus();
-    el.focus();
-    child.focus();
-    child.blur();
+    act(() => {child.focus();});
+    act(() => {el.focus();});
+    act(() => {child.focus();});
+    act(() => {child.blur();});
 
     expect(events).toEqual([
       {type: 'focus', target: child},
@@ -83,8 +83,8 @@ describe('useFocusWithin', function () {
     );
 
     let child = tree.getByTestId('child');
-    child.focus();
-    child.blur();
+    act(() => {child.focus();});
+    act(() => {child.blur();});
 
     expect(events).toEqual([]);
   });
@@ -105,8 +105,8 @@ describe('useFocusWithin', function () {
     );
 
     let child = tree.getByTestId('child');
-    child.focus();
-    child.blur();
+    act(() => {child.focus();});
+    act(() => {child.blur();});
 
     expect(onInnerFocus).toHaveBeenCalledTimes(1);
     expect(onInnerBlur).toHaveBeenCalledTimes(1);
@@ -130,8 +130,8 @@ describe('useFocusWithin', function () {
     );
 
     let child = tree.getByTestId('child');
-    child.focus();
-    child.blur();
+    act(() => {child.focus();});
+    act(() => {child.blur();});
 
     expect(onInnerFocus).toHaveBeenCalledTimes(1);
     expect(onInnerBlur).toHaveBeenCalledTimes(1);

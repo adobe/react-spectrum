@@ -16,6 +16,7 @@ import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useRef} from 'react';
 import {SpectrumRadioProps} from '@react-types/radio';
 import styles from '@adobe/spectrum-css-temp/components/radio/vars.css';
+import {useHover} from '@react-aria/interactions';
 import {useRadio} from '@react-aria/radio';
 import {useRadioProvider} from './context';
 
@@ -27,6 +28,7 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let {hoverProps, isHovered} = useHover({isDisabled});
 
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
@@ -34,7 +36,6 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
   let radioGroupProps = useRadioProvider();
   let {
     isEmphasized,
-    isDisabled: isGroupDisabled,
     validationState,
     state
   } = radioGroupProps;
@@ -42,12 +43,13 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
   let {inputProps} = useRadio({
     ...props,
     ...radioGroupProps,
-    isDisabled: isDisabled || isGroupDisabled
+    isDisabled
   }, state, inputRef);
 
   return (
     <label
       {...styleProps}
+      {...hoverProps}
       ref={domRef}
       className={
         classNames(
@@ -58,7 +60,8 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
             // 'spectrum-Radio--labelBelow': labelPosition === 'bottom',
             'spectrum-Radio--quiet': !isEmphasized,
             'is-disabled': isDisabled,
-            'is-invalid': validationState === 'invalid'
+            'is-invalid': validationState === 'invalid',
+            'is-hovered': isHovered
           },
           styleProps.className
         )

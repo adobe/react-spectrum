@@ -11,8 +11,11 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Button} from '@react-spectrum/button';
+import {Flex} from '@react-spectrum/layout';
+import {Form} from '@react-spectrum/form';
 import Info from '@spectrum-icons/workflow/Info';
-import React from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextArea} from '../';
 
@@ -33,6 +36,14 @@ storiesOf('TextArea', module)
   .add(
     'isQuiet: true',
     () => render({isQuiet: true})
+  )
+  .add(
+    'isQuiet, defaultValue',
+    () => render({isQuiet: true, defaultValue: 'foo  '.repeat(10)})
+  )
+  .add(
+    'isQuiet, value',
+    () => render({isQuiet: true, value: 'foo  '.repeat(10)})
   )
   .add(
     'isDisabled: true',
@@ -111,7 +122,23 @@ storiesOf('TextArea', module)
   )
   .add('custom width, quiet',
     () => render({icon: <Info />, validationState: 'invalid', width: '300px', isQuiet: true})
-  );
+  )
+  .add(
+    'custom height with label',
+    () => (
+      <Form>
+        <TextArea label="Height size-2000" height="size-2000" />
+        <TextArea label="Height size-2000" height="size-2000" isQuiet />
+        <TextArea labelPosition="side" label="Height size-2000" height="size-2000" />
+        <TextArea labelPosition="side" label="Height size-2000" height="size-2000" isQuiet />
+      </Form>
+    )
+  )
+  .add('controlled interactive',
+    () => <ControlledTextArea />
+  )
+  .add('in flex', () => renderInFlexRowAndBlock())
+  .add('in flex validation state', () => renderInFlexRowAndBlock({validationState: 'invalid'}));
 
 function render(props = {}) {
   return (
@@ -123,5 +150,73 @@ function render(props = {}) {
       onBlur={action('blur')}
       UNSAFE_className="custom_classname"
       {...props} />
+  );
+}
+
+function ControlledTextArea(props) {
+  let [value, setValue] = useState('');
+  return (
+    <>
+      <TextArea label="megatron" value={value} onChange={setValue} {...props} isQuiet />
+      <Button variant="primary" onPress={() => setValue('decepticons are evil transformers and should be kicked out of earth')}>Set Text</Button>
+    </>
+  );
+}
+
+function renderInFlexRowAndBlock(props = {}) {
+  return (
+    <Flex direction="column" gap="size-300">
+      Align stretch
+      <Flex gap="size-100">
+        <TextArea
+          label="Default"
+          placeholder="React"
+          {...props} />
+        <TextArea
+          label="Quiet"
+          placeholder="React"
+          isQuiet
+          {...props} />
+        <TextArea
+          label="Quiet"
+          placeholder="React"
+          isQuiet
+          {...props} />
+      </Flex>
+      Align end
+      <Flex gap="size-100" alignItems="end">
+        <TextArea
+          label="Default"
+          placeholder="React"
+          {...props} />
+        <TextArea
+          label="Quiet"
+          placeholder="React"
+          isQuiet
+          {...props} />
+        <TextArea
+          label="Quiet"
+          placeholder="React"
+          isQuiet
+          {...props} />
+      </Flex>
+      Display block
+      <div>
+        <TextArea
+          label="Default"
+          placeholder="React"
+          {...props} />
+        <TextArea
+          label="Quiet"
+          placeholder="React"
+          isQuiet
+          {...props} />
+        <TextArea
+          label="Quiet"
+          placeholder="React"
+          isQuiet
+          {...props} />
+      </div>
+    </Flex>
   );
 }

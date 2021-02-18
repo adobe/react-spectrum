@@ -92,6 +92,11 @@ describe('useSearchField hook', () => {
         let {inputProps} = renderSearchHook({isDisabled: true, onClear, onSubmit});
         expect(inputProps.onKeyDown).not.toBeDefined();
       });
+
+      it('does not return an defaultValue prop', () => {
+        let {inputProps} = renderSearchHook({onClear, onSubmit, defaultValue: 'ABC'});
+        expect(inputProps.defaultValue).not.toBeDefined();
+      });
     });
   });
 

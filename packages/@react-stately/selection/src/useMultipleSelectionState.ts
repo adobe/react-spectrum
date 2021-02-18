@@ -38,6 +38,9 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
     defaultSelectedKeys,
     props.onSelectionChange
   );
+  let disabledKeysProp = useMemo(() =>
+    props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
+  , [props.disabledKeys]);
 
   return {
     selectionMode,
@@ -57,7 +60,8 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
       setFocusedKey(k);
     },
     selectedKeys,
-    setSelectedKeys
+    setSelectedKeys,
+    disabledKeys: disabledKeysProp
   };
 }
 

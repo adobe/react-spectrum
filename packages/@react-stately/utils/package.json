@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/utils",
-  "version": "3.0.0",
+  "version": "3.2.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -14,13 +14,10 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe-private/react-spectrum-v3"
+    "url": "https://github.com/adobe/react-spectrum"
   },
   "peerDependencies": {
-    "react": "^16.8.0"
-  },
-  "devDependencies": {
-    "react": "^16.8.0"
+    "react": "^16.8.0 || ^17.0.0-rc.1"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2"

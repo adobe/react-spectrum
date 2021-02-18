@@ -71,7 +71,7 @@ function Example() {
     onKeyDown: e => setEvents(
       events => [`key down: ${e.key}`, ...events]
     ),
-    onKeyDown: e => setEvents(
+    onKeyUp: e => setEvents(
       events => [`key up: ${e.key}`, ...events]
     )
   });

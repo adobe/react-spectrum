@@ -45,6 +45,7 @@ export class TreeCollection<T> implements Collection<Node<T>> {
         node.prevKey = last.key;
       } else {
         this.firstKey = key;
+        node.prevKey = undefined;
       }
 
       if (node.type === 'item') {
@@ -52,11 +53,13 @@ export class TreeCollection<T> implements Collection<Node<T>> {
       }
 
       last = node;
+
+      // Set nextKey as undefined since this might be the last node
+      // If it isn't the last node, last.nextKey will properly set at start of new loop
+      last.nextKey = undefined;
     }
 
-    if (last) {
-      this.lastKey = last.key;
-    }
+    this.lastKey = last?.key;
   }
 
   *[Symbol.iterator]() {

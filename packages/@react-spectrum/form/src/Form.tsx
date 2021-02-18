@@ -24,6 +24,15 @@ export function useFormProps<T extends SpectrumLabelableProps>(props: T): T {
   return {...ctx, ...props};
 }
 
+const formPropNames = new Set([
+  'action',
+  'autoComplete',
+  'encType',
+  'method',
+  'target',
+  'onSubmit'
+]);
+
 function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
   props = useProviderProps(props);
   let {
@@ -51,7 +60,7 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
 
   return (
     <form
-      {...filterDOMProps(otherProps, {labelable: true})}
+      {...filterDOMProps(otherProps, {labelable: true, propNames: formPropNames})}
       {...styleProps}
       ref={domRef}
       className={

@@ -11,25 +11,39 @@
  */
 
 import {AriaLabelingProps, FocusableDOMProps, FocusableProps, PressEvents, StyleProps} from '@react-types/shared';
-import {JSXElementConstructor, ReactNode} from 'react';
+import {ElementType, JSXElementConstructor, ReactNode} from 'react';
 
 interface ButtonProps extends PressEvents, FocusableProps {
-  /** Whether the button is disabled */
+  /** Whether the button is disabled. */
   isDisabled?: boolean,
   /** The content to display in the button. */
-  children?: ReactNode,
+  children?: ReactNode
 }
 
-export interface LinkButtonProps {
+interface ToggleButtonProps extends ButtonProps {
+  /** Whether the element should be selected (controlled). */
+  isSelected?: boolean,
+  /** Whether the element should be selected (uncontrolled). */
+  defaultSelected?: boolean,
+  /** Handler that is called when the element's selection state changes. */
+  onChange?: (isSelected: boolean) => void
+}
+
+export interface AriaButtonElementTypeProps<T extends ElementType = 'button'> {
   /**
    * The HTML element or React element used to render the button, e.g. 'div', 'a', or `RouterLink`.
    * @default 'button'
    */
-  elementType?: string | JSXElementConstructor<any>,
+  elementType?: T | JSXElementConstructor<any>
+}
+
+export interface LinkButtonProps<T extends ElementType = 'button'> extends AriaButtonElementTypeProps<T> {
   /** A URL to link to if elementType="a". */
   href?: string,
   /** The target window for the link. */
-  target?: string
+  target?: string,
+  /** The relationship between the linked resource and the current page. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel). */
+  rel?: string
 }
 
 interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
@@ -48,9 +62,10 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
   type?: 'button' | 'submit' | 'reset'
 }
 
-export interface AriaButtonProps extends ButtonProps, LinkButtonProps, AriaBaseButtonProps {}
+export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}
+export interface AriaToggleButtonProps<T extends ElementType = 'button'> extends ToggleButtonProps, AriaBaseButtonProps, AriaButtonElementTypeProps<T> {}
 
-export interface SpectrumButtonProps extends AriaBaseButtonProps, ButtonProps, LinkButtonProps, StyleProps {
+export interface SpectrumButtonProps<T extends ElementType = 'button'> extends AriaBaseButtonProps, ButtonProps, LinkButtonProps<T>, StyleProps {
   /** The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button. */
   variant: 'cta' | 'overBackground' | 'primary' | 'secondary' | 'negative',
   /** Whether the button should be displayed with a quiet style. */
@@ -58,11 +73,16 @@ export interface SpectrumButtonProps extends AriaBaseButtonProps, ButtonProps, L
 }
 
 export interface SpectrumActionButtonProps extends AriaBaseButtonProps, ButtonProps, StyleProps {
-  /** Whether the ActionButton should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
+  /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
   isQuiet?: boolean
 }
 
 export interface SpectrumLogicButtonProps extends AriaBaseButtonProps, ButtonProps, StyleProps {
   /** The type of boolean sequence to be represented by the LogicButton. */
   variant: 'and' | 'or'
+}
+
+export interface SpectrumToggleButtonProps extends ToggleButtonProps, SpectrumActionButtonProps {
+  /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
+  isEmphasized?: boolean
 }

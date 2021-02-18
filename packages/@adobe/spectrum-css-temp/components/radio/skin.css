@@ -113,6 +113,17 @@ governing permissions and limitations under the License.
 
 
 .spectrum-Radio, .spectrum-Radio--quiet {
+  &.is-invalid {
+    .spectrum-Radio-button,
+    .spectrum-Radio-input:checked + .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-emphasized-circle-border-color-error);
+      }
+    }
+    .spectrum-Radio-label {
+      color: var(--spectrum-radio-emphasized-circle-border-color-error);
+    }
+  }
   &.is-invalid:hover {
     .spectrum-Radio-input + .spectrum-Radio-button {
       &:before {
@@ -131,17 +142,6 @@ governing permissions and limitations under the License.
     }
     .spectrum-Radio-label {
       color: var(--spectrum-radio-emphasized-circle-border-color-error-down);
-    }
-  }
-  &.is-invalid {
-    .spectrum-Radio-button,
-    .spectrum-Radio-input:checked + .spectrum-Radio-button {
-      &:before {
-        border-color: var(--spectrum-radio-emphasized-circle-border-color-error);
-      }
-    }
-    .spectrum-Radio-label {
-      color: var(--spectrum-radio-emphasized-circle-border-color-error);
     }
   }
   &.is-invalid .spectrum-Radio-input:focus-ring,

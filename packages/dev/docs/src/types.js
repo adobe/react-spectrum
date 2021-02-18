@@ -11,7 +11,7 @@
  */
 
 import Asterisk from '@spectrum-icons/workflow/Asterisk';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import {getAnchorProps, getUsedLinks} from './utils';
 import {getDoc} from 'globals-docs';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
@@ -369,7 +369,7 @@ export function LinkType({id}) {
 }
 
 function SpectrumLink({href, children, title}) {
-  return <a className={classNames(linkStyle['spectrum-Link--secondary'], styles.link)} href={href} title={title} {...getAnchorProps(href)}>{children}</a>;
+  return <a className={clsx(linkStyle['spectrum-Link--secondary'], styles.link)} href={href} title={title} {...getAnchorProps(href)}>{children}</a>;
 }
 
 export function renderHTMLfromMarkdown(description) {
@@ -422,8 +422,8 @@ export function InterfaceType({description, properties: props, showRequired, sho
           </thead>
           <tbody className={tableStyles['spectrum-Table-body']}>
             {properties.map((prop, index) => (
-              <tr key={index} className={classNames(tableStyles['spectrum-Table-row'], styles.tableRow)}>
-                <td role="rowheader" className={classNames(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Name">
+              <tr key={index} className={clsx(tableStyles['spectrum-Table-row'], styles.tableRow)}>
+                <td role="rowheader" className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Name">
                   <code className={`${typographyStyles['spectrum-Code4']}`}>
                     <span className={`token ${isComponent ? 'hljs-attr' : 'hljs-variable'}`}>{prop.name}</span>
                   </code>
@@ -432,7 +432,7 @@ export function InterfaceType({description, properties: props, showRequired, sho
                     : null
                   }
                 </td>
-                <td className={classNames(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Type">
+                <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Type">
                   <code className={typographyStyles['spectrum-Code4']}>
                     <Type type={prop.value} />
                   </code>
@@ -445,7 +445,7 @@ export function InterfaceType({description, properties: props, showRequired, sho
                     }
                   </td>
                 }
-                <td className={classNames(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description)}</td>
+                <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description)}</td>
               </tr>
             ))}
           </tbody>
@@ -464,8 +464,8 @@ export function InterfaceType({description, properties: props, showRequired, sho
           </thead>
           <tbody className={tableStyles['spectrum-Table-body']}>
             {methods.map((prop, index) => (
-              <tr key={index} className={classNames(tableStyles['spectrum-Table-row'], styles.tableRow)}>
-                <td role="rowheader" className={classNames(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Name">
+              <tr key={index} className={clsx(tableStyles['spectrum-Table-row'], styles.tableRow)}>
+                <td role="rowheader" className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Name">
                   <code className={`${typographyStyles['spectrum-Code4']}`}>
                     <span className="token hljs-function">{prop.name}</span>
                     <TypeParameters typeParameters={prop.value.typeParameters} />
@@ -476,7 +476,7 @@ export function InterfaceType({description, properties: props, showRequired, sho
                     <Type type={prop.value.return} />
                   </code>
                 </td>
-                <td className={classNames(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description)}</td>
+                <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description)}</td>
               </tr>
             ))}
           </tbody>

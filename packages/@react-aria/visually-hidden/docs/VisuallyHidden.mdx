@@ -11,7 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-aria/visually-hidden';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, FunctionAPI} from '@react-spectrum/docs';
 import packageData from '@react-aria/visually-hidden/package.json';
 
 ---
@@ -43,3 +43,17 @@ element visually.
 
 See [useRadioGroup](useRadioGroup.html#styling) and [useCheckbox](useCheckbox.html#styling)
 for examples of using `VisuallyHidden` to hide native form elements visually.
+
+## Hook
+
+In order to allow additional rendering flexibility, the `useVisuallyHidden` hook can be
+used in custom components instead of the `VisuallyHidden` component. It supports the same
+options as the component, and returns props to spread onto the element that should be hidden.
+
+<FunctionAPI links={docs.links} function={docs.exports.useVisuallyHidden} />
+
+```tsx
+let {visuallyHiddenProps} = useVisuallyHidden();
+
+<div {...visuallyHiddenProps}>I am hidden</div>
+```

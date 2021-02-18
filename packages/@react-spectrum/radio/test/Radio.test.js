@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, createEvent, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import {Button} from '@react-spectrum/button';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../';
@@ -272,9 +272,9 @@ describe('Radios', function () {
     let radios = getAllByRole('radio');
     expect(radioGroup).toBeTruthy();
     expect(radios.length).toBe(3);
-    expect(radios[0]).toHaveAttribute('readonly');
-    expect(radios[1]).toHaveAttribute('readonly');
-    expect(radios[2]).toHaveAttribute('readonly');
+    expect(radios[0]).toHaveAttribute('aria-readonly', 'true');
+    expect(radios[1]).toHaveAttribute('aria-readonly', 'true');
+    expect(radios[2]).toHaveAttribute('aria-readonly', 'true');
 
     let cats = getByLabelText('Cats');
     userEvent.click(cats);
@@ -449,41 +449,25 @@ describe('Radios', function () {
       let radios = getAllByRole('radio');
       let button = getByRole('button');
 
-      let preventDefault = jest.fn();
-      act(() => {
-        let tabEvent = createEvent.keyDown(button, {key: 'Tab'});
-        fireEvent(button, tabEvent);
-        if (!tabEvent.defaultPrevented) {
-          userEvent.tab();
-        }
-        fireEvent.keyUp(button, {key: 'Tab', preventDefault});
-      });
+      // 0. body/nothing is focused
+
+      // 1. tab once to focus button before radiogroup
+      userEvent.tab();
       expect(document.activeElement).toBe(button);
       expect(document.activeElement).not.toBe(radios[0]);
       expect(document.activeElement).not.toBe(radios[1]);
       expect(document.activeElement).not.toBe(radios[2]);
 
-      act(() => {
-        let tabEvent = createEvent.keyDown(button, {key: 'Tab'});
-        fireEvent(document.activeElement, tabEvent);
-        if (!tabEvent.defaultPrevented) {
-          userEvent.tab();
-        }
-        fireEvent.keyUp(document.activeElement, {key: 'Tab', preventDefault});
-      });
+      // 2. tab once again to focus radiogroup (= first radiobutton)
+      userEvent.tab();
       expect(document.activeElement).not.toBe(button);
       expect(document.activeElement).toBe(radios[0]);
       expect(document.activeElement).not.toBe(radios[1]);
       expect(document.activeElement).not.toBe(radios[2]);
 
-      act(() => {
-        let tabEvent = createEvent.keyDown(button, {key: 'Tab'});
-        fireEvent(document.activeElement, tabEvent);
-        if (!tabEvent.defaultPrevented) {
-          userEvent.tab();
-        }
-        fireEvent.keyUp(document.activeElement, {key: 'Tab', preventDefault});
-      });
+      // 3. tab once again to focus the body, and again to wrap back around to the button
+      userEvent.tab();
+      userEvent.tab();
       expect(document.activeElement).toBe(button);
       expect(document.activeElement).not.toBe(radios[0]);
       expect(document.activeElement).not.toBe(radios[1]);
@@ -497,7 +481,7 @@ describe('Radios', function () {
       expect(radios[1]).toHaveAttribute('tabIndex', '0');
       expect(radios[2]).toHaveAttribute('tabIndex', '0');
 
-      radios[0].focus();
+      act(() => {radios[0].focus();});
       expect(document.activeElement).toBe(radios[0]);
 
       userEvent.click(radios[1]);
@@ -538,7 +522,7 @@ describe('Radios', function () {
 
       let radios = getAllByRole('radio');
       let radioGroup = getByRole('radiogroup');
-      radioGroup.focus();
+      act(() => {radioGroup.focus();});
 
       orders.forEach(({action, result}, index) => {
         action(document.activeElement);
@@ -570,7 +554,7 @@ describe('Radios', function () {
 
       let radios = tree.getAllByRole('radio');
       let radioGroup = tree.getByRole('radiogroup');
-      radioGroup.focus();
+      act(() => {radioGroup.focus();});
 
       orders.forEach(({action, result}, index) => {
         action(document.activeElement);
@@ -596,7 +580,7 @@ describe('Radios', function () {
 
       let radios = tree.getAllByRole('radio');
       let radioGroup = tree.getByRole('radiogroup');
-      radioGroup.focus();
+      act(() => {radioGroup.focus();});
 
       orders.forEach(({action, result}, index) => {
         action(document.activeElement);

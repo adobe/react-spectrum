@@ -27,7 +27,7 @@ export interface AriaLinkOptions extends AriaLinkProps {
 
 export interface LinkAria {
   /** Props for the link element. */
-  linkProps: HTMLAttributes<HTMLDivElement>
+  linkProps: HTMLAttributes<HTMLElement>
 }
 
 /**
@@ -47,7 +47,7 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<HTMLElement>): Li
     ...otherProps
   } = props;
 
-  let linkProps: HTMLAttributes<HTMLDivElement>;
+  let linkProps: HTMLAttributes<HTMLElement>;
   if (elementType !== 'a') {
     linkProps = {
       role: 'link',

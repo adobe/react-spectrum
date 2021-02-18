@@ -24,11 +24,12 @@ export interface ItemProps<T> {
   /** A list of child item objects. Used for dynamic collections. */
   childItems?: Iterable<T>,
   /** Whether this item has children, even if not loaded yet. */
-  hasChildItems?: boolean,
+  hasChildItems?: boolean
 }
 
 export type ItemElement<T> = ReactElement<ItemProps<T>>;
 export type ItemRenderer<T> = (item: T) => ItemElement<T>;
+export type LoadingState = 'loading' | 'sorting' | 'loadingMore' | 'error' | 'idle' | 'filtering';
 
 export interface AsyncLoadable {
   /** Whether the items are currently loading. */
@@ -121,7 +122,7 @@ export interface KeyboardDelegate {
  */
 export interface Collection<T> extends Iterable<T> {
   /** The number of items in the collection. */
-  readonly size: number;
+  readonly size: number,
 
   /** Iterate over all keys in the collection. */
   getKeys(): Iterable<Key>,

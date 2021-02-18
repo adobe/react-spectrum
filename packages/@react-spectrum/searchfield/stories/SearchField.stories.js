@@ -78,6 +78,16 @@ storiesOf('SearchField', module)
     {info}
   )
   .add(
+    'validationState=invalid',
+    () => renderSearchLandmark(render({defaultValue: 'React', validationState: 'invalid'})),
+    {info}
+  )
+  .add(
+    'validationState=valid',
+    () => renderSearchLandmark(render({defaultValue: 'React', validationState: 'valid'})),
+    {info}
+  )
+  .add(
     'onClear',
     () => renderSearchLandmark(render({onClear: action('clear')})),
     {info}

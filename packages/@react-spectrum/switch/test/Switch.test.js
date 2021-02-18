@@ -16,7 +16,6 @@ import {Switch} from '../';
 import userEvent from '@testing-library/user-event';
 import V2Switch from '@react/react-spectrum/Switch';
 
-
 describe('Switch', function () {
   let onChangeSpy = jest.fn();
 

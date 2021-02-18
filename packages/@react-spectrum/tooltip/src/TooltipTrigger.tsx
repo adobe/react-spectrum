@@ -10,73 +10,96 @@
  * governing permissions and limitations under the License.
  */
 
-// import {DOMPropsResponder} from '@react-aria/interactions';
-// import {Overlay} from '@react-spectrum/overlays';
-import {PlacementAxis} from '@react-types/overlays';
-import React, {RefObject, useContext} from 'react';
-import {StyleProps} from '@react-types/shared';
-import {TooltipTriggerProps} from '@react-types/tooltip';
-// import {useOverlayPosition} from '@react-aria/overlays';
-// import {useTooltipTrigger} from '@react-aria/tooltip';
-// import {useTooltipTriggerState} from '@react-stately/tooltip';
+import {FocusableProvider} from '@react-aria/focus';
+import {Overlay} from '@react-spectrum/overlays';
+import React, {ReactElement, useRef} from 'react';
+import {SpectrumTooltipTriggerProps} from '@react-types/tooltip';
+import {TooltipContext} from './context';
+import {useOverlayPosition} from '@react-aria/overlays';
+import {useTooltipTrigger} from '@react-aria/tooltip';
+import {useTooltipTriggerState} from '@react-stately/tooltip';
 
-interface TooltipContextProps extends StyleProps {
-  ref?: RefObject<HTMLDivElement>,
-  placement?: PlacementAxis,
-  isOpen?: boolean
+const DEFAULT_OFFSET = 7; // Closest visual match to Spectrum's mocks
+const DEFAULT_CROSS_OFFSET = 0;
+
+function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
+  let {
+    children,
+    crossOffset = DEFAULT_CROSS_OFFSET,
+    isDisabled,
+    offset = DEFAULT_OFFSET,
+    trigger: triggerAction
+  } = props;
+
+  let [trigger, tooltip] = React.Children.toArray(children);
+
+  let state = useTooltipTriggerState(props);
+
+  let tooltipTriggerRef = useRef<HTMLElement>();
+  let overlayRef = useRef<HTMLDivElement>();
+
+  let {triggerProps, tooltipProps} = useTooltipTrigger({
+    isDisabled,
+    trigger: triggerAction
+  }, state, tooltipTriggerRef);
+
+  let {overlayProps, arrowProps, placement} = useOverlayPosition({
+    placement: props.placement || 'top',
+    targetRef: tooltipTriggerRef,
+    overlayRef,
+    offset,
+    crossOffset,
+    isOpen: state.isOpen
+  });
+
+  return (
+    <FocusableProvider
+      {...triggerProps}
+      ref={tooltipTriggerRef}>
+      {trigger}
+      <TooltipContext.Provider
+        value={{
+          state,
+          placement,
+          ref: overlayRef,
+          UNSAFE_style: overlayProps.style,
+          arrowProps,
+          ...tooltipProps
+        }}>
+        <Overlay isOpen={state.isOpen}>
+          {tooltip}
+        </Overlay>
+      </TooltipContext.Provider>
+    </FocusableProvider>
+  );
 }
 
-const TooltipContext = React.createContext<TooltipContextProps>({});
+// Support TooltipTrigger inside components using CollectionBuilder.
+TooltipTrigger.getCollectionNode = function* (props: SpectrumTooltipTriggerProps) {
+  // Replaced the use of React.Childern.toArray because it mutates the key prop.
+  let childArray: ReactElement[] = [];
+  React.Children.forEach(props.children, child => {
+    if (React.isValidElement(child)) {
+      childArray.push(child);
+    }
+  });
+  let [trigger, tooltip] = childArray;
+  yield {
+    element: trigger,
+    wrapper: (element) => (
+      <TooltipTrigger key={element.key} {...props}>
+        {element}
+        {tooltip}
+      </TooltipTrigger>
+    )
+  };
+};
 
-export function useTooltipProvider(): TooltipContextProps {
-  return useContext(TooltipContext);
-}
-
-// eslint-disable-next-line
-export function TooltipTrigger(props: TooltipTriggerProps) {
-  // let {
-  //   children,
-  //   isDisabled
-  // } = props;
-
-  // let [trigger, tooltip] = React.Children.toArray(children);
-
-  // let state = useTooltipTriggerState();
-
-  // let triggerRef = useRef<HTMLElement>();
-  // let overlayRef = useRef<HTMLDivElement>();
-
-  // let {triggerProps, tooltipProps} = useTooltipTrigger({
-  //   tooltipProps: tooltip.props,
-  //   triggerProps: trigger.props,
-  //   isDisabled
-  // }, state, triggerRef);
-
-  // let {overlayProps, placement} = useOverlayPosition({
-  //   placement: props.placement || 'right',
-  //   targetRef: triggerRef,
-  //   overlayRef
-  // });
-
-  return null;
-
-  // return (
-  //   <DOMPropsResponder
-  //     {...triggerProps}
-  //     ref={triggerRef}
-  //     isDisabled={isDisabled}>
-  //     {trigger}
-  //     <TooltipContext.Provider
-  //       value={{
-  //         placement,
-  //         ref: overlayRef,
-  //         UNSAFE_style: overlayProps.style,
-  //         ...tooltipProps
-  //       }}>
-  //       <Overlay isOpen={state.open}>
-  //         {tooltip}
-  //       </Overlay>
-  //     </TooltipContext.Provider>
-  //   </DOMPropsResponder>
-  // );
-}
+/**
+ * TooltipTrigger wraps around a trigger element and a Tooltip. It handles opening and closing
+ * the Tooltip when the user hovers over or focuses the trigger, and positioning the Tooltip
+ * relative to the trigger.
+ */
+// We don't want getCollectionNode to show up in the type definition
+let _TooltipTrigger = TooltipTrigger as (props: SpectrumTooltipTriggerProps) => JSX.Element;
+export {_TooltipTrigger as TooltipTrigger};

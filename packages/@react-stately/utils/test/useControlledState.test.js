@@ -11,8 +11,8 @@
  */
 
 import {act, renderHook} from '@testing-library/react-hooks';
+import {act as actDOM, render} from '@testing-library/react';
 import React, {useEffect, useState} from 'react';
-import {render} from '@testing-library/react';
 import {useControlledState} from '../src';
 import userEvent from '@testing-library/user-event';
 
@@ -48,6 +48,24 @@ describe('useControlledState tests', function () {
     expect(onChangeSpy).toHaveBeenLastCalledWith('newValue');
   });
 
+  it('using NaN will only trigger onChange once', () => {
+    let onChangeSpy = jest.fn();
+    let {result} = renderHook(() => useControlledState(undefined, undefined, onChangeSpy));
+    let [value, setValue] = result.current;
+    expect(value).not.toBeDefined();
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    act(() => setValue(NaN));
+    [value, setValue] = result.current;
+    expect(value).toBe(NaN);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenLastCalledWith(NaN);
+
+    act(() => setValue(NaN));
+    [value, setValue] = result.current;
+    expect(value).toBe(NaN);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+  });
+
   it('can handle callback setValue behavior', () => {
     let onChangeSpy = jest.fn();
     let {result} = renderHook(() => useControlledState(undefined, 'defaultValue', onChangeSpy));
@@ -68,7 +86,7 @@ describe('useControlledState tests', function () {
 
     let TestComponent = (props) => {
       let [state, setState] = useControlledState(props.value, props.defaultValue, props.onChange);
-      useEffect(() => renderSpy());
+      useEffect(() => renderSpy(), [state]);
       return <button onClick={() => setState((prev) => prev + 1)} data-testid={state} />;
     };
 
@@ -80,9 +98,12 @@ describe('useControlledState tests', function () {
     let {getByRole, getByTestId} = render(<TestComponentWrapper defaultValue={5} />);
     let button = getByRole('button');
     getByTestId('5');
-    userEvent.click(button);
+    expect(renderSpy).toBeCalledTimes(1);
+    actDOM(() =>
+      userEvent.click(button)
+    );
     getByTestId('6');
-    expect(renderSpy.mock.calls.length).toBe(1);
+    expect(renderSpy).toBeCalledTimes(2);
   });
 
   it('can handle controlled setValue behavior', () => {

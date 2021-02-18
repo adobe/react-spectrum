@@ -30,24 +30,25 @@ category: Content
   packageData={packageData}
   componentNames={['Content']} />
 
-## Examples
+## Example
 
 ```tsx example
-<Content>Try another search</Content>
+<Content>Content is king</Content>
 ```
 
 ## Content
 
-The Content component is used as a child to other components. Based on the
-component it is used within, it gets Spectrum styling and may have a preassigned
-slot for positioning. By virtue of its name, the Content component provides
-semantic meaning in the context they are placed. An example of this is
-explained in [Dialog](Dialog.html#content) and it is also used by
-[IllustratedMessage](IllustratedMessage.html#example). It is important to note
-that the Content element accepts any renderable node, not just strings.
+The `Content` component represents the primary content within a Spectrum container
+such as a [Dialog](Dialog.html) or [IllustratedMessage](IllustratedMessage.html).
+`Content` provides no specific styling by itself, but receives styling from the
+parent container. In addition, `Content` will be automatically placed within the
+container's layout according to Spectrum guidelines.
 
-A Content is used to specify the content of a component. Example usage can be found in
-[Dialog](Dialog.html#example) and [IllustratedMessage](IllustratedMessage.html#example).
+See [Dialog](Dialog.html#example) and [IllustratedMessage](IllustratedMessage.html#example)
+for examples of how to use the `Content` component in the context of a Spectrum container.
+See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/section) for more
+information about the semantics of the `section` element, which is used internally
+by the `Content` component.
 
 ## Props
 

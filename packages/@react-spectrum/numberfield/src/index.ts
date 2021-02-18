@@ -10,4 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+/// <reference types="css-module-types" />
+/// <reference types="intl-types-extension" />
+
 export * from './NumberField';

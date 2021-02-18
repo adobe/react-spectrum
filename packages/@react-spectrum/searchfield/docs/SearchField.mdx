@@ -86,7 +86,7 @@ Placeholder text will only appear when the SearchField is empty, and should not 
 A visual label should be provided for the SearchField using the `label` prop. If the SearchField is required, the `isRequired` and `necessityIndicator` props can be used to show a required state.
 
 ```tsx example
-<Flex gap="size-300">
+<Flex gap="size-300" wrap>
   <SearchField label="Search" />
   <SearchField label="Search" isRequired necessityIndicator="icon" />
   <SearchField label="Search" isRequired necessityIndicator="label" />

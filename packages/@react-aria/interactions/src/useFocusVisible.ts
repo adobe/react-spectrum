@@ -15,9 +15,11 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
+import {isMac} from '@react-aria/utils';
+import {isVirtualClick} from './utils';
 import {useEffect, useState} from 'react';
 
-type Modality = 'keyboard' | 'pointer';
+type Modality = 'keyboard' | 'pointer' | 'virtual';
 type HandlerEvent = PointerEvent | MouseEvent | KeyboardEvent | FocusEvent;
 type Handler = (modality: Modality, e: HandlerEvent) => void;
 interface FocusVisibleProps {
@@ -37,11 +39,6 @@ let changeHandlers = new Set<Handler>();
 let hasSetupGlobalListeners = false;
 let hasEventBeforeFocus = false;
 
-const isMac =
-  typeof window !== 'undefined' && window.navigator != null
-    ? /^Mac/.test(window.navigator.platform)
-    : false;
-
 // Only Tab or Esc keys will make focus visible on text input elements
 const FOCUS_VISIBLE_INPUT_KEYS = {
   Tab: true,
@@ -54,9 +51,11 @@ function triggerChangeHandlers(modality: Modality, e: HandlerEvent) {
   }
 }
 
-// Helper function to determine if a KeyboardEvent is unmodified and could make keyboard focus styles visible
+/**
+ * Helper function to determine if a KeyboardEvent is unmodified and could make keyboard focus styles visible.
+ */
 function isValidKey(e: KeyboardEvent) {
-  return !(e.metaKey || (!isMac && e.altKey) || e.ctrlKey);
+  return !(e.metaKey || (!isMac() && e.altKey) || e.ctrlKey);
 }
 
 function handleKeyboardEvent(e: KeyboardEvent) {
@@ -72,6 +71,13 @@ function handlePointerEvent(e: PointerEvent | MouseEvent) {
   if (e.type === 'mousedown' || e.type === 'pointerdown') {
     hasEventBeforeFocus = true;
     triggerChangeHandlers('pointer', e);
+  }
+}
+
+function handleClickEvent(e: MouseEvent) {
+  if (isVirtualClick(e)) {
+    hasEventBeforeFocus = true;
+    currentModality = 'virtual';
   }
 }
 
@@ -99,9 +105,11 @@ function handleWindowBlur() {
   hasEventBeforeFocus = false;
 }
 
-// Setup global event listeners to control when keyboard focus style should be visible
+/**
+ * Setup global event listeners to control when keyboard focus style should be visible.
+ */
 function setupGlobalFocusEvents() {
-  if (hasSetupGlobalListeners) {
+  if (typeof window === 'undefined' || hasSetupGlobalListeners) {
     return;
   }
 
@@ -117,6 +125,7 @@ function setupGlobalFocusEvents() {
 
   document.addEventListener('keydown', handleKeyboardEvent, true);
   document.addEventListener('keyup', handleKeyboardEvent, true);
+  document.addEventListener('click', handleClickEvent, true);
 
   // Register focus events on the window so they are sure to happen
   // before React's event listeners (registered on the document).
@@ -136,10 +145,25 @@ function setupGlobalFocusEvents() {
   hasSetupGlobalListeners = true;
 }
 
+/**
+ * If true, keyboard focus is visible.
+ */
 export function isFocusVisible(): boolean {
   return currentModality !== 'pointer';
 }
 
+export function getInteractionModality(): Modality {
+  return currentModality;
+}
+
+export function setInteractionModality(modality: Modality) {
+  currentModality = modality;
+  triggerChangeHandlers(modality, null);
+}
+
+/**
+ * Keeps state of the current modality.
+ */
 export function useInteractionModality(): Modality {
   setupGlobalFocusEvents();
 
@@ -167,10 +191,10 @@ export function useFocusVisible(props: FocusVisibleProps = {}): FocusVisibleResu
   let {isTextInput, autoFocus} = props;
   let [isFocusVisibleState, setFocusVisible] = useState(autoFocus || isFocusVisible());
   useEffect(() => {
-    let handler = (modality, e) => {
+    let handler = (modality: Modality, e: HandlerEvent) => {
       // If this is a text input component, don't update the focus visible style when
       // typing except for when the Tab and Escape keys are pressed.
-      if (isTextInput && modality === 'keyboard' && !FOCUS_VISIBLE_INPUT_KEYS[e.key]) {
+      if (isTextInput && modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]) {
         return;
       }
 

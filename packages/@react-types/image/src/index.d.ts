@@ -24,7 +24,7 @@ export interface ImageProps {
   /**
    * Sets the Image [object-fit](https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit) style.
    */
-  objectFit?: any, // move to styleProps for images and type better
+  objectFit?: any // move to styleProps for images and type better
 }
 
 export interface SpectrumImageProps extends ImageProps, DOMProps, StyleProps {

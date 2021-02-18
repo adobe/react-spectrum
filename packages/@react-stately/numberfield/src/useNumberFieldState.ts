@@ -10,107 +10,241 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp} from '@react-aria/utils';
-import {useControlledState} from '@react-stately/utils';
-import {useRef} from 'react';
-import {ValidationState} from '@react-types/shared';
+import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
+import {NumberFieldProps} from '@react-types/numberfield';
+import {NumberFormatter, NumberParser} from '@internationalized/number';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 export interface NumberFieldState {
-  setValue: (val: string, ...args: any) => void,
-  increment: (...args: any) => void,
-  decrement: (...args: any) => void,
-  incrementToMax: (...args: any) => void,
-  decrementToMin: (...args: any) => void,
-  value: number,
-  validationState: ValidationState
+  /**
+   * The current text value of the input. Updated as the user types,
+   * and formatted according to `formatOptions` on blur.
+   */
+  inputValue: string,
+  /**
+   * The currently parsed number value, or NaN if a valid number could not be parsed.
+   * Updated based on the `inputValue` as the user types.
+   */
+  numberValue: number,
+  /** The minimum value of the number field. */
+  minValue: number,
+  /** The maximum value of the number field. */
+  maxValue: number,
+  /** Whether the current value can be incremented according to the maximum value and step. */
+  canIncrement: boolean,
+  /** Whether the current value can be decremented according to the minimum value and step. */
+  canDecrement: boolean,
+  /**
+   * Validates a user input string according to the current locale and format options.
+   * Values can be partially entered, and may be valid even if they cannot currently be parsed to a number.
+   * Can be used to implement validation as a user types.
+   */
+  validate(value: string): boolean,
+  /** Sets the current text value of the input. */
+  setInputValue(val: string): void,
+  /**
+   * Commits the current input value. The value is parsed to a number, clamped according
+   * to the minimum and maximum values of the field, and snapped to the nearest step value.
+   * This will fire the `onChange` prop with the new value, and if uncontrolled, update the `numberValue`.
+   * Typically this is called when the field is blurred.
+   */
+  commit(): void,
+  /** Increments the current input value to the next step boundary, and fires `onChange`. */
+  increment(): void,
+  /** Decrements the current input value to the next step boundary, and fires `onChange`. */
+  decrement(): void,
+  /** Sets the current value to the `maxValue` if any, and fires `onChange`. */
+  incrementToMax(): void,
+  /** Sets the current value to the `minValue` if any, and fires `onChange`. */
+  decrementToMin(): void
 }
 
-export function useNumberFieldState(props) : NumberFieldState {
+interface NumberFieldStateProps extends NumberFieldProps {
+  locale: string
+}
+
+/**
+ * Provides state management for a number field component. Number fields allow users to enter a number,
+ * and increment or decrement the value using stepper buttons.
+ */
+export function useNumberFieldState(
+  props: NumberFieldStateProps
+): NumberFieldState {
   let {
     minValue,
     maxValue,
-    step = 1,
+    step,
+    formatOptions,
     value,
     defaultValue,
-    onChange
+    onChange,
+    locale,
+    isDisabled,
+    isReadOnly
   } = props;
 
-  let [numValue, setNumValue] = useControlledState(value, defaultValue || '', onChange);
-  let isValid = useRef(!isInputValueInvalid(numValue, maxValue, minValue));
+  let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, onChange);
+  let [inputValue, setInputValue] = useState(() => isNaN(numberValue) ? '' : new NumberFormatter(locale, formatOptions).format(numberValue));
+
+  let numberParser = useMemo(() => new NumberParser(locale, formatOptions), [locale, formatOptions]);
+  let numberingSystem = useMemo(() => numberParser.getNumberingSystem(inputValue), [numberParser, inputValue]);
+  let formatter = useMemo(() => new NumberFormatter(locale, {...formatOptions, numberingSystem}), [locale, formatOptions, numberingSystem]);
+  let intlOptions = useMemo(() => formatter.resolvedOptions(), [formatter]);
+  let format = useCallback((value: number) => isNaN(value) ? '' : formatter.format(value), [formatter]);
+
+  let clampStep = !isNaN(step) ? step : 1;
+  if (intlOptions.style === 'percent' && isNaN(step)) {
+    clampStep = 0.01;
+  }
+
+  // Update the input value when the number value or format options change. This is done
+  // in a useEffect so that the controlled behavior is correct and we only update the
+  // textfield after prop changes.
+  useEffect(() => {
+    setInputValue(format(numberValue));
+  }, [numberValue, locale, formatOptions]);
+
+  // Store last parsed value in a ref so it can be used by increment/decrement below
+  let parsedValue = useMemo(() => numberParser.parse(inputValue), [numberParser, inputValue]);
+  let parsed = useRef(0);
+  parsed.current = parsedValue;
+
+  let commit = () => {
+    // Set to empty state if input value is empty
+    if (!inputValue.length) {
+      setNumberValue(NaN);
+      setInputValue('');
+      return;
+    }
+
+    // if it failed to parse, then reset input to formatted version of current number
+    if (isNaN(parsed.current)) {
+      setInputValue(format(numberValue));
+      return;
+    }
+
+    // Clamp to min and max, round to the nearest step, and round to specified number of digits
+    let clampedValue: number;
+    if (isNaN(step)) {
+      clampedValue = clamp(parsed.current, minValue, maxValue);
+    } else {
+      clampedValue = snapValueToStep(parsed.current, minValue, maxValue, step);
+    }
+
+    clampedValue = numberParser.parse(format(clampedValue));
+    setNumberValue(clampedValue);
+
+    // in a controlled state, the numberValue won't change, so we won't go back to our old input without help
+    setInputValue(format(value === undefined ? clampedValue : numberValue));
+  };
+
+  let safeNextStep = (operation: '+' | '-', minMax: number) => {
+    let prev = parsed.current;
+
+    if (isNaN(prev)) {
+      // if the input is empty, start from the min/max value when incrementing/decrementing,
+      // or zero if there is no min/max value defined.
+      let newValue = isNaN(minMax) ? 0 : minMax;
+      return snapValueToStep(newValue, minValue, maxValue, clampStep);
+    } else {
+      // otherwise, first snap the current value to the nearest step. if it moves in the direction
+      // we're going, use that value, otherwise add the step and snap that value.
+      let newValue = snapValueToStep(prev, minValue, maxValue, clampStep);
+      if ((operation === '+' && newValue > prev) || (operation === '-' && newValue < prev)) {
+        return newValue;
+      }
+
+      return snapValueToStep(
+        handleDecimalOperation(operation, prev, clampStep),
+        minValue,
+        maxValue,
+        clampStep
+      );
+    }
+  };
 
   let increment = () => {
-    setNumValue(previousValue => {
-      let newValue = parseFloat(previousValue);
-      if (isNaN(newValue)) {
-        newValue = maxValue != null ? Math.min(step, maxValue) : step;
-      } else {
-        newValue = clamp(handleDecimalOperation('+', newValue, step), minValue, maxValue);
+    setNumberValue((previousValue) => {
+      let newValue = safeNextStep('+', minValue);
+
+      // if we've arrived at the same value that was previously in the state, the
+      // input value should be updated to match
+      // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
+      // you'd be at 5, then incrementing to 5 again, so no re-render would happen and 4 would be left in the input
+      if (newValue === previousValue) {
+        setInputValue(format(newValue));
       }
-      updateValidation(newValue);
+
+      return newValue;
+    });
+  };
+
+  let decrement = () => {
+    setNumberValue((previousValue) => {
+      let newValue = safeNextStep('-', maxValue);
+
+      if (newValue === previousValue) {
+        setInputValue(format(newValue));
+      }
+
       return newValue;
     });
   };
 
   let incrementToMax = () => {
     if (maxValue != null) {
-      setNumValue(maxValue);
+      setNumberValue(snapValueToStep(maxValue, minValue, maxValue, clampStep));
     }
-  };
-
-  let decrement = () => {
-    setNumValue(previousValue => {
-      let newValue = parseFloat(previousValue);
-      if (isNaN(newValue)) {
-        newValue = minValue != null ? Math.max(-step, minValue) : -step;
-      } else {
-        newValue = clamp(handleDecimalOperation('-', newValue, step), minValue, maxValue);
-      }
-      updateValidation(newValue);
-      return newValue;
-    });
   };
 
   let decrementToMin = () => {
     if (minValue != null) {
-      setNumValue(minValue);
+      setNumberValue(minValue);
     }
   };
 
-  let setValue = (value: string) => {
-    const valueAsNumber = value === '' ? null : +value;
-    const numeric = !isNaN(valueAsNumber);
+  let canIncrement = useMemo(() => (
+    !isDisabled &&
+    !isReadOnly &&
+    (
+      isNaN(parsedValue) ||
+      isNaN(maxValue) ||
+      snapValueToStep(parsedValue, minValue, maxValue, clampStep) > parsedValue ||
+      handleDecimalOperation('+', parsedValue, clampStep) <= maxValue
+    )
+  ), [isDisabled, isReadOnly, minValue, maxValue, clampStep, parsedValue]);
 
-    // They may be starting to type a negative number, we don't want to broadcast this to
-    // the onChange handler, but we do want to update the value state.
-    const resemblesNumber = numeric || value === '-' || value === '';
+  let canDecrement = useMemo(() => (
+    !isDisabled &&
+    !isReadOnly &&
+    (
+      isNaN(parsedValue) ||
+      isNaN(minValue) ||
+      snapValueToStep(parsedValue, minValue, maxValue, clampStep) < parsedValue ||
+      handleDecimalOperation('-', parsedValue, clampStep) >= minValue
+    )
+  ), [isDisabled, isReadOnly, minValue, maxValue, clampStep, parsedValue]);
 
-    isValid.current = !isInputValueInvalid(value, maxValue, minValue);
-    if (resemblesNumber) {
-      setNumValue(valueAsNumber);
-    }
-  };
-
-  let updateValidation = (value) => {
-    isValid.current = !isInputValueInvalid(value, maxValue, minValue);
-  };
+  let validate = (value: string) => numberParser.isValidPartialNumber(value, minValue, maxValue);
 
   return {
-    setValue,
+    validate,
     increment,
     incrementToMax,
     decrement,
     decrementToMin,
-    value: numValue,
-    validationState: !isValid.current ? 'invalid' : null
+    canIncrement,
+    canDecrement,
+    minValue,
+    maxValue,
+    numberValue: parsedValue,
+    setInputValue,
+    inputValue,
+    commit
   };
 }
 
-function isInputValueInvalid(value, max, min):boolean {
-  return value !== '' && isNaN(+value)
-    || (max !== null && value > max || min !== null && value < min);
-}
-
-function handleDecimalOperation(operator, value1, value2) {
+function handleDecimalOperation(operator: '-' | '+', value1: number, value2: number): number {
   let result = operator === '+' ? value1 + value2 : value1 - value2;
 
   // Check if we have decimals

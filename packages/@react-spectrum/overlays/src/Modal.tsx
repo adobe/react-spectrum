@@ -12,7 +12,7 @@
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useViewportSize} from '@react-aria/utils';
 import {ModalProps} from '@react-types/overlays';
 import modalStyles from '@adobe/spectrum-css-temp/components/modal/vars.css';
 import {Overlay} from './Overlay';
@@ -25,12 +25,13 @@ interface ModalWrapperProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode,
   isOpen?: boolean,
   onClose?: () => void,
-  type?: 'fullscreen' | 'fullscreenTakeover',
-  isDismissable?: boolean
+  type?: 'modal' | 'fullscreen' | 'fullscreenTakeover',
+  isDismissable?: boolean,
+  isKeyboardDismissDisabled?: boolean
 }
 
 function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, onClose, type, isDismissable, ...otherProps} = props;
+  let {children, onClose, type, isDismissable, isKeyboardDismissDisabled, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
 
@@ -42,6 +43,7 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
         onClose={onClose}
         type={type}
         isDismissable={isDismissable}
+        isKeyboardDismissDisabled={isKeyboardDismissDisabled}
         ref={domRef}>
         {children}
       </ModalWrapper>
@@ -56,12 +58,12 @@ let typeMap = {
 
 let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject<HTMLDivElement>) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {children, isOpen, type, isDismissable, ...otherProps} = props;
+  let {children, isOpen, type, isDismissable, isKeyboardDismissDisabled, ...otherProps} = props;
   let typeVariant = typeMap[type];
 
   let {overlayProps} = useOverlay(props, ref);
   usePreventScroll();
-  useModal();
+  let {modalProps} = useModal();
 
   let wrapperClassName = classNames(
     modalStyles,
@@ -88,10 +90,15 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject
     otherProps.className
   );
 
+  let viewport = useViewportSize();
+  let style: any = {
+    '--spectrum-visual-viewport-height': viewport.height + 'px'
+  };
+
   return (
-    <div className={wrapperClassName}>
+    <div className={wrapperClassName} style={style}>
       <div
-        {...mergeProps(otherProps, overlayProps)}
+        {...mergeProps(otherProps, overlayProps, modalProps)}
         ref={ref}
         className={modalClassName}
         data-testid="modal">

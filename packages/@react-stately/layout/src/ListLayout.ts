@@ -15,8 +15,8 @@ import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-statel
 import {Key} from 'react';
 // import { DragTarget, DropTarget, DropPosition } from '@react-types/shared';
 
-type ListLayoutOptions<T> = {
-  /** the height of a row in px. */
+export type ListLayoutOptions<T> = {
+  /** The height of a row in px. */
   rowHeight?: number,
   estimatedRowHeight?: number,
   headingHeight?: number,
@@ -28,6 +28,7 @@ type ListLayoutOptions<T> = {
 
 // A wrapper around LayoutInfo that supports heirarchy
 export interface LayoutNode {
+  node?: Node<unknown>,
   layoutInfo: LayoutInfo,
   header?: LayoutInfo,
   children?: LayoutNode[]
@@ -37,7 +38,7 @@ const DEFAULT_HEIGHT = 48;
 
 /**
  * The ListLayout class is an implementation of a collection view {@link Layout}
- * it is used for creating lists and lists with indented sub-lists
+ * it is used for creating lists and lists with indented sub-lists.
  *
  * To configure a ListLayout, you can use the properties to define the
  * layouts and/or use the method for defining indentation.
@@ -62,7 +63,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected lastCollection: Collection<Node<T>>;
   protected rootNodes: LayoutNode[];
   protected collator: Intl.Collator;
-  protected cache: WeakMap<Node<T>, LayoutNode> = new WeakMap();
+  protected invalidateEverything: boolean;
 
   /**
    * Creates a new ListLayout with options. See the list of properties below for a description
@@ -117,9 +118,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
     // Invalidate cache if the size of the collection changed.
     // In this case, we need to recalculate the entire layout.
-    if (invalidationContext.sizeChanged) {
-      this.cache = new WeakMap();
-    }
+    this.invalidateEverything = invalidationContext.sizeChanged;
 
     this.collection = this.virtualizer.collection;
     this.rootNodes = this.buildCollection();
@@ -137,6 +136,14 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       nodes.push(layoutNode);
     }
 
+    if (nodes.length === 0) {
+      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.rowHeight || this.estimatedRowHeight);
+      let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
+      this.layoutInfos.set('placeholder', placeholder);
+      nodes.push({layoutInfo: placeholder});
+      y = placeholder.rect.maxY;
+    }
+
     if (this.isLoading) {
       let rect = new Rect(0, y, this.virtualizer.visibleRect.width, 40);
       let loader = new LayoutInfo('loader', 'loader', rect);
@@ -150,12 +157,13 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   buildChild(node: Node<T>, x: number, y: number): LayoutNode {
-    let cached = this.cache.get(node);
-    if (cached && y === (cached.header || cached.layoutInfo).rect.y) {
+    let cached = this.layoutNodes.get(node.key);
+    if (!this.invalidateEverything && cached && cached.node === node && y === (cached.header || cached.layoutInfo).rect.y) {
       return cached;
     }
 
     let layoutNode = this.buildNode(node, x, y);
+    layoutNode.node = node;
 
     layoutNode.layoutInfo.parentKey = node.parentKey || null;
     this.layoutInfos.set(layoutNode.layoutInfo.key, layoutNode.layoutInfo);
@@ -164,8 +172,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     }
 
     // Remove deleted child layout nodes from key mapping.
-    let prev = this.layoutNodes.get(node.key);
-    if (prev) {
+    if (cached) {
       let childKeys = new Set();
       if (layoutNode.children) {
         for (let child of layoutNode.children) {
@@ -173,8 +180,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
         }
       }
 
-      if (prev.children) {
-        for (let child of prev.children) {
+      if (cached.children) {
+        for (let child of cached.children) {
           if (!childKeys.has(child.layoutInfo.key)) {
             this.removeLayoutNode(child);
           }
@@ -183,7 +190,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     }
 
     this.layoutNodes.set(node.key, layoutNode);
-    this.cache.set(node, layoutNode);
     return layoutNode;
   }
 
@@ -307,14 +313,17 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     let layoutInfo = this.layoutInfos.get(key);
     layoutInfo.estimatedSize = false;
     if (layoutInfo.rect.height !== size.height) {
-      layoutInfo.rect.height = size.height;
+      // Copy layout info rather than mutating so that later caches are invalidated.
+      let newLayoutInfo = layoutInfo.copy();
+      newLayoutInfo.rect.height = size.height;
+      this.layoutInfos.set(key, newLayoutInfo);
 
       // Invalidate layout for this layout node and all parents
-      this.cache.delete(this.collection.getItem(key));
+      this.updateLayoutNode(key, layoutInfo, newLayoutInfo);
 
       let node = this.collection.getItem(layoutInfo.parentKey);
       while (node) {
-        this.cache.delete(this.collection.getItem(node.key));
+        this.updateLayoutNode(node.key, layoutInfo, newLayoutInfo);
         node = this.collection.getItem(node.parentKey);
       }
 
@@ -322,6 +331,21 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     }
 
     return false;
+  }
+
+  updateLayoutNode(key: Key, oldLayoutInfo: LayoutInfo, newLayoutInfo: LayoutInfo) {
+    let n = this.layoutNodes.get(key);
+    if (n) {
+      // Invalidate by clearing node.
+      n.node = null;
+
+      // Replace layout info in LayoutNode
+      if (n.header === oldLayoutInfo) {
+        n.header = newLayoutInfo;
+      } else if (n.layoutInfo === oldLayoutInfo) {
+        n.layoutInfo = newLayoutInfo;
+      }
+    }
   }
 
   getContentSize() {
@@ -332,7 +356,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     let collection = this.collection;
 
     key = collection.getKeyBefore(key);
-    while (key) {
+    while (key != null) {
       let item = collection.getItem(key);
       if (item.type === 'item' && !this.disabledKeys.has(item.key)) {
         return key;
@@ -346,7 +370,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     let collection = this.collection;
 
     key = collection.getKeyAfter(key);
-    while (key) {
+    while (key != null) {
       let item = collection.getItem(key);
       if (item.type === 'item' && !this.disabledKeys.has(item.key)) {
         return key;
@@ -358,29 +382,35 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
   getKeyPageAbove(key: Key) {
     let layoutInfo = this.getLayoutInfo(key);
-    let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
-    while (layoutInfo && layoutInfo.rect.y > pageY && layoutInfo) {
-      let keyAbove = this.getKeyAbove(layoutInfo.key);
-      layoutInfo = this.getLayoutInfo(keyAbove);
-    }
 
     if (layoutInfo) {
-      return layoutInfo.key;
+      let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
+      while (layoutInfo && layoutInfo.rect.y > pageY && layoutInfo) {
+        let keyAbove = this.getKeyAbove(layoutInfo.key);
+        layoutInfo = this.getLayoutInfo(keyAbove);
+      }
+
+      if (layoutInfo) {
+        return layoutInfo.key;
+      }
     }
 
     return this.getFirstKey();
   }
 
   getKeyPageBelow(key: Key) {
-    let layoutInfo = this.getLayoutInfo(key);
-    let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
-    while (layoutInfo && layoutInfo.rect.y < pageY) {
-      let keyBelow = this.getKeyBelow(layoutInfo.key);
-      layoutInfo = this.getLayoutInfo(keyBelow);
-    }
+    let layoutInfo = this.getLayoutInfo(key != null ? key : this.getFirstKey());
 
     if (layoutInfo) {
-      return layoutInfo.key;
+      let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
+      while (layoutInfo && layoutInfo.rect.y < pageY) {
+        let keyBelow = this.getKeyBelow(layoutInfo.key);
+        layoutInfo = this.getLayoutInfo(keyBelow);
+      }
+
+      if (layoutInfo) {
+        return layoutInfo.key;
+      }
     }
 
     return this.getLastKey();
@@ -389,7 +419,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   getFirstKey() {
     let collection = this.collection;
     let key = collection.getFirstKey();
-    while (key) {
+    while (key != null) {
       let item = collection.getItem(key);
       if (item.type === 'item' && !this.disabledKeys.has(item.key)) {
         return key;
@@ -402,7 +432,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   getLastKey() {
     let collection = this.collection;
     let key = collection.getLastKey();
-    while (key) {
+    while (key != null) {
       let item = collection.getItem(key);
       if (item.type === 'item' && !this.disabledKeys.has(item.key)) {
         return key;
@@ -419,7 +449,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
     let collection = this.collection;
     let key = fromKey || this.getFirstKey();
-    while (key) {
+    while (key != null) {
       let item = collection.getItem(key);
       let substring = item.textValue.slice(0, search.length);
       if (item.textValue && this.collator.compare(substring, search) === 0) {

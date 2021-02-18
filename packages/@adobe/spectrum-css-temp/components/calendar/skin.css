@@ -94,6 +94,10 @@ governing permissions and limitations under the License.
 
     &.is-today {
       border-color: var(--spectrum-calendar-day-border-color-key-focus);
+
+      &:before {
+        border-color: var(--spectrum-calendar-day-border-color-key-focus);
+      }
     }
 
     &:active,
@@ -113,6 +117,7 @@ governing permissions and limitations under the License.
 
     &.is-range-selection {
       &:before {
+        border-color: var(--spectrum-calendar-day-border-color-key-focus);
         background: var(--spectrum-calendar-day-background-color-selected-hover);
       }
     }

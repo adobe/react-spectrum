@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, useState} from 'react';
+import {Key, useMemo, useState} from 'react';
 import {Selection} from '@react-types/shared';
 
 interface ListOptions<T> {
@@ -18,8 +18,12 @@ interface ListOptions<T> {
   initialItems?: T[],
   /** The keys for the initially selected items. */
   initialSelectedKeys?: 'all' | Iterable<Key>,
+  /** The initial text to filter the list by. */
+  initialFilterText?: string,
   /** A function that returns a unique key for an item object. */
-  getKey?: (item: T) => Key
+  getKey?: (item: T) => Key,
+  /** A function that returns whether a item matches the current filter text. */
+  filter?: (item: T, filterText: string) => boolean
 }
 
 export interface ListData<T> {
@@ -32,48 +36,54 @@ export interface ListData<T> {
   /** Sets the selected keys. */
   setSelectedKeys(keys: Selection): void,
 
+  /** The current filter text. */
+  filterText: string,
+
+  /** Sets the filter text. */
+  setFilterText(filterText: string): void,
+
   /**
    * Gets an item from the list by key.
-   * @param key - the key of the item to retrieve.
+   * @param key - The key of the item to retrieve.
    */
   getItem(key: Key): T,
 
   /**
    * Inserts items into the list at the given index.
-   * @param index - the index to insert into.
-   * @param values - the values to insert.
+   * @param index - The index to insert into.
+   * @param values - The values to insert.
    */
   insert(index: number, ...values: T[]): void,
 
   /**
    * Inserts items into the list before the item at the given key.
-   * @param key - the key of the item to insert before.
-   * @param values - the values to insert.
+   * @param key - The key of the item to insert before.
+   * @param values - The values to insert.
    */
   insertBefore(key: Key, ...values: T[]): void,
 
   /**
    * Inserts items into the list after the item at the given key.
-   * @param key - the key of the item to insert after.
-   * @param values - the values to insert.
+   * @param key - The key of the item to insert after.
+   * @param values - The values to insert.
    */
   insertAfter(key: Key, ...values: T[]): void,
 
   /**
    * Appends items to the list.
-   * @param values - the values to insert.
+   * @param values - The values to insert.
    */
   append(...values: T[]): void,
 
   /**
    * Prepends items to the list.
-   * @param value - the value to insert.
+   * @param value - The value to insert.
    */
   prepend(...values: T[]): void,
 
   /**
    * Removes items from the list by their keys.
-   * @param keys - the keys of the item to remove.
+   * @param keys - The keys of the item to remove.
    */
   remove(...keys: Key[]): void,
 
@@ -85,22 +95,23 @@ export interface ListData<T> {
 
   /**
    * Moves an item within the list.
-   * @param key - the key of the item to move.
-   * @param toIndex - the index to move the item to.
+   * @param key - The key of the item to move.
+   * @param toIndex - The index to move the item to.
    */
   move(key: Key, toIndex: number): void,
 
   /**
    * Updates an item in the list.
-   * @param key - the key of the item to update.
-   * @param newValue - the new value for the item.
+   * @param key - The key of the item to update.
+   * @param newValue - The new value for the item.
    */
   update(key: Key, newValue: T): void
 }
 
 export interface ListState<T> {
   items: T[],
-  selectedKeys: Selection
+  selectedKeys: Selection,
+  filterText: string
 }
 
 /**
@@ -111,15 +122,25 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
   let {
     initialItems = [],
     initialSelectedKeys,
-    getKey = (item: any) => item.id || item.key
+    getKey = (item: any) => item.id || item.key,
+    filter,
+    initialFilterText = ''
   } = options;
+
+  // Store both items and filteredItems in state so we can go back to the unfiltered list
   let [state, setState] = useState<ListState<T>>({
     items: initialItems,
-    selectedKeys: initialSelectedKeys === 'all' ? 'all' : new Set(initialSelectedKeys || [])
+    selectedKeys: initialSelectedKeys === 'all' ? 'all' : new Set(initialSelectedKeys || []),
+    filterText: initialFilterText
   });
+
+  let filteredItems = useMemo(
+    () => filter ? state.items.filter(item => filter(item, state.filterText)) : state.items,
+    [state.items, state.filterText, filter]);
 
   return {
     ...state,
+    items: filteredItems,
     ...createListActions({getKey}, setState),
     getItem(key: Key) {
       return state.items.find(item => getKey(item) === key);
@@ -138,13 +159,19 @@ function insert<T>(state: ListState<T>, index: number, ...values: T[]): ListStat
   };
 }
 
-export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (state: ListState<T>) => ListState<T>) => void): Omit<ListData<T>, 'items' | 'selectedKeys' | 'getItem'> {
+export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (state: ListState<T>) => ListState<T>) => void): Omit<ListData<T>, 'items' | 'selectedKeys' | 'getItem' | 'filterText'> {
   let {getKey} = opts;
   return {
     setSelectedKeys(selectedKeys: Selection) {
       dispatch(state => ({
         ...state,
         selectedKeys
+      }));
+    },
+    setFilterText(filterText: string) {
+      dispatch(state => ({
+        ...state,
+        filterText
       }));
     },
     insert(index: number, ...values: T[]) {

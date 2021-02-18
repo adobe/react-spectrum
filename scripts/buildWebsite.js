@@ -15,7 +15,8 @@ const fs = require('fs-extra');
 const packageJSON = require('../package.json');
 const path = require('path');
 const glob = require('fast-glob');
-const {spawn, execSync} = require('child_process');
+const semver = require('semver');
+const spawn = require('cross-spawn');
 
 build().catch(err => {
   console.error(err.stack);
@@ -42,7 +43,8 @@ async function build() {
           name === 'parcel' ||
           name === 'patch-package' ||
           name.startsWith('@spectrum-css') ||
-          name.startsWith('postcss')
+          name.startsWith('postcss') ||
+          name.startsWith('@adobe')
         )
     ),
     dependencies: {},
@@ -61,11 +63,30 @@ async function build() {
   for (let p of packages) {
     let json = JSON.parse(fs.readFileSync(path.join(packagesDir, p), 'utf8'));
     if (!json.private && json.name !== '@adobe/react-spectrum') {
-      pkg.dependencies[json.name] = 'latest';
-
       let docsDir = path.join(packagesDir, path.dirname(p), 'docs');
+      let hasDocs = false;
       if (fs.existsSync(docsDir)) {
-        fs.copySync(docsDir, path.join(dir, 'docs', json.name, 'docs'));
+        let contents = fs.readdirSync(docsDir);
+        for (let file of contents) {
+          let docFile = path.join(docsDir, file);
+          let destFile = path.join(dir, 'docs', json.name, 'docs', file);
+          if (file.endsWith('.mdx')) {
+            // Skip mdx files with an after_version key that is <= to the current package version.
+            let contents = fs.readFileSync(docFile, 'utf8');
+            let m = contents.match(/after_version:\s*(.*)/);
+            if (!m || semver.gt(json.version, m[1])) {
+              fs.copySync(docFile, destFile);
+              hasDocs = true;
+            }
+          } else {
+            fs.copySync(docFile, destFile);
+            hasDocs = true;
+          }
+        }
+      }
+
+      if (hasDocs) {
+        pkg.dependencies[json.name] = 'latest';
       }
     }
   }
@@ -80,15 +101,28 @@ async function build() {
   fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
   fs.copySync(path.join(__dirname, '..', 'cssnano.config.js'), path.join(dir, 'cssnano.config.js'));
   fs.copySync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
-  fs.copySync(path.join(__dirname, '..', 'patches'), path.join(dir, 'patches'));
   fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'));
 
-  // Install and build
+  // Only copy babel patch over
+  let patches = fs.readdirSync(path.join(__dirname, '..', 'patches'));
+  let babelPatch = patches.find(name => name.startsWith('@babel'));
+  fs.copySync(path.join(__dirname, '..', 'patches', babelPatch), path.join(dir, 'patches', babelPatch));
+
+  // Install dependencies from npm
   await run('yarn', {cwd: dir, stdio: 'inherit'});
+
+  // Copy package.json for each package into docs dir so we can find the correct version numbers
+  for (let p of packages) {
+    if (fs.existsSync(path.join(dir, 'node_modules', p))) {
+      fs.copySync(path.join(dir, 'node_modules', p), path.join(dir, 'docs', p));
+    }
+  }
+
+  // Build the website
   await run('yarn', ['build'], {cwd: dir, stdio: 'inherit'});
 
   // Copy the build back into dist, and delete the temp dir.
-  fs.copySync(path.join(dir, 'dist'), path.join(__dirname, '..', 'dist', 'master', 'docs'));
+  fs.copySync(path.join(dir, 'dist'), path.join(__dirname, '..', 'dist', 'production', 'docs'));
   fs.removeSync(dir);
 }
 
@@ -103,6 +137,6 @@ function run(cmd, args, opts) {
       }
 
       resolve();
-    })
+    });
   });
 }

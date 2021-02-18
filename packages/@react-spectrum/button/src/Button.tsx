@@ -13,11 +13,13 @@
 import {classNames, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import React from 'react';
+import {mergeProps} from '@react-aria/utils';
+import React, {ElementType, ReactElement} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
+import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 
 // todo: CSS hasn't caught up yet, map
@@ -25,7 +27,7 @@ let VARIANT_MAPPING = {
   negative: 'warning'
 };
 
-function Button(props: SpectrumButtonProps, ref: FocusableRef) {
+function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'button');
   let {
@@ -39,6 +41,7 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
   } = props;
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
 
   let buttonVariant = variant;
@@ -50,7 +53,7 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <ElementType
         {...styleProps}
-        {...buttonProps}
+        {...mergeProps(buttonProps, hoverProps)}
         ref={domRef}
         className={
           classNames(
@@ -60,7 +63,8 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
             {
               'spectrum-Button--quiet': isQuiet,
               'is-disabled': isDisabled,
-              'is-active': isPressed
+              'is-active': isPressed,
+              'is-hovered': isHovered
             },
             styleProps.className
           )
@@ -89,5 +93,5 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
  * They have multiple styles for various needs, and are ideal for calling attention to
  * where a user needs to do something in order to move forward in a flow.
  */
-let _Button = React.forwardRef(Button);
+let _Button = React.forwardRef(Button) as <T extends ElementType = 'button'>(props: SpectrumButtonProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
 export {_Button as Button};

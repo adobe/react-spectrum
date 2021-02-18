@@ -11,7 +11,7 @@
  */
 
 import {Key} from 'react';
-import {Selection, SelectionMode} from '@react-types/shared';
+import {PressEvent, Selection, SelectionMode} from '@react-types/shared';
 
 export interface FocusState {
   /** Whether the collection is currently focused. */
@@ -21,7 +21,7 @@ export interface FocusState {
   /** The current focused key in the collection. */
   readonly focusedKey: Key,
   /** Sets the focused key. */
-  setFocusedKey(key: Key): void,
+  setFocusedKey(key: Key): void
 }
 
 export interface SingleSelectionState extends FocusState {
@@ -41,7 +41,9 @@ export interface MultipleSelectionState extends FocusState {
   /** The currently selected keys in the collection. */
   readonly selectedKeys: Selection,
   /** Sets the selected keys in the collection. */
-  setSelectedKeys(keys: Selection | ((v: Selection) => Selection)): void
+  setSelectedKeys(keys: Selection | ((v: Selection) => Selection)): void,
+  /** The currently disabled keys in the collection. */
+  readonly disabledKeys: Set<Key>
 }
 
 export interface MultipleSelectionManager extends FocusState {
@@ -55,8 +57,12 @@ export interface MultipleSelectionManager extends FocusState {
   readonly isEmpty: boolean,
   /** Whether all items in the collection are selected. */
   readonly isSelectAll: boolean,
+  /** The first selected key in the collection. */
+  readonly firstSelectedKey: Key | null,
+  /** The last selected key in the collection. */
+  readonly lastSelectedKey: Key | null,
   /** Returns whether a key is selected. */
-  isSelected(key: Key): boolean
+  isSelected(key: Key): boolean,
   /** Extends the selection to the given key. */
   extendSelection(toKey: Key): void,
   /** Toggles whether the given key is selected. */
@@ -68,5 +74,10 @@ export interface MultipleSelectionManager extends FocusState {
   /** Removes all keys from the selection. */
   clearSelection(): void,
   /** Toggles between select all and an empty selection. */
-  toggleSelectAll(): void
+  toggleSelectAll(): void,
+  /**
+   * Toggles, replaces, or extends selection to the given key depending
+   * on the pointer event and collection's selection mode.
+   */
+  select(key: Key, e?: PressEvent | PointerEvent): void
 }

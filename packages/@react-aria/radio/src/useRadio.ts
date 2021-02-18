@@ -13,6 +13,7 @@
 import {AriaRadioProps} from '@react-types/radio';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {InputHTMLAttributes, RefObject} from 'react';
+import {radioGroupNames} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
@@ -29,27 +30,30 @@ interface RadioAriaProps extends AriaRadioProps {
 }
 
 interface RadioAria {
-  /** Props for the input element */
+  /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLElement>
 }
 
 /**
  * Provides the behavior and accessibility implementation for an individual
  * radio button in a radio group.
- * @param props - props for the radio
- * @param state - state for the radio group, as returned by `useRadioGroupState`
- * @param ref - ref to the HTML input element
+ * @param props - Props for the radio.
+ * @param state - State for the radio group, as returned by `useRadioGroupState`.
+ * @param ref - Ref to the HTML input element.
  */
 export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: RefObject<HTMLElement>): RadioAria {
   let {
     value,
     isRequired,
-    isReadOnly,
-    isDisabled,
     children,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby
   } = props;
+
+  const isDisabled = props.isDisabled || state.isDisabled;
+  
+  // Individual radios cannot be readonly
+  const isReadOnly = state.isReadOnly;
 
   let hasChildren = children != null;
   let hasAriaLabel = ariaLabel != null || ariaLabelledby != null;
@@ -82,10 +86,10 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
     inputProps: mergeProps(domProps, {
       ...interactions,
       type: 'radio',
-      name: state.name,
+      name: radioGroupNames.get(state),
       tabIndex,
       disabled: isDisabled,
-      readOnly: isReadOnly,
+      'aria-readonly': isReadOnly || undefined,
       required: isRequired,
       checked,
       value,

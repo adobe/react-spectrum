@@ -11,9 +11,10 @@
  */
 
 import {AriaRadioGroupProps} from '@react-types/radio';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {HTMLAttributes} from 'react';
+import {radioGroupNames} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
@@ -29,11 +30,12 @@ interface RadioGroupAria {
 /**
  * Provides the behavior and accessibility implementation for a radio group component.
  * Radio groups allow users to select a single item from a list of mutually exclusive options.
- * @param props - props for the radio group
- * @param state - state for the radio group, as returned by `useRadioGroupState`
+ * @param props - Props for the radio group.
+ * @param state - State for the radio group, as returned by `useRadioGroupState`.
  */
 export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState): RadioGroupAria {
   let {
+    name,
     validationState,
     isReadOnly,
     isRequired,
@@ -110,6 +112,9 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
       state.setSelectedValue(nextElem.value);
     }
   };
+
+  let groupName = useId(name);
+  radioGroupNames.set(state, groupName);
 
   return {
     radioGroupProps: mergeProps(domProps, {

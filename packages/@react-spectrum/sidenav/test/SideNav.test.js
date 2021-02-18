@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render, waitFor} from '@testing-library/react';
+import {act, fireEvent, render, waitFor} from '@testing-library/react';
 import {Item, Section} from '@react-spectrum/tree';
 import React from 'react';
 import {SideNav} from '../src';
@@ -83,13 +83,19 @@ function renderComponent(Name, Component, ComponentSection, ComponentItem, props
 
 describe('SideNav', function () {
   let stub1, stub2;
+  let scrollHeight;
+
   beforeAll(function () {
+    jest.useFakeTimers();
+    scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 48);
     stub1 = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 200);
     stub2 = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 400);
   });
   afterAll(function () {
+    jest.useRealTimers();
     stub1.mockReset();
     stub2.mockReset();
+    scrollHeight.mockReset();
   });
 
   it.each`
@@ -183,7 +189,7 @@ describe('SideNav', function () {
       getByText('Alice')
     ];
 
-    bar.focus();
+    act(() => {bar.focus();});
     triggerPress(bar);
 
     expect(foo).not.toHaveAttribute('aria-current');
@@ -198,7 +204,7 @@ describe('SideNav', function () {
 
     expect(spy).toBeCalledTimes(1);
 
-    alice.focus();
+    act(() => {alice.focus();});
     triggerPress(alice);
 
     expect(foo).not.toHaveAttribute('aria-current');
@@ -260,7 +266,7 @@ describe('SideNav', function () {
 
     let items = getAllByRole('link');
     let selectedItem = items[0];
-    selectedItem.focus();
+    act(() => {selectedItem.focus();});
     expect(selectedItem).toBe(document.activeElement);
     fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
     let nextSelectedItem = items[1];
@@ -288,13 +294,13 @@ describe('SideNav', function () {
 
     let items = getAllByRole('link');
     let firstItem = items[0];
-    firstItem.focus();
+    act(() => {firstItem.focus();});
     expect(firstItem).toBe(document.activeElement);
     fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});
     let lastItem = items[items.length - 1];
     expect(lastItem).not.toBe(document.activeElement);
 
-    lastItem.focus();
+    act(() => {lastItem.focus();});
     expect(lastItem).toBe(document.activeElement);
     fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});
     expect(firstItem).not.toBe(document.activeElement);
@@ -317,13 +323,13 @@ describe('SideNav', function () {
 
     let items = getAllByRole('link');
     let firstItem = items[0];
-    firstItem.focus();
+    act(() => {firstItem.focus();});
     expect(firstItem).toBe(document.activeElement);
     fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});
     let lastItem = items[items.length - 1];
     expect(lastItem).toBe(document.activeElement);
 
-    lastItem.focus();
+    act(() => {lastItem.focus();});
     expect(lastItem).toBe(document.activeElement);
     fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});
     expect(firstItem).toBe(document.activeElement);
@@ -459,7 +465,7 @@ describe('SideNav', function () {
     expect(bar).toHaveAttribute('aria-current', 'page');
 
 
-    alice.focus();
+    act(() => {alice.focus();});
     triggerPress(alice);
     expect(bar).not.toHaveAttribute('aria-current');
     expect(alice).toHaveAttribute('aria-current', 'page');
@@ -496,7 +502,7 @@ describe('SideNav', function () {
     expect(bar).toHaveAttribute('aria-current', 'page');
 
 
-    alice.focus();
+    act(() => {alice.focus();});
     triggerPress(alice);
     expect(bar).not.toHaveAttribute('aria-current');
     expect(alice).toHaveAttribute('aria-current', 'page');

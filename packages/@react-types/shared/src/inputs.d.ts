@@ -14,12 +14,12 @@ export type ValidationState = 'valid' | 'invalid';
 
 export interface Validation {
   /** Whether the input should display its "valid" or "invalid" visual styling. */
-  validationState?: ValidationState
+  validationState?: ValidationState,
   /**
    * Whether user input is required on the input before form submission.
    * Often paired with the `necessityIndicator` prop to add a visual indicator to the input.
    */
-  isRequired?: boolean,
+  isRequired?: boolean
 }
 
 export interface InputBase {
@@ -35,7 +35,7 @@ export interface ValueBase<T> {
   /** The default value (uncontrolled). */
   defaultValue?: T,
   /** Handler that is called when the value changes. */
-  onChange?: (value: T) => void,
+  onChange?: (value: T) => void
 }
 
 export interface TextInputBase {

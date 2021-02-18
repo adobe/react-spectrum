@@ -16,6 +16,7 @@ import focusDocs from 'docs:@react-aria/focus';
 import statelyDocs from 'docs:@react-stately/radio';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-aria/radio/package.json';
+import Anatomy from './anatomy.svg';
 
 ```jsx import
 import {useRadioGroup, useRadio} from '@react-aria/radio';
@@ -59,11 +60,13 @@ radio groups that can be styled as needed.
 
 ## Anatomy
 
+<Anatomy />
+
 A radio group consists of a set of radio buttons, and a label. Each radio
 includes a label and a visual selection indicator. A single radio button
 within the group can be selected at a time. Users may click or touch a radio
-button to select it, or use the Tab key to navigate to the group, the arrow keys
-to navigate within the group, and the Space key to select an option.
+button to select it, or use the <kbd>Tab</kbd> key to navigate to the group, the arrow keys
+to navigate within the group, and the <kbd>Space</kbd> key to select an option.
 
 `useRadioGroup` returns props for the group and its label, which you should spread
 onto the appropriate element:
@@ -114,11 +117,12 @@ function RadioGroup(props) {
 function Radio(props) {
   let {children} = props;
   let state = React.useContext(RadioContext);
-  let {inputProps} = useRadio(props, state);
+  let ref = useRef(null);
+  let {inputProps} = useRadio(props, state, ref);
 
   return (
     <label style={{display: 'block'}}>
-      <input {...inputProps} />
+      <input {...inputProps} ref={ref} />
       {children}
     </label>
   );
@@ -169,16 +173,17 @@ function RadioGroup(props) {
 function Radio(props) {
   let {children} = props;
   let state = React.useContext(RadioContext);
-  let {inputProps} = useRadio(props, state);
+  let ref = useRef(null);
+  let {inputProps} = useRadio(props, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
-  let isChecked = inputProps.checked;
-  let strokeWidth = isChecked ? 6 : 2;
+  let isSelected = state.selectedValue === props.value;
+  let strokeWidth = isSelected ? 6 : 2;
 
   return (
     <label style={{display: 'flex', alignItems: 'center'}}>
       <VisuallyHidden>
-        <input {...inputProps} {...focusProps} />
+        <input {...inputProps} {...focusProps} ref={ref} />
       </VisuallyHidden>
       <svg
         width={24}
@@ -190,7 +195,7 @@ function Radio(props) {
           cy={12}
           r={8 - strokeWidth / 2}
           fill="none"
-          stroke={isChecked ? 'orange' : 'gray'}
+          stroke={isSelected ? 'orange' : 'gray'}
           strokeWidth={strokeWidth} />
         {isFocusVisible &&
           <circle

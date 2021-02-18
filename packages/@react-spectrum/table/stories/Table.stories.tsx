@@ -12,18 +12,23 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
+import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from './CRUDExample';
+import Delete from '@spectrum-icons/workflow/Delete';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from './HidingColumns';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
 import React from 'react';
+import {SearchField} from '@react-spectrum/searchfield';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {useAsyncList} from '@react-stately/data';
+import {useFilter} from '@react-aria/i18n';
+import {View} from '@react-spectrum/view';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -168,6 +173,74 @@ storiesOf('Table', module)
     )
   )
   .add(
+    'dynamic with single selection',
+    () => (
+      <Table aria-label="Table with dynamic contents" selectionMode="single" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'dynamic with disabled, single selection',
+    () => (
+      <Table disabledKeys={['Foo 1', 'Foo 3']} aria-label="Table with dynamic contents" selectionMode="single" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'dynamic with disabled, multiple selection',
+    () => (
+      <Table disabledKeys={['Foo 1', 'Foo 3']} aria-label="Table with dynamic contents" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'dynamic with disabled, multiple selection, quiet',
+    () => (
+      <Table isQuiet disabledKeys={['Foo 1', 'Foo 3']} aria-label="Table with dynamic contents" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
     'static with nested columns',
     () => (
       <Table aria-label="Table with nested columns" selectionMode="multiple" width={500} height={200} onSelectionChange={s => onSelectionChange([...s])}>
@@ -262,7 +335,8 @@ storiesOf('Table', module)
           }
         </TableBody>
       </Table>
-    )
+    ),
+    {chromatic: {disable: true}}
   )
   .add(
     'isQuiet, many columns and rows',
@@ -281,7 +355,8 @@ storiesOf('Table', module)
           }
         </TableBody>
       </Table>
-    )
+    ),
+    {chromatic: {disable: true}}
   )
   .add(
     'column widths and dividers',
@@ -542,7 +617,133 @@ storiesOf('Table', module)
   )
   .add(
     'async loading',
-    () => <AsyncLoadingExample />
+    () => <AsyncLoadingExample />,
+    {chromatic: {disable: true}}
+  )
+  .add(
+    'hideHeader',
+    () => (
+      <Table
+        aria-label="Table with static contents"
+        width={350}
+        height={200}>
+        <TableHeader>
+          <Column key="foo">
+            Foo
+          </Column>
+          <Column key="addAction" hideHeader>
+            Add Item
+          </Column>
+          <Column key="deleteAction" hideHeader showDivider>
+            Delete Item
+          </Column>
+          <Column key="bar">Bar</Column>
+          <Column key="baz">Baz</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Add />
+              </ActionButton>
+            </Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Delete />
+              </ActionButton>
+            </Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Add />
+              </ActionButton>
+            </Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Delete />
+              </ActionButton>
+            </Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Add />
+              </ActionButton>
+            </Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Delete />
+              </ActionButton>
+            </Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Add />
+              </ActionButton>
+            </Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Delete />
+              </ActionButton>
+            </Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Add />
+              </ActionButton>
+            </Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Delete />
+              </ActionButton>
+            </Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Add />
+              </ActionButton>
+            </Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Delete />
+              </ActionButton>
+            </Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'async client side filter loading',
+    () => <ProjectListTable />,
+    {chromatic: {disable: true}}
+  )
+  .add(
+    'async server side filter loading',
+    () => <AsyncServerFilterTable />,
+    {chromatic: {disable: true}}
   );
 
 function AsyncLoadingExample() {
@@ -599,6 +800,195 @@ function AsyncLoadingExample() {
               }
             </Row>)
           }
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
+
+let COLUMNS = [
+  {
+    name: 'Name',
+    key: 'name',
+    minWidth: 200
+  },
+  {
+    name: 'Owner',
+    key: 'ownerName'
+  }
+];
+
+async function getCollectionItems(): Promise<any> {
+  const result = [
+    {
+      id: 'xx',
+      name: 'abc',
+      ownerName: 'xx'
+    },
+    {
+      id: 'aa',
+      name: 'efg',
+      ownerName: 'aa'
+    },
+    {
+      id: 'yy',
+      name: 'abcd',
+      ownerName: 'yy'
+    },
+    {
+      id: 'bb',
+      name: 'efgh',
+      ownerName: 'bb'
+    },
+    {
+      id: 'zz',
+      name: 'abce',
+      ownerName: 'zz'
+    },
+    {
+      id: 'cc',
+      name: 'efgi',
+      ownerName: 'cc'
+    }
+  ];
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(result);
+    }, 5);
+  });
+}
+
+function ProjectListTable() {
+  interface Item {
+    id: string,
+    name: string,
+    ownerName: string
+  }
+
+  let {contains} = useFilter({sensitivity: 'base'});
+  let [filterText, setFilterText] = React.useState('');
+  let list = useAsyncList<Item>({
+    async load() {
+      let projects = await getCollectionItems();
+      return {items: projects};
+    }
+  });
+  let filteredItems = React.useMemo(() => list.items.filter(item => contains(item.name, filterText)), [list.items, filterText, contains]);
+  const onChange = (value) => {
+    setFilterText(value);
+  };
+
+  return (
+    <>
+      <SearchField
+        marginStart={'size-200'}
+        marginBottom={'size-200'}
+        marginTop={'size-200'}
+        width={'size-3600'}
+        aria-label={'Search by name'}
+        placeholder={'Search by name'}
+        value={filterText}
+        onChange={(onChange)} />
+      <View flexGrow={1} height={700} overflow="hidden">
+        <Table
+          aria-label={'Project list'}
+          height={'100%'}
+          isQuiet
+          sortDescriptor={list.sortDescriptor}
+          onSortChange={list.sort}>
+          <TableHeader columns={COLUMNS}>
+            {(column) => {
+              const {name, ...columnProps} = column;
+              return <Column {...columnProps}>{name}</Column>;
+            }}
+          </TableHeader>
+          <TableBody
+            items={filteredItems}
+            isLoading={list.isLoading}>
+            {(item) => (
+              <Row key={item.id}>{(key) => <Cell>{item[key]}</Cell>}</Row>
+            )}
+          </TableBody>
+        </Table>
+      </View>
+    </>
+  );
+}
+
+function AsyncServerFilterTable() {
+  interface Item {
+    name: string,
+    height: string,
+    mass: string
+  }
+
+  let columns = [
+    {
+      name: 'Name',
+      key: 'name',
+      minWidth: 200
+    },
+    {
+      name: 'Height',
+      key: 'height'
+    },
+    {
+      name: 'Mass',
+      key: 'mass'
+    }
+  ];
+
+  let list = useAsyncList<Item>({
+    getKey: (item) => item.name,
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  const onChange = (value) => {
+    list.setFilterText(value);
+  };
+  return (
+    <div>
+      <SearchField
+        marginStart={'size-200'}
+        marginBottom={'size-200'}
+        marginTop={'size-200'}
+        width={'size-3600'}
+        aria-label={'Search by name'}
+        placeholder={'Search by name'}
+        defaultValue={list.filterText}
+        onChange={(onChange)} />
+      <Table
+        aria-label={'Star Wars Characters'}
+        height={200}
+        width={600}
+        isQuiet
+        sortDescriptor={list.sortDescriptor}
+        onSortChange={list.sort}>
+        <TableHeader columns={columns}>
+          {(column) => {
+            const {name, ...columnProps} = column;
+            return <Column {...columnProps}>{name}</Column>;
+          }}
+        </TableHeader>
+        <TableBody
+          items={list.items}
+          isLoading={list.isLoading}
+          onLoadMore={list.loadMore}>
+          {(item) => (
+            <Row key={item.name}>{(key) => <Cell>{item[key]}</Cell>}</Row>
+          )}
         </TableBody>
       </Table>
     </div>

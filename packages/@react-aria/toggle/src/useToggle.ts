@@ -18,9 +18,15 @@ import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
 export interface ToggleAria {
+  /**
+   * Props to be spread on the input element.
+   */
   inputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
+/**
+ * Handles interactions for toggle elements, e.g. Checkboxes and Switches.
+ */
 export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefObject<HTMLElement>): ToggleAria {
   let {
     isDisabled = false,
@@ -61,10 +67,10 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
       'aria-invalid': validationState === 'invalid' || undefined,
       'aria-errormessage': props['aria-errormessage'],
       'aria-controls': props['aria-controls'],
+      'aria-readonly': isReadOnly || undefined,
       onChange,
       disabled: isDisabled,
       required: isRequired,
-      readOnly: isReadOnly,
       value,
       name,
       type: 'checkbox',

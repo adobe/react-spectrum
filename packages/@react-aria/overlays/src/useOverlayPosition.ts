@@ -11,33 +11,52 @@
  */
 
 import {calculatePosition, PositionResult} from './calculatePosition';
-import {HTMLAttributes, RefObject, useCallback, useEffect, useState} from 'react';
-import {Placement, PlacementAxis} from '@react-types/overlays';
+import {HTMLAttributes, RefObject, useCallback, useEffect, useRef, useState} from 'react';
+import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
+import {useCloseOnScroll} from './useCloseOnScroll';
 import {useLocale} from '@react-aria/i18n';
 
-export interface PositionProps {
-  placement?: Placement,
-  containerPadding?: number,
-  offset?: number,
-  crossOffset?: number,
-  shouldFlip?: boolean,
-  boundaryElement?: HTMLElement,
-  isOpen?: boolean
-}
-
 interface AriaPositionProps extends PositionProps {
+  /**
+   * Element that that serves as the positioning boundary.
+   * @default document.body
+   */
+  boundaryElement?: HTMLElement,
+  /**
+   * The ref for the element which the overlay positions itself with respect to.
+   */
   targetRef: RefObject<HTMLElement>,
+  /**
+   * The ref for the overlay element.
+   */
   overlayRef: RefObject<HTMLElement>,
+  /**
+   * A ref for the scrollable region within the overlay.
+   * @default overlayRef
+   */
   scrollRef?: RefObject<HTMLElement>,
-  shouldUpdatePosition?: boolean
+  /**
+   * Whether the overlay should update its position automatically.
+   * @default true
+   */
+  shouldUpdatePosition?: boolean,
+  /** Handler that is called when the overlay should close. */
+  onClose?: () => void
 }
 
 interface PositionAria {
+  /** Props for the overlay container element. */
   overlayProps: HTMLAttributes<Element>,
+  /** Props for the overlay tip arrow if any. */
   arrowProps: HTMLAttributes<Element>,
+  /** Placement of the overlay with respect to the overlay trigger. */
   placement: PlacementAxis,
+  /** Updates the position of the overlay. */
   updatePosition(): void
 }
+
+// @ts-ignore
+let visualViewport = typeof window !== 'undefined' && window.visualViewport;
 
 /**
  * Handles positioning overlays like popovers and menus relative to a trigger
@@ -52,11 +71,12 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     placement = 'bottom' as Placement,
     containerPadding = 12,
     shouldFlip = true,
-    boundaryElement = document.body,
+    boundaryElement = typeof document !== 'undefined' ? document.body : null,
     offset = 0,
     crossOffset = 0,
     shouldUpdatePosition = true,
-    isOpen = true
+    isOpen = true,
+    onClose
   } = props;
   let [position, setPosition] = useState<PositionResult>({
     position: {},
@@ -82,7 +102,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   ];
 
   let updatePosition = useCallback(() => {
-    if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !scrollRef.current) {
+    if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !scrollRef.current || !boundaryElement) {
       return;
     }
 
@@ -106,6 +126,43 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 
   // Update position on window resize
   useResize(updatePosition);
+
+  // Reposition the overlay and do not close on scroll while the visual viewport is resizing.
+  // This will ensure that overlays adjust their positioning when the iOS virtual keyboard appears.
+  let isResizing = useRef(false);
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    let onResize = () => {
+      isResizing.current = true;
+      clearTimeout(timeout);
+
+      timeout = setTimeout(() => {
+        isResizing.current = false;
+      }, 500);
+
+      updatePosition();
+    };
+
+    visualViewport?.addEventListener('resize', onResize);
+
+    return () => {
+      visualViewport?.removeEventListener('resize', onResize);
+    };
+  }, [updatePosition]);
+
+  let close = useCallback(() => {
+    if (!isResizing.current) {
+      onClose();
+    }
+  }, [onClose, isResizing]);
+
+  // When scrolling a parent scrollable region of the trigger (other than the body),
+  // we hide the popover. Otherwise, its position would be incorrect.
+  useCloseOnScroll({
+    triggerRef: targetRef,
+    isOpen,
+    onClose: onClose ? close : undefined
+  });
 
   return {
     overlayProps: {

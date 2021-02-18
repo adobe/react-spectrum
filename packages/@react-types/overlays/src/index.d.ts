@@ -65,6 +65,7 @@ export interface OverlayProps {
   children: ReactNode,
   isOpen?: boolean,
   container?: Element,
+  isKeyboardDismissDisabled?: boolean,
   onEnter?: () => void,
   onEntering?: () => void,
   onEntered?: () => void,
@@ -77,7 +78,7 @@ export interface ModalProps extends StyleProps, OverlayProps {
   children: ReactElement,
   isOpen?: boolean,
   onClose?: () => void,
-  type?: 'fullscreen' | 'fullscreenTakeover',
+  type?: 'modal' | 'fullscreen' | 'fullscreenTakeover',
   isDismissable?: boolean
 }
 
@@ -88,14 +89,17 @@ export interface PopoverProps extends StyleProps, OverlayProps {
   hideArrow?: boolean,
   isOpen?: boolean,
   onClose?: () => void,
-  shouldCloseOnBlur?: boolean
+  shouldCloseOnBlur?: boolean,
+  isNonModal?: boolean
 }
 
 export interface TrayProps extends StyleProps, OverlayProps {
   children: ReactElement,
   isOpen?: boolean,
   onClose?: () => void,
-  shouldCloseOnBlur?: boolean
+  shouldCloseOnBlur?: boolean,
+  isFixedHeight?: boolean,
+  isNonModal?: boolean
 }
 
 export interface OverlayTriggerProps {

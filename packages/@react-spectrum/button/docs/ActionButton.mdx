@@ -37,13 +37,7 @@ keywords: [action button]
 ## Example
 
 ```tsx example
-import {Text} from '@react-spectrum/text';
-import Edit from '@spectrum-icons/workflow/Edit';
-
-<ActionButton>
-  <Edit />
-  <Text>Edit</Text>
-</ActionButton>
+<ActionButton>Edit</ActionButton>
 ```
 
 ## Content
@@ -52,6 +46,9 @@ ActionButtons can have a label, an icon, or both. An icon is provided by passing
 A visible label can be provided by passing a string or a Text component as a child, depending on whether the ActionButton has an accompanying icon.
 
 ```tsx example
+import {Text} from '@react-spectrum/text';
+import Edit from '@spectrum-icons/workflow/Edit';
+
 <ActionButton>
   <Edit />
   <Text>Icon + Label</Text>

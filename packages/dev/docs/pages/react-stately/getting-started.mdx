@@ -42,6 +42,8 @@ You can install any React Stately package using a package manager like [npm](htt
 yarn add @react-stately/radio
 ```
 
+We also offer a single package containing all React Stately hooks. See [below](#mono-package) for details.
+
 ## Building a component
 
 This example shows a very simple radio group component built with the [useRadioGroupState](useRadioGroupState.html) hook
@@ -86,6 +88,31 @@ If you're using React Stately on the web, see [useRadioGroup](../react-aria/useR
 handle more of this behavior and accessibility for you. To see an example of how React Stately manages more complex state,
 see [useSelectState](useSelectState.html).
 
+## Mono-package
+
+In addition to individual packages, we also offer a mono-package containing all of the React Stately hooks in a single
+package. This ensures that all packages use compatible versions and are upgraded together. If you release all components
+in your component library in a single package, or just want to get started easily without installing a lot of packages,
+the mono-package may be the way to go. It is available as the [react-stately](https://npmjs.com/package/react-stately) package
+on npm.
+
+```
+yarn add react-stately
+```
+
+Once installed, all hooks work the same way as the individual packages, but are imported from the `react-stately` package
+instead of individual packages.
+
+```tsx
+// Individual packages
+import {useRadioGroupState} from '@react-stately/radio';
+```
+
+```tsx
+// Monopackage
+import {useRadioGroupState} from 'react-stately';
+```
+
 ## Next steps
 
 Now that you understand how to use the hooks in React Stately to build your own components, you can read the documentation
@@ -95,5 +122,5 @@ for the individual hooks to understand them in detail. We also have high level d
 For more examples of using React Stately, also check out the docs for [React Aria](../react-aria/index.html), which is a library
 of hooks that implement behavior and accessibility for the web on top of React Stately. For a complete example of a full component library
 built with React Stately and React Aria, also check out [React Spectrum](../react-spectrum/index.html). The
-[source code](https://github.com/adobe-private/react-spectrum-v3/tree/master/packages/%40react-spectrum)
+[source code](https://github.com/adobe/react-spectrum/tree/main/packages/%40react-spectrum)
 is a good example of how the React Stately and React Aria hooks are used in many real-world components.

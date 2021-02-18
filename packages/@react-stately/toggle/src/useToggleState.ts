@@ -18,13 +18,16 @@ export interface ToggleState {
   readonly isSelected: boolean,
 
   /** Updates selection state. */
-  setSelected(isSelected: boolean): void
+  setSelected(isSelected: boolean): void,
+  
+  /** Toggle the selection state. */
+  toggle(): void
 }
 
 /**
  * Provides state management for toggle components like checkboxes and switches.
  */
-export function useToggleState(props: ToggleProps): ToggleState {
+export function useToggleState(props: ToggleProps = {}): ToggleState {
   let {isReadOnly, onChange} = props;
 
   // have to provide an empty function so useControlledState doesn't throw a fit
@@ -40,8 +43,21 @@ export function useToggleState(props: ToggleProps): ToggleState {
     }
   }
 
+  function toggleState() {
+    if (!isReadOnly) {
+      setSelected(prev => {
+        let newVal = !prev;
+        if (onChange) {
+          onChange(newVal);
+        }
+        return newVal;
+      });
+    }
+  }
+
   return {
     isSelected,
-    setSelected: updateSelected
+    setSelected: updateSelected,
+    toggle: toggleState
   };
 }

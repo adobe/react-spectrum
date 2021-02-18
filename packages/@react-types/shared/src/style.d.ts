@@ -68,7 +68,7 @@ export interface StyleProps {
   order?: number,
 
   /** When used in a grid layout, specifies the named grid area that the element should be placed in within the grid. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-area). */
-  gridArea?: string
+  gridArea?: string,
   /** When used in a grid layout, specifies the column the element should be placed in within the grid. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column). */
   gridColumn?: string,
   /** When used in a grid layout, specifies the row the element should be placed in within the grid. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row). */
@@ -176,7 +176,7 @@ export interface ViewStyleProps extends StyleProps {
   paddingY?: DimensionValue,
 
   /** Species what to do when the element's content is too long to fit its size. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/overflow). */
-  overflow?: string,
+  overflow?: string
   // ...
   // shadows?
   // transforms?
@@ -188,7 +188,7 @@ export interface BoxAlignmentStyleProps {
    * @default 'stretch'
    */
   justifyContent?: 'start' | 'end' | 'center' | 'left' | 'right' | 'space-between' | 'space-around' | 'space-evenly' | 'stretch' | 'baseline' | 'first baseline' | 'last baseline' | 'safe center' | 'unsafe center',
-  /** 
+  /**
    * The distribution of space around child items along the cross axis. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/align-content).
    * @default 'start'
    */

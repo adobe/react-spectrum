@@ -15,7 +15,7 @@ import {ReactNode} from 'react';
 
 export interface ContentProps extends DOMProps, StyleProps {
   /**
-   * Content content
+   * Content content.
    */
   children: ReactNode
 }

@@ -20,11 +20,7 @@ let getTime = perfNow ? perfNow.bind(perf) : function () {
   return Date.now ? Date.now() : new Date().getTime();
 };
 
-// check if we need to get the time each frame (see below)
-let fixTs = false;
-requestAnimationFrame(function (t) {
-  fixTs = (t > 1e12) !== (getTime() > 1e12);
-});
+let fixTs: boolean;
 
 export interface CancelablePromise<T> extends Promise<T> {
   cancel(): void
@@ -32,7 +28,7 @@ export interface CancelablePromise<T> extends Promise<T> {
 
 export function tween(begin, end, duration, ease, fn): CancelablePromise<void> {
   let canceled = false;
-  let raf_id;
+  let raf_id: number;
 
   let promise = new Promise(resolve => {
     let start = getTime();
@@ -42,6 +38,10 @@ export function tween(begin, end, duration, ease, fn): CancelablePromise<void> {
     raf_id = requestAnimationFrame(function run(t) {
       // if we're using a high res timer, make sure timestamp is not the old epoch-based value.
       // http://updates.html5rocks.com/2012/05/requestAnimationFrame-API-now-with-sub-millisecond-precision
+      if (fixTs == null) {
+        fixTs = t > 1e12 !== getTime() > 1e12;
+      }
+
       if (fixTs) {
         t = getTime();
       }
@@ -57,6 +57,7 @@ export function tween(begin, end, duration, ease, fn): CancelablePromise<void> {
           begin.x + diffX * ease(delta / duration),
           begin.y + diffY * ease(delta / duration)
         ));
+
         if (proceed !== false && !canceled) {
           raf_id = requestAnimationFrame(run);
         }

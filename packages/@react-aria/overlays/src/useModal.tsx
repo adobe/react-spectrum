@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {AriaAttributes, HTMLAttributes, ReactNode, useContext, useEffect, useState} from 'react';
+import React, {AriaAttributes, HTMLAttributes, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 interface ModalProviderProps extends HTMLAttributes<HTMLElement> {
@@ -26,17 +26,19 @@ interface ModalContext {
 
 const Context = React.createContext<ModalContext | null>(null);
 
-// Each ModalProvider tracks how many modals are open in its subtree. On mount, the modals
-// trigger `addModal` to increment the count, and trigger `removeModal` on unmount to decrement it.
-// This is done recursively so that all parent providers are incremented and decremented.
-// If the modal count is greater than zero, we add `aria-hidden` to this provider to hide its
-// subtree from screen readers. This is done using React context in order to account for things
-// like portals, which can cause the React tree and the DOM tree to differ significantly in structure.
+/**
+ * Each ModalProvider tracks how many modals are open in its subtree. On mount, the modals
+ * trigger `addModal` to increment the count, and trigger `removeModal` on unmount to decrement it.
+ * This is done recursively so that all parent providers are incremented and decremented.
+ * If the modal count is greater than zero, we add `aria-hidden` to this provider to hide its
+ * subtree from screen readers. This is done using React context in order to account for things
+ * like portals, which can cause the React tree and the DOM tree to differ significantly in structure.
+ */
 export function ModalProvider(props: ModalProviderProps) {
   let {children} = props;
   let parent = useContext(Context);
-  let [modalCount, setModalCount] = useState(parent ? parent.modalCount : 0);
-  let context = {
+  let [modalCount, setModalCount] = useState(0);
+  let context = useMemo(() => ({
     parent,
     modalCount,
     addModal() {
@@ -51,7 +53,7 @@ export function ModalProvider(props: ModalProviderProps) {
         parent.removeModal();
       }
     }
-  };
+  }), [parent, modalCount]);
 
   return (
     <Context.Provider value={context}>
@@ -61,9 +63,16 @@ export function ModalProvider(props: ModalProviderProps) {
 }
 
 interface ModalProviderAria {
+  /**
+   * Props to be spread on the container element.
+   */
   modalProviderProps: AriaAttributes
 }
 
+/**
+ * Used to determine if the tree should be aria-hidden based on how many
+ * modals are open.
+ */
 export function useModalProvider(): ModalProviderAria {
   let context = useContext(Context);
   return {
@@ -73,6 +82,9 @@ export function useModalProvider(): ModalProviderAria {
   };
 }
 
+/**
+ * Creates a root node that will be aria-hidden if there are other modals open.
+ */
 function OverlayContainerDOM(props: ModalProviderProps) {
   let {modalProviderProps} = useModalProvider();
   return <div {...props} {...modalProviderProps} />;
@@ -106,13 +118,27 @@ export function OverlayContainer(props: ModalProviderProps): React.ReactPortal {
   return ReactDOM.createPortal(contents, document.body);
 }
 
+interface ModalAriaProps extends HTMLAttributes<HTMLElement> {
+  /** Data attribute marks the dom node as a modal for the aria-modal-polyfill. */
+  'data-ismodal': boolean
+}
+
+interface ModalOptions {
+  isDisabled?: boolean
+}
+
+interface ModalAria {
+  /** Props for the modal content element. */
+  modalProps: ModalAriaProps
+}
+
 /**
  * Hides content outside the current `<OverlayContainer>` from screen readers
  * on mount and restores it on unmount. Typically used by modal dialogs and
  * other types of overlays to ensure that only the top-most modal is
  * accessible at once.
  */
-export function useModal(): void {
+export function useModal(options?: ModalOptions): ModalAria {
   // Add aria-hidden to all parent providers on mount, and restore on unmount.
   let context = useContext(Context);
   if (!context) {
@@ -120,7 +146,7 @@ export function useModal(): void {
   }
 
   useEffect(() => {
-    if (!context || !context.parent) {
+    if (options?.isDisabled || !context || !context.parent) {
       return;
     }
 
@@ -132,5 +158,11 @@ export function useModal(): void {
         context.parent.removeModal();
       }
     };
-  }, [context, context.parent]);
+  }, [context, context.parent, options?.isDisabled]);
+
+  return {
+    modalProps: {
+      'data-ismodal': !options?.isDisabled
+    }
+  };
 }

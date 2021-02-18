@@ -14,11 +14,13 @@ import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, SlotProvider} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
+import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import React, {Key, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
 import {TreeState} from '@react-stately/tree';
+import {useHover} from '@react-aria/interactions';
 import {useMenuContext} from './context';
 import {useMenuItem} from '@react-aria/menu';
 
@@ -48,7 +50,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     key
   } = item;
 
-  let isSelected = state.selectionManager.selectedKeys.has(key);
+  let isSelected = state.selectionManager.isSelected(key);
   let isDisabled = state.disabledKeys.has(key);
 
   let ref = useRef<HTMLLIElement>();
@@ -66,6 +68,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     state,
     ref
   );
+  let {hoverProps, isHovered} = useHover({isDisabled});
 
   let contents = typeof rendered === 'string'
     ? <Text>{rendered}</Text>
@@ -74,7 +77,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <li
-        {...menuItemProps}
+        {...mergeProps(menuItemProps, hoverProps)}
         ref={ref}
         className={classNames(
           styles,
@@ -82,7 +85,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
           {
             'is-disabled': isDisabled,
             'is-selected': isSelected,
-            'is-selectable': state.selectionManager.selectionMode !== 'none'
+            'is-selectable': state.selectionManager.selectionMode !== 'none',
+            'is-hovered': isHovered
           }
         )}>
         <Grid

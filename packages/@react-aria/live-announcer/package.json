@@ -1,9 +1,8 @@
 {
   "name": "@react-aria/live-announcer",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
-  "private": true,
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
@@ -15,16 +14,16 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe-private/react-spectrum-v3"
+    "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/utils": "^3.0.0",
-    "@react-aria/visually-hidden": "^3.0.0"
+    "@react-aria/utils": "^3.4.1",
+    "@react-aria/visually-hidden": "^3.1.0"
   },
   "peerDependencies": {
-    "react": "^16.8.0",
-    "react-dom": "^16.8.0"
+    "react": "^16.8.0 || ^17.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"

@@ -60,7 +60,7 @@ React Aria includes most component semantics by default, but there is one import
 a textual label for each control. This gives a screen reader user context about the control they are interacting with.
 
 Form inputs like text fields, checkboxes, and selects should usually have a visible label, and in this case, React Aria
-will automatically associate the visible label with the control to so that assistive technology can describe it properly.
+will automatically associate the visible label with the control so that assistive technology can describe it properly.
 
 In case a visible label is not desired for some reason, or you're using a control that doesn't have a built-in label,
 you must use the `aria-label` or `aria-labelledby` props to identify it to assistive technology. Most React Aria
@@ -80,7 +80,7 @@ For more information about keyboard navigation and focus interactions, see the [
 On mobile touch screen devices, screen reader users navigate applications by moving a virtual cursor around the screen with
 gestures like swiping left and right rather than using a keyboard like on desktop platforms. The screen reader knows which
 elements are available to navigate to through the semantic information exposed by ARIA. These gestures and the virtual cursor
-takes over the whole screen, and normal touch interactions for your application will not be available.
+take over the whole screen, and normal touch interactions for your application will not be available.
 
 There are additional things to consider when supporting mobile screen readers. Since there's no hardware keyboard
 on most mobile devices, we cannot rely on keyboard interactions being available. And since the screen reader gestures

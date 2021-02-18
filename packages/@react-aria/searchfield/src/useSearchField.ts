@@ -23,21 +23,21 @@ interface SearchFieldAria {
   /** Props for the text field's visible label element (if any). */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>,
   /** Props for the clear button. */
   clearButtonProps: AriaButtonProps
 }
 
 /**
  * Provides the behavior and accessibility implementation for a search field.
- * @param props - props for the search field
- * @param state - state for the search field, as returned by `useSearchFieldState`
- * @param inputRef - a ref to the input element
+ * @param props - Props for the search field.
+ * @param state - State for the search field, as returned by `useSearchFieldState`.
+ * @param inputRef - A ref to the input element.
  */
 export function useSearchField(
   props: AriaSearchFieldProps,
   state: SearchFieldState,
-  inputRef: RefObject<HTMLInputElement & HTMLTextAreaElement>
+  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>
 ): SearchFieldAria {
   let formatMessage = useMessageFormatter(intlMessages);
   let {
@@ -94,7 +94,11 @@ export function useSearchField(
 
   return {
     labelProps,
-    inputProps,
+    inputProps: {
+      ...inputProps,
+      // already handled by useSearchFieldState
+      defaultValue: undefined
+    },
     clearButtonProps: {
       'aria-label': formatMessage('Clear search'),
       excludeFromTabOrder: true,

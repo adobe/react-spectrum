@@ -9,18 +9,19 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './BreadcrumbItem';
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps, useValueEffect} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
-import React, {Key, ReactElement, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {Key, ReactElement, useCallback, useRef} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useResizeObserver} from '@react-aria/utils';
 
 const MIN_VISIBLE_ITEMS = 1;
 const MAX_VISIBLE_ITEMS = 4;
@@ -119,12 +120,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     });
   }, [listRef, children, setVisibleItems, showRoot, isMultiline]);
 
-  useEffect(() => {
-    window.addEventListener('resize', updateOverflow, false);
-    return () => {
-      window.removeEventListener('resize', updateOverflow, false);
-    };
-  }, [updateOverflow]);
+  useResizeObserver({ref: domRef, onResize: updateOverflow});
 
   useLayoutEffect(updateOverflow, [children]);
 
@@ -219,52 +215,6 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
       </ul>
     </nav>
   );
-}
-
-// This hook works like `useState`, but when setting the value, you pass a generator function
-// that can yield multiple values. Each yielded value updates the state and waits for the next
-// layout effect, then continues the generator. This allows sequential updates to state to be
-// written linearly.
-function useValueEffect(defaultValue) {
-  let [value, setValue] = useState(defaultValue);
-  let effect = useRef(null);
-
-  // Store the function in a ref so we can always access the current version
-  // which has the proper `value` in scope.
-  let nextRef = useRef(null);
-  nextRef.current = () => {
-    // Run the generator to the next yield.
-    let newValue = effect.current.next();
-
-    // If the generator is done, reset the effect.
-    if (newValue.done) {
-      effect.current = null;
-      return;
-    }
-
-    // If the value is the same as the current value,
-    // then continue to the next yield. Otherwise,
-    // set the value in state and wait for the next layout effect.
-    if (value === newValue.value) {
-      nextRef.current();
-    } else {
-      setValue(newValue.value);
-    }
-  };
-
-  useLayoutEffect(() => {
-    // If there is an effect currently running, continue to the next yield.
-    if (effect.current) {
-      nextRef.current();
-    }
-  });
-
-  let queue = useCallback(fn => {
-    effect.current = fn();
-    nextRef.current();
-  }, [effect, nextRef]);
-
-  return [value, queue];
 }
 
 /**

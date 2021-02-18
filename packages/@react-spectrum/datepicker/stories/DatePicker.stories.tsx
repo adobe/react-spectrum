@@ -19,7 +19,6 @@ const BlockDecorator = storyFn => <div>{storyFn()}</div>;
 
 storiesOf('DatePicker', module)
   .addDecorator(BlockDecorator)
-  .addParameters({chromaticProvider: {locales: true}, chromatic: {viewports: [350]}})
   .add(
     'default',
     () => render()

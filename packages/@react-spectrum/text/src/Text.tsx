@@ -33,7 +33,7 @@ function Text(props: TextProps, ref: DOMRef) {
 }
 
 /**
- * Text is used to define label or option text in components.
+ * Text represents text with no specific semantic meaning.
  */
 const _Text = forwardRef(Text);
 export {_Text as Text};

@@ -245,7 +245,7 @@
   --spectrum-meter-small-border-radius: var(--spectrum-global-dimension-static-size-25);
   --spectrum-pagination-page-button-line-height: 26px;
   /* BEGIN RSP PATCH */
-  /* fix popover in edge https://github.com/adobe-private/react-spectrum-v3/pull/402 */
+  /* fix popover in edge https://github.com/adobe/react-spectrum/pull/402 */
   --spectrum-overlay-positive-transform-distance: 6px;
   --spectrum-overlay-negative-transform-distance: -6px;
   /* END RSP PATCH */
@@ -319,7 +319,7 @@
   --spectrum-switch-track-width: 26px;
   --spectrum-switch-handle-border-radius: 7px;
   /* BEGIN RSP PATCH */
-  /* fix switch in edge: https://github.com/adobe-private/react-spectrum-v3/pull/90 */
+  /* fix switch in edge: https://github.com/adobe/react-spectrum/pull/90 */
   --spectrum-switch-handle-transform-x-ltr: 12px;
   --spectrum-switch-handle-transform-x-rtl: -12px;
   /* END RSP PATCH */
@@ -392,7 +392,10 @@
   --spectrum-tool-high-emphasis-touch-hit-x: var(--spectrum-global-dimension-static-size-100);
   --spectrum-tool-high-emphasis-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
   --spectrum-tooltip-padding-bottom: 5px;
-  --spectrum-tooltip-content-max-width: 101px;
+  /* BEGIN RSP PATCH */
+  /* Old value is deprecated, bumping to new value for now: https://git.corp.adobe.com/Spectrum/spectrum-dna/blob/53f6efb0d81ec6829048a53a9e8389b450f46dee/data/elements/tooltip/TooltipBase.mjs#L36 */
+  --spectrum-tooltip-content-max-width: var(--spectrum-global-dimension-size-2000);
+  /* END RSP PATCH */
   --spectrum-tooltip-info-padding-bottom: 5px;
   --spectrum-tooltip-info-content-max-width: 101px;
   --spectrum-tooltip-negative-padding-bottom: 5px;

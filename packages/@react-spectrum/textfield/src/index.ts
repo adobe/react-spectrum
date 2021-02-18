@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+/// <reference types="css-module-types" />
+
 export * from './TextArea';
 export * from './TextField';
 export * from './TextFieldBase';

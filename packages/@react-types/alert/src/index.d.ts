@@ -21,5 +21,5 @@ export interface AlertProps {
 }
 
 export interface SpectrumAlertProps extends AlertProps, DOMProps, StyleProps {
-  variant: 'info' | 'help' | 'success' | 'error' | 'warning',
+  variant: 'info' | 'help' | 'success' | 'error' | 'warning'
 }

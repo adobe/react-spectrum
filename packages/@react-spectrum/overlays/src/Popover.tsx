@@ -12,11 +12,11 @@
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Overlay} from './Overlay';
 import overrideStyles from './overlays.css';
 import {PlacementAxis, PopoverProps} from '@react-types/overlays';
-import React, {forwardRef, HTMLAttributes, ReactNode, RefObject, useLayoutEffect, useRef, useState} from 'react';
+import React, {forwardRef, HTMLAttributes, ReactNode, RefObject, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {useModal, useOverlay} from '@react-aria/overlays';
 
@@ -27,7 +27,9 @@ interface PopoverWrapperProps extends HTMLAttributes<HTMLElement> {
   hideArrow?: boolean,
   isOpen?: boolean,
   onClose?: () => void,
-  shouldCloseOnBlur?: boolean
+  shouldCloseOnBlur?: boolean,
+  isKeyboardDismissDisabled?: boolean,
+  isNonModal?: boolean
 }
 
 /**
@@ -35,7 +37,7 @@ interface PopoverWrapperProps extends HTMLAttributes<HTMLElement> {
  * other two don't, they start at a fractional pixel value, it introduces rounding differences between browsers and
  * between display types (retina with subpixels vs not retina). By flipping them with CSS we can ensure that
  * the path always starts at 0 so that it perfectly overlaps the popover's border.
- * see bottom of file for more explanation.
+ * See bottom of file for more explanation.
  */
 let arrowPlacement = {
   left: 'right',
@@ -45,7 +47,7 @@ let arrowPlacement = {
 };
 
 function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, placement, arrowProps, onClose, shouldCloseOnBlur, hideArrow, ...otherProps} = props;
+  let {children, placement, arrowProps, onClose, shouldCloseOnBlur, hideArrow, isKeyboardDismissDisabled, isNonModal, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
 
@@ -58,7 +60,9 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
         arrowProps={arrowProps}
         onClose={onClose}
         shouldCloseOnBlur={shouldCloseOnBlur}
-        hideArrow={hideArrow}>
+        isKeyboardDismissDisabled={isKeyboardDismissDisabled}
+        hideArrow={hideArrow}
+        isNonModal={isNonModal}>
         {children}
       </PopoverWrapper>
     </Overlay>
@@ -67,13 +71,15 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
 
 const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HTMLDivElement>) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {children, placement = 'bottom', arrowProps, isOpen, hideArrow, shouldCloseOnBlur, ...otherProps} = props;
+  let {children, placement = 'bottom', arrowProps, isOpen, hideArrow, shouldCloseOnBlur, isKeyboardDismissDisabled, isNonModal, ...otherProps} = props;
   let {overlayProps} = useOverlay({...props, isDismissable: true}, ref);
-  useModal();
+  let {modalProps} = useModal({
+    isDisabled: isNonModal
+  });
 
   return (
     <div
-      {...mergeProps(otherProps, overlayProps)}
+      {...mergeProps(otherProps, overlayProps, modalProps)}
       ref={ref}
       className={
         classNames(
@@ -181,5 +187,5 @@ export {_Popover as Popover};
  * - I didn't try drawing the svg backwards
  * This could still be tried
  * - I tried changing the calculation of the popover placement AND the svg height/width so that they were all rounded
- * This seems to have done the trick
+ * This seems to have done the trick.
  */

@@ -101,6 +101,9 @@ import {I18nProvider} from '@react-aria/i18n';
 </I18nProvider>
 ```
 
+**Note:** if you are using server side rendering, you should always specify a locale rather than relying on browser defaults
+to ensure that the server and client match. See the [SSR docs](ssr.html#locale-selection) for more information.
+
 ## Supported locales
 
 React Aria currently supports over 30 locales. They are listed below.

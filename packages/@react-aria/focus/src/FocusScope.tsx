@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {focusWithoutScrolling} from '@react-aria/utils';
-import React, {ReactNode, RefObject, useContext, useEffect, useLayoutEffect, useRef} from 'react';
+import {focusSafely} from './focusSafely';
+import React, {ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
+import {useLayoutEffect} from '@react-aria/utils';
 
 // import {FocusScope, useFocusScope} from 'react-events/focus-scope';
 // export {FocusScope};
@@ -238,24 +239,23 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
           focusFirstInScope(activeScope.current);
         }
       } else {
-        e.stopPropagation();
         activeScope = scopeRef;
         focusedNode.current = e.target;
       }
     };
 
     let onBlur = (e) => {
-      e.stopPropagation();
-      let isInAnyScope = isElementInAnyScope(e.relatedTarget, scopes);
+      // Firefox doesn't shift focus back to the Dialog properly without this
+      raf.current = requestAnimationFrame(() => {
+        // Use document.activeElement instead of e.relatedTarget so we can tell if user clicked into iframe
+        let isInAnyScope = isElementInAnyScope(document.activeElement, scopes);
 
-      if (!isInAnyScope) {
-        activeScope = scopeRef;
-        focusedNode.current = e.target;
-        // Firefox doesn't shift focus back to the Dialog properly without this
-        raf.current = requestAnimationFrame(() => {
+        if (!isInAnyScope) {
+          activeScope = scopeRef;
+          focusedNode.current = e.target;
           focusedNode.current.focus();
-        });
-      }
+        }
+      });
     };
 
     document.addEventListener('keydown', onKeyDown, false);
@@ -273,7 +273,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
     return () => cancelAnimationFrame(raf.current);
-  }, []);
+  }, [raf]);
 }
 
 function isElementInAnyScope(element: Element, scopes: Set<RefObject<HTMLElement[]>>) {
@@ -292,7 +292,7 @@ function isElementInScope(element: Element, scope: HTMLElement[]) {
 function focusElement(element: HTMLElement | null, scroll = false) {
   if (element != null && !scroll) {
     try {
-      focusWithoutScrolling(element);
+      focusSafely(element);
     } catch (err) {
       // ignore
     }
@@ -352,7 +352,11 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       // next element after the node to restore to instead.
       if ((!nextElement || !isElementInScope(nextElement, scope)) && nodeToRestore) {
         walker.currentNode = nodeToRestore;
-        nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
+
+        // Skip over elements within the scope, in case the scope immediately follows the node to restore.
+        do {
+          nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
+        } while (isElementInScope(nextElement, scope));
 
         e.preventDefault();
         e.stopPropagation();
@@ -385,8 +389,11 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
   }, [scopeRef, restoreFocus, contain]);
 }
 
+/**
+ * Create a [TreeWalker]{@link https://developer.mozilla.org/en-US/docs/Web/API/TreeWalker}
+ * that matches all focusable/tabbable elements.
+ */
 export function getFocusableTreeWalker(root: HTMLElement, opts?: FocusManagerOptions) {
-  // Create a DOM tree walker that matches all focusable/tabbable elements
   let selector = opts?.tabbable ? TABBABLE_ELEMENT_SELECTOR : FOCUSABLE_ELEMENT_SELECTOR;
   let walker = document.createTreeWalker(
     root,

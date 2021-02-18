@@ -12,9 +12,11 @@
 
 import {classNames, getWrappedElement, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import {SpectrumLinkProps} from '@react-types/link';
 import styles from '@adobe/spectrum-css-temp/components/link/vars.css';
+import {useHover} from '@react-aria/interactions';
 import {useLink} from '@react-aria/link';
 import {useProviderProps} from '@react-spectrum/provider';
 
@@ -32,6 +34,7 @@ export function Link(props: SpectrumLinkProps) {
     href
   } = props;
   let {styleProps} = useStyleProps(props);
+  let {hoverProps, isHovered} = useHover({});
 
   if (href) {
     console.warn('href is deprecated, please use an anchor element as children');
@@ -49,14 +52,15 @@ export function Link(props: SpectrumLinkProps) {
         getWrappedElement(children),
         {
           ...styleProps,
-          ...linkProps,
+          ...mergeProps(linkProps, hoverProps),
           ref,
           className: classNames(
             styles,
             'spectrum-Link',
             {
               'spectrum-Link--quiet': isQuiet,
-              [`spectrum-Link--${variant}`]: variant
+              [`spectrum-Link--${variant}`]: variant,
+              'is-hovered': isHovered
             },
             styleProps.className
           )

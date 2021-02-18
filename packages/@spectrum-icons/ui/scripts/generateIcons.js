@@ -18,10 +18,10 @@ let displayNameRegex = /.*?\.displayName = '(?<name>.*?)';/;
 function template(iconName) {
   return (
 `import {${iconName} as IconComponent} from '@adobe/react-spectrum-ui/dist/${iconName}';
-import {UIIcon} from '@react-spectrum/icon';
+import {UIIcon, UIIconPropsWithoutChildren} from '@react-spectrum/icon';
 import React from 'react';
 
-export default function ${iconName}(props) {
+export default function ${iconName}(props: UIIconPropsWithoutChildren) {
   return <UIIcon {...props}><IconComponent /></UIIcon>;
 }
 `
