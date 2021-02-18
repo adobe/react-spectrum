@@ -71,13 +71,27 @@ governing permissions and limitations under the License.
 
   &:focus,
   &:active {
+    .spectrum-Stepper-input {
+      border-color: var(--spectrum-textfield-border-color-key-focus);
+    }
     .spectrum-Stepper-button {
       border-color: var(--spectrum-textfield-border-color-key-focus);
+    }
+
+    &:disabled,
+    &.is-disabled {
+      .spectrum-Stepper-input {
+        border-color: var(--spectrum-textfield-quiet-border-color-disabled);
+      }
     }
 
     &:invalid,
     &.is-invalid {
       border-color: var(--spectrum-textfield-border-color-error);
+
+      .spectrum-Stepper-input {
+        border-color: var(--spectrum-textfield-border-color-error);
+      }
     }
   }
 
@@ -143,7 +157,19 @@ governing permissions and limitations under the License.
     .spectrum-Stepper-button {
       &:disabled,
       &.is-disabled {
+        border-color: var(--spectrum-textfield-quiet-border-color);
+      }
+    }
+    &:disabled,
+    &.is-disabled {
+      .spectrum-Stepper-button {
         border-color: var(--spectrum-textfield-quiet-border-color-disabled);
+      }
+    }
+
+    &:hover {
+      .spectrum-Stepper-button--stepDown {
+        border-color: var(--spectrum-textfield-quiet-border-color-hover);
       }
     }
 
@@ -165,6 +191,7 @@ governing permissions and limitations under the License.
 
       &:invalid,
       &.is-invalid {
+         box-shadow: none;
         .spectrum-Stepper-button--stepDown {
           box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
         }
@@ -231,11 +258,6 @@ governing permissions and limitations under the License.
 
   &.spectrum-Stepper--quiet.spectrum-Stepper--isMobile {
     .spectrum-Stepper-button {
-      &:disabled,
-      &.is-disabled {
-        border-color: var(--spectrum-textfield-quiet-border-color-disabled);
-      }
-
       &.is-active {
         border-color: var(--spectrum-actionbutton-border-color-hover);
         color: var(--spectrum-actionbutton-text-color-hover);
@@ -243,6 +265,13 @@ governing permissions and limitations under the License.
         .spectrum-Stepper-icon {
           fill: var(--spectrum-actionbutton-icon-color-hover);
         }
+      }
+    }
+
+
+    &.is-hovered {
+      .spectrum-Stepper-button {
+        border-color: var(--spectrum-actionbutton-border-color-hover);
       }
     }
 
@@ -461,10 +490,64 @@ governing permissions and limitations under the License.
       }
     }
   }
+  &:disabled,
+  &.is-disabled {
+    .spectrum-Stepper-button.spectrum-Stepper-button--stepDown {
+      &.is-disabled {
+         border-color: var(--spectrum-textfield-quiet-border-color-disabled);
+       }
+    }
+  }
   &.is-focused {
     .spectrum-Stepper-button.spectrum-Stepper-button--stepDown {
       &.is-disabled {
         border-color: var(--spectrum-actionbutton-border-color-key-focus);
+      }
+    }
+  }
+  &:invalid,
+  &.is-invalid {
+    .spectrum-Stepper-button.spectrum-Stepper-button--stepDown {
+      &.is-disabled {
+         border-color: var(--spectrum-textfield-border-color-error);
+       }
+    }
+  }
+}
+
+.spectrum-Stepper.spectrum-Stepper--quiet.spectrum-Stepper--isMobile.spectrum-Stepper--readonly {
+  .spectrum-Stepper-button.spectrum-Stepper-button--stepUp {
+    &.is-disabled {
+      border-color: var(--spectrum-textfield-quiet-border-color);
+    }
+  }
+  &:hover {
+    .spectrum-Stepper-button.spectrum-Stepper-button--stepUp {
+      &.is-disabled {
+        border-color: var(--spectrum-actionbutton-border-color-hover);
+      }
+    }
+  }
+  &:disabled,
+  &.is-disabled {
+    .spectrum-Stepper-button.spectrum-Stepper-button--stepUp {
+      &.is-disabled {
+        border-color: var(--spectrum-textfield-quiet-border-color-disabled);
+      }
+    }
+  }
+  &.is-focused {
+    .spectrum-Stepper-button.spectrum-Stepper-button--stepUp {
+      &.is-disabled {
+        border-color: var(--spectrum-actionbutton-border-color-key-focus);
+      }
+    }
+  }
+  &:invalid,
+  &.is-invalid {
+    .spectrum-Stepper-button.spectrum-Stepper-button--stepUp {
+      &.is-disabled {
+        border-color: var(--spectrum-textfield-border-color-error);
       }
     }
   }

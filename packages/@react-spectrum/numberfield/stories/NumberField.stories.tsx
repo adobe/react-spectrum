@@ -105,6 +105,10 @@ storiesOf('NumberField', module)
     () => render({minValue: 0, maxValue: 20})
   )
   .add(
+    'minValue = 0, maxValue = 20, quiet',
+    () => render({isQuiet: true, minValue: 0, maxValue: 20})
+  )
+  .add(
     'minValue = -50, maxValue = -20',
     () => render({minValue: -50, maxValue: -20})
   )
