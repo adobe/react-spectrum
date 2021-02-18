@@ -415,16 +415,12 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
-    // Has a problem where commiting a value (via focusing a option and hitting Enter) doesn't close the menu (possibly fixed by moving "Close when an item is selected, if open state or selectedKey is uncontrolled." after the "If the selectedKey changed, update the input value" bit in useComboBoxState)
-    // Also has problem where typing an invalid value and blurring the field causes the menu to open
     'inputValue and isOpen (controlled)',
     () => (
       <ControlledValueOpenCombobox />
     )
   )
   .add(
-     // Has a problem where commiting a value that is already selected(via focusing a selected option and hitting Enter) doesn't reset the input value to that key
-     // Also blurring when there is a selected value but the user has modified the input value doesn't reset the input value
     'selectedKey and isOpen (controlled)',
     () => (
       <ControlledKeyOpenCombobox />
