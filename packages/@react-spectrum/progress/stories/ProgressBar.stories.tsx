@@ -186,11 +186,12 @@ storiesOf('Progress/ProgressBar', module)
   )
   .add(
     'width: 30px, labelPosition: side, isIndeterminate: true, long label, button on left',
-    () =>
-    <>
-      {render({width: '30px', labelPosition: 'side', isIndeterminate: true, label: 'Super long progress bar label. Sample label copy. Loading...'})}
-      <button>Confirm</button>
-    </>
+    () => (
+      <>
+        {render({width: '30px', labelPosition: 'side', isIndeterminate: true, label: 'Super long progress bar label. Sample label copy. Loading...'})}
+        <button>Confirm</button>
+      </>
+    )
   )
   .add(
     'Using raw values for minValue, maxValue, and value',
