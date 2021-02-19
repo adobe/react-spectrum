@@ -90,6 +90,7 @@ governing permissions and limitations under the License.
         .spectrum-Stepper-button--stepUp {}
       }
       &.spectrum-Stepper--isMobile {
+        inline-size: var(--spectrum-stepper-default-width-mobile);
         .spectrum-Stepper-input {}
         .spectrum-Stepper-button {
           block-size: var(--spectrum-textfield-height);
@@ -123,6 +124,7 @@ governing permissions and limitations under the License.
         }
       }
       &.spectrum-Stepper--isMobile {
+        inline-size: var(--spectrum-stepper-default-width-mobile);
         .spectrum-Stepper-input {
           border-radius: 0;
         }
@@ -187,6 +189,7 @@ governing permissions and limitations under the License.
         .spectrum-Stepper-button--stepUp {}
       }
       &.spectrum-Stepper--isMobile {
+        inline-size: var(--spectrum-stepper-default-width-mobile);
         .spectrum-Stepper-input {}
         .spectrum-Stepper-button {
           block-size: var(--spectrum-textfield-height);
