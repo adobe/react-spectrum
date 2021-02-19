@@ -218,7 +218,10 @@ class DragSession {
   }
 
   onFocus(e: FocusEvent) {
-    this.cancelEvent(e);
+    // Prevent focus events, except to the original drag target.
+    if (e.target !== this.dragTarget.element) {
+      this.cancelEvent(e);
+    }
 
     if (e.target === this.dragTarget.element) {
       return;
@@ -235,7 +238,9 @@ class DragSession {
   }
 
   onBlur(e: FocusEvent) {
-    this.cancelEvent(e);
+    if (e.target !== this.dragTarget.element) {
+      this.cancelEvent(e);
+    }
 
     if (!e.relatedTarget) {
       this.currentDropTarget?.element.focus();

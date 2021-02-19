@@ -29,6 +29,7 @@ import {mergeProps} from '@react-aria/utils';
 import {PressResponder} from '@react-aria/interactions';
 import {Provider, useProvider} from '@react-spectrum/provider';
 import React from 'react';
+import {ReorderableGridExample} from './Reorderable';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {storiesOf} from '@storybook/react';
 import {unwrapDOMRef} from '@react-spectrum/utils';
@@ -143,6 +144,12 @@ storiesOf('Drag and Drop', module)
         <VirtualizedListBoxExample items={manyItems.map(item => ({...item, type: 'folder'}))} accept="folder" />
         <VirtualizedListBoxExample items={manyItems} accept="item" />
       </Flex>
+    )
+  )
+  .add(
+    'Reorderable',
+    () => (
+      <ReorderableGridExample />
     )
   );
 

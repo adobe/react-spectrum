@@ -292,9 +292,8 @@ function InsertionIndicator(props) {
   );
 }
 
-function RootDropIndicator(props) {
+function RootDropIndicator() {
   let {state, dropState} = React.useContext(Context);
-  let isDropTarget = dropState.isDropTarget({type: 'root'});
   let dropRef = React.useRef();
   let {dropIndicatorProps} = useDropIndicator({
     collection: state.collection,
