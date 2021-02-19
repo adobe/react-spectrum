@@ -25,50 +25,168 @@ governing permissions and limitations under the License.
   --spectrum-stepper-default-width-mobile: calc(var(--spectrum-component-single-line-height) * 5);
 }
 
-/* increase specificity to not collide with InputGroup */
-.spectrum-Stepper.spectrum-Stepper {
+.spectrum-Stepper {
   display: inline-grid;
-  grid-template-rows: auto auto;
-  grid-template-columns: 1fr auto;
-  grid-template-areas:
-    'field increment'
-    'field decrement';
 
   inline-size: var(--spectrum-stepper-default-width-desktop);
   min-inline-size: unset;
   line-height: 0;
-  border-radius: var(--spectrum-border-radius);
   transition: border-color var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
+
+  /* there are only two layouts, so we don't need to repeat them down below */
+  /* technically there are other optimizations like this, but the others are harder to pull out, we'd need a truth table */
+  &:not(.spectrum-Stepper--isMobile) {
+    grid-template-rows: auto auto;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+    'field increment'
+    'field decrement';
+  }
+  &.spectrum-Stepper--isMobile {
+    grid-template-rows: auto;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: 'decrement field increment';
+  }
+
+  .spectrum-Stepper-field {
+    grid-area: field;
+    inline-size: unset;
+    min-inline-size: var(--spectrum-stepper-input-min-width);
+  }
+  .spectrum-Stepper-button--stepUp {
+    grid-area: increment;
+    border-start-end-radius: var(--spectrum-border-radius);
+    padding-block-start: calc(var(--spectrum-button-padding-y) + 1px);
+    padding-block-end: calc(var(--spectrum-button-padding-y) - .5px);
+  }
+  .spectrum-Stepper-button--stepDown {
+    grid-area: decrement;
+    padding-block-end: calc(var(--spectrum-button-padding-y) + 1px);
+    padding-block-start: calc(var(--spectrum-button-padding-y) - .5px);
+  }
+
+  &:not(.spectrum-Stepper--isQuiet) {
+    border-radius: var(--spectrum-border-radius);
+
+    &:not(.spectrum-Stepper--showStepper) {
+      &:not(.spectrum-Stepper--isMobile) {
+        .spectrum-Stepper-input {}
+        .spectrum-Stepper-button {
+          block-size: var(--spectrum-stepper-button-height);
+          inline-size: var(--spectrum-stepper-button-width);
+        }
+        .spectrum-Stepper-button--stepDown {}
+        .spectrum-Stepper-button--stepUp {}
+      }
+      &.spectrum-Stepper--isMobile {
+        .spectrum-Stepper-input {}
+        .spectrum-Stepper-button {
+          block-size: var(--spectrum-textfield-height);
+          inline-size: var(--spectrum-actionbutton-min-width);
+        }
+        .spectrum-Stepper-button--stepDown {}
+        .spectrum-Stepper-button--stepUp {}
+      }
+    }
+    &.spectrum-Stepper--showStepper {
+      &:not(.spectrum-Stepper--isMobile) {
+        .spectrum-Stepper-input {
+          border-start-end-radius: 0;
+          border-end-end-radius: 0;
+        }
+        .spectrum-Stepper-button {
+          block-size: var(--spectrum-stepper-button-height);
+          inline-size: var(--spectrum-stepper-button-width);
+          border-inline-start-width: 0;
+        }
+        .spectrum-Stepper-button--stepDown {
+          border-end-end-radius: var(--spectrum-border-radius);
+          border-block-start-width: var(--spectrum-stepper-border-size-default);
+          border-block-end-width: var(--spectrum-stepper-border-size-default);
+          border-inline-end-width: var(--spectrum-stepper-border-size-default);
+        }
+        .spectrum-Stepper-button--stepUp {
+          border-block-start-width: var(--spectrum-stepper-border-size-default);
+          border-inline-end-width: var(--spectrum-stepper-border-size-default);
+          border-start-end-radius: var(--spectrum-border-radius);
+        }
+      }
+      &.spectrum-Stepper--isMobile {
+        .spectrum-Stepper-input {
+          border-radius: 0;
+        }
+        .spectrum-Stepper-button {
+          block-size: var(--spectrum-textfield-height);
+          inline-size: var(--spectrum-actionbutton-min-width);
+        }
+        .spectrum-Stepper-button--stepDown {
+          border-block-start-width: var(--spectrum-stepper-border-size-default);
+          border-block-end-width: var(--spectrum-stepper-border-size-default);
+          border-inline-start-width: var(--spectrum-stepper-border-size-default);
+          border-start-start-radius: var(--spectrum-border-radius);
+          border-end-start-radius: var(--spectrum-border-radius);
+        }
+        .spectrum-Stepper-button--stepUp {
+          border-block-start-width: var(--spectrum-stepper-border-size-default);
+          border-block-end-width: var(--spectrum-stepper-border-size-default);
+          border-inline-end-width: var(--spectrum-stepper-border-size-default);
+          border-start-end-radius: var(--spectrum-border-radius);
+          border-end-end-radius: var(--spectrum-border-radius);
+        }
+      }
+    }
+  }
+  &.spectrum-Stepper--isQuiet {
+    &:not(.spectrum-Stepper--showStepper) {
+      &:not(.spectrum-Stepper--isMobile) {
+        .spectrum-Stepper-input {}
+        .spectrum-Stepper-button {
+          block-size: var(--spectrum-stepper-button-height);
+          inline-size: var(--spectrum-stepper-button-width);
+        }
+        .spectrum-Stepper-button--stepDown {
+          border-block-end-width: var(--spectrum-stepper-border-size-default);
+        }
+        .spectrum-Stepper-button--stepUp {}
+      }
+      &.spectrum-Stepper--isMobile {
+        .spectrum-Stepper-input {}
+        .spectrum-Stepper-button {
+          block-size: var(--spectrum-textfield-height);
+          inline-size: var(--spectrum-actionbutton-min-width);
+          border-block-end-width: var(--spectrum-stepper-border-size-default);
+        }
+        .spectrum-Stepper-button--stepDown {}
+        .spectrum-Stepper-button--stepUp {}
+      }
+    }
+    &.spectrum-Stepper--showStepper {
+      &:not(.spectrum-Stepper--isMobile) {
+        .spectrum-Stepper-input {}
+        .spectrum-Stepper-button {
+          block-size: var(--spectrum-stepper-button-height);
+          inline-size: var(--spectrum-stepper-button-width);
+        }
+        .spectrum-Stepper-button--stepDown {
+          border-block-end-width: var(--spectrum-stepper-border-size-default);
+        }
+        .spectrum-Stepper-button--stepUp {}
+      }
+      &.spectrum-Stepper--isMobile {
+        .spectrum-Stepper-input {}
+        .spectrum-Stepper-button {
+          block-size: var(--spectrum-textfield-height);
+          inline-size: var(--spectrum-actionbutton-min-width);
+          border-block-end-width: var(--spectrum-stepper-border-size-default);
+        }
+        .spectrum-Stepper-button--stepDown {}
+        .spectrum-Stepper-button--stepUp {}
+      }
+    }
+  }
 }
 
-.spectrum-Stepper {
-  &:not(.spectrum-Stepper--quiet):not(.spectrum-Stepper--showStepper) {
-    .spectrum-Stepper-input {
-      border-inline-end-width: var(--spectrum-stepper-border-size-default);
-      border-inline-end-style: solid;
-      border-start-end-radius: var(--spectrum-border-radius);
-      border-end-end-radius: var(--spectrum-border-radius);
-    }
-
-    &.is-disabled .spectrum-Stepper-input {
-      border-inline-end-width: 0px;
-    }
-  }
-
-  &.is-disabled:not(.spectrum-Stepper--quiet):not(.is-invalid) {
-    .spectrum-Stepper-input {
-      border: none;
-    }
-  }
-
-  &.is-disabled.is-invalid:not(.spectrum-Stepper--quiet):not(.spectrum-Stepper--showStepper) {
-    .spectrum-Stepper-input {
-      border-inline-end-width: 1px;
-      border-inline-end-style: solid;
-    }
-  }
-}
-
+/* this is specific to handling default width */
 .spectrum-Stepper-container {
   /* ensure we have higher specificity than .spectrum-Field */
   &.spectrum-Stepper-container {
@@ -84,13 +202,10 @@ governing permissions and limitations under the License.
 .spectrum-Stepper-button {
   @inherit: %spectrum-BaseButton;
 
-  block-size: var(--spectrum-stepper-button-height);
-  inline-size: var(--spectrum-stepper-button-width);
-
   display: flex;
 
   border-style: solid;
-  border-width: var(--spectrum-stepper-border-size-default);
+  border-width: 0;
 
   padding: var(--spectrum-button-padding-y) calc(var(--spectrum-button-primary-padding-x) - var(--spectrum-button-primary-border-size));
 
@@ -110,111 +225,5 @@ governing permissions and limitations under the License.
     transition: background var(--spectrum-global-animation-duration-100) ease-out,
                 fill var(--spectrum-global-animation-duration-100) ease-out;
     box-sizing: initial;
-  }
-}
-
-.spectrum-Stepper {
-  .spectrum-Stepper-button--stepUp {
-    grid-area: increment;
-    border-start-end-radius: var(--spectrum-border-radius);
-    padding-block-start: calc(var(--spectrum-button-padding-y) + 1px);
-    padding-block-end: calc(var(--spectrum-button-padding-y) - .5px);
-  }
-
-  .spectrum-Stepper-button--stepDown {
-    grid-area: decrement;
-    border-block-start: none;
-    border-end-end-radius: var(--spectrum-border-radius);
-    padding-block-end: calc(var(--spectrum-button-padding-y) + 1px);
-    padding-block-start: calc(var(--spectrum-button-padding-y) - .5px);
-
-    &:focus {
-      border-block-start: none;
-    }
-  }
-  .spectrum-Stepper-field {
-    grid-area: field;
-
-    inline-size: unset;
-    min-inline-size: var(--spectrum-stepper-input-min-width);
-  }
-}
-
-.spectrum-Stepper--showStepper {
-  .spectrum-Stepper-input {
-    position: relative;
-
-    border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
-    border-end-end-radius: var(--spectrum-stepper-border-radius-reset);
-  }
-
-  &.spectrum-Stepper--isMobile {
-    grid-template-rows: auto;
-    grid-template-columns: auto 1fr auto;
-    grid-template-areas: 'decrement field increment';
-    inline-size: var(--spectrum-stepper-default-width-mobile);
-
-    &:not(.spectrum-Stepper--quiet):not(.is-disabled),
-    &:not(.spectrum-Stepper--quiet).is-invalid {
-      .spectrum-Stepper-input {
-        border-inline-end-width: 1px;
-        border-inline-end-style: solid;
-      }
-    }
-
-    .spectrum-Stepper-input {
-      border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
-      border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
-      border-end-start-radius: var(--spectrum-stepper-border-radius-reset);
-      border-end-end-radius: var(--spectrum-stepper-border-radius-reset);
-    }
-    .spectrum-Stepper-button {
-      block-size: var(--spectrum-textfield-height);
-      inline-size: var(--spectrum-actionbutton-min-width);
-      border-block-start-style: solid;
-      border-block-start-width: var(--spectrum-stepper-border-size-default);
-      padding-block-end: 0px;
-      padding-block-start: 0px;
-    }
-    .spectrum-Stepper-button--stepUp {
-      border-inline-end-style: solid;
-      border-inline-start-style: none;
-      border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
-      border-start-end-radius: var(--spectrum-border-radius);
-      border-end-start-radius: var(--spectrum-stepper-border-radius-reset);
-      border-end-end-radius: var(--spectrum-border-radius);
-    }
-    .spectrum-Stepper-button--stepDown {
-      border-inline-start-style: solid;
-      border-inline-end-style: none;
-      border-start-start-radius: var(--spectrum-border-radius);
-      border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
-      border-end-start-radius: var(--spectrum-border-radius);
-      border-end-end-radius: var(--spectrum-stepper-border-radius-reset);
-    }
-  }
-}
-
-.spectrum-Stepper.spectrum-Stepper--quiet {
-  border-radius: var(--spectrum-stepper-border-radius-reset);
-
-  .spectrum-Stepper-button {
-    border-block-start: none;
-    border-inline-start: none;
-    border-inline-end: none;
-    border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
-    border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
-    border-end-start-radius: var(--spectrum-stepper-border-radius-reset);
-    border-end-end-radius: var(--spectrum-stepper-border-radius-reset);
-  }
-  &:not(.spectrum-Stepper--isMobile) .spectrum-Stepper-button--stepUp {
-    border-block-end: none;
-  }
-  &:focus {
-    .spectrum-Stepper-button {
-      border-block-start: none;
-      border-inline-start: none;
-      border-inline-end: none;
-    }
   }
 }
