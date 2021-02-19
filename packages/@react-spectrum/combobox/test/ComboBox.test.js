@@ -2324,6 +2324,110 @@ describe('ComboBox', function () {
         expect(items).toHaveLength(1);
       });
     });
+
+    it('should not open the menu on blur when an invalid input is entered (controlled by selectedKey, inputValue, and isOpen)', function () {
+      let {getByRole} = renderComboBox({selectedKey: '2', inputValue: 'z', isOpen: false});
+      let combobox = getByRole('combobox');
+      act(() => {
+        combobox.focus();
+        jest.runAllTimers();
+      });
+      act(() => {
+        userEvent.tab();
+        jest.runAllTimers();
+      });
+
+      // When open state, inputValue, and selectedKey are all controlled, only onSelectionChange should be called
+      expect(onInputChange).toHaveBeenCalledTimes(0);
+      expect(onOpenChange).toHaveBeenCalledTimes(0);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledWith('2');
+    });
+
+    it('should reset input value when selecting a selected option (controlled by selectedKey, inputValue, and isOpen)', function () {
+      let {getByRole} = renderComboBox({selectedKey: '1', inputValue: 'O', isOpen: true});
+      let combobox = getByRole('combobox');
+      act(() => {
+        combobox.focus();
+        jest.runAllTimers();
+      });
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        jest.runAllTimers();
+      });
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+        jest.runAllTimers();
+      });
+
+      // When open state, inputValue, and selectedKey are all controlled, only onSelectionChange should be called
+      expect(onInputChange).toHaveBeenCalledTimes(0);
+      expect(onOpenChange).toHaveBeenCalledTimes(0);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledWith('1');
+    });
+
+    it('should close the menu when selecting a item (controlled by inputValue, and isOpen)', function () {
+      let ControlledComboBox = () => {
+        let [fieldState, setFieldState] = React.useState({
+          isOpen: false,
+          inputValue: ''
+        });
+
+        let onInputChangeHandler = (value) => {
+          setFieldState({
+            isOpen: true,
+            inputValue: value
+          });
+        };
+
+        let onOpenChangeHandler = (isOpen) => {
+          setFieldState(prevState => ({
+            isOpen,
+            inputValue: prevState.inputValue
+          }));
+        };
+
+        return (
+          <ComboBox label="Combobox" isOpen={fieldState.isOpen} inputValue={fieldState.inputValue} onInputChange={onInputChangeHandler} onOpenChange={onOpenChangeHandler}>
+            <Item key="1">One</Item>
+            <Item key="2">Two</Item>
+            <Item key="3">Three</Item>
+          </ComboBox>
+        );
+      };
+
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <ControlledComboBox />
+        </Provider>
+      );
+
+      let combobox = getByRole('combobox');
+      typeText(combobox, 'O');
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        jest.runAllTimers();
+      });
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+        jest.runAllTimers();
+      });
+
+      expect(() => getByRole('listbox')).toThrow();
+      expect(combobox.value).toBe('One');
+    });
   });
 
   describe('uncontrolled combobox', function () {
