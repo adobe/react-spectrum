@@ -139,14 +139,25 @@ function createFocusManager(scopeRef: React.RefObject<HTMLElement[]>): FocusMana
       let scope = scopeRef.current;
       let {from, tabbable, wrap} = opts; 
       let node = from || document.activeElement;
-      let focusable = getFocusableElementsInScope(scope, {tabbable}).reverse();
-      let previousNode = focusable.find(n =>
-        !!(node.compareDocumentPosition(n) & (Node.DOCUMENT_POSITION_PRECEDING | Node.DOCUMENT_POSITION_CONTAINED_BY))
-      );
-      if (!previousNode && wrap) {
-        previousNode = focusable[0];
+      let sentinel = scope[scope.length - 1].nextElementSibling;
+      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable});
+      walker.currentNode = sentinel;
+      let prevNode = walker.previousNode() as HTMLElement;
+      let previousNode;
+      while (prevNode && isElementInScope(prevNode, scope))  {
+        if (node.compareDocumentPosition(prevNode) & (Node.DOCUMENT_POSITION_PRECEDING | Node.DOCUMENT_POSITION_CONTAINED_BY)) {
+          previousNode = prevNode;
+          prevNode = null;
+          break;
+        } else {
+          prevNode = walker.previousNode() as HTMLElement;
+        }
       }
-      if (previousNode) {
+      if (!(previousNode && isElementInScope(previousNode, scope)) && wrap) {
+        walker.currentNode = sentinel;
+        previousNode = walker.previousNode() as HTMLElement;
+      }
+      if (previousNode && isElementInScope(previousNode, scope)) {
         focusElement(previousNode, true);
       }
       return previousNode;
@@ -203,6 +214,8 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
     if (!contain) {
       return;
     }
+
+    let focusManager = createFocusManager(scopeRef);
 
     // Handle the Tab key to contain focus within the scope
     let onKeyDown = (e) => {
@@ -425,8 +438,7 @@ export function getFocusableTreeWalker(root: HTMLElement, opts?: FocusManagerOpt
 
         return NodeFilter.FILTER_SKIP;
       }
-    },
-    false
+    }
   );
 
   if (opts?.from) {
