@@ -154,8 +154,8 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
           }
           validationIconClassName={
             classNames(
-              inputgroupStyles,
-              'spectrum-InputGroup-input-validationIcon'
+              stepperStyle,
+              'spectrum-Stepper-icon'
             )
           }
           isQuiet={isQuiet}

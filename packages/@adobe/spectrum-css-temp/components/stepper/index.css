@@ -23,6 +23,7 @@ governing permissions and limitations under the License.
   --spectrum-stepper-input-min-width: var(--spectrum-component-single-line-height);
   --spectrum-stepper-default-width-desktop: calc(var(--spectrum-component-single-line-height) * 4);
   --spectrum-stepper-default-width-mobile: calc(var(--spectrum-component-single-line-height) * 5);
+  --spectrum-stepper-validation-icon-right: var(--spectrum-global-dimension-size-100);
 }
 
 .spectrum-Stepper {
@@ -41,11 +42,21 @@ governing permissions and limitations under the License.
     grid-template-areas:
     'field increment'
     'field decrement';
+    .spectrum-Stepper-button--stepUp {
+      padding-block-start: calc(var(--spectrum-button-padding-y) + 1px);
+      padding-block-end: calc(var(--spectrum-button-padding-y) - .5px);
+    }
+    .spectrum-Stepper-button--stepDown {
+      padding-block-end: calc(var(--spectrum-button-padding-y) + 1px);
+      padding-block-start: calc(var(--spectrum-button-padding-y) - .5px);
+    }
   }
   &.spectrum-Stepper--isMobile {
     grid-template-rows: auto;
     grid-template-columns: auto 1fr auto;
     grid-template-areas: 'decrement field increment';
+    .spectrum-Stepper-button--stepUp {}
+    .spectrum-Stepper-button--stepDown {}
   }
 
   .spectrum-Stepper-field {
@@ -53,17 +64,15 @@ governing permissions and limitations under the License.
     inline-size: unset;
     min-inline-size: var(--spectrum-stepper-input-min-width);
   }
+  .spectrum-Stepper-icon {
+    padding-inline-end: 0;
+    inset-inline-end: var(--spectrum-stepper-validation-icon-right);
+  }
   .spectrum-Stepper-button--stepUp {
     grid-area: increment;
     border-start-end-radius: var(--spectrum-border-radius);
-    padding-block-start: calc(var(--spectrum-button-padding-y) + 1px);
-    padding-block-end: calc(var(--spectrum-button-padding-y) - .5px);
   }
-  .spectrum-Stepper-button--stepDown {
-    grid-area: decrement;
-    padding-block-end: calc(var(--spectrum-button-padding-y) + 1px);
-    padding-block-start: calc(var(--spectrum-button-padding-y) - .5px);
-  }
+  .spectrum-Stepper-button--stepDown {}
 
   &:not(.spectrum-Stepper--isQuiet) {
     border-radius: var(--spectrum-border-radius);
@@ -217,7 +226,7 @@ governing permissions and limitations under the License.
     box-shadow: none;
   }
 
-  .spectrum-Stepper-icon {
+  .spectrum-Stepper-button-icon {
     max-block-size: 100%;
     flex-shrink: 0;
     order: 0; /* always be before the label, regardless of DOM order */
