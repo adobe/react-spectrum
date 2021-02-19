@@ -20,14 +20,14 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef
+  useRef, useState
 } from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isAndroid, isIOS, isIPhone, mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {TextInputDOMProps} from '@react-types/shared';
-import {useFocus} from '@react-aria/interactions';
+import {useFocus, useFocusWithin} from '@react-aria/interactions';
 import {
   useMessageFormatter,
   useNumberFormatter
@@ -116,6 +116,9 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     }
   );
 
+  let [focusWithin, setFocusWithin] = useState(false);
+  let {focusWithinProps} = useFocusWithin({isDisabled, onFocusWithinChange: setFocusWithin});
+
   let onWheel = useCallback((e) => {
     // If the ctrlKey is pressed, this is a zoom event, do nothing.
     if (e.ctrlKey) {
@@ -132,7 +135,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     }
   }, [decrement, increment]);
   // If the input isn't supposed to receive input, disable scrolling.
-  let scrollingDisabled = isDisabled || isReadOnly || disableScroll;
+  let scrollingDisabled = isDisabled || isReadOnly || disableScroll || !focusWithin;
   useScrollWheel({onScroll: onWheel, capture: false, disable: scrollingDisabled}, inputRef);
 
   // The inputMode attribute influences the software keyboard that is shown on touch devices.
@@ -376,7 +379,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     groupProps: {
       role: 'group',
       'aria-disabled': isDisabled,
-      'aria-invalid': validationState === 'invalid' ? 'true' : undefined
+      'aria-invalid': validationState === 'invalid' ? 'true' : undefined,
+      ...focusWithinProps
     },
     labelProps,
     inputProps,
