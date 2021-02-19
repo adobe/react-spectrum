@@ -72,7 +72,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     autoFocus,
     validationState,
     label,
-    formatOptions
+    formatOptions,
+    disableScroll
   } = props;
 
   let {
@@ -116,9 +117,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   );
 
   let onWheel = useCallback((e) => {
-    // If the input isn't supposed to receive input, do nothing.
     // If the ctrlKey is pressed, this is a zoom event, do nothing.
-    if (isDisabled || isReadOnly || e.ctrlKey) {
+    if (e.ctrlKey) {
       return;
     }
 
@@ -130,8 +130,10 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     } else if (e.deltaY < 0) {
       decrement();
     }
-  }, [isReadOnly, isDisabled, decrement, increment]);
-  useScrollWheel({onScroll: onWheel, capture: false}, inputRef);
+  }, [decrement, increment]);
+  // If the input isn't supposed to receive input, disable scrolling.
+  let scrollingDisabled = isDisabled || isReadOnly || disableScroll;
+  useScrollWheel({onScroll: onWheel, capture: false, disable: scrollingDisabled}, inputRef);
 
   // The inputMode attribute influences the software keyboard that is shown on touch devices.
   // Browsers and operating systems are quite inconsistent about what keys are available, however.
@@ -384,13 +386,18 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
 }
 
 // scroll wheel needs to be added not passively so it's cancelable, small helper hook to remember that
-function useScrollWheel({onScroll, capture}: {onScroll: (e) => void, capture: boolean}, ref: RefObject<HTMLElement>) {
+function useScrollWheel({onScroll, capture, disable}: {onScroll: (e) => void, capture: boolean, disable: boolean}, ref: RefObject<HTMLElement>) {
   useEffect(() => {
     let elem = ref.current;
-    elem.addEventListener('wheel', onScroll, capture);
+
+    if (!disable) {
+      elem.addEventListener('wheel', onScroll, capture);
+    }
 
     return () => {
-      elem.removeEventListener('wheel', onScroll, capture);
+      if (!disable) {
+        elem.removeEventListener('wheel', onScroll, capture);
+      }
     };
-  }, [onScroll, ref, capture]);
+  }, [onScroll, ref, capture, disable]);
 }
