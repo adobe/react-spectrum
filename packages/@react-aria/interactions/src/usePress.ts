@@ -624,17 +624,56 @@ function createEvent(target: HTMLElement, e: EventBase): EventBase {
   };
 }
 
+interface Point {
+  x: number,
+  y: number
+}
+
+interface PointRect {
+  top: number,
+  right: number,
+  bottom: number,
+  left: number
+}
+
 interface EventPoint {
   clientX: number,
-  clientY: number
+  clientY: number,
+  width?: number,
+  height?: number,
+  radiusX?: number,
+  radiusY?: number
+}
+
+function getPointClientRect(point: EventPoint): PointRect {
+  let offsetX = (point.width / 2) || point.radiusX || 0;
+  let offsetY = (point.height / 2) || point.radiusY || 0;
+
+  return {
+    top: point.clientY - offsetY,
+    right: point.clientX + offsetX,
+    bottom: point.clientX + offsetY,
+    left: point.clientX - offsetX
+  };
+}
+
+function isPointInRect(point: Point, rect: DOMRect): boolean {
+  return point.x >= rect.left &&
+    point.x <= rect.right &&
+    point.y >= rect.top &&
+    point.y <= rect.bottom;
 }
 
 function isOverTarget(point: EventPoint, target: HTMLElement) {
   let rect = target.getBoundingClientRect();
-  return (point.clientX || 0) >= (rect.left || 0) &&
-    (point.clientX || 0) <= (rect.right || 0) &&
-    (point.clientY || 0) >= (rect.top || 0) &&
-    (point.clientY || 0) <= (rect.bottom || 0);
+  if (isPointInRect({x: point.clientX, y: point.clientY}, rect)) {
+    return true;
+  }
+  let pointRect = getPointClientRect(point);
+  return isPointInRect({x: pointRect.left, y: pointRect.top}, rect) ||
+    isPointInRect({x: pointRect.right, y: pointRect.top}, rect) ||
+    isPointInRect({x: pointRect.right, y: pointRect.bottom}, rect) ||
+    isPointInRect({x: pointRect.left, y: pointRect.bottom}, rect);
 }
 
 function shouldPreventDefault(target: Element) {
