@@ -12,7 +12,6 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {Grid, repeat} from '@react-spectrum/layout';
-import inputStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {mergeProps} from '@react-aria/utils';
 import {Meta, Story} from '@storybook/react';
 import {NumberField} from '../src';
@@ -31,7 +30,6 @@ let states = [
 let noLabelStates = [
   {UNSAFE_className: classNames(
     {},
-      classNames(inputStyles, 'focus-ring'),
       classNames(stepperStyles, 'focus-ring')
     )},
   {UNSAFE_className: classNames(
