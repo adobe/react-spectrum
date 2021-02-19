@@ -336,12 +336,7 @@ function DraggableCollectionItem({item, state, dragState}) {
   let buttonRef = React.useRef();
   let {buttonProps} = useButton({
     ...dragButtonProps,
-    elementType: 'div',
-    onPressStart() {
-      if (!isSelected) {
-        state.selectionManager.select(item.key);
-      }
-    }
+    elementType: 'div'
   }, buttonRef);
   let id = useId();
 

@@ -269,12 +269,7 @@ function CollectionItem({item, state, dragState, dropState}) {
   let dragButtonRef = React.useRef();
   let {buttonProps} = useButton({
     ...dragButtonProps,
-    elementType: 'div',
-    onPressStart() {
-      if (!isSelected) {
-        state.selectionManager.select(item.key);
-      }
-    }
+    elementType: 'div'
   }, dragButtonRef);
 
   let dropIndicatorRef = React.useRef();
