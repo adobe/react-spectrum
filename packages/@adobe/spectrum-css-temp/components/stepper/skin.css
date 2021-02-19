@@ -186,13 +186,14 @@ governing permissions and limitations under the License.
 }
 
 /* styles that are applied to the stepper buttons independent of component state, cannot chromatic test some of these as a result */
+/* hover and active most notably, we can test disabled using min/max */
 .spectrum-Stepper {
   .spectrum-Stepper-button {
     &:hover,
     &.is-hovered {
       color: var(--spectrum-actionbutton-text-color-hover);
 
-      .spectrum-Stepper-icon {
+      .spectrum-Stepper-button-icon {
         fill: var(--spectrum-actionbutton-icon-color-hover);
       }
     }
@@ -205,7 +206,7 @@ governing permissions and limitations under the License.
     &.is-disabled {
       color: var(--spectrum-textfield-text-color-disabled);
 
-      .spectrum-Stepper-icon {
+      .spectrum-Stepper-button-icon {
         fill: var(--spectrum-textfield-text-color-disabled);
       }
     }
@@ -233,7 +234,7 @@ governing permissions and limitations under the License.
       &.is-disabled {
         color: var(--spectrum-textfield-quiet-text-color-disabled);
 
-        .spectrum-Stepper-icon {
+        .spectrum-Stepper-button-icon {
           fill: var(--spectrum-textfield-quiet-text-color-disabled);
         }
       }
