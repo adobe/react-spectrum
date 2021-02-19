@@ -15,7 +15,6 @@ import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils'
 import {Field} from '@react-spectrum/label';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {mergeProps} from '@react-aria/utils';
 import React, {HTMLAttributes, InputHTMLAttributes, RefObject, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
