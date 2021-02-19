@@ -66,7 +66,6 @@ governing permissions and limitations under the License.
   }
   .spectrum-Stepper-icon {
     padding-inline-end: 0;
-    inset-inline-end: var(--spectrum-stepper-validation-icon-right);
   }
   .spectrum-Stepper-button--stepUp {
     grid-area: increment;
@@ -76,6 +75,9 @@ governing permissions and limitations under the License.
 
   &:not(.spectrum-Stepper--isQuiet) {
     border-radius: var(--spectrum-border-radius);
+    .spectrum-Stepper-icon {
+      inset-inline-end: var(--spectrum-stepper-validation-icon-right);
+    }
 
     &:not(.spectrum-Stepper--showStepper) {
       &:not(.spectrum-Stepper--isMobile) {
@@ -146,6 +148,9 @@ governing permissions and limitations under the License.
     }
   }
   &.spectrum-Stepper--isQuiet {
+    .spectrum-Stepper-icon {
+      inset-inline-end: 0px;
+    }
     &:not(.spectrum-Stepper--showStepper) {
       &:not(.spectrum-Stepper--isMobile) {
         .spectrum-Stepper-input {}
