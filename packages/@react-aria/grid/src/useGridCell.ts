@@ -13,14 +13,15 @@
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {GridCollection} from '@react-types/grid';
 import {GridState} from '@react-stately/grid';
-import {HTMLAttributes, RefObject} from 'react';
+import {HTMLAttributes, KeyboardEvent, RefObject} from 'react';
 import {isFocusVisible, usePress} from '@react-aria/interactions';
 import {mergeProps} from '@react-aria/utils';
-import {Node} from '@react-types/shared';
+import {Node as RSNode} from '@react-types/shared';
+import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface GridCellProps {
-  node: Node<unknown>,
+  node: RSNode<unknown>,
   ref: RefObject<HTMLElement>,
   isVirtualized?: boolean,
   isDisabled?: boolean,
@@ -42,11 +43,15 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     focusMode = 'child'
   } = props;
 
+  let {direction} = useLocale();
+
   // Handles focusing the cell. If there is a focusable child,
   // it is focused, otherwise the cell itself is focused.
   let focus = () => {
     let treeWalker = getFocusableTreeWalker(ref.current);
-    let focusable = treeWalker.firstChild() as HTMLElement;
+    let focusable = ref.current.compareDocumentPosition(document.activeElement) & Node.DOCUMENT_POSITION_FOLLOWING
+      ? treeWalker.lastChild() as HTMLElement
+      : treeWalker.firstChild() as HTMLElement;
     if (focusable && focusMode === 'child') {
       focusSafely(focusable);
     } else {
@@ -64,6 +69,32 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   // TODO: move into useSelectableItem?
   let {pressProps} = usePress({...itemProps, isDisabled});
+
+  let onKeyDown = (e: KeyboardEvent) => {
+    let focusable;
+    // TODO: need to fix walker + active element
+    let walker = getFocusableTreeWalker(ref.current);
+    let leftNode = direction === 'rtl' ? walker.nextNode : walker.previousNode;
+    let rightNode = direction === 'rtl' ? walker.previousNode : walker.nextNode;
+    switch (e.key) {
+      case 'ArrowLeft':
+        e.preventDefault();
+        e.stopPropagation();
+        focusable = leftNode();
+        if (focusable) { // todo remove check once rows are not focusable
+          focusable.focus();
+        }
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        e.stopPropagation();
+        focusable = rightNode();
+        if (focusable && focusable !== ref.current) {
+          focusable.focus();
+        }
+        break;
+    }
+  };
 
   // Grid cells can have focusable elements inside them. In this case, focus should
   // be marshalled to that element rather than focusing the cell itself.
@@ -92,6 +123,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(pressProps, {
     role: 'gridcell',
+    onKeyDownCapture: onKeyDown,
     onFocus
   });
 
