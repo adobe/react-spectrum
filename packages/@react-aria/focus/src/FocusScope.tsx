@@ -215,8 +215,6 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       return;
     }
 
-    let focusManager = createFocusManager(scopeRef);
-
     // Handle the Tab key to contain focus within the scope
     let onKeyDown = (e) => {
       if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey) {
