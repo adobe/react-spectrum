@@ -10,50 +10,43 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorWheelProps} from '@react-types/color';
+import {AriaColorWheelProps} from '@react-types/color';
 import {ColorWheelState} from '@react-stately/color';
-import {focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
-import React, {HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
+import {focusWithoutScrolling, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
+import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
+import {useLocale} from '@react-aria/i18n';
 
-interface ColorWheelAriaProps extends ColorWheelProps {
-  inputRef: RefObject<HTMLElement>,
-  containerRef: RefObject<HTMLElement>,
-  innerRadius: number,
-  outerRadius: number
+interface ColorWheelAriaProps extends AriaColorWheelProps {
+  /** The outer radius of the color wheel. */
+  outerRadius: number,
+  /** The inner radius of the color wheel. */
+  innerRadius: number
 }
 
 interface ColorWheelAria {
+  /** Props for the track element. */
+  trackProps: HTMLAttributes<HTMLElement>,
+  /** Props for the thumb element. */
   thumbProps: HTMLAttributes<HTMLElement>,
-  containerProps: HTMLAttributes<HTMLElement>,
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
-  thumbPosition: {x: number, y: number}
+  /** Props for the visually hidden range input element. */
+  inputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
 const PAGE_MIN_STEP_SIZE = 6;
 
-function degToRad(deg: number) {
-  return deg * Math.PI / 180;
-}
-
-function radToDeg(rad: number) {
-  return rad * 180 / Math.PI;
-}
-
-// 0deg = 3 o'clock. increases clockwise
-function angleToCartesian(angle: number, radius: number): {x: number, y: number} {
-  let rad = degToRad(360 - angle + 90);
-  let x = Math.sin(rad) * (radius);
-  let y = Math.cos(rad) * (radius);
-  return {x, y};
-}
-function cartesianToAngle(x: number, y: number, radius: number): number {
-  let deg = radToDeg(Math.atan2(y / radius, x / radius));
-  return (deg + 360) % 360;
-}
-
-export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState): ColorWheelAria {
-  let {inputRef, containerRef, isDisabled, step = 1, innerRadius, outerRadius} = props;
+/**
+ * Provides the behavior and accessibility implementation for a color wheel component.
+ * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
+ */
+export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState, inputRef: RefObject<HTMLElement>): ColorWheelAria {
+  let {
+    isDisabled,
+    step = 1,
+    innerRadius,
+    outerRadius,
+    'aria-label': ariaLabel
+  } = props;
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
@@ -76,7 +69,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     },
     onMove({deltaX, deltaY, pointerType}) {
       if (currentPosition.current == null) {
-        currentPosition.current = angleToCartesian(stateRef.current.hue, thumbRadius);
+        currentPosition.current = stateRef.current.getThumbPosition(thumbRadius);
       }
       currentPosition.current.x += deltaX;
       currentPosition.current.y += deltaY;
@@ -87,11 +80,11 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
           state.decrement();
         }
       } else {
-        stateRef.current.setHue(cartesianToAngle(currentPosition.current.x, currentPosition.current.y, thumbRadius));
+        stateRef.current.setHueFromPoint(currentPosition.current.x, currentPosition.current.y, thumbRadius);
       }
     },
     onMoveEnd() {
-      isOnWheel.current = undefined;
+      isOnTrack.current = undefined;
       state.setDragging(false);
       focusInput();
     }
@@ -99,20 +92,20 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
   let {moveProps: movePropsThumb} = useMove(moveHandler);
 
   let currentPointer = useRef<number | null | undefined>(undefined);
-  let isOnWheel = useRef<boolean>(false);
+  let isOnTrack = useRef<boolean>(false);
   let {moveProps: movePropsContainer} = useMove({
     onMoveStart() {
-      if (isOnWheel.current) {
+      if (isOnTrack.current) {
         moveHandler.onMoveStart();
       }
     },
     onMove(e) {
-      if (isOnWheel.current) {
+      if (isOnTrack.current) {
         moveHandler.onMove(e);
       }
     },
     onMoveEnd() {
-      if (isOnWheel.current) {
+      if (isOnTrack.current) {
         moveHandler.onMoveEnd();
       }
     }
@@ -135,7 +128,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       focusInput();
       state.setDragging(false);
       currentPointer.current = undefined;
-      isOnWheel.current = false;
+      isOnTrack.current = false;
 
       removeGlobalListener(window, 'mouseup', onThumbUp, false);
       removeGlobalListener(window, 'touchend', onThumbUp, false);
@@ -143,16 +136,15 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     }
   };
 
-  let onTrackDown = (id: number | null, pageX: number, pageY: number) => {
-    let rect = (containerRef.current as HTMLElement).getBoundingClientRect();
+  let onTrackDown = (track: Element, id: number | null, pageX: number, pageY: number) => {
+    let rect = track.getBoundingClientRect();
     let x = pageX - rect.x - rect.width / 2;
     let y = pageY - rect.y - rect.height / 2;
     let radius = Math.sqrt(x * x + y * y);
-    let angle = cartesianToAngle(x, y, radius);
     if (innerRadius < radius && radius < outerRadius && !state.isDragging && currentPointer.current === undefined) {
-      isOnWheel.current = true;
+      isOnTrack.current = true;
       currentPointer.current = id;
-      stateRef.current.setHue(angle);
+      stateRef.current.setHueFromPoint(x, y, radius);
 
       focusInput();
       state.setDragging(true);
@@ -165,8 +157,8 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
 
   let onTrackUp = (e) => {
     let id = e.pointerId ?? e.changedTouches?.[0].identifier;
-    if (isOnWheel.current && id === currentPointer.current) {
-      isOnWheel.current = false;
+    if (isOnTrack.current && id === currentPointer.current) {
+      isOnTrack.current = false;
       currentPointer.current = undefined;
       state.setDragging(false);
       focusInput();
@@ -192,25 +184,112 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     }
   });
 
-  return {
-    containerProps: isDisabled ? {} : mergeProps({
-      onMouseDown: (e: React.MouseEvent) => {onTrackDown(undefined, e.pageX, e.pageY);},
-      onPointerDown: (e: React.PointerEvent) => {onTrackDown(e.pointerId, e.pageX, e.pageY);},
-      onTouchStart: (e: React.TouchEvent) => {onTrackDown(e.changedTouches[0].identifier, e.changedTouches[0].pageX, e.changedTouches[0].pageY);}
-    }, movePropsContainer),
-    thumbProps: isDisabled ? {} : mergeProps({
-      onMouseDown: () => {onThumbDown(undefined);},
-      onPointerDown: (e: React.PointerEvent) => {onThumbDown(e.pointerId);},
-      onTouchStart: (e: React.TouchEvent) => {onThumbDown(e.changedTouches[0].identifier);}
-    }, movePropsThumb, keyboardProps),
-    inputProps: {
-      type: 'range',
-      'aria-label': 'hue',
-      min: '0',
-      max: '360',
-      step: String(step),
-      disabled: isDisabled
+  let trackInteractions = isDisabled ? {} : mergeProps({
+    onMouseDown: (e: React.MouseEvent) => {
+      if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+        return;
+      }
+      onTrackDown(e.currentTarget, undefined, e.clientX, e.clientY);
     },
-    thumbPosition: angleToCartesian(state.value.getChannelValue('hue'), thumbRadius)
+    onPointerDown: (e: React.PointerEvent) => {
+      if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
+        return;
+      }
+      onTrackDown(e.currentTarget, e.pointerId, e.clientX, e.clientY);
+    },
+    onTouchStart: (e: React.TouchEvent) => {
+      onTrackDown(e.currentTarget, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+    }
+  }, movePropsContainer);
+
+  let thumbInteractions = isDisabled ? {} : mergeProps({
+    onMouseDown: (e: React.MouseEvent) => {
+      if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+        return;
+      }
+      onThumbDown(undefined);
+    },
+    onPointerDown: (e: React.PointerEvent) => {
+      if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
+        return;
+      }
+      onThumbDown(e.pointerId);
+    },
+    onTouchStart: (e: React.TouchEvent) => {
+      onThumbDown(e.changedTouches[0].identifier);
+    }
+  }, movePropsThumb, keyboardProps);
+  let {x, y} = state.getThumbPosition(thumbRadius);
+
+  // Provide a default aria-label if none is given
+  let {locale} = useLocale();
+  if (ariaLabel == null && props['aria-labelledby'] == null) {
+    ariaLabel = state.value.getChannelName('hue', locale);
+  }
+
+  let inputLabellingProps = useLabels({
+    ...props,
+    'aria-label': ariaLabel
+  });
+
+  return {
+    trackProps: {
+      ...trackInteractions,
+      style: {
+        position: 'relative',
+        touchAction: 'none',
+        width: outerRadius * 2,
+        height: outerRadius * 2,
+        background: `
+          conic-gradient(
+            from 90deg,
+            hsl(0, 100%, 50%),
+            hsl(30, 100%, 50%),
+            hsl(60, 100%, 50%),
+            hsl(90, 100%, 50%),
+            hsl(120, 100%, 50%),
+            hsl(150, 100%, 50%),
+            hsl(180, 100%, 50%),
+            hsl(210, 100%, 50%),
+            hsl(240, 100%, 50%),
+            hsl(270, 100%, 50%),
+            hsl(300, 100%, 50%),
+            hsl(330, 100%, 50%),
+            hsl(360, 100%, 50%)
+          )
+        `,
+        clipPath: `path(evenodd, "${circlePath(outerRadius, outerRadius, outerRadius)} ${circlePath(outerRadius, outerRadius, innerRadius)}")`
+      }
+    },
+    thumbProps: {
+      ...thumbInteractions,
+      style: {
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: `translate(calc(${x}px - 50%), calc(${y}px - 50%))`,
+        touchAction: 'none'
+      }
+    },
+    inputProps: mergeProps(
+      inputLabellingProps,
+      {
+        type: 'range',
+        min: '0',
+        max: '360',
+        step: String(step),
+        'aria-valuetext': state.value.formatChannelValue('hue', locale),
+        disabled: isDisabled,
+        value: `${state.value.getChannelValue('hue')}`,
+        onChange: (e: ChangeEvent<HTMLInputElement>) => {
+          state.setHue(parseFloat(e.target.value));
+        }
+      }
+    )
   };
+}
+
+// Creates an SVG path string for a circle.
+function circlePath(cx: number, cy: number, r: number) {
+  return `M ${cx}, ${cy} m ${-r}, 0 a ${r}, ${r}, 0, 1, 0, ${r * 2}, 0 a ${r}, ${r}, 0, 1, 0 ${-r * 2}, 0`;
 }

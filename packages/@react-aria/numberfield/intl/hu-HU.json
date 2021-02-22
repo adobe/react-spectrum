@@ -1,5 +1,5 @@
 {
-  "Decrement": "Csökkentés",
-  "Enter a number": "Adjon meg egy számot",
-  "Increment": "Növelés"
+  "decrease": "Decrease {fieldLabel}",
+  "increase": "Increase {fieldLabel}",
+  "Number field": "Number field"
 }

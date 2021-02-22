@@ -23,9 +23,12 @@ import {HidingColumns} from './HidingColumns';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
 import React from 'react';
+import {SearchField} from '@react-spectrum/searchfield';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {useAsyncList} from '@react-stately/data';
+import {useFilter} from '@react-aria/i18n';
+import {View} from '@react-spectrum/view';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -731,6 +734,16 @@ storiesOf('Table', module)
         </TableBody>
       </Table>
     )
+  )
+  .add(
+    'async client side filter loading',
+    () => <ProjectListTable />,
+    {chromatic: {disable: true}}
+  )
+  .add(
+    'async server side filter loading',
+    () => <AsyncServerFilterTable />,
+    {chromatic: {disable: true}}
   );
 
 function AsyncLoadingExample() {
@@ -787,6 +800,195 @@ function AsyncLoadingExample() {
               }
             </Row>)
           }
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
+
+let COLUMNS = [
+  {
+    name: 'Name',
+    key: 'name',
+    minWidth: 200
+  },
+  {
+    name: 'Owner',
+    key: 'ownerName'
+  }
+];
+
+async function getCollectionItems(): Promise<any> {
+  const result = [
+    {
+      id: 'xx',
+      name: 'abc',
+      ownerName: 'xx'
+    },
+    {
+      id: 'aa',
+      name: 'efg',
+      ownerName: 'aa'
+    },
+    {
+      id: 'yy',
+      name: 'abcd',
+      ownerName: 'yy'
+    },
+    {
+      id: 'bb',
+      name: 'efgh',
+      ownerName: 'bb'
+    },
+    {
+      id: 'zz',
+      name: 'abce',
+      ownerName: 'zz'
+    },
+    {
+      id: 'cc',
+      name: 'efgi',
+      ownerName: 'cc'
+    }
+  ];
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(result);
+    }, 5);
+  });
+}
+
+function ProjectListTable() {
+  interface Item {
+    id: string,
+    name: string,
+    ownerName: string
+  }
+
+  let {contains} = useFilter({sensitivity: 'base'});
+  let [filterText, setFilterText] = React.useState('');
+  let list = useAsyncList<Item>({
+    async load() {
+      let projects = await getCollectionItems();
+      return {items: projects};
+    }
+  });
+  let filteredItems = React.useMemo(() => list.items.filter(item => contains(item.name, filterText)), [list.items, filterText, contains]);
+  const onChange = (value) => {
+    setFilterText(value);
+  };
+
+  return (
+    <>
+      <SearchField
+        marginStart={'size-200'}
+        marginBottom={'size-200'}
+        marginTop={'size-200'}
+        width={'size-3600'}
+        aria-label={'Search by name'}
+        placeholder={'Search by name'}
+        value={filterText}
+        onChange={(onChange)} />
+      <View flexGrow={1} height={700} overflow="hidden">
+        <Table
+          aria-label={'Project list'}
+          height={'100%'}
+          isQuiet
+          sortDescriptor={list.sortDescriptor}
+          onSortChange={list.sort}>
+          <TableHeader columns={COLUMNS}>
+            {(column) => {
+              const {name, ...columnProps} = column;
+              return <Column {...columnProps}>{name}</Column>;
+            }}
+          </TableHeader>
+          <TableBody
+            items={filteredItems}
+            isLoading={list.isLoading}>
+            {(item) => (
+              <Row key={item.id}>{(key) => <Cell>{item[key]}</Cell>}</Row>
+            )}
+          </TableBody>
+        </Table>
+      </View>
+    </>
+  );
+}
+
+function AsyncServerFilterTable() {
+  interface Item {
+    name: string,
+    height: string,
+    mass: string
+  }
+
+  let columns = [
+    {
+      name: 'Name',
+      key: 'name',
+      minWidth: 200
+    },
+    {
+      name: 'Height',
+      key: 'height'
+    },
+    {
+      name: 'Mass',
+      key: 'mass'
+    }
+  ];
+
+  let list = useAsyncList<Item>({
+    getKey: (item) => item.name,
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  const onChange = (value) => {
+    list.setFilterText(value);
+  };
+  return (
+    <div>
+      <SearchField
+        marginStart={'size-200'}
+        marginBottom={'size-200'}
+        marginTop={'size-200'}
+        width={'size-3600'}
+        aria-label={'Search by name'}
+        placeholder={'Search by name'}
+        defaultValue={list.filterText}
+        onChange={(onChange)} />
+      <Table
+        aria-label={'Star Wars Characters'}
+        height={200}
+        width={600}
+        isQuiet
+        sortDescriptor={list.sortDescriptor}
+        onSortChange={list.sort}>
+        <TableHeader columns={columns}>
+          {(column) => {
+            const {name, ...columnProps} = column;
+            return <Column {...columnProps}>{name}</Column>;
+          }}
+        </TableHeader>
+        <TableBody
+          items={list.items}
+          isLoading={list.isLoading}
+          onLoadMore={list.loadMore}>
+          {(item) => (
+            <Row key={item.name}>{(key) => <Cell>{item[key]}</Cell>}</Row>
+          )}
         </TableBody>
       </Table>
     </div>

@@ -272,9 +272,9 @@ describe('Radios', function () {
     let radios = getAllByRole('radio');
     expect(radioGroup).toBeTruthy();
     expect(radios.length).toBe(3);
-    expect(radios[0]).toHaveAttribute('readonly');
-    expect(radios[1]).toHaveAttribute('readonly');
-    expect(radios[2]).toHaveAttribute('readonly');
+    expect(radios[0]).toHaveAttribute('aria-readonly', 'true');
+    expect(radios[1]).toHaveAttribute('aria-readonly', 'true');
+    expect(radios[2]).toHaveAttribute('aria-readonly', 'true');
 
     let cats = getByLabelText('Cats');
     userEvent.click(cats);

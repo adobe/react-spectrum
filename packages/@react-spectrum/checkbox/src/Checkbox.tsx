@@ -50,6 +50,9 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
     // eslint-disable-next-line react-hooks/rules-of-hooks
     ? useCheckboxGroupItem({
       ...props,
+      // Value is optional for standalone checkboxes, but required for CheckboxGroup items;
+      // it's passed explicitly here to avoid typescript error (requires strictNullChecks disabled).
+      value: props.value,
       // Only pass isRequired and validationState to react-aria if they came from
       // the props for this individual checkbox, and not from the group via context.
       isRequired: originalProps.isRequired,
@@ -67,6 +70,9 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
       if (originalProps[key] != null) {
         console.warn(`${key} is unsupported on individual <Checkbox> elements within a <CheckboxGroup>. Please apply these props to the group instead.`);
       }
+    }
+    if (props.value == null) {
+      console.warn('A <Checkbox> element within a <CheckboxGroup> requires a `value` property.');
     }
   }
 

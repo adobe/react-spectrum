@@ -83,7 +83,7 @@ publish-nightly: build
 	yarn publish:nightly
 
 build:
-	parcel build packages/@react-{spectrum,aria,stately}/*/ --no-minify
+	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/*/ --no-minify
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs

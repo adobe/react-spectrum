@@ -28,6 +28,8 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     children,
     labelProps,
     elementType,
+    wrapperClassName,
+
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -40,11 +42,15 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
         'spectrum-Field--positionTop': labelPosition === 'top',
         'spectrum-Field--positionSide': labelPosition === 'side'
       },
-      styleProps.className
+      styleProps.className,
+      wrapperClassName
     );
 
     children = React.cloneElement(children, mergeProps(children.props, {
-      className: classNames(labelStyles, 'spectrum-Field-field')
+      className: classNames(
+        labelStyles,
+        'spectrum-Field-field'
+      )
     }));
 
     return (

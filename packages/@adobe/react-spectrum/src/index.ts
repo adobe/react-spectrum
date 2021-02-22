@@ -30,6 +30,7 @@ export {Picker} from '@react-spectrum/picker';
 export {ProgressBar, ProgressCircle} from '@react-spectrum/progress';
 export {Provider} from '@react-spectrum/provider';
 export {Radio, RadioGroup} from '@react-spectrum/radio';
+export {RangeSlider, Slider} from '@react-spectrum/slider';
 export {SearchField} from '@react-spectrum/searchfield';
 export {StatusLight} from '@react-spectrum/statuslight';
 export {Switch} from '@react-spectrum/switch';

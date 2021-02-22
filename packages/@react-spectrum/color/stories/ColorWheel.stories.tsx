@@ -11,24 +11,24 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Color} from '@react-stately/color';
 import {ColorWheel} from '../';
 import {Flex} from '@adobe/react-spectrum';
+import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('ColorWheel', module)
   .add(
     'default',
-    () => <ColorWheel defaultValue={new Color('hsl(0, 100%, 50%)')} onChange={action('change')} />
+    () => <ColorWheel defaultValue="hsl(0, 100%, 50%)')" onChange={action('change')} />
   )
   .add(
     'disabled',
-    () => <ColorWheel isDisabled defaultValue={new Color('hsl(0, 100%, 50%)')} />
+    () => <ColorWheel isDisabled defaultValue="hsl(0, 100%, 50%)" />
   )
   .add(
     'step',
-    () => <ColorWheel step={6} defaultValue={new Color('hsl(0, 100%, 50%)')} />
+    () => <ColorWheel step={6} defaultValue="hsl(0, 100%, 50%)" />
   )
   .add(
     'custom size',
@@ -40,14 +40,14 @@ storiesOf('ColorWheel', module)
           <button onClick={() => setSize('size-5000')}>size-5000</button>
           <button onClick={() => setSize('50vh')}>50vh</button>
         </Flex>
-        <ColorWheel defaultValue={new Color('hsl(0, 100%, 50%)')} size={size} />
+        <ColorWheel defaultValue="hsl(0, 100%, 50%)" size={size} />
       </Flex>);
     }
   )
   .add(
     'controlled',
     () => {
-      let [color, setColor] = useState(new Color('hsl(0, 100%, 50%)'));
+      let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
       let colorCSS = color.toString('css');
       return (<Flex gap={'size-500'} direction="row" alignItems="center">
         <ColorWheel onChange={setColor} value={color} />

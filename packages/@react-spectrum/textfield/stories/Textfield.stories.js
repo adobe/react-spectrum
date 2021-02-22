@@ -109,11 +109,20 @@ storiesOf('TextField', module)
   .add('custom width',
     () => render({icon: <Info />, validationState: 'invalid', width: '300px'})
   )
+  .add('custom width small',
+    () => render({icon: <Info />, validationState: 'invalid', width: '30px'})
+  )
   .add('custom width, quiet',
     () => render({icon: <Info />, validationState: 'invalid', width: '300px', isQuiet: true})
   )
   .add('custom width, labelPosition: side',
     () => render({icon: <Info />, validationState: 'invalid', width: '500px', labelPosition: 'side'})
+  )
+  .add('custom width small, labelPosition: side',
+    () => render({icon: <Info />, validationState: 'invalid', width: '30px', labelPosition: 'side'})
+  )
+  .add('placeholder arabic',
+    () => render({placeholder: 'أدخل رقماً'})
   );
 
 function render(props = {}) {

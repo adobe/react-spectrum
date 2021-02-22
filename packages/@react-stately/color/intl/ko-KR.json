@@ -1,0 +1,10 @@
+{
+  "hue": "색상",
+  "saturation": "채도",
+  "lightness": "명도",
+  "brightness": "값",
+  "red": "빨강",
+  "green": "녹색",
+  "blue": "파랑",
+  "alpha": "알파"
+}

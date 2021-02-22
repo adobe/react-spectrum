@@ -29,6 +29,7 @@ export {useSearchField} from '@react-aria/searchfield';
 export {HiddenSelect, useHiddenSelect, useSelect} from '@react-aria/select';
 export {useSeparator} from '@react-aria/separator';
 export {SSRProvider, useIsSSR} from '@react-aria/ssr';
+export {useSlider, useSliderThumb} from '@react-aria/slider';
 export {useSwitch} from '@react-aria/switch';
 export {useTextField} from '@react-aria/textfield';
 export {useTooltip, useTooltipTrigger} from '@react-aria/tooltip';
