@@ -1,5 +1,5 @@
 {
-  "Decrement": "Minska",
-  "Increment": "Öka",
+  "decrease": "Decrease {fieldLabel}",
+  "increase": "Increase {fieldLabel}",
   "Number field": "Number field"
 }

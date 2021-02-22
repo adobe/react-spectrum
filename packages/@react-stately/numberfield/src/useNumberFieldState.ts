@@ -11,30 +11,62 @@
  */
 
 import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
-import {getNumberFormatter, getNumberingSystem, isValidPartialNumber, parseNumber} from '@react-stately/i18n';
 import {NumberFieldProps} from '@react-types/numberfield';
+import {NumberFormatter, NumberParser} from '@internationalized/number';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 export interface NumberFieldState {
-  validate: (value: string) => boolean,
-  increment: () => void,
-  decrement: () => void,
-  incrementToMax: () => void,
-  decrementToMin: () => void,
-  canIncrement: boolean,
-  canDecrement: boolean,
-  commitInputValue: () => void,
-  minValue: number,
-  maxValue: number,
+  /**
+   * The current text value of the input. Updated as the user types,
+   * and formatted according to `formatOptions` on blur.
+   */
+  inputValue: string,
+  /**
+   * The currently parsed number value, or NaN if a valid number could not be parsed.
+   * Updated based on the `inputValue` as the user types.
+   */
   numberValue: number,
-  setInputValue: (val: string) => void,
-  inputValue: string
+  /** The minimum value of the number field. */
+  minValue: number,
+  /** The maximum value of the number field. */
+  maxValue: number,
+  /** Whether the current value can be incremented according to the maximum value and step. */
+  canIncrement: boolean,
+  /** Whether the current value can be decremented according to the minimum value and step. */
+  canDecrement: boolean,
+  /**
+   * Validates a user input string according to the current locale and format options.
+   * Values can be partially entered, and may be valid even if they cannot currently be parsed to a number.
+   * Can be used to implement validation as a user types.
+   */
+  validate(value: string): boolean,
+  /** Sets the current text value of the input. */
+  setInputValue(val: string): void,
+  /**
+   * Commits the current input value. The value is parsed to a number, clamped according
+   * to the minimum and maximum values of the field, and snapped to the nearest step value.
+   * This will fire the `onChange` prop with the new value, and if uncontrolled, update the `numberValue`.
+   * Typically this is called when the field is blurred.
+   */
+  commit(): void,
+  /** Increments the current input value to the next step boundary, and fires `onChange`. */
+  increment(): void,
+  /** Decrements the current input value to the next step boundary, and fires `onChange`. */
+  decrement(): void,
+  /** Sets the current value to the `maxValue` if any, and fires `onChange`. */
+  incrementToMax(): void,
+  /** Sets the current value to the `minValue` if any, and fires `onChange`. */
+  decrementToMin(): void
 }
 
 interface NumberFieldStateProps extends NumberFieldProps {
   locale: string
 }
 
+/**
+ * Provides state management for a number field component. Number fields allow users to enter a number,
+ * and increment or decrement the value using stepper buttons.
+ */
 export function useNumberFieldState(
   props: NumberFieldStateProps
 ): NumberFieldState {
@@ -52,10 +84,11 @@ export function useNumberFieldState(
   } = props;
 
   let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, onChange);
-  let [inputValue, setInputValue] = useState(() => isNaN(numberValue) ? '' : getNumberFormatter(locale, formatOptions).format(numberValue));
+  let [inputValue, setInputValue] = useState(() => isNaN(numberValue) ? '' : new NumberFormatter(locale, formatOptions).format(numberValue));
 
-  let numberingSystem = useMemo(() => getNumberingSystem(locale, formatOptions, inputValue), [locale, formatOptions, inputValue]);
-  let formatter = useMemo(() => getNumberFormatter(locale, {...formatOptions, numberingSystem}), [locale, formatOptions, numberingSystem]);
+  let numberParser = useMemo(() => new NumberParser(locale, formatOptions), [locale, formatOptions]);
+  let numberingSystem = useMemo(() => numberParser.getNumberingSystem(inputValue), [numberParser, inputValue]);
+  let formatter = useMemo(() => new NumberFormatter(locale, {...formatOptions, numberingSystem}), [locale, formatOptions, numberingSystem]);
   let intlOptions = useMemo(() => formatter.resolvedOptions(), [formatter]);
   let format = useCallback((value: number) => isNaN(value) ? '' : formatter.format(value), [formatter]);
 
@@ -72,11 +105,11 @@ export function useNumberFieldState(
   }, [numberValue, locale, formatOptions]);
 
   // Store last parsed value in a ref so it can be used by increment/decrement below
-  let parsedValue = useMemo(() => parseNumber(locale, formatOptions, inputValue), [locale, formatOptions, inputValue]);
+  let parsedValue = useMemo(() => numberParser.parse(inputValue), [numberParser, inputValue]);
   let parsed = useRef(0);
   parsed.current = parsedValue;
 
-  let commitInputValue = () => {
+  let commit = () => {
     // Set to empty state if input value is empty
     if (!inputValue.length) {
       setNumberValue(NaN);
@@ -98,7 +131,7 @@ export function useNumberFieldState(
       clampedValue = snapValueToStep(parsed.current, minValue, maxValue, step);
     }
 
-    clampedValue = parseNumber(locale, formatOptions, format(clampedValue));
+    clampedValue = numberParser.parse(format(clampedValue));
     setNumberValue(clampedValue);
 
     // in a controlled state, the numberValue won't change, so we won't go back to our old input without help
@@ -192,7 +225,7 @@ export function useNumberFieldState(
     )
   ), [isDisabled, isReadOnly, minValue, maxValue, clampStep, parsedValue]);
 
-  let validate = (value: string) => isValidPartialNumber(locale, formatOptions, value, minValue, maxValue);
+  let validate = (value: string) => numberParser.isValidPartialNumber(value, minValue, maxValue);
 
   return {
     validate,
@@ -207,7 +240,7 @@ export function useNumberFieldState(
     numberValue: parsedValue,
     setInputValue,
     inputValue,
-    commitInputValue
+    commit
   };
 }
 

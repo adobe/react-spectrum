@@ -1,5 +1,5 @@
 {
-  "Decrement": "Vähennys",
-  "Increment": "Lisäys",
+  "decrease": "Decrease {fieldLabel}",
+  "increase": "Increase {fieldLabel}",
   "Number field": "Number field"
 }

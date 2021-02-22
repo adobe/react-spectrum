@@ -1,5 +1,5 @@
 {
-  "Decrement": "نقصان",
-  "Increment": "زيادة",
+  "decrease": "Decrease {fieldLabel}",
+  "increase": "Increase {fieldLabel}",
   "Number field": "Number field"
 }

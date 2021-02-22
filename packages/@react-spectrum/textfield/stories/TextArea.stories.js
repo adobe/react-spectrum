@@ -12,6 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
+import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import Info from '@spectrum-icons/workflow/Info';
 import React, {useState} from 'react';
@@ -135,7 +136,9 @@ storiesOf('TextArea', module)
   )
   .add('controlled interactive',
     () => <ControlledTextArea />
-  );
+  )
+  .add('in flex', () => renderInFlexRowAndBlock())
+  .add('in flex validation state', () => renderInFlexRowAndBlock({validationState: 'invalid'}));
 
 function render(props = {}) {
   return (
@@ -157,5 +160,63 @@ function ControlledTextArea(props) {
       <TextArea label="megatron" value={value} onChange={setValue} {...props} isQuiet />
       <Button variant="primary" onPress={() => setValue('decepticons are evil transformers and should be kicked out of earth')}>Set Text</Button>
     </>
+  );
+}
+
+function renderInFlexRowAndBlock(props = {}) {
+  return (
+    <Flex direction="column" gap="size-300">
+      Align stretch
+      <Flex gap="size-100">
+        <TextArea
+          label="Default"
+          placeholder="React"
+          {...props} />
+        <TextArea
+          label="Quiet"
+          placeholder="React"
+          isQuiet
+          {...props} />
+        <TextArea
+          label="Quiet"
+          placeholder="React"
+          isQuiet
+          {...props} />
+      </Flex>
+      Align end
+      <Flex gap="size-100" alignItems="end">
+        <TextArea
+          label="Default"
+          placeholder="React"
+          {...props} />
+        <TextArea
+          label="Quiet"
+          placeholder="React"
+          isQuiet
+          {...props} />
+        <TextArea
+          label="Quiet"
+          placeholder="React"
+          isQuiet
+          {...props} />
+      </Flex>
+      Display block
+      <div>
+        <TextArea
+          label="Default"
+          placeholder="React"
+          {...props} />
+        <TextArea
+          label="Quiet"
+          placeholder="React"
+          isQuiet
+          {...props} />
+        <TextArea
+          label="Quiet"
+          placeholder="React"
+          isQuiet
+          {...props} />
+      </div>
+    </Flex>
   );
 }

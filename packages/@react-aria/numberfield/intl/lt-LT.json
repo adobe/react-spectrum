@@ -1,5 +1,5 @@
 {
-  "Decrement": "Sumažėjimas",
-  "Increment": "Padidėjimas",
+  "decrease": "Decrease {fieldLabel}",
+  "increase": "Increase {fieldLabel}",
   "Number field": "Number field"
 }

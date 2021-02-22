@@ -35,6 +35,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
   let provider = useProvider();
   let {
     isQuiet,
+    isReadOnly,
     isDisabled,
     hideStepper
   } = props;
@@ -46,12 +47,12 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
   let inputRef = useRef<HTMLInputElement>();
   let domRef = useFocusableRef<HTMLElement>(ref, inputRef);
   let {
-    numberFieldProps,
+    groupProps,
     labelProps,
-    inputFieldProps,
+    inputProps,
     incrementButtonProps,
     decrementButtonProps
-  } = useNumberField({...props, inputRef}, state);
+  } = useNumberField(props, state, inputRef);
   let isMobile = provider.scale === 'large';
   let showStepper = !hideStepper;
 
@@ -62,14 +63,17 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
     'spectrum-InputGroup',
     {
       'spectrum-InputGroup--quiet': isQuiet,
-      'is-invalid': props.validationState === 'invalid',
-      'is-disabled': isDisabled
+      'spectrum-InputGroup--invalid': props.validationState === 'invalid',
+      'is-disabled': isDisabled,
+      'is-hovered': isHovered
     },
     classNames(
       stepperStyle,
       'spectrum-Stepper',
       {
         'spectrum-Stepper--quiet': isQuiet,
+        'is-disabled': isDisabled,
+        'spectrum-Stepper--readonly': isReadOnly,
         'is-invalid': props.validationState === 'invalid',
         'spectrum-Stepper--showStepper': showStepper,
         'spectrum-Stepper--isMobile': isMobile,
@@ -79,17 +83,23 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
       }
     )
   );
-  // TODO: how to ignore a right click on the stepper buttons to prevent focus of just them
 
   return (
     <Field
       {...props as Omit<SpectrumNumberFieldProps, 'onChange'>}
       labelProps={labelProps}
-      ref={domRef}>
+      ref={domRef}
+      wrapperClassName={classNames(
+        stepperStyle,
+        'spectrum-Stepper-container',
+        {
+          'spectrum-Stepper-container--isMobile': isMobile
+        }
+      )}>
       <NumberFieldInput
         {...props}
-        numberFieldProps={mergeProps(numberFieldProps, hoverProps)}
-        inputProps={inputFieldProps}
+        groupProps={mergeProps(groupProps, hoverProps)}
+        inputProps={inputProps}
         inputRef={inputRef}
         incrementProps={incrementButtonProps}
         decrementProps={decrementButtonProps}
@@ -101,7 +111,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
 
 
 interface NumberFieldInputProps extends SpectrumNumberFieldProps {
-  numberFieldProps: HTMLAttributes<HTMLDivElement>,
+  groupProps: HTMLAttributes<HTMLDivElement>,
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   incrementProps: AriaButtonProps,
@@ -112,7 +122,7 @@ interface NumberFieldInputProps extends SpectrumNumberFieldProps {
 
 const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: NumberFieldInputProps, ref: RefObject<HTMLElement>) {
   let {
-    numberFieldProps,
+    groupProps,
     inputProps,
     inputRef,
     incrementProps,
@@ -122,8 +132,7 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
     autoFocus,
     isQuiet,
     hideStepper,
-    validationState,
-    label
+    validationState
   } = props;
   let showStepper = !hideStepper;
 
@@ -135,14 +144,36 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
       focusRingClass={classNames(inputgroupStyles, 'focus-ring', classNames(stepperStyle, 'focus-ring'))}
       autoFocus={autoFocus}>
       <div
-        {...numberFieldProps}
+        {...groupProps}
         ref={ref as RefObject<HTMLDivElement>}
-        {...(label ? {style: {...style, width: '100%'}} : {style})}
+        style={style}
         className={className}>
         <TextFieldBase
-          UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-field')}
+          UNSAFE_className={
+            classNames(
+              stepperStyle,
+              'spectrum-Stepper-field',
+              classNames(inputgroupStyles,
+                'spectrum-InputGroup-field'
+              )
+            )
+          }
           isQuiet={isQuiet}
-          inputClassName={classNames(stepperStyle, 'spectrum-Stepper-input')}
+          inputClassName={
+            classNames(
+              stepperStyle,
+              'spectrum-Stepper-input',
+              classNames(inputgroupStyles,
+                'spectrum-InputGroup-input'
+              )
+            )
+          }
+          validationIconClassName={
+            classNames(
+              inputgroupStyles,
+              'spectrum-InputGroup-input-validationIcon'
+            )
+          }
           inputRef={inputRef}
           validationState={validationState}
           inputProps={inputProps} />
@@ -158,7 +189,7 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
 });
 
 /**
- * Numberfield allow entering of numbers with steppers to increment and decrement that value.
+ * NumberFields allow users to enter a number, and increment or decrement the value using stepper buttons.
  */
 let _NumberField = React.forwardRef(NumberField);
 export {_NumberField as NumberField};

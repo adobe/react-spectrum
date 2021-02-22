@@ -1,5 +1,5 @@
 {
-  "Decrement": "Reduser",
-  "Increment": "Øk",
+  "decrease": "Decrease {fieldLabel}",
+  "increase": "Increase {fieldLabel}",
   "Number field": "Number field"
 }
