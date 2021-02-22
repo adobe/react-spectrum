@@ -1,5 +1,5 @@
 {
-  "Decrement": "Decrementar",
-  "Enter a number": "Insira um número",
-  "Increment": "Incrementar"
+  "decrease": "Decrease {fieldLabel}",
+  "increase": "Increase {fieldLabel}",
+  "Number field": "Number field"
 }

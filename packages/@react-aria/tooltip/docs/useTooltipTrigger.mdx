@@ -14,6 +14,7 @@ import docs from 'docs:@react-aria/tooltip';
 import statelyDocs from 'docs:@react-stately/tooltip';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-aria/tooltip/package.json';
+import Anatomy from './anatomy.svg';
 
 ```jsx import
 import {useTooltipTrigger} from '@react-aria/tooltip';
@@ -55,7 +56,9 @@ fully accessible tooltips that can be styled as needed.
 
 ## Anatomy
 
-A tooltip consists of two parts, the trigger element and the tooltip itself.
+<Anatomy />
+
+A tooltip consists of two parts: the trigger element and the tooltip itself.
 Users may reveal the tooltip by hovering or focusing the trigger.
 
 `useTooltipTrigger` returns props to be spread onto its target trigger and the tooltip:

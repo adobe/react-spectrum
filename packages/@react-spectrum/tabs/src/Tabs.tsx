@@ -132,7 +132,7 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
           selectedTab={selectedTab}
           ref={tablistRef} />
       }
-      <div {...tabPanelProps}>
+      <div {...tabPanelProps} className={classNames(styles, 'spectrum-TabsPanel-tabpanel')}>
         {state.selectedItem && state.selectedItem.props.children}
       </div>
     </div>

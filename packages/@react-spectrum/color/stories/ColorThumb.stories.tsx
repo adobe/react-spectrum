@@ -10,29 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color} from '@react-stately/color';
 import {ColorThumb} from '../src/ColorThumb';
+import {parseColor} from '@react-stately/color';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('ColorThumb', module)
   .add(
     'default',
-    () => <ColorThumb value={new Color('#f00')} />
+    () => <ColorThumb value={parseColor('#f00')} />
   )
   .add(
     'focused',
-    () => <ColorThumb value={new Color('#f00')} isFocused />
+    () => <ColorThumb value={parseColor('#f00')} isFocused />
   )
   .add(
     'focused, dragging',
-    () => <ColorThumb value={new Color('#f00')} isFocused isDragging />
+    () => <ColorThumb value={parseColor('#f00')} isFocused isDragging />
   )
   .add(
     'focused, dragging, alpha',
-    () => <ColorThumb value={new Color('hsla(0, 100%, 100%, 0)')} isFocused isDragging />
+    () => <ColorThumb value={parseColor('hsla(0, 100%, 100%, 0)')} isFocused isDragging />
   )
   .add(
     'disabled',
-    () => <ColorThumb value={new Color('#f00')} isDisabled />
+    () => <ColorThumb value={parseColor('#f00')} isDisabled />
   );
