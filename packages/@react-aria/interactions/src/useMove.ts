@@ -15,9 +15,11 @@ import {MoveEvents, PointerType} from '@react-types/shared';
 import React, {HTMLAttributes, useMemo, useRef} from 'react';
 import {useGlobalListeners} from '@react-aria/utils';
 
+type MoveResultProps = Pick<HTMLAttributes<HTMLElement>, 'onMouseDown' | 'onTouchStart' | 'onPointerDown' | 'onKeyDown'>
+
 interface MoveResult {
   /** Props to spread on the target element. */
-  moveProps: HTMLAttributes<HTMLElement>
+  moveProps: MoveResultProps
 }
 
 /**
@@ -37,7 +39,7 @@ export function useMove(props: MoveEvents): MoveResult {
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
   let moveProps = useMemo(() => {
-    let moveProps: HTMLAttributes<HTMLElement> = {};
+    let moveProps: MoveResultProps = {};
 
     let start = () => {
       disableTextSelection();

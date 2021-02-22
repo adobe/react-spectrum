@@ -25,7 +25,7 @@ interface FocusProps extends FocusEvents {
 
 interface FocusResult {
   /** Props to spread onto the target element. */
-  focusProps: HTMLAttributes<HTMLElement>
+  focusProps: Pick<HTMLAttributes<HTMLElement>, 'onFocus' | 'onBlur'>
 }
 
 /**

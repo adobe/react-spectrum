@@ -54,11 +54,13 @@ interface EventBase {
   metaKey: boolean
 }
 
+type PressResultProps = Pick<HTMLAttributes<HTMLElement>, 'onClick' | 'onPointerDown' | 'onPointerUp' | 'onMouseDown' | 'onMouseEnter' | 'onMouseLeave' | 'onMouseUp' | 'onTouchStart' | 'onTouchMove' | 'onTouchEnd' | 'onTouchCancel' | 'onKeyDown' | 'onKeyUp'>
+
 export interface PressResult {
   /** Whether the target is currently pressed. */
   isPressed: boolean,
   /** Props to spread on the target element. */
-  pressProps: HTMLAttributes<HTMLElement>
+  pressProps: PressResultProps
 }
 
 function usePressResponderContext(props: PressHookProps): PressHookProps {
@@ -193,7 +195,7 @@ export function usePress(props: PressHookProps): PressResult {
       }
     };
 
-    let pressProps: HTMLAttributes<HTMLElement> = {
+    let pressProps: PressResultProps = {
       onKeyDown(e) {
         if (isValidKeyboardEvent(e.nativeEvent)) {
           e.preventDefault();

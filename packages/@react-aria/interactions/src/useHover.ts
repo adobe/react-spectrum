@@ -23,9 +23,11 @@ export interface HoverProps extends HoverEvents {
   isDisabled?: boolean
 }
 
+type HoverResultProps = Pick<HTMLAttributes<HTMLElement>, 'onPointerEnter' | 'onPointerLeave' | 'onTouchStart' | 'onMouseEnter' | 'onMouseLeave'>
+
 interface HoverResult {
   /** Props to spread on the target element. */
-  hoverProps: HTMLAttributes<HTMLElement>,
+  hoverProps: HoverResultProps,
   isHovered: boolean
 }
 
@@ -146,7 +148,7 @@ export function useHover(props: HoverProps): HoverResult {
       setHovered(false);
     };
 
-    let hoverProps: HTMLAttributes<HTMLElement> = {};
+    let hoverProps: HoverResultProps = {};
 
     if (typeof PointerEvent !== 'undefined') {
       hoverProps.onPointerEnter = (e) => {

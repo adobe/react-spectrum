@@ -21,7 +21,7 @@ export interface KeyboardProps extends KeyboardEvents {
 
 interface KeyboardResult {
   /** Props to spread onto the target element. */
-  keyboardProps: HTMLAttributes<HTMLElement>
+  keyboardProps: Pick<HTMLAttributes<HTMLElement>, 'onKeyDown' | 'onKeyUp'>
 }
 
 /**

@@ -30,7 +30,7 @@ interface FocusWithinProps {
 
 interface FocusWithinResult {
   /** Props to spread onto the target element. */
-  focusWithinProps: HTMLAttributes<HTMLElement>
+  focusWithinProps: Pick<HTMLAttributes<HTMLElement>, 'onFocus' | 'onBlur'>
 }
 
 /**
