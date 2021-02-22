@@ -11,13 +11,13 @@
  */
 
 import {clamp} from '@react-aria/utils';
-import {ColorChannel, ColorFormat, Color as IColor} from '@react-types/color';
+import {ColorChannel, ColorChannelRange, ColorFormat, Color as IColor} from '@react-types/color';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {MessageDictionary} from '@internationalized/message';
+import {NumberFormatter} from '@internationalized/number';
 
-interface ColorChannelRange {
-  minValue: number,
-  maxValue: number,
-  step: number
-}
+const messages = new MessageDictionary(intlMessages);
 
 export function parseColor(value: string): IColor {
   let res = RGBColor.parse(value) || HSBColor.parse(value) || HSLColor.parse(value);
@@ -28,29 +28,12 @@ export function parseColor(value: string): IColor {
   throw new Error('Invalid color value: ' + value);
 }
 
-export function getColorChannelRange(channel: ColorChannel): ColorChannelRange {
-  switch (channel) {
-    case 'hue':
-      return {minValue: 0, maxValue: 360, step: 1};
-    case 'saturation':
-    case 'lightness':
-    case 'brightness':
-      return {minValue: 0, maxValue: 100, step: 1};
-    case 'red':
-    case 'green':
-    case 'blue':
-      return {minValue: 0, maxValue: 255, step: 1};
-    case 'alpha':
-      return {minValue: 0, maxValue: 1, step: 0.01};
-    default:
-      throw new Error('Unknown color channel: ' + channel);
-  }
-}
-
 abstract class Color implements IColor {
   abstract toFormat(format: ColorFormat): IColor;
   abstract toString(format: ColorFormat | 'css'): string;
   abstract clone(): Color;
+  abstract getChannelRange(channel: ColorChannel): ColorChannelRange;
+  abstract formatChannelValue(channel: ColorChannel, locale: string): string;
 
   toHexInt(): number {
     return this.toFormat('rgb').toHexInt();
@@ -72,6 +55,10 @@ abstract class Color implements IColor {
     }
 
     throw new Error('Unsupported color channel: ' + channel);
+  }
+
+  getChannelName(channel: ColorChannel, locale: string) {
+    return messages.getStringForLocale(channel, locale);
   }
 }
 
@@ -143,6 +130,37 @@ class RGBColor extends Color {
   clone(): Color {
     return new RGBColor(this.red, this.green, this.blue, this.alpha);
   }
+
+  getChannelRange(channel: ColorChannel): ColorChannelRange {
+    switch (channel) {
+      case 'red':
+      case 'green':
+      case 'blue':
+        return {minValue: 0, maxValue: 255, step: 1};
+      case 'alpha':
+        return {minValue: 0, maxValue: 1, step: 0.01};
+      default:
+        throw new Error('Unknown color channel: ' + channel);
+    }
+  }
+
+  formatChannelValue(channel: ColorChannel, locale: string) {
+    let options: Intl.NumberFormatOptions;
+    let value = this.getChannelValue(channel);
+    switch (channel) {
+      case 'red':
+      case 'green':
+      case 'blue':
+        options = {style: 'decimal'};
+        break;
+      case 'alpha':
+        options = {style: 'percent'};
+        break;
+      default:
+        throw new Error('Unknown color channel: ' + channel);
+    }
+    return new NumberFormatter(locale, options).format(value);
+  }
 }
 
 // X = <negative/positive number with/without decimal places>
@@ -210,6 +228,41 @@ class HSBColor extends Color {
   clone(): Color {
     return new HSBColor(this.hue, this.saturation, this.brightness, this.alpha);
   }
+
+  getChannelRange(channel: ColorChannel): ColorChannelRange {
+    switch (channel) {
+      case 'hue':
+        return {minValue: 0, maxValue: 360, step: 1};
+      case 'saturation':
+      case 'brightness':
+        return {minValue: 0, maxValue: 100, step: 1};
+      case 'alpha':
+        return {minValue: 0, maxValue: 1, step: 0.01};
+      default:
+        throw new Error('Unknown color channel: ' + channel);
+    }
+  }
+
+  formatChannelValue(channel: ColorChannel, locale: string) {
+    let options: Intl.NumberFormatOptions;
+    let value = this.getChannelValue(channel);
+    switch (channel) {
+      case 'hue':
+        options = {style: 'unit', unit: 'degree', unitDisplay: 'narrow'};
+        break;
+      case 'saturation':
+      case 'brightness':
+        options = {style: 'percent'};
+        value /= 100;
+        break;
+      case 'alpha':
+        options = {style: 'percent'};
+        break;
+      default:
+        throw new Error('Unknown color channel: ' + channel);
+    }
+    return new NumberFormatter(locale, options).format(value);
+  }
 }
 
 // X = <negative/positive number with/without decimal places>
@@ -261,5 +314,40 @@ class HSLColor extends Color {
 
   clone(): Color {
     return new HSLColor(this.hue, this.saturation, this.lightness, this.alpha);
+  }
+
+  getChannelRange(channel: ColorChannel): ColorChannelRange {
+    switch (channel) {
+      case 'hue':
+        return {minValue: 0, maxValue: 360, step: 1};
+      case 'saturation':
+      case 'lightness':
+        return {minValue: 0, maxValue: 100, step: 1};
+      case 'alpha':
+        return {minValue: 0, maxValue: 1, step: 0.01};
+      default:
+        throw new Error('Unknown color channel: ' + channel);
+    }
+  }
+
+  formatChannelValue(channel: ColorChannel, locale: string) {
+    let options: Intl.NumberFormatOptions;
+    let value = this.getChannelValue(channel);
+    switch (channel) {
+      case 'hue':
+        options = {style: 'unit', unit: 'degree', unitDisplay: 'narrow'};
+        break;
+      case 'saturation':
+      case 'lightness':
+        options = {style: 'percent'};
+        value /= 100;
+        break;
+      case 'alpha':
+        options = {style: 'percent'};
+        break;
+      default:
+        throw new Error('Unknown color channel: ' + channel);
+    }
+    return new NumberFormatter(locale, options).format(value);
   }
 }
