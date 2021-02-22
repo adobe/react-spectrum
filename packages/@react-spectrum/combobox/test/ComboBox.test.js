@@ -3612,7 +3612,7 @@ describe('ComboBox', function () {
 
     describe('mobile async loading', function () {
       it('async combobox works with useAsyncList', async () => {
-        let {getByRole, getByTestId, getByText} = render(
+        let {getByRole, getByTestId} = render(
           <Provider theme={theme}>
             <AsyncComboBox />
           </Provider>
