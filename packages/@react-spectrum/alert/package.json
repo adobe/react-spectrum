@@ -35,11 +35,11 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/i18n": "^3.1.0",
     "@react-spectrum/utils": "^3.1.0",
-    "@react-types/alert": "^3.0.0-alpha.1",
+    "@react-types/alert": "3.0.0-alpha.1",
     "@spectrum-icons/ui": "^3.1.0"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1",

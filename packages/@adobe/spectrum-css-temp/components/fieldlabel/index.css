@@ -20,6 +20,7 @@ governing permissions and limitations under the License.
 
 .spectrum-FieldLabel {
   display: flex;
+  flex: 0 0 auto;
 
   box-sizing: border-box;
 
@@ -62,14 +63,20 @@ governing permissions and limitations under the License.
  * label will wrap within this width. The width of the whole field can be overridden by the user,
  * and this causes both the label and inner field to resize as well. */
 .spectrum-Field {
+  --spectrum-field-default-width: var(--spectrum-component-single-line-width);
+
   &.spectrum-Field--positionTop {
     display: inline-flex;
     flex-direction: column;
-    width: var(--spectrum-component-single-line-width);
+    width: var(--spectrum-field-default-width);
 
     .spectrum-Field-field {
       /* If the user overrides the width of the field, propagate to the inner component */
       width: 100%;
+    }
+
+    .spectrum-Field-field--multiline {
+      flex: 1 1 auto;
     }
   }
 
@@ -81,6 +88,10 @@ governing permissions and limitations under the License.
 
     .spectrum-Field-field {
       flex: 1;
+    }
+
+    .spectrum-Field-field--multiline {
+      height: 100%;
     }
   }
 }
