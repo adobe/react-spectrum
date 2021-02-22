@@ -21,7 +21,7 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/i18n": "^3.1.0",
     "@react-stately/utils": "^3.1.0",
-    "@react-types/calendar": "^3.0.0-alpha.1",
+    "@react-types/calendar": "3.0.0-alpha.1",
     "@react-types/datepicker": "3.0.0-alpha.1",
     "@react-types/shared": "^3.1.0",
     "date-fns": "^1.30.1"
