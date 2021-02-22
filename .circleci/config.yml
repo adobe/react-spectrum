@@ -23,9 +23,6 @@ jobs:
       - run:
           name: build
           command: |
-            if [ $NPM_PASSWORD ]; then
-              make adobe_setup
-            fi
             yarn --pure-lockfile
 
       - save_cache:
