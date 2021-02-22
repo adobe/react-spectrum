@@ -16,7 +16,12 @@ describe('NumberField SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
       import {NumberField} from '../';
-      <NumberField aria-label="number" />
+      import {Provider} from '@react-spectrum/provider';
+      import {theme} from '@react-spectrum/theme-default';
+
+      <Provider theme={theme}>
+        <NumberField aria-label="number" />
+      </Provider>
     `);
   });
 });

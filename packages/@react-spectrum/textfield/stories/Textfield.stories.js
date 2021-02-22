@@ -120,6 +120,9 @@ storiesOf('TextField', module)
   )
   .add('custom width small, labelPosition: side',
     () => render({icon: <Info />, validationState: 'invalid', width: '30px', labelPosition: 'side'})
+  )
+  .add('placeholder arabic',
+    () => render({placeholder: 'أدخل رقماً'})
   );
 
 function render(props = {}) {

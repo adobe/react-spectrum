@@ -23,14 +23,6 @@ interface SearchField extends TextField {
   onClear?: () => void
 }
 
-interface NumberField extends InputBase, TextInputBase, ValueBase<number>, RangeInputBase<number>, Labelable, DOMProps, StyleProps {
-  isQuiet?: boolean,
-  decrementAriaLabel?: string,
-  incrementAriaLabel?: string,
-  showStepper?: boolean,
-  formatOptions?: Intl.NumberFormatOptions
-}
-
 interface SearchWithin extends InputBase, TextInputBase, Labelable, DOMProps, StyleProps {
   // not extending from ValueBase because we want onValueChange instead of onChange
   value?: string,
@@ -75,17 +67,6 @@ interface InlineEditor extends TextField {
 | `onChange(value, e, {from})` (search only) | `onChange(value)`       | removed `from` parameter. use `onClear` instead. |
 | -                                          | `onClear` (search only) | added                                            |
 | `icon`                                     | -                       | moved to TextField                               |
-
-## NumberField Changes
-| **v2**           | **v3**               | **Notes** |
-| ---------------- | -------------------- | --------- |
-| `<NumberInput>`  | `<NumberField>`      |           |
-| `min`            | `minValue`           |           |
-| `max`            | `maxValue`           |           |
-| `decrementTitle` | `decrementAriaLabel` |           |
-| `incrementTitle` | `incrementAriaLabel` |           |
-| -                | `showStepper`        | added     |
-| -                | `formatOptions`      | added     |
 
 ## SearchWithin Changes
 | **v2**         | **v3**     | **Notes** |
