@@ -365,6 +365,10 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
           // If there is no next element, blur the focused element to move focus to the body.
           focusedElement.blur();
         }
+      } else if (nextElement && !isElementInScope(nextElement, scope) && nodeToRestore === document.body) {
+        e.preventDefault();
+        e.stopPropagation();
+        nextElement.focus();
       }
     };
 

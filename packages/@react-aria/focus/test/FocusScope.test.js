@@ -590,6 +590,50 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(item3);
     });
 
+    it('should move focus forward but only to tabbable elements while accounting for container elements within the scope', function () {
+      function Test() {
+        return (
+          <FocusScope>
+            <Group data-testid="group1">
+              <Item data-testid="item1" tabIndex={-1} />
+              <Item data-testid="item2" tabIndex={0} />
+              <Item style={{display: 'none'}} />
+            </Group>
+            <Group data-testid="group2">
+              <Item style={{visibility: 'hidden'}} />
+              <Item style={{visibility: 'collapse'}} />
+              <Item data-testid="item3" tabIndex={0} />
+            </Group>
+          </FocusScope>
+        );
+      }
+
+      function Item(props) {
+        return <div {...props} role="button" />;
+      }
+
+      function Group(props) {
+        let focusManager = useFocusManager();
+        let onMouseDown = e => {
+          focusManager.focusNext({from: e.target, tabbable: true});
+        };
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+        return <div {...props} role="group" onMouseDown={onMouseDown} />;
+      }
+
+      let {getByTestId} = render(<Test />);
+      let group1 = getByTestId('group1');
+      let group2 = getByTestId('group2');
+      let item2 = getByTestId('item2');
+      let item3 = getByTestId('item3');
+
+      fireEvent.mouseDown(group2);
+      expect(document.activeElement).toBe(item3);
+
+      fireEvent.mouseDown(group1);
+      expect(document.activeElement).toBe(item2);
+    });
+
     it('should move focus backward', function () {
       function Test() {
         return (
@@ -696,7 +740,52 @@ describe('FocusScope', function () {
       fireEvent.click(item3);
       expect(document.activeElement).toBe(item1);
     });
+
+    it('should move focus backward but only to tabbable elements while accounting for container elements within the scope', function () {
+      function Test() {
+        return (
+          <FocusScope>
+            <Group data-testid="group1">
+              <Item data-testid="item1" tabIndex={0} />
+              <Item data-testid="item2" tabIndex={-1} />
+              <Item style={{display: 'none'}} />
+            </Group>
+            <Group data-testid="group2">
+              <Item style={{visibility: 'hidden'}} />
+              <Item style={{visibility: 'collapse'}} />
+              <Item data-testid="item3" tabIndex={0} />
+            </Group>
+          </FocusScope>
+        );
+      }
+
+      function Item(props) {
+        return <div {...props} role="button" />;
+      }
+
+      function Group(props) {
+        let focusManager = useFocusManager();
+        let onMouseDown = e => {
+          focusManager.focusPrevious({from: e.target, tabbable: true});
+        };
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+        return <div {...props} role="group" onMouseDown={onMouseDown} />;
+      }
+
+      let {getByTestId} = render(<Test />);
+      let group1 = getByTestId('group1');
+      let group2 = getByTestId('group2');
+      let item1 = getByTestId('item1');
+      let item3 = getByTestId('item3');
+
+      fireEvent.mouseDown(group2);
+      expect(document.activeElement).toBe(item3);
+
+      fireEvent.mouseDown(group1);
+      expect(document.activeElement).toBe(item1);
+    });
   });
+
   describe('nested focus scopes', function () {
     it('should make child FocusScopes the active scope regardless of DOM structure', function () {
       function ChildComponent(props) {
@@ -734,6 +823,34 @@ describe('FocusScope', function () {
       act(() => {input3.focus();});
       fireEvent.focusIn(input3);
       expect(document.activeElement).toBe(input3);
+    });
+  });
+
+  describe('scope child of document.body', function () {
+    it('should navigate in and out of scope in DOM order when the nodeToRestore is the document.body', function () {
+      function Test() {
+        return (
+          <div>
+            <input data-testid="beforeScope" />
+            <FocusScope>
+              <input data-testid="inScope" />
+            </FocusScope>
+            <input data-testid="afterScope" />
+          </div>
+        );
+      }
+
+      let {getByTestId} = render(<Test />);
+      let beforeScope = getByTestId('beforeScope');
+      let inScope = getByTestId('inScope');
+      let afterScope = getByTestId('afterScope');
+
+      act(() => {inScope.focus();});
+      fireEvent.keyDown(inScope, {key: 'Tab'});
+      expect(document.activeElement).toBe(afterScope);
+      act(() => {inScope.focus();});
+      fireEvent.keyDown(inScope, {key: 'Tab', shiftKey: true});
+      expect(document.activeElement).toBe(beforeScope);
     });
   });
 });
