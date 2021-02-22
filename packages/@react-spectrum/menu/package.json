@@ -56,7 +56,7 @@
     "@spectrum-icons/ui": "^3.2.0"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "^3.0.0-rc.1",
