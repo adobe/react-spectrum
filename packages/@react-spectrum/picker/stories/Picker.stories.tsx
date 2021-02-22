@@ -24,6 +24,7 @@ import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 import {useAsyncList} from '@react-stately/data';
+import {View} from '@react-spectrum/view';
 
 
 let flatOptions = [
@@ -524,16 +525,26 @@ storiesOf('Picker', module)
     () => (
       <Flex>
         <Picker label="Test1">
-          <Item key="One">One</Item>
-          <Item key="Two">Two</Item>
-          <Item key="Three">Three</Item>
-        </Picker>
         <Picker label="Test2">
           <Item key="One">One</Item>
           <Item key="Two">Two</Item>
           <Item key="Three">Three</Item>
         </Picker>
       </Flex>
+    )
+  )
+  .add(
+    'scrolling container',
+    () => (
+      <View width="300px" height="size-500" overflow="auto">
+        <View width="500px">
+          <Picker label="Test" autoFocus>
+            <Item key="One">One</Item>
+            <Item key="Two">Two</Item>
+            <Item key="Three">Three</Item>
+          </Picker>
+        </View>
+      </View>
     )
   );
 
