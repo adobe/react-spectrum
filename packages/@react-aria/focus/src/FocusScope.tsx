@@ -190,21 +190,6 @@ function getScopeRoot(scope: HTMLElement[]) {
   return scope.length ? scope[0].parentElement : null;
 }
 
-function getFocusableElementsInScope(scope: HTMLElement[], opts: FocusManagerOptions): HTMLElement[] {
-  let res = [];
-  if (!scope.length) {
-    return res;
-  }
-  let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: opts.tabbable});
-  walker.currentNode = scope[0].previousElementSibling;
-  let node = walker.nextNode() as HTMLElement;
-  while (node && isElementInScope(node, scope)) {
-    res.push(node);
-    node = walker.nextNode() as HTMLElement;
-  }
-  return res;
-}
-
 function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolean) {
   let focusedNode = useRef<HTMLElement>();
 
@@ -226,27 +211,16 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
         return;
       }
 
-      let elements = getFocusableElementsInScope(scope, {tabbable: true});
-      let position = elements.indexOf(focusedElement);
-      let lastPosition = elements.length - 1;
-      let nextElement = null;
-
-      if (e.shiftKey) {
-        if (position <= 0) {
-          nextElement = elements[lastPosition];
-        } else {
-          nextElement = elements[position - 1];
-        }
-      } else {
-        if (position === lastPosition) {
-          nextElement = elements[0];
-        } else {
-          nextElement = elements[position + 1];
-        }
+      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: true});
+      walker.currentNode = focusedElement;
+      let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
+      if (!(nextElement && isElementInScope(nextElement, scope))) {
+        walker.currentNode = e.shiftKey ? scope[scope.length - 1].nextElementSibling : scope[0].previousElementSibling;
+        nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode())  as HTMLElement;
       }
 
       e.preventDefault();
-      if (nextElement) {
+      if (nextElement && isElementInScope(nextElement, scope)) {
         focusElement(nextElement, true);
       }
     };
