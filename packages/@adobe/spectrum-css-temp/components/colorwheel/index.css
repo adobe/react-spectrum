@@ -32,12 +32,18 @@
   display: block;
   width: var(--spectrum-colorwheel-width);
   height: var(--spectrum-colorwheel-height);
+  /* expose to JS */
+  --spectrum-colorwheel-track-thickness: var(--spectrum-colorwheel-track-width);
 
   border-radius: var(--spectrum-colorwheel-border-radius);
 
   user-select: none;
   touch-action: none;
   cursor: default;
+
+  .spectrum-ColorWheel-handle {
+    margin: 0;
+  }
 
   &.is-focused {
     z-index: 2;
@@ -62,30 +68,31 @@
   z-index: 0;
   width: var(--spectrum-colorwheel-width);
   height: var(--spectrum-colorwheel-height);
-  border-radius: 100%;
-  box-sizing: border-box;
 
-  border-width: var(--spectrum-colorwheel-border-size);
-  border-style: solid;
-}
+  &:before,
+  &:after {
+    content: "";
+    position: absolute;
+    border-radius: 100%;
+    border-width: var(--spectrum-colorwheel-border-size);
+    border-style: solid;
+  }
 
-.spectrum-ColorWheel-wheel {
-  position: relative;
-  z-index: 1;
-}
+  &:before {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
 
-.spectrum-ColorWheel-outerCircle,
-.spectrum-ColorWheel-innerCircle {
-  fill: transparent;
-
-  stroke-width: var(--spectrum-colorwheel-border-size);
+  &:after {
+    top: calc(var(--spectrum-colorwheel-track-width) - var(--spectrum-colorwheel-border-size));
+    left: calc(var(--spectrum-colorwheel-track-width) - var(--spectrum-colorwheel-border-size));
+    bottom: calc(var(--spectrum-colorwheel-track-width) - var(--spectrum-colorwheel-border-size));
+    right: calc(var(--spectrum-colorwheel-track-width) - var(--spectrum-colorwheel-border-size));
+  }
 }
 
 .spectrum-ColorWheel-slider {
   @extend %spectrum-ColorControl-hiddenField;
-}
-
-.spectrum-ColorWheel-handle {
-  left: 50%;
-  top: 50%;
 }

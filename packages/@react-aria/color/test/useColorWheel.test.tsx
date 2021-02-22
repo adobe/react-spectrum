@@ -36,16 +36,14 @@ function ColorWheel(props: ColorWheelProps) {
   let inputRef = useRef(null);
   let containerRef = useRef(null);
 
-  let {inputProps, groupProps, thumbPosition: {x, y}, thumbProps} = useColorWheel({
+  let {inputProps, trackProps, thumbProps} = useColorWheel({
     ...props,
-    inputRef,
-    containerRef,
     innerRadius: THUMB_RADIUS - 3,
     outerRadius: THUMB_RADIUS + 3
-  }, state);
+  }, state, inputRef);
 
-  return (<div data-testid="container" {...groupProps} ref={containerRef}>
-    <div data-testid="thumb" {...thumbProps} style={{transform: `translate(${x}, ${y})`}}>
+  return (<div data-testid="container" {...trackProps} ref={containerRef}>
+    <div data-testid="thumb" {...thumbProps}>
       <input {...inputProps} ref={inputRef} />
     </div>
   </div>);
@@ -79,7 +77,6 @@ describe('useColorWheel', () => {
     let slider = getByRole('slider');
 
     expect(slider).toHaveAttribute('type', 'range');
-    expect(slider).toHaveAttribute('aria-label', 'hue');
     expect(slider).toHaveAttribute('min', '0');
     expect(slider).toHaveAttribute('max', '360');
     expect(slider).toHaveAttribute('step', '1');
@@ -232,19 +229,19 @@ describe('useColorWheel', () => {
   describe.each`
     type                | prepare               | actions
     ${'Mouse Events'}   | ${installMouseEvent}  | ${[
-      (el, {pageX, pageY}) => fireEvent.mouseDown(el, {button: 0, pageX, pageY}),
-      (el, {pageX, pageY}) => fireEvent.mouseMove(el, {button: 0, pageX, pageY}),
-      (el, {pageX, pageY}) => fireEvent.mouseUp(el, {button: 0, pageX, pageY})
+      (el, {pageX, pageY}) => fireEvent.mouseDown(el, {button: 0, pageX, pageY, clientX: pageX, clientY: pageY}),
+      (el, {pageX, pageY}) => fireEvent.mouseMove(el, {button: 0, pageX, pageY, clientX: pageX, clientY: pageY}),
+      (el, {pageX, pageY}) => fireEvent.mouseUp(el, {button: 0, pageX, pageY, clientX: pageX, clientY: pageY})
     ]}
     ${'Pointer Events'} | ${installPointerEvent}| ${[
-      (el, {pageX, pageY}) => fireEvent.pointerDown(el, {button: 0, pointerId: 1, pageX, pageY}),
-      (el, {pageX, pageY}) => fireEvent.pointerMove(el, {button: 0, pointerId: 1, pageX, pageY}),
-      (el, {pageX, pageY}) => fireEvent.pointerUp(el, {button: 0, pointerId: 1, pageX, pageY})
+      (el, {pageX, pageY}) => fireEvent.pointerDown(el, {button: 0, pointerId: 1, pageX, pageY, clientX: pageX, clientY: pageY}),
+      (el, {pageX, pageY}) => fireEvent.pointerMove(el, {button: 0, pointerId: 1, pageX, pageY, clientX: pageX, clientY: pageY}),
+      (el, {pageX, pageY}) => fireEvent.pointerUp(el, {button: 0, pointerId: 1, pageX, pageY, clientX: pageX, clientY: pageY})
     ]}
     ${'Touch Events'}   | ${() => {}}           | ${[
-      (el, {pageX, pageY}) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1, pageX, pageY}]}),
-      (el, {pageX, pageY}) => fireEvent.touchMove(el, {changedTouches: [{identifier: 1, pageX, pageY}]}),
-      (el, {pageX, pageY}) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX, pageY}]})
+      (el, {pageX, pageY}) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1, pageX, pageY, clientX: pageX, clientY: pageY}]}),
+      (el, {pageX, pageY}) => fireEvent.touchMove(el, {changedTouches: [{identifier: 1, pageX, pageY, clientX: pageX, clientY: pageY}]}),
+      (el, {pageX, pageY}) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX, pageY, clientX: pageX, clientY: pageY}]})
     ]}
   `('$type', ({actions: [start, move, end], prepare}) => {
     prepare();
