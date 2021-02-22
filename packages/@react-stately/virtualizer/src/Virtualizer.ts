@@ -431,8 +431,8 @@ export class Virtualizer<T extends object, V, W> {
     if (this._relayoutRaf) {
       cancelAnimationFrame(this._relayoutRaf);
       this._relayoutRaf = null;
-      // tentative: Update the provided context with the current invalidationContext since we are cancelling
-      // a scheduled relayoutNow call that has this._invalidationContext as its context arg (aka the relayoutNow in relayout)
+      // Update the provided context with the current invalidationContext since we are cancelling
+      // a scheduled relayoutNow call that has this._invalidationContext set as its default context arg (relayoutNow() in relayout)
       context = {...this._invalidationContext, ...context};
     }
 
