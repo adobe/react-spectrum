@@ -188,7 +188,8 @@ interface ComboBoxInputProps extends SpectrumComboBoxProps<unknown> {
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   triggerProps: AriaButtonProps,
   triggerRef: RefObject<FocusableRefValue<HTMLElement>>,
-  style?: React.CSSProperties
+  style?: React.CSSProperties,
+  className?: string
 }
 
 const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInputProps, ref: RefObject<HTMLElement>) {
@@ -203,7 +204,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     triggerRef,
     autoFocus,
     style,
-    UNSAFE_className,
+    className,
     loadingState,
     isOpen,
     menuTrigger
@@ -264,7 +265,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
               'spectrum-InputGroup--invalid': validationState === 'invalid',
               'is-hovered': isHovered
             },
-            UNSAFE_className
+            className
           )
         }>
         <TextFieldBase
