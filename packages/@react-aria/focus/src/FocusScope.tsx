@@ -126,7 +126,7 @@ function createFocusManager(scopeRef: React.RefObject<HTMLElement[]>): FocusMana
       let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable});
       walker.currentNode = isElementInScope(node, scope) ? node : sentinel;
       let nextNode = walker.nextNode() as HTMLElement;
-      if (!(nextNode && isElementInScope(nextNode, scope)) && wrap) {
+      if ((!nextNode || !isElementInScope(nextNode, scope)) && wrap) {
         walker.currentNode = sentinel;
         nextNode = walker.nextNode() as HTMLElement;
       }
@@ -153,7 +153,7 @@ function createFocusManager(scopeRef: React.RefObject<HTMLElement[]>): FocusMana
           prevNode = walker.previousNode() as HTMLElement;
         }
       }
-      if (!(previousNode && isElementInScope(previousNode, scope)) && wrap) {
+      if ((!previousNode || !isElementInScope(previousNode, scope)) && wrap) {
         walker.currentNode = sentinel;
         previousNode = walker.previousNode() as HTMLElement;
       }
@@ -214,7 +214,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: true});
       walker.currentNode = focusedElement;
       let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
-      if (!(nextElement && isElementInScope(nextElement, scope))) {
+      if (!nextElement || !isElementInScope(nextElement, scope)) {
         walker.currentNode = e.shiftKey ? scope[scope.length - 1].nextElementSibling : scope[0].previousElementSibling;
         nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode())  as HTMLElement;
       }
