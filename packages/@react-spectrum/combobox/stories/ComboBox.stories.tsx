@@ -526,7 +526,7 @@ function AsyncLoadingExample() {
       items={list.items}
       inputValue={list.filterText}
       onInputChange={list.setFilterText}
-      loadingState={list.state}
+      loadingState={list.loadingState}
       onLoadMore={list.loadMore}
       onOpenChange={action('onOpenChange')}>
       {item => <Item key={item.name}>{item.name}</Item>}

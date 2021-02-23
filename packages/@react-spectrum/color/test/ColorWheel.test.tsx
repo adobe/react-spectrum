@@ -60,10 +60,11 @@ describe('ColorWheel', () => {
     let slider = getByRole('slider');
 
     expect(slider).toHaveAttribute('type', 'range');
-    expect(slider).toHaveAttribute('aria-label', 'hue');
+    expect(slider).toHaveAttribute('aria-label', 'Hue');
     expect(slider).toHaveAttribute('min', '0');
     expect(slider).toHaveAttribute('max', '360');
     expect(slider).toHaveAttribute('step', '1');
+    expect(slider).toHaveAttribute('aria-valuetext', '0°');
   });
 
   it('the slider is focusable', () => {
@@ -101,6 +102,24 @@ describe('ColorWheel', () => {
     expect(document.activeElement).toBe(buttonB);
     userEvent.tab({shift: true});
     expect(document.activeElement).toBe(buttonA);
+  });
+
+  describe('labelling', () => {
+    it('should support a custom aria-label', () => {
+      let {getByRole} = render(<ColorWheel aria-label="Color hue" />);
+      let slider = getByRole('slider');
+
+      expect(slider).toHaveAttribute('aria-label', 'Color hue');
+      expect(slider).not.toHaveAttribute('aria-labelledby');
+    });
+
+    it('should support a custom aria-labelledby', () => {
+      let {getByRole} = render(<ColorWheel aria-labelledby="label-id" />);
+      let slider = getByRole('slider');
+
+      expect(slider).not.toHaveAttribute('aria-label');
+      expect(slider).toHaveAttribute('aria-labelledby', 'label-id');
+    });
   });
 
   describe('keyboard events', () => {
@@ -159,19 +178,19 @@ describe('ColorWheel', () => {
   describe.each`
     type                | prepare               | actions
     ${'Mouse Events'}   | ${installMouseEvent}  | ${[
-      (el, {pageX, pageY}) => fireEvent.mouseDown(el, {button: 0, pageX, pageY}),
-      (el, {pageX, pageY}) => fireEvent.mouseMove(el, {button: 0, pageX, pageY}),
-      (el, {pageX, pageY}) => fireEvent.mouseUp(el, {button: 0, pageX, pageY})
+      (el, {pageX, pageY}) => fireEvent.mouseDown(el, {button: 0, pageX, pageY, clientX: pageX, clientY: pageY}),
+      (el, {pageX, pageY}) => fireEvent.mouseMove(el, {button: 0, pageX, pageY, clientX: pageX, clientY: pageY}),
+      (el, {pageX, pageY}) => fireEvent.mouseUp(el, {button: 0, pageX, pageY, clientX: pageX, clientY: pageY})
     ]}
     ${'Pointer Events'} | ${installPointerEvent}| ${[
-      (el, {pageX, pageY}) => fireEvent.pointerDown(el, {button: 0, pointerId: 1, pageX, pageY}),
-      (el, {pageX, pageY}) => fireEvent.pointerMove(el, {button: 0, pointerId: 1, pageX, pageY}),
-      (el, {pageX, pageY}) => fireEvent.pointerUp(el, {button: 0, pointerId: 1, pageX, pageY})
+      (el, {pageX, pageY}) => fireEvent.pointerDown(el, {button: 0, pointerId: 1, pageX, pageY, clientX: pageX, clientY: pageY}),
+      (el, {pageX, pageY}) => fireEvent.pointerMove(el, {button: 0, pointerId: 1, pageX, pageY, clientX: pageX, clientY: pageY}),
+      (el, {pageX, pageY}) => fireEvent.pointerUp(el, {button: 0, pointerId: 1, pageX, pageY, clientX: pageX, clientY: pageY})
     ]}
     ${'Touch Events'}   | ${() => {}}           | ${[
-      (el, {pageX, pageY}) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1, pageX, pageY}]}),
-      (el, {pageX, pageY}) => fireEvent.touchMove(el, {changedTouches: [{identifier: 1, pageX, pageY}]}),
-      (el, {pageX, pageY}) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX, pageY}]})
+      (el, {pageX, pageY}) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1, pageX, pageY, clientX: pageX, clientY: pageY}]}),
+      (el, {pageX, pageY}) => fireEvent.touchMove(el, {changedTouches: [{identifier: 1, pageX, pageY, clientX: pageX, clientY: pageY}]}),
+      (el, {pageX, pageY}) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX, pageY, clientX: pageX, clientY: pageY}]})
     ]}
   `('$type', ({actions: [start, move, end], prepare}) => {
     prepare();
@@ -181,7 +200,7 @@ describe('ColorWheel', () => {
       let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
-      let container = _container.firstChild as HTMLElement;
+      let container = _container.firstChild.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
       expect(document.activeElement).not.toBe(slider);
@@ -203,7 +222,7 @@ describe('ColorWheel', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {container: _container, getByRole} = render(<ColorWheel isDisabled defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
-      let container = _container.firstChild as HTMLElement;
+      let container = _container.firstChild.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
       let thumb = slider.parentElement;
 
@@ -225,7 +244,7 @@ describe('ColorWheel', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} step={120} />);
       let slider = getByRole('slider');
-      let container = _container.firstChild as HTMLElement;
+      let container = _container.firstChild.firstChild as HTMLElement;
       let thumb = slider.parentElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
@@ -243,7 +262,7 @@ describe('ColorWheel', () => {
       let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
-      let container = _container.firstChild as HTMLElement;
+      let container = _container.firstChild.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
       expect(document.activeElement).not.toBe(slider);
@@ -266,7 +285,7 @@ describe('ColorWheel', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} isDisabled />);
       let slider = getByRole('slider');
-      let container = _container.firstChild as HTMLElement;
+      let container = _container.firstChild.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
       expect(document.activeElement).not.toBe(slider);
@@ -288,7 +307,7 @@ describe('ColorWheel', () => {
       let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} step={120} />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
-      let container = _container.firstChild as HTMLElement;
+      let container = _container.firstChild.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
       start(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
