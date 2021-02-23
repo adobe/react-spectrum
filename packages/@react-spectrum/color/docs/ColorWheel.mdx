@@ -16,6 +16,7 @@ import packageData from '@react-spectrum/color/package.json';
 
 ```jsx import
 import {ColorWheel} from '@react-spectrum/color';
+import {Flex} from '@react-spectrum/layout';
 ```
 
 ---
@@ -66,7 +67,7 @@ is provided, it should be localized accordingly.
 
 ## Step values
 
-The `step` prop can be used to snap the value to certain increments. The value provided should the number of degrees that each step should span,
+The `step` prop can be used to snap the ColorWheel's value to specific increments. The value provided should the number of degrees that each step should span,
 ranging from 1 to 360. Note that the steps are calculated starting from 0˚ and that the final step will always snap back to 0˚, regardless of how much
 remaining track distance there is from the step prior.
 
@@ -76,8 +77,8 @@ remaining track distance there is from the step prior.
 
 ## Events
 
-ColorWheel accepts two events, `onChange` and `onChangeEnd`. The former is triggered whenever the ColorWheel's value is changed while the
-latter only fires on the final change event (e.g. when a user stops dragging the ColorWheel's handle).
+ColorWheel accepts two events, `onChange` and `onChangeEnd`. The former is triggered whenever the ColorWheel's handle is dragged while the
+latter fires when the user stops dragging the handle.
 
 The example below uses `onChange` and `onChangeEnd` to update two separate elements with the ColorWheel's value.
 
