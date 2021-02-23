@@ -337,8 +337,8 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       manager.setFocused(true);
       manager.setFocusedKey(focusedKey);
 
-      // If no default focus key is selected, focus the collection itself.
-      if (focusedKey == null && !shouldUseVirtualFocus) {
+      // If no default focus key is selected and the collection is mounted, focus the collection itself.
+      if (focusedKey == null && !shouldUseVirtualFocus && ref.current) {
         focusSafely(ref.current);
       }
     }
