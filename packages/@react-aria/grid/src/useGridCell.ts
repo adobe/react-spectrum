@@ -12,8 +12,9 @@
 
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {GridCollection} from '@react-types/grid';
+import {gridKeyboardDelegates} from './utils';
 import {GridState} from '@react-stately/grid';
-import {HTMLAttributes, KeyboardEvent, RefObject} from 'react';
+import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 import {isFocusVisible, usePress} from '@react-aria/interactions';
 import {mergeProps} from '@react-aria/utils';
 import {Node as RSNode} from '@react-types/shared';
@@ -44,17 +45,23 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   } = props;
 
   let {direction} = useLocale();
+  let keyboardDelegate = gridKeyboardDelegates.get(state);
 
   // Handles focusing the cell. If there is a focusable child,
   // it is focused, otherwise the cell itself is focused.
   let focus = () => {
     let treeWalker = getFocusableTreeWalker(ref.current);
-    let focusable = ref.current.compareDocumentPosition(document.activeElement) & Node.DOCUMENT_POSITION_FOLLOWING
-      ? treeWalker.lastChild() as HTMLElement
-      : treeWalker.firstChild() as HTMLElement;
-    if (focusable && focusMode === 'child') {
-      focusSafely(focusable);
-    } else {
+    if (focusMode === 'child') {
+      let focusable = state.selectionManager.focusedChild === 'last'
+        ? treeWalker.lastChild() as HTMLElement
+        : treeWalker.firstChild() as HTMLElement;
+      if (focusable) {
+        focusSafely(focusable);
+        return;
+      }
+    }
+
+    if (!ref.current.contains(document.activeElement)) {
       focusSafely(ref.current);
     }
   };
@@ -70,27 +77,99 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   // TODO: move into useSelectableItem?
   let {pressProps} = usePress({...itemProps, isDisabled});
 
-  let onKeyDown = (e: KeyboardEvent) => {
-    let focusable;
-    // TODO: need to fix walker + active element
+  let onKeyDown = (e: ReactKeyboardEvent) => {
     let walker = getFocusableTreeWalker(ref.current);
-    let leftNode = direction === 'rtl' ? walker.nextNode : walker.previousNode;
-    let rightNode = direction === 'rtl' ? walker.previousNode : walker.nextNode;
+    walker.currentNode = document.activeElement;
+
     switch (e.key) {
-      case 'ArrowLeft':
-        e.preventDefault();
-        e.stopPropagation();
-        focusable = leftNode();
-        if (focusable) { // todo remove check once rows are not focusable
-          focusable.focus();
+      case 'ArrowLeft': {
+        // Find the next focusable element within the cell.
+        let focusable = direction === 'rtl'
+          ? walker.nextNode() as HTMLElement
+          : walker.previousNode() as HTMLElement;
+
+        // Don't focus the cell itself if focusMode is "child"
+        if (focusMode === 'child' && focusable === ref.current) {
+          focusable = null;
+        }
+
+        if (focusable) {
+          e.preventDefault();
+          e.stopPropagation();
+          focusSafely(focusable);
+        } else {
+          // If there is no next focusable child, then move to the next cell to the left of this one.
+          // This will be handled by useSelectableCollection. However, if there is no cell to the left
+          // of this one, only one column, and the grid doesn't focus rows, then the next key will be the
+          // same as this one. In that case we need to handle focusing either the cell or the first/last
+          // child, depending on the focus mode.
+          let prev = keyboardDelegate.getKeyLeftOf(node.key);
+          if (prev !== node.key) {
+            break;
+          }
+
+          e.preventDefault();
+          e.stopPropagation();
+          if (focusMode === 'cell' && direction === 'rtl') {
+            focusSafely(ref.current);
+          } else {
+            walker.currentNode = ref.current;
+            focusable = direction === 'rtl'
+              ? walker.firstChild() as HTMLElement
+              : walker.lastChild() as HTMLElement;
+            if (focusable) {
+              focusSafely(focusable);
+            }
+          }
         }
         break;
-      case 'ArrowRight':
-        e.preventDefault();
-        e.stopPropagation();
-        focusable = rightNode();
-        if (focusable && focusable !== ref.current) {
-          focusable.focus();
+      }
+      case 'ArrowRight': {
+        let focusable = direction === 'rtl'
+          ? walker.previousNode() as HTMLElement
+          : walker.nextNode() as HTMLElement;
+
+        if (focusMode === 'child' && focusable === ref.current) {
+          focusable = null;
+        }
+
+        if (focusable) {
+          e.preventDefault();
+          e.stopPropagation();
+          focusSafely(focusable);
+        } else {
+          let next = keyboardDelegate.getKeyRightOf(node.key);
+          if (next !== node.key) {
+            break;
+          }
+
+          e.preventDefault();
+          e.stopPropagation();
+          if (focusMode === 'cell' && direction === 'ltr') {
+            focusSafely(ref.current);
+          } else {
+            walker.currentNode = ref.current;
+            focusable = direction === 'rtl'
+              ? walker.lastChild() as HTMLElement
+              : walker.firstChild() as HTMLElement;
+            if (focusable) {
+              focusSafely(focusable);
+            }
+          }
+        }
+        break;
+      }
+      case 'ArrowUp':
+      case 'ArrowDown':
+        // Prevent this event from reaching cell children, e.g. menu buttons. We want arrow keys to navigate
+        // to the cell above/below instead. We need to re-dispatch the event from a higher parent so it still
+        // bubbles and gets handled by useSelectableCollection.
+        if (!e.altKey && ref.current.contains(e.target as HTMLElement)) {
+          e.stopPropagation();
+          e.preventDefault();
+          ref.current.parentElement.dispatchEvent(
+            new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
+          );
         }
         break;
     }

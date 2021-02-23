@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node, PressEvent, SelectionMode} from '@react-types/shared';
+import {Collection, FocusStrategy, Node, PressEvent, SelectionMode} from '@react-types/shared';
 import {Key} from 'react';
 import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
@@ -70,11 +70,15 @@ export class SelectionManager implements MultipleSelectionManager {
     return this.state.focusedKey;
   }
 
+  get focusedChild(): FocusStrategy {
+    return this.state.focusedChild;
+  }
+
   /**
    * Sets the focused key.
    */
-  setFocusedKey(key: Key) {
-    this.state.setFocusedKey(key);
+  setFocusedKey(key: Key, focusedChild?: FocusStrategy) {
+    this.state.setFocusedKey(key, focusedChild);
   }
 
   /**

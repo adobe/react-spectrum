@@ -43,7 +43,7 @@ export class GridCollection<T> implements IGridCollection<T> {
       let childKeys = new Set();
       let last: GridNode<T>;
       for (let child of node.childNodes) {
-        if (child.type === 'cell' && !child.parentKey) {
+        if (child.type === 'cell' && child.parentKey == null) {
           // if child is a cell parent key isn't already established by the collection, match child node to parent row
           child.parentKey = node.key;
         }

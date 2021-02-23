@@ -30,6 +30,7 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
   let isFocusedRef = useRef(false);
   let [, setFocused] = useState(false);
   let focusedKeyRef = useRef(null);
+  let focusedChildRef = useRef(null);
   let [, setFocusedKey] = useState(null);
   let selectedKeysProp = useMemo(() => convertSelection(props.selectedKeys), [props.selectedKeys]);
   let defaultSelectedKeys = useMemo(() => convertSelection(props.defaultSelectedKeys, new Selection()), [props.defaultSelectedKeys]);
@@ -55,8 +56,12 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
     get focusedKey() {
       return focusedKeyRef.current;
     },
-    setFocusedKey(k) {
+    get focusedChild() {
+      return focusedChildRef.current;
+    },
+    setFocusedKey(k, focusedChild = 'first') {
       focusedKeyRef.current = k;
+      focusedChildRef.current = focusedChild;
       setFocusedKey(k);
     },
     selectedKeys,

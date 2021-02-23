@@ -167,6 +167,8 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       if (this.focusMode === 'row') {
         return item.parentKey;
       }
+
+      return this.direction === 'rtl' ? this.getFirstKey(key) : this.getLastKey(key);
     }
   }
 
@@ -201,6 +203,8 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       if (this.focusMode === 'row') {
         return item.parentKey;
       }
+
+      return this.direction === 'rtl' ? this.getLastKey(key) : this.getFirstKey(key);
     }
   }
 
@@ -373,4 +377,4 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return null;
   }
 }
-    
+
