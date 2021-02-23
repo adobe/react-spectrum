@@ -18,13 +18,14 @@ import dropIndicatorStyles from '@adobe/spectrum-css-temp/components/dropindicat
 import {DroppableCollectionDropEvent} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import Folder from '@spectrum-icons/workflow/Folder';
+import {GridCollection, useGridState} from '@react-stately/grid';
 import {Item} from '@react-stately/collections';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import {useDropIndicator, useDroppableCollection} from '..';
 import {useDroppableCollectionState} from '@react-stately/dnd';
-import {useListBox, useOption} from '@react-aria/listbox';
+import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
@@ -86,11 +87,31 @@ export function DroppableGridExample(props) {
 function DroppableGrid(props) {
   let ref = React.useRef<HTMLDivElement>(null);
   let onDrop = action('onDrop');
-  let state = useListState({...props, selectionMode: 'multiple'});
+  let state = useListState(props);
   let keyboardDelegate = new ListKeyboardDelegate(state.collection, new Set(), ref);
+  let gridState = useGridState({
+    selectionMode: 'multiple',
+    collection: new GridCollection({
+      columnCount: 1,
+      items: [...state.collection].map(item => ({
+        ...item,
+        childNodes: [{
+          key: `cell-${item.key}`,
+          type: 'cell',
+          index: 0,
+          value: null,
+          level: 0,
+          rendered: null,
+          textValue: item.textValue,
+          hasChildNodes: false,
+          childNodes: []
+        }]
+      }))
+    })
+  });
 
   let dropState = useDroppableCollectionState({
-    collection: state.collection,
+    collection: gridState.collection,
     getDropOperation(target, types, allowedOperations) {
       if (target.type === 'root') {
         return 'move';
@@ -162,11 +183,12 @@ function DroppableGrid(props) {
     }
   }, dropState, ref);
 
-  let {listBoxProps} = useListBox({
+  let {gridProps} = useGrid({
     ...props,
+    ref,
     'aria-label': 'List',
-    keyboardDelegate
-  }, state, ref);
+    focusMode: 'cell'
+  }, gridState);
 
   let isDropTarget = dropState.isDropTarget({type: 'root'});
   let dropRef = React.useRef();
@@ -178,7 +200,7 @@ function DroppableGrid(props) {
 
   return (
     <div
-      {...mergeProps(collectionProps, listBoxProps)}
+      {...mergeProps(collectionProps, gridProps)}
       ref={ref}
       className={classNames(dndStyles, 'droppable-collection', {'is-drop-target': isDropTarget})}
       role="grid">
@@ -191,23 +213,23 @@ function DroppableGrid(props) {
           </div>
         </div>
       }
-      {[...state.collection].map(item => (
+      {[...gridState.collection].map(item => (
         <>
           <InsertionIndicator
             key={item.key + '-before'}
-            collection={state.collection}
+            collection={gridState.collection}
             collectionRef={ref}
             target={{type: 'item', key: item.key, dropPosition: 'before'}}
             dropState={dropState} />
           <CollectionItem
             key={item.key}
             item={item}
-            state={state}
+            state={gridState}
             dropState={dropState} />
           {state.collection.getKeyAfter(item.key) == null &&
             <InsertionIndicator
               key={item.key + '-after'}
-              collection={state.collection}
+              collection={gridState.collection}
               target={{type: 'item', key: item.key, dropPosition: 'after'}}
               collectionRef={ref}
               dropState={dropState} />
@@ -219,31 +241,44 @@ function DroppableGrid(props) {
 }
 
 function CollectionItem({item, state, dropState}) {
-  let ref = React.useRef();
-  let {optionProps} = useOption({
-    key: item.key,
-    isSelected: state.selectionManager.isSelected(item.key)
-  }, state, ref);
+  let rowRef = React.useRef();
+  let cellRef = React.useRef();
+  let cellNode = [...item.childNodes][0];
+  let isSelected = state.selectionManager.isSelected(item.key);
 
-  let buttonRef = React.useRef();
+  let {rowProps} = useGridRow({
+    node: item,
+    ref: rowRef,
+    isSelected
+  }, state);
+  let {gridCellProps} = useGridCell({
+    node: cellNode,
+    ref: cellRef,
+    focusMode: 'cell',
+    shouldSelectOnPressUp: true
+  }, state);
+
+  let dropIndicatorRef = React.useRef();
   let {dropIndicatorProps} = useDropIndicator({
     collection: state.collection,
     target: {type: 'item', key: item.key, dropPosition: 'on'}
-  }, dropState, buttonRef);
+  }, dropState, dropIndicatorRef);
+  let {visuallyHiddenProps} = useVisuallyHidden();
 
   return (
-    <div role="row" data-key={item.key} style={{margin: '4px 0'}}>
+    <div {...rowProps} ref={rowRef} style={{outline: 'none'}}>
       <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
         <div
-          {...mergeProps(optionProps)}
-          ref={ref}
+          {...gridCellProps}
+          ref={cellRef}
           className={classNames(dndStyles, 'droppable', {
             'is-drop-target': dropState.isDropTarget({type: 'item', key: item.key, dropPosition: 'on'}),
             'is-selected': state.selectionManager.isSelected(item.key)
-          })}
-          role="gridcell">
-          <div {...useVisuallyHidden().visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={buttonRef} />
+          })}>
           {item.rendered}
+          {!dropIndicatorProps['aria-hidden'] &&
+            <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={dropIndicatorRef} />
+          }
         </div>
       </FocusRing>
     </div>

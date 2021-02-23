@@ -28,9 +28,15 @@
     box-shadow: 0 0 0 1px var(--spectrum-dropzone-border-color-selected-hover);
   }
 
-  span {
+  > span {
     margin-left: var(--spectrum-global-dimension-static-size-100);
     flex: 1;
+    display: flex;
+    align-items: center;
+
+    svg {
+      margin-right: var(--spectrum-global-dimension-static-size-100);
+    }
   }
 
   &.is-drag-preview {
@@ -73,6 +79,7 @@
   padding: 0 var(--spectrum-global-dimension-static-size-150);
   border-radius: var(--spectrum-alias-border-radius-regular);
   background: var(--spectrum-global-color-gray-50);
+  margin: 4px 0;
 
   &.is-selected {
     background: var(--spectrum-alias-highlight-hover);
@@ -93,9 +100,14 @@
     box-shadow: 0 0 0 1px var(--spectrum-dropzone-border-color-selected-hover);
   }
 
-  span {
+  > span {
     margin-left: var(--spectrum-global-dimension-static-size-100);
   }
+}
+
+.cell {
+  display: flex;
+  align-items: center;
 }
 
 .drag-handle {

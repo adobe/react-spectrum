@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
-import {HTMLAttributes, Key, RefObject, useEffect, useRef} from 'react';
+import {focusSafely} from '@react-aria/focus';
+import {HTMLAttributes, Key, RefObject, useEffect} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressEvent} from '@react-types/shared';
 import {PressProps} from '@react-aria/interactions';
@@ -34,7 +34,6 @@ interface SelectableItemOptions {
    * item causes the UI to disappear immediately (e.g. menus).
    */
   shouldSelectOnPressUp?: boolean,
-  shouldDeselectOnPressUp?: boolean,
   /**
    * Whether the option is contained in a virtual scroller.
    */
@@ -65,7 +64,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     key,
     ref,
     shouldSelectOnPressUp,
-    shouldDeselectOnPressUp,
     isVirtualized,
     shouldUseVirtualFocus,
     focus
@@ -96,36 +94,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         if (e.target === ref.current) {
           manager.setFocusedKey(key);
         }
-      },
-      onKeyDown(e) {
-        if (e.key !== 'Tab') {
-          return;
-        }
-
-        let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
-        walker.currentNode = document.activeElement;
-        let next: Node;
-        if (e.shiftKey) {
-          if (document.activeElement === ref.current) {
-            let last: Node;
-            do {
-              last = walker.lastChild();
-              if (last) {
-                next = last;
-              }
-            } while (last);
-          } else {
-            next = walker.previousNode();
-          }
-        } else {
-          next = walker.nextNode();
-        }
-
-        if (next) {
-          e.preventDefault();
-          e.stopPropagation();
-          (next as HTMLElement).focus();
-        }
       }
     };
   }
@@ -137,7 +105,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // we want to be able to have the pointer down on the trigger that opens the menu and
   // the pointer up on the menu item rather than requiring a separate press.
   // For keyboard events, selection still occurs on key down.
-  let updateOnPress = useRef(false);
   if (shouldSelectOnPressUp) {
     itemProps.onPressStart = (e) => {
       if (e.pointerType === 'keyboard') {
@@ -153,19 +120,13 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   } else {
     // On touch, it feels strange to select on touch down, so we special case this.
     itemProps.onPressStart = (e) => {
-      if (shouldDeselectOnPressUp && manager.isSelected(key) && e.pointerType !== 'keyboard') {
-        updateOnPress.current = true;
-        return;
-      }
-
       if (e.pointerType !== 'touch') {
-        updateOnPress.current = false;
         onSelect(e);
       }
     };
 
     itemProps.onPress = (e) => {
-      if (e.pointerType === 'touch' || updateOnPress.current) {
+      if (e.pointerType === 'touch') {
         onSelect(e);
       }
     };

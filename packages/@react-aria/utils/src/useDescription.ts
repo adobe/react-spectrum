@@ -44,6 +44,7 @@ export function useDescription(description: string): AriaLabelingProps {
     return () => {
       if (--desc.refCount === 0) {
         desc.element.remove();
+        descriptionNodes.delete(description);
       }
     };
   }, [description]);

@@ -22,7 +22,8 @@ export interface GridRowProps<T> {
   ref?: RefObject<HTMLElement>,
   isVirtualized?: boolean,
   isSelected?: boolean,
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  shouldSelectOnPressUp?: boolean
 }
 
 export interface GridRowAria {
@@ -35,14 +36,16 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     ref,
     isVirtualized,
     isSelected,
-    isDisabled
+    isDisabled,
+    shouldSelectOnPressUp
   } = props;
 
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
     key: node.key,
     ref,
-    isVirtualized
+    isVirtualized,
+    shouldSelectOnPressUp
   });
 
   // TODO: move into useSelectableItem?

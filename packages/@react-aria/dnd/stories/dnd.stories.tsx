@@ -23,6 +23,7 @@ import dropzoneStyles from '@adobe/spectrum-css-temp/components/dropzone/vars.cs
 import {Flex} from '@react-spectrum/layout';
 import {FocusRing} from '@react-aria/focus';
 import Folder from '@spectrum-icons/workflow/Folder';
+import {GridCollection, useGridState} from '@react-stately/grid';
 import {Heading} from '@react-spectrum/text';
 import {Item} from '@react-stately/collections';
 import {mergeProps} from '@react-aria/utils';
@@ -36,7 +37,7 @@ import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useButton} from '@react-aria/button';
 import {useDrag, useDraggableItem, useDrop} from '..';
 import {useDraggableCollectionState} from '@react-stately/dnd';
-import {useListBox, useOption} from '@react-aria/listbox';
+import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
 import {VirtualizedListBoxExample} from './VirtualizedListBox';
@@ -61,7 +62,7 @@ storiesOf('Drag and Drop', module)
     )
   )
   .add(
-    'Collection',
+    'Droppable listbox',
     () => (
       <Flex direction="row" gap="size-200" alignItems="center">
         <Draggable />
@@ -101,7 +102,7 @@ storiesOf('Drag and Drop', module)
     )
   )
   .add(
-    'Draggable collection',
+    'Draggable grid, droppable listbox',
     () => (
       <Flex direction="row" gap="size-200" alignItems="center" wrap>
         <DraggableCollectionExample />
@@ -128,7 +129,7 @@ storiesOf('Drag and Drop', module)
     )
   )
   .add(
-    'Virtualized',
+    'Virtualized listbox',
     () => (
       <Flex direction="row" gap="size-200" alignItems="center" wrap>
         <DraggableCollectionExample />
@@ -260,13 +261,34 @@ function DraggableCollectionExample() {
 
 function DraggableCollection(props) {
   let ref = React.useRef<HTMLDivElement>(null);
-  let state = useListState({...props, selectionMode: 'multiple'});
+  let state = useListState(props);
+  let gridState = useGridState({
+    selectionMode: 'multiple',
+    collection: new GridCollection({
+      columnCount: 1,
+      items: [...state.collection].map(item => ({
+        ...item,
+        childNodes: [{
+          key: `cell-${item.key}`,
+          type: 'cell',
+          index: 0,
+          value: null,
+          level: 0,
+          rendered: null,
+          textValue: item.textValue,
+          hasChildNodes: false,
+          childNodes: []
+        }]
+      }))
+    })
+  });
+
   let provider = useProvider();
   let dragState = useDraggableCollectionState({
-    selectionManager: state.selectionManager,
+    selectionManager: gridState.selectionManager,
     getItems(keys) {
       return [...keys].map(key => {
-        let item = state.collection.getItem(key);
+        let item = gridState.collection.getItem(key);
 
         return {
           // @ts-ignore
@@ -297,25 +319,26 @@ function DraggableCollection(props) {
     onDragEnd: chain(action('onDragEnd'), props.onDragEnd)
   });
 
-  let {listBoxProps} = useListBox({
+  let {gridProps} = useGrid({
     ...props,
-    'aria-label': 'Draggable list'
-  }, state, ref);
+    ref,
+    'aria-label': 'Draggable list',
+    focusMode: 'cell'
+  }, gridState);
 
   return (
     <div
       ref={ref}
-      {...listBoxProps}
-      role="grid"
+      {...gridProps}
       style={{
         display: 'flex',
         flexDirection: 'column'
       }}>
-      {[...state.collection].map(item => (
+      {[...gridState.collection].map(item => (
         <DraggableCollectionItem
           key={item.key}
           item={item}
-          state={state}
+          state={gridState}
           dragState={dragState} />
       ))}
     </div>
@@ -323,13 +346,22 @@ function DraggableCollection(props) {
 }
 
 function DraggableCollectionItem({item, state, dragState}) {
-  let ref = React.useRef();
+  let rowRef = React.useRef();
+  let cellRef = React.useRef();
+  let cellNode = [...item.childNodes][0];
   let isSelected = state.selectionManager.isSelected(item.key);
-  let {optionProps} = useOption({
-    key: item.key,
-    isSelected,
+
+  let {rowProps} = useGridRow({
+    node: item,
+    ref: rowRef,
+    isSelected
+  }, state);
+  let {gridCellProps} = useGridCell({
+    node: cellNode,
+    ref: cellRef,
+    focusMode: 'cell',
     shouldSelectOnPressUp: true
-  }, state, ref);
+  }, state);
 
   let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
 
@@ -341,13 +373,12 @@ function DraggableCollectionItem({item, state, dragState}) {
   let id = useId();
 
   return (
-    <div role="row">
+    <div {...rowProps} ref={rowRef} aria-labelledby={id}>
       <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
         <div
-          {...mergeProps(optionProps, dragProps)}
-          role="gridcell"
+          {...mergeProps(gridCellProps, dragProps)}
           aria-labelledby={id}
-          ref={ref}
+          ref={cellRef}
           className={classNames(dndStyles, 'draggable', {
             'is-dragging': dragState.isDragging(item.key),
             'is-selected': isSelected
