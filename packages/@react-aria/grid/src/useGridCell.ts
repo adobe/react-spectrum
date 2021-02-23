@@ -53,7 +53,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     let treeWalker = getFocusableTreeWalker(ref.current);
     if (focusMode === 'child') {
       let focusable = state.selectionManager.focusedChild === 'last'
-        ? treeWalker.lastChild() as HTMLElement
+        ? last(treeWalker)
         : treeWalker.firstChild() as HTMLElement;
       if (focusable) {
         focusSafely(focusable);
@@ -116,7 +116,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
             walker.currentNode = ref.current;
             focusable = direction === 'rtl'
               ? walker.firstChild() as HTMLElement
-              : walker.lastChild() as HTMLElement;
+              : last(walker);
             if (focusable) {
               focusSafely(focusable);
             }
@@ -150,7 +150,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           } else {
             walker.currentNode = ref.current;
             focusable = direction === 'rtl'
-              ? walker.lastChild() as HTMLElement
+              ? last(walker)
               : walker.firstChild() as HTMLElement;
             if (focusable) {
               focusSafely(focusable);
@@ -213,4 +213,16 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   return {
     gridCellProps
   };
+}
+
+function last(walker: TreeWalker) {
+  let next: HTMLElement;
+  let last: HTMLElement;
+  do {
+    last = walker.lastChild() as HTMLElement;
+    if (last) {
+      next = last;
+    }
+  } while (last);
+  return next;
 }
