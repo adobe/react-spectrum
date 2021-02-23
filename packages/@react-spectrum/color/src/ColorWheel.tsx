@@ -13,11 +13,11 @@
 import {classNames, dimensionValue, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {ColorThumb} from './ColorThumb';
 import {FocusableRef} from '@react-types/shared';
+import {parseColor, useColorWheelState} from '@react-stately/color';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {SpectrumColorWheelProps} from '@react-types/color';
 import styles from '@adobe/spectrum-css-temp/components/colorwheel/vars.css';
 import {useColorWheel} from '@react-aria/color';
-import {useColorWheelState} from '@react-stately/color';
 import {useFocusRing} from '@react-aria/focus';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useResizeObserver} from '@react-aria/utils';
@@ -92,7 +92,7 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
       }}>
       <div {...trackProps} className={classNames(styles, 'spectrum-ColorWheel-gradient')} />
       <ColorThumb
-        value={state.value}
+        value={parseColor(`hsl(${state.value.getChannelValue('hue')}, 100%, 50%)`)}
         isFocused={isFocusVisible}
         isDisabled={isDisabled}
         isDragging={state.isDragging}
@@ -104,5 +104,8 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
   );
 }
 
+/**
+ * A color wheel lets users visually change an individual channel of a color on a circular track.
+ */
 let _ColorWheel = React.forwardRef(ColorWheel);
 export {_ColorWheel as ColorWheel};

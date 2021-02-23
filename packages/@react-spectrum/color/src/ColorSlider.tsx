@@ -133,5 +133,8 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
   );
 }
 
+/**
+ * A color slider lets users visually change an individual channel of a color.
+ */
 let _ColorSlider = React.forwardRef(ColorSlider);
 export {_ColorSlider as ColorSlider};

@@ -1,0 +1,120 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/color';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/color/package.json';
+
+```jsx import
+import {ColorWheel} from '@react-spectrum/color';
+```
+
+---
+category: Color
+keywords: [color wheel]
+---
+
+# ColorWheel
+
+<p>{docs.exports.ColorWheel.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ColorWheel']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/color-wheel/'}
+  ]} />
+
+## Example
+
+```tsx example
+<ColorWheel defaultValue="hsl(30, 100%, 50%)" />
+```
+
+## Value
+
+A ColorWheel's `value` is `hsl(0, 100%, 50%)` by default, but an alternative initial uncontrolled value can be provided using the `defaultValue` prop.
+Alternatively, a controlled value can be provided using the `value` prop. Note that only HSB and HSL values are supported as valid values.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState('hsl(30, 100%, 50%)');
+  return (
+    <Flex gap="size-150" wrap>
+      <ColorWheel defaultValue="hsl(30, 100%, 50%)" />
+      <ColorWheel
+        value={value}
+        onChange={setValue} />
+    </Flex>
+  );
+}
+```
+
+## Labeling
+
+By default, a localized string for the "hue" channel name is used as the `aria-label` for the ColorWheel. When a custom `aria-label` or `aria-labelledby`
+is provided, it should be localized accordingly.
+
+## Step values
+
+The `step` prop can be used to snap the value to certain increments. The value provided should the number of degrees that each step should span,
+ranging from 1 to 360. Note that the steps are calculated starting from 0˚ and that the final step will always snap back to 0˚, regardless of how much
+remaining track distance there is from the step prior.
+
+```tsx example
+<ColorWheel step={60} />
+```
+
+## Events
+
+ColorWheel accepts two events, `onChange` and `onChangeEnd`. The former is triggered whenever the ColorWheel's value is changed while the
+latter only fires on the final change event (e.g. when a user stops dragging the ColorWheel's handle).
+
+The example below uses `onChange` and `onChangeEnd` to update two separate elements with the ColorWheel's value.
+
+```tsx example
+function Example() {
+  let [currentValue, setCurrentValue] = React.useState('hsl(50, 100%, 50%)');
+  let [finalValue, setFinalValue] = React.useState('hsl(50, 100%, 50%)');
+
+  return (
+    <div>
+      <ColorWheel
+        value={currentValue}
+        onChange={setCurrentValue}
+        onChangeEnd={setFinalValue} />
+      <pre>Current value: {currentValue}</pre>
+      <pre>Final value: {finalValue}</pre>
+    </div>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.ColorWheel} links={docs.links} />
+
+## Visual options
+
+### Disabled
+[View guidelines](https://spectrum.adobe.com/page/color-wheel/#Disabled)
+
+```tsx example
+<ColorWheel isDisabled />
+```
+
+### Size
+[View guidelines](https://spectrum.adobe.com/page/color-wheel/#Size)
+
+```tsx example
+<ColorWheel size="size-3000" />
+```
