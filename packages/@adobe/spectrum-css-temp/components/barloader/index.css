@@ -18,20 +18,20 @@ governing permissions and limitations under the License.
   flex-flow: row wrap;
   justify-content: space-between;
   align-items: center;
-  min-width: var(--spectrum-barloader-large-width);
+  min-inline-size: var(--spectrum-barloader-large-width);
   inline-size: var(--spectrum-barloader-large-width);
   vertical-align: top;
   isolation: isolate;
 
   &.spectrum-BarLoader--indeterminate {
-    max-width: var(--spectrum-barloader-large-width);
+    max-inline-size: var(--spectrum-barloader-large-width);
   }
 }
 
 .spectrum-BarLoader-track {
   /* Visually apply border radius to child elements */
   overflow: hidden;
-  min-width: var(--spectrum-barloader-large-width);
+  min-inline-size: var(--spectrum-barloader-large-width);
   inline-size: 100%;
   height: var(--spectrum-barloader-large-height);
   border-radius: var(--spectrum-barloader-large-border-radius);
@@ -67,11 +67,10 @@ governing permissions and limitations under the License.
   display: inline-flex;
   flex-flow: row;
   justify-content: space-between;
-  inline-size: auto;
-  min-width: fit-content;
+  min-inline-size: fit-content;
 
   .spectrum-BarLoader-track {
-    width: auto;
+    inline-size: auto;
   }
 
   .spectrum-BarLoader-label {
@@ -87,7 +86,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-BarLoader--small {
-  min-width: var(--spectrum-barloader-small-width);
+  min-inline-size: var(--spectrum-barloader-small-width);
 
   .spectrum-BarLoader-fill {
     height: var(--spectrum-barloader-small-height);
@@ -99,7 +98,7 @@ governing permissions and limitations under the License.
   }
 }
 .spectrum-BarLoader--indeterminate .spectrum-BarLoader-fill {
-  width: var(--spectrum-barloader-large-indeterminate-fill-width);
+  inline-size: var(--spectrum-barloader-large-indeterminate-fill-width);
   position: relative;
   animation-timing-function: var(--spectrum-barloader-large-indeterminate-animation-ease);
   will-change: transform;
