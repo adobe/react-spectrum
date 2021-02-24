@@ -1,5 +1,5 @@
 {
-  "decrease": "Decrease {fieldLabel}",
-  "increase": "Increase {fieldLabel}",
-  "Number field": "Number field"
+  "Number field": "Numerokenttä",
+  "decrease": "Vähennä {fieldLabel}",
+  "increase": "Lisää {fieldLabel}"
 }

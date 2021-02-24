@@ -1,5 +1,5 @@
 {
-  "decrease": "Decrease {fieldLabel}",
-  "increase": "Increase {fieldLabel}",
-  "Number field": "Number field"
+  "Number field": "數字欄位",
+  "decrease": "縮小 {fieldLabel}",
+  "increase": "放大 {fieldLabel}"
 }

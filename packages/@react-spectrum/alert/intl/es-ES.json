@@ -1,7 +1,7 @@
 {
   "error": "Error",
-  "warning": "Advertencia",
-  "info": "Información",
   "help": "Ayuda",
-  "success": "Éxito"
+  "info": "Información",
+  "success": "Éxito",
+  "warning": "Advertencia"
 }

@@ -1,5 +1,5 @@
 {
-  "decrease": "Decrease {fieldLabel}",
-  "increase": "Increase {fieldLabel}",
-  "Number field": "Number field"
+  "Number field": "Champ de nombre",
+  "decrease": "Diminuer {fieldLabel}",
+  "increase": "Augmenter {fieldLabel}"
 }

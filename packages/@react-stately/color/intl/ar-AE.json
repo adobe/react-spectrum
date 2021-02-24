@@ -1,10 +1,10 @@
 {
-  "hue": "تدرج اللون",
-  "saturation": "‏‏الإشباع",
-  "lightness": "الإضاءة",
-  "brightness": "والقيمة",
-  "red": "أحمر",
-  "green": "أخضر",
+  "alpha": "ألفا",
   "blue": "أزرق",
-  "alpha": "أولي"
+  "brightness": "السطوع",
+  "green": "أخضر",
+  "hue": "درجة اللون",
+  "lightness": "الإضاءة",
+  "red": "أحمر",
+  "saturation": "التشبع"
 }

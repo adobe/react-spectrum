@@ -1,5 +1,5 @@
 {
-  "decrease": "Decrease {fieldLabel}",
-  "increase": "Increase {fieldLabel}",
-  "Number field": "Number field"
+  "Number field": "Číselné pole",
+  "decrease": "Znížiť {fieldLabel}",
+  "increase": "Zvýšiť {fieldLabel}"
 }

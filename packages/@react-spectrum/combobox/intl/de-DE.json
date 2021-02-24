@@ -1,6 +1,6 @@
 {
-  "clear": "Clear",
-  "invalid": "(invalid)",
-  "loading": "Loading...",
-  "noResults": "No results"
+  "clear": "Löschen",
+  "invalid": "(ungültig)",
+  "loading": "Wird geladen...",
+  "noResults": "Keine Ergebnisse"
 }

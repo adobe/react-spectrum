@@ -1,10 +1,10 @@
 {
-  "alpha": "Alpha",
-  "blue": "Blue",
-  "brightness": "Brightness",
-  "green": "Green",
-  "hue": "Hue",
-  "lightness": "Lightness",
-  "red": "Red",
-  "saturation": "Saturation"
+  "alpha": "Alfa",
+  "blue": "Azul",
+  "brightness": "Luminosidade",
+  "green": "Verde",
+  "hue": "Tonalidade",
+  "lightness": "Claridade",
+  "red": "Vermelho",
+  "saturation": "Saturação"
 }

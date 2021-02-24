@@ -1,6 +1,6 @@
 {
-  "clear": "Clear",
-  "invalid": "(invalid)",
-  "loading": "Loading...",
-  "noResults": "No results"
+  "clear": "Izbriši",
+  "invalid": "(nevažeće)",
+  "loading": "Učitavam...",
+  "noResults": "Nema rezultata"
 }
