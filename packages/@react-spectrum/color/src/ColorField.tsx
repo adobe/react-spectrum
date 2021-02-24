@@ -11,14 +11,14 @@
  */
 
 import React, {RefObject, useRef} from 'react';
-import {SpectrumHexColorFieldProps} from '@react-types/color';
+import {SpectrumColorFieldProps} from '@react-types/color';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
-import {useHexColorField} from '@react-aria/color';
-import {useHexColorFieldState} from '@react-stately/color';
+import {useColorField} from '@react-aria/color';
+import {useColorFieldState} from '@react-stately/color';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function HexColorField(props: SpectrumHexColorFieldProps, ref: RefObject<TextFieldRef>) {
+function ColorField(props: SpectrumColorFieldProps, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
   let {
     // These disabled props are handled by the state hook
@@ -27,12 +27,12 @@ function HexColorField(props: SpectrumHexColorFieldProps, ref: RefObject<TextFie
     onChange,       // eslint-disable-line @typescript-eslint/no-unused-vars
     ...otherProps
   } = props;
-  let state = useHexColorFieldState(props);
+  let state = useColorFieldState(props);
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
   let {
     labelProps,
     inputProps
-  } = useHexColorField(otherProps, state, inputRef);
+  } = useColorField(otherProps, state, inputRef);
 
   return (
     <TextFieldBase
@@ -44,5 +44,5 @@ function HexColorField(props: SpectrumHexColorFieldProps, ref: RefObject<TextFie
   );
 }
 
-const _HexColorField = React.forwardRef(HexColorField);
-export {_HexColorField as HexColorField};
+const _ColorField = React.forwardRef(ColorField);
+export {_ColorField as ColorField};

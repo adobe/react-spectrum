@@ -44,12 +44,31 @@
   display: block;
   width: 100%;
   height: var(--spectrum-colorslider-height);
+  border-radius: var(--spectrum-colorslider-border-radius);
 
   /* Otherwise we randomly drag a file icon */
   user-select: none;
   touch-action: none;
 
   cursor: default;
+
+  /* The checkerboard is a separate element so that the gradient is overlaid on top. */
+  &:before {
+    content: "";
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    border-radius: var(--spectrum-colorslider-border-radius);
+    background-size: var(--spectrum-global-dimension-static-size-200)
+      var(--spectrum-global-dimension-static-size-200);
+    background-position: 0 0, 0 var(--spectrum-global-dimension-static-size-100),
+      var(--spectrum-global-dimension-static-size-100)
+        calc(-1 * var(--spectrum-global-dimension-static-size-100)),
+      calc(-1 * var(--spectrum-global-dimension-static-size-100)) 0;
+  }
 
   &.is-focused {
     z-index: 2;
@@ -85,34 +104,6 @@
     width: var(--spectrum-colorslider-handle-hitarea-width);
     height: var(--spectrum-colorslider-handle-hitarea-height);
   }
-}
-
-.spectrum-ColorSlider-checkerboard {
-  background-size: var(--spectrum-global-dimension-static-size-200)
-    var(--spectrum-global-dimension-static-size-200);
-  background-position: 0 0, 0 var(--spectrum-global-dimension-static-size-100),
-    var(--spectrum-global-dimension-static-size-100)
-      calc(-1 * var(--spectrum-global-dimension-static-size-100)),
-    calc(-1 * var(--spectrum-global-dimension-static-size-100)) 0;
-
-  /* the floating inset box shadow must be a separate element since <canvas> won't take it */
-  &:before {
-    content: "";
-    z-index: 1;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    border-radius: var(--spectrum-colorslider-border-radius);
-  }
-}
-
-.spectrum-ColorSlider-gradient,
-.spectrum-ColorSlider-checkerboard {
-  width: 100%;
-  height: 100%;
-  border-radius: var(--spectrum-colorslider-border-radius);
 }
 
 .spectrum-ColorSlider-slider {

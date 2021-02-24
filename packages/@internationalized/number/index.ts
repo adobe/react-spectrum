@@ -10,7 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-export type {NumberFormatOptions} from './NumberFormatter';
-
-export {getNumberFormatter} from './NumberFormatter';
-export {getNumberingSystem, parseNumber, isValidPartialNumber} from './NumberParser';
+export * from './src';
