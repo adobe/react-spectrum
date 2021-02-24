@@ -11,6 +11,8 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/color';
+import colorTypes from 'docs:@react-types/color/src/index.d.ts';
+import statelyDocs from 'docs:@react-stately/color';
 import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/color/package.json';
 
@@ -44,17 +46,28 @@ keywords: [color wheel]
 ## Value
 
 A ColorWheel's `value` is `hsl(0, 100%, 50%)` by default, but an alternative initial uncontrolled value can be provided using the `defaultValue` prop.
-Alternatively, a controlled value can be provided using the `value` prop. Note that only HSB and HSL values are supported as valid values.
+Alternatively, a controlled value can be provided using the `value` prop. Note that only HSB(A) and HSL(A) values are supported as valid values.
+
+In the example below, the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} /> function is used to parse the initial color from a HSL string
+so that `value`'s type remains consistent.
 
 ```tsx example
+import {parseColor} from '@react-stately/color';
+
 function Example() {
-  let [value, setValue] = React.useState('hsl(30, 100%, 50%)');
+  let [value, setValue] = React.useState(parseColor('hsl(30, 100%, 50%)'));
   return (
     <Flex gap="size-150" wrap>
-      <ColorWheel defaultValue="hsl(30, 100%, 50%)" />
-      <ColorWheel
-        value={value}
-        onChange={setValue} />
+      <div>
+        <label id="label-1">Hue (uncontrolled)</label>
+        <ColorWheel defaultValue="hsl(30, 100%, 50%)" aria-labelledby="label-1" />
+      </div>
+      <div>
+        <label id="label-2">Hue (uncontrolled)</label>
+        <ColorWheel
+          value={value}
+          onChange={setValue} />
+      </div>
     </Flex>
   );
 }
@@ -78,23 +91,25 @@ remaining track distance there is from the step prior.
 ## Events
 
 ColorWheel accepts two events, `onChange` and `onChangeEnd`. The former is triggered whenever the ColorWheel's handle is dragged while the
-latter fires when the user stops dragging the handle.
+latter fires when the user stops dragging the handle. Note that a <TypeLink links={colorTypes.links} type={colorTypes.exports.Color} /> object
+is returned by `onChange` and `onChangeEnd`.
 
 The example below uses `onChange` and `onChangeEnd` to update two separate elements with the ColorWheel's value.
 
 ```tsx example
 function Example() {
-  let [currentValue, setCurrentValue] = React.useState('hsl(50, 100%, 50%)');
-  let [finalValue, setFinalValue] = React.useState('hsl(50, 100%, 50%)');
+  let [currentValue, setCurrentValue] = React.useState(parseColor('hsl(50, 100%, 50%)'));
+  let [finalValue, setFinalValue] = React.useState(parseColor('hsl(50, 100%, 50%)'));
 
   return (
     <div>
       <ColorWheel
         value={currentValue}
         onChange={setCurrentValue}
-        onChangeEnd={setFinalValue} />
-      <pre>Current value: {currentValue}</pre>
-      <pre>Final value: {finalValue}</pre>
+        onChangeEnd={setFinalValue}
+      />
+      <pre>Current value: {currentValue.toString('hsl')}</pre>
+      <pre>Final value: {finalValue.toString('hsl')}</pre>
     </div>
   );
 }

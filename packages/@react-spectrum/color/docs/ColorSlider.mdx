@@ -50,15 +50,22 @@ The value provided to either of these props should be a string or <TypeLink link
 ColorSlider representing a color channel ("red", "green", "blue") would have a hex color code (e.g. "#7f0000") provided. For a full list of supported channels,
 see the [Props](#props) table below.
 
+In the example below, the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} /> function is used to parse the initial color from a HSL string
+so that `value`'s type remains consistent.
+
 ```tsx example
+import {parseColor} from '@react-stately/color';
+
 function Example() {
-  let [value, setValue] = React.useState('hsl(0, 100%, 50%)');
+  let [value, setValue] = React.useState(parseColor('hsl(0, 100%, 50%)'));
   return (
-    <Flex gap="size-150" wrap>
+    <Flex gap="size-300" wrap>
       <ColorSlider
+        label="Hue (uncontrolled)"
         defaultValue="hsl(0, 100%, 50%)"
         channel="hue" />
       <ColorSlider
+        label="Hue (controlled)"
         value={value}
         onChange={setValue}
         channel="hue" />
@@ -73,7 +80,7 @@ The ColorSlider's channel and value are shown above the ColorSlider by default. 
 `label={null}` and `showValueLabel={false}` to the ColorSlider.
 
 ```tsx example
-<Flex gap="size-150" wrap>
+<Flex gap="size-300" wrap alignItems="flex-end">
   <ColorSlider channel="saturation" defaultValue="hsl(0, 100%, 50%)" label={null} />
   <ColorSlider channel="lightness" defaultValue="hsl(0, 100%, 50%)" showValueLabel={false} />
 </Flex>
@@ -98,21 +105,22 @@ The `step` prop can be used to snap the ColorSlider's value to specific incremen
 ```tsx example
 <Flex gap="size-150" wrap>
   <ColorSlider channel="hue" defaultValue="hsl(0, 100%, 50%)" step={10} />
-  <ColorSlider channel="alpha" defaultValue={.2} step={.05} />
+  <ColorSlider channel="alpha" defaultValue=".2" step={.05} />
 </Flex>
 ```
 
 ## Events
 
 ColorSlider accepts two events, `onChange` and `onChangeEnd`. The former is triggered whenever the ColorSlider's handle is dragged while the
-latter fires when the user stops dragging the handle.
+latter fires when the user stops dragging the handle. Note that a <TypeLink links={colorTypes.links} type={colorTypes.exports.Color} /> object
+is returned by `onChange` and `onChangeEnd`.
 
 The example below uses `onChange` and `onChangeEnd` to update two separate elements with the ColorSlider's value.
 
 ```tsx example
 function Example() {
-  let [currentValue, setCurrentValue] = React.useState('hsl(50, 100%, 50%)');
-  let [finalValue, setFinalValue] = React.useState('hsl(50, 100%, 50%)');
+  let [currentValue, setCurrentValue] = React.useState(parseColor('hsl(50, 100%, 50%)'));
+  let [finalValue, setFinalValue] = React.useState(parseColor('hsl(50, 100%, 50%)'));
 
   return (
     <div>
@@ -121,8 +129,8 @@ function Example() {
         channel="hue"
         onChange={setCurrentValue}
         onChangeEnd={setFinalValue} />
-      <pre>Current value: {currentValue}</pre>
-      <pre>Final value: {finalValue}</pre>
+      <pre>Current value: {currentValue.toString('hsl')}</pre>
+      <pre>Final value: {finalValue.toString('hsl')}</pre>
     </div>
   );
 }
@@ -138,8 +146,6 @@ function is used to parse the initial color from a hex value, stored in state. T
 of ColorSlider are used to make the sliders controlled, so that they all update when the color is modified.
 
 ```tsx example
-import {parseColor} from '@react-stately/color';
-
 function Example() {
   let [color, setColor] = React.useState(parseColor('#ff00ff'));
 
@@ -160,7 +166,7 @@ This example shows how to build a similar color picker to the one above, using H
 
 ```tsx example
 function Example() {
-  let [color, setColor] = React.useState(parseColor('hsla(0, 100%, 50%, .5)'));
+  let [color, setColor] = React.useState(parseColor('hsla(0, 100%, 50%, 0.5)'));
 
   return (
     <Flex direction="column">
@@ -179,7 +185,7 @@ This example shows how to build an HSBA color picker.
 
 ```tsx example
 function Example() {
-  let [color, setColor] = React.useState(parseColor('hsba(0, 100%, 50%, .5)'));
+  let [color, setColor] = React.useState(parseColor('hsba(0, 100%, 50%, 0.5)'));
   return (
     <>
       <ColorSlider channel="hue" value={color} onChange={setColor} />
@@ -201,14 +207,14 @@ function Example() {
 [View guidelines](https://spectrum.adobe.com/page/color-slider/#Disabled)
 
 ```tsx example
-<ColorSlider isDisabled channel="red" />
+<ColorSlider defaultValue="#7f0000"  channel="red" isDisabled />
 ```
 
 ### Vertical
 [View guidelines](https://spectrum.adobe.com/page/color-slider/#Orientation)
 
 ```tsx example
-<ColorSlider channel="red" orientation="vertical" />
+<ColorSlider defaultValue="#7f0000" channel="red" orientation="vertical" />
 ```
 
 ### Custom Size
@@ -216,7 +222,7 @@ function Example() {
 
 ```tsx example
 <Flex direction="column" gap="size-150">
-  <ColorSlider channel="red" orientation="vertical" height={300} />
-  <ColorSlider channel="red" width={300} />
+  <ColorSlider defaultValue="#7f0000" channel="red" orientation="vertical" height={300} />
+  <ColorSlider defaultValue="#7f0000" channel="red" width={300} />
 </Flex>
 ```

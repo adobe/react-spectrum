@@ -105,7 +105,7 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
 }
 
 /**
- * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
+ * ColorWheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
  */
 let _ColorWheel = React.forwardRef(ColorWheel);
 export {_ColorWheel as ColorWheel};
