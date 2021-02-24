@@ -193,12 +193,20 @@ export function useDrop(options: DropOptions): DropResult {
       }
 
       let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      options.onDrop({
+      let event: DropEvent = {
         type: 'drop',
         x: e.clientX - rect.x,
         y: e.clientY - rect.y,
         items,
         dropOperation
+      };
+
+      // Wait a frame to dispatch the drop event so that we ensure the dragend event fires first.
+      // Otherwise, if onDrop removes the original dragged element from the DOM, dragend will never be fired.
+      // This behavior is consistent across browsers, but see this issue for details:
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=460801
+      requestAnimationFrame(() => {
+        options.onDrop(event);
       });
     }
 
