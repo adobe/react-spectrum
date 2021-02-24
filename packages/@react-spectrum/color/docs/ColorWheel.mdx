@@ -13,7 +13,7 @@ export default Layout;
 import docs from 'docs:@react-spectrum/color';
 import colorTypes from 'docs:@react-types/color/src/index.d.ts';
 import statelyDocs from 'docs:@react-stately/color';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/color/package.json';
 
 ```jsx import
@@ -57,17 +57,20 @@ import {parseColor} from '@react-stately/color';
 function Example() {
   let [value, setValue] = React.useState(parseColor('hsl(30, 100%, 50%)'));
   return (
-    <Flex gap="size-150" wrap>
-      <div>
+    <Flex gap="size-300" wrap>
+      <Flex direction="column" alignItems="center">
         <label id="label-1">Hue (uncontrolled)</label>
-        <ColorWheel defaultValue="hsl(30, 100%, 50%)" aria-labelledby="label-1" />
-      </div>
-      <div>
-        <label id="label-2">Hue (uncontrolled)</label>
+        <ColorWheel
+          defaultValue="hsl(30, 100%, 50%)"
+          aria-labelledby="label-1" />
+      </Flex>
+      <Flex direction="column" alignItems="center">
+        <label id="label-2">Hue (controlled)</label>
         <ColorWheel
           value={value}
-          onChange={setValue} />
-      </div>
+          onChange={setValue}
+          aria-labelledby="label-1" />
+      </Flex>
     </Flex>
   );
 }

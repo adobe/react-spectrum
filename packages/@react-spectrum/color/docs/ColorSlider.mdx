@@ -103,9 +103,9 @@ The `step` prop can be used to snap the ColorSlider's value to specific incremen
 (e.g. "alpha" channel value ranges from 0 to 1 so the step should be less than 1).
 
 ```tsx example
-<Flex gap="size-150" wrap>
+<Flex gap="size-300" wrap>
   <ColorSlider channel="hue" defaultValue="hsl(0, 100%, 50%)" step={10} />
-  <ColorSlider channel="alpha" defaultValue=".2" step={.05} />
+  <ColorSlider channel="alpha" defaultValue="hsla(0, 100%, 50%, 0.5)" step={.05} />
 </Flex>
 ```
 
@@ -221,7 +221,7 @@ function Example() {
 [View guidelines](https://spectrum.adobe.com/page/color-slider/#Length)
 
 ```tsx example
-<Flex direction="column" gap="size-150">
+<Flex direction="column" gap="size-300">
   <ColorSlider defaultValue="#7f0000" channel="red" orientation="vertical" height={300} />
   <ColorSlider defaultValue="#7f0000" channel="red" width={300} />
 </Flex>
