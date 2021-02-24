@@ -525,6 +525,10 @@ storiesOf('Picker', module)
     () => (
       <Flex>
         <Picker label="Test1">
+          <Item key="One">One</Item>
+          <Item key="Two">Two</Item>
+          <Item key="Three">Three</Item>
+        </Picker>
         <Picker label="Test2">
           <Item key="One">One</Item>
           <Item key="Two">Two</Item>
