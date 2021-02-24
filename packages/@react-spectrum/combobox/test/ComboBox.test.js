@@ -21,6 +21,7 @@ import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.cs
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {typeText} from '@react-spectrum/test-utils';
+import {useAsyncList} from '@react-stately/data';
 import userEvent from '@testing-library/user-event';
 
 let theme = {
@@ -78,6 +79,47 @@ function renderSectionComboBox(props = {}) {
   );
 }
 
+let initialFilterItems = [
+  {name: 'Aardvark', id: '1'},
+  {name: 'Kangaroo', id: '2'},
+  {name: 'Snake', id: '3'}
+];
+
+let secondCallFilterItems = [
+  {name: 'Aardvark', id: '1'}
+];
+
+function getFilterItems() {
+  return Promise.resolve({
+    items: initialFilterItems
+  });
+}
+
+function mockSecondCall() {
+  return Promise.resolve({
+    items: secondCallFilterItems
+  });
+}
+
+let load;
+let AsyncComboBox = () => {
+  let list = useAsyncList({
+    load: load
+  });
+
+  return (
+    <ComboBox
+      items={list.items}
+      label="Combobox"
+      inputValue={list.filterText}
+      onInputChange={list.setFilterText}
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}>
+      {(item) => <Item>{item.name}</Item>}
+    </ComboBox>
+  );
+};
+
 function testComboBoxOpen(combobox, button, listbox, focusedItemIndex) {
   let buttonId = button.id;
   let comboboxLabelledBy = combobox.getAttribute('aria-labelledby');
@@ -128,6 +170,14 @@ describe('ComboBox', function () {
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.useFakeTimers();
+  });
+
+  beforeEach(() => {
+    load = jest
+      .fn()
+      .mockImplementationOnce(getFilterItems)
+      .mockImplementationOnce(mockSecondCall)
+      .mockImplementationOnce(mockSecondCall);
   });
 
   afterEach(() => {
@@ -2584,6 +2634,137 @@ describe('ComboBox', function () {
     expect(combobox).toHaveAttribute('aria-invalid', 'true');
   });
 
+  describe('loadingState', function () {
+    it.each`
+      LoadingState   | ValidationState
+      ${'loading'}   | ${null}
+      ${'filtering'} | ${null}
+      ${'loading'}   | ${'invalid'}
+      ${'filtering'} | ${'invalid'}
+    `('should render the loading swirl in the input field when loadingState="$LoadingState" and validationState="$ValidationState"', ({LoadingState, ValidationState}) => {
+      let {getByRole} = renderComboBox({loadingState: LoadingState, validationState: ValidationState});
+      let button = getByRole('button');
+      let progressSpinner = getByRole('progressbar');
+
+      expect(progressSpinner).toBeTruthy();
+      expect(progressSpinner).toHaveAttribute('aria-label', 'Loading...');
+
+      let combobox = getByRole('combobox');
+      if (ValidationState) {
+        expect(combobox).toHaveAttribute('aria-invalid', 'true');
+      }
+
+      // validation icon should no be present
+      expect(() => within(combobox).getByRole('img', {hidden: true})).toThrow();
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      expect(() => within(listbox).getByRole('progressbar')).toThrow();
+    });
+
+    it('should render the loading swirl in the listbox when loadingState="loadingMore"', function () {
+      let {getByRole} = renderComboBox({loadingState: 'loadingMore'});
+      let button = getByRole('button');
+
+      expect(() => getByRole('progressbar')).toThrow();
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+
+      let progressSpinner = within(listbox).getByRole('progressbar');
+      expect(progressSpinner).toBeTruthy();
+      expect(progressSpinner).toHaveAttribute('aria-label', 'Loading more…');
+    });
+  });
+
+  describe('async loading', function () {
+    it('async combobox works with useAsyncList', async () => {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <AsyncComboBox />
+        </Provider>
+      );
+
+      let combobox = getByRole('combobox');
+      let button = getByRole('button');
+      let progressSpinner = getByRole('progressbar');
+      expect(progressSpinner).toBeTruthy();
+      expect(progressSpinner).toHaveAttribute('aria-label', 'Loading...');
+
+      await waitFor(() => expect(load).toHaveBeenCalledTimes(1));
+      expect(load).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          'filterText': ''
+        })
+      );
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      expect(() => getByRole('progressbar')).toThrow();
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeTruthy();
+      let items = within(listbox).getAllByRole('option');
+      expect(items).toHaveLength(3);
+      expect(items[0]).toHaveTextContent('Aardvark');
+      expect(items[1]).toHaveTextContent('Kangaroo');
+      expect(items[2]).toHaveTextContent('Snake');
+
+      act(() => {
+        fireEvent.change(combobox, {target: {value: 'aard'}});
+        jest.runAllTimers();
+      });
+
+      progressSpinner = getByRole('progressbar');
+      expect(progressSpinner).toBeTruthy();
+      expect(progressSpinner).toHaveAttribute('aria-label', 'Loading...');
+
+      await waitFor(() => expect(load).toHaveBeenCalledTimes(2));
+      expect(load).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          'filterText': 'aard'
+        })
+      );
+      expect(() => getByRole('progressbar')).toThrow();
+
+      items = within(listbox).getAllByRole('option');
+      expect(items).toHaveLength(1);
+      expect(items[0]).toHaveTextContent('Aardvark');
+
+      act(() => {
+        triggerPress(items[0]);
+        jest.runAllTimers();
+      });
+
+      progressSpinner = getByRole('progressbar');
+      expect(progressSpinner).toBeTruthy();
+      expect(progressSpinner).toHaveAttribute('aria-label', 'Loading...');
+
+      await waitFor(() => expect(load).toHaveBeenCalledTimes(3));
+      expect(load).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          'filterText': 'Aardvark'
+        })
+      );
+
+      expect(() => getByRole('progressbar')).toThrow();
+      expect(combobox.value).toBe('Aardvark');
+    });
+  });
+
   describe('mobile combobox', function () {
     beforeEach(() => {
       jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 600);
@@ -3270,6 +3451,177 @@ describe('ComboBox', function () {
 
         act(() => {ref.current.focus();});
         expect(document.activeElement).toBe(getByRole('button'));
+      });
+    });
+
+    describe('isLoading', function () {
+      it.each`
+        LoadingState   | ValidationState
+        ${'loading'}   | ${null}
+        ${'filtering'} | ${null}
+        ${'loading'}   | ${'invalid'}
+        ${'filtering'} | ${'invalid'}
+      `('should render the loading swirl in the tray input field when loadingState="$LoadingState" and validationState="$ValidationState"', ({LoadingState, ValidationState}) => {
+        let {getByRole, getByTestId} = renderComboBox({loadingState: LoadingState, validationState: ValidationState, defaultInputValue: 'O'});
+        let button = getByRole('button');
+        let progressSpinner = getByRole('progressbar');
+
+        expect(progressSpinner).toBeTruthy();
+        expect(progressSpinner).toHaveAttribute('aria-label', 'Loading...');
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        let tray = getByTestId('tray');
+        expect(tray).toBeVisible();
+
+        let trayProgressSpinner = within(tray).getByRole('progressbar');
+        expect(trayProgressSpinner).toBeTruthy();
+
+        if (LoadingState === 'loading') {
+          expect(trayProgressSpinner).toHaveAttribute('aria-label', 'Loading more…');
+        } else {
+          expect(trayProgressSpinner).toHaveAttribute('aria-label', 'Loading...');
+        }
+
+
+        let clearButton = within(tray).getByLabelText('Clear');
+        expect(clearButton).toBeTruthy();
+
+        let listbox = getByRole('listbox');
+
+        if (LoadingState === 'loading') {
+          expect(within(listbox).getByRole('progressbar')).toBeTruthy();
+        } else {
+          expect(() => within(listbox).getByRole('progressbar')).toThrow();
+        }
+
+        if (ValidationState) {
+          let trayInput = within(tray).getByRole('searchbox');
+          expect(trayInput).toHaveAttribute('aria-invalid', 'true');
+        }
+
+        if (ValidationState && LoadingState === 'loading') {
+          // validation icon should be present along with the clear button
+          expect(within(tray).getAllByRole('img', {hidden: true})).toHaveLength(2);
+        } else {
+          // validation icon should not be present, only img is the clear button
+          expect(within(tray).getAllByRole('img', {hidden: true})).toHaveLength(1);
+        }
+      });
+
+      it('should render the loading swirl in the listbox when loadingState="loadingMore"', function () {
+        let {getByRole, getByTestId} = renderComboBox({loadingState: 'loadingMore', validationState: 'invalid'});
+        let button = getByRole('button');
+
+        expect(() => getByRole('progressbar')).toThrow();
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        let tray = getByTestId('tray');
+        expect(tray).toBeVisible();
+
+        let allProgressSpinners = within(tray).getAllByRole('progressbar');
+        expect(allProgressSpinners.length).toBe(1);
+
+        let validationIcon = within(tray).getByRole('img', {hidden: true});
+        expect(validationIcon).toBeTruthy();
+
+        let trayInput = within(tray).getByRole('searchbox');
+        expect(trayInput).toHaveAttribute('aria-invalid', 'true');
+
+        let listbox = getByRole('listbox');
+        let progressSpinner = within(listbox).getByRole('progressbar');
+        expect(progressSpinner).toBeTruthy();
+        expect(progressSpinner).toHaveAttribute('aria-label', 'Loading more…');
+      });
+    });
+
+    describe('mobile async loading', function () {
+      it('async combobox works with useAsyncList', async () => {
+        let {getByRole, getByTestId, getByText} = render(
+          <Provider theme={theme}>
+            <AsyncComboBox />
+          </Provider>
+        );
+
+        let button = getByRole('button');
+        let progressSpinner = getByRole('progressbar');
+        expect(progressSpinner).toBeTruthy();
+
+        await waitFor(() => expect(load).toHaveBeenCalledTimes(1));
+        expect(load).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            'filterText': ''
+          })
+        );
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        expect(() => getByRole('progressbar')).toThrow();
+
+        let tray = getByTestId('tray');
+        expect(tray).toBeVisible();
+        expect(() => within(tray).getByRole('progressbar')).toThrow();
+
+        let listbox = getByRole('listbox');
+        expect(() => within(listbox).getByRole('progressbar')).toThrow;
+        let items = within(listbox).getAllByRole('option');
+        expect(items).toHaveLength(3);
+        expect(items[0]).toHaveTextContent('Aardvark');
+        expect(items[1]).toHaveTextContent('Kangaroo');
+        expect(items[2]).toHaveTextContent('Snake');
+
+        let trayInput = within(tray).getByRole('searchbox');
+        act(() => {
+          trayInput.focus();
+          fireEvent.change(trayInput, {target: {value: 'aard'}});
+          jest.runAllTimers();
+        });
+
+        let trayInputProgress = within(tray).getByRole('progressbar');
+        expect(trayInputProgress).toBeTruthy();
+        expect(() => within(listbox).getByRole('progressbar')).toThrow;
+
+        await waitFor(() => expect(load).toHaveBeenCalledTimes(2));
+        expect(load).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            'filterText': 'aard'
+          })
+        );
+        expect(() => within(tray).getByRole('progressbar')).toThrow();
+
+        items = within(listbox).getAllByRole('option');
+        expect(items).toHaveLength(1);
+        expect(items[0]).toHaveTextContent('Aardvark');
+
+        act(() => {
+          triggerPress(items[0]);
+          jest.runAllTimers();
+        });
+
+        progressSpinner = getByRole('progressbar');
+        expect(progressSpinner).toBeTruthy();
+        expect(progressSpinner).toHaveAttribute('aria-label', 'Loading...');
+
+        await waitFor(() => expect(load).toHaveBeenCalledTimes(3));
+        expect(load).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            'filterText': 'Aardvark'
+          })
+        );
+
+        expect(() => getByRole('progressbar')).toThrow();
+        expect(() => getByTestId('tray')).toThrow();
+        expect(button).toHaveAttribute('aria-labelledby', `${getByText('Combobox').id} ${getByText('Aardvark').id}`);
       });
     });
   });

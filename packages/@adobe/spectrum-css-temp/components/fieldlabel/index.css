@@ -73,6 +73,9 @@ governing permissions and limitations under the License.
     .spectrum-Field-field {
       /* If the user overrides the width of the field, propagate to the inner component */
       width: 100%;
+    }
+
+    .spectrum-Field-field--multiline {
       flex: 1 1 auto;
     }
   }
@@ -84,9 +87,11 @@ governing permissions and limitations under the License.
     align-items: flex-start;
 
     .spectrum-Field-field {
-      /* If the user overrides the height of the field, propagate to the inner component */
-      height: 100%;
       flex: 1;
+    }
+
+    .spectrum-Field-field--multiline {
+      height: 100%;
     }
   }
 }
