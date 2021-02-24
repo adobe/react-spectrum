@@ -23,7 +23,7 @@ import {Flex} from '@react-spectrum/layout';
 
 ---
 category: Color
-keywords: [color wheel]
+keywords: [color wheel, slider]
 ---
 
 # ColorWheel
@@ -84,7 +84,7 @@ is provided, it should be localized accordingly.
 ## Step values
 
 The `step` prop can be used to snap the ColorWheel's value to specific increments. The value provided should the number of degrees that each step should span,
-ranging from 1 to 360. Note that the steps are calculated starting from 0˚ and that the final step will always snap back to 0˚, regardless of how much
+ranging from 0 to 360. Note that the steps are calculated starting from 0˚ and that the final step will always snap back to 0˚, regardless of how much
 remaining track distance there is from the step prior.
 
 ```tsx example
