@@ -119,8 +119,8 @@ export function useSliderThumb(
     inputRef
   );
 
-  let currentPointer = useRef<number | null | undefined>(undefined);
-  let onDown = (id: number | null) => {
+  let currentPointer = useRef<number | undefined>(undefined);
+  let onDown = (id?: number) => {
     focusInput();
     currentPointer.current = id;
     state.setThumbDragging(index, true);
@@ -171,7 +171,7 @@ export function useSliderThumb(
           if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
             return;
           }
-          onDown(null);
+          onDown();
         },
         onPointerDown: (e: React.PointerEvent<HTMLElement>) => {
           if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {

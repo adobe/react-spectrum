@@ -129,6 +129,9 @@ storiesOf('TextField', module)
         </div>
       </div>
     )
+  )
+  .add('placeholder arabic',
+    () => render({placeholder: 'أدخل رقماً'})
   );
 
 function render(props = {}) {

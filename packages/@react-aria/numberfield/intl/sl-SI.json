@@ -1,6 +1,5 @@
 {
-  "Decrement": "Zmanjšanje",
-  "Enter a number": "Vnesite številko",
-  "Increment": "Povečanje",
-  "Spin button number field": "Spin button number field"
+  "decrease": "Decrease {fieldLabel}",
+  "increase": "Increase {fieldLabel}",
+  "Number field": "Number field"
 }
