@@ -161,7 +161,13 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     );
 
     textField = React.cloneElement(textField, mergeProps(textField.props, {
-      className: classNames(labelStyles, 'spectrum-Field-field')
+      className: classNames(
+        labelStyles,
+        'spectrum-Field-field',
+        {
+          'spectrum-Field-field--multiline': multiLine
+        }
+      )
     }));
 
     return (

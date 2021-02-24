@@ -1,6 +1,5 @@
 {
-  "Decrement": "Azalış",
-  "Enter a number": "Sayı girin",
-  "Increment": "Artış",
-  "Spin button number field": "Spin button number field"
+  "decrease": "Decrease {fieldLabel}",
+  "increase": "Increase {fieldLabel}",
+  "Number field": "Number field"
 }
