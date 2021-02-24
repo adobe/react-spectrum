@@ -10,15 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {DragEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragStartEvent} from '@react-types/shared';
+import {Collection, DragEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragStartEvent, Node} from '@react-types/shared';
 import {Key, useState} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
 interface DraggableCollectionOptions extends DraggableCollectionProps {
+  collection: Collection<Node<unknown>>,
   selectionManager: MultipleSelectionManager
 }
 
 export interface DraggableCollectionState {
+  collection: Collection<Node<unknown>>,
+  selectionManager: MultipleSelectionManager,
   isDragging(key: Key): boolean,
   getItems(key: Key): DragItem[],
   renderPreview(key: Key): JSX.Element,
@@ -44,6 +47,8 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
   };
 
   return {
+    collection: props.collection,
+    selectionManager: props.selectionManager,
     isDragging(key) {
       return draggingKeys.has(key);
     },

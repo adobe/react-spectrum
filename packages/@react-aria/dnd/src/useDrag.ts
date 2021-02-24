@@ -15,9 +15,12 @@ import {CUSTOM_DRAG_TYPE, DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_
 import {DragEndEvent, DragItem, DragMoveEvent, DragStartEvent, DropOperation, PressEvent} from '@react-types/shared';
 import {DragEvent, HTMLAttributes, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import ReactDOM from 'react-dom';
 import {useDescription} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 interface DragOptions {
   onDragStart?: (e: DragStartEvent) => void,
@@ -36,20 +39,21 @@ interface DragResult {
 
 const MESSAGES = {
   keyboard: {
-    start: 'Press Enter to start dragging.',
-    end: 'Dragging. Press Enter to cancel drag.'
+    start: 'dragDescriptionKeyboard',
+    end: 'endDragKeyboard'
   },
   touch: {
-    start: 'Double tap to start dragging.',
-    end: 'Dragging. Double tap to cancel drag.'
+    start: 'dragDescriptionTouch',
+    end: 'endDragTouch'
   },
   virtual: {
-    start: 'Click to start dragging.',
-    end: 'Dragging. Click to cancel drag.'
+    start: 'dragDescriptionVirtual',
+    end: 'endDragVirtual'
   }
 };
 
 export function useDrag(options: DragOptions): DragResult {
+  let formatMessage = useMessageFormatter(intlMessages);
   let state = useRef({
     options,
     x: 0,
@@ -232,7 +236,7 @@ export function useDrag(options: DragOptions): DragResult {
           state.options.onDragEnd(e);
         }
       }
-    });
+    }, formatMessage);
 
     setDragging(true);
   };
@@ -246,7 +250,9 @@ export function useDrag(options: DragOptions): DragResult {
     modality = 'touch';
   }
 
-  let descriptionProps = useDescription(!isDragging ? MESSAGES[modality].start : MESSAGES[modality].end);
+  let descriptionProps = useDescription(
+    formatMessage(!isDragging ? MESSAGES[modality].start : MESSAGES[modality].end)
+  );
 
   return {
     dragProps: {

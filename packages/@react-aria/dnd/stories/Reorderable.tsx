@@ -113,6 +113,7 @@ function ReorderableGrid(props) {
 
   let provider = useProvider();
   let dragState = useDraggableCollectionState({
+    collection: gridState.collection,
     selectionManager: gridState.selectionManager,
     getItems(keys) {
       return [...keys].map(key => {
@@ -230,7 +231,6 @@ function ReorderableGrid(props) {
   let isDropTarget = dropState.isDropTarget({type: 'root'});
   let dropRef = React.useRef();
   let {dropIndicatorProps} = useDropIndicator({
-    collection: gridState.collection,
     target: {type: 'root'}
   }, dropState, dropRef);
   let {visuallyHiddenProps} = useVisuallyHidden();
@@ -253,7 +253,6 @@ function ReorderableGrid(props) {
         <>
           <InsertionIndicator
             key={item.key + '-before'}
-            collection={gridState.collection}
             collectionRef={ref}
             target={{type: 'item', key: item.key, dropPosition: 'before'}}
             dropState={dropState} />
@@ -266,7 +265,6 @@ function ReorderableGrid(props) {
           {gridState.collection.getKeyAfter(item.key) == null &&
             <InsertionIndicator
               key={item.key + '-after'}
-              collection={gridState.collection}
               target={{type: 'item', key: item.key, dropPosition: 'after'}}
               collectionRef={ref}
               dropState={dropState} />
@@ -305,7 +303,6 @@ function CollectionItem({item, state, dragState, dropState}) {
 
   let dropIndicatorRef = React.useRef();
   let {dropIndicatorProps} = useDropIndicator({
-    collection: state.collection,
     target: {type: 'item', key: item.key, dropPosition: 'on'}
   }, dropState, dropIndicatorRef);
   let {visuallyHiddenProps} = useVisuallyHidden();
@@ -327,7 +324,6 @@ function CollectionItem({item, state, dragState, dropState}) {
             <div
               {...buttonProps as React.HTMLAttributes<HTMLElement>}
               ref={dragButtonRef}
-              aria-label="drag"
               className={classNames(dndStyles, 'drag-handle')}>
               <ShowMenu size="XS" />
             </div>

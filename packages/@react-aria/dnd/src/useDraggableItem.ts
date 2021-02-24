@@ -13,7 +13,10 @@
 import {AriaButtonProps} from '@react-types/button';
 import {DraggableCollectionState} from '@react-stately/dnd';
 import {HTMLAttributes, Key} from 'react';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {useDrag} from './useDrag';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 interface DraggableItemProps {
   key: Key
@@ -25,6 +28,7 @@ interface DraggableItemResult {
 }
 
 export function useDraggableItem(props: DraggableItemProps, state: DraggableCollectionState): DraggableItemResult {
+  let formatMessage = useMessageFormatter(intlMessages);
   let {dragProps, dragButtonProps} = useDrag({
     getItems() {
       return state.getItems(props.key);
@@ -43,8 +47,21 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     }
   });
 
+  let item = state.collection.getItem(props.key);
+  let numSelectedKeys = state.selectionManager.selectedKeys.size;
+  let isSelected = state.selectionManager.isSelected(props.key);
+  let message;
+  if (isSelected && numSelectedKeys > 1) {
+    message = formatMessage('dragSelectedItems', {count: numSelectedKeys});
+  } else {
+    message = formatMessage('dragItem', {itemText: item?.textValue ?? ''});
+  }
+
   return {
     dragProps,
-    dragButtonProps
+    dragButtonProps: {
+      ...dragButtonProps,
+      'aria-label': message
+    }
   };
 }

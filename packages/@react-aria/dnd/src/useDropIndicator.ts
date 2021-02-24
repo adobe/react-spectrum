@@ -10,17 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from '@react-types/shared';
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {DropTarget} from '@react-types/shared';
 import {getDroppableCollectionId} from './utils';
 import {HTMLAttributes, Key, RefObject} from 'react';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {useDroppableItem} from './useDroppableItem';
 import {useId} from '@react-aria/utils';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 interface DropIndicatorProps {
-  collection: Collection<Node<unknown>>,
   target: DropTarget
 }
 
@@ -29,8 +30,10 @@ interface DropIndicatorAria {
 }
 
 export function useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DropIndicatorAria {
-  let {collection, target} = props;
+  let {target} = props;
+  let {collection} = state;
 
+  let formatMessage = useMessageFormatter(intlMessages);
   let dragSession = DragManager.useDragSession();
   let {dropProps} = useDroppableItem(props, state, ref);
   let id = useId();
@@ -39,10 +42,12 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
   let label = '';
   let labelledBy: string;
   if (target.type === 'root') {
-    label = 'Drop on';
+    label = formatMessage('dropOnRoot');
     labelledBy = `${id} ${getDroppableCollectionId(state)}`;
   } else if (target.dropPosition === 'on') {
-    label = `Drop on ${getText(target.key)}`;
+    label = formatMessage('dropOnItem', {
+      itemText: getText(target.key)
+    });
   } else {
     let before = target.dropPosition === 'before'
       ? collection.getKeyBefore(target.key)
@@ -52,11 +57,18 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
       : target.key;
 
     if (before && after) {
-      label = `Insert between ${getText(before)} and ${getText(after)}`;
+      label = formatMessage('insertBetween', {
+        beforeItemText: getText(before),
+        afterItemText: getText(after)
+      });
     } else if (before) {
-      label = `Insert after ${getText(before)}`;
+      label = formatMessage('insertAfter', {
+        itemText: getText(before)
+      });
     } else if (after) {
-      label = `Insert before ${getText(after)}`;
+      label = formatMessage('insertBefore', {
+        itemText: getText(after)
+      });
     }
   }
 
@@ -64,7 +76,7 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
     dropIndicatorProps: {
       ...dropProps,
       id,
-      'aria-roledescription': 'drop indicator',
+      'aria-roledescription': formatMessage('dropIndicator'),
       'aria-label': label,
       'aria-labelledby': labelledBy,
       'aria-hidden': !dragSession ? 'true' : dropProps['aria-hidden'],

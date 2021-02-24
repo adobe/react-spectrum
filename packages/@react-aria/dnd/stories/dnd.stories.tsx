@@ -285,6 +285,7 @@ function DraggableCollection(props) {
 
   let provider = useProvider();
   let dragState = useDraggableCollectionState({
+    collection: gridState.collection,
     selectionManager: gridState.selectionManager,
     getItems(keys) {
       return [...keys].map(key => {
@@ -387,7 +388,6 @@ function DraggableCollectionItem({item, state, dragState}) {
             <div
               {...buttonProps as React.HTMLAttributes<HTMLElement>}
               ref={buttonRef}
-              aria-label="drag"
               className={classNames(dndStyles, 'drag-handle')}>
               <ShowMenu size="XS" />
             </div>

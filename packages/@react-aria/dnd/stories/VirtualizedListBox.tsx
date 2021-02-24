@@ -261,9 +261,9 @@ function CollectionItem({item}) {
 }
 
 function InsertionIndicator(props) {
-  let {state, dropState} = React.useContext(Context);
+  let {dropState} = React.useContext(Context);
   let ref = React.useRef();
-  let {dropIndicatorProps} = useDropIndicator({...props, collection: state.collection}, dropState, ref);
+  let {dropIndicatorProps} = useDropIndicator(props, dropState, ref);
 
   // If aria-hidden, we are either not in a drag session or the drop target is invalid.
   // In that case, there's no need to render anything at all unless we need to show the indicator visually.
@@ -293,10 +293,9 @@ function InsertionIndicator(props) {
 }
 
 function RootDropIndicator() {
-  let {state, dropState} = React.useContext(Context);
+  let {dropState} = React.useContext(Context);
   let dropRef = React.useRef();
   let {dropIndicatorProps} = useDropIndicator({
-    collection: state.collection,
     target: {type: 'root'}
   }, dropState, dropRef);
 

@@ -171,7 +171,6 @@ export function DroppableListBox(props) {
   let isDropTarget = dropState.isDropTarget({type: 'root'});
   let dropRef = React.useRef();
   let {dropIndicatorProps} = useDropIndicator({
-    collection: state.collection,
     target: {type: 'root'}
   }, dropState, dropRef);
   let {visuallyHiddenProps} = useVisuallyHidden();
@@ -193,7 +192,6 @@ export function DroppableListBox(props) {
         <>
           <InsertionIndicator
             key={item.key + '-before'}
-            collection={state.collection}
             collectionRef={ref}
             target={{type: 'item', key: item.key, dropPosition: 'before'}}
             dropState={dropState} />
@@ -205,7 +203,6 @@ export function DroppableListBox(props) {
           {state.collection.getKeyAfter(item.key) == null &&
             <InsertionIndicator
               key={item.key + '-after'}
-              collection={state.collection}
               target={{type: 'item', key: item.key, dropPosition: 'after'}}
               collectionRef={ref}
               dropState={dropState} />

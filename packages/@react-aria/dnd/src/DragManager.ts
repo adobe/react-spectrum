@@ -62,12 +62,12 @@ interface DragTarget {
   onDragEnd?: (e: DragEndEvent) => void
 }
 
-export function beginDragging(options: DragTarget) {
+export function beginDragging(target: DragTarget, formatMessage: (key: string) => string) {
   if (dragSession) {
     throw new Error('Cannot begin dragging while already dragging');
   }
 
-  dragSession = new DragSession(options);
+  dragSession = new DragSession(target, formatMessage);
   requestAnimationFrame(() => {
     dragSession.setup();
 
@@ -130,12 +130,9 @@ const CLICK_EVENTS = [
 ];
 
 const MESSAGES = {
-  keyboard: {
-    start: 'Started dragging. Press Tab to navigate to a drop target, then press Enter to drop, or press Escape to cancel.'
-  },
-  virtual: {
-    start: 'Started dragging. Navigate to a drop target, then click or press Enter to drop.'
-  }
+  keyboard: 'dragStartedKeyboard',
+  touch: 'dragStartedTouch',
+  virtual: 'dragStartedVirtual'
 };
 
 class DragSession {
@@ -146,9 +143,11 @@ class DragSession {
   dropOperation: DropOperation;
   mutationObserver: MutationObserver;
   restoreAriaHidden: () => void;
+  formatMessage: (key: string) => string;
 
-  constructor(target: DragTarget) {
+  constructor(target: DragTarget, formatMessage: (key: string) => string) {
     this.dragTarget = target;
+    this.formatMessage = formatMessage;
 
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onFocus = this.onFocus.bind(this);
@@ -170,7 +169,7 @@ class DragSession {
     this.mutationObserver = new MutationObserver(() => this.updateValidDropTargets());
     this.updateValidDropTargets();
 
-    announce(MESSAGES[getInteractionModality()].start);
+    announce(this.formatMessage(MESSAGES[getInteractionModality()]));
   }
 
   teardown() {
@@ -433,7 +432,7 @@ class DragSession {
       this.dragTarget.element.focus();
     }
 
-    announce('Drop canceled.');
+    announce(this.formatMessage('dropCanceled'));
   }
 
   drop(item?: DroppableItem) {
@@ -470,7 +469,7 @@ class DragSession {
     }
 
     this.end();
-    announce('Drop complete.');
+    announce(this.formatMessage('dropComplete'));
   }
 
   activate() {

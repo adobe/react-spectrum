@@ -10,14 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DropOperation, DroppableCollectionProps, DropTarget, ItemDropTarget} from '@react-types/shared';
+import {Collection, DropOperation, DroppableCollectionProps, DropTarget, ItemDropTarget, Node} from '@react-types/shared';
 import {useState} from 'react';
 
 interface DroppableCollectionStateOptions extends DroppableCollectionProps {
-  collection: Collection<unknown>
+  collection: Collection<Node<unknown>>
 }
 
 export interface DroppableCollectionState {
+  collection: Collection<Node<unknown>>,
   target: DropTarget,
   setTarget(target: DropTarget): void,
   isDropTarget(target: DropTarget): boolean,
@@ -38,6 +39,7 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
   };
 
   return {
+    collection: props.collection,
     target,
     setTarget(newTarget) {
       if (this.isDropTarget(newTarget)) {

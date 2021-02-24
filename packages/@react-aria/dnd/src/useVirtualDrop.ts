@@ -12,20 +12,24 @@
 
 import * as DragManager from './DragManager';
 import {HTMLAttributes} from 'react';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {useDescription} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 interface VirtualDropResult {
   dropProps: HTMLAttributes<HTMLElement>
 }
 
 const MESSAGES = {
-  keyboard: 'Press Enter to drop. Press Escape to cancel drag.',
-  touch: 'Double tap to drop.',
-  virtual: 'Click to drop.'
+  keyboard: 'dropDescriptionKeyboard',
+  touch: 'dropDescriptionTouch',
+  virtual: 'dropDescriptionVirtual'
 };
 
 export function useVirtualDrop(): VirtualDropResult {
+  let formatMessage = useMessageFormatter(intlMessages);
   let modality: string = useInteractionModality() || 'virtual';
   if (modality === 'pointer') {
     modality = 'virtual';
@@ -36,7 +40,7 @@ export function useVirtualDrop(): VirtualDropResult {
   }
 
   let dragSession = DragManager.useDragSession();
-  let descriptionProps = useDescription(dragSession ? MESSAGES[modality] : '');
+  let descriptionProps = useDescription(dragSession ? formatMessage(MESSAGES[modality]) : '');
 
   return {
     dropProps: {
