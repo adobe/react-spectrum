@@ -24,9 +24,9 @@ interface LabelAriaProps extends LabelableProps, DOMProps, AriaLabelingProps {
 
 interface LabelAria {
   /** Props to apply to the label container element. */
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  labelProps: Pick<LabelHTMLAttributes<HTMLLabelElement>, 'id' | 'htmlFor'>,
   /** Props to apply to the field container element being labeled. */
-  fieldProps: HTMLAttributes<HTMLElement>
+  fieldProps: Pick<HTMLAttributes<HTMLElement>, 'id' | 'aria-label' | 'aria-labelledby'>
 }
 
 /**
