@@ -136,6 +136,15 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       triggerState.close();
     }
 
+    // Close when an item is selected, if open state or selectedKey is uncontrolled.
+    if (
+      selectedKey != null &&
+      selectedKey !== lastSelectedKey.current &&
+      (props.isOpen === undefined || props.selectedKey === undefined)
+    ) {
+      triggerState.close();
+    }
+
     // Clear focused key when input value changes.
     if (inputValue !== lastValue.current) {
       selectionManager.setFocusedKey(null);
@@ -165,14 +174,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       lastValue.current = inputValue;
     }
 
-    // Close when an item is selected, if open state or selectedKey is uncontrolled.
-    if (
-      selectedKey != null &&
-      selectedKey !== lastSelectedKey.current &&
-      (props.isOpen === undefined || props.selectedKey === undefined)
-    ) {
-      triggerState.close();
-    }
+
 
     isInitialRender.current = false;
     lastSelectedKey.current = selectedKey;
