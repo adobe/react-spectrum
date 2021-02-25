@@ -83,14 +83,20 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
   }, [ref, isFocused, manager.focusedKey, manager.isFocused, shouldUseVirtualFocus]);
 
-  let itemProps: SelectableItemAria['itemProps'] = {
-    tabIndex: isFocused && !shouldUseVirtualFocus ? 0 : -1,
-    onFocus(e) {
-      if (e.target === ref.current) {
-        manager.setFocusedKey(key);
+  // Set tabIndex to 0 if the element is focused, or -1 otherwise so that only the last focused
+  // item is tabbable.  If using virtual focus, don't set a tabIndex at all so that VoiceOver
+  // on iOS 14 doesn't try to move real DOM focus to the item anyway.
+  let itemProps: SelectableItemAria['itemProps'] = {};
+  if (!shouldUseVirtualFocus) {
+    itemProps = {
+      tabIndex: isFocused ? 0 : -1,
+      onFocus(e) {
+        if (e.target === ref.current) {
+          manager.setFocusedKey(key);
+        }
       }
-    }
-  };
+    };
+  }
 
   // By default, selection occurs on pointer down. This can be strange if selecting an
   // item causes the UI to disappear immediately (e.g. menus).

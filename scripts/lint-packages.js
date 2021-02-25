@@ -39,7 +39,7 @@ softAssert.deepEqual = function (val, val2, message) {
 };
 softAssert.equal = function (val, val2, message) {
   try {
-    assert.equal(val, val2, message);
+    assert.strictEqual(val, val2, message);
   } catch {
     console.error(chalk.red(message));
     errors = true;

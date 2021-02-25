@@ -12,6 +12,17 @@ governing permissions and limitations under the License.
 
 .spectrum-Tabs {
   border-block-end-color: var(--spectrum-tabs-rule-color);
+
+  &.spectrum-Tabs--isCollapsed {
+    :focus-ring {
+      /* FieldButton Picker focus ring override */
+      box-shadow: none;
+
+      &::before {
+        border-color: var(--spectrum-tabs-focus-ring-color);
+      }
+    }
+  }
 }
 
 .spectrum-Tabs--vertical {

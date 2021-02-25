@@ -40,12 +40,12 @@ describe('useInteractOutside', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent(el, pointerEvent('pointerdown'));
-      fireEvent(el, pointerEvent('pointerup'));
+      fireEvent(el, pointerEvent('mousedown'));
+      fireEvent(el, pointerEvent('mouseup'));
       expect(onInteractOutside).not.toHaveBeenCalled();
 
-      fireEvent(document.body, pointerEvent('pointerdown'));
-      fireEvent(document.body, pointerEvent('pointerup'));
+      fireEvent(document.body, pointerEvent('mousedown'));
+      fireEvent(document.body, pointerEvent('mouseup'));
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
 
@@ -55,12 +55,12 @@ describe('useInteractOutside', function () {
         <Example onInteractOutside={onInteractOutside} />
       );
 
-      fireEvent(document.body, pointerEvent('pointerdown', {button: 1}));
-      fireEvent(document.body, pointerEvent('pointerup', {button: 1}));
+      fireEvent(document.body, pointerEvent('mousedown', {button: 1}));
+      fireEvent(document.body, pointerEvent('mouseup', {button: 1}));
       expect(onInteractOutside).not.toHaveBeenCalled();
 
-      fireEvent(document.body, pointerEvent('pointerdown', {button: 0}));
-      fireEvent(document.body, pointerEvent('pointerup', {button: 0}));
+      fireEvent(document.body, pointerEvent('mousedown', {button: 0}));
+      fireEvent(document.body, pointerEvent('mouseup'));
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
 
@@ -169,6 +169,40 @@ describe('useInteractOutside', function () {
       );
 
       fireEvent.touchEnd(document.body);
+      expect(onInteractOutside).not.toHaveBeenCalled();
+    });
+  });
+  describe('disable interact outside events', function () {
+    it('does not handle pointer events if disabled', function () {
+      let onInteractOutside = jest.fn();
+      render(
+        <Example isDisabled onInteractOutside={onInteractOutside} />
+      );
+
+      fireEvent(document.body, pointerEvent('mousedown'));
+      fireEvent(document.body, pointerEvent('mouseup'));
+      expect(onInteractOutside).not.toHaveBeenCalled();
+    });
+
+    it('does not handle touch events if disabled', function () {
+      let onInteractOutside = jest.fn();
+      render(
+        <Example isDisabled onInteractOutside={onInteractOutside} />
+      );
+
+      fireEvent.touchStart(document.body);
+      fireEvent.touchEnd(document.body);
+      expect(onInteractOutside).not.toHaveBeenCalled();
+    });
+
+    it('does not handle mouse events if disabled', function () {
+      let onInteractOutside = jest.fn();
+      render(
+        <Example isDisabled onInteractOutside={onInteractOutside} />
+      );
+
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body);
       expect(onInteractOutside).not.toHaveBeenCalled();
     });
   });

@@ -19,7 +19,7 @@ import {useOverlayPosition} from '@react-aria/overlays';
 import {useTooltipTrigger} from '@react-aria/tooltip';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
 
-const DEFAULT_OFFSET = 7; // Closest visual match to Spectrum's mocks
+const DEFAULT_OFFSET = -1; // Offset needed to reach 4px/5px (med/large) distance between tooltip and trigger button
 const DEFAULT_CROSS_OFFSET = 0;
 
 function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
@@ -27,7 +27,8 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
     children,
     crossOffset = DEFAULT_CROSS_OFFSET,
     isDisabled,
-    offset = DEFAULT_OFFSET
+    offset = DEFAULT_OFFSET,
+    trigger: triggerAction
   } = props;
 
   let [trigger, tooltip] = React.Children.toArray(children);
@@ -38,7 +39,8 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
   let overlayRef = useRef<HTMLDivElement>();
 
   let {triggerProps, tooltipProps} = useTooltipTrigger({
-    isDisabled
+    isDisabled,
+    trigger: triggerAction
   }, state, tooltipTriggerRef);
 
   let {overlayProps, arrowProps, placement} = useOverlayPosition({
@@ -57,6 +59,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
       {trigger}
       <TooltipContext.Provider
         value={{
+          state,
           placement,
           ref: overlayRef,
           UNSAFE_style: overlayProps.style,
@@ -73,7 +76,14 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
 
 // Support TooltipTrigger inside components using CollectionBuilder.
 TooltipTrigger.getCollectionNode = function* (props: SpectrumTooltipTriggerProps) {
-  let [trigger, tooltip] = React.Children.toArray(props.children) as [ReactElement, ReactElement];
+  // Replaced the use of React.Childern.toArray because it mutates the key prop.
+  let childArray: ReactElement[] = [];
+  React.Children.forEach(props.children, child => {
+    if (React.isValidElement(child)) {
+      childArray.push(child);
+    }
+  });
+  let [trigger, tooltip] = childArray;
   yield {
     element: trigger,
     wrapper: (element) => (

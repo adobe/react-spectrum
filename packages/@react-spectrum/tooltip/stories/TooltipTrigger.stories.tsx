@@ -12,6 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
+import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import {Flex} from '@react-spectrum/layout';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -59,6 +60,10 @@ storiesOf('TooltipTrigger', module)
     () => render({delay: 0})
   )
   .add(
+    'focus only',
+    () => render({trigger: 'focus'})
+  )
+  .add(
     'multiple tooltips',
     () => renderMultipleTriggers({placement: 'start'})
   )
@@ -100,6 +105,10 @@ storiesOf('TooltipTrigger', module)
         <Button variant="secondary">No Tooltip</Button>
       </Flex>
     )
+  )
+  .add(
+    'tooltrip trigger inside action group',
+    () => ActionGroupTrigger()
   )
   .add(
     'crossoffset examples',
@@ -248,6 +257,22 @@ function renderMultipleTriggers(props = {}) {
         </Tooltip>
       </TooltipTrigger>
     </Flex>
+  );
+}
+
+function ActionGroupTrigger() {
+  let onSelectionChange = action('onSelectionChange');
+
+  return (
+    <ActionGroup
+      selectionMode="single"
+      disallowEmptySelection
+      onSelectionChange={s => onSelectionChange([...s])}>
+      <TooltipTrigger delay={0}>
+        <Item key="item1">Trigger Tooltip</Item>
+        <Tooltip>Tooltip is inside an ActionGroup</Tooltip>
+      </TooltipTrigger>
+    </ActionGroup>
   );
 }
 

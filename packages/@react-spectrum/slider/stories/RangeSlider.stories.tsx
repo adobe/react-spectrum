@@ -11,12 +11,18 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ErrorBoundary} from '@react-spectrum/story-utils';
 import {RangeSlider} from '../';
-import React, {useState} from 'react';
+import React from 'react';
 import {SpectrumRangeSliderProps} from '@react-types/slider';
 import {storiesOf} from '@storybook/react';
 
+let message = 'Your browser may not support this set of format options.';
+
 storiesOf('Slider/RangeSlider', module)
+  .addDecorator(story => (
+    <ErrorBoundary message={message}>{story()}</ErrorBoundary>
+  ))
   .add(
     'Default',
     () => render({'aria-label': 'Label'})
@@ -35,7 +41,7 @@ storiesOf('Slider/RangeSlider', module)
   )
   .add(
     'label overflow',
-    () => render({label: 'This is a rather long label for this narrow slider element.', maxValue: 1000, width: '100px'})
+    () => render({label: 'This is a rather long label for this narrow slider element.', maxValue: 1000, width: '300px'})
   )
   .add(
     'showValueLabel: false',
@@ -52,10 +58,11 @@ storiesOf('Slider/RangeSlider', module)
   )
   .add(
     'custom valueLabel',
-    () => {
-      let [state, setState] = useState({start: 20, end: 50});
-      return render({label: 'Label', value: state, onChange: setState, valueLabel: `${state.start} <-> ${state.end}`});
-    }
+    () => render({label: 'Label', getValueLabel: (value) => `${value.start} <-> ${value.end}`})
+  )
+  .add(
+    'custom valueLabel with label overflow',
+    () => render({label: 'This is a rather long label for this narrow slider element.', getValueLabel: (value) => `${value.start} <-> ${value.end}`})
   )
   .add(
     'labelPosition: side',
@@ -65,18 +72,6 @@ storiesOf('Slider/RangeSlider', module)
     'min/max',
     () => render({label: 'Label', minValue: 30, maxValue: 70})
   );
-  // .add(
-  //   'ticks',
-  //   () => render({label: 'Label', tickCount: 4})
-  // )
-  // .add(
-  //   'showTickLabels: true',
-  //   () => render({label: 'Label', tickCount: 4, showTickLabels: true})
-  // )
-  // .add(
-  //   'tickLabels',
-  //   () => render({label: 'Label', tickCount: 3, showTickLabels: true, tickLabels: ['A', 'B', 'C']})
-  // );
 
 function render(props: SpectrumRangeSliderProps = {}) {
   if (props.onChange == null) {

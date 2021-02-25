@@ -16,6 +16,7 @@ import selectionDocs from 'docs:@react-stately/selection';
 import treeDocs from 'docs:@react-stately/tree';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-aria/menu/package.json';
+import Anatomy from './menu-anatomy.svg';
 
 ```jsx import
 import {useMenu, useMenuSection, useMenuItem} from '@react-aria/menu';
@@ -63,6 +64,8 @@ Note: `useMenu` only handles the menu itself. For a dropdown menu, combine with 
 * Virtualized scrolling support for performance with long lists
 
 ## Anatomy
+
+<Anatomy />
 
 A menu consists of a container element, with a list of menu items or groups inside.
 `useMenu`, `useMenuItem`, and `useMenuSection` handle exposing this to assistive
@@ -113,8 +116,8 @@ For more information, see [Selection](/react-stately/selection.html).
 
 ## Example
 
-This example uses HTML `<ul>` and `<li>` elements to represent the menu, and applies
-props from <TypeLink links={docs.links} type={docs.exports.useMenu} />
+This example uses HTML `<ul>` and `<li>` elements to represent the menu with the first item `disabled`, and applies
+props from <TypeLink links={docs.links} type={docs.exports.useMenu}/>
 and <TypeLink links={docs.links} type={docs.exports.useMenuItem} />.
 
 ```tsx example
@@ -155,9 +158,11 @@ function Menu(props) {
 function MenuItem({item, state, onAction}) {
   // Get props for the menu item element
   let ref = React.useRef();
+  let isDisabled = state.disabledKeys.has(item.key);
+
   let {menuItemProps} = useMenuItem({
     key: item.key,
-    isDisabled: item.isDisabled,
+    isDisabled,
     onAction
   }, state, ref);
 
@@ -175,14 +180,14 @@ function MenuItem({item, state, onAction}) {
         color: isFocused ? 'white' : null,
         padding: '2px 5px',
         outline: 'none',
-        cursor: 'pointer'
+        cursor: isDisabled ? 'default' : 'pointer'
       }}>
       {item.rendered}
     </li>
   );
 }
 
-<Menu onAction={alert} aria-label="Actions">
+<Menu onAction={alert} aria-label="Actions" disabledKeys={['one']}>
   <Item key="one">One</Item>
   <Item key="two">Two</Item>
   <Item key="three">Three</Item>
@@ -285,9 +290,11 @@ function MenuItem({item, state, onAction}) {
   // Same as in the first example...
 ///- begin collapse -///
   let ref = React.useRef();
+  let isDisabled = state.disabledKeys.has(item.key);
+
   let {menuItemProps} = useMenuItem({
     key: item.key,
-    isDisabled: item.isDisabled,
+    isDisabled,
     onAction
   }, state, ref);
   let [isFocused, setFocused] = React.useState(false);
@@ -373,6 +380,8 @@ function Menu(props) {
 function MenuItem({item, state, onAction}) {
   // Get props for the menu item element and child elements
   let ref = React.useRef();
+  let isDisabled = state.disabledKeys.has(item.key);
+
   let {
     menuItemProps,
     labelProps,
@@ -380,7 +389,7 @@ function MenuItem({item, state, onAction}) {
     keyboardShortcutProps
   } = useMenuItem({
     key: item.key,
-    isDisabled: item.isDisabled,
+    isDisabled,
     onAction
   }, state, ref);
 

@@ -23,6 +23,7 @@ import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 
 describe('Picker', function () {
   let offsetWidth, offsetHeight;
@@ -1566,6 +1567,50 @@ describe('Picker', function () {
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Two');
     });
+
+    it('move selection on Arrow-Left/Right', function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Picker label="Test" onSelectionChange={onSelectionChange}>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let picker = getByRole('button');
+      act(() => {picker.focus();});
+      expect(picker).toHaveTextContent('Select an option…');
+      fireEvent.keyDown(picker, {key: 'ArrowLeft'});
+      act(() => jest.runAllTimers());
+      
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(picker).toHaveTextContent('One');
+
+      fireEvent.keyDown(picker, {key: 'ArrowLeft'});
+      expect(picker).toHaveTextContent('One');
+
+      fireEvent.keyDown(picker, {key: 'ArrowRight'});
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(picker).toHaveTextContent('Two');
+
+      fireEvent.keyDown(picker, {key: 'ArrowRight'});
+      expect(onSelectionChange).toHaveBeenCalledTimes(3);
+      expect(picker).toHaveTextContent('Three');
+
+      fireEvent.keyDown(picker, {key: 'ArrowRight'});
+      expect(onSelectionChange).toHaveBeenCalledTimes(3);
+      expect(picker).toHaveTextContent('Three');
+
+      fireEvent.keyDown(picker, {key: 'ArrowLeft'});
+      expect(onSelectionChange).toHaveBeenCalledTimes(4);
+      expect(picker).toHaveTextContent('Two');
+
+      fireEvent.keyDown(picker, {key: 'ArrowLeft'});
+      expect(onSelectionChange).toHaveBeenCalledTimes(5);
+      expect(picker).toHaveTextContent('One');
+    });
   });
 
   describe('type to select', function () {
@@ -1857,6 +1902,141 @@ describe('Picker', function () {
 
       expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(document.activeElement).not.toBe(picker);
+    });
+  });
+
+  describe('focus', function () {
+    let focusSpies;
+
+    beforeEach(() => {
+      focusSpies = {
+        onFocus: jest.fn(),
+        onBlur: jest.fn()
+      };
+    });
+
+    it('supports autofocus', function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Picker label="Test" {...focusSpies} autoFocus>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+            <Item key="">None</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let picker = getByRole('button');
+      expect(document.activeElement).toBe(picker);
+      expect(focusSpies.onFocus).toHaveBeenCalled();
+    });
+
+    it('calls onBlur and onFocus for the closed Picker', function () {
+      let {getByTestId} = render(
+        <Provider theme={theme}>
+          <button data-testid="before" />
+          <Picker data-testid="picker" label="Test" {...focusSpies} autoFocus>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+            <Item key="">None</Item>
+          </Picker>
+          <button data-testid="after" />
+        </Provider>
+      );
+      let beforeBtn = getByTestId('before');
+      let afterBtn = getByTestId('after');
+      let picker = getByTestId('picker');
+      expect(document.activeElement).toBe(picker);
+      expect(focusSpies.onFocus).toHaveBeenCalledTimes(1);
+
+      userEvent.tab();
+      expect(document.activeElement).toBe(afterBtn);
+      expect(focusSpies.onBlur).toHaveBeenCalledTimes(1);
+      userEvent.tab({shift: true});
+      expect(focusSpies.onFocus).toHaveBeenCalledTimes(2);
+      userEvent.tab({shift: true});
+      expect(focusSpies.onBlur).toHaveBeenCalledTimes(2);
+      expect(document.activeElement).toBe(beforeBtn);
+    });
+
+    it('calls onBlur and onFocus for the open Picker', function () {
+      let {getByRole, getByTestId} = render(
+        <Provider theme={theme}>
+          <button data-testid="before" />
+          <Picker data-testid="picker" label="Test" {...focusSpies} autoFocus>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+            <Item key="">None</Item>
+          </Picker>
+          <button data-testid="after" />
+        </Provider>
+      );
+      let beforeBtn = getByTestId('before');
+      let afterBtn = getByTestId('after');
+      let picker = getByTestId('picker');
+
+      fireEvent.keyDown(picker, {key: 'ArrowDown'});
+      fireEvent.keyUp(picker, {key: 'ArrowDown'});
+      act(() => jest.runAllTimers());
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      let items = within(listbox).getAllByRole('option');
+      expect(document.activeElement).toBe(items[0]);
+
+      userEvent.tab();
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toBe(afterBtn);
+      expect(focusSpies.onBlur).toHaveBeenCalledTimes(1);
+
+      userEvent.tab({shift: true});
+      expect(focusSpies.onFocus).toHaveBeenCalledTimes(2);
+      fireEvent.keyDown(picker, {key: 'ArrowDown'});
+      fireEvent.keyUp(picker, {key: 'ArrowDown'});
+      act(() => jest.runAllTimers());
+      listbox = getByRole('listbox');
+      items = within(listbox).getAllByRole('option');
+      expect(document.activeElement).toBe(items[0]);
+
+      userEvent.tab({shift: true});
+      act(() => jest.runAllTimers());
+      expect(focusSpies.onBlur).toHaveBeenCalledTimes(2);
+      expect(document.activeElement).toBe(beforeBtn);
+    });
+
+    it('does not call blur when an item is selected', function () {
+      let otherButtonFocus = jest.fn();
+      let {getByRole, getByTestId} = render(
+        <Provider theme={theme}>
+          <button data-testid="before" onFocus={otherButtonFocus} />
+          <Picker data-testid="picker" label="Test" {...focusSpies} autoFocus>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+            <Item key="">None</Item>
+          </Picker>
+          <button data-testid="after" onFocus={otherButtonFocus} />
+        </Provider>
+      );
+      let picker = getByTestId('picker');
+      expect(focusSpies.onFocus).toHaveBeenCalledTimes(1);
+
+      fireEvent.keyDown(picker, {key: 'ArrowDown'});
+      fireEvent.keyUp(picker, {key: 'ArrowDown'});
+      act(() => jest.runAllTimers());
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      let items = within(listbox).getAllByRole('option');
+      expect(document.activeElement).toBe(items[0]);
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      expect(focusSpies.onFocus).toHaveBeenCalledTimes(1);
+      expect(focusSpies.onBlur).not.toHaveBeenCalled();
+      expect(otherButtonFocus).not.toHaveBeenCalled();
     });
   });
 });

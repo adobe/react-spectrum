@@ -149,4 +149,14 @@ storiesOf('Flex', module)
         <View backgroundColor="magenta-600" width="size-800" height="size-800" />
       </Flex>
     )
+  )
+  .add(
+    'ordered',
+    () => (
+      <Flex direction="row" gap="size-100" justifyContent="space-evenly" width="80%">
+        <View backgroundColor="celery-600" order={2} width="size-800" height="size-800" />
+        <View backgroundColor="blue-600" width="size-800" height="size-800" />
+        <View backgroundColor="magenta-600" order={1} width="size-800" height="size-800" />
+      </Flex>
+    )
   );

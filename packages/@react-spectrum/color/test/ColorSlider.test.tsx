@@ -11,9 +11,9 @@
  */
 
 import {act, fireEvent, render} from '@testing-library/react';
-import {Color} from '@react-stately/color';
 import {ColorSlider} from '../';
 import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
+import {parseColor} from '@react-stately/color';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -47,26 +47,198 @@ describe('ColorSlider', () => {
   });
 
   it('sets input props', () => {
-    let {getByRole} = render(<ColorSlider defaultValue={new Color('#000000')} channel="red" />);
+    let {getByRole} = render(<ColorSlider defaultValue="#000000" channel="red" />);
     let slider = getByRole('slider');
 
     expect(slider).toHaveAttribute('type', 'range');
     expect(slider).toHaveAttribute('min', '0');
     expect(slider).toHaveAttribute('max', '255');
     expect(slider).toHaveAttribute('step', '1');
+    expect(slider).toHaveAttribute('aria-valuetext', '0');
   });
 
-  it('sets aria-label when label is disbaled', () => {
-    let {getByRole} = render(<ColorSlider defaultValue={new Color('#000000')} channel="red" label={null} />);
+  it('sets aria-valuetext to formatted value', () => {
+    let {getByRole} = render(<ColorSlider defaultValue="hsl(10, 50%, 50%)" channel="hue" />);
     let slider = getByRole('slider');
 
-    expect(slider).toHaveAttribute('aria-label', 'Red');
+    expect(slider).toHaveAttribute('type', 'range');
+    expect(slider).toHaveAttribute('min', '0');
+    expect(slider).toHaveAttribute('max', '360');
+    expect(slider).toHaveAttribute('step', '1');
+    expect(slider).toHaveAttribute('aria-valuetext', '10°');
+  });
+
+  describe('labeling', () => {
+    it('defaults to showing the channel as a label', () => {
+      let {getByRole} = render(<ColorSlider defaultValue="#000000" channel="red" />);
+      let slider = getByRole('slider');
+      let group = getByRole('group');
+
+      expect(slider).toHaveAttribute('aria-labelledby');
+      expect(slider).not.toHaveAttribute('aria-label');
+
+      let label = document.getElementById(slider.getAttribute('aria-labelledby'));
+      expect(label).toHaveTextContent('Red');
+      expect(label).toHaveAttribute('id');
+
+      expect(group).toHaveAttribute('aria-labelledby', label.id);
+      expect(group).not.toHaveAttribute('aria-label');
+    });
+
+    it('sets a default aria-label when label={null}', () => {
+      let {getByRole} = render(<ColorSlider defaultValue="#000000" channel="red" label={null} />);
+      let slider = getByRole('slider');
+      let group = getByRole('group');
+
+      expect(group).toHaveAttribute('aria-label', 'Red');
+      expect(group).not.toHaveAttribute('aria-labelledby');
+      expect(group).toHaveAttribute('id');
+      expect(slider).toHaveAttribute('aria-labelledby', group.id);
+    });
+
+    it('allows a custom label', () => {
+      let {getByRole} = render(<ColorSlider defaultValue="#000000" channel="red" label="Test" />);
+      let slider = getByRole('slider');
+      let group = getByRole('group');
+
+      expect(slider).toHaveAttribute('aria-labelledby');
+      expect(slider).not.toHaveAttribute('aria-label');
+
+      let label = document.getElementById(slider.getAttribute('aria-labelledby'));
+      expect(label).toHaveTextContent('Test');
+      expect(label).toHaveAttribute('id');
+
+      expect(group).toHaveAttribute('aria-labelledby', label.id);
+      expect(group).not.toHaveAttribute('aria-label');
+    });
+
+    it('allows a custom aria-label', () => {
+      let {getByRole} = render(<ColorSlider defaultValue="#000000" channel="red" aria-label="Test" />);
+      let slider = getByRole('slider');
+      let group = getByRole('group');
+
+      expect(group).toHaveAttribute('aria-label', 'Test');
+      expect(group).not.toHaveAttribute('aria-labelledby');
+      expect(group).toHaveAttribute('id');
+      expect(slider).toHaveAttribute('aria-labelledby', group.id);
+    });
+
+    it('allows a custom aria-labelledby', () => {
+      let {getByRole} = render(<ColorSlider defaultValue="#000000" channel="red" aria-labelledby="label-id" />);
+      let slider = getByRole('slider');
+      let group = getByRole('group');
+
+      expect(group).not.toHaveAttribute('aria-label');
+      expect(group).toHaveAttribute('aria-labelledby', 'label-id');
+      expect(group).toHaveAttribute('id');
+      expect(slider).toHaveAttribute('aria-labelledby', group.id);
+    });
+
+    it('clicking on label should focus input', () => {
+      let {getByRole, getByText} = render(<ColorSlider defaultValue="#000000" channel="red" />);
+      let label = getByText('Red');
+      let slider = getByRole('slider');
+
+      act(() => label.click());
+
+      expect(document.activeElement).toBe(slider);
+    });
+
+    it('shows value label by default', () => {
+      let {getByRole} = render(<ColorSlider defaultValue="#7f0000" channel="red" />);
+      let output = getByRole('status');
+      expect(output).toHaveTextContent('127');
+      expect(output).toHaveAttribute('for', getByRole('slider').id);
+      expect(output).not.toHaveAttribute('aria-labelledby');
+      expect(output).toHaveAttribute('aria-live', 'off');
+    });
+
+    it('shows value label with custom label', () => {
+      let {getByRole} = render(<ColorSlider defaultValue="#7f0000" channel="red" label="Test" />);
+      let output = getByRole('status');
+      expect(output).toHaveTextContent('127');
+      expect(output).toHaveAttribute('for', getByRole('slider').id);
+      expect(output).not.toHaveAttribute('aria-labelledby');
+      expect(output).toHaveAttribute('aria-live', 'off');
+    });
+
+    it('hides value label with showValueLabel=false', () => {
+      let {getByRole} = render(<ColorSlider defaultValue="#7f0000" channel="red" showValueLabel={false} />);
+      expect(() => getByRole('status')).toThrow();
+    });
+
+    it('hides value label when no visible label', () => {
+      let {getByRole} = render(<ColorSlider defaultValue="#7f0000" channel="red" label={null} />);
+      expect(() => getByRole('status')).toThrow();
+    });
+
+    it('hides value label when aria-label is specified', () => {
+      let {getByRole} = render(<ColorSlider defaultValue="#7f0000" channel="red" aria-label="Test" />);
+      expect(() => getByRole('status')).toThrow();
+    });
+
+    it('hides value label when aria-labelledby is specified', () => {
+      let {getByRole} = render(<ColorSlider defaultValue="#7f0000" channel="red" aria-labelledby="label-id" />);
+      expect(() => getByRole('status')).toThrow();
+    });
+
+    it('hides label and value label and has default aria-label when orientation=vertical', () => {
+      let {getByRole} = render(<ColorSlider defaultValue="#000000" channel="red" orientation="vertical" />);
+      let slider = getByRole('slider');
+      let group = getByRole('group');
+
+      expect(group).toHaveAttribute('aria-label', 'Red');
+      expect(group).not.toHaveAttribute('aria-labelledby');
+      expect(group).toHaveAttribute('id');
+      expect(slider).toHaveAttribute('aria-labelledby', group.id);
+
+      expect(() => getByRole('status')).toThrow();
+    });
+
+    it('uses custom label as aria-label orientation=vertical', () => {
+      let {getByRole} = render(<ColorSlider defaultValue="#000000" channel="red" label="Test" orientation="vertical" />);
+      let slider = getByRole('slider');
+      let group = getByRole('group');
+
+      expect(group).toHaveAttribute('aria-label', 'Test');
+      expect(group).not.toHaveAttribute('aria-labelledby');
+      expect(group).toHaveAttribute('id');
+      expect(slider).toHaveAttribute('aria-labelledby', group.id);
+
+      expect(() => getByRole('status')).toThrow();
+    });
+
+    it('supports custom aria-label with orientation=vertical', () => {
+      let {getByRole} = render(<ColorSlider defaultValue="#000000" channel="red" aria-label="Test" orientation="vertical" />);
+      let slider = getByRole('slider');
+      let group = getByRole('group');
+
+      expect(group).toHaveAttribute('aria-label', 'Test');
+      expect(group).not.toHaveAttribute('aria-labelledby');
+      expect(group).toHaveAttribute('id');
+      expect(slider).toHaveAttribute('aria-labelledby', group.id);
+
+      expect(() => getByRole('status')).toThrow();
+    });
+
+    it('supports custom aria-labelledby with orientation=vertical', () => {
+      let {getByRole} = render(<ColorSlider defaultValue="#000000" channel="red" aria-labelledby="label-id" orientation="vertical" />);
+      let slider = getByRole('slider');
+      let group = getByRole('group');
+
+      expect(group).not.toHaveAttribute('aria-label');
+      expect(group).toHaveAttribute('aria-labelledby', 'label-id');
+      expect(group).toHaveAttribute('id');
+      expect(slider).toHaveAttribute('aria-labelledby', group.id);
+
+      expect(() => getByRole('status')).toThrow();
+    });
   });
 
   it('the slider is focusable', () => {
     let {getAllByRole, getByRole} = render(<div>
       <button>A</button>
-      <ColorSlider defaultValue={new Color('#000000')} channel="red" />
+      <ColorSlider defaultValue="#000000" channel="red" />
       <button>B</button>
     </div>);
     let slider = getByRole('slider');
@@ -85,7 +257,7 @@ describe('ColorSlider', () => {
   it('disabled', () => {
     let {getAllByRole, getByRole} = render(<div>
       <button>A</button>
-      <ColorSlider defaultValue={new Color('#000000')} channel="red" isDisabled />
+      <ColorSlider defaultValue="#000000" channel="red" isDisabled />
       <button>B</button>
     </div>);
     let slider = getByRole('slider');
@@ -102,7 +274,7 @@ describe('ColorSlider', () => {
 
   describe('keyboard events', () => {
     it('works', () => {
-      let defaultColor = new Color('#000000');
+      let defaultColor = parseColor('#000000');
       let {getByRole} = render(<ColorSlider defaultValue={defaultColor} onChange={onChangeSpy} channel="red" />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
@@ -116,7 +288,7 @@ describe('ColorSlider', () => {
     });
 
     it('doesn\'t work when disabled', () => {
-      let defaultColor = new Color('#000000');
+      let defaultColor = parseColor('#000000');
       let {getByRole} = render(<ColorSlider defaultValue={defaultColor} onChange={onChangeSpy} channel="red" isDisabled />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
@@ -128,7 +300,7 @@ describe('ColorSlider', () => {
     });
 
     it('respects step', () => {
-      let defaultColor = new Color('#000000');
+      let defaultColor = parseColor('#000000');
       let {getByRole} = render(<ColorSlider defaultValue={defaultColor} onChange={onChangeSpy} channel="red" step={10} />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
@@ -163,7 +335,7 @@ describe('ColorSlider', () => {
     prepare();
 
     it('dragging the thumb works', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorSlider channel="hue" defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
@@ -184,7 +356,7 @@ describe('ColorSlider', () => {
     });
 
     it('dragging the thumb works when vertical', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorSlider channel="hue" defaultValue={defaultColor} onChange={onChangeSpy} orientation="vertical" />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
@@ -205,7 +377,7 @@ describe('ColorSlider', () => {
     });
 
     it('dragging the thumb doesn\'t works when disabled', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorSlider channel="hue" isDisabled defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
@@ -225,7 +397,7 @@ describe('ColorSlider', () => {
     });
 
     it('dragging the thumb respects the step', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorSlider channel="hue" defaultValue={defaultColor} onChange={onChangeSpy} step={120} />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
@@ -240,11 +412,11 @@ describe('ColorSlider', () => {
     });
 
     it('clicking and dragging on the track works', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorSlider channel="hue" defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
-      let container = getByRole('group').firstChild;
+      let container = getByRole('group');
 
       expect(document.activeElement).not.toBe(slider);
       start(container, {pageX: 50});
@@ -263,11 +435,11 @@ describe('ColorSlider', () => {
     });
 
     it('clicking and dragging on the track works when vertical', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorSlider channel="hue" defaultValue={defaultColor} onChange={onChangeSpy} orientation="vertical" />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
-      let container = getByRole('group').firstChild;
+      let container = getByRole('group');
 
       expect(document.activeElement).not.toBe(slider);
       start(container, {pageY: 50});
@@ -286,10 +458,10 @@ describe('ColorSlider', () => {
     });
 
     it('clicking and dragging on the track doesn\'t work when disabled', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorSlider channel="hue" defaultValue={defaultColor} onChange={onChangeSpy} isDisabled />);
       let slider = getByRole('slider');
-      let container = getByRole('group').firstChild;
+      let container = getByRole('group');
 
       expect(document.activeElement).not.toBe(slider);
       start(container, {pageX: 50});
@@ -306,11 +478,11 @@ describe('ColorSlider', () => {
     });
 
     it('clicking and dragging on the track respects the step', () => {
-      let defaultColor = new Color('hsl(0, 100%, 50%)');
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorSlider channel="saturation" defaultValue={defaultColor} onChange={onChangeSpy} step={25} />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
-      let container = getByRole('group').firstChild;
+      let container = getByRole('group');
 
       start(container, {pageX: 30});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);

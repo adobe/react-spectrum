@@ -14,7 +14,8 @@ import {action} from '@storybook/addon-actions';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
 import {Flex} from '@react-spectrum/layout';
-import React from 'react';
+import React, {ElementType} from 'react';
+import {SpectrumButtonProps} from '@react-types/button';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 
@@ -90,7 +91,7 @@ storiesOf('Button', module)
     () => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', variant: 'primary'})
   );
 
-function render(props: any = {}) {
+function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
   return (
     <Flex gap="size-200">
       <Button

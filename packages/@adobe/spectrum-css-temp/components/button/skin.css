@@ -767,7 +767,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &.is-invalid {
+  &.spectrum-FieldButton--invalid {
     border-color: var(--spectrum-fieldbutton-border-color-error);
 
     &:hover {
@@ -829,7 +829,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &.is-invalid {
+  &.spectrum-FieldButton--invalid {
     &:focus-ring,
     &.is-focused {
       box-shadow: 0 2px 0 0 var(--spectrum-fieldbutton-border-color-error-key-focus);

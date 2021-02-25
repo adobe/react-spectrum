@@ -10,25 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent} from '@react-aria/utils';
-import {useLayoutEffect} from 'react';
+import {chain, getScrollParent, isIOS, useLayoutEffect} from '@react-aria/utils';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
   isDisabled?: boolean
 }
 
-const isMobileSafari =
-  typeof window !== 'undefined' && window.navigator != null
-    ? /AppleWebKit/.test(window.navigator.userAgent) && (
-      /^(iPhone|iPad)$/.test(window.navigator.platform) ||
-      // iPadOS 13 lies and says its a Mac, but we can distinguish by detecting touch support.
-      (window.navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-    )
-    : false;
-
 // @ts-ignore
 const visualViewport = typeof window !== 'undefined' && window.visualViewport;
+
+// HTML input types that do not cause the software keyboard to appear.
+const nonTextInputTypes = new Set([
+  'checkbox',
+  'radio',
+  'range',
+  'color',
+  'file',
+  'image',
+  'button',
+  'submit',
+  'reset'
+]);
 
 /**
  * Prevents scrolling on the document body on mount, and
@@ -43,7 +46,7 @@ export function usePreventScroll(options: PreventScrollOptions = {}) {
       return;
     }
 
-    if (isMobileSafari) {
+    if (isIOS()) {
       return preventScrollMobileSafari();
     } else {
       return preventScrollStandard();
@@ -123,7 +126,7 @@ function preventScrollMobileSafari() {
 
   let onTouchEnd = (e: TouchEvent) => {
     let target = e.target as HTMLElement;
-    if (target.tagName === 'INPUT') {
+    if (target instanceof HTMLInputElement && !nonTextInputTypes.has(target.type)) {
       e.preventDefault();
 
       // Apply a transform to trick Safari into thinking the input is at the top of the page
@@ -139,7 +142,7 @@ function preventScrollMobileSafari() {
 
   let onFocus = (e: FocusEvent) => {
     let target = e.target as HTMLElement;
-    if (target.tagName === 'INPUT') {
+    if (target instanceof HTMLInputElement && !nonTextInputTypes.has(target.type)) {
       // Transform also needs to be applied in the focus event in cases where focus moves
       // other than tapping on an input directly, e.g. the next/previous buttons in the
       // software keyboard. In these cases, it seems applying the transform in the focus event

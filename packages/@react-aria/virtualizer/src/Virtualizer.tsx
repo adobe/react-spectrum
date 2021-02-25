@@ -155,9 +155,18 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     }
   });
 
+  // Set tabIndex to -1 if the focused view is in the DOM, otherwise 0 so that the collection
+  // itself is tabbable. When the collection receives focus, we scroll the focused item back into
+  // view, which will allow it to be properly focused. If using virtual focus, don't set a
+  // tabIndex at all so that VoiceOver on iOS 14 doesn't try to move real DOM focus to the element anyway.
+  let tabIndex: number;
+  if (!shouldUseVirtualFocus) {
+    tabIndex = focusedView ? -1 : 0;
+  }
+
   return {
     virtualizerProps: {
-      tabIndex: focusedView || shouldUseVirtualFocus ? -1 : 0,
+      tabIndex,
       onFocus,
       onBlur
     }

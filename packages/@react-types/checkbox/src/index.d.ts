@@ -79,7 +79,9 @@ export interface AriaCheckboxGroupProps extends CheckboxGroupProps, DOMProps, Ar
   name?: string
 }
 
-export interface AriaCheckboxGroupItemProps extends Omit<AriaCheckboxProps, 'isSelected' | 'defaultSelected'> {}
+export interface AriaCheckboxGroupItemProps extends Omit<AriaCheckboxProps, 'isSelected' | 'defaultSelected'> {
+  value: string
+}
 
 export interface SpectrumCheckboxProps extends AriaCheckboxProps, StyleProps {
   /**

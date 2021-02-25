@@ -108,8 +108,17 @@ async function build() {
   let babelPatch = patches.find(name => name.startsWith('@babel'));
   fs.copySync(path.join(__dirname, '..', 'patches', babelPatch), path.join(dir, 'patches', babelPatch));
 
-  // Install and build
+  // Install dependencies from npm
   await run('yarn', {cwd: dir, stdio: 'inherit'});
+
+  // Copy package.json for each package into docs dir so we can find the correct version numbers
+  for (let p of packages) {
+    if (fs.existsSync(path.join(dir, 'node_modules', p))) {
+      fs.copySync(path.join(dir, 'node_modules', p), path.join(dir, 'docs', p));
+    }
+  }
+
+  // Build the website
   await run('yarn', ['build'], {cwd: dir, stdio: 'inherit'});
 
   // Copy the build back into dist, and delete the temp dir.

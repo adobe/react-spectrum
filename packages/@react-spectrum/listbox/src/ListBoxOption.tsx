@@ -105,7 +105,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
           <SlotProvider
             slots={{
               text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
-              icon: {UNSAFE_className: styles['spectrum-Menu-icon']},
+              icon: {size: 'S', UNSAFE_className: styles['spectrum-Menu-icon']},
               description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps}
             }}>
             {contents}

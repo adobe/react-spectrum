@@ -95,13 +95,16 @@ const AXIS_SIZE = {
 
 const PARSED_PLACEMENT_CACHE = {};
 
+// @ts-ignore
+let visualViewport = typeof window !== 'undefined' && window.visualViewport;
+
 function getContainerDimensions(containerNode: Element): Dimensions {
   let width = 0, height = 0, top = 0, left = 0;
   let scroll: Position = {};
 
   if (containerNode.tagName === 'BODY') {
-    width = document.documentElement.clientWidth;
-    height = document.documentElement.clientHeight;
+    width = visualViewport?.width ?? document.documentElement.clientWidth;
+    height = visualViewport?.height ?? document.documentElement.clientHeight;
 
     scroll.top =
       getScrollTop(ownerDocument(containerNode).documentElement) ||

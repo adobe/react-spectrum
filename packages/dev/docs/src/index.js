@@ -14,6 +14,7 @@ export * from './Image';
 export * from './Highlights';
 export * from './Layout';
 export * from './PropTable';
+export * from './VersionBadge';
 export * from './HeaderInfo';
 export * from './ResourceCard';
 export * from './types';

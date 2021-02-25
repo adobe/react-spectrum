@@ -45,6 +45,9 @@ governing permissions and limitations under the License.
         color: var(--spectrum-dropdown-icon-color-disabled);
       }
     }
+    &:active .spectrum-Dropdown-label {
+      color: var(--spectrum-dropdown-text-color-disabled);
+    }
     .spectrum-Dropdown-label {
       &.is-placeholder {
         color: var(--spectrum-dropdown-placeholder-text-color-disabled);

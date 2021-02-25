@@ -79,7 +79,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectProps, state: SelectSt
       disabled: isDisabled,
       name,
       size: state.collection.size,
-      value: state.selectedKey,
+      value: state.selectedKey ?? '',
       onChange: (e: React.ChangeEvent<HTMLSelectElement>) => state.setSelectedKey(e.target.value)
     }
   };
