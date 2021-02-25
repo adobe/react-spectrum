@@ -180,7 +180,7 @@ function ColorSlider(props) {
 
 This example shows how to build a vertical color slider. The main difference from horizontal color sliders is the addition of the
 `orientation: 'vertical'` option to `useColorSlider`. This automatically adjusts the internal positioning and dragging logic.
-Additionally, the vertical slider does not have a visible label or `<output>` element. This is done by simply not using the returned
+Additionally, this example does not have a visible label or `<output>` element. This can be done by simply not using the returned
 `labelProps` and `outputProps`. The color slider will have a default `aria-label` using the localized channel name, which can be overridden
 by passing an `aria-label` prop to `useColorSlider`.
 
@@ -268,7 +268,7 @@ function Example() {
 
 ### HSLA
 
-This example shows how to build a similar color picker to the one above, but for HSLA colors.
+This example shows how to build a similar color picker to the one above, using HSLA colors instead.
 
 ```tsx example
 function Example() {
