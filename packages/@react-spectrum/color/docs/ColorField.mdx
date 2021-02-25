@@ -105,21 +105,21 @@ zero or the current value. A `step` can be set to any positive decimal, defaulti
 
 ## Validation
 
-NumberFields can display a validation state to communicate to the user whether the current value is valid or invalid.
-Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the NumberField via the `validationState` prop.
+ColorField can display a validation state to communicate to the user whether the current value is valid or invalid.
+Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the ColorField via the `validationState` prop.
 
 The example below illustrates how one would validate if the user has entered a red color.
 ```tsx example
 function Example() {
   let [value, setValue] = React.useState('#e73623');
   let isValid = React.useMemo(() => {
-    if (value.length === 7) {
+    if (value && value.length === 7) {
       let red = parseInt(value.substr(1,2), 16);
       let green = parseInt(value.substr(3,2), 16);
       let blue = parseInt(value.substr(5,2), 16);
       return red > green && red > blue;
     }
-    return value.red && value.red > value.green && value.red > value.blue;
+    return value && value.red && value.red > value.green && value.red > value.blue;
   }, [value]);
 
   return (
@@ -163,9 +163,9 @@ and the contents can still be copied. See [the MDN docs](https://developer.mozil
 ### Label alignment and position
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Label-position)
 
-By default, the label is positioned above the NumberField. The `labelPosition` prop can be used to position the label to the side.
+By default, the label is positioned above the ColorField. The `labelPosition` prop can be used to position the label to the side.
 The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the
-left most edge of the NumberField and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+left most edge of the ColorField and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
 
 ```tsx example
 <ColorField label="Primary Color" labelPosition="side" labelAlign="end" />
