@@ -121,9 +121,11 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   let {scale} = useProvider();
 
   let onResize = useCallback(() => {
-    let buttonWidth = unwrappedButtonRef.current.offsetWidth;
-    let inputWidth = inputRef.current.offsetWidth;
-    setMenuWidth(buttonWidth + inputWidth);
+    if (unwrappedButtonRef.current && inputRef.current) {
+      let buttonWidth = unwrappedButtonRef.current.offsetWidth;
+      let inputWidth = inputRef.current.offsetWidth;
+      setMenuWidth(buttonWidth + inputWidth);
+    }
   }, [unwrappedButtonRef, inputRef, setMenuWidth]);
 
   useResizeObserver({
