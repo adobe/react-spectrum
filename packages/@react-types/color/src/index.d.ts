@@ -89,6 +89,7 @@ export interface ColorFieldProps extends ValueBase<string | Color>, InputBase, V
 export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete'>, AriaValidationProps {}
 
 export interface SpectrumColorFieldProps extends AriaColorFieldProps, SpectrumLabelableProps, StyleProps {
+  /** Whether the ColorField should be displayed with a quiet style. */
   isQuiet?: boolean
 }
 

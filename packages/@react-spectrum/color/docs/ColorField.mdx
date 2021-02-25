@@ -42,7 +42,7 @@ keywords: [color field, input]
 ## Value
 
 A ColorField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
-Alternatively, a controlled value can be provided using the `value` prop. These values must begin with a `#`.
+Alternatively, a controlled value can be provided using the `value` prop. Valid values are hexadecimal color codes.
 
 ```tsx example
 function Example() {
@@ -52,7 +52,7 @@ function Example() {
     <Flex gap="size-150" wrap>
       <ColorField
         label="Primary Color (Uncontrolled)"
-        defaultValue="#e73623" />
+        defaultValue="#e21" />
 
       <ColorField
         label="Primary Color (Controlled)"
@@ -63,7 +63,7 @@ function Example() {
 }
 ```
 
-Placeholder text, provided using the placeholder prop, describes the expected value or formatting for the ColorField.
+Placeholder text, provided using the `placeholder` prop, describes the expected value or formatting for the ColorField.
 Placeholder text will only appear when the ColorField is empty, and should not be used as a substitute for labeling the
 component with a visible label.
 
@@ -96,11 +96,41 @@ When the `necessityIndicator` prop is set to `"label"`, a localized string will 
 
 ## Step values
 
-The `step` prop can be used to snap the value to certain increments, default is one. The steps are calculated starting from
-zero or the current value. A `step` can be any positive decimal.
+The `step` prop can be used to snap the value to certain increments. The steps are calculated starting from
+zero or the current value. A `step` can be set to any positive decimal, defaulting to `1` if unspecified.
 
 ```tsx example
-<NumberField label="Primary Color" step={16} />
+<ColorField label="Primary Color" step={16} />
+```
+
+## Validation
+
+NumberFields can display a validation state to communicate to the user whether the current value is valid or invalid.
+Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the NumberField via the `validationState` prop.
+
+The example below illustrates how one would validate if the user has entered a red color.
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState('#e73623');
+  let isValid = React.useMemo(() => {
+    if (value.length === 7) {
+      let red = parseInt(value.substr(1,2), 16);
+      let green = parseInt(value.substr(3,2), 16);
+      let blue = parseInt(value.substr(5,2), 16);
+      return red > green && red > blue;
+    }
+    return value.red && value.red > value.green && value.red > value.blue;
+  }, [value]);
+
+  return (
+    <ColorField
+      validationState={isValid ? 'valid' : 'invalid'}
+      value={value}
+      onChange={setValue}
+      label="Red colors"
+    />
+  );
+}
 ```
 
 ## Props
