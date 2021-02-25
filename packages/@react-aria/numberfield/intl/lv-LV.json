@@ -1,5 +1,5 @@
 {
-  "Number field": "Skaitļu lauks",
   "decrease": "Samazināšana {fieldLabel}",
-  "increase": "Palielināšana {fieldLabel}"
+  "increase": "Palielināšana {fieldLabel}",
+  "numberField": "Skaitļu lauks"
 }

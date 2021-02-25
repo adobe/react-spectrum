@@ -1,5 +1,5 @@
 {
-  "Number field": "Getalveld",
   "decrease": "{fieldLabel} verlagen",
-  "increase": "{fieldLabel} verhogen"
+  "increase": "{fieldLabel} verhogen",
+  "numberField": "Getalveld"
 }

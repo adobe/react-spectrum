@@ -1,5 +1,5 @@
 {
-  "Number field": "Talfelt",
   "decrease": "Reducer {fieldLabel}",
-  "increase": "Øg {fieldLabel}"
+  "increase": "Øg {fieldLabel}",
+  "numberField": "Talfelt"
 }

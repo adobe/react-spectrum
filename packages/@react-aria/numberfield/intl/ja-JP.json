@@ -1,5 +1,5 @@
 {
-  "Number field": "数値フィールド",
   "decrease": "{fieldLabel}を縮小",
-  "increase": "{fieldLabel}を拡大"
+  "increase": "{fieldLabel}を拡大",
+  "numberField": "数値フィールド"
 }

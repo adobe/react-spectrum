@@ -1,5 +1,5 @@
 {
-  "Number field": "Числовое поле",
   "decrease": "Уменьшение {fieldLabel}",
-  "increase": "Увеличение {fieldLabel}"
+  "increase": "Увеличение {fieldLabel}",
+  "numberField": "Числовое поле"
 }

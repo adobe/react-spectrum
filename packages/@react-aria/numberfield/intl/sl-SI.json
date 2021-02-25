@@ -1,5 +1,5 @@
 {
-  "Number field": "Številčno polje",
   "decrease": "Upadati {fieldLabel}",
-  "increase": "Povečajte {fieldLabel}"
+  "increase": "Povečajte {fieldLabel}",
+  "numberField": "Številčno polje"
 }

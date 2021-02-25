@@ -1,5 +1,5 @@
 {
-  "Number field": "Polje broja",
   "decrease": "Smanji {fieldLabel}",
-  "increase": "Povećaj {fieldLabel}"
+  "increase": "Povećaj {fieldLabel}",
+  "numberField": "Polje broja"
 }

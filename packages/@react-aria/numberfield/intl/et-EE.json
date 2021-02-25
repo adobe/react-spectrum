@@ -1,5 +1,5 @@
 {
-  "Number field": "Numbri väli",
   "decrease": "Vähenda {fieldLabel}",
-  "increase": "Suurenda {fieldLabel}"
+  "increase": "Suurenda {fieldLabel}",
+  "numberField": "Numbri väli"
 }

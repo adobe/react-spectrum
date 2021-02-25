@@ -1,5 +1,5 @@
 {
-  "Number field": "Номер на полето",
   "decrease": "Намаляване {fieldLabel}",
-  "increase": "Усилване {fieldLabel}"
+  "increase": "Усилване {fieldLabel}",
+  "numberField": "Номер на полето"
 }

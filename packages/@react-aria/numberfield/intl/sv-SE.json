@@ -1,5 +1,5 @@
 {
-  "Number field": "Nummerfält",
   "decrease": "Minska {fieldLabel}",
-  "increase": "Öka {fieldLabel}"
+  "increase": "Öka {fieldLabel}",
+  "numberField": "Nummerfält"
 }

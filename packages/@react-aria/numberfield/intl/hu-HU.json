@@ -1,5 +1,5 @@
 {
-  "Number field": "Számmező",
   "decrease": "{fieldLabel} csökkentése",
-  "increase": "{fieldLabel} növelése"
+  "increase": "{fieldLabel} növelése",
+  "numberField": "Számmező"
 }

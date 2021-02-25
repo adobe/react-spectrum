@@ -1,5 +1,5 @@
 {
-  "Number field": "Sayı alanı",
   "decrease": "{fieldLabel} azalt",
-  "increase": "{fieldLabel} arttır"
+  "increase": "{fieldLabel} arttır",
+  "numberField": "Sayı alanı"
 }

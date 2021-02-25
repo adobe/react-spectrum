@@ -1,5 +1,5 @@
 {
-  "Number field": "שדה מספר",
   "decrease": "הקטן {fieldLabel}",
-  "increase": "הגדל {fieldLabel}"
+  "increase": "הגדל {fieldLabel}",
+  "numberField": "שדה מספר"
 }
