@@ -14,10 +14,51 @@ export default BlogPostLayout;
 ---
 keywords: [react aria, react spectrum, react, spectrum, interactions, numberfield, touch, spinbutton]
 description: Numberfields seem like simple components at first, but they hide a lot of complexity under the hood.
-In the first part of this series, we'll look at how React Spectrum and React Aria implement adaptive press interactions that work across a wide variety of devices and interaction models.
 date: 2020-08-12
 author: '[Rob Snow](https://twitter.com/snowystinger)'
 image: ../assets/ReactAria_976x445_2x.png
 ---
 
+# Building a NumberField Part 1: Why not native
+Started with reading https://technology.blog.gov.uk/2020/02/24/why-the-gov-uk-design-system-team-changed-the-input-type-for-numbers/ thanks @deebov
+which goes into greater depth on these topics
+## Accessibility issues
+    // this is short section restating some of what's in the blog as a TL;DR type of thing
+  - input type number / role spinbutton is not selectable by some dictation/sr software
+  - may appear unlabeled
+  - rounding
+  - scrolling
 
+## Differences in conclusions drawn
+  ### Pattern
+    - we don't limit text via pattern, we use beforeinput (more in part 2)
+    - we don't currently tackle the issue of telling a user what character set they are bound to using
+    - we wouldn't use a NumberField for things like credit cards
+  ### Role
+    - text with roledescription of NumberField
+  ### Inputmode
+    - The things we did to show mobile keyboards, deal with minus signs
+  - Formatting control
+  - How we handle stepping, handling rounding errors, etc.
+  - scrolling only enabled when focused, maybe also completely turned off
+  - disabling focus on stepper buttons and where focus goes
+
+
+Other things of interest
+Bug disabling form elements while over them (stepper buttons)
+
+
+# Building a NumberField Part 2: Intro to numbering systems
+  ## What is a numbering system
+  ### How do numbering systems work with locales
+    - -u-nu-
+    - differences when combined
+  ## Manipulating numbers // maybe different title?
+  ### Formatting
+    - Intl NumberFormat
+  ### Parsing
+    - combined numbering system and locale with formatting
+    - what to do about special characters like arab decimal character
+    - always allowing certain characters like 'minus' even in accounting where parens are expected
+  ## How do we handle input method editors
+    - pinyin & composition events
