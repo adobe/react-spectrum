@@ -771,7 +771,7 @@ let ControlledValueOpenCombobox = (props) => {
   };
 
   return (
-    <ComboBox label="Combobox" {...mergeProps(props, actions)} items={items} isOpen={fieldState.isOpen} onOpenChange={onOpenChange} inputValue={fieldState.inputValue} onInputChange={onInputChange} onSelectionChange={onSelectionChange}>
+    <ComboBox label="Combobox" {...mergeProps(props, actions)} defaultItems={items} isOpen={fieldState.isOpen} onOpenChange={onOpenChange} inputValue={fieldState.inputValue} onInputChange={onInputChange} onSelectionChange={onSelectionChange}>
       {(item: any) => <Item>{item.name}</Item>}
     </ComboBox>
   );
