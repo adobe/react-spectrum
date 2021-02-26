@@ -151,10 +151,10 @@ function Example() {
 
   return (
     <Flex direction="column">
-      <ColorSlider value={color} onChange={setColor} channel={'red'} />
-      <ColorSlider value={color} onChange={setColor} channel={'green'} />
-      <ColorSlider value={color} onChange={setColor} channel={'blue'} />
-      <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
+      <ColorSlider channel="red" value={color} onChange={setColor} />
+      <ColorSlider channel="green" value={color} onChange={setColor} />
+      <ColorSlider channel="blue" value={color} onChange={setColor} />
+      <ColorSlider channel="alpha" value={color} onChange={setColor} />
     </Flex>
   );
 }
