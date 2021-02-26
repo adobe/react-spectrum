@@ -125,6 +125,9 @@ export function useDrop(options: DropOptions): DropResult {
         y: e.clientY - rect.y
       });
     }
+
+    state.x = e.clientX;
+    state.y = e.clientY;
   };
 
   let onDragLeave = (e: DragEvent) => {

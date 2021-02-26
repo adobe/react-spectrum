@@ -50,7 +50,7 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
   let item = state.collection.getItem(props.key);
   let numSelectedKeys = state.selectionManager.selectedKeys.size;
   let isSelected = state.selectionManager.isSelected(props.key);
-  let message;
+  let message: string;
   if (isSelected && numSelectedKeys > 1) {
     message = formatMessage('dragSelectedItems', {count: numSelectedKeys});
   } else {

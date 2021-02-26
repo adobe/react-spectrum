@@ -15,7 +15,7 @@ import {HTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useDescription} from '@react-aria/utils';
-import {useInteractionModality} from '@react-aria/interactions';
+import {useDragModality} from './utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface VirtualDropResult {
@@ -30,15 +30,7 @@ const MESSAGES = {
 
 export function useVirtualDrop(): VirtualDropResult {
   let formatMessage = useMessageFormatter(intlMessages);
-  let modality: string = useInteractionModality() || 'virtual';
-  if (modality === 'pointer') {
-    modality = 'virtual';
-  }
-
-  if (modality === 'virtual' && 'ontouchstart' in window) {
-    modality = 'touch';
-  }
-
+  let modality = useDragModality();
   let dragSession = DragManager.useDragSession();
   let descriptionProps = useDescription(dragSession ? formatMessage(MESSAGES[modality]) : '');
 

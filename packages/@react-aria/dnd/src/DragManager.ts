@@ -13,8 +13,7 @@
 import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropOperation, DropTarget as DroppableCollectionTarget} from '@react-types/shared';
-import {getInteractionModality} from '@react-aria/interactions';
-import {getTypes} from './utils';
+import {getDragModality, getTypes} from './utils';
 import {useEffect, useState} from 'react';
 
 let dropTargets = new Map<Element, DropTarget>();
@@ -71,7 +70,7 @@ export function beginDragging(target: DragTarget, formatMessage: (key: string) =
   requestAnimationFrame(() => {
     dragSession.setup();
 
-    if (getInteractionModality() === 'keyboard') {
+    if (getDragModality() === 'keyboard') {
       dragSession.next();
     }
   });
@@ -142,6 +141,7 @@ class DragSession {
   currentDropItem: DroppableItem;
   dropOperation: DropOperation;
   mutationObserver: MutationObserver;
+  mutationImmediate: NodeJS.Immediate;
   restoreAriaHidden: () => void;
   formatMessage: (key: string) => string;
 
@@ -166,10 +166,20 @@ class DragSession {
       document.addEventListener(event, this.cancelEvent, true);
     }
 
-    this.mutationObserver = new MutationObserver(() => this.updateValidDropTargets());
+    this.mutationObserver = new MutationObserver(() => {
+      // JSDOM has a bug where MutationObserver enters an infinite loop if mutations
+      // occur inside a MutationObserver callback. If running in Node, wait until
+      // the next tick to update valid drop targets.
+      // See https://github.com/jsdom/jsdom/issues/3096
+      if (typeof setImmediate === 'function') {
+        this.mutationImmediate = setImmediate(() => this.updateValidDropTargets());
+      } else {
+        this.updateValidDropTargets();
+      }
+    });
     this.updateValidDropTargets();
 
-    announce(this.formatMessage(MESSAGES[getInteractionModality()]));
+    announce(this.formatMessage(MESSAGES[getDragModality()]));
   }
 
   teardown() {
@@ -184,6 +194,9 @@ class DragSession {
 
     this.mutationObserver.disconnect();
     this.restoreAriaHidden();
+    if (this.mutationImmediate) {
+      clearImmediate(this.mutationImmediate);
+    }
   }
 
   onKeyDown(e: KeyboardEvent) {
@@ -222,13 +235,18 @@ class DragSession {
       this.cancelEvent(e);
     }
 
-    if (e.target === this.dragTarget.element) {
+    // Ignore focus events on the window/document (JSDOM). Will be handled in onBlur, below.
+    if (!(e.target instanceof HTMLElement) || e.target === this.dragTarget.element) {
       return;
     }
 
     let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
     if (!dropTarget) {
-      this.currentDropTarget?.element.focus();
+      if (this.currentDropTarget) {
+        this.currentDropTarget.element.focus();
+      } else {
+        this.dragTarget.element.focus();
+      }
       return;
     }
 
@@ -241,8 +259,14 @@ class DragSession {
       this.cancelEvent(e);
     }
 
-    if (!e.relatedTarget) {
-      this.currentDropTarget?.element.focus();
+    // If nothing is gaining focus, or e.relatedTarget is the window/document (JSDOM),
+    // restore focus back to the current drop target if any, or the original drag target.
+    if (!e.relatedTarget || !(e.relatedTarget instanceof HTMLElement)) {
+      if (this.currentDropTarget) {
+        this.currentDropTarget.element.focus();
+      } else {
+        this.dragTarget.element.focus();
+      }
     }
   }
 
@@ -379,6 +403,8 @@ class DragSession {
         });
       }
 
+      this.currentDropTarget = dropTarget;
+
       if (dropTarget) {
         if (typeof dropTarget.onDropEnter === 'function') {
           let rect = dropTarget.element.getBoundingClientRect();
@@ -393,8 +419,6 @@ class DragSession {
           dropTarget?.element.focus();
         }
       }
-
-      this.currentDropTarget = dropTarget;
     }
 
 

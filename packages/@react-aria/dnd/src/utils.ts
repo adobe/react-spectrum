@@ -12,6 +12,7 @@
 
 import {DragItem} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
+import {getInteractionModality, Modality, useInteractionModality} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 
 const droppableCollectionIds = new WeakMap<DroppableCollectionState, string>();
@@ -40,4 +41,28 @@ export function getTypes(items: DragItem[]): Set<string> {
   }
 
   return types;
+}
+
+function mapModality(modality: string) {
+  if (!modality) {
+    modality = 'virtual';
+  }
+
+  if (modality === 'pointer') {
+    modality = 'virtual';
+  }
+
+  if (modality === 'virtual' && 'ontouchstart' in window) {
+    modality = 'touch';
+  }
+
+  return modality;
+}
+
+export function useDragModality() {
+  return mapModality(useInteractionModality());
+}
+
+export function getDragModality() {
+  return mapModality(getInteractionModality());
 }

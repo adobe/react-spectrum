@@ -19,7 +19,7 @@ import * as DragManager from './DragManager';
 import intlMessages from '../intl/*.json';
 import ReactDOM from 'react-dom';
 import {useDescription} from '@react-aria/utils';
-import {useInteractionModality} from '@react-aria/interactions';
+import {useDragModality} from './utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface DragOptions {
@@ -241,15 +241,7 @@ export function useDrag(options: DragOptions): DragResult {
     setDragging(true);
   };
 
-  let modality: string = useInteractionModality() || 'virtual';
-  if (modality === 'pointer') {
-    modality = 'virtual';
-  }
-
-  if (modality === 'virtual' && 'ontouchstart' in window) {
-    modality = 'touch';
-  }
-
+  let modality = useDragModality();
   let descriptionProps = useDescription(
     formatMessage(!isDragging ? MESSAGES[modality].start : MESSAGES[modality].end)
   );
