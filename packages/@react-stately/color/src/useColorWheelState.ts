@@ -13,7 +13,7 @@
 import {Color, ColorWheelProps} from '@react-types/color';
 import {parseColor} from './Color';
 import {useControlledState} from '@react-stately/utils';
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 
 export interface ColorWheelState {
   /** The current color value displayed by the color wheel. */
@@ -95,13 +95,16 @@ function cartesianToAngle(x: number, y: number, radius: number): number {
  * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
  */
 export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
-  let {defaultValue, onChange, step = 1} = props;
+  let {defaultValue, onChange, onChangeEnd, step = 1} = props;
 
   if (!props.value && !defaultValue) {
     defaultValue = DEFAULT_COLOR;
   }
 
   let [value, setValue] = useControlledState(normalizeColor(props.value), normalizeColor(defaultValue), onChange);
+  let valueRef = useRef(value);
+  valueRef.current = value;
+
   let [isDragging, setDragging] = useState(false);
 
   let hue = value.getChannelValue('hue');
@@ -119,7 +122,9 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
   return {
     value,
     setValue(v) {
-      setValue(normalizeColor(v));
+      let color = normalizeColor(v);
+      valueRef.current = color;
+      setValue(color);
     },
     hue,
     setHue,
@@ -147,8 +152,14 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
         setHue(hue - s);
       }
     },
-    setDragging(value) {
-      setDragging(value);
+    setDragging(isDragging) {
+      setDragging(wasDragging => {
+        if (onChangeEnd && !isDragging && wasDragging) {
+          onChangeEnd(valueRef.current);
+        }
+
+        return isDragging;
+      });
     },
     isDragging
   };
