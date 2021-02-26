@@ -2503,17 +2503,17 @@ describe('ComboBox', function () {
       });
     });
 
-    describe('blur and commit flows', function () {
-      it.each`
-        Name                           | Component
-        ${'controlled value'}          | ${<ControlledValueComboBox />}
-        ${'controlled key'}            | ${<ControlledKeyComboBox />}
-        ${'controlled open'}           | ${<ControlledOpenComboBox />}
-        ${'controlled value and key'}  | ${<ControlledValueKeyComboBox />}
-        ${'controlled value and open'} | ${<ControlledOpenValueComboBox />}
-        ${'controlled open and key'}   | ${<ControlledOpenKeyComboBox />}
-        ${'all controlled'}            | ${<AllControlledComboBox />}
-      `('should reset the input text and close the menu on committing a previously selected option ($Name)', ({Name, Component}) => {
+    describe.each`
+      Name                           | Component
+      ${'controlled value'}          | ${<ControlledValueComboBox />}
+      ${'controlled key'}            | ${<ControlledKeyComboBox />}
+      ${'controlled open'}           | ${<ControlledOpenComboBox />}
+      ${'controlled value and key'}  | ${<ControlledValueKeyComboBox />}
+      ${'controlled value and open'} | ${<ControlledOpenValueComboBox />}
+      ${'controlled open and key'}   | ${<ControlledOpenKeyComboBox />}
+      ${'all controlled'}            | ${<AllControlledComboBox />}
+    `(' blur and commit flows: $Name ComboBox', ({Name, Component}) => {
+      it('should reset the input text and close the menu on committing a previously selected option', () => {
         let {getByRole} = render(Component);
         let combobox = getByRole('combobox');
         let button = getByRole('button');
@@ -2588,16 +2588,7 @@ describe('ComboBox', function () {
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
       });
 
-      it.each`
-        Name                           | Component
-        ${'controlled value'}          | ${<ControlledValueComboBox />}
-        ${'controlled key'}            | ${<ControlledKeyComboBox />}
-        ${'controlled open'}           | ${<ControlledOpenComboBox />}
-        ${'controlled value and key'}  | ${<ControlledValueKeyComboBox />}
-        ${'controlled value and open'} | ${<ControlledOpenValueComboBox />}
-        ${'controlled open and key'}   | ${<ControlledOpenKeyComboBox />}
-        ${'all controlled'}            | ${<AllControlledComboBox />}
-      `('should update the input field with the selected item and close the menu on commit ($Name)', ({Name, Component}) => {
+      it('should update the input field with the selected item and close the menu on commit', () => {
         let {getByRole} = render(Component);
         let combobox = getByRole('combobox');
         typeText(combobox, 'On');
@@ -2650,16 +2641,7 @@ describe('ComboBox', function () {
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
       });
 
-      it.each`
-        Name                           | Component
-        ${'controlled value'}          | ${<ControlledValueComboBox />}
-        ${'controlled key'}            | ${<ControlledKeyComboBox />}
-        ${'controlled open'}           | ${<ControlledOpenComboBox />}
-        ${'controlled value and key'}  | ${<ControlledValueKeyComboBox />}
-        ${'controlled value and open'} | ${<ControlledOpenValueComboBox />}
-        ${'controlled open and key'}   | ${<ControlledOpenKeyComboBox />}
-        ${'all controlled'}            | ${<AllControlledComboBox />}
-      `('should reset the input value and close the menu on blur ($Name)', ({Name, Component}) => {
+      it('should reset the input value and close the menu on blur', () => {
         let {getByRole} = render(Component);
         let combobox = getByRole('combobox');
         typeText(combobox, 'On');
@@ -2712,16 +2694,7 @@ describe('ComboBox', function () {
         }
       });
 
-      it.each`
-        Name                           | Component
-        ${'controlled value'}          | ${<ControlledValueComboBox />}
-        ${'controlled key'}            | ${<ControlledKeyComboBox />}
-        ${'controlled open'}           | ${<ControlledOpenComboBox />}
-        ${'controlled value and key'}  | ${<ControlledValueKeyComboBox />}
-        ${'controlled value and open'} | ${<ControlledOpenValueComboBox />}
-        ${'controlled open and key'}   | ${<ControlledOpenKeyComboBox />}
-        ${'all controlled'}            | ${<AllControlledComboBox />}
-      `('should not open the menu on blur when an invalid input is entered ($Name)', ({Name, Component}) => {
+      it('should not open the menu on blur when an invalid input is entered', () => {
         let {getByRole} = render(Component);
         let combobox = getByRole('combobox');
         typeText(combobox, 'On');
@@ -2761,106 +2734,10 @@ describe('ComboBox', function () {
         }
 
         if (!Name.includes('open') && !Name.includes('all')) {
-           // Check that onOpenChange is firing appropriately for the comboboxes w/o user defined onOpenChange handlers
+            // Check that onOpenChange is firing appropriately for the comboboxes w/o user defined onOpenChange handlers
           expect(onOpenChange).toBeCalledTimes(2);
           expect(onOpenChange).toHaveBeenLastCalledWith(false);
         }
-      });
-
-      it('should not open the menu on blur when an invalid input is entered (controlled by inputValue and isOpen)', function () {
-        let {getByRole} = render(<ControlledOpenValueComboBox />);
-        let combobox = getByRole('combobox');
-        typeText(combobox, 'One');
-        act(() => jest.runAllTimers());
-
-        let listbox = getByRole('listbox');
-        expect(listbox).toBeVisible();
-
-        act(() => {
-          fireEvent.change(combobox, {target: {value: ''}});
-          jest.runAllTimers();
-        });
-
-        typeText(combobox, 'z');
-        act(() => jest.runAllTimers());
-        expect(() => getByRole('listbox')).toThrow();
-        expect(combobox.value).toBe('z');
-
-        userEvent.tab();
-
-        expect(() => getByRole('listbox')).toThrow();
-        expect(combobox.value).toBe('');
-      });
-
-      it('should not open the menu on blur when an invalid input is entered (controlled by selectedKey, inputValue, and isOpen)', function () {
-        let {getByRole} = renderComboBox({selectedKey: '2', inputValue: 'z', isOpen: false});
-        let combobox = getByRole('combobox');
-        act(() => {
-          combobox.focus();
-          jest.runAllTimers();
-        });
-        act(() => {
-          userEvent.tab();
-          jest.runAllTimers();
-        });
-
-        // When open state, inputValue, and selectedKey are all controlled, only onSelectionChange should be called
-        expect(onInputChange).toHaveBeenCalledTimes(0);
-        expect(onOpenChange).toHaveBeenCalledTimes(0);
-        expect(onSelectionChange).toHaveBeenCalledTimes(1);
-        expect(onSelectionChange).toHaveBeenCalledWith('2');
-      });
-
-      it('should reset input value when selecting a selected option (controlled by selectedKey, inputValue, and isOpen)', function () {
-        let {getByRole} = renderComboBox({selectedKey: '1', inputValue: 'O', isOpen: true});
-        let combobox = getByRole('combobox');
-        act(() => {
-          combobox.focus();
-          jest.runAllTimers();
-        });
-
-        act(() => {
-          fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
-          fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
-          jest.runAllTimers();
-        });
-
-        act(() => {
-          fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
-          fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
-          jest.runAllTimers();
-        });
-
-        // When open state, inputValue, and selectedKey are all controlled, only onSelectionChange should be called
-        expect(onInputChange).toHaveBeenCalledTimes(0);
-        expect(onOpenChange).toHaveBeenCalledTimes(0);
-        expect(onSelectionChange).toHaveBeenCalledTimes(1);
-        expect(onSelectionChange).toHaveBeenCalledWith('1');
-      });
-
-      it('should close the menu when selecting a item (controlled by inputValue, and isOpen)', function () {
-        let {getByRole} = render(<ControlledOpenValueComboBox />);
-
-        let combobox = getByRole('combobox');
-        typeText(combobox, 'O');
-
-        let listbox = getByRole('listbox');
-        expect(listbox).toBeVisible();
-
-        act(() => {
-          fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
-          fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
-          jest.runAllTimers();
-        });
-
-        act(() => {
-          fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
-          fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
-          jest.runAllTimers();
-        });
-
-        expect(() => getByRole('listbox')).toThrow();
-        expect(combobox.value).toBe('One');
       });
     });
   });
