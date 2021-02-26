@@ -227,6 +227,9 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
           // If multiple things are controlled but isOpen isn't, close the menu for the user
           if (props.isOpen === undefined) {
+            // Stop menu from reopening from useEffect
+            let itemText = collection.getItem(selectedKey)?.textValue ?? '';
+            lastValue.current = itemText;
             triggerState.close();
           }
         } else {
