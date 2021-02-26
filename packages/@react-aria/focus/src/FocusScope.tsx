@@ -141,18 +141,8 @@ function createFocusManager(scopeRef: React.RefObject<HTMLElement[]>): FocusMana
       let node = from || document.activeElement;
       let sentinel = scope[scope.length - 1].nextElementSibling;
       let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable});
-      walker.currentNode = sentinel;
-      let prevNode = walker.previousNode() as HTMLElement;
-      let previousNode;
-      while (prevNode && isElementInScope(prevNode, scope))  {
-        if (node.compareDocumentPosition(prevNode) & (Node.DOCUMENT_POSITION_PRECEDING | Node.DOCUMENT_POSITION_CONTAINED_BY)) {
-          previousNode = prevNode;
-          prevNode = null;
-          break;
-        } else {
-          prevNode = walker.previousNode() as HTMLElement;
-        }
-      }
+      walker.currentNode = isElementInScope(node, scope) ? node : sentinel;
+      let previousNode = walker.previousNode() as HTMLElement;
       if ((!previousNode || !isElementInScope(previousNode, scope)) && wrap) {
         walker.currentNode = sentinel;
         previousNode = walker.previousNode() as HTMLElement;

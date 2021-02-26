@@ -776,12 +776,14 @@ describe('FocusScope', function () {
       let group1 = getByTestId('group1');
       let group2 = getByTestId('group2');
       let item1 = getByTestId('item1');
-      let item3 = getByTestId('item3');
 
       fireEvent.mouseDown(group2);
-      expect(document.activeElement).toBe(item3);
+      expect(document.activeElement).toBe(item1);
 
       fireEvent.mouseDown(group1);
+      // focus should remain unchanged, 
+      // because there is no focusable element in scope before group1,
+      // and wrap is false
       expect(document.activeElement).toBe(item1);
     });
   });
