@@ -1252,7 +1252,7 @@ describe('Table', function () {
                 <Cell>Baz 1</Cell>
               </Row>
               <Row>
-                <Cell textValue="Foo 2"><Switch aria-label="Foo 2" /></Cell>
+                <Cell textValue="Foo 2"><Switch aria-label="Foo 2" /><Switch aria-label="Foo 3" /></Cell>
                 <Cell textValue="Yahoo"><Link><a href="https://yahoo.com" target="_blank">Yahoo</a></Link></Cell>
                 <Cell>Baz 2</Cell>
               </Row>
@@ -1272,6 +1272,18 @@ describe('Table', function () {
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
 
         moveFocus('ArrowDown');
+        expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
+
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(tree.getAllByRole('switch')[2]);
+
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(tree.getAllByRole('link')[1]);
+
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(tree.getAllByRole('switch')[2]);
+
+        moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
         moveFocus('ArrowLeft');
