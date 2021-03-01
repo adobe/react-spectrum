@@ -131,6 +131,25 @@ storiesOf('Tabs', module)
         </Tabs>
       </Flex>
     )
+  )
+  .add(
+    'transition between tab sizes',
+    () => (
+      (
+        <Tabs maxWidth={500}>
+          <Item title="Tab 1 long long long name">
+            <Content margin="size-160">
+              <Text>Text</Text>
+            </Content>
+          </Item>
+          <Item title="Tab 2">
+            <Content margin="size-160">
+              <Text>Text 2</Text>
+            </Content>
+          </Item>
+        </Tabs>
+      )
+    )
   );
 
 function render(props = {}) {
