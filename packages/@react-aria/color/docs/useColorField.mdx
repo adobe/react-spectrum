@@ -14,6 +14,7 @@ import docs from 'docs:@react-aria/color';
 import statelyDocs from 'docs:@react-stately/color';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-aria/color/package.json';
+import Anatomy from './ColorFieldAnatomy.svg';
 
 ```jsx import
 import {useColorField} from '@react-aria/color';
@@ -39,9 +40,46 @@ keywords: [color, input, color picker, aria]
 
 <FunctionAPI function={docs.exports.useColorField} links={docs.links} />
 
+## Features
+
+The [&lt;input type="color"&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/color) HTML element
+can be used to build a color picker, however it is very inconsistent across browsers and operating systems and consists
+of a complete color picker rather than a single field for editing a hex value. `useColorField` helps achieve accessible
+color fields that can be styled as needed.
+
+* Support for parsing and formatting a hex color value
+* Validates keyboard entry as the user types so that only valid hex characters are accepted
+* Supports using the arrow keys to increment and decrement the value
+* Support for customizing the step value for incrementing and decrementing
+* Exposed to assistive technology as a `textbox` via ARIA
+* Visual and ARIA labeling support
+* Follows the [spinbutton](https://www.w3.org/TR/wai-aria-practices-1.2/#spinbutton) ARIA pattern
+* Works around bugs in VoiceOver with the spinbutton role
+* Uses an ARIA live region to ensure that value changes are announced
+
+## Anatomy
+
+<Anatomy />
+
+A color field consists of an input element and a label. `useColorField` automatically manages
+the relationship between the two elements using the `for` attribute on the `<label>` element
+and the `aria-labelledby` attribute on the `<input>` element.
+
+`useColorField` returns two sets of props that you should spread onto the appropriate element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useColorField.return.id].properties} />
+</TypeContext.Provider>
+
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useColorFieldState} />
+hook from `@react-stately/color`. The state object should be passed as an option to `useColorField`
+
+If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
+to identify the element to screen readers.
+
 ## Example
 
-```tsx example
+```tsx example export=true
 import {useColorFieldState} from '@react-stately/color';
 
 function ColorField(props) {
@@ -62,3 +100,61 @@ function ColorField(props) {
 
 <ColorField label="Color" />
 ```
+
+## Usage
+
+The following examples show how to use the `ColorField` component created in the above example.
+
+### Uncontrolled
+
+By default, `ColorField` is uncontrolled. You can set a default value using the `defaultValue` prop.
+
+```tsx example
+<ColorField defaultValue="#7f007f" />
+```
+
+### Controlled
+
+A `ColorField` can be made controlled. The <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} />
+function is used to parse the initial color from a hex string, stored in state.  The `value` and `onChange` props
+are used to update the value in state when the edits the value.
+
+```tsx example
+import {parseColor} from '@react-stately/color';
+
+function Example() {
+  let [color, setColor] = React.useState(parseColor('#7f007f'));
+  return (
+    <>
+      <ColorField value={color} onChange={setColor} />
+      <p>Current color value: {color.toString('hex')}</p>
+    </>
+  );
+}
+```
+
+### Step
+
+The `step` prop can be used to make a `ColorField` snap its value to specific increments.
+
+```tsx example
+<ColorField defaultValue="#7f007f" step={16} />
+```
+
+### Disabled and read only
+
+A `ColorField` can be disabled using the `isDisabled` prop, and made read only using the `isReadOnly` prop.
+The difference is that read only color fields are focusable but disabled color fields are not.
+
+```tsx example
+<ColorField defaultValue="#7f007f" isDisabled />
+<ColorField defaultValue="#7f007f" isReadOnly />
+```
+
+
+## Internationalization
+
+### RTL
+
+In right-to-left languages, color fields should be mirrored. The label should be right aligned,
+along with the text in the input. Ensure that your CSS accounts for this.

@@ -140,7 +140,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let {scale} = useProvider();
 
   let onResize = useCallback(() => {
-    if (!isMobile) {
+    if (!isMobile && unwrappedTriggerRef.current) {
       let width = unwrappedTriggerRef.current.offsetWidth;
       setButtonWidth(width);
     }
