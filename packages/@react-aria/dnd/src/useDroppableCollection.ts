@@ -14,7 +14,7 @@ import * as DragManager from './DragManager';
 import {DropOperation, DroppableCollectionProps, DropPosition, DropTarget, KeyboardDelegate} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {getTypes} from './utils';
-import {HTMLAttributes, Key, RefObject, useEffect, useRef} from 'react';
+import {HTMLAttributes, RefObject, useEffect, useRef} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';

@@ -12,7 +12,7 @@
 
 import {DragItem} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
-import {getInteractionModality, Modality, useInteractionModality} from '@react-aria/interactions';
+import {getInteractionModality, useInteractionModality} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 
 const droppableCollectionIds = new WeakMap<DroppableCollectionState, string>();

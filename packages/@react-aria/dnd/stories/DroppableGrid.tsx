@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain} from '@react-aria/utils';
 import {classNames} from '@react-spectrum/utils';
 import dndStyles from './dnd.css';
 import dropIndicatorStyles from '@adobe/spectrum-css-temp/components/dropindicator/vars.css';
