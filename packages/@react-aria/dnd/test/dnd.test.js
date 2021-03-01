@@ -13,109 +13,12 @@
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, render, waitFor} from '@testing-library/react';
 import {announce} from '@react-aria/live-announcer';
-import {mergeProps} from '@react-aria/utils';
+import {DataTransfer, DataTransferItem, DragEvent} from './mocks';
+import {Draggable, Droppable} from './examples';
 import React from 'react';
-import {useButton} from '@react-aria/button';
-import {useDrag, useDrop} from '../';
 import userEvent from '@testing-library/user-event';
 
 describe('useDrag and useDrop', function () {
-  function Draggable(props) {
-    let {dragProps, dragButtonProps, isDragging} = useDrag({
-      getItems() {
-        return [{
-          types: ['text/plain'],
-          getData: () => 'hello world'
-        }];
-      },
-      ...props
-    });
-
-    let ref = React.useRef();
-    let {buttonProps} = useButton({...dragButtonProps, elementType: 'div'}, ref);
-
-    return (
-      <div
-        ref={ref}
-        {...mergeProps(dragProps, buttonProps)}
-        data-dragging={isDragging}>
-        {props.children || 'Drag me'}
-      </div>
-    );
-  }
-
-  function Droppable(props) {
-    let ref = React.useRef();
-    let {dropProps, isDropTarget} = useDrop({
-      ref,
-      ...props
-    });
-
-    let {buttonProps} = useButton({elementType: 'div'}, ref);
-
-    return (
-      <div
-        {...mergeProps(dropProps, buttonProps)}
-        ref={ref}
-        data-droptarget={isDropTarget}>
-        {props.children || 'Drop here'}
-      </div>
-    );
-  }
-
-  class DataTransferItem {
-    constructor(type, data, kind = 'string') {
-      this.kind = kind;
-      this.type = type;
-      this._data = data;
-    }
-
-    getAsString(callback) {
-      callback(this._data);
-    }
-  }
-
-  class DataTransferItemList {
-    constructor(items = []) {
-      this._items = items;
-    }
-
-    add(data, type) {
-      this._items.push(new DataTransferItem(type, data));
-    }
-
-    *[Symbol.iterator]() {
-      yield* this._items;
-    }
-  }
-
-  class DataTransfer {
-    constructor() {
-      this.items = new DataTransferItemList();
-      this.dropEffect = 'none';
-      this.effectAllowed = 'all';
-    }
-
-    setDragImage(dragImage, x, y) {
-      this._dragImage = {node: dragImage, x, y};
-    }
-
-    get types() {
-      return this.items._items.map(item => item.type);
-    }
-
-    getData(type) {
-      return this.items._items.find(item => item.type === type)?._data;
-    }
-  }
-
-  class DragEvent extends MouseEvent {
-    constructor(type, init) {
-      super(type, {...init, bubbles: true, cancelable: true, composed: true});
-      this.dataTransfer = init.dataTransfer;
-    }
-  }
-
   beforeEach(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({

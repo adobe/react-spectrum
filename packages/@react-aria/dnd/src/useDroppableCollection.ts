@@ -29,6 +29,8 @@ interface DroppableCollectionResult {
   collectionProps: HTMLAttributes<HTMLElement>
 }
 
+const DROP_POSITIONS: DropPosition[] = ['before', 'on', 'after'];
+
 export function useDroppableCollection(props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DroppableCollectionResult {
   let localState = useRef({
     props,
@@ -107,12 +109,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
   });
 
   useEffect(() => {
-    let getAllowedDropPositions = (key: Key) => (
-      typeof localState.props.getAllowedDropPositions === 'function'
-        ? localState.props.getAllowedDropPositions(key)
-        : ['before', 'on', 'after'] as DropPosition[]
-    );
-
     let getNextTarget = (target: DropTarget, wrap = true): DropTarget => {
       if (!target) {
         return {
@@ -126,10 +122,9 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         : keyboardDelegate.getFirstKey();
 
       if (target.type === 'item') {
-        let allowedDropPositions = getAllowedDropPositions(target.key);
-        let positionIndex = allowedDropPositions.indexOf(target.dropPosition);
-        let nextDropPosition = allowedDropPositions[positionIndex + 1];
-        if (positionIndex < allowedDropPositions.length - 1 && !(nextDropPosition === 'after' && nextKey != null && getAllowedDropPositions(nextKey).includes('before'))) {
+        let positionIndex = DROP_POSITIONS.indexOf(target.dropPosition);
+        let nextDropPosition = DROP_POSITIONS[positionIndex + 1];
+        if (positionIndex < DROP_POSITIONS.length - 1 && !(nextDropPosition === 'after' && nextKey != null)) {
           return {
             type: 'item',
             key: target.key,
@@ -145,13 +140,13 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           };
         }
 
-        return target;
+        return null;
       }
 
       return {
         type: 'item',
         key: nextKey,
-        dropPosition: getAllowedDropPositions(nextKey)[0] as any
+        dropPosition: DROP_POSITIONS[0]
       };
     };
 
@@ -162,9 +157,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         : keyboardDelegate.getLastKey();
 
       if (target?.type === 'item') {
-        let allowedDropPositions = getAllowedDropPositions(target.key);
-        let positionIndex = allowedDropPositions.indexOf(target.dropPosition);
-        let nextDropPosition = allowedDropPositions[positionIndex - 1];
+        let positionIndex = DROP_POSITIONS.indexOf(target.dropPosition);
+        let nextDropPosition = DROP_POSITIONS[positionIndex - 1];
         if (positionIndex > 0 && nextDropPosition !== 'after') {
           return {
             type: 'item',
@@ -181,7 +175,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           };
         }
 
-        return target;
+        return null;
       }
 
       return {
@@ -201,8 +195,12 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       let seenRoot = 0;
       let operation: DropOperation;
       do {
-        target = getNextTarget(target, wrap);
-        operation = localState.state.getDropOperation(target, types, allowedDropOperations);
+        let nextTarget = getNextTarget(target, wrap);
+        if (!nextTarget) {
+          return null;
+        }
+        target = nextTarget;
+        operation = localState.state.getDropOperation(nextTarget, types, allowedDropOperations);
         if (target.type === 'root') {
           seenRoot++;
         }

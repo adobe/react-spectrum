@@ -99,7 +99,6 @@ interface DroppableCollectionDropEvent extends DropEvent {
 }
 
 export interface DroppableCollectionProps {
-  getAllowedDropPositions?: (key: Key) => DropPosition[],
   getDropOperation?: (target: DropTarget, types: Set<string>, allowedOperations: DropOperation[]) => DropOperation,
   onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
   onDropMove?: (e: DroppableCollectionMoveEvent) => void,

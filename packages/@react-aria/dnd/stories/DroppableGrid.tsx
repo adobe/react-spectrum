@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
 import {chain} from '@react-aria/utils';
 import {classNames} from '@react-spectrum/utils';
 import dndStyles from './dnd.css';
@@ -41,6 +40,10 @@ export function DroppableGridExample(props) {
   });
 
   let onDrop = async (e: DroppableCollectionDropEvent) => {
+    if (props.onDrop) {
+      props.onDrop(e);
+    }
+
     if (e.target.type === 'root' || e.target.dropPosition !== 'on') {
       let items = [];
       for (let item of e.items) {
@@ -49,6 +52,8 @@ export function DroppableGridExample(props) {
           type = 'folder';
         } else if (item.types.has('item')) {
           type = 'item';
+        } else if (item.types.has('text/plain')) {
+          type = 'text/plain';
         }
 
         if (!type) {
@@ -73,7 +78,7 @@ export function DroppableGridExample(props) {
   };
 
   return (
-    <DroppableGrid items={list.items} onDrop={onDrop}>
+    <DroppableGrid {...props} items={list.items} onDrop={onDrop}>
       {item => (
         <Item textValue={item.text}>
           {item.type === 'folder' && <Folder size="S" />}
@@ -86,7 +91,6 @@ export function DroppableGridExample(props) {
 
 function DroppableGrid(props) {
   let ref = React.useRef<HTMLDivElement>(null);
-  let onDrop = action('onDrop');
   let state = useListState(props);
   let keyboardDelegate = new ListKeyboardDelegate(state.collection, new Set(), ref);
   let gridState = useGridState({
@@ -110,31 +114,34 @@ function DroppableGrid(props) {
     })
   });
 
+  let defaultGetDropOperation = (target, types, allowedOperations) => {
+    if (target.type === 'root') {
+      return 'move';
+    }
+
+    if (target.key === '2' && target.dropPosition === 'on') {
+      return 'cancel';
+    }
+
+    return target.dropPosition !== 'on' ? allowedOperations[0] : 'copy';
+  };
+
   let dropState = useDroppableCollectionState({
     collection: gridState.collection,
-    getDropOperation(target, types, allowedOperations) {
-      if (target.type === 'root') {
-        return 'move';
-      }
-
-      if (target.key === '2' && target.dropPosition === 'on') {
-        return 'cancel';
-      }
-
-      return target.dropPosition !== 'on' ? allowedOperations[0] : 'copy';
-    }
+    getDropOperation: props.getDropOperation || defaultGetDropOperation,
+    onDropEnter: props.onDropEnter,
+    onDropMove: props.onDropMove,
+    onDropExit: props.onDropExit,
+    onDropActivate: props.onDropActivate
   });
 
   let {collectionProps} = useDroppableCollection({
     keyboardDelegate,
-    onDropEnter: chain(action('onDropEnter'), console.log),
-    // onDropMove: action('onDropMove'),
-    onDropExit: chain(action('onDropExit'), console.log),
-    onDropActivate: chain(action('onDropActivate'), console.log),
-    onDrop: async e => {
-      onDrop(e);
-      props.onDrop?.(e);
-    },
+    onDropEnter: props.onDropEnter,
+    onDropMove: props.onDropMove,
+    onDropExit: props.onDropExit,
+    onDropActivate: props.onDropActivate,
+    onDrop: props.onDrop,
     getDropTargetFromPoint(x, y) {
       let rect = ref.current.getBoundingClientRect();
       x += rect.x;
@@ -202,9 +209,11 @@ function DroppableGrid(props) {
       {...mergeProps(collectionProps, gridProps)}
       ref={ref}
       className={classNames(dndStyles, 'droppable-collection', {'is-drop-target': isDropTarget})}
+      style={props.style}
+      data-droptarget={isDropTarget}
       role="grid">
       {!dropIndicatorProps['aria-hidden'] &&
-        <div role="row" aria-hidden={dropIndicatorProps['aria-hidden']}>
+        <div role="row">
           <div
             role="gridcell"
             aria-selected="false">
@@ -213,7 +222,7 @@ function DroppableGrid(props) {
         </div>
       }
       {[...gridState.collection].map(item => (
-        <>
+        <React.Fragment key={item.key}>
           <InsertionIndicator
             key={item.key + '-before'}
             collectionRef={ref}
@@ -231,7 +240,7 @@ function DroppableGrid(props) {
               collectionRef={ref}
               dropState={dropState} />
           }
-        </>
+        </React.Fragment>
       ))}
     </div>
   );

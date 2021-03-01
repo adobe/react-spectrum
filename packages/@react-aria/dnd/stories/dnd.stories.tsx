@@ -115,7 +115,7 @@ storiesOf('Drag and Drop', module)
     () => (
       <Flex direction="row" gap="size-200" alignItems="center" wrap>
         <DraggableCollectionExample />
-        <DroppableGridExample />
+        <DroppableGridExample onDropEnter={action('onDropEnter')} onDropExit={action('onDropExit')} onDrop={action('onDrop')} />
       </Flex>
     )
   )
