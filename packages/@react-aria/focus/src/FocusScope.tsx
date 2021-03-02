@@ -337,13 +337,13 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       walker.currentNode = focusedElement;
       let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
 
-      if (!document.body.contains(nodeToRestore)) {
-        nodeToRestore = undefined;
+      if (!document.body.contains(nodeToRestore) || nodeToRestore === document.body) {
+        nodeToRestore = null;
       }
 
       // If there is no next element, or it is outside the current scope, move focus to the
       // next element after the node to restore to instead.
-      if ((!nextElement || !isElementInScope(nextElement, scope)) && nodeToRestore && nodeToRestore !== document.body) {
+      if ((!nextElement || !isElementInScope(nextElement, scope)) && nodeToRestore) {
         walker.currentNode = nodeToRestore;
 
         // Skip over elements within the scope, in case the scope immediately follows the node to restore.
@@ -354,15 +354,15 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
         e.preventDefault();
         e.stopPropagation();
         if (nextElement) {
-          nextElement.focus();
+          focusElement(nextElement, true);
         } else {
           // If there is no next element, blur the focused element to move focus to the body.
           focusedElement.blur();
         }
-      } else if (nextElement && !isElementInScope(nextElement, scope) && nodeToRestore === document.body) {
+      } else if (nextElement && !isElementInScope(nextElement, scope)) {
         e.preventDefault();
         e.stopPropagation();
-        nextElement.focus();
+        focusElement(nextElement, true);
       }
     };
 
