@@ -35,12 +35,6 @@ export function ariaHideOutside(targets: HTMLElement[], root = document.body) {
           visibleNodes.add(node);
         }
 
-        // VoiceOver on iOS has issues hiding elements with role="row". Hide the cells inside instead.
-        // TODO: investigate.
-        if (node instanceof HTMLElement && node.getAttribute('role') === 'row') {
-          return NodeFilter.FILTER_SKIP;
-        }
-
         // Skip this node and its children if it is one of the target nodes, or a live announcer.
         // Also skip children of already hidden nodes, as aria-hidden is recursive.
         if (
@@ -48,6 +42,11 @@ export function ariaHideOutside(targets: HTMLElement[], root = document.body) {
           hiddenNodes.has(node.parentElement)
         ) {
           return NodeFilter.FILTER_REJECT;
+        }
+
+        // VoiceOver on iOS has issues hiding elements with role="row". Hide the cells inside instead.
+        if (node instanceof HTMLElement && node.getAttribute('role') === 'row') {
+          return NodeFilter.FILTER_SKIP;
         }
 
         // Skip this node but continue to children if one of the targets is inside the node.
