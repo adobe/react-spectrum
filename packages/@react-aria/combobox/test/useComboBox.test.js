@@ -15,11 +15,17 @@ import {ListLayout} from '@react-stately/layout';
 import React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
 import {useComboBox} from '../';
+import {useComboBoxState} from '@react-stately/combobox';
 import {useSingleSelectListState} from '@react-stately/list';
 
 describe('useComboBox', function () {
-  let setOpen = jest.fn();
-  let setFocusedKey = jest.fn();
+  let preventDefault = jest.fn();
+  let stopPropagation = jest.fn();
+  let event = (key) => ({
+    key,
+    preventDefault,
+    stopPropagation
+  });
 
   let defaultProps = {items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>};
   let {result} = renderHook(() => useSingleSelectListState(defaultProps));
@@ -29,8 +35,7 @@ describe('useComboBox', function () {
   mockLayout.collection = result.current.collection;
 
   afterEach(() => {
-    setOpen.mockClear();
-    setFocusedKey.mockClear();
+    jest.clearAllMocks();
   });
 
   it('should return default props for all the button group elements', function () {
@@ -64,5 +69,31 @@ describe('useComboBox', function () {
     expect(buttonProps['onPress']).toBeTruthy();
     expect(buttonProps['onPressStart']).toBeTruthy();
     expect(buttonProps['onKeyDown']).toBeTruthy();
+  });
+
+  it('should prevent default on Enter if isOpen', function () {
+    let props = {
+      label: 'test label',
+      popoverRef: React.createRef(),
+      buttonRef: React.createRef(),
+      inputRef: {
+        current: {
+          contains: jest.fn()
+        }
+      },
+      listBoxRef: React.createRef(),
+      layout: mockLayout,
+      isOpen: true
+    };
+
+    let {result, rerender} = renderHook((props) => useComboBox(props, useComboBoxState(props)), {initialProps: props});
+    let {inputProps} = result.current;
+
+    inputProps.onKeyDown(event('Enter'));
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+
+    rerender({...props, isOpen: false});
+    result.current.inputProps.onKeyDown(event('Enter'));
+    expect(preventDefault).toHaveBeenCalledTimes(1);
   });
 });
