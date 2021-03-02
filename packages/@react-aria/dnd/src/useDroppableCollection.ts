@@ -218,7 +218,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       return target;
     };
 
-    DragManager.registerDropTarget({
+    return DragManager.registerDropTarget({
       element: ref.current,
       getDropOperation(types, allowedOperations) {
         if (localState.state.target) {
