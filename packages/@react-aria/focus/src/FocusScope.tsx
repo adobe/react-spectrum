@@ -337,6 +337,10 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       walker.currentNode = focusedElement;
       let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
 
+      if (!document.body.contains(nodeToRestore)) {
+        nodeToRestore = undefined;
+      }
+
       // If there is no next element, or it is outside the current scope, move focus to the
       // next element after the node to restore to instead.
       if ((!nextElement || !isElementInScope(nextElement, scope)) && nodeToRestore && nodeToRestore !== document.body) {
