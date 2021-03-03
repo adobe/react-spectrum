@@ -19,7 +19,6 @@ import React, {useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
-import {color} from "@storybook/addon-knobs";
 
 function renderComponent(props) {
   return render(
