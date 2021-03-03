@@ -400,7 +400,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     }
 
     lastInputValue.current = inputValue;
-  }, [loadingState, inputValue]);
+  }, [loadingState, inputValue, showLoading]);
 
   return (
     <FocusScope restoreFocus contain>
