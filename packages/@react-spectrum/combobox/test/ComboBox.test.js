@@ -2739,6 +2739,21 @@ describe('ComboBox', function () {
       expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
     });
 
+    it('combobox should reset the 1000ms progress circle delay timer when input text changes', function () {
+      let {getByRole} = render(<ExampleComboBox loadingState="loading" menuTrigger="manual" />);
+      let combobox = getByRole('combobox');
+
+      act(() => {jest.advanceTimersByTime(500);});
+      expect(() => getByRole('progressbar')).toThrow();
+
+      typeText(combobox, 'O');
+      act(() => {jest.advanceTimersByTime(500);});
+      expect(() => getByRole('progressbar')).toThrow();
+
+      act(() => {jest.advanceTimersByTime(500);});
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+    });
+
     it.each`
       LoadingState   | ValidationState
       ${'loading'}   | ${null}
@@ -3525,6 +3540,30 @@ describe('ComboBox', function () {
 
         rerender(<ExampleComboBox loadingState="idle" />);
         expect(() => within(tray).getByRole('progressbar')).toThrow();
+      });
+
+      it('tray input loading circle timer should reset on input value change', function () {
+        let {getByRole, getByTestId, rerender} = render(<ExampleComboBox />);
+        let button = getByRole('button');
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        rerender(<ExampleComboBox loadingState="filtering" />);
+        let tray = getByTestId('tray');
+        expect(tray).toBeVisible();
+        expect(() => within(tray).getByRole('progressbar')).toThrow();
+        act(() => {jest.advanceTimersByTime(500);});
+
+        let trayInput = within(tray).getByRole('searchbox');
+        typeText(trayInput, 'One');
+        act(() => {jest.advanceTimersByTime(500);});
+        expect(() => within(tray).getByRole('progressbar')).toThrow();
+
+        act(() => {jest.advanceTimersByTime(500);});
+        expect(within(tray).getByRole('progressbar')).toBeTruthy();
       });
 
       it.each`
