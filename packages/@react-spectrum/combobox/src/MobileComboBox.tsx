@@ -375,19 +375,32 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     popoverRef.current.focus();
   }, [inputRef, popoverRef, isTouchDown]);
 
+  let inputValue = inputProps.value;
+  let lastInputValue = useRef(inputValue);
   useEffect(() => {
     if (loadingState === 'filtering' && !showLoading) {
-      // If filtering is happening and the loading circle is not displayed, start timer to show loading circle
-      clearTimeout(timeout.current);
-      timeout.current = setTimeout(() => {
-        setShowLoading(true);
-      }, 1000);
+      if (timeout.current === null) {
+        timeout.current = setTimeout(() => {
+          setShowLoading(true);
+        }, 1000);
+      }
+
+      // If user is typing, clear the timer and restart since it is a new request
+      if (inputValue !== lastInputValue.current) {
+        clearTimeout(timeout.current);
+        timeout.current = setTimeout(() => {
+          setShowLoading(true);
+        }, 1000);
+      }
     } else if (loadingState !== 'filtering') {
-      // If filtering is no longer happening, clear any timers and hide the loading circle
+      // If loading is no longer happening, clear any timers and hide the loading circle
       setShowLoading(false);
       clearTimeout(timeout.current);
+      timeout.current = null;
     }
-  }, [loadingState, showLoading]);
+
+    lastInputValue.current = inputValue;
+  }, [loadingState, inputValue]);
 
   return (
     <FocusScope restoreFocus contain>

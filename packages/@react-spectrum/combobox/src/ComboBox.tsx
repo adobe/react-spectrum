@@ -232,19 +232,32 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
   );
 
   let isLoading = loadingState === 'loading' || loadingState === 'filtering';
+  let inputValue = inputProps.value;
+  let lastInputValue = useRef(inputValue);
   useEffect(() => {
     if (isLoading && !showLoading) {
-      // If loading is happening and the loading circle is not displayed, start timer to show loading circle
-      clearTimeout(timeout.current);
-      timeout.current = setTimeout(() => {
-        setShowLoading(true);
-      }, 1000);
+      if (timeout.current === null) {
+        timeout.current = setTimeout(() => {
+          setShowLoading(true);
+        }, 1000);
+      }
+
+      // If user is typing, clear the timer and restart since it is a new request
+      if (inputValue !== lastInputValue.current) {
+        clearTimeout(timeout.current);
+        timeout.current = setTimeout(() => {
+          setShowLoading(true);
+        }, 1000);
+      }
     } else if (!isLoading) {
       // If loading is no longer happening, clear any timers and hide the loading circle
       setShowLoading(false);
       clearTimeout(timeout.current);
+      timeout.current = null;
     }
-  }, [isLoading, showLoading]);
+
+    lastInputValue.current = inputValue;
+  }, [isLoading, showLoading, inputValue]);
 
   return (
     <FocusRing
