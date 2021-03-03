@@ -200,6 +200,10 @@ governing permissions and limitations under the License.
 
     &.is-active {
       color: var(--spectrum-actionbutton-text-color-down);
+
+      .spectrum-Stepper-button-icon {
+        fill: var(--spectrum-actionbutton-text-color-down);
+      }
     }
 
     &:disabled,
