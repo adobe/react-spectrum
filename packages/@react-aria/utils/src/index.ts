@@ -27,3 +27,4 @@ export * from './useResizeObserver';
 export * from './getScrollParent';
 export * from './useViewportSize';
 export * from './platform';
+export * from './useScrollWheel';

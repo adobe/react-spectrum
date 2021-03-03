@@ -24,7 +24,7 @@ import {
 } from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isAndroid, isIOS, isIPhone, mergeProps, useId} from '@react-aria/utils';
+import {isAndroid, isIOS, isIPhone, mergeProps, useId, useScrollWheel} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {TextInputDOMProps} from '@react-types/shared';
 import {useFocus} from '@react-aria/interactions';
@@ -381,16 +381,4 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     incrementButtonProps,
     decrementButtonProps
   };
-}
-
-// scroll wheel needs to be added not passively so it's cancelable, small helper hook to remember that
-function useScrollWheel({onScroll, capture}: {onScroll: (e) => void, capture: boolean}, ref: RefObject<HTMLElement>) {
-  useEffect(() => {
-    let elem = ref.current;
-    elem.addEventListener('wheel', onScroll, capture);
-
-    return () => {
-      elem.removeEventListener('wheel', onScroll, capture);
-    };
-  }, [onScroll, ref, capture]);
 }

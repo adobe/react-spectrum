@@ -30,6 +30,13 @@ storiesOf('ColorField', module)
     () => render({defaultValue: '#abcdef'})
   )
   .add(
+    'value',
+    () => render({
+      value: '#FF00AA',
+      onChange: action('change')
+    })
+  )
+  .add(
     'isQuiet',
     () => render({isQuiet: true})
   )
