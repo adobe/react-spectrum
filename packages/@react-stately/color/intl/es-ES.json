@@ -1,10 +1,10 @@
 {
-  "hue": "Matiz",
-  "saturation": "Saturación",
-  "lightness": "Claridad",
-  "brightness": "Brillo",
-  "red": "Rojo",
-  "green": "Verde",
+  "alpha": "Alpha",
   "blue": "Azul",
-  "alpha": "Alfa"
+  "brightness": "Brillo",
+  "green": "Verde",
+  "hue": "Tono",
+  "lightness": "Luminosidad",
+  "red": "Rojo",
+  "saturation": "Saturación"
 }

@@ -1,10 +1,10 @@
 {
-  "hue": "Nyans",
-  "saturation": "Mättnad",
-  "lightness": "Lätthet",
+  "alpha": "Alfa",
+  "blue": "Blått",
   "brightness": "Ljusstyrka",
-  "red": "Röd",
-  "green": "Grön",
-  "blue": "Blå",
-  "alpha": "Alfa"
+  "green": "Grönt",
+  "hue": "Nyans",
+  "lightness": "Ljushet",
+  "red": "Rött",
+  "saturation": "Mättnad"
 }

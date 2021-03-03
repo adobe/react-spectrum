@@ -21,7 +21,7 @@ export type {SliderState} from '@react-stately/slider';
 export type {MultipleSelectionManager, MultipleSelectionState, SingleSelectionState} from '@react-stately/selection';
 export type {ToggleState} from '@react-stately/toggle';
 export type {TooltipTriggerState} from '@react-stately/tooltip';
-export type {TreeState} from '@react-stately/tree';
+export type {TreeProps, TreeState} from '@react-stately/tree';
 
 export {useCheckboxGroupState} from '@react-stately/checkbox';
 export {Item, Section, useCollection} from '@react-stately/collections';
