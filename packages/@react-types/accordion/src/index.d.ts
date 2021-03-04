@@ -11,17 +11,14 @@
  */
 
 import {DOMProps, StyleProps} from '@react-types/shared';
+import {TreeProps} from '@react-stately/tree';
 
-export interface AccordionProps {
-  value?: any,
-  defaultValue?: any,
-  onChange?: any
+export interface AccordionProps<T> extends TreeProps<T> {
+  isDisabled?: boolean,
 }
 
-export interface AriaAccordionProps extends AccordionProps, DOMProps {
-
+export interface AriaAccordionProps<T> extends AccordionProps<T>, DOMProps {
+  isDisabled?: boolean,
 }
 
-export interface SpectrumAccordionProps extends AriaAccordionProps, StyleProps {
-
-}
+export interface SpectrumAccordionProps<T> extends AriaAccordionProps<T>, StyleProps {}
