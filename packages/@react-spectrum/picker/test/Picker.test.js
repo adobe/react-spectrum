@@ -2066,7 +2066,7 @@ describe('Picker', function () {
       fireEvent.submit(getByTestId('form'));
       expect(onSubmit).toHaveBeenCalledTimes(1);
       expect(value).toEqual('');
-    })
+    });
 
     it('Should submit default option', function () {
       let value;
@@ -2092,6 +2092,6 @@ describe('Picker', function () {
       fireEvent.submit(getByTestId('form'));
       expect(onSubmit).toHaveBeenCalledTimes(1);
       expect(value).toEqual('one');
-    })
-  })
+    });
+  });
 });
