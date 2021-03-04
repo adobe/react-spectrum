@@ -10,20 +10,37 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
 import {Accordion} from '../';
-import {SpectrumAccordionProps} from '@react-types/accordion';
+import {Item} from '@react-stately/collections';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('Accordion', module)
   .add(
-    'name me',
+    'default',
     () => render({})
-  );
+  )
+  .add(
+    'isDisabled',
+    () => render({isDisabled: true})
+  )
+  .add('defaultExpandedKeys: files', () => render({
+    defaultExpandedKeys: ['files']
+  }))
+  .add('isDisabled, defaultExpandedKeys: files', () => render({
+    defaultExpandedKeys: ['files'],
+    isDisabled: true
+  }));
 
-function render(props: SpectrumAccordionProps) {
+function render(props = {}) {
   return (
-    <Accordion {...props} onChange={action('onChange')} />
+    <Accordion {...props} >
+      <Item key="files" title="Your files">
+        files
+      </Item>
+      <Item key="shared" title="Shared with you">
+        shared
+      </Item>
+    </Accordion>
   );
 }
