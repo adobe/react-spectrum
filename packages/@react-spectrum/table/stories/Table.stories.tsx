@@ -295,7 +295,7 @@ storiesOf('Table', module)
     () => (
       <Flex direction="column">
         <input placeholder="Focusable before" />
-        <Table aria-label="Table with focusable cells" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <Table aria-label="Table with focusable cells" selectionMode="multiple" width={450} height={200} onSelectionChange={s => onSelectionChange([...s])}>
           <TableHeader>
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
@@ -304,6 +304,11 @@ storiesOf('Table', module)
           <TableBody>
             <Row>
               <Cell><Switch aria-label="Foo" /></Cell>
+              <Cell><Link><a href="https://yahoo.com" target="_blank">Yahoo</a></Link></Cell>
+              <Cell>Three</Cell>
+            </Row>
+            <Row>
+              <Cell><Switch aria-label="Foo" /><Switch aria-label="Bar" /></Cell>
               <Cell><Link><a href="https://google.com" target="_blank">Google</a></Link></Cell>
               <Cell>Three</Cell>
             </Row>

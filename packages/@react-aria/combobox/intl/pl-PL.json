@@ -1,0 +1,7 @@
+{
+  "buttonLabel": "Wyświetlaj sugestie",
+  "countAnnouncement": "dostępna/dostępne(-nych) {optionCount, plural, one {# opcja} other {# opcje(-i)}}.",
+  "focusAnnouncement": "{isGroupChange, select, true {Dołączono do grupy {groupTitle}, z {groupCount, plural, one {# opcją} other {# opcjami}}. } other {}}{optionText}{isSelected, select, true {, wybrano} other {}}",
+  "listboxLabel": "Sugestie",
+  "selectedAnnouncement": "{optionText}, wybrano"
+}
