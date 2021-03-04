@@ -77,7 +77,7 @@ governing permissions and limitations under the License.
   letter-spacing: var(--spectrum-accordion-item-title-tracking-actual);
 
   text-overflow: ellipsis;
-  cursor: default;
+  cursor: pointer;
   font-weight: 500;
 
   /* reset styling if button element is used */
@@ -114,8 +114,10 @@ governing permissions and limitations under the License.
 .spectrum-Accordion-item {
   &.is-open {
     > .spectrum-Accordion-itemHeading {
-      > .spectrum-Accordion-itemIndicator {
-        transform: rotate(90deg);
+      > .spectrum-Accordion-itemHeader {
+        > .spectrum-Accordion-itemIndicator {
+          transform: rotate(90deg);
+        }
       }
     }
 

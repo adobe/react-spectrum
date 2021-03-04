@@ -10,15 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, StyleProps} from '@react-types/shared';
-import {TreeProps} from '@react-stately/tree';
+import {CollectionBase, DOMProps, Expandable, StyleProps} from '@react-types/shared';
 
-export interface AccordionProps<T> extends TreeProps<T> {
-  isDisabled?: boolean,
+interface AccordionProps<T> extends CollectionBase<T>, Expandable {
+  isDisabled?: boolean
 }
 
 export interface AriaAccordionProps<T> extends AccordionProps<T>, DOMProps {
-  isDisabled?: boolean,
+  isDisabled?: boolean
 }
 
 export interface SpectrumAccordionProps<T> extends AriaAccordionProps<T>, StyleProps {}

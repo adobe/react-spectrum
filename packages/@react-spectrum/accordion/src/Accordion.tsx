@@ -10,36 +10,85 @@
  * governing permissions and limitations under the License.
  */
 
+import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {DOMRef, Node} from '@react-types/shared';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {FocusRing} from '@react-aria/focus';
+import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React from 'react';
 import {SpectrumAccordionProps} from '@react-types/accordion';
 import styles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
-import {useAccordion} from '@react-aria/accordion';
-import {useProviderProps} from '@react-spectrum/provider';
+import {TreeState, useTreeState} from '@react-stately/tree';
+import {useAccordion, useAccordionItem} from '@react-aria/accordion';
+import {useHover} from '@react-aria/interactions';
 
 
-function Accordion(props: SpectrumAccordionProps, ref: DOMRef<HTMLDivElement>) {
-  // Grabs specific props from the closest Provider (see https://react-spectrum.adobe.com/react-spectrum/Provider.html#property-groups). Remove if your component doesn't support any of the listed props.
+function Accordion<T extends object>(props: SpectrumAccordionProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
-  // Handles RSP specific style options, UNSAFE_style, and UNSAFE_className props (see https://react-spectrum.adobe.com/react-spectrum/styling.html#style-props)
+  let {isDisabled} = props;
+  let state = useTreeState<T>(props);
   let {styleProps} = useStyleProps(props);
-  let ariaProps = useAccordion(props, state);
+  let {accordionProps} = useAccordion(state);
   let domRef = useDOMRef(ref);
+  let providerProps = {isDisabled};
 
   return (
     <div
       {...filterDOMProps(props)}
-      {...ariaProps}
+      {...accordionProps}
       {...styleProps}
       ref={domRef}
-      className={classNames(styles, '', styleProps.className)} />
+      className={classNames(styles, 'spectrum-Accordion', styleProps.className)}>
+      <Provider {...providerProps}>
+        {[...state.collection].map(item => (
+          <AccordionItem<T> key={item.key} item={item} state={state} />
+        ))}
+      </Provider>
+    </div>
   );
 }
 
-/**
- * TODO: Add description of component here.
- */
+interface AccordionItemProps<T> {
+  isDisabled?: boolean,
+  item: Node<T>,
+  state: TreeState<T>
+}
+
+function AccordionItem<T>(props: AccordionItemProps<T>) {
+  props = useProviderProps(props);
+  let {isDisabled, state, item} = props;
+  let {buttonProps, regionProps} = useAccordionItem<T>(props, state);
+  let isOpen = state.expandedKeys.has(item.key);
+  let {isHovered, hoverProps} = useHover(props);
+
+  return (
+    <div
+      role="presentation"
+      className={classNames(styles, 'spectrum-Accordion-item', {
+        'is-open': isOpen,
+        'is-disabled': isDisabled
+      })}>
+      <h3 className={classNames(styles, 'spectrum-Accordion-itemHeading')}>
+        <FocusRing within focusRingClass={classNames(styles, 'focus-ring')}>
+          <button
+            {...mergeProps(buttonProps, hoverProps)}
+            className={classNames(styles, 'spectrum-Accordion-itemHeader', {
+              'is-hovered': isHovered
+            })}>
+            <ChevronRightMedium
+              aria-hidden="true"
+              UNSAFE_className={classNames(styles, 'spectrum-Accordion-itemIndicator')} />
+            {item.props.title}
+          </button>
+        </FocusRing>
+      </h3>
+      <div {...regionProps} className={classNames(styles, 'spectrum-Accordion-itemContent')}>
+        {item.rendered}
+      </div>
+    </div>
+  );
+}
+
 const _Accordion = React.forwardRef(Accordion);
 export {_Accordion as Accordion};
