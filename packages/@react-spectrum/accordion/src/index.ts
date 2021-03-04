@@ -13,3 +13,4 @@
 /// <reference types="css-module-types" />
 
 export * from './Accordion';
+export {Item} from '@react-stately/collections';

@@ -84,7 +84,7 @@ function AccordionItem<T>(props: AccordionItemProps<T>) {
         </FocusRing>
       </h3>
       <div {...regionProps} className={classNames(styles, 'spectrum-Accordion-itemContent')}>
-        {item.rendered}
+        {item.props.children}
       </div>
     </div>
   );

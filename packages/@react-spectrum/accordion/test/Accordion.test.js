@@ -10,17 +10,50 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion} from '../';
+import {Accordion, Item} from '../src';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {render} from '@testing-library/react';
+import {theme} from '@react-spectrum/theme-default';
+
+let items = [
+  {key: 'one', title: 'one title', children: 'one children'},
+  {key: 'two', title: 'two title', children: 'two children'},
+  {key: 'three', title: 'three title', children: 'three children'}
+];
+
+function renderComponent(props) {
+  return render(
+    <Provider theme={theme}>
+      <Accordion {...props} defaultExpandedKeys={['one']} items={items}>
+        {item => (
+          <Item key={item.key} title={item.title}>
+            {item.children}
+          </Item>
+        )}
+      </Accordion>
+    </Provider>
+  );
+}
 
 describe('Accordion', function () {
-  it.each`
-    Name | Component      | props
-    ${'Accordion'} | ${Accordion} | ${{}}
-  `('$Name handles defaults', function ({Component, props}) {
-    let tree = render(<Component {...props} />);
+  it('renders properly', function () {
+    let container = renderComponent();
+    let accordionItems = container.getAllByRole('presentation');
+    expect(items.length).toBe(3);
 
-    expect(tree).toBeTruthy();
+    for (let item of accordionItems) {
+      let button = item.querySelector('button');
+      expect(button).toHaveAttribute('aria-expanded');
+      let isExpanded = button.getAttribute('aria-expanded') === 'true';
+      if (isExpanded) {
+        expect(button).toHaveAttribute('aria-controls');
+        let region = document.getElementById(button.getAttribute('aria-controls'));
+        expect(region).toBeTruthy();
+        expect(region).toHaveAttribute('aria-labelledby', button.id);
+        expect(region).toHaveAttribute('role', 'region');
+        expect(region).toHaveTextContent(items[0].children);
+      }
+    }
   });
 });

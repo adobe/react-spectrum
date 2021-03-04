@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion} from '../';
-import {Item} from '@react-stately/collections';
+import {Accordion, Item} from '../src';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 

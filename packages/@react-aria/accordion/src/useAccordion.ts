@@ -40,11 +40,12 @@ export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: Tre
     isDisabled,
     onPress: () => state.toggleKey(item.key)
   });
+  let isExpanded = state.expandedKeys.has(item.key);
   return {
     buttonProps: {
       ...pressProps,
       id: buttonId,
-      'aria-expanded': state.expandedKeys.has(item.key),
+      'aria-expanded': isExpanded,
       'aria-controls': regionId,
       'aria-disabled': isDisabled || state.disabledKeys.has(item.key)
     },
