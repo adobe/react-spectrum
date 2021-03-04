@@ -1,10 +1,10 @@
 {
-  "hue": "Árnyalat",
-  "saturation": "Telítettség",
-  "lightness": "Fényerő",
-  "brightness": "Értéke",
-  "red": "Vörös",
-  "green": "Zöld",
+  "alpha": "Alfa",
   "blue": "Kék",
-  "alpha": "Alfa"
+  "brightness": "Fényesség",
+  "green": "Zöld",
+  "hue": "Színárnyalat",
+  "lightness": "Világosság",
+  "red": "Piros",
+  "saturation": "Telítettség"
 }
