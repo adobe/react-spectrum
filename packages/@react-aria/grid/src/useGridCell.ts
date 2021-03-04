@@ -57,6 +57,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         : treeWalker.firstChild() as HTMLElement;
       if (focusable) {
         focusSafely(focusable);
+        state.selectionManager.setFocusWithinItem(true);
         return;
       }
     }
@@ -207,7 +208,8 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(pressProps, {
     role: 'gridcell',
     onKeyDownCapture: onKeyDown,
-    onFocus
+    onFocus,
+    onBlur
   });
 
   if (isVirtualized) {
