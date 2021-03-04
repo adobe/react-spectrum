@@ -23,14 +23,48 @@ We need to provide React Spectrum compliant components that run on UXP including
 
 ## Detailed Design
 
-<!--
-   This is the bulk of the RFC.
+UXP = Unified Extensibility Platform. This platform is used both internally by Adobe and also public plugins for Adobe products including XD.
 
-   Explain the design with enough detail that someone familiar with React-Spectrum
-   can implement it by reading this document. Please get into specifics
-   of your approach, corner cases, and examples of how the change will be
-   used. Be sure to define any new terms in this section.
--->
+### UXP Implementation per module
+
+For every @react-spectrum module which needs a modified implementation of one or more components for UXP we will do the following:
+
+- Create a new folder and UXP specific entry point: `./src/uxp/index.ts`.
+    - Has the same export API as `./src/index.ts`.
+    - Re-exports any components that do not need to be modified from `./src/index.ts`.
+    - If running on UXP (determined at runtime) exports UXP specific components as needed.
+- Modify `./package.json` and add a new parcel build target that will enter at `./src/uxp/index.ts` and output at `./dist/uxp.js`
+
+### UXP Storybook for developers
+
+UXP Developers will need a convenient way to author and test UXP components with hot module reloading (HMR). We propose adding a UXP compatible storybook plugin to the repository at `./packages/uxp/storybook`.
+
+This new package will:
+
+- Leverage the pre-existing `./stories` files for each module.
+- Build a plugin that can be viewed in:
+    - a web browser
+    - the UXP demo application
+    - a plugin environment like XD
+- Provide hot module reloading for all clients.
+
+### UXP Consumption of React-Spectrum components
+
+UXP clients will use the `./dist/uxp.js` entry point which will be compiled and published automatically via the current build/publish process.
+
+We intend to provide both parcel and webpack plugins that simplify the consumption of the UXP specific entry point. Details of both are open questions.
+
+### UXP Development process
+
+In order to streamline review process and avoid undue burden on core react-spectrum developers, we propose making UXP team architects code owners over the react-spectrum `./packages/uxp` folder and corresponding `./packages/*/*/src/uxp` folders for each relevant module.
+
+The currently existing PR tests will ensure that uxp specific targets are always built successfully.
+
+No changes within the uxp specific folders can have any effect upon the current browser specific modules.
+
+### Sample Implementation of basic Storybook and UXP Button
+
+https://github.com/adobe/react-spectrum/compare/main...krisnye:monorepo?expand=1
 
 ## Documentation
 
