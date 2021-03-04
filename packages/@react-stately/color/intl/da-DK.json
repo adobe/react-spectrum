@@ -1,10 +1,10 @@
 {
-  "hue": "Nuance",
-  "saturation": "Mætning",
-  "lightness": "Lysstyrke",
-  "brightness": "Værdi",
-  "red": "Rød",
-  "green": "Grøn",
+  "alpha": "Alfa",
   "blue": "Blå",
-  "alpha": "Alfa"
+  "brightness": "Lysstyrke",
+  "green": "Grøn",
+  "hue": "Tone",
+  "lightness": "Lyshed",
+  "red": "Rød",
+  "saturation": "Farvemætning"
 }

@@ -1,10 +1,10 @@
 {
-  "hue": "Toon",
-  "saturation": "Küllastus",
-  "lightness": "Helendus",
-  "brightness": "Väärtus",
-  "red": "Punane",
-  "green": "Roheline",
+  "alpha": "Alfa",
   "blue": "Sinine",
-  "alpha": "Alfa"
+  "brightness": "Heledus",
+  "green": "Roheline",
+  "hue": "Värv",
+  "lightness": "Valgus",
+  "red": "Punane",
+  "saturation": "Küllastus"
 }
