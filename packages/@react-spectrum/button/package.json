@@ -24,6 +24,12 @@
       "includeNodeModules": [
         "@adobe/spectrum-css-temp"
       ]
+    },
+    "uxp": {
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ],
+      "source": "src/uxp/index.ts"
     }
   },
   "repository": {

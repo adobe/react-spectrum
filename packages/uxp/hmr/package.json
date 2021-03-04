@@ -1,0 +1,22 @@
+{
+  "name": "hmr-sample",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "main": "dist/index.html",
+  "scripts": {
+    "watch": "rm -rf ../../../.parcel-cache && parcel serve src/index.html --target main"
+  },
+  "targets": {
+    "main": {
+      "minify": true
+    }
+  },
+  "devDependencies": {
+    "parcel": "nightly"
+  },
+  "dependencies": {
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0"
+  }
+}
