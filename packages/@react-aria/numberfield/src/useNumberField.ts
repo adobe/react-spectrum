@@ -302,7 +302,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
       // override the spinbutton role, we can't focus a spin button with VO
       role: null,
       // ignore aria-roledescription on iOS so that required state will announce when it is present
-      'aria-roledescription': (!isIOS() ? formatMessage('Number field') : null),
+      'aria-roledescription': (!isIOS() ? formatMessage('numberField') : null),
       'aria-valuemax': null,
       'aria-valuemin': null,
       'aria-valuenow': null,

@@ -1,10 +1,10 @@
 {
-  "hue": "גוון",
-  "saturation": "רוויה",
-  "lightness": "‏‏בהירות",
-  "brightness": "וערך",
-  "red": "אדום",
-  "green": "ירוק",
+  "alpha": "אלפא",
   "blue": "כחול",
-  "alpha": "אלפא"
+  "brightness": "בהירות",
+  "green": "ירוק",
+  "hue": "גוון",
+  "lightness": "כמות אור",
+  "red": "אדום",
+  "saturation": "רוויה"
 }

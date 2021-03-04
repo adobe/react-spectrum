@@ -1,5 +1,5 @@
 {
-  "decrease": "Decrease {fieldLabel}",
-  "increase": "Increase {fieldLabel}",
-  "Number field": "Number field"
+  "decrease": "Μείωση {fieldLabel}",
+  "increase": "Αύξηση {fieldLabel}",
+  "numberField": "Πεδίο αριθμού"
 }
