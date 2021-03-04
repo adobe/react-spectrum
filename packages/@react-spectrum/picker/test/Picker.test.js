@@ -2067,5 +2067,31 @@ describe('Picker', function () {
       expect(onSubmit).toHaveBeenCalledTimes(1);
       expect(value).toEqual('');
     })
+
+    it('Should submit default option', function () {
+      let value;
+      let onSubmit = jest.fn(e => {
+        e.preventDefault();
+        let formData = new FormData(e.currentTarget);
+        value = Object.fromEntries(formData).picker;
+      });
+      let {getByTestId} = render(
+        <Provider theme={theme}>
+          <form data-testid="form" onSubmit={onSubmit}>
+            <Picker defaultSelectedKey="one" name="picker" label="Test" autoFocus>
+              <Item key="one">One</Item>
+              <Item key="two">Two</Item>
+              <Item key="three">Three</Item>
+            </Picker>
+            <button type="submit" data-testid="submit">
+              submit
+            </button>
+          </form>
+        </Provider>
+      );
+      fireEvent.submit(getByTestId('form'));
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(value).toEqual('one');
+    })
   })
 });
