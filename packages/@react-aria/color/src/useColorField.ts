@@ -22,7 +22,9 @@ import {useSpinButton} from '@react-aria/spinbutton';
 import {useTextField} from '@react-aria/textfield';
 
 interface ColorFieldAria {
+  /** Props for the label element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  /** Props for the input element. */
   inputProps: HTMLAttributes<HTMLInputElement>
 }
 

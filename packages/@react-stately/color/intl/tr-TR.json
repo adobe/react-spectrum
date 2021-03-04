@@ -1,10 +1,10 @@
 {
-  "hue": "Ton",
-  "saturation": "Doygunluk",
-  "lightness": "Hafiflik",
-  "brightness": "Parlaklık",
-  "red": "Kırmızı",
-  "green": "Yeşil",
+  "alpha": "Alfa",
   "blue": "Mavi",
-  "alpha": "Alfa"
+  "brightness": "Parlaklık",
+  "green": "Yeşil",
+  "hue": "Ton",
+  "lightness": "Canlılık",
+  "red": "Kırmızı",
+  "saturation": "Doygunluk"
 }

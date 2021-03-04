@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {FocusStrategy, PressEvent, Selection, SelectionMode} from '@react-types/shared';
 import {Key} from 'react';
-import {PressEvent, Selection, SelectionMode} from '@react-types/shared';
 
 export interface FocusState {
   /** Whether the collection is currently focused. */
@@ -24,8 +24,10 @@ export interface FocusState {
   setFocusWithinItem(isFocused: boolean): void,
   /** The current focused key in the collection. */
   readonly focusedKey: Key,
-  /** Sets the focused key. */
-  setFocusedKey(key: Key): void
+  /** Whether the first or last child of the focused key should receive focus. */
+  readonly childFocusStrategy: FocusStrategy,
+  /** Sets the focused key, and optionally, whether the first or last child of that key should receive focus. */
+  setFocusedKey(key: Key, child?: FocusStrategy): void
 }
 
 export interface SingleSelectionState extends FocusState {

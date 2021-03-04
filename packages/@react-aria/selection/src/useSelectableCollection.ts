@@ -15,6 +15,7 @@ import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
 import {isMac, mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
+import {useLocale} from '@react-aria/i18n';
 import {useTypeSelect} from './useTypeSelect';
 
 function isCtrlKeyPressed(e: KeyboardEvent) {
@@ -95,6 +96,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     disallowTypeAhead = false,
     shouldUseVirtualFocus
   } = options;
+  let {direction} = useLocale();
 
   let onKeyDown = (e: KeyboardEvent) => {
     // Let child element (e.g. menu button) handle the event if the Alt key is pressed.
@@ -162,7 +164,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
           e.preventDefault();
           let nextKey = delegate.getKeyLeftOf(manager.focusedKey);
           if (nextKey != null) {
-            manager.setFocusedKey(nextKey);
+            manager.setFocusedKey(nextKey, direction === 'rtl' ? 'first' : 'last');
             if (manager.selectionMode === 'single' && selectOnFocus) {
               manager.replaceSelection(nextKey);
             }
@@ -178,7 +180,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
           e.preventDefault();
           let nextKey = delegate.getKeyRightOf(manager.focusedKey);
           if (nextKey != null) {
-            manager.setFocusedKey(nextKey);
+            manager.setFocusedKey(nextKey, direction === 'rtl' ? 'last' : 'first');
             if (manager.selectionMode === 'single' && selectOnFocus) {
               manager.replaceSelection(nextKey);
             }
@@ -349,7 +351,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     // We use a capturing listener to ensure that the keyboard events for the collection
     // override those of the children. For example, ArrowDown in a table should always go
     // to the cell below, and not open a menu.
-    onKeyDownCapture: onKeyDown,
+    onKeyDown,
     onFocus,
     onBlur,
     onMouseDown(e) {
