@@ -12,7 +12,10 @@
 
 .no-results {
   display: block;
-  /* Renamed from padding-y to padding-height to fix docs issue where fallback var replaced this value. */
+  /*
+    Renamed from padding-y to padding-height to fix docs issue where fallback var replaced this value
+    (due to old spectrum-css postcss-custom-properties-custom-mapping plugin).
+  */
   padding-top: var(--spectrum-selectlist-option-padding-height);
   padding-inline-start: var(--spectrum-selectlist-option-padding);
   font-size: var(--spectrum-selectlist-option-text-size);
