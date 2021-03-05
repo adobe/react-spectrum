@@ -87,11 +87,12 @@ let [selectedKeys, setSelectedKeys] = useState(new Set());
 
 ## Selected key data type
 
-As mentioned on the Collection [page](./collections.html#unique-keys), there are two ways that keys can be defined for your collection items.
+As mentioned in the collection [docs](./collections.html#unique-keys), there are two ways that keys can be defined for your collection items.
 The method you use will affect the data type you provide to your `defaultSelectedKey(s)` and `selectedKey(s)` props and what `onSelectionChange` returns.
+
 If you directly specify the key on each `Item` using the `key` prop, `defaultSelectedKey(s)`/`selectedKey(s)` will expect a string/list of strings regardless of the
 original data type provided to the `Item`'s `key` prop. As seen in the example below, the `selectedKey` is initialized to `"2"` rather than `2` despite the fact that
-the `dataId`s provided as the `Item`'s `key`s are `number`s.
+the `dataIds` provided to each `Item` `key` are numbers.
 
 ```tsx
 let items = [
