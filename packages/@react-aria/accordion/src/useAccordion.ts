@@ -14,8 +14,9 @@ import {HTMLAttributes} from 'react';
 import {Node} from '@react-types/shared';
 import {TreeState} from '@react-stately/tree';
 import {useId} from '@react-aria/utils';
-import {usePress} from '../../../react-aria';
+import {usePress} from '@react-aria/interactions';
 import {useSelectableList} from '@react-aria/selection';
+
 interface AccordionAria {
   /** Props for the accordion container element. */
   accordionProps: HTMLAttributes<HTMLElement>
@@ -47,7 +48,8 @@ export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: Tre
       id: buttonId,
       'aria-expanded': isExpanded,
       'aria-controls': regionId,
-      'aria-disabled': isDisabled || state.disabledKeys.has(item.key)
+      'aria-disabled': isDisabled || state.disabledKeys.has(item.key),
+      tabIndex: isDisabled ? -1 : 0
     },
     regionProps: {
       id: regionId,
