@@ -103,7 +103,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
         <label>
           {label}
           <select {...selectProps}>
-            <option hidden disabled />
+            <option />
             {[...state.collection.getKeys()].map(key => {
               let item = state.collection.getItem(key);
               if (item.type === 'item') {
