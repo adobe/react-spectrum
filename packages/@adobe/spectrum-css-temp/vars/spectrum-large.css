@@ -229,8 +229,11 @@
   --spectrum-selectlist-option-icon-margin-top: var(--spectrum-global-dimension-static-size-50);
   --spectrum-selectlist-option-height: var(--spectrum-global-dimension-static-size-600);
   /* BEGIN RSP PATCH */
-  /* This is not correct in DNA. */
-  --spectrum-selectlist-option-padding-y: var(--spectrum-global-dimension-static-size-160);
+  /*
+    This is not correct in DNA. Renamed from padding-y to padding-height to fix docs issue where fallback var replaced this value
+    (due to old spectrum-css postcss-custom-properties-custom-mapping plugin).
+  */
+  --spectrum-selectlist-option-padding-height: var(--spectrum-global-dimension-static-size-160);
   /* END RSP PATCH */
   --spectrum-selectlist-thumbnail-option-icon-padding-y: var(--spectrum-global-dimension-static-size-200);
   --spectrum-loader-bar-large-border-radius: 4px;
