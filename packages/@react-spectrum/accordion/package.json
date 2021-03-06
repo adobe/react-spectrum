@@ -35,6 +35,7 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/accordion": "3.0.0-alpha.1",
     "@react-aria/focus": "^3.2.3",
+    "@react-aria/i18n": "^3.3.0",
     "@react-aria/interactions": "^3.3.3",
     "@react-aria/utils": "^3.0.0",
     "@react-spectrum/utils": "^3.0.0",

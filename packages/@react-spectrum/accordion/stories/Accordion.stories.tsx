@@ -21,14 +21,14 @@ storiesOf('Accordion', module)
   )
   .add(
     'isDisabled',
-    () => render({isDisabled: true})
+    () => render({disabledKeys: ['files', 'shared']})
   )
   .add('defaultExpandedKeys: files', () => render({
     defaultExpandedKeys: ['files']
   }))
   .add('isDisabled, defaultExpandedKeys: files', () => render({
     defaultExpandedKeys: ['files'],
-    isDisabled: true
+    disabledKeys: ['files', 'shared']
   }));
 
 function render(props = {}) {
@@ -39,6 +39,9 @@ function render(props = {}) {
       </Item>
       <Item key="shared" title="Shared with you">
         shared
+      </Item>
+      <Item key="last" title="Last item">
+        last
       </Item>
     </Accordion>
   );
