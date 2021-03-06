@@ -22,6 +22,8 @@ import styles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
 import {useAccordion, useAccordionItem} from '@react-aria/accordion';
 import {useHover} from '@react-aria/interactions';
+import {useLocale} from '@react-aria/i18n';
+import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 
 
 function Accordion<T extends object>(props: SpectrumAccordionProps<T>, ref: DOMRef<HTMLDivElement>) {
@@ -61,6 +63,7 @@ function AccordionItem<T>(props: AccordionItemProps<T>) {
   let {buttonProps, regionProps} = useAccordionItem<T>(props, state);
   let isOpen = state.expandedKeys.has(item.key);
   let {isHovered, hoverProps} = useHover(props);
+  let {direction} = useLocale();
 
   return (
     <div
@@ -76,9 +79,15 @@ function AccordionItem<T>(props: AccordionItemProps<T>) {
             className={classNames(styles, 'spectrum-Accordion-itemHeader', {
               'is-hovered': isHovered
             })}>
-            <ChevronRightMedium
-              aria-hidden="true"
-              UNSAFE_className={classNames(styles, 'spectrum-Accordion-itemIndicator')} />
+            {direction === 'ltr' ? (
+              <ChevronRightMedium
+                aria-hidden="true"
+                UNSAFE_className={classNames(styles, 'spectrum-Accordion-itemIndicator')} />
+              ) : (
+              <ChevronLeftMedium
+                aria-hidden="true"
+                UNSAFE_className={classNames(styles, 'spectrum-Accordion-itemIndicator')} />
+              )}
             {item.props.title}
           </button>
         </FocusRing>
