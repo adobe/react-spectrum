@@ -382,7 +382,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
       if (timeout.current === null) {
         timeout.current = setTimeout(() => {
           setShowLoading(true);
-        }, 1000);
+        }, 500);
       }
 
       // If user is typing, clear the timer and restart since it is a new request
@@ -390,7 +390,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
         clearTimeout(timeout.current);
         timeout.current = setTimeout(() => {
           setShowLoading(true);
-        }, 1000);
+        }, 500);
       }
     } else if (loadingState !== 'filtering') {
       // If loading is no longer happening, clear any timers and hide the loading circle

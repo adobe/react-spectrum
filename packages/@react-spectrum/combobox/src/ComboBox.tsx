@@ -239,7 +239,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
       if (timeout.current === null) {
         timeout.current = setTimeout(() => {
           setShowLoading(true);
-        }, 1000);
+        }, 500);
       }
 
       // If user is typing, clear the timer and restart since it is a new request
@@ -247,7 +247,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
         clearTimeout(timeout.current);
         timeout.current = setTimeout(() => {
           setShowLoading(true);
-        }, 1000);
+        }, 500);
       }
     } else if (!isLoading) {
       // If loading is no longer happening, clear any timers and hide the loading circle
