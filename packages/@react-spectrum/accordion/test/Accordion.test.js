@@ -67,7 +67,7 @@ describe('Accordion', function () {
     expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
     userEvent.click(selectedItem);
     expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
-  })
+  });
 
   it('allows users to open and close accordion item with enter / space key', function () {
     renderComponent();
@@ -84,7 +84,7 @@ describe('Accordion', function () {
     fireEvent.keyDown(selectedItem, {key: 'Enter'});
     fireEvent.keyUp(selectedItem, {key: 'Enter'});
     expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
-  })
+  });
 
   it('allows users to naviagte accordion headers through arrow keys', function () {
     renderComponent();
