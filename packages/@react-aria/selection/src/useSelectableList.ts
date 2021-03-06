@@ -72,7 +72,7 @@ interface SelectableListOptions {
    */
   shouldUseVirtualFocus?: boolean,
   /**
-   * Whether navigation throguh tab key is enabled.
+   * Whether navigation through tab key is enabled.
    */
   allowsTabNavigation?: boolean
 }
