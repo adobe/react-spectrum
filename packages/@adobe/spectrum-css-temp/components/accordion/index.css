@@ -99,7 +99,7 @@ governing permissions and limitations under the License.
       content: '';
 
       position: absolute;
-      left: 0;
+      inset-inline-start: 0;
       top: calc(var(--spectrum-accordion-item-border-size) * -1);
       bottom: calc(var(--spectrum-accordion-item-border-size) * -1);
 
