@@ -11,10 +11,11 @@
  */
 
 import {Accordion, Item} from '../src';
+import {act, fireEvent, render} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render} from '@testing-library/react';
 import {theme} from '@react-spectrum/theme-default';
+import userEvent from '@testing-library/user-event';
 
 let items = [
   {key: 'one', title: 'one title', children: 'one children'},
@@ -38,8 +39,8 @@ function renderComponent(props) {
 
 describe('Accordion', function () {
   it('renders properly', function () {
-    let container = renderComponent();
-    let accordionItems = container.getAllByRole('presentation');
+    renderComponent();
+    let accordionItems = document.querySelectorAll('.spectrum-Accordion-item');
     expect(items.length).toBe(3);
 
     for (let item of accordionItems) {
@@ -55,5 +56,74 @@ describe('Accordion', function () {
         expect(region).toHaveTextContent(items[0].children);
       }
     }
+  });
+
+  it('toggle accordion on mouse click', function () {
+    renderComponent();
+    let buttons = document.getElementsByTagName('button');
+    let selectedItem = buttons[0];
+    expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
+    userEvent.click(selectedItem);
+    expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
+    userEvent.click(selectedItem);
+    expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
+  })
+
+  it('allows users to open and close accordion item with enter / space key', function () {
+    renderComponent();
+    let buttons = document.getElementsByTagName('button');
+    let selectedItem = buttons[0];
+    expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
+    act(() => {selectedItem.focus();});
+    expect(document.activeElement).toBe(selectedItem);
+
+    fireEvent.keyDown(selectedItem, {key: 'Enter'});
+    fireEvent.keyUp(selectedItem, {key: 'Enter'});
+    expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
+
+    fireEvent.keyDown(selectedItem, {key: 'Enter'});
+    fireEvent.keyUp(selectedItem, {key: 'Enter'});
+    expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
+  })
+
+  it('allows users to naviagte accordion headers through arrow keys', function () {
+    renderComponent();
+    let buttons = document.getElementsByTagName('button');
+    let [firstItem, secondItem, thirdItem] = buttons;
+    act(() => {firstItem.focus();});
+
+    expect(document.activeElement).toBe(firstItem);
+    fireEvent.keyDown(firstItem, {key: 'ArrowUp'});
+    expect(document.activeElement).toBe(firstItem);
+    fireEvent.keyDown(firstItem, {key: 'ArrowDown'});
+    expect(document.activeElement).toBe(secondItem);
+    fireEvent.keyDown(secondItem, {key: 'ArrowDown'});
+    expect(document.activeElement).toBe(thirdItem);
+    fireEvent.keyDown(thirdItem, {key: 'ArrowDown'});
+    expect(document.activeElement).toBe(thirdItem);
+    fireEvent.keyDown(thirdItem, {key: 'ArrowUp'});
+    expect(document.activeElement).toBe(secondItem);
+  });
+
+  it('allows users to navigate accordion headers through the tab key', function () {
+    renderComponent();
+    let buttons = document.getElementsByTagName('button');
+    let [firstItem, secondItem, thirdItem] = buttons;
+    act(() => {firstItem.focus();});
+    expect(document.activeElement).toBe(firstItem);
+    userEvent.tab();
+    expect(document.activeElement).toBe(secondItem);
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(firstItem);
+    userEvent.tab();
+    expect(document.activeElement).toBe(secondItem);
+    userEvent.tab();
+    expect(document.activeElement).toBe(thirdItem);
+    userEvent.tab();
+    expect(document.activeElement).not.toBe(firstItem);
+    expect(document.activeElement).not.toBe(secondItem);
+    expect(document.activeElement).not.toBe(thirdItem);
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(thirdItem);
   });
 });
