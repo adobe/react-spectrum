@@ -13,6 +13,7 @@
 import {
   AriaLabelingProps,
   CollectionBase,
+  CollectionChildren,
   DOMProps,
   Node,
   Orientation,
@@ -28,9 +29,9 @@ export interface AriaTabProps<T> {
   isDisabled?: boolean
 }
 
-export interface TabsProps<T> extends CollectionBase<T>, SingleSelection {}
+export interface TabListProps<T> extends CollectionBase<T>, SingleSelection {}
 
-export interface AriaTabsProps<T> extends TabsProps<T>, DOMProps, AriaLabelingProps {
+export interface AriaTabListProps<T> extends TabListProps<T>, DOMProps, AriaLabelingProps {
   /**
    * Whether tabs are activated automatically on focus or manually.
    * @default 'automatic'
@@ -48,22 +49,23 @@ export interface AriaTabsProps<T> extends TabsProps<T>, DOMProps, AriaLabelingPr
   isDisabled?: boolean
 }
 
-export interface SpectrumTabsProps<T> extends AriaTabsProps<T>, StyleProps {
-  /** Whether the Tabs should be displayed with a quiet style. */
-  isQuiet?: boolean,
-  /**
-   * Sets the amount of space between the Tab and the Tab rail.
-   * @default 'regular'
-   */
-  density?: 'compact' | 'regular',
-  // overflowMode?: 'dropdown' | 'scrolling',
-  // isEmphasized?: boolean,
-  /** Whether Tabs are disabled. */
+export interface AriaTabPanelProps extends DOMProps, AriaLabelingProps {}
+
+interface SpectrumTabsProps<T> extends SingleSelection, DOMProps, StyleProps {
+  items?: Iterable<T>,
+  keyboardActivation?: 'automatic' | 'manual',
+  orientation?: Orientation,
   isDisabled?: boolean,
-  /** Handler that is called when the tab selection changes. */
-  onSelectionChange?: (selectedItem: Key) => void,
-  /** The currently selected Tab key in the collection (controlled). */
-  selectedKey?: Key,
-  /** The initial selected Tab key in the collection (uncontrolled). */
-  defaultSelectedKey?: Key
+  disabledKeys?: Iterable<Key>,
+  isQuiet?: boolean,
+  density?: 'compact' | 'regular'
+  children: any
+}
+
+export interface SpectrumTabListProps<T> extends DOMProps, StyleProps {
+  children: CollectionChildren<T>
+}
+
+export interface SpectrumTabPanelsProps<T> extends DOMProps, StyleProps {
+  children: CollectionChildren<T>
 }
