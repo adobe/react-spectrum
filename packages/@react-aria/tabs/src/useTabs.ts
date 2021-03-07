@@ -123,7 +123,6 @@ export function useTabPanel<T>(
   props: AriaTabPanelProps,
   state: TabListState<T>
 ): TabPanelAria {
-  console.log("mann ", state)
   return {
     tabPanelProps: mergeProps(props, {
       id: generateId(state, state?.selectedKey, 'tabpanel'),
