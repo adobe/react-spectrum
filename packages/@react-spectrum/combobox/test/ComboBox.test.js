@@ -96,9 +96,7 @@ function getFilterItems() {
 }
 
 function mockSecondCall() {
-  return Promise.resolve({
-    items: secondCallFilterItems
-  });
+  return new Promise(resolve => setTimeout(() => resolve({items: secondCallFilterItems}), 1500));
 }
 
 let load;
@@ -2635,6 +2633,127 @@ describe('ComboBox', function () {
   });
 
   describe('loadingState', function () {
+    it('combobox should not render a loading circle if menu is not open', function () {
+      let {getByRole, rerender} = render(<ExampleComboBox loadingState="loading" />);
+      act(() => {jest.advanceTimersByTime(500);});
+      expect(() => getByRole('progressbar')).toThrow();
+
+      rerender(<ExampleComboBox loadingState="filtering" />);
+
+      expect(() => getByRole('progressbar')).toThrow();
+    });
+
+    it('combobox should render a loading circle if menu is not open but menuTrigger is "manual"', function () {
+      let {getByRole, rerender} = render(<ExampleComboBox loadingState="loading" menuTrigger="manual" />);
+      let combobox = getByRole('combobox');
+      expect(() => getByRole('progressbar')).toThrow();
+
+      act(() => {jest.advanceTimersByTime(500);});
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+
+      rerender(<ExampleComboBox loadingState="filtering" menuTrigger="manual" />);
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+
+      rerender(<ExampleComboBox loadingState="filtering" />);
+      expect(() => getByRole('progressbar')).toThrow();
+    });
+
+    it('combobox should not render a loading circle until a delay of 500ms passes', function () {
+      let {getByRole} = renderComboBox({loadingState: 'loading'});
+      let combobox = getByRole('combobox');
+      act(() => {jest.advanceTimersByTime(500);});
+      expect(() => getByRole('progressbar')).toThrow();
+
+      let button = getByRole('button');
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+    });
+
+    it('combobox should hide the loading circle when loadingState changes to a non-loading state', function () {
+      let {getByRole, rerender} = render(<ExampleComboBox loadingState="filtering" />);
+      let combobox = getByRole('combobox');
+      let button = getByRole('button');
+      expect(() => getByRole('progressbar')).toThrow();
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+      act(() => {jest.advanceTimersByTime(500);});
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+
+      rerender(<ExampleComboBox loadingState="idle" />);
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      expect(() => getByRole('progressbar')).toThrow();
+    });
+
+    it('combobox should hide the loading circle when if the menu closes', function () {
+      let {getByRole} = render(<ExampleComboBox loadingState="filtering" />);
+      let combobox = getByRole('combobox');
+      let button = getByRole('button');
+      expect(() => getByRole('progressbar')).toThrow();
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+      act(() => {jest.advanceTimersByTime(500);});
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+      expect(() => getByRole('progressbar')).toThrow();
+      expect(() => getByRole('listbox')).toThrow();
+    });
+
+    it('combobox cancels the 500ms progress circle delay timer if the loading finishes first', function () {
+      let {getByRole, rerender} = render(<ExampleComboBox loadingState="loading" menuTrigger="manual" />);
+      expect(() => getByRole('progressbar')).toThrow();
+      act(() => {jest.advanceTimersByTime(250);});
+      expect(() => getByRole('progressbar')).toThrow();
+
+      rerender(<ExampleComboBox loadingState="idle" />);
+      act(() => {jest.advanceTimersByTime(250);});
+      expect(() => getByRole('progressbar')).toThrow();
+    });
+
+    it('combobox should not reset the 500ms progress circle delay timer when loadingState changes from loading to filtering', function () {
+      let {getByRole, rerender} = render(<ExampleComboBox loadingState="loading" menuTrigger="manual" />);
+      let combobox = getByRole('combobox');
+
+      act(() => {jest.advanceTimersByTime(250);});
+      expect(() => getByRole('progressbar')).toThrow();
+
+      rerender(<ExampleComboBox loadingState="filtering" menuTrigger="manual" />);
+      expect(() => getByRole('progressbar')).toThrow();
+      act(() => {jest.advanceTimersByTime(250);});
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+    });
+
+    it('combobox should reset the 500ms progress circle delay timer when input text changes', function () {
+      let {getByRole} = render(<ExampleComboBox loadingState="loading" menuTrigger="manual" />);
+      let combobox = getByRole('combobox');
+
+      act(() => {jest.advanceTimersByTime(250);});
+      expect(() => getByRole('progressbar')).toThrow();
+
+      typeText(combobox, 'O');
+      act(() => {jest.advanceTimersByTime(250);});
+      expect(() => getByRole('progressbar')).toThrow();
+
+      act(() => {jest.advanceTimersByTime(250);});
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+    });
+
     it.each`
       LoadingState   | ValidationState
       ${'loading'}   | ${null}
@@ -2643,24 +2762,25 @@ describe('ComboBox', function () {
       ${'filtering'} | ${'invalid'}
     `('should render the loading swirl in the input field when loadingState="$LoadingState" and validationState="$ValidationState"', ({LoadingState, ValidationState}) => {
       let {getByRole} = renderComboBox({loadingState: LoadingState, validationState: ValidationState});
-      let button = getByRole('button');
-      let progressSpinner = getByRole('progressbar');
-
-      expect(progressSpinner).toBeTruthy();
-      expect(progressSpinner).toHaveAttribute('aria-label', 'Loading...');
-
       let combobox = getByRole('combobox');
+      let button = getByRole('button');
+      act(() => {jest.advanceTimersByTime(500);});
+
       if (ValidationState) {
         expect(combobox).toHaveAttribute('aria-invalid', 'true');
       }
 
-      // validation icon should no be present
+      // validation icon should not be present
       expect(() => within(combobox).getByRole('img', {hidden: true})).toThrow();
 
       act(() => {
         triggerPress(button);
         jest.runAllTimers();
       });
+
+      let progressSpinner = getByRole('progressbar', {hidden: true});
+      expect(progressSpinner).toBeTruthy();
+      expect(progressSpinner).toHaveAttribute('aria-label', 'Loading...');
 
       let listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
@@ -2684,84 +2804,6 @@ describe('ComboBox', function () {
       let progressSpinner = within(listbox).getByRole('progressbar');
       expect(progressSpinner).toBeTruthy();
       expect(progressSpinner).toHaveAttribute('aria-label', 'Loading more…');
-    });
-  });
-
-  describe('async loading', function () {
-    it('async combobox works with useAsyncList', async () => {
-      let {getByRole} = render(
-        <Provider theme={theme}>
-          <AsyncComboBox />
-        </Provider>
-      );
-
-      let combobox = getByRole('combobox');
-      let button = getByRole('button');
-      let progressSpinner = getByRole('progressbar');
-      expect(progressSpinner).toBeTruthy();
-      expect(progressSpinner).toHaveAttribute('aria-label', 'Loading...');
-
-      await waitFor(() => expect(load).toHaveBeenCalledTimes(1));
-      expect(load).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          'filterText': ''
-        })
-      );
-
-      act(() => {
-        triggerPress(button);
-        jest.runAllTimers();
-      });
-
-      expect(() => getByRole('progressbar')).toThrow();
-
-      let listbox = getByRole('listbox');
-      expect(listbox).toBeTruthy();
-      let items = within(listbox).getAllByRole('option');
-      expect(items).toHaveLength(3);
-      expect(items[0]).toHaveTextContent('Aardvark');
-      expect(items[1]).toHaveTextContent('Kangaroo');
-      expect(items[2]).toHaveTextContent('Snake');
-
-      act(() => {
-        fireEvent.change(combobox, {target: {value: 'aard'}});
-        jest.runAllTimers();
-      });
-
-      progressSpinner = getByRole('progressbar');
-      expect(progressSpinner).toBeTruthy();
-      expect(progressSpinner).toHaveAttribute('aria-label', 'Loading...');
-
-      await waitFor(() => expect(load).toHaveBeenCalledTimes(2));
-      expect(load).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          'filterText': 'aard'
-        })
-      );
-      expect(() => getByRole('progressbar')).toThrow();
-
-      items = within(listbox).getAllByRole('option');
-      expect(items).toHaveLength(1);
-      expect(items[0]).toHaveTextContent('Aardvark');
-
-      act(() => {
-        triggerPress(items[0]);
-        jest.runAllTimers();
-      });
-
-      progressSpinner = getByRole('progressbar');
-      expect(progressSpinner).toBeTruthy();
-      expect(progressSpinner).toHaveAttribute('aria-label', 'Loading...');
-
-      await waitFor(() => expect(load).toHaveBeenCalledTimes(3));
-      expect(load).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          'filterText': 'Aardvark'
-        })
-      );
-
-      expect(() => getByRole('progressbar')).toThrow();
-      expect(combobox.value).toBe('Aardvark');
     });
   });
 
@@ -3455,19 +3497,85 @@ describe('ComboBox', function () {
     });
 
     describe('isLoading', function () {
+      it('tray input should render a loading circle after a delay of 500ms if loadingState="filtering"', function () {
+        let {getByRole, getByTestId, rerender} = render(<ExampleComboBox loadingState="loading" />);
+        let button = getByRole('button');
+        act(() => {jest.advanceTimersByTime(500);});
+        expect(() => getByRole('progressbar')).toThrow();
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        let tray = getByTestId('tray');
+        expect(tray).toBeVisible();
+        let listbox = getByRole('listbox');
+        expect(within(listbox).getByRole('progressbar')).toBeTruthy();
+        expect(within(tray).getAllByRole('progressbar').length).toBe(1);
+
+        rerender(<ExampleComboBox loadingState="filtering" />);
+        act(() => {jest.advanceTimersByTime(500);});
+
+        expect(within(tray).getByRole('progressbar')).toBeTruthy();
+        expect(() => within(listbox).getByRole('progressbar')).toThrow();
+      });
+
+      it('tray input should hide the loading circle if loadingState is no longer "filtering"', function () {
+        let {getByRole, getByTestId, rerender} = render(<ExampleComboBox loadingState="filtering" />);
+        let button = getByRole('button');
+        act(() => {jest.advanceTimersByTime(500);});
+        expect(() => getByRole('progressbar')).toThrow();
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        let tray = getByTestId('tray');
+        expect(tray).toBeVisible();
+        let listbox = getByRole('listbox');
+        expect(within(tray).getByRole('progressbar')).toBeTruthy();
+        expect(() => within(listbox).getByRole('progressbar')).toThrow();
+
+        rerender(<ExampleComboBox loadingState="idle" />);
+        expect(() => within(tray).getByRole('progressbar')).toThrow();
+      });
+
+      it('tray input loading circle timer should reset on input value change', function () {
+        let {getByRole, getByTestId, rerender} = render(<ExampleComboBox />);
+        let button = getByRole('button');
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        rerender(<ExampleComboBox loadingState="filtering" />);
+        let tray = getByTestId('tray');
+        expect(tray).toBeVisible();
+        expect(() => within(tray).getByRole('progressbar')).toThrow();
+        act(() => {jest.advanceTimersByTime(250);});
+
+        let trayInput = within(tray).getByRole('searchbox');
+        typeText(trayInput, 'One');
+        act(() => {jest.advanceTimersByTime(250);});
+        expect(() => within(tray).getByRole('progressbar')).toThrow();
+
+        act(() => {jest.advanceTimersByTime(250);});
+        expect(within(tray).getByRole('progressbar')).toBeTruthy();
+      });
+
       it.each`
-        LoadingState   | ValidationState
-        ${'loading'}   | ${null}
-        ${'filtering'} | ${null}
-        ${'loading'}   | ${'invalid'}
-        ${'filtering'} | ${'invalid'}
+      LoadingState   | ValidationState
+      ${'loading'}   | ${null}
+      ${'filtering'} | ${null}
+      ${'loading'}   | ${'invalid'}
+      ${'filtering'} | ${'invalid'}
       `('should render the loading swirl in the tray input field when loadingState="$LoadingState" and validationState="$ValidationState"', ({LoadingState, ValidationState}) => {
         let {getByRole, getByTestId} = renderComboBox({loadingState: LoadingState, validationState: ValidationState, defaultInputValue: 'O'});
         let button = getByRole('button');
-        let progressSpinner = getByRole('progressbar');
-
-        expect(progressSpinner).toBeTruthy();
-        expect(progressSpinner).toHaveAttribute('aria-label', 'Loading...');
+        act(() => {jest.advanceTimersByTime(500);});
 
         act(() => {
           triggerPress(button);
@@ -3485,7 +3593,6 @@ describe('ComboBox', function () {
         } else {
           expect(trayProgressSpinner).toHaveAttribute('aria-label', 'Loading...');
         }
-
 
         let clearButton = within(tray).getByLabelText('Clear');
         expect(clearButton).toBeTruthy();
@@ -3544,16 +3651,13 @@ describe('ComboBox', function () {
 
     describe('mobile async loading', function () {
       it('async combobox works with useAsyncList', async () => {
-        let {getByRole, getByTestId, getByText} = render(
+        let {getByRole, getByTestId} = render(
           <Provider theme={theme}>
             <AsyncComboBox />
           </Provider>
         );
 
         let button = getByRole('button');
-        let progressSpinner = getByRole('progressbar');
-        expect(progressSpinner).toBeTruthy();
-
         await waitFor(() => expect(load).toHaveBeenCalledTimes(1));
         expect(load).toHaveBeenLastCalledWith(
           expect.objectContaining({
@@ -3561,7 +3665,7 @@ describe('ComboBox', function () {
           })
         );
 
-        act(() => {
+        await act(async () => {
           triggerPress(button);
           jest.runAllTimers();
         });
@@ -3581,15 +3685,16 @@ describe('ComboBox', function () {
         expect(items[2]).toHaveTextContent('Snake');
 
         let trayInput = within(tray).getByRole('searchbox');
-        act(() => {
+
+        await act(async () => {
           trayInput.focus();
           fireEvent.change(trayInput, {target: {value: 'aard'}});
+          jest.advanceTimersByTime(500);
+          let trayInputProgress = within(tray).getByRole('progressbar', {hidden: true});
+          expect(trayInputProgress).toBeTruthy();
+          expect(() => within(listbox).getByRole('progressbar')).toThrow;
           jest.runAllTimers();
         });
-
-        let trayInputProgress = within(tray).getByRole('progressbar');
-        expect(trayInputProgress).toBeTruthy();
-        expect(() => within(listbox).getByRole('progressbar')).toThrow;
 
         await waitFor(() => expect(load).toHaveBeenCalledTimes(2));
         expect(load).toHaveBeenLastCalledWith(
@@ -3602,26 +3707,6 @@ describe('ComboBox', function () {
         items = within(listbox).getAllByRole('option');
         expect(items).toHaveLength(1);
         expect(items[0]).toHaveTextContent('Aardvark');
-
-        act(() => {
-          triggerPress(items[0]);
-          jest.runAllTimers();
-        });
-
-        progressSpinner = getByRole('progressbar');
-        expect(progressSpinner).toBeTruthy();
-        expect(progressSpinner).toHaveAttribute('aria-label', 'Loading...');
-
-        await waitFor(() => expect(load).toHaveBeenCalledTimes(3));
-        expect(load).toHaveBeenLastCalledWith(
-          expect.objectContaining({
-            'filterText': 'Aardvark'
-          })
-        );
-
-        expect(() => getByRole('progressbar')).toThrow();
-        expect(() => getByTestId('tray')).toThrow();
-        expect(button).toHaveAttribute('aria-labelledby', `${getByText('Combobox').id} ${getByText('Aardvark').id}`);
       });
     });
   });
