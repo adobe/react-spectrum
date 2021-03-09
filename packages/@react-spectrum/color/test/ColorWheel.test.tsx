@@ -31,9 +31,11 @@ const getBoundingClientRect = () => ({
 
 describe('ColorWheel', () => {
   let onChangeSpy = jest.fn();
+  let onChangeEndSpy = jest.fn();
 
   afterEach(() => {
     onChangeSpy.mockClear();
+    onChangeEndSpy.mockClear();
   });
 
   beforeAll(() => {
@@ -125,16 +127,20 @@ describe('ColorWheel', () => {
   describe('keyboard events', () => {
     it('works', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
+      let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
 
       fireEvent.keyDown(slider, {key: 'Right'});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 1).toString('hsla'));
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeEndSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 1).toString('hsla'));
       fireEvent.keyDown(slider, {key: 'Left'});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
       expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
+      expect(onChangeEndSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
     });
 
     it('doesn\'t work when disabled', () => {
@@ -197,7 +203,7 @@ describe('ColorWheel', () => {
 
     it('dragging the thumb works', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
+      let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
       let container = _container.firstChild.firstChild as HTMLElement;
@@ -206,15 +212,19 @@ describe('ColorWheel', () => {
       expect(document.activeElement).not.toBe(slider);
       start(thumb, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
       expect(onChangeSpy).toHaveBeenCalledTimes(0);
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(0);
       expect(document.activeElement).toBe(slider);
 
       move(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 90).toString('hsla'));
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(0);
       expect(document.activeElement).toBe(slider);
 
       end(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeEndSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 90).toString('hsla'));
       expect(document.activeElement).toBe(slider);
     });
 

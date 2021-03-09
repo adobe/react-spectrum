@@ -470,6 +470,9 @@ function LoadingExamples(props) {
       <ComboBox {...props} label="Combobox (filtering)" loadingState="filtering" defaultItems={items}>
         {(item: any) => <Item>{item.name}</Item>}
       </ComboBox>
+      <ComboBox {...props} label="Combobox (loading + menuTrigger manual)" loadingState="loading" menuTrigger="manual" defaultItems={items} >
+        {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
       <ComboBox {...props} label="Combobox (loading more)" loadingState="loadingMore" defaultItems={items}>
         {(item: any) => <Item>{item.name}</Item>}
       </ComboBox>
@@ -512,7 +515,8 @@ function AsyncLoadingExample() {
 
       let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
-
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 1500));
       return {
         items: json.results,
         cursor: json.next
