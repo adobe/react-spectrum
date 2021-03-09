@@ -206,37 +206,41 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     }
   };
 
+  let commitSelection = () => {
+    // If multiple things are controlled, call onSelectionChange
+    // Note that users who control open state and input value MUST also have a onSelectionChange handler to properly close the menu and reset input value
+    if (
+      (props.selectedKey !== undefined && props.inputValue !== undefined) ||
+      (props.inputValue !== undefined && props.isOpen !== undefined) ||
+      (props.selectedKey !== undefined && props.isOpen !== undefined)
+    ) {
+      props.onSelectionChange(selectedKey);
+
+      // If multiple things are controlled but inputValue isn't, reset the input value for the user
+      if (props.inputValue === undefined) {
+        resetInputValue();
+      }
+
+      // If multiple things are controlled but isOpen isn't, close the menu for the user
+      if (props.isOpen === undefined) {
+        // Stop menu from reopening from useEffect
+        let itemText = collection.getItem(selectedKey)?.textValue ?? '';
+        lastValue.current = itemText;
+        triggerState.close();
+      }
+    } else {
+      // If only a single aspect of combobox is controlled, reset input value and close menu for the user
+      resetInputValue();
+      triggerState.close();
+    }
+  };
+
   let commit = () => {
     if (triggerState.isOpen && selectionManager.focusedKey != null) {
       // Reset inputValue and close menu here if the selected key is already the focused key. Otherwise
       // fire onSelectionChange to allow the application to control the closing.
       if (selectedKey === selectionManager.focusedKey) {
-        // If multiple things are controlled, call onSelectionChange
-        // Note that users who control open state and input value MUST also have a onSelectionChange handler to properly close the menu and reset input value
-        if (
-          (props.selectedKey !== undefined && props.inputValue !== undefined) ||
-          (props.inputValue !== undefined && props.isOpen !== undefined) ||
-          (props.selectedKey !== undefined && props.isOpen !== undefined)
-        ) {
-          props.onSelectionChange(selectedKey);
-
-          // If multiple things are controlled but inputValue isn't, reset the input value for the user
-          if (props.inputValue === undefined) {
-            resetInputValue();
-          }
-
-          // If multiple things are controlled but isOpen isn't, close the menu for the user
-          if (props.isOpen === undefined) {
-            // Stop menu from reopening from useEffect
-            let itemText = collection.getItem(selectedKey)?.textValue ?? '';
-            lastValue.current = itemText;
-            triggerState.close();
-          }
-        } else {
-          // If only a single aspect of combobox is controlled, reset input value and close menu for the user
-          resetInputValue();
-          triggerState.close();
-        }
+        commitSelection();
       } else {
         setSelectedKey(selectionManager.focusedKey);
       }
@@ -255,29 +259,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       if (allowsCustomValue && inputValue !== itemText) {
         commitCustomValue();
       } else {
-        // If multiple things are controlled, call onSelectionChange
-        // Note that users who control open state and input value MUST also have a onSelectionChange handler to properly close the menu and reset input value
-        if (
-          (props.selectedKey !== undefined && props.inputValue !== undefined) ||
-          (props.inputValue !== undefined && props.isOpen !== undefined) ||
-          (props.selectedKey !== undefined && props.isOpen !== undefined)
-        ) {
-          props.onSelectionChange(selectedKey);
-
-          // If multiple things are controlled but inputValue isn't, reset the input value for the user
-          if (props.inputValue === undefined) {
-            resetInputValue();
-          }
-
-          // If multiple things are controlled but isOpen isn't, close the menu for the user
-          if (props.isOpen === undefined) {
-            triggerState.close();
-          }
-        } else {
-          // If only a single aspect of combobox is controlled, reset input value and close menu for the user
-          resetInputValue();
-          triggerState.close();
-        }
+        commitSelection();
       }
     }
 

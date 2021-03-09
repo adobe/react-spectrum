@@ -413,8 +413,8 @@ function Example() {
 When a ComboBox has multiple controlled properties (e.g. `isOpen`, `inputValue`, `selectedKey`), it is important to note that an update to one of these properties will
 not automatically update the others. Each interaction done in the ComboBox will only trigger its associated event handler. For example, typing in the field will only
 trigger `onInputChange` whereas selecting an item from the ComboBox menu will only trigger `onSelectionChange` so it is your responsibility to update the other
-controlled properties accordingly. Note that you should provide a `onSelectionChange` handler for a ComboBox with controlled input value and open state so that you can properly
-control the menu's open state when the user selects a option or blurs from the field.
+controlled properties accordingly. Note that you should provide an `onSelectionChange` handler for a ComboBox with controlled input value and open state. This way, you can properly
+control the menu's open state when the user selects an option or blurs from the field.
 
 The below example demonstrates how you would construct the same example above in a completely controlled fashion.
 
