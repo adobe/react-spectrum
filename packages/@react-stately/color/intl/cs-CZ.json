@@ -1,10 +1,10 @@
 {
-  "hue": "Odstín",
-  "saturation": "Sytost",
-  "lightness": "Světlost",
-  "brightness": "Jas",
-  "red": "Červená",
-  "green": "Zelená",
+  "alpha": "Alfa",
   "blue": "Modrá",
-  "alpha": "Alfa"
+  "brightness": "Jas",
+  "green": "Zelená",
+  "hue": "Odstín",
+  "lightness": "Světlost",
+  "red": "Červená",
+  "saturation": "Sytost"
 }

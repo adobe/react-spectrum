@@ -1,10 +1,10 @@
 {
-  "hue": "Nokrāsa",
-  "saturation": "Piesātinājums",
-  "lightness": "Vieglums",
-  "brightness": "Spilgtums",
-  "red": "Sarkana",
-  "green": "Zaļa",
+  "alpha": "Alfa",
   "blue": "Zila",
-  "alpha": "Alfa"
+  "brightness": "Spilgtums",
+  "green": "Zaļa",
+  "hue": "Nokrāsa",
+  "lightness": "Gaišums",
+  "red": "Sarkana",
+  "saturation": "Piesātinājums"
 }
