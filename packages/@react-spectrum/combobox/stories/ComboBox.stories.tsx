@@ -471,7 +471,20 @@ storiesOf('ComboBox', module)
     () => (
       <AsyncLoadingExample />
     )
+  )
+  .add(
+    'server side filtering with useAsyncList (controlled key)',
+    () => (
+      <AsyncLoadingExampleControlledKey />
+    )
+  )
+  .add(
+    'server side filtering with useAsyncList (controlled open and key)',
+    () => (
+      <AsyncLoadingExampleAllControlled />
+    )
   );
+
 
 function LoadingExamples(props) {
   return (
@@ -512,7 +525,6 @@ function ListDataExample() {
   );
 }
 
-
 function AsyncLoadingExample() {
   interface StarWarsChar {
     name: string,
@@ -545,6 +557,131 @@ function AsyncLoadingExample() {
       loadingState={list.loadingState}
       onLoadMore={list.loadMore}
       onOpenChange={action('onOpenChange')}>
+      {item => <Item key={item.name}>{item.name}</Item>}
+    </ComboBox>
+  );
+}
+
+
+function AsyncLoadingExampleControlledKey() {
+  interface StarWarsChar {
+    name: string,
+    url: string
+  }
+
+  let [selectedKey, setSelectedKey] = useState('Luke Skywalker');
+
+  let list = useAsyncList<StarWarsChar>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  let onSelectionChange = (key) => {
+    setSelectedKey(key);
+    list.setFilterText(key);
+  };
+
+  let onInputChange = (value) => {
+    if (value === '') {
+      setSelectedKey(null);
+    }
+    list.setFilterText(value);
+  };
+
+  return (
+    <ComboBox
+      label="Star Wars Character Lookup"
+      selectedKey={selectedKey}
+      onSelectionChange={onSelectionChange}
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={onInputChange}
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}
+      onOpenChange={action('onOpenChange')}>
+      {item => <Item key={item.name}>{item.name}</Item>}
+    </ComboBox>
+  );
+}
+
+function AsyncLoadingExampleAllControlled() {
+  interface StarWarsChar {
+    name: string,
+    url: string
+  }
+
+  let [fieldState, setFieldState] = useState({
+    selectedKey: 'Luke Skywalker',
+    isOpen: false
+  });
+
+  let list = useAsyncList<StarWarsChar>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  let onSelectionChange = (key) => {
+    setFieldState({
+      isOpen: false,
+      selectedKey: key
+    });
+
+    list.setFilterText(key);
+  };
+
+  let onInputChange = (value) => {
+    setFieldState(prevState => ({
+      isOpen: true,
+      selectedKey: value === '' ? null : prevState.selectedKey
+    }));
+
+    list.setFilterText(value);
+  };
+
+  let onOpenChange = (isOpen: boolean) => {
+    setFieldState(prevState => ({
+      isOpen,
+      selectedKey: prevState.selectedKey
+    }));
+  };
+
+  return (
+    <ComboBox
+      label="Star Wars Character Lookup"
+      selectedKey={fieldState.selectedKey}
+      onSelectionChange={onSelectionChange}
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={onInputChange}
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}
+      onOpenChange={onOpenChange}
+      isOpen={fieldState.isOpen}>
       {item => <Item key={item.name}>{item.name}</Item>}
     </ComboBox>
   );
@@ -730,17 +867,26 @@ let CustomValueComboBox = (props) => {
 
 let ControlledOpenCombobox = (props) => {
   let [isOpen, setOpen] = React.useState(props.isOpen);
+  let [items, setItems] = React.useState([
+    {name: 'The first item', id: 'one'},
+    {name: 'The second item', id: 'two'},
+    {name: 'The third item', id: 'three'}
+  ]);
+
+  let onClick = () => {
+    setItems([
+      {name: 'The first item', id: 'one'},
+      {name: 'The second test', id: 'two'},
+      {name: 'The third item', id: 'three'}
+    ]);
+  };
 
   return (
     <Flex direction="column">
       <TextField label="Email" />
-      <ComboBox label="Combobox" {...mergeProps(props, actions)} isOpen={isOpen} onOpenChange={setOpen}>
-        <Item key="one">Item One</Item>
-        <Item key="two" textValue="Item Two">
-          <Copy size="S" />
-          <Text>Item Two</Text>
-        </Item>
-        <Item key="three">Item Three</Item>
+      <button onClick={onClick}>Press to change items</button>
+      <ComboBox label="Combobox" {...mergeProps(props, actions)} isOpen={isOpen} onOpenChange={setOpen} items={items}>
+        {(item: any) => <Item>{item.name}</Item>}
       </ComboBox>
       <TextField label="Name" />
     </Flex>
@@ -784,7 +930,7 @@ let ControlledValueOpenCombobox = (props) => {
 let ControlledKeyOpenCombobox = (props) => {
   let [fieldState, setFieldState] = React.useState({
     isOpen: false,
-    selectedKey: null
+    selectedKey: 'two'
   });
 
   let onSelectionChange = (key: string) => {

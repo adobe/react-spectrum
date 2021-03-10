@@ -174,6 +174,31 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       lastValue.current = inputValue;
     }
 
+    // Update the inputValue if the selected item's text differs from the current input value.
+    // This is to handle cases where a selectedKey is specified but the items aren't available (async loading) or the selected item's text value updates.
+    // Only reset if the user isn't currently within the field so we don't erroneously modify user input. Also prevent this from triggering on initial render
+    // so controlled inputValue + defaultSelectedKey case still retains the user specified inputValue.
+    // Trigger only if a selectedKey exists so that allowCustomValue=true user values don't get reset.
+    if (!isFocused && !isInitialRender.current && selectedKey != null) {
+      let itemText = collection.getItem(selectedKey)?.textValue ?? '';
+      if (inputValue !== itemText) {
+        if (
+          (props.selectedKey !== undefined && props.inputValue !== undefined) ||
+          (props.inputValue !== undefined && props.isOpen !== undefined)
+        ) {
+          props.onSelectionChange(selectedKey);
+
+          // If multiple things are controlled but inputValue isn't, reset the input value for the user
+          if (props.inputValue === undefined) {
+            resetInputValue();
+          }
+        } else {
+          // If only a single aspect of combobox is controlled, reset input value
+          resetInputValue();
+        }
+      }
+    }
+
     isInitialRender.current = false;
     lastSelectedKey.current = selectedKey;
   });
