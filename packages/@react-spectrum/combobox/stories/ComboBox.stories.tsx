@@ -876,7 +876,7 @@ let ControlledOpenCombobox = (props) => {
   let onClick = () => {
     setItems([
       {name: 'The first item', id: 'one'},
-      {name: 'The second test', id: 'two'},
+      {name: 'The second item new text', id: 'two'},
       {name: 'The third item', id: 'three'}
     ]);
   };
