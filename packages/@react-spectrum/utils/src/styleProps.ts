@@ -10,10 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, DimensionValue, Direction, StyleProps, ViewStyleProps} from '@react-types/shared';
+import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, DimensionValue, Direction, Responsive, ResponsiveProp, StyleProps, ViewStyleProps} from '@react-types/shared';
 import {CSSProperties, HTMLAttributes} from 'react';
 import {useLocale} from '@react-aria/i18n';
+import {useMediaQuery} from './useMediaQuery';
+import {useProvider} from '@react-spectrum/provider';
 
+type Breakpoint = 'base' | 'S' | 'M' | 'L';
 type StyleName = string | string[] | ((dir: Direction) => string);
 type StyleHandler = (value: any) => string;
 export interface StyleHandlers {
@@ -130,6 +133,11 @@ export function dimensionValue(value: DimensionValue) {
   return `var(--spectrum-global-dimension-${value}, var(--spectrum-alias-${value}))`;
 }
 
+export function responsiveDimensionValue(value: Responsive<DimensionValue>, breakpoint: Breakpoint) {
+  value = getResponsiveProp(value, breakpoint);
+  return dimensionValue(value);
+}
+
 type ColorType = 'default' | 'background' | 'border' | 'icon' | 'status';
 function colorValue(value: ColorValue, type: ColorType = 'default') {
   return `var(--spectrum-global-color-${value}, var(--spectrum-semantic-${value}-color-${type}))`;
@@ -171,7 +179,7 @@ function flexValue(value: boolean | number | string) {
   return '' + value;
 }
 
-export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers, direction: Direction) {
+export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers, direction: Direction, breakpoint: Breakpoint) {
   let style: CSSProperties = {};
   for (let key in props) {
     let styleProp = handlers[key];
@@ -184,7 +192,8 @@ export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers
       name = name(direction);
     }
 
-    let value = convert(props[key]);
+    let prop = getResponsiveProp(props[key], breakpoint);
+    let value = convert(prop);
     if (Array.isArray(name)) {
       for (let k of name) {
         style[k] = value;
@@ -211,7 +220,8 @@ export function useStyleProps<T extends StyleProps>(props: T, handlers: StyleHan
     ...otherProps
   } = props;
   let {direction} = useLocale();
-  let styles = convertStyleProps(props, handlers, direction);
+  let breakpoint = useBreakpoint();
+  let styles = convertStyleProps(props, handlers, direction, breakpoint);
   let style = {...UNSAFE_style, ...styles};
 
   // @ts-ignore
@@ -248,4 +258,37 @@ export function useStyleProps<T extends StyleProps>(props: T, handlers: StyleHan
 
 export function passthroughStyle(value) {
   return value;
+}
+
+export function getResponsiveProp<T>(prop: Responsive<T>, breakpoint: Breakpoint): T {
+  if (prop && typeof prop === 'object') {
+    if (prop[breakpoint]) {
+      return prop[breakpoint];
+    } else {
+      return (prop as ResponsiveProp<T>).base;
+    }
+  }
+  return prop as T;
+}
+
+export function useBreakpoint(): Breakpoint {
+  let provider = useProvider();
+  let breakpoints = provider?.breakpoints || {S: 380, M: 768, L: 1024};
+  let isSmall = useMediaQuery(`(min-width: ${breakpoints.S}px) and (max-width: ${breakpoints.M}px)`);
+  let isMedium = useMediaQuery(`(min-width: ${breakpoints.M}px) and (max-width: ${breakpoints.L}px)`);
+  let isLarge = useMediaQuery(`(min-width: ${breakpoints.L}px)`);
+
+  if (isSmall) {
+    return 'S';
+  }
+
+  if (isMedium) {
+    return 'M';
+  }
+
+  if (isLarge) {
+    return 'L';
+  }
+
+  return 'base';
 }

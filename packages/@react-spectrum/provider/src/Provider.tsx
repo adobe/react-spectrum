@@ -33,6 +33,7 @@ const Context = React.createContext<ProviderContext | null>(null);
 function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let prevContext = useProvider();
   let prevColorScheme = prevContext && prevContext.colorScheme;
+  let prevBreakpoints = prevContext && prevContext.breakpoints;
   let {
     theme = prevContext && prevContext.theme,
     defaultColorScheme
@@ -49,6 +50,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     colorScheme = usePrevColorScheme ? prevColorScheme : autoColorScheme,
     scale = prevContext ? prevContext.scale : autoScale,
     locale = prevContext ? prevLocale : null,
+    breakpoints = prevContext ? prevBreakpoints : {S: 380, M: 768, L: 1024},
     children,
     isQuiet,
     isEmphasized,
@@ -63,6 +65,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let currentProps = {
     version,
     theme,
+    breakpoints: {S: 380, M: 768, L: 1024, ...breakpoints},
     colorScheme,
     scale,
     isQuiet,

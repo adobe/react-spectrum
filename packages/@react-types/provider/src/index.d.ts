@@ -15,6 +15,11 @@ import {ReactNode} from 'react';
 
 export type ColorScheme = 'light' | 'dark';
 export type Scale = 'medium' | 'large';
+export interface Breakpoints {
+  S: number,
+  M: number,
+  L: number
+}
 
 export type CSSModule = {
   [className: string]: string
@@ -75,12 +80,18 @@ export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
    * Defaults to the browser/OS language setting.
    * @default 'en-US'
    */
-  locale?: string
+  locale?: string,
+  /**
+   * The breakpoints for styleProps.
+   * @default {S:380,M:768,L:1024}
+   */
+  breakpoints?: Breakpoints
 }
 
 export interface ProviderContext extends ContextProps {
   version: string,
   theme: Theme,
   colorScheme: ColorScheme,
-  scale: Scale
+  scale: Scale,
+  breakpoints: Breakpoints
 }

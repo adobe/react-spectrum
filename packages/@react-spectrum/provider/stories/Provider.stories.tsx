@@ -85,6 +85,25 @@ storiesOf('Provider', module)
   .add(
     'custom theme',
     () => render({theme: THEME})
+  )
+  .add(
+    'responsive styleProps',
+    () => (
+      <Provider UNSAFE_style={{padding: 50}}>
+        <div>
+          <TextField
+            label="A text field"
+            placeholder="Something"
+            width={{base: 'size-800', S: 'size-1000', M: 'size-2000', L: 'size-3000'}} />
+        </div>
+        <Button
+          isHidden={{base: false, S: false, M: false, L: true}}
+          marginTop={{base: 'size-100', M: 'size-1000'}}
+          variant="primary" >
+          This button is hidden in large display.
+        </Button>
+      </Provider>
+    )
   );
 
 function render(props = {}) {
