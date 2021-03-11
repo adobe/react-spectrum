@@ -55,10 +55,8 @@ export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: Tre
   return {
     buttonProps: {
       ...buttonProps,
-      type: 'button',
       'aria-expanded': isExpanded,
-      'aria-controls': isExpanded ? regionId : undefined,
-      'aria-disabled': isDisabled
+      'aria-controls': isExpanded ? regionId : undefined
     },
     regionProps: {
       id: regionId,
