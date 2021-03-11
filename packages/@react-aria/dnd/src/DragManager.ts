@@ -140,10 +140,10 @@ class DragSession {
   currentDropTarget: DropTarget;
   currentDropItem: DroppableItem;
   dropOperation: DropOperation;
-  mutationObserver: MutationObserver;
-  mutationImmediate: NodeJS.Immediate;
-  restoreAriaHidden: () => void;
-  formatMessage: (key: string) => string;
+  private mutationObserver: MutationObserver;
+  private mutationImmediate: NodeJS.Immediate;
+  private restoreAriaHidden: () => void;
+  private formatMessage: (key: string) => string;
 
   constructor(target: DragTarget, formatMessage: (key: string) => string) {
     this.dragTarget = target;
