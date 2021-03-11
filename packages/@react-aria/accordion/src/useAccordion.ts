@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaAccordionProps} from '@react-types/accordion';
 import {ButtonHTMLAttributes, HTMLAttributes, RefObject} from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
@@ -17,9 +18,6 @@ import {TreeState} from '@react-stately/tree';
 import {useButton} from '@react-aria/button';
 import {useSelectableItem, useSelectableList} from '@react-aria/selection';
 
-interface AccordionAriaProps {
-
-}
 interface AccordionAria {
   /** Props for the accordion container element. */
   accordionProps: HTMLAttributes<HTMLElement>
@@ -66,7 +64,7 @@ export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: Tre
   };
 }
 
-export function useAccordion<T>(props: AccordionAriaProps, state: TreeState<T>, ref: RefObject<HTMLDivElement>): AccordionAria {
+export function useAccordion<T>(props: AriaAccordionProps<T>, state: TreeState<T>, ref: RefObject<HTMLDivElement>): AccordionAria {
   let {listProps} = useSelectableList({
     ...props,
     ...state,
