@@ -1584,7 +1584,6 @@ describe('Picker', function () {
       expect(picker).toHaveTextContent('Select an option…');
       fireEvent.keyDown(picker, {key: 'ArrowLeft'});
       act(() => jest.runAllTimers());
-      
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(picker).toHaveTextContent('One');
 

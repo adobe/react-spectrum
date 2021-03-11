@@ -26,4 +26,5 @@ export * from './useLayoutEffect';
 export * from './useResizeObserver';
 export * from './getScrollParent';
 export * from './useViewportSize';
+export * from './useDescription';
 export * from './platform';
