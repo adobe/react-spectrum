@@ -11,7 +11,7 @@
  */
 
 import {Accordion, Item} from '../src';
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render, within} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -39,12 +39,12 @@ function renderComponent(props) {
 
 describe('Accordion', function () {
   it('renders properly', function () {
-    renderComponent();
-    let accordionItems = document.querySelectorAll('.spectrum-Accordion-item');
+    let tree = renderComponent();
+    let accordionItems = tree.getAllByRole('heading');
     expect(items.length).toBe(3);
 
     for (let item of accordionItems) {
-      let button = item.querySelector('button');
+      let button = within(item).getByRole('button');
       expect(button).toHaveAttribute('aria-expanded');
       let isExpanded = button.getAttribute('aria-expanded') === 'true';
       if (isExpanded) {
@@ -59,8 +59,8 @@ describe('Accordion', function () {
   });
 
   it('toggle accordion on mouse click', function () {
-    renderComponent();
-    let buttons = document.getElementsByTagName('button');
+    let tree = renderComponent();
+    let buttons = tree.getAllByRole('button');
     let selectedItem = buttons[0];
     expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
     userEvent.click(selectedItem);
@@ -70,8 +70,8 @@ describe('Accordion', function () {
   });
 
   it('allows users to open and close accordion item with enter / space key', function () {
-    renderComponent();
-    let buttons = document.getElementsByTagName('button');
+    let tree = renderComponent();
+    let buttons = tree.getAllByRole('button');
     let selectedItem = buttons[0];
     expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
     act(() => {selectedItem.focus();});
@@ -87,8 +87,8 @@ describe('Accordion', function () {
   });
 
   it('allows users to naviagte accordion headers through arrow keys', function () {
-    renderComponent();
-    let buttons = document.getElementsByTagName('button');
+    let tree = renderComponent();
+    let buttons = tree.getAllByRole('button');
     let [firstItem, secondItem, thirdItem] = buttons;
     act(() => {firstItem.focus();});
 
@@ -106,8 +106,8 @@ describe('Accordion', function () {
   });
 
   it('allows users to navigate accordion headers through the tab key', function () {
-    renderComponent();
-    let buttons = document.getElementsByTagName('button');
+    let tree = renderComponent();
+    let buttons = tree.getAllByRole('button');
     let [firstItem, secondItem, thirdItem] = buttons;
     act(() => {firstItem.focus();});
     expect(document.activeElement).toBe(firstItem);
