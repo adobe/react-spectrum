@@ -30,7 +30,7 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
       UNSAFE_className={
         classNames(
           styles,
-          'spectrum-Search-icon'
+          'spectrum-Textfield-icon'
         )
       } />
   );
