@@ -2768,7 +2768,7 @@ describe('Table', function () {
           <TableBody items={items} onLoadMore={onLoadMore}>
             {row => (
               <Row>
-                {key => <Cell>row[key]</Cell>}
+                {key => <Cell>{row[key]}</Cell>}
               </Row>
             )}
           </TableBody>
@@ -2809,7 +2809,7 @@ describe('Table', function () {
           <TableBody items={items} onLoadMore={onLoadMore}>
             {row => (
               <Row>
-                {key => <Cell>row[key]</Cell>}
+                {key => <Cell>{row[key]}</Cell>}
               </Row>
             )}
           </TableBody>
