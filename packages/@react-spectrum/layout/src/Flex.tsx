@@ -32,7 +32,7 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
     children,
     ...otherProps
   } = props;
-  let {breakpoint} = useProvider();
+  let provider = useProvider();
   let {styleProps} = useStyleProps(otherProps);
   let {styleProps: flexStyle} = useStyleProps(otherProps, {handlers: flexStyleProps});
   let domRef = useDOMRef(ref);
@@ -47,9 +47,9 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   if ((props.gap || props.rowGap || props.columnGap) && (isSSR || !isFlexGapSupported())) {
     let style = {
       ...flexStyle.style,
-      '--column-gap': props.columnGap != null ? responsiveDimensionValue(props.columnGap, breakpoint) : undefined,
-      '--row-gap': props.rowGap != null ? responsiveDimensionValue(props.rowGap, breakpoint) : undefined,
-      '--gap': props.gap != null ? responsiveDimensionValue(props.gap, breakpoint) : undefined
+      '--column-gap': props.columnGap != null ? responsiveDimensionValue(props.columnGap, provider.breakpoint) : undefined,
+      '--row-gap': props.rowGap != null ? responsiveDimensionValue(props.rowGap, provider.breakpoint) : undefined,
+      '--gap': props.gap != null ? responsiveDimensionValue(props.gap, provider.breakpoint) : undefined
     };
 
     return (
@@ -68,15 +68,15 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   };
 
   if (props.gap != null) {
-    style.gap = responsiveDimensionValue(props.gap, breakpoint);
+    style.gap = responsiveDimensionValue(props.gap, provider.breakpoint);
   }
 
   if (props.columnGap != null) {
-    style.columnGap = responsiveDimensionValue(props.columnGap, breakpoint);
+    style.columnGap = responsiveDimensionValue(props.columnGap, provider.breakpoint);
   }
 
   if (props.rowGap != null) {
-    style.rowGap = responsiveDimensionValue(props.rowGap, breakpoint);
+    style.rowGap = responsiveDimensionValue(props.rowGap, provider.breakpoint);
   }
 
   return (

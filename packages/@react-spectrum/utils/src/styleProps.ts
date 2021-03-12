@@ -224,7 +224,7 @@ export function useStyleProps<T extends StyleProps>(props: T, options: {
     ...otherProps
   } = props;
   let {
-    handlers,
+    handlers = baseStyleProps,
     breakpoint
   } = options;
   let providerProps = useProvider();
