@@ -1,9 +1,6 @@
-import {
-  CollectionBase,
-  MultipleSelection
-} from '@react-types/shared';
 import {GridCollection} from '@react-types/grid';
 import {Key, useEffect, useMemo} from 'react';
+import {MultipleSelection} from '@react-types/shared';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 
 export interface GridState<T, C extends GridCollection<T>> {
@@ -12,8 +9,9 @@ export interface GridState<T, C extends GridCollection<T>> {
   selectionManager: SelectionManager
 }
 
-interface GridStateOptions<T, C extends GridCollection<T>> extends CollectionBase<T>, MultipleSelection {
-  collection: C
+interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelection {
+  collection: C,
+  disabledKeys?: Iterable<Key>
 }
 
 export function useGridState<T extends object, C extends GridCollection<T>>(props: GridStateOptions<T, C>): GridState<T, C> {
