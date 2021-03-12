@@ -2909,7 +2909,7 @@ describe('ComboBox', function () {
         );
       }
 
-      let {getByRole, rerender, debug} = render(<ComboBoxWithMap />);
+      let {getByRole, rerender} = render(<ComboBoxWithMap />);
       let combobox = getByRole('combobox');
       let button = getByRole('button');
 
