@@ -347,6 +347,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
         {state.visibleViews[0]}
       </div>
       <ScrollView
+        sizeToFit="height"
         role="presentation"
         className={classNames(styles, 'spectrum-Table-body')}
         style={{flex: 1}}
