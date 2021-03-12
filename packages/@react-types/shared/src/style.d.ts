@@ -17,7 +17,8 @@ type ResponsiveProp<T> = {
   base?: T,
   S?: T,
   M?: T,
-  L?: T
+  L?: T,
+  [custom: string]: T
 }
 type Responsive<T> = T | ResponsiveProp<T>
 

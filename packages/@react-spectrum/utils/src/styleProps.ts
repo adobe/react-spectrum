@@ -13,10 +13,9 @@
 import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, DimensionValue, Direction, Responsive, ResponsiveProp, StyleProps, ViewStyleProps} from '@react-types/shared';
 import {CSSProperties, HTMLAttributes} from 'react';
 import {useLocale} from '@react-aria/i18n';
-import {useMediaQuery} from './useMediaQuery';
 import {useProvider} from '@react-spectrum/provider';
 
-type Breakpoint = 'base' | 'S' | 'M' | 'L';
+type Breakpoint = 'base' | 'S' | 'M' | 'L' | string;
 type StyleName = string | string[] | ((dir: Direction) => string);
 type StyleHandler = (value: any) => string;
 export interface StyleHandlers {
@@ -213,15 +212,24 @@ export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers
   return style;
 }
 
-export function useStyleProps<T extends StyleProps>(props: T, handlers: StyleHandlers = baseStyleProps) {
+export function useStyleProps<T extends StyleProps>(props: T, options: {
+  handlers?: StyleHandlers,
+  breakpoint?: Breakpoint
+} = {
+  handlers: baseStyleProps
+}) {
   let {
     UNSAFE_className,
     UNSAFE_style,
     ...otherProps
   } = props;
+  let {
+    handlers,
+    breakpoint
+  } = options;
+  let providerProps = useProvider();
   let {direction} = useLocale();
-  let breakpoint = useBreakpoint();
-  let styles = convertStyleProps(props, handlers, direction, breakpoint);
+  let styles = convertStyleProps(props, handlers, direction, providerProps?.breakpoint || breakpoint);
   let style = {...UNSAFE_style, ...styles};
 
   // @ts-ignore
@@ -269,26 +277,4 @@ export function getResponsiveProp<T>(prop: Responsive<T>, breakpoint: Breakpoint
     }
   }
   return prop as T;
-}
-
-export function useBreakpoint(): Breakpoint {
-  let provider = useProvider();
-  let breakpoints = provider?.breakpoints || {S: 380, M: 768, L: 1024};
-  let isSmall = useMediaQuery(`(min-width: ${breakpoints.S}px) and (max-width: ${breakpoints.M}px)`);
-  let isMedium = useMediaQuery(`(min-width: ${breakpoints.M}px) and (max-width: ${breakpoints.L}px)`);
-  let isLarge = useMediaQuery(`(min-width: ${breakpoints.L}px)`);
-
-  if (isSmall) {
-    return 'S';
-  }
-
-  if (isMedium) {
-    return 'M';
-  }
-
-  if (isLarge) {
-    return 'L';
-  }
-
-  return 'base';
 }

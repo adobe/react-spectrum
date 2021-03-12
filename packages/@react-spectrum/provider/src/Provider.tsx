@@ -24,7 +24,7 @@ import {
 } from '@react-spectrum/utils';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/index.css';
-import {useColorScheme, useScale} from './mediaQueries';
+import {useBreakpoint, useColorScheme, useScale} from './mediaQueries';
 // @ts-ignore
 import {version} from '../package.json';
 
@@ -61,11 +61,13 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     ...otherProps
   } = props;
 
+  let breakpoint = useBreakpoint(breakpoints);
   // select only the props with values so undefined props don't overwrite prevContext values
   let currentProps = {
     version,
     theme,
-    breakpoints: {S: 380, M: 768, L: 1024, ...breakpoints},
+    breakpoints,
+    breakpoint,
     colorScheme,
     scale,
     isQuiet,

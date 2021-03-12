@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, passthroughStyle, responsiveDimensionValue, StyleHandlers, useBreakpoint, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, passthroughStyle, responsiveDimensionValue, StyleHandlers, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {FlexProps} from '@react-types/layout';
 import React, {forwardRef} from 'react';
 import styles from './flex-gap.css';
 import {useIsSSR} from '@react-aria/ssr';
+import {useProvider} from '@react-spectrum/provider';
 
 const flexStyleProps: StyleHandlers = {
   direction: ['flexDirection', passthroughStyle],
@@ -31,9 +32,9 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
     children,
     ...otherProps
   } = props;
+  let {breakpoint} = useProvider();
   let {styleProps} = useStyleProps(otherProps);
-  let {styleProps: flexStyle} = useStyleProps(otherProps, flexStyleProps);
-  let breakpoint = useBreakpoint();
+  let {styleProps: flexStyle} = useStyleProps(otherProps, {handlers: flexStyleProps});
   let domRef = useDOMRef(ref);
   let isSSR = useIsSSR();
 

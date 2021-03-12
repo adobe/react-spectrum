@@ -15,7 +15,7 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import customTheme from './custom-theme.css';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
-import {Provider} from '../';
+import {Provider, useProvider} from '../';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import scaleLarge from '@adobe/spectrum-css-temp/vars/spectrum-large.css';
@@ -104,7 +104,34 @@ storiesOf('Provider', module)
         </Button>
       </Provider>
     )
-  );
+  )
+  .add(
+    'custom responsive styleProps',
+    () => {
+      let Breakpoint = () => {
+        let {breakpoint} = useProvider();
+        let width = {base: 'size-1600', XS: 'size-2000', S: 'size-2400', M: 'size-3000', L: 'size-3400', XL: 'size-4600', XXL: 'size-6000'};
+        return (
+          <>
+            <Button
+              variant="primary"
+              width={width} >
+              Button with {breakpoint} breakpoint.
+            </Button>
+            <div>
+              width: {width[breakpoint]}
+            </div>
+          </>
+        );
+      };
+      return (
+        <Provider
+          breakpoints={{XS: 360, S: 480, M: 640, L: 1024, XL: 1280, XXL: 1920}}
+          UNSAFE_style={{padding: 50}}>
+          <Breakpoint />
+        </Provider>
+      );
+    });
 
 function render(props = {}) {
   return (
