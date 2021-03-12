@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, render, within} from '@testing-library/react';
-import {Item, Tabs, TabList, TabPanels} from '../src';
+import {Item, TabList, TabPanels, Tabs} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -455,7 +455,7 @@ describe('Tabs', function () {
 
     rerender(
       <Provider theme={theme}>
-         <Tabs items={newItems} orientation="vertical">
+        <Tabs items={newItems} orientation="vertical">
           <TabList>
             {item => (
               <Item key={item.name} title={item.name || item.children} />

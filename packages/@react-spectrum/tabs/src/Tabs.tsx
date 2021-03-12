@@ -14,35 +14,35 @@ import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useStyleProps, useVal
 import {DOMProps, DOMRef, Node, Orientation} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {Item, Picker} from '@react-spectrum/picker';
+import {ListCollection, SingleSelectListState} from '@react-stately/list';
 import {mergeProps, useId, useLayoutEffect} from '@react-aria/utils';
 import React, {Key, MutableRefObject, ReactElement, useCallback, useEffect, useRef, useState} from 'react';
-import {ListCollection, SingleSelectListState} from '@react-stately/list';
 import {SpectrumPickerProps} from '@react-types/select';
-import {SpectrumTabsProps, SpectrumTabListProps, SpectrumTabPanelsProps} from '@react-types/tabs';
+import {SpectrumTabListProps, SpectrumTabPanelsProps, SpectrumTabsProps} from '@react-types/tabs';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
+import {TabListState, useTabListState} from '@react-stately/tabs';
 import {Text} from '@react-spectrum/text';
+import {useCollection} from '@react-stately/collections';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useResizeObserver} from '@react-aria/utils';
 import {useTab, useTabList, useTabPanel} from '@react-aria/tabs';
-import {TabListState, useTabListState} from '@react-stately/tabs';
-import {useCollection} from '@react-stately/collections';
 
 interface TabsContext<T> {
-  tabProps: SpectrumTabsProps<T>;
+  tabProps: SpectrumTabsProps<T>,
   tabState: {
-    tabListState: TabListState<T>;
-    setTabListState: (state: TabListState<T>) => void;
-    selectedTab: HTMLElement;
+    tabListState: TabListState<T>,
+    setTabListState: (state: TabListState<T>) => void,
+    selectedTab: HTMLElement,
     collapse: boolean
-  };
+  },
   refs: { 
     wrapperRef: MutableRefObject<HTMLDivElement>,
     tablistRef: MutableRefObject<HTMLDivElement>
-  };
+  },
   tabPanelProps: {
-    "aria-labelledby": string
+    'aria-labelledby': string
   }
 }
 
@@ -52,8 +52,6 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
   props = useProviderProps(props);
   let {
     orientation = 'horizontal' as Orientation,
-    isDisabled,
-    isQuiet,
     density = 'regular',
     children,
     ...otherProps
@@ -127,10 +125,9 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
       value={{
         tabProps: {...props, orientation, density}, 
         tabState: {tabListState, setTabListState, selectedTab, collapse}, 
-        refs: { tablistRef, wrapperRef },
-        tabPanelProps,
-      }}
-      >
+        refs: {tablistRef, wrapperRef},
+        tabPanelProps
+      }}>
       <div
         {...styleProps}
         ref={domRef}
@@ -251,13 +248,15 @@ export const TabList = function <T> (props: SpectrumTabListProps<T>) {
   const {isQuiet, density, isDisabled, orientation} = tabProps;
   const {selectedTab, collapse, setTabListState} = tabState;
   const {tablistRef, wrapperRef} = refs;
+  // Pass original Tab props but override children to create the collection.
   const state = useTabListState({...tabProps, children: props.children});
+  
   const {tabListProps} = useTabList({...tabProps, ...props}, state, tablistRef);
   
   useEffect(() => {
     // Passing back to root as useTabPanel needs the TabListState
     setTabListState(state);
-  },[state.disabledKeys, state.selectedItem, state.selectedKey, props.children])
+  }, [state.disabledKeys, state.selectedItem, state.selectedKey, props.children]);
 
   const tabContent = (
     <div
@@ -270,30 +269,29 @@ export const TabList = function <T> (props: SpectrumTabListProps<T>) {
         {
           'spectrum-Tabs--quiet': isQuiet,
           ['spectrum-Tabs--compact']: density === 'compact'
-        })}
-      >
+        })}>
       {[...state.collection].map((item) => (
-          <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
+        <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
       ))}
       <TabLine orientation={orientation} selectedTab={selectedTab} />
     </div>
-  )
+  );
 
 
   if (orientation === 'vertical') {
     return tabContent;
   } else {
-      let tabListclassName = classNames(styles, 'spectrum-TabsPanel-tabs');
-      return (
-        <div
-          ref={wrapperRef}
-          className={classNames(
+    let tabListclassName = classNames(styles, 'spectrum-TabsPanel-tabs');
+    return (
+      <div
+        ref={wrapperRef}
+        className={classNames(
             styles,
             'spectrum-TabsPanel-collapseWrapper'
           )}>
-          {collapse ? <TabPicker {...props} {...tabProps} id={tabPanelProps['aria-labelledby']} state={state} className={tabListclassName} /> : tabContent}
-        </div>
-      );
+        {collapse ? <TabPicker {...props} {...tabProps} id={tabPanelProps['aria-labelledby']} state={state} className={tabListclassName} /> : tabContent}
+      </div>
+    );
   }
 };
 
@@ -303,11 +301,11 @@ export const TabPanels = function <T> (props: SpectrumTabPanelsProps<T>) {
   const {tabListState} = tabState;
   const {tabPanelProps} = useTabPanel(props, tabListState);
   
-  if(ctxTabPanelProps['aria-labelledby']){
-    tabPanelProps['aria-labelledby'] = ctxTabPanelProps['aria-labelledby']
+  if (ctxTabPanelProps['aria-labelledby']) {
+    tabPanelProps['aria-labelledby'] = ctxTabPanelProps['aria-labelledby'];
   }
 
-  const factory = nodes => new ListCollection(nodes)
+  const factory = nodes => new ListCollection(nodes);
   const collection = useCollection({items: tabProps.items, ...props}, factory);
   const selectedItem = tabListState ? collection.getItem(tabListState.selectedKey) : null;
 

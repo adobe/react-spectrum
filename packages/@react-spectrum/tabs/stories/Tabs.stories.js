@@ -17,7 +17,7 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import Calendar from '@spectrum-icons/workflow/Calendar';
 import {Content, Flex, Heading, Text} from '@adobe/react-spectrum';
 import Dashboard from '@spectrum-icons/workflow/Dashboard';
-import {Item, Tabs, TabList, TabPanels} from '..';
+import {Item, TabList, TabPanels, Tabs} from '..';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -162,19 +162,14 @@ function render(props = {}) {
   return (
     <Tabs {...props} aria-label="Tab example" maxWidth={500} onSelectionChange={action('onSelectionChange')}>
       <TabList>
-        <Item title="Tab 1" key="val1">
-        </Item>
-        <Item title="Tab 2" key="val2">
-        </Item>
-        <Item title="Tab 3" key="val3">
-        </Item>
-        <Item title="Tab 4" key="val4">
-        </Item>
-        <Item title="Tab 5" key="val5">
-        </Item>
+        <Item title="Tab 1" key="val1" />
+        <Item title="Tab 2" key="val2" />
+        <Item title="Tab 3" key="val3" />
+        <Item title="Tab 4" key="val4" />
+        <Item title="Tab 5" key="val5" />
       </TabList>
       <TabPanels>
-      <Item title="Tab 1" key="val1">
+        <Item title="Tab 1" key="val1">
           <Content margin="size-160">
             <Heading>Tab Body 1</Heading>
             <Text>
@@ -382,8 +377,8 @@ let DynamicTabs = (props = {}) => {
         <TabList>
           {item => (
             <Item key={item.name} textValue={item.name}>
-                {item.icon}
-                <Text>{item.name}</Text>
+              {item.icon}
+              <Text>{item.name}</Text>
             </Item>
           )}
         </TabList>

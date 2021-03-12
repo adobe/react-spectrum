@@ -58,7 +58,7 @@ interface SpectrumTabsProps<T> extends SingleSelection, DOMProps, StyleProps {
   isDisabled?: boolean,
   disabledKeys?: Iterable<Key>,
   isQuiet?: boolean,
-  density?: 'compact' | 'regular'
+  density?: 'compact' | 'regular',
   children: any
 }
 
