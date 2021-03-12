@@ -225,11 +225,11 @@ export function useStyleProps<T extends StyleProps>(props: T, options: {
   } = props;
   let {
     handlers = baseStyleProps,
-    breakpoint
+    breakpoint = 'base'
   } = options;
-  let providerProps = useProvider();
+  let provider = useProvider();
   let {direction} = useLocale();
-  let styles = convertStyleProps(props, handlers, direction, providerProps?.breakpoint || breakpoint);
+  let styles = convertStyleProps(props, handlers, direction, provider?.breakpoint || breakpoint);
   let style = {...UNSAFE_style, ...styles};
 
   // @ts-ignore
