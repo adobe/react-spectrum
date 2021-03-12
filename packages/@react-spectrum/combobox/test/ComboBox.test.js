@@ -2889,6 +2889,81 @@ describe('ComboBox', function () {
       expect(items[1].textContent).toBe('Item 2');
       expect(items[2].textContent).toBe('Item 3');
     });
+
+    it('updates the list of items when items update (items provided by map)', function () {
+      function ComboBoxWithMap(props) {
+        let defaultItems = initialFilterItems;
+        let {
+          listItems = defaultItems
+        } = props;
+        return (
+          <Provider theme={theme}>
+            <ComboBox label="Combobox" {...props}>
+              {listItems.map((item) => (
+                <Item key={item.id}>
+                  {item.name}
+                </Item>
+              ))}
+            </ComboBox>
+          </Provider>
+        );
+      }
+
+      let {getByRole, rerender, debug} = render(<ComboBoxWithMap />);
+      let combobox = getByRole('combobox');
+      let button = getByRole('button');
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      let items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(3);
+
+      expect(items[0].textContent).toBe('Aardvark');
+      expect(items[1].textContent).toBe('Kangaroo');
+      expect(items[2].textContent).toBe('Snake');
+
+      act(() => {
+        triggerPress(items[0]);
+        jest.runAllTimers();
+      });
+
+      expect(combobox.value).toBe('Aardvark');
+
+      act(() => {
+        combobox.blur();
+        jest.runAllTimers();
+      });
+      expect(document.activeElement).not.toBe(combobox);
+
+      let newItems = [
+        {name: 'New Text', id: '1'},
+        {name: 'Item 2', id: '2'},
+        {name: 'Item 3', id: '3'}
+      ];
+
+      rerender(<ComboBoxWithMap listItems={newItems} />);
+      expect(combobox.value).toBe('New Text');
+
+      act(() => {
+        combobox.focus();
+        fireEvent.change(combobox, {target: {value: ''}});
+        jest.runAllTimers();
+      });
+
+      listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(3);
+
+      expect(items[0].textContent).toBe('New Text');
+      expect(items[1].textContent).toBe('Item 2');
+      expect(items[2].textContent).toBe('Item 3');
+    });
   });
 
   describe('uncontrolled combobox', function () {

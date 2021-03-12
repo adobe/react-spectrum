@@ -80,6 +80,12 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
+    'with mapped items (defaultItem and items undef)',
+    () => (
+      <ComboBoxWithMap defaultOpen defaultSelectedKey="two" />
+    )
+  )
+  .add(
     'no items',
     () => (
       <ComboBox defaultItems={[]} label="Combobox" {...actions}>
@@ -867,26 +873,17 @@ let CustomValueComboBox = (props) => {
 
 let ControlledOpenCombobox = (props) => {
   let [isOpen, setOpen] = React.useState(props.isOpen);
-  let [items, setItems] = React.useState([
-    {name: 'The first item', id: 'one'},
-    {name: 'The second item', id: 'two'},
-    {name: 'The third item', id: 'three'}
-  ]);
-
-  let onClick = () => {
-    setItems([
-      {name: 'The first item', id: 'one'},
-      {name: 'The second item new text', id: 'two'},
-      {name: 'The third item', id: 'three'}
-    ]);
-  };
 
   return (
     <Flex direction="column">
       <TextField label="Email" />
-      <button onClick={onClick}>Press to change items</button>
-      <ComboBox label="Combobox" {...mergeProps(props, actions)} isOpen={isOpen} onOpenChange={setOpen} items={items}>
-        {(item: any) => <Item>{item.name}</Item>}
+      <ComboBox label="Combobox" {...mergeProps(props, actions)} isOpen={isOpen} onOpenChange={setOpen}>
+        <Item key="one">Item One</Item>
+        <Item key="two" textValue="Item Two">
+          <Copy size="S" />
+          <Text>Item Two</Text>
+        </Item>
+        <Item key="three">Item Three</Item>
       </ComboBox>
       <TextField label="Name" />
     </Flex>
@@ -1023,6 +1020,35 @@ function ResizeCombobox() {
         </ComboBox>
       </div>
       <ActionButton onPress={() => setSize(prev => !prev)}>Toggle size</ActionButton>
+    </Flex>
+  );
+}
+
+function ComboBoxWithMap(props) {
+  let [items, setItems] = React.useState([
+    {name: 'The first item', id: 'one'},
+    {name: 'The second item', id: 'two'},
+    {name: 'The third item', id: 'three'}
+  ]);
+
+  let onClick = () => {
+    setItems([
+      {name: 'The first item new text', id: 'one'},
+      {name: 'The second item new text', id: 'two'},
+      {name: 'The third item new text', id: 'three'}
+    ]);
+  };
+
+  return (
+    <Flex direction="column">
+      <button onClick={onClick}>Press to change items</button>
+      <ComboBox label="Combobox" {...mergeProps(props, actions)}>
+        {items.map((item) => (
+          <Item key={item.id}>
+            {item.name}
+          </Item>
+        ))}
+      </ComboBox>
     </Flex>
   );
 }

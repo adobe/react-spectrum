@@ -112,7 +112,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
   let isInitialRender = useRef(true);
   let lastSelectedKey = useRef(props.selectedKey ?? props.defaultSelectedKey ?? null);
-  let lastItems = useRef(props.items);
+  let lastCollection = useRef(collection);
   useEffect(() => {
     // If open state or inputValue is uncontrolled, open and close automatically when the input value changes,
     // the input is if focused, and there are items in the collection or allowEmptyCollection is true.
@@ -174,11 +174,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       lastValue.current = inputValue;
     }
 
-    // Update the inputValue if the selected item's text differs from the current input value but only if items are controlled.
-    // This is to handle cases where a selectedKey is specified but the items aren't available (async loading), the selected item's text value updates.
+    // Update the inputValue if the selected item's text differs from the current input value but only if the collection is changed.
+    // This is to handle cases where a selectedKey is specified but the items aren't available (async loading) or the selected item's text value updates.
     // Only reset if the user isn't currently within the field so we don't erroneously modify user input.
     // Trigger only if a selectedKey exists so that allowCustomValue=true user values don't get reset.
-    if (!isFocused && props.items !== lastItems.current && selectedKey != null) {
+    if (!isFocused && lastCollection.current !== collection && selectedKey != null) {
       let itemText = collection.getItem(selectedKey)?.textValue ?? '';
       if (inputValue !== itemText) {
         if (
@@ -200,7 +200,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
     isInitialRender.current = false;
     lastSelectedKey.current = selectedKey;
-    lastItems.current = props.items;
+    lastCollection.current = collection;
   });
 
   useEffect(() => {
