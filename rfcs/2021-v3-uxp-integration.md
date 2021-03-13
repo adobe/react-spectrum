@@ -25,19 +25,33 @@ We need to provide React Spectrum compliant components that run on UXP including
 
 UXP = Unified Extensibility Platform. This platform is used both internally by Adobe and also public plugins for Adobe products including XD.
 
+### UXP Specific React Spectrum Organization
+
+We will create a new @react-spectrum-uxp organization at npmjs.com in order to provide a namespace for all of our UXP specific react-spectrum modules.
+
+Our UXP implementations will have the same name as the react-spectrum modules they replace but be hosted within our new namespace. For example our implementation of `@react-spectrum/button` will be at `@react-spectrum-uxp/button`.
+
 ### UXP Implementation per module
 
 For every @react-spectrum module which needs a modified implementation of one or more components for UXP we will do the following:
 
-- Create a new folder and UXP specific entry point: `./src/uxp/index.ts`.
-    - Has the same export API as `./src/index.ts`.
-    - Re-exports any components that do not need to be modified from `./src/index.ts`.
-    - If running on UXP (determined at runtime) exports UXP specific components as needed.
-- Modify `./package.json` and add a new parcel build target that will enter at `./src/uxp/index.ts` and output at `./dist/uxp.js`
+- Create a new corresponding project at `packages/@react-spectrum-uxp/[name]`.
+- Implement UXP compatible versions of relevant components.
+- Has the same export API as `packages/@react-spectrum/[name]`.
+- Re-exports any components that do not need to be modified from `packages/@react-spectrum/[name]`.
+- If running on UXP exports UXP specific components as needed.
+- If running on web re-exports base implementations.
+- It may be possible to use package.json conditional exports to determine correct entry at bundling time otherwise it will be determined at runtime.
+
+### UXP mono-package for consumers
+
+We will create a new package at `packages/@adobe/react-spectrum-uxp` that has the same API and exports as `packages/@adobe/react-spectrum` but exports our UXP specific components where needed and simply re-exports any base components that need no changes.
+
+This package will be published on npmjs.com as `@adobe/react-spectrum-uxp`.
 
 ### UXP Storybook for developers
 
-UXP Developers will need a convenient way to author and test UXP components with hot module reloading (HMR). We propose adding a UXP compatible storybook plugin to the repository at `./packages/uxp/storybook`.
+UXP Developers will need a convenient way to author and test UXP components with hot module reloading (HMR). We propose adding a UXP compatible storybook plugin to the repository at `packages/@react-spectrum-uxp/storybook`.
 
 This new package will:
 
@@ -47,32 +61,31 @@ This new package will:
     - the UXP demo application
     - a plugin environment like XD
 - Provide hot module reloading for all clients.
+- Be marked private and not published to npmjs.
 
 ### UXP Consumption of React-Spectrum components
 
-UXP clients will use the `./dist/uxp.js` entry point which will be compiled and published automatically via the current build/publish process.
+UXP clients will simply modify their existing `@adobe/react-spectrum` import and change it to `@adobe/react-spectrum-uxp`. This can also be done with aliasing in most bundlers so that no source code needs to be changed.
 
-We intend to provide both parcel and webpack plugins that simplify the consumption of the UXP specific entry point. Details of both are open questions.
+We may provide plugins for both parcel and webpack that simplify consumption if needed, but the usage of conditional exports may make this unnecessary.
 
 ### UXP Development process
 
-In order to streamline review process and avoid undue burden on core react-spectrum developers, we propose making UXP team architects code owners over the react-spectrum `./packages/uxp` folder and corresponding `./packages/*/*/src/uxp` folders for each relevant module.
+In order to streamline review process and avoid undue burden on core react-spectrum developers, we propose making UXP team architects code owners over the react-spectrum-uxp folder `packages/@react-spectrum-uxp` and the mono-package folder `./packages/@adobe/react-spectrum-uxp`.
 
 The currently existing PR tests will ensure that uxp specific targets are always built successfully.
 
-No changes within the uxp specific folders can have any effect upon the current browser specific modules.
+No changes within the uxp specific folders should have any effect upon the current browser specific modules.
+
+Backwards incompatible/breaking changes to react-spectrum module API's may cause compile errors in corresponding UXP projects. If this happens then the react-spectrum core developer can fix the type errors and should add a UXP team member such as myself to the review process.
 
 ### Sample Implementation of basic Storybook and UXP Button
 
 https://github.com/adobe/react-spectrum/compare/main...krisnye:monorepo?expand=1
 
-## Documentation
-
-There will be a README.md included in a uxp specific package.
-
 ## Drawbacks
 
-The presence of new UXP specific folders will increase complexity of the repository and build time.
+The presence of new UXP specific modules will increase complexity of the repository and build time.
 Contributors without a UXP environment won't be able to test any changes that impact UXP.
 
 ## Backwards Compatibility Analysis
@@ -85,7 +98,6 @@ UXP users will need to use a parcel/webpack plugin to bundle the correct new UXP
 
 1. Use an external package as the UXP entry point.
     + No dependence on react-spectrum team and processes.
-    - More packages to publish and consume.
     - Harder to keep UXP API in sync with standard API.
     - Duplicating type systems and build processes for little gain.
     - Contributors gain less knowledge of react-spectrum since not working within it's repository.
@@ -102,6 +114,8 @@ How do we configure Parcel bundling for UXP?
 How do we configure Webpack bundling for UXP?
 
 How do we add any tests that require a UXP environment?
+
+Will package.json conditional exports handle importing UXP vs web entry points?
 
 ## Help Needed
 
