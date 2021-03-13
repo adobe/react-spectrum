@@ -8,6 +8,7 @@ export default function MainContent() {
     let story = getStory(componentName, storyName);
     return (
         <div className="MainContent">
+            Hello Stuff Main Content.
             { story?.render() }
         </div>
     )

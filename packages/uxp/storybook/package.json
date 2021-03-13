@@ -16,7 +16,9 @@
     }
   },
   "alias": {
-    "@react-spectrum/button": "@react-spectrum/button/src/uxp"
+    "@storybook/react": "./src/@storybook/react",
+    "@storybook/addon-actions": "./src/@storybook/addon-actions",
+    "--@react-spectrum/button": "@react-spectrum/button/src/uxp"
   },
   "devDependencies": {
     "@types/react": "^17.0.0",

@@ -9,6 +9,7 @@ export default function Sidebar() {
     let components = useComponents();
     return (
         <div className="Sidebar">
+            SIDEBAR HERE. Stories?: {JSON.stringify({components})}
             {
                 Array.from(components.values()).map(c => {
                     return [

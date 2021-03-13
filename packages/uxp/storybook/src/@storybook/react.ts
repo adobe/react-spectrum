@@ -45,6 +45,7 @@ export class Story {
 }
 
 export function storiesOf(name: string, module: any) {
+    console.log("====== storiesOf", { name });
     let component = new StoryComponent(name, module);
     components.set(name, component);
     notifyListeners();
