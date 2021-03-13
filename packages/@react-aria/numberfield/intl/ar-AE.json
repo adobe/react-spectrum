@@ -1,5 +1,5 @@
 {
-  "Decrement": "نقصان",
-  "Enter a number": "أدخل رقمًا",
-  "Increment": "زيادة"
+  "decrease": "خفض {fieldLabel}",
+  "increase": "زيادة {fieldLabel}",
+  "numberField": "حقل رقمي"
 }

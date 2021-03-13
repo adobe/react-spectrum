@@ -1,0 +1,324 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/numberfield';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/numberfield/package.json';
+
+```jsx import
+import {NumberField} from '@react-spectrum/numberfield';
+import {Flex} from '@react-spectrum/layout';
+```
+
+---
+category: Forms
+keywords: [number field, input]
+---
+
+# NumberField
+
+<p>{docs.exports.NumberField.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['NumberField']}
+  sourceData={[]} />
+
+## Example
+
+```tsx example
+<NumberField label="Width" defaultValue={1024} minValue={0}  />
+```
+
+## Value
+
+A NumberField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
+Alternatively, a controlled value can be provided using the `value` prop.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState(15);
+
+  return (
+    <Flex gap="size-150" wrap>
+      <NumberField
+        label="Cookies (Uncontrolled)"
+        defaultValue={15}
+        minValue={0} />
+
+      <NumberField
+        label="Cookies (Controlled)"
+        value={value}
+        onChange={setValue}
+        minValue={0} />
+    </Flex>
+  );
+}
+```
+
+## Labeling
+
+A visual label should be provided for the NumberField using the `label` prop. If the NumberField is required, the `isRequired` and
+`necessityIndicator` props can be used to show a required state.
+
+```tsx example
+<Flex gap="size-150" wrap>
+  <NumberField label="Cookies" minValue={0} />
+  <NumberField label="Cookies" isRequired necessityIndicator="icon" minValue={0}  />
+  <NumberField label="Cookies" isRequired necessityIndicator="label" minValue={0}  />
+  <NumberField label="Cookies" necessityIndicator="label" minValue={0}  />
+</Flex>
+```
+
+### Accessibility
+
+If a visible label isn't specified, an `aria-label` must be provided to the NumberField for
+accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using
+the `id` of the labeling element instead.
+
+### Internationalization
+
+In order to internationalize a NumberField, a localized string should be passed to the `label` or `aria-label` prop.
+When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
+
+## Number formatting
+
+The NumberField value can be formatted by using the `formatOptions` prop.
+`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
+Currently only standard notation is supported, though scientific, engineering, and compact notation may be supported in the future.
+
+NumberField supports three numeral systems; Latin, Arabic-Indic, and Han decimal. Regardless of the locale, these three
+can be parsed from typed input. Initial rendering will appear in the [default numeral system](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/numberingSystem) for the locale unless explicitly overridden.
+
+### Decimals
+
+The following example uses the `signDisplay` option to include the plus sign for positive numbers, for example to display an offset from some value.
+In addition, it always displays a minimum of 1 digit after the decimal point, and allows up to 2 fraction digits.
+If the user enters more than 2 fraction digits, the result will be rounded.
+
+```tsx example
+<NumberField
+  label="Adjust exposure"
+  formatOptions={{
+    signDisplay: 'exceptZero',
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 2
+  }}
+  defaultValue={0} />
+```
+
+### Percentages
+
+The `style: 'percent'` option can be passed to the `formatOptions` prop to treat the value as a percentage. In this mode,
+the value is multiplied by 100 before it is displayed, i.e. `0.45` is displayed as `45%`. The reverse is also true: when the
+user enters a value, the `onChange` event will be triggered with the entered value divided by 100. When the percent option
+is enabled, the default step automatically changes to `0.01` such that incrementing and decrementing occurs by `1%`. This can
+be overridden with the `step` prop. [See below](#step-values) for details.
+
+```tsx example
+<NumberField
+  label="Sales tax"
+  formatOptions={{style: 'percent'}}
+  minValue={0}
+  defaultValue={0.05} />
+```
+
+### Currency values
+
+The `style: 'currency'` option can be passed to the `formatOptions` prop to treat the value as a currency value. The `currency`
+option must also be passed to set the currency code (e.g. `USD`) to use. In addition, the `currencyDisplay` option can be
+used to choose whether to display the currency symbol, currency code, or currency name. Finally, the `currencySign` option
+can be set to `accounting` to use accounting notation for negative numbers, which uses parentheses rather than a minus sign
+in some locales.
+
+If you need to allow the user to change the currency, you should include a separate dropdown next to the NumberField.
+The NumberField itself will not determine the currency from the user input.
+
+```tsx example
+<NumberField
+  label="Transaction amount"
+  defaultValue={45}
+  formatOptions={{
+    style: 'currency',
+    currency: 'EUR',
+    currencyDisplay: 'code',
+    currencySign: 'accounting'
+  }} />
+```
+
+### Units
+
+The `style: 'unit'` option can be passed to the `formatOptions` prop to format the value with a unit of measurement. The `unit`
+option must also be passed to set which unit to use (e.g. `inch`). In addition, the `unitDisplay` option can be used to choose
+whether to display the unit in long, short, or narrow format.
+
+If you need to allow the user to change the unit, you should include a separate dropdown next to the number field.
+The number field itself will not determine the unit from the user input.
+
+**Note:** The `unit` style is not currently supported in Safari. A [polyfill](https://formatjs.io/docs/polyfills/intl-numberformat/)
+may be necessary.
+
+```tsx example
+<NumberField
+  label="Package width"
+  defaultValue={4}
+  minValue={0}
+  formatOptions={{
+    style: 'unit',
+    unit: 'inch',
+    unitDisplay: 'long'
+  }} />
+```
+
+## Minimum and maximum values
+
+The `minValue` and `maxValue` props can be used to limit the entered value to a specific range. The value will be clamped
+when the user blurs the input field. In addition, the increment and decrement buttons will be disabled when the value is
+within one `step` value from the bounds ([see below](#step-values) for info about steps). Ranges can be open ended by only
+providing either `minValue` or `maxValue` rather than both.
+
+If a valid range is known ahead of time, it is a good idea to provide it to `NumberField` so it can optimize the experience.
+For example, when the minimum value is greater than or equal to zero, it is possible to use a numeric keyboard on iOS rather
+than a full text keyboard (necessary to enter a minus sign).
+
+```tsx example
+<NumberField
+  label="Enter your age"
+  minValue={0} />
+```
+
+## Step values
+
+The `step` prop can be used to snap the value to certain increments. If there is a `minValue` defined, the steps are calculated
+starting from the minimum. For example, if `minValue={2}`, and `step={3}`, the valid step values would be 2, 5, 8, 11, etc. If no
+`minValue` is defined, the steps are calculated starting from zero and extending in both directions. In other words, such that the
+values are evenly divisible by the step. A `step` can be any positive decimal. If no `step` is defined, any decimal value may be typed, but incrementing and decrementing
+snaps the value to an integer.
+
+If the user types a value that is between two steps and blurs the input, the value will be snapped to the nearest step. When
+incrementing or decrementing, the value is snapped to the nearest step that is higher or lower, respectively.
+When incrementing or decrementing from an empty field, the value starts at the `minValue` or `maxValue`, respectively, if defined.
+Otherwise, the value starts from `0`.
+
+```tsx example
+<Flex direction="column" gap="size-150">
+  <NumberField
+    label="Step"
+    step={10} />
+  <NumberField
+    label="Step + minValue"
+    minValue={2}
+    step={3} />
+  <NumberField
+    label="Step + minValue + maxValue"
+    minValue={2}
+    maxValue={21}
+    step={3} />
+</Flex>
+```
+
+## Events
+
+NumberField accepts an `onChange` prop which is triggered whenever the value is committed by the user. This happens on blur of the field
+or on interaction with the stepper functionality, arrow keys or stepper buttons.
+For a full list of supported events, see the [Props](#props) table below.
+
+The example below uses `onChange` to update a separate `pre` element with the same values entered into the NumberField.
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState();
+
+  return (
+    <Flex direction="column" gap="size-150">
+      <NumberField
+        onChange={setValue}
+        label="Number of cookies to buy"
+        minValue={0} />
+      <pre>How many cookies you are ordering: {isNaN(value) ? 0 : value}</pre>
+    </Flex>
+  );
+}
+```
+
+## Validation
+
+NumberFields can display a validation state to communicate to the user whether the current value is valid or invalid.
+Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the NumberField via the `validationState` prop.
+
+The example below illustrates how one would validate if the user has entered a [FizzBuzz](https://en.wikipedia.org/wiki/Fizz_buzz) number into the NumberField.
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState(15);
+  let isValid = React.useMemo(() => value % 3 === 0 && value % 5 === 0, [value]);
+
+  return (
+    <NumberField
+      validationState={isValid ? 'valid' : 'invalid'}
+      value={value}
+      onChange={setValue}
+      label="FizzBuzz values only"
+    />
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.NumberField} links={docs.links} />
+
+## Visual options
+
+### Quiet
+
+```tsx example
+<NumberField label="Cookies" isQuiet minValue={0} />
+```
+
+### Hidden Steppers
+
+NumberField stepper buttons are optional.
+
+```tsx example
+<NumberField label="Cookies" hideStepper minValue={0} />
+```
+
+### Disabled
+
+```tsx example
+<NumberField label="Cookies" isDisabled minValue={0} />
+```
+
+### Read only
+
+The `isReadOnly` boolean prop makes the NumberField's text content immutable. Unlike `isDisabled` the NumberField remains focusable
+and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<NumberField label="Cookies" defaultValue={15} isReadOnly minValue={0} />
+```
+
+### Label alignment and position
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Label-position)
+
+By default, the label is positioned above the NumberField. The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the NumberField and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+
+```tsx example
+<NumberField label="Cookies" labelPosition="side" labelAlign="end" minValue={0} />
+```
+
+### Custom width
+
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
+
+```tsx example
+<NumberField label="Cookies" width="size-3600" maxWidth="100%" minValue={0} />
+```

@@ -1,5 +1,5 @@
 {
-  "Decrement": "Zníženie",
-  "Enter a number": "Zadajte číslo",
-  "Increment": "Prírastok"
+  "decrease": "Znížiť {fieldLabel}",
+  "increase": "Zvýšiť {fieldLabel}",
+  "numberField": "Číselné pole"
 }
