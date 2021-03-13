@@ -45,7 +45,8 @@ keywords: [color wheel, slider]
 
 ## Value
 
-A ColorWheel's `value` is `hsl(0, 100%, 50%)` by default, but an alternative initial uncontrolled value can be provided using the `defaultValue` prop.
+A ColorWheel's `value` specifies the position of the ColorWheel's thumb on the track, and accepts a string or <TypeLink links={colorTypes.links} type={colorTypes.exports.Color} /> object.
+It is initialized as `hsl(0, 100%, 50%)` by default, but an alternative initial uncontrolled value can be provided using the `defaultValue` prop.
 Alternatively, a controlled value can be provided using the `value` prop. Note that only HSB(A) and HSL(A) values are supported as valid values.
 
 In the example below, the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} /> function is used to parse the initial color from a HSL string

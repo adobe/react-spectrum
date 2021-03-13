@@ -45,8 +45,8 @@ keywords: [color slider]
 
 ## Value
 
-A ColorSlider requires either a uncontrolled default value or a controlled value, provided using the `defaultValue` or `value` props respectively.
-The value provided to either of these props should be a string or <TypeLink links={colorTypes.links} type={colorTypes.exports.Color} />  object that matches the provided ColorSlider's `channel` prop. For example, a
+A ColorSlider requires either an uncontrolled default value or a controlled value, provided using the `defaultValue` or `value` props respectively.
+The value provided to either of these props should be a string or <TypeLink links={colorTypes.links} type={colorTypes.exports.Color} /> object that matches the provided ColorSlider's `channel` prop. For example, a
 ColorSlider representing a color channel ("red", "green", "blue") would have a hex color code (e.g. "#7f0000") provided. For a full list of supported channels,
 see the [Props](#props) table below.
 
@@ -99,8 +99,8 @@ ColorSlider automatically uses the current locale to format the channel and valu
 
 ## Step values
 
-The `step` prop can be used to snap the ColorSlider's value to specific increments. Be sure to provide a number that makes sense for value range of the ColorSlider's channel
-(e.g. "alpha" channel value ranges from 0 to 1 so the step should be less than 1).
+The `step` prop can be used to snap the ColorSlider's value to specific increments. Be sure to provide a number that makes sense for the range of the ColorSlider's channel
+(e.g. An "alpha" channel value ranges from 0 to 1 so the step should be less than 1).
 
 ```tsx example
 <Flex gap="size-300" wrap>
