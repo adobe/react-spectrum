@@ -20,6 +20,15 @@ const initial = [
   {name: 'Julia'}
 ];
 
+const many = [
+  {name: 'One'},
+  {name: 'Two'},
+  {name: 'Three'},
+  {name: 'Four'},
+  {name: 'Five'},
+  {name: 'Six'}
+];
+
 let getKey = (item) => item.name;
 let filter = (item, text) => item.name.includes(text);
 
@@ -289,6 +298,287 @@ describe('useListData', function () {
     expect(result.current.items[0]).toBe(initialResult.items[1]);
     expect(result.current.items[1]).toBe(initialResult.items[0]);
     expect(result.current.items[2]).toBe(initialResult.items[2]);
+  });
+
+  describe('moveBefore', function () {
+    it('should move an item before another item from before', function () {
+      let {result} = renderHook(() => useListData({initialItems: many, getKey}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.moveBefore('Three', 'One');
+      });
+
+      expect(result.current.items).not.toBe(initialResult.items);
+      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toEqual([
+        many[1],
+        many[0],
+        many[2],
+        many[3],
+        many[4],
+        many[5]
+      ]);
+    });
+
+    it('should move an item before another item from after', function () {
+      let {result} = renderHook(() => useListData({initialItems: initial, getKey}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.moveBefore('Sam', 'Julia');
+      });
+
+      expect(result.current.items).not.toBe(initialResult.items);
+      expect(result.current.items).toHaveLength(3);
+      expect(result.current.items).toEqual([
+        initial[0],
+        initial[2],
+        initial[1]
+      ]);
+    });
+
+    it('should move multiple subsequent items before another item from before', function () {
+      let {result} = renderHook(() => useListData({initialItems: many, getKey}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.moveBefore('Five', 'Two', 'Three');
+      });
+
+      expect(result.current.items).not.toBe(initialResult.items);
+      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toEqual([
+        many[0],
+        many[3],
+        many[1],
+        many[2],
+        many[4],
+        many[5]
+      ]);
+    });
+
+    it('should move multiple subsequent items before another item from after', function () {
+      let {result} = renderHook(() => useListData({initialItems: many, getKey}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.moveBefore('Two', 'Five', 'Six');
+      });
+
+      expect(result.current.items).not.toBe(initialResult.items);
+      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toEqual([
+        many[0],
+        many[4],
+        many[5],
+        many[1],
+        many[2],
+        many[3]
+      ]);
+    });
+
+    it('should move multiple non-subsequent items before another item from before', function () {
+      let {result} = renderHook(() => useListData({initialItems: many, getKey}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.moveBefore('Five', 'One', 'Three');
+      });
+
+      expect(result.current.items).not.toBe(initialResult.items);
+      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toEqual([
+        many[1],
+        many[3],
+        many[0],
+        many[2],
+        many[4],
+        many[5]
+      ]);
+    });
+
+    it('should move multiple non-subsequent items before another item from after', function () {
+      let {result} = renderHook(() => useListData({initialItems: many, getKey}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.moveBefore('Two', 'Four', 'Six');
+      });
+
+      expect(result.current.items).not.toBe(initialResult.items);
+      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toEqual([
+        many[0],
+        many[3],
+        many[5],
+        many[1],
+        many[2],
+        many[4]
+      ]);
+    });
+
+    it('should move multiple items before another item from both before and after', function () {
+      let {result} = renderHook(() => useListData({initialItems: many, getKey}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.moveBefore('Three', 'One', 'Five');
+      });
+
+      expect(result.current.items).not.toBe(initialResult.items);
+      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toEqual([
+        many[1],
+        many[0],
+        many[4],
+        many[2],
+        many[3],
+        many[5]
+      ]);
+    });
+  });
+
+  describe('moveAfter', function () {
+    it('should move an item before another item from before', function () {
+      let {result} = renderHook(() => useListData({initialItems: many, getKey}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.moveAfter('Three', 'One');
+      });
+
+      expect(result.current.items).not.toBe(initialResult.items);
+      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toEqual([
+        many[1],
+        many[2],
+        many[0],
+        many[3],
+        many[4],
+        many[5]
+      ]);
+    });
+
+    it('should move an item before another item from after', function () {
+      let {result} = renderHook(() => useListData({initialItems: many, getKey}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.moveAfter('Three', 'Five');
+      });
+
+      expect(result.current.items).not.toBe(initialResult.items);
+      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toEqual([
+        many[0],
+        many[1],
+        many[2],
+        many[4],
+        many[3],
+        many[5]
+      ]);
+    });
+
+    it('should move multiple subsequent items before another item from before', function () {
+      let {result} = renderHook(() => useListData({initialItems: many, getKey}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.moveAfter('Five', 'Two', 'Three');
+      });
+
+      expect(result.current.items).not.toBe(initialResult.items);
+      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toEqual([
+        many[0],
+        many[3],
+        many[4],
+        many[1],
+        many[2],
+        many[5]
+      ]);
+    });
+
+    it('should move multiple subsequent items before another item from after', function () {
+      let {result} = renderHook(() => useListData({initialItems: many, getKey}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.moveAfter('Two', 'Five', 'Six');
+      });
+
+      expect(result.current.items).not.toBe(initialResult.items);
+      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toEqual([
+        many[0],
+        many[1],
+        many[4],
+        many[5],
+        many[2],
+        many[3]
+      ]);
+    });
+
+    it('should move multiple non-subsequent items before another item from before', function () {
+      let {result} = renderHook(() => useListData({initialItems: many, getKey}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.moveAfter('Five', 'One', 'Three');
+      });
+
+      expect(result.current.items).not.toBe(initialResult.items);
+      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toEqual([
+        many[1],
+        many[3],
+        many[4],
+        many[0],
+        many[2],
+        many[5]
+      ]);
+    });
+
+    it('should move multiple non-subsequent items before another item from after', function () {
+      let {result} = renderHook(() => useListData({initialItems: many, getKey}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.moveAfter('Two', 'Four', 'Six');
+      });
+
+      expect(result.current.items).not.toBe(initialResult.items);
+      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toEqual([
+        many[0],
+        many[1],
+        many[3],
+        many[5],
+        many[2],
+        many[4]
+      ]);
+    });
+
+    it('should move multiple items before another item from both before and after', function () {
+      let {result} = renderHook(() => useListData({initialItems: many, getKey}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.moveAfter('Three', 'One', 'Five');
+      });
+
+      expect(result.current.items).not.toBe(initialResult.items);
+      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toEqual([
+        many[1],
+        many[2],
+        many[0],
+        many[4],
+        many[3],
+        many[5]
+      ]);
+    });
   });
 
   it('should support filtering', function () {

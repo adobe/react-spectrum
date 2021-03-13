@@ -2768,7 +2768,7 @@ describe('Table', function () {
           <TableBody items={items} onLoadMore={onLoadMore}>
             {row => (
               <Row>
-                {key => <Cell>row[key]</Cell>}
+                {key => <Cell>{row[key]}</Cell>}
               </Row>
             )}
           </TableBody>
@@ -2790,6 +2790,32 @@ describe('Table', function () {
       scrollView.scrollTop = 2800;
       fireEvent.scroll(scrollView);
 
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
+
+    it('should automatically fire onLoadMore it there aren\'t enough items to fill the Table', function () {
+      let items = [];
+      for (let i = 1; i <= 15; i++) {
+        items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
+      }
+
+      let onLoadMore = jest.fn();
+      render(
+        <Table aria-label="Table">
+          <TableHeader>
+            <Column key="foo">Foo</Column>
+            <Column key="bar">Bar</Column>
+          </TableHeader>
+          <TableBody items={items} onLoadMore={onLoadMore}>
+            {row => (
+              <Row>
+                {key => <Cell>{row[key]}</Cell>}
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+      );
+      // Table is 1000px tall, 15 items x 41px doesn't fill up the table
       expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 

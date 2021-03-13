@@ -49,7 +49,7 @@ function StepButton(props: StepButtonProps, ref: RefObject<HTMLDivElement>) {
             {
               'spectrum-Stepper-button--stepUp': direction === 'up',
               'spectrum-Stepper-button--stepDown': direction === 'down',
-              'spectrum-Stepper-button--quiet': isQuiet,
+              'spectrum-Stepper-button--isQuiet': isQuiet,
               'is-hovered': isHovered,
               'is-active': isPressed,
               'is-disabled': isDisabled
@@ -59,16 +59,16 @@ function StepButton(props: StepButtonProps, ref: RefObject<HTMLDivElement>) {
         {...mergeProps(hoverProps, buttonProps)}
         ref={ref}>
         {direction === 'up' && scale === 'large' &&
-          <Add UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon', 'spectrum-Stepper-stepUpIcon')} size="S" />
+          <Add UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-button-icon', 'spectrum-Stepper-stepUpIcon')} size="S" />
         }
         {direction === 'up' && scale === 'medium' &&
-          <ChevronUpSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon', 'spectrum-Stepper-stepUpIcon')} />
+          <ChevronUpSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-button-icon', 'spectrum-Stepper-stepUpIcon')} />
         }
         {direction === 'down' && scale === 'large' &&
-          <Remove UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon', 'spectrum-Stepper-stepDownIcon')} size="S" />
+          <Remove UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-button-icon', 'spectrum-Stepper-stepDownIcon')} size="S" />
         }
         {direction === 'down' && scale === 'medium' &&
-          <ChevronDownSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-icon', 'spectrum-Stepper-stepDownIcon')} />
+          <ChevronDownSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-button-icon', 'spectrum-Stepper-stepDownIcon')} />
         }
       </div>
     </FocusRing>
