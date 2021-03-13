@@ -749,6 +749,11 @@ storiesOf('Table', module)
     'async server side filter loading',
     () => <AsyncServerFilterTable />,
     {chromatic: {disable: true}}
+  )
+  .add(
+    'loads more on scroll when contentSize.height < rect.height * 2',
+    () => <AsyncServerFilterTable height={300} />,
+    {chromatic: {disable: true}}
   );
 
 function AsyncLoadingExample() {
@@ -920,7 +925,7 @@ function ProjectListTable() {
   );
 }
 
-function AsyncServerFilterTable() {
+function AsyncServerFilterTable(props) {
   interface Item {
     name: string,
     height: string,
@@ -963,6 +968,7 @@ function AsyncServerFilterTable() {
   const onChange = (value) => {
     list.setFilterText(value);
   };
+
   return (
     <div>
       <SearchField
@@ -980,7 +986,8 @@ function AsyncServerFilterTable() {
         width={600}
         isQuiet
         sortDescriptor={list.sortDescriptor}
-        onSortChange={list.sort}>
+        onSortChange={list.sort}
+        {...props}>
         <TableHeader columns={columns}>
           {(column) => {
             const {name, ...columnProps} = column;
