@@ -11,9 +11,10 @@
  */
 
 import {calculatePosition, PositionResult} from './calculatePosition';
-import {HTMLAttributes, RefObject, useCallback, useLayoutEffect, useRef, useState} from 'react';
+import {HTMLAttributes, RefObject, useCallback, useRef, useState} from 'react';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
 import {useCloseOnScroll} from './useCloseOnScroll';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 interface AriaPositionProps extends PositionProps {
