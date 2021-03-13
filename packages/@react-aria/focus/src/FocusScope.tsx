@@ -173,7 +173,7 @@ const focusableElements = [
 
 const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]),') + ',[tabindex]:not([hidden])';
 
-focusableElements.push('[tabindex]:not([tabindex="-1"])');
+focusableElements.push('[tabindex]:not([tabindex="-1"]):not([disabled])');
 const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]):not([tabindex="-1"]),');
 
 function getScopeRoot(scope: HTMLElement[]) {

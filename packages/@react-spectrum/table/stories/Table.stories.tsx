@@ -295,7 +295,7 @@ storiesOf('Table', module)
     () => (
       <Flex direction="column">
         <input placeholder="Focusable before" />
-        <Table aria-label="Table with focusable cells" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <Table aria-label="Table with focusable cells" selectionMode="multiple" width={450} height={200} onSelectionChange={s => onSelectionChange([...s])}>
           <TableHeader>
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
@@ -304,6 +304,11 @@ storiesOf('Table', module)
           <TableBody>
             <Row>
               <Cell><Switch aria-label="Foo" /></Cell>
+              <Cell><Link><a href="https://yahoo.com" target="_blank">Yahoo</a></Link></Cell>
+              <Cell>Three</Cell>
+            </Row>
+            <Row>
+              <Cell><Switch aria-label="Foo" /><Switch aria-label="Bar" /></Cell>
               <Cell><Link><a href="https://google.com" target="_blank">Google</a></Link></Cell>
               <Cell>Three</Cell>
             </Row>
@@ -744,6 +749,11 @@ storiesOf('Table', module)
     'async server side filter loading',
     () => <AsyncServerFilterTable />,
     {chromatic: {disable: true}}
+  )
+  .add(
+    'loads more on scroll when contentSize.height < rect.height * 2',
+    () => <AsyncServerFilterTable height={300} />,
+    {chromatic: {disable: true}}
   );
 
 function AsyncLoadingExample() {
@@ -915,7 +925,7 @@ function ProjectListTable() {
   );
 }
 
-function AsyncServerFilterTable() {
+function AsyncServerFilterTable(props) {
   interface Item {
     name: string,
     height: string,
@@ -958,6 +968,7 @@ function AsyncServerFilterTable() {
   const onChange = (value) => {
     list.setFilterText(value);
   };
+
   return (
     <div>
       <SearchField
@@ -975,7 +986,8 @@ function AsyncServerFilterTable() {
         width={600}
         isQuiet
         sortDescriptor={list.sortDescriptor}
-        onSortChange={list.sort}>
+        onSortChange={list.sort}
+        {...props}>
         <TableHeader columns={columns}>
           {(column) => {
             const {name, ...columnProps} = column;

@@ -110,6 +110,7 @@ describe('FocusScope', function () {
           <input style={{visibility: 'hidden'}} />
           <input style={{visibility: 'collapse'}} />
           <div tabIndex={-1} />
+          <input disabled tabIndex={0} />
           <input data-testid="input3" />
         </FocusScope>
       );

@@ -321,7 +321,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
   let onVisibleRectChange = useCallback((rect: Rect) => {
     state.setVisibleRect(rect);
 
-    if (!collection.body.props.isLoading && collection.body.props.onLoadMore && state.virtualizer.contentSize.height > rect.height * 2) {
+    if (!collection.body.props.isLoading && collection.body.props.onLoadMore) {
       let scrollOffset = state.virtualizer.contentSize.height - rect.height * 2;
       if (rect.y > scrollOffset) {
         collection.body.props.onLoadMore();
