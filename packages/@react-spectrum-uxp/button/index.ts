@@ -10,15 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-const isUxp = document.location.protocol === 'plugin:';
-
-import { Button as WebButton } from '../Button';
-import { Button as UxpButton } from './UxpButton';
-export const Button: typeof WebButton = isUxp ? UxpButton : WebButton;
-export { Button };
-
-export * from '../ActionButton';
-export * from '../FieldButton';
-export * from '../LogicButton';
-export * from '../ClearButton';
-export * from '../ToggleButton';
+export * from './src';

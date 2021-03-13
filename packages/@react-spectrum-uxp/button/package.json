@@ -1,7 +1,7 @@
 {
-  "name": "@react-spectrum/button",
+  "name": "@react-spectrum-uxp/button",
   "version": "3.4.0",
-  "description": "Spectrum UI components in React",
+  "description": "Spectrum UI components in React for UXP",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
