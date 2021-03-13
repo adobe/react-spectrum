@@ -11,6 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ActionButton} from '@react-spectrum/button';
 import Bookmark from '@spectrum-icons/workflow/Bookmark';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
@@ -143,16 +144,48 @@ storiesOf('Tabs', module)
     () => (
       (
         <Tabs maxWidth={500}>
-          <Item title="Tab 1 long long long name">
-            <Content margin="size-160">
-              <Text>Text</Text>
-            </Content>
-          </Item>
-          <Item title="Tab 2">
-            <Content margin="size-160">
-              <Text>Text 2</Text>
-            </Content>
-          </Item>
+          <TabList>
+            <Item>
+              <Text>Tab 1 long long long name</Text>
+            </Item>
+            <Item>
+              <Text>Tab 2</Text>
+            </Item>
+          </TabList>
+          <TabPanels>
+            <Item>
+              <Content margin="size-160">
+                <Text>Text</Text>
+              </Content>
+            </Item>
+            <Item>
+              <Content margin="size-160">
+                <Text>Text 2</Text>
+              </Content>
+            </Item>
+          </TabPanels>
+        </Tabs>
+      )
+    )
+  )
+  .add(
+    'Tab with flex container in between',
+    () => (
+      (
+        <Tabs maxWidth={500}>
+          <Flex direction="column">
+            <Flex direction="row" alignItems="center">
+              <TabList>
+                <Item key="tab1">Tab</Item>
+              </TabList>
+              <ActionButton aria-label="Add Tabs">
+                Add
+              </ActionButton>
+            </Flex>
+            <TabPanels>
+              <Item key="tab1">Tab 1 content</Item>
+            </TabPanels>
+          </Flex>
         </Tabs>
       )
     )
