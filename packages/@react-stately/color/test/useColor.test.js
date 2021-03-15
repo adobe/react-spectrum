@@ -12,7 +12,7 @@
 
 import {parseColor} from '../src/Color';
 import {renderHook} from '@testing-library/react-hooks';
-import {useColor} from '../';
+import {useColor} from '../src/useColor';
 
 describe('useColor tests', function () {
   it('should accept string value', function () {

@@ -1,6 +1,5 @@
 {
-  "Decrement": "Minska",
-  "Enter a number": "Ange ett tal",
-  "Increment": "Öka",
-  "Spin button number field": "Spin button number field"
+  "decrease": "Minska {fieldLabel}",
+  "increase": "Öka {fieldLabel}",
+  "numberField": "Nummerfält"
 }

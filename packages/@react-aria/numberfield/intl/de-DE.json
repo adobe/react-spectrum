@@ -1,6 +1,5 @@
 {
-  "Decrement": "Verringern",
-  "Enter a number": "Zahl eingeben",
-  "Increment": "Erhöhen",
-  "Spin button number field": "Spin button number field"
+  "decrease": "{fieldLabel} verringern",
+  "increase": "{fieldLabel} erhöhen",
+  "numberField": "Nummernfeld"
 }

@@ -20,6 +20,7 @@ import {ComboBox, Item, Section} from '../';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Draw from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
+import {mergeProps} from '@react-aria/utils';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
@@ -179,7 +180,7 @@ storiesOf('ComboBox', module)
   )
   .add(
     'isOpen',
-    () => <ControlledOpenCombobox isOpen />,
+    () => <ControlledOpenCombobox isOpen allowsCustomValue defaultSelectedKey="two" />,
     {note: 'Combobox needs focus to show dropdown.'}
   )
   .add(
@@ -414,9 +415,27 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
+    'inputValue and isOpen (controlled)',
+    () => (
+      <ControlledValueOpenCombobox />
+    )
+  )
+  .add(
+    'selectedKey and isOpen (controlled)',
+    () => (
+      <ControlledKeyOpenCombobox />
+    )
+  )
+  .add(
     'inputValue, selectedKey, and isOpen (controlled)',
     () => (
       <AllControlledOpenComboBox selectedKey="2" inputValue="Kangaroo" disabledKeys={['2', '6']} />
+    )
+  )
+  .add(
+    'inputValue, selectedKey, isOpen, allowsCustomValue (controlled)',
+    () => (
+      <AllControlledOpenComboBox selectedKey="2" inputValue="Kangaroo" disabledKeys={['2', '6']} allowsCustomValue />
     )
   )
   .add(
@@ -463,6 +482,9 @@ function LoadingExamples(props) {
       <ComboBox {...props} label="Combobox (filtering)" loadingState="filtering" defaultItems={items}>
         {(item: any) => <Item>{item.name}</Item>}
       </ComboBox>
+      <ComboBox {...props} label="Combobox (loading + menuTrigger manual)" loadingState="loading" menuTrigger="manual" defaultItems={items} >
+        {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
       <ComboBox {...props} label="Combobox (loading more)" loadingState="loadingMore" defaultItems={items}>
         {(item: any) => <Item>{item.name}</Item>}
       </ComboBox>
@@ -505,7 +527,8 @@ function AsyncLoadingExample() {
 
       let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
-
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 1500));
       return {
         items: json.results,
         cursor: json.next
@@ -519,7 +542,7 @@ function AsyncLoadingExample() {
       items={list.items}
       inputValue={list.filterText}
       onInputChange={list.setFilterText}
-      loadingState={list.state}
+      loadingState={list.loadingState}
       onLoadMore={list.loadMore}
       onOpenChange={action('onOpenChange')}>
       {item => <Item key={item.name}>{item.name}</Item>}
@@ -540,8 +563,7 @@ let CustomFilterComboBox = (props) => {
 
   return (
     <ComboBox
-      {...actions}
-      {...props}
+      {...mergeProps(props, actions)}
       label="Combobox"
       items={filteredItems}
       inputValue={filterValue}
@@ -642,7 +664,7 @@ let ControlledKeyComboBox = (props) => {
           <Text>Clear key</Text>
         </Button>
       </ButtonGroup>
-      <ComboBox {...props} selectedKey={selectedKey} defaultItems={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')}>
+      <ComboBox {...mergeProps(props, actions)} selectedKey={selectedKey} defaultItems={withSection} label="Combobox" onSelectionChange={onSelectionChange}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}
@@ -674,7 +696,7 @@ let ControlledValueComboBox = (props) => {
           <Text>Clear field</Text>
         </Button>
       </ButtonGroup>
-      <ComboBox {...props} inputValue={value} defaultItems={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onValueChange} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')}>
+      <ComboBox {...mergeProps(props, actions)} inputValue={value} defaultItems={withSection} label="Combobox" onInputChange={onValueChange}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}
@@ -695,7 +717,7 @@ let CustomValueComboBox = (props) => {
   return (
     <div>
       <div>Selected Key: {selectedKey}</div>
-      <ComboBox {...props} selectedKey={selectedKey} defaultItems={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} marginTop={20}>
+      <ComboBox {...mergeProps(props, actions)} selectedKey={selectedKey} defaultItems={withSection} label="Combobox" onSelectionChange={onSelectionChange} marginTop={20}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}
@@ -712,7 +734,7 @@ let ControlledOpenCombobox = (props) => {
   return (
     <Flex direction="column">
       <TextField label="Email" />
-      <ComboBox label="Combobox" isOpen={isOpen} {...actions} onOpenChange={setOpen}>
+      <ComboBox label="Combobox" {...mergeProps(props, actions)} isOpen={isOpen} onOpenChange={setOpen}>
         <Item key="one">Item One</Item>
         <Item key="two" textValue="Item Two">
           <Copy size="S" />
@@ -722,6 +744,72 @@ let ControlledOpenCombobox = (props) => {
       </ComboBox>
       <TextField label="Name" />
     </Flex>
+  );
+};
+
+let ControlledValueOpenCombobox = (props) => {
+  let [fieldState, setFieldState] = React.useState({
+    isOpen: false,
+    inputValue: ''
+  });
+
+  let onInputChange = (value: string) => {
+    setFieldState({
+      isOpen: true,
+      inputValue: value
+    });
+  };
+
+  let onOpenChange = (isOpen: boolean) => {
+    setFieldState(prevState => ({
+      isOpen: isOpen,
+      inputValue: prevState.inputValue
+    }));
+  };
+
+  let onSelectionChange = (key) => {
+    setFieldState({
+      isOpen: false,
+      inputValue: items.find(item => item.id === key)?.name ?? ''
+    });
+  };
+
+  return (
+    <ComboBox label="Combobox" {...mergeProps(props, actions)} defaultItems={items} isOpen={fieldState.isOpen} onOpenChange={onOpenChange} inputValue={fieldState.inputValue} onInputChange={onInputChange} onSelectionChange={onSelectionChange}>
+      {(item: any) => <Item>{item.name}</Item>}
+    </ComboBox>
+  );
+};
+
+let ControlledKeyOpenCombobox = (props) => {
+  let [fieldState, setFieldState] = React.useState({
+    isOpen: false,
+    selectedKey: null
+  });
+
+  let onSelectionChange = (key: string) => {
+    setFieldState({
+      isOpen: false,
+      selectedKey: key
+    });
+  };
+
+  let onOpenChange = (isOpen: boolean) => {
+    setFieldState(prevState => ({
+      isOpen: isOpen,
+      selectedKey: prevState.selectedKey
+    }));
+  };
+
+  return (
+    <ComboBox label="Combobox" {...mergeProps(props, actions)} isOpen={fieldState.isOpen} onOpenChange={onOpenChange} selectedKey={fieldState.selectedKey} onSelectionChange={onSelectionChange}>
+      <Item key="one">Item One</Item>
+      <Item key="two" textValue="Item Two">
+        <Copy size="S" />
+        <Text>Item Two</Text>
+      </Item>
+      <Item key="three">Item Three</Item>
+    </ComboBox>
   );
 };
 
@@ -737,11 +825,11 @@ function AllControlledOpenComboBox(props) {
   });
 
   let onSelectionChange = (key: React.Key) => {
-    setFieldState({
+    setFieldState(prevState => ({
       isOpen: false,
-      inputValue: list.getItem(key)?.value.name ?? '',
+      inputValue: list.getItem(key)?.value.name ?? (props.allowsCustomValue ? prevState.inputValue : ''),
       selectedKey: key
-    });
+    }));
   };
 
   let onInputChange = (value: string) => {
@@ -762,7 +850,7 @@ function AllControlledOpenComboBox(props) {
 
   return (
     <div>
-      <ComboBox disabledKeys={props.disabledKeys} selectedKey={fieldState.selectedKey} inputValue={fieldState.inputValue} defaultItems={list.items} label="Combobox" isOpen={fieldState.isOpen} onOpenChange={onOpenChange} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')}>
+      <ComboBox allowsCustomValue={props.allowsCustomValue} disabledKeys={props.disabledKeys} selectedKey={fieldState.selectedKey} inputValue={fieldState.inputValue} defaultItems={list.items} label="Combobox" isOpen={fieldState.isOpen} onOpenChange={onOpenChange} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')}>
         {item => (
           <Section items={item.children} title={item.value.name}>
             {item => <Item>{item.value.name}</Item>}
@@ -795,7 +883,7 @@ function ResizeCombobox() {
 
 function render(props = {}) {
   return (
-    <ComboBox label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} {...props}>
+    <ComboBox label="Combobox" {...mergeProps(props, actions)}>
       <Item key="one">Item One</Item>
       <Item key="two" textValue="Item Two">
         <Copy size="S" />
