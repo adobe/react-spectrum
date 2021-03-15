@@ -72,7 +72,11 @@ interface SelectableCollectionOptions {
   /**
    * Whether the collection items should use virtual focus instead of being focused directly.
    */
-  shouldUseVirtualFocus?: boolean
+  shouldUseVirtualFocus?: boolean,
+  /**
+   * Whether navigation through tab key is enabled.
+   */
+  allowsTabNavigation?: boolean
 }
 
 interface SelectableCollectionAria {
@@ -94,7 +98,8 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     disallowSelectAll = false,
     selectOnFocus = false,
     disallowTypeAhead = false,
-    shouldUseVirtualFocus
+    shouldUseVirtualFocus,
+    allowsTabNavigation = false
   } = options;
   let {direction} = useLocale();
 
@@ -254,30 +259,32 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         }
         break;
       case 'Tab': {
-        // There may be elements that are "tabbable" inside a collection (e.g. in a grid cell).
-        // However, collections should be treated as a single tab stop, with arrow key navigation internally.
-        // We don't control the rendering of these, so we can't override the tabIndex to prevent tabbing.
-        // Instead, we handle the Tab key, and move focus manually to the first/last tabbable element
-        // in the collection, so that the browser default behavior will apply starting from that element
-        // rather than the currently focused one.
-        if (e.shiftKey) {
-          ref.current.focus();
-        } else {
-          let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
-          let next: HTMLElement;
-          let last: HTMLElement;
-          do {
-            last = walker.lastChild() as HTMLElement;
-            if (last) {
-              next = last;
-            }
-          } while (last);
+        if (!allowsTabNavigation) {
+          // There may be elements that are "tabbable" inside a collection (e.g. in a grid cell).
+          // However, collections should be treated as a single tab stop, with arrow key navigation internally.
+          // We don't control the rendering of these, so we can't override the tabIndex to prevent tabbing.
+          // Instead, we handle the Tab key, and move focus manually to the first/last tabbable element
+          // in the collection, so that the browser default behavior will apply starting from that element
+          // rather than the currently focused one.
+          if (e.shiftKey) {
+            ref.current.focus();
+          } else {
+            let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
+            let next: HTMLElement;
+            let last: HTMLElement;
+            do {
+              last = walker.lastChild() as HTMLElement;
+              if (last) {
+                next = last;
+              }
+            } while (last);
 
-          if (next && !next.contains(document.activeElement)) {
-            next.focus();
+            if (next && !next.contains(document.activeElement)) {
+              next.focus();
+            }
           }
+          break;
         }
-        break;
       }
     }
   };
