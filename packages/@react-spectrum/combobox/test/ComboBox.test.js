@@ -2793,23 +2793,17 @@ describe('ComboBox', function () {
 
           rerender(<Component items={newItems} />);
 
-          expect(combobox.value).toBe('New Text');
+          if (Name.includes('value') || Name.includes('all')) {
+            expect(combobox.value).toBe('Aardvark');
+          } else {
+            expect(combobox.value).toBe('New Text');
+          }
+
           expect(() => getByRole('listbox')).toThrow();
 
           if (!Name.includes('value') && !Name.includes('all')) {
-            // Check that onInputChange is firing appropriately for the comboboxes w/o user defined onInputChange handlers
             expect(onInputChange).toBeCalledTimes(5);
             expect(onInputChange).toHaveBeenLastCalledWith('New Text');
-          }
-
-          if (!Name.includes('key') && !Name.includes('all') && !Name.includes('and')) {
-            // Check that combobox with single controlled property (excluding items) doesn't have selectionChange called again on text reset
-            expect(onSelectionChange).toBeCalledTimes(1);
-          }
-
-          if (Name === 'controlled value and open') {
-            expect(onSelectionChange).toBeCalledTimes(3);
-            expect(onSelectionChange).toHaveBeenLastCalledWith('1');
           }
         });
 

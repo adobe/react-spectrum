@@ -485,9 +485,9 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
-    'server side filtering with useAsyncList (controlled open and key)',
+    'server side filtering with controlled key and inputValue reset if not focused',
     () => (
-      <AsyncLoadingExampleAllControlled />
+      <AsyncLoadingExampleControlledKeyWithReset />
     )
   );
 
@@ -622,16 +622,14 @@ function AsyncLoadingExampleControlledKey() {
   );
 }
 
-function AsyncLoadingExampleAllControlled() {
+function AsyncLoadingExampleControlledKeyWithReset() {
   interface StarWarsChar {
     name: string,
     url: string
   }
 
-  let [fieldState, setFieldState] = useState({
-    selectedKey: 'Luke Skywalker',
-    isOpen: false
-  });
+  let [selectedKey, setSelectedKey] = useState('Luke Skywalker');
+  let [isFocused, setFocused] = useState(false);
 
   let list = useAsyncList<StarWarsChar>({
     async load({signal, cursor, filterText}) {
@@ -644,6 +642,14 @@ function AsyncLoadingExampleAllControlled() {
       // Slow down load so progress circle can appear
       await new Promise(resolve => setTimeout(resolve, 1500));
 
+      // If selectedKey exists and combobox isn't focused, update the input value with the selected key text
+      if (!isFocused && selectedKey) {
+        let selectedItemName = json.results.find(item => item.name === selectedKey)?.name ?? '';
+        if (selectedItemName !== filterText) {
+          list.setFilterText(selectedItemName);
+        }
+      }
+
       return {
         items: json.results,
         cursor: json.next
@@ -652,42 +658,30 @@ function AsyncLoadingExampleAllControlled() {
   });
 
   let onSelectionChange = (key) => {
-    setFieldState({
-      isOpen: false,
-      selectedKey: key
-    });
-
+    setSelectedKey(key);
     list.setFilterText(key);
   };
 
   let onInputChange = (value) => {
-    setFieldState(prevState => ({
-      isOpen: true,
-      selectedKey: value === '' ? null : prevState.selectedKey
-    }));
-
+    if (value === '') {
+      setSelectedKey(null);
+    }
     list.setFilterText(value);
-  };
-
-  let onOpenChange = (isOpen: boolean) => {
-    setFieldState(prevState => ({
-      isOpen,
-      selectedKey: prevState.selectedKey
-    }));
   };
 
   return (
     <ComboBox
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
       label="Star Wars Character Lookup"
-      selectedKey={fieldState.selectedKey}
+      selectedKey={selectedKey}
       onSelectionChange={onSelectionChange}
       items={list.items}
       inputValue={list.filterText}
       onInputChange={onInputChange}
       loadingState={list.loadingState}
       onLoadMore={list.loadMore}
-      onOpenChange={onOpenChange}
-      isOpen={fieldState.isOpen}>
+      onOpenChange={action('onOpenChange')}>
       {item => <Item key={item.name}>{item.name}</Item>}
     </ComboBox>
   );
