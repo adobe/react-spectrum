@@ -15,6 +15,7 @@ import {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject, Textar
 import {ElementType} from 'react';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {useFocusable} from '@react-aria/focus';
+import {useKeyboard} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
 
 interface TextFieldAria {
@@ -50,11 +51,14 @@ export function useTextField(
     isReadOnly = false,
     validationState,
     type = 'text',
-    onChange = () => {}
+    onChange = () => {},
+    onKeyDown = () => {},
+    onKeyUp = () => {}
   } = props;
   let {focusableProps} = useFocusable(props, ref);
   let {labelProps, fieldProps} = useLabel(props);
   let domProps = filterDOMProps(props, {labelable: true});
+  let {keyboardProps} = useKeyboard({...props, onKeyDown, onKeyUp});
 
   const inputOnlyProps = {
     type,
@@ -65,6 +69,7 @@ export function useTextField(
     labelProps,
     inputProps: mergeProps(
       domProps,
+      keyboardProps,
       inputElementType === 'input' && inputOnlyProps,
       {
         disabled: isDisabled,
