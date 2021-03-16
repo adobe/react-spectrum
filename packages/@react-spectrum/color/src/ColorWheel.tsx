@@ -92,7 +92,7 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
       }}>
       <div {...trackProps} className={classNames(styles, 'spectrum-ColorWheel-gradient')} />
       <ColorThumb
-        value={parseColor(`hsl(${state.value.getChannelValue('hue')}, 100%, 50%)`)}
+        value={state.value.withChannelValue('saturation', 100).withChannelValue('lightness', 50)}
         isFocused={isFocusVisible}
         isDisabled={isDisabled}
         isDragging={state.isDragging}
