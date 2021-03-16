@@ -5,7 +5,7 @@
   "license": "MIT",
   "main": "dist/index.html",
   "scripts": {
-    "watch:parcel": "rm -rf ../../../.parcel-cache && parcel serve src/index.html --target main",
+    "watch:parcel": "rm -rf ../../../.parcel-cache && parcel serve src/index.html --target main --log-level verbose",
     "watch-:uxp": "sleep 20 && yarn uxp",
     "watch": "run-p watch:*",
     "uxp": "../../../../torq-native/build/out/bin/macos/v8/nativeui/Debug/demo.app/Contents/MacOS/demo --extension dist"
@@ -16,8 +16,8 @@
     }
   },
   "alias": {
-    "@storybook/react": "./src/@storybook/react",
-    "@storybook/addon-actions": "./src/@storybook/addon-actions",
+    "@storybook/react": "./src/@storybook/react.ts",
+    "@storybook/addon-actions": "./src/@storybook/addon-actions.ts",
     "--@react-spectrum/button": "@react-spectrum/button/src/uxp"
   },
   "devDependencies": {

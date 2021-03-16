@@ -13,10 +13,9 @@
 const isUxp = document.location.protocol === 'plugin:';
 
 // TODO: This is not simplified or even correct yet, we've just moved it over from it's previous location within @react-spectrum/button/src
-import { Button as WebButton } from '/Button';
+import { Button as WebButton } from '@react-spectrum/button';
 import { Button as UxpButton } from './UxpButton';
 export const Button: typeof WebButton = isUxp ? UxpButton : WebButton;
-export { Button };
 
 export * from '../ActionButton';
 export * from '../FieldButton';

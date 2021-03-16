@@ -7,14 +7,11 @@ import Header from "./@storybook/Storybook/Header";
 import "./App.css";
 
 export default function App() {
-    // return (
-    //     <Provider id="storybook" key="provider" theme={defaultTheme}>
-    //         <Sample />
-    //     </Provider>
-    // );
-
     return [
         <Header />,
+        <Provider id="storybook" key="provider" theme={defaultTheme}>
+            <Sample />
+        </Provider>,
         <Storybook key="storybook" />,
     ]
 }
