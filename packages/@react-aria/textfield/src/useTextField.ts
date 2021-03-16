@@ -69,7 +69,6 @@ export function useTextField(
     labelProps,
     inputProps: mergeProps(
       domProps,
-      keyboardProps,
       inputElementType === 'input' && inputOnlyProps,
       {
         disabled: isDisabled,
@@ -107,7 +106,8 @@ export function useTextField(
         onBeforeInput: props.onBeforeInput,
         onInput: props.onInput,
         ...focusableProps,
-        ...fieldProps
+        ...fieldProps,
+        ...keyboardProps
       }
     )
   };

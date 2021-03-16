@@ -94,5 +94,19 @@ describe('useTextField hook', () => {
       expect(props.type).toBeUndefined();
       expect(props.pattern).toBeUndefined();
     });
+
+    it('stops propagation on keydown and keyup', () => {
+      let stopPropagation = jest.fn();
+      let event = () => ({
+        stopPropagation
+      });
+
+      let props = renderTextFieldHook({'aria-label': 'mandatory label'});
+      props.onKeyDown(event());
+      expect(stopPropagation).toHaveBeenCalledTimes(1);
+      props.onKeyUp(event());
+      expect(stopPropagation).toHaveBeenCalledTimes(2);
+      stopPropagation.mockClear();
+    });
   });
 });
