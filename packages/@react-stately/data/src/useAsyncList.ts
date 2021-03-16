@@ -146,14 +146,19 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
           if (action.abortController !== data.abortController) {
             return data;
           }
-
+          // console.log('success', [...action.items]);
+          // console.log('new state', (action.filterText && action.filterText !== data.filterText) ? 'filtering' : 'idle');
+          // (action.filterText && action.filterText !== data.filterText) && data.abortController.abort();
           return {
             ...data,
+            filterText: action.filterText ?? data.filterText,
             state: 'idle',
+            // state: (action.filterText && action.filterText !== data.filterText) ? 'filtering' : 'idle',
             items: [...action.items],
             selectedKeys: new Set(action.selectedKeys ?? data.selectedKeys),
             sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
             abortController: null,
+            // abortController: (action.filterText && action.filterText !== data.filterText) ? action.abortController : null,
             cursor: action.cursor
           };
         case 'error':
@@ -181,6 +186,15 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
             // Reset items to an empty list if loading, but not when sorting.
             items: action.type === 'loading' ? [] : data.items,
             abortController: action.abortController
+          };
+        case 'update':
+          // We're already loading, and an update happened at the same time.
+          // We need to abort the previous load.
+          data.abortController.abort();
+          console.log('aborting cuz update')
+          return {
+            ...data,
+            ...action.updater(data)
           };
         default:
           throw new Error(`Invalid action "${action.type}" in state "${data.state}"`);
@@ -217,6 +231,15 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
             // Reset items to an empty list if loading, but not when sorting.
             items: action.type === 'loading' ? [] : data.items,
             abortController: action.abortController
+          };
+        case 'update':
+          // We're already loading more, and an update happened at the same time.
+          // We need to abort the previous load.
+          data.abortController.abort();
+          console.log('aborting cuz update')
+          return {
+            ...data,
+            ...action.updater(data)
           };
         default:
           throw new Error(`Invalid action "${action.type}" in state "${data.state}"`);
@@ -262,7 +285,12 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
         filterText: action.filterText ?? data.filterText
       });
 
+      let previousFilterText = action.filterText ?? data.filterText;
+      let filterText = response.filterText ?? previousFilterText;
       dispatch({type: 'success', ...response, abortController});
+      if (filterText && (filterText !== previousFilterText) && !abortController.signal.aborted) {
+        dispatchFetch({type: 'filtering', filterText}, load);
+      }
     } catch (e) {
       dispatch({type: 'error', error: e, abortController});
     }
