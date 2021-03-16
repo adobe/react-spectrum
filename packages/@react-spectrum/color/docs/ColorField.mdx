@@ -11,8 +11,9 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/color';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/color/package.json';
+import statelyDocs from 'docs:@react-stately/color';
 
 ```jsx import
 import {ColorField} from '@react-spectrum/color';
@@ -43,10 +44,14 @@ keywords: [color field, input]
 
 A ColorField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
 Alternatively, a controlled value can be provided using the `value` prop. Valid values are hexadecimal color codes.
+The <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} /> function is used to parse the initial color
+from a hex value, stored in state.
 
 ```tsx example
+import {parseColor} from '@react-stately/color';
+
 function Example() {
-  let [value, setValue] = React.useState('#e73623');
+  let [value, setValue] = React.useState(parseColor('#e73623'));
 
   return (
     <Flex gap="size-150" wrap>
@@ -108,17 +113,14 @@ zero or the current value. A `step` can be set to any positive decimal, defaulti
 ColorField can display a validation state to communicate to the user whether the current value is valid or invalid.
 Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the ColorField via the `validationState` prop.
 
-The example below illustrates how one would validate if the user has entered a red color.
+The example below illustrates how one would validate if the user has entered a red color. In it,
+the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} /> function is used to parse the
+initial color from a hexadecimal string so that `value`'s type remains consistent.
+
 ```tsx example
 function Example() {
-  let [value, setValue] = React.useState('#e73623');
+  let [value, setValue] = React.useState(parseColor('#e73623'));
   let isValid = React.useMemo(() => {
-    if (value && value.length === 7) {
-      let red = parseInt(value.substr(1,2), 16);
-      let green = parseInt(value.substr(3,2), 16);
-      let blue = parseInt(value.substr(5,2), 16);
-      return red > green && red > blue;
-    }
     return value && value.red && value.red > value.green && value.red > value.blue;
   }, [value]);
 
