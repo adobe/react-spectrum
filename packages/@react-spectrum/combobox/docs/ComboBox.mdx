@@ -523,7 +523,8 @@ ComboBox supports loading data asynchronously, and will display a progress circl
 set by the `loadingState` prop. It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
 
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle loading the data. See the docs for more information.
-**Note:** If you provide a `selectedKey` to the Combobox example below, it is your responsibility to update the input text when the `items` change or load.
+
+**Note:** When both `inputValue` and `selectedKey` are controlled, and the `selectedKey` is set to an initial value before the `items` load, you must update the `inputValue` when the `items` load. This can be done by returning `filterText` from the `useAsyncList` load function.
 
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
