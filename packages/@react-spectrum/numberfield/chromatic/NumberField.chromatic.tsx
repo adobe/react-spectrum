@@ -12,7 +12,6 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {Grid, repeat} from '@react-spectrum/layout';
-import inputStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {mergeProps} from '@react-aria/utils';
 import {Meta, Story} from '@storybook/react';
 import {NumberField} from '../src';
@@ -31,7 +30,6 @@ let states = [
 let noLabelStates = [
   {UNSAFE_className: classNames(
     {},
-      classNames(inputStyles, 'focus-ring'),
       classNames(stepperStyles, 'focus-ring')
     )},
   {UNSAFE_className: classNames(
@@ -142,14 +140,14 @@ const TemplateSmall: Story<SpectrumNumberFieldProps> = (args) => (
   </Grid>
 );
 
-// const TemplateWithForcedStyles: Story<SpectrumNumberFieldProps> = (args) => (
-//   <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
-//     {combinationsStyles.map(c => {
-//       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
-//       return <div key={key}><div>{key}</div><NumberField {...args} {...c} /></div>;
-//     })}
-//   </Grid>
-// );
+const TemplateWithForcedStyles: Story<SpectrumNumberFieldProps> = (args) => (
+  <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
+    {combinationsStyles.map(c => {
+      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      return <div key={key}><div>{key}</div><NumberField {...args} {...c} /></div>;
+    })}
+  </Grid>
+);
 
 export const PropDefaults = Template.bind({});
 PropDefaults.storyName = 'default';
@@ -188,7 +186,10 @@ PropCustomWidth.storyName = 'custom width';
 PropCustomWidth.args = {...PropDefaults.args, width: 'size-3000'};
 
 // we can only force the interaction styles on the no visible label stories
-// TODO refactor CSS so all states are top level, otherwise we can't do this one
-// export const PropInteractionStyles = TemplateWithForcedStyles.bind({});
-// PropInteractionStyles.storyName = 'interaction styles';
-// PropInteractionStyles.args = {...PropAriaLabelled.args};
+export const PropInteractionStyles = TemplateWithForcedStyles.bind({});
+PropInteractionStyles.storyName = 'interaction styles';
+PropInteractionStyles.args = {...PropAriaLabelled.args};
+
+export const PropInteractionStylesMinValue = TemplateWithForcedStyles.bind({});
+PropInteractionStylesMinValue.storyName = 'interaction styles min value';
+PropInteractionStylesMinValue.args = {...PropAriaLabelled.args, minValue: 10, defaultValue: 10};

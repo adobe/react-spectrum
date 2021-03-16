@@ -28,7 +28,8 @@ interface GridCellProps {
   isDisabled?: boolean,
 
   /* when a cell is focused, should the cell or it's first focusable item be focused */
-  focusMode?: 'child' | 'cell'
+  focusMode?: 'child' | 'cell',
+  shouldSelectOnPressUp?: boolean
 }
 
 interface GridCellAria {
@@ -41,7 +42,8 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     ref,
     isVirtualized,
     isDisabled,
-    focusMode = 'child'
+    focusMode = 'child',
+    shouldSelectOnPressUp
   } = props;
 
   let {direction} = useLocale();
@@ -71,7 +73,8 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     key: node.key,
     ref,
     isVirtualized,
-    focus
+    focus,
+    shouldSelectOnPressUp
   });
 
   // TODO: move into useSelectableItem?
