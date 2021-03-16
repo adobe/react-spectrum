@@ -27,7 +27,9 @@ function pointerEvent(type, opts) {
     ctrlKey: false,
     metaKey: false,
     shiftKey: false,
-    button: opts.button || 0
+    button: opts.button || 0,
+    width: 1,
+    height: 1
   }, opts);
   return evt;
 }
@@ -277,6 +279,50 @@ describe('usePress', function () {
       ]);
     });
 
+    it('should cancel press on dragstart', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, new MouseEvent('dragstart', {bubbles: true, cancelable: true, composed: true}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        }
+      ]);
+    });
+
     it('should handle modifier keys', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
@@ -377,6 +423,85 @@ describe('usePress', function () {
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
       expect(document.activeElement).toBe(el);
+    });
+
+    it('should prevent default on pointerdown and mousedown by default', function () {
+      let res = render(
+        <Example />
+      );
+
+      let el = res.getByText('test');
+      let allowDefault = fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      expect(allowDefault).toBe(false);
+
+      allowDefault = fireEvent.mouseDown(el);
+      expect(allowDefault).toBe(false);
+    });
+
+    it('should not prevent default when in a draggable container', function () {
+      let res = render(
+        <div draggable="true">
+          <Example />
+        </div>
+      );
+
+      let el = res.getByText('test');
+      let allowDefault = fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      expect(allowDefault).toBe(true);
+
+      allowDefault = fireEvent.mouseDown(el);
+      expect(allowDefault).toBe(true);
+    });
+
+    it('should detect virtual pointer events', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        }
+      ]);
     });
   });
 
@@ -667,6 +792,72 @@ describe('usePress', function () {
       fireEvent.click(el);
 
       expect(document.activeElement).toBe(el);
+    });
+
+    it('should prevent default on mousedown by default', function () {
+      let res = render(
+        <Example />
+      );
+
+      let el = res.getByText('test');
+      let allowDefault = fireEvent.mouseDown(el);
+      expect(allowDefault).toBe(false);
+    });
+
+    it('should not prevent default when in a draggable container', function () {
+      let res = render(
+        <div draggable="true">
+          <Example />
+        </div>
+      );
+
+      let el = res.getByText('test');
+      let allowDefault = fireEvent.mouseDown(el);
+      expect(allowDefault).toBe(true);
+    });
+
+    it('should cancel press on dragstart', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent.mouseDown(el, {detail: 1});
+      fireEvent(el, new MouseEvent('dragstart', {bubbles: true, cancelable: true, composed: true}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        }
+      ]);
     });
   });
 
@@ -1093,6 +1284,50 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false
+        }
+      ]);
+    });
+
+    it('should cancel press on dragstart', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent(el, new MouseEvent('dragstart', {bubbles: true, cancelable: true, composed: true}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'touch',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'touch',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
         }
       ]);
     });
