@@ -180,10 +180,11 @@ export function useDrop(options: DropOptions): DropResult {
       // Otherwise, map native drag items to items of a single representation.
       if (!hasCustomType) {
         for (let item of e.dataTransfer.items) {
+          let data = e.dataTransfer.getData(item.type);
           if (item.kind === 'string') {
             items.push({
               types: new Set([item.type]),
-              getData: () => new Promise(resolve => item.getAsString(resolve))
+              getData: () => Promise.resolve(data)
             });
           } else if (item.kind === 'file') {
             // TODO: file support
