@@ -2805,23 +2805,21 @@ describe('Table', function () {
         .mockImplementationOnce(() => addItem(2))
         .mockImplementationOnce(() => addItem(3));
 
-      let TableMock = (props) => {
-        return (
-          <Table aria-label="Table">
-            <TableHeader>
-              <Column key="foo">Foo</Column>
-              <Column key="bar">Bar</Column>
-            </TableHeader>
-            <TableBody items={props.items} onLoadMore={onLoadMoreSpy}>
-              {row => (
-                <Row>
-                  {key => <Cell>{row[key]}</Cell>}
-                </Row>
-              )}
-            </TableBody>
-          </Table>
-        );
-      };
+      let TableMock = (props) => (
+        <Table aria-label="Table">
+          <TableHeader>
+            <Column key="foo">Foo</Column>
+            <Column key="bar">Bar</Column>
+          </TableHeader>
+          <TableBody items={props.items} onLoadMore={onLoadMoreSpy}>
+            {row => (
+              <Row>
+                {key => <Cell>{row[key]}</Cell>}
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+      );
 
       let tree = render(<TableMock items={items} />);
       act(() => jest.runAllTimers());
@@ -2836,7 +2834,7 @@ describe('Table', function () {
       );
       Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
         configurable: true,
-        value: 1000,
+        value: 1000
       });
 
       rerender(tree, <TableMock items={items} />);

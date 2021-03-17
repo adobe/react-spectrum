@@ -796,7 +796,7 @@ describe('ListBox', function () {
       );
       Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
         configurable: true,
-        value: 300,
+        value: 300
       });
 
       // Trigger useLayoutEffect, onVisibleRectChange won't fire anymore since ScrollView's
