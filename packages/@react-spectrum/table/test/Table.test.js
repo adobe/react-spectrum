@@ -58,6 +58,7 @@ for (let i = 1; i <= 100; i++) {
 
 describe('Table', function () {
   let offsetWidth, offsetHeight;
+
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
@@ -2794,29 +2795,53 @@ describe('Table', function () {
     });
 
     it('should automatically fire onLoadMore it there aren\'t enough items to fill the Table', function () {
-      let items = [];
-      for (let i = 1; i <= 15; i++) {
+      let items = [{id: 1, foo: 'Foo 1', bar: 'Bar 1'}];
+      let addItem = (i) => {
         items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
-      }
+      };
 
-      let onLoadMore = jest.fn();
-      render(
-        <Table aria-label="Table">
-          <TableHeader>
-            <Column key="foo">Foo</Column>
-            <Column key="bar">Bar</Column>
-          </TableHeader>
-          <TableBody items={items} onLoadMore={onLoadMore}>
-            {row => (
-              <Row>
-                {key => <Cell>{row[key]}</Cell>}
-              </Row>
-            )}
-          </TableBody>
-        </Table>
+      let onLoadMoreSpy = jest
+        .fn()
+        .mockImplementationOnce(addItem(2))
+        .mockImplementationOnce(addItem(3));
+
+      let TableMock = (props) => {
+        return (
+          <Table aria-label="Table" height={1000}>
+            <TableHeader>
+              <Column key="foo">Foo</Column>
+              <Column key="bar">Bar</Column>
+            </TableHeader>
+            <TableBody items={props.items} onLoadMore={onLoadMoreSpy}>
+              {row => (
+                <Row>
+                  {key => <Cell>{row[key]}</Cell>}
+                </Row>
+              )}
+            </TableBody>
+          </Table>
+        );
+      };
+
+      let tree = render(<TableMock items={items} />);
+      // first loadMore triggered by onVisibleRectChange
+      expect(onLoadMoreSpy).toHaveBeenCalledTimes(1);
+
+      // Mocking element offset height so ref.offsetHeight returns a value
+      const originalOffsetHeight = Object.getOwnPropertyDescriptor(
+        HTMLElement.prototype,
+        'offsetHeight'
       );
-      // Table is 1000px tall, 15 items x 41px doesn't fill up the table
-      expect(onLoadMore).toHaveBeenCalledTimes(1);
+      Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
+        configurable: true,
+        value: 1000,
+      });
+
+      rerender(tree, <TableMock items={items} />);
+      // second loadMore triggered by useLayoutEffect since there aren't enough items to fill the screen
+      expect(onLoadMoreSpy).toHaveBeenCalledTimes(2);
+
+      Object.defineProperty(HTMLElement.prototype, 'offsetHeight', originalOffsetHeight);
     });
 
     it('should display an empty state when there are no items', function () {
