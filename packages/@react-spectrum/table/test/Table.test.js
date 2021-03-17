@@ -2794,7 +2794,7 @@ describe('Table', function () {
       expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
-    it('should automatically fire onLoadMore it there aren\'t enough items to fill the Table', function () {
+    it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
       let items = [{id: 1, foo: 'Foo 1', bar: 'Bar 1'}];
       let addItem = (i) => {
         items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
@@ -2802,12 +2802,12 @@ describe('Table', function () {
 
       let onLoadMoreSpy = jest
         .fn()
-        .mockImplementationOnce(addItem(2))
-        .mockImplementationOnce(addItem(3));
+        .mockImplementationOnce(() => addItem(2))
+        .mockImplementationOnce(() => addItem(3));
 
       let TableMock = (props) => {
         return (
-          <Table aria-label="Table" height={1000}>
+          <Table aria-label="Table">
             <TableHeader>
               <Column key="foo">Foo</Column>
               <Column key="bar">Bar</Column>
@@ -2824,10 +2824,12 @@ describe('Table', function () {
       };
 
       let tree = render(<TableMock items={items} />);
+      act(() => jest.runAllTimers());
       // first loadMore triggered by onVisibleRectChange
       expect(onLoadMoreSpy).toHaveBeenCalledTimes(1);
 
       // Mocking element offset height so ref.offsetHeight returns a value
+      // Only mocking offsetHeight now so we can be sure the only loadMores are from onVisibleRectChange
       const originalOffsetHeight = Object.getOwnPropertyDescriptor(
         HTMLElement.prototype,
         'offsetHeight'
@@ -2838,6 +2840,7 @@ describe('Table', function () {
       });
 
       rerender(tree, <TableMock items={items} />);
+      act(() => jest.runAllTimers());
       // second loadMore triggered by useLayoutEffect since there aren't enough items to fill the screen
       expect(onLoadMoreSpy).toHaveBeenCalledTimes(2);
 

@@ -763,5 +763,55 @@ describe('ListBox', function () {
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
+
+    it('should fire onLoadMore if there aren\'t enough items to fill the ListBox ', function () {
+      // Mock clientHeight to match maxHeight prop
+      let maxHeight = 300;
+      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => maxHeight);
+
+      let onLoadMore = jest.fn();
+      let items = [];
+      for (let i = 1; i <= 5; i++) {
+        items.push({name: 'Test ' + i});
+      }
+
+      let {getByRole, rerender} = render(
+        <Provider theme={theme}>
+          <ListBox aria-label="listbox" items={items} maxHeight={maxHeight} onLoadMore={onLoadMore}>
+            {item => <Item key={item.name}>{item.name}</Item>}
+          </ListBox>
+        </Provider>
+      );
+
+      let listbox = getByRole('listbox');
+      let options = within(listbox).getAllByRole('option');
+      expect(options.length).toBe(5);
+      // onLoadMore called twice from onVisibleRectChange due to ListBox sizeToFit
+      expect(onLoadMore).toHaveBeenCalledTimes(2);
+
+      // Mock offsetHeight so ScrollView ref.current.offsetHeight is defined now
+      const originalOffsetHeight = Object.getOwnPropertyDescriptor(
+        HTMLElement.prototype,
+        'offsetHeight'
+      );
+      Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
+        configurable: true,
+        value: 300,
+      });
+
+      // Trigger useLayoutEffect, onVisibleRectChange won't fire anymore since ScrollView's
+      // state height is equal to contentSize height
+      rerender(
+        <Provider theme={theme}>
+          <ListBox aria-label="listbox" items={items} maxHeight={maxHeight} onLoadMore={onLoadMore}>
+            {item => <Item key={item.name}>{item.name}</Item>}
+          </ListBox>
+        </Provider>
+      );
+      // onLoadMore called since ScrollView height is greater than content height
+      expect(onLoadMore).toHaveBeenCalledTimes(3);
+
+      Object.defineProperty(HTMLElement.prototype, 'offsetHeight', originalOffsetHeight);
+    });
   });
 });
