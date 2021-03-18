@@ -227,7 +227,7 @@ governing permissions and limitations under the License.
   position: absolute;
   height: var(--spectrum-icon-info-medium-height);
   width: var(--spectrum-icon-info-medium-width);
-  inset-inline-start: var(--spectrum-global-dimension-size-100);
+  inset-inline-start: var(--spectrum-global-dimension-size-150);
   top: var(--spectrum-global-dimension-size-85);
   transition: fill var(--spectrum-global-animation-duration-100) ease-in-out;
 }
