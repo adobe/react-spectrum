@@ -62,3 +62,10 @@ export class DragEvent extends MouseEvent {
     this.dataTransfer = init.dataTransfer;
   }
 }
+
+export class ClipboardEvent extends Event {
+  constructor(type, init) {
+    super(type, {...init, bubbles: true, cancelable: true, composed: true});
+    this.clipboardData = init.clipboardData;
+  }
+}

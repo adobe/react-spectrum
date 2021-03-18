@@ -21,7 +21,7 @@ import {Item} from '@react-stately/collections';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
-import {useDropIndicator, useDroppableCollection} from '..';
+import {useClipboard, useDropIndicator, useDroppableCollection} from '..';
 import {useDroppableCollectionState} from '@react-stately/dnd';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListData} from '@react-stately/data';
@@ -231,7 +231,8 @@ function DroppableGrid(props) {
             key={item.key}
             item={item}
             state={gridState}
-            dropState={dropState} />
+            dropState={dropState}
+            onPaste={items => props.onDrop({target: {type: 'item', key: item.key, dropPosition: 'before'}, items})} />
           {state.collection.getKeyAfter(item.key) == null &&
             <InsertionIndicator
               key={item.key + '-after'}
@@ -245,7 +246,7 @@ function DroppableGrid(props) {
   );
 }
 
-function CollectionItem({item, state, dropState}) {
+function CollectionItem({item, state, dropState, onPaste}) {
   let rowRef = React.useRef();
   let cellRef = React.useRef();
   let cellNode = [...item.childNodes][0];
@@ -269,11 +270,15 @@ function CollectionItem({item, state, dropState}) {
   }, dropState, dropIndicatorRef);
   let {visuallyHiddenProps} = useVisuallyHidden();
 
+  let {clipboardProps} = useClipboard({
+    onPaste
+  });
+
   return (
     <div {...rowProps} ref={rowRef} style={{outline: 'none'}}>
       <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
         <div
-          {...gridCellProps}
+          {...mergeProps(gridCellProps, clipboardProps)}
           ref={cellRef}
           className={classNames(dndStyles, 'droppable', {
             'is-drop-target': dropState.isDropTarget({type: 'item', key: item.key, dropPosition: 'on'}),

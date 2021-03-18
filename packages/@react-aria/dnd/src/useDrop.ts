@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {CUSTOM_DRAG_TYPE, DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
 import {DragEvent, HTMLAttributes, RefObject, useLayoutEffect, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
-import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropMoveEvent, DropOperation} from '@react-types/shared';
+import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
+import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation} from '@react-types/shared';
+import {readFromDataTransfer} from './utils';
 import {useVirtualDrop} from './useVirtualDrop';
 
 interface DropOptions {
@@ -154,46 +155,7 @@ export function useDrop(options: DropOptions): DropResult {
 
     if (typeof options.onDrop === 'function') {
       let dropOperation = DROP_EFFECT_TO_DROP_OPERATION[state.dropEffect];
-      let items: DropItem[] = [];
-
-      // If our custom drag type is available, use that. This is a JSON serialized
-      // representation of all items in the drag, set when there are multiple items
-      // of the same type, or an individual item has multiple representations.
-      let hasCustomType = false;
-      if ([...e.dataTransfer.types].includes(CUSTOM_DRAG_TYPE)) {
-        try {
-          let data = e.dataTransfer.getData(CUSTOM_DRAG_TYPE);
-          let parsed = JSON.parse(data);
-          for (let item of parsed) {
-            items.push({
-              types: new Set(Object.keys(item)),
-              getData: (type) => item[type]
-            });
-          }
-
-          hasCustomType = true;
-        } catch (e) {
-          // ignore
-        }
-      }
-
-      // Otherwise, map native drag items to items of a single representation.
-      if (!hasCustomType) {
-        for (let item of e.dataTransfer.items) {
-          if (item.kind === 'string') {
-            items.push({
-              types: new Set([item.type]),
-              getData: () => new Promise(resolve => item.getAsString(resolve))
-            });
-          } else if (item.kind === 'file') {
-            // TODO: file support
-            // items.push({
-            //   types: new Set([item.type]),
-            //   getData: () => Promise.resolve(item.getAsFile()) // ???
-            // });
-          }
-        }
-      }
+      let items = readFromDataTransfer(e.dataTransfer);
 
       let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
       let event: DropEvent = {
