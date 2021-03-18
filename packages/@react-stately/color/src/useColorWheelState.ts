@@ -39,7 +39,9 @@ export interface ColorWheelState {
   /** Whether the cxolor wheel is currently being dragged. */
   readonly isDragging: boolean,
   /** Sets whether the color wheel is being dragged. */
-  setDragging(value: boolean): void
+  setDragging(value: boolean): void,
+  /** Returns the color that should be displayed in the color wheel instead of `value`. */
+  getDisplayColor(): Color
 }
 
 function normalizeColor(v: string | Color) {
@@ -161,6 +163,9 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
         return isDragging;
       });
     },
-    isDragging
+    isDragging,
+    getDisplayColor() {
+      return value.withChannelValue('saturation', 100).withChannelValue('lightness', 50);
+    }
   };
 }

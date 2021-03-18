@@ -94,9 +94,9 @@ remaining track distance there is from the step prior.
 
 ## Events
 
-ColorWheel accepts two events, `onChange` and `onChangeEnd`. The former is triggered whenever the ColorWheel's handle is dragged while the
-latter fires when the user stops dragging the handle. Note that a <TypeLink links={colorTypes.links} type={colorTypes.exports.Color} /> object
-is returned by `onChange` and `onChangeEnd`.
+ColorWheel supports two events: `onChange` and `onChangeEnd`. `onChange` is triggered whenever the ColorWheel's handle is dragged, and `onChangeEnd`
+is triggered when the user stops dragging the handle. Both events receive a <TypeLink links={colorTypes.links} type={colorTypes.exports.Color} /> object
+as a parameter.
 
 The example below uses `onChange` and `onChangeEnd` to update two separate elements with the ColorWheel's value.
 
