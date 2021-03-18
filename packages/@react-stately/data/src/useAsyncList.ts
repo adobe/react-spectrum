@@ -274,19 +274,20 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     let abortController = new AbortController();
     try {
       dispatch({...action, abortController});
+      let previousFilterText = action.filterText ?? data.filterText;
       let response = await fn({
         items: data.items.slice(),
         selectedKeys: data.selectedKeys,
         sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
         signal: abortController.signal,
         cursor: action.type === 'loadingMore' ? data.cursor : null,
-        filterText: action.filterText ?? data.filterText
+        filterText: previousFilterText
       });
 
-      let previousFilterText = action.filterText ?? data.filterText;
       let filterText = response.filterText ?? previousFilterText;
       dispatch({type: 'success', ...response, abortController});
-      // Fetch a new filtered list if filterText is updated via a updated filterText returned by `load` func rather than list.setFilterText
+      // Fetch a new filtered list if filterText is updated via `load` response func rather than list.setFilterText
+      // Only do this if not aborted (e.g. user triggers another filter action before load completes)
       if (filterText && (filterText !== previousFilterText) && !abortController.signal.aborted) {
         dispatchFetch({type: 'filtering', filterText}, load);
       }
