@@ -2796,6 +2796,7 @@ describe('Table', function () {
 
     it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
       let items = [{id: 1, foo: 'Foo 1', bar: 'Bar 1'}];
+      let onLoadMoreSpy = jest.fn();
 
       let TableMock = (props) => (
         <Table aria-label="Table">
