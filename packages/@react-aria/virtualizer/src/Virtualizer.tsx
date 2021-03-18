@@ -85,11 +85,11 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
 
   useLayoutEffect(() => {
     if (!isLoading && onLoadMore && !state.isAnimating) {
-      if (ref.current?.offsetHeight >= state.contentSize.height) {
+      if (state.contentSize.height <= state.virtualizer.visibleRect.height) {
         onLoadMore();
       }
     }
-  }, [state.contentSize, state.isAnimating, onLoadMore, isLoading, ref]);
+  }, [state.contentSize, state.isAnimating, state.virtualizer, onLoadMore, isLoading]);
 
   return (
     <ScrollView

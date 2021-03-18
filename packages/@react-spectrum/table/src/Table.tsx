@@ -331,11 +331,11 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
 
   useLayoutEffect(() => {
     if (!collection.body.props.isLoading && collection.body.props.onLoadMore && !state.isAnimating) {
-      if (bodyRef.current?.offsetHeight >= state.contentSize.height) {
+      if (state.contentSize.height <= state.virtualizer.visibleRect.height) {
         collection.body.props.onLoadMore();
       }
     }
-  }, [state.contentSize, state.isAnimating, collection.body.props, bodyRef]);
+  }, [state.contentSize, state.virtualizer, state.isAnimating, collection.body.props]);
 
   return (
     <div

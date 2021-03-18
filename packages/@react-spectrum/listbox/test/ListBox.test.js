@@ -775,7 +775,7 @@ describe('ListBox', function () {
         items.push({name: 'Test ' + i});
       }
 
-      let {getByRole, rerender} = render(
+      let {getByRole} = render(
         <Provider theme={theme}>
           <ListBox aria-label="listbox" items={items} maxHeight={maxHeight} onLoadMore={onLoadMore}>
             {item => <Item key={item.name}>{item.name}</Item>}
@@ -787,31 +787,8 @@ describe('ListBox', function () {
       let options = within(listbox).getAllByRole('option');
       expect(options.length).toBe(5);
       // onLoadMore called twice from onVisibleRectChange due to ListBox sizeToFit
-      expect(onLoadMore).toHaveBeenCalledTimes(2);
-
-      // Mock offsetHeight so ScrollView ref.current.offsetHeight is defined now
-      const originalOffsetHeight = Object.getOwnPropertyDescriptor(
-        HTMLElement.prototype,
-        'offsetHeight'
-      );
-      Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
-        configurable: true,
-        value: 300
-      });
-
-      // Trigger useLayoutEffect, onVisibleRectChange won't fire anymore since ScrollView's
-      // state height is equal to contentSize height
-      rerender(
-        <Provider theme={theme}>
-          <ListBox aria-label="listbox" items={items} maxHeight={maxHeight} onLoadMore={onLoadMore}>
-            {item => <Item key={item.name}>{item.name}</Item>}
-          </ListBox>
-        </Provider>
-      );
-      // onLoadMore called since ScrollView height is greater than content height
-      expect(onLoadMore).toHaveBeenCalledTimes(3);
-
-      Object.defineProperty(HTMLElement.prototype, 'offsetHeight', originalOffsetHeight);
+      // onLoadMore called three times from useLayoutEffect
+      expect(onLoadMore).toHaveBeenCalledTimes(5);
     });
   });
 });
