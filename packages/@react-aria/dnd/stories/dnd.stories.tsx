@@ -187,8 +187,7 @@ function Draggable() {
   let {dragProps, dragButtonProps, isDragging} = useDrag({
     getItems() {
       return [{
-        types: ['text/plain'],
-        getData: () => 'hello world'
+        'text/plain': 'hello world'
       }];
     },
     getAllowedDropOperations() {
@@ -202,8 +201,7 @@ function Draggable() {
   let {clipboardProps} = useClipboard({
     getItems() {
       return [{
-        types: ['text/plain'],
-        getData: () => 'hello world'
+        'text/plain': 'hello world'
       }];
     }
   });
@@ -336,10 +334,8 @@ function DraggableCollection(props) {
 
         return {
           // @ts-ignore
-          types: ['text/plain', item.value.type],
-          getData() {
-            return item.textValue;
-          }
+          [item.value.type]: item.textValue,
+          'text/plain': item.textValue
         };
       });
     },

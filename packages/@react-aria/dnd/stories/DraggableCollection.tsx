@@ -88,10 +88,8 @@ function DraggableCollection(props) {
 
         return {
           // @ts-ignore
-          types: ['text/plain', item.value.type],
-          getData() {
-            return item.textValue;
-          }
+          [item.value.type]: item.textValue,
+          'text/plain': item.textValue
         };
       });
     },

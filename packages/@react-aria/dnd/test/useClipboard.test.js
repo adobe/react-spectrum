@@ -20,8 +20,7 @@ function Copyable(props) {
   let {clipboardProps} = useClipboard({
     getItems: () => [
       {
-        types: ['text/plain'],
-        getData: () => 'hello world'
+        'text/plain': 'hello world'
       }
     ],
     ...props
@@ -165,12 +164,13 @@ describe('useClipboard', () => {
     expect(onPaste).toHaveBeenCalledTimes(1);
     expect(onPaste).toHaveBeenCalledWith([
       {
+        kind: 'text',
         types: new Set(['text/plain']),
-        getData: expect.any(Function)
+        getText: expect.any(Function)
       }
     ]);
 
-    expect(await onPaste.mock.calls[0][0][0].getData('text/plain')).toBe('hello world');
+    expect(await onPaste.mock.calls[0][0][0].getText('text/plain')).toBe('hello world');
   });
 
   it('should only enable pasting when focused', () => {
@@ -201,8 +201,7 @@ describe('useClipboard', () => {
   describe('data', () => {
     it('should work with custom data types', async () => {
       let getItems = () => [{
-        types: ['test'],
-        getData: () => 'test data'
+        test: 'test data'
       }];
 
       let onPaste = jest.fn();
@@ -220,21 +219,20 @@ describe('useClipboard', () => {
       expect(onPaste).toHaveBeenCalledTimes(1);
       expect(onPaste).toHaveBeenCalledWith([
         {
+          kind: 'text',
           types: new Set(['test']),
-          getData: expect.any(Function)
+          getText: expect.any(Function)
         }
       ]);
 
-      expect(await onPaste.mock.calls[0][0][0].getData('test')).toBe('test data');
+      expect(await onPaste.mock.calls[0][0][0].getText('test')).toBe('test data');
     });
 
     it('should work with multiple items of the same custom type', async () => {
       let getItems = () => [{
-        types: ['test'],
-        getData: () => 'item 1'
+        test: 'item 1'
       }, {
-        types: ['test'],
-        getData: () => 'item 2'
+        test: 'item 2'
       }];
 
       let onPaste = jest.fn();
@@ -258,23 +256,25 @@ describe('useClipboard', () => {
       expect(onPaste).toHaveBeenCalledTimes(1);
       expect(onPaste).toHaveBeenCalledWith([
         {
+          kind: 'text',
           types: new Set(['test']),
-          getData: expect.any(Function)
+          getText: expect.any(Function)
         },
         {
+          kind: 'text',
           types: new Set(['test']),
-          getData: expect.any(Function)
+          getText: expect.any(Function)
         }
       ]);
 
-      expect(await onPaste.mock.calls[0][0][0].getData('test')).toBe('item 1');
-      expect(await onPaste.mock.calls[0][0][1].getData('test')).toBe('item 2');
+      expect(await onPaste.mock.calls[0][0][0].getText('test')).toBe('item 1');
+      expect(await onPaste.mock.calls[0][0][1].getText('test')).toBe('item 2');
     });
 
     it('should work with items of multiple types', async () => {
       let getItems = () => [{
-        types: ['test', 'text/plain'],
-        getData: () => 'test data'
+        test: 'test data',
+        'text/plain': 'test data'
       }];
 
       let onPaste = jest.fn();
@@ -299,22 +299,23 @@ describe('useClipboard', () => {
       expect(onPaste).toHaveBeenCalledTimes(1);
       expect(onPaste).toHaveBeenCalledWith([
         {
+          kind: 'text',
           types: new Set(['test', 'text/plain']),
-          getData: expect.any(Function)
+          getText: expect.any(Function)
         }
       ]);
 
-      expect(await onPaste.mock.calls[0][0][0].getData('test')).toBe('test data');
-      expect(await onPaste.mock.calls[0][0][0].getData('text/plain')).toBe('test data');
+      expect(await onPaste.mock.calls[0][0][0].getText('test')).toBe('test data');
+      expect(await onPaste.mock.calls[0][0][0].getText('text/plain')).toBe('test data');
     });
 
     it('should work with multiple items of multiple types', async () => {
       let getItems = () => [{
-        types: ['test', 'text/plain'],
-        getData: () => 'item 1'
+        test: 'item 1',
+        'text/plain': 'item 1'
       }, {
-        types: ['test', 'text/plain'],
-        getData: () => 'item 2'
+        test: 'item 2',
+        'text/plain': 'item 2'
       }];
 
       let onPaste = jest.fn();
@@ -342,19 +343,21 @@ describe('useClipboard', () => {
       expect(onPaste).toHaveBeenCalledTimes(1);
       expect(onPaste).toHaveBeenCalledWith([
         {
+          kind: 'text',
           types: new Set(['test', 'text/plain']),
-          getData: expect.any(Function)
+          getText: expect.any(Function)
         },
         {
+          kind: 'text',
           types: new Set(['test', 'text/plain']),
-          getData: expect.any(Function)
+          getText: expect.any(Function)
         }
       ]);
 
-      expect(await onPaste.mock.calls[0][0][0].getData('test')).toBe('item 1');
-      expect(await onPaste.mock.calls[0][0][0].getData('text/plain')).toBe('item 1');
-      expect(await onPaste.mock.calls[0][0][1].getData('test')).toBe('item 2');
-      expect(await onPaste.mock.calls[0][0][1].getData('text/plain')).toBe('item 2');
+      expect(await onPaste.mock.calls[0][0][0].getText('test')).toBe('item 1');
+      expect(await onPaste.mock.calls[0][0][0].getText('text/plain')).toBe('item 1');
+      expect(await onPaste.mock.calls[0][0][1].getText('test')).toBe('item 2');
+      expect(await onPaste.mock.calls[0][0][1].getText('text/plain')).toBe('item 2');
     });
   });
 });

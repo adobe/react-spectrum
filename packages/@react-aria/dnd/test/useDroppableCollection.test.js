@@ -205,8 +205,9 @@ describe('useDroppableCollection', () => {
         dropOperation: 'move',
         items: [
           {
+            kind: 'text',
             types: new Set(['text/plain']),
-            getData: expect.any(Function)
+            getText: expect.any(Function)
           }
         ]
       });
@@ -215,7 +216,7 @@ describe('useDroppableCollection', () => {
       cells = within(grid).getAllByRole('gridcell');
       expect(cells.map(cell => cell.textContent)).toEqual(['One', 'Two', 'hello world', 'Three']);
 
-      expect(await onDrop.mock.calls[0][0].items[0].getData('text/plain')).toBe('hello world');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
     });
 
     it('should auto scroll when near the bottom', () => {
@@ -326,8 +327,9 @@ describe('useDroppableCollection', () => {
         dropOperation: 'move',
         items: [
           {
+            kind: 'text',
             types: new Set(['text/plain']),
-            getData: expect.any(Function)
+            getText: expect.any(Function)
           }
         ]
       });
@@ -336,7 +338,7 @@ describe('useDroppableCollection', () => {
       cells = within(grid).getAllByRole('gridcell');
       expect(cells.map(cell => cell.textContent)).toEqual(['One', 'hello world', 'Two', 'Three']);
 
-      expect(await onDrop.mock.calls[0][0].items[0].getData('text/plain')).toBe('hello world');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
     });
 
     it('should support arrow key navigation', () => {
@@ -814,8 +816,9 @@ describe('useDroppableCollection', () => {
         dropOperation: 'move',
         items: [
           {
+            kind: 'text',
             types: new Set(['text/plain']),
-            getData: expect.any(Function)
+            getText: expect.any(Function)
           }
         ]
       });
@@ -824,7 +827,7 @@ describe('useDroppableCollection', () => {
       cells = within(grid).getAllByRole('gridcell');
       expect(cells.map(cell => cell.textContent)).toEqual(['One', 'hello world', 'Two', 'Three']);
 
-      expect(await onDrop.mock.calls[0][0].items[0].getData('text/plain')).toBe('hello world');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
     });
 
     it('should add descriptions to each item', () => {
