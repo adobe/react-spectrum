@@ -547,6 +547,7 @@ function AsyncLoadingExample() {
       let json = await res.json();
       // Slow down load so progress circle can appear
       await new Promise(resolve => setTimeout(resolve, 1500));
+
       return {
         items: json.results,
         cursor: json.next
@@ -607,7 +608,7 @@ function AsyncLoadingExampleControlledKey() {
     list.setFilterText(value);
   };
 
-  let selectedKey = list.selectedKeys === 'all' ? null : list.selectedKeys.values().next().value;
+  let selectedKey = (list.selectedKeys as Set<React.Key>).values().next().value;
   return (
     <ComboBox
       label="Star Wars Character Lookup"
@@ -675,7 +676,7 @@ function AsyncLoadingExampleControlledKeyWithReset() {
     list.setFilterText(value);
   };
 
-  let selectedKey = list.selectedKeys === 'all' ? null : list.selectedKeys.values().next().value;
+  let selectedKey = (list.selectedKeys as Set<React.Key>).values().next().value;
   return (
     <ComboBox
       onFocus={() => setFocused(true)}
