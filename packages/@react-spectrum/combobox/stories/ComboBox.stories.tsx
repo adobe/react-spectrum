@@ -568,50 +568,36 @@ function AsyncLoadingExample() {
   );
 }
 
-
 function AsyncLoadingExampleControlledKey() {
   interface StarWarsChar {
     name: string,
     url: string
   }
 
-  // let [selectedKey, setSelectedKey] = useState('Luke Skywalker');
-  let [isFocused, setFocused] = useState(false);
   let list = useAsyncList<StarWarsChar>({
-    async load({signal, cursor, filterText, selectedKeys}) {
+    async load({signal, cursor, filterText}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
-
 
       let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
       // Slow down load so progress circle can appear
       await new Promise(resolve => setTimeout(resolve, 1500));
 
-      let selectedText;
-      let selectedKey = selectedKeys.values().next().value;
-      // If selectedKey exists and combobox isn't focused, update the input value with the selected key text
-      if (!isFocused && selectedKey) {
-        let selectedItemName = json.results.find(item => item.name === selectedKey)?.name;
-        if (selectedItemName != null && selectedItemName !== filterText) {
-          selectedText = selectedItemName;
-        }
-      }
-
       return {
         items: json.results,
-        cursor: json.next,
-        filterText: selectedText ?? filterText
+        cursor: json.next
       };
     },
-    initialSelectedKeys: ["Luke Skywalker"]
+    initialSelectedKeys: ['Luke Skywalker'],
+    getKey: (item) => item.name
   });
 
   let onSelectionChange = (key) => {
-    // let itemText = list.getItem(key).name;
+    let itemText = list.getItem(key)?.name;
     list.setSelectedKeys(new Set([key]));
-    list.setFilterText(key);
+    list.setFilterText(itemText);
   };
 
   let onInputChange = (value) => {
@@ -621,12 +607,11 @@ function AsyncLoadingExampleControlledKey() {
     list.setFilterText(value);
   };
 
+  let selectedKey = list.selectedKeys === 'all' ? null : list.selectedKeys.values().next().value;
   return (
     <ComboBox
-      onFocus={() => setFocused(true)}
-      onBlur={() => setFocused(false)}
       label="Star Wars Character Lookup"
-      selectedKey={list.selectedKeys.values().next().value}
+      selectedKey={selectedKey}
       onSelectionChange={onSelectionChange}
       items={list.items}
       inputValue={list.filterText}
@@ -645,11 +630,9 @@ function AsyncLoadingExampleControlledKeyWithReset() {
     url: string
   }
 
-  let [selectedKey, setSelectedKey] = useState('Luke Skywalker');
   let [isFocused, setFocused] = useState(false);
-
   let list = useAsyncList<StarWarsChar>({
-    async load({signal, cursor, filterText}) {
+    async load({signal, cursor, filterText, selectedKeys}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
@@ -659,33 +642,40 @@ function AsyncLoadingExampleControlledKeyWithReset() {
       // Slow down load so progress circle can appear
       await new Promise(resolve => setTimeout(resolve, 1500));
 
+      let selectedText;
+      let selectedKey = (selectedKeys as Set<React.Key>).values().next().value;
+
       // If selectedKey exists and combobox isn't focused, update the input value with the selected key text
       if (!isFocused && selectedKey) {
-        let selectedItemName = json.results.find(item => item.name === selectedKey)?.name ?? '';
-        if (selectedItemName !== filterText) {
-          list.setFilterText(selectedItemName);
+        let selectedItemName = json.results.find(item => item.name === selectedKey)?.name;
+        if (selectedItemName != null && selectedItemName !== filterText) {
+          selectedText = selectedItemName;
         }
       }
-
       return {
         items: json.results,
-        cursor: json.next
+        cursor: json.next,
+        filterText: selectedText ?? filterText
       };
-    }
+    },
+    initialSelectedKeys: ['Luke Skywalker'],
+    getKey: (item) => item.name
   });
 
   let onSelectionChange = (key) => {
-    setSelectedKey(key);
-    list.setFilterText(key);
+    let itemText = list.getItem(key)?.name;
+    list.setSelectedKeys(new Set([key]));
+    list.setFilterText(itemText);
   };
 
   let onInputChange = (value) => {
     if (value === '') {
-      setSelectedKey(null);
+      list.setSelectedKeys(new Set([null]));
     }
     list.setFilterText(value);
   };
 
+  let selectedKey = list.selectedKeys === 'all' ? null : list.selectedKeys.values().next().value;
   return (
     <ComboBox
       onFocus={() => setFocused(true)}

@@ -112,7 +112,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
   let isInitialRender = useRef(true);
   let lastSelectedKey = useRef(props.selectedKey ?? props.defaultSelectedKey ?? null);
-  let lastCollection = useRef(collection);
+  let lastSelectedKeyText = useRef(collection.getItem(selectedKey)?.textValue ?? '');
   useEffect(() => {
     // If open state or inputValue is uncontrolled, open and close automatically when the input value changes,
     // the input is if focused, and there are items in the collection or allowEmptyCollection is true.
@@ -174,21 +174,21 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       lastValue.current = inputValue;
     }
 
-    // Update the inputValue if the selected item's text differs from the current input value but only if the collection is changed.
+    // Update the inputValue if the selected item's text changes from its last tracked value.
     // This is to handle cases where a selectedKey is specified but the items aren't available (async loading) or the selected item's text value updates.
     // Only reset if the user isn't currently within the field so we don't erroneously modify user input.
-    // Trigger only if a selectedKey exists so that allowCustomValue=true user values don't get reset.
     // If inputValue is controlled, it is the user's responsibility to update the inputValue when items change.
-    if (!isFocused && lastCollection.current !== collection && selectedKey != null && props.inputValue === undefined) {
-      let itemText = collection.getItem(selectedKey)?.textValue ?? '';
-      if (inputValue !== itemText) {
-        resetInputValue();
+    let selectedItemText = collection.getItem(selectedKey)?.textValue ?? '';
+    if (!isFocused && selectedKey != null && props.inputValue === undefined && selectedKey === lastSelectedKey.current) {
+      if (lastSelectedKeyText.current !== selectedItemText) {
+        lastValue.current = selectedItemText;
+        setInputValue(selectedItemText);
       }
     }
 
     isInitialRender.current = false;
     lastSelectedKey.current = selectedKey;
-    lastCollection.current = collection;
+    lastSelectedKeyText.current = selectedItemText;
   });
 
   useEffect(() => {

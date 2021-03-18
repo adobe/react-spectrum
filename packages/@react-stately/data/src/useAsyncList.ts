@@ -56,7 +56,9 @@ interface AsyncListStateUpdate<T, C> {
   /** The sort descriptor to set. */
   sortDescriptor?: SortDescriptor,
   /** The pagination cursor to be used for the next page load. */
-  cursor?: C
+  cursor?: C,
+  /** The updated filter text for the list. */
+  filterText?: string
 }
 
 interface AsyncListState<T, C> extends ListState<T> {
@@ -146,19 +148,15 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
           if (action.abortController !== data.abortController) {
             return data;
           }
-          // console.log('success', [...action.items]);
-          // console.log('new state', (action.filterText && action.filterText !== data.filterText) ? 'filtering' : 'idle');
-          // (action.filterText && action.filterText !== data.filterText) && data.abortController.abort();
+
           return {
             ...data,
             filterText: action.filterText ?? data.filterText,
             state: 'idle',
-            // state: (action.filterText && action.filterText !== data.filterText) ? 'filtering' : 'idle',
             items: [...action.items],
             selectedKeys: new Set(action.selectedKeys ?? data.selectedKeys),
             sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
             abortController: null,
-            // abortController: (action.filterText && action.filterText !== data.filterText) ? action.abortController : null,
             cursor: action.cursor
           };
         case 'error':
@@ -191,7 +189,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
           // We're already loading, and an update happened at the same time.
           // We need to abort the previous load.
           data.abortController.abort();
-          console.log('aborting cuz update')
+
           return {
             ...data,
             ...action.updater(data)
@@ -236,7 +234,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
           // We're already loading more, and an update happened at the same time.
           // We need to abort the previous load.
           data.abortController.abort();
-          console.log('aborting cuz update')
+
           return {
             ...data,
             ...action.updater(data)
@@ -288,6 +286,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
       let previousFilterText = action.filterText ?? data.filterText;
       let filterText = response.filterText ?? previousFilterText;
       dispatch({type: 'success', ...response, abortController});
+      // Fetch a new filtered list if filterText is updated via a updated filterText returned by `load` func rather than list.setFilterText
       if (filterText && (filterText !== previousFilterText) && !abortController.signal.aborted) {
         dispatchFetch({type: 'filtering', filterText}, load);
       }
