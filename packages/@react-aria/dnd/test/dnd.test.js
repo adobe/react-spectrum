@@ -13,8 +13,10 @@
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, render, waitFor} from '@testing-library/react';
 import {announce} from '@react-aria/live-announcer';
-import {DataTransfer, DataTransferItem, DragEvent} from './mocks';
+import {CUSTOM_DRAG_TYPE} from '../src/constants';
+import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from './mocks';
 import {Draggable, Droppable} from './examples';
+import {DragTypes} from '../src/utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -113,13 +115,14 @@ describe('useDrag and useDrop', function () {
         dropOperation: 'move',
         items: [
           {
+            kind: 'text',
             types: new Set(['text/plain']),
-            getData: expect.any(Function)
+            getText: expect.any(Function)
           }
         ]
       });
 
-      expect(await onDrop.mock.calls[0][0].items[0].getData('text/plain')).toBe('hello world');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
 
       fireEvent(draggable, new DragEvent('dragend', {dataTransfer, clientX: 2, clientY: 2}));
       expect(onDragEnd).toHaveBeenCalledTimes(1);
@@ -322,8 +325,7 @@ describe('useDrag and useDrop', function () {
     describe('drag data', () => {
       it('should work with custom data types', async () => {
         let getItems = () => [{
-          types: ['test'],
-          getData: () => 'test data'
+          test: 'test data'
         }];
 
         let onDrop = jest.fn();
@@ -350,22 +352,21 @@ describe('useDrag and useDrop', function () {
           dropOperation: 'move',
           items: [
             {
+              kind: 'text',
               types: new Set(['test']),
-              getData: expect.any(Function)
+              getText: expect.any(Function)
             }
           ]
         });
 
-        expect(await onDrop.mock.calls[0][0].items[0].getData('test')).toBe('test data');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('test')).toBe('test data');
       });
 
       it('should work with multiple items of the same custom type', async () => {
         let getItems = () => [{
-          types: ['test'],
-          getData: () => 'item 1'
+          test: 'item 1'
         }, {
-          types: ['test'],
-          getData: () => 'item 2'
+          test: 'item 2'
         }];
 
         let onDrop = jest.fn();
@@ -382,7 +383,7 @@ describe('useDrag and useDrop', function () {
         expect([...dataTransfer.items]).toEqual([
           new DataTransferItem('test', 'item 1'),
           new DataTransferItem(
-            'application/vnd.react-aria.items+json',
+            CUSTOM_DRAG_TYPE,
             JSON.stringify([{test: 'item 1'}, {test: 'item 2'}]
           ))
         ]);
@@ -398,24 +399,26 @@ describe('useDrag and useDrop', function () {
           dropOperation: 'move',
           items: [
             {
+              kind: 'text',
               types: new Set(['test']),
-              getData: expect.any(Function)
+              getText: expect.any(Function)
             },
             {
+              kind: 'text',
               types: new Set(['test']),
-              getData: expect.any(Function)
+              getText: expect.any(Function)
             }
           ]
         });
 
-        expect(await onDrop.mock.calls[0][0].items[0].getData('test')).toBe('item 1');
-        expect(await onDrop.mock.calls[0][0].items[1].getData('test')).toBe('item 2');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('test')).toBe('item 1');
+        expect(await onDrop.mock.calls[0][0].items[1].getText('test')).toBe('item 2');
       });
 
       it('should work with items of multiple types', async () => {
         let getItems = () => [{
-          types: ['test', 'text/plain'],
-          getData: () => 'test data'
+          test: 'test data',
+          'text/plain': 'test data'
         }];
 
         let onDrop = jest.fn();
@@ -433,7 +436,7 @@ describe('useDrag and useDrop', function () {
           new DataTransferItem('test', 'test data'),
           new DataTransferItem('text/plain', 'test data'),
           new DataTransferItem(
-            'application/vnd.react-aria.items+json',
+            CUSTOM_DRAG_TYPE,
             JSON.stringify([{test: 'test data', 'text/plain': 'test data'}]
           ))
         ]);
@@ -449,23 +452,24 @@ describe('useDrag and useDrop', function () {
           dropOperation: 'move',
           items: [
             {
+              kind: 'text',
               types: new Set(['test', 'text/plain']),
-              getData: expect.any(Function)
+              getText: expect.any(Function)
             }
           ]
         });
 
-        expect(await onDrop.mock.calls[0][0].items[0].getData('test')).toBe('test data');
-        expect(await onDrop.mock.calls[0][0].items[0].getData('text/plain')).toBe('test data');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('test')).toBe('test data');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('test data');
       });
 
       it('should work with multiple items of multiple types', async () => {
         let getItems = () => [{
-          types: ['test', 'text/plain'],
-          getData: () => 'item 1'
+          test: 'item 1',
+          'text/plain': 'item 1'
         }, {
-          types: ['test', 'text/plain'],
-          getData: () => 'item 2'
+          test: 'item 2',
+          'text/plain': 'item 2'
         }];
 
         let onDrop = jest.fn();
@@ -483,7 +487,7 @@ describe('useDrag and useDrop', function () {
           new DataTransferItem('test', 'item 1'),
           new DataTransferItem('text/plain', 'item 1\nitem 2'),
           new DataTransferItem(
-            'application/vnd.react-aria.items+json',
+            CUSTOM_DRAG_TYPE,
             JSON.stringify([
               {test: 'item 1', 'text/plain': 'item 1'},
               {test: 'item 2', 'text/plain': 'item 2'}
@@ -502,20 +506,273 @@ describe('useDrag and useDrop', function () {
           dropOperation: 'move',
           items: [
             {
+              kind: 'text',
               types: new Set(['test', 'text/plain']),
-              getData: expect.any(Function)
+              getText: expect.any(Function)
             },
             {
+              kind: 'text',
               types: new Set(['test', 'text/plain']),
-              getData: expect.any(Function)
+              getText: expect.any(Function)
             }
           ]
         });
 
-        expect(await onDrop.mock.calls[0][0].items[0].getData('test')).toBe('item 1');
-        expect(await onDrop.mock.calls[0][0].items[0].getData('text/plain')).toBe('item 1');
-        expect(await onDrop.mock.calls[0][0].items[1].getData('test')).toBe('item 2');
-        expect(await onDrop.mock.calls[0][0].items[1].getData('text/plain')).toBe('item 2');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('test')).toBe('item 1');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('item 1');
+        expect(await onDrop.mock.calls[0][0].items[1].getText('test')).toBe('item 2');
+        expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('item 2');
+      });
+
+      it('should support dropping multiple native types', async () => {
+        let onDrop = jest.fn();
+        let tree = render(<Droppable onDrop={onDrop} />);
+        let droppable = tree.getByText('Drop here');
+
+        let dataTransfer = new DataTransfer();
+        dataTransfer.items.add('hello world', 'text/plain');
+        dataTransfer.items.add('<p>hello world</p>', 'text/html');
+
+        fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+        fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 2, clientY: 2}));
+        act(() => jest.runAllTimers());
+        expect(onDrop).toHaveBeenCalledTimes(1);
+        expect(onDrop).toHaveBeenCalledWith({
+          type: 'drop',
+          x: 2,
+          y: 2,
+          dropOperation: 'move',
+          items: [
+            {
+              kind: 'text',
+              types: new Set(['text/plain', 'text/html']),
+              getText: expect.any(Function)
+            }
+          ]
+        });
+
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/html')).toBe('<p>hello world</p>');
+      });
+
+      describe('files', () => {
+        it('should support dropping files', async () => {
+          let onDrop = jest.fn();
+          let tree = render(<Droppable onDrop={onDrop} />);
+          let droppable = tree.getByText('Drop here');
+
+          let dataTransfer = new DataTransfer();
+          let file = new File(['hello world'], 'test.txt', {type: 'text/plain'});
+          dataTransfer.items.add(file);
+
+          fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 2, clientY: 2}));
+          act(() => jest.runAllTimers());
+          expect(onDrop).toHaveBeenCalledTimes(1);
+          expect(onDrop).toHaveBeenCalledWith({
+            type: 'drop',
+            x: 2,
+            y: 2,
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'file',
+                type: 'text/plain',
+                name: 'test.txt',
+                getText: expect.any(Function),
+                getFile: expect.any(Function)
+              }
+            ]
+          });
+
+          expect(await onDrop.mock.calls[0][0].items[0].getText()).toBe('hello world');
+          expect(await onDrop.mock.calls[0][0].items[0].getFile()).toBe(file);
+        });
+
+        it('should support dropping multiple files', async () => {
+          let onDrop = jest.fn();
+          let tree = render(<Droppable onDrop={onDrop} />);
+          let droppable = tree.getByText('Drop here');
+
+          let dataTransfer = new DataTransfer();
+          let file1 = new File(['hello world'], 'test.txt', {type: 'text/plain'});
+          let file2 = new File(['<p>hello world</p>'], 'test.html', {type: 'text/html'});
+          dataTransfer.items.add(file1);
+          dataTransfer.items.add(file2);
+
+          fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 2, clientY: 2}));
+          act(() => jest.runAllTimers());
+          expect(onDrop).toHaveBeenCalledTimes(1);
+          expect(onDrop).toHaveBeenCalledWith({
+            type: 'drop',
+            x: 2,
+            y: 2,
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'file',
+                type: 'text/plain',
+                name: 'test.txt',
+                getText: expect.any(Function),
+                getFile: expect.any(Function)
+              },
+              {
+                kind: 'file',
+                type: 'text/html',
+                name: 'test.html',
+                getText: expect.any(Function),
+                getFile: expect.any(Function)
+              }
+            ]
+          });
+
+          expect(await onDrop.mock.calls[0][0].items[0].getText()).toBe('hello world');
+          expect(await onDrop.mock.calls[0][0].items[0].getFile()).toBe(file1);
+          expect(await onDrop.mock.calls[0][0].items[1].getText()).toBe('<p>hello world</p>');
+          expect(await onDrop.mock.calls[0][0].items[1].getFile()).toBe(file2);
+        });
+
+        it('should support dropping both text and files', async () => {
+          let onDrop = jest.fn();
+          let tree = render(<Droppable onDrop={onDrop} />);
+          let droppable = tree.getByText('Drop here');
+
+          let dataTransfer = new DataTransfer();
+          let file = new File(['hello world'], 'test.txt', {type: 'text/plain'});
+          dataTransfer.items.add(file);
+          dataTransfer.items.add('<p>hello world</p>', 'text/html');
+
+          fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 2, clientY: 2}));
+          act(() => jest.runAllTimers());
+          expect(onDrop).toHaveBeenCalledTimes(1);
+          expect(onDrop).toHaveBeenCalledWith({
+            type: 'drop',
+            x: 2,
+            y: 2,
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'file',
+                type: 'text/plain',
+                name: 'test.txt',
+                getText: expect.any(Function),
+                getFile: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/html']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+
+          expect(await onDrop.mock.calls[0][0].items[0].getText()).toBe('hello world');
+          expect(await onDrop.mock.calls[0][0].items[0].getFile()).toBe(file);
+          expect(await onDrop.mock.calls[0][0].items[1].getText('text/html')).toBe('<p>hello world</p>');
+        });
+
+        it('should support dropping directories', async () => {
+          let onDrop = jest.fn();
+          let tree = render(<Droppable onDrop={onDrop} />);
+          let droppable = tree.getByText('Drop here');
+
+          let dataTransfer = new DataTransfer();
+          let dir = new FileSystemDirectoryEntry('test', [
+            new FileSystemFileEntry(new File(['hello world'], 'test.txt', {type: 'text/plain'})),
+            new FileSystemDirectoryEntry('nested', [
+              new FileSystemFileEntry(new File(['<p>foo</p>'], 'foo.html', {type: 'text/html'}))
+            ])
+          ]);
+          dataTransfer.items.add(dir);
+
+          fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 2, clientY: 2}));
+          act(() => jest.runAllTimers());
+          expect(onDrop).toHaveBeenCalledTimes(1);
+          expect(onDrop).toHaveBeenCalledWith({
+            type: 'drop',
+            x: 2,
+            y: 2,
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'directory',
+                name: 'test',
+                getEntries: expect.any(Function)
+              }
+            ]
+          });
+
+          let collect = async (dir) => {
+            let entries = [];
+            for await (let entry of dir.getEntries()) {
+              entries.push(entry);
+            }
+            return entries;
+          };
+
+          let entries = await collect(onDrop.mock.calls[0][0].items[0]);
+          expect(entries).toEqual([
+            {
+              kind: 'file',
+              type: 'text/plain',
+              name: 'test.txt',
+              getText: expect.any(Function),
+              getFile: expect.any(Function)
+            },
+            {
+              kind: 'directory',
+              name: 'nested',
+              getEntries: expect.any(Function)
+            }
+          ]);
+
+          expect(await entries[0].getText()).toBe('hello world');
+          expect(await collect(entries[1])).toEqual([
+            {
+              kind: 'file',
+              type: 'text/html',
+              name: 'foo.html',
+              getText: expect.any(Function),
+              getFile: expect.any(Function)
+            }
+          ]);
+        });
+
+        it('should handle unknown file types using a generic mime type', async () => {
+          let onDrop = jest.fn();
+          let tree = render(<Droppable onDrop={onDrop} />);
+          let droppable = tree.getByText('Drop here');
+
+          let dataTransfer = new DataTransfer();
+          let file = new File(['hello world'], 'test.abc', {type: ''});
+          dataTransfer.items.add(file);
+
+          fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 2, clientY: 2}));
+          act(() => jest.runAllTimers());
+          expect(onDrop).toHaveBeenCalledTimes(1);
+          expect(onDrop).toHaveBeenCalledWith({
+            type: 'drop',
+            x: 2,
+            y: 2,
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'file',
+                type: 'application/octet-stream',
+                name: 'test.abc',
+                getText: expect.any(Function),
+                getFile: expect.any(Function)
+              }
+            ]
+          });
+
+          expect(await onDrop.mock.calls[0][0].items[0].getText()).toBe('hello world');
+          expect(await onDrop.mock.calls[0][0].items[0].getFile()).toBe(file);
+        });
       });
     });
 
@@ -537,7 +794,7 @@ describe('useDrag and useDrop', function () {
         expect(dataTransfer.dropEffect).toBe('none');
 
         fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 0, clientY: 0}));
-        expect(getDropOperation).toHaveBeenCalledWith(new Set(['text/plain']), ['move', 'copy', 'link']);
+        expect(getDropOperation).toHaveBeenCalledWith(new DragTypes(dataTransfer), ['move', 'copy', 'link']);
         expect(dataTransfer.dropEffect).toBe('copy');
         expect(droppable).toHaveAttribute('data-droptarget', 'true');
 
@@ -550,8 +807,9 @@ describe('useDrag and useDrop', function () {
           dropOperation: 'copy',
           items: [
             {
+              kind: 'text',
               types: new Set(['text/plain']),
-              getData: expect.any(Function)
+              getText: expect.any(Function)
             }
           ]
         });
@@ -585,7 +843,7 @@ describe('useDrag and useDrop', function () {
         expect(dataTransfer.dropEffect).toBe('none');
 
         fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 0, clientY: 0}));
-        expect(getDropOperation).toHaveBeenCalledWith(new Set(['text/plain']), ['copy']);
+        expect(getDropOperation).toHaveBeenCalledWith(new DragTypes(dataTransfer), ['copy']);
         expect(dataTransfer.dropEffect).toBe('copy');
         expect(droppable).toHaveAttribute('data-droptarget', 'true');
 
@@ -598,8 +856,9 @@ describe('useDrag and useDrop', function () {
           dropOperation: 'copy',
           items: [
             {
+              kind: 'text',
               types: new Set(['text/plain']),
-              getData: expect.any(Function)
+              getText: expect.any(Function)
             }
           ]
         });
@@ -635,6 +894,77 @@ describe('useDrag and useDrop', function () {
         expect(dataTransfer.dropEffect).toBe('none');
         expect(droppable).toHaveAttribute('data-droptarget', 'false');
         expect(onDropEnter).not.toHaveBeenCalled();
+      });
+
+      it('should pass file types to getDropOperation', async () => {
+        let getDropOperation = jest.fn().mockImplementation(() => 'move');
+        let tree = render(<Droppable getDropOperation={getDropOperation} />);
+        let droppable = tree.getByText('Drop here');
+
+        let dataTransfer = new DataTransfer();
+        let file = new File(['hello world'], 'test.txt', {type: 'text/plain'});
+        dataTransfer.items.add(file);
+
+        fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+        expect(getDropOperation).toHaveBeenCalledTimes(1);
+        expect(getDropOperation.mock.calls[0][0].has('text/plain'));
+        expect(!getDropOperation.mock.calls[0][0].has('text/html'));
+      });
+
+      it('should handle unknown file types using a generic mime type', async () => {
+        let getDropOperation = jest.fn().mockImplementation(() => 'move');
+        let tree = render(<Droppable getDropOperation={getDropOperation} />);
+        let droppable = tree.getByText('Drop here');
+
+        let dataTransfer = new DataTransfer();
+        let file = new File(['hello world'], 'test.abc', {type: ''});
+        dataTransfer.items.add(file);
+
+        fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+        expect(getDropOperation).toHaveBeenCalledTimes(1);
+        expect(getDropOperation.mock.calls[0][0].has('application/octet-stream'));
+        expect(!getDropOperation.mock.calls[0][0].has('text/plain'));
+      });
+
+      it('should handle when no file types are available', async () => {
+        let getDropOperation = jest.fn().mockImplementation(() => 'move');
+        let tree = render(<Droppable getDropOperation={getDropOperation} />);
+        let droppable = tree.getByText('Drop here');
+
+        // In Safari, the DataTransferItem objects aren't available until drop,
+        // so we have to assume that all possible file types are available.
+        let dataTransfer = new DataTransfer();
+        dataTransfer.items.add('', 'Files');
+
+        fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+        expect(getDropOperation).toHaveBeenCalledTimes(1);
+        expect(getDropOperation.mock.calls[0][0].has('text/plain'));
+        expect(getDropOperation.mock.calls[0][0].has('image/jpeg'));
+      });
+
+      it('should not include react-aria custom type in list of types passed to getDropOperation', async () => {
+        let getDropOperation = jest.fn().mockImplementation(() => 'move');
+        let getItems = () => [{
+          test: 'item 1'
+        }, {
+          test: 'item 2'
+        }];
+        let tree = render(<>
+          <Draggable getItems={getItems} />
+          <Droppable getDropOperation={getDropOperation} />
+        </>);
+
+        let draggable = tree.getByText('Drag me');
+        let droppable = tree.getByText('Drop here');
+
+        let dataTransfer = new DataTransfer();
+        fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(dataTransfer.types).toEqual(['test', CUSTOM_DRAG_TYPE]);
+
+        fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+        expect(getDropOperation).toHaveBeenCalledTimes(1);
+        expect(getDropOperation.mock.calls[0][0].has('test'));
+        expect(!getDropOperation.mock.calls[0][0].has(CUSTOM_DRAG_TYPE));
       });
     });
 
@@ -791,13 +1121,14 @@ describe('useDrag and useDrop', function () {
         dropOperation: 'move',
         items: [
           {
+            kind: 'text',
             types: new Set(['text/plain']),
-            getData: expect.any(Function)
+            getText: expect.any(Function)
           }
         ]
       });
 
-      expect(await onDrop2.mock.calls[0][0].items[0].getData('text/plain')).toBe('hello world');
+      expect(await onDrop2.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
       expect(announce).toHaveBeenCalledWith('Drop complete.');
 
       expect(onDropExit).toHaveBeenCalledTimes(1);
@@ -1095,8 +1426,7 @@ describe('useDrag and useDrop', function () {
     describe('drag data', () => {
       it('should work with custom data types', async () => {
         let getItems = () => [{
-          types: ['test'],
-          getData: () => 'test data'
+          'test': 'test data'
         }];
 
         let onDrop = jest.fn();
@@ -1126,22 +1456,21 @@ describe('useDrag and useDrop', function () {
           dropOperation: 'move',
           items: [
             {
+              kind: 'text',
               types: new Set(['test']),
-              getData: expect.any(Function)
+              getText: expect.any(Function)
             }
           ]
         });
 
-        expect(await onDrop.mock.calls[0][0].items[0].getData('test')).toBe('test data');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('test')).toBe('test data');
       });
 
       it('should work with multiple items of the same custom type', async () => {
         let getItems = () => [{
-          types: ['test'],
-          getData: () => 'item 1'
+          test: 'item 1'
         }, {
-          types: ['test'],
-          getData: () => 'item 2'
+          test: 'item 2'
         }];
 
         let onDrop = jest.fn();
@@ -1171,24 +1500,26 @@ describe('useDrag and useDrop', function () {
           dropOperation: 'move',
           items: [
             {
+              kind: 'text',
               types: new Set(['test']),
-              getData: expect.any(Function)
+              getText: expect.any(Function)
             },
             {
+              kind: 'text',
               types: new Set(['test']),
-              getData: expect.any(Function)
+              getText: expect.any(Function)
             }
           ]
         });
 
-        expect(await onDrop.mock.calls[0][0].items[0].getData('test')).toBe('item 1');
-        expect(await onDrop.mock.calls[0][0].items[1].getData('test')).toBe('item 2');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('test')).toBe('item 1');
+        expect(await onDrop.mock.calls[0][0].items[1].getText('test')).toBe('item 2');
       });
 
       it('should work with items of multiple types', async () => {
         let getItems = () => [{
-          types: ['test', 'text/plain'],
-          getData: () => 'test data'
+          test: 'test data',
+          'text/plain': 'test data'
         }];
 
         let onDrop = jest.fn();
@@ -1218,23 +1549,24 @@ describe('useDrag and useDrop', function () {
           dropOperation: 'move',
           items: [
             {
+              kind: 'text',
               types: new Set(['test', 'text/plain']),
-              getData: expect.any(Function)
+              getText: expect.any(Function)
             }
           ]
         });
 
-        expect(await onDrop.mock.calls[0][0].items[0].getData('test')).toBe('test data');
-        expect(await onDrop.mock.calls[0][0].items[0].getData('text/plain')).toBe('test data');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('test')).toBe('test data');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('test data');
       });
 
       it('should work with multiple items of multiple types', async () => {
         let getItems = () => [{
-          types: ['test', 'text/plain'],
-          getData: () => 'item 1'
+          test: 'item 1',
+          'text/plain': 'item 1'
         }, {
-          types: ['test', 'text/plain'],
-          getData: () => 'item 2'
+          test: 'item 2',
+          'text/plain': 'item 2'
         }];
 
         let onDrop = jest.fn();
@@ -1264,20 +1596,22 @@ describe('useDrag and useDrop', function () {
           dropOperation: 'move',
           items: [
             {
+              kind: 'text',
               types: new Set(['test', 'text/plain']),
-              getData: expect.any(Function)
+              getText: expect.any(Function)
             },
             {
+              kind: 'text',
               types: new Set(['test', 'text/plain']),
-              getData: expect.any(Function)
+              getText: expect.any(Function)
             }
           ]
         });
 
-        expect(await onDrop.mock.calls[0][0].items[0].getData('test')).toBe('item 1');
-        expect(await onDrop.mock.calls[0][0].items[0].getData('text/plain')).toBe('item 1');
-        expect(await onDrop.mock.calls[0][0].items[1].getData('test')).toBe('item 2');
-        expect(await onDrop.mock.calls[0][0].items[1].getData('text/plain')).toBe('item 2');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('test')).toBe('item 1');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('item 1');
+        expect(await onDrop.mock.calls[0][0].items[1].getText('test')).toBe('item 2');
+        expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('item 2');
       });
     });
 
@@ -1314,8 +1648,9 @@ describe('useDrag and useDrop', function () {
           dropOperation: 'copy',
           items: [
             {
+              kind: 'text',
               types: new Set(['text/plain']),
-              getData: expect.any(Function)
+              getText: expect.any(Function)
             }
           ]
         });
@@ -1362,8 +1697,9 @@ describe('useDrag and useDrop', function () {
           dropOperation: 'copy',
           items: [
             {
+              kind: 'text',
               types: new Set(['text/plain']),
-              getData: expect.any(Function)
+              getText: expect.any(Function)
             }
           ]
         });
@@ -1519,13 +1855,14 @@ describe('useDrag and useDrop', function () {
         dropOperation: 'move',
         items: [
           {
+            kind: 'text',
             types: new Set(['text/plain']),
-            getData: expect.any(Function)
+            getText: expect.any(Function)
           }
         ]
       });
 
-      expect(await onDrop2.mock.calls[0][0].items[0].getData('text/plain')).toBe('hello world');
+      expect(await onDrop2.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
       expect(announce).toHaveBeenCalledWith('Drop complete.');
 
       expect(onDropExit).toHaveBeenCalledTimes(1);

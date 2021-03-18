@@ -19,8 +19,7 @@ export function Draggable(props) {
   let {dragProps, dragButtonProps, isDragging} = useDrag({
     getItems() {
       return [{
-        types: ['text/plain'],
-        getData: () => 'hello world'
+        'text/plain': 'hello world'
       }];
     },
     ...props

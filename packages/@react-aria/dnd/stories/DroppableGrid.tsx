@@ -28,9 +28,15 @@ import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
+interface ListItem {
+  id: string,
+  type: string,
+  text: string
+}
+
 export function DroppableGridExample(props) {
   let id = React.useRef(props.items?.length || 3);
-  let list = useListData({
+  let list = useListData<ListItem>({
     initialItems: props.items || [
       {id: '1', type: 'folder', text: 'One'},
       {id: '2', type: 'item', text: 'Two'},
@@ -44,26 +50,42 @@ export function DroppableGridExample(props) {
     }
 
     if (e.target.type === 'root' || e.target.dropPosition !== 'on') {
-      let items = [];
+      let items: ListItem[] = [];
       for (let item of e.items) {
         let type: string;
-        if (item.types.has('folder')) {
-          type = 'folder';
-        } else if (item.types.has('item')) {
-          type = 'item';
-        } else if (item.types.has('text/plain')) {
-          type = 'text/plain';
-        }
+        if (item.kind === 'text') {
+          if (item.types.has('folder')) {
+            type = 'folder';
+          } else if (item.types.has('item')) {
+            type = 'item';
+          } else if (item.types.has('text/plain')) {
+            type = 'text/plain';
+          }
 
-        if (!type) {
-          continue;
-        }
+          if (!type) {
+            continue;
+          }
 
-        items.push({
-          id: String(++id.current),
-          type,
-          text: await item.getData(type)
-        });
+          items.push({
+            id: String(++id.current),
+            type,
+            text: await item.getText(type)
+          });
+        } else if (item.kind === 'file') {
+          items.push({
+            id: String(++id.current),
+            type: 'file',
+            text: item.name
+          });
+        } else if (item.kind === 'directory') {
+          for await (let entry of item.getEntries()) {
+            items.push({
+              id: String(++id.current),
+              type: entry.kind === 'directory' ? 'folder' : 'file',
+              text: entry.name
+            });
+          }
+        }
       }
 
       if (e.target.type === 'root') {
@@ -113,7 +135,7 @@ function DroppableGrid(props) {
     })
   });
 
-  let defaultGetDropOperation = (target, types, allowedOperations) => {
+  let defaultGetDropOperation = (target, items, allowedOperations) => {
     if (target.type === 'root') {
       return 'move';
     }
