@@ -38,6 +38,7 @@ import React, {
   ReactElement,
   RefObject,
   useCallback,
+  useEffect,
   useRef,
   useState
 } from 'react';
@@ -68,6 +69,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     menuTrigger = 'input',
     shouldFlip = true,
     direction = 'bottom',
+    isQuiet,
     loadingState,
     onLoadMore
   } = props;
@@ -120,9 +122,11 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   let {scale} = useProvider();
 
   let onResize = useCallback(() => {
-    let buttonWidth = unwrappedButtonRef.current.offsetWidth;
-    let inputWidth = inputRef.current.offsetWidth;
-    setMenuWidth(buttonWidth + inputWidth);
+    if (unwrappedButtonRef.current && inputRef.current) {
+      let buttonWidth = unwrappedButtonRef.current.offsetWidth;
+      let inputWidth = inputRef.current.offsetWidth;
+      setMenuWidth(buttonWidth + inputWidth);
+    }
   }, [unwrappedButtonRef, inputRef, setMenuWidth]);
 
   useResizeObserver({
@@ -134,7 +138,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
 
   let style = {
     ...overlayProps.style,
-    width: menuWidth
+    width: isQuiet ? null : menuWidth,
+    minWidth: isQuiet ? `calc(${menuWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : menuWidth
   };
 
   return (
@@ -142,6 +147,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
       <Field {...props} labelProps={labelProps} ref={domRef}>
         <ComboBoxInput
           {...props}
+          isOpen={state.isOpen}
           loadingState={loadingState}
           inputProps={inputProps}
           inputRef={inputRef}
@@ -151,6 +157,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
       <Popover
         isOpen={state.isOpen}
         UNSAFE_style={style}
+        UNSAFE_className={classNames(styles, 'spectrum-InputGroup-popover', {'spectrum-InputGroup-popover--quiet': isQuiet})}
         ref={popoverRef}
         placement={placement}
         hideArrow
@@ -164,8 +171,6 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           focusOnPointerEnter
           layout={layout}
           state={state}
-          // Set max height: inherit so Tray scrolling works
-          UNSAFE_style={{maxHeight: 'inherit'}}
           shouldUseVirtualFocus
           isLoading={loadingState === 'loadingMore'}
           onLoadMore={onLoadMore}
@@ -185,8 +190,8 @@ interface ComboBoxInputProps extends SpectrumComboBoxProps<unknown> {
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   triggerProps: AriaButtonProps,
   triggerRef: RefObject<FocusableRefValue<HTMLElement>>,
-  className?: string,
-  style?: React.CSSProperties
+  style?: React.CSSProperties,
+  className?: string
 }
 
 const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInputProps, ref: RefObject<HTMLElement>) {
@@ -202,10 +207,14 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     autoFocus,
     style,
     className,
-    loadingState
+    loadingState,
+    isOpen,
+    menuTrigger
   } = props;
   let {hoverProps, isHovered} = useHover({});
   let formatMessage = useMessageFormatter(intlMessages);
+  let timeout = useRef(null);
+  let [showLoading, setShowLoading] = useState(false);
 
   let loadingCircle = (
     <ProgressCircle
@@ -221,6 +230,34 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
         )
       )} />
   );
+
+  let isLoading = loadingState === 'loading' || loadingState === 'filtering';
+  let inputValue = inputProps.value;
+  let lastInputValue = useRef(inputValue);
+  useEffect(() => {
+    if (isLoading && !showLoading) {
+      if (timeout.current === null) {
+        timeout.current = setTimeout(() => {
+          setShowLoading(true);
+        }, 500);
+      }
+
+      // If user is typing, clear the timer and restart since it is a new request
+      if (inputValue !== lastInputValue.current) {
+        clearTimeout(timeout.current);
+        timeout.current = setTimeout(() => {
+          setShowLoading(true);
+        }, 500);
+      }
+    } else if (!isLoading) {
+      // If loading is no longer happening, clear any timers and hide the loading circle
+      setShowLoading(false);
+      clearTimeout(timeout.current);
+      timeout.current = null;
+    }
+
+    lastInputValue.current = inputValue;
+  }, [isLoading, showLoading, inputValue]);
 
   return (
     <FocusRing
@@ -270,9 +307,11 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
           isDisabled={isDisabled}
           isQuiet={isQuiet}
           validationState={validationState}
-          isLoading={loadingState === 'loading' || loadingState === 'filtering'}
+          // loading circle should only be displayed if menu is open or if menuTrigger is "manual" (to stop circle from showing up when user selects an option)
+          // TODO: add special case for completionMode: complete as well
+          isLoading={showLoading && (isOpen || menuTrigger === 'manual')}
           loadingIndicator={loadingState != null && loadingCircle} />
-        <PressResponder preventFocusOnPress>
+        <PressResponder preventFocusOnPress isPressed={isOpen}>
           <FieldButton
             {...triggerProps}
             ref={triggerRef}

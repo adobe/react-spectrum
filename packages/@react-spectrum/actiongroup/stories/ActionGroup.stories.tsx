@@ -107,6 +107,10 @@ storiesOf('ActionGroup', module)
     () => render({isDisabled: true, defaultSelectedKeys: ['1']}, docItems)
   )
   .add(
+    'all keys disabled',
+    () => render({disabledKeys: ['1', '2']}, docItems)
+  )
+  .add(
     'compact',
     () => render({density: 'compact', defaultSelectedKeys: ['1']}, viewItems)
   )

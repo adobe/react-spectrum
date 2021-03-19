@@ -1,6 +1,5 @@
 {
-  "Decrement": "Decrecimiento",
-  "Enter a number": "Introduzca un número",
-  "Increment": "Incremento",
-  "Spin button number field": "Spin button number field"
+  "decrease": "Reducir {fieldLabel}",
+  "increase": "Aumentar {fieldLabel}",
+  "numberField": "Campo de número"
 }
