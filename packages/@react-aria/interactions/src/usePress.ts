@@ -146,10 +146,7 @@ export function usePress(props: PressHookProps): PressResult {
     };
 
     let triggerPressEnd = (originalEvent: EventBase, pointerType: PointerType, wasPressed = true) => {
-      let {onPressEnd, onPressChange, onPress, isDisabled} = propsRef.current;
-      if (isDisabled) {
-        return;
-      }
+      let {onPressEnd, onPressChange, onPress} = propsRef.current;
 
       state.ignoreClickAfterPress = true;
 
