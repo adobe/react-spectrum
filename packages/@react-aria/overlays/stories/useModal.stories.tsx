@@ -21,7 +21,7 @@ storiesOf('useModal', module)
     <App />
   ))
   .add('different container', () => (
-    <App container={document.getElementById('alternateContainer')} />
+    <App useAlternateContainer />
   ));
 
 function App(props) {
@@ -50,11 +50,12 @@ function Modal(props) {
 }
 
 function Example(props) {
+  let container = props.useAlternateContainer ? document.getElementById('alternateContainer') : undefined;
   return (
     <OverlayProvider data-testid="root-provider">
       This is the root provider.
       {props.showModal &&
-      <Modal container={props.container}>{props.children}</Modal>
+      <Modal container={container}>{props.children}</Modal>
       }
     </OverlayProvider>
   );
