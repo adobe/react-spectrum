@@ -221,8 +221,8 @@ function Example() {
 [View guidelines](https://spectrum.adobe.com/page/color-slider/#Length)
 
 ```tsx example
-<Flex direction="column" gap="size-300" maxWidth="size-5000" >
+<Flex direction="column" gap="size-300">
   <ColorSlider defaultValue="#7f0000" channel="red" orientation="vertical" height="size-3600" />
-  <ColorSlider defaultValue="#7f0000" channel="red" width="size-3600" />
+  <ColorSlider defaultValue="#7f0000" channel="red" width="size-3600" maxWidth="100%" />
 </Flex>
 ```

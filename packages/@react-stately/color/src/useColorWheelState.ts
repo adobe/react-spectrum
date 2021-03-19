@@ -16,9 +16,9 @@ import {useControlledState} from '@react-stately/utils';
 import {useRef, useState} from 'react';
 
 export interface ColorWheelState {
-  /** The current color value displayed by the color wheel. */
+  /** The current color value represented by the color wheel. */
   readonly value: Color,
-  /** Sets the color value displayed by the color wheel, and triggers `onChange`. */
+  /** Sets the color value represented by the color wheel, and triggers `onChange`. */
   setValue(value: string | Color): void,
 
   /** The current value of the hue channel displayed by the color wheel. */
@@ -36,7 +36,7 @@ export interface ColorWheelState {
   /** Decrements the hue by the given amount (defaults to 1). */
   decrement(minStepSize?: number): void,
 
-  /** Whether the cxolor wheel is currently being dragged. */
+  /** Whether the color wheel is currently being dragged. */
   readonly isDragging: boolean,
   /** Sets whether the color wheel is being dragged. */
   setDragging(value: boolean): void,
