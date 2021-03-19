@@ -181,7 +181,7 @@ describe('useModal', function () {
         )
       ).toThrow();
       expect(console.error).toHaveBeenCalledWith(
-        expect.stringContaining('The root container element must not be inside another container.'),
+        expect.stringContaining('An OverlayContainer must not be inside another container. Please change the portalContainer prop.'),
         expect.anything()
       );
     });
