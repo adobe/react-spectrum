@@ -107,7 +107,7 @@ export function OverlayProvider(props: ModalProviderProps) {
 }
 
 interface OverlayContainerProps extends ModalProviderProps {
-  containerRootElement?: HTMLElement
+  portalContainer?: HTMLElement
 }
 
 /**
@@ -118,16 +118,16 @@ interface OverlayContainerProps extends ModalProviderProps {
  * be accessible at once.
  */
 export function OverlayContainer(props: OverlayContainerProps): React.ReactPortal {
-  let {containerRootElement = document.body, ...rest} = props;
+  let {portalContainer = document.body, ...rest} = props;
 
   React.useEffect(() => {
-    if (containerRootElement.closest('[data-overlay-container]')) {
-      throw new Error('The root container element must not be inside another container. See https://github.com/adobe/react-spectrum/issues/991#issuecomment-678566328');
+    if (portalContainer.closest('[data-overlay-container]')) {
+      throw new Error('An OverlayContainer must not be inside another container. Please change the portalContainer prop.');
     }
-  }, [containerRootElement]);
+  }, [portalContainer]);
 
   let contents = <OverlayProvider {...rest} />;
-  return ReactDOM.createPortal(contents, containerRootElement);
+  return ReactDOM.createPortal(contents, portalContainer);
 }
 
 interface ModalAriaProps extends HTMLAttributes<HTMLElement> {

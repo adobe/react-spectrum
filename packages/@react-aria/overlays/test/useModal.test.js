@@ -21,7 +21,7 @@ function ModalDOM(props) {
 
 function Modal(props) {
   return (
-    <OverlayContainer containerRootElement={props.container} data-testid={props.providerId || 'modal-provider'}>
+    <OverlayContainer portalContainer={props.container} data-testid={props.providerId || 'modal-provider'}>
       <ModalDOM modalId={props.modalId}>{props.children}</ModalDOM>
     </OverlayContainer>
   );
