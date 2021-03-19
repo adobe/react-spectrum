@@ -9,8 +9,10 @@ import { theme as defaultTheme } from "@react-spectrum/theme-default";
 export default function Storybook() {
     return (
         <Provider id="storybook" key="provider" theme={defaultTheme}>
-            <Sidebar />
-            <MainContent />
+            <div style={{ display: "flex", flexDirection: "row" }}>
+                <Sidebar />
+                <MainContent />
+            </div>
         </Provider>
     )
 }

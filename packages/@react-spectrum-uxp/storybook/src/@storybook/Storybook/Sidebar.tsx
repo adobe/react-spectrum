@@ -9,7 +9,6 @@ export default function Sidebar() {
     let components = useComponents();
     return (
         <div className="Sidebar">
-            SIDEBAR HERE. Stories?: {JSON.stringify({components})}
             {
                 Array.from(components.values()).map(c => {
                     return [
@@ -18,6 +17,7 @@ export default function Sidebar() {
                             Array.from(c.stories.values()).map(s => {
                                 let story = [c.name, s.name];
                                 let selected = JSON.stringify(selectedStory) === JSON.stringify(story);
+                                console.log(selected + " ? " + JSON.stringify(story));
                                 return <SidebarItem
                                     key={c.name + ":" + s.name}
                                     selected={selected}

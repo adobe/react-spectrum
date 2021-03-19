@@ -6,8 +6,12 @@ export default function SidebarItem(props: { name: string, selected?: boolean, i
     let { name, selected, defaultOpen, indent, action, ...rest } = props;
     let [open, setOpen] = useLocalStorage(name, false);
     action ??= () => setOpen(!open);
+    let baseStyle = { paddingLeft: indent * 16 };
+    let style = selected ? {...baseStyle, color: "blue" } : baseStyle;
     return (
-        <div className={"SidebarItem" + (selected ? " selected" : "")} style={{ paddingLeft: indent * 16 }} {...rest}>
+        // css is not working... for some reason with this older version of parcel 2...
+        //  so we are going to style it manually so we at least see it as blue.
+        <div className={"SidebarItem" + (selected ? " selected" : "")} style={style} {...rest}>
             <div className="SidebarItem_Title" onClick={action}>
                 { props.name }
             </div>
