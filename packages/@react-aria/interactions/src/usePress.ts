@@ -161,7 +161,7 @@ export function usePress(props: PressHookProps): PressResult {
         });
       }
 
-      if (onPressChange && !isDisabled) {
+      if (onPressChange) {
         onPressChange(false);
       }
 
