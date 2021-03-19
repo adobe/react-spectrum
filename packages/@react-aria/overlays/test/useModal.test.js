@@ -21,7 +21,7 @@ function ModalDOM(props) {
 
 function Modal(props) {
   return (
-    <OverlayContainer getContainerRootElement={props.container} data-testid={props.providerId || 'modal-provider'}>
+    <OverlayContainer containerRootElement={props.container} data-testid={props.providerId || 'modal-provider'}>
       <ModalDOM modalId={props.modalId}>{props.children}</ModalDOM>
     </OverlayContainer>
   );
@@ -92,7 +92,7 @@ describe('useModal', function () {
   it('can specify a different container from the default document.body', function () {
     let res = render(
       <div id="alternateContainer" data-testid="alternate-container">
-        <Example container={() => document.getElementById('alternateContainer')} />
+        <Example container={document.getElementById('alternateContainer')} />
       </div>
     );
     let rootProvider = res.getByTestId('root-provider');
@@ -101,7 +101,7 @@ describe('useModal', function () {
 
     res.rerender(
       <div id="alternateContainer" data-testid="alternate-container">
-        <Example showModal container={() => document.getElementById('alternateContainer')} />
+        <Example showModal container={document.getElementById('alternateContainer')} />
       </div>
     );
 
@@ -112,7 +112,7 @@ describe('useModal', function () {
 
     res.rerender(
       <div id="alternateContainer" data-testid="alternate-container">
-        <Example showModal container={() => document.getElementById('alternateContainer')}>
+        <Example showModal container={document.getElementById('alternateContainer')}>
           <Modal providerId="inner-modal-provider" modalId="inner-modal">Inner</Modal>
         </Example>
       </div>
@@ -126,7 +126,7 @@ describe('useModal', function () {
 
     res.rerender(
       <div id="alternateContainer" data-testid="alternate-container">
-        <Example container={() => document.getElementById('alternateContainer')} />
+        <Example container={document.getElementById('alternateContainer')} />
       </div>
     );
     expect(rootProvider).not.toHaveAttribute('aria-hidden');
@@ -144,7 +144,7 @@ describe('useModal', function () {
     it('if inside another container, throws an error', function () {
       let res = render(
         <div id="alternateContainer" data-testid="alternate-container">
-          <Example container={() => document.getElementById('alternateContainer')}>
+          <Example container={document.getElementById('alternateContainer')}>
             <div id="nestedContainer" />
           </Example>
         </div>
@@ -155,7 +155,7 @@ describe('useModal', function () {
 
       res.rerender(
         <div id="alternateContainer" data-testid="alternate-container">
-          <Example showModal container={() => document.getElementById('alternateContainer')}>
+          <Example showModal container={document.getElementById('alternateContainer')}>
             <div id="nestedContainer" />
           </Example>
         </div>
@@ -168,10 +168,10 @@ describe('useModal', function () {
       expect(() =>
         res.rerender(
           <div id="alternateContainer" data-testid="alternate-container">
-            <Example showModal container={() => document.getElementById('alternateContainer')}>
+            <Example showModal container={document.getElementById('alternateContainer')}>
               <div id="nestedContainer" />
               <Modal
-                container={() => document.getElementById('nestedContainer')}
+                container={document.getElementById('nestedContainer')}
                 providerId="inner-modal-provider"
                 modalId="inner-modal">
                 Inner

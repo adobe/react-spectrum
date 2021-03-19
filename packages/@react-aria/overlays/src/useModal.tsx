@@ -107,7 +107,7 @@ export function OverlayProvider(props: ModalProviderProps) {
 }
 
 interface OverlayContainerProps extends ModalProviderProps {
-  getContainerRootElement?: () => HTMLElement
+  containerRootElement?: HTMLElement
 }
 
 /**
@@ -118,8 +118,7 @@ interface OverlayContainerProps extends ModalProviderProps {
  * be accessible at once.
  */
 export function OverlayContainer(props: OverlayContainerProps): React.ReactPortal {
-  let {getContainerRootElement = () => document.body, ...rest} = props;
-  let containerRootElement = getContainerRootElement();
+  let {containerRootElement = document.body, ...rest} = props;
 
   React.useEffect(() => {
     if (containerRootElement.closest('[data-overlay-container]')) {

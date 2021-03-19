@@ -21,7 +21,7 @@ storiesOf('useModal', module)
     <App />
   ))
   .add('different container', () => (
-    <App container={() => document.getElementById('alternateContainer')} />
+    <App container={document.getElementById('alternateContainer')} />
   ));
 
 function App(props) {
@@ -43,7 +43,7 @@ function ModalDOM(props) {
 
 function Modal(props) {
   return (
-    <OverlayContainer getContainerRootElement={props.container} data-testid={props.providerId || 'modal-provider'}>
+    <OverlayContainer containerRootElement={props.container} data-testid={props.providerId || 'modal-provider'}>
       <ModalDOM modalId={props.modalId}>{props.children}</ModalDOM>
     </OverlayContainer>
   );
