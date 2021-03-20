@@ -382,7 +382,7 @@ describe('FocusScope', function () {
       let input3 = getByTestId('input3');
       act(() => {input3.focus();});
 
-      userEvent.tab();;
+      userEvent.tab();
       expect(document.activeElement).toBe(getByTestId('after'));
     });
 
@@ -449,7 +449,7 @@ describe('FocusScope', function () {
       let input3 = getByTestId('input3');
       act(() => {input3.focus();});
 
-      userEvent.tab();;
+      userEvent.tab();
       expect(document.activeElement).toBe(getByTestId('after'));
     });
   });
@@ -850,7 +850,7 @@ describe('FocusScope', function () {
       let afterScope = getByTestId('afterScope');
 
       act(() => {inScope.focus();});
-      userEvent.tab();;
+      userEvent.tab();
       expect(document.activeElement).toBe(afterScope);
       act(() => {inScope.focus();});
       userEvent.tab({shift: true});
