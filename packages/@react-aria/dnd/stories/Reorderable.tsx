@@ -50,19 +50,21 @@ export function ReorderableGridExample(props) {
     if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
       let items = [];
       for (let item of e.items) {
-        let type: string;
-        if (item.types.has('folder')) {
-          type = 'folder';
-        } else if (item.types.has('item')) {
-          type = 'item';
-        }
+        if (item.kind === 'text') {
+          let type: string;
+          if (item.types.has('folder')) {
+            type = 'folder';
+          } else if (item.types.has('item')) {
+            type = 'item';
+          }
 
-        if (!type) {
-          continue;
-        }
+          if (!type) {
+            continue;
+          }
 
-        let data = JSON.parse(await item.getData(type));
-        items.push(data.id);
+          let data = JSON.parse(await item.getText(type));
+          items.push(data.id);
+        }
       }
 
       if (e.target.dropPosition === 'before') {
@@ -121,14 +123,8 @@ function ReorderableGrid(props) {
 
         return {
           // @ts-ignore
-          types: ['text/plain', item.value.type],
-          getData(type) {
-            if (type === 'text/plain') {
-              return item.textValue;
-            }
-
-            return JSON.stringify(item.value);
-          }
+          [item.value.type]: JSON.stringify(item.value),
+          'text/plain': item.textValue
         };
       });
     },
