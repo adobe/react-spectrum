@@ -39,6 +39,8 @@ export function DroppableListBoxExample(props) {
     ]
   });
 
+  let ref = React.useRef(null);
+
   let onDrop = async (e: DroppableCollectionDropEvent) => {
     if (e.target.type === 'root' || e.target.dropPosition !== 'on') {
       let items = [];
@@ -70,11 +72,19 @@ export function DroppableListBoxExample(props) {
       } else {
         list.insertAfter(e.target.key, ...items);
       }
+
+      // Select the dropped items and focus the first
+      list.setSelectedKeys(new Set(items.map(item => item.id)));
+      ref.current.focusItem(items[0].id);
+    } else {
+      // Select and focus the target we dropped on.
+      list.setSelectedKeys(new Set([e.target.key]));
+      ref.current.focusItem(e.target.key);
     }
   };
 
   return (
-    <DroppableListBox items={list.items} onDrop={onDrop}>
+    <DroppableListBox items={list.items} onDrop={onDrop} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} ref={ref}>
       {item => (
         <Item textValue={item.text}>
           {item.type === 'folder' && <Folder size="S" />}
@@ -85,11 +95,18 @@ export function DroppableListBoxExample(props) {
   );
 }
 
-export function DroppableListBox(props) {
-  let ref = React.useRef<HTMLDivElement>(null);
+export const DroppableListBox = React.forwardRef(function (props: any, ref) {
+  let domRef = React.useRef<HTMLDivElement>(null);
   let onDrop = action('onDrop');
   let state = useListState({...props, selectionMode: 'multiple'});
-  let keyboardDelegate = new ListKeyboardDelegate(state.collection, new Set(), ref);
+  let keyboardDelegate = new ListKeyboardDelegate(state.collection, new Set(), domRef);
+
+  React.useImperativeHandle(ref, () => ({
+    focusItem(key) {
+      state.selectionManager.setFocusedKey(key);
+      state.selectionManager.setFocused(true);
+    }
+  }));
 
   let dropState = useDroppableCollectionState({
     collection: state.collection,
@@ -117,14 +134,14 @@ export function DroppableListBox(props) {
       props.onDrop?.(e);
     },
     getDropTargetFromPoint(x, y) {
-      let rect = ref.current.getBoundingClientRect();
+      let rect = domRef.current.getBoundingClientRect();
       x += rect.x;
       y += rect.y;
       let closest = null;
       let closestDistance = Infinity;
       let closestDir = null;
 
-      for (let child of ref.current.children) {
+      for (let child of domRef.current.children) {
         if (!(child as HTMLElement).dataset.key) {
           continue;
         }
@@ -162,13 +179,13 @@ export function DroppableListBox(props) {
         };
       }
     }
-  }, dropState, ref);
+  }, dropState, domRef);
 
   let {listBoxProps} = useListBox({
     ...props,
     'aria-label': 'List',
     keyboardDelegate
-  }, state, ref);
+  }, state, domRef);
 
   let isDropTarget = dropState.isDropTarget({type: 'root'});
   let dropRef = React.useRef();
@@ -180,7 +197,7 @@ export function DroppableListBox(props) {
   return (
     <div
       {...mergeProps(collectionProps, listBoxProps)}
-      ref={ref}
+      ref={domRef}
       className={classNames(dndStyles, 'droppable-collection', {'is-drop-target': isDropTarget})}>
       {!dropIndicatorProps['aria-hidden'] &&
         <div
@@ -194,7 +211,7 @@ export function DroppableListBox(props) {
         <>
           <InsertionIndicator
             key={item.key + '-before'}
-            collectionRef={ref}
+            collectionRef={domRef}
             target={{type: 'item', key: item.key, dropPosition: 'before'}}
             dropState={dropState} />
           <CollectionItem
@@ -206,14 +223,14 @@ export function DroppableListBox(props) {
             <InsertionIndicator
               key={item.key + '-after'}
               target={{type: 'item', key: item.key, dropPosition: 'after'}}
-              collectionRef={ref}
+              collectionRef={domRef}
               dropState={dropState} />
           }
         </>
       ))}
     </div>
   );
-}
+});
 
 function CollectionItem({item, state, dropState}) {
   let ref = React.useRef();
