@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useDrag';
-export * from './useDrop';
-export * from './useDroppableCollection';
-export * from './useDroppableItem';
-export * from './useDropIndicator';
-export * from './useDraggableItem';
-export * from './useClipboard';
+import {CollectionBase, DOMProps, Expandable, StyleProps} from '@react-types/shared';
+
+interface AccordionProps<T> extends CollectionBase<T>, Expandable {}
+
+export interface AriaAccordionProps<T> extends AccordionProps<T>, DOMProps {}
+
+export interface SpectrumAccordionProps<T> extends AriaAccordionProps<T>, StyleProps {}

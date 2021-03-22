@@ -12,7 +12,7 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
-import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropOperation, DropTarget as DroppableCollectionTarget} from '@react-types/shared';
+import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget} from '@react-types/shared';
 import {getDragModality, getTypes} from './utils';
 import {useEffect, useState} from 'react';
 
@@ -477,9 +477,10 @@ class DragSession {
     }
 
     if (typeof this.currentDropTarget.onDrop === 'function') {
-      let items = this.dragTarget.items.map(item => ({
-        types: new Set(item.types),
-        getData: (type: string) => Promise.resolve(item.getData(type))
+      let items: DropItem[] = this.dragTarget.items.map(item => ({
+        kind: 'text',
+        types: new Set(Object.keys(item)),
+        getText: (type: string) => Promise.resolve(item[type])
       }));
 
       let rect = this.currentDropTarget.element.getBoundingClientRect();
