@@ -624,12 +624,7 @@ function createEvent(target: HTMLElement, e: EventBase): EventBase {
   };
 }
 
-interface Point {
-  x: number,
-  y: number
-}
-
-interface PointRect {
+interface Rect {
   top: number,
   right: number,
   bottom: number,
@@ -645,7 +640,7 @@ interface EventPoint {
   radiusY?: number
 }
 
-function getPointClientRect(point: EventPoint): PointRect {
+function getPointClientRect(point: EventPoint): Rect {
   let offsetX = (point.width / 2) || point.radiusX || 0;
   let offsetY = (point.height / 2) || point.radiusY || 0;
 
@@ -657,23 +652,22 @@ function getPointClientRect(point: EventPoint): PointRect {
   };
 }
 
-function isPointInRect(point: Point, rect: DOMRect): boolean {
-  return point.x >= rect.left &&
-    point.x <= rect.right &&
-    point.y >= rect.top &&
-    point.y <= rect.bottom;
+function areRectanglesOverlapping(a: Rect, b: Rect) {
+  // check if they cannot overlap on x axis
+  if (a.left > b.right || b.left > a.right) {
+    return false;
+  }
+  // check if they cannot overlap on y axis
+  if (a.top > b.bottom || b.top > a.bottom) {
+    return false;
+  }
+  return true;
 }
 
 function isOverTarget(point: EventPoint, target: HTMLElement) {
   let rect = target.getBoundingClientRect();
-  if (isPointInRect({x: point.clientX, y: point.clientY}, rect)) {
-    return true;
-  }
   let pointRect = getPointClientRect(point);
-  return isPointInRect({x: pointRect.left, y: pointRect.top}, rect) ||
-    isPointInRect({x: pointRect.right, y: pointRect.top}, rect) ||
-    isPointInRect({x: pointRect.right, y: pointRect.bottom}, rect) ||
-    isPointInRect({x: pointRect.left, y: pointRect.bottom}, rect);
+  return areRectanglesOverlapping(rect, pointRect);
 }
 
 function shouldPreventDefault(target: Element) {
