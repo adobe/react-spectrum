@@ -236,15 +236,21 @@ function Droppable({type}: any) {
     }
   });
 
+  let {clipboardProps} = useClipboard({
+    onPaste: action('onPaste')
+  });
+
   let {buttonProps} = useButton({elementType: 'div'}, ref);
 
   return (
-    <div
-      {...mergeProps(dropProps, buttonProps)}
-      ref={ref}
-      className={classNames(dropzoneStyles, 'spectrum-Dropzone', {'is-dragged': isDropTarget})}>
-      Drop here
-    </div>
+    <FocusRing focusRingClass={classNames(dropzoneStyles, 'focus-ring')}>
+      <div
+        {...mergeProps(dropProps, buttonProps, clipboardProps)}
+        ref={ref}
+        className={classNames(dropzoneStyles, 'spectrum-Dropzone', {'is-dragged': isDropTarget})}>
+        Drop here
+      </div>
+    </FocusRing>
   );
 }
 
