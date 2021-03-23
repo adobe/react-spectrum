@@ -569,10 +569,8 @@ This can be done by returning `filterText` from the `useAsyncList` load function
 The example below demonstrates how you could update the input value for your selected key once your list of items has been fetched.
 
 ```tsx example
-import {useAsyncList} from '@react-stately/data';
-
 function AsyncLoadingExample() {
-    let [isFocused, setFocused] = useState(false);
+  let [isFocused, setFocused] = React.useState(false);
   let list = useAsyncList({
     async load({signal, cursor, filterText, selectedKeys}) {
       if (cursor) {
@@ -588,7 +586,7 @@ function AsyncLoadingExample() {
       let json = await res.json();
 
       let selectedText;
-      let selectedKey = (selectedKeys as Set<React.Key>).values().next().value;
+      let selectedKey = selectedKeys.values().next().value;
 
       // If selectedKey exists and combobox isn't focused, update the input value with the selected key text
       // This allows the input value to be up to date when items load for the first time or the selected key text is updated server side.
@@ -600,14 +598,13 @@ function AsyncLoadingExample() {
       }
 
       return {
-          items: json.results,
-          cursor: json.next,
-          filterText: selectedText ?? filterText
-        };
-      },
-      initialSelectedKeys: ['Luke Skywalker'],
-      getKey: (item) => item.name
-    }
+        items: json.results,
+        cursor: json.next,
+        filterText: selectedText ?? filterText
+      };
+    },
+    initialSelectedKeys: ['Luke Skywalker'],
+    getKey: (item) => item.name
   });
 
   let onSelectionChange = (key) => {
@@ -624,7 +621,7 @@ function AsyncLoadingExample() {
     list.setFilterText(value);
   };
 
-  let selectedKey = (list.selectedKeys as Set<React.Key>).values().next().value;
+  let selectedKey = list.selectedKeys.values().next().value;
   return (
     <ComboBox
       label="Star Wars Character Lookup"
