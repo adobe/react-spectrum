@@ -37,8 +37,12 @@ export function BreakpointProvider(props: BreakpointProviderProps) {
 export function useMatchedBreakpoint(breakpoints: Breakpoints) {
   // sort breakpoints in ascending order.
   let entries = Object.entries(breakpoints).sort(([, valueA], [, valueB]) => valueA - valueB);
-  let breakpointQueries = entries.map(([, value]) => {
-    return `(min-width: ${value}px)`;
+  let breakpointQueries = entries.map(([, value], index) => {
+    if (index === entries.length - 1) {
+      return `(min-width: ${value}px)`;
+    } else {
+      return `(min-width: ${value}px) and (max-width: ${entries[index + 1][1]}px)`;
+    }
   });
 
   let supportsMatchMedia = typeof window !== 'undefined' && typeof window.matchMedia === 'function';
