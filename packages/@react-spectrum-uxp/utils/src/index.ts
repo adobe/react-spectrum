@@ -10,16 +10,5 @@
  * governing permissions and limitations under the License.
  */
 
-import { isUxp } from "@react-spectrum-uxp/utils";
+export * from './isUxp';
 
-import { Button as WebButton } from '@react-spectrum/button';
-import { Button as UxpButton } from './Button';
-export const Button: typeof WebButton = isUxp ? UxpButton : WebButton;
-
-export {
-    ActionButton,
-} from '@react-spectrum/button';
-// export * from '../FieldButton';
-// export * from '../LogicButton';
-// export * from '../ClearButton';
-// export * from '../ToggleButton';

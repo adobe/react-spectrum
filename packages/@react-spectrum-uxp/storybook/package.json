@@ -20,7 +20,8 @@
   },
   "alias": {
     "@storybook/react": "./src/@storybook/react.ts",
-    "@storybook/addon-actions": "./src/@storybook/addon-actions.ts"
+    "@storybook/addon-actions": "./src/@storybook/addon-actions.ts",
+    "@react-spectrum/button": "@react-spectrum-uxp/button"
   },
   "devDependencies": {
     "@types/react": "^17.0.0",
@@ -32,7 +33,7 @@
     "@react-spectrum-uxp/parcel-resolver-alias-fix": "1.0.0"
   },
   "dependencies": {
-    "@react-spectrum/button": "^3.3.0",
+    "@react-spectrum-uxp/button": "^3.3.0",
     "@react-spectrum/provider": "^3.1.2",
     "@react-spectrum/theme-default": "^3.1.0",
     "react": "16.13.1",

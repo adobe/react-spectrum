@@ -14,8 +14,8 @@ const { Resolver } = require('@parcel/plugin');
 const NodeResolver = require('@parcel/node-resolver-core').default;
 const path = require('path');
 
-// const { Console } = require('console');
-// const console = new Console(process.stdout, process.stdin);
+const { Console } = require('console');
+const console = new Console(process.stdout, process.stdin);
 
 async function getPackage(fs, file) {
   let parent = path.dirname(file);
@@ -49,10 +49,18 @@ module.exports = new Resolver({
     }
 
     let alias = this.alias[filePath];
-    if (alias) {
-      let newFilePath = path.join(this.root, alias);
-      // console.log("Found Alias: " + filePath + " => " + newFilePath);
-      return { filePath: newFilePath };
+    // we only fix relative alias's the others should work by default so we ignore.
+    // we also ignore .stories. for the following reason:
+    //  we want to alias "@react-spectrum/button" to "@react-spectrum-uxp/button"
+    //  BUT that will also alias sub items like "@react-spectrum/button/stories/ActionButton.stories.tsx"
+    //  we do NOT want that, we want them to load from original location in "@react-spectrum/button/stories..."
+    //  So we skip them.
+    // if (filePath.indexOf('.stories.') > 0 || filePath.indexOf("Button") > 0) {
+    //   console.log("------> " + filePath + " : " + dependency.sourcePath + " " + dependency.target);
+    // }
+    if (alias && alias.startsWith(".") && alias.indexOf(".stories.") < 0) {
+      // console.log("Found Alias: " + filePath);
+      return { filePath: path.join(this.root, alias) };
     }
     return null;
   }

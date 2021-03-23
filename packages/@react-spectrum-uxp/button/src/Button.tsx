@@ -14,14 +14,13 @@ import {classNames, SlotProvider, useFocusableRef, useSlotProps} from '@react-sp
 import {FocusableRef} from '@react-types/shared';
 import React, {ElementType, ReactElement} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
-import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>, ref: FocusableRef<HTMLElement>) {
-  props = useProviderProps(props);
-  props = useSlotProps(props, 'button');
+  // props = useProviderProps(props);
+  // props = useSlotProps(props, 'button');
   let {
     elementType: ElementType = 'sp-button', // uxp
     children,
@@ -42,20 +41,9 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
       quiet={ isQuiet }   // uxp
       variant={ variant } // uxp
       >
-      <SlotProvider
-        slots={{
-          icon: {
-            size: 'S',
-            UNSAFE_className: classNames(styles, 'spectrum-Icon')
-          },
-          text: {
-            UNSAFE_className: classNames(styles, 'spectrum-Button-label')
-          }
-        }}>
-        {typeof children === 'string'
-          ? <Text>{children}</Text>
-          : children}
-      </SlotProvider>
+      {typeof children === 'string'
+        ? <Text>{children}</Text>
+        : children}
     </ElementType>
   );
 }
