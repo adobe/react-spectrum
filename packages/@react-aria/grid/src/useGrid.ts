@@ -14,20 +14,20 @@ import {AriaLabelingProps, DOMProps, KeyboardDelegate} from '@react-types/shared
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
+import {gridKeyboardDelegates} from './utils';
 import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject, useMemo} from 'react';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useSelectableCollection} from '@react-aria/selection';
 
-const gridIds = new WeakMap<GridState<unknown, GridCollection<unknown>>, string>();
-
-interface GridProps extends DOMProps, AriaLabelingProps {
+export interface GridProps extends DOMProps, AriaLabelingProps {
   ref: RefObject<HTMLElement>,
   isVirtualized?: boolean,
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate,
+  focusMode?: 'row' | 'cell'
 }
 
-interface GridAria {
+export interface GridAria {
   gridProps: HTMLAttributes<HTMLElement>
 }
 
@@ -35,7 +35,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   let {
     ref,
     isVirtualized,
-    keyboardDelegate
+    keyboardDelegate,
+    focusMode
   } = props;
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
@@ -51,8 +52,9 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     disabledKeys: state.disabledKeys,
     ref,
     direction,
-    collator
-  }), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator]);
+    collator,
+    focusMode
+  }), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator, focusMode]);
   let {collectionProps} = useSelectableCollection({
     ref,
     selectionManager: state.selectionManager,
@@ -60,7 +62,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   });
 
   let id = useId();
-  gridIds.set(state, id);
+  gridKeyboardDelegates.set(state, delegate);
 
   let domProps = filterDOMProps(props, {labelable: true});
   let gridProps: HTMLAttributes<HTMLElement> = mergeProps(domProps, {

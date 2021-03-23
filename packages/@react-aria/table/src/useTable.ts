@@ -10,38 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, KeyboardDelegate, Node} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {GridAria, GridProps, useGrid} from '@react-aria/grid';
 import {gridIds} from './utils';
-import {HTMLAttributes, RefObject, useMemo} from 'react';
 import {Layout} from '@react-stately/virtualizer';
+import {Node} from '@react-types/shared';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {TableState} from '@react-stately/table';
 import {useCollator, useLocale} from '@react-aria/i18n';
-import {useSelectableCollection} from '@react-aria/selection';
+import {useId} from '@react-aria/utils';
+import {useMemo} from 'react';
 
-interface GridProps<T> extends DOMProps, AriaLabelingProps {
-  ref: RefObject<HTMLElement>,
-  isVirtualized?: boolean,
-  keyboardDelegate?: KeyboardDelegate,
+interface TableProps<T> extends GridProps {
   layout?: Layout<Node<T>>
 }
 
-interface GridAria {
-  gridProps: HTMLAttributes<HTMLElement>
-}
-
-export function useTable<T>(props: GridProps<T>, state: TableState<T>): GridAria {
+export function useTable<T>(props: TableProps<T>, state: TableState<T>): GridAria {
   let {
     ref,
-    isVirtualized,
     keyboardDelegate,
+    isVirtualized,
     layout
   } = props;
-
-  if (!props['aria-label'] && !props['aria-labelledby']) {
-    console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
-  }
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
@@ -55,26 +44,19 @@ export function useTable<T>(props: GridProps<T>, state: TableState<T>): GridAria
     collator,
     layout
   }), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator, layout]);
-  let {collectionProps} = useSelectableCollection({
-    ref,
-    selectionManager: state.selectionManager,
-    keyboardDelegate: delegate
-  });
 
   let id = useId();
   gridIds.set(state, id);
 
-  let domProps = filterDOMProps(props, {labelable: true});
-  let gridProps: HTMLAttributes<HTMLElement> = mergeProps(domProps, {
-    role: 'grid',
+  let {gridProps} = useGrid({
+    ...props,
     id,
-    'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined,
-    ...collectionProps
-  });
+    keyboardDelegate: delegate
+  }, state);
 
+  // Override to include header rows
   if (isVirtualized) {
     gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
-    gridProps['aria-colcount'] = state.collection.columns.length;
   }
 
   return {

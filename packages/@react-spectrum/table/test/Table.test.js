@@ -58,6 +58,7 @@ for (let i = 1; i <= 100; i++) {
 
 describe('Table', function () {
   let offsetWidth, offsetHeight;
+
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
@@ -1252,7 +1253,7 @@ describe('Table', function () {
                 <Cell>Baz 1</Cell>
               </Row>
               <Row>
-                <Cell textValue="Foo 2"><Switch aria-label="Foo 2" /></Cell>
+                <Cell textValue="Foo 2"><Switch aria-label="Foo 2" /><Switch aria-label="Foo 3" /></Cell>
                 <Cell textValue="Yahoo"><Link><a href="https://yahoo.com" target="_blank">Yahoo</a></Link></Cell>
                 <Cell>Baz 2</Cell>
               </Row>
@@ -1272,6 +1273,18 @@ describe('Table', function () {
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
 
         moveFocus('ArrowDown');
+        expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
+
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(tree.getAllByRole('switch')[2]);
+
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(tree.getAllByRole('link')[1]);
+
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(tree.getAllByRole('switch')[2]);
+
+        moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
         moveFocus('ArrowLeft');
@@ -2756,7 +2769,7 @@ describe('Table', function () {
           <TableBody items={items} onLoadMore={onLoadMore}>
             {row => (
               <Row>
-                {key => <Cell>row[key]</Cell>}
+                {key => <Cell>{row[key]}</Cell>}
               </Row>
             )}
           </TableBody>
@@ -2779,6 +2792,32 @@ describe('Table', function () {
       fireEvent.scroll(scrollView);
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
+
+    it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
+      let items = [{id: 1, foo: 'Foo 1', bar: 'Bar 1'}];
+      let onLoadMoreSpy = jest.fn();
+
+      let TableMock = (props) => (
+        <Table aria-label="Table">
+          <TableHeader>
+            <Column key="foo">Foo</Column>
+            <Column key="bar">Bar</Column>
+          </TableHeader>
+          <TableBody items={props.items} onLoadMore={onLoadMoreSpy}>
+            {row => (
+              <Row>
+                {key => <Cell>{row[key]}</Cell>}
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+      );
+
+      render(<TableMock items={items} />);
+      act(() => jest.runAllTimers());
+      // first loadMore triggered by onVisibleRectChange, other 2 by useLayoutEffect
+      expect(onLoadMoreSpy).toHaveBeenCalledTimes(3);
     });
 
     it('should display an empty state when there are no items', function () {

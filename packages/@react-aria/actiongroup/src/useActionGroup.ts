@@ -35,6 +35,10 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
     isDisabled,
     orientation = 'horizontal' as Orientation
   } = props;
+  let allKeys = [...state.collection.getKeys()];
+  if (!allKeys.some(key => !state.disabledKeys.has(key))) {
+    isDisabled = true;
+  }
 
   let {direction} = useLocale();
   // eslint-disable-next-line arrow-body-style
