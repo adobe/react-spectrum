@@ -61,6 +61,17 @@ abstract class Color implements IColor {
   getChannelName(channel: ColorChannel, locale: string) {
     return messages.getStringForLocale(channel, locale);
   }
+
+  getColorSpace(): ColorFormat {
+    if (this instanceof RGBColor) {
+      return 'rgb';
+    } else if (this instanceof HSBColor) {
+      return 'hsb';
+    } else if (this instanceof HSLColor) {
+      return 'hsl';
+    }
+    return null;
+  }
 }
 
 const HEX_REGEX = /^#(?:([0-9a-f]{3})|([0-9a-f]{6}))$/i;
@@ -308,9 +319,21 @@ class HSLColor extends Color {
       case 'hsl':
       case 'hsla':
         return this;
+      case 'hsb':
+      case 'hsba':
+        return this.toHSB();
       default:
         throw new Error('Unsupported color conversion: hsl -> ' + format);
     }
+  }
+
+  private toHSB(): Color {
+    // determine the brightness and saturation in the range [0,100]
+    const b = this.saturation * (this.lightness < 50 ? this.lightness : 100 - this.lightness) / 100;
+    const brightness = this.lightness + b;
+    const saturation = b === 0 ? 0 : 2 * b / (this.lightness + b) * 100;
+
+    return new HSBColor(this.hue, saturation, brightness, this.alpha);
   }
 
   clone(): Color {

@@ -49,6 +49,8 @@ export interface Color {
   toFormat(format: ColorFormat): Color,
   /** Converts the color to a string in the given format. */
   toString(format: ColorFormat | 'css'): string,
+  /** Returns a duplicate of the color value. */
+  clone(): Color,
   /** Converts the color to hex, and returns an integer representation. */
   toHexInt(): number,
   /**
@@ -73,7 +75,11 @@ export interface Color {
   /**
    * Formats the numeric value for a given channel for display according to the provided locale.
    */
-  formatChannelValue(channel: ColorChannel, locale: string): string
+  formatChannelValue(channel: ColorChannel, locale: string): string,
+  /**
+   * Returns the color space, 'rgb', 'hsb' or 'hsl', for the current color.
+   */
+  getColorSpace(): ColorFormat
 }
 
 export interface ColorFieldProps extends ValueBase<string | Color>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
@@ -133,4 +139,29 @@ export interface AriaColorSliderProps extends ColorSliderProps, DOMProps, AriaLa
 export interface SpectrumColorSliderProps extends AriaColorSliderProps, StyleProps {
   /** Whether the value label is displayed. True by default if there is a label, false by default if not. */
   showValueLabel?: boolean
+}
+
+export interface ColorAreaProps extends ValueBase<string | Color> {
+  /** Color channel for the horizontal axis. */
+  xChannel?: ColorChannel,
+  /** Color channel for the vertical axis. */
+  yChannel?: ColorChannel,
+  /** Whether the ColorArea is disabled. */
+  isDisabled?: boolean,
+  /** Handler that is called when the value changes, as the user drags. */
+  onChange?: (value: Color) => void,
+  /** Handler that is called when the user stops dragging. */
+  onChangeEnd?: (value: Color) => void,
+  /**
+   * The ColorArea's step value.
+   * @default 1
+   */
+  step?: number
+}
+
+export interface AriaColorAreaProps extends ColorAreaProps, DOMProps, AriaLabelingProps {}
+
+
+export interface SpectrumColorAreaProps extends AriaColorAreaProps, Omit<StyleProps, 'width' | 'height'> {
+  size?: DimensionValue
 }
