@@ -71,6 +71,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     version,
     theme,
     breakpoints,
+    mobileFirst,
     colorScheme,
     scale,
     isQuiet,
