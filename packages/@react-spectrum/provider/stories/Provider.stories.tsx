@@ -15,7 +15,7 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import customTheme from './custom-theme.css';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
-import {Provider, useProvider} from '../';
+import {Provider} from '../';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import scaleLarge from '@adobe/spectrum-css-temp/vars/spectrum-large.css';
@@ -23,6 +23,7 @@ import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium.css';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
+import {useBreakpoint} from '@react-spectrum/utils';
 
 const THEME = {
   light: customTheme,
@@ -109,7 +110,8 @@ storiesOf('Provider', module)
     'custom responsive styleProps',
     () => {
       let Breakpoint = () => {
-        let {breakpoint} = useProvider();
+        let {matchedBreakpoints} = useBreakpoint();
+        let breakpoint = matchedBreakpoints[0];
         let width = {base: 'size-1600', XS: 'size-2000', S: 'size-2400', M: 'size-3000', L: 'size-3400', XL: 'size-4600', XXL: 'size-6000'};
         return (
           <>
@@ -126,12 +128,68 @@ storiesOf('Provider', module)
       };
       return (
         <Provider
-          breakpoints={{XS: 360, S: 480, M: 640, L: 1024, XL: 1280, XXL: 1920}}
+          breakpoints={{S: 480, M: 640, L: 1024}}
           UNSAFE_style={{padding: 50}}>
           <Breakpoint />
         </Provider>
       );
-    });
+    })
+    .add(
+      'mobileFirst = true',
+      () => {
+        let Breakpoint = () => {
+          let {matchedBreakpoints} = useBreakpoint();
+          let breakpoint = matchedBreakpoints[0];
+          let width = {base: 'size-1600', S: 'size-2400', L: 'size-3400'};
+          return (
+            <>
+              <p>
+                button's width will be S: 'size-2400' at M viewport.
+              </p>
+              <Button
+                variant="primary"
+                width={width} >
+                Button with {breakpoint} breakpoint.
+              </Button>
+            </>
+          );
+        };
+        return (
+          <Provider
+            mobileFirst
+            UNSAFE_style={{padding: 50}}>
+            <Breakpoint />
+          </Provider>
+        );
+      })
+      .add(
+        'mobileFirst = false',
+        () => {
+          let Breakpoint = () => {
+            let {matchedBreakpoints} = useBreakpoint();
+            let breakpoint = matchedBreakpoints[0];
+            let width = {base: 'size-1600', S: 'size-2400', L: 'size-3400'};
+            return (
+              <>
+                <p>
+                  button's width will be L: 'size-3400' at M viewport.
+                </p>
+                <Button
+                  variant="primary"
+                  width={width} >
+                  Button with {breakpoint} breakpoint.
+                </Button>
+              </>
+            );
+          };
+          return (
+            <Provider
+              mobileFirst={false}
+              UNSAFE_style={{padding: 50}}>
+              <Breakpoint />
+            </Provider>
+          );
+        });
 
 function render(props = {}) {
   return (

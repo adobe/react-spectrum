@@ -1,5 +1,5 @@
-import { useIsSSR } from '@react-aria/ssr';
 import React, {ReactNode, useContext, useEffect, useState} from 'react';
+import {useIsSSR} from '@react-aria/ssr';
 
 interface Breakpoints {
   S?: number,
@@ -9,59 +9,54 @@ interface Breakpoints {
 }
 
 interface IBreakpointContext {
-  breakpoint: string
+  matchedBreakpoints: string[]
 }
 
 export const BreakpointContext = React.createContext<IBreakpointContext>(null);
 BreakpointContext.displayName = 'BreakpointContext';
 
+export const DEFAULT_BREAKPOINTS = {S: 380, M: 768, L: 1024};
+
 interface BreakpointProviderProps {
   children?: ReactNode,
-  breakpoint: string
+  matchedBreakpoints: string[]
 }
 
 export function BreakpointProvider(props: BreakpointProviderProps) {
   let {
     children,
-    breakpoint,
+    matchedBreakpoints
   } = props;
   return (
-    <BreakpointContext.Provider value={{
-      breakpoint
-    }}>
+    <BreakpointContext.Provider
+      value={{matchedBreakpoints}} >
       {children}
     </BreakpointContext.Provider>
-  )
+  );
 }
 
-export function useMatchedBreakpoint(breakpoints: Breakpoints) {
-  // sort breakpoints in ascending order.
-  let entries = Object.entries(breakpoints).sort(([, valueA], [, valueB]) => valueA - valueB);
-  let breakpointQueries = entries.map(([, value], index) => {
-    if (index === entries.length - 1) {
-      return `(min-width: ${value}px)`;
-    } else {
-      return `(min-width: ${value}px) and (max-width: ${entries[index + 1][1]}px)`;
-    }
-  });
+export function useMatchedBreakpoints(breakpoints: Breakpoints, mobileFirst: boolean): string[] {
+  // sort breakpoints
+  let entries = Object.entries(breakpoints).sort(([, valueA], [, valueB]) => mobileFirst ? valueB - valueA : valueA - valueB);
+  let breakpointQueries = entries.map(([, value]) => mobileFirst ?  `(min-width: ${value}px)` : `(max-width: ${value}px)`);
 
   let supportsMatchMedia = typeof window !== 'undefined' && typeof window.matchMedia === 'function';
   let getBreakpointHandler = () => {
-    let point = 'base';
+    let matched = [];
     for (let i in breakpointQueries) {
       let query = breakpointQueries[i];
       if (window.matchMedia(query).matches) {
-        point = entries[i][0];
-        break;
+        matched.push(entries[i][0]);
       }
     }
-    return point;
+    matched.push('base');
+    return matched;
   };
 
   let [breakpoint, setBreakpoint] = useState(() =>
     supportsMatchMedia
       ? getBreakpointHandler()
-      : 'base'
+      : ['base']
   );
 
   useEffect(() => {
@@ -82,7 +77,7 @@ export function useMatchedBreakpoint(breakpoints: Breakpoints) {
   // If in SSR, the media query should never match. Once the page hydrates,
   // this will update and the real value will be returned.
   let isSSR = useIsSSR();
-  return isSSR ? 'base' : breakpoint;
+  return isSSR ? ['base'] : breakpoint;
 }
 
 export function useBreakpoint(): IBreakpointContext {

@@ -10,6 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {
+  BreakpointProvider,
+  DEFAULT_BREAKPOINTS,
+  shouldKeepSpectrumClassNames,
+  useDOMRef,
+  useMatchedBreakpoints,
+  useStyleProps
+} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
@@ -17,13 +25,6 @@ import {I18nProvider, useLocale} from '@react-aria/i18n';
 import {ModalProvider, useModalProvider} from '@react-aria/overlays';
 import {ProviderContext, ProviderProps} from '@react-types/provider';
 import React, {useContext, useEffect, useRef} from 'react';
-import {
-  BreakpointProvider,
-  shouldKeepSpectrumClassNames,
-  useDOMRef,
-  useMatchedBreakpoint,
-  useStyleProps
-} from '@react-spectrum/utils';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/index.css';
 import {useColorScheme, useScale} from './mediaQueries';
@@ -36,6 +37,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let prevContext = useProvider();
   let prevColorScheme = prevContext && prevContext.colorScheme;
   let prevBreakpoints = prevContext && prevContext.breakpoints;
+  let prevMobileFirst = prevContext && prevContext.mobileFirst;
   let {
     theme = prevContext && prevContext.theme,
     defaultColorScheme
@@ -52,7 +54,8 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     colorScheme = usePrevColorScheme ? prevColorScheme : autoColorScheme,
     scale = prevContext ? prevContext.scale : autoScale,
     locale = prevContext ? prevLocale : null,
-    breakpoints = prevContext ? prevBreakpoints : {base: 0, S: 380, M: 768, L: 1024},
+    breakpoints = prevContext ? prevBreakpoints : DEFAULT_BREAKPOINTS,
+    mobileFirst = prevContext ? prevMobileFirst : true,
     children,
     isQuiet,
     isEmphasized,
@@ -78,8 +81,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     validationState
   };
 
-  let breakpoint = useMatchedBreakpoint(breakpoints);
-  console.log(breakpoint)
+  let matchedBreakpoints = useMatchedBreakpoints(breakpoints, mobileFirst);
   let filteredProps = {};
   Object.entries(currentProps).forEach(([key, value]) => value !== undefined && (filteredProps[key] = value));
 
@@ -89,7 +91,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   // Only wrap in a DOM node if the theme, colorScheme, or scale changed
   let contents = children;
   let domProps = filterDOMProps(otherProps);
-  let {styleProps} = useStyleProps(otherProps, {breakpoint});
+  let {styleProps} = useStyleProps(otherProps, {matchedBreakpoints});
   if (!prevContext || props.locale || theme !== prevContext.theme || colorScheme !== prevContext.colorScheme || scale !== prevContext.scale || Object.keys(domProps).length > 0 || otherProps.UNSAFE_className || Object.keys(styleProps.style).length > 0) {
     contents = (
       <ProviderWrapper {...props} UNSAFE_style={{isolation: !prevContext ? 'isolate' : undefined, ...styleProps.style}} ref={ref}>
@@ -101,7 +103,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   return (
     <Context.Provider value={context}>
       <I18nProvider locale={locale}>
-        <BreakpointProvider breakpoint={breakpoint}>
+        <BreakpointProvider matchedBreakpoints={matchedBreakpoints}>
           <ModalProvider>
             {contents}
           </ModalProvider>

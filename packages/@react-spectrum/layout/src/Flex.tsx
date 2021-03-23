@@ -10,14 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, passthroughStyle, responsiveDimensionValue, StyleHandlers, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, passthroughStyle, responsiveDimensionValue, StyleHandlers, useBreakpoint, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {FlexProps} from '@react-types/layout';
 import React, {forwardRef} from 'react';
 import styles from './flex-gap.css';
 import {useIsSSR} from '@react-aria/ssr';
-import {useProvider} from '@react-spectrum/provider';
 
 const flexStyleProps: StyleHandlers = {
   direction: ['flexDirection', passthroughStyle],
@@ -32,8 +31,7 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
     children,
     ...otherProps
   } = props;
-  let provider = useProvider();
-  let breakpoint = provider?.breakpoint || 'base';
+  let {matchedBreakpoints = ['base']} = useBreakpoint();
   let {styleProps} = useStyleProps(otherProps);
   let {styleProps: flexStyle} = useStyleProps(otherProps, {handlers: flexStyleProps});
   let domRef = useDOMRef(ref);
@@ -48,9 +46,9 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   if ((props.gap || props.rowGap || props.columnGap) && (isSSR || !isFlexGapSupported())) {
     let style = {
       ...flexStyle.style,
-      '--column-gap': props.columnGap != null ? responsiveDimensionValue(props.columnGap, breakpoint) : undefined,
-      '--row-gap': props.rowGap != null ? responsiveDimensionValue(props.rowGap, breakpoint) : undefined,
-      '--gap': props.gap != null ? responsiveDimensionValue(props.gap, breakpoint) : undefined
+      '--column-gap': props.columnGap != null ? responsiveDimensionValue(props.columnGap, matchedBreakpoints) : undefined,
+      '--row-gap': props.rowGap != null ? responsiveDimensionValue(props.rowGap, matchedBreakpoints) : undefined,
+      '--gap': props.gap != null ? responsiveDimensionValue(props.gap, matchedBreakpoints) : undefined
     };
 
     return (
@@ -69,15 +67,15 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   };
 
   if (props.gap != null) {
-    style.gap = responsiveDimensionValue(props.gap, breakpoint);
+    style.gap = responsiveDimensionValue(props.gap, matchedBreakpoints);
   }
 
   if (props.columnGap != null) {
-    style.columnGap = responsiveDimensionValue(props.columnGap, breakpoint);
+    style.columnGap = responsiveDimensionValue(props.columnGap, matchedBreakpoints);
   }
 
   if (props.rowGap != null) {
-    style.rowGap = responsiveDimensionValue(props.rowGap, breakpoint);
+    style.rowGap = responsiveDimensionValue(props.rowGap, matchedBreakpoints);
   }
 
   return (

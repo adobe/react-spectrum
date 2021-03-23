@@ -12,9 +12,8 @@
 
 import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, DimensionValue, Direction, Responsive, ResponsiveProp, StyleProps, ViewStyleProps} from '@react-types/shared';
 import {CSSProperties, HTMLAttributes} from 'react';
+import {useBreakpoint} from './BreakpointProvider';
 import {useLocale} from '@react-aria/i18n';
-import {useProvider} from '@react-spectrum/provider';
-import { useBreakpoint } from './BreakpointProvider';
 
 type Breakpoint = 'base' | 'S' | 'M' | 'L' | string;
 type StyleName = string | string[] | ((dir: Direction) => string);
@@ -133,8 +132,8 @@ export function dimensionValue(value: DimensionValue) {
   return `var(--spectrum-global-dimension-${value}, var(--spectrum-alias-${value}))`;
 }
 
-export function responsiveDimensionValue(value: Responsive<DimensionValue>, breakpoint: Breakpoint) {
-  value = getResponsiveProp(value, breakpoint);
+export function responsiveDimensionValue(value: Responsive<DimensionValue>, matchedBreakpoints: Breakpoint[]) {
+  value = getResponsiveProp(value, matchedBreakpoints);
   return dimensionValue(value);
 }
 
@@ -179,7 +178,7 @@ function flexValue(value: boolean | number | string) {
   return '' + value;
 }
 
-export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers, direction: Direction, breakpoint: Breakpoint) {
+export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers, direction: Direction, breakpoint: Breakpoint[]) {
   let style: CSSProperties = {};
   for (let key in props) {
     let styleProp = handlers[key];
@@ -215,7 +214,7 @@ export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers
 
 export function useStyleProps<T extends StyleProps>(props: T, options: {
   handlers?: StyleHandlers,
-  breakpoint?: Breakpoint
+  matchedBreakpoints?: Breakpoint[]
 } = {
   handlers: baseStyleProps
 }) {
@@ -226,11 +225,11 @@ export function useStyleProps<T extends StyleProps>(props: T, options: {
   } = props;
   let {
     handlers = baseStyleProps,
-    breakpoint = 'base'
+    matchedBreakpoints = ['base']
   } = options;
   let breakpointProvider = useBreakpoint();
   let {direction} = useLocale();
-  let styles = convertStyleProps(props, handlers, direction, breakpointProvider?.breakpoint || breakpoint);
+  let styles = convertStyleProps(props, handlers, direction, breakpointProvider?.matchedBreakpoints || matchedBreakpoints);
   let style = {...UNSAFE_style, ...styles};
 
   // @ts-ignore
@@ -269,13 +268,15 @@ export function passthroughStyle(value) {
   return value;
 }
 
-export function getResponsiveProp<T>(prop: Responsive<T>, breakpoint: Breakpoint): T {
+export function getResponsiveProp<T>(prop: Responsive<T>, matchedBreakpoints: Breakpoint[]): T {
   if (prop && typeof prop === 'object') {
-    if (prop[breakpoint]) {
-      return prop[breakpoint];
-    } else {
-      return (prop as ResponsiveProp<T>).base;
+    for (let i = 0; i < matchedBreakpoints.length; i++) {
+      let breakpoint = matchedBreakpoints[i];
+      if (prop[breakpoint]) {
+        return prop[breakpoint];
+      }
     }
+    return (prop as ResponsiveProp<T>).base;
   }
   return prop as T;
 }
