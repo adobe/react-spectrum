@@ -770,8 +770,8 @@ describe('useAsyncList', () => {
       jest.runAllTimers();
     });
 
-    // Only original load more is handled, the other is ignored
-    expect(load).toHaveBeenCalledTimes(2);
+    // Only original load more is handled, the other is canceled
+    expect(load).toHaveBeenCalledTimes(3);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.items).toEqual(ITEMS.concat(ITEMS2));
   });
