@@ -178,7 +178,7 @@ function flexValue(value: boolean | number | string) {
   return '' + value;
 }
 
-export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers, direction: Direction, breakpoint: Breakpoint[]) {
+export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers, direction: Direction, matchedBreakpoints: Breakpoint[]) {
   let style: CSSProperties = {};
   for (let key in props) {
     let styleProp = handlers[key];
@@ -191,7 +191,7 @@ export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers
       name = name(direction);
     }
 
-    let prop = getResponsiveProp(props[key], breakpoint);
+    let prop = getResponsiveProp(props[key], matchedBreakpoints);
     let value = convert(prop);
     if (Array.isArray(name)) {
       for (let k of name) {
@@ -269,7 +269,7 @@ export function passthroughStyle(value) {
 }
 
 export function getResponsiveProp<T>(prop: Responsive<T>, matchedBreakpoints: Breakpoint[]): T {
-  if (prop && typeof prop === 'object') {
+  if (prop && typeof prop === 'object' && !Array.isArray(prop)) {
     for (let i = 0; i < matchedBreakpoints.length; i++) {
       let breakpoint = matchedBreakpoints[i];
       if (prop[breakpoint]) {
