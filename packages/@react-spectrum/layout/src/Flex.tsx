@@ -31,7 +31,8 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
     children,
     ...otherProps
   } = props;
-  let {matchedBreakpoints = ['base']} = useBreakpoint();
+  let breakpointProvider = useBreakpoint();
+  let matchedBreakpoints = breakpointProvider?.matchedBreakpoints || ['base'];
   let {styleProps} = useStyleProps(otherProps);
   let {styleProps: flexStyle} = useStyleProps(otherProps, {handlers: flexStyleProps});
   let domRef = useDOMRef(ref);
