@@ -14,6 +14,7 @@ import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeVal
 import {CSSProperties, HTMLAttributes} from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {useProvider} from '@react-spectrum/provider';
+import { useBreakpoint } from './BreakpointProvider';
 
 type Breakpoint = 'base' | 'S' | 'M' | 'L' | string;
 type StyleName = string | string[] | ((dir: Direction) => string);
@@ -227,9 +228,9 @@ export function useStyleProps<T extends StyleProps>(props: T, options: {
     handlers = baseStyleProps,
     breakpoint = 'base'
   } = options;
-  let provider = useProvider();
+  let breakpointProvider = useBreakpoint();
   let {direction} = useLocale();
-  let styles = convertStyleProps(props, handlers, direction, provider?.breakpoint || breakpoint);
+  let styles = convertStyleProps(props, handlers, direction, breakpointProvider?.breakpoint || breakpoint);
   let style = {...UNSAFE_style, ...styles};
 
   // @ts-ignore

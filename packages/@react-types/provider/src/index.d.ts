@@ -95,5 +95,4 @@ export interface ProviderContext extends ContextProps {
   colorScheme: ColorScheme,
   scale: Scale,
   breakpoints: Breakpoints,
-  breakpoint: string
 }
