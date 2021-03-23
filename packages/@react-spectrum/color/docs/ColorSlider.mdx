@@ -46,9 +46,7 @@ keywords: [color slider]
 ## Value
 
 A ColorSlider requires either an uncontrolled default value or a controlled value, provided using the `defaultValue` or `value` props respectively.
-The value provided to either of these props should be a string or <TypeLink links={colorTypes.links} type={colorTypes.exports.Color} /> object that matches the provided ColorSlider's `channel` prop. For example, a
-ColorSlider representing a color channel ("red", "green", "blue") could have a hex color code (e.g. "#7f0000") or a decimal code (e.g. "rgb(127, 0, 0)") provided.
-For a full list of supported channels, see the [Props](#props) table below.
+The value provided to either of these props should be a color string or <TypeLink links={colorTypes.links} type={colorTypes.exports.Color} /> object. The `channel` prop must also be provided to specify which color channel the slider should display. This must be one of the channels included in the color value, for example, for RGB colors, the "red", "green", and "blue" channels are available. For a full list of supported channels, see the [Props](#props) table below.
 
 In the example below, the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} /> function is used to parse the initial color from a HSL string
 so that `value`'s type remains consistent.
