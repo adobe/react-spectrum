@@ -15,6 +15,13 @@ import {ReactNode} from 'react';
 
 export type ColorScheme = 'light' | 'dark';
 export type Scale = 'medium' | 'large';
+export interface Breakpoints {
+  S?: number,
+  M?: number,
+  L?: number,
+  // Currently, it only deals with pixels, but we need to fix it to accept em or rem as well.
+  [custom: string]: number
+}
 
 export type CSSModule = {
   [className: string]: string
@@ -75,12 +82,27 @@ export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
    * Defaults to the browser/OS language setting.
    * @default 'en-US'
    */
-  locale?: string
+  locale?: string,
+  /**
+   * The breakpoints for styleProps.
+   * Do not use `base` property.
+   * @default {S:380,M:768,L:1024}
+   */
+  breakpoints?: Breakpoints,
+
+  /**
+   * Determines how your responsive styleProps resolves.
+   * If you provided S and L but not M to the styleProps, S value will be adapted to the styles when your view port is M.
+   * @default true
+   */
+  mobileFirst?: boolean
 }
 
 export interface ProviderContext extends ContextProps {
   version: string,
   theme: Theme,
   colorScheme: ColorScheme,
-  scale: Scale
+  scale: Scale,
+  breakpoints: Breakpoints,
+  mobileFirst: boolean
 }
