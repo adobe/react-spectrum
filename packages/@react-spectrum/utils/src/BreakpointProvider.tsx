@@ -15,6 +15,7 @@ interface IBreakpointContext {
 export const BreakpointContext = React.createContext<IBreakpointContext>(null);
 BreakpointContext.displayName = 'BreakpointContext';
 
+// This is temporary values.
 export const DEFAULT_BREAKPOINTS = {S: 380, M: 768, L: 1024};
 
 interface BreakpointProviderProps {
