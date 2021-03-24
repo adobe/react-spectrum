@@ -255,7 +255,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         let dropPosition: DropPosition = 'after';
 
         // If the focused key is a cell, get the parent item instead.
-        // For now, we assume that individual cells cannot be dragged.
+        // For now, we assume that individual cells cannot be dropped on.
         let item = localState.state.collection.getItem(key);
         if (item?.type === 'cell') {
           key = item.parentKey;
@@ -282,7 +282,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
           // If the default target is not valid, find the next one that is.
           if (localState.state.getDropOperation(target, types, drag.allowedDropOperations) === 'cancel') {
-            target = nextValidTarget(target, types, drag.allowedDropOperations, getNextTarget);
+            target = nextValidTarget(target, types, drag.allowedDropOperations, getNextTarget, false)
+              ?? nextValidTarget(target, types, drag.allowedDropOperations, getPreviousTarget, false);
           }
         }
 
