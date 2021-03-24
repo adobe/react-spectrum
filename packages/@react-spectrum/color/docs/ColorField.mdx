@@ -68,12 +68,6 @@ function Example() {
 }
 ```
 
-Placeholder text, provided using the `placeholder` prop, describes the expected value or formatting for the ColorField.
-Placeholder text will only appear when the ColorField is empty, and should not be used as a substitute for labeling the
-component with a visible label.
-
-<ColorField placeholder="#e73623" label="Primary Color" />
-
 ## Labeling
 
 A visual label should be provided for the ColorField using the `label` prop. If the ColorField is required, the `isRequired` and
@@ -101,8 +95,9 @@ When the `necessityIndicator` prop is set to `"label"`, a localized string will 
 
 ## Step values
 
-The `step` prop can be used to snap the value to certain increments. The steps are calculated starting from
-zero or the current value. A `step` can be set to any positive decimal, defaulting to `1` if unspecified.
+The `step` prop can be used to increment or decrement the current `value` using up or down arrow keys. These increments
+are calculated from the current `value` or zero if the `value` is empty. A `step` can be set to any positive decimal,
+defaulting to `1` if unspecified.
 
 ```tsx example
 <ColorField label="Primary Color" step={16} />
