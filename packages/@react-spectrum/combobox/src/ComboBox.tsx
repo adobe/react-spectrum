@@ -38,6 +38,7 @@ import React, {
   ReactElement,
   RefObject,
   useCallback,
+  useEffect,
   useRef,
   useState
 } from 'react';
@@ -121,9 +122,11 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   let {scale} = useProvider();
 
   let onResize = useCallback(() => {
-    let buttonWidth = unwrappedButtonRef.current.offsetWidth;
-    let inputWidth = inputRef.current.offsetWidth;
-    setMenuWidth(buttonWidth + inputWidth);
+    if (unwrappedButtonRef.current && inputRef.current) {
+      let buttonWidth = unwrappedButtonRef.current.offsetWidth;
+      let inputWidth = inputRef.current.offsetWidth;
+      setMenuWidth(buttonWidth + inputWidth);
+    }
   }, [unwrappedButtonRef, inputRef, setMenuWidth]);
 
   useResizeObserver({
@@ -205,10 +208,13 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     style,
     className,
     loadingState,
-    isOpen
+    isOpen,
+    menuTrigger
   } = props;
   let {hoverProps, isHovered} = useHover({});
   let formatMessage = useMessageFormatter(intlMessages);
+  let timeout = useRef(null);
+  let [showLoading, setShowLoading] = useState(false);
 
   let loadingCircle = (
     <ProgressCircle
@@ -224,6 +230,34 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
         )
       )} />
   );
+
+  let isLoading = loadingState === 'loading' || loadingState === 'filtering';
+  let inputValue = inputProps.value;
+  let lastInputValue = useRef(inputValue);
+  useEffect(() => {
+    if (isLoading && !showLoading) {
+      if (timeout.current === null) {
+        timeout.current = setTimeout(() => {
+          setShowLoading(true);
+        }, 500);
+      }
+
+      // If user is typing, clear the timer and restart since it is a new request
+      if (inputValue !== lastInputValue.current) {
+        clearTimeout(timeout.current);
+        timeout.current = setTimeout(() => {
+          setShowLoading(true);
+        }, 500);
+      }
+    } else if (!isLoading) {
+      // If loading is no longer happening, clear any timers and hide the loading circle
+      setShowLoading(false);
+      clearTimeout(timeout.current);
+      timeout.current = null;
+    }
+
+    lastInputValue.current = inputValue;
+  }, [isLoading, showLoading, inputValue]);
 
   return (
     <FocusRing
@@ -273,7 +307,9 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
           isDisabled={isDisabled}
           isQuiet={isQuiet}
           validationState={validationState}
-          isLoading={loadingState === 'loading' || loadingState === 'filtering'}
+          // loading circle should only be displayed if menu is open or if menuTrigger is "manual" (to stop circle from showing up when user selects an option)
+          // TODO: add special case for completionMode: complete as well
+          isLoading={showLoading && (isOpen || menuTrigger === 'manual')}
           loadingIndicator={loadingState != null && loadingCircle} />
         <PressResponder preventFocusOnPress isPressed={isOpen}>
           <FieldButton

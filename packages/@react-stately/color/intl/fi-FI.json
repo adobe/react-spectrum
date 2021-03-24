@@ -1,10 +1,10 @@
 {
-  "hue": "Värisävy",
-  "saturation": "Kylläisyys",
-  "lightness": "Valoisuus",
-  "brightness": "Kirkkaus",
-  "red": "Punainen",
-  "green": "Vihreä",
+  "alpha": "Alpha",
   "blue": "Sininen",
-  "alpha": "Alpha"
+  "brightness": "Kirkkaus",
+  "green": "Vihreä",
+  "hue": "Sävy",
+  "lightness": "Valomäärä",
+  "red": "Punainen",
+  "saturation": "Värikylläisyys"
 }

@@ -117,7 +117,7 @@ function RadioGroup(props) {
 function Radio(props) {
   let {children} = props;
   let state = React.useContext(RadioContext);
-  let ref = useRef(null);
+  let ref = React.useRef(null);
   let {inputProps} = useRadio(props, state, ref);
 
   return (
@@ -173,7 +173,7 @@ function RadioGroup(props) {
 function Radio(props) {
   let {children} = props;
   let state = React.useContext(RadioContext);
-  let ref = useRef(null);
+  let ref = React.useRef(null);
   let {inputProps} = useRadio(props, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 

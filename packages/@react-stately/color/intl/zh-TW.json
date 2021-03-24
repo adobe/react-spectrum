@@ -1,10 +1,10 @@
 {
-  "hue": "色調",
-  "saturation": "飽和",
-  "lightness": "光度",
+  "alpha": "Alpha",
+  "blue": "藍色",
   "brightness": "亮度",
-  "red": "紅",
-  "green": "綠",
-  "blue": "藍",
-  "alpha": "Alpha"
+  "green": "綠色",
+  "hue": "色相",
+  "lightness": "明亮",
+  "red": "紅色",
+  "saturation": "飽和度"
 }
