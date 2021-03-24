@@ -1,5 +1,8 @@
-# Unified Extensibility Platform
+# UXP Storybook
 
+Contains a UXP compatible storybook host plugin which can display standard storybook stories.
+
+Provides Hot Module Reloading that works in both the UXP Demo Application and in a web browser.
 
 ## Setup Notes
 
