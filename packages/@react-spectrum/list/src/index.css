@@ -1,0 +1,45 @@
+.react-spectrum-List {
+  border-color: #e1e1e1;
+  border-style: solid;
+  border-width: var(--spectrum-table-border-size);
+  border-radius: var(--spectrum-table-border-radius);
+  overflow: auto;
+  vertical-align: var(--spectrum-table-cell-vertical-alignment);
+}
+
+
+
+.react-spectrum-ListItem {
+  border-bottom: 1px solid var(--spectrum-tabel-cell-border-color, var(--spectrum-global-color-gray-300));
+  box-sizing: border-box;
+  padding: var(--spectrum-global-dimension-size-125) var(--spectrum-table-cell-padding-x, var(--spectrum-global-dimension-size-200));
+
+  transition: background-color var(--spectrum-global-animation-duration-100) ease-in-out;
+
+  position: relative;
+}
+
+.react-spectrum-ListItem:hover,
+.react-spectrum-ListItem.is-hovered {
+  background-color: var(--spectrum-alias-highlight-hover);
+}
+
+.react-spectrum-ListItem:focus-ring,
+.react-spectrum-ListItem.is-focused {
+  /*outline: none;*/
+}
+
+.react-spectrum-ListItem::before {
+  content: '';
+
+  /* Float above border */
+  z-index: 1;
+  position: absolute;
+
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  inset-block-end: 0;
+  inset-inline-start: 0;
+
+  border-radius: calc(var(--spectrum-table-cell-border-radius-key-focus) - 1px);
+}
