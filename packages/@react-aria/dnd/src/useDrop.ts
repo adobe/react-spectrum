@@ -170,9 +170,9 @@ export function useDrop(options: DropOptions): DropResult {
       // Otherwise, if onDrop removes the original dragged element from the DOM, dragend will never be fired.
       // This behavior is consistent across browsers, but see this issue for details:
       // https://bugzilla.mozilla.org/show_bug.cgi?id=460801
-      requestAnimationFrame(() => {
+      setTimeout(() => {
         options.onDrop(event);
-      });
+      }, 0);
     }
 
     if (typeof options.onDropExit === 'function') {
