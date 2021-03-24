@@ -65,7 +65,9 @@
   }
 
   &.is-focused,
-  &.focus-ring {
+  &.focus-ring,
+  &:focus-within {
+    z-index: 2;
     @extend %spectrum-ColorControl-handle--focused;
   }
 
