@@ -28,6 +28,7 @@ import {isAndroid, isIOS, isIPhone, mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {TextInputDOMProps} from '@react-types/shared';
 import {useFocus} from '@react-aria/interactions';
+import {useFocusable} from '@react-aria/focus';
 import {
   useMessageFormatter,
   useNumberFormatter
@@ -88,12 +89,14 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
 
   let inputId = useId(id);
 
+  let {focusableProps} = useFocusable(props, inputRef);
   let {focusProps} = useFocus({
     onBlur: () => {
       // Set input value to normalized valid value
       commit();
     }
   });
+
 
   let {
     spinButtonProps,
@@ -295,6 +298,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   }, inputRef);
 
   let inputProps = mergeProps(
+    focusableProps,
     spinButtonProps,
     textFieldProps,
     focusProps,

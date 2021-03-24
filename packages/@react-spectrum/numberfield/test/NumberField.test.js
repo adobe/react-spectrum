@@ -29,6 +29,9 @@ let locales = Object.keys(messages).map(locale => locale.replace('.json', '')).f
 
 describe('NumberField', function () {
   let onChangeSpy = jest.fn();
+  let onBlurSpy = jest.fn();
+  let onKeyDownSpy = jest.fn();
+  let onKeyUpSpy = jest.fn();
 
   beforeAll(() => {
     jest.useFakeTimers();
@@ -41,6 +44,9 @@ describe('NumberField', function () {
 
   afterEach(() => {
     onChangeSpy.mockClear();
+    onBlurSpy.mockClear();
+    onKeyDownSpy.mockClear();
+    onKeyUpSpy.mockClear();
     // there's an announcer, make sure to run through it
     // make sure only to run the pending timers, spin button can cause an infinite loop if we run all
     act(() => {jest.runOnlyPendingTimers();});
@@ -148,15 +154,17 @@ describe('NumberField', function () {
   `('$Name switches to numeric inputMode if maximumFractionDigits is 0 and no negative numbers', () => {
     let {
       textField
-    } = renderNumberField({onChange: onChangeSpy, formatOptions: {maximumFractionDigits: 0}, minValue: 0});
+    } = renderNumberField({onChange: onChangeSpy, onBlur: onBlurSpy, formatOptions: {maximumFractionDigits: 0}, minValue: 0});
 
     expect(textField).toHaveAttribute('inputMode', 'numeric');
 
     act(() => {textField.focus();});
     typeText(textField, '5.2');
     expect(textField).toHaveAttribute('value', '52');
+    expect(onBlurSpy).not.toHaveBeenCalled();
     act(() => {textField.blur();});
     expect(onChangeSpy).toHaveBeenCalledWith(52);
+    expect(onBlurSpy).toHaveBeenCalledTimes(1);
   });
 
   it.each`
@@ -253,9 +261,10 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name handles input change with custom step number', () => {
-    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, step: 5});
+    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, onBlur: onBlurSpy, step: 5});
 
     act(() => {textField.focus();});
+    expect(onBlurSpy).not.toHaveBeenCalled();
     typeText(textField, '2');
     act(() => {textField.blur();});
     expect(onChangeSpy).toHaveBeenLastCalledWith(0);
@@ -273,6 +282,7 @@ describe('NumberField', function () {
     triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenLastCalledWith(10);
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
+    expect(onBlurSpy).toHaveBeenCalledTimes(2);
   });
 
   it.each`
@@ -325,26 +335,31 @@ describe('NumberField', function () {
     let {
       container,
       textField
-    } = renderNumberField({onChange: onChangeSpy, maxValue: 1, defaultValue: 0});
+    } = renderNumberField({onChange: onChangeSpy, onBlur: onBlurSpy, maxValue: 1, defaultValue: 0});
 
     expect(container).not.toHaveAttribute('aria-invalid');
 
     act(() => {textField.focus();});
+    expect(onBlurSpy).not.toHaveBeenCalled();
     typeText(textField, '2');
     expect(onChangeSpy).not.toHaveBeenCalled();
     act(() => {textField.blur();});
     expect(onChangeSpy).toHaveBeenCalled();
     expect(onChangeSpy).toHaveBeenCalledWith(1);
     expect(textField).toHaveAttribute('value', '1');
+    expect(onBlurSpy).toHaveBeenCalledTimes(1);
 
     expect(container).not.toHaveAttribute('aria-invalid');
 
     onChangeSpy.mockReset();
+    onBlurSpy.mockReset();
     act(() => {textField.focus();});
+    expect(onBlurSpy).not.toHaveBeenCalled();
     typeText(textField, '1');
     expect(onChangeSpy).not.toHaveBeenCalled();
     act(() => {textField.blur();});
     expect(onChangeSpy).not.toHaveBeenCalled();
+    expect(onBlurSpy).toHaveBeenCalledTimes(1);
     expect(textField).toHaveAttribute('value', '1');
   });
 
@@ -387,12 +402,13 @@ describe('NumberField', function () {
     ${'NumberField'}
   `('$Name decrement value when scrolling downwards or left in LTR', () => {
     // downwards is reverse natural scroll? i don't know how to describe it
-    let {textField} = renderNumberField({defaultValue: 0, onChange: onChangeSpy});
+    let {textField} = renderNumberField({defaultValue: 0, onChange: onChangeSpy, onBlur: onBlurSpy});
 
     act(() => {textField.focus();});
     fireEvent.wheel(textField, {deltaY: -10});
     expect(onChangeSpy).toHaveBeenCalledWith(-1);
     act(() => {textField.blur();});
+    expect(onBlurSpy).toHaveBeenCalledTimes(1);
   });
 
   it.each`
@@ -425,14 +441,16 @@ describe('NumberField', function () {
     ${'NumberField'}
   `('$Name should not fire increment or decrement if it is a zoom event', () => {
 
-    let {textField} = renderNumberField({defaultValue: 0, onChange: onChangeSpy});
+    let {textField} = renderNumberField({defaultValue: 0, onChange: onChangeSpy, onBlur: onBlurSpy});
 
     act(() => {textField.focus();});
     fireEvent.wheel(textField, {deltaY: 10, ctrlKey: true});
     expect(onChangeSpy).not.toHaveBeenCalled();
     fireEvent.wheel(textField, {deltaY: -10, ctrlKey: true});
     expect(onChangeSpy).not.toHaveBeenCalled();
+    expect(onBlurSpy).not.toHaveBeenCalled();
     act(() => {textField.blur();});
+    expect(onBlurSpy).toHaveBeenCalledTimes(1);
   });
 
   // TODO: what should happen when an invalid defaultValue is supplied in a min/max
@@ -510,13 +528,14 @@ describe('NumberField', function () {
       textField,
       incrementButton,
       decrementButton
-    } = renderNumberField({onChange: onChangeSpy});
+    } = renderNumberField({onChange: onChangeSpy, onBlur: onBlurSpy});
 
     expect(textField).toHaveAttribute('value', '');
     triggerPress(incrementButton);
     expect(textField).toHaveAttribute('value', '0');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(0);
+    expect(onBlurSpy).not.toHaveBeenCalled();
 
     act(() => {textField.focus();});
     userEvent.clear(textField);
@@ -524,11 +543,13 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenLastCalledWith(NaN);
+    expect(onBlurSpy).toHaveBeenCalledTimes(1);
 
     triggerPress(decrementButton);
     expect(textField).toHaveAttribute('value', '0');
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenCalledWith(0);
+    expect(onBlurSpy).toHaveBeenCalledTimes(1);
   });
 
   it.each`
@@ -733,7 +754,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name properly formats percents', () => {
-    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, defaultValue: 0.1, formatOptions: {style: 'percent'}});
+    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, onBlur: onBlurSpy, defaultValue: 0.1, formatOptions: {style: 'percent'}});
 
     expect(textField).toHaveAttribute('inputMode', 'numeric');
     expect(textField).toHaveAttribute('value', '10%');
@@ -744,11 +765,13 @@ describe('NumberField', function () {
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '25%');
     expect(onChangeSpy).toHaveBeenLastCalledWith(0.25);
+    expect(onBlurSpy).toHaveBeenCalledTimes(1);
     act(() => {textField.focus();});
     triggerPress(incrementButton);
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '26%');
     expect(onChangeSpy).toHaveBeenLastCalledWith(0.26);
+    expect(onBlurSpy).toHaveBeenCalledTimes(2);
   });
 
   it.each`
@@ -831,7 +854,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name properly formats currencySign accounting', () => {
-    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, defaultValue: -10, formatOptions: {style: 'currency', currency: 'USD', currencySign: 'accounting'}});
+    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, onBlur: onBlurSpy, defaultValue: -10, formatOptions: {style: 'currency', currency: 'USD', currencySign: 'accounting'}});
 
     expect(textField).toHaveAttribute('value', '($10.00)');
     triggerPress(incrementButton);
@@ -869,6 +892,7 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '($32.00)');
     expect(onChangeSpy).toHaveBeenCalledTimes(4);
     expect(onChangeSpy).toHaveBeenLastCalledWith(-32);
+    expect(onBlurSpy).toHaveBeenCalledTimes(3);
   });
 
   it.each`
@@ -961,10 +985,12 @@ describe('NumberField', function () {
     ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['10,00 €', '11,00 €', '9,00 €', '9,00 €']}
     ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['١٠٫٠٠ €', '١١٫٠٠ €', '٩٫٠٠ €', '٩٫٠٠ €']}
   `('$Name pressing up arrow & down arrow keeps focus state formatting', ({props, locale, expected}) => {
-    let {textField} = renderNumberField({defaultValue: 10, ...props}, {locale});
+    let {textField} = renderNumberField({defaultValue: 10, onKeyDown: onKeyDownSpy, onKeyUp: onKeyUpSpy, ...props}, {locale});
 
     act(() => {textField.focus();});
     expect(textField).toHaveAttribute('value', expected[0]);
+    expect(onKeyDownSpy).not.toHaveBeenCalled();
+    expect(onKeyDownSpy).not.toHaveBeenCalled();
     fireEvent.keyDown(textField, {key: 'ArrowUp'});
     fireEvent.keyUp(textField, {key: 'ArrowUp'});
     expect(textField).toHaveAttribute('value', expected[1]);
@@ -976,13 +1002,15 @@ describe('NumberField', function () {
     act(() => {textField.blur();});
     // after blur, we should go to the formatted version
     expect(textField).toHaveAttribute('value', expected[3]);
+    expect(onKeyDownSpy).toHaveBeenCalledTimes(3);
+    expect(onKeyDownSpy).toHaveBeenCalledTimes(3);
   });
 
   it.each`
     Name
     ${'NumberField'}
   `('$Name sets invalid input value to valid number value on blur', () => {
-    let {textField} = renderNumberField({defaultValue: 10});
+    let {textField} = renderNumberField({defaultValue: 10, onBlur: onBlurSpy});
 
     expect(textField).toHaveAttribute('value', '10');
     typeText(textField, '-');
@@ -991,21 +1019,24 @@ describe('NumberField', function () {
     act(() => {textField.focus();});
     expect(textField).toHaveAttribute('value', '10');
     act(() => {textField.blur();});
+    expect(onBlurSpy).toHaveBeenCalledTimes(2);
   });
 
   it.each`
     Name
     ${'NumberField'}
   `('$Name sets invalid input value to valid step on blur', () => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 10, step: 10});
+    let {textField} = renderNumberField({onChange: onChangeSpy, onBlur: onBlurSpy, defaultValue: 10, step: 10});
 
     expect(textField).toHaveAttribute('value', '10');
     act(() => {textField.focus();});
     typeText(textField, '5');
+    expect(onBlurSpy).not.toHaveBeenCalled();
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '110');
     expect(onChangeSpy).toHaveBeenCalledWith(110);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onBlurSpy).toHaveBeenCalledTimes(1);
 
     act(() => {textField.focus();});
     userEvent.clear(textField);
@@ -1015,6 +1046,7 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '20');
     expect(onChangeSpy).toHaveBeenLastCalledWith(20);
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    expect(onBlurSpy).toHaveBeenCalledTimes(2);
   });
 
   it.each`
@@ -1037,7 +1069,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('goes to valid step max on `end`', () => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 10, step: 10, maxValue: 521});
+    let {textField} = renderNumberField({onChange: onChangeSpy, onKeyUp: onKeyUpSpy, defaultValue: 10, step: 10, maxValue: 521});
 
     expect(textField).toHaveAttribute('value', '10');
     act(() => {textField.focus();});
@@ -1047,13 +1079,14 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '520');
     expect(onChangeSpy).toHaveBeenCalledWith(520);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onKeyUpSpy).toHaveBeenCalledTimes(1);
   });
 
   it.each`
     Name
     ${'NumberField'}
   `('goes to valid min on `home`', () => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 10, minValue: -521});
+    let {textField} = renderNumberField({onChange: onChangeSpy, onKeyDown: onKeyDownSpy, defaultValue: 10, minValue: -521});
 
     expect(textField).toHaveAttribute('value', '10');
     act(() => {textField.focus();});
@@ -1063,6 +1096,7 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '-521');
     expect(onChangeSpy).toHaveBeenCalledWith(-521);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onKeyDownSpy).toHaveBeenCalledTimes(1);
   });
 
   it.each`
@@ -1100,13 +1134,16 @@ describe('NumberField', function () {
     ${'positive lower positive upper'} | ${'up'}      | ${{minValue: 5, maxValue: 15}}                | ${5}
     ${'positive lower positive upper'} | ${'down'}    | ${{minValue: 5, maxValue: 15}}                | ${15}
   `('$direction $Name starts from the right place', ({direction, props, expected}) => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, ...props});
+    let {textField} = renderNumberField({onChange: onChangeSpy, onBlur: onBlurSpy, onKeyUp: onKeyUpSpy, ...props});
     let key = direction === 'up' ? 'ArrowUp' : 'ArrowDown';
     act(() => {textField.focus();});
     fireEvent.keyDown(textField, {key});
     fireEvent.keyUp(textField, {key});
     expect(onChangeSpy).toHaveBeenCalledWith(expected);
+    expect(onBlurSpy).not.toHaveBeenCalled();
     act(() => {textField.blur();});
+    expect(onBlurSpy).toHaveBeenCalledTimes(1);
+    expect(onKeyUpSpy).toHaveBeenCalledTimes(1);
   });
 
   it.each`
@@ -1128,13 +1165,14 @@ describe('NumberField', function () {
     ${'positive lower positive upper'} | ${'up'}      | ${{minValue: 5, maxValue: 15}}                | ${5}
     ${'positive lower positive upper'} | ${'down'}    | ${{minValue: 5, maxValue: 15}}                | ${14}
   `('$direction $Name step 3 starts from the right place', ({direction, props, expected}) => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, step: 3, ...props});
+    let {textField} = renderNumberField({onChange: onChangeSpy, onKeyDown: onKeyDownSpy, step: 3, ...props});
     let key = direction === 'up' ? 'ArrowUp' : 'ArrowDown';
     act(() => {textField.focus();});
     fireEvent.keyDown(textField, {key});
     fireEvent.keyUp(textField, {key});
     expect(onChangeSpy).toHaveBeenCalledWith(expected);
     act(() => {textField.blur();});
+    expect(onKeyDownSpy).toHaveBeenCalledTimes(1);
   });
 
   it.each`
@@ -1143,7 +1181,7 @@ describe('NumberField', function () {
     ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['4', '2', ',', '1']} | ${['4', '42', '42,', '42,1', '42,10 €']}
     ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['٤', '٢', ',', '١']} | ${['٤', '٤٢', '٤٢,', '٤٢,١', '٤٢٫١٠ €']}
   `('$Name typing in locale stays consistent', ({props, locale, keystrokes, expected}) => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, ...props}, {locale});
+    let {textField} = renderNumberField({onChange: onChangeSpy, onKeyUp: onKeyUpSpy, ...props}, {locale});
 
     act(() => {textField.focus();});
     expect(textField).toHaveAttribute('value', '');
@@ -1163,6 +1201,7 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledWith(42.1);
     // after blur, we should go to the formatted version
     expect(textField).toHaveAttribute('value', expected[4]);
+    expect(onKeyUpSpy).toHaveBeenCalledTimes(4);
   });
 
   it.each`
@@ -1329,7 +1368,7 @@ describe('NumberField', function () {
     Name
     ${'v3 NumberField'}
   `('$Name will start with uncommitted value when stepper buttons are pressed', () => {
-    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, step: 5});
+    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, onBlur: onBlurSpy, step: 5});
 
     act(() => {textField.focus();});
     typeText(textField, '2');
@@ -1356,6 +1395,7 @@ describe('NumberField', function () {
     act(() => {textField.blur();});
     expect(onChangeSpy).toHaveBeenCalledTimes(4);
     expect(onChangeSpy).toHaveBeenLastCalledWith(NaN);
+    expect(onBlurSpy).toHaveBeenCalledTimes(4);
   });
 
   it.each`
