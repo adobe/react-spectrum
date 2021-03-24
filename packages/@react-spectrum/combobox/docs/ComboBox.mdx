@@ -413,7 +413,8 @@ function Example() {
 When a ComboBox has multiple controlled properties (e.g. `isOpen`, `inputValue`, `selectedKey`), it is important to note that an update to one of these properties will
 not automatically update the others. Each interaction done in the ComboBox will only trigger its associated event handler. For example, typing in the field will only
 trigger `onInputChange` whereas selecting an item from the ComboBox menu will only trigger `onSelectionChange` so it is your responsibility to update the other
-controlled properties accordingly.
+controlled properties accordingly. Note that you should provide an `onSelectionChange` handler for a ComboBox with controlled input value and open state. This way, you can properly
+control the menu's open state when the user selects an option or blurs from the field.
 
 The below example demonstrates how you would construct the same example above in a completely controlled fashion.
 
@@ -792,16 +793,32 @@ The open state of the menu can be controlled via the `defaultOpen` and `isOpen` 
 
 ```tsx example
 function Example() {
-  let [open, setOpen] = React.useState(false);
-  let [favorite, setFavorite] = React.useState("red panda");
+  let [fieldState, setFieldState] = React.useState({
+    isOpen: false,
+    selectedKey: 'red panda'
+  });
+
+  let onSelectionChange = (key) => {
+    setFieldState({
+      isOpen: false,
+      selectedKey: key
+    });
+  };
+
+  let onOpenChange = (isOpen) => {
+    setFieldState(prevState => ({
+      isOpen: isOpen,
+      selectedKey: prevState.selectedKey
+    }));
+  };
 
   return (
     <ComboBox
       label="Favorite Animal"
-      isOpen={open}
-      onOpenChange={setOpen}
-      selectedKey={favorite}
-      onSelectionChange={selected => setFavorite(selected)}>
+      isOpen={fieldState.isOpen}
+      onOpenChange={onOpenChange}
+      selectedKey={fieldState.selectedKey}
+      onSelectionChange={onSelectionChange}>
       <Item key="red panda">Red Panda</Item>
       <Item key="cat">Cat</Item>
       <Item key="dog">Dog</Item>

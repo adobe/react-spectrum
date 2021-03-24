@@ -1,7 +1,7 @@
 {
   "error": "Chyba",
-  "warning": "Upozornění",
-  "info": "Informace",
   "help": "Nápověda",
-  "success": "Úspěch"
+  "info": "Informace",
+  "success": "Úspěch",
+  "warning": "Upozornění"
 }

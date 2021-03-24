@@ -103,12 +103,18 @@ export interface ColorWheelProps extends ValueBase<string | Color> {
    * The ColorWheel's step value.
    * @default 1
    */
-  step?: number
+  step?: number,
+  /**
+   * The default value (uncontrolled).
+   * @default 'hsl(0, 100%, 50%)'
+   */
+  defaultValue?: string | Color
 }
 
 export interface AriaColorWheelProps extends ColorWheelProps, DOMProps, AriaLabelingProps {}
 
 export interface SpectrumColorWheelProps extends AriaColorWheelProps, Omit<StyleProps, 'width' | 'height'> {
+  /** The outer diameter of the ColorWheel. */
   size?: DimensionValue
 }
 
@@ -118,11 +124,12 @@ export interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'min
   /** Handler that is called when the value changes, as the user drags. */
   onChange?: (value: Color) => void,
   /** Handler that is called when the user stops dragging. */
-  onChangeEnd?: (value: Color) => void,
-  /** Whether the value label is displayed. True by default if there is a label, false by default if not. */
-  showValueLabel?: boolean
+  onChangeEnd?: (value: Color) => void
 }
 
 export interface AriaColorSliderProps extends ColorSliderProps, DOMProps, AriaLabelingProps {}
 
-export interface SpectrumColorSliderProps extends AriaColorSliderProps, StyleProps {}
+export interface SpectrumColorSliderProps extends AriaColorSliderProps, StyleProps {
+  /** Whether the value label is displayed. True by default if there is a label, false by default if not. */
+  showValueLabel?: boolean
+}

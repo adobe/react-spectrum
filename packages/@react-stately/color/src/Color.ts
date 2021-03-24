@@ -19,6 +19,7 @@ import {NumberFormatter} from '@internationalized/number';
 
 const messages = new MessageDictionary(intlMessages);
 
+/** Parses a color from a string value. Throws an error if the string could not be parsed. */
 export function parseColor(value: string): IColor {
   let res = RGBColor.parse(value) || HSBColor.parse(value) || HSLColor.parse(value);
   if (res) {

@@ -1,5 +1,5 @@
 {
-  "decrease": "Decrease {fieldLabel}",
-  "increase": "Increase {fieldLabel}",
-  "Number field": "Number field"
+  "decrease": "خفض {fieldLabel}",
+  "increase": "زيادة {fieldLabel}",
+  "numberField": "حقل رقمي"
 }

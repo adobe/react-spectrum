@@ -1,5 +1,5 @@
 {
-  "decrease": "Decrease {fieldLabel}",
-  "increase": "Increase {fieldLabel}",
-  "Number field": "Number field"
+  "decrease": "Sumažinti {fieldLabel}",
+  "increase": "Padidinti {fieldLabel}",
+  "numberField": "Numerio laukas"
 }

@@ -122,8 +122,6 @@ governing permissions and limitations under the License.
 
   /* Be below the tab */
   z-index: 0;
-
-  transition: transform var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out;
   transform-origin: top left;
 
 
@@ -169,6 +167,7 @@ governing permissions and limitations under the License.
     block-size: var(--spectrum-tabs-rule-height);
 
     inset-block-end: calc(var(--spectrum-tabs-rule-height) * -1);
+    transition: transform var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out, width var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out;
   }
 
   &.spectrum-Tabs--isCollapsed {
@@ -254,6 +253,7 @@ governing permissions and limitations under the License.
     inline-size: var(--spectrum-tabs-vertical-rule-width);
 
     inset-inline-start: calc(var(--spectrum-tabs-vertical-rule-width) * -1);
+    transition: transform var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out, height var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out;
   }
 }
 
