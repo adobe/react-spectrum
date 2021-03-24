@@ -324,8 +324,6 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     },
     loadMore() {
       // Ignore if already loading more or if performing server side filtering.
-      // `data.state` won't be up to date if multiple loadMore's are called at the same time so we track loadingMore state
-      // via ref. This allows us to properly early return
       if (data.state === 'loadingMore' || data.state === 'filtering' || data.cursor == null) {
         return;
       }
