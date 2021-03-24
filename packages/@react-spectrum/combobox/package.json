@@ -51,7 +51,7 @@
     "@react-stately/collections": "^3.3.1",
     "@react-stately/combobox": "3.0.0-beta.0",
     "@react-types/button": "^3.3.1",
-    "@react-types/combobox": "3.0.0-alpha.1",
+    "@react-types/combobox": "3.0.0-beta.0",
     "@react-types/overlays": "^3.4.0",
     "@react-types/shared": "^3.5.0",
     "@react-types/textfield": "^3.2.2",

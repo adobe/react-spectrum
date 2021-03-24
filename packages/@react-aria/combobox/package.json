@@ -21,7 +21,7 @@
     "@react-aria/i18n": "^3.3.0",
     "@react-aria/interactions": "^3.3.4",
     "@react-aria/listbox": "^3.2.4",
-    "@react-aria/live-announcer": "3.0.0-alpha.0",
+    "@react-aria/live-announcer": "3.0.0-rc.0",
     "@react-aria/menu": "^3.2.0",
     "@react-aria/overlays": "^3.6.2",
     "@react-aria/selection": "^3.4.0",
@@ -29,9 +29,9 @@
     "@react-aria/utils": "^3.7.0",
     "@react-stately/collections": "^3.3.1",
     "@react-stately/combobox": "3.0.0-beta.0",
-    "@react-stately/layout": "3.2.1-alpha.0",
+    "@react-stately/layout": "^3.2.1",
     "@react-types/button": "^3.3.1",
-    "@react-types/combobox": "3.0.0-alpha.1",
+    "@react-types/combobox": "3.0.0-beta.0",
     "@react-types/shared": "^3.5.0"
   },
   "peerDependencies": {
