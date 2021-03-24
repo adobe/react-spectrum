@@ -73,9 +73,9 @@ describe('useDraggableCollection', () => {
       });
 
       expect([...dataTransfer.items]).toEqual([
-        new DataTransferItem('text/plain', 'Bar'),
         new DataTransferItem('folder', 'Bar'),
-        new DataTransferItem('application/vnd.react-aria.items+json', JSON.stringify([{'text/plain': 'Bar', folder: 'Bar'}]))
+        new DataTransferItem('text/plain', 'Bar'),
+        new DataTransferItem('application/vnd.react-aria.items+json', JSON.stringify([{folder: 'Bar', 'text/plain': 'Bar'}]))
       ]);
       expect(dataTransfer._dragImage.node.textContent).toBe('Bar');
       expect(dataTransfer._dragImage.node.querySelector('.badge')).toBeNull();
@@ -101,14 +101,15 @@ describe('useDraggableCollection', () => {
         dropOperation: 'move',
         items: [
           {
+            kind: 'text',
             types: new Set(['text/plain', 'folder']),
-            getData: expect.any(Function)
+            getText: expect.any(Function)
           }
         ]
       });
 
-      expect(await onDrop.mock.calls[0][0].items[0].getData('text/plain')).toBe('Bar');
-      expect(await onDrop.mock.calls[0][0].items[0].getData('folder')).toBe('Bar');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Bar');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('folder')).toBe('Bar');
 
       fireEvent(cells[1], new DragEvent('dragend', {dataTransfer, clientX: 2, clientY: 2}));
       expect(onDragEnd).toHaveBeenCalledTimes(1);
@@ -164,11 +165,11 @@ describe('useDraggableCollection', () => {
       });
 
       expect([...dataTransfer.items]).toEqual([
-        new DataTransferItem('text/plain', 'Foo\nBar'),
         new DataTransferItem('folder', 'Foo'),
+        new DataTransferItem('text/plain', 'Foo\nBar'),
         new DataTransferItem('application/vnd.react-aria.items+json', JSON.stringify([
-          {'text/plain': 'Foo', folder: 'Foo'},
-          {'text/plain': 'Bar', folder: 'Bar'}
+          {folder: 'Foo', 'text/plain': 'Foo'},
+          {folder: 'Bar', 'text/plain': 'Bar'}
         ]))
       ]);
       expect(dataTransfer._dragImage.node.querySelector('span').textContent).toBe('Bar');
@@ -186,21 +187,23 @@ describe('useDraggableCollection', () => {
         dropOperation: 'move',
         items: [
           {
+            kind: 'text',
             types: new Set(['text/plain', 'folder']),
-            getData: expect.any(Function)
+            getText: expect.any(Function)
           },
           {
+            kind: 'text',
             types: new Set(['text/plain', 'folder']),
-            getData: expect.any(Function)
+            getText: expect.any(Function)
           }
         ]
       });
 
-      expect(await onDrop.mock.calls[0][0].items[0].getData('text/plain')).toBe('Foo');
-      expect(await onDrop.mock.calls[0][0].items[0].getData('folder')).toBe('Foo');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Foo');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('folder')).toBe('Foo');
 
-      expect(await onDrop.mock.calls[0][0].items[1].getData('text/plain')).toBe('Bar');
-      expect(await onDrop.mock.calls[0][0].items[1].getData('folder')).toBe('Bar');
+      expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Bar');
+      expect(await onDrop.mock.calls[0][0].items[1].getText('folder')).toBe('Bar');
 
       fireEvent(cells[1], new DragEvent('dragend', {dataTransfer, clientX: 2, clientY: 2}));
       expect(onDragEnd).toHaveBeenCalledTimes(1);
@@ -254,10 +257,10 @@ describe('useDraggableCollection', () => {
       });
 
       expect([...dataTransfer.items]).toEqual([
-        new DataTransferItem('text/plain', 'Bar'),
         new DataTransferItem('folder', 'Bar'),
+        new DataTransferItem('text/plain', 'Bar'),
         new DataTransferItem('application/vnd.react-aria.items+json', JSON.stringify([
-          {'text/plain': 'Bar', folder: 'Bar'}
+          {folder: 'Bar', 'text/plain': 'Bar'}
         ]))
       ]);
       expect(dataTransfer._dragImage.node.querySelector('span').textContent).toBe('Bar');
@@ -275,14 +278,15 @@ describe('useDraggableCollection', () => {
         dropOperation: 'move',
         items: [
           {
+            kind: 'text',
             types: new Set(['text/plain', 'folder']),
-            getData: expect.any(Function)
+            getText: expect.any(Function)
           }
         ]
       });
 
-      expect(await onDrop.mock.calls[0][0].items[0].getData('text/plain')).toBe('Bar');
-      expect(await onDrop.mock.calls[0][0].items[0].getData('folder')).toBe('Bar');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Bar');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('folder')).toBe('Bar');
 
       fireEvent(cells[1], new DragEvent('dragend', {dataTransfer, clientX: 2, clientY: 2}));
       expect(onDragEnd).toHaveBeenCalledTimes(1);
@@ -363,14 +367,15 @@ describe('useDraggableCollection', () => {
         dropOperation: 'move',
         items: [
           {
+            kind: 'text',
             types: new Set(['text/plain', 'folder']),
-            getData: expect.any(Function)
+            getText: expect.any(Function)
           }
         ]
       });
 
-      expect(await onDrop.mock.calls[0][0].items[0].getData('text/plain')).toBe('Bar');
-      expect(await onDrop.mock.calls[0][0].items[0].getData('folder')).toBe('Bar');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Bar');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('folder')).toBe('Bar');
 
       expect(onDragEnd).toHaveBeenCalledTimes(1);
       expect(onDragEnd).toHaveBeenCalledWith({
@@ -452,21 +457,23 @@ describe('useDraggableCollection', () => {
         dropOperation: 'move',
         items: [
           {
+            kind: 'text',
             types: new Set(['text/plain', 'folder']),
-            getData: expect.any(Function)
+            getText: expect.any(Function)
           },
           {
+            kind: 'text',
             types: new Set(['text/plain', 'folder']),
-            getData: expect.any(Function)
+            getText: expect.any(Function)
           }
         ]
       });
 
-      expect(await onDrop.mock.calls[0][0].items[0].getData('text/plain')).toBe('Foo');
-      expect(await onDrop.mock.calls[0][0].items[0].getData('folder')).toBe('Foo');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Foo');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('folder')).toBe('Foo');
 
-      expect(await onDrop.mock.calls[0][0].items[1].getData('text/plain')).toBe('Bar');
-      expect(await onDrop.mock.calls[0][0].items[1].getData('folder')).toBe('Bar');
+      expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Bar');
+      expect(await onDrop.mock.calls[0][0].items[1].getText('folder')).toBe('Bar');
 
       expect(onDragEnd).toHaveBeenCalledTimes(1);
       expect(onDragEnd).toHaveBeenCalledWith({
@@ -544,14 +551,15 @@ describe('useDraggableCollection', () => {
         dropOperation: 'move',
         items: [
           {
+            kind: 'text',
             types: new Set(['text/plain', 'folder']),
-            getData: expect.any(Function)
+            getText: expect.any(Function)
           }
         ]
       });
 
-      expect(await onDrop.mock.calls[0][0].items[0].getData('text/plain')).toBe('Bar');
-      expect(await onDrop.mock.calls[0][0].items[0].getData('folder')).toBe('Bar');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Bar');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('folder')).toBe('Bar');
 
       expect(onDragEnd).toHaveBeenCalledTimes(1);
       expect(onDragEnd).toHaveBeenCalledWith({
@@ -626,14 +634,15 @@ describe('useDraggableCollection', () => {
         dropOperation: 'move',
         items: [
           {
+            kind: 'text',
             types: new Set(['text/plain', 'folder']),
-            getData: expect.any(Function)
+            getText: expect.any(Function)
           }
         ]
       });
 
-      expect(await onDrop.mock.calls[0][0].items[0].getData('text/plain')).toBe('Bar');
-      expect(await onDrop.mock.calls[0][0].items[0].getData('folder')).toBe('Bar');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Bar');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('folder')).toBe('Bar');
 
       expect(onDragEnd).toHaveBeenCalledTimes(1);
       expect(onDragEnd).toHaveBeenCalledWith({
@@ -703,21 +712,23 @@ describe('useDraggableCollection', () => {
         dropOperation: 'move',
         items: [
           {
+            kind: 'text',
             types: new Set(['text/plain', 'folder']),
-            getData: expect.any(Function)
+            getText: expect.any(Function)
           },
           {
+            kind: 'text',
             types: new Set(['text/plain', 'folder']),
-            getData: expect.any(Function)
+            getText: expect.any(Function)
           }
         ]
       });
 
-      expect(await onDrop.mock.calls[0][0].items[0].getData('text/plain')).toBe('Foo');
-      expect(await onDrop.mock.calls[0][0].items[0].getData('folder')).toBe('Foo');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Foo');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('folder')).toBe('Foo');
 
-      expect(await onDrop.mock.calls[0][0].items[1].getData('text/plain')).toBe('Bar');
-      expect(await onDrop.mock.calls[0][0].items[1].getData('folder')).toBe('Bar');
+      expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Bar');
+      expect(await onDrop.mock.calls[0][0].items[1].getText('folder')).toBe('Bar');
 
       expect(onDragEnd).toHaveBeenCalledTimes(1);
       expect(onDragEnd).toHaveBeenCalledWith({
@@ -785,14 +796,15 @@ describe('useDraggableCollection', () => {
         dropOperation: 'move',
         items: [
           {
+            kind: 'text',
             types: new Set(['text/plain', 'folder']),
-            getData: expect.any(Function)
+            getText: expect.any(Function)
           }
         ]
       });
 
-      expect(await onDrop.mock.calls[0][0].items[0].getData('text/plain')).toBe('Bar');
-      expect(await onDrop.mock.calls[0][0].items[0].getData('folder')).toBe('Bar');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Bar');
+      expect(await onDrop.mock.calls[0][0].items[0].getText('folder')).toBe('Bar');
 
       expect(onDragEnd).toHaveBeenCalledTimes(1);
       expect(onDragEnd).toHaveBeenCalledWith({

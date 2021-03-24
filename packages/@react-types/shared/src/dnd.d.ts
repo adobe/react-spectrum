@@ -21,8 +21,7 @@ export interface DragDropEvent {
 export type DropOperation = 'copy' | 'link' | 'move' | 'cancel';
 
 export interface DragItem {
-  types: Iterable<string>,
-  getData(type: string): string
+  [type: string]: string
 }
 
 export interface DragStartEvent extends DragDropEvent {
@@ -54,10 +53,27 @@ export interface DropExitEvent extends DragDropEvent {
   type: 'dropexit'
 }
 
-export interface DropItem {
+export interface TextItem {
+  kind: 'text',
   types: Set<string>,
-  getData(type: string): Promise<string>
+  getText(type: string): Promise<string>
 }
+
+export interface FileItem {
+  kind: 'file',
+  type: string,
+  name: string,
+  getFile(): Promise<File>,
+  getText(): Promise<string>
+}
+
+export interface DirectoryItem {
+  kind: 'directory',
+  name: string,
+  getEntries(): AsyncIterable<FileItem | DirectoryItem>
+}
+
+export type DropItem = TextItem | FileItem | DirectoryItem;
 
 export interface DropEvent extends DragDropEvent {
   type: 'drop',
@@ -98,8 +114,12 @@ interface DroppableCollectionDropEvent extends DropEvent {
   target: DropTarget
 }
 
+export interface DragTypes {
+  has(type: string): boolean
+}
+
 export interface DroppableCollectionProps {
-  getDropOperation?: (target: DropTarget, types: Set<string>, allowedOperations: DropOperation[]) => DropOperation,
+  getDropOperation?: (target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]) => DropOperation,
   onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
   onDropMove?: (e: DroppableCollectionMoveEvent) => void,
   onDropActivate?: (e: DroppableCollectionActivateEvent) => void,

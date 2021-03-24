@@ -12,6 +12,7 @@
 
 import {Button} from '@react-spectrum/button';
 import {Form} from '../';
+import {Item, Picker} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {render} from '@testing-library/react';
@@ -145,5 +146,41 @@ describe('Form', function () {
 
     let form = getByRole('form');
     expect(form).toHaveAttribute('data-testid', 'test');
+  });
+
+  describe('values', () => {
+    it('default value of a picker is empty', () => {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Form aria-label="Test">
+            <Picker name="picker" label="Test Picker">
+              <Item key="one">One</Item>
+              <Item key="two">Two</Item>
+              <Item key="three">Three</Item>
+            </Picker>
+          </Form>
+        </Provider>
+      );
+
+      let form = getByRole('form');
+      expect(form.elements['picker'].value).toEqual('');
+    });
+
+    it('value of a picker can be set', () => {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Form aria-label="Test">
+            <Picker name="picker" defaultSelectedKey="one" label="Test Picker">
+              <Item key="one">One</Item>
+              <Item key="two">Two</Item>
+              <Item key="three">Three</Item>
+            </Picker>
+          </Form>
+        </Provider>
+      );
+
+      let form = getByRole('form');
+      expect(form.elements['picker'].value).toEqual('one');
+    });
   });
 });

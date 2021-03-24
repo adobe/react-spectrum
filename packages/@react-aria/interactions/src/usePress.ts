@@ -41,6 +41,7 @@ interface PressState {
   isPressed: boolean,
   ignoreEmulatedMouseEvents: boolean,
   ignoreClickAfterPress: boolean,
+  didFirePressStart: boolean,
   activePointerId: any,
   target: HTMLElement | null,
   isOverTarget: boolean,
@@ -111,6 +112,7 @@ export function usePress(props: PressHookProps): PressResult {
     isPressed: false,
     ignoreEmulatedMouseEvents: false,
     ignoreClickAfterPress: false,
+    didFirePressStart: false,
     activePointerId: null,
     target: null,
     isOverTarget: false,
@@ -123,7 +125,7 @@ export function usePress(props: PressHookProps): PressResult {
     let state = ref.current;
     let triggerPressStart = (originalEvent: EventBase, pointerType: PointerType) => {
       let {onPressStart, onPressChange, isDisabled} = propsRef.current;
-      if (isDisabled) {
+      if (isDisabled || state.didFirePressStart) {
         return;
       }
 
@@ -142,16 +144,18 @@ export function usePress(props: PressHookProps): PressResult {
         onPressChange(true);
       }
 
+      state.didFirePressStart = true;
       setPressed(true);
     };
 
     let triggerPressEnd = (originalEvent: EventBase, pointerType: PointerType, wasPressed = true) => {
       let {onPressEnd, onPressChange, onPress, isDisabled} = propsRef.current;
-      if (isDisabled) {
+      if (!state.didFirePressStart) {
         return;
       }
 
       state.ignoreClickAfterPress = true;
+      state.didFirePressStart = false;
 
       if (onPressEnd) {
         onPressEnd({
@@ -170,7 +174,7 @@ export function usePress(props: PressHookProps): PressResult {
 
       setPressed(false);
 
-      if (onPress && wasPressed) {
+      if (onPress && wasPressed && !isDisabled) {
         onPress({
           type: 'press',
           pointerType,
@@ -297,6 +301,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         // iOS safari fires pointer events from VoiceOver (but only when outside an iframe...)
+        // https://bugs.webkit.org/show_bug.cgi?id=222627
         state.pointerType = isVirtualPointerEvent(e.nativeEvent) ? 'virtual' : e.pointerType;
 
         e.stopPropagation();

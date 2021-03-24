@@ -11,6 +11,7 @@
  */
 
 export type {CheckboxGroupState} from '@react-stately/checkbox';
+export type {ListData} from '@react-stately/data';
 export type {ListProps, ListState, SingleSelectListProps, SingleSelectListState} from '@react-stately/list';
 export type {MenuTriggerState} from '@react-stately/menu';
 export type {OverlayTriggerState} from '@react-stately/overlays';
