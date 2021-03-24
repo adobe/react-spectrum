@@ -26,15 +26,32 @@ storiesOf('ColorArea', module)
       return (<div role="group" aria-label="HSBA Color Picker">
         <Flex gap="size-500">
           <Flex direction="row" alignContent={'center'} alignItems={'center'} gap="size-200" height={'size-2000'}>
-            <div style={{position: 'relative', width: '100%', height: '100%'}}>
-              <div style={{position: 'relative', left: 'calc(50% - calc(var(--spectrum-global-dimension-size-2000) / 2))', top: 'calc(50% - calc(var(--spectrum-global-dimension-size-2000) / 2))'}}>
-                <ColorWheel value={color} onChange={setColor} size={'size-2000'} />
-              </div>
-              <div style={{position: 'absolute', margin: '0', left: 'calc(50% - calc(var(--spectrum-global-dimension-size-900) / 2))', top: 'calc(50% - calc(var(--spectrum-global-dimension-size-900) / 2))'}}>
-                <ColorArea value={color} onChange={setColor} size={'size-900'} xChannel={'saturation'} yChannel={'brightness'} />
-              </div>
+            <div style={{position: 'relative'}}>
+              <ColorWheel
+                value={color}
+                onChange={setColor}
+                UNSAFE_style={{
+                  position: 'relative',
+                  left: 'calc(50% - calc(var(--spectrum-global-dimension-size-125) * 8))',
+                  top: 'calc(50% - calc(var(--spectrum-global-dimension-size-125) * 8))'
+                }} />
+              <ColorArea
+                value={color}
+                onChange={setColor}
+                size={'size-900'}
+                UNSAFE_style={{
+                  position: 'absolute',
+                  margin: '0',
+                  left: 'calc(50% - calc(var(--spectrum-global-dimension-size-900) / 2))',
+                  top: 'calc(50% - calc(var(--spectrum-global-dimension-size-900) / 2))'
+                }} />
             </div>
-            <ColorSlider value={color} onChange={setColor} channel={'alpha'} orientation="vertical" height={'size-2000'} />
+            <ColorSlider
+              value={color}
+              onChange={setColor}
+              channel={'alpha'}
+              orientation="vertical"
+              height={'size-2000'} />
             <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
               <div role="img" aria-label={`color swatch: ${color.toString('hsba')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
               <Text>{color.toString('hsba')}</Text>
@@ -184,13 +201,25 @@ storiesOf('ColorArea', module)
       return (<div role="group" aria-label="HSLA Color Picker">
         <Flex gap="size-500">
           <Flex direction="row" alignContent={'center'} alignItems={'center'} gap="size-200">
-            <div style={{position: 'relative', width: '100%', height: '100%'}}>
-              <div style={{position: 'relative', left: 'calc(50% - calc(var(--spectrum-global-dimension-size-2000) / 2))', top: 'calc(50% - calc(var(--spectrum-global-dimension-size-2000) / 2))'}}>
-                <ColorWheel value={color} onChange={setColor} size={'size-2000'} />
-              </div>
-              <div style={{position: 'absolute', margin: '0', left: 'calc(50% - calc(var(--spectrum-global-dimension-size-900, var(--spectrum-alias-size-900)) / 2))', top: 'calc(50% - calc(var(--spectrum-global-dimension-size-900, var(--spectrum-alias-size-900)) / 2))'}}>
-                <ColorArea value={color} onChange={setColor} size={'size-900'} xChannel={'saturation'} yChannel={'lightness'} />
-              </div>
+            <div style={{position: 'relative'}}>
+              <ColorWheel
+                value={color}
+                onChange={setColor}
+                UNSAFE_style={{
+                  position: 'relative',
+                  left: 'calc(50% - calc(var(--spectrum-global-dimension-size-125) * 8))',
+                  top: 'calc(50% - calc(var(--spectrum-global-dimension-size-125) * 8))'
+                }} />
+              <ColorArea
+                value={color}
+                onChange={setColor}
+                size={'size-900'}
+                UNSAFE_style={{
+                  position: 'absolute',
+                  margin: '0',
+                  left: 'calc(50% - calc(var(--spectrum-global-dimension-size-900, var(--spectrum-alias-size-900)) / 2))',
+                  top: 'calc(50% - calc(var(--spectrum-global-dimension-size-900, var(--spectrum-alias-size-900)) / 2))'
+                }} />
             </div>
             <ColorSlider value={color} onChange={setColor} channel={'alpha'} orientation="vertical" height={'size-2000'} />
             <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
