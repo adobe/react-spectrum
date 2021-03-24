@@ -177,7 +177,7 @@ focusableElements.push('[tabindex]:not([tabindex="-1"]):not([disabled])');
 const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]):not([tabindex="-1"]),');
 
 function getScopeRoot(scope: HTMLElement[]) {
-  return scope.length ? scope[0].parentElement : null;
+  return scope[0].parentElement;
 }
 
 function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolean) {
