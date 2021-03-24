@@ -319,21 +319,9 @@ class HSLColor extends Color {
       case 'hsl':
       case 'hsla':
         return this;
-      case 'hsb':
-      case 'hsba':
-        return this.toHSB();
       default:
         throw new Error('Unsupported color conversion: hsl -> ' + format);
     }
-  }
-
-  private toHSB(): Color {
-    // determine the brightness and saturation in the range [0,100]
-    const b = this.saturation * (this.lightness < 50 ? this.lightness : 100 - this.lightness) / 100;
-    const brightness = this.lightness + b;
-    const saturation = b === 0 ? 0 : 2 * b / (this.lightness + b) * 100;
-
-    return new HSBColor(this.hue, saturation, brightness, this.alpha);
   }
 
   clone(): Color {
