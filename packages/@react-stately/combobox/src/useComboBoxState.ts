@@ -48,14 +48,23 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     menuTrigger = 'input',
     allowsEmptyCollection = false,
     allowsCustomValue,
-    shouldCloseOnBlur = true
+    shouldCloseOnBlur = true,
+    onMenuOpenManual = () => {},
+    // fullItems
   } = props;
+
+  let showAllItemsTracker = useRef(false);
+  // let onInputChange = (value) => {
+  //   showAllItemsTracker.current = false;
+  //   props.onInputChange && props.onInputChange(value);
+  // }
 
   let [isFocused, setFocusedState] = useState(false);
   let [inputValue, setInputValue] = useControlledState(
     props.inputValue,
     props.defaultInputValue ?? '',
     props.onInputChange
+    // onInputChange
   );
 
   let onSelectionChange = (key) => {
@@ -79,6 +88,22 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     items: props.items ?? props.defaultItems
   });
 
+  // If we want to provide a prop to the users to allow them to specify their "full" list of items
+  // Only for controlled items
+  // let {collection: fullCollection} = useSingleSelectListState({
+  //   ...props,
+  //   onSelectionChange,
+  //   items: fullItems
+  // });
+
+  // This is only used if collection is not controlled
+  let originalCollection = useMemo(() => (
+    props.items != null
+      ? null
+      : filterCollection(collection, '', () => true)
+  // update if children change for the item mapping case
+  ), [props.children, props.items]);
+
   let filteredCollection = useMemo(() => (
     // No default filter if items are controlled.
     props.items != null || !defaultFilter
@@ -87,17 +112,32 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   ), [collection, inputValue, defaultFilter, props.items]);
 
   let triggerState = useMenuTriggerState(props);
-  let open = (focusStrategy?: FocusStrategy) => {
+  // TODO: perhaps add an additional argument here called "Show all items?"
+  let open = (focusStrategy?: FocusStrategy, showAllItems?: boolean) => {
+
     // Prevent open operations from triggering if there is nothing to display
-    if (allowsEmptyCollection || filteredCollection.size > 0) {
+    if (allowsEmptyCollection || filteredCollection.size > 0 || showAllItems) {
+      if (showAllItems && !triggerState.isOpen) {
+        // TODO show all items if menu is manually opened. Call onMenuOpenManual so user can update `items` if controlled
+        showAllItemsTracker.current = true;
+        onMenuOpenManual();
+      }
+
       triggerState.open(focusStrategy);
     }
   };
 
-  let toggle = (focusStrategy?: FocusStrategy) => {
+  // TODO: perhaps add an additional argument here called "Show all items?"
+  let toggle = (focusStrategy?: FocusStrategy, showAllItems?: boolean) => {
     // If the menu is closed and there is nothing to display, early return so toggle isn't called to prevent extraneous onOpenChange
-    if (!(allowsEmptyCollection || filteredCollection.size > 0) && !triggerState.isOpen) {
+    if (!(allowsEmptyCollection || filteredCollection.size > 0 || showAllItems) && !triggerState.isOpen) {
       return;
+    }
+
+    if (showAllItems && !triggerState.isOpen) {
+      // TODO show all items if menu is toggled open. Call onMenuOpenManual so user can update `items` if controlled
+      onMenuOpenManual();
+      showAllItemsTracker.current = true;
     }
 
     triggerState.toggle(focusStrategy);
@@ -128,6 +168,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
     // Close the menu if the collection is empty and either open state or items are uncontrolled.
     if (
+      // TODO: don't close menu if filtered collection size is 0 but we are currently showing all items via button press
+      !showAllItemsTracker.current &&
       !allowsEmptyCollection &&
       triggerState.isOpen &&
       filteredCollection.size === 0 &&
@@ -159,6 +201,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     // If it is the intial render and inputValue isn't controlled nor has an intial value, set input to match current selected key if any
     if (isInitialRender.current && (props.inputValue === undefined && props.defaultInputValue === undefined)) {
       resetInputValue();
+    }
+
+    // // TODO alternative to the onInputChange above, reset to showing the filteredCollection when input value changes
+    if (inputValue !== lastValue.current) {
+      showAllItemsTracker.current = false;
     }
 
     // If the selectedKey changed, update the input value.
@@ -252,7 +299,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   let setFocused = (isFocused: boolean) => {
     if (isFocused) {
       if (menuTrigger === 'focus') {
-        open();
+        open(null, true);
       }
     } else if (shouldCloseOnBlur) {
       let itemText = collection.getItem(selectedKey)?.textValue ?? '';
@@ -277,7 +324,9 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     isFocused,
     setFocused,
     selectedItem,
-    collection: filteredCollection,
+    //TODO: determine whether to show originalCollection or filteredCollection based on showAllItemTracker
+    // We should only use originalCollection if items/content aren't controlled
+    collection: showAllItemsTracker.current && (props.items === undefined) ? originalCollection : filteredCollection,
     inputValue,
     setInputValue,
     commit
@@ -297,7 +346,8 @@ function filterNodes<T>(nodes: Iterable<Node<T>>, inputValue: string, filter: Fi
         filteredNode.push({...node, childNodes: filtered});
       }
     } else if (node.type !== 'section' && filter(node.textValue, inputValue)) {
-      filteredNode.push(node);
+      // TODO changed this to be a clone rather than a referential copy, not sure if it was a bug previously
+      filteredNode.push({...node});
     }
   }
   return filteredNode;

@@ -88,6 +88,12 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
+    'with mapped items (defaultItem and items undef)',
+    () => (
+      <ComboBoxWithMap defaultOpen defaultSelectedKey="two" />
+    )
+  )
+  .add(
     'with sections',
     () => (
       <ComboBox defaultItems={withSection} label="Combobox" {...actions}>
@@ -496,6 +502,7 @@ function ListDataExample() {
   let {contains} = useFilter({sensitivity: 'base'});
   let list = useListData({
     initialItems: items,
+    initialFilterText: 'Snake',
     filter(item, text) {
       return contains(item.name, text);
     }
@@ -503,10 +510,18 @@ function ListDataExample() {
 
   return (
     <ComboBox
+      onMenuOpenManual={() => {
+        // TODO: maybe rename to list.stopFiltering?
+        list.returnFullList()
+      }}
       label="ComboBox"
       items={list.items}
       inputValue={list.filterText}
-      onInputChange={list.setFilterText}>
+      onInputChange={(value) => {
+        // TODO: maybe rename to list.resumeFiltering?
+        list.returnFilteredList()
+        list.setFilterText(value)
+      }}>
       {item => <Item>{item.name}</Item>}
     </ComboBox>
   );
@@ -519,6 +534,8 @@ function AsyncLoadingExample() {
     url: string
   }
 
+  // TODO: perhaps have useAsyncList accept a prop to define a base list of items (before load)
+  // Or maybe take the first load req? Does it even make sense for useAsyncList to support a base list?
   let list = useAsyncList<StarWarsChar>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
@@ -891,5 +908,33 @@ function render(props = {}) {
       </Item>
       <Item key="three">Item Three</Item>
     </ComboBox>
+  );
+}
+function ComboBoxWithMap(props) {
+  let [items, setItems] = React.useState([
+    {name: 'The first item', id: 'one'},
+    {name: 'The second item', id: 'two'},
+    {name: 'The third item', id: 'three'}
+  ]);
+
+  let onClick = () => {
+    setItems([
+      {name: 'The first item new text', id: 'one'},
+      {name: 'The second item new text', id: 'two'},
+      {name: 'The third item new text', id: 'three'}
+    ]);
+  };
+
+  return (
+    <Flex direction="column">
+      <button onClick={onClick}>Press to change items</button>
+      <ComboBox label="Combobox" {...mergeProps(props, actions)}>
+        {items.map((item) => (
+          <Item key={item.id}>
+            {item.name}
+          </Item>
+        ))}
+      </ComboBox>
+    </Flex>
   );
 }
