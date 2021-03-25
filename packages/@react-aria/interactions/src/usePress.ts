@@ -301,6 +301,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         // iOS safari fires pointer events from VoiceOver (but only when outside an iframe...)
+        // https://bugs.webkit.org/show_bug.cgi?id=222627
         state.pointerType = isVirtualPointerEvent(e.nativeEvent) ? 'virtual' : e.pointerType;
 
         e.stopPropagation();

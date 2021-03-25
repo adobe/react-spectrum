@@ -70,6 +70,7 @@ export class SelectionManager implements MultipleSelectionManager {
     return this.state.focusedKey;
   }
 
+  /** Whether the first or last child of the focused key should receive focus. */
   get childFocusStrategy(): FocusStrategy {
     return this.state.childFocusStrategy;
   }
