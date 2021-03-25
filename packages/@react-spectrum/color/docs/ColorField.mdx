@@ -1,0 +1,177 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/color';
+import {HeaderInfo, PropTable, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/color/package.json';
+import statelyDocs from 'docs:@react-stately/color';
+
+```jsx import
+import {ColorField} from '@react-spectrum/color';
+import {Flex} from '@react-spectrum/layout';
+```
+
+---
+category: Color
+keywords: [color field, input]
+---
+
+# ColorField
+
+<p>{docs.exports.ColorField.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ColorField']}
+  sourceData={[]} />
+
+## Example
+
+```tsx example
+<ColorField label="Primary Color" />
+```
+
+## Value
+
+A ColorField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
+Alternatively, a controlled value can be provided using the `value` prop. Valid values are hexadecimal color codes.
+The <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} /> function is used to parse the initial color
+from a hex value, stored in state.
+
+```tsx example
+import {parseColor} from '@react-stately/color';
+
+function Example() {
+  let [value, setValue] = React.useState(parseColor('#e73623'));
+
+  return (
+    <Flex gap="size-150" wrap>
+      <ColorField
+        label="Primary Color (Uncontrolled)"
+        defaultValue="#e21" />
+
+      <ColorField
+        label="Primary Color (Controlled)"
+        value={value}
+        onChange={setValue} />
+    </Flex>
+  );
+}
+```
+
+## Labeling
+
+A visual label should be provided for the ColorField using the `label` prop. If the ColorField is required, the `isRequired` and
+`necessityIndicator` props can be used to show a required state.
+
+```tsx example
+<Flex gap="size-150" wrap>
+  <ColorField label="Primary Color" />
+  <ColorField label="Primary Color" isRequired />
+  <ColorField label="Primary Color" isRequired necessityIndicator="label" />
+  <ColorField label="Primary Color" necessityIndicator="label" />
+</Flex>
+```
+
+### Accessibility
+
+If a visible label isn't specified, an `aria-label` must be provided to the ColorField for
+accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using
+the `id` of the labeling element instead.
+
+### Internationalization
+
+In order to internationalize a ColorField, a localized string should be passed to the `label` or `aria-label` prop.
+When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
+
+## Step values
+
+The `step` prop can be used to increment or decrement the current `value` using up or down arrow keys. These increments
+are calculated from the current `value` or zero if the `value` is empty. A `step` can be set to any positive decimal,
+defaulting to `1` if unspecified.
+
+```tsx example
+<ColorField label="Primary Color" step={16} />
+```
+
+## Validation
+
+ColorField can display a validation state to communicate to the user whether the current value is valid or invalid.
+Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the ColorField via the `validationState` prop.
+
+The example below illustrates how one would validate if the user has entered a red color. In it,
+the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} /> function is used to parse the
+initial color from a hexadecimal string so that `value`'s type remains consistent.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState(parseColor('#e73623'));
+  let isValid = React.useMemo(() => {
+    return value && value.red && value.red > value.green && value.red > value.blue;
+  }, [value]);
+
+  return (
+    <ColorField
+      validationState={isValid ? 'valid' : 'invalid'}
+      value={value}
+      onChange={setValue}
+      label="Red colors"
+    />
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.ColorField} links={docs.links} />
+
+## Visual options
+
+### Quiet
+
+```tsx example
+<ColorField label="Primary Color" isQuiet />
+```
+
+### Disabled
+
+```tsx example
+<ColorField label="Primary Color" isDisabled defaultValue="#e73623" />
+```
+
+### Read only
+
+The `isReadOnly` boolean prop makes the ColorField's text content immutable. Unlike `isDisabled` the ColorField remains focusable
+and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<ColorField label="Primary Color" isReadOnly defaultValue="#e73623" />
+```
+
+### Label alignment and position
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Label-position)
+
+By default, the label is positioned above the ColorField. The `labelPosition` prop can be used to position the label to the side.
+The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the
+left most edge of the ColorField and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+
+```tsx example
+<ColorField label="Primary Color" labelPosition="side" labelAlign="end" />
+```
+
+### Custom width
+
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
+
+```tsx example
+<ColorField label="Primary Color" width="size-3600" maxWidth="100%" />
+```
