@@ -915,7 +915,7 @@ describe('useDroppableCollection', () => {
       expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Two');
     });
 
-    it('should default to on the last selected item there is a selection and only dropping on items is allowed', () => {
+    it('should default to on the last selected item when only dropping on items is allowed', () => {
       let onDrop = jest.fn();
       let getDropOperation = (target) => target.dropPosition !== 'on' ? 'cancel' : 'move';
       let tree = render(<>
