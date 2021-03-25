@@ -37,7 +37,10 @@ storiesOf('ColorArea', module)
                 }} />
               <ColorArea
                 value={color}
-                onChange={setColor}
+                onChange={(e) => {
+                  action('change')(e);
+                  setColor(e);
+                }}
                 size={'size-900'}
                 UNSAFE_style={{
                   position: 'absolute',
@@ -68,7 +71,14 @@ storiesOf('ColorArea', module)
       return (<div role="group" aria-label="HSBA Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
-            <ColorArea value={color} onChange={setColor} xChannel={'hue'} yChannel={'brightness'} />
+            <ColorArea
+              value={color}
+              onChange={(e) => {
+                action('change')(e);
+                setColor(e);
+              }}
+              xChannel={'hue'}
+              yChannel={'brightness'} />
             <ColorSlider value={color} onChange={setColor} channel={'saturation'} />
             <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
@@ -87,7 +97,14 @@ storiesOf('ColorArea', module)
       return (<div role="group" aria-label="HSBA Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
-            <ColorArea value={color} onChange={setColor} xChannel={'hue'} yChannel={'saturation'} />
+            <ColorArea
+              value={color}
+              onChange={(e) => {
+                action('change')(e);
+                setColor(e);
+              }}
+              xChannel={'hue'}
+              yChannel={'saturation'} />
             <ColorSlider value={color} onChange={setColor} channel={'brightness'} />
             <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
@@ -106,7 +123,14 @@ storiesOf('ColorArea', module)
       return (<div role="group" aria-label="HSBA Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
-            <ColorArea value={color} onChange={setColor} xChannel={'brightness'} yChannel={'hue'} />
+            <ColorArea
+              value={color}
+              onChange={(e) => {
+                action('change')(e);
+                setColor(e);
+              }}
+              xChannel={'brightness'}
+              yChannel={'hue'} />
             <ColorSlider value={color} onChange={setColor} channel={'saturation'} />
             <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
@@ -125,7 +149,14 @@ storiesOf('ColorArea', module)
       return (<div role="group" aria-label="HSBA Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
-            <ColorArea value={color} onChange={setColor} xChannel={'saturation'} yChannel={'hue'} />
+            <ColorArea
+              value={color}
+              onChange={(e) => {
+                action('change')(e);
+                setColor(e);
+              }}
+              xChannel={'saturation'}
+              yChannel={'hue'} />
             <ColorSlider value={color} onChange={setColor} channel={'brightness'} />
             <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
@@ -144,7 +175,14 @@ storiesOf('ColorArea', module)
       return (<div role="group" aria-label="RGBA Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
-            <ColorArea value={color} onChange={setColor} xChannel={'blue'} yChannel={'green'} />
+            <ColorArea
+              value={color}
+              onChange={(e) => {
+                action('change')(e);
+                setColor(e);
+              }}
+              xChannel={'blue'}
+              yChannel={'green'} />
             <ColorSlider value={color} onChange={setColor} channel={'red'} />
             <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
@@ -163,7 +201,14 @@ storiesOf('ColorArea', module)
       return (<div role="group" aria-label="RGBA Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
-            <ColorArea value={color} onChange={setColor} xChannel={'blue'} yChannel={'red'} />
+            <ColorArea
+              value={color}
+              onChange={(e) => {
+                action('change')(e);
+                setColor(e);
+              }}
+              xChannel={'blue'}
+              yChannel={'red'} />
             <ColorSlider value={color} onChange={setColor} channel={'green'} />
             <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
@@ -182,7 +227,14 @@ storiesOf('ColorArea', module)
       return (<div role="group" aria-label="RGBA Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
-            <ColorArea value={color} onChange={setColor} xChannel={'red'} yChannel={'green'} />
+            <ColorArea
+              value={color}
+              onChange={(e) => {
+                action('change')(e);
+                setColor(e);
+              }}
+              xChannel={'red'}
+              yChannel={'green'} />
             <ColorSlider value={color} onChange={setColor} channel={'blue'} />
             <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
@@ -204,7 +256,10 @@ storiesOf('ColorArea', module)
             <div style={{position: 'relative'}}>
               <ColorWheel
                 value={color}
-                onChange={setColor}
+                onChange={(e) => {
+                  action('change')(e);
+                  setColor(e);
+                }}
                 UNSAFE_style={{
                   position: 'relative',
                   left: 'calc(50% - calc(var(--spectrum-global-dimension-size-125) * 8))',
@@ -238,7 +293,14 @@ storiesOf('ColorArea', module)
       return (<div role="group" aria-label="HSLA Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
-            <ColorArea value={color} onChange={setColor} xChannel={'hue'} yChannel={'lightness'} />
+            <ColorArea
+              value={color}
+              onChange={(e) => {
+                action('change')(e);
+                setColor(e);
+              }}
+              xChannel={'hue'}
+              yChannel={'lightness'} />
             <ColorSlider value={color} onChange={setColor} channel={'saturation'} />
             <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
@@ -257,7 +319,14 @@ storiesOf('ColorArea', module)
       return (<div role="group" aria-label="HSLA Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
-            <ColorArea value={color} onChange={setColor} xChannel={'hue'} yChannel={'saturation'} />
+            <ColorArea
+              value={color}
+              onChange={(e) => {
+                action('change')(e);
+                setColor(e);
+              }}
+              xChannel={'hue'}
+              yChannel={'saturation'} />
             <ColorSlider value={color} onChange={setColor} channel={'lightness'} />
             <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
@@ -297,7 +366,12 @@ storiesOf('ColorArea', module)
       let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
       let colorCSS = color.toString('css');
       return (<Flex gap={'size-500'} direction="row" alignItems="center">
-        <ColorArea onChange={setColor} value={color} />
+        <ColorArea
+          onChange={(e) => {
+            action('change')(e);
+            setColor(e);
+          }}
+          value={color} />
         <div style={{width: '50px', height: '50px', backgroundColor: colorCSS, border: '1px solid black'}} />
       </Flex>);
     }

@@ -11,8 +11,8 @@
  */
 
 import {AriaColorAreaProps} from '@react-types/color';
+import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
 import {ColorAreaState} from '@react-stately/color';
-import {focusWithoutScrolling, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {MessageDictionary} from '@internationalized/message';
@@ -22,7 +22,7 @@ import {useLocale} from '@react-aria/i18n';
 
 const messages = new MessageDictionary(intlMessages);
 
-interface ColorAreaProps extends AriaColorAreaProps {
+interface ColorAreaAriaProps extends AriaColorAreaProps {
   /** The width of the color area in pixels. */
   width: number,
   /** The height of the color area in pixels. */
@@ -42,13 +42,24 @@ interface ColorAreaAria {
   yInputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
-const PAGE_MIN_STEP_SIZE = 10;
+const PERCENT_STEP_SIZE = 10;
+const HUE_STEP_SIZE = 15;
+const RGB_STEP_SIZE = 16;
+const CHANNEL_STEP_SIZE = {
+  hue: HUE_STEP_SIZE,
+  saturation: PERCENT_STEP_SIZE,
+  brightness: PERCENT_STEP_SIZE,
+  lightness: PERCENT_STEP_SIZE,
+  red: RGB_STEP_SIZE,
+  green: RGB_STEP_SIZE,
+  blue: RGB_STEP_SIZE
+};
 
 const HIDDEN_INPUT_STYLES:CSSProperties = {
   opacity: 0.0001,
   position: 'absolute',
   top: 0,
-  left: '0',
+  left: 0,
   width: '100%',
   height: '100%',
   zIndex: 0,
@@ -61,7 +72,7 @@ const HIDDEN_INPUT_STYLES:CSSProperties = {
  * Provides the behavior and accessibility implementation for a color wheel component.
  * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
  */
-export function useColorArea(props: ColorAreaProps, state: ColorAreaState, inputXRef: RefObject<HTMLElement>, inputYRef: RefObject<HTMLElement>): ColorAreaAria {
+export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, inputXRef: RefObject<HTMLElement>, inputYRef: RefObject<HTMLElement>): ColorAreaAria {
   let {
     isDisabled,
     xChannel,
@@ -76,6 +87,8 @@ export function useColorArea(props: ColorAreaProps, state: ColorAreaState, input
   let {direction, locale} = useLocale();
 
   let colorAreaDimensions = {width, height};
+
+  let focusedInputRef = useRef<HTMLElement>(null);
 
   let focusInput = useCallback((inputRef = inputXRef) => {
     if (inputRef) {
@@ -93,6 +106,74 @@ export function useColorArea(props: ColorAreaProps, state: ColorAreaState, input
   let zChannel = channels.zChannel;
 
   let currentPosition = useRef<{x: number, y: number}>(null);
+
+  let {keyboardProps} = useKeyboard({
+    onKeyDown(e) {
+      if (!e.shiftKey && /^Arrow(?:Right|Left|Up|Down)$/.test(e.key)) {
+        return;
+      }
+      let stepSize = CHANNEL_STEP_SIZE[xChannel];
+      let range = stateRef.current.value.getChannelRange(xChannel);
+      switch (e.key) {
+        case 'PageUp':
+        case 'ArrowUp':
+          range = stateRef.current.value.getChannelRange(yChannel);
+          stepSize = CHANNEL_STEP_SIZE[yChannel];
+          stateRef.current.setYValue(
+            clamp(
+              (Math.floor(stateRef.current.yValue / stepSize) + 1) * stepSize,
+              range.minValue,
+              range.maxValue
+            )
+          );
+          focusedInputRef.current = inputYRef.current;
+          break;
+        case 'PageDown':
+        case 'ArrowDown':
+          range = stateRef.current.value.getChannelRange(yChannel);
+          stepSize = CHANNEL_STEP_SIZE[yChannel];
+          stateRef.current.setYValue(
+            clamp(
+              (Math.ceil(stateRef.current.yValue / stepSize) - 1) * stepSize,
+              range.minValue,
+              range.maxValue
+            )
+          );
+          focusedInputRef.current = inputYRef.current;
+          break;
+        case 'Home':
+        case 'ArrowLeft':
+          stateRef.current.setXValue(
+            clamp(
+              (Math[direction === 'rtl' ? 'floor' : 'ceil'](stateRef.current.xValue / stepSize) + (direction === 'rtl' ? 1 : -1)) * stepSize,
+              range.minValue,
+              range.maxValue
+            )
+          );
+          focusedInputRef.current = inputXRef.current;
+          break;
+        case 'End':
+        case 'ArrowRight':
+          stateRef.current.setXValue(
+            clamp(
+              (Math[direction === 'rtl' ? 'floor' : 'ceil'](stateRef.current.xValue / stepSize) + (direction === 'rtl' ? -1 : 1)) * stepSize,
+              range.minValue,
+              range.maxValue
+            )
+          );
+          focusedInputRef.current = inputXRef.current;
+          break;
+      }
+      if (focusedInputRef.current) {
+        e.preventDefault();
+        setTimeout(() => {
+          focusInput(focusedInputRef.current ? focusedInputRef : inputXRef);
+          focusedInputRef.current = undefined;
+        }, 120);
+      }
+    }
+  });
+
   let moveHandler = {
     onMoveStart() {
       currentPosition.current = null;
@@ -107,16 +188,16 @@ export function useColorArea(props: ColorAreaProps, state: ColorAreaState, input
       if (pointerType === 'keyboard') {
         if (deltaX > 0) {
           stateRef.current[`${direction === 'rtl' ? 'decrement' : 'increment'}X`]();
-          focusInput(inputXRef);
+          focusedInputRef.current = inputXRef.current;
         } else if (deltaX < 0) {
           stateRef.current[`${direction === 'rtl' ? 'increment' : 'decrement'}X`]();
-          focusInput(inputXRef);
+          focusedInputRef.current = inputXRef.current;
         } else if (deltaY > 0) {
           stateRef.current.decrementY();
-          focusInput(inputYRef);
+          focusedInputRef.current = inputYRef.current;
         } else if (deltaY < 0) {
           stateRef.current.incrementY();
-          focusInput(inputYRef);
+          focusedInputRef.current = inputYRef.current;
         }
       } else {        
         stateRef.current.setColorFromPoint(currentPosition.current.x, currentPosition.current.y, colorAreaDimensions);
@@ -125,7 +206,8 @@ export function useColorArea(props: ColorAreaProps, state: ColorAreaState, input
     onMoveEnd() {
       isOnColorArea.current = undefined;
       state.setDragging(false);
-      focusInput(document.activeElement === inputYRef.current ? inputYRef : inputXRef);
+      focusInput(focusedInputRef.current ? focusedInputRef : inputXRef);
+      focusedInputRef.current = undefined;
     }
   };
   let {moveProps: movePropsThumb} = useMove(moveHandler);
@@ -211,41 +293,6 @@ export function useColorArea(props: ColorAreaProps, state: ColorAreaState, input
     }
   };
 
-  let {keyboardProps} = useKeyboard({
-    onKeyDown(e) {
-      if (!e.shiftKey && /^Arrow(?:Right|Left|Up|Down)$/.test(e.key)) {
-        return;
-      }
-      let inputRefToFocus;
-      switch (e.key) {
-        case 'PageUp':
-        case 'ArrowUp':
-          stateRef.current.incrementY(PAGE_MIN_STEP_SIZE);
-          inputRefToFocus = inputYRef;
-          break;
-        case 'PageDown':
-        case 'ArrowDown':
-          stateRef.current.decrementY(PAGE_MIN_STEP_SIZE);
-          inputRefToFocus = inputYRef;
-          break;
-        case 'Home':
-        case 'ArrowLeft':
-          stateRef.current[`${direction === 'rtl' ? 'increment' : 'decrement'}X`](PAGE_MIN_STEP_SIZE);
-          inputRefToFocus = inputXRef;
-          break;
-        case 'End':
-        case 'ArrowRight':
-          stateRef.current[`${direction === 'rtl' ? 'decrement' : 'increment'}X`](PAGE_MIN_STEP_SIZE);
-          inputRefToFocus = inputXRef;
-          break;
-      }
-      if (inputRefToFocus) {
-        e.preventDefault();
-        setTimeout(() => focusInput(inputRefToFocus), 120);
-      }
-    }
-  });
-
   let colorAreaInteractions = isDisabled ? {} : mergeProps({
     onMouseDown: (e: React.MouseEvent) => {
       if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
@@ -296,8 +343,8 @@ export function useColorArea(props: ColorAreaProps, state: ColorAreaState, input
   let colorAriaLabellingProps = useLabels(props);
 
   let getValueTitle = () => {
-    let title = '';
-    let alpha = '';
+    let title = null;
+    let alpha = null;
     if (state.value.getChannelValue('alpha') < 1) {
       alpha = `${state.value.getChannelName('alpha', locale)}: ${state.value.formatChannelValue('alpha', locale)}`;
     }
@@ -306,26 +353,29 @@ export function useColorArea(props: ColorAreaProps, state: ColorAreaState, input
         title = [
           `${state.value.getChannelName('hue', locale)}: ${state.value.formatChannelValue('hue', locale)}`,
           `${state.value.getChannelName('saturation', locale)}: ${state.value.formatChannelValue('saturation', locale)}`,
-          `${state.value.getChannelName('brightness', locale)}: ${state.value.formatChannelValue('brightness', locale)}`,
-          alpha
-        ].join(', ');
+          `${state.value.getChannelName('brightness', locale)}: ${state.value.formatChannelValue('brightness', locale)}`
+        ];
         break;
       case 'hsl':
         title = [
           `${state.value.getChannelName('hue', locale)}: ${state.value.formatChannelValue('hue', locale)}`,
           `${state.value.getChannelName('saturation', locale)}: ${state.value.formatChannelValue('saturation', locale)}`,
-          `${state.value.getChannelName('lightness', locale)}: ${state.value.formatChannelValue('lightness', locale)}`,
-          alpha
-        ].join(', ');
+          `${state.value.getChannelName('lightness', locale)}: ${state.value.formatChannelValue('lightness', locale)}`
+        ];
         break;
       case 'rgb':
         title = [
           `${state.value.getChannelName('red', locale)}: ${state.value.formatChannelValue('red', locale)}`,
           `${state.value.getChannelName('green', locale)}: ${state.value.formatChannelValue('green', locale)}`,
-          `${state.value.getChannelName('blue', locale)}: ${state.value.formatChannelValue('blue', locale)}`,
-          alpha
-        ].join(', ');
+          `${state.value.getChannelName('blue', locale)}: ${state.value.formatChannelValue('blue', locale)}`
+        ];
         break;
+    }
+    if (title) {
+      if (alpha) {
+        title.push(alpha);
+      }
+      title = title.join(', ');
     }
     return title;
   };
