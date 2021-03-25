@@ -1,71 +1,44 @@
 import {ActionButton} from '@react-spectrum/button';
+import Add from '@spectrum-icons/workflow/Add';
+import Delete from '@spectrum-icons/workflow/Delete';
+import Edit from '@spectrum-icons/workflow/Edit';
 import {Flex} from '@react-spectrum/layout';
 import {Item, List} from '../';
+import {Menu, MenuTrigger} from '@react-spectrum/menu';
+import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {TextField} from '@react-spectrum/textfield';
+import {Text} from '@react-spectrum/text';
 import {View} from '@react-spectrum/view';
 
-
 storiesOf('List', module)
-  // .addDecorator(story => (
-  //   <List>
-  //     <Item>
-  //       <TextField />
-  //     </Item>
-  //   </List>
-  // ));
   .add('default', () => (
+    <List width="250px">
+      <Item>row 1</Item>
+      <Item>row 2</Item>
+      <Item>row 3</Item>
+    </List>
+  ))
+
+  .add('with buttons', () => (
     <List width="300px">
       <Item>
-        <Flex direction="row" gap="10px" alignItems="center">
-          <ActionButton>Press1</ActionButton>
-          <div>hi there</div>
-          <ActionButton>Press2</ActionButton>
+        <Flex alignItems="center">
+          <View flexGrow={1}>row 1</View>
+          <ActionButton>Button 1</ActionButton>
         </Flex>
       </Item>
       <Item>
-        <Flex gap="10px" alignItems="center">
-          <ActionButton>Press1</ActionButton>
-          <div>hola</div>
-          <ActionButton>Press2</ActionButton>
+        <Flex alignItems="center">
+          <View flexGrow={1}>row 2</View>
+          <ActionButton>Button 1</ActionButton>
         </Flex>
       </Item>
       <Item>
-        <Flex gap="10px" alignItems="center">
-          <TextField />
-          <ActionButton>Press2</ActionButton>
+        <Flex alignItems="center">
+          <View flexGrow={1}>row 3</View>
+          <ActionButton>Button 1</ActionButton>
         </Flex>
-      </Item>
-    </List>
-  ))
-  .add('basic', () => (
-    <List width="500px">
-      <Item>
-        <View margin="10px">row 1</View>
-      </Item>
-      <Item>
-        <View margin="10px">row 2</View>
-      </Item>
-      <Item>
-        <View margin="10px">row 3</View>
-      </Item>
-    </List>
-  ))
-
-  .add('button', () => (
-    <List width="500px">
-      <Item>
-        <View margin="10px">row 1</View>
-        <ActionButton>Button 1</ActionButton>
-      </Item>
-      <Item>
-        <View margin="10px">row 2</View>
-        <ActionButton>Button 2</ActionButton>
-      </Item>
-      <Item>
-        <View margin="10px">row 3</View>
-        <ActionButton>Button 3</ActionButton>
       </Item>
     </List>
   ))
@@ -84,16 +57,31 @@ storiesOf('List', module)
       {key: 'k'},
       {key: 'l'},
       {key: 'm'},
-      {key: 'n'},
+      {key: 'n'}
     ];
     return (
-      <List items={items} width="500px" height="250px">
-        {item =>
+      <List items={items} width="300px" height="250px">
+        {item => (
           <Item>
-            <ActionButton>1 Button {item.key}</ActionButton>
-            <ActionButton>2 Button {item.key}</ActionButton>
+            <Flex alignItems="center" gap="10px">
+              <View flexGrow={1}>Item {item.key}</View>
+              <ActionButton><Add /></ActionButton>
+              <MenuTrigger>
+                <ActionButton><MoreSmall /></ActionButton>
+                <Menu>
+                  <Item>
+                    <Edit />
+                    <Text>Edit</Text>
+                  </Item>
+                  <Item>
+                    <Delete />
+                    <Text>Delete</Text>
+                  </Item>
+                </Menu>
+              </MenuTrigger>
+            </Flex>
           </Item>
-        }
+        )}
       </List>
     );
   });

@@ -16,12 +16,12 @@ import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
 import {ListItem} from './ListItem';
 import {ListLayout} from '@react-stately/layout';
 import {ListState, useListState} from '@react-stately/list';
-import React, {ReactElement, useMemo} from 'react';
+import listStyles from './index.css';
+import React, {useMemo} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';
-import listStyles from './index.css';
 
 
 export const ListContext = React.createContext(null);
@@ -33,7 +33,7 @@ export function useListLayout<T>(state: ListState<T>) {
       new ListLayout<T>({
         estimatedRowHeight: scale === 'large' ? 48 : 32,
         estimatedHeadingHeight: scale === 'large' ? 33 : 26,
-        padding: scale === 'large' ? 5 : 4, // TODO: get from DNA
+        padding: 0, // TODO: get from DNA
         collator
       })
     , [collator, scale]);
@@ -43,7 +43,7 @@ export function useListLayout<T>(state: ListState<T>) {
   return layout;
 }
 
-function List<T>(props, ref: DOMRef<HTMLDivElement>) {
+function List<T extends object>(props, ref: DOMRef<HTMLDivElement>) {
   let {
     shouldUseVirtualFocus,
     transitionDuration = 0
@@ -83,36 +83,20 @@ function List<T>(props, ref: DOMRef<HTMLDivElement>) {
   let {gridProps} = useGrid({
     keyboardDelegate,
     ref: domRef
-    // focusMode: 'cell'
   }, state);
 
-  console.log('selectedkey', state.selectionManager.focusedKey)
   let {styleProps} = useStyleProps(props);
 
   // This overrides collection view's renderWrapper to support hierarchy of items in sections.
   // The header is extracted from the children so it can receive ARIA labeling properties.
   type View = ReusableView<Node<T>, unknown>;
-  let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
-    // TOOD handle sections?
+  let renderWrapper = (parent: View, reusableView: View) => (
+    <VirtualizerItem
+      key={reusableView.key}
+      reusableView={reusableView}
+      parent={parent} />
+  );
 
-    return (
-      <VirtualizerItem
-        key={reusableView.key}
-        reusableView={reusableView}
-        parent={parent} />
-    );
-  };
-
-  // TODO: add renderView?
-
-  console.log('list styles', listStyles)
-  console.log('list styles',
-    classNames(
-      listStyles,
-      'react-spectrum-List',
-      styleProps.className
-    ))
-  // todo: add isLoading, onLoadMore
   return (
     <ListContext.Provider value={{state, keyboardDelegate}}>
       <Virtualizer
@@ -149,21 +133,7 @@ function List<T>(props, ref: DOMRef<HTMLDivElement>) {
       </Virtualizer>
     </ListContext.Provider>
   );
-
-  // TODO adding grid props makes the grid keyboard delegate the main keyboard listener?
-  return (
-    <div
-      {...gridProps}
-      ref={domRef}>
-      {
-        [...collection].map(item =>
-          <ListItem item={item} state={state} delegate={keyboardDelegate} />
-        )
-      }
-    </div>
-  );
 }
 
-
-const _List = React.forwardRef(List); // as (pro[s &]) => ReactElement;
+const _List = React.forwardRef(List);
 export {_List as List};
