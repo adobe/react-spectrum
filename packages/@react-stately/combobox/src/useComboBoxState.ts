@@ -96,13 +96,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   //   items: fullItems
   // });
 
-  // This is only used if collection is not controlled
-  let originalCollection = useMemo(() => (
-    props.items != null
-      ? null
-      : filterCollection(collection, '', () => true)
-  // update if children change for the item mapping case
-  ), [props.children, props.items]);
+  // This is only used if items are not controlled
+  let originalCollection = collection;
 
   let filteredCollection = useMemo(() => (
     // No default filter if items are controlled.
