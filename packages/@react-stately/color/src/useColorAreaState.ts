@@ -66,6 +66,10 @@ function normalizeColor(v: string | Color) {
 
 const DEFAULT_COLOR = parseColor('hsb(0, 100%, 100%)');
 
+function roundToStep(value: number, step: number): number {
+  return Math.round(value / step) * step;
+}
+
 /**
  * Provides state management for a color area component.
  * Color area allows users to adjust two channels of an HSL, HSB or RGB color value against a two-dimensional gradient background.
@@ -223,8 +227,8 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       let xRange = color.getChannelRange(xChannel);
       let yRange = color.getChannelRange(yChannel);
       let newColor = color.clone();
-      newColor = newColor.withChannelValue(xChannel, Math.round(xRange.minValue + (clamp(x, 0, dimensions.width) / dimensions.width) * (xRange.maxValue - xRange.minValue)));
-      newColor = newColor.withChannelValue(yChannel, Math.round(yRange.minValue + ((dimensions.height - clamp(y, 0, dimensions.height)) / dimensions.height) * (yRange.maxValue - yRange.minValue)));
+      newColor = newColor.withChannelValue(xChannel, roundToStep(xRange.minValue + (clamp(x, 0, dimensions.width) / dimensions.width) * (xRange.maxValue - xRange.minValue), xRange.step));
+      newColor = newColor.withChannelValue(yChannel, roundToStep(yRange.minValue + ((dimensions.height - clamp(y, 0, dimensions.height)) / dimensions.height) * (yRange.maxValue - yRange.minValue), yRange.step));
       setColor(newColor);
     },
     getThumbPosition(dimensions) {

@@ -91,7 +91,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, i
   let focusedInputRef = useRef<HTMLElement>(null);
 
   let focusInput = useCallback((inputRef = inputXRef) => {
-    if (inputRef) {
+    if (inputRef.current) {
       focusWithoutScrolling(inputRef.current);
     }
   }, [inputXRef]);
@@ -112,13 +112,13 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, i
       if (!e.shiftKey && /^Arrow(?:Right|Left|Up|Down)$/.test(e.key)) {
         return;
       }
-      let stepSize = CHANNEL_STEP_SIZE[xChannel];
+      let stepSize = Math.max(step, CHANNEL_STEP_SIZE[xChannel]);
       let range = stateRef.current.value.getChannelRange(xChannel);
       switch (e.key) {
         case 'PageUp':
         case 'ArrowUp':
           range = stateRef.current.value.getChannelRange(yChannel);
-          stepSize = CHANNEL_STEP_SIZE[yChannel];
+          stepSize = Math.max(step, CHANNEL_STEP_SIZE[yChannel]);
           stateRef.current.setYValue(
             clamp(
               (Math.floor(stateRef.current.yValue / stepSize) + 1) * stepSize,
@@ -131,7 +131,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, i
         case 'PageDown':
         case 'ArrowDown':
           range = stateRef.current.value.getChannelRange(yChannel);
-          stepSize = CHANNEL_STEP_SIZE[yChannel];
+          stepSize = Math.max(step, CHANNEL_STEP_SIZE[yChannel]);
           stateRef.current.setYValue(
             clamp(
               (Math.ceil(stateRef.current.yValue / stepSize) - 1) * stepSize,
@@ -527,7 +527,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, i
       style: HIDDEN_INPUT_STYLES,
       title: getValueTitle(),
       disabled: isDisabled,
-      value: `${state.value.getChannelValue(xChannel)}`,
+      value: state.value.getChannelValue(xChannel),
       tabIndex: 0,
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
         state.setXValue(parseFloat(e.target.value));
@@ -552,7 +552,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, i
       },
       title: getValueTitle(),
       disabled: isDisabled,
-      value: `${state.value.getChannelValue(yChannel)}`,
+      value: state.value.getChannelValue(yChannel),
       tabIndex: -1,
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
         state.setYValue(parseFloat(e.target.value));
