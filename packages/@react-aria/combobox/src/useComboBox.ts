@@ -37,7 +37,13 @@ interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
   /** The ref for the list box popup trigger button.  */
   buttonRef: RefObject<HTMLElement>,
   /** An optional keyboard delegate implementation, to override the default. */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate,
+  /** Callback triggered upon opening the combobox manually (i.e. via pressing menu button or arrow keys). */
+  // TODO: think up of better name
+  onMenuOpenManual?: () => void,
+  /** Whether opening the menu via non input change interactions should display the full list of options. */
+  // TODO: think up of better name, also do we need this prop?
+  showWholeMenuOnOpen?: boolean
 }
 
 interface ComboBoxAria {
@@ -66,7 +72,9 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     keyboardDelegate,
     // completionMode = 'suggest',
     isReadOnly,
-    isDisabled
+    isDisabled,
+    onMenuOpenManual = () => {},
+    showWholeMenuOnOpen = true
   } = props;
 
   let formatMessage = useMessageFormatter(intlMessages);
@@ -113,10 +121,18 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
         state.close();
         break;
       case 'ArrowDown':
-        state.open('first', true);
+        if (!state.isOpen) {
+          onMenuOpenManual();
+        }
+
+        state.open('first', showWholeMenuOnOpen);
         break;
       case 'ArrowUp':
-        state.open('last', true);
+        if (!state.isOpen) {
+          onMenuOpenManual();
+        }
+
+        state.open('last', showWholeMenuOnOpen);
         break;
       case 'ArrowLeft':
       case 'ArrowRight':
@@ -163,16 +179,22 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   // Press handlers for the ComboBox button
   let onPress = (e: PressEvent) => {
     if (e.pointerType === 'touch') {
+      if (!state.isOpen) {
+        onMenuOpenManual();
+      }
       // Focus the input field in case it isn't focused yet
       inputRef.current.focus();
-      state.toggle(null, true);
+      state.toggle(null, showWholeMenuOnOpen);
     }
   };
 
   let onPressStart = (e: PressEvent) => {
     if (e.pointerType !== 'touch') {
+      if (!state.isOpen) {
+        onMenuOpenManual();
+      }
       inputRef.current.focus();
-      state.toggle((e.pointerType === 'keyboard' || e.pointerType === 'virtual') ? 'first' : null, true);
+      state.toggle((e.pointerType === 'keyboard' || e.pointerType === 'virtual') ? 'first' : null, showWholeMenuOnOpen);
     }
   };
 
@@ -211,7 +233,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     if (touch.clientX === centerX && touch.clientY === centerY) {
       e.preventDefault();
       inputRef.current.focus();
-      state.toggle(null, true);
+      state.toggle(null);
 
       lastEventTime.current = e.timeStamp;
     }

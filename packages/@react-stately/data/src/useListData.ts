@@ -141,7 +141,6 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
     initialFilterText = ''
   } = options;
 
-  let [showFull, setFull] = useState(false);
   // Store both items and filteredItems in state so we can go back to the unfiltered list
   let [state, setState] = useState<ListState<T>>({
     items: initialItems,
@@ -150,8 +149,8 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
   });
 
   let filteredItems = useMemo(
-    () => filter && !showFull ? state.items.filter(item => filter(item, state.filterText)) : state.items,
-    [state.items, state.filterText, filter, showFull]);
+    () => filter ? state.items.filter(item => filter(item, state.filterText)) : state.items,
+    [state.items, state.filterText, filter]);
 
   return {
     ...state,
@@ -159,12 +158,6 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
     ...createListActions({getKey}, setState),
     getItem(key: Key) {
       return state.items.find(item => getKey(item) === key);
-    },
-    returnFullList() {
-      setFull(true);
-    },
-    returnFilteredList() {
-      setFull(false)
     }
   };
 }

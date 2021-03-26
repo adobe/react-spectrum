@@ -98,6 +98,8 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           isDisabled={isDisabled}
           isPlaceholder={!state.inputValue}
           validationState={validationState}
+          // TODO: don't have full menu display for mobile upon open, weird UX
+          // TODO: do we wanna call onMenuOpenManual here as well?
           onPress={() => !isReadOnly && state.open()}>
           {state.inputValue || props.placeholder || ''}
         </ComboBoxButton>

@@ -34,7 +34,7 @@ interface ComboBoxStateProps<T> extends ComboBoxProps<T> {
   /** Whether the combo box allows the menu to be open when the collection is empty. */
   allowsEmptyCollection?: boolean,
   /** Whether the combo box menu should close on blur. */
-  shouldCloseOnBlur?: boolean
+  shouldCloseOnBlur?: boolean,
 }
 
 /**
@@ -48,12 +48,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     menuTrigger = 'input',
     allowsEmptyCollection = false,
     allowsCustomValue,
-    shouldCloseOnBlur = true,
-    onMenuOpenManual = () => {},
+    shouldCloseOnBlur = true
     // fullItems
   } = props;
 
-  let [showAllItemsTracker, setshowAllItemsTracker] = useState(false);
+  let [showAllItemsTracker, setShowAllItemsTracker] = useState(false);
 
   let [isFocused, setFocusedState] = useState(false);
   let [inputValue, setInputValue] = useControlledState(
@@ -102,32 +101,30 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   ), [collection, inputValue, defaultFilter, props.items]);
 
   let triggerState = useMenuTriggerState(props);
-  // TODO: perhaps add an additional argument here called "Show all items?"
   let open = (focusStrategy?: FocusStrategy, showAllItems?: boolean) => {
-
     // Prevent open operations from triggering if there is nothing to display
-    if (allowsEmptyCollection || filteredCollection.size > 0 || (showAllItems && originalCollection.size > 0)) {
-      if (showAllItems && !triggerState.isOpen) {
-        // TODO show all items if menu is manually opened. Call onMenuOpenManual so user can update `items` if controlled
-        setshowAllItemsTracker(true)
-        onMenuOpenManual();
+    // Also prevent open operations from triggering if items are uncontrolled but defaultItems is empty, even if showAllItems is true.
+    // This is to prevent comboboxes with empty defaultItems from opening but allow controlled items comboboxes to open even if the inital list is empty (assumption is user will provide swap the empty list with a base list via onMenuOpenManual)
+    // TODO: alternative would be to accept another prop called "baseItems" so that we can check the size of that
+    if (allowsEmptyCollection || filteredCollection.size > 0 || (showAllItems && (originalCollection.size > 0 || props.items))) {
+      if (showAllItems && !triggerState.isOpen && props.items === undefined) {
+        // TODO show all items if menu is manually opened. Only care about this if items are undefined
+        setShowAllItemsTracker(true)
       }
 
       triggerState.open(focusStrategy);
     }
   };
 
-  // TODO: perhaps add an additional argument here called "Show all items?"
   let toggle = (focusStrategy?: FocusStrategy, showAllItems?: boolean) => {
     // If the menu is closed and there is nothing to display, early return so toggle isn't called to prevent extraneous onOpenChange
-    if (!(allowsEmptyCollection || filteredCollection.size > 0 || (showAllItems && originalCollection.size > 0)) && !triggerState.isOpen) {
+    if (!(allowsEmptyCollection || filteredCollection.size > 0 || (showAllItems && (originalCollection.size > 0 || props.items))) && !triggerState.isOpen) {
       return;
     }
 
-    if (showAllItems && !triggerState.isOpen) {
-      // TODO show all items if menu is toggled open. Call onMenuOpenManual so user can update `items` if controlled
-      onMenuOpenManual();
-      setshowAllItemsTracker(true)
+    if (showAllItems && !triggerState.isOpen && props.items === undefined) {
+      // TODO show all items if menu is toggled open. Only care about this if items are undefined
+      setShowAllItemsTracker(true);
     }
 
     triggerState.toggle(focusStrategy);
@@ -157,8 +154,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     }
 
     // Close the menu if the collection is empty and either open state or items are uncontrolled.
+    // Don't close menu if filtered collection size is 0 but we are currently showing all items via button press (only applies to uncontrolled items)
     if (
-      // TODO: don't close menu if filtered collection size is 0 but we are currently showing all items via button press
       !showAllItemsTracker &&
       !allowsEmptyCollection &&
       triggerState.isOpen &&
@@ -195,7 +192,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
     // // TODO alternative to the onInputChange above, reset to showing the filteredCollection when input value changes
     if (inputValue !== lastValue.current) {
-      setshowAllItemsTracker(false)
+      setShowAllItemsTracker(false)
     }
 
     // If the selectedKey changed, update the input value.

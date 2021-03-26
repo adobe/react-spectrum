@@ -508,18 +508,18 @@ function ListDataExample() {
     }
   });
 
+  let [showAll, setShowAll] = useState(false);
+
   return (
     <ComboBox
       onMenuOpenManual={() => {
-        // TODO: maybe rename to list.stopFiltering?
-        list.returnFullList()
+        setShowAll(true)
       }}
       label="ComboBox"
-      items={list.items}
+      items={showAll ? items : list.items}
       inputValue={list.filterText}
       onInputChange={(value) => {
-        // TODO: maybe rename to list.resumeFiltering?
-        list.returnFilteredList()
+        setShowAll(false);
         list.setFilterText(value)
       }}>
       {item => <Item>{item.name}</Item>}
