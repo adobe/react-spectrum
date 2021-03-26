@@ -111,7 +111,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   let open = (focusStrategy?: FocusStrategy, showAllItems?: boolean) => {
 
     // Prevent open operations from triggering if there is nothing to display
-    if (allowsEmptyCollection || filteredCollection.size > 0 || showAllItems) {
+    if (allowsEmptyCollection || filteredCollection.size > 0 || (showAllItems && originalCollection.size > 0)) {
       if (showAllItems && !triggerState.isOpen) {
         // TODO show all items if menu is manually opened. Call onMenuOpenManual so user can update `items` if controlled
         showAllItemsTracker.current = true;
@@ -125,7 +125,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   // TODO: perhaps add an additional argument here called "Show all items?"
   let toggle = (focusStrategy?: FocusStrategy, showAllItems?: boolean) => {
     // If the menu is closed and there is nothing to display, early return so toggle isn't called to prevent extraneous onOpenChange
-    if (!(allowsEmptyCollection || filteredCollection.size > 0 || showAllItems) && !triggerState.isOpen) {
+    if (!(allowsEmptyCollection || filteredCollection.size > 0 || (showAllItems && originalCollection.size > 0)) && !triggerState.isOpen) {
       return;
     }
 
