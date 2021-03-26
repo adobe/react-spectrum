@@ -53,18 +53,13 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     // fullItems
   } = props;
 
-  let showAllItemsTracker = useRef(false);
-  // let onInputChange = (value) => {
-  //   showAllItemsTracker.current = false;
-  //   props.onInputChange && props.onInputChange(value);
-  // }
+  let [showAllItemsTracker, setshowAllItemsTracker] = useState(false);
 
   let [isFocused, setFocusedState] = useState(false);
   let [inputValue, setInputValue] = useControlledState(
     props.inputValue,
     props.defaultInputValue ?? '',
     props.onInputChange
-    // onInputChange
   );
 
   let onSelectionChange = (key) => {
@@ -114,7 +109,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     if (allowsEmptyCollection || filteredCollection.size > 0 || (showAllItems && originalCollection.size > 0)) {
       if (showAllItems && !triggerState.isOpen) {
         // TODO show all items if menu is manually opened. Call onMenuOpenManual so user can update `items` if controlled
-        showAllItemsTracker.current = true;
+        setshowAllItemsTracker(true)
         onMenuOpenManual();
       }
 
@@ -132,7 +127,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     if (showAllItems && !triggerState.isOpen) {
       // TODO show all items if menu is toggled open. Call onMenuOpenManual so user can update `items` if controlled
       onMenuOpenManual();
-      showAllItemsTracker.current = true;
+      setshowAllItemsTracker(true)
     }
 
     triggerState.toggle(focusStrategy);
@@ -164,7 +159,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     // Close the menu if the collection is empty and either open state or items are uncontrolled.
     if (
       // TODO: don't close menu if filtered collection size is 0 but we are currently showing all items via button press
-      !showAllItemsTracker.current &&
+      !showAllItemsTracker &&
       !allowsEmptyCollection &&
       triggerState.isOpen &&
       filteredCollection.size === 0 &&
@@ -200,7 +195,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
     // // TODO alternative to the onInputChange above, reset to showing the filteredCollection when input value changes
     if (inputValue !== lastValue.current) {
-      showAllItemsTracker.current = false;
+      setshowAllItemsTracker(false)
     }
 
     // If the selectedKey changed, update the input value.
@@ -321,7 +316,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     selectedItem,
     //TODO: determine whether to show originalCollection or filteredCollection based on showAllItemTracker
     // We should only use originalCollection if items/content aren't controlled
-    collection: showAllItemsTracker.current && (props.items === undefined) ? originalCollection : filteredCollection,
+    collection: showAllItemsTracker && (props.items === undefined) ? originalCollection : filteredCollection,
     inputValue,
     setInputValue,
     commit
