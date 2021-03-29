@@ -398,7 +398,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, i
           background: [
             (
             isHSL
-            ? `linear-gradient(to ${orientation[Number(dir)]},hsla(0,0%,100%,0) 50%,hsla(0,0%,100%,1) 100%),linear-gradient(to top,hsla(0,0%,0%,1) 0%,hsla(0,0%,0%,0) 50%)`
+            ? `linear-gradient(to ${orientation[Number(dir)]},hsla(0,0%,100%,0) 50%,hsla(0,0%,100%,1) 100%),linear-gradient(to ${orientation[Number(dir)]},hsla(0,0%,0%,1) 0%,hsla(0,0%,0%,0) 50%)`
             : `linear-gradient(to ${orientation[Number(dir)]},hsl(0,0%,0%),hsla(0,0%,0%,0))`
             ),
             `linear-gradient(to ${orientation[Number(!dir)]},hsl(0,0%,${l}%),hsla(0,0%,${l}%,0))`,
@@ -412,14 +412,14 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, i
           background: [
             (
             isHSL
-            ? `linear-gradient(to ${orientation[Number(!dir)]},hsla(0,0%,100%,0) 50%,hsla(0,0%,100%,${a}) 100%),linear-gradient(to top,hsla(0,0%,0%,${a}) 0%,hsla(0,0%,0%,0) 50%)`
+            ? `linear-gradient(to ${orientation[Number(!dir)]},hsla(0,0%,100%,0) 50%,hsla(0,0%,100%,${a}) 100%),linear-gradient(to ${orientation[Number(!dir)]},hsla(0,0%,0%,${a}) 0%,hsla(0,0%,0%,0) 50%)`
             : `linear-gradient(to ${orientation[Number(!dir)]},hsla(0,0%,0%,${a}),hsla(0,0%,0%,0))`
             ),
             `linear-gradient(to ${orientation[Number(dir)]},hsla(0,100%,50%,${a}),hsla(60,100%,50%,${a}),hsla(120,100%,50%,${a}),hsla(180,100%,50%,${a}),hsla(240,100%,50%,${a}),hsla(300,100%,50%,${a}),hsla(359,100%,50%,${a}))`,
             (
             isHSL
             ? 'hsl(0, 0%, 50%)'
-            : `linear-gradient(to ${orientation[Number(dir)]},hsl(0,0%,0%),hsl(0,0%,100%))`
+            : `linear-gradient(to ${orientation[Number(!dir)]},hsl(0,0%,0%),hsl(0,0%,100%))`
             )
           ].join(',')
         };
