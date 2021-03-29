@@ -29,6 +29,8 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
   defaultInputValue?: string,
   /** Handler that is called when the ComboBox input value changes. */
   onInputChange?: (value: string) => void,
+  /** Handler that is called when the ComboBox is opened manually (i.e. via trigger press or keyboard interactions). */
+  onMenuOpenManual?: () => void,
   /** Whether the ComboBox allows a non-item matching input value to be set. */
   allowsCustomValue?: boolean,
   // /**

@@ -24,7 +24,11 @@ export interface ComboBoxState<T> extends SelectState<T> {
   /** Sets the value of the combo box input. */
   setInputValue(value: string): void,
   /** Selects the currently focused item and updates the input value. */
-  commit(): void
+  commit(): void,
+  /** Opens the menu. */
+  open(focusStrategy?: FocusStrategy | null, showAllItems?: boolean): void,
+  /** Toggles the menu. */
+  toggle(focusStrategy?: FocusStrategy | null, showAllItems?: boolean): void
 }
 
 type FilterFn = (textValue: string, inputValue: string) => boolean;
@@ -34,7 +38,7 @@ interface ComboBoxStateProps<T> extends ComboBoxProps<T> {
   /** Whether the combo box allows the menu to be open when the collection is empty. */
   allowsEmptyCollection?: boolean,
   /** Whether the combo box menu should close on blur. */
-  shouldCloseOnBlur?: boolean,
+  shouldCloseOnBlur?: boolean
 }
 
 /**
@@ -49,11 +53,9 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     allowsEmptyCollection = false,
     allowsCustomValue,
     shouldCloseOnBlur = true
-    // fullItems
   } = props;
 
   let [showAllItemsTracker, setShowAllItemsTracker] = useState(false);
-
   let [isFocused, setFocusedState] = useState(false);
   let [inputValue, setInputValue] = useControlledState(
     props.inputValue,
@@ -109,7 +111,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     if (allowsEmptyCollection || filteredCollection.size > 0 || (showAllItems && (originalCollection.size > 0 || props.items))) {
       if (showAllItems && !triggerState.isOpen && props.items === undefined) {
         // TODO show all items if menu is manually opened. Only care about this if items are undefined
-        setShowAllItemsTracker(true)
+        setShowAllItemsTracker(true);
       }
 
       triggerState.open(focusStrategy);
@@ -139,6 +141,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
   let isInitialRender = useRef(true);
   let lastSelectedKey = useRef(props.selectedKey ?? props.defaultSelectedKey ?? null);
+  // @ts-ignore - intentional omit dependency array, want this to happen on every render
   useEffect(() => {
     // If open state or inputValue is uncontrolled, open and close automatically when the input value changes,
     // the input is if focused, and there are items in the collection or allowEmptyCollection is true.
@@ -174,9 +177,10 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       triggerState.close();
     }
 
-    // Clear focused key when input value changes.
+    // Clear focused key when input value changes and display filtered collection again.
     if (inputValue !== lastValue.current) {
       selectionManager.setFocusedKey(null);
+      setShowAllItemsTracker(false);
 
       // Set selectedKey to null when the user clears the input.
       // If controlled, this is the application developer's responsibility.
@@ -188,11 +192,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     // If it is the intial render and inputValue isn't controlled nor has an intial value, set input to match current selected key if any
     if (isInitialRender.current && (props.inputValue === undefined && props.defaultInputValue === undefined)) {
       resetInputValue();
-    }
-
-    // // TODO alternative to the onInputChange above, reset to showing the filteredCollection when input value changes
-    if (inputValue !== lastValue.current) {
-      setShowAllItemsTracker(false)
     }
 
     // If the selectedKey changed, update the input value.
@@ -311,8 +310,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     isFocused,
     setFocused,
     selectedItem,
-    //TODO: determine whether to show originalCollection or filteredCollection based on showAllItemTracker
-    // We should only use originalCollection if items/content aren't controlled
+    // TODO: should there be a prop that controls this behavior for react-stately consumers only?
     collection: showAllItemsTracker && (props.items === undefined) ? originalCollection : filteredCollection,
     inputValue,
     setInputValue,

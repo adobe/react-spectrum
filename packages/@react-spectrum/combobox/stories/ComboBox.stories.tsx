@@ -90,7 +90,7 @@ storiesOf('ComboBox', module)
   .add(
     'with mapped items (defaultItem and items undef)',
     () => (
-      <ComboBoxWithMap defaultOpen defaultSelectedKey="two" />
+      <ComboBoxWithMap defaultSelectedKey="two" />
     )
   )
   .add(
@@ -511,19 +511,28 @@ function ListDataExample() {
   let [showAll, setShowAll] = useState(false);
 
   return (
-    <ComboBox
-      onMenuOpenManual={() => {
-        setShowAll(true)
-      }}
-      label="ComboBox"
-      items={showAll ? items : list.items}
-      inputValue={list.filterText}
-      onInputChange={(value) => {
-        setShowAll(false);
-        list.setFilterText(value)
-      }}>
-      {item => <Item>{item.name}</Item>}
-    </ComboBox>
+    <Flex gap="size-300" direction="column" >
+      <ComboBox
+        onMenuOpenManual={() => {
+          setShowAll(true);
+        }}
+        label="ComboBox (show all on open)"
+        items={showAll ? items : list.items}
+        inputValue={list.filterText}
+        onInputChange={(value) => {
+          setShowAll(false);
+          list.setFilterText(value);
+        }}>
+        {item => <Item>{item.name}</Item>}
+      </ComboBox>
+      <ComboBox
+        label="ComboBox (default controlled items behavior)"
+        items={list.items}
+        inputValue={list.filterText}
+        onInputChange={list.setFilterText}>
+        {item => <Item>{item.name}</Item>}
+      </ComboBox>
+    </Flex>
   );
 }
 
@@ -910,6 +919,7 @@ function render(props = {}) {
     </ComboBox>
   );
 }
+
 function ComboBoxWithMap(props) {
   let [items, setItems] = React.useState([
     {name: 'The first item', id: 'one'},

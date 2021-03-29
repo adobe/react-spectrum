@@ -38,9 +38,6 @@ interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
   buttonRef: RefObject<HTMLElement>,
   /** An optional keyboard delegate implementation, to override the default. */
   keyboardDelegate?: KeyboardDelegate,
-  /** Callback triggered upon opening the combobox manually (i.e. via pressing menu button or arrow keys). */
-  // TODO: think up of better name
-  onMenuOpenManual?: () => void,
   /** Whether opening the menu via non input change interactions should display the full list of options. */
   // TODO: think up of better name, also do we need this prop?
   showWholeMenuOnOpen?: boolean
