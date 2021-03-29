@@ -263,7 +263,7 @@ function ControlledItemsComboBox(props) {
   let {contains} = useFilter({sensitivity: 'base'});
   let list = useListData({
     initialItems: items,
-    initialFilterText: 'Two',
+    initialFilterText: props.defaultInputValue,
     filter(item, text) {
       return contains(item.name, text);
     }
@@ -991,7 +991,6 @@ describe('ComboBox', function () {
         jest.runAllTimers();
       });
 
-      let listbox = getByRole('listbox');
       expect(document.activeElement).toBe(combobox);
       expect(combobox).not.toHaveAttribute('aria-activedescendant');
     });
@@ -1377,7 +1376,6 @@ describe('ComboBox', function () {
     `('$Name ComboBox', ({Name, Component}) => {
       it('displays all items when opened via trigger button', function () {
         let {getByRole} = render(<Component defaultInputValue="Tw" />);
-        let combobox = getByRole('combobox');
         let button = getByRole('button');
         act(() => {
           triggerPress(button);
@@ -1510,9 +1508,40 @@ describe('ComboBox', function () {
           listbox = getByRole('listbox');
           items = within(listbox).getAllByRole('option');
           expect(items).toHaveLength(3);
-        } else {
-          expect(() => getByRole('listbox')).toThrow();
         }
+      });
+
+      // separate test since controlled items case above blows up
+      it('controlled items combobox doesn\'t display all items when menu is opened', function () {
+        let {getByRole} = render(<ControlledItemsComboBox defaultInputValue="Two" />);
+        let combobox = getByRole('combobox');
+        let button = getByRole('button');
+
+        act(() => {
+          combobox.focus();
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        let listbox = getByRole('listbox');
+        let items = within(listbox).getAllByRole('option');
+        expect(items).toHaveLength(1);
+
+        act(() => {
+          fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+          fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+          jest.runAllTimers();
+        });
+
+        items = within(listbox).getAllByRole('option');
+        expect(items).toHaveLength(1);
+
+        act(() => {
+          typeText(combobox, 'blah');
+          jest.runAllTimers();
+        });
+
+        expect(() => getByRole('listbox')).toThrow();
       });
     });
   });
