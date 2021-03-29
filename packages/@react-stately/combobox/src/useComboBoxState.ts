@@ -141,7 +141,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
   let isInitialRender = useRef(true);
   let lastSelectedKey = useRef(props.selectedKey ?? props.defaultSelectedKey ?? null);
-  // @ts-ignore - intentional omit dependency array, want this to happen on every render
+  // intentional omit dependency array, want this to happen on every render
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     // If open state or inputValue is uncontrolled, open and close automatically when the input value changes,
     // the input is if focused, and there are items in the collection or allowEmptyCollection is true.
