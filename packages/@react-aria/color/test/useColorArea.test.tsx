@@ -424,6 +424,31 @@ describe('useColorArea', () => {
       expect(document.activeElement).not.toBe(slider);
     });
 
+    it('dragging the thumb respects the step', () => {
+      let defaultColor = parseColor('hsl(0, 50%, 50%)');
+      let {getAllByRole, getByTestId} = render(<ColorArea step={10} defaultValue={defaultColor} onChange={onChangeSpy} xChannel="saturation" yChannel="lightness" />);
+      let thumb = getByTestId('thumb');
+      let sliders = getAllByRole('slider');
+      let container = getByTestId('container');
+      container.getBoundingClientRect = getBoundingClientRect;
+
+      start(thumb, {pageX: CENTER, pageY: CENTER});
+      expect(onChangeSpy).toHaveBeenCalledTimes(0);
+
+      move(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('lightness', 40).toString('hsla'));
+      expect(sliders[1]).toHaveAttribute('value', '40');
+
+      move(thumb, {pageX: CENTER - THUMB_RADIUS, pageY: CENTER});
+      expect(onChangeSpy).toHaveBeenCalledTimes(2);
+      expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('saturation', 40).toString('hsla'));
+      expect(sliders[0]).toHaveAttribute('value', '40');
+
+      end(thumb, {pageX: CENTER - THUMB_RADIUS, pageY: CENTER});
+      expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    });
+
     it('clicking and dragging on the color area works', () => {
       let defaultColor = parseColor('hsl(0, 50%, 50%)');
       let {getAllByRole, getByTestId} = render(<ColorArea defaultValue={defaultColor} onChange={onChangeSpy} />);
@@ -440,6 +465,53 @@ describe('useColorArea', () => {
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
       expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('saturation', 40).toString('hsla'));
       expect(sliders[0]).toHaveAttribute('value', '40');
+
+      end(container, {pageX: CENTER - THUMB_RADIUS, pageY: CENTER});
+      expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('clicking and dragging on the color area doesn\'t work when disabled', () => {
+      let defaultColor = parseColor('hsl(0, 50%, 50%)');
+      let {getAllByRole, getByTestId} = render(<ColorArea isDisabled defaultValue={defaultColor} onChange={onChangeSpy} />);
+      let slider = getAllByRole('slider')[0];
+      let container = getByTestId('container');
+      container.getBoundingClientRect = getBoundingClientRect;
+
+      expect(document.activeElement).not.toBe(slider);
+      start(container, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
+      expect(onChangeSpy).toHaveBeenCalledTimes(0);
+      expect(document.activeElement).not.toBe(slider);
+
+      move(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
+      expect(onChangeSpy).toHaveBeenCalledTimes(0);
+      expect(document.activeElement).not.toBe(slider);
+
+      end(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
+      expect(onChangeSpy).toHaveBeenCalledTimes(0);
+      expect(document.activeElement).not.toBe(slider);
+    });
+
+    it('clicking and dragging on the color area respects the step', () => {
+      let defaultColor = parseColor('hsl(0, 100%, 100%)');
+      let {getAllByRole, getByTestId} = render(<ColorArea step={10} defaultValue={defaultColor} onChange={onChangeSpy} xChannel="saturation" yChannel="lightness" />);
+      let sliders = getAllByRole('slider');
+      let container = getByTestId('container');
+      container.getBoundingClientRect = getBoundingClientRect;
+
+      start(container, {pageX: SIZE, pageY: 0});
+      expect(onChangeSpy).toHaveBeenCalledTimes(0);
+
+      move(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('saturation', 50).withChannelValue('lightness', 40).toString('hsla'));
+      expect(sliders[0]).toHaveAttribute('value', '50');
+      expect(sliders[1]).toHaveAttribute('value', '40');
+
+      move(container, {pageX: CENTER - THUMB_RADIUS, pageY: CENTER});
+      expect(onChangeSpy).toHaveBeenCalledTimes(2);
+      expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('saturation', 40).withChannelValue('lightness', 50).toString('hsla'));
+      expect(sliders[0]).toHaveAttribute('value', '40');
+      expect(sliders[1]).toHaveAttribute('value', '50');
 
       end(container, {pageX: CENTER - THUMB_RADIUS, pageY: CENTER});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp} from '../../utils';
+import {clamp, snapValueToStep} from '@react-aria/utils';
 import {Color, ColorAreaProps, ColorChannel} from '@react-types/color';
 import {parseColor} from './Color';
 import {useControlledState} from '@react-stately/utils';
@@ -65,10 +65,6 @@ function normalizeColor(v: string | Color) {
 }
 
 const DEFAULT_COLOR = parseColor('hsb(0, 100%, 100%)');
-
-function roundToStep(value: number, step: number): number {
-  return Math.round(value / step) * step;
-}
 
 /**
  * Provides state management for a color area component.
@@ -210,8 +206,9 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
 
   let xValue = color.getChannelValue(xChannel);
   let yValue = color.getChannelValue(yChannel);
-  let setXValue = (v) => setColor(color.withChannelValue(xChannel, v));
-  let setYValue = (v) => setColor(color.withChannelValue(yChannel, v));
+  let setXValue = (v: number) => setColor(color.withChannelValue(xChannel, v));
+  let setYValue = (v: number) => setColor(color.withChannelValue(yChannel, v));
+
   return {
     value: color,
     setValue(value) {
@@ -223,47 +220,57 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
     setXValue,
     yValue,
     setYValue,
-    setColorFromPoint(x, y, dimensions) {
-      let xRange = color.getChannelRange(xChannel);
-      let yRange = color.getChannelRange(yChannel);
-      let newColor = color.clone();
-      newColor = newColor.withChannelValue(xChannel, roundToStep(xRange.minValue + (clamp(x, 0, dimensions.width) / dimensions.width) * (xRange.maxValue - xRange.minValue), xRange.step));
-      newColor = newColor.withChannelValue(yChannel, roundToStep(yRange.minValue + ((dimensions.height - clamp(y, 0, dimensions.height)) / dimensions.height) * (yRange.maxValue - yRange.minValue), yRange.step));
-      setColor(newColor);
+    setColorFromPoint(x: number, y: number, dimensions: {width: number, height: number}) {
+      let {width, height} = dimensions;
+      let {minValue: minValueX, maxValue: maxValueX} = color.getChannelRange(xChannel);
+      let {minValue: minValueY, maxValue: maxValueY} = color.getChannelRange(yChannel);
+      let newXValue = snapValueToStep(minValueX + (clamp(x, 0, width) / width) * (maxValueX - minValueX), minValueX, maxValueX, step);
+      let newYValue = snapValueToStep(minValueY + ((height - clamp(y, 0, height)) / height) * (maxValueY - minValueY), minValueY, maxValueY, step);
+      let newColor:Color;
+      if (newXValue !== xValue) {
+        newColor = color.clone().withChannelValue(xChannel, newXValue);
+      }
+      if (newYValue !== yValue) {
+        newColor = (newColor || color.clone()).withChannelValue(yChannel, newYValue);
+      }
+      if (newColor) {
+        setColor(newColor);
+      }
     },
-    getThumbPosition(dimensions) {
-      let xRange = color.getChannelRange(xChannel);
-      let yRange = color.getChannelRange(yChannel);
-      let x = dimensions.width * ((xValue - xRange.minValue) / (xRange.maxValue - xRange.minValue));
-      let y = dimensions.height - (dimensions.height * ((yValue - yRange.minValue) / (yRange.maxValue - yRange.minValue)));
+    getThumbPosition(dimensions: {width: number, height: number}) {
+      let {width, height} = dimensions;
+      let {minValue, maxValue} = color.getChannelRange(xChannel);
+      let {minValue: minValueY, maxValue: maxValueY} = color.getChannelRange(yChannel);
+      let x = width * ((xValue - minValue) / (maxValue - minValue));
+      let y = height - (height * ((yValue - minValueY) / (maxValueY - minValueY)));
       return {x, y};
     },
     incrementX(minStepSize: number = 0) {
       let s = Math.max(minStepSize, step);
-      let range = color.getChannelRange(xChannel);
-      if (xValue < range.maxValue) {
-        setXValue(Math.min(xValue + s, range.maxValue));
+      let {maxValue} = color.getChannelRange(xChannel);
+      if (xValue < maxValue) {
+        setXValue(Math.min(xValue + s, maxValue));
       }
     },
     incrementY(minStepSize: number = 0) {
       let s = Math.max(minStepSize, step);
-      let range = color.getChannelRange(yChannel);
-      if (yValue < range.maxValue) {
-        setYValue(Math.min(yValue + s, range.maxValue));
+      let {maxValue} = color.getChannelRange(yChannel);
+      if (yValue < maxValue) {
+        setYValue(Math.min(yValue + s, maxValue));
       }
     },
     decrementX(minStepSize: number = 0) {
       let s = Math.max(minStepSize, step);
-      let range = color.getChannelRange(xChannel);
-      if (xValue > range.minValue) {
-        setXValue(Math.max(xValue - s, range.minValue));
+      let {minValue} = color.getChannelRange(xChannel);
+      if (xValue > minValue) {
+        setXValue(Math.max(xValue - s, minValue));
       }
     },
     decrementY(minStepSize: number = 0) {
       let s = Math.max(minStepSize, step);
-      let range = color.getChannelRange(yChannel);
-      if (yValue > range.minValue) {
-        setYValue(Math.max(yValue - s, range.minValue));
+      let {minValue} = color.getChannelRange(yChannel);
+      if (yValue > minValue) {
+        setYValue(Math.max(yValue - s, minValue));
       }
     },
     setDragging(isDragging) {
