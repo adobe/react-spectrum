@@ -19,6 +19,7 @@ import {MessageDictionary} from '@internationalized/message';
 import React, {ChangeEvent, CSSProperties, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
+import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 const messages = new MessageDictionary(intlMessages);
 
@@ -55,19 +56,6 @@ const CHANNEL_STEP_SIZE = {
   blue: RGB_STEP_SIZE
 };
 
-const HIDDEN_INPUT_STYLES:CSSProperties = {
-  opacity: 0.0001,
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: '100%',
-  zIndex: 0,
-  margin: 0,
-  pointerEvents: 'none',
-  touchAction: 'none'
-};
-
 /**
  * Provides the behavior and accessibility implementation for a color wheel component.
  * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
@@ -90,7 +78,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, i
 
   let focusedInputRef = useRef<HTMLElement>(null);
 
-  let focusInput = useCallback((inputRef = inputXRef) => {
+  let focusInput = useCallback((inputRef:RefObject<HTMLElement> = inputXRef) => {
     if (inputRef.current) {
       focusWithoutScrolling(inputRef.current);
     }
@@ -485,6 +473,16 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, i
 
   let background = generateBackground();
   let ariaRoleDescription = messages.getStringForLocale('ariaRoleDescription', locale);
+  
+  let {visuallyHiddenProps} = useVisuallyHidden();
+  visuallyHiddenProps.style = mergeProps(
+    visuallyHiddenProps.style,
+    {
+      width: '100%',
+      height: '100%',
+      pointerEvents: 'none'
+    }
+  );
 
   return {
     colorAreaProps: {
@@ -515,6 +513,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, i
     },
     xInputProps: {
       ...inputLabellingProps,
+      ...visuallyHiddenProps,
       type: 'range',
       min: state.value.getChannelRange(xChannel).minValue,
       max: state.value.getChannelRange(xChannel).maxValue,
@@ -524,7 +523,6 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, i
         `${state.value.getChannelName(xChannel, locale)}: ${state.value.formatChannelValue(xChannel, locale)}`,
         `${state.value.getChannelName(yChannel, locale)}: ${state.value.formatChannelValue(yChannel, locale)}`
       ].join(', '),
-      style: HIDDEN_INPUT_STYLES,
       title: getValueTitle(),
       disabled: isDisabled,
       value: state.value.getChannelValue(xChannel),
@@ -535,6 +533,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, i
     },
     yInputProps: {
       ...inputLabellingProps,
+      ...visuallyHiddenProps,
       type: 'range',
       min: state.value.getChannelRange(yChannel).minValue,
       max: state.value.getChannelRange(yChannel).maxValue,
@@ -545,11 +544,6 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, i
         `${state.value.getChannelName(xChannel, locale)}: ${state.value.formatChannelValue(xChannel, locale)}`
       ].join(', '),
       'aria-orientation': 'vertical',
-      style: {
-        ...HIDDEN_INPUT_STYLES,
-        WebkitAppearance: 'slider-vertical',
-        MozOrient: 'vertical'
-      },
       title: getValueTitle(),
       disabled: isDisabled,
       value: state.value.getChannelValue(yChannel),
