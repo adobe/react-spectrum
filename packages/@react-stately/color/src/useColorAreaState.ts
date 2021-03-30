@@ -94,7 +94,6 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       if (!xChannel) {
         switch (yChannel) {
           case 'red':
-            xChannel = 'blue';
           case 'green':
             xChannel = 'blue';
             break;
@@ -107,11 +106,11 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
         }
       } else if (!yChannel) {
         switch (xChannel) {
-          case 'blue':
-            yChannel = 'red';
-            break;
           case 'red':
             yChannel = 'green';
+            break;
+          case 'blue':
+            yChannel = 'red';
             break;
           default: 
             xChannel = 'blue';
@@ -134,6 +133,7 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
             break;
           case 'brightness':
             xChannel = 'saturation';
+            break;
           default:
             xChannel = 'saturation';
             yChannel = 'brightness';
@@ -146,6 +146,7 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
             break;
           case 'brightness':
             yChannel = 'saturation';
+            break;
           default:
             xChannel = 'saturation';
             yChannel = 'brightness';
@@ -231,10 +232,10 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       let newYValue = snapValueToStep(minValueY + ((height - clamp(y, 0, height)) / height) * (maxValueY - minValueY), minValueY, maxValueY, step);
       let newColor:Color;
       if (newXValue !== xValue) {
-        newColor = color.clone().withChannelValue(xChannel, newXValue);
+        newColor = color.withChannelValue(xChannel, newXValue);
       }
       if (newYValue !== yValue) {
-        newColor = (newColor || color.clone()).withChannelValue(yChannel, newYValue);
+        newColor = (newColor || color).withChannelValue(yChannel, newYValue);
       }
       if (newColor) {
         setColor(newColor);
