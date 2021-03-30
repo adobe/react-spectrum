@@ -63,13 +63,6 @@ abstract class Color implements IColor {
   }
 
   getColorSpace(): ColorFormat {
-    if (this instanceof RGBColor) {
-      return 'rgb';
-    } else if (this instanceof HSBColor) {
-      return 'hsb';
-    } else if (this instanceof HSLColor) {
-      return 'hsl';
-    }
     return null;
   }
 }
@@ -173,6 +166,10 @@ class RGBColor extends Color {
     }
     return new NumberFormatter(locale, options).format(value);
   }
+
+  getColorSpace(): ColorFormat {
+    return 'rgb';
+  }
 }
 
 // X = <negative/positive number with/without decimal places>
@@ -275,6 +272,10 @@ class HSBColor extends Color {
     }
     return new NumberFormatter(locale, options).format(value);
   }
+
+  getColorSpace(): ColorFormat {
+    return 'hsb';
+  }
 }
 
 // X = <negative/positive number with/without decimal places>
@@ -361,5 +362,9 @@ class HSLColor extends Color {
         throw new Error('Unknown color channel: ' + channel);
     }
     return new NumberFormatter(locale, options).format(value);
+  }
+
+  getColorSpace(): ColorFormat {
+    return 'hsl';
   }
 }
