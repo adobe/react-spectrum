@@ -84,14 +84,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     items: props.items ?? props.defaultItems
   });
 
-  // If we want to provide a prop to the users to allow them to specify their "full" list of items
-  // Only for controlled items
-  // let {collection: fullCollection} = useSingleSelectListState({
-  //   ...props,
-  //   onSelectionChange,
-  //   items: fullItems
-  // });
-
   // This is only used if items are not controlled
   let originalCollection = collection;
 
@@ -110,7 +102,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     // TODO: alternative would be to accept another prop called "baseItems" so that we can check the size of that
     if (allowsEmptyCollection || filteredCollection.size > 0 || (showAllItems && (originalCollection.size > 0 || props.items))) {
       if (showAllItems && !triggerState.isOpen && props.items === undefined) {
-        // TODO show all items if menu is manually opened. Only care about this if items are undefined
+        // Show all items if menu is manually opened. Only care about this if items are undefined
         setShowAllItemsTracker(true);
       }
 
@@ -125,7 +117,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     }
 
     if (showAllItems && !triggerState.isOpen && props.items === undefined) {
-      // TODO show all items if menu is toggled open. Only care about this if items are undefined
+      // Show all items if menu is toggled open. Only care about this if items are undefined
       setShowAllItemsTracker(true);
     }
 
@@ -332,7 +324,6 @@ function filterNodes<T>(nodes: Iterable<Node<T>>, inputValue: string, filter: Fi
         filteredNode.push({...node, childNodes: filtered});
       }
     } else if (node.type !== 'section' && filter(node.textValue, inputValue)) {
-      // TODO changed this to be a clone rather than a referential copy, not sure if it was a bug previously
       filteredNode.push({...node});
     }
   }

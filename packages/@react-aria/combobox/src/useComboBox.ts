@@ -230,7 +230,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     if (touch.clientX === centerX && touch.clientY === centerY) {
       e.preventDefault();
       inputRef.current.focus();
-      state.toggle(null);
+      state.toggle(null, showWholeMenuOnOpen);
 
       lastEventTime.current = e.timeStamp;
     }
