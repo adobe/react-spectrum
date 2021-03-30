@@ -91,7 +91,7 @@ function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivEleme
       }}>
       <div {...gradientProps} className={classNames(styles, 'spectrum-ColorArea-gradient')} />
       <ColorThumb
-        value={state.value}
+        value={state.getDisplayColor()}
         isFocused={isFocusVisible}
         isDisabled={isDisabled}
         isDragging={state.isDragging}

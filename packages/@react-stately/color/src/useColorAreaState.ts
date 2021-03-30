@@ -53,7 +53,10 @@ export interface ColorAreaState {
   setDragging(value: boolean): void,
 
   /** Returns the xChannel, yChannel and zChannel names based on the color value. */
-  getChannels(): {xChannel: ColorChannel, yChannel: ColorChannel, zChannel: ColorChannel}
+  getChannels(): {xChannel: ColorChannel, yChannel: ColorChannel, zChannel: ColorChannel},
+
+  /** Returns the color that should be displayed in the color area thumb instead of `value`. */
+  getDisplayColor(): Color
 }
 
 function normalizeColor(v: string | Color) {
@@ -283,6 +286,9 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       });
     },
     isDragging,
-    getChannels
+    getChannels,
+    getDisplayColor() {
+      return color.withChannelValue('alpha', 1);
+    }
   };
 }
