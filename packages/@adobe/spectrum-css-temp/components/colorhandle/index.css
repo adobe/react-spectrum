@@ -65,10 +65,13 @@
   }
 
   &.is-focused,
-  &.focus-ring,
-  &:focus-within {
+  &.focus-ring {
     z-index: 2;
     @extend %spectrum-ColorControl-handle--focused;
+  }
+
+  &:focus-within {
+    z-index: 2;
   }
 
   &.is-disabled {

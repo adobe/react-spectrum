@@ -30,12 +30,16 @@
   user-select: none;
 
   &.is-focused,
-  &:focus-within {
+  &.focus-ring {
     z-index: 2;
 
     .spectrum-ColorArea-handle {
       @extend %spectrum-ColorControl-handle--focused;
     }
+  }
+
+  &:focus-within {
+    z-index: 2;
   }
 
   &.is-disabled {
