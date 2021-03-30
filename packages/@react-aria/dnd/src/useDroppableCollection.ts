@@ -205,7 +205,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           seenRoot++;
         }
       } while (
-        target &&
         operation === 'cancel' &&
         !localState.state.isDropTarget(target) &&
         seenRoot < 2
