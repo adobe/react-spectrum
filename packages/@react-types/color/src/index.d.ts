@@ -89,6 +89,7 @@ export interface ColorFieldProps extends ValueBase<string | Color>, InputBase, V
 export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete'>, AriaValidationProps {}
 
 export interface SpectrumColorFieldProps extends AriaColorFieldProps, SpectrumLabelableProps, StyleProps {
+  /** Whether the ColorField should be displayed with a quiet style. */
   isQuiet?: boolean
 }
 
@@ -103,12 +104,18 @@ export interface ColorWheelProps extends ValueBase<string | Color> {
    * The ColorWheel's step value.
    * @default 1
    */
-  step?: number
+  step?: number,
+  /**
+   * The default value (uncontrolled).
+   * @default 'hsl(0, 100%, 50%)'
+   */
+  defaultValue?: string | Color
 }
 
 export interface AriaColorWheelProps extends ColorWheelProps, DOMProps, AriaLabelingProps {}
 
 export interface SpectrumColorWheelProps extends AriaColorWheelProps, Omit<StyleProps, 'width' | 'height'> {
+  /** The outer diameter of the ColorWheel. */
   size?: DimensionValue
 }
 

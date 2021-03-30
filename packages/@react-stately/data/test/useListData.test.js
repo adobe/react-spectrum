@@ -306,7 +306,7 @@ describe('useListData', function () {
       let initialResult = result.current;
 
       act(() => {
-        result.current.moveBefore('Three', 'One');
+        result.current.moveBefore('Three', ['One']);
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
@@ -326,7 +326,7 @@ describe('useListData', function () {
       let initialResult = result.current;
 
       act(() => {
-        result.current.moveBefore('Sam', 'Julia');
+        result.current.moveBefore('Sam', ['Julia']);
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
@@ -343,7 +343,7 @@ describe('useListData', function () {
       let initialResult = result.current;
 
       act(() => {
-        result.current.moveBefore('Five', 'Two', 'Three');
+        result.current.moveBefore('Five', ['Two', 'Three']);
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
@@ -363,7 +363,7 @@ describe('useListData', function () {
       let initialResult = result.current;
 
       act(() => {
-        result.current.moveBefore('Two', 'Five', 'Six');
+        result.current.moveBefore('Two', ['Five', 'Six']);
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
@@ -383,7 +383,7 @@ describe('useListData', function () {
       let initialResult = result.current;
 
       act(() => {
-        result.current.moveBefore('Five', 'One', 'Three');
+        result.current.moveBefore('Five', ['One', 'Three']);
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
@@ -403,7 +403,7 @@ describe('useListData', function () {
       let initialResult = result.current;
 
       act(() => {
-        result.current.moveBefore('Two', 'Four', 'Six');
+        result.current.moveBefore('Two', ['Four', 'Six']);
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
@@ -423,7 +423,7 @@ describe('useListData', function () {
       let initialResult = result.current;
 
       act(() => {
-        result.current.moveBefore('Three', 'One', 'Five');
+        result.current.moveBefore('Three', ['One', 'Five']);
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
@@ -445,7 +445,7 @@ describe('useListData', function () {
       let initialResult = result.current;
 
       act(() => {
-        result.current.moveAfter('Three', 'One');
+        result.current.moveAfter('Three', ['One']);
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
@@ -465,7 +465,7 @@ describe('useListData', function () {
       let initialResult = result.current;
 
       act(() => {
-        result.current.moveAfter('Three', 'Five');
+        result.current.moveAfter('Three', ['Five']);
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
@@ -485,7 +485,7 @@ describe('useListData', function () {
       let initialResult = result.current;
 
       act(() => {
-        result.current.moveAfter('Five', 'Two', 'Three');
+        result.current.moveAfter('Five', ['Two', 'Three']);
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
@@ -505,7 +505,7 @@ describe('useListData', function () {
       let initialResult = result.current;
 
       act(() => {
-        result.current.moveAfter('Two', 'Five', 'Six');
+        result.current.moveAfter('Two', ['Five', 'Six']);
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
@@ -525,7 +525,7 @@ describe('useListData', function () {
       let initialResult = result.current;
 
       act(() => {
-        result.current.moveAfter('Five', 'One', 'Three');
+        result.current.moveAfter('Five', ['One', 'Three']);
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
@@ -545,7 +545,7 @@ describe('useListData', function () {
       let initialResult = result.current;
 
       act(() => {
-        result.current.moveAfter('Two', 'Four', 'Six');
+        result.current.moveAfter('Two', ['Four', 'Six']);
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
@@ -565,7 +565,7 @@ describe('useListData', function () {
       let initialResult = result.current;
 
       act(() => {
-        result.current.moveAfter('Three', 'One', 'Five');
+        result.current.moveAfter('Three', ['One', 'Five']);
       });
 
       expect(result.current.items).not.toBe(initialResult.items);

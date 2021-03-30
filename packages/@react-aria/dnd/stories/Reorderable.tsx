@@ -68,9 +68,9 @@ export function ReorderableGridExample(props) {
       }
 
       if (e.target.dropPosition === 'before') {
-        list.moveBefore(e.target.key, ...items);
+        list.moveBefore(e.target.key, items);
       } else {
-        list.moveAfter(e.target.key, ...items);
+        list.moveAfter(e.target.key, items);
       }
     }
   };
