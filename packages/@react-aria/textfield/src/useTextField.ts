@@ -69,6 +69,7 @@ export function useTextField(
       {
         disabled: isDisabled,
         readOnly: isReadOnly,
+        required: isRequired,
         'aria-required': isRequired || undefined,
         'aria-invalid': validationState === 'invalid' || undefined,
         'aria-errormessage': props['aria-errormessage'],

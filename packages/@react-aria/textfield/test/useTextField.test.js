@@ -27,6 +27,7 @@ describe('useTextField hook', () => {
       expect(props.type).toBe('text');
       expect(props.disabled).toBeFalsy();
       expect(props.readOnly).toBeFalsy();
+      expect(props.required).toBeFalsy();
       expect(props['aria-invalid']).toBeUndefined();
       expect(props['aria-required']).toBeUndefined();
       expect(typeof props.onChange).toBe('function');
@@ -51,9 +52,11 @@ describe('useTextField hook', () => {
     it('with appropriate props if isRequired is defined', () => {
       let props = renderTextFieldHook({isRequired: true, 'aria-label': 'mandatory label'});
       expect(props['aria-required']).toBeTruthy();
+      expect(props.required).toBeTruthy();
 
       props = renderTextFieldHook({isRequired: false, 'aria-label': 'mandatory label'});
       expect(props['aria-required']).toBeUndefined();
+      expect(props.required).toBeFalsy();
     });
 
     it('with appropriate props if isReadOnly is defined', () => {
