@@ -478,6 +478,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, i
   visuallyHiddenProps.style = mergeProps(
     visuallyHiddenProps.style,
     {
+      opacity: '0.0001',
       width: '100%',
       height: '100%',
       pointerEvents: 'none'

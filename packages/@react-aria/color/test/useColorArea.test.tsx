@@ -93,7 +93,7 @@ describe('useColorArea', () => {
       expect(slider).toHaveAttribute('aria-valuetext', i === 0 ? 'Saturation: 100%, Brightness: 100%' : 'Brightness: 100%, Saturation: 100%');
       expect(slider).toHaveAttribute('title', 'Hue: 0°, Saturation: 100%, Brightness: 100%');
       expect(slider).toHaveAttribute('tabindex', i === 0 ? '0' : '-1');
-      expect(slider).toHaveAttribute('style', 'opacity: 0.0001; position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; z-index: 0; margin: 0px; pointer-events: none;');
+      expect(slider).toHaveAttribute('style', 'border: 0px; clip-path: inset(50%); height: 100%; margin: 0px -1px -1px 0px; overflow: hidden; padding: 0px; position: absolute; width: 100%; white-space: nowrap; opacity: 0.0001; pointer-events: none;');
       if (i === 1) {
         expect(slider).toHaveAttribute('aria-orientation', 'vertical');
       } else {
