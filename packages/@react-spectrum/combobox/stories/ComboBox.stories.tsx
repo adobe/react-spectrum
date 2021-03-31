@@ -513,9 +513,7 @@ function ListDataExample() {
   return (
     <Flex gap="size-300" direction="column" >
       <ComboBox
-        onMenuOpenManual={() => {
-          setShowAll(true);
-        }}
+        onMenuOpenManual={() => setShowAll(true)}
         label="ComboBox (show all on open)"
         items={showAll ? items : list.items}
         inputValue={list.filterText}
