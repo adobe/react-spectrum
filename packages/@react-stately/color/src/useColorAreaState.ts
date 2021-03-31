@@ -32,10 +32,10 @@ export interface ColorAreaState {
   /** Sets the value for the vertical axis channel displayed by the color area, and triggers `onChange`. */
   setYValue(value: number): void,
 
-  /** Sets the x and y channels of the current color value based on the given coordinates and pixel dimensions of the color area, and triggers `onChange`. */
-  setColorFromPoint(x: number, y: number, dimensions: {width: number, height: number}): void,
-  /** Returns the coordinates of the thumb relative to the upper left corner of the color area. */
-  getThumbPosition(dimensions: {width: number, height: number}): {x: number, y: number},
+  /** Sets the x and y channels of the current color value based on a percentage of the width and height of the color area, and triggers `onChange`. */
+  setColorFromPoint(x: number, y: number): void,
+  /** Returns the coordinates of the thumb relative to the upper left corner of the color area as a percentage. */
+  getThumbPosition(): {x: number, y: number},
 
   /** Increments the value of the horizontal axis channel by the given amount (defaults to 1). */
   incrementX(minStepSize?: number): void,
@@ -224,12 +224,11 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
     setXValue,
     yValue,
     setYValue,
-    setColorFromPoint(x: number, y: number, dimensions: {width: number, height: number}) {
-      let {width, height} = dimensions;
+    setColorFromPoint(x: number, y: number) {
       let {minValue: minValueX, maxValue: maxValueX} = color.getChannelRange(xChannel);
       let {minValue: minValueY, maxValue: maxValueY} = color.getChannelRange(yChannel);
-      let newXValue = snapValueToStep(minValueX + (clamp(x, 0, width) / width) * (maxValueX - minValueX), minValueX, maxValueX, step);
-      let newYValue = snapValueToStep(minValueY + ((height - clamp(y, 0, height)) / height) * (maxValueY - minValueY), minValueY, maxValueY, step);
+      let newXValue = snapValueToStep(minValueX + clamp(x, 0, 1) * (maxValueX - minValueX), minValueX, maxValueX, step);
+      let newYValue = snapValueToStep(minValueY + (1 - clamp(y, 0, 1)) * (maxValueY - minValueY), minValueY, maxValueY, step);
       let newColor:Color;
       if (newXValue !== xValue) {
         newColor = color.withChannelValue(xChannel, newXValue);
@@ -241,12 +240,11 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
         setColor(newColor);
       }
     },
-    getThumbPosition(dimensions: {width: number, height: number}) {
-      let {width, height} = dimensions;
+    getThumbPosition() {
       let {minValue, maxValue} = color.getChannelRange(xChannel);
       let {minValue: minValueY, maxValue: maxValueY} = color.getChannelRange(yChannel);
-      let x = width * ((xValue - minValue) / (maxValue - minValue));
-      let y = height - (height * ((yValue - minValueY) / (maxValueY - minValueY)));
+      let x = (xValue - minValue) / (maxValue - minValue);
+      let y = 1 - (yValue - minValueY) / (maxValueY - minValueY);
       return {x, y};
     },
     incrementX(minStepSize: number = 0) {

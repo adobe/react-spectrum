@@ -13,16 +13,14 @@
 import {classNames, dimensionValue, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {ColorThumb} from './ColorThumb';
 import {FocusableRef} from '@react-types/shared';
-import {mergeProps, useResizeObserver} from '@react-aria/utils';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {mergeProps} from '@react-aria/utils';
+import React, {useRef} from 'react';
 import {SpectrumColorAreaProps} from '@react-types/color';
 import styles from '@adobe/spectrum-css-temp/components/colorarea/vars.css';
 import {useColorArea} from '@react-aria/color';
 import {useColorAreaState} from '@react-stately/color';
 import {useFocusRing} from '@react-aria/focus';
 import {useProviderProps} from '@react-spectrum/provider';
-
-const DEFAULT_SIZE = 160;
 
 function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
@@ -35,35 +33,15 @@ function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivEleme
   let yInputRef = useRef(null);
   let containerRef = useFocusableRef(ref, xInputRef);
 
-  let [colorAreaWidth, setColorAreaWidth] = useState<number | null>(null);
-  let [colorAreaHeight, setColorAreaHeight] = useState(DEFAULT_SIZE);
-
-  let resizeHandler = useCallback(() => {
-    if (containerRef.current) {
-      setColorAreaWidth(containerRef.current.offsetWidth);
-      setColorAreaHeight(containerRef.current.offsetHeight);
-    }
-  }, [containerRef, setColorAreaWidth, setColorAreaHeight]);
-
-  useEffect(() => {
-    // the size observer's fallback to the window resize event doesn't fire on mount
-    if (colorAreaWidth == null) {
-      resizeHandler();
-    }
-  }, [colorAreaWidth, resizeHandler]);
-
-  useResizeObserver({
-    ref: containerRef,
-    onResize: resizeHandler
-  });
-
   let state = useColorAreaState(props);
 
-  let {colorAreaProps, gradientProps, xInputProps, yInputProps, thumbProps} = useColorArea({
-    ...props,
-    width: colorAreaWidth,
-    height: colorAreaHeight
-  }, state, xInputRef, yInputRef);
+  let {
+    colorAreaProps,
+    gradientProps,
+    xInputProps,
+    yInputProps,
+    thumbProps
+  } = useColorArea(props, state, xInputRef, yInputRef, containerRef);
 
   let {focusProps, isFocusVisible} = useFocusRing();
 

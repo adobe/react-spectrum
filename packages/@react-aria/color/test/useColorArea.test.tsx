@@ -34,15 +34,17 @@ function ColorArea(props: ColorAreaProps) {
   let state = useColorAreaState(props);
   let xInputRef = useRef(null);
   let yInputRef = useRef(null);
+  let containerRef = useRef(null);
 
-  let {colorAreaProps, gradientProps, xInputProps, yInputProps, thumbProps} = useColorArea(
-    {
-      ...props,
-      width: SIZE,
-      height: SIZE
-    }, state, xInputRef, yInputRef);
+  let {
+    colorAreaProps,
+    gradientProps,
+    xInputProps,
+    yInputProps,
+    thumbProps
+  } = useColorArea(props, state, xInputRef, yInputRef, containerRef);
 
-  return (<div data-testid="container" {...colorAreaProps}>
+  return (<div data-testid="container" {...colorAreaProps} ref={containerRef}>
     <div data-testid="gradient" {...gradientProps} />
     <div data-testid="thumb" {...thumbProps}>
       <input {...xInputProps} ref={xInputRef} />
@@ -146,12 +148,12 @@ describe('useColorArea', () => {
       let sliders = getAllByRole('slider');
       act(() => sliders[0].focus());
 
-      fireEvent.keyDown(sliders[0], {key: 'Left'});
+      fireEvent.keyDown(sliders[0], {key: 'ArrowLeft'});
       act(() => jest.runAllTimers());
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('saturation', 99).toString('hsla'));
       expect(sliders[0]).toHaveAttribute('value', '99');
-      fireEvent.keyDown(sliders[0], {key: 'Right'});
+      fireEvent.keyDown(sliders[0], {key: 'ArrowRight'});
       act(() => jest.runAllTimers());
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
       expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('saturation', 100).toString('hsla'));
@@ -164,11 +166,11 @@ describe('useColorArea', () => {
       let sliders = getAllByRole('slider');
       act(() => {sliders[0].focus();});
 
-      fireEvent.keyDown(sliders[0], {key: 'Down'});
+      fireEvent.keyDown(sliders[0], {key: 'ArrowDown'});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('lightness', 49).toString('hsla'));
       expect(sliders[1]).toHaveAttribute('value', '49');
-      fireEvent.keyDown(sliders[1], {key: 'Up'});
+      fireEvent.keyDown(sliders[1], {key: 'ArrowUp'});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
       expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('lightness', 50).toString('hsla'));
       expect(sliders[1]).toHaveAttribute('value', '50');
@@ -180,9 +182,9 @@ describe('useColorArea', () => {
       let slider = getAllByRole('slider')[0];
       act(() => {slider.focus();});
 
-      fireEvent.keyDown(slider, {key: 'Right'});
+      fireEvent.keyDown(slider, {key: 'ArrowRight'});
       expect(onChangeSpy).toHaveBeenCalledTimes(0);
-      fireEvent.keyDown(slider, {key: 'Left'});
+      fireEvent.keyDown(slider, {key: 'ArrowLeft'});
       expect(onChangeSpy).toHaveBeenCalledTimes(0);
     });
 
@@ -192,11 +194,11 @@ describe('useColorArea', () => {
       let sliders = getAllByRole('slider');
       act(() => {sliders[0].focus();});
 
-      fireEvent.keyDown(sliders[0], {key: 'Left'});
+      fireEvent.keyDown(sliders[0], {key: 'ArrowLeft'});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('saturation', 55).toString('hsla'));
       expect(sliders[0]).toHaveAttribute('value', '55');
-      fireEvent.keyDown(sliders[0], {key: 'Right'});
+      fireEvent.keyDown(sliders[0], {key: 'ArrowRight'});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
       expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('saturation', 100).toString('hsla'));
       expect(sliders[0]).toHaveAttribute('value', '100');

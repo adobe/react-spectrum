@@ -16,19 +16,12 @@ import {ColorAreaState} from '@react-stately/color';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {MessageDictionary} from '@internationalized/message';
-import React, {ChangeEvent, CSSProperties, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
+import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 const messages = new MessageDictionary(intlMessages);
-
-interface ColorAreaAriaProps extends AriaColorAreaProps {
-  /** The width of the color area in pixels. */
-  width: number,
-  /** The height of the color area in pixels. */
-  height: number
-}
 
 interface ColorAreaAria {
   /** Props for the color area container element. */
@@ -60,21 +53,17 @@ const CHANNEL_STEP_SIZE = {
  * Provides the behavior and accessibility implementation for a color wheel component.
  * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
  */
-export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, inputXRef: RefObject<HTMLElement>, inputYRef: RefObject<HTMLElement>): ColorAreaAria {
+export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, inputXRef: RefObject<HTMLElement>, inputYRef: RefObject<HTMLElement>, containerRef: RefObject<HTMLElement>): ColorAreaAria {
   let {
     isDisabled,
     xChannel,
     yChannel,
-    step = 1,
-    width,
-    height
+    step = 1
   } = props;
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
   let {direction, locale} = useLocale();
-
-  let colorAreaDimensions = {width, height};
 
   let focusedInputRef = useRef<HTMLElement>(null);
 
@@ -169,10 +158,11 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, i
     },
     onMove({deltaX, deltaY, pointerType}) {
       if (currentPosition.current == null) {
-        currentPosition.current = stateRef.current.getThumbPosition(colorAreaDimensions);
+        currentPosition.current = stateRef.current.getThumbPosition();
       }
-      currentPosition.current.x += direction === 'rtl' ? -1 * deltaX : deltaX;
-      currentPosition.current.y += deltaY;
+      let {width, height} = containerRef.current.getBoundingClientRect();
+      currentPosition.current.x += (direction === 'rtl' ? -1 * deltaX : deltaX / width);
+      currentPosition.current.y += deltaY / height;
       if (pointerType === 'keyboard') {
         if (deltaX > 0) {
           stateRef.current[`${direction === 'rtl' ? 'decrement' : 'increment'}X`]();
@@ -188,7 +178,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, i
           focusedInputRef.current = inputYRef.current;
         }
       } else {        
-        stateRef.current.setColorFromPoint(currentPosition.current.x, currentPosition.current.y, colorAreaDimensions);
+        stateRef.current.setColorFromPoint(currentPosition.current.x, currentPosition.current.y);
       }
     },
     onMoveEnd() {
@@ -245,18 +235,18 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, i
     }
   };
 
-  let onColorAreaDown = (colorArea: Element, id: number | null, pageX: number, pageY: number) => {
+  let onColorAreaDown = (colorArea: Element, id: number | null, clientX: number, clientY: number) => {
     let rect = colorArea.getBoundingClientRect();
     let {width, height} = rect;
-    let x = pageX - rect.x;
-    let y = pageY - rect.y;
+    let x = (clientX - rect.x) / width;
+    let y = (clientY - rect.y) / height;
     if (direction === 'rtl') {
-      x = width - x;
+      x = 1 - x;
     }
-    if (x >= 0 && x <= width && y >= 0 && y <= height && !state.isDragging && currentPointer.current === undefined) {
+    if (x >= 0 && x <= 1 && y >= 0 && y <= 1 && !state.isDragging && currentPointer.current === undefined) {
       isOnColorArea.current = true;
       currentPointer.current = id;
-      state.setColorFromPoint(x, y, {width, height});
+      state.setColorFromPoint(x, y);
 
       focusInput();
       state.setDragging(true);
@@ -317,10 +307,10 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, i
     }
   }, movePropsThumb, keyboardProps);
 
-  let {x, y} = stateRef.current.getThumbPosition(colorAreaDimensions);
+  let {x, y} = stateRef.current.getThumbPosition();
 
   if (direction === 'rtl') {
-    x = colorAreaDimensions.width - x;
+    x = 1 - x;
   }
 
   let inputLabellingProps = useLabels({
@@ -506,9 +496,9 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState, i
       ...thumbInteractions,
       style: {
         position: 'absolute',
-        left: '0',
-        top: '0',
-        transform: `translate(${x}px, ${y}px)`,
+        left: `${x * 100}%`,
+        top: `${y * 100}%`,
+        transform: 'translate(0%, 0%)',
         touchAction: 'none'
       }
     },
