@@ -612,7 +612,7 @@ opened via the trigger button or arrow keys.
 
 ```tsx example
 function Example() {
-    let options = [
+  let options = [
     {id: 1, email: 'fake@email.com'},
     {id: 2, email: 'anotherfake@email.com'},
     {id: 3, email: 'bob@email.com'},
@@ -634,7 +634,7 @@ function Example() {
       onMenuOpenManual={() => setShowAll(true)}
       width="size-3000"
       label="To:"
-      items={showAll ? items : filteredItems}
+      items={showAll ? options : filteredItems}
       inputValue={filterValue}
       onInputChange={(value) => {
         setShowAll(false);
@@ -642,7 +642,7 @@ function Example() {
       }}
       placeholder="Enter recipient email"
       allowsCustomValue>
-      {item => <Item>{item.name}</Item>}
+      {item => <Item>{item.email}</Item>}
     </ComboBox>
   );
 }
