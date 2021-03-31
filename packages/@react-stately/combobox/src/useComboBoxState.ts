@@ -99,7 +99,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     // Prevent open operations from triggering if there is nothing to display
     // Also prevent open operations from triggering if items are uncontrolled but defaultItems is empty, even if showAllItems is true.
     // This is to prevent comboboxes with empty defaultItems from opening but allow controlled items comboboxes to open even if the inital list is empty (assumption is user will provide swap the empty list with a base list via onMenuOpenManual)
-    // TODO: alternative would be to accept another prop called "baseItems" so that we can check the size of that
     if (allowsEmptyCollection || filteredCollection.size > 0 || (showAllItems && (originalCollection.size > 0 || props.items))) {
       if (showAllItems && !triggerState.isOpen && props.items === undefined) {
         // Show all items if menu is manually opened. Only care about this if items are undefined

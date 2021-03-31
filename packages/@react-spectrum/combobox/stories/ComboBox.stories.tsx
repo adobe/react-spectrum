@@ -541,8 +541,6 @@ function AsyncLoadingExample() {
     url: string
   }
 
-  // TODO: perhaps have useAsyncList accept a prop to define a base list of items (before load)
-  // Or maybe take the first load req? Does it even make sense for useAsyncList to support a base list?
   let list = useAsyncList<StarWarsChar>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
