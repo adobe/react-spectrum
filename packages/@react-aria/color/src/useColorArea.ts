@@ -49,6 +49,14 @@ const CHANNEL_STEP_SIZE = {
   blue: RGB_STEP_SIZE
 };
 
+
+function maxMinOrZero(value1: number, value2: number): number {
+  if (value1 === 0) {
+    return 0;
+  }
+  return value1 < 0 ? Math.min(value1, -1 * value2) : Math.max(value1, value2);
+}
+
 /**
  * Provides the behavior and accessibility implementation for a color wheel component.
  * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
@@ -143,10 +151,8 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       }
       if (focusedInputRef.current) {
         e.preventDefault();
-        setTimeout(() => {
-          focusInput(focusedInputRef.current ? focusedInputRef : inputXRef);
-          focusedInputRef.current = undefined;
-        }, 120);
+        focusInput(focusedInputRef.current ? focusedInputRef : inputXRef);
+        focusedInputRef.current = undefined;
       }
     }
   });
@@ -161,25 +167,15 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
         currentPosition.current = stateRef.current.getThumbPosition();
       }
       let {width, height} = containerRef.current.getBoundingClientRect();
-      currentPosition.current.x += (direction === 'rtl' ? -1 * deltaX : deltaX / width);
-      currentPosition.current.y += deltaY / height;
       if (pointerType === 'keyboard') {
-        if (deltaX > 0) {
-          stateRef.current[`${direction === 'rtl' ? 'decrement' : 'increment'}X`]();
-          focusedInputRef.current = inputXRef.current;
-        } else if (deltaX < 0) {
-          stateRef.current[`${direction === 'rtl' ? 'increment' : 'decrement'}X`]();
-          focusedInputRef.current = inputXRef.current;
-        } else if (deltaY > 0) {
-          stateRef.current.decrementY();
-          focusedInputRef.current = inputYRef.current;
-        } else if (deltaY < 0) {
-          stateRef.current.incrementY();
-          focusedInputRef.current = inputYRef.current;
-        }
-      } else {        
-        stateRef.current.setColorFromPoint(currentPosition.current.x, currentPosition.current.y);
+        deltaX = maxMinOrZero(deltaX, step);
+        deltaY = maxMinOrZero(deltaY, step);
+        // set the focused input based on which axis has the greater delta
+        focusedInputRef.current = (deltaX !== 0 || deltaY !== 0) && Math.abs(deltaY) > Math.abs(deltaX) ? inputYRef.current : inputXRef.current;
       }
+      currentPosition.current.x += (direction === 'rtl' ? -1 : 1) * deltaX / width ;
+      currentPosition.current.y += deltaY / height;
+      stateRef.current.setColorFromPoint(currentPosition.current.x, currentPosition.current.y);
     },
     onMoveEnd() {
       isOnColorArea.current = undefined;
@@ -322,38 +318,28 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
 
   let getValueTitle = () => {
     let title = null;
-    let alpha = null;
-    if (state.value.getChannelValue('alpha') < 1) {
-      alpha = `${state.value.getChannelName('alpha', locale)}: ${state.value.formatChannelValue('alpha', locale)}`;
-    }
     switch (state.value.getColorSpace()) {
       case 'hsb':
         title = [
           `${state.value.getChannelName('hue', locale)}: ${state.value.formatChannelValue('hue', locale)}`,
           `${state.value.getChannelName('saturation', locale)}: ${state.value.formatChannelValue('saturation', locale)}`,
           `${state.value.getChannelName('brightness', locale)}: ${state.value.formatChannelValue('brightness', locale)}`
-        ];
+        ].join(', ');
         break;
       case 'hsl':
         title = [
           `${state.value.getChannelName('hue', locale)}: ${state.value.formatChannelValue('hue', locale)}`,
           `${state.value.getChannelName('saturation', locale)}: ${state.value.formatChannelValue('saturation', locale)}`,
           `${state.value.getChannelName('lightness', locale)}: ${state.value.formatChannelValue('lightness', locale)}`
-        ];
+        ].join(', ');
         break;
       case 'rgb':
         title = [
           `${state.value.getChannelName('red', locale)}: ${state.value.formatChannelValue('red', locale)}`,
           `${state.value.getChannelName('green', locale)}: ${state.value.formatChannelValue('green', locale)}`,
           `${state.value.getChannelName('blue', locale)}: ${state.value.formatChannelValue('blue', locale)}`
-        ];
+        ].join(', ');
         break;
-    }
-    if (title) {
-      if (alpha) {
-        title.push(alpha);
-      }
-      title = title.join(', ');
     }
     return title;
   };
@@ -367,19 +353,25 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
     let isHSL = state.value.getColorSpace() === 'hsl';
     let a = (zValue - zMin) / (zMax - zMin);
     let l = zValue;
-    let maskImage;
+    let maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
     switch (zChannel) {
       case 'hue':
         dir = xChannel !== 'saturation';
         l = isHSL ? 50 : 100;
         background.gradientStyles = {
           background: [
-            (
-            isHSL
-            ? `linear-gradient(to ${orientation[Number(dir)]},hsla(0,0%,100%,0) 50%,hsla(0,0%,100%,1) 100%),linear-gradient(to ${orientation[Number(dir)]},hsla(0,0%,0%,1) 0%,hsla(0,0%,0%,0) 50%)`
-            : `linear-gradient(to ${orientation[Number(dir)]},hsl(0,0%,0%),hsla(0,0%,0%,0))`
-            ),
+            (isHSL
+              /* for HSL, foreground gradient represents lightness,
+              from black to transparent to white */
+              ? `linear-gradient(to ${orientation[Number(dir)]}, hsla(0,0%,0%,1) 0%, hsla(0,0%,0%,0) 50%, hsla(0,0%,100%,0) 50%, hsla(0,0%,100%,1) 100%)`
+              /* for HSB, foreground gradient represents brightness,
+              from black to transparent */
+              : `linear-gradient(to ${orientation[Number(dir)]},hsl(0,0%,0%),hsla(0,0%,0%,0))`),
+            /* background gradient represents saturation,
+            from gray to transparent for HSL,
+            or from white to transparent for HSB */
             `linear-gradient(to ${orientation[Number(!dir)]},hsl(0,0%,${l}%),hsla(0,0%,${l}%,0))`,
+            /* background color is the hue at full saturation and brightness */
             `hsl(${zValue}, 100%, 50%)`
           ].join(',')
         };
@@ -388,17 +380,23 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
         dir = xChannel === 'hue';
         background.gradientStyles = {
           background: [
-            (
-            isHSL
-            ? `linear-gradient(to ${orientation[Number(!dir)]},hsla(0,0%,100%,0) 50%,hsla(0,0%,100%,${a}) 100%),linear-gradient(to ${orientation[Number(!dir)]},hsla(0,0%,0%,${a}) 0%,hsla(0,0%,0%,0) 50%)`
-            : `linear-gradient(to ${orientation[Number(!dir)]},hsla(0,0%,0%,${a}),hsla(0,0%,0%,0))`
-            ),
+            (isHSL
+              /* for HSL, foreground gradient represents lightness, 
+              from black to transparent to white, with alpha set to saturation value */
+              ? `linear-gradient(to ${orientation[Number(!dir)]}, hsla(0,0%,0%,${a}) 0%, hsla(0,0%,0%,0) 50%, hsla(0,0%,100%,0) 50%, hsla(0,0%,100%,${a}) 100%)`
+              /* for HSB, foreground gradient represents brightness,
+              from black to transparent, with alpha set to saturation value */
+              : `linear-gradient(to ${orientation[Number(!dir)]},hsla(0,0%,0%,${a}),hsla(0,0%,0%,0))`),
+            /* background gradient represents the hue,
+            from 0 to 360, with alpha set to saturation value */
             `linear-gradient(to ${orientation[Number(dir)]},hsla(0,100%,50%,${a}),hsla(60,100%,50%,${a}),hsla(120,100%,50%,${a}),hsla(180,100%,50%,${a}),hsla(240,100%,50%,${a}),hsla(300,100%,50%,${a}),hsla(359,100%,50%,${a}))`,
-            (
-            isHSL
-            ? 'hsl(0, 0%, 50%)'
-            : `linear-gradient(to ${orientation[Number(!dir)]},hsl(0,0%,0%),hsl(0,0%,100%))`
-            )
+            (isHSL
+              /* for HSL, the alpha transparency representing saturation 
+              of the gradients above overlay a solid gray background */
+              ? 'hsl(0, 0%, 50%)'
+              /* for HSB, the alpha transparency representing saturation, 
+              of the gradients above overlay a gradient from black to white */
+              : `linear-gradient(to ${orientation[Number(!dir)]},hsl(0,0%,0%),hsl(0,0%,100%))`)
           ].join(',')
         };
         break;
@@ -406,8 +404,14 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
         dir = xChannel === 'hue';
         background.gradientStyles = {
           background: [
+            /* foreground gradient represents saturation,
+            from white to transparent, with alpha set to brightness value */
             `linear-gradient(to ${orientation[Number(!dir)]},hsla(0,0%,100%,${a}),hsla(0,0%,100%,0))`,
+            /* background gradient represents the hue,
+            from 0 to 360, with alpha set to brightness value */
             `linear-gradient(to ${orientation[Number(dir)]},hsla(0,100%,50%,${a}),hsla(60,100%,50%,${a}),hsla(120,100%,50%,${a}),hsla(180,100%,50%,${a}),hsla(240,100%,50%,${a}),hsla(300,100%,50%,${a}),hsla(359,100%,50%,${a}))`,
+            /* for HSB, the alpha transparency representing brightness
+            of the gradients above overlay a solid black background */
             '#000'
           ].join(',')
         };
@@ -416,43 +420,59 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
         dir = xChannel === 'hue';
         background.gradientStyles = {
           background: [
+            /* foreground gradient represents the color saturation from 0 to 100,
+            adjusted by the lightness value */
             `linear-gradient(to ${orientation[Number(!dir)]},hsl(0,0%,${l}%),hsla(0,0%,${l}%,0))`,
+            /* background gradient represents the hue, from 0 to 360,
+            adjusted by the lightness value */
             `linear-gradient(to ${orientation[Number(dir)]},hsl(0,100%,${l}%),hsl(60,100%,${l}%),hsl(120,100%,${l}%),hsl(180,100%,${l}%),hsl(240,100%,${l}%),hsl(300,100%,${l}%),hsl(360,100%,${l}%))`
           ].join(',')
         };
         break;
       case 'red':
         dir = xChannel === 'green';
-        maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
         background.colorAreaStyles = {
+          /* the background represents the green channel as a linear gradient from min to max,
+          with the blue channel minimized, adjusted by the red channel value. */
           background: `linear-gradient(to ${orientation[Number(dir)]},rgb(${zValue},0,0),rgb(${zValue},255,0))`
         };
         background.gradientStyles = {
+          /* the foreground represents the green channel as a linear gradient from min to max,
+          with the blue channel maximized, adjusted by the red channel value. */
           background: `linear-gradient(to ${orientation[Number(dir)]},rgba(${zValue},0,255),rgb(${zValue},255,255))`,
+          /* the foreground gradient is masked by a perpendicular linear gradient from black to white */
           maskImage,
           'WebkitMaskImage': maskImage
         };
         break;
       case 'green':
         dir = xChannel === 'red';
-        maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
         background.colorAreaStyles = {
+          /* the background represents the red channel as a linear gradient from min to max,
+          with the blue channel minimized, adjusted by the green channel value. */
           background: `linear-gradient(to ${orientation[Number(dir)]},rgb(0,${zValue},0),rgb(255,${zValue},0))`
         };
         background.gradientStyles = {
+          /* the foreground represents the red channel as a linear gradient from min to max,
+          with the blue channel maximized, adjusted by the green channel value. */
           background: `linear-gradient(to ${orientation[Number(dir)]},rgba(0,${zValue},255),rgb(255,${zValue},255))`,
+          /* the foreground gradient is masked by a perpendicular linear gradient from black to white */
           maskImage,
           'WebkitMaskImage': maskImage
         };
         break;
       case 'blue':
         dir = xChannel === 'red';
-        maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
         background.colorAreaStyles = {
+          /* the background represents the red channel as a linear gradient from min to max,
+          with the green channel minimized, adjusted by the blue channel value. */
           background: `linear-gradient(to ${orientation[Number(dir)]},rgb(0,0,${zValue}),rgb(255,0,${zValue}))`
         };
         background.gradientStyles = {
+          /* the foreground represents the red channel as a linear gradient from min to max,
+          with the green channel maximized, adjusted by the blue channel value. */
           background: `linear-gradient(to ${orientation[Number(dir)]},rgba(0,255,${zValue}),rgb(255,255,${zValue}))`,
+          /* the foreground gradient is masked by a perpendicular linear gradient from black to white */
           maskImage,
           'WebkitMaskImage': maskImage
         };

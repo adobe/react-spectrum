@@ -20,10 +20,10 @@ import {Text} from '@react-spectrum/text';
 
 storiesOf('ColorArea', module)
   .add(
-    'default (HSBA xChannel="saturation" yChannel="brightness")',
+    'default (HSB xChannel="saturation" yChannel="brightness")',
     () => {
-      let [color, setColor] = useState(parseColor('hsba(0, 100%, 100%, 0.5)'));
-      return (<div role="group" aria-label="HSBA Color Picker">
+      let [color, setColor] = useState(parseColor('hsb(0, 100%, 100%)'));
+      return (<div role="group" aria-label="HSB Color Picker">
         <Flex gap="size-500">
           <Flex direction="row" alignContent={'center'} alignItems={'center'} gap="size-200" height={'size-2000'}>
             <div style={{position: 'relative'}}>
@@ -49,15 +49,9 @@ storiesOf('ColorArea', module)
                   top: 'calc(50% - calc(var(--spectrum-global-dimension-size-900) / 2))'
                 }} />
             </div>
-            <ColorSlider
-              value={color}
-              onChange={setColor}
-              channel={'alpha'}
-              orientation="vertical"
-              height={'size-2000'} />
             <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-              <div role="img" aria-label={`color swatch: ${color.toString('hsba')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
-              <Text>{color.toString('hsba')}</Text>
+              <div role="img" aria-label={`color swatch: ${color.toString('hsb')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+              <Text>{color.toString('hsb')}</Text>
             </Flex>
           </Flex>
         </Flex>
@@ -65,10 +59,10 @@ storiesOf('ColorArea', module)
     }
   )
   .add(
-    'HSBA xChannel="brightness" yChannel="saturation"',
+    'HSB xChannel="brightness" yChannel="saturation"',
     () => {
-      let [color, setColor] = useState(parseColor('hsba(0, 100%, 100%, 0.5)'));
-      return (<div role="group" aria-label="HSBA Color Picker">
+      let [color, setColor] = useState(parseColor('hsb(0, 100%, 100%)'));
+      return (<div role="group" aria-label="HSB Color Picker">
         <Flex gap="size-500">
           <Flex direction="row" alignContent={'center'} alignItems={'center'} gap="size-200" height={'size-2000'}>
             <div style={{position: 'relative'}}>
@@ -96,15 +90,9 @@ storiesOf('ColorArea', module)
                 xChannel={'brightness'}
                 yChannel={'saturation'} />
             </div>
-            <ColorSlider
-              value={color}
-              onChange={setColor}
-              channel={'alpha'}
-              orientation="vertical"
-              height={'size-2000'} />
             <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-              <div role="img" aria-label={`color swatch: ${color.toString('hsba')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
-              <Text>{color.toString('hsba')}</Text>
+              <div role="img" aria-label={`color swatch: ${color.toString('hsb')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+              <Text>{color.toString('hsb')}</Text>
             </Flex>
           </Flex>
         </Flex>
@@ -112,10 +100,10 @@ storiesOf('ColorArea', module)
     }
   )
   .add(
-    'HSBA xChannel="hue", yChannel="brightness"',
+    'HSB xChannel="hue", yChannel="brightness"',
     () => {
-      let [color, setColor] = useState(parseColor('hsba(0, 100%, 100%, 0.5)'));
-      return (<div role="group" aria-label="HSBA Color Picker">
+      let [color, setColor] = useState(parseColor('hsb(0, 100%, 100%)'));
+      return (<div role="group" aria-label="HSB Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
             <ColorArea
@@ -127,21 +115,20 @@ storiesOf('ColorArea', module)
               xChannel={'hue'}
               yChannel={'brightness'} />
             <ColorSlider value={color} onChange={setColor} channel={'saturation'} />
-            <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('hsba')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
-            <Text>{color.toString('hsba')}</Text>
+            <div role="img" aria-label={`color swatch: ${color.toString('hsb')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <Text>{color.toString('hsb')}</Text>
           </Flex>
         </Flex>
       </div>);
     }
   )
   .add(
-    'HSBA xChannel="brightness", yChannel="hue"',
+    'HSB xChannel="brightness", yChannel="hue"',
     () => {
-      let [color, setColor] = useState(parseColor('hsba(0, 100%, 100%, 0.5)'));
-      return (<div role="group" aria-label="HSBA Color Picker">
+      let [color, setColor] = useState(parseColor('hsb(0, 100%, 100%)'));
+      return (<div role="group" aria-label="HSB Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
             <ColorArea
@@ -153,11 +140,10 @@ storiesOf('ColorArea', module)
               xChannel={'brightness'}
               yChannel={'hue'} />
             <ColorSlider value={color} onChange={setColor} channel={'saturation'} />
-            <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('hsba')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
-            <Text>{color.toString('hsba')}</Text>
+            <div role="img" aria-label={`color swatch: ${color.toString('hsb')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <Text>{color.toString('hsb')}</Text>
           </Flex>
         </Flex>
       </div>);
@@ -166,8 +152,8 @@ storiesOf('ColorArea', module)
   .add(
     'HSB xChannel="hue", yChannel="saturation"',
     () => {
-      let [color, setColor] = useState(parseColor('hsba(0, 100%, 100%, 0.5)'));
-      return (<div role="group" aria-label="HSBA Color Picker">
+      let [color, setColor] = useState(parseColor('hsb(0, 100%, 100%)'));
+      return (<div role="group" aria-label="HSB Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
             <ColorArea
@@ -179,21 +165,20 @@ storiesOf('ColorArea', module)
               xChannel={'hue'}
               yChannel={'saturation'} />
             <ColorSlider value={color} onChange={setColor} channel={'brightness'} />
-            <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('hsba')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
-            <Text>{color.toString('hsba')}</Text>
+            <div role="img" aria-label={`color swatch: ${color.toString('hsb')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <Text>{color.toString('hsb')}</Text>
           </Flex>
         </Flex>
       </div>);
     }
   )
   .add(
-    'HSBA xChannel="saturation", yChannel="hue"',
+    'HSB xChannel="saturation", yChannel="hue"',
     () => {
-      let [color, setColor] = useState(parseColor('hsba(0, 100%, 100%, 0.5)'));
-      return (<div role="group" aria-label="HSBA Color Picker">
+      let [color, setColor] = useState(parseColor('hsb(0, 100%, 100%)'));
+      return (<div role="group" aria-label="HSB Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
             <ColorArea
@@ -205,21 +190,20 @@ storiesOf('ColorArea', module)
               xChannel={'saturation'}
               yChannel={'hue'} />
             <ColorSlider value={color} onChange={setColor} channel={'brightness'} />
-            <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('hsba')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
-            <Text>{color.toString('hsba')}</Text>
+            <div role="img" aria-label={`color swatch: ${color.toString('hsb')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <Text>{color.toString('hsb')}</Text>
           </Flex>
         </Flex>
       </div>);
     }
   )
   .add(
-    'RGBA xChannel="blue", yChannel="green"',
+    'RGB xChannel="blue", yChannel="green"',
     () => {
       let [color, setColor] = useState(parseColor('#ff00ff'));
-      return (<div role="group" aria-label="RGBA Color Picker">
+      return (<div role="group" aria-label="RGB Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
             <ColorArea
@@ -231,21 +215,20 @@ storiesOf('ColorArea', module)
               xChannel={'blue'}
               yChannel={'green'} />
             <ColorSlider value={color} onChange={setColor} channel={'red'} />
-            <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap="size-100" minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('rgba')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
-            <Text>{color.toString('hexa')}</Text>
+            <div role="img" aria-label={`color swatch: ${color.toString('rgb')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <Text>{color.toString('hex')}</Text>
           </Flex>
         </Flex>
       </div>);
     }
   )
   .add(
-    'RGBA xChannel="blue", yChannel="red"',
+    'RGB xChannel="blue", yChannel="red"',
     () => {
       let [color, setColor] = useState(parseColor('#ff00ff'));
-      return (<div role="group" aria-label="RGBA Color Picker">
+      return (<div role="group" aria-label="RGB Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
             <ColorArea
@@ -257,21 +240,20 @@ storiesOf('ColorArea', module)
               xChannel={'blue'}
               yChannel={'red'} />
             <ColorSlider value={color} onChange={setColor} channel={'green'} />
-            <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap="size-100" minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('rgba')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
-            <Text>{color.toString('hexa')}</Text>
+            <div role="img" aria-label={`color swatch: ${color.toString('rgb')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <Text>{color.toString('hex')}</Text>
           </Flex>
         </Flex>
       </div>);
     }
   )
   .add(
-    'RGBA xChannel="red", yChannel="green"',
+    'RGB xChannel="red", yChannel="green"',
     () => {
       let [color, setColor] = useState(parseColor('#ff00ff'));
-      return (<div role="group" aria-label="RGBA Color Picker">
+      return (<div role="group" aria-label="RGB Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
             <ColorArea
@@ -283,21 +265,20 @@ storiesOf('ColorArea', module)
               xChannel={'red'}
               yChannel={'green'} />
             <ColorSlider value={color} onChange={setColor} channel={'blue'} />
-            <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap="size-100" minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('rgba')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
-            <Text>{color.toString('hexa')}</Text>
+            <div role="img" aria-label={`color swatch: ${color.toString('rgb')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <Text>{color.toString('hex')}</Text>
           </Flex>
         </Flex>
       </div>);
     }
   )
   .add(
-    'HSLA xChannel="saturation", yChannel="lightness"',
+    'HSL xChannel="saturation", yChannel="lightness"',
     () => {
-      let [color, setColor] = useState(parseColor('hsla(0, 100%, 50%, 0.5)'));
-      return (<div role="group" aria-label="HSLA Color Picker">
+      let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
+      return (<div role="group" aria-label="HSL Color Picker">
         <Flex gap="size-500">
           <Flex direction="row" alignContent={'center'} alignItems={'center'} gap="size-200">
             <div style={{position: 'relative'}}>
@@ -323,10 +304,9 @@ storiesOf('ColorArea', module)
                   top: 'calc(50% - calc(var(--spectrum-global-dimension-size-900, var(--spectrum-alias-size-900)) / 2))'
                 }} />
             </div>
-            <ColorSlider value={color} onChange={setColor} channel={'alpha'} orientation="vertical" height={'size-2000'} />
             <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-              <div role="img" aria-label={`color swatch: ${color.toString('hsla')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
-              <Text>{color.toString('hsla')}</Text>
+              <div role="img" aria-label={`color swatch: ${color.toString('hsl')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+              <Text>{color.toString('hsl')}</Text>
             </Flex>
           </Flex>
         </Flex>
@@ -334,10 +314,10 @@ storiesOf('ColorArea', module)
     }
   )
   .add(
-    'HSLA xChannel="lightness", yChannel="saturation"',
+    'HSL xChannel="lightness", yChannel="saturation"',
     () => {
-      let [color, setColor] = useState(parseColor('hsla(0, 100%, 50%, 0.5)'));
-      return (<div role="group" aria-label="HSLA Color Picker">
+      let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
+      return (<div role="group" aria-label="HSL Color Picker">
         <Flex gap="size-500">
           <Flex direction="row" alignContent={'center'} alignItems={'center'} gap="size-200">
             <div style={{position: 'relative'}}>
@@ -365,10 +345,9 @@ storiesOf('ColorArea', module)
                 xChannel={'lightness'}
                 yChannel={'saturation'} />
             </div>
-            <ColorSlider value={color} onChange={setColor} channel={'alpha'} orientation="vertical" height={'size-2000'} />
             <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-              <div role="img" aria-label={`color swatch: ${color.toString('hsla')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
-              <Text>{color.toString('hsla')}</Text>
+              <div role="img" aria-label={`color swatch: ${color.toString('hsl')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+              <Text>{color.toString('hsl')}</Text>
             </Flex>
           </Flex>
         </Flex>
@@ -376,10 +355,10 @@ storiesOf('ColorArea', module)
     }
   )
   .add(
-    'HSLA xChannel="hue", yChannel="lightness"',
+    'HSL xChannel="hue", yChannel="lightness"',
     () => {
-      let [color, setColor] = useState(parseColor('hsla(0, 100%, 50%, 0.5)'));
-      return (<div role="group" aria-label="HSLA Color Picker">
+      let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
+      return (<div role="group" aria-label="HSL Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
             <ColorArea
@@ -391,21 +370,20 @@ storiesOf('ColorArea', module)
               xChannel={'hue'}
               yChannel={'lightness'} />
             <ColorSlider value={color} onChange={setColor} channel={'saturation'} />
-            <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('hsla')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
-            <Text>{color.toString('hsla')}</Text>
+            <div role="img" aria-label={`color swatch: ${color.toString('hsl')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <Text>{color.toString('hsl')}</Text>
           </Flex>
         </Flex>
       </div>);
     }
   )
   .add(
-    'HSLA xChannel="lightness", yChannel="hue"',
+    'HSL xChannel="lightness", yChannel="hue"',
     () => {
-      let [color, setColor] = useState(parseColor('hsla(0, 100%, 50%, 0.5)'));
-      return (<div role="group" aria-label="HSLA Color Picker">
+      let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
+      return (<div role="group" aria-label="HSL Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
             <ColorArea
@@ -417,21 +395,20 @@ storiesOf('ColorArea', module)
               xChannel={'lightness'}
               yChannel={'hue'} />
             <ColorSlider value={color} onChange={setColor} channel={'saturation'} />
-            <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('hsla')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
-            <Text>{color.toString('hsla')}</Text>
+            <div role="img" aria-label={`color swatch: ${color.toString('hsl')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <Text>{color.toString('hsl')}</Text>
           </Flex>
         </Flex>
       </div>);
     }
   )
   .add(
-    'HSLA xChannel="hue", yChannel="saturation"',
+    'HSL xChannel="hue", yChannel="saturation"',
     () => {
-      let [color, setColor] = useState(parseColor('hsla(0, 100%, 50%, 0.5)'));
-      return (<div role="group" aria-label="HSLA Color Picker">
+      let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
+      return (<div role="group" aria-label="HSL Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
             <ColorArea
@@ -443,21 +420,20 @@ storiesOf('ColorArea', module)
               xChannel={'hue'}
               yChannel={'saturation'} />
             <ColorSlider value={color} onChange={setColor} channel={'lightness'} />
-            <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('hsla')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
-            <Text>{color.toString('hsla')}</Text>
+            <div role="img" aria-label={`color swatch: ${color.toString('hsl')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <Text>{color.toString('hsl')}</Text>
           </Flex>
         </Flex>
       </div>);
     }
   )
   .add(
-    'HSLA xChannel="saturation", yChannel="hue"',
+    'HSL xChannel="saturation", yChannel="hue"',
     () => {
-      let [color, setColor] = useState(parseColor('hsla(0, 100%, 50%, 0.5)'));
-      return (<div role="group" aria-label="HSLA Color Picker">
+      let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
+      return (<div role="group" aria-label="HSL Color Picker">
         <Flex gap="size-500" alignItems="center">
           <Flex direction="column" gap="size-50" width={'size-2000'}>
             <ColorArea
@@ -469,11 +445,10 @@ storiesOf('ColorArea', module)
               xChannel={'saturation'}
               yChannel={'hue'} />
             <ColorSlider value={color} onChange={setColor} channel={'lightness'} />
-            <ColorSlider value={color} onChange={setColor} channel={'alpha'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('hsla')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
-            <Text>{color.toString('hsla')}</Text>
+            <div role="img" aria-label={`color swatch: ${color.toString('hsl')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <Text>{color.toString('hsl')}</Text>
           </Flex>
         </Flex>
       </div>);

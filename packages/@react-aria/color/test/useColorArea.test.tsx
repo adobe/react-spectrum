@@ -144,8 +144,10 @@ describe('useColorArea', () => {
   describe('keyboard events', () => {
     it('left/right works', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {getAllByRole} = render(<ColorArea defaultValue={defaultColor} onChange={onChangeSpy} />);
+      let {getAllByRole, getByTestId} = render(<ColorArea defaultValue={defaultColor} onChange={onChangeSpy} />);
       let sliders = getAllByRole('slider');
+      let container = getByTestId('container');
+      container.getBoundingClientRect = getBoundingClientRect;
       act(() => sliders[0].focus());
 
       fireEvent.keyDown(sliders[0], {key: 'ArrowLeft'});
@@ -162,8 +164,10 @@ describe('useColorArea', () => {
 
     it('up/down works', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {getAllByRole} = render(<ColorArea defaultValue={defaultColor} onChange={onChangeSpy} />);
+      let {getAllByRole, getByTestId} = render(<ColorArea defaultValue={defaultColor} onChange={onChangeSpy} />);
       let sliders = getAllByRole('slider');
+      let container = getByTestId('container');
+      container.getBoundingClientRect = getBoundingClientRect;
       act(() => {sliders[0].focus();});
 
       fireEvent.keyDown(sliders[0], {key: 'ArrowDown'});
@@ -178,8 +182,10 @@ describe('useColorArea', () => {
 
     it('doesn\'t work when disabled', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {getAllByRole} = render(<ColorArea defaultValue={defaultColor} onChange={onChangeSpy} isDisabled />);
+      let {getAllByRole, getByTestId} = render(<ColorArea defaultValue={defaultColor} onChange={onChangeSpy} isDisabled />);
       let slider = getAllByRole('slider')[0];
+      let container = getByTestId('container');
+      container.getBoundingClientRect = getBoundingClientRect;
       act(() => {slider.focus();});
 
       fireEvent.keyDown(slider, {key: 'ArrowRight'});
@@ -190,14 +196,16 @@ describe('useColorArea', () => {
 
     it('respects step', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {getAllByRole} = render(<ColorArea defaultValue={defaultColor} onChange={onChangeSpy} step={45} />);
+      let {getAllByRole, getByTestId} = render(<ColorArea defaultValue={defaultColor} onChange={onChangeSpy} step={20} />);
       let sliders = getAllByRole('slider');
+      let container = getByTestId('container');
+      container.getBoundingClientRect = getBoundingClientRect;
       act(() => {sliders[0].focus();});
 
       fireEvent.keyDown(sliders[0], {key: 'ArrowLeft'});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('saturation', 55).toString('hsla'));
-      expect(sliders[0]).toHaveAttribute('value', '55');
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('saturation', 80).toString('hsla'));
+      expect(sliders[0]).toHaveAttribute('value', '80');
       fireEvent.keyDown(sliders[0], {key: 'ArrowRight'});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
       expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('saturation', 100).toString('hsla'));
@@ -207,9 +215,12 @@ describe('useColorArea', () => {
     describe('page up/page down/shift + up/shift + down, home/end/shift + left/shift + right', () => {
       it('Hue defaults to step=15', () => {
         let defaultColor = parseColor('hsb(0, 100%, 50%)');
-        let {getAllByRole} = render(<ColorArea defaultValue={defaultColor} xChannel={'hue'} yChannel={'brightness'} onChange={onChangeSpy} />);
+        let {getAllByRole, getByTestId} = render(<ColorArea defaultValue={defaultColor} xChannel={'hue'} yChannel={'brightness'} onChange={onChangeSpy} />);
         let sliders = getAllByRole('slider');
+        let container = getByTestId('container');
+        container.getBoundingClientRect = getBoundingClientRect;
         act(() => {sliders[0].focus();});
+
         fireEvent.keyDown(sliders[0], {key: 'PageDown'});
         expect(onChangeSpy).toHaveBeenCalledTimes(1);
         expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).withChannelValue('brightness', 40).toString('hsla'));
@@ -230,9 +241,12 @@ describe('useColorArea', () => {
 
       it('RGB defaults to step=16', () => {
         let defaultColor = parseColor('rgb(128, 0, 0)');
-        let {getAllByRole} = render(<ColorArea defaultValue={defaultColor} xChannel={'blue'} yChannel={'green'} onChange={onChangeSpy} />);
+        let {getAllByRole, getByTestId} = render(<ColorArea defaultValue={defaultColor} xChannel={'blue'} yChannel={'green'} onChange={onChangeSpy} />);
         let sliders = getAllByRole('slider');
+        let container = getByTestId('container');
+        container.getBoundingClientRect = getBoundingClientRect;
         act(() => {sliders[0].focus();});
+
         fireEvent.keyDown(sliders[0], {key: 'PageUp'});
         expect(onChangeSpy).toHaveBeenCalledTimes(1);
         expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(defaultColor.withChannelValue('blue', 0).withChannelValue('green', 16).toString('rgba'));
@@ -253,8 +267,11 @@ describe('useColorArea', () => {
 
       it('Saturation/Brightness defaults to step=10', () => {
         let defaultColor = parseColor('hsb(0, 100%, 50%)');
-        let {getAllByRole} = render(<ColorArea defaultValue={defaultColor} onChange={onChangeSpy} />);
+        let {getAllByRole, getByTestId} = render(<ColorArea defaultValue={defaultColor} onChange={onChangeSpy} />);
         let sliders = getAllByRole('slider');
+        let container = getByTestId('container');
+        container.getBoundingClientRect = getBoundingClientRect;
+
         act(() => {sliders[0].focus();});
         fireEvent.keyDown(sliders[0], {key: 'PageDown'});
         expect(onChangeSpy).toHaveBeenCalledTimes(1);
@@ -298,8 +315,11 @@ describe('useColorArea', () => {
 
       it('Saturation/Lightness defaults to step=10', () => {
         let defaultColor = parseColor('hsl(0, 100%, 50%)');
-        let {getAllByRole} = render(<ColorArea defaultValue={defaultColor} onChange={onChangeSpy} />);
+        let {getAllByRole, getByTestId} = render(<ColorArea defaultValue={defaultColor} onChange={onChangeSpy} />);
         let sliders = getAllByRole('slider');
+        let container = getByTestId('container');
+        container.getBoundingClientRect = getBoundingClientRect;
+
         act(() => {sliders[0].focus();});
         fireEvent.keyDown(sliders[0], {key: 'PageDown'});
         expect(onChangeSpy).toHaveBeenCalledTimes(1);
@@ -343,8 +363,10 @@ describe('useColorArea', () => {
 
       it('favors max of step vs default step for channel', () => {
         let defaultColor = parseColor('hsl(0, 100%, 50%)');
-        let {getAllByRole} = render(<ColorArea defaultValue={defaultColor} onChange={onChangeSpy} step={25} />);
+        let {getAllByRole, getByTestId} = render(<ColorArea defaultValue={defaultColor} onChange={onChangeSpy} step={25} />);
         let sliders = getAllByRole('slider');
+        let container = getByTestId('container');
+        container.getBoundingClientRect = getBoundingClientRect;
         act(() => {sliders[0].focus();});
   
         fireEvent.keyDown(sliders[0], {key: 'PageDown'});
