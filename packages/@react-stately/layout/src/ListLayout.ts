@@ -385,7 +385,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
     if (layoutInfo) {
       let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
-      while (layoutInfo && layoutInfo.rect.y > pageY && layoutInfo) {
+      while (layoutInfo && layoutInfo.rect.y > pageY) {
         let keyAbove = this.getKeyAbove(layoutInfo.key);
         layoutInfo = this.getLayoutInfo(keyAbove);
       }
