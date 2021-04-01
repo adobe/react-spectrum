@@ -72,19 +72,11 @@ export function DroppableListBoxExample(props) {
       } else {
         list.insertAfter(e.target.key, ...items);
       }
-
-      // Select the dropped items and focus the first
-      list.setSelectedKeys(new Set(items.map(item => item.id)));
-      ref.current.focusItem(items[0].id);
-    } else {
-      // Select and focus the target we dropped on.
-      list.setSelectedKeys(new Set([e.target.key]));
-      ref.current.focusItem(e.target.key);
     }
   };
 
   return (
-    <DroppableListBox items={list.items} onDrop={onDrop} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} ref={ref}>
+    <DroppableListBox items={list.items} onDrop={onDrop} ref={ref}>
       {item => (
         <Item textValue={item.text}>
           {item.type === 'folder' && <Folder size="S" />}
@@ -110,6 +102,7 @@ export const DroppableListBox = React.forwardRef(function (props: any, ref) {
 
   let dropState = useDroppableCollectionState({
     collection: state.collection,
+    selectionManager: state.selectionManager,
     getDropOperation(target, types, allowedOperations) {
       if (target.type === 'root') {
         return 'move';

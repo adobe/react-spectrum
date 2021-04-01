@@ -97,19 +97,11 @@ export function DroppableGridExample(props) {
       } else {
         list.insertAfter(e.target.key, ...items);
       }
-
-      // Select the dropped items and focus the first
-      list.setSelectedKeys(new Set(items.map(item => item.id)));
-      ref.current.focusItem(items[0].id);
-    } else {
-      // Select and focus the target we dropped on.
-      list.setSelectedKeys(new Set([e.target.key]));
-      ref.current.focusItem(e.target.key);
     }
   };
 
   return (
-    <DroppableGrid {...props} items={list.items} onDrop={onDrop} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} ref={ref}>
+    <DroppableGrid {...props} items={list.items} onDrop={onDrop} ref={ref}>
       {item => (
         <Item textValue={item.text}>
           {item.type === 'folder' && <Folder size="S" />}
@@ -126,6 +118,7 @@ const DroppableGrid = React.forwardRef(function (props: any, ref) {
   let keyboardDelegate = new ListKeyboardDelegate(state.collection, new Set(), domRef);
   let gridState = useGridState({
     selectionMode: 'multiple',
+    focusMode: 'cell',
     selectedKeys: props.selectedKeys,
     onSelectionChange: props.onSelectionChange,
     collection: new GridCollection({
@@ -168,6 +161,7 @@ const DroppableGrid = React.forwardRef(function (props: any, ref) {
 
   let dropState = useDroppableCollectionState({
     collection: gridState.collection,
+    selectionManager: gridState.selectionManager,
     getDropOperation: props.getDropOperation || defaultGetDropOperation,
     onDropEnter: props.onDropEnter,
     onDropMove: props.onDropMove,
