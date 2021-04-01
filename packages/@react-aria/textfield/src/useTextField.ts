@@ -14,8 +14,8 @@ import {AriaTextFieldProps} from '@react-types/textfield';
 import {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject, TextareaHTMLAttributes} from 'react';
 import {ElementType} from 'react';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {useField} from '@react-aria/label';
 import {useFocusable} from '@react-aria/focus';
-import {useLabel} from '@react-aria/label';
 
 export interface TextFieldAria {
   /** Props for the input element. */
@@ -53,7 +53,7 @@ export function useTextField(
     onChange = () => {}
   } = props;
   let {focusableProps} = useFocusable(props, ref);
-  let {labelProps, fieldProps} = useLabel(props);
+  let {labelProps, fieldProps} = useField(props);
   let domProps = filterDOMProps(props, {labelable: true});
 
   const inputOnlyProps = {

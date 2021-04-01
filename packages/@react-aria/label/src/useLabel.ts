@@ -22,7 +22,7 @@ interface LabelAriaProps extends LabelableProps, DOMProps, AriaLabelingProps {
   labelElementType?: ElementType
 }
 
-interface LabelAria {
+export interface LabelAria {
   /** Props to apply to the label container element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props to apply to the field container element being labeled. */
