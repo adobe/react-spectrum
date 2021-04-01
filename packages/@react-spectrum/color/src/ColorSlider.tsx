@@ -104,7 +104,7 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
       )}>
       {label &&
         <Flex direction="row" justifyContent={alignLabel}>
-          {label && <Label {...labelProps}>{label}</Label>}
+          <Label {...labelProps}>{label}</Label>
           {showValueLabel && <Label elementType="span"><output {...outputProps}>{state.value.formatChannelValue(channel, locale)}</output></Label>}
         </Flex>
       }
