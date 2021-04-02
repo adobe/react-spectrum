@@ -18,13 +18,21 @@ import {useFocusable} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
 
 interface TextFieldAria {
-  /** Props for the input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
   /** Props for the text field's visible label element (if any). */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>
 }
 
-interface AriaTextFieldOptions extends AriaTextFieldProps {
+interface InputFieldAria extends TextFieldAria {
+  /** Props for the input element. */
+  inputProps: InputHTMLAttributes<HTMLInputElement>
+}
+
+interface TextareaFieldAria extends TextFieldAria {
+  /** Props for the textarea element. */
+  inputProps: TextareaHTMLAttributes<HTMLTextAreaElement>
+}
+
+interface AriaTextFieldOptions<InputElement extends HTMLInputElement | HTMLTextAreaElement> extends AriaTextFieldProps<InputElement> {
   /**
    * The HTML element used to render the input, e.g. 'input', or 'textarea'.
    * It determines whether certain HTML attributes will be included in `inputProps`.
@@ -40,9 +48,17 @@ interface AriaTextFieldOptions extends AriaTextFieldProps {
  * @param ref - Ref to the HTML input or textarea element.
  */
 export function useTextField(
-  props: AriaTextFieldOptions,
+  props: AriaTextFieldOptions<HTMLTextAreaElement>,
+  ref: RefObject<HTMLTextAreaElement>
+): TextareaFieldAria;
+export function useTextField(
+  props: AriaTextFieldOptions<HTMLInputElement>,
+  ref: RefObject<HTMLInputElement>
+): InputFieldAria;
+export function useTextField(
+  props: AriaTextFieldOptions<HTMLInputElement | HTMLTextAreaElement>,
   ref: RefObject<HTMLInputElement | HTMLTextAreaElement>
-): TextFieldAria {
+): TextareaFieldAria | InputFieldAria {
   let {
     inputElementType = 'input',
     isDisabled = false,
@@ -77,7 +93,7 @@ export function useTextField(
         'aria-haspopup': props['aria-haspopup'],
         value: props.value,
         defaultValue: props.value ? undefined : props.defaultValue,
-        onChange: (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value),
+        onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => onChange(e.target.value),
         autoComplete: props.autoComplete,
         maxLength: props.maxLength,
         minLength: props.minLength,

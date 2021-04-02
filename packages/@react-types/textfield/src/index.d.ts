@@ -29,7 +29,7 @@ import {ReactElement} from 'react';
 
 export interface TextFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<string>, LabelableProps {}
 
-export interface AriaTextFieldProps extends TextFieldProps, AriaLabelingProps, FocusableDOMProps, TextInputDOMProps, AriaValidationProps {
+export interface AriaTextFieldProps<InputElement extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement> extends TextFieldProps, AriaLabelingProps, FocusableDOMProps, TextInputDOMProps<InputElement>, AriaValidationProps {
   // https://www.w3.org/TR/wai-aria-1.2/#textbox
   /** Identifies the currently active element when DOM focus is on a composite widget, textbox, group, or application. */
   'aria-activedescendant'?: string,
@@ -42,7 +42,7 @@ export interface AriaTextFieldProps extends TextFieldProps, AriaLabelingProps, F
   'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog'
 }
 
-export interface SpectrumTextFieldProps extends AriaTextFieldProps, SpectrumLabelableProps, StyleProps {
+export interface SpectrumTextFieldProps<InputElement extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement> extends AriaTextFieldProps<InputElement>, SpectrumLabelableProps, StyleProps {
   /** An icon to display at the start of the input. */
   icon?: ReactElement,
   /** Whether the input should be displayed with a quiet style. */

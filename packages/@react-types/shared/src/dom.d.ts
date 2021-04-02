@@ -63,7 +63,7 @@ export interface FocusableDOMProps extends DOMProps {
 
 // DOM props that apply to all text inputs
 // Ensure this is synced with useTextField
-export interface TextInputDOMProps extends DOMProps {
+export interface TextInputDOMProps<InputElement extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement> extends DOMProps {
   /**
    * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
@@ -108,47 +108,47 @@ export interface TextInputDOMProps extends DOMProps {
   /**
    * Handler that is called when the user copies text. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncopy).
    */
-  onCopy?: ClipboardEventHandler<HTMLInputElement>,
+  onCopy?: ClipboardEventHandler<InputElement>,
 
   /**
    * Handler that is called when the user cuts text. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncut).
    */
-  onCut?: ClipboardEventHandler<HTMLInputElement>,
+  onCut?: ClipboardEventHandler<InputElement>,
 
   /**
    * Handler that is called when the user pastes text. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/onpaste).
    */
-  onPaste?: ClipboardEventHandler<HTMLInputElement>,
+  onPaste?: ClipboardEventHandler<InputElement>,
 
   // Composition events
   /**
    * Handler that is called when a text composition system starts a new text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionstart_event).
    */
-  onCompositionStart?: CompositionEventHandler<HTMLInputElement>,
-  
+  onCompositionStart?: CompositionEventHandler<InputElement>,
+
   /**
    * Handler that is called when a text composition system completes or cancels the current text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionend_event).
    */
-  onCompositionEnd?: CompositionEventHandler<HTMLInputElement>,
+  onCompositionEnd?: CompositionEventHandler<InputElement>,
 
   /**
    * Handler that is called when a new character is received in the current text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionupdate_event).
    */
-  onCompositionUpdate?: CompositionEventHandler<HTMLInputElement>,
+  onCompositionUpdate?: CompositionEventHandler<InputElement>,
 
   // Selection events
   /**
    * Handler that is called when text in the input is selected. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/select_event).
    */
-  onSelect?: ReactEventHandler<HTMLInputElement>,
+  onSelect?: ReactEventHandler<InputElement>,
 
   // Input events
   /**
    * Handler that is called when the input value is about to be modified. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/beforeinput_event).
    */
-  onBeforeInput?: FormEventHandler<HTMLInputElement>,
+  onBeforeInput?: FormEventHandler<InputElement>,
   /**
    * Handler that is called when the input value is modified. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/input_event).
    */
-  onInput?: FormEventHandler<HTMLInputElement>
+  onInput?: FormEventHandler<InputElement>
 }

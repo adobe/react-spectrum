@@ -18,7 +18,7 @@ import {useControlledState} from '@react-stately/utils';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
 
-function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
+function TextArea(props: SpectrumTextFieldProps<HTMLTextAreaElement>, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
   let {
     isDisabled = false,
