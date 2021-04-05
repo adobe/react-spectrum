@@ -96,7 +96,6 @@ export function useColorFieldState(
       setColorValue(newColor);
       return;
     }
-    setInputValue(colorValue.toString('hex'));
   };
 
   useEffect(() => {
