@@ -22,6 +22,7 @@ import {isVirtualClick} from './utils';
 import {PointerType, PressEvents} from '@react-types/shared';
 import {PressResponderContext} from './context';
 import {useGlobalListeners} from '@react-aria/utils';
+import {useLayoutEffect} from '@react-aria/utils';
 
 export interface PressProps extends PressEvents {
   /** Whether the target is in a controlled press state (e.g. an overlay it triggers is open). */
@@ -72,7 +73,7 @@ function usePressResponderContext(props: PressHookProps): PressHookProps {
   }
 
   // Sync ref from <PressResponder> with ref passed to usePress.
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (context && context.ref) {
       context.ref.current = props.ref.current;
       return () => {
