@@ -489,9 +489,10 @@ function TableRowGroup({children, ...otherProps}) {
 function TableRow({item, children, ...otherProps}) {
   let ref = useRef();
   let state = useTableContext();
+  let allowsSelection = state.selectionManager.selectionMode !== 'none';
   let isDisabled = state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key) && !isDisabled;
-  let {rowProps} = useTableRow({
+  let {rowProps, isPressed} = useTableRow({
     node: item,
     isSelected,
     ref,
@@ -524,10 +525,11 @@ function TableRow({item, children, ...otherProps}) {
           styles,
           'spectrum-Table-row',
           {
+            'is-active': isPressed && allowsSelection,
             'is-selected': isSelected,
             'is-focused': isFocusVisibleWithin,
             'focus-ring': isFocusVisible,
-            'is-hovered': isHovered,
+            'is-hovered': isHovered && allowsSelection,
             'is-disabled': isDisabled
           }
         )

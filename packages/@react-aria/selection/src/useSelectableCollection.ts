@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusEvent, HTMLAttributes, KeyboardEvent, RefObject, useEffect} from 'react';
+import {FocusEvent, HTMLAttributes, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
 import {isMac, mergeProps} from '@react-aria/utils';
@@ -289,13 +289,26 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     }
   };
 
+  let skipFocus = useRef(false);
   let onFocus = (e: FocusEvent) => {
+    if (skipFocus.current) {
+      // Blur so collection doesn't get focused on click
+      // This breaks when tabbing to a item then clicking on the scroll bar to try and scroll
+      // because useVirtualizer onBlur and onFocus get called
+      // Need the blur because otherwise the collection gets browser focus when clicking on scroll bar
+      // then returning to the window from a different window will cause
+      // 1. either the setFocusedKey below to happen (if no key previously focused) causing it to scroll to the top of the collection
+      // 2. if a key was focused previously (via keyboard nav in grid), then onFocus in useVirtualizer gets called causing it to scroll to the previously focused key
+
+      // ref.current.blur();
+      return;
+    }
+
     if (manager.isFocused) {
       // If a focus event bubbled through a portal, reset focus state.
       if (!e.currentTarget.contains(e.target)) {
         manager.setFocused(false);
       }
-
       return;
     }
 
@@ -307,6 +320,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     manager.setFocused(true);
 
     if (manager.focusedKey == null) {
+      console.log('setting focused key')
       // If the user hasn't yet interacted with the collection, there will be no focusedKey set.
       // Attempt to detect whether the user is tabbing forward or backward into the collection
       // and either focus the first or last item accordingly.
@@ -323,10 +337,12 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     // Don't set blurred and then focused again if moving focus within the collection.
     if (!e.currentTarget.contains(e.relatedTarget as HTMLElement)) {
       manager.setFocused(false);
+      skipFocus.current = false;
     }
   };
 
   useEffect(() => {
+    console.log('in useEffect')
     if (autoFocus) {
       let focusedKey = null;
 
@@ -355,15 +371,16 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   }, []);
 
   let handlers = {
-    // We use a capturing listener to ensure that the keyboard events for the collection
-    // override those of the children. For example, ArrowDown in a table should always go
-    // to the cell below, and not open a menu.
     onKeyDown,
     onFocus,
     onBlur,
     onMouseDown(e) {
       // Prevent focus going to the collection when clicking on the scrollbar.
-      e.preventDefault();
+      skipFocus.current = true;
+      // e.preventDefault();
+    },
+    onMouseUp() {
+      skipFocus.current = false;
     }
   };
 

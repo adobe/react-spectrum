@@ -48,6 +48,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   let {direction} = useLocale();
   let keyboardDelegate = gridKeyboardDelegates.get(state);
+  let allowsSelection = state.selectionManager.selectionMode !== 'none';
 
   // Handles focusing the cell. If there is a focusable child,
   // it is focused, otherwise the cell itself is focused.
@@ -202,6 +203,16 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       }
     });
   };
+
+  // TODO: get rid of press/click/drag handlers so that text select can happen
+  if (!allowsSelection) {
+    pressProps = {
+      onKeyDown: pressProps.onKeyDown,
+      onKeyUp: pressProps.onKeyUp,
+      onFocus: pressProps.onFocus,
+      tabIndex: pressProps.tabIndex
+    };
+  }
 
   let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(pressProps, {
     role: 'gridcell',
