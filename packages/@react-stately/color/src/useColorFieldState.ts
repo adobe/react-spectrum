@@ -72,6 +72,8 @@ export function useColorFieldState(
   let initialValue = useColor(value);
   let initialDefaultValue = useColor(defaultValue);
   let [colorValue, setColorValue] = useControlledState<Color>(initialValue, initialDefaultValue, onChange);
+  let [inputValue, setInputValue] = useState(() => (value || defaultValue) && colorValue ? colorValue.toString('hex') : '');
+
   let safelySetColorValue = (newColor: Color | ((prevState: Color) => Color)) => {
     if (typeof newColor === 'function') {
       setColorValue((prev:Color) => {
@@ -94,9 +96,8 @@ export function useColorFieldState(
       setColorValue(newColor);
       return;
     }
+    setInputValue(colorValue.toString('hex'));
   };
-
-  let [inputValue, setInputValue] = useState(() => (value || defaultValue) && colorValue ? colorValue.toString('hex') : '');
 
   useEffect(() => {
     setInputValue(colorValue ? colorValue.toString('hex') : '');
@@ -134,7 +135,7 @@ export function useColorFieldState(
     if (colorValue) {
       newColorValue = colorValue.toString('hex');
     }
-    setInputValue(value === undefined ? '' : newColorValue);
+    setInputValue(newColorValue);
   };
 
   let increment = () => {
