@@ -133,7 +133,6 @@ describe('ColorField', function () {
       colorField.focus();
       userEvent.clear(colorField);
     });
-    // should call onChange when input is cleared
     expect(colorField.value).toBe('');
     expect(onChangeSpy).not.toHaveBeenCalled();
     act(() => {
@@ -155,6 +154,32 @@ describe('ColorField', function () {
     expect(colorField.value).toBe('#CBACBA');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cbacba'));
+  });
+
+  it('should handle uncontrolled state typing same value twice', function () {
+    let onChangeSpy = jest.fn();
+    let {getByLabelText} = renderComponent({onChange: onChangeSpy});
+
+    let colorField = getByLabelText('Primary Color');
+
+    act(() => {
+      colorField.focus();
+    });
+    typeText(colorField, 'cbacba');
+    act(() => {
+      colorField.blur();
+    });
+    expect(colorField.value).toBe('#CBACBA');
+
+    act(() => {
+      colorField.focus();
+      userEvent.clear(colorField);
+    });
+    typeText(colorField, 'cbacba');
+    act(() => {
+      colorField.blur();
+    });
+    expect(colorField.value).toBe('#CBACBA');
   });
 
   it('should not update value in controlled state', function () {
