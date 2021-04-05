@@ -69,7 +69,11 @@ governing permissions and limitations under the License.
 .spectrum-Menu-checkmark {
   transform: scale(1);
   opacity: 1;
-  padding-block-start: calc(var(--spectrum-selectlist-option-icon-padding-y) - var(--spectrum-selectlist-option-padding-y));
+  /*
+    Renamed from padding-y to padding-height to fix docs issue where fallback var replaced this value
+    (due to old spectrum-css postcss-custom-properties-custom-mapping plugin).
+  */
+  padding-block-start: calc(var(--spectrum-selectlist-option-icon-padding-y) - var(--spectrum-selectlist-option-padding-height));
 }
 
 .spectrum-Menu-item {
@@ -106,6 +110,7 @@ governing permissions and limitations under the License.
 .spectrum-Menu-itemLabel {
   grid-area: text;
   line-height: var(--spectrum-global-font-line-height-small);
+  word-break: break-all;
 }
 
 .spectrum-Menu-itemLabel--wrapping {
@@ -158,7 +163,11 @@ governing permissions and limitations under the License.
 .spectrum-Menu-itemGrid {
   display: grid;
   grid-template-columns: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)) auto 1fr auto auto auto var(--spectrum-selectlist-option-padding);
-  grid-template-rows: var(--spectrum-selectlist-option-padding-y) 1fr auto var(--spectrum-selectlist-option-padding-y);
+  /*
+    Renamed from padding-y to padding-height to fix docs issue where fallback var replaced this value
+    (due to old spectrum-css postcss-custom-properties-custom-mapping plugin).
+  */
+  grid-template-rows: var(--spectrum-selectlist-option-padding-height) 1fr auto var(--spectrum-selectlist-option-padding-height);
   grid-template-areas:
     ". .    .            .         .     .            ."
     ". icon text         checkmark end   keyboard     ."

@@ -17,11 +17,14 @@ export class ActionGroupKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: Collection<T>;
   private flipDirection: boolean;
   private disabledKeys: Set<Key>;
+  private isDisabled: boolean;
 
   constructor(collection: Collection<T>, direction: Direction, orientation: Orientation, disabledKeys: Set<Key> = new Set()) {
     this.collection = collection;
     this.flipDirection = direction === 'rtl' && orientation === 'horizontal';
     this.disabledKeys = disabledKeys;
+    let allKeys = [...collection.getKeys()];
+    this.isDisabled = !allKeys.some(key => !disabledKeys.has(key));
   }
 
   getKeyLeftOf(key: Key) {
@@ -65,6 +68,9 @@ export class ActionGroupKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   getNextKey(key) {
+    if (this.isDisabled) {
+      return undefined;
+    }
     do {
       key = this.collection.getKeyAfter(key);
       if (key == null) {
@@ -75,6 +81,9 @@ export class ActionGroupKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   getPreviousKey(key) {
+    if (this.isDisabled) {
+      return undefined;
+    }
     do {
       key = this.collection.getKeyBefore(key);
       if (key == null) {

@@ -37,5 +37,10 @@ export function useVirtualizerItem<T extends object, V>(options: VirtualizerItem
 }
 
 function getSize(node: HTMLElement) {
-  return new Size(node.scrollWidth, node.scrollHeight);
+  // Reset height before measuring so we get the intrinsic size
+  let height = node.style.height;
+  node.style.height = '';
+  let size = new Size(node.scrollWidth, node.scrollHeight);
+  node.style.height = height;
+  return size;
 }

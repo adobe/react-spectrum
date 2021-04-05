@@ -89,11 +89,11 @@ function handleFocusEvent(e: FocusEvent) {
     return;
   }
 
-  // If a focus event occurs without a preceding keyboard or pointer event, switch to keyboard modality.
+  // If a focus event occurs without a preceding keyboard or pointer event, switch to virtual modality.
   // This occurs, for example, when navigating a form with the next/previous buttons on iOS.
   if (!hasEventBeforeFocus) {
-    currentModality = 'keyboard';
-    triggerChangeHandlers('keyboard', e);
+    currentModality = 'virtual';
+    triggerChangeHandlers('virtual', e);
   }
 
   hasEventBeforeFocus = false;
@@ -143,6 +143,14 @@ function setupGlobalFocusEvents() {
   }
 
   hasSetupGlobalListeners = true;
+}
+
+if (typeof document !== 'undefined') {
+  if (document.readyState !== 'loading') {
+    setupGlobalFocusEvents();
+  } else {
+    document.addEventListener('DOMContentLoaded', setupGlobalFocusEvents);
+  }
 }
 
 /**

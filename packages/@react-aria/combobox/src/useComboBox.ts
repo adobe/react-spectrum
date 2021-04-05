@@ -102,6 +102,11 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     switch (e.key) {
       case 'Enter':
       case 'Tab':
+        // Prevent form submission if menu is open since we may be selecting a option
+        if (state.isOpen && e.key === 'Enter') {
+          e.preventDefault();
+        }
+
         state.commit();
         break;
       case 'Escape':
@@ -148,7 +153,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let {labelProps, inputProps} = useTextField({
     ...props,
     onChange: state.setInputValue,
-    onKeyDown: !isReadOnly && chain(state.isOpen && collectionProps.onKeyDownCapture, onKeyDown),
+    onKeyDown: !isReadOnly && chain(state.isOpen && collectionProps.onKeyDown, onKeyDown),
     onBlur,
     value: state.inputValue,
     onFocus,
