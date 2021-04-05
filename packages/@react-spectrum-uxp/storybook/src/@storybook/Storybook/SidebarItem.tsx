@@ -3,9 +3,9 @@ import useLocalStorage from "../../useLocalStorage";
 import "./SidebarItem.css";
 
 export default function SidebarItem(props: { name: string, selected?: boolean, indent: number, defaultOpen?: boolean, action?: any, children?: any }) {
-    let { name, selected, defaultOpen, indent, action, ...rest } = props;
     let [open, setOpen] = useLocalStorage(name, false);
-    action ??= () => setOpen(!open);
+    let toggle = () => setOpen(!open);
+    let { name, selected, defaultOpen, indent, action = toggle, ...rest } = props;
     let baseStyle = { paddingLeft: indent * 16 };
     let style = selected ? {...baseStyle, color: "blue" } : baseStyle;
     return (

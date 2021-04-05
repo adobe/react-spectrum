@@ -1,10 +1,11 @@
 {
   "name": "@adobe/react-spectrum-uxp",
-  "version": "3.8.0",
+  "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React for Adobe's Unified Extensibility Platform",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
+  "private": true,
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [

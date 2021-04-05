@@ -1,6 +1,6 @@
 {
   "name": "rs3uxp-plugin",
-  "version": "1.0.0",
+  "version": "3.0.0-alpha.1",
   "private": true,
   "license": "MIT",
   "main": "dist/index.html",
