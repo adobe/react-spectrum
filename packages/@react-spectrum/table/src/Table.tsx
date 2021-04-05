@@ -19,7 +19,7 @@ import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useContext, useMemo, useRef} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
@@ -328,6 +328,14 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
       }
     }
   }, [collection.body.props, state.setVisibleRect, state.virtualizer]);
+
+  useLayoutEffect(() => {
+    if (!collection.body.props.isLoading && collection.body.props.onLoadMore && !state.isAnimating) {
+      if (state.contentSize.height <= state.virtualizer.visibleRect.height) {
+        collection.body.props.onLoadMore();
+      }
+    }
+  }, [state.contentSize, state.virtualizer, state.isAnimating, collection.body.props]);
 
   return (
     <div
