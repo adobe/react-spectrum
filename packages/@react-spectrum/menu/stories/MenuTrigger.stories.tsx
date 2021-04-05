@@ -83,6 +83,51 @@ let withSection = [
 ];
 
 storiesOf('MenuTrigger', module)
+  .add('debug',
+    () => (
+      <div style={{ minHeight: "100vh" }}>
+        <MenuTrigger>
+          <ActionButton>Menu</ActionButton>
+          <Menu onAction={(key) => console.log(key)}>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+            <Item key="four">Four</Item>
+            <Item key="five">Five</Item>
+          </Menu>
+        </MenuTrigger>
+        <button
+          style={{ display: "block", padding: "6px 24px" }}
+          onClick={() => alert("Oh no!")}
+        >
+          Click
+        </button>
+        <button
+          style={{ display: "block", padding: "6px 24px" }}
+          onClick={() => alert("Oh no!")}
+        >
+          Click
+        </button>
+        <button
+          style={{ display: "block", padding: "6px 24px" }}
+          onClick={() => alert("Oh no!")}
+        >
+          Click
+        </button>
+        <button
+          style={{ display: "block", padding: "6px 24px" }}
+          onClick={() => alert("Oh no!")}
+        >
+          Click
+        </button>
+        <button
+          style={{ display: "block", padding: "6px 24px" }}
+          onClick={() => alert("Oh no!")}
+        >
+          Click
+        </button>
+      </div>
+    ))
   .add(
     'default menu (static)',
     () => render(

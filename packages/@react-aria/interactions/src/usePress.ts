@@ -146,6 +146,14 @@ export function usePress(props: PressHookProps): PressResult {
 
       state.didFirePressStart = true;
       setPressed(true);
+      let cancelClick = (e) => {
+        if (originalEvent.currentTarget !== e.target) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
+        document.body.removeEventListener('click', cancelClick, true);
+      };
+      document.body.addEventListener('click', cancelClick, true);
     };
 
     let triggerPressEnd = (originalEvent: EventBase, pointerType: PointerType, wasPressed = true) => {
