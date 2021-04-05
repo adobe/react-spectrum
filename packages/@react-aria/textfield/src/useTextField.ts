@@ -42,11 +42,7 @@ interface AriaTextFieldOptions<InputElement extends HTMLInputElement | HTMLTextA
   inputElementType?: ElementType
 }
 
-/**
- * Provides the behavior and accessibility implementation for a text field.
- * @param props - Props for the text field.
- * @param ref - Ref to the HTML input or textarea element.
- */
+/* eslint-disable no-redeclare */
 export function useTextField(
   props: AriaTextFieldOptions<HTMLTextAreaElement>,
   ref: RefObject<HTMLTextAreaElement>
@@ -55,10 +51,16 @@ export function useTextField(
   props: AriaTextFieldOptions<HTMLInputElement>,
   ref: RefObject<HTMLInputElement>
 ): InputFieldAria;
+/**
+ * Provides the behavior and accessibility implementation for a text field.
+ * @param props - Props for the text field.
+ * @param ref - Ref to the HTML input or textarea element.
+ */
 export function useTextField(
   props: AriaTextFieldOptions<HTMLInputElement | HTMLTextAreaElement>,
   ref: RefObject<HTMLInputElement | HTMLTextAreaElement>
 ): TextareaFieldAria | InputFieldAria {
+/* eslint-enable no-redeclare */
   let {
     inputElementType = 'input',
     isDisabled = false,
