@@ -130,11 +130,10 @@ export function useColorFieldState(
 function addColorValue(color: Color, step: number) {
   let newColor = color ? color : MIN_COLOR;
   let colorInt = newColor.toHexInt();
-  let newColorString = color ? color.toString('hex') : '';
 
   let clampInt = Math.min(Math.max(colorInt + step, MIN_COLOR_INT), MAX_COLOR_INT);
   if (clampInt !== colorInt) {
-    newColorString = `#${clampInt.toString(16).padStart(6, '0').toUpperCase()}`;
+    let newColorString = `#${clampInt.toString(16).padStart(6, '0').toUpperCase()}`;
     newColor = parseColor(newColorString);
   }
   return newColor;

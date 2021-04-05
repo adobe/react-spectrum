@@ -46,26 +46,28 @@ export function VirtualizedListBoxExample(props) {
     if (e.target.type === 'root' || e.target.dropPosition !== 'on') {
       let items = [];
       for (let item of e.items) {
-        let type: string;
-        if (props.accept) {
-          if (item.types.has(props.accept)) {
-            type = props.accept;
+        if (item.kind === 'text') {
+          let type: string;
+          if (props.accept) {
+            if (item.types.has(props.accept)) {
+              type = props.accept;
+            }
+          } else if (item.types.has('folder')) {
+            type = 'folder';
+          } else if (item.types.has('item')) {
+            type = 'item';
           }
-        } else if (item.types.has('folder')) {
-          type = 'folder';
-        } else if (item.types.has('item')) {
-          type = 'item';
-        }
 
-        if (!type) {
-          continue;
-        }
+          if (!type) {
+            continue;
+          }
 
-        items.push({
-          id: String(++id.current),
-          type,
-          text: await item.getData(type)
-        });
+          items.push({
+            id: String(++id.current),
+            type,
+            text: await item.getText(type)
+          });
+        }
       }
 
       if (e.target.type === 'root') {

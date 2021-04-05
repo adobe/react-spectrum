@@ -23,6 +23,7 @@ export interface DraggableCollectionState {
   collection: Collection<Node<unknown>>,
   selectionManager: MultipleSelectionManager,
   isDragging(key: Key): boolean,
+  getKeysForDrag(key: Key): Set<Key>,
   getItems(key: Key): DragItem[],
   renderPreview(key: Key): JSX.Element,
   startDrag(key: Key, event: DragStartEvent): void,
@@ -52,6 +53,7 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
     isDragging(key) {
       return draggingKeys.has(key);
     },
+    getKeysForDrag: getKeys,
     getItems(key) {
       return props.getItems(getKeys(key));
     },

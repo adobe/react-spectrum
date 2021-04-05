@@ -41,6 +41,7 @@ export function useAutoScroll(ref: RefObject<Element>) {
   return {
     move(x, y) {
       // Most browsers auto scroll natively, but WebKit on macOS does not (iOS does 🤷‍♂️).
+      // https://bugs.webkit.org/show_bug.cgi?id=222636
       if (!isWebKit() || isIOS() || !scrollableRef.current) {
         return;
       }
