@@ -17,7 +17,7 @@ import {TreeCollection} from './TreeCollection';
 import {useCollection} from '@react-stately/collections';
 import {useControlledState} from '@react-stately/utils';
 
-interface TreeProps<T> extends CollectionBase<T>, Expandable, MultipleSelection {}
+export interface TreeProps<T> extends CollectionBase<T>, Expandable, MultipleSelection {}
 export interface TreeState<T> {
   /** A collection of items in the tree. */
   readonly collection: Collection<Node<T>>,

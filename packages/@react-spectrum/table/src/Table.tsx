@@ -19,7 +19,7 @@ import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useContext, useMemo, useRef} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
@@ -310,26 +310,33 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
     }
   }, state, domRef);
 
+  let {setVisibleRect, virtualizer, contentSize, isAnimating} = state;
   let headerHeight = layout.getLayoutInfo('header')?.rect.height || 0;
-  let visibleRect = state.virtualizer.visibleRect;
+  let visibleRect = virtualizer.visibleRect;
 
   // Sync the scroll position from the table body to the header container.
   let onScroll = useCallback(() => {
     headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
   }, [bodyRef]);
 
-  let {setVisibleRect, virtualizer} = state;
-
   let onVisibleRectChange = useCallback((rect: Rect) => {
     setVisibleRect(rect);
 
-    if (!collection.body.props.isLoading && collection.body.props.onLoadMore && virtualizer.contentSize.height > rect.height * 2) {
+    if (!collection.body.props.isLoading && collection.body.props.onLoadMore) {
       let scrollOffset = virtualizer.contentSize.height - rect.height * 2;
       if (rect.y > scrollOffset) {
         collection.body.props.onLoadMore();
       }
     }
   }, [collection.body.props, setVisibleRect, virtualizer]);
+
+  useLayoutEffect(() => {
+    if (!collection.body.props.isLoading && collection.body.props.onLoadMore && !isAnimating) {
+      if (contentSize.height <= virtualizer.visibleRect.height) {
+        collection.body.props.onLoadMore();
+      }
+    }
+  }, [contentSize, virtualizer, isAnimating, collection.body.props]);
 
   return (
     <div

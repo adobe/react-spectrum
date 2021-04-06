@@ -1,7 +1,7 @@
 {
   "error": "Hata",
-  "warning": "Uyarı",
-  "info": "Bilgi",
   "help": "Yardım",
-  "success": "Başarılı"
+  "info": "Bilgiler",
+  "success": "Başarılı",
+  "warning": "Uyarı"
 }

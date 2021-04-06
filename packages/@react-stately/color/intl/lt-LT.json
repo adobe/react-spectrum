@@ -1,10 +1,10 @@
 {
-  "hue": "Atspalvis",
-  "saturation": "Grynis",
-  "lightness": "Skaistis",
-  "brightness": "Ryškumas",
-  "red": "Raudona",
-  "green": "Žalia",
+  "alpha": "Alfa",
   "blue": "Mėlyna",
-  "alpha": "Alfa"
+  "brightness": "Ryškumas",
+  "green": "Žalia",
+  "hue": "Atspalvis",
+  "lightness": "Šviesumas",
+  "red": "Raudona",
+  "saturation": "Įsotinimas"
 }
