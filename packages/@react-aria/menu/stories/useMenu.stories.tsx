@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
 import {DismissButton, useOverlay} from '@react-aria/overlays';
 import {FocusScope} from '@react-aria/focus';
 import {Item} from '@react-stately/collections';
@@ -21,7 +22,6 @@ import {useFocus, useInteractOutside} from '@react-aria/interactions';
 import {useMenu, useMenuItem, useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
 import {useTreeState} from '@react-stately/tree';
-import {action} from "@storybook/addon-actions";
 
 
 storiesOf('useMenu', module)
