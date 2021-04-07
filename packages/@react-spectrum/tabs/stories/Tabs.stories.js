@@ -16,7 +16,7 @@ import Bookmark from '@spectrum-icons/workflow/Bookmark';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import Calendar from '@spectrum-icons/workflow/Calendar';
-import {Content, Flex, Heading, Text} from '@adobe/react-spectrum';
+import {ActionGroup, Content, Flex, Heading, Text} from '@adobe/react-spectrum';
 import Dashboard from '@spectrum-icons/workflow/Dashboard';
 import {Item, TabList, TabPanels, Tabs} from '..';
 import React from 'react';
@@ -170,25 +170,7 @@ storiesOf('Tabs', module)
   )
   .add(
     'Tab with flex container in between',
-    () => (
-      (
-        <Tabs maxWidth={500}>
-          <Flex direction="column">
-            <Flex direction="row" alignItems="center">
-              <TabList>
-                <Item key="tab1">Tab</Item>
-              </TabList>
-              <ActionButton aria-label="Add Tabs">
-                Add
-              </ActionButton>
-            </Flex>
-            <TabPanels>
-              <Item key="tab1">Tab 1 content</Item>
-            </TabPanels>
-          </Flex>
-        </Tabs>
-      )
-    )
+    () => <DynamicTabsWithDecoration />
   );
 
 function render(props = {}) {
@@ -474,6 +456,72 @@ let OrientationFlip = (props = {}) => {
       <Button variant="secondary" onPress={() => setFlipOrientation((state) => !state)}>
         <Text>Flip Orientation</Text>
       </Button>
+    </div>
+  );
+};
+
+
+let DynamicTabsWithDecoration = (props = {}) => {
+
+  let [tabs, setTabs] = React.useState(items);
+  let addTab = () => {
+    let newTabs = [...tabs];
+    newTabs.push({
+      name: `Tab ${tabs.length + 1}`,
+      children: `Tab Body ${tabs.length + 1}`
+    });
+
+    setTabs(newTabs);
+  };
+
+  let removeTab = () => {
+    if (tabs.length > 1) {
+      let newTabs = [...tabs];
+      newTabs.pop();
+      setTabs(newTabs);
+    }
+  };
+
+  return (
+    <div style={{width: '80%'}}>
+      <Tabs {...props} aria-label="Tab example" items={tabs} onSelectionChange={action('onSelectionChange')}>
+        <Flex direction="column">
+          <Flex direction="row" alignItems="center">
+            <TabList>
+              {item => (
+                <Item key={item.name} textValue={item.name}>
+                  {item.icon}
+                  <Text>{item.name}</Text>
+                </Item>
+              )}
+            </TabList>
+            <Flex alignItems="center" justifyContent="end" flexGrow={1} alignSelf="stretch" UNSAFE_style={{borderBottom: 'var(--spectrum-alias-border-size-thick) solid var(--spectrum-global-color-gray-200)'}}>
+              <ActionGroup marginEnd="30px" disabledKeys={tabs.length === 1 ? ['remove'] : undefined} onAction={val => val === 'add' ? addTab() : removeTab()}>
+                <Item key="add">
+                  <Text>Add Tab</Text>
+                </Item>
+                <Item key="remove">
+                  <Text>Remove Tab</Text>
+                </Item>
+              </ActionGroup>
+            </Flex>
+          </Flex>
+          <TabPanels>
+            {item => (
+              <Item key={item.name}>
+                <Content margin="size-160">
+                  <Heading>{item.children}</Heading>
+                  <Text>
+                    Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+                    Id cupidatat aute id ut excepteur exercitation magna pariatur. Mollit irure irure reprehenderit pariatur eiusmod proident Lorem deserunt duis cillum mollit. Do reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum. Velit aliquip commodo ea ipsum incididunt culpa nostrud deserunt incididunt exercitation. In quis proident sit ad dolore tempor. Eiusmod pariatur quis commodo labore cupidatat cillum enim eiusmod voluptate laborum culpa. Laborum cupidatat incididunt velit voluptate incididunt occaecat quis do.
+                    Consequat adipisicing irure Lorem commodo officia sint id. Velit sit magna aliquip eiusmod non id deserunt. Magna veniam ad consequat dolor cupidatat esse enim Lorem ullamco. Anim excepteur consectetur id in. Mollit laboris duis labore enim duis esse reprehenderit.
+                  </Text>
+                </Content>
+              </Item>
+            )}
+          </TabPanels>
+        </Flex>
+      </Tabs>
     </div>
   );
 };
