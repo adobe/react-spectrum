@@ -15,11 +15,10 @@ import {DOMRef} from '@react-types/shared';
 import {MenuContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useSyncRef} from '@react-aria/utils';
 import React, {ReactElement, useContext} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {useLayoutEffect} from '@react-aria/utils';
 import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 
@@ -33,16 +32,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   let state = useTreeState(completeProps);
   let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
-
-  // Sync ref from <MenuTrigger> context with DOM ref.
-  useLayoutEffect(() => {
-    if (contextProps && contextProps.ref) {
-      contextProps.ref.current = domRef.current;
-      return () => {
-        contextProps.ref.current = null;
-      };
-    }
-  }, [contextProps, domRef]);
+  useSyncRef(contextProps, domRef);
 
   return (
     <ul
