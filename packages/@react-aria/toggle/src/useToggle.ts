@@ -54,13 +54,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
   }
 
   // This handles focusing the input on pointer down, which Safari does not do by default.
-  let {pressProps} = usePress({
-    isDisabled,
-    // This is needed for checkboxes otherwise the input property 'checked' will get out of sync with
-    // the react prop (attribute) 'checked'. It worked in the integration test without it because FocusRing caused an
-    // extra render that put the values back in sync.
-    allowClickDefault: true
-  });
+  let {pressProps} = usePress({isDisabled});
 
   let {focusableProps} = useFocusable(props, ref);
   let interactions = mergeProps(pressProps, focusableProps);

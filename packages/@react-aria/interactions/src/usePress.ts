@@ -28,11 +28,6 @@ export interface PressProps extends PressEvents {
   isPressed?: boolean,
   /** Whether the press events should be disabled. */
   isDisabled?: boolean,
-  /**
-   * Whether to allow onclick default behavior.
-   * @default false
-   **/
-  allowClickDefault?: boolean,
   /** Whether the target should not receive focus on press. */
   preventFocusOnPress?: boolean
 }
@@ -107,7 +102,6 @@ export function usePress(props: PressHookProps): PressResult {
     preventFocusOnPress,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ref: _, // Removing `ref` from `domProps` because TypeScript is dumb
-    allowClickDefault = false,
     ...domProps
   } = usePressResponderContext(props);
   let propsRef = useRef<PressHookProps>(null);
@@ -252,7 +246,7 @@ export function usePress(props: PressHookProps): PressResult {
       },
       onClick(e) {
         if (e && e.button === 0) {
-          if (!allowClickDefault || isDisabled) {
+          if (isDisabled) {
             e.preventDefault();
           }
           e.stopPropagation();

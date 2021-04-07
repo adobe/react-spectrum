@@ -84,8 +84,7 @@ export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<an
     onPress,
     isDisabled,
     preventFocusOnPress,
-    ref,
-    allowClickDefault: type === 'submit'
+    ref
   });
 
   let {focusableProps} = useFocusable(props, ref);

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, render} from '@testing-library/react';
 import {Checkbox} from '../';
 import React from 'react';
-import {render} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import V2Checkbox from '@react/react-spectrum/Checkbox';
 

@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, render} from '@testing-library/react';
 import {AriaCheckboxGroupItemProps, AriaCheckboxGroupProps} from '@react-types/checkbox';
 import {CheckboxGroupState, useCheckboxGroupState} from '@react-stately/checkbox';
 import React, {useRef} from 'react';
-import {render} from '@testing-library/react';
 import {useCheckboxGroup, useCheckboxGroupItem} from '../';
 import userEvent from '@testing-library/user-event';
 
