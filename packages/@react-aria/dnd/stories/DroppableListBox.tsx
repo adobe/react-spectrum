@@ -44,21 +44,23 @@ export function DroppableListBoxExample(props) {
       let items = [];
       for (let item of e.items) {
         let type: string;
-        if (item.types.has('folder')) {
-          type = 'folder';
-        } else if (item.types.has('item')) {
-          type = 'item';
-        }
+        if (item.kind === 'text') {
+          if (item.types.has('folder')) {
+            type = 'folder';
+          } else if (item.types.has('item')) {
+            type = 'item';
+          }
 
-        if (!type) {
-          continue;
-        }
+          if (!type) {
+            continue;
+          }
 
-        items.push({
-          id: String(++id.current),
-          type,
-          text: await item.getData(type)
-        });
+          items.push({
+            id: String(++id.current),
+            type,
+            text: await item.getText(type)
+          });
+        }
       }
 
       if (e.target.type === 'root') {
