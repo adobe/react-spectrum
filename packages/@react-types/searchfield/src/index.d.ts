@@ -20,5 +20,5 @@ export interface SearchFieldProps extends TextFieldProps {
   onClear?: () => void
 }
 
-export interface AriaSearchFieldProps extends SearchFieldProps, AriaTextFieldProps {}
+export interface AriaSearchFieldProps<InputElement extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement> extends SearchFieldProps, AriaTextFieldProps<InputElement> {}
 export interface SpectrumSearchFieldProps extends AriaSearchFieldProps, SpectrumTextFieldProps {}

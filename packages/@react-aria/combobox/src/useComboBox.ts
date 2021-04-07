@@ -27,9 +27,9 @@ import {useMenuTrigger} from '@react-aria/menu';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
-interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
+interface AriaComboBoxProps<T, InputElement extends HTMLInputElement | HTMLTextAreaElement> extends ComboBoxProps<T> {
   /** The ref for the input element. */
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  inputRef: RefObject<InputElement>,
   /** The ref for the list box popover. */
   popoverRef: RefObject<HTMLDivElement>,
   /** The ref for the list box. */
@@ -51,13 +51,17 @@ interface ComboBoxAria {
   labelProps: HTMLAttributes<HTMLElement>
 }
 
+/* eslint-disable no-redeclare */
+export function useComboBox<T>(props: AriaComboBoxProps<T, HTMLInputElement>, state: ComboBoxState<T>): ComboBoxAria;
+export function useComboBox<T>(props: AriaComboBoxProps<T, HTMLTextAreaElement>, state: ComboBoxState<T>): ComboBoxAria;
 /**
  * Provides the behavior and accessibility implementation for a combo box component.
  * A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
  * @param props - Props for the combo box.
  * @param state - State for the select, as returned by `useComboBoxState`.
  */
-export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState<T>): ComboBoxAria {
+export function useComboBox<T>(props: AriaComboBoxProps<T, any>, state: ComboBoxState<T>): ComboBoxAria {
+/* eslint-enable no-redeclare */
   let {
     buttonRef,
     popoverRef,

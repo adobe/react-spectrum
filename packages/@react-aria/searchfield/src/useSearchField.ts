@@ -19,15 +19,26 @@ import {SearchFieldState} from '@react-stately/searchfield';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
-interface SearchFieldAria {
+interface SearchFieldAria<InputElement extends HTMLInputElement | HTMLTextAreaElement> {
   /** Props for the text field's visible label element (if any). */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>,
+  inputProps: InputHTMLAttributes<InputElement>,
   /** Props for the clear button. */
   clearButtonProps: AriaButtonProps
 }
 
+/* eslint-disable no-redeclare */
+export function useSearchField(
+  props: AriaSearchFieldProps<HTMLInputElement>,
+  state: SearchFieldState,
+  inputRef: RefObject<HTMLInputElement>
+): SearchFieldAria<HTMLInputElement>;
+export function useSearchField(
+  props: AriaSearchFieldProps<HTMLTextAreaElement>,
+  state: SearchFieldState,
+  inputRef: RefObject<HTMLTextAreaElement>
+): SearchFieldAria<HTMLTextAreaElement>
 /**
  * Provides the behavior and accessibility implementation for a search field.
  * @param props - Props for the search field.
@@ -35,10 +46,10 @@ interface SearchFieldAria {
  * @param inputRef - A ref to the input element.
  */
 export function useSearchField(
-  props: AriaSearchFieldProps,
+  props: AriaSearchFieldProps<HTMLInputElement | HTMLTextAreaElement>,
   state: SearchFieldState,
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>
-): SearchFieldAria {
+  inputRef: RefObject<any>
+): SearchFieldAria<HTMLInputElement | HTMLTextAreaElement> {
   let formatMessage = useMessageFormatter(intlMessages);
   let {
     isDisabled,
