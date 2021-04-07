@@ -20,26 +20,26 @@ import {useLocale} from '@react-aria/i18n';
 import {useSelectableCollection} from '@react-aria/selection';
 
 interface TabListAria {
-    /** Props for the tablist container. */
-    tabListProps: HTMLAttributes<HTMLElement>
-  }
+  /** Props for the tablist container. */
+  tabListProps: HTMLAttributes<HTMLElement>
+}
   
 export function useTabList<T>(props: AriaTabListProps<T>, state: TabListState<T>, ref): TabListAria {
   let {
-      orientation = 'horizontal',
-      keyboardActivation = 'automatic'
-    } = props;
+    orientation = 'horizontal',
+    keyboardActivation = 'automatic'
+  } = props;
   let {
-      collection,
-      selectionManager: manager,
-      disabledKeys
-    } = state;
+    collection,
+    selectionManager: manager,
+    disabledKeys
+  } = state;
   let {direction} = useLocale();
   let delegate = useMemo(() => new TabsKeyboardDelegate(
-      collection,
-      direction,
-      orientation,
-      disabledKeys), [collection, disabledKeys, orientation, direction]);
+    collection,
+    direction,
+    orientation,
+    disabledKeys), [collection, disabledKeys, orientation, direction]);
   
   let {collectionProps} = useSelectableCollection({
     ref,

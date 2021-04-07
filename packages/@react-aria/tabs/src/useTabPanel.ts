@@ -17,8 +17,8 @@ import {mergeProps} from '@react-aria/utils';
 import {TabListState} from '@react-stately/tabs';
 
 interface TabPanelAria {
-    /** Props for the tab panel element. */
-    tabPanelProps: HTMLAttributes<HTMLElement>
+  /** Props for the tab panel element. */
+  tabPanelProps: HTMLAttributes<HTMLElement>
 }
     
 export function useTabPanel<T>(props: AriaTabPanelProps, state: TabListState<T>): TabPanelAria {

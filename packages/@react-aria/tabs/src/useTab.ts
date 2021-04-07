@@ -18,14 +18,14 @@ import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface TabAria {
-    /** Props for the tab element. */
-    tabProps: HTMLAttributes<HTMLElement>
-  }
+  /** Props for the tab element. */
+  tabProps: HTMLAttributes<HTMLElement>
+}
   
 export function useTab<T>(
-    props: AriaTabProps<T>,
-    state: SingleSelectListState<T>,
-    ref: RefObject<HTMLElement>
+  props: AriaTabProps<T>,
+  state: SingleSelectListState<T>,
+  ref: RefObject<HTMLElement>
 ): TabAria {
   let {item, isDisabled: propsDisabled} = props;
   let {key} = item;
