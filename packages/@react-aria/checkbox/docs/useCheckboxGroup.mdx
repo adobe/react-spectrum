@@ -16,6 +16,7 @@ import focusDocs from 'docs:@react-aria/focus';
 import statelyDocs from 'docs:@react-stately/checkbox';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-aria/checkbox/package.json';
+import Anatomy from './checkboxgroup-anatomy.svg';
 
 ```jsx import
 import {useCheckboxGroup, useCheckboxGroupItem} from '@react-aria/checkbox';
@@ -59,6 +60,8 @@ checkbox groups that can be styled as needed.
 * Group and checkbox labeling support for assistive technology
 
 ## Anatomy
+
+<Anatomy />
 
 A checkbox group consists of a set of checkboxes, and a label. Each checkbox
 includes a label and a visual selection indicator. Zero or more checkboxes
@@ -122,16 +125,23 @@ function Checkbox(props) {
   let ref = React.useRef();
   let {inputProps} = useCheckboxGroupItem(props, state, ref);
 
+  let isDisabled = state.isDisabled || props.isDisabled;
+  let isSelected = state.isSelected(props.value);
+
   return (
-    <label style={{display: 'block'}}>
-      <input {...inputProps} />
+    <label
+      style={{
+        display: 'block',
+        color: (isDisabled && 'var(--gray)') || (isSelected && 'var(--blue)'),
+      }}>
+      <input {...inputProps} ref={ref} />
       {children}
     </label>
   );
 }
 
 <CheckboxGroup label="Favorite sports">
-  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="soccer" isDisabled>Soccer</Checkbox>
   <Checkbox value="baseball">Baseball</Checkbox>
   <Checkbox value="basketball">Basketball</Checkbox>
 </CheckboxGroup>

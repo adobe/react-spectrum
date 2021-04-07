@@ -10,44 +10,69 @@
  * governing permissions and limitations under the License.
  */
 
+import {useEffect, useRef, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
 import {useSSRSafeId} from '@react-aria/ssr';
-import {useState} from 'react';
 
-let map: Map<string, (v: string) => void> = new Map();
+let idsUpdaterMap: Map<string, (v: string) => void> = new Map();
 
 /**
  * If a default is not provided, generate an id.
  * @param defaultId - Default component id.
  */
 export function useId(defaultId?: string): string {
+  let isRendering = useRef(true);
+  isRendering.current = true;
   let [value, setValue] = useState(defaultId);
+  let nextId = useRef(null);
+  // don't memo this, we want it new each render so that the Effects always run
+  let updateValue = (val) => {
+    if (!isRendering.current) {
+      setValue(val);
+    } else {
+      nextId.current = val;
+    }
+  };
+
+  useLayoutEffect(() => {
+    isRendering.current = false;
+  }, [updateValue]);
+
+  useEffect(() => {
+    let newId = nextId.current;
+    if (newId) {
+      setValue(newId);
+      nextId.current = null;
+    }
+  }, [setValue, updateValue]);
+
   let res = useSSRSafeId(value);
-  map.set(res, setValue);
+  idsUpdaterMap.set(res, updateValue);
   return res;
 }
 
 /**
  * Merges two ids.
+ * Different ids will trigger a side-effect and re-render components hooked up with `useId`.
  */
-export function mergeIds(a: string, b: string): string {
-  if (a === b) {
-    return a;
+export function mergeIds(idA: string, idB: string): string {
+  if (idA === idB) {
+    return idA;
   }
 
-  let setA = map.get(a);
-  if (setA) {
-    setA(b);
-    return b;
+  let setIdA = idsUpdaterMap.get(idA);
+  if (setIdA) {
+    setIdA(idB);
+    return idB;
   }
 
-  let setB = map.get(b);
-  if (setB) {
-    setB(a);
-    return a;
+  let setIdB = idsUpdaterMap.get(idB);
+  if (setIdB) {
+    setIdB(idA);
+    return idA;
   }
 
-  return b;
+  return idB;
 }
 
 /**
@@ -57,7 +82,7 @@ export function mergeIds(a: string, b: string): string {
 export function useSlotId(): string {
   let [id, setId] = useState(useId());
   useLayoutEffect(() => {
-    let setCurr = map.get(id);
+    let setCurr = idsUpdaterMap.get(id);
     if (setCurr && !document.getElementById(id)) {
       setId(null);
     }

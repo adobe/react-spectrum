@@ -11,8 +11,8 @@
  */
 
 jest.mock('@react-aria/live-announcer');
+import {act, fireEvent, render} from '@testing-library/react';
 import {announce} from '@react-aria/live-announcer';
-import {fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import {useSpinButton} from '../';
 
@@ -113,13 +113,13 @@ describe('useSpinButton', function () {
   it('should announce on value change while focused', function () {
     let res = render(<Example value={2} />);
     let el = res.getByTestId('test');
-    el.focus();
+    act(() => {el.focus();});
 
     res.rerender(<Example value={3} />);
     expect(announce).toHaveBeenCalledTimes(1);
-    expect(announce).toHaveBeenCalledWith('3');
+    expect(announce).toHaveBeenCalledWith('3', 'assertive');
 
-    el.blur();
+    act(() => {el.blur();});
 
     res.rerender(<Example value={4} />);
     expect(announce).toHaveBeenCalledTimes(1);
@@ -128,10 +128,24 @@ describe('useSpinButton', function () {
   it('should announce on textValue change while focused', function () {
     let res = render(<Example value={2} textValue="2 items" />);
     let el = res.getByTestId('test');
-    el.focus();
+    act(() => {el.focus();});
 
     res.rerender(<Example value={3} textValue="3 items" />);
     expect(announce).toHaveBeenCalledTimes(1);
-    expect(announce).toHaveBeenCalledWith('3 items');
+    expect(announce).toHaveBeenCalledWith('3 items', 'assertive');
+  });
+
+  it('should substitute a minus sign for hyphen in the textValue for negative values', function () {
+    let res = render(<Example value={-2} textValue="-2 items" />);
+    let el = res.getByTestId('test');
+    expect(el).toHaveAttribute('aria-valuenow', '-2');
+    expect(el).toHaveAttribute('aria-valuetext', '−2 items');
+    act(() => {el.focus();});
+
+    res.rerender(<Example value={-3} textValue="-3 items" />);
+    expect(announce).toHaveBeenCalledTimes(1);
+    expect(announce).toHaveBeenCalledWith('−3 items', 'assertive');
+    expect(el).toHaveAttribute('aria-valuenow', '-3');
+    expect(el).toHaveAttribute('aria-valuetext', '−3 items');
   });
 });

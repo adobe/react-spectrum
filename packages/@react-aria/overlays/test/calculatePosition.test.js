@@ -117,7 +117,7 @@ describe('calculatePosition', function () {
       pos.left = expected[0];
       pos.top = expected[1];
     }
-    
+
     const expectedPosition = {
       position: pos,
       arrowOffsetLeft: expected[2],
@@ -202,7 +202,7 @@ describe('calculatePosition', function () {
       noOffset: [50, 250, undefined, 50, 300],
       offsetBefore: [-200, 50, undefined, 0, 500],
       offsetAfter: [300, 350, undefined, 200, 200],
-      crossAxisOffset: [50, 250, undefined, 50, 300],
+      crossAxisOffset: [50, 260, undefined, 40, 290],
       mainAxisOffset: [40, 250, undefined, 50, 300]
     },
     {
@@ -227,7 +227,7 @@ describe('calculatePosition', function () {
       offsetBefore: [50, -200, 0, undefined, 0],
       offsetAfter: [350, 300, 200, undefined, 450],
       mainAxisOffset: [250, 40, 50, undefined, 200],
-      crossAxisOffset: [250, 50, 50, undefined, 200]
+      crossAxisOffset: [260, 50, 40, undefined, 200]
     },
     {
       placement: 'top right',
@@ -251,7 +251,7 @@ describe('calculatePosition', function () {
       offsetBefore: [50, 100, 0, undefined, 450],
       offsetAfter: [350, 600, 200, undefined, 0],
       mainAxisOffset: [250, 360, 50, undefined, 190],
-      crossAxisOffset: [250, 350, 50, undefined, 200]
+      crossAxisOffset: [260, 350, 40, undefined, 200]
     },
     {
       placement: 'bottom right',
@@ -274,7 +274,7 @@ describe('calculatePosition', function () {
       noOffset: [350, 250, undefined, 50, 300],
       offsetBefore: [100, 50, undefined, 0, 500],
       offsetAfter: [600, 350, undefined, 200, 200],
-      crossAxisOffset: [350, 250, undefined, 50, 300],
+      crossAxisOffset: [350, 260, undefined, 40, 290],
       mainAxisOffset: [360, 250, undefined, 50, 300]
     },
     {
@@ -344,7 +344,7 @@ describe('calculatePosition', function () {
 
   describe('overlay smaller than target aligns in center', function () {
     checkPosition(
-      'right', getTargetDimension({left: 250, top: 250}, overlaySize.height + 100, overlaySize.width + 100), [550, 300, undefined, null, 250]
+      'right', getTargetDimension({left: 250, top: 250}, overlaySize.height + 100, overlaySize.width + 100), [550, 300, undefined, 100, 250]
     );
   });
 

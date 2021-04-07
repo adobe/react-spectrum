@@ -112,7 +112,7 @@ tbody.spectrum-Table-body {
   box-sizing: border-box;
 
   .spectrum-Table-cellWrapper {
-    /* Add an opaque background so that the transparent background 
+    /* Add an opaque background so that the transparent background
      * on the cell doesn't allow other cells to show through sticky cells. */
     background-color: var(--spectrum-table-background-color);
   }
@@ -134,7 +134,7 @@ tbody.spectrum-Table-body {
     }
   }
 
-  &:active .spectrum-Table-cell {
+  &:active .spectrum-Table-cell:not(.is-disabled) {
     background-color: var(--spectrum-table-row-background-color-down);
   }
 
@@ -200,7 +200,7 @@ tbody.spectrum-Table-body {
       background-color: var(--spectrum-table-quiet-row-background-color-hover);
     }
 
-    &:active .spectrum-Table-cell {
+    &:active .spectrum-Table-cell:not(.is-disabled) {
       background-color: var(--spectrum-table-quiet-row-background-color-down);
     }
 

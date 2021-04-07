@@ -32,7 +32,7 @@ export function useControlledState<T>(
   let setValue = useCallback((value, ...args) => {
     let onChangeCaller = (value, ...onChangeArgs) => {
       if (onChange) {
-        if (stateRef.current !== value) {
+        if (!Object.is(stateRef.current, value)) {
           onChange(value, ...onChangeArgs);
         }
       }

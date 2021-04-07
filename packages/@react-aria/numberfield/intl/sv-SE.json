@@ -1,5 +1,5 @@
 {
-  "Decrement": "Minska",
-  "Enter a number": "Ange ett tal",
-  "Increment": "Öka"
+  "decrease": "Minska {fieldLabel}",
+  "increase": "Öka {fieldLabel}",
+  "numberField": "Nummerfält"
 }

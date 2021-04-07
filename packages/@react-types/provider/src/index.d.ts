@@ -13,9 +13,6 @@
 import {DOMProps, StyleProps, ValidationState} from '@react-types/shared';
 import {ReactNode} from 'react';
 
-type ToastPlacement = 'top' | 'top left' | 'top center' | 'top right'
-  | 'bottom' | 'bottom left' | 'bottom center' | 'bottom right';
-
 export type ColorScheme = 'light' | 'dark';
 export type Scale = 'medium' | 'large';
 

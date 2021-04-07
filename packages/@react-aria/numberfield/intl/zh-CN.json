@@ -1,5 +1,5 @@
 {
-  "Decrement": "递减",
-  "Enter a number": "输入一个数字",
-  "Increment": "递增"
+  "decrease": "降低 {fieldLabel}",
+  "increase": "提高 {fieldLabel}",
+  "numberField": "数字字段"
 }

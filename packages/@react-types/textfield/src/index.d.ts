@@ -43,13 +43,13 @@ export interface AriaTextFieldProps extends TextFieldProps, AriaLabelingProps, F
 }
 
 export interface SpectrumTextFieldProps extends AriaTextFieldProps, SpectrumLabelableProps, StyleProps {
-  /** An icon to display at the start of the textfield. */
+  /** An icon to display at the start of the input. */
   icon?: ReactElement,
-  /** Whether the textfield should be displayed with a quiet style. */
+  /** Whether the input should be displayed with a quiet style. */
   isQuiet?: boolean
 }
 
-export interface TextFieldRef extends FocusableRefValue<HTMLInputElement & HTMLTextAreaElement, HTMLDivElement> {
+export interface TextFieldRef extends FocusableRefValue<HTMLInputElement | HTMLTextAreaElement, HTMLDivElement> {
   select(): void,
-  getInputElement(): HTMLInputElement & HTMLTextAreaElement
+  getInputElement(): HTMLInputElement | HTMLTextAreaElement
 }

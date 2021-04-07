@@ -28,7 +28,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
   getKeyBelow(key: Key) {
     key = this.collection.getKeyAfter(key);
-    while (key) {
+    while (key != null) {
       let item = this.collection.getItem(key);
       if (item.type === 'item' && !this.disabledKeys.has(key)) {
         return key;
@@ -40,7 +40,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
   getKeyAbove(key: Key) {
     key = this.collection.getKeyBefore(key);
-    while (key) {
+    while (key != null) {
       let item = this.collection.getItem(key);
       if (item.type === 'item' && !this.disabledKeys.has(key)) {
         return key;
@@ -52,7 +52,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
   getFirstKey() {
     let key = this.collection.getFirstKey();
-    while (key) {
+    while (key != null) {
       let item = this.collection.getItem(key);
       if (item.type === 'item' && !this.disabledKeys.has(key)) {
         return key;
@@ -64,7 +64,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
   getLastKey() {
     let key = this.collection.getLastKey();
-    while (key) {
+    while (key != null) {
       let item = this.collection.getItem(key);
       if (item.type === 'item' && !this.disabledKeys.has(key)) {
         return key;
@@ -119,7 +119,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
     let collection = this.collection;
     let key = fromKey || this.getFirstKey();
-    while (key) {
+    while (key != null) {
       let item = collection.getItem(key);
       let substring = item.textValue.slice(0, search.length);
       if (item.textValue && this.collator.compare(substring, search) === 0) {

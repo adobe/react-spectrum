@@ -92,10 +92,13 @@ which define the values for the variables in each color scheme and platform scal
 a CSS class which includes the variables it defines, and `Provider` applies these classes according to
 media queries and prop settings.
 
-React Spectrum includes two themes by default. The `defaultTheme` uses the Spectrum `light` and `darkest` color themes
-and is suitable for most applications. The `darkTheme` uses the Spectrum `dark` and `darkest` color themes, and is
-suitable for applications that are optimal with a darker interface regardless of operating system setting
-(e.g. photo/video editors). See the [Spectrum color](https://spectrum.adobe.com/page/color/#Color-themes-and-modes)
+React Spectrum includes three themes by default.
+
+1. The `defaultTheme` uses the Spectrum `light` and `darkest` color themes and is suitable for most applications.
+2. The `darkTheme` uses the Spectrum `dark` and `darkest` color themes, and is suitable for applications that are optimal with a darker interface regardless of operating system setting (e.g. photo/video editors). 
+3. The `lightTheme` uses the Spectrum `lightest` and `darkest` color themes, and is suitable for applications that require high brightness levels while in light mode and high contrast ratios while in dark mode.
+
+See the [Spectrum color](https://spectrum.adobe.com/page/color/#Color-themes-and-modes)
 page for more information.
 
 Import your desired theme and pass it to your application's `Provider` to apply it.

@@ -15,6 +15,7 @@ import statelyDocs from 'docs:@react-stately/searchfield';
 import buttonDocs from 'docs:@react-aria/button';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-aria/searchfield/package.json';
+import Anatomy from './anatomy.svg';
 
 ```jsx import
 import {useSearchField} from '@react-aria/searchfield';
@@ -54,10 +55,12 @@ search fields that can be styled as needed.
 
 ## Anatomy
 
+<Anatomy />
+
 Search fields consist of an input element, a label, and an optional clear button.
 `useSearchField` automatically manages the labeling and relationships between the elements,
-and handles keyboard events. Users can press the <kbd>Escape</kbd> key to clear the search field, or the
-<kbd>Enter</kbd> key to trigger the `onSubmit` event.
+and handles keyboard events. Users can press the <kbd>Escape</kbd> key to clear the search field, or
+the <kbd>Enter</kbd> key to trigger the `onSubmit` event.
 
 `useSearchField` returns two sets of props that you should spread onto the appropriate element:
 

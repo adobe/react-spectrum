@@ -11,6 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import Refresh from '@spectrum-icons/workflow/Refresh';
 import {SearchField} from '../';
@@ -78,6 +79,16 @@ storiesOf('SearchField', module)
     {info}
   )
   .add(
+    'validationState=invalid',
+    () => renderSearchLandmark(render({defaultValue: 'React', validationState: 'invalid'})),
+    {info}
+  )
+  .add(
+    'validationState=valid',
+    () => renderSearchLandmark(render({defaultValue: 'React', validationState: 'valid'})),
+    {info}
+  )
+  .add(
     'onClear',
     () => renderSearchLandmark(render({onClear: action('clear')})),
     {info}
@@ -107,6 +118,15 @@ storiesOf('SearchField', module)
   )
   .add('custom width, labelPosition: side',
     () => render({width: 300, labelPosition: 'side'})
+  )
+  .add('custom width and narrow container',
+    () => (
+      <Flex direction="column" width="30px">
+        {render({defaultValue: 'React', validationState: 'valid'})}
+        {render({defaultValue: 'React', width: 30})}
+        {render({defaultValue: 'React', width: 30, validationState: 'valid'})}
+      </Flex>
+    )
   );
 
 function renderSearchLandmark(child) {

@@ -256,7 +256,7 @@ describe('Popover', function () {
         expect(popover).toBeVisible();
       }); // wait for animation
 
-      button.blur();
+      act(() => {button.blur();});
       expect(onClose).toHaveBeenCalledTimes(1);
     });
   });

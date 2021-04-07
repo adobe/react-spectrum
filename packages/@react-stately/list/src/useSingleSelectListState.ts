@@ -36,7 +36,7 @@ export interface SingleSelectListState<T> extends ListState<T> {
  * Handles building a collection of items from props, and manages selection state.
  */
 export function useSingleSelectListState<T extends object>(props: SingleSelectListProps<T>): SingleSelectListState<T>  {
-  let [selectedKey, setSelectedKey] = useControlledState(props.selectedKey, props.defaultSelectedKey, props.onSelectionChange);
+  let [selectedKey, setSelectedKey] = useControlledState(props.selectedKey, props.defaultSelectedKey ?? null, props.onSelectionChange);
   let selectedKeys = useMemo(() => selectedKey != null ? [selectedKey] : [], [selectedKey]);
   let {collection, disabledKeys, selectionManager} = useListState({
     ...props,

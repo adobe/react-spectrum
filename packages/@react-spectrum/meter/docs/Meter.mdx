@@ -72,17 +72,6 @@ Values are formatted as a percentage by default, but this can be modified by usi
   variant="positive" />
 ```
 
-### Accessibility
-
-Depending on the visualization being used (i.e. depending on the `showValueLabel` prop), a `label`, `aria-label`, or `aria-labelledby` prop is required.
-
-### Internationalization
-
-To internationalize a Meter, a localized string should be passed to the `label` prop, `aria-label` prop, or value of the associated `aria-labelledby` element.
-
-For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the meter is automatically flipped. In addition,
-Meter automatically uses the current locale to format the value label.
-
 ## Labeling
 Value labels are shown above the Meter by default, but they can also be moved to the side or hidden as needed.
 The label text should be in sentence case.
@@ -126,6 +115,18 @@ By default, the value label is formatted as a percentage. This can be customized
     variant="critical" />
 </Flex>
 ```
+
+### Accessibility
+
+Depending on the visualization being used (i.e. depending on the `showValueLabel` prop), a `label`, `aria-label`, or `aria-labelledby` prop is required.
+
+### Internationalization
+
+To internationalize a Meter, a localized string should be passed to the `label` prop, `aria-label` prop, or value of the associated `aria-labelledby` element.
+
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the meter is automatically flipped. In addition,
+Meter automatically uses the current locale to format the value label.
+
 ## Props
 
 <PropTable component={docs.exports.Meter} links={docs.links} />

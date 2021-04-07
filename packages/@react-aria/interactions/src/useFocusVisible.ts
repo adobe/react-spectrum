@@ -15,6 +15,7 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
+import {isMac} from '@react-aria/utils';
 import {isVirtualClick} from './utils';
 import {useEffect, useState} from 'react';
 
@@ -38,11 +39,6 @@ let changeHandlers = new Set<Handler>();
 let hasSetupGlobalListeners = false;
 let hasEventBeforeFocus = false;
 
-const isMac =
-  typeof window !== 'undefined' && window.navigator != null
-    ? /^Mac/.test(window.navigator.platform)
-    : false;
-
 // Only Tab or Esc keys will make focus visible on text input elements
 const FOCUS_VISIBLE_INPUT_KEYS = {
   Tab: true,
@@ -59,7 +55,7 @@ function triggerChangeHandlers(modality: Modality, e: HandlerEvent) {
  * Helper function to determine if a KeyboardEvent is unmodified and could make keyboard focus styles visible.
  */
 function isValidKey(e: KeyboardEvent) {
-  return !(e.metaKey || (!isMac && e.altKey) || e.ctrlKey);
+  return !(e.metaKey || (!isMac() && e.altKey) || e.ctrlKey);
 }
 
 function handleKeyboardEvent(e: KeyboardEvent) {
@@ -93,11 +89,11 @@ function handleFocusEvent(e: FocusEvent) {
     return;
   }
 
-  // If a focus event occurs without a preceding keyboard or pointer event, switch to keyboard modality.
+  // If a focus event occurs without a preceding keyboard or pointer event, switch to virtual modality.
   // This occurs, for example, when navigating a form with the next/previous buttons on iOS.
   if (!hasEventBeforeFocus) {
-    currentModality = 'keyboard';
-    triggerChangeHandlers('keyboard', e);
+    currentModality = 'virtual';
+    triggerChangeHandlers('virtual', e);
   }
 
   hasEventBeforeFocus = false;
@@ -147,6 +143,14 @@ function setupGlobalFocusEvents() {
   }
 
   hasSetupGlobalListeners = true;
+}
+
+if (typeof document !== 'undefined') {
+  if (document.readyState !== 'loading') {
+    setupGlobalFocusEvents();
+  } else {
+    document.addEventListener('DOMContentLoaded', setupGlobalFocusEvents);
+  }
 }
 
 /**

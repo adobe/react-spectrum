@@ -4,7 +4,7 @@
   "private": true,
   "source": "src/index.js",
   "dependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
+    "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
     "@mdx-js/react": "^1.5.5",
     "@react-aria/aria-modal-polyfill": "^3.1.0",
     "@react-aria/interactions": "^3.1.0",
@@ -28,8 +28,8 @@
     "highlight.js": "9.18.1",
     "markdown-to-jsx": "^6.11.0",
     "quicklink": "^2.0.0",
-    "react": "^16.8.0",
-    "react-dom": "^16.8.0",
+    "react": "^16.8.0 || ^17.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1",
     "react-lowlight": "^2.0.0"
   }
 }

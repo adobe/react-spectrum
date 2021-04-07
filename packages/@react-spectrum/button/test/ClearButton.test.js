@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, render} from '@testing-library/react';
 import {ClearButton} from '../';
 import React from 'react';
-import {render} from '@testing-library/react';
 import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 
@@ -72,7 +72,7 @@ describe('ClearButton', function () {
     let button = tree.queryByRole('button');
     expect(button).toBe(ref.current.UNSAFE_getDOMNode());
 
-    ref.current.focus();
+    act(() => {ref.current.focus();});
     expect(document.activeElement).toBe(button);
   });
 });

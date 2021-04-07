@@ -63,12 +63,13 @@ more complex layouts.
 
 In addition to the properties widely supported by CSS, React Spectrum also shims the `gap` property, along
 with `rowGap` and `columnGap`. These properties make it much easier to build layouts
-with consistent space between each item. The gap can be defined with Spectrum [dimension variables](styling.html#dimension-values)
+with consistent space between each item. The gap can be defined with [Spectrum dimension variables](styling.html#dimension-values)
 to ensure consistency across applications, and allow the layout to adapt to different devices automatically.
 
 ### Example
 
-This example shows a simple vertical stack, with a gap between each item defined using a Spectrum dimension variable.
+This example shows a simple vertical stack, with a gap between each item defined
+using a [Spectrum dimension variable](styling.html#dimension-values).
 
 ```tsx example
 <Flex direction="column" width="size-2000" gap="size-100">
@@ -97,7 +98,8 @@ layouts without extra presentational elements, keeping your code clean and seman
 are automatically mirrored in right-to-left languages.
 
 The [Grid](Grid.html) component can be used as a container to define a grid layout. Any React Spectrum component can be used as
-a child of a `Grid`. The `Grid` component extends the CSS syntax to support defining grids using Spectrum defined dimension values.
+a child of a `Grid`. The `Grid` component extends the CSS syntax to support
+defining grids using [Spectrum-defined dimension values](styling.html#dimension-values).
 This ensures that sizing and spacing is consistent between applications, and allows the layout to adapt to different devices
 automatically.
 
@@ -110,7 +112,7 @@ places them into these named regions.
 
 In addition, you can define the `columns` and `rows`
 props on the `Grid` container to specify the widths and heights of the columns and rows respectively. This can be
-done using Spectrum dimension values to ensure they are adaptive on various devices.
+done using [Spectrum dimension values](styling.html#dimension-values) to ensure they are adaptive on various devices.
 
 The following example shows how you could use `Grid` to declare a common application layout, with a header, sidebar,
 content area, and footer. Notice how there are no nested layout elements — the layout is entirely declared in the

@@ -135,15 +135,6 @@ storiesOf('SplitView', module)
     )
   )
   .add(
-    'onMouseDown',
-    () => (
-      <SplitView UNSAFE_className={svStyles['storybook-SplitView']} onMouseDown={action('onMouseDown')}>
-        <div>Primary</div>
-        <div>Secondary</div>
-      </SplitView>
-    )
-  )
-  .add(
     'with scrolling content',
     () => (
       <SplitView UNSAFE_className={svStyles['storybook-SplitView']} onMouseDown={action('onMouseDown')}>

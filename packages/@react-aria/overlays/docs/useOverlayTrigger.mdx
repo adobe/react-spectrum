@@ -195,7 +195,7 @@ function Example() {
   // popover closes.
   let {buttonProps} = useButton({
     onPress: () => state.open()
-  });
+  }, triggerRef);
 
   return <>
     <button

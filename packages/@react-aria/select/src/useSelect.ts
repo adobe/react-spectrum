@@ -12,8 +12,8 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaSelectProps} from '@react-types/select';
-import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {HTMLAttributes, RefObject, useMemo} from 'react';
+import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {FocusEvent, HTMLAttributes, RefObject, useMemo} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
 import {SelectState} from '@react-stately/select';
@@ -52,7 +52,8 @@ interface SelectAria {
  */
 export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<HTMLElement>): SelectAria {
   let {
-    keyboardDelegate
+    keyboardDelegate,
+    isDisabled
   } = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
@@ -62,11 +63,37 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
+      isDisabled,
       type: 'listbox'
     },
     state,
     ref
   );
+
+  let onKeyDown = (e: KeyboardEvent) => {
+    switch (e.key) {
+      case 'ArrowLeft': {
+        // prevent scrolling containers
+        e.preventDefault();
+
+        let key = state.selectedKey != null ? delegate.getKeyAbove(state.selectedKey) : delegate.getFirstKey();
+        if (key) {
+          state.setSelectedKey(key);
+        }
+        break;
+      }
+      case 'ArrowRight': {
+        // prevent scrolling containers
+        e.preventDefault();
+
+        let key = state.selectedKey != null ? delegate.getKeyBelow(state.selectedKey) : delegate.getFirstKey();
+        if (key) {
+          state.setSelectedKey(key);
+        }
+        break;
+      }
+    }
+  };
 
   let {typeSelectProps} = useTypeSelect({
     keyboardDelegate: delegate,
@@ -81,8 +108,12 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     labelElementType: 'span'
   });
 
+  typeSelectProps.onKeyDown = typeSelectProps.onKeyDownCapture;
+  delete typeSelectProps.onKeyDownCapture;
+
   let domProps = filterDOMProps(props, {labelable: true});
-  let triggerProps = mergeProps(mergeProps(menuTriggerProps, fieldProps), typeSelectProps);
+  let triggerProps = mergeProps(typeSelectProps, menuTriggerProps, fieldProps);
+
   let valueId = useId();
 
   return {
@@ -99,15 +130,33 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     },
     triggerProps: mergeProps(domProps, {
       ...triggerProps,
+      onKeyDown: chain(triggerProps.onKeyDown, onKeyDown, props.onKeyDown),
+      onKeyUp: props.onKeyUp,
       'aria-labelledby': [
         triggerProps['aria-labelledby'],
         triggerProps['aria-label'] && !triggerProps['aria-labelledby'] ? triggerProps.id : null,
         valueId
       ].filter(Boolean).join(' '),
-      onFocus() {
+      onFocus(e: FocusEvent) {
+        if (state.isFocused) {
+          return;
+        }
+
+        if (props.onFocus) {
+          props.onFocus(e);
+        }
+
         state.setFocused(true);
       },
-      onBlur() {
+      onBlur(e: FocusEvent) {
+        if (state.isOpen) {
+          return;
+        }
+
+        if (props.onBlur) {
+          props.onBlur(e);
+        }
+
         state.setFocused(false);
       }
     }),
@@ -116,6 +165,16 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     },
     menuProps: {
       ...menuProps,
+      onBlur: (e) => {
+        if (e.currentTarget.contains(e.relatedTarget as Node)) {
+          return;
+        }
+
+        if (props.onBlur) {
+          props.onBlur(e);
+        }
+        state.setFocused(false);
+      },
       'aria-labelledby': [
         fieldProps['aria-labelledby'],
         triggerProps['aria-label'] && !fieldProps['aria-labelledby'] ? triggerProps.id : null

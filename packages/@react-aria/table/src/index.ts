@@ -12,8 +12,9 @@
 
 export * from './useTable';
 export * from './useTableColumnHeader';
-export * from './useTableRowGroup';
 export * from './useTableRow';
 export * from './useTableRowHeader';
-export * from './useTableCell';
 export * from './useTableSelectionCheckbox';
+
+export {useGridCell as useTableCell} from '@react-aria/grid';
+export {useGridRowGroup as useTableRowGroup} from '@react-aria/grid';

@@ -11,7 +11,7 @@
  */
 
 import {AriaTextFieldProps} from '@react-types/textfield';
-import {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject, TextareaHTMLAttributes} from 'react';
 import {ElementType} from 'react';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {useFocusable} from '@react-aria/focus';
@@ -19,7 +19,7 @@ import {useLabel} from '@react-aria/label';
 
 interface TextFieldAria {
   /** Props for the input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement & HTMLTextAreaElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
   /** Props for the text field's visible label element (if any). */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>
 }

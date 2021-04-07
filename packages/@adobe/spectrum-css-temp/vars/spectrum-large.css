@@ -229,8 +229,11 @@
   --spectrum-selectlist-option-icon-margin-top: var(--spectrum-global-dimension-static-size-50);
   --spectrum-selectlist-option-height: var(--spectrum-global-dimension-static-size-600);
   /* BEGIN RSP PATCH */
-  /* This is not correct in DNA. */
-  --spectrum-selectlist-option-padding-y: var(--spectrum-global-dimension-static-size-160);
+  /*
+    This is not correct in DNA. Renamed from padding-y to padding-height to fix docs issue where fallback var replaced this value
+    (due to old spectrum-css postcss-custom-properties-custom-mapping plugin).
+  */
+  --spectrum-selectlist-option-padding-height: var(--spectrum-global-dimension-static-size-160);
   /* END RSP PATCH */
   --spectrum-selectlist-thumbnail-option-icon-padding-y: var(--spectrum-global-dimension-static-size-200);
   --spectrum-loader-bar-large-border-radius: 4px;
@@ -392,7 +395,10 @@
   --spectrum-tool-high-emphasis-touch-hit-x: var(--spectrum-global-dimension-static-size-50);
   --spectrum-tool-high-emphasis-touch-hit-y: var(--spectrum-global-dimension-static-size-50);
   --spectrum-tooltip-padding-bottom: 6px;
-  --spectrum-tooltip-content-max-width: 126px;
+  /* BEGIN RSP PATCH */
+  /* Old value is deprecated, bumping to new value for now: https://git.corp.adobe.com/Spectrum/spectrum-dna/blob/53f6efb0d81ec6829048a53a9e8389b450f46dee/data/elements/tooltip/TooltipBase.mjs#L36 */
+  --spectrum-tooltip-content-max-width: var(--spectrum-global-dimension-size-2000);
+  /* END RSP PATCH */
   --spectrum-tooltip-info-padding-bottom: 6px;
   --spectrum-tooltip-info-content-max-width: 126px;
   --spectrum-tooltip-negative-padding-bottom: 6px;

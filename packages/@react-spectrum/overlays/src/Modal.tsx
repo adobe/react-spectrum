@@ -12,7 +12,7 @@
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useViewportSize} from '@react-aria/utils';
 import {ModalProps} from '@react-types/overlays';
 import modalStyles from '@adobe/spectrum-css-temp/components/modal/vars.css';
 import {Overlay} from './Overlay';
@@ -25,7 +25,7 @@ interface ModalWrapperProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode,
   isOpen?: boolean,
   onClose?: () => void,
-  type?: 'fullscreen' | 'fullscreenTakeover',
+  type?: 'modal' | 'fullscreen' | 'fullscreenTakeover',
   isDismissable?: boolean,
   isKeyboardDismissDisabled?: boolean
 }
@@ -90,8 +90,13 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject
     otherProps.className
   );
 
+  let viewport = useViewportSize();
+  let style: any = {
+    '--spectrum-visual-viewport-height': viewport.height + 'px'
+  };
+
   return (
-    <div className={wrapperClassName}>
+    <div className={wrapperClassName} style={style}>
       <div
         {...mergeProps(otherProps, overlayProps, modalProps)}
         ref={ref}

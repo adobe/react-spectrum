@@ -89,6 +89,14 @@ storiesOf('Breadcrumbs', module)
     'isDisabled: true, isMultiline',
     () => render({isDisabled: true, isMultiline: true})
   )
+  .add(
+    'resizeable',
+    () => (
+      <div style={{minWidth: '100px', width: '300px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+        {renderMany({})}
+      </div>
+    )
+  )
   // .add(
   //   'last item Heading',
   //   () => renderHeading()

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render} from '@testing-library/react';
 import {DatePicker, DateRangePicker} from '../';
-import {fireEvent, render} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -224,7 +224,7 @@ describe('DatePickerBase', function () {
       let {getAllByRole} = render(<Component />);
 
       let segments = getAllByRole('spinbutton');
-      segments[0].focus();
+      act(() => {segments[0].focus();});
 
       for (let i = 0; i < segments.length; i++) {
         expect(segments[i]).toHaveFocus();
@@ -249,7 +249,7 @@ describe('DatePickerBase', function () {
       );
 
       let segments = getAllByRole('spinbutton');
-      segments[0].focus();
+      act(() => {segments[0].focus();});
 
       for (let i = 0; i < segments.length; i++) {
         expect(segments[i]).toHaveFocus();

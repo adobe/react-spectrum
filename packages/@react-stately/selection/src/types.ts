@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {FocusStrategy, PressEvent, Selection, SelectionMode} from '@react-types/shared';
 import {Key} from 'react';
-import {Selection, SelectionMode} from '@react-types/shared';
 
 export interface FocusState {
   /** Whether the collection is currently focused. */
@@ -20,8 +20,10 @@ export interface FocusState {
   setFocused(isFocused: boolean): void,
   /** The current focused key in the collection. */
   readonly focusedKey: Key,
-  /** Sets the focused key. */
-  setFocusedKey(key: Key): void
+  /** Whether the first or last child of the focused key should receive focus. */
+  readonly childFocusStrategy: FocusStrategy,
+  /** Sets the focused key, and optionally, whether the first or last child of that key should receive focus. */
+  setFocusedKey(key: Key, child?: FocusStrategy): void
 }
 
 export interface SingleSelectionState extends FocusState {
@@ -41,7 +43,9 @@ export interface MultipleSelectionState extends FocusState {
   /** The currently selected keys in the collection. */
   readonly selectedKeys: Selection,
   /** Sets the selected keys in the collection. */
-  setSelectedKeys(keys: Selection | ((v: Selection) => Selection)): void
+  setSelectedKeys(keys: Selection | ((v: Selection) => Selection)): void,
+  /** The currently disabled keys in the collection. */
+  readonly disabledKeys: Set<Key>
 }
 
 export interface MultipleSelectionManager extends FocusState {
@@ -72,5 +76,10 @@ export interface MultipleSelectionManager extends FocusState {
   /** Removes all keys from the selection. */
   clearSelection(): void,
   /** Toggles between select all and an empty selection. */
-  toggleSelectAll(): void
+  toggleSelectAll(): void,
+  /**
+   * Toggles, replaces, or extends selection to the given key depending
+   * on the pointer event and collection's selection mode.
+   */
+  select(key: Key, e?: PressEvent | PointerEvent): void
 }
