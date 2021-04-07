@@ -70,11 +70,15 @@ export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<an
       tabIndex: isDisabled ? undefined : 0,
       href: elementType === 'a' && isDisabled ? undefined : href,
       target: elementType === 'a' ? target : undefined,
-      type: elementType === 'input' && type !== 'button' ? type : undefined,
+      type: elementType === 'input' ? type : undefined,
       disabled: elementType === 'input' ? isDisabled : undefined,
       'aria-disabled': !isDisabled || elementType === 'input' ? undefined : isDisabled,
       rel: elementType === 'a' ? rel : undefined
     };
+  }
+  // don't apply type button to non button elements
+  if (elementType !== 'button' && type === 'button') {
+    type = undefined;
   }
 
   let {pressProps, isPressed} = usePress({
