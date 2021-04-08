@@ -70,8 +70,6 @@ governing permissions and limitations under the License.
   /* Correct the outline for input[type="search"] style in Safari. */
   outline-offset: -2px;
 
-  /* Use padding instead of text-indent so long strings don't overlap the icon */
-  padding-inline-start: var(--spectrum-search-padding-left);
   text-indent: 0;
 
   /* Don't let long strings overlap the close icon */
