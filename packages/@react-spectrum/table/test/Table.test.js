@@ -58,6 +58,7 @@ for (let i = 1; i <= 100; i++) {
 
 describe('Table', function () {
   let offsetWidth, offsetHeight;
+
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
@@ -2793,20 +2794,17 @@ describe('Table', function () {
       expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
-    it('should automatically fire onLoadMore it there aren\'t enough items to fill the Table', function () {
-      let items = [];
-      for (let i = 1; i <= 15; i++) {
-        items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
-      }
+    it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
+      let items = [{id: 1, foo: 'Foo 1', bar: 'Bar 1'}];
+      let onLoadMoreSpy = jest.fn();
 
-      let onLoadMore = jest.fn();
-      render(
+      let TableMock = (props) => (
         <Table aria-label="Table">
           <TableHeader>
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
           </TableHeader>
-          <TableBody items={items} onLoadMore={onLoadMore}>
+          <TableBody items={props.items} onLoadMore={onLoadMoreSpy}>
             {row => (
               <Row>
                 {key => <Cell>{row[key]}</Cell>}
@@ -2815,8 +2813,11 @@ describe('Table', function () {
           </TableBody>
         </Table>
       );
-      // Table is 1000px tall, 15 items x 41px doesn't fill up the table
-      expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+      render(<TableMock items={items} />);
+      act(() => jest.runAllTimers());
+      // first loadMore triggered by onVisibleRectChange, other 2 by useLayoutEffect
+      expect(onLoadMoreSpy).toHaveBeenCalledTimes(3);
     });
 
     it('should display an empty state when there are no items', function () {

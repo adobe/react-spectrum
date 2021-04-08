@@ -11,7 +11,7 @@
  */
 
 import {Collection} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useRef} from 'react';
 import {ScrollView} from './ScrollView';
@@ -82,6 +82,14 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
       }
     }
   }, [isLoading, onLoadMore, state]);
+
+  useLayoutEffect(() => {
+    if (!isLoading && onLoadMore && !state.isAnimating) {
+      if (state.contentSize.height <= state.virtualizer.visibleRect.height) {
+        onLoadMore();
+      }
+    }
+  }, [state.contentSize, state.isAnimating, state.virtualizer, onLoadMore, isLoading]);
 
   return (
     <ScrollView

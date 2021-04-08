@@ -752,7 +752,7 @@ storiesOf('Table', module)
   )
   .add(
     'loads more on scroll when contentSize.height < rect.height * 2',
-    () => <AsyncServerFilterTable height={300} />,
+    () => <AsyncServerFilterTable height={500} />,
     {chromatic: {disable: true}}
   );
 
