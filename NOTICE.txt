@@ -127,3 +127,22 @@ This codebase contains a portion of code that vuejs adapted from jest-dom which 
     * https://github.com/testing-library/jest-dom/blob/main/LICENSE
 
 ------------------------------------------------------------------------------
+
+This codebase contains contains a modified portion of Bang's RGB color names (678 colors)
+
+* SOURCE:
+    * http://www.procato.com/rgb+index/?css
+    * Tue, 06 Apr 2021 22:24:36 +0200
+
+* LICENSE:
+  These data are FREE and distributed in the hope that
+  they will be useful, but WITHOUT ANY WARRANTY
+
+  Permission is granted to copy, distribute
+  and/or modify the data under the terms of
+  the Creative Commons Attribution-ShareAlike 3.0.
+
+  Copyright 2021 Per Bang
+
+------------------------------------------------------------------------------
+

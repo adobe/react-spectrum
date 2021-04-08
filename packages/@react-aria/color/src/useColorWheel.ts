@@ -279,6 +279,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
         max: '360',
         step: String(step),
         'aria-valuetext': state.value.formatChannelValue('hue', locale),
+        title: state.value.getHueName(locale),
         disabled: isDisabled,
         value: `${state.value.getChannelValue('hue')}`,
         onChange: (e: ChangeEvent<HTMLInputElement>) => {

@@ -79,7 +79,20 @@ export interface Color {
   /**
    * Returns the color space, 'rgb', 'hsb' or 'hsl', for the current color.
    */
-  getColorSpace(): ColorFormat
+  getColorSpace(): ColorFormat,
+  /**
+   * Returns the difference between the color and a given color using the CIE2000 color difference algorithm, 
+   * http://en.wikipedia.org/wiki/Color_difference#CIEDE2000.
+   */
+  getDeltaE(color:Color): number,
+  /**
+   * Returns a localized name for the color, for use in visual or accessibility labels.
+   */
+  getColorName(locale: string): string,
+  /**
+   * Returns a localized name for the hue, for use in visual or accessibility labels.
+   */
+  getHueName(locale: string): string
 }
 
 export interface ColorFieldProps extends ValueBase<string | Color>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {

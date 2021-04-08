@@ -17,11 +17,13 @@ import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
+import {useLocale} from '@react-aria/i18n';
 
 storiesOf('ColorArea', module)
   .add(
     'default (HSB xChannel="saturation" yChannel="brightness")',
     () => {
+      let {locale} = useLocale();
       let [color, setColor] = useState(parseColor('hsb(0, 100%, 100%)'));
       return (<div role="group" aria-label="HSB Color Picker">
         <Flex gap="size-500">
@@ -50,8 +52,9 @@ storiesOf('ColorArea', module)
                 }} />
             </div>
             <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-              <div role="img" aria-label={`color swatch: ${color.toString('hsb')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+              <div role="img" aria-label={`color swatch: ${color.toString('hsb')}`} title={`${color.getColorName(locale)}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
               <Text>{color.toString('hsb')}</Text>
+              <Text>{color.getColorName(locale)}</Text>
             </Flex>
           </Flex>
         </Flex>
@@ -61,6 +64,7 @@ storiesOf('ColorArea', module)
   .add(
     'HSB xChannel="brightness" yChannel="saturation"',
     () => {
+      let {locale} = useLocale();
       let [color, setColor] = useState(parseColor('hsb(0, 100%, 100%)'));
       return (<div role="group" aria-label="HSB Color Picker">
         <Flex gap="size-500">
@@ -91,8 +95,9 @@ storiesOf('ColorArea', module)
                 yChannel={'saturation'} />
             </div>
             <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-              <div role="img" aria-label={`color swatch: ${color.toString('hsb')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+              <div role="img" aria-label={`color swatch: ${color.toString('hsb')}`} title={`${color.getColorName(locale)}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
               <Text>{color.toString('hsb')}</Text>
+              <Text>{color.getColorName(locale)}</Text>
             </Flex>
           </Flex>
         </Flex>
@@ -102,6 +107,7 @@ storiesOf('ColorArea', module)
   .add(
     'HSB xChannel="hue", yChannel="brightness"',
     () => {
+      let {locale} = useLocale();
       let [color, setColor] = useState(parseColor('hsb(0, 100%, 100%)'));
       return (<div role="group" aria-label="HSB Color Picker">
         <Flex gap="size-500" alignItems="center">
@@ -117,8 +123,9 @@ storiesOf('ColorArea', module)
             <ColorSlider value={color} onChange={setColor} channel={'saturation'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('hsb')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <div role="img" aria-label={`color swatch: ${color.toString('hsb')}`} title={`${color.getColorName(locale)}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
             <Text>{color.toString('hsb')}</Text>
+            <Text>{color.getColorName(locale)}</Text>
           </Flex>
         </Flex>
       </div>);
@@ -127,6 +134,7 @@ storiesOf('ColorArea', module)
   .add(
     'HSB xChannel="brightness", yChannel="hue"',
     () => {
+      let {locale} = useLocale();
       let [color, setColor] = useState(parseColor('hsb(0, 100%, 100%)'));
       return (<div role="group" aria-label="HSB Color Picker">
         <Flex gap="size-500" alignItems="center">
@@ -142,8 +150,9 @@ storiesOf('ColorArea', module)
             <ColorSlider value={color} onChange={setColor} channel={'saturation'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('hsb')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <div role="img" aria-label={`color swatch: ${color.toString('hsb')}`} title={`${color.getColorName(locale)}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
             <Text>{color.toString('hsb')}</Text>
+            <Text>{color.getColorName(locale)}</Text>
           </Flex>
         </Flex>
       </div>);
@@ -152,6 +161,7 @@ storiesOf('ColorArea', module)
   .add(
     'HSB xChannel="hue", yChannel="saturation"',
     () => {
+      let {locale} = useLocale();
       let [color, setColor] = useState(parseColor('hsb(0, 100%, 100%)'));
       return (<div role="group" aria-label="HSB Color Picker">
         <Flex gap="size-500" alignItems="center">
@@ -167,8 +177,9 @@ storiesOf('ColorArea', module)
             <ColorSlider value={color} onChange={setColor} channel={'brightness'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('hsb')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <div role="img" aria-label={`color swatch: ${color.toString('hsb')}`} title={`${color.getColorName(locale)}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
             <Text>{color.toString('hsb')}</Text>
+            <Text>{color.getColorName(locale)}</Text>
           </Flex>
         </Flex>
       </div>);
@@ -177,6 +188,7 @@ storiesOf('ColorArea', module)
   .add(
     'HSB xChannel="saturation", yChannel="hue"',
     () => {
+      let {locale} = useLocale();
       let [color, setColor] = useState(parseColor('hsb(0, 100%, 100%)'));
       return (<div role="group" aria-label="HSB Color Picker">
         <Flex gap="size-500" alignItems="center">
@@ -192,8 +204,9 @@ storiesOf('ColorArea', module)
             <ColorSlider value={color} onChange={setColor} channel={'brightness'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('hsb')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <div role="img" aria-label={`color swatch: ${color.toString('hsb')}`} title={`${color.getColorName(locale)}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
             <Text>{color.toString('hsb')}</Text>
+            <Text>{color.getColorName(locale)}</Text>
           </Flex>
         </Flex>
       </div>);
@@ -202,6 +215,7 @@ storiesOf('ColorArea', module)
   .add(
     'RGB xChannel="blue", yChannel="green"',
     () => {
+      let {locale} = useLocale();
       let [color, setColor] = useState(parseColor('#ff00ff'));
       return (<div role="group" aria-label="RGB Color Picker">
         <Flex gap="size-500" alignItems="center">
@@ -217,8 +231,36 @@ storiesOf('ColorArea', module)
             <ColorSlider value={color} onChange={setColor} channel={'red'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap="size-100" minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('rgb')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <div role="img" aria-label={`color swatch: ${color.toString('rgb')}`} title={`${color.getColorName(locale)}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
             <Text>{color.toString('hex')}</Text>
+            <Text>{color.getColorName(locale)}</Text>
+          </Flex>
+        </Flex>
+      </div>);
+    }
+  )
+  .add(
+    'RGB xChannel="green", yChannel="blue"',
+    () => {
+      let {locale} = useLocale();
+      let [color, setColor] = useState(parseColor('#ff00ff'));
+      return (<div role="group" aria-label="RGB Color Picker">
+        <Flex gap="size-500" alignItems="center">
+          <Flex direction="column" gap="size-50" width={'size-2000'}>
+            <ColorArea
+              value={color}
+              onChange={(e) => {
+                action('change')(e);
+                setColor(e);
+              }}
+              xChannel={'green'}
+              yChannel={'blue'} />
+            <ColorSlider value={color} onChange={setColor} channel={'red'} />
+          </Flex>
+          <Flex direction="column" alignItems="center" gap="size-100" minWidth={'size-2000'}>
+            <div role="img" aria-label={`color swatch: ${color.toString('rgb')}`} title={`${color.getColorName(locale)}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <Text>{color.toString('hex')}</Text>
+            <Text>{color.getColorName(locale)}</Text>
           </Flex>
         </Flex>
       </div>);
@@ -227,6 +269,7 @@ storiesOf('ColorArea', module)
   .add(
     'RGB xChannel="blue", yChannel="red"',
     () => {
+      let {locale} = useLocale();
       let [color, setColor] = useState(parseColor('#ff00ff'));
       return (<div role="group" aria-label="RGB Color Picker">
         <Flex gap="size-500" alignItems="center">
@@ -242,8 +285,36 @@ storiesOf('ColorArea', module)
             <ColorSlider value={color} onChange={setColor} channel={'green'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap="size-100" minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('rgb')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <div role="img" aria-label={`color swatch: ${color.toString('rgb')}`} title={`${color.getColorName(locale)}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
             <Text>{color.toString('hex')}</Text>
+            <Text>{color.getColorName(locale)}</Text>
+          </Flex>
+        </Flex>
+      </div>);
+    }
+  )
+  .add(
+    'RGB xChannel="red", yChannel="blue"',
+    () => {
+      let {locale} = useLocale();
+      let [color, setColor] = useState(parseColor('#ff00ff'));
+      return (<div role="group" aria-label="RGB Color Picker">
+        <Flex gap="size-500" alignItems="center">
+          <Flex direction="column" gap="size-50" width={'size-2000'}>
+            <ColorArea
+              value={color}
+              onChange={(e) => {
+                action('change')(e);
+                setColor(e);
+              }}
+              xChannel={'red'}
+              yChannel={'blue'} />
+            <ColorSlider value={color} onChange={setColor} channel={'green'} />
+          </Flex>
+          <Flex direction="column" alignItems="center" gap="size-100" minWidth={'size-2000'}>
+            <div role="img" aria-label={`color swatch: ${color.toString('rgb')}`} title={`${color.getColorName(locale)}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <Text>{color.toString('hex')}</Text>
+            <Text>{color.getColorName(locale)}</Text>
           </Flex>
         </Flex>
       </div>);
@@ -252,6 +323,7 @@ storiesOf('ColorArea', module)
   .add(
     'RGB xChannel="red", yChannel="green"',
     () => {
+      let {locale} = useLocale();
       let [color, setColor] = useState(parseColor('#ff00ff'));
       return (<div role="group" aria-label="RGB Color Picker">
         <Flex gap="size-500" alignItems="center">
@@ -267,8 +339,36 @@ storiesOf('ColorArea', module)
             <ColorSlider value={color} onChange={setColor} channel={'blue'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap="size-100" minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('rgb')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <div role="img" aria-label={`color swatch: ${color.toString('rgb')}`} title={`${color.getColorName(locale)}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
             <Text>{color.toString('hex')}</Text>
+            <Text>{color.getColorName(locale)}</Text>
+          </Flex>
+        </Flex>
+      </div>);
+    }
+  )
+  .add(
+    'RGB xChannel="green", yChannel="red"',
+    () => {
+      let {locale} = useLocale();
+      let [color, setColor] = useState(parseColor('#ff00ff'));
+      return (<div role="group" aria-label="RGB Color Picker">
+        <Flex gap="size-500" alignItems="center">
+          <Flex direction="column" gap="size-50" width={'size-2000'}>
+            <ColorArea
+              value={color}
+              onChange={(e) => {
+                action('change')(e);
+                setColor(e);
+              }}
+              xChannel={'green'}
+              yChannel={'red'} />
+            <ColorSlider value={color} onChange={setColor} channel={'blue'} />
+          </Flex>
+          <Flex direction="column" alignItems="center" gap="size-100" minWidth={'size-2000'}>
+            <div role="img" aria-label={`color swatch: ${color.toString('rgb')}`} title={`${color.getColorName(locale)}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <Text>{color.toString('hex')}</Text>
+            <Text>{color.getColorName(locale)}</Text>
           </Flex>
         </Flex>
       </div>);
@@ -277,6 +377,7 @@ storiesOf('ColorArea', module)
   .add(
     'HSL xChannel="saturation", yChannel="lightness"',
     () => {
+      let {locale} = useLocale();
       let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
       return (<div role="group" aria-label="HSL Color Picker">
         <Flex gap="size-500">
@@ -305,8 +406,9 @@ storiesOf('ColorArea', module)
                 }} />
             </div>
             <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-              <div role="img" aria-label={`color swatch: ${color.toString('hsl')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+              <div role="img" aria-label={`color swatch: ${color.toString('hsl')}`} title={`${color.getColorName(locale)}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
               <Text>{color.toString('hsl')}</Text>
+              <Text>{color.getColorName(locale)}</Text>
             </Flex>
           </Flex>
         </Flex>
@@ -316,6 +418,7 @@ storiesOf('ColorArea', module)
   .add(
     'HSL xChannel="lightness", yChannel="saturation"',
     () => {
+      let {locale} = useLocale();
       let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
       return (<div role="group" aria-label="HSL Color Picker">
         <Flex gap="size-500">
@@ -346,8 +449,9 @@ storiesOf('ColorArea', module)
                 yChannel={'saturation'} />
             </div>
             <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-              <div role="img" aria-label={`color swatch: ${color.toString('hsl')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+              <div role="img" aria-label={`color swatch: ${color.toString('hsl')}`} title={`${color.getColorName(locale)}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
               <Text>{color.toString('hsl')}</Text>
+              <Text>{color.getColorName(locale)}</Text>
             </Flex>
           </Flex>
         </Flex>
@@ -357,6 +461,7 @@ storiesOf('ColorArea', module)
   .add(
     'HSL xChannel="hue", yChannel="lightness"',
     () => {
+      let {locale} = useLocale();
       let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
       return (<div role="group" aria-label="HSL Color Picker">
         <Flex gap="size-500" alignItems="center">
@@ -372,8 +477,9 @@ storiesOf('ColorArea', module)
             <ColorSlider value={color} onChange={setColor} channel={'saturation'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('hsl')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <div role="img" aria-label={`color swatch: ${color.toString('hsl')}`} title={`${color.getColorName(locale)}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
             <Text>{color.toString('hsl')}</Text>
+            <Text>{color.getColorName(locale)}</Text>
           </Flex>
         </Flex>
       </div>);
@@ -382,6 +488,7 @@ storiesOf('ColorArea', module)
   .add(
     'HSL xChannel="lightness", yChannel="hue"',
     () => {
+      let {locale} = useLocale();
       let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
       return (<div role="group" aria-label="HSL Color Picker">
         <Flex gap="size-500" alignItems="center">
@@ -397,8 +504,9 @@ storiesOf('ColorArea', module)
             <ColorSlider value={color} onChange={setColor} channel={'saturation'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('hsl')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <div role="img" aria-label={`color swatch: ${color.toString('hsl')}`} title={`${color.getColorName(locale)}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
             <Text>{color.toString('hsl')}</Text>
+            <Text>{color.getColorName(locale)}</Text>
           </Flex>
         </Flex>
       </div>);
@@ -407,6 +515,7 @@ storiesOf('ColorArea', module)
   .add(
     'HSL xChannel="hue", yChannel="saturation"',
     () => {
+      let {locale} = useLocale();
       let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
       return (<div role="group" aria-label="HSL Color Picker">
         <Flex gap="size-500" alignItems="center">
@@ -422,8 +531,9 @@ storiesOf('ColorArea', module)
             <ColorSlider value={color} onChange={setColor} channel={'lightness'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('hsl')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <div role="img" aria-label={`color swatch: ${color.toString('hsl')}`} title={`${color.getColorName(locale)}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
             <Text>{color.toString('hsl')}</Text>
+            <Text>{color.getColorName(locale)}</Text>
           </Flex>
         </Flex>
       </div>);
@@ -432,6 +542,7 @@ storiesOf('ColorArea', module)
   .add(
     'HSL xChannel="saturation", yChannel="hue"',
     () => {
+      let {locale} = useLocale();
       let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
       return (<div role="group" aria-label="HSL Color Picker">
         <Flex gap="size-500" alignItems="center">
@@ -447,8 +558,9 @@ storiesOf('ColorArea', module)
             <ColorSlider value={color} onChange={setColor} channel={'lightness'} />
           </Flex>
           <Flex direction="column" alignItems="center" gap={'size-100'} minWidth={'size-2000'}>
-            <div role="img" aria-label={`color swatch: ${color.toString('hsl')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
+            <div role="img" aria-label={`color swatch: ${color.toString('hsl')}`} title={`${color.getColorName(locale)}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
             <Text>{color.toString('hsl')}</Text>
+            <Text>{color.getColorName(locale)}</Text>
           </Flex>
         </Flex>
       </div>);

@@ -341,7 +341,8 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
         ].join(', ');
         break;
     }
-    return title;
+    const colorName = state.value.getColorName(locale);
+    return colorName ? `${colorName}, ${title}` : title;
   };
 
   let generateBackground = () => {
@@ -353,9 +354,9 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
     let isHSL = state.value.getColorSpace() === 'hsl';
     let a = (zValue - zMin) / (zMax - zMin);
     let l = zValue;
-    let maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
+    let maskImage;
     switch (zChannel) {
-      case 'hue':
+      case 'hue': {
         dir = xChannel !== 'saturation';
         l = isHSL ? 50 : 100;
         background.gradientStyles = {
@@ -376,7 +377,8 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
           ].join(',')
         };
         break;
-      case 'saturation':
+      }
+      case 'saturation': {
         dir = xChannel === 'hue';
         background.gradientStyles = {
           background: [
@@ -400,7 +402,8 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
           ].join(',')
         };
         break;
-      case 'brightness':
+      }
+      case 'brightness': {
         dir = xChannel === 'hue';
         background.gradientStyles = {
           background: [
@@ -416,10 +419,11 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
           ].join(',')
         };
         break;
-      case 'lightness':
+      }
+      case 'lightness': {
         dir = xChannel === 'hue';
         background.gradientStyles = {
-          background: [
+          backgroundImage: [
             /* foreground gradient represents the color saturation from 0 to 100,
             adjusted by the lightness value */
             `linear-gradient(to ${orientation[Number(!dir)]},hsl(0,0%,${l}%),hsla(0,0%,${l}%,0))`,
@@ -429,54 +433,61 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
           ].join(',')
         };
         break;
-      case 'red':
+      }
+      case 'red': {
         dir = xChannel === 'green';
+        maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
         background.colorAreaStyles = {
           /* the background represents the green channel as a linear gradient from min to max,
           with the blue channel minimized, adjusted by the red channel value. */
-          background: `linear-gradient(to ${orientation[Number(dir)]},rgb(${zValue},0,0),rgb(${zValue},255,0))`
+          backgroundImage: `linear-gradient(to ${orientation[Number(dir)]},rgb(${zValue},0,0),rgb(${zValue},255,0))`
         };
         background.gradientStyles = {
           /* the foreground represents the green channel as a linear gradient from min to max,
           with the blue channel maximized, adjusted by the red channel value. */
-          background: `linear-gradient(to ${orientation[Number(dir)]},rgba(${zValue},0,255),rgb(${zValue},255,255))`,
+          backgroundImage: `linear-gradient(to ${orientation[Number(dir)]},rgb(${zValue},0,255),rgb(${zValue},255,255))`,
           /* the foreground gradient is masked by a perpendicular linear gradient from black to white */
-          maskImage,
-          'WebkitMaskImage': maskImage
+          'WebkitMaskImage': maskImage,
+          maskImage
         };
         break;
-      case 'green':
+      }
+      case 'green': {
         dir = xChannel === 'red';
+        maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
         background.colorAreaStyles = {
           /* the background represents the red channel as a linear gradient from min to max,
           with the blue channel minimized, adjusted by the green channel value. */
-          background: `linear-gradient(to ${orientation[Number(dir)]},rgb(0,${zValue},0),rgb(255,${zValue},0))`
+          backgroundImage: `linear-gradient(to ${orientation[Number(dir)]},rgb(0,${zValue},0),rgb(255,${zValue},0))`
         };
         background.gradientStyles = {
           /* the foreground represents the red channel as a linear gradient from min to max,
           with the blue channel maximized, adjusted by the green channel value. */
-          background: `linear-gradient(to ${orientation[Number(dir)]},rgba(0,${zValue},255),rgb(255,${zValue},255))`,
+          backgroundImage: `linear-gradient(to ${orientation[Number(dir)]},rgb(0,${zValue},255),rgb(255,${zValue},255))`,
           /* the foreground gradient is masked by a perpendicular linear gradient from black to white */
-          maskImage,
-          'WebkitMaskImage': maskImage
+          'WebkitMaskImage': maskImage,
+          maskImage
         };
         break;
-      case 'blue':
+      }
+      case 'blue': {
         dir = xChannel === 'red';
+        maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
         background.colorAreaStyles = {
           /* the background represents the red channel as a linear gradient from min to max,
           with the green channel minimized, adjusted by the blue channel value. */
-          background: `linear-gradient(to ${orientation[Number(dir)]},rgb(0,0,${zValue}),rgb(255,0,${zValue}))`
+          backgroundImage: `linear-gradient(to ${orientation[Number(dir)]},rgb(0,0,${zValue}),rgb(255,0,${zValue}))`
         };
         background.gradientStyles = {
           /* the foreground represents the red channel as a linear gradient from min to max,
           with the green channel maximized, adjusted by the blue channel value. */
-          background: `linear-gradient(to ${orientation[Number(dir)]},rgba(0,255,${zValue}),rgb(255,255,${zValue}))`,
+          backgroundImage: `linear-gradient(to ${orientation[Number(dir)]},rgb(0,255,${zValue}),rgb(255,255,${zValue}))`,
           /* the foreground gradient is masked by a perpendicular linear gradient from black to white */
-          maskImage,
-          'WebkitMaskImage': maskImage
+          'WebkitMaskImage': maskImage,
+          maskImage
         };
         break;
+      }
     }
     return background;
   };

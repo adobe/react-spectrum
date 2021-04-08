@@ -25,7 +25,8 @@
     "@react-stately/slider": "^3.0.2",
     "@react-stately/utils": "^3.2.1",
     "@react-types/color": "3.0.0-beta.1",
-    "@react-types/numberfield": "^3.0.0"
+    "@react-types/numberfield": "^3.0.0",
+    "delta-e": "^0.0.8"
   },
   "peerDependencies": {
     "react": "^16.8.0"
