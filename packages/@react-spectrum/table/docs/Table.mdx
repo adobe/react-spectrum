@@ -1,0 +1,619 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/table';
+import tableTypes from 'docs:@react-types/table/src/index.d.ts';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/table/package.json';
+
+```jsx import
+import {ActionButton} from '@react-spectrum/button';
+import Add from '@spectrum-icons/workflow/Add';
+import {Cell, Column, Row, Table, TableBody, TableHeader} from '@react-spectrum/table';
+import {Flex} from '@react-spectrum/layout';
+```
+
+---
+category: Table
+keywords: [table, grid]
+---
+
+# Table
+
+<p>{docs.exports.Table.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Cell', 'Column', 'Row', 'Table', 'TableBody', 'TableHeader']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/table/'}
+  ]} />
+
+## Example
+```tsx example
+<Flex height="size-2000" width="size-6000">
+  <Table aria-label="Example table with static contents" width="100%" height="100%">
+    <TableHeader>
+      <Column>Name</Column>
+      <Column>Date Modified</Column>
+      <Column>Type</Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>Games</Cell>
+        <Cell>6/7/2020</Cell>
+        <Cell>File folder</Cell>
+      </Row>
+      <Row>
+        <Cell>Program Files</Cell>
+        <Cell>4/7/2021</Cell>
+        <Cell>File folder</Cell>
+      </Row>
+      <Row>
+        <Cell>bootmgr</Cell>
+        <Cell>11/20/2010</Cell>
+        <Cell>System file</Cell>
+      </Row>
+      <Row>
+        <Cell>log.txt</Cell>
+        <Cell>1/18/2016</Cell>
+        <Cell>Text Document</Cell>
+      </Row>
+    </TableBody>
+  </Table>
+</Flex>
+```
+
+## Content
+Table expects a TableHeader and a TableBody as children. In turn, TableHeader and TableBody follow the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections.
+The TableHeader accepts either static Columns or a `columns` prop with a renderer function for dynamic rendering. Similarly, TableBody accepts either static Rows or a `items` prop with a renderer function.
+Row follows the same pattern, accepting Cells as children instead.
+
+Basic usage of Table, seen in the example above, shows multiple Columns and Rows populated with strings and Cells respectively. Static collections, as in this example, can be used when the contents of the Table is known ahead of time.
+
+Dynamic collections, as shown below, can be used when the options come from an external data source such as an API call, or update over time. Providing the data in this way allows Table to automatically cache the rendering of each item,
+which dramatically improves performance. Be sure to match each Column's key with an identical property in the Row object.
+
+```tsx example
+function Example() {
+  let columns = [
+    {name: 'Name', uid: 'name'},
+    {name: 'Date Modified', uid: 'date'},
+    {name: 'Type', uid: 'type'}
+  ];
+
+  let rows = [
+    {id: '1', name: 'Games', date: '6/7/2020', type: 'File folder'},
+    {id: '2', name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+    {id: '3', name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+    {id: '4', name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+  ];
+
+  return (
+    <Flex height="size-2000" width="size-6000">
+      <Table aria-label="Example table with dynamic content" width="100%" height="100%">
+        <TableHeader columns={columns}>
+          {column => (
+            <Column key={column.uid}>
+              {column.name}
+            </Column>
+          )}
+        </TableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <Row key={item.id}>
+              {/* Note this key is equal to the key of the the column,
+              not the key set on the Row prior */}
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+    </Flex>
+  );
+}
+```
+
+### Internationalization
+To internationalize a Table, all text content within the Table should be replaced with localized strings. This includes all `aria-labels` provided to the Table, Columns, Rows, and Cells.
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of Table is automatically flipped.
+
+## Labeling
+### Accessibility
+An `aria-label` must be provided to the Table for accessibility. If the Table is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+
+## Asynchronous loading
+Table supports loading data asynchronously, and will display a progress circle reflecting the current load state,
+set by the `isLoading` prop. It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle loading the data.
+See the docs for more information.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+function AsyncTable() {
+  let columns = [
+    {name: 'Name', key: 'name'},
+    {name: 'Height', key: 'height'},
+    {name: 'Mass', key: 'mass'}
+  ];
+
+  let list = useAsyncList({
+    getKey: (item) => item.name,
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <Flex height="size-2000" width="size-6000">
+      <Table aria-label="example async loading table" height="100%" width="100%">
+        <TableHeader columns={columns}>
+          {(column) => (
+            <Column>{column.name}</Column>
+          )}
+        </TableHeader>
+        <TableBody
+          items={list.items}
+          isLoading={list.isLoading}
+          onLoadMore={list.loadMore}>
+          {(item) => (
+            <Row key={item.name}>{(key) => <Cell>{item[key]}</Cell>}</Row>
+          )}
+        </TableBody>
+      </Table>
+    </Flex>
+  );
+}
+```
+
+## Events
+
+### Selection
+Table supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
+Use `defaultSelectedKeys` to provide a default set of selected rows. Note that the  value of the selected keys must match the `key` prop of the Row.
+
+The example below demonstrates how one would use `defaultSelectedKeys`.
+
+```tsx example
+<Flex height="size-2000" width="size-6000">
+  <Table aria-label="Example table with single selection (uncontrolled)" width="100%" height="100%" selectionMode="single" defaultSelectedKeys={['2']}>
+    <TableHeader>
+      <Column>Name</Column>
+      <Column>Type</Column>
+      <Column>Level</Column>
+    </TableHeader>
+    <TableBody>
+      <Row key="1">
+        <Cell>Charizard</Cell>
+        <Cell>Fire, Flying</Cell>
+        <Cell>67</Cell>
+      </Row>
+      <Row key="2">
+        <Cell>Blastoise</Cell>
+        <Cell>Water</Cell>
+        <Cell>56</Cell>
+      </Row>
+      <Row key="3">
+        <Cell>Venusaur</Cell>
+        <Cell>Grass, Poison</Cell>
+        <Cell>83</Cell>
+      </Row>
+      <Row key="4">
+        <Cell>Pikachu</Cell>
+        <Cell>Electric</Cell>
+        <Cell>100</Cell>
+      </Row>
+    </TableBody>
+  </Table>
+</Flex>
+```
+
+To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `key` prop from the selected row will
+be passed into the callback when the row is pressed, allowing you to update `selectedKeys` accordingly.
+
+Here is how you would control selection for the above example.
+
+```tsx example export=true
+function PokemonTable(props) {
+  let columns = [
+    {name: 'Name', uid: 'name'},
+    {name: 'Type', uid: 'type'},
+    {name: 'Level', uid: 'level'}
+  ];
+
+  let rows = [
+    {id: '1', name: 'Charizard', type: 'Fire, Flying', level: '67'},
+    {id: '2', name: 'Blastoise', type: 'Water', level: '56'},
+    {id: '3', name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+    {id: '4', name: 'Pikachu', type: 'Electric', level: '100'}
+  ];
+
+  let [selected, setSelected] = React.useState(new Set(['2']));
+
+  return (
+    <Flex height="size-2000" width="size-6000">
+      <Table aria-label="Example table with single selection (controlled)" width="100%" height="100%" selectionMode="single" selectedKeys={selected} onSelectionChange={setSelected} {...props}>
+        <TableHeader columns={columns}>
+          {column => (
+            <Column key={column.uid}>
+              {column.name}
+            </Column>
+          )}
+        </TableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <Row key={item.id}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+    </Flex>
+  );
+}
+```
+
+Multiple selection can be enabled by setting `selectionMode` to `multiple`.
+
+```tsx example
+// Using the same table as above
+<PokemonTable selectionMode="multiple" />
+```
+
+Table also supports a `disallowEmptySelection` prop which forces the user to have at least one row in the Table selected at all times.
+
+```tsx example
+// Using the same table as above
+<PokemonTable selectionMode="single" disallowEmptySelection />
+```
+
+### Sorting
+Table supports sorting its data when a column header is pressed. To designate that a Column should support sorting, provide it with
+the `allowsSorting` prop. The Table accepts a `SortDescriptor` prop that defines the current column key to sort by and the sort direction (ascending/descending).
+When the user presses a column's sort icon, the column's key and sort direction is passed into the `onSortChange` callback, allowing you to update
+the `SortDescriptor` appropriately.
+
+This example performs client side sorting by passing a `sort` function to the [useAsyncList](../react-stately/useAsyncList.html) hook.
+See the docs for more information.
+
+```tsx example
+function AsyncSortTable() {
+  let columns = [
+    {name: 'Name', key: 'name'},
+    {name: 'Height', key: 'height'},
+    {name: 'Mass', key: 'mass'}
+  ];
+
+  let list = useAsyncList({
+    getKey: (item) => item.name,
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    },
+    async sort({items, sortDescriptor}) {
+      return {
+        items: items.slice().sort((a, b) => {
+          let cmp = a[sortDescriptor.column] < b[sortDescriptor.column] ? -1 : 1;
+          if (sortDescriptor.direction === 'descending') {
+            cmp *= -1;
+          }
+          return cmp;
+        })
+      };
+    }
+  });
+
+  return (
+    <Flex height="size-2000" width="size-6000">
+      <Table aria-label="Example table with client side sorting" height="100%" width="100%" sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
+        <TableHeader columns={columns}>
+          {(column) => (
+            <Column allowsSorting>{column.name}</Column>
+          )}
+        </TableHeader>
+        <TableBody
+          items={list.items}
+          isLoading={list.isLoading}
+          onLoadMore={list.loadMore}>
+          {(item) => (
+            <Row key={item.name}>{(key) => <Cell>{item[key]}</Cell>}</Row>
+          )}
+        </TableBody>
+      </Table>
+    </Flex>
+  );
+}
+```
+
+## Props
+
+### Table props
+
+<PropTable component={{
+  props: {
+    properties: Object.fromEntries(Object.entries(tableTypes.exports.SpectrumTableProps.properties))
+  }
+}} links={tableTypes.links} />
+
+### Table header props
+
+<PropTable component={{
+  props: {
+    properties: Object.fromEntries(Object.entries(tableTypes.exports.TableHeaderProps.properties))
+  }
+}} links={tableTypes.links} />
+
+// TODO maybe don't need this, explain through examples?
+
+### Column props
+
+<PropTable component={{
+  props: {
+    properties: Object.fromEntries(Object.entries(tableTypes.exports.SpectrumColumnProps.properties))
+  }
+}} links={tableTypes.links} />
+
+// TODO maybe don't need this, explain through examples? Also might need to comment out some of the column types if they aren't supported yet
+
+### Table body props
+
+<PropTable component={{
+  props: {
+    properties: Object.fromEntries(Object.entries(tableTypes.exports.TableBodyProps.properties))
+  }
+}} links={tableTypes.links} />
+
+// TODO maybe don't need this, explain through examples?
+
+### Row props
+
+<PropTable component={{
+  props: {
+    properties: Object.fromEntries(Object.entries(tableTypes.exports.RowProps.properties))
+  }
+}} links={tableTypes.links} />
+
+// TODO maybe don't need this, explain through examples?
+
+### Cell props
+
+<PropTable component={{
+  props: {
+    properties: Object.fromEntries(Object.entries(tableTypes.exports.CellProps.properties))
+  }
+}} links={tableTypes.links} />
+
+// TODO maybe don't need this, explain through examples?
+
+
+## Visual options
+
+### Hide header
+Individual column headers can be hidden by providing the `hideHeader` prop to the Column. A tooltip is rendered when the column header is focused
+to compensate for the lack of a visual title.
+
+```tsx example export=true
+function TableExample(props) {
+  let columns = [
+    {name: 'First Name', key: 'firstName'},
+    {name: 'Last Name', key: 'lastName'},
+    {name: 'Add Info', key: 'addInfo'},
+    {name: 'Age', key: 'age'}
+  ];
+
+  let rows = [
+    {id: '1', firstName: 'John', lastName: 'Doe', age: '45'},
+    {id: '2', firstName: 'Jane', lastName: 'Doe', age: '37'},
+    {id: '3', firstName: 'Joe', lastName: 'Schmoe', age: '67'},
+    {id: '4', firstName: 'Joe', lastName: 'Bloggs', age: '12'},
+    {id: '5', firstName: 'Longgggg Wrapping', lastName: 'Name', age: '56'}
+  ];
+
+  return (
+    <Flex height="size-2000" width="size-6000">
+      <Table aria-label="Example table with hidden headers" width="100%" height="100%" {...props}>
+        <TableHeader columns={columns}>
+          {column => (
+            <Column
+              hideHeader={column.key === 'addInfo'}
+              align={column.key === 'age' ? 'end' : 'start'}
+              showDivider={column.key === 'addInfo'}>
+              {column.name}
+            </Column>
+          )}
+        </TableHeader>
+        <TableBody items={rows}>
+          {item =>
+            (<Row key={item.id}>
+              {key =>
+                key === 'addInfo'
+                ? <Cell><ActionButton isQuiet><Add /></ActionButton></Cell>
+                : <Cell>{item[key]}</Cell>
+              }
+            </Row>)
+          }
+        </TableBody>
+      </Table>
+    </Flex>
+  );
+}
+```
+
+### Quiet
+[View guidelines](https://spectrum.adobe.com/page/table/#Standard-or-quiet)
+
+```tsx example
+// Using same setup as hide header example
+<TableExample isQuiet />
+```
+
+### Disabled
+Use the `disabledKeys` prop to specify which rows to disable in the Table.
+
+```tsx example
+// Using same setup as hide header example
+<TableExample disabledKeys={['2', '3']} />
+```
+
+### Density
+The amount of vertical padding that each row contains can be modified by providing the `density` prop.
+
+```tsx example
+// Using same setup as hide header example
+<Flex direction="column" gap="size-300">
+  <TableExample density="compact" />
+  <TableExample density="spacious" />
+</Flex>
+```
+
+### Overflow mode
+By default, text content that overflows its table cell will be truncated. You can have it wrap instead by passing `overflowMode="wrap"`
+to the Table.
+
+```tsx example
+// Using same setup as hide header example
+<TableExample overflowMode="wrap" />
+```
+
+### Column alignment
+[View guidelines](https://spectrum.adobe.com/page/table/#Usage-guidelines)
+
+```tsx example
+<Flex height="size-2000" width="size-6000">
+  <Table aria-label="Example table for column alignment" width="100%" height="100%">
+    <TableHeader>
+      <Column align="start">Name</Column>
+      <Column align="center">Type</Column>
+      <Column align="end">Size</Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>2021406_Proposal</Cell>
+        <Cell>PDF</Cell>
+        <Cell>86 KB</Cell>
+      </Row>
+      <Row>
+        <Cell>Budget Template</Cell>
+        <Cell>XLS</Cell>
+        <Cell>120 KB</Cell>
+      </Row>
+      <Row>
+        <Cell>Onboarding</Cell>
+        <Cell>PPT</Cell>
+        <Cell>472 KB</Cell>
+      </Row>
+    </TableBody>
+  </Table>
+</Flex>
+```
+
+### Empty state
+Use the `renderEmptyState` prop to customize what the Table will display if there are no rows provided.
+
+```tsx example
+import {Content} from '@react-spectrum/view';
+import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import {Heading} from '@react-spectrum/text';
+
+function renderEmptyState() {
+  return (
+    <IllustratedMessage>
+      <svg width="150" height="103" viewBox="0 0 150 103">
+        <path d="M133.7,8.5h-118c-1.9,0-3.5,1.6-3.5,3.5v27c0,0.8,0.7,1.5,1.5,1.5s1.5-0.7,1.5-1.5V23.5h119V92c0,0.3-0.2,0.5-0.5,0.5h-118c-0.3,0-0.5-0.2-0.5-0.5V69c0-0.8-0.7-1.5-1.5-1.5s-1.5,0.7-1.5,1.5v23c0,1.9,1.6,3.5,3.5,3.5h118c1.9,0,3.5-1.6,3.5-3.5V12C137.2,10.1,135.6,8.5,133.7,8.5z M15.2,21.5V12c0-0.3,0.2-0.5,0.5-0.5h118c0.3,0,0.5,0.2,0.5,0.5v9.5H15.2z M32.6,16.5c0,0.6-0.4,1-1,1h-10c-0.6,0-1-0.4-1-1s0.4-1,1-1h10C32.2,15.5,32.6,15.9,32.6,16.5z M13.6,56.1l-8.6,8.5C4.8,65,4.4,65.1,4,65.1c-0.4,0-0.8-0.1-1.1-0.4c-0.6-0.6-0.6-1.5,0-2.1l8.6-8.5l-8.6-8.5c-0.6-0.6-0.6-1.5,0-2.1c0.6-0.6,1.5-0.6,2.1,0l8.6,8.5l8.6-8.5c0.6-0.6,1.5-0.6,2.1,0c0.6,0.6,0.6,1.5,0,2.1L15.8,54l8.6,8.5c0.6,0.6,0.6,1.5,0,2.1c-0.3,0.3-0.7,0.4-1.1,0.4c-0.4,0-0.8-0.1-1.1-0.4L13.6,56.1z" />
+      </svg>
+      <Heading>No results</Heading>
+      <Content>No results found</Content>
+    </IllustratedMessage>
+  );
+}
+
+<Flex height="size-6000" width="size-6000">
+  <Table aria-label="Example table for empty state" width="100%" height="100%" renderEmptyState={renderEmptyState}>
+    <TableHeader>
+      <Column>Name</Column>
+      <Column>Type</Column>
+      <Column>Size</Column>
+    </TableHeader>
+    <TableBody>
+      {[]}
+    </TableBody>
+  </Table>
+</Flex>
+```
+
+### Nested columns
+// TODO add description here
+
+```tsx example
+<Flex height="size-2000" width="size-6000">
+  <Table aria-label="Example table for column alignment" width="100%" height="100%">
+    <TableHeader>
+      <Column title="OS (C:)">
+        <Column align="start">Name</Column>
+        <Column align="center">Type</Column>
+        <Column align="end">Size</Column>
+      </Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>2021406_Proposal</Cell>
+        <Cell>PDF</Cell>
+        <Cell>86 KB</Cell>
+      </Row>
+      <Row>
+        <Cell>Budget Template</Cell>
+        <Cell>XLS</Cell>
+        <Cell>120 KB</Cell>
+      </Row>
+      <Row>
+        <Cell>Onboarding</Cell>
+        <Cell>PPT</Cell>
+        <Cell>472 KB</Cell>
+      </Row>
+    </TableBody>
+  </Table>
+</Flex>
+```
+
+### Focusable cells
+// TODO add description here
+
+### Column widths
+// TODO add description here
+
+### Column dividers
+[View guidelines](https://spectrum.adobe.com/page/table/#Column-dividers)
+
+
+TODO: // Other column specific props like isRowHeader labeling
+TODO: // Modify all numeric columns to align end properly
