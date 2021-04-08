@@ -10,19 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DropOperation, DroppableCollectionProps, DropTarget, ItemDropTarget, Node} from '@react-types/shared';
+import {Collection, DragTypes, DropOperation, DroppableCollectionProps, DropTarget, ItemDropTarget, Node} from '@react-types/shared';
+import {MultipleSelectionManager} from '@react-stately/selection';
 import {useState} from 'react';
 
 interface DroppableCollectionStateOptions extends DroppableCollectionProps {
-  collection: Collection<Node<unknown>>
+  collection: Collection<Node<unknown>>,
+  selectionManager: MultipleSelectionManager
 }
 
 export interface DroppableCollectionState {
   collection: Collection<Node<unknown>>,
+  selectionManager: MultipleSelectionManager,
   target: DropTarget,
   setTarget(target: DropTarget): void,
   isDropTarget(target: DropTarget): boolean,
-  getDropOperation(target: DropTarget, types: Set<string>, allowedOperations: DropOperation[]): DropOperation
+  getDropOperation(target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]): DropOperation
 }
 
 export function useDroppableCollectionState(props: DroppableCollectionStateOptions): DroppableCollectionState  {
@@ -40,6 +43,7 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
 
   return {
     collection: props.collection,
+    selectionManager: props.selectionManager,
     target,
     setTarget(newTarget) {
       if (this.isDropTarget(newTarget)) {
