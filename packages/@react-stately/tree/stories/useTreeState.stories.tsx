@@ -13,19 +13,19 @@
 import {Item} from '@react-stately/collections';
 import {Node} from '@react-types/shared';
 import React, {Key, useMemo, useRef} from 'react';
-import {storiesOf} from '@storybook/react';
 import {TreeCollection} from '../src/TreeCollection';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
 import {useTreeState} from '../';
 
-storiesOf('useTreeState', module)
-  .add(
-    'keyboard navigation',
-    () => render()
-  );
+export default {
+  title: 'useTreeState'
+};
 
-function render(props = {}) {
+export const KeyboardNavigation = () => <TreeExample />;
+
+
+function TreeExample(props = {}) {
   return (
     <Tree {...props}>
       <Item key="1" title="Animals">
