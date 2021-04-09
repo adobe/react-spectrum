@@ -102,6 +102,7 @@ export function VirtualizedListBox(props) {
 
   let dropState = useDroppableCollectionState({
     collection: state.collection,
+    selectionManager: state.selectionManager,
     getDropOperation(target, types, allowedOperations) {
       if (props.accept) {
         // Don't accept if types includes both items and folders.
