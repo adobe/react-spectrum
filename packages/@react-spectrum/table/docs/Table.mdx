@@ -201,7 +201,7 @@ function AsyncTable() {
   });
 
   return (
-    <Flex height="size-2000" flexGrow={1} maxWidth="size-4600">
+    <Flex height="size-2000" flexGrow={1} maxWidth="size-6000">
       <Table aria-label="example async loading table" height="100%" width="100%">
         <TableHeader columns={columns}>
           {(column) => (
@@ -372,7 +372,7 @@ function AsyncSortTable() {
   });
 
   return (
-    <Flex height="size-2000" flexGrow={1} maxWidth="size-4600">
+    <Flex height="size-2000" flexGrow={1} maxWidth="size-6000">
       <Table aria-label="Example table with client side sorting" height="100%" width="100%" sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
         <TableHeader columns={columns}>
           {(column) => (
@@ -520,7 +520,7 @@ import Delete from '@spectrum-icons/workflow/Delete';
 Columns support three different width props: `minWidth`, `width`, and `maxWidth`.
 
 ```tsx example
-<Flex flexGrow={1} maxWidth="size-6000">
+<Flex flexGrow={1} maxWidth="size-4600">
   <Table aria-label="Example table for column widths" width="100%" height="100%">
     <TableHeader>
       <Column maxWidth={300} align="start">Name</Column>
@@ -557,7 +557,7 @@ Columns support three different width props: `minWidth`, `width`, and `maxWidth`
 [View guidelines](https://spectrum.adobe.com/page/table/#Column-dividers)
 
 ```tsx example
-<Flex flexGrow={1} maxWidth="size-6000">
+<Flex flexGrow={1} maxWidth="size-4600">
   <Table aria-label="Example table for column dividers" width="100%" height="100%">
     <TableHeader>
       <Column align="start" showDivider>Name</Column>
@@ -594,7 +594,7 @@ Columns support three different width props: `minWidth`, `width`, and `maxWidth`
 [View guidelines](https://spectrum.adobe.com/page/table/#Usage-guidelines)
 
 ```tsx example
-<Flex flexGrow={1} maxWidth="size-6000">
+<Flex flexGrow={1} maxWidth="size-4600">
   <Table aria-label="Example table for column alignment" width="100%" height="100%">
     <TableHeader>
       <Column align="start">Name</Column>
@@ -631,7 +631,7 @@ Columns support three different width props: `minWidth`, `width`, and `maxWidth`
 Table supports nesting columns, allowing you to render "tiered" column headers.
 
 ```tsx example
-<Flex flexGrow={1} maxWidth="size-6000">
+<Flex flexGrow={1} maxWidth="size-4600">
   <Table aria-label="Example table for nested columns" width="100%" height="100%">
     <TableHeader>
       <Column title="OS (C:)">
