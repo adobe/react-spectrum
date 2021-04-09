@@ -45,7 +45,6 @@ export function useListLayout<T>(state: ListState<T>) {
 
 function List<T extends object>(props, ref: DOMRef<HTMLDivElement>) {
   let {
-    shouldUseVirtualFocus,
     transitionDuration = 0
   } = props;
   let domRef = useDOMRef(ref);
@@ -116,17 +115,28 @@ function List<T extends object>(props, ref: DOMRef<HTMLDivElement>) {
         layout={layout}
         collection={collection}
         renderWrapper={renderWrapper}
-        transitionDuration={transitionDuration}
-        shouldUseVirtualFocus={shouldUseVirtualFocus}>
+        transitionDuration={transitionDuration}>
         {(type, item) => {
           if (type === 'item')  {
             return (
-              <ListItem item={item} shouldUseVirtualFocus={shouldUseVirtualFocus} />
+              <ListItem item={item} />
             );
           } else if (type === 'loader') {
             return (<div>wait circle</div>);
           } else if (type === 'placeholder') {
-            return (<div>placeholder</div>);
+            let emptyState = props.renderEmptyState ? props.renderEmptyState() : null;
+            if (emptyState == null) {
+              return null;
+            }
+
+            return (
+              <div
+                // aria-selected isn't needed here since this option is not selectable.
+                // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
+                role="option">
+                {emptyState}
+              </div>
+            );
           }
 
         }}

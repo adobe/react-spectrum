@@ -164,10 +164,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
     let layoutNode = this.buildNode(node, x, y);
     layoutNode.node = node;
-    // if (layoutNode.node.type === 'row') {
-    // layoutNode.node = node.childNodes[0].rendered;
-    // console.log('child nodes', )
-    // }
 
     layoutNode.layoutInfo.parentKey = node.parentKey || null;
     this.layoutInfos.set(layoutNode.layoutInfo.key, layoutNode.layoutInfo);
