@@ -105,14 +105,14 @@ export interface ListData<T> {
    * @param key - The key of the item to move the items before.
    * @param keys - The keys of the items to move.
    */
-  moveBefore(key: Key, ...keys: Key[]): void,
+  moveBefore(key: Key, keys: Key[]): void,
 
   /**
    * Moves one or more items after a given key.
    * @param key - The key of the item to move the items after.
    * @param keys - The keys of the items to move.
    */
-  moveAfter(key: Key, ...keys: Key[]): void,
+  moveAfter(key: Key, keys: Key[]): void,
 
   /**
    * Updates an item in the list.
@@ -258,7 +258,7 @@ export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (
         };
       });
     },
-    moveBefore(key: Key, ...keys: Key[]) {
+    moveBefore(key: Key, keys: Key[]) {
       dispatch(state => {
         let toIndex = state.items.findIndex(item => getKey(item) === key);
         if (toIndex === -1) {
@@ -270,7 +270,7 @@ export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (
         return move(state, indices, toIndex);
       });
     },
-    moveAfter(key: Key, ...keys: Key[]) {
+    moveAfter(key: Key, keys: Key[]) {
       dispatch(state => {
         let toIndex = state.items.findIndex(item => getKey(item) === key);
         if (toIndex === -1) {
