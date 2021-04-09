@@ -20,7 +20,8 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef, useState
+  useRef, 
+  useState
 } from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
