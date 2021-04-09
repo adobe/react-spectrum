@@ -78,11 +78,11 @@ storiesOf('NumberField', module)
   )
   .add(
     'quiet disabled',
-    () => render({isQuiet: true, isDisabled: true})
+    () => render({isQuiet: true, isDisabled: true, defaultValue: 10})
   )
   .add(
     'quiet readonly',
-    () => render({isQuiet: true, isReadOnly: true})
+    () => render({isQuiet: true, isReadOnly: true, defaultValue: 10})
   )
   .add(
     'validationState: invalid',
@@ -165,6 +165,14 @@ storiesOf('NumberField', module)
     () => renderNoLabel({isRequired: true, 'aria-label': 'Width'})
   )
   .add(
+    'quiet no visible label',
+    () => renderNoLabel({isQuiet: true, isRequired: true, 'aria-label': 'Width'})
+  )
+  .add(
+    'quiet no visible label hidestepper',
+    () => renderNoLabel({hideStepper: true, isQuiet: true, isRequired: true, 'aria-label': 'Width'})
+  )
+  .add(
     'aria-labelledby',
     () => (
       <>
@@ -176,6 +184,10 @@ storiesOf('NumberField', module)
   .add(
     'custom width',
     () => render({width: 'size-3000'})
+  )
+  .add(
+    'quiet custom width',
+    () => render({isQuiet: true, width: 'size-3000'})
   )
   .add(
     'custom width no visible label',

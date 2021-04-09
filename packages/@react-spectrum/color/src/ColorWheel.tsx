@@ -92,7 +92,7 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
       }}>
       <div {...trackProps} className={classNames(styles, 'spectrum-ColorWheel-gradient')} />
       <ColorThumb
-        value={state.value}
+        value={state.getDisplayColor()}
         isFocused={isFocusVisible}
         isDisabled={isDisabled}
         isDragging={state.isDragging}
@@ -104,5 +104,8 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
   );
 }
 
+/**
+ * ColorWheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
+ */
 let _ColorWheel = React.forwardRef(ColorWheel);
 export {_ColorWheel as ColorWheel};
