@@ -40,7 +40,7 @@ keywords: [table, grid]
 
 ## Example
 ```tsx example
-<Flex height="size-2000" width="size-6000">
+<Flex width="size-6000">
   <Table aria-label="Example table with static contents" width="100%" height="100%">
     <TableHeader>
       <Column>Name</Column>
@@ -99,7 +99,7 @@ function Example() {
   ];
 
   return (
-    <Flex height="size-2000" width="size-6000">
+    <Flex width="size-6000">
       <Table aria-label="Example table with dynamic content" width="100%" height="100%">
         <TableHeader columns={columns}>
           {column => (
@@ -124,12 +124,46 @@ function Example() {
 ```
 
 ### Internationalization
-To internationalize a Table, all text content within the Table should be replaced with localized strings. This includes all `aria-labels` provided to the Table, Columns, Rows, and Cells.
+To internationalize a Table, all text content within the Table should be replaced with localized strings. This includes the `aria-label` provided to the Table if any.
 For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of Table is automatically flipped.
 
 ## Labeling
 ### Accessibility
 An `aria-label` must be provided to the Table for accessibility. If the Table is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+
+By default, the first column of the Table is used as the row header and is announced by assistive technology when navigating through the rows. You can override this behavior by providing the `isRowHeader` prop
+to one or more Columns, allowing you to customize which columns should label the rows of the Table.
+
+The example below applies `isRowHeader` to the "First Name" and "Last Name" columns so that each row is announced with the person's full name (e.g. "John Doe").
+
+```tsx example
+<Flex width="size-6000">
+  <Table aria-label="Example table with static contents" width="100%" height="100%">
+    <TableHeader>
+      <Column isRowHeader>First Name</Column>
+      <Column isRowHeader>Last Name</Column>
+      <Column align="end">Age</Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>John</Cell>
+        <Cell>Doe</Cell>
+        <Cell>45</Cell>
+      </Row>
+      <Row>
+        <Cell>Jane</Cell>
+        <Cell>Doe</Cell>
+        <Cell>37</Cell>
+      </Row>
+      <Row>
+        <Cell>Joe</Cell>
+        <Cell>Schmoe</Cell>
+        <Cell>67</Cell>
+      </Row>
+    </TableBody>
+  </Table>
+</Flex>
+```
 
 ## Asynchronous loading
 Table supports loading data asynchronously, and will display a progress circle reflecting the current load state,
@@ -166,7 +200,7 @@ function AsyncTable() {
   });
 
   return (
-    <Flex height="size-2000" width="size-6000">
+    <Flex width="size-6000">
       <Table aria-label="example async loading table" height="100%" width="100%">
         <TableHeader columns={columns}>
           {(column) => (
@@ -198,7 +232,7 @@ Use `defaultSelectedKeys` to provide a default set of selected rows. Note that t
 The example below demonstrates how one would use `defaultSelectedKeys`.
 
 ```tsx example
-<Flex height="size-2000" width="size-6000">
+<Flex width="size-6000">
   <Table aria-label="Example table with single selection (uncontrolled)" width="100%" height="100%" selectionMode="single" defaultSelectedKeys={['2']}>
     <TableHeader>
       <Column>Name</Column>
@@ -254,7 +288,7 @@ function PokemonTable(props) {
   let [selected, setSelected] = React.useState(new Set(['2']));
 
   return (
-    <Flex height="size-2000" width="size-6000">
+    <Flex width="size-6000">
       <Table aria-label="Example table with single selection (controlled)" width="100%" height="100%" selectionMode="single" selectedKeys={selected} onSelectionChange={setSelected} {...props}>
         <TableHeader columns={columns}>
           {column => (
@@ -336,7 +370,7 @@ function AsyncSortTable() {
   });
 
   return (
-    <Flex height="size-2000" width="size-6000">
+    <Flex width="size-6000">
       <Table aria-label="Example table with client side sorting" height="100%" width="100%" sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
         <TableHeader columns={columns}>
           {(column) => (
@@ -426,7 +460,7 @@ function AsyncSortTable() {
 import Edit from '@spectrum-icons/workflow/Edit';
 import Delete from '@spectrum-icons/workflow/Delete';
 
-<Flex height="size-2000" width="size-3000">
+<Flex width="size-3000">
   <Table aria-label="Example table for focusable cells" width="100%" height="100%">
     <TableHeader>
       <Column>Name</Column>
@@ -495,7 +529,7 @@ import Delete from '@spectrum-icons/workflow/Delete';
 Columns support three different width props: `minWidth`, `width`, and `maxWidth`.
 
 ```tsx example
-<Flex height="size-2000" width="size-6000">
+<Flex width="size-6000">
   <Table aria-label="Example table for column widths" width="100%" height="100%">
     <TableHeader>
       <Column maxWidth={300} align="start">Name</Column>
@@ -532,7 +566,7 @@ Columns support three different width props: `minWidth`, `width`, and `maxWidth`
 [View guidelines](https://spectrum.adobe.com/page/table/#Column-dividers)
 
 ```tsx examples
-<Flex height="size-2000" width="size-6000">
+<Flex width="size-6000">
   <Table aria-label="Example table for column dividers" width="100%" height="100%">
     <TableHeader>
       <Column align="start" showDivider>Name</Column>
@@ -569,7 +603,7 @@ Columns support three different width props: `minWidth`, `width`, and `maxWidth`
 [View guidelines](https://spectrum.adobe.com/page/table/#Usage-guidelines)
 
 ```tsx example
-<Flex height="size-2000" width="size-6000">
+<Flex width="size-6000">
   <Table aria-label="Example table for column alignment" width="100%" height="100%">
     <TableHeader>
       <Column align="start">Name</Column>
@@ -606,7 +640,7 @@ Columns support three different width props: `minWidth`, `width`, and `maxWidth`
 Table supports nesting columns, allowing you to render "tiered" column headers.
 
 ```tsx example
-<Flex height="size-2000" width="size-6000">
+<Flex width="size-6000">
   <Table aria-label="Example table for nested columns" width="100%" height="100%">
     <TableHeader>
       <Column title="OS (C:)">
@@ -658,7 +692,7 @@ function TableExample(props) {
   ];
 
   return (
-    <Flex height="size-2000" width="size-6000">
+    <Flex width="size-6000">
       <Table aria-label="Example table with hidden headers" width="100%" height="100%" {...props}>
         <TableHeader columns={columns}>
           {column => (
@@ -743,7 +777,7 @@ function renderEmptyState() {
   );
 }
 
-<Flex height="size-6000" width="size-6000">
+<Flex width="size-6000">
   <Table aria-label="Example table for empty state" width="100%" height="100%" renderEmptyState={renderEmptyState}>
     <TableHeader>
       <Column>Name</Column>
@@ -756,5 +790,3 @@ function renderEmptyState() {
   </Table>
 </Flex>
 ```
-
-TODO: // Other column specific props like isRowHeader labeling, perhaps accessibility

@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, MultipleSelection, SectionProps, Sortable, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, MultipleSelection, Sortable, StyleProps} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {Key, ReactElement, ReactNode} from 'react';
 
 export interface TableProps<T> extends MultipleSelection, Sortable {
-  /** The elements that make up the Table. Includes the TableHeader, TableBody, Columns, and Rows. TODO: I think this shouldn't have Section and row? Also need to fix prop table rendering for this */
+  // TODO: I think this shouldn't have Section and row? Also need to fix prop table rendering for this
+  /** The elements that make up the Table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children: ReactElement<TableHeaderProps<T> | TableBodyProps<T>>[],
   /** A list of row keys to disable. */
   disabledKeys?: Iterable<Key>
@@ -41,7 +42,7 @@ export interface SpectrumTableProps<T> extends TableProps<T>, DOMProps, AriaLabe
 export interface TableHeaderProps<T> {
   /** A list of Table columns. */
   columns?: T[],
-  /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop.` */
+  /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
   children: ColumnElement<T> | ColumnElement<T>[] | ColumnRenderer<T>
 }
 
@@ -56,7 +57,7 @@ export interface ColumnProps<T> {
   childColumns?: T[],
   // TODO Not sure if this is a thing, doesn't seem to get passed through?
   /** An accessibility label for the column. */
-  'aria-label'?: string,
+  // 'aria-label'?: string,
   /** The width of the column. */
   width?: number | string,
   /** The minimum width of the column. */
@@ -80,9 +81,9 @@ export interface SpectrumColumnProps<T> extends ColumnProps<T> {
   // allowsReordering?: boolean,
   /** Whether the column allows sorting. */
   allowsSorting?: boolean,
-  /** Whether the column should stick to the viewport when scrolling. TODO check this */
-  isSticky?: boolean, // shouldStick??
-  /** Whether the column is a row header and should be announced. TODO check this  */
+  // /** Whether the column should stick to the viewport when scrolling. */
+  // isSticky?: boolean, // shouldStick?? Not implemented yet?
+  /** Whether a column is a row header and should be announced by assistive technology during row navigation. */
   isRowHeader?: boolean,
   /** Whether the column should render a divider between it and the next column. */
   showDivider?: boolean,
@@ -109,20 +110,20 @@ export interface RowProps<T> {
   /** Rendered contents of the row or row child items. */
   children: CellElement | CellElement[] | CellRenderer,
   /** A string representation of the row's contents, used for features like typeahead. */
-  textValue?: string, // ???
+  textValue?: string // ???
   // TODO Not sure if this is a thing, doesn't seem to get passed through?
   /** An accessibility label for the row. */
-  'aria-label'?: string // ???
+  // 'aria-label'?: string // ???
 }
 
 export interface CellProps {
   /** The contents of the cell. */
   children: ReactNode,
   /** A string representation of the cell's contents, used for features like typeahead. */
-  textValue?: string,
+  textValue?: string
   // TODO Not sure if this is a thing, doesn't seem to get passed through?
   /** An accessibility label for the cell. */
-  'aria-label'?: string
+  // 'aria-label'?: string
 }
 
 export type CellElement = ReactElement<CellProps>;
