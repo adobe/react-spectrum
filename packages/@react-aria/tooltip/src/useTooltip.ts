@@ -1,24 +1,42 @@
-import {AllHTMLAttributes} from 'react';
-import {useId} from '@react-aria/utils';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 
-interface TooltipProps {
-  role?: 'tooltip'
-  id?: string
-}
+import {AriaTooltipProps} from '@react-types/tooltip';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {HTMLAttributes} from 'react';
+import {TooltipTriggerState} from '@react-stately/tooltip';
+import {useHover} from '@react-aria/interactions';
 
 interface TooltipAria {
-  tooltipProps: AllHTMLAttributes<HTMLElement>
+  /**
+   * Props for the tooltip element.
+   */
+  tooltipProps: HTMLAttributes<HTMLElement>
 }
 
-export function useTooltip(props: TooltipProps): TooltipAria {
-  let tooltipId = useId(props.id);
-  let {
-    role = 'tooltip'
-  } = props;
+/**
+ * Provides the accessibility implementation for a Tooltip component.
+ */
+export function useTooltip(props: AriaTooltipProps, state?: TooltipTriggerState): TooltipAria {
+  let domProps = filterDOMProps(props, {labelable: true});
+
+  let {hoverProps} = useHover({
+    onHoverStart: () => state?.open(true),
+    onHoverEnd: () => state?.close()
+  });
+
   return {
-    tooltipProps: {
-      role,
-      id: tooltipId
-    }
+    tooltipProps: mergeProps(domProps, hoverProps, {
+      role: 'tooltip'
+    })
   };
 }

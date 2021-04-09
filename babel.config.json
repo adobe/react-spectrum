@@ -1,0 +1,69 @@
+{
+  "presets": [
+    "@babel/preset-typescript",
+    "@babel/preset-react",
+    ["@parcel/babel-preset-env",
+      {
+        "loose": true
+      }
+    ]
+  ],
+  "env": {
+    "storybook": {
+      "presets": [
+        [
+          "@parcel/babel-preset-env",
+          {
+            "loose": true,
+            "targets": {
+              "esmodules": true
+            }
+          }
+        ]
+      ]
+    },
+    "cover": {
+      "plugins": [
+        "istanbul"
+      ]
+    },
+    "production": {
+      "plugins": [
+        [
+          "react-remove-properties",
+          {
+            "properties": [
+              "data-testid"
+            ]
+          }
+        ]
+      ]
+    }
+  },
+  "plugins": [
+    [
+      "@parcel/babel-plugin-transform-runtime",
+      {
+        "version": "^7.6.2"
+      }
+    ],
+    [
+      "@babel/plugin-proposal-decorators",
+      {
+        "legacy": true
+      }
+    ],
+    [
+      "@babel/plugin-proposal-class-properties",
+      {
+        "loose": true
+      }
+    ],
+    "@babel/plugin-proposal-export-default-from",
+    "@babel/plugin-proposal-export-namespace-from",
+    "@babel/plugin-syntax-class-properties",
+    "transform-glob-import",
+    "babel-plugin-macros"
+  ],
+  "sourceType": "unambiguous"
+}

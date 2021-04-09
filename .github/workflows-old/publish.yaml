@@ -17,11 +17,11 @@ jobs:
         NPMRC: ${{ secrets.NPMRC }}
       run: echo "$NPMRC" > .npmrc
     - name: install
-      run: yarn install  
+      run: yarn install
     - name: Configure CI Git User
       run: |
         git remote rm origin
-        git remote add origin "https://github-actions:$GITHUB_TOKEN@github.com/adobe/react-spectrum-v3.git"
+        git remote add origin "https://github-actions:$GITHUB_TOKEN@github.com/adobe/react-spectrum.git"
         git fetch
         git config --global user.email octobot@github.com
         git config --global user.name GitHub Actions

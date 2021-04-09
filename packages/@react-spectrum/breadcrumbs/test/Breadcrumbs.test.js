@@ -1,21 +1,47 @@
-import {BreadcrumbItem, Breadcrumbs} from '../';
-import {cleanup, render, within} from '@testing-library/react';
-import React, {useRef} from 'react';
-import V2Breadcrumbs from '@react/react-spectrum/Breadcrumbs';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 
+import {Breadcrumbs} from '../';
+import {Item} from '@react-stately/collections';
+import {Provider} from '@react-spectrum/provider';
+import React, {useRef} from 'react';
+import {render, within} from '@testing-library/react';
+import {theme} from '@react-spectrum/theme-default';
+import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('Breadcrumbs', function () {
+  beforeEach(() => {
+    jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+      if (this instanceof HTMLUListElement) {
+        return 500;
+      }
 
-  afterEach(() => {
-    cleanup();
+      return 100;
+    });
+
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
-  it.each`
-    Name               | Component        | props
-    ${'Breadcrumbs'}   | ${Breadcrumbs}   | ${{}}
-    ${'V2Breadcrumbs'} | ${V2Breadcrumbs} | ${{}}
-  `('$Name handles defaults', function ({Component, props}) {
-    let {getByLabelText} = render(<Component {...props} id="breadcrumbs-id" aria-label="breadcrumbs-test" />);
+  afterEach(() => {
+    HTMLElement.prototype.scrollIntoView.mockRestore();
+  });
+
+  it('$Name handles defaults', function () {
+    let {getByLabelText} = render(
+      <Breadcrumbs id="breadcrumbs-id" aria-label="breadcrumbs-test">
+        <Item>Folder 1</Item>
+      </Breadcrumbs>
+    );
 
     let breadcrumbs = getByLabelText('breadcrumbs-test');
     expect(breadcrumbs).toHaveAttribute('id', 'breadcrumbs-id');
@@ -25,7 +51,7 @@ describe('Breadcrumbs', function () {
   it('Handles UNSAFE_className', () => {
     let {getByRole} = render(
       <Breadcrumbs UNSAFE_className="test-class">
-        <BreadcrumbItem>Folder 1</BreadcrumbItem>
+        <Item>Folder 1</Item>
       </Breadcrumbs>
     );
     let breadcrumbs = getByRole('list');
@@ -33,20 +59,20 @@ describe('Breadcrumbs', function () {
   });
 
   it('Handles multiple items', () => {
-    let {getByTestId} = render(
-      <Breadcrumbs className="test-class">
-        <BreadcrumbItem data-testid="item-1" >Folder 1</BreadcrumbItem>
-        <BreadcrumbItem data-testid="item-2" >Folder 2</BreadcrumbItem>
-        <BreadcrumbItem data-testid="item-3" >Folder 3</BreadcrumbItem>
+    let {getByText} = render(
+      <Breadcrumbs UNSAFE_className="test-class">
+        <Item>Folder 1</Item>
+        <Item>Folder 2</Item>
+        <Item>Folder 3</Item>
       </Breadcrumbs>
     );
-    let item1 = getByTestId('item-1');
+    let item1 = getByText('Folder 1');
     expect(item1.tabIndex).toBe(0);
     expect(item1).not.toHaveAttribute('aria-current');
-    let item2 = getByTestId('item-2');
+    let item2 = getByText('Folder 2');
     expect(item2.tabIndex).toBe(0);
     expect(item2).not.toHaveAttribute('aria-current');
-    let item3 = getByTestId('item-3');
+    let item3 = getByText('Folder 3');
     expect(item3.tabIndex).toBe(-1);
     expect(item3).toHaveAttribute('aria-current', 'page');
   });
@@ -57,7 +83,7 @@ describe('Breadcrumbs', function () {
       ref = useRef();
       return (
         <Breadcrumbs ref={ref} aria-label="breadcrumbs-test">
-          <BreadcrumbItem>Folder 1</BreadcrumbItem>
+          <Item>Folder 1</Item>
         </Breadcrumbs>
       );
     };
@@ -66,76 +92,306 @@ describe('Breadcrumbs', function () {
     expect(breadcrumb).toBe(ref.current.UNSAFE_getDOMNode());
   });
 
-  it('Handles size="L"', () => {
+  it('Handles size="S"', () => {
     let {getByRole} = render(
-      <Breadcrumbs size="L">
-        <BreadcrumbItem>Folder 1</BreadcrumbItem>
+      <Breadcrumbs size="S">
+        <Item>Folder 1</Item>
       </Breadcrumbs>
     );
     let breadcrumbs = getByRole('list');
-    expect(breadcrumbs).toHaveAttribute('class', expect.stringContaining('--multiline'));
+    expect(breadcrumbs).toHaveAttribute('class', expect.stringContaining('--small'));
   });
 
-  it('Handles isHeading and headingAriaLevel', () => {
+  it('Handles size="M"', () => {
     let {getByRole} = render(
-      <Breadcrumbs headingAriaLevel={2} isHeading>
-        <BreadcrumbItem>Folder 1</BreadcrumbItem>
+      <Breadcrumbs size="M">
+        <Item>Folder 1</Item>
       </Breadcrumbs>
     );
-    let heading = getByRole('heading');
-    expect(heading).toHaveAttribute('aria-level', '2');
+    let breadcrumbs = getByRole('list');
+    expect(breadcrumbs).toHaveAttribute('class', expect.stringContaining('--medium'));
   });
 
-  it('Handles max visible items', () => {
+  it('shows four items with no menu', () => {
     let {getByText, getByRole} = render(
-      <Breadcrumbs maxVisibleItems="3" >
-        <BreadcrumbItem >Folder 1</BreadcrumbItem>
-        <BreadcrumbItem >Folder 2</BreadcrumbItem>
-        <BreadcrumbItem >Folder 3</BreadcrumbItem>
-        <BreadcrumbItem >Folder 4</BreadcrumbItem>
-        <BreadcrumbItem >Folder 5</BreadcrumbItem>
-      </Breadcrumbs>
+      <Provider theme={theme}>
+        <Breadcrumbs>
+          <Item>Folder 1</Item>
+          <Item>Folder 2</Item>
+          <Item>Folder 3</Item>
+          <Item>Folder 4</Item>
+        </Breadcrumbs>
+      </Provider>
+    );
+    let {children} = getByRole('list');
+    expect(() => within(children[0]).getByRole('button')).toThrow();
+    expect(getByText('Folder 1')).toBeTruthy();
+    expect(getByText('Folder 2')).toBeTruthy();
+    expect(getByText('Folder 3')).toBeTruthy();
+    expect(getByText('Folder 4')).toBeTruthy();
+  });
+
+  it('shows a maximum of 4 items', () => {
+    let {getByText, getByRole} = render(
+      <Provider theme={theme}>
+        <Breadcrumbs>
+          <Item>Folder 1</Item>
+          <Item>Folder 2</Item>
+          <Item>Folder 3</Item>
+          <Item>Folder 4</Item>
+          <Item>Folder 5</Item>
+        </Breadcrumbs>
+      </Provider>
     );
     let {children} = getByRole('list');
     expect(within(children[0]).getByRole('button')).toBeTruthy();
     expect(() => getByText('Folder 1')).toThrow();
     expect(() => getByText('Folder 2')).toThrow();
-    expect(() => getByText('Folder 3')).toThrow();
+    expect(getByText('Folder 3')).toBeTruthy();
     expect(getByText('Folder 4')).toBeTruthy();
     expect(getByText('Folder 5')).toBeTruthy();
   });
 
-  it('Handles max visible items with showRoot', () => {
+  it('shows a maximum of 4 items with showRoot', () => {
     let {getByText, getByRole} = render(
-      <Breadcrumbs maxVisibleItems="3" showRoot>
-        <BreadcrumbItem >Folder 1</BreadcrumbItem>
-        <BreadcrumbItem >Folder 2</BreadcrumbItem>
-        <BreadcrumbItem >Folder 3</BreadcrumbItem>
-        <BreadcrumbItem >Folder 4</BreadcrumbItem>
-        <BreadcrumbItem >Folder 5</BreadcrumbItem>
-      </Breadcrumbs>
+      <Provider theme={theme}>
+        <Breadcrumbs showRoot>
+          <Item>Folder 1</Item>
+          <Item>Folder 2</Item>
+          <Item>Folder 3</Item>
+          <Item>Folder 4</Item>
+          <Item>Folder 5</Item>
+        </Breadcrumbs>
+      </Provider>
     );
     let {children} = getByRole('list');
     expect(getByText('Folder 1')).toBeTruthy();
     expect(within(children[1]).getByRole('button')).toBeTruthy();
     expect(() => getByText('Folder 2')).toThrow();
     expect(() => getByText('Folder 3')).toThrow();
-    expect(() => getByText('Folder 4')).toThrow();
+    expect(getByText('Folder 4')).toBeTruthy();
     expect(getByText('Folder 5')).toBeTruthy();
   });
 
   it('Handles isDisabled', () => {
-    let {getByTestId} = render(
+    let {getByText} = render(
       <Breadcrumbs isDisabled>
-        <BreadcrumbItem data-testid="item-1" >Folder 1</BreadcrumbItem>
-        <BreadcrumbItem data-testid="item-2" >Folder 2</BreadcrumbItem>
+        <Item>Folder 1</Item>
+        <Item>Folder 2</Item>
       </Breadcrumbs>
     );
 
-    let item1 = getByTestId('item-1');
+    let item1 = getByText('Folder 1');
     expect(item1).toHaveAttribute('aria-disabled', 'true');
-    let item2 = getByTestId('item-2');
+    let item2 = getByText('Folder 2');
     expect(item2).toHaveAttribute('aria-disabled', 'true');
   });
 
+  it('shows less than 4 items if they do not fit', () => {
+    jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+      if (this instanceof HTMLUListElement) {
+        return 300;
+      }
+
+      return 100;
+    });
+
+    let {getByText, getByRole} = render(
+      <Provider theme={theme}>
+        <Breadcrumbs>
+          <Item>Folder 1</Item>
+          <Item>Folder 2</Item>
+          <Item>Folder 3</Item>
+          <Item>Folder 4</Item>
+          <Item>Folder 5</Item>
+        </Breadcrumbs>
+      </Provider>
+    );
+
+    let {children} = getByRole('list');
+    expect(within(children[0]).getByRole('button')).toBeTruthy();
+    expect(() => getByText('Folder 1')).toThrow();
+    expect(() => getByText('Folder 2')).toThrow();
+    expect(() => getByText('Folder 3')).toThrow();
+    expect(() => getByText('Folder 4')).toThrow();
+    expect(getByText('Folder 5')).toBeTruthy();
+  });
+
+  it('collapses root item if it does not fit', () => {
+    jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+      if (this instanceof HTMLUListElement) {
+        return 300;
+      }
+
+      return 100;
+    });
+
+    let {getByText, getByRole} = render(
+      <Provider theme={theme}>
+        <Breadcrumbs showRoot>
+          <Item>Folder 1</Item>
+          <Item>Folder 2</Item>
+          <Item>Folder 3</Item>
+          <Item>Folder 4</Item>
+          <Item>Folder 5</Item>
+        </Breadcrumbs>
+      </Provider>
+    );
+
+    let {children} = getByRole('list');
+    expect(() => getByText('Folder 1')).toThrow();
+    expect(within(children[0]).getByRole('button')).toBeTruthy();
+    expect(() => getByText('Folder 2')).toThrow();
+    expect(() => getByText('Folder 3')).toThrow();
+    expect(() => getByText('Folder 4')).toThrow();
+    expect(getByText('Folder 5')).toBeTruthy();
+  });
+
+  it('Handles showRoot and folders of different widths', () => {
+    // Change the width of "Folder 1" from 100px to 200px, which means there's only room for 1 other breadcrumb.
+    jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+      if (this instanceof HTMLUListElement) {
+        return 500;
+      }
+
+      if (this.textContent === 'Folder 1') {
+        return 200;
+      }
+
+      return 100;
+    });
+
+    let {getByText, getByRole} = render(
+      <Provider theme={theme}>
+        <Breadcrumbs showRoot>
+          <Item>Folder 1</Item>
+          <Item>Folder 2</Item>
+          <Item>Folder 3</Item>
+          <Item>Folder 4</Item>
+          <Item>Folder 5</Item>
+        </Breadcrumbs>
+      </Provider>
+    );
+
+    let {children} = getByRole('list');
+    expect(within(children[1]).getByRole('button')).toBeTruthy();
+    expect(getByText('Folder 1')).toBeTruthy();
+    expect(() => getByText('Folder 2')).toThrow();
+    expect(() => getByText('Folder 3')).toThrow();
+    expect(() => getByText('Folder 4')).toThrow();
+    expect(getByText('Folder 5')).toBeTruthy();
+  });
+
+
+  it('can open the menu', () => {
+    let onAction = jest.fn();
+    let {getAllByText, getByRole, getAllByRole} = render(
+      <Provider theme={theme}>
+        <Breadcrumbs showRoot onAction={onAction}>
+          <Item key="Folder 1">Folder 1</Item>
+          <Item>Folder 2</Item>
+          <Item>Folder 3</Item>
+          <Item>Folder 4</Item>
+          <Item>Folder 5</Item>
+        </Breadcrumbs>
+      </Provider>
+    );
+
+    let menuButton = getByRole('button');
+    triggerPress(menuButton);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeTruthy();
+    // menu contains all breadcrumb items
+    expect(getAllByRole('menuitemradio').length).toBe(5);
+
+    let item1 = getAllByText('Folder 1');
+    expect(item1.length).toBe(2);
+
+    // breadcrumb root item
+    expect(item1[0]).toHaveAttribute('role', 'link');
+    triggerPress(item1[0]);
+    expect(onAction).toHaveBeenCalledWith('Folder 1');
+
+    // menu item
+    expect(item1[1]).not.toHaveAttribute('role');
+    triggerPress(item1[1]);
+    expect(onAction).toHaveBeenCalledWith('Folder 1');
+  });
+
+  it('clicking on current folder does not trigger onAction', () => {
+    let onAction = jest.fn();
+    let {getByRole, getAllByRole} = render(
+      <Provider theme={theme}>
+        <Breadcrumbs showRoot onAction={onAction}>
+          <Item key="Folder 1">Folder 1</Item>
+          <Item key="Folder 2">Folder 2</Item>
+          <Item key="Folder 3">Folder 3</Item>
+          <Item key="Folder 4">Folder 4</Item>
+          <Item key="Folder 5">Folder 5</Item>
+        </Breadcrumbs>
+      </Provider>
+    );
+
+    let menuButton = getByRole('button');
+    triggerPress(menuButton);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeTruthy();
+
+    let menuItems = getAllByRole('menuitemradio');
+    // menu contains all breadcrumb items
+    expect(menuItems.length).toBe(5);
+
+    let item = menuItems[4];
+    expect(item).toHaveAttribute('aria-checked', 'true');
+    triggerPress(item);
+    expect(onAction).not.toHaveBeenCalled();
+  });
+
+  it('supports aria-label', function () {
+    let {getByRole} = render(
+      <Breadcrumbs aria-label="Test">
+        <Item>Folder 1</Item>
+      </Breadcrumbs>
+    );
+    let breadcrumbs = getByRole('navigation');
+    expect(breadcrumbs).toHaveAttribute('aria-label', 'Test');
+  });
+
+  it('supports aria-labelledby', function () {
+    let {getByRole} = render(
+      <>
+        <span id="test">Test</span>
+        <Breadcrumbs aria-labelledby="test">
+          <Item>Folder 1</Item>
+        </Breadcrumbs>
+      </>
+    );
+    let breadcrumbs = getByRole('navigation');
+    expect(breadcrumbs).toHaveAttribute('aria-labelledby', 'test');
+  });
+
+  it('supports aria-describedby', function () {
+    let {getByRole} = render(
+      <>
+        <span id="test">Test</span>
+        <Breadcrumbs aria-describedby="test">
+          <Item>Folder 1</Item>
+        </Breadcrumbs>
+      </>
+    );
+    let breadcrumbs = getByRole('navigation');
+    expect(breadcrumbs).toHaveAttribute('aria-describedby', 'test');
+  });
+
+  it('supports custom props', function () {
+    let {getByRole} = render(
+      <Breadcrumbs data-testid="test">
+        <Item>Folder 1</Item>
+      </Breadcrumbs>
+    );
+    let breadcrumbs = getByRole('navigation');
+    expect(breadcrumbs).toHaveAttribute('data-testid', 'test');
+  });
 });

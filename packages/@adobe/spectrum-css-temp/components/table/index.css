@@ -12,14 +12,22 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
+:root {
+  --spectrum-table-cell-compact-padding-y: var(--spectrum-global-dimension-size-75);
+  --spectrum-table-cell-regular-padding-y: var(--spectrum-global-dimension-size-125);
+  --spectrum-table-cell-spacious-padding-y: var(--spectrum-global-dimension-size-175);
+}
+
 .spectrum-Table {
   border-collapse: separate;
   border-spacing: 0;
+  outline: none;
+  isolation: isolate;
 }
 
 .spectrum-Table-sortedIcon {
   display: none;
-  margin-left: var(--spectrum-table-header-sort-icon-gap);
+  margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
 
   vertical-align: middle;
 
@@ -28,7 +36,6 @@ governing permissions and limitations under the License.
 
 .spectrum-Table-headCell {
   box-sizing: border-box;
-  text-align: left;
   font-size: var(--spectrum-table-header-text-size);
   font-weight: var(--spectrum-table-header-text-font-weight);
   line-height: var(--spectrum-table-header-text-line-height);
@@ -42,7 +49,7 @@ governing permissions and limitations under the License.
   border-radius: var(--spectrum-table-header-border-radius);
 
   &.is-sortable {
-    cursor: pointer;
+    cursor: default;
   }
 
   &.is-sorted-asc,
@@ -65,8 +72,8 @@ governing permissions and limitations under the License.
   text-align: center;
 }
 
-.spectrum-Table-cell--alignRight {
-  text-align: right;
+.spectrum-Table-cell--alignEnd {
+  text-align: end;
 }
 
 /* Helper for shared drop target overlay */
@@ -89,6 +96,9 @@ governing permissions and limitations under the License.
   border-radius: var(--spectrum-table-border-radius);
   overflow: auto;
   vertical-align: var(--spectrum-table-cell-vertical-alignment);
+
+  /* Fix scrollbars on iOS with sticky row headers */
+  transform: translate3d(0, 0, 0);
 
   &.is-drop-target {
     @inherit: %drop-target;
@@ -124,15 +134,48 @@ governing permissions and limitations under the License.
   box-sizing: border-box;
   font-size: var(--spectrum-table-cell-text-size);
   font-weight: var(--spectrum-table-cell-text-font-weight);
-  line-height: var(--spectrum-table-cell-text-line-height);
-  padding: var(--spectrum-table-cell-padding-y) var(--spectrum-table-cell-padding-x);
-  /* Subtract top/bottom padding for this value to be correct in this implementation */
-  min-height: calc(var(--spectrum-table-cell-min-height) - calc(var(--spectrum-table-cell-padding-y) * 2));
+  /* need to subtract 1px here because 14px * 1.5 + 14px + 14px = 49px, and we want 48px */
+  line-height: calc(calc(var(--spectrum-table-cell-text-size) * var(--spectrum-table-cell-text-line-height)) - 1px);
+  padding: var(--spectrum-table-cell-regular-padding-y) var(--spectrum-table-cell-padding-x);
+}
+
+.spectrum-Table--compact .spectrum-Table-cell {
+  padding-top: var(--spectrum-table-cell-compact-padding-y);
+  padding-bottom: var(--spectrum-table-cell-compact-padding-y);
+}
+
+.spectrum-Table--spacious .spectrum-Table-cell {
+  padding-top: var(--spectrum-table-cell-spacious-padding-y);
+  padding-bottom: var(--spectrum-table-cell-spacious-padding-y);
+}
+
+.spectrum-Table-cellContents {
+  /* truncate text with ellipsis */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  /* allow focus ring of child to extend outside the bounds */
+  padding: 4px;
+  margin: -4px;
+}
+
+.spectrum-Table-cell--hideHeader {
+  padding: 0;
+  justify-content: center;
+}
+
+.spectrum-Table--wrap .spectrum-Table-cellContents {
+  white-space: normal;
 }
 
 .spectrum-Table-cell,
 .spectrum-Table-headCell {
   position: relative;
+
+  &:focus {
+    outline: none;
+  }
 
   &:focus-ring,
   &.is-focused {
@@ -168,21 +211,39 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Table-cell--divider {
-  border-right-width: var(--spectrum-table-divider-border-size);
+  border-inline-end-width: var(--spectrum-table-divider-border-size);
 }
 
 .spectrum-Table-row {
   position: relative;
-  cursor: pointer;
+  cursor: default;
   transition: background-color var(--spectrum-global-animation-duration-100) ease-in-out;
 
   &:focus {
     outline: 0;
   }
 
+  /* The focus ring must be on top of the first cell, so needs to be absolutely positioned. */
+  &:focus-ring {
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: var(--spectrum-selectlist-border-size-key-focus);
+      z-index: 3;
+    }
+  }
+
   &.is-drop-target {
     @inherit: %drop-target;
   }
+}
+
+/* the CSS logical properties postcss plugin doesn't seem to work with :focus-ring. */
+[dir="rtl"] .spectrum-Table-row:focus-ring:before {
+  right: 0;
 }
 
 .spectrum-Table > .spectrum-Table-body > .spectrum-Table-row:last-of-type {
@@ -204,8 +265,9 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Table-checkboxCell {
-  padding-right: var(--spectrum-table-cell-checkbox-padding-right);
+.spectrum-Table-headCell.spectrum-Table-checkboxCell,
+.spectrum-Table-cell.spectrum-Table-checkboxCell {
+  padding-inline-end: var(--spectrum-table-cell-checkbox-padding-right);
   /* have to eliminate vertical padding to allow proper vertical alignment */
   padding-top: 0px;
   padding-bottom: 0px;

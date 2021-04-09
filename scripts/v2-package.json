@@ -1,0 +1,11 @@
+{
+  "name": "v2-test-deps",
+  "version": "1.0.0",
+  "description": "This package becomes enabled if make adobe_setup is run, and allows v2 parity tests to run when installed.",
+  "private": true,
+  "dependencies": {
+    "@react/collection-view": "^4.1.5",
+    "@react/react-spectrum": "^2.26.1",
+    "@react/react-spectrum-icons": "^2.1.0"
+  }
+}

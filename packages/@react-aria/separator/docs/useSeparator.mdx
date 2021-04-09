@@ -1,0 +1,93 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/separator';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
+import packageData from '@react-aria/separator/package.json';
+
+```jsx import
+import {useSeparator} from '@react-aria/separator';
+```
+
+---
+category: Content
+keywords: [vertical separator, horizontal separator, separator, hr, aria]
+---
+
+# useSeparator
+
+<p>{docs.exports.useSeparator.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useSeparator']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-1.2/#separator'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useSeparator} links={docs.links} />
+
+## Features
+
+Horizontal separators can be built with the HTML [&lt;hr&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/hr)
+element. However, there is no HTML element for a vertical separator. `useSeparator` helps achieve
+accessible separators that can be styled as needed.
+
+* Support for horizontal and vertical orientation
+* Support for HTML `<hr>` element or a custom element type
+
+## Anatomy
+
+A separator consists of a single element that represents the divider.
+`useSeparator` returns props to be spread onto the element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useSeparator.return.id].properties} />
+</TypeContext.Provider>
+
+
+## Example
+
+This example shows how create both a horizontal and a vertical oriented separator.
+
+```tsx example
+function Separator(props) {
+  let {separatorProps} = useSeparator(props);
+
+  return (
+    <div
+      {...separatorProps}
+      style={{
+        background: 'gray',
+        width: props.orientation === 'vertical' ? '1px' : '100%',
+        height: props.orientation === 'vertical' ? '100%' : '1px',
+        margin: props.orientation === 'vertical' ? '0 5px' : '5px 0'
+      }} />
+  );
+}
+
+<>
+  <div style={{display: 'flex', flexDirection: 'column'}}>
+    Content above
+    <Separator />
+    Content below
+  </div>
+
+  <div style={{display: 'flex', flexDirection: 'row', marginTop: 20, height: 40, alignItems: 'center'}}>
+    Content left
+    <Separator orientation="vertical" />
+    Content right
+  </div>
+</>
+```

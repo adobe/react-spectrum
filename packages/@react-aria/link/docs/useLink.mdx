@@ -1,0 +1,147 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/link';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
+import packageData from '@react-aria/link/package.json';
+
+```jsx import
+import {useLink} from '@react-aria/link';
+```
+
+---
+category: Navigation
+keywords: [link, anchor, aria]
+---
+
+# useLink
+
+<p>{docs.exports.useLink.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useLink']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices/#link'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useLink} links={docs.links} />
+
+## Features
+
+Links can be created in HTML with the [&lt;a&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a)
+element with an `href` attribute. However, if the link does not have an href, and is
+handled client side with JavaScript instead, it will not be exposed to assistive technology properly.
+`useLink` helps achieve accessible links with either native HTML elements or custom element types.
+
+* Support for mouse, touch, and keyboard interactions
+* Support for navigation links via `<a>` elements or custom element types via ARIA
+* Support for disabled links
+
+## Anatomy
+
+A link consists of a pressable area usually containing a textual label or an icon
+that users can click or tap to navigate to another page or resource. In addition,
+keyboard users may activate links using the <kbd>Enter</kbd> key.
+
+`useLink` returns props to be spread onto the link element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useLink.return.id].properties} />
+</TypeContext.Provider>
+
+If a visual label is not provided (e.g. an icon or image only link), then an `aria-label` or
+`aria-labelledby` prop must be passed to identify the link to assistive technology.
+
+## Example
+
+This example shows a basic link using a native `<a>` element.
+
+```tsx example
+function Link(props) {
+  let ref = React.useRef();
+  let {linkProps} = useLink(props, ref);
+
+  return (
+    <a
+      {...linkProps}
+      ref={ref}
+      href={props.href}
+      target={props.target}
+      style={{color: 'var(--blue)'}}>
+      {props.children}
+    </a>
+  );
+}
+
+<Link href="https://adobe.com" target="_blank">Adobe</Link>
+```
+
+## Client handled links
+
+This example shows a client handled link using press events. It sets `elementType` to `span`
+so that `useLink` returns the proper ARIA attributes to expose the element as a link to
+assistive technology.
+
+```tsx example
+function Link(props) {
+  let ref = React.useRef();
+  let {linkProps} = useLink({...props, elementType: 'span'}, ref);
+
+  return (
+    <span
+      {...linkProps}
+      ref={ref}
+      style={{
+        color: 'var(--blue)',
+        textDecoration: 'underline',
+        cursor: 'pointer'
+      }}>
+      {props.children}
+    </span>
+  );
+}
+
+<Link onPress={() => alert('Pressed link')}>Adobe</Link>
+```
+
+
+## Disabled links
+
+A link can be disabled by passing the `isDisabled` property. This will work with both native
+link elements as well as client handled links. Native navigation will be disabled, and the `onPress`
+event will not be fired. The link will be exposed as disabled to assistive technology with ARIA.
+
+```tsx example
+function Link(props) {
+  let ref = React.useRef();
+  let {linkProps} = useLink(props, ref);
+
+  return (
+    <a
+      {...linkProps}
+      ref={ref}
+      href={props.href}
+      target={props.target}
+      style={{
+        color: props.isDisabled ? 'var(--gray)' : 'var(--blue)',
+        cursor: props.isDisabled ? 'default' : 'pointer'
+      }}>
+      {props.children}
+    </a>
+  );
+}
+
+<Link href="https://adobe.com" target="_blank" isDisabled>Disabled link</Link>
+```

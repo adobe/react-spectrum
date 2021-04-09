@@ -1,0 +1,55 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/view';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/view/package.json';
+
+```jsx import
+import {Content} from '@react-spectrum/view';
+```
+
+---
+category: Content
+---
+
+# Content
+
+<p>{docs.exports.Content.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Content']} />
+
+## Example
+
+```tsx example
+<Content>Content is king</Content>
+```
+
+## Content
+
+The `Content` component represents the primary content within a Spectrum container
+such as a [Dialog](Dialog.html) or [IllustratedMessage](IllustratedMessage.html).
+`Content` provides no specific styling by itself, but receives styling from the
+parent container. In addition, `Content` will be automatically placed within the
+container's layout according to Spectrum guidelines.
+
+See [Dialog](Dialog.html#example) and [IllustratedMessage](IllustratedMessage.html#example)
+for examples of how to use the `Content` component in the context of a Spectrum container.
+See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/section) for more
+information about the semantics of the `section` element, which is used internally
+by the `Content` component.
+
+## Props
+
+<PropTable component={docs.exports.Content} links={docs.links} />

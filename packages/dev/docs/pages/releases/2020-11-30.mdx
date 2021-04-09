@@ -1,0 +1,105 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: We have lots of bug fixes in this release. We have fixes for iOS 14, improved types, better focus handling and some new features. Thanks to everyone who submitted helpful issues and of course to those who contributed fixes!
+date: 2020-11-30
+---
+
+# November 30, 2020 Release
+We have lots of bug fixes in this release. We have fixes for iOS 14, improved types, better focus handling and some new features. Thanks to everyone who submitted helpful issues and of course to those who contributed fixes!
+
+## New features
+- Add `isDisabled` option to `useInteractOutside` - [@toshi1127](https://github.com/toshi1127) - [PR](https://github.com/adobe/react-spectrum/pull/1273)
+- Add `isDisabled` option to `useModal` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1176)
+- Add `trigger` option to `TooltipTrigger` and `useTooltipTrigger` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1226)
+- Add `useFilter` to `@react-aria/i18n` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1307) - [Docs](https://react-spectrum.adobe.com/react-aria/useFilter.html)
+## Fixed
+- Fixed styling of `SearchField` with `validationState` prop - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1176)
+- Prevent iOS virtual keyboard from hiding when navigating to clear button with VoiceOver - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1176)
+- Improve TypeScript types for `useButton` and `useToggleButton` based on `elementType` - [@toinelin](https://github.com/toinelin) - [PR](https://github.com/adobe/react-spectrum/pull/1191)
+- Catch Intl.NumberFormat error for unsupported option - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1249)
+- Fix text selection on `useInteractOutside` in Firefox - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1240)
+- Fix value of `aria-setsize` attribute in `useOption` and `useMenuItem` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1176)
+- Fix positioning of overlays when iOS virtual keyboard is visible - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1176)
+- Fix touch activation of non-text inputs in dialogs in mobile safari - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1290')
+- Do not set a `tabIndex` when using `shouldUseVirtualFocus` option to avoid iOS 14 focusing the item with VoiceOver - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1176)
+- Accessibility improvements for tabs - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/1237)
+- Use ResizeObserver in `ButtonGroup` component - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1225)
+- Fix mutating keys of `ActionGroup` items in `TooltipTrigger` - [@samiur98](https://github.com/samiur98) - [PR](https://github.com/adobe/react-spectrum/pull/1242)
+- Use custom `delay` prop in `useTooltipTriggerState` - [@johnjacobkenny](https://github.com/johnjacobkenny) - [PR](https://github.com/adobe/react-spectrum/pull/1201)
+- Fix DOM prop names for `NoSearchResults` in `@spectrum-icons/illustrations`  - [@evargast](https://github.com/evargast) - [PR](https://github.com/adobe/react-spectrum/pull/1255)
+- Fix typo in `useMove` - [@johnjacobkenny](https://github.com/johnjacobkenny) - [PR](https://github.com/adobe/react-spectrum/pull/1218)
+- Improved `LiveAnnouncer` types - [@anuraghazra](https://github.com/anuraghazra) - [PR](https://github.com/adobe/react-spectrum/pull/1210)
+- Fix text color of disabled active selected state  - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/1232)
+## Docs
+- Fix docs typo in react-aria getting started - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1254)
+- Fix docs useSelect console warning - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1222)
+
+
+## Under construction
+
+Pre-release versions of the following components have been released. Please feel free to try them out, and report any issues you encounter.
+
+
+- [ComboBox](http://react-spectrum.adobe.com/react-spectrum/ComboBox.html)
+- [Tabs](http://react-spectrum.adobe.com/react-spectrum/Tabs.html)
+
+
+## Released packages
+```
+     - @adobe/react-spectrum@3.6.0
+     - @react-aria/button@3.3.0
+     - @react-aria/combobox@3.0.0-alpha.0
+     - @react-aria/i18n@3.2.0
+     - @react-aria/interactions@3.3.2
+     - @react-aria/listbox@3.2.3
+     - @react-aria/live-announcer@3.0.0-alpha.0
+     - @react-aria/menu@3.1.3
+     - @react-aria/overlays@3.6.0
+     - @react-aria/select@3.2.3
+     - @react-aria/selection@3.3.1
+     - @react-aria/tabs@3.0.0-alpha.2
+     - @react-aria/textfield@3.2.2
+     - @react-aria/tooltip@3.1.0
+     - @react-aria/utils@3.4.1
+     - @react-aria/virtualizer@3.3.1
+     - @react-spectrum/breadcrumbs@3.2.0
+     - @react-spectrum/button@3.3.0
+     - @react-spectrum/buttongroup@3.2.0
+     - @react-spectrum/combobox@3.0.0-alpha.0
+     - @react-spectrum/label@3.3.0
+     - @react-spectrum/listbox@3.4.0
+     - @react-spectrum/overlays@3.4.0
+     - @react-spectrum/searchfield@3.1.2
+     - @react-spectrum/table@3.0.0-alpha.9
+     - @react-spectrum/tabs@3.0.0-alpha.3
+     - @react-spectrum/textfield@3.1.4
+     - @react-spectrum/tooltip@3.1.0
+     - @react-spectrum/utils@3.5.0
+     - @react-stately/collections@3.3.0
+     - @react-stately/combobox@3.0.0-alpha.0
+     - @react-stately/data@3.1.2
+     - @react-stately/list@3.2.2
+     - @react-stately/tabs@3.0.0-alpha.0
+     - @react-stately/tooltip@3.0.1
+     - @react-types/button@3.3.0
+     - @react-types/combobox@3.0.0-alpha.0
+     - @react-types/label@3.3.0
+     - @react-types/overlays@3.4.0
+     - @react-types/tabs@3.0.0-alpha.2
+     - @react-types/textfield@3.2.2
+     - @react-types/tooltip@3.1.0
+     - @spectrum-icons/illustrations@3.2.1
+     - react-aria@3.2.0
+     - react-stately@3.1.0
+```

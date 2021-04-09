@@ -1,0 +1,16 @@
+{
+  "name": "parcel-transformer-docs",
+  "version": "1.0.0",
+  "private": true,
+  "main": "DocsTransformer.js",
+  "engines": {
+    "parcel": ">= 2.0.0-alpha.3.2"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.9.0",
+    "@babel/traverse": "^7.9.0",
+    "@babel/types": "^7.9.0",
+    "@parcel/plugin": "nightly",
+    "doctrine": "^3.0.0"
+  }
+}

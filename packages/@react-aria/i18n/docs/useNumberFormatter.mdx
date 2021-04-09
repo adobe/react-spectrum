@@ -1,0 +1,74 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/i18n';
+import {ClassAPI, HeaderInfo, TypeContext, FunctionAPI, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-aria/i18n/package.json';
+
+```tsx import
+import {useNumberFormatter} from '@react-aria/i18n';
+```
+
+---
+category: Internationalization
+keywords: [number, i18n, aria, localization]
+---
+
+# useNumberFormatter
+
+<p>{docs.exports.useNumberFormatter.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useNumberFormatter']} />
+
+## Introduction
+
+`useNumberFormatter` wraps a builtin browser [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat)
+object to provide a React Hook that integrates with the i18n system in React Aria. It handles formatting numbers for the current locale,
+updating when the locale changes, and caching of number formatters for performance. See the
+[Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) docs for
+information on formatting options.
+
+## API
+
+<FunctionAPI function={docs.exports.useNumberFormatter} links={docs.links} />
+
+## Example
+
+This example displays a currency value for two locales: USA, and Germany. Two instances of the `Currency` component are rendered,
+using the [I18nProvider](I18nProvider.html) to specify the locale to display.
+
+```tsx example
+import {I18nProvider} from '@react-aria/i18n';
+
+function Currency({value, currency}) {
+  let formatter = useNumberFormatter({
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 0
+  });
+
+  return (
+    <p>{formatter.format(value)}</p>
+  );
+}
+
+<>
+  <I18nProvider locale="en-US">
+    <Currency value={125000} currency="USD" />
+  </I18nProvider>
+  <I18nProvider locale="de-DE">
+    <Currency value={350000} currency="EUR" />
+  </I18nProvider>
+</>
+```

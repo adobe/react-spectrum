@@ -1,0 +1,156 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/illustratedmessage';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/illustratedmessage/package.json';
+
+```jsx import
+import {Content} from '@react-spectrum/view';
+import {Heading} from '@react-spectrum/text';
+import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+```
+
+---
+category: Content
+keywords: [illustrated message]
+---
+
+# IllustratedMessage
+
+<p>{docs.exports.IllustratedMessage.description}</p>
+
+<HeaderInfo packageData={packageData} componentNames={['IllustratedMessage']} />
+
+## Example
+
+```tsx example
+import NotFound from '@spectrum-icons/illustrations/NotFound';
+
+<IllustratedMessage>
+  <NotFound />
+  <Heading>No results</Heading>
+  <Content>Try another search</Content>
+</IllustratedMessage>
+```
+
+## Content
+
+An IllustratedMessage consists of three areas: an illustration, a title, and a body.
+Each of these sections can be populated by providing the following components to your IllustratedMessage as children:
+`svg`, [Heading](Heading.html) (title), and [Content](Content.html) (body).
+
+```tsx example
+import Upload from '@spectrum-icons/illustrations/Upload';
+
+<IllustratedMessage>
+  <Upload />
+  <Heading>Drag and Drop your file</Heading>
+  <Content>Select a File from your computer<br /> or Search Adobe Stock</Content>
+</IllustratedMessage>
+```
+
+### Accessibility
+
+When an IllustratedMessage has a `svg` and a `Heading`, the `svg` needs an `aria-hidden` prop and a `role` prop set to `presentation`.
+
+## Labeling
+
+### Accessibility
+
+The title of an IllustratedMessage is typically provided via its `Heading`.
+If a `Heading` isn't specified, the illustration needs an `aria-label` prop to identify it to assistive technology.
+If you pass an SVG in yourself, you'll need to ensure that the `role` prop is set to `img` as well.
+
+```tsx example
+<IllustratedMessage>
+  <NotFound aria-label="No results" />
+</IllustratedMessage>
+```
+
+## Props
+
+<PropTable component={docs.exports.IllustratedMessage} links={docs.links} />
+
+## Example illustrations
+
+The below examples make use of illustrations included in the [@spectrum-icons/illustrations](http://npmjs.com/@spectrum-icons/illustrations) package.
+
+### No search results
+
+```tsx example
+import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
+
+<IllustratedMessage>
+  <NoSearchResults />
+  <Heading>No matching results</Heading>
+  <Content>Try another search.</Content>
+</IllustratedMessage>
+```
+
+### 403 Forbidden
+
+```tsx example
+import Unauthorized from '@spectrum-icons/illustrations/Unauthorized';
+
+<IllustratedMessage>
+  <Unauthorized />
+  <Heading>Error 403: Access not allowed</Heading>
+  <Content>You do not have permission to access this page. Try checking the URL or visit a different page.</Content>
+</IllustratedMessage>
+```
+
+### 404 Not found
+
+```tsx example
+<IllustratedMessage>
+  <NotFound />
+  <Heading>Error 404: Page not found</Heading>
+  <Content>This page isn't available. Try checking the URL or visit a different page.</Content>
+</IllustratedMessage>
+```
+
+### 500 Internal server error
+
+```tsx example
+import Error from '@spectrum-icons/illustrations/Error';
+
+<IllustratedMessage>
+  <Error />
+  <Heading>Error 500: Internal server error</Heading>
+  <Content>Something went wrong. Please try again later.</Content>
+</IllustratedMessage>
+```
+
+### 503 Service unavailable
+
+```tsx example
+import Unavailable from '@spectrum-icons/illustrations/Unavailable';
+
+<IllustratedMessage>
+  <Unavailable />
+  <Heading>Error 503: Service unavailable</Heading>
+  <Content>This page isn't working. Try a different page or try again later.</Content>
+</IllustratedMessage>
+```
+
+### 504 Gateway timeout
+
+```tsx example
+import Timeout from '@spectrum-icons/illustrations/Timeout';
+
+<IllustratedMessage>
+  <Timeout />
+  <Heading>Error 504: Server timeout</Heading>
+  <Content>The server took too long. Please try again later.</Content>
+</IllustratedMessage>
+```

@@ -1,3 +1,15 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {ActionButton} from '@react-spectrum/button';
 import {CalendarAria} from '@react-aria/calendar';
 import {CalendarPropsBase} from '@react-types/calendar';
@@ -6,7 +18,7 @@ import {CalendarTableBody} from './CalendarTableBody';
 import {CalendarTableHeader} from './CalendarTableHeader';
 import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import ChevronRight from '@spectrum-icons/ui/ChevronRightLarge';
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
@@ -40,7 +52,6 @@ export function CalendarBase(props: CalendarBaseProps) {
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
       {...styleProps}
       {...calendarProps}
       className={
@@ -58,26 +69,23 @@ export function CalendarBase(props: CalendarBaseProps) {
         <ActionButton
           {...prevButtonProps}
           UNSAFE_className={classNames(styles, 'spectrum-Calendar-prevMonth')}
-          isQuiet
-          isDisabled={props.isDisabled}
-          icon={direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />} />
+          isQuiet>
+          {direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}
+        </ActionButton>
         <ActionButton
           {...nextButtonProps}
           UNSAFE_className={classNames(styles, 'spectrum-Calendar-nextMonth')}
-          isQuiet
-          isDisabled={props.isDisabled}
-          icon={direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />} />
+          isQuiet>
+          {direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />}
+        </ActionButton>
       </div>
-      <div
+      <table
         {...calendarBodyProps}
-        className={classNames(styles, 'spectrum-Calendar-body')}>
-        <table
-          className={classNames(styles, 'spectrum-Calendar-table')}>
-          <VisuallyHidden elementType="caption" {...captionProps} />
-          <CalendarTableHeader weekStart={state.weekStart} />
-          <CalendarTableBody state={state} />
-        </table>
-      </div>
+        className={classNames(styles, 'spectrum-Calendar-body', 'spectrum-Calendar-table')}>
+        <VisuallyHidden elementType="caption" {...captionProps} />
+        <CalendarTableHeader weekDays={state.weekDays} />
+        <CalendarTableBody state={state} />
+      </table>
     </div>
   );
 }

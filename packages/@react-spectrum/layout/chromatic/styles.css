@@ -1,0 +1,67 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+.spectrum-Card {
+  border: 1px solid rgb(25, 25, 25);
+  border-radius: 4px;
+  background: rgb(50, 50, 50);
+  max-width: 300px;
+}
+
+.heading {
+  padding: 0;
+  margin: 0;
+}
+
+.spectrum-Card {
+  display: grid;
+  grid-template-columns: 14px 48px 1fr 1fr 14px;
+  grid-template-rows: minmax(auto, 168px) 32px 16px auto auto auto;
+  grid-template-areas:
+    "preview preview    preview  preview   preview"
+    ".       avatar     .        .         ."
+    ".       avatar     .        .         ."
+    ".       title      title    title     ."
+    ".       body       body     body      ."
+    ".       divider    divider  divider   ."
+    ".       footer     footer   footer    .";
+}
+
+.preview {
+  grid-area: preview-start / preview-start / span 2 /preview-end;
+}
+
+.avatar {
+  grid-area: avatar;
+  z-index: 1;
+  height: 48px;
+  width: 48px;
+}
+
+.title {
+  grid-area: title;
+  margin: 5px 0;
+}
+
+.body {
+  grid-area: body;
+}
+
+.divider {
+  grid-area: divider;
+  width: 100%;
+}
+
+.footer {
+  grid-area: footer;
+  margin-bottom: 5px;
+}

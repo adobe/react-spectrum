@@ -1,0 +1,41 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+.react-spectrum-Table {
+  display: flex;
+  flex-direction: column;
+}
+
+.react-spectrum-Table-cell {
+  display: flex;
+  align-items: center;
+}
+
+.react-spectrum-Table-cellWrapper > .react-spectrum-Table-cell {
+  height: 100%;
+}
+
+.react-spectrum-Table-cell--alignCenter {
+  justify-content: center;
+}
+
+.react-spectrum-Table-cell--alignEnd {
+  justify-content: flex-end;
+}
+
+.react-spectrum-Table-centeredWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}

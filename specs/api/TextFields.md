@@ -1,3 +1,12 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
 # Text Fields
 
 ```typescript
@@ -12,14 +21,6 @@ type TextArea = TextField;
 interface SearchField extends TextField {
   onSubmit?: (value: string) => void,
   onClear?: () => void
-}
-
-interface NumberField extends InputBase, TextInputBase, ValueBase<number>, RangeInputBase<number>, Labelable, DOMProps, StyleProps {
-  isQuiet?: boolean,
-  decrementAriaLabel?: string,
-  incrementAriaLabel?: string,
-  showStepper?: boolean,
-  formatOptions?: Intl.NumberFormatOptions
 }
 
 interface SearchWithin extends InputBase, TextInputBase, Labelable, DOMProps, StyleProps {
@@ -66,17 +67,6 @@ interface InlineEditor extends TextField {
 | `onChange(value, e, {from})` (search only) | `onChange(value)`       | removed `from` parameter. use `onClear` instead. |
 | -                                          | `onClear` (search only) | added                                            |
 | `icon`                                     | -                       | moved to TextField                               |
-
-## NumberField Changes
-| **v2**           | **v3**               | **Notes** |
-| ---------------- | -------------------- | --------- |
-| `<NumberInput>`  | `<NumberField>`      |           |
-| `min`            | `minValue`           |           |
-| `max`            | `maxValue`           |           |
-| `decrementTitle` | `decrementAriaLabel` |           |
-| `incrementTitle` | `incrementAriaLabel` |           |
-| -                | `showStepper`        | added     |
-| -                | `formatOptions`      | added     |
 
 ## SearchWithin Changes
 | **v2**         | **v3**     | **Notes** |

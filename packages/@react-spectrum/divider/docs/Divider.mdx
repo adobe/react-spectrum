@@ -1,0 +1,76 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/divider';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/divider/package.json';
+
+```jsx import
+import {Divider} from '@react-spectrum/divider';
+import {Flex} from '@react-spectrum/layout';
+import {Text} from '@react-spectrum/text';
+```
+
+---
+category: Content
+---
+
+# Divider
+
+<p>{docs.exports.Divider.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Divider']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/divider/'}
+  ]} />
+
+## Example
+
+### Horizontal
+[View guidelines](https://spectrum.adobe.com/page/divider/#Orientation)
+
+```tsx example
+<Flex direction="column" gap="size-125">
+  <Text>Content above</Text>
+  <Divider />
+  <Text>Content below</Text>
+</Flex>
+```
+
+### Vertical
+
+```tsx example
+<Flex gap="size-125">
+  <Text>Content left</Text>
+  <Divider orientation="vertical" />
+  <Text>Content right</Text>
+</Flex>
+```
+
+### Size
+[View guidelines](https://spectrum.adobe.com/page/divider/#Size)
+
+```tsx example
+<Flex direction="column" gap="size-125">
+  <Text>Content above large Divider</Text>
+  <Divider size="L" />
+  <Text>Content above medium Divider</Text>
+  <Divider size="M" />
+  <Text>Content above small Divider</Text>
+  <Divider size="S" />
+</Flex>
+```
+## Props
+
+<PropTable component={docs.exports.Divider} links={docs.links} />

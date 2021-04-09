@@ -1,0 +1,47 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+.react-spectrum-ToastContainer {
+  position: fixed;
+  top: unset;
+  bottom: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
+  z-index: 100050; /* above modals */
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  pointer-events: none;
+
+  .spectrum-Toast {
+    margin: 8px;
+    pointer-events: all;
+  }
+}
+.react-spectrum-ToastContainer--top {
+  top: 0;
+  flex-direction: column;
+  bottom: unset;
+}
+.react-spectrum-ToastContainer--bottom {
+  flex-direction: column-reverse;
+  bottom: 0;
+}
+.react-spectrum-ToastContainer--left {
+  align-items: flex-start;
+}
+.react-spectrum-ToastContainer--center {
+  align-items: center;
+}
+.react-spectrum-ToastContainer--right {
+  align-items: flex-end;
+}

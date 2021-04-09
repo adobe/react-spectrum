@@ -1,0 +1,139 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: This release includes a few new components including ToggleButton, Tooltips, Slider, and Tabs, some new features, many bugfixes, and improvements. Huge thanks to all of the amazing contributors!
+date: 2020-08-18
+---
+
+# August 18, 2020 Release
+
+This release includes a few new components, some new features, many bugfixes, and improvements. A huge thanks to all of the amazing
+contributors to this release. A special shout out to [@tomsontom](https://github.com/tomsontom),
+[@chungwu](https://github.com/chungwu), and [@so99ynoodles](https://github.com/so99ynoodles) for contributing entire new components,
+including ToggleButton, Slider, and Tabs! 😍
+
+## New components
+
+- **ToggleButton** - [@tomsontom](https://github.com/tomsontom) - [PR](https://github.com/adobe/react-spectrum/pull/916)
+    - [ToggleButton](../../react-spectrum/ToggleButton.html) component in `@react-spectrum/button`
+    - [useToggleButton](../../react-aria/useToggleButton.html) hook in `@react-aria/button`
+- **Tooltips** - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/843)
+    - `@react-spectrum/tooltip` (alpha)
+    - `@react-aria/tooltip` (alpha)
+    - `@react-stately/tooltip` (alpha)
+- **Slider** - [@chungwu](https://github.com/chungwu) - [PR](https://github.com/adobe/react-spectrum/pull/809)
+    - `@react-aria/slider` (alpha)
+    - `@react-stately/slider` (alpha)
+- **Tabs** - [@so99ynoodles](https://github.com/so99ynoodles) - [PR](https://github.com/adobe/react-spectrum/pull/837)
+    - `@react-spectrum/tabs` (alpha)
+    - `@react-aria/tabs` (alpha)
+    - `@react-stately/tabs` (alpha)
+
+**Note:** Tooltips, Slider, and Tabs are available as alpha releases today, and will receive additional updates, documentation, and bugfixes before their stable release. Please feel free to test them out and [report any issues](https://github.com/adobe/react-spectrum/issues) you find.
+
+## New features
+
+- `aria-modal-polyfill` now handles modal behavior for popovers, trays, and other types of overlays - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/806)
+- Buttons that are link elements now support the `rel` attribute - [@ronderksen](https://github.com/ronderksen) - [PR](https://github.com/adobe/react-spectrum/pull/836)
+- `useTextField` supports an `inputElementType` prop to allow for `<textarea>` - [@maksimsemenov](https://github.com/adobe/react-spectrum/pull/831) - [PR](https://github.com/adobe/react-spectrum/pull/831)
+- `isKeyboardDismissDisabled` was added as a prop to `useOverlay` and `DialogTrigger` - [@amy-lei](https://github.com/amy-lei) - [PR](https://github.com/adobe/react-spectrum/pull/901)
+- Clicking the label in `useSelect` and `Picker` now focuses the select element - [@gavinhenderson](https://github.com/gavinhenderson) - [PR](https://github.com/adobe/react-spectrum/pull/860)
+- `useSelectableCollection` and `useSelectableList` and now support `selectOnFocus` and `disallowTypeAhead` options - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/421)
+- `useSelectableItem` and `useOption` now support a `shouldUseVirtualFocus` option- [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/421)
+- Add support for HTML form props to `Form` component - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/589)
+- Added `useVisuallyHidden` hook to `@react-aria/visually-hidden` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/917)
+- Added `useHiddenSelect` hook to `@react-aria/select` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/917)
+- Added `shouldCloseOnInteractOutside` function to `useOverlay` options - [@chungwu](https://github.com/chungwu) - [PR](https://github.com/adobe/react-spectrum/pull/913)
+
+## Bug fixes
+
+- Switched from the `classnames` to smaller/faster `clsx` library - [@cedeber](https://github.com/cedeber) - [PR](https://github.com/adobe/react-spectrum/pull/859)
+- Fix incorrect overlay position when flip is enabled and positive offset is given - [@raon0211](https://github.com/raon0211) - [PR](https://github.com/adobe/react-spectrum/pull/845)
+- `useTypeSelect` now matches spaces rather than selecting the option - [@solimant](https://github.com/solimant) - [PR](https://github.com/adobe/react-spectrum/pull/869)
+- Fix behavior of `maxHeight` and `maxWidth` props in `ListBox` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/903)
+- Fix resizing of quiet `TextArea` - [@zidian257](https://github.com/zidian257) - [PR](https://github.com/adobe/react-spectrum/pull/890)
+- `Breadcrumbs` now uses `ResizeObserver` instead of listening to window `resize` events - [@Anenth](https://github.com/Anenth) - [PR](https://github.com/adobe/react-spectrum/pull/793)
+- `useListState` and `useSingleSelectListState` now accept a `filter` option - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/421)
+- Fix font family in `TextField` - [@tomsontom](https://github.com/tomsontom) - [PR](https://github.com/adobe/react-spectrum/pull/887)
+- Fix focusing dialogs when in an iframe on Safari - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/897)
+- Wait for CSS transitions to finish before focusing element in Tray to fix VoiceOver - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/893)
+- Use inline styles instead of CSS import in `VisuallyHidden` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/911)
+- Fix cache invalidation issue in `ListBox` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/935)
+- Fix repeating keyboard events triggering menu item after opening menu - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/934)
+
+## Docs
+
+- Fix link in PR template - [@Thesoreon](https://github.com/Thesoreon) - [PR](https://github.com/adobe/react-spectrum/pull/920)
+- Add missing ref to `useSelect` example - [@tristandubbeld](https://github.com/tristandubbeld) - [PR](https://github.com/adobe/react-spectrum/pull/871)
+- Fix docs for `onCompositionStart` and `onCompositionEnd` - [@amy-lei](https://github.com/amy-lei) - [PR](https://github.com/adobe/react-spectrum/pull/909)
+- Fix broken link in contributing docs - [@markhicken](https://github.com/markhicken) - [PR](https://github.com/adobe/react-spectrum/pull/838)
+- Fix ActionGroup examples in docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/886)
+- Add missing import to `useOverlayTrigger`  - [@anuraghazra](https://github.com/anuraghazra) - [PR](https://github.com/adobe/react-spectrum/pull/921)
+
+## Released packages
+
+```
+- @adobe/react-spectrum@3.2.0
+- @react-aria/aria-modal-polyfill@3.2.0
+- @react-aria/button@3.2.0
+- @react-aria/dialog@3.1.1
+- @react-aria/focus@3.2.0
+- @react-aria/interactions@3.2.0
+- @react-aria/listbox@3.2.0
+- @react-aria/menu@3.1.1
+- @react-aria/overlays@3.2.0
+- @react-aria/select@3.2.0
+- @react-aria/selection@3.2.0
+- @react-aria/slider@3.0.0-alpha.0
+- @react-aria/table@3.0.0-alpha.6
+- @react-aria/tabs@3.0.0-alpha.0
+- @react-aria/textfield@3.2.0
+- @react-aria/tooltip@3.0.0-alpha.0
+- @react-aria/utils@3.2.0
+- @react-aria/virtualizer@3.1.1
+- @react-aria/visually-hidden@3.2.0
+- @react-spectrum/breadcrumbs@3.1.1
+- @react-spectrum/button@3.2.0
+- @react-spectrum/dialog@3.2.0
+- @react-spectrum/form@3.2.0
+- @react-spectrum/label@3.2.0
+- @react-spectrum/layout@3.1.1
+- @react-spectrum/listbox@3.2.0
+- @react-spectrum/overlays@3.2.0
+- @react-spectrum/picker@3.1.1
+- @react-spectrum/provider@3.1.1
+- @react-spectrum/table@3.0.0-alpha.6
+- @react-spectrum/tabs@3.0.0-alpha.0
+- @react-spectrum/textfield@3.1.1
+- @react-spectrum/tooltip@3.0.0-alpha.0
+- @react-spectrum/utils@3.2.0
+- @react-stately/collections@3.2.0
+- @react-stately/layout@3.1.1
+- @react-stately/list@3.2.0
+- @react-stately/menu@3.2.0
+- @react-stately/selection@3.2.0
+- @react-stately/slider@3.0.0-alpha.0
+- @react-stately/toggle@3.2.0
+- @react-stately/tooltip@3.0.0-alpha.0
+- @react-stately/tree@3.1.1
+- @react-types/button@3.2.0
+- @react-types/dialog@3.2.0
+- @react-types/form@3.2.0
+- @react-types/label@3.2.0
+- @react-types/overlays@3.2.0
+- @react-types/shared@3.2.0
+- @react-types/slider@3.0.0-alpha.0
+- @react-types/tabs@3.0.0-alpha.0
+- @react-types/textfield@3.2.0
+- @react-types/tooltip@3.0.0-alpha.0
+```

@@ -1,0 +1,149 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import {HeaderInfo, PropTable, TypeLink} from '@react-spectrum/docs';
+
+---
+category: Concepts
+keywords: [i18n, aria, localization, locale]
+---
+
+# Internationalization
+
+Adapting components to respect languages and cultures of users around the world is an important way to help make your
+application accessible to the widest number of people. React Aria supports over 30 languages, including
+right-to-left mirroring and interactions.
+
+## Introduction
+
+Internationalization is the process of structuring your code and user interface to support localization. React Aria supports
+many aspects of localization for many components out of the box, including translations for builtin strings, localized
+date and number formatting, right-to-left interactions, and more. By using React Aria for your design system,
+these aspects of internationalization are handled for you. You can also use our hooks in your own custom components.
+
+## Localization
+
+Localization is the process of adapting an application for a particular language or region. It includes translating text content,
+as well as adapting date formatting, number formatting, collation and sorting, text search, and more.
+
+React Aria includes translations for all builtin strings in over 30 locales. However, because React Aria provides no rendering,
+most of the builtin strings are for non-visible content to provide accessible labels. All application provided content must be localized
+and passed in to components. This can be done with libraries such as [react-intl](https://formatjs.io/docs/react-intl).
+Internally, React Aria uses the same [intl-messageformat](https://formatjs.io/docs/intl-messageformat) library used by react-intl.
+
+React Aria also formats numbers and dates according to the current locale, and uses internationalized algorithms for collation,
+sorting, and text search. This is built into all of the components that need to perform these tasks out of the box, but you can
+also use our internationalization hooks in your own components. These are implemented with the builtin browser
+[Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) APIs under the hood, so there's no
+large libraries or locale data for users to download.
+
+See [useMessageFormatter](useMessageFormatter.html), [useDateFormatter](useDateFormatter.html), [useNumberFormatter](useNumberFormatter.html),
+and [useCollator](useCollator.html) for more information about using our internationalization hooks.
+
+## Bi-directionality
+
+Many languages such as those written in the Latin script (e.g. English and French), Cyrillic script (e.g. Russian and Bulgarian), and
+logographic scripts (e.g. Chinese and Japanese) are written left to right. Other languages such as Arabic and Hebrew are written
+right to left. These languages are called “bi-directional,” or are also commonly referred to as “RTL” (“right-to-left”) languages.
+
+In right-to-left languages, user interfaces are expected to be **mirrored**. Layouts flip such that components are positioned on the
+opposite side of the interface. For example, a button that would be displayed on the right side of a screen in a left-to-right language
+would appear on the left side of the screen in a right-to-left language. In addition, elements within a component are also expected to
+mirror. For example, in a checkbox component, the label would be placed on the left side of the checkmark rather than the right.
+
+Since React Aria provides no rendering, it is up to you to implement RTL support in your design. The documentation for individual react-aria hooks
+calls out when you need to be aware of this, so you can account for it in your CSS using
+[logical properties](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Logical_Properties) or other means. For example, flexbox and CSS grid
+both automatically flip their layouts depending on the direction.
+
+Even though it is not responsible for rendering or layout, React Aria is aware of the current directionality, and adjusts interactions
+accordingly. For example, when navigating using the left and right arrow keys, React Aria automatically flips the direction so that
+the left arrow always navigates to the item physically to the left, and the right arrow always navigates to the item physically to the right.
+
+## Example
+
+The root most element of your application should define the [lang](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang)
+and [dir](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir) attributes so that the browser knows which language
+and direction the user interface should be rendered in. This can be done with the [useLocale](useLocale.html) hook from `@react-aria/i18n`.
+
+```tsx
+import {useLocale} from '@react-aria/i18n';
+
+function YourApp() {
+  let {locale, direction} = useLocale();
+
+  return (
+    <div lang={locale} dir={direction}>
+      {/* your app here */}
+    </div>
+  );
+}
+```
+
+React Aria automatically detects the user's current language by default, and even updates this if the browser or system language changes.
+However, if you would like to override this with an application specific setting, you can do so using the [I18nProvider](I18nProvider.html)
+exposed by `@react-aria/i18n`.
+
+```tsx
+import {I18nProvider} from '@react-aria/i18n';
+
+<I18nProvider locale="fr-FR">
+  <YourApp />
+</I18nProvider>
+```
+
+**Note:** if you are using server side rendering, you should always specify a locale rather than relying on browser defaults
+to ensure that the server and client match. See the [SSR docs](ssr.html#locale-selection) for more information.
+
+## Supported locales
+
+React Aria currently supports over 30 locales. They are listed below.
+
+<div style={{columnWidth: 200}}>
+
+* Arabic (United Arab Emirates)
+* Bulgarian (Bulgaria)
+* Chinese (Simplified)
+* Chinese (Traditional)
+* Croatian (Croatia)
+* Czech (Czech Republic)
+* Danish (Denmark)
+* Dutch (Netherlands)
+* English (Great Britain)
+* English (United States)
+* Estonian (Estonia)
+* Finnish (Finland)
+* French (Canada)
+* French (France)
+* German (Germany)
+* Greek (Greece)
+* Hebrew (Israel)
+* Hungarian (Hungary)
+* Italian (Italy)
+* Japanese (Japan)
+* Korean (Korea)
+* Latvian (Latvia)
+* Lithuanian (Lithuania)
+* Norwegian (Norway)
+* Polish (Poland)
+* Portuguese (Brazil)
+* Romanian (Romania)
+* Russian (Russia)
+* Serbian (Serbia)
+* Slovakian (Slovakia)
+* Slovenian (Slovenia)
+* Spanish (Spain)
+* Swedish (Sweden)
+* Turkish (Turkey)
+* Ukrainian (Ukraine)
+
+</div>

@@ -2,6 +2,7 @@
 coverage
 node_modules
 npm-debug.log
+build-storybook.log
 test-reports.xml
 .nyc_output
 dist
@@ -9,11 +10,8 @@ dist
 .package-lock.json
 .cache
 .parcel-cache
+packages/dev/v2-test-deps
 
 dist
 public
 storybook-static
-
-
-#allow
-!.storybook-v3/lib

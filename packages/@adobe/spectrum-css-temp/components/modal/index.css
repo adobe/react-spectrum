@@ -20,7 +20,8 @@ governing permissions and limitations under the License.
   --spectrum-dialog-exit-animation-delay: 0ms;
 
   /* Distance between top and bottom of dialog and edge of window for fullscreen dialog */
-  --spectrum-dialog-fullscreen-margin: 32px;
+  --spectrum-dialog-fullscreen-margin: 40px;
+  --spectrum-dialog-max-height: calc(var(--spectrum-visual-viewport-height) * 0.9);
 }
 
 /* Used to position the modal */
@@ -34,8 +35,12 @@ governing permissions and limitations under the License.
   justify-content: center;
 
   box-sizing: border-box;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  /* On mobile browsers, vh units are fixed based on the maximum height of the screen.
+   * However, when you scroll, the toolbar and address bar shrink, making the viewport resize.
+   * The visual viewport also shrinks when the keyboard is displayed. We use the VisualViewport
+   * API in JS to set this CSS variable to ensure the height is correct. */
+  height: var(--spectrum-visual-viewport-height);
 
   visibility: hidden;
 
@@ -58,14 +63,14 @@ governing permissions and limitations under the License.
 
   /* Start offset by the animation distance */
   transform: translateY(var(--spectrum-dialog-entry-animation-distance));
-  margin-top: var(--spectrum-dialog-vertical-offset);
 
   /* Appear above underlay */
   z-index: 2;
 
   /* Don't be bigger than the screen */
-  max-width: var(--spectrum-dialog-max-width);
   max-height: var(--spectrum-dialog-max-height);
+  max-width: 90vw;
+  min-width: var(--spectrum-dialog-min-width);
 
   border-radius: var(--spectrum-dialog-border-radius);
   outline: none; /* Firefox shows outline */
@@ -114,6 +119,8 @@ only screen and (max-device-height: 350px) {
   bottom: var(--spectrum-dialog-fullscreen-margin);
   max-width: none;
   max-height: none;
+  width: calc(100% - calc(2 * var(--spectrum-dialog-fullscreen-margin)));
+  height: calc(100% - calc(2 * var(--spectrum-dialog-fullscreen-margin)));
 }
 
 .spectrum-Modal--fullscreenTakeover {

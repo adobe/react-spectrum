@@ -1,13 +1,15 @@
 {
   "name": "@react-aria/switch",
-  "version": "3.0.0-rc.1",
+  "version": "3.1.1",
   "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "sideEffects": false,
   "repository": {
@@ -16,13 +18,12 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/toggle": "^3.0.0-rc.1",
-    "@react-stately/toggle": "^3.0.0-rc.1",
-    "@react-types/switch": "^3.0.0-rc.1"
+    "@react-aria/toggle": "^3.1.1",
+    "@react-stately/toggle": "^3.2.1",
+    "@react-types/switch": "^3.1.1"
   },
   "peerDependencies": {
-    "react": "^16.8.0",
-    "react-dom": "^16.8.0"
+    "react": "^16.8.0 || ^17.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"

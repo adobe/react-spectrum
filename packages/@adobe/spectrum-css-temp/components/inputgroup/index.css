@@ -15,15 +15,16 @@ governing permissions and limitations under the License.
 :root {
   /* Todo: move to DNA */
   --spectrum-combobox-quiet-fieldbutton-border-radius: 0;
-  --spectrum-combobox-field-border-width-right: 0;
   --spectrum-combobox-quiet-fieldbutton-padding-right: 0;
+  --spectrum-combobox-quiet-fieldbutton-padding-left: var(--spectrum-global-dimension-size-130);
+  --spectrum-combobox-validation-icon-right: var(--spectrum-global-dimension-size-100);
   --spectrum-datepicker-input-width: calc(var(--spectrum-global-dimension-size-1600) -  2 * var(--spectrum-padding));
   --spectrum-datepicker-datetime-input-width: calc(var(--spectrum-datepicker-input-width) + var(--spectrum-global-dimension-size-700) - var(--spectrum-global-dimension-static-font-size-100) / 2);
   --spectrum-datepicker-range-dash-margin-left: calc(-0.5 * var(--spectrum-global-dimension-static-font-size-100));
   --spectrum-datepicker-range-dash-padding-top: 0;
   --spectrum-datepicker-range-dash-line-height: calc(var(--spectrum-textfield-height) - var(--spectrum-global-dimension-size-100));
 
-  --spectrum-combobox-button-width: calc(var(--spectrum-global-dimension-size-400) + var(--spectrum-global-dimension-size-25));
+  --spectrum-combobox-button-width: var(--spectrum-global-dimension-size-400);
 }
 
 .spectrum-InputGroup {
@@ -31,7 +32,7 @@ governing permissions and limitations under the License.
   display: inline-flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  min-width: var(--spectrum-component-single-line-width);
+  min-width: calc(2.5 * var(--spectrum-dropdown-height));
   border-radius: var(--spectrum-border-radius);
 
   .spectrum-FieldButton {
@@ -40,6 +41,7 @@ governing permissions and limitations under the License.
     border-start-start-radius: var(--spectrum-combobox-fieldbutton-border-top-left-radius);
     border-end-start-radius: var(--spectrum-combobox-fieldbutton-border-bottom-left-radius);
     border-width: 1px;
+    flex-shrink: 0;
   }
 
   &.is-disabled {
@@ -47,23 +49,39 @@ governing permissions and limitations under the License.
       border-width: 0;
     }
   }
+
+  .spectrum-InputGroup-field {
+    .spectrum-InputGroup-input-validationIcon {
+      padding-inline-end: 0;
+      inset-inline-end: var(--spectrum-combobox-validation-icon-right);
+    }
+
+    .spectrum-InputGroup-input-circleLoader {
+      padding-inline-end: 0;
+      inset-inline-end: var(--spectrum-combobox-validation-icon-right);
+    }
+  }
 }
 
 .spectrum-InputGroup-field {
+  flex: 1 1 auto;
+}
+
+.spectrum-InputGroup-input {
   border-start-end-radius: var(--spectrum-combobox-textfield-border-top-right-radius);
   border-end-end-radius: var(--spectrum-combobox-textfield-border-bottom-right-radius);
-  border-inline-end: var(--spectrum-combobox-field-border-width-right);
-  flex: 1;
+  border-inline-end-style: none;
 }
 
 .spectrum-InputGroup--quiet {
   border-radius: var(--spectrum-combobox-quiet-fieldbutton-border-radius);
+  min-width: calc(2 * var(--spectrum-dropdown-height));
 
   .spectrum-FieldButton {
     inline-size: auto;
     position: relative;
 
-    padding-inline-start: var(--spectrum-dropdown-padding-x);
+    padding-inline-start: var(--spectrum-combobox-quiet-fieldbutton-padding-left);
     padding-inline-end: var(--spectrum-combobox-quiet-fieldbutton-padding-right);
     border-width: 0;
     border-bottom: var(--spectrum-textfield-quiet-affixed-border-size) solid;
@@ -88,6 +106,24 @@ governing permissions and limitations under the License.
       border-bottom-width: 1px;
     }
   }
+
+  .spectrum-InputGroup-field {
+    .spectrum-InputGroup-input-validationIcon {
+      padding-inline-end: 0;
+      inset-inline-end: 0;
+    }
+
+    .spectrum-InputGroup-input-circleLoader {
+      padding-inline-end: 0;
+      inset-inline-end: var(--spectrum-global-dimension-size-10);
+    }
+  }
+}
+
+.spectrum-InputGroup-popover--quiet {
+  /* Define this var so it can be read from JS */
+  --spectrum-dropdown-quiet-offset: calc(var(--spectrum-dropdown-quiet-popover-offset-x) + var(--spectrum-popover-border-size));
+  margin-inline-end: calc(var(--spectrum-dropdown-quiet-offset) * -1);
 }
 
 .spectrum-Datepicker--range {

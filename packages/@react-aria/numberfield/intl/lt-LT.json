@@ -1,5 +1,5 @@
 {
-  "Decrement": "Sumažėjimas",
-  "Enter a number": "Įveskite skaičių",
-  "Increment": "Padidėjimas"
+  "decrease": "Sumažinti {fieldLabel}",
+  "increase": "Padidinti {fieldLabel}",
+  "numberField": "Numerio laukas"
 }

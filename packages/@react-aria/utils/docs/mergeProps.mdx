@@ -1,0 +1,77 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/utils';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
+import packageData from '@react-aria/utils/package.json';
+
+---
+category: Utilities
+keywords: [chain, props, merging props]
+---
+
+# mergeProps
+
+<p>{docs.exports.mergeProps.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['mergeProps']} />
+
+## API
+
+<FunctionAPI function={docs.exports.mergeProps} links={docs.links} />
+
+## Introduction
+
+`mergeProps` is a utility function that combines multiple props objects together in a smart way.
+This can be useful when you need to combine the results of multiple react-aria hooks onto a single
+element. For example, both hooks may return the same event handlers, class names, or ids, and only
+one of these can be applied. `mergeProps` handles combining these props together so that multiple
+event handlers will be chained, multiple classes will be combined, and ids will be deduplicated.
+For all other props, the last prop object overrides all previous ones.
+
+## Example
+
+```tsx
+let a = {
+  className: 'foo',
+  onKeyDown(e) {
+    if (e.key === 'Enter') {
+      console.log('enter')
+    }
+  }
+};
+
+let b = {
+  className: 'bar',
+  onKeyDown(e) {
+    if (e.key === ' ') {
+      console.log('space')
+    }
+  }
+};
+
+let merged = mergeProps(a, b);
+```
+
+The result of the above example will be equivalent to this:
+
+```tsx
+let merged = {
+  className: 'foo bar',
+  onKeyDown(e) {
+    a.onKeyDown(e);
+    b.onKeyDown(e);
+  }
+}
+```

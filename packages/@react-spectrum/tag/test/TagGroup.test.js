@@ -1,14 +1,24 @@
-import {cleanup, render} from '@testing-library/react';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {fireEvent} from '@testing-library/react';
 import React from 'react';
+import {render} from '@testing-library/react';
 import {Tag, TagGroup} from '../src';
-import {TagList} from '@react/react-spectrum/TagList';
 
 describe('TagGroup', function () {
   let onRemoveSpy = jest.fn();
 
   afterEach(() => {
-    cleanup();
     onRemoveSpy.mockClear();
   });
 
@@ -34,13 +44,12 @@ describe('TagGroup', function () {
   });
 
   it.each`
-   Name           | Component         | props
-   ${'TagGroup'}  | ${TagGroup}       | ${{isReadOnly: true, isRemovable: true, onRemove: onRemoveSpy}}
-   ${'TagList'}   | ${TagList}        | ${{readOnly: true, onClose: onRemoveSpy}}
-  `('$Name can be read only', ({Component, props}) => {
+   Name           | Component     | TagComponent | props
+   ${'TagGroup'}  | ${TagGroup}   | ${Tag}       | ${{isReadOnly: true, isRemovable: true, onRemove: onRemoveSpy}}
+  `('$Name can be read only', ({Component, TagComponent, props}) => {
     let {getByText} = render(
       <Component {...props}>
-        <Tag>Tag 1</Tag>
+        <TagComponent>Tag 1</TagComponent>
       </Component>
     );
     let tag = getByText('Tag 1');

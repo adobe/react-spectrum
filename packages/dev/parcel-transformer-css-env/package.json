@@ -1,0 +1,12 @@
+{
+  "name": "parcel-transformer-css-env",
+  "version": "1.0.0",
+  "private": true,
+  "main": "CSSEnvTransformer.js",
+  "engines": {
+    "parcel": ">= 2.0.0-alpha.3.2"
+  },
+  "dependencies": {
+    "@parcel/plugin": "latest"
+  }
+}

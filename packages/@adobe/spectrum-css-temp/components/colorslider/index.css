@@ -1,0 +1,111 @@
+:root {
+  --spectrum-colorslider-handle-hitarea-border-radius: 0%;
+  --spectrum-colorslider-handle-hitarea-width: var(
+    --spectrum-global-dimension-size-300
+  );
+  --spectrum-colorslider-handle-hitarea-height: var(
+    --spectrum-global-dimension-size-300
+  );
+}
+
+%spectrum-ColorControl-handle--focused {
+  /* Bigger handle when focused */
+  width: calc(var(--spectrum-colorhandle-size) * 2);
+  height: calc(var(--spectrum-colorhandle-size) * 2);
+
+  margin-left: calc(-1 * var(--spectrum-colorhandle-size));
+  margin-top: calc(-1 * var(--spectrum-colorhandle-size));
+}
+
+%spectrum-ColorControl-hiddenField {
+  opacity: 0.0001;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  margin: 0;
+  pointer-events: none;
+}
+
+.spectrum-ColorSlider-container--horizontal {
+  width: var(--spectrum-colorslider-default-length);
+}
+
+.spectrum-ColorSlider-container--vertical {
+  display: flex;
+  flex-direction: column;
+  height: var(--spectrum-colorslider-default-length);
+}
+
+.spectrum-ColorSlider {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: var(--spectrum-colorslider-height);
+  border-radius: var(--spectrum-colorslider-border-radius);
+
+  /* Otherwise we randomly drag a file icon */
+  user-select: none;
+  touch-action: none;
+
+  cursor: default;
+
+  /* The checkerboard is a separate element so that the gradient is overlaid on top. */
+  &:before {
+    content: "";
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    border-radius: var(--spectrum-colorslider-border-radius);
+    background-size: var(--spectrum-global-dimension-static-size-200)
+      var(--spectrum-global-dimension-static-size-200);
+    background-position: 0 0, 0 var(--spectrum-global-dimension-static-size-100),
+      var(--spectrum-global-dimension-static-size-100)
+        calc(-1 * var(--spectrum-global-dimension-static-size-100)),
+      calc(-1 * var(--spectrum-global-dimension-static-size-100)) 0;
+  }
+
+  &.is-focused {
+    z-index: 2;
+
+    .spectrum-ColorSlider-handle {
+      @extend %spectrum-ColorControl-handle--focused;
+    }
+  }
+
+  &.is-disabled {
+    pointer-events: none;
+  }
+}
+
+.spectrum-ColorSlider--vertical {
+  display: inline-block;
+
+  width: var(--spectrum-colorslider-vertical-width);
+  flex: 1;
+
+  .spectrum-ColorSlider-handle {
+    left: 50%;
+    top: 0;
+  }
+}
+
+.spectrum-ColorSlider-handle {
+  left: 0;
+  top: 50%;
+
+  &:after {
+    border-radius: var(--spectrum-colorslider-handle-hitarea-border-radius);
+    width: var(--spectrum-colorslider-handle-hitarea-width);
+    height: var(--spectrum-colorslider-handle-hitarea-height);
+  }
+}
+
+.spectrum-ColorSlider-slider {
+  @extend %spectrum-ColorControl-hiddenField;
+}

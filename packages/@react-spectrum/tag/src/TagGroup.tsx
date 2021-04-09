@@ -1,4 +1,16 @@
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import React, {useContext} from 'react';
 import {Removable} from '@react-types/shared';
 import {SpectrumTagGroupProps} from '@react-types/tag';
@@ -6,7 +18,7 @@ import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTagGroup} from '@react-aria/tag';
 
-interface TagGroupContext extends Removable<any, void> {
+interface TagGroupContextValue extends Removable<any, void> {
   isDisabled?: boolean,
   isFocused?: boolean,
   isRequired?: boolean,
@@ -15,14 +27,14 @@ interface TagGroupContext extends Removable<any, void> {
   role?: 'gridcell'
 }
 
-const TagGroupContext = React.createContext<TagGroupContext | {}>({});
+const TagGroupContext = React.createContext<TagGroupContextValue | {}>({});
 
-export function useTagGroupProvider(): TagGroupContext {
+export function useTagGroupProvider(): TagGroupContextValue {
   return useContext(TagGroupContext);
 }
 
 export const TagGroup = ((props: SpectrumTagGroupProps) => {
-  let completeProps = useProviderProps(props);
+  props = useProviderProps(props);
 
   let {
     isReadOnly,
@@ -31,9 +43,9 @@ export const TagGroup = ((props: SpectrumTagGroupProps) => {
     validationState,
     children,
     ...otherProps
-  } = completeProps;
+  } = props;
   let {styleProps} = useStyleProps(otherProps);
-  const {tagGroupProps} = useTagGroup(completeProps);
+  const {tagGroupProps} = useTagGroup(props);
 
   function removeAll(tags) {
     onRemove([tags]);
@@ -41,7 +53,6 @@ export const TagGroup = ((props: SpectrumTagGroupProps) => {
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
       {...styleProps}
       className={
         classNames(

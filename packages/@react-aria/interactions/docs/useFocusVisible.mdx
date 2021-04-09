@@ -1,0 +1,78 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/interactions';
+import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-aria/interactions/package.json';
+
+```jsx import
+import {useFocusVisible} from '@react-aria/interactions';
+```
+
+---
+category: Interactions
+keywords: [keyboard focus, focus management, focus ring, focus visibility, aria]
+---
+
+# useFocusVisible
+
+<p>{docs.exports.useFocusVisible.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useFocusVisible']} />
+
+## API
+
+<FunctionAPI function={docs.exports.useFocusVisible} links={docs.links} />
+
+## Features
+
+`useFocusVisible` handles focus interactions for the page and determines whether keyboard focus
+should be visible (e.g. with a focus ring). Focus visibility is computed based on the current
+interaction mode of the user. When the user interacts via a mouse or touch, then focus is not
+visible. When the user interacts via a keyboard or screen reader, then focus is visible. This is similar to
+the [:focus-visible](https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-visible) pseudo class
+in CSS.
+
+To determine whether a focus ring should be visible for an individual component rather than
+globally, see [useFocusRing](useFocusRing.html).
+
+## Example
+
+This example shows focus visible state and updates as you interact with the page. By default,
+when the page loads, it is true. If you press anywhere on the page with a mouse or touch,
+then focus visible state is set to false. If you keyboard navigate around the page then
+it is set to true again.
+
+Note that this example uses the `isTextInput` option so that only certain navigation keys
+cause focus visible state to appear. This prevents focus visible state from appearing when
+typing text in a text field.
+
+```tsx example
+function Example() {
+  let {isFocusVisible} = useFocusVisible({isTextInput: true});
+
+  return (
+    <>
+      <div>Focus visible: {String(isFocusVisible)}</div>
+      <label style={{display: 'block'}}>
+        First Name: <input />
+      </label>
+      <label style={{display: 'block'}}>
+        Last Name: <input />
+      </label>
+    </>
+  );
+}
+```
