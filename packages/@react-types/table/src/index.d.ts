@@ -64,7 +64,7 @@ export interface ColumnProps<T> {
   minWidth?: number | string,
   /** The maximum width of the column. */
   maxWidth?: number | string,
-  /** The default width of the column. TODO: is this even a thing? If so, why? */
+  /** The default width of the column. */
   defaultWidth?: number | string
 }
 

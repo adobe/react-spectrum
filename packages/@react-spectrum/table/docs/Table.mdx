@@ -40,7 +40,7 @@ keywords: [table, grid]
 
 ## Example
 ```tsx example
-<Flex width="size-6000">
+<Flex flexGrow={1} maxWidth="size-6000">
   <Table aria-label="Example table with static contents" width="100%" height="100%">
     <TableHeader>
       <Column>Name</Column>
@@ -99,7 +99,7 @@ function Example() {
   ];
 
   return (
-    <Flex width="size-6000">
+    <Flex flexGrow={1} maxWidth="size-6000">
       <Table aria-label="Example table with dynamic content" width="100%" height="100%">
         <TableHeader columns={columns}>
           {column => (
@@ -137,7 +137,7 @@ to one or more Columns, allowing you to customize which columns should label the
 The example below applies `isRowHeader` to the "First Name" and "Last Name" columns so that each row is announced with the person's full name (e.g. "John Doe").
 
 ```tsx example
-<Flex width="size-6000">
+<Flex flexGrow={1} maxWidth="size-3000">
   <Table aria-label="Example table with static contents" width="100%" height="100%">
     <TableHeader>
       <Column isRowHeader>First Name</Column>
@@ -179,7 +179,8 @@ function AsyncTable() {
   let columns = [
     {name: 'Name', key: 'name'},
     {name: 'Height', key: 'height'},
-    {name: 'Mass', key: 'mass'}
+    {name: 'Mass', key: 'mass'},
+    {name: 'Birth Year', key: 'birth_year'}
   ];
 
   let list = useAsyncList({
@@ -200,7 +201,7 @@ function AsyncTable() {
   });
 
   return (
-    <Flex width="size-6000">
+    <Flex height="size-2000" flexGrow={1} maxWidth="size-4600">
       <Table aria-label="example async loading table" height="100%" width="100%">
         <TableHeader columns={columns}>
           {(column) => (
@@ -232,7 +233,7 @@ Use `defaultSelectedKeys` to provide a default set of selected rows. Note that t
 The example below demonstrates how one would use `defaultSelectedKeys`.
 
 ```tsx example
-<Flex width="size-6000">
+<Flex flexGrow={1} maxWidth="size-6000">
   <Table aria-label="Example table with single selection (uncontrolled)" width="100%" height="100%" selectionMode="single" defaultSelectedKeys={['2']}>
     <TableHeader>
       <Column>Name</Column>
@@ -288,7 +289,7 @@ function PokemonTable(props) {
   let [selected, setSelected] = React.useState(new Set(['2']));
 
   return (
-    <Flex width="size-6000">
+    <Flex flexGrow={1} maxWidth="size-6000">
       <Table aria-label="Example table with single selection (controlled)" width="100%" height="100%" selectionMode="single" selectedKeys={selected} onSelectionChange={setSelected} {...props}>
         <TableHeader columns={columns}>
           {column => (
@@ -338,7 +339,8 @@ function AsyncSortTable() {
   let columns = [
     {name: 'Name', key: 'name'},
     {name: 'Height', key: 'height'},
-    {name: 'Mass', key: 'mass'}
+    {name: 'Mass', key: 'mass'},
+    {name: 'Birth Year', key: 'birth_year'}
   ];
 
   let list = useAsyncList({
@@ -370,7 +372,7 @@ function AsyncSortTable() {
   });
 
   return (
-    <Flex width="size-6000">
+    <Flex height="size-2000" flexGrow={1} maxWidth="size-4600">
       <Table aria-label="Example table with client side sorting" height="100%" width="100%" sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
         <TableHeader columns={columns}>
           {(column) => (
@@ -449,7 +451,7 @@ function AsyncSortTable() {
 import Edit from '@spectrum-icons/workflow/Edit';
 import Delete from '@spectrum-icons/workflow/Delete';
 
-<Flex width="size-3000">
+<Flex maxWidth="size-3000" flexGrow={1}>
   <Table aria-label="Example table for focusable cells" width="100%" height="100%">
     <TableHeader>
       <Column>Name</Column>
@@ -518,7 +520,7 @@ import Delete from '@spectrum-icons/workflow/Delete';
 Columns support three different width props: `minWidth`, `width`, and `maxWidth`.
 
 ```tsx example
-<Flex width="size-6000">
+<Flex flexGrow={1} maxWidth="size-6000">
   <Table aria-label="Example table for column widths" width="100%" height="100%">
     <TableHeader>
       <Column maxWidth={300} align="start">Name</Column>
@@ -554,13 +556,13 @@ Columns support three different width props: `minWidth`, `width`, and `maxWidth`
 ### Column dividers
 [View guidelines](https://spectrum.adobe.com/page/table/#Column-dividers)
 
-```tsx examples
-<Flex width="size-6000">
+```tsx example
+<Flex flexGrow={1} maxWidth="size-6000">
   <Table aria-label="Example table for column dividers" width="100%" height="100%">
     <TableHeader>
       <Column align="start" showDivider>Name</Column>
-      <Column>Type</Column>
-      <Column align="end">Size</Column>
+      <Column showDivider>Type</Column>
+      <Column align="end" showDivider>Size</Column>
     </TableHeader>
     <TableBody>
       <Row>
@@ -592,7 +594,7 @@ Columns support three different width props: `minWidth`, `width`, and `maxWidth`
 [View guidelines](https://spectrum.adobe.com/page/table/#Usage-guidelines)
 
 ```tsx example
-<Flex width="size-6000">
+<Flex flexGrow={1} maxWidth="size-6000">
   <Table aria-label="Example table for column alignment" width="100%" height="100%">
     <TableHeader>
       <Column align="start">Name</Column>
@@ -629,7 +631,7 @@ Columns support three different width props: `minWidth`, `width`, and `maxWidth`
 Table supports nesting columns, allowing you to render "tiered" column headers.
 
 ```tsx example
-<Flex width="size-6000">
+<Flex flexGrow={1} maxWidth="size-6000">
   <Table aria-label="Example table for nested columns" width="100%" height="100%">
     <TableHeader>
       <Column title="OS (C:)">
@@ -681,7 +683,7 @@ function TableExample(props) {
   ];
 
   return (
-    <Flex width="size-6000">
+    <Flex flexGrow={1} maxWidth="size-6000">
       <Table aria-label="Example table with hidden headers" width="100%" height="100%" {...props}>
         <TableHeader columns={columns}>
           {column => (
@@ -766,7 +768,7 @@ function renderEmptyState() {
   );
 }
 
-<Flex width="size-6000">
+<Flex height="size-6000" flexGrow={1} maxWidth="size-6000">
   <Table aria-label="Example table for empty state" width="100%" height="100%" renderEmptyState={renderEmptyState}>
     <TableHeader>
       <Column>Name</Column>
