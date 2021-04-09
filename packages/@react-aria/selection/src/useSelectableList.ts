@@ -70,7 +70,11 @@ interface SelectableListOptions {
   /**
    * Whether the collection items should use virtual focus instead of being focused directly.
    */
-  shouldUseVirtualFocus?: boolean
+  shouldUseVirtualFocus?: boolean,
+  /**
+   * Whether navigation through tab key is enabled.
+   */
+  allowsTabNavigation?: boolean
 }
 
 interface SelectableListAria {
@@ -96,7 +100,8 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     disallowEmptySelection,
     selectOnFocus = false,
     disallowTypeAhead,
-    shouldUseVirtualFocus
+    shouldUseVirtualFocus,
+    allowsTabNavigation
   } = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
@@ -124,7 +129,8 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     disallowEmptySelection,
     selectOnFocus,
     disallowTypeAhead,
-    shouldUseVirtualFocus
+    shouldUseVirtualFocus,
+    allowsTabNavigation
   });
 
   return {

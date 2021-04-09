@@ -15,7 +15,6 @@ import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils'
 import {Field} from '@react-spectrum/label';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {mergeProps} from '@react-aria/utils';
 import React, {HTMLAttributes, InputHTMLAttributes, RefObject, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
@@ -58,20 +57,12 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
 
   let {isHovered, hoverProps} = useHover({isDisabled});
 
-  let className = classNames(
-    inputgroupStyles,
-    'spectrum-InputGroup',
-    {
-      'spectrum-InputGroup--quiet': isQuiet,
-      'spectrum-InputGroup--invalid': props.validationState === 'invalid',
-      'is-disabled': isDisabled,
-      'is-hovered': isHovered
-    },
+  let className =
     classNames(
       stepperStyle,
       'spectrum-Stepper',
       {
-        'spectrum-Stepper--quiet': isQuiet,
+        'spectrum-Stepper--isQuiet': isQuiet,
         'is-disabled': isDisabled,
         'spectrum-Stepper--readonly': isReadOnly,
         'is-invalid': props.validationState === 'invalid',
@@ -81,8 +72,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
         // because FocusRing won't pass along the className from Field, we have to handle that ourselves
         [style.className]: !props.label && style.className
       }
-    )
-  );
+    );
 
   return (
     <Field
@@ -140,8 +130,8 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
     <FocusRing
       within
       isTextInput
-      focusClass={classNames(inputgroupStyles, 'is-focused', classNames(stepperStyle, 'is-focused'))}
-      focusRingClass={classNames(inputgroupStyles, 'focus-ring', classNames(stepperStyle, 'focus-ring'))}
+      focusClass={classNames(stepperStyle, 'is-focused')}
+      focusRingClass={classNames(stepperStyle, 'focus-ring')}
       autoFocus={autoFocus}>
       <div
         {...groupProps}
@@ -152,28 +142,22 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
           UNSAFE_className={
             classNames(
               stepperStyle,
-              'spectrum-Stepper-field',
-              classNames(inputgroupStyles,
-                'spectrum-InputGroup-field'
-              )
+              'spectrum-Stepper-field'
             )
           }
-          isQuiet={isQuiet}
           inputClassName={
             classNames(
               stepperStyle,
-              'spectrum-Stepper-input',
-              classNames(inputgroupStyles,
-                'spectrum-InputGroup-input'
-              )
+              'spectrum-Stepper-input'
             )
           }
           validationIconClassName={
             classNames(
-              inputgroupStyles,
-              'spectrum-InputGroup-input-validationIcon'
+              stepperStyle,
+              'spectrum-Stepper-icon'
             )
           }
+          isQuiet={isQuiet}
           inputRef={inputRef}
           validationState={validationState}
           inputProps={inputProps} />
