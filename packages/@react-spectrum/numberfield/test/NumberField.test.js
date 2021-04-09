@@ -87,6 +87,8 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('inputMode', 'numeric');
     expect(incrementButton).toBeTruthy();
     expect(decrementButton).toBeTruthy();
+    expect(incrementButton).toHaveAttribute('tabIndex', '-1');
+    expect(decrementButton).toHaveAttribute('tabIndex', '-1');
   });
 
   it('attaches a user provided ref to the outer div', function () {
