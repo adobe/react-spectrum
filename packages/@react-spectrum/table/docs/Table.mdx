@@ -44,29 +44,29 @@ keywords: [table, grid]
   <Table aria-label="Example table with static contents" width="100%" height="100%">
     <TableHeader>
       <Column>Name</Column>
-      <Column>Date Modified</Column>
       <Column>Type</Column>
+      <Column align="end">Date Modified</Column>
     </TableHeader>
     <TableBody>
       <Row>
         <Cell>Games</Cell>
-        <Cell>6/7/2020</Cell>
         <Cell>File folder</Cell>
+        <Cell>6/7/2020</Cell>
       </Row>
       <Row>
         <Cell>Program Files</Cell>
-        <Cell>4/7/2021</Cell>
         <Cell>File folder</Cell>
+        <Cell>4/7/2021</Cell>
       </Row>
       <Row>
         <Cell>bootmgr</Cell>
-        <Cell>11/20/2010</Cell>
         <Cell>System file</Cell>
+        <Cell>11/20/2010</Cell>
       </Row>
       <Row>
         <Cell>log.txt</Cell>
-        <Cell>1/18/2016</Cell>
         <Cell>Text Document</Cell>
+        <Cell>1/18/2016</Cell>
       </Row>
     </TableBody>
   </Table>
@@ -87,8 +87,8 @@ which dramatically improves performance. Be sure to match each Column's key with
 function Example() {
   let columns = [
     {name: 'Name', uid: 'name'},
-    {name: 'Date Modified', uid: 'date'},
-    {name: 'Type', uid: 'type'}
+    {name: 'Type', uid: 'type'},
+    {name: 'Date Modified', uid: 'date'}
   ];
 
   let rows = [
@@ -103,7 +103,7 @@ function Example() {
       <Table aria-label="Example table with dynamic content" width="100%" height="100%">
         <TableHeader columns={columns}>
           {column => (
-            <Column key={column.uid}>
+            <Column key={column.uid} align={column.uid === 'date' ? 'end' : 'start'}>
               {column.name}
             </Column>
           )}
@@ -170,7 +170,9 @@ function AsyncTable() {
       <Table aria-label="example async loading table" height="100%" width="100%">
         <TableHeader columns={columns}>
           {(column) => (
-            <Column>{column.name}</Column>
+            <Column align={column.key !== 'name' ? 'end' : 'start'}>
+              {column.name}
+            </Column>
           )}
         </TableHeader>
         <TableBody
@@ -201,7 +203,7 @@ The example below demonstrates how one would use `defaultSelectedKeys`.
     <TableHeader>
       <Column>Name</Column>
       <Column>Type</Column>
-      <Column>Level</Column>
+      <Column align="end">Level</Column>
     </TableHeader>
     <TableBody>
       <Row key="1">
@@ -256,7 +258,7 @@ function PokemonTable(props) {
       <Table aria-label="Example table with single selection (controlled)" width="100%" height="100%" selectionMode="single" selectedKeys={selected} onSelectionChange={setSelected} {...props}>
         <TableHeader columns={columns}>
           {column => (
-            <Column key={column.uid}>
+            <Column key={column.uid} align={column.uid === 'level' ? 'end' : 'start'}>
               {column.name}
             </Column>
           )}
@@ -338,7 +340,9 @@ function AsyncSortTable() {
       <Table aria-label="Example table with client side sorting" height="100%" width="100%" sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
         <TableHeader columns={columns}>
           {(column) => (
-            <Column allowsSorting>{column.name}</Column>
+            <Column allowsSorting align={column.key !== 'name' ? 'end' : 'start'}>
+              {column.name}
+            </Column>
           )}
         </TableHeader>
         <TableBody
@@ -417,6 +421,220 @@ function AsyncSortTable() {
 
 
 ## Visual options
+### Focusable cells
+```tsx example
+import Edit from '@spectrum-icons/workflow/Edit';
+import Delete from '@spectrum-icons/workflow/Delete';
+
+<Flex height="size-2000" width="size-3000">
+  <Table aria-label="Example table for focusable cells" width="100%" height="100%">
+    <TableHeader>
+      <Column>Name</Column>
+      <Column hideHeader>Add</Column>
+      <Column hideHeader>Delete</Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>Red Panda</Cell>
+        <Cell>
+          <ActionButton isQuiet>
+            <Edit />
+          </ActionButton>
+        </Cell>
+        <Cell>
+          <ActionButton isQuiet>
+            <Delete />
+          </ActionButton>
+        </Cell>
+      </Row>
+      <Row>
+        <Cell>Harbor Seal</Cell>
+        <Cell>
+          <ActionButton isQuiet>
+            <Edit />
+          </ActionButton>
+        </Cell>
+        <Cell>
+          <ActionButton isQuiet>
+            <Delete />
+          </ActionButton>
+        </Cell>
+      </Row>
+      <Row>
+        <Cell>Groundhog</Cell>
+        <Cell>
+          <ActionButton isQuiet>
+            <Edit />
+          </ActionButton>
+        </Cell>
+        <Cell>
+          <ActionButton isQuiet>
+            <Delete />
+          </ActionButton>
+        </Cell>
+      </Row>
+      <Row>
+        <Cell>Otter</Cell>
+        <Cell>
+          <ActionButton isQuiet>
+            <Edit />
+          </ActionButton>
+        </Cell>
+        <Cell>
+          <ActionButton isQuiet>
+            <Delete />
+          </ActionButton>
+        </Cell>
+      </Row>
+    </TableBody>
+  </Table>
+</Flex>
+```
+
+### Column widths
+Columns support three different width props: `minWidth`, `width`, and `maxWidth`.
+
+```tsx example
+<Flex height="size-2000" width="size-6000">
+  <Table aria-label="Example table for column widths" width="100%" height="100%">
+    <TableHeader>
+      <Column maxWidth={300} align="start">Name</Column>
+      <Column width={80}>Type</Column>
+      <Column minWidth={100} align="end">Size</Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>2021406_Proposal</Cell>
+        <Cell>PDF</Cell>
+        <Cell>86 KB</Cell>
+      </Row>
+      <Row>
+        <Cell>Budget Template</Cell>
+        <Cell>XLS</Cell>
+        <Cell>120 KB</Cell>
+      </Row>
+      <Row>
+        <Cell>Onboarding</Cell>
+        <Cell>PPT</Cell>
+        <Cell>472 KB</Cell>
+      </Row>
+      <Row>
+        <Cell>Welcome</Cell>
+        <Cell>TXT</Cell>
+        <Cell>24 KB</Cell>
+      </Row>
+    </TableBody>
+  </Table>
+</Flex>
+```
+
+### Column dividers
+[View guidelines](https://spectrum.adobe.com/page/table/#Column-dividers)
+
+```tsx examples
+<Flex height="size-2000" width="size-6000">
+  <Table aria-label="Example table for column dividers" width="100%" height="100%">
+    <TableHeader>
+      <Column align="start" showDivider>Name</Column>
+      <Column>Type</Column>
+      <Column align="end">Size</Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>2021406_Proposal</Cell>
+        <Cell>PDF</Cell>
+        <Cell>86 KB</Cell>
+      </Row>
+      <Row>
+        <Cell>Budget Template</Cell>
+        <Cell>XLS</Cell>
+        <Cell>120 KB</Cell>
+      </Row>
+      <Row>
+        <Cell>Onboarding</Cell>
+        <Cell>PPT</Cell>
+        <Cell>472 KB</Cell>
+      </Row>
+      <Row>
+        <Cell>Welcome</Cell>
+        <Cell>TXT</Cell>
+        <Cell>24 KB</Cell>
+      </Row>
+    </TableBody>
+  </Table>
+</Flex>
+```
+
+### Column alignment
+[View guidelines](https://spectrum.adobe.com/page/table/#Usage-guidelines)
+
+```tsx example
+<Flex height="size-2000" width="size-6000">
+  <Table aria-label="Example table for column alignment" width="100%" height="100%">
+    <TableHeader>
+      <Column align="start">Name</Column>
+      <Column align="center">Type</Column>
+      <Column align="end">Size</Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>2021406_Proposal</Cell>
+        <Cell>PDF</Cell>
+        <Cell>86 KB</Cell>
+      </Row>
+      <Row>
+        <Cell>Budget Template</Cell>
+        <Cell>XLS</Cell>
+        <Cell>120 KB</Cell>
+      </Row>
+      <Row>
+        <Cell>Onboarding</Cell>
+        <Cell>PPT</Cell>
+        <Cell>472 KB</Cell>
+      </Row>
+      <Row>
+        <Cell>Welcome</Cell>
+        <Cell>TXT</Cell>
+        <Cell>24 KB</Cell>
+      </Row>
+    </TableBody>
+  </Table>
+</Flex>
+```
+
+### Nested columns
+Table supports nesting columns, allowing you to render "tiered" column headers.
+
+```tsx example
+<Flex height="size-2000" width="size-6000">
+  <Table aria-label="Example table for nested columns" width="100%" height="100%">
+    <TableHeader>
+      <Column title="OS (C:)">
+        <Column align="start">Name</Column>
+        <Column>Type</Column>
+        <Column align="end">Size</Column>
+      </Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>2021406_Proposal</Cell>
+        <Cell>PDF</Cell>
+        <Cell>86 KB</Cell>
+      </Row>
+      <Row>
+        <Cell>Budget Template</Cell>
+        <Cell>XLS</Cell>
+        <Cell>120 KB</Cell>
+      </Row>
+      <Row>
+        <Cell>Onboarding</Cell>
+        <Cell>PPT</Cell>
+        <Cell>472 KB</Cell>
+      </Row>
+    </TableBody>
+  </Table>
+</Flex>
+```
 
 ### Hide header
 Individual column headers can be hidden by providing the `hideHeader` prop to the Column. A tooltip is rendered when the column header is focused
@@ -505,38 +723,6 @@ to the Table.
 <TableExample overflowMode="wrap" />
 ```
 
-### Column alignment
-[View guidelines](https://spectrum.adobe.com/page/table/#Usage-guidelines)
-
-```tsx example
-<Flex height="size-2000" width="size-6000">
-  <Table aria-label="Example table for column alignment" width="100%" height="100%">
-    <TableHeader>
-      <Column align="start">Name</Column>
-      <Column align="center">Type</Column>
-      <Column align="end">Size</Column>
-    </TableHeader>
-    <TableBody>
-      <Row>
-        <Cell>2021406_Proposal</Cell>
-        <Cell>PDF</Cell>
-        <Cell>86 KB</Cell>
-      </Row>
-      <Row>
-        <Cell>Budget Template</Cell>
-        <Cell>XLS</Cell>
-        <Cell>120 KB</Cell>
-      </Row>
-      <Row>
-        <Cell>Onboarding</Cell>
-        <Cell>PPT</Cell>
-        <Cell>472 KB</Cell>
-      </Row>
-    </TableBody>
-  </Table>
-</Flex>
-```
-
 ### Empty state
 Use the `renderEmptyState` prop to customize what the Table will display if there are no rows provided.
 
@@ -571,49 +757,4 @@ function renderEmptyState() {
 </Flex>
 ```
 
-### Nested columns
-// TODO add description here
-
-```tsx example
-<Flex height="size-2000" width="size-6000">
-  <Table aria-label="Example table for column alignment" width="100%" height="100%">
-    <TableHeader>
-      <Column title="OS (C:)">
-        <Column align="start">Name</Column>
-        <Column align="center">Type</Column>
-        <Column align="end">Size</Column>
-      </Column>
-    </TableHeader>
-    <TableBody>
-      <Row>
-        <Cell>2021406_Proposal</Cell>
-        <Cell>PDF</Cell>
-        <Cell>86 KB</Cell>
-      </Row>
-      <Row>
-        <Cell>Budget Template</Cell>
-        <Cell>XLS</Cell>
-        <Cell>120 KB</Cell>
-      </Row>
-      <Row>
-        <Cell>Onboarding</Cell>
-        <Cell>PPT</Cell>
-        <Cell>472 KB</Cell>
-      </Row>
-    </TableBody>
-  </Table>
-</Flex>
-```
-
-### Focusable cells
-// TODO add description here
-
-### Column widths
-// TODO add description here
-
-### Column dividers
-[View guidelines](https://spectrum.adobe.com/page/table/#Column-dividers)
-
-
-TODO: // Other column specific props like isRowHeader labeling
-TODO: // Modify all numeric columns to align end properly
+TODO: // Other column specific props like isRowHeader labeling, perhaps accessibility
