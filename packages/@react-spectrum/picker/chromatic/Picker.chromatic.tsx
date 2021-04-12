@@ -25,7 +25,11 @@ import {Text} from '@react-spectrum/text';
 const meta: Meta<SpectrumPickerProps<object>> = {
   title: 'Picker',
   component: Picker,
-  parameters: {chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true}},
+  parameters: {
+    chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true},
+    // chromatic needs a bit more time than disableAnimations allows
+    chromatic: {delay: 300}
+  },
   decorators: [Story => <div style={{height: '400px'}}><Story /></div>]
 };
 

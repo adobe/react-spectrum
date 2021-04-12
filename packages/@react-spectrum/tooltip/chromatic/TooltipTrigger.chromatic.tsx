@@ -19,7 +19,11 @@ import {Tooltip, TooltipTrigger} from '../';
 const meta: Meta<SpectrumTooltipTriggerProps> = {
   title: 'TooltipTrigger',
   component: TooltipTrigger,
-  parameters: {chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true}}
+  parameters: {
+    chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true},
+    // chromatic needs a bit more time than disableAnimations allows
+    chromatic: {delay: 300}
+  }
 };
 
 export default meta;
