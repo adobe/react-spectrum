@@ -37,10 +37,6 @@ storiesOf('NumberField', module)
     () => render({value: 10})
   )
   .add(
-    'disable scroll',
-    () => render({disableScroll: true, defaultValue: 10})
-  )
-  .add(
     'maximumFractionDigits = 0',
     () => render({formatOptions: {maximumFractionDigits: 0}})
   )

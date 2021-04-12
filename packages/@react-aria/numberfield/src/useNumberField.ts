@@ -20,7 +20,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef, 
+  useRef,
   useState
 } from 'react';
 // @ts-ignore
@@ -73,8 +73,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     autoFocus,
     validationState,
     label,
-    formatOptions,
-    disableScroll
+    formatOptions
   } = props;
 
   let {
@@ -136,7 +135,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     }
   }, [decrement, increment]);
   // If the input isn't supposed to receive input, disable scrolling.
-  let scrollingDisabled = isDisabled || isReadOnly || disableScroll || !focusWithin;
+  let scrollingDisabled = isDisabled || isReadOnly || !focusWithin;
   useScrollWheel({onScroll: onWheel, capture: false, disable: scrollingDisabled}, inputRef);
 
   // The inputMode attribute influences the software keyboard that is shown on touch devices.
