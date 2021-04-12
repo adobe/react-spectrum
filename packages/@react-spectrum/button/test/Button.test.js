@@ -197,6 +197,7 @@ describe('Button', function () {
 
     let button = getByRole('button');
     triggerPress(button);
+    expect(button).toBeDisabled();
     expect(onPressSpy).not.toHaveBeenCalled();
   });
 

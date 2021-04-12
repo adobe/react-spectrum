@@ -80,6 +80,10 @@ export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<an
   if (elementType !== 'button' && type === 'button') {
     type = undefined;
   }
+  // don't apply disabled to non button/input elements
+  if (elementType !== 'button' && isDisabled) {
+    isDisabled = undefined;
+  }
 
   let {pressProps, isPressed} = usePress({
     onPressStart,
