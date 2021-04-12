@@ -118,7 +118,7 @@ function rtl(ltr: string, rtl: string) {
 }
 
 const UNIT_RE = /(%|px|em|rem|vw|vh|auto|cm|mm|in|pt|pc|ex|ch|rem|vmin|vmax|fr)$/;
-const FUNC_RE = /\s*\w+\(/;
+const FUNC_RE = /^\s*\w+\(/;
 const SPECTRUM_VARIABLE_RE = /(static-)?size-\d+|single-line-(height|width)/g;
 
 export function dimensionValue(value: DimensionValue) {
