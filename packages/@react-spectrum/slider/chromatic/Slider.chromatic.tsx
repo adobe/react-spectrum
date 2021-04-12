@@ -11,8 +11,8 @@
  */
 
 import {Meta, Story} from '@storybook/react';
-import {Slider} from '../';
 import React from 'react';
+import {Slider} from '../';
 import {SpectrumSliderProps} from '@react-types/slider';
 
 const meta: Meta<SpectrumSliderProps> = {
