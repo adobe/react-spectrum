@@ -34,11 +34,11 @@ Default.args = {label: 'Meter label', value: 50, variant: 'positive'};
 export const SizeS = Template().bind({});
 SizeS.args = {...Default.args, size: 'S'};
 
-export const ShowValueLabel = Template().bind({});
-ShowValueLabel.args = {...Default.args, showValueLabel: true};
+export const ShowValueLabelFalse = Template().bind({});
+ShowValueLabelFalse.args = {...Default.args, showValueLabel: false};
 
 export const LabelPositionSide = Template().bind({});
-LabelPositionSide.args = {...Default.args};
+LabelPositionSide.args = {...Default.args, labelPosition: 'side'};
 
 export const Critical = Template().bind({});
 Critical.args = {...Default.args, variant: 'critical'};

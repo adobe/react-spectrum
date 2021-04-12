@@ -28,6 +28,10 @@ const Template = <T extends object>(): Story<SpectrumBreadcrumbsProps<T>> => (ar
     <Item key="Folder 1">The quick brown fox jumps over</Item>
     <Item key="Folder 2">My Documents</Item>
     <Item key="Folder 3">Kangaroos jump high</Item>
+    <Item key="Folder 4">Koalas are very cute</Item>
+    <Item key="Folder 5">Wombat's noses</Item>
+    <Item key="Folder 6">Wattle trees</Item>
+    <Item key="Folder 7">April 7</Item>
   </Breadcrumbs>
 );
 
@@ -46,6 +50,7 @@ SizeM.args = {size: 'M'};
 
 export const Truncated = Template().bind({});
 Truncated.args = {truncated: true};
+Truncated.decorators = [(Story) => <div style={{width: '100px'}}><Story /></div>];
 
 export const ShowRoot = Template().bind({});
 ShowRoot.args = {showRoot: true};
