@@ -42,8 +42,11 @@ Vertical.args = {...Default.args, orientation: 'vertical'};
 export const LabelPositionSide = Template().bind({});
 LabelPositionSide.args = {...Default.args, labelPosition: 'side'};
 
+/*
+Not supported but prop exists
 export const LabelAlignEnd = Template().bind({});
-LabelAlignEnd.args = {...Default.args, labelAlign: 'end'};
+LabelAlignEnd.args = {...Default.args, labelAlign: 'end', showValueLabel: false};
+*/
 
 export const Value50 = Template().bind({});
 Value50.args = {...Default.args, defaultValue: 50};

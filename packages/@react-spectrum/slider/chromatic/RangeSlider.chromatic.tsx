@@ -42,8 +42,11 @@ Vertical.args = {...Default.args, orientation: 'vertical'};
 export const SmallerRange = Template().bind({});
 SmallerRange.args = {...Default.args, defaultValue: {start: 30, end: 70}};
 
-export const LabelPositionSide = Template().bind({});
-LabelPositionSide.args = {...Default.args, labelPosition: 'side'};
+/*
+Not supported but prop exists
+export const LabelAlignEnd = Template().bind({});
+LabelAlignEnd.args = {...Default.args, labelAlign: 'end', showValueLabel: false};
+*/
 
 export const LabelAlignEnd = Template().bind({});
 LabelAlignEnd.args = {...Default.args, labelAlign: 'end'};

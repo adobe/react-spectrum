@@ -25,7 +25,8 @@ import {Text} from '@react-spectrum/text';
 const meta: Meta<SpectrumPickerProps<object>> = {
   title: 'Picker',
   component: Picker,
-  parameters: {chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true}}
+  parameters: {chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true}},
+  decorators: [Story => <div style={{height: '400px'}}><Story /></div>]
 };
 
 export default meta;
@@ -89,7 +90,7 @@ export const Disabled = Template().bind({});
 Disabled.args = {...Default.args, isDisabled: true};
 
 export const LabelAlignEnd = Template().bind({});
-Default.args = {...Default.args, labelAlign: 'end'};
+LabelAlignEnd.args = {...Default.args, labelAlign: 'end'};
 
 export const LabelPositionSide = Template().bind({});
 LabelPositionSide.args = {...Default.args, labelPosition: 'side'};
