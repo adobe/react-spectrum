@@ -74,14 +74,15 @@ keywords: [table, grid]
 ```
 
 ## Content
-Table expects a TableHeader and a TableBody as children. In turn, TableHeader and TableBody follow the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections.
+Table expects a TableHeader and a TableBody as children. In turn, TableHeader and TableBody follow the [Collection Components](../react-stately/collections.html) API.
 The TableHeader accepts either static Columns or a `columns` prop with a renderer function for dynamic rendering. Similarly, TableBody accepts either static Rows or a `items` prop with a renderer function.
 Row follows the same pattern, accepting Cells as children instead.
 
 Basic usage of Table, seen in the example above, shows multiple Columns and Rows populated with strings and Cells respectively. Static collections, as in this example, can be used when the contents of the Table is known ahead of time.
 
 Dynamic collections, as shown below, can be used when the options come from an external data source such as an API call, or update over time. Providing the data in this way allows Table to automatically cache the rendering of each item,
-which dramatically improves performance. Be sure to match each Column's key with an identical property in the Row object.
+which dramatically improves performance. Make sure that each rendered property in the Row object matches with a Column's key. In the example below, the `uid` of each Column is set as its key and matches with a
+property within each Row object.
 
 ```tsx example
 function Example() {
@@ -227,10 +228,10 @@ function AsyncTable() {
 ## Events
 
 ### Selection
-Table supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
-Use `defaultSelectedKeys` to provide a default set of selected rows. Note that the  value of the selected keys must match the `key` prop of the Row.
+Table supports multiple selection modes. By default, selection is disabled, but this can be modified using the `selectionMode` prop.
+Use `defaultSelectedKeys` to provide a default set of selected rows. Note that the value of the selected keys must match the `key` prop of the Row.
 
-The example below demonstrates how one would use `defaultSelectedKeys`.
+The example below uses `defaultSelectedKeys` to select the row with key equal to "2".
 
 ```tsx example
 <Flex flexGrow={1} maxWidth="size-6000">
@@ -332,7 +333,7 @@ When the user presses a column's sort icon, the column's key and sort direction 
 the `SortDescriptor` appropriately.
 
 This example performs client side sorting by passing a `sort` function to the [useAsyncList](../react-stately/useAsyncList.html) hook.
-See the docs for more information.
+See the docs for more information on how to perform server side sorting.
 
 ```tsx example
 function AsyncSortTable() {
@@ -446,70 +447,37 @@ function AsyncSortTable() {
 }} links={tableTypes.links} />
 
 ## Visual options
-### Focusable cells
-```tsx example
-import Edit from '@spectrum-icons/workflow/Edit';
-import Delete from '@spectrum-icons/workflow/Delete';
+### Column alignment
+[View guidelines](https://spectrum.adobe.com/page/table/#Usage-guidelines)
 
-<Flex maxWidth="size-3000" flexGrow={1}>
-  <Table aria-label="Example table for focusable cells" width="100%" height="100%">
+```tsx example
+<Flex flexGrow={1} maxWidth="size-4600">
+  <Table aria-label="Example table for column alignment" width="100%" height="100%">
     <TableHeader>
-      <Column>Name</Column>
-      <Column hideHeader>Add</Column>
-      <Column hideHeader>Delete</Column>
+      <Column align="start">Name</Column>
+      <Column align="center">Type</Column>
+      <Column align="end">Size</Column>
     </TableHeader>
     <TableBody>
       <Row>
-        <Cell>Red Panda</Cell>
-        <Cell>
-          <ActionButton isQuiet>
-            <Edit />
-          </ActionButton>
-        </Cell>
-        <Cell>
-          <ActionButton isQuiet>
-            <Delete />
-          </ActionButton>
-        </Cell>
+        <Cell>2021406_Proposal</Cell>
+        <Cell>PDF</Cell>
+        <Cell>86 KB</Cell>
       </Row>
       <Row>
-        <Cell>Harbor Seal</Cell>
-        <Cell>
-          <ActionButton isQuiet>
-            <Edit />
-          </ActionButton>
-        </Cell>
-        <Cell>
-          <ActionButton isQuiet>
-            <Delete />
-          </ActionButton>
-        </Cell>
+        <Cell>Budget Template</Cell>
+        <Cell>XLS</Cell>
+        <Cell>120 KB</Cell>
       </Row>
       <Row>
-        <Cell>Groundhog</Cell>
-        <Cell>
-          <ActionButton isQuiet>
-            <Edit />
-          </ActionButton>
-        </Cell>
-        <Cell>
-          <ActionButton isQuiet>
-            <Delete />
-          </ActionButton>
-        </Cell>
+        <Cell>Onboarding</Cell>
+        <Cell>PPT</Cell>
+        <Cell>472 KB</Cell>
       </Row>
       <Row>
-        <Cell>Otter</Cell>
-        <Cell>
-          <ActionButton isQuiet>
-            <Edit />
-          </ActionButton>
-        </Cell>
-        <Cell>
-          <ActionButton isQuiet>
-            <Delete />
-          </ActionButton>
-        </Cell>
+        <Cell>Welcome</Cell>
+        <Cell>TXT</Cell>
+        <Cell>24 KB</Cell>
       </Row>
     </TableBody>
   </Table>
@@ -590,43 +558,6 @@ Columns support three different width props: `minWidth`, `width`, and `maxWidth`
 </Flex>
 ```
 
-### Column alignment
-[View guidelines](https://spectrum.adobe.com/page/table/#Usage-guidelines)
-
-```tsx example
-<Flex flexGrow={1} maxWidth="size-4600">
-  <Table aria-label="Example table for column alignment" width="100%" height="100%">
-    <TableHeader>
-      <Column align="start">Name</Column>
-      <Column align="center">Type</Column>
-      <Column align="end">Size</Column>
-    </TableHeader>
-    <TableBody>
-      <Row>
-        <Cell>2021406_Proposal</Cell>
-        <Cell>PDF</Cell>
-        <Cell>86 KB</Cell>
-      </Row>
-      <Row>
-        <Cell>Budget Template</Cell>
-        <Cell>XLS</Cell>
-        <Cell>120 KB</Cell>
-      </Row>
-      <Row>
-        <Cell>Onboarding</Cell>
-        <Cell>PPT</Cell>
-        <Cell>472 KB</Cell>
-      </Row>
-      <Row>
-        <Cell>Welcome</Cell>
-        <Cell>TXT</Cell>
-        <Cell>24 KB</Cell>
-      </Row>
-    </TableBody>
-  </Table>
-</Flex>
-```
-
 ### Nested columns
 Table supports nesting columns, allowing you to render "tiered" column headers.
 
@@ -661,6 +592,78 @@ Table supports nesting columns, allowing you to render "tiered" column headers.
 </Flex>
 ```
 
+### Focusable cells
+Cells accept any renderable node, allowing you to have focusable children within the table.
+
+```tsx example
+import Edit from '@spectrum-icons/workflow/Edit';
+import Delete from '@spectrum-icons/workflow/Delete';
+
+<Flex maxWidth="size-3000" flexGrow={1}>
+  <Table aria-label="Example table for focusable cells" width="100%" height="100%">
+    <TableHeader>
+      <Column>Name</Column>
+      <Column hideHeader>Add</Column>
+      <Column hideHeader>Delete</Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>Red Panda</Cell>
+        <Cell>
+          <ActionButton isQuiet>
+            <Edit />
+          </ActionButton>
+        </Cell>
+        <Cell>
+          <ActionButton isQuiet>
+            <Delete />
+          </ActionButton>
+        </Cell>
+      </Row>
+      <Row>
+        <Cell>Harbor Seal</Cell>
+        <Cell>
+          <ActionButton isQuiet>
+            <Edit />
+          </ActionButton>
+        </Cell>
+        <Cell>
+          <ActionButton isQuiet>
+            <Delete />
+          </ActionButton>
+        </Cell>
+      </Row>
+      <Row>
+        <Cell>Groundhog</Cell>
+        <Cell>
+          <ActionButton isQuiet>
+            <Edit />
+          </ActionButton>
+        </Cell>
+        <Cell>
+          <ActionButton isQuiet>
+            <Delete />
+          </ActionButton>
+        </Cell>
+      </Row>
+      <Row>
+        <Cell>Otter</Cell>
+        <Cell>
+          <ActionButton isQuiet>
+            <Edit />
+          </ActionButton>
+        </Cell>
+        <Cell>
+          <ActionButton isQuiet>
+            <Delete />
+          </ActionButton>
+        </Cell>
+      </Row>
+    </TableBody>
+  </Table>
+</Flex>
+```
+
 ### Hide header
 Individual column headers can be hidden by providing the `hideHeader` prop to the Column. A tooltip is rendered when the column header is focused
 to compensate for the lack of a visual title.
@@ -679,7 +682,7 @@ function TableExample(props) {
     {id: '2', firstName: 'Jane', lastName: 'Doe', age: '37'},
     {id: '3', firstName: 'Joe', lastName: 'Schmoe', age: '67'},
     {id: '4', firstName: 'Joe', lastName: 'Bloggs', age: '12'},
-    {id: '5', firstName: 'Longgggg Wrapping', lastName: 'Name', age: '56'}
+    {id: '5', firstName: 'Longggggggggggg Wrapping', lastName: 'Name', age: '56'}
   ];
 
   return (
@@ -721,11 +724,11 @@ function TableExample(props) {
 ```
 
 ### Disabled
-Use the `disabledKeys` prop to specify which rows to disable in the Table.
+Use the `disabledKeys` prop to specify which rows to disable selection for in the Table.
 
 ```tsx example
 // Using same setup as hide header example
-<TableExample disabledKeys={['2', '3']} />
+<TableExample disabledKeys={['2', '3']} selectionMode="single" />
 ```
 
 ### Density
