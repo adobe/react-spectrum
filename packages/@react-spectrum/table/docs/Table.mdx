@@ -185,7 +185,6 @@ function AsyncTable() {
   ];
 
   let list = useAsyncList({
-    getKey: (item) => item.name,
     async load({signal, cursor}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
@@ -345,7 +344,6 @@ function AsyncSortTable() {
   ];
 
   let list = useAsyncList({
-    getKey: (item) => item.name,
     async load({signal, cursor}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
@@ -360,14 +358,25 @@ function AsyncSortTable() {
       };
     },
     async sort({items, sortDescriptor}) {
+      let sorted = items.sort((a, b) => {
+        let cmp;
+        let first = a[sortDescriptor.column].replace("BBY", "");
+        let second = b[sortDescriptor.column].replace("BBY", "");
+
+        if (+first || +second) {
+          cmp = +first < +second ? -1 : 1;
+        } else {
+          cmp = first <= second ? -1 : 1;
+        }
+
+        if (sortDescriptor.direction === 'descending') {
+          cmp *= -1;
+        }
+        return cmp;
+      });
+
       return {
-        items: items.slice().sort((a, b) => {
-          let cmp = a[sortDescriptor.column] < b[sortDescriptor.column] ? -1 : 1;
-          if (sortDescriptor.direction === 'descending') {
-            cmp *= -1;
-          }
-          return cmp;
-        })
+        items: sorted
       };
     }
   });
