@@ -149,6 +149,7 @@ function DroppableGrid(props) {
 
   let dropState = useDroppableCollectionState({
     collection: gridState.collection,
+    selectionManager: gridState.selectionManager,
     getDropOperation: props.getDropOperation || defaultGetDropOperation,
     onDropEnter: props.onDropEnter,
     onDropMove: props.onDropMove,
@@ -282,8 +283,7 @@ function CollectionItem({item, state, dropState, onPaste}) {
   let {gridCellProps} = useGridCell({
     node: cellNode,
     ref: cellRef,
-    focusMode: 'cell',
-    shouldSelectOnPressUp: true
+    focusMode: 'cell'
   }, state);
 
   let dropIndicatorRef = React.useRef();
