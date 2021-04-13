@@ -76,14 +76,6 @@ export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<an
       rel: elementType === 'a' ? rel : undefined
     };
   }
-  // don't apply type button to non button elements
-  if (elementType !== 'button' && type === 'button') {
-    type = undefined;
-  }
-  // don't apply disabled to non button/input elements
-  if (elementType !== 'button' && isDisabled) {
-    isDisabled = undefined;
-  }
 
   let {pressProps, isPressed} = usePress({
     onPressStart,
@@ -94,6 +86,15 @@ export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<an
     preventFocusOnPress,
     ref
   });
+
+  // don't apply type button to non button elements
+  if (elementType !== 'button' && type === 'button') {
+    type = undefined;
+  }
+  // don't apply disabled to non button/input elements
+  if (elementType !== 'input' && elementType !== 'button') {
+    isDisabled = undefined;
+  }
 
   let {focusableProps} = useFocusable(props, ref);
   let buttonProps = mergeProps(focusableProps, pressProps);
