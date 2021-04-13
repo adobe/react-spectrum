@@ -16,7 +16,7 @@ import {FocusRing} from '@react-aria/focus';
 import {Item, Picker} from '@react-spectrum/picker';
 import {ListCollection, SingleSelectListState} from '@react-stately/list';
 import {mergeProps, useId, useLayoutEffect} from '@react-aria/utils';
-import React, {Key, MutableRefObject, ReactElement, useCallback, useEffect, useRef, useState} from 'react';
+import React, {Key, MutableRefObject, ReactElement, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
 import {SpectrumTabListProps, SpectrumTabPanelsProps, SpectrumTabsProps} from '@react-types/tabs';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
@@ -37,7 +37,7 @@ interface TabsContext<T> {
     selectedTab: HTMLElement,
     collapse: boolean
   },
-  refs: { 
+  refs: {
     wrapperRef: MutableRefObject<HTMLDivElement>,
     tablistRef: MutableRefObject<HTMLDivElement>
   },
@@ -65,7 +65,7 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
   let {styleProps} = useStyleProps(otherProps);
   let [collapse, setCollapse] = useValueEffect(false);
   let [selectedTab, setSelectedTab] = useState<HTMLElement>();
-  const [tabListState, setTabListState] = React.useState<TabListState<T>>(null);
+  const [tabListState, setTabListState] = useState<TabListState<T>>(null);
 
   useEffect(() => {
     if (tablistRef.current) {
@@ -121,10 +121,10 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
     tabPanelProps['aria-labelledby'] = collapsibleTabListId;
   }
   return (
-    <TabContext.Provider 
+    <TabContext.Provider
       value={{
-        tabProps: {...props, orientation, density}, 
-        tabState: {tabListState, setTabListState, selectedTab, collapse}, 
+        tabProps: {...props, orientation, density},
+        tabState: {tabListState, setTabListState, selectedTab, collapse},
         refs: {tablistRef, wrapperRef},
         tabPanelProps
       }}>
@@ -150,13 +150,14 @@ interface TabProps<T> extends DOMProps {
   orientation?: Orientation
 }
 
-export function Tab<T>(props: TabProps<T>) {
+// @private
+function Tab<T>(props: TabProps<T>) {
   let {item, state, isDisabled: propsDisabled} = props;
   let {key, rendered} = item;
   let isDisabled = propsDisabled || state.disabledKeys.has(key);
 
   let ref = useRef<HTMLDivElement>();
-  let {tabProps} = useTab({item, isDisabled}, state, ref);
+  let {tabProps} = useTab({key, isDisabled}, state, ref);
 
   let {hoverProps, isHovered} = useHover({
     ...props
@@ -202,6 +203,7 @@ interface TabLineProps {
   selectedKey?: Key
 }
 
+// @private
 function TabLine(props: TabLineProps) {
   let {
     orientation,
@@ -242,20 +244,25 @@ function TabLine(props: TabLineProps) {
   return <div className={classNames(styles, 'spectrum-Tabs-selectionIndicator')} role="presentation" style={style} />;
 }
 
-export const TabList = function <T> (props: SpectrumTabListProps<T>) {
-  const tabContext = React.useContext(TabContext);
+/**
+ * A TabList is used within Tabs to group tabs that a user can switch between.
+ * The keys of the items within the <TabList> must match up with a corresponding item inside the <TabPanels>.
+ */
+export function TabList<T>(props: SpectrumTabListProps<T>) {
+  const tabContext = useContext(TabContext);
   const {refs, tabState, tabProps, tabPanelProps} = tabContext;
   const {isQuiet, density, isDisabled, orientation} = tabProps;
   const {selectedTab, collapse, setTabListState} = tabState;
   const {tablistRef, wrapperRef} = refs;
   // Pass original Tab props but override children to create the collection.
   const state = useTabListState({...tabProps, children: props.children});
-  
+
   const {tabListProps} = useTabList({...tabProps, ...props}, state, tablistRef);
-  
+
   useEffect(() => {
     // Passing back to root as useTabPanel needs the TabListState
     setTabListState(state);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.disabledKeys, state.selectedItem, state.selectedKey, props.children]);
 
   const tabContent = (
@@ -293,14 +300,17 @@ export const TabList = function <T> (props: SpectrumTabListProps<T>) {
       </div>
     );
   }
-};
+}
 
-
-export const TabPanels = function <T> (props: SpectrumTabPanelsProps<T>) {
-  const {tabState, tabProps, tabPanelProps: ctxTabPanelProps} = React.useContext(TabContext);
+/**
+ * TabPanels is used within Tabs as a container for the content of each tab.
+ * The keys of the items within the <TabPanels> must match up with a corresponding item inside the <TabList>.
+ */
+export function TabPanels<T>(props: SpectrumTabPanelsProps<T>) {
+  const {tabState, tabProps, tabPanelProps: ctxTabPanelProps} = useContext(TabContext);
   const {tabListState} = tabState;
   const {tabPanelProps} = useTabPanel(props, tabListState);
-  
+
   if (ctxTabPanelProps['aria-labelledby']) {
     tabPanelProps['aria-labelledby'] = ctxTabPanelProps['aria-labelledby'];
   }
@@ -312,9 +322,9 @@ export const TabPanels = function <T> (props: SpectrumTabPanelsProps<T>) {
   return (
     <div {...tabPanelProps} className={classNames(styles, 'spectrum-TabsPanel-tabpanel')}>
       {selectedItem && selectedItem.props.children}
-    </div> 
+    </div>
   );
-};
+}
 
 interface TabPickerProps<T> extends SpectrumPickerProps<T> {
   density?: 'compact' | 'regular',

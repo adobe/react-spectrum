@@ -23,7 +23,7 @@ interface TabListAria {
   /** Props for the tablist container. */
   tabListProps: HTMLAttributes<HTMLElement>
 }
-  
+
 export function useTabList<T>(props: AriaTabListProps<T>, state: TabListState<T>, ref): TabListAria {
   let {
     orientation = 'horizontal',
@@ -40,7 +40,7 @@ export function useTabList<T>(props: AriaTabListProps<T>, state: TabListState<T>
     direction,
     orientation,
     disabledKeys), [collection, disabledKeys, orientation, direction]);
-  
+
   let {collectionProps} = useSelectableCollection({
     ref,
     selectionManager: manager,
@@ -48,13 +48,13 @@ export function useTabList<T>(props: AriaTabListProps<T>, state: TabListState<T>
     selectOnFocus: keyboardActivation === 'automatic',
     disallowEmptySelection: true
   });
-  
-    // Compute base id for all tabs
+
+  // Compute base id for all tabs
   let tabsId = useId();
   tabsIds.set(state, tabsId);
-  
+
   let tabListLabelProps = useLabels({...props, id: tabsId});
-  
+
   return {
     tabListProps: {
       ...mergeProps(collectionProps, tabListLabelProps),

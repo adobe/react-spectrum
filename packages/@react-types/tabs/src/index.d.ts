@@ -15,16 +15,15 @@ import {
   CollectionBase,
   CollectionChildren,
   DOMProps,
-  Node,
   Orientation,
   SingleSelection,
   StyleProps
 } from '@react-types/shared';
 import {Key} from 'react';
 
-export interface AriaTabProps<T> {
-  /** Collection node for the tab. */
-  item: Node<T>,
+export interface AriaTabProps {
+  /** The key of the tab. */
+  key: Key,
   /** Whether the tab should be disabled. */
   isDisabled?: boolean
 }

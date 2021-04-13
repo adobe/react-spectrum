@@ -21,8 +21,14 @@ export function useTabListState<T extends object>(props: TabListProps<T>): TabLi
 
   useEffect(() => {
     // Ensure a tab is always selected (in case no selected key was specified or if selected item was deleted from collection)
-    if (state.selectionManager.isEmpty || !state.collection.getItem(state.selectedKey)) {
-      state.selectionManager.replaceSelection(state.collection.getFirstKey());
+    let selectedKey = state.selectedKey;
+    if (state.selectionManager.isEmpty || !state.collection.getItem(selectedKey)) {
+      selectedKey = state.collection.getFirstKey();
+      state.selectionManager.replaceSelection(selectedKey);
+    }
+
+    if (state.selectionManager.focusedKey == null) {
+      state.selectionManager.setFocusedKey(selectedKey);
     }
   }, [state.selectionManager, state.selectedKey, state.collection]);
 

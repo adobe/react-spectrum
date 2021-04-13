@@ -21,14 +21,13 @@ interface TabAria {
   /** Props for the tab element. */
   tabProps: HTMLAttributes<HTMLElement>
 }
-  
+
 export function useTab<T>(
-  props: AriaTabProps<T>,
+  props: AriaTabProps,
   state: SingleSelectListState<T>,
   ref: RefObject<HTMLElement>
 ): TabAria {
-  let {item, isDisabled: propsDisabled} = props;
-  let {key} = item;
+  let {key, isDisabled: propsDisabled} = props;
   let {selectionManager: manager, selectedKey} = state;
 
   let isSelected = key === selectedKey;
@@ -45,11 +44,6 @@ export function useTab<T>(
   let tabPanelId = generateId(state, key, 'tabpanel');
   let {tabIndex} = pressProps;
 
-    // selected tab should have tabIndex=0, when it initializes
-  if (isSelected && !isDisabled) {
-    tabIndex = 0;
-  }
-
   return {
     tabProps: {
       ...pressProps,
@@ -62,4 +56,4 @@ export function useTab<T>(
     }
   };
 }
-  
+
