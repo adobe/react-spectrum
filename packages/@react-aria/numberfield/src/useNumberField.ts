@@ -136,7 +136,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   }, [decrement, increment]);
   // If the input isn't supposed to receive input, disable scrolling.
   let scrollingDisabled = isDisabled || isReadOnly || !focusWithin;
-  useScrollWheel({onScroll: onWheel, capture: false, disable: scrollingDisabled}, inputRef);
+  useScrollWheel({onScroll: onWheel, capture: false, isDisabled: scrollingDisabled}, inputRef);
 
   // The inputMode attribute influences the software keyboard that is shown on touch devices.
   // Browsers and operating systems are quite inconsistent about what keys are available, however.
@@ -390,16 +390,16 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
 }
 
 // scroll wheel needs to be added not passively so it's cancelable, small helper hook to remember that
-function useScrollWheel({onScroll, capture, disable}: {onScroll: (e) => void, capture: boolean, disable: boolean}, ref: RefObject<HTMLElement>) {
+function useScrollWheel({onScroll, capture, isDisabled}: {onScroll: (e) => void, capture: boolean, isDisabled: boolean}, ref: RefObject<HTMLElement>) {
   useEffect(() => {
     let elem = ref.current;
 
-    if (!disable) {
+    if (!isDisabled) {
       elem.addEventListener('wheel', onScroll, capture);
     }
 
     return () => {
-      if (!disable) {
+      if (!isDisabled) {
         elem.removeEventListener('wheel', onScroll, capture);
       }
     };
