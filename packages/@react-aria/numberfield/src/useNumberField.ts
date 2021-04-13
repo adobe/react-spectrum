@@ -403,5 +403,5 @@ function useScrollWheel({onScroll, capture, isDisabled}: {onScroll: (e) => void,
         elem.removeEventListener('wheel', onScroll, capture);
       }
     };
-  }, [onScroll, ref, capture, disable]);
+  }, [onScroll, ref, capture, isDisabled]);
 }
