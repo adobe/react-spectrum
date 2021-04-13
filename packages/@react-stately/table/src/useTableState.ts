@@ -18,9 +18,13 @@ import {TableCollection} from './TableCollection';
 import {useCollection} from '@react-stately/collections';
 
 export interface TableState<T> extends GridState<T, ITableCollection<T>> {
+  /** A collection of rows and columns in the table. */
   collection: ITableCollection<T>,
+  /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes: boolean,
+  /** The current sorted column and direction. */
   sortDescriptor: SortDescriptor,
+  /** Calls the provided onSortChange handler with the provided column key and sort direction. */
   sort(columnKey: Key): void
 }
 
@@ -30,7 +34,10 @@ export interface CollectionBuilderContext<T> {
   columns: Node<T>[]
 }
 
+// TODO: perhaps define things like `items`, `selectedKeys` etc here instead of relying on extend
+// since the table type descriptions for these props should be more specific to table?
 export interface TableStateProps<T> extends CollectionBase<T>, MultipleSelection, Sortable {
+  /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes?: boolean
 }
 
@@ -39,6 +46,10 @@ const OPPOSITE_SORT_DIRECTION = {
   descending: 'ascending' as SortDirection
 };
 
+/**
+ * Provides state management for a table component. Handles building a collection
+ * of columns and rows from props. In addition, it tracks row selection and manages sort order changes.
+ */
 export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T>  {
   let {selectionMode = 'none'} = props;
 

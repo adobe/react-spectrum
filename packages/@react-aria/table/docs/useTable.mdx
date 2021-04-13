@@ -1,0 +1,72 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/table';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-aria/table/package.json';
+
+```jsx import
+import {useTable, useTableColumnHeader, useTableRow, useTableRowHeader, useTableSelectionCheckbox} from '@react-aria/table';
+```
+
+---
+category: Table
+keywords: [table, aria]
+---
+
+# useTable
+
+<p>{docs.exports.useTable.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useTable', 'useTableColumnHeader', 'useTableRow', 'useTableRowHeader', 'useTableSelectionCheckbox']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices/#menu'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useTable} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableColumnHeader} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableRow} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableRowHeader} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableSelectionCheckbox} links={docs.links} />
+
+## Features
+
+// Talk about implementing a table via table tr etc and the challenges
+
+// add list of things the hooks offer
+
+## Anatomy
+
+// talk about anatomy of a table, column, rows, row headers, selection checkboxes
+// do we have an anatomy image?
+// mention state object
+
+## State management
+// mention useTableState
+
+## Example
+
+// Perhaps a checkbox vs non checkbox version?
+
+## Usage
+// Add this section?
+// show dynamic vs static
+// see other Table examples in docs
+
+## Internationalization
+
+
+### RTL
