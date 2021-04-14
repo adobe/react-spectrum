@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, render, within} from '@testing-library/react';
-import {Item, Tabs} from '../src';
+import {Item, TabList, TabPanels, Tabs} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -28,11 +28,18 @@ function renderComponent(props) {
   return render(
     <Provider theme={theme}>
       <Tabs {...props} items={items}>
-        {item => (
-          <Item key={item.name} title={item.name}>
-            {item.children}
-          </Item>
-        )}
+        <TabList>
+          {item => (
+            <Item key={item.name} title={item.name || item.children} />
+          )}
+        </TabList>
+        <TabPanels>
+          {item => (
+            <Item key={item.name} title={item.name}>
+              {item.children}
+            </Item>
+          )}
+        </TabPanels>
       </Tabs>
     </Provider>
   );
@@ -217,18 +224,32 @@ describe('Tabs', function () {
     let tree = render(
       <Provider theme={theme}>
         <Tabs>
-          {items.map(item => (
-            <Item key={item.name} title={item.name}>
-              {item.children}
-            </Item>
-          ))}
+          <TabList>
+            {items.map(item => (
+              <Item key={item.name} title={item.name || item.children} />
+            ))}
+          </TabList>
+          <TabPanels>
+            {items.map(item => (
+              <Item key={item.name}>
+                {item.children}
+              </Item>
+            ))}
+          </TabPanels>
         </Tabs>
         <Tabs>
-          {items.map(item => (
-            <Item key={item.name} title={item.name}>
-              {item.children}
-            </Item>
-          ))}
+          <TabList>
+            {items.map(item => (
+              <Item key={item.name} title={item.name || item.children} />
+            ))}
+          </TabList>
+          <TabPanels>
+            {items.map(item => (
+              <Item key={item.name}>
+                {item.children}
+              </Item>
+            ))}
+          </TabPanels>
         </Tabs>
       </Provider>
     );
@@ -369,11 +390,18 @@ describe('Tabs', function () {
     let {getByRole, rerender} = render(
       <Provider theme={theme}>
         <Tabs aria-label="Test Tabs" items={items}>
-          {item => (
-            <Item key={item.name} title={item.name}>
-              {item.children}
-            </Item>
-          )}
+          <TabList>
+            {item => (
+              <Item key={item.name} title={item.name || item.children} />
+            )}
+          </TabList>
+          <TabPanels>
+            {item => (
+              <Item key={item.name}>
+                {item.children}
+              </Item>
+            )}
+          </TabPanels>
         </Tabs>
       </Provider>
     );
@@ -400,11 +428,18 @@ describe('Tabs', function () {
     rerender(
       <Provider theme={theme}>
         <Tabs aria-label="Test Tabs" items={newItems}>
-          {item => (
-            <Item key={item.name} title={item.name}>
-              {item.children}
-            </Item>
-          )}
+          <TabList>
+            {item => (
+              <Item key={item.name} title={item.name || item.children} />
+            )}
+          </TabList>
+          <TabPanels>
+            {item => (
+              <Item key={item.name}>
+                {item.children}
+              </Item>
+            )}
+          </TabPanels>
         </Tabs>
       </Provider>
     );
@@ -420,12 +455,19 @@ describe('Tabs', function () {
 
     rerender(
       <Provider theme={theme}>
-        <Tabs aria-label="Test Tabs" items={newItems} orientation="vertical">
-          {item => (
-            <Item key={item.name} title={item.name}>
-              {item.children}
-            </Item>
-          )}
+        <Tabs items={newItems} orientation="vertical">
+          <TabList>
+            {item => (
+              <Item key={item.name} title={item.name || item.children} />
+            )}
+          </TabList>
+          <TabPanels>
+            {item => (
+              <Item key={item.name}>
+                {item.children}
+              </Item>
+            )}
+          </TabPanels>
         </Tabs>
       </Provider>
     );
@@ -458,11 +500,18 @@ describe('Tabs', function () {
     rerender(
       <Provider theme={theme}>
         <Tabs aria-label="Test Tabs" items={newItems}>
-          {item => (
-            <Item key={item.name} title={item.name}>
-              {item.children}
-            </Item>
-          )}
+          <TabList>
+            {item => (
+              <Item key={item.name} title={item.name} />
+            )}
+          </TabList>
+          <TabPanels>
+            {item => (
+              <Item key={item.name}>
+                {item.children}
+              </Item>
+            )}
+          </TabPanels>
         </Tabs>
       </Provider>
     );
