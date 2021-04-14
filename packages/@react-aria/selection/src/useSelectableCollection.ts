@@ -360,10 +360,8 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     onBlur,
     onMouseDown(e) {
       // Prevent focus going to the collection when clicking on the scrollbar.
-      // TODO: test against other things that use useSelectableCollection (combobox, actiongroup)
-      // Perhaps the check here should be if (e.target === ref.current || e.target.parentElement === ref.current)? using parentElement only seems pretty table specific
-      if (e.target.parentElement === ref.current) {
-        console.log('preventing')
+      // e.target.parentElement check is for Table since the scrollbar click occurs on the Table body
+      if (e.target.parentElement === ref.current || e.target === ref.current) {
         e.preventDefault();
       }
     }
