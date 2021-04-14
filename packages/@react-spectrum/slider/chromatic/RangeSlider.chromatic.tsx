@@ -11,25 +11,25 @@
  */
 
 import {Meta, Story} from '@storybook/react';
+import {RangeSlider} from '../';
 import React from 'react';
-import {Slider} from '../';
-import {SpectrumSliderProps} from '@react-types/slider';
+import {SpectrumRangeSliderProps} from '@react-types/slider';
 
-const meta: Meta<SpectrumSliderProps> = {
-  title: 'Slider',
-  component: Slider
+const meta: Meta<SpectrumRangeSliderProps> = {
+  title: 'RangeSlider',
+  component: RangeSlider
 };
 
 export default meta;
 
 
-const Template = (): Story<SpectrumSliderProps> => (args) => (
-  <Slider {...args} />
+const Template = (): Story<SpectrumRangeSliderProps> => (args) => (
+  <RangeSlider {...args} />
 );
 
 
 export const Default = Template().bind({});
-Default.args = {label: 'Slider label'};
+Default.args = {label: 'RangeSlider label'};
 
 export const Disabled = Template().bind({});
 Disabled.args = {...Default.args, isDisabled: true};
@@ -39,8 +39,8 @@ export const Vertical = Template().bind({});
 Vertical.args = {...Default.args, orientation: 'vertical'};
 */
 
-export const LabelPositionSide = Template().bind({});
-LabelPositionSide.args = {...Default.args, labelPosition: 'side'};
+export const SmallerRange = Template().bind({});
+SmallerRange.args = {...Default.args, defaultValue: {start: 30, end: 70}};
 
 /*
 Not supported but prop exists
@@ -48,14 +48,5 @@ export const LabelAlignEnd = Template().bind({});
 LabelAlignEnd.args = {...Default.args, labelAlign: 'end', showValueLabel: false};
 */
 
-export const Value50 = Template().bind({});
-Value50.args = {...Default.args, defaultValue: 50};
-
-export const Filled = Template().bind({});
-Filled.args = {...Value50.args, isFilled: true};
-
-export const FillOffset = Template().bind({});
-FillOffset.args = {...Filled.args, defaultValue: 80, fillOffset: 50};
-
-export const TrackGradient = Template().bind({});
-TrackGradient.args = {...Default.args, isFilled: true, defaultValue: 30, trackGradient: ['white', 'rgba(177,141,32,1)']};
+export const LabelAlignEnd = Template().bind({});
+LabelAlignEnd.args = {...Default.args, labelAlign: 'end'};
