@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, waitFor, within} from '@testing-library/react';
 import {Item, TabList, TabPanels, Tabs} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -569,5 +569,37 @@ describe('Tabs', function () {
     expect(onSelectionChange).toHaveBeenCalledWith('');
     tabpanel = getByRole('tabpanel');
     expect(tabpanel).toHaveTextContent(items[1].children);
+  });
+
+  it('tabpanel should have tabIndex=0 only when there are no focusable elements', async function () {
+    let {getByRole, getAllByRole} = render(
+      <Provider theme={theme}>
+        <Tabs maxWidth={500}>
+          <TabList>
+            <Item>Tab 1</Item>
+            <Item>Tab 2</Item>
+          </TabList>
+          <TabPanels>
+            <Item>
+              <input />
+            </Item>
+            <Item>
+              <input disabled />
+            </Item>
+          </TabPanels>
+        </Tabs>
+      </Provider>
+    );
+
+    let tabpanel = getByRole('tabpanel');
+    await waitFor(() => expect(tabpanel).not.toHaveAttribute('tabindex'));
+
+    let tabs = getAllByRole('tab');
+    triggerPress(tabs[1]);
+
+    await waitFor(() => expect(tabpanel).toHaveAttribute('tabindex', '0'));
+
+    triggerPress(tabs[0]);
+    await waitFor(() => expect(tabpanel).not.toHaveAttribute('tabindex'));
   });
 });

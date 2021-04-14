@@ -12,7 +12,8 @@
 
 import {AriaTabPanelProps} from '@react-types/tabs';
 import {generateId} from './utils';
-import {HTMLAttributes} from 'react';
+import {getFocusableTreeWalker} from '@react-aria/focus';
+import {HTMLAttributes, RefObject, useLayoutEffect, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {TabListState} from '@react-stately/tabs';
 
@@ -20,13 +21,43 @@ interface TabPanelAria {
   /** Props for the tab panel element. */
   tabPanelProps: HTMLAttributes<HTMLElement>
 }
-    
-export function useTabPanel<T>(props: AriaTabPanelProps, state: TabListState<T>): TabPanelAria {
+
+export function useTabPanel<T>(props: AriaTabPanelProps, state: TabListState<T>, ref: RefObject<HTMLElement>): TabPanelAria {
+  let [tabIndex, setTabIndex] = useState(0);
+
+  // The tabpanel should have tabIndex=0 when there are no tabbable elements within it.
+  // Otherwise, tabbing from the focused tab should go directly to the first tabbable element
+  // within the tabpanel.
+  useLayoutEffect(() => {
+    if (ref?.current) {
+      let update = () => {
+        // Detect if there are any tabbable elements and update the tabIndex accordingly.
+        let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
+        setTabIndex(walker.nextNode() ? undefined : 0);
+      };
+
+      update();
+
+      // Update when new elements are inserted, or the tabIndex/disabled attribute updates.
+      let observer = new MutationObserver(update);
+      observer.observe(ref.current, {
+        subtree: true,
+        childList: true,
+        attributes: true,
+        attributeFilter: ['tabIndex', 'disabled']
+      });
+
+      return () => {
+        observer.disconnect();
+      };
+    }
+  }, [ref]);
+
   return {
     tabPanelProps: mergeProps(props, {
       id: generateId(state, state?.selectedKey, 'tabpanel'),
       'aria-labelledby': generateId(state, state?.selectedKey, 'tab'),
-      tabIndex: 0,
+      tabIndex,
       role: 'tabpanel'
     })
   };

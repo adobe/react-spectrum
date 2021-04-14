@@ -17,7 +17,10 @@ import {useEffect} from 'react';
 export interface TabListState<T> extends SingleSelectListState<T> {}
 
 export function useTabListState<T extends object>(props: TabListProps<T>): TabListState<T> {
-  let state = useSingleSelectListState<T>(props);
+  let state = useSingleSelectListState<T>({
+    ...props,
+    suppressTextValueWarning: true
+  });
 
   useEffect(() => {
     // Ensure a tab is always selected (in case no selected key was specified or if selected item was deleted from collection)

@@ -213,7 +213,6 @@ function TabLine(props: TabLineProps) {
     selectedKey
   } = props;
 
-  let verticalSelectionIndicatorOffset = 12;
   let {direction} = useLocale();
   let {scale} = useProvider();
 
@@ -228,18 +227,18 @@ function TabLine(props: TabLineProps) {
       // In RTL, calculate the transform from the right edge of the tablist so that resizing the window doesn't break the Tabline position due to offsetLeft changes
       let offset = direction === 'rtl' ? -1 * ((selectedTab.offsetParent as HTMLElement)?.offsetWidth - selectedTab.offsetWidth - selectedTab.offsetLeft) : selectedTab.offsetLeft;
       styleObj.transform = orientation === 'vertical'
-        ? `translateY(${selectedTab.offsetTop + verticalSelectionIndicatorOffset / 2}px)`
+        ? `translateY(${selectedTab.offsetTop}px)`
         : `translateX(${offset}px)`;
 
       if (orientation === 'horizontal') {
         styleObj.width = `${selectedTab.offsetWidth}px`;
       } else {
-        styleObj.height = `${selectedTab.offsetHeight - verticalSelectionIndicatorOffset}px`;
+        styleObj.height = `${selectedTab.offsetHeight}px`;
       }
       setStyle(styleObj);
     }
 
-  }, [direction, setStyle, selectedTab, orientation, scale, verticalSelectionIndicatorOffset, selectedKey]);
+  }, [direction, setStyle, selectedTab, orientation, scale, selectedKey]);
 
   return <div className={classNames(styles, 'spectrum-Tabs-selectionIndicator')} role="presentation" style={style} />;
 }
@@ -257,6 +256,7 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
   // Pass original Tab props but override children to create the collection.
   const state = useTabListState({...tabProps, children: props.children});
 
+  let {styleProps} = useStyleProps(props);
   const {tabListProps} = useTabList({...tabProps, ...props}, state, tablistRef);
 
   useEffect(() => {
@@ -265,14 +265,17 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.disabledKeys, state.selectedItem, state.selectedKey, props.children]);
 
+  let tabListclassName = classNames(styles, 'spectrum-TabsPanel-tabs');
   const tabContent = (
     <div
+      {...styleProps}
       {...tabListProps}
       ref={tablistRef}
       className={classNames(
         styles,
         'spectrum-Tabs',
         `spectrum-Tabs--${orientation}`,
+        tabListclassName,
         {
           'spectrum-Tabs--quiet': isQuiet,
           ['spectrum-Tabs--compact']: density === 'compact'
@@ -288,7 +291,6 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
   if (orientation === 'vertical') {
     return tabContent;
   } else {
-    let tabListclassName = classNames(styles, 'spectrum-TabsPanel-tabs');
     return (
       <div
         ref={wrapperRef}
@@ -309,20 +311,24 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
 export function TabPanels<T>(props: SpectrumTabPanelsProps<T>) {
   const {tabState, tabProps, tabPanelProps: ctxTabPanelProps} = useContext(TabContext);
   const {tabListState} = tabState;
-  const {tabPanelProps} = useTabPanel(props, tabListState);
+  let ref = useRef();
+  const {tabPanelProps} = useTabPanel(props, tabListState, ref);
+  let {styleProps} = useStyleProps(props);
 
   if (ctxTabPanelProps['aria-labelledby']) {
     tabPanelProps['aria-labelledby'] = ctxTabPanelProps['aria-labelledby'];
   }
 
   const factory = nodes => new ListCollection(nodes);
-  const collection = useCollection({items: tabProps.items, ...props}, factory);
+  const collection = useCollection({items: tabProps.items, ...props}, factory, {suppressTextValueWarning: true});
   const selectedItem = tabListState ? collection.getItem(tabListState.selectedKey) : null;
 
   return (
-    <div {...tabPanelProps} className={classNames(styles, 'spectrum-TabsPanel-tabpanel')}>
-      {selectedItem && selectedItem.props.children}
-    </div>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <div {...styleProps} {...tabPanelProps} ref={ref} className={classNames(styles, 'spectrum-TabsPanel-tabpanel')}>
+        {selectedItem && selectedItem.props.children}
+      </div>
+    </FocusRing>
   );
 }
 
