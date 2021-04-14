@@ -20,4 +20,4 @@ export * from './useInteractOutside';
 export * from './useKeyboard';
 export * from './useMove';
 export * from './usePress';
-export * from './useScroll';
+export * from './useScrollWheel';

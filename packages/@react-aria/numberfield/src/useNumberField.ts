@@ -18,9 +18,7 @@ import {
   LabelHTMLAttributes,
   RefObject,
   useCallback,
-  useEffect,
   useMemo,
-  useRef,
   useState
 } from 'react';
 // @ts-ignore
@@ -29,12 +27,12 @@ import {isAndroid, isIOS, isIPhone, mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {TextInputDOMProps} from '@react-types/shared';
 import {useFocus, useFocusWithin} from '@react-aria/interactions';
-import {useFormattedInput, useTextField} from '@react-aria/textfield';
+import {useFormattedTextField} from '@react-aria/textfield';
 import {
   useMessageFormatter,
   useNumberFormatter
 } from '@react-aria/i18n';
-import {useScroll} from '@react-aria/interactions';
+import {useScrollWheel} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
 
 interface NumberFieldAria {
@@ -122,7 +120,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   }, [decrement, increment]);
   // If the input isn't supposed to receive input, disable scrolling.
   let scrollingDisabled = isDisabled || isReadOnly || !focusWithin;
-  useScroll({onScroll: onWheel, isDisabled: scrollingDisabled}, inputRef);
+  useScrollWheel({onScroll: onWheel, isDisabled: scrollingDisabled}, inputRef);
 
   // The inputMode attribute influences the software keyboard that is shown on touch devices.
   // Browsers and operating systems are quite inconsistent about what keys are available, however.
@@ -156,8 +154,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     state.setInputValue(value);
   };
 
-  let {inputProps: beforeInputProps} = useFormattedInput(props, state, inputRef);
-  let {labelProps, inputProps: textFieldProps} = useTextField({
+  let {labelProps, inputProps: textFieldProps} = useFormattedTextField({
     label,
     autoFocus,
     isDisabled,
@@ -171,9 +168,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     id: inputId,
     type: 'text', // Can't use type="number" because then we can't have things like $ in the field.
     inputMode,
-    onChange,
-    ...beforeInputProps
-  }, inputRef);
+    onChange
+  }, state, inputRef);
 
   let inputProps = mergeProps(
     spinButtonProps,

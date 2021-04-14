@@ -11,4 +11,4 @@
  */
 
 export * from './useTextField';
-export * from './useFormattedInput';
+export * from './useFormattedTextField';

@@ -19,8 +19,8 @@ import {
   useCallback
 } from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
-import {useFormattedInput, useTextField} from '@react-aria/textfield';
-import {useScroll} from '@react-aria/interactions';
+import {useFormattedTextField} from '@react-aria/textfield';
+import {useScrollWheel} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
 
 interface ColorFieldAria {
@@ -81,22 +81,20 @@ export function useColorField(
   }, [isReadOnly, isDisabled, decrement, increment]);
   // If the input isn't supposed to receive input, disable scrolling.
   let scrollingDisabled = isDisabled || isReadOnly;
-  useScroll({onScroll: onWheel, isDisabled: scrollingDisabled}, ref);
+  useScrollWheel({onScroll: onWheel, isDisabled: scrollingDisabled}, ref);
 
   let onChange = value => {
     state.setInputValue(value);
   };
-  let {inputProps: beforeInputProps} = useFormattedInput(props, state, ref);
 
-  let {labelProps, inputProps} = useTextField(
+  let {labelProps, inputProps} = useFormattedTextField(
     mergeProps(props, {
       id: inputId,
       value: inputValue,
       type: 'text',
       autoComplete: 'off',
-      onChange,
-      ...beforeInputProps
-    }), ref);
+      onChange
+    }), state, ref);
 
   return {
     labelProps,

@@ -13,13 +13,13 @@
 import {RefObject, useCallback, useEffect} from 'react';
 import {ScrollEvents} from '@react-types/shared';
 
-export interface ScrollProps extends ScrollEvents {
+export interface ScrollWheelProps extends ScrollEvents {
   /** Whether the scroll listener should be disabled. */
   isDisabled?: boolean
 }
 
 // scroll wheel needs to be added not passively so it's cancelable, small helper hook to remember that
-export function useScroll(props: ScrollProps, ref: RefObject<HTMLElement>): void {
+export function useScrollWheel(props: ScrollWheelProps, ref: RefObject<HTMLElement>): void {
   let {onScroll, isDisabled} = props;
   let onScrollHandler = useCallback((e) => {
     // If the ctrlKey is pressed, this is a zoom event, do nothing.
@@ -29,6 +29,7 @@ export function useScroll(props: ScrollProps, ref: RefObject<HTMLElement>): void
 
     // stop scrolling the page
     e.preventDefault();
+    e.stopPropagation();
 
     if (onScroll) {
       onScroll({deltaX: e.deltaX, deltaY: e.deltaY});

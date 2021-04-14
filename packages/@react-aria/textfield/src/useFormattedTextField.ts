@@ -10,7 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaTextFieldProps} from '@react-types/textfield';
 import {RefObject, useEffect, useRef} from 'react';
+import {TextFieldAria, useTextField} from './useTextField';
+
+interface FormattedTextFieldState {
+  validate: (val: string) => boolean,
+  setInputValue: (val: string) => void
+}
+
 
 function supportsNativeBeforeInputEvent() {
   return typeof window !== 'undefined' &&
@@ -19,7 +27,7 @@ function supportsNativeBeforeInputEvent() {
     typeof InputEvent.prototype.getTargetRanges === 'function';
 }
 
-export function useFormattedInput(props, state: {validate: (val: string) => boolean, setInputValue: (val: string) => void}, inputRef: RefObject<HTMLInputElement>) {
+export function useFormattedTextField(props: AriaTextFieldProps, state: FormattedTextFieldState, inputRef: RefObject<HTMLInputElement>): TextFieldAria {
 
   let stateRef = useRef(state);
   stateRef.current = state;
@@ -105,9 +113,12 @@ export function useFormattedInput(props, state: {validate: (val: string) => bool
     }
     : null;
 
+  let {labelProps, inputProps: textFieldProps} = useTextField(props, inputRef);
+
   let compositionStartState = useRef(null);
   return {
     inputProps: {
+      ...textFieldProps,
       onBeforeInput,
       onCompositionStart() {
         // Chrome does not implement Input Events Level 2, which specifies the insertFromComposition
@@ -135,6 +146,7 @@ export function useFormattedInput(props, state: {validate: (val: string) => bool
           state.setInputValue(value);
         }
       }
-    }
+    },
+    labelProps
   };
 }
