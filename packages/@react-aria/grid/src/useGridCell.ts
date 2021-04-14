@@ -204,7 +204,6 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     });
   };
 
-  // TODO: get rid of press/click/drag handlers so that text select can happen
   if (!allowsSelection) {
     pressProps = {
       onKeyDown: pressProps.onKeyDown,

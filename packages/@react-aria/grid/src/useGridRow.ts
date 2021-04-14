@@ -53,7 +53,6 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
   // TODO: move into useSelectableItem?
   let {pressProps, isPressed} = usePress({...itemProps, isDisabled});
 
-  // TODO: get rid of press/click/drag handlers so that text select can happen
   if (!allowsSelection) {
     pressProps = {
       onKeyDown: pressProps.onKeyDown,

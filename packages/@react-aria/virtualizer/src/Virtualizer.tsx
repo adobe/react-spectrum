@@ -116,6 +116,7 @@ interface VirtualizerOptions {
 export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions, state: VirtualizerState<T, V, W>, ref: RefObject<HTMLElement>) {
   let {focusedKey, scrollToItem, shouldUseVirtualFocus} = props;
   let {virtualizer} = state;
+
   // Scroll to the focusedKey when it changes. Actually focusing the focusedKey
   // is up to the implementation using Virtualizer since we don't have refs
   // to all of the item DOM nodes.
@@ -145,15 +146,11 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     if (e.target === ref.current && !isFocusWithin.current) {
       virtualizer.scrollToItem(focusedKey, {duration: 0});
     }
-    console.log('awlrgUKBFKU', e.target !== ref.current)
+
     isFocusWithin.current = e.target !== ref.current;
   }, [ref, virtualizer, focusedKey]);
 
   let onBlur = useCallback((e: FocusEvent) => {
-    console.log('calling blur', ref.current, e.relatedTarget, ref.current.contains(e.relatedTarget as Element), state.isScrolling);
-    // Would be great if I could detect that the blur is happening due to the blur call from useSelectableCollection. Then I could maintain that isFocusWithin is true
-    // Can't simply put a || e.relatedTarget == null because this means focus wouldn't go to the collection when a cell is focused and then scrolled out
-    // of view
     isFocusWithin.current = ref.current.contains(e.relatedTarget as Element);
   }, [ref]);
 
