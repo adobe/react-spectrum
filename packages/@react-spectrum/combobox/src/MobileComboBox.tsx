@@ -98,7 +98,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           isDisabled={isDisabled}
           isPlaceholder={!state.inputValue}
           validationState={validationState}
-          onPress={!isReadOnly && chain(state.open, props.onMenuOpenManual)}>
+          onPress={() => !isReadOnly && state.open(null, false, 'manual')}>
           {state.inputValue || props.placeholder || ''}
         </ComboBoxButton>
       </Field>
