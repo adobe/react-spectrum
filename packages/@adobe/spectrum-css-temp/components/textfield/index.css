@@ -227,7 +227,8 @@ governing permissions and limitations under the License.
   position: absolute;
   height: var(--spectrum-icon-info-medium-height);
   width: var(--spectrum-icon-info-medium-width);
-  inset-inline-start: var(--spectrum-global-dimension-size-100);
+  /* This has a named variable in a future update of spectrum-css. */
+  inset-inline-start: var(--spectrum-global-dimension-size-150);
   top: var(--spectrum-global-dimension-size-85);
   transition: fill var(--spectrum-global-animation-duration-100) ease-in-out;
 }
@@ -235,7 +236,12 @@ governing permissions and limitations under the License.
 /* styles the textfield properly if the left icon is provided */
 .spectrum-Textfield-inputIcon {
   /* Use padding instead of text-indent so long strings don't overlap the icon */
-  padding-inline-start: calc(calc(var(--spectrum-global-dimension-size-200) + var(--spectrum-icon-info-medium-width)) - 1px);
+  /* These values have real names in a spectrum-css update, when we update, use those. */
+  padding-inline-start: calc(
+    var(--spectrum-global-dimension-size-150) +
+    var(--spectrum-global-dimension-size-225) +
+    var(--spectrum-global-dimension-size-65)
+  );
 
   .spectrum-Textfield--quiet & {
     padding-inline-start: calc(var(--spectrum-global-dimension-size-100) + var(--spectrum-icon-info-medium-width));

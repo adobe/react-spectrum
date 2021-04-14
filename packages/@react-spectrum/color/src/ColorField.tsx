@@ -44,5 +44,8 @@ function ColorField(props: SpectrumColorFieldProps, ref: RefObject<TextFieldRef>
   );
 }
 
+/**
+ * ColorFields allow users to enter a color in #rrggbb hexadecimal format.
+ */
 const _ColorField = React.forwardRef(ColorField);
 export {_ColorField as ColorField};

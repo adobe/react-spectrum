@@ -361,11 +361,15 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       if (item.textValue) {
         let substring = item.textValue.slice(0, search.length);
         if (this.collator.compare(substring, search) === 0) {
+          if (this.isRow(item) && this.focusMode === 'cell') {
+            return [...item.childNodes][0].key;
+          }
+
           return item.key;
         }
       }
 
-      key = this.getKeyBelow(key);
+      key = this.findNextKey(key);
 
       // Wrap around when reaching the end of the collection
       if (key == null && !hasWrapped) {
