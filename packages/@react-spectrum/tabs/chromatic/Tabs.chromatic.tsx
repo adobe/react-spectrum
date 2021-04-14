@@ -42,45 +42,35 @@ const Template = <T extends object>(): Story<SpectrumTabsProps<T>> => (args) => 
       <Item key="val5">Tab 5</Item>
     </TabList>
     <TabPanels>
-      <Item title="Tab 1" key="val1">
-        <Content margin="size-160">
-          <Heading>Tab Body 1</Heading>
-          <Text>
-            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
-          </Text>
-        </Content>
+      <Item key="val1">
+        <Heading>Tab Body 1</Heading>
+        <Text>
+          Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+        </Text>
       </Item>
-      <Item title="Tab 2" key="val2">
-        <Content margin="size-160">
-          <Heading>Tab Body 2</Heading>
-          <Text>
-            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
-          </Text>
-        </Content>
+      <Item key="val2">
+        <Heading>Tab Body 2</Heading>
+        <Text>
+          Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+        </Text>
       </Item>
-      <Item title="Tab 3" key="val3">
-        <Content margin="size-160">
-          <Heading>Tab Body 3</Heading>
-          <Text>
-            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
-          </Text>
-        </Content>
+      <Item key="val3">
+        <Heading>Tab Body 3</Heading>
+        <Text>
+          Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+        </Text>
       </Item>
-      <Item title="Tab 4" key="val4">
-        <Content margin="size-160">
-          <Heading>Tab Body 4</Heading>
-          <Text>
-            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
-          </Text>
-        </Content>
+      <Item key="val4">
+        <Heading>Tab Body 4</Heading>
+        <Text>
+          Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+        </Text>
       </Item>
-      <Item title="Tab 5" key="val5">
-        <Content margin="size-160">
-          <Heading>Tab Body 5</Heading>
-          <Text>
-            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
-          </Text>
-        </Content>
+      <Item key="val5">
+        <Heading>Tab Body 5</Heading>
+        <Text>
+          Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+        </Text>
       </Item>
     </TabPanels>
   </Tabs>
