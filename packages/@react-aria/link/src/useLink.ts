@@ -27,7 +27,9 @@ export interface AriaLinkOptions extends AriaLinkProps {
 
 export interface LinkAria {
   /** Props for the link element. */
-  linkProps: HTMLAttributes<HTMLElement>
+  linkProps: HTMLAttributes<HTMLElement>,
+  /** Whether the link is currently pressed. */
+  isPressed: boolean
 }
 
 /**
@@ -55,10 +57,11 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<HTMLElement>): Li
     };
   }
 
-  let {pressProps} = usePress({onPress, onPressStart, onPressEnd, isDisabled, ref});
+  let {pressProps, isPressed} = usePress({onPress, onPressStart, onPressEnd, isDisabled, ref});
   let domProps = filterDOMProps(otherProps, {labelable: true});
 
   return {
+    isPressed, // Used to indicate press state for visual
     linkProps: mergeProps(domProps, {
       ...pressProps,
       ...linkProps,

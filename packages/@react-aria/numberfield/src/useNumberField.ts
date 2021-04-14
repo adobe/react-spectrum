@@ -20,14 +20,15 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef
+  useRef,
+  useState
 } from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isAndroid, isIOS, isIPhone, mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {TextInputDOMProps} from '@react-types/shared';
-import {useFocus} from '@react-aria/interactions';
+import {useFocus, useFocusWithin} from '@react-aria/interactions';
 import {
   useMessageFormatter,
   useNumberFormatter
@@ -115,10 +116,12 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     }
   );
 
+  let [focusWithin, setFocusWithin] = useState(false);
+  let {focusWithinProps} = useFocusWithin({isDisabled, onFocusWithinChange: setFocusWithin});
+
   let onWheel = useCallback((e) => {
-    // If the input isn't supposed to receive input, do nothing.
     // If the ctrlKey is pressed, this is a zoom event, do nothing.
-    if (isDisabled || isReadOnly || e.ctrlKey) {
+    if (e.ctrlKey) {
       return;
     }
 
@@ -130,8 +133,10 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     } else if (e.deltaY < 0) {
       decrement();
     }
-  }, [isReadOnly, isDisabled, decrement, increment]);
-  useScrollWheel({onScroll: onWheel, capture: false}, inputRef);
+  }, [decrement, increment]);
+  // If the input isn't supposed to receive input, disable scrolling.
+  let scrollingDisabled = isDisabled || isReadOnly || !focusWithin;
+  useScrollWheel({onScroll: onWheel, capture: false, isDisabled: scrollingDisabled}, inputRef);
 
   // The inputMode attribute influences the software keyboard that is shown on touch devices.
   // Browsers and operating systems are quite inconsistent about what keys are available, however.
@@ -374,7 +379,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     groupProps: {
       role: 'group',
       'aria-disabled': isDisabled,
-      'aria-invalid': validationState === 'invalid' ? 'true' : undefined
+      'aria-invalid': validationState === 'invalid' ? 'true' : undefined,
+      ...focusWithinProps
     },
     labelProps,
     inputProps,
@@ -384,13 +390,18 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
 }
 
 // scroll wheel needs to be added not passively so it's cancelable, small helper hook to remember that
-function useScrollWheel({onScroll, capture}: {onScroll: (e) => void, capture: boolean}, ref: RefObject<HTMLElement>) {
+function useScrollWheel({onScroll, capture, isDisabled}: {onScroll: (e) => void, capture: boolean, isDisabled: boolean}, ref: RefObject<HTMLElement>) {
   useEffect(() => {
     let elem = ref.current;
-    elem.addEventListener('wheel', onScroll, capture);
+
+    if (!isDisabled) {
+      elem.addEventListener('wheel', onScroll, capture);
+    }
 
     return () => {
-      elem.removeEventListener('wheel', onScroll, capture);
+      if (!isDisabled) {
+        elem.removeEventListener('wheel', onScroll, capture);
+      }
     };
-  }, [onScroll, ref, capture]);
+  }, [onScroll, ref, capture, isDisabled]);
 }

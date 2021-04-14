@@ -398,6 +398,16 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
+  `('$Name cannot scroll to step when not focused', () => {
+    let {textField} = renderNumberField({defaultValue: 0, onChange: onChangeSpy});
+
+    fireEvent.wheel(textField, {deltaY: -10});
+    expect(onChangeSpy).not.toHaveBeenCalled();
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
   `('$Name increment value when scrolling upwards', () => {
     let {textField} = renderNumberField({defaultValue: 0, onChange: onChangeSpy});
 
