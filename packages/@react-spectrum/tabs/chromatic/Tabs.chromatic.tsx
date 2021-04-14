@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {Content} from '@react-spectrum/view';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, TabList, TabPanels, Tabs} from '../';
 import {Meta, Story} from '@storybook/react';
