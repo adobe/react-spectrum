@@ -145,4 +145,24 @@ describe('useGrid', () => {
     fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
     expect(document.activeElement).toBe(tree.getAllByRole('gridcell')[0]);
   });
+
+  it('useGridRow returns press state if selectionMode is not "none"', () => {
+    let {getByTestId, getAllByRole} = renderGrid({gridFocusMode: 'cell', cellFocusMode: 'cell', selectionMode: 'single'});
+    let row = getAllByRole('row')[0];
+    expect(() => getByTestId('pressed')).toThrow();
+    fireEvent.mouseDown(row, {detail: 1});
+    let pressedElement = getByTestId('pressed');
+    expect(pressedElement).toBe(row);
+    fireEvent.mouseUp(row, {detail: 1});
+    fireEvent.click(row, {detail: 1});
+    expect(() => getByTestId('pressed')).toThrow();
+  });
+
+  it('useGridRow removes press handlers and isPressed tracking if selectionMode is "none"', () => {
+    let {getByTestId, getAllByRole} = renderGrid({gridFocusMode: 'cell', cellFocusMode: 'cell', selectionMode: 'none'});
+    let row = getAllByRole('row')[0];
+    expect(() => getByTestId('pressed')).toThrow();
+    fireEvent.mouseDown(row, {detail: 1});
+    expect(() => getByTestId('pressed')).toThrow();
+  });
 });

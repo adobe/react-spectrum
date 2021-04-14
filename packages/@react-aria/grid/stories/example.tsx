@@ -6,11 +6,11 @@ import {useGrid, useGridCell, useGridRow} from '../';
 import {useListState} from '@react-stately/list';
 
 export function Grid(props) {
-  let {gridFocusMode = 'row', cellFocusMode = 'child'} = props;
+  let {gridFocusMode = 'row', cellFocusMode = 'child', selectionMode = 'multiple'} = props;
   let state = useListState(props);
   let gridState = useGridState({
     ...props,
-    selectionMode: 'multiple',
+    selectionMode,
     collection: new GridCollection({
       columnCount: 1,
       items: [...state.collection].map(item => ({
@@ -48,7 +48,7 @@ function Row({state, item, focusMode}) {
   let rowRef = React.useRef();
   let cellRef = React.useRef();
   let cellNode = [...item.childNodes][0];
-  let {rowProps} = useGridRow({
+  let {rowProps, isPressed} = useGridRow({
     node: item,
     ref: rowRef
   }, state);
@@ -69,7 +69,7 @@ function Row({state, item, focusMode}) {
   });
 
   return (
-    <div {...mergeProps(rowProps, rowFocusProps)} ref={rowRef} style={{outline: isRowFocused ? '2px solid red' : null}}>
+    <div {...mergeProps(rowProps, rowFocusProps)} ref={rowRef} style={{outline: isRowFocused ? '2px solid red' : null}} data-testid={isPressed ? 'pressed' : 'notpressed'}>
       <div {...mergeProps(gridCellProps, cellFocusProps)} ref={cellRef} style={{outline: isCellFocused ? '2px solid green' : null}}>
         {cellNode.rendered}
       </div>
