@@ -93,6 +93,7 @@ export function DroppableListBox(props) {
 
   let dropState = useDroppableCollectionState({
     collection: state.collection,
+    selectionManager: state.selectionManager,
     getDropOperation(target, types, allowedOperations) {
       if (target.type === 'root') {
         return 'move';

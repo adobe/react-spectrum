@@ -120,6 +120,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       let nextKey = target.type === 'item'
         ? keyboardDelegate.getKeyBelow(target.key)
         : keyboardDelegate.getFirstKey();
+      let dropPosition: DropPosition = 'before';
 
       if (target.type === 'item') {
         let positionIndex = DROP_POSITIONS.indexOf(target.dropPosition);
@@ -131,6 +132,12 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
             dropPosition: nextDropPosition
           };
         }
+
+        // If the last drop position was 'after', then 'before' on the next key is equivalent.
+        // Switch to 'on' instead.
+        if (target.dropPosition === 'after') {
+          dropPosition = 'on';
+        }
       }
 
       if (nextKey == null) {
@@ -146,7 +153,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       return {
         type: 'item',
         key: nextKey,
-        dropPosition: DROP_POSITIONS[0]
+        dropPosition
       };
     };
 
@@ -155,6 +162,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       let nextKey = target?.type === 'item'
         ? keyboardDelegate.getKeyAbove(target.key)
         : keyboardDelegate.getLastKey();
+      let dropPosition: DropPosition = !target || target.type === 'root' ? 'after' : 'on';
 
       if (target?.type === 'item') {
         let positionIndex = DROP_POSITIONS.indexOf(target.dropPosition);
@@ -166,6 +174,12 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
             dropPosition: nextDropPosition
           };
         }
+
+        // If the last drop position was 'before', then 'after' on the previous key is equivalent.
+        // Switch to 'on' instead.
+        if (target.dropPosition === 'before') {
+          dropPosition = 'on';
+        }
       }
 
       if (nextKey == null) {
@@ -181,7 +195,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       return {
         type: 'item',
         key: nextKey,
-        dropPosition: !target || target.type === 'root' ? 'after' : 'on'
+        dropPosition
       };
     };
 
@@ -231,7 +245,52 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       },
       onDropEnter(e, drag) {
         let types = getTypes(drag.items);
-        let target = nextValidTarget(null, types, drag.allowedDropOperations, getNextTarget);
+        let selectionManager = localState.state.selectionManager;
+        let target: DropTarget;
+
+        // When entering the droppable collection for the first time, the default drop target
+        // is after the focused key.
+        let key = selectionManager.focusedKey;
+        let dropPosition: DropPosition = 'after';
+
+        // If the focused key is a cell, get the parent item instead.
+        // For now, we assume that individual cells cannot be dropped on.
+        let item = localState.state.collection.getItem(key);
+        if (item?.type === 'cell') {
+          key = item.parentKey;
+        }
+
+        // If the focused item is also selected, the default drop target is after the last selected item.
+        // But if the focused key is the first selected item, then default to before the first selected item.
+        // This is to make reordering lists slightly easier. If you select top down, we assume you want to
+        // move the items down. If you select bottom up, we assume you want to move the items up.
+        if (selectionManager.isSelected(key)) {
+          if (selectionManager.selectedKeys.size > 1 && selectionManager.firstSelectedKey === key) {
+            dropPosition = 'before';
+          } else {
+            key = selectionManager.lastSelectedKey;
+          }
+        }
+
+        if (key != null) {
+          target = {
+            type: 'item',
+            key,
+            dropPosition
+          };
+
+          // If the default target is not valid, find the next one that is.
+          if (localState.state.getDropOperation(target, types, drag.allowedDropOperations) === 'cancel') {
+            target = nextValidTarget(target, types, drag.allowedDropOperations, getNextTarget, false)
+              ?? nextValidTarget(target, types, drag.allowedDropOperations, getPreviousTarget, false);
+          }
+        }
+
+        // If no focused key, then start from the root.
+        if (!target) {
+          target = nextValidTarget(null, types, drag.allowedDropOperations, getNextTarget);
+        }
+
         localState.state.setTarget(target);
       },
       onDropExit() {
