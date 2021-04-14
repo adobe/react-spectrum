@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Content} from '@react-spectrum/view';
 import {Heading, Text} from '@react-spectrum/text';
-import {Item, Tabs} from '../';
+import {Item, TabList, TabPanels, Tabs} from '../';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumTabsProps} from '@react-types/tabs';
@@ -32,47 +31,47 @@ export default meta;
 
 
 const Template = <T extends object>(): Story<SpectrumTabsProps<T>> => (args) => (
+
   <Tabs {...args} aria-label="Tab example" maxWidth={500}>
-    <Item title="Tab 1" key="val1">
-      <Content margin="size-160">
+    <TabList>
+      <Item key="val1">Tab 1</Item>
+      <Item key="val2">Tab 2</Item>
+      <Item key="val3">Tab 3</Item>
+      <Item key="val4">Tab 4</Item>
+      <Item key="val5">Tab 5</Item>
+    </TabList>
+    <TabPanels>
+      <Item key="val1">
         <Heading>Tab Body 1</Heading>
         <Text>
           Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
         </Text>
-      </Content>
-    </Item>
-    <Item title="Tab 2" key="val2">
-      <Content margin="size-160">
+      </Item>
+      <Item key="val2">
         <Heading>Tab Body 2</Heading>
         <Text>
           Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
         </Text>
-      </Content>
-    </Item>
-    <Item title="Tab 3" key="val3">
-      <Content margin="size-160">
+      </Item>
+      <Item key="val3">
         <Heading>Tab Body 3</Heading>
         <Text>
           Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
         </Text>
-      </Content>
-    </Item>
-    <Item title="Tab 4" key="val4">
-      <Content margin="size-160">
+      </Item>
+      <Item key="val4">
         <Heading>Tab Body 4</Heading>
         <Text>
           Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
         </Text>
-      </Content>
-    </Item>
-    <Item title="Tab 5" key="val5">
-      <Content margin="size-160">
+      </Item>
+      <Item key="val5">
         <Heading>Tab Body 5</Heading>
         <Text>
           Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
         </Text>
-      </Content>
-    </Item>
+      </Item>
+    </TabPanels>
   </Tabs>
 );
 

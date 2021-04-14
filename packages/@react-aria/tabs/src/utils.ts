@@ -10,6 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useTab';
-export * from './useTabPanel';
-export * from './useTabList';
+import {Key} from 'react';
+import {SingleSelectListState} from '@react-stately/list';
+
+export const tabsIds = new WeakMap<SingleSelectListState<unknown>, string>();
+
+export function generateId<T>(state: SingleSelectListState<T>, key: Key, role: string) {
+  if (typeof key === 'string') {
+    key = key.replace(/\s+/g, '');
+  }
+  
+  let baseId = tabsIds.get(state);
+  return `${baseId}-${role}-${key}`;
+}
+  
