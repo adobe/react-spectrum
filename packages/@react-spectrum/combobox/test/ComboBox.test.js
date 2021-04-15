@@ -536,11 +536,10 @@ describe('ComboBox', function () {
           combobox.focus();
           jest.runAllTimers();
         });
-        expect(onOpenChange).toHaveBeenLastCalledWith(true);
 
         let listbox = getByRole('listbox');
         expect(onOpenChange).toBeCalledTimes(1);
-        expect(onOpenChange).toHaveBeenCalledWith(true);
+        expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
         testComboBoxOpen(combobox, button, listbox);
       });
     });
@@ -569,7 +568,7 @@ describe('ComboBox', function () {
 
         expect(listbox).toBeVisible();
         expect(onOpenChange).toBeCalledTimes(1);
-        expect(onOpenChange).toHaveBeenCalledWith(false);
+        expect(onOpenChange).toHaveBeenCalledWith(false, undefined);
 
         expect(combobox).toHaveAttribute('aria-expanded', 'true');
         expect(combobox).toHaveAttribute('aria-controls');
@@ -594,7 +593,7 @@ describe('ComboBox', function () {
 
         expect(listbox).not.toBeInTheDocument();
         expect(onOpenChange).toBeCalledTimes(1);
-        expect(onOpenChange).toHaveBeenCalledWith(false);
+        expect(onOpenChange).toHaveBeenCalledWith(false, undefined);
 
         expect(combobox).toHaveAttribute('aria-expanded', 'false');
         expect(combobox).not.toHaveAttribute('aria-controls');
@@ -656,7 +655,7 @@ describe('ComboBox', function () {
           jest.runAllTimers();
         });
 
-        expect(onOpenChange).toHaveBeenCalledWith(true);
+        expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
 
         let listbox = getByRole('listbox');
         testComboBoxOpen(combobox, button, listbox);
@@ -734,7 +733,7 @@ describe('ComboBox', function () {
           jest.runAllTimers();
         });
 
-        expect(onOpenChange).toHaveBeenCalledWith(true);
+        expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
 
         let listbox = getByRole('listbox');
         testComboBoxOpen(combobox, button, listbox);
@@ -759,7 +758,7 @@ describe('ComboBox', function () {
 
         let listbox = getByRole('listbox');
         expect(onOpenChange).toHaveBeenCalledTimes(1);
-        expect(onOpenChange).toHaveBeenCalledWith(true);
+        expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
         testComboBoxOpen(combobox, button, listbox, 0);
       });
 
@@ -780,7 +779,7 @@ describe('ComboBox', function () {
 
         let listbox = getByRole('listbox');
         expect(onOpenChange).toHaveBeenCalledTimes(1);
-        expect(onOpenChange).toHaveBeenCalledWith(true);
+        expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
         testComboBoxOpen(combobox, button, listbox, 2);
       });
 
@@ -799,7 +798,7 @@ describe('ComboBox', function () {
         });
 
         expect(onOpenChange).toHaveBeenCalledTimes(1);
-        expect(onOpenChange).toHaveBeenCalledWith(true);
+        expect(onOpenChange).toHaveBeenCalledWith(true, 'input');
 
         let listbox = getByRole('listbox');
         expect(listbox).toBeVisible();
@@ -829,7 +828,7 @@ describe('ComboBox', function () {
         });
 
         expect(onOpenChange).toHaveBeenCalledTimes(1);
-        expect(onOpenChange).toHaveBeenCalledWith(true);
+        expect(onOpenChange).toHaveBeenCalledWith(true, 'input');
 
         let listbox = getByRole('listbox');
         expect(listbox).toBeVisible();
@@ -854,7 +853,7 @@ describe('ComboBox', function () {
         act(() => jest.runAllTimers());
 
         expect(onOpenChange).toHaveBeenCalledTimes(1);
-        expect(onOpenChange).toHaveBeenCalledWith(true);
+        expect(onOpenChange).toHaveBeenCalledWith(true, 'input');
 
         let listbox = getByRole('listbox');
         let items = within(listbox).getAllByRole('option');
@@ -890,7 +889,7 @@ describe('ComboBox', function () {
         });
 
         expect(onOpenChange).toHaveBeenCalledTimes(1);
-        expect(onOpenChange).toHaveBeenCalledWith(true);
+        expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
 
         let listbox = getByRole('listbox');
         expect(listbox).toBeTruthy();
@@ -1206,7 +1205,7 @@ describe('ComboBox', function () {
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenCalledWith(null);
       expect(onOpenChange).toHaveBeenCalledTimes(2);
-      expect(onOpenChange).toHaveBeenCalledWith(false);
+      expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
     });
 
     it('defers closing menu to user handlers if allowsCustomValue=true, no item is focused, and isOpen is controlled', function () {
@@ -1365,7 +1364,7 @@ describe('ComboBox', function () {
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenCalledWith('2');
       expect(onOpenChange).toHaveBeenCalledTimes(1);
-      expect(onOpenChange).toHaveBeenLastCalledWith(false);
+      expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
     });
 
     describe.each`
@@ -1734,7 +1733,7 @@ describe('ComboBox', function () {
 
       expect(getByRole('listbox')).toBeVisible();
       expect(onOpenChange).toHaveBeenCalledTimes(1);
-      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(onOpenChange).toHaveBeenCalledWith(true, 'input');
 
       typeText(combobox, 'x');
 
@@ -1746,7 +1745,7 @@ describe('ComboBox', function () {
 
       expect(() => getByRole('listbox')).toThrow();
       expect(onOpenChange).toHaveBeenCalledTimes(2);
-      expect(onOpenChange).toHaveBeenCalledWith(false);
+      expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
     });
 
     it('should clear the focused item when typing', function () {
@@ -1809,7 +1808,7 @@ describe('ComboBox', function () {
       });
 
       expect(document.activeElement).toBe(secondaryButton);
-      expect(onOpenChange).toHaveBeenCalledWith(false);
+      expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
       expect(onSelectionChange).toHaveBeenCalledWith('1');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onInputChange).toHaveBeenCalledWith('Bulbasaur');
@@ -1846,7 +1845,7 @@ describe('ComboBox', function () {
       });
 
       // ComboBox value should reset to the selected key value and menu should be closed
-      expect(onOpenChange).toHaveBeenCalledWith(false);
+      expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
       expect(onInputChange).toHaveBeenLastCalledWith('Squirtle');
       expect(combobox.value).toBe('Squirtle');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
@@ -1877,7 +1876,7 @@ describe('ComboBox', function () {
         jest.runAllTimers();
       });
 
-      expect(onOpenChange).toHaveBeenCalledWith(false);
+      expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenCalledWith(null);
 
@@ -1995,7 +1994,7 @@ describe('ComboBox', function () {
       });
 
       expect(document.activeElement).toBe(combobox);
-      expect(onOpenChange).toHaveBeenLastCalledWith(true);
+      expect(onOpenChange).toHaveBeenLastCalledWith(true, 'manual');
       let listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
       let items = within(listbox).getAllByRole('option');
@@ -2007,7 +2006,7 @@ describe('ComboBox', function () {
 
       expect(onInputChange).not.toHaveBeenCalled();
       expect(onSelectionChange).not.toHaveBeenCalled();
-      expect(onOpenChange).toHaveBeenLastCalledWith(true);
+      expect(onOpenChange).toHaveBeenLastCalledWith(true, 'manual');
       expect(combobox.value).toBe('');
       expect(document.activeElement).toBe(combobox);
       expect(listbox).toBeVisible();
@@ -2464,7 +2463,7 @@ describe('ComboBox', function () {
         listbox = getByRole('listbox');
         expect(listbox).toBeVisible();
         expect(onOpenChange).toHaveBeenCalledTimes(1);
-        expect(onOpenChange).toHaveBeenLastCalledWith(false);
+        expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
       });
 
       it('calls onOpenChange when clicking on a selected item if selectedKey is controlled but open state isn\'t ', function () {
@@ -2483,7 +2482,7 @@ describe('ComboBox', function () {
         let items = within(listbox).getAllByRole('option');
         expect(items).toHaveLength(3);
         expect(onOpenChange).toHaveBeenCalledTimes(1);
-        expect(onOpenChange).toHaveBeenLastCalledWith(true);
+        expect(onOpenChange).toHaveBeenLastCalledWith(true, 'manual');
 
         act(() => {
           userEvent.click(items[1]);
@@ -2492,7 +2491,7 @@ describe('ComboBox', function () {
 
         expect(() => getByRole('listbox')).toThrow();
         expect(onOpenChange).toHaveBeenCalledTimes(2);
-        expect(onOpenChange).toHaveBeenLastCalledWith(false);
+        expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
       });
     });
 
@@ -2767,7 +2766,7 @@ describe('ComboBox', function () {
         if (!Name.includes('open') && !Name.includes('all')) {
           // Check that onOpenChange is firing appropriately for the comboboxes w/o user defined onOpenChange handlers
           expect(onOpenChange).toBeCalledTimes(4);
-          expect(onOpenChange).toHaveBeenLastCalledWith(false);
+          expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
         }
 
         act(() => {
@@ -2819,7 +2818,7 @@ describe('ComboBox', function () {
         if (!Name.includes('open') && !Name.includes('all')) {
           // Check that onOpenChange is firing appropriately for the comboboxes w/o user defined onOpenChange handlers
           expect(onOpenChange).toBeCalledTimes(2);
-          expect(onOpenChange).toHaveBeenLastCalledWith(false);
+          expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
         }
 
         let button = getByRole('button');
@@ -2884,7 +2883,7 @@ describe('ComboBox', function () {
         if (!Name.includes('open') && !Name.includes('all')) {
           // Check that onOpenChange is firing appropriately for the comboboxes w/o user defined onOpenChange handlers
           expect(onOpenChange).toBeCalledTimes(4);
-          expect(onOpenChange).toHaveBeenLastCalledWith(false);
+          expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
         }
       });
 
@@ -2930,7 +2929,7 @@ describe('ComboBox', function () {
         if (!Name.includes('open') && !Name.includes('all')) {
             // Check that onOpenChange is firing appropriately for the comboboxes w/o user defined onOpenChange handlers
           expect(onOpenChange).toBeCalledTimes(2);
-          expect(onOpenChange).toHaveBeenLastCalledWith(false);
+          expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
         }
       });
     });
@@ -3125,7 +3124,7 @@ describe('ComboBox', function () {
 
       expect(() => getByRole('listbox')).toThrow();
       expect(onOpenChange).toHaveBeenCalledTimes(2);
-      expect(onOpenChange).toHaveBeenLastCalledWith(false);
+      expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
 
     });
   });
@@ -3746,7 +3745,7 @@ describe('ComboBox', function () {
         jest.runAllTimers();
       });
 
-      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
       expect(onOpenChange).toHaveBeenCalledTimes(1);
 
       let tray = getByTestId('tray');
@@ -3766,7 +3765,7 @@ describe('ComboBox', function () {
       expect(onInputChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenCalledWith('2');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
-      expect(onOpenChange).toHaveBeenCalledWith(false);
+      expect(onOpenChange).toHaveBeenCalledWith(false, undefined);
       expect(onOpenChange).toHaveBeenCalledTimes(2);
       expect(() => getByTestId('tray')).toThrow();
       expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText('Two').id}`);
@@ -3808,7 +3807,7 @@ describe('ComboBox', function () {
         jest.runAllTimers();
       });
 
-      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
       expect(onOpenChange).toHaveBeenCalledTimes(1);
 
       testComboBoxTrayOpen(trayInput, tray, listbox, 2);
@@ -3823,7 +3822,7 @@ describe('ComboBox', function () {
       expect(onInputChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenCalledWith('3');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
-      expect(onOpenChange).toHaveBeenCalledWith(false);
+      expect(onOpenChange).toHaveBeenCalledWith(false, undefined);
       expect(onOpenChange).toHaveBeenCalledTimes(2);
       expect(() => getByTestId('tray')).toThrow();
       expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText('Three').id}`);
@@ -3884,7 +3883,7 @@ describe('ComboBox', function () {
         jest.runAllTimers();
       });
 
-      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
       expect(onOpenChange).toHaveBeenCalledTimes(1);
 
       let tray = getByTestId('tray');
@@ -3907,7 +3906,7 @@ describe('ComboBox', function () {
         jest.runAllTimers();
       });
 
-      expect(onOpenChange).toHaveBeenCalledWith(false);
+      expect(onOpenChange).toHaveBeenCalledWith(false, undefined);
       expect(onOpenChange).toHaveBeenCalledTimes(2);
       expect(() => getByTestId('tray')).toThrow();
       expect(document.activeElement).toBe(button);
