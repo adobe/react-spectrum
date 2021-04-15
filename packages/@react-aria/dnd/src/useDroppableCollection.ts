@@ -33,7 +33,8 @@ interface DroppableCollectionResult {
 interface DroppingState {
   collection: Collection<Node<unknown>>,
   focusedKey: Key,
-  selectedKeys: Set<Key>
+  selectedKeys: Set<Key>,
+  timeout: NodeJS.Timeout
 }
 
 const DROP_POSITIONS: DropPosition[] = ['before', 'on', 'after'];
@@ -118,6 +119,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     // Save some state of the collection/selection before the drop occurs so we can compare later.
     let focusedKey = state.selectionManager.focusedKey;
     droppingState.current = {
+      timeout: null,
       focusedKey,
       collection: state.collection,
       selectedKeys: state.selectionManager.selectedKeys
@@ -136,13 +138,13 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     // and for React to re-render. If an insert occurs during this time, it will be selected/focused below.
     // If items are not "immediately" inserted by the onDrop handler, the application will need to handle
     // selecting and focusing those items themselves.
-    setTimeout(() => {
+    droppingState.current.timeout = setTimeout(() => {
       // If focus didn't move already (e.g. due to an insert), and the user dropped on an item,
       // focus that item and show the focus ring to give the user feedback that the drop occurred.
       // Also show the focus ring if the focused key is not selected, e.g. in case of a reorder.
       let {state} = localState;
       if (state.selectionManager.focusedKey === focusedKey) {
-        if (target.type === 'item' && target.dropPosition === 'on') {
+        if (target.type === 'item' && target.dropPosition === 'on' && state.collection.getItem(target.key) != null) {
           state.selectionManager.setFocusedKey(target.key);
           state.selectionManager.setFocused(true);
           setInteractionModality('keyboard');
@@ -154,6 +156,15 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       droppingState.current = null;
     }, 50);
   }, [localState]);
+
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => {
+      if (droppingState.current) {
+        clearTimeout(droppingState.current.timeout);
+      }
+    };
+  }, []);
 
   useLayoutEffect(() => {
     // If an insert occurs during a drop, we want to immediately select these items to give
