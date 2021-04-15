@@ -123,14 +123,14 @@ function createFocusManager(scopeRef: React.RefObject<HTMLElement[]>): FocusMana
       let {from, tabbable, wrap} = opts; 
       let node = from || document.activeElement;
       let sentinel = scope[0].previousElementSibling;
-      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable});
+      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable}, scope);
       walker.currentNode = isElementInScope(node, scope) ? node : sentinel;
       let nextNode = walker.nextNode() as HTMLElement;
-      if ((!nextNode || !isElementInScope(nextNode, scope)) && wrap) {
+      if (!nextNode && wrap) {
         walker.currentNode = sentinel;
         nextNode = walker.nextNode() as HTMLElement;
       }
-      if (nextNode && isElementInScope(nextNode, scope)) {
+      if (nextNode) {
         focusElement(nextNode, true);
       }
       return nextNode;
@@ -140,14 +140,14 @@ function createFocusManager(scopeRef: React.RefObject<HTMLElement[]>): FocusMana
       let {from, tabbable, wrap} = opts; 
       let node = from || document.activeElement;
       let sentinel = scope[scope.length - 1].nextElementSibling;
-      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable});
+      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable}, scope);
       walker.currentNode = isElementInScope(node, scope) ? node : sentinel;
       let previousNode = walker.previousNode() as HTMLElement;
-      if ((!previousNode || !isElementInScope(previousNode, scope)) && wrap) {
+      if (!previousNode && wrap) {
         walker.currentNode = sentinel;
         previousNode = walker.previousNode() as HTMLElement;
       }
-      if (previousNode && isElementInScope(previousNode, scope)) {
+      if (previousNode) {
         focusElement(previousNode, true);
       }
       return previousNode;
@@ -201,16 +201,16 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
         return;
       }
 
-      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: true});
+      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: true}, scope);
       walker.currentNode = focusedElement;
       let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
-      if (!nextElement || !isElementInScope(nextElement, scope)) {
+      if (!nextElement) {
         walker.currentNode = e.shiftKey ? scope[scope.length - 1].nextElementSibling : scope[0].previousElementSibling;
         nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode())  as HTMLElement;
       }
 
       e.preventDefault();
-      if (nextElement && isElementInScope(nextElement, scope)) {
+      if (nextElement) {
         focusElement(nextElement, true);
       }
     };
@@ -294,7 +294,7 @@ function focusElement(element: HTMLElement | null, scroll = false) {
 
 function focusFirstInScope(scope: HTMLElement[]) {
   let sentinel = scope[0].previousElementSibling;
-  let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: true});
+  let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: true}, scope);
   walker.currentNode = sentinel;
   focusElement(walker.nextNode() as HTMLElement);
 }
@@ -386,7 +386,7 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
  * Create a [TreeWalker]{@link https://developer.mozilla.org/en-US/docs/Web/API/TreeWalker}
  * that matches all focusable/tabbable elements.
  */
-export function getFocusableTreeWalker(root: HTMLElement, opts?: FocusManagerOptions) {
+export function getFocusableTreeWalker(root: HTMLElement, opts?: FocusManagerOptions, scope?: HTMLElement[]) {
   let selector = opts?.tabbable ? TABBABLE_ELEMENT_SELECTOR : FOCUSABLE_ELEMENT_SELECTOR;
   let walker = document.createTreeWalker(
     root,
@@ -398,7 +398,9 @@ export function getFocusableTreeWalker(root: HTMLElement, opts?: FocusManagerOpt
           return NodeFilter.FILTER_REJECT;
         }
 
-        if ((node as HTMLElement).matches(selector) && isElementVisible(node as HTMLElement)) {
+        if ((node as HTMLElement).matches(selector)
+          && isElementVisible(node as HTMLElement)
+          && (scope ? isElementInScope(node as HTMLElement, scope) : true)) {
           return NodeFilter.FILTER_ACCEPT;
         }
 
