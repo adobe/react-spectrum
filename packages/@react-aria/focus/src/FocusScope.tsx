@@ -11,8 +11,9 @@
  */
 
 import {focusSafely} from './focusSafely';
-import {isElementVisible, useLayoutEffect} from '@react-aria/utils';
+import {isElementVisible} from './isElementVisible';
 import React, {ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
+import {useLayoutEffect} from '@react-aria/utils';
 
 // import {FocusScope, useFocusScope} from 'react-events/focus-scope';
 // export {FocusScope};
@@ -400,7 +401,7 @@ export function getFocusableTreeWalker(root: HTMLElement, opts?: FocusManagerOpt
 
         if ((node as HTMLElement).matches(selector)
           && isElementVisible(node as HTMLElement)
-          && (scope ? isElementInScope(node as HTMLElement, scope) : true)) {
+          && (!scope || isElementInScope(node as HTMLElement, scope))) {
           return NodeFilter.FILTER_ACCEPT;
         }
 
