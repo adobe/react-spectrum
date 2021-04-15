@@ -181,6 +181,10 @@ storiesOf('Progress/ProgressBar', module)
     () => render({width: '30px'})
   )
   .add(
+    'width: 30px, size: S',
+    () => render({width: '30px', size: 'S'})
+  )
+  .add(
     'width: 30px, labelPosition: side, long label',
     () => render({width: '30px', labelPosition: 'side', label: 'Super long progress bar label. Sample label copy. Loading...'})
   )
