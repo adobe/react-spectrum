@@ -87,6 +87,8 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('inputMode', 'numeric');
     expect(incrementButton).toBeTruthy();
     expect(decrementButton).toBeTruthy();
+    expect(incrementButton).toHaveAttribute('tabIndex', '-1');
+    expect(decrementButton).toHaveAttribute('tabIndex', '-1');
   });
 
   it('attaches a user provided ref to the outer div', function () {
@@ -1442,6 +1444,10 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '100');
     expect(incrementButton).toHaveAttribute('aria-disabled');
     expect(decrementButton).toHaveAttribute('aria-disabled');
+    // they are aria-disabled, but don't have the attribute disabled because they are not buttons or inputs
+    // should they be made buttons again after the Safari bug is fixed, this will need to be reversed
+    expect(incrementButton).not.toBeDisabled();
+    expect(decrementButton).not.toBeDisabled();
   });
 
   it.each`
