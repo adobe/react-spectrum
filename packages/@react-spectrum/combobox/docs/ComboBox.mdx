@@ -607,8 +607,9 @@ By default, ComboBox uses a string "contains" filtering strategy when deciding w
 by filtering the list of items yourself and passing the filtered list to the ComboBox via the `items` prop.
 
 The example below uses a string "startsWith" filter function obtained from the `useFilter` hook to display items that start with the ComboBox's current input
-value only. By using the `onMenuOpenManual` prop, it also handles displaying the entire option list regardless of the current filter value when the ComboBox menu is
-opened via the trigger button or arrow keys.
+value only. By using the `menuTrigger` returned by `onOpenChange`, it also handles displaying the entire option list regardless of the current filter value when the ComboBox menu is
+opened via the trigger button or arrow keys. `menuTrigger` tells you if the menu was opened manually by the user ("manual"), by focusing the ComboBox ("focus"), or by
+changes in the input field ("input"), allowing you to make updates to other controlled aspects of your ComboBox accordingly.
 
 ```tsx example
 function Example() {
@@ -631,7 +632,13 @@ function Example() {
 
   return (
     <ComboBox
-      onMenuOpenManual={() => setShowAll(true)}
+      onOpenChange={(isOpen, menuTrigger) => {
+        // Show all items if menu is opened manually
+        // i.e. by the arrow keys or trigger button
+        if (menuTrigger === 'manual' && isOpen) {
+          setShowAll(true);
+        }
+      }}
       width="size-3000"
       label="To:"
       items={showAll ? options : filteredItems}

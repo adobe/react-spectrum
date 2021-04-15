@@ -97,55 +97,7 @@ describe('useComboBox', function () {
     expect(preventDefault).toHaveBeenCalledTimes(1);
   });
 
-  it('calls onMenuOpenManual if menu is closed and arrow down/up/button is pressed', function () {
-    let onMenuOpenManualSpy = jest.fn();
-    let props = {
-      label: 'test label',
-      popoverRef: React.createRef(),
-      buttonRef: React.createRef(),
-      inputRef: {
-        current: {
-          contains: jest.fn(),
-          focus: jest.fn()
-        }
-      },
-      listBoxRef: React.createRef(),
-      layout: mockLayout,
-      onMenuOpenManual: onMenuOpenManualSpy,
-      isOpen: true
-    };
-
-    let {result: state, rerender: rerenderState} = renderHook((props) => useComboBoxState(props), {initialProps: props});
-    // mock open and toggle so we don't get act issues
-    state.current.open = jest.fn();
-    state.current.toggle = jest.fn();
-
-    let {result, rerender} = renderHook((props) => useComboBox(props, state.current), {initialProps: props});
-    let {inputProps, buttonProps} = result.current;
-    inputProps.onKeyDown(event({key: 'ArrowDown'}));
-    expect(onMenuOpenManualSpy).toHaveBeenCalledTimes(0);
-    inputProps.onKeyDown(event({key: 'ArrowUp'}));
-    expect(onMenuOpenManualSpy).toHaveBeenCalledTimes(0);
-    buttonProps.onPress(event({pointerType: 'touch'}));
-    expect(onMenuOpenManualSpy).toHaveBeenCalledTimes(0);
-    buttonProps.onPressStart(event({pointerType: 'keyboard'}));
-    expect(onMenuOpenManualSpy).toHaveBeenCalledTimes(0);
-
-    // Update state isOpen state
-    rerenderState({...props, isOpen: false});
-    rerender(props);
-    result.current.inputProps.onKeyDown(event({key: 'ArrowDown'}));
-    expect(onMenuOpenManualSpy).toHaveBeenCalledTimes(1);
-    result.current.inputProps.onKeyDown(event({key: 'ArrowUp'}));
-    expect(onMenuOpenManualSpy).toHaveBeenCalledTimes(2);
-    result.current.buttonProps.onPress(event({pointerType: 'touch'}));
-    expect(onMenuOpenManualSpy).toHaveBeenCalledTimes(3);
-    result.current.buttonProps.onPressStart(event({pointerType: 'keyboard'}));
-    expect(onMenuOpenManualSpy).toHaveBeenCalledTimes(4);
-  });
-
-
-  it('calls open with showWholeMenuOnOpen', function () {
+  it('calls open and toggle with the expected parameters when arrow down/up/trigger button is pressed', function () {
     let openSpy = jest.fn();
     let toggleSpy = jest.fn();
     let props = {
@@ -160,49 +112,30 @@ describe('useComboBox', function () {
       },
       listBoxRef: React.createRef(),
       layout: mockLayout,
-      isOpen: false,
-      showWholeMenuOnOpen: true
+      isOpen: false
     };
 
     let {result: state} = renderHook((props) => useComboBoxState(props), {initialProps: props});
     state.current.open = openSpy;
     state.current.toggle = toggleSpy;
-    // Try calling renderHook on useComboboxstate first? Then can spy on state.toggle and state.opne
-    let {result, rerender} = renderHook((props) => useComboBox(props, state.current), {initialProps: props});
+
+    let {result} = renderHook((props) => useComboBox(props, state.current), {initialProps: props});
     let {inputProps, buttonProps} = result.current;
     inputProps.onKeyDown(event({key: 'ArrowDown'}));
     expect(openSpy).toHaveBeenCalledTimes(1);
-    expect(openSpy).toHaveBeenLastCalledWith('first', true);
+    expect(openSpy).toHaveBeenLastCalledWith('first', true, 'manual');
     expect(toggleSpy).toHaveBeenCalledTimes(0);
     inputProps.onKeyDown(event({key: 'ArrowUp'}));
     expect(openSpy).toHaveBeenCalledTimes(2);
-    expect(openSpy).toHaveBeenLastCalledWith('last', true);
+    expect(openSpy).toHaveBeenLastCalledWith('last', true, 'manual');
     expect(toggleSpy).toHaveBeenCalledTimes(0);
     buttonProps.onPress(event({pointerType: 'touch'}));
     expect(openSpy).toHaveBeenCalledTimes(2);
     expect(toggleSpy).toHaveBeenCalledTimes(1);
-    expect(toggleSpy).toHaveBeenLastCalledWith(null, true);
+    expect(toggleSpy).toHaveBeenLastCalledWith(null, true, 'manual');
     buttonProps.onPressStart(event({pointerType: 'mouse'}));
     expect(openSpy).toHaveBeenCalledTimes(2);
     expect(toggleSpy).toHaveBeenCalledTimes(2);
-    expect(toggleSpy).toHaveBeenLastCalledWith(null, true);
-
-    rerender({...props, showWholeMenuOnOpen: false});
-    result.current.inputProps.onKeyDown(event({key: 'ArrowDown'}));
-    expect(openSpy).toHaveBeenCalledTimes(3);
-    expect(openSpy).toHaveBeenLastCalledWith('first', false);
-    expect(toggleSpy).toHaveBeenCalledTimes(2);
-    result.current.inputProps.onKeyDown(event({key: 'ArrowUp'}));
-    expect(openSpy).toHaveBeenCalledTimes(4);
-    expect(openSpy).toHaveBeenLastCalledWith('last', false);
-    expect(toggleSpy).toHaveBeenCalledTimes(2);
-    result.current.buttonProps.onPress(event({pointerType: 'touch'}));
-    expect(openSpy).toHaveBeenCalledTimes(4);
-    expect(toggleSpy).toHaveBeenCalledTimes(3);
-    expect(toggleSpy).toHaveBeenLastCalledWith(null, false);
-    result.current.buttonProps.onPressStart(event({pointerType: 'mouse'}));
-    expect(openSpy).toHaveBeenCalledTimes(4);
-    expect(toggleSpy).toHaveBeenCalledTimes(4);
-    expect(toggleSpy).toHaveBeenLastCalledWith(null, false);
+    expect(toggleSpy).toHaveBeenLastCalledWith(null, true, 'manual');
   });
 });

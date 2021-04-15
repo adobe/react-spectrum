@@ -23,7 +23,7 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
   isOpen?: boolean,
   /** Sets the default open state of the menu. */
   defaultOpen?: boolean,
-  /** Method that is called when the open state of the menu changes. */
+  /** Method that is called when the open state of the menu changes. Returns the new open state and the action that caused the opening of the menu. */
   onOpenChange?: (isOpen: boolean, menuTrigger?: MenuTriggerAction) => void,
   /** The value of the ComboBox input (controlled). */
   inputValue?: string,
