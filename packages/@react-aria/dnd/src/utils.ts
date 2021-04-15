@@ -154,7 +154,7 @@ export class DragTypes implements IDragTypes {
 
     // In Safari, when dragging files, the dataTransfer.items list is empty, but dataTransfer.types contains "Files".
     // Unfortunately, this doesn't tell us what types of files the user is dragging, so we need to assume that any
-    // type the user checks for is included.
+    // type the user checks for is included. See https://bugs.webkit.org/show_bug.cgi?id=223517.
     this.includesUnknownTypes = !hasFiles && dataTransfer.types.includes('Files');
   }
 
@@ -208,10 +208,11 @@ export function readFromDataTransfer(dataTransfer: DataTransfer) {
         if (typeof item.webkitGetAsEntry === 'function') {
           let entry: FileSystemEntry = item.webkitGetAsEntry();
           if (!entry) {
-            // For some reason, Chrome and Firefox include an item with type image/png when copy
-            // and pasting any file or directory (no matter the type), but return `null` for both
+            // For some reason, Firefox includes an item with type image/png when copy
+            // and pasting any file or directory (no matter the type), but returns `null` for both
             // item.getAsFile() and item.webkitGetAsEntry(). Safari works as expected. Ignore this
-            // item if this happens.
+            // item if this happens. See https://bugzilla.mozilla.org/show_bug.cgi?id=1699743.
+            // This was recently fixed in Chrome Canary: https://bugs.chromium.org/p/chromium/issues/detail?id=1175483.
             continue;
           }
 
