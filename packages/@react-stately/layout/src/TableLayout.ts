@@ -27,6 +27,8 @@ export class TableLayout<T> extends ListLayout<T> {
   columnWidths: Map<Key, number>;
   stickyColumnIndices: number[];
   getDefaultWidth: (props) => string | number;
+  wasLoading = false;
+  isLoading = false;
 
   constructor(options: TableLayoutOptions<T>) {
     super(options);
@@ -44,6 +46,10 @@ export class TableLayout<T> extends ListLayout<T> {
       // Invalidate everything in this layout pass. Will be reset in ListLayout on the next pass.
       this.invalidateEverything = true;
     }
+
+    // Track whether we were previously loading. This is used to adjust the animations of async loading vs inserts.
+    this.wasLoading = this.isLoading;
+    this.isLoading = Boolean(this.collection.body.props.isLoading);
 
     this.buildColumnWidths();
     let header = this.buildHeader();
@@ -405,5 +411,16 @@ export class TableLayout<T> extends ListLayout<T> {
     }
 
     return Math.max(0, Math.min(items.length - 1, low));
+  }
+
+  getInitialLayoutInfo(layoutInfo: LayoutInfo) {
+    let res = super.getInitialLayoutInfo(layoutInfo);
+
+    // If this insert was the result of async loading, remove the zoom effect and just keep the fade in.
+    if (this.wasLoading) {
+      res.transform = null;
+    }
+
+    return res;
   }
 }
