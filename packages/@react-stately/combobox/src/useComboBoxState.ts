@@ -107,7 +107,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     // Prevent open operations from triggering if there is nothing to display
     // Also prevent open operations from triggering if items are uncontrolled but defaultItems is empty, even if showAllItems is true.
     // This is to prevent comboboxes with empty defaultItems from opening but allow controlled items comboboxes to open even if the inital list is empty (assumption is user will provide swap the empty list with a base list via onOpenChange returning `menuTrigger` manual)
-    if (allowsEmptyCollection || filteredCollection.size > 0 || (showAllItems && (originalCollection.size > 0 || props.items))) {
+    if (allowsEmptyCollection || filteredCollection.size > 0 || (showAllItems && originalCollection.size > 0) || props.items) {
       if (showAllItems && !triggerState.isOpen && props.items === undefined) {
         // Show all items if menu is manually opened. Only care about this if items are undefined
         setShowAllItemsTracker(true);
@@ -120,7 +120,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
   let toggle = (focusStrategy?: FocusStrategy, showAllItems?: boolean, trigger?: MenuTriggerAction) => {
     // If the menu is closed and there is nothing to display, early return so toggle isn't called to prevent extraneous onOpenChange
-    if (!(allowsEmptyCollection || filteredCollection.size > 0 || (showAllItems && (originalCollection.size > 0 || props.items))) && !triggerState.isOpen) {
+    if (!(allowsEmptyCollection || filteredCollection.size > 0 || (showAllItems && originalCollection.size > 0) || props.items) && !triggerState.isOpen) {
       return;
     }
 
@@ -316,7 +316,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     isFocused,
     setFocused,
     selectedItem,
-    // TODO: should there be a prop that controls this behavior for react-stately consumers only?
     collection: showAllItemsTracker && (props.items === undefined) ? originalCollection : filteredCollection,
     inputValue,
     setInputValue,
