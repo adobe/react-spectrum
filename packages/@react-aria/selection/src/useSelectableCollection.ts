@@ -360,8 +360,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     onBlur,
     onMouseDown(e) {
       // Prevent focus going to the collection when clicking on the scrollbar.
-      // e.target.parentElement check is for Table since the scrollbar click occurs on the Table body
-      if (e.target.parentElement === ref.current || e.target === ref.current) {
+      if (e.target === ref.current) {
         e.preventDefault();
       }
     }
