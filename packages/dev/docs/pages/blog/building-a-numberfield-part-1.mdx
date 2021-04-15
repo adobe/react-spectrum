@@ -8,18 +8,105 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License. -->
 
 
-import {BlogPostLayout, Video} from '@react-spectrum/docs';
+import {BlogPostLayout, Video, Image} from '@react-spectrum/docs';
+import pinyinIMEentering from 'url:../assets/Pinyin-IME-entering.mov';
+import arabicNumberFormatting from 'url:../assets/arabic-number-formatting.mov';
+import numberfieldIphoneDefault from 'url:../assets/NumberField_Iphone_default.png';
+import numberfieldIphonePositive from 'url:../assets/NumberField_Iphone_positive.png';
+import numberfieldIphoneInteger from 'url:../assets/NumberField_Iphone_integer.png';
+import numberfieldAndroidPositive from 'url:../assets/NumberField_Android_positive.jpg';
+import numberfieldAndroidInteger from 'url:../assets/NumberField_Android_integer.jpg';
 export default BlogPostLayout;
+
+```jsx import
+import {NumberField} from '@react-spectrum/numberfield';
+import {Flex} from '@react-spectrum/layout';
+```
 
 ---
 keywords: [react aria, react spectrum, react, spectrum, interactions, numberfield, touch, spinbutton]
 description: Numberfields seem like simple components at first, but they hide a lot of complexity under the hood.
-date: 2021-4-8
+date: 2021-04-08
 author: '[Rob Snow](https://twitter.com/snowystinger)'
 image: ../assets/ReactAria_976x445_2x.png
 ---
+# NumberField
 
-# Building a NumberField Part 1: Why not native
+## What is a number field
+
+Number fields are for entering incrementable numbers, e.g. quantities, dimensions, currencies, percentages, unit values, etc.
+It is not for things like credit cards or phone numbers, which contain numbers, but represent more information.
+
+```tsx example
+<NumberField label="Width" formatOptions={{style: 'unit', unit: 'inch'}} defaultValue={9} minValue={0} />
+```
+
+Number fields should support formatting of the number value into easier to read representations based on a users locale and numbering system.
+We accomplish this using the browsers built-in [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat).
+We make extensive use of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) and support most options that NumberFormat accepts.
+Notable exceptions are some notations beyond standard that we don't support yet.
+Here's an example using the German locale and Latin numbering system.
+
+```tsx example
+function Example() {
+  let formatter = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+  let formattedValue = formatter.format(40);
+  return (
+    <span>
+      {formattedValue}
+    </span>
+  );
+}
+```
+
+Number fields also support steppers, two buttons that allow a user to incremenet or decrement the value in the field by a specified `step` amount.
+The stepping behavior can also be triggered with the keyboard arrow keys, scroll wheel, and gestures in some screen readers.
+Stepping also influences rounding in number fields, which will be rounded based off `0` or the `minValue` if one is supplied.
+For example, if step `5` is used, valid values will be `0`, `5`, `10`... etc.
+If a step of `5` is used with minValue `2` though, valid values will be `2`, `7`, `12`... etc.
+Providing a step amount will also cause any value not falling on a valid value to be rounded to the nearest valid value.
+
+```tsx example
+<Flex gap="size-200">
+  <NumberField label="Width" formatOptions={{style: 'unit', unit: 'inch'}} step={5}  />
+  <NumberField label="Width" formatOptions={{style: 'unit', unit: 'inch'}} step={5} minValue={2} />
+</Flex>
+```
+
+On mobile devices, the keyboard should be as helpful as possible, providing only the keys that can be entered into the field.
+Keyboards vary across devices and operating systems.
+Various combinations settings on a numberfield also vary the allowed keys.
+For example, having a minValue greater than or equal to `0` means that no negative values can be entered into the field.
+As a result, the keyboard displayed should not contain the negative sign.
+Similar, if no decimal values are allowed in a number, then the decimal key should not be in the keyboard if at all possible.
+<br />
+<div style={{display: 'grid', rowGap: '40px', columnGap: '20px', gridTemplateRows: 'repeat(2, auto auto)', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 30%))', gridAutoFlow: 'column'}}>
+    <span>Iphone not allowing negatives but does allow decimals.</span>
+    <Image src={numberfieldIphonePositive} alt="Iphone screenshot of example NumberField only allowing positive decimals" style={{margin: '0px'}} />
+    <span>Iphone not allowing decimals and only positive numbers.</span>
+    <Image src={numberfieldIphoneInteger} alt="Iphone screenshot of example NumberField not allowing decimals" style={{margin: '0px'}} />
+    <span>Iphone allowing negatives and decimals.</span>
+    <Image src={numberfieldIphoneDefault} alt="Iphone screenshot of example NumberField allowing negatives and decimals" style={{margin: '0px'}} />
+    <span>Android not allowing negatives but does allow decimals.</span>
+    <Image src={numberfieldAndroidPositive} alt="Iphone screenshot of example NumberField allowing negatives and decimals" style={{margin: '0px'}} />
+    <span>Android not allowing decimals and only positive numbers.</span>
+    <Image src={numberfieldAndroidInteger} alt="Iphone screenshot of example NumberField allowing negatives and decimals" style={{margin: '0px'}} />
+</div>
+<br />
+
+Number fields shouldn't allow non-valid characters in them, so we run validation before every change to the field.
+If the incoming change results in something we can't parse, then we block that change.
+Number fields supporting multiple numbering systems also need to support input method implementations (IMEs) such as Pinyin.
+We do this through composition events.
+During a composition event, we stop running our validation and start again when the composition event ends.
+
+<Video src={pinyinIMEentering} loop autoPlay muted />
+
+## Problems with input type number
+
+Formatting controls for numbers are limited when it comes to large number in JavaScript. 
+
+<Video src={arabicNumberFormatting} loop autoPlay muted />
 
 As with building any component for the web, it is never as simple as you would wish.
 Browsers today ship with a native number input, `<input type=number />`.
