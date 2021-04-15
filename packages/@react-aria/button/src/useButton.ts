@@ -64,7 +64,12 @@ export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<an
     type = 'button'
   } = props;
   let additionalProps;
-  if (elementType !== 'button') {
+  if (elementType === 'button') {
+    additionalProps = {
+      type,
+      disabled: isDisabled
+    };
+  } else {
     additionalProps = {
       role: 'button',
       tabIndex: isDisabled ? undefined : 0,
@@ -87,15 +92,6 @@ export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<an
     ref
   });
 
-  // don't apply type button to non button elements
-  if (elementType !== 'button' && type === 'button') {
-    type = undefined;
-  }
-  // don't apply disabled to non button/input elements
-  if (elementType !== 'input' && elementType !== 'button') {
-    isDisabled = undefined;
-  }
-
   let {focusableProps} = useFocusable(props, ref);
   let buttonProps = mergeProps(focusableProps, pressProps);
   buttonProps = mergeProps(buttonProps, filterDOMProps(props, {labelable: true}));
@@ -107,8 +103,6 @@ export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<an
       'aria-expanded': props['aria-expanded'],
       'aria-controls': props['aria-controls'],
       'aria-pressed': props['aria-pressed'],
-      disabled: isDisabled,
-      type,
       onClick: (e) => {
         if (deprecatedOnClick) {
           deprecatedOnClick(e);
