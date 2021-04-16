@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {Collection, DropEvent, DropOperation, DroppableCollectionProps, DropPosition, DropTarget, KeyboardDelegate, Node} from '@react-types/shared';
 import * as DragManager from './DragManager';
-import {DropOperation, DroppableCollectionProps, DropPosition, DropTarget, KeyboardDelegate} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {getTypes} from './utils';
-import {HTMLAttributes, RefObject, useEffect, useRef} from 'react';
+import {HTMLAttributes, Key, RefObject, useCallback, useEffect, useLayoutEffect, useRef} from 'react';
 import {mergeProps} from '@react-aria/utils';
+import {setInteractionModality} from '@react-aria/interactions';
 import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
 import {useDroppableCollectionId} from './utils';
@@ -27,6 +28,13 @@ interface DroppableCollectionOptions extends DroppableCollectionProps {
 
 interface DroppableCollectionResult {
   collectionProps: HTMLAttributes<HTMLElement>
+}
+
+interface DroppingState {
+  collection: Collection<Node<unknown>>,
+  focusedKey: Key,
+  selectedKeys: Set<Key>,
+  timeout: NodeJS.Timeout
 }
 
 const DROP_POSITIONS: DropPosition[] = ['before', 'on', 'after'];
@@ -96,15 +104,100 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     },
     onDrop(e) {
       if (state.target && typeof props.onDrop === 'function') {
-        props.onDrop({
-          type: 'drop',
-          x: e.x, // todo
-          y: e.y,
-          target: state.target,
-          items: e.items,
-          dropOperation: e.dropOperation
-        });
+        onDrop(e, state.target);
       }
+    }
+  });
+
+  let droppingState = useRef<DroppingState>(null);
+  let onDrop = useCallback((e: DropEvent, target: DropTarget) => {
+    let {state} = localState;
+
+    // Focus the collection.
+    state.selectionManager.setFocused(true);
+
+    // Save some state of the collection/selection before the drop occurs so we can compare later.
+    let focusedKey = state.selectionManager.focusedKey;
+    droppingState.current = {
+      timeout: null,
+      focusedKey,
+      collection: state.collection,
+      selectedKeys: state.selectionManager.selectedKeys
+    };
+
+    localState.props.onDrop({
+      type: 'drop',
+      x: e.x, // todo
+      y: e.y,
+      target,
+      items: e.items,
+      dropOperation: e.dropOperation
+    });
+
+    // Wait for a short time period after the onDrop is called to allow the data to be read asynchronously
+    // and for React to re-render. If an insert occurs during this time, it will be selected/focused below.
+    // If items are not "immediately" inserted by the onDrop handler, the application will need to handle
+    // selecting and focusing those items themselves.
+    droppingState.current.timeout = setTimeout(() => {
+      // If focus didn't move already (e.g. due to an insert), and the user dropped on an item,
+      // focus that item and show the focus ring to give the user feedback that the drop occurred.
+      // Also show the focus ring if the focused key is not selected, e.g. in case of a reorder.
+      let {state} = localState;
+      if (state.selectionManager.focusedKey === focusedKey) {
+        if (target.type === 'item' && target.dropPosition === 'on' && state.collection.getItem(target.key) != null) {
+          state.selectionManager.setFocusedKey(target.key);
+          state.selectionManager.setFocused(true);
+          setInteractionModality('keyboard');
+        } else if (!state.selectionManager.isSelected(focusedKey)) {
+          setInteractionModality('keyboard');
+        }
+      }
+
+      droppingState.current = null;
+    }, 50);
+  }, [localState]);
+
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => {
+      if (droppingState.current) {
+        clearTimeout(droppingState.current.timeout);
+      }
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    // If an insert occurs during a drop, we want to immediately select these items to give
+    // feedback to the user that a drop occurred. Only do this if the selection didn't change
+    // since the drop started so we don't override if the user or application did something.
+    if (
+      droppingState.current &&
+      state.selectionManager.isFocused &&
+      state.collection.size > droppingState.current.collection.size &&
+      state.selectionManager.isSelectionEqual(droppingState.current.selectedKeys)
+    ) {
+      let newKeys = new Set<Key>();
+      for (let key of state.collection.getKeys()) {
+        if (!droppingState.current.collection.getItem(key)) {
+          newKeys.add(key);
+        }
+      }
+
+      state.selectionManager.setSelectedKeys(newKeys);
+
+      // If the focused item didn't change since the drop occurred, also focus the first
+      // inserted item. If selection is disabled, then also show the focus ring so there
+      // is some indication that items were added.
+      if (state.selectionManager.focusedKey === droppingState.current.focusedKey) {
+        let first = newKeys.keys().next().value;
+        state.selectionManager.setFocusedKey(first);
+
+        if (state.selectionManager.selectionMode === 'none') {
+          setInteractionModality('keyboard');
+        }
+      }
+
+      droppingState.current = null;
     }
   });
 
@@ -315,14 +408,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       },
       onDrop(e, target) {
         if (localState.state.target && typeof localState.props.onDrop === 'function') {
-          localState.props.onDrop({
-            type: 'drop',
-            x: e.x, // todo
-            y: e.y,
-            target: target || localState.state.target,
-            items: e.items,
-            dropOperation: e.dropOperation
-          });
+          onDrop(e, target || localState.state.target);
         }
       },
       onKeyDown(e, drag) {
@@ -440,7 +526,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         }
       }
     });
-  }, [localState, ref]);
+  }, [localState, ref, onDrop]);
 
   let id = useDroppableCollectionId(state);
   return {
