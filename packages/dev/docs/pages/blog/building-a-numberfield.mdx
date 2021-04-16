@@ -43,6 +43,7 @@ It is not for things like credit cards or phone numbers, which contain numbers, 
 <NumberField label="Width" formatOptions={{style: 'unit', unit: 'inch'}} defaultValue={9} minValue={0} />
 ```
 
+### Features
 Number fields should support formatting of the number value into easier to read representations based on a users locale and numbering system.
 We accomplish this using the browsers built-in [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat).
 We make extensive use of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) and support most options that NumberFormat accepts.
@@ -128,6 +129,7 @@ A good place to see these differences in UI is this [codepen](https://codepen.io
 
 ## Internationalization
 
+### Numeral systems vs locales
 In our NumberField, we support three [numeral systems](https://en.wikipedia.org/wiki/Numeral_system) out of the browsers [Intl numbering system](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/numberingSystem).
 We support the common place and only one that native input type=number supports, Latin numeral system or code `latn`.
 We also support Eastern Arabic code `arab` [٠	١	٢	٣	٤	٥	٦	٧	٨	٩] and Chinese Simplified code `hanidec` [〇 一 二 三 四 五 六 七 八 九].
@@ -178,7 +180,8 @@ Using our component though, users can choose whichever they are most comfortable
 
 <Video src={numeralSystemEntering} loop autoPlay muted style={{margin: '0px auto'}} />
 
-To accomplish this, even though browsers can't parse non-`latn` numeral systems, we had to get creative.
+### Localized number parsing
+To accomplish parsing other numeral systems, even though browsers can't parse non-`latn`, we had to get creative.
 We based our initial work off this [blog post](https://observablehq.com/@mbostock/localized-number-parsing).
 The general gist of this is to use [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) to generate a parser for us.
 By generating several numbers and formatting them, we can determine a map between the digits, negative and positive signs, group characters, and the decimal character.
