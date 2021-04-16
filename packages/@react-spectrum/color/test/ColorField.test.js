@@ -133,24 +133,53 @@ describe('ColorField', function () {
       colorField.focus();
       userEvent.clear(colorField);
     });
+    expect(colorField.value).toBe('');
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    act(() => {
+      colorField.blur();
+    });
     // should call onChange when input is cleared
     expect(colorField.value).toBe('');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(null);
 
+    act(() => {
+      colorField.focus();
+    });
     typeText(colorField, 'cba');
-    expect(colorField.value).toBe('cba');
-    expect(onChangeSpy).toHaveBeenCalledTimes(2);
-    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cba'));
-
     typeText(colorField, 'cba');
-    expect(colorField.value).toBe('cbacba');
-    expect(onChangeSpy).toHaveBeenCalledTimes(3);
-    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cbacba'));
-
-    act(() => {colorField.blur();});
+    act(() => {
+      colorField.blur();
+    });
     expect(colorField.value).toBe('#CBACBA');
-    expect(onChangeSpy).toHaveBeenCalledTimes(3);
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cbacba'));
+  });
+
+  it('should handle uncontrolled state typing same value twice', function () {
+    let onChangeSpy = jest.fn();
+    let {getByLabelText} = renderComponent({onChange: onChangeSpy});
+
+    let colorField = getByLabelText('Primary Color');
+
+    act(() => {
+      colorField.focus();
+    });
+    typeText(colorField, 'cbacba');
+    act(() => {
+      colorField.blur();
+    });
+    expect(colorField.value).toBe('#CBACBA');
+
+    act(() => {
+      colorField.focus();
+      userEvent.clear(colorField);
+    });
+    typeText(colorField, 'cbacba');
+    act(() => {
+      colorField.blur();
+    });
+    expect(colorField.value).toBe('#CBACBA');
   });
 
   it('should not update value in controlled state', function () {
@@ -164,6 +193,10 @@ describe('ColorField', function () {
       colorField.focus();
       userEvent.clear(colorField);
     });
+    // blur must be called in its own act
+    act(() => {
+      colorField.blur();
+    });
     // should call onChange when input is cleared
     expect(colorField.value).toBe('#AABBCC');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
@@ -174,16 +207,15 @@ describe('ColorField', function () {
       userEvent.type(colorField, '{selectall}');
     });
     typeText(colorField, 'cba');
+    act(() => {
+      colorField.blur();
+    });
     expect(colorField.value).toBe('#AABBCC');
     expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cba'));
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
-
-    act(() => {colorField.blur();});
-    expect(colorField.value).toBe('#AABBCC');
-    expect(onChangeSpy).toHaveBeenCalledTimes(2);
   });
 
-  it('should update value in controlled state', function () {
+  it('should update value in controlled state when implemented', function () {
     function ColorFieldControlled(props) {
       let {onChange} = props;
       let [color, setColor] = useState(props.value);
@@ -205,22 +237,25 @@ describe('ColorField', function () {
       colorField.focus();
       userEvent.clear(colorField);
     });
+    act(() => {
+      colorField.blur();
+    });
     // should call onChange when input is cleared
     expect(colorField.value).toBe('');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(null);
 
+    act(() => {
+      colorField.focus();
+    });
     typeText(colorField, 'cba');
-    expect(colorField.value).toBe('cba');
-    expect(onChangeSpy).toHaveBeenCalledTimes(2);
-    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cba'));
-
     act(() => {colorField.blur();});
     expect(colorField.value).toBe('#CCBBAA');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#CCBBAA'));
   });
 
-  it('should disallow invalid characters and revert back to last valid value', function () {
+  it('should disallow invalid characters and revert back to last valid value if left incomplete', function () {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({onChange: onChangeSpy});
     let colorField = getByLabelText('Primary Color');
@@ -228,32 +263,20 @@ describe('ColorField', function () {
 
     act(() => {colorField.focus();});
     typeText(colorField, 'abc');
-    expect(colorField.value).toBe('abc');
-    expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#abc'));
-
-    typeText(colorField, 'xyz8b');
-    expect(colorField.value).toBe('abc8b');
-    expect(onChangeSpy).toHaveBeenCalledTimes(1);
-
     act(() => {colorField.blur();});
     expect(colorField.value).toBe('#AABBCC');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
-  });
+    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#abc'));
 
-  it('should not trigger onChange when input changes to text of same color value', function () {
-    let onChangeSpy = jest.fn();
-    let {getByLabelText} = renderComponent({onChange: onChangeSpy});
-    let colorField = getByLabelText('Primary Color');
-    expect(colorField.value).toBe('');
-
-    typeText(colorField, 'fff');
-    expect(colorField.value).toBe('fff');
-    expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#fff'));
-
-    typeText(colorField, 'fff');
-    expect(colorField.value).toBe('ffffff');
+    act(() => {
+      colorField.focus();
+      userEvent.clear(colorField);
+    });
+    typeText(colorField, 'abcxyz8b');
+    expect(colorField.value).toBe('abc8b');
+    act(() => {colorField.blur();});
+    /* is this really what we expect?? */
+    expect(colorField.value).toBe('#AABBCC');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -278,9 +301,9 @@ describe('ColorField', function () {
   });
 
   it.each`
-    Name                                | expected                 | deltaY
-    ${'increment with mouse wheel'}     | ${parseColor('#AAAAAE')}  | ${-10}
-    ${'decrement with mouse wheel'}     | ${parseColor('#AAAAA6')}  | ${10}
+    Name                                | expected                        | deltaY
+    ${'increment with mouse wheel'}     | ${parseColor('#AAAAAE')}  | ${10}
+    ${'decrement with mouse wheel'}     | ${parseColor('#AAAAA6')}  | ${-10}
   `('should handle $Name event', function ({expected, deltaY}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({
@@ -291,6 +314,7 @@ describe('ColorField', function () {
     let colorField = getByLabelText('Primary Color');
     expect(colorField.value).toBe('#AAAAAA');
 
+    act(() => {colorField.focus();});
     fireEvent.wheel(colorField, {deltaY});
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(expected);
@@ -299,7 +323,7 @@ describe('ColorField', function () {
 
   it.each`
     Name                                 | props                                   | initExpected  | key
-    ${'not increment beyond max value'}  | ${{defaultValue: '#fffffc', step: 16}}  | ${'#FFFFFC'}  | ${'ArrowUp'}
+    ${'not increment beyond max value'}  | ${{defaultValue: '#fffffe'}}            | ${'#FFFFFE'}  | ${'ArrowUp'}
     ${'increment to max value'}          | ${{defaultValue: '#aabbcc'}}            | ${'#AABBCC'}  | ${'End'}
   `('should $Name', function ({props, initExpected, key}) {
     let onChangeSpy = jest.fn();
@@ -311,6 +335,7 @@ describe('ColorField', function () {
     fireEvent.keyDown(colorField, {key});
     fireEvent.keyUp(colorField, {key});
     expect(onChangeSpy).toHaveBeenCalledWith(maxColor);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(colorField.value).toBe(maxColor.toString('hex'));
 
     // repeat action to make sure onChange is not called when already at max
@@ -321,7 +346,7 @@ describe('ColorField', function () {
 
   it.each`
     Name                                 | props                                   | initExpected  | key
-    ${'not decrement beyond min value'}  | ${{defaultValue: '#00000c', step: 16}}  | ${'#00000C'}  | ${'ArrowDown'}
+    ${'not decrement beyond min value'}  | ${{defaultValue: '#000001'}}            | ${'#000001'}  | ${'ArrowDown'}
     ${'decrement to min value'}          | ${{defaultValue: '#aabbcc'}}            | ${'#AABBCC'}  | ${'Home'}
   `('should $Name', function ({props, initExpected, key}) {
     let onChangeSpy = jest.fn();
@@ -333,6 +358,7 @@ describe('ColorField', function () {
     fireEvent.keyDown(colorField, {key});
     fireEvent.keyUp(colorField, {key});
     expect(onChangeSpy).toHaveBeenCalledWith(minColor);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(colorField.value).toBe(minColor.toString('hex'));
 
     // repeat action to make sure onChange is not called when already at min
