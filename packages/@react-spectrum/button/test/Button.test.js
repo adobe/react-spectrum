@@ -156,6 +156,7 @@ describe('Button', function () {
 
     let button = getByRole('button');
     expect(button).toHaveAttribute('tabindex', '0');
+    expect(button).not.toHaveAttribute('type', 'button');
     triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
 
@@ -196,6 +197,7 @@ describe('Button', function () {
 
     let button = getByRole('button');
     triggerPress(button);
+    expect(button).toBeDisabled();
     expect(onPressSpy).not.toHaveBeenCalled();
   });
 

@@ -114,3 +114,16 @@ This codebase contains ResizeObserver.d.ts type declaration file which can be ob
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ------------------------------------------------------------------------------
+
+This codebase contains a portion of code that vuejs adapted from jest-dom which can be obtained at:
+  * SOURCE:
+    * https://github.com/vuejs/vue-test-utils-next/blob/master/src/utils/isElementVisible.ts
+  * LICENSE:
+    * https://github.com/vuejs/vue-test-utils-next/blob/master/LICENSE
+
+  * SOURCE:
+    * https://github.com/testing-library/jest-dom/blob/main/src/to-be-visible.js
+  * LICENSE:
+    * https://github.com/testing-library/jest-dom/blob/main/LICENSE
+
+------------------------------------------------------------------------------

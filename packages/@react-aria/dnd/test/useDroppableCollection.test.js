@@ -195,7 +195,7 @@ describe('useDroppableCollection', () => {
       expect(dropIndicator).toHaveAttribute('aria-roledescription', 'drop indicator');
 
       fireEvent(cells[2], new DragEvent('drop', {dataTransfer, clientX: 2, clientY: 2}));
-      act(() => jest.runAllTimers());
+      act(() => jest.advanceTimersByTime(1));
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith({
         type: 'drop',
@@ -212,11 +212,15 @@ describe('useDroppableCollection', () => {
         ]
       });
 
-      await waitFor(() => expect(within(grid).getAllByRole('gridcell')).toHaveLength(4));
+      await waitFor(() => expect(within(grid).getAllByRole('gridcell')).toHaveLength(4), {interval: 10});
       cells = within(grid).getAllByRole('gridcell');
       expect(cells.map(cell => cell.textContent)).toEqual(['One', 'Two', 'hello world', 'Three']);
 
       expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
+
+      act(() => jest.advanceTimersByTime(50));
+      expect(document.activeElement).toBe(cells[2]);
+      expect(cells[2].parentElement).toHaveAttribute('aria-selected', 'true');
     });
 
     it('should auto scroll when near the bottom', () => {
@@ -271,6 +275,63 @@ describe('useDroppableCollection', () => {
       fireEvent(cells[2], new DragEvent('dragover', {dataTransfer, clientX: 30, clientY: 30}));
       act(() => jest.runAllTimers());
       expect(scrollTop).toHaveBeenCalledTimes(3);
+    });
+
+    it('supports dropping on an item', async () => {
+      let onDropEnter = jest.fn();
+      let onDragExit = jest.fn();
+      let onDrop = jest.fn();
+      let tree = render(<>
+        <Draggable />
+        <DroppableGridExample onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
+      </>);
+
+      let draggable = tree.getByText('Drag me');
+      let grid = tree.getByRole('grid');
+      let cells = within(grid).getAllByRole('gridcell');
+      expect(cells).toHaveLength(3);
+
+      let dataTransfer = new DataTransfer();
+      fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      act(() => jest.runAllTimers());
+      expect(draggable).toHaveAttribute('data-dragging', 'true');
+
+      fireEvent(cells[0], new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 20}));
+      expect(onDropEnter).toHaveBeenCalledTimes(1);
+      expect(onDropEnter).toHaveBeenLastCalledWith({
+        type: 'dropenter',
+        x: 0,
+        y: 0,
+        target: {type: 'item', key: '1', dropPosition: 'on'}
+      });
+
+      expect(dataTransfer.dropEffect).toBe('copy');
+
+      fireEvent(cells[0], new DragEvent('drop', {dataTransfer, clientX: 2, clientY: 2}));
+      act(() => jest.advanceTimersByTime(1));
+      expect(onDrop).toHaveBeenCalledTimes(1);
+      expect(onDrop).toHaveBeenCalledWith({
+        type: 'drop',
+        x: 2,
+        y: 2,
+        target: {type: 'item', key: '1', dropPosition: 'on'},
+        dropOperation: 'copy',
+        items: [
+          {
+            kind: 'text',
+            types: new Set(['text/plain']),
+            getText: expect.any(Function)
+          }
+        ]
+      });
+
+      await waitFor(() => expect(within(grid).getAllByRole('gridcell')).toHaveLength(3), {interval: 10});
+      cells = within(grid).getAllByRole('gridcell');
+      expect(cells.map(cell => cell.textContent)).toEqual(['One', 'Two', 'Three']);
+
+      act(() => jest.advanceTimersByTime(50));
+      expect(document.activeElement).toBe(cells[0]);
+      expect(cells[0].parentElement).not.toHaveAttribute('aria-selected', 'true');
     });
   });
 
@@ -334,11 +395,15 @@ describe('useDroppableCollection', () => {
         ]
       });
 
-      await waitFor(() => expect(within(grid).getAllByRole('gridcell')).toHaveLength(4));
+      await waitFor(() => expect(within(grid).getAllByRole('gridcell')).toHaveLength(4), {interval: 10});
       cells = within(grid).getAllByRole('gridcell');
       expect(cells.map(cell => cell.textContent)).toEqual(['One', 'hello world', 'Two', 'Three']);
 
       expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
+
+      act(() => jest.advanceTimersByTime(50));
+      expect(document.activeElement).toBe(cells[1]);
+      expect(cells[1].parentElement).toHaveAttribute('aria-selected', 'true');
     });
 
     it('should support arrow key navigation', () => {
@@ -770,6 +835,190 @@ describe('useDroppableCollection', () => {
         });
       }
     });
+
+    it('should default to dropping after the last focused item if any', () => {
+      let onDrop = jest.fn();
+      let tree = render(<>
+        <Draggable />
+        <DroppableGridExample onDrop={onDrop} />
+      </>);
+
+      let draggable = tree.getByText('Drag me');
+      let grid = tree.getByRole('grid');
+      let cells = within(grid).getAllByRole('gridcell');
+      expect(cells).toHaveLength(3);
+
+      userEvent.tab();
+      userEvent.tab();
+      expect(document.activeElement).toBe(cells[0]);
+
+      pressKey('ArrowDown');
+      expect(document.activeElement).toBe(cells[1]);
+
+      userEvent.tab({shift: true});
+      expect(document.activeElement).toBe(draggable);
+
+      pressKey('Enter');
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Two and Three');
+    });
+
+    it('should default to dropping after the selected items if any', () => {
+      let onDrop = jest.fn();
+      let tree = render(<>
+        <Draggable />
+        <DroppableGridExample onDrop={onDrop} />
+      </>);
+
+      let draggable = tree.getByText('Drag me');
+      let grid = tree.getByRole('grid');
+      let cells = within(grid).getAllByRole('gridcell');
+      let rows = within(grid).getAllByRole('row');
+      expect(cells).toHaveLength(3);
+
+      userEvent.tab();
+      userEvent.tab();
+      pressKey(' ');
+      expect(document.activeElement).toBe(cells[0]);
+      expect(rows[0]).toHaveAttribute('aria-selected', 'true');
+
+      pressKey('ArrowDown');
+      pressKey('ArrowDown');
+      pressKey(' ');
+      expect(document.activeElement).toBe(cells[2]);
+      expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+
+      pressKey('ArrowUp');
+      pressKey(' ');
+      expect(document.activeElement).toBe(cells[1]);
+      expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+
+      userEvent.tab({shift: true});
+      expect(document.activeElement).toBe(draggable);
+
+      pressKey('Enter');
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Three');
+    });
+
+    it('should default to before the selected items if the last focused item is the first selected item', () => {
+      let onDrop = jest.fn();
+      let tree = render(<>
+        <Draggable />
+        <DroppableGridExample onDrop={onDrop} />
+      </>);
+
+      let draggable = tree.getByText('Drag me');
+      let grid = tree.getByRole('grid');
+      let cells = within(grid).getAllByRole('gridcell');
+      let rows = within(grid).getAllByRole('row');
+      expect(cells).toHaveLength(3);
+
+      userEvent.tab();
+      userEvent.tab();
+      expect(document.activeElement).toBe(cells[0]);
+
+      pressKey('ArrowDown');
+      pressKey('ArrowDown');
+      pressKey('ArrowDown');
+      pressKey(' ');
+      expect(document.activeElement).toBe(cells[2]);
+      expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+
+      pressKey('ArrowUp');
+      pressKey(' ');
+      expect(document.activeElement).toBe(cells[1]);
+      expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+
+      userEvent.tab({shift: true});
+      expect(document.activeElement).toBe(draggable);
+
+      pressKey('Enter');
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between One and Two');
+    });
+
+    it('should default to on the first selected item if the last focused item is the first selected item and only dropping on items is allowed', () => {
+      let onDrop = jest.fn();
+      let getDropOperation = (target) => target.dropPosition !== 'on' ? 'cancel' : 'move';
+      let tree = render(<>
+        <Draggable />
+        <DroppableGridExample onDrop={onDrop} getDropOperation={getDropOperation} />
+      </>);
+
+      let draggable = tree.getByText('Drag me');
+      let grid = tree.getByRole('grid');
+      let cells = within(grid).getAllByRole('gridcell');
+      let rows = within(grid).getAllByRole('row');
+      expect(cells).toHaveLength(3);
+
+      userEvent.tab();
+      userEvent.tab();
+      expect(document.activeElement).toBe(cells[0]);
+
+      pressKey('ArrowDown');
+      pressKey('ArrowDown');
+      pressKey('ArrowDown');
+      pressKey(' ');
+      expect(document.activeElement).toBe(cells[2]);
+      expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+
+      pressKey('ArrowUp');
+      pressKey(' ');
+      expect(document.activeElement).toBe(cells[1]);
+      expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+
+      userEvent.tab({shift: true});
+      expect(document.activeElement).toBe(draggable);
+
+      pressKey('Enter');
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Two');
+    });
+
+    it('should default to on the last selected item when only dropping on items is allowed', () => {
+      let onDrop = jest.fn();
+      let getDropOperation = (target) => target.dropPosition !== 'on' ? 'cancel' : 'move';
+      let tree = render(<>
+        <Draggable />
+        <DroppableGridExample onDrop={onDrop} getDropOperation={getDropOperation} />
+      </>);
+
+      let draggable = tree.getByText('Drag me');
+      let grid = tree.getByRole('grid');
+      let cells = within(grid).getAllByRole('gridcell');
+      let rows = within(grid).getAllByRole('row');
+      expect(cells).toHaveLength(3);
+
+      userEvent.tab();
+      userEvent.tab();
+      pressKey(' ');
+      expect(document.activeElement).toBe(cells[0]);
+      expect(rows[0]).toHaveAttribute('aria-selected', 'true');
+
+      pressKey('ArrowDown');
+      pressKey('ArrowDown');
+      pressKey(' ');
+      expect(document.activeElement).toBe(cells[2]);
+      expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+
+      pressKey('ArrowUp');
+      pressKey(' ');
+      expect(document.activeElement).toBe(cells[1]);
+      expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+
+      userEvent.tab({shift: true});
+      expect(document.activeElement).toBe(draggable);
+
+      pressKey('Enter');
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Three');
+    });
   });
 
   describe('screen reader', () => {
@@ -823,11 +1072,15 @@ describe('useDroppableCollection', () => {
         ]
       });
 
-      await waitFor(() => expect(within(grid).getAllByRole('gridcell')).toHaveLength(4));
+      await waitFor(() => expect(within(grid).getAllByRole('gridcell')).toHaveLength(4), {interval: 10});
       cells = within(grid).getAllByRole('gridcell');
       expect(cells.map(cell => cell.textContent)).toEqual(['One', 'hello world', 'Two', 'Three']);
 
       expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
+
+      act(() => jest.advanceTimersByTime(50));
+      expect(document.activeElement).toBe(cells[1]);
+      expect(cells[1].parentElement).toHaveAttribute('aria-selected', 'true');
     });
 
     it('should add descriptions to each item', () => {

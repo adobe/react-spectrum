@@ -119,7 +119,9 @@ const CANCELED_EVENTS = [
   'touchstart',
   'touchmove',
   'touchend',
-  'keyup'
+  'keyup',
+  'focusin',
+  'focusout'
 ];
 
 const CLICK_EVENTS = [
