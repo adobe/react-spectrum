@@ -18,8 +18,8 @@ export const Button: typeof WebButton = isUxp ? UxpButton : WebButton;
 
 export {
     ActionButton,
+    FieldButton,
+    LogicButton,
+    ClearButton,
+    ToggleButton,
 } from '@react-spectrum/button';
-// export * from '../FieldButton';
-// export * from '../LogicButton';
-// export * from '../ClearButton';
-// export * from '../ToggleButton';
