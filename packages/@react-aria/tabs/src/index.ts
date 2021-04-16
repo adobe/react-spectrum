@@ -10,4 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useTabs';
+export * from './useTab';
+export * from './useTabPanel';
+export * from './useTabList';
