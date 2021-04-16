@@ -95,3 +95,13 @@ governing permissions and limitations under the License.
     }
   }
 }
+
+.spectrum-TabsPanel-tabpanel {
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-ring {
+    border-color: var(--spectrum-tabs-focus-ring-color);
+  }
+}

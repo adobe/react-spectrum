@@ -113,7 +113,7 @@ export function useNumberFieldState(
     // Set to empty state if input value is empty
     if (!inputValue.length) {
       setNumberValue(NaN);
-      setInputValue('');
+      setInputValue(value === undefined ? '' : format(numberValue));
       return;
     }
 

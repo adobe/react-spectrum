@@ -1,10 +1,10 @@
 {
-  "hue": "Nuanță",
-  "saturation": "Saturație",
-  "lightness": "Luminozitate",
-  "brightness": "Valoare",
-  "red": "Roșu",
-  "green": "Verde",
+  "alpha": "Alfa",
   "blue": "Albastru",
-  "alpha": "Alfa"
+  "brightness": "Luminozitate",
+  "green": "Verde",
+  "hue": "Nuanță",
+  "lightness": "Luminozitate",
+  "red": "Roșu",
+  "saturation": "Saturație"
 }

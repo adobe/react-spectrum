@@ -1,10 +1,10 @@
 {
-  "hue": "Tint",
-  "saturation": "Verzadiging",
-  "lightness": "Lichtheid",
-  "brightness": "Helderheid",
-  "red": "Rood",
-  "green": "Groen",
+  "alpha": "Alfa",
   "blue": "Blauw",
-  "alpha": "Alfa"
+  "brightness": "Helderheid",
+  "green": "Groen",
+  "hue": "Kleurtoon",
+  "lightness": "Lichtsterkte",
+  "red": "Rood",
+  "saturation": "Verzadiging"
 }

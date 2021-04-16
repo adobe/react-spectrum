@@ -1,10 +1,10 @@
 {
-  "hue": "Nijansa",
-  "saturation": "Zasićenje",
-  "lightness": "Svjetlina",
-  "brightness": "Vrijednost",
-  "red": "Crvena",
-  "green": "Zelena",
+  "alpha": "Alfa",
   "blue": "Plava",
-  "alpha": "Alfa"
+  "brightness": "Svjetlina",
+  "green": "Zelena",
+  "hue": "Nijansa",
+  "lightness": "Osvijetljenost",
+  "red": "Crvena",
+  "saturation": "Zasićenost"
 }
