@@ -21,13 +21,24 @@ import {useCollator, useLocale} from '@react-aria/i18n';
 import {useSelectableCollection} from '@react-aria/selection';
 
 export interface GridProps extends DOMProps, AriaLabelingProps {
+  /** The ref attached to the grid element. */
   ref: RefObject<HTMLElement>,
+  /** Whether the grid uses virtual scrolling. */
   isVirtualized?: boolean,
+  /**
+   * An optional keyboard delegate implementation for type to select,
+   * to override the default.
+   */
   keyboardDelegate?: KeyboardDelegate,
+  /**
+   * Whether initial grid focus should be placed on the grid row or grid cell.
+   * @default 'row'
+   */
   focusMode?: 'row' | 'cell'
 }
 
 export interface GridAria {
+  /** Props for the grid element. */
   gridProps: HTMLAttributes<HTMLElement>
 }
 

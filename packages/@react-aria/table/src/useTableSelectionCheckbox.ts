@@ -17,11 +17,14 @@ import {TableState} from '@react-stately/table';
 import {useId} from '@react-aria/utils';
 
 interface SelectionCheckboxProps {
+  /** A unique key for the checkbox. */
   key: Key,
+  /** Whether the checkbox is disabled. */
   isDisabled?: boolean
 }
 
 interface SelectionCheckboxAria {
+  /** Props for the checkbox element. */
   checkboxProps: AriaCheckboxProps
 }
 

@@ -21,6 +21,7 @@ import {useId} from '@react-aria/utils';
 import {useMemo} from 'react';
 
 interface TableProps<T> extends GridProps {
+  /** The layout object for the table. Computes what content is visible and how to position and style them. */
   layout?: Layout<Node<T>>
 }
 

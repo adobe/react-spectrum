@@ -17,13 +17,18 @@ import {TableState} from '@react-stately/table';
 import {useGridCell} from '@react-aria/grid';
 
 interface RowHeaderProps {
+  /** An object representing the row header. Contains all the relevant information that makes up the row header. */
   node: GridNode<unknown>,
+  /** The ref attached to the row header. */
   ref: RefObject<HTMLElement>,
+  /** Whether the row header is contained in a virtual scroller. */
   isVirtualized?: boolean,
+  /** Whether the row header is disabled. */
   isDisabled?: boolean
 }
 
 interface RowHeaderAria {
+  /** Props for the row header element. */
   rowHeaderProps: HTMLAttributes<HTMLElement>
 }
 

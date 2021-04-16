@@ -21,14 +21,20 @@ import {usePress} from '@react-aria/interactions';
 
 
 interface ColumnHeaderProps {
+  /** An object representing the column header. Contains all the relevant information that makes up the column header. */
   node: Node<unknown>,
+  /** The ref attached to the column header. */
   ref: RefObject<HTMLElement>,
+  /** Whether the column header is contained in a virtual scroller. */
   isVirtualized?: boolean,
+  /** The number of columns the column header should span. */
   colspan?: number,
+  /** Whether the column header is disabled. */
   isDisabled?: boolean
 }
 
 interface ColumnHeaderAria {
+  /** Props for the column header element. */
   columnHeaderProps: HTMLAttributes<HTMLElement>
 }
 
