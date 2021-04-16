@@ -31,7 +31,7 @@
     "parcel": "nightly",
     "typescript": "^3.8.3"
   },
-  "optionalDependencies": {
+  "unpublishedDependencies": {
     "@react-spectrum-uxp/button": "^3.3.0",
     "@react-spectrum-uxp/parcel-resolver-alias-fix": "1.0.0"
   },

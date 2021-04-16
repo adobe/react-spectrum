@@ -19,7 +19,7 @@
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
-  "optionalDependencies": {
+  "unpublishedDependencies": {
     "@react-spectrum-uxp/button": "^3.4.0"
   },
   "dependencies": {
