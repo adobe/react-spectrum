@@ -36,8 +36,8 @@
     "@react-spectrum-uxp/button": "^3.3.0",
     "@react-spectrum/provider": "^3.1.2",
     "@react-spectrum/theme-default": "^3.1.0",
-    "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "react": "^16.8.0 || ^17.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1"
   },
   "bundledDependencies": ["react", "react-dom"]
 }
