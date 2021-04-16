@@ -27,8 +27,7 @@ export interface GridRowProps<T> {
 }
 
 export interface GridRowAria {
-  rowProps: HTMLAttributes<HTMLElement>,
-  isPressed: boolean
+  rowProps: HTMLAttributes<HTMLElement>
 }
 
 export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T, C>>(props: GridRowProps<T>, state: S): GridRowAria {
@@ -51,7 +50,7 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
   });
 
   // TODO: move into useSelectableItem?
-  let {pressProps, isPressed} = usePress({...itemProps, isDisabled});
+  let {pressProps} = usePress({...itemProps, isDisabled});
 
   // Get rid of click/drag/pointer/mousedown handlers if selection isn't allowed so that text selection can happen
   if (!allowsSelection) {
@@ -74,7 +73,6 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
   }
 
   return {
-    rowProps,
-    isPressed
+    rowProps
   };
 }

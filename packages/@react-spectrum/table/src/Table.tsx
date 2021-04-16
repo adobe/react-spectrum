@@ -31,6 +31,7 @@ import {TableState, useTableState} from '@react-stately/table';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useHover} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {usePress} from '@react-aria/interactions';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useTable, useTableCell, useTableColumnHeader, useTableRow, useTableRowGroup, useTableRowHeader, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
@@ -492,7 +493,7 @@ function TableRow({item, children, ...otherProps}) {
   let allowsSelection = state.selectionManager.selectionMode !== 'none';
   let isDisabled = state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key) && !isDisabled;
-  let {rowProps, isPressed} = useTableRow({
+  let {rowProps} = useTableRow({
     node: item,
     isSelected,
     ref,
@@ -500,6 +501,7 @@ function TableRow({item, children, ...otherProps}) {
     isDisabled
   }, state);
 
+  let {pressProps, isPressed} = usePress({isDisabled});
   // The row should show the focus background style when any cell inside it is focused.
   // If the row itself is focused, then it should have a blue focus indicator on the left.
   let {
@@ -513,7 +515,8 @@ function TableRow({item, children, ...otherProps}) {
     otherProps,
     focusWithinProps,
     focusProps,
-    hoverProps
+    hoverProps,
+    allowsSelection && pressProps
   );
 
   return (
@@ -525,7 +528,7 @@ function TableRow({item, children, ...otherProps}) {
           styles,
           'spectrum-Table-row',
           {
-            'is-active': isPressed && allowsSelection,
+            'is-active': isPressed,
             'is-selected': isSelected,
             'is-focused': isFocusVisibleWithin,
             'focus-ring': isFocusVisible,
