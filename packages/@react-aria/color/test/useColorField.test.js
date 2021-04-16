@@ -20,6 +20,9 @@ describe('useColorField', function () {
 
   beforeEach(() => {
     ref = React.createRef();
+    ref.current = {};
+    ref.current.addEventListener = () => {};
+    ref.current.removeEventListener = () => {};
   });
 
   let renderColorFieldHook = (props, state = {}) => {
@@ -67,11 +70,6 @@ describe('useColorField', function () {
     expect(inputProps.id).toBeTruthy();
     expect(inputProps['aria-labelledby']).toBe(labelProps.id);
     expect(inputProps['aria-label']).toBeUndefined(); // because label prop is provided instead of aria-label
-    expect(typeof inputProps.onChange).toBe('function');
-    expect(typeof inputProps.onBlur).toBe('function');
-    expect(typeof inputProps.onFocus).toBe('function');
-    expect(typeof inputProps.onKeyDown).toBe('function');
-    expect(typeof inputProps.onWheel).toBe('function');
   });
 
   it('should return prop for invalid', function () {

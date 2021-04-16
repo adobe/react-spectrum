@@ -13,14 +13,11 @@
 import {AriaLabelingProps, PressEvents, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
-export interface LinkProps extends PressEvents {
-  /** The content to display in the link. */
-  children: ReactNode
-}
-
-export interface AriaLinkProps extends LinkProps, AriaLabelingProps {}
+export interface AriaLinkProps extends PressEvents, AriaLabelingProps { }
 
 export interface SpectrumLinkProps extends AriaLinkProps, StyleProps {
+  /** The content to display in the link. */
+  children: ReactNode,
   /**
    * The [visual style](https://spectrum.adobe.com/page/link/#Options) of the link.
    * @default 'primary'

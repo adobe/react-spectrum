@@ -65,12 +65,16 @@ export interface MultipleSelectionManager extends FocusState {
   readonly lastSelectedKey: Key | null,
   /** Returns whether a key is selected. */
   isSelected(key: Key): boolean,
+  /** Returns whether the current selection is equal to the given selection. */
+  isSelectionEqual(selection: Set<Key>): boolean,
   /** Extends the selection to the given key. */
   extendSelection(toKey: Key): void,
   /** Toggles whether the given key is selected. */
   toggleSelection(key: Key): void,
   /** Replaces the selection with only the given key. */
   replaceSelection(key: Key): void,
+  /** Replaces the selection with the given keys. */
+  setSelectedKeys(keys: Iterable<Key>): void,
   /** Selects all items in the collection. */
   selectAll(): void,
   /** Removes all keys from the selection. */

@@ -94,17 +94,22 @@ This example shows a client handled link using press events. It sets `elementTyp
 so that `useLink` returns the proper ARIA attributes to expose the element as a link to
 assistive technology.
 
+In addition, this example shows usage of the `isPressed` value returned by `useLink` to properly
+style the links's active state. You could use the CSS `:active` pseudo class for this, but `isPressed`
+properly handles when the user drags their pointer off of the link, along with keyboard support and better
+touch screen support.
+
 ```tsx example
 function Link(props) {
   let ref = React.useRef();
-  let {linkProps} = useLink({...props, elementType: 'span'}, ref);
+  let {linkProps, isPressed} = useLink({...props, elementType: 'span'}, ref);
 
   return (
     <span
       {...linkProps}
       ref={ref}
       style={{
-        color: 'var(--blue)',
+        color: isPressed ? 'var(--blue)' : 'var(--spectrum-global-color-blue-700)',
         textDecoration: 'underline',
         cursor: 'pointer'
       }}>
