@@ -213,7 +213,8 @@ jobs:
       - run:
           name: install
           command: |
-            SKIP_BUILDING_ICONS="true" && yarn install --pure-lockfile --cache-folder ~/.cache/yarn
+            SKIP_BUILDING_ICONS="true"
+            yarn install --pure-lockfile --cache-folder ~/.cache/yarn
 
       - run:
           name: comment on pr
