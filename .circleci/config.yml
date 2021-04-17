@@ -28,7 +28,7 @@ jobs:
           command: |
             yarn --pure-lockfile --cache-folder ~/.cache/yarn
             rm -rf .git/
-            ls -a
+            mkdir dist
 
       - save_cache:
          paths:
@@ -59,7 +59,7 @@ jobs:
           command: |
             yarn install --pure-lockfile --cache-folder ~/.cache/yarn && yarn install-17 --cache-folder ~/.cache/yarn
             rm -rf .git/
-
+            mkdir dist
 
       - save_cache:
           paths:
@@ -117,15 +117,12 @@ jobs:
 
       - run:
           name: build storybook
-          command: |
-            make storybook
-            ls -a
-            ls -a dist
+          command: make storybook
 
       - persist_to_workspace:
-          root: /dist
+          root: dist
           paths:
-            - '*/storybook'
+            - '*/storybook/'
 
   storybook-17:
     docker:
@@ -142,9 +139,9 @@ jobs:
           command: make storybook-17
 
       - persist_to_workspace:
-          root: /dist
+          root: dist
           paths:
-            - '*/storybook-17'
+            - '*/storybook-17/'
 
   docs:
     docker:
@@ -161,9 +158,9 @@ jobs:
           command: make website
 
       - persist_to_workspace:
-          root: /dist
+          root: dist
           paths:
-            - '*/docs'
+            - '*/docs/'
 
   docs-production:
     docker:
@@ -180,9 +177,9 @@ jobs:
           command: make website-production
 
       - persist_to_workspace:
-          root: /dist
+          root: dist
           paths:
-            - '*/docs'
+            - '*/docs/'
 
   deploy:
     executor: azure-cli/azure-docker
