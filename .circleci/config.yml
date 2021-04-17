@@ -12,9 +12,9 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            rsp-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            rsp-yarn-{{ .Branch }}-
-            rsp-yarn-
+            rsp-yarn16-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            rsp-yarn16-{{ .Branch }}-
+            rsp-yarn16-
 
       - run:
           name: Write npmrc
@@ -31,12 +31,12 @@ jobs:
       - save_cache:
          paths:
            - ~/.cache/yarn
-         key: rsp-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+         key: rsp-yarn16-{{ .Branch }}-{{ checksum "yarn.lock" }}
 
       - save_cache:
           paths:
             - ~/react-spectrum
-          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum16-{{ .Environment.CIRCLE_SHA1 }}
 
   install-17:
     docker:
@@ -48,9 +48,9 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            rsp-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            rsp-yarn-{{ .Branch }}-
-            rsp-yarn-
+            rsp-yarn16-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            rsp-yarn16-{{ .Branch }}-
+            rsp-yarn16-
 
       - run:
           name: build
@@ -60,7 +60,7 @@ jobs:
       - save_cache:
           paths:
             - ~/react-spectrum
-          key: react-spectrum-17-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum17-{{ .Environment.CIRCLE_SHA1 }}
 
   test:
     docker:
@@ -69,7 +69,7 @@ jobs:
     working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum16-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: test
@@ -82,7 +82,7 @@ jobs:
     working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: react-spectrum-17-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum17-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: test
@@ -95,7 +95,7 @@ jobs:
     working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum16-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: lint
@@ -109,14 +109,14 @@ jobs:
     working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum16-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: build storybook
           command: make storybook
 
       - persist_to_workspace:
-          root: /tmp/dist
+          root: dist
           paths:
             - '*/storybook/'
 
@@ -128,14 +128,14 @@ jobs:
     working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: react-spectrum-17-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum17-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: build storybook-17
           command: make storybook-17
 
       - persist_to_workspace:
-          root: /tmp/dist
+          root: dist
           paths:
             - '*/storybook-17/'
 
@@ -147,14 +147,14 @@ jobs:
     working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum16-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: build docs
           command: make website
 
       - persist_to_workspace:
-          root: /tmp/dist
+          root: dist
           paths:
             - '*/docs/'
 
@@ -166,14 +166,14 @@ jobs:
     working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum16-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: build docs
           command: make website-production
 
       - persist_to_workspace:
-          root: /tmp/dist
+          root: dist
           paths:
             - '*/docs/'
 
@@ -206,9 +206,9 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            rsp-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            rsp-yarn-{{ .Branch }}-
-            rsp-yarn-
+            rsp-yarn16-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            rsp-yarn16-{{ .Branch }}-
+            rsp-yarn16-
 
       - run:
           name: install
@@ -229,7 +229,7 @@ jobs:
     working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum16-{{ .Environment.CIRCLE_SHA1 }}
       - run:
           name: Authenticate with npm
           command: |
