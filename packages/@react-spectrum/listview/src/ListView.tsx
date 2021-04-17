@@ -59,6 +59,9 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let {collection} = useListState(props);
   let formatMessage = useMessageFormatter(intlMessages);
 
+  let {styleProps} = useStyleProps(props);
+  let {direction} = useLocale();
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let gridCollection = useMemo(() => new GridCollection({
     columnCount: 1,
     items: [...collection].map(item => ({
@@ -70,15 +73,11 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
       }]
     }))
   }), [collection]);
-
   let state = useGridState({
     ...props,
     collection: gridCollection
   });
-  let layout = useListLayout(state); // TODO should layout return nulls?
-
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let {direction} = useLocale();
+  let layout = useListLayout(state);
   let keyboardDelegate = new GridKeyboardDelegate({
     collection: state.collection,
     disabledKeys: state.disabledKeys,
@@ -92,8 +91,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     keyboardDelegate,
     ref: domRef
   }, state);
-
-  let {styleProps} = useStyleProps(props);
 
   // Sync loading state into the layout.
   layout.isLoading = props.isLoading;
