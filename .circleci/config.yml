@@ -27,7 +27,8 @@ jobs:
           name: build
           command: |
             yarn --pure-lockfile --cache-folder ~/.cache/yarn
-            rm -rf ~/react-spectrum/.git
+            rm -rf .git/
+            ls -a
 
       - save_cache:
          paths:
@@ -57,7 +58,7 @@ jobs:
           name: build
           command: |
             yarn install --pure-lockfile --cache-folder ~/.cache/yarn && yarn install-17 --cache-folder ~/.cache/yarn
-            rm -rf ~/react-spectrum/.git
+            rm -rf .git/
 
 
       - save_cache:
@@ -116,7 +117,10 @@ jobs:
 
       - run:
           name: build storybook
-          command: make storybook
+          command: |
+            make storybook
+            ls -a
+            ls -a dist
 
       - persist_to_workspace:
           root: /dist
