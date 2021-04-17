@@ -51,7 +51,7 @@ jobs:
       - run:
           name: test
           command: |
-            TESTFILES=$(circleci tests glob "**/?(*.)+(test).[tj]s?(x)" | circleci tests split --split-by=timings)
+            TESTFILES=$(circleci tests glob "**/?(*.)+(test).[tj]s?(x)" | circleci tests split)
             yarn test $TESTFILES
 
       - run:
