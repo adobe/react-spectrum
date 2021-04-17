@@ -52,7 +52,7 @@ jobs:
           name: test
           command: |
             yarn test:ssr
-            TESTFILES=$(circleci tests glob "**/?(*.)+(test).[tj]s?(x)" | circleci tests split --split-by=timings)
+            TESTFILES=$(circleci tests glob "**/?(*.)+(test).[tj]s?(x)" | circleci tests split)
             yarn test $TESTFILES
 
       - run:
@@ -79,7 +79,7 @@ jobs:
           command: |
             yarn add -W react@^17.0.1 react-dom@^17.0.1
             yarn test:ssr
-            TESTFILES=$(circleci tests glob "**/?(*.)+(test).[tj]s?(x)" | circleci tests split --split-by=timings)
+            TESTFILES=$(circleci tests glob "**/?(*.)+(test).[tj]s?(x)" | circleci tests split)
             yarn test $TESTFILES
 
       - run:
