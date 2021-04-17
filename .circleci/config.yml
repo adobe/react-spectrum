@@ -229,9 +229,9 @@ workflows:
   commit:
     jobs:
       - install
-      - install-17
-        requires:
-          - install
+      - install-17:
+          requires:
+            - install
       - test:
           requires:
             - install
