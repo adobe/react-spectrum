@@ -42,6 +42,7 @@ jobs:
 
     working_directory: ~/react-spectrum
     steps:
+      - checkout
       - restore_cache:
           key: rsp-yarn-{{ checksum "yarn.lock" }}
 
