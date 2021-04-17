@@ -51,7 +51,8 @@ jobs:
       - run:
           name: test
           command: |
-            TESTFILES=$(circleci tests glob "**/?(*.)+(test).[tj]s?(x)" | circleci tests split)
+            yarn test:ssr
+            TESTFILES=$(circleci tests glob "**/?(*.)+(test).[tj]s?(x)" | circleci tests split --split-by=timings)
             yarn test $TESTFILES
 
       - run:
@@ -63,8 +64,10 @@ jobs:
           path: ~/junit
 
   test_17:
+    parallelism: 3
     docker:
       - image: circleci/node:12
+    resource_class: xlarge
 
     working_directory: ~/react-spectrum
     steps:
@@ -73,7 +76,19 @@ jobs:
 
       - run:
           name: test
-          command: yarn ci-test-17
+          command: |
+            yarn add -W react@^17.0.1 react-dom@^17.0.1
+            yarn test:ssr
+            TESTFILES=$(circleci tests glob "**/?(*.)+(test).[tj]s?(x)" | circleci tests split --split-by=timings)
+            yarn test $TESTFILES
+
+      - run:
+          command: cp junit-17.xml ~/junit/
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
 
   lint:
     docker:
