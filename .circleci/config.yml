@@ -122,7 +122,7 @@ jobs:
       - persist_to_workspace:
           root: dist
           paths:
-            - 'dist/storybook'
+            - '*/storybook/**/*'
 
   storybook-17:
     docker:
@@ -141,7 +141,7 @@ jobs:
       - persist_to_workspace:
           root: dist
           paths:
-            - 'dist/storybook-17'
+            - '*/storybook-17/**/*'
 
   docs:
     docker:
@@ -160,7 +160,7 @@ jobs:
       - persist_to_workspace:
           root: dist
           paths:
-            - 'dist/docs'
+            - '*/docs/**/*'
 
   docs-production:
     docker:
@@ -179,7 +179,7 @@ jobs:
       - persist_to_workspace:
           root: dist
           paths:
-            - 'dist/docs'
+            - '*/docs/**/*'
 
   deploy:
     executor: azure-cli/azure-docker
