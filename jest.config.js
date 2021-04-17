@@ -123,7 +123,7 @@ module.exports = {
   // Use this configuration option to add custom reporters to Jest
   reporters: ['default', 'jest-junit'],
   'jest-junit': {
-    'addFileAttribute': 'true'
+    addFileAttribute: true
   },
 
   // Automatically reset mock state between every test
