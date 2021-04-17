@@ -44,12 +44,17 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: rsp-yarn-{{ checksum "yarn.lock" }}
+          key: rsp-yarn-17-{{ checksum "yarn.lock" }}
 
       - run:
           name: build
           command: |
-            yarn install-17
+            yarn install --pure-lockfile && yarn install-17 || yarn install-17
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: rsp-yarn-17-{{ checksum "yarn.lock" }}
 
       - save_cache:
           paths:
@@ -230,9 +235,7 @@ workflows:
   commit:
     jobs:
       - install
-      - install-17:
-          requires:
-            - install
+      - install-17
       - test:
           requires:
             - install
