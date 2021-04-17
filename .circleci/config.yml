@@ -11,7 +11,10 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: rsp-yarn-{{ checksum "yarn.lock" }}
+          keys:
+            rsp-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            rsp-yarn-{{ .Branch }}-
+            rsp-yarn-
 
       - run:
           name: Write npmrc
@@ -23,12 +26,13 @@ jobs:
       - run:
           name: build
           command: |
-            yarn --pure-lockfile
+            yarn --pure-lockfile --cache-folder ~/.cache/yarn
+            rm -rf ~/react-spectrum/.git
 
       - save_cache:
          paths:
-           - node_modules
-         key: rsp-yarn-{{ checksum "yarn.lock" }}
+           - ~/.cache/yarn
+         key: rsp-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
 
       - save_cache:
           paths:
@@ -44,17 +48,17 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: rsp-yarn-17-{{ checksum "yarn.lock" }}
+          keys:
+            rsp-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            rsp-yarn-{{ .Branch }}-
+            rsp-yarn-
 
       - run:
           name: build
           command: |
-            yarn install --pure-lockfile && yarn install-17 || yarn install-17
+            yarn install --pure-lockfile --cache-folder ~/.cache/yarn && yarn install-17 --cache-folder ~/.cache/yarn
+            rm -rf ~/react-spectrum/.git
 
-      - save_cache:
-          paths:
-            - node_modules
-          key: rsp-yarn-17-{{ checksum "yarn.lock" }}
 
       - save_cache:
           paths:
@@ -204,7 +208,15 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: rsp-yarn-{{ checksum "yarn.lock" }}
+          keys:
+            rsp-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            rsp-yarn-{{ .Branch }}-
+            rsp-yarn-
+
+      - run:
+          name: install
+          command: |
+            SKIP_BUILDING_ICONS="true" && yarn install --pure-lockfile --cache-folder ~/.cache/yarn
 
       - run:
           name: comment on pr
