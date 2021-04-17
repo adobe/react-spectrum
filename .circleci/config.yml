@@ -39,7 +39,7 @@ jobs:
     parallelism: 3
     docker:
       - image: circleci/node:12
-    resource_class: large
+    resource_class: xlarge
 
     working_directory: ~/react-spectrum
     steps:
