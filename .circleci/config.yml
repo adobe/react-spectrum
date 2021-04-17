@@ -35,6 +35,26 @@ jobs:
             - ~/react-spectrum
           key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
+  install-17:
+    docker:
+      - image: circleci/node:12
+    resource_class: large
+
+    working_directory: ~/react-spectrum
+    steps:
+      - restore_cache:
+          key: rsp-yarn-{{ checksum "yarn.lock" }}
+
+      - run:
+          name: build
+          command: |
+            yarn install-17
+
+      - save_cache:
+          paths:
+            - ~/react-spectrum
+          key: react-spectrum-17-{{ .Environment.CIRCLE_SHA1 }}
+
   test:
     docker:
       - image: circleci/node:12
@@ -55,7 +75,7 @@ jobs:
     working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-17-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: test
@@ -101,7 +121,7 @@ jobs:
     working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-17-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: build storybook-17
@@ -209,12 +229,15 @@ workflows:
   commit:
     jobs:
       - install
+      - install-17
+        requires:
+          - install
       - test:
           requires:
             - install
       - test_17:
           requires:
-            - install
+            - install-17
       - lint:
           requires:
             - install
@@ -223,7 +246,7 @@ workflows:
             - install
       - storybook-17:
           requires:
-            - install
+            - install-17
       - docs:
           requires:
             - install
