@@ -74,13 +74,15 @@ jobs:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
+      - run: mkdir ~/junit
+
       - run:
           name: test
           command: |
             yarn add -W react@^17.0.1 react-dom@^17.0.1
             yarn test:ssr
             TESTFILES=$(circleci tests glob "**/?(*.)+(test).[tj]s?(x)" | circleci tests split)
-            yarn test $TESTFILES
+            JEST_JUNIT_OUTPUT_NAME="junit-17.xml" yarn test -- $TESTFILES
 
       - run:
           command: cp junit-17.xml ~/junit/
