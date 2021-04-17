@@ -216,8 +216,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
         return this.buildSection(node, x, y);
       case 'item':
         return this.buildItem(node, x, y);
-      case 'row':
-        return this.buildItem(node, x, y);
     }
   }
 

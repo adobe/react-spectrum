@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2021 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -9,31 +9,32 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import {AriaLabelingProps, CollectionBase, DOMProps, DOMRef, ItemElement, StyleProps} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, Node} from '@react-types/shared';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
-import {ListItem} from './ListItem';
-import {ListLayout} from '@react-stately/layout';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {ListState, useListState} from '@react-stately/list';
-import listStyles from './index.css';
-import React, {useMemo} from 'react';
-import {ReusableView} from '@react-stately/virtualizer';
-import {useCollator, useLocale} from '@react-aria/i18n';
+import listStyles from './listview.css';
+import {ListViewItem} from './ListViewItem';
+import {ListViewLayout} from '@react-stately/layout';
+import {ProgressCircle} from '@react-spectrum/progress';
+import React, {useContext, useMemo} from 'react';
+import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useProvider} from '@react-spectrum/provider';
-import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';
+import {Virtualizer} from '@react-aria/virtualizer';
 
 
-export const ListContext = React.createContext(null);
+export const ListViewContext = React.createContext(null);
 
 export function useListLayout<T>(state: ListState<T>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() =>
-      new ListLayout<T>({
+      new ListViewLayout<T>({
         estimatedRowHeight: scale === 'large' ? 48 : 32,
-        estimatedHeadingHeight: scale === 'large' ? 33 : 26,
-        padding: 0, // TODO: get from DNA
+        padding: 0,
         collator
       })
     , [collator, scale]);
@@ -43,25 +44,32 @@ export function useListLayout<T>(state: ListState<T>) {
   return layout;
 }
 
-function List<T extends object>(props, ref: DOMRef<HTMLDivElement>) {
+export type ItemRenderer<T> = (item: T) => ItemElement<T>;
+interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps {
+  isLoading?: boolean,
+  renderEmptyState?: () => JSX.Element,
+  transitionDuration?: number
+}
+
+function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
     transitionDuration = 0
   } = props;
   let domRef = useDOMRef(ref);
   let {collection} = useListState(props);
+  let formatMessage = useMessageFormatter(intlMessages);
 
-  let gridCollection = new GridCollection({
+  let gridCollection = useMemo(() => new GridCollection({
     columnCount: 1,
     items: [...collection].map(item => ({
-      type: 'row',
+      type: 'item',
       childNodes: [{
         ...item,
         index: 0,
         type: 'cell'
       }]
     }))
-  });
-
+  }), [collection]);
 
   let state = useGridState({
     ...props,
@@ -80,24 +88,18 @@ function List<T extends object>(props, ref: DOMRef<HTMLDivElement>) {
     focusMode: 'cell'
   });
   let {gridProps} = useGrid({
+    ...props,
     keyboardDelegate,
     ref: domRef
   }, state);
 
   let {styleProps} = useStyleProps(props);
 
-  // This overrides collection view's renderWrapper to support hierarchy of items in sections.
-  // The header is extracted from the children so it can receive ARIA labeling properties.
-  type View = ReusableView<Node<T>, unknown>;
-  let renderWrapper = (parent: View, reusableView: View) => (
-    <VirtualizerItem
-      key={reusableView.key}
-      reusableView={reusableView}
-      parent={parent} />
-  );
+  // Sync loading state into the layout.
+  layout.isLoading = props.isLoading;
 
   return (
-    <ListContext.Provider value={{state, keyboardDelegate}}>
+    <ListViewContext.Provider value={{state, keyboardDelegate}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}
@@ -108,42 +110,59 @@ function List<T extends object>(props, ref: DOMRef<HTMLDivElement>) {
         className={
           classNames(
             listStyles,
-            'react-spectrum-List',
+            'react-spectrum-ListView',
             styleProps.className
           )
         }
         layout={layout}
         collection={collection}
-        renderWrapper={renderWrapper}
         transitionDuration={transitionDuration}>
         {(type, item) => {
-          if (type === 'item')  {
+          if (type === 'item') {
             return (
-              <ListItem item={item} />
+              <ListViewItem item={item} />
             );
           } else if (type === 'loader') {
-            return (<div>wait circle</div>);
-          } else if (type === 'placeholder') {
+            return (
+              <CenteredWrapper>
+                <ProgressCircle
+                  isIndeterminate
+                  aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
+              </CenteredWrapper>
+            );
+          } else if (type === 'empty') {
             let emptyState = props.renderEmptyState ? props.renderEmptyState() : null;
             if (emptyState == null) {
               return null;
             }
 
             return (
-              <div
-                // aria-selected isn't needed here since this option is not selectable.
-                // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
-                role="option">
+              <CenteredWrapper>
                 {emptyState}
-              </div>
+              </CenteredWrapper>
             );
           }
 
         }}
       </Virtualizer>
-    </ListContext.Provider>
+    </ListViewContext.Provider>
   );
 }
 
-const _List = React.forwardRef(List);
-export {_List as List};
+
+function CenteredWrapper({children}) {
+  let {state} = useContext(ListViewContext);
+  return (
+    <div
+      role="row"
+      aria-rowindex={state.collection.size + 1}
+      className={classNames(listStyles, 'react-spectrum-ListView-centeredWrapper')}>
+      <div role="gridcell" aria-colspan={1}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+const _ListView = React.forwardRef(ListView);
+export {_ListView as ListView};
