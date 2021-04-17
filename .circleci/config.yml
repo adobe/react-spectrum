@@ -36,7 +36,7 @@ jobs:
           key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
   test:
-    parallelism: 5
+    parallelism: 3
     docker:
       - image: circleci/node:12
     resource_class: large
