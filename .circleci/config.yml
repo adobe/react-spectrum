@@ -19,6 +19,7 @@ jobs:
       - run:
           name: Write npmrc
           command: |
+            echo rsp-yarn16-{{ .Branch }}-{{ checksum "yarn.lock" }}
             if [ $NPM_PASSWORD ]; then
               cp .circleci/.npmrc .npmrc
             fi
