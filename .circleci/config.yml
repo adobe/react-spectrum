@@ -14,9 +14,9 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
-            rsp-yarn-{{ .Environment.CACHE_VERSION }}-
+            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
+            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-
 
       - run:
           name: Write npmrc
@@ -52,9 +52,9 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
-            rsp-yarn-{{ .Environment.CACHE_VERSION }}-
+            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
+            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-
 
       - run:
           name: build
