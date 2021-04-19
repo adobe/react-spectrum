@@ -51,6 +51,7 @@ jobs:
       - run:
           name: test
           command: |
+            echo ${BASH_VERSION}
             shopt -s globstar
             yarn test:ssr
             echo "All test files:"
