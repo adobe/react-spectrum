@@ -51,6 +51,7 @@ jobs:
       - run:
           name: test
           command: |
+            shopt -s globstar
             yarn test:ssr
             echo "All test files:"
             echo $(circleci tests glob "**/?(*.)+(test).[tj]s?(x)")
