@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+import {CalendarDate, isSameDay, isToday, toDate} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isSameDay, isToday} from 'date-fns';
 import {PressProps, usePress} from '@react-aria/interactions';
 import {useDateFormatter, useMessageFormatter} from '@react-aria/i18n';
 
 export interface AriaCalendarCellProps {
-  date: Date
+  date: CalendarDate
 }
 
 interface CalendarCellAria {
@@ -30,22 +30,30 @@ interface CalendarCellAria {
 export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarState | RangeCalendarState, ref: RefObject<HTMLElement>): CalendarCellAria {
   let {date} = props;
   let formatMessage = useMessageFormatter(intlMessages);
-  let dateFormatter = useDateFormatter({weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
+  let dateFormatter = useDateFormatter({
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    era: date.calendar.identifier !== 'gregory' ? 'long' : undefined,
+    timeZone: state.timeZone
+  });
   let isSelected = state.isSelected(date);
   let isFocused = state.isCellFocused(date);
   let isDisabled = state.isCellDisabled(date);
 
   // aria-label should be localize Day of week, Month, Day and Year without Time.
-  let label = dateFormatter.format(date);
-  if (isToday(date)) {
+  let nativeDate = toDate(date, state.timeZone);
+  let label = dateFormatter.format(nativeDate);
+  if (isToday(date, state.timeZone)) {
     // If date is today, set appropriate string depending on selected state:
     label = formatMessage(isSelected ? 'todayDateSelected' : 'todayDate', {
-      date
+      date: nativeDate
     });
   } else if (isSelected) {
     // If date is selected but not today:
     label = formatMessage('dateSelected', {
-      date
+      date: nativeDate
     });
   }
 

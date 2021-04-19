@@ -3498,6 +3498,10 @@ describe('ComboBox', function () {
         triggerPress(clearButton);
       });
 
+      act(() => {
+        jest.runAllTimers();
+      });
+
       expect(document.activeElement).toBe(trayInput);
       expect(trayInput.value).toBe('');
     });

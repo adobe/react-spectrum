@@ -10,23 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarBase} from './CalendarBase';
-import {createCalendar} from '@internationalized/date';
-import React from 'react';
-import {SpectrumRangeCalendarProps} from '@react-types/calendar';
-import {useRangeCalendar} from '@react-aria/calendar';
-import {useRangeCalendarState} from '@react-stately/calendar';
+import {CalendarDate} from './CalendarDate';
 
-export function RangeCalendar(props: SpectrumRangeCalendarProps) {
-  let state = useRangeCalendarState({
-    ...props,
-    createCalendar
-  });
-  let aria = useRangeCalendar(props, state);
-  return (
-    <CalendarBase
-      {...props}
-      state={state}
-      aria={aria} />
-  );
+export interface Calendar {
+  identifier: string,
+
+  fromJulianDay(jd: number): CalendarDate,
+  toJulianDay(date: CalendarDate): number,
+
+  getDaysInMonth(date: CalendarDate): number,
+  getMonthsInYear(date: CalendarDate): number,
+
+  getCurrentEra(): string,
+
+  balanceDate?(date: CalendarDate): void,
+  addYears?(date: CalendarDate, years: number): void
+}
+
+export interface Duration {
+  years?: number,
+  months?: number,
+  weeks?: number,
+  days?: number
+}
+
+export interface DateFields {
+  year?: number,
+  month?: number,
+  day?: number
 }
