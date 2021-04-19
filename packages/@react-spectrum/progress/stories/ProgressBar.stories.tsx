@@ -189,7 +189,7 @@ storiesOf('Progress/ProgressBar', module)
     () => render({width: '30px', labelPosition: 'side', label: 'Super long progress bar label. Sample label copy. Loading...'})
   )
   .add(
-    'width: 30px, labelPosition: side, isIndeterminate: true, long label, button on left',
+    'width: 30px, labelPosition: side, isIndeterminate: true, long label, button on right',
     () => (
       <>
         {render({width: '30px', labelPosition: 'side', isIndeterminate: true, label: 'Super long progress bar label. Sample label copy. Loading...'})}
