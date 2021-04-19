@@ -56,7 +56,9 @@ jobs:
             yarn test $TESTFILES
 
       - run:
-          command: cp junit.xml ~/junit/
+          command: |
+            cat junit.xml
+            cp junit.xml ~/junit/
           when: always
       - store_test_results:
           path: ~/junit
