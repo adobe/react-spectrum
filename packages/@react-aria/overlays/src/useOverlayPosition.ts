@@ -11,9 +11,10 @@
  */
 
 import {calculatePosition, PositionResult} from './calculatePosition';
-import {HTMLAttributes, RefObject, useCallback, useEffect, useRef, useState} from 'react';
+import {HTMLAttributes, RefObject, useCallback, useRef, useState} from 'react';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
 import {useCloseOnScroll} from './useCloseOnScroll';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 interface AriaPositionProps extends PositionProps {
@@ -122,7 +123,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   }, deps);
 
   // Update position when anything changes
-  useEffect(updatePosition, deps);
+  useLayoutEffect(updatePosition, deps);
 
   // Update position on window resize
   useResize(updatePosition);
@@ -130,7 +131,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   // Reposition the overlay and do not close on scroll while the visual viewport is resizing.
   // This will ensure that overlays adjust their positioning when the iOS virtual keyboard appears.
   let isResizing = useRef(false);
-  useEffect(() => {
+  useLayoutEffect(() => {
     let timeout: NodeJS.Timeout;
     let onResize = () => {
       isResizing.current = true;
@@ -185,7 +186,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 }
 
 function useResize(onResize) {
-  useEffect(() => {
+  useLayoutEffect(() => {
     window.addEventListener('resize', onResize, false);
     return () => {
       window.removeEventListener('resize', onResize, false);
