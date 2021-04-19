@@ -30,6 +30,7 @@ governing permissions and limitations under the License.
   &.spectrum-BarLoader--indeterminate.spectrum-BarLoader--sideLabel {
     .spectrum-BarLoader-track {
       max-inline-size: var(--spectrum-barloader-large-width);
+      inline-size: 100%;
     }
   }
 }
