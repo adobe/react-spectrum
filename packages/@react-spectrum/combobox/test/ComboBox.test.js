@@ -3745,7 +3745,7 @@ describe('ComboBox', function () {
         jest.runAllTimers();
       });
 
-      expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
+      expect(onOpenChange).toHaveBeenCalledWith(true, undefined);
       expect(onOpenChange).toHaveBeenCalledTimes(1);
 
       let tray = getByTestId('tray');
@@ -3807,7 +3807,7 @@ describe('ComboBox', function () {
         jest.runAllTimers();
       });
 
-      expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
+      expect(onOpenChange).toHaveBeenCalledWith(true, undefined);
       expect(onOpenChange).toHaveBeenCalledTimes(1);
 
       testComboBoxTrayOpen(trayInput, tray, listbox, 2);
@@ -3883,7 +3883,7 @@ describe('ComboBox', function () {
         jest.runAllTimers();
       });
 
-      expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
+      expect(onOpenChange).toHaveBeenCalledWith(true, undefined);
       expect(onOpenChange).toHaveBeenCalledTimes(1);
 
       let tray = getByTestId('tray');

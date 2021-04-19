@@ -78,7 +78,7 @@ describe('useComboBoxState tests', function () {
       let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
 
       act(() => {
-        result.current.open(undefined, false, 'focus');
+        result.current.open(undefined, 'focus');
       });
       expect(result.current.isOpen).toBe(true);
       expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
@@ -88,7 +88,7 @@ describe('useComboBoxState tests', function () {
       expect(onOpenChange).toHaveBeenCalledWith(false, undefined);
 
       act(() => {
-        result.current.open(undefined, false, 'input');
+        result.current.open(undefined, 'input');
       });
       expect(result.current.isOpen).toBe(true);
       expect(onOpenChange).toHaveBeenCalledWith(true, 'input');
@@ -96,7 +96,7 @@ describe('useComboBoxState tests', function () {
       act(() => result.current.close());
 
       act(() => {
-        result.current.open(undefined, false, 'manual');
+        result.current.open(undefined, 'manual');
       });
       expect(result.current.isOpen).toBe(true);
       expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
@@ -107,17 +107,17 @@ describe('useComboBoxState tests', function () {
       let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
 
       act(() => {
-        result.current.toggle(undefined, false, 'focus');
+        result.current.toggle(undefined, 'focus');
       });
       expect(result.current.isOpen).toBe(true);
       expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
 
-      act(() => result.current.toggle(undefined, false, 'focus'));
+      act(() => result.current.toggle(undefined, 'focus'));
       expect(result.current.isOpen).toBe(false);
       expect(onOpenChange).toHaveBeenCalledWith(false, undefined);
 
       act(() => {
-        result.current.toggle(undefined, false, 'input');
+        result.current.toggle(undefined, 'input');
       });
       expect(result.current.isOpen).toBe(true);
       expect(onOpenChange).toHaveBeenCalledWith(true, 'input');
@@ -125,7 +125,7 @@ describe('useComboBoxState tests', function () {
       act(() => result.current.close());
 
       act(() => {
-        result.current.toggle(undefined, false, 'manual');
+        result.current.toggle(undefined, 'manual');
       });
       expect(result.current.isOpen).toBe(true);
       expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
