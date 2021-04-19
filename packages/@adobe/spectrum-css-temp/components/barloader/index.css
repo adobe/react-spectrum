@@ -18,7 +18,7 @@ governing permissions and limitations under the License.
   flex-flow: row wrap;
   justify-content: space-between;
   align-items: center;
-  min-inline-size: 48px;
+  min-inline-size: var(--spectrum-global-dimension-static-size-600);
   inline-size: var(--spectrum-barloader-large-width);
   vertical-align: top;
   isolation: isolate;
@@ -37,7 +37,7 @@ governing permissions and limitations under the License.
 .spectrum-BarLoader-track {
   /* Visually apply border radius to child elements */
   overflow: hidden;
-  min-inline-size: 48px;
+  min-inline-size: var(--spectrum-global-dimension-static-size-600);
   inline-size: 100%;
   height: var(--spectrum-barloader-large-height);
   border-radius: var(--spectrum-barloader-large-border-radius);
@@ -92,7 +92,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-BarLoader--small {
-  min-inline-size: 48px;
+  min-inline-size: var(--spectrum-global-dimension-static-size-600);
 
   .spectrum-BarLoader-fill {
     height: var(--spectrum-barloader-small-height);
