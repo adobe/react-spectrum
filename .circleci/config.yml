@@ -53,8 +53,8 @@ jobs:
           command: |
             yarn test:ssr
             echo "All test files:"
-            circleci tests glob **/?(*.)+(test).[tj]s?(x) | xargs -n 1 echo
-            TESTFILES=$(circleci tests glob **/?(*.)+(test).[tj]s?(x) | circleci tests split)
+            echo $(circleci tests glob "**/?(*.)+(test).[tj]s?(x)")
+            TESTFILES=$(circleci tests glob "**/?(*.)+(test).[tj]s?(x)" | circleci tests split)
             echo "split tests:"
             echo $TESTFILES
             yarn test $TESTFILES
