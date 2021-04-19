@@ -98,6 +98,7 @@
     "chalk": "^2.4.2",
     "chromatic": "^5.4.0",
     "clsx": "^1.1.1",
+    "concurrently": "^6.0.2",
     "core-js": "^3.0.0",
     "cross-env": "^7.0.2",
     "cross-spawn": "^7.0.3",
