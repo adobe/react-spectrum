@@ -15,11 +15,13 @@ import {ColorFieldState} from '@react-stately/color';
 import {
   HTMLAttributes,
   LabelHTMLAttributes,
-  RefObject
+  RefObject,
+  useCallback
 } from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
+import {useFormattedTextField} from '@react-aria/textfield';
+import {useScrollWheel} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
-import {useTextField} from '@react-aria/textfield';
 
 interface ColorFieldAria {
   /** Props for the label element. */
@@ -46,7 +48,6 @@ export function useColorField(
   let {
     colorValue,
     inputValue,
-    setInputValue,
     commit,
     increment,
     decrement,
@@ -71,25 +72,29 @@ export function useColorField(
     }
   );
 
-  let onWheel = (e) => {
-    if (isDisabled || isReadOnly) {
-      return;
-    }
-    if (e.deltaY < 0) {
+  let onWheel = useCallback((e) => {
+    if (e.deltaY > 0) {
       increment();
-    } else {
+    } else if (e.deltaY < 0) {
       decrement();
     }
+  }, [isReadOnly, isDisabled, decrement, increment]);
+  // If the input isn't supposed to receive input, disable scrolling.
+  let scrollingDisabled = isDisabled || isReadOnly;
+  useScrollWheel({onScroll: onWheel, isDisabled: scrollingDisabled}, ref);
+
+  let onChange = value => {
+    state.setInputValue(value);
   };
 
-  let {labelProps, inputProps} = useTextField(
+  let {labelProps, inputProps} = useFormattedTextField(
     mergeProps(props, {
       id: inputId,
       value: inputValue,
       type: 'text',
       autoComplete: 'off',
-      onChange: setInputValue
-    }), ref);
+      onChange
+    }), state, ref);
 
   return {
     labelProps,
@@ -100,8 +105,7 @@ export function useColorField(
       'aria-valuenow': null,
       'aria-valuetext': null,
       autoCorrect: 'off',
-      onBlur: commit,
-      onWheel
+      onBlur: commit
     })
   };
 }

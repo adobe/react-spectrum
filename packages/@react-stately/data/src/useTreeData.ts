@@ -159,7 +159,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     if (newNode == null) {
       deleteNode(node);
     } else {
-      map.set(key, newNode);
+      addNode(newNode);
     }
 
     // Walk up the tree and update each parent to refer to the new chilren.
@@ -202,6 +202,13 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
 
       return item;
     });
+  }
+
+  function addNode(node: TreeNode<T>) {
+    map.set(node.key, node);
+    for (let child of node.children) {
+      addNode(child);
+    }
   }
 
   function deleteNode(node: TreeNode<T>) {
