@@ -38,6 +38,7 @@ jobs:
   test-ssr:
     docker:
       - image: circleci/node:12
+    resource_class: large
 
     working_directory: ~/react-spectrum
     steps:
@@ -67,6 +68,7 @@ jobs:
           command: |
             shopt -s globstar
             shopt -s extglob
+            shopt extglob
             TESTFILES=$(circleci tests glob "*.js?(x)" | circleci tests split)
             echo ${TESTFILES}
 
