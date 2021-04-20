@@ -118,7 +118,7 @@ export function usePress(props: PressHookProps): PressResult {
     target: null,
     isOverTarget: false,
     pointerType: null,
-    targetRect: null,
+    targetRect: null
   });
 
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
@@ -188,11 +188,8 @@ export function usePress(props: PressHookProps): PressResult {
       }
     };
 
-    let triggerPressUp = (
-      originalEvent: EventBase,
-      pointerType: PointerType
-    ) => {
-      let { onPressUp, isDisabled } = propsRef.current;
+    let triggerPressUp = (originalEvent: EventBase, pointerType: PointerType) => {
+      let {onPressUp, isDisabled} = propsRef.current;
       if (isDisabled) {
         return;
       }
@@ -229,11 +226,13 @@ export function usePress(props: PressHookProps): PressResult {
           e.preventDefault();
           e.stopPropagation();
 
+
           // If the event is repeating, it may have started on a different element
           // after which focus moved to the current element. Ignore these events and
           // only handle the first key down event.
           if (!state.isPressed && !e.repeat) {
             state.target = e.currentTarget as HTMLElement;
+            state.targetRect = e.currentTarget.getBoundingClientRect();
             state.isPressed = true;
             triggerPressStart(e, 'keyboard');
 
@@ -306,18 +305,15 @@ export function usePress(props: PressHookProps): PressResult {
 
         // iOS safari fires pointer events from VoiceOver (but only when outside an iframe...)
         // https://bugs.webkit.org/show_bug.cgi?id=222627
-        state.pointerType = isVirtualPointerEvent(e.nativeEvent)
-          ? "virtual"
-          : e.pointerType;
+        state.pointerType = isVirtualPointerEvent(e.nativeEvent) ? 'virtual' : e.pointerType;
 
         e.stopPropagation();
         if (!state.isPressed) {
           state.isPressed = true;
           state.isOverTarget = true;
           state.activePointerId = e.pointerId;
-          const targetRect = e.currentTarget.getBoundingClientRect();
           state.target = e.currentTarget;
-          state.targetRect = targetRect;
+          state.targetRect = e.currentTarget.getBoundingClientRect();
 
           if (!isDisabled && !preventFocusOnPress) {
             focusWithoutScrolling(e.currentTarget);
@@ -326,9 +322,9 @@ export function usePress(props: PressHookProps): PressResult {
           disableTextSelection();
           triggerPressStart(e, state.pointerType);
 
-          addGlobalListener(document, "pointermove", onPointerMove, false);
-          addGlobalListener(document, "pointerup", onPointerUp, false);
-          addGlobalListener(document, "pointercancel", onPointerCancel, false);
+          addGlobalListener(document, 'pointermove', onPointerMove, false);
+          addGlobalListener(document, 'pointerup', onPointerUp, false);
+          addGlobalListener(document, 'pointercancel', onPointerCancel, false);
         }
       };
 
@@ -369,29 +365,16 @@ export function usePress(props: PressHookProps): PressResult {
           }
         } else if (state.isOverTarget) {
           state.isOverTarget = false;
-          triggerPressEnd(
-            createEvent(state.target, e),
-            state.pointerType,
-            false
-          );
+          triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
         }
       };
 
       let onPointerUp = (e: PointerEvent) => {
-        if (
-          e.pointerId === state.activePointerId &&
-          state.isPressed &&
-          e.button === 0
-        ) {
-
+        if (e.pointerId === state.activePointerId && state.isPressed && e.button === 0) {
           if (isOverTarget(e, state.targetRect)) {
             triggerPressEnd(createEvent(state.target, e), state.pointerType);
           } else if (state.isOverTarget) {
-            triggerPressEnd(
-              createEvent(state.target, e),
-              state.pointerType,
-              false
-            );
+            triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
           }
 
           state.isPressed = false;
@@ -432,6 +415,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.isPressed = true;
         state.isOverTarget = true;
         state.target = e.currentTarget;
+        state.targetRect = e.currentTarget.getBoundingClientRect();
         state.pointerType = isVirtualClick(e.nativeEvent) ? 'virtual' : 'mouse';
 
         if (!isDisabled && !preventFocusOnPress) {
@@ -499,6 +483,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.isOverTarget = true;
         state.isPressed = true;
         state.target = e.currentTarget;
+        state.targetRect = e.currentTarget.getBoundingClientRect();
         state.pointerType = 'touch';
 
         // Due to browser inconsistencies, especially on mobile browsers, we prevent default
@@ -652,12 +637,10 @@ interface EventPoint {
 }
 
 function isOverTarget(point: EventPoint, rect: DOMRect) {
-  const result =
-    (point.clientX || 0) >= (rect.left || 0) &&
+  return (point.clientX || 0) >= (rect.left || 0) &&
     (point.clientX || 0) <= (rect.right || 0) &&
     (point.clientY || 0) >= (rect.top || 0) &&
     (point.clientY || 0) <= (rect.bottom || 0);
-  return result;
 }
 
 function shouldPreventDefault(target: Element) {
