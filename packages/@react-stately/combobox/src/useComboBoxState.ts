@@ -84,9 +84,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     items: props.items ?? props.defaultItems
   });
 
-  // This is only used if items are not controlled
+  // Preserve original collection so we can show all items on demand
   let originalCollection = collection;
-
   let filteredCollection = useMemo(() => (
     // No default filter if items are controlled.
     props.items != null || !defaultFilter
@@ -318,7 +317,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     isFocused,
     setFocused,
     selectedItem,
-    collection: showAllItems && (props.items === undefined) ? originalCollection : filteredCollection,
+    collection: showAllItems ? originalCollection : filteredCollection,
     inputValue,
     setInputValue,
     commit
