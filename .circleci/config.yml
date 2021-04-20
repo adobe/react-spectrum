@@ -52,14 +52,13 @@ jobs:
           name: test
           command: |
             echo ${BASH_VERSION}
-            shopt globstar
             shopt -s globstar
             echo "set globstar, checking again"
             shopt globstar
             yarn test:ssr
             echo "All test files:"
-            echo $(circleci tests glob "**/?(*.)+(test).[tj]s?(x)")
-            TESTFILES=$(circleci tests glob "**/?(*.)+(test).[tj]s?(x)" | circleci tests split)
+            echo $(circleci tests glob "**/*test.[tj]s?(x)")
+            TESTFILES=$(circleci tests glob "**/*test.[tj]s?(x)" | circleci tests split)
             echo "split tests:"
             echo ${TESTFILES}
             yarn test ${TESTFILES}
