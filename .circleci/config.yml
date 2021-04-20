@@ -54,10 +54,9 @@ jobs:
             echo ${BASH_VERSION}
             shopt -s globstar
             yarn test:ssr
-            ls -l
             echo "All test files:"
-            echo $(circleci tests glob "*.js")
-            TESTFILES=$(circleci tests glob "*.js" | circleci tests split)
+            echo $(circleci tests glob "*.[tj]s?(x)")
+            TESTFILES=$(circleci tests glob "*.[tj]s?(x)" | circleci tests split)
             echo "split tests:"
             echo ${TESTFILES}
 
