@@ -52,7 +52,9 @@ jobs:
           name: test
           command: |
             echo ${BASH_VERSION}
+            shopt globstar
             shopt -s globstar
+            shopt globstar
             yarn test:ssr
             echo "All test files:"
             echo $(circleci tests glob "**/?(*.)+(test).[tj]s?(x)")
