@@ -204,14 +204,11 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     });
   };
 
-  // Get rid of click/drag/pointer/mousedown handlers if selection isn't allowed so that text selection can happen
+  // Don't propagate press handlers if selection isn't allowed so that text selection can happen
   if (!allowsSelection) {
-    pressProps = {
-      onKeyDown: pressProps.onKeyDown,
-      onKeyUp: pressProps.onKeyUp,
-      onFocus: pressProps.onFocus,
-      tabIndex: pressProps.tabIndex
-    };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    let {onPressStart, onPressEnd, onPressUp, onPress, ...otherProps} = itemProps;
+    pressProps = otherProps;
   }
 
   let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(pressProps, {
