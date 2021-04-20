@@ -52,14 +52,10 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
   // TODO: move into useSelectableItem?
   let {pressProps} = usePress({...itemProps, isDisabled});
 
-  // Get rid of click/drag/pointer/mousedown handlers if selection isn't allowed so that text selection can happen
   if (!allowsSelection) {
-    pressProps = {
-      onKeyDown: pressProps.onKeyDown,
-      onKeyUp: pressProps.onKeyUp,
-      onFocus: pressProps.onFocus,
-      tabIndex: pressProps.tabIndex
-    };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    let {onPressStart, onPressEnd, onPressUp, onPress, ...otherProps} = itemProps;
+    pressProps = otherProps;
   }
 
   let rowProps: HTMLAttributes<HTMLElement> = {
