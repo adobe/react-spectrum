@@ -67,9 +67,8 @@ jobs:
           name: test
           command: |
             shopt -s globstar
-            shopt -s extglob
-            TESTFILES=$(circleci tests glob "**/*.[tj]{s,sx}" | circleci tests split)
-            echo ${TESTFILES}
+            TESTFILES=$(circleci tests glob "**/*.test.[tj]{s,sx}" | circleci tests split)
+            yarn test ${TESTFILES}
 
       - run:
           command: |
