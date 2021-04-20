@@ -21,7 +21,7 @@ import Copy from '@spectrum-icons/workflow/Copy';
 import Draw from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
 import {mergeProps} from '@react-aria/utils';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 import {TextField} from '@react-spectrum/textfield';
@@ -630,9 +630,9 @@ function AsyncLoadingExampleControlledKeyWithReset() {
     name: string,
     url: string
   }
-
+  let isFocused = useRef(false);
   let list = useAsyncList<StarWarsChar>({
-    async load({signal, cursor, filterText, selectedKeys, loadingState}) {
+    async load({signal, cursor, filterText, selectedKeys}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
@@ -646,7 +646,7 @@ function AsyncLoadingExampleControlledKeyWithReset() {
       let selectedKey = (selectedKeys as Set<React.Key>).values().next().value;
 
       // If selectedKey exists and combobox is performing intial load, update the input value with the selected key text
-      if (loadingState === 'loading' && selectedKey) {
+      if (!isFocused.current && selectedKey) {
         let selectedItemName = json.results.find(item => item.name === selectedKey)?.name;
         if (selectedItemName != null && selectedItemName !== filterText) {
           selectedText = selectedItemName;
@@ -678,6 +678,7 @@ function AsyncLoadingExampleControlledKeyWithReset() {
   let selectedKey = (list.selectedKeys as Set<React.Key>).values().next().value;
   return (
     <ComboBox
+      onFocusChange={(focus) => isFocused.current = focus}
       label="Star Wars Character Lookup"
       selectedKey={selectedKey}
       onSelectionChange={onSelectionChange}
