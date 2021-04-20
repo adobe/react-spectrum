@@ -54,6 +54,7 @@ jobs:
             echo ${BASH_VERSION}
             shopt globstar
             shopt -s globstar
+            echo "set globstar, checking again"
             shopt globstar
             yarn test:ssr
             echo "All test files:"
