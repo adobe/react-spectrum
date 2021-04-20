@@ -35,6 +35,20 @@ jobs:
             - ~/react-spectrum
           key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
+  test-ssr:
+    docker:
+      - image: circleci/node:12
+
+    working_directory: ~/react-spectrum
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: test ssr
+          command: yarn test:ssr
+
+
   test:
     parallelism: 3
     docker:
@@ -51,13 +65,9 @@ jobs:
       - run:
           name: test
           command: |
-            echo ${BASH_VERSION}
             shopt -s globstar
-            yarn test:ssr
-            echo "All test files:"
-            echo $(circleci tests glob "*.[tj]s?(x)")
+            shopt -s extglob
             TESTFILES=$(circleci tests glob "*.[tj]s?(x)" | circleci tests split)
-            echo "split tests:"
             echo ${TESTFILES}
 
       - run:
@@ -247,6 +257,9 @@ workflows:
   commit:
     jobs:
       - install
+      - test-ssr:
+          requires:
+            - install
       - test:
           requires:
             - install
@@ -274,6 +287,7 @@ workflows:
       - deploy:
           requires:
             - lint
+            - test-ssr
             - test
             - test_17
             - storybook
