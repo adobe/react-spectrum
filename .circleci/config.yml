@@ -101,7 +101,7 @@ jobs:
           name: test
           command: |
             shopt -s globstar
-            TESTFILES=$(circleci tests glob "**/*.test.[tj]{s,sx}" | circleci tests split)
+            TESTFILES=$(circleci tests glob "**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
             yarn test ${TESTFILES}
 
       - run:
@@ -150,7 +150,7 @@ jobs:
           name: test
           command: |
             shopt -s globstar
-            TESTFILES=$(circleci tests glob "**/*.test.[tj]{s,sx}" | circleci tests split)
+            TESTFILES=$(circleci tests glob "**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
             JEST_JUNIT_OUTPUT_NAME="junit-17.xml" yarn test ${TESTFILES}
 
       - run:
