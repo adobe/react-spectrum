@@ -10,22 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useId';
-export * from './chain';
-export * from './mergeProps';
-export * from './filterDOMProps';
-export * from './focusWithoutScrolling';
-export * from './getOffset';
-export * from './number';
-export * from './runAfterTransition';
-export * from './useDrag1D';
-export * from './useGlobalListeners';
-export * from './useLabels';
-export * from './useUpdateEffect';
-export * from './useLayoutEffect';
-export * from './useResizeObserver';
-export * from './useSyncRef';
-export * from './getScrollParent';
-export * from './useViewportSize';
-export * from './useDescription';
-export * from './platform';
+import {MutableRefObject, RefObject} from 'react';
+import {useLayoutEffect} from './';
+
+interface ContextValue<T> {
+  ref?: MutableRefObject<T>
+}
+
+// Syncs ref from context with ref passed to hook
+export function useSyncRef<T>(context: ContextValue<T>, ref: RefObject<T>) {
+  useLayoutEffect(() => {
+    if (context && context.ref) {
+      context.ref.current = ref.current;
+      return () => {
+        context.ref.current = null;
+      };
+    }
+  }, [context, ref]);
+}
