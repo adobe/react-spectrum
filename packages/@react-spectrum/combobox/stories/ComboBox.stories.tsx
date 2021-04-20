@@ -631,9 +631,8 @@ function AsyncLoadingExampleControlledKeyWithReset() {
     url: string
   }
 
-  let [isFocused, setFocused] = useState(false);
   let list = useAsyncList<StarWarsChar>({
-    async load({signal, cursor, filterText, selectedKeys}) {
+    async load({signal, cursor, filterText, selectedKeys, loadingState}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
@@ -646,8 +645,8 @@ function AsyncLoadingExampleControlledKeyWithReset() {
       let selectedText;
       let selectedKey = (selectedKeys as Set<React.Key>).values().next().value;
 
-      // If selectedKey exists and combobox isn't focused, update the input value with the selected key text
-      if (!isFocused && selectedKey) {
+      // If selectedKey exists and combobox is performing intial load, update the input value with the selected key text
+      if (loadingState === 'loading' && selectedKey) {
         let selectedItemName = json.results.find(item => item.name === selectedKey)?.name;
         if (selectedItemName != null && selectedItemName !== filterText) {
           selectedText = selectedItemName;
@@ -679,8 +678,6 @@ function AsyncLoadingExampleControlledKeyWithReset() {
   let selectedKey = (list.selectedKeys as Set<React.Key>).values().next().value;
   return (
     <ComboBox
-      onFocus={() => setFocused(true)}
-      onBlur={() => setFocused(false)}
       label="Star Wars Character Lookup"
       selectedKey={selectedKey}
       onSelectionChange={onSelectionChange}

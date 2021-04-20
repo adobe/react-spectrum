@@ -11,7 +11,7 @@
  */
 
 import {createListActions, ListData, ListState} from './useListData';
-import {Key, Reducer, useEffect, useReducer} from 'react';
+import {Key, Reducer, useEffect, useReducer, useRef} from 'react';
 import {LoadingState, Selection, SortDescriptor} from '@react-types/shared';
 
 interface AsyncListOptions<T, C> {
@@ -45,7 +45,9 @@ interface AsyncListLoadOptions<T, C> {
   /** The pagination cursor returned from the last page load. */
   cursor?: C,
   /** The current filter text used to perform server side filtering. */
-  filterText?: string
+  filterText?: string,
+  /** The current loading state of the list. */
+  loadingState?: LoadingState
 }
 
 interface AsyncListStateUpdate<T, C> {
@@ -209,10 +211,6 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
             cursor: action.cursor
           };
         case 'error':
-          if (action.abortController !== data.abortController) {
-            return data;
-          }
-
           return {
             ...data,
             state: 'error',
@@ -232,12 +230,6 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
             items: action.type === 'loading' ? [] : data.items,
             abortController: action.abortController
           };
-        case 'loadingMore':
-          // If already loading more and another loading more is triggered, abort the new load more.
-          // Do not overwrite the data.abortController
-          action.abortController.abort();
-
-          return data;
         case 'update':
           // We're already loading, and an update happened at the same time (e.g. selectedKey changed).
           // Update data but don't abort previous load.
@@ -266,6 +258,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     getKey = (item: any) => item.id || item.key,
     initialFilterText = ''
   } = options;
+  let loadingState = useRef<LoadingState>('idle');
 
   let [data, dispatch] = useReducer<Reducer<AsyncListState<T, C>, Action<T, C>>>(reducer, {
     state: 'idle',
@@ -281,24 +274,35 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     try {
       dispatch({...action, abortController});
       let previousFilterText = action.filterText ?? data.filterText;
+
+      if (action.type !== 'success' && action.type !== 'update') {
+        loadingState.current = action.type;
+      } else {
+        loadingState.current = 'idle';
+      }
+
       let response = await fn({
         items: data.items.slice(),
         selectedKeys: data.selectedKeys,
         sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
         signal: abortController.signal,
         cursor: action.type === 'loadingMore' ? data.cursor : null,
-        filterText: previousFilterText
+        filterText: previousFilterText,
+        loadingState: loadingState.current
       });
 
       let filterText = response.filterText ?? previousFilterText;
+      loadingState.current = 'idle';
       dispatch({type: 'success', ...response, abortController});
 
       // Fetch a new filtered list if filterText is updated via `load` response func rather than list.setFilterText
       // Only do this if not aborted (e.g. user triggers another filter action before load completes)
       if (filterText && (filterText !== previousFilterText) && !abortController.signal.aborted) {
+        loadingState.current = 'filtering';
         dispatchFetch({type: 'filtering', filterText}, load);
       }
     } catch (e) {
+      loadingState.current = 'error';
       dispatch({type: 'error', error: e, abortController});
     }
   };
@@ -324,7 +328,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     },
     loadMore() {
       // Ignore if already loading more or if performing server side filtering.
-      if (data.state === 'loadingMore' || data.state === 'filtering' || data.cursor == null) {
+      if (loadingState.current === 'loadingMore' || loadingState.current === 'filtering' || data.cursor == null) {
         return;
       }
 
