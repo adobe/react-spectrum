@@ -124,7 +124,6 @@ export function usePress(props: PressHookProps): PressResult {
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
   let pressProps = useMemo(() => {
-    console.log("update state");
     let state = ref.current;
     let triggerPressStart = (originalEvent: EventBase, pointerType: PointerType) => {
       let {onPressStart, onPressChange, isDisabled} = propsRef.current;
@@ -234,13 +233,6 @@ export function usePress(props: PressHookProps): PressResult {
           // after which focus moved to the current element. Ignore these events and
           // only handle the first key down event.
           if (!state.isPressed && !e.repeat) {
-            const {
-              top,
-              left,
-              bottom,
-              right,
-            } = e.currentTarget.getBoundingClientRect();
-            console.log('onKeyDown target', { top, left, bottom, right });
             state.target = e.currentTarget as HTMLElement;
             state.isPressed = true;
             triggerPressStart(e, 'keyboard');
@@ -301,7 +293,6 @@ export function usePress(props: PressHookProps): PressResult {
 
     if (typeof PointerEvent !== 'undefined') {
       pressProps.onPointerDown = (e) => {
-        console.log("onPointerDown");
         // Only handle left clicks
         if (e.button !== 0) {
           return;
@@ -325,12 +316,8 @@ export function usePress(props: PressHookProps): PressResult {
           state.isOverTarget = true;
           state.activePointerId = e.pointerId;
           const targetRect = e.currentTarget.getBoundingClientRect();
-          const { top, left, bottom, right } = targetRect;
-          console.log("onPointerDown target", { top, left, bottom, right });
           state.target = e.currentTarget;
           state.targetRect = targetRect;
-
-          console.log("onPointerDown target", state.target);
 
           if (!isDisabled && !preventFocusOnPress) {
             focusWithoutScrolling(e.currentTarget);
@@ -363,7 +350,6 @@ export function usePress(props: PressHookProps): PressResult {
         // Safari on iOS sometimes fires pointerup events, even
         // when the touch isn't over the target, so double check.
         if (e.button === 0 && isOverTarget(e, state.targetRect)) {
-          console.log("---onPointerUp---");
           triggerPressUp(e, state.pointerType);
         }
       };
@@ -397,18 +383,6 @@ export function usePress(props: PressHookProps): PressResult {
           state.isPressed &&
           e.button === 0
         ) {
-          const { clientY, clientX } = e;
-          const {
-            top,
-            left,
-            bottom,
-            right,
-          } = state.target.getBoundingClientRect();
-          console.log(
-            "onPointerUp",
-            { clientY, clientX },
-            { top, left, bottom, right }
-          );
 
           if (isOverTarget(e, state.targetRect)) {
             triggerPressEnd(createEvent(state.target, e), state.pointerType);
@@ -457,13 +431,6 @@ export function usePress(props: PressHookProps): PressResult {
 
         state.isPressed = true;
         state.isOverTarget = true;
-        const {
-          top,
-          left,
-          bottom,
-          right,
-        } = e.currentTarget.getBoundingClientRect();
-        console.log('onMouseDown target', { top, left, bottom, right });
         state.target = e.currentTarget;
         state.pointerType = isVirtualClick(e.nativeEvent) ? 'virtual' : 'mouse';
 
@@ -531,13 +498,6 @@ export function usePress(props: PressHookProps): PressResult {
         state.ignoreEmulatedMouseEvents = true;
         state.isOverTarget = true;
         state.isPressed = true;
-        const {
-          top,
-          left,
-          bottom,
-          right,
-        } = e.currentTarget.getBoundingClientRect();
-        console.log('onTouchStart target', { top, left, bottom, right });
         state.target = e.currentTarget;
         state.pointerType = 'touch';
 
@@ -692,14 +652,11 @@ interface EventPoint {
 }
 
 function isOverTarget(point: EventPoint, rect: DOMRect) {
-  const { clientY, clientX } = point;
-  const { top, left, bottom, right } = rect;
   const result =
     (point.clientX || 0) >= (rect.left || 0) &&
     (point.clientX || 0) <= (rect.right || 0) &&
     (point.clientY || 0) >= (rect.top || 0) &&
     (point.clientY || 0) <= (rect.bottom || 0);
-  console.log({ clientY, clientX }, { top, left, bottom, right }, result);
   return result;
 }
 
