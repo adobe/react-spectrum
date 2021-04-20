@@ -289,7 +289,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
       bodyRef.current.scrollTop = rect.y;
       setScrollLeft(bodyRef.current, direction, rect.x);
     },
-    transitionDuration: collection.body.props.isLoading && collection.size > 0 ? 0 : 500
+    transitionDuration: collection.body.props.isLoading ? 160 : 220
   });
 
   let {virtualizerProps} = useVirtualizer({
