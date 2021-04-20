@@ -80,6 +80,22 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
+  test-ssr-17:
+    docker:
+      - image: circleci/node:12
+    resource_class: xlarge
+
+    working_directory: ~/react-spectrum
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: test ssr
+          command: |
+            yarn add -W react@^17.0.1 react-dom@^17.0.1
+            yarn test:ssr
+
   test_17:
     parallelism: 3
     docker:
@@ -97,9 +113,9 @@ jobs:
           name: test
           command: |
             yarn add -W react@^17.0.1 react-dom@^17.0.1
-            yarn test:ssr
-            TESTFILES=$(circleci tests glob "**/?(*.)+(test).[tj]s?(x)" | circleci tests split)
-            JEST_JUNIT_OUTPUT_NAME="junit-17.xml" yarn test -- $TESTFILES
+            shopt -s globstar
+            TESTFILES=$(circleci tests glob "**/*.test.[tj]{s,sx}" | circleci tests split)
+            JEST_JUNIT_OUTPUT_NAME="junit-17.xml" yarn test ${TESTFILES}
 
       - run:
           command: cp junit-17.xml ~/junit/
@@ -263,6 +279,9 @@ workflows:
       - test:
           requires:
             - install
+      - test-ssr-17:
+          requires:
+            - install
       - test_17:
           requires:
             - install
@@ -290,6 +309,7 @@ workflows:
             - test-ssr
             - test
             - test_17
+            - test-ssr-17
             - storybook
             - storybook-17
             - docs
