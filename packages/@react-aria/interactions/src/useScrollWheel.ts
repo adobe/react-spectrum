@@ -31,7 +31,6 @@ export function useScrollWheel(props: ScrollWheelProps, ref: RefObject<HTMLEleme
     e.preventDefault();
     e.stopPropagation();
 
-
     if (onScroll) {
       onScroll({deltaX: e.deltaX, deltaY: e.deltaY});
     }
@@ -39,14 +38,13 @@ export function useScrollWheel(props: ScrollWheelProps, ref: RefObject<HTMLEleme
 
   useEffect(() => {
     let elem = ref.current;
-    if (!isDisabled) {
-      elem.addEventListener('wheel', onScrollHandler);
+    if (isDisabled) {
+      return;
     }
+    elem.addEventListener('wheel', onScrollHandler);
 
     return () => {
-      if (!isDisabled) {
-        elem.removeEventListener('wheel', onScrollHandler);
-      }
+      elem.removeEventListener('wheel', onScrollHandler);
     };
   }, [onScrollHandler, ref, isDisabled]);
 }
