@@ -90,7 +90,7 @@ jobs:
     working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: test
@@ -184,7 +184,7 @@ jobs:
     working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: react-spectrum16-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: build docs
