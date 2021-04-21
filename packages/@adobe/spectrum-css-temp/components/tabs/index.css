@@ -46,6 +46,7 @@ governing permissions and limitations under the License.
   vertical-align: top;
 
   outline: none;
+  user-select: none;
 }
 
 .spectrum-Tabs-item {
@@ -78,6 +79,7 @@ governing permissions and limitations under the License.
   .spectrum-Icon {
     /* Vertical centering */
     block-size: var(--spectrum-tabs-item-height);
+    transition: color var(--spectrum-global-animation-duration-100) ease-out;
 
     & + .spectrum-Tabs-itemLabel {
       margin-inline-start: var(--spectrum-tabs-icon-gap);
