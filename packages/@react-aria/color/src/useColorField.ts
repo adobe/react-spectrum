@@ -19,8 +19,8 @@ import {
   useCallback, useState
 } from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
-import {useFormattedTextField} from '@react-aria/textfield';
 import {useFocusWithin, useScrollWheel} from '@react-aria/interactions';
+import {useFormattedTextField} from '@react-aria/textfield';
 import {useSpinButton} from '@react-aria/spinbutton';
 
 interface ColorFieldAria {
