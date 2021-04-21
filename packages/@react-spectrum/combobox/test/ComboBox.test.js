@@ -3272,7 +3272,8 @@ describe('ComboBox', function () {
     it('combobox should not render a loading circle if menu is not open', function () {
       let {getByRole, rerender} = render(<ExampleComboBox loadingState="loading" />);
       act(() => {jest.advanceTimersByTime(500);});
-      expect(() => getByRole('progressbar')).toThrow();
+      // First time load will show progress bar so user can know that items are being fetched
+      expect(getByRole('progressbar')).toBeTruthy();
 
       rerender(<ExampleComboBox loadingState="filtering" />);
 
@@ -3294,9 +3295,40 @@ describe('ComboBox', function () {
       expect(() => getByRole('progressbar')).toThrow();
     });
 
-    it('combobox should not render a loading circle until a delay of 500ms passes', function () {
+    it('combobox should not render a loading circle until a delay of 500ms passes (loadingState: loading)', function () {
       let {getByRole} = renderComboBox({loadingState: 'loading'});
       let combobox = getByRole('combobox');
+
+      act(() => {jest.advanceTimersByTime(250);});
+      expect(() => getByRole('progressbar')).toThrow();
+
+      act(() => {jest.advanceTimersByTime(250);});
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+
+      let button = getByRole('button');
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+    });
+
+    it('combobox should not render a loading circle until a delay of 500ms passes (loadingState: loading)', function () {
+      let {getByRole} = renderComboBox({loadingState: 'loading'});
+      let combobox = getByRole('combobox');
+
+      act(() => {jest.advanceTimersByTime(250);});
+      expect(() => getByRole('progressbar')).toThrow();
+
+      act(() => {jest.advanceTimersByTime(250);});
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+    });
+
+    it('combobox should not render a loading circle until a delay of 500ms passes and the menu is open (loadingState: filtering)', function () {
+      let {getByRole} = renderComboBox({loadingState: 'filtering'});
+      let combobox = getByRole('combobox');
+
       act(() => {jest.advanceTimersByTime(500);});
       expect(() => getByRole('progressbar')).toThrow();
 
