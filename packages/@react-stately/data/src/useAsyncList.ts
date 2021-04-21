@@ -277,8 +277,6 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
 
       if (action.type !== 'success' && action.type !== 'update') {
         loadingState.current = action.type;
-      } else {
-        loadingState.current = 'idle';
       }
 
       let response = await fn({
@@ -298,7 +296,6 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
       // Fetch a new filtered list if filterText is updated via `load` response func rather than list.setFilterText
       // Only do this if not aborted (e.g. user triggers another filter action before load completes)
       if (filterText && (filterText !== previousFilterText) && !abortController.signal.aborted) {
-        loadingState.current = 'filtering';
         dispatchFetch({type: 'filtering', filterText}, load);
       }
     } catch (e) {
