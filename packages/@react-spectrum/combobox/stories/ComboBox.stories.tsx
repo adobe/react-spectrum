@@ -88,6 +88,12 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
+    'with mapped items (defaultItem and items undef)',
+    () => (
+      <ComboBoxWithMap defaultSelectedKey="two" />
+    )
+  )
+  .add(
     'with sections',
     () => (
       <ComboBox defaultItems={withSection} label="Combobox" {...actions}>
@@ -496,19 +502,39 @@ function ListDataExample() {
   let {contains} = useFilter({sensitivity: 'base'});
   let list = useListData({
     initialItems: items,
+    initialFilterText: 'Snake',
     filter(item, text) {
       return contains(item.name, text);
     }
   });
 
+  let [showAll, setShowAll] = useState(false);
+
   return (
-    <ComboBox
-      label="ComboBox"
-      items={list.items}
-      inputValue={list.filterText}
-      onInputChange={list.setFilterText}>
-      {item => <Item>{item.name}</Item>}
-    </ComboBox>
+    <Flex gap="size-300" direction="column" >
+      <ComboBox
+        onOpenChange={(open, reason) => {
+          if (reason === 'manual' && open) {
+            setShowAll(true);
+          }
+        }}
+        label="ComboBox (show all on open)"
+        items={showAll ? items : list.items}
+        inputValue={list.filterText}
+        onInputChange={(value) => {
+          setShowAll(false);
+          list.setFilterText(value);
+        }}>
+        {item => <Item>{item.name}</Item>}
+      </ComboBox>
+      <ComboBox
+        label="ComboBox (default controlled items behavior)"
+        items={list.items}
+        inputValue={list.filterText}
+        onInputChange={list.setFilterText}>
+        {item => <Item>{item.name}</Item>}
+      </ComboBox>
+    </Flex>
   );
 }
 
@@ -891,5 +917,34 @@ function render(props = {}) {
       </Item>
       <Item key="three">Item Three</Item>
     </ComboBox>
+  );
+}
+
+function ComboBoxWithMap(props) {
+  let [items, setItems] = React.useState([
+    {name: 'The first item', id: 'one'},
+    {name: 'The second item', id: 'two'},
+    {name: 'The third item', id: 'three'}
+  ]);
+
+  let onClick = () => {
+    setItems([
+      {name: 'The first item new text', id: 'one'},
+      {name: 'The second item new text', id: 'two'},
+      {name: 'The third item new text', id: 'three'}
+    ]);
+  };
+
+  return (
+    <Flex direction="column">
+      <button onClick={onClick}>Press to change items</button>
+      <ComboBox label="Combobox" {...mergeProps(props, actions)}>
+        {items.map((item) => (
+          <Item key={item.id}>
+            {item.name}
+          </Item>
+        ))}
+      </ComboBox>
+    </Flex>
   );
 }
