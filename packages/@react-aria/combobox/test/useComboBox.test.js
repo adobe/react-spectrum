@@ -21,8 +21,8 @@ import {useSingleSelectListState} from '@react-stately/list';
 describe('useComboBox', function () {
   let preventDefault = jest.fn();
   let stopPropagation = jest.fn();
-  let event = (key) => ({
-    key,
+  let event = (e) => ({
+    ...e,
     preventDefault,
     stopPropagation
   });
@@ -89,11 +89,53 @@ describe('useComboBox', function () {
     let {result, rerender} = renderHook((props) => useComboBox(props, useComboBoxState(props)), {initialProps: props});
     let {inputProps} = result.current;
 
-    inputProps.onKeyDown(event('Enter'));
+    inputProps.onKeyDown(event({key: 'Enter'}));
     expect(preventDefault).toHaveBeenCalledTimes(1);
 
     rerender({...props, isOpen: false});
-    result.current.inputProps.onKeyDown(event('Enter'));
+    result.current.inputProps.onKeyDown(event({key: 'Enter'}));
     expect(preventDefault).toHaveBeenCalledTimes(1);
+  });
+
+  it('calls open and toggle with the expected parameters when arrow down/up/trigger button is pressed', function () {
+    let openSpy = jest.fn();
+    let toggleSpy = jest.fn();
+    let props = {
+      label: 'test label',
+      popoverRef: React.createRef(),
+      buttonRef: React.createRef(),
+      inputRef: {
+        current: {
+          contains: jest.fn(),
+          focus: jest.fn()
+        }
+      },
+      listBoxRef: React.createRef(),
+      layout: mockLayout,
+      isOpen: false
+    };
+
+    let {result: state} = renderHook((props) => useComboBoxState(props), {initialProps: props});
+    state.current.open = openSpy;
+    state.current.toggle = toggleSpy;
+
+    let {result} = renderHook((props) => useComboBox(props, state.current), {initialProps: props});
+    let {inputProps, buttonProps} = result.current;
+    inputProps.onKeyDown(event({key: 'ArrowDown'}));
+    expect(openSpy).toHaveBeenCalledTimes(1);
+    expect(openSpy).toHaveBeenLastCalledWith('first', 'manual');
+    expect(toggleSpy).toHaveBeenCalledTimes(0);
+    inputProps.onKeyDown(event({key: 'ArrowUp'}));
+    expect(openSpy).toHaveBeenCalledTimes(2);
+    expect(openSpy).toHaveBeenLastCalledWith('last', 'manual');
+    expect(toggleSpy).toHaveBeenCalledTimes(0);
+    buttonProps.onPress(event({pointerType: 'touch'}));
+    expect(openSpy).toHaveBeenCalledTimes(2);
+    expect(toggleSpy).toHaveBeenCalledTimes(1);
+    expect(toggleSpy).toHaveBeenLastCalledWith(null, 'manual');
+    buttonProps.onPressStart(event({pointerType: 'mouse'}));
+    expect(openSpy).toHaveBeenCalledTimes(2);
+    expect(toggleSpy).toHaveBeenCalledTimes(2);
+    expect(toggleSpy).toHaveBeenLastCalledWith(null, 'manual');
   });
 });
