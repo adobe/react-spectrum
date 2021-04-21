@@ -21,7 +21,7 @@ import Copy from '@spectrum-icons/workflow/Copy';
 import Draw from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
 import {mergeProps} from '@react-aria/utils';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 import {TextField} from '@react-spectrum/textfield';
@@ -77,6 +77,12 @@ storiesOf('ComboBox', module)
       <ComboBox defaultItems={items} label="Combobox" {...actions}>
         {(item) => <Item>{item.name}</Item>}
       </ComboBox>
+    )
+  )
+  .add(
+    'with mapped items (defaultItem and items undef)',
+    () => (
+      <ComboBoxWithMap defaultOpen defaultSelectedKey="two" />
     )
   )
   .add(
@@ -477,7 +483,20 @@ storiesOf('ComboBox', module)
     () => (
       <AsyncLoadingExample />
     )
+  )
+  .add(
+    'server side filtering with useAsyncList (controlled key)',
+    () => (
+      <AsyncLoadingExampleControlledKey />
+    )
+  )
+  .add(
+    'server side filtering with controlled key and inputValue reset if not focused',
+    () => (
+      <AsyncLoadingExampleControlledKeyWithReset />
+    )
   );
+
 
 function LoadingExamples(props) {
   return (
@@ -538,7 +557,6 @@ function ListDataExample() {
   );
 }
 
-
 function AsyncLoadingExample() {
   interface StarWarsChar {
     name: string,
@@ -555,6 +573,7 @@ function AsyncLoadingExample() {
       let json = await res.json();
       // Slow down load so progress circle can appear
       await new Promise(resolve => setTimeout(resolve, 1500));
+
       return {
         items: json.results,
         cursor: json.next
@@ -568,6 +587,130 @@ function AsyncLoadingExample() {
       items={list.items}
       inputValue={list.filterText}
       onInputChange={list.setFilterText}
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}
+      onOpenChange={action('onOpenChange')}>
+      {item => <Item key={item.name}>{item.name}</Item>}
+    </ComboBox>
+  );
+}
+
+function AsyncLoadingExampleControlledKey() {
+  interface StarWarsChar {
+    name: string,
+    url: string
+  }
+
+  let list = useAsyncList<StarWarsChar>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    },
+    initialSelectedKeys: ['Luke Skywalker'],
+    getKey: (item) => item.name
+  });
+
+  let onSelectionChange = (key) => {
+    let itemText = list.getItem(key)?.name;
+    list.setSelectedKeys(new Set([key]));
+    list.setFilterText(itemText);
+  };
+
+  let onInputChange = (value) => {
+    if (value === '') {
+      list.setSelectedKeys(new Set([null]));
+    }
+    list.setFilterText(value);
+  };
+
+  let selectedKey = (list.selectedKeys as Set<React.Key>).values().next().value;
+  return (
+    <ComboBox
+      label="Star Wars Character Lookup"
+      selectedKey={selectedKey}
+      onSelectionChange={onSelectionChange}
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={onInputChange}
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}
+      onOpenChange={action('onOpenChange')}>
+      {item => <Item key={item.name}>{item.name}</Item>}
+    </ComboBox>
+  );
+}
+
+function AsyncLoadingExampleControlledKeyWithReset() {
+  interface StarWarsChar {
+    name: string,
+    url: string
+  }
+  let isFocused = useRef(false);
+  let list = useAsyncList<StarWarsChar>({
+    async load({signal, cursor, filterText, selectedKeys}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      let selectedText;
+      let selectedKey = (selectedKeys as Set<React.Key>).values().next().value;
+
+      // If selectedKey exists and combobox is performing intial load, update the input value with the selected key text
+      if (!isFocused.current && selectedKey) {
+        let selectedItemName = json.results.find(item => item.name === selectedKey)?.name;
+        if (selectedItemName != null && selectedItemName !== filterText) {
+          selectedText = selectedItemName;
+        }
+      }
+      return {
+        items: json.results,
+        cursor: json.next,
+        filterText: selectedText ?? filterText
+      };
+    },
+    initialSelectedKeys: ['Luke Skywalker'],
+    getKey: (item) => item.name
+  });
+
+  let onSelectionChange = (key) => {
+    let itemText = list.getItem(key)?.name;
+    list.setSelectedKeys(new Set([key]));
+    list.setFilterText(itemText);
+  };
+
+  let onInputChange = (value) => {
+    if (value === '') {
+      list.setSelectedKeys(new Set([null]));
+    }
+    list.setFilterText(value);
+  };
+
+  let selectedKey = (list.selectedKeys as Set<React.Key>).values().next().value;
+  return (
+    <ComboBox
+      onFocusChange={(focus) => isFocused.current = focus}
+      label="Star Wars Character Lookup"
+      selectedKey={selectedKey}
+      onSelectionChange={onSelectionChange}
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={onInputChange}
       loadingState={list.loadingState}
       onLoadMore={list.loadMore}
       onOpenChange={action('onOpenChange')}>
@@ -810,7 +953,7 @@ let ControlledValueOpenCombobox = (props) => {
 let ControlledKeyOpenCombobox = (props) => {
   let [fieldState, setFieldState] = React.useState({
     isOpen: false,
-    selectedKey: null
+    selectedKey: 'two'
   });
 
   let onSelectionChange = (key: string) => {

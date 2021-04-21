@@ -124,6 +124,7 @@ function ControlledOpenComboBox(props) {
 }
 
 function ControlledValueKeyComboBox(props) {
+  let itemList = props.items || items;
   let [fieldState, setFieldState] = React.useState({
     inputValue: '',
     selectedKey: null
@@ -138,14 +139,14 @@ function ControlledValueKeyComboBox(props) {
 
   let onSelectionChangeHandler = (key) => {
     setFieldState({
-      inputValue: items.find(item => item.id === key)?.name ?? '',
+      inputValue: itemList.find(item => item.id === key)?.name ?? '',
       selectedKey: key
     });
   };
 
   return (
     <Provider theme={theme}>
-      <ComboBox {...defaultProps} label="Combobox" defaultItems={items} inputValue={fieldState.inputValue} onInputChange={onInputChangeHandler} selectedKey={fieldState.selectedKey} onSelectionChange={onSelectionChangeHandler} {...props}>
+      <ComboBox {...defaultProps} label="Combobox" defaultItems={itemList} inputValue={fieldState.inputValue} onInputChange={onInputChangeHandler} selectedKey={fieldState.selectedKey} onSelectionChange={onSelectionChangeHandler} {...props}>
         {(item) => <Item>{item.name}</Item>}
       </ComboBox>
     </Provider>
@@ -182,6 +183,7 @@ function ControlledOpenKeyComboBox(props) {
 }
 
 function ControlledOpenValueComboBox(props) {
+  let itemList = props.items || items;
   let [fieldState, setFieldState] = React.useState({
     isOpen: false,
     inputValue: ''
@@ -205,13 +207,13 @@ function ControlledOpenValueComboBox(props) {
     onSelectionChange(key);
     setFieldState({
       isOpen: false,
-      inputValue: items.find(item => item.id === key)?.name ?? ''
+      inputValue: itemList.find(item => item.id === key)?.name ?? ''
     });
   };
 
   return (
     <Provider theme={theme}>
-      <ComboBox {...defaultProps} label="Combobox" defaultItems={items} isOpen={fieldState.isOpen} inputValue={fieldState.inputValue} onInputChange={onInputChangeHandler} onOpenChange={onOpenChangeHandler} onSelectionChange={onSelectionChangeHandler} {...props}>
+      <ComboBox {...defaultProps} label="Combobox" defaultItems={itemList} isOpen={fieldState.isOpen} inputValue={fieldState.inputValue} onInputChange={onInputChangeHandler} onOpenChange={onOpenChangeHandler} onSelectionChange={onSelectionChangeHandler} {...props}>
         {(item) => <Item>{item.name}</Item>}
       </ComboBox>
     </Provider>
@@ -219,16 +221,17 @@ function ControlledOpenValueComboBox(props) {
 }
 
 function AllControlledComboBox(props) {
+  let itemList = props.items || items;
   let [fieldState, setFieldState] = React.useState({
     isOpen: false,
     inputValue: '',
-    selectedKey: '2'
+    selectedKey: null
   });
 
   let onSelectionChangeHandler = (key) => {
     setFieldState(prevState => ({
       isOpen: false,
-      inputValue: items.find(item => item.id === key)?.name ?? (props.allowsCustomValue ? prevState.inputValue : ''),
+      inputValue: itemList.find(item => item.id === key)?.name ?? (props.allowsCustomValue ? prevState.inputValue : ''),
       selectedKey: key
     }));
   };
@@ -2698,240 +2701,457 @@ describe('ComboBox', function () {
 
     describe.each`
       Name                           | Component
-      ${'controlled value'}          | ${<ControlledValueComboBox />}
-      ${'controlled key'}            | ${<ControlledKeyComboBox />}
-      ${'controlled open'}           | ${<ControlledOpenComboBox />}
-      ${'controlled value and key'}  | ${<ControlledValueKeyComboBox />}
-      ${'controlled value and open'} | ${<ControlledOpenValueComboBox />}
-      ${'controlled open and key'}   | ${<ControlledOpenKeyComboBox />}
-      ${'all controlled'}            | ${<AllControlledComboBox />}
-    `(' blur and commit flows: $Name ComboBox', ({Name, Component}) => {
-      it('should reset the input text and close the menu on committing a previously selected option', () => {
-        let {getByRole} = render(Component);
-        let combobox = getByRole('combobox');
-        let button = getByRole('button');
-        act(() => {
-          triggerPress(button);
-          jest.runAllTimers();
-        });
+      ${'controlled value'}          | ${ControlledValueComboBox}
+      ${'controlled key'}            | ${ControlledKeyComboBox}
+      ${'controlled open'}           | ${ControlledOpenComboBox}
+      ${'controlled value and key'}  | ${ControlledValueKeyComboBox}
+      ${'controlled value and open'} | ${ControlledOpenValueComboBox}
+      ${'controlled open and key'}   | ${ControlledOpenKeyComboBox}
+      ${'all controlled'}            | ${AllControlledComboBox}
+    `('$Name ComboBox', ({Name, Component}) => {
+      describe('blur and commit flows', function () {
+        it('should reset the input text and close the menu on committing a previously selected option', () => {
+          let {getByRole} = render(<Component />);
+          let combobox = getByRole('combobox');
+          let button = getByRole('button');
+          act(() => {
+            triggerPress(button);
+            jest.runAllTimers();
+          });
 
-        let listbox = getByRole('listbox');
-        expect(listbox).toBeVisible();
-        let items = within(listbox).getAllByRole('option');
-        expect(items.length).toBe(3);
+          let listbox = getByRole('listbox');
+          expect(listbox).toBeVisible();
+          let items = within(listbox).getAllByRole('option');
+          expect(items.length).toBe(3);
 
-        act(() => {
-          triggerPress(items[0]);
-          jest.runAllTimers();
-        });
+          act(() => {
+            triggerPress(items[0]);
+            jest.runAllTimers();
+          });
 
-        expect(combobox.value).toBe('One');
-        expect(() => getByRole('listbox')).toThrow();
+          expect(combobox.value).toBe('One');
+          expect(() => getByRole('listbox')).toThrow();
 
-        act(() => {
-          fireEvent.change(combobox, {target: {value: 'On'}});
-          jest.runAllTimers();
-        });
+          act(() => {
+            fireEvent.change(combobox, {target: {value: 'On'}});
+            jest.runAllTimers();
+          });
 
-        expect(combobox.value).toBe('On');
-        listbox = getByRole('listbox');
-        expect(listbox).toBeVisible();
-        items = within(listbox).getAllByRole('option');
-        expect(items[0]).toHaveTextContent('One');
-        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+          expect(combobox.value).toBe('On');
+          listbox = getByRole('listbox');
+          expect(listbox).toBeVisible();
+          items = within(listbox).getAllByRole('option');
+          expect(items[0]).toHaveTextContent('One');
+          expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-        act(() => {
-          fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
-          fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
-          fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
-          fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
-          jest.runAllTimers();
-        });
+          act(() => {
+            fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+            fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+            fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+            fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+            jest.runAllTimers();
+          });
 
-        expect(() => getByRole('listbox')).toThrow();
-        expect(combobox.value).toBe('One');
+          expect(() => getByRole('listbox')).toThrow();
+          expect(combobox.value).toBe('One');
 
-        if (!Name.includes('value') && !Name.includes('all')) {
-          // Check that onInputChange is firing appropriately for the comboboxes w/o user defined onInputChange handlers
-          expect(onInputChange).toBeCalledTimes(3);
-          expect(onInputChange).toHaveBeenLastCalledWith('One');
-        }
+          if (!Name.includes('value') && !Name.includes('all')) {
+            // Check that onInputChange is firing appropriately for the comboboxes w/o user defined onInputChange handlers
+            expect(onInputChange).toBeCalledTimes(3);
+            expect(onInputChange).toHaveBeenLastCalledWith('One');
+          }
 
-        if (Name === 'controlled value and open') {
-          // Checking special case, spy is chained with the onSelectionChangeHandler
-          expect(onSelectionChange).toBeCalledTimes(2);
-          expect(onSelectionChange).toHaveBeenLastCalledWith('1');
-        }
+          if (Name === 'controlled value and open') {
+            // Checking special case, spy is chained with the onSelectionChangeHandler
+            expect(onSelectionChange).toBeCalledTimes(2);
+            expect(onSelectionChange).toHaveBeenLastCalledWith('1');
+          }
 
-        if (!Name.includes('open') && !Name.includes('all')) {
-          // Check that onOpenChange is firing appropriately for the comboboxes w/o user defined onOpenChange handlers
-          expect(onOpenChange).toBeCalledTimes(4);
-          expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
-        }
-
-        act(() => {
-          triggerPress(button);
-          jest.runAllTimers();
-        });
-
-        listbox = getByRole('listbox');
-        expect(listbox).toBeVisible();
-        items = within(listbox).getAllByRole('option');
-        expect(items[0]).toHaveTextContent('One');
-        expect(items[0]).toHaveAttribute('aria-selected', 'true');
-      });
-
-      it('should update the input field with the selected item and close the menu on commit', () => {
-        let {getByRole} = render(Component);
-        let combobox = getByRole('combobox');
-        typeText(combobox, 'On');
-        act(() => jest.runAllTimers());
-
-        let listbox = getByRole('listbox');
-        expect(listbox).toBeVisible();
-        let items = within(listbox).getAllByRole('option');
-        expect(items.length).toBe(1);
-
-        act(() => {
-          fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
-          fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
-          fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
-          fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
-          jest.runAllTimers();
-        });
-
-        expect(combobox.value).toBe('One');
-        expect(() => getByRole('listbox')).toThrow();
-
-        if (!Name.includes('value') && !Name.includes('all')) {
-          // Check that onInputChange is firing appropriately for the comboboxes w/o user defined onInputChange handlers
-          expect(onInputChange).toBeCalledTimes(3);
-          expect(onInputChange).toHaveBeenLastCalledWith('One');
-        }
-
-        if (Name === 'controlled value and open') {
-          // Checking special case, spy is chained with the onSelectionChangeHandler
-          expect(onSelectionChange).toBeCalledTimes(1);
-          expect(onSelectionChange).toHaveBeenLastCalledWith('1');
-        }
-
-        if (!Name.includes('open') && !Name.includes('all')) {
-          // Check that onOpenChange is firing appropriately for the comboboxes w/o user defined onOpenChange handlers
-          expect(onOpenChange).toBeCalledTimes(2);
-          expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
-        }
-
-        let button = getByRole('button');
-        act(() => {
-          triggerPress(button);
-          jest.runAllTimers();
-        });
-
-        listbox = getByRole('listbox');
-        expect(listbox).toBeVisible();
-        items = within(listbox).getAllByRole('option');
-        expect(items[0]).toHaveTextContent('One');
-        expect(items[0]).toHaveAttribute('aria-selected', 'true');
-      });
-
-      it('should reset the input value and close the menu on blur', () => {
-        let {getByRole} = render(Component);
-        let combobox = getByRole('combobox');
-        typeText(combobox, 'On');
-        act(() => jest.runAllTimers());
-
-        let listbox = getByRole('listbox');
-        expect(listbox).toBeVisible();
-        let items = within(listbox).getAllByRole('option');
-
-        act(() => {
-          triggerPress(items[0]);
-          jest.runAllTimers();
-        });
-
-        expect(combobox.value).toBe('One');
-        expect(() => getByRole('listbox')).toThrow();
-
-        act(() => {
-          fireEvent.change(combobox, {target: {value: 'On'}});
-          jest.runAllTimers();
-        });
-
-        listbox = getByRole('listbox');
-        expect(listbox).toBeVisible();
-
-        act(() => {
-          userEvent.tab();
-          jest.runAllTimers();
-        });
-
-        expect(() => getByRole('listbox')).toThrow();
-        expect(combobox.value).toBe('One');
-
-        if (!Name.includes('value') && !Name.includes('all')) {
-          // Check that onInputChange is firing appropriately for the comboboxes w/o user defined onInputChange handlers
-          expect(onInputChange).toBeCalledTimes(5);
-          expect(onInputChange).toHaveBeenLastCalledWith('One');
-        }
-
-        if (Name === 'controlled value and open') {
-          // Checking special case, spy is chained with the onSelectionChangeHandler
-          expect(onSelectionChange).toBeCalledTimes(2);
-          expect(onSelectionChange).toHaveBeenLastCalledWith('1');
-        }
-
-        if (!Name.includes('open') && !Name.includes('all')) {
-          // Check that onOpenChange is firing appropriately for the comboboxes w/o user defined onOpenChange handlers
-          expect(onOpenChange).toBeCalledTimes(4);
-          expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
-        }
-      });
-
-      it('should not open the menu on blur when an invalid input is entered', () => {
-        let {getByRole} = render(Component);
-        let combobox = getByRole('combobox');
-        typeText(combobox, 'On');
-        act(() => jest.runAllTimers());
-
-        let listbox = getByRole('listbox');
-        expect(listbox).toBeVisible();
-
-        act(() => {
-          fireEvent.change(combobox, {target: {value: ''}});
-          jest.runAllTimers();
-        });
-
-        typeText(combobox, 'z');
-        act(() => jest.runAllTimers());
-        expect(() => getByRole('listbox')).toThrow();
-        expect(combobox.value).toBe('z');
-
-        act(() => {
-          userEvent.tab();
-          jest.runAllTimers();
-        });
-
-        expect(() => getByRole('listbox')).toThrow();
-        expect(combobox.value).toBe('');
-
-        if (!Name.includes('value') && !Name.includes('all')) {
-          // Check that onInputChange is firing appropriately for the comboboxes w/o user defined onInputChange handlers
-          expect(onInputChange).toBeCalledTimes(5);
-          expect(onInputChange).toHaveBeenLastCalledWith('');
-        }
-
-        if (Name === 'controlled value and open') {
-          // Checking special case, spy is chained with the onSelectionChangeHandler
-          expect(onSelectionChange).toBeCalledTimes(1);
-          expect(onSelectionChange).toHaveBeenLastCalledWith(null);
-        }
-
-        if (!Name.includes('open') && !Name.includes('all')) {
+          if (!Name.includes('open') && !Name.includes('all')) {
             // Check that onOpenChange is firing appropriately for the comboboxes w/o user defined onOpenChange handlers
-          expect(onOpenChange).toBeCalledTimes(2);
-          expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
-        }
+            expect(onOpenChange).toBeCalledTimes(4);
+            expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
+          }
+
+          act(() => {
+            triggerPress(button);
+            jest.runAllTimers();
+          });
+
+          listbox = getByRole('listbox');
+          expect(listbox).toBeVisible();
+          items = within(listbox).getAllByRole('option');
+          expect(items[0]).toHaveTextContent('One');
+          expect(items[0]).toHaveAttribute('aria-selected', 'true');
+        });
+
+        it('should update the input field with the selected item and close the menu on commit', () => {
+          let {getByRole} = render(<Component />);
+          let combobox = getByRole('combobox');
+          typeText(combobox, 'On');
+          act(() => jest.runAllTimers());
+
+          let listbox = getByRole('listbox');
+          expect(listbox).toBeVisible();
+          let items = within(listbox).getAllByRole('option');
+          expect(items.length).toBe(1);
+
+          act(() => {
+            fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+            fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+            fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+            fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+            jest.runAllTimers();
+          });
+
+          expect(combobox.value).toBe('One');
+          expect(() => getByRole('listbox')).toThrow();
+
+          if (!Name.includes('value') && !Name.includes('all')) {
+            // Check that onInputChange is firing appropriately for the comboboxes w/o user defined onInputChange handlers
+            expect(onInputChange).toBeCalledTimes(3);
+            expect(onInputChange).toHaveBeenLastCalledWith('One');
+          }
+
+          if (Name === 'controlled value and open') {
+            // Checking special case, spy is chained with the onSelectionChangeHandler
+            expect(onSelectionChange).toBeCalledTimes(1);
+            expect(onSelectionChange).toHaveBeenLastCalledWith('1');
+          }
+
+          if (!Name.includes('open') && !Name.includes('all')) {
+            // Check that onOpenChange is firing appropriately for the comboboxes w/o user defined onOpenChange handlers
+            expect(onOpenChange).toBeCalledTimes(2);
+            expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
+          }
+
+          let button = getByRole('button');
+          act(() => {
+            triggerPress(button);
+            jest.runAllTimers();
+          });
+
+          listbox = getByRole('listbox');
+          expect(listbox).toBeVisible();
+          items = within(listbox).getAllByRole('option');
+          expect(items[0]).toHaveTextContent('One');
+          expect(items[0]).toHaveAttribute('aria-selected', 'true');
+        });
+
+        it('should reset the input value and close the menu on blur', () => {
+          let {getByRole} = render(<Component />);
+          let combobox = getByRole('combobox');
+          typeText(combobox, 'On');
+          act(() => jest.runAllTimers());
+
+          let listbox = getByRole('listbox');
+          expect(listbox).toBeVisible();
+          let items = within(listbox).getAllByRole('option');
+
+          act(() => {
+            triggerPress(items[0]);
+            jest.runAllTimers();
+          });
+
+          expect(combobox.value).toBe('One');
+          expect(() => getByRole('listbox')).toThrow();
+
+          act(() => {
+            fireEvent.change(combobox, {target: {value: 'On'}});
+            jest.runAllTimers();
+          });
+
+          listbox = getByRole('listbox');
+          expect(listbox).toBeVisible();
+
+          act(() => {
+            userEvent.tab();
+            jest.runAllTimers();
+          });
+
+          expect(() => getByRole('listbox')).toThrow();
+          expect(combobox.value).toBe('One');
+
+          if (!Name.includes('value') && !Name.includes('all')) {
+            // Check that onInputChange is firing appropriately for the comboboxes w/o user defined onInputChange handlers
+            expect(onInputChange).toBeCalledTimes(5);
+            expect(onInputChange).toHaveBeenLastCalledWith('One');
+          }
+
+          if (Name === 'controlled value and open') {
+            // Checking special case, spy is chained with the onSelectionChangeHandler
+            expect(onSelectionChange).toBeCalledTimes(2);
+            expect(onSelectionChange).toHaveBeenLastCalledWith('1');
+          }
+
+          if (!Name.includes('open') && !Name.includes('all')) {
+            // Check that onOpenChange is firing appropriately for the comboboxes w/o user defined onOpenChange handlers
+            expect(onOpenChange).toBeCalledTimes(4);
+            expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
+          }
+        });
+
+        it('should not open the menu on blur when an invalid input is entered', () => {
+          let {getByRole} = render(<Component />);
+          let combobox = getByRole('combobox');
+          typeText(combobox, 'On');
+          act(() => jest.runAllTimers());
+
+          let listbox = getByRole('listbox');
+          expect(listbox).toBeVisible();
+
+          act(() => {
+            fireEvent.change(combobox, {target: {value: ''}});
+            jest.runAllTimers();
+          });
+
+          typeText(combobox, 'z');
+          act(() => jest.runAllTimers());
+          expect(() => getByRole('listbox')).toThrow();
+          expect(combobox.value).toBe('z');
+
+          act(() => {
+            userEvent.tab();
+            jest.runAllTimers();
+          });
+
+          expect(() => getByRole('listbox')).toThrow();
+          expect(combobox.value).toBe('');
+
+          if (!Name.includes('value') && !Name.includes('all')) {
+            // Check that onInputChange is firing appropriately for the comboboxes w/o user defined onInputChange handlers
+            expect(onInputChange).toBeCalledTimes(5);
+            expect(onInputChange).toHaveBeenLastCalledWith('');
+          }
+
+          if (Name === 'controlled value and open') {
+            // Checking special case, spy is chained with the onSelectionChangeHandler
+            expect(onSelectionChange).toBeCalledTimes(1);
+            expect(onSelectionChange).toHaveBeenLastCalledWith(null);
+          }
+
+          if (!Name.includes('open') && !Name.includes('all')) {
+              // Check that onOpenChange is firing appropriately for the comboboxes w/o user defined onOpenChange handlers
+            expect(onOpenChange).toBeCalledTimes(2);
+            expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
+          }
+        });
       });
+
+      describe('controlled items', function () {
+        it('should update the input value when items update and selectedKey textValue does\'t match', function () {
+          let {getByRole, rerender} = render(<Component items={initialFilterItems} />);
+          let combobox = getByRole('combobox');
+
+          act(() => {
+            combobox.focus();
+            jest.runAllTimers();
+          });
+          typeText(combobox, 'Aar');
+          act(() => jest.runAllTimers());
+
+          let listbox = getByRole('listbox');
+          expect(listbox).toBeVisible();
+          let items = within(listbox).getAllByRole('option');
+
+          act(() => {
+            triggerPress(items[0]);
+            jest.runAllTimers();
+          });
+
+          expect(combobox.value).toBe('Aardvark');
+
+          if ((!Name.includes('key') && !Name.includes('all')) || Name === 'controlled value and open') {
+            expect(onSelectionChange).toBeCalledTimes(1);
+            expect(onSelectionChange).toHaveBeenLastCalledWith('1');
+          }
+          expect(() => getByRole('listbox')).toThrow();
+
+          act(() => {
+            combobox.blur();
+            jest.runAllTimers();
+          });
+          expect(document.activeElement).not.toBe(combobox);
+
+          if (Name === 'controlled value and open') {
+            // Checking special case, spy is chained with the onSelectionChangeHandler
+            // onSelectionChange is called on blur due to commitSelection (so that input value resets)
+            expect(onSelectionChange).toBeCalledTimes(2);
+            expect(onSelectionChange).toHaveBeenLastCalledWith('1');
+          }
+
+          let newItems = [
+            {name: 'New Text', id: '1'},
+            {name: 'Item 2', id: '2'},
+            {name: 'Item 3', id: '3'}
+          ];
+
+          rerender(<Component items={newItems} />);
+
+          if (Name.includes('value') || Name.includes('all')) {
+            expect(combobox.value).toBe('Aardvark');
+          } else {
+            expect(combobox.value).toBe('New Text');
+          }
+
+          expect(() => getByRole('listbox')).toThrow();
+
+          if (!Name.includes('value') && !Name.includes('all')) {
+            expect(onInputChange).toBeCalledTimes(5);
+            expect(onInputChange).toHaveBeenLastCalledWith('New Text');
+          }
+        });
+
+        it('doesn\'t update the input value when items update but the combobox is focused', function () {
+          let {getByRole, rerender} = render(<Component items={initialFilterItems} />);
+          let combobox = getByRole('combobox');
+
+          act(() => {
+            combobox.focus();
+            jest.runAllTimers();
+          });
+          typeText(combobox, 'Aar');
+          act(() => jest.runAllTimers());
+
+          let listbox = getByRole('listbox');
+          expect(listbox).toBeVisible();
+          let items = within(listbox).getAllByRole('option');
+
+          act(() => {
+            triggerPress(items[0]);
+            jest.runAllTimers();
+          });
+
+          expect(combobox.value).toBe('Aardvark');
+
+          if ((!Name.includes('key') && !Name.includes('all')) || Name === 'controlled value and open') {
+            expect(onSelectionChange).toBeCalledTimes(1);
+            expect(onSelectionChange).toHaveBeenLastCalledWith('1');
+          }
+          expect(() => getByRole('listbox')).toThrow();
+
+          let newItems = [
+            {name: 'New Text', id: '1'},
+            {name: 'Item 2', id: '2'},
+            {name: 'Item 3', id: '3'}
+          ];
+
+          rerender(<Component items={newItems} />);
+
+          expect(combobox.value).toBe('Aardvark');
+          expect(() => getByRole('listbox')).toThrow();
+        });
+      });
+    });
+
+    it('updates the list of items when items update', function () {
+      let {getByRole, rerender} = render(<ControlledValueComboBox items={initialFilterItems} />);
+      let button = getByRole('button');
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      let items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(3);
+
+      expect(items[0].textContent).toBe('Aardvark');
+      expect(items[1].textContent).toBe('Kangaroo');
+      expect(items[2].textContent).toBe('Snake');
+
+      let newItems = [
+        {name: 'New Text', id: '1'},
+        {name: 'Item 2', id: '2'},
+        {name: 'Item 3', id: '3'}
+      ];
+
+      rerender(<ControlledValueComboBox items={newItems} />);
+
+      expect(listbox).toBeVisible();
+      items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(3);
+
+      expect(items[0].textContent).toBe('New Text');
+      expect(items[1].textContent).toBe('Item 2');
+      expect(items[2].textContent).toBe('Item 3');
+    });
+
+    it('updates the list of items when items update (items provided by map)', function () {
+      function ComboBoxWithMap(props) {
+        let defaultItems = initialFilterItems;
+        let {
+          listItems = defaultItems
+        } = props;
+        return (
+          <Provider theme={theme}>
+            <ComboBox label="Combobox" {...props}>
+              {listItems.map((item) => (
+                <Item key={item.id}>
+                  {item.name}
+                </Item>
+              ))}
+            </ComboBox>
+          </Provider>
+        );
+      }
+
+      let {getByRole, rerender} = render(<ComboBoxWithMap />);
+      let combobox = getByRole('combobox');
+      let button = getByRole('button');
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      let items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(3);
+
+      expect(items[0].textContent).toBe('Aardvark');
+      expect(items[1].textContent).toBe('Kangaroo');
+      expect(items[2].textContent).toBe('Snake');
+
+      act(() => {
+        triggerPress(items[0]);
+        jest.runAllTimers();
+      });
+
+      expect(combobox.value).toBe('Aardvark');
+
+      act(() => {
+        combobox.blur();
+        jest.runAllTimers();
+      });
+      expect(document.activeElement).not.toBe(combobox);
+
+      let newItems = [
+        {name: 'New Text', id: '1'},
+        {name: 'Item 2', id: '2'},
+        {name: 'Item 3', id: '3'}
+      ];
+
+      rerender(<ComboBoxWithMap listItems={newItems} />);
+      expect(combobox.value).toBe('New Text');
+
+      act(() => {
+        combobox.focus();
+        fireEvent.change(combobox, {target: {value: ''}});
+        jest.runAllTimers();
+      });
+
+      listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(3);
+
+      expect(items[0].textContent).toBe('New Text');
+      expect(items[1].textContent).toBe('Item 2');
+      expect(items[2].textContent).toBe('Item 3');
     });
   });
 
@@ -3246,7 +3466,8 @@ describe('ComboBox', function () {
     it('combobox should not render a loading circle if menu is not open', function () {
       let {getByRole, rerender} = render(<ExampleComboBox loadingState="loading" />);
       act(() => {jest.advanceTimersByTime(500);});
-      expect(() => getByRole('progressbar')).toThrow();
+      // First time load will show progress bar so user can know that items are being fetched
+      expect(getByRole('progressbar')).toBeTruthy();
 
       rerender(<ExampleComboBox loadingState="filtering" />);
 
@@ -3268,9 +3489,40 @@ describe('ComboBox', function () {
       expect(() => getByRole('progressbar')).toThrow();
     });
 
-    it('combobox should not render a loading circle until a delay of 500ms passes', function () {
+    it('combobox should not render a loading circle until a delay of 500ms passes (loadingState: loading)', function () {
       let {getByRole} = renderComboBox({loadingState: 'loading'});
       let combobox = getByRole('combobox');
+
+      act(() => {jest.advanceTimersByTime(250);});
+      expect(() => getByRole('progressbar')).toThrow();
+
+      act(() => {jest.advanceTimersByTime(250);});
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+
+      let button = getByRole('button');
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+    });
+
+    it('combobox should not render a loading circle until a delay of 500ms passes (loadingState: loading)', function () {
+      let {getByRole} = renderComboBox({loadingState: 'loading'});
+      let combobox = getByRole('combobox');
+
+      act(() => {jest.advanceTimersByTime(250);});
+      expect(() => getByRole('progressbar')).toThrow();
+
+      act(() => {jest.advanceTimersByTime(250);});
+      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
+    });
+
+    it('combobox should not render a loading circle until a delay of 500ms passes and the menu is open (loadingState: filtering)', function () {
+      let {getByRole} = renderComboBox({loadingState: 'filtering'});
+      let combobox = getByRole('combobox');
+
       act(() => {jest.advanceTimersByTime(500);});
       expect(() => getByRole('progressbar')).toThrow();
 
