@@ -16,7 +16,8 @@ import {
   HTMLAttributes,
   LabelHTMLAttributes,
   RefObject,
-  useCallback, useState
+  useCallback,
+  useState
 } from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
 import {useFocusWithin, useScrollWheel} from '@react-aria/interactions';
