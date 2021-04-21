@@ -570,8 +570,9 @@ The example below demonstrates how you could update the input value for your sel
 
 ```tsx example
 function AsyncLoadingExample() {
+  let isFocused = useRef(false);
   let list = useAsyncList({
-    async load({signal, cursor, filterText, selectedKeys, loadingState}) {
+    async load({signal, cursor, filterText, selectedKeys}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
@@ -587,9 +588,9 @@ function AsyncLoadingExample() {
       let selectedText;
       let selectedKey = selectedKeys.values().next().value;
 
-      // If selectedKey exists and combobox is performing its initial load, update the input value with the selected key text
+      // If selectedKey exists and combobox is not focused, update the input value with the selected key text
       // This allows the input value to be up to date when items load for the first time or the selected key text is updated server side.
-      if (loadingState === 'loading' && selectedKey) {
+      if (!isFocused.current && selectedKey) {
         let selectedItemName = json.results.find(item => item.name === selectedKey)?.name;
         if (selectedItemName != null && selectedItemName !== filterText) {
           selectedText = selectedItemName;
@@ -624,6 +625,7 @@ function AsyncLoadingExample() {
   return (
     <ComboBox
       label="Star Wars Character Lookup"
+      onFocusChange={(focus) => isFocused.current = focus}
       selectedKey={selectedKey}
       onSelectionChange={onSelectionChange}
       items={list.items}
