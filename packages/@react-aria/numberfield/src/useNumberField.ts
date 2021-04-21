@@ -112,6 +112,13 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   let {focusWithinProps} = useFocusWithin({isDisabled, onFocusWithinChange: setFocusWithin});
 
   let onWheel = useCallback((e) => {
+    // if on a trackpad, users can scroll in both X and Y at once, check the magnitude of the change
+    // if it's mostly in the X direction, then just return, the user probably doesn't mean to inc/dec
+    // this isn't perfect, events come in fast with small deltas and a part of the scroll may give a false indication
+    // especially if the user is scrolling near 45deg
+    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) {
+      return;
+    }
     if (e.deltaY > 0) {
       increment();
     } else if (e.deltaY < 0) {

@@ -73,6 +73,9 @@ export function useColorField(
   );
 
   let onWheel = useCallback((e) => {
+    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) {
+      return;
+    }
     if (e.deltaY > 0) {
       increment();
     } else if (e.deltaY < 0) {

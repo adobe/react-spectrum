@@ -94,6 +94,12 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
+    'with mapped items (defaultItem and items undef)',
+    () => (
+      <ComboBoxWithMap defaultSelectedKey="two" />
+    )
+  )
+  .add(
     'with sections',
     () => (
       <ComboBox defaultItems={withSection} label="Combobox" {...actions}>
@@ -515,19 +521,39 @@ function ListDataExample() {
   let {contains} = useFilter({sensitivity: 'base'});
   let list = useListData({
     initialItems: items,
+    initialFilterText: 'Snake',
     filter(item, text) {
       return contains(item.name, text);
     }
   });
 
+  let [showAll, setShowAll] = useState(false);
+
   return (
-    <ComboBox
-      label="ComboBox"
-      items={list.items}
-      inputValue={list.filterText}
-      onInputChange={list.setFilterText}>
-      {item => <Item>{item.name}</Item>}
-    </ComboBox>
+    <Flex gap="size-300" direction="column" >
+      <ComboBox
+        onOpenChange={(open, reason) => {
+          if (reason === 'manual' && open) {
+            setShowAll(true);
+          }
+        }}
+        label="ComboBox (show all on open)"
+        items={showAll ? items : list.items}
+        inputValue={list.filterText}
+        onInputChange={(value) => {
+          setShowAll(false);
+          list.setFilterText(value);
+        }}>
+        {item => <Item>{item.name}</Item>}
+      </ComboBox>
+      <ComboBox
+        label="ComboBox (default controlled items behavior)"
+        items={list.items}
+        inputValue={list.filterText}
+        onInputChange={list.setFilterText}>
+        {item => <Item>{item.name}</Item>}
+      </ComboBox>
+    </Flex>
   );
 }
 
@@ -1024,6 +1050,19 @@ function ResizeCombobox() {
   );
 }
 
+function render(props = {}) {
+  return (
+    <ComboBox label="Combobox" {...mergeProps(props, actions)}>
+      <Item key="one">Item One</Item>
+      <Item key="two" textValue="Item Two">
+        <Copy size="S" />
+        <Text>Item Two</Text>
+      </Item>
+      <Item key="three">Item Three</Item>
+    </ComboBox>
+  );
+}
+
 function ComboBoxWithMap(props) {
   let [items, setItems] = React.useState([
     {name: 'The first item', id: 'one'},
@@ -1050,18 +1089,5 @@ function ComboBoxWithMap(props) {
         ))}
       </ComboBox>
     </Flex>
-  );
-}
-
-function render(props = {}) {
-  return (
-    <ComboBox label="Combobox" {...mergeProps(props, actions)}>
-      <Item key="one">Item One</Item>
-      <Item key="two" textValue="Item Two">
-        <Copy size="S" />
-        <Text>Item Two</Text>
-      </Item>
-      <Item key="three">Item Three</Item>
-    </ComboBox>
   );
 }

@@ -2374,6 +2374,50 @@ describe('Table', function () {
     });
   });
 
+  describe('press/hover interactions and selection mode', function () {
+    let TableExample = (props) => (
+      <Table aria-label="Table" {...props}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </Table>
+    );
+
+    it('displays pressed/hover styles when row is pressed/hovered and selection mode is not "none"', function () {
+      let tree = render(<TableExample selectionMode="multiple" />);
+
+      let row = tree.getAllByRole('row')[1];
+      fireEvent.mouseDown(row, {detail: 1});
+      expect(row.className.includes('is-active')).toBeTruthy();
+      fireEvent.mouseEnter(row);
+      expect(row.className.includes('is-hovered')).toBeTruthy();
+
+      rerender(tree, <TableExample selectionMode="single" />);
+      row = tree.getAllByRole('row')[1];
+      fireEvent.mouseDown(row, {detail: 1});
+      expect(row.className.includes('is-active')).toBeTruthy();
+      fireEvent.mouseEnter(row);
+      expect(row.className.includes('is-hovered')).toBeTruthy();
+    });
+
+    it('doesn\'t show pressed/hover styles when row is pressed/hovered and selection mode is "none"', function () {
+      let tree = render(<TableExample selectionMode="none" />);
+
+      let row = tree.getAllByRole('row')[1];
+      fireEvent.mouseDown(row, {detail: 1});
+      expect(row.className.includes('is-active')).toBeFalsy();
+      fireEvent.mouseEnter(row);
+      expect(row.className.includes('is-hovered')).toBeFalsy();
+    });
+  });
+
   describe('CRUD', function () {
     it('can add items', function () {
       let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
