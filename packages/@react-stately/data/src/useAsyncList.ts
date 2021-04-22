@@ -258,7 +258,6 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     getKey = (item: any) => item.id || item.key,
     initialFilterText = ''
   } = options;
-  let loadingState = useRef<LoadingState>('idle');
 
   let [data, dispatch] = useReducer<Reducer<AsyncListState<T, C>, Action<T, C>>>(reducer, {
     state: 'idle',
@@ -269,13 +268,15 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     filterText: initialFilterText
   });
 
+  // Track ongoing loadingMore and filtering requests so we can skip loadMore operations if any exist
+  let loadingRequests = useRef(new Set());
   const dispatchFetch = async (action: Action<T, C>, fn: AsyncListLoadFunction<T, C>) => {
     let abortController = new AbortController();
     try {
       dispatch({...action, abortController});
       let previousFilterText = action.filterText ?? data.filterText;
-      if (action.type !== 'success' && action.type !== 'update') {
-        loadingState.current = action.type;
+      if (action.type === 'loadingMore' || action.type === 'filtering') {
+        loadingRequests.current.add(abortController);
       }
 
       let response = await fn({
@@ -284,13 +285,12 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
         sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
         signal: abortController.signal,
         cursor: action.type === 'loadingMore' ? data.cursor : null,
-        filterText: previousFilterText,
-        loadingState: loadingState.current
+        filterText: previousFilterText
       });
 
       let filterText = response.filterText ?? previousFilterText;
-      loadingState.current = 'idle';
       dispatch({type: 'success', ...response, abortController});
+      loadingRequests.current.delete(abortController);
 
       // Fetch a new filtered list if filterText is updated via `load` response func rather than list.setFilterText
       // Only do this if not aborted (e.g. user triggers another filter action before load completes)
@@ -298,6 +298,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
         dispatchFetch({type: 'filtering', filterText}, load);
       }
     } catch (e) {
+      loadingRequests.current.delete(abortController);
       dispatch({type: 'error', error: e, abortController});
     }
   };
@@ -323,7 +324,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     },
     loadMore() {
       // Ignore if already loading more or if performing server side filtering.
-      if (loadingState.current === 'loadingMore' || loadingState.current === 'filtering' || data.cursor == null) {
+      if (loadingRequests.current.size > 0 || data.cursor == null) {
         return;
       }
 
