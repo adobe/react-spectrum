@@ -48,7 +48,6 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   let {direction} = useLocale();
   let keyboardDelegate = gridKeyboardDelegates.get(state);
-  let allowsSelection = state.selectionManager.selectionMode !== 'none';
 
   // Handles focusing the cell. If there is a focusable child,
   // it is focused, otherwise the cell itself is focused.
@@ -203,13 +202,6 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       }
     });
   };
-
-  // Don't propagate press handlers if selection isn't allowed so that text selection can happen
-  if (!allowsSelection) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    let {onPressStart, onPressEnd, onPressUp, onPress, ...otherProps} = itemProps;
-    pressProps = otherProps;
-  }
 
   let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(pressProps, {
     role: 'gridcell',
