@@ -77,7 +77,8 @@ function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement
           barClassName,
           styleProps.className
         )
-      }>
+      }
+      style={{minWidth: '-moz-fit-content'}}>
       {label &&
         <span
           {...labelProps}
