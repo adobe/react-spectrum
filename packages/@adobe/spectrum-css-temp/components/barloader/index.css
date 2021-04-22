@@ -74,6 +74,7 @@ governing permissions and limitations under the License.
   display: inline-flex;
   flex-flow: row;
   justify-content: space-between;
+  /* cssnano-ignore-line */
   min-inline-size: -moz-fit-content;
   min-inline-size: fit-content;
 
