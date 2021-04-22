@@ -778,8 +778,8 @@ describe('useAsyncList', () => {
       jest.runAllTimers();
     });
 
-    // Only the first loadMore is handled, the other is never called
-    expect(load).toHaveBeenCalledTimes(2);
+    // Only the first loadMore is handled, the others are canceled
+    expect(load).toHaveBeenCalledTimes(4);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.items).toEqual(ITEMS.concat(ITEMS2));
   });
@@ -824,7 +824,8 @@ describe('useAsyncList', () => {
       jest.runAllTimers();
     });
 
-    // Only the first loadMore and filtering operation is handled (first loadMore is canceled by filter), subsequent loadMores are never called
+    // Only the first loadMore and filtering operation is handled (first loadMore is canceled by filter),
+    // subsequent loadMores are never called because filtering operation is happening
     expect(load).toHaveBeenCalledTimes(3);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.items).toEqual(ITEMS2);
