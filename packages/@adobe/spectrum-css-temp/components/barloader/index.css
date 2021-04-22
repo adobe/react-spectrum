@@ -75,6 +75,7 @@ governing permissions and limitations under the License.
   flex-flow: row;
   justify-content: space-between;
   min-inline-size: fit-content;
+  min-inline-size: -moz-fit-content;
 
   .spectrum-BarLoader-track {
     inline-size: inherit;
