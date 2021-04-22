@@ -274,7 +274,6 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     try {
       dispatch({...action, abortController});
       let previousFilterText = action.filterText ?? data.filterText;
-
       if (action.type !== 'success' && action.type !== 'update') {
         loadingState.current = action.type;
       }
@@ -299,7 +298,6 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
         dispatchFetch({type: 'filtering', filterText}, load);
       }
     } catch (e) {
-      loadingState.current = 'error';
       dispatch({type: 'error', error: e, abortController});
     }
   };

@@ -569,10 +569,10 @@ function AsyncLoadingExample() {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
-      let json = await res.json();
       // Slow down load so progress circle can appear
       await new Promise(resolve => setTimeout(resolve, 1500));
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
 
       return {
         items: json.results,
@@ -607,10 +607,11 @@ function AsyncLoadingExampleControlledKey() {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
-      let json = await res.json();
       // Slow down load so progress circle can appear
       await new Promise(resolve => setTimeout(resolve, 1500));
+
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
 
       return {
         items: json.results,
@@ -663,10 +664,11 @@ function AsyncLoadingExampleControlledKeyWithReset() {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
-      let json = await res.json();
       // Slow down load so progress circle can appear
       await new Promise(resolve => setTimeout(resolve, 1500));
+
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
 
       let selectedText;
       let selectedKey = (selectedKeys as Set<React.Key>).values().next().value;
