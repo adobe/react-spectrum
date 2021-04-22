@@ -43,7 +43,7 @@ const PACKAGES = {
       let distFile =
         path.join(distFolder, path.basename(srcFile, path.extname(srcFile))) +
         '.js';
-      if (!(await exists(distFile) || await isNewerThan(srcFile, distFile))) {
+      if (!(await exists(distFile)) || (await isNewerThan(srcFile, distFile))) {
         commandPromises.push(pkg !== 'illustrations' ?
           {command: 'yarn make-icons && yarn build-icons', name: `Making and building icons for @spectrum-icons/${pkg}`, cwd: distFolder} :
           {command: 'yarn build-icons', name: `Building icons for @spectrum-icons/${pkg}`, cwd: distFolder}
