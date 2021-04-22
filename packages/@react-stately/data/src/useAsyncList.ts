@@ -235,7 +235,8 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
             abortController: action.abortController
           };
         case 'loadingMore':
-          // If already loading more and another loading more is triggered, abort the new load more.
+          // If already loading more and another loading more is triggered, abort the new load more since
+          // it is a duplicate request since the cursor hasn't been updated.
           // Do not overwrite the data.abortController
           action.abortController.abort();
 
