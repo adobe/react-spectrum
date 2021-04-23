@@ -54,7 +54,7 @@ export function ListViewItem(props) {
         className={
           classNames(
             listStyles,
-            'react-spectrum-ListItem',
+            'react-spectrum-ListViewItem',
             {
               'is-focused': isFocusVisibleWithin,
               'focus-ring': isFocusVisible,

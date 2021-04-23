@@ -41,7 +41,7 @@ storiesOf('ListView', module)
           <ActionButton>Button 1</ActionButton>
         </Flex>
       </Item>
-      <Item> textValue="two"
+      <Item textValue="two">
         <Flex alignItems="center">
           <View flexGrow={1}>row 2</View>
           <ActionButton>Button 1</ActionButton>
