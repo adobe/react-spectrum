@@ -27,7 +27,8 @@ interface ModalWrapperProps extends HTMLAttributes<HTMLElement> {
   onClose?: () => void,
   type?: 'modal' | 'fullscreen' | 'fullscreenTakeover',
   isDismissable?: boolean,
-  isKeyboardDismissDisabled?: boolean
+  isKeyboardDismissDisabled?: boolean,
+  overlayProps: HTMLAttributes<HTMLElement>
 }
 
 function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
@@ -38,7 +39,7 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
   let {overlayProps, underlayProps} = useOverlay({
     onClose,
     isDismissable,
-    isKeyboardDismissDisabled,
+    isKeyboardDismissDisabled
   }, domRef);
 
   return (
