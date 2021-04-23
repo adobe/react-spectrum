@@ -115,12 +115,11 @@ import {useButton} from '@react-aria/button';
 
 function ModalDialog(props) {
   let {title, children} = props;
-  let underlayRef = React.useRef();
 
   // Handle interacting outside the dialog and pressing
   // the Escape key to close the modal.
   let ref = React.useRef();
-  let {overlayProps} = useOverlay({...props, underlayRef}, ref);
+  let {overlayProps, underlayProps} = useOverlay(props, ref);
 
   // Prevent scrolling while the modal is open, and hide content
   // outside the modal from screen readers.
@@ -132,7 +131,6 @@ function ModalDialog(props) {
 
   return (
     <div
-      ref={underlayRef}
       style={{
         position: 'fixed',
         zIndex: 100,
@@ -144,7 +142,8 @@ function ModalDialog(props) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
-      }}>
+      }}
+      {...underlayProps}>
       <FocusScope contain restoreFocus autoFocus>
         <div
           {...overlayProps}

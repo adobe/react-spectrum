@@ -48,6 +48,8 @@ interface OverlayProps {
 interface OverlayAria {
   /** Props to apply to the overlay container element. */
   overlayProps: HTMLAttributes<HTMLElement>
+  /** Props to apply to the underlay element. */
+  underlayProps: HTMLAttributes<HTMLElement>
 }
 
 const visibleOverlays: RefObject<HTMLElement>[] = [];
@@ -115,10 +117,20 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
     }
   });
 
+  let onPointerDownUnderlay = e => {
+    // fixes a firefox issue that starts text selection
+    if (e.target === e.currentTarget) {
+      e.preventDefault();
+    }
+  };
+
   return {
     overlayProps: {
       onKeyDown,
       ...focusWithinProps
+    },
+    underlayProps: {
+      onPointerDown: onPointerDownUnderlay
     }
   };
 }
