@@ -210,7 +210,7 @@ storiesOf('Tabs', module)
     )
   )
   .add(
-    'Tabs controlled child',
+    'Tab 1 controlled child',
     () => {
       let [tab1Text, setTab1Text] = useState();
 
