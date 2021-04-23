@@ -110,7 +110,7 @@ describe('useOverlay', function () {
 
   it('should hide the overlay when pressing the escape key', function () {
     let onClose = jest.fn();
-    let res = render(<Example isOpen onClose={onClose}/>);
+    let res = render(<Example isOpen onClose={onClose} />);
     let el = res.getByTestId('test');
     fireEvent.keyDown(el, {key: 'Escape'});
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -118,7 +118,7 @@ describe('useOverlay', function () {
 
   it('should still hide the overlay when pressing the escape key if isDismissable is false', function () {
     let onClose = jest.fn();
-    let res = render(<Example isOpen onClose={onClose} isDismissable={false}/>);
+    let res = render(<Example isOpen onClose={onClose} isDismissable={false} />);
     let el = res.getByTestId('test');
     fireEvent.keyDown(el, {key: 'Escape'});
     expect(onClose).toHaveBeenCalledTimes(1);
