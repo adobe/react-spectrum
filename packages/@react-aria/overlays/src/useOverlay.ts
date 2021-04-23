@@ -41,8 +41,7 @@ interface OverlayProps {
    * out interaction with elements that should not dismiss the overlay.
    * By default, onClose will always be called on interaction outside the overlay ref.
    */
-  shouldCloseOnInteractOutside?: (element: HTMLElement) => boolean,
-  underlayRef?: RefObject<HTMLElement>
+  shouldCloseOnInteractOutside?: (element: HTMLElement) => boolean
 }
 
 interface OverlayAria {
@@ -66,8 +65,7 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
     isOpen,
     isDismissable = false,
     isKeyboardDismissDisabled = false,
-    shouldCloseOnInteractOutside,
-    underlayRef
+    shouldCloseOnInteractOutside
   } = props;
 
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
@@ -106,7 +104,7 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
   };
 
   // Handle clicking outside the overlay to close it
-  useInteractOutside({ref, onInteractOutside: isDismissable ? onInteractOutside : null, underlayRef});
+  useInteractOutside({ref, onInteractOutside: isDismissable ? onInteractOutside : null});
 
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !shouldCloseOnBlur,

@@ -21,8 +21,7 @@ interface InteractOutsideProps {
   ref: RefObject<Element>,
   onInteractOutside?: (e: SyntheticEvent) => void,
   /** Whether the interact outside events should be disabled. */
-  isDisabled?: boolean,
-  underlayRef?: RefObject<HTMLElement>
+  isDisabled?: boolean
 }
 
 /**
@@ -30,7 +29,7 @@ interface InteractOutsideProps {
  * when a user clicks outside them.
  */
 export function useInteractOutside(props: InteractOutsideProps) {
-  let {ref, onInteractOutside, isDisabled, underlayRef} = props;
+  let {ref, onInteractOutside, isDisabled} = props;
   let stateRef = useRef({
     isPointerDown: false,
     ignoreEmulatedMouseEvents: false
@@ -39,9 +38,6 @@ export function useInteractOutside(props: InteractOutsideProps) {
 
   useEffect(() => {
     let onPointerDown = (e) => {
-      if (underlayRef && e.target === underlayRef.current) {
-        e.preventDefault();
-      }
       if (isDisabled) {
         return;
       }
@@ -53,9 +49,6 @@ export function useInteractOutside(props: InteractOutsideProps) {
     // Use pointer events if available. Otherwise, fall back to mouse and touch events.
     if (typeof PointerEvent !== 'undefined') {
       let onPointerUp = (e) => {
-        if (underlayRef && e.target === underlayRef.current) {
-          e.preventDefault();
-        }
         if (isDisabled) {
           return;
         }
