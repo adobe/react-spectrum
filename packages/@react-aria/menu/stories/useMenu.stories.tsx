@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
 import {DismissButton, useOverlay} from '@react-aria/overlays';
 import {FocusScope} from '@react-aria/focus';
 import {Item} from '@react-stately/collections';
@@ -92,7 +93,7 @@ function MenuPopup(props) {
     },
     overlayRef
   );
-  useInteractOutside({ref: overlayRef, onInteractOutside: () => console.log('onInteractOutside')});
+  useInteractOutside({ref: overlayRef, onInteractOutside: action('onInteractOutside')});
 
   // Wrap in <FocusScope> so that focus is restored back to the
   // trigger when the menu is closed. In addition, add hidden

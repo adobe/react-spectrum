@@ -11,6 +11,7 @@
  */
 
 .react-spectrum-Table {
+  user-select: none;
   display: flex;
   flex-direction: column;
 }

@@ -11,6 +11,7 @@
  */
 
 export type {CheckboxGroupState} from '@react-stately/checkbox';
+export type {ListData} from '@react-stately/data';
 export type {ListProps, ListState, SingleSelectListProps, SingleSelectListState} from '@react-stately/list';
 export type {MenuTriggerState} from '@react-stately/menu';
 export type {OverlayTriggerState} from '@react-stately/overlays';
@@ -21,7 +22,7 @@ export type {SliderState} from '@react-stately/slider';
 export type {MultipleSelectionManager, MultipleSelectionState, SingleSelectionState} from '@react-stately/selection';
 export type {ToggleState} from '@react-stately/toggle';
 export type {TooltipTriggerState} from '@react-stately/tooltip';
-export type {TreeState} from '@react-stately/tree';
+export type {TreeProps, TreeState} from '@react-stately/tree';
 
 export {useCheckboxGroupState} from '@react-stately/checkbox';
 export {Item, Section, useCollection} from '@react-stately/collections';

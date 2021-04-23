@@ -1,7 +1,7 @@
 {
   "error": "錯誤",
-  "warning": "警告",
-  "info": "資訊",
   "help": "說明",
-  "success": "成功"
+  "info": "資訊",
+  "success": "成功",
+  "warning": "警告"
 }

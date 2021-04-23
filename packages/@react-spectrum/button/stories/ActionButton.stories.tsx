@@ -105,19 +105,19 @@ function render(props = {}) {
 function DisabledButtonBug() {
   let [fooDisabled, setFooDisabled] = useState<boolean>();
   let fooPressStart = () => {
-    console.log('press start foo');
+    action('press start foo')();
     setFooDisabled(true);
   };
   let fooPressEnd = () => {
-    console.log('press end foo');
+    action('press end foo')();
   };
 
 
   let barPressStart = () => {
-    console.log('press start bar');
+    action('press start bar')();
   };
   let barPressEnd = () => {
-    console.log('press end bar');
+    action('press end bar')();
   };
   return (
     <Flex>

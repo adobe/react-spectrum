@@ -21,8 +21,8 @@
     "@react-aria/ssr": "^3.0.1",
     "@react-aria/utils": "^3.6.0",
     "@react-types/shared": "^3.4.0",
-    "@internationalized/message": "3.0.0-alpha.0",
-    "@internationalized/number": "3.0.0-alpha.0"
+    "@internationalized/message": "3.0.0-rc.0",
+    "@internationalized/number": "3.0.0-rc.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1"

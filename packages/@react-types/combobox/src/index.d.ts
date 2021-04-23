@@ -12,6 +12,8 @@
 
 import {AsyncLoadable, CollectionBase, DOMProps, FocusableProps, InputBase, LoadingState, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase, Validation} from '@react-types/shared';
 
+export type MenuTriggerAction = 'focus' | 'input' | 'manual';
+
 export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, InputBase, TextInputBase, DOMProps, Validation, FocusableProps {
   /** The list of ComboBox items (uncontrolled). */
   defaultItems?: Iterable<T>,
@@ -21,8 +23,8 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
   isOpen?: boolean,
   /** Sets the default open state of the menu. */
   defaultOpen?: boolean,
-  /** Method that is called when the open state of the menu changes. */
-  onOpenChange?: (isOpen: boolean) => void,
+  /** Method that is called when the open state of the menu changes. Returns the new open state and the action that caused the opening of the menu. */
+  onOpenChange?: (isOpen: boolean, menuTrigger?: MenuTriggerAction) => void,
   /** The value of the ComboBox input (controlled). */
   inputValue?: string,
   /** The default value of the ComboBox input (uncontrolled). */
@@ -40,7 +42,7 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
    * The interaction required to display the ComboBox menu.
    * @default 'input'
    */
-  menuTrigger?: 'focus' | 'input' | 'manual',
+  menuTrigger?: MenuTriggerAction,
   /**
    * Whether the menu should automatically flip direction when space is limited.
    * @default true

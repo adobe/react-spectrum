@@ -30,7 +30,7 @@ import intlMessages from '../intl/*.json';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useRef} from 'react';
+import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality, useHover} from '@react-aria/interactions';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
@@ -55,11 +55,9 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     isQuiet,
     isDisabled,
     validationState,
-    isReadOnly,
-    loadingState
+    isReadOnly
   } = props;
 
-  let formatMessage = useMessageFormatter(intlMessages);
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({
     ...props,
@@ -85,21 +83,6 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     }
   };
 
-  let loadingCircle = (
-    <ProgressCircle
-      aria-label={formatMessage('loading')}
-      size="S"
-      isIndeterminate
-      UNSAFE_className={classNames(
-        textfieldStyles,
-        'spectrum-Textfield-circleLoader',
-        classNames(
-          styles,
-          'spectrum-InputGroup-input-circleLoader'
-        )
-      )} />
-  );
-
   return (
     <>
       <Field
@@ -115,9 +98,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           isDisabled={isDisabled}
           isPlaceholder={!state.inputValue}
           validationState={validationState}
-          onPress={() => !isReadOnly && state.open()}
-          isLoading={loadingState === 'loading' || loadingState === 'filtering'}
-          loadingIndicator={loadingState != null && loadingCircle}>
+          onPress={() => !isReadOnly && state.open()}>
           {state.inputValue || props.placeholder || ''}
         </ComboBoxButton>
       </Field>
@@ -138,9 +119,7 @@ interface ComboBoxButtonProps extends AriaButtonProps {
   validationState?: ValidationState,
   children?: ReactNode,
   style?: React.CSSProperties,
-  className?: string,
-  isLoading?: boolean,
-  loadingIndicator?: ReactElement
+  className?: string
 }
 
 const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxButtonProps, ref: RefObject<HTMLElement>) {
@@ -151,9 +130,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
     validationState,
     children,
     style,
-    className,
-    isLoading,
-    loadingIndicator
+    className
   } = props;
   let formatMessage = useMessageFormatter(intlMessages);
   let valueId = useId();
@@ -219,7 +196,6 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
               {
                 'spectrum-Textfield--invalid': validationState === 'invalid',
                 'spectrum-Textfield--valid': validationState === 'valid',
-                'spectrum-Textfield--loadable': loadingIndicator,
                 'spectrum-Textfield--quiet': isQuiet
               },
               classNames(
@@ -260,8 +236,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
               {children}
             </span>
           </div>
-          {validationState && !isLoading ? validation : null}
-          {isLoading && loadingIndicator}
+          {validationState ? validation : null}
         </div>
         <div
           className={
@@ -307,6 +282,8 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     onLoadMore
   } = props;
 
+  let timeout = useRef(null);
+  let [showLoading, setShowLoading] = useState(false);
   let inputRef = useRef<HTMLInputElement>();
   let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
   let popoverRef = useRef<HTMLDivElement>();
@@ -398,6 +375,33 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     popoverRef.current.focus();
   }, [inputRef, popoverRef, isTouchDown]);
 
+  let inputValue = inputProps.value;
+  let lastInputValue = useRef(inputValue);
+  useEffect(() => {
+    if (loadingState === 'filtering' && !showLoading) {
+      if (timeout.current === null) {
+        timeout.current = setTimeout(() => {
+          setShowLoading(true);
+        }, 500);
+      }
+
+      // If user is typing, clear the timer and restart since it is a new request
+      if (inputValue !== lastInputValue.current) {
+        clearTimeout(timeout.current);
+        timeout.current = setTimeout(() => {
+          setShowLoading(true);
+        }, 500);
+      }
+    } else if (loadingState !== 'filtering') {
+      // If loading is no longer happening, clear any timers and hide the loading circle
+      setShowLoading(false);
+      clearTimeout(timeout.current);
+      timeout.current = null;
+    }
+
+    lastInputValue.current = inputValue;
+  }, [loadingState, inputValue, showLoading]);
+
   return (
     <FocusScope restoreFocus contain>
       <div
@@ -416,7 +420,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           inputProps={inputProps}
           inputRef={inputRef}
           isDisabled={isDisabled}
-          isLoading={loadingState === 'filtering'}
+          isLoading={showLoading && loadingState === 'filtering'}
           loadingIndicator={loadingState != null && loadingCircle}
           validationState={validationState}
           wrapperChildren={(state.inputValue !== '' || loadingState === 'filtering') && !props.isReadOnly && clearButton}

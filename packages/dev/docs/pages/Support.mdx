@@ -13,7 +13,7 @@ export default Layout;
 ---
 category: Foundation
 description: How to get help with React Spectrum, how to report issues, and our development roadmap.
-keywords: [react spectrum support, react spectrum help]
+keywords: [react spectrum support, react spectrum help, pre-releases]
 ---
 
 # Support
@@ -61,7 +61,30 @@ out to discuss how we'd like to go about it. This helps avoid rework in the PR r
 
 ### Release schedule
 
-We generally plan to release every two weeks. However, priority bug fixes may be released more quickly. In addition, we release
-alpha and beta versions of new components and features we're working on in advance of their stable release so that the community
-can help test them out. Check out the [Versioning](react-spectrum/versioning.html) docs to learn more about how we version and
+We generally plan to release every 2-3 weeks. However, priority bug fixes may be released more quickly. Check out the [Versioning](react-spectrum/versioning.html) docs to learn more about how we version and
 release React Spectrum.
+
+## Pre-releases
+We release new components and features we're working on in stages before their stable release so that the community
+can help test them out. Our pre-releases include nightlies, alpha, beta and rc. Below we describe what each stage means, and the testing, docs, and API stability you can expect.
+
+### Nightly
+
+Nightly versions are published automatically, and include all code that has been merged that day. Nightlies can be used to access changes before they are published as alphas, however they have not been tested beyond the level done for individual pull requests.
+
+### Alpha
+
+Alpha packages are the first official version available. This means that the API has not been vetted beyond initial conception and implementation. Alpha packages may or may not have documentation, however they have had a basic level of testing across a number of different devices. Alpha packages are considered unstable and individual changes will not be documented in release notes.
+
+### Beta
+
+Beta packages are considerably more stable than alphas. API changes may still occur in beta versions, however once in beta, this is less likely to happen. There may be outstanding features or issues in beta versions, which will be reported on GitHub. Initial documentation will also be available, and accessibility and design audits are conducted as part of this version.
+
+### RC
+
+RC is the last stage before release. The API is very unlikely to change, and all known issues have been addressed.  More complete documentation and translations are also available for RC packages.
+
+### Release
+
+This is a stable version. All documentation, accessibility, and design reviews are finalized, and no breaking changes are allowed.
+

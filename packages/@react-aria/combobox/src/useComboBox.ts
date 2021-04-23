@@ -102,16 +102,21 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     switch (e.key) {
       case 'Enter':
       case 'Tab':
+        // Prevent form submission if menu is open since we may be selecting a option
+        if (state.isOpen && e.key === 'Enter') {
+          e.preventDefault();
+        }
+
         state.commit();
         break;
       case 'Escape':
         state.close();
         break;
       case 'ArrowDown':
-        state.open('first');
+        state.open('first', 'manual');
         break;
       case 'ArrowUp':
-        state.open('last');
+        state.open('last', 'manual');
         break;
       case 'ArrowLeft':
       case 'ArrowRight':
@@ -148,7 +153,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let {labelProps, inputProps} = useTextField({
     ...props,
     onChange: state.setInputValue,
-    onKeyDown: !isReadOnly && chain(state.isOpen && collectionProps.onKeyDownCapture, onKeyDown),
+    onKeyDown: !isReadOnly && chain(state.isOpen && collectionProps.onKeyDown, onKeyDown),
     onBlur,
     value: state.inputValue,
     onFocus,
@@ -160,14 +165,14 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     if (e.pointerType === 'touch') {
       // Focus the input field in case it isn't focused yet
       inputRef.current.focus();
-      state.toggle();
+      state.toggle(null, 'manual');
     }
   };
 
   let onPressStart = (e: PressEvent) => {
     if (e.pointerType !== 'touch') {
       inputRef.current.focus();
-      state.toggle((e.pointerType === 'keyboard' || e.pointerType === 'virtual') ? 'first' : null);
+      state.toggle((e.pointerType === 'keyboard' || e.pointerType === 'virtual') ? 'first' : null, 'manual');
     }
   };
 
@@ -206,7 +211,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     if (touch.clientX === centerX && touch.clientY === centerY) {
       e.preventDefault();
       inputRef.current.focus();
-      state.toggle();
+      state.toggle(null, 'manual');
 
       lastEventTime.current = e.timeStamp;
     }
