@@ -325,7 +325,7 @@ export function TabPanels<T>(props: SpectrumTabPanelsProps<T>) {
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div {...styleProps} {...tabPanelProps} ref={ref} className={classNames(styles, 'spectrum-TabsPanel-tabpanel')}>
+      <div {...styleProps} {...tabPanelProps} ref={ref} key={tabPanelProps.id} className={classNames(styles, 'spectrum-TabsPanel-tabpanel')}>
         {selectedItem && selectedItem.props.children}
       </div>
     </FocusRing>
