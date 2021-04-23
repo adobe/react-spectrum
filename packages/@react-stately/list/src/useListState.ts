@@ -18,8 +18,11 @@ import {useCollection} from '@react-stately/collections';
 
 export interface ListProps<T> extends CollectionBase<T>, MultipleSelection {
   /** Filter function to generate a filtered list of nodes. */
-  filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>
+  filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>,
+  /** @private */
+  suppressTextValueWarning?: boolean
 }
+
 export interface ListState<T> {
   /** A collection of items in the list. */
   collection: Collection<Node<T>>,
@@ -46,8 +49,9 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
   , [props.disabledKeys]);
 
   let factory = nodes => filter ? new ListCollection(filter(nodes)) : new ListCollection(nodes as Iterable<Node<T>>);
+  let context = useMemo(() => ({suppressTextValueWarning: props.suppressTextValueWarning}), [props.suppressTextValueWarning]);
 
-  let collection = useCollection(props, factory, null, [filter]);
+  let collection = useCollection(props, factory, context, [filter]);
 
   // Reset focused key if that item is deleted from the collection.
   useEffect(() => {
