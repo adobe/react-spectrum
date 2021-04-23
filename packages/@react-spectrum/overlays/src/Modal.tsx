@@ -30,15 +30,11 @@ interface ModalWrapperProps extends HTMLAttributes<HTMLElement> {
 }
 
 function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, onClose, type, isDismissable, isKeyboardDismissDisabled, ...otherProps} = props;
+  let {children, onClose, type, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
 
-  let {overlayProps, underlayProps} = useOverlay({
-    onClose,
-    isDismissable,
-    isKeyboardDismissDisabled
-  }, domRef);
+  let {overlayProps, underlayProps} = useOverlay(props, domRef);
 
   return (
     <Overlay {...otherProps}>
