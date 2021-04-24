@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaLabelingProps, CollectionBase, DOMProps, DOMRef, ItemElement, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, CollectionBase, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
@@ -24,7 +24,6 @@ import React, {ReactElement, useContext, useMemo} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
-import {SpectrumListBoxProps} from '@react-types/listbox';
 
 
 export const ListViewContext = React.createContext(null);
@@ -55,9 +54,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let {
     transitionDuration = 0
   } = props;
-  let {items, ...otherProps} = props;
   let domRef = useDOMRef(ref);
-  let {collection} = useListState(otherProps);
+  let {collection} = useListState(props);
   let formatMessage = useMessageFormatter(intlMessages);
 
   let {styleProps} = useStyleProps(props);
