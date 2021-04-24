@@ -101,7 +101,7 @@ export function useHover(props: HoverProps): HoverResult {
 
   let hoverProps = useMemo(() => {
     let triggerHoverStart = (event, pointerType) => {
-      if (isDisabled || pointerType === 'touch' || state.isHovered) {
+      if (isDisabled || pointerType === 'touch' || state.isHovered || !event.currentTarget.contains(event.target)) {
         return;
       }
 

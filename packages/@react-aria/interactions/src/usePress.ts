@@ -214,7 +214,6 @@ export function usePress(props: PressHookProps): PressResult {
           e.preventDefault();
           e.stopPropagation();
 
-
           // If the event is repeating, it may have started on a different element
           // after which focus moved to the current element. Ignore these events and
           // only handle the first key down event.
@@ -235,6 +234,10 @@ export function usePress(props: PressHookProps): PressResult {
         }
       },
       onClick(e) {
+        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+          return;
+        }
+
         if (e && e.button === 0) {
           e.stopPropagation();
           if (isDisabled) {
@@ -280,7 +283,7 @@ export function usePress(props: PressHookProps): PressResult {
     if (typeof PointerEvent !== 'undefined') {
       pressProps.onPointerDown = (e) => {
         // Only handle left clicks
-        if (e.button !== 0) {
+        if (e.button !== 0 || !e.currentTarget.contains(e.target as HTMLElement)) {
           return;
         }
 
@@ -315,6 +318,10 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onMouseDown = (e) => {
+        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+          return;
+        }
+
         if (e.button === 0) {
           // Chrome and Firefox on touch Windows devices require mouse down events
           // to be canceled in addition to pointer events, or an extra asynchronous
@@ -328,6 +335,10 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onPointerUp = (e) => {
+        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+          return;
+        }
+
         // Only handle left clicks
         // Safari on iOS sometimes fires pointerup events, even
         // when the touch isn't over the target, so double check.
@@ -383,7 +394,7 @@ export function usePress(props: PressHookProps): PressResult {
     } else {
       pressProps.onMouseDown = (e) => {
         // Only handle left clicks
-        if (e.button !== 0) {
+        if (e.button !== 0 || !e.currentTarget.contains(e.target as HTMLElement)) {
           return;
         }
 
@@ -429,6 +440,10 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onMouseUp = (e) => {
+        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+          return;
+        }
+
         if (!state.ignoreEmulatedMouseEvents && e.button === 0) {
           triggerPressUp(e, state.pointerType);
         }
