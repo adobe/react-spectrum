@@ -74,7 +74,7 @@ storiesOf('ListView', module)
     ];
     return (
       <ListView items={items} width="300px" height="250px">
-        {(item: any) => (
+        {(item) => (
           <Item>
             <Flex alignItems="center" gap="10px">
               <View flexGrow={1}>Item {item.key}</View> {/* TODO */}

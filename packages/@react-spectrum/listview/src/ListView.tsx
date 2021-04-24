@@ -20,10 +20,11 @@ import listStyles from './listview.css';
 import {ListViewItem} from './ListViewItem';
 import {ListViewLayout} from '@react-stately/layout';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {useContext, useMemo} from 'react';
+import React, {ReactElement, useContext, useMemo} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
+import {SpectrumListBoxProps} from '@react-types/listbox';
 
 
 export const ListViewContext = React.createContext(null);
@@ -44,7 +45,6 @@ export function useListLayout<T>(state: ListState<T>) {
   return layout;
 }
 
-export type ItemRenderer<T> = (item: T) => ItemElement<T>;
 interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps {
   isLoading?: boolean,
   renderEmptyState?: () => JSX.Element,
@@ -55,8 +55,9 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let {
     transitionDuration = 0
   } = props;
+  let {items, ...otherProps} = props;
   let domRef = useDOMRef(ref);
-  let {collection} = useListState(props);
+  let {collection} = useListState(otherProps);
   let formatMessage = useMessageFormatter(intlMessages);
 
   let {styleProps} = useStyleProps(props);
@@ -161,5 +162,5 @@ function CenteredWrapper({children}) {
   );
 }
 
-const _ListView = React.forwardRef(ListView);
+const _ListView = React.forwardRef(ListView) as <T>(props: ListViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ListView as ListView};
