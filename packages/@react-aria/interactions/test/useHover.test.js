@@ -440,7 +440,7 @@ describe('useHover', function () {
           <PortalExample
             onHoverStart={hoverMock}
             onHoverEnd={hoverMock}
-            onHoverChange={hoverMock}/>
+            onHoverChange={hoverMock} />
         );
 
         fireEvent.click(res.getByText('open'));
