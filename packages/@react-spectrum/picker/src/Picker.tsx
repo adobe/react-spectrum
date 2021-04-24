@@ -40,6 +40,7 @@ import React, {ReactElement, useCallback, useRef, useState} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
 import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
 import {Text} from '@react-spectrum/text';
+import {TextFieldBase} from '@react-spectrum/textfield';
 import {useFormProps} from '@react-spectrum/form';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
@@ -51,6 +52,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let formatMessage = useMessageFormatter(intlMessages);
   let {
     isDisabled,
+    isReadOnly,
     direction = 'bottom',
     align = 'start',
     shouldFlip = true,
@@ -252,6 +254,16 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       {state.collection.size === 0 ? null : overlay}
     </div>
   );
+
+  if (isReadOnly) {
+    picker = (
+      <TextFieldBase
+        inputProps={{readOnly: isReadOnly, value: state.selectedKey}}
+        isQuiet={isQuiet}
+        isReadOnly={isReadOnly}
+        validationState={validationState} />
+    );
+  }
 
   if (label) {
     let labelWrapperClass = classNames(

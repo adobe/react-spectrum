@@ -119,6 +119,16 @@ storiesOf('Picker', module)
         <Item key="Three">Three</Item>
       </Picker>
     )
+)
+  .add(
+    'isReadOnly',
+    () => (
+      <Picker label="Test" isReadOnly onSelectionChange={action('selectionChange')} selectedKey="One">
+        <Item key="One">One</Item>
+        <Item key="Two">Two</Item>
+        <Item key="Three">Three</Item>
+      </Picker>
+    )
   )
   .add(
     'labelAlign: end',
