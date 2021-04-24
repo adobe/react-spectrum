@@ -234,7 +234,8 @@ export function usePress(props: PressHookProps): PressResult {
         }
       },
       onClick(e) {
-        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+        console.log(e)
+        if (e && !e.currentTarget.contains(e.target as HTMLElement)) {
           return;
         }
 
