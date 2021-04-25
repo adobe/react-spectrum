@@ -10,14 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {CollectionBase, DOMProps, StyleProps} from '@react-types/shared';
+import {Key, ReactNode} from 'react';
 
-export interface ActionBarProps {
-  value?: any,
-  defaultValue?: any,
-  onChange?: any
+export interface ActionBarProps<T> extends CollectionBase<T> {
+  // Required. When zero, the ActionBar is hidden.
+  selectedItemCount: number,
+  // Also required. When clicked, the selection should be cleared.
+  onClearSelection: () => void,
+  isEmphasized?: boolean,
+  onAction?: (key: Key) => void
 }
 
-export interface SpectrumActionBarProps extends ActionBarProps, DOMProps, StyleProps {
-
+export interface SpectrumActionBarProps<T> extends ActionBarProps<T>, DOMProps, StyleProps {
+  variant: 'primary' | 'secondary' | 'warning'
 }
+
+interface ActionBarContainerProps {
+  children: ReactNode
+}
+
+export interface SpectrumActionBarContainerProps extends ActionBarContainerProps, DOMProps, StyleProps {}

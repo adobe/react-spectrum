@@ -13,3 +13,5 @@
 /// <reference types="css-module-types" />
 
 export * from './ActionBar';
+export * from './ActionBarContainer';
+export {Item} from '@react-stately/collections';

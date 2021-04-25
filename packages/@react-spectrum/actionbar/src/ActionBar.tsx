@@ -10,27 +10,67 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton} from '@react-spectrum/button';
+import {ActionGroup} from '@react-spectrum/actiongroup';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
+import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React from 'react';
 import {SpectrumActionBarProps} from '@react-types/actionbar';
-import {useProviderProps} from '@react-spectrum/provider';
-
+import styles from './actionbar.css';
+import {Text} from '@react-spectrum/text';
 
 function ActionBar(props: SpectrumActionBarProps, ref: DOMRef<HTMLDivElement>) {
   // Grabs specific props from the closest Provider (see https://react-spectrum.adobe.com/react-spectrum/Provider.html#property-groups). Remove if your component doesn't support any of the listed props.
   props = useProviderProps(props);
+
+  const {
+    children,
+    isEmphasized,
+    onAction,
+    onClearSelection,
+    selectedItemCount,
+    variant,
+    ...otherProps
+  } = props;
+
   // Handles RSP specific style options, UNSAFE_style, and UNSAFE_className props (see https://react-spectrum.adobe.com/react-spectrum/styling.html#style-props)
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
+  let providerProps = {isEmphasized};
 
   return (
     <div
       {...filterDOMProps(props)}
       {...styleProps}
       ref={domRef}
-      className={styleProps.className} />
+      className={classNames(
+        styles,
+        'spectrum-ActionBar', {
+          'spectrum-ActionBar--primary': variant === 'primary',
+          'spectrum-ActionBar--secondary': variant === 'secondary',
+          'spectrum-ActionBar--warning': variant === 'warning',
+          'spectrum-ActionBar--emphasized': isEmphasized
+        },
+        styleProps.className,
+        otherProps.UNSAFE_className
+      )}>
+      <Provider {...providerProps}>
+        <div className={classNames(styles, 'spectrum-ActionBar__leading')}>
+          <ActionButton
+            onPress={() => onClearSelection()}
+            isQuiet>
+            <CrossLarge />
+          </ActionButton>
+          <Text>{selectedItemCount} selected</Text>
+        </div>
+        <ActionGroup selectionMode="none" onAction={onAction}>
+          {children}
+        </ActionGroup>
+      </Provider>
+    </div>
   );
 }
 
