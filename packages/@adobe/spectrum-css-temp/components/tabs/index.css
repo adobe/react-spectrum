@@ -46,6 +46,7 @@ governing permissions and limitations under the License.
   vertical-align: top;
 
   outline: none;
+  user-select: none;
 }
 
 .spectrum-Tabs-item {
@@ -78,6 +79,9 @@ governing permissions and limitations under the License.
   .spectrum-Icon {
     /* Vertical centering */
     block-size: var(--spectrum-tabs-item-height);
+    transition: fill var(--spectrum-global-animation-duration-100) ease-out;
+    /* Prevents a wiggle in Safari when switching tabs. */
+    transform: translate3d(0, 0, 0);
 
     & + .spectrum-Tabs-itemLabel {
       margin-inline-start: var(--spectrum-tabs-icon-gap);
@@ -263,9 +267,13 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-TabsPanel-tabs {
-  flex-grow: 0;
+  flex-grow: 1;
   flex-shrink: 0;
   flex-basis: 0%;
+
+  &.spectrum-Tabs--vertical {
+    flex-grow: 0;
+  }
 }
 
 .spectrum-TabsPanel-tabpanel {
