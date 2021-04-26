@@ -570,7 +570,7 @@ The example below demonstrates how you could update the input value for your sel
 
 ```tsx example
 function AsyncLoadingExample() {
-  let isFocused = useRef(false);
+  let isFocused = React.useRef(false);
   let list = useAsyncList({
     async load({signal, cursor, filterText, selectedKeys}) {
       if (cursor) {
