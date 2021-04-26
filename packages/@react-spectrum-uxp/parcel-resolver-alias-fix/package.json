@@ -2,6 +2,7 @@
   "name": "@react-spectrum-uxp/parcel-resolver-alias-fix",
   "version": "3.0.0-alpha.1",
   "private": true,
+  "module": "AliasFixResolver.js",
   "main": "AliasFixResolver.js",
   "engines": {
     "parcel": ">= 2.0.0-alpha.3.2"
