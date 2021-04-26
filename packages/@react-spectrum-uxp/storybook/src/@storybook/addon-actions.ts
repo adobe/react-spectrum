@@ -1,6 +1,5 @@
-
 export function action(name: string) {
-    return () => {
-        console.log("actions: " + name)
-    }
+  return () => {
+    console.log('actions: ' + name);
+  };
 }

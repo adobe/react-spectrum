@@ -1,11 +1,9 @@
-import "./shim";
-import React, { createElement } from "react";
-import ReactDOM from "react-dom";
-import App from "./App";
-import foo from "./foo";
-import Bar from "./bar";
+import './shim';
+import App from './App';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 ReactDOM.render(
-    <App />,
-    document.getElementById("app")
+  <App />,
+  document.getElementById('app')
 );

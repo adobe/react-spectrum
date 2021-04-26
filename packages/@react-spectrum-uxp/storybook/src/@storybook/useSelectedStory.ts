@@ -1,5 +1,5 @@
-import useLocalStorage from "../useLocalStorage";
+import useLocalStorage from '../useLocalStorage';
 
 export default function useSelectedStory(): [string[], (value: string[]) => void] {
-    return useLocalStorage("selectedStory", []) as any;
+  return useLocalStorage('selectedStory', []) as any;
 }

@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useFocusableRef, useSlotProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import React, {ElementType, ReactElement} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
-import {useProviderProps} from '@react-spectrum/provider';
+import {useFocusableRef} from '@react-spectrum/utils';
 
 function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>, ref: FocusableRef<HTMLElement>) {
   // props = useProviderProps(props);
@@ -26,8 +25,6 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     children,
     variant,
     isQuiet,
-    isDisabled,
-    autoFocus,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
@@ -38,9 +35,8 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
       {...buttonProps}
       {...otherProps}
       ref={domRef}
-      quiet={ isQuiet }   // uxp
-      variant={ variant } // uxp
-      >
+      quiet={isQuiet}   // uxp
+      variant={variant}>
       {typeof children === 'string'
         ? <Text>{children}</Text>
         : children}
