@@ -54,7 +54,9 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
   }
 
   // This handles focusing the input on pointer down, which Safari does not do by default.
-  let {pressProps} = usePress({isDisabled});
+  let {pressProps} = usePress({
+    isDisabled
+  });
 
   let {focusableProps} = useFocusable(props, ref);
   let interactions = mergeProps(pressProps, focusableProps);

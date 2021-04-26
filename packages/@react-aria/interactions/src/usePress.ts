@@ -236,10 +236,10 @@ export function usePress(props: PressHookProps): PressResult {
       },
       onClick(e) {
         if (e && e.button === 0) {
+          e.stopPropagation();
           if (isDisabled) {
             e.preventDefault();
           }
-          e.stopPropagation();
 
           // If triggered from a screen reader or by using element.click(),
           // trigger as if it were a keyboard click.
