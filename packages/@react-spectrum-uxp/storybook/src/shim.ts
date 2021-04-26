@@ -27,3 +27,5 @@ if (!Element.prototype.closest) {
     return null;
   };
 }
+
+export default true;
