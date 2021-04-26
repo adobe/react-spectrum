@@ -11,6 +11,7 @@
  */
 
 import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {HelpText} from './HelpText';
 import {Label} from './Label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from '@react-aria/utils';
@@ -25,8 +26,15 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     isRequired,
     necessityIndicator,
     includeNecessityIndicatorInAccessibilityName,
+    validationState,
+    description,
+    errorMessage,
+    isDisabled,
+    showIcon,
     children,
     labelProps,
+    descriptionProps,
+    errorMessageProps,
     elementType,
     wrapperClassName,
 
@@ -69,6 +77,16 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
           {label}
         </Label>
         {children}
+        {(description || errorMessage) &&
+          <HelpText
+            descriptionProps={descriptionProps}
+            errorMessageProps={errorMessageProps}
+            description={description}
+            errorMessage={errorMessage}
+            validationState={validationState}
+            isDisabled={isDisabled}
+            showIcon={showIcon} />
+        }
       </div>
     );
   }

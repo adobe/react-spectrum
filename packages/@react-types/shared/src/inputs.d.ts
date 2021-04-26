@@ -69,7 +69,7 @@ export interface HelpTextProps {
 }
 
 // Spectrum specific types. Extends `Validation` so that the `validationState` prop is available.
-export interface SpectrumHelpTextProps extends Validation {
+export interface SpectrumHelpTextProps extends HelpTextProps, Validation {
   /** Whether the description is displayed with lighter text. */
   isDisabled?: boolean,
   /** Whether an error icon is rendered. */

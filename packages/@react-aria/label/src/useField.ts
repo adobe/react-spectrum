@@ -17,7 +17,7 @@ import {useSlotId} from '@react-aria/utils';
 
 interface AriaFieldProps extends LabelableProps, HelpTextProps {}
 
-interface FieldAria extends LabelAria {
+export interface FieldAria extends LabelAria {
   /** Props for the description element, if any. */
   descriptionProps: HTMLAttributes<HTMLElement>,
   /** Props for the error message element, if any. */
