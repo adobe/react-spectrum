@@ -16,11 +16,12 @@ import {
   HTMLAttributes,
   LabelHTMLAttributes,
   RefObject,
-  useCallback
+  useCallback,
+  useState
 } from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
+import {useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
-import {useScrollWheel} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
 
 interface ColorFieldAria {
@@ -72,6 +73,9 @@ export function useColorField(
     }
   );
 
+  let [focusWithin, setFocusWithin] = useState(false);
+  let {focusWithinProps} = useFocusWithin({isDisabled, onFocusWithinChange: setFocusWithin});
+
   let onWheel = useCallback((e) => {
     if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) {
       return;
@@ -83,7 +87,7 @@ export function useColorField(
     }
   }, [isReadOnly, isDisabled, decrement, increment]);
   // If the input isn't supposed to receive input, disable scrolling.
-  let scrollingDisabled = isDisabled || isReadOnly;
+  let scrollingDisabled = isDisabled || isReadOnly || !focusWithin;
   useScrollWheel({onScroll: onWheel, isDisabled: scrollingDisabled}, ref);
 
   let onChange = value => {
@@ -101,7 +105,7 @@ export function useColorField(
 
   return {
     labelProps,
-    inputProps: mergeProps(inputProps, spinButtonProps, {
+    inputProps: mergeProps(inputProps, spinButtonProps, focusWithinProps, {
       role: 'textbox',
       'aria-valuemax': null,
       'aria-valuemin': null,
