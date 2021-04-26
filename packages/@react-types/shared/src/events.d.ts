@@ -135,3 +135,15 @@ export interface MoveEvents {
   /** Handler that is called when a move interaction ends. */
   onMoveEnd?: (e: MoveEndEvent) => void
 }
+
+export interface ScrollEvent {
+  /** The amount moved in the X direction since the last event. */
+  deltaX: number,
+  /** The amount moved in the Y direction since the last event. */
+  deltaY: number
+}
+
+export interface ScrollEvents {
+  /** Handler that is called when the scroll wheel moves. */
+  onScroll?: (e: ScrollEvent) => void
+}

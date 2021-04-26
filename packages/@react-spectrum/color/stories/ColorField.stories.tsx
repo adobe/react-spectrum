@@ -30,6 +30,13 @@ storiesOf('ColorField', module)
     () => render({defaultValue: '#abcdef'})
   )
   .add(
+    'value',
+    () => render({
+      value: '#FF00AA',
+      onChange: action('change')
+    })
+  )
+  .add(
     'isQuiet',
     () => render({isQuiet: true})
   )
@@ -50,6 +57,16 @@ storiesOf('ColorField', module)
     () => render({validationState: 'invalid'})
   )
   .add(
+    'required, label, optional',
+    () => (
+      <Flex direction="column" gap="size-100">
+        {render({isRequired: 'true'})}
+        {render({isRequired: 'true', necessityIndicator: 'label'})}
+        {render({necessityIndicator: 'label'})}
+      </Flex>
+    )
+  )
+  .add(
     'with placeholder',
     () => render({placeholder: 'Enter a hex color'})
   )
@@ -68,6 +85,50 @@ storiesOf('ColorField', module)
   .add(
     'autofocus',
     () => render({autoFocus: true})
+  )
+  .add(
+    'placeholder',
+    () => render({placeholder: '#e73623'})
+  )
+  .add(
+    'label side',
+    () => render({labelPosition: 'side'})
+  )
+  .add(
+    'no visible label',
+    () => renderNoLabel({isRequired: true, 'aria-label': 'Primary Color'})
+  )
+  .add(
+    'aria-labelledby',
+    () => (
+      <>
+        <label htmlFor="colorfield" id="label">Primary Color</label>
+        {renderNoLabel({isRequired: true, id: 'colorfield', 'aria-labelledby': 'label'})}
+      </>
+    )
+  )
+  .add(
+    'custom width',
+    () => render({width: 'size-3000'})
+  )
+  .add(
+    'custom width no visible label',
+    () => renderNoLabel({width: 'size-3000', isRequired: true, 'aria-label': 'Primary Color'})
+  )
+  .add(
+    'custom width, labelPosition=side',
+    () => render({width: 'size-3000', labelPosition: 'side'})
+  )
+  .add(
+    'custom width, 10px for min-width',
+    () => (
+      <Flex direction="column" gap="size-100">
+        {render({width: '10px'})}
+        <div style={{width: '10px'}}>
+          {render()}
+        </div>
+      </Flex>
+    )
   );
 
 function ControlledColorField(props: any = {}) {
@@ -102,5 +163,11 @@ function render(props: any = {}) {
       label="Primary Color"
       onChange={action('change')}
       {...props} />
+  );
+}
+
+function renderNoLabel(props: any = {}) {
+  return (
+    <ColorField {...props} onChange={action('onChange')} />
   );
 }

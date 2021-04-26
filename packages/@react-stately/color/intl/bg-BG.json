@@ -1,10 +1,10 @@
 {
-  "hue": "Нюанс",
-  "saturation": "Наситеност",
-  "lightness": "Осветеност",
-  "brightness": "Яркост",
-  "red": "Червено",
-  "green": "Зелено",
+  "alpha": "Алфа",
   "blue": "Синьо",
-  "alpha": "Алфа"
+  "brightness": "Яркост",
+  "green": "Зелено",
+  "hue": "Оттенък",
+  "lightness": "Лекота",
+  "red": "Червено",
+  "saturation": "Наситеност"
 }

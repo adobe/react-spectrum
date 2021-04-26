@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {mergeProps} from '@react-aria/utils';
-import React, {HTMLAttributes, MutableRefObject, RefObject, useContext, useEffect} from 'react';
+import {mergeProps, useSyncRef} from '@react-aria/utils';
+import React, {HTMLAttributes, MutableRefObject, RefObject, useContext} from 'react';
 
 interface DOMPropsResponderProps extends HTMLAttributes<HTMLElement> {
   ref?: RefObject<HTMLElement>
@@ -32,16 +32,7 @@ export function useDOMPropsResponderContext(props: DOMPropsResponderProps): DOMP
     props = mergeProps(contextProps, props);
     register();
   }
-
-  // Sync ref from <DOMPropsResponder> with ref passed to the useHover hook.
-  useEffect(() => {
-    if (context && context.ref) {
-      context.ref.current = props.ref.current;
-      return () => {
-        context.ref.current = null;
-      };
-    }
-  }, [context, props.ref]);
+  useSyncRef(context, props.ref);
 
   return props;
 }
