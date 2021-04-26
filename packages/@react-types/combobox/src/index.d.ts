@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncLoadable, CollectionBase, DOMProps, FocusableProps, InputBase, LoadingState, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase, Validation} from '@react-types/shared';
+import {AsyncLoadable, CollectionBase, DOMProps, FocusableProps, HelpTextProps, InputBase, LoadingState, SingleSelection, SpectrumHelpTextProps, SpectrumLabelableProps, StyleProps, TextInputBase, Validation} from '@react-types/shared';
 
 export type MenuTriggerAction = 'focus' | 'input' | 'manual';
 
-export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, InputBase, TextInputBase, DOMProps, Validation, FocusableProps {
+export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, InputBase, TextInputBase, DOMProps, Validation, HelpTextProps, FocusableProps {
   /** The list of ComboBox items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of ComboBox items (controlled). */
@@ -50,7 +50,7 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
   shouldFlip?: boolean
 }
 
-export interface SpectrumComboBoxProps<T> extends ComboBoxProps<T>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface SpectrumComboBoxProps<T> extends ComboBoxProps<T>, SpectrumLabelableProps, SpectrumHelpTextProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
   /** Whether the ComboBox should be displayed with a quiet style. */
   isQuiet?: boolean,
   /**

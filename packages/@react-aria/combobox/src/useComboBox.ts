@@ -48,7 +48,11 @@ interface ComboBoxAria {
   /** Props for the combo box menu. */
   listBoxProps: HTMLAttributes<HTMLElement>,
   /** Props for the combo box label element. */
-  labelProps: HTMLAttributes<HTMLElement>
+  labelProps: HTMLAttributes<HTMLElement>,
+  /** Props for the combo box description element, if any. */
+  descriptionProps: HTMLAttributes<HTMLElement>,
+  /** Props for the combo box error message element, if any. */
+  errorMessageProps: HTMLAttributes<HTMLElement>
 }
 
 /**
@@ -150,7 +154,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     state.setFocused(true);
   };
 
-  let {labelProps, inputProps} = useTextField({
+  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
     ...props,
     onChange: state.setInputValue,
     onKeyDown: !isReadOnly && chain(state.isOpen && collectionProps.onKeyDown, onKeyDown),
@@ -303,12 +307,18 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       // TODO: readd proper logic for completionMode = complete (aria-autocomplete: both)
       'aria-autocomplete': 'list',
       'aria-activedescendant': focusedItem ? getItemId(state, focusedItem.key) : undefined,
+      'aria-describedby': [
+        errorMessageProps.id,
+        descriptionProps.id
+      ].filter(Boolean).join(' '),
       onTouchEnd,
       // This disable's iOS's autocorrect suggestions, since the combo box provides its own suggestions.
       autoCorrect: 'off',
       // This disable's the macOS Safari spell check auto corrections.
       spellCheck: 'false'
     }),
-    listBoxProps: mergeProps(menuProps, listBoxProps)
+    listBoxProps: mergeProps(menuProps, listBoxProps),
+    descriptionProps,
+    errorMessageProps
   };
 }
