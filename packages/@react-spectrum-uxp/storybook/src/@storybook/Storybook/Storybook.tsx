@@ -9,7 +9,7 @@ import Sidebar from './Sidebar';
 export default function Storybook() {
   return (
     <Provider id="storybook" key="provider" theme={defaultTheme}>
-      <div style={{display: 'flex', flexDirection: 'row' }}>
+      <div style={{display: 'flex', flexDirection: 'row'}}>
         <Sidebar />
         <MainContent />
       </div>

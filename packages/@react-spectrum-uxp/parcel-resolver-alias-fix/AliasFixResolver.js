@@ -10,19 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-const { Resolver } = require('@parcel/plugin');
-const NodeResolver = require('@parcel/node-resolver-core').default;
+const {Resolver} = require('@parcel/plugin');
 const path = require('path');
 
-const { Console } = require('console');
-const console = new Console(process.stdout, process.stdin);
+// const {Console} = require('console');
+// const console = new Console(process.stdout, process.stdin);
 
 async function getPackage(fs, file) {
   let parent = path.dirname(file);
   if (parent === file) {
     return [];
   }
-  let check = path.join(parent, "package.json");
+  let check = path.join(parent, 'package.json');
   if (fs.existsSync(check)) {
     return [parent, JSON.parse((await fs.readFile(check)).toString())];
   }
@@ -39,7 +38,7 @@ async function getPackage(fs, file) {
 module.exports = new Resolver({
 
   async resolve(args) {
-    let {dependency, options, filePath} = args;
+    let {options, filePath} = args;
 
     if (this.alias == null) {
       // console.log("FS", Object.keys(options.inputFS));
@@ -58,9 +57,9 @@ module.exports = new Resolver({
     // if (filePath.indexOf('.stories.') > 0 || filePath.indexOf("Button") > 0) {
     //   console.log("------> " + filePath + " : " + dependency.sourcePath + " " + dependency.target);
     // }
-    if (alias && alias.startsWith(".") && alias.indexOf(".stories.") < 0) {
+    if (alias && alias.startsWith('.') && alias.indexOf('.stories.') < 0) {
       // console.log("Found Alias: " + filePath);
-      return { filePath: path.join(this.root, alias) };
+      return {filePath: path.join(this.root, alias)};
     }
     return null;
   }

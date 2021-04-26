@@ -12,7 +12,11 @@
 
 export {ActionGroup} from '@react-spectrum/actiongroup';
 export {Breadcrumbs} from '@react-spectrum/breadcrumbs';
-export {ActionButton, Button, LogicButton, ToggleButton} from '@react-spectrum-uxp/button';
+//  getting the following error, since @react-spectrum-uxp/button is not yet published.
+//  I'm changing this to a relative link UNTIL we publish, then we will fix it.
+// /home/circleci/react-spectrum/packages/@adobe/react-spectrum-uxp/src/index.ts
+//   15:1  error  Missing dependency on @react-spectrum-uxp/button  rulesdir/imports
+export {ActionButton, Button, LogicButton, ToggleButton} from '../../../@react-spectrum-uxp/button';
 export {ButtonGroup} from '@react-spectrum/buttongroup';
 export {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 export {AlertDialog, Dialog, DialogTrigger, DialogContainer, useDialogContainer} from '@react-spectrum/dialog';

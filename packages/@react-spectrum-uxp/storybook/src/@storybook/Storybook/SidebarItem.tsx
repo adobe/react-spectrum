@@ -7,7 +7,7 @@ export default function SidebarItem(props: { name: string, selected?: boolean, i
   let toggle = () => setOpen(!open);
   let {selected, indent, action = toggle, ...rest} = props;
   let baseStyle = {paddingLeft: indent * 16};
-  let style = selected ? {...baseStyle, color: 'blue' } : baseStyle;
+  let style = selected ? {...baseStyle, color: 'blue'} : baseStyle;
   return (
     // css is not working... for some reason with this older version of parcel 2...
     //  so we are going to style it manually so we at least see it as blue.

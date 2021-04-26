@@ -1,5 +1,5 @@
-import '@react-spectrum/button/stories/ActionButton.stories.tsx';
-import '@react-spectrum/button/stories/Button.stories.tsx';
+import '../../../../@react-spectrum/button/stories/ActionButton.stories';
+import '../../../../@react-spectrum/button/stories/Button.stories';
 
 // import "@react-spectrum/button/stories/LogicButton.stories.tsx";
 

@@ -10,4 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-export const isUxp = typeof document === "object" && document.location.protocol === 'plugin:';
+export const isUxp = typeof document === 'object' && document.location.protocol === 'plugin:';
