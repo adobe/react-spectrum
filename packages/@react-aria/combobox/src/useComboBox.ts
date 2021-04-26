@@ -113,10 +113,10 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
         state.close();
         break;
       case 'ArrowDown':
-        state.open('first');
+        state.open('first', 'manual');
         break;
       case 'ArrowUp':
-        state.open('last');
+        state.open('last', 'manual');
         break;
       case 'ArrowLeft':
       case 'ArrowRight':
@@ -165,14 +165,14 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     if (e.pointerType === 'touch') {
       // Focus the input field in case it isn't focused yet
       inputRef.current.focus();
-      state.toggle();
+      state.toggle(null, 'manual');
     }
   };
 
   let onPressStart = (e: PressEvent) => {
     if (e.pointerType !== 'touch') {
       inputRef.current.focus();
-      state.toggle((e.pointerType === 'keyboard' || e.pointerType === 'virtual') ? 'first' : null);
+      state.toggle((e.pointerType === 'keyboard' || e.pointerType === 'virtual') ? 'first' : null, 'manual');
     }
   };
 
@@ -211,7 +211,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     if (touch.clientX === centerX && touch.clientY === centerY) {
       e.preventDefault();
       inputRef.current.focus();
-      state.toggle();
+      state.toggle(null, 'manual');
 
       lastEventTime.current = e.timeStamp;
     }

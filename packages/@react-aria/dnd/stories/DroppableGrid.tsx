@@ -44,6 +44,8 @@ export function DroppableGridExample(props) {
     ]
   });
 
+  let ref = React.useRef(null);
+
   let onDrop = async (e: DroppableCollectionDropEvent) => {
     if (props.onDrop) {
       props.onDrop(e);
@@ -99,7 +101,7 @@ export function DroppableGridExample(props) {
   };
 
   return (
-    <DroppableGrid {...props} items={list.items} onDrop={onDrop}>
+    <DroppableGrid {...props} items={list.items} onDrop={onDrop} ref={ref}>
       {item => (
         <Item textValue={item.text}>
           {item.type === 'folder' && <Folder size="S" />}
@@ -110,12 +112,15 @@ export function DroppableGridExample(props) {
   );
 }
 
-function DroppableGrid(props) {
-  let ref = React.useRef<HTMLDivElement>(null);
+const DroppableGrid = React.forwardRef(function (props: any, ref) {
+  let domRef = React.useRef<HTMLDivElement>(null);
   let state = useListState(props);
-  let keyboardDelegate = new ListKeyboardDelegate(state.collection, new Set(), ref);
+  let keyboardDelegate = new ListKeyboardDelegate(state.collection, new Set(), domRef);
   let gridState = useGridState({
     selectionMode: 'multiple',
+    focusMode: 'cell',
+    selectedKeys: props.selectedKeys,
+    onSelectionChange: props.onSelectionChange,
     collection: new GridCollection({
       columnCount: 1,
       items: [...state.collection].map(item => ({
@@ -135,6 +140,13 @@ function DroppableGrid(props) {
     })
   });
 
+  React.useImperativeHandle(ref, () => ({
+    focusItem(key) {
+      gridState.selectionManager.setFocusedKey(`cell-${key}`);
+      gridState.selectionManager.setFocused(true);
+    }
+  }));
+
   let defaultGetDropOperation = (target, items, allowedOperations) => {
     if (target.type === 'root') {
       return 'move';
@@ -149,6 +161,7 @@ function DroppableGrid(props) {
 
   let dropState = useDroppableCollectionState({
     collection: gridState.collection,
+    selectionManager: gridState.selectionManager,
     getDropOperation: props.getDropOperation || defaultGetDropOperation,
     onDropEnter: props.onDropEnter,
     onDropMove: props.onDropMove,
@@ -164,14 +177,14 @@ function DroppableGrid(props) {
     onDropActivate: props.onDropActivate,
     onDrop: props.onDrop,
     getDropTargetFromPoint(x, y) {
-      let rect = ref.current.getBoundingClientRect();
+      let rect = domRef.current.getBoundingClientRect();
       x += rect.x;
       y += rect.y;
       let closest = null;
       let closestDistance = Infinity;
       let closestDir = null;
 
-      for (let child of ref.current.children) {
+      for (let child of domRef.current.children) {
         if (!(child as HTMLElement).dataset.key) {
           continue;
         }
@@ -209,11 +222,11 @@ function DroppableGrid(props) {
         };
       }
     }
-  }, dropState, ref);
+  }, dropState, domRef);
 
   let {gridProps} = useGrid({
     ...props,
-    ref,
+    ref: domRef,
     'aria-label': 'List',
     focusMode: 'cell'
   }, gridState);
@@ -228,7 +241,7 @@ function DroppableGrid(props) {
   return (
     <div
       {...mergeProps(collectionProps, gridProps)}
-      ref={ref}
+      ref={domRef}
       className={classNames(dndStyles, 'droppable-collection', {'is-drop-target': isDropTarget})}
       style={props.style}
       data-droptarget={isDropTarget}
@@ -246,7 +259,7 @@ function DroppableGrid(props) {
         <React.Fragment key={item.key}>
           <InsertionIndicator
             key={item.key + '-before'}
-            collectionRef={ref}
+            collectionRef={domRef}
             target={{type: 'item', key: item.key, dropPosition: 'before'}}
             dropState={dropState} />
           <CollectionItem
@@ -259,14 +272,14 @@ function DroppableGrid(props) {
             <InsertionIndicator
               key={item.key + '-after'}
               target={{type: 'item', key: item.key, dropPosition: 'after'}}
-              collectionRef={ref}
+              collectionRef={domRef}
               dropState={dropState} />
           }
         </React.Fragment>
       ))}
     </div>
   );
-}
+});
 
 function CollectionItem({item, state, dropState, onPaste}) {
   let rowRef = React.useRef();
@@ -282,8 +295,7 @@ function CollectionItem({item, state, dropState, onPaste}) {
   let {gridCellProps} = useGridCell({
     node: cellNode,
     ref: cellRef,
-    focusMode: 'cell',
-    shouldSelectOnPressUp: true
+    focusMode: 'cell'
   }, state);
 
   let dropIndicatorRef = React.useRef();
