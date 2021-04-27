@@ -16,12 +16,11 @@
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
 import {disableTextSelection, restoreTextSelection} from './textSelection';
-import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, useGlobalListeners, useSyncRef} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {isVirtualClick} from './utils';
 import {PointerType, PressEvents} from '@react-types/shared';
 import {PressResponderContext} from './context';
-import {useGlobalListeners} from '@react-aria/utils';
 
 export interface PressProps extends PressEvents {
   /** Whether the target is in a controlled press state (e.g. an overlay it triggers is open). */
@@ -71,16 +70,7 @@ function usePressResponderContext(props: PressHookProps): PressHookProps {
     props = mergeProps(contextProps, props) as PressHookProps;
     register();
   }
-
-  // Sync ref from <PressResponder> with ref passed to usePress.
-  useEffect(() => {
-    if (context && context.ref) {
-      context.ref.current = props.ref.current;
-      return () => {
-        context.ref.current = null;
-      };
-    }
-  }, [context, props.ref]);
+  useSyncRef(context, props.ref);
 
   return props;
 }
@@ -301,6 +291,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         // iOS safari fires pointer events from VoiceOver (but only when outside an iframe...)
+        // https://bugs.webkit.org/show_bug.cgi?id=222627
         state.pointerType = isVirtualPointerEvent(e.nativeEvent) ? 'virtual' : e.pointerType;
 
         e.stopPropagation();

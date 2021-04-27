@@ -11,7 +11,8 @@
   margin: 4px 0;
 
   &.is-selected {
-    background: var(--spectrum-alias-highlight-hover);
+    background: var(--spectrum-alias-highlight-selected);
+    border-color: var(--spectrum-table-row-background-color-selected);
   }
 
   &.is-dragging {
@@ -82,7 +83,8 @@
   margin: 4px 0;
 
   &.is-selected {
-    background: var(--spectrum-alias-highlight-hover);
+    background: var(--spectrum-alias-highlight-selected);
+    border-color: var(--spectrum-table-row-background-color-selected);
   }
 
   &:focus {
