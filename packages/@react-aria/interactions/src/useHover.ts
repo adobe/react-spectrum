@@ -94,19 +94,23 @@ export function useHover(props: HoverProps): HoverResult {
   let [isHovered, setHovered] = useState(false);
   let state = useRef({
     isHovered: false,
-    ignoreEmulatedMouseEvents: false
+    ignoreEmulatedMouseEvents: false,
+    pointerType: '',
+    target: null
   }).current;
 
   useEffect(setupGlobalTouchEvents, []);
 
-  let hoverProps = useMemo(() => {
+  let {hoverProps, triggerHoverEnd} = useMemo(() => {
     let triggerHoverStart = (event, pointerType) => {
+      state.pointerType = pointerType;
       if (isDisabled || pointerType === 'touch' || state.isHovered) {
         return;
       }
 
       state.isHovered = true;
       let target = event.target;
+      state.target = target;
 
       if (onHoverStart) {
         onHoverStart({
@@ -124,6 +128,8 @@ export function useHover(props: HoverProps): HoverResult {
     };
 
     let triggerHoverEnd = (event, pointerType) => {
+      state.pointerType = '';
+      state.target = null;
       if (pointerType === 'touch' || !state.isHovered) {
         return;
       }
@@ -158,7 +164,9 @@ export function useHover(props: HoverProps): HoverResult {
       };
 
       hoverProps.onPointerLeave = (e) => {
-        triggerHoverEnd(e, e.pointerType);
+        if (!isDisabled) {
+          triggerHoverEnd(e, e.pointerType);
+        }
       };
     } else {
       hoverProps.onTouchStart = () => {
@@ -177,8 +185,15 @@ export function useHover(props: HoverProps): HoverResult {
         triggerHoverEnd(e, 'mouse');
       };
     }
-    return hoverProps;
+    return {hoverProps, triggerHoverEnd};
   }, [onHoverStart, onHoverChange, onHoverEnd, isDisabled, state]);
+
+  useEffect(() => {
+    // Call the triggerHoverEnd as soon as isDisabled changes to true
+    if (!isDisabled) {
+      triggerHoverEnd({target: state.target}, state.pointerType);
+    }
+  }, [isDisabled]);
 
   return {
     hoverProps,
