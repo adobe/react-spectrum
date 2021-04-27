@@ -149,12 +149,392 @@ For more information, see [Selection](/react-stately/selection.html).
 
 ## Example
 
-// Perhaps a checkbox vs non checkbox version?
+This example uses HTML `<div>` elements to construct the table. It uses `useTableState` to construct the table's collection of rows and columns,
+applying the appropriate attributes to each `<div>` using the various table hooks listed above paired with the div's role in the table.
+The table follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
+The example below shows a static collection, which can be used when the full set of table contents is known ahead of time.
+
+```tsx example export=true
+import {Cell, Column, Row, TableBody, TableHeader, useTableState} from '@react-stately/table';
+import {mergeProps} from '@react-aria/utils';
+import {useCheckbox} from '@react-aria/checkbox';
+import {useContext, useRef} from 'react';
+import {useFocusRing} from '@react-aria/focus';
+import {useToggleState} from '@react-stately/toggle';
+
+const TableContext = React.createContext(null);
+function useTableContext() {
+  return useContext(TableContext);
+}
+
+function Table(props) {
+  let state = useTableState({...props, showSelectionCheckboxes: true});
+  let ref = useRef();
+
+  let {gridProps} = useTable({
+    ...props,
+    ref: ref
+  }, state);
+
+  let headerRows = state.collection.rows.filter(item => item.type === 'headerrow' && item);
+  let rows = state.collection.rows.filter(item => item.type === 'item' && item);
+
+  let renderColumnNode = (node) => {
+    if (node.props.isSelectionCell) {
+      return <TableSelectAllCell column={node} />;
+    }
+
+    return <TableColumnHeader column={node} />;
+  };
+
+  let renderRowNode = (node) => {
+    if (node.props.isSelectionCell) {
+      return <TableCheckboxCell cell={node} />;
+    }
+
+    if (state.collection.rowHeaderColumnKeys.has(node.column.key)) {
+      return <TableRowHeader cell={node} />;
+    }
+
+    return <TableCell cell={node} />;
+  };
+
+  return (
+    <TableContext.Provider value={state}>
+      <div {...gridProps} style={{...props.style, display: 'flex', flexDirection: 'column'}} ref={ref}>
+        <TableHeaderGroup>
+          {[...headerRows].map(headerRow => (
+            <TableHeaderRow item={headerRow}>
+              {[...headerRow.childNodes].map((column) => renderColumnNode(column))}
+            </TableHeaderRow>
+          ))}
+        </TableHeaderGroup>
+        <div
+          style={{
+            borderTop: '2px solid black',
+            borderBottom: '2px solid black',
+            padding: '0px 1px 0px 1px',
+            flex: '1 1 0%',
+            overflow: 'auto'
+          }}>
+          <TableRowGroup>
+            {[...rows].map(row => (
+              <TableRow item={row}>
+                {[...row.childNodes].map((node) => renderRowNode(node))}
+              </TableRow>
+            ))}
+          </TableRowGroup>
+        </div>
+      </div>
+    </TableContext.Provider>
+  );
+}
+
+
+function TableHeaderGroup({children, ...otherProps}) {
+  let {rowGroupProps} = useTableRowGroup();
+
+  return (
+    <div {...rowGroupProps} {...otherProps}>
+      {children}
+    </div>
+  );
+}
+
+function TableColumnHeader({column}) {
+  let ref = useRef();
+  let state = useTableContext();
+  let {columnHeaderProps} = useTableColumnHeader({
+    node: column,
+    ref,
+    colspan: column.colspan
+  }, state);
+
+  let {isFocusVisible, focusProps} = useFocusRing();
+  let columnProps = column.props;
+  let arrowIcon = state.sortDescriptor?.direction === 'ascending' ? '▲' : '▼';
+
+  return (
+    <div
+      {...mergeProps(columnHeaderProps, focusProps)}
+      style={{
+        height: '16px',
+        lineHeight: '16px',
+        width: '100px',
+        padding: '10px 10px 10px 10px',
+        outline: isFocusVisible ? '2px solid -webkit-focus-ring-color' : 'none'
+      }}
+      ref={ref}>
+      {column.rendered}
+      {columnProps.allowsSorting && state.sortDescriptor?.column === column.key &&
+        <span aria-hidden="true" style={{padding: '0 2px'}}>
+          {arrowIcon}
+        </span>
+      }
+    </div>
+  );
+}
+
+function TableSelectAllCell({column}) {
+  let ref = useRef();
+  let state = useTableContext();
+
+  let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
+  let {columnHeaderProps} = useTableColumnHeader({
+    node: column,
+    ref,
+    colspan: column.colspan,
+    isDisabled: isSingleSelectionMode
+  }, state);
+
+  let {checkboxProps} = useTableSelectAllCheckbox(state);
+  let inputRef = useRef(null);
+  let {inputProps} = useCheckbox(checkboxProps, useToggleState(checkboxProps), inputRef);
+
+  return (
+    <div
+      {...columnHeaderProps}
+      style={{
+        height: '16px',
+        padding: '10px 10px 10px 10px'
+      }}
+      aria-disabled={isSingleSelectionMode}
+      ref={ref}>
+      <input
+        {...inputProps}
+        disabled={isSingleSelectionMode}
+        style={{visibility: isSingleSelectionMode ? 'hidden' : 'visible'}} />
+    </div>
+  );
+}
+
+function TableRowGroup({children, ...otherProps}) {
+  let {rowGroupProps} = useTableRowGroup();
+
+  return (
+    <div {...rowGroupProps} {...otherProps}>
+      {children}
+    </div>
+  );
+}
+
+function TableRow({item, children, ...otherProps}) {
+  let ref = useRef();
+  let state = useTableContext();
+  let isDisabled = state.disabledKeys.has(item.key);
+  let isSelected = state.selectionManager.isSelected(item.key) && !isDisabled;
+  let {rowProps} = useTableRow({
+    node: item,
+    isSelected,
+    ref,
+    isDisabled
+  }, state);
+
+  let props = mergeProps(
+    rowProps,
+    otherProps
+  );
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        padding: '1px 1px 2px 1px',
+        borderTop: '1px solid lightgrey'
+      }}
+      {...props}
+      ref={ref}>
+      {children}
+    </div>
+  );
+}
+
+function TableHeaderRow({item, children, ...otherProps}) {
+  return (
+    <div role="row" aria-rowindex={item.index + 1} {...otherProps} style={{display: 'flex', flexDirection: 'row', paddingBottom: '4px'}}>
+      {children}
+    </div>
+  );
+}
+
+function TableCheckboxCell({cell}) {
+  let ref = useRef();
+  let state = useTableContext();
+  let isDisabled = state.disabledKeys.has(cell.parentKey);
+  let {gridCellProps} = useTableCell({
+    node: cell,
+    ref,
+    isDisabled
+  }, state);
+
+  let {checkboxProps} = useTableSelectionCheckbox(
+    {
+      key: cell.parentKey,
+      isDisabled
+    },
+    state
+  );
+
+  let inputRef = useRef(null);
+  let {inputProps} = useCheckbox({...checkboxProps, isDisabled}, useToggleState(checkboxProps), inputRef);
+
+  return (
+    <div
+      {...gridCellProps}
+      style={{
+        height: '16px',
+        padding: '10px 10px 10px 10px'
+      }}
+      ref={ref}>
+      {state.selectionManager.selectionMode !== 'none' &&
+        <input {...inputProps} />
+      }
+    </div>
+  );
+}
+
+function TableCell({cell}) {
+  let ref = useRef();
+  let state = useTableContext();
+  let isDisabled = state.disabledKeys.has(cell.parentKey);
+  let {gridCellProps} = useTableCell({
+    node: cell,
+    ref,
+    isDisabled
+  }, state);
+
+  return (
+    <TableCellBase
+      {...gridCellProps}
+      cell={cell}
+      cellRef={ref} />
+  );
+}
+
+function TableRowHeader({cell}) {
+  let ref = useRef();
+  let state = useTableContext();
+  let isDisabled = state.disabledKeys.has(cell.parentKey);
+  let {rowHeaderProps} = useTableRowHeader({
+    node: cell,
+    ref,
+    isDisabled
+  }, state);
+
+  return (
+    <TableCellBase
+      {...rowHeaderProps}
+      cell={cell}
+      cellRef={ref} />
+  );
+}
+
+function TableCellBase({cell, cellRef, ...otherProps}) {
+  let {isFocusVisible, focusProps} = useFocusRing();
+
+  return (
+    <div
+      {...mergeProps(otherProps, focusProps)}
+      style={{
+        height: '16px',
+        lineHeight: '16px',
+        width: '100px',
+        padding: '10px 10px 10px 10px',
+        outline: isFocusVisible ? '2px solid -webkit-focus-ring-color' : 'none'
+      }}
+      ref={cellRef}>
+      <span>
+        {cell.rendered}
+      </span>
+    </div>
+  );
+}
+
+<Table aria-label="Example static collection table" style={{height: '200px'}}>
+  <TableHeader>
+    <Column>Name</Column>
+    <Column>Type</Column>
+    <Column>Date Modified</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Games</Cell>
+      <Cell>File folder</Cell>
+      <Cell>6/7/2020</Cell>
+    </Row>
+    <Row>
+      <Cell>Program Files</Cell>
+      <Cell>File folder</Cell>
+      <Cell>4/7/2021</Cell>
+    </Row>
+    <Row>
+      <Cell>bootmgr</Cell>
+      <Cell>System file</Cell>
+      <Cell>11/20/2010</Cell>
+    </Row>
+    <Row>
+      <Cell>log.txt</Cell>
+      <Cell>Text Document</Cell>
+      <Cell>1/18/2016</Cell>
+    </Row>
+  </TableBody>
+</Table>
+```
 
 ## Usage
-// Add this section?
-// show dynamic vs static
-// see other Table examples in docs
+
+### Dynamic collections
+
+// TODO add description
+
+```tsx example
+function Example() {
+  let columns = [
+    {name: 'Name', key: 'name'},
+    {name: 'Type', key: 'type'},
+    {name: 'Date Modified', key: 'date'}
+  ];
+
+  let rows = [
+    {id: '1', name: 'Games', date: '6/7/2020', type: 'File folder'},
+    {id: '2', name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+    {id: '3', name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+    {id: '4', name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+  ];
+
+  return (
+    <Table aria-label="Example dynamic collection table" style={{height: '200px'}}>
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column key={column.key}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows}>
+        {(item) => (
+          <Row key={item.id}>
+            {/* Note this key is equal to the key of the the column,
+            not the key set on the Row prior */}
+            {(key) => <Cell>{item[key]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### Selection
+
+### Sorting
+
+### Async
+// show dynamic
+// show single selection, no selection, multiple selection
+// show sorting
+// show async
 
 ## Internationalization
 
