@@ -156,12 +156,13 @@ The table follows the [Collection Components API](../react-stately/collections.h
 The example below shows a static collection, which can be used when the full set of table contents is known ahead of time. Be sure to note the usage of
 `Cell`, `Column`, `Row`, `TableBody`, and `TableHeader` to construct the table structure. These elements are similar to `Item` and `Section` used in other components
 following the [Collection Components API](../react-stately/collections.html) mentioned previously, serving as node generators for the table collection.
+See [useTableState](/react-stately/useTableState.html) for more info on the props they support.
 
 ```tsx example export=true
 import {Cell, Column, Row, TableBody, TableHeader, useTableState} from '@react-stately/table';
 import {mergeProps} from '@react-aria/utils';
 import {useCheckbox} from '@react-aria/checkbox';
-import {useContext, useRef} from 'react';
+import {useContext, useLayoutEffect, useRef} from 'react';
 import {useFocusRing} from '@react-aria/focus';
 import {useToggleState} from '@react-stately/toggle';
 
@@ -173,6 +174,8 @@ function useTableContext() {
 function Table(props) {
   let state = useTableState({...props, showSelectionCheckboxes: true});
   let ref = useRef();
+  let scrollViewRef = useRef();
+  let {collection, selectionManager} = state;
 
   let {gridProps} = useTable({
     ...props,
@@ -202,9 +205,26 @@ function Table(props) {
     return <TableCell cell={node} />;
   };
 
+  let onScroll = (e) => {
+    if (e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 10) {
+      collection.body.props.onLoadMore && collection.body.props.onLoadMore();
+    }
+  };
+
+  useLayoutEffect(() => {
+    if (scrollViewRef.current) {
+      let scrollHeight = scrollViewRef.current.scrollHeight;
+      let clientHeight = scrollViewRef.current?.clientHeight;
+
+      if (!(scrollHeight > clientHeight)) {
+        collection.body.props.onLoadMore && collection.body.props.onLoadMore();
+      }
+    }
+  }, [collection.body.props, scrollViewRef]);
+
   return (
     <TableContext.Provider value={state}>
-      <div {...gridProps} style={{...props.style, display: 'flex', flexDirection: 'column'}} ref={ref}>
+      <div {...gridProps} style={{...props.style, display: 'flex', flexDirection: 'column'}} ref={ref} onScroll={onScroll}>
         <TableHeaderGroup>
           {[...headerRows].map(headerRow => (
             <TableHeaderRow item={headerRow}>
@@ -213,6 +233,7 @@ function Table(props) {
           ))}
         </TableHeaderGroup>
         <div
+          ref={scrollViewRef}
           style={{
             borderTop: '2px solid black',
             borderBottom: '2px solid black',
@@ -696,7 +717,8 @@ function AsyncSortTable() {
         )}
       </TableHeader>
       <TableBody
-        items={list.items}>
+        items={list.items}
+        onLoadMore={list.loadMore}>
         {(item) => (
           <Row key={item.name}>{(key) => <Cell>{item[key]}</Cell>}</Row>
         )}
