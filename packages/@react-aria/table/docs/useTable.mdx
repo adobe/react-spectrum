@@ -152,7 +152,10 @@ For more information, see [Selection](/react-stately/selection.html).
 This example uses HTML `<div>` elements to construct the table. It uses `useTableState` to construct the table's collection of rows and columns,
 applying the appropriate attributes to each `<div>` using the various table hooks listed above paired with the div's role in the table.
 The table follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
-The example below shows a static collection, which can be used when the full set of table contents is known ahead of time.
+
+The example below shows a static collection, which can be used when the full set of table contents is known ahead of time. Be sure to note the usage of
+`Cell`, `Column`, `Row`, `TableBody`, and `TableHeader` to construct the table structure. These elements are similar to `Item` and `Section` used in other components
+following the [Collection Components API](../react-stately/collections.html) mentioned previously, serving as node generators for the table collection.
 
 ```tsx example export=true
 import {Cell, Column, Row, TableBody, TableHeader, useTableState} from '@react-stately/table';
@@ -444,14 +447,14 @@ function TableCellBase({cell, cellRef, ...otherProps}) {
         outline: isFocusVisible ? '2px solid -webkit-focus-ring-color' : 'none'
       }}
       ref={cellRef}>
-      <span>
+      <span style={{overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>
         {cell.rendered}
       </span>
     </div>
   );
 }
 
-<Table aria-label="Example static collection table" style={{height: '200px'}}>
+<Table aria-label="Example static collection table" style={{height: '200px', maxWidth: '400px'}}>
   <TableHeader>
     <Column>Name</Column>
     <Column>Type</Column>
@@ -486,7 +489,8 @@ function TableCellBase({cell, cellRef, ...otherProps}) {
 
 ### Dynamic collections
 
-// TODO add description
+Dynamic collections, as shown below, can be used when the table data comes from an external data source such as an API call, or update over time.
+In the example below, both the columns and the rows are provided to the table via a render function.
 
 ```tsx example
 function Example() {
@@ -504,7 +508,7 @@ function Example() {
   ];
 
   return (
-    <Table aria-label="Example dynamic collection table" style={{height: '200px'}}>
+    <Table aria-label="Example dynamic collection table" style={{height: '200px', maxWidth: '400px'}}>
       <TableHeader columns={columns}>
         {(column) => (
           <Column key={column.key}>
@@ -528,13 +532,179 @@ function Example() {
 
 ### Selection
 
+By default, `useTableState` doesn't allow row selection but this can be modified using the `selectionMode` prop. Use `defaultSelectedKeys` to provide a default set of selected rows.
+Note that the value of the selected keys must match the `key` prop of the row.
+
+The example below uses `defaultSelectedKeys` to select the row with key equal to "2".
+
+```tsx example
+<Table aria-label="Example table with single selection (uncontrolled)" selectionMode="single" defaultSelectedKeys={['2']} style={{height: '200px', maxWidth: '400px'}}>
+  <TableHeader>
+    <Column>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </TableHeader>
+  <TableBody>
+    <Row key="1">
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </Row>
+    <Row key="2">
+      <Cell>Blastoise</Cell>
+      <Cell>Water</Cell>
+      <Cell>56</Cell>
+    </Row>
+    <Row key="3">
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </Row>
+    <Row key="4">
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </Row>
+  </TableBody>
+</Table>
+```
+
+To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `key` prop from the selected row will
+be passed into the callback when the row is pressed, allowing you to update `selectedKeys` accordingly.
+
+Here is how you would control selection for the above example.
+
+```tsx example export=true
+function PokemonTable(props) {
+  let columns = [
+    {name: 'Name', uid: 'name'},
+    {name: 'Type', uid: 'type'},
+    {name: 'Level', uid: 'level'}
+  ];
+  let rows = [
+    {id: '1', name: 'Charizard', type: 'Fire, Flying', level: '67'},
+    {id: '2', name: 'Blastoise', type: 'Water', level: '56'},
+    {id: '3', name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+    {id: '4', name: 'Pikachu', type: 'Electric', level: '100'}
+  ];
+  let [selected, setSelected] = React.useState(new Set(['2']));
+  return (
+    <Table aria-label="Example table with single selection (controlled)" selectionMode="single" selectedKeys={selected} onSelectionChange={setSelected} style={{height: '200px', maxWidth: '400px'}} {...props}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column key={column.uid}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows}>
+        {item => (
+          <Row key={item.id}>
+            {key => <Cell>{item[key]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+Multiple selection can be enabled by setting `selectionMode` to `multiple`.
+
+```tsx example
+// Using the same table as above
+<PokemonTable selectionMode="multiple" />
+```
+
+Table also supports a `disallowEmptySelection` prop which forces the user to have at least one row in the Table selected at all times.
+
+```tsx example
+// Using the same table as above
+<PokemonTable selectionMode="single" disallowEmptySelection />
+```
+
+### Disabled rows
+
+You can disable specific rows by providing an array of keys to `useTableState` via the `disabledKeys` prop. This will prevent rows from being selectable as shown in the example below.
+Note that you are responsible for the styling of disabled rows.
+
+```tsx example
+// Using the same table as above
+<PokemonTable selectionMode="multiple" disabledKeys={['2']} />
+```
+
 ### Sorting
 
-### Async
-// show dynamic
-// show single selection, no selection, multiple selection
-// show sorting
-// show async
+Table supports sorting its data when a column header is pressed. To designate that a Column should support sorting, provide it with
+the `allowsSorting` prop. The Table accepts a `SortDescriptor` prop that defines the current column key to sort by and the sort direction (ascending/descending).
+When the user presses a column's sort icon, the column's key and sort direction is passed into the `onSortChange` callback, allowing you to update
+the `SortDescriptor` appropriately.
+
+This example performs client side sorting by passing a `sort` function to the [useAsyncList](../react-stately/useAsyncList.html) hook.
+See the docs for more information on how to perform server side sorting.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+function AsyncSortTable() {
+  let columns = [
+    {name: 'Name', key: 'name'},
+    {name: 'Height', key: 'height'},
+    {name: 'Mass', key: 'mass'},
+    {name: 'Birth Year', key: 'birth_year'}
+  ];
+  let list = useAsyncList({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search`, {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    },
+    async sort({items, sortDescriptor}) {
+      let sorted = items.sort((a, b) => {
+        let cmp;
+        let first = a[sortDescriptor.column].replace("BBY", "");
+        let second = b[sortDescriptor.column].replace("BBY", "");
+        if (+first || +second) {
+          cmp = +first < +second ? -1 : 1;
+        } else {
+          cmp = first <= second ? -1 : 1;
+        }
+        if (sortDescriptor.direction === 'descending') {
+          cmp *= -1;
+        }
+        return cmp;
+      });
+      return {
+        items: sorted
+      };
+    }
+  });
+
+  return (
+    <Table aria-label="Example table with client side sorting" sortDescriptor={list.sortDescriptor} onSortChange={list.sort} style={{height: '400px', maxWidth: '600px'}}>
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column allowsSorting>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody
+        items={list.items}>
+        {(item) => (
+          <Row key={item.name}>{(key) => <Cell>{item[key]}</Cell>}</Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
 
 ## Internationalization
 
