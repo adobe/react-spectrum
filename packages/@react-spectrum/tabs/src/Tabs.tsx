@@ -323,7 +323,8 @@ export function TabPanels<T>(props: SpectrumTabPanelsProps<T>) {
   );
 }
 
-export function TabPanel<T>(props: SpectrumTabPanelsProps<T>) {
+// @private
+function TabPanel<T>(props: SpectrumTabPanelsProps<T>) {
   const {tabState, tabPanelProps: ctxTabPanelProps} = useContext(TabContext);
   const {tabListState} = tabState;
   let ref = useRef();
