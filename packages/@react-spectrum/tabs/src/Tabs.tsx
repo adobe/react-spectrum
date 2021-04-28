@@ -309,7 +309,22 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
  * The keys of the items within the <TabPanels> must match up with a corresponding item inside the <TabList>.
  */
 export function TabPanels<T>(props: SpectrumTabPanelsProps<T>) {
-  const {tabState, tabProps, tabPanelProps: ctxTabPanelProps} = useContext(TabContext);
+  const {tabState, tabProps} = useContext(TabContext);
+  const {tabListState} = tabState;
+
+  const factory = nodes => new ListCollection(nodes);
+  const collection = useCollection({items: tabProps.items, ...props}, factory, {suppressTextValueWarning: true});
+  const selectedItem = tabListState ? collection.getItem(tabListState.selectedKey) : null;
+
+  return (
+    <TabPanel {...props} key={tabListState?.selectedKey}>
+      {selectedItem && selectedItem.props.children}
+    </TabPanel>
+  );
+}
+
+export function TabPanel<T>(props: SpectrumTabPanelsProps<T>) {
+  const {tabState, tabPanelProps: ctxTabPanelProps} = useContext(TabContext);
   const {tabListState} = tabState;
   let ref = useRef();
   const {tabPanelProps} = useTabPanel(props, tabListState, ref);
@@ -319,14 +334,10 @@ export function TabPanels<T>(props: SpectrumTabPanelsProps<T>) {
     tabPanelProps['aria-labelledby'] = ctxTabPanelProps['aria-labelledby'];
   }
 
-  const factory = nodes => new ListCollection(nodes);
-  const collection = useCollection({items: tabProps.items, ...props}, factory, {suppressTextValueWarning: true});
-  const selectedItem = tabListState ? collection.getItem(tabListState.selectedKey) : null;
-
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div {...styleProps} {...tabPanelProps} ref={ref} className={classNames(styles, 'spectrum-TabsPanel-tabpanel')}>
-        {selectedItem && selectedItem.props.children}
+        {props.children}
       </div>
     </FocusRing>
   );
