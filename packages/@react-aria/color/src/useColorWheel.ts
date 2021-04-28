@@ -33,7 +33,7 @@ interface ColorWheelAria {
   inputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
-const PAGE_MIN_STEP_SIZE = 6;
+const PAGE_MIN_STEP_SIZE = 15;
 
 /**
  * Provides the behavior and accessibility implementation for a color wheel component.
