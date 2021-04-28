@@ -63,7 +63,9 @@ function isValidKey(e: KeyboardEvent) {
 }
 
 function getHasChangedTabRecently() {
-  return documentVisibilityState.current === 'visible' && documentVisibilityState.previous === 'hidden'
+  // in Chrome visibilitychange event always happens before any focus event.
+  // situation is different for Firefox and Safari where visibilitychange fires after all initial focus events.
+  return (documentVisibilityState.current === 'visible' && documentVisibilityState.previous === 'hidden') || documentVisibilityState.current === 'hidden'
 }
 
 function resetDocumentVisibilityState() {
