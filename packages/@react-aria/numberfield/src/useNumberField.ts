@@ -93,7 +93,6 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     }
   });
 
-
   let {
     spinButtonProps,
     incrementButtonProps: incButtonProps,
