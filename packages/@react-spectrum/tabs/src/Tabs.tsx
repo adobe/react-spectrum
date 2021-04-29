@@ -344,7 +344,7 @@ function TabPanel<T>(props: SpectrumTabPanelsProps<T>) {
   );
 }
 
-interface TabPickerProps<T> extends SpectrumPickerProps<T> {
+interface TabPickerProps<T> extends Omit<SpectrumPickerProps<T>, 'children'> {
   density?: 'compact' | 'regular',
   state: SingleSelectListState<T>,
   className?: string
