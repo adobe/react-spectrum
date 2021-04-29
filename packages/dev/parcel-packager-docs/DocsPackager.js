@@ -44,7 +44,6 @@ module.exports = new Packager({
     function _processAsset(asset, res) {
       let obj = processCode(asset, code.get(asset.id));
       for (let [exported] of asset.symbols) {
-
         let {asset: resolvedAsset, exportSymbol} = bundleGraph.resolveSymbol(asset, exported);
         let processed = resolvedAsset.id === asset.id ? obj : processAsset(resolvedAsset);
 
