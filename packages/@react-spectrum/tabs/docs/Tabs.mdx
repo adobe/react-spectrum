@@ -64,7 +64,7 @@ import {Text} from '@react-spectrum/text';
 
 ## Content
 Tabs expects a TabList and TabPanels as children. In turn, TabList and TabPanels follow the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections. TabList and TabPanel accepts `<Item>` elements as children,
-each with a `key` prop. The key passed to the TabList Item must match its corresponding TabPanel Item.
+each with a `key` prop. The key passed to the TabList `<Item>` must match its corresponding TabPanel `<Item>`.
 Static collections, as in this example, can be used when the full list of tabs and their contents is known ahead of time.
 
 Dynamic collections, as shown below, can be used when the options come from an external data source such as an API call, or update over time. As seen below, an iterable list of options is passed to the Tabs using the `items` prop.
