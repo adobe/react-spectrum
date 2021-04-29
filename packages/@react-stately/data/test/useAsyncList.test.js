@@ -645,45 +645,6 @@ describe('useAsyncList', () => {
     expect(result.current.items).toEqual([ITEMS[0], {name: 'Test', id: 5}, ...ITEMS.slice(1)]);
   });
 
-  describe('unwanted error', function () {
-    // temporarily disable console error https://github.com/facebook/react/issues/15520
-    // https://github.com/testing-library/react-hooks-testing-library/issues/43
-    const consoleError = console.error;
-    beforeEach(() => {
-      console.error = () => {};
-    });
-
-    afterEach(() => {
-      console.error = consoleError;
-    });
-
-    it('should throw if updating the list while loading', async () => {
-      let load = jest.fn().mockImplementation(getItems);
-      let {result} = renderHook(
-        () => useAsyncList({load})
-      );
-
-      expect(load).toHaveBeenCalledTimes(1);
-      expect(result.current.isLoading).toBe(true);
-      expect(result.current.items).toEqual([]);
-
-      // Ignore fewer hooks than expected error from react, it happens because we throw in the reducer
-      // and since we're testing that, we can safely ignore the react warning
-      try {
-        act(() => {
-          result.current.insert(1, {name: 'Test', id: 5});
-        });
-      } catch (err) {
-        // ignore
-      }
-
-      expect(result.error).toEqual(new Error('Invalid action "update" in state "loading"'));
-      await act(async () => {
-        jest.runAllTimers();
-      });
-    });
-  });
-
   it('should get an item by key', async function () {
     let load = jest.fn().mockImplementation(getItems);
     let {result, waitForNextUpdate} = renderHook(
@@ -702,6 +663,172 @@ describe('useAsyncList', () => {
     expect(result.current.isLoading).toBe(false);
     expect(result.current.items).toEqual(ITEMS);
     expect(result.current.getItem(1)).toBe(ITEMS[0]);
+  });
+
+  it('should allow updates to the list while loading', async () => {
+    let load = jest.fn().mockImplementation(getItems);
+    let {result} = renderHook(
+      () => useAsyncList({load})
+    );
+
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.items).toEqual([]);
+
+    act(() => {
+      result.current.insert(1, {name: 'Test', id: 5});
+      result.current.setSelectedKeys(new Set(['selected key']));
+    });
+
+    await act(async () => {
+      jest.runAllTimers();
+    });
+
+    // Since it is a load operation, previous item is overwritten
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.items).toEqual(ITEMS);
+    expect(result.current.getItem(1)).toBe(ITEMS[0]);
+    expect(result.current.selectedKeys).toEqual(new Set(['selected key']));
+  });
+
+  it('should allow updates to the list while loading more', async () => {
+    let load = jest.fn()
+      .mockImplementationOnce(getItems)
+      .mockImplementationOnce(getItems2);
+    let {result, waitForNextUpdate} = renderHook(
+      () => useAsyncList({load})
+    );
+
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.items).toEqual([]);
+
+    await act(async () => {
+      jest.runAllTimers();
+    });
+
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.items).toEqual(ITEMS);
+
+    await act(async () => {
+      result.current.loadMore();
+      await waitForNextUpdate();
+    });
+
+    expect(load).toHaveBeenCalledTimes(2);
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.items).toEqual(ITEMS);
+
+    await act(async() => {
+      result.current.insert(1, {name: 'Test', id: 5});
+      result.current.setSelectedKeys(new Set(['selected key']));
+      await waitForNextUpdate();
+    });
+
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.items[1]).toStrictEqual({name: 'Test', id: 5});
+    expect(result.current.selectedKeys).toEqual(new Set(['selected key']));
+
+    await act(async () => {
+      jest.runAllTimers();
+      await waitForNextUpdate();
+    });
+
+    let finalItems = ITEMS.concat(ITEMS2);
+    finalItems.splice(1, 0, {name: 'Test', id: 5});
+    // Since it is a loadMore operation, new items are appended to the end
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.items).toEqual(finalItems);
+    expect(result.current.selectedKeys).toEqual(new Set(['selected key']));
+  });
+
+  it('should handle multiple loadMore operations called in quick succession', async () => {
+    let load = jest.fn()
+      .mockImplementationOnce(getItems)
+      .mockImplementationOnce(({signal}) => new Promise((resolve, reject) => {
+        signal.addEventListener('abort', () => {
+          reject();
+        });
+
+        setTimeout(() => resolve({items: ITEMS2}), 100);
+      }))
+      .mockImplementationOnce(getItems)
+      .mockImplementationOnce(getItems);
+    let {result} = renderHook(
+      () => useAsyncList({load})
+    );
+
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.items).toEqual([]);
+
+    await act(async () => {
+      jest.runAllTimers();
+    });
+
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.items).toEqual(ITEMS);
+
+    await act(async () => {
+      result.current.loadMore();
+      result.current.loadMore();
+      result.current.loadMore();
+      jest.runAllTimers();
+    });
+
+    // Only the first loadMore is handled, the others are canceled
+    expect(load).toHaveBeenCalledTimes(4);
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.items).toEqual(ITEMS.concat(ITEMS2));
+  });
+
+  it('should handle multiple loadMore/filtering operations called in quick succession', async () => {
+    let load = jest.fn()
+      .mockImplementationOnce(getItems)
+      .mockImplementationOnce(({signal}) => new Promise((resolve, reject) => {
+        signal.addEventListener('abort', () => {
+          reject();
+        });
+
+        setTimeout(() => resolve({items: ITEMS}), 100);
+      }))
+      .mockImplementationOnce(getItems2)
+      .mockImplementationOnce(getItems);
+    let {result} = renderHook(
+      () => useAsyncList({load})
+    );
+
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.items).toEqual([]);
+
+    await act(async () => {
+      jest.runAllTimers();
+    });
+
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.items).toEqual(ITEMS);
+
+    await act(async () => {
+      result.current.loadMore();
+      jest.advanceTimersByTime(20);
+      result.current.setFilterText('blah');
+      jest.advanceTimersByTime(20);
+    });
+
+    await act(async () => {
+      result.current.loadMore();
+      jest.runAllTimers();
+    });
+
+    // Only the first loadMore and filtering operation is handled (first loadMore is canceled by filter),
+    // subsequent loadMores are never called because filtering operation is happening
+    expect(load).toHaveBeenCalledTimes(3);
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.items).toEqual(ITEMS2);
   });
 
   describe('filtering', function () {
@@ -724,6 +851,12 @@ describe('useAsyncList', () => {
     function mockSecondCall() {
       return new Promise(resolve => {
         setTimeout(() => resolve({items: itemsSecondCall, cursor: 3}), 100);
+      });
+    }
+
+    function mockCallWithUpdatedText() {
+      return new Promise(resolve => {
+        setTimeout(() => resolve({items: itemsFirstCall, cursor: 3, filterText: 'new text'}), 100);
       });
     }
 
@@ -913,6 +1046,72 @@ describe('useAsyncList', () => {
       expect(result.current.isLoading).toBe(false);
       expect(result.current.items).toEqual(itemsSecondCall);
       expect(result.current.filterText).toBe('Jo');
+    });
+
+    it('should update the filter text and perform a new filter operation if previous load returns updated filter text', async () => {
+      let load = jest
+        .fn()
+        .mockImplementationOnce(getFilterItems)
+        .mockImplementationOnce(mockCallWithUpdatedText)
+        .mockImplementationOnce(mockSecondCall);
+      let initialFilterText = 'Bo';
+      let {result, waitForNextUpdate} = renderHook(() => useAsyncList({load, initialFilterText}));
+
+      expect(result.current.loadingState).toBe('loading');
+      expect(load).toHaveBeenCalledTimes(1);
+      let args = load.mock.calls[0][0];
+      expect(args.items).toEqual([]);
+      expect(args.selectedKeys).toEqual(new Set());
+
+      expect(result.current.isLoading).toBe(true);
+      expect(result.current.items).toEqual([]);
+
+      await act(async () => {
+        jest.runAllTimers();
+        await waitForNextUpdate();
+      });
+
+      expect(result.current.loadingState).toBe('idle');
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.items).toEqual(filterItems);
+      expect(result.current.filterText).toEqual('Bo');
+      expect(load).toHaveBeenCalledTimes(1);
+
+      await act(async () => {
+        result.current.setFilterText('Jo');
+        await waitForNextUpdate();
+      });
+
+      expect(result.current.loadingState).toBe('filtering');
+      expect(load).toHaveBeenCalledTimes(2);
+      expect(result.current.isLoading).toBe(true);
+      expect(result.current.items).toEqual(filterItems);
+      expect(result.current.filterText).toEqual('Jo');
+
+      await act(async () => {
+        jest.runAllTimers();
+        await waitForNextUpdate();
+      });
+
+      // New filter text was returned in this load. As a result, a new filter fetch is
+      // dispatched with the new filter text so we get a up to date filtered list.
+      expect(result.current.loadingState).toBe('filtering');
+      expect(load).toHaveBeenCalledTimes(3);
+      expect(result.current.isLoading).toBe(true);
+      expect(result.current.items).toEqual(itemsFirstCall);
+      expect(result.current.filterText).toEqual('new text');
+
+      await act(async () => {
+        jest.runAllTimers();
+        await waitForNextUpdate();
+      });
+
+      // New items are returned
+      expect(result.current.loadingState).toBe('idle');
+      expect(load).toHaveBeenCalledTimes(3);
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.items).toEqual(itemsSecondCall);
+      expect(result.current.filterText).toEqual('new text');
     });
   });
 });

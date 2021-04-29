@@ -65,7 +65,12 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     autoFocus,
     validationState,
     label,
-    formatOptions
+    formatOptions,
+    onBlur,
+    onFocus,
+    onFocusChange,
+    onKeyDown,
+    onKeyUp
   } = props;
 
   let {
@@ -175,7 +180,12 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     id: inputId,
     type: 'text', // Can't use type="number" because then we can't have things like $ in the field.
     inputMode,
-    onChange
+    onChange,
+    onBlur,
+    onFocus,
+    onFocusChange,
+    onKeyDown,
+    onKeyUp
   }, state, inputRef);
 
   let inputProps = mergeProps(
