@@ -213,7 +213,7 @@ storiesOf('Tabs', module)
   .add(
     'Tab 1 controlled child',
     () => {
-      let [tab1Text, setTab1Text] = useState();
+      let [tab1Text, setTab1Text] = useState('');
 
       return (
         <Tabs maxWidth={500}>
