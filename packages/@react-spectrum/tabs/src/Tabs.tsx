@@ -323,7 +323,8 @@ export function TabPanels<T>(props: SpectrumTabPanelsProps<T>) {
   );
 }
 
-export function TabPanel<T>(props: SpectrumTabPanelsProps<T>) {
+// @private
+function TabPanel<T>(props: SpectrumTabPanelsProps<T>) {
   const {tabState, tabPanelProps: ctxTabPanelProps} = useContext(TabContext);
   const {tabListState} = tabState;
   let ref = useRef();
@@ -343,7 +344,7 @@ export function TabPanel<T>(props: SpectrumTabPanelsProps<T>) {
   );
 }
 
-interface TabPickerProps<T> extends SpectrumPickerProps<T> {
+interface TabPickerProps<T> extends Omit<SpectrumPickerProps<T>, 'children'> {
   density?: 'compact' | 'regular',
   state: SingleSelectListState<T>,
   className?: string
