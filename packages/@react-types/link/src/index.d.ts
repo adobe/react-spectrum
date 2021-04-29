@@ -13,7 +13,9 @@
 import {AriaLabelingProps, PressEvents, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
-export interface AriaLinkProps extends PressEvents, AriaLabelingProps { }
+export interface LinkProps extends PressEvents {}
+
+export interface AriaLinkProps extends LinkProps, AriaLabelingProps { }
 
 export interface SpectrumLinkProps extends AriaLinkProps, StyleProps {
   /** The content to display in the link. */
