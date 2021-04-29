@@ -344,17 +344,12 @@ function AsyncSortTable() {
   ];
 
   let list = useAsyncList({
-    async load({signal, cursor}) {
-      if (cursor) {
-        cursor = cursor.replace(/^http:\/\//i, 'https://');
-      }
-
-      let res = await fetch(cursor || `https://swapi.dev/api/people/?search`, {signal});
+    async load({signal}) {
+      let res = await fetch(`https://swapi.dev/api/people/?search`, {signal});
       let json = await res.json();
 
       return {
-        items: json.results,
-        cursor: json.next
+        items: json.results
       };
     },
     async sort({items, sortDescriptor}) {
@@ -393,8 +388,7 @@ function AsyncSortTable() {
         </TableHeader>
         <TableBody
           items={list.items}
-          isLoading={list.isLoading}
-          onLoadMore={list.loadMore}>
+          isLoading={list.isLoading}>
           {(item) => (
             <Row key={item.name}>{(key) => <Cell>{item[key]}</Cell>}</Row>
           )}
