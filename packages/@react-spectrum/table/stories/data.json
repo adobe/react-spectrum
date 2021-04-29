@@ -1,0 +1,3362 @@
+[
+  {
+    "id": "594d3ff2dad46f147237066f",
+    "name": "TestMigration",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["595575470402fd507c49a499", "thisMonth"],
+      "calculatedMetricIds": ["cm300000022_560aa6cce4b0790131f85ab3"],
+      "segmentIds": ["545bf2c8e4b02df70be505c5", "54456630e4b02df70be4d000"]
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2017-06-30T16:13:48Z",
+    "created": "2017-06-23T16:21:06Z"
+  },
+  {
+    "id": "59765bcd5fe7077a11e3aae9",
+    "name": "Flow CSV",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2017-07-24T20:42:53Z",
+    "created": "2017-07-24T20:42:53Z"
+  },
+  {
+    "id": "5982026a9ab1733f764346db",
+    "name": "New Project",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2017-08-02T16:48:42Z",
+    "created": "2017-08-02T16:48:42Z"
+  },
+  {
+    "id": "59f26a2f7e721252c3e8caf6",
+    "name": "Mixed Types",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2017-10-26T23:05:19Z",
+    "created": "2017-10-26T23:05:19Z"
+  },
+  {
+    "id": "59f28ae38e430014f049871d",
+    "name": "New Project",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2017-11-03T15:56:56Z",
+    "created": "2017-10-27T01:24:51Z"
+  },
+  {
+    "id": "5d013add0bd5401abf7653ce",
+    "name": "New Project",
+    "description": "",
+    "rsid": "obue.atest",
+    "reportSuiteName": "Adrian Test",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Adrian Test",
+    "modified": "2019-06-12T17:48:13Z",
+    "created": "2019-06-12T17:48:13Z"
+  },
+  {
+    "id": "5d2385c9bf465f660d4493e2",
+    "name": "New Project",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2019-07-08T18:04:57Z",
+    "created": "2019-07-08T18:04:57Z"
+  },
+  {
+    "id": "5d2ceb5a4bf52d3e3c610b62",
+    "name": "New Project",
+    "description": "",
+    "rsid": "vrs_obueng0_appservicecuratedcom",
+    "reportSuiteName": "Appservice (Curated Components)",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [
+      {
+        "id": 26112,
+        "name": "#adhoc",
+        "components": []
+      }
+    ],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Appservice (Curated Components)",
+    "modified": "2019-07-15T21:08:42Z",
+    "created": "2019-07-15T21:08:42Z"
+  },
+  {
+    "id": "5d2ddfac4bf52d3e3c610e1a",
+    "name": "Curated",
+    "description": "",
+    "rsid": "vrs_obueng0_cja",
+    "reportSuiteName": "Unknown Report Suite",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 7940044,
+        "shareToId": 200095818,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5d2ddfac4bf52d3e3c610e1a",
+        "shareToDisplayName": "Adrian Limited",
+        "shareToLogin": "afoong-lim",
+        "accessLevel": "duplicate"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Unknown Report Suite",
+    "modified": "2019-07-16T14:31:34Z",
+    "created": "2019-07-08T18:04:57Z"
+  },
+  {
+    "id": "5d4c7fd138afac7e9a0cb48c",
+    "name": "New Project",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2019-08-08T20:08:05Z",
+    "created": "2019-08-08T20:02:25Z"
+  },
+  {
+    "id": "5d5b04a921a7153499c58de2",
+    "name": "VRS",
+    "description": "",
+    "rsid": "vrs_obueng0_cja",
+    "reportSuiteName": "Unknown Report Suite",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Unknown Report Suite",
+    "modified": "2019-08-19T20:20:57Z",
+    "created": "2019-08-19T20:20:57Z"
+  },
+  {
+    "id": "5d5ee91685fa5a450876a7bc",
+    "name": "New Project",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2019-08-23T21:29:28Z",
+    "created": "2019-08-22T19:12:22Z"
+  },
+  {
+    "id": "5d63d7ba9500e21542d3fc46",
+    "name": "New Project",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2019-08-26T12:59:38Z",
+    "created": "2019-08-26T12:59:38Z"
+  },
+  {
+    "id": "5d63d88d963f3d283d2766bb",
+    "name": "New Project",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2019-08-26T13:03:23Z",
+    "created": "2019-08-26T13:03:09Z"
+  },
+  {
+    "id": "5d63e340bab7ac7076db5f63",
+    "name": "Contribution Analysis CSV",
+    "description": "",
+    "rsid": "obue.analytics.spa",
+    "reportSuiteName": "Analytics SPA",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "segmentIds": [
+        "s300000022_5d63e30676eba94791af7180",
+        "s300000022_5d63e3060420874a8f858096",
+        "s300000022_5d63e3060420874a8f858097",
+        "s300000022_5d63e30bea81456827886822",
+        "s300000022_5d63e306b58a636e2b297727",
+        "s300000022_5d63e3066824eb1586aa11b6",
+        "s300000022_5d63e306ea81456827886820",
+        "s300000022_5d63e306ea81456827886821",
+        "s300000022_5d63e30608253f198c801839",
+        "s300000022_5d63e30652995f434ac68bd7",
+        "s300000022_5d63e3068c809042e7454cfc",
+        "s300000022_5d63e3068c809042e7454cfb",
+        "s300000022_5d63e3067d44a42f1201cad3",
+        "s300000022_5d63e3060436875b840c4b8a",
+        "s300000022_5d63e3050436875b840c4b89",
+        "s300000022_5d63e3069973e91e263d562a",
+        "s300000022_5d63e305d375ee6be7761f82",
+        "s300000022_5d63e3068f082f105276c1c7",
+        "s300000022_5d63e306bd3fe7710d8db6be",
+        "s300000022_5d63e306c02e943368d16669",
+        "s300000022_5d63e306c68b3104e432cc34",
+        "s300000022_5d63e30665be8361883aa131",
+        "s300000022_5d63e306d375ee6be7761f83",
+        "s300000022_5d63e306c2761369b0aa92ab",
+        "s300000022_5d63e3064adec2247810f6fb",
+        "s300000022_5d63e3064adec2247810f6fc"
+      ]
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Analytics SPA",
+    "modified": "2019-08-26T13:48:48Z",
+    "created": "2019-08-26T13:48:48Z"
+  },
+  {
+    "id": "5d6422657cc452193fa43397",
+    "name": "VD",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2019-08-26T18:18:13Z",
+    "created": "2019-08-26T18:18:13Z"
+  },
+  {
+    "id": "5d6549639500e21542d42454",
+    "name": "SPA",
+    "description": "",
+    "rsid": "obue.analytics.spa",
+    "reportSuiteName": "Analytics SPA",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Analytics SPA",
+    "modified": "2019-08-27T15:16:51Z",
+    "created": "2019-08-27T15:16:51Z"
+  },
+  {
+    "id": "5d9f39dd3fccb64646437cdc",
+    "name": "New Project",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["last53FullWeeks"],
+      "calculatedMetricIds": [],
+      "segmentIds": ["s300000022_5d63fd8c6a445e284042620d", "canada"]
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2019-11-20T23:22:52Z",
+    "created": "2019-10-10T14:02:05Z"
+  },
+  {
+    "id": "5e2f32239bcadc29a7f03614",
+    "name": "SegmentCompare",
+    "description": "",
+    "rsid": "vrs_obueng0_cja",
+    "reportSuiteName": "Unknown Report Suite",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["last30Days", "thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["vrs_obueng0_cja"],
+      "segmentIds": [
+        "s300000022_5e30ac9dbe6bf23b24a971d8",
+        "s300000022_5e30ac9b0d9f0c146049b2e9",
+        "s300000022_5e30ac98c89a9619cd83d186"
+      ]
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Unknown Report Suite",
+    "modified": "2020-01-28T21:51:27Z",
+    "created": "2020-01-27T18:55:31Z"
+  },
+  {
+    "id": "5e5404eb3126e2262ef2ce9e",
+    "name": "New Project",
+    "description": "",
+    "rsid": "vrs_obueng0_avrs",
+    "reportSuiteName": "Unknown Report Suite",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["vrs_obueng0_avrs"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Unknown Report Suite",
+    "modified": "2020-02-24T17:16:27Z",
+    "created": "2020-02-24T17:16:27Z"
+  },
+  {
+    "id": "5e5431e7cf5bf3632d029234",
+    "name": "New Project",
+    "description": "",
+    "rsid": "vrs_obueng0_anewvrs11411121copy_0",
+    "reportSuiteName": "Unknown Report Suite",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["obue.analytics.spa", "a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Unknown Report Suite",
+    "modified": "2020-02-24T22:24:01Z",
+    "created": "2020-02-24T20:28:23Z"
+  },
+  {
+    "id": "5e5ff3f4cf5bf37a97eadd0d",
+    "name": "Analysis Workspace Training Tutorial1",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["lastFullMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": ["First_Time_Visits", "All_Visits", "Return_Visits"]
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-03-04T20:48:03Z",
+    "created": "2020-03-04T18:31:16Z"
+  },
+  {
+    "id": "5e66d2393126e272c6f4f738",
+    "name": "New Project Flow",
+    "description": "",
+    "rsid": "vrs_obueng0_cja",
+    "reportSuiteName": "Unknown Report Suite",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Unknown Report Suite",
+    "modified": "2020-03-09T23:33:13Z",
+    "created": "2020-03-09T23:33:13Z"
+  },
+  {
+    "id": "5e6fe7c33126e239a773384d",
+    "name": "A11Y",
+    "description": "",
+    "rsid": "vrs_obueng0_cja",
+    "reportSuiteName": "Unknown Report Suite",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["vrs_obueng0_cja"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Unknown Report Suite",
+    "modified": "2020-04-07T17:37:56Z",
+    "created": "2020-03-16T20:55:31Z"
+  },
+  {
+    "id": "5e73f26acf5bf323a16a3329",
+    "name": "New Project",
+    "description": "",
+    "rsid": "obue.analytics.spa",
+    "reportSuiteName": "Analytics SPA",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Analytics SPA",
+    "modified": "2020-03-19T22:30:02Z",
+    "created": "2020-03-19T22:30:02Z"
+  },
+  {
+    "id": "5e73f3383126e238c9857e0c",
+    "name": "New Project",
+    "description": "",
+    "rsid": "obue.analytics.spa",
+    "reportSuiteName": "Analytics SPA",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Analytics SPA",
+    "modified": "2020-03-19T22:33:28Z",
+    "created": "2020-03-19T22:33:28Z"
+  },
+  {
+    "id": "5e9619053126e24644f4eb8f",
+    "name": "Adrian MR Test",
+    "description": "",
+    "rsid": "vrs_obueng0_cja",
+    "reportSuiteName": "Unknown Report Suite",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth", "last7Days"],
+      "calculatedMetricIds": [
+        "cm300000022_5e9619c1e9526326043f6b16",
+        "cm300000022_5e961abfe8836d5d62d5599a"
+      ],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": ["canada"]
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Unknown Report Suite",
+    "modified": "2020-04-14T20:21:13Z",
+    "created": "2020-04-14T20:11:49Z"
+  },
+  {
+    "id": "5e9632a93126e24644f4eca6",
+    "name": "Curation",
+    "description": "",
+    "rsid": "obue.analytics.spa",
+    "reportSuiteName": "Analytics SPA",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["obue.analytics.spa"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Analytics SPA",
+    "modified": "2020-04-14T22:01:13Z",
+    "created": "2020-04-14T22:01:13Z"
+  },
+  {
+    "id": "5e98c3153126e213aef081cc",
+    "name": "QI",
+    "description": "",
+    "rsid": "vrs_obueng0_cja",
+    "reportSuiteName": "Unknown Report Suite",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["vrs_obueng0_cja"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Unknown Report Suite",
+    "modified": "2020-04-16T20:41:57Z",
+    "created": "2020-04-16T20:41:57Z"
+  },
+  {
+    "id": "5eab3b89cf5bf33452ba1b16",
+    "name": "All the charts",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": [
+        "s300000022_5d63fd8c6a445e284042620d",
+        "canada",
+        "All_Visits"
+      ]
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {
+      "count": 1,
+      "mostRecentTimestamp": "2021-02-24T18:32:15Z",
+      "itemId": "5eab3b89cf5bf33452ba1b16"
+    },
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-10-01T22:35:18Z",
+    "created": "2020-04-30T20:56:41Z"
+  },
+  {
+    "id": "5eb0712c3126e267409e3d89",
+    "name": "SR",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": ["cm300000022_5eb0a14c38b0e428008c244c"],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": ["canada"]
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-05-04T23:40:50Z",
+    "created": "2020-05-04T19:46:52Z"
+  },
+  {
+    "id": "5ec2b7703126e212dce71c63",
+    "name": "New Project",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["obue.analytics.spa", "a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-05-21T05:33:52Z",
+    "created": "2020-05-18T16:27:28Z"
+  },
+  {
+    "id": "5ecd4dbbcf5bf35ddb0c6cec",
+    "name": "New Project",
+    "description": "",
+    "rsid": "obue.richie.mrs.incompat",
+    "reportSuiteName": "Richie MRS Incompat Test Suite",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["obue.richie.mrs.incompat"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Richie MRS Incompat Test Suite",
+    "modified": "2020-05-26T17:29:29Z",
+    "created": "2020-05-26T17:11:23Z"
+  },
+  {
+    "id": "5ede7ee63126e2458d87cd3c",
+    "name": "New Project",
+    "description": "",
+    "rsid": "vrs_obueng0_cja",
+    "reportSuiteName": "Unknown Report Suite",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["vrs_obueng0_cja"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Unknown Report Suite",
+    "modified": "2020-06-08T18:25:17Z",
+    "created": "2020-06-08T18:09:42Z"
+  },
+  {
+    "id": "5ede8fb33126e251f7f70f80",
+    "name": "New Project",
+    "description": "",
+    "rsid": "vrs_obueng0_moonvrs",
+    "reportSuiteName": "MOON VRS 2--Change on July 31",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth", "last7Days"],
+      "calculatedMetricIds": [],
+      "rsids": ["vrs_obueng0_cja", "a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "MOON VRS 2--Change on July 31",
+    "modified": "2020-07-14T16:08:23Z",
+    "created": "2020-06-08T19:21:23Z"
+  },
+  {
+    "id": "5ee951f2008c297cc56527f9",
+    "name": "Deleted VRS",
+    "description": "",
+    "rsid": "obue.analytics.spa",
+    "reportSuiteName": "Analytics SPA",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["vrs_obueng0_deletemecopy_1", "obue.analytics.spa"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Analytics SPA",
+    "modified": "2020-06-16T23:12:50Z",
+    "created": "2020-06-16T23:12:50Z"
+  },
+  {
+    "id": "5f701bbe3126e21f0210ecba",
+    "name": "resize test",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-09-27T04:57:34Z",
+    "created": "2020-09-27T04:57:34Z"
+  },
+  {
+    "id": "5f775edacf5bf3749a440ad7",
+    "name": "Funky Line",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [
+        "cm_app_actions_defaultmetric",
+        "cm300000022_560a90d8e4b0790131f85aaf",
+        "cm300000022_5c86b0aa658022599ce1320a"
+      ],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-10-02T17:09:46Z",
+    "created": "2020-10-02T17:09:46Z"
+  },
+  {
+    "id": "5f7df154008c295f36072858",
+    "name": "New Project Test",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["obue.analytics.spa", "a4t-test.geometrixxqc"],
+      "segmentIds": ["s300000022_5d9cbe0f0d9f0c1f63682fd8"]
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 12036449,
+        "shareToId": 200095818,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5f7df154008c295f36072858",
+        "shareToDisplayName": "Adrian Limited",
+        "shareToLogin": "afoong-lim",
+        "accessLevel": "edit"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-10-07T17:00:07Z",
+    "created": "2020-10-07T16:48:20Z"
+  },
+  {
+    "id": "5fac79ed3126e264ce38a80c",
+    "name": "Missing",
+    "description": "",
+    "rsid": "auto.mixed-case",
+    "reportSuiteName": "auto.Mixed-Case",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": ["cm300000022_557f4788e4b0e3bda2e7dacc"],
+      "rsids": ["auto.mixed-case"],
+      "segmentIds": ["s300000022_5fada15085d04231a1b25b54"]
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "auto.Mixed-Case",
+    "modified": "2020-11-16T21:14:46Z",
+    "created": "2020-11-11T23:55:25Z"
+  },
+  {
+    "id": "5faf1d423126e264ce38ba0e",
+    "name": "Adrian Admin",
+    "description": "",
+    "rsid": "obue.analytics.spa",
+    "reportSuiteName": "Analytics SPA",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["auto.mixed-case", "a4t-test.geometrixxqc"],
+      "segmentIds": ["s300000022_5fada15085d04231a1b25b54"]
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 12407656,
+        "shareToId": 200095818,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5faf1d423126e264ce38ba0e",
+        "shareToDisplayName": "Adrian Limited",
+        "shareToLogin": "afoong-lim",
+        "accessLevel": "edit"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Analytics SPA",
+    "modified": "2020-11-17T06:11:50Z",
+    "created": "2020-11-13T23:56:50Z"
+  },
+  {
+    "id": "5fe105d43126e264ce398a74",
+    "name": "New project",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {
+      "count": 4,
+      "mostRecentTimestamp": "2021-03-26T18:41:02Z",
+      "itemId": "5fe105d43126e264ce398a74"
+    },
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-12-21T20:30:12Z",
+    "created": "2020-12-21T20:30:12Z"
+  },
+  {
+    "id": "600b66774a034974f0c90b9d",
+    "name": "Derived",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2021-01-22T23:57:43Z",
+    "created": "2021-01-22T23:57:43Z"
+  },
+  {
+    "id": "602309fdfc7df953034b3463",
+    "name": "Fallout",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": ["All_Visits"]
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2021-02-09T22:17:33Z",
+    "created": "2021-02-09T22:17:33Z"
+  },
+  {
+    "id": "60242e0dcf90050984d5063d",
+    "name": "multi rs",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [
+        "cm_app_actions_defaultmetric",
+        "cm_app_users_defaultmetric"
+      ],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": [
+        "s300000022_5f3204a2967890718dcdcbaa",
+        "s300000022_5ee3f2d07097ba4af59c798d"
+      ]
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {
+      "count": 435,
+      "mostRecentTimestamp": "2021-04-14T17:42:38Z",
+      "itemId": "60242e0dcf90050984d5063d"
+    },
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2021-03-25T21:32:50Z",
+    "created": "2021-02-10T19:03:41Z"
+  },
+  {
+    "id": "60411e79637e767c7cabbfb2",
+    "name": "CA",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": [],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {
+      "count": 10,
+      "mostRecentTimestamp": "2021-03-04T18:31:34Z",
+      "itemId": "60411e79637e767c7cabbfb2"
+    },
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2021-03-04T17:57:55Z",
+    "created": "2019-04-05T19:44:19Z"
+  },
+  {
+    "id": "605e4a11874dbc582f87c35e",
+    "name": "Test template",
+    "description": "",
+    "rsid": "obue.analytics.spa",
+    "reportSuiteName": "Analytics SPA",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": true,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["obue.analytics.spa"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Analytics SPA",
+    "modified": "2021-03-26T20:54:41Z",
+    "created": "2021-03-26T20:54:41Z"
+  },
+  {
+    "id": "6075cb19cf428468820f8598",
+    "name": "New mobile scorecard",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 611163,
+      "name": "Adrian Foong",
+      "login": "afoong"
+    },
+    "companyTemplate": false,
+    "type": "mobileScorecard",
+    "externalReferences": {
+      "dateRangeIds": ["yesterday", "today"],
+      "calculatedMetricIds": [],
+      "rsids": [],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2021-04-13T16:47:21Z",
+    "created": "2021-04-13T16:47:21Z"
+  },
+  {
+    "id": "56f9aedcfcb4710283ab4d22",
+    "name": "Metrics",
+    "description": "",
+    "rsid": "bugzilla",
+    "reportSuiteName": "BugZilla",
+    "owner": {
+      "id": 523682,
+      "name": "Brian Farnsworth",
+      "login": "farnswor"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": [],
+      "calculatedMetricIds": [],
+      "rsids": ["bugzilla"],
+      "segmentIds": ["All_Visits"]
+    },
+    "accessLevel": "duplicate",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 1616438,
+        "shareToId": 543955,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "56f9aedcfcb4710283ab4d22",
+        "shareToDisplayName": "Brian Limited",
+        "shareToLogin": "farnswor_limited",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11024081,
+        "shareToId": 200273389,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "56f9aedcfcb4710283ab4d22",
+        "shareToDisplayName": "Brian ShareTest",
+        "shareToLogin": "farnswor-share-test",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11024082,
+        "shareToId": 35926,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "56f9aedcfcb4710283ab4d22",
+        "shareToDisplayName": "Test Group",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11024095,
+        "shareToId": 200213676,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "56f9aedcfcb4710283ab4d22",
+        "shareToDisplayName": "Brian Farnsworth",
+        "shareToLogin": "hawkeye",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11057900,
+        "shareToId": 200231914,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "56f9aedcfcb4710283ab4d22",
+        "shareToDisplayName": "Brian Farnsworth",
+        "shareToLogin": "farnswor2",
+        "accessLevel": "edit"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "BugZilla",
+    "modified": "2020-06-19T00:59:16Z",
+    "created": "2016-03-28T22:23:24Z"
+  },
+  {
+    "id": "5876ee78b8aef126f2691344",
+    "name": "New Project",
+    "description": "",
+    "rsid": "geo1xx192",
+    "reportSuiteName": "We.Outdoors 2015",
+    "owner": {
+      "id": 601089,
+      "name": "Yiming Zheng",
+      "login": "yzheng"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["daterange_14"],
+      "calculatedMetricIds": [],
+      "segmentIds": []
+    },
+    "accessLevel": "duplicate",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 10933229,
+        "shareToId": 1,
+        "shareToType": "all",
+        "componentType": "project",
+        "componentId": "5876ee78b8aef126f2691344",
+        "shareToDisplayName": "All",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11057901,
+        "shareToId": 200231914,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5876ee78b8aef126f2691344",
+        "shareToDisplayName": "Brian Farnsworth",
+        "shareToLogin": "farnswor2",
+        "accessLevel": "edit"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "We.Outdoors 2015",
+    "modified": "2017-01-12T02:48:24Z",
+    "created": "2017-01-12T02:48:24Z"
+  },
+  {
+    "id": "59c95f7d9ab17365f2e09ed2",
+    "name": "AppService Summary Dashboard - Last 2 Weeks",
+    "description": "",
+    "rsid": "obue.appservicesprod",
+    "reportSuiteName": "obue.appservices Prod",
+    "owner": {
+      "id": 355891,
+      "name": "Nate Purser",
+      "login": "npurser"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["lastFullWeek", "last2FullWeeks"],
+      "calculatedMetricIds": [
+        "cm300000022_557fc6a6e4b0442ab4c394d2",
+        "cm300000022_557f5363e4b0b4388cd3a6ec",
+        "cm300000022_55807882e4b07e827d17d51e"
+      ],
+      "segmentIds": [
+        "545bc60ae4b0e1cfa16abb1f",
+        "s300000022_55b2cc25e4b08b7e063633e3",
+        "s300000022_55b2cca4e4b08b7e063633e4"
+      ]
+    },
+    "accessLevel": "duplicate",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 2850031,
+        "shareToId": 64435,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "59c95f7d9ab17365f2e09ed2",
+        "shareToDisplayName": "AppService Team",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11057902,
+        "shareToId": 200231914,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "59c95f7d9ab17365f2e09ed2",
+        "shareToDisplayName": "Brian Farnsworth",
+        "shareToLogin": "farnswor2",
+        "accessLevel": "edit"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "obue.appservices Prod",
+    "modified": "2017-10-10T22:15:24Z",
+    "created": "2017-09-25T19:56:45Z"
+  },
+  {
+    "id": "5a0caaf65fe70750641c04eb",
+    "name": "New Project",
+    "description": "",
+    "rsid": "obue.ui",
+    "reportSuiteName": "OBU UI",
+    "owner": {
+      "id": 545901,
+      "name": "Andrea Yang",
+      "login": "ayang"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "segmentIds": []
+    },
+    "accessLevel": "duplicate",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 3172879,
+        "shareToId": 64436,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "5a0caaf65fe70750641c04eb",
+        "shareToDisplayName": "Andrea Group",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 3172880,
+        "shareToId": 545901,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5a0caaf65fe70750641c04eb",
+        "shareToDisplayName": "Andrea Yang",
+        "shareToLogin": "ayang",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 3172881,
+        "shareToId": 602412,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5a0caaf65fe70750641c04eb",
+        "shareToDisplayName": "Andrea Nonadmin",
+        "shareToLogin": "ayang3",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11057903,
+        "shareToId": 200231914,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5a0caaf65fe70750641c04eb",
+        "shareToDisplayName": "Brian Farnsworth",
+        "shareToLogin": "farnswor2",
+        "accessLevel": "edit"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "OBU UI",
+    "modified": "2017-11-20T17:46:07Z",
+    "created": "2017-11-15T21:00:38Z"
+  },
+  {
+    "id": "5a0e2509e4a3276857d180c9",
+    "name": "Report Suite Summary",
+    "description": "",
+    "rsid": "obue.analytics.spa",
+    "reportSuiteName": "Analytics SPA",
+    "owner": {
+      "id": 355891,
+      "name": "Nate Purser",
+      "login": "npurser"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["last90Days"],
+      "calculatedMetricIds": [],
+      "segmentIds": [
+        "s300000022_5a0e1db81d43f6274e196de5",
+        "All_Visits",
+        "s300000022_5a0f1a54b7204e6c8ec3232a",
+        "s300000022_5a0e2591746e7a64676d7520",
+        "s300000022_5a0e25c517a045ca9cd30b85"
+      ]
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 3246512,
+        "shareToId": 611163,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5a0e2509e4a3276857d180c9",
+        "shareToDisplayName": "Adrian Foong",
+        "shareToLogin": "afoong",
+        "accessLevel": "edit"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {
+      "count": 1,
+      "mostRecentTimestamp": "2021-02-10T19:02:56Z",
+      "itemId": "5a0e2509e4a3276857d180c9"
+    },
+    "siteTitle": "Analytics SPA",
+    "modified": "2017-12-04T20:17:58Z",
+    "created": "2017-11-16T23:53:45Z"
+  },
+  {
+    "id": "5a131a16058fb03c485d0c02",
+    "name": "Performance Data for Analysis Workspace",
+    "description": "",
+    "rsid": "obue.analytics.spa",
+    "reportSuiteName": "Analytics SPA",
+    "owner": {
+      "id": 543890,
+      "name": "Brian Farnsworth",
+      "login": "farnswor"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": [
+        "5a00ef7001e8236725f34e00",
+        "5a00ef2aae06387a6a4134c3",
+        "5a1c7fdbb7204e6c8e633def"
+      ],
+      "calculatedMetricIds": [
+        "cm300000022_593b09b3d39bbdd136f26db3",
+        "cm300000022_593b0becc912bb2eef04f625",
+        "cm300000022_5a1c7fdcbef0d3763d852220"
+      ],
+      "segmentIds": [
+        "s300000022_5a1473dcab80a635572a3771",
+        "s300000022_5a1474be8b49b744fc9a4b72",
+        "s300000022_5a1474beab80a635572a3781",
+        "s300000022_5a1473dc535e3b1668199e25",
+        "s300000022_5a1474be7f0bfd212756e21e",
+        "s300000022_5a1473dc535e3b1668199e24",
+        "s300000022_5a1474beab80a635572a3780",
+        "s300000022_5a1474bef30aae36413ddbae",
+        "All_Visits",
+        "s300000022_5a1473dcc912bb2df83f757a",
+        "s300000022_5a1473dc03d38321c07dd13a",
+        "s300000022_5a1473dcb7204e6c8ec3252f",
+        "s300000022_5a1473dc3e958a35e1dc37df",
+        "s300000022_5a1473dc8b49b744fc9a4b6e",
+        "s300000022_5a1474be3f1e920264550db1",
+        "s300000022_5a1474beec835022bb0e43d3",
+        "s300000022_5a1474beae06387a6a87617e",
+        "s300000022_5a1473dc3f1e920264550da9",
+        "s300000022_5a149e8403d38321c07dd17d",
+        "s300000022_5a1474be3319987887fea1e4",
+        "s300000022_5a1473dc22fa9921dc8530e1",
+        "s300000022_5a1473dc17a045ca9cd30e08",
+        "s300000022_5a1473dcb017850d7867e6f6",
+        "s300000022_5a1473dcb017850d7867e6f5",
+        "s300000022_5a1474bed39bbd6df34828e6",
+        "s300000022_5a1474bf01e8236725d8246e",
+        "s300000022_5a1474be59161d5ee3eb7024",
+        "s300000022_5a1474bef73f233ba1a02dc4"
+      ]
+    },
+    "accessLevel": "edit",
+    "tags": [
+      {
+        "id": 34959,
+        "name": "Performance",
+        "components": []
+      }
+    ],
+    "shares": [
+      {
+        "shareId": 3180023,
+        "shareToId": 465600,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5a131a16058fb03c485d0c02",
+        "shareToDisplayName": "Brandon George",
+        "shareToLogin": "bgeorge",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 3180106,
+        "shareToId": 611163,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5a131a16058fb03c485d0c02",
+        "shareToDisplayName": "Adrian Foong",
+        "shareToLogin": "afoong",
+        "accessLevel": "edit"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Analytics SPA",
+    "modified": "2017-11-27T22:14:56Z",
+    "created": "2017-11-20T18:08:22Z"
+  },
+  {
+    "id": "5c741213d916994d9b9e9ae8",
+    "name": "Reports SLT",
+    "description": "This project shows the Appservice Report API SLI over the past 30 days",
+    "rsid": "vrs_obueng0_appservicecuratedcom",
+    "reportSuiteName": "Appservice (Curated Components)",
+    "owner": {
+      "id": 355891,
+      "name": "Nate Purser",
+      "login": "npurser"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": [
+        "today",
+        "thisMonth",
+        "lastFullMonth",
+        "5c8182355759f0074c35f8b9",
+        "last14Days",
+        "last7Days"
+      ],
+      "calculatedMetricIds": [
+        "cm300000022_5c740b70ebec942c6bd465b5",
+        "cm300000022_5c817e3e4273a00a3f005140"
+      ],
+      "segmentIds": [
+        "s300000022_5580776be4b084cfcea7a02a",
+        "s300000022_5c74126c1212e61ad704c56f"
+      ]
+    },
+    "accessLevel": "duplicate",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 7696426,
+        "shareToId": 64435,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "5c741213d916994d9b9e9ae8",
+        "shareToDisplayName": "AppService Team",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 8500334,
+        "shareToId": 200204542,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5c741213d916994d9b9e9ae8",
+        "shareToDisplayName": "Brent Kleinman",
+        "shareToLogin": "bkleinma",
+        "accessLevel": "edit"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Appservice (Curated Components)",
+    "modified": "2019-09-19T21:54:35Z",
+    "created": "2015-09-18T03:50:02Z"
+  },
+  {
+    "id": "5c786475e579481be1d1c02a",
+    "name": "All Visualizations",
+    "description": "",
+    "rsid": "obue.analytics.spa",
+    "reportSuiteName": "Analytics SPA",
+    "owner": {
+      "id": 736216,
+      "name": "Amy  Scoville",
+      "login": "scoville"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["last2FullMonths"],
+      "calculatedMetricIds": [],
+      "segmentIds": ["s300000022_5ae345bd7f0bfd37c575f831"]
+    },
+    "accessLevel": "edit",
+    "tags": [
+      {
+        "id": 26864,
+        "name": "#test",
+        "components": []
+      },
+      {
+        "id": 117886,
+        "name": "a",
+        "components": []
+      }
+    ],
+    "shares": [
+      {
+        "shareId": 7906207,
+        "shareToId": 200185346,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5c786475e579481be1d1c02a",
+        "shareToDisplayName": "Richie Preece",
+        "shareToLogin": "preece",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 8259962,
+        "shareToId": 602410,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5c786475e579481be1d1c02a",
+        "shareToDisplayName": "Richard Bell",
+        "shareToLogin": "rbell2",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 8259971,
+        "shareToId": 571966,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5c786475e579481be1d1c02a",
+        "shareToDisplayName": "richard bell",
+        "shareToLogin": "rbell",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 8259982,
+        "shareToId": 611163,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5c786475e579481be1d1c02a",
+        "shareToDisplayName": "Adrian Foong",
+        "shareToLogin": "afoong",
+        "accessLevel": "edit"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Analytics SPA",
+    "modified": "2019-08-23T17:20:59Z",
+    "created": "2019-02-28T22:45:09Z"
+  },
+  {
+    "id": "5d30c5800d8e331a9a91c491",
+    "name": "Magento: Marketing & Commerce",
+    "description": "What is my marketing effectiveness on Commerce?",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 736216,
+      "name": "Amy  Scoville",
+      "login": "scoville"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["last30Days", "last3FullMonths"],
+      "calculatedMetricIds": ["cm_bouncerate_defaultmetric"],
+      "segmentIds": [
+        "1_to_5_days_since_last_visit",
+        "21_to_50_days_since_last_visit",
+        "s300000022_5d30af8f39d6ba2c88a7d4b7",
+        "s300000022_5d30af8fde3da655a0a3b760",
+        "s300000022_5d30af8f39d6ba2c88a7d4b6",
+        "51_to_100_days_since_last_visit",
+        "s300000022_5d30af8fb0341e17e45fce55",
+        "s300000022_5d30af8f2e32e62d15b4cc0f",
+        "s300000022_5d30af8f53dc2b4245c62751",
+        "s300000022_5d30af90e0075f183fbba872",
+        "10_to_20_days_since_last_visit",
+        "visits_with_referrer",
+        "All_Visits",
+        "0_days_since_last_visit",
+        "s300000022_5d30af8fd049bc55ab668b32",
+        "Visits_With_Tracking_Code",
+        "more_than_100_days_since_last_visit",
+        "s300000022_5d30af8faa413959d07030f4",
+        "s300000022_5d30af8fb9c4bb0b53098f8f",
+        "s300000022_5d30af8f6eb23b157015a6b7",
+        "s300000022_5d30af8f2c4ea141645250a6",
+        "s300000022_5d30af8fb9c4bb0b53098f8e"
+      ]
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 8285273,
+        "shareToId": 611163,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5d30c5800d8e331a9a91c491",
+        "shareToDisplayName": "Adrian Foong",
+        "shareToLogin": "afoong",
+        "accessLevel": "edit"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2019-08-22T16:22:19Z",
+    "created": "2019-07-18T19:16:16Z"
+  },
+  {
+    "id": "5dcc3db66b91fa14ff618f71",
+    "name": "why doesn't this have a name",
+    "description": "who knows",
+    "rsid": "obue.analytics.spa",
+    "reportSuiteName": "Analytics SPA",
+    "owner": {
+      "id": 736216,
+      "name": "Amy  Scoville",
+      "login": "scoville"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["last13FullWeeks"],
+      "calculatedMetricIds": [],
+      "segmentIds": ["All_Visits"]
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 8971835,
+        "shareToId": 611163,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5dcc3db66b91fa14ff618f71",
+        "shareToDisplayName": "Adrian Foong",
+        "shareToLogin": "afoong",
+        "accessLevel": "edit"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Analytics SPA",
+    "modified": "2019-11-18T20:17:50Z",
+    "created": "2019-11-13T17:30:30Z"
+  },
+  {
+    "id": "5e1f350c65920b037ad431d9",
+    "name": "Other Use Segment",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 355891,
+      "name": "Nate Purser",
+      "login": "npurser"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "segmentIds": ["537d58b7e4b0893ab3084e92"]
+    },
+    "accessLevel": "duplicate",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 9436994,
+        "shareToId": 1,
+        "shareToType": "all",
+        "componentType": "project",
+        "componentId": "5e1f350c65920b037ad431d9",
+        "shareToDisplayName": "All",
+        "accessLevel": "duplicate"
+      }
+    ],
+    "approved": true,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-01-15T15:51:40Z",
+    "created": "2020-01-15T15:51:00Z"
+  },
+  {
+    "id": "5e3b510ebaafd368afd9f58e",
+    "name": "Multi-panel",
+    "description": "",
+    "rsid": "obue.analytics.spa",
+    "reportSuiteName": "Analytics SPA",
+    "owner": {
+      "id": 363324,
+      "name": "Brad Rogers",
+      "login": "brrogers"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": [
+        "obue.ui",
+        "obue.analytics.spa",
+        "obue.screports",
+        "a4t-test.geometrixxqc"
+      ],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 9656592,
+        "shareToId": 611163,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5e3b510ebaafd368afd9f58e",
+        "shareToDisplayName": "Adrian Foong",
+        "shareToLogin": "afoong",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 9656593,
+        "shareToId": 200185346,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5e3b510ebaafd368afd9f58e",
+        "shareToDisplayName": "Richie Preece",
+        "shareToLogin": "preece",
+        "accessLevel": "edit"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Analytics SPA",
+    "modified": "2020-02-18T19:47:10Z",
+    "created": "2020-02-05T23:34:38Z"
+  },
+  {
+    "id": "5e472e3bbaafd368afdada75",
+    "name": "Project shared",
+    "description": "",
+    "rsid": "sistr2",
+    "reportSuiteName": "sistr2 - 工藤静香",
+    "owner": {
+      "id": 363324,
+      "name": "Brad Rogers",
+      "login": "brrogers"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["sistr2"],
+      "segmentIds": ["s300000022_5e472d4497834a466fbac0c3"]
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 9672014,
+        "shareToId": 200071593,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5e472e3bbaafd368afdada75",
+        "shareToDisplayName": "Jake Cahoon",
+        "shareToLogin": "cahoon",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 9672015,
+        "shareToId": 611163,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5e472e3bbaafd368afdada75",
+        "shareToDisplayName": "Adrian Foong",
+        "shareToLogin": "afoong",
+        "accessLevel": "edit"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "sistr2 - 工藤静香",
+    "modified": "2020-02-14T23:33:48Z",
+    "created": "2020-02-14T23:33:15Z"
+  },
+  {
+    "id": "5eb08694008c296cf1592453",
+    "name": "TEST TEST TEST",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 200231914,
+      "name": "Brian Farnsworth",
+      "login": "farnswor2"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "duplicate",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 10644819,
+        "shareToId": 200273389,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5eb08694008c296cf1592453",
+        "shareToDisplayName": "Brian ShareTest",
+        "shareToLogin": "farnswor-share-test",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 10701443,
+        "shareToId": 1,
+        "shareToType": "all",
+        "componentType": "project",
+        "componentId": "5eb08694008c296cf1592453",
+        "shareToDisplayName": "All",
+        "accessLevel": "duplicate"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-05-11T21:45:40Z",
+    "created": "2020-05-04T21:18:12Z"
+  },
+  {
+    "id": "5ed06d8a3126e24b3116e42a",
+    "name": "Algorithmic 2",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 200231914,
+      "name": "Brian Farnsworth",
+      "login": "farnswor2"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["last30Days", "thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": ["canada", "10_to_20_days_since_last_visit"]
+    },
+    "accessLevel": "duplicate",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 10879191,
+        "shareToId": 65505,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "5ed06d8a3126e24b3116e42a",
+        "shareToDisplayName": "000 create",
+        "accessLevel": "duplicate"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-06-03T04:11:40Z",
+    "created": "2020-05-29T02:03:54Z"
+  },
+  {
+    "id": "5edfce44cf5bf313b23e460a",
+    "name": "AN-213924",
+    "description": "",
+    "rsid": "obue.analytics.spa",
+    "reportSuiteName": "Analytics SPA",
+    "owner": {
+      "id": 200185346,
+      "name": "Richie Preece",
+      "login": "preece"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["obue.analytics.spa"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 10951151,
+        "shareToId": 200235176,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5edfce44cf5bf313b23e460a",
+        "shareToDisplayName": "Richie mrs-test",
+        "shareToLogin": "preecemrs",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 10951442,
+        "shareToId": 611163,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5edfce44cf5bf313b23e460a",
+        "shareToDisplayName": "Adrian Foong",
+        "shareToLogin": "afoong",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 10951443,
+        "shareToId": 736216,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5edfce44cf5bf313b23e460a",
+        "shareToDisplayName": "Amy  Scoville",
+        "shareToLogin": "scoville",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 10951444,
+        "shareToId": 543890,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5edfce44cf5bf313b23e460a",
+        "shareToDisplayName": "Brian Farnsworth",
+        "shareToLogin": "farnswor",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 10951445,
+        "shareToId": 200130093,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5edfce44cf5bf313b23e460a",
+        "shareToDisplayName": "Bryant Baird",
+        "shareToLogin": "baird",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 10951446,
+        "shareToId": 200135777,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5edfce44cf5bf313b23e460a",
+        "shareToDisplayName": "Courtney Ferguson",
+        "shareToLogin": "cofergus",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 10951447,
+        "shareToId": 200226731,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5edfce44cf5bf313b23e460a",
+        "shareToDisplayName": "Unknown User",
+        "shareToLogin": "",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 10951448,
+        "shareToId": 363324,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5edfce44cf5bf313b23e460a",
+        "shareToDisplayName": "Brad Rogers",
+        "shareToLogin": "brrogers",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 10951449,
+        "shareToId": 491500,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5edfce44cf5bf313b23e460a",
+        "shareToDisplayName": "Jonny Moon",
+        "shareToLogin": "jmoon",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 10951450,
+        "shareToId": 602410,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5edfce44cf5bf313b23e460a",
+        "shareToDisplayName": "Richard Bell",
+        "shareToLogin": "rbell2",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 10951593,
+        "shareToId": 128258,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "5edfce44cf5bf313b23e460a",
+        "shareToDisplayName": "Test ",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 10951594,
+        "shareToId": 265137,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "5edfce44cf5bf313b23e460a",
+        "shareToDisplayName": "MRS Test",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 10983302,
+        "shareToId": 200231914,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5edfce44cf5bf313b23e460a",
+        "shareToDisplayName": "Brian Farnsworth",
+        "shareToLogin": "farnswor2",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 10994142,
+        "shareToId": 35926,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "5edfce44cf5bf313b23e460a",
+        "shareToDisplayName": "Test Group",
+        "accessLevel": "duplicate"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Analytics SPA",
+    "modified": "2020-06-17T16:13:14Z",
+    "created": "2020-06-09T18:00:36Z"
+  },
+  {
+    "id": "5ee39689cf5bf32a2e55e40b",
+    "name": "Admin Owner - Shared",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 200130093,
+      "name": "Bryant Baird",
+      "login": "baird"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 10969703,
+        "shareToId": 200164964,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ee39689cf5bf32a2e55e40b",
+        "shareToDisplayName": "Bryant Non Baird Admin",
+        "shareToLogin": "bairdna",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 10969824,
+        "shareToId": 571966,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ee39689cf5bf32a2e55e40b",
+        "shareToDisplayName": "richard bell",
+        "shareToLogin": "rbell",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 10969825,
+        "shareToId": 602410,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ee39689cf5bf32a2e55e40b",
+        "shareToDisplayName": "Richard Bell",
+        "shareToLogin": "rbell2",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 10969949,
+        "shareToId": 611163,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ee39689cf5bf32a2e55e40b",
+        "shareToDisplayName": "Adrian Foong",
+        "shareToLogin": "afoong",
+        "accessLevel": "edit"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-06-12T15:02:17Z",
+    "created": "2020-06-10T23:00:21Z"
+  },
+  {
+    "id": "5eeb14573126e26ac3a38564",
+    "name": "Shared with all",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 200231914,
+      "name": "Brian Farnsworth",
+      "login": "farnswor2"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "duplicate",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 11014105,
+        "shareToId": 200273389,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5eeb14573126e26ac3a38564",
+        "shareToDisplayName": "Brian ShareTest",
+        "shareToLogin": "farnswor-share-test",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11014106,
+        "shareToId": 65433,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "5eeb14573126e26ac3a38564",
+        "shareToDisplayName": "kotis test web acces group",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11014107,
+        "shareToId": 543955,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5eeb14573126e26ac3a38564",
+        "shareToDisplayName": "Brian Limited",
+        "shareToLogin": "farnswor_limited",
+        "accessLevel": "duplicate"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-06-18T16:03:08Z",
+    "created": "2020-06-18T07:14:31Z"
+  },
+  {
+    "id": "5eebc5433126e26ac3a38ca2",
+    "name": "Share to group - pre migration",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 200231914,
+      "name": "Brian Farnsworth",
+      "login": "farnswor2"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "duplicate",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 11021955,
+        "shareToId": 32781,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "5eebc5433126e26ac3a38ca2",
+        "shareToDisplayName": "Test Group A",
+        "accessLevel": "duplicate"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-06-18T19:49:33Z",
+    "created": "2020-06-18T19:49:23Z"
+  },
+  {
+    "id": "5eebc565cf5bf3561626df84",
+    "name": "Share to all - pre migration",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 200231914,
+      "name": "Brian Farnsworth",
+      "login": "farnswor2"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "duplicate",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 11021969,
+        "shareToId": 1,
+        "shareToType": "all",
+        "componentType": "project",
+        "componentId": "5eebc565cf5bf3561626df84",
+        "shareToDisplayName": "All",
+        "accessLevel": "duplicate"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-06-18T19:50:06Z",
+    "created": "2020-06-18T19:49:57Z"
+  },
+  {
+    "id": "5eebffc73126e26ac3a38fef",
+    "name": "Its is alive!",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 200231914,
+      "name": "Brian Farnsworth",
+      "login": "farnswor2"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "duplicate",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 11023867,
+        "shareToId": 200273389,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5eebffc73126e26ac3a38fef",
+        "shareToDisplayName": "Brian ShareTest",
+        "shareToLogin": "farnswor-share-test",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11023868,
+        "shareToId": 35926,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "5eebffc73126e26ac3a38fef",
+        "shareToDisplayName": "Test Group",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11023869,
+        "shareToId": 705888,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5eebffc73126e26ac3a38fef",
+        "shareToDisplayName": "k k",
+        "shareToLogin": "kotis_some_reportsuite_management",
+        "accessLevel": "duplicate"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-06-18T23:59:20Z",
+    "created": "2020-06-18T23:59:03Z"
+  },
+  {
+    "id": "5ef391a23126e227c822f579",
+    "name": "Shared with all to non-admin",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 200231914,
+      "name": "Brian Farnsworth",
+      "login": "farnswor2"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 11058028,
+        "shareToId": 1,
+        "shareToType": "all",
+        "componentType": "project",
+        "componentId": "5ef391a23126e227c822f579",
+        "shareToDisplayName": "All",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11068877,
+        "shareToId": 200213676,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ef391a23126e227c822f579",
+        "shareToDisplayName": "Brian Farnsworth",
+        "shareToLogin": "hawkeye",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11068879,
+        "shareToId": 572266,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ef391a23126e227c822f579",
+        "shareToDisplayName": "Brian Watson",
+        "shareToLogin": "briawats_test1",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11068881,
+        "shareToId": 572267,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ef391a23126e227c822f579",
+        "shareToDisplayName": "Brian Watson",
+        "shareToLogin": "briawats_test2",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11070738,
+        "shareToId": 727753,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ef391a23126e227c822f579",
+        "shareToDisplayName": "Amit Singh",
+        "shareToLogin": "amising",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 11070802,
+        "shareToId": 437224,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ef391a23126e227c822f579",
+        "shareToDisplayName": "Brian Watson",
+        "shareToLogin": "briawats",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 11070917,
+        "shareToId": 200273389,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ef391a23126e227c822f579",
+        "shareToDisplayName": "Brian ShareTest",
+        "shareToLogin": "farnswor-share-test",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11070918,
+        "shareToId": 611163,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ef391a23126e227c822f579",
+        "shareToDisplayName": "Adrian Foong",
+        "shareToLogin": "afoong",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 11070920,
+        "shareToId": 35926,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "5ef391a23126e227c822f579",
+        "shareToDisplayName": "Test Group",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11070921,
+        "shareToId": 270922,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "5ef391a23126e227c822f579",
+        "shareToDisplayName": "Brian Share Test Group",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11070922,
+        "shareToId": 32781,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "5ef391a23126e227c822f579",
+        "shareToDisplayName": "Test Group A",
+        "accessLevel": "duplicate"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-06-25T19:30:50Z",
+    "created": "2020-06-24T17:47:14Z"
+  },
+  {
+    "id": "5ef500bccf5bf337cbab1d37",
+    "name": "New Project",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 200231914,
+      "name": "Brian Farnsworth",
+      "login": "farnswor2"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 11071143,
+        "shareToId": 611163,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ef500bccf5bf337cbab1d37",
+        "shareToDisplayName": "Adrian Foong",
+        "shareToLogin": "afoong",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 11071163,
+        "shareToId": 1,
+        "shareToType": "all",
+        "componentType": "project",
+        "componentId": "5ef500bccf5bf337cbab1d37",
+        "shareToDisplayName": "All",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11071164,
+        "shareToId": 667276,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ef500bccf5bf337cbab1d37",
+        "shareToDisplayName": "Mike Richardson",
+        "shareToLogin": "michrichnonadmin",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11071165,
+        "shareToId": 200213676,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ef500bccf5bf337cbab1d37",
+        "shareToDisplayName": "Brian Farnsworth",
+        "shareToLogin": "hawkeye",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11071192,
+        "shareToId": 200273389,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ef500bccf5bf337cbab1d37",
+        "shareToDisplayName": "Brian ShareTest",
+        "shareToLogin": "farnswor-share-test",
+        "accessLevel": "duplicate"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-06-25T20:02:23Z",
+    "created": "2020-06-25T19:53:32Z"
+  },
+  {
+    "id": "5ef50f6a008c2944e865c439",
+    "name": "All Can Edit",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 200231914,
+      "name": "Brian Farnsworth",
+      "login": "farnswor2"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 11072562,
+        "shareToId": 611163,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ef50f6a008c2944e865c439",
+        "shareToDisplayName": "Adrian Foong",
+        "shareToLogin": "afoong",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 11072568,
+        "shareToId": 543955,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ef50f6a008c2944e865c439",
+        "shareToDisplayName": "Brian Limited",
+        "shareToLogin": "farnswor_limited",
+        "accessLevel": "edit"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-06-25T21:00:23Z",
+    "created": "2020-06-25T20:56:10Z"
+  },
+  {
+    "id": "5ef5124c3126e26831ff850f",
+    "name": "New Project",
+    "description": "",
+    "rsid": "a4t-test.geometrixxqc",
+    "reportSuiteName": "Geometrixx A4T",
+    "owner": {
+      "id": 200231914,
+      "name": "Brian Farnsworth",
+      "login": "farnswor2"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["last30Days"],
+      "calculatedMetricIds": [],
+      "rsids": ["a4t-test.geometrixxqc"],
+      "segmentIds": []
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 11072962,
+        "shareToId": 1,
+        "shareToType": "all",
+        "componentType": "project",
+        "componentId": "5ef5124c3126e26831ff850f",
+        "shareToDisplayName": "All",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 11072964,
+        "shareToId": 200273389,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ef5124c3126e26831ff850f",
+        "shareToDisplayName": "Brian ShareTest",
+        "shareToLogin": "farnswor-share-test",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 11072970,
+        "shareToId": 270922,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "5ef5124c3126e26831ff850f",
+        "shareToDisplayName": "Brian Share Test Group",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11072980,
+        "shareToId": 560926,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ef5124c3126e26831ff850f",
+        "shareToDisplayName": "BrianTest Watson",
+        "shareToLogin": "briawats12345",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11072982,
+        "shareToId": 611163,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ef5124c3126e26831ff850f",
+        "shareToDisplayName": "Adrian Foong",
+        "shareToLogin": "afoong",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11072983,
+        "shareToId": 200095819,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ef5124c3126e26831ff850f",
+        "shareToDisplayName": "Adrian Admin",
+        "shareToLogin": "afoong-admin",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11072984,
+        "shareToId": 258548,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "5ef5124c3126e26831ff850f",
+        "shareToDisplayName": "Adrian Group",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11072985,
+        "shareToId": 572868,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ef5124c3126e26831ff850f",
+        "shareToDisplayName": "Data Migration",
+        "shareToLogin": "datamigrationtesting",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11134064,
+        "shareToId": 527701,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5ef5124c3126e26831ff850f",
+        "shareToDisplayName": "Sam Grigg",
+        "shareToLogin": "grigg",
+        "accessLevel": "edit"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "Geometrixx A4T",
+    "modified": "2020-08-25T18:56:30Z",
+    "created": "2020-06-25T21:08:28Z"
+  },
+  {
+    "id": "5f455fad3126e245281a9d20",
+    "name": "test shareing",
+    "description": "",
+    "rsid": "obue.genesistest",
+    "reportSuiteName": "genesistest",
+    "owner": {
+      "id": 596983,
+      "name": "Kent Otisaa",
+      "login": "kotis"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": ["cm300000022_5f455f8ac01bb87a85a8c131"],
+      "rsids": ["obue.genesistest"],
+      "segmentIds": ["All_Visits", "s300000022_5f455f6880f0070afe4d4395"]
+    },
+    "accessLevel": "view",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 11625558,
+        "shareToId": 355891,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5f455fad3126e245281a9d20",
+        "shareToDisplayName": "Nate Purser",
+        "shareToLogin": "npurser",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 11625559,
+        "shareToId": 378846,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5f455fad3126e245281a9d20",
+        "shareToDisplayName": "John Anderson",
+        "shareToLogin": "johnande",
+        "accessLevel": "duplicate"
+      },
+      {
+        "shareId": 11625560,
+        "shareToId": 200204542,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5f455fad3126e245281a9d20",
+        "shareToDisplayName": "Brent Kleinman",
+        "shareToLogin": "bkleinma",
+        "accessLevel": "view"
+      },
+      {
+        "shareId": 11625561,
+        "shareToId": 1,
+        "shareToType": "all",
+        "componentType": "project",
+        "componentId": "5f455fad3126e245281a9d20",
+        "shareToDisplayName": "All",
+        "accessLevel": "view"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "genesistest",
+    "modified": "2020-08-25T19:00:44Z",
+    "created": "2020-08-25T18:59:57Z"
+  },
+  {
+    "id": "5f7d730f008c295f360727e1",
+    "name": "New Project",
+    "description": "",
+    "rsid": "vrs_obueng0_curatedvrs",
+    "reportSuiteName": "jiouon ..mn;l",
+    "owner": {
+      "id": 200122176,
+      "name": "Chunli Wang",
+      "login": "bey41074@adobe.com"
+    },
+    "companyTemplate": false,
+    "type": "project",
+    "externalReferences": {
+      "dateRangeIds": ["thisMonth"],
+      "calculatedMetricIds": [],
+      "rsids": ["auto.mixed-case", "vrs_obueng0_curatedvrs"],
+      "segmentIds": [
+        "s300000022_5f8aa0490725625cb5a639ed",
+        "s300000022_5f8aa049f882e41106e066e1",
+        "s300000022_5f8aa0492b368719693ee03f",
+        "s300000022_5f8aa0495fe71e25701ef5fc",
+        "s300000022_5f8aa04985d0427d02e4e8d3",
+        "s300000022_5f8aa04985d0427d02e4e8d2",
+        "s300000022_5f8aa04985d0427d02e4e8d1",
+        "s300000022_5f8aa0497097ba34a398a1b2",
+        "s300000022_5f8aa049b81a6c1dd05c2d8d",
+        "s300000022_5f8aa0497d03f6095e14ed66",
+        "s300000022_5f8aa0494618f6776b69b08c",
+        "s300000022_5f8aa0494618f6776b69b08b",
+        "All_Visits",
+        "s300000022_5f8aa0494618f6776b69b08a",
+        "s300000022_5f8aa0497d03f6095e14ed64",
+        "s300000022_5f8aa04934d05f5534be84c8",
+        "s300000022_5f8aa0497d03f6095e14ed65",
+        "s300000022_5f8aa04980f007767340d422",
+        "s300000022_5f8aa049e50ca0799ecb8a5c",
+        "s300000022_5f8aa049ab8d620158cb66d8",
+        "s300000022_5f8aa04980f007767340d424",
+        "s300000022_5f8aa0495aa5b83dd83f0463",
+        "s300000022_5f8aa04980f007767340d423",
+        "s300000022_5f8aa049cfb2521181c06463",
+        "s300000022_5f8aa0491212e67bb7714fa1",
+        "s300000022_5f8aa049cfb2521181c06462",
+        "s300000022_5f8aa0494618f6776b69b089"
+      ]
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 12116283,
+        "shareToId": 36258,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "5f7d730f008c295f360727e1",
+        "shareToDisplayName": "Social",
+        "accessLevel": "edit"
+      },
+      {
+        "shareId": 12116284,
+        "shareToId": 62047,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "5f7d730f008c295f360727e1",
+        "shareToDisplayName": "fewmetrics",
+        "accessLevel": "view"
+      },
+      {
+        "shareId": 12116285,
+        "shareToId": 611163,
+        "shareToType": "user",
+        "componentType": "project",
+        "componentId": "5f7d730f008c295f360727e1",
+        "shareToDisplayName": "Adrian Foong",
+        "shareToLogin": "afoong",
+        "accessLevel": "view"
+      },
+      {
+        "shareId": 12116286,
+        "shareToId": 52744,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "5f7d730f008c295f360727e1",
+        "shareToDisplayName": "tanner",
+        "accessLevel": "edit"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "jiouon ..mn;l",
+    "modified": "2020-10-17T07:42:17Z",
+    "created": "2020-10-07T07:49:35Z"
+  },
+  {
+    "id": "6026a6e230135f0a02b2fac1",
+    "name": "っじゃçå拿杤 㒠 㒡 Ё おいvs (Kopie)",
+    "description": "",
+    "rsid": "auto.mixed-case",
+    "reportSuiteName": "auto.Mixed-Case",
+    "owner": {
+      "id": 200122176,
+      "name": "Chunli Wang",
+      "login": "bey41074@adobe.com"
+    },
+    "companyTemplate": false,
+    "type": "mobileScorecard",
+    "externalReferences": {
+      "dateRangeIds": [],
+      "calculatedMetricIds": ["cm_amo_solution_cpc"],
+      "rsids": [],
+      "segmentIds": ["s300000022_5f3204a2967890718dcdcbaa"]
+    },
+    "accessLevel": "edit",
+    "tags": [],
+    "shares": [
+      {
+        "shareId": 13160316,
+        "shareToId": 65363,
+        "shareToType": "group",
+        "componentType": "project",
+        "componentId": "6026a6e230135f0a02b2fac1",
+        "shareToDisplayName": "test all access",
+        "accessLevel": "edit"
+      }
+    ],
+    "approved": false,
+    "favorite": false,
+    "usageSummary": {},
+    "siteTitle": "auto.Mixed-Case",
+    "modified": "2021-02-19T08:54:16Z",
+    "created": "2021-02-12T15:54:55Z"
+  }
+]
