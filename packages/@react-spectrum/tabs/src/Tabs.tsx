@@ -279,7 +279,10 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
         {
           'spectrum-Tabs--quiet': isQuiet,
           ['spectrum-Tabs--compact']: density === 'compact'
-        })}>
+        },
+        styleProps.className
+        )
+      }>
       {[...state.collection].map((item) => (
         <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
       ))}
@@ -337,7 +340,7 @@ function TabPanel<T>(props: SpectrumTabPanelsProps<T>) {
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div {...styleProps} {...tabPanelProps} ref={ref} className={classNames(styles, 'spectrum-TabsPanel-tabpanel')}>
+      <div {...styleProps} {...tabPanelProps} ref={ref} className={classNames(styles, 'spectrum-TabsPanel-tabpanel', styleProps.className)}>
         {props.children}
       </div>
     </FocusRing>
