@@ -55,6 +55,9 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     shouldCloseOnBlur = true
   } = props;
 
+  let multipleControlledProps = (props.selectedKey !== undefined && props.inputValue !== undefined) ||
+  (props.inputValue !== undefined && props.isOpen !== undefined) ||
+  (props.selectedKey !== undefined && props.isOpen !== undefined);
   let [showAllItems, setShowAllItems] = useState(false);
   let [isFocused, setFocusedState] = useState(false);
   let [inputValue, setInputValue] = useControlledState(
@@ -190,9 +193,10 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       selectionManager.setFocusedKey(null);
       setShowAllItems(false);
 
-      // Set selectedKey to null when the user clears the input.
-      // If controlled, this is the application developer's responsibility.
-      if (inputValue === '' && (props.inputValue === undefined || props.selectedKey === undefined)) {
+      // Set selectedKey to null when the user clears the input. Only do this if selectedKey is undefined or if there is a single controlled prop.
+      // If controlled, this is the application developer's responsibility. Users who control open state and selected key MUST also have a onInputChange handler
+      // so they can control if the key gets cleared upon clearing the input field
+      if (inputValue === '' && (props.selectedKey === undefined || !multipleControlledProps)) {
         setSelectedKey(null);
       }
     }
@@ -262,11 +266,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   let commitSelection = () => {
     // If multiple things are controlled, call onSelectionChange
     // Note that users who control open state and input value MUST also have a onSelectionChange handler to properly close the menu and reset input value
-    if (
-      (props.selectedKey !== undefined && props.inputValue !== undefined) ||
-      (props.inputValue !== undefined && props.isOpen !== undefined) ||
-      (props.selectedKey !== undefined && props.isOpen !== undefined)
-    ) {
+    if (multipleControlledProps) {
       props.onSelectionChange(selectedKey);
 
       // If multiple things are controlled but inputValue isn't, reset the input value for the user
