@@ -299,8 +299,10 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
         ref={wrapperRef}
         className={classNames(
             styles,
-            'spectrum-TabsPanel-collapseWrapper'
-          )}>
+            'spectrum-TabsPanel-collapseWrapper',
+            styleProps.className
+          )}
+        style={styleProps.style}>
         {collapse ? <TabPicker {...props} {...tabProps} id={tabPanelProps['aria-labelledby']} state={state} className={tabListclassName} /> : tabContent}
       </div>
     );

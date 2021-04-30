@@ -524,7 +524,7 @@ let DynamicTabsWithDecoration = (props = {}) => {
     <div style={{width: '80%'}}>
       <Tabs {...props} aria-label="Tab example" items={tabs} onSelectionChange={action('onSelectionChange')}>
         <Flex direction="row" alignItems="center">
-          <TabList>
+          <TabList flex="1 1 auto" UNSAFE_style={{overflow: 'hidden'}}>
             {(item: DynamicTabItem) => (
               <Item key={item.name}>
                 {item.icon}
@@ -532,7 +532,7 @@ let DynamicTabsWithDecoration = (props = {}) => {
               </Item>
             )}
           </TabList>
-          <Flex alignItems="center" justifyContent="end" flexGrow={1} alignSelf="stretch" UNSAFE_style={{borderBottom: 'var(--spectrum-alias-border-size-thick) solid var(--spectrum-global-color-gray-200)'}}>
+          <Flex alignItems="center" justifyContent="end" flex="0 0 auto" alignSelf="stretch" UNSAFE_style={{borderBottom: 'var(--spectrum-alias-border-size-thick) solid var(--spectrum-global-color-gray-200)'}}>
             <ActionGroup marginEnd="30px" disabledKeys={tabs.length === 1 ? ['remove'] : undefined} onAction={val => val === 'add' ? addTab() : removeTab()}>
               <Item key="add">
                 <Text>Add Tab</Text>
