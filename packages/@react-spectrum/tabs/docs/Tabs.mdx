@@ -16,7 +16,10 @@ import packageData from '@react-spectrum/tabs/package.json';
 
 ```jsx import
 import {ActionGroup} from '@react-spectrum/actiongroup';
+import Bookmark from '@spectrum-icons/workflow/Bookmark';
 import {Button} from '@react-spectrum/button';
+import Calendar from '@spectrum-icons/workflow/Calendar';
+import Dashboard from '@spectrum-icons/workflow/Dashboard';
 import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, Tabs, TabList, TabPanels} from '@react-spectrum/tabs';
@@ -63,7 +66,7 @@ keywords: [tabs, collections]
 ## Content
 Tabs expects `<TabList>` and `<TabPanels>` elements as children, however additional elements may wrap them to allow for layout flexibility. TabList and TabPanels follow the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections. TabList and TabPanel accept `<Item>` elements as children,
 each with a `key` prop. The key passed to the TabList `<Item>` must match its corresponding TabPanel `<Item>`.
-Static collections, as in this example, can be used when the full list of tabs and their contents is known ahead of time.
+Static collections, as in the previous example, can be used when the full list of tabs and their contents is known ahead of time.
 
 Dynamic collections, as shown below, can be used when the options come from an external data source such as an API call, or update over time. As seen below, an iterable list of options is passed to the Tabs using the `items` prop.
 Each item accepts a key prop, which is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and a `key` prop is not required.
@@ -106,7 +109,35 @@ function Example() {
 To internationalize Tabs, a localized string should be passed as children to the TabList `<Item>`. Any text content within the Tab's panel should also be localized accordingly.
 For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of Tabs is automatically flipped.
 
+### Icons in tabs
+
+Icons can also be used in `Tabs` in addition to a text label. Tabs use [Slots](./layout.html#slots) in order to style Icons and Text together.
+
+```tsx example
+<Tabs aria-label="History of Ancient Rome">
+  <TabList>
+    <Item key="FoR"><Bookmark /><Text>Founding of Rome</Text></Item>
+    <Item key="MaR"><Calendar /><Text>Monarchy and Republic</Text></Item>
+    <Item key="Emp"><Dashboard /><Text>Empire</Text></Item>
+  </TabList>
+  <TabPanels>
+    <Item key="FoR">
+      Arma virumque cano, Troiae qui primus ab oris.
+    </Item>
+    <Item key="MaR">
+      Senatus Populusque Romanus.
+    </Item>
+    <Item key="Emp">
+      Alea jacta est.
+    </Item>
+  </TabPanels>
+</Tabs>
+```
+
 ### Customizing layout
+
+If you need to add additional structure to `Tabs` such as buttons in-line with the `TabList`, we support this too.
+`TabList` and `TabPanels` are not required to be the immediate children of `Tabs`.
 
 ```tsx example
 function Example () {
