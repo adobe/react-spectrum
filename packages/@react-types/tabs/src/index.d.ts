@@ -19,7 +19,7 @@ import {
   SingleSelection,
   StyleProps
 } from '@react-types/shared';
-import {Key, ReactElement} from 'react';
+import {Key, ReactNode} from 'react';
 
 export interface AriaTabProps {
   /** The key of the tab. */
@@ -54,7 +54,7 @@ export interface AriaTabPanelProps extends DOMProps, AriaLabelingProps {}
 
 export interface SpectrumTabsProps<T> extends AriaTabListBase, SingleSelection, DOMProps, StyleProps {
   /** The children of the <Tabs> element. Should include `<TabList>` and `<TabPanels>` elements. */
-  children: ReactElement<SpectrumTabListProps<T> | SpectrumTabPanelsProps<T>>[],
+  children: ReactNode,
   /** The item objects for each tab, for dynamic collections. */
   items?: Iterable<T>,
   /** The keys of the tabs that are disabled. These tabs cannot be selected, focused, or otherwise interacted with. */
