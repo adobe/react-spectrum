@@ -268,7 +268,6 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
   let tabListclassName = classNames(styles, 'spectrum-TabsPanel-tabs');
   const tabContent = (
     <div
-      {...styleProps}
       {...tabListProps}
       ref={tablistRef}
       className={classNames(
@@ -280,9 +279,10 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
           'spectrum-Tabs--quiet': isQuiet,
           ['spectrum-Tabs--compact']: density === 'compact'
         },
-        styleProps.className
+        orientation === 'vertical' && styleProps.className
         )
-      }>
+      }
+      style={orientation === 'vertical' ? styleProps.style : {}}>
       {[...state.collection].map((item) => (
         <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
       ))}
