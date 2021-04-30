@@ -29,6 +29,9 @@ let locales = Object.keys(messages).map(locale => locale.replace('.json', '')).f
 
 describe('NumberField', function () {
   let onChangeSpy = jest.fn();
+  let onBlurSpy = jest.fn();
+  let onKeyDownSpy = jest.fn();
+  let onKeyUpSpy = jest.fn();
 
   beforeAll(() => {
     jest.useFakeTimers();
@@ -41,6 +44,9 @@ describe('NumberField', function () {
 
   afterEach(() => {
     onChangeSpy.mockClear();
+    onBlurSpy.mockClear();
+    onKeyDownSpy.mockClear();
+    onKeyUpSpy.mockClear();
     // there's an announcer, make sure to run through it
     // make sure only to run the pending timers, spin button can cause an infinite loop if we run all
     act(() => {jest.runOnlyPendingTimers();});
@@ -87,6 +93,8 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('inputMode', 'numeric');
     expect(incrementButton).toBeTruthy();
     expect(decrementButton).toBeTruthy();
+    expect(incrementButton).toHaveAttribute('tabIndex', '-1');
+    expect(decrementButton).toHaveAttribute('tabIndex', '-1');
   });
 
   it('attaches a user provided ref to the outer div', function () {
@@ -253,9 +261,10 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name handles input change with custom step number', () => {
-    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, step: 5});
+    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, onBlur: onBlurSpy, step: 5});
 
     act(() => {textField.focus();});
+    expect(onBlurSpy).not.toHaveBeenCalled();
     typeText(textField, '2');
     act(() => {textField.blur();});
     expect(onChangeSpy).toHaveBeenLastCalledWith(0);
@@ -263,6 +272,7 @@ describe('NumberField', function () {
     triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenLastCalledWith(5);
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    expect(onBlurSpy).toHaveBeenCalledTimes(1);
 
     act(() => {textField.focus();});
     userEvent.clear(textField);
@@ -273,6 +283,7 @@ describe('NumberField', function () {
     triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenLastCalledWith(10);
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
+    expect(onBlurSpy).toHaveBeenCalledTimes(2); // blur spy is called after each blur
   });
 
   it.each`
@@ -387,12 +398,23 @@ describe('NumberField', function () {
     ${'NumberField'}
   `('$Name decrement value when scrolling downwards or left in LTR', () => {
     // downwards is reverse natural scroll? i don't know how to describe it
-    let {textField} = renderNumberField({defaultValue: 0, onChange: onChangeSpy});
+    let {textField} = renderNumberField({defaultValue: 0, onChange: onChangeSpy, onBlur: onBlurSpy});
 
     act(() => {textField.focus();});
     fireEvent.wheel(textField, {deltaY: -10});
     expect(onChangeSpy).toHaveBeenCalledWith(-1);
     act(() => {textField.blur();});
+    expect(onBlurSpy).toHaveBeenCalledTimes(1); // blur isn't triggered erroneously by wheel events
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name cannot scroll to step when not focused', () => {
+    let {textField} = renderNumberField({defaultValue: 0, onChange: onChangeSpy});
+
+    fireEvent.wheel(textField, {deltaY: -10});
+    expect(onChangeSpy).not.toHaveBeenCalled();
   });
 
   it.each`
@@ -510,13 +532,14 @@ describe('NumberField', function () {
       textField,
       incrementButton,
       decrementButton
-    } = renderNumberField({onChange: onChangeSpy});
+    } = renderNumberField({onChange: onChangeSpy, onBlur: onBlurSpy});
 
     expect(textField).toHaveAttribute('value', '');
     triggerPress(incrementButton);
     expect(textField).toHaveAttribute('value', '0');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(0);
+    expect(onBlurSpy).not.toHaveBeenCalled();
 
     act(() => {textField.focus();});
     userEvent.clear(textField);
@@ -524,11 +547,13 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenLastCalledWith(NaN);
+    expect(onBlurSpy).toHaveBeenCalledTimes(1);
 
     triggerPress(decrementButton);
     expect(textField).toHaveAttribute('value', '0');
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenCalledWith(0);
+    expect(onBlurSpy).toHaveBeenCalledTimes(1); // increment/decrement buttons don't trigger blur
   });
 
   it.each`
@@ -961,10 +986,12 @@ describe('NumberField', function () {
     ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['10,00 €', '11,00 €', '9,00 €', '9,00 €']}
     ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['١٠٫٠٠ €', '١١٫٠٠ €', '٩٫٠٠ €', '٩٫٠٠ €']}
   `('$Name pressing up arrow & down arrow keeps focus state formatting', ({props, locale, expected}) => {
-    let {textField} = renderNumberField({defaultValue: 10, ...props}, {locale});
+    let {textField} = renderNumberField({defaultValue: 10, onKeyDown: onKeyDownSpy, onKeyUp: onKeyUpSpy, ...props}, {locale});
 
     act(() => {textField.focus();});
     expect(textField).toHaveAttribute('value', expected[0]);
+    expect(onKeyDownSpy).not.toHaveBeenCalled();
+    expect(onKeyUpSpy).not.toHaveBeenCalled();
     fireEvent.keyDown(textField, {key: 'ArrowUp'});
     fireEvent.keyUp(textField, {key: 'ArrowUp'});
     expect(textField).toHaveAttribute('value', expected[1]);
@@ -976,6 +1003,8 @@ describe('NumberField', function () {
     act(() => {textField.blur();});
     // after blur, we should go to the formatted version
     expect(textField).toHaveAttribute('value', expected[3]);
+    expect(onKeyDownSpy).toHaveBeenCalledTimes(3); // correct number of key events are called
+    expect(onKeyUpSpy).toHaveBeenCalledTimes(3);
   });
 
   it.each`
@@ -1100,13 +1129,19 @@ describe('NumberField', function () {
     ${'positive lower positive upper'} | ${'up'}      | ${{minValue: 5, maxValue: 15}}                | ${5}
     ${'positive lower positive upper'} | ${'down'}    | ${{minValue: 5, maxValue: 15}}                | ${15}
   `('$direction $Name starts from the right place', ({direction, props, expected}) => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, ...props});
+    let {textField} = renderNumberField({onChange: onChangeSpy, onBlur: onBlurSpy, onKeyUp: onKeyUpSpy, onKeyDown: onKeyDownSpy, ...props});
     let key = direction === 'up' ? 'ArrowUp' : 'ArrowDown';
     act(() => {textField.focus();});
+    expect(onBlurSpy).not.toHaveBeenCalled();
+    expect(onKeyUpSpy).not.toHaveBeenCalled();
+    expect(onKeyDownSpy).not.toHaveBeenCalled();
     fireEvent.keyDown(textField, {key});
     fireEvent.keyUp(textField, {key});
     expect(onChangeSpy).toHaveBeenCalledWith(expected);
     act(() => {textField.blur();});
+    expect(onBlurSpy).toHaveBeenCalledTimes(1); // checking the blur and key events with arrow keys
+    expect(onKeyUpSpy).toHaveBeenCalledTimes(1);
+    expect(onKeyDownSpy).toHaveBeenCalledTimes(1);
   });
 
   it.each`
@@ -1432,6 +1467,10 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '100');
     expect(incrementButton).toHaveAttribute('aria-disabled');
     expect(decrementButton).toHaveAttribute('aria-disabled');
+    // they are aria-disabled, but don't have the attribute disabled because they are not buttons or inputs
+    // should they be made buttons again after the Safari bug is fixed, this will need to be reversed
+    expect(incrementButton).not.toBeDisabled();
+    expect(decrementButton).not.toBeDisabled();
   });
 
   it.each`

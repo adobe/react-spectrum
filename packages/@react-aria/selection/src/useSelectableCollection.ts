@@ -355,9 +355,6 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   }, []);
 
   let handlers = {
-    // We use a capturing listener to ensure that the keyboard events for the collection
-    // override those of the children. For example, ArrowDown in a table should always go
-    // to the cell below, and not open a menu.
     onKeyDown,
     onFocus,
     onBlur,
