@@ -165,17 +165,17 @@ function Example () {
   };
 
   return (
-    <Tabs {...props} width="100%" aria-label="Tab example" items={tabs}>
-      <Flex direction="row" alignItems="center">
-        <TabList flex="1 1 auto" UNSAFE_style={{overflow: 'hidden'}}>
+    <Tabs {...props} aria-label="Tab example" items={tabs}>
+      <div style={{display: 'flex'}}>
+        <TabList flex="1 1 auto" minWidth="0px">
           {(item) => (
             <Item key={item.name}>
               {item.name}
             </Item>
           )}
         </TabList>
-        <Flex alignItems="center" justifyContent="end" flex="0 0 auto" alignSelf="stretch" UNSAFE_style={{borderBottom: 'var(--spectrum-alias-border-size-thick) solid var(--spectrum-global-color-gray-200)'}}>
-          <ActionGroup marginEnd="30px" disabledKeys={tabs.length === 1 ? ['remove'] : undefined} onAction={val => val === 'add' ? addTab() : removeTab()}>
+        <div style={{display: 'flex', flex: '0 0 auto', borderBottom: 'var(--spectrum-alias-border-size-thick) solid var(--spectrum-global-color-gray-200)'}}>
+          <ActionGroup disabledKeys={tabs.length === 1 ? ['remove'] : undefined} onAction={val => val === 'add' ? addTab() : removeTab()}>
             <Item key="add">
               Add Tab
             </Item>
@@ -183,8 +183,8 @@ function Example () {
               Remove Tab
             </Item>
           </ActionGroup>
-        </Flex>
-      </Flex>
+        </div>
+      </div>
       <TabPanels>
         {(item) => (
           <Item key={item.name}>
