@@ -166,7 +166,7 @@ function Example () {
 
   return (
     <Tabs {...props} aria-label="Tab example" items={tabs}>
-      <div style={{display: 'flex'}}>
+      <Flex>
         <TabList flex="1 1 auto" minWidth="0px">
           {(item) => (
             <Item key={item.name}>
@@ -184,7 +184,7 @@ function Example () {
             </Item>
           </ActionGroup>
         </div>
-      </div>
+      </Flex>
       <TabPanels>
         {(item) => (
           <Item key={item.name}>
