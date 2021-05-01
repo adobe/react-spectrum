@@ -28,7 +28,7 @@ export interface AriaTabProps {
   isDisabled?: boolean
 }
 
-export interface TabListProps<T> extends CollectionBase<T>, SingleSelection {}
+export interface TabListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {}
 
 interface AriaTabListBase {
   /**
