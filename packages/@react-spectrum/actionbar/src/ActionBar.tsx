@@ -39,8 +39,11 @@ function ActionBar(props: SpectrumActionBarProps, ref: DOMRef<HTMLDivElement>) {
     ...otherProps
   } = props;
 
+  const innerDivRef = React.useRef<HTMLDivElement>();
+  const height = innerDivRef.current?.clientHeight;
+
   // Handles RSP specific style options, UNSAFE_style, and UNSAFE_className props (see https://react-spectrum.adobe.com/react-spectrum/styling.html#style-props)
-  let {styleProps} = useStyleProps(props);
+  let {styleProps} = useStyleProps(selectedItemCount !== 0 ? {...props, height} : props);
   let domRef = useDOMRef(ref);
   let providerProps = {isEmphasized};
   let formatMessage = useMessageFormatter(intlMessages);
@@ -60,24 +63,26 @@ function ActionBar(props: SpectrumActionBarProps, ref: DOMRef<HTMLDivElement>) {
         },
         styleProps.className
       )}>
-      <Provider {...providerProps}>
-        <div className={classNames(styles, 'react-spectrum-ActionBar__leading')}>
-          <ActionButton
-            aria-label={formatMessage('deselect')}
-            onPress={() => onClearSelection()}
-            isQuiet>
-            <CrossLarge />
-          </ActionButton>
-          <Text>{
-            selectedItemCount === 'all'
-            ? formatMessage('selectedAll')
-            : formatMessage('selected', {count: selectedItemCount})
-          }</Text>
-        </div>
-        <ActionGroup selectionMode="none" onAction={onAction}>
-          {children}
-        </ActionGroup>
-      </Provider>
+      <div ref={innerDivRef}>
+        <Provider {...providerProps}>
+          <div className={classNames(styles, 'react-spectrum-ActionBar__leading')}>
+            <ActionButton
+              aria-label={formatMessage('deselect')}
+              onPress={() => onClearSelection()}
+              isQuiet>
+              <CrossLarge />
+            </ActionButton>
+            <Text>{
+              selectedItemCount === 'all'
+              ? formatMessage('selectedAll')
+              : formatMessage('selected', {count: selectedItemCount})
+            }</Text>
+          </div>
+          <ActionGroup selectionMode="none" onAction={onAction}>
+            {children}
+          </ActionGroup>
+        </Provider>
+      </div>
     </div>
   );
 }

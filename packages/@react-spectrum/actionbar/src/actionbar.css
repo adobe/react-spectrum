@@ -2,14 +2,24 @@
   --spectrum-padding: var(--spectrum-global-dimension-size-100);
   --column-gap: var(--spectrum-actionbuttongroup-text-button-gap-x);
   --row-gap: var(--spectrum-actionbuttongroup-text-button-gap-y);
+  --show-transition-duration: var(--spectrum-global-animation-duration-700);
+  --show-transition-timing: var(--spectrum-global-animation-linear);
 
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  isolation: isolate;
-  justify-content: space-between;
-  padding: var(--spectrum-padding);
+  height: 0;
+  overflow: hidden;
+  transition-property: height;
+  transition-duration: var(--show-transition-duration);
+  transition-timing-function: var(--show-transition-timing);
+
+  & > div {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    isolation: isolate;
+    justify-content: space-between;
+    padding: var(--spectrum-padding);
+  }
 
   &:focus {
     outline: none;
@@ -31,6 +41,10 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
+
+    & span {
+      padding: 0 calc(var(--spectrum-padding)/2)
+    }
   }
 
   .react-spectrum-ActionBar-item {
