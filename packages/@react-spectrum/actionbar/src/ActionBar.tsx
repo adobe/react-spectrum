@@ -52,17 +52,17 @@ function ActionBar(props: SpectrumActionBarProps, ref: DOMRef<HTMLDivElement>) {
       ref={domRef}
       className={classNames(
         styles,
-        'spectrum-ActionBar', {
-          'spectrum-ActionBar--primary': variant === 'primary',
-          'spectrum-ActionBar--secondary': variant === 'secondary',
-          'spectrum-ActionBar--warning': variant === 'warning',
-          'spectrum-ActionBar--emphasized': isEmphasized
+        'react-spectrum-ActionBar', {
+          'react-spectrum-ActionBar--primary': variant === 'primary',
+          'react-spectrum-ActionBar--secondary': variant === 'secondary',
+          'react-spectrum-ActionBar--warning': variant === 'warning',
+          'react-spectrum-ActionBar--emphasized': isEmphasized
         },
         styleProps.className,
         otherProps.UNSAFE_className
       )}>
       <Provider {...providerProps}>
-        <div className={classNames(styles, 'spectrum-ActionBar__leading')}>
+        <div className={classNames(styles, 'react-spectrum-ActionBar__leading')}>
           <ActionButton
             onPress={() => onClearSelection()}
             isQuiet>
