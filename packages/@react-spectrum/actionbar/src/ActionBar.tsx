@@ -68,7 +68,11 @@ function ActionBar(props: SpectrumActionBarProps, ref: DOMRef<HTMLDivElement>) {
             isQuiet>
             <CrossLarge />
           </ActionButton>
-          <Text>{formatMessage('selected', {count: selectedItemCount})}</Text>
+          <Text>{
+            selectedItemCount === 'all'
+            ? formatMessage('selectedAll')
+            : formatMessage('selected', {count: selectedItemCount})
+          }</Text>
         </div>
         <ActionGroup selectionMode="none" onAction={onAction}>
           {children}

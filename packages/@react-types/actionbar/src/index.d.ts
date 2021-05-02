@@ -15,7 +15,7 @@ import {Key, ReactNode} from 'react';
 
 export interface ActionBarProps<T> extends CollectionBase<T> {
   // Required. When zero, the ActionBar is hidden.
-  selectedItemCount: number,
+  selectedItemCount: number | 'all',
   // Also required. When clicked, the selection should be cleared.
   onClearSelection: () => void,
   isEmphasized?: boolean,
