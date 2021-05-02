@@ -23,7 +23,7 @@ import React from 'react';
 import {SpectrumActionBarProps} from '@react-types/actionbar';
 import styles from './actionbar.css';
 import {Text} from '@react-spectrum/text';
-import { useMessageFormatter } from '@react-aria/i18n';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 function ActionBar(props: SpectrumActionBarProps, ref: DOMRef<HTMLDivElement>) {
   // Grabs specific props from the closest Provider (see https://react-spectrum.adobe.com/react-spectrum/Provider.html#property-groups). Remove if your component doesn't support any of the listed props.
@@ -64,6 +64,7 @@ function ActionBar(props: SpectrumActionBarProps, ref: DOMRef<HTMLDivElement>) {
       <Provider {...providerProps}>
         <div className={classNames(styles, 'react-spectrum-ActionBar__leading')}>
           <ActionButton
+            aria-label={formatMessage('deselect')}
             onPress={() => onClearSelection()}
             isQuiet>
             <CrossLarge />
