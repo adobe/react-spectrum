@@ -58,8 +58,7 @@ function ActionBar(props: SpectrumActionBarProps, ref: DOMRef<HTMLDivElement>) {
           'react-spectrum-ActionBar--warning': variant === 'warning',
           'react-spectrum-ActionBar--emphasized': isEmphasized
         },
-        styleProps.className,
-        otherProps.UNSAFE_className
+        styleProps.className
       )}>
       <Provider {...providerProps}>
         <div className={classNames(styles, 'react-spectrum-ActionBar__leading')}>
