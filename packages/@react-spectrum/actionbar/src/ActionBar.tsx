@@ -16,11 +16,14 @@ import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React from 'react';
 import {SpectrumActionBarProps} from '@react-types/actionbar';
 import styles from './actionbar.css';
 import {Text} from '@react-spectrum/text';
+import { useMessageFormatter } from '@react-aria/i18n';
 
 function ActionBar(props: SpectrumActionBarProps, ref: DOMRef<HTMLDivElement>) {
   // Grabs specific props from the closest Provider (see https://react-spectrum.adobe.com/react-spectrum/Provider.html#property-groups). Remove if your component doesn't support any of the listed props.
@@ -40,6 +43,7 @@ function ActionBar(props: SpectrumActionBarProps, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
   let providerProps = {isEmphasized};
+  let formatMessage = useMessageFormatter(intlMessages);
 
   return (
     <div
@@ -64,7 +68,7 @@ function ActionBar(props: SpectrumActionBarProps, ref: DOMRef<HTMLDivElement>) {
             isQuiet>
             <CrossLarge />
           </ActionButton>
-          <Text>{selectedItemCount} selected</Text>
+          <Text>{formatMessage('selected', {count: selectedItemCount})}</Text>
         </div>
         <ActionGroup selectionMode="none" onAction={onAction}>
           {children}

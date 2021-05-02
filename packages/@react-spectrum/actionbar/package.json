@@ -34,6 +34,7 @@
   "dependencies": {
     "@adobe/react-spectrum": "^3.9.0",
     "@babel/runtime": "^7.6.2",
+    "@react-aria/i18n": "^3.3.0",
     "@react-aria/utils": "^3.0.0",
     "@react-spectrum/actiongroup": "^3.1.2",
     "@react-spectrum/button": "^3.4.0",
