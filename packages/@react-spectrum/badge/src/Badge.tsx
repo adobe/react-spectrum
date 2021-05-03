@@ -10,43 +10,53 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, DOMRef, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {mergeProps} from '@react-aria/utils';
-import {SpectrumBadgeProps} from '@react-types/$badge';
-import React from 'react';
+import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import React, {ReactElement} from 'react';
+import {SpectrumBadgeProps} from '@react-types/badge';
 import styles from '@adobe/spectrum-css-temp/components/label/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function Badge(props: SpectrumBadgeProps, ref: DOMRef) {
+function Badge(props: SpectrumBadgeProps, ref: DOMRef<HTMLElement>) {
   let {
     children,
     variant,
-    size,
-    anchorEdge,
-    ...otherProps
+    size = 'S',
+    anchorEdge
   } = useProviderProps(props);
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
   let isTextOnly = React.Children.toArray(props.children).every(c => !React.isValidElement(c));
 
+  let anchorEdgeClassName = '';
+  if (anchorEdge) {
+    anchorEdgeClassName = `spectrum-Label--anchor${anchorEdge.charAt(0).toUpperCase() + anchorEdge.slice(1)}`;
+  }
+
   return (
     <span
-    className={classNames(
-      styles,
-      'spectrum-Label',
-      `spectrum-Label--${variant}`,
-      styleProps.className
-    )}
-    ref={domRef}>
+      className={classNames(
+        styles,
+        'spectrum-Label',
+        `spectrum-Label--${variant}`,
+        {
+          'spectrum-Label--small': size === 'S',
+          'spectrum-Label--large': size === 'L',
+          [anchorEdgeClassName]: anchorEdge
+        },
+        styleProps.className
+      )}
+      style={styleProps.style}
+      ref={domRef}>
       <SlotProvider
         slots={{
           icon: {
-            size: 'S',
-            UNSAFE_className: classNames(styles, styleProps, 'spectrum-Icon')
+            size: size === 'L' ? 'M' : 'S',
+            UNSAFE_className: classNames(styles, 'spectrum-Label-icon')
           },
           text: {
-            UNSAFE_className: classNames(styles, styleProps, 'spectrum-Label', `spectrum-Label-${variant}`)
+            UNSAFE_className: classNames(styles, 'spectrum-Label-label')
           }
         }}>
         {typeof children === 'string' || isTextOnly
@@ -57,5 +67,5 @@ function Badge(props: SpectrumBadgeProps, ref: DOMRef) {
   );
 }
 
-const _Badge = React.forwardRef(Badge);
+const _Badge = React.forwardRef(Badge) as (props: SpectrumBadgeProps & {ref?: DOMRef<HTMLElement>}) => ReactElement;
 export {_Badge as Badge};

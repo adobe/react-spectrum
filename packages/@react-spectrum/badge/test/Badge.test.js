@@ -10,20 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import Badge from '../';
-import {render} from '@testing-library/react';
+import {Badge} from '../';
 import React from 'react';
-import V2Badge from '@react/react-spectrum/Badge';
+import {render} from '@testing-library/react';
 
-
+/**
+ * So far, everything about this component is a visual style, so we just check that it renders at all.
+ */
 describe('Badge', function () {
   it.each`
     Name | Component      | props
     ${'Badge'} | ${Badge}| ${{}}
-    ${'V2Badge'}      | ${V2Badge}      | ${{}}
   `('$Name handles defaults', function ({Component, props}) {
-    let {getByRole, getByText} = render(<Component {...props}></Component>);
-
-    expect(true).toBeTruthy();
+    let {getByText} = render(<Component variant="neutral" {...props}>Brave new badge</Component>);
+    let badge = getByText('Brave new badge');
+    expect(badge).toBeInTheDocument();
   });
 });
