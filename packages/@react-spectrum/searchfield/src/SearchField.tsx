@@ -25,14 +25,7 @@ import {useSearchFieldState} from '@react-stately/searchfield';
 function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
   let defaultIcon = (
-    <Magnifier
-      data-testid="searchicon"
-      UNSAFE_className={
-        classNames(
-          styles,
-          'spectrum-Search-icon'
-        )
-      } />
+    <Magnifier data-testid="searchicon" />
   );
 
   let {
@@ -43,12 +36,13 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
   } = props;
 
   let state = useSearchFieldState(props);
-  let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
+  let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
   let {labelProps, inputProps, clearButtonProps} = useSearchField(props, state, inputRef);
 
   let clearButton = (
     <ClearButton
       {...clearButtonProps}
+      preventFocus
       UNSAFE_className={
         classNames(
           styles,
@@ -67,9 +61,12 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
         classNames(
           styles,
           'spectrum-Search',
+          'spectrum-Textfield',
           {
             'is-disabled': isDisabled,
-            'is-quiet': props.isQuiet
+            'is-quiet': props.isQuiet,
+            'spectrum-Search--invalid': props.validationState === 'invalid',
+            'spectrum-Search--valid': props.validationState === 'valid'
           },
           UNSAFE_className
         )

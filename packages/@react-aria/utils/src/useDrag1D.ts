@@ -11,8 +11,8 @@
  */
 
 import {getOffset} from './getOffset';
-import {HTMLAttributes, MutableRefObject, useRef} from 'react';
 import {Orientation} from '@react-types/shared';
+import React, {HTMLAttributes, MutableRefObject, useRef} from 'react';
 
 interface UseDrag1DProps {
   containerRef: MutableRefObject<HTMLElement>,
@@ -39,6 +39,7 @@ const draggingElements: HTMLElement[] = [];
 // It can also handle either a vertical or horizontal movement, but not both at the same time
 
 export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
+  console.warn('useDrag1D is deprecated, please use `useMove` instead https://react-spectrum.adobe.com/react-aria/useMove.html');
   let {containerRef, reverse, orientation, onHover, onDrag, onPositionChange, onIncrement, onDecrement, onIncrementToMax, onDecrementToMin, onCollapseToggle} = props;
   let getPosition = (e) => orientation === 'horizontal' ? e.clientX : e.clientY;
   let getNextOffset = (e: MouseEvent) => {
@@ -120,8 +121,8 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
     switch (e.key) {
       case 'Left':
       case 'ArrowLeft':
-        e.preventDefault();
         if (orientation === 'horizontal') {
+          e.preventDefault();
           if (onDecrement && !reverse) {
             onDecrement();
           } else if (onIncrement && reverse) {
@@ -131,8 +132,8 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
         break;
       case 'Up':
       case 'ArrowUp':
-        e.preventDefault();
         if (orientation === 'vertical') {
+          e.preventDefault();
           if (onDecrement && !reverse) {
             onDecrement();
           } else if (onIncrement && reverse) {
@@ -142,8 +143,8 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
         break;
       case 'Right':
       case 'ArrowRight':
-        e.preventDefault();
         if (orientation === 'horizontal') {
+          e.preventDefault();
           if (onIncrement && !reverse) {
             onIncrement();
           } else if (onDecrement && reverse) {
@@ -153,8 +154,8 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
         break;
       case 'Down':
       case 'ArrowDown':
-        e.preventDefault();
         if (orientation === 'vertical') {
+          e.preventDefault();
           if (onIncrement && !reverse) {
             onIncrement();
           } else if (onDecrement && reverse) {

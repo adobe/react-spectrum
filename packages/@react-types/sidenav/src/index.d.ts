@@ -27,7 +27,7 @@ export interface SpectrumSideNavItemProps<T> extends HTMLAttributes<HTMLElement>
   item: Node<T>
 }
 
-interface SideNavSectionProps<T> {
+export interface SideNavSectionProps<T> {
   reusableView: ReusableView<Node<T>, unknown>,
   header: ReusableView<Node<T>, unknown>,
   children?: ReactNode

@@ -87,7 +87,7 @@ export function useModalProvider(): ModalProviderAria {
  */
 function OverlayContainerDOM(props: ModalProviderProps) {
   let {modalProviderProps} = useModalProvider();
-  return <div {...props} {...modalProviderProps} />;
+  return <div data-overlay-container {...props} {...modalProviderProps} />;
 }
 
 /**
@@ -106,6 +106,10 @@ export function OverlayProvider(props: ModalProviderProps) {
   );
 }
 
+interface OverlayContainerProps extends ModalProviderProps {
+  portalContainer?: HTMLElement
+}
+
 /**
  * A container for overlays like modals and popovers. Renders the overlay
  * into a Portal which is placed at the end of the document body.
@@ -113,14 +117,26 @@ export function OverlayProvider(props: ModalProviderProps) {
  * nested modal is opened. Only the top-most modal or overlay should
  * be accessible at once.
  */
-export function OverlayContainer(props: ModalProviderProps): React.ReactPortal {
-  let contents = <OverlayProvider {...props} />;
-  return ReactDOM.createPortal(contents, document.body);
+export function OverlayContainer(props: OverlayContainerProps): React.ReactPortal {
+  let {portalContainer = document.body, ...rest} = props;
+
+  React.useEffect(() => {
+    if (portalContainer.closest('[data-overlay-container]')) {
+      throw new Error('An OverlayContainer must not be inside another container. Please change the portalContainer prop.');
+    }
+  }, [portalContainer]);
+
+  let contents = <OverlayProvider {...rest} />;
+  return ReactDOM.createPortal(contents, portalContainer);
 }
 
 interface ModalAriaProps extends HTMLAttributes<HTMLElement> {
   /** Data attribute marks the dom node as a modal for the aria-modal-polyfill. */
   'data-ismodal': boolean
+}
+
+interface ModalOptions {
+  isDisabled?: boolean
 }
 
 interface ModalAria {
@@ -134,7 +150,7 @@ interface ModalAria {
  * other types of overlays to ensure that only the top-most modal is
  * accessible at once.
  */
-export function useModal(): ModalAria {
+export function useModal(options?: ModalOptions): ModalAria {
   // Add aria-hidden to all parent providers on mount, and restore on unmount.
   let context = useContext(Context);
   if (!context) {
@@ -142,7 +158,7 @@ export function useModal(): ModalAria {
   }
 
   useEffect(() => {
-    if (!context || !context.parent) {
+    if (options?.isDisabled || !context || !context.parent) {
       return;
     }
 
@@ -154,11 +170,11 @@ export function useModal(): ModalAria {
         context.parent.removeModal();
       }
     };
-  }, [context, context.parent]);
+  }, [context, context.parent, options?.isDisabled]);
 
   return {
     modalProps: {
-      'data-ismodal': true
+      'data-ismodal': !options?.isDisabled
     }
   };
 }

@@ -11,14 +11,23 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
+import Add from '@spectrum-icons/workflow/Add';
+import Alert from '@spectrum-icons/workflow/Alert';
+import Bell from '@spectrum-icons/workflow/Bell';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {ComboBox, Item, Section} from '../';
 import Copy from '@spectrum-icons/workflow/Copy';
+import Draw from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
-import React from 'react';
+import {mergeProps} from '@react-aria/utils';
+import React, {useRef, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
+import {TextField} from '@react-spectrum/textfield';
+import {useAsyncList} from '@react-stately/data';
+import {useFilter} from '@react-aria/i18n';
+import {useListData, useTreeData} from '@react-stately/data';
 
 let items = [
   {name: 'Aardvark', id: '1'},
@@ -39,24 +48,25 @@ let withSection = [
   ]}
 ];
 
+let lotsOfSections: any[] = [];
+for (let i = 0; i < 50; i++) {
+  let children = [];
+  for (let j = 0; j < 50; j++) {
+    children.push({name: `Section ${i}, Item ${j}`});
+  }
+
+  lotsOfSections.push({name: 'Section ' + i, children});
+}
+
 let actions = {
   onOpenChange: action('onOpenChange'),
   onInputChange: action('onInputChange'),
   onSelectionChange: action('onSelectionChange'),
   onBlur: action('onBlur'),
-  onFocus: action('onFocus'),
-  onCustomValue: action('onCustomValue')
+  onFocus: action('onFocus')
 };
 
 storiesOf('ComboBox', module)
-  .add(
-    'no items',
-    () => (
-      <ComboBox items={[]} label="Combobox" {...actions}>
-        {(item: any) => <Item>{item.name}</Item>}
-      </ComboBox>
-    )
-  )
   .add(
     'static items',
     () => render({})
@@ -64,15 +74,35 @@ storiesOf('ComboBox', module)
   .add(
     'dynamic items',
     () => (
-      <ComboBox items={items} label="Combobox" {...actions}>
+      <ComboBox defaultItems={items} label="Combobox" {...actions}>
         {(item) => <Item>{item.name}</Item>}
       </ComboBox>
     )
   )
   .add(
+    'with mapped items (defaultItem and items undef)',
+    () => (
+      <ComboBoxWithMap defaultOpen defaultSelectedKey="two" />
+    )
+  )
+  .add(
+    'no items',
+    () => (
+      <ComboBox defaultItems={[]} label="Combobox" {...actions}>
+        {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
+    )
+  )
+  .add(
+    'with mapped items (defaultItem and items undef)',
+    () => (
+      <ComboBoxWithMap defaultSelectedKey="two" />
+    )
+  )
+  .add(
     'with sections',
     () => (
-      <ComboBox items={withSection} label="Combobox" {...actions}>
+      <ComboBox defaultItems={withSection} label="Combobox" {...actions}>
         {(item) => (
           <Section key={item.name} items={item.children} title={item.name}>
             {(item) => <Item key={item.name}>{item.name}</Item>}
@@ -82,9 +112,51 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
+    'with many sections',
+    () => (
+      <ComboBox defaultItems={lotsOfSections} label="Combobox" {...actions}>
+        {(item) => (
+          <Section key={item.name} items={item.children} title={item.name}>
+            {(item: any) => <Item key={item.name}>{item.name}</Item>}
+          </Section>
+        )}
+      </ComboBox>
+    )
+  )
+  .add(
+    'complex items',
+    () => (
+      <ComboBox label="Select action">
+        <Item textValue="Add to queue">
+          <Add />
+          <Text>Add to queue</Text>
+          <Text slot="description">Add to current watch queue.</Text>
+        </Item>
+        <Item textValue="Add review">
+          <Draw />
+          <Text>Add review</Text>
+          <Text slot="description">Post a review for the episode.</Text>
+        </Item>
+        <Item textValue="Subscribe to series">
+          <Bell />
+          <Text>Subscribe to series</Text>
+          <Text slot="description">
+            Add series to your subscription list and be notified when a new episode
+            airs.
+          </Text>
+        </Item>
+        <Item textValue="Report">
+          <Alert />
+          <Text>Report</Text>
+          <Text slot="description">Report an issue/violation.</Text>
+        </Item>
+      </ComboBox>
+    )
+  )
+  .add(
     'user provided id and label',
     () => (
-      <div style={{width: '192px'}}>
+      <Flex direction="column" width="size-3000">
         <label id="test-label" htmlFor="test-id">Combobox</label>
         <ComboBox id="test-id" aria-labelledby="test-label" {...actions}>
           <Item key="one">Item One</Item>
@@ -94,7 +166,7 @@ storiesOf('ComboBox', module)
           </Item>
           <Item key="three">Item Three</Item>
         </ComboBox>
-      </div>
+      </Flex>
     )
   )
   .add(
@@ -103,13 +175,10 @@ storiesOf('ComboBox', module)
   )
   .add(
     'menuTrigger: manual',
-    () => render({menuTrigger: 'manual'})
-  )
-  .add(
-    'isOpen',
     () => (
-      <div>
-        <ComboBox label="Combobox" isOpen {...actions}>
+      <Flex direction="column">
+        <TextField label="Email" />
+        <ComboBox label="Combobox" menuTrigger="manual" {...actions}>
           <Item key="one">Item One</Item>
           <Item key="two" textValue="Item Two">
             <Copy size="S" />
@@ -117,14 +186,20 @@ storiesOf('ComboBox', module)
           </Item>
           <Item key="three">Item Three</Item>
         </ComboBox>
-      </div>
-    ),
+        <TextField label="Name" />
+      </Flex>
+    )
+  )
+  .add(
+    'isOpen',
+    () => <ControlledOpenCombobox isOpen allowsCustomValue defaultSelectedKey="two" />,
     {note: 'Combobox needs focus to show dropdown.'}
   )
   .add(
     'defaultOpen',
     () => (
-      <div>
+      <Flex direction="column">
+        <TextField label="Email" />
         <ComboBox label="Combobox" defaultOpen {...actions}>
           <Item key="one">Item One</Item>
           <Item key="two" textValue="Item Two">
@@ -133,50 +208,21 @@ storiesOf('ComboBox', module)
           </Item>
           <Item key="three">Item Three</Item>
         </ComboBox>
-      </div>
+        <TextField label="Name" />
+      </Flex>
     ),
     {note: 'Combobox needs focus to show dropdown.'}
   )
   .add(
-    'inputValue (controlled)',
+    'disabled keys',
     () => (
-      <ControlledValueComboBox inputValue="Test" />
-    )
-  )
-  .add(
-    'defaultInputValue (uncontrolled)',
-    () => render({defaultInputValue: 'Item'})
-  )
-  .add(
-    'selectedKey (controlled)',
-    () => (
-      <ControlledKeyComboBox selectedKey="4" />
-    )
-  )
-  .add(
-    'defaultSelectedKey (uncontrolled)',
-    () => render({defaultSelectedKey: 'two'})
-  )
-  .add(
-    'inputValue and selectedKey (controlled)',
-    () => (
-      <AllControlledComboBox selectedKey="2" inputValue="Kangaroo" />
-    )
-  )
-  .add(
-    'defaultInputValue and defaultSelectedKey (uncontrolled)',
-    () => render({defaultInputValue: 'Item Two', defaultSelectedKey: 'two'})
-  )
-  .add(
-    'inputValue and defaultSelectedKey (controlled by inputvalue)',
-    () => (
-      <ControlledValueComboBox inputValue="K" defaultSelectedKey="2" />
-    )
-  )
-  .add(
-    'defaultInputValue and selectedKey (controlled by selectedKey)',
-    () => (
-      <ControlledKeyComboBox defaultInputValue="Blah" selectedKey="2" />
+      <ComboBox defaultItems={withSection} label="Combobox" disabledKeys={['Snake', 'Ross']} {...actions}>
+        {(item) => (
+          <Section key={item.name} items={item.children} title={item.name}>
+            {(item) => <Item key={item.name}>{item.name}</Item>}
+          </Section>
+        )}
+      </ComboBox>
     )
   )
   .add(
@@ -189,7 +235,7 @@ storiesOf('ComboBox', module)
   )
   .add(
     'isReadOnly',
-    () => render({isReadOnly: true})
+    () => render({isReadOnly: true, defaultSelectedKey: 'two'})
   )
   .add(
     'labelPosition: top, labelAlign: end',
@@ -198,6 +244,22 @@ storiesOf('ComboBox', module)
   .add(
     'labelPosition: side',
     () => render({labelPosition: 'side'})
+  )
+  .add(
+    'no visible label',
+    () => (
+      <ComboBox defaultItems={items} aria-label="ComboBox" {...actions}>
+        {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
+    )
+  )
+  .add(
+    'no visible label, isQuiet',
+    () => (
+      <ComboBox defaultItems={items} aria-label="ComboBox" isQuiet {...actions}>
+        {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
+    )
   )
   .add(
     'isRequired',
@@ -216,6 +278,18 @@ storiesOf('ComboBox', module)
     () => render({validationState: 'valid', defaultSelectedKey: 'two'})
   )
   .add(
+    'validationState: invalid, isQuiet',
+    () => render({validationState: 'invalid', isQuiet: true, defaultSelectedKey: 'two'})
+  )
+  .add(
+    'validationState: valid, isQuiet',
+    () => render({validationState: 'valid', isQuiet: true, defaultSelectedKey: 'two'})
+  )
+  .add(
+    'placeholder',
+    () => render({placeholder: 'Select an item...'})
+  )
+  .add(
     'autoFocus: true',
     () => render({autoFocus: true})
   )
@@ -226,14 +300,14 @@ storiesOf('ComboBox', module)
   .add(
     'allowsCustomValue: true',
     () => (
-      <CustomValueComboBox allowsCustomValue selectedKey="2" />
+      <CustomValueComboBox allowsCustomValue selectedKey="2" disabledKeys={['3', '6']} />
     )
   )
   .add(
     'customWidth',
     () => (
       <Flex direction="column">
-        <ComboBox label="Combobox" {...actions} width="200px">
+        <ComboBox label="Combobox" {...actions} width="size-500">
           <Item key="one">Item One</Item>
           <Item key="two" textValue="Item Two">
             <Copy size="S" />
@@ -241,7 +315,15 @@ storiesOf('ComboBox', module)
           </Item>
           <Item key="three">Item Three</Item>
         </ComboBox>
-        <ComboBox label="Combobox" {...actions} width="800px">
+        <ComboBox label="Combobox" {...actions} isQuiet width="size-3000">
+          <Item key="one">Item One</Item>
+          <Item key="two" textValue="Item Two">
+            <Copy size="S" />
+            <Text>Item Two</Text>
+          </Item>
+          <Item key="three">Item Three</Item>
+        </ComboBox>
+        <ComboBox label="Combobox" {...actions} width="size-6000">
           <Item key="one">Item One</Item>
           <Item key="two" textValue="Item Two">
             <Copy size="S" />
@@ -253,11 +335,391 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
-    'onFilter, (value included in list)',
+    'no visible label, customWidth',
     () => (
-      <CustomFilterComboBox selectedKey="2" />
+      <Flex gap="size-300" direction="column" >
+        <ComboBox {...actions} aria-label="ComboBox" width="size-500">
+          <Item key="one">Item One</Item>
+          <Item key="two" textValue="Item Two">
+            <Copy size="S" />
+            <Text>Item Two</Text>
+          </Item>
+          <Item key="three">Item Three</Item>
+        </ComboBox>
+        <ComboBox {...actions} aria-label="ComboBox" isQuiet width="size-3000">
+          <Item key="one">Item One</Item>
+          <Item key="two" textValue="Item Two">
+            <Copy size="S" />
+            <Text>Item Two</Text>
+          </Item>
+          <Item key="three">Item Three</Item>
+        </ComboBox>
+        <ComboBox {...actions} aria-label="ComboBox" width="size-6000">
+          <Item key="one">Item One</Item>
+          <Item key="two" textValue="Item Two">
+            <Copy size="S" />
+            <Text>Item Two</Text>
+          </Item>
+          <Item key="three">Item Three</Item>
+        </ComboBox>
+      </Flex>
+    )
+  )
+  .add(
+    'resize',
+    () => <ResizeCombobox />
+  )
+  .add(
+    'in small div',
+    () => (
+      <Flex width="size-500">
+        <ComboBox aria-label="ComboBox" {...actions} >
+          <Item key="one">Item One</Item>
+          <Item key="two" textValue="Item Two">
+            <Copy size="S" />
+            <Text>Item Two</Text>
+          </Item>
+          <Item key="three">Item Three</Item>
+        </ComboBox>
+      </Flex>
+    )
+  )
+  .add(
+    'inputValue (controlled)',
+    () => (
+      <ControlledValueComboBox inputValue="Snake" disabledKeys={['2', '6']} />
+    )
+  )
+  .add(
+    'defaultInputValue (uncontrolled)',
+    () => render({defaultInputValue: 'Item Three', disabledKeys: ['two']})
+  )
+  .add(
+    'selectedKey (controlled)',
+    () => (
+      <ControlledKeyComboBox selectedKey="4" disabledKeys={['2', '6']} />
+    )
+  )
+  .add(
+    'defaultSelectedKey (uncontrolled)',
+    () => render({defaultSelectedKey: 'two', disabledKeys: ['one']})
+  )
+  .add(
+    'inputValue and selectedKey (controlled)',
+    () => (
+      <AllControlledComboBox selectedKey="2" inputValue="Kangaroo" disabledKeys={['2', '6']} />
+    )
+  )
+  .add(
+    'defaultInputValue and defaultSelectedKey (uncontrolled)',
+    () => render({defaultInputValue: 'Item Two', defaultSelectedKey: 'two', disabledKeys: ['two']})
+  )
+  .add(
+    'inputValue and defaultSelectedKey (controlled by inputvalue)',
+    () => (
+      <ControlledValueComboBox inputValue="K" defaultSelectedKey="2" disabledKeys={['2', '6']} />
+    )
+  )
+  .add(
+    'defaultInputValue and selectedKey (controlled by selectedKey)',
+    () => (
+      <ControlledKeyComboBox defaultInputValue="Blah" selectedKey="2" disabledKeys={['2', '6']} />
+    )
+  )
+  .add(
+    'inputValue and isOpen (controlled)',
+    () => (
+      <ControlledValueOpenCombobox />
+    )
+  )
+  .add(
+    'selectedKey and isOpen (controlled)',
+    () => (
+      <ControlledKeyOpenCombobox />
+    )
+  )
+  .add(
+    'inputValue, selectedKey, and isOpen (controlled)',
+    () => (
+      <AllControlledOpenComboBox selectedKey="2" inputValue="Kangaroo" disabledKeys={['2', '6']} />
+    )
+  )
+  .add(
+    'inputValue, selectedKey, isOpen, allowsCustomValue (controlled)',
+    () => (
+      <AllControlledOpenComboBox selectedKey="2" inputValue="Kangaroo" disabledKeys={['2', '6']} allowsCustomValue />
+    )
+  )
+  .add(
+    'custom filter',
+    () => (
+      <CustomFilterComboBox />
+    )
+  )
+  .add(
+    'loadingState',
+    () => <LoadingExamples />
+  )
+  .add(
+    'loadingState = "loading", validationState: invalid',
+    () => <LoadingExamples validationState="invalid" />
+  )
+  .add(
+    'loadingState = "loading", isQuiet',
+    () => <LoadingExamples isQuiet />
+  )
+  .add(
+    'loadingState = "loading", isQuiet, validationState: invalid',
+    () => <LoadingExamples isQuiet validationState="invalid" />
+  )
+  .add(
+    'filtering with useListData',
+    () => (
+      <ListDataExample />
+    )
+  )
+  .add(
+    'server side filtering with useAsyncList',
+    () => (
+      <AsyncLoadingExample />
+    )
+  )
+  .add(
+    'server side filtering with useAsyncList (controlled key)',
+    () => (
+      <AsyncLoadingExampleControlledKey />
+    )
+  )
+  .add(
+    'server side filtering with controlled key and inputValue reset if not focused',
+    () => (
+      <AsyncLoadingExampleControlledKeyWithReset />
     )
   );
+
+
+function LoadingExamples(props) {
+  return (
+    <Flex gap="size-300" direction="column" >
+      <ComboBox {...props} label="Combobox (loading)" loadingState="loading" defaultItems={items} >
+        {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
+      <ComboBox {...props} label="Combobox (filtering)" loadingState="filtering" defaultItems={items}>
+        {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
+      <ComboBox {...props} label="Combobox (loading + menuTrigger manual)" loadingState="loading" menuTrigger="manual" defaultItems={items} >
+        {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
+      <ComboBox {...props} label="Combobox (loading more)" loadingState="loadingMore" defaultItems={items}>
+        {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
+    </Flex>
+  );
+}
+
+function ListDataExample() {
+  let {contains} = useFilter({sensitivity: 'base'});
+  let list = useListData({
+    initialItems: items,
+    initialFilterText: 'Snake',
+    filter(item, text) {
+      return contains(item.name, text);
+    }
+  });
+
+  let [showAll, setShowAll] = useState(false);
+
+  return (
+    <Flex gap="size-300" direction="column" >
+      <ComboBox
+        onOpenChange={(open, reason) => {
+          if (reason === 'manual' && open) {
+            setShowAll(true);
+          }
+        }}
+        label="ComboBox (show all on open)"
+        items={showAll ? items : list.items}
+        inputValue={list.filterText}
+        onInputChange={(value) => {
+          setShowAll(false);
+          list.setFilterText(value);
+        }}>
+        {item => <Item>{item.name}</Item>}
+      </ComboBox>
+      <ComboBox
+        label="ComboBox (default controlled items behavior)"
+        items={list.items}
+        inputValue={list.filterText}
+        onInputChange={list.setFilterText}>
+        {item => <Item>{item.name}</Item>}
+      </ComboBox>
+    </Flex>
+  );
+}
+
+function AsyncLoadingExample() {
+  interface StarWarsChar {
+    name: string,
+    url: string
+  }
+
+  let list = useAsyncList<StarWarsChar>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <ComboBox
+      label="Star Wars Character Lookup"
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={list.setFilterText}
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}
+      onOpenChange={action('onOpenChange')}>
+      {item => <Item key={item.name}>{item.name}</Item>}
+    </ComboBox>
+  );
+}
+
+function AsyncLoadingExampleControlledKey() {
+  interface StarWarsChar {
+    name: string,
+    url: string
+  }
+
+  let list = useAsyncList<StarWarsChar>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    },
+    initialSelectedKeys: ['Luke Skywalker'],
+    getKey: (item) => item.name
+  });
+
+  let onSelectionChange = (key) => {
+    let itemText = list.getItem(key)?.name;
+    list.setSelectedKeys(new Set([key]));
+    list.setFilterText(itemText);
+  };
+
+  let onInputChange = (value) => {
+    if (value === '') {
+      list.setSelectedKeys(new Set([null]));
+    }
+    list.setFilterText(value);
+  };
+
+  let selectedKey = (list.selectedKeys as Set<React.Key>).values().next().value;
+  return (
+    <ComboBox
+      label="Star Wars Character Lookup"
+      selectedKey={selectedKey}
+      onSelectionChange={onSelectionChange}
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={onInputChange}
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}
+      onOpenChange={action('onOpenChange')}>
+      {item => <Item key={item.name}>{item.name}</Item>}
+    </ComboBox>
+  );
+}
+
+function AsyncLoadingExampleControlledKeyWithReset() {
+  interface StarWarsChar {
+    name: string,
+    url: string
+  }
+  let isFocused = useRef(false);
+  let list = useAsyncList<StarWarsChar>({
+    async load({signal, cursor, filterText, selectedKeys}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      let selectedText;
+      let selectedKey = (selectedKeys as Set<React.Key>).values().next().value;
+
+      // If selectedKey exists and combobox is performing intial load, update the input value with the selected key text
+      if (!isFocused.current && selectedKey) {
+        let selectedItemName = json.results.find(item => item.name === selectedKey)?.name;
+        if (selectedItemName != null && selectedItemName !== filterText) {
+          selectedText = selectedItemName;
+        }
+      }
+      return {
+        items: json.results,
+        cursor: json.next,
+        filterText: selectedText ?? filterText
+      };
+    },
+    initialSelectedKeys: ['Luke Skywalker'],
+    getKey: (item) => item.name
+  });
+
+  let onSelectionChange = (key) => {
+    let itemText = list.getItem(key)?.name;
+    list.setSelectedKeys(new Set([key]));
+    list.setFilterText(itemText);
+  };
+
+  let onInputChange = (value) => {
+    if (value === '') {
+      list.setSelectedKeys(new Set([null]));
+    }
+    list.setFilterText(value);
+  };
+
+  let selectedKey = (list.selectedKeys as Set<React.Key>).values().next().value;
+  return (
+    <ComboBox
+      onFocusChange={(focus) => isFocused.current = focus}
+      label="Star Wars Character Lookup"
+      selectedKey={selectedKey}
+      onSelectionChange={onSelectionChange}
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={onInputChange}
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}
+      onOpenChange={action('onOpenChange')}>
+      {item => <Item key={item.name}>{item.name}</Item>}
+    </ComboBox>
+  );
+}
 
 let customFilterItems = [
   {name: 'The first item', id: '1'},
@@ -266,50 +728,83 @@ let customFilterItems = [
 ];
 
 let CustomFilterComboBox = (props) => {
-  let [list, setList] = React.useState(customFilterItems);
-  let [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
-
-  let onSelectionChange = (key) => {
-    setSelectedKey(key);
-  };
-
-  let onFilter = (value) => {
-    setList(customFilterItems.filter(item => item.name.includes(value)));
-  };
+  let {startsWith} = useFilter({sensitivity: 'base'});
+  let [filterValue, setFilterValue] = React.useState('');
+  let filteredItems = React.useMemo(() => customFilterItems.filter(item => startsWith(item.name, filterValue)), [props.items, filterValue, startsWith]);
 
   return (
-    <ComboBox items={list} selectedKey={selectedKey} label="Combobox" onSelectionChange={onSelectionChange} onFilter={onFilter} onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+    <ComboBox
+      {...mergeProps(props, actions)}
+      label="Combobox"
+      items={filteredItems}
+      inputValue={filterValue}
+      onInputChange={setFilterValue}>
       {(item: any) => <Item>{item.name}</Item>}
     </ComboBox>
   );
 };
 
-let AllControlledComboBox = (props) => {
-  let [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
-  let [inputValue, setInputValue] = React.useState(props.inputValue);
+function AllControlledComboBox(props) {
+  let [fieldState, setFieldState] = React.useState({
+    selectedKey: props.selectedKey,
+    inputValue: props.inputValue
+  });
 
-  let onSelectionChange = (key) => {
-    setSelectedKey(key);
+  let list = useTreeData({
+    initialItems: withSection
+  });
+
+  let onSelectionChange = (key: React.Key) => {
+    setFieldState({
+      inputValue: list.getItem(key)?.value.name ?? '',
+      selectedKey: key
+    });
   };
 
-  let onInputChange = (value) => {
-    setInputValue(value);
+  let onInputChange = (value: string) => {
+    setFieldState(prevState => ({
+      inputValue: value,
+      selectedKey: value === '' ? null : prevState.selectedKey
+    }));
+  };
+
+  let setSnake = () => {
+    setFieldState({inputValue: 'Snake', selectedKey: '3'});
+  };
+
+  let setRoss = () => {
+    setFieldState({inputValue: 'Ross', selectedKey: '6'});
+  };
+
+  let clearAll = () => {
+    setFieldState({inputValue: '', selectedKey: null});
   };
 
   return (
     <div>
-      <div>Current selectedKey: {selectedKey}</div>
-      <div>Current input value: {inputValue}</div>
-      <ComboBox {...props} selectedKey={selectedKey} inputValue={inputValue} items={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
-        {(item: any) => (
-          <Section items={item.children} title={item.name}>
-            {(item: any) => <Item>{item.name}</Item>}
+      <div>Current selectedKey: {fieldState.selectedKey}</div>
+      <div>Current input value: {fieldState.inputValue}</div>
+      <ButtonGroup marginEnd="30px">
+        <Button variant="secondary" onPress={setSnake}>
+          <Text>Snake</Text>
+        </Button>
+        <Button variant="secondary" onPress={setRoss}>
+          <Text>Ross</Text>
+        </Button>
+        <Button variant="secondary" onPress={clearAll}>
+          <Text>Clear key</Text>
+        </Button>
+      </ButtonGroup>
+      <ComboBox disabledKeys={props.disabledKeys} selectedKey={fieldState.selectedKey} inputValue={fieldState.inputValue} defaultItems={list.items} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')}>
+        {item => (
+          <Section items={item.children} title={item.value.name}>
+            {item => <Item>{item.value.name}</Item>}
           </Section>
         )}
       </ComboBox>
     </div>
   );
-};
+}
 
 let ControlledKeyComboBox = (props) => {
   let [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
@@ -318,21 +813,29 @@ let ControlledKeyComboBox = (props) => {
     setSelectedKey(key);
   };
 
+  let setSnake = () => {
+    setSelectedKey('3');
+  };
+
+  let setRoss = () => {
+    setSelectedKey('6');
+  };
+
   return (
     <div>
       <div>Current selectedKey: {selectedKey}</div>
       <ButtonGroup marginEnd="30px">
-        <Button variant="secondary" onPress={() => setSelectedKey('3')}>
+        <Button variant="secondary" onPress={setSnake}>
           <Text>Snake</Text>
         </Button>
-        <Button variant="secondary" onPress={() => setSelectedKey('6')}>
+        <Button variant="secondary" onPress={setRoss}>
           <Text>Ross</Text>
         </Button>
-        <Button variant="secondary" onPress={() => setSelectedKey('')}>
+        <Button variant="secondary" onPress={() => setSelectedKey(null)}>
           <Text>Clear key</Text>
         </Button>
       </ButtonGroup>
-      <ComboBox {...props} selectedKey={selectedKey} items={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+      <ComboBox {...mergeProps(props, actions)} selectedKey={selectedKey} defaultItems={withSection} label="Combobox" onSelectionChange={onSelectionChange}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}
@@ -353,7 +856,7 @@ let ControlledValueComboBox = (props) => {
   return (
     <div>
       <div>Current input value: {value}</div>
-      <ButtonGroup marginEnd="30px">
+      <ButtonGroup marginEnd="30px" UNSAFE_style={{verticalAlign: 'bottom'}}>
         <Button variant="secondary" onPress={() => setValue('Blah')}>
           <Text>Blah</Text>
         </Button>
@@ -364,7 +867,7 @@ let ControlledValueComboBox = (props) => {
           <Text>Clear field</Text>
         </Button>
       </ButtonGroup>
-      <ComboBox {...props} inputValue={value} items={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onValueChange} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+      <ComboBox {...mergeProps(props, actions)} inputValue={value} defaultItems={withSection} label="Combobox" onInputChange={onValueChange}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}
@@ -377,21 +880,15 @@ let ControlledValueComboBox = (props) => {
 
 let CustomValueComboBox = (props) => {
   let [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
-  let [customValue, setCustomValue] = React.useState();
 
   let onSelectionChange = (key) => {
     setSelectedKey(key);
   };
 
-  let onCustomValue = (value) => {
-    setCustomValue(value);
-  };
-
   return (
     <div>
-      <div>Last custom value: {customValue}</div>
       <div>Selected Key: {selectedKey}</div>
-      <ComboBox {...props} selectedKey={selectedKey} items={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={onCustomValue} marginTop="40px">
+      <ComboBox {...mergeProps(props, actions)} selectedKey={selectedKey} defaultItems={withSection} label="Combobox" onSelectionChange={onSelectionChange} marginTop={20}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}
@@ -402,9 +899,81 @@ let CustomValueComboBox = (props) => {
   );
 };
 
-function render(props = {}) {
+let ControlledOpenCombobox = (props) => {
+  let [isOpen, setOpen] = React.useState(props.isOpen);
+
   return (
-    <ComboBox label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')} {...props}>
+    <Flex direction="column">
+      <TextField label="Email" />
+      <ComboBox label="Combobox" {...mergeProps(props, actions)} isOpen={isOpen} onOpenChange={setOpen}>
+        <Item key="one">Item One</Item>
+        <Item key="two" textValue="Item Two">
+          <Copy size="S" />
+          <Text>Item Two</Text>
+        </Item>
+        <Item key="three">Item Three</Item>
+      </ComboBox>
+      <TextField label="Name" />
+    </Flex>
+  );
+};
+
+let ControlledValueOpenCombobox = (props) => {
+  let [fieldState, setFieldState] = React.useState({
+    isOpen: false,
+    inputValue: ''
+  });
+
+  let onInputChange = (value: string) => {
+    setFieldState({
+      isOpen: true,
+      inputValue: value
+    });
+  };
+
+  let onOpenChange = (isOpen: boolean) => {
+    setFieldState(prevState => ({
+      isOpen: isOpen,
+      inputValue: prevState.inputValue
+    }));
+  };
+
+  let onSelectionChange = (key) => {
+    setFieldState({
+      isOpen: false,
+      inputValue: items.find(item => item.id === key)?.name ?? ''
+    });
+  };
+
+  return (
+    <ComboBox label="Combobox" {...mergeProps(props, actions)} defaultItems={items} isOpen={fieldState.isOpen} onOpenChange={onOpenChange} inputValue={fieldState.inputValue} onInputChange={onInputChange} onSelectionChange={onSelectionChange}>
+      {(item: any) => <Item>{item.name}</Item>}
+    </ComboBox>
+  );
+};
+
+let ControlledKeyOpenCombobox = (props) => {
+  let [fieldState, setFieldState] = React.useState({
+    isOpen: false,
+    selectedKey: 'two'
+  });
+
+  let onSelectionChange = (key: string) => {
+    setFieldState({
+      isOpen: false,
+      selectedKey: key
+    });
+  };
+
+  let onOpenChange = (isOpen: boolean) => {
+    setFieldState(prevState => ({
+      isOpen: isOpen,
+      selectedKey: prevState.selectedKey
+    }));
+  };
+
+  return (
+    <ComboBox label="Combobox" {...mergeProps(props, actions)} isOpen={fieldState.isOpen} onOpenChange={onOpenChange} selectedKey={fieldState.selectedKey} onSelectionChange={onSelectionChange}>
       <Item key="one">Item One</Item>
       <Item key="two" textValue="Item Two">
         <Copy size="S" />
@@ -412,5 +981,115 @@ function render(props = {}) {
       </Item>
       <Item key="three">Item Three</Item>
     </ComboBox>
+  );
+};
+
+function AllControlledOpenComboBox(props) {
+  let [fieldState, setFieldState] = React.useState({
+    isOpen: false,
+    selectedKey: props.selectedKey,
+    inputValue: props.inputValue
+  });
+
+  let list = useTreeData({
+    initialItems: withSection
+  });
+
+  let onSelectionChange = (key: React.Key) => {
+    setFieldState(prevState => ({
+      isOpen: false,
+      inputValue: list.getItem(key)?.value.name ?? (props.allowsCustomValue ? prevState.inputValue : ''),
+      selectedKey: key
+    }));
+  };
+
+  let onInputChange = (value: string) => {
+    setFieldState(prevState => ({
+      isOpen: true,
+      inputValue: value,
+      selectedKey: value === '' ? null : prevState.selectedKey
+    }));
+  };
+
+  let onOpenChange = (isOpen: boolean) => {
+    setFieldState(prevState => ({
+      isOpen,
+      inputValue: prevState.inputValue,
+      selectedKey: prevState.selectedKey
+    }));
+  };
+
+  return (
+    <div>
+      <ComboBox allowsCustomValue={props.allowsCustomValue} disabledKeys={props.disabledKeys} selectedKey={fieldState.selectedKey} inputValue={fieldState.inputValue} defaultItems={list.items} label="Combobox" isOpen={fieldState.isOpen} onOpenChange={onOpenChange} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')}>
+        {item => (
+          <Section items={item.children} title={item.value.name}>
+            {item => <Item>{item.value.name}</Item>}
+          </Section>
+        )}
+      </ComboBox>
+    </div>
+  );
+}
+
+function ResizeCombobox() {
+  let [size, setSize] = useState(true);
+
+  return (
+    <Flex direction="column" gap="size-200" alignItems="start">
+      <div style={{width: size ? '200px' : '300px'}}>
+        <ComboBox label="Combobox" {...actions} width="100%">
+          <Item key="one">Item One</Item>
+          <Item key="two" textValue="Item Two">
+            <Copy size="S" />
+            <Text>Item Two</Text>
+          </Item>
+          <Item key="three">Item Three</Item>
+        </ComboBox>
+      </div>
+      <ActionButton onPress={() => setSize(prev => !prev)}>Toggle size</ActionButton>
+    </Flex>
+  );
+}
+
+function render(props = {}) {
+  return (
+    <ComboBox label="Combobox" {...mergeProps(props, actions)}>
+      <Item key="one">Item One</Item>
+      <Item key="two" textValue="Item Two">
+        <Copy size="S" />
+        <Text>Item Two</Text>
+      </Item>
+      <Item key="three">Item Three</Item>
+    </ComboBox>
+  );
+}
+
+function ComboBoxWithMap(props) {
+  let [items, setItems] = React.useState([
+    {name: 'The first item', id: 'one'},
+    {name: 'The second item', id: 'two'},
+    {name: 'The third item', id: 'three'}
+  ]);
+
+  let onClick = () => {
+    setItems([
+      {name: 'The first item new text', id: 'one'},
+      {name: 'The second item new text', id: 'two'},
+      {name: 'The third item new text', id: 'three'}
+    ]);
+  };
+
+  return (
+    <Flex direction="column">
+      <button onClick={onClick}>Press to change items</button>
+      <ComboBox label="Combobox" {...mergeProps(props, actions)}>
+        {items.map((item) => (
+          <Item key={item.id}>
+            {item.name}
+          </Item>
+        ))}
+      </ComboBox>
+    </Flex>
   );
 }

@@ -268,10 +268,10 @@ describe('SideNav', function () {
     let selectedItem = items[0];
     act(() => {selectedItem.focus();});
     expect(selectedItem).toBe(document.activeElement);
-    act(() => {fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});});
+    fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
     let nextSelectedItem = items[1];
     expect(nextSelectedItem).toBe(document.activeElement);
-    act(() => {fireEvent.keyDown(nextSelectedItem, {key: 'ArrowUp', code: 38, charCode: 38});});
+    fireEvent.keyDown(nextSelectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
     expect(selectedItem).toBe(document.activeElement);
   });
 
@@ -296,13 +296,13 @@ describe('SideNav', function () {
     let firstItem = items[0];
     act(() => {firstItem.focus();});
     expect(firstItem).toBe(document.activeElement);
-    act(() => {fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});});
+    fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});
     let lastItem = items[items.length - 1];
     expect(lastItem).not.toBe(document.activeElement);
 
     act(() => {lastItem.focus();});
     expect(lastItem).toBe(document.activeElement);
-    act(() => {fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});});
+    fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});
     expect(firstItem).not.toBe(document.activeElement);
   });
 
@@ -325,17 +325,13 @@ describe('SideNav', function () {
     let firstItem = items[0];
     act(() => {firstItem.focus();});
     expect(firstItem).toBe(document.activeElement);
-    act(() => {
-      fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});
-    });
+    fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});
     let lastItem = items[items.length - 1];
     expect(lastItem).toBe(document.activeElement);
 
     act(() => {lastItem.focus();});
     expect(lastItem).toBe(document.activeElement);
-    act(() => {
-      fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});
-    });
+    fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});
     expect(firstItem).toBe(document.activeElement);
   });
 

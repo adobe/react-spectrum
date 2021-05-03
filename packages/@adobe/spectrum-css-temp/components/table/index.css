@@ -156,8 +156,13 @@ governing permissions and limitations under the License.
   text-overflow: ellipsis;
 
   /* allow focus ring of child to extend outside the bounds */
-  padding: 0 4px;
-  margin: 0 -4px;
+  padding: 4px;
+  margin: -4px;
+}
+
+.spectrum-Table-cell--hideHeader {
+  padding: 0;
+  justify-content: center;
 }
 
 .spectrum-Table--wrap .spectrum-Table-cellContents {

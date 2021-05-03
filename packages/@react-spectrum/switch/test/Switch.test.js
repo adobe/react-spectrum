@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render} from '@testing-library/react';
 import React from 'react';
+import {render} from '@testing-library/react';
 import {Switch} from '../';
 import userEvent from '@testing-library/user-event';
 import V2Switch from '@react/react-spectrum/Switch';
-
 
 describe('Switch', function () {
   let onChangeSpy = jest.fn();
@@ -38,12 +37,12 @@ describe('Switch', function () {
     expect(checkbox).toHaveAttribute('aria-checked', 'false');
     expect(onChangeSpy).not.toHaveBeenCalled();
 
-    act(() => {userEvent.click(checkbox);});
+    userEvent.click(checkbox);
     expect(checkbox).toHaveAttribute('aria-checked', 'true');
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy.mock.calls[0][0]).toBe(true);
 
-    act(() => {userEvent.click(checkbox);});
+    userEvent.click(checkbox);
     expect(checkbox).toHaveAttribute('aria-checked', 'false');
     expect(onChangeSpy.mock.calls[1][0]).toBe(false);
 
@@ -62,7 +61,7 @@ describe('Switch', function () {
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.checked).toBeTruthy();
 
-    act(() => {userEvent.click(checkbox);});
+    userEvent.click(checkbox);
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy.mock.calls[0][0]).toBe(false);
   });
@@ -79,7 +78,7 @@ describe('Switch', function () {
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.checked).toBeTruthy();
 
-    act(() => {userEvent.click(checkbox);});
+    userEvent.click(checkbox);
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy.mock.calls[0][0]).toBe(false);
   });
@@ -96,7 +95,7 @@ describe('Switch', function () {
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.checked).toBeFalsy();
 
-    act(() => {userEvent.click(checkbox);});
+    userEvent.click(checkbox);
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy.mock.calls[0][0]).toBe(true);
   });
@@ -113,7 +112,7 @@ describe('Switch', function () {
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.checked).toBeFalsy();
 
-    act(() => {userEvent.click(checkbox);});
+    userEvent.click(checkbox);
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
@@ -191,7 +190,7 @@ describe('Switch', function () {
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.checked).toBeTruthy();
 
-    act(() => {userEvent.click(checkbox);});
+    userEvent.click(checkbox);
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy).not.toHaveBeenCalled();
   });

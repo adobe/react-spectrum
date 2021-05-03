@@ -10,86 +10,71 @@
  * governing permissions and limitations under the License.
  */
 
-/** A list of supported color formats. */
-type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hsb' | 'hsba';
+import {clamp} from '@react-aria/utils';
+import {ColorChannel, ColorChannelRange, ColorFormat, Color as IColor} from '@react-types/color';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {MessageDictionary} from '@internationalized/message';
+import {NumberFormatter} from '@internationalized/number';
 
-/** A list of color channels. */
-type ColorChannel = 'hue' | 'saturation' | 'brightness' | 'lightness' | 'red' | 'green' | 'blue' | 'alpha';
+const messages = new MessageDictionary(intlMessages);
 
-export class Color {
-  private value: ColorValue;
-
-  constructor(value: string) {
-    let parsed: ColorValue | void = RGBColor.parse(value);
-    if (parsed) {
-      this.value = parsed;
-    } else {
-      throw new Error('Invalid color value: ' + value);
-    }
+/** Parses a color from a string value. Throws an error if the string could not be parsed. */
+export function parseColor(value: string): IColor {
+  let res = RGBColor.parse(value) || HSBColor.parse(value) || HSLColor.parse(value);
+  if (res) {
+    return res;
   }
 
-  private static fromColorValue(value: ColorValue): Color {
-    let x: Color = Object.create(Color.prototype);
-    x.value = value;
-    return x;
-  }
+  throw new Error('Invalid color value: ' + value);
+}
 
-  toFormat(format: ColorFormat): Color {
-    switch (format) {
-      case 'hex':
-      case 'hexa':
-      case 'rgb':
-      case 'rgba':
-        return Color.fromColorValue(this.value.toRGB());
-      case 'hsl':
-      case 'hsla':
-        return Color.fromColorValue(this.value.toHSL());
-      case 'hsb':
-      case 'hsba':
-        return Color.fromColorValue(this.value.toHSB());
-      default:
-        throw new Error('Invalid color format: ' + format);
-    }
-  }
+abstract class Color implements IColor {
+  abstract toFormat(format: ColorFormat): IColor;
+  abstract toString(format: ColorFormat | 'css'): string;
+  abstract clone(): Color;
+  abstract getChannelRange(channel: ColorChannel): ColorChannelRange;
+  abstract formatChannelValue(channel: ColorChannel, locale: string): string;
 
-  toString(format: ColorFormat) {
-    switch (format) {
-      case 'hex':
-      case 'hexa':
-      case 'rgb':
-      case 'rgba':
-        return this.value.toRGB().toString(format);
-      case 'hsl':
-      case 'hsla':
-        return this.value.toHSL().toString(format);
-      case 'hsb':
-      case 'hsba':
-        return this.value.toHSB().toString(format);
-      default:
-        throw new Error('Invalid color format: ' + format);
-    }
+  toHexInt(): number {
+    return this.toFormat('rgb').toHexInt();
   }
 
   getChannelValue(channel: ColorChannel): number {
-    if (channel in this.value) {
-      return this.value[channel];
+    if (channel in this) {
+      return this[channel];
     }
 
     throw new Error('Unsupported color channel: ' + channel);
   }
-}
 
-interface ColorValue {
-  toRGB(): ColorValue,
-  toHSB(): ColorValue,
-  toHSL(): ColorValue,
-  toString(format: ColorFormat): string
+  withChannelValue(channel: ColorChannel, value: number): IColor {
+    if (channel in this) {
+      let x = this.clone();
+      x[channel] = value;
+      return x;
+    }
+
+    throw new Error('Unsupported color channel: ' + channel);
+  }
+
+  getChannelName(channel: ColorChannel, locale: string) {
+    return messages.getStringForLocale(channel, locale);
+  }
 }
 
 const HEX_REGEX = /^#(?:([0-9a-f]{3})|([0-9a-f]{6}))$/i;
 
-class RGBColor implements ColorValue {
-  constructor(private red: number, private green: number, private blue: number, private alpha: number) {}
+// X = <negative/positive number with/without decimal places>
+// before/after a comma, 0 or more whitespaces are allowed
+// - rgb(X, X, X)
+// - rgba(X, X, X, X)
+const RGB_REGEX = /rgb\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?)\)|rgba\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d(.\d+)?)\)/;
+
+class RGBColor extends Color {
+  constructor(private red: number, private green: number, private blue: number, private alpha: number) {
+    super();
+  }
 
   static parse(value: string): RGBColor | void {
     let m;
@@ -105,99 +90,265 @@ class RGBColor implements ColorValue {
         let b = parseInt(m[2][4] + m[2][5], 16);
         return new RGBColor(r, g, b, 1);
       }
-    } else {
-      // TODO: check rgb and rgba strings
+    } if ((m = value.match(RGB_REGEX))) {
+      const [r, g, b, a] = (m[1] ?? m[2]).split(',').map(n => Number(n.trim()));
+      return new RGBColor(clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255), clamp(a ?? 1, 0, 1));
     }
   }
 
-  toString(format: ColorFormat) {
+  toString(format: ColorFormat | 'css') {
     switch (format) {
       case 'hex':
-        return '#' + (1 << 24 | this.red << 16 | this.green << 8 | this.blue).toString(16).slice(1).toUpperCase();
+        return '#' + (this.red.toString(16).padStart(2, '0') + this.green.toString(16).padStart(2, '0') + this.blue.toString(16).padStart(2, '0')).toUpperCase();
+      case 'hexa':
+        return '#' + (this.red.toString(16).padStart(2, '0') + this.green.toString(16).padStart(2, '0') + this.blue.toString(16).padStart(2, '0') + Math.round(this.alpha * 255).toString(16).padStart(2, '0')).toUpperCase();
       case 'rgb':
         return `rgb(${this.red}, ${this.green}, ${this.blue})`;
+      case 'css':
       case 'rgba':
         return `rgba(${this.red}, ${this.green}, ${this.blue}, ${this.alpha})`;
       default:
-        throw new Error('Unsupported color format: ' + format);
+        return this.toFormat(format).toString(format);
     }
   }
 
-  toRGB(): ColorValue {
-    return this;
+  toFormat(format: ColorFormat): IColor {
+    switch (format) {
+      case 'hex':
+      case 'hexa':
+      case 'rgb':
+      case 'rgba':
+        return this;
+      default:
+        throw new Error('Unsupported color conversion: rgb -> ' + format);
+    }
   }
 
-  toHSB(): ColorValue {
-    throw new Error('Not implemented');
+  toHexInt(): number {
+    return this.red << 16 | this.green << 8 | this.blue;
   }
 
-  toHSL(): ColorValue {
-    throw new Error('Not implemented');
+  clone(): Color {
+    return new RGBColor(this.red, this.green, this.blue, this.alpha);
+  }
+
+  getChannelRange(channel: ColorChannel): ColorChannelRange {
+    switch (channel) {
+      case 'red':
+      case 'green':
+      case 'blue':
+        return {minValue: 0, maxValue: 255, step: 1};
+      case 'alpha':
+        return {minValue: 0, maxValue: 1, step: 0.01};
+      default:
+        throw new Error('Unknown color channel: ' + channel);
+    }
+  }
+
+  formatChannelValue(channel: ColorChannel, locale: string) {
+    let options: Intl.NumberFormatOptions;
+    let value = this.getChannelValue(channel);
+    switch (channel) {
+      case 'red':
+      case 'green':
+      case 'blue':
+        options = {style: 'decimal'};
+        break;
+      case 'alpha':
+        options = {style: 'percent'};
+        break;
+      default:
+        throw new Error('Unknown color channel: ' + channel);
+    }
+    return new NumberFormatter(locale, options).format(value);
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-class HSBColor implements ColorValue {
-  constructor(private hue: number, private saturation: number, private brightness: number, private alpha: number) {}
+// X = <negative/positive number with/without decimal places>
+// before/after a comma, 0 or more whitespaces are allowed
+// - hsb(X, X%, X%)
+// - hsba(X, X%, X%, X)
+const HSB_REGEX = /hsb\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%)\)|hsba\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d(.\d+)?)\)/;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static parse(value: string): HSBColor | void {
-    // TODO
+class HSBColor extends Color {
+  constructor(private hue: number, private saturation: number, private brightness: number, private alpha: number) {
+    super();
   }
 
-  toString(format: ColorFormat) {
+  static parse(value: string): HSBColor | void {
+    let m: RegExpMatchArray | void;
+    if ((m = value.match(HSB_REGEX))) {
+      const [h, s, b, a] = (m[1] ?? m[2]).split(',').map(n => Number(n.trim().replace('%', '')));
+      return new HSBColor(mod(h, 360), clamp(s, 0, 100), clamp(b, 0, 100), clamp(a ?? 1, 0, 1));
+    }
+  }
+
+  toString(format: ColorFormat | 'css') {
     switch (format) {
+      case 'css':
+        return this.toHSL().toString('css');
       case 'hsb':
         return `hsb(${this.hue}, ${this.saturation}%, ${this.brightness}%)`;
       case 'hsba':
         return `hsba(${this.hue}, ${this.saturation}%, ${this.brightness}%, ${this.alpha})`;
       default:
-        throw new Error('Unsupported color format: ' + format);
+        return this.toFormat(format).toString(format);
     }
   }
 
-  toRGB(): ColorValue {
-    throw new Error('Not implemented');
+  toFormat(format: ColorFormat): IColor {
+    switch (format) {
+      case 'hsb':
+      case 'hsba':
+        return this;
+      case 'hsl':
+      case 'hsla':
+        return this.toHSL();
+      default:
+        throw new Error('Unsupported color conversion: hsb -> ' + format);
+    }
   }
 
-  toHSB(): ColorValue {
-    return this;
+  private toHSL(): Color {
+    // determine the lightness in the range [0,100]
+    var l = (2 - this.saturation / 100) * this.brightness / 2;
+
+    // store the HSL components
+    let hue = this.hue;
+    let saturation = this.saturation * this.brightness / (l < 50 ? l * 2 : 200 - l * 2);
+    let lightness = l;
+
+    // correct a division-by-zero error
+    if (isNaN(saturation)) {
+      saturation = 0;
+    }
+
+    return new HSLColor(hue, saturation, lightness, this.alpha);
   }
 
-  toHSL(): ColorValue {
-    throw new Error('Not implemented');
+  clone(): Color {
+    return new HSBColor(this.hue, this.saturation, this.brightness, this.alpha);
+  }
+
+  getChannelRange(channel: ColorChannel): ColorChannelRange {
+    switch (channel) {
+      case 'hue':
+        return {minValue: 0, maxValue: 360, step: 1};
+      case 'saturation':
+      case 'brightness':
+        return {minValue: 0, maxValue: 100, step: 1};
+      case 'alpha':
+        return {minValue: 0, maxValue: 1, step: 0.01};
+      default:
+        throw new Error('Unknown color channel: ' + channel);
+    }
+  }
+
+  formatChannelValue(channel: ColorChannel, locale: string) {
+    let options: Intl.NumberFormatOptions;
+    let value = this.getChannelValue(channel);
+    switch (channel) {
+      case 'hue':
+        options = {style: 'unit', unit: 'degree', unitDisplay: 'narrow'};
+        break;
+      case 'saturation':
+      case 'brightness':
+        options = {style: 'percent'};
+        value /= 100;
+        break;
+      case 'alpha':
+        options = {style: 'percent'};
+        break;
+      default:
+        throw new Error('Unknown color channel: ' + channel);
+    }
+    return new NumberFormatter(locale, options).format(value);
   }
 }
 
+// X = <negative/positive number with/without decimal places>
+// before/after a comma, 0 or more whitespaces are allowed
+// - hsl(X, X%, X%)
+// - hsla(X, X%, X%, X)
+const HSL_REGEX = /hsl\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%)\)|hsla\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d(.\d+)?)\)/;
+
+function mod(n, m) {
+  return ((n % m) + m) % m;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-class HSLColor implements ColorValue {
-  constructor(private hue: number, private saturation: number, private lightness: number, private alpha: number) {}
+class HSLColor extends Color {
+  constructor(private hue: number, private saturation: number, private lightness: number, private alpha: number) {
+    super();
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   static parse(value: string): HSLColor | void {
-    // TODO
-  }
-
-  toString(format: ColorFormat) {
-    switch (format) {
-      case 'hsl':
-        return `hsl(${this.hue}, ${this.saturation}%, ${this.lightness}%)`;
-      case 'hsla':
-        return `hsla(${this.hue}, ${this.saturation}%, ${this.lightness}%, ${this.alpha})`;
-      default:
-        throw new Error('Unsupported color format: ' + format);
+    let m: RegExpMatchArray | void;
+    if ((m = value.match(HSL_REGEX))) {
+      const [h, s, l, a] = (m[1] ?? m[2]).split(',').map(n => Number(n.trim().replace('%', '')));
+      return new HSLColor(mod(h, 360), clamp(s, 0, 100), clamp(l, 0, 100), clamp(a ?? 1, 0, 1));
     }
   }
 
-  toRGB(): ColorValue {
-    throw new Error('Not implemented');
+  toString(format: ColorFormat | 'css') {
+    switch (format) {
+      case 'hsl':
+        return `hsl(${this.hue}, ${this.saturation}%, ${this.lightness}%)`;
+      case 'css':
+      case 'hsla':
+        return `hsla(${this.hue}, ${this.saturation}%, ${this.lightness}%, ${this.alpha})`;
+      default:
+        return this.toFormat(format).toString(format);
+    }
   }
 
-  toHSB(): ColorValue {
-    throw new Error('Not implemented');
+  toFormat(format: ColorFormat): IColor {
+    switch (format) {
+      case 'hsl':
+      case 'hsla':
+        return this;
+      default:
+        throw new Error('Unsupported color conversion: hsl -> ' + format);
+    }
   }
 
-  toHSL(): ColorValue {
-    return this;
+  clone(): Color {
+    return new HSLColor(this.hue, this.saturation, this.lightness, this.alpha);
+  }
+
+  getChannelRange(channel: ColorChannel): ColorChannelRange {
+    switch (channel) {
+      case 'hue':
+        return {minValue: 0, maxValue: 360, step: 1};
+      case 'saturation':
+      case 'lightness':
+        return {minValue: 0, maxValue: 100, step: 1};
+      case 'alpha':
+        return {minValue: 0, maxValue: 1, step: 0.01};
+      default:
+        throw new Error('Unknown color channel: ' + channel);
+    }
+  }
+
+  formatChannelValue(channel: ColorChannel, locale: string) {
+    let options: Intl.NumberFormatOptions;
+    let value = this.getChannelValue(channel);
+    switch (channel) {
+      case 'hue':
+        options = {style: 'unit', unit: 'degree', unitDisplay: 'narrow'};
+        break;
+      case 'saturation':
+      case 'lightness':
+        options = {style: 'percent'};
+        value /= 100;
+        break;
+      case 'alpha':
+        options = {style: 'percent'};
+        break;
+      default:
+        throw new Error('Unknown color channel: ' + channel);
+    }
+    return new NumberFormatter(locale, options).format(value);
   }
 }

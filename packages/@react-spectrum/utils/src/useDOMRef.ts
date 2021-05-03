@@ -11,7 +11,7 @@
  */
 
 import {DOMRef, DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {RefObject, useImperativeHandle, useRef} from 'react';
+import {RefObject, useImperativeHandle, useMemo, useRef} from 'react';
 
 export function createDOMRef<T extends HTMLElement = HTMLElement>(ref: RefObject<T>): DOMRefValue<T> {
   return {
@@ -50,4 +50,8 @@ export function unwrapDOMRef<T extends HTMLElement>(ref: RefObject<DOMRefValue<T
       return ref.current && ref.current.UNSAFE_getDOMNode();
     }
   };
+}
+
+export function useUnwrapDOMRef<T extends HTMLElement>(ref: RefObject<DOMRefValue<T>>) : RefObject<T> {
+  return useMemo(() => unwrapDOMRef(ref), [ref]);
 }

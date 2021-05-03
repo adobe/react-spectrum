@@ -11,7 +11,7 @@
  */
 
 import {Collection} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useRef} from 'react';
 import {ScrollView} from './ScrollView';
@@ -32,7 +32,8 @@ interface VirtualizerProps<T extends object, V> extends HTMLAttributes<HTMLEleme
   scrollDirection?: 'horizontal' | 'vertical' | 'both',
   transitionDuration?: number,
   isLoading?: boolean,
-  onLoadMore?: () => void
+  onLoadMore?: () => void,
+  shouldUseVirtualFocus?: boolean
 }
 
 function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: RefObject<HTMLDivElement>) {
@@ -48,6 +49,8 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
     onLoadMore,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     focusedKey,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    shouldUseVirtualFocus,
     ...otherProps
   } = props;
 
@@ -80,6 +83,14 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
     }
   }, [isLoading, onLoadMore, state]);
 
+  useLayoutEffect(() => {
+    if (!isLoading && onLoadMore && !state.isAnimating) {
+      if (state.contentSize.height <= state.virtualizer.visibleRect.height) {
+        onLoadMore();
+      }
+    }
+  }, [state.contentSize, state.isAnimating, state.virtualizer, onLoadMore, isLoading]);
+
   return (
     <ScrollView
       {...mergeProps(otherProps, virtualizerProps)}
@@ -98,11 +109,12 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
 
 interface VirtualizerOptions {
   focusedKey?: Key,
-  scrollToItem?: (key: Key) => void
+  scrollToItem?: (key: Key) => void,
+  shouldUseVirtualFocus?: boolean
 }
 
 export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions, state: VirtualizerState<T, V, W>, ref: RefObject<HTMLElement>) {
-  let {focusedKey, scrollToItem} = props;
+  let {focusedKey, scrollToItem, shouldUseVirtualFocus} = props;
   let {virtualizer} = state;
 
   // Scroll to the focusedKey when it changes. Actually focusing the focusedKey
@@ -151,9 +163,18 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     }
   });
 
+  // Set tabIndex to -1 if the focused view is in the DOM, otherwise 0 so that the collection
+  // itself is tabbable. When the collection receives focus, we scroll the focused item back into
+  // view, which will allow it to be properly focused. If using virtual focus, don't set a
+  // tabIndex at all so that VoiceOver on iOS 14 doesn't try to move real DOM focus to the element anyway.
+  let tabIndex: number;
+  if (!shouldUseVirtualFocus) {
+    tabIndex = focusedView ? -1 : 0;
+  }
+
   return {
     virtualizerProps: {
-      tabIndex: focusedView ? -1 : 0,
+      tabIndex,
       onFocus,
       onBlur
     }

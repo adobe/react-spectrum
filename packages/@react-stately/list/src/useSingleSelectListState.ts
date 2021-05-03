@@ -18,8 +18,11 @@ import {useControlledState} from '@react-stately/utils';
 
 export interface SingleSelectListProps<T> extends CollectionBase<T>, SingleSelection {
   /** Filter function to generate a filtered list of nodes. */
-  filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>
+  filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>,
+  /** @private */
+  suppressTextValueWarning?: boolean
 }
+
 export interface SingleSelectListState<T> extends ListState<T> {
   /** The key for the currently selected item. */
   readonly selectedKey: Key,
@@ -36,7 +39,7 @@ export interface SingleSelectListState<T> extends ListState<T> {
  * Handles building a collection of items from props, and manages selection state.
  */
 export function useSingleSelectListState<T extends object>(props: SingleSelectListProps<T>): SingleSelectListState<T>  {
-  let [selectedKey, setSelectedKey] = useControlledState(props.selectedKey, props.defaultSelectedKey, props.onSelectionChange);
+  let [selectedKey, setSelectedKey] = useControlledState(props.selectedKey, props.defaultSelectedKey ?? null, props.onSelectionChange);
   let selectedKeys = useMemo(() => selectedKey != null ? [selectedKey] : [], [selectedKey]);
   let {collection, disabledKeys, selectionManager} = useListState({
     ...props,

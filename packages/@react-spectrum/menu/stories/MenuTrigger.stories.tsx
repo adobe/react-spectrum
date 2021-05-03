@@ -364,7 +364,7 @@ storiesOf('MenuTrigger', module)
             onPress={action('press')}
             onPressStart={action('pressstart')}
             onPressEnd={action('pressend')}>
-              Menu Button
+            Menu Button
           </ActionButton>
           <Menu onAction={action('action')}>
             <Section title="Section 1">
@@ -432,7 +432,7 @@ storiesOf('MenuTrigger', module)
                 onPress={action('press')}
                 onPressStart={action('pressstart')}
                 onPressEnd={action('pressend')}>
-                  Menu Button
+                Menu Button
               </ActionButton>
               <Menu items={withSection} onAction={action('action')}>
                 {item => (
@@ -463,7 +463,7 @@ storiesOf('MenuTrigger', module)
               onPress={action('press')}
               onPressStart={action('pressstart')}
               onPressEnd={action('pressend')}>
-                Menu Button
+              Menu Button
             </ActionButton>
             <Menu items={withSection} onAction={action('action')} disabledKeys={['Snake', 'Ross']}>
               {item => (
@@ -510,7 +510,7 @@ function render(menu, {isDisabled, ...props}: any = {}, menuProps = {}) {
           onPress={action('press')}
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}>
-            Menu Button
+          Menu Button
         </ActionButton>
         {menuRender}
       </MenuTrigger>

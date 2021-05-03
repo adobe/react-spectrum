@@ -1,5 +1,5 @@
 {
-  "Decrement": "Smanjenje",
-  "Enter a number": "Unesite broj",
-  "Increment": "Povećanje"
+  "decrease": "Smanji {fieldLabel}",
+  "increase": "Povećaj {fieldLabel}",
+  "numberField": "Polje broja"
 }

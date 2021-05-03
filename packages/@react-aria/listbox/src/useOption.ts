@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {getItemCount} from '@react-stately/collections';
 import {getItemId} from './utils';
 import {HTMLAttributes, Key, RefObject} from 'react';
 import {isFocusVisible, useHover, usePress} from '@react-aria/interactions';
+import {isMac, isWebKit, mergeProps, useSlotId} from '@react-aria/utils';
 import {ListState} from '@react-stately/list';
-import {mergeProps, useSlotId} from '@react-aria/utils';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface OptionAria {
@@ -54,13 +55,6 @@ interface AriaOptionProps {
   shouldUseVirtualFocus?: boolean
 }
 
-const isSafariMacOS =
-  typeof window !== 'undefined' && window.navigator != null
-    ? /^Mac/.test(window.navigator.platform) &&
-      /Safari/.test(window.navigator.userAgent) &&
-      !/Chrome/.test(window.navigator.userAgent)
-    : false;
-
 /**
  * Provides the behavior and accessibility implementation for an option in a listbox.
  * See `useListBox` for more details about listboxes.
@@ -90,7 +84,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
   // Safari with VoiceOver on macOS misreads options with aria-labelledby or aria-label as simply "text".
   // We should not map slots to the label and description on Safari and instead just have VoiceOver read the textContent.
   // https://bugs.webkit.org/show_bug.cgi?id=209279
-  if (!isSafariMacOS) {
+  if (!(isMac() && isWebKit())) {
     optionProps['aria-label'] = props['aria-label'];
     optionProps['aria-labelledby'] = labelId;
     optionProps['aria-describedby'] = descriptionId;
@@ -98,7 +92,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
 
   if (isVirtualized) {
     optionProps['aria-posinset'] = state.collection.getItem(key).index + 1;
-    optionProps['aria-setsize'] = state.collection.size;
+    optionProps['aria-setsize'] = getItemCount(state.collection);
   }
 
   let {itemProps} = useSelectableItem({
@@ -110,7 +104,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     shouldUseVirtualFocus
   });
 
-  let {pressProps} = usePress({...itemProps, isDisabled});
+  let {pressProps} = usePress({...itemProps, isDisabled, preventFocusOnPress: shouldUseVirtualFocus});
 
   let {hoverProps} = useHover({
     isDisabled: isDisabled || !shouldFocusOnHover,

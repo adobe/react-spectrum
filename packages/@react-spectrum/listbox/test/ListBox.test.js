@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render, within} from '@testing-library/react';
 import Bell from '@spectrum-icons/workflow/Bell';
-import {fireEvent, render, within} from '@testing-library/react';
 import {Item, ListBox, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -558,7 +558,7 @@ describe('ListBox', function () {
       expect(document.activeElement).toBe(options[5]);
 
       // Advance the timers so we can select using the Spacebar
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       fireEvent.keyDown(document.activeElement, {key: ' ', code: 32, charCode: 32});
 
@@ -585,7 +585,7 @@ describe('ListBox', function () {
       fireEvent.keyDown(listbox, {key: 'B'});
       expect(document.activeElement).toBe(options[1]);
 
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       fireEvent.keyDown(listbox, {key: 'B'});
       expect(document.activeElement).toBe(options[1]);
@@ -602,7 +602,7 @@ describe('ListBox', function () {
       fireEvent.keyDown(listbox, {key: 'E'});
       expect(document.activeElement).toBe(options[4]);
 
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       fireEvent.keyDown(listbox, {key: 'B'});
       expect(document.activeElement).toBe(options[4]);
@@ -762,6 +762,33 @@ describe('ListBox', function () {
       fireEvent.scroll(listbox);
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
+
+    it('should fire onLoadMore if there aren\'t enough items to fill the ListBox ', function () {
+      // Mock clientHeight to match maxHeight prop
+      let maxHeight = 300;
+      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => maxHeight);
+
+      let onLoadMore = jest.fn();
+      let items = [];
+      for (let i = 1; i <= 5; i++) {
+        items.push({name: 'Test ' + i});
+      }
+
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <ListBox aria-label="listbox" items={items} maxHeight={maxHeight} onLoadMore={onLoadMore}>
+            {item => <Item key={item.name}>{item.name}</Item>}
+          </ListBox>
+        </Provider>
+      );
+
+      let listbox = getByRole('listbox');
+      let options = within(listbox).getAllByRole('option');
+      expect(options.length).toBe(5);
+      // onLoadMore called twice from onVisibleRectChange due to ListBox sizeToFit
+      // onLoadMore called three times from useLayoutEffect
+      expect(onLoadMore).toHaveBeenCalledTimes(5);
     });
   });
 });

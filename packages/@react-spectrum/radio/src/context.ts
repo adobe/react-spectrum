@@ -14,9 +14,7 @@ import {RadioGroupState} from '@react-stately/radio';
 import React, {useContext} from 'react';
 
 interface RadioGroupContext {
-  isDisabled?: boolean,
   isRequired?: boolean,
-  isReadOnly?: boolean,
   isEmphasized?: boolean,
   name?: string,
   validationState?: 'valid' | 'invalid',

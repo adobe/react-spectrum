@@ -10,28 +10,43 @@
  * governing permissions and limitations under the License.
  */
 
+import {
+  AnchorHTMLAttributes,
+  ButtonHTMLAttributes,
+  ElementType,
+  HTMLAttributes,
+  InputHTMLAttributes,
+  RefObject
+} from 'react';
 import {AriaButtonProps} from '@react-types/button';
-import {ButtonHTMLAttributes, RefObject} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
 import {mergeProps} from '@react-aria/utils';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
 
-export interface ButtonAria {
+export interface ButtonAria<T> {
   /** Props for the button element. */
-  buttonProps: ButtonHTMLAttributes<HTMLButtonElement>,
+  buttonProps: T,
   /** Whether the button is currently pressed. */
   isPressed: boolean
 }
 
+/* eslint-disable no-redeclare */
+export function useButton(props: AriaButtonProps<'a'>, ref: RefObject<HTMLAnchorElement>): ButtonAria<AnchorHTMLAttributes<HTMLAnchorElement>>;
+export function useButton(props: AriaButtonProps<'button'>, ref: RefObject<HTMLButtonElement>): ButtonAria<ButtonHTMLAttributes<HTMLButtonElement>>;
+export function useButton(props: AriaButtonProps<'div'>, ref: RefObject<HTMLDivElement>): ButtonAria<HTMLAttributes<HTMLDivElement>>;
+export function useButton(props: AriaButtonProps<'input'>, ref: RefObject<HTMLInputElement>): ButtonAria<InputHTMLAttributes<HTMLInputElement>>;
+export function useButton(props: AriaButtonProps<'span'>, ref: RefObject<HTMLSpanElement>): ButtonAria<HTMLAttributes<HTMLSpanElement>>;
+export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<HTMLElement>): ButtonAria<HTMLAttributes<HTMLElement>>;
 /**
  * Provides the behavior and accessibility implementation for a button component. Handles mouse, keyboard, and touch interactions,
  * focus behavior, and ARIA props for both native button elements and custom element types.
  * @param props - Props to be applied to the button.
  * @param ref - A ref to a DOM element for the button.
  */
-export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): ButtonAria {
+export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<any>): ButtonAria<HTMLAttributes<any>> {
+/* eslint-enable no-redeclare */
   let {
     elementType = 'button',
     isDisabled,
@@ -39,6 +54,8 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     onPressStart,
     onPressEnd,
     onPressChange,
+    // @ts-ignore - undocumented
+    preventFocusOnPress,
     // @ts-ignore
     onClick: deprecatedOnClick,
     href,
@@ -47,7 +64,12 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     type = 'button'
   } = props;
   let additionalProps;
-  if (elementType !== 'button') {
+  if (elementType === 'button') {
+    additionalProps = {
+      type,
+      disabled: isDisabled
+    };
+  } else {
     additionalProps = {
       role: 'button',
       tabIndex: isDisabled ? undefined : 0,
@@ -66,6 +88,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     onPressChange,
     onPress,
     isDisabled,
+    preventFocusOnPress,
     ref
   });
 
@@ -75,14 +98,11 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
 
   return {
     isPressed, // Used to indicate press state for visual
-    buttonProps: mergeProps(buttonProps, {
+    buttonProps: mergeProps(additionalProps, buttonProps, {
       'aria-haspopup': props['aria-haspopup'],
       'aria-expanded': props['aria-expanded'],
       'aria-controls': props['aria-controls'],
       'aria-pressed': props['aria-pressed'],
-      disabled: isDisabled,
-      type,
-      ...(additionalProps || {}),
       onClick: (e) => {
         if (deprecatedOnClick) {
           deprecatedOnClick(e);

@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render} from '@testing-library/react';
 import {Button} from '@react-spectrum/button';
 import {Form} from '../';
+import {Item, Picker} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {render} from '@testing-library/react';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
@@ -97,7 +98,7 @@ describe('Form', function () {
     expect(form).toHaveAttribute('encType', 'text/plain');
     expect(form).toHaveAttribute('autoComplete', 'on');
     let submit = getByLabelText('Submit');
-    act(() => {userEvent.click(submit);});
+    userEvent.click(submit);
     expect(onSubmit).toHaveBeenCalled();
   });
 
@@ -145,5 +146,41 @@ describe('Form', function () {
 
     let form = getByRole('form');
     expect(form).toHaveAttribute('data-testid', 'test');
+  });
+
+  describe('values', () => {
+    it('default value of a picker is empty', () => {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Form aria-label="Test">
+            <Picker name="picker" label="Test Picker">
+              <Item key="one">One</Item>
+              <Item key="two">Two</Item>
+              <Item key="three">Three</Item>
+            </Picker>
+          </Form>
+        </Provider>
+      );
+
+      let form = getByRole('form');
+      expect(form.elements['picker'].value).toEqual('');
+    });
+
+    it('value of a picker can be set', () => {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Form aria-label="Test">
+            <Picker name="picker" defaultSelectedKey="one" label="Test Picker">
+              <Item key="one">One</Item>
+              <Item key="two">Two</Item>
+              <Item key="three">Three</Item>
+            </Picker>
+          </Form>
+        </Provider>
+      );
+
+      let form = getByRole('form');
+      expect(form.elements['picker'].value).toEqual('one');
+    });
   });
 });

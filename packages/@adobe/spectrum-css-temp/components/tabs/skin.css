@@ -12,6 +12,17 @@ governing permissions and limitations under the License.
 
 .spectrum-Tabs {
   border-block-end-color: var(--spectrum-tabs-rule-color);
+
+  &.spectrum-Tabs--isCollapsed {
+    :focus-ring {
+      /* FieldButton Picker focus ring override */
+      box-shadow: none;
+
+      &::before {
+        border-color: var(--spectrum-tabs-focus-ring-color);
+      }
+    }
+  }
 }
 
 .spectrum-Tabs--vertical {
@@ -26,14 +37,14 @@ governing permissions and limitations under the License.
   color: var(--spectrum-tabs-text-color);
 
   .spectrum-Icon {
-    color: var(--spectrum-tabs-icon-color)
+    fill: var(--spectrum-tabs-icon-color)
   }
 
   &:hover {
     color: var(--spectrum-tabs-text-color-hover);
 
     .spectrum-Icon {
-      color: var(--spectrum-tabs-icon-color-hover)
+      fill: var(--spectrum-tabs-icon-color-hover)
     }
   }
 
@@ -41,7 +52,7 @@ governing permissions and limitations under the License.
     color: var(--spectrum-tabs-text-color-selected);
 
     .spectrum-Icon {
-      color: var(--spectrum-tabs-icon-color-selected)
+      fill: var(--spectrum-tabs-icon-color-selected)
     }
   }
 
@@ -53,7 +64,7 @@ governing permissions and limitations under the License.
     }
 
     .spectrum-Icon {
-      color: var(--spectrum-tabs-icon-color-key-focus)
+      fill: var(--spectrum-tabs-icon-color-key-focus)
     }
   }
 
@@ -61,7 +72,7 @@ governing permissions and limitations under the License.
     color: var(--spectrum-tabs-text-color-disabled);
 
     .spectrum-Icon {
-      color: var(--spectrum-tabs-icon-color-disabled)
+      fill: var(--spectrum-tabs-icon-color-disabled)
     }
   }
 }
@@ -82,5 +93,15 @@ governing permissions and limitations under the License.
     .spectrum-Tabs-selectionIndicator {
       background-color: var(--spectrum-tabs-quiet-selection-indicator-color);
     }
+  }
+}
+
+.spectrum-TabsPanel-tabpanel {
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-ring {
+    border-color: var(--spectrum-tabs-focus-ring-color);
   }
 }

@@ -28,5 +28,5 @@ export interface TagGroupProps extends MultipleSelection {
   validationState?: 'invalid' | 'valid'
 }
 
-interface SpectrumTagProps extends TagProps, DOMProps, StyleProps {}
-interface SpectrumTagGroupProps extends TagGroupProps, DOMProps, StyleProps {}
+export interface SpectrumTagProps extends TagProps, DOMProps, StyleProps {}
+export interface SpectrumTagGroupProps extends TagGroupProps, DOMProps, StyleProps {}

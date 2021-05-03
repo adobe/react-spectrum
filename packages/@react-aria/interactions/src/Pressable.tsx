@@ -19,7 +19,8 @@ interface PressableProps extends PressProps {
 }
 
 export const Pressable = React.forwardRef(({children, ...props}: PressableProps, ref: RefObject<HTMLElement>) => {
-  ref = ref || useRef();
+  let newRef = useRef();
+  ref = ref ?? newRef;
   let {pressProps} = usePress({...props, ref});
   let child = React.Children.only(children);
   return React.cloneElement(

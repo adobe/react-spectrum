@@ -13,17 +13,13 @@
 import {FocusEvent, HTMLAttributes, KeyboardEvent, RefObject, useEffect} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
+import {isMac, mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
+import {useLocale} from '@react-aria/i18n';
 import {useTypeSelect} from './useTypeSelect';
 
-const isMac =
-  typeof window !== 'undefined' && window.navigator != null
-    ? /^Mac/.test(window.navigator.platform)
-    : false;
-
 function isCtrlKeyPressed(e: KeyboardEvent) {
-  if (isMac) {
+  if (isMac()) {
     return e.metaKey;
   }
 
@@ -72,7 +68,15 @@ interface SelectableCollectionOptions {
    * Whether typeahead is disabled.
    * @default false
    */
-  disallowTypeAhead?: boolean
+  disallowTypeAhead?: boolean,
+  /**
+   * Whether the collection items should use virtual focus instead of being focused directly.
+   */
+  shouldUseVirtualFocus?: boolean,
+  /**
+   * Whether navigation through tab key is enabled.
+   */
+  allowsTabNavigation?: boolean
 }
 
 interface SelectableCollectionAria {
@@ -93,8 +97,11 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     disallowEmptySelection = false,
     disallowSelectAll = false,
     selectOnFocus = false,
-    disallowTypeAhead = false
+    disallowTypeAhead = false,
+    shouldUseVirtualFocus,
+    allowsTabNavigation = false
   } = options;
+  let {direction} = useLocale();
 
   let onKeyDown = (e: KeyboardEvent) => {
     // Let child element (e.g. menu button) handle the event if the Alt key is pressed.
@@ -162,7 +169,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
           e.preventDefault();
           let nextKey = delegate.getKeyLeftOf(manager.focusedKey);
           if (nextKey != null) {
-            manager.setFocusedKey(nextKey);
+            manager.setFocusedKey(nextKey, direction === 'rtl' ? 'first' : 'last');
             if (manager.selectionMode === 'single' && selectOnFocus) {
               manager.replaceSelection(nextKey);
             }
@@ -178,7 +185,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
           e.preventDefault();
           let nextKey = delegate.getKeyRightOf(manager.focusedKey);
           if (nextKey != null) {
-            manager.setFocusedKey(nextKey);
+            manager.setFocusedKey(nextKey, direction === 'rtl' ? 'last' : 'first');
             if (manager.selectionMode === 'single' && selectOnFocus) {
               manager.replaceSelection(nextKey);
             }
@@ -252,30 +259,32 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         }
         break;
       case 'Tab': {
-        // There may be elements that are "tabbable" inside a collection (e.g. in a grid cell).
-        // However, collections should be treated as a single tab stop, with arrow key navigation internally.
-        // We don't control the rendering of these, so we can't override the tabIndex to prevent tabbing.
-        // Instead, we handle the Tab key, and move focus manually to the first/last tabbable element
-        // in the collection, so that the browser default behavior will apply starting from that element
-        // rather than the currently focused one.
-        if (e.shiftKey) {
-          ref.current.focus();
-        } else {
-          let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
-          let next: HTMLElement;
-          let last: HTMLElement;
-          do {
-            last = walker.lastChild() as HTMLElement;
-            if (last) {
-              next = last;
-            }
-          } while (last);
+        if (!allowsTabNavigation) {
+          // There may be elements that are "tabbable" inside a collection (e.g. in a grid cell).
+          // However, collections should be treated as a single tab stop, with arrow key navigation internally.
+          // We don't control the rendering of these, so we can't override the tabIndex to prevent tabbing.
+          // Instead, we handle the Tab key, and move focus manually to the first/last tabbable element
+          // in the collection, so that the browser default behavior will apply starting from that element
+          // rather than the currently focused one.
+          if (e.shiftKey) {
+            ref.current.focus();
+          } else {
+            let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
+            let next: HTMLElement;
+            let last: HTMLElement;
+            do {
+              last = walker.lastChild() as HTMLElement;
+              if (last) {
+                next = last;
+              }
+            } while (last);
 
-          if (next && !next.contains(document.activeElement)) {
-            next.focus();
+            if (next && !next.contains(document.activeElement)) {
+              next.focus();
+            }
           }
+          break;
         }
-        break;
       }
     }
   };
@@ -338,7 +347,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       manager.setFocusedKey(focusedKey);
 
       // If no default focus key is selected, focus the collection itself.
-      if (focusedKey == null) {
+      if (focusedKey == null && !shouldUseVirtualFocus) {
         focusSafely(ref.current);
       }
     }
@@ -346,10 +355,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   }, []);
 
   let handlers = {
-    // We use a capturing listener to ensure that the keyboard events for the collection
-    // override those of the children. For example, ArrowDown in a table should always go
-    // to the cell below, and not open a menu.
-    onKeyDownCapture: onKeyDown,
+    onKeyDown,
     onFocus,
     onBlur,
     onMouseDown(e) {
@@ -367,12 +373,19 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     handlers = mergeProps(typeSelectProps, handlers);
   }
 
+  // If nothing is focused within the collection, make the collection itself tabbable.
+  // This will be marshalled to either the first or last item depending on where focus came from.
+  // If using virtual focus, don't set a tabIndex at all so that VoiceOver on iOS 14 doesn't try
+  // to move real DOM focus to the element anyway.
+  let tabIndex: number;
+  if (!shouldUseVirtualFocus) {
+    tabIndex = manager.focusedKey == null ? 0 : -1;
+  }
+
   return {
     collectionProps: {
       ...handlers,
-      // If nothing is focused within the collection, make the collection itself tabbable.
-      // This will be marshalled to either the first or last item depending on where focus came from.
-      tabIndex: manager.focusedKey == null ? 0 : -1
+      tabIndex
     }
   };
 }

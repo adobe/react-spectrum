@@ -12,7 +12,6 @@
 
 import {
   Dispatch,
-  MouseEventHandler,
   MutableRefObject,
   ReactElement,
   SetStateAction
@@ -55,7 +54,6 @@ export interface SplitViewState {
 
 export interface SplitViewAriaProps {
   id?: string,
-  onMouseDown?: MouseEventHandler,
   allowsResizing?: boolean,
   orientation?: Orientation,
   primaryPane?: 0 | 1,

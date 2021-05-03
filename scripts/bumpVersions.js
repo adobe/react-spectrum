@@ -34,6 +34,12 @@ let excludedPackages = new Set([
   '@react-spectrum/docs'
 ]);
 
+let monopackages = new Set([
+  '@adobe/react-spectrum',
+  'react-aria',
+  'react-stately'
+]);
+
 class VersionManager {
   constructor() {
     // Get dependency tree from yarn workspaces
@@ -95,7 +101,17 @@ class VersionManager {
   }
 
   getChangedPackages() {
-    let res = exec("git diff $(git describe --tags --abbrev=0)..HEAD --name-only packages ':!**/dev/**' ':!**/docs/**' ':!**/test/**' ':!**/stories/**' ':!**/chromatic/**'", {encoding: 'utf8'});
+    let packagesIndex = process.argv.findIndex(arg => arg === '--packages');
+    if (packagesIndex >= 0) {
+      for (let pkg of process.argv.slice(packagesIndex + 1)) {
+        this.changedPackages.add(pkg);
+      }
+      return;
+    }
+
+    let sinceIndex = process.argv.findIndex(arg => arg === '--since');
+    let since = sinceIndex >= 0 ? process.argv[sinceIndex + 1] : '$(git describe --tags --abbrev=0)';
+    let res = exec(`git diff ${since}..HEAD --name-only packages ':!**/dev/**' ':!**/docs/**' ':!**/test/**' ':!**/stories/**' ':!**/chromatic/**'`, {encoding: 'utf8'});
 
     for (let line of res.trim().split('\n')) {
       let parts = line.split('/').slice(1, 3);
@@ -106,6 +122,11 @@ class VersionManager {
       let name = parts.join('/');
       let pkg = JSON.parse(fs.readFileSync(`packages/${name}/package.json`, 'utf8'));
       this.changedPackages.add(name);
+    }
+
+    // Always bump monopackages
+    for (let pkg of monopackages) {
+      this.changedPackages.add(pkg);
     }
   }
 
