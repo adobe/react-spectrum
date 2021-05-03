@@ -392,7 +392,6 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
         <Nav currentPageName={currentPage.name} pages={pages} />
         <main>
           <article className={clsx(typographyStyles['spectrum-Typography'], {[docStyles.inCategory]: !!currentPage.category})}>
-            <div id="edit-page" className={docStyles.editPageContainer} />
             <MDXProvider components={mdxComponents}>
               <ImageContext.Provider value={publicUrl}>
                 <LinkProvider>
@@ -404,6 +403,7 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
             </MDXProvider>
           </article>
           {toc.length ? <ToC toc={toc} /> : null}
+          <div id="edit-page" className={docStyles.editPageContainer} />
           <Footer />
         </main>
       </div>
