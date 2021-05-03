@@ -23,10 +23,10 @@ import {
   StyleProps,
   TextInputBase,
   TextInputDOMProps,
-  Validation
+  Validation,
+  ValueBase
 } from '@react-types/shared';
-import {BaseSliderProps} from '@react-types/slider';
-import {Color} from '@react-stately/color';
+import {SliderProps} from '@react-types/slider';
 
 /** A list of supported color formats. */
 export type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hsb' | 'hsba';
@@ -34,41 +34,103 @@ export type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hs
 /** A list of color channels. */
 export type ColorChannel = 'hue' | 'saturation' | 'brightness' | 'lightness' | 'red' | 'green' | 'blue' | 'alpha';
 
-export type ColorInput = string | Color;
+export interface ColorChannelRange {
+  /** The minimum value of the color channel. */
+  minValue: number,
+  /** The maximum value of the color channel. */
+  maxValue: number,
+  /** The step value of the color channel, used when incrementing and decrementing. */
+  step: number
+}
 
-export interface HexColorFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
-  value?: ColorInput,
-  defaultValue?: ColorInput,
+/** Represents a color value. */
+export interface Color {
+  /** Converts the color to the given color format, and returns a new Color object. */
+  toFormat(format: ColorFormat): Color,
+  /** Converts the color to a string in the given format. */
+  toString(format: ColorFormat | 'css'): string,
+  /** Converts the color to hex, and returns an integer representation. */
+  toHexInt(): number,
+  /**
+   * Returns the numeric value for a given channel.
+   * Throws an error if the channel is unsupported in the current color format.
+   */
+  getChannelValue(channel: ColorChannel): number,
+  /**
+   * Sets the numeric value for a given channel, and returns a new Color object.
+   * Throws an error if the channel is unsupported in the current color format.
+   */
+  withChannelValue(channel: ColorChannel, value: number): Color,
+  /**
+   * Returns the minimum, maximum, and step values for a given channel.
+   */
+  getChannelRange(channel: ColorChannel): ColorChannelRange,
+  /**
+   * Returns a localized color channel name for a given channel and locale,
+   * for use in visual or accessibility labels.
+   */
+  getChannelName(channel: ColorChannel, locale: string): string,
+  /**
+   * Formats the numeric value for a given channel for display according to the provided locale.
+   */
+  formatChannelValue(channel: ColorChannel, locale: string): string
+}
+
+export interface ColorFieldProps extends ValueBase<string | Color>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
+  /** Handler that is called when the value changes. */
   onChange?: (color: Color) => void,
+  /**
+   * The step value to increment and decrement the color by when using the arrow keys.
+   * @default 1
+   */
   step?: number
 }
 
-export interface AriaHexColorFieldProps extends HexColorFieldProps, AriaLabelingProps, FocusableDOMProps, TextInputDOMProps, AriaValidationProps {}
+export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete'>, AriaValidationProps {}
 
-export interface SpectrumHexColorFieldProps extends AriaHexColorFieldProps, SpectrumLabelableProps, StyleProps {
+export interface SpectrumColorFieldProps extends AriaColorFieldProps, SpectrumLabelableProps, StyleProps {
+  /** Whether the ColorField should be displayed with a quiet style. */
   isQuiet?: boolean
 }
 
-export interface ColorWheelProps extends BaseSliderProps, Omit<StyleProps, 'width' | 'height'> {
+export interface ColorWheelProps extends ValueBase<string | Color> {
+  /** Whether the ColorWheel is disabled. */
+  isDisabled?: boolean,
+  /** Handler that is called when the value changes, as the user drags. */
+  onChange?: (value: Color) => void,
+  /** Handler that is called when the user stops dragging. */
+  onChangeEnd?: (value: Color) => void,
+  /**
+   * The ColorWheel's step value.
+   * @default 1
+   */
   step?: number,
-  // overriding these to allow passing string:
-  value?: string | Color,
-  defaultValue?: string | Color,
-  onChange?: (value: Color) => void
+  /**
+   * The default value (uncontrolled).
+   * @default 'hsl(0, 100%, 50%)'
+   */
+  defaultValue?: string | Color
 }
 
-export interface SpectrumColorWheelProps extends ColorWheelProps, DOMProps, StyleProps, AriaLabelingProps {
+export interface AriaColorWheelProps extends ColorWheelProps, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumColorWheelProps extends AriaColorWheelProps, Omit<StyleProps, 'width' | 'height'> {
+  /** The outer diameter of the ColorWheel. */
   size?: DimensionValue
 }
 
-interface ColorSliderProps extends Omit<BaseSliderProps, 'minValue' | 'maxValue'>, LabelableProps {
+export interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'minValue' | 'maxValue'> {
+  /** The color channel that the slider manipulates. */
   channel: ColorChannel,
-  value?: string | Color,
-  defaultValue?: string | Color,
+  /** Handler that is called when the value changes, as the user drags. */
   onChange?: (value: Color) => void,
-  /** Whether the value's label is displayed. True by default, false by default if not. */
-  showValueLabel?: boolean
-  // showTextField?: boolean, // do we want this? we didn't keep it for slider....
+  /** Handler that is called when the user stops dragging. */
+  onChangeEnd?: (value: Color) => void
 }
 
-export interface SpectrumColorSliderProps extends ColorSliderProps, DOMProps, StyleProps, AriaLabelingProps {}
+export interface AriaColorSliderProps extends ColorSliderProps, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumColorSliderProps extends AriaColorSliderProps, StyleProps {
+  /** Whether the value label is displayed. True by default if there is a label, false by default if not. */
+  showValueLabel?: boolean
+}

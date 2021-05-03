@@ -10,9 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-/**
- * Takes a value and forces it to the closest min/max.
- */
-export function clamp(value: number, min: number = -Infinity, max: number = Infinity): number {
-  return Math.min(Math.max(value, min), max);
-}
+export {clamp, snapValueToStep} from '@react-stately/utils';

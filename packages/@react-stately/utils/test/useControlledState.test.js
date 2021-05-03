@@ -48,6 +48,24 @@ describe('useControlledState tests', function () {
     expect(onChangeSpy).toHaveBeenLastCalledWith('newValue');
   });
 
+  it('using NaN will only trigger onChange once', () => {
+    let onChangeSpy = jest.fn();
+    let {result} = renderHook(() => useControlledState(undefined, undefined, onChangeSpy));
+    let [value, setValue] = result.current;
+    expect(value).not.toBeDefined();
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    act(() => setValue(NaN));
+    [value, setValue] = result.current;
+    expect(value).toBe(NaN);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenLastCalledWith(NaN);
+
+    act(() => setValue(NaN));
+    [value, setValue] = result.current;
+    expect(value).toBe(NaN);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+  });
+
   it('can handle callback setValue behavior', () => {
     let onChangeSpy = jest.fn();
     let {result} = renderHook(() => useControlledState(undefined, 'defaultValue', onChangeSpy));

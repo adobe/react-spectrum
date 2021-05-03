@@ -19,15 +19,15 @@ governing permissions and limitations under the License.
   padding: var(--spectrum-dropzone-padding);
   border-style: dashed;
 
-  &.is-dragged {
-    border-style: solid;
-  }
-
   &:focus {
     outline: 0;
     border-style: dashed;
     &.focus-ring {
       border-style: solid;
     }
+  }
+
+  &.is-dragged {
+    border-style: solid;
   }
 }

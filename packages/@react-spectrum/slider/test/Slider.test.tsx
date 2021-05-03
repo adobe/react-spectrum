@@ -40,12 +40,20 @@ describe('Slider', function () {
     let labelId = group.getAttribute('aria-labelledby');
     let slider = getByRole('slider');
     expect(slider.getAttribute('aria-labelledby')).toBe(labelId);
+    expect(slider).toHaveAttribute('aria-valuetext', '0');
 
-    expect(document.getElementById(labelId)).toHaveTextContent(/^The Label$/);
+    let label = document.getElementById(labelId);
+    expect(label).toHaveTextContent(/^The Label$/);
+    // https://bugs.webkit.org/show_bug.cgi?id=172464
+    // expect(label).toHaveAttribute('for', getByRole('slider').id);
+    expect(label).not.toHaveAttribute('for');
 
     // Shows value as well
-    expect(group.textContent).toBe('The Label0');
-    expect(slider).toHaveAttribute('aria-valuetext', '0');
+    let output = getByRole('status');
+    expect(output).toHaveTextContent('0');
+    expect(output).toHaveAttribute('for', getByRole('slider').id);
+    expect(output).not.toHaveAttribute('aria-labelledby');
+    expect(output).toHaveAttribute('aria-live', 'off');
   });
 
   it('supports showValueLabel: false', function () {
@@ -55,6 +63,7 @@ describe('Slider', function () {
 
     let slider = getByRole('slider');
     expect(slider).toHaveAttribute('aria-valuetext', '0');
+    expect(() => getByRole('status')).toThrow();
   });
 
   it('supports disabled', function () {
@@ -99,12 +108,15 @@ describe('Slider', function () {
     let {getByRole} = render(<Slider label="The Label" defaultValue={20} />);
 
     let slider = getByRole('slider');
+    let output = getByRole('status');
 
     expect(slider).toHaveProperty('value', '20');
     expect(slider).toHaveAttribute('aria-valuetext', '20');
+    expect(output).toHaveTextContent('20');
     fireEvent.change(slider, {target: {value: '40'}});
     expect(slider).toHaveProperty('value', '40');
     expect(slider).toHaveAttribute('aria-valuetext', '40');
+    expect(output).toHaveTextContent('40');
   });
 
   it('can be controlled', function () {
@@ -119,33 +131,36 @@ describe('Slider', function () {
 
     let {getByRole} = render(<Test />);
 
+    let output = getByRole('status');
     let slider = getByRole('slider');
 
     expect(slider).toHaveProperty('value', '50');
     expect(slider).toHaveAttribute('aria-valuetext', '50');
+    expect(output).toHaveTextContent('50');
     fireEvent.change(slider, {target: {value: '55'}});
     expect(slider).toHaveProperty('value', '55');
     expect(slider).toHaveAttribute('aria-valuetext', '55');
+    expect(output).toHaveTextContent('55');
 
     expect(renders).toStrictEqual([50, 55]);
   });
 
-  it('supports a custom valueLabel', function () {
+  it('supports a custom getValueLabel', function () {
     function Test() {
       let [value, setValue] = useState(50);
-      return (<Slider label="The Label" value={value} onChange={setValue} valueLabel={`A${value}B`} />);
+      return (<Slider label="The Label" value={value} onChange={setValue} getValueLabel={value => `A${value}B`} />);
     }
 
     let {getByRole} = render(<Test />);
 
-    let group = getByRole('group');
+    let output = getByRole('status');
     let slider = getByRole('slider');
 
-    expect(group.textContent).toBe('The LabelA50B');
+    expect(output).toHaveTextContent('A50B');
     // TODO should aria-valuetext be formatted as well?
     expect(slider).toHaveAttribute('aria-valuetext', '50');
     fireEvent.change(slider, {target: {value: '55'}});
-    expect(group.textContent).toBe('The LabelA55B');
+    expect(output).toHaveTextContent('A55B');
     expect(slider).toHaveAttribute('aria-valuetext', '55');
   });
 
@@ -159,13 +174,13 @@ describe('Slider', function () {
           defaultValue={10} />
       );
 
-      let group = getByRole('group');
+      let output = getByRole('status');
       let slider = getByRole('slider');
 
-      expect(group.textContent).toBe('The Label+10');
+      expect(output).toHaveTextContent('+10');
       expect(slider).toHaveAttribute('aria-valuetext', '+10');
       fireEvent.change(slider, {target: {value: '0'}});
-      expect(group.textContent).toBe('The Label0');
+      expect(output).toHaveTextContent('0');
       expect(slider).toHaveAttribute('aria-valuetext', '0');
     });
 
@@ -180,13 +195,13 @@ describe('Slider', function () {
           formatOptions={{style: 'percent'}} />
       );
 
-      let group = getByRole('group');
+      let output = getByRole('status');
       let slider = getByRole('slider');
 
-      expect(group.textContent).toBe('The Label20%');
+      expect(output).toHaveTextContent('20%');
       expect(slider).toHaveAttribute('aria-valuetext', '20%');
       fireEvent.change(slider, {target: {value: 0.5}});
-      expect(group.textContent).toBe('The Label50%');
+      expect(output).toHaveTextContent('50%');
       expect(slider).toHaveAttribute('aria-valuetext', '50%');
     });
   });
@@ -359,6 +374,18 @@ describe('Slider', function () {
       expect(onChangeSpy).not.toHaveBeenCalled();
       fireEvent.mouseUp(thumb, {pageX: 70});
       expect(onChangeSpy).not.toHaveBeenCalled();
+    });
+
+    it('clicking on the label should focus the first thumb', () => {
+      let {getByText, getByRole} = render(
+        <Slider label="The Label" />
+      );
+
+      let label = getByText('The Label');
+      let thumb = getByRole('slider');
+
+      fireEvent.click(label);
+      expect(document.activeElement).toBe(thumb);
     });
   });
 

@@ -15,14 +15,15 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
+import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useContext, useMemo, useRef} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
-import {SpectrumColumnProps, SpectrumTableProps, TableNode} from '@react-types/table';
+import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import {TableLayout} from '@react-stately/layout';
@@ -30,6 +31,7 @@ import {TableState, useTableState} from '@react-stately/table';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useHover} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {usePress} from '@react-aria/interactions';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useTable, useTableCell, useTableColumnHeader, useTableRow, useTableRowGroup, useTableRowHeader, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
@@ -110,7 +112,7 @@ function Table<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLD
   }, state);
 
   // This overrides collection view's renderWrapper to support DOM heirarchy.
-  type View = ReusableView<TableNode<T>, unknown>;
+  type View = ReusableView<GridNode<T>, unknown>;
   let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
     let style = layoutInfoToStyle(reusableView.layoutInfo, direction, parent && parent.layoutInfo);
     if (style.overflow === 'hidden') {
@@ -179,7 +181,7 @@ function Table<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLD
     );
   };
 
-  let renderView = (type: string, item: TableNode<T>) => {
+  let renderView = (type: string, item: GridNode<T>) => {
     switch (type) {
       case 'header':
       case 'rowgroup':
@@ -288,7 +290,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
       bodyRef.current.scrollTop = rect.y;
       setScrollLeft(bodyRef.current, direction, rect.x);
     },
-    transitionDuration: collection.body.props.isLoading && collection.size > 0 ? 0 : 500
+    transitionDuration: collection.body.props.isLoading ? 160 : 220
   });
 
   let {virtualizerProps} = useVirtualizer({
@@ -320,13 +322,21 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
   let onVisibleRectChange = useCallback((rect: Rect) => {
     state.setVisibleRect(rect);
 
-    if (!collection.body.props.isLoading && collection.body.props.onLoadMore && state.virtualizer.contentSize.height > rect.height * 2) {
+    if (!collection.body.props.isLoading && collection.body.props.onLoadMore) {
       let scrollOffset = state.virtualizer.contentSize.height - rect.height * 2;
       if (rect.y > scrollOffset) {
         collection.body.props.onLoadMore();
       }
     }
   }, [collection.body.props, state.setVisibleRect, state.virtualizer]);
+
+  useLayoutEffect(() => {
+    if (!collection.body.props.isLoading && collection.body.props.onLoadMore && !state.isAnimating) {
+      if (state.contentSize.height <= state.virtualizer.visibleRect.height) {
+        collection.body.props.onLoadMore();
+      }
+    }
+  }, [state.contentSize, state.virtualizer, state.isAnimating, collection.body.props]);
 
   return (
     <div
@@ -480,6 +490,7 @@ function TableRowGroup({children, ...otherProps}) {
 function TableRow({item, children, ...otherProps}) {
   let ref = useRef();
   let state = useTableContext();
+  let allowsSelection = state.selectionManager.selectionMode !== 'none';
   let isDisabled = state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key) && !isDisabled;
   let {rowProps} = useTableRow({
@@ -490,6 +501,7 @@ function TableRow({item, children, ...otherProps}) {
     isDisabled
   }, state);
 
+  let {pressProps, isPressed} = usePress({isDisabled});
   // The row should show the focus background style when any cell inside it is focused.
   // If the row itself is focused, then it should have a blue focus indicator on the left.
   let {
@@ -503,7 +515,8 @@ function TableRow({item, children, ...otherProps}) {
     otherProps,
     focusWithinProps,
     focusProps,
-    hoverProps
+    hoverProps,
+    allowsSelection && pressProps
   );
 
   return (
@@ -515,10 +528,11 @@ function TableRow({item, children, ...otherProps}) {
           styles,
           'spectrum-Table-row',
           {
+            'is-active': isPressed,
             'is-selected': isSelected,
             'is-focused': isFocusVisibleWithin,
             'focus-ring': isFocusVisible,
-            'is-hovered': isHovered,
+            'is-hovered': isHovered && allowsSelection,
             'is-disabled': isDisabled
           }
         )

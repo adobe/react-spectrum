@@ -193,8 +193,6 @@ async function parse(asset) {
 }
 // cache things in pre-visit order so the references exist
 function walk(obj, fn) {
-  // cache so we don't recompute
-  let cache = new Map();
   // circular is to make sure we don't traverse over an object we visited earlier in the recursion
   let circular = new Set();
 
@@ -206,25 +204,19 @@ function walk(obj, fn) {
           id: obj.id
         };
       }
-      if (cache.has(obj)) {
-        return cache.get(obj);
-      }
       if (Array.isArray(obj)) {
         let resultArray = [];
-        cache.set(obj, resultArray);
         obj.forEach((item, i) => resultArray[i] = visit(item, fn, k));
         return resultArray;
       } else if (obj && typeof obj === 'object') {
         circular.add(obj);
         let res = {};
-        cache.set(obj, res);
         for (let key in obj) {
           res[key] = visit(obj[key], fn, key);
         }
         circular.delete(obj);
         return res;
       } else {
-        // don't cache things like null/undefined
         return obj;
       }
     };

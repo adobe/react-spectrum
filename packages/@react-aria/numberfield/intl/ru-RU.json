@@ -1,5 +1,5 @@
 {
-  "Decrement": "Уменьшить",
-  "Enter a number": "Введите номер",
-  "Increment": "Увеличить"
+  "decrease": "Уменьшение {fieldLabel}",
+  "increase": "Увеличение {fieldLabel}",
+  "numberField": "Числовое поле"
 }
