@@ -79,10 +79,6 @@ export function useTextField(
         'aria-activedescendant': props['aria-activedescendant'],
         'aria-autocomplete': props['aria-autocomplete'],
         'aria-haspopup': props['aria-haspopup'],
-        'aria-describedby': [
-          errorMessageProps.id,
-          descriptionProps.id
-        ].filter(Boolean).join(' '),
         value: props.value,
         defaultValue: props.value ? undefined : props.defaultValue,
         onChange: (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value),

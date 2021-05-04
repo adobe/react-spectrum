@@ -70,8 +70,6 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     shouldFlip = true,
     direction = 'bottom',
     isQuiet,
-    description,
-    errorMessage,
     loadingState,
     onLoadMore
   } = props;

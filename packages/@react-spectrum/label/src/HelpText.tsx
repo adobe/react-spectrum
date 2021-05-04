@@ -35,7 +35,7 @@ function HelpText(props: HelpTextProps, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
 
-  if (!description || !errorMessage) {
+  if (!description && !(errorMessage && validationState === 'invalid')) {
     return null;
   }
 
@@ -47,12 +47,11 @@ function HelpText(props: HelpTextProps, ref: DOMRef<HTMLDivElement>) {
       className={styleProps.className}>
       {validationState === 'invalid' ? (
         <div {...errorMessageProps}>
-          {showIcon && <span>/!\ - </span>}
-          Error message: {errorMessage} {isDisabled && '— disabled'}
+          {errorMessage}
         </div>
       ) : (
         <div {...descriptionProps}>
-          Description: {description} {isDisabled && '— disabled'}
+          {description}
         </div>
       )}
     </div>

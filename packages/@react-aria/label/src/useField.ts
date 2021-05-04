@@ -13,7 +13,7 @@
 import {HelpTextProps, LabelableProps} from '@react-types/shared';
 import {HTMLAttributes} from 'react';
 import {LabelAria, useLabel} from './useLabel';
-import {useSlotId} from '@react-aria/utils';
+import {mergeProps, useSlotId} from '@react-aria/utils';
 
 interface AriaFieldProps extends LabelableProps, HelpTextProps {}
 
@@ -37,7 +37,12 @@ export function useField(props: AriaFieldProps): FieldAria {
 
   return {
     labelProps,
-    fieldProps,
+    fieldProps: mergeProps(fieldProps, {
+      'aria-describedby': [
+        descriptionId,
+        errorMessageId
+      ].filter(Boolean).join(' ') || undefined
+    }),
     descriptionProps: {
       id: descriptionId
     },
