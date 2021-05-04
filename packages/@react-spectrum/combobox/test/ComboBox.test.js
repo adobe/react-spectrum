@@ -173,9 +173,18 @@ function ControlledOpenKeyComboBox(props) {
     });
   };
 
+  // Handle removing selected key if input text is deleted
+  let onInputChangeHandler = (value) => {
+    onInputChange(value);
+    setFieldState(prevState => ({
+      isOpen: prevState.isOpen,
+      selectedKey: value === '' ? null : prevState.selectedKey
+    }));
+  };
+
   return (
     <Provider theme={theme}>
-      <ComboBox {...defaultProps} label="Combobox" defaultItems={items} isOpen={fieldState.isOpen} onOpenChange={onOpenChangeHandler} selectedKey={fieldState.selectedKey} onSelectionChange={onSelectionChangeHandler} {...props}>
+      <ComboBox {...defaultProps} label="Combobox" defaultItems={items} isOpen={fieldState.isOpen} onOpenChange={onOpenChangeHandler} selectedKey={fieldState.selectedKey} onSelectionChange={onSelectionChangeHandler} onInputChange={onInputChangeHandler} {...props}>
         {(item) => <Item>{item.name}</Item>}
       </ComboBox>
     </Provider>
@@ -205,15 +214,25 @@ function ControlledOpenValueComboBox(props) {
 
   let onSelectionChangeHandler = (key) => {
     onSelectionChange(key);
-    setFieldState({
-      isOpen: false,
-      inputValue: itemList.find(item => item.id === key)?.name ?? ''
-    });
+    let newInputValue = itemList.find(item => item.id === key)?.name;
+    setFieldState(prevState => ({
+      // If key is null (aka selected key is being cleared), preserve previous open state
+      // e.g. if user clears input field, previous open state will be open then this onSelectionChange will fire for the selected key removal. We'll want to keep that open state
+      isOpen: key == null ? prevState.isOpen : false,
+      inputValue: newInputValue ?? (props.allowsCustomValue ? prevState.inputValue : '')
+    }));
+  };
+
+  let onFocusChangeHandler = (isFocused) => {
+    setFieldState(prevState => ({
+      isOpen: isFocused ? prevState.isOpen : false,
+      inputValue: prevState.inputValue
+    }));
   };
 
   return (
     <Provider theme={theme}>
-      <ComboBox {...defaultProps} label="Combobox" defaultItems={itemList} isOpen={fieldState.isOpen} inputValue={fieldState.inputValue} onInputChange={onInputChangeHandler} onOpenChange={onOpenChangeHandler} onSelectionChange={onSelectionChangeHandler} {...props}>
+      <ComboBox {...defaultProps} label="Combobox" defaultItems={itemList} isOpen={fieldState.isOpen} inputValue={fieldState.inputValue} onInputChange={onInputChangeHandler} onOpenChange={onOpenChangeHandler} onSelectionChange={onSelectionChangeHandler} onFocusChange={onFocusChangeHandler} {...props}>
         {(item) => <Item>{item.name}</Item>}
       </ComboBox>
     </Provider>
@@ -3041,6 +3060,85 @@ describe('ComboBox', function () {
           expect(combobox.value).toBe('Aardvark');
           expect(() => getByRole('listbox')).toThrow();
         });
+      });
+
+      it('should clear selection and open the menu', () => {
+        let {getByRole} = render(<Component />);
+        let combobox = getByRole('combobox');
+        let button = getByRole('button');
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        let listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+        let items = within(listbox).getAllByRole('option');
+        expect(items.length).toBe(3);
+
+        act(() => {
+          triggerPress(items[0]);
+          jest.runAllTimers();
+        });
+
+        expect(combobox.value).toBe('One');
+        expect(() => getByRole('listbox')).toThrow();
+
+        // TODO: Figure out why all controlled combobox breaks with a "Can't perform a React state update on an unmounted component"
+        if (!Name.includes('all')) {
+          act(() => {
+            fireEvent.change(combobox, {target: {value: ''}});
+            jest.runAllTimers();
+          });
+
+          expect(combobox.value).toBe('');
+          listbox = getByRole('listbox');
+          expect(listbox).toBeVisible();
+          items = within(listbox).getAllByRole('option');
+          expect(items.length).toBe(3);
+          expect(items[0]).not.toHaveAttribute('aria-selected', 'true');
+        }
+      });
+
+      it('should reset value when clicking on same option', () => {
+        let {getByRole} = render(<Component />);
+        let combobox = getByRole('combobox');
+        let button = getByRole('button');
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        let listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+        let items = within(listbox).getAllByRole('option');
+        expect(items.length).toBe(3);
+
+        act(() => {
+          triggerPress(items[0]);
+          jest.runAllTimers();
+        });
+
+        expect(combobox.value).toBe('One');
+        expect(() => getByRole('listbox')).toThrow();
+
+        act(() => {
+          fireEvent.change(combobox, {target: {value: 'On'}});
+          jest.runAllTimers();
+        });
+
+        listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+        items = within(listbox).getAllByRole('option');
+        expect(items.length).toBe(1);
+
+        act(() => {
+          triggerPress(items[0]);
+          jest.runAllTimers();
+        });
+
+        expect(combobox.value).toBe('One');
+        expect(() => getByRole('listbox')).toThrow();
       });
     });
 
