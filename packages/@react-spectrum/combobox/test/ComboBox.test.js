@@ -273,7 +273,7 @@ function AllControlledComboBox(props) {
 
   return (
     <Provider theme={theme}>
-      <ComboBox {...defaultProps} label="Combobox" defaultItems={items} isOpen={fieldState.isOpen} inputValue={fieldState.inputValue} onInputChange={onInputChangeHandler} onOpenChange={onOpenChangeHandler} onSelectionChange={onSelectionChangeHandler} {...props}>
+      <ComboBox {...defaultProps} label="Combobox" defaultItems={items} isOpen={fieldState.isOpen} inputValue={fieldState.inputValue} selectedKey={fieldState.selectedKey} onInputChange={onInputChangeHandler} onOpenChange={onOpenChangeHandler} onSelectionChange={onSelectionChangeHandler} {...props}>
         {(item) => <Item>{item.name}</Item>}
       </ComboBox>
       <input tabIndex={0} />
@@ -3084,20 +3084,17 @@ describe('ComboBox', function () {
         expect(combobox.value).toBe('One');
         expect(() => getByRole('listbox')).toThrow();
 
-        // TODO: Figure out why all controlled combobox breaks with a "Can't perform a React state update on an unmounted component"
-        if (!Name.includes('all')) {
-          act(() => {
-            fireEvent.change(combobox, {target: {value: ''}});
-            jest.runAllTimers();
-          });
+        act(() => {
+          fireEvent.change(combobox, {target: {value: ''}});
+          jest.runAllTimers();
+        });
 
-          expect(combobox.value).toBe('');
-          listbox = getByRole('listbox');
-          expect(listbox).toBeVisible();
-          items = within(listbox).getAllByRole('option');
-          expect(items.length).toBe(3);
-          expect(items[0]).not.toHaveAttribute('aria-selected', 'true');
-        }
+        expect(combobox.value).toBe('');
+        listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+        items = within(listbox).getAllByRole('option');
+        expect(items.length).toBe(3);
+        expect(items[0]).not.toHaveAttribute('aria-selected', 'true');
       });
 
       it('should reset value when clicking on same option', () => {
