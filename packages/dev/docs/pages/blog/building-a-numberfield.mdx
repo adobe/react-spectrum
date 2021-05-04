@@ -113,7 +113,7 @@ A locale represents a set of preferences for users in a particular part of the w
 
 While a locale may have a default numbering system associated with it, users may choose to use a different one. For example, the ar-AE locale defaults to Arabic numerals, but users may still wish to enter a Latin number. Our number field automatically detects the numbering system of the characters entered by the user, and parses it accordingly.
 
-<Video src={pinyinEntering} loop autoPlay muted style={{margin: '0px auto'}} />
+<Video src={pinyinEntering} loop autoPlay muted style={{margin: '0px auto', width: '300px'}} />
 
 ### Localized number parsing
 JavaScript’s `parseFloat` function only handles Latin numerals and US-style decimals, so in order to parse localized numbers we had to get creative. We use an Intl.NumberFormat object to format each digit in a locale/numbering system and generate a map between numeral characters and numbers. We also use the number formatter to determine the allowed set of non-numeral characters such as the decimal point, group separator, and minus sign for the locale. This gives us enough information to validate and parse user input.
