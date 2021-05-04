@@ -429,8 +429,8 @@ describe('useHover', function () {
         (el) => fireEvent.mouseLeave(el, {button: 0})
       ]}
       ${'Pointer Events'} | ${installPointerEvent}| ${[
-        (el) => fireEvent(el, pointerEvent('pointerover', {pointerType: 'touch'})),
-        (el) => fireEvent(el, pointerEvent('pointerout', {pointerType: 'touch'}))
+        (el) => fireEvent(el, pointerEvent('pointerover', {button: 0})),
+        (el) => fireEvent(el, pointerEvent('pointerout', {button: 0}))
       ]}
     `('$type', ({actions: [start, end], prepare}) => {
       prepare();
@@ -450,8 +450,8 @@ describe('useHover', function () {
         });
 
         let el = res.getByText('test');
-        fireEvent.mouseEnter(el);
-        fireEvent.mouseLeave(el);
+        start(el);
+        end(el);
         expect(hoverMock.mock.calls).toHaveLength(0);
       });
     });

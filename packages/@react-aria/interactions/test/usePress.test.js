@@ -2121,8 +2121,8 @@ describe('usePress', function () {
         });
 
         let el = res.getByText('test');
-        start(el, {});
-        end(el, {});
+        start(el);
+        end(el);
         expect(pressMock.mock.calls).toHaveLength(0);
       });
     });
