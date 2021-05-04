@@ -19,7 +19,7 @@ import {
   SingleSelection,
   StyleProps
 } from '@react-types/shared';
-import {Key} from 'react';
+import {Key, ReactNode} from 'react';
 
 export interface AriaTabProps {
   /** The key of the tab. */
@@ -28,9 +28,9 @@ export interface AriaTabProps {
   isDisabled?: boolean
 }
 
-export interface TabListProps<T> extends CollectionBase<T>, SingleSelection {}
+export interface TabListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {}
 
-export interface AriaTabListProps<T> extends TabListProps<T>, DOMProps, AriaLabelingProps {
+interface AriaTabListBase {
   /**
    * Whether tabs are activated automatically on focus or manually.
    * @default 'automatic'
@@ -48,23 +48,29 @@ export interface AriaTabListProps<T> extends TabListProps<T>, DOMProps, AriaLabe
   isDisabled?: boolean
 }
 
+export interface AriaTabListProps<T> extends TabListProps<T>, AriaTabListBase, DOMProps, AriaLabelingProps {}
+
 export interface AriaTabPanelProps extends DOMProps, AriaLabelingProps {}
 
-interface SpectrumTabsProps<T> extends SingleSelection, DOMProps, StyleProps {
+export interface SpectrumTabsProps<T> extends AriaTabListBase, SingleSelection, DOMProps, StyleProps {
+  /** The children of the <Tabs> element. Should include <TabList> and <TabPanels> elements. */
+  children: ReactNode,
+  /** The item objects for each tab, for dynamic collections. */
   items?: Iterable<T>,
-  keyboardActivation?: 'automatic' | 'manual',
-  orientation?: Orientation,
-  isDisabled?: boolean,
+  /** The keys of the tabs that are disabled. These tabs cannot be selected, focused, or otherwise interacted with. */
   disabledKeys?: Iterable<Key>,
+  /** Whether the tabs are displayed in a quiet style. */
   isQuiet?: boolean,
-  density?: 'compact' | 'regular',
-  children: any
+  /** The amount of space between the tabs. */
+  density?: 'compact' | 'regular'
 }
 
 export interface SpectrumTabListProps<T> extends DOMProps, StyleProps {
+  /** The tab items to display. Item keys should match the key of the corresponding <Item> within the <TabPanels> element. */
   children: CollectionChildren<T>
 }
 
 export interface SpectrumTabPanelsProps<T> extends DOMProps, StyleProps {
+  /** The contents of each tab. Item keys should match the key of the corresponding <Item> within the <TabList> element. */
   children: CollectionChildren<T>
 }
