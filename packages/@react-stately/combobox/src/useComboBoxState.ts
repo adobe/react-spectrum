@@ -71,11 +71,18 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       props.onSelectionChange(key);
     }
 
-    // If open state or selectedKey is uncontrolled and key is the same, reset the inputValue and close the menu
+    // If key is the same as the selectedKey, reset the inputValue and close the menu.
     // (scenario: user clicks on already selected option)
-    if (props.isOpen === undefined || props.selectedKey === undefined) {
-      if (key === selectedKey) {
+    // Defer to user if input Value/open state is controlled alongside other props
+    if (key === selectedKey) {
+      if (props.inputValue === undefined || !multipleControlledProps) {
         resetInputValue();
+      }
+
+      if (props.isOpen === undefined || !multipleControlledProps) {
+        // Stop menu from reopening from useEffect and trigger close menu
+        let itemText = collection.getItem(selectedKey)?.textValue ?? '';
+        lastValue.current = itemText;
         triggerState.close();
       }
     }
