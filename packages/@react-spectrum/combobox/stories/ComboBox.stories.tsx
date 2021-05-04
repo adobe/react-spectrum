@@ -429,13 +429,13 @@ storiesOf('ComboBox', module)
   .add(
     'inputValue and isOpen (controlled)',
     () => (
-      <ControlledValueOpenCombobox allowsCustomValue />
+      <ControlledValueOpenCombobox />
     )
   )
   .add(
     'selectedKey and isOpen (controlled)',
     () => (
-      <ControlledKeyOpenCombobox allowsCustomValue />
+      <ControlledKeyOpenCombobox />
     )
   )
   .add(
@@ -921,66 +921,47 @@ let ControlledOpenCombobox = (props) => {
 let ControlledValueOpenCombobox = (props) => {
   let [fieldState, setFieldState] = React.useState({
     isOpen: false,
-    inputValue: '',
-    isFocused: false
+    inputValue: ''
   });
 
   let onInputChange = (value: string) => {
-    setFieldState(prevState => ({
+    setFieldState({
       isOpen: true,
-      inputValue: value,
-      isFocused: prevState.isFocused
-    }));
+      inputValue: value
+    });
   };
 
   let onOpenChange = (isOpen: boolean) => {
-    console.log('on open change')
     setFieldState(prevState => ({
       isOpen: isOpen,
-      inputValue: prevState.inputValue,
-      isFocused: prevState.isFocused
+      inputValue: prevState.inputValue
     }));
   };
 
   let onSelectionChange = (key) => {
     let newInputValue = items.find(item => item.id === key)?.name;
-    setFieldState(prevState => {
-      console.log('prevstate', prevState);
-      return {
-        isOpen: prevState.isOpen,
-        // If key is null (aka selected key is being cleared), preserve previous open state
-        // e.g. if user clears input field, previous open state will be open then this onSelectionChange will fire for the selected key removal. We'll want to keep that open state
-        // isOpen: key == null && prevState.isFocused ? prevState.isOpen : false,
-        inputValue: newInputValue ?? (props.allowsCustomValue ? prevState.inputValue : ''),
-        isFocused: prevState.isFocused
-      }
-    });
-  };
-
-  // TODO: A bit annoying but can't figure out an alternative here. Without tracking focus state manually,
-  // onSelectionChange doesn't have enough information to set the proper open state.
-  // The two cases that are seen as the same from inside onSelectionChange but want to have two different final open states:
-  // 1. User has a selected key and then deletes all input text. This causes onInputChange to fire -> isOpen = true and inputValue = "" -> onSelectionChange fires to remove selectedKey -> prevInputValue = "" prevIsOpen = true -> desired end state is to keep isOpen as true
-  // 2. User doesn't have a selected key but has the menu open and blurs. This causes onSelectionChange to fire with null  -> prevInputValue = "" prevIsOpen = true -> desired end state is to keep isOpen as false
-  let onFocus = () => {
     setFieldState(prevState => ({
-      isOpen: prevState.isOpen,
-      inputValue: prevState.inputValue,
-      isFocused: true
+      // If key is null (aka selected key is being cleared), preserve previous open state
+      // e.g. if user clears input field, previous open state will be open then this onSelectionChange will fire for the selected key removal. We'll want to keep that open state
+      isOpen: key == null ? prevState.isOpen : false,
+      inputValue: newInputValue ?? (props.allowsCustomValue ? prevState.inputValue : '')
     }));
   };
 
-  let onBlur = () => {
+  // A bit annoying but can't figure out an alternative here. Without tracking focus state manually,
+  // onSelectionChange doesn't have enough information to set the proper open state.
+  // These two cases that are seen as the same from inside onSelectionChange but want to have two different final open states:
+  // 1. User has a selected key and then deletes all input text. This causes onInputChange to fire -> isOpen = true and inputValue = "" -> onSelectionChange fires to remove selectedKey -> prevInputValue = "", prevIsOpen = true, key = null -> desired end state is to keep isOpen as true
+  // 2. User doesn't have a selected key but has the menu open and blurs. This causes onSelectionChange to fire with null  -> prevInputValue = "", prevIsOpen = true, key = null -> desired end state is to keep isOpen as false
+  let onFocusChange = (isFocused) => {
     setFieldState(prevState => ({
-      isOpen: prevState.isOpen,
-      inputValue: prevState.inputValue,
-      isFocused: false
+      isOpen: isFocused ? prevState.isOpen : false,
+      inputValue: prevState.inputValue
     }));
   };
 
   return (
-    // <ComboBox label="Combobox" {...mergeProps(props, actions)} defaultItems={items} isOpen={fieldState.isOpen} onOpenChange={onOpenChange} inputValue={fieldState.inputValue} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={onBlur} onFocus={onFocus}>
-    <ComboBox label="Combobox" {...mergeProps(props, actions)} defaultItems={items} isOpen={fieldState.isOpen} onOpenChange={onOpenChange} inputValue={fieldState.inputValue} onInputChange={onInputChange} onSelectionChange={onSelectionChange}>
+    <ComboBox label="Combobox" {...mergeProps(props, actions)} defaultItems={items} isOpen={fieldState.isOpen} onOpenChange={onOpenChange} inputValue={fieldState.inputValue} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onFocusChange={onFocusChange}>
       {(item: any) => <Item>{item.name}</Item>}
     </ComboBox>
   );
@@ -1008,14 +989,16 @@ let ControlledKeyOpenCombobox = (props) => {
 
   // Handle removing selected key if input text is deleted
   let onInputChange = (value: string) => {
-    setFieldState(prevState => {
-      return {
-        isOpen: prevState.isOpen,
-        selectedKey: value === '' ? null : prevState.selectedKey
-      }
-    })
+    setFieldState(prevState => ({
+      isOpen: prevState.isOpen,
+      selectedKey: value === '' ? null : prevState.selectedKey
+    }));
   };
 
+  // Flows:
+  // 1. User has a selected key and then deletes all input text. This causes onInputChange to fire -> isOpen = prevState and selectedKey = null -> state.open fires because inputValue uncontrolled and it changed (useComboBoxState) -> final state: isOpen = true,  selectedKey = prevSelectedKey = null
+  // 2. User doesn't have a selected key but has the menu open and blurs. This causes onSelectionChange to fire with null  -> isOpen = false and selectedKey = null
+  // 3. User has a selected key but has the menu open + input is modified and blurs. This causes onSelectionChange to fire with selectedKey -> isOpen = false, selectedKey=selectedKey -> onInputChange fires from commitSelection resetInputValue() -> isOpen = prevState = false selectedKey = selectedKey
   return (
     <ComboBox label="Combobox" {...mergeProps(props, actions)} isOpen={fieldState.isOpen} onOpenChange={onOpenChange} selectedKey={fieldState.selectedKey} onSelectionChange={onSelectionChange} onInputChange={onInputChange}>
       <Item key="one">Item One</Item>
