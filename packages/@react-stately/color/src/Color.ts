@@ -98,9 +98,23 @@ abstract class Color implements IColor {
 
   getColorName(locale:string): string {
     let name = undefined;
+    let hsl = this.toFormat('hsl');
+    let saturation = hsl.getChannelValue('saturation');
+    let lightness = hsl.getChannelValue('lightness');
+
+    switch (lightness) {
+      case 0:
+        return messages.getStringForLocale('black', locale);
+      case 100:
+        return messages.getStringForLocale('white', locale);
+      default:
+        if (saturation === 0) {
+          return `${messages.getStringForLocale('gray', locale)} ${new NumberFormatter(locale, {style: 'percent'}).format(Math.round(lightness) / 100)}`;
+        }
+    }
 
     // get closest hue name
-    let hue = this.toFormat('hsl').getChannelValue('hue');
+    let hue = hsl.getChannelValue('hue');
     let hueName = '';
     if (hue >= 360) {
       hue -= 360;
@@ -125,18 +139,20 @@ abstract class Color implements IColor {
 
     // check for closer bang color outlier
     for (const [key, value] of BANG_COLOR_OUTLIERS) {
-      d = this.getDeltaE(parseColor(value));
-      if (d <= 0.1 && d < deltaE) {
-        deltaE = d;
+      if (value === this.toString('hex')) {
         name = messages.getStringForLocale(key, locale);
+      } else {
+        d = this.getDeltaE(parseColor(value));
+        if (d <= 0.1 && d < deltaE) {
+          deltaE = d;
+          name = messages.getStringForLocale(key, locale);
+        }
       }
     }
 
-    // check for closer css color name
+    // check for exact match of css color name
     for (const [key, value] of CSS_COLOR_NAMES) {
-      d = this.getDeltaE(parseColor(value));
-      if (d <= 0.1 && d < deltaE) {
-        deltaE = d;
+      if (value === this.toString('hex')) {
         name = messages.getStringForLocale(key, locale);
       }
     }
@@ -184,9 +200,15 @@ class RGBColor extends Color {
         let b = parseInt(m[2][4] + m[2][5], 16);
         return new RGBColor(r, g, b, 1);
       }
-    } if ((m = value.match(RGB_REGEX))) {
+    }
+    
+    if ((m = value.match(RGB_REGEX))) {
       const [r, g, b, a] = (m[1] ?? m[2]).split(',').map(n => Number(n.trim()));
       return new RGBColor(clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255), clamp(a ?? 1, 0, 1));
+    }
+
+    if (CSS_COLOR_NAMES.has(value)) {
+      return RGBColor.parse(CSS_COLOR_NAMES.get(value));
     }
   }
 
@@ -367,10 +389,15 @@ class HSBColor extends Color {
     switch (format) {
       case 'css':
         return this.toHSL().toString('css');
+      case 'hex':
+        return this.toRGB().toString('hex');
+      case 'hexa':
+        return this.toRGB().toString('hexa');
       case 'hsb':
         return `hsb(${this.hue}, ${Math.round(this.saturation)}%, ${Math.round(this.brightness)}%)`;
       case 'hsba':
         return `hsba(${this.hue}, ${Math.round(this.saturation)}%, ${Math.round(this.brightness)}%, ${this.alpha})`;
+      
       default:
         return this.toFormat(format).toString(format);
     }
@@ -500,6 +527,10 @@ class HSLColor extends Color {
 
   toString(format: ColorFormat | 'css') {
     switch (format) {
+      case 'hex':
+        return this.toRGB().toString('hex');
+      case 'hexa':
+        return this.toRGB().toString('hexa');
       case 'hsl':
         return `hsl(${this.hue}, ${Math.round(this.saturation)}%, ${Math.round(this.lightness)}%)`;
       case 'css':
