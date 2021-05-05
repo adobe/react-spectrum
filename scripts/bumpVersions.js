@@ -128,6 +128,17 @@ class VersionManager {
     for (let pkg of monopackages) {
       this.changedPackages.add(pkg);
     }
+
+    let all = process.argv.find(arg => arg === '--all');
+    if (all) {
+      for (let name in this.workspacePackages) {
+        let filePath = this.workspacePackages[name].location + '/package.json';
+        let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        if (!pkg.private) {
+          this.changedPackages.add(name);
+        }
+      }
+    }
   }
 
   async getVersionBumps() {
