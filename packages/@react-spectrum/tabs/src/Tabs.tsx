@@ -264,10 +264,12 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
     setTabListState(state);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.disabledKeys, state.selectedItem, state.selectedKey, props.children]);
+  let stylePropsForVertical = orientation === 'vertical' ? styleProps : {};
 
   let tabListclassName = classNames(styles, 'spectrum-TabsPanel-tabs');
   const tabContent = (
     <div
+      {...stylePropsForVertical}
       {...tabListProps}
       ref={tablistRef}
       className={classNames(
@@ -281,8 +283,7 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
         },
         orientation === 'vertical' && styleProps.className
       )
-      }
-      style={orientation === 'vertical' ? styleProps.style : {}}>
+      }>
       {[...state.collection].map((item) => (
         <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
       ))}
@@ -296,13 +297,13 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
   } else {
     return (
       <div
+        {...styleProps}
         ref={wrapperRef}
         className={classNames(
           styles,
           'spectrum-TabsPanel-collapseWrapper',
           styleProps.className
-        )}
-        style={styleProps.style}>
+        )}>
         {collapse ? <TabPicker {...props} {...tabProps} id={tabPanelProps['aria-labelledby']} state={state} className={tabListclassName} /> : tabContent}
       </div>
     );
