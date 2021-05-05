@@ -19,6 +19,7 @@ import {MessageDictionary} from '@internationalized/message';
 import {NumberFormatter} from '@internationalized/number';
 
 const messages = new MessageDictionary(intlMessages);
+const HUE_STEP = 15 / 2;
 
 /** Parses a color from a string value. Throws an error if the string could not be parsed. */
 export function parseColor(value: string): IColor {
@@ -99,6 +100,7 @@ abstract class Color implements IColor {
   getColorName(locale:string): string {
     let name = undefined;
     let hsl = this.toFormat('hsl');
+    let hue = hsl.getChannelValue('hue');
     let saturation = hsl.getChannelValue('saturation');
     let lightness = hsl.getChannelValue('lightness');
 
@@ -114,17 +116,7 @@ abstract class Color implements IColor {
     }
 
     // get closest hue name
-    let hue = hsl.getChannelValue('hue');
-    let hueName = '';
-    if (hue >= 360) {
-      hue -= 360;
-    }
-    for (const [key, value] of HUES) {
-      if (Math.abs(value - hue) <= 3.75) {
-        hueName = messages.getStringForLocale(key, locale);
-        break;
-      }
-    }
+    let hueName = this.getHueName(locale) || '';
     
     // get closest bang color name from HSL
     let deltaE = Infinity;
@@ -163,8 +155,12 @@ abstract class Color implements IColor {
   getHueName(locale:string): string {
     let hue = this.toFormat('hsl').getChannelValue('hue');
     let name = undefined;
+    let range = HUE_STEP / 2;
+    if (hue > 360 - range) {
+      hue -= 360;
+    }
     for (const [key, value] of HUES) {
-      if (Math.abs(value - hue) < 3.75) {
+      if (Math.abs(value - hue) < range) {
         name = messages.getStringForLocale(key, locale);
         break;
       }
