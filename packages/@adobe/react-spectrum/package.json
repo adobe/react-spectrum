@@ -38,6 +38,7 @@
     "@react-spectrum/listbox": "^3.4.2",
     "@react-spectrum/menu": "^3.2.3",
     "@react-spectrum/meter": "^3.1.2",
+    "@react-spectrum/numberfield": "^3.0.0",
     "@react-spectrum/overlays": "^3.4.1",
     "@react-spectrum/picker": "^3.2.4",
     "@react-spectrum/progress": "^3.1.2",
