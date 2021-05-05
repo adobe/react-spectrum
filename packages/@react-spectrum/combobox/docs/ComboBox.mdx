@@ -522,8 +522,7 @@ If a description is added, the prop `slot="description"` must be used to disting
 ComboBox supports loading data asynchronously, and will display a progress circle reflecting the current load state,
 set by the `loadingState` prop. It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
 
-This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle loading the data.
-See the docs for more information.
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle loading the data. See the docs for more information.
 
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
@@ -556,6 +555,82 @@ function AsyncLoadingExample() {
       items={list.items}
       inputValue={list.filterText}
       onInputChange={list.setFilterText}
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}>
+      {item => <Item key={item.name}>{item.name}</Item>}
+    </ComboBox>
+  );
+}
+```
+
+When both `inputValue` and `selectedKey` are controlled, and the `selectedKey` is set to an initial value before the `items` load, you must update the `inputValue` when the `items` load.
+This can be done by returning `filterText` from the `useAsyncList` load function.
+
+The example below demonstrates how you could update the input value for your selected key once your list of items has been fetched.
+
+```tsx example
+function AsyncLoadingExample() {
+  let isFocused = React.useRef(false);
+  let list = useAsyncList({
+    async load({signal, cursor, filterText, selectedKeys}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // If no cursor is available, then we're loading the first page,
+      // filtering the results returned via a query string that
+      // mirrors the ComboBox input text.
+      // Otherwise, the cursor is the next URL to load,
+      // as returned from the previous page.
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      let selectedText;
+      let selectedKey = selectedKeys.values().next().value;
+
+      // If selectedKey exists and combobox is not focused, update the input value with the selected key text
+      // This allows the input value to be up to date when items load for the first time or the selected key text is updated server side.
+      if (!isFocused.current && selectedKey) {
+        let selectedItemName = json.results.find(item => item.name === selectedKey)?.name;
+        if (selectedItemName != null && selectedItemName !== filterText) {
+          selectedText = selectedItemName;
+        }
+      }
+
+      return {
+        items: json.results,
+        cursor: json.next,
+        filterText: selectedText ?? filterText
+      };
+    },
+    initialSelectedKeys: ['Luke Skywalker'],
+    getKey: (item) => item.name
+  });
+
+  let onSelectionChange = (key) => {
+    let itemText = list.getItem(key)?.name;
+    list.setSelectedKeys(new Set([key]));
+    list.setFilterText(itemText);
+  };
+
+  let onInputChange = (value) => {
+    // Clear key if user deletes all text in the field
+    if (value === '') {
+      list.setSelectedKeys(new Set([null]));
+    }
+    list.setFilterText(value);
+  };
+
+  let selectedKey = list.selectedKeys.values().next().value;
+  return (
+    <ComboBox
+      label="Star Wars Character Lookup"
+      onFocusChange={(focus) => isFocused.current = focus}
+      selectedKey={selectedKey}
+      onSelectionChange={onSelectionChange}
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={onInputChange}
       loadingState={list.loadingState}
       onLoadMore={list.loadMore}>
       {item => <Item key={item.name}>{item.name}</Item>}
