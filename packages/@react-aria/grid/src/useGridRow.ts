@@ -40,7 +40,6 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     shouldSelectOnPressUp
   } = props;
 
-  let allowsSelection = state.selectionManager.selectionMode !== 'none';
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
     key: node.key,
@@ -51,13 +50,6 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
 
   // TODO: move into useSelectableItem?
   let {pressProps} = usePress({...itemProps, isDisabled});
-
-  // Don't propagate press handlers if selection isn't allowed so that text selection can happen
-  if (!allowsSelection) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    let {onPressStart, onPressEnd, onPressUp, onPress, ...otherProps} = itemProps;
-    pressProps = otherProps;
-  }
 
   let rowProps: HTMLAttributes<HTMLElement> = {
     role: 'row',

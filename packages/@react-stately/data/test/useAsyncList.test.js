@@ -743,10 +743,17 @@ describe('useAsyncList', () => {
     expect(result.current.selectedKeys).toEqual(new Set(['selected key']));
   });
 
-  it('should handle multiple loadMore called in quick succession', async () => {
+  it('should handle multiple loadMore operations called in quick succession', async () => {
     let load = jest.fn()
       .mockImplementationOnce(getItems)
-      .mockImplementationOnce(getItems2)
+      .mockImplementationOnce(({signal}) => new Promise((resolve, reject) => {
+        signal.addEventListener('abort', () => {
+          reject();
+        });
+
+        setTimeout(() => resolve({items: ITEMS2}), 100);
+      }))
+      .mockImplementationOnce(getItems)
       .mockImplementationOnce(getItems);
     let {result} = renderHook(
       () => useAsyncList({load})
@@ -767,13 +774,61 @@ describe('useAsyncList', () => {
     await act(async () => {
       result.current.loadMore();
       result.current.loadMore();
+      result.current.loadMore();
       jest.runAllTimers();
     });
 
-    // Only the first loadMore is handled, the other is never called
-    expect(load).toHaveBeenCalledTimes(2);
+    // Only the first loadMore is handled, the others are canceled
+    expect(load).toHaveBeenCalledTimes(4);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.items).toEqual(ITEMS.concat(ITEMS2));
+  });
+
+  it('should handle multiple loadMore/filtering operations called in quick succession', async () => {
+    let load = jest.fn()
+      .mockImplementationOnce(getItems)
+      .mockImplementationOnce(({signal}) => new Promise((resolve, reject) => {
+        signal.addEventListener('abort', () => {
+          reject();
+        });
+
+        setTimeout(() => resolve({items: ITEMS}), 100);
+      }))
+      .mockImplementationOnce(getItems2)
+      .mockImplementationOnce(getItems);
+    let {result} = renderHook(
+      () => useAsyncList({load})
+    );
+
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.items).toEqual([]);
+
+    await act(async () => {
+      jest.runAllTimers();
+    });
+
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.items).toEqual(ITEMS);
+
+    await act(async () => {
+      result.current.loadMore();
+      jest.advanceTimersByTime(20);
+      result.current.setFilterText('blah');
+      jest.advanceTimersByTime(20);
+    });
+
+    await act(async () => {
+      result.current.loadMore();
+      jest.runAllTimers();
+    });
+
+    // Only the first loadMore and filtering operation is handled (first loadMore is canceled by filter),
+    // subsequent loadMores are never called because filtering operation is happening
+    expect(load).toHaveBeenCalledTimes(3);
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.items).toEqual(ITEMS2);
   });
 
   describe('filtering', function () {

@@ -360,9 +360,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     onBlur,
     onMouseDown(e) {
       // Prevent focus going to the collection when clicking on the scrollbar.
-      if (e.target === ref.current) {
-        e.preventDefault();
-      }
+      e.preventDefault();
     }
   };
 

@@ -596,10 +596,45 @@ describe('Tabs', function () {
 
     let tabs = getAllByRole('tab');
     triggerPress(tabs[1]);
+    tabpanel = getByRole('tabpanel');
 
     await waitFor(() => expect(tabpanel).toHaveAttribute('tabindex', '0'));
 
     triggerPress(tabs[0]);
+    tabpanel = getByRole('tabpanel');
+
     await waitFor(() => expect(tabpanel).not.toHaveAttribute('tabindex'));
+  });
+
+  it('TabPanel children do not share values between panels', () => {
+    let {getByDisplayValue, getAllByRole, getByTestId} = render(
+      <Provider theme={theme}>
+        <Tabs maxWidth={500}>
+          <TabList>
+            <Item>Tab 1</Item>
+            <Item>Tab 2</Item>
+          </TabList>
+          <TabPanels>
+            <Item>
+              <input data-testid="panel1_input" />
+            </Item>
+            <Item>
+              <input disabled data-testid="panel2_input" />
+            </Item>
+          </TabPanels>
+        </Tabs>
+      </Provider>
+    );
+
+    let tabPanelInput = getByTestId('panel1_input');
+    expect(tabPanelInput.value).toBe('');
+    tabPanelInput.value = 'A String';
+    expect(getByDisplayValue('A String')).toBeTruthy();
+
+    let tabs = getAllByRole('tab');
+    triggerPress(tabs[1]);
+
+    tabPanelInput = getByTestId('panel2_input');
+    expect(tabPanelInput.value).toBe('');
   });
 });

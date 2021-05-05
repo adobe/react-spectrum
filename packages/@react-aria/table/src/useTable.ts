@@ -13,11 +13,11 @@
 import {GridAria, GridProps, useGrid} from '@react-aria/grid';
 import {gridIds} from './utils';
 import {Layout} from '@react-stately/virtualizer';
-import {mergeProps, useId} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {TableState} from '@react-stately/table';
 import {useCollator, useLocale} from '@react-aria/i18n';
+import {useId} from '@react-aria/utils';
 import {useMemo} from 'react';
 
 interface TableProps<T> extends GridProps {
@@ -54,19 +54,12 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>): GridAri
     keyboardDelegate: delegate
   }, state);
 
-  let onMouseDown = (e) => {
-    // Prevent focus going to the Table when clicking on the scrollbar (target on click is the Table body). Fixes scrollbar jumping.
-    if (e.target.parentElement === ref.current) {
-      e.preventDefault();
-    }
-  };
-
   // Override to include header rows
   if (isVirtualized) {
     gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
   }
 
   return {
-    gridProps: mergeProps(gridProps, {onMouseDown})
+    gridProps
   };
 }
