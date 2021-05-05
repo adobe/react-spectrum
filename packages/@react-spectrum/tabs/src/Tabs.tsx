@@ -268,6 +268,7 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
   let tabListclassName = classNames(styles, 'spectrum-TabsPanel-tabs');
   const tabContent = (
     <div
+      {...styleProps}
       {...tabListProps}
       ref={tablistRef}
       className={classNames(
@@ -278,11 +279,7 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
         {
           'spectrum-Tabs--quiet': isQuiet,
           ['spectrum-Tabs--compact']: density === 'compact'
-        },
-        orientation === 'vertical' && styleProps.className
-        )
-      }
-      style={orientation === 'vertical' ? styleProps.style : {}}>
+        })}>
       {[...state.collection].map((item) => (
         <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
       ))}
@@ -299,10 +296,8 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
         ref={wrapperRef}
         className={classNames(
             styles,
-            'spectrum-TabsPanel-collapseWrapper',
-            styleProps.className
-          )}
-        style={styleProps.style}>
+            'spectrum-TabsPanel-collapseWrapper'
+          )}>
         {collapse ? <TabPicker {...props} {...tabProps} id={tabPanelProps['aria-labelledby']} state={state} className={tabListclassName} /> : tabContent}
       </div>
     );
@@ -342,7 +337,7 @@ function TabPanel<T>(props: SpectrumTabPanelsProps<T>) {
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div {...styleProps} {...tabPanelProps} ref={ref} className={classNames(styles, 'spectrum-TabsPanel-tabpanel', styleProps.className)}>
+      <div {...styleProps} {...tabPanelProps} ref={ref} className={classNames(styles, 'spectrum-TabsPanel-tabpanel')}>
         {props.children}
       </div>
     </FocusRing>
