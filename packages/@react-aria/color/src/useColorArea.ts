@@ -493,7 +493,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
   };
 
   let background = generateBackground();
-  let ariaRoleDescription = messages.getStringForLocale('ariaRoleDescription', locale);
+  let ariaRoleDescription = messages.getStringForLocale('twoDimensionalSlider', locale);
   
   let {visuallyHiddenProps} = useVisuallyHidden();
   visuallyHiddenProps.style = mergeProps(

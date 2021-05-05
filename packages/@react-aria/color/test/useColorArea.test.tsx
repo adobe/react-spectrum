@@ -91,7 +91,7 @@ describe('useColorArea', () => {
       expect(slider).toHaveAttribute('step', '1');
       expect(slider).toHaveAttribute('value', '100');
       expect(slider).toHaveAttribute('aria-label', 'Saturation / Brightness');
-      expect(slider).toHaveAttribute('aria-roledescription', 'two-dimensional slider');
+      expect(slider).toHaveAttribute('aria-roledescription', '2D slider');
       expect(slider).toHaveAttribute('aria-valuetext', i === 0 ? 'Saturation: 100%, Brightness: 100%' : 'Brightness: 100%, Saturation: 100%');
       expect(slider).toHaveAttribute('title', 'Red, Hue: 0°, Saturation: 100%, Brightness: 100%');
       expect(slider).toHaveAttribute('tabindex', i === 0 ? '0' : '-1');
