@@ -425,7 +425,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
 
   let onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     // Ignore blur if focus moves from tray input to something outside the popover (i.e. tray is being closed via tapping outside the tray -> focus will return to combobox button -> prevent menuTrigger = focus from reopening the combobox tray).
-    if (e.target === inputRef?.current && !popoverRef.current?.contains(e.relatedTarget as HTMLElement)) {
+    if (!popoverRef.current?.contains(e.relatedTarget as HTMLElement)) {
       return;
     }
 
