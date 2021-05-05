@@ -325,7 +325,7 @@ describe('DateRangePicker', function () {
   });
 
   describe('focus management', function () {
-    it('should focus the last segment of each field on mouse down', function () {
+    it('should focus the first segment of each field on mouse down', function () {
       let {getByLabelText} = render(<DateRangePicker />);
       let startDate = getByLabelText('Start Date');
       let endDate = getByLabelText('End Date');
@@ -333,10 +333,10 @@ describe('DateRangePicker', function () {
       let endSegments = getAllByRoleInContainer(endDate, 'spinbutton');
 
       fireEvent.mouseDown(startDate);
-      expect(startSegments[startSegments.length - 1]).toHaveFocus();
+      expect(startSegments[0]).toHaveFocus();
 
       fireEvent.mouseDown(endDate);
-      expect(endSegments[endSegments.length - 1]).toHaveFocus();
+      expect(endSegments[0]).toHaveFocus();
     });
 
     it('should focus the first segment of the end date on mouse down on the dash', function () {

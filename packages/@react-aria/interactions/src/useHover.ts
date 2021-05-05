@@ -124,7 +124,7 @@ export function useHover(props: HoverProps): HoverResult {
     };
 
     let triggerHoverEnd = (event, pointerType) => {
-      if (isDisabled || pointerType === 'touch' || !state.isHovered) {
+      if (pointerType === 'touch' || !state.isHovered) {
         return;
       }
 

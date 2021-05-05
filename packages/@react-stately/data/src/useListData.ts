@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, useState} from 'react';
+import {Key, useMemo, useState} from 'react';
 import {Selection} from '@react-types/shared';
 
 interface ListOptions<T> {
@@ -18,8 +18,12 @@ interface ListOptions<T> {
   initialItems?: T[],
   /** The keys for the initially selected items. */
   initialSelectedKeys?: 'all' | Iterable<Key>,
+  /** The initial text to filter the list by. */
+  initialFilterText?: string,
   /** A function that returns a unique key for an item object. */
-  getKey?: (item: T) => Key
+  getKey?: (item: T) => Key,
+  /** A function that returns whether a item matches the current filter text. */
+  filter?: (item: T, filterText: string) => boolean
 }
 
 export interface ListData<T> {
@@ -31,6 +35,12 @@ export interface ListData<T> {
 
   /** Sets the selected keys. */
   setSelectedKeys(keys: Selection): void,
+
+  /** The current filter text. */
+  filterText: string,
+
+  /** Sets the filter text. */
+  setFilterText(filterText: string): void,
 
   /**
    * Gets an item from the list by key.
@@ -91,6 +101,20 @@ export interface ListData<T> {
   move(key: Key, toIndex: number): void,
 
   /**
+   * Moves one or more items before a given key.
+   * @param key - The key of the item to move the items before.
+   * @param keys - The keys of the items to move.
+   */
+  moveBefore(key: Key, keys: Key[]): void,
+
+  /**
+   * Moves one or more items after a given key.
+   * @param key - The key of the item to move the items after.
+   * @param keys - The keys of the items to move.
+   */
+  moveAfter(key: Key, keys: Key[]): void,
+
+  /**
    * Updates an item in the list.
    * @param key - The key of the item to update.
    * @param newValue - The new value for the item.
@@ -100,7 +124,8 @@ export interface ListData<T> {
 
 export interface ListState<T> {
   items: T[],
-  selectedKeys: Selection
+  selectedKeys: Selection,
+  filterText: string
 }
 
 /**
@@ -111,15 +136,25 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
   let {
     initialItems = [],
     initialSelectedKeys,
-    getKey = (item: any) => item.id || item.key
+    getKey = (item: any) => item.id || item.key,
+    filter,
+    initialFilterText = ''
   } = options;
+
+  // Store both items and filteredItems in state so we can go back to the unfiltered list
   let [state, setState] = useState<ListState<T>>({
     items: initialItems,
-    selectedKeys: initialSelectedKeys === 'all' ? 'all' : new Set(initialSelectedKeys || [])
+    selectedKeys: initialSelectedKeys === 'all' ? 'all' : new Set(initialSelectedKeys || []),
+    filterText: initialFilterText
   });
+
+  let filteredItems = useMemo(
+    () => filter ? state.items.filter(item => filter(item, state.filterText)) : state.items,
+    [state.items, state.filterText, filter]);
 
   return {
     ...state,
+    items: filteredItems,
     ...createListActions({getKey}, setState),
     getItem(key: Key) {
       return state.items.find(item => getKey(item) === key);
@@ -127,24 +162,19 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
   };
 }
 
-function insert<T>(state: ListState<T>, index: number, ...values: T[]): ListState<T> {
-  return {
-    ...state,
-    items: [
-      ...state.items.slice(0, index),
-      ...values,
-      ...state.items.slice(index)
-    ]
-  };
-}
-
-export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (state: ListState<T>) => ListState<T>) => void): Omit<ListData<T>, 'items' | 'selectedKeys' | 'getItem'> {
+export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (state: ListState<T>) => ListState<T>) => void): Omit<ListData<T>, 'items' | 'selectedKeys' | 'getItem' | 'filterText'> {
   let {getKey} = opts;
   return {
     setSelectedKeys(selectedKeys: Selection) {
       dispatch(state => ({
         ...state,
         selectedKeys
+      }));
+    },
+    setFilterText(filterText: string) {
+      dispatch(state => ({
+        ...state,
+        filterText
       }));
     },
     insert(index: number, ...values: T[]) {
@@ -228,6 +258,29 @@ export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (
         };
       });
     },
+    moveBefore(key: Key, keys: Key[]) {
+      dispatch(state => {
+        let toIndex = state.items.findIndex(item => getKey(item) === key);
+        if (toIndex === -1) {
+          return state;
+        }
+
+        // Find indices of keys to move. Sort them so that the order in the list is retained.
+        let indices = keys.map(key => state.items.findIndex(item => getKey(item) === key)).sort();
+        return move(state, indices, toIndex);
+      });
+    },
+    moveAfter(key: Key, keys: Key[]) {
+      dispatch(state => {
+        let toIndex = state.items.findIndex(item => getKey(item) === key);
+        if (toIndex === -1) {
+          return state;
+        }
+
+        let indices = keys.map(key => state.items.findIndex(item => getKey(item) === key)).sort();
+        return move(state, indices, toIndex + 1);
+      });
+    },
     update(key: Key, newValue: T) {
       dispatch(state => {
         let index = state.items.findIndex(item => getKey(item) === key);
@@ -245,5 +298,67 @@ export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (
         };
       });
     }
+  };
+}
+
+function insert<T>(state: ListState<T>, index: number, ...values: T[]): ListState<T> {
+  return {
+    ...state,
+    items: [
+      ...state.items.slice(0, index),
+      ...values,
+      ...state.items.slice(index)
+    ]
+  };
+}
+
+function move<T>(state: ListState<T>, indices: number[], toIndex: number): ListState<T> {
+  // Shift the target down by the number of items being moved from before the target
+  for (let index of indices) {
+    if (index < toIndex) {
+      toIndex--;
+    }
+  }
+
+  let moves = indices.map(from => ({
+    from,
+    to: toIndex++
+  }));
+
+  // Shift later from indices down if they have a larger index
+  for (let i = 0; i < moves.length; i++) {
+    let a = moves[i].from;
+    for (let j = i; j < moves.length; j++) {
+      let b = moves[j].from;
+
+      if (b > a) {
+        moves[j].from--;
+      }
+    }
+  }
+
+  // Interleave the moves so they can be applied one by one rather than all at once
+  for (let i = 0; i < moves.length; i++) {
+    let a = moves[i];
+    for (let j = moves.length - 1; j > i; j--) {
+      let b = moves[j];
+
+      if (b.from < a.to) {
+        a.to++;
+      } else {
+        b.from++;
+      }
+    }
+  }
+
+  let copy = state.items.slice();
+  for (let move of moves) {
+    let [item] = copy.splice(move.from, 1);
+    copy.splice(move.to, 0, item);
+  }
+
+  return {
+    ...state,
+    items: copy
   };
 }

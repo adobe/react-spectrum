@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
-import {Item, Tabs} from '../src';
+import {act, fireEvent, render, waitFor, within} from '@testing-library/react';
+import {Item, TabList, TabPanels, Tabs} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -28,11 +28,18 @@ function renderComponent(props) {
   return render(
     <Provider theme={theme}>
       <Tabs {...props} items={items}>
-        {item => (
-          <Item key={item.name} title={item.name}>
-            {item.children}
-          </Item>
-        )}
+        <TabList>
+          {item => (
+            <Item key={item.name} title={item.name || item.children} />
+          )}
+        </TabList>
+        <TabPanels>
+          {item => (
+            <Item key={item.name} title={item.name}>
+              {item.children}
+            </Item>
+          )}
+        </TabPanels>
       </Tabs>
     </Provider>
   );
@@ -217,18 +224,32 @@ describe('Tabs', function () {
     let tree = render(
       <Provider theme={theme}>
         <Tabs>
-          {items.map(item => (
-            <Item key={item.name} title={item.name}>
-              {item.children}
-            </Item>
-          ))}
+          <TabList>
+            {items.map(item => (
+              <Item key={item.name} title={item.name || item.children} />
+            ))}
+          </TabList>
+          <TabPanels>
+            {items.map(item => (
+              <Item key={item.name}>
+                {item.children}
+              </Item>
+            ))}
+          </TabPanels>
         </Tabs>
         <Tabs>
-          {items.map(item => (
-            <Item key={item.name} title={item.name}>
-              {item.children}
-            </Item>
-          ))}
+          <TabList>
+            {items.map(item => (
+              <Item key={item.name} title={item.name || item.children} />
+            ))}
+          </TabList>
+          <TabPanels>
+            {items.map(item => (
+              <Item key={item.name}>
+                {item.children}
+              </Item>
+            ))}
+          </TabPanels>
         </Tabs>
       </Provider>
     );
@@ -369,11 +390,18 @@ describe('Tabs', function () {
     let {getByRole, rerender} = render(
       <Provider theme={theme}>
         <Tabs aria-label="Test Tabs" items={items}>
-          {item => (
-            <Item key={item.name} title={item.name}>
-              {item.children}
-            </Item>
-          )}
+          <TabList>
+            {item => (
+              <Item key={item.name} title={item.name || item.children} />
+            )}
+          </TabList>
+          <TabPanels>
+            {item => (
+              <Item key={item.name}>
+                {item.children}
+              </Item>
+            )}
+          </TabPanels>
         </Tabs>
       </Provider>
     );
@@ -400,11 +428,18 @@ describe('Tabs', function () {
     rerender(
       <Provider theme={theme}>
         <Tabs aria-label="Test Tabs" items={newItems}>
-          {item => (
-            <Item key={item.name} title={item.name}>
-              {item.children}
-            </Item>
-          )}
+          <TabList>
+            {item => (
+              <Item key={item.name} title={item.name || item.children} />
+            )}
+          </TabList>
+          <TabPanels>
+            {item => (
+              <Item key={item.name}>
+                {item.children}
+              </Item>
+            )}
+          </TabPanels>
         </Tabs>
       </Provider>
     );
@@ -420,12 +455,19 @@ describe('Tabs', function () {
 
     rerender(
       <Provider theme={theme}>
-        <Tabs aria-label="Test Tabs" items={newItems} orientation="vertical">
-          {item => (
-            <Item key={item.name} title={item.name}>
-              {item.children}
-            </Item>
-          )}
+        <Tabs items={newItems} orientation="vertical">
+          <TabList>
+            {item => (
+              <Item key={item.name} title={item.name || item.children} />
+            )}
+          </TabList>
+          <TabPanels>
+            {item => (
+              <Item key={item.name}>
+                {item.children}
+              </Item>
+            )}
+          </TabPanels>
         </Tabs>
       </Provider>
     );
@@ -458,11 +500,18 @@ describe('Tabs', function () {
     rerender(
       <Provider theme={theme}>
         <Tabs aria-label="Test Tabs" items={newItems}>
-          {item => (
-            <Item key={item.name} title={item.name}>
-              {item.children}
-            </Item>
-          )}
+          <TabList>
+            {item => (
+              <Item key={item.name} title={item.name} />
+            )}
+          </TabList>
+          <TabPanels>
+            {item => (
+              <Item key={item.name}>
+                {item.children}
+              </Item>
+            )}
+          </TabPanels>
         </Tabs>
       </Provider>
     );
@@ -520,5 +569,72 @@ describe('Tabs', function () {
     expect(onSelectionChange).toHaveBeenCalledWith('');
     tabpanel = getByRole('tabpanel');
     expect(tabpanel).toHaveTextContent(items[1].children);
+  });
+
+  it('tabpanel should have tabIndex=0 only when there are no focusable elements', async function () {
+    let {getByRole, getAllByRole} = render(
+      <Provider theme={theme}>
+        <Tabs maxWidth={500}>
+          <TabList>
+            <Item>Tab 1</Item>
+            <Item>Tab 2</Item>
+          </TabList>
+          <TabPanels>
+            <Item>
+              <input />
+            </Item>
+            <Item>
+              <input disabled />
+            </Item>
+          </TabPanels>
+        </Tabs>
+      </Provider>
+    );
+
+    let tabpanel = getByRole('tabpanel');
+    await waitFor(() => expect(tabpanel).not.toHaveAttribute('tabindex'));
+
+    let tabs = getAllByRole('tab');
+    triggerPress(tabs[1]);
+    tabpanel = getByRole('tabpanel');
+
+    await waitFor(() => expect(tabpanel).toHaveAttribute('tabindex', '0'));
+
+    triggerPress(tabs[0]);
+    tabpanel = getByRole('tabpanel');
+
+    await waitFor(() => expect(tabpanel).not.toHaveAttribute('tabindex'));
+  });
+
+  it('TabPanel children do not share values between panels', () => {
+    let {getByDisplayValue, getAllByRole, getByTestId} = render(
+      <Provider theme={theme}>
+        <Tabs maxWidth={500}>
+          <TabList>
+            <Item>Tab 1</Item>
+            <Item>Tab 2</Item>
+          </TabList>
+          <TabPanels>
+            <Item>
+              <input data-testid="panel1_input" />
+            </Item>
+            <Item>
+              <input disabled data-testid="panel2_input" />
+            </Item>
+          </TabPanels>
+        </Tabs>
+      </Provider>
+    );
+
+    let tabPanelInput = getByTestId('panel1_input');
+    expect(tabPanelInput.value).toBe('');
+    tabPanelInput.value = 'A String';
+    expect(getByDisplayValue('A String')).toBeTruthy();
+
+    let tabs = getAllByRole('tab');
+    triggerPress(tabs[1]);
+
+    tabPanelInput = getByTestId('panel2_input');
+    expect(tabPanelInput.value).toBe('');
   });
 });

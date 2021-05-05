@@ -1,6 +1,5 @@
 {
-  "Decrement": "감소",
-  "Enter a number": "숫자 입력",
-  "Increment": "증가",
-  "Spin button number field": "Spin button number field"
+  "decrease": "{fieldLabel} 감소",
+  "increase": "{fieldLabel} 증가",
+  "numberField": "번호 필드"
 }

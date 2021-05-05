@@ -1,0 +1,7 @@
+{
+  "buttonLabel": "Показати пропозиції",
+  "countAnnouncement": "{optionCount, plural, one {# параметр} other {# параметри(-ів)}} доступно.",
+  "focusAnnouncement": "{isGroupChange, select, true {Введена група {groupTitle}, з {groupCount, plural, one {# параметр} other {# параметри(-ів)}}. } other {}}{optionText}{isSelected, select, true {, вибрано} other {}}",
+  "listboxLabel": "Пропозиції",
+  "selectedAnnouncement": "{optionText}, вибрано"
+}

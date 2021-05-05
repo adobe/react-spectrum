@@ -1,6 +1,5 @@
 {
-  "Decrement": "Amortizare",
-  "Enter a number": "Introduceţi un număr",
-  "Increment": "Creştere",
-  "Spin button number field": "Spin button number field"
+  "decrease": "Scădere {fieldLabel}",
+  "increase": "Creștere {fieldLabel}",
+  "numberField": "Câmp numeric"
 }

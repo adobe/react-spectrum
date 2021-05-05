@@ -116,8 +116,8 @@ For more information, see [Selection](/react-stately/selection.html).
 
 ## Example
 
-This example uses HTML `<ul>` and `<li>` elements to represent the menu, and applies
-props from <TypeLink links={docs.links} type={docs.exports.useMenu} />
+This example uses HTML `<ul>` and `<li>` elements to represent the menu with the first item `disabled`, and applies
+props from <TypeLink links={docs.links} type={docs.exports.useMenu}/>
 and <TypeLink links={docs.links} type={docs.exports.useMenuItem} />.
 
 ```tsx example
@@ -158,9 +158,11 @@ function Menu(props) {
 function MenuItem({item, state, onAction}) {
   // Get props for the menu item element
   let ref = React.useRef();
+  let isDisabled = state.disabledKeys.has(item.key);
+
   let {menuItemProps} = useMenuItem({
     key: item.key,
-    isDisabled: item.isDisabled,
+    isDisabled,
     onAction
   }, state, ref);
 
@@ -178,14 +180,14 @@ function MenuItem({item, state, onAction}) {
         color: isFocused ? 'white' : null,
         padding: '2px 5px',
         outline: 'none',
-        cursor: 'pointer'
+        cursor: isDisabled ? 'default' : 'pointer'
       }}>
       {item.rendered}
     </li>
   );
 }
 
-<Menu onAction={alert} aria-label="Actions">
+<Menu onAction={alert} aria-label="Actions" disabledKeys={['one']}>
   <Item key="one">One</Item>
   <Item key="two">Two</Item>
   <Item key="three">Three</Item>
@@ -288,9 +290,11 @@ function MenuItem({item, state, onAction}) {
   // Same as in the first example...
 ///- begin collapse -///
   let ref = React.useRef();
+  let isDisabled = state.disabledKeys.has(item.key);
+
   let {menuItemProps} = useMenuItem({
     key: item.key,
-    isDisabled: item.isDisabled,
+    isDisabled,
     onAction
   }, state, ref);
   let [isFocused, setFocused] = React.useState(false);
@@ -376,6 +380,8 @@ function Menu(props) {
 function MenuItem({item, state, onAction}) {
   // Get props for the menu item element and child elements
   let ref = React.useRef();
+  let isDisabled = state.disabledKeys.has(item.key);
+
   let {
     menuItemProps,
     labelProps,
@@ -383,7 +389,7 @@ function MenuItem({item, state, onAction}) {
     keyboardShortcutProps
   } = useMenuItem({
     key: item.key,
-    isDisabled: item.isDisabled,
+    isDisabled,
     onAction
   }, state, ref);
 
