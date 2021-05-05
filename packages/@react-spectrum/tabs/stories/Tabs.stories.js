@@ -18,7 +18,7 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import Calendar from '@spectrum-icons/workflow/Calendar';
 import Dashboard from '@spectrum-icons/workflow/Dashboard';
 import {Item, TabList, TabPanels, Tabs} from '..';
-import React from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
 
@@ -208,7 +208,31 @@ storiesOf('Tabs', module)
         </TabPanels>
       </Tabs>
     )
+  )
+  .add(
+    'Tab 1 controlled child',
+    () => {
+      let [tab1Text, setTab1Text] = useState();
+
+      return (
+        <Tabs maxWidth={500}>
+          <TabList>
+            <Item>Tab 1</Item>
+            <Item>Tab 2</Item>
+          </TabList>
+          <TabPanels>
+            <Item>
+              <TextField label="Tab 1" value={tab1Text} onChange={setTab1Text} />
+            </Item>
+            <Item>
+              <TextField label="Tab 2" />
+            </Item>
+          </TabPanels>
+        </Tabs>
+      );
+    }
   );
+
 
 function render(props = {}) {
   return (

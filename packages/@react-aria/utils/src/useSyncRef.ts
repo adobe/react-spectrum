@@ -10,33 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-.react-spectrum-Table {
-  user-select: none;
-  display: flex;
-  flex-direction: column;
+import {MutableRefObject, RefObject} from 'react';
+import {useLayoutEffect} from './';
+
+interface ContextValue<T> {
+  ref?: MutableRefObject<T>
 }
 
-.react-spectrum-Table-cell {
-  display: flex;
-  align-items: center;
-}
-
-.react-spectrum-Table-cellWrapper > .react-spectrum-Table-cell {
-  height: 100%;
-}
-
-.react-spectrum-Table-cell--alignCenter {
-  justify-content: center;
-}
-
-.react-spectrum-Table-cell--alignEnd {
-  justify-content: flex-end;
-}
-
-.react-spectrum-Table-centeredWrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
+// Syncs ref from context with ref passed to hook
+export function useSyncRef<T>(context: ContextValue<T>, ref: RefObject<T>) {
+  useLayoutEffect(() => {
+    if (context && context.ref) {
+      context.ref.current = ref.current;
+      return () => {
+        context.ref.current = null;
+      };
+    }
+  }, [context, ref]);
 }

@@ -134,7 +134,7 @@ tbody.spectrum-Table-body {
     }
   }
 
-  &:active .spectrum-Table-cell:not(.is-disabled) {
+  &.is-active .spectrum-Table-cell:not(.is-disabled) {
     background-color: var(--spectrum-table-row-background-color-down);
   }
 
@@ -200,7 +200,7 @@ tbody.spectrum-Table-body {
       background-color: var(--spectrum-table-quiet-row-background-color-hover);
     }
 
-    &:active .spectrum-Table-cell:not(.is-disabled) {
+    &.is-active .spectrum-Table-cell:not(.is-disabled) {
       background-color: var(--spectrum-table-quiet-row-background-color-down);
     }
 
