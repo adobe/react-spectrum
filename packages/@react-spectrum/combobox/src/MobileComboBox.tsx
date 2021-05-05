@@ -16,21 +16,22 @@ import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {chain, mergeProps, useId} from '@react-aria/utils';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, unwrapDOMRef} from '@react-spectrum/utils';
+import {classNames} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
 import comboboxStyles from './combobox.css';
 import {DismissButton} from '@react-aria/overlays';
 import {Field} from '@react-spectrum/label';
-import {FocusableRef, FocusableRefValue, ValidationState} from '@react-types/shared';
+import {FocusableRef, ValidationState} from '@react-types/shared';
 import {FocusRing, FocusScope} from '@react-aria/focus';
 import {focusSafely} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
+import {ListLayout} from '@react-stately/layout';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
+import React, {HTMLAttributes, InputHTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality, useHover} from '@react-aria/interactions';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
@@ -55,7 +56,8 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     isQuiet,
     isDisabled,
     validationState,
-    isReadOnly
+    isReadOnly,
+    menuTrigger = 'input'
   } = props;
 
   let {contains} = useFilter({sensitivity: 'base'});
@@ -63,12 +65,30 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     ...props,
     defaultFilter: contains,
     allowsEmptyCollection: true,
-    shouldCloseOnBlur: false
+    shouldCloseOnBlur: true
   });
 
   let buttonRef = useRef<HTMLElement>();
   let domRef = useFocusableRef(ref, buttonRef);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
+  let layout = useListBoxLayout(state);
+  let popoverRef = useRef<HTMLDivElement>();
+  let listBoxRef = useRef<HTMLDivElement>();
+  let inputRef = useRef<HTMLInputElement>();
+
+  let {inputProps: trayInputProps, listBoxProps, labelProps: trayInputLabelProps} = useComboBox(
+    {
+      ...props,
+      // completionMode,
+      keyboardDelegate: layout,
+      buttonRef,
+      popoverRef,
+      listBoxRef,
+      inputRef,
+      menuTrigger
+    },
+    state
+  );
 
   let {labelProps, fieldProps} = useLabel({
     ...props,
@@ -92,7 +112,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
         ref={domRef}
         includeNecessityIndicatorInAccessibilityName>
         <ComboBoxButton
-          {...mergeProps(triggerProps, fieldProps)}
+          {...mergeProps(triggerProps, fieldProps, {onBlur: trayInputProps.onBlur, onFocus: trayInputProps.onFocus, autoFocus: props.autoFocus})}
           ref={buttonRef}
           isQuiet={isQuiet}
           isDisabled={isDisabled}
@@ -106,6 +126,13 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
         <ComboBoxTray
           {...props}
           overlayProps={overlayProps}
+          inputRef={inputRef}
+          popoverRef={popoverRef}
+          listBoxRef={listBoxRef}
+          inputProps={trayInputProps}
+          listBoxProps={listBoxProps}
+          labelProps={trayInputLabelProps}
+          layout={layout}
           state={state} />
       </Tray>
     </>
@@ -266,48 +293,42 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
 interface ComboBoxTrayProps extends SpectrumComboBoxProps<unknown> {
   state: ComboBoxState<unknown>,
   overlayProps: HTMLAttributes<HTMLElement>,
-  loadingIndicator?: ReactElement
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  listBoxProps: HTMLAttributes<HTMLElement>,
+  labelProps: HTMLAttributes<HTMLElement>,
+  loadingIndicator?: ReactElement,
+  inputRef: RefObject<HTMLInputElement>,
+  popoverRef: RefObject<HTMLDivElement>,
+  listBoxRef: RefObject<HTMLDivElement>,
+  layout: ListLayout<unknown>
 }
 
 function ComboBoxTray(props: ComboBoxTrayProps) {
   let {
     // completionMode = 'suggest',
-    menuTrigger = 'input',
     state,
     isDisabled,
     validationState,
     label,
     overlayProps,
     loadingState,
-    onLoadMore
+    onLoadMore,
+    inputRef,
+    popoverRef,
+    listBoxRef,
+    inputProps,
+    listBoxProps,
+    labelProps,
+    layout
   } = props;
 
   let timeout = useRef(null);
   let [showLoading, setShowLoading] = useState(false);
-  let inputRef = useRef<HTMLInputElement>();
-  let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
-  let popoverRef = useRef<HTMLDivElement>();
-  let listBoxRef = useRef<HTMLDivElement>();
-  let layout = useListBoxLayout(state);
   let formatMessage = useMessageFormatter(intlMessages);
-
-  let {inputProps, listBoxProps, labelProps} = useComboBox(
-    {
-      ...props,
-      // completionMode,
-      keyboardDelegate: layout,
-      buttonRef: unwrapDOMRef(buttonRef),
-      popoverRef: popoverRef,
-      listBoxRef,
-      inputRef,
-      menuTrigger
-    },
-    state
-  );
 
   React.useEffect(() => {
     focusSafely(inputRef.current);
-  }, []);
+  }, [inputRef]);
 
   let {dialogProps} = useDialog({
     'aria-labelledby': useId(labelProps.id)
