@@ -423,6 +423,15 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     lastInputValue.current = inputValue;
   }, [loadingState, inputValue, showLoading]);
 
+  let onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    // Ignore blur if focus moves from tray input to something outside the popover (i.e. tray is being closed via tapping outside the tray -> focus will return to combobox button -> prevent menuTrigger = focus from reopening the combobox tray).
+    if (e.target === inputRef?.current && !popoverRef.current?.contains(e.relatedTarget as HTMLElement)) {
+      return;
+    }
+
+    inputProps.onBlur(e);
+  };
+
   return (
     <FocusScope restoreFocus contain>
       <div
@@ -438,7 +447,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
         <TextFieldBase
           label={label}
           labelProps={labelProps}
-          inputProps={inputProps}
+          inputProps={{...inputProps, onBlur}}
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={showLoading && loadingState === 'filtering'}
