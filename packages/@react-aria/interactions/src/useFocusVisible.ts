@@ -26,7 +26,8 @@ interface FocusVisibleProps {
   /** Whether the element is a text input. */
   isTextInput?: boolean,
   /** Whether the element will be auto focused. */
-  autoFocus?: boolean
+  autoFocus?: boolean,
+  cb: (vis: boolean) => void
 }
 
 interface FocusVisibleResult {
@@ -61,6 +62,7 @@ function isValidKey(e: KeyboardEvent) {
 function handleKeyboardEvent(e: KeyboardEvent) {
   hasEventBeforeFocus = true;
   if (isValidKey(e)) {
+    console.log('kb modality')
     currentModality = 'keyboard';
     triggerChangeHandlers('keyboard', e);
   }
@@ -196,24 +198,27 @@ export function useInteractionModality(): Modality {
 export function useFocusVisible(props: FocusVisibleProps = {}): FocusVisibleResult {
   setupGlobalFocusEvents();
 
-  let {isTextInput, autoFocus} = props;
-  let [isFocusVisibleState, setFocusVisible] = useState(autoFocus || isFocusVisible());
-  useEffect(() => {
-    let handler = (modality: Modality, e: HandlerEvent) => {
-      // If this is a text input component, don't update the focus visible style when
-      // typing except for when the Tab and Escape keys are pressed.
-      if (isTextInput && modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]) {
-        return;
-      }
+  // let {isTextInput, autoFocus} = props;
+  // let [isFocusVisibleState, setFocusVisible] = useState(autoFocus || isFocusVisible());
+  // useEffect(() => {
+  //   let handler = (modality: Modality, e: HandlerEvent) => {
+  //     // If this is a text input component, don't update the focus visible style when
+  //     // typing except for when the Tab and Escape keys are pressed.
+  //     if (isTextInput && modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]) {
+  //       return;
+  //     }
+  //
+  //     setFocusVisible(isFocusVisible());
+  //   };
+  //
+  //   changeHandlers.add(handler);
+  //   return () => {
+  //     changeHandlers.delete(handler);
+  //   };
+  // }, [isTextInput]);
 
-      setFocusVisible(isFocusVisible());
-    };
-
-    changeHandlers.add(handler);
-    return () => {
-      changeHandlers.delete(handler);
-    };
-  }, [isTextInput]);
-
-  return {isFocusVisible: isFocusVisibleState};
+  return {
+    add: changeHandlers.add.bind(changeHandlers),
+    del: changeHandlers.delete.bind(changeHandlers)
+  };
 }
