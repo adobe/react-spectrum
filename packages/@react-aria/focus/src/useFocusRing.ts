@@ -1,4 +1,4 @@
-import {HTMLAttributes, useRef, useState} from 'react';
+import {HTMLAttributes, useState} from 'react';
 import {useFocus, useFocusEmitter, useFocusWithin} from '@react-aria/interactions';
 
 interface FocusRingProps {
@@ -38,15 +38,12 @@ export function useFocusRing(props: FocusRingProps = {}): FocusRingAria {
   let [isFocused, setFocused] = useState(false);
   let [isFocusWithin, setFocusWithin] = useState(false);
   let [isFocusVisible, setFocusVisible] = useState(false);
-  let lastKnownVisibleState = useRef(false);
 
-  useFocusEmitter((isFocusVisible) => {
-    lastKnownVisibleState.current = isFocusVisible;
-    // rerender only if component is focused or component is losing focus
-    if (isFocused || (lastKnownVisibleState.current && !isFocusVisible)) {
-      setFocusVisible(lastKnownVisibleState.current);
-    }
-  }, [isFocused]);
+  // trigger on isFocusVisible state change when component is focused and modality changes
+  // or when the component loses focus
+  useFocusEmitter(isFocusVisible => {
+    setFocusVisible((within ? isFocusWithin : isFocused) && isFocusVisible);
+  }, [within, isFocusWithin, isFocused]);
 
   let {focusProps} = useFocus({
     isDisabled: within,
@@ -59,7 +56,7 @@ export function useFocusRing(props: FocusRingProps = {}): FocusRingAria {
 
   return {
     isFocused: within ? isFocusWithin : isFocused,
-    isFocusVisible: (within ? isFocusWithin : isFocused) && isFocusVisible,
+    isFocusVisible,
     focusProps: within ? focusWithinProps : focusProps
   };
 }
