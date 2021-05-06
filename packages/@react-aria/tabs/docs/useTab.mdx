@@ -1,0 +1,153 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/tabs';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
+import packageData from '@react-aria/tabs/package.json';
+import Anatomy from './anatomy.svg';
+
+```jsx import
+import {useTab, useTabList, useTabPanel} from '@react-aria/tabs';
+import {useTabListState} from '@react-stately/tabs';
+```
+
+---
+category: Navigation
+keywords: [tabs, aria]
+---
+
+# useTabList
+
+<p>{docs.exports.useTab.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useTabList', 'useTab', 'useTabPanel']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices/#tabpanel'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useTabList} links={docs.links} />
+<FunctionAPI function={docs.exports.useTab} links={docs.links} />
+<FunctionAPI function={docs.exports.useTabPanel} links={docs.links} />
+
+## Features
+
+Tabs provide a list of tabs that a user can select from to change the panels contents. `useTab`, `useTabList`, and `useTabPanel` help implement these in an accessible way.
+
+* Support for mouse, touch, and keyboard interactions on tabs
+* Support for LTR and RTL keyboard navigation
+* Support for disabled tabs
+* Support for accessibly linking Tabs and the associated Tab Panel
+
+
+## Anatomy
+
+<Anatomy />
+
+Tabs consist of a tablist with one or more visually separated tabs. Each tab has associated content and only the selected tab's content is shown.
+Each Tab can be clicked, tapped, or navigated to via arrow keys. Depending on the mode, the tab can be selected by receiving keyboard focus or it can be selected with the <kbd>Enter</kbd> key.
+
+`useTabList` returns props to spread onto any element containing the tabs:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useTabList.return.id].properties} />
+</TypeContext.Provider>
+
+`useTab` returns props to be spread onto the individual tabs:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useTab.return.id].properties} />
+</TypeContext.Provider>
+
+`useTabPanel` returns props to spread onto the container for the tab content:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useTabPanel.return.id].properties} />
+</TypeContext.Provider>
+
+## Example
+
+```tsx example
+import {Item} from '@react-stately/collections';
+import {useFocus} from '@react-aria/interactions';
+import {mergeProps} from '@react-aria/utils';
+
+function Tabs(props) {
+  return (
+    <div>
+    </div>
+  );
+}
+function TabList(props) {
+  let state = useTabListState(props);
+  let {tabListProps} = useTabList(props, state);
+  return (
+    <div {...tabListProps}>
+    </div>
+  );
+}
+function Tab({item, state}) {
+  let {key, rendered} = item;
+  let ref = useRef<HTMLDivElement>();
+  let {tabProps} = useTab({key, isDisabled}, state, ref);
+  return (
+    <div {...tabProps}>
+      {item.rendered}
+    </div>
+  );
+}
+function TabPanel(props) {
+  let {tabPanelProps} = useTabPanel(props);
+  return (
+    <div {...tabPanelProps}>
+    </div>
+  );
+}
+
+<Tabs aria-label="History of Ancient Rome">
+  <TabList>
+    <Item key="FoR">Founding of Rome</Item>
+    <Item key="MaR">Monarchy and Republic</Item>
+    <Item key="Emp">Empire</Item>
+  </TabList>
+  <TabPanels>
+    <Item key="FoR">
+      Arma virumque cano, Troiae qui primus ab oris.
+    </Item>
+    <Item key="MaR">
+      Senatus Populusque Romanus.
+    </Item>
+    <Item key="Emp">
+      Alea jacta est.
+    </Item>
+  </TabPanels>
+</Tabs>
+```
+
+
+## Navigation links
+
+This example is similar to the previous one, except the individual breadcrumbs
+are native navigation links to other pages rather than handled by JavaScript.
+
+
+## Breadcrumbs as a heading
+
+If you use breadcrumbs in the context where a heading would normally be used,
+you should make sure that the proper `elementType` for each breadcrumb is communicated to
+`useBreadcrumbItem` so that you receive the correct `breadcrumbItemProps` to spread on your breadcrumb.
+This can be seen in the example below where we specify that the last breadcrumb has elementType `h3` and all other
+breadcrumbs are of type `a`.
+

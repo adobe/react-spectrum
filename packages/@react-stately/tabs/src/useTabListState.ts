@@ -14,8 +14,13 @@ import {SingleSelectListState, useSingleSelectListState} from '@react-stately/li
 import {TabListProps} from '@react-types/tabs';
 import {useEffect} from 'react';
 
+
 export interface TabListState<T> extends SingleSelectListState<T> {}
 
+/**
+ * Provides state management for a Tabs component. Tabs include a TabList which tracks
+ * which tab is currently selected and displays the content associated with that Tab in a TabPanel.
+ */
 export function useTabListState<T extends object>(props: TabListProps<T>): TabListState<T> {
   let state = useSingleSelectListState<T>({
     ...props,
