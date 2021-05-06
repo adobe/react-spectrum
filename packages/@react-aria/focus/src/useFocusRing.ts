@@ -28,6 +28,11 @@ interface FocusRingAria {
   focusProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Determines whether a focus ring should be shown to indicate keyboard focus.
+ * Focus rings are visible only when the user is interacting with a keyboard,
+ * not with a mouse, touch, or other input methods.
+ */
 export function useFocusRing(props: FocusRingProps = {}): FocusRingAria {
   let {within} = props;
   let [isFocused, setFocused] = useState(false);
@@ -46,7 +51,7 @@ export function useFocusRing(props: FocusRingProps = {}): FocusRingAria {
 
   let {focusProps} = useFocus({
     isDisabled: within,
-    onFocusChange: (focusChange) => setFocused(focusChange)
+    onFocusChange: setFocused
   });
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !within,
