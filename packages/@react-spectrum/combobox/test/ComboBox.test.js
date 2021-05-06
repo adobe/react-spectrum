@@ -4334,6 +4334,100 @@ describe('ComboBox', function () {
       expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText('Two').id} ${getByLabelText('(invalid)').id}`);
     });
 
+    it('combobox value resets on combobox button blur', function () {
+      let {getByRole, getByTestId, getByText} = renderComboBox({defaultSelectedKey: '2'});
+      let button = getByRole('button');
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      let trayInput = within(tray).getByRole('searchbox');
+      expect(trayInput.value).toBe('Two');
+      typeText(trayInput, 'r');
+
+      act(() => {
+        triggerPress(document.body);
+        jest.runAllTimers();
+        jest.runAllTimers();
+      });
+
+      expect(() => getByTestId('tray')).toThrow();
+      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText('Twor').id}`);
+
+      act(() => {
+        button.blur();
+        jest.runAllTimers();
+      });
+      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText('Two').id}`);
+    });
+
+    it('menutrigger=focus doesn\'t reopen the tray on close', function () {
+      let {getByRole, getByTestId} = renderComboBox({menuTrigger: 'focus'});
+      let button = getByRole('button');
+
+      act(() => {
+        button.focus();
+        jest.runAllTimers();
+      });
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      let trayInput = within(tray).getByRole('searchbox');
+
+      act(() => {
+        trayInput.blur();
+        triggerPress(document.body);
+        jest.runAllTimers();
+      });
+
+      expect(() => getByTestId('tray')).toThrow();
+    });
+
+    it('combobox button is focused when autoFocus is true', function () {
+      let {getByRole} = renderComboBox({autoFocus: true});
+      let button = getByRole('button');
+      expect(document.activeElement).toBe(button);
+    });
+
+    it('combobox tray doesn\'t open when controlled input value is updated', function () {
+      let {getByRole, rerender, getByTestId} = render(<ExampleComboBox inputValue="One" />);
+      let button = getByRole('button');
+
+      act(() => {
+        button.focus();
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      let trayInput = within(tray).getByRole('searchbox');
+
+      act(() => {
+        trayInput.blur();
+        triggerPress(document.body);
+        jest.runAllTimers();
+      });
+
+      expect(() => getByTestId('tray')).toThrow();
+
+      act(() => {
+        button.blur();
+        jest.runAllTimers();
+      });
+
+      rerender(<ExampleComboBox inputValue="Two" />);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(() => getByTestId('tray')).toThrow();
+    });
+
     describe('refs', function () {
       it('attaches a ref to the label wrapper', function () {
         let ref = React.createRef();
