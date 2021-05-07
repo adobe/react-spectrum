@@ -27,25 +27,7 @@ storiesOf('Button/ActionButton', module)
   )
   .add(
     'icon',
-    () => (
-      <Flex gap="size-100">
-        <ActionButton
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}>
-          <Add />
-          <Text>Default</Text>
-        </ActionButton>
-        <ActionButton
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isDisabled>
-          <Text>Disabled</Text>
-          <Add />
-        </ActionButton>
-      </Flex>
-    )
+    () => renderWithIcon()
   )
   .add(
     'icon only',
@@ -80,8 +62,8 @@ storiesOf('Button/ActionButton', module)
     () => (
       <View backgroundColor="seafoam-600" padding="size-1000">
         <Flex direction="column" rowGap="size-150">
-          {render({staticColor: 'white'})}
-          {render({staticColor: 'white', isQuiet: true})}
+          {renderWithIcon({staticColor: 'white'})}
+          {renderWithIcon({staticColor: 'white', isQuiet: true})}
         </Flex>
       </View>
     )
@@ -91,8 +73,8 @@ storiesOf('Button/ActionButton', module)
     () => (
       <View backgroundColor="yellow-400" padding="size-1000">
         <Flex direction="column" rowGap="size-150">
-          {render({staticColor: 'black'})}
-          {render({staticColor: 'black', isQuiet: true})}
+          {renderWithIcon({staticColor: 'black'})}
+          {renderWithIcon({staticColor: 'black', isQuiet: true})}
         </Flex>
       </View>
     )
@@ -115,6 +97,30 @@ function render(props = {}) {
         isDisabled
         {...props}>
         Disabled
+      </ActionButton>
+    </Flex>
+  );
+}
+
+function renderWithIcon(props = {}) {
+  return (
+    <Flex gap="size-100">
+      <ActionButton
+        onPress={action('press')}
+        onPressStart={action('pressstart')}
+        onPressEnd={action('pressend')}
+        {...props}>
+        <Add />
+        <Text>Default</Text>
+      </ActionButton>
+      <ActionButton
+        onPress={action('press')}
+        onPressStart={action('pressstart')}
+        onPressEnd={action('pressend')}
+        isDisabled
+        {...props}>
+        <Text>Disabled</Text>
+        <Add />
       </ActionButton>
     </Flex>
   );

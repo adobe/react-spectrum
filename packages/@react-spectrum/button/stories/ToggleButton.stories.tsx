@@ -11,7 +11,8 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Flex, View} from '@adobe/react-spectrum';
+import Add from '@spectrum-icons/workflow/Add';
+import {Flex, Text, View} from '@adobe/react-spectrum';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {ToggleButton} from '../';
@@ -57,13 +58,16 @@ storiesOf('Button/ToggleButton', module)
 function render(props = {}) {
   return (<Flex gap="size-100">
     <ToggleButton onChange={action('change')} onPress={action('press')} {...props}>
-      Default
+      <Add />
+      <Text>Default</Text>
     </ToggleButton>
     <ToggleButton onChange={action('change')} onPress={action('press')} defaultSelected {...props}>
-      Selected
+      <Add />
+      <Text>Selected</Text>
     </ToggleButton>
     <ToggleButton defaultSelected isDisabled {...props}>
-      Disabled + selected
+      <Add />
+      <Text>Disabled + selected</Text>
     </ToggleButton>
   </Flex>);
 }
