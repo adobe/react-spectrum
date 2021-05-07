@@ -65,7 +65,7 @@ Each Tab can be clicked, tapped, or navigated to via arrow keys. Depending on th
   <InterfaceType properties={docs.links[docs.exports.useTabList.return.id].properties} />
 </TypeContext.Provider>
 
-`useTab` returns props to be spread onto the individual tabs:
+`useTab` returns props to be spread onto each individual tab:
 
 <TypeContext.Provider value={docs.links}>
   <InterfaceType properties={docs.links[docs.exports.useTab.return.id].properties} />
@@ -79,59 +79,117 @@ Each Tab can be clicked, tapped, or navigated to via arrow keys. Depending on th
 
 ## Example
 
+This example displays a basic list of tabs. The currently selected Tab get a tabindex of 0 while the rest are set to -1 ensuring that the Tab list is only a single tab stop. The selected tab gets a different style so it's obvious which one is currently selected. Our hooks handle the aria properties that associate the tabs with their tab panel for screen readers. In the tab panel itself, we only render the currently selected item.
+
 ```tsx example
 import {Item} from '@react-stately/collections';
 import {useFocus} from '@react-aria/interactions';
 import {mergeProps} from '@react-aria/utils';
 
 function Tabs(props) {
+  let state = useTabListState(props);
+  let tablistRef = React.useRef();
+  let tabpanelRef = React.useRef();
+  let {tabListProps} = useTabList(props, state, tablistRef);
+  let {tabPanelProps} = useTabPanel(props, state, tabpanelRef);
   return (
     <div>
-    </div>
-  );
-}
-function TabList(props) {
-  let state = useTabListState(props);
-  let {tabListProps} = useTabList(props, state);
-  return (
-    <div {...tabListProps}>
+      <div {...tabListProps} ref={tablistRef}>
+        <div style={{display: 'flex', borderBottom: '1px solid lightgrey'}}>
+          {[...state.collection].map((item) => (
+            <Tab key={item.key} item={item} state={state} />
+          ))}
+        </div>
+      </div>
+      <div {...tabPanelProps} ref={tabpanelRef} style={{padding: '10px'}}>
+        {state.selectedItem && state.selectedItem.props.children}
+      </div>
     </div>
   );
 }
 function Tab({item, state}) {
   let {key, rendered} = item;
-  let ref = useRef();
-  let {tabProps} = useTab({key, isDisabled}, state, ref);
+  let ref = React.useRef();
+  let {tabProps} = useTab({key}, state, ref);
+  let isSelected = state.selectedKey === key;
+  let selectedStyle = {
+    borderBottom: '3px solid orange'
+  };
+  let tabStyle = {
+    padding: '10px',
+    ...(isSelected ? selectedStyle : {})
+  };
   return (
-    <div {...tabProps}>
+    <div {...tabProps} ref={ref} style={tabStyle}>
       {item.rendered}
-    </div>
-  );
-}
-function TabPanel(props) {
-  let {tabPanelProps} = useTabPanel(props);
-  return (
-    <div {...tabPanelProps}>
     </div>
   );
 }
 
 <Tabs aria-label="History of Ancient Rome">
-  <TabList>
-    <Item key="FoR">Founding of Rome</Item>
-    <Item key="MaR">Monarchy and Republic</Item>
-    <Item key="Emp">Empire</Item>
-  </TabList>
-  <TabPanels>
-    <Item key="FoR">
-      Arma virumque cano, Troiae qui primus ab oris.
-    </Item>
-    <Item key="MaR">
-      Senatus Populusque Romanus.
-    </Item>
-    <Item key="Emp">
-      Alea jacta est.
-    </Item>
-  </TabPanels>
+  <Item key="FoR" title="Founding of Rome">Arma virumque cano, Troiae qui primus ab oris.</Item>
+  <Item key="MaR" title="Monarchy and Republic">Senatus Populusque Romanus.</Item>
+  <Item key="Emp" title="Empire">Alea jacta est.</Item>
+</Tabs>
+```
+
+## With focusable content
+
+When a Tab Panel has focusable content, there is a difference in behavior. When nothing inside is focusable, the entire `role="tabpanel"` is given a `tabIndex=0`, this is so that the content can be navigated to. When there is something focusable inside, such as a textfield, then this is omitted because the textfield can receive the focus.
+Using the same example `Tabs` component from above. Try navigating from the tabs to the content for each panel using the keyboard.
+
+```tsx example
+import {TextField} from '@react-spectrum/textfield';
+import {Content} from '@react-spectrum/view';
+
+function Tabs(props) {
+  // Same as the first example...
+///- begin collapse -///
+  let state = useTabListState(props);
+  let tablistRef = React.useRef();
+  let tabpanelRef = React.useRef();
+  let {tabListProps} = useTabList(props, state, tablistRef);
+  let {tabPanelProps} = useTabPanel(props, state, tabpanelRef);
+  return (
+    <div>
+      <div {...tabListProps} ref={tablistRef}>
+        <div style={{display: 'flex', borderBottom: '1px solid lightgray'}}>
+          {[...state.collection].map((item) => (
+            <Tab key={item.key} item={item} state={state} />
+          ))}
+        </div>
+      </div>
+      <div {...tabPanelProps} ref={tabpanelRef} style={{padding: '10px'}}>
+        {state.selectedItem && state.selectedItem.props.children}
+      </div>
+    </div>
+  );
+}
+function Tab({item, state}) {
+  let {key, rendered} = item;
+  let ref = React.useRef();
+  let {tabProps} = useTab({key}, state, ref);
+  let isSelected = state.selectedKey === key;
+  let selectedStyle = {
+    borderBottom: '3px solid orange'
+  };
+  let tabStyle = {
+    padding: '10px',
+    ...(isSelected ? selectedStyle : {})
+  };
+  return (
+    <div {...tabProps} ref={ref} style={tabStyle}>
+      {item.rendered}
+    </div>
+  );
+///- end collapse -///
+}
+
+<Tabs aria-label="Notes app">
+  <Item key="item1" title="Jane Doe">
+    <Content><TextField label="Leave a note for Jane" /></Content>
+  </Item>
+  <Item key="item2" title="John Doe">Senatus Populusque Romanus.</Item>
+  <Item key="item3" title="Joe Bloggs">Alea jacta est.</Item>
 </Tabs>
 ```
