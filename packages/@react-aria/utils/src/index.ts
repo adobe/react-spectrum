@@ -24,6 +24,7 @@ export * from './useLabels';
 export * from './useUpdateEffect';
 export * from './useLayoutEffect';
 export * from './useResizeObserver';
+export * from './useSyncRef';
 export * from './getScrollParent';
 export * from './useViewportSize';
 export * from './useDescription';

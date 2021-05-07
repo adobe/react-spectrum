@@ -23,7 +23,7 @@ export function useScrollWheel(props: ScrollWheelProps, ref: RefObject<HTMLEleme
   let {onScroll, isDisabled} = props;
   let onScrollHandler = useCallback((e) => {
     // If the ctrlKey is pressed, this is a zoom event, do nothing.
-    if (isDisabled || e.ctrlKey) {
+    if (e.ctrlKey) {
       return;
     }
 
@@ -34,14 +34,17 @@ export function useScrollWheel(props: ScrollWheelProps, ref: RefObject<HTMLEleme
     if (onScroll) {
       onScroll({deltaX: e.deltaX, deltaY: e.deltaY});
     }
-  }, [onScroll, isDisabled]);
+  }, [onScroll]);
 
   useEffect(() => {
     let elem = ref.current;
+    if (isDisabled) {
+      return;
+    }
     elem.addEventListener('wheel', onScrollHandler);
 
     return () => {
       elem.removeEventListener('wheel', onScrollHandler);
     };
-  }, [onScrollHandler, ref]);
+  }, [onScrollHandler, ref, isDisabled]);
 }
