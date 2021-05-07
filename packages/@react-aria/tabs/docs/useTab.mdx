@@ -100,7 +100,7 @@ function TabList(props) {
 }
 function Tab({item, state}) {
   let {key, rendered} = item;
-  let ref = useRef<HTMLDivElement>();
+  let ref = useRef();
   let {tabProps} = useTab({key, isDisabled}, state, ref);
   return (
     <div {...tabProps}>
@@ -135,19 +135,3 @@ function TabPanel(props) {
   </TabPanels>
 </Tabs>
 ```
-
-
-## Navigation links
-
-This example is similar to the previous one, except the individual breadcrumbs
-are native navigation links to other pages rather than handled by JavaScript.
-
-
-## Breadcrumbs as a heading
-
-If you use breadcrumbs in the context where a heading would normally be used,
-you should make sure that the proper `elementType` for each breadcrumb is communicated to
-`useBreadcrumbItem` so that you receive the correct `breadcrumbItemProps` to spread on your breadcrumb.
-This can be seen in the example below where we specify that the last breadcrumb has elementType `h3` and all other
-breadcrumbs are of type `a`.
-
