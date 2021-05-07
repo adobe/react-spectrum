@@ -18,7 +18,8 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import Calendar from '@spectrum-icons/workflow/Calendar';
 import Dashboard from '@spectrum-icons/workflow/Dashboard';
 import {Item, TabList, TabPanels, Tabs} from '..';
-import React, {useState} from 'react';
+import React, {ReactNode, useState} from 'react';
+import {SpectrumTabsProps} from '@react-types/tabs';
 import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
 
@@ -212,7 +213,7 @@ storiesOf('Tabs', module)
   .add(
     'Tab 1 controlled child',
     () => {
-      let [tab1Text, setTab1Text] = useState();
+      let [tab1Text, setTab1Text] = useState('');
 
       return (
         <Tabs maxWidth={500}>
@@ -393,6 +394,12 @@ function renderWithFalsyKey(props = {}) {
   );
 }
 
+interface DynamicTabItem {
+  name: string,
+  children: ReactNode,
+  icon?: ReactNode
+}
+
 let items = [
   {name: 'Tab 1', children: 'Tab Body 1', icon: <Dashboard size="S" />},
   {name: 'Tab 2', children: 'Tab Body 2', icon: <Calendar size="S" />},
@@ -400,9 +407,9 @@ let items = [
   {name: 'Tab 4', children: 'Tab Body 4', icon: <Dashboard size="S" />},
   {name: 'Tab 5', children: 'Tab Body 5', icon: <Calendar size="S" />},
   {name: 'Tab 6', children: 'Tab Body 6', icon: <Bookmark size="S" />}
-];
+] as DynamicTabItem[];
 
-let DynamicTabs = (props = {}) => {
+let DynamicTabs = (props: Omit<SpectrumTabsProps<DynamicTabItem>, 'children'>) => {
 
   let [tabs, setTabs] = React.useState(items);
   let addTab = () => {
@@ -425,7 +432,7 @@ let DynamicTabs = (props = {}) => {
     <div style={{width: '80%'}}>
       <Tabs {...props} aria-label="Tab example" items={tabs} onSelectionChange={action('onSelectionChange')}>
         <TabList>
-          {item => (
+          {(item: DynamicTabItem) => (
             <Item key={item.name}>
               {item.icon}
               <Text>{item.name}</Text>
@@ -433,7 +440,7 @@ let DynamicTabs = (props = {}) => {
           )}
         </TabList>
         <TabPanels>
-          {item => (
+          {(item: DynamicTabItem) => (
             <Item key={item.name}>
               <Heading>{item.children}</Heading>
               <Text>
@@ -464,7 +471,7 @@ let OrientationFlip = (props = {}) => {
     <div style={{width: '80%'}}>
       <Tabs {...props} aria-label="Tab example" items={items} onSelectionChange={action('onSelectionChange')} orientation={flipOrientation ? 'horizontal' : 'vertical'}>
         <TabList>
-          {item => (
+          {(item: DynamicTabItem) => (
             <Item key={item.name}>
               {item.icon}
               <Text>{item.name}</Text>
@@ -472,7 +479,7 @@ let OrientationFlip = (props = {}) => {
           )}
         </TabList>
         <TabPanels>
-          {item => (
+          {(item: DynamicTabItem) => (
             <Item key={item.name}>
               <Heading>{item.children}</Heading>
               <Text>
@@ -517,15 +524,15 @@ let DynamicTabsWithDecoration = (props = {}) => {
     <div style={{width: '80%'}}>
       <Tabs {...props} aria-label="Tab example" items={tabs} onSelectionChange={action('onSelectionChange')}>
         <Flex direction="row" alignItems="center">
-          <TabList>
-            {item => (
+          <TabList flex="1 1 auto" UNSAFE_style={{overflow: 'hidden'}}>
+            {(item: DynamicTabItem) => (
               <Item key={item.name}>
                 {item.icon}
                 <Text>{item.name}</Text>
               </Item>
             )}
           </TabList>
-          <Flex alignItems="center" justifyContent="end" flexGrow={1} alignSelf="stretch" UNSAFE_style={{borderBottom: 'var(--spectrum-alias-border-size-thick) solid var(--spectrum-global-color-gray-200)'}}>
+          <Flex alignItems="center" justifyContent="end" flex="0 0 auto" alignSelf="stretch" UNSAFE_style={{borderBottom: 'var(--spectrum-alias-border-size-thick) solid var(--spectrum-global-color-gray-200)'}}>
             <ActionGroup marginEnd="30px" disabledKeys={tabs.length === 1 ? ['remove'] : undefined} onAction={val => val === 'add' ? addTab() : removeTab()}>
               <Item key="add">
                 <Text>Add Tab</Text>
@@ -537,7 +544,7 @@ let DynamicTabsWithDecoration = (props = {}) => {
           </Flex>
         </Flex>
         <TabPanels>
-          {item => (
+          {(item: DynamicTabItem) => (
             <Item key={item.name}>
               <Heading>{item.children}</Heading>
               <Text>
