@@ -15,16 +15,14 @@ import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React from 'react';
 import {SpectrumActionBarContainerProps} from '@react-types/actionbar';
+import styles from './actionbar.css';
 import {useProviderProps} from '@react-spectrum/provider';
-
 
 function ActionBarContainer(props: SpectrumActionBarContainerProps, ref: DOMRef<HTMLDivElement>) {
   // Grabs specific props from the closest Provider (see https://react-spectrum.adobe.com/react-spectrum/Provider.html#property-groups). Remove if your component doesn't support any of the listed props.
   props = useProviderProps(props);
 
-  const {children} = props;
-
-  // Handles RSP specific style options, UNSAFE_style, and UNSAFE_className props (see https://react-spectrum.adobe.com/react-spectrum/styling.html#style-props)
+  let {children} = props;
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
 
@@ -33,7 +31,9 @@ function ActionBarContainer(props: SpectrumActionBarContainerProps, ref: DOMRef<
       {...filterDOMProps(props)}
       {...styleProps}
       ref={domRef}
-      className={styleProps.className}>{children}</div>
+      className={classNames(styles, 'ActionBarContainer', styleProps.className)}>
+      {children}
+    </div>
   );
 }
 

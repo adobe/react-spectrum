@@ -22,9 +22,7 @@ export interface ActionBarProps<T> extends CollectionBase<T> {
   onAction?: (key: Key) => void
 }
 
-export interface SpectrumActionBarProps<T> extends ActionBarProps<T>, DOMProps, StyleProps {
-  variant: 'primary' | 'secondary' | 'warning'
-}
+export interface SpectrumActionBarProps<T> extends ActionBarProps<T>, DOMProps, StyleProps {}
 
 interface ActionBarContainerProps {
   children: ReactNode

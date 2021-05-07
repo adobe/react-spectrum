@@ -18,34 +18,28 @@ import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {Provider, useProviderProps} from '@react-spectrum/provider';
-import React from 'react';
+import React, {ReactElement} from 'react';
 import {SpectrumActionBarProps} from '@react-types/actionbar';
 import styles from './actionbar.css';
 import {Text} from '@react-spectrum/text';
 import {useMessageFormatter} from '@react-aria/i18n';
+import {useProviderProps} from '@react-spectrum/provider';
 
-function ActionBar(props: SpectrumActionBarProps, ref: DOMRef<HTMLDivElement>) {
-  // Grabs specific props from the closest Provider (see https://react-spectrum.adobe.com/react-spectrum/Provider.html#property-groups). Remove if your component doesn't support any of the listed props.
+function ActionBar<T extends object>(props: SpectrumActionBarProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
 
-  const {
+  let {
     children,
     isEmphasized,
     onAction,
     onClearSelection,
-    selectedItemCount,
-    variant,
-    ...otherProps
+    selectedItemCount
   } = props;
 
-  const innerDivRef = React.useRef<HTMLDivElement>();
-  const height = innerDivRef.current?.clientHeight;
-
-  // Handles RSP specific style options, UNSAFE_style, and UNSAFE_className props (see https://react-spectrum.adobe.com/react-spectrum/styling.html#style-props)
+  let innerDivRef = React.useRef<HTMLDivElement>();
+  let height = innerDivRef.current?.clientHeight;
   let {styleProps} = useStyleProps(selectedItemCount !== 0 ? {...props, height} : props);
   let domRef = useDOMRef(ref);
-  let providerProps = {isEmphasized};
   let formatMessage = useMessageFormatter(intlMessages);
 
   return (
@@ -56,32 +50,27 @@ function ActionBar(props: SpectrumActionBarProps, ref: DOMRef<HTMLDivElement>) {
       className={classNames(
         styles,
         'react-spectrum-ActionBar', {
-          'react-spectrum-ActionBar--primary': variant === 'primary',
-          'react-spectrum-ActionBar--secondary': variant === 'secondary',
-          'react-spectrum-ActionBar--warning': variant === 'warning',
           'react-spectrum-ActionBar--emphasized': isEmphasized
         },
         styleProps.className
       )}>
       <div ref={innerDivRef}>
-        <Provider {...providerProps}>
-          <div className={classNames(styles, 'react-spectrum-ActionBar__leading')}>
-            <ActionButton
-              aria-label={formatMessage('deselect')}
-              onPress={() => onClearSelection()}
-              isQuiet>
-              <CrossLarge />
-            </ActionButton>
-            <Text>{
-              selectedItemCount === 'all'
-              ? formatMessage('selectedAll')
-              : formatMessage('selected', {count: selectedItemCount})
-            }</Text>
-          </div>
-          <ActionGroup selectionMode="none" onAction={onAction}>
-            {children}
-          </ActionGroup>
-        </Provider>
+        <div className={classNames(styles, 'react-spectrum-ActionBar__leading')}>
+          <ActionButton
+            aria-label={formatMessage('deselect')}
+            onPress={() => onClearSelection()}
+            isQuiet>
+            <CrossLarge />
+          </ActionButton>
+          <Text>{
+            selectedItemCount === 'all'
+            ? formatMessage('selectedAll')
+            : formatMessage('selected', {count: selectedItemCount})
+          }</Text>
+        </div>
+        <ActionGroup selectionMode="none" onAction={onAction}>
+          {children}
+        </ActionGroup>
       </div>
     </div>
   );
@@ -90,5 +79,5 @@ function ActionBar(props: SpectrumActionBarProps, ref: DOMRef<HTMLDivElement>) {
 /**
  * TODO: Add description of component here.
  */
-const _ActionBar = React.forwardRef(ActionBar);
+const _ActionBar = React.forwardRef(ActionBar) as <T>(props: SpectrumActionBarProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ActionBar as ActionBar};

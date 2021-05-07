@@ -10,12 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
 import {ActionBar, ActionBarContainer, Item} from '../';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '@react-spectrum/table';
 import React, {useState} from 'react';
 import {Selection} from '@react-types/shared';
-import {SpectrumActionBarProps} from '@react-types/actionbar';
 import {storiesOf} from '@storybook/react';
 
 let columns = [
@@ -41,7 +39,7 @@ storiesOf('ActionBar', module)
     () => {
       const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
       return (
-        <ActionBarContainer>
+        <ActionBarContainer height={300}>
           <Table
             selectedKeys={selectedKeys}
             selectionMode="multiple"
@@ -62,42 +60,6 @@ storiesOf('ActionBar', module)
             onClearSelection={() => {
               setSelectedKeys(new Set());
             }}
-            isEmphasized>
-            <Item>Edit</Item>
-            <Item>Delete</Item>
-          </ActionBar>
-        </ActionBarContainer>
-      );
-    }
-  )
-  .add(
-    'primary',
-    () => {
-      const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
-      return (
-        <ActionBarContainer>
-          <Table
-            selectedKeys={selectedKeys}
-            selectionMode="multiple"
-            onSelectionChange={(keys) => setSelectedKeys(keys)}>
-            <TableHeader columns={columns}>
-              {column => <Column>{column.name}</Column>}
-            </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </Table>
-          <ActionBar
-            variant="primary"
-            selectedItemCount={selectedKeys === 'all' ? selectedKeys : selectedKeys.size}
-            onClearSelection={() => {
-              setSelectedKeys(new Set());
-            }}
-            onAction={action('onAction')}
             isEmphasized>
             <Item>Edit</Item>
             <Item>Delete</Item>
@@ -106,3 +68,4 @@ storiesOf('ActionBar', module)
       );
     }
   );
+

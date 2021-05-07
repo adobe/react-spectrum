@@ -1,8 +1,22 @@
+.ActionBarContainer {
+  display: flex;
+  flex-direction: column;
+
+  & > :not(.react-spectrum-ActionBar) {
+    flex: 1;
+    min-height: 0;
+  }
+
+  & > .react-spectrum-ActionBar {
+    flex: 0 0 auto;
+  }
+}
+
 .react-spectrum-ActionBar {
   --spectrum-padding: var(--spectrum-global-dimension-size-100);
   --column-gap: var(--spectrum-actionbuttongroup-text-button-gap-x);
   --row-gap: var(--spectrum-actionbuttongroup-text-button-gap-y);
-  --show-transition-duration: var(--spectrum-global-animation-duration-700);
+  --show-transition-duration: var(--spectrum-global-animation-duration-200);
   --show-transition-timing: var(--spectrum-global-animation-linear);
 
   height: 0;
@@ -10,6 +24,8 @@
   transition-property: height;
   transition-duration: var(--show-transition-duration);
   transition-timing-function: var(--show-transition-timing);
+
+  background: white;
 
   & > div {
     align-items: center;
