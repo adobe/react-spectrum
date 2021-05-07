@@ -33,11 +33,11 @@ describe('useComboBoxState tests', function () {
         result.current.open();
       });
       expect(result.current.isOpen).toBe(true);
-      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(onOpenChange).toHaveBeenCalledWith(true, undefined);
 
       act(() => result.current.close());
       expect(result.current.isOpen).toBe(false);
-      expect(onOpenChange).toHaveBeenCalledWith(false);
+      expect(onOpenChange).toHaveBeenCalledWith(false, undefined);
     });
 
     it('should be set open by default if defaultOpen is true and isFocused is true', function () {
@@ -50,7 +50,7 @@ describe('useComboBoxState tests', function () {
 
       act(() => result.current.close());
       expect(result.current.isOpen).toBe(false);
-      expect(onOpenChange).toHaveBeenCalledWith(false);
+      expect(onOpenChange).toHaveBeenCalledWith(false, undefined);
     });
 
     it('open should be a controllable value', function () {
@@ -62,7 +62,7 @@ describe('useComboBoxState tests', function () {
 
       act(() => result.current.close());
       expect(result.current.isOpen).toBe(true);
-      expect(onOpenChange).toHaveBeenCalledWith(false);
+      expect(onOpenChange).toHaveBeenCalledWith(false, undefined);
 
 
       rerender({...defaultProps, isOpen: false});
@@ -70,7 +70,65 @@ describe('useComboBoxState tests', function () {
 
       act(() => result.current.open());
       expect(result.current.isOpen).toBe(false);
-      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(onOpenChange).toHaveBeenCalledWith(true, undefined);
+    });
+
+    it('onOpenChange should return the reason that open was called', function () {
+      let initialProps = defaultProps;
+      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+
+      act(() => {
+        result.current.open(undefined, 'focus');
+      });
+      expect(result.current.isOpen).toBe(true);
+      expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
+
+      act(() => result.current.close());
+      expect(result.current.isOpen).toBe(false);
+      expect(onOpenChange).toHaveBeenCalledWith(false, undefined);
+
+      act(() => {
+        result.current.open(undefined, 'input');
+      });
+      expect(result.current.isOpen).toBe(true);
+      expect(onOpenChange).toHaveBeenCalledWith(true, 'input');
+
+      act(() => result.current.close());
+
+      act(() => {
+        result.current.open(undefined, 'manual');
+      });
+      expect(result.current.isOpen).toBe(true);
+      expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
+    });
+
+    it('onOpenChange should return the reason that toggle was called when opening', function () {
+      let initialProps = defaultProps;
+      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+
+      act(() => {
+        result.current.toggle(undefined, 'focus');
+      });
+      expect(result.current.isOpen).toBe(true);
+      expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
+
+      act(() => result.current.toggle(undefined, 'focus'));
+      expect(result.current.isOpen).toBe(false);
+      expect(onOpenChange).toHaveBeenCalledWith(false, undefined);
+
+      act(() => {
+        result.current.toggle(undefined, 'input');
+      });
+      expect(result.current.isOpen).toBe(true);
+      expect(onOpenChange).toHaveBeenCalledWith(true, 'input');
+
+      act(() => result.current.close());
+
+      act(() => {
+        result.current.toggle(undefined, 'manual');
+      });
+      expect(result.current.isOpen).toBe(true);
+      expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
     });
   });
 

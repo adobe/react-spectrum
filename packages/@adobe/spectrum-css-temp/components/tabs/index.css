@@ -40,12 +40,13 @@ governing permissions and limitations under the License.
   z-index: 0;
 
   margin: 0;
-  padding: 0 var(--spectrum-tabs-focus-ring-padding-x);
+  padding: 0;
 
   /* Friends should align to the top of the tabs */
   vertical-align: top;
 
   outline: none;
+  user-select: none;
 }
 
 .spectrum-Tabs-item {
@@ -78,6 +79,9 @@ governing permissions and limitations under the License.
   .spectrum-Icon {
     /* Vertical centering */
     block-size: var(--spectrum-tabs-item-height);
+    transition: fill var(--spectrum-global-animation-duration-100) ease-out;
+    /* Prevents a wiggle in Safari when switching tabs. */
+    transform: translate3d(0, 0, 0);
 
     & + .spectrum-Tabs-itemLabel {
       margin-inline-start: var(--spectrum-tabs-icon-gap);
@@ -122,8 +126,6 @@ governing permissions and limitations under the License.
 
   /* Be below the tab */
   z-index: 0;
-
-  transition: transform var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out;
   transform-origin: top left;
 
 
@@ -169,6 +171,7 @@ governing permissions and limitations under the License.
     block-size: var(--spectrum-tabs-rule-height);
 
     inset-block-end: calc(var(--spectrum-tabs-rule-height) * -1);
+    transition: transform var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out, width var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out;
   }
 
   &.spectrum-Tabs--isCollapsed {
@@ -254,12 +257,12 @@ governing permissions and limitations under the License.
     inline-size: var(--spectrum-tabs-vertical-rule-width);
 
     inset-inline-start: calc(var(--spectrum-tabs-vertical-rule-width) * -1);
+    transition: transform var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out, height var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out;
   }
 }
 
 .spectrum-TabsPanel-collapseWrapper {
   display: flex;
-  overflow: hidden;
   position: relative;
 }
 
@@ -267,8 +270,19 @@ governing permissions and limitations under the License.
   flex-grow: 1;
   flex-shrink: 0;
   flex-basis: 0%;
+
+  &.spectrum-Tabs--vertical {
+    flex-grow: 0;
+  }
 }
 
 .spectrum-TabsPanel-tabpanel {
   flex-grow: 1;
+  border: var(--spectrum-tabs-focus-ring-size) solid transparent;
+}
+
+.spectrum-TabsPanel--vertical {
+  .spectrum-Tabs {
+    padding-right: var(--spectrum-global-dimension-size-160);
+  }
 }

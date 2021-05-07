@@ -1,0 +1,140 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import docs from 'docs:@react-spectrum/color';
+import colorTypes from 'docs:@react-types/color/src/index.d.ts';
+import {HeaderInfo, PropTable, TypeLink} from '@react-spectrum/docs';
+import {Layout} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/color/package.json';
+import statelyDocs from 'docs:@react-stately/color';
+
+export default Layout;
+
+```jsx import
+import {ColorWheel} from '@react-spectrum/color';
+import {Flex} from '@react-spectrum/layout';
+```
+
+---
+category: Color
+keywords: [color wheel, slider]
+---
+
+# ColorWheel
+
+<p>{docs.exports.ColorWheel.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ColorWheel']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/color-wheel/'}
+  ]} />
+
+## Example
+
+```tsx example
+<ColorWheel defaultValue="hsl(30, 100%, 50%)" />
+```
+
+## Value
+
+A ColorWheel's `value` specifies the position of the ColorWheel's thumb on the track, and accepts a string or <TypeLink links={colorTypes.links} type={colorTypes.exports.Color} /> object.
+It is initialized as `hsl(0, 100%, 50%)` by default, but an alternative initial uncontrolled value can be provided using the `defaultValue` prop.
+Alternatively, a controlled value can be provided using the `value` prop. Note that only HSB(A) values are supported as valid values.
+
+In the example below, the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} /> function is used to parse the initial color from a HSL string
+so that `value`'s type remains consistent.
+
+```tsx example
+import {parseColor} from '@react-stately/color';
+
+function Example() {
+  let [value, setValue] = React.useState(parseColor('hsl(30, 100%, 50%)'));
+  return (
+    <Flex gap="size-300" wrap>
+      <Flex direction="column" alignItems="center">
+        <label id="label-1">Hue (uncontrolled)</label>
+        <ColorWheel
+          defaultValue="hsl(30, 100%, 50%)"
+          aria-labelledby="label-1" />
+      </Flex>
+      <Flex direction="column" alignItems="center">
+        <label id="label-2">Hue (controlled)</label>
+        <ColorWheel
+          value={value}
+          onChange={setValue}
+          aria-labelledby="label-1" />
+      </Flex>
+    </Flex>
+  );
+}
+```
+
+## Labeling
+
+By default, a localized string for the "hue" channel name is used as the `aria-label` for the ColorWheel. When a custom `aria-label` or `aria-labelledby`
+is provided, it should be localized accordingly.
+
+## Step values
+
+The `step` prop can be used to snap the ColorWheel's value to specific increments. The value provided should the number of degrees that each step should span,
+ranging from 0 to 360. Note that the steps are calculated starting from 0˚ and that the final step will always snap back to 0˚, regardless of how much
+remaining track distance there is from the step prior.
+
+```tsx example
+<ColorWheel step={60} />
+```
+
+## Events
+
+ColorWheel supports two events: `onChange` and `onChangeEnd`. `onChange` is triggered whenever the ColorWheel's handle is dragged, and `onChangeEnd`
+is triggered when the user stops dragging the handle. Both events receive a <TypeLink links={colorTypes.links} type={colorTypes.exports.Color} /> object
+as a parameter.
+
+The example below uses `onChange` and `onChangeEnd` to update two separate elements with the ColorWheel's value.
+
+```tsx example
+function Example() {
+  let [currentValue, setCurrentValue] = React.useState(parseColor('hsl(50, 100%, 50%)'));
+  let [finalValue, setFinalValue] = React.useState(parseColor('hsl(50, 100%, 50%)'));
+
+  return (
+    <div>
+      <ColorWheel
+        value={currentValue}
+        onChange={setCurrentValue}
+        onChangeEnd={setFinalValue}
+      />
+      <pre>Current value: {currentValue.toString('hsl')}</pre>
+      <pre>Final value: {finalValue.toString('hsl')}</pre>
+    </div>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.ColorWheel} links={docs.links} />
+
+## Visual options
+
+### Disabled
+[View guidelines](https://spectrum.adobe.com/page/color-wheel/#Disabled)
+
+```tsx example
+<ColorWheel isDisabled />
+```
+
+### Size
+[View guidelines](https://spectrum.adobe.com/page/color-wheel/#Size)
+
+```tsx example
+<ColorWheel size="size-1600" />
+```

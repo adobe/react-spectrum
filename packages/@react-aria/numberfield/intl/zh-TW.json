@@ -1,6 +1,5 @@
 {
-  "Decrement": "減值",
-  "Enter a number": "輸入數字",
-  "Increment": "增值",
-  "Spin button number field": "Spin button number field"
+  "decrease": "縮小 {fieldLabel}",
+  "increase": "放大 {fieldLabel}",
+  "numberField": "數字欄位"
 }

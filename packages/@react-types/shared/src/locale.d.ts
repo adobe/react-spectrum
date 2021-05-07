@@ -11,18 +11,3 @@
  */
 
 export type Direction = 'ltr' | 'rtl';
-
-export type NumeralSystem = 'arab' | 'hanidec' | 'latn';
-
-export interface NumberParser {
-  /** Parses a cleaned string into the number it represents. */
-  parse: (value: string) => number,
-  /** Rounds a number using the current formatter. */
-  round: (value: number) => number,
-  symbols: {
-    minusSign: string,
-    plusSign: string
-  },
-  /** This removes any not allowed characters from the string. */
-  clean: (value: string) => string
-}

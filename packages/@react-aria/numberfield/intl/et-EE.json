@@ -1,6 +1,5 @@
 {
-  "Decrement": "Vähendamine",
-  "Enter a number": "Sisestage number",
-  "Increment": "Suurendamine",
-  "Spin button number field": "Spin button number field"
+  "decrease": "Vähenda {fieldLabel}",
+  "increase": "Suurenda {fieldLabel}",
+  "numberField": "Numbri väli"
 }

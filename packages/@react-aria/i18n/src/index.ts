@@ -15,7 +15,6 @@
 export * from './context';
 export * from './useMessageFormatter';
 export * from './useDateFormatter';
-export * from './useNumberParser';
 export * from './useNumberFormatter';
 export * from './useCollator';
 export * from './useFilter';
