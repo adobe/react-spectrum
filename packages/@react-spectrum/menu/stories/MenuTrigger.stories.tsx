@@ -328,6 +328,18 @@ storiesOf('MenuTrigger', module)
     () => render(defaultMenu, {direction: 'top'})
   )
   .add(
+    'direction="bottom"',
+    () => render(defaultMenu, {direction: 'bottom'})
+  )
+  .add(
+    'direction="left"',
+    () => render(defaultMenu, {direction: 'left'})
+  )
+  .add(
+    'direction="right"',
+    () => render(defaultMenu, {direction: 'right'})
+  )
+  .add(
     'shouldFlip',
     () => render(defaultMenu, {shouldFlip: true})
   )
