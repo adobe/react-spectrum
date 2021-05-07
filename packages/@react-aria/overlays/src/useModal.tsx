@@ -107,6 +107,10 @@ export function OverlayProvider(props: ModalProviderProps) {
 }
 
 interface OverlayContainerProps extends ModalProviderProps {
+  /**
+   * The container element in which the overlay portal will be placed.
+   * @default document.body
+   */
   portalContainer?: HTMLElement
 }
 
