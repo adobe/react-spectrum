@@ -17,6 +17,7 @@ import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
+import {View} from '@react-spectrum/view';
 
 storiesOf('Button/ActionButton', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -73,6 +74,28 @@ storiesOf('Button/ActionButton', module)
   .add(
     'autoFocus',
     () => render({autoFocus: true})
+  )
+  .add(
+    'staticColor: white',
+    () => (
+      <View backgroundColor="seafoam-600" padding="size-1000">
+        <Flex direction="column" rowGap="size-150">
+          {render({staticColor: 'white'})}
+          {render({staticColor: 'white', isQuiet: true})}
+        </Flex>
+      </View>
+    )
+  )
+  .add(
+    'staticColor: black',
+    () => (
+      <View backgroundColor="yellow-400" padding="size-1000">
+        <Flex direction="column" rowGap="size-150">
+          {render({staticColor: 'black'})}
+          {render({staticColor: 'black', isQuiet: true})}
+        </Flex>
+      </View>
+    )
   );
 
 function render(props = {}) {
