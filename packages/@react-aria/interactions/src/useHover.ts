@@ -130,13 +130,13 @@ export function useHover(props: HoverProps): HoverResult {
     let triggerHoverEnd = (event, pointerType) => {
       state.pointerType = '';
       state.target = null;
+      
       if (pointerType === 'touch' || !state.isHovered) {
         return;
       }
 
       state.isHovered = false;
       let target = event.target;
-
       if (onHoverEnd) {
         onHoverEnd({
           type: 'hoverend',
@@ -182,7 +182,9 @@ export function useHover(props: HoverProps): HoverResult {
       };
 
       hoverProps.onMouseLeave = (e) => {
-        triggerHoverEnd(e, 'mouse');
+        if (!isDisabled) {
+          triggerHoverEnd(e, 'mouse');
+        }
       };
     }
     return {hoverProps, triggerHoverEnd};
@@ -190,7 +192,8 @@ export function useHover(props: HoverProps): HoverResult {
 
   useEffect(() => {
     // Call the triggerHoverEnd as soon as isDisabled changes to true
-    if (!isDisabled) {
+    // Safe to call triggerHoverEnd, it will early return if we aren't currently hovering
+    if (isDisabled) {
       triggerHoverEnd({target: state.target}, state.pointerType);
     }
   }, [isDisabled]);
@@ -200,3 +203,4 @@ export function useHover(props: HoverProps): HoverResult {
     isHovered
   };
 }
+
