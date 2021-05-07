@@ -62,7 +62,7 @@ export interface NumberFieldState {
 interface NumberFieldStateProps extends NumberFieldProps {
   /**
    * The locale that should be used for parsing.
-   *  @default 'en-US'
+   * @default 'en-US'
    */
   locale: string
 }
