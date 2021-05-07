@@ -95,7 +95,7 @@ function Tabs(props) {
   return (
     <div>
       <div {...tabListProps} ref={tablistRef}>
-        <div style={{display: 'flex', borderBottom: '1px solid lightgrey'}}>
+        <div style={{display: 'flex', borderBottom: '1px solid grey'}}>
           {[...state.collection].map((item) => (
             <Tab key={item.key} item={item} state={state} />
           ))}
@@ -153,7 +153,7 @@ function Tabs(props) {
   return (
     <div>
       <div {...tabListProps} ref={tablistRef}>
-        <div style={{display: 'flex', borderBottom: '1px solid lightgray'}}>
+        <div style={{display: 'flex', borderBottom: '1px solid grey'}}>
           {[...state.collection].map((item) => (
             <Tab key={item.key} item={item} state={state} />
           ))}
