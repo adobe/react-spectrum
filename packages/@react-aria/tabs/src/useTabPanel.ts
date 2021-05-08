@@ -53,6 +53,14 @@ export function useTabPanel<T>(props: AriaTabPanelProps, state: TabListState<T>,
     }
   }, [ref]);
 
+  props = {
+    id: props.id,
+    'aria-describedby': props['aria-describedby'],
+    'aria-details': props['aria-details'],
+    'aria-label': props['aria-label'],
+    'aria-labelledby': props['aria-labelledby']
+  };
+
   return {
     tabPanelProps: mergeProps(props, {
       id: generateId(state, state?.selectedKey, 'tabpanel'),
