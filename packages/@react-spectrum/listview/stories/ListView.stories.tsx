@@ -28,9 +28,9 @@ function renderEmptyState() {
 storiesOf('ListView', module)
   .add('default', () => (
     <ListView width="250px">
-      <Item>row 1</Item>
-      <Item>row 2</Item>
-      <Item>row 3</Item>
+      <Item textValue="row1">row 1</Item>
+      <Item textValue="row2">row 2</Item>
+      <Item textValue="row3">row 3</Item>
     </ListView>
   ))
   .add('with buttons', () => (
