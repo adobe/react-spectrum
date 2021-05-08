@@ -53,7 +53,7 @@ describe('useFocusVisible', function () {
     expect(el.textContent).toBe('example-focusVisible');
   });
   it('returns negative isFocusVisible result after toggling browser tabs without prior keyboard navigation', function () {
-    let res = render(<Example/>);
+    let res = render(<Example />);
     let el = res.getByText('example-focusVisible');
 
     fireEvent.mouseDown(el);
