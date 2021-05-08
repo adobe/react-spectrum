@@ -13,17 +13,13 @@
 import {Divider} from '../';
 import React from 'react';
 import {render} from '@testing-library/react';
-import Rule from '@react/react-spectrum/Rule';
 
 describe('Divider', function () {
   it.each`
-    Name         | Component  | props
-    ${'Divider'} | ${Divider} | ${{}}
-    ${'v2 Rule'}    | ${Rule}    | ${{}}
-    ${'Divider'} | ${Divider} | ${{size: 'M'}}
-    ${'v2 Rule'}    | ${Rule}    | ${{variant: 'medium'}}
-    ${'Divider'} | ${Divider} | ${{size: 'S'}}
-    ${'v2 Rule'}    | ${Rule}    | ${{variant: 'small'}}
+    Name                 | Component  | props
+    ${'Divider default'} | ${Divider} | ${{}}
+    ${'Divider medium'}  | ${Divider} | ${{size: 'M'}}
+    ${'Divider small'}   | ${Divider} | ${{size: 'S'}}
   `('$Name handles defaults', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} aria-label="divides" />);
 
@@ -33,12 +29,11 @@ describe('Divider', function () {
     expect(divider).toHaveAttribute('aria-label', 'divides');
   });
 
-  // V2 doesn't have a vertical Rule, this is new to Divider
   it.each`
-    Name         | Component  | props
-    ${'Divider'} | ${Divider} | ${{orientation: 'vertical'}}
-    ${'Divider'} | ${Divider} | ${{orientation: 'vertical', size: 'M'}}
-    ${'Divider'} | ${Divider} | ${{orientation: 'vertical', size: 'S'}}
+    Name                 | Component  | props
+    ${'Divider default'} | ${Divider} | ${{orientation: 'vertical'}}
+    ${'Divider medium'}  | ${Divider} | ${{orientation: 'vertical', size: 'M'}}
+    ${'Divider small'}   | ${Divider} | ${{orientation: 'vertical', size: 'S'}}
   `('$Name can be vertical', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} aria-label="divides" />);
 
@@ -49,10 +44,10 @@ describe('Divider', function () {
   });
 
   it.each`
-    Name         | Component  | props
-    ${'Divider'} | ${Divider} | ${{orientation: 'vertical'}}
-    ${'Divider'} | ${Divider} | ${{orientation: 'vertical', size: 'M'}}
-    ${'Divider'} | ${Divider} | ${{orientation: 'vertical', size: 'S'}}
+    Name                 | Component  | props
+    ${'Divider default'} | ${Divider} | ${{orientation: 'vertical'}}
+    ${'Divider medium'}  | ${Divider} | ${{orientation: 'vertical', size: 'M'}}
+    ${'Divider small'}   | ${Divider} | ${{orientation: 'vertical', size: 'S'}}
   `('$Name supports aria-labelledby', function ({Component, props}) {
     let {getByRole} = render(
       <>
@@ -66,10 +61,10 @@ describe('Divider', function () {
   });
 
   it.each`
-    Name         | Component  | props
-    ${'Divider'} | ${Divider} | ${{orientation: 'vertical'}}
-    ${'Divider'} | ${Divider} | ${{orientation: 'vertical', size: 'M'}}
-    ${'Divider'} | ${Divider} | ${{orientation: 'vertical', size: 'S'}}
+    Name                 | Component  | props
+    ${'Divider default'} | ${Divider} | ${{orientation: 'vertical'}}
+    ${'Divider medium'}  | ${Divider} | ${{orientation: 'vertical', size: 'M'}}
+    ${'Divider small'}   | ${Divider} | ${{orientation: 'vertical', size: 'S'}}
   `('$Name supports custom data attributes', function ({Component, props}) {
     let {getByRole} = render(
       <>

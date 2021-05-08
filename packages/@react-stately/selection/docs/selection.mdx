@@ -85,6 +85,44 @@ let [selectedKeys, setSelectedKeys] = useState(new Set());
 </ListBox>
 ```
 
+## Selected key data type
+
+As mentioned in the collection [docs](./collections.html#unique-keys), there are two ways that keys can be defined for your collection items.
+The method you use will affect the data type you provide to your `defaultSelectedKey(s)` and `selectedKey(s)` props and what `onSelectionChange` returns.
+
+If you directly specify the key on each `Item` using the `key` prop, `defaultSelectedKey(s)`/`selectedKey(s)` will expect a string/list of strings regardless of the
+original data type provided to the `Item`'s `key` prop. As seen in the example below, the `selectedKey` is initialized to `"2"` rather than `2` despite the fact that
+the `dataIds` provided to each `Item` `key` are numbers.
+
+```tsx
+let items = [
+  {name: 'Aardvark', dataId: 1},
+  {name: 'Kangaroo', dataId: 2},
+  {name: 'Snake', dataId: 3}
+];
+
+let [selectedKey, setSelectedKey] = useState("2");
+<ComboBox selectedKey={selectedKey} onSelectionChange={setSelectedKey}>
+  {item => <Item key={item.dataId}>{item.name}</Item>}
+</ComboBox>
+```
+
+If you specify a `key` or `id` within your `items` array and forgo specifying a key on the `Item` instead, `defaultSelectedKey(s)`/`selectedKey(s)` should match the data type
+of the `key` or `id`. As seen in the example below, the `selectedKey` is initialized as a `number`, matching the `key` type of the `items` array.
+
+```tsx
+let items = [
+  {name: 'Aardvark', key: 1},
+  {name: 'Kangaroo', key: 2},
+  {name: 'Snake', key: 3}
+];
+
+let [selectedKey, setSelectedKey] = useState(2);
+<ComboBox selectedKey={selectedKey} onSelectionChange={setSelectedKey}>
+  {item => <Item>{item.name}</Item>}
+</ComboBox>
+```
+
 ## Dynamic data
 
 When data in a collection changes, the selection state may need to be updated accordingly. For example, if a selected item is
