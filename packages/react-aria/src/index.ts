@@ -22,6 +22,7 @@ export {useLink} from '@react-aria/link';
 export {useListBox, useListBoxSection, useOption} from '@react-aria/listbox';
 export {useMenu, useMenuItem, useMenuSection, useMenuTrigger} from '@react-aria/menu';
 export {useMeter} from '@react-aria/meter';
+export {useNumberField} from '@react-aria/numberfield';
 export {DismissButton, ModalProvider, OverlayContainer, OverlayProvider, useModal, useModalProvider, useOverlay, useOverlayPosition, useOverlayTrigger, usePreventScroll} from '@react-aria/overlays';
 export {useProgressBar} from '@react-aria/progress';
 export {useRadio, useRadioGroup} from '@react-aria/radio';
