@@ -68,7 +68,7 @@ function useTableContext() {
   return useContext(TableContext);
 }
 
-function Table<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
+function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {isQuiet} = props;
   let {styleProps} = useStyleProps(props);
@@ -695,5 +695,5 @@ function CenteredWrapper({children}) {
   );
 }
 
-const _Table = React.forwardRef(Table);
-export {_Table as Table};
+const _TableView = React.forwardRef(TableView);
+export {_TableView as TableView};

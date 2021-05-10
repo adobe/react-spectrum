@@ -12,7 +12,7 @@
 
 /// <reference types="css-module-types" />
 
-export * from './Table';
+export * from './TableView';
 import {Column} from '@react-stately/table';
 import {SpectrumColumnProps} from '@react-types/table';
 
