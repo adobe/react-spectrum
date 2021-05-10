@@ -30,24 +30,36 @@ export interface FieldAria extends LabelAria {
  * @param props - Props for the Field.
  */
 export function useField(props: AriaFieldProps): FieldAria {
+  let {description, errorMessage} = props;
   let {labelProps, fieldProps} = useLabel(props);
 
   let descriptionId = useSlotId();
   let errorMessageId = useSlotId();
 
+  fieldProps = mergeProps(fieldProps, {
+    'aria-describedby': [
+      descriptionId,
+      errorMessageId
+    ].filter(Boolean).join(' ') || undefined
+  });
+
+  let descriptionProps = {};
+  let errorMessageProps = {};
+  if (description) {
+    descriptionProps = {
+      id: descriptionId
+    };
+  }
+  if (errorMessage) {
+    errorMessageProps = {
+      id: errorMessageId
+    };
+  }
+
   return {
     labelProps,
-    fieldProps: mergeProps(fieldProps, {
-      'aria-describedby': [
-        descriptionId,
-        errorMessageId
-      ].filter(Boolean).join(' ') || undefined
-    }),
-    descriptionProps: {
-      id: descriptionId
-    },
-    errorMessageProps: {
-      id: errorMessageId
-    }
+    fieldProps,
+    descriptionProps,
+    errorMessageProps
   };
 }
