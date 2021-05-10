@@ -238,4 +238,17 @@ describe('ListView', function () {
       });
     });
   });
+
+  it('should display loading affordance', function () {
+    let {getByRole} = render(<ListView aria-label="List" isLoading>{[]}</ListView>);
+    expect(getByRole('progressbar')).toBeTruthy();
+  });
+
+  it('should render empty state', function () {
+    function renderEmptyState() {
+      return <div>No results</div>;
+    }
+    let {getByText} = render(<ListView aria-label="List" renderEmptyState={renderEmptyState} />);
+    expect(getByText('No results')).toBeTruthy();
+  });
 });
