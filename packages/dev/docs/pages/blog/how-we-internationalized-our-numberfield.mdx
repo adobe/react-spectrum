@@ -85,11 +85,11 @@ One area of complexity here is dealing with floating point rounding errors. All 
 
 A number field should help the user enter a valid number and avoid accidental input. In order to do this, we only allow the user to type characters that meet the formatting requirements. For example, when the number is a percentage, we allow only numerals and the percent sign, and all other characters are ignored. The allowed characters are based on the formatting options as well as the current locale.
 
-In addition, we also support several different numbering systems, including the Latin, Arabic, and Han decimal systems. There are many different ways of entering numbers, including different hardware keyboard layouts, and various input method editors such as Pinyin, which uses combinations of Latin characters to represent Chinese logograms. These are supported via composition events, which the browser fires as the user enters each Latin character. While these characters by themselves are not valid numbers, we cannot validate them until the sequence is complete and the Latin characters are replaced by the Chinese logogram.
+In addition, we also support several different numbering systems, including the Latin, Arabic, and Han positional decimal systems. There are many different ways of entering numbers, including different hardware keyboard layouts, and various input method editors such as Pinyin, which uses combinations of Latin characters to represent Chinese logograms. These are supported via composition events, which the browser fires as the user enters each Latin character. While these characters by themselves are not valid numbers, we cannot validate them until the sequence is complete and the Latin characters are replaced by the Chinese logogram.
 
 <figure style={{display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '20px 0'}}>
   <Video src={pinyinEntering} loop autoPlay muted style={{margin: 0, marginBottom: 5, width: '300px'}} />
-  <figcaption>Entering the number 21 in the Han decimal system using the iOS Pinyin keyboard</figcaption>
+  <figcaption>Entering the number 21 in the Han positional decimal system using the iOS Pinyin keyboard</figcaption>
 </figure>
 
 ### Mobile
@@ -141,7 +141,7 @@ Internationalization is an especially important feature for components like numb
 
 A **locale** represents a set of preferences for users in a particular part of the world, such as the language, currency, and number format. For example, in the `en-US` locale, the default language is English and the decimal character is a period, but in the `de-DE` locale, the default language is German, and the decimal character is a comma.
 
-A **numbering system** is a way of representing numbers using written characters. For example, in the Latin numbering system, the number twelve is represented as “12”, and in the Han decimal system, it is “一 二”. Most commonly used numbering systems are decimal based, which means they have ten numeral symbols that are combined based on their position. An example of a non-positional numbering system is the Roman numeral system, in which digits are combined by addition or subtraction. Currently, we only support base-10 decimal systems, since these are most commonly used and the simplest to parse.
+A **numbering system** is a way of representing numbers using written characters. For example, in the Latin numbering system, the number twelve is represented as “12”, and in the Arabic decimal system, it is “١٢”. Most commonly used numbering systems are decimal based, which means they have ten numeral symbols that are combined based on their position. An example of a non-positional numbering system is the Roman numeral system, in which digits are combined by addition or subtraction. Currently, we only support base-10 decimal systems, since these are most commonly used and the simplest to parse.
 
 While a locale may have a default numbering system associated with it, users may choose to use a different one. For example, the `ar-AE` locale defaults to Arabic numerals, but users may still wish to enter a Latin number. Our number field automatically detects the numbering system of the characters entered by the user, and parses it accordingly.
 
