@@ -18,10 +18,6 @@ let path = require('path');
 let packages = glob.sync(path.dirname(__dirname) + '/packages/@{react,spectrum}-*/*/package.json');
 let errors = false;
 
-function ignore(jsonPackage) {
-  return jsonPackage.private === true;
-}
-
 // soft assert won't fail the whole thing, allowing us to accumulate all errors at once
 // there's probably a nicer way to do this, but well... sometimes it's good enough. feel free to update me :)
 // maybe turn me into an actual eslint plugin so we get their format for styling
@@ -53,9 +49,6 @@ softAssert.equal = function (val, val2, message) {
 let pkgNames = {};
 for (let pkg of packages) {
   let json = JSON.parse(fs.readFileSync(pkg));
-  if (ignore(json)) {
-    continue;
-  }
   pkgNames[json.name] = true;
 
   if (!pkg.includes('@react-types') && !pkg.includes('@spectrum-icons')) {
@@ -114,9 +107,6 @@ for (let pkg of packages) {
 
 for (let pkg of packages) {
   let json = JSON.parse(fs.readFileSync(pkg));
-  if (ignore(json)) {
-    continue;
-  }
   let [scope, basename] = json.name.split('/');
 
   if (basename.includes('utils') || basename.includes('layout')) {
