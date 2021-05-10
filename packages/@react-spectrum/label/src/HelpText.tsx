@@ -45,7 +45,7 @@ function HelpText(props: HelpTextProps, ref: DOMRef<HTMLDivElement>) {
       {...styleProps}
       ref={domRef}
       className={styleProps.className}>
-      {validationState === 'invalid' ? (
+      {errorMessage && validationState === 'invalid' ? (
         <div {...errorMessageProps}>
           {errorMessage}
         </div>

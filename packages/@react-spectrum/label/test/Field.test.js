@@ -47,7 +47,7 @@ describe('Field', function () {
     expect(labelledField).toBeInTheDocument();
     expect(labelledField).not.toHaveAttribute('aria-describedby');
   });
-  it('supports a ref', () => {
+  it('supports a ref', function () {
     let ref = React.createRef();
     let {getByRole} = renderField({ref});
     let field = getByRole('textbox').closest('div');
@@ -55,39 +55,67 @@ describe('Field', function () {
     expect(ref.current).toBe(field);
   });
   describe('help text', function () {
-    it('renders when description is provided', function () {
-      let {getByRole, getByText} = renderField({description: 'Help text'});
+    describe('description', function () {
+      it('renders when description is provided', function () {
+        let {getByRole, getByText} = renderField({description: 'Help text'});
 
-      let helpText = getByText('Help text');
-      expect(helpText).toBeInTheDocument();
-      let input = getByRole('textbox');
-      expect(input).toHaveAttribute('aria-describedby', helpText.id);
+        let helpText = getByText('Help text');
+        expect(helpText).toBeInTheDocument();
+        let input = getByRole('textbox');
+        expect(input).toHaveAttribute('aria-describedby', helpText.id);
+      });
+
+      it('renders when description and error message are provided but validationState is not invalid', function () {
+        let {getByRole, getByText} = renderField({description: 'Help text', errorMessage: 'Error message'});
+
+        let helpText = getByText('Help text');
+        expect(helpText).toBeInTheDocument();
+        let input = getByRole('textbox');
+        expect(input).toHaveAttribute('aria-describedby', helpText.id);
+      });
+
+      it('renders when description is provided and validationState is invalid but no error message is provided', function () {
+        let {getByRole, getByText} = renderField({description: 'Help text', validationState: 'invalid'});
+
+        let helpText = getByText('Help text');
+        expect(helpText).toBeInTheDocument();
+        let input = getByRole('textbox');
+        expect(input).toHaveAttribute('aria-describedby', helpText.id);
+      });
+
+      it('does not render when no description is provided', function () {
+        let {getByRole} = renderField();
+
+        let input = getByRole('textbox');
+        expect(input).not.toHaveAttribute('aria-describedby');
+      });
     });
 
-    it('renders when error message is provided and validationState is invalid', function () {
-      let {getByRole, getByText} = renderField({errorMessage: 'Error message', validationState: 'invalid'});
+    describe('error message', function () {
+      it('renders when error message is provided and validationState is invalid', function () {
+        let {getByRole, getByText} = renderField({errorMessage: 'Error message', validationState: 'invalid'});
 
-      let errorMessage = getByText('Error message');
-      expect(errorMessage).toBeInTheDocument();
-      let input = getByRole('textbox');
-      expect(input).toHaveAttribute('aria-describedby', errorMessage.id);
-    });
+        let errorMessage = getByText('Error message');
+        expect(errorMessage).toBeInTheDocument();
+        let input = getByRole('textbox');
+        expect(input).toHaveAttribute('aria-describedby', errorMessage.id);
+      });
 
-    it('does not render when error message is provided but validationState is not invalid', function () {
-      let {getByRole, queryByText} = renderField({errorMessage: 'Error message'});
+      it('does not render when error message is provided but validationState is not invalid', function () {
+        let {getByRole, queryByText} = renderField({errorMessage: 'Error message'});
 
-      let errorMessage = queryByText('Error message');
-      expect(errorMessage).toBeNull();
-      let input = getByRole('textbox');
-      expect(input).not.toHaveAttribute('aria-describedby');
-    });
+        let errorMessage = queryByText('Error message');
+        expect(errorMessage).toBeNull();
+        let input = getByRole('textbox');
+        expect(input).not.toHaveAttribute('aria-describedby');
+      });
 
-    it('does not render when validationState is invalid but no error message is provided', function () {
-      let {getByRole, debug} = renderField({validationState: 'invalid'});
-      debug();
+      it('does not render when validationState is invalid but no error message is provided', function () {
+        let {getByRole} = renderField({validationState: 'invalid'});
 
-      let input = getByRole('textbox');
-      expect(input).not.toHaveAttribute('aria-describedby');
+        let input = getByRole('textbox');
+        expect(input).not.toHaveAttribute('aria-describedby');
+      });
     });
   });
 });

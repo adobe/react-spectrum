@@ -77,16 +77,14 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
           {label}
         </Label>
         {children}
-        {(description || errorMessage) &&
-          <HelpText
-            descriptionProps={descriptionProps}
-            errorMessageProps={errorMessageProps}
-            description={description}
-            errorMessage={errorMessage}
-            validationState={validationState}
-            isDisabled={isDisabled}
-            showIcon={showIcon} />
-        }
+        <HelpText
+          descriptionProps={descriptionProps}
+          errorMessageProps={errorMessageProps}
+          description={description}
+          errorMessage={errorMessage}
+          validationState={validationState}
+          isDisabled={isDisabled}
+          showIcon={showIcon} />
       </div>
     );
   }
