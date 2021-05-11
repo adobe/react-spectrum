@@ -17,12 +17,11 @@ import {
   createFocusableRef,
   useStyleProps
 } from '@react-spectrum/utils';
+import {Field} from '@react-spectrum/label';
 import {FocusRing} from '@react-aria/focus';
-import {Label} from '@react-spectrum/label';
-import {LabelPosition, PressEvents} from '@react-types/shared';
-import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from '@react-aria/utils';
-import React, {cloneElement, forwardRef, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, TextareaHTMLAttributes, useImperativeHandle, useRef} from 'react';
+import {PressEvents} from '@react-types/shared';
+import React, {cloneElement, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, TextareaHTMLAttributes, useImperativeHandle, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFormProps} from '@react-spectrum/form';
@@ -36,6 +35,8 @@ interface TextFieldBaseProps extends SpectrumTextFieldProps, PressEvents {
   multiLine?: boolean,
   labelProps?: LabelHTMLAttributes<HTMLLabelElement>,
   inputProps: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
+  descriptionProps?: HTMLAttributes<HTMLElement>,
+  errorMessageProps?: HTMLAttributes<HTMLElement>,
   inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   loadingIndicator?: ReactElement,
   isLoading?: boolean
@@ -46,10 +47,6 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   props = useFormProps(props);
   let {
     label,
-    labelPosition = 'top' as LabelPosition,
-    labelAlign,
-    isRequired,
-    necessityIndicator,
     validationState,
     icon,
     isQuiet = false,
@@ -60,6 +57,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     wrapperChildren,
     labelProps,
     inputProps,
+    descriptionProps,
+    errorMessageProps,
     inputRef,
     isLoading,
     loadingIndicator,
@@ -150,41 +149,21 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   );
 
   if (label) {
-    let labelWrapperClass = classNames(
-      labelStyles,
-      'spectrum-Field',
-      {
-        'spectrum-Field--positionTop': labelPosition === 'top',
-        'spectrum-Field--positionSide': labelPosition === 'side'
-      },
-      styleProps.className
-    );
-
     textField = React.cloneElement(textField, mergeProps(textField.props, {
-      className: classNames(
-        labelStyles,
-        'spectrum-Field-field',
-        {
-          'spectrum-Field-field--multiline': multiLine
-        }
-      )
+      className: multiLine ? 'spectrum-Field-field--multiline' : ''
     }));
 
+    // TODO: Find a workaround. SpectrumFieldProps defines onChange as FormEventHandler<HTMLElement> from DOMProps, but Textfield defines it as ValueBase<string>['onChange']
+    let {onChange, ...fieldProps} = props;
     return (
-      <div
-        {...styleProps}
-        ref={domRef}
-        className={labelWrapperClass}>
-        <Label
-          {...labelProps}
-          labelPosition={labelPosition}
-          labelAlign={labelAlign}
-          isRequired={isRequired}
-          necessityIndicator={necessityIndicator}>
-          {label}
-        </Label>
+      <Field
+        {...fieldProps}
+        labelProps={labelProps}
+        descriptionProps={descriptionProps}
+        errorMessageProps={errorMessageProps}
+        ref={domRef}>
         {textField}
-      </div>
+      </Field>
     );
   }
 

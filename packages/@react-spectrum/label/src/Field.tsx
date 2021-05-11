@@ -13,6 +13,7 @@
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {HelpText} from './HelpText';
 import {Label} from './Label';
+import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from '@react-aria/utils';
 import React, {RefObject} from 'react';
@@ -21,7 +22,7 @@ import {SpectrumFieldProps} from '@react-types/label';
 function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   let {
     label,
-    labelPosition = 'top',
+    labelPosition = 'top' as LabelPosition,
     labelAlign,
     isRequired,
     necessityIndicator,
