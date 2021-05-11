@@ -144,8 +144,8 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
  * but doesn't affect parents above `scrollView`.
  */
 function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
-  let offsetX = element.offsetLeft - scrollView.offsetLeft;
-  let offsetY = element.offsetTop - scrollView.offsetTop;
+  let offsetX = relativeOffset(scrollView, element, 'left');
+  let offsetY = relativeOffset(scrollView, element, 'top');
   let width = element.offsetWidth;
   let height = element.offsetHeight;
   let x = scrollView.scrollLeft;
@@ -166,4 +166,28 @@ function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
 
   scrollView.scrollLeft = x;
   scrollView.scrollTop = y;
+}
+
+/**
+ * Computes the offset left or top from child to ancestor by accumulating
+ * offsetLeft or offsetTop through intervening offsetParents.
+ */
+function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|'top') {
+  const prop = axis === 'left' ? 'offsetLeft' : 'offsetTop';
+  let sum = 0;
+  while (child.offsetParent) {
+    sum += child[prop];
+    if (child.offsetParent === ancestor) {
+      // Stop once we have found the ancestor we are interested in.
+      break;
+    } else if (child.offsetParent.contains(ancestor)) {
+      // If the ancestor is not `position:relative`, then we stop at 
+      // _its_ offset parent, and we subtract off _its_ offset, so that
+      // we end up with the proper offset from child to ancestor.
+      sum -= ancestor[prop];
+      break;
+    }
+    child = child.offsetParent as HTMLElement;
+  }
+  return sum;
 }

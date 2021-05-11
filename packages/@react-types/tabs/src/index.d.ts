@@ -13,24 +13,24 @@
 import {
   AriaLabelingProps,
   CollectionBase,
+  CollectionChildren,
   DOMProps,
-  Node,
   Orientation,
   SingleSelection,
   StyleProps
 } from '@react-types/shared';
-import {Key} from 'react';
+import {Key, ReactNode} from 'react';
 
-export interface AriaTabProps<T> {
-  /** Collection node for the tab. */
-  item: Node<T>,
+export interface AriaTabProps {
+  /** The key of the tab. */
+  key: Key,
   /** Whether the tab should be disabled. */
   isDisabled?: boolean
 }
 
-export interface TabsProps<T> extends CollectionBase<T>, SingleSelection {}
+export interface TabListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {}
 
-export interface AriaTabsProps<T> extends TabsProps<T>, DOMProps, AriaLabelingProps {
+interface AriaTabListBase {
   /**
    * Whether tabs are activated automatically on focus or manually.
    * @default 'automatic'
@@ -48,22 +48,29 @@ export interface AriaTabsProps<T> extends TabsProps<T>, DOMProps, AriaLabelingPr
   isDisabled?: boolean
 }
 
-export interface SpectrumTabsProps<T> extends AriaTabsProps<T>, StyleProps {
-  /** Whether the Tabs should be displayed with a quiet style. */
+export interface AriaTabListProps<T> extends TabListProps<T>, AriaTabListBase, DOMProps, AriaLabelingProps {}
+
+export interface AriaTabPanelProps extends DOMProps, AriaLabelingProps {}
+
+export interface SpectrumTabsProps<T> extends AriaTabListBase, SingleSelection, DOMProps, StyleProps {
+  /** The children of the <Tabs> element. Should include `<TabList>` and `<TabPanels>` elements. */
+  children: ReactNode,
+  /** The item objects for each tab, for dynamic collections. */
+  items?: Iterable<T>,
+  /** The keys of the tabs that are disabled. These tabs cannot be selected, focused, or otherwise interacted with. */
+  disabledKeys?: Iterable<Key>,
+  /** Whether the tabs are displayed in a quiet style. */
   isQuiet?: boolean,
-  /**
-   * Sets the amount of space between the Tab and the Tab rail.
-   * @default 'regular'
-   */
-  density?: 'compact' | 'regular',
-  // overflowMode?: 'dropdown' | 'scrolling',
-  // isEmphasized?: boolean,
-  /** Whether Tabs are disabled. */
-  isDisabled?: boolean,
-  /** Handler that is called when the tab selection changes. */
-  onSelectionChange?: (selectedItem: Key) => void,
-  /** The currently selected Tab key in the collection (controlled). */
-  selectedKey?: Key,
-  /** The initial selected Tab key in the collection (uncontrolled). */
-  defaultSelectedKey?: Key
+  /** The amount of space between the tabs. */
+  density?: 'compact' | 'regular'
+}
+
+export interface SpectrumTabListProps<T> extends DOMProps, StyleProps {
+  /** The tab items to display. Item keys should match the key of the corresponding `<Item>` within the `<TabPanels>` element. */
+  children: CollectionChildren<T>
+}
+
+export interface SpectrumTabPanelsProps<T> extends DOMProps, StyleProps {
+  /** The contents of each tab. Item keys should match the key of the corresponding `<Item>` within the `<TabList>` element. */
+  children: CollectionChildren<T>
 }

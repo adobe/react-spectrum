@@ -359,6 +359,8 @@ function renderWithForm({width = 'auto', ...props}) {
                   <Item key="Kangaroo">Kangaroo</Item>
                   <Item key="Snake">Snake</Item>
                 </Picker>
+                <Button UNSAFE_style={{display: 'none'}} variant="primary">Hidden</Button>
+                <Button UNSAFE_style={{visibility: 'hidden', position: 'absolute'}} variant="primary">Hidden</Button>
                 <RadioGroup label="Preferred Job" name="jobs">
                   <Radio value="battery">Battery</Radio>
                   <Radio value="storage">Information Storage</Radio>
