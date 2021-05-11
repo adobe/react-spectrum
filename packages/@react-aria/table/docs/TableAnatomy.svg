@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="842" height="342" style="max-height: 342; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 842 342">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="842" height="342" style="max-height: 342px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 842 342">
   <title>Table anatomy diagram</title>
   <desc>Shows a table component with labels pointing to its parts, including the row, row divider, column, column header, column divider, sort icon, and cell elements.</desc>
   <defs>
@@ -7,23 +7,18 @@
     </clipPath>
   </defs>
   <g id="table_anatomy" clip-path="url(#clip-table_anatomy)">
-    <rect width="842" height="342" fill="var(--anatomy-gray-100)4f6fc"/>
+    <rect width="842" height="342" fill="var(--anatomy-gray-100)"/>
     <g id="Group_4011" data-name="Group 4011" transform="translate(-36 403)">
-      <rect id="Rectangle_3659" data-name="Rectangle 3659" width="20" height="20" transform="translate(392 -340)" fill="red" opacity="0"/>
       <text id="Column_header" data-name="Column
 header" transform="translate(402 -360)" fill="var(--anatomy-gray-700)" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="-19.858" y="0">Column</tspan><tspan x="-17.576" y="15">header</tspan></text>
       <path id="Union_50" data-name="Union 50" d="M-8701-353.5a2.5,2.5,0,0,1,2-2.45V-374h1v18.05a2.5,2.5,0,0,1,2,2.45,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-8701-353.5Z" transform="translate(9100.5 34)" fill="var(--anatomy-gray-500)"/>
     </g>
     <text id="Typography" transform="translate(543 94)" fill="var(--anatomy-gray-600)" font-size="11" font-family="AdobeClean-Medium, Adobe Clean" font-weight="500" letter-spacing="0.06em"><tspan x="-26.224" y="0">SENT</tspan></text>
-    <g id="rectangle-33" transform="translate(276 107)" fill="var(--anatomy-gray-100)ff">
+    <g id="rectangle-33" transform="translate(276 107)" fill="var(--anatomy-gray-100)">
       <path d="M 296 188.5 L 4 188.5 C 2.070076942443848 188.5 0.5 186.9299163818359 0.5 185 L 0.5 4 C 0.5 2.070076942443848 2.070076942443848 0.5 4 0.5 L 296 0.5 C 297.929931640625 0.5 299.5 2.070076942443848 299.5 4 L 299.5 185 C 299.5 186.9299163818359 297.929931640625 188.5 296 188.5 Z" stroke="none"/>
       <path d="M 4 1 C 2.345794677734375 1 1 2.345809936523438 1 4 L 1 185 C 1 186.6541900634766 2.345794677734375 188 4 188 L 296 188 C 297.6542053222656 188 299 186.6541900634766 299 185 L 299 4 C 299 2.345809936523438 297.6542053222656 1 296 1 L 4 1 M 4 0 L 296 0 C 298.2091064453125 0 300 1.790847778320312 300 4 L 300 185 C 300 187.2091522216797 298.2091064453125 189 296 189 L 4 189 C 1.79083251953125 189 0 187.2091522216797 0 185 L 0 4 C 0 1.790847778320312 1.79083251953125 0 4 0 Z" stroke="none" fill="var(--anatomy-gray-300)"/>
     </g>
     <text id="Typography-2" data-name="Typography" transform="translate(557 135)" fill="var(--anatomy-gray-800)" font-size="14" font-family="AdobeClean-Regular, Adobe Clean"><tspan x="-30.618" y="0">6,554</tspan></text>
-    <rect id="rectangle-34" width="298" height="1" transform="translate(277 154)" fill="var(--anatomy-gray-300)"/>
-    <rect id="rectangle-34-2" data-name="rectangle-34" width="298" height="1" transform="translate(277 107)" fill="var(--anatomy-gray-300)"/>
-    <rect id="rectangle-34-3" data-name="rectangle-34" width="298" height="1" transform="translate(277 201)" fill="var(--anatomy-gray-300)"/>
-    <rect id="rectangle-34-4" data-name="rectangle-34" width="298" height="1" transform="translate(277 248)" fill="var(--anatomy-gray-300)"/>
     <text id="Typography-3" data-name="Typography" transform="translate(557 182)" fill="var(--anatomy-gray-800)" font-size="14" font-family="AdobeClean-Regular, Adobe Clean"><tspan x="-29.106" y="0">2,875</tspan></text>
     <text id="Typography-4" data-name="Typography" transform="translate(557 229)" fill="var(--anatomy-gray-800)" font-size="14" font-family="AdobeClean-Regular, Adobe Clean"><tspan x="-29.652" y="0">3,679</tspan></text>
     <text id="Typography-5" data-name="Typography" transform="translate(557 276)" fill="var(--anatomy-gray-800)" font-size="14" font-family="AdobeClean-Regular, Adobe Clean"><tspan x="-28.462" y="0">1,308</tspan></text>
@@ -33,7 +28,6 @@ header" transform="translate(402 -360)" fill="var(--anatomy-gray-700)" font-size
     <text id="Tree_item-4" data-name="Tree item" transform="translate(340 231)" fill="var(--anatomy-gray-800)" font-size="14" font-family="AdobeClean-Regular, Adobe Clean"><tspan x="0" y="0">Tree item</tspan></text>
     <text id="Typography-6" data-name="Typography" transform="translate(336 94)" fill="var(--anatomy-gray-600)" font-size="11" font-family="AdobeClean-Medium, Adobe Clean" font-weight="500" letter-spacing="0.06em"><tspan x="0" y="0">ITEM NAME</tspan></text>
     <g id="Group_4019" data-name="Group 4019" transform="translate(-77 637.5)">
-      <rect id="Rectangle_3659-2" data-name="Rectangle 3659" width="20" height="21" transform="translate(355 -350.5)" fill="red" opacity="0"/>
       <text id="Column" transform="translate(364 -316.5)" fill="var(--anatomy-gray-700)" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="-19.858" y="0">Column</tspan></text>
       <path id="Union_53" data-name="Union 53" d="M-8599-588.5V-608.55a2.5,2.5,0,0,1-2-2.45,2.5,2.5,0,0,1,2.5-2.5,2.5,2.5,0,0,1,2.5,2.5,2.5,2.5,0,0,1-2,2.449V-588.5Z" transform="translate(8963.5 259)" fill="var(--anatomy-gray-500)"/>
     </g>
@@ -45,58 +39,42 @@ header" transform="translate(402 -360)" fill="var(--anatomy-gray-700)" font-size
       <rect id="Rectangle_12329" data-name="Rectangle 12329" width="20" height="20" transform="translate(392 -335)" fill="red" opacity="0"/>
       <path id="Union_49" data-name="Union 49" d="M-8556-348.5a2.5,2.5,0,0,1,2-2.45V-369h1v18.051a2.5,2.5,0,0,1,2,2.449,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-8556-348.5Z" transform="translate(8955.5 34)" fill="var(--anatomy-gray-500)"/>
     </g>
+    <rect id="rectangle-34" width="298" height="1" transform="translate(277 154)" fill="var(--anatomy-gray-300)"/>
+    <rect id="rectangle-34-2" data-name="rectangle-34" width="298" height="1" transform="translate(277 107)" fill="var(--anatomy-gray-300)"/>
+    <rect id="rectangle-34-3" data-name="rectangle-34" width="298" height="1" transform="translate(277 201)" fill="var(--anatomy-gray-300)"/>
+    <rect id="rectangle-34-4" data-name="rectangle-34" width="298" height="1" transform="translate(277 248)" fill="var(--anatomy-gray-300)"/>
+    <rect id="rectangle-34-5" data-name="rectangle-34" width="1" height="189" transform="translate(497 107)" fill="var(--anatomy-gray-300)"/>
     <g id="Group_16603" data-name="Group 16603" transform="translate(86 378)">
       <text id="Row_divider" data-name="Row
 divider" transform="translate(402 -355)" fill="var(--anatomy-gray-700)" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="-11.102" y="0">Row</tspan><tspan x="-17.173" y="15">divider</tspan></text>
-      <rect id="Rectangle_12329-2" data-name="Rectangle 12329" width="20" height="20" transform="translate(392 -330)" fill="red" opacity="0"/>
       <path id="Union_49-2" data-name="Union 49" d="M0,92.5a2.5,2.5,0,0,1,2-2.45V0H3V90.051A2.5,2.5,0,1,1,0,92.5Z" transform="translate(399.5 -318)" fill="var(--anatomy-gray-500)"/>
     </g>
     <g id="Checkbox" transform="translate(293 115)">
-      <g id="Placement_Area" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
-        <rect width="14" height="32" stroke="none"/>
-        <rect x="0.5" y="0.5" width="13" height="31" fill="none"/>
-      </g>
-      <g id="Box" transform="translate(0 9)" fill="var(--anatomy-gray-100)dfdfe" stroke="var(--anatomy-gray-600)" stroke-width="2">
+      <g id="Box" transform="translate(0 9)" fill="var(--anatomy-gray-100)" stroke="var(--anatomy-gray-600)" stroke-width="2">
         <rect width="14" height="14" rx="2" stroke="none"/>
         <rect x="1" y="1" width="12" height="12" rx="1" fill="none"/>
       </g>
     </g>
     <g id="Checkbox-2" data-name="Checkbox" transform="translate(293 209)">
-      <g id="Placement_Area-2" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
-        <rect width="14" height="32" stroke="none"/>
-        <rect x="0.5" y="0.5" width="13" height="31" fill="none"/>
-      </g>
-      <g id="Box-2" data-name="Box" transform="translate(0 9)" fill="var(--anatomy-gray-100)dfdfe" stroke="var(--anatomy-gray-600)" stroke-width="2">
+      <g id="Box-2" data-name="Box" transform="translate(0 9)" fill="var(--anatomy-gray-100)" stroke="var(--anatomy-gray-600)" stroke-width="2">
         <rect width="14" height="14" rx="2" stroke="none"/>
         <rect x="1" y="1" width="12" height="12" rx="1" fill="none"/>
       </g>
     </g>
     <g id="Checkbox-3" data-name="Checkbox" transform="translate(293 162)">
-      <g id="Placement_Area-3" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
-        <rect width="14" height="32" stroke="none"/>
-        <rect x="0.5" y="0.5" width="13" height="31" fill="none"/>
-      </g>
-      <g id="Box-3" data-name="Box" transform="translate(0 9)" fill="var(--anatomy-gray-100)dfdfe" stroke="var(--anatomy-gray-600)" stroke-width="2">
+      <g id="Box-3" data-name="Box" transform="translate(0 9)" fill="var(--anatomy-gray-100)" stroke="var(--anatomy-gray-600)" stroke-width="2">
         <rect width="14" height="14" rx="2" stroke="none"/>
         <rect x="1" y="1" width="12" height="12" rx="1" fill="none"/>
       </g>
     </g>
     <g id="Checkbox-4" data-name="Checkbox" transform="translate(293 256)">
-      <g id="Placement_Area-4" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
-        <rect width="14" height="32" stroke="none"/>
-        <rect x="0.5" y="0.5" width="13" height="31" fill="none"/>
-      </g>
-      <g id="Box-4" data-name="Box" transform="translate(0 9)" fill="var(--anatomy-gray-100)dfdfe" stroke="var(--anatomy-gray-600)" stroke-width="2">
+      <g id="Box-4" data-name="Box" transform="translate(0 9)" fill="var(--anatomy-gray-100)" stroke="var(--anatomy-gray-600)" stroke-width="2">
         <rect width="14" height="14" rx="2" stroke="none"/>
         <rect x="1" y="1" width="12" height="12" rx="1" fill="none"/>
       </g>
     </g>
     <g id="Checkbox-5" data-name="Checkbox" transform="translate(293 74)">
-      <g id="Placement_Area-5" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
-        <rect width="14" height="32" stroke="none"/>
-        <rect x="0.5" y="0.5" width="13" height="31" fill="none"/>
-      </g>
-      <g id="Box-5" data-name="Box" transform="translate(0 9)" fill="var(--anatomy-gray-100)dfdfe" stroke="var(--anatomy-gray-600)" stroke-width="2">
+      <g id="Box-5" data-name="Box" transform="translate(0 9)" fill="var(--anatomy-gray-100)" stroke="var(--anatomy-gray-600)" stroke-width="2">
         <rect width="14" height="14" rx="2" stroke="none"/>
         <rect x="1" y="1" width="12" height="12" rx="1" fill="none"/>
       </g>
@@ -104,10 +82,8 @@ divider" transform="translate(402 -355)" fill="var(--anatomy-gray-700)" font-siz
     <g id="Group_16604" data-name="Group 16604" transform="translate(-102 398)">
       <text id="Checkbox_selection" data-name="Checkbox
 selection" transform="translate(402 -355)" fill="var(--anatomy-gray-700)" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="-24.31" y="0">Checkbox</tspan><tspan x="-22.003" y="15">selection</tspan></text>
-      <rect id="Rectangle_12329-3" data-name="Rectangle 12329" width="20" height="20" transform="translate(392 -335)" fill="red" opacity="0"/>
       <path id="Union_49-3" data-name="Union 49" d="M-8556-348.5a2.5,2.5,0,0,1,2-2.45V-369h1v18.051a2.5,2.5,0,0,1,2,2.449,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-8556-348.5Z" transform="translate(8955.5 34)" fill="var(--anatomy-gray-500)"/>
     </g>
-    <rect id="rectangle-34-5" data-name="rectangle-34" width="1" height="189" transform="translate(497 107)" fill="var(--anatomy-gray-300)"/>
     <text id="Column_divider" data-name="Column
 divider" transform="translate(497 315)" fill="var(--anatomy-gray-700)" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="-19.858" y="0">Column</tspan><tspan x="-17.173" y="15">divider</tspan></text>
     <path id="Union_57" data-name="Union 57" d="M-8599-588.5V-608.55a2.5,2.5,0,0,1-2-2.45,2.5,2.5,0,0,1,2.5-2.5,2.5,2.5,0,0,1,2.5,2.5,2.5,2.5,0,0,1-2,2.449V-588.5Z" transform="translate(9095.5 888)" fill="var(--anatomy-gray-500)"/>
