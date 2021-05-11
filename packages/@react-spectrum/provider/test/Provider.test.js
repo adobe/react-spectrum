@@ -36,10 +36,6 @@ let mediaQueryMinXSmall = '(min-width: 190px)';
 let mediaQueryMinSmall = '(min-width: 380px)';
 let mediaQueryMinMedium = '(min-width: 768px)';
 let mediaQueryMinLarge = '(min-width: 1024px)';
-let mediaQueryMaxSmall = '(max-width: 380px)';
-let mediaQueryMaxMedium = '(max-width: 768px)';
-let mediaQueryMaxLarge = '(max-width: 1024px)';
-let mediaQueryMaxXLarge = '(max-width: 2048px)';
 
 describe('Provider', () => {
   let matchMedia;
@@ -216,10 +212,6 @@ describe('Provider', () => {
       ${'default'}            | ${mediaQueryMinSmall}    | ${{}}                   | ${'1000px'}
       ${'default'}            | ${mediaQueryMinMedium}   | ${{}}                   | ${'2000px'}
       ${'default'}            | ${mediaQueryMinLarge}    | ${{}}                   | ${'3000px'}
-      ${'mobileFirst=false'}  | ${mediaQueryMaxSmall}    | ${{mobileFirst: false}} | ${'1000px'}
-      ${'mobileFirst=false'}  | ${mediaQueryMaxMedium}   | ${{mobileFirst: false}} | ${'2000px'}
-      ${'mobileFirst=false'}  | ${mediaQueryMaxLarge}    | ${{mobileFirst: false}} | ${'3000px'}
-      ${'mobileFirst=false'}  | ${mediaQueryMaxXLarge}   | ${{mobileFirst: false}} | ${'192px'}
       ${'custom breakpoints'} | ${mediaQueryMinXSmall}   | ${{breakpoints}}        | ${'192px'}
       ${'custom breakpoints'} | ${'(min-width: 480px)'}  | ${{breakpoints}}        | ${'1000px'}
       ${'custom breakpoints'} | ${'(min-width: 640px)'}  | ${{breakpoints}}        | ${'2000px'}

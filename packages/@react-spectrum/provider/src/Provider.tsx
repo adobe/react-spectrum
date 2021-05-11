@@ -37,7 +37,6 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let prevContext = useProvider();
   let prevColorScheme = prevContext && prevContext.colorScheme;
   let prevBreakpoints = prevContext && prevContext.breakpoints;
-  let prevMobileFirst = prevContext && prevContext.mobileFirst;
   let {
     theme = prevContext && prevContext.theme,
     defaultColorScheme
@@ -55,7 +54,6 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     scale = prevContext ? prevContext.scale : autoScale,
     locale = prevContext ? prevLocale : null,
     breakpoints = prevContext ? prevBreakpoints : DEFAULT_BREAKPOINTS,
-    mobileFirst = prevContext ? prevMobileFirst : true,
     children,
     isQuiet,
     isEmphasized,
@@ -71,7 +69,6 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     version,
     theme,
     breakpoints,
-    mobileFirst,
     colorScheme,
     scale,
     isQuiet,
@@ -82,7 +79,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     validationState
   };
 
-  let matchedBreakpoints = useMatchedBreakpoints(breakpoints, mobileFirst);
+  let matchedBreakpoints = useMatchedBreakpoints(breakpoints);
   let filteredProps = {};
   Object.entries(currentProps).forEach(([key, value]) => value !== undefined && (filteredProps[key] = value));
 

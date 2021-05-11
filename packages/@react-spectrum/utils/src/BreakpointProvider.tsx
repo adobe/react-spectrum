@@ -36,10 +36,9 @@ export function BreakpointProvider(props: BreakpointProviderProps) {
   );
 }
 
-export function useMatchedBreakpoints(breakpoints: Breakpoints, mobileFirst: boolean): string[] {
-  // sort breakpoints
-  let entries = Object.entries(breakpoints).sort(([, valueA], [, valueB]) => mobileFirst ? valueB - valueA : valueA - valueB);
-  let breakpointQueries = entries.map(([, value]) => mobileFirst ?  `(min-width: ${value}px)` : `(max-width: ${value}px)`);
+export function useMatchedBreakpoints(breakpoints: Breakpoints): string[] {
+  let entries = Object.entries(breakpoints).sort(([, valueA], [, valueB]) => valueB - valueA);
+  let breakpointQueries = entries.map(([, value]) => `(min-width: ${value}px)`);
 
   let supportsMatchMedia = typeof window !== 'undefined' && typeof window.matchMedia === 'function';
   let getBreakpointHandler = () => {

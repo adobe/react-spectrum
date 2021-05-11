@@ -88,14 +88,7 @@ export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
    * Do not use `base` property.
    * @default {S:380,M:768,L:1024}
    */
-  breakpoints?: Breakpoints,
-
-  /**
-   * Determines how your responsive styleProps resolves.
-   * If you provided S and L but not M to the styleProps, S value will be adapted to the styles when your view port is M.
-   * @default true
-   */
-  mobileFirst?: boolean
+  breakpoints?: Breakpoints
 }
 
 export interface ProviderContext extends ContextProps {
@@ -103,6 +96,5 @@ export interface ProviderContext extends ContextProps {
   theme: Theme,
   colorScheme: ColorScheme,
   scale: Scale,
-  breakpoints: Breakpoints,
-  mobileFirst: boolean
+  breakpoints: Breakpoints
 }

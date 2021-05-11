@@ -135,7 +135,7 @@ storiesOf('Provider', module)
       );
     })
     .add(
-      'mobileFirst = true',
+      'breakpoint omitted',
       () => {
         let Breakpoint = () => {
           let {matchedBreakpoints} = useBreakpoint();
@@ -155,41 +155,11 @@ storiesOf('Provider', module)
           );
         };
         return (
-          <Provider
-            mobileFirst
-            UNSAFE_style={{padding: 50}}>
+          <Provider UNSAFE_style={{padding: 50}}>
             <Breakpoint />
           </Provider>
         );
-      })
-      .add(
-        'mobileFirst = false',
-        () => {
-          let Breakpoint = () => {
-            let {matchedBreakpoints} = useBreakpoint();
-            let breakpoint = matchedBreakpoints[0];
-            let width = {base: 'size-1600', S: 'size-2400', L: 'size-3400'};
-            return (
-              <>
-                <p>
-                  button's width will be L: 'size-3400' at M viewport.
-                </p>
-                <Button
-                  variant="primary"
-                  width={width} >
-                  Button with {breakpoint} breakpoint.
-                </Button>
-              </>
-            );
-          };
-          return (
-            <Provider
-              mobileFirst={false}
-              UNSAFE_style={{padding: 50}}>
-              <Breakpoint />
-            </Provider>
-          );
-        });
+      });
 
 function render(props = {}) {
   return (
