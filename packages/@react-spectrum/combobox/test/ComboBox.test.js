@@ -4350,8 +4350,8 @@ describe('ComboBox', function () {
       typeText(trayInput, 'r');
 
       act(() => {
+        trayInput.blur();
         triggerPress(document.body);
-        jest.runAllTimers();
         jest.runAllTimers();
       });
 
