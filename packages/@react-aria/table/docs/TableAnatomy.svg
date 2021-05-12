@@ -14,7 +14,7 @@ header" transform="translate(402 -360)" fill="var(--anatomy-gray-700)" font-size
       <path id="Union_50" data-name="Union 50" d="M-8701-353.5a2.5,2.5,0,0,1,2-2.45V-374h1v18.05a2.5,2.5,0,0,1,2,2.45,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-8701-353.5Z" transform="translate(9100.5 34)" fill="var(--anatomy-gray-500)"/>
     </g>
     <text id="Typography" transform="translate(543 94)" fill="var(--anatomy-gray-600)" font-size="11" font-family="AdobeClean-Medium, Adobe Clean" font-weight="500" letter-spacing="0.06em"><tspan x="-26.224" y="0">SENT</tspan></text>
-    <g id="rectangle-33" transform="translate(276 107)" fill="var(--anatomy-gray-100)">
+    <g id="rectangle-33" transform="translate(276 107)" fill="none">
       <path d="M 296 188.5 L 4 188.5 C 2.070076942443848 188.5 0.5 186.9299163818359 0.5 185 L 0.5 4 C 0.5 2.070076942443848 2.070076942443848 0.5 4 0.5 L 296 0.5 C 297.929931640625 0.5 299.5 2.070076942443848 299.5 4 L 299.5 185 C 299.5 186.9299163818359 297.929931640625 188.5 296 188.5 Z" stroke="none"/>
       <path d="M 4 1 C 2.345794677734375 1 1 2.345809936523438 1 4 L 1 185 C 1 186.6541900634766 2.345794677734375 188 4 188 L 296 188 C 297.6542053222656 188 299 186.6541900634766 299 185 L 299 4 C 299 2.345809936523438 297.6542053222656 1 296 1 L 4 1 M 4 0 L 296 0 C 298.2091064453125 0 300 1.790847778320312 300 4 L 300 185 C 300 187.2091522216797 298.2091064453125 189 296 189 L 4 189 C 1.79083251953125 189 0 187.2091522216797 0 185 L 0 4 C 0 1.790847778320312 1.79083251953125 0 4 0 Z" stroke="none" fill="var(--anatomy-gray-300)"/>
     </g>
