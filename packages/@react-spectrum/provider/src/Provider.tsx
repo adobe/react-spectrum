@@ -12,7 +12,6 @@
 
 import {
   BreakpointProvider,
-  DEFAULT_BREAKPOINTS,
   shouldKeepSpectrumClassNames,
   useDOMRef,
   useMatchedBreakpoints,
@@ -32,6 +31,9 @@ import {useColorScheme, useScale} from './mediaQueries';
 import {version} from '../package.json';
 
 const Context = React.createContext<ProviderContext | null>(null);
+Context.displayName = 'ProviderContext';
+
+const DEFAULT_BREAKPOINTS = {S: 380, M: 768, L: 1024};
 
 function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let prevContext = useProvider();

@@ -8,15 +8,12 @@ interface Breakpoints {
   [custom: string]: number
 }
 
-interface IBreakpointContext {
+interface BreakpointContext {
   matchedBreakpoints: string[]
 }
 
-export const BreakpointContext = React.createContext<IBreakpointContext>(null);
-BreakpointContext.displayName = 'BreakpointContext';
-
-// This is temporary values.
-export const DEFAULT_BREAKPOINTS = {S: 380, M: 768, L: 1024};
+const Context = React.createContext<BreakpointContext>(null);
+Context.displayName = 'BreakpointContext';
 
 interface BreakpointProviderProps {
   children?: ReactNode,
@@ -29,10 +26,10 @@ export function BreakpointProvider(props: BreakpointProviderProps) {
     matchedBreakpoints
   } = props;
   return (
-    <BreakpointContext.Provider
+    <Context.Provider
       value={{matchedBreakpoints}} >
       {children}
-    </BreakpointContext.Provider>
+    </Context.Provider>
   );
 }
 
@@ -80,6 +77,6 @@ export function useMatchedBreakpoints(breakpoints: Breakpoints): string[] {
   return isSSR ? ['base'] : breakpoint;
 }
 
-export function useBreakpoint(): IBreakpointContext {
-  return useContext(BreakpointContext);
+export function useBreakpoint(): BreakpointContext {
+  return useContext(Context);
 }
