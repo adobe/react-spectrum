@@ -4428,6 +4428,30 @@ describe('ComboBox', function () {
       expect(() => getByTestId('tray')).toThrow();
     });
 
+    it('combobox button is focused on press end', function () {
+      let {getByRole, getByTestId} = renderComboBox({menutTrigger: 'focus'});
+      let button = getByRole('button');
+
+      act(() => {
+        fireEvent.touchStart(button, {targetTouches: [{identifier: 1}]});
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement).not.toBe(button);
+      expect(() => getByTestId('tray')).toThrow();
+
+      act(() => {
+        fireEvent.touchEnd(button, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
+        expect(document.activeElement).toBe(button);
+        jest.runAllTimers();
+      });
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      let input = within(tray).getByRole('searchbox');
+      expect(document.activeElement).toBe(input);
+    });
+
     describe('refs', function () {
       it('attaches a ref to the label wrapper', function () {
         let ref = React.createRef();

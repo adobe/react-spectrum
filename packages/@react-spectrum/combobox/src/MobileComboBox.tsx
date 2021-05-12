@@ -186,8 +186,27 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
       valueId,
       validationState === 'invalid' ? invalidId : null
     ].filter(Boolean).join(' '),
-    elementType: 'div'
+    elementType: 'div',
+    // Prevent focus on press and focus on press end to avoid situations where user
+    // presses and holds on the combobox button and tray immediately opens due to menuTrigger=focus
+    // @ts-ignore
+    preventFocusOnPress: true,
+    onPressEnd: () => {
+      focusSafely(ref.current);
+    }
   }, ref);
+
+  // Prevent focus event when pressing down and holding on combobox button. This is to stop tray from opening until user releases the button.
+  // Prevents tray open -> useInteractOutside called on press end -> tray closing immediately when menuTrigger = "focus" and user presses and holds combobox button on mobile
+  useEffect(() => {
+    let button = ref.current;
+    let onTouchStart = (e) => e.preventDefault();
+    button.addEventListener('touchstart', onTouchStart);
+
+    return () => {
+      button.removeEventListener('touchstart', onTouchStart);
+    };
+  }, [ref]);
 
   return (
     <FocusRing
