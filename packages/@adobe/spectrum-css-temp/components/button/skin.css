@@ -676,8 +676,11 @@ governing permissions and limitations under the License.
 
 .spectrum-ActionButton--staticWhite {
   mix-blend-mode: screen;
+  --spectrum-actionbutton-static-background-color-hover: rgba(255, 255, 255, 0.1);
+  --spectrum-actionbutton-static-background-color-focus: rgba(255, 255, 255, 0.1);
+  --spectrum-actionbutton-static-background-color-active: rgba(255, 255, 255, 0.2);
   --spectrum-actionbutton-static-border-color: rgba(255, 255, 255, 0.3);
-  --spectrum-actionbutton-static-border-color-hover: white; /* ?? */
+  --spectrum-actionbutton-static-border-color-hover: white;
   --spectrum-actionbutton-static-border-color-active: white;
   --spectrum-actionbutton-static-border-color-focus: white;
   --spectrum-actionbutton-static-border-disabled: rgba(255, 255, 255, 0.15);
@@ -687,9 +690,6 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-ActionButton--staticWhite.spectrum-ActionButton--quiet {
-  --spectrum-actionbutton-static-background-color-hover: rgba(255, 255, 255, 0.1);
-  --spectrum-actionbutton-static-background-color-focus: rgba(255, 255, 255, 0.1);
-  --spectrum-actionbutton-static-background-color-active: rgba(255, 255, 255, 0.2);
   --spectrum-actionbutton-static-border-color: transparent;
   --spectrum-actionbutton-static-border-color-hover: transparent;
   --spectrum-actionbutton-static-border-color-active: transparent;
@@ -697,8 +697,11 @@ governing permissions and limitations under the License.
 
 .spectrum-ActionButton--staticBlack {
   mix-blend-mode: multiply;
+  --spectrum-actionbutton-static-background-color-hover: rgba(0, 0, 0, 0.1);
+  --spectrum-actionbutton-static-background-color-focus: rgba(0, 0, 0, 0.1);
+  --spectrum-actionbutton-static-background-color-active: rgba(0, 0, 0, 0.2);
   --spectrum-actionbutton-static-border-color: rgba(0, 0, 0, 0.3);
-  --spectrum-actionbutton-static-border-color-hover: black; /* ?? */
+  --spectrum-actionbutton-static-border-color-hover: black;
   --spectrum-actionbutton-static-border-color-active: black;
   --spectrum-actionbutton-static-border-color-focus: black;
   --spectrum-actionbutton-static-border-disabled: rgba(0, 0, 0, 0.15);
@@ -708,9 +711,6 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-ActionButton--staticBlack.spectrum-ActionButton--quiet {
-  --spectrum-actionbutton-static-background-color-hover: rgba(0, 0, 0, 0.1);
-  --spectrum-actionbutton-static-background-color-focus: rgba(0, 0, 0, 0.1);
-  --spectrum-actionbutton-static-background-color-active: rgba(0, 0, 0, 0.2);
   --spectrum-actionbutton-static-border-color: transparent;
   --spectrum-actionbutton-static-border-color-hover: transparent;
   --spectrum-actionbutton-static-border-color-active: transparent;
