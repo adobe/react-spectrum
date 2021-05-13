@@ -18,7 +18,7 @@ import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 import React, {useRef} from 'react';
 import {SpectrumAccordionProps} from '@react-types/accordion';
-import styles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
+import styles from '@spectrum-css/accordion/dist/index-vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
 import {useAccordion, useAccordionItem} from '@react-aria/accordion';
 import {useHover} from '@react-aria/interactions';
