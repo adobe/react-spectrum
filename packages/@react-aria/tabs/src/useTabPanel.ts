@@ -54,12 +54,10 @@ export function useTabPanel<T>(props: AriaTabPanelProps, state: TabListState<T>,
   }, [ref]);
 
   const id = generateId(state, state?.selectedKey, 'tabpanel');
-  const tabPanelProps = useLabels({...props, id});
+  const tabPanelProps = useLabels({...props, id, 'aria-labelledby': generateId(state, state?.selectedKey, 'tab')});
 
   return {
     tabPanelProps: mergeProps(tabPanelProps, {
-      id,
-      'aria-labelledby': generateId(state, state?.selectedKey, 'tab'),
       tabIndex,
       role: 'tabpanel',
       'aria-describedby': props['aria-describedby'],
