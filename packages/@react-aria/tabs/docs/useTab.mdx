@@ -49,7 +49,7 @@ Tabs provide a list of tabs that a user can select from to change the panels con
 * Support for mouse, touch, and keyboard interactions on tabs
 * Support for LTR and RTL keyboard navigation
 * Support for disabled tabs
-* Support for accessibly linking Tabs and the associated Tab Panel
+* Support for accessibly linking tabs and the associated tab panel
 
 
 ## Anatomy
@@ -57,7 +57,7 @@ Tabs provide a list of tabs that a user can select from to change the panels con
 <Anatomy />
 
 Tabs consist of a tablist with one or more visually separated tabs. Each tab has associated content and only the selected tab's content is shown.
-Each Tab can be clicked, tapped, or navigated to via arrow keys. Depending on the mode, the tab can be selected by receiving keyboard focus or it can be selected with the <kbd>Enter</kbd> key.
+Each tab can be clicked, tapped, or navigated to via arrow keys. Depending on the mode, the tab can be selected by receiving keyboard focus or it can be selected with the <kbd>Enter</kbd> key.
 
 `useTabList` returns props to spread onto any element containing the tabs:
 
@@ -79,7 +79,7 @@ Each Tab can be clicked, tapped, or navigated to via arrow keys. Depending on th
 
 ## Example
 
-This example displays a basic list of tabs. The currently selected Tab get a tabindex of 0 while the rest are set to -1 ensuring that the Tab list is only a single tab stop. The selected tab gets a different style so it's obvious which one is currently selected. Our hooks handle the aria properties that associate the tabs with their tab panel for screen readers. In the tab panel itself, we only render the currently selected item.
+This example displays a basic list of tabs. The currently selected tab get a tabindex of 0 while the rest are set to -1 ensuring that the tablist is only a single tab stop. The selected tab gets a different style so it's obvious which one is currently selected. Our hooks handle the aria properties that associate the tabs with their tab panel for screen readers. In the tab panel itself, we only render the currently selected item.
 
 ```tsx example
 import {Item} from '@react-stately/collections';
@@ -135,7 +135,8 @@ function Tab({item, state}) {
 
 ## With focusable content
 
-When a Tab Panel has focusable content, there is a difference in behavior. When nothing inside is focusable, the entire `role="tabpanel"` is given a `tabIndex=0`, this is so that the content can be navigated to. When there is something focusable inside, such as a textfield, then this is omitted because the textfield can receive the focus.
+When the tab panel doesn't contain focusable content, the entire panel is given a `tabIndex=0` so that the content can be navigated to. When the tab panel contains focusable content, such as a textfield, then the tab index is omitted because the content itself can receive focus.
+
 Using the same example `Tabs` component from above. Try navigating from the tabs to the content for each panel using the keyboard.
 
 ```tsx example

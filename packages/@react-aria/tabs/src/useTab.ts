@@ -22,6 +22,10 @@ interface TabAria {
   tabProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a tab component. Handles mouse, keyboard, and touch interactions,
+ * focus behavior, and ARIA props.
+ */
 export function useTab<T>(
   props: AriaTabProps,
   state: SingleSelectListState<T>,
