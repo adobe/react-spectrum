@@ -384,7 +384,7 @@ describe('Radios', function () {
     expect(radios[0]).toHaveAttribute('aria-label', 'Favorite Pet');
   });
 
-  it('v3 RadioGroup supports custom props', () => {
+  it('v3 Radios supports custom props', () => {
     let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet'}, [{'data-testid': 'test'}]);
     let radios = getAllByRole('radio');
     expect(radios[0]).toHaveAttribute('data-testid', 'test');

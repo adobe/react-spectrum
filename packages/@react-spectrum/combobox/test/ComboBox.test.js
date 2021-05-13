@@ -3508,17 +3508,6 @@ describe('ComboBox', function () {
       expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
     });
 
-    it('combobox should not render a loading circle until a delay of 500ms passes (loadingState: loading)', function () {
-      let {getByRole} = renderComboBox({loadingState: 'loading'});
-      let combobox = getByRole('combobox');
-
-      act(() => {jest.advanceTimersByTime(250);});
-      expect(() => getByRole('progressbar')).toThrow();
-
-      act(() => {jest.advanceTimersByTime(250);});
-      expect(() => within(combobox).getByRole('progressbar')).toBeTruthy();
-    });
-
     it('combobox should not render a loading circle until a delay of 500ms passes and the menu is open (loadingState: filtering)', function () {
       let {getByRole} = renderComboBox({loadingState: 'filtering'});
       let combobox = getByRole('combobox');

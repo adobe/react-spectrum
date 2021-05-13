@@ -4,6 +4,7 @@ node_modules
 npm-debug.log
 build-storybook.log
 test-reports.xml
+junit.xml
 .nyc_output
 dist
 .idea
