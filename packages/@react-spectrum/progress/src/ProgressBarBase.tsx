@@ -58,10 +58,9 @@ function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement
   if (!label && !ariaLabel && !ariaLabelledby) {
     console.warn('If you do not provide a visible label via children, you must specify an aria-label or aria-labelledby attribute for accessibility');
   }
-
+  // use inline style for fit-content because cssnano is too smart for us and will strip out the -moz prefix in css files
   return (
     <div
-      {...styleProps}
       {...barProps}
       ref={domRef}
       className={
@@ -77,7 +76,8 @@ function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement
           barClassName,
           styleProps.className
         )
-      }>
+      }
+      style={{minWidth: '-moz-fit-content', ...styleProps.style}}>
       {label &&
         <span
           {...labelProps}

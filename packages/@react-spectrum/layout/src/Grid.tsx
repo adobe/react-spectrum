@@ -45,7 +45,7 @@ function Grid(props: GridProps, ref: DOMRef<HTMLDivElement>) {
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps, gridStyleProps);
+  let {styleProps} = useStyleProps(otherProps, {handlers: gridStyleProps});
   styleProps.style.display = 'grid'; // inline-grid?
   let domRef = useDOMRef(ref);
 
