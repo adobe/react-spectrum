@@ -3,7 +3,7 @@
   "version": "3.0.0-alpha.1",
   "private": true,
   "license": "MIT",
-  "main": "dist/index.html",
+  "browser": "dist/index.html",
   "scripts": {
     "watch:parcel": "rm -rf ../../../.parcel-cache && parcel serve src/index.html --target main --no-content-hash --no-cache --log-level verbose",
     "watch-:uxp": "sleep 20 && yarn uxp",
