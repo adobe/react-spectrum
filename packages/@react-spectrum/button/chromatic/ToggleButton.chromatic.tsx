@@ -52,14 +52,14 @@ storiesOf('Button/ToggleButton', module)
     </Grid>
   ))
   .add('staticColor = white', () => (
-    <View backgroundColor="seafoam-600" padding="size-1000">
+    <View backgroundColor="static-seafoam-600" padding="size-1000">
       <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
         {combinations.map(c => <ToggleButton {...c} staticColor="white">Button</ToggleButton>)}
       </Grid>
     </View>
   ))
   .add('staticColor = black', () => (
-    <View backgroundColor="yellow-400" padding="size-1000">
+    <View backgroundColor="static-yellow-400" padding="size-1000">
       <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
         {combinations.map(c => <ToggleButton {...c} staticColor="black">Button</ToggleButton>)}
       </Grid>
