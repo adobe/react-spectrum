@@ -23,7 +23,7 @@ function View(props: ViewProps, ref: DOMRef) {
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(props, {handlers: viewStyleProps});
+  let {styleProps} = useStyleProps(props, viewStyleProps);
   let domRef = useDOMRef(ref);
 
   return (
