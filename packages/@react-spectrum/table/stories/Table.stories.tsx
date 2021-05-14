@@ -602,13 +602,13 @@ storiesOf('TableView', module)
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
     'filtering',
     () => (
-      <Table aria-label="Table filtering" width={700} height={200}>
+      <TableView aria-label="Table filtering" width={700} height={200}>
         <TableHeader columns={columns}>
           {column =>
             <Column minWidth={100}>{column.name}</Column>

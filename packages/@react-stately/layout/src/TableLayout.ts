@@ -246,9 +246,7 @@ export class TableLayout<T> extends ListLayout<T> {
       children.push(layoutNode);
     }
 
-    let loadingState = this.collection.body.props.loadingState;
-    let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-    if (isLoading) {
+    if (this.isLoading) {
       let rect = new Rect(0, y, width || this.virtualizer.visibleRect.width, children.length === 0 ? this.virtualizer.visibleRect.height : 60);
       let loader = new LayoutInfo('loader', 'loader', rect);
       loader.parentKey = 'body';

@@ -2799,7 +2799,7 @@ describe('TableView', function () {
 
     it('should not display a spinner when filtering', function () {
       let tree = render(
-        <Table aria-label="Table">
+        <TableView aria-label="Table">
           <TableHeader>
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
@@ -2814,7 +2814,7 @@ describe('TableView', function () {
               <Cell>Bar 2</Cell>
             </Row>
           </TableBody>
-        </Table>
+        </TableView>
       );
 
       let table = tree.getByRole('grid');
