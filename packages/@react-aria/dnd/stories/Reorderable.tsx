@@ -15,11 +15,11 @@ import {chain} from '@react-aria/utils';
 import {classNames} from '@react-spectrum/utils';
 import dndStyles from './dnd.css';
 import dropIndicatorStyles from '@adobe/spectrum-css-temp/components/dropindicator/vars.css';
-import {DroppableCollectionDropEvent} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {Item} from '@react-stately/collections';
+import {ItemDropTarget} from '@react-types/shared';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import {mergeProps} from '@react-aria/utils';
 import {Provider, useProvider} from '@react-spectrum/provider';
@@ -46,37 +46,16 @@ export function ReorderableGridExample(props) {
     ]
   });
 
-  let onDrop = async (e: DroppableCollectionDropEvent) => {
-    if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
-      let items = [];
-      for (let item of e.items) {
-        if (item.kind === 'text') {
-          let type: string;
-          if (item.types.has('folder')) {
-            type = 'folder';
-          } else if (item.types.has('item')) {
-            type = 'item';
-          }
-
-          if (!type) {
-            continue;
-          }
-
-          let data = JSON.parse(await item.getText(type));
-          items.push(data.id);
-        }
-      }
-
-      if (e.target.dropPosition === 'before') {
-        list.moveBefore(e.target.key, items);
-      } else {
-        list.moveAfter(e.target.key, items);
-      }
+  let onMove = (keys: React.Key[], target: ItemDropTarget) => {
+    if (target.dropPosition === 'before') {
+      list.moveBefore(target.key, keys);
+    } else {
+      list.moveAfter(target.key, keys);
     }
   };
 
   return (
-    <ReorderableGrid items={list.items} onDrop={onDrop}>
+    <ReorderableGrid items={list.items} onMove={onMove}>
       {item => (
         <Item textValue={item.text}>
           {item.type === 'folder' && <Folder size="S" />}
@@ -89,7 +68,6 @@ export function ReorderableGridExample(props) {
 
 function ReorderableGrid(props) {
   let ref = React.useRef<HTMLDivElement>(null);
-  let onDrop = action('onDrop');
   let state = useListState(props);
   let keyboardDelegate = new ListKeyboardDelegate(state.collection, new Set(), ref);
   let gridState = useGridState({
@@ -114,19 +92,16 @@ function ReorderableGrid(props) {
   });
 
   let provider = useProvider();
+
+  // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
+  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
   let dragState = useDraggableCollectionState({
     collection: gridState.collection,
     selectionManager: gridState.selectionManager,
     getItems(keys) {
-      return [...keys].map(key => {
-        let item = gridState.collection.getItem(key);
-
-        return {
-          // @ts-ignore
-          [item.value.type]: JSON.stringify(item.value),
-          'text/plain': item.textValue
-        };
-      });
+      return [...keys].map(key => ({
+        [dragType]: JSON.stringify(key)
+      }));
     },
     renderPreview(selectedKeys, draggedKey) {
       let item = gridState.collection.getItem(draggedKey);
@@ -150,6 +125,7 @@ function ReorderableGrid(props) {
 
   let dropState = useDroppableCollectionState({
     collection: gridState.collection,
+    selectionManager: gridState.selectionManager,
     getDropOperation(target) {
       if (target.type === 'root' || target.dropPosition === 'on') {
         return 'cancel';
@@ -166,8 +142,17 @@ function ReorderableGrid(props) {
     onDropExit: chain(action('onDropExit'), console.log),
     onDropActivate: chain(action('onDropActivate'), console.log),
     onDrop: async e => {
-      onDrop(e);
-      props.onDrop?.(e);
+      if (e.target.type !== 'root' && e.target.dropPosition !== 'on' && props.onMove) {
+        let keys = [];
+        for (let item of e.items) {
+          if (item.kind === 'text' && item.types.has(dragType)) {
+            let key = JSON.parse(await item.getText(dragType));
+            keys.push(key);
+          }
+        }
+
+        props.onMove(keys, e.target);
+      }
     },
     getDropTargetFromPoint(x, y) {
       let rect = ref.current.getBoundingClientRect();

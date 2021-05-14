@@ -11,18 +11,27 @@
  */
 
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
-import {TabsProps} from '@react-types/tabs';
+import {TabListProps} from '@react-types/tabs';
 import {useEffect} from 'react';
 
-export interface TabsState<T> extends SingleSelectListState<T> {}
+export interface TabListState<T> extends SingleSelectListState<T> {}
 
-export function useTabsState<T extends object>(props: TabsProps<T>): TabsState<T> {
-  let state = useSingleSelectListState<T>(props);
+export function useTabListState<T extends object>(props: TabListProps<T>): TabListState<T> {
+  let state = useSingleSelectListState<T>({
+    ...props,
+    suppressTextValueWarning: true
+  });
 
   useEffect(() => {
     // Ensure a tab is always selected (in case no selected key was specified or if selected item was deleted from collection)
-    if (state.selectionManager.isEmpty || !state.collection.getItem(state.selectedKey)) {
-      state.selectionManager.replaceSelection(state.collection.getFirstKey());
+    let selectedKey = state.selectedKey;
+    if (state.selectionManager.isEmpty || !state.collection.getItem(selectedKey)) {
+      selectedKey = state.collection.getFirstKey();
+      state.selectionManager.replaceSelection(selectedKey);
+    }
+
+    if (state.selectionManager.focusedKey == null) {
+      state.selectionManager.setFocusedKey(selectedKey);
     }
   }, [state.selectionManager, state.selectedKey, state.collection]);
 

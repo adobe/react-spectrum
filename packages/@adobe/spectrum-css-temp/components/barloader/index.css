@@ -18,15 +18,28 @@ governing permissions and limitations under the License.
   flex-flow: row wrap;
   justify-content: space-between;
   align-items: center;
-  width: var(--spectrum-barloader-large-width);
+  min-inline-size: var(--spectrum-global-dimension-static-size-600);
+  inline-size: var(--spectrum-barloader-large-width);
   vertical-align: top;
   isolation: isolate;
+
+  &.spectrum-BarLoader--indeterminate {
+    max-inline-size: var(--spectrum-barloader-large-width);
+  }
+
+  &.spectrum-BarLoader--indeterminate.spectrum-BarLoader--sideLabel {
+    .spectrum-BarLoader-track {
+      max-inline-size: var(--spectrum-barloader-large-width);
+      inline-size: 100%;
+    }
+  }
 }
 
 .spectrum-BarLoader-track {
   /* Visually apply border radius to child elements */
   overflow: hidden;
-  width: var(--spectrum-barloader-large-width);
+  min-inline-size: var(--spectrum-global-dimension-static-size-600);
+  inline-size: 100%;
   height: var(--spectrum-barloader-large-height);
   border-radius: var(--spectrum-barloader-large-border-radius);
   z-index: 1; /* to fix a weird webkit bug with rounded corners and masking */
@@ -61,7 +74,11 @@ governing permissions and limitations under the License.
   display: inline-flex;
   flex-flow: row;
   justify-content: space-between;
-  inline-size: auto;
+  min-inline-size: fit-content;
+
+  .spectrum-BarLoader-track {
+    inline-size: inherit;
+  }
 
   .spectrum-BarLoader-label {
     margin-inline-end: var(--spectrum-barloader-large-label-gap-x);
@@ -76,7 +93,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-BarLoader--small {
-  min-width: var(--spectrum-barloader-small-width);
+  min-inline-size: var(--spectrum-global-dimension-static-size-600);
 
   .spectrum-BarLoader-fill {
     height: var(--spectrum-barloader-small-height);
@@ -88,7 +105,7 @@ governing permissions and limitations under the License.
   }
 }
 .spectrum-BarLoader--indeterminate .spectrum-BarLoader-fill {
-  width: var(--spectrum-barloader-large-indeterminate-fill-width);
+  inline-size: var(--spectrum-barloader-large-indeterminate-fill-width);
   position: relative;
   animation-timing-function: var(--spectrum-barloader-large-indeterminate-animation-ease);
   will-change: transform;

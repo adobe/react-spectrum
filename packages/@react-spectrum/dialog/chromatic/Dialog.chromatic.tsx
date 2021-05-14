@@ -271,9 +271,9 @@ function renderFooter({width = 'auto', isDismissable = undefined, ...props}) {
   );
 }
 
-function renderAlert({width = 'auto', ...props}: SpectrumAlertDialogProps) {
+function renderAlert({...props}: SpectrumAlertDialogProps) {
   return (
-    <div style={{display: 'flex', width, margin: '100px 0'}}>
+    <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
       <DialogTrigger defaultOpen>
         <ActionButton>Trigger</ActionButton>
         <AlertDialog {...props} />
