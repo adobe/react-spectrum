@@ -120,6 +120,9 @@ function rtl(ltr: string, rtl: string) {
 }
 
 const UNIT_RE = /(%|px|em|rem|vw|vh|auto|cm|mm|in|pt|pc|ex|ch|rem|vmin|vmax|fr)$/;
+const FUNC_RE = /^\s*\w+\(/;
+const SPECTRUM_VARIABLE_RE = /(static-)?size-\d+|single-line-(height|width)/g;
+
 export function dimensionValue(value: DimensionValue) {
   if (typeof value === 'number') {
     return value + 'px';
@@ -127,6 +130,10 @@ export function dimensionValue(value: DimensionValue) {
 
   if (UNIT_RE.test(value)) {
     return value;
+  }
+
+  if (FUNC_RE.test(value)) {
+    return value.replace(SPECTRUM_VARIABLE_RE, 'var(--spectrum-global-dimension-$&, var(--spectrum-alias-$&))');
   }
 
   return `var(--spectrum-global-dimension-${value}, var(--spectrum-alias-${value}))`;
