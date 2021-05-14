@@ -65,19 +65,8 @@ module.exports = () => {
           include: path.resolve(__dirname, '../')
         },
         {
-          test: /\.css$/,use: [
-            'style-loader',
-            {
-              loader: 'css-loader',
-              options: {
-                modules: true,
-                importLoaders: 1,
-                getLocalIdent: (context, localIdentName, localName) => {
-                  return generateScopedName(localName, context.resourcePath);
-                },
-              }
-            },
-          ],
+          test: /\.css$/,
+          use: ['style-loader', 'css-loader'],
           include: path.resolve(__dirname, '../'),
           exclude: /packages[\\/].*\.css$/
         },
