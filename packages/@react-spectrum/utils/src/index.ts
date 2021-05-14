@@ -23,3 +23,4 @@ export * from './useHasChild';
 export * from './useResizeObserver';
 export * from './useIsMobileDevice';
 export * from './useValueEffect';
+export * from './BreakpointProvider';
