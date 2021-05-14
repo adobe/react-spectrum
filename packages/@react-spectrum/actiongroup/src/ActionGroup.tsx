@@ -11,16 +11,20 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
+import {AriaLabelingProps, DOMProps, DOMRef, Node, StyleProps} from '@react-types/shared';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
-import {classNames, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, DOMRef, Node, StyleProps} from '@react-types/shared';
+import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
+import {classNames, SlotProvider, useDOMRef, useStyleProps, useValueEffect} from '@react-spectrum/utils';
+import {filterDOMProps, mergeProps, useId, useResizeObserver} from '@react-aria/utils';
+import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {ListState, useListState} from '@react-stately/list';
-import {mergeProps} from '@react-aria/utils';
+import More from '@spectrum-icons/workflow/More';
 import {PressResponder, useHover} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
-import React, {forwardRef, Key, ReactElement, useRef} from 'react';
+import React, {forwardRef, Key, ReactElement, useCallback, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import styles from '@adobe/spectrum-css-temp/components/actiongroup/vars.css';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useActionGroup} from '@react-aria/actiongroup';
 import {useActionGroupItem} from '@react-aria/actiongroup';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -35,19 +39,135 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
     isDisabled,
     orientation = 'horizontal',
     isQuiet,
+    staticColor,
+    overflowMode = 'wrap',
     onAction,
+    hideButtonText,
+    moreIcon,
     ...otherProps
   } = props;
 
   let domRef = useDOMRef(ref);
-  let state = useListState(props);
+  let wrapperRef = useRef<HTMLDivElement>(null);
+  let state = useListState({...props, suppressTextValueWarning: true});
   let {actionGroupProps} = useActionGroup(props, state, domRef);
   let isVertical = orientation === 'vertical';
   let providerProps = {isEmphasized, isDisabled, isQuiet};
   let {styleProps} = useStyleProps(props);
 
+  let [{visibleItems, isMeasuring}, setVisibleItems] = useValueEffect({
+    visibleItems: state.collection.size,
+    isMeasuring: false
+  });
+
+  let selectionMode = state.selectionManager.selectionMode;
+  let updateOverflow = useCallback(() => {
+    if (overflowMode === 'wrap') {
+      return;
+    }
+
+    let computeVisibleItems = (visibleItems: number) => {
+      let listItems = Array.from(domRef.current.children) as HTMLLIElement[];
+      let containerWidth = wrapperRef.current.offsetWidth;
+      let isShowingMenu = visibleItems < state.collection.size;
+      let calculatedWidth = 0;
+      let newVisibleItems = 0;
+
+      if (isShowingMenu) {
+        calculatedWidth += outerWidth(listItems.pop(), false, true);
+      }
+
+      for (let [i, item] of listItems.entries()) {
+        calculatedWidth += outerWidth(item, i === 0, i === listItems.length - 1);
+        if (calculatedWidth <= containerWidth) {
+          newVisibleItems++;
+        } else {
+          break;
+        }
+      }
+
+      // If selection is enabled, and not all of the items fit, collapse all of them into a dropdown
+      // immediately rather than having some visible and some not.
+      if (selectionMode !== 'none' && newVisibleItems < state.collection.size) {
+        return 0;
+      }
+
+      return newVisibleItems;
+    };
+
+    setVisibleItems(function *() {
+      // Update to show all items.
+      yield {
+        visibleItems: state.collection.size,
+        isMeasuring: true
+      };
+
+      // Measure, and update to show the items that fit.
+      let newVisibleItems = computeVisibleItems(state.collection.size);
+      let isMeasuring = newVisibleItems < state.collection.size && newVisibleItems > 0;
+      yield {
+        visibleItems: newVisibleItems,
+        isMeasuring
+      };
+
+      // // If the number of items is less than the number of children,
+      // // then update again to ensure that the menu fits.
+      if (isMeasuring) {
+        yield {
+          visibleItems: computeVisibleItems(newVisibleItems),
+          isMeasuring: false
+        };
+      }
+    });
+  }, [domRef, state.collection, setVisibleItems, overflowMode, selectionMode]);
+
+  // Watch the parent element for size changes. Watching only the action group itself may not work
+  // in all scenarios because it may not shrink when available space is reduced.
+  let parentRef = useMemo(() => ({
+    get current() {
+      return wrapperRef.current.parentElement;
+    }
+  }), [wrapperRef]);
+  useResizeObserver({ref: overflowMode !== 'wrap' ? parentRef : null, onResize: updateOverflow});
+  useLayoutEffect(updateOverflow, [updateOverflow, state.collection]);
+
+  let children = [...state.collection];
+  let menuItem = null;
+  let menuProps = {};
+
+  // If there are no visible items, don't apply any props to the action group container
+  // and pass all aria labeling props through to the menu button.
+  if (overflowMode === 'collapse' && visibleItems === 0) {
+    menuProps = filterDOMProps(props, {labelable: true});
+    actionGroupProps = {};
+  }
+
+  if (overflowMode === 'collapse' && visibleItems < state.collection.size) {
+    let menuChildren = children.slice(visibleItems);
+    children = children.slice(0, visibleItems);
+    menuItem = (
+      <ActionGroupMenu
+        {...menuProps}
+        items={menuChildren}
+        onAction={onAction}
+        isDisabled={isDisabled}
+        isEmphasized={isEmphasized}
+        staticColor={staticColor}
+        state={state}
+        moreIcon={moreIcon}
+        hideButtonText={hideButtonText}
+        isOnlyItem={visibleItems === 0} />
+    );
+  }
+
+  let style = {
+    ...styleProps.style,
+    // While measuring, take up as much space as possible.
+    flexBasis: isMeasuring ? '100%' : undefined
+  };
+
   return (
-    <div {...styleProps} className={classNames(styles, 'flex-container', styleProps.className)}>
+    <div {...styleProps} style={style} className={classNames(styles, 'flex-container', styleProps.className)} ref={wrapperRef}>
       <div
         {...actionGroupProps}
         ref={domRef}
@@ -60,21 +180,25 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
               'spectrum-ActionGroup--quiet': isQuiet,
               'spectrum-ActionGroup--vertical': isVertical,
               'spectrum-ActionGroup--compact': density === 'compact',
-              'spectrum-ActionGroup--justified': isJustified
+              'spectrum-ActionGroup--justified': isJustified && !isMeasuring,
+              'spectrum-ActionGroup--overflowCollapse': overflowMode === 'collapse'
             },
             otherProps.UNSAFE_className
           )
         }>
         <Provider {...providerProps}>
-          {[...state.collection].map((item) => (
+          {children.map((item) => (
             <ActionGroupItem
               key={item.key}
               onAction={onAction}
               isDisabled={isDisabled}
               isEmphasized={isEmphasized}
+              staticColor={staticColor}
               item={item}
-              state={state} />
+              state={state}
+              hideButtonText={hideButtonText} />
           ))}
+          {menuItem}
         </Provider>
       </div>
     </div>
@@ -92,12 +216,14 @@ interface ActionGroupItemProps<T> extends DOMProps, StyleProps {
   state: ListState<T>,
   isDisabled: boolean,
   isEmphasized: boolean,
+  staticColor?: 'white' | 'black',
+  hideButtonText?: boolean,
   onAction: (key: Key) => void
 }
 
-function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, onAction}: ActionGroupItemProps<T>) {
+function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor, onAction, hideButtonText}: ActionGroupItemProps<T>) {
   let ref = useRef();
-  let {buttonProps} = useActionGroupItem({key: item.key}, state, unwrapDOMRef(ref));
+  let {buttonProps} = useActionGroupItem({key: item.key}, state);
   isDisabled = isDisabled || state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key);
   let {hoverProps, isHovered} = useHover({isDisabled});
@@ -108,39 +234,155 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, onAction}: A
     });
   }
 
+  // If button text is hidden, we need to show it as a tooltip instead, so
+  // go find the text element in the DOM after rendering.
+  let textId = useId();
+  let [textContent, setTextContent] = useState('');
+  useLayoutEffect(() => {
+    if (hideButtonText) {
+      setTextContent(document.getElementById(textId)?.textContent);
+    }
+  }, [hideButtonText, item.rendered, textId]);
+
   let button = (
     // Use a PressResponder to send DOM props through.
     // ActionButton doesn't allow overriding the role by default.
     <PressResponder {...mergeProps(buttonProps, hoverProps)}>
-      <ActionButton
-        ref={ref}
-        UNSAFE_className={
-          classNames(
-            styles,
-            'spectrum-ActionGroup-item',
-            {
-              'is-selected': isSelected,
-              'is-hovered': isHovered
-            },
+      <SlotProvider
+        slots={{
+          text: {
+            id: hideButtonText ? textId : null,
+            isHidden: hideButtonText
+          }
+        }}>
+        <ActionButton
+          ref={ref}
+          UNSAFE_className={
             classNames(
-              buttonStyles,
+              styles,
+              'spectrum-ActionGroup-item',
               {
-                'spectrum-ActionButton--emphasized': isEmphasized,
-                'is-selected': isSelected
-              }
+                'is-selected': isSelected,
+                'is-hovered': isHovered,
+                'spectrum-ActionGroup-item--iconOnly': hideButtonText
+              },
+              classNames(
+                buttonStyles,
+                {
+                  'spectrum-ActionButton--emphasized': isEmphasized,
+                  'is-selected': isSelected
+                }
+              )
             )
-          )
-        }
-        isDisabled={isDisabled}
-        aria-label={item['aria-label']}>
-        {item.rendered}
-      </ActionButton>
+          }
+          isDisabled={isDisabled}
+          staticColor={staticColor}
+          aria-label={item['aria-label']}
+          aria-labelledby={item['aria-label'] == null && hideButtonText ? textId : undefined}>
+          {item.rendered}
+        </ActionButton>
+      </SlotProvider>
     </PressResponder>
   );
+
+  if (hideButtonText && textContent) {
+    button = (
+      <TooltipTrigger>
+        {button}
+        <Tooltip>{textContent}</Tooltip>
+      </TooltipTrigger>
+    );
+  }
 
   if (item.wrapper) {
     button = item.wrapper(button);
   }
 
   return button;
+}
+
+interface ActionGroupMenuProps<T> extends AriaLabelingProps {
+  state: ListState<T>,
+  isDisabled?: boolean,
+  isEmphasized?: boolean,
+  staticColor?: 'white' | 'black',
+  items: Node<T>[],
+  hideButtonText?: boolean,
+  moreIcon?: ReactElement,
+  isOnlyItem?: boolean,
+  onAction: (key: Key) => void
+}
+
+function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items, onAction, moreIcon, hideButtonText, isOnlyItem, ...otherProps}: ActionGroupMenuProps<T>) {
+  // Random key that won't conflict with any real items in the collection.
+  let key = useId();
+  let {buttonProps} = useActionGroupItem({key}, state);
+
+  // The menu button shouldn't act like an actual action group item.
+  delete buttonProps.onPress;
+  delete buttonProps.role;
+
+  let {hoverProps, isHovered} = useHover({isDisabled});
+
+  // If no aria-label or aria-labelledby is given, provide a default one.
+  let ariaLabel = otherProps['aria-label'] || (otherProps['aria-labelledby'] ? null : '…');
+
+  return (
+    // Use a PressResponder to send DOM props through.
+    <MenuTrigger align={isOnlyItem ? 'start' : 'end'}>
+      <PressResponder {...mergeProps(buttonProps, hoverProps)}>
+        <ActionButton
+          {...otherProps}
+          aria-label={ariaLabel}
+          UNSAFE_className={
+            classNames(
+              styles,
+              'spectrum-ActionGroup-item',
+              {
+                'spectrum-ActionGroup-item--iconOnly': hideButtonText && moreIcon,
+                'is-hovered': isHovered
+              },
+              classNames(
+                buttonStyles,
+                {
+                  'spectrum-ActionButton--emphasized': isEmphasized
+                }
+              )
+            )
+          }
+          isDisabled={isDisabled}
+          staticColor={staticColor}>
+          {moreIcon
+            ? (
+              // If there's a custom moreIcon, also add a chevron.
+              <>
+                {moreIcon}
+                <ChevronDownMedium />
+              </>
+            )
+            : <More />
+          }
+        </ActionButton>
+      </PressResponder>
+      <Menu
+        items={items}
+        selectionMode={state.selectionManager.selectionMode}
+        selectedKeys={state.selectionManager.selectedKeys}
+        disallowEmptySelection={state.selectionManager.disallowEmptySelection}
+        onSelectionChange={(keys) => state.selectionManager.setSelectedKeys(keys)}
+        onAction={onAction}>
+        {node => <Item textValue={node.textValue}>{node.rendered}</Item>}
+      </Menu>
+    </MenuTrigger>
+  );
+}
+
+function outerWidth(element: HTMLElement, ignoreLeftMargin: boolean, ignoreRightMargin: boolean) {
+  let style = window.getComputedStyle(element);
+  return element.offsetWidth + (ignoreLeftMargin ? 0 : toNumber(style.marginLeft)) + (ignoreRightMargin ? 0 : toNumber(style.marginRight));
+}
+
+function toNumber(value: string) {
+  let parsed = parseInt(value, 10);
+  return isNaN(parsed) ? 0 : parsed;
 }
