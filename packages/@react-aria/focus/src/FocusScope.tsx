@@ -420,7 +420,7 @@ export function getFocusableTreeWalker(root: HTMLElement, opts?: FocusManagerOpt
 /**
  * Creates a FocusManager object that can be used to move focus within an element.
  */
-export function createFocusManager(ref: React.RefObject<HTMLElement>): FocusManager {
+export function createFocusManager(ref: RefObject<HTMLElement>): FocusManager {
   return {
     focusNext(opts: FocusManagerOptions = {}) {
       let root = ref.current;

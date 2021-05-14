@@ -15,13 +15,13 @@ import {AriaLabelingProps, DOMProps, DOMRef, Node, StyleProps} from '@react-type
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames, SlotProvider, useDOMRef, useStyleProps, useValueEffect} from '@react-spectrum/utils';
-import {filterDOMProps, mergeProps, useId, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {ListState, useListState} from '@react-stately/list';
 import More from '@spectrum-icons/workflow/More';
 import {PressResponder, useHover} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
-import React, {forwardRef, Key, ReactElement, useCallback, useLayoutEffect, useMemo, useRef, useState} from 'react';
+import React, {forwardRef, Key, ReactElement, useCallback, useMemo, useRef, useState} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import styles from '@adobe/spectrum-css-temp/components/actiongroup/vars.css';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
