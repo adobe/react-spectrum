@@ -35,7 +35,7 @@ storiesOf('Button/ToggleButton', module)
   .add(
     'staticColor: white',
     () => (
-      <View backgroundColor="seafoam-600" padding="size-1000">
+      <View backgroundColor="static-seafoam-600" padding="size-1000">
         <Flex direction="column" rowGap="size-150">
           {render({staticColor: 'white'})}
           {render({staticColor: 'white', isQuiet: true})}
@@ -46,7 +46,7 @@ storiesOf('Button/ToggleButton', module)
   .add(
     'staticColor: black',
     () => (
-      <View backgroundColor="yellow-400" padding="size-1000">
+      <View backgroundColor="static-yellow-400" padding="size-1000">
         <Flex direction="column" rowGap="size-150">
           {render({staticColor: 'black'})}
           {render({staticColor: 'black', isQuiet: true})}

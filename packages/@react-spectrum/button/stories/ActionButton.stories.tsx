@@ -60,7 +60,7 @@ storiesOf('Button/ActionButton', module)
   .add(
     'staticColor: white',
     () => (
-      <View backgroundColor="seafoam-600" padding="size-1000">
+      <View backgroundColor="static-seafoam-600" padding="size-1000">
         <Flex direction="column" rowGap="size-150">
           {renderWithIcon({staticColor: 'white'})}
           {renderWithIcon({staticColor: 'white', isQuiet: true})}
@@ -71,7 +71,7 @@ storiesOf('Button/ActionButton', module)
   .add(
     'staticColor: black',
     () => (
-      <View backgroundColor="yellow-400" padding="size-1000">
+      <View backgroundColor="static-yellow-400" padding="size-1000">
         <Flex direction="column" rowGap="size-150">
           {renderWithIcon({staticColor: 'black'})}
           {renderWithIcon({staticColor: 'black', isQuiet: true})}
