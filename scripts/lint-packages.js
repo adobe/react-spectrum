@@ -59,7 +59,7 @@ for (let pkg of packages) {
     softAssert(json.source, `${pkg} did not have "source"`);
     softAssert.equal(json.source, 'src/index.ts', `${pkg} did not match "src/index.ts"`);
     softAssert.deepEqual(json.files, ['dist', 'src'], `${pkg} did not match "files"`);
-    if (pkg.includes('@react-spectrum') || pkg.includes('@react-aria/visually-hidden')) {
+    if (pkg.includes('@react-spectrum') || pkg.includes('@react-aria/visually-hidden') || pkg.includes('@adobe/react-spectrum')) {
       softAssert.deepEqual(json.sideEffects, ['*.css'], `${pkg} is missing sideEffects: [ '*.css' ]`);
     } else {
       softAssert.equal(json.sideEffects, false, `${pkg} is missing sideEffects: false`);
