@@ -275,10 +275,20 @@ storiesOf('ActionGroup', module)
     )
   )
   .add(
-    'hideButtonText',
+    'buttonLabelBehavior: hide',
     () => (
       <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', width: 250, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-        {renderCollapsible({hideButtonText: true})}
+        {renderCollapsible({buttonLabelBehavior: 'hide'})}
+        {renderCollapsibleText({buttonLabelBehavior: 'hide'})}
+      </div>
+    )
+  )
+  .add(
+    'buttonLabelBehavior: collapse',
+    () => (
+      <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', width: 500, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+        {renderCollapsible({buttonLabelBehavior: 'collapse'})}
+        {renderCollapsibleText({buttonLabelBehavior: 'collapse'})}
       </div>
     )
   )
@@ -415,6 +425,18 @@ function renderCollapsible(props = {}) {
   );
 }
 
+function renderCollapsibleText(props = {}) {
+  return (
+    <ActionGroup overflowMode="collapse" onAction={action('onAction')} {...props} marginBottom="size-250">
+      <Item key="edit">Edit</Item>
+      <Item key="copy">Copy</Item>
+      <Item key="delete">Delete</Item>
+      <Item key="move">Move</Item>
+      <Item key="duplicate">Duplicate</Item>
+    </ActionGroup>
+  );
+}
+
 function renderCollapsibleFormatting(props = {}) {
   return (
     <ActionGroup
@@ -422,7 +444,7 @@ function renderCollapsibleFormatting(props = {}) {
       overflowMode="collapse"
       selectionMode="multiple"
       onSelectionChange={action('onSelectionChange')}
-      hideButtonText
+      buttonLabelBehavior="hide"
       {...props}>
       <Item key="bold">
         <TagBold />
@@ -453,7 +475,7 @@ function renderCollapsibleAlignment(props = {}) {
       defaultSelectedKeys={['left']}
       disallowEmptySelection
       onSelectionChange={action('onSelectionChange')}
-      hideButtonText
+      buttonLabelBehavior="hide"
       {...props}>
       <Item key="left">
         <TextAlignLeft />

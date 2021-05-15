@@ -870,11 +870,11 @@ describe('ActionGroup', function () {
     });
   });
 
-  describe('hideButtonText', function () {
-    it('should show the text in a tooltip', function () {
+  describe('buttonLabelBehavior', function () {
+    it('should show the text in a tooltip with buttonLabelBehavior="hide"', function () {
       let tree = render(
         <Provider theme={theme}>
-          <ActionGroup overflowMode="collapse" hideButtonText>
+          <ActionGroup overflowMode="collapse" buttonLabelBehavior="hide">
             <Item key="one">
               <Edit />
               <Text>One</Text>
@@ -907,7 +907,7 @@ describe('ActionGroup', function () {
     it('should show the text when collapsed into a dropdown', function () {
       let tree = render(
         <Provider theme={theme}>
-          <ActionGroup overflowMode="collapse" hideButtonText>
+          <ActionGroup overflowMode="collapse" buttonLabelBehavior="hide">
             <Item key="one" textValue="One">
               <Edit />
               <Text>One</Text>
@@ -935,6 +935,78 @@ describe('ActionGroup', function () {
       expect(items).toHaveLength(2);
       expect(items[0]).toHaveTextContent('Two');
       expect(items[1]).toHaveTextContent('Three');
+    });
+
+    it('should show the text if it fits with buttonLabelBehavior="collapse"', function () {
+      jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+        if (this instanceof HTMLButtonElement) {
+          return this.hasAttribute('aria-labelledby') ? 50 : 100;
+        }
+
+        return 300;
+      });
+
+      let tree = render(
+        <Provider theme={theme}>
+          <ActionGroup overflowMode="collapse" buttonLabelBehavior="collapse">
+            <Item key="one">
+              <Edit />
+              <Text>One</Text>
+            </Item>
+            <Item key="two">
+              <Edit />
+              <Text>Two</Text>
+            </Item>
+          </ActionGroup>
+        </Provider>
+      );
+
+      let actiongroup = tree.getByRole('toolbar');
+      let buttons = within(actiongroup).getAllByRole('button');
+      expect(buttons.length).toBe(2);
+      expect(buttons[0]).not.toHaveAttribute('aria-labelledby');
+      expect(buttons[0]).toHaveTextContent('One');
+    });
+
+    it('should hide the text if it does not fit with buttonLabelBehavior="collapse"', function () {
+      jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+        if (this instanceof HTMLButtonElement) {
+          return this.hasAttribute('aria-labelledby') ? 50 : 100;
+        }
+
+        return 150;
+      });
+
+      let tree = render(
+        <Provider theme={theme}>
+          <ActionGroup overflowMode="collapse" buttonLabelBehavior="collapse">
+            <Item key="one">
+              <Edit />
+              <Text>One</Text>
+            </Item>
+            <Item key="two">
+              <Edit />
+              <Text>Two</Text>
+            </Item>
+          </ActionGroup>
+        </Provider>
+      );
+
+      let actiongroup = tree.getByRole('toolbar');
+      let buttons = within(actiongroup).getAllByRole('button');
+      expect(buttons.length).toBe(2);
+      expect(buttons[0]).toHaveAttribute('aria-labelledby');
+      let text = document.getElementById(buttons[0].getAttribute('aria-labelledby'));
+      expect(text).toHaveTextContent('One');
+      expect(text).toHaveAttribute('hidden');
+
+      fireEvent.mouseEnter(buttons[0]);
+      fireEvent.mouseMove(buttons[0]);
+      act(() => jest.advanceTimersByTime(2000));
+
+      let tooltip = tree.getByRole('tooltip');
+      expect(tooltip).toHaveTextContent('One');
+      expect(buttons[0]).toHaveAttribute('aria-describedby', tooltip.id);
     });
   });
 });

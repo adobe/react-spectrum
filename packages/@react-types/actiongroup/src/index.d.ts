@@ -62,12 +62,13 @@ export interface SpectrumActionGroupProps<T> extends AriaActionGroupProps<T>, St
    */
   overflowMode?: 'wrap' | 'collapse',
   /**
-   * Whether the text within the buttons should be hidden, and only the icon should be shown.
-   * When set to true, the text is shown in a tooltip. The text is always visible when the item
+   * Defines when the text within the buttons should be hidden and only the icon should be shown.
+   * When set to 'hide', the text is always shown in a tooltip. When set to 'collapse', the text is visible
+   * if space is available, and hidden when space is limited. The text is always visible when the item
    * is collapsed into a menu.
-   * @default false
+   * @default 'show'
    */
-  hideButtonText?: boolean,
+  buttonLabelBehavior?: 'show' | 'collapse' | 'hide',
   /** Allows overriding the icon displayed in the dropdown menu button when the ActionGroup is collapsed. */
   moreIcon?: ReactElement
 }

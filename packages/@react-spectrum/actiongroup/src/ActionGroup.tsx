@@ -42,7 +42,7 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
     staticColor,
     overflowMode = 'wrap',
     onAction,
-    hideButtonText,
+    buttonLabelBehavior,
     moreIcon,
     ...otherProps
   } = props;
@@ -55,8 +55,11 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
   let providerProps = {isEmphasized, isDisabled, isQuiet};
   let {styleProps} = useStyleProps(props);
 
-  let [{visibleItems, isMeasuring}, setVisibleItems] = useValueEffect({
+  // Only hide button text if every item contains more than just plain text (we assume an icon).
+  let isIconCollapsible = useMemo(() => [...state.collection].every(item => typeof item.rendered !== 'string'), [state.collection]);
+  let [{visibleItems, hideButtonText, isMeasuring}, setVisibleItems] = useValueEffect({
     visibleItems: state.collection.size,
+    hideButtonText: buttonLabelBehavior === 'hide' && isIconCollapsible,
     isMeasuring: false
   });
 
@@ -96,17 +99,36 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
     };
 
     setVisibleItems(function *() {
+      let hideButtonText = buttonLabelBehavior === 'hide' && isIconCollapsible;
+
       // Update to show all items.
       yield {
         visibleItems: state.collection.size,
+        hideButtonText,
         isMeasuring: true
       };
 
       // Measure, and update to show the items that fit.
       let newVisibleItems = computeVisibleItems(state.collection.size);
       let isMeasuring = newVisibleItems < state.collection.size && newVisibleItems > 0;
+
+      // If not all of the buttons fit, and buttonLabelBehavior is 'collapse', then first try hiding
+      // the button text and only showing icons. Only if that still doesn't fit collapse into a menu.
+      if (newVisibleItems < state.collection.size && buttonLabelBehavior === 'collapse' && isIconCollapsible) {
+        yield {
+          visibleItems: state.collection.size,
+          hideButtonText: true,
+          isMeasuring: true
+        };
+
+        newVisibleItems = computeVisibleItems(state.collection.size);
+        isMeasuring = newVisibleItems < state.collection.size && newVisibleItems > 0;
+        hideButtonText = true;
+      }
+
       yield {
         visibleItems: newVisibleItems,
+        hideButtonText,
         isMeasuring
       };
 
@@ -115,11 +137,12 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
       if (isMeasuring) {
         yield {
           visibleItems: computeVisibleItems(newVisibleItems),
+          hideButtonText,
           isMeasuring: false
         };
       }
     });
-  }, [domRef, state.collection, setVisibleItems, overflowMode, selectionMode]);
+  }, [domRef, state.collection, setVisibleItems, overflowMode, selectionMode, buttonLabelBehavior, isIconCollapsible]);
 
   // Watch the parent element for size changes. Watching only the action group itself may not work
   // in all scenarios because it may not shrink when available space is reduced.
