@@ -91,7 +91,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   // Only wrap in a DOM node if the theme, colorScheme, or scale changed
   let contents = children;
   let domProps = filterDOMProps(otherProps);
-  let {styleProps} = useStyleProps(otherProps, {matchedBreakpoints});
+  let {styleProps} = useStyleProps(otherProps, undefined, {matchedBreakpoints});
   if (!prevContext || props.locale || theme !== prevContext.theme || colorScheme !== prevContext.colorScheme || scale !== prevContext.scale || Object.keys(domProps).length > 0 || otherProps.UNSAFE_className || Object.keys(styleProps.style).length > 0) {
     contents = (
       <ProviderWrapper {...props} UNSAFE_style={{isolation: !prevContext ? 'isolate' : undefined, ...styleProps.style}} ref={ref}>
