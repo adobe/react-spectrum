@@ -226,7 +226,8 @@ type StylePropsOptions = {
 export function useStyleProps<T extends StyleProps>(
   props: T,
   handlers: StyleHandlers = baseStyleProps,
-  options: StylePropsOptions = {}) {
+  options: StylePropsOptions = {}
+) {
   let {
     UNSAFE_className,
     UNSAFE_style,
