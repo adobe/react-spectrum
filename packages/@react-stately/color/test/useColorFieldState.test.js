@@ -57,10 +57,10 @@ describe('useColorFieldState tests', function () {
   });
 
   it.each`
-    action                               | action               | props
+    name                                 | action               | props
     ${'not increment beyond max value'}  | ${'increment'}       | ${{defaultValue: '#ffffff'}}
     ${'increment to max value'}          | ${'incrementToMax'}  | ${{defaultValue: '#aabbcc'}}
-  `('should $action', function ({action, props}) {
+  `('should $action $name', function ({action, props}) {
     let {result} = renderHook(() => useColorFieldState(props));
     act(() => result.current[action]());
     expect(result.current.colorValue.getChannelValue('red')).toBe(255);
@@ -71,10 +71,10 @@ describe('useColorFieldState tests', function () {
   });
 
   it.each`
-    action                               | action               | props
+    name                                 | action               | props
     ${'not decrement beyond min value'}  | ${'decrement'}       | ${{defaultValue: '#000000'}}
     ${'decrement to min value'}          | ${'decrementToMin'}  | ${{defaultValue: '#aabbcc'}}
-  `('should $action', function ({action, props}) {
+  `('should $action $name', function ({action, props}) {
     let {result} = renderHook(() => useColorFieldState(props));
     act(() => result.current[action]());
     expect(result.current.colorValue.getChannelValue('red')).toBe(0);
