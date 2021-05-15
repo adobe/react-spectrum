@@ -136,20 +136,21 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       nodes.push(layoutNode);
     }
 
-    if (nodes.length === 0) {
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.rowHeight || this.estimatedRowHeight);
-      let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
-      this.layoutInfos.set('placeholder', placeholder);
-      nodes.push({layoutInfo: placeholder});
-      y = placeholder.rect.maxY;
-    }
-
     if (this.isLoading) {
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, 40);
+      let loaderHeight = nodes.length ? 40 : this.virtualizer.visibleRect.height;
+      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, loaderHeight);
       let loader = new LayoutInfo('loader', 'loader', rect);
       this.layoutInfos.set('loader', loader);
       nodes.push({layoutInfo: loader});
       y = loader.rect.maxY;
+    }
+
+    if (nodes.length === 0) {
+      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.virtualizer.visibleRect.height);
+      let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
+      this.layoutInfos.set('placeholder', placeholder);
+      nodes.push({layoutInfo: placeholder});
+      y = placeholder.rect.maxY;
     }
 
     this.contentSize = new Size(this.virtualizer.visibleRect.width, y + this.padding);

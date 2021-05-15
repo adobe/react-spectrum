@@ -10,6 +10,5 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './ListViewLayout';
 export * from './ListLayout';
 export * from './TableLayout';

@@ -15,10 +15,10 @@ import {GridCollection, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {ListLayout} from '@react-stately/layout';
 import {ListState, useListState} from '@react-stately/list';
 import listStyles from './listview.css';
 import {ListViewItem} from './ListViewItem';
-import {ListViewLayout} from '@react-stately/layout';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useContext, useMemo} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
@@ -32,7 +32,7 @@ export function useListLayout<T>(state: ListState<T>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() =>
-      new ListViewLayout<T>({
+      new ListLayout<T>({
         estimatedRowHeight: scale === 'large' ? 48 : 32,
         padding: 0,
         collator
@@ -77,14 +77,14 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     collection: gridCollection
   });
   let layout = useListLayout(state);
-  let keyboardDelegate = new GridKeyboardDelegate({
+  let keyboardDelegate = useMemo(() => new GridKeyboardDelegate({
     collection: state.collection,
     disabledKeys: state.disabledKeys,
     ref: domRef,
     direction,
     collator,
     focusMode: 'cell'
-  });
+  }), [state, domRef, direction, collator]);
   let {gridProps} = useGrid({
     ...props,
     isVirtualized: true,
@@ -127,7 +127,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
                   aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
               </CenteredWrapper>
             );
-          } else if (type === 'empty') {
+          } else if (type === 'placeholder') {
             let emptyState = props.renderEmptyState ? props.renderEmptyState() : null;
             if (emptyState == null) {
               return null;
@@ -154,7 +154,7 @@ function CenteredWrapper({children}) {
       role="row"
       aria-rowindex={state.collection.size + 1}
       className={classNames(listStyles, 'react-spectrum-ListView-centeredWrapper')}>
-      <div role="gridcell" aria-colspan={1}>
+      <div role="gridcell">
         {children}
       </div>
     </div>
