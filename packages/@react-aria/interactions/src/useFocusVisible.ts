@@ -209,10 +209,18 @@ export function useInteractionModality(): Modality {
     changeHandlers.add(handler);
     return () => {
       changeHandlers.delete(handler);
-    };
+    }
   }, []);
 
   return modality;
+}
+
+/**
+ * If this is attached to text input component, return if the event is a focus event (Tab/Escape keys pressed) so that
+ * focus visible style can be properly set.
+ */
+export function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: HandlerEvent) {
+  return isTextInput && !(modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]);
 }
 
 /**
@@ -221,10 +229,8 @@ export function useInteractionModality(): Modality {
 export function useFocusVisible(props: FocusVisibleProps = {}): FocusVisibleResult {
   let {isTextInput, autoFocus} = props;
   let [isFocusVisibleState, setFocusVisible] = useState(autoFocus || isFocusVisible());
-  useFocusEmitter((isFocusVisible, modality, e) => {
-    // If this is a text input component, don't update the focus visible style when
-    // typing except for when the Tab and Escape keys are pressed.
-    if (isTextInput && modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]) {
+  useFocusVisibilityEmitter((isFocusVisible, modality, e) => {
+    if (!isKeyboardFocusEvent(isTextInput, modality, e)) {
       return;
     }
 
@@ -237,7 +243,7 @@ export function useFocusVisible(props: FocusVisibleProps = {}): FocusVisibleResu
 /**
  * Emits on on trigger change and reports if focus is visible (i.e., modality is not pointer).
  */
-export function useFocusEmitter(fn, deps): void {
+export function useFocusVisibilityEmitter(fn, deps): void {
   setupGlobalFocusEvents();
 
   useEffect(() => {
