@@ -3333,6 +3333,7 @@ describe('TableView', function () {
         userEvent.click(within(row).getByRole('checkbox'));
         expect(row).toHaveAttribute('aria-selected', 'true');
 
+        // Without ListLayout fix, throws here with "TypeError: Cannot set property 'estimatedSize' of undefined"
         rerender(tree, <ControlledSelection selectionMode="none" />);
         act(() => jest.runAllTimers());
         expect(() => tree.getByRole('checkbox')).toThrow();

@@ -244,9 +244,9 @@ storiesOf('TableView', module)
   )
   .add(
     // For testing https://github.com/adobe/react-spectrum/issues/1885
-    'controlled selection mode',
+    'swap selection mode',
     () => (
-      <ControlledSelectionMode />
+      <ChangableSelectionMode />
     )
   )
   .add(
@@ -1016,7 +1016,7 @@ function AsyncServerFilterTable(props) {
   );
 }
 
-function ControlledSelectionMode() {
+function ChangableSelectionMode() {
   let [selectionMode, setSelectionMode] = useState('none' as SelectionMode);
   let [selectedKeys, setSelectedKeys] = React.useState(new Set([]) as 'all' | Iterable<Key>);
 
