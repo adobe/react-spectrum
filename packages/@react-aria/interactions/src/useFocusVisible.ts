@@ -209,7 +209,7 @@ export function useInteractionModality(): Modality {
     changeHandlers.add(handler);
     return () => {
       changeHandlers.delete(handler);
-    }
+    };
   }, []);
 
   return modality;

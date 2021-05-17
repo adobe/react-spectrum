@@ -1,7 +1,7 @@
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '@react-spectrum/table';
 import React, {useState} from 'react';
-import {storiesOf} from '@storybook/react';
 import {SearchField} from '@react-spectrum/searchfield';
+import {storiesOf} from '@storybook/react';
 
 
 let manyColumns = [];
@@ -59,5 +59,5 @@ function SearchExample() {
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }
