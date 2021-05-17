@@ -37,6 +37,7 @@ interface GridCellProps {
 }
 
 interface GridCellAria {
+  /** Props for the grid cell element. */
   gridCellProps: HTMLAttributes<HTMLElement>
 }
 
