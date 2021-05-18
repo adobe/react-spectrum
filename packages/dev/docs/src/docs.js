@@ -57,36 +57,40 @@ function LinkPopover({id}) {
   },
   []);
 
+  const isCancelledRef = useRef(false); 
+  const timeoutRef = useRef();
   useEffect(() => {
-    let isCancelled = false; 
-    let timeoutId;
     let links = ref.current.querySelectorAll('[data-link]');
     for (let link of links) {
+      // Links with [data-link] will open within the LinkPopover, so [aria-haspopup] is not appropriate.
       link.removeAttribute('aria-haspopup');
+      // Add click event handler so that the link updates the content of the popover.
       link.addEventListener('click', (e) => {
         e.preventDefault();
         setBreadcrumbs([...breadcrumbs, document.getElementById(link.dataset.link)]);
       });
     }
 
-    if (isCancelled) {
-      if (timeoutId) {
-        cancelAnimationFrame(timeoutId);
+    if (isCancelledRef.current) {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
       }
       return;
     }
 
-    timeoutId = requestAnimationFrame(() => {
+    // Wait a frame, then focus the current breadcrumb for the popover, 
+    // which ensures that focus is not lost to the document.body when the LinkPopover content changes.
+    timeoutRef.current = setTimeout(() => {
       const currentBreadcrumb = ref.current.closest(`.${docsStyle.popover}`).querySelector('[aria-current]');
       if (currentBreadcrumb) {
         currentBreadcrumb.tabIndex = 0;
         currentBreadcrumb.addEventListener('blur', onBlurCurrentBreadcrumb);
         focusWithoutScrolling(currentBreadcrumb); 
       }
-    });
+    }, 0);
 
-    return () => isCancelled = true;
-  }, [breadcrumbs, onBlurCurrentBreadcrumb]);
+    () => isCancelledRef.current = true;
+  }, [breadcrumbs, isCancelledRef, onBlurCurrentBreadcrumb, timeoutRef]);
 
   return (
     <Dialog UNSAFE_className={`${highlightCss.spectrum} ${docsStyle.popover}`} size="L">
