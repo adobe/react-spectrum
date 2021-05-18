@@ -38,6 +38,7 @@ let currentModality = null;
 let changeHandlers = new Set<Handler>();
 let hasSetupGlobalListeners = false;
 let hasEventBeforeFocus = false;
+let hasBlurredWindowRecently = false;
 let documentVisibilityState = {
   current: null,
   previous: null
@@ -106,7 +107,7 @@ function handleFocusEvent(e: FocusEvent) {
 
   // If a focus event occurs without a preceding keyboard or pointer event, switch to virtual modality.
   // This occurs, for example, when navigating a form with the next/previous buttons on iOS.
-  if (!hasEventBeforeFocus && !hasChangedTabRecently()) {
+  if (!hasEventBeforeFocus && !hasBlurredWindowRecently && !hasChangedTabRecently()) {
     currentModality = 'virtual';
     triggerChangeHandlers('virtual', e);
   }
@@ -116,12 +117,14 @@ function handleFocusEvent(e: FocusEvent) {
   }
 
   hasEventBeforeFocus = false;
+  hasBlurredWindowRecently = false;
 }
 
 function handleWindowBlur() {
   // When the window is blurred, reset state. This is necessary when tabbing out of the window,
   // for example, since a subsequent focus event won't be fired.
   hasEventBeforeFocus = false;
+  hasBlurredWindowRecently = true;
 }
 
 function handleVisibilityChange() {
