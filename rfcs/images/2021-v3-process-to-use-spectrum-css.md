@@ -9,7 +9,7 @@ governing permissions and limitations under the License. -->
 
 - Start Date: (fill me in with today's date, YYYY-MM-DD)
 - RFC PR: (leave this empty, to be filled in later)
-- Authors: (the names of everyone contributing to this RFC)
+- Authors: Rob Snow
 
 # Process to get back to Spectrum CSS
 
@@ -50,19 +50,33 @@ Before a component is moved over, we should make sure it's in Chromatic so we ca
 
 #### CSS Modules:
 
+##### Spectrum-CSS maintains
 Generate in Spectrum-CSS project, add to dist.
+Spectrum-CSS is open to doing this.
 
-##### Pros:
+###### Pros:
   - Source of truth is Spectrum-CSS
   - We no longer provide our own separate copy bundle of the CSS
 
-##### Cons:
+###### Cons:
   - We may need to still distribute some of our own modularized css if there are things Spectrum-CSS cannot have from us
     - It may be that we just don't distribute those files
   
+##### RSP maintains
+Generate from node_modules in React Spectrum and publish as separate packages.
+
+###### Pros:
+  - Spectrum-CSS has to do less work
+
+###### Cons:
+  - A completely new package(s) for everyone
+  - Wouldn't track with Spectrum-CSS updates, it'd always be behind
+  - Local development would need to do it in postinstall so they'd be ready for use in storybook
+  
 
 #### DNA
-  fill in
+
+There has been a breaking change to DNA, many tokens have changed.
 
 #### DSS
   fill in
@@ -70,7 +84,11 @@ Generate in Spectrum-CSS project, add to dist.
 #### Use complete, partial, none
 We will likely have three different kinds of components. Components where we can immediately switch to Spectrum-CSS, components where we will need to merge back some changes before we can switch completely over, and components that we will never be able to use spectrum-css for.
 
+##### Contributing back
+  fill in
 
+##### Local overrides & new packages
+  fill in
 
 ## Documentation
 
