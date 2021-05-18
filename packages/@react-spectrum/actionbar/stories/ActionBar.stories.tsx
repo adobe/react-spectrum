@@ -11,7 +11,7 @@
  */
 
 import {ActionBar, ActionBarContainer, Item} from '../';
-import {Cell, Column, Row, Table, TableBody, TableHeader} from '@react-spectrum/table';
+import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import React, {useState} from 'react';
 import {Selection} from '@react-types/shared';
 import {storiesOf} from '@storybook/react';
@@ -40,7 +40,7 @@ storiesOf('ActionBar', module)
       const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
       return (
         <ActionBarContainer height={300}>
-          <Table
+          <TableView
             selectedKeys={selectedKeys}
             selectionMode="multiple"
             onSelectionChange={(keys) => setSelectedKeys(keys)}>
@@ -54,7 +54,7 @@ storiesOf('ActionBar', module)
                 </Row>)
               }
             </TableBody>
-          </Table>
+          </TableView>
           <ActionBar
             selectedItemCount={selectedKeys === 'all' ? selectedKeys : selectedKeys.size}
             onClearSelection={() => {
@@ -68,4 +68,3 @@ storiesOf('ActionBar', module)
       );
     }
   );
-
