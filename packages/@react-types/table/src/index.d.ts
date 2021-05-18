@@ -83,7 +83,7 @@ export interface SpectrumColumnProps<T> extends ColumnProps<T> {
   allowsSorting?: boolean,
   // /** Whether the column should stick to the viewport when scrolling. */
   // isSticky?: boolean, // shouldStick?? Not implemented yet?
-  /** Whether a column is a row header and should be announced by assistive technology during row navigation. */
+  /** Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation. */
   isRowHeader?: boolean,
   /** Whether the column should render a divider between it and the next column. */
   showDivider?: boolean,
@@ -136,8 +136,7 @@ export interface TableCollection<T> extends GridCollection<T> {
   headerRows: GridNode<T>[],
   /** A list of column nodes in the table. */
   columns: GridNode<T>[],
-  // TODO perhaps elaborate here, link to rowheader docs? https://www.digitala11y.com/rowheader-role/?
-  /** A set of column keys that serve as the row header. */
+  /** A set of column keys that serve as the [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader). */
   rowHeaderColumnKeys: Set<Key>,
   /** The node that makes up the body of the table. */
   body: GridNode<T>

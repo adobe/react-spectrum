@@ -17,18 +17,18 @@ import {TableState} from '@react-stately/table';
 import {useGridCell} from '@react-aria/grid';
 
 interface RowHeaderProps {
-  /** An object representing the row header. Contains all the relevant information that makes up the row header. */
+  /** An object representing the [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader). Contains all the relevant information that makes up the row header. */
   node: GridNode<unknown>,
-  /** The ref attached to the row header. */
+  /** The ref attached to the [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader). */
   ref: RefObject<HTMLElement>,
-  /** Whether the row header is contained in a virtual scroller. */
+  /** Whether the [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) is contained in a virtual scroller. */
   isVirtualized?: boolean,
-  /** Whether the row header is disabled. */
+  /** Whether the [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) is disabled. */
   isDisabled?: boolean
 }
 
 interface RowHeaderAria {
-  /** Props for the row header element. */
+  /** Props for the [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) element. */
   rowHeaderProps: HTMLAttributes<HTMLElement>
 }
 

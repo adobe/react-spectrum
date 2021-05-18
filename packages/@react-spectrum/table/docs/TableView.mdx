@@ -132,7 +132,7 @@ For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout o
 ### Accessibility
 An `aria-label` must be provided to the TableView for accessibility. If the TableView is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
 
-By default, the first column of the TableView is used as the row header and is announced by assistive technology when navigating through the rows. You can override this behavior by providing the `isRowHeader` prop
+By default, the first column of the TableView is used as the [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and is announced by assistive technology when navigating through the rows. You can override this behavior by providing the `isRowHeader` prop
 to one or more Columns, allowing you to customize which columns should label the rows of the TableView.
 
 The example below applies `isRowHeader` to the "First Name" and "Last Name" columns so that each row is announced with the person's full name (e.g. "John Doe").
