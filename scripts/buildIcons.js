@@ -27,10 +27,6 @@ const PACKAGES = {
   illustrations: path.join(getIconPackageFolder('illustrations'), 'src')
 };
 
-let needToBuild = async (srcFile, distFile) => {
-  return Promise.race([async () => !(await exists(distFile)), isNewerThan(srcFile, distFile)]);
-};
-
 (async function () {
   let commandPromises = [];
   // run in packages where at least one dist js file is newer that the corresponding source js file
@@ -47,7 +43,7 @@ let needToBuild = async (srcFile, distFile) => {
       let distFile =
         path.join(distFolder, path.basename(srcFile, path.extname(srcFile))) +
         '.js';
-      if (await needToBuild(srcFile, distFile)) {
+      if (!(await exists(distFile)) || (await isNewerThan(srcFile, distFile))) {
         commandPromises.push(pkg !== 'illustrations' ?
           {command: 'yarn make-icons && yarn build-icons', name: `Making and building icons for @spectrum-icons/${pkg}`, cwd: distFolder} :
           {command: 'yarn build-icons', name: `Building icons for @spectrum-icons/${pkg}`, cwd: distFolder}
