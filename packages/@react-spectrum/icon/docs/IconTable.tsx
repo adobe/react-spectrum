@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {Cell, Column, Row, Table, TableBody, TableHeader} from '@react-spectrum/table';
+import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useEffect, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
@@ -77,7 +77,7 @@ export default function IconTable(props: {iconPackage: string}) {
         onClear={onSearchClear}
         onChange={onSearch}
         marginBottom="20px" />
-      <Table width="100%" height={500} selectionMode="none">
+      <TableView width="100%" height={500} selectionMode="none">
         <TableHeader>
           <Column key="icon" width={64}>Icon</Column>
           <Column key="name">Name</Column>
@@ -97,7 +97,7 @@ export default function IconTable(props: {iconPackage: string}) {
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     </>
   );
 }
