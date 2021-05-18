@@ -12,7 +12,7 @@
 import {fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
-import {useFocusEmitter, useFocusVisible} from '../';
+import {useFocusVisibilityEmitter, useFocusVisible} from '../';
 
 function Example() {
   let {isFocusVisible} = useFocusVisible();
@@ -66,7 +66,7 @@ describe('useFocusVisible', function () {
 describe('useFocusEmitter', function () {
   it('emits on modality change', function () {
     let fnMock = jest.fn();
-    renderHook(() => useFocusEmitter(fnMock, []));
+    renderHook(() => useFocusVisibilityEmitter(fnMock, []));
     expect(fnMock).toHaveBeenCalledTimes(0);
     fireEvent.keyDown(document.body, {key: 'Escape'});
     expect(fnMock).toHaveBeenCalledTimes(1);

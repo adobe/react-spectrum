@@ -220,7 +220,7 @@ export function useInteractionModality(): Modality {
  * focus visible style can be properly set.
  */
 export function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: HandlerEvent) {
-  return isTextInput && !(modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]);
+  return !(isTextInput && modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]);
 }
 
 /**
