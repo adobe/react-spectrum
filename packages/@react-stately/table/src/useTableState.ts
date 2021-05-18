@@ -34,8 +34,6 @@ export interface CollectionBuilderContext<T> {
   columns: Node<T>[]
 }
 
-// TODO: perhaps define things like `items`, `selectedKeys` etc here instead of relying on extend
-// since the table type descriptions for these props should be more specific to table?
 export interface TableStateProps<T> extends CollectionBase<T>, MultipleSelection, Sortable {
   /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes?: boolean

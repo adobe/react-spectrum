@@ -129,7 +129,6 @@ export interface CellProps {
 export type CellElement = ReactElement<CellProps>;
 export type CellRenderer = (columnKey: Key) => CellElement;
 
-// TODO: perhaps defined `rows`, etc here so that we can table specific definitions
 export interface TableCollection<T> extends GridCollection<T> {
   // TODO perhaps elaborate on this? maybe not clear enought, essentially returns the table header rows (e.g. in a tiered headers table, will return the nodes containing the top tier column, next tier, etc)
   /** A list of header row nodes in the table. */
