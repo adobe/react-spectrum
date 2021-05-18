@@ -149,6 +149,11 @@ let [animals, setAnimals] = useState([
 </ListBox>
 ```
 
+Note that if you do specify a custom key on each `Item` using the `key` prop, React will convert the provided key to a string. As a result,
+all the collection component's key related event handlers and props (e.g. `onSelectionChange`, `selectedKey(s)`) will expect and return strings.
+If you forgo specifying a key on the `Item` and instead rely on the id or key being defined in your `items` array, the key related event handlers and props
+will match what you have in your `items` array. See the [Selection](./selection.html#selected-key-data-type) docs for more info.
+
 ### Why not array map?
 
 You may be wondering why we didn't use `animals.map` in this example.

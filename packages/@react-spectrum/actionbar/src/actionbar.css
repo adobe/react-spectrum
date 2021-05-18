@@ -1,0 +1,69 @@
+.ActionBarContainer {
+  display: flex;
+  flex-direction: column;
+
+  & > :not(.react-spectrum-ActionBar) {
+    flex: 1;
+    min-height: 0;
+  }
+
+  & > .react-spectrum-ActionBar {
+    flex: 0 0 auto;
+  }
+}
+
+.react-spectrum-ActionBar {
+  --spectrum-padding: var(--spectrum-global-dimension-size-100);
+  --column-gap: var(--spectrum-actionbuttongroup-text-button-gap-x);
+  --row-gap: var(--spectrum-actionbuttongroup-text-button-gap-y);
+  --show-transition-duration: var(--spectrum-global-animation-duration-200);
+  --show-transition-timing: var(--spectrum-global-animation-linear);
+
+  height: 0;
+  overflow: hidden;
+  transition-property: height;
+  transition-duration: var(--show-transition-duration);
+  transition-timing-function: var(--show-transition-timing);
+
+  background: white;
+
+  & > div {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    isolation: isolate;
+    justify-content: space-between;
+    padding: var(--spectrum-padding);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &.react-spectrum-ActionBar--primary {
+    background-color: var(--spectrum-actionbar-primary-background-color);
+  }
+
+  &.react-spectrum-ActionBar--secondary {
+    background-color: var(--spectrum-actionbar-secondary-background-color);
+  }
+
+  &.react-spectrum-ActionBar--warning {
+    background-color: var(--spectrum-actionbar-warning-background-color);
+  }
+
+  .react-spectrum-ActionBar__leading {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    & span {
+      padding: 0 calc(var(--spectrum-padding)/2)
+    }
+  }
+
+  .react-spectrum-ActionBar-item {
+    flex-shrink: 0;
+  }
+}
