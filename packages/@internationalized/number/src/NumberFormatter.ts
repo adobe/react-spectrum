@@ -124,7 +124,7 @@ function getCachedNumberFormatter(locale: string, options: NumberFormatOptions =
 }
 
 /** @private - exported for tests */
-export function numberFormatSignDisplayPolyfill(numberFormat: Intl.NumberFormat, signDisplay: 'always' | 'exceptZero' | 'auto' | 'never', num: number) {
+export function numberFormatSignDisplayPolyfill(numberFormat: Intl.NumberFormat, signDisplay: string, num: number) {
   if (signDisplay === 'auto') {
     return numberFormat.format(num);
   } else if (signDisplay === 'never') {

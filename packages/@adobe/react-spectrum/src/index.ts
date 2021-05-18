@@ -26,6 +26,7 @@ export {Link} from '@react-spectrum/link';
 export {ListBox} from '@react-spectrum/listbox';
 export {Menu, MenuTrigger} from '@react-spectrum/menu';
 export {Meter} from '@react-spectrum/meter';
+export {NumberField} from '@react-spectrum/numberfield';
 export {Picker} from '@react-spectrum/picker';
 export {ProgressBar, ProgressCircle} from '@react-spectrum/progress';
 export {Provider} from '@react-spectrum/provider';

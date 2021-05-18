@@ -11,7 +11,7 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {Grid, repeat} from '@adobe/react-spectrum';
+import {Grid, repeat, View} from '@adobe/react-spectrum';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -50,4 +50,18 @@ storiesOf('Button/ToggleButton', module)
     <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
       {combinations.map(c => <ToggleButton {...c}>Button</ToggleButton>)}
     </Grid>
+  ))
+  .add('staticColor = white', () => (
+    <View backgroundColor="static-seafoam-600" padding="size-1000">
+      <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
+        {combinations.map(c => <ToggleButton {...c} staticColor="white">Button</ToggleButton>)}
+      </Grid>
+    </View>
+  ))
+  .add('staticColor = black', () => (
+    <View backgroundColor="static-yellow-400" padding="size-1000">
+      <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
+        {combinations.map(c => <ToggleButton {...c} staticColor="black">Button</ToggleButton>)}
+      </Grid>
+    </View>
   ));
