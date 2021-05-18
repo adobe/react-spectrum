@@ -514,7 +514,7 @@ function Example() {
   ];
 
   return (
-    <Table aria-label="Example dynamic collection table" style={{height: '200px', maxWidth: '400px'}}>
+    <Table aria-label="Example dynamic collection table" style={{height: '210px', maxWidth: '400px'}}>
       <TableHeader columns={columns}>
         {(column) => (
           <Column key={column.key}>
@@ -544,7 +544,7 @@ Note that the value of the selected keys must match the `key` prop of the row.
 The example below uses `defaultSelectedKeys` to select the row with key equal to "2".
 
 ```tsx example
-<Table aria-label="Example table with single selection (uncontrolled)" selectionMode="single" defaultSelectedKeys={['2']} style={{height: '200px', maxWidth: '400px'}}>
+<Table aria-label="Example table with single selection (uncontrolled)" selectionMode="single" defaultSelectedKeys={['2']} style={{height: '210px', maxWidth: '400px'}}>
   <TableHeader>
     <Column>Name</Column>
     <Column>Type</Column>
@@ -595,7 +595,7 @@ function PokemonTable(props) {
   ];
   let [selected, setSelected] = React.useState(new Set(['2']));
   return (
-    <Table aria-label="Example table with single selection (controlled)" selectionMode="single" selectedKeys={selected} onSelectionChange={setSelected} style={{height: '200px', maxWidth: '400px'}} {...props}>
+    <Table aria-label="Example table with single selection (controlled)" selectionMode="single" selectedKeys={selected} onSelectionChange={setSelected} style={{height: '210px', maxWidth: '400px'}} {...props}>
       <TableHeader columns={columns}>
         {column => (
           <Column key={column.uid}>

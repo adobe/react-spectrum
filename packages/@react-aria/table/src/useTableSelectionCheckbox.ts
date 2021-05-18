@@ -24,7 +24,12 @@ interface SelectionCheckboxProps {
 }
 
 interface SelectionCheckboxAria {
-  /** Props for the checkbox element. */
+  /** Props for the row selection checkbox element. */
+  checkboxProps: AriaCheckboxProps
+}
+
+interface SelectAllCheckboxAria {
+  /** Props for the select all checkbox element. */
   checkboxProps: AriaCheckboxProps
 }
 
@@ -51,7 +56,7 @@ export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, stat
   };
 }
 
-export function useTableSelectAllCheckbox<T>(state: TableState<T>): SelectionCheckboxAria {
+export function useTableSelectAllCheckbox<T>(state: TableState<T>): SelectAllCheckboxAria {
   let {isEmpty, isSelectAll} = state.selectionManager;
   return {
     checkboxProps: {
