@@ -10,11 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
 import {ActionBar, ActionBarContainer, Item} from '../';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
+import Copy from '@spectrum-icons/workflow/Copy';
+import Delete from '@spectrum-icons/workflow/Delete';
+import Duplicate from '@spectrum-icons/workflow/Duplicate';
+import Edit from '@spectrum-icons/workflow/Edit';
+import Move from '@spectrum-icons/workflow/Move';
 import React, {useState} from 'react';
 import {Selection} from '@react-types/shared';
 import {storiesOf} from '@storybook/react';
+import {Text} from '@react-spectrum/text';
+import {useViewportSize} from '@react-aria/utils';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -30,41 +38,84 @@ let items = [
   {test: 'Test 1', foo: 'Foo 5', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
   {test: 'Test 2', foo: 'Foo 6', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
   {test: 'Test 1', foo: 'Foo 7', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {test: 'Test 2', foo: 'Foo 8', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
+  {test: 'Test 2', foo: 'Foo 8', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
+  {test: 'Test 1', foo: 'Foo 9', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+  {test: 'Test 2', foo: 'Foo 10', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
+  {test: 'Test 1', foo: 'Foo 11', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+  {test: 'Test 2', foo: 'Foo 12', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
+  {test: 'Test 1', foo: 'Foo 13', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+  {test: 'Test 2', foo: 'Foo 14', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
+  {test: 'Test 1', foo: 'Foo 15', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+  {test: 'Test 2', foo: 'Foo 16', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
 ];
 
 storiesOf('ActionBar', module)
   .add(
     'default',
+    () => <Example />
+  )
+  .add(
+    'isEmphasized',
+    () => <Example isEmphasized />
+  )
+  .add(
+    'full width',
     () => {
-      const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
-      return (
-        <ActionBarContainer height={300}>
-          <TableView
-            selectedKeys={selectedKeys}
-            selectionMode="multiple"
-            onSelectionChange={(keys) => setSelectedKeys(keys)}>
-            <TableHeader columns={columns}>
-              {column => <Column>{column.name}</Column>}
-            </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </TableView>
-          <ActionBar
-            selectedItemCount={selectedKeys === 'all' ? selectedKeys : selectedKeys.size}
-            onClearSelection={() => {
-              setSelectedKeys(new Set());
-            }}
-            isEmphasized>
-            <Item>Edit</Item>
-            <Item>Delete</Item>
-          </ActionBar>
-        </ActionBarContainer>
-      );
+      let viewport = useViewportSize();
+      return <Example isEmphasized tableWidth="100vw" containerHeight={viewport.height} isQuiet />;
     }
   );
+
+function Example(props: any = {}) {
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
+  return (
+    <ActionBarContainer height={props.containerHeight || 300}>
+      <TableView
+        aria-label="Table"
+        isQuiet={props.isQuiet}
+        width={props.tableWidth}
+        selectedKeys={selectedKeys}
+        selectionMode="multiple"
+        onSelectionChange={(keys) => setSelectedKeys(keys)}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+      <ActionBar
+        selectedItemCount={selectedKeys === 'all' ? selectedKeys : selectedKeys.size}
+        onClearSelection={() => {
+          setSelectedKeys(new Set());
+        }}
+        onAction={action('onAction')}
+        {...props}>
+        <Item key="edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="copy">
+          <Copy />
+          <Text>Copy</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+        <Item key="move">
+          <Move />
+          <Text>Move</Text>
+        </Item>
+        <Item key="duplicate">
+          <Duplicate />
+          <Text>Duplicate</Text>
+        </Item>
+      </ActionBar>
+    </ActionBarContainer>
+  );
+}
