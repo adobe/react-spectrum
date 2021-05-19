@@ -29,6 +29,7 @@ function ToggleButton(props: SpectrumToggleButtonProps, ref: FocusableRef<HTMLBu
     isQuiet,
     isDisabled,
     isEmphasized,
+    staticColor,
     children,
     autoFocus,
     ...otherProps
@@ -54,6 +55,9 @@ function ToggleButton(props: SpectrumToggleButtonProps, ref: FocusableRef<HTMLBu
             {
               'spectrum-ActionButton--quiet': isQuiet,
               'spectrum-ActionButton--emphasized': isEmphasized,
+              'spectrum-ActionButton--staticColor': !!staticColor,
+              'spectrum-ActionButton--staticWhite': staticColor === 'white',
+              'spectrum-ActionButton--staticBlack': staticColor === 'black',
               'is-active': isPressed,
               'is-disabled': isDisabled,
               'is-hovered': isHovered,
