@@ -363,6 +363,7 @@ function render({width = 'auto', ...props}) {
 function renderTriggerNotCentered(props) {
   return (
     <div style={{position: 'absolute', top: '100px', left: '100px'}}>
+      <div>action button shouldn't get any events if the underlay is up and you try to click it through the underlay</div>
       <DialogTrigger {...props} isDismissable onOpenChange={action('open change')}>
         <ActionButton onPressStart={action('onPressStart')} onPress={action('onPress')} onPressEnd={action('onPressEnd')}>Trigger</ActionButton>
         <Dialog>
