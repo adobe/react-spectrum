@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
 import {ActionButton} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
+import {announce} from '@react-aria/live-announcer';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {CRUDExample} from '../stories/CRUDExample';
 import {getFocusableTreeWalker} from '@react-aria/focus';
@@ -2149,6 +2151,90 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(1, 3), true);
         checkRowSelection(rows.slice(3, 4), false);
         checkRowSelection(rows.slice(4, 20), true);
+      });
+    });
+
+    describe('annoucements', function () {
+      it('should announce the selected or deselected row', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let row = tree.getAllByRole('row')[1];
+        triggerPress(row);
+        expect(announce).toHaveBeenLastCalledWith('Foo 1 selected.');
+
+        triggerPress(row);
+        expect(announce).toHaveBeenLastCalledWith('Foo 1 not selected.');
+      });
+
+      it('should announce the row and number of selected items when there are more than one', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let rows = tree.getAllByRole('row');
+        triggerPress(rows[1]);
+        triggerPress(rows[2]);
+
+        expect(announce).toHaveBeenLastCalledWith('Foo 2 selected. 2 items selected.');
+
+        triggerPress(rows[2]);
+        expect(announce).toHaveBeenLastCalledWith('Foo 2 not selected. 1 item selected.');
+      });
+
+      it('should announce only the number of selected items when multiple are selected at once', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let rows = tree.getAllByRole('row');
+        triggerPress(rows[1]);
+        triggerPress(rows[3], {shiftKey: true});
+
+        expect(announce).toHaveBeenLastCalledWith('3 items selected.');
+
+        triggerPress(rows[1], {shiftKey: true});
+        expect(announce).toHaveBeenLastCalledWith('1 item selected.');
+      });
+
+      it('should announce select all', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        userEvent.click(tree.getByLabelText('Select All'));
+        expect(announce).toHaveBeenLastCalledWith('All items selected.');
+
+        userEvent.click(tree.getByLabelText('Select All'));
+        expect(announce).toHaveBeenLastCalledWith('No items selected.');
+      });
+
+      it('should announce all row header columns', function () {
+        let tree = render(
+          <TableView aria-label="Table" selectionMode="multiple">
+            <TableHeader>
+              <Column isRowHeader>First Name</Column>
+              <Column isRowHeader>Last Name</Column>
+              <Column>Birthday</Column>
+            </TableHeader>
+            <TableBody>
+              <Row>
+                <Cell>Sam</Cell>
+                <Cell>Smith</Cell>
+                <Cell>May 3</Cell>
+              </Row>
+              <Row>
+                <Cell>Julia</Cell>
+                <Cell>Jones</Cell>
+                <Cell>February 10</Cell>
+              </Row>
+            </TableBody>
+          </TableView>
+        );
+
+        let row = tree.getAllByRole('row')[1];
+        triggerPress(row);
+        expect(announce).toHaveBeenLastCalledWith('Sam Smith selected.');
+
+        triggerPress(row);
+        expect(announce).toHaveBeenLastCalledWith('Sam Smith not selected.');
       });
     });
   });
