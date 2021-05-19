@@ -1,6 +1,6 @@
 <svg style="background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 976 344">
   <title>Tabs anatomy diagram</title>
-  <desc>Shows a tabs component with labels for each tab, a selection state, and the tab view.</desc>
+  <desc>Shows a tabs component with labels for each tab, a selection state, and the tab panel.</desc>
   <defs>
     <clipPath id="clip-tabs_anatomy_desktop">
       <rect width="976" height="344"/>
@@ -33,7 +33,7 @@
       <path id="Union_7" d="M72.05-35H52v-1H72.05a2.5,2.5,0,0,1,2.45-2A2.5,2.5,0,0,1,77-35.5,2.5,2.5,0,0,1,74.5-33,2.5,2.5,0,0,1,72.05-35Z" transform="translate(108 67.5)" fill="var(--anatomy-gray-500)"/>
     </g>
     <g id="Group_3916" transform="translate(-20 177)">
-      <text id="Tab_view" transform="translate(156 35)" fill="var(--anatomy-gray-700)" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="-44.473" y="0">Tab view</tspan></text>
+      <text id="Tab_view" transform="translate(156 35)" fill="var(--anatomy-gray-700)" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="-44.473" y="0">Tab panel</tspan></text>
       <path id="Union_7-2" d="M18.717,3H0V2H18.717a2.5,2.5,0,1,1,0,1Z" transform="translate(161 29.5)" fill="var(--anatomy-gray-500)"/>
     </g>
     <g id="LG_-_Tabs_Vertical_default_" transform="translate(395 -69.999)">
@@ -48,7 +48,7 @@
     </g>
     <rect id="Rectangle_136824" width="147.906" height="218" transform="translate(738 86)" fill="var(--anatomy-gray-200)" opacity="0.5"/>
     <g id="Group_4122" transform="translate(407 395)">
-      <text id="Tab_view-2" transform="translate(402 -342)" fill="var(--anatomy-gray-700)" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="-22.236" y="0">Tab view</tspan></text>
+      <text id="Tab_view-2" transform="translate(402 -342)" fill="var(--anatomy-gray-700)" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="-22.236" y="0">Tab panel</tspan></text>
       <g id="Group_4106">
         <path id="Union_63-3" d="M0,19.5a2.5,2.5,0,0,1,2-2.45V0H3V17.048A2.5,2.5,0,1,1,0,19.5Z" transform="translate(399.5 -336.999)" fill="var(--anatomy-gray-500)"/>
       </g>
