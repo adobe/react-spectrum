@@ -84,6 +84,8 @@ function MenuPopup(props) {
   // Handle events that should cause the menu to close,
   // e.g. blur, clicking outside, or pressing the escape key.
   let overlayRef = React.useRef();
+  // before useOverlay so this action will get called
+  useInteractOutside({ref: overlayRef, onInteractOutside: action('onInteractOutside')});
   let {overlayProps} = useOverlay(
     {
       onClose: props.onClose,
@@ -93,7 +95,6 @@ function MenuPopup(props) {
     },
     overlayRef
   );
-  useInteractOutside({ref: overlayRef, onInteractOutside: action('onInteractOutside')});
 
   // Wrap in <FocusScope> so that focus is restored back to the
   // trigger when the menu is closed. In addition, add hidden
