@@ -19,7 +19,7 @@ import docsStyle from './docs.css';
 import {focusWithoutScrolling} from '@react-aria/utils';
 import highlightCss from './syntax-highlight.css';
 import {Pressable} from '@react-aria/interactions';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {ThemeProvider} from './ThemeSwitcher';
 
@@ -57,9 +57,8 @@ function LinkPopover({id}) {
   },
   []);
 
-  const isCancelledRef = useRef(false); 
   const timeoutRef = useRef();
-  useEffect(() => {
+  useLayoutEffect(() => {
     let links = ref.current.querySelectorAll('[data-link]');
     for (let link of links) {
       // Links with [data-link] will open within the LinkPopover, so [aria-haspopup] is not appropriate.
@@ -71,26 +70,30 @@ function LinkPopover({id}) {
       });
     }
 
-    if (isCancelledRef.current) {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      return;
+    
+    if (timeoutRef.current) {
+      cancelAnimationFrame(timeoutRef.current);
+      timeoutRef.current = undefined;
     }
 
     // Wait a frame, then focus the current breadcrumb for the popover, 
     // which ensures that focus is not lost to the document.body when the LinkPopover content changes.
-    timeoutRef.current = setTimeout(() => {
+    timeoutRef.current = requestAnimationFrame(() => {
       const currentBreadcrumb = ref.current.closest(`.${docsStyle.popover}`).querySelector('[aria-current]');
       if (currentBreadcrumb) {
         currentBreadcrumb.tabIndex = 0;
         currentBreadcrumb.addEventListener('blur', onBlurCurrentBreadcrumb);
         focusWithoutScrolling(currentBreadcrumb); 
       }
-    }, 0);
+    });
 
-    () => isCancelledRef.current = true;
-  }, [breadcrumbs, isCancelledRef, onBlurCurrentBreadcrumb, timeoutRef]);
+    return () => {
+      if (timeoutRef.current) {
+        cancelAnimationFrame(timeoutRef.current);
+        timeoutRef.current = undefined;
+      }
+    };
+  }, [breadcrumbs, onBlurCurrentBreadcrumb, timeoutRef]);
 
   return (
     <Dialog UNSAFE_className={`${highlightCss.spectrum} ${docsStyle.popover}`} size="L">
