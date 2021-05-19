@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, dimensionValue, passthroughStyle, StyleHandlers, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, passthroughStyle, responsiveDimensionValue, StyleHandlers, useBreakpoint, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {FlexProps} from '@react-types/layout';
@@ -31,6 +31,8 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
     children,
     ...otherProps
   } = props;
+  let breakpointProvider = useBreakpoint();
+  let matchedBreakpoints = breakpointProvider?.matchedBreakpoints || ['base'];
   let {styleProps} = useStyleProps(otherProps);
   let {styleProps: flexStyle} = useStyleProps(otherProps, flexStyleProps);
   let domRef = useDOMRef(ref);
@@ -45,9 +47,9 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   if ((props.gap || props.rowGap || props.columnGap) && (isSSR || !isFlexGapSupported())) {
     let style = {
       ...flexStyle.style,
-      '--column-gap': props.columnGap != null ? dimensionValue(props.columnGap) : undefined,
-      '--row-gap': props.rowGap != null ? dimensionValue(props.rowGap) : undefined,
-      '--gap': props.gap != null ? dimensionValue(props.gap) : undefined
+      '--column-gap': props.columnGap != null ? responsiveDimensionValue(props.columnGap, matchedBreakpoints) : undefined,
+      '--row-gap': props.rowGap != null ? responsiveDimensionValue(props.rowGap, matchedBreakpoints) : undefined,
+      '--gap': props.gap != null ? responsiveDimensionValue(props.gap, matchedBreakpoints) : undefined
     };
 
     return (
@@ -66,15 +68,15 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   };
 
   if (props.gap != null) {
-    style.gap = dimensionValue(props.gap);
+    style.gap = responsiveDimensionValue(props.gap, matchedBreakpoints);
   }
 
   if (props.columnGap != null) {
-    style.columnGap = dimensionValue(props.columnGap);
+    style.columnGap = responsiveDimensionValue(props.columnGap, matchedBreakpoints);
   }
 
   if (props.rowGap != null) {
-    style.rowGap = dimensionValue(props.rowGap);
+    style.rowGap = responsiveDimensionValue(props.rowGap, matchedBreakpoints);
   }
 
   return (
