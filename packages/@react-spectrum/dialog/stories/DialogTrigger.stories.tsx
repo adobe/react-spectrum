@@ -364,7 +364,7 @@ function renderTriggerNotCentered(props) {
   return (
     <div style={{position: 'absolute', top: '100px', left: '100px'}}>
       <DialogTrigger {...props} isDismissable onOpenChange={action('open change')}>
-        <ActionButton>Trigger</ActionButton>
+        <ActionButton onPressStart={action('onPressStart')} onPress={action('onPress')} onPressEnd={action('onPressEnd')}>Trigger</ActionButton>
         <Dialog>
           <Heading>The Heading</Heading>
           <Header>The Header</Header>

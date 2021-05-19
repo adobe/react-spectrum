@@ -58,10 +58,6 @@ storiesOf('Button/ActionButton', module)
     () => render({autoFocus: true})
   )
   .add(
-    'Safari: press start not fired after press end on disabled form element',
-    () => <DisabledButtonBug />
-  )
-  .add(
     'staticColor: white',
     () => (
       <View backgroundColor="static-seafoam-600" padding="size-1000">
@@ -102,32 +98,6 @@ function render(props = {}) {
         {...props}>
         Disabled
       </ActionButton>
-    </Flex>
-  );
-}
-
-// https://codesandbox.io/s/eloquent-herschel-pgwci?file=/index.html
-function DisabledButtonBug() {
-  let [fooDisabled, setFooDisabled] = useState<boolean>();
-  let fooPressStart = () => {
-    action('press start foo')();
-    setFooDisabled(true);
-  };
-  let fooPressEnd = () => {
-    action('press end foo')();
-  };
-
-
-  let barPressStart = () => {
-    action('press start bar')();
-  };
-  let barPressEnd = () => {
-    action('press end bar')();
-  };
-  return (
-    <Flex>
-      <ActionButton isDisabled={fooDisabled} onPressStart={fooPressStart} onPress={fooPressEnd}>Foo</ActionButton>
-      <ActionButton onPressStart={barPressStart} onPress={barPressEnd}>Bar</ActionButton>
     </Flex>
   );
 }
