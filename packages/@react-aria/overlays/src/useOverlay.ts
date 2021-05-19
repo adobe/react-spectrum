@@ -47,7 +47,7 @@ interface OverlayProps {
 interface OverlayAria {
   /** Props to apply to the overlay container element. */
   overlayProps: HTMLAttributes<HTMLElement>,
-  /** Props to apply to the underlay element. */
+  /** Props to apply to the underlay element, if any. */
   underlayProps: HTMLAttributes<HTMLElement>
 }
 
@@ -116,7 +116,7 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
   });
 
   let onPointerDownUnderlay = e => {
-    // fixes a firefox issue that starts text selection
+    // fixes a firefox issue that starts text selection https://bugzilla.mozilla.org/show_bug.cgi?id=1675846
     if (e.target === e.currentTarget) {
       e.preventDefault();
     }
