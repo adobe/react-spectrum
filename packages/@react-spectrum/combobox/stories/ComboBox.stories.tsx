@@ -276,6 +276,8 @@ storiesOf('ComboBox', module)
         <hr />
         {render({label: 'Combobox - no help text'})}
         <hr />
+        {render({label: 'Combobox - has aria-describedby', 'aria-describedby': 'other-desc', description: 'hello'})}
+        <div id="other-desc">Please select an item.</div>
       </div>
     )
   )

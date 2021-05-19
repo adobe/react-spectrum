@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {HelpTextProps, LabelableProps} from '@react-types/shared';
+import {AriaLabelingProps, HelpTextProps, LabelableProps} from '@react-types/shared';
 import {HTMLAttributes} from 'react';
 import {LabelAria, useLabel} from './useLabel';
 import {mergeProps, useSlotId} from '@react-aria/utils';
 
 interface AriaFieldProps extends LabelableProps, HelpTextProps {}
 
-export interface FieldAria extends LabelAria {
+export interface FieldAria extends LabelAria, AriaLabelingProps {
   /** Props for the description element, if any. */
   descriptionProps: HTMLAttributes<HTMLElement>,
   /** Props for the error message element, if any. */
@@ -38,6 +38,7 @@ export function useField(props: AriaFieldProps): FieldAria {
 
   fieldProps = mergeProps(fieldProps, {
     'aria-describedby': [
+      props['aria-describedby'],
       descriptionId,
       errorMessageId
     ].filter(Boolean).join(' ') || undefined
