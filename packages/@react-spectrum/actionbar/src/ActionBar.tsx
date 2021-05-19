@@ -21,7 +21,7 @@ import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {OpenTransition} from '@react-spectrum/overlays/src/OpenTransition';
-import React, {ReactElement, useEffect, useRef, useState} from 'react';
+import React, {ReactElement, useEffect, useRef} from 'react';
 import {SpectrumActionBarProps} from '@react-types/actionbar';
 import styles from './actionbar.css';
 import {Text} from '@react-spectrum/text';
@@ -31,21 +31,12 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function ActionBar<T extends object>(props: SpectrumActionBarProps<T>, ref: DOMRef<HTMLDivElement>) {
   let isOpen = props.selectedItemCount !== 0;
-  let [exited, setExited] = useState(!isOpen);
-
-  // Don't un-render the action bar while it's transitioning out.
-  let mountOverlay = isOpen || !exited;
-  if (!mountOverlay) {
-    // Don't bother showing anything if we don't have to.
-    return null;
-  }
 
   return (
     <OpenTransition
       in={isOpen}
-      appear
-      onExited={() => setExited(true)}
-      onEntered={() => setExited(false)}>
+      mountOnEnter
+      unmountOnExit>
       <ActionBarInner {...props} ref={ref} />
     </OpenTransition>
   );

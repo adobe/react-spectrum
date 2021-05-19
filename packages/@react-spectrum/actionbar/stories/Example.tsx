@@ -47,7 +47,7 @@ let items = [
 ];
 
 export function Example(props: any = {}) {
-  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(props.defaultSelectedKeys || new Set());
   return (
     <ActionBarContainer height={props.containerHeight || 300}>
       <TableView

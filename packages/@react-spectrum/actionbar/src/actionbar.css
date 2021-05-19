@@ -47,7 +47,7 @@
     max-width: 960px;
     margin: 0 auto;
 
-    background: white;
+    background: var(--spectrum-global-color-gray-50);
     border-radius: var(--spectrum-popover-border-radius);
     border-style: solid;
     border-width: var(--spectrum-popover-border-size);
