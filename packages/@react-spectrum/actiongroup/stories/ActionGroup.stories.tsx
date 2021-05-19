@@ -13,17 +13,21 @@
 import {action} from '@storybook/addon-actions';
 import {ActionGroup} from '../';
 import BookIcon from '@spectrum-icons/workflow/Book';
+import Brush from '@spectrum-icons/workflow/Brush';
 import CopyIcon from '@spectrum-icons/workflow/Copy';
 import DeleteIcon from '@spectrum-icons/workflow/Delete';
 import DocumentIcon from '@spectrum-icons/workflow/Document';
 import DrawIcon from '@spectrum-icons/workflow/Draw';
 import DuplicateIcon from '@spectrum-icons/workflow/Duplicate';
 import {Flex} from '@react-spectrum/layout';
+import Heal from '@spectrum-icons/workflow/Heal';
 import InfoIcon from '@spectrum-icons/workflow/Info';
 import {Item} from '@react-stately/collections';
 import MoveIcon from '@spectrum-icons/workflow/MoveTo';
 import PropertiesIcon from '@spectrum-icons/workflow/Properties';
 import React from 'react';
+import Sampler from '@spectrum-icons/workflow/Sampler';
+import Select from '@spectrum-icons/workflow/Select';
 import SettingsIcon from '@spectrum-icons/workflow/Settings';
 import {storiesOf} from '@storybook/react';
 import TagBold from '@spectrum-icons/workflow/TagBold';
@@ -34,9 +38,11 @@ import TextAlignCenter from '@spectrum-icons/workflow/TextAlignCenter';
 import TextAlignJustify from '@spectrum-icons/workflow/TextAlignJustify';
 import TextAlignLeft from '@spectrum-icons/workflow/TextAlignLeft';
 import TextAlignRight from '@spectrum-icons/workflow/TextAlignRight';
+import TextIcon from '@spectrum-icons/workflow/Text';
 import TextStrikethrough from '@spectrum-icons/workflow/TextStrikethrough';
 import TextStyle from '@spectrum-icons/workflow/TextStyle';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
+import VectorDraw from '@spectrum-icons/workflow/VectorDraw';
 import ViewCardIcon from '@spectrum-icons/workflow/ViewCard';
 import ViewGridIcon from '@spectrum-icons/workflow/ViewGrid';
 import ViewListIcon from '@spectrum-icons/workflow/ViewList';
@@ -318,6 +324,22 @@ storiesOf('ActionGroup', module)
         {renderCollapsibleAlignment({density: 'compact', overflowMode: 'collapse', moreIcon: <TextAlignLeft />, isEmphasized: true})}
       </div>
     )
+  )
+  .add(
+    'orientation: vertical, overflowMode: collapse',
+    () => (
+      <div style={{padding: '10px', resize: 'vertical', overflow: 'auto', width: 32, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+        {renderCollapsible({orientation: 'vertical', buttonLabelBehavior: 'hide', maxHeight: '100%', marginBottom: 0})}
+      </div>
+    )
+  )
+  .add(
+    'orientation: vertical, overflowMode: collapse, selection',
+    () => (
+      <div style={{padding: '10px', resize: 'vertical', overflow: 'auto', width: 32, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+        {renderTools({orientation: 'vertical', buttonLabelBehavior: 'hide', maxHeight: '100%'})}
+      </div>
+    )
   );
 
 
@@ -400,7 +422,7 @@ function renderTooltips(props, items: any = docItems) {
 
 function renderCollapsible(props = {}) {
   return (
-    <ActionGroup overflowMode="collapse" onAction={action('onAction')} {...props} marginBottom="size-250">
+    <ActionGroup overflowMode="collapse" onAction={action('onAction')} marginBottom="size-250" {...props}>
       <Item key="edit">
         <DrawIcon />
         <Text>Edit</Text>
@@ -492,6 +514,47 @@ function renderCollapsibleAlignment(props = {}) {
       <Item key="justify">
         <TextAlignJustify />
         <Text>Justify</Text>
+      </Item>
+    </ActionGroup>
+  );
+}
+
+function renderTools(props = {}) {
+  return (
+    <ActionGroup
+      aria-label="Tools"
+      overflowMode="collapse"
+      selectionMode="single"
+      disallowEmptySelection
+      defaultSelectedKeys={['select']}
+      onSelectionChange={action('onSelectionChange')}
+      buttonLabelBehavior="hide"
+      isEmphasized
+      isQuiet
+      {...props}>
+      <Item key="select">
+        <Select />
+        <Text>Select</Text>
+      </Item>
+      <Item key="text">
+        <TextIcon />
+        <Text>Text</Text>
+      </Item>
+      <Item key="heal">
+        <Heal />
+        <Text>Heal</Text>
+      </Item>
+      <Item key="brush">
+        <Brush />
+        <Text>Brush</Text>
+      </Item>
+      <Item key="pen">
+        <VectorDraw />
+        <Text>Pen</Text>
+      </Item>
+      <Item key="eyedropper">
+        <Sampler />
+        <Text>Eye dropper</Text>
       </Item>
     </ActionGroup>
   );
