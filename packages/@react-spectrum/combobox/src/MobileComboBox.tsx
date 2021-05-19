@@ -16,22 +16,21 @@ import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {chain, mergeProps, useId} from '@react-aria/utils';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames} from '@react-spectrum/utils';
+import {classNames, unwrapDOMRef} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
 import comboboxStyles from './combobox.css';
 import {DismissButton} from '@react-aria/overlays';
 import {Field} from '@react-spectrum/label';
-import {FocusableRef, ValidationState} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, ValidationState} from '@react-types/shared';
 import {FocusRing, FocusScope} from '@react-aria/focus';
 import {focusSafely} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
-import {ListLayout} from '@react-stately/layout';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {HTMLAttributes, InputHTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
+import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality, useHover} from '@react-aria/interactions';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
@@ -56,8 +55,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     isQuiet,
     isDisabled,
     validationState,
-    isReadOnly,
-    menuTrigger = 'input'
+    isReadOnly
   } = props;
 
   let {contains} = useFilter({sensitivity: 'base'});
@@ -65,30 +63,13 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     ...props,
     defaultFilter: contains,
     allowsEmptyCollection: true,
+    // reset input value on tray close
     shouldCloseOnBlur: true
   });
 
   let buttonRef = useRef<HTMLElement>();
   let domRef = useFocusableRef(ref, buttonRef);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
-  let layout = useListBoxLayout(state);
-  let popoverRef = useRef<HTMLDivElement>();
-  let listBoxRef = useRef<HTMLDivElement>();
-  let inputRef = useRef<HTMLInputElement>();
-
-  let {inputProps: trayInputProps, listBoxProps, labelProps: trayInputLabelProps} = useComboBox(
-    {
-      ...props,
-      // completionMode,
-      keyboardDelegate: layout,
-      buttonRef,
-      popoverRef,
-      listBoxRef,
-      inputRef,
-      menuTrigger
-    },
-    state
-  );
 
   let {labelProps, fieldProps} = useLabel({
     ...props,
@@ -103,6 +84,15 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     }
   };
 
+  // When mobile ComboBox button recieves focus, set state.isFocused (i.e. the tray input's focus tracker) to false.
+  // This is to prevent state.isFocused from being set to true when the tray closes
+  // (FocusScope attempts to restore focus to the tray input when tapping outside the tray due to "contain")
+  let onFocus = () => {
+    if (state.isFocused) {
+      state.setFocused(false);
+    }
+  };
+
   return (
     <>
       <Field
@@ -112,7 +102,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
         ref={domRef}
         includeNecessityIndicatorInAccessibilityName>
         <ComboBoxButton
-          {...mergeProps(triggerProps, fieldProps, {onBlur: trayInputProps.onBlur, onFocus: trayInputProps.onFocus, autoFocus: props.autoFocus})}
+          {...mergeProps(triggerProps, fieldProps, {autoFocus: props.autoFocus, onFocus})}
           ref={buttonRef}
           isQuiet={isQuiet}
           isDisabled={isDisabled}
@@ -126,13 +116,6 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
         <ComboBoxTray
           {...props}
           overlayProps={overlayProps}
-          inputRef={inputRef}
-          popoverRef={popoverRef}
-          listBoxRef={listBoxRef}
-          inputProps={trayInputProps}
-          listBoxProps={listBoxProps}
-          labelProps={trayInputLabelProps}
-          layout={layout}
           state={state} />
       </Tray>
     </>
@@ -186,27 +169,8 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
       valueId,
       validationState === 'invalid' ? invalidId : null
     ].filter(Boolean).join(' '),
-    elementType: 'div',
-    // Prevent focus on `press` and instead focus on `pressend` to avoid situations where users
-    // press and holds the combobox button and tray immediately opens due to menuTrigger=focus
-    // @ts-ignore
-    preventFocusOnPress: true,
-    onPressEnd: () => {
-      focusSafely(ref.current);
-    }
+    elementType: 'div'
   }, ref);
-
-  // Prevent focus event when pressing down and holding on combobox button. This is to stop tray from opening until user releases the button. Android specific, iOS is handled via changes in https://github.com/adobe/react-spectrum/pull/317.
-  // Prevents tray open -> useInteractOutside called on press end -> tray closing immediately when menuTrigger = "focus" and user presses and holds combobox button on mobile
-  useEffect(() => {
-    let button = ref.current;
-    let onTouchStart = (e) => e.preventDefault();
-    button.addEventListener('touchstart', onTouchStart);
-
-    return () => {
-      button.removeEventListener('touchstart', onTouchStart);
-    };
-  }, [ref]);
 
   return (
     <FocusRing
@@ -312,14 +276,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
 interface ComboBoxTrayProps extends SpectrumComboBoxProps<unknown> {
   state: ComboBoxState<unknown>,
   overlayProps: HTMLAttributes<HTMLElement>,
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
-  listBoxProps: HTMLAttributes<HTMLElement>,
-  labelProps: HTMLAttributes<HTMLElement>,
-  loadingIndicator?: ReactElement,
-  inputRef: RefObject<HTMLInputElement>,
-  popoverRef: RefObject<HTMLDivElement>,
-  listBoxRef: RefObject<HTMLDivElement>,
-  layout: ListLayout<unknown>
+  loadingIndicator?: ReactElement
 }
 
 function ComboBoxTray(props: ComboBoxTrayProps) {
@@ -331,23 +288,34 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     label,
     overlayProps,
     loadingState,
-    onLoadMore,
-    inputRef,
-    popoverRef,
-    listBoxRef,
-    inputProps,
-    listBoxProps,
-    labelProps,
-    layout
+    onLoadMore
   } = props;
 
   let timeout = useRef(null);
   let [showLoading, setShowLoading] = useState(false);
+  let inputRef = useRef<HTMLInputElement>();
+  let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
+  let popoverRef = useRef<HTMLDivElement>();
+  let listBoxRef = useRef<HTMLDivElement>();
+  let layout = useListBoxLayout(state);
   let formatMessage = useMessageFormatter(intlMessages);
+
+  let {inputProps, listBoxProps, labelProps} = useComboBox(
+    {
+      ...props,
+      // completionMode,
+      keyboardDelegate: layout,
+      buttonRef: unwrapDOMRef(buttonRef),
+      popoverRef: popoverRef,
+      listBoxRef,
+      inputRef
+    },
+    state
+  );
 
   React.useEffect(() => {
     focusSafely(inputRef.current);
-  }, [inputRef]);
+  }, []);
 
   let {dialogProps} = useDialog({
     'aria-labelledby': useId(labelProps.id)
@@ -443,7 +411,9 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   }, [loadingState, inputValue, showLoading]);
 
   let onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    // Ignore blur if focus moves from tray input to something outside the popover (i.e. tray is being closed via tapping outside the tray -> focus will return to combobox button -> prevent menuTrigger = focus from reopening the combobox tray).
+    // Ignore blur if focus moves from tray input to something outside the popover.
+    // This is to prevent the tray from closing if the user switches windows on their mobile device even
+    // though we have "shouldCloseOnBlur" provided to useComboState.
     if (!popoverRef.current?.contains(e.relatedTarget as HTMLElement)) {
       return;
     }

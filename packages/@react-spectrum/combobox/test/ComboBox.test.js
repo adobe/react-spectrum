@@ -4334,7 +4334,7 @@ describe('ComboBox', function () {
       expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText('Two').id} ${getByLabelText('(invalid)').id}`);
     });
 
-    it('combobox value resets on combobox button blur', function () {
+    it('combobox value resets on tray close', function () {
       let {getByRole, getByTestId, getByText} = renderComboBox({defaultSelectedKey: '2'});
       let button = getByRole('button');
 
@@ -4356,12 +4356,6 @@ describe('ComboBox', function () {
       });
 
       expect(() => getByTestId('tray')).toThrow();
-      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText('Twor').id}`);
-
-      act(() => {
-        button.blur();
-        jest.runAllTimers();
-      });
       expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText('Two').id}`);
     });
 
@@ -4371,6 +4365,14 @@ describe('ComboBox', function () {
 
       act(() => {
         button.focus();
+        jest.runAllTimers();
+      });
+
+      // menutrigger = focus is inapplicable for mobile ComboBox
+      expect(() => getByTestId('tray')).toThrow();
+
+      act(() => {
+        triggerPress(button);
         jest.runAllTimers();
       });
 
@@ -4426,30 +4428,6 @@ describe('ComboBox', function () {
       });
 
       expect(() => getByTestId('tray')).toThrow();
-    });
-
-    it('combobox button is focused on press end', function () {
-      let {getByRole, getByTestId} = renderComboBox({menutTrigger: 'focus'});
-      let button = getByRole('button');
-
-      act(() => {
-        fireEvent.touchStart(button, {targetTouches: [{identifier: 1}]});
-        jest.runAllTimers();
-      });
-
-      expect(document.activeElement).not.toBe(button);
-      expect(() => getByTestId('tray')).toThrow();
-
-      act(() => {
-        fireEvent.touchEnd(button, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
-        expect(document.activeElement).toBe(button);
-        jest.runAllTimers();
-      });
-
-      let tray = getByTestId('tray');
-      expect(tray).toBeVisible();
-      let input = within(tray).getByRole('searchbox');
-      expect(document.activeElement).toBe(input);
     });
 
     describe('refs', function () {
