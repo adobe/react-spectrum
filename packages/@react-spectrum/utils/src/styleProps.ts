@@ -219,19 +219,21 @@ export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers
   return style;
 }
 
-export function useStyleProps<T extends StyleProps>(props: T, options: {
-  handlers?: StyleHandlers,
+type StylePropsOptions = {
   matchedBreakpoints?: Breakpoint[]
-} = {
-  handlers: baseStyleProps
-}) {
+};
+
+export function useStyleProps<T extends StyleProps>(
+  props: T,
+  handlers: StyleHandlers = baseStyleProps,
+  options: StylePropsOptions = {}
+) {
   let {
     UNSAFE_className,
     UNSAFE_style,
     ...otherProps
   } = props;
   let {
-    handlers = baseStyleProps,
     matchedBreakpoints = ['base']
   } = options;
   let breakpointProvider = useBreakpoint();

@@ -25,7 +25,7 @@ export interface MenuTriggerProps extends OverlayTriggerProps {
    * Where the Menu opens relative to its trigger.
    * @default 'bottom'
    */
-  direction?: 'bottom' | 'top',
+  direction?: 'bottom' | 'top' | 'left' | 'right' | 'start' | 'end',
   /**
    * Whether the Menu closes when a selection is made.
    * @default true
