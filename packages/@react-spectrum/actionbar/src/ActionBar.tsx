@@ -113,7 +113,6 @@ const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef
             staticColor={isEmphasized ? 'white' : null}
             overflowMode="collapse"
             buttonLabelBehavior="collapse"
-            selectionMode="none"
             onAction={onAction}
             UNSAFE_className={classNames(styles, 'react-spectrum-ActionBar-actionGroup')}>
             {children}
