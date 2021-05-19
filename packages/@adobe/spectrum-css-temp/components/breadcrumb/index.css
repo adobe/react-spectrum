@@ -116,7 +116,7 @@ governing permissions and limitations under the License.
 }
 
 
-.spectrum-Breadcrumbs-item.is-dragged  .spectrum-Breadcrumbs-itemLink:before,
+.spectrum-Breadcrumbs-item.is-dragged .spectrum-Breadcrumbs-itemLink:before,
 .spectrum-Breadcrumbs-itemLink:not([aria-current]):focus-ring:before {
   position: absolute;
   top: 0;
