@@ -11,9 +11,9 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Item} from '@react-stately/collections';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
-import {Item} from '@react-stately/collections';
 import {TagGroup} from '../src';
 import {Text} from '@react-spectrum/Text';
 
@@ -51,14 +51,6 @@ storiesOf('TagGroup', module)
   () => render({
     isDisabled: true
   }))
-  .add('test', () => {
-    return (
-      <div>
-      <span tabIndex={0}>hi</span>
-      <span tabIndex={-1}>hi</span>
-      </div>
-    )
-  })
   .add(
     'with announcing',
     () => (
@@ -90,7 +82,7 @@ function WithAnnouncing() {
       {/*
         // @ts-ignore */}
       <TagGroup onKeyDown={handleKeyDown}>
-        {tags.map((t, index) => <Tag key={index}>{t}</Tag>)}
+        {tags.map((t, index) => <Item key={index}>{t}</Item>)}
       </TagGroup>
     </React.Fragment>
   );

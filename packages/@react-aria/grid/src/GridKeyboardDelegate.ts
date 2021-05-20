@@ -188,7 +188,6 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
   }
 
   getKeyLeftOf(key: Key) {
-    console.log('get key left', key)
     let item = this.collection.getItem(key);
     if (!item) {
       return;
