@@ -28,7 +28,9 @@ export interface ComboBoxState<T> extends SelectState<T> {
   /** Opens the menu. */
   open(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void,
   /** Toggles the menu. */
-  toggle(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void
+  toggle(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void,
+  /** Resets the input value to the previously selected item's text if any.  */
+  resetInputValue(): void
 }
 
 type FilterFn = (textValue: string, inputValue: string) => boolean;
@@ -333,7 +335,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     collection: showAllItems ? originalCollection : filteredCollection,
     inputValue,
     setInputValue,
-    commit
+    commit,
+    resetInputValue
   };
 }
 

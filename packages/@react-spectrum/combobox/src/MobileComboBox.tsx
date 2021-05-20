@@ -13,7 +13,6 @@
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {AriaButtonProps} from '@react-types/button';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
-import {chain, mergeProps, useId} from '@react-aria/utils';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames, unwrapDOMRef} from '@react-spectrum/utils';
@@ -29,6 +28,7 @@ import {focusSafely} from '@react-aria/focus';
 import intlMessages from '../intl/*.json';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
+import {mergeProps, useId} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
@@ -63,8 +63,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     ...props,
     defaultFilter: contains,
     allowsEmptyCollection: true,
-    // reset input value on tray close
-    shouldCloseOnBlur: true
+    shouldCloseOnBlur: false
   });
 
   let buttonRef = useRef<HTMLElement>();
@@ -93,6 +92,16 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     }
   };
 
+  let onClose = () => {
+    state.commit();
+    // Avoid reseting input value if combobox allows custom value so that the user's custom value isn't changed to the last selected item's text
+    // Also avoid reseting input value if there is a focused key when the menu is closed so that there aren't multiple onInputChanges from selection and reset
+    if (!props.allowsCustomValue && state.selectionManager.focusedKey === null) {
+      state.resetInputValue();
+    }
+    state.close();
+  };
+
   return (
     <>
       <Field
@@ -112,9 +121,10 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           {state.inputValue || props.placeholder || ''}
         </ComboBoxButton>
       </Field>
-      <Tray isOpen={state.isOpen} onClose={chain(state.commit, state.close)} isFixedHeight isNonModal {...overlayProps}>
+      <Tray isOpen={state.isOpen} onClose={onClose} isFixedHeight isNonModal {...overlayProps}>
         <ComboBoxTray
           {...props}
+          onClose={onClose}
           overlayProps={overlayProps}
           state={state} />
       </Tray>
@@ -276,7 +286,8 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
 interface ComboBoxTrayProps extends SpectrumComboBoxProps<unknown> {
   state: ComboBoxState<unknown>,
   overlayProps: HTMLAttributes<HTMLElement>,
-  loadingIndicator?: ReactElement
+  loadingIndicator?: ReactElement,
+  onClose: () => void
 }
 
 function ComboBoxTray(props: ComboBoxTrayProps) {
@@ -288,7 +299,9 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     label,
     overlayProps,
     loadingState,
-    onLoadMore
+    onLoadMore,
+    onClose,
+    allowsCustomValue
   } = props;
 
   let timeout = useRef(null);
@@ -410,15 +423,14 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     lastInputValue.current = inputValue;
   }, [loadingState, inputValue, showLoading]);
 
-  let onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    // Ignore blur if focus moves from tray input to something outside the popover.
-    // This is to prevent the tray from closing if the user switches windows on their mobile device even
-    // though we have "shouldCloseOnBlur" provided to useComboState.
-    if (!popoverRef.current?.contains(e.relatedTarget as HTMLElement)) {
-      return;
+  // Need to handle onKeyDown here, Tray's onClose doesn't trigger when hitting escape since useComboBox's escape handler closes the tray
+  let onKeyDown = (e) => {
+    // If there isn't a selected key and allowsCustomValue is true, then we avoid reseting input value so the new custom value persists
+    if (e.key === 'Escape' && !(!state.selectedKey && allowsCustomValue)) {
+      state.resetInputValue();
     }
 
-    inputProps.onBlur(e);
+    inputProps.onKeyDown(e);
   };
 
   return (
@@ -432,11 +444,11 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
             'tray-dialog'
           )
         }>
-        <DismissButton onDismiss={chain(state.commit, state.close)} />
+        <DismissButton onDismiss={onClose} />
         <TextFieldBase
           label={label}
           labelProps={labelProps}
-          inputProps={{...inputProps, onBlur}}
+          inputProps={{...inputProps, onKeyDown}}
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={showLoading && loadingState === 'filtering'}
@@ -501,7 +513,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           onScroll={onScroll}
           onLoadMore={onLoadMore}
           isLoading={loadingState === 'loading' || loadingState === 'loadingMore'} />
-        <DismissButton onDismiss={chain(state.commit, state.close)} />
+        <DismissButton onDismiss={onClose} />
       </div>
     </FocusScope>
   );
