@@ -321,7 +321,7 @@ storiesOf('ActionGroup', module)
     () => (
       <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', display: 'flex', gap: 10, width: 300, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
         {renderCollapsibleFormatting({density: 'compact', overflowMode: 'collapse', moreIcon: <TextStyle />, isEmphasized: true})}
-        {renderCollapsibleAlignment({density: 'compact', overflowMode: 'collapse', moreIcon: <TextAlignLeft />, isEmphasized: true})}
+        {renderCollapsibleAlignment({density: 'compact', overflowMode: 'collapse', isEmphasized: true})}
       </div>
     )
   )
