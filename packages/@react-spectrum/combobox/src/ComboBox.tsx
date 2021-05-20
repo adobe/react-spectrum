@@ -192,7 +192,8 @@ interface ComboBoxInputProps extends SpectrumComboBoxProps<unknown> {
   triggerProps: AriaButtonProps,
   triggerRef: RefObject<FocusableRefValue<HTMLElement>>,
   style?: React.CSSProperties,
-  className?: string
+  className?: string,
+  isOpen?: boolean
 }
 
 const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInputProps, ref: RefObject<HTMLElement>) {
