@@ -654,7 +654,7 @@ describe('Menu', function () {
       jest.runAllTimers();
     });
 
-    expect(() => tree.getByRole('dialog')).toThrow();
+    expect(tree.queryByRole('dialog')).toBeNull();
   });
 
   describe('supports onAction', function () {
