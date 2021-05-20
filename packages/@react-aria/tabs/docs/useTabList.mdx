@@ -87,7 +87,7 @@ and `useTabPanel`.
 
 ## Example
 
-This example displays a basic list of tabs. The currently selected tab get a `tabIndex` of 0 while the rest are set to -1 ensuring that the tablist is only a single tab stop. The selected tab gets a different style so it's obvious which one is currently selected. `useTab` and `useTabPanel` handle associating the tabs and tab panels for assistive technology. The currently selected tab panel is rendered below the list of tabs. The `key` prop on the `TabPanel` element is important to ensure that DOM state (e.g. text field contents) is not shared between unrelated tabs.
+This example displays a basic list of tabs. The currently selected tab receives a `tabIndex` of 0 while the rest are set to -1 ensuring that the whole tablist is a single tab stop. The selected tab has a different style so it's obvious which one is currently selected. `useTab` and `useTabPanel` handle associating the tabs and tab panels for assistive technology. The currently selected tab panel is rendered below the list of tabs. The `key` prop on the `TabPanel` element is important to ensure that DOM state (e.g. text field contents) is not shared between unrelated tabs.
 
 ```tsx example export=true
 import {Item} from '@react-stately/collections';
