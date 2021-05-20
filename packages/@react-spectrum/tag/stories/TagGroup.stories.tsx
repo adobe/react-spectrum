@@ -15,7 +15,6 @@ import {Item} from '@react-stately/collections';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {TagGroup} from '../src';
-import {Text} from '@react-spectrum/Text';
 
 storiesOf('TagGroup', module)
   .add(
@@ -32,13 +31,13 @@ storiesOf('TagGroup', module)
       </TagGroup>
     )
   )
-  .add('icons', () => (
-    <TagGroup>
-      <Item>
-        <Text>Tag 1</Text>
-      </Item>
-    </TagGroup>
-  ))
+  // .add('icons', () => (
+  //   <TagGroup>
+  //     <Item>
+  //       <Text>Tag 1</Text>
+  //     </Item>
+  //   </TagGroup>
+  // ))
   .add(
     'onRemove',
     () => render({
