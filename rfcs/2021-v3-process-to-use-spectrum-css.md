@@ -46,7 +46,7 @@ We'd also like for others to benefit from the work that we've done on CSS since 
 Wholesale vs incrementally. This should be a non-starter, we need to be able to do this incrementally as much as possible.
 
 #### Chromatic
-Before a component is moved over, we should make sure it's in Chromatic. This way we can test for visual regressions and be confident that we've consumed the new CSS correctly. This will also allow us to verify that we've contributed back our changes correctly. This will still have holes, but it will help. In addition, DSS has a feature that all component states are top-leveled, allowing us to render every combination of states eventually.
+Before a component is moved over, we should make sure it's in Chromatic. This way we can test for visual regressions and be confident that we've consumed the new CSS correctly. This will also allow us to verify that we've contributed back our changes correctly. This will still have holes, but it will help. In addition, DSS may have a feature that all component states are top-leveled, allowing us to render every combination of states eventually.
 
 #### CSS Modules:
 
@@ -110,12 +110,12 @@ We will likely have three different kinds of components. Components where we can
 In order to merge back the changes we've made, we'll need to go component by component and get guidance on if we should contribute the changes to Spectrum-CSS or directly into DSS.
 
 ##### Local overrides & new packages
-Spectrum-CSS provides a whole tools packages that we can use to build our own CSS. Yarn/Lerna resolution will choose a local copy of a package over a remote one by the same name. We don't want to include CSS into our packages other than some minor bits like TableView has, so we'd need to publish any overrides. This would be confusing to the community though and a lot of work to maintain.
+Spectrum-CSS provides a whole tools packages that we can use to build our own CSS. Yarn/Lerna resolution will choose a local copy of a package over a remote one by the same name. We don't want to include CSS into our packages other than some minor bits like TableView has, so we'd need to publish any overrides. This would be confusing to the community, and a lot of work to maintain.
 If we do have components that spectrum-css never wants, those we should publish ourselves.
 
-With Spectrum-CSS potentially taking on CSS Modules, how do we want to handle local CSS such as TableView. Can these local files be contributed to Spectrum-CSS, or will they need to be published with the package as we currently do. I see this as low risk because we already apply both Spectrum-CSS and React-Spectrum-CSS selectors and Table at least isn't relying on variables nor creating any.
+With Spectrum-CSS potentially taking on CSS Modules, how do we want to handle local CSS such as TableView. Can these local files be contributed to Spectrum-CSS, or will they need to be published with the package as we currently do. I see this as low risk because we already apply both Spectrum-CSS and React-Spectrum-CSS selectors and Table, at least, isn't relying on variables nor creating any.
 
-### Possible timeline of work to move over
+### Possible flow of work to move over
 
   - Add stories to Chromatic
   - At the same time, create branch to update DNA to 7.0
