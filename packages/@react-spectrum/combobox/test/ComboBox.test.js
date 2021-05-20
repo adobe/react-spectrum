@@ -4323,29 +4323,78 @@ describe('ComboBox', function () {
       expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText('Two').id} ${getByLabelText('(invalid)').id}`);
     });
 
-    it('combobox value resets on tray close', function () {
-      let {getByRole, getByTestId, getByText} = renderComboBox({defaultSelectedKey: '2'});
-      let button = getByRole('button');
-
+    it.each`
+      Method
+      ${'clicking outside tray'}
+      ${'dismiss button'}
+      ${'escape key'}
+    `('combobox value resets on tray close ($Method)', ({Method}) => {
+       // If there is a selected key and allowCustomValue is false, closing the tray should reset the input value
+      let tree = render(<ExampleComboBox defaultSelectedKey="2" />);
+      let button = tree.getByRole('button');
       act(() => {
         triggerPress(button);
         jest.runAllTimers();
       });
 
-      let tray = getByTestId('tray');
-      expect(tray).toBeVisible();
-      let trayInput = within(tray).getByRole('searchbox');
-      expect(trayInput.value).toBe('Two');
-      typeText(trayInput, 'r');
+      let performInteractions = (render) => {
+        let tray = render.getByTestId('tray');
+        expect(tray).toBeVisible();
+        let trayInput = within(tray).getByRole('searchbox');
+        expect(trayInput.value).toBe('Two');
+        typeText(trayInput, 'r');
+        let dismissButtons = within(tray).getAllByRole('button');
+        act(() => {
+          switch (Method) {
+            case 'clicking outside tray':
+              triggerPress(document.body);
+              break;
+            case 'dismiss button':
+              triggerPress(dismissButtons[0]);
+              break;
+            case 'escape key':
+              fireEvent.keyDown(trayInput, {key: 'Escape', code: 27, charCode: 27});
+              fireEvent.keyUp(trayInput, {key: 'Escape', code: 27, charCode: 27});
+              break;
+          }
+          jest.runAllTimers();
+        });
+      };
 
+      performInteractions(tree);
+      expect(() => tree.getByTestId('tray')).toThrow();
+      expect(button).toHaveAttribute('aria-labelledby', `${tree.getByText('Test').id} ${tree.getByText('Two').id}`);
+      tree.unmount();
+
+      // If there is a selected key and allowCustomValue is true, closing the tray via dismiss button or clicking outside the tray should clear the selected key and
+      // update the input value to the custom value. If the user closes the tray via escape key, then the input value should be reset and the selected key isn't cleared
+      tree = render(<ExampleComboBox defaultSelectedKey="2" allowsCustomValue />);
+      button = tree.getByRole('button');
       act(() => {
-        trayInput.blur();
-        triggerPress(document.body);
+        triggerPress(button);
         jest.runAllTimers();
       });
 
-      expect(() => getByTestId('tray')).toThrow();
-      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText('Two').id}`);
+      performInteractions(tree);
+      expect(() => tree.getByTestId('tray')).toThrow();
+      if (Method === 'escape key') {
+        expect(button).toHaveAttribute('aria-labelledby', `${tree.getByText('Test').id} ${tree.getByText('Two').id}`);
+      } else {
+        expect(button).toHaveAttribute('aria-labelledby', `${tree.getByText('Test').id} ${tree.getByText('Twor').id}`);
+      }
+      tree.unmount();
+
+      // If there is a pre-existing custom value, closing the tray should update the custom value if any changes were made in the tray input
+      tree = render(<ExampleComboBox defaultInputValue="Two" allowsCustomValue />);
+      button = tree.getByRole('button');
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      performInteractions(tree);
+      expect(() => tree.getByTestId('tray')).toThrow();
+      expect(button).toHaveAttribute('aria-labelledby', `${tree.getByText('Test').id} ${tree.getByText('Twor').id}`);
     });
 
     it('menutrigger=focus doesn\'t reopen the tray on close', function () {
