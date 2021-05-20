@@ -42,17 +42,16 @@ We'd also like for others to benefit from the work that we've done on CSS since 
 -->
 
 ### Approaches
-work in progress area
-Wholesale vs incrementally. This should be a non-starter, we need to be able to do this incrementally.
+
+Wholesale vs incrementally. This should be a non-starter, we need to be able to do this incrementally as much as possible.
 
 #### Chromatic
-Before a component is moved over, we should make sure it's in Chromatic so we can test for visual regressions and be confident that we've consumed the new CSS correctly.
+Before a component is moved over, we should make sure it's in Chromatic. This way we can test for visual regressions and be confident that we've consumed the new CSS correctly. This will also allow us to verify that we've contributed back our changes correctly. This will still have holes, but it will help. In addition, DSS has a feature that all component states are top-leveled, allowing us to render every combination of states eventually.
 
 #### CSS Modules:
 
 ##### Spectrum-CSS maintains
-Generate in Spectrum-CSS project, add to dist.
-Spectrum-CSS is open to doing this.
+In this scenario, the Spectrum-CSS project adds two files to their distribution, a js file with the mapping of classnames to css module classnames and a css file that the js file imports. They can point to the js file using the main field of the package.json and can use styles to point to their css files. Spectrum-CSS is open to doing this. 
 
 ###### Pros:
   - Source of truth is Spectrum-CSS
@@ -116,12 +115,39 @@ If we do have components that spectrum-css never wants, those we should publish 
 
 With Spectrum-CSS potentially taking on CSS Modules, how do we want to handle local CSS such as TableView. Can these local files be contributed to Spectrum-CSS, or will they need to be published with the package as we currently do. I see this as low risk because we already apply both Spectrum-CSS and React-Spectrum-CSS selectors and Table at least isn't relying on variables nor creating any.
 
+### Possible timeline of work to move over
+
+  - Add stories to Chromatic
+  - At the same time, create branch to update DNA to 7.0
+  - After DNA, begin moving over "easy" components to spectrum-css packages
+    - Create a branch and run chromatic
+    - Diff our CSS with Spectrum-CSS
+    - Determine if we should contribute to Spectrum-CSS or DSS
+    - Make branch to update appropriate module
+    - Link locally, delete our local copy in spectrum-css-temp
+    - Add any classes we need
+    - Run chromatic
+    - Verify results, repeating above steps until it passes
+    - Submit branch as PR to spectrum and create a PR for React-Spectrum
+    - Once Spectrum-CSS releases the package, merge PR in React-Spectrum
+  - Continue moving components over
+
+### Possible contribution back to Spectrum-CSS
+
+  - Locally run Spectrum-CSS / DSS and link appropriate packages that need to be worked on
+  - Make changes
+  - When ready, submit changes as a PR to Spectrum-CSS / DSS
+  - Once merged and released, submit PR to React Spectrum making sure to bump the version of each package depended on appropriately and merge
+    - To define "appropriate", if the change included a new classname/selector/token we didn't have before
+    - If it didn't have any of those, we don't need to release with a bump to the version
+
 ## Documentation
 
 <!--
     How will this RFC be documented? Does it need a formal announcement to explain 
 		the motivation?
 -->
+No formal announcement should be needed, npm should take care of installing new package dependencies when we change over. If people don't use the combined @adobe/react-spectrum package though, they may end up with some duplicate css, we should be able to cover this by updating all minimum package references for this release. We will need to add some documentation describing how we expect contributions and bugs concerning CSS to be carried out. We should be able to rely on Spectrum-CSS for information on what tokens are considered API for theming, though we should link to the appropriate place from our Styling docs.
 
 ## Drawbacks
 
@@ -202,6 +228,7 @@ People within our own team will need to champion the various components where th
 
 When will DSS actually be prime time ready?
 What timeline are going to work with here?
+Size comparison current Spectrum-CSS vs DSS output
 
 ## Related Discussions
 
