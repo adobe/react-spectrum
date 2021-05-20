@@ -39,10 +39,6 @@ let changeHandlers = new Set<Handler>();
 let hasSetupGlobalListeners = false;
 let hasEventBeforeFocus = false;
 let hasBlurredWindowRecently = false;
-let documentVisibilityState = {
-  current: null,
-  previous: null
-};
 
 // Only Tab or Esc keys will make focus visible on text input elements
 const FOCUS_VISIBLE_INPUT_KEYS = {
@@ -64,16 +60,6 @@ function isValidKey(e: KeyboardEvent) {
   return !(e.metaKey || (!isMac() && e.altKey) || e.ctrlKey || e.type === 'keyup' && (e.key === 'Control' || e.key === 'Shift'));
 }
 
-function hasChangedTabRecently() {
-  // in Chrome visibilitychange event always happens before any focus event.
-  // situation is different for Firefox and Safari where visibilitychange fires after all initial focus events.
-  return (documentVisibilityState.current === 'visible' && documentVisibilityState.previous === 'hidden') || documentVisibilityState.current === 'hidden';
-}
-
-function resetDocumentVisibilityState() {
-  documentVisibilityState.current = null;
-  documentVisibilityState.previous = null;
-}
 
 function handleKeyboardEvent(e: KeyboardEvent) {
   hasEventBeforeFocus = true;
@@ -108,13 +94,9 @@ function handleFocusEvent(e: FocusEvent) {
 
   // If a focus event occurs without a preceding keyboard or pointer event, switch to virtual modality.
   // This occurs, for example, when navigating a form with the next/previous buttons on iOS.
-  if (!hasEventBeforeFocus && !hasBlurredWindowRecently && !hasChangedTabRecently()) {
+  if (!hasEventBeforeFocus && !hasBlurredWindowRecently) {
     currentModality = 'virtual';
     triggerChangeHandlers('virtual', e);
-  }
-
-  if (documentVisibilityState.current === 'visible') {
-    resetDocumentVisibilityState();
   }
 
   hasEventBeforeFocus = false;
@@ -126,11 +108,6 @@ function handleWindowBlur() {
   // for example, since a subsequent focus event won't be fired.
   hasEventBeforeFocus = false;
   hasBlurredWindowRecently = true;
-}
-
-function handleVisibilityChange() {
-  documentVisibilityState.previous = documentVisibilityState.current;
-  documentVisibilityState.current = document.visibilityState;
 }
 
 /**
@@ -154,7 +131,6 @@ function setupGlobalFocusEvents() {
   document.addEventListener('keydown', handleKeyboardEvent, true);
   document.addEventListener('keyup', handleKeyboardEvent, true);
   document.addEventListener('click', handleClickEvent, true);
-  document.addEventListener('visibilitychange', handleVisibilityChange, true);
 
   // Register focus events on the window so they are sure to happen
   // before React's event listeners (registered on the document).
