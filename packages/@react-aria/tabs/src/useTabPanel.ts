@@ -24,7 +24,8 @@ interface TabPanelAria {
 
 
 /**
- * Provides the behavior and accessibility implementation for a tab panel component. Handles focus behavior, and ARIA props.
+ * Provides the behavior and accessibility implementation for a tab panel. A tab panel is a container for
+ * the contents of a tab, and is shown when the tab is selected.
  */
 export function useTabPanel<T>(props: AriaTabPanelProps, state: TabListState<T>, ref: RefObject<HTMLElement>): TabPanelAria {
   let [tabIndex, setTabIndex] = useState(0);

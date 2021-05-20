@@ -26,8 +26,8 @@ interface TabListAria {
 
 
 /**
- * Provides the behavior and accessibility implementation for a tab list component. Handles mouse, keyboard, and touch interactions,
- * focus behavior, and ARIA props.
+ * Provides the behavior and accessibility implementation for a tab list.
+ * Tabs organize content into multiple sections and allow users to navigate between them.
  */
 export function useTabList<T>(props: AriaTabListProps<T>, state: TabListState<T>, ref: RefObject<HTMLElement>): TabListAria {
   let {

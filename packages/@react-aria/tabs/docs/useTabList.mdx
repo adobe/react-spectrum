@@ -11,7 +11,8 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-aria/tabs';
-import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
+import statelyDocs from 'docs:@react-stately/tabs';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-aria/tabs/package.json';
 import Anatomy from './anatomy.svg';
 
@@ -27,7 +28,7 @@ keywords: [tabs, aria]
 
 # useTabList
 
-<p>{docs.exports.useTab.description}</p>
+<p>{docs.exports.useTabList.description}</p>
 
 <HeaderInfo
   packageData={packageData}
@@ -46,22 +47,22 @@ keywords: [tabs, aria]
 
 ## Features
 
-Tabs provide a list of tabs that a user can select from to change the panels contents. `useTab`, `useTabList`, and `useTabPanel` help implement these in an accessible way.
+Tabs provide a list of tabs that a user can select from to switch between multiple tab panels. `useTabList`, `useTab`, and `useTabPanel` can be used to implement these in an accessible way.
 
 * Support for mouse, touch, and keyboard interactions on tabs
 * Support for LTR and RTL keyboard navigation
 * Support for disabled tabs
-* Support for accessibly linking tabs and the associated tab panel
-
+* Follows the tabs ARIA pattern, semantically linking tabs and their associated tab panels
+* Focus management for tab panels without any focusable children
 
 ## Anatomy
 
 <Anatomy />
 
-Tabs consist of a tab list with one or more visually separated tabs. Each tab has associated content and only the selected tab's content is shown.
-Each tab can be clicked, tapped, or navigated to via arrow keys. Depending on the mode, the tab can be selected by receiving keyboard focus or it can be selected with the <kbd>Enter</kbd> key.
+Tabs consist of a tab list with one or more visually separated tabs. Each tab has associated content, and only the selected tab's content is shown.
+Each tab can be clicked, tapped, or navigated to via arrow keys. Depending on the `keyboardActivation` prop, the tab can be selected by receiving keyboard focus, or it can be selected with the <kbd>Enter</kbd> key.
 
-`useTabList` returns props to spread onto any element containing the tabs:
+`useTabList` returns props to spread onto the tab list container:
 
 <TypeContext.Provider value={docs.links}>
   <InterfaceType properties={docs.links[docs.exports.useTabList.return.id].properties} />
@@ -79,9 +80,13 @@ Each tab can be clicked, tapped, or navigated to via arrow keys. Depending on th
   <InterfaceType properties={docs.links[docs.exports.useTabPanel.return.id].properties} />
 </TypeContext.Provider>
 
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTabListState} />
+hook in `@react-stately/tabs`. The state object should be passed as an option to `useTabList`, `useTab`,
+and `useTabPanel`.
+
 ## Example
 
-This example displays a basic list of tabs. The currently selected tab get a tabindex of 0 while the rest are set to -1 ensuring that the tablist is only a single tab stop. The selected tab gets a different style so it's obvious which one is currently selected. Our hooks handle the aria properties that associate the tabs with their tab panel for screen readers. In the tab panel itself, we only render the currently selected item.
+This example displays a basic list of tabs. The currently selected tab get a `tabIndex` of 0 while the rest are set to -1 ensuring that the tablist is only a single tab stop. The selected tab gets a different style so it's obvious which one is currently selected. `useTab` and `useTabPanel` handle associating the tabs and tab panels for assistive technology. The currently selected tab panel is rendered below the list of tabs. The `key` prop on the `TabPanel` element is important to ensure that DOM state (e.g. text field contents) is not shared between unrelated tabs.
 
 ```tsx example export=true
 import {Item} from '@react-stately/collections';
@@ -90,39 +95,46 @@ import {mergeProps} from '@react-aria/utils';
 
 function Tabs(props) {
   let state = useTabListState(props);
-  let tablistRef = React.useRef();
-  let tabpanelRef = React.useRef();
-  let {tabListProps} = useTabList(props, state, tablistRef);
-  let {tabPanelProps} = useTabPanel(props, state, tabpanelRef);
+  let ref = React.useRef();
+  let {tabListProps} = useTabList(props, state, ref);
   return (
     <div style={{height: '150px'}}>
-      <div {...tabListProps} ref={tablistRef}>
-        <div style={{display: 'flex', borderBottom: '1px solid grey'}}>
-          {[...state.collection].map((item) => (
-            <Tab key={item.key} item={item} state={state} />
-          ))}
-        </div>
+      <div {...tabListProps} ref={ref} style={{display: 'flex', borderBottom: '1px solid grey'}}>
+        {[...state.collection].map((item) => (
+          <Tab key={item.key} item={item} state={state} />
+        ))}
       </div>
-      <div {...tabPanelProps} ref={tabpanelRef} style={{padding: '10px'}}>
-        {state.selectedItem && state.selectedItem.props.children}
-      </div>
+      <TabPanel key={state.selectedItem?.key} state={state} />
     </div>
   );
 }
+
 function Tab({item, state}) {
   let {key, rendered} = item;
   let ref = React.useRef();
   let {tabProps} = useTab({key}, state, ref);
   let isSelected = state.selectedKey === key;
   let isDisabled = state.disabledKeys.has(key);
-  let tabStyle = {
-    padding: '10px',
-    borderBottom: isSelected ? '3px solid orange' : undefined,
-    opacity: isDisabled ? '0.5' : undefined
-  };
   return (
-    <div {...tabProps} ref={ref} style={tabStyle}>
+    <div
+      {...tabProps}
+      ref={ref}
+      style={{
+        padding: '10px',
+        borderBottom: isSelected ? '3px solid var(--blue)' : undefined,
+        opacity: isDisabled ? '0.5' : undefined
+      }}>
       {item.rendered}
+    </div>
+  );
+}
+
+function TabPanel({state, ...props}) {
+  let ref = React.useRef();
+  let {tabPanelProps} = useTabPanel(props, state, ref);
+  return (
+    <div {...tabPanelProps} ref={ref} style={{padding: '10px'}}>
+      {state.selectedItem?.props.children}
     </div>
   );
 }
@@ -136,17 +148,14 @@ function Tab({item, state}) {
 
 ## With focusable content
 
-When the tab panel doesn't contain focusable content, the entire panel is given a `tabIndex=0` so that the content can be navigated to. When the tab panel contains focusable content, such as a textfield, then the tab index is omitted because the content itself can receive focus.
+When the tab panel doesn't contain any focusable content, the entire panel is given a `tabIndex=0` so that the content can be navigated to with the keyboard. When the tab panel contains focusable content, such as a textfield, then the `tabIndex` is omitted because the content itself can receive focus.
 
-Using the same example `Tabs` component from above. Try navigating from the tabs to the content for each panel using the keyboard.
+This example uses the same `Tabs` component from above. Try navigating from the tabs to the content for each panel using the keyboard.
 
 ```tsx example
-import {TextField} from '@react-spectrum/textfield';
-import {Content} from '@react-spectrum/view';
-
 <Tabs aria-label="Notes app">
   <Item key="item1" title="Jane Doe">
-    <Content><TextField label="Leave a note for Jane" /></Content>
+    <label>Leave a note for Jane: <input type="text" /></label>
   </Item>
   <Item key="item2" title="John Doe">Senatus Populusque Romanus.</Item>
   <Item key="item3" title="Joe Bloggs">Alea jacta est.</Item>
@@ -155,7 +164,7 @@ import {Content} from '@react-spectrum/view';
 
 ## Internationalization
 
-These hooks handle some aspects of internationalization automatically. For example, keyboard navigation left right is automatically swapped for RTL languages. You are responsible for localizing all tab labels and content.
+`useTabList` handles some aspects of internationalization automatically. For example, keyboard navigation is automatically mirrored for right-to-left languages. You are responsible for localizing all tab labels and content.
 
 ### RTL
 

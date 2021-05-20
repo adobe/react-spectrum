@@ -13,7 +13,7 @@
 import {AriaTabProps} from '@react-types/tabs';
 import {generateId} from './utils';
 import {HTMLAttributes, RefObject} from 'react';
-import {SingleSelectListState} from '@react-stately/list';
+import {TabListState} from '@react-stately/tabs';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -23,12 +23,12 @@ interface TabAria {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a tab component. Handles mouse, keyboard, and touch interactions,
- * focus behavior, and ARIA props.
+ * Provides the behavior and accessibility implementation for a tab.
+ * When selected, the associated tab panel is shown.
  */
 export function useTab<T>(
   props: AriaTabProps,
-  state: SingleSelectListState<T>,
+  state: TabListState<T>,
   ref: RefObject<HTMLElement>
 ): TabAria {
   let {key, isDisabled: propsDisabled} = props;
