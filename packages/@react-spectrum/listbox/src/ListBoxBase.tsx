@@ -56,6 +56,7 @@ export function useListBoxLayout<T>(state: ListState<T>) {
       estimatedHeadingHeight: scale === 'large' ? 33 : 26,
       padding: scale === 'large' ? 5 : 4, // TODO: get from DNA
       loaderHeight: 40,
+      placeholderHeight: scale === 'large' ? 48 : 32,
       collator
     })
   , [collator, scale]);

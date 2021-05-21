@@ -24,10 +24,11 @@ export type ListLayoutOptions<T> = {
   padding?: number,
   indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number,
   collator?: Intl.Collator,
-  loaderHeight?: number
+  loaderHeight?: number,
+  placeholderHeight?: number
 };
 
-// A wrapper around LayoutInfo that supports heirarchy
+// A wrapper around LayoutInfo that supports hierarchy
 export interface LayoutNode {
   node?: Node<unknown>,
   layoutInfo: LayoutInfo,
@@ -66,6 +67,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected collator: Intl.Collator;
   protected invalidateEverything: boolean;
   protected loaderHeight: number;
+  protected placeholderHeight: number;
 
   /**
    * Creates a new ListLayout with options. See the list of properties below for a description
@@ -80,12 +82,13 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     this.padding = options.padding || 0;
     this.indentationForItem = options.indentationForItem;
     this.collator = options.collator;
+    this.loaderHeight = options.loaderHeight;
+    this.placeholderHeight = options.placeholderHeight;
     this.layoutInfos = new Map();
     this.layoutNodes = new Map();
     this.rootNodes = [];
     this.lastWidth = 0;
     this.lastCollection = null;
-    this.loaderHeight = options.loaderHeight;
   }
 
   getLayoutInfo(key: Key) {
@@ -149,7 +152,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     }
 
     if (nodes.length === 0) {
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.virtualizer.visibleRect.height);
+      let rect = new Rect(0, y, this.virtualizer.visibleRect.width,
+        this.placeholderHeight ?? this.virtualizer.visibleRect.height);
       let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
       this.layoutInfos.set('placeholder', placeholder);
       nodes.push({layoutInfo: placeholder});
