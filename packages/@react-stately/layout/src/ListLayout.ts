@@ -23,7 +23,8 @@ export type ListLayoutOptions<T> = {
   estimatedHeadingHeight?: number,
   padding?: number,
   indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number,
-  collator?: Intl.Collator
+  collator?: Intl.Collator,
+  loaderHeight?: number;
 };
 
 // A wrapper around LayoutInfo that supports heirarchy
@@ -64,6 +65,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected rootNodes: LayoutNode[];
   protected collator: Intl.Collator;
   protected invalidateEverything: boolean;
+  protected loaderHeight: number;
 
   /**
    * Creates a new ListLayout with options. See the list of properties below for a description
@@ -83,6 +85,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     this.rootNodes = [];
     this.lastWidth = 0;
     this.lastCollection = null;
+    this.loaderHeight = options.loaderHeight;
   }
 
   getLayoutInfo(key: Key) {
@@ -137,8 +140,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     }
 
     if (this.isLoading) {
-      let loaderHeight = nodes.length ? 40 : this.virtualizer.visibleRect.height;
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, loaderHeight);
+      let rect = new Rect(0, y, this.virtualizer.visibleRect.width,
+        this.loaderHeight ?? this.virtualizer.visibleRect.height);
       let loader = new LayoutInfo('loader', 'loader', rect);
       this.layoutInfos.set('loader', loader);
       nodes.push({layoutInfo: loader});
