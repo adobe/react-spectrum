@@ -24,7 +24,7 @@ export type ListLayoutOptions<T> = {
   padding?: number,
   indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number,
   collator?: Intl.Collator,
-  loaderHeight?: number;
+  loaderHeight?: number
 };
 
 // A wrapper around LayoutInfo that supports heirarchy
