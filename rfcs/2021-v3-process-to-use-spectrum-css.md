@@ -50,7 +50,7 @@ Before a component is moved over, we should make sure it's in Chromatic. This wa
 
 #### CSS Modules:
 
-##### Spectrum-CSS maintains
+##### Spectrum-CSS maintains all css packages
 In this scenario, the Spectrum-CSS project adds two files to their distribution, a js file with the mapping of classnames to css module classnames and a css file that the js file imports. They can point to the js file using the main field of the package.json and can use styles to point to their css files. Spectrum-CSS is open to doing this. 
 
 ###### Pros:
@@ -58,13 +58,15 @@ In this scenario, the Spectrum-CSS project adds two files to their distribution,
   - We no longer provide our own separate copy bundle of the CSS
   - We are likely not blocked on several component we thought we'd have to maintain forever, Spectrum-CSS has already taken on grid in Dialog
   - Should Spectrum-CSS inadvertently break during a release, users of React Spectrum will be able to pin to earlier versions of Spectrum-CSS
+  - Fixing CSS for the most part should still have the same turn around because they can test and release independent of us and our range dependency should still allow users to pick up the fix
 
 ###### Cons:
   - We may need to still distribute some of our own modularized css if there are things Spectrum-CSS cannot have from us
     - It may be that we just don't distribute those files
   - If we use any new features that Spectrum-CSS implements, we will need to update our packages to point to the new minimum version of the CSS that supports our component
+  - Slower cycle to add new features that require CSS
   
-##### RSP maintains
+##### RSP maintains css modules packages
 Generate from node_modules in React Spectrum and publish as separate packages.
 
 ###### Pros:
@@ -76,7 +78,30 @@ Generate from node_modules in React Spectrum and publish as separate packages.
   - Wouldn't track with Spectrum-CSS updates, it'd always be behind
   - Local development would need to do it in postinstall so they'd be ready for use in storybook
   - If we use any new features that we implement in CSS, we will need to update our packages to point to the new minimum version of the CSS that supports our component
-  
+
+##### RSP maintains their own CSS packages
+Everything stays the same but we publish our CSS
+
+###### Pros:
+  - Very fast to add new features
+  - Spectrum-CSS doesn't have to do anything
+
+###### Cons:
+  - More confusing ecosystem
+  - Diverge from Spectrum-CSS
+  - More work for us, we'd be duplicating efforts of Spectrum-CSS at best
+
+
+##### Spectrum-CSS and React Spectrum move into an even bigger monorepo
+
+###### Pros:
+  - No need to do local linking when trying to develop a new feature requiring CSS updates
+  - Coordinated releases
+  - Shared tooling
+
+###### Cons:
+  - Would set precedent for bringing in other groups to an already large repo
+  - Work required to move into another repo for someone
 
 #### DNA
 
@@ -85,18 +110,19 @@ There has been a breaking change to DNA, many tokens have changed.
 ##### Upgrade to 7.0 DNA first
 
 ###### Pros
- - There will be less to resolve when we start using Spectrum-CSS.
+  - There will be less to resolve when we start using Spectrum-CSS.
 
 ###### Cons
- - It would be more up front work that we'd need to do all at once before we could move to Spectrum-CSS. Probably we'd have a branch very similar to Spectrum-CSS'
+  - It would be more up front work that we'd need to do all at once before we could move to Spectrum-CSS. Probably we'd have a branch very similar to Spectrum-CSS'
 
 ##### Upgrade to 7.0 via move to Spectrum-CSS
 
 ###### Pros
- - Less up front work to getting on Spectrum-CSS.
+  - Less up front work to getting on Spectrum-CSS.
 
 ###### Cons
- - We may have to support two versions of DNA at the same time. It would be susceptible to ordering and would probably increase our overall library size while we're working on this.
+  - We may have to support two versions of DNA at the same time. It would be susceptible to ordering 
+  - would probably increase our overall library size while we're working on this.
 
 
 #### DSS
