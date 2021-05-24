@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, MultipleSelection, Sortable, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, LoadingState, MultipleSelection, Sortable, StyleProps} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {Key, ReactElement, ReactNode} from 'react';
 
@@ -94,11 +94,13 @@ export interface SpectrumColumnProps<T> extends ColumnProps<T> {
   hideHeader?: boolean
 }
 
-export interface TableBodyProps<T> extends AsyncLoadable {
+export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
   /** The contents of the table body. Supports static items or a function for dynamic rendering. */
   children: CollectionChildren<T>,
   /** A list of row objects in the table body used when dynamically rendering rows. */
   items?: Iterable<T>
+  /** The current loading state of the TableView. */
+  loadingState?: LoadingState
 }
 
 export interface RowProps<T> {

@@ -35,4 +35,7 @@ storiesOf('View', module)
         <Button variant="primary" marginStart="size-250">Test</Button>
       </div>
     )
-  );
+  )
+  .add('dimension functions', () => (
+    <View width="calc(100px + size-250)" height="single-line-height" backgroundColor="blue-400" />
+  ));
