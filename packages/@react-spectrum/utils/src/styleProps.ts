@@ -120,6 +120,9 @@ function rtl(ltr: string, rtl: string) {
 }
 
 const UNIT_RE = /(%|px|em|rem|vw|vh|auto|cm|mm|in|pt|pc|ex|ch|rem|vmin|vmax|fr)$/;
+const FUNC_RE = /^\s*\w+\(/;
+const SPECTRUM_VARIABLE_RE = /(static-)?size-\d+|single-line-(height|width)/g;
+
 export function dimensionValue(value: DimensionValue) {
   if (typeof value === 'number') {
     return value + 'px';
@@ -127,6 +130,10 @@ export function dimensionValue(value: DimensionValue) {
 
   if (UNIT_RE.test(value)) {
     return value;
+  }
+
+  if (FUNC_RE.test(value)) {
+    return value.replace(SPECTRUM_VARIABLE_RE, 'var(--spectrum-global-dimension-$&, var(--spectrum-alias-$&))');
   }
 
   return `var(--spectrum-global-dimension-${value}, var(--spectrum-alias-${value}))`;
@@ -212,19 +219,21 @@ export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers
   return style;
 }
 
-export function useStyleProps<T extends StyleProps>(props: T, options: {
-  handlers?: StyleHandlers,
+type StylePropsOptions = {
   matchedBreakpoints?: Breakpoint[]
-} = {
-  handlers: baseStyleProps
-}) {
+};
+
+export function useStyleProps<T extends StyleProps>(
+  props: T,
+  handlers: StyleHandlers = baseStyleProps,
+  options: StylePropsOptions = {}
+) {
   let {
     UNSAFE_className,
     UNSAFE_style,
     ...otherProps
   } = props;
   let {
-    handlers = baseStyleProps,
     matchedBreakpoints = ['base']
   } = options;
   let breakpointProvider = useBreakpoint();
