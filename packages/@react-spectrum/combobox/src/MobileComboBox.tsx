@@ -83,15 +83,6 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     }
   };
 
-  // When mobile ComboBox button recieves focus, set state.isFocused (i.e. the tray input's focus tracker) to false.
-  // This is to prevent state.isFocused from being set to true when the tray closes
-  // (FocusScope attempts to restore focus to the tray input when tapping outside the tray due to "contain")
-  let onFocus = () => {
-    if (state.isFocused) {
-      state.setFocused(false);
-    }
-  };
-
   let onClose = () => {
     state.commit();
     // Avoid reseting input value if combobox allows custom value so that the user's custom value isn't changed to the last selected item's text
@@ -111,7 +102,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
         ref={domRef}
         includeNecessityIndicatorInAccessibilityName>
         <ComboBoxButton
-          {...mergeProps(triggerProps, fieldProps, {autoFocus: props.autoFocus, onFocus})}
+          {...mergeProps(triggerProps, fieldProps, {autoFocus: props.autoFocus})}
           ref={buttonRef}
           isQuiet={isQuiet}
           isDisabled={isDisabled}
@@ -328,6 +319,13 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
 
   React.useEffect(() => {
     focusSafely(inputRef.current);
+
+    // When the tray unmounts, set state.isFocused (i.e. the tray input's focus tracker) to false.
+    // This is to prevent state.isFocused from being set to true when the tray closes via tapping on the underlay
+    // (FocusScope attempts to restore focus to the tray input when tapping outside the tray due to "contain")
+    return () => {
+      state.setFocused(false);
+    };
   }, []);
 
   let {dialogProps} = useDialog({
