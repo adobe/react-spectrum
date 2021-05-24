@@ -29,6 +29,7 @@ We'd like to benefit from their work on the Express theme and T-shirt sizes, thi
 We'd like to not bundle CSS with our components so that users of our library only get one copy of a components CSS in their code.
 This isn't just for external users, we've run into this ourselves in our documentation website.
 We'd also like for others to benefit from the work that we've done on CSS since we originally forked.
+We'd like for DNA updates to be easier to do, which should just be a new release of Spectrum-CSS.
 
 ## Detailed Design
 
@@ -105,7 +106,7 @@ Everything stays the same but we publish our CSS
 
 #### DNA
 
-There has been a breaking change to DNA, many tokens have changed.
+There has been a breaking change to DNA, many tokens have changed. In addition, a script was run that changed our vars, so our vars don't look like Spectrum-CSS's vars. We will need to see if the script can be run again or if it's even something we want to keep.
 
 ##### Upgrade to 7.0 DNA first
 
