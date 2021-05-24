@@ -40,39 +40,6 @@ describe('useComboBoxState tests', function () {
       expect(onOpenChange).toHaveBeenCalledWith(false, undefined);
     });
 
-    it('should be set open by default if defaultOpen is true and isFocused is true', function () {
-      let initialProps = {...defaultProps, defaultOpen: true};
-      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
-
-      act(() => result.current.setFocused(true));
-
-      expect(result.current.isOpen).toBe(true);
-
-      act(() => result.current.close());
-      expect(result.current.isOpen).toBe(false);
-      expect(onOpenChange).toHaveBeenCalledWith(false, undefined);
-    });
-
-    it('open should be a controllable value', function () {
-      let initialProps = {...defaultProps, isOpen: true};
-      let {result, rerender} = renderHook((props) => useComboBoxState(props), {initialProps});
-      act(() => result.current.setFocused(true));
-
-      expect(result.current.isOpen).toBe(true);
-
-      act(() => result.current.close());
-      expect(result.current.isOpen).toBe(true);
-      expect(onOpenChange).toHaveBeenCalledWith(false, undefined);
-
-
-      rerender({...defaultProps, isOpen: false});
-      expect(result.current.isOpen).toBe(false);
-
-      act(() => result.current.open());
-      expect(result.current.isOpen).toBe(false);
-      expect(onOpenChange).toHaveBeenCalledWith(true, undefined);
-    });
-
     it('onOpenChange should return the reason that open was called', function () {
       let initialProps = defaultProps;
       let {result} = renderHook((props) => useComboBoxState(props), {initialProps});

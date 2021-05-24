@@ -281,6 +281,9 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
   let {direction} = useLocale();
   let headerRef = useRef<HTMLDivElement>();
   let bodyRef = useRef<HTMLDivElement>();
+  let loadingState = collection.body.props.loadingState;
+  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
+  let onLoadMore = collection.body.props.onLoadMore;
   let state = useVirtualizerState({
     layout,
     collection,
@@ -290,7 +293,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
       bodyRef.current.scrollTop = rect.y;
       setScrollLeft(bodyRef.current, direction, rect.x);
     },
-    transitionDuration: collection.body.props.isLoading ? 160 : 220
+    transitionDuration: isLoading ? 160 : 220
   });
 
   let {virtualizerProps} = useVirtualizer({
@@ -322,21 +325,21 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
   let onVisibleRectChange = useCallback((rect: Rect) => {
     state.setVisibleRect(rect);
 
-    if (!collection.body.props.isLoading && collection.body.props.onLoadMore) {
+    if (!isLoading && onLoadMore) {
       let scrollOffset = state.virtualizer.contentSize.height - rect.height * 2;
       if (rect.y > scrollOffset) {
-        collection.body.props.onLoadMore();
+        onLoadMore();
       }
     }
-  }, [collection.body.props, state.setVisibleRect, state.virtualizer]);
+  }, [onLoadMore, isLoading, state.setVisibleRect, state.virtualizer]);
 
   useLayoutEffect(() => {
-    if (!collection.body.props.isLoading && collection.body.props.onLoadMore && !state.isAnimating) {
+    if (!isLoading && onLoadMore && !state.isAnimating) {
       if (state.contentSize.height <= state.virtualizer.visibleRect.height) {
-        collection.body.props.onLoadMore();
+        onLoadMore();
       }
     }
-  }, [state.contentSize, state.virtualizer, state.isAnimating, collection.body.props]);
+  }, [state.contentSize, state.virtualizer, state.isAnimating, onLoadMore, isLoading]);
 
   return (
     <div
