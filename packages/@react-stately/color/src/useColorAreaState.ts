@@ -74,7 +74,7 @@ const DEFAULT_COLOR = parseColor('hsb(0, 100%, 100%)');
  * Color area allows users to adjust two channels of an HSL, HSB or RGB color value against a two-dimensional gradient background.
  */
 export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
-  let {value, defaultValue, xChannel, yChannel, onChange, onChangeEnd, step = 1} = props;
+  let {value, defaultValue, xChannel, yChannel, onChange, onChangeEnd, xChannelStep = 1, yChannelStep = 1} = props;
 
   if (!value && !defaultValue) {
     defaultValue = DEFAULT_COLOR;
@@ -232,12 +232,12 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       let newColor:Color;
       if (newXValue !== xValue) {
         // Round new value to multiple of step, clamp value between min and max
-        newXValue = snapValueToStep(newXValue, minValueX, maxValueX, step);
+        newXValue = snapValueToStep(newXValue, minValueX, maxValueX, xChannelStep);
         newColor = color.withChannelValue(xChannel, newXValue);
       }
       if (newYValue !== yValue) {
         // Round new value to multiple of step, clamp value between min and max
-        newYValue = snapValueToStep(newYValue, minValueY, maxValueY, step);
+        newYValue = snapValueToStep(newYValue, minValueY, maxValueY, yChannelStep);
         newColor = (newColor || color).withChannelValue(yChannel, newYValue);
       }
       if (newColor) {
@@ -252,28 +252,28 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       return {x, y};
     },
     incrementX(minStepSize: number = 0) {
-      let s = Math.max(minStepSize, step);
+      let s = Math.max(minStepSize, xChannelStep);
       let {maxValue} = color.getChannelRange(xChannel);
       if (xValue < maxValue) {
         setXValue(Math.min(xValue + s, maxValue));
       }
     },
     incrementY(minStepSize: number = 0) {
-      let s = Math.max(minStepSize, step);
+      let s = Math.max(minStepSize, yChannelStep);
       let {maxValue} = color.getChannelRange(yChannel);
       if (yValue < maxValue) {
         setYValue(Math.min(yValue + s, maxValue));
       }
     },
     decrementX(minStepSize: number = 0) {
-      let s = Math.max(minStepSize, step);
+      let s = Math.max(minStepSize, xChannelStep);
       let {minValue} = color.getChannelRange(xChannel);
       if (xValue > minValue) {
         setXValue(Math.max(xValue - s, minValue));
       }
     },
     decrementY(minStepSize: number = 0) {
-      let s = Math.max(minStepSize, step);
+      let s = Math.max(minStepSize, yChannelStep);
       let {minValue} = color.getChannelRange(yChannel);
       if (yValue > minValue) {
         setYValue(Math.max(yValue - s, minValue));

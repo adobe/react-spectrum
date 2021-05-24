@@ -19,7 +19,6 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@internationalized/message": "^3.0.0",
-    "@internationalized/number": "^3.0.0",
     "@react-aria/focus": "^3.2.4",
     "@react-aria/i18n": "^3.3.1",
     "@react-aria/interactions": "^3.4.0",
