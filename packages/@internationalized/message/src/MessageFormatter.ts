@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {FormatXMLElementFn, PrimitiveType} from 'intl-messageformat/src/formatters';
 import IntlMessageFormat from 'intl-messageformat';
 import {MessageDictionary} from './MessageDictionary';
 
@@ -27,7 +28,7 @@ export class MessageFormatter {
     this.cache = {};
   }
 
-  format(key: string, variables: object) {
+  format<T = void>(key: string, variables: Record<string, PrimitiveType | T | FormatXMLElementFn<T, string | T | (string | T)[]>> | undefined) {
     let message = this.cache[key];
     if (!message) {
       let msg = this.messages.getStringForLocale(key, this.locale);
