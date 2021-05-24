@@ -3306,6 +3306,38 @@ describe('TableView', function () {
 
         scrollHeight.mockRestore();
       });
+
+      // To test https://github.com/adobe/react-spectrum/issues/1885
+      it('should not throw error if selection mode changes with overflowMode="wrap" and selection was controlled', function () {
+        function ControlledSelection(props) {
+          let [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
+          return (
+            <TableView aria-label="Table" overflowMode="wrap" selectionMode={props.selectionMode} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+              <TableHeader columns={columns}>
+                {column => <Column>{column.name}</Column>}
+              </TableHeader>
+              <TableBody items={items}>
+                {item =>
+                  (<Row key={item.foo}>
+                    {key => <Cell>{item[key]}</Cell>}
+                  </Row>)
+                }
+              </TableBody>
+            </TableView>
+          );
+        }
+
+        let tree = render(<ControlledSelection selectionMode="multiple" />);
+        let row = tree.getAllByRole('row')[2];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        userEvent.click(within(row).getByRole('checkbox'));
+        expect(row).toHaveAttribute('aria-selected', 'true');
+
+        // Without ListLayout fix, throws here with "TypeError: Cannot set property 'estimatedSize' of undefined"
+        rerender(tree, <ControlledSelection selectionMode="none" />);
+        act(() => jest.runAllTimers());
+        expect(() => tree.getByRole('checkbox')).toThrow();
+      });
     });
 
     describe('column widths', function () {

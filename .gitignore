@@ -16,3 +16,4 @@ packages/dev/v2-test-deps
 dist
 public
 storybook-static
+junit.xml
