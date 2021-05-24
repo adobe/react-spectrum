@@ -98,7 +98,7 @@ export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
   /** The contents of the table body. Supports static items or a function for dynamic rendering. */
   children: CollectionChildren<T>,
   /** A list of row objects in the table body used when dynamically rendering rows. */
-  items?: Iterable<T>
+  items?: Iterable<T>,
   /** The current loading state of the TableView. */
   loadingState?: LoadingState
 }
