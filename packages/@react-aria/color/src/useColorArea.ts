@@ -170,12 +170,20 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       if (pointerType === 'keyboard') {
         deltaX = maxMinOrZero(deltaX, step);
         deltaY = maxMinOrZero(deltaY, step);
+        if (deltaX !== 0) {
+          stateRef.current[`${deltaX > 0 ? 'increment' : 'decrement'}X`](Math.abs(deltaX));
+        }
+        if (deltaY !== 0) {
+          stateRef.current[`${deltaY < 0 ? 'increment' : 'decrement'}Y`](Math.abs(deltaY));
+        }
         // set the focused input based on which axis has the greater delta
         focusedInputRef.current = (deltaX !== 0 || deltaY !== 0) && Math.abs(deltaY) > Math.abs(deltaX) ? inputYRef.current : inputXRef.current;
       }
       currentPosition.current.x += (direction === 'rtl' ? -1 : 1) * deltaX / width ;
       currentPosition.current.y += deltaY / height;
-      stateRef.current.setColorFromPoint(currentPosition.current.x, currentPosition.current.y);
+      if (pointerType !== 'keyboard') {
+        stateRef.current.setColorFromPoint(currentPosition.current.x, currentPosition.current.y);
+      }
     },
     onMoveEnd() {
       isOnColorArea.current = undefined;
