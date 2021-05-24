@@ -123,7 +123,7 @@ abstract class Color implements IColor {
     let d = Infinity;
     for (const [prefix, [saturation, lightness]] of PREFIXES) {
       d = this.getDeltaE(parseColor(`hsl(${hue}, ${saturation}%, ${lightness}%)`));
-      if (d <= 0.1 && d < deltaE) {
+      if (d <= 0.15 && d < deltaE) {
         deltaE = d;
         name = `${messages.getStringForLocale(prefix, locale)} ${hueName}`.trim();
       }
