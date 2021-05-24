@@ -11,7 +11,7 @@
 */
 
 import {AriaTabListProps} from '@react-types/tabs';
-import {HTMLAttributes, useMemo} from 'react';
+import {HTMLAttributes, RefObject, useMemo} from 'react';
 import {mergeProps, useId, useLabels} from '@react-aria/utils';
 import {TabListState} from '@react-stately/tabs';
 import {tabsIds} from './utils';
@@ -24,7 +24,12 @@ interface TabListAria {
   tabListProps: HTMLAttributes<HTMLElement>
 }
 
-export function useTabList<T>(props: AriaTabListProps<T>, state: TabListState<T>, ref): TabListAria {
+
+/**
+ * Provides the behavior and accessibility implementation for a tab list.
+ * Tabs organize content into multiple sections and allow users to navigate between them.
+ */
+export function useTabList<T>(props: AriaTabListProps<T>, state: TabListState<T>, ref: RefObject<HTMLElement>): TabListAria {
   let {
     orientation = 'horizontal',
     keyboardActivation = 'automatic'

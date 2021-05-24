@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, renderHook} from '@testing-library/react-hooks';
 import {Item} from '@react-stately/collections';
 import {ListLayout} from '@react-stately/layout';
 import React from 'react';
-import {renderHook} from '@testing-library/react-hooks';
 import {useComboBox} from '../';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useSingleSelectListState} from '@react-stately/list';
@@ -78,21 +78,36 @@ describe('useComboBox', function () {
       buttonRef: React.createRef(),
       inputRef: {
         current: {
-          contains: jest.fn()
+          contains: jest.fn(),
+          focus: jest.fn()
         }
       },
       listBoxRef: React.createRef(),
-      layout: mockLayout,
-      isOpen: true
+      layout: mockLayout
     };
 
-    let {result, rerender} = renderHook((props) => useComboBox(props, useComboBoxState(props)), {initialProps: props});
+    let {result: state} = renderHook((props) => useComboBoxState(props), {initialProps: {...props, allowsEmptyCollection: true}});
+    act(() => {
+      // set combobox state to open
+      state.current.open();
+    });
+
+    let {result, rerender} = renderHook((props) => useComboBox(props, state.current), {initialProps: props});
     let {inputProps} = result.current;
 
-    inputProps.onKeyDown(event({key: 'Enter'}));
+    act(() => {
+      inputProps.onKeyDown(event({key: 'Enter'}));
+    });
+
     expect(preventDefault).toHaveBeenCalledTimes(1);
 
-    rerender({...props, isOpen: false});
+    act(() => {
+      // set combobox state to close
+      state.current.close();
+    });
+
+    // Rerender so updated state value is propagated to useComboBox
+    rerender(props);
     result.current.inputProps.onKeyDown(event({key: 'Enter'}));
     expect(preventDefault).toHaveBeenCalledTimes(1);
   });
@@ -111,8 +126,7 @@ describe('useComboBox', function () {
         }
       },
       listBoxRef: React.createRef(),
-      layout: mockLayout,
-      isOpen: false
+      layout: mockLayout
     };
 
     let {result: state} = renderHook((props) => useComboBoxState(props), {initialProps: props});
