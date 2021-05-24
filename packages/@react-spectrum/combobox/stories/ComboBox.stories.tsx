@@ -82,7 +82,7 @@ storiesOf('ComboBox', module)
   .add(
     'with mapped items (defaultItem and items undef)',
     () => (
-      <ComboBoxWithMap defaultOpen defaultSelectedKey="two" />
+      <ComboBoxWithMap defaultSelectedKey="two" />
     )
   )
   .add(
@@ -189,29 +189,6 @@ storiesOf('ComboBox', module)
         <TextField label="Name" />
       </Flex>
     )
-  )
-  .add(
-    'isOpen',
-    () => <ControlledOpenCombobox isOpen allowsCustomValue defaultSelectedKey="two" />,
-    {note: 'Combobox needs focus to show dropdown.'}
-  )
-  .add(
-    'defaultOpen',
-    () => (
-      <Flex direction="column">
-        <TextField label="Email" />
-        <ComboBox label="Combobox" defaultOpen {...actions}>
-          <Item key="one">Item One</Item>
-          <Item key="two" textValue="Item Two">
-            <Copy size="S" />
-            <Text>Item Two</Text>
-          </Item>
-          <Item key="three">Item Three</Item>
-        </ComboBox>
-        <TextField label="Name" />
-      </Flex>
-    ),
-    {note: 'Combobox needs focus to show dropdown.'}
   )
   .add(
     'disabled keys',
@@ -424,30 +401,6 @@ storiesOf('ComboBox', module)
     'defaultInputValue and selectedKey (controlled by selectedKey)',
     () => (
       <ControlledKeyComboBox defaultInputValue="Blah" selectedKey="2" disabledKeys={['2', '6']} />
-    )
-  )
-  .add(
-    'inputValue and isOpen (controlled)',
-    () => (
-      <ControlledValueOpenCombobox />
-    )
-  )
-  .add(
-    'selectedKey and isOpen (controlled)',
-    () => (
-      <ControlledKeyOpenCombobox />
-    )
-  )
-  .add(
-    'inputValue, selectedKey, and isOpen (controlled)',
-    () => (
-      <AllControlledOpenComboBox selectedKey="2" inputValue="Kangaroo" disabledKeys={['2', '6']} />
-    )
-  )
-  .add(
-    'inputValue, selectedKey, isOpen, allowsCustomValue (controlled)',
-    () => (
-      <AllControlledOpenComboBox selectedKey="2" inputValue="Kangaroo" disabledKeys={['2', '6']} allowsCustomValue />
     )
   )
   .add(
@@ -898,139 +851,6 @@ let CustomValueComboBox = (props) => {
     </div>
   );
 };
-
-let ControlledOpenCombobox = (props) => {
-  let [isOpen, setOpen] = React.useState(props.isOpen);
-
-  return (
-    <Flex direction="column">
-      <TextField label="Email" />
-      <ComboBox label="Combobox" {...mergeProps(props, actions)} isOpen={isOpen} onOpenChange={setOpen}>
-        <Item key="one">Item One</Item>
-        <Item key="two" textValue="Item Two">
-          <Copy size="S" />
-          <Text>Item Two</Text>
-        </Item>
-        <Item key="three">Item Three</Item>
-      </ComboBox>
-      <TextField label="Name" />
-    </Flex>
-  );
-};
-
-let ControlledValueOpenCombobox = (props) => {
-  let [fieldState, setFieldState] = React.useState({
-    isOpen: false,
-    inputValue: ''
-  });
-
-  let onInputChange = (value: string) => {
-    setFieldState({
-      isOpen: true,
-      inputValue: value
-    });
-  };
-
-  let onOpenChange = (isOpen: boolean) => {
-    setFieldState(prevState => ({
-      isOpen: isOpen,
-      inputValue: prevState.inputValue
-    }));
-  };
-
-  let onSelectionChange = (key) => {
-    setFieldState({
-      isOpen: false,
-      inputValue: items.find(item => item.id === key)?.name ?? ''
-    });
-  };
-
-  return (
-    <ComboBox label="Combobox" {...mergeProps(props, actions)} defaultItems={items} isOpen={fieldState.isOpen} onOpenChange={onOpenChange} inputValue={fieldState.inputValue} onInputChange={onInputChange} onSelectionChange={onSelectionChange}>
-      {(item: any) => <Item>{item.name}</Item>}
-    </ComboBox>
-  );
-};
-
-let ControlledKeyOpenCombobox = (props) => {
-  let [fieldState, setFieldState] = React.useState({
-    isOpen: false,
-    selectedKey: 'two'
-  });
-
-  let onSelectionChange = (key: string) => {
-    setFieldState({
-      isOpen: false,
-      selectedKey: key
-    });
-  };
-
-  let onOpenChange = (isOpen: boolean) => {
-    setFieldState(prevState => ({
-      isOpen: isOpen,
-      selectedKey: prevState.selectedKey
-    }));
-  };
-
-  return (
-    <ComboBox label="Combobox" {...mergeProps(props, actions)} isOpen={fieldState.isOpen} onOpenChange={onOpenChange} selectedKey={fieldState.selectedKey} onSelectionChange={onSelectionChange}>
-      <Item key="one">Item One</Item>
-      <Item key="two" textValue="Item Two">
-        <Copy size="S" />
-        <Text>Item Two</Text>
-      </Item>
-      <Item key="three">Item Three</Item>
-    </ComboBox>
-  );
-};
-
-function AllControlledOpenComboBox(props) {
-  let [fieldState, setFieldState] = React.useState({
-    isOpen: false,
-    selectedKey: props.selectedKey,
-    inputValue: props.inputValue
-  });
-
-  let list = useTreeData({
-    initialItems: withSection
-  });
-
-  let onSelectionChange = (key: React.Key) => {
-    setFieldState(prevState => ({
-      isOpen: false,
-      inputValue: list.getItem(key)?.value.name ?? (props.allowsCustomValue ? prevState.inputValue : ''),
-      selectedKey: key
-    }));
-  };
-
-  let onInputChange = (value: string) => {
-    setFieldState(prevState => ({
-      isOpen: true,
-      inputValue: value,
-      selectedKey: value === '' ? null : prevState.selectedKey
-    }));
-  };
-
-  let onOpenChange = (isOpen: boolean) => {
-    setFieldState(prevState => ({
-      isOpen,
-      inputValue: prevState.inputValue,
-      selectedKey: prevState.selectedKey
-    }));
-  };
-
-  return (
-    <div>
-      <ComboBox allowsCustomValue={props.allowsCustomValue} disabledKeys={props.disabledKeys} selectedKey={fieldState.selectedKey} inputValue={fieldState.inputValue} defaultItems={list.items} label="Combobox" isOpen={fieldState.isOpen} onOpenChange={onOpenChange} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')}>
-        {item => (
-          <Section items={item.children} title={item.value.name}>
-            {item => <Item>{item.value.name}</Item>}
-          </Section>
-        )}
-      </ComboBox>
-    </div>
-  );
-}
 
 function ResizeCombobox() {
   let [size, setSize] = useState(true);

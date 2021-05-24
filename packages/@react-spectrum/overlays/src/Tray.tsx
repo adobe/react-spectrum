@@ -25,26 +25,26 @@ interface TrayWrapperProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode,
   isOpen?: boolean,
   onClose?: () => void,
-  shouldCloseOnBlur?: boolean,
-  isKeyboardDismissDisabled?: boolean,
   isFixedHeight?: boolean,
-  isNonModal?: boolean
+  isNonModal?: boolean,
+  overlayProps: HTMLAttributes<HTMLElement>
 }
 
 function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, onClose, shouldCloseOnBlur, isKeyboardDismissDisabled, isFixedHeight, isNonModal, ...otherProps} = props;
+  let {children, onClose, isFixedHeight, isNonModal, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
 
+  let {overlayProps, underlayProps} = useOverlay({...props, isDismissable: true}, domRef);
+
   return (
     <Overlay {...otherProps}>
-      <Underlay />
+      <Underlay {...underlayProps} />
       <TrayWrapper
         {...styleProps}
         onClose={onClose}
-        shouldCloseOnBlur={shouldCloseOnBlur}
-        isKeyboardDismissDisabled={isKeyboardDismissDisabled}
         ref={domRef}
+        overlayProps={overlayProps}
         isFixedHeight={isFixedHeight}
         isNonModal={isNonModal}>
         {children}
@@ -57,15 +57,11 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
   let {
     children,
     isOpen,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    shouldCloseOnBlur,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isKeyboardDismissDisabled,
     isFixedHeight,
     isNonModal,
+    overlayProps,
     ...otherProps
   } = props;
-  let {overlayProps} = useOverlay({...props, isDismissable: true}, ref);
   usePreventScroll();
   let {modalProps} = useModal({
     isDisabled: isNonModal

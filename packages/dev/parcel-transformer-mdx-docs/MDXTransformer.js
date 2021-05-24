@@ -88,9 +88,9 @@ module.exports = new Transformer({
               ];
             }
 
-            // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actuall
+            // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actually
             // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
-            node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*\/\/\/- end collapse -\/\/\//g, '').trim();
+            node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*?\/\/\/- end collapse -\/\/\//g, () => '').trim();
             node.meta = 'example';
 
             return [
