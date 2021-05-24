@@ -66,7 +66,8 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
     isDisabled,
     xChannel,
     yChannel,
-    step = 1
+    xChannelStep,
+    yChannelStep
   } = props;
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
@@ -90,6 +91,14 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
   }
   let zChannel = channels.zChannel;
 
+  if (!xChannelStep) {
+    xChannelStep = stateRef.current.value.getChannelRange(xChannel).step;
+  }
+
+  if (!yChannelStep) {
+    yChannelStep = stateRef.current.value.getChannelRange(yChannel).step;
+  }
+
   let currentPosition = useRef<{x: number, y: number}>(null);
 
   let {keyboardProps} = useKeyboard({
@@ -97,13 +106,13 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       if (!e.shiftKey && /^Arrow(?:Right|Left|Up|Down)$/.test(e.key)) {
         return;
       }
-      let stepSize = Math.max(step, CHANNEL_STEP_SIZE[xChannel]);
+      let stepSize = Math.max(xChannelStep, CHANNEL_STEP_SIZE[xChannel]);
       let range = stateRef.current.value.getChannelRange(xChannel);
       switch (e.key) {
         case 'PageUp':
         case 'ArrowUp':
           range = stateRef.current.value.getChannelRange(yChannel);
-          stepSize = Math.max(step, CHANNEL_STEP_SIZE[yChannel]);
+          stepSize = Math.max(yChannelStep, CHANNEL_STEP_SIZE[yChannel]);
           stateRef.current.setYValue(
             clamp(
               (Math.floor(stateRef.current.yValue / stepSize) + 1) * stepSize,
@@ -116,7 +125,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
         case 'PageDown':
         case 'ArrowDown':
           range = stateRef.current.value.getChannelRange(yChannel);
-          stepSize = Math.max(step, CHANNEL_STEP_SIZE[yChannel]);
+          stepSize = Math.max(yChannelStep, CHANNEL_STEP_SIZE[yChannel]);
           stateRef.current.setYValue(
             clamp(
               (Math.ceil(stateRef.current.yValue / stepSize) - 1) * stepSize,
@@ -168,8 +177,8 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       }
       let {width, height} = containerRef.current.getBoundingClientRect();
       if (pointerType === 'keyboard') {
-        deltaX = maxMinOrZero(deltaX, step);
-        deltaY = maxMinOrZero(deltaY, step);
+        deltaX = maxMinOrZero(deltaX, xChannelStep);
+        deltaY = maxMinOrZero(deltaY, yChannelStep);
         if (deltaX !== 0) {
           stateRef.current[`${deltaX > 0 ? 'increment' : 'decrement'}X`](Math.abs(deltaX));
         }
@@ -547,7 +556,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       type: 'range',
       min: state.value.getChannelRange(xChannel).minValue,
       max: state.value.getChannelRange(xChannel).maxValue,
-      step: String(step),
+      step: xChannelStep,
       'aria-roledescription': ariaRoleDescription,
       'aria-valuetext': [
         `${state.value.getChannelName(xChannel, locale)}: ${state.value.formatChannelValue(xChannel, locale)}`,
@@ -567,7 +576,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       type: 'range',
       min: state.value.getChannelRange(yChannel).minValue,
       max: state.value.getChannelRange(yChannel).maxValue,
-      step: String(step),
+      step: yChannelStep,
       'aria-roledescription': ariaRoleDescription,
       'aria-valuetext': [
         `${state.value.getChannelName(yChannel, locale)}: ${state.value.formatChannelValue(yChannel, locale)}`,

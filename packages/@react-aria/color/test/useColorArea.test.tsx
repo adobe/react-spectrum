@@ -196,7 +196,7 @@ describe('useColorArea', () => {
 
     it('respects step', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {getAllByRole, getByTestId} = render(<ColorArea defaultValue={defaultColor} onChange={onChangeSpy} step={20} />);
+      let {getAllByRole, getByTestId} = render(<ColorArea defaultValue={defaultColor} onChange={onChangeSpy} xChannelStep={20} yChannelStep={20} />);
       let sliders = getAllByRole('slider');
       let container = getByTestId('container');
       container.getBoundingClientRect = getBoundingClientRect;
@@ -363,7 +363,7 @@ describe('useColorArea', () => {
 
       it('favors max of step vs default step for channel', () => {
         let defaultColor = parseColor('hsl(0, 100%, 50%)');
-        let {getAllByRole, getByTestId} = render(<ColorArea defaultValue={defaultColor} onChange={onChangeSpy} step={25} />);
+        let {getAllByRole, getByTestId} = render(<ColorArea defaultValue={defaultColor} onChange={onChangeSpy} xChannelStep={25} yChannelStep={25} />);
         let sliders = getAllByRole('slider');
         let container = getByTestId('container');
         container.getBoundingClientRect = getBoundingClientRect;
@@ -450,7 +450,7 @@ describe('useColorArea', () => {
 
     it('dragging the thumb respects the step', () => {
       let defaultColor = parseColor('hsl(0, 50%, 50%)');
-      let {getAllByRole, getByTestId} = render(<ColorArea step={10} defaultValue={defaultColor} onChange={onChangeSpy} xChannel="saturation" yChannel="lightness" />);
+      let {getAllByRole, getByTestId} = render(<ColorArea xChannelStep={10} yChannelStep={10} defaultValue={defaultColor} onChange={onChangeSpy} xChannel="saturation" yChannel="lightness" />);
       let thumb = getByTestId('thumb');
       let sliders = getAllByRole('slider');
       let container = getByTestId('container');
@@ -517,7 +517,7 @@ describe('useColorArea', () => {
 
     it('clicking and dragging on the color area respects the step', () => {
       let defaultColor = parseColor('hsl(0, 100%, 100%)');
-      let {getAllByRole, getByTestId} = render(<ColorArea step={10} defaultValue={defaultColor} onChange={onChangeSpy} xChannel="saturation" yChannel="lightness" />);
+      let {getAllByRole, getByTestId} = render(<ColorArea xChannelStep={10} yChannelStep={10} defaultValue={defaultColor} onChange={onChangeSpy} xChannel="saturation" yChannel="lightness" />);
       let sliders = getAllByRole('slider');
       let container = getByTestId('container');
       container.getBoundingClientRect = getBoundingClientRect;

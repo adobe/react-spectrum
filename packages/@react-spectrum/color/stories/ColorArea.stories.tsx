@@ -572,7 +572,7 @@ storiesOf('ColorArea', module)
   )
   .add(
     'step',
-    () => <ColorArea step={4} onChange={action('change')} defaultValue="hsl(0, 100%, 50%)" yChannel="hue" xChannel="lightness" />
+    () => <ColorArea xChannelStep={5} yChannelStep={7.5} onChange={action('change')} defaultValue="hsl(0, 100%, 50%)" yChannel="hue" xChannel="lightness" />
   )
   .add(
     'custom size',
