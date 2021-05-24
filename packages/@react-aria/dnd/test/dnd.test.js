@@ -1909,7 +1909,7 @@ describe('useDrag and useDrop', function () {
       buttons = tree.getAllByRole('button');
       expect(buttons).toEqual([draggable, droppable, droppable2]);
 
-      expect(() => tree.getByRole('textbox')).toThrow();
+      expect(tree.queryByRole('textbox')).toBeNull();
       expect(tree.getByText('Text')).toHaveAttribute('aria-hidden', 'true');
     });
 
