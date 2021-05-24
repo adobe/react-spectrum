@@ -2818,7 +2818,7 @@ describe('TableView', function () {
       );
 
       let table = tree.getByRole('grid');
-      expect(() => within(table).getByRole('progressbar')).toThrow();
+      expect(within(table).queryByRole('progressbar')).toBeNull();
     });
 
     it('should fire onLoadMore when scrolling near the bottom', function () {
@@ -3360,7 +3360,7 @@ describe('TableView', function () {
         // Without ListLayout fix, throws here with "TypeError: Cannot set property 'estimatedSize' of undefined"
         rerender(tree, <ControlledSelection selectionMode="none" />);
         act(() => jest.runAllTimers());
-        expect(() => tree.getByRole('checkbox')).toThrow();
+        expect(tree.queryByRole('checkbox')).toBeNull();
       });
     });
 
