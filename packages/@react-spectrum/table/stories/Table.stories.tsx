@@ -22,8 +22,10 @@ import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from './HidingColumns';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
-import React from 'react';
+import {Radio, RadioGroup} from '@react-spectrum/radio';
+import React, {Key, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
+import {SelectionMode} from '@react-types/shared';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {useAsyncList} from '@react-stately/data';
@@ -238,6 +240,13 @@ storiesOf('TableView', module)
           }
         </TableBody>
       </TableView>
+    )
+  )
+  .add(
+    // For testing https://github.com/adobe/react-spectrum/issues/1885
+    'swap selection mode',
+    () => (
+      <ChangableSelectionMode />
     )
   )
   .add(
@@ -576,7 +585,7 @@ storiesOf('TableView', module)
             <Column minWidth={100}>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={[]} isLoading>
+        <TableBody items={[]} loadingState="loading">
           {item =>
             (<Row key={item.foo}>
               {key => <Cell>{item[key]}</Cell>}
@@ -595,7 +604,26 @@ storiesOf('TableView', module)
             <Column minWidth={100}>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={items} isLoading>
+        <TableBody items={items} loadingState="loadingMore">
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'filtering',
+    () => (
+      <TableView aria-label="Table filtering" width={700} height={200}>
+        <TableHeader columns={columns}>
+          {column =>
+            <Column minWidth={100}>{column.name}</Column>
+          }
+        </TableHeader>
+        <TableBody items={items} loadingState="filtering">
           {item =>
             (<Row key={item.foo}>
               {key => <Cell>{item[key]}</Cell>}
@@ -800,7 +828,7 @@ function AsyncLoadingExample() {
           <Column key="author" width={200} allowsSorting>Author</Column>
           <Column key="num_comments" width={100} allowsSorting>Comments</Column>
         </TableHeader>
-        <TableBody items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
+        <TableBody items={list.items} loadingState={list.loadingState} onLoadMore={list.loadMore}>
           {item =>
             (<Row key={item.data.id}>
               {key =>
@@ -914,7 +942,7 @@ function ProjectListTable() {
           </TableHeader>
           <TableBody
             items={filteredItems}
-            isLoading={list.isLoading}>
+            loadingState={list.loadingState}>
             {(item) => (
               <Row key={item.id}>{(key) => <Cell>{item[key]}</Cell>}</Row>
             )}
@@ -996,7 +1024,7 @@ function AsyncServerFilterTable(props) {
         </TableHeader>
         <TableBody
           items={list.items}
-          isLoading={list.isLoading}
+          loadingState={list.loadingState}
           onLoadMore={list.loadMore}>
           {(item) => (
             <Row key={item.name}>{(key) => <Cell>{item[key]}</Cell>}</Row>
@@ -1004,5 +1032,31 @@ function AsyncServerFilterTable(props) {
         </TableBody>
       </TableView>
     </div>
+  );
+}
+
+function ChangableSelectionMode() {
+  let [selectionMode, setSelectionMode] = useState('none' as SelectionMode);
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([]) as 'all' | Iterable<Key>);
+
+  return (
+    <Flex direction="column" flexGrow={1} maxWidth="size-6000">
+      <RadioGroup defaultValue="none" onChange={(value: SelectionMode) => setSelectionMode(value)} label="Show / Hide">
+        <Radio value="multiple">Multiple</Radio>
+        <Radio value="none">None</Radio>
+      </RadioGroup>
+      <TableView overflowMode="wrap" selectionMode={selectionMode} selectedKeys={selectedKeys} aria-label="TableView with controlled selection" width="100%" height="100%" onSelectionChange={setSelectedKeys}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    </Flex>
   );
 }

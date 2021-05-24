@@ -119,7 +119,7 @@ function ModalDialog(props) {
   // Handle interacting outside the dialog and pressing
   // the Escape key to close the modal.
   let ref = React.useRef();
-  let {overlayProps} = useOverlay(props, ref);
+  let {overlayProps, underlayProps} = useOverlay(props, ref);
 
   // Prevent scrolling while the modal is open, and hide content
   // outside the modal from screen readers.
@@ -142,7 +142,8 @@ function ModalDialog(props) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
-      }}>
+      }}
+      {...underlayProps}>
       <FocusScope contain restoreFocus autoFocus>
         <div
           {...overlayProps}
