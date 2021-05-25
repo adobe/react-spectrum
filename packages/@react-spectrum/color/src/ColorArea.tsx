@@ -14,7 +14,7 @@ import {classNames, dimensionValue, useFocusableRef, useStyleProps} from '@react
 import {ColorThumb} from './ColorThumb';
 import {FocusableRef} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
-import React, {useRef} from 'react';
+import React, {ReactElement, useRef} from 'react';
 import {SpectrumColorAreaProps} from '@react-types/color';
 import styles from '@adobe/spectrum-css-temp/components/colorarea/vars.css';
 import {useColorArea} from '@react-aria/color';
@@ -84,5 +84,5 @@ function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivEleme
   );
 }
 
-let _ColorArea = React.forwardRef(ColorArea);
+let _ColorArea = React.forwardRef(ColorArea) as (props: SpectrumColorAreaProps & {ref?: FocusableRef<HTMLDivElement>}) => ReactElement;
 export {_ColorArea as ColorArea};
