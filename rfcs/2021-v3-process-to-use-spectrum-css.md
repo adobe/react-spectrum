@@ -46,10 +46,13 @@ We'd like for DNA updates to be easier to do, which should just be a new release
 
 Wholesale vs incrementally. This should be a non-starter, we need to be able to do this incrementally as much as possible.
 
-#### Chromatic
+#### Chromatic:
 Before a component is moved over, we should make sure it's in Chromatic. This way we can test for visual regressions and be confident that we've consumed the new CSS correctly. This will also allow us to verify that we've contributed back our changes correctly. This will still have holes, but it will help. In addition, DSS may have a feature that all component states are top-leveled, allowing us to render every combination of states eventually.
 
 #### CSS Modules:
+CSS modules allows us to uniquely name css classnames so that even if someone has conflicting versions of CSS, the styles will not collide. This is done as a step in processing CSS. Spectrum-CSS does not currently perform this step when they build their packages.
+In order for users of React Spectrum to be able to make use of CSS Modules, we either need to package our CSS that we've modularized into our React Spectrum packages as we've been doing. Or we need to put into its own package with the modularizing applied.
+There are some PostCSS plugins that can handle writing out the mappings of classes and can even join class names across files. https://github.com/madyankin/postcss-modules We'll need to mind which class names are shared across files though, right now it's done in Spectrum-CSS (search for spectrum-Icon) but we are careful not to do it in React Spectrum's copy of Spectrum CSS. This means there are some class names we have taken the liberty of re-naming to make that distinction more clear, since CSS modules doesn't actually support the same name across multiple files and this plugin hides that a bit by created joined classnames.
 
 ##### Spectrum-CSS maintains all css packages
 In this scenario, the Spectrum-CSS project adds two files to their distribution, a js file with the mapping of classnames to css module classnames and a css file that the js file imports. They can point to the js file using the main field of the package.json and can use styles to point to their css files. Spectrum-CSS is open to doing this. 
@@ -66,6 +69,7 @@ In this scenario, the Spectrum-CSS project adds two files to their distribution,
     - It may be that we just don't distribute those files
   - If we use any new features that Spectrum-CSS implements, we will need to update our packages to point to the new minimum version of the CSS that supports our component
   - Slower cycle to add new features that require CSS
+  - Our priorities may not match Spectrum-CSS' priorities
   
 ##### RSP maintains css modules packages
 Generate from node_modules in React Spectrum and publish as separate packages.
