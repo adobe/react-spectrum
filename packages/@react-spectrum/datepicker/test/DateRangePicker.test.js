@@ -12,7 +12,6 @@
 
 import {act, fireEvent, getAllByRole as getAllByRoleInContainer, render} from '@testing-library/react';
 import {DateRangePicker} from '../';
-import {installPointerEvent} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
