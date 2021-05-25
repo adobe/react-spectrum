@@ -23,10 +23,12 @@ export type ListLayoutOptions<T> = {
   estimatedHeadingHeight?: number,
   padding?: number,
   indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number,
-  collator?: Intl.Collator
+  collator?: Intl.Collator,
+  loaderHeight?: number,
+  placeholderHeight?: number
 };
 
-// A wrapper around LayoutInfo that supports heirarchy
+// A wrapper around LayoutInfo that supports hierarchy
 export interface LayoutNode {
   node?: Node<unknown>,
   layoutInfo: LayoutInfo,
@@ -64,6 +66,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected rootNodes: LayoutNode[];
   protected collator: Intl.Collator;
   protected invalidateEverything: boolean;
+  protected loaderHeight: number;
+  protected placeholderHeight: number;
 
   /**
    * Creates a new ListLayout with options. See the list of properties below for a description
@@ -78,6 +82,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     this.padding = options.padding || 0;
     this.indentationForItem = options.indentationForItem;
     this.collator = options.collator;
+    this.loaderHeight = options.loaderHeight;
+    this.placeholderHeight = options.placeholderHeight;
     this.layoutInfos = new Map();
     this.layoutNodes = new Map();
     this.rootNodes = [];
@@ -136,20 +142,22 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       nodes.push(layoutNode);
     }
 
-    if (nodes.length === 0) {
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.rowHeight || this.estimatedRowHeight);
-      let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
-      this.layoutInfos.set('placeholder', placeholder);
-      nodes.push({layoutInfo: placeholder});
-      y = placeholder.rect.maxY;
-    }
-
     if (this.isLoading) {
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, 40);
+      let rect = new Rect(0, y, this.virtualizer.visibleRect.width,
+        this.loaderHeight ?? this.virtualizer.visibleRect.height);
       let loader = new LayoutInfo('loader', 'loader', rect);
       this.layoutInfos.set('loader', loader);
       nodes.push({layoutInfo: loader});
       y = loader.rect.maxY;
+    }
+
+    if (nodes.length === 0) {
+      let rect = new Rect(0, y, this.virtualizer.visibleRect.width,
+        this.placeholderHeight ?? this.virtualizer.visibleRect.height);
+      let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
+      this.layoutInfos.set('placeholder', placeholder);
+      nodes.push({layoutInfo: placeholder});
+      y = placeholder.rect.maxY;
     }
 
     this.contentSize = new Size(this.virtualizer.visibleRect.width, y + this.padding);

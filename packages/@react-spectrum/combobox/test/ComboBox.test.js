@@ -3212,7 +3212,7 @@ describe('ComboBox', function () {
       }
 
       // validation icon should not be present
-      expect(() => within(combobox).getByRole('img', {hidden: true})).toThrow();
+      expect(within(combobox).queryByRole('img', {hidden: true})).toBeNull();
 
       act(() => {
         triggerPress(button);
@@ -3225,7 +3225,7 @@ describe('ComboBox', function () {
 
       let listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
-      expect(() => within(listbox).getByRole('progressbar')).toThrow();
+      expect(within(listbox).queryByRole('progressbar')).toBeNull();
     });
 
     it('should render the loading swirl in the listbox when loadingState="loadingMore"', function () {
@@ -3959,7 +3959,7 @@ describe('ComboBox', function () {
         act(() => {jest.advanceTimersByTime(500);});
 
         expect(within(tray).getByRole('progressbar')).toBeTruthy();
-        expect(() => within(listbox).getByRole('progressbar')).toThrow();
+        expect(within(listbox).queryByRole('progressbar')).toBeNull();
       });
 
       it('tray input should hide the loading circle if loadingState is no longer "filtering"', function () {
@@ -3977,10 +3977,10 @@ describe('ComboBox', function () {
         expect(tray).toBeVisible();
         let listbox = getByRole('listbox');
         expect(within(tray).getByRole('progressbar')).toBeTruthy();
-        expect(() => within(listbox).getByRole('progressbar')).toThrow();
+        expect(within(listbox).queryByRole('progressbar')).toBeNull();
 
         rerender(<ExampleComboBox loadingState="idle" />);
-        expect(() => within(tray).getByRole('progressbar')).toThrow();
+        expect(within(tray).queryByRole('progressbar')).toBeNull();
       });
 
       it('tray input loading circle timer should reset on input value change', function () {
@@ -3995,13 +3995,13 @@ describe('ComboBox', function () {
         rerender(<ExampleComboBox loadingState="filtering" />);
         let tray = getByTestId('tray');
         expect(tray).toBeVisible();
-        expect(() => within(tray).getByRole('progressbar')).toThrow();
+        expect(within(tray).queryByRole('progressbar')).toBeNull();
         act(() => {jest.advanceTimersByTime(250);});
 
         let trayInput = within(tray).getByRole('searchbox');
         typeText(trayInput, 'One');
         act(() => {jest.advanceTimersByTime(250);});
-        expect(() => within(tray).getByRole('progressbar')).toThrow();
+        expect(within(tray).queryByRole('progressbar')).toBeNull();
 
         act(() => {jest.advanceTimersByTime(250);});
         expect(within(tray).getByRole('progressbar')).toBeTruthy();
@@ -4043,7 +4043,7 @@ describe('ComboBox', function () {
         if (LoadingState === 'loading') {
           expect(within(listbox).getByRole('progressbar')).toBeTruthy();
         } else {
-          expect(() => within(listbox).getByRole('progressbar')).toThrow();
+          expect(within(listbox).queryByRole('progressbar')).toBeNull();
         }
 
         if (ValidationState) {
@@ -4115,10 +4115,10 @@ describe('ComboBox', function () {
 
         let tray = getByTestId('tray');
         expect(tray).toBeVisible();
-        expect(() => within(tray).getByRole('progressbar')).toThrow();
+        expect(within(tray).queryByRole('progressbar')).toBeNull();
 
         let listbox = getByRole('listbox');
-        expect(() => within(listbox).getByRole('progressbar')).toThrow;
+        expect(within(listbox).queryByRole('progressbar')).toBeNull;
         let items = within(listbox).getAllByRole('option');
         expect(items).toHaveLength(3);
         expect(items[0]).toHaveTextContent('Aardvark');
@@ -4133,7 +4133,7 @@ describe('ComboBox', function () {
           jest.advanceTimersByTime(500);
           let trayInputProgress = within(tray).getByRole('progressbar', {hidden: true});
           expect(trayInputProgress).toBeTruthy();
-          expect(() => within(listbox).getByRole('progressbar')).toThrow;
+          expect(within(listbox).queryByRole('progressbar')).toBeNull;
           jest.runAllTimers();
         });
 
@@ -4143,7 +4143,7 @@ describe('ComboBox', function () {
             'filterText': 'aard'
           })
         );
-        expect(() => within(tray).getByRole('progressbar')).toThrow();
+        expect(within(tray).queryByRole('progressbar')).toBeNull();
 
         items = within(listbox).getAllByRole('option');
         expect(items).toHaveLength(1);
