@@ -1,5 +1,5 @@
 import {HTMLAttributes, useState} from 'react';
-import {isKeyboardFocusEvent, useFocus, useFocusVisibilityEmitter, useFocusWithin} from '@react-aria/interactions';
+import {isFocusVisible, useFocus, useFocusVisibleListener, useFocusWithin} from '@react-aria/interactions';
 
 interface FocusRingProps {
   /**
@@ -34,19 +34,16 @@ interface FocusRingAria {
  * not with a mouse, touch, or other input methods.
  */
 export function useFocusRing(props: FocusRingProps = {}): FocusRingAria {
-  let {isTextInput, within} = props;
+  let {autoFocus, isTextInput, within} = props;
   let [isFocused, setFocused] = useState(false);
   let [isFocusWithin, setFocusWithin] = useState(false);
-  let [isFocusVisible, setFocusVisible] = useState(false);
+  let [isFocusVisibleState, setFocusVisible] = useState(autoFocus || isFocusVisible());
 
   // trigger on isFocusVisible state change when component is focused and modality changes
   // or when the component loses focus
-  useFocusVisibilityEmitter((isFocusVisible, modality, e) => {
-    if (!isKeyboardFocusEvent(isTextInput, modality, e)) {
-      return;
-    }
-    setFocusVisible((within ? isFocusWithin : isFocused) && isFocusVisible);
-  }, [within, isFocusWithin, isFocused]);
+  useFocusVisibleListener((isFocusVisible) => {
+    setFocusVisible(isFocusVisible);
+  }, [within, isFocusWithin, isFocused], {isTextInput});
 
   let {focusProps} = useFocus({
     isDisabled: within,
@@ -59,7 +56,7 @@ export function useFocusRing(props: FocusRingProps = {}): FocusRingAria {
 
   return {
     isFocused: within ? isFocusWithin : isFocused,
-    isFocusVisible,
+    isFocusVisible: (within ? isFocusWithin : isFocused) && isFocusVisibleState,
     focusProps: within ? focusWithinProps : focusProps
   };
 }
