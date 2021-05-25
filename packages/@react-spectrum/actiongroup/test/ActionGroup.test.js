@@ -598,7 +598,7 @@ describe('ActionGroup', function () {
       jest.runAllTimers();
     });
 
-    expect(() => tree.getByRole('dialog')).toThrow();
+    expect(tree.queryByRole('dialog')).toBeNull();
   });
 
   it('supports TooltipTrigger as a wrapper around items', function () {

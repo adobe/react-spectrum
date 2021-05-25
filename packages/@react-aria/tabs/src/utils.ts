@@ -11,16 +11,16 @@
  */
 
 import {Key} from 'react';
-import {SingleSelectListState} from '@react-stately/list';
+import {TabListState} from '@react-stately/tabs';
 
-export const tabsIds = new WeakMap<SingleSelectListState<unknown>, string>();
+export const tabsIds = new WeakMap<TabListState<unknown>, string>();
 
-export function generateId<T>(state: SingleSelectListState<T>, key: Key, role: string) {
+export function generateId<T>(state: TabListState<T>, key: Key, role: string) {
   if (typeof key === 'string') {
     key = key.replace(/\s+/g, '');
   }
-  
+
   let baseId = tabsIds.get(state);
   return `${baseId}-${role}-${key}`;
 }
-  
+

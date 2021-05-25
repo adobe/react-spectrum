@@ -68,13 +68,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       props.onSelectionChange(key);
     }
 
-    // If open state or selectedKey is uncontrolled and key is the same, reset the inputValue and close the menu
+    // If key is the same, reset the inputValue and close the menu
     // (scenario: user clicks on already selected option)
-    if (props.isOpen === undefined || props.selectedKey === undefined) {
-      if (key === selectedKey) {
-        resetInputValue();
-        triggerState.close();
-      }
+    if (key === selectedKey) {
+      resetInputValue();
+      triggerState.close();
     }
   };
 
@@ -101,7 +99,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     }
   };
 
-  let triggerState = useMenuTriggerState({...props, onOpenChange});
+  let triggerState = useMenuTriggerState({...props, onOpenChange, isOpen: undefined, defaultOpen: undefined});
   let open = (focusStrategy?: FocusStrategy, trigger?: MenuTriggerAction) => {
     let displayAllItems = (trigger === 'manual' || (trigger === 'focus' && menuTrigger === 'focus'));
     // Prevent open operations from triggering if there is nothing to display
@@ -151,36 +149,33 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   // intentional omit dependency array, want this to happen on every render
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    // If open state or inputValue is uncontrolled, open and close automatically when the input value changes,
-    // the input is if focused, and there are items in the collection or allowEmptyCollection is true.
+    // Open and close menu automatically when the input value changes if the input is focused,
+    // and there are items in the collection or allowEmptyCollection is true.
     if (
       isFocused &&
       (filteredCollection.size > 0 || allowsEmptyCollection) &&
       !triggerState.isOpen &&
       inputValue !== lastValue.current &&
-      menuTrigger !== 'manual' &&
-      (props.isOpen === undefined || props.inputValue === undefined)
+      menuTrigger !== 'manual'
     ) {
       open(null, 'input');
     }
 
-    // Close the menu if the collection is empty and either open state or items are uncontrolled.
-    // Don't close menu if filtered collection size is 0 but we are currently showing all items via button press (only applies to uncontrolled items)
+    // Close the menu if the collection is empty. Don't close menu if filtered collection size is 0
+    // but we are currently showing all items via button press
     if (
       !showAllItems &&
       !allowsEmptyCollection &&
       triggerState.isOpen &&
-      filteredCollection.size === 0 &&
-      (props.isOpen === undefined || props.items === undefined)
+      filteredCollection.size === 0
     ) {
       triggerState.close();
     }
 
-    // Close when an item is selected, if open state or selectedKey is uncontrolled.
+    // Close when an item is selected.
     if (
       selectedKey != null &&
-      selectedKey !== lastSelectedKey.current &&
-      (props.isOpen === undefined || props.selectedKey === undefined)
+      selectedKey !== lastSelectedKey.current
     ) {
       triggerState.close();
     }
@@ -239,48 +234,20 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   }, [triggerState.isOpen, selectionManager]);
 
   let commitCustomValue = () => {
-    let shouldClose = false;
     lastSelectedKey.current = null;
     setSelectedKey(null);
-
-    // If previous key was already null, need to manually call onSelectionChange since it won't be triggered by a setSelectedKey call
-    // This allows the application to control whether or not to close the menu on custom value commit
-    if (selectedKey === null && props.onSelectionChange) {
-      props.onSelectionChange(null);
-    }
-
-    // Should close menu ourselves if component open state or selected key is uncontrolled and therefore won't be closed by a user defined event handler
-    shouldClose = props.isOpen == null || props.selectedKey === undefined;
-
-    // Close if no other event will be fired. Otherwise, allow the
-    // application to control this based on that event.
-    if (shouldClose) {
-      triggerState.close();
-    }
+    triggerState.close();
   };
 
   let commitSelection = () => {
     // If multiple things are controlled, call onSelectionChange
-    // Note that users who control open state and input value MUST also have a onSelectionChange handler to properly close the menu and reset input value
-    if (
-      (props.selectedKey !== undefined && props.inputValue !== undefined) ||
-      (props.inputValue !== undefined && props.isOpen !== undefined) ||
-      (props.selectedKey !== undefined && props.isOpen !== undefined)
-    ) {
+    if (props.selectedKey !== undefined && props.inputValue !== undefined) {
       props.onSelectionChange(selectedKey);
 
-      // If multiple things are controlled but inputValue isn't, reset the input value for the user
-      if (props.inputValue === undefined) {
-        resetInputValue();
-      }
-
-      // If multiple things are controlled but isOpen isn't, close the menu for the user
-      if (props.isOpen === undefined) {
-        // Stop menu from reopening from useEffect
-        let itemText = collection.getItem(selectedKey)?.textValue ?? '';
-        lastValue.current = itemText;
-        triggerState.close();
-      }
+      // Stop menu from reopening from useEffect
+      let itemText = collection.getItem(selectedKey)?.textValue ?? '';
+      lastValue.current = itemText;
+      triggerState.close();
     } else {
       // If only a single aspect of combobox is controlled, reset input value and close menu for the user
       resetInputValue();
