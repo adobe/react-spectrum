@@ -86,10 +86,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     }
   };
 
-  let onClose = () => {
-    state.commit();
-    state.close();
-  };
+  let onClose = () => state.commit();
 
   return (
     <>
@@ -320,6 +317,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     // When the tray unmounts, set state.isFocused (i.e. the tray input's focus tracker) to false.
     // This is to prevent state.isFocused from being set to true when the tray closes via tapping on the underlay
     // (FocusScope attempts to restore focus to the tray input when tapping outside the tray due to "contain")
+    // Have to do this manually since React doesn't call onBlur when a component is unmounted: https://github.com/facebook/react/issues/12363
     return () => {
       state.setFocused(false);
     };
