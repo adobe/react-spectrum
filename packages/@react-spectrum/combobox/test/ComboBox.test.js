@@ -3046,6 +3046,122 @@ describe('ComboBox', function () {
     });
   });
 
+  describe('reset input value', function () {
+    describe.each`
+      Name                                       | Component                               | action
+      ${'uncontrolled combobox (Enter)'}         | ${<ControlledValueKeyComboBox />}       | ${
+        (combobox) => {
+          fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+          fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+        }
+      }
+      ${'controlled combobox (Enter)'}           | ${<ExampleComboBox />}                   | ${
+        (combobox) => {
+          fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+          fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+        }
+      }
+      ${'allows custom value combobox (Enter)'}  | ${<ExampleComboBox allowsCustomValue />} | ${
+        (combobox) => {
+          fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+          fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+        }
+      }
+      ${'uncontrolled combobox (Escape)'}        | ${<ControlledValueKeyComboBox />}        | ${
+        (combobox) => {
+          fireEvent.keyDown(combobox, {key: 'Escape', code: 27, charCode: 27});
+          fireEvent.keyUp(combobox, {key: 'Escape', code: 27, charCode: 27});
+        }
+      }
+      ${'controlled combobox (Escape)'}          | ${<ExampleComboBox />}                   | ${
+        (combobox) => {
+          fireEvent.keyDown(combobox, {key: 'Escape', code: 27, charCode: 27});
+          fireEvent.keyUp(combobox, {key: 'Escape', code: 27, charCode: 27});
+        }
+      }
+      ${'allows custom value combobox (Escape)'} | ${<ExampleComboBox allowsCustomValue />} | ${
+        (combobox) => {
+          fireEvent.keyDown(combobox, {key: 'Escape', code: 27, charCode: 27});
+          fireEvent.keyUp(combobox, {key: 'Escape', code: 27, charCode: 27});
+        }
+      }
+    `('$Name', ({Name, Component, action}) => {
+      it('should reset the input value and close the menu when pressing escape', function () {
+        let {getByRole, queryByRole} = render(Component);
+        let button = getByRole('button');
+        let combobox = getByRole('combobox');
+
+        typeText(combobox, 'One');
+        act(() => jest.runAllTimers());
+
+        let listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+        expect(combobox).toHaveAttribute('value', 'One');
+
+        act(() => {
+          action(combobox);
+          jest.runAllTimers();
+        });
+
+        expect(() => queryByRole('listbox')).toBeNull;
+
+        // If allowCustomValue then the value shouldn't be reset (for Escape, only if there isn't a selected key)
+        if (Name.includes('allows custom value')) {
+          expect(combobox).toHaveAttribute('value', 'One');
+
+          // Reset to starting point
+          act(() => {
+            fireEvent.change(combobox, {target: {value: ''}});
+            jest.runAllTimers();
+          });
+
+          act(() => {
+            triggerPress(button);
+            jest.runAllTimers();
+          });
+        } else {
+          expect(combobox).toHaveAttribute('value', '');
+        }
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        listbox = getByRole('listbox');
+        let items = within(listbox).getAllByRole('option');
+        act(() => {
+          triggerPress(items[1]);
+          jest.runAllTimers();
+        });
+
+        expect(combobox).toHaveAttribute('value', 'Two');
+
+        act(() => {
+          fireEvent.change(combobox, {target: {value: 'T'}});
+          jest.runAllTimers();
+        });
+
+        listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+        expect(combobox).toHaveAttribute('value', 'T');
+        expect(combobox).not.toHaveAttribute('aria-activedescendant');
+
+        act(() => {
+          action(combobox);
+          jest.runAllTimers();
+        });
+
+        expect(() => queryByRole('listbox')).toBeNull;
+        if (Name.includes('allows custom value') && Name.includes('Enter')) {
+          expect(combobox).toHaveAttribute('value', 'T');
+        } else {
+          expect(combobox).toHaveAttribute('value', 'Two');
+        }
+      });
+    });
+  });
+
   it('should have aria-invalid when validationState="invalid"', function () {
     let {getByRole} = renderComboBox({validationState: 'invalid'});
     let combobox = getByRole('combobox');
