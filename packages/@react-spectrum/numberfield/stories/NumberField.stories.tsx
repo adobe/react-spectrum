@@ -212,6 +212,10 @@ storiesOf('NumberField', module)
   .add(
     'min width',
     () => render({width: 0})
+  )
+  .add(
+    'focus events',
+    () => render({onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp')})
   );
 
 function render(props: any = {}) {

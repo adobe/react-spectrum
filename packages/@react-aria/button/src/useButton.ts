@@ -64,7 +64,12 @@ export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<an
     type = 'button'
   } = props;
   let additionalProps;
-  if (elementType !== 'button') {
+  if (elementType === 'button') {
+    additionalProps = {
+      type,
+      disabled: isDisabled
+    };
+  } else {
     additionalProps = {
       role: 'button',
       tabIndex: isDisabled ? undefined : 0,
@@ -98,8 +103,6 @@ export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<an
       'aria-expanded': props['aria-expanded'],
       'aria-controls': props['aria-controls'],
       'aria-pressed': props['aria-pressed'],
-      disabled: isDisabled,
-      type,
       onClick: (e) => {
         if (deprecatedOnClick) {
           deprecatedOnClick(e);

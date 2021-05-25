@@ -261,7 +261,7 @@ describe('DatePicker', function () {
       let segments = getAllByRole('spinbutton');
 
       fireEvent.mouseDown(field);
-      expect(segments[segments.length - 1]).toHaveFocus();
+      expect(segments[0]).toHaveFocus();
     });
   });
 

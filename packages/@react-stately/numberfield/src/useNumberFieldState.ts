@@ -60,6 +60,10 @@ export interface NumberFieldState {
 }
 
 interface NumberFieldStateProps extends NumberFieldProps {
+  /**
+   * The locale that should be used for parsing.
+   * @default 'en-US'
+   */
   locale: string
 }
 
@@ -113,7 +117,7 @@ export function useNumberFieldState(
     // Set to empty state if input value is empty
     if (!inputValue.length) {
       setNumberValue(NaN);
-      setInputValue('');
+      setInputValue(value === undefined ? '' : format(numberValue));
       return;
     }
 

@@ -18,12 +18,14 @@ function Item<T>(props: ItemProps<T>): ReactElement { // eslint-disable-line @ty
   return null;
 }
 
-Item.getCollectionNode = function* getCollectionNode<T>(props: ItemProps<T>): Generator<PartialNode<T>> {
+Item.getCollectionNode = function* getCollectionNode<T>(props: ItemProps<T>, context: any): Generator<PartialNode<T>> {
   let {childItems, title, children} = props;
 
   let rendered = props.title || props.children;
   let textValue = props.textValue || (typeof rendered === 'string' ? rendered : '') || props['aria-label'] || '';
-  if (!textValue) {
+
+  // suppressTextValueWarning is used in components like Tabs, which don't have type to select support.
+  if (!textValue && !context?.suppressTextValueWarning) {
     console.warn('<Item> with non-plain text contents is unsupported by type to select for accessibility. Please add a `textValue` prop.');
   }
 

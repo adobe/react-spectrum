@@ -35,7 +35,7 @@ export function useDateField(props: DatePickerProps & DOMProps): DateFieldAria {
   let onMouseDown = (e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    focusManager.focusPrevious({from: e.target as HTMLElement});
+    focusManager.focusNext({from: e.target as HTMLElement});
   };
 
   return {
