@@ -435,15 +435,6 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     }
   };
 
-  let onBlur = (e) => {
-    // Early return if related target is null so that we don't get the wrong state.isFocused set (i.e. the blur caused from hitting Enter in the tray w/o a item focused)
-    if (e.relatedTarget === null) {
-      return;
-    }
-
-    inputProps.onBlur(e);
-  };
-
   return (
     <FocusScope restoreFocus contain>
       <div
@@ -459,7 +450,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
         <TextFieldBase
           label={label}
           labelProps={labelProps}
-          inputProps={{...inputProps, onKeyDown, onBlur}}
+          inputProps={{...inputProps, onKeyDown}}
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={showLoading && loadingState === 'filtering'}
