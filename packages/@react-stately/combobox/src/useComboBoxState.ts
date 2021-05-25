@@ -29,8 +29,8 @@ export interface ComboBoxState<T> extends SelectState<T> {
   open(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void,
   /** Toggles the menu. */
   toggle(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void,
-  /** Resets the input value to the previously selected item's text if any.  */
-  resetInputValue(): void
+  /** Resets the input value to the previously selected item's text if any and closes the menu.  */
+  revert(): void
 }
 
 type FilterFn = (textValue: string, inputValue: string) => boolean;
@@ -235,6 +235,15 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     }
   }, [triggerState.isOpen, selectionManager]);
 
+  // Revert input value and close menu
+  let revert = () => {
+    if (allowsCustomValue && selectedKey == null) {
+      commitCustomValue();
+    } else {
+      commitSelection();
+    }
+  };
+
   let commitCustomValue = () => {
     lastSelectedKey.current = null;
     setSelectedKey(null);
@@ -268,6 +277,9 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       }
     } else if (allowsCustomValue) {
       commitCustomValue();
+    } else {
+      // Reset inputValue and close menu if no item is focused but user triggers a commit
+      commitSelection();
     }
   };
 
@@ -303,7 +315,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     inputValue,
     setInputValue,
     commit,
-    resetInputValue
+    revert
   };
 }
 

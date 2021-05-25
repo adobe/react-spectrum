@@ -1028,6 +1028,7 @@ describe('ComboBox', function () {
       it('displays all items when opened via arrow keys', function () {
         let {getByRole} = render(<Component defaultInputValue="Tw" />);
         let combobox = getByRole('combobox');
+        let button = getByRole('button');
 
         act(() => {
           fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
@@ -1044,8 +1045,7 @@ describe('ComboBox', function () {
         }
 
         act(() => {
-          fireEvent.keyDown(combobox, {key: 'Escape', code: 27, charCode: 27});
-          fireEvent.keyUp(combobox, {key: 'Escape', code: 27, charCode: 27});
+          triggerPress(button);
           jest.runAllTimers();
         });
 

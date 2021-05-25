@@ -63,6 +63,9 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     ...props,
     defaultFilter: contains,
     allowsEmptyCollection: true,
+    // Needs to be false here otherwise we double up on commitSelection/commitCustomValue calls when
+    // user taps on underlay (i.e. initial tap will call setFocused(false) -> commitSelection/commitCustomValue via onBlur,
+    // then the closing of the tray will call setFocused(false) again due to cleanup effect)
     shouldCloseOnBlur: false
   });
 
@@ -85,11 +88,6 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
 
   let onClose = () => {
     state.commit();
-    // Avoid reseting input value if combobox allows custom value so that the user's custom value isn't changed to the last selected item's text
-    // Also avoid reseting input value if there is a focused key when the menu is closed so that there aren't multiple onInputChanges from selection and reset
-    if (!props.allowsCustomValue && state.selectionManager.focusedKey === null) {
-      state.resetInputValue();
-    }
     state.close();
   };
 
@@ -291,8 +289,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     overlayProps,
     loadingState,
     onLoadMore,
-    onClose,
-    allowsCustomValue
+    onClose
   } = props;
 
   let timeout = useRef(null);
@@ -326,6 +323,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     return () => {
       state.setFocused(false);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   let {dialogProps} = useDialog({
@@ -421,14 +419,29 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     lastInputValue.current = inputValue;
   }, [loadingState, inputValue, showLoading]);
 
-  // Need to handle onKeyDown here, Tray's onClose doesn't trigger when hitting escape since useComboBox's escape handler closes the tray
   let onKeyDown = (e) => {
-    // If there isn't a selected key and allowsCustomValue is true, then we avoid reseting input value so the new custom value persists
-    if (e.key === 'Escape' && !(!state.selectedKey && allowsCustomValue)) {
-      state.resetInputValue();
+    // Close virtual keyboard if user hits Enter w/o any focused options
+    if (e.key === 'Enter' && state.selectionManager.focusedKey == null) {
+      inputRef.current.readOnly = true;
+      popoverRef.current.focus();
+
+      // Required to keep keyboard from reopening, 6ms is minimum time so that editing the field and hitting enter hides the virtual keyboard in iOS
+      setTimeout(() => {
+        inputRef.current.focus();
+        inputRef.current.readOnly = false;
+      }, 6);
+    } else {
+      inputProps.onKeyDown(e);
+    }
+  };
+
+  let onBlur = (e) => {
+    // Early return if related target is null so that we don't get the wrong state.isFocused set (i.e. the blur caused from hitting Enter in the tray w/o a item focused)
+    if (e.relatedTarget === null) {
+      return;
     }
 
-    inputProps.onKeyDown(e);
+    inputProps.onBlur(e);
   };
 
   return (
@@ -446,7 +459,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
         <TextFieldBase
           label={label}
           labelProps={labelProps}
-          inputProps={{...inputProps, onKeyDown}}
+          inputProps={{...inputProps, onKeyDown, onBlur}}
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={showLoading && loadingState === 'filtering'}
