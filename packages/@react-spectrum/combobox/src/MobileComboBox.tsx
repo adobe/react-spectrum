@@ -420,14 +420,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   let onKeyDown = (e) => {
     // Close virtual keyboard if user hits Enter w/o any focused options
     if (e.key === 'Enter' && state.selectionManager.focusedKey == null) {
-      inputRef.current.readOnly = true;
       popoverRef.current.focus();
-
-      // Required to keep keyboard from reopening, 6ms is minimum time so that editing the field and hitting enter hides the virtual keyboard in iOS
-      setTimeout(() => {
-        inputRef.current.focus();
-        inputRef.current.readOnly = false;
-      }, 6);
     } else {
       inputProps.onKeyDown(e);
     }
