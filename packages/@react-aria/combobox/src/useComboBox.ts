@@ -110,7 +110,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
         state.commit();
         break;
       case 'Escape':
-        state.close();
+        state.revert();
         break;
       case 'ArrowDown':
         state.open('first', 'manual');
