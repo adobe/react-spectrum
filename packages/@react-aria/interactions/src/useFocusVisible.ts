@@ -51,6 +51,7 @@ const FOCUS_VISIBLE_INPUT_KEYS = {
 };
 
 function triggerChangeHandlers(modality: Modality, e: HandlerEvent) {
+  console.log('go', modality)
   for (let handler of changeHandlers) {
     handler(modality, e);
   }
@@ -245,7 +246,7 @@ export function useFocusVisibleListener(fn: FocusVisibleHandler, deps: ReadonlyA
 
   useEffect(() => {
     let handler = (modality: Modality, e: HandlerEvent) => {
-      if (!isKeyboardFocusEvent(opts.isTextInput, modality, e)) {
+      if (!isKeyboardFocusEvent(opts?.isTextInput, modality, e)) {
         return;
       }
       fn(isFocusVisible());
