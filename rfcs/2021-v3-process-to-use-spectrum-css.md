@@ -42,9 +42,19 @@ We'd like for DNA updates to be easier to do, which should just be a new release
    used. Be sure to define any new terms in this section.
 -->
 
+We can do a couple of things without being blocked by decisions in this RFC. First and foremost, we can add more stories to Chromatic for coverage on components.
+We don't need to do every component at once, but the more we have ahead of time, the easier this whole process will be. It can help us move both to the new CSS and new DNA.
+
+
+The second thing we can do is upgrade to DNA 7. Again, the more chromatic stories we have in place, the easier this will be, as we'll need to do it to all components at once. This will prepare us more for the merge with CSS in which we'll need to worry about merging our changes with Spectrum-CSS' changes.
+
+Once both of the above are in place, we can move forward with merging with Spectrum CSS.
+-- to fill out --
+
+
 ### Approaches
 
-Wholesale vs incrementally. This should be a non-starter, we need to be able to do this incrementally as much as possible.
+These are different steps in the process of moving and maintaining one or both code bases compared and contrasted informing the above design.
 
 #### Chromatic:
 Before a component is moved over, we should make sure it's in Chromatic. This way we can test for visual regressions and be confident that we've consumed the new CSS correctly. This will also allow us to verify that we've contributed back our changes correctly. This will still have holes, but it will help. In addition, DSS may have a feature that all component states are top-leveled, allowing us to render every combination of states eventually.
@@ -70,6 +80,7 @@ In this scenario, the Spectrum-CSS project adds two files to their distribution,
   - If we use any new features that Spectrum-CSS implements, we will need to update our packages to point to the new minimum version of the CSS that supports our component
   - Slower cycle to add new features that require CSS
   - Our priorities may not match Spectrum-CSS' priorities
+  - Any additional post-processing steps we want to do would need to be contributed to Spectrum-CSS, and some we may not be able to run at all, for instance, Parcel can remove unused classes. They'd be hard for a human to spot.
   
 ##### RSP maintains css modules packages
 Generate from node_modules in React Spectrum and publish as separate packages.
@@ -107,6 +118,32 @@ Everything stays the same but we publish our CSS
 ###### Cons:
   - Would set precedent for bringing in other groups to an already large repo
   - Work required to move into another repo for someone
+
+##### Spectrum-CSS becomes a submodule in React Spectrum
+
+In this scenario, we'd likely run the Spectrum-CSS build as they provide it, we'd additionally run our own post processing steps to create the packages with CSS Modules.
+
+###### Pros:
+  - No need to do local linking when trying to develop a new feature requiring CSS updates
+  - Coordinated releases
+  - Shared tooling
+
+###### Cons:
+  - Sub modules notoriously difficult to manage
+  - Would likely need tooling in our repo specific to Spectrum-CSS
+
+##### React Spectrum consumes DSS directly
+
+In this scenario, we stop using Spectrum-CSS and maintain our own CSS packages using the mixins provided by DSS. We may be able to make use of Spectrum-CSS if they also created mixins that covered some of the things that DSS can't.
+
+###### Pros:
+  - We can make use of all the nice things that DSS provides while also being able to quickly iterate on changes we need to make
+  - Releases won't be held up by waiting for Spectrum-CSS, and hold ups from DSS should theoretically be less
+  - We can make changes to structure and it wouldn't be breaking for Spectrum-CSS or DSS
+
+###### Cons:
+  - Outstanding question, will DSS cover layout (grid/flex)
+  - DSS isn't a standard thing, so understanding how our CSS files work may cause trouble for contributors
 
 #### DNA
 
