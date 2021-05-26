@@ -1028,6 +1028,7 @@ describe('ComboBox', function () {
       it('displays all items when opened via arrow keys', function () {
         let {getByRole} = render(<Component defaultInputValue="Tw" />);
         let combobox = getByRole('combobox');
+        let button = getByRole('button');
 
         act(() => {
           fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
@@ -1044,8 +1045,7 @@ describe('ComboBox', function () {
         }
 
         act(() => {
-          fireEvent.keyDown(combobox, {key: 'Escape', code: 27, charCode: 27});
-          fireEvent.keyUp(combobox, {key: 'Escape', code: 27, charCode: 27});
+          triggerPress(button);
           jest.runAllTimers();
         });
 
@@ -3046,6 +3046,122 @@ describe('ComboBox', function () {
     });
   });
 
+  describe('reset input value', function () {
+    describe.each`
+      Name                                       | Component                               | action
+      ${'uncontrolled combobox (Enter)'}         | ${<ControlledValueKeyComboBox />}       | ${
+        (combobox) => {
+          fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+          fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+        }
+      }
+      ${'controlled combobox (Enter)'}           | ${<ExampleComboBox />}                   | ${
+        (combobox) => {
+          fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+          fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+        }
+      }
+      ${'allows custom value combobox (Enter)'}  | ${<ExampleComboBox allowsCustomValue />} | ${
+        (combobox) => {
+          fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+          fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+        }
+      }
+      ${'uncontrolled combobox (Escape)'}        | ${<ControlledValueKeyComboBox />}        | ${
+        (combobox) => {
+          fireEvent.keyDown(combobox, {key: 'Escape', code: 27, charCode: 27});
+          fireEvent.keyUp(combobox, {key: 'Escape', code: 27, charCode: 27});
+        }
+      }
+      ${'controlled combobox (Escape)'}          | ${<ExampleComboBox />}                   | ${
+        (combobox) => {
+          fireEvent.keyDown(combobox, {key: 'Escape', code: 27, charCode: 27});
+          fireEvent.keyUp(combobox, {key: 'Escape', code: 27, charCode: 27});
+        }
+      }
+      ${'allows custom value combobox (Escape)'} | ${<ExampleComboBox allowsCustomValue />} | ${
+        (combobox) => {
+          fireEvent.keyDown(combobox, {key: 'Escape', code: 27, charCode: 27});
+          fireEvent.keyUp(combobox, {key: 'Escape', code: 27, charCode: 27});
+        }
+      }
+    `('$Name', ({Name, Component, action}) => {
+      it('should reset the input value and close the menu when pressing escape', function () {
+        let {getByRole, queryByRole} = render(Component);
+        let button = getByRole('button');
+        let combobox = getByRole('combobox');
+
+        typeText(combobox, 'One');
+        act(() => jest.runAllTimers());
+
+        let listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+        expect(combobox).toHaveAttribute('value', 'One');
+
+        act(() => {
+          action(combobox);
+          jest.runAllTimers();
+        });
+
+        expect(() => queryByRole('listbox')).toBeNull;
+
+        // If allowCustomValue then the value shouldn't be reset (for Escape, only if there isn't a selected key)
+        if (Name.includes('allows custom value')) {
+          expect(combobox).toHaveAttribute('value', 'One');
+
+          // Reset to starting point
+          act(() => {
+            fireEvent.change(combobox, {target: {value: ''}});
+            jest.runAllTimers();
+          });
+
+          act(() => {
+            triggerPress(button);
+            jest.runAllTimers();
+          });
+        } else {
+          expect(combobox).toHaveAttribute('value', '');
+        }
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        listbox = getByRole('listbox');
+        let items = within(listbox).getAllByRole('option');
+        act(() => {
+          triggerPress(items[1]);
+          jest.runAllTimers();
+        });
+
+        expect(combobox).toHaveAttribute('value', 'Two');
+
+        act(() => {
+          fireEvent.change(combobox, {target: {value: 'T'}});
+          jest.runAllTimers();
+        });
+
+        listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+        expect(combobox).toHaveAttribute('value', 'T');
+        expect(combobox).not.toHaveAttribute('aria-activedescendant');
+
+        act(() => {
+          action(combobox);
+          jest.runAllTimers();
+        });
+
+        expect(() => queryByRole('listbox')).toBeNull;
+        if (Name.includes('allows custom value') && Name.includes('Enter')) {
+          expect(combobox).toHaveAttribute('value', 'T');
+        } else {
+          expect(combobox).toHaveAttribute('value', 'Two');
+        }
+      });
+    });
+  });
+
   it('should have aria-invalid when validationState="invalid"', function () {
     let {getByRole} = renderComboBox({validationState: 'invalid'});
     let combobox = getByRole('combobox');
@@ -3911,6 +4027,151 @@ describe('ComboBox', function () {
       let {getByRole, getByText, getByLabelText} = renderComboBox({validationState: 'invalid', selectedKey: '2'});
       let button = getByRole('button');
       expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText('Two').id} ${getByLabelText('(invalid)').id}`);
+    });
+
+    it.each`
+      Method
+      ${'clicking outside tray'}
+      ${'dismiss button'}
+      ${'escape key'}
+    `('combobox value resets on tray close ($Method)', ({Method}) => {
+       // If there is a selected key and allowCustomValue is false, closing the tray should reset the input value
+      let tree = render(<ExampleComboBox defaultSelectedKey="2" />);
+      let button = tree.getByRole('button');
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let performInteractions = (render) => {
+        let tray = render.getByTestId('tray');
+        expect(tray).toBeVisible();
+        let trayInput = within(tray).getByRole('searchbox');
+        expect(trayInput.value).toBe('Two');
+        typeText(trayInput, 'r');
+        let dismissButtons = within(tray).getAllByRole('button');
+        act(() => {
+          switch (Method) {
+            case 'clicking outside tray':
+              triggerPress(document.body);
+              break;
+            case 'dismiss button':
+              triggerPress(dismissButtons[0]);
+              break;
+            case 'escape key':
+              fireEvent.keyDown(trayInput, {key: 'Escape', code: 27, charCode: 27});
+              fireEvent.keyUp(trayInput, {key: 'Escape', code: 27, charCode: 27});
+              break;
+          }
+          jest.runAllTimers();
+        });
+      };
+
+      performInteractions(tree);
+      expect(() => tree.getByTestId('tray')).toThrow();
+      expect(button).toHaveAttribute('aria-labelledby', `${tree.getByText('Test').id} ${tree.getByText('Two').id}`);
+      tree.unmount();
+
+      // If there is a selected key and allowCustomValue is true, closing the tray via dismiss button or clicking outside the tray should clear the selected key and
+      // update the input value to the custom value. If the user closes the tray via escape key, then the input value should be reset and the selected key isn't cleared
+      tree = render(<ExampleComboBox defaultSelectedKey="2" allowsCustomValue />);
+      button = tree.getByRole('button');
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      performInteractions(tree);
+      expect(() => tree.getByTestId('tray')).toThrow();
+      if (Method === 'escape key') {
+        expect(button).toHaveAttribute('aria-labelledby', `${tree.getByText('Test').id} ${tree.getByText('Two').id}`);
+      } else {
+        expect(button).toHaveAttribute('aria-labelledby', `${tree.getByText('Test').id} ${tree.getByText('Twor').id}`);
+      }
+      tree.unmount();
+
+      // If there is a pre-existing custom value, closing the tray should update the custom value if any changes were made in the tray input
+      tree = render(<ExampleComboBox defaultInputValue="Two" allowsCustomValue />);
+      button = tree.getByRole('button');
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      performInteractions(tree);
+      expect(() => tree.getByTestId('tray')).toThrow();
+      expect(button).toHaveAttribute('aria-labelledby', `${tree.getByText('Test').id} ${tree.getByText('Twor').id}`);
+    });
+
+    it('menutrigger=focus doesn\'t reopen the tray on close', function () {
+      let {getByRole, getByTestId} = renderComboBox({menuTrigger: 'focus'});
+      let button = getByRole('button');
+
+      act(() => {
+        button.focus();
+        jest.runAllTimers();
+      });
+
+      // menutrigger = focus is inapplicable for mobile ComboBox
+      expect(() => getByTestId('tray')).toThrow();
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      let trayInput = within(tray).getByRole('searchbox');
+
+      act(() => {
+        trayInput.blur();
+        triggerPress(document.body);
+        jest.runAllTimers();
+      });
+
+      expect(() => getByTestId('tray')).toThrow();
+    });
+
+    it('combobox button is focused when autoFocus is true', function () {
+      let {getByRole} = renderComboBox({autoFocus: true});
+      let button = getByRole('button');
+      expect(document.activeElement).toBe(button);
+    });
+
+    it('combobox tray doesn\'t open when controlled input value is updated', function () {
+      let {getByRole, rerender, getByTestId} = render(<ExampleComboBox inputValue="One" />);
+      let button = getByRole('button');
+
+      act(() => {
+        button.focus();
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      let trayInput = within(tray).getByRole('searchbox');
+
+      act(() => {
+        trayInput.blur();
+        triggerPress(document.body);
+        jest.runAllTimers();
+      });
+
+      expect(() => getByTestId('tray')).toThrow();
+
+      act(() => {
+        button.blur();
+        jest.runAllTimers();
+      });
+
+      rerender(<ExampleComboBox inputValue="Two" />);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(() => getByTestId('tray')).toThrow();
     });
 
     describe('refs', function () {
