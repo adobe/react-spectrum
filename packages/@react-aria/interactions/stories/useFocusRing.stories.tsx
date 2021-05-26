@@ -24,13 +24,12 @@ for (let i = 0; i < 1000; i++) {
 }
 
 storiesOf('useFocusRing', module)
-.add(
-  'search + table',
-  () => (
-    <SearchExample />
-  ),
-  {chromatic: {disable: true}}
-);
+  .add(
+    'search + table',
+    () => (
+      <SearchExample />
+    )
+  );
 
 function SearchExample() {
   const [items, setItems] = useState(manyRows);

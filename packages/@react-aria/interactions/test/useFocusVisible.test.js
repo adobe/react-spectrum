@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
 import {useFocusVisible, useFocusVisibleListener} from '../';
@@ -63,16 +63,36 @@ describe('useFocusVisible', function () {
   });
 });
 
-describe('useFocusEmitter', function () {
-  it('emits on modality change', function () {
+describe('useFocusVisibleListener', function () {
+  it('emits on modality change (non-text input)', function () {
     let fnMock = jest.fn();
-    renderHook(() => useFocusVisibleListener(fnMock, []), {isTextInput: true});
+    renderHook(() => useFocusVisibleListener(fnMock, []));
     expect(fnMock).toHaveBeenCalledTimes(0);
-    fireEvent.keyDown(document.body, {key: 'Escape'});
-    expect(fnMock).toHaveBeenCalledTimes(1);
-    expect(fnMock.mock.calls[0][0]).toBeTruthy();
-    fireEvent.mouseDown(document.body);
-    expect(fnMock).toHaveBeenCalledTimes(2);
-    expect(fnMock.mock.calls[1][0]).toBeFalsy();
+    act(() => {
+      fireEvent.keyDown(document.body, {key: 'a'});
+      fireEvent.keyUp(document.body, {key: 'a'});
+      fireEvent.keyDown(document.body, {key: 'Escape'});
+      fireEvent.keyUp(document.body, {key: 'Escape'});
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body); // does not trigger change handlers (but included for completeness)
+    });
+    expect(fnMock).toHaveBeenCalledTimes(5);
+    expect(fnMock.mock.calls).toEqual([[true], [true], [true], [true], [false]]);
+  });
+
+  it('emits on modality change (text input)', function () {
+    let fnMock = jest.fn();
+    renderHook(() => useFocusVisibleListener(fnMock, [], {isTextInput: true}));
+    expect(fnMock).toHaveBeenCalledTimes(0);
+    act(() => {
+      fireEvent.keyDown(document.body, {key: 'a'});
+      fireEvent.keyUp(document.body, {key: 'a'});
+      fireEvent.keyDown(document.body, {key: 'Escape'});
+      fireEvent.keyUp(document.body, {key: 'Escape'});
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body); // does not trigger change handlers (but included for completeness)
+    });
+    expect(fnMock).toHaveBeenCalledTimes(3);
+    expect(fnMock.mock.calls).toEqual([[true], [true], [false]]);
   });
 });
