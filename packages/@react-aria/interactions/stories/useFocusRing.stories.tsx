@@ -1,4 +1,4 @@
-import {Cell, Column, Row, Table, TableBody, TableHeader} from '@react-spectrum/table';
+import {Cell, Column, Row, TableView, TableBody, TableHeader} from '@react-spectrum/table';
 import React, {useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {storiesOf} from '@storybook/react';
@@ -44,7 +44,7 @@ function SearchExample() {
           );
           setItems(newItems);
         }} />
-      <Table aria-label="Searchable table with many columns and rows" selectionMode="multiple" width={700} height={500}>
+      <TableView aria-label="Searchable table with many columns and rows" selectionMode="multiple" width={700} height={500}>
         <TableHeader columns={manyColumns}>
           {column =>
             <Column minWidth={100}>{column.name}</Column>
@@ -57,7 +57,7 @@ function SearchExample() {
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     </div>
   );
 }
