@@ -13,14 +13,12 @@
 import {ProgressCircle} from '../';
 import React from 'react';
 import {render} from '@testing-library/react';
-import V2ProgressCircle from '@react/react-spectrum/Wait';
 
 
 describe('ProgressCircle', function () {
   it.each`
     Name                  | Component           | props
     ${'ProgressCircle'}   | ${ProgressCircle}   | ${{}}
-    ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{indeterminate: false}}
   `('$Name handles defaults', function ({Component, props}) {
     let {getByRole} = render(<Component aria-label="Progress" {...props}>Progress Circle</Component>);
     let progressCircle = getByRole('progressbar');
@@ -32,7 +30,6 @@ describe('ProgressCircle', function () {
   it.each`
     Name                  | Component           | props
     ${'ProgressCircle'}   | ${ProgressCircle}   | ${{isIndeterminate: true}}
-    ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{}}
   `('$Name handles indeterminate', function ({Component, props}) {
     let {getByRole} = render(<Component aria-label="Progress" {...props}>Progress Circle</Component>);
     let progressCircle = getByRole('progressbar');
@@ -44,8 +41,7 @@ describe('ProgressCircle', function () {
   it.each`
     Name                  | Component           | props
     ${'ProgressCircle'}   | ${ProgressCircle}   | ${{value: 30}}
-    ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{value: 30, indeterminate: false}}
-  `('$Name handles defaults', function ({Component, props}) {
+  `('$Name handles controlled value', function ({Component, props}) {
     let {getByRole} = render(<Component aria-label="Progress" {...props}>Progress Circle</Component>);
     let progressCircle = getByRole('progressbar');
     expect(progressCircle).toHaveAttribute('aria-valuemin', '0');
@@ -56,7 +52,6 @@ describe('ProgressCircle', function () {
   it.each`
     Name               | Component        | props
     ${'ProgressCircle'}   | ${ProgressCircle}   | ${{value: -1}}
-    ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{value: -1, indeterminate: false}}
   `('$Name clamps values to 0', function ({Component, props}) {
     let {getByRole} = render(<Component aria-label="Progress" {...props}>Progress Circle</Component>);
     let progressCircle = getByRole('progressbar');
@@ -66,7 +61,6 @@ describe('ProgressCircle', function () {
   it.each`
     Name               | Component        | props
     ${'ProgressCircle'}   | ${ProgressCircle}   | ${{value: 1000}}
-    ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{value: 1000, indeterminate: false}}
   `('$Name clamps values to 100', function ({Component, props}) {
     let {getByRole} = render(<Component aria-label="Progress" {...props}>Progress Circle</Component>);
     let progressCircle = getByRole('progressbar');
@@ -76,7 +70,6 @@ describe('ProgressCircle', function () {
   it.each`
     Name                  | Component           | props
     ${'ProgressCircle'}   | ${ProgressCircle}   | ${{UNSAFE_className: 'testClass'}}
-    ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{className: 'testClass'}}
   `('$Name supports UNSAFE_className', function ({Component, props}) {
     let {getByRole} = render(<Component aria-label="Progress" {...props}>Progress Circle</Component>);
     let progressCircle = getByRole('progressbar');
