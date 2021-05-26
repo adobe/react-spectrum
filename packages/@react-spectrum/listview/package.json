@@ -34,7 +34,7 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/focus": "^3.2.3",
-    "@react-aria/grid": "3.0.0-alpha.1",
+    "@react-aria/grid": "3.0.0-alpha.2",
     "@react-aria/i18n": "^3.2.0",
     "@react-aria/interactions": "^3.3.2",
     "@react-aria/listbox": "^3.2.3",
@@ -51,7 +51,7 @@
     "@react-spectrum/utils": "^3.5.0",
     "@react-spectrum/view": "^3.1.1",
     "@react-stately/collections": "^3.3.0",
-    "@react-stately/grid": "3.0.0-alpha.1",
+    "@react-stately/grid": "3.0.0-alpha.2",
     "@react-stately/layout": "^3.2.0",
     "@react-stately/list": "^3.2.2",
     "@react-stately/virtualizer": "^3.1.2",
