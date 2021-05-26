@@ -42,7 +42,7 @@ export function useFocusRing(props: FocusRingProps = {}): FocusRingAria {
   // trigger on isFocusVisible state change when component is focused and modality changes
   // or when the component loses focus
   useFocusVisibleListener((isFocusVisible) => {
-    setFocusVisible(isFocusVisible);
+    setFocusVisible((within ? isFocusWithin : isFocused) && isFocusVisible);
   }, [within, isFocusWithin, isFocused], {isTextInput});
 
   let {focusProps} = useFocus({

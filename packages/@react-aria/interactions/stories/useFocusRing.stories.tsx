@@ -1,4 +1,4 @@
-import {Cell, Column, Row, TableView, TableBody, TableHeader} from '@react-spectrum/table';
+import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import React, {useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {storiesOf} from '@storybook/react';
