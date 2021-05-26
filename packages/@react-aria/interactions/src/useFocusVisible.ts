@@ -51,7 +51,6 @@ const FOCUS_VISIBLE_INPUT_KEYS = {
 };
 
 function triggerChangeHandlers(modality: Modality, e: HandlerEvent) {
-  console.log('go', modality)
   for (let handler of changeHandlers) {
     handler(modality, e);
   }

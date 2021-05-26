@@ -12,7 +12,7 @@
 import {fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
-import {useFocusVisibleListener, useFocusVisible} from '../';
+import {useFocusVisible, useFocusVisibleListener} from '../';
 
 function Example() {
   let {isFocusVisible} = useFocusVisible();
