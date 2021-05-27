@@ -388,6 +388,12 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
+    'inputValue and selectedKey, allowsCustomValue (controlled)',
+    () => (
+      <AllControlledComboBox selectedKey="2" inputValue="Kangaroo" disabledKeys={['2', '6']} allowsCustomValue />
+    )
+  )
+  .add(
     'defaultInputValue and defaultSelectedKey (uncontrolled)',
     () => render({defaultInputValue: 'Item Two', defaultSelectedKey: 'two', disabledKeys: ['two']})
   )
@@ -708,10 +714,10 @@ function AllControlledComboBox(props) {
   });
 
   let onSelectionChange = (key: React.Key) => {
-    setFieldState({
-      inputValue: list.getItem(key)?.value.name ?? '',
+    setFieldState(prevState => ({
+      inputValue: list.getItem(key)?.value.name ?? (props.allowsCustomValue ? prevState.inputValue : ''),
       selectedKey: key
-    });
+    }));
   };
 
   let onInputChange = (value: string) => {
@@ -748,7 +754,7 @@ function AllControlledComboBox(props) {
           <Text>Clear key</Text>
         </Button>
       </ButtonGroup>
-      <ComboBox disabledKeys={props.disabledKeys} selectedKey={fieldState.selectedKey} inputValue={fieldState.inputValue} defaultItems={list.items} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')}>
+      <ComboBox allowsCustomValue={props.allowsCustomValue} disabledKeys={props.disabledKeys} selectedKey={fieldState.selectedKey} inputValue={fieldState.inputValue} defaultItems={list.items} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')}>
         {item => (
           <Section items={item.children} title={item.value.name}>
             {item => <Item>{item.value.name}</Item>}

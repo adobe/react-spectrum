@@ -2815,7 +2815,7 @@ describe('TableView', function () {
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
           </TableHeader>
-          <TableBody isLoading>
+          <TableBody loadingState="loading">
             {[]}
           </TableBody>
         </TableView>
@@ -2849,7 +2849,7 @@ describe('TableView', function () {
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
           </TableHeader>
-          <TableBody isLoading>
+          <TableBody loadingState="loadingMore">
             <Row>
               <Cell>Foo 1</Cell>
               <Cell>Bar 1</Cell>
@@ -2881,6 +2881,30 @@ describe('TableView', function () {
       rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(3);
       expect(spinner).not.toBeInTheDocument();
+    });
+
+    it('should not display a spinner when filtering', function () {
+      let tree = render(
+        <TableView aria-label="Table">
+          <TableHeader>
+            <Column key="foo">Foo</Column>
+            <Column key="bar">Bar</Column>
+          </TableHeader>
+          <TableBody loadingState="filtering">
+            <Row>
+              <Cell>Foo 1</Cell>
+              <Cell>Bar 1</Cell>
+            </Row>
+            <Row>
+              <Cell>Foo 2</Cell>
+              <Cell>Bar 2</Cell>
+            </Row>
+          </TableBody>
+        </TableView>
+      );
+
+      let table = tree.getByRole('grid');
+      expect(within(table).queryByRole('progressbar')).toBeNull();
     });
 
     it('should fire onLoadMore when scrolling near the bottom', function () {
@@ -3422,7 +3446,7 @@ describe('TableView', function () {
         // Without ListLayout fix, throws here with "TypeError: Cannot set property 'estimatedSize' of undefined"
         rerender(tree, <ControlledSelection selectionMode="none" />);
         act(() => jest.runAllTimers());
-        expect(() => tree.getByRole('checkbox')).toThrow();
+        expect(tree.queryByRole('checkbox')).toBeNull();
       });
     });
 

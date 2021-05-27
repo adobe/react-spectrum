@@ -585,7 +585,7 @@ storiesOf('TableView', module)
             <Column minWidth={100}>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={[]} isLoading>
+        <TableBody items={[]} loadingState="loading">
           {item =>
             (<Row key={item.foo}>
               {key => <Cell>{item[key]}</Cell>}
@@ -604,7 +604,26 @@ storiesOf('TableView', module)
             <Column minWidth={100}>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={items} isLoading>
+        <TableBody items={items} loadingState="loadingMore">
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'filtering',
+    () => (
+      <TableView aria-label="Table filtering" width={700} height={200}>
+        <TableHeader columns={columns}>
+          {column =>
+            <Column minWidth={100}>{column.name}</Column>
+          }
+        </TableHeader>
+        <TableBody items={items} loadingState="filtering">
           {item =>
             (<Row key={item.foo}>
               {key => <Cell>{item[key]}</Cell>}
@@ -809,7 +828,7 @@ function AsyncLoadingExample() {
           <Column key="author" width={200} allowsSorting>Author</Column>
           <Column key="num_comments" width={100} allowsSorting>Comments</Column>
         </TableHeader>
-        <TableBody items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
+        <TableBody items={list.items} loadingState={list.loadingState} onLoadMore={list.loadMore}>
           {item =>
             (<Row key={item.data.id}>
               {key =>
@@ -923,7 +942,7 @@ function ProjectListTable() {
           </TableHeader>
           <TableBody
             items={filteredItems}
-            isLoading={list.isLoading}>
+            loadingState={list.loadingState}>
             {(item) => (
               <Row key={item.id}>{(key) => <Cell>{item[key]}</Cell>}</Row>
             )}
@@ -1005,7 +1024,7 @@ function AsyncServerFilterTable(props) {
         </TableHeader>
         <TableBody
           items={list.items}
-          isLoading={list.isLoading}
+          loadingState={list.loadingState}
           onLoadMore={list.loadMore}>
           {(item) => (
             <Row key={item.name}>{(key) => <Cell>{item[key]}</Cell>}</Row>
