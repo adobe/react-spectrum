@@ -58,7 +58,8 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: Focusa
 
   let isMobile = useIsMobileDevice();
   if (isMobile) {
-    return <MobileComboBox {...props} ref={ref} />;
+    // menuTrigger=focus/manual don't apply to mobile combobox
+    return <MobileComboBox {...props} menuTrigger="input" ref={ref} />;
   } else {
     return <ComboBoxBase {...props} ref={ref} />;
   }
@@ -191,7 +192,8 @@ interface ComboBoxInputProps extends SpectrumComboBoxProps<unknown> {
   triggerProps: AriaButtonProps,
   triggerRef: RefObject<FocusableRefValue<HTMLElement>>,
   style?: React.CSSProperties,
-  className?: string
+  className?: string,
+  isOpen?: boolean
 }
 
 const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInputProps, ref: RefObject<HTMLElement>) {

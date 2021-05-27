@@ -13,7 +13,6 @@
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {AriaButtonProps} from '@react-types/button';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
-import {chain, mergeProps, useId} from '@react-aria/utils';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames, unwrapDOMRef} from '@react-spectrum/utils';
@@ -29,6 +28,7 @@ import {focusSafely} from '@react-aria/focus';
 import intlMessages from '../intl/*.json';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
+import {mergeProps, useId} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
@@ -63,6 +63,9 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     ...props,
     defaultFilter: contains,
     allowsEmptyCollection: true,
+    // Needs to be false here otherwise we double up on commitSelection/commitCustomValue calls when
+    // user taps on underlay (i.e. initial tap will call setFocused(false) -> commitSelection/commitCustomValue via onBlur,
+    // then the closing of the tray will call setFocused(false) again due to cleanup effect)
     shouldCloseOnBlur: false
   });
 
@@ -83,6 +86,8 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     }
   };
 
+  let onClose = () => state.commit();
+
   return (
     <>
       <Field
@@ -92,7 +97,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
         ref={domRef}
         includeNecessityIndicatorInAccessibilityName>
         <ComboBoxButton
-          {...mergeProps(triggerProps, fieldProps)}
+          {...mergeProps(triggerProps, fieldProps, {autoFocus: props.autoFocus})}
           ref={buttonRef}
           isQuiet={isQuiet}
           isDisabled={isDisabled}
@@ -102,9 +107,10 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           {state.inputValue || props.placeholder || ''}
         </ComboBoxButton>
       </Field>
-      <Tray isOpen={state.isOpen} onClose={chain(state.commit, state.close)} isFixedHeight isNonModal {...overlayProps}>
+      <Tray isOpen={state.isOpen} onClose={onClose} isFixedHeight isNonModal {...overlayProps}>
         <ComboBoxTray
           {...props}
+          onClose={onClose}
           overlayProps={overlayProps}
           state={state} />
       </Tray>
@@ -266,20 +272,21 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
 interface ComboBoxTrayProps extends SpectrumComboBoxProps<unknown> {
   state: ComboBoxState<unknown>,
   overlayProps: HTMLAttributes<HTMLElement>,
-  loadingIndicator?: ReactElement
+  loadingIndicator?: ReactElement,
+  onClose: () => void
 }
 
 function ComboBoxTray(props: ComboBoxTrayProps) {
   let {
     // completionMode = 'suggest',
-    menuTrigger = 'input',
     state,
     isDisabled,
     validationState,
     label,
     overlayProps,
     loadingState,
-    onLoadMore
+    onLoadMore,
+    onClose
   } = props;
 
   let timeout = useRef(null);
@@ -299,14 +306,22 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
       buttonRef: unwrapDOMRef(buttonRef),
       popoverRef: popoverRef,
       listBoxRef,
-      inputRef,
-      menuTrigger
+      inputRef
     },
     state
   );
 
   React.useEffect(() => {
     focusSafely(inputRef.current);
+
+    // When the tray unmounts, set state.isFocused (i.e. the tray input's focus tracker) to false.
+    // This is to prevent state.isFocused from being set to true when the tray closes via tapping on the underlay
+    // (FocusScope attempts to restore focus to the tray input when tapping outside the tray due to "contain")
+    // Have to do this manually since React doesn't call onBlur when a component is unmounted: https://github.com/facebook/react/issues/12363
+    return () => {
+      state.setFocused(false);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   let {dialogProps} = useDialog({
@@ -402,6 +417,15 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     lastInputValue.current = inputValue;
   }, [loadingState, inputValue, showLoading]);
 
+  let onKeyDown = (e) => {
+    // Close virtual keyboard if user hits Enter w/o any focused options
+    if (e.key === 'Enter' && state.selectionManager.focusedKey == null) {
+      popoverRef.current.focus();
+    } else {
+      inputProps.onKeyDown(e);
+    }
+  };
+
   return (
     <FocusScope restoreFocus contain>
       <div
@@ -413,11 +437,11 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
             'tray-dialog'
           )
         }>
-        <DismissButton onDismiss={chain(state.commit, state.close)} />
+        <DismissButton onDismiss={onClose} />
         <TextFieldBase
           label={label}
           labelProps={labelProps}
-          inputProps={inputProps}
+          inputProps={{...inputProps, onKeyDown}}
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={showLoading && loadingState === 'filtering'}
@@ -482,7 +506,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           onScroll={onScroll}
           onLoadMore={onLoadMore}
           isLoading={loadingState === 'loading' || loadingState === 'loadingMore'} />
-        <DismissButton onDismiss={chain(state.commit, state.close)} />
+        <DismissButton onDismiss={onClose} />
       </div>
     </FocusScope>
   );
