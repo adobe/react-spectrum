@@ -43,7 +43,7 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
     overflowMode = 'wrap',
     onAction,
     buttonLabelBehavior,
-    moreIcon,
+    summaryIcon,
     ...otherProps
   } = props;
 
@@ -186,7 +186,7 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
         isEmphasized={isEmphasized}
         staticColor={staticColor}
         state={state}
-        moreIcon={moreIcon}
+        summaryIcon={summaryIcon}
         hideButtonText={hideButtonText}
         isOnlyItem={visibleItems === 0}
         orientation={orientation} />
@@ -343,13 +343,13 @@ interface ActionGroupMenuProps<T> extends AriaLabelingProps {
   staticColor?: 'white' | 'black',
   items: Node<T>[],
   hideButtonText?: boolean,
-  moreIcon?: ReactNode,
+  summaryIcon?: ReactNode,
   isOnlyItem?: boolean,
   orientation?: 'horizontal' | 'vertical',
   onAction: (key: Key) => void
 }
 
-function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items, onAction, moreIcon, hideButtonText, isOnlyItem, orientation, ...otherProps}: ActionGroupMenuProps<T>) {
+function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items, onAction, summaryIcon, hideButtonText, isOnlyItem, orientation, ...otherProps}: ActionGroupMenuProps<T>) {
   // Random key that won't conflict with any real items in the collection.
   let key = useId();
   let {buttonProps} = useActionGroupItem({key}, state);
@@ -366,25 +366,30 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
   let textId = useId();
   let id = useId();
 
-  let iconOnly = hideButtonText && moreIcon;
+  // Summary icon only applies when selection is enabled.
+  if (state.selectionManager.selectionMode === 'none') {
+    summaryIcon = null;
+  }
+
+  let iconOnly = hideButtonText && summaryIcon;
 
   // If there is a selection, show the selected state on the menu button. (??)
   let isSelected = state.selectionManager.selectionMode !== 'none' && !state.selectionManager.isEmpty;
 
   // If single selection and empty selection is not allowed, swap the contents of the button to the selected item (like a Picker).
-  if (!moreIcon && state.selectionManager.selectionMode === 'single' && state.selectionManager.disallowEmptySelection) {
+  if (!summaryIcon && state.selectionManager.selectionMode === 'single' && state.selectionManager.disallowEmptySelection) {
     let selectedItem = state.collection.getItem(state.selectionManager.firstSelectedKey);
     if (selectedItem) {
-      moreIcon = selectedItem.rendered;
+      summaryIcon = selectedItem.rendered;
       ariaLabelledby = `${ariaLabelledby ?? id} ${textId}`;
     }
   }
 
-  // If there's a custom moreIcon, also add a chevron.
-  if (moreIcon) {
-    moreIcon = (
+  if (summaryIcon) {
+    // If there's a custom summary icon, also add a chevron.
+    summaryIcon = (
       <>
-        {moreIcon}
+        {summaryIcon}
         <ChevronDownMedium />
       </>
     );
@@ -426,7 +431,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
             }
             isDisabled={isDisabled}
             staticColor={staticColor}>
-            {moreIcon || <More />}
+            {summaryIcon || <More />}
           </ActionButton>
         </PressResponder>
       </SlotProvider>

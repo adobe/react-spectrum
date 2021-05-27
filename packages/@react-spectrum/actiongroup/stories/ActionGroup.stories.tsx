@@ -308,10 +308,10 @@ storiesOf('ActionGroup', module)
     )
   )
   .add(
-    'overflowMode: collapse, moreIcon',
+    'overflowMode: collapse, summaryIcon',
     () => (
       <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', display: 'flex', gap: 10, width: 300, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-        {renderCollapsibleFormatting({density: 'compact', overflowMode: 'collapse', moreIcon: <TextStyle />, isEmphasized: true})}
+        {renderCollapsibleFormatting({density: 'compact', overflowMode: 'collapse', summaryIcon: <TextStyle />, isEmphasized: true})}
         {renderCollapsibleAlignment({density: 'compact', overflowMode: 'collapse', isEmphasized: true})}
       </div>
     )

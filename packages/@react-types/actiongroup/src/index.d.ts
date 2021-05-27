@@ -69,6 +69,6 @@ export interface SpectrumActionGroupProps<T> extends AriaActionGroupProps<T>, St
    * @default 'show'
    */
   buttonLabelBehavior?: 'show' | 'collapse' | 'hide',
-  /** Allows overriding the icon displayed in the dropdown menu button when the ActionGroup is collapsed. */
-  moreIcon?: ReactElement
+  /** The icon displayed in the dropdown menu button when a selectable ActionGroup is collapsed. */
+  summaryIcon?: ReactElement
 }
