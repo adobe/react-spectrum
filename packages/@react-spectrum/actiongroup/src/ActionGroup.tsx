@@ -14,7 +14,6 @@ import {ActionButton} from '@react-spectrum/button';
 import {AriaLabelingProps, DOMProps, DOMRef, Node, StyleProps} from '@react-types/shared';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import ChevronDownSmall from '@spectrum-icons/ui/ChevronDownSmall';
 import {classNames, SlotProvider, useDOMRef, useStyleProps, useValueEffect} from '@react-spectrum/utils';
 import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
@@ -67,6 +66,11 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
   let selectionMode = state.selectionManager.selectionMode;
   let updateOverflow = useCallback(() => {
     if (overflowMode === 'wrap') {
+      return;
+    }
+
+    if (orientation === 'vertical' && selectionMode !== 'none') {
+      // Collapsing vertical action groups with selection is currently unsupported by Spectrum.
       return;
     }
 
@@ -378,21 +382,12 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
 
   // If there's a custom moreIcon, also add a chevron.
   if (moreIcon) {
-    if (orientation === 'horizontal') {
-      moreIcon = (
-        <>
-          {moreIcon}
-          <ChevronDownMedium />
-        </>
-      );
-    } else {
-      moreIcon = (
-        <>
-          <ChevronDownSmall UNSAFE_className={classNames(buttonStyles, 'spectrum-ActionButton-hold')} />
-          {moreIcon}
-        </>
-      );
-    }
+    moreIcon = (
+      <>
+        {moreIcon}
+        <ChevronDownMedium />
+      </>
+    );
   }
 
   return (

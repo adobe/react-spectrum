@@ -308,15 +308,6 @@ storiesOf('ActionGroup', module)
     )
   )
   .add(
-    'overflowMode: collapse, selection',
-    () => (
-      <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', display: 'flex', gap: 10, width: 300, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-        {renderCollapsibleFormatting({density: 'compact', overflowMode: 'collapse', isEmphasized: true})}
-        {renderCollapsibleAlignment({density: 'compact', overflowMode: 'collapse', isEmphasized: true})}
-      </div>
-    )
-  )
-  .add(
     'overflowMode: collapse, moreIcon',
     () => (
       <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', display: 'flex', gap: 10, width: 300, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
@@ -336,9 +327,12 @@ storiesOf('ActionGroup', module)
   .add(
     'orientation: vertical, overflowMode: collapse, selection',
     () => (
-      <div style={{padding: '10px', resize: 'vertical', overflow: 'auto', width: 32, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-        {renderTools({orientation: 'vertical', buttonLabelBehavior: 'hide', maxHeight: '100%'})}
-      </div>
+      <Flex direction="column">
+        <p>Note: this is currently unsupported by Spectrum. Container should scroll.</p>
+        <div style={{padding: '10px', resize: 'vertical', overflow: 'auto', width: 32, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+          {renderTools({orientation: 'vertical', buttonLabelBehavior: 'hide', maxHeight: '100%'})}
+        </div>
+      </Flex>
     )
   );
 
