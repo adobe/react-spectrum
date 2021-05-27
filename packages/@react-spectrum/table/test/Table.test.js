@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
 import {ActionButton} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
+import {announce} from '@react-aria/live-announcer';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {CRUDExample} from '../stories/CRUDExample';
 import {getFocusableTreeWalker} from '@react-aria/focus';
@@ -2151,6 +2153,90 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(4, 20), true);
       });
     });
+
+    describe('annoucements', function () {
+      it('should announce the selected or deselected row', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let row = tree.getAllByRole('row')[1];
+        triggerPress(row);
+        expect(announce).toHaveBeenLastCalledWith('Foo 1 selected.');
+
+        triggerPress(row);
+        expect(announce).toHaveBeenLastCalledWith('Foo 1 not selected.');
+      });
+
+      it('should announce the row and number of selected items when there are more than one', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let rows = tree.getAllByRole('row');
+        triggerPress(rows[1]);
+        triggerPress(rows[2]);
+
+        expect(announce).toHaveBeenLastCalledWith('Foo 2 selected. 2 items selected.');
+
+        triggerPress(rows[2]);
+        expect(announce).toHaveBeenLastCalledWith('Foo 2 not selected. 1 item selected.');
+      });
+
+      it('should announce only the number of selected items when multiple are selected at once', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let rows = tree.getAllByRole('row');
+        triggerPress(rows[1]);
+        triggerPress(rows[3], {shiftKey: true});
+
+        expect(announce).toHaveBeenLastCalledWith('3 items selected.');
+
+        triggerPress(rows[1], {shiftKey: true});
+        expect(announce).toHaveBeenLastCalledWith('1 item selected.');
+      });
+
+      it('should announce select all', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        userEvent.click(tree.getByLabelText('Select All'));
+        expect(announce).toHaveBeenLastCalledWith('All items selected.');
+
+        userEvent.click(tree.getByLabelText('Select All'));
+        expect(announce).toHaveBeenLastCalledWith('No items selected.');
+      });
+
+      it('should announce all row header columns', function () {
+        let tree = render(
+          <TableView aria-label="Table" selectionMode="multiple">
+            <TableHeader>
+              <Column isRowHeader>First Name</Column>
+              <Column isRowHeader>Last Name</Column>
+              <Column>Birthday</Column>
+            </TableHeader>
+            <TableBody>
+              <Row>
+                <Cell>Sam</Cell>
+                <Cell>Smith</Cell>
+                <Cell>May 3</Cell>
+              </Row>
+              <Row>
+                <Cell>Julia</Cell>
+                <Cell>Jones</Cell>
+                <Cell>February 10</Cell>
+              </Row>
+            </TableBody>
+          </TableView>
+        );
+
+        let row = tree.getAllByRole('row')[1];
+        triggerPress(row);
+        expect(announce).toHaveBeenLastCalledWith('Sam Smith selected.');
+
+        triggerPress(row);
+        expect(announce).toHaveBeenLastCalledWith('Sam Smith not selected.');
+      });
+    });
   });
 
   describe('single selection', function () {
@@ -2729,7 +2815,7 @@ describe('TableView', function () {
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
           </TableHeader>
-          <TableBody isLoading>
+          <TableBody loadingState="loading">
             {[]}
           </TableBody>
         </TableView>
@@ -2763,7 +2849,7 @@ describe('TableView', function () {
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
           </TableHeader>
-          <TableBody isLoading>
+          <TableBody loadingState="loadingMore">
             <Row>
               <Cell>Foo 1</Cell>
               <Cell>Bar 1</Cell>
@@ -2795,6 +2881,30 @@ describe('TableView', function () {
       rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(3);
       expect(spinner).not.toBeInTheDocument();
+    });
+
+    it('should not display a spinner when filtering', function () {
+      let tree = render(
+        <TableView aria-label="Table">
+          <TableHeader>
+            <Column key="foo">Foo</Column>
+            <Column key="bar">Bar</Column>
+          </TableHeader>
+          <TableBody loadingState="filtering">
+            <Row>
+              <Cell>Foo 1</Cell>
+              <Cell>Bar 1</Cell>
+            </Row>
+            <Row>
+              <Cell>Foo 2</Cell>
+              <Cell>Bar 2</Cell>
+            </Row>
+          </TableBody>
+        </TableView>
+      );
+
+      let table = tree.getByRole('grid');
+      expect(within(table).queryByRole('progressbar')).toBeNull();
     });
 
     it('should fire onLoadMore when scrolling near the bottom', function () {
@@ -3305,6 +3415,38 @@ describe('TableView', function () {
         }
 
         scrollHeight.mockRestore();
+      });
+
+      // To test https://github.com/adobe/react-spectrum/issues/1885
+      it('should not throw error if selection mode changes with overflowMode="wrap" and selection was controlled', function () {
+        function ControlledSelection(props) {
+          let [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
+          return (
+            <TableView aria-label="Table" overflowMode="wrap" selectionMode={props.selectionMode} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+              <TableHeader columns={columns}>
+                {column => <Column>{column.name}</Column>}
+              </TableHeader>
+              <TableBody items={items}>
+                {item =>
+                  (<Row key={item.foo}>
+                    {key => <Cell>{item[key]}</Cell>}
+                  </Row>)
+                }
+              </TableBody>
+            </TableView>
+          );
+        }
+
+        let tree = render(<ControlledSelection selectionMode="multiple" />);
+        let row = tree.getAllByRole('row')[2];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        userEvent.click(within(row).getByRole('checkbox'));
+        expect(row).toHaveAttribute('aria-selected', 'true');
+
+        // Without ListLayout fix, throws here with "TypeError: Cannot set property 'estimatedSize' of undefined"
+        rerender(tree, <ControlledSelection selectionMode="none" />);
+        act(() => jest.runAllTimers());
+        expect(tree.queryByRole('checkbox')).toBeNull();
       });
     });
 

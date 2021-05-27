@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, FocusStrategy, Node, PressEvent, SelectionMode} from '@react-types/shared';
+import {Collection, FocusStrategy, Selection as ISelection, Node, PressEvent, SelectionMode} from '@react-types/shared';
 import {Key} from 'react';
 import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
@@ -89,6 +89,14 @@ export class SelectionManager implements MultipleSelectionManager {
     return this.state.selectedKeys === 'all'
       ? new Set(this.getSelectAllKeys())
       : this.state.selectedKeys;
+  }
+
+  /**
+   * The raw selection value for the collection.
+   * Either 'all' for select all, or a set of keys.
+   */
+  get rawSelection(): ISelection {
+    return this.state.selectedKeys;
   }
 
   /**
