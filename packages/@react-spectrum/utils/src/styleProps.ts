@@ -233,12 +233,12 @@ export function useStyleProps<T extends StyleProps>(
     UNSAFE_style,
     ...otherProps
   } = props;
-  let {
-    matchedBreakpoints = ['base']
-  } = options;
   let breakpointProvider = useBreakpoint();
   let {direction} = useLocale();
-  let styles = convertStyleProps(props, handlers, direction, breakpointProvider?.matchedBreakpoints || matchedBreakpoints);
+  let {
+    matchedBreakpoints = breakpointProvider?.matchedBreakpoints || ['base']
+  } = options;
+  let styles = convertStyleProps(props, handlers, direction, matchedBreakpoints);
   let style = {...UNSAFE_style, ...styles};
 
   // @ts-ignore
@@ -264,7 +264,7 @@ export function useStyleProps<T extends StyleProps>(
     className: UNSAFE_className
   };
 
-  if (props.isHidden) {
+  if (getResponsiveProp(props.isHidden, matchedBreakpoints)) {
     styleProps.hidden = true;
   }
 
@@ -281,7 +281,7 @@ export function getResponsiveProp<T>(prop: Responsive<T>, matchedBreakpoints: Br
   if (prop && typeof prop === 'object' && !Array.isArray(prop)) {
     for (let i = 0; i < matchedBreakpoints.length; i++) {
       let breakpoint = matchedBreakpoints[i];
-      if (prop[breakpoint]) {
+      if (prop[breakpoint] != null) {
         return prop[breakpoint];
       }
     }
