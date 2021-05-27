@@ -70,7 +70,7 @@ In this scenario, the Spectrum-CSS project adds two files to their distribution,
 ###### Pros:
   - Source of truth is Spectrum-CSS
   - We no longer provide our own separate copy bundle of the CSS
-  - We are likely not blocked on several component we thought we'd have to maintain forever, Spectrum-CSS has already taken on grid in Dialog
+  - We are likely not blocked on several components we thought we'd have to maintain forever, Spectrum-CSS has already taken on grid in Dialog
   - Should Spectrum-CSS inadvertently break during a release, users of React Spectrum will be able to pin to earlier versions of Spectrum-CSS
   - Fixing CSS for the most part should still have the same turn around because they can test and release independent of us and our range dependency should still allow users to pick up the fix
 
@@ -81,6 +81,7 @@ In this scenario, the Spectrum-CSS project adds two files to their distribution,
   - Slower cycle to add new features that require CSS
   - Our priorities may not match Spectrum-CSS' priorities
   - Any additional post-processing steps we want to do would need to be contributed to Spectrum-CSS, and some we may not be able to run at all, for instance, Parcel can remove unused classes. They'd be hard for a human to spot.
+  - We have an extremely high quality bar, so releasing something where we're still waiting on the CSS updates as well is not something we want to do
   
 ##### RSP maintains css modules packages
 Generate from node_modules in React Spectrum and publish as separate packages.
@@ -121,16 +122,23 @@ Everything stays the same but we publish our CSS
 
 ##### Spectrum-CSS becomes a submodule in React Spectrum
 
-In this scenario, we'd likely run the Spectrum-CSS build as they provide it, we'd additionally run our own post processing steps to create the packages with CSS Modules.
+In this scenario, we'd likely run the Spectrum-CSS build as they provide it, we'd additionally run our own post processing steps to create the packages with CSS Modules. 
 
 ###### Pros:
-  - No need to do local linking when trying to develop a new feature requiring CSS updates
-  - Coordinated releases
+  - No need to do local linking when trying to develop a new feature requiring CSS updates, it's taken care of by workspaces and lerna
   - Shared tooling
 
 ###### Cons:
-  - Sub modules notoriously difficult to manage
+  - Sub modules notoriously difficult to manage, contributors would need to learn some new workflows
   - Would likely need tooling in our repo specific to Spectrum-CSS
+  - Would still be held up by Spectrum-CSS release cycles potentially
+    - This could potentially be mitigated by us releasing the css module version of Spectrum-CSS, however, if we have multiple PR's open against Spectrum-CSS before we try to release, we'd need to merge all of them together which will make Spectrum-CSS task of reviewing and merging them more difficult. This is a common scenario in release testing.
+
+##### Spectrum-CSS submodule alternatives
+
+Looked at some alternatives to sub-modules, https://dev.to/giteden/4-git-submodules-alternatives-you-should-know-1hga some require subscriptions or would need an RFC for moving to them as their workflows and setups are different than ours. Some require moving to BitBucket.
+
+Each of these seems to have mostly the same pros and cons as submodules regardless of the technology used.
 
 ##### React Spectrum consumes DSS directly
 
@@ -139,7 +147,7 @@ In this scenario, we stop using Spectrum-CSS and maintain our own CSS packages u
 ###### Pros:
   - We can make use of all the nice things that DSS provides while also being able to quickly iterate on changes we need to make
   - Releases won't be held up by waiting for Spectrum-CSS, and hold ups from DSS should theoretically be less
-  - We can make changes to structure and it wouldn't be breaking for Spectrum-CSS or DSS
+  - We can make changes to structure, and it wouldn't be breaking for Spectrum-CSS or DSS
 
 ###### Cons:
   - Outstanding question, will DSS cover layout (grid/flex)
