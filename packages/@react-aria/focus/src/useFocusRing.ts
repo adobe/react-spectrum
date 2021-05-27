@@ -1,5 +1,6 @@
 import {HTMLAttributes, useState} from 'react';
 import {isFocusVisible, useFocus, useFocusVisibleListener, useFocusWithin} from '@react-aria/interactions';
+import {useRef} from 'react';
 
 interface FocusRingProps {
   /**
@@ -34,29 +35,41 @@ interface FocusRingAria {
  * not with a mouse, touch, or other input methods.
  */
 export function useFocusRing(props: FocusRingProps = {}): FocusRingAria {
-  let {autoFocus, isTextInput, within} = props;
-  let [isFocused, setFocused] = useState(false);
-  let [isFocusWithin, setFocusWithin] = useState(false);
-  let [isFocusVisibleState, setFocusVisible] = useState(autoFocus || isFocusVisible());
+  let {
+    autoFocus = false,
+    isTextInput,
+    within
+  } = props;
+  let state = useRef({
+    isFocused: autoFocus,
+    isFocusVisible: isFocusVisible()
+  }).current;
+  let [isFocusVisibleState, setFocusVisible] = useState(() => state.isFocused && state.isFocusVisible);
 
-  // trigger on isFocusVisible state change when component is focused and modality changes
-  // or when the component loses focus
+  let updateState = () => setFocusVisible(state.isFocused && state.isFocusVisible);
+  let onFocusChange = isFocused => {
+    state.isFocused = isFocused;
+    updateState();
+  };
+
   useFocusVisibleListener((isFocusVisible) => {
-    setFocusVisible((within ? isFocusWithin : isFocused) && isFocusVisible);
-  }, [within, isFocusWithin, isFocused], {isTextInput});
+    state.isFocusVisible = isFocusVisible;
+    updateState();
+  }, [], {isTextInput});
 
   let {focusProps} = useFocus({
     isDisabled: within,
-    onFocusChange: setFocused
+    onFocusChange
   });
+
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !within,
-    onFocusWithinChange: setFocusWithin
+    onFocusWithinChange: onFocusChange
   });
 
   return {
-    isFocused: within ? isFocusWithin : isFocused,
-    isFocusVisible: (within ? isFocusWithin : isFocused) && isFocusVisibleState,
+    isFocused: state.isFocused,
+    isFocusVisible: state.isFocused && isFocusVisibleState,
     focusProps: within ? focusWithinProps : focusProps
   };
 }
