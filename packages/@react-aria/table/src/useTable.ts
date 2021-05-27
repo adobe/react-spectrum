@@ -51,7 +51,35 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>): GridAri
   let {gridProps} = useGrid({
     ...props,
     id,
-    keyboardDelegate: delegate
+    keyboardDelegate: delegate,
+    getRowText(key) {
+      let added = state.collection.getItem(key);
+
+      // If the row has a textValue, use that.
+      if (added.textValue != null) {
+        return added.textValue;
+      }
+
+      // Otherwise combine the text of each of the row header columns.
+      let rowHeaderColumnKeys = state.collection.rowHeaderColumnKeys;
+      if (rowHeaderColumnKeys) {
+        let text = [];
+        for (let cell of added.childNodes) {
+          let column = state.collection.columns[cell.index];
+          if (rowHeaderColumnKeys.has(column.key) && cell.textValue) {
+            text.push(cell.textValue);
+          }
+
+          if (text.length === rowHeaderColumnKeys.size) {
+            break;
+          }
+        }
+
+        return text.join(' ');
+      }
+
+      return '';
+    }
   }, state);
 
   // Override to include header rows
