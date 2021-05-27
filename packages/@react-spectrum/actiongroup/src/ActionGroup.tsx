@@ -141,8 +141,8 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
         isMeasuring
       };
 
-      // // If the number of items is less than the number of children,
-      // // then update again to ensure that the menu fits.
+      // If the number of items is less than the number of children,
+      // then update again to ensure that the menu fits.
       if (isMeasuring) {
         yield {
           visibleItems: computeVisibleItems(newVisibleItems),
