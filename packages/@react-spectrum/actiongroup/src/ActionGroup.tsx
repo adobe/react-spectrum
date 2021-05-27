@@ -373,7 +373,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
 
   let iconOnly = hideButtonText && summaryIcon;
 
-  // If there is a selection, show the selected state on the menu button. (??)
+  // If there is a selection, show the selected state on the menu button.
   let isSelected = state.selectionManager.selectionMode !== 'none' && !state.selectionManager.isEmpty;
 
   // If single selection and empty selection is not allowed, swap the contents of the button to the selected item (like a Picker).
