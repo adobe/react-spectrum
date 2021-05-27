@@ -739,7 +739,7 @@ describe('ActionGroup', function () {
         </Provider>
       );
 
-      expect(() => tree.getByRole('toolbar')).toThrow();
+      expect(tree.queryByRole('toolbar')).toBeNull();
       let button = tree.getByRole('button');
       expect(button).toHaveAttribute('aria-label', 'Test');
       expect(button).toHaveAttribute('aria-haspopup', 'true');
@@ -771,7 +771,7 @@ describe('ActionGroup', function () {
         </Provider>
       );
 
-      expect(() => tree.getByRole('radiogroup')).toThrow();
+      expect(tree.queryByRole('radiogroup')).toBeNull();
 
       let button = tree.getByRole('button');
       expect(button).toHaveAttribute('aria-label', '…');
@@ -813,7 +813,7 @@ describe('ActionGroup', function () {
         </Provider>
       );
 
-      expect(() => tree.getByRole('radiogroup')).toThrow();
+      expect(tree.queryByRole('radiogroup')).toBeNull();
 
       let button = tree.getByRole('button');
       expect(button).toHaveAttribute('aria-label', '…');
