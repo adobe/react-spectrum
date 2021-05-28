@@ -55,7 +55,7 @@ describe('DialogTrigger', function () {
     window.requestAnimationFrame.mockRestore();
   });
 
-  it.only('should trigger a modal by default', function () {
+  it('should trigger a modal by default', function () {
     let {queryByRole, getByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger>

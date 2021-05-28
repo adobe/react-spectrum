@@ -73,7 +73,6 @@ export function useInteractOutside(props: InteractOutsideProps) {
         if (isDisabled) {
           return;
         }
-        e.stopPropagation();
         if (state.ignoreEmulatedMouseEvents) {
           state.ignoreEmulatedMouseEvents = false;
         } else if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
