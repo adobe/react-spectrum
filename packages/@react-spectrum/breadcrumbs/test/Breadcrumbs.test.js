@@ -315,6 +315,9 @@ describe('Breadcrumbs', function () {
     // breadcrumb root item
     expect(item1[0]).toHaveAttribute('role', 'link');
     triggerPress(item1[0]);
+    // first press closes the menu, second press
+    act(() => {jest.runAllTimers();});
+    triggerPress(item1[0]);
     expect(onAction).toHaveBeenCalledWith('Folder 1');
 
     // menu item
