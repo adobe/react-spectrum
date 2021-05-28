@@ -39,6 +39,7 @@ storiesOf('useMenu', module)
           <Item key="cut">Cut</Item>
           <Item key="paste">Paste</Item>
         </MenuButton>
+        <input />
       </div>
     )
   );

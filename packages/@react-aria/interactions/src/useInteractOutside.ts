@@ -42,6 +42,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
         return;
       }
       if (isValidEvent(e, ref) && onInteractOutside) {
+        e.preventDefault();
         e.stopPropagation();
         state.isPointerDown = true;
       }

@@ -123,4 +123,15 @@ describe('useOverlay', function () {
     fireEvent.keyDown(el, {key: 'Escape'});
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  describe('firefox bug', () => {
+    installPointerEvent();
+    it('should prevent default on pointer down on the underlay', function () {
+      let underlayRef = React.createRef();
+      render(<Example isOpen isDismissable underlayProps={{ref: underlayRef}} />);
+      let isPrevented = fireEvent.pointerDown(underlayRef.current, {button: 0, pointerId: 1});
+      fireEvent.pointerUp(document.body);
+      expect(isPrevented).toBeFalsy(); // meaning the event had preventDefault called
+    });
+  });
 });
