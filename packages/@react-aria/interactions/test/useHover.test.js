@@ -204,6 +204,56 @@ describe('useHover', function () {
       fireEvent(el, pointerEvent('pointerout', {pointerType: 'touch'}));
       expect(el.textContent).toBe('test');
     });
+
+    it('should end hover when disabled', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onHoverStart={addEvent}
+          onHoverEnd={addEvent}
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+      );
+      let el = res.getByText('test');
+
+      fireEvent(el, pointerEvent('pointerover', {pointerType: 'mouse'}));
+      expect(el.textContent).toBe('test-hovered');
+      expect(events).toEqual([
+        {
+          type: 'hoverstart',
+          target: el,
+          pointerType: 'mouse'
+        },
+        {
+          type: 'hoverchange',
+          isHovering: true
+        }
+      ]);
+      events.pop();
+      events.pop();
+
+      res.rerender(
+        <Example
+          isDisabled
+          onHoverStart={addEvent}
+          onHoverEnd={addEvent}
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+      );
+      el = res.getByText('test');
+      expect(el.textContent).toBe('test');
+      expect(events).toEqual([
+        {
+          type: 'hoverend',
+          target: el,
+          pointerType: 'mouse'
+        },
+        {
+          type: 'hoverchange',
+          isHovering: false
+        }
+      ]);
+      fireEvent(el, pointerEvent('pointerout', {pointerType: 'mouse'}));
+    });
   });
 
   describe('mouse events', function () {
@@ -323,6 +373,56 @@ describe('useHover', function () {
           isHovering: false
         }
       ]);
+    });
+
+    it('should end hover when disabled', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onHoverStart={addEvent}
+          onHoverEnd={addEvent}
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+      );
+      let el = res.getByText('test');
+
+      fireEvent.mouseEnter(el);
+      expect(el.textContent).toBe('test-hovered');
+      expect(events).toEqual([
+        {
+          type: 'hoverstart',
+          target: el,
+          pointerType: 'mouse'
+        },
+        {
+          type: 'hoverchange',
+          isHovering: true
+        }
+      ]);
+      events.pop();
+      events.pop();
+
+      res.rerender(
+        <Example
+          isDisabled
+          onHoverStart={addEvent}
+          onHoverEnd={addEvent}
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+      );
+      el = res.getByText('test');
+      expect(el.textContent).toBe('test');
+      expect(events).toEqual([
+        {
+          type: 'hoverend',
+          target: el,
+          pointerType: 'mouse'
+        },
+        {
+          type: 'hoverchange',
+          isHovering: false
+        }
+      ]);
+      fireEvent.mouseLeave(el);
     });
   });
 

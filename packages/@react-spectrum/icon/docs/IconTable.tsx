@@ -83,7 +83,7 @@ export default function IconTable(props: {iconPackage: string}) {
           <Column key="name">Name</Column>
           <Column key="action" width={120} align="end">Copy Import</Column>
         </TableHeader>
-        <TableBody items={tableState.items} isLoading={tableState.loading}>
+        <TableBody items={tableState.items}>
           {item =>
             (<Row key={item.name}>
               {key => (
