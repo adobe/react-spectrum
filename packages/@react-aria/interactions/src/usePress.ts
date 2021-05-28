@@ -638,7 +638,7 @@ function getPointClientRect(point: EventPoint): Rect {
   return {
     top: point.clientY - offsetY,
     right: point.clientX + offsetX,
-    bottom: point.clientX + offsetY,
+    bottom: point.clientY + offsetY,
     left: point.clientX - offsetX
   };
 }
