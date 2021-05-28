@@ -22,6 +22,7 @@ import {useEffect, useState} from 'react';
 type Modality = 'keyboard' | 'pointer' | 'virtual';
 type HandlerEvent = PointerEvent | MouseEvent | KeyboardEvent | FocusEvent;
 type Handler = (modality: Modality, e: HandlerEvent) => void;
+type FocusVisibleHandler = (isFocusVisible: boolean) => void;
 interface FocusVisibleProps {
   /** Whether the element is a text input. */
   isTextInput?: boolean,
@@ -216,29 +217,40 @@ export function useInteractionModality(): Modality {
 }
 
 /**
+ * If this is attached to text input component, return if the event is a focus event (Tab/Escape keys pressed) so that
+ * focus visible style can be properly set.
+ */
+function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: HandlerEvent) {
+  return !(isTextInput && modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]);
+}
+
+/**
  * Manages focus visible state for the page, and subscribes individual components for updates.
  */
 export function useFocusVisible(props: FocusVisibleProps = {}): FocusVisibleResult {
-  setupGlobalFocusEvents();
-
   let {isTextInput, autoFocus} = props;
   let [isFocusVisibleState, setFocusVisible] = useState(autoFocus || isFocusVisible());
-  useEffect(() => {
-    let handler = (modality: Modality, e: HandlerEvent) => {
-      // If this is a text input component, don't update the focus visible style when
-      // typing except for when the Tab and Escape keys are pressed.
-      if (isTextInput && modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]) {
-        return;
-      }
-
-      setFocusVisible(isFocusVisible());
-    };
-
-    changeHandlers.add(handler);
-    return () => {
-      changeHandlers.delete(handler);
-    };
-  }, [isTextInput]);
+  useFocusVisibleListener((isFocusVisible) => {
+    setFocusVisible(isFocusVisible);
+  }, [isTextInput], {isTextInput});
 
   return {isFocusVisible: isFocusVisibleState};
+}
+
+/**
+ * Listens for trigger change and reports if focus is visible (i.e., modality is not pointer).
+ */
+export function useFocusVisibleListener(fn: FocusVisibleHandler, deps: ReadonlyArray<any>, opts?: {isTextInput?: boolean}): void {
+  setupGlobalFocusEvents();
+
+  useEffect(() => {
+    let handler = (modality: Modality, e: HandlerEvent) => {
+      if (!isKeyboardFocusEvent(opts?.isTextInput, modality, e)) {
+        return;
+      }
+      fn(isFocusVisible());
+    };
+    changeHandlers.add(handler);
+    return () => changeHandlers.delete(handler);
+  }, deps);
 }

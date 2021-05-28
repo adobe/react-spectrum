@@ -1,6 +1,18 @@
-import {fireEvent, render} from '@testing-library/react';
+/*
+ * Copyright 2021 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+import {act, fireEvent, render} from '@testing-library/react';
 import React from 'react';
-import {useFocusVisible} from '../';
+import {renderHook} from '@testing-library/react-hooks';
+import {useFocusVisible, useFocusVisibleListener} from '../';
 
 function Example() {
   let {isFocusVisible} = useFocusVisible();
@@ -48,5 +60,39 @@ describe('useFocusVisible', function () {
     toggleBrowserTabs();
 
     expect(el.textContent).toBe('example');
+  });
+});
+
+describe('useFocusVisibleListener', function () {
+  it('emits on modality change (non-text input)', function () {
+    let fnMock = jest.fn();
+    renderHook(() => useFocusVisibleListener(fnMock, []));
+    expect(fnMock).toHaveBeenCalledTimes(0);
+    act(() => {
+      fireEvent.keyDown(document.body, {key: 'a'});
+      fireEvent.keyUp(document.body, {key: 'a'});
+      fireEvent.keyDown(document.body, {key: 'Escape'});
+      fireEvent.keyUp(document.body, {key: 'Escape'});
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body); // does not trigger change handlers (but included for completeness)
+    });
+    expect(fnMock).toHaveBeenCalledTimes(5);
+    expect(fnMock.mock.calls).toEqual([[true], [true], [true], [true], [false]]);
+  });
+
+  it('emits on modality change (text input)', function () {
+    let fnMock = jest.fn();
+    renderHook(() => useFocusVisibleListener(fnMock, [], {isTextInput: true}));
+    expect(fnMock).toHaveBeenCalledTimes(0);
+    act(() => {
+      fireEvent.keyDown(document.body, {key: 'a'});
+      fireEvent.keyUp(document.body, {key: 'a'});
+      fireEvent.keyDown(document.body, {key: 'Escape'});
+      fireEvent.keyUp(document.body, {key: 'Escape'});
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body); // does not trigger change handlers (but included for completeness)
+    });
+    expect(fnMock).toHaveBeenCalledTimes(3);
+    expect(fnMock.mock.calls).toEqual([[true], [true], [false]]);
   });
 });
