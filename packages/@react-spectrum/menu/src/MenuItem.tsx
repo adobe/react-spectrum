@@ -100,7 +100,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
             slots={{
               text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
               end: {UNSAFE_className: styles['spectrum-Menu-end'], ...descriptionProps},
-              icon: {UNSAFE_className: styles['spectrum-Menu-icon']},
+              icon: {UNSAFE_className: styles['spectrum-Menu-icon'], size: 'S'},
               description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps},
               keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard'], ...keyboardShortcutProps}
             }}>
