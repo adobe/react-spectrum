@@ -210,7 +210,7 @@ export function usePress(props: PressHookProps): PressResult {
 
     let pressProps: HTMLAttributes<HTMLElement> = {
       onKeyDown(e) {
-        if (isValidKeyboardEvent(e.nativeEvent)) {
+        if (isValidKeyboardEvent(e.nativeEvent) && e.currentTarget.contains(e.target as HTMLElement)) {
           e.preventDefault();
           e.stopPropagation();
 
@@ -229,7 +229,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
       },
       onKeyUp(e) {
-        if (isValidKeyboardEvent(e.nativeEvent) && !e.repeat) {
+        if (isValidKeyboardEvent(e.nativeEvent) && !e.repeat && e.currentTarget.contains(e.target as HTMLElement)) {
           triggerPressUp(createEvent(state.target, e), 'keyboard');
         }
       },
@@ -282,7 +282,7 @@ export function usePress(props: PressHookProps): PressResult {
 
     if (typeof PointerEvent !== 'undefined') {
       pressProps.onPointerDown = (e) => {
-        // Only handle left clicks
+        // Only handle left clicks, and ignore events that bubbled through portals.
         if (e.button !== 0 || !e.currentTarget.contains(e.target as HTMLElement)) {
           return;
         }
@@ -388,6 +388,10 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onDragStart = (e) => {
+        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+          return;
+        }
+
         // Safari does not call onPointerCancel when a drag starts, whereas Chrome and Firefox do.
         cancel(e);
       };
@@ -424,6 +428,10 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onMouseEnter = (e) => {
+        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+          return;
+        }
+
         e.stopPropagation();
         if (state.isPressed && !state.ignoreEmulatedMouseEvents) {
           state.isOverTarget = true;
@@ -432,6 +440,10 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onMouseLeave = (e) => {
+        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+          return;
+        }
+
         e.stopPropagation();
         if (state.isPressed && !state.ignoreEmulatedMouseEvents) {
           state.isOverTarget = false;
@@ -473,6 +485,10 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onTouchStart = (e) => {
+        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+          return;
+        }
+
         e.stopPropagation();
         let touch = getTouchFromEvent(e.nativeEvent);
         if (!touch) {
@@ -498,6 +514,10 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onTouchMove = (e) => {
+        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+          return;
+        }
+
         e.stopPropagation();
         if (!state.isPressed) {
           return;
@@ -516,6 +536,10 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onTouchEnd = (e) => {
+        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+          return;
+        }
+
         e.stopPropagation();
         if (!state.isPressed) {
           return;
@@ -538,6 +562,10 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onTouchCancel = (e) => {
+        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+          return;
+        }
+
         e.stopPropagation();
         if (state.isPressed) {
           cancel(e);
@@ -556,6 +584,10 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onDragStart = (e) => {
+        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+          return;
+        }
+
         cancel(e);
       };
     }

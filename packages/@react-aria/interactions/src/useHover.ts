@@ -130,7 +130,7 @@ export function useHover(props: HoverProps): HoverResult {
     let triggerHoverEnd = (event, pointerType) => {
       state.pointerType = '';
       state.target = null;
-      
+
       if (pointerType === 'touch' || !state.isHovered) {
         return;
       }
@@ -164,7 +164,7 @@ export function useHover(props: HoverProps): HoverResult {
       };
 
       hoverProps.onPointerLeave = (e) => {
-        if (!isDisabled) {
+        if (!isDisabled && e.currentTarget.contains(e.target as HTMLElement)) {
           triggerHoverEnd(e, e.pointerType);
         }
       };
@@ -182,7 +182,7 @@ export function useHover(props: HoverProps): HoverResult {
       };
 
       hoverProps.onMouseLeave = (e) => {
-        if (!isDisabled) {
+        if (!isDisabled && e.currentTarget.contains(e.target as HTMLElement)) {
           triggerHoverEnd(e, 'mouse');
         }
       };
