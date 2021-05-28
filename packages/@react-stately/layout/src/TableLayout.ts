@@ -48,8 +48,9 @@ export class TableLayout<T> extends ListLayout<T> {
     }
 
     // Track whether we were previously loading. This is used to adjust the animations of async loading vs inserts.
+    let loadingState = this.collection.body.props.loadingState;
     this.wasLoading = this.isLoading;
-    this.isLoading = Boolean(this.collection.body.props.isLoading);
+    this.isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
     this.buildColumnWidths();
     let header = this.buildHeader();
@@ -245,8 +246,7 @@ export class TableLayout<T> extends ListLayout<T> {
       children.push(layoutNode);
     }
 
-    // TODO: not show the spinner at the bottom when sorting?
-    if (this.collection.body.props.isLoading) {
+    if (this.isLoading) {
       let rect = new Rect(0, y, width || this.virtualizer.visibleRect.width, children.length === 0 ? this.virtualizer.visibleRect.height : 60);
       let loader = new LayoutInfo('loader', 'loader', rect);
       loader.parentKey = 'body';

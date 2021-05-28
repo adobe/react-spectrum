@@ -66,9 +66,10 @@ jobs:
             - ~/react-spectrum
           key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
-  test:
+  test-ssr:
     docker:
       - image: circleci/node:12
+    resource_class: xlarge
     environment:
       CACHE_VERSION: v1
 
@@ -78,12 +79,45 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: test
-          command: yarn ci-test
+          name: test ssr
+          command: yarn test:ssr
 
-  test-17:
+  test:
+    parallelism: 3
     docker:
       - image: circleci/node:12
+    resource_class: xlarge
+    environment:
+      CACHE_VERSION: v1
+
+    working_directory: ~/react-spectrum
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run: mkdir ~/junit
+
+      - run:
+          name: test
+          command: |
+            shopt -s globstar
+            TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
+            yarn test ${TESTFILES}
+
+      - run:
+          command: |
+            cat junit.xml
+            cp junit.xml ~/junit/
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
+
+  test-ssr-17:
+    docker:
+      - image: circleci/node:12
+    resource_class: xlarge
     environment:
       CACHE_VERSION: v1
 
@@ -93,8 +127,39 @@ jobs:
           key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
+          name: test ssr
+          command: |
+            yarn test:ssr
+
+  test-17:
+    parallelism: 3
+    docker:
+      - image: circleci/node:12
+    resource_class: xlarge
+    environment:
+      CACHE_VERSION: v1
+
+    working_directory: ~/react-spectrum
+    steps:
+      - restore_cache:
+          key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run: mkdir ~/junit
+
+      - run:
           name: test
-          command: yarn ci-test-17
+          command: |
+            shopt -s globstar
+            TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
+            JEST_JUNIT_OUTPUT_NAME="junit-17.xml" yarn test ${TESTFILES}
+
+      - run:
+          command: cp junit-17.xml ~/junit/
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
 
   lint:
     docker:
@@ -261,9 +326,15 @@ workflows:
     jobs:
       - install
       - install-17
+      - test-ssr:
+          requires:
+            - install
       - test:
           requires:
             - install
+      - test-ssr-17:
+          requires:
+            - install-17
       - test-17:
           requires:
             - install-17
@@ -288,7 +359,9 @@ workflows:
       - deploy:
           requires:
             - lint
+            - test-ssr
             - test
+            - test-ssr-17
             - test-17
             - storybook
             - storybook-17

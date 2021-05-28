@@ -270,6 +270,23 @@ a.spectrum-ActionButton {
   font-weight: var(--spectrum-actionbutton-quiet-text-font-weight);
 }
 
+.spectrum-ActionButton--emphasized,
+.spectrum-ActionButton--staticColor {
+  @inherit: %spectrum-ButtonWithFocusRing;
+
+  &:after {
+    /* Override border-radius set in %spectrum-ButtonWithFocusRing since this is not a pill button */
+    border-radius: calc(var(--spectrum-actionbutton-border-radius) + var(--spectrum-alias-focus-ring-gap));
+  }
+
+  &:focus-ring {
+    &:after {
+      /* action buttons only have a 1px border, not 2px */
+      margin: calc(calc(var(--spectrum-alias-focus-ring-gap) * -1) - var(--spectrum-actionbutton-quiet-border-size));
+    }
+  }
+}
+
 .spectrum-LogicButton {
   @inherit: %spectrum-BaseButton;
   @inherit: %spectrum-ButtonWithFocusRing;

@@ -262,13 +262,14 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
   useEffect(() => {
     // Passing back to root as useTabPanel needs the TabListState
     setTabListState(state);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.disabledKeys, state.selectedItem, state.selectedKey, props.children]);
+  let stylePropsForVertical = orientation === 'vertical' ? styleProps : {};
 
   let tabListclassName = classNames(styles, 'spectrum-TabsPanel-tabs');
   const tabContent = (
     <div
-      {...styleProps}
+      {...stylePropsForVertical}
       {...tabListProps}
       ref={tablistRef}
       className={classNames(
@@ -279,7 +280,10 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
         {
           'spectrum-Tabs--quiet': isQuiet,
           ['spectrum-Tabs--compact']: density === 'compact'
-        })}>
+        },
+        orientation === 'vertical' && styleProps.className
+      )
+      }>
       {[...state.collection].map((item) => (
         <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
       ))}
@@ -293,11 +297,13 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
   } else {
     return (
       <div
+        {...styleProps}
         ref={wrapperRef}
         className={classNames(
-            styles,
-            'spectrum-TabsPanel-collapseWrapper'
-          )}>
+          styles,
+          'spectrum-TabsPanel-collapseWrapper',
+          styleProps.className
+        )}>
         {collapse ? <TabPicker {...props} {...tabProps} id={tabPanelProps['aria-labelledby']} state={state} className={tabListclassName} /> : tabContent}
       </div>
     );
@@ -309,7 +315,23 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
  * The keys of the items within the <TabPanels> must match up with a corresponding item inside the <TabList>.
  */
 export function TabPanels<T>(props: SpectrumTabPanelsProps<T>) {
-  const {tabState, tabProps, tabPanelProps: ctxTabPanelProps} = useContext(TabContext);
+  const {tabState, tabProps} = useContext(TabContext);
+  const {tabListState} = tabState;
+
+  const factory = nodes => new ListCollection(nodes);
+  const collection = useCollection({items: tabProps.items, ...props}, factory, {suppressTextValueWarning: true});
+  const selectedItem = tabListState ? collection.getItem(tabListState.selectedKey) : null;
+
+  return (
+    <TabPanel {...props} key={tabListState?.selectedKey}>
+      {selectedItem && selectedItem.props.children}
+    </TabPanel>
+  );
+}
+
+// @private
+function TabPanel<T>(props: SpectrumTabPanelsProps<T>) {
+  const {tabState, tabPanelProps: ctxTabPanelProps} = useContext(TabContext);
   const {tabListState} = tabState;
   let ref = useRef();
   const {tabPanelProps} = useTabPanel(props, tabListState, ref);
@@ -319,20 +341,16 @@ export function TabPanels<T>(props: SpectrumTabPanelsProps<T>) {
     tabPanelProps['aria-labelledby'] = ctxTabPanelProps['aria-labelledby'];
   }
 
-  const factory = nodes => new ListCollection(nodes);
-  const collection = useCollection({items: tabProps.items, ...props}, factory, {suppressTextValueWarning: true});
-  const selectedItem = tabListState ? collection.getItem(tabListState.selectedKey) : null;
-
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div {...styleProps} {...tabPanelProps} ref={ref} className={classNames(styles, 'spectrum-TabsPanel-tabpanel')}>
-        {selectedItem && selectedItem.props.children}
+      <div {...styleProps} {...tabPanelProps} ref={ref} className={classNames(styles, 'spectrum-TabsPanel-tabpanel', styleProps.className)}>
+        {props.children}
       </div>
     </FocusRing>
   );
 }
 
-interface TabPickerProps<T> extends SpectrumPickerProps<T> {
+interface TabPickerProps<T> extends Omit<SpectrumPickerProps<T>, 'children'> {
   density?: 'compact' | 'regular',
   state: SingleSelectListState<T>,
   className?: string

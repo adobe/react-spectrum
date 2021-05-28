@@ -22,6 +22,7 @@ import {useEffect, useState} from 'react';
 type Modality = 'keyboard' | 'pointer' | 'virtual';
 type HandlerEvent = PointerEvent | MouseEvent | KeyboardEvent | FocusEvent;
 type Handler = (modality: Modality, e: HandlerEvent) => void;
+type FocusVisibleHandler = (isFocusVisible: boolean) => void;
 interface FocusVisibleProps {
   /** Whether the element is a text input. */
   isTextInput?: boolean,
@@ -38,6 +39,7 @@ let currentModality = null;
 let changeHandlers = new Set<Handler>();
 let hasSetupGlobalListeners = false;
 let hasEventBeforeFocus = false;
+let hasBlurredWindowRecently = false;
 
 // Only Tab or Esc keys will make focus visible on text input elements
 const FOCUS_VISIBLE_INPUT_KEYS = {
@@ -55,8 +57,10 @@ function triggerChangeHandlers(modality: Modality, e: HandlerEvent) {
  * Helper function to determine if a KeyboardEvent is unmodified and could make keyboard focus styles visible.
  */
 function isValidKey(e: KeyboardEvent) {
-  return !(e.metaKey || (!isMac() && e.altKey) || e.ctrlKey);
+  // Control and Shift keys trigger when navigating back to the tab with keyboard.
+  return !(e.metaKey || (!isMac() && e.altKey) || e.ctrlKey || e.type === 'keyup' && (e.key === 'Control' || e.key === 'Shift'));
 }
+
 
 function handleKeyboardEvent(e: KeyboardEvent) {
   hasEventBeforeFocus = true;
@@ -91,18 +95,20 @@ function handleFocusEvent(e: FocusEvent) {
 
   // If a focus event occurs without a preceding keyboard or pointer event, switch to virtual modality.
   // This occurs, for example, when navigating a form with the next/previous buttons on iOS.
-  if (!hasEventBeforeFocus) {
+  if (!hasEventBeforeFocus && !hasBlurredWindowRecently) {
     currentModality = 'virtual';
     triggerChangeHandlers('virtual', e);
   }
 
   hasEventBeforeFocus = false;
+  hasBlurredWindowRecently = false;
 }
 
 function handleWindowBlur() {
   // When the window is blurred, reset state. This is necessary when tabbing out of the window,
   // for example, since a subsequent focus event won't be fired.
   hasEventBeforeFocus = false;
+  hasBlurredWindowRecently = true;
 }
 
 /**
@@ -191,29 +197,40 @@ export function useInteractionModality(): Modality {
 }
 
 /**
+ * If this is attached to text input component, return if the event is a focus event (Tab/Escape keys pressed) so that
+ * focus visible style can be properly set.
+ */
+function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: HandlerEvent) {
+  return !(isTextInput && modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]);
+}
+
+/**
  * Manages focus visible state for the page, and subscribes individual components for updates.
  */
 export function useFocusVisible(props: FocusVisibleProps = {}): FocusVisibleResult {
-  setupGlobalFocusEvents();
-
   let {isTextInput, autoFocus} = props;
   let [isFocusVisibleState, setFocusVisible] = useState(autoFocus || isFocusVisible());
-  useEffect(() => {
-    let handler = (modality: Modality, e: HandlerEvent) => {
-      // If this is a text input component, don't update the focus visible style when
-      // typing except for when the Tab and Escape keys are pressed.
-      if (isTextInput && modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]) {
-        return;
-      }
-
-      setFocusVisible(isFocusVisible());
-    };
-
-    changeHandlers.add(handler);
-    return () => {
-      changeHandlers.delete(handler);
-    };
-  }, [isTextInput]);
+  useFocusVisibleListener((isFocusVisible) => {
+    setFocusVisible(isFocusVisible);
+  }, [isTextInput], {isTextInput});
 
   return {isFocusVisible: isFocusVisibleState};
+}
+
+/**
+ * Listens for trigger change and reports if focus is visible (i.e., modality is not pointer).
+ */
+export function useFocusVisibleListener(fn: FocusVisibleHandler, deps: ReadonlyArray<any>, opts?: {isTextInput?: boolean}): void {
+  setupGlobalFocusEvents();
+
+  useEffect(() => {
+    let handler = (modality: Modality, e: HandlerEvent) => {
+      if (!isKeyboardFocusEvent(opts?.isTextInput, modality, e)) {
+        return;
+      }
+      fn(isFocusVisible());
+    };
+    changeHandlers.add(handler);
+    return () => changeHandlers.delete(handler);
+  }, deps);
 }

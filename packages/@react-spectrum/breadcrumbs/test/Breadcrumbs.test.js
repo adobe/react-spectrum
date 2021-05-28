@@ -124,7 +124,7 @@ describe('Breadcrumbs', function () {
       </Provider>
     );
     let {children} = getByRole('list');
-    expect(() => within(children[0]).getByRole('button')).toThrow();
+    expect(within(children[0]).queryByRole('button')).toBeNull();
     expect(getByText('Folder 1')).toBeTruthy();
     expect(getByText('Folder 2')).toBeTruthy();
     expect(getByText('Folder 3')).toBeTruthy();
