@@ -35,7 +35,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
     align = 'start',
     shouldFlip = true,
     direction = 'bottom',
-    closeOnSelect = true
+    closeOnSelect
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
