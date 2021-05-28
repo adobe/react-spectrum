@@ -392,8 +392,8 @@ storiesOf('MenuTrigger', module)
     () => render(defaultMenu, {closeOnSelect: false}, {})
   )
   .add(
-    'closeOnSelect=true',
-    () => render(defaultMenu, {closeOnSelect: true}, {})
+    'closeOnSelect=true, multiselect menu',
+    () => render(defaultMenu, {closeOnSelect: true}, {selectionMode: 'multiple'})
   )
   .add(
     'menu with semantic elements (static)',
