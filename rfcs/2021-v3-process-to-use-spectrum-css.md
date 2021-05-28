@@ -68,7 +68,7 @@ In order for users of React Spectrum to be able to make use of CSS Modules, we e
 There are some PostCSS plugins that can handle writing out the mappings of classes and can even join class names across files. https://github.com/madyankin/postcss-modules We'll need to mind which class names are shared across files though, right now it's done in Spectrum-CSS (search for spectrum-Icon) but we are careful not to do it in React Spectrum's copy of Spectrum CSS. This means there are some class names we have taken the liberty of re-naming to make that distinction more clear, since CSS modules doesn't actually support the same name across multiple files and this plugin hides that a bit by created joined classnames.
 
 #### Where should the CSS live
-This has the most impact on what we ultimately do as it not only influences what we do immediately, it also impacts how we contribute back and make fixes during things like release.
+This has the most impact on what we ultimately do as it not only influences what we do immediately, it also impacts how we contribute back and make fixes during things like a release.
 
 Groupings for this section:
   - Spectrum CSS publishes
@@ -168,6 +168,7 @@ In this scenario, we'd likely run the Spectrum-CSS build as they provide it, we'
   - Would likely need tooling in our repo specific to Spectrum-CSS
   - Would still be held up by Spectrum-CSS release cycles potentially
     - This could potentially be mitigated by us releasing the css module version of Spectrum-CSS, however, if we have multiple PR's open against Spectrum-CSS before we try to release, we'd need to merge all of them together which will make Spectrum-CSS task of reviewing and merging them more difficult. This is a common scenario in release testing.
+  - https://www.atlassian.com/git/tutorials/git-submodule has a list of good use cases, ours isn't really one of them
 
 ##### Spectrum-CSS submodule alternatives
 
