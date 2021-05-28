@@ -83,20 +83,22 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
 }
 
 const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HTMLDivElement>) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {
     children,
     placement = 'bottom',
     arrowProps,
     isOpen,
     hideArrow,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     shouldCloseOnBlur,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isKeyboardDismissDisabled,
     isNonModal,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isDismissable,
     ...otherProps
   } = props;
-  let {overlayProps} = useOverlay({...props, isDismissable}, ref);
+  let {overlayProps} = useOverlay(props, ref);
   let {modalProps} = useModal({
     isDisabled: isNonModal
   });
