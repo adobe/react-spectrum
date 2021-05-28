@@ -104,20 +104,18 @@ governing permissions and limitations under the License.
 
   &[href],
   &[tabindex="0"] {
-    &:not([aria-current]) {
-      cursor: pointer;
+    cursor: pointer;
 
-      &:hover,
-      &:focus-ring {
-        text-decoration: underline;
-      }
+    &:hover,
+    &:focus-ring {
+      text-decoration: underline;
     }
   }
 }
 
 
 .spectrum-Breadcrumbs-item.is-dragged .spectrum-Breadcrumbs-itemLink:before,
-.spectrum-Breadcrumbs-itemLink:not([aria-current]):focus-ring:before {
+.spectrum-Breadcrumbs-itemLink:focus-ring:before {
   position: absolute;
   top: 0;
   inset-inline-start: 0;
@@ -135,12 +133,16 @@ governing permissions and limitations under the License.
   pointer-events: none;
 }
 
-.spectrum-Breadcrumbs--small .spectrum-Breadcrumbs-item {
-  font-size: var(--spectrum-breadcrumb-multiline-item-text-size);
+.spectrum-Breadcrumbs--small {
+  .spectrum-Breadcrumbs-item {
+    font-size: var(--spectrum-breadcrumb-multiline-item-text-size);
+  }
 }
 
-.spectrum-Breadcrumbs--medium .spectrum-Breadcrumbs-item {
-  font-size: var(--spectrum-breadcrumb-compact-item-text-size);
+.spectrum-Breadcrumbs--medium {
+  .spectrum-Breadcrumbs-item {
+    font-size: var(--spectrum-breadcrumb-compact-item-text-size);
+  }
 }
 
 .spectrum-Breadcrumbs--multiline {

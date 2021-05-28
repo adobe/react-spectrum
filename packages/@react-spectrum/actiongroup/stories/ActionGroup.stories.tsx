@@ -13,19 +13,36 @@
 import {action} from '@storybook/addon-actions';
 import {ActionGroup} from '../';
 import BookIcon from '@spectrum-icons/workflow/Book';
+import Brush from '@spectrum-icons/workflow/Brush';
 import CopyIcon from '@spectrum-icons/workflow/Copy';
 import DeleteIcon from '@spectrum-icons/workflow/Delete';
 import DocumentIcon from '@spectrum-icons/workflow/Document';
 import DrawIcon from '@spectrum-icons/workflow/Draw';
+import DuplicateIcon from '@spectrum-icons/workflow/Duplicate';
 import {Flex} from '@react-spectrum/layout';
+import Heal from '@spectrum-icons/workflow/Heal';
 import InfoIcon from '@spectrum-icons/workflow/Info';
 import {Item} from '@react-stately/collections';
+import MoveIcon from '@spectrum-icons/workflow/MoveTo';
 import PropertiesIcon from '@spectrum-icons/workflow/Properties';
 import React from 'react';
+import Sampler from '@spectrum-icons/workflow/Sampler';
+import Select from '@spectrum-icons/workflow/Select';
 import SettingsIcon from '@spectrum-icons/workflow/Settings';
 import {storiesOf} from '@storybook/react';
+import TagBold from '@spectrum-icons/workflow/TagBold';
+import TagItalic from '@spectrum-icons/workflow/TagItalic';
+import TagUnderline from '@spectrum-icons/workflow/TagUnderline';
 import {Text} from '@react-spectrum/text';
+import TextAlignCenter from '@spectrum-icons/workflow/TextAlignCenter';
+import TextAlignJustify from '@spectrum-icons/workflow/TextAlignJustify';
+import TextAlignLeft from '@spectrum-icons/workflow/TextAlignLeft';
+import TextAlignRight from '@spectrum-icons/workflow/TextAlignRight';
+import TextIcon from '@spectrum-icons/workflow/Text';
+import TextStrikethrough from '@spectrum-icons/workflow/TextStrikethrough';
+import TextStyle from '@spectrum-icons/workflow/TextStyle';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
+import VectorDraw from '@spectrum-icons/workflow/VectorDraw';
 import ViewCardIcon from '@spectrum-icons/workflow/ViewCard';
 import ViewGridIcon from '@spectrum-icons/workflow/ViewGrid';
 import ViewListIcon from '@spectrum-icons/workflow/ViewList';
@@ -222,6 +239,101 @@ storiesOf('ActionGroup', module)
   .add(
     'with tooltips',
     () => renderTooltips({})
+  )
+  .add(
+    'overflowMode: wrap',
+    () => (
+      <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', width: 250, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+        <ActionGroup overflowMode="wrap" onAction={action('onAction')}>
+          <Item>
+            <DrawIcon />
+            <Text>Edit</Text>
+          </Item>
+          <Item>
+            <CopyIcon />
+            <Text>Copy</Text>
+          </Item>
+          <Item>
+            <DeleteIcon />
+            <Text>Delete</Text>
+          </Item>
+          <Item>
+            <MoveIcon />
+            <Text>Move</Text>
+          </Item>
+          <Item>
+            <DuplicateIcon />
+            <Text>Duplicate</Text>
+          </Item>
+        </ActionGroup>
+      </div>
+    )
+  )
+  .add(
+    'overflowMode: collapse',
+    () => (
+      <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', width: 250, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+        {renderCollapsible()}
+        {renderCollapsible({density: 'compact'})}
+        {renderCollapsible({density: 'compact', isJustified: true})}
+        {renderCollapsible({isQuiet: true})}
+      </div>
+    )
+  )
+  .add(
+    'buttonLabelBehavior: hide',
+    () => (
+      <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', width: 250, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+        {renderCollapsible({buttonLabelBehavior: 'hide'})}
+        {renderCollapsibleText({buttonLabelBehavior: 'hide'})}
+      </div>
+    )
+  )
+  .add(
+    'buttonLabelBehavior: collapse',
+    () => (
+      <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', width: 500, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+        {renderCollapsible({buttonLabelBehavior: 'collapse'})}
+        {renderCollapsibleText({buttonLabelBehavior: 'collapse'})}
+      </div>
+    )
+  )
+  .add(
+    'overflowMode: collapse, selection',
+    () => (
+      <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', display: 'flex', gap: 10, width: 300, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+        {renderCollapsibleFormatting({density: 'compact', maxWidth: '50%', isEmphasized: true})}
+        {renderCollapsibleAlignment({density: 'compact', maxWidth: '50%', isEmphasized: true})}
+      </div>
+    )
+  )
+  .add(
+    'overflowMode: collapse, summaryIcon',
+    () => (
+      <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', display: 'flex', gap: 10, width: 300, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+        {renderCollapsibleFormatting({density: 'compact', overflowMode: 'collapse', summaryIcon: <TextStyle />, isEmphasized: true})}
+        {renderCollapsibleAlignment({density: 'compact', overflowMode: 'collapse', isEmphasized: true})}
+      </div>
+    )
+  )
+  .add(
+    'orientation: vertical, overflowMode: collapse',
+    () => (
+      <div style={{padding: '10px', resize: 'vertical', overflow: 'auto', width: 32, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+        {renderCollapsible({orientation: 'vertical', buttonLabelBehavior: 'hide', maxHeight: '100%', marginBottom: 0})}
+      </div>
+    )
+  )
+  .add(
+    'orientation: vertical, overflowMode: collapse, selection',
+    () => (
+      <Flex direction="column">
+        <p>Note: this is currently unsupported by Spectrum. Container should scroll.</p>
+        <div style={{padding: '10px', resize: 'vertical', overflow: 'auto', width: 32, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+          {renderTools({orientation: 'vertical', buttonLabelBehavior: 'hide', maxHeight: '100%'})}
+        </div>
+      </Flex>
+    )
   );
 
 
@@ -298,6 +410,146 @@ function renderTooltips(props, items: any = docItems) {
           );
         })
       }
+    </ActionGroup>
+  );
+}
+
+function renderCollapsible(props = {}) {
+  return (
+    <ActionGroup overflowMode="collapse" onAction={action('onAction')} marginBottom="size-250" {...props}>
+      <Item key="edit">
+        <DrawIcon />
+        <Text>Edit</Text>
+      </Item>
+      <Item key="copy">
+        <CopyIcon />
+        <Text>Copy</Text>
+      </Item>
+      <Item key="delete">
+        <DeleteIcon />
+        <Text>Delete</Text>
+      </Item>
+      <Item key="move">
+        <MoveIcon />
+        <Text>Move</Text>
+      </Item>
+      <Item key="duplicate">
+        <DuplicateIcon />
+        <Text>Duplicate</Text>
+      </Item>
+    </ActionGroup>
+  );
+}
+
+function renderCollapsibleText(props = {}) {
+  return (
+    <ActionGroup overflowMode="collapse" onAction={action('onAction')} {...props} marginBottom="size-250">
+      <Item key="edit">Edit</Item>
+      <Item key="copy">Copy</Item>
+      <Item key="delete">Delete</Item>
+      <Item key="move">Move</Item>
+      <Item key="duplicate">Duplicate</Item>
+    </ActionGroup>
+  );
+}
+
+function renderCollapsibleFormatting(props = {}) {
+  return (
+    <ActionGroup
+      aria-label="Text style"
+      overflowMode="collapse"
+      selectionMode="multiple"
+      onSelectionChange={action('onSelectionChange')}
+      buttonLabelBehavior="hide"
+      {...props}>
+      <Item key="bold">
+        <TagBold />
+        <Text>Bold</Text>
+      </Item>
+      <Item key="italic">
+        <TagItalic />
+        <Text>Italic</Text>
+      </Item>
+      <Item key="underline">
+        <TagUnderline />
+        <Text>Underline</Text>
+      </Item>
+      <Item key="strike">
+        <TextStrikethrough />
+        <Text>Strikethrough</Text>
+      </Item>
+    </ActionGroup>
+  );
+}
+
+function renderCollapsibleAlignment(props = {}) {
+  return (
+    <ActionGroup
+      aria-label="Text alignment"
+      overflowMode="collapse"
+      selectionMode="single"
+      defaultSelectedKeys={['left']}
+      disallowEmptySelection
+      onSelectionChange={action('onSelectionChange')}
+      buttonLabelBehavior="hide"
+      {...props}>
+      <Item key="left">
+        <TextAlignLeft />
+        <Text>Align Left</Text>
+      </Item>
+      <Item key="center">
+        <TextAlignCenter />
+        <Text>Align Center</Text>
+      </Item>
+      <Item key="right">
+        <TextAlignRight />
+        <Text>Align Right</Text>
+      </Item>
+      <Item key="justify">
+        <TextAlignJustify />
+        <Text>Justify</Text>
+      </Item>
+    </ActionGroup>
+  );
+}
+
+function renderTools(props = {}) {
+  return (
+    <ActionGroup
+      aria-label="Tools"
+      overflowMode="collapse"
+      selectionMode="single"
+      disallowEmptySelection
+      defaultSelectedKeys={['select']}
+      onSelectionChange={action('onSelectionChange')}
+      buttonLabelBehavior="hide"
+      isEmphasized
+      isQuiet
+      {...props}>
+      <Item key="select">
+        <Select />
+        <Text>Select</Text>
+      </Item>
+      <Item key="text">
+        <TextIcon />
+        <Text>Text</Text>
+      </Item>
+      <Item key="heal">
+        <Heal />
+        <Text>Heal</Text>
+      </Item>
+      <Item key="brush">
+        <Brush />
+        <Text>Brush</Text>
+      </Item>
+      <Item key="pen">
+        <VectorDraw />
+        <Text>Pen</Text>
+      </Item>
+      <Item key="eyedropper">
+        <Sampler />
+        <Text>Eye dropper</Text>
+      </Item>
     </ActionGroup>
   );
 }
