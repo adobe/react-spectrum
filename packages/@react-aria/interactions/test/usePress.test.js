@@ -523,6 +523,18 @@ describe('usePress', function () {
 
       expect(events).toEqual([]);
     });
+
+    it('should fire press event when pointerup close to the target', function () {
+      let spy = jest.fn();
+      let res = render(<Example onPress={spy} />);
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0, width: 20, height: 20}));
+      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 10, clientY: 10, width: 20, height: 20}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 10, clientY: 10, width: 20, height: 20}));
+
+      expect(spy).toHaveBeenCalled();
+    });
   });
 
   describe('mouse events', function () {
@@ -895,7 +907,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
 
       expect(events).toEqual([
@@ -955,7 +967,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
 
@@ -987,7 +999,7 @@ describe('usePress', function () {
       ]);
 
       events = [];
-      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
       fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
@@ -1073,7 +1085,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.mouseDown(el);
       fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
       fireEvent.mouseLeave(el);
@@ -1164,7 +1176,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.touchCancel(el);
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
 
@@ -1209,7 +1221,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.scroll(document.body);
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
 
@@ -1257,7 +1269,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
 
       let scrollable = res.getByTestId('scrollable');
       fireEvent.scroll(scrollable);
@@ -1321,7 +1333,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent(el, new MouseEvent('dragstart', {bubbles: true, cancelable: true, composed: true}));
 
       expect(events).toEqual([
@@ -1358,7 +1370,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
 
       expect(document.activeElement).not.toBe(el);
@@ -1370,10 +1382,22 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
 
       expect(document.activeElement).toBe(el);
+    });
+
+    it('should fire press event when touchup close to the target', function () {
+      let spy = jest.fn();
+      let res = render(<Example onPress={spy} />);
+
+      let el = res.getByText('test');
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0, radiusX: 15, radiusY: 15}]});
+      fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 10, clientY: 10, radiusX: 15, radiusY: 15}]});
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 10, clientY: 10, radiusX: 15, radiusY: 15}]});
+
+      expect(spy).toHaveBeenCalled();
     });
   });
 
