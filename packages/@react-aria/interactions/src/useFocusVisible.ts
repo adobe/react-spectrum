@@ -39,10 +39,7 @@ let currentModality = null;
 let changeHandlers = new Set<Handler>();
 let hasSetupGlobalListeners = false;
 let hasEventBeforeFocus = false;
-let documentVisibilityState = {
-  current: null,
-  previous: null
-};
+let hasBlurredWindowRecently = false;
 
 // Only Tab or Esc keys will make focus visible on text input elements
 const FOCUS_VISIBLE_INPUT_KEYS = {
@@ -60,19 +57,10 @@ function triggerChangeHandlers(modality: Modality, e: HandlerEvent) {
  * Helper function to determine if a KeyboardEvent is unmodified and could make keyboard focus styles visible.
  */
 function isValidKey(e: KeyboardEvent) {
-  return !(e.metaKey || (!isMac() && e.altKey) || e.ctrlKey);
+  // Control and Shift keys trigger when navigating back to the tab with keyboard.
+  return !(e.metaKey || (!isMac() && e.altKey) || e.ctrlKey || e.type === 'keyup' && (e.key === 'Control' || e.key === 'Shift'));
 }
 
-function hasChangedTabRecently() {
-  // in Chrome visibilitychange event always happens before any focus event.
-  // situation is different for Firefox and Safari where visibilitychange fires after all initial focus events.
-  return (documentVisibilityState.current === 'visible' && documentVisibilityState.previous === 'hidden') || documentVisibilityState.current === 'hidden';
-}
-
-function resetDocumentVisibilityState() {
-  documentVisibilityState.current = null;
-  documentVisibilityState.previous = null;
-}
 
 function handleKeyboardEvent(e: KeyboardEvent) {
   hasEventBeforeFocus = true;
@@ -107,27 +95,20 @@ function handleFocusEvent(e: FocusEvent) {
 
   // If a focus event occurs without a preceding keyboard or pointer event, switch to virtual modality.
   // This occurs, for example, when navigating a form with the next/previous buttons on iOS.
-  if (!hasEventBeforeFocus && !hasChangedTabRecently()) {
+  if (!hasEventBeforeFocus && !hasBlurredWindowRecently) {
     currentModality = 'virtual';
     triggerChangeHandlers('virtual', e);
   }
 
-  if (documentVisibilityState.current === 'visible') {
-    resetDocumentVisibilityState();
-  }
-
   hasEventBeforeFocus = false;
+  hasBlurredWindowRecently = false;
 }
 
 function handleWindowBlur() {
   // When the window is blurred, reset state. This is necessary when tabbing out of the window,
   // for example, since a subsequent focus event won't be fired.
   hasEventBeforeFocus = false;
-}
-
-function handleVisibilityChange() {
-  documentVisibilityState.previous = documentVisibilityState.current;
-  documentVisibilityState.current = document.visibilityState;
+  hasBlurredWindowRecently = true;
 }
 
 /**
@@ -151,7 +132,6 @@ function setupGlobalFocusEvents() {
   document.addEventListener('keydown', handleKeyboardEvent, true);
   document.addEventListener('keyup', handleKeyboardEvent, true);
   document.addEventListener('click', handleClickEvent, true);
-  document.addEventListener('visibilitychange', handleVisibilityChange, true);
 
   // Register focus events on the window so they are sure to happen
   // before React's event listeners (registered on the document).

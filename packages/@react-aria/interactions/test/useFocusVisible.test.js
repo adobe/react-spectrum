@@ -9,14 +9,14 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render, screen} from '@testing-library/react';
 import React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
 import {useFocusVisible, useFocusVisibleListener} from '../';
 
-function Example() {
-  let {isFocusVisible} = useFocusVisible();
-  return <div>example{isFocusVisible && '-focusVisible'}</div>;
+function Example(props) {
+  const {isFocusVisible} = useFocusVisible();
+  return <div id={props.id}>example{isFocusVisible && '-focusVisible'}</div>;
 }
 
 function toggleBrowserTabs() {
@@ -42,22 +42,52 @@ function toggleBrowserTabs() {
   fireEvent(lastActiveElement, new Event('focus'));
 }
 
+function toggleBrowserWindow() {
+  fireEvent(window, new Event('blur', {target: window}));
+  fireEvent(window, new Event('focus', {target: window}));
+}
+
 describe('useFocusVisible', function () {
+  beforeEach(() => {
+    fireEvent.focus(document.body);
+  });
+
   it('returns positive isFocusVisible result after toggling browser tabs after keyboard navigation', function () {
-    let res = render(<Example />);
-    let el = res.getByText('example-focusVisible');
+    render(<Example />);
+    let el = screen.getByText('example-focusVisible');
 
     fireEvent.keyDown(el, {key: 'Tab'});
     toggleBrowserTabs();
 
     expect(el.textContent).toBe('example-focusVisible');
   });
+
   it('returns negative isFocusVisible result after toggling browser tabs without prior keyboard navigation', function () {
-    let res = render(<Example />);
-    let el = res.getByText('example-focusVisible');
+    render(<Example />);
+    let el = screen.getByText('example-focusVisible');
 
     fireEvent.mouseDown(el);
     toggleBrowserTabs();
+
+    expect(el.textContent).toBe('example');
+  });
+
+  it('returns positive isFocusVisible result after toggling browser window after keyboard navigation', function () {
+    render(<Example />);
+    let el = screen.getByText('example-focusVisible');
+
+    fireEvent.keyDown(el, {key: 'Tab'});
+    toggleBrowserWindow();
+
+    expect(el.textContent).toBe('example-focusVisible');
+  });
+
+  it('returns negative isFocusVisible result after toggling browser window without prior keyboard navigation', function () {
+    render(<Example />);
+    let el = screen.getByText('example-focusVisible');
+
+    fireEvent.mouseDown(el);
+    toggleBrowserWindow();
 
     expect(el.textContent).toBe('example');
   });
