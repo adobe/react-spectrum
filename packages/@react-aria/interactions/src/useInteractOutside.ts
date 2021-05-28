@@ -41,8 +41,8 @@ export function useInteractOutside(props: InteractOutsideProps) {
       if (isDisabled) {
         return;
       }
-      e.stopPropagation();
-      if (isValidEvent(e, ref)) {
+      if (isValidEvent(e, ref) && onInteractOutside) {
+        e.stopPropagation();
         state.isPointerDown = true;
       }
     };
@@ -53,7 +53,6 @@ export function useInteractOutside(props: InteractOutsideProps) {
         if (isDisabled) {
           return;
         }
-        console.log('on pointer up outside');
         if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
           e.stopPropagation();
           state.isPointerDown = false;

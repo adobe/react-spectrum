@@ -55,8 +55,8 @@ describe('DialogTrigger', function () {
     window.requestAnimationFrame.mockRestore();
   });
 
-  it('should trigger a modal by default', function () {
-    let {getByRole, getByTestId} = render(
+  it.only('should trigger a modal by default', function () {
+    let {queryByRole, getByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger>
           <ActionButton>Trigger</ActionButton>
@@ -65,9 +65,7 @@ describe('DialogTrigger', function () {
       </Provider>
     );
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
     triggerPress(button);

@@ -456,8 +456,8 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
-  '2 comboboxes',
-  () => (
+    '2 comboboxes',
+    () => (
       <Flex gap="size-100">
         <ComboBox defaultItems={items} label="Combobox1">
           {(item) => <Item>{item.name}</Item>}

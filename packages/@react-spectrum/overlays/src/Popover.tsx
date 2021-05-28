@@ -29,7 +29,9 @@ interface PopoverWrapperProps extends HTMLAttributes<HTMLElement> {
   onClose?: () => void,
   shouldCloseOnBlur?: boolean,
   isKeyboardDismissDisabled?: boolean,
-  isNonModal?: boolean
+  isNonModal?: boolean,
+  shouldCloseOnInteractOutside?: (element: HTMLElement) => boolean,
+  isDismissable?: boolean
 }
 
 /**
@@ -47,7 +49,19 @@ let arrowPlacement = {
 };
 
 function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, placement, arrowProps, onClose, shouldCloseOnBlur, hideArrow, isKeyboardDismissDisabled, isNonModal, ...otherProps} = props;
+  let {
+    children,
+    placement,
+    arrowProps,
+    onClose,
+    shouldCloseOnBlur,
+    hideArrow,
+    isKeyboardDismissDisabled,
+    isNonModal,
+    shouldCloseOnInteractOutside,
+    isDismissable = true,
+    ...otherProps
+  } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
 
@@ -60,9 +74,11 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
         arrowProps={arrowProps}
         onClose={onClose}
         shouldCloseOnBlur={shouldCloseOnBlur}
+        shouldCloseOnInteractOutside={shouldCloseOnInteractOutside}
         isKeyboardDismissDisabled={isKeyboardDismissDisabled}
         hideArrow={hideArrow}
-        isNonModal={isNonModal}>
+        isNonModal={isNonModal}
+        isDismissable={isDismissable}>
         {children}
       </PopoverWrapper>
     </Overlay>
@@ -71,8 +87,20 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
 
 const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HTMLDivElement>) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {children, placement = 'bottom', arrowProps, isOpen, hideArrow, shouldCloseOnBlur, isKeyboardDismissDisabled, isNonModal, ...otherProps} = props;
-  let {overlayProps} = useOverlay({...props, isDismissable: true}, ref);
+  let {
+    children,
+    placement = 'bottom',
+    arrowProps,
+    isOpen,
+    hideArrow,
+    shouldCloseOnBlur,
+    isKeyboardDismissDisabled,
+    isNonModal,
+    shouldCloseOnInteractOutside,
+    isDismissable,
+    ...otherProps
+  } = props;
+  let {overlayProps} = useOverlay({...props, isDismissable}, ref);
   let {modalProps} = useModal({
     isDisabled: isNonModal
   });
