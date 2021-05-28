@@ -525,8 +525,19 @@ describe('MenuTrigger', function () {
 
     it.each`
       Name                      | Component      | props | menuProps
-      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
       ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple'}}
+    `('$Name doesn\'t close menu on item selection via mouse with multiple selection', function ({Component, props, menuProps}) {
+      tree = renderComponent(Component, props, menuProps);
+      openAndTriggerMenuItem(tree, Component === MenuTrigger, props.role, menuProps.selectionMode, (item) => triggerPress(item));
+
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeTruthy();
+    });
+
+    it.each`
+      Name                      | Component      | props | menuProps
+      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
+      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{closeOnSelect: true}} | ${{selectionMode: 'multiple'}}
       ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
       ${'V2Dropdown single'}    | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'single'}}
       ${'V2Dropdown multiple'}  | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'multiple'}}
