@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
@@ -29,6 +29,9 @@ function Example(props) {
 }
 
 describe('useOverlay', function () {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
   describe.each`
     type                | prepare               | actions
     ${'Mouse Events'}   | ${installMouseEvent}  | ${[
@@ -122,16 +125,5 @@ describe('useOverlay', function () {
     let el = res.getByTestId('test');
     fireEvent.keyDown(el, {key: 'Escape'});
     expect(onClose).toHaveBeenCalledTimes(1);
-  });
-
-  describe('firefox bug', () => {
-    installPointerEvent();
-    it('should prevent default on pointer down on the underlay', function () {
-      let underlayRef = React.createRef();
-      render(<Example isOpen isDismissable underlayProps={{ref: underlayRef}} />);
-      let isPrevented = fireEvent.pointerDown(underlayRef.current, {button: 0, pointerId: 1});
-      fireEvent.pointerUp(document.body);
-      expect(isPrevented).toBeFalsy(); // meaning the event had preventDefault called
-    });
   });
 });

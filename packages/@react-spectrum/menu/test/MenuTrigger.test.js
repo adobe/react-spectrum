@@ -211,6 +211,7 @@ describe('MenuTrigger', function () {
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, isOpen: true}}
   `('$Name supports a controlled open state ', function ({Component, props}) {
     let tree = renderComponent(Component, props);
+    act(() => {jest.runAllTimers();});
     expect(onOpenChange).toBeCalledTimes(0);
 
     let menu = tree.getByRole('menu');
@@ -222,7 +223,7 @@ describe('MenuTrigger', function () {
 
     menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
-    expect(onOpenChange).toBeCalledTimes(2); // once for press, once for blur :/
+    expect(onOpenChange).toBeCalledTimes(1);
   });
 
   // New functionality in v3
@@ -231,6 +232,7 @@ describe('MenuTrigger', function () {
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, defaultOpen: true}}
   `('$Name supports a uncontrolled default open state ', function ({Component, props}) {
     let tree = renderComponent(Component, props);
+    act(() => {jest.runAllTimers();});
     expect(onOpenChange).toBeCalledTimes(0);
 
     let menu = tree.getByRole('menu');
@@ -263,6 +265,7 @@ describe('MenuTrigger', function () {
       ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
     `('$Name autofocuses the selected item on menu open', function ({Component, props}) {
       let tree = renderComponent(Component, props, {selectedKeys: ['Bar']});
+      act(() => {jest.runAllTimers();});
       let button = tree.getByRole('button');
       triggerPress(button);
       act(() => {jest.runAllTimers();});
@@ -278,6 +281,8 @@ describe('MenuTrigger', function () {
 
       // Opening menu via down arrow still autofocuses the selected item
       fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
+      fireEvent.keyUp(button, {key: 'ArrowDown', code: 40, charCode: 40});
+      act(() => {jest.runAllTimers();});
       menu = tree.getByRole('menu');
       menuItems = within(menu).getAllByRole('menuitem');
       selectedItem = menuItems[1];
