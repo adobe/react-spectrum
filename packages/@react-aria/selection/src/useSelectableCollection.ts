@@ -317,8 +317,11 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     onFocus,
     onBlur,
     onMouseDown(e) {
-      // Prevent focus going to the collection when clicking on the scrollbar.
-      e.preventDefault();
+      // Ignore events that bubbled through portals.
+      if (e.currentTarget.contains(e.target)) {
+        // Prevent focus going to the collection when clicking on the scrollbar.
+        e.preventDefault();
+      }
     }
   };
 
