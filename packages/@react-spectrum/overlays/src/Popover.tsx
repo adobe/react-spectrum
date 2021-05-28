@@ -30,7 +30,6 @@ interface PopoverWrapperProps extends HTMLAttributes<HTMLElement> {
   shouldCloseOnBlur?: boolean,
   isKeyboardDismissDisabled?: boolean,
   isNonModal?: boolean,
-  shouldCloseOnInteractOutside?: (element: HTMLElement) => boolean,
   isDismissable?: boolean
 }
 
@@ -58,7 +57,6 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
     hideArrow,
     isKeyboardDismissDisabled,
     isNonModal,
-    shouldCloseOnInteractOutside,
     isDismissable = true,
     ...otherProps
   } = props;
@@ -74,7 +72,6 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
         arrowProps={arrowProps}
         onClose={onClose}
         shouldCloseOnBlur={shouldCloseOnBlur}
-        shouldCloseOnInteractOutside={shouldCloseOnInteractOutside}
         isKeyboardDismissDisabled={isKeyboardDismissDisabled}
         hideArrow={hideArrow}
         isNonModal={isNonModal}
@@ -96,7 +93,6 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
     shouldCloseOnBlur,
     isKeyboardDismissDisabled,
     isNonModal,
-    shouldCloseOnInteractOutside,
     isDismissable,
     ...otherProps
   } = props;

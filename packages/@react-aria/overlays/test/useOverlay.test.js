@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
@@ -29,9 +29,6 @@ function Example(props) {
 }
 
 describe('useOverlay', function () {
-  beforeAll(() => {
-    jest.useFakeTimers();
-  });
   describe.each`
     type                | prepare               | actions
     ${'Mouse Events'}   | ${installMouseEvent}  | ${[
