@@ -837,10 +837,6 @@ describe('ActionGroup', function () {
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['two', 'three', 'four']));
 
-      triggerPress(button);
-      menu = tree.getByRole('menu');
-      items = within(menu).getAllByRole('menuitemcheckbox');
-
       expect(items[1]).toHaveAttribute('aria-checked', 'true');
       expect(items[2]).toHaveAttribute('aria-checked', 'true');
       expect(items[3]).toHaveAttribute('aria-checked', 'true');
