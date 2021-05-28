@@ -10,25 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
-import {Example} from './Example';
+import {Example} from '../stories/Example';
+import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {useViewportSize} from '@react-aria/utils';
 
 storiesOf('ActionBar', module)
   .add(
     'default',
-    () => <Example onAction={action('onAction')} />
+    () => (
+      <Flex gap="size-250">
+        <Example />
+        <Example defaultSelectedKeys={new Set(['Foo 1'])} />
+      </Flex>
+    )
   )
   .add(
     'isEmphasized',
-    () => <Example isEmphasized onAction={action('onAction')} />
+    () => <Example isEmphasized defaultSelectedKeys={new Set(['Foo 1'])} />
   )
   .add(
-    'full width',
-    () => {
-      let viewport = useViewportSize();
-      return <Example isEmphasized tableWidth="100vw" containerHeight={viewport.height} isQuiet onAction={action('onAction')} />;
-    }
+    'large width',
+    () => <Example isEmphasized tableWidth={800} isQuiet defaultSelectedKeys={new Set(['Foo 1'])} />
+  )
+  .add(
+    'collapsed icons',
+    () => <Example isEmphasized tableWidth={500} isQuiet defaultSelectedKeys={new Set(['Foo 1'])} />
   );
