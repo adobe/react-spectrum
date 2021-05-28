@@ -152,23 +152,27 @@ function FormWithControls(props: any = {}) {
   let [favoritePet2, setFavoritePet2] = useState('cats');
   let [favoriteColor2, setFavoriteColor2] = useState('green' as Key);
   let [howIFeel2, setHowIFeel2] = useState('I feel good, o I feel so good!');
+  let [preventDefault, setPreventDefault] = useState(true);
 
   return (
     <Flex>
+      <Checkbox isSelected={preventDefault} onChange={setPreventDefault}>Prevent Default onSubmit</Checkbox>
       <Form
         onSubmit={e => {
           action('onSubmit')(e);
-          e.preventDefault();
+          if (preventDefault) {
+            e.preventDefault();
+          }
         }}
         {...props}>
-        <TextField label="First Name controlled" placeholder="John" value={firstName} onChange={setFirstName} />
-        <TextField label="Last Name default" placeholder="Smith" defaultValue="world" />
-        <TextField label="Street Address none" placeholder="123 Any Street" />
-        <Picker label="Country none" placeholder="Select a country" items={countries}>
+        <TextField name="first-name" label="First Name controlled" placeholder="John" value={firstName} onChange={setFirstName} />
+        <TextField name="last-name" label="Last Name default" placeholder="Smith" defaultValue="world" />
+        <TextField name="street-address" label="Street Address none" placeholder="123 Any Street" />
+        <Picker name="country" label="Country none" placeholder="Select a country" items={countries}>
           {item => <Item key={item.name}>{item.name}</Item>}
         </Picker>
-        <Checkbox isSelected={isHunter} onChange={setIsHunter}>I am a hunter! controlled</Checkbox>
-        <Checkbox defaultSelected>I am a wizard! default</Checkbox>
+        <Checkbox name="is-hunter" isSelected={isHunter} onChange={setIsHunter}>I am a hunter! controlled</Checkbox>
+        <Checkbox name="is-wizard" defaultSelected>I am a wizard! default</Checkbox>
         <RadioGroup label="Favorite pet controlled" name="favorite-pet-group" value={favoritePet} onChange={setFavoritePet}>
           <Radio value="dogs">Dogs</Radio>
           <Radio value="cats">Cats</Radio>
@@ -179,7 +183,7 @@ function FormWithControls(props: any = {}) {
           <Radio value="cats">Cats</Radio>
           <Radio value="dragons">Dragons</Radio>
         </RadioGroup>
-        <Picker label="Favorite color controlled" selectedKey={favoriteColor} onSelectionChange={setFavoriteColor}>
+        <Picker name="favorite-color" label="Favorite color controlled" selectedKey={favoriteColor} onSelectionChange={setFavoriteColor}>
           <Item key="red">Red</Item>
           <Item key="orange">Orange</Item>
           <Item key="yellow">Yellow</Item>
@@ -187,8 +191,8 @@ function FormWithControls(props: any = {}) {
           <Item key="blue">Blue</Item>
           <Item key="purple">Purple</Item>
         </Picker>
-        <TextArea label="Comments" placeholder="How do you feel? controlled" value={howIFeel} onChange={setHowIFeel} />
-        <TextArea label="Comments" placeholder="How do you feel? default" defaultValue="hello" />
+        <TextArea name="comments-controlled" label="Comments" placeholder="How do you feel? controlled" value={howIFeel} onChange={setHowIFeel} />
+        <TextArea name="comments-uncontrolled" label="Comments" placeholder="How do you feel? default" defaultValue="hello" />
         <ButtonGroup>
           <Button variant="primary" type="submit">Submit</Button>
         </ButtonGroup>
@@ -196,7 +200,9 @@ function FormWithControls(props: any = {}) {
       <form
         onSubmit={e => {
           action('onSubmit')(e);
-          e.preventDefault();
+          if (preventDefault) {
+            e.preventDefault();
+          }
         }}
         {...props}>
         <Flex direction="column" gap="size-500" marginTop="size-500">
@@ -214,7 +220,7 @@ function FormWithControls(props: any = {}) {
           </label>
           <label>
             Country none
-            <select placeholder="Select a country">
+            <select name="Country" placeholder="Select a country">
               {countries.map(item => <option value={item.name}>{item.name}</option>)}
             </select>
           </label>

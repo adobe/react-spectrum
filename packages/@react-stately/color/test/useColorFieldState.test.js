@@ -57,10 +57,10 @@ describe('useColorFieldState tests', function () {
   });
 
   it.each`
-    action                               | action               | props
-    ${'not increment beyond max value'}  | ${'increment'}       | ${{defaultValue: '#fffffc', step: 16}}
+    name                                 | action               | props
+    ${'not increment beyond max value'}  | ${'increment'}       | ${{defaultValue: '#ffffff'}}
     ${'increment to max value'}          | ${'incrementToMax'}  | ${{defaultValue: '#aabbcc'}}
-  `('should $action', function ({action, props}) {
+  `('should $action $name', function ({action, props}) {
     let {result} = renderHook(() => useColorFieldState(props));
     act(() => result.current[action]());
     expect(result.current.colorValue.getChannelValue('red')).toBe(255);
@@ -71,10 +71,10 @@ describe('useColorFieldState tests', function () {
   });
 
   it.each`
-    action                               | action               | props
-    ${'not decrement beyond min value'}  | ${'decrement'}       | ${{defaultValue: '#00000c', step: 16}}
+    name                                 | action               | props
+    ${'not decrement beyond min value'}  | ${'decrement'}       | ${{defaultValue: '#000000'}}
     ${'decrement to min value'}          | ${'decrementToMin'}  | ${{defaultValue: '#aabbcc'}}
-  `('should $action', function ({action, props}) {
+  `('should $action $name', function ({action, props}) {
     let {result} = renderHook(() => useColorFieldState(props));
     act(() => result.current[action]());
     expect(result.current.colorValue.getChannelValue('red')).toBe(0);
@@ -113,6 +113,8 @@ describe('useColorFieldState tests', function () {
     expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
 
     act(() => result.current.setInputValue('invalidColor'));
+
+    act(() => result.current.commit());
     expect(result.current.inputValue).toBe('#AABBCC');
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
@@ -129,12 +131,14 @@ describe('useColorFieldState tests', function () {
 
     let newColor = parseColor('#cba');
     act(() => result.current.setInputValue('#cba'));
+
+    act(() => result.current.commit());
     expect(onChangeSpy).toHaveBeenCalledWith(newColor);
     expect(result.current.colorValue.getChannelValue('red')).toBe(204);
     expect(result.current.colorValue.getChannelValue('green')).toBe(187);
     expect(result.current.colorValue.getChannelValue('blue')).toBe(170);
     expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
-    expect(result.current.inputValue).toBe('#cba');
+    expect(result.current.inputValue).toBe('#CCBBAA');
   });
 
   it('should not update colorValue (controlled)', function () {
@@ -149,6 +153,8 @@ describe('useColorFieldState tests', function () {
 
     let newColor = parseColor('#cba');
     act(() => result.current.setInputValue('#cba'));
+
+    act(() => result.current.commit());
     expect(onChangeSpy).toHaveBeenCalledWith(newColor);
     expect(result.current.colorValue.getChannelValue('red')).toBe(170);
     expect(result.current.colorValue.getChannelValue('green')).toBe(187);
@@ -168,6 +174,8 @@ describe('useColorFieldState tests', function () {
     expect(result.current.inputValue).toBe('#AABBCC');
 
     act(() => result.current.setInputValue(''));
+
+    act(() => result.current.commit());
     expect(onChangeSpy).toHaveBeenCalledWith(null);
     expect(result.current.colorValue).toBeNull();
     expect(result.current.inputValue).toBe('');

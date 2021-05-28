@@ -15,7 +15,7 @@ import {ActionGroup} from '@react-spectrum/actiongroup';
 import Add from '@spectrum-icons/workflow/Add';
 import {AlertDialog, Dialog, DialogContainer, useDialogContainer} from '@react-spectrum/dialog';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
+import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Content} from '@react-spectrum/view';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {Divider} from '@react-spectrum/divider';
@@ -51,7 +51,7 @@ export function CRUDExample() {
           <Item key="bulk-delete" aria-label="Delete selected items"><Delete /></Item>
         }
       </ActionGroup>
-      <Table aria-label="People" width={500} height={300} selectionMode="multiple" isQuiet selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
+      <TableView aria-label="People" width={500} height={300} selectionMode="multiple" isQuiet selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
         <TableHeader>
           <Column isRowHeader key="firstName">First Name</Column>
           <Column isRowHeader key="lastName">Last Name</Column>
@@ -78,7 +78,7 @@ export function CRUDExample() {
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
       <DialogContainer onDismiss={() => setDialog(null)}>
         {dialog?.action === 'add' &&
           <EditDialog

@@ -1,6 +1,6 @@
 {
   "name": "@internationalized/message",
-  "version": "3.0.0-alpha.0",
+  "version": "3.0.0",
   "description": "Internationalized message formatting and locale negotiation",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "intl-messageformat": "^2.2.0"
+    "intl-messageformat": "^9.6.12"
   },
   "publishConfig": {
     "access": "public"

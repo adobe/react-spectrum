@@ -22,6 +22,7 @@ import {useEffect, useState} from 'react';
 type Modality = 'keyboard' | 'pointer' | 'virtual';
 type HandlerEvent = PointerEvent | MouseEvent | KeyboardEvent | FocusEvent;
 type Handler = (modality: Modality, e: HandlerEvent) => void;
+type FocusVisibleHandler = (isFocusVisible: boolean) => void;
 interface FocusVisibleProps {
   /** Whether the element is a text input. */
   isTextInput?: boolean,
@@ -38,6 +39,10 @@ let currentModality = null;
 let changeHandlers = new Set<Handler>();
 let hasSetupGlobalListeners = false;
 let hasEventBeforeFocus = false;
+let documentVisibilityState = {
+  current: null,
+  previous: null
+};
 
 // Only Tab or Esc keys will make focus visible on text input elements
 const FOCUS_VISIBLE_INPUT_KEYS = {
@@ -56,6 +61,17 @@ function triggerChangeHandlers(modality: Modality, e: HandlerEvent) {
  */
 function isValidKey(e: KeyboardEvent) {
   return !(e.metaKey || (!isMac() && e.altKey) || e.ctrlKey);
+}
+
+function hasChangedTabRecently() {
+  // in Chrome visibilitychange event always happens before any focus event.
+  // situation is different for Firefox and Safari where visibilitychange fires after all initial focus events.
+  return (documentVisibilityState.current === 'visible' && documentVisibilityState.previous === 'hidden') || documentVisibilityState.current === 'hidden';
+}
+
+function resetDocumentVisibilityState() {
+  documentVisibilityState.current = null;
+  documentVisibilityState.previous = null;
 }
 
 function handleKeyboardEvent(e: KeyboardEvent) {
@@ -91,9 +107,13 @@ function handleFocusEvent(e: FocusEvent) {
 
   // If a focus event occurs without a preceding keyboard or pointer event, switch to virtual modality.
   // This occurs, for example, when navigating a form with the next/previous buttons on iOS.
-  if (!hasEventBeforeFocus) {
+  if (!hasEventBeforeFocus && !hasChangedTabRecently()) {
     currentModality = 'virtual';
     triggerChangeHandlers('virtual', e);
+  }
+
+  if (documentVisibilityState.current === 'visible') {
+    resetDocumentVisibilityState();
   }
 
   hasEventBeforeFocus = false;
@@ -103,6 +123,11 @@ function handleWindowBlur() {
   // When the window is blurred, reset state. This is necessary when tabbing out of the window,
   // for example, since a subsequent focus event won't be fired.
   hasEventBeforeFocus = false;
+}
+
+function handleVisibilityChange() {
+  documentVisibilityState.previous = documentVisibilityState.current;
+  documentVisibilityState.current = document.visibilityState;
 }
 
 /**
@@ -126,6 +151,7 @@ function setupGlobalFocusEvents() {
   document.addEventListener('keydown', handleKeyboardEvent, true);
   document.addEventListener('keyup', handleKeyboardEvent, true);
   document.addEventListener('click', handleClickEvent, true);
+  document.addEventListener('visibilitychange', handleVisibilityChange, true);
 
   // Register focus events on the window so they are sure to happen
   // before React's event listeners (registered on the document).
@@ -191,29 +217,40 @@ export function useInteractionModality(): Modality {
 }
 
 /**
+ * If this is attached to text input component, return if the event is a focus event (Tab/Escape keys pressed) so that
+ * focus visible style can be properly set.
+ */
+function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: HandlerEvent) {
+  return !(isTextInput && modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]);
+}
+
+/**
  * Manages focus visible state for the page, and subscribes individual components for updates.
  */
 export function useFocusVisible(props: FocusVisibleProps = {}): FocusVisibleResult {
-  setupGlobalFocusEvents();
-
   let {isTextInput, autoFocus} = props;
   let [isFocusVisibleState, setFocusVisible] = useState(autoFocus || isFocusVisible());
-  useEffect(() => {
-    let handler = (modality: Modality, e: HandlerEvent) => {
-      // If this is a text input component, don't update the focus visible style when
-      // typing except for when the Tab and Escape keys are pressed.
-      if (isTextInput && modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]) {
-        return;
-      }
-
-      setFocusVisible(isFocusVisible());
-    };
-
-    changeHandlers.add(handler);
-    return () => {
-      changeHandlers.delete(handler);
-    };
-  }, [isTextInput]);
+  useFocusVisibleListener((isFocusVisible) => {
+    setFocusVisible(isFocusVisible);
+  }, [isTextInput], {isTextInput});
 
   return {isFocusVisible: isFocusVisibleState};
+}
+
+/**
+ * Listens for trigger change and reports if focus is visible (i.e., modality is not pointer).
+ */
+export function useFocusVisibleListener(fn: FocusVisibleHandler, deps: ReadonlyArray<any>, opts?: {isTextInput?: boolean}): void {
+  setupGlobalFocusEvents();
+
+  useEffect(() => {
+    let handler = (modality: Modality, e: HandlerEvent) => {
+      if (!isKeyboardFocusEvent(opts?.isTextInput, modality, e)) {
+        return;
+      }
+      fn(isFocusVisible());
+    };
+    changeHandlers.add(handler);
+    return () => changeHandlers.delete(handler);
+  }, deps);
 }

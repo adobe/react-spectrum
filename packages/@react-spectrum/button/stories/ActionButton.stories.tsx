@@ -17,6 +17,7 @@ import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
+import {View} from '@react-spectrum/view';
 
 storiesOf('Button/ActionButton', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -26,25 +27,7 @@ storiesOf('Button/ActionButton', module)
   )
   .add(
     'icon',
-    () => (
-      <Flex gap="size-100">
-        <ActionButton
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}>
-          <Add />
-          <Text>Default</Text>
-        </ActionButton>
-        <ActionButton
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isDisabled>
-          <Text>Disabled</Text>
-          <Add />
-        </ActionButton>
-      </Flex>
-    )
+    () => renderWithIcon()
   )
   .add(
     'icon only',
@@ -73,6 +56,28 @@ storiesOf('Button/ActionButton', module)
   .add(
     'autoFocus',
     () => render({autoFocus: true})
+  )
+  .add(
+    'staticColor: white',
+    () => (
+      <View backgroundColor="static-seafoam-600" padding="size-1000">
+        <Flex direction="column" rowGap="size-150">
+          {renderWithIcon({staticColor: 'white'})}
+          {renderWithIcon({staticColor: 'white', isQuiet: true})}
+        </Flex>
+      </View>
+    )
+  )
+  .add(
+    'staticColor: black',
+    () => (
+      <View backgroundColor="static-yellow-400" padding="size-1000">
+        <Flex direction="column" rowGap="size-150">
+          {renderWithIcon({staticColor: 'black'})}
+          {renderWithIcon({staticColor: 'black', isQuiet: true})}
+        </Flex>
+      </View>
+    )
   );
 
 function render(props = {}) {
@@ -92,6 +97,30 @@ function render(props = {}) {
         isDisabled
         {...props}>
         Disabled
+      </ActionButton>
+    </Flex>
+  );
+}
+
+function renderWithIcon(props = {}) {
+  return (
+    <Flex gap="size-100">
+      <ActionButton
+        onPress={action('press')}
+        onPressStart={action('pressstart')}
+        onPressEnd={action('pressend')}
+        {...props}>
+        <Add />
+        <Text>Default</Text>
+      </ActionButton>
+      <ActionButton
+        onPress={action('press')}
+        onPressStart={action('pressstart')}
+        onPressEnd={action('pressend')}
+        isDisabled
+        {...props}>
+        <Text>Disabled</Text>
+        <Add />
       </ActionButton>
     </Flex>
   );

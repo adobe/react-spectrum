@@ -15,11 +15,14 @@ import {ColorFieldState} from '@react-stately/color';
 import {
   HTMLAttributes,
   LabelHTMLAttributes,
-  RefObject
+  RefObject,
+  useCallback,
+  useState
 } from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
+import {useFocusWithin, useScrollWheel} from '@react-aria/interactions';
+import {useFormattedTextField} from '@react-aria/textfield';
 import {useSpinButton} from '@react-aria/spinbutton';
-import {useTextField} from '@react-aria/textfield';
 
 interface ColorFieldAria {
   /** Props for the label element. */
@@ -46,7 +49,6 @@ export function useColorField(
   let {
     colorValue,
     inputValue,
-    setInputValue,
     commit,
     increment,
     decrement,
@@ -71,37 +73,46 @@ export function useColorField(
     }
   );
 
-  let onWheel = (e) => {
-    if (isDisabled || isReadOnly) {
+  let [focusWithin, setFocusWithin] = useState(false);
+  let {focusWithinProps} = useFocusWithin({isDisabled, onFocusWithinChange: setFocusWithin});
+
+  let onWheel = useCallback((e) => {
+    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) {
       return;
     }
-    if (e.deltaY < 0) {
+    if (e.deltaY > 0) {
       increment();
-    } else {
+    } else if (e.deltaY < 0) {
       decrement();
     }
+  }, [isReadOnly, isDisabled, decrement, increment]);
+  // If the input isn't supposed to receive input, disable scrolling.
+  let scrollingDisabled = isDisabled || isReadOnly || !focusWithin;
+  useScrollWheel({onScroll: onWheel, isDisabled: scrollingDisabled}, ref);
+
+  let onChange = value => {
+    state.setInputValue(value);
   };
 
-  let {labelProps, inputProps} = useTextField(
+  let {labelProps, inputProps} = useFormattedTextField(
     mergeProps(props, {
       id: inputId,
       value: inputValue,
       type: 'text',
       autoComplete: 'off',
-      onChange: setInputValue
-    }), ref);
+      onChange
+    }), state, ref);
 
   return {
     labelProps,
-    inputProps: mergeProps(inputProps, spinButtonProps, {
+    inputProps: mergeProps(inputProps, spinButtonProps, focusWithinProps, {
       role: 'textbox',
       'aria-valuemax': null,
       'aria-valuemin': null,
       'aria-valuenow': null,
       'aria-valuetext': null,
       autoCorrect: 'off',
-      onBlur: commit,
-      onWheel
+      onBlur: commit
     })
   };
 }

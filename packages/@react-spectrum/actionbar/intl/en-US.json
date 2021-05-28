@@ -1,0 +1,5 @@
+{
+  "deselect": "Deselect",
+  "selected": "{count, plural, =0 {None selected} other {# selected}}",
+  "selectedAll": "All selected"
+}
