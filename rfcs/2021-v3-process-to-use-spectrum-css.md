@@ -42,14 +42,17 @@ We'd like for DNA updates to be easier to do, which should just be a new release
    used. Be sure to define any new terms in this section.
 -->
 
-We can do a couple of things without being blocked by decisions in this RFC. First and foremost, we can add more stories to Chromatic for coverage on components.
+We can do a couple of things without being blocked by decisions in this RFC. First and foremost, we can add more stories to Chromatic for visual regression test coverage on components.
 We don't need to do every component at once, but the more we have ahead of time, the easier this whole process will be. It can help us move both to the new CSS and new DNA.
 
 
 The second thing we can do is upgrade to DNA 7. Again, the more chromatic stories we have in place, the easier this will be, as we'll need to do it to all components at once. This will prepare us more for the merge with CSS in which we'll need to worry about merging our changes with Spectrum-CSS' changes.
 
 Once both of the above are in place, we can move forward with merging with Spectrum CSS.
--- to fill out --
+
+--Initial leaning-- is to consume DSS directly, and write out own CSS based on that. Reason being that we are currently asking for a specialized package that requires post processing, css modules for one, and web components are running their own post processing on Spectrum-CSS as well. We could see Spectrum-CSS providing CSS for teams that just want to include it on their page, but each implementation with a framework comes with different needs that they know best. Any changes that we'd need to make to post processing would need to be made in Spectrum-CSS and that just doesn't make much sense.
+We see another avenue for continuing to work with Spectrum-CSS. Since it's meant to do things that DSS can't, if they could turn those "things that DSS can't do" into their own mixins and publish those, then we could use them too. In addition, they could make use of those mixins themselves for Spectrum-CSS.
+This would allow us to not duplicate much of what Spectrum-CSS does, and give us the flexibility to change our DOM structure without causing a breaking change to Spectrum CSS. It would also allow us to iterate more quickly because we could make CSS changes in sync with our code changes.
 
 
 ### Approaches
@@ -64,6 +67,21 @@ CSS modules allows us to uniquely name css classnames so that even if someone ha
 In order for users of React Spectrum to be able to make use of CSS Modules, we either need to package our CSS that we've modularized into our React Spectrum packages as we've been doing. Or we need to put into its own package with the modularizing applied.
 There are some PostCSS plugins that can handle writing out the mappings of classes and can even join class names across files. https://github.com/madyankin/postcss-modules We'll need to mind which class names are shared across files though, right now it's done in Spectrum-CSS (search for spectrum-Icon) but we are careful not to do it in React Spectrum's copy of Spectrum CSS. This means there are some class names we have taken the liberty of re-naming to make that distinction more clear, since CSS modules doesn't actually support the same name across multiple files and this plugin hides that a bit by created joined classnames.
 
+#### Where should the CSS live
+This has the most impact on what we ultimately do as it not only influences what we do immediately, it also impacts how we contribute back and make fixes during things like release.
+
+Groupings for this section:
+  - Spectrum CSS publishes
+    - Spectrum-CSS maintains all css packages
+  - RSP publishes
+    - RSP maintains css modules packages
+    - RSP consumes DSS directly
+    - RSP maintains their own CSS packages
+  - Cohabit, RSP publishes
+    - Spectrum-CSS and React Spectrum move into an even bigger monorepo
+    - Spectrum-CSS becomes a submodule in React Spectrum
+    - Spectrum-CSS submodule alternatives
+
 ##### Spectrum-CSS maintains all css packages
 In this scenario, the Spectrum-CSS project adds two files to their distribution, a js file with the mapping of classnames to css module classnames and a css file that the js file imports. They can point to the js file using the main field of the package.json and can use styles to point to their css files. Spectrum-CSS is open to doing this. 
 
@@ -72,7 +90,7 @@ In this scenario, the Spectrum-CSS project adds two files to their distribution,
   - We no longer provide our own separate copy bundle of the CSS
   - We are likely not blocked on several components we thought we'd have to maintain forever, Spectrum-CSS has already taken on grid in Dialog
   - Should Spectrum-CSS inadvertently break during a release, users of React Spectrum will be able to pin to earlier versions of Spectrum-CSS
-  - Fixing CSS for the most part should still have the same turn around because they can test and release independent of us and our range dependency should still allow users to pick up the fix
+  - Fixing CSS for the most part should still have the same turn around because they can test and release independent of us, and our range dependency should still allow users to pick up the fix
 
 ###### Cons:
   - We may need to still distribute some of our own modularized css if there are things Spectrum-CSS cannot have from us
@@ -93,11 +111,26 @@ Generate from node_modules in React Spectrum and publish as separate packages.
 ###### Cons:
   - A completely new package(s) for everyone
   - Wouldn't track with Spectrum-CSS updates, it'd always be behind
-  - Local development would need to do it in postinstall so they'd be ready for use in storybook
+  - Local development would be difficult
+    - in post install, so they'd be ready for use in storybook
+    - have our own packages that import spectrum-css and apply overrides?
   - If we use any new features that we implement in CSS, we will need to update our packages to point to the new minimum version of the CSS that supports our component
 
+##### React Spectrum consumes DSS directly
+
+In this scenario, we stop using Spectrum-CSS and maintain our own CSS packages using the mixins provided by DSS. We may be able to make use of Spectrum-CSS if they also created mixins that covered some things that DSS can't.
+
+###### Pros:
+  - We can make use of all the nice things that DSS provides while also being able to quickly iterate on changes we need to make
+  - Releases won't be held up by waiting for Spectrum-CSS, and hold ups from DSS should theoretically be less
+  - We can make changes to structure, and it wouldn't be breaking for Spectrum-CSS or DSS
+
+###### Cons:
+  - Outstanding question, will DSS cover layout (grid/flex)
+  - DSS isn't a standard thing, so understanding how our CSS files work may cause trouble for contributors
+
 ##### RSP maintains their own CSS packages
-Everything stays the same but we publish our CSS
+Everything stays the same, but we publish our CSS. What I mean by everything stays the same is that we keep a full copy of CSS and don't adopt new DSS or try to move back to Spectrum-CSS in any way.
 
 ###### Pros:
   - Very fast to add new features
@@ -109,7 +142,8 @@ Everything stays the same but we publish our CSS
   - More work for us, we'd be duplicating efforts of Spectrum-CSS at best
 
 
-##### Spectrum-CSS and React Spectrum move into an even bigger monorepo
+##### Spectrum-CSS and React Spectrum share a monorepo
+Either we'd move into theirs, or they'd move into ours, or we'd set up a new repo. Releases could be done in sync or not.
 
 ###### Pros:
   - No need to do local linking when trying to develop a new feature requiring CSS updates
@@ -119,6 +153,7 @@ Everything stays the same but we publish our CSS
 ###### Cons:
   - Would set precedent for bringing in other groups to an already large repo
   - Work required to move into another repo for someone
+  - Managing reviews could become difficult, especially around build
 
 ##### Spectrum-CSS becomes a submodule in React Spectrum
 
@@ -139,19 +174,6 @@ In this scenario, we'd likely run the Spectrum-CSS build as they provide it, we'
 Looked at some alternatives to sub-modules, https://dev.to/giteden/4-git-submodules-alternatives-you-should-know-1hga some require subscriptions or would need an RFC for moving to them as their workflows and setups are different than ours. Some require moving to BitBucket.
 
 Each of these seems to have mostly the same pros and cons as submodules regardless of the technology used.
-
-##### React Spectrum consumes DSS directly
-
-In this scenario, we stop using Spectrum-CSS and maintain our own CSS packages using the mixins provided by DSS. We may be able to make use of Spectrum-CSS if they also created mixins that covered some of the things that DSS can't.
-
-###### Pros:
-  - We can make use of all the nice things that DSS provides while also being able to quickly iterate on changes we need to make
-  - Releases won't be held up by waiting for Spectrum-CSS, and hold ups from DSS should theoretically be less
-  - We can make changes to structure, and it wouldn't be breaking for Spectrum-CSS or DSS
-
-###### Cons:
-  - Outstanding question, will DSS cover layout (grid/flex)
-  - DSS isn't a standard thing, so understanding how our CSS files work may cause trouble for contributors
 
 #### DNA
 
@@ -177,13 +199,13 @@ There has been a breaking change to DNA, many tokens have changed. In addition, 
 
 #### DSS
 
-This affects generation of Spectrum-CSS and token names. We will likely need to add some new classes. If we do have some components that we can't merge back to Spectrum-CSS, we'll need to decide if we keep using the Spectrum-CSS build tools to build our own
+This affects generation of Spectrum-CSS and token names. We will likely need to add some new classes. If we do have some components that we can't merge back to Spectrum-CSS, we'll need to decide if we keep using the Spectrum-CSS build tools to build our own.
 
 #### Use complete, partial, none
 We will likely have three different kinds of components. Components where we can immediately switch to Spectrum-CSS, components where we will need to merge back some changes before we can switch completely over, and components that we will never be able to use spectrum-css for. After talking to Spectrum-CSS the worry about having some components we can never contribute back has diminished, as shown by them taking on Dialog's CSS changes over half a year ago.
 
 ##### Contributing back
-In order to merge back the changes we've made, we'll need to go component by component and get guidance on if we should contribute the changes to Spectrum-CSS or directly into DSS.
+In order to merge back the changes we've made, we'll need to go component by component and get guidance on if we should contribute the changes to Spectrum-CSS or directly into DSS. Pros and cons are wrapped up in where Spectrum-CSS ends up living. See above "Where should the CSS live".
 
 ##### Local overrides & new packages
 Spectrum-CSS provides a whole tools packages that we can use to build our own CSS. Yarn/Lerna resolution will choose a local copy of a package over a remote one by the same name. We don't want to include CSS into our packages other than some minor bits like TableView has, so we'd need to publish any overrides. This would be confusing to the community, and a lot of work to maintain.
@@ -191,31 +213,6 @@ If we do have components that spectrum-css never wants, those we should publish 
 
 With Spectrum-CSS potentially taking on CSS Modules, how do we want to handle local CSS such as TableView. Can these local files be contributed to Spectrum-CSS, or will they need to be published with the package as we currently do. I see this as low risk because we already apply both Spectrum-CSS and React-Spectrum-CSS selectors and Table, at least, isn't relying on variables nor creating any.
 
-### Possible flow of work to move over
-
-  - Add stories to Chromatic
-  - At the same time, create branch to update DNA to 7.0
-  - After DNA, begin moving over "easy" components to spectrum-css packages
-    - Create a branch and run chromatic
-    - Diff our CSS with Spectrum-CSS
-    - Determine if we should contribute to Spectrum-CSS or DSS
-    - Make branch to update appropriate module
-    - Link locally, delete our local copy in spectrum-css-temp
-    - Add any classes we need
-    - Run chromatic
-    - Verify results, repeating above steps until it passes
-    - Submit branch as PR to spectrum and create a PR for React-Spectrum
-    - Once Spectrum-CSS releases the package, merge PR in React-Spectrum
-  - Continue moving components over
-
-### Possible contribution back to Spectrum-CSS
-
-  - Locally run Spectrum-CSS / DSS and link appropriate packages that need to be worked on
-  - Make changes
-  - When ready, submit changes as a PR to Spectrum-CSS / DSS
-  - Once merged and released, submit PR to React Spectrum making sure to bump the version of each package depended on appropriately and merge
-    - To define "appropriate", if the change included a new classname/selector/token we didn't have before
-    - If it didn't have any of those, we don't need to release with a bump to the version
 
 ## Documentation
 
