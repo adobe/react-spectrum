@@ -55,6 +55,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
           return;
         }
         if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
+          e.preventDefault();
           e.stopPropagation();
           state.isPointerDown = false;
           onInteractOutside(e);
@@ -77,6 +78,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
         if (state.ignoreEmulatedMouseEvents) {
           state.ignoreEmulatedMouseEvents = false;
         } else if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
+          e.preventDefault();
           e.stopPropagation();
           state.isPointerDown = false;
           onInteractOutside(e);
@@ -89,6 +91,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
         }
         state.ignoreEmulatedMouseEvents = true;
         if (onInteractOutside && state.isPointerDown && isValidEvent(e, ref)) {
+          e.preventDefault();
           e.stopPropagation();
           state.isPointerDown = false;
           onInteractOutside(e);
