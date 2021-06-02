@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {ColorWheel} from '../';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
-import {ColorWheel} from '../';
 import {SpectrumColorWheelProps} from '@react-types/color';
 
 const meta: Meta<SpectrumColorWheelProps> = {
