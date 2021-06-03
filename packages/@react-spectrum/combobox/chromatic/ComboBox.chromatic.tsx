@@ -23,7 +23,7 @@ let states = [
   {isQuiet: true},
   {isReadOnly: true},
   {isDisabled: true},
-  {validationState: ['valid', 'invalid', undefined]},
+  {validationState: ['valid', 'invalid']},
   {isRequired: true},
   {necessityIndicator: 'label'}
 ];
@@ -58,7 +58,7 @@ function shortName(key, value) {
       returnVal = 'disable';
       break;
     case 'validationState':
-      returnVal = `vs ${value === undefined ? 'none' : value}`;
+      returnVal = `vs ${value}`;
       break;
     case 'isRequired':
       returnVal = 'req';
@@ -71,7 +71,10 @@ function shortName(key, value) {
 }
 
 const meta: Meta<SpectrumComboBoxProps<object>> = {
-  title: 'ComboBox'
+  title: 'ComboBox',
+  parameters: {
+    chromaticProvider: {colorSchemes: ['light', 'dark', 'lightest', 'darkest'], locales: ['en-US'], scales: ['medium', 'large']}
+  }
 };
 
 export default meta;

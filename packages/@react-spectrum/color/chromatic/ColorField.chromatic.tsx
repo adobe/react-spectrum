@@ -21,7 +21,7 @@ import {SpectrumColorFieldProps} from '@react-types/color';
 let states = [
   {isQuiet: true},
   {isDisabled: true},
-  {validationState: ['valid', 'invalid', undefined]},
+  {validationState: ['valid', 'invalid']},
   {isRequired: true},
   {necessityIndicator: 'label'}
 ];
@@ -53,7 +53,7 @@ function shortName(key, value) {
       returnVal = 'disable';
       break;
     case 'validationState':
-      returnVal = `vs ${value === undefined ? 'none' : value}`;
+      returnVal = `vs ${value}`;
       break;
     case 'isRequired':
       returnVal = 'req';
@@ -72,7 +72,7 @@ const meta: Meta = {
 export default meta;
 
 const Template: Story<SpectrumColorFieldProps> = (args) => (
-  <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
+  <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
       if (!key) {
@@ -84,7 +84,7 @@ const Template: Story<SpectrumColorFieldProps> = (args) => (
 );
 
 const TemplateSmall: Story<SpectrumColorFieldProps> = (args) => (
-  <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
+  <Grid columns={repeat(2, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
       if (!key) {
@@ -131,6 +131,6 @@ export const PropLabelSide = TemplateSmall.bind({});
 PropLabelSide.storyName = 'label side';
 PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side', defaultValue: '#abcdef'};
 
-export const PropCustomWidth = TemplateSmall.bind({});
+export const PropCustomWidth = Template.bind({});
 PropCustomWidth.storyName = 'custom width';
 PropCustomWidth.args = {...PropDefaults.args, width: 'size-3000'};

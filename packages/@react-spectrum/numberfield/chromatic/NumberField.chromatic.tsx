@@ -24,7 +24,7 @@ let states = [
   {isDisabled: true},
   {isReadOnly: true},
   {hideStepper: true},
-  {validationState: ['valid', 'invalid', undefined]}
+  {validationState: ['valid', 'invalid']}
 ];
 
 let noLabelStates = [
@@ -100,7 +100,7 @@ function shortName(key, value) {
       returnVal = 'hidestep';
       break;
     case 'validationState':
-      returnVal = `vs ${value === undefined ? 'none' : value}`;
+      returnVal = `vs ${value}`;
       break;
     case 'UNSAFE_className':
       returnVal = `cn ${value.includes('focus-ring') ? 'ring' : 'focused'}`;
