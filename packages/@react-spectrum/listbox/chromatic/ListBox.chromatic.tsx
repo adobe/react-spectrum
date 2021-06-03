@@ -22,8 +22,8 @@ import {Label} from '@react-spectrum/label';
 import {Meta, Story} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
-import {Text} from '@react-spectrum/text';
 import {SpectrumListBoxProps} from '@react-types/listbox';
+import {Text} from '@react-spectrum/text';
 
 let iconMap = {
   AlignCenter,
@@ -72,52 +72,48 @@ let withSection = [
 ];
 
 const meta: Meta<SpectrumListBoxProps<object>> = {
-  title: 'ListBox'
+  title: 'ListBox',
+  component: ListBox,
+  parameters: {
+    // noticed a small shifting before final layout, delaying so chromatic doesn't hit that
+    chromatic: {delay: 600}
+  },
+  decorators: [Story => (
+    <div style={{display: 'flex', flexDirection: 'column'}}>
+      <Label id="label">Choose an item</Label>
+      <div style={{display: 'flex', minWidth: '200px', background: 'var(--spectrum-global-color-gray-50)', border: '1px solid lightgray', maxHeight: 300}}>
+        <Story />
+      </div>
+    </div>
+  )]
 };
 
 export default meta;
 
-const Wrapper = ({children}) => {
-  return (
-    <div style={{display: 'flex', flexDirection: 'column'}}>
-      <Label id="label">Choose an item</Label>
-      <div style={{display: 'flex', minWidth: '200px', background: 'var(--spectrum-global-color-gray-50)', border: '1px solid lightgray', maxHeight: 300}}>
-        {children}
-      </div>
-    </div>
-  );
-}
-
 const Template = (): Story<SpectrumListBoxProps<object>> => (args) => (
-  <Wrapper>
-    <ListBox {...args} flexGrow={1} items={flatOptions}>
-      {(item) => <Item key={item.name}>{item.name}</Item>}
-    </ListBox>
-  </Wrapper>
+  <ListBox {...args} flexGrow={1} items={flatOptions}>
+    {(item) => <Item key={item.name}>{item.name}</Item>}
+  </ListBox>
 );
 
 const TemplateWithSections = (): Story<SpectrumListBoxProps<object>> => (args) => (
-  <Wrapper>
-    <ListBox {...args} flexGrow={1} items={withSection}>
-      {item => (
-        <Section key={item.name} items={item.children} title={item.name}>
-          {item => <Item key={item.name}>{item.name}</Item>}
-        </Section>
-      )}
-    </ListBox>
-  </Wrapper>
+  <ListBox {...args} flexGrow={1} items={withSection}>
+    {item => (
+      <Section key={item.name} items={item.children} title={item.name}>
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </Section>
+    )}
+  </ListBox>
 );
 
 const TemplateNoTitle = (): Story<SpectrumListBoxProps<object>> => (args) => (
-  <Wrapper>
-    <ListBox {...args} flexGrow={1} items={withSection}>
-      {item => (
-        <Section key={item.name} items={item.children}>
-          {item => <Item key={item.name}>{item.name}</Item>}
-        </Section>
-      )}
-    </ListBox>
-  </Wrapper>
+  <ListBox {...args} flexGrow={1} items={withSection}>
+    {item => (
+      <Section key={item.name} items={item.children}>
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </Section>
+    )}
+  </ListBox>
 );
 
 let customOption = (item) => {
@@ -131,18 +127,15 @@ let customOption = (item) => {
 };
 
 const TemplateComplex = (): Story<SpectrumListBoxProps<object>> => (args) => (
-  <Wrapper>
-    <ListBox {...args} flexGrow={1} items={hardModeProgrammatic}>
-        {item => (
-          <Section key={item.name} items={item.children} title={item.name}>
-            {item => customOption(item)}
-          </Section>
-        )}
-    </ListBox>
-  </Wrapper>
+  <ListBox {...args} flexGrow={1} items={hardModeProgrammatic}>
+    {item => (
+      <Section key={item.name} items={item.children} title={item.name}>
+        {item => customOption(item)}
+      </Section>
+    )}
+  </ListBox>
 );
 
-// No need to make a set of all permutations, rely on each individual component story to do that for us. Just make sure Form is passing the options down
 export const Default = Template().bind({});
 Default.storyName = 'flat list with selection';
 Default.args = {selectedKeys: ['Snake', 'Aardvark'], disabledKeys: ['Ross'], selectionMode: 'multiple'};

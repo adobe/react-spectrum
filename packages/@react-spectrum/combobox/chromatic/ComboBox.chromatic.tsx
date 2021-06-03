@@ -83,7 +83,7 @@ let items = [
 ];
 
 const Template: Story<SpectrumComboBoxProps<object>> = (args) => (
-  <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
+  <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
       if (!key) {
@@ -116,26 +116,6 @@ const TemplateSideLabel: Story<SpectrumComboBoxProps<object>> = (args) => (
   </Grid>
 );
 
-const TemplateSmall: Story<SpectrumComboBoxProps<object>> = (args) => (
-  <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
-    {combinations.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
-      if (!key) {
-        key = 'empty';
-      }
-
-      return (
-        <ComboBox key={key} {...args} {...c} label={args['aria-label'] ? undefined : key} defaultItems={items}>
-          {(item: any) => <Item>{item.name}</Item>}
-        </ComboBox>
-      );
-    })}
-  </Grid>
-);
-
-// disabled, quiet, readonly, label postion/alignment, no label, isRequired, validationstate, placeholder, autoFocus, custom width
-
-// label position/alignment down here, custom width down here,  no label
 export const PropDefaults = Template.bind({});
 PropDefaults.storyName = 'default';
 PropDefaults.args = {};
@@ -144,7 +124,7 @@ export const PropSelectedKey = Template.bind({});
 PropSelectedKey.storyName = 'selectedKey: 2';
 PropSelectedKey.args = {selectedKey: '2'};
 
-export const PropInputValue= Template.bind({});
+export const PropInputValue = Template.bind({});
 PropInputValue.storyName = 'inputValue: Blah';
 PropInputValue.args = {inputValue: 'Blah'};
 
@@ -160,6 +140,6 @@ export const PropLabelSide = TemplateSideLabel.bind({});
 PropLabelSide.storyName = 'label side';
 PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side'};
 
-export const PropCustomWidth = TemplateSmall.bind({});
+export const PropCustomWidth = Template.bind({});
 PropCustomWidth.storyName = 'custom width';
 PropCustomWidth.args = {...PropDefaults.args, width: 'size-3000'};

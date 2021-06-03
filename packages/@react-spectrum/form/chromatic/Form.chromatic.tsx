@@ -13,9 +13,9 @@
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
-import {Radio, RadioGroup} from '@react-spectrum/radio';
 import {Meta, Story} from '@storybook/react';
 import {NumberField} from '@react-spectrum/numberfield';
+import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import {SpectrumFormProps} from '@react-types/form';
 import {TextArea, TextField} from '@react-spectrum/textfield';
@@ -29,7 +29,7 @@ export default meta;
 let flatOptions = [
   {id: 1, name: 'Aardvark'},
   {id: 2, name: 'Kangaroo'},
-  {id: 3, name: 'Snake'},
+  {id: 3, name: 'Snake'}
 ];
 
 const Template = (): Story<SpectrumFormProps> => (args) => (
@@ -39,7 +39,7 @@ const Template = (): Story<SpectrumFormProps> => (args) => (
       {item => <Item key={item.id}>{item.name}</Item>}
     </Picker>
     <NumberField label="Test" />
-    <CheckboxGroup defaultValue={["dragons"]} label="Pets">
+    <CheckboxGroup defaultValue={['dragons']} label="Pets">
       <Checkbox value="dogs">Dogs</Checkbox>
       <Checkbox value="cats">Cats</Checkbox>
       <Checkbox value="dragons">Dragons</Checkbox>

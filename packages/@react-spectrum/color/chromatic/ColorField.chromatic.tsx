@@ -60,6 +60,7 @@ function shortName(key, value) {
       break;
     case 'necessityIndicator':
       returnVal = 'necInd=label';
+      break;
   }
   return returnVal;
 }
