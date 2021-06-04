@@ -102,16 +102,17 @@ const Template: Story<SpectrumComboBoxProps<object>> = (args) => (
   </Grid>
 );
 
+// Chromatic can't handle the size of the side label story so removed some extraneous props that don't matter for side label case.
 const TemplateSideLabel: Story<SpectrumComboBoxProps<object>> = (args) => (
-  <Grid columns={repeat(2, '1fr')} autoFlow="row" gap="size-200">
-    {combinations.map(c => {
+  <Grid columns={repeat(2, '1fr')} autoFlow="row" gap="size-200" width={800}>
+    {combinations.filter(combo => !(combo.isReadOnly || combo.isDisabled)).map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
       if (!key) {
         key = 'empty';
       }
 
       return (
-        <ComboBox key={key} {...args} {...c} label={args['aria-label'] ? undefined : key} defaultItems={items}>
+        <ComboBox key={key} {...args} {...c} label={key} defaultItems={items}>
           {(item: any) => <Item>{item.name}</Item>}
         </ComboBox>
       );

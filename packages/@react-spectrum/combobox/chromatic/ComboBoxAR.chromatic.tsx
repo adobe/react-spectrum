@@ -10,26 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorWheel} from '../';
-import {Meta, Story} from '@storybook/react';
-import React from 'react';
-import {SpectrumColorWheelProps} from '@react-types/color';
+import {Meta} from '@storybook/react';
 
-const meta: Meta<SpectrumColorWheelProps> = {
-  title: 'ColorWheel'
+// Original ComboBox chromatic story was too large to be processed
+const meta: Meta = {
+  title: 'ComboBoxAR',
+  parameters: {
+    chromaticProvider: {colorSchemes: ['light', 'dark', 'lightest', 'darkest'], locales: ['ar-AE'], scales: ['medium', 'large']}
+  }
 };
 
 export default meta;
 
-const Template = (): Story<SpectrumColorWheelProps> => (args) => (
-  <ColorWheel {...args} />
-);
-
-export const Default = Template().bind({});
-Default.args = {defaultValue: 'hsl(0, 100%, 50%)'};
-
-export const Disabled = Template().bind({});
-Disabled.args = {...Default.args, isDisabled: true};
-
-export const CustomSize = Template().bind({});
-CustomSize.args = {...Default.args, size: 'size-5000'};
+export {PropDefaults, PropSelectedKey, PropInputValue, PropAriaLabelled, PropLabelEnd, PropLabelSide, PropCustomWidth} from './ComboBox.chromatic';
