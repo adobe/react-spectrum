@@ -81,7 +81,7 @@ const TemplateSmall: Story<SpectrumColorFieldProps> = (args) => (
 );
 
 const NoLabelTemplate: Story<SpectrumColorFieldProps> = (args) => (
-  <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
+  <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
     {combinations.filter(combo => combo.isRequired == null && combo.necessityIndicator == null).map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
       if (!key) {
