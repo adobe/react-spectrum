@@ -131,4 +131,4 @@ PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side'};
 
 export const PropCustomWidth = Template.bind({});
 PropCustomWidth.storyName = 'custom width';
-PropCustomWidth.args = {...PropDefaults.args, width: 'size-3000'};
+PropCustomWidth.args = {...PropDefaults.args, width: 'size-1600'};
