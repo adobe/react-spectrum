@@ -14,7 +14,7 @@ import {Meta} from '@storybook/react';
 
 // Original ComboBox chromatic story was too large to be processed
 const meta: Meta = {
-  title: 'ComboBoxAR',
+  title: 'ComboBoxRTL',
   parameters: {
     chromaticProvider: {colorSchemes: ['light', 'dark', 'lightest', 'darkest'], locales: ['ar-AE'], scales: ['medium', 'large']}
   }

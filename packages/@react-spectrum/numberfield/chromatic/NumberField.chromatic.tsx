@@ -11,6 +11,7 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
+import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {mergeProps} from '@react-aria/utils';
 import {Meta, Story} from '@storybook/react';
@@ -38,22 +39,7 @@ let noLabelStates = [
     )}
 ];
 
-// Generate a powerset of the options
-let combinations: any[] = [{}];
-for (let i = 0; i < states.length; i++) {
-  let len = combinations.length;
-  for (let j = 0; j < len; j++) {
-    if (states[i].validationState) {
-      states[i].validationState.forEach(state => {
-        let merged = mergeProps(combinations[j], {validationState: state});
-        combinations.push(merged);
-      });
-    } else {
-      let merged = mergeProps(combinations[j], states[i]);
-      combinations.push(merged);
-    }
-  }
-}
+let combinations = generatePowerset(states);
 
 let combinationsStyles: any[] = [...combinations];
 for (let i = 0; i < noLabelStates.length; i++) {

@@ -11,8 +11,8 @@
  */
 
 import {ColorSlider} from '../';
+import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
-import {mergeProps} from '@react-aria/utils';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumColorSliderProps} from '@react-types/color';
@@ -23,26 +23,7 @@ let states = [
   {showValueLabel: false}
 ];
 
-// Generate a powerset of the options
-let combinations: any[] = [{}];
-for (let i = 0; i < states.length; i++) {
-  let len = combinations.length;
-  for (let j = 0; j < len; j++) {
-    if (states[i].label || states[i].label === null) {
-      states[i].label.forEach(label => {
-        let merged = mergeProps(combinations[j], {label: label});
-        combinations.push(merged);
-      });
-    } else {
-      let merged = mergeProps(combinations[j], states[i]);
-
-      // Ignore showValueLabel setting if label is null
-      if (!(merged.label === null && merged.showValueLabel === false)) {
-        combinations.push(merged);
-      }
-    }
-  }
-}
+let combinations = generatePowerset(states, (merged) => merged.label === null && merged.showValueLabel === false);
 
 function shortName(key, value) {
   let returnVal = '';

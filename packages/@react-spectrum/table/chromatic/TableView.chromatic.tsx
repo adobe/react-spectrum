@@ -13,10 +13,10 @@
 
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Content} from '@react-spectrum/view';
+import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
-import {mergeProps} from '@react-aria/utils';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumTableProps} from '@react-types/table';
@@ -29,27 +29,7 @@ let states = [
   {density: ['compact', 'spacious']}
 ];
 
-// Generate a powerset of the options
-let combinations: any[] = [{}];
-for (let i = 0; i < states.length; i++) {
-  let len = combinations.length;
-  for (let j = 0; j < len; j++) {
-    if (states[i].selectionMode) {
-      states[i].selectionMode.forEach(mode => {
-        let merged = mergeProps(combinations[j], {selectionMode: mode});
-        combinations.push(merged);
-      });
-    } else if (states[i].density) {
-      states[i].density.forEach(density => {
-        let merged = mergeProps(combinations[j], {density: density});
-        combinations.push(merged);
-      });
-    } else {
-      let merged = mergeProps(combinations[j], states[i]);
-      combinations.push(merged);
-    }
-  }
-}
+let combinations = generatePowerset(states);
 
 function shortName(key, value) {
   let returnVal = '';

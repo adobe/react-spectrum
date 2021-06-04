@@ -11,8 +11,8 @@
  */
 
 import {ColorField} from '../';
+import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
-import {mergeProps} from '@react-aria/utils';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumColorFieldProps} from '@react-types/color';
@@ -26,22 +26,7 @@ let states = [
   {necessityIndicator: 'label'}
 ];
 
-// Generate a powerset of the options
-let combinations: any[] = [{}];
-for (let i = 0; i < states.length; i++) {
-  let len = combinations.length;
-  for (let j = 0; j < len; j++) {
-    if (states[i].validationState) {
-      states[i].validationState.forEach(state => {
-        let merged = mergeProps(combinations[j], {validationState: state});
-        combinations.push(merged);
-      });
-    } else {
-      let merged = mergeProps(combinations[j], states[i]);
-      combinations.push(merged);
-    }
-  }
-}
+let combinations = generatePowerset(states);
 
 function shortName(key, value) {
   let returnVal = '';
