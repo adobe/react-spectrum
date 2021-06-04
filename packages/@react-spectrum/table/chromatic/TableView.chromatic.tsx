@@ -109,10 +109,7 @@ let items = [
   {foo: 'Foo 2', bar: 'Baaaaaaaaaar 2', baz: 'Baz 2'},
   {foo: 'Foo 3', bar: 'Baaaaaaaaaar 3', baz: 'Baz 1'},
   {foo: 'Foo 4', bar: 'Baaaaaaaaaar 4', baz: 'Baz 2'},
-  {foo: 'Foo 5', bar: 'Baaaaaaaaaar 5', baz: 'Baz 1'},
-  {foo: 'Foo 6', bar: 'Baaaaaaaaaar 6', baz: 'Baz 2'},
-  {foo: 'Foo 7', bar: 'Baaaaaaaaaar 7', baz: 'Baz 1'},
-  {foo: 'Foo 8', bar: 'Baaaaaaaaaar 8', baz: 'Baz 2'}
+  {foo: 'Foo 5', bar: 'Baaaaaaaaaar 5', baz: 'Baz 1'}
 ];
 
 const Template = (): Story => ({columns, items, ...args}) => (

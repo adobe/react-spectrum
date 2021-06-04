@@ -81,7 +81,7 @@ const meta: Meta<SpectrumListBoxProps<object>> = {
   decorators: [Story => (
     <div style={{display: 'flex', flexDirection: 'column'}}>
       <Label id="label">Choose an item</Label>
-      <div style={{display: 'flex', minWidth: '200px', background: 'var(--spectrum-global-color-gray-50)', border: '1px solid lightgray', maxHeight: 300}}>
+      <div style={{display: 'flex', minWidth: '200px', background: 'var(--spectrum-global-color-gray-50)', border: '1px solid lightgray', maxHeight: 600}}>
         <Story />
       </div>
     </div>
