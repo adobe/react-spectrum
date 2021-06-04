@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, Collection, CollectionChildren, DOMProps, MultipleSelection, Node, SectionProps, Sortable, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, LoadingState, MultipleSelection, SectionProps, Sortable, StyleProps} from '@react-types/shared';
+import {GridCollection, GridNode} from '@react-types/grid';
 import {Key, ReactElement, ReactNode} from 'react';
 
 export interface TableProps<T> extends MultipleSelection, Sortable {
@@ -55,9 +56,11 @@ export interface SpectrumColumnProps<T> extends ColumnProps<T> {
   hideHeader?: boolean
 }
 
-export interface TableBodyProps<T> extends AsyncLoadable {
+export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
   children: CollectionChildren<T>,
-  items?: Iterable<T>
+  items?: Iterable<T>,
+  /** The current loading state of the TableView. */
+  loadingState?: LoadingState
 }
 
 export interface RowProps<T> {
@@ -78,14 +81,9 @@ export interface CellProps {
 export type CellElement = ReactElement<CellProps>;
 export type CellRenderer = (columnKey: Key) => CellElement;
 
-export interface TableCollection<T> extends Collection<TableNode<T>> {
-  headerRows: TableNode<T>[],
-  columns: TableNode<T>[],
+export interface TableCollection<T> extends GridCollection<T> {
+  headerRows: GridNode<T>[],
+  columns: GridNode<T>[],
   rowHeaderColumnKeys: Set<Key>,
-  body: TableNode<T>
-}
-
-export interface TableNode<T> extends Node<T> {
-  column?: TableNode<T>,
-  colspan?: number
+  body: GridNode<T>
 }

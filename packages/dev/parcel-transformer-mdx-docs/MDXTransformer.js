@@ -67,14 +67,13 @@ module.exports = new Transformer({
 
             if (/^\s*function (.|\n)*}\s*$/.test(code)) {
               let name = code.match(/^\s*function (.*?)\s*\(/)[1];
-              code = `(function () {
-                ${code}
-                ReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));
-              })();`;
+              code = `${code}\nReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));`;
             } else if (/^<(.|\n)*>$/m.test(code)) {
-              code = `(function () {
-                ${code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`)}
-              })();`;
+              code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`);
+            }
+
+            if (!options.includes('export=true')) {
+              code = `(function() {\n${code}\n})();`;
             }
 
             exampleCode.push(code);
@@ -89,9 +88,9 @@ module.exports = new Transformer({
               ];
             }
 
-            // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actuall
+            // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actually
             // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
-            node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*\/\/\/- end collapse -\/\/\//g, '').trim();
+            node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*?\/\/\/- end collapse -\/\/\//g, () => '').trim();
             node.meta = 'example';
 
             return [

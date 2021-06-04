@@ -10,19 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render, within} from '@testing-library/react';
 import {ActionGroup} from '../';
 import {Button} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import Edit from '@spectrum-icons/workflow/Edit';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
-import V2Button from '@react/react-spectrum/Button';
-import V2ButtonGroup from '@react/react-spectrum/ButtonGroup';
 
 // Describes the tabIndex values of button 1 (column 1), 2, and 3 as focus is moved forward or back.
 // e.g. button2Focused describes button 2 having tabindex=0 while all other buttons have -1
@@ -132,6 +132,14 @@ function renderComponentWithExtraInputs(props) {
 describe('ActionGroup', function () {
   beforeAll(function () {
     jest.useFakeTimers();
+
+    jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+      if (this instanceof HTMLButtonElement) {
+        return 100;
+      }
+
+      return 1000;
+    });
   });
 
   afterEach(() => {
@@ -154,27 +162,8 @@ describe('ActionGroup', function () {
   });
 
   it.each`
-  Name               | ComponentGroup   | Component   | props
-  ${'ActionGroup'}   | ${ActionGroup}   | ${Item}     | ${{selectionMode: 'multiple'}}
-  ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button} | ${{multiple: true, role: 'toolbar'}}
-  `('$Name handles multiple selection', function ({ComponentGroup, Component, props}) {
-    let {getByRole, getAllByRole} = render(
-      <Provider theme={theme} locale="de-DE">
-        <ComponentGroup {...props} >
-          <Component>Click me</Component>
-          <Component>Click me</Component>
-        </ComponentGroup>
-      </Provider>
-    );
-    expect(getByRole('toolbar')).toBeTruthy();
-    let button = getAllByRole('checkbox');
-    expect(button.length).toBe(2);
-  });
-
-  it.each`
     Name               | ComponentGroup   | Component   | props
     ${'ActionGroup'}   | ${ActionGroup}   | ${Item}     | ${{orientation: 'vertical'}}
-    ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button} | ${{orientation: 'vertical', role: 'toolbar'}}
   `('$Name handles vertical', function ({ComponentGroup, Component, props}) {
     let {getByTestId} = render(
       <Provider theme={theme} locale="de-DE">
@@ -190,7 +179,6 @@ describe('ActionGroup', function () {
   it.each`
     Name               | ComponentGroup   | Component   | props
     ${'ActionGroup'}   | ${ActionGroup}   | ${Item}     | ${{selectionMode: 'single', isDisabled: true}}
-    ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button} | ${{disabled: true}}
   `('$Name handles disabled', function ({ComponentGroup, Component, props}) {
     let {getByRole} = render(
       <Provider theme={theme} locale="de-DE">
@@ -350,8 +338,9 @@ describe('ActionGroup', function () {
   });
 
   it('ActionGroup handles multiple selection', function () {
-    let {getAllByRole} = renderComponent({selectionMode: 'multiple'});
+    let {getByRole, getAllByRole} = renderComponent({selectionMode: 'multiple'});
 
+    expect(getByRole('toolbar')).toBeTruthy();
     let [button1, button2] = getAllByRole('checkbox');
     triggerPress(button1);
     expect(button1).toHaveAttribute('aria-checked', 'true');
@@ -372,34 +361,6 @@ describe('ActionGroup', function () {
     fireEvent.keyDown(button1, {key: 'a', ctrlKey: true});
     expect(button1).toHaveAttribute('aria-checked', 'true');
     expect(button2).toHaveAttribute('aria-checked', 'false');
-  });
-
-  it('ActionGroup supports shift + arrow keys to extend selection', function () {
-    let {getAllByRole} = renderComponent({selectionMode: 'multiple'});
-
-    let [button1, button2] = getAllByRole('checkbox');
-    triggerPress(button1);
-    expect(button1).toHaveAttribute('aria-checked', 'true');
-    expect(button2).toHaveAttribute('aria-checked', 'false');
-    expect(button1).not.toHaveAttribute('aria-pressed');
-    expect(button2).not.toHaveAttribute('aria-pressed');
-
-    fireEvent.keyDown(button1, {key: 'ArrowRight', shiftKey: true});
-    expect(button1).toHaveAttribute('aria-checked', 'true');
-    expect(button2).toHaveAttribute('aria-checked', 'true');
-
-    fireEvent.keyDown(button1, {key: 'ArrowLeft', shiftKey: true});
-    expect(button1).toHaveAttribute('aria-checked', 'true');
-    expect(button2).toHaveAttribute('aria-checked', 'false');
-
-    triggerPress(button1);
-    triggerPress(button2);
-    expect(button1).toHaveAttribute('aria-checked', 'false');
-    expect(button2).toHaveAttribute('aria-checked', 'true');
-
-    fireEvent.keyDown(button2, {key: 'ArrowLeft', shiftKey: true});
-    expect(button1).toHaveAttribute('aria-checked', 'true');
-    expect(button2).toHaveAttribute('aria-checked', 'true');
   });
 
   it('ActionGroup handles none selection', function () {
@@ -431,7 +392,7 @@ describe('ActionGroup', function () {
     expect(button1).toHaveAttribute('class', expect.not.stringContaining('test-class'));
     expect(button1).toHaveAttribute('class', expect.stringContaining('-item'));
     expect(button1).toHaveAttribute('role', 'radio');
-    expect(button1).toHaveAttribute('tabIndex', '-1');
+    expect(button1).toHaveAttribute('tabIndex', '0');
   });
 
   it('ActionGroup handles disabledKeys', function () {
@@ -460,7 +421,7 @@ describe('ActionGroup', function () {
     expect(button2).toHaveAttribute('aria-checked', 'false');
   });
 
-  it('ActionGroup handles selectedKeys (controlled)', function () {
+  it('ActionGroup handles selectedKeys (uncontrolled)', function () {
     let onSelectionChange = jest.fn();
     let {getAllByRole} = renderComponent({selectionMode: 'single', defaultSelectedKeys: ['1'], onSelectionChange});
 
@@ -619,7 +580,7 @@ describe('ActionGroup', function () {
       jest.runAllTimers();
     });
 
-    expect(() => tree.getByRole('dialog')).toThrow();
+    expect(tree.queryByRole('dialog')).toBeNull();
   });
 
   it('supports TooltipTrigger as a wrapper around items', function () {
@@ -644,5 +605,404 @@ describe('ActionGroup', function () {
     let tooltip = tree.getByRole('tooltip');
     expect(tooltip).toBeVisible();
     expect(button).toHaveAttribute('aria-describedby', tooltip.id);
+  });
+
+  it('no infinite loop if all keys are disabled', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <input type="text" id="foo" autoFocus />
+        <ActionGroup disabledKeys={['test1', 'test2']} selectionMode="single">
+          <Item key="test1">Hi</Item>
+          <Item key="test2">Bye</Item>
+        </ActionGroup>
+        <input type="text" id="bar" />
+      </Provider>
+    );
+
+    let actiongroup = tree.getByRole('radiogroup');
+    expect(actiongroup).toHaveAttribute('aria-disabled', 'true');
+    let inputs = tree.getAllByRole('textbox');
+    expect(document.activeElement).toBe(inputs[0]);
+    userEvent.tab();
+    expect(document.activeElement).toBe(inputs[1]);
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(inputs[0]);
+  });
+
+  it('not disabled if extraneous disabledKeys are provided', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <input type="text" id="foo" autoFocus />
+        <ActionGroup disabledKeys={['test1', 'foo']} selectionMode="single">
+          <Item key="test1">Hi</Item>
+          <Item key="test2">Bye</Item>
+        </ActionGroup>
+        <input type="text" id="bar" />
+      </Provider>
+    );
+
+    let actiongroup = tree.getByRole('radiogroup');
+    expect(actiongroup).not.toHaveAttribute('aria-disabled', 'true');
+    let inputs = tree.getAllByRole('textbox');
+    let buttons = tree.getAllByRole('radio');
+    expect(document.activeElement).toBe(inputs[0]);
+    userEvent.tab();
+    expect(document.activeElement).toBe(buttons[1]);
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(inputs[0]);
+  });
+
+  it('is disabled if extraneous disabledKeys are provided in addition to all keys being disabled', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <input type="text" id="foo" autoFocus />
+        <ActionGroup disabledKeys={['test1', 'test2', 'foo']} selectionMode="single">
+          <Item key="test1">Hi</Item>
+          <Item key="test2">Bye</Item>
+        </ActionGroup>
+        <input type="text" id="bar" />
+      </Provider>
+    );
+
+    let actiongroup = tree.getByRole('radiogroup');
+    expect(actiongroup).toHaveAttribute('aria-disabled', 'true');
+    let inputs = tree.getAllByRole('textbox');
+    expect(document.activeElement).toBe(inputs[0]);
+    userEvent.tab();
+    expect(document.activeElement).toBe(inputs[1]);
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(inputs[0]);
+  });
+
+  describe('overflowMode="collapse"', function () {
+    beforeEach(() => {
+      jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+        if (this instanceof HTMLButtonElement) {
+          return 100;
+        }
+
+        return 250;
+      });
+    });
+
+    it('collapses overflowing items into a menu', function () {
+      let onAction = jest.fn();
+      let tree = render(
+        <Provider theme={theme}>
+          <ActionGroup overflowMode="collapse" onAction={onAction}>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+            <Item key="four">Four</Item>
+          </ActionGroup>
+        </Provider>
+      );
+
+      let actiongroup = tree.getByRole('toolbar');
+      let buttons = within(actiongroup).getAllByRole('button');
+      expect(buttons.length).toBe(2);
+      expect(buttons[0]).toHaveTextContent('One');
+      expect(buttons[1]).toHaveAttribute('aria-label', '…');
+      expect(buttons[1]).toHaveAttribute('aria-haspopup', 'true');
+
+      triggerPress(buttons[1]);
+
+      let menu = tree.getByRole('menu');
+      let items = within(menu).getAllByRole('menuitem');
+      expect(items).toHaveLength(3);
+      expect(items[0]).toHaveTextContent('Two');
+      expect(items[1]).toHaveTextContent('Three');
+      expect(items[2]).toHaveTextContent('Four');
+
+      triggerPress(items[1]);
+      expect(onAction).toHaveBeenCalledWith('three');
+    });
+
+    it('passes aria labeling props through to menu button if it is the only child', function () {
+      jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+        if (this instanceof HTMLButtonElement) {
+          return 100;
+        }
+
+        return 150;
+      });
+
+      let onAction = jest.fn();
+      let tree = render(
+        <Provider theme={theme}>
+          <ActionGroup aria-label="Test" overflowMode="collapse" onAction={onAction}>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+            <Item key="four">Four</Item>
+          </ActionGroup>
+        </Provider>
+      );
+
+      expect(tree.queryByRole('toolbar')).toBeNull();
+      let button = tree.getByRole('button');
+      expect(button).toHaveAttribute('aria-label', 'Test');
+      expect(button).toHaveAttribute('aria-haspopup', 'true');
+
+      triggerPress(button);
+
+      let menu = tree.getByRole('menu');
+      let items = within(menu).getAllByRole('menuitem');
+      expect(items).toHaveLength(4);
+      expect(items[0]).toHaveTextContent('One');
+      expect(items[1]).toHaveTextContent('Two');
+      expect(items[2]).toHaveTextContent('Three');
+      expect(items[3]).toHaveTextContent('Four');
+
+      triggerPress(items[1]);
+      expect(onAction).toHaveBeenCalledWith('two');
+    });
+
+    it('collapses all items if selectionMode="single"', function () {
+      let onSelectionChange = jest.fn();
+      let tree = render(
+        <Provider theme={theme}>
+          <ActionGroup overflowMode="collapse" selectionMode="single" defaultSelectedKeys={['two']} onSelectionChange={onSelectionChange}>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+            <Item key="four">Four</Item>
+          </ActionGroup>
+        </Provider>
+      );
+
+      expect(tree.queryByRole('radiogroup')).toBeNull();
+
+      let button = tree.getByRole('button');
+      expect(button).toHaveAttribute('aria-label', '…');
+      expect(button).toHaveAttribute('aria-haspopup', 'true');
+
+      triggerPress(button);
+
+      let menu = tree.getByRole('menu');
+      let items = within(menu).getAllByRole('menuitemradio');
+      expect(items).toHaveLength(4);
+      expect(items[0]).toHaveTextContent('One');
+      expect(items[1]).toHaveTextContent('Two');
+      expect(items[1]).toHaveAttribute('aria-checked', 'true');
+      expect(items[2]).toHaveTextContent('Three');
+      expect(items[3]).toHaveTextContent('Four');
+
+      triggerPress(items[2]);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['three']));
+
+      triggerPress(button);
+      menu = tree.getByRole('menu');
+      items = within(menu).getAllByRole('menuitemradio');
+
+      expect(items[1]).not.toHaveAttribute('aria-checked', 'true');
+      expect(items[2]).toHaveAttribute('aria-checked', 'true');
+    });
+
+    it('collapses all items if selectionMode="multiple"', function () {
+      let onSelectionChange = jest.fn();
+      let tree = render(
+        <Provider theme={theme}>
+          <ActionGroup overflowMode="collapse" selectionMode="multiple" defaultSelectedKeys={['two', 'three']} onSelectionChange={onSelectionChange}>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+            <Item key="four">Four</Item>
+          </ActionGroup>
+        </Provider>
+      );
+
+      expect(tree.queryByRole('radiogroup')).toBeNull();
+
+      let button = tree.getByRole('button');
+      expect(button).toHaveAttribute('aria-label', '…');
+      expect(button).toHaveAttribute('aria-haspopup', 'true');
+
+      triggerPress(button);
+
+      let menu = tree.getByRole('menu');
+      let items = within(menu).getAllByRole('menuitemcheckbox');
+      expect(items).toHaveLength(4);
+      expect(items[0]).toHaveTextContent('One');
+      expect(items[0]).not.toHaveAttribute('aria-checked', 'true');
+      expect(items[1]).toHaveTextContent('Two');
+      expect(items[1]).toHaveAttribute('aria-checked', 'true');
+      expect(items[2]).toHaveTextContent('Three');
+      expect(items[2]).toHaveAttribute('aria-checked', 'true');
+      expect(items[3]).toHaveTextContent('Four');
+      expect(items[3]).not.toHaveAttribute('aria-checked', 'true');
+
+      triggerPress(items[3]);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['two', 'three', 'four']));
+
+      expect(items[1]).toHaveAttribute('aria-checked', 'true');
+      expect(items[2]).toHaveAttribute('aria-checked', 'true');
+      expect(items[3]).toHaveAttribute('aria-checked', 'true');
+    });
+
+    it('menu button should be disabled if action group is disabled', function () {
+      let onAction = jest.fn();
+      let tree = render(
+        <Provider theme={theme}>
+          <ActionGroup overflowMode="collapse" onAction={onAction} isDisabled>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+            <Item key="four">Four</Item>
+          </ActionGroup>
+        </Provider>
+      );
+
+      let actiongroup = tree.getByRole('toolbar');
+      let buttons = within(actiongroup).getAllByRole('button');
+      expect(buttons.length).toBe(2);
+      expect(buttons[0]).toHaveTextContent('One');
+      expect(buttons[0]).toBeDisabled();
+      expect(buttons[1]).toHaveAttribute('aria-label', '…');
+      expect(buttons[1]).toHaveAttribute('aria-haspopup', 'true');
+      expect(buttons[1]).toBeDisabled();
+    });
+  });
+
+  describe('buttonLabelBehavior', function () {
+    it('should show the text in a tooltip with buttonLabelBehavior="hide"', function () {
+      let tree = render(
+        <Provider theme={theme}>
+          <ActionGroup overflowMode="collapse" buttonLabelBehavior="hide">
+            <Item key="one">
+              <Edit />
+              <Text>One</Text>
+            </Item>
+            <Item key="two">
+              <Edit />
+              <Text>Two</Text>
+            </Item>
+          </ActionGroup>
+        </Provider>
+      );
+
+      let actiongroup = tree.getByRole('toolbar');
+      let buttons = within(actiongroup).getAllByRole('button');
+      expect(buttons.length).toBe(2);
+      expect(buttons[0]).toHaveAttribute('aria-labelledby');
+      let text = document.getElementById(buttons[0].getAttribute('aria-labelledby'));
+      expect(text).toHaveTextContent('One');
+      expect(text).toHaveAttribute('hidden');
+
+      fireEvent.mouseEnter(buttons[0]);
+      fireEvent.mouseMove(buttons[0]);
+      act(() => jest.advanceTimersByTime(2000));
+
+      let tooltip = tree.getByRole('tooltip');
+      expect(tooltip).toHaveTextContent('One');
+      expect(buttons[0]).toHaveAttribute('aria-describedby', tooltip.id);
+    });
+
+    it('should show the text when collapsed into a dropdown', function () {
+      let tree = render(
+        <Provider theme={theme}>
+          <ActionGroup overflowMode="collapse" buttonLabelBehavior="hide">
+            <Item key="one" textValue="One">
+              <Edit />
+              <Text>One</Text>
+            </Item>
+            <Item key="two" textValue="Two">
+              <Edit />
+              <Text>Two</Text>
+            </Item>
+            <Item key="three" textValue="Three">
+              <Edit />
+              <Text>Three</Text>
+            </Item>
+          </ActionGroup>
+        </Provider>
+      );
+
+      let actiongroup = tree.getByRole('toolbar');
+      let buttons = within(actiongroup).getAllByRole('button');
+      expect(buttons.length).toBe(2);
+
+      triggerPress(buttons[1]);
+
+      let menu = tree.getByRole('menu');
+      let items = within(menu).getAllByRole('menuitem');
+      expect(items).toHaveLength(2);
+      expect(items[0]).toHaveTextContent('Two');
+      expect(items[1]).toHaveTextContent('Three');
+    });
+
+    it('should show the text if it fits with buttonLabelBehavior="collapse"', function () {
+      jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+        if (this instanceof HTMLButtonElement) {
+          return this.hasAttribute('aria-labelledby') ? 50 : 100;
+        }
+
+        return 300;
+      });
+
+      let tree = render(
+        <Provider theme={theme}>
+          <ActionGroup overflowMode="collapse" buttonLabelBehavior="collapse">
+            <Item key="one">
+              <Edit />
+              <Text>One</Text>
+            </Item>
+            <Item key="two">
+              <Edit />
+              <Text>Two</Text>
+            </Item>
+          </ActionGroup>
+        </Provider>
+      );
+
+      let actiongroup = tree.getByRole('toolbar');
+      let buttons = within(actiongroup).getAllByRole('button');
+      expect(buttons.length).toBe(2);
+      expect(buttons[0]).not.toHaveAttribute('aria-labelledby');
+      expect(buttons[0]).toHaveTextContent('One');
+    });
+
+    it('should hide the text if it does not fit with buttonLabelBehavior="collapse"', function () {
+      jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+        if (this instanceof HTMLButtonElement) {
+          return this.hasAttribute('aria-labelledby') ? 50 : 100;
+        }
+
+        return 150;
+      });
+
+      let tree = render(
+        <Provider theme={theme}>
+          <ActionGroup overflowMode="collapse" buttonLabelBehavior="collapse">
+            <Item key="one">
+              <Edit />
+              <Text>One</Text>
+            </Item>
+            <Item key="two">
+              <Edit />
+              <Text>Two</Text>
+            </Item>
+          </ActionGroup>
+        </Provider>
+      );
+
+      let actiongroup = tree.getByRole('toolbar');
+      let buttons = within(actiongroup).getAllByRole('button');
+      expect(buttons.length).toBe(2);
+      expect(buttons[0]).toHaveAttribute('aria-labelledby');
+      let text = document.getElementById(buttons[0].getAttribute('aria-labelledby'));
+      expect(text).toHaveTextContent('One');
+      expect(text).toHaveAttribute('hidden');
+
+      fireEvent.mouseEnter(buttons[0]);
+      fireEvent.mouseMove(buttons[0]);
+      act(() => jest.advanceTimersByTime(2000));
+
+      let tooltip = tree.getByRole('tooltip');
+      expect(tooltip).toHaveTextContent('One');
+      expect(buttons[0]).toHaveAttribute('aria-describedby', tooltip.id);
+    });
   });
 });

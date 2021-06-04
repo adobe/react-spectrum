@@ -18,10 +18,7 @@ import buttonDocs from 'docs:@react-aria/button';
 import statelyDocs from 'docs:@react-stately/menu';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-aria/menu/package.json';
-
-```jsx import
-import {useMenuTrigger} from '@react-aria/menu';
-```
+import Anatomy from './menu-trigger-anatomy.svg';
 
 ---
 category: Overlays
@@ -54,6 +51,8 @@ combined with [useMenu](useMenu.html) helps achieve accessible menu components t
   the first or last item accordingly
 
 ## Anatomy
+
+<Anatomy />
 
 A menu trigger consists of a button or other trigger element combined with a popup menu.
 It should be combined with [useButton](useButton.html) and [useMenu](useMenu.html), which handle
@@ -90,7 +89,7 @@ In addition, see [useMenu](useMenu.html) for examples of menu item groups, and m
 ```tsx example
 import {useMenuTriggerState} from '@react-stately/menu';
 import {useButton} from '@react-aria/button';
-import {useMenu, useMenuItem} from '@react-aria/menu';
+import {useMenu, useMenuItem, useMenuTrigger} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 import {Item} from '@react-stately/collections';
 import {mergeProps} from '@react-aria/utils';

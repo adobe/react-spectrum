@@ -1,5 +1,5 @@
 {
-  "Decrement": "Azalış",
-  "Enter a number": "Sayı girin",
-  "Increment": "Artış"
+  "decrease": "{fieldLabel} azalt",
+  "increase": "{fieldLabel} arttır",
+  "numberField": "Sayı alanı"
 }

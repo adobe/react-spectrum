@@ -10,15 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionGroupKeyboardDelegate} from './ActionGroupKeyboardDelegate';
 import {AriaActionGroupProps} from '@react-types/actiongroup';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes, RefObject, useMemo, useState} from 'react';
+import {createFocusManager} from '@react-aria/focus';
+import {filterDOMProps} from '@react-aria/utils';
+import {HTMLAttributes, RefObject} from 'react';
 import {ListState} from '@react-stately/list';
 import {Orientation} from '@react-types/shared';
-import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
-import {useSelectableCollection} from '@react-aria/selection';
 
 const BUTTON_GROUP_ROLES = {
   'none': 'toolbar',
@@ -35,25 +33,42 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
     isDisabled,
     orientation = 'horizontal' as Orientation
   } = props;
+  let allKeys = [...state.collection.getKeys()];
+  if (!allKeys.some(key => !state.disabledKeys.has(key))) {
+    isDisabled = true;
+  }
 
   let {direction} = useLocale();
-  // eslint-disable-next-line arrow-body-style
-  let keyboardDelegate = useMemo(() => {
-    return new ActionGroupKeyboardDelegate(state.collection, direction, orientation, state.disabledKeys);
-  }, [state.collection, direction, orientation, state.disabledKeys]);
+  let focusManager = createFocusManager(ref);
+  let flipDirection = direction === 'rtl' && orientation === 'horizontal';
+  let onKeyDown = (e) => {
+    if (!e.currentTarget.contains(e.target)) {
+      return;
+    }
 
-  let {collectionProps} = useSelectableCollection({
-    ref,
-    selectionManager: state.selectionManager,
-    keyboardDelegate,
-    disallowSelectAll: true
-  });
-
-  let [isFocusWithin, setFocusWithin] = useState(false);
-  let {focusWithinProps} = useFocusWithin({
-    onFocusWithinChange: setFocusWithin
-  });
-  let tabIndex = isFocusWithin ? -1 : 0;
+    switch (e.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.key === 'ArrowRight' && flipDirection) {
+          focusManager.focusPrevious({wrap: true});
+        } else {
+          focusManager.focusNext({wrap: true});
+        }
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.key === 'ArrowLeft' && flipDirection) {
+          focusManager.focusNext({wrap: true});
+        } else {
+          focusManager.focusPrevious({wrap: true});
+        }
+        break;
+    }
+  };
 
   let role = BUTTON_GROUP_ROLES[state.selectionManager.selectionMode];
   return {
@@ -62,8 +77,7 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
       role,
       'aria-orientation': role === 'toolbar' ? orientation : null,
       'aria-disabled': isDisabled,
-      ...mergeProps(focusWithinProps, collectionProps),
-      tabIndex: isDisabled ? null : tabIndex
+      onKeyDown
     }
   };
 }

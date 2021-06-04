@@ -1,5 +1,5 @@
 {
-  "Decrement": "Afname",
-  "Enter a number": "Getal invoeren",
-  "Increment": "Toename"
+  "decrease": "{fieldLabel} verlagen",
+  "increase": "{fieldLabel} verhogen",
+  "numberField": "Getalveld"
 }

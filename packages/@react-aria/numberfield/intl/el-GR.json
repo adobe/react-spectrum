@@ -1,5 +1,5 @@
 {
-  "Decrement": "Μείωση",
-  "Enter a number": "Εισαγωγή αριθμού",
-  "Increment": "Προσαύξηση"
+  "decrease": "Μείωση {fieldLabel}",
+  "increase": "Αύξηση {fieldLabel}",
+  "numberField": "Πεδίο αριθμού"
 }

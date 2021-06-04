@@ -272,9 +272,9 @@ describe('Radios', function () {
     let radios = getAllByRole('radio');
     expect(radioGroup).toBeTruthy();
     expect(radios.length).toBe(3);
-    expect(radios[0]).toHaveAttribute('readonly');
-    expect(radios[1]).toHaveAttribute('readonly');
-    expect(radios[2]).toHaveAttribute('readonly');
+    expect(radios[0]).toHaveAttribute('aria-readonly', 'true');
+    expect(radios[1]).toHaveAttribute('aria-readonly', 'true');
+    expect(radios[2]).toHaveAttribute('aria-readonly', 'true');
 
     let cats = getByLabelText('Cats');
     userEvent.click(cats);
@@ -384,7 +384,7 @@ describe('Radios', function () {
     expect(radios[0]).toHaveAttribute('aria-label', 'Favorite Pet');
   });
 
-  it('v3 RadioGroup supports custom props', () => {
+  it('v3 Radios supports custom props', () => {
     let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet'}, [{'data-testid': 'test'}]);
     let radios = getAllByRole('radio');
     expect(radios[0]).toHaveAttribute('data-testid', 'test');

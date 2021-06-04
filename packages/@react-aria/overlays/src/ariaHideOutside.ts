@@ -44,6 +44,12 @@ export function ariaHideOutside(targets: HTMLElement[], root = document.body) {
           return NodeFilter.FILTER_REJECT;
         }
 
+        // VoiceOver on iOS has issues hiding elements with role="row". Hide the cells inside instead.
+        // https://bugs.webkit.org/show_bug.cgi?id=222623
+        if (node instanceof HTMLElement && node.getAttribute('role') === 'row') {
+          return NodeFilter.FILTER_SKIP;
+        }
+
         // Skip this node but continue to children if one of the targets is inside the node.
         if (targets.some(target => node.contains(target))) {
           return NodeFilter.FILTER_SKIP;

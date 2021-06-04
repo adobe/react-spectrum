@@ -21,6 +21,7 @@ import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
+import {Item, Picker} from '@react-spectrum/picker';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
@@ -327,9 +328,9 @@ function renderFooter({width = 'auto', isDismissable = undefined, ...props}) {
   );
 }
 
-function renderAlert({width = 'auto', ...props}: SpectrumAlertDialogProps) {
+function renderAlert({...props}: SpectrumAlertDialogProps) {
   return (
-    <div style={{display: 'flex', width, margin: '100px 0'}}>
+    <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
       <DialogTrigger defaultOpen>
         <ActionButton>Trigger</ActionButton>
         <AlertDialog {...props} onPrimaryAction={action('primary')} onSecondaryAction={action('secondary')} onCancel={props.onCancel} />
@@ -353,6 +354,13 @@ function renderWithForm({width = 'auto', ...props}) {
               <Form>
                 <TextField label="Last Words" autoFocus />
                 <Checkbox>Acknowledge robot overlords</Checkbox>
+                <Picker isDisabled>
+                  <Item key="Aardvark">Aardvark</Item>
+                  <Item key="Kangaroo">Kangaroo</Item>
+                  <Item key="Snake">Snake</Item>
+                </Picker>
+                <Button UNSAFE_style={{display: 'none'}} variant="primary">Hidden</Button>
+                <Button UNSAFE_style={{visibility: 'hidden', position: 'absolute'}} variant="primary">Hidden</Button>
                 <RadioGroup label="Preferred Job" name="jobs">
                   <Radio value="battery">Battery</Radio>
                   <Radio value="storage">Information Storage</Radio>

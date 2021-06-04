@@ -1,0 +1,28 @@
+<svg style="max-height: 48px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 334 48">
+  <title>Switch anatomy diagram</title>
+  <desc>Shows a switch component with labels pointing to its parts, including the input, and label elements.</desc>
+  <g transform="translate(-99 -107.5)">
+    <g transform="translate(153 107.5)">
+      <path d="M0,0H113V48H0Z" fill="red" opacity="0" />
+      <rect width="39" height="21" rx="10.5" transform="translate(0 13.5)" fill="var(--anatomy-gray-600)" /><text transform="translate(54 30)" fill="var(--anatomy-gray-700)" font-size="21" font-family="Adobe-Clean">
+        <tspan x="0" y="0">Low power mode</tspan>
+      </text>
+      <g transform="translate(18 13.5)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-600)" stroke-width="3">
+        <circle cx="10.5" cy="10.5" r="10.5" stroke="none" />
+        <circle cx="10.5" cy="10.5" r="9" fill="none" />
+      </g>
+    </g>
+    <g transform="translate(-30 99.5)">
+      <rect width="23" height="20" transform="translate(160 22)" fill="red" opacity="0" /><text transform="translate(156 35)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+        <tspan x="-26.299" y="0">Input</tspan>
+      </text>
+      <circle cx="2.5" cy="2.5" r="2.5" transform="translate(180 29.5)" fill="var(--anatomy-gray-500)" />
+      <rect width="21" height="1" transform="translate(160 31.5)" fill="var(--anatomy-gray-500)" />
+      <g transform="translate(66 354)"><text transform="translate(383 -316.5)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+          <tspan x="-13.826" y="0">Label</tspan>
+        </text>
+        <path d="M-7607-395.5v-39.05a2.5,2.5,0,0,1-2-2.45,2.5,2.5,0,0,1,2.5-2.5,2.5,2.5,0,0,1,2.5,2.5,2.5,2.5,0,0,1-2,2.45v39.05Z" transform="translate(760.5 -7928.5) rotate(-90)" fill="var(--anatomy-gray-500)" />
+      </g>
+    </g>
+  </g>
+</svg>

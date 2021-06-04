@@ -11,8 +11,13 @@
  */
 
 import {act, fireEvent, render} from '@testing-library/react';
-import {installPointerEvent} from '@react-spectrum/test-utils';
+import {ActionButton} from '@react-spectrum/button';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
+import MatchMediaMock from 'jest-matchmedia-mock';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {theme} from '@react-spectrum/theme-default';
 import {usePress} from '../';
 
 function Example(props) {
@@ -27,7 +32,9 @@ function pointerEvent(type, opts) {
     ctrlKey: false,
     metaKey: false,
     shiftKey: false,
-    button: opts.button || 0
+    button: opts.button || 0,
+    width: 1,
+    height: 1
   }, opts);
   return evt;
 }
@@ -277,6 +284,50 @@ describe('usePress', function () {
       ]);
     });
 
+    it('should cancel press on dragstart', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, new MouseEvent('dragstart', {bubbles: true, cancelable: true, composed: true}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        }
+      ]);
+    });
+
     it('should handle modifier keys', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
@@ -377,6 +428,117 @@ describe('usePress', function () {
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
       expect(document.activeElement).toBe(el);
+    });
+
+    it('should prevent default on pointerdown and mousedown by default', function () {
+      let res = render(
+        <Example />
+      );
+
+      let el = res.getByText('test');
+      let allowDefault = fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      expect(allowDefault).toBe(false);
+
+      allowDefault = fireEvent.mouseDown(el);
+      expect(allowDefault).toBe(false);
+    });
+
+    it('should not prevent default when in a draggable container', function () {
+      let res = render(
+        <div draggable="true">
+          <Example />
+        </div>
+      );
+
+      let el = res.getByText('test');
+      let allowDefault = fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      expect(allowDefault).toBe(true);
+
+      allowDefault = fireEvent.mouseDown(el);
+      expect(allowDefault).toBe(true);
+    });
+
+    it('should detect virtual pointer events', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        }
+      ]);
+    });
+
+    it('should not fire press events for disabled elements', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          isDisabled
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+
+      expect(events).toEqual([]);
+    });
+
+    it('should fire press event when pointerup close to the target', function () {
+      let spy = jest.fn();
+      let res = render(<Example onPress={spy} />);
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0, width: 20, height: 20}));
+      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 10, clientY: 10, width: 20, height: 20}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 10, clientY: 10, width: 20, height: 20}));
+
+      expect(spy).toHaveBeenCalled();
     });
   });
 
@@ -668,6 +830,72 @@ describe('usePress', function () {
 
       expect(document.activeElement).toBe(el);
     });
+
+    it('should prevent default on mousedown by default', function () {
+      let res = render(
+        <Example />
+      );
+
+      let el = res.getByText('test');
+      let allowDefault = fireEvent.mouseDown(el);
+      expect(allowDefault).toBe(false);
+    });
+
+    it('should not prevent default when in a draggable container', function () {
+      let res = render(
+        <div draggable="true">
+          <Example />
+        </div>
+      );
+
+      let el = res.getByText('test');
+      let allowDefault = fireEvent.mouseDown(el);
+      expect(allowDefault).toBe(true);
+    });
+
+    it('should cancel press on dragstart', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent.mouseDown(el, {detail: 1});
+      fireEvent(el, new MouseEvent('dragstart', {bubbles: true, cancelable: true, composed: true}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        }
+      ]);
+    });
   });
 
   describe('touch events', function () {
@@ -684,7 +912,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
 
       expect(events).toEqual([
@@ -744,7 +972,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
 
@@ -776,7 +1004,7 @@ describe('usePress', function () {
       ]);
 
       events = [];
-      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
       fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
@@ -862,7 +1090,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.mouseDown(el);
       fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
       fireEvent.mouseLeave(el);
@@ -953,7 +1181,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.touchCancel(el);
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
 
@@ -998,7 +1226,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.scroll(document.body);
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
 
@@ -1046,7 +1274,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
 
       let scrollable = res.getByTestId('scrollable');
       fireEvent.scroll(scrollable);
@@ -1097,13 +1325,57 @@ describe('usePress', function () {
       ]);
     });
 
+    it('should cancel press on dragstart', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
+      fireEvent(el, new MouseEvent('dragstart', {bubbles: true, cancelable: true, composed: true}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'touch',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'touch',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        }
+      ]);
+    });
+
     it('should not focus the target if preventFocusOnPress is true', function () {
       let res = render(
         <Example preventFocusOnPress />
       );
 
       let el = res.getByText('test');
-      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
 
       expect(document.activeElement).not.toBe(el);
@@ -1115,10 +1387,22 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
 
       expect(document.activeElement).toBe(el);
+    });
+
+    it('should fire press event when touchup close to the target', function () {
+      let spy = jest.fn();
+      let res = render(<Example onPress={spy} />);
+
+      let el = res.getByText('test');
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0, radiusX: 15, radiusY: 15}]});
+      fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 10, clientY: 10, radiusX: 15, radiusY: 15}]});
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 10, clientY: 10, radiusX: 15, radiusY: 15}]});
+
+      expect(spy).toHaveBeenCalled();
     });
   });
 
@@ -1776,6 +2060,95 @@ describe('usePress', function () {
       unmount();
       act(() => {jest.advanceTimersByTime(300);});
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
+    });
+  });
+
+  describe('portal event bubbling', () => {
+    function PortalExample(props) {
+      let {elementType: ElementType = 'div', ...otherProps} = props;
+      let {pressProps} = usePress(otherProps);
+      return (
+        <Provider theme={theme}>
+          <ElementType {...pressProps} tabIndex="0">
+            <DialogTrigger>
+              <ActionButton>open</ActionButton>
+              <Dialog>
+                test
+              </Dialog>
+            </DialogTrigger>
+          </ElementType>
+        </Provider>
+      );
+    }
+
+    beforeAll(() => {
+      jest.useFakeTimers();
+    });
+    afterAll(() => {
+      jest.useRealTimers();
+    });
+
+    let matchMedia;
+    beforeEach(() => {
+      matchMedia = new MatchMediaMock();
+      // this needs to be a setTimeout so that the dialog can be removed from the dom before the callback is invoked
+      jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(() => cb(), 0));
+    });
+
+    afterEach(() => {
+      // Ensure we close any dialogs before unmounting to avoid warning.
+      let dialog = document.querySelector('[role="dialog"]');
+      if (dialog) {
+        act(() => {
+          fireEvent.keyDown(dialog, {key: 'Escape'});
+          fireEvent.keyUp(dialog, {key: 'Escape'});
+          jest.runAllTimers();
+        });
+      }
+
+      matchMedia.clear();
+      window.requestAnimationFrame.mockRestore();
+    });
+
+    describe.each`
+      type                | prepare               | actions
+      ${'Mouse Events'}   | ${installMouseEvent}  | ${[
+        (el) => fireEvent.mouseDown(el, {button: 0}),
+        (el) => fireEvent.mouseUp(el, {button: 0})
+      ]}
+      ${'Pointer Events'} | ${installPointerEvent}| ${[
+        (el) => fireEvent.pointerDown(el, {button: 0, pointerId: 1}),
+        (el) => fireEvent.pointerUp(el, {button: 0, pointerId: 1})
+      ]}
+      ${'Touch Events'}   | ${() => {}}           | ${[
+        (el) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1}]}),
+        (el) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]})
+      ]}
+    `('$type', ({actions: [start, end], prepare}) => {
+      prepare();
+
+      it('stop event bubbling through portal', () => {
+        const pressMock = jest.fn();
+        let res = render(
+          <PortalExample
+            onPressStart={pressMock}
+            onPressEnd={pressMock}
+            onPressChange={pressMock}
+            onPress={pressMock}
+            onPressUp={pressMock} />
+        );
+
+        fireEvent.click(res.getByText('open'));
+
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let el = res.getByText('test');
+        start(el);
+        end(el);
+        expect(pressMock.mock.calls).toHaveLength(0);
+      });
     });
   });
 });

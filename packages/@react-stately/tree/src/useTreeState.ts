@@ -17,7 +17,7 @@ import {TreeCollection} from './TreeCollection';
 import {useCollection} from '@react-stately/collections';
 import {useControlledState} from '@react-stately/utils';
 
-interface TreeProps<T> extends CollectionBase<T>, Expandable, MultipleSelection {}
+export interface TreeProps<T> extends CollectionBase<T>, Expandable, MultipleSelection {}
 export interface TreeState<T> {
   /** A collection of items in the tree. */
   readonly collection: Collection<Node<T>>,
@@ -51,7 +51,7 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
-  let tree = useCollection(props, nodes => new TreeCollection(nodes, {expandedKeys}));
+  let tree = useCollection(props, nodes => new TreeCollection(nodes, {expandedKeys}), null, [expandedKeys]);
 
   // Reset focused key if that item is deleted from the collection.
   useEffect(() => {

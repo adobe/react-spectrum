@@ -120,9 +120,15 @@ export class CollectionBuilder<T extends object> {
         let childNode = result.value;
 
         partialNode.index = index;
+
+        let nodeKey = childNode.key;
+        if (!nodeKey) {
+          nodeKey = childNode.element ? null : this.getKey(element as CollectionElement<T>, partialNode, state, parentKey);
+        }
+
         let nodes = this.getFullNode({
           ...childNode,
-          key: childNode.element ? null : this.getKey(element as CollectionElement<T>, partialNode, state, parentKey),
+          key: nodeKey,
           index,
           wrapper: compose(partialNode.wrapper, childNode.wrapper)
         }, this.getChildState(state, childNode), parentKey ? `${parentKey}${element.key}` : element.key, parentNode);

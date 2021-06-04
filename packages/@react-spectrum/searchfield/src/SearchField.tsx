@@ -25,14 +25,7 @@ import {useSearchFieldState} from '@react-stately/searchfield';
 function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
   let defaultIcon = (
-    <Magnifier
-      data-testid="searchicon"
-      UNSAFE_className={
-        classNames(
-          styles,
-          'spectrum-Search-icon'
-        )
-      } />
+    <Magnifier data-testid="searchicon" />
   );
 
   let {
@@ -72,8 +65,8 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
           {
             'is-disabled': isDisabled,
             'is-quiet': props.isQuiet,
-            'is-invalid': props.validationState === 'invalid',
-            'is-valid': props.validationState === 'valid'
+            'spectrum-Search--invalid': props.validationState === 'invalid',
+            'spectrum-Search--valid': props.validationState === 'valid'
           },
           UNSAFE_className
         )

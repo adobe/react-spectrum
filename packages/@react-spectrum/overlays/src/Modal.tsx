@@ -26,27 +26,25 @@ interface ModalWrapperProps extends HTMLAttributes<HTMLElement> {
   isOpen?: boolean,
   onClose?: () => void,
   type?: 'modal' | 'fullscreen' | 'fullscreenTakeover',
-  isDismissable?: boolean,
-  isKeyboardDismissDisabled?: boolean
+  overlayProps: HTMLAttributes<HTMLElement>
 }
 
 function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, onClose, type, isDismissable, isKeyboardDismissDisabled, ...otherProps} = props;
+  let {children, onClose, type, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
-
+  let {overlayProps, underlayProps} = useOverlay(props, domRef);
   let underlayRef = useRef(null);
 
   return (
     <Overlay {...otherProps} nodeRef={underlayRef}>
-      <Underlay ref={underlayRef} />
+      <Underlay {...underlayProps} ref={underlayRef} />
       <ModalWrapper
         {...styleProps}
         onClose={onClose}
         type={type}
-        isDismissable={isDismissable}
-        isKeyboardDismissDisabled={isKeyboardDismissDisabled}
-        ref={domRef}>
+        ref={domRef}
+        overlayProps={overlayProps}>
         {children}
       </ModalWrapper>
     </Overlay>
@@ -60,10 +58,9 @@ let typeMap = {
 
 let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject<HTMLDivElement>) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {children, isOpen, type, isDismissable, isKeyboardDismissDisabled, ...otherProps} = props;
+  let {children, isOpen, type, overlayProps, ...otherProps} = props;
   let typeVariant = typeMap[type];
 
-  let {overlayProps} = useOverlay(props, ref);
   usePreventScroll();
   let {modalProps} = useModal();
 

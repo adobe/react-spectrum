@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColumnProps, TableCollection, TableNode} from '@react-types/table';
+import {ColumnProps, TableCollection} from '@react-types/table';
+import {GridNode} from '@react-types/grid';
 import {Key} from 'react';
 import {LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
@@ -26,6 +27,8 @@ export class TableLayout<T> extends ListLayout<T> {
   columnWidths: Map<Key, number>;
   stickyColumnIndices: number[];
   getDefaultWidth: (props) => string | number;
+  wasLoading = false;
+  isLoading = false;
 
   constructor(options: TableLayoutOptions<T>) {
     super(options);
@@ -44,6 +47,11 @@ export class TableLayout<T> extends ListLayout<T> {
       this.invalidateEverything = true;
     }
 
+    // Track whether we were previously loading. This is used to adjust the animations of async loading vs inserts.
+    let loadingState = this.collection.body.props.loadingState;
+    this.wasLoading = this.isLoading;
+    this.isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
+
     this.buildColumnWidths();
     let header = this.buildHeader();
     let body = this.buildBody(0);
@@ -60,7 +68,7 @@ export class TableLayout<T> extends ListLayout<T> {
     this.stickyColumnIndices = [];
 
     // Pass 1: set widths for all explicitly defined columns.
-    let remainingColumns = new Set<TableNode<T>>();
+    let remainingColumns = new Set<GridNode<T>>();
     let remainingSpace = this.virtualizer.visibleRect.width;
     for (let column of this.collection.columns) {
       let props = column.props as ColumnProps<T>;
@@ -138,7 +146,7 @@ export class TableLayout<T> extends ListLayout<T> {
     };
   }
 
-  buildHeaderRow(headerRow: TableNode<T>, x: number, y: number) {
+  buildHeaderRow(headerRow: GridNode<T>, x: number, y: number) {
     let rect = new Rect(0, y, 0, 0);
     let row = new LayoutInfo('headerrow', headerRow.key, rect);
 
@@ -175,7 +183,7 @@ export class TableLayout<T> extends ListLayout<T> {
     }
   }
 
-  getColumnWidth(node: TableNode<T>) {
+  getColumnWidth(node: GridNode<T>) {
     let colspan = node.colspan ?? 1;
     let width = 0;
     for (let i = 0; i < colspan; i++) {
@@ -186,7 +194,7 @@ export class TableLayout<T> extends ListLayout<T> {
     return width;
   }
 
-  getEstimatedHeight(node: TableNode<T>, width: number, height: number, estimatedHeight: number) {
+  getEstimatedHeight(node: GridNode<T>, width: number, height: number, estimatedHeight: number) {
     let isEstimated = false;
 
     // If no explicit height is available, use an estimated height.
@@ -209,7 +217,7 @@ export class TableLayout<T> extends ListLayout<T> {
     return {height, isEstimated};
   }
 
-  buildColumn(node: TableNode<T>, x: number, y: number): LayoutNode {
+  buildColumn(node: GridNode<T>, x: number, y: number): LayoutNode {
     let width = this.getColumnWidth(node);
     let {height, isEstimated} = this.getEstimatedHeight(node, width, this.headingHeight, this.estimatedHeadingHeight);
     let rect = new Rect(x, y, width, height);
@@ -238,8 +246,7 @@ export class TableLayout<T> extends ListLayout<T> {
       children.push(layoutNode);
     }
 
-    // TODO: not show the spinner at the bottom when sorting?
-    if (this.collection.body.props.isLoading) {
+    if (this.isLoading) {
       let rect = new Rect(0, y, width || this.virtualizer.visibleRect.width, children.length === 0 ? this.virtualizer.visibleRect.height : 60);
       let loader = new LayoutInfo('loader', 'loader', rect);
       loader.parentKey = 'body';
@@ -270,7 +277,7 @@ export class TableLayout<T> extends ListLayout<T> {
     };
   }
 
-  buildNode(node: TableNode<T>, x: number, y: number): LayoutNode {
+  buildNode(node: GridNode<T>, x: number, y: number): LayoutNode {
     switch (node.type) {
       case 'headerrow':
         return this.buildHeaderRow(node, x, y);
@@ -286,7 +293,7 @@ export class TableLayout<T> extends ListLayout<T> {
     }
   }
 
-  buildRow(node: TableNode<T>, x: number, y: number): LayoutNode {
+  buildRow(node: GridNode<T>, x: number, y: number): LayoutNode {
     let rect = new Rect(x, y, 0, 0);
     let layoutInfo = new LayoutInfo('row', node.key, rect);
 
@@ -310,7 +317,7 @@ export class TableLayout<T> extends ListLayout<T> {
     };
   }
 
-  buildCell(node: TableNode<T>, x: number, y: number): LayoutNode {
+  buildCell(node: GridNode<T>, x: number, y: number): LayoutNode {
     let width = this.getColumnWidth(node);
     let {height, isEstimated} = this.getEstimatedHeight(node, width, this.rowHeight, this.estimatedRowHeight);
     let rect = new Rect(x, y, width, height);
@@ -404,5 +411,16 @@ export class TableLayout<T> extends ListLayout<T> {
     }
 
     return Math.max(0, Math.min(items.length - 1, low));
+  }
+
+  getInitialLayoutInfo(layoutInfo: LayoutInfo) {
+    let res = super.getInitialLayoutInfo(layoutInfo);
+
+    // If this insert was the result of async loading, remove the zoom effect and just keep the fade in.
+    if (this.wasLoading) {
+      res.transform = null;
+    }
+
+    return res;
   }
 }

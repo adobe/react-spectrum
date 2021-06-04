@@ -30,8 +30,6 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
     isEmphasized,
     isRequired,
     necessityIndicator,
-    isReadOnly,
-    isDisabled,
     label,
     labelPosition = 'top' as LabelPosition,
     labelAlign,
@@ -91,8 +89,6 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
           value={{
             isEmphasized,
             isRequired,
-            isReadOnly,
-            isDisabled,
             validationState,
             state
           }}>

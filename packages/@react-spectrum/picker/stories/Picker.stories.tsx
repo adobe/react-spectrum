@@ -24,6 +24,7 @@ import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 import {useAsyncList} from '@react-stately/data';
+import {View} from '@react-spectrum/view';
 
 
 let flatOptions = [
@@ -296,6 +297,18 @@ storiesOf('Picker', module)
     )
   )
   .add(
+    'long item text',
+    () => (
+      <Picker label="Test" onSelectionChange={action('selectionChange')}>
+        <Item key="short">One</Item>
+        <Item key="long">your text here long long long long</Item>
+        <Item key="underscores">your_text_here_long_long_long_long</Item>
+        <Item key="hyphens">your-text-here-long-long-long-long</Item>
+        <Item key="singleWord">supercalifragilisticexpialidocious</Item>
+      </Picker>
+    )
+  )
+  .add(
     'falsy item key',
     () => (
       <Picker label="Test" onSelectionChange={action('selectionChange')}>
@@ -499,6 +512,17 @@ storiesOf('Picker', module)
     () => (
       <AsyncLoadingExample />
     )
+  ).add(
+    'focus',
+    () => (
+      <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
+        <input placeholder="Shift tab here" />
+        <Picker label="Focus-Test" items={flatOptions} autoFocus onFocus={action('focus')} onBlur={action('blur')} onKeyDown={action('keydown')} onKeyUp={action('keyup')}>
+          {item => <Item>{item.name}</Item>}
+        </Picker>
+        <input placeholder="Tab here" />
+      </div>
+    )
   )
   .add('resize', () => <ResizePicker />)
   .add('autofocus', () => (
@@ -507,6 +531,17 @@ storiesOf('Picker', module)
       <Item key="Two">Two</Item>
       <Item key="Three">Three</Item>
     </Picker>
+  ))
+  .add('scrolling container', () => (
+    <View width="300px" height="size-500" overflow="auto">
+      <View width="500px">
+        <Picker label="Test" autoFocus>
+          <Item key="One">One</Item>
+          <Item key="Two">Two</Item>
+          <Item key="Three">Three</Item>
+        </Picker>
+      </View>
+    </View>
   ));
 
 function AsyncLoadingExample() {
