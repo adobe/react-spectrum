@@ -15,7 +15,6 @@ import {Overlay} from '@react-spectrum/overlays';
 import React, {ReactElement, useRef} from 'react';
 import {SpectrumTooltipTriggerProps} from '@react-types/tooltip';
 import {TooltipContext} from './context';
-import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useOverlayPosition} from '@react-aria/overlays';
 import {useTooltipTrigger} from '@react-aria/tooltip';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
