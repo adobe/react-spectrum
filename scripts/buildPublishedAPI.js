@@ -25,7 +25,7 @@ build().catch(err => {
 async function build() {
   // Create a temp directory to build the site in
   let dir = tempy.directory();
-  console.log(`Building into ${dir}...`);
+  console.log(`Building published api into ${dir}...`);
 
   // Generate a package.json containing just what we need to build the website
   let pkg = {
@@ -158,7 +158,7 @@ async function build() {
   fs.removeSync(path.join(dir, 'packages', 'dev'));
   fs.removeSync(path.join(dir, 'packages', '@react-spectrum', 'button', 'node_modules'));
   fs.copySync(path.join(dir, 'packages'), path.join(__dirname, '..', 'dist', 'published-api'));
-  //fs.removeSync(dir);
+  fs.removeSync(dir);
 }
 
 function run(cmd, args, opts) {

@@ -25,7 +25,7 @@ build().catch(err => {
 async function build() {
   // Create a temp directory to build the site in
   let dir = tempy.directory();
-  console.log(`Building into ${dir}...`);
+  console.log(`Building branch api into ${dir}...`);
 
   // Generate a package.json containing just what we need to build the website
   let pkg = {
@@ -117,8 +117,8 @@ async function build() {
   await run('yarn', ['parcel', 'build', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/*/', '--target', 'apiCheck'], {cwd: dir, stdio: 'inherit'});
 
   // Copy the build back into dist, and delete the temp dir.
-  //fs.copySync(path.join(dir, 'packages'), path.join(__dirname, '..', 'dist', 'branch-api'));
-  //fs.removeSync(dir);
+  fs.copySync(path.join(dir, 'packages'), path.join(__dirname, '..', 'dist', 'branch-api'));
+  fs.removeSync(dir);
 }
 
 function run(cmd, args, opts) {
