@@ -17,5 +17,4 @@ export * from './ActionButton';
 export * from './FieldButton';
 export * from './LogicButton';
 export * from './ClearButton';
-
-export let Anything = () => true;
+export * from './ToggleButton';
