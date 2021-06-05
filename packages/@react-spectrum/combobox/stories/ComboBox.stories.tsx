@@ -80,12 +80,6 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
-    'with mapped items (defaultItem and items undef)',
-    () => (
-      <ComboBoxWithMap defaultSelectedKey="two" />
-    )
-  )
-  .add(
     'no items',
     () => (
       <ComboBox defaultItems={[]} label="Combobox" {...actions}>
