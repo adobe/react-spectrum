@@ -12,7 +12,7 @@
 
 import {Collection} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
-import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
+import {Layout, Point, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useRef} from 'react';
 import {ScrollView} from './ScrollView';
 import {VirtualizerItem} from './VirtualizerItem';
@@ -145,6 +145,17 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     // element, and we aren't moving focus to the collection from within (see below).
     if (e.target === ref.current && !isFocusWithin.current) {
       virtualizer.scrollToItem(focusedKey, {duration: 0});
+    } else if (e.target !== ref.current && focusedKey != null && !isFocusWithin.current) {
+      let focusedView = virtualizer.getView(focusedKey);
+      // Otherwise if we are re-entering the collection and there is a previously focused key that is out of view, scroll it into view
+      // If it is in view already, preserve the current scroll position via scrollTo. This is to prevent the shift-tabbing into the
+      // collection from scrolling the focused key out of view due to useSelectableCollection focusing the last element in the table when tabbing out of the collection
+      if (!focusedView) {
+        virtualizer.scrollToItem(focusedKey, {duration: 0});
+      } else {
+        let rect = virtualizer.getVisibleRect();
+        virtualizer.scrollTo(new Point(rect.x, rect.y), 0)
+      }
     }
 
     isFocusWithin.current = e.target !== ref.current;
