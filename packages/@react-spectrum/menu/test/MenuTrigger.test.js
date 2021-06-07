@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, queryByRole, render, within} from '@testing-library/react';
 import {Button} from '@react-spectrum/button';
 import {Item, Menu, MenuTrigger, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
@@ -774,5 +774,49 @@ describe('MenuTrigger', function () {
     );
     let checkmark = queryByRole('img', {hidden: true});
     expect(checkmark).toBeNull();
+  });
+
+  it('two menus can not be open at the same time', function () {
+    let {getAllByRole, getByRole, queryByRole} = render(
+      <Provider theme={theme}>
+        <MenuTrigger>
+          <Button>
+            {triggerText}
+          </Button>
+          <Menu items={withSection}>
+            <Item key="alpha">Alpha</Item>
+            <Item key="bravo">Bravo</Item>
+          </Menu>
+        </MenuTrigger>
+        <MenuTrigger>
+          <Button>
+            {triggerText}
+          </Button>
+          <Menu items={withSection}>
+            <Item key="whiskey">Whiskey</Item>
+            <Item key="tango">Tango</Item>
+            <Item key="foxtrot">Foxtrot</Item>
+          </Menu>
+        </MenuTrigger>
+      </Provider>
+    );
+    let [button1, button2] = getAllByRole('button');
+    triggerPress(button1);
+    act(() => jest.runAllTimers());
+    let menu = getByRole('menu');
+    let menuItem1 = within(menu).getByText('Alpha');
+    expect(menuItem1).toBeInTheDocument();
+
+    // pressing once on button 2 should close menu1, but not open menu2 yet
+    triggerPress(button2);
+    act(() => jest.runAllTimers());
+    expect(queryByRole('menu')).toBeNull();
+
+    // second press of button2 should open menu2
+    triggerPress(button2);
+    act(() => jest.runAllTimers());
+    let menu2 = getByRole('menu');
+    let menu2Item1 = within(menu2).getByText('Whiskey');
+    expect(menu2Item1).toBeInTheDocument();
   });
 });
