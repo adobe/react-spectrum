@@ -48,11 +48,6 @@ export function useFocusRing(props: FocusRingProps = {}): FocusRingAria {
 
   let updateState = () => setFocusVisible(state.isFocused && state.isFocusVisible);
 
-  let onFocus = () => {
-    state.isFocused = true;
-    updateState();
-  };
-
   let onFocusChange = isFocused => {
     state.isFocused = isFocused;
     updateState();
@@ -65,8 +60,7 @@ export function useFocusRing(props: FocusRingProps = {}): FocusRingAria {
 
   let {focusProps} = useFocus({
     isDisabled: within,
-    onFocusChange,
-    onFocus
+    onFocusChange
   });
 
   let {focusWithinProps} = useFocusWithin({
