@@ -98,7 +98,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
     isDismissable,
     ...otherProps
   } = props;
-  let {overlayProps} = useOverlay(props, ref);
+  let {overlayProps} = useOverlay({...props, isDismissable: isDismissable && isOpen}, ref);
   let {modalProps} = useModal({
     isDisabled: isNonModal
   });
