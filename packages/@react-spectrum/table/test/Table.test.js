@@ -2796,8 +2796,7 @@ describe('TableView', function () {
 
   describe('with dialog trigger', function () {
     let TableExample = (props) => (
-
-      <TableView aria-label="TableView with static contents" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])} {...props}>
+      <TableView aria-label="TableView with static contents" selectionMode="multiple" width={300} height={200} {...props}>
         <TableHeader>
           <Column key="foo">Foo</Column>
           <Column key="bar">Bar</Column>
@@ -2856,8 +2855,8 @@ describe('TableView', function () {
       expect(document.activeElement).toEqual(input);
 
       act(() => {
-        fireEvent.keyDown(combobox, {key: 'ArrowRight', code: 39, charCode: 39});
-        fireEvent.keyUp(combobox, {key: 'ArrowRight', code: 39, charCode: 39});
+        fireEvent.keyDown(input, {key: 'ArrowRight', code: 39, charCode: 39});
+        fireEvent.keyUp(input, {key: 'ArrowRight', code: 39, charCode: 39});
         jest.runAllTimers();
       });
 
