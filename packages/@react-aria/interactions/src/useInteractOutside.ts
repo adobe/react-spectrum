@@ -20,6 +20,7 @@ import {RefObject, SyntheticEvent, useEffect, useRef} from 'react';
 interface InteractOutsideProps {
   ref: RefObject<Element>,
   onInteractOutside?: (e: SyntheticEvent) => void,
+  onInteractOutsideStart?: (e: SyntheticEvent) => void,
   /** Whether the interact outside events should be disabled. */
   isDisabled?: boolean
 }
@@ -29,7 +30,7 @@ interface InteractOutsideProps {
  * when a user clicks outside them.
  */
 export function useInteractOutside(props: InteractOutsideProps) {
-  let {ref, onInteractOutside, isDisabled} = props;
+  let {ref, onInteractOutside, isDisabled, onInteractOutsideStart} = props;
   let stateRef = useRef({
     isPointerDown: false,
     ignoreEmulatedMouseEvents: false
@@ -42,8 +43,9 @@ export function useInteractOutside(props: InteractOutsideProps) {
         return;
       }
       if (isValidEvent(e, ref) && onInteractOutside) {
-        e.preventDefault();
-        e.stopPropagation();
+        if (onInteractOutsideStart) {
+          onInteractOutsideStart(e);
+        }
         state.isPointerDown = true;
       }
     };
@@ -55,8 +57,6 @@ export function useInteractOutside(props: InteractOutsideProps) {
           return;
         }
         if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
-          e.preventDefault();
-          e.stopPropagation();
           state.isPointerDown = false;
           onInteractOutside(e);
         }
@@ -78,8 +78,6 @@ export function useInteractOutside(props: InteractOutsideProps) {
         if (state.ignoreEmulatedMouseEvents) {
           state.ignoreEmulatedMouseEvents = false;
         } else if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
-          e.preventDefault();
-          e.stopPropagation();
           state.isPointerDown = false;
           onInteractOutside(e);
         }
@@ -91,8 +89,6 @@ export function useInteractOutside(props: InteractOutsideProps) {
         }
         state.ignoreEmulatedMouseEvents = true;
         if (onInteractOutside && state.isPointerDown && isValidEvent(e, ref)) {
-          e.preventDefault();
-          e.stopPropagation();
           state.isPointerDown = false;
           onInteractOutside(e);
         }
