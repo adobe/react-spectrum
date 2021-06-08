@@ -4367,8 +4367,13 @@ describe('ComboBox', function () {
         let allProgressSpinners = within(tray).getAllByRole('progressbar');
         expect(allProgressSpinners.length).toBe(1);
 
-        let validationIcon = within(tray).getByRole('img', {hidden: true});
-        expect(validationIcon).toBeTruthy();
+        let icons = within(tray).getAllByRole('img', {hidden: true});
+        expect(icons.length).toBe(2);
+
+        let clearButton = within(tray).getByLabelText('Clear');
+        expect(clearButton).toBeTruthy();
+
+        expect(within(clearButton).getByRole('img', {hidden: true})).toBe(icons[1]);
 
         let trayInput = within(tray).getByRole('searchbox');
         expect(trayInput).toHaveAttribute('aria-invalid', 'true');
