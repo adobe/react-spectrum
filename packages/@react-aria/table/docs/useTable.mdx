@@ -24,7 +24,7 @@ import {useTable, useTableCell, useTableColumnHeader, useTableRow, useTableRowGr
 
 ---
 category: Collections
-keywords: [table, aria]
+keywords: [table, aria, grid]
 ---
 
 # useTable
@@ -35,7 +35,7 @@ keywords: [table, aria]
   packageData={packageData}
   componentNames={['useTable', 'useTableCell', 'useTableColumnHeader', 'useTableRow', 'useTableRowGroup', 'useTableRowHeader', 'useTableSelectAllCheckbox', 'useTableSelectionCheckbox']}
   sourceData={[
-    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices/#menu'}
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices/#grid}
   ]} />
 
 ## API
@@ -72,7 +72,7 @@ A table can be built using the [&lt;table&gt;](https://developer.mozilla.org/en-
 <Anatomy />
 
 A table consists of a container element, with columns and rows of cells containing data inside. The cells within a table may contain focusable elements or plain text content.
-If the table supports row selection, each row includes a selection checkbox. Additionally, a "select all" checkbox is displayed as the first column header if the table supports multiple row selection.
+If the table supports row selection, each row includes a selection checkbox in the first column. Additionally, a "select all" checkbox is displayed as the first column header if the table supports multiple row selection.
 
 `useTable`, `useTableCell`, `useTableColumnHeader`, `useTableRow`, and `useTableRowHeader` handle keyboard, mouse, and other interactions to support
 row selection, in table navigation, and overall focus behavior. Those hooks, along with `useTableRowGroup`, also handle exposing the table and its contents
@@ -311,6 +311,7 @@ function TableSelectAllCell({column}) {
       ref={ref}>
       <input
         {...inputProps}
+        ref={inputRef}
         disabled={isSingleSelectionMode}
         style={{visibility: isSingleSelectionMode ? 'hidden' : 'visible'}} />
     </div>
