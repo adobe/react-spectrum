@@ -1,0 +1,13 @@
+diff --git a/node_modules/@parcel/runtime-react-refresh/lib/ReactRefreshRuntime.js b/node_modules/@parcel/runtime-react-refresh/lib/ReactRefreshRuntime.js
+index 72bfb6f..b79f8b2 100644
+--- a/node_modules/@parcel/runtime-react-refresh/lib/ReactRefreshRuntime.js
++++ b/node_modules/@parcel/runtime-react-refresh/lib/ReactRefreshRuntime.js
+@@ -40,7 +40,7 @@ var _default = new (_plugin().Runtime)({
+     for (let entry of entries) {
+       let pkg = await entry.getPackage();
+ 
+-      if (pkg && (pkg.dependencies && pkg.dependencies['react'] || pkg.devDependencies && pkg.devDependencies['react'])) {
++      if (pkg && (pkg.dependencies && pkg.dependencies['react'] || pkg.devDependencies && pkg.devDependencies['react'] || pkg.peerDependencies && pkg.peerDependencies['react'])) {
+         return {
+           filePath: __filename,
+           code: CODE,

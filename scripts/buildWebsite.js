@@ -51,7 +51,7 @@ async function build() {
     resolutions: packageJSON.resolutions,
     browserslist: packageJSON.browserslist,
     scripts: {
-      build: "DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx' --no-scope-hoist",
+      build: "DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
       postinstall: 'patch-package'
     }
   };
@@ -104,10 +104,8 @@ async function build() {
   fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'));
   fs.copySync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
 
-  // Only copy babel patch over
-  let patches = fs.readdirSync(path.join(__dirname, '..', 'patches'));
-  let babelPatch = patches.find(name => name.startsWith('@babel'));
-  fs.copySync(path.join(__dirname, '..', 'patches', babelPatch), path.join(dir, 'patches', babelPatch));
+  // Copy patches
+  fs.copySync(path.join(__dirname, '..', 'patches'), path.join(dir, 'patches'));
 
   // Install dependencies from npm
   await run('yarn', {cwd: dir, stdio: 'inherit'});

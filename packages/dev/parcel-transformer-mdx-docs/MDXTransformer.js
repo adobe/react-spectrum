@@ -19,9 +19,9 @@ const frontmatter = require('remark-frontmatter');
 const slug = require('remark-slug');
 const util = require('mdast-util-toc');
 const yaml = require('js-yaml');
-const prettier = require('prettier');
-const {parse} = require('@babel/parser');
-const traverse = require('@babel/traverse').default;
+// const prettier = require('prettier');
+// const {parse} = require('@babel/parser');
+const dprint = require('dprint-node');
 const t = require('@babel/types');
 
 const IMPORT_MAPPINGS = {
@@ -278,15 +278,16 @@ export default {};
         content: clientBundle,
         uniqueKey: 'client',
         isSplittable: true,
+        sideEffects: true,
         env: {
           // We have to override all of the environment options to ensure this doesn't inherit
           // anything from the parent asset, whose environment is set below.
           context: 'browser',
           engines: asset.env.engines,
-          outputFormat: asset.env.scopeHoist ? 'esmodule' : 'global',
+          outputFormat: asset.env.shouldScopeHoist ? 'esmodule' : 'global',
           includeNodeModules: asset.env.includeNodeModules,
-          scopeHoist: asset.env.scopeHoist,
-          minify: asset.env.minify
+          shouldScopeHoist: asset.env.shouldScopeHoist,
+          shouldOptimize: asset.env.shouldOptimize
         },
         meta: {
           isMDX: false
@@ -321,8 +322,8 @@ export default {};
         'markdown-to-jsx': false,
         'prop-types': false
       },
-      scopeHoist: false,
-      minify: false
+      shouldScopeHoist: false,
+      shouldOptimize: false
     });
 
     return assets;
@@ -335,20 +336,24 @@ function transformExample(node, preRelease) {
   }
 
   if (/^<(.|\n)*>$/m.test(node.value)) {
-    node.value = node.value.replace(/^(<(.|\n)*>)$/m, '<WRAPPER>$1</WRAPPER>');
+    node.value = node.value.replace(/^(<(.|\n)*>)$/m, '(<WRAPPER>$1</WRAPPER>)');
   }
 
-  let ast = parse(node.value, {
-    sourceType: 'module',
-    plugins: ['jsx', 'typescript']
-  });
+  let force = false;
 
   /* Replace individual package imports in the code
    * with monorepo imports if building for production and not a pre-release
    */
-  if (process.env.DOCS_ENV === 'production' && !preRelease) {
+  if (process.env.DOCS_ENV === 'production' && !preRelease && node.value.includes('@react-spectrum')) {
     let specifiers = [];
     let last;
+    const traverse = require('@babel/traverse').default;
+    const {parse} = require('@babel/parser');
+    const generate = require('@babel/generator').default;
+    let ast = parse(node.value, {
+      sourceType: 'module',
+      plugins: ['jsx', 'typescript']
+    });
 
     traverse(ast, {
       ImportDeclaration(path) {
@@ -391,12 +396,15 @@ function transformExample(node, preRelease) {
         }
       }
     });
+
+    node.value = generate(ast).code.replace(/(<WRAPPER>(?:.|\n)*<\/WRAPPER>)/g, '\n($1)');
+    force = true;
   }
 
-  return responsiveCode(node, ast);
+  return responsiveCode(node, force);
 }
 
-function responsiveCode(node, ast) {
+function responsiveCode(node, force) {
   if (!node.lang) {
     return [node];
   }
@@ -404,19 +412,19 @@ function responsiveCode(node, ast) {
   let large = {
     ...node,
     meta: node.meta ? `${node.meta} large` : 'large',
-    value: formatCode(node, node.value, ast, 80)
+    value: formatCode(node, node.value, 80, force)
   };
 
   let medium = {
     ...node,
     meta: node.meta ? `${node.meta} medium` : 'medium',
-    value: formatCode(node, large.value, ast, 60)
+    value: formatCode(node, large.value, 60, force)
   };
 
   let small = {
     ...node,
     meta: node.meta ? `${node.meta} small` : 'small',
-    value: formatCode(node, medium.value, ast, 25)
+    value: formatCode(node, medium.value, 25, force)
   };
 
   return [
@@ -426,26 +434,24 @@ function responsiveCode(node, ast) {
   ];
 }
 
-function formatCode(node, code, ast, printWidth = 80) {
-  if (!ast && code.split('\n').every(line => line.length <= printWidth)) {
-    return code;
+function formatCode(node, code, printWidth = 80, force = false) {
+  if (!force && code.split('\n').every(line => line.length <= printWidth)) {
+    return code.replace(/^\(<WRAPPER>((?:.|\n)*)<\/WRAPPER>\);?\s*$/m, '$1');
   }
 
-  let parser = node.lang === 'css' ? 'css' : 'babel-ts';
-  if (ast) {
-    parser = () => ast;
+  if (node.lang === 'css') {
+    return node.value;
   }
 
-  let res = prettier.format(node.value, {
-    parser,
-    singleQuote: true,
-    jsxBracketSameLine: true,
-    bracketSpacing: false,
-    trailingComma: 'none',
-    printWidth
+  let res = dprint.format('example.jsx', node.value, {
+    quoteStyle: 'preferSingle',
+    'jsx.quoteStyle': 'preferDouble',
+    trailingCommas: 'never',
+    lineWidth: printWidth,
+    'importDeclaration.spaceSurroundingNamedImports': false
   });
 
-  return res.replace(/^<WRAPPER>((?:.|\n)*)<\/WRAPPER>;?\s*$/m, (str, contents) =>
+  return res.replace(/^\(<WRAPPER>((?:.|\n)*)<\/WRAPPER>\);?\s*$/m, (str, contents) =>
     contents.replace(/^\s{2}/gm, '').trim()
   );
 }

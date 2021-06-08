@@ -22,7 +22,7 @@ module.exports = new Namer({
       let entryFilePath = path.relative(options.projectRoot, main.filePath);
       let parts = entryFilePath.split(path.sep);
 
-      let basename = path.basename(entryFilePath, path.extname(entryFilePath)) + '.' + bundle.type;
+      let basename = path.basename(entryFilePath, path.extname(entryFilePath)) + '.html';
 
       // For dev files, simply /PageName.html or /dir/PageName.html
       if (parts[1] === 'dev') {
@@ -41,7 +41,8 @@ module.exports = new Namer({
       let bundleGroupBundles = bundleGraph.getBundlesInBundleGroup(bundleGroup);
       let mainBundle =  bundleGroupBundles.find(b => b.getEntryAssets().some(a => a.id === bundleGroup.entryAssetId));
       let entry = mainBundle.getEntryAssets().find(a => a.id === bundleGroup.entryAssetId).filePath;
-      return path.basename(entry, path.extname(entry)) + '.' + bundle.hashReference + '.' + bundle.type;
+      // return path.basename(entry, path.extname(entry)) + '.' + bundle.hashReference + '.' + bundle.type;
+      return bundle.id + '.' + bundle.type;
     } else {
       // Let the default namer handle it.
       return null;

@@ -36,6 +36,9 @@ module.exports = new Transformer({
 
     let exports = {};
 
+    asset.symbols.ensure();
+    asset.symbols.set('*', `$${asset.id}$exports`);
+
     traverse(ast, {
       ExportNamedDeclaration(path) {
         if (path.node.source) {

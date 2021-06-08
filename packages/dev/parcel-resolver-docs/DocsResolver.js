@@ -30,7 +30,7 @@ module.exports = new Resolver({
         env: dependency.env
       });
 
-      if (resolved) {
+      if (resolved && resolved.filePath) {
         // HACK: ensure source code is used to build types, not compiled code.
         // Parcel removes the source field from package.json when the code comes from node_modules.
         if (resolved.filePath.endsWith('.d.ts') && !resolved.filePath.includes('@react-types')) {
@@ -38,6 +38,7 @@ module.exports = new Resolver({
         }
 
         resolved.filePath = await options.inputFS.realpath(resolved.filePath);
+        resolved.sideEffects = true;
         return resolved;
       }
     }

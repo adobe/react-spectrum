@@ -15,6 +15,7 @@ const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const requireFromString = require('require-from-string');
 const {blobToString, urlJoin} = require('@parcel/utils');
+const path = require('path');
 
 module.exports = new Optimizer({
   async optimize({bundle, bundleGraph, contents, map}) {
@@ -25,7 +26,7 @@ module.exports = new Optimizer({
 
     let js = await blobToString(contents);
     let Component = requireFromString(js, mainAsset.filePath).default;
-    let bundles = bundleGraph.getSiblingBundles(bundle).filter(b => !b.isInline).reverse();
+    let bundles = bundleGraph.getReferencedBundles(bundle).reverse();
 
     let pages = [];
     bundleGraph.traverseBundles(b => {
@@ -85,7 +86,7 @@ module.exports = new Optimizer({
 });
 
 function rename(bundle) {
-  return bundle.name.slice(0, -bundle.type.length) + 'html';
+  return bundle.name.slice(0, -path.extname(bundle.name).length) + '.html';
 }
 
 function getImageURL(image, bundleGraph, bundle) {
