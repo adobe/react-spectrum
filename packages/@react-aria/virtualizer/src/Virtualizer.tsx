@@ -154,7 +154,7 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
         virtualizer.scrollToItem(focusedKey, {duration: 0});
       } else {
         let rect = virtualizer.getVisibleRect();
-        virtualizer.scrollTo(new Point(rect.x, rect.y), 0)
+        virtualizer.scrollTo(new Point(rect.x, rect.y), 0);
       }
     }
 

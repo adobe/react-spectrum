@@ -36,6 +36,8 @@ interface GridCellAria {
   gridCellProps: HTMLAttributes<HTMLElement>
 }
 
+let isAltTabEvent = false;
+
 export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps, state: GridState<T, C>): GridCellAria {
   let {
     node,
@@ -54,7 +56,20 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   let focus = () => {
     let treeWalker = getFocusableTreeWalker(ref.current);
     if (focusMode === 'child') {
-      let focusable = state.selectionManager.childFocusStrategy === 'last'
+      let focusable;
+      // TODO: This conflicts with the childFocusStrategy stuff set up below, but this behavior made more sense to me
+      // since it respects visual tab order by default.
+      // Perhaps state.selectionManager.childFocusStrategy should default to "undef" in useMultipleSelectionState
+      // so that I can do a childFocusStategy != null check here so it doesn't override what the user sets?
+
+      // If the current active element is a focusable child within the cell, early return.
+      // This means that we've alt/option tab forward/backward into the cell and we should preserve the current
+      // focused child element.
+      if (document.activeElement !== ref.current && ref.current.contains(document.activeElement)) {
+        return;
+      }
+
+      focusable = state.selectionManager.childFocusStrategy === 'last'
         ? last(treeWalker)
         : treeWalker.firstChild() as HTMLElement;
       if (focusable) {
@@ -175,6 +190,16 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           );
         }
         break;
+      case 'Tab':
+        // Track if focus is being moved around within the grid via alt/option + tab so we can update focusedKey
+        // when onFocus is called for the next focusable grid cell.
+        if (e.altKey) {
+          isAltTabEvent = true;
+          // Set the grid cell's tab index to -1 so that shift+alt/option+tab doesn't move focus from the focusable child
+          // to the grid cell. This would cause the child to then get refocused, effectively nullifying your shift+alt+tab action
+          ref.current.tabIndex = -1;
+        }
+        break;
     }
   };
 
@@ -188,8 +213,14 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       // If focus is currently visible (e.g. the user is navigating with the keyboard),
       // then skip this. We want to restore focus to the previously focused row/cell
       // in that case since the table should act like a single tab stop.
-      if (!isFocusVisible()) {
+      // If focus is being moved via alt/option + tab, we need to update the focused selection manager
+      // focused key tracker so that subsequent arrow key presses move focus to the right places
+      if (!isFocusVisible() || isAltTabEvent) {
         state.selectionManager.setFocusedKey(node.key);
+
+        if (isAltTabEvent) {
+          isAltTabEvent = false;
+        }
       }
       return;
     }
