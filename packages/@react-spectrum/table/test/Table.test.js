@@ -12,17 +12,23 @@
 
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
-import {ActionButton} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {announce} from '@react-aria/live-announcer';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {Content} from '@react-spectrum/view';
 import {CRUDExample} from '../stories/CRUDExample';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {Divider} from '@react-spectrum/divider';
 import {getFocusableTreeWalker} from '@react-aria/focus';
+import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from '../stories/HidingColumns';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Switch} from '@react-spectrum/switch';
+import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {typeText} from '@react-spectrum/test-utils';
@@ -2785,6 +2791,84 @@ describe('TableView', function () {
 
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+    });
+  });
+
+  describe('with dialog trigger', function () {
+    let TableExample = (props) => (
+      <TableView aria-label="TableView with static contents" selectionMode="multiple" width={300} height={200} {...props}>
+        <TableHeader>
+          <Column key="foo">Foo</Column>
+          <Column key="bar">Bar</Column>
+          <Column key="baz">Baz</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>Two</Cell>
+            <Cell>
+              <DialogTrigger>
+                <ActionButton aria-label="Add"><Add /></ActionButton>
+                {close => (
+                  <Dialog>
+                    <Heading>The Heading</Heading>
+                    <Divider />
+                    <Content>
+                      <TextField autoFocus label="Last Words" data-testid="input" />
+                    </Content>
+                    <ButtonGroup>
+                      <Button variant="secondary" onPress={close}>Cancel</Button>
+                      <Button variant="cta" onPress={close}>Confirm</Button>
+                    </ButtonGroup>
+                  </Dialog>
+                )}
+              </DialogTrigger>
+            </Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    );
+
+    it('arrow keys interactions don\'t move the focus away from the textfield in the dialog', function () {
+      let tree = render(<TableExample />);
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(2);
+
+      let button = within(rows[1]).getByRole('button');
+      triggerPress(button);
+
+      let dialog = tree.getByRole('dialog');
+      let input = within(dialog).getByTestId('input');
+
+      expect(input).toBeTruthy();
+      userEvent.type(input, 'blah');
+      expect(document.activeElement).toEqual(input);
+      expect(input.value).toBe('blah');
+
+      act(() => {
+        fireEvent.keyDown(input, {key: 'ArrowLeft', code: 37, charCode: 37});
+        fireEvent.keyUp(input, {key: 'ArrowLeft', code: 37, charCode: 37});
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement).toEqual(input);
+
+      act(() => {
+        fireEvent.keyDown(input, {key: 'ArrowRight', code: 39, charCode: 39});
+        fireEvent.keyUp(input, {key: 'ArrowRight', code: 39, charCode: 39});
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement).toEqual(input);
+
+      act(() => {
+        fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
+        fireEvent.keyUp(input, {key: 'Escape', code: 27, charCode: 27});
+        jest.runAllTimers();
+      });
+
+      expect(dialog).not.toBeInTheDocument();
     });
   });
 
