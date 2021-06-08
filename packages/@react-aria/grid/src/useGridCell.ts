@@ -196,7 +196,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         if (e.altKey) {
           isAltTabEvent = true;
           // Set the grid cell's tab index to -1 so that shift+alt/option+tab doesn't move focus from the focusable child
-          // to the grid cell. This would cause the child to then get refocused, effectively nullifying your shift+alt+tab action
+          // to the grid cell. This would cause the child to then get refocused due to onFocus below, effectively nullifying your shift+alt+tab action
           ref.current.tabIndex = -1;
         }
         break;
