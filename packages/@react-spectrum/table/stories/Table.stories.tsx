@@ -341,20 +341,20 @@ storiesOf('TableView', module)
     () => (
       <>
         <input />
-          <TableView aria-label="TableView with many columns and rows" selectionMode="multiple" width={700} height={500} onSelectionChange={s => onSelectionChange([...s])}>
-            <TableHeader columns={manyColunns}>
-              {column =>
-                <Column minWidth={100}>{column.name}</Column>
-              }
-            </TableHeader>
-            <TableBody items={manyRows}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </TableView>
+        <TableView aria-label="TableView with many columns and rows" selectionMode="multiple" width={700} height={500} onSelectionChange={s => onSelectionChange([...s])}>
+          <TableHeader columns={manyColunns}>
+            {column =>
+              <Column minWidth={100}>{column.name}</Column>
+            }
+          </TableHeader>
+          <TableBody items={manyRows}>
+            {item =>
+              (<Row key={item.foo}>
+                {key => <Cell>{item[key]}</Cell>}
+              </Row>)
+            }
+          </TableBody>
+        </TableView>
         <input />
       </>
     ),
