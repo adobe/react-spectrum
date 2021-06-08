@@ -1749,7 +1749,7 @@ describe('useDrag and useDrop', function () {
   describe('screen reader', () => {
     beforeEach(() => {
       // reset focus visible state
-      fireEvent.blur(window);
+      fireEvent.focus(document.body);
     });
 
     afterEach(() => {
@@ -1909,7 +1909,7 @@ describe('useDrag and useDrop', function () {
       buttons = tree.getAllByRole('button');
       expect(buttons).toEqual([draggable, droppable, droppable2]);
 
-      expect(() => tree.getByRole('textbox')).toThrow();
+      expect(tree.queryByRole('textbox')).toBeNull();
       expect(tree.getByText('Text')).toHaveAttribute('aria-hidden', 'true');
     });
 

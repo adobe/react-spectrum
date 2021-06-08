@@ -19,10 +19,6 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
   defaultItems?: Iterable<T>,
   /** The list of ComboBox items (controlled). */
   items?: Iterable<T>,
-  /** Sets the open state of the menu. */
-  isOpen?: boolean,
-  /** Sets the default open state of the menu. */
-  defaultOpen?: boolean,
   /** Method that is called when the open state of the menu changes. Returns the new open state and the action that caused the opening of the menu. */
   onOpenChange?: (isOpen: boolean, menuTrigger?: MenuTriggerAction) => void,
   /** The value of the ComboBox input (controlled). */
@@ -50,7 +46,12 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
   shouldFlip?: boolean
 }
 
-export interface SpectrumComboBoxProps<T> extends ComboBoxProps<T>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface SpectrumComboBoxProps<T> extends Omit<ComboBoxProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+  /**
+   * The interaction required to display the ComboBox menu. Note that this prop has no effect on the mobile ComboBox experience.
+   * @default 'input'
+   */
+  menuTrigger?: MenuTriggerAction,
   /** Whether the ComboBox should be displayed with a quiet style. */
   isQuiet?: boolean,
   /**

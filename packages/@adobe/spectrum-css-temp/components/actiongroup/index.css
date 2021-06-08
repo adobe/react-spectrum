@@ -163,3 +163,11 @@ governing permissions and limitations under the License.
     }
   }
 }
+
+.spectrum-ActionGroup--overflowCollapse {
+  flex-wrap: nowrap;
+}
+
+.spectrum-ActionGroup-item--iconOnly {
+  padding-inline-end: var(--spectrum-actionbutton-icon-padding-x);
+}
