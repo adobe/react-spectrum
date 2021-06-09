@@ -63,7 +63,6 @@ module.exports = new Resolver({
 
       let {value, imports} = generate(matches, dependency.isAsync);
       code = imports + 'module.exports = ' + value;
-      console.log(code)
     // } else if (sourceAssetType === 'css') {
     //   for (let [, relative] of results) {
     //     code += `@import "${relative}";\n`;
