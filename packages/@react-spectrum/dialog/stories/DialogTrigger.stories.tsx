@@ -335,6 +335,26 @@ storiesOf('DialogTrigger', module)
   .add(
     'trigger visible through underlay',
     () => renderTriggerNotCentered({})
+  )
+  .add(
+    '2 popovers',
+    () => (
+      <Flex gap="size-200">
+        <DialogTrigger type="popover">
+          <ActionButton>Trigger</ActionButton>
+          <Dialog>
+            <Content>
+              <input />
+              <input />
+            </Content>
+          </Dialog>
+        </DialogTrigger>
+        <DialogTrigger type="popover">
+          <ActionButton>Trigger</ActionButton>
+          <Dialog><Content>Hi!</Content></Dialog>
+        </DialogTrigger>
+      </Flex>
+    )
   );
 
 function render({width = 'auto', ...props}) {

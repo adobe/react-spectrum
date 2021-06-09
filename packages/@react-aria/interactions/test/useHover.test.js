@@ -11,8 +11,13 @@
  */
 
 import {act, fireEvent, render} from '@testing-library/react';
-import {installPointerEvent} from '@react-spectrum/test-utils';
+import {ActionButton} from '@react-spectrum/button';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
+import MatchMediaMock from 'jest-matchmedia-mock';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {theme} from '@react-spectrum/theme-default';
 import {useHover} from '../';
 
 function Example(props) {
@@ -467,6 +472,88 @@ describe('useHover', function () {
 
       fireEvent.mouseLeave(el);
       expect(el.textContent).toBe('test');
+    });
+  });
+
+  describe('portal event bubbling', () => {
+    function PortalExample(props) {
+      let {elementType: ElementType = 'div', ...otherProps} = props;
+      let {hoverProps} = useHover(otherProps);
+      return (
+        <Provider theme={theme}>
+          <ElementType {...hoverProps} tabIndex="0">
+            <DialogTrigger>
+              <ActionButton>open</ActionButton>
+              <Dialog>
+                test
+              </Dialog>
+            </DialogTrigger>
+          </ElementType>
+        </Provider>
+      );
+    }
+
+    beforeAll(() => {
+      jest.useFakeTimers();
+    });
+    afterAll(() => {
+      jest.useRealTimers();
+    });
+
+    let matchMedia;
+    beforeEach(() => {
+      matchMedia = new MatchMediaMock();
+      // this needs to be a setTimeout so that the dialog can be removed from the dom before the callback is invoked
+      jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(() => cb(), 0));
+    });
+
+    afterEach(() => {
+      // Ensure we close any dialogs before unmounting to avoid warning.
+      let dialog = document.querySelector('[role="dialog"]');
+      if (dialog) {
+        act(() => {
+          fireEvent.keyDown(dialog, {key: 'Escape'});
+          fireEvent.keyUp(dialog, {key: 'Escape'});
+          jest.runAllTimers();
+        });
+      }
+
+      matchMedia.clear();
+      window.requestAnimationFrame.mockRestore();
+    });
+
+    describe.each`
+      type                | prepare               | actions
+      ${'Mouse Events'}   | ${installMouseEvent}  | ${[
+        (el) => fireEvent.mouseEnter(el, {button: 0}),
+        (el) => fireEvent.mouseLeave(el, {button: 0})
+      ]}
+      ${'Pointer Events'} | ${installPointerEvent}| ${[
+        (el) => fireEvent(el, pointerEvent('pointerover', {button: 0})),
+        (el) => fireEvent(el, pointerEvent('pointerout', {button: 0}))
+      ]}
+    `('$type', ({actions: [start, end], prepare}) => {
+      prepare();
+      it('stop event bubbling through portal', () => {
+        const hoverMock = jest.fn();
+        let res = render(
+          <PortalExample
+            onHoverStart={hoverMock}
+            onHoverEnd={hoverMock}
+            onHoverChange={hoverMock} />
+        );
+
+        fireEvent.click(res.getByText('open'));
+
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let el = res.getByText('test');
+        start(el);
+        end(el);
+        expect(hoverMock.mock.calls).toHaveLength(0);
+      });
     });
   });
 });

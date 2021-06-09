@@ -11,12 +11,15 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from './CRUDExample';
 import Delete from '@spectrum-icons/workflow/Delete';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from './HidingColumns';
@@ -28,6 +31,7 @@ import {SearchField} from '@react-spectrum/searchfield';
 import {SelectionMode} from '@react-types/shared';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
+import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
 import {View} from '@react-spectrum/view';
@@ -782,6 +786,42 @@ storiesOf('TableView', module)
     'loads more on scroll when contentSize.height < rect.height * 2',
     () => <AsyncServerFilterTable height={500} />,
     {chromatic: {disable: true}}
+  )
+  .add(
+    'with dialog trigger',
+    () => (
+      <TableView aria-label="TableView with static contents" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column key="foo">Foo</Column>
+          <Column key="bar">Bar</Column>
+          <Column key="baz">Baz</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>Two</Cell>
+            <Cell>
+              <DialogTrigger>
+                <ActionButton aria-label="Add"><Add /></ActionButton>
+                {close => (
+                  <Dialog>
+                    <Heading>The Heading</Heading>
+                    <Divider />
+                    <Content>
+                      <TextField label="Last Words" />
+                    </Content>
+                    <ButtonGroup>
+                      <Button variant="secondary" onPress={close}>Cancel</Button>
+                      <Button variant="cta" onPress={close}>Confirm</Button>
+                    </ButtonGroup>
+                  </Dialog>
+                )}
+              </DialogTrigger>
+            </Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
   );
 
 function AsyncLoadingExample() {

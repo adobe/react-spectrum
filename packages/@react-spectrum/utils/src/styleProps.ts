@@ -233,19 +233,19 @@ export function useStyleProps<T extends StyleProps>(
     UNSAFE_style,
     ...otherProps
   } = props;
-  let {
-    matchedBreakpoints = ['base']
-  } = options;
   let breakpointProvider = useBreakpoint();
   let {direction} = useLocale();
-  let styles = convertStyleProps(props, handlers, direction, breakpointProvider?.matchedBreakpoints || matchedBreakpoints);
+  let {
+    matchedBreakpoints = breakpointProvider?.matchedBreakpoints || ['base']
+  } = options;
+  let styles = convertStyleProps(props, handlers, direction, matchedBreakpoints);
   let style = {...UNSAFE_style, ...styles};
 
   // @ts-ignore
   if (otherProps.className) {
     console.warn(
       'The className prop is unsafe and is unsupported in React Spectrum v3. ' +
-      'Please use style props with Spectrum variables, or UNSAFE_className if you absolutely must to something custom. ' +
+      'Please use style props with Spectrum variables, or UNSAFE_className if you absolutely must do something custom. ' +
       'Note that this may break in future versions due to DOM structure changes.'
     );
   }
@@ -254,7 +254,7 @@ export function useStyleProps<T extends StyleProps>(
   if (otherProps.style) {
     console.warn(
       'The style prop is unsafe and is unsupported in React Spectrum v3. ' +
-      'Please use style props with Spectrum variables, or UNSAFE_style if you absolutely must to something custom. ' +
+      'Please use style props with Spectrum variables, or UNSAFE_style if you absolutely must do something custom. ' +
       'Note that this may break in future versions due to DOM structure changes.'
     );
   }
@@ -264,7 +264,7 @@ export function useStyleProps<T extends StyleProps>(
     className: UNSAFE_className
   };
 
-  if (props.isHidden) {
+  if (getResponsiveProp(props.isHidden, matchedBreakpoints)) {
     styleProps.hidden = true;
   }
 
@@ -281,7 +281,7 @@ export function getResponsiveProp<T>(prop: Responsive<T>, matchedBreakpoints: Br
   if (prop && typeof prop === 'object' && !Array.isArray(prop)) {
     for (let i = 0; i < matchedBreakpoints.length; i++) {
       let breakpoint = matchedBreakpoints[i];
-      if (prop[breakpoint]) {
+      if (prop[breakpoint] != null) {
         return prop[breakpoint];
       }
     }
