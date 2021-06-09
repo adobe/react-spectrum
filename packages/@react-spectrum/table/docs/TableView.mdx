@@ -168,7 +168,7 @@ The example below applies `isRowHeader` to the "First Name" and "Last Name" colu
 
 ## Asynchronous loading
 TableView supports loading data asynchronously, and will display a progress circle reflecting the current load state,
-set by the `isLoading` prop. It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
+set by the `loadingState` prop. It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
 
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle loading the data.
 See the docs for more information.
@@ -212,7 +212,7 @@ function AsyncTable() {
         </TableHeader>
         <TableBody
           items={list.items}
-          isLoading={list.isLoading}
+          loadingState={list.loadingState}
           onLoadMore={list.loadMore}>
           {(item) => (
             <Row key={item.name}>{(key) => <Cell>{item[key]}</Cell>}</Row>
@@ -388,7 +388,7 @@ function AsyncSortTable() {
         </TableHeader>
         <TableBody
           items={list.items}
-          isLoading={list.isLoading}>
+          loadingState={list.loadingState}>
           {(item) => (
             <Row key={item.name}>{(key) => <Cell>{item[key]}</Cell>}</Row>
           )}
@@ -665,7 +665,8 @@ import Delete from '@spectrum-icons/workflow/Delete';
 
 ### Hide header
 Individual column headers can be hidden by providing the `hideHeader` prop to the Column. A tooltip is rendered when the column header is focused
-to compensate for the lack of a visual title.
+to compensate for the lack of a visual title. Note that the `hideHeader` prop is specifically intended for columns that contain ActionButtons instead
+of text content.
 
 ```tsx example export=true
 function TableExample(props) {
