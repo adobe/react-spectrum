@@ -211,7 +211,9 @@ export function usePress(props: PressHookProps): PressResult {
     let pressProps: HTMLAttributes<HTMLElement> = {
       onKeyDown(e) {
         if (isValidKeyboardEvent(e.nativeEvent)) {
-          e.preventDefault();
+          if (shouldPreventDefault(e.target as Element)) {
+            e.preventDefault();
+          }
           e.stopPropagation();
 
 
@@ -262,7 +264,9 @@ export function usePress(props: PressHookProps): PressResult {
 
     let onKeyUp = (e: KeyboardEvent) => {
       if (state.isPressed && isValidKeyboardEvent(e)) {
-        e.preventDefault();
+        if (shouldPreventDefault(e.target as Element)) {
+          e.preventDefault();
+        }
         e.stopPropagation();
 
         state.isPressed = false;
@@ -663,7 +667,7 @@ function isOverTarget(point: EventPoint, target: HTMLElement) {
 
 function shouldPreventDefault(target: Element) {
   // We cannot prevent default if the target is inside a draggable element.
-  return !target.closest('[draggable="true"]');
+  return !(target.closest('[draggable="true"]') || ((target.role === 'button' || target.tagName === 'BUTTON') && target.type === 'submit'));
 }
 
 function isVirtualPointerEvent(event: PointerEvent) {
