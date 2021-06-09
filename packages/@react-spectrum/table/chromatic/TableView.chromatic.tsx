@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-
+import {ActionButton} from '@react-spectrum/button';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Content} from '@react-spectrum/view';
+import Delete from '@spectrum-icons/workflow/Delete';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
@@ -132,7 +133,10 @@ const Template = (): Story => ({columns, items, ...args}) => (
             <TableBody items={items}>
               {(item: any) =>
                 (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
+                  {key => {
+                    let button = <ActionButton isQuiet><Delete /></ActionButton>;
+                    return <Cell>{key === 'baz' ? button : item[key]}</Cell>;
+                  }}
                 </Row>)
               }
             </TableBody>
