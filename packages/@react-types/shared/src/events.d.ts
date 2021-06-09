@@ -16,6 +16,8 @@ import {
   SyntheticEvent
 } from 'react';
 
+type DOMKeyboardEvent = globalThis.KeyboardEvent
+
 // Event bubbling can be problematic in real-world applications, so the default for React Spectrum components
 // is not to propagate. This can be overridden by calling continuePropagation() on the event.
 export type BaseEvent<T extends SyntheticEvent> = T & {
@@ -27,6 +29,8 @@ export type BaseEvent<T extends SyntheticEvent> = T & {
 export type KeyboardEvent = BaseEvent<ReactKeyboardEvent<any>>;
 
 export type PointerType = 'mouse' | 'pen' | 'touch' | 'keyboard' | 'virtual';
+
+export type OriginalPressEvent = DOMKeyboardEvent | MouseEvent | PointerEvent | DragEvent | TouchEvent
 
 export interface PressEvent {
   /** The type of press event being fired. */
@@ -40,8 +44,12 @@ export interface PressEvent {
   /** Whether the ctrl keyboard modifier was held during the press event. */
   ctrlKey: boolean,
   /** Whether the meta keyboard modifier was held during the press event. */
-  metaKey: boolean
+  metaKey: boolean,
+  /** The original DOM event that triggered the press event. */
+  originalEvent: OriginalPressEvent
 }
+
+export type OriginalHoverEvent = MouseEvent | PointerEvent | TouchEvent
 
 export interface HoverEvent {
   /** The type of hover event being fired. */
@@ -49,7 +57,9 @@ export interface HoverEvent {
   /** The pointer type that triggered the hover event. */
   pointerType: 'mouse' | 'pen',
   /** The target element of the hover event. */
-  target: HTMLElement
+  target: HTMLElement,
+  /** The original DOM event that triggered the hover event. */
+  originalEvent: OriginalHoverEvent
 }
 
 export interface KeyboardEvents {

@@ -102,21 +102,25 @@ export function useHover(props: HoverProps): HoverResult {
   useEffect(setupGlobalTouchEvents, []);
 
   let {hoverProps, triggerHoverEnd} = useMemo(() => {
-    let triggerHoverStart = (event, pointerType) => {
+    let triggerHoverStart = (originalEvent, pointerType) => {
       state.pointerType = pointerType;
-      if (isDisabled || pointerType === 'touch' || state.isHovered || !event.currentTarget.contains(event.target)) {
+      if (
+        isDisabled || pointerType === 'touch' || state.isHovered ||
+        !originalEvent.currentTarget.contains(originalEvent.target)
+      ) {
         return;
       }
 
       state.isHovered = true;
-      let target = event.target;
+      let target = originalEvent.target;
       state.target = target;
 
       if (onHoverStart) {
         onHoverStart({
           type: 'hoverstart',
           target,
-          pointerType
+          pointerType,
+          originalEvent
         });
       }
 
@@ -127,7 +131,7 @@ export function useHover(props: HoverProps): HoverResult {
       setHovered(true);
     };
 
-    let triggerHoverEnd = (event, pointerType) => {
+    let triggerHoverEnd = (originalEvent, pointerType) => {
       state.pointerType = '';
       state.target = null;
 
@@ -136,12 +140,13 @@ export function useHover(props: HoverProps): HoverResult {
       }
 
       state.isHovered = false;
-      let target = event.target;
+      let target = originalEvent.target;
       if (onHoverEnd) {
         onHoverEnd({
           type: 'hoverend',
           target,
-          pointerType
+          pointerType,
+          originalEvent
         });
       }
 

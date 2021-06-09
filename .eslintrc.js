@@ -77,7 +77,8 @@ module.exports = {
     'expect': true,
     'JSX': 'readonly',
     'NodeJS': 'readonly',
-    'AsyncIterable': 'readonly'
+    'AsyncIterable': 'readonly',
+    'globalThis': 'readonly'
   },
   settings: {
     jsdoc: {
