@@ -162,7 +162,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
         ref={popoverRef}
         placement={placement}
         hideArrow
-        isNonModal>
+        isNonModal
+        isDismissable={false}>
         <ListBoxBase
           ref={listBoxRef}
           domProps={listBoxProps}
