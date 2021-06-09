@@ -76,7 +76,7 @@ describe('useHover', function () {
       fireEvent(el, pointerEvent('pointerover', {pointerType: 'mouse'}));
       fireEvent(el, pointerEvent('pointerout', {pointerType: 'mouse'}));
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'hoverstart',
           target: el,
@@ -162,7 +162,7 @@ describe('useHover', function () {
       fireEvent(el, pointerEvent('pointerover', {pointerType: 'mouse'}));
       fireEvent(el, pointerEvent('pointerout', {pointerType: 'mouse'}));
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'hoverstart',
           target: el,
@@ -223,7 +223,7 @@ describe('useHover', function () {
 
       fireEvent(el, pointerEvent('pointerover', {pointerType: 'mouse'}));
       expect(el.textContent).toBe('test-hovered');
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'hoverstart',
           target: el,
@@ -246,7 +246,7 @@ describe('useHover', function () {
       );
       el = res.getByText('test');
       expect(el.textContent).toBe('test');
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'hoverend',
           target: el,
@@ -276,7 +276,7 @@ describe('useHover', function () {
       fireEvent.mouseEnter(el);
       fireEvent.mouseLeave(el);
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'hoverstart',
           target: el,
@@ -358,7 +358,7 @@ describe('useHover', function () {
       fireEvent.mouseEnter(el);
       fireEvent.mouseLeave(el);
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'hoverstart',
           target: el,
@@ -393,7 +393,7 @@ describe('useHover', function () {
 
       fireEvent.mouseEnter(el);
       expect(el.textContent).toBe('test-hovered');
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'hoverstart',
           target: el,
@@ -416,7 +416,7 @@ describe('useHover', function () {
       );
       el = res.getByText('test');
       expect(el.textContent).toBe('test');
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'hoverend',
           target: el,

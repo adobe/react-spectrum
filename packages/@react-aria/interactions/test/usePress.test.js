@@ -77,7 +77,7 @@ describe('usePress', function () {
 
       // How else to get the DOM node it renders the hook to?
       // let el = events[0].target;
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -139,7 +139,7 @@ describe('usePress', function () {
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
       fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -172,7 +172,7 @@ describe('usePress', function () {
       fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -256,7 +256,7 @@ describe('usePress', function () {
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       fireEvent(el, pointerEvent('pointercancel', {pointerId: 1, pointerType: 'mouse'}));
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -300,7 +300,7 @@ describe('usePress', function () {
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       fireEvent(el, new MouseEvent('dragstart', {bubbles: true, cancelable: true, composed: true}));
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -346,7 +346,7 @@ describe('usePress', function () {
 
       // How else to get the DOM node it renders the hook to?
       // let el = events[0].target;
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -473,7 +473,7 @@ describe('usePress', function () {
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -560,7 +560,7 @@ describe('usePress', function () {
       fireEvent.mouseUp(el, {detail: 1});
       fireEvent.click(el, {detail: 1});
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -622,7 +622,7 @@ describe('usePress', function () {
       fireEvent.mouseUp(document.body, {detail: 1, clientX: 100, clientY: 100});
       fireEvent.mouseEnter(el);
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -656,7 +656,7 @@ describe('usePress', function () {
       fireEvent.mouseUp(el, {detail: 1});
       fireEvent.click(el, {detail: 1});
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -741,7 +741,7 @@ describe('usePress', function () {
       fireEvent.mouseUp(el, {detail: 1, shiftKey: true});
       fireEvent.click(el, {detail: 1});
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -869,7 +869,7 @@ describe('usePress', function () {
       fireEvent.mouseDown(el, {detail: 1});
       fireEvent(el, new MouseEvent('dragstart', {bubbles: true, cancelable: true, composed: true}));
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -915,7 +915,7 @@ describe('usePress', function () {
       fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -976,7 +976,7 @@ describe('usePress', function () {
       fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -1009,7 +1009,7 @@ describe('usePress', function () {
       fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -1100,7 +1100,7 @@ describe('usePress', function () {
       fireEvent.mouseUp(el);
       fireEvent.click(el);
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -1185,7 +1185,7 @@ describe('usePress', function () {
       fireEvent.touchCancel(el);
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -1230,7 +1230,7 @@ describe('usePress', function () {
       fireEvent.scroll(document.body);
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -1281,7 +1281,7 @@ describe('usePress', function () {
 
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -1341,7 +1341,7 @@ describe('usePress', function () {
       fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
       fireEvent(el, new MouseEvent('dragstart', {bubbles: true, cancelable: true, composed: true}));
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -1423,7 +1423,7 @@ describe('usePress', function () {
       fireEvent.keyDown(el, {key: ' '});
       fireEvent.keyUp(el, {key: ' '});
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -1498,7 +1498,7 @@ describe('usePress', function () {
       fireEvent.click(el);
 
       // Click event, which is called when Enter key on a link is handled natively, should trigger a click.
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'click'
         },
@@ -1570,7 +1570,7 @@ describe('usePress', function () {
       fireEvent.keyUp(el, {key: 'Enter'});
 
       // Enter key should trigger press events on element with role="link"
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -1645,7 +1645,7 @@ describe('usePress', function () {
       fireEvent.keyDown(el, {key: ' '});
       fireEvent.keyUp(el, {key: ' '});
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -1708,7 +1708,7 @@ describe('usePress', function () {
       fireEvent.keyDown(el, {key: ' ', shiftKey: true});
       fireEvent.keyUp(el, {key: ' ', ctrlKey: true});
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
@@ -1771,7 +1771,7 @@ describe('usePress', function () {
       fireEvent.keyDown(el, {key: ' '});
       fireEvent.keyUp(el, {key: ' '});
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         // First sequence. Ensure the key up on the body causes a press end.
         {
           type: 'pressstart',
@@ -1878,7 +1878,7 @@ describe('usePress', function () {
       let el = getByText('test');
       fireEvent.click(el);
 
-      expect(events).toEqual([
+      expect(events).toMatchObject([
         {
           type: 'pressstart',
           target: el,
