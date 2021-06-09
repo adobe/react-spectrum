@@ -28,7 +28,7 @@ storiesOf('useMenu', module)
   .add('double menu fires onInteractOutside',
     () => (
       <div>
-        <div>This should just be there to show that onInteractOutside fires when clicking on another trigger, don't worry about two open menus at once.</div>
+        <div>This should just be there to show that onInteractOutside fires when clicking on another trigger.</div>
         <MenuButton label="Actions">
           <Item key="copy">Copy</Item>
           <Item key="cut">Cut</Item>
@@ -39,6 +39,7 @@ storiesOf('useMenu', module)
           <Item key="cut">Cut</Item>
           <Item key="paste">Paste</Item>
         </MenuButton>
+        <input />
       </div>
     )
   );

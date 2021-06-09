@@ -86,10 +86,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     }
   };
 
-  let onClose = () => {
-    state.commit();
-    state.close();
-  };
+  let onClose = () => state.commit();
 
   return (
     <>
@@ -106,7 +103,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           isDisabled={isDisabled}
           isPlaceholder={!state.inputValue}
           validationState={validationState}
-          onPress={() => !isReadOnly && state.open()}>
+          onPress={() => !isReadOnly && state.open(null, 'manual')}>
           {state.inputValue || props.placeholder || ''}
         </ComboBoxButton>
       </Field>
@@ -320,6 +317,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     // When the tray unmounts, set state.isFocused (i.e. the tray input's focus tracker) to false.
     // This is to prevent state.isFocused from being set to true when the tray closes via tapping on the underlay
     // (FocusScope attempts to restore focus to the tray input when tapping outside the tray due to "contain")
+    // Have to do this manually since React doesn't call onBlur when a component is unmounted: https://github.com/facebook/react/issues/12363
     return () => {
       state.setFocused(false);
     };
@@ -422,14 +420,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   let onKeyDown = (e) => {
     // Close virtual keyboard if user hits Enter w/o any focused options
     if (e.key === 'Enter' && state.selectionManager.focusedKey == null) {
-      inputRef.current.readOnly = true;
       popoverRef.current.focus();
-
-      // Required to keep keyboard from reopening, 6ms is minimum time so that editing the field and hitting enter hides the virtual keyboard in iOS
-      setTimeout(() => {
-        inputRef.current.focus();
-        inputRef.current.readOnly = false;
-      }, 6);
     } else {
       inputProps.onKeyDown(e);
     }
@@ -456,7 +447,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           isLoading={showLoading && loadingState === 'filtering'}
           loadingIndicator={loadingState != null && loadingCircle}
           validationState={validationState}
-          wrapperChildren={(state.inputValue !== '' || loadingState === 'filtering') && !props.isReadOnly && clearButton}
+          wrapperChildren={(state.inputValue !== '' || loadingState === 'filtering' || validationState != null) && !props.isReadOnly && clearButton}
           UNSAFE_className={
             classNames(
               searchStyles,

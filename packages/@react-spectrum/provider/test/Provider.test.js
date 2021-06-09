@@ -33,7 +33,7 @@ let theme = {
 let mediaQueryLight = '(prefers-color-scheme: light)';
 let mediaQueryDark = '(prefers-color-scheme: dark)';
 let mediaQueryMinXSmall = '(min-width: 190px)';
-let mediaQueryMinSmall = '(min-width: 380px)';
+let mediaQueryMinSmall = '(min-width: 640px)';
 let mediaQueryMinMedium = '(min-width: 768px)';
 let mediaQueryMinLarge = '(min-width: 1024px)';
 

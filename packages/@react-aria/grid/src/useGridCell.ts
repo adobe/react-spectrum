@@ -81,6 +81,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   let {pressProps} = usePress({...itemProps, isDisabled});
 
   let onKeyDown = (e: ReactKeyboardEvent) => {
+    if (!e.currentTarget.contains(e.target as HTMLElement)) {
+      return;
+    }
+
     let walker = getFocusableTreeWalker(ref.current);
     walker.currentNode = document.activeElement;
 

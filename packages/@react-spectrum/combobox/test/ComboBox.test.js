@@ -424,6 +424,22 @@ describe('ComboBox', function () {
         expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
         testComboBoxOpen(combobox, button, listbox);
       });
+
+      it('opens menu when combobox is focused by clicking button', function () {
+        let {getByRole} = renderComboBox({menuTrigger: 'focus'});
+
+        let button = getByRole('button');
+        let combobox = getByRole('combobox');
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        let listbox = getByRole('listbox');
+        expect(onOpenChange).toBeCalledTimes(1);
+        expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
+        testComboBoxOpen(combobox, button, listbox);
+      });
     });
 
     describe('button click', function () {
@@ -3692,7 +3708,7 @@ describe('ComboBox', function () {
         jest.runAllTimers();
       });
 
-      expect(onOpenChange).toHaveBeenCalledWith(true, undefined);
+      expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
       expect(onOpenChange).toHaveBeenCalledTimes(1);
 
       let tray = getByTestId('tray');
@@ -3726,11 +3742,11 @@ describe('ComboBox', function () {
       expect(tray).toBeVisible();
       trayInput = within(tray).getByRole('searchbox');
       items = within(tray).getAllByRole('option');
-      expect(items.length).toBe(1);
-      expect(items[0].textContent).toBe('Two');
+      expect(items.length).toBe(3);
+      expect(items[1].textContent).toBe('Two');
       expect(trayInput).not.toHaveAttribute('aria-activedescendant');
       expect(trayInput.value).toBe('Two');
-      expect(items[0]).toHaveAttribute('aria-selected', 'true');
+      expect(items[1]).toHaveAttribute('aria-selected', 'true');
     });
 
     it('user can select options by focusing them and hitting enter', function () {
@@ -3754,7 +3770,7 @@ describe('ComboBox', function () {
         jest.runAllTimers();
       });
 
-      expect(onOpenChange).toHaveBeenCalledWith(true, undefined);
+      expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
       expect(onOpenChange).toHaveBeenCalledTimes(1);
 
       testComboBoxTrayOpen(trayInput, tray, listbox, 2);
@@ -3783,11 +3799,11 @@ describe('ComboBox', function () {
       expect(tray).toBeVisible();
       trayInput = within(tray).getByRole('searchbox');
       let items = within(tray).getAllByRole('option');
-      expect(items.length).toBe(1);
-      expect(items[0].textContent).toBe('Three');
+      expect(items.length).toBe(3);
+      expect(items[2].textContent).toBe('Three');
       expect(trayInput).not.toHaveAttribute('aria-activedescendant');
       expect(trayInput.value).toBe('Three');
-      expect(items[0]).toHaveAttribute('aria-selected', 'true');
+      expect(items[2]).toHaveAttribute('aria-selected', 'true');
     });
 
     it('input is blurred when the user scrolls the listbox with touch', function () {
@@ -3830,7 +3846,7 @@ describe('ComboBox', function () {
         jest.runAllTimers();
       });
 
-      expect(onOpenChange).toHaveBeenCalledWith(true, undefined);
+      expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
       expect(onOpenChange).toHaveBeenCalledTimes(1);
 
       let tray = getByTestId('tray');
@@ -3909,7 +3925,13 @@ describe('ComboBox', function () {
     });
 
     it('user can open the tray even if there aren\'t any items to show', function () {
-      let {getByRole, getByTestId} = renderComboBox({inputValue: 'blah'});
+      let {getByRole, getByTestId} = render(
+        <Provider theme={theme}>
+          <ComboBox label="Combobox" items={[]} inputValue="blah">
+            {(item) => <Item>{item.name}</Item>}
+          </ComboBox>
+        </Provider>
+      );
       let button = getByRole('button');
 
       act(() => {
@@ -4174,6 +4196,29 @@ describe('ComboBox', function () {
       expect(() => getByTestId('tray')).toThrow();
     });
 
+    it('shows all items when opening the tray', function () {
+      let {getByTestId, getByRole} = renderComboBox({defaultInputValue: 'gibberish'});
+      let button = getByRole('button');
+
+      act(() => {
+        button.focus();
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      let listbox = getByRole('listbox');
+      let trayInput = within(tray).getByRole('searchbox');
+
+      testComboBoxTrayOpen(trayInput, tray, listbox);
+
+      let items = within(tray).getAllByRole('option');
+      expect(items.length).toBe(3);
+    });
+
     describe('refs', function () {
       it('attaches a ref to the label wrapper', function () {
         let ref = React.createRef();
@@ -4338,8 +4383,13 @@ describe('ComboBox', function () {
         let allProgressSpinners = within(tray).getAllByRole('progressbar');
         expect(allProgressSpinners.length).toBe(1);
 
-        let validationIcon = within(tray).getByRole('img', {hidden: true});
-        expect(validationIcon).toBeTruthy();
+        let icons = within(tray).getAllByRole('img', {hidden: true});
+        expect(icons.length).toBe(2);
+
+        let clearButton = within(tray).getByLabelText('Clear');
+        expect(clearButton).toBeTruthy();
+
+        expect(within(clearButton).getByRole('img', {hidden: true})).toBe(icons[1]);
 
         let trayInput = within(tray).getByRole('searchbox');
         expect(trayInput).toHaveAttribute('aria-invalid', 'true');
