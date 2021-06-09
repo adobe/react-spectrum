@@ -665,7 +665,8 @@ import Delete from '@spectrum-icons/workflow/Delete';
 
 ### Hide header
 Individual column headers can be hidden by providing the `hideHeader` prop to the Column. A tooltip is rendered when the column header is focused
-to compensate for the lack of a visual title.
+to compensate for the lack of a visual title. Note that the `hideHeader` prop is specifically intended for columns that contain ActionButtons instead
+of text content.
 
 ```tsx example export=true
 function TableExample(props) {
