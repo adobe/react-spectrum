@@ -1452,6 +1452,35 @@ describe('TableView', function () {
         let before = tree.getByTestId('before');
         expect(document.activeElement).toBe(before);
       });
+
+      it('should properly track the current focused key when using Option/Alt + Tab', function () {
+        let tree = renderFocusable();
+        let switches = tree.getAllByRole('switch');
+        let checkboxes = tree.getAllByRole('checkbox');
+
+        triggerPress(checkboxes[0]);
+        expect(document.activeElement).toBe(checkboxes[0]);
+
+        // Simulate focus shifting when pressing Option/Alt + Tab
+        fireEvent.keyDown(document.activeElement, {key: 'Tab', altKey: true});
+        act(() => {switches[0].focus();});
+        fireEvent.keyUp(document.activeElement, {key: 'Tab', altKey: true});
+        expect(document.activeElement).toBe(switches[0]);
+
+        // focused key should be up to date so arrow up should move to the switch in the row below
+        moveFocus('ArrowDown');
+        expect(document.activeElement).toBe(switches[1]);
+
+        // Simulate focus shifting when pressing Option/Alt + Shift + Tab
+        fireEvent.keyDown(document.activeElement, {key: 'Tab', altKey: true, shiftKey: true});
+        act(() => {checkboxes[1].focus();});
+        fireEvent.keyUp(document.activeElement, {key: 'Tab', altKey: true, shiftKey: true});
+        expect(document.activeElement).toBe(checkboxes[1]);
+
+        // focused key should be up to date so arrow down should move to the checkbox in the row above
+        moveFocus('ArrowUp');
+        expect(document.activeElement).toBe(checkboxes[0]);
+      });
     });
 
     describe('scrolling', function () {
