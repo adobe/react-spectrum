@@ -350,8 +350,9 @@ interface ActionGroupMenuProps<T> extends AriaLabelingProps {
 }
 
 function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items, onAction, summaryIcon, hideButtonText, isOnlyItem, orientation, ...otherProps}: ActionGroupMenuProps<T>) {
-  // Random key that won't conflict with any real items in the collection.
-  let key = useId();
+  // Use the key of the first item within the menu as the key of the button.
+  // The key must actually exist in the collection for focus to work correctly.
+  let key = items[0].key;
   let {buttonProps} = useActionGroupItem({key}, state);
 
   // The menu button shouldn't act like an actual action group item.
