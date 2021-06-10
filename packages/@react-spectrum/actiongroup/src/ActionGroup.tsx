@@ -24,6 +24,7 @@ import {Provider} from '@react-spectrum/provider';
 import React, {forwardRef, Key, ReactElement, ReactNode, useCallback, useMemo, useRef, useState} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import styles from '@adobe/spectrum-css-temp/components/actiongroup/vars.css';
+import {Text} from '@react-spectrum/text';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useActionGroup} from '@react-aria/actiongroup';
 import {useActionGroupItem} from '@react-aria/actiongroup';
@@ -372,7 +373,6 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
     summaryIcon = null;
   }
 
-  let iconOnly = hideButtonText && summaryIcon;
 
   // If there is a selection, show the selected state on the menu button.
   let isSelected = state.selectionManager.selectionMode !== 'none' && !state.selectionManager.isEmpty;
@@ -382,6 +382,9 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
     let selectedItem = state.collection.getItem(state.selectionManager.firstSelectedKey);
     if (selectedItem) {
       summaryIcon = selectedItem.rendered;
+      if (typeof summaryIcon === 'string') {
+        summaryIcon = <Text>{summaryIcon}</Text>;
+      }
       ariaLabelledby = `${ariaLabelledby ?? id} ${textId}`;
     }
   }
@@ -390,8 +393,10 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
     // If there's a custom summary icon, also add a chevron.
     summaryIcon = (
       <>
-        {summaryIcon}
-        <ChevronDownMedium />
+        <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-ActionGroup-menu-chevron')} />
+        <span className={classNames(styles, 'spectrum-ActionGroup-menu-contents')}>
+          {summaryIcon}
+        </span>
       </>
     );
   }
@@ -403,7 +408,8 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
         slots={{
           text: {
             id: hideButtonText ? textId : null,
-            isHidden: hideButtonText
+            isHidden: hideButtonText,
+            UNSAFE_className: classNames(styles, 'spectrum-ActionGroup-menu-text')
           }
         }}>
         <PressResponder {...mergeProps(buttonProps, hoverProps)}>
@@ -416,8 +422,8 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
               classNames(
                 styles,
                 'spectrum-ActionGroup-item',
+                'spectrum-ActionGroup-menu',
                 {
-                  'spectrum-ActionGroup-item--iconOnly': iconOnly,
                   'is-hovered': isHovered,
                   'is-selected': isSelected
                 },

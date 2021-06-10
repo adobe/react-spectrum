@@ -167,6 +167,29 @@ governing permissions and limitations under the License.
   flex-wrap: nowrap;
 }
 
+.spectrum-ActionGroup-menu {
+  .spectrum-ActionGroup-menu-chevron {
+    order: 2;
+    padding: 0 var(--spectrum-actionbutton-icon-padding-x);
+  }
+
+  .spectrum-ActionGroup-menu-contents {
+    /* don't affect layout, but this wrapper is needed to keep the :only-child/sibling selectors
+     * in button CSS working with the additional chevron element. */
+    display: contents;
+
+    > svg:only-child {
+      /* icon only end-padding is handled by chevron above */
+      padding-inline-end: 0;
+    }
+  }
+
+  .spectrum-ActionGroup-menu-text {
+    /* text end-padding is handled by chevron */
+    padding-inline-end: 0;
+  }
+}
+
 .spectrum-ActionGroup-item--iconOnly {
   padding-inline-end: var(--spectrum-actionbutton-icon-padding-x);
 }
