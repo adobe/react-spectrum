@@ -448,6 +448,19 @@ storiesOf('ComboBox', module)
     () => (
       <AsyncLoadingExampleControlledKeyWithReset />
     )
+  )
+  .add(
+    '2 comboboxes',
+    () => (
+      <Flex gap="size-100">
+        <ComboBox defaultItems={items} label="Combobox1">
+          {(item) => <Item>{item.name}</Item>}
+        </ComboBox>
+        <ComboBox defaultItems={items} label="Combobox2">
+          {(item) => <Item>{item.name}</Item>}
+        </ComboBox>
+      </Flex>
+    )
   );
 
 
