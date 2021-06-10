@@ -44,7 +44,6 @@ governing permissions and limitations under the License.
 .spectrum-ActionGroup {
   display: flex;
   flex-wrap: wrap;
-  isolation: isolate;
   --column-gap: var(--spectrum-actionbuttongroup-text-button-gap-x);
   --row-gap: var(--spectrum-actionbuttongroup-text-button-gap-y);
 
