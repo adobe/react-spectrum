@@ -718,6 +718,34 @@ describe('ActionGroup', function () {
       expect(onAction).toHaveBeenCalledWith('three');
     });
 
+    it('handles keyboard focus management properly', function () {
+      let onAction = jest.fn();
+      let tree = render(
+        <Provider theme={theme}>
+          <ActionGroup overflowMode="collapse" onAction={onAction}>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+            <Item key="four">Four</Item>
+          </ActionGroup>
+        </Provider>
+      );
+
+      let actiongroup = tree.getByRole('toolbar');
+      let buttons = within(actiongroup).getAllByRole('button');
+      expect(buttons.length).toBe(2);
+      expect(buttons[0]).toHaveAttribute('tabIndex', '0');
+      expect(buttons[1]).toHaveAttribute('tabIndex', '0');
+
+      act(() => buttons[0].focus());
+      expect(buttons[0]).toHaveAttribute('tabIndex', '0');
+      expect(buttons[1]).toHaveAttribute('tabIndex', '-1');
+
+      pressArrowRight(buttons[0]);
+      expect(buttons[0]).toHaveAttribute('tabIndex', '-1');
+      expect(buttons[1]).toHaveAttribute('tabIndex', '0');
+    });
+
     it('passes aria labeling props through to menu button if it is the only child', function () {
       jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
         if (this instanceof HTMLButtonElement) {
