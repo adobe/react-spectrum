@@ -41,6 +41,7 @@
     "@react-aria/slider": "^3.0.2",
     "@react-aria/ssr": "^3.0.2",
     "@react-aria/switch": "^3.1.2",
+    "@react-aria/tabs": "3.0.0-rc.0",
     "@react-aria/textfield": "^3.3.0",
     "@react-aria/tooltip": "^3.1.2",
     "@react-aria/utils": "^3.8.0",
