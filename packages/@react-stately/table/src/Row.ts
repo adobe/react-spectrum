@@ -20,7 +20,7 @@ function Row<T>(props: RowProps<T>): ReactElement { // eslint-disable-line @type
 }
 
 Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>> {
-  let {childItems, children, textValue} = props;
+  let {children, textValue} = props;
 
   yield {
     type: 'item',
@@ -62,16 +62,6 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
         }
 
         yield* cells;
-      }
-
-      // Then process child rows (e.g. treeble)
-      if (childItems) {
-        for (let child of childItems) {
-          yield {
-            type: 'item',
-            value: child
-          };
-        }
       }
     },
     shouldInvalidate(newContext: CollectionBuilderContext<T>) {

@@ -15,7 +15,7 @@ import {GridCollection, GridNode} from '@react-types/grid';
 import {Key, ReactElement, ReactNode} from 'react';
 
 export interface TableProps<T> extends MultipleSelection, Sortable {
-  /** The elements that make up the Table. Includes the TableHeader, TableBody, Columns, and Rows. */
+  /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
   /** A list of row keys to disable. */
   disabledKeys?: Iterable<Key>
@@ -23,23 +23,23 @@ export interface TableProps<T> extends MultipleSelection, Sortable {
 
 export interface SpectrumTableProps<T> extends TableProps<T>, DOMProps, AriaLabelingProps, StyleProps {
   /**
-   * Sets the amount of vertical padding within each Table cell.
+   * Sets the amount of vertical padding within each cell.
    * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious',
   /**
-   * Sets the overflow behavior for the Table cell contents.
+   * Sets the overflow behavior for the cell contents.
    * @default 'truncate'
    */
   overflowMode?: 'wrap' | 'truncate',
-  /** Whether the Table should be displayed with a quiet style. */
+  /** Whether the TableView should be displayed with a quiet style. */
   isQuiet?: boolean,
-  /** Sets what the Table should render when there is no content to display. */
+  /** Sets what the TableView should render when there is no content to display. */
   renderEmptyState?: () => JSX.Element
 }
 
 export interface TableHeaderProps<T> {
-  /** A list of Table columns. */
+  /** A list of table columns. */
   columns?: T[],
   /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
   children: ColumnElement<T> | ColumnElement<T>[] | ColumnRenderer<T>
@@ -59,9 +59,8 @@ export interface ColumnProps<T> {
   /** The minimum width of the column. */
   minWidth?: number | string,
   /** The maximum width of the column. */
-  maxWidth?: number | string,
-  /** The default width of the column. */
-  defaultWidth?: number | string
+  maxWidth?: number | string
+  // defaultWidth?: number | string
 }
 
 // TODO: how to support these in CollectionBuilder...
@@ -92,16 +91,16 @@ export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
   children: CollectionChildren<T>,
   /** A list of row objects in the table body used when dynamically rendering rows. */
   items?: Iterable<T>,
-  /** The current loading state of the TableView. */
+  /** The current loading state of the table. */
   loadingState?: LoadingState
 }
 
 export interface RowProps<T> {
-  // treeble case?
-  /** A list of child item objects used when dynamically rendering row children. */
-  childItems?: Iterable<T>,
-  /** Whether this row has children, even if not loaded yet. */
-  hasChildItems?: boolean,
+  // treeble case? Unsupported props for now
+  // /** A list of child item objects used when dynamically rendering row children. */
+  // childItems?: Iterable<T>,
+  // /** Whether this row has children, even if not loaded yet. */
+  // hasChildItems?: boolean,
   /** Rendered contents of the row or row child items. */
   children: CellElement | CellElement[] | CellRenderer,
   /** A string representation of the row's contents, used for features like typeahead. */
