@@ -18,15 +18,22 @@ import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 export interface GridRowProps<T> {
+  /** An object representing the grid row. Contains all the relevant information that makes up the grid row. */
   node: Node<T>,
+  /** The ref attached to the grid row. */
   ref?: RefObject<HTMLElement>,
+  /** Whether the grid row is contained in a virtual scroller. */
   isVirtualized?: boolean,
+  /** Whether the grid row is selected. */
   isSelected?: boolean,
+  /** Whether the grid row is disabled. */
   isDisabled?: boolean,
+  /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean
 }
 
 export interface GridRowAria {
+  /** Props for the grid row element. */
   rowProps: HTMLAttributes<HTMLElement>
 }
 

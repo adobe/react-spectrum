@@ -5,7 +5,9 @@ import {SelectionManager, useMultipleSelectionState} from '@react-stately/select
 
 export interface GridState<T, C extends GridCollection<T>> {
   collection: C,
+  /** A set of keys for rows that are disabled. */
   disabledKeys: Set<Key>,
+  /** A selection manager to read and update row selection state. */
   selectionManager: SelectionManager
 }
 

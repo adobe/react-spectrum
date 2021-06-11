@@ -17,11 +17,19 @@ import {TableState} from '@react-stately/table';
 import {useId} from '@react-aria/utils';
 
 interface SelectionCheckboxProps {
+  /** A unique key for the checkbox. */
   key: Key,
+  /** Whether the checkbox is disabled. */
   isDisabled?: boolean
 }
 
 interface SelectionCheckboxAria {
+  /** Props for the row selection checkbox element. */
+  checkboxProps: AriaCheckboxProps
+}
+
+interface SelectAllCheckboxAria {
+  /** Props for the select all checkbox element. */
   checkboxProps: AriaCheckboxProps
 }
 
@@ -48,7 +56,7 @@ export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, stat
   };
 }
 
-export function useTableSelectAllCheckbox<T>(state: TableState<T>): SelectionCheckboxAria {
+export function useTableSelectAllCheckbox<T>(state: TableState<T>): SelectAllCheckboxAria {
   let {isEmpty, isSelectAll} = state.selectionManager;
   return {
     checkboxProps: {

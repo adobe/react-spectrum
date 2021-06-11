@@ -21,14 +21,20 @@ import {usePress} from '@react-aria/interactions';
 
 
 interface ColumnHeaderProps {
+  /** An object representing the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader). Contains all the relevant information that makes up the column header. */
   node: Node<unknown>,
+  /** The ref attached to the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader). */
   ref: RefObject<HTMLElement>,
+  /** Whether the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) is contained in a virtual scroller. */
   isVirtualized?: boolean,
+  /** The number of columns the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) should span. */
   colspan?: number,
+  /** Whether the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) is disabled. */
   isDisabled?: boolean
 }
 
 interface ColumnHeaderAria {
+  /** Props for the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) element. */
   columnHeaderProps: HTMLAttributes<HTMLElement>
 }
 
