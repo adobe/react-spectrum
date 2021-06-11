@@ -373,6 +373,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
     summaryIcon = null;
   }
 
+  let iconOnly = false;
 
   // If there is a selection, show the selected state on the menu button.
   let isSelected = state.selectionManager.selectionMode !== 'none' && !state.selectionManager.isEmpty;
@@ -385,6 +386,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
       if (typeof summaryIcon === 'string') {
         summaryIcon = <Text>{summaryIcon}</Text>;
       }
+      iconOnly = hideButtonText;
       ariaLabelledby = `${ariaLabelledby ?? id} ${textId}`;
     }
   }
@@ -394,7 +396,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
     summaryIcon = (
       <>
         <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-ActionGroup-menu-chevron')} />
-        <span className={classNames(styles, 'spectrum-ActionGroup-menu-contents')}>
+        <span className={classNames(styles, 'spectrum-ActionGroup-menu-contents', {'spectrum-ActionGroup-item--iconOnly': iconOnly})}>
           {summaryIcon}
         </span>
       </>
