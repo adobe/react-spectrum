@@ -15,11 +15,11 @@ import {PartialNode} from '@react-stately/collections';
 import React, {ReactElement} from 'react';
 import {RowProps} from '@react-types/table';
 
-function Row<T>(props: RowProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
+function Row(props: RowProps): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
 }
 
-Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>> {
+Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps, context: CollectionBuilderContext<T>): Generator<PartialNode<T>> {
   let {children, textValue} = props;
 
   yield {
@@ -75,5 +75,5 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
 };
 
 // We don't want getCollectionNode to show up in the type definition
-let _Row = Row as <T>(props: RowProps<T>) => JSX.Element;
+let _Row = Row as (props: RowProps) => JSX.Element;
 export {_Row as Row};
