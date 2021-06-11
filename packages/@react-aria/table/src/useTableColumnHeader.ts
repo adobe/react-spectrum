@@ -38,6 +38,11 @@ interface ColumnHeaderAria {
   columnHeaderProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a column header in a table.
+ * @param props - Props for the column header.
+ * @param state - State of the table, as returned by `useTableState`.
+ */
 export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>): ColumnHeaderAria {
   let {node, colspan, ref, isDisabled} = props;
   let {gridCellProps} = useGridCell(props, state);

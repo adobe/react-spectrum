@@ -33,6 +33,11 @@ interface SelectAllCheckboxAria {
   checkboxProps: AriaCheckboxProps
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a selection checkbox in a table.
+ * @param props - Props for the selection checkbox.
+ * @param state - State of the table, as returned by `useTableState`.
+ */
 export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, state: TableState<T>): SelectionCheckboxAria {
   let {
     key,
