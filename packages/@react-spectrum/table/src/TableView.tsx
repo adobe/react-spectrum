@@ -698,5 +698,8 @@ function CenteredWrapper({children}) {
   );
 }
 
-const _TableView = React.forwardRef(TableView);
+/**
+ * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
+ */
+const _TableView = React.forwardRef(TableView) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_TableView as TableView};
