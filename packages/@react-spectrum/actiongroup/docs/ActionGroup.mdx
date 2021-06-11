@@ -72,9 +72,58 @@ const items = [
 </ActionGroup>
 ```
 
+### Icons
+
+Icons can be added to ActionGroup items by wrapping the label in a [Text](Text.html) element, and adding the icon as a sibling.
+
+```tsx example
+import Draw from '@spectrum-icons/workflow/Draw';
+import Copy from '@spectrum-icons/workflow/Copy';
+import Delete from '@spectrum-icons/workflow/Delete';
+import {Text} from '@react-spectrum/text';
+
+<ActionGroup>
+  <Item key="edit">
+    <Draw />
+    <Text>Edit</Text>
+  </Item>
+  <Item key="copy">
+    <Copy />
+    <Text>Copy</Text>
+  </Item>
+  <Item key="delete">
+    <Delete />
+    <Text>Delete</Text>
+  </Item>
+</ActionGroup>
+```
+
+You can also hide the label text within the buttons using the `buttonLabelBehavior` prop. When set to `"hide"`, the label is
+hidden and automatically shown in a tooltip on hover.
+
+```tsx example
+<ActionGroup buttonLabelBehavior="hide">
+  <Item key="edit">
+    <Draw />
+    <Text>Edit</Text>
+  </Item>
+  <Item key="copy">
+    <Copy />
+    <Text>Copy</Text>
+  </Item>
+  <Item key="delete">
+    <Delete />
+    <Text>Delete</Text>
+  </Item>
+</ActionGroup>
+```
+
 ### Accessibility
 
-If no visible label is provided (e.g. an icon only) to each item, an alternative text label must be provided to identify the control for accessibility.
+Icon only ActionGroups should usually include a tooltip to describe the button via the `buttonLabelBehavior` prop as described above. This also automatically handles
+labeling the button for assistive technology users.
+
+In rare cases where no tooltip is desired, an alternative text label must be provided to identify the control for accessibility.
 This should be added using the `aria-label` prop to each Item.
 
 ```tsx example
