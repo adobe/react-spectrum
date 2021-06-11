@@ -1,6 +1,7 @@
 .ActionBarContainer {
   display: flex;
   flex-direction: column;
+  position: relative;
 
   & > :not(.react-spectrum-ActionBar) {
     flex: 1;
@@ -13,57 +14,70 @@
 }
 
 .react-spectrum-ActionBar {
-  --spectrum-padding: var(--spectrum-global-dimension-size-100);
-  --column-gap: var(--spectrum-actionbuttongroup-text-button-gap-x);
-  --row-gap: var(--spectrum-actionbuttongroup-text-button-gap-y);
-  --show-transition-duration: var(--spectrum-global-animation-duration-200);
-  --show-transition-timing: var(--spectrum-global-animation-linear);
+  transition: height var(--spectrum-global-animation-duration-100) ease-in-out,
+              opacity var(--spectrum-global-animation-duration-100) ease-in-out;
 
-  height: 0;
+  /* Take up no space when not open */
+  block-size: 0;
+  opacity: 0;
+  width: 100%;
+
+  /* Clip anything outside of us, whether we're open or not. This makes the animation smooth */
   overflow: hidden;
-  transition-property: height;
-  transition-duration: var(--show-transition-duration);
-  transition-timing-function: var(--show-transition-timing);
 
-  background: white;
+  &.is-open {
+    height: calc(var(--spectrum-global-dimension-size-600) + var(--spectrum-global-dimension-size-100) * 2);
+    opacity: 1;
+    transition-delay: 0ms;
+  }
 
-  & > div {
+  .react-spectrum-ActionBar-bar {
+    display: grid;
+    grid-template-areas: "clear selected . actiongroup";
+    grid-template-columns: auto max-content minmax(var(--spectrum-global-dimension-size-300), 1fr) auto;
     align-items: center;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
     isolation: isolate;
     justify-content: space-between;
-    padding: var(--spectrum-padding);
+    padding: var(--spectrum-global-dimension-size-100);
+
+    position: absolute;
+    bottom: var(--spectrum-global-dimension-size-100);
+    left: var(--spectrum-global-dimension-size-100);
+    right: var(--spectrum-global-dimension-size-100);
+    max-width: 960px;
+    margin: 0 auto;
+
+    background: var(--spectrum-global-color-gray-50);
+    border-radius: var(--spectrum-popover-border-radius);
+    border-style: solid;
+    border-width: var(--spectrum-popover-border-size);
+    border-color: var(--spectrum-popover-border-color);
+    box-shadow: 0 2px 8px var(--spectrum-alias-dropshadow-color);
+
+    transform: translateY(var(--spectrum-overlay-positive-transform-distance));
+    transition: transform var(--spectrum-global-animation-duration-100) ease-in-out;
   }
 
-  &:focus {
-    outline: none;
+  &.is-open .react-spectrum-ActionBar-bar {
+    transform: translateY(0);
   }
 
-  &.react-spectrum-ActionBar--primary {
-    background-color: var(--spectrum-actionbar-primary-background-color);
+  &.react-spectrum-ActionBar--emphasized .react-spectrum-ActionBar-bar {
+    background: var(--spectrum-global-color-static-blue-700);
+    color: white;
+    box-shadow: 0 2px 6px var(--spectrum-alias-dropshadow-color);
+    border: none;
   }
 
-  &.react-spectrum-ActionBar--secondary {
-    background-color: var(--spectrum-actionbar-secondary-background-color);
+  .react-spectrum-ActionBar-selectedCount {
+    grid-area: selected;
+    padding: 0 var(--spectrum-global-dimension-size-50);
+    user-select: none;
+    cursor: default;
   }
 
-  &.react-spectrum-ActionBar--warning {
-    background-color: var(--spectrum-actionbar-warning-background-color);
-  }
-
-  .react-spectrum-ActionBar__leading {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-
-    & span {
-      padding: 0 calc(var(--spectrum-padding)/2)
-    }
-  }
-
-  .react-spectrum-ActionBar-item {
-    flex-shrink: 0;
+  .react-spectrum-ActionBar-actionGroup {
+    grid-area: actiongroup;
+    min-width: 0;
   }
 }

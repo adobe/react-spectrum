@@ -33,7 +33,7 @@ import {version} from '../package.json';
 const Context = React.createContext<ProviderContext | null>(null);
 Context.displayName = 'ProviderContext';
 
-const DEFAULT_BREAKPOINTS = {S: 380, M: 768, L: 1024};
+const DEFAULT_BREAKPOINTS = {S: 640, M: 768, L: 1024, XL: 1280, XXL: 1536};
 
 function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let prevContext = useProvider();

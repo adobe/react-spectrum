@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusEvent, HTMLAttributes, KeyboardEvent, RefObject, useEffect} from 'react';
+import {FocusEvent, HTMLAttributes, Key, KeyboardEvent, RefObject, useEffect} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
-import {isMac, mergeProps} from '@react-aria/utils';
+import {focusWithoutScrolling, isMac, mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
 import {useTypeSelect} from './useTypeSelect';
@@ -111,30 +111,29 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       return;
     }
 
+    const navigateToKey = (key: Key | undefined, childFocus?: FocusStrategy) => {
+      if (key != null) {
+        manager.setFocusedKey(key, childFocus);
+
+        if (e.shiftKey && manager.selectionMode === 'multiple') {
+          manager.extendSelection(key);
+        } else if (selectOnFocus) {
+          manager.replaceSelection(key);
+        }
+      }
+    };
+
     switch (e.key) {
       case 'ArrowDown': {
         if (delegate.getKeyBelow) {
           e.preventDefault();
           let nextKey = manager.focusedKey != null
-            ? delegate.getKeyBelow(manager.focusedKey)
-            : delegate.getFirstKey();
-
-          if (nextKey != null) {
-            manager.setFocusedKey(nextKey);
-            if (manager.selectionMode === 'single' && selectOnFocus) {
-              manager.replaceSelection(nextKey);
-            }
-          } else if (shouldFocusWrap) {
-            let wrapKey = delegate.getFirstKey(manager.focusedKey);
-            manager.setFocusedKey(wrapKey);
-            if (manager.selectionMode === 'single' && selectOnFocus) {
-              manager.replaceSelection(wrapKey);
-            }
+              ? delegate.getKeyBelow(manager.focusedKey)
+              : delegate.getFirstKey?.();
+          if (nextKey == null && shouldFocusWrap) {
+            nextKey = delegate.getFirstKey?.(manager.focusedKey);
           }
-
-          if (e.shiftKey && manager.selectionMode === 'multiple') {
-            manager.extendSelection(nextKey);
-          }
+          navigateToKey(nextKey);
         }
         break;
       }
@@ -142,25 +141,12 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         if (delegate.getKeyAbove) {
           e.preventDefault();
           let nextKey = manager.focusedKey != null
-            ? delegate.getKeyAbove(manager.focusedKey)
-            : delegate.getLastKey();
-
-          if (nextKey != null) {
-            manager.setFocusedKey(nextKey);
-            if (manager.selectionMode === 'single' && selectOnFocus) {
-              manager.replaceSelection(nextKey);
-            }
-          } else if (shouldFocusWrap) {
-            let wrapKey = delegate.getLastKey(manager.focusedKey);
-            manager.setFocusedKey(wrapKey);
-            if (manager.selectionMode === 'single' && selectOnFocus) {
-              manager.replaceSelection(wrapKey);
-            }
+              ? delegate.getKeyAbove(manager.focusedKey)
+              : delegate.getLastKey?.();
+          if (nextKey == null && shouldFocusWrap) {
+            nextKey = delegate.getLastKey?.(manager.focusedKey);
           }
-
-          if (e.shiftKey && manager.selectionMode === 'multiple') {
-            manager.extendSelection(nextKey);
-          }
+          navigateToKey(nextKey);
         }
         break;
       }
@@ -168,15 +154,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         if (delegate.getKeyLeftOf) {
           e.preventDefault();
           let nextKey = delegate.getKeyLeftOf(manager.focusedKey);
-          if (nextKey != null) {
-            manager.setFocusedKey(nextKey, direction === 'rtl' ? 'first' : 'last');
-            if (manager.selectionMode === 'single' && selectOnFocus) {
-              manager.replaceSelection(nextKey);
-            }
-          }
-          if (e.shiftKey && manager.selectionMode === 'multiple') {
-            manager.extendSelection(nextKey);
-          }
+          navigateToKey(nextKey, direction === 'rtl' ? 'first' : 'last');
         }
         break;
       }
@@ -184,15 +162,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         if (delegate.getKeyRightOf) {
           e.preventDefault();
           let nextKey = delegate.getKeyRightOf(manager.focusedKey);
-          if (nextKey != null) {
-            manager.setFocusedKey(nextKey, direction === 'rtl' ? 'last' : 'first');
-            if (manager.selectionMode === 'single' && selectOnFocus) {
-              manager.replaceSelection(nextKey);
-            }
-          }
-          if (e.shiftKey && manager.selectionMode === 'multiple') {
-            manager.extendSelection(nextKey);
-          }
+          navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
         }
         break;
       }
@@ -201,11 +171,10 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
           e.preventDefault();
           let firstKey = delegate.getFirstKey(manager.focusedKey, isCtrlKeyPressed(e));
           manager.setFocusedKey(firstKey);
-          if (manager.selectionMode === 'single' && selectOnFocus) {
-            manager.replaceSelection(firstKey);
-          }
           if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
             manager.extendSelection(firstKey);
+          } else if (selectOnFocus) {
+            manager.replaceSelection(firstKey);
           }
         }
         break;
@@ -214,11 +183,10 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
           e.preventDefault();
           let lastKey = delegate.getLastKey(manager.focusedKey, isCtrlKeyPressed(e));
           manager.setFocusedKey(lastKey);
-          if (manager.selectionMode === 'single' && selectOnFocus) {
-            manager.replaceSelection(lastKey);
-          }
           if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
             manager.extendSelection(lastKey);
+          } else if (selectOnFocus) {
+            manager.replaceSelection(lastKey);
           }
         }
         break;
@@ -226,24 +194,14 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         if (delegate.getKeyPageBelow) {
           e.preventDefault();
           let nextKey = delegate.getKeyPageBelow(manager.focusedKey);
-          if (nextKey != null) {
-            manager.setFocusedKey(nextKey);
-            if (e.shiftKey && manager.selectionMode === 'multiple') {
-              manager.extendSelection(nextKey);
-            }
-          }
+          navigateToKey(nextKey);
         }
         break;
       case 'PageUp':
         if (delegate.getKeyPageAbove) {
           e.preventDefault();
           let nextKey = delegate.getKeyPageAbove(manager.focusedKey);
-          if (nextKey != null) {
-            manager.setFocusedKey(nextKey);
-            if (e.shiftKey && manager.selectionMode === 'multiple') {
-              manager.extendSelection(nextKey);
-            }
-          }
+          navigateToKey(nextKey);
         }
         break;
       case 'a':
@@ -280,7 +238,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
             } while (last);
 
             if (next && !next.contains(document.activeElement)) {
-              next.focus();
+              focusWithoutScrolling(next);
             }
           }
           break;
@@ -359,8 +317,11 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     onFocus,
     onBlur,
     onMouseDown(e) {
-      // Prevent focus going to the collection when clicking on the scrollbar.
-      e.preventDefault();
+      // Ignore events that bubbled through portals.
+      if (e.currentTarget.contains(e.target)) {
+        // Prevent focus going to the collection when clicking on the scrollbar.
+        e.preventDefault();
+      }
     }
   };
 
