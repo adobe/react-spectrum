@@ -1,5 +1,6 @@
 import {CollectionBase, Node} from '@react-types/shared';
 import {Item} from '@react-spectrum/actiongroup';
+import {List} from './List';
 import {ListState, useListState} from '@react-stately/list';
 import * as React from 'react';
 import {Section} from '@react-spectrum/menu';
@@ -25,11 +26,11 @@ function SelectableList(props: CollectionBase<any> & {
 
   return (
     <ul
-      {...listProps} 
+      {...listProps}
       style={{
         height: 200, overflow: 'auto', padding: 10, margin: 0, listStyle: 'none',
         position: props.isUlRelativelyPositioned ? 'relative' : 'static'
-      }} 
+      }}
       ref={listRef}>
       {Array.from(state.collection).map(node => {
         if (node.hasChildNodes) {
@@ -72,9 +73,9 @@ function SelectableItem(props: {
 
   const isFocused = node.key === state.selectionManager.focusedKey;
   return (
-    <li 
+    <li
       {...itemProps}
-      key={node.key} 
+      key={node.key}
       style={{
         backgroundColor: isFocused ? 'gray' : 'white',
         fontWeight: isFocused ? 'bold' : 'normal'
@@ -131,4 +132,117 @@ storiesOf('useSelectableList', module)
     <SelectableList isSubUlRelativelyPositioned isUlRelativelyPositioned>
       {options}
     </SelectableList>
-  ));
+  ))
+  .add(
+    'single select allow empty',
+    () => (
+      <>
+        <div>
+          <h4>Single selection allow empty</h4>
+          <ol>
+            <li>Select the first item by clicking on it</li>
+            <li>press arrow down</li>
+            <li>Second item is selected ✓</li>
+          </ol>
+          <List selectionMode="single">
+            <Item>Paco de Lucia</Item>
+            <Item>Vicente Amigo</Item>
+            <Item>Gerardo Nunez</Item>
+          </List>
+        </div>
+        <div>
+          <h4>Native selection</h4>
+          <span>there is no such native example, it's a dropdown picker</span>
+        </div>
+      </>
+    )
+  )
+  .add(
+    'single select no empty',
+    () => (
+      <>
+        <div>
+          <h4>Single selection allow empty</h4>
+          <ol>
+            <li>Select the first item by clicking on it</li>
+            <li>press arrow down</li>
+            <li>Second item is selected ✓</li>
+          </ol>
+          <List selectionMode="single" disallowEmptySelection>
+            <Item>Paco de Lucia</Item>
+            <Item>Vicente Amigo</Item>
+            <Item>Gerardo Nunez</Item>
+          </List>
+        </div>
+        <div>
+          <h4>Native selection</h4>
+          <span>there is no such native example, it's a dropdown picker</span>
+        </div>
+      </>
+    )
+  )
+  .add(
+    'multi select behaviors',
+    () => render()
+  );
+
+function render() {
+  return (
+    <>
+      <div>
+        <h4>Multi selection</h4>
+        <ol>
+          <li>
+            Select first and second item by clicking on them (while holding
+            shift)
+          </li>
+          <li>Press arrow down (without holding shift)</li>
+          <li>
+            Third item is just focused. selection is unchanged, even though{' '}
+            <code>selectOnFocus</code> is true ❌
+          </li>
+        </ol>
+        <List selectionMode="multiple">
+          <Item>Paco de Lucia</Item>
+          <Item>Vicente Amigo</Item>
+          <Item>Gerardo Nunez</Item>
+        </List>
+      </div>
+      <div>
+        <h4>Multi selection</h4>
+        <ol>
+          <li>
+            Select first and second item by clicking on them (while holding
+            shift)
+          </li>
+          <li>Press arrow down (without holding shift)</li>
+          <li>
+            Third item is just focused. selection is unchanged, even though{' '}
+            <code>selectOnFocus</code> is true ❌
+          </li>
+        </ol>
+        <List selectionMode="multiple" disallowEmptySelection>
+          <Item>Paco de Lucia</Item>
+          <Item>Vicente Amigo</Item>
+          <Item>Gerardo Nunez</Item>
+        </List>
+      </div>
+      <div>
+        <h4>Native multi selection</h4>
+        <ol>
+          <li>
+            Select first and second item by clicking on them (while holding
+            shift)
+          </li>
+          <li>Press arrow down</li>
+          <li>Third item is selected ✓</li>
+        </ol>
+        <select multiple>
+          <option>Paco de Lucia</option>
+          <option>Vicente Amigo</option>
+          <option>Gerardo Nunez</option>
+        </select>
+      </div>
+    </>
+  );
+}

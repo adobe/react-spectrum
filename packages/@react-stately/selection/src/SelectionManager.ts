@@ -374,7 +374,7 @@ export class SelectionManager implements MultipleSelectionManager {
     } else if (e && e.shiftKey) {
       this.extendSelection(key);
     } else {
-      this.toggleSelection(key);
+      this.replaceSelection(key);
     }
   }
 
