@@ -17,6 +17,9 @@ interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelec
   focusMode?: 'row' | 'cell'
 }
 
+/**
+ * Provides state management for a grid component. Handles row selection and focusing a grid cell's focusable child if applicable.
+ */
 export function useGridState<T extends object, C extends GridCollection<T>>(props: GridStateOptions<T, C>): GridState<T, C> {
   let {collection, focusMode} = props;
   let selectionState = useMultipleSelectionState(props);

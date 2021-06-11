@@ -39,7 +39,7 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
    */
   focusMode?: 'row' | 'cell',
   /**
-   * A function that returns the text that should be announced by accessibility tools when a row is added or removed from selection.
+   * A function that returns the text that should be announced by assistive technology when a row is added or removed from selection.
    * @default (key) => state.collection.getItem(key)?.textValue
    */
   getRowText?: (key: Key) => string
@@ -50,6 +50,12 @@ export interface GridAria {
   gridProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a grid component.
+ * A grid displays data in one or more rows and columns and enables a user to navigate its contents via directional navigation keys.
+ * @param props - Props for the grid.
+ * @param state - State for the grid, as returned by `useGridState`.
+ */
 export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<T>>): GridAria {
   let {
     ref,

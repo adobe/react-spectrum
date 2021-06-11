@@ -32,6 +32,11 @@ interface RowHeaderAria {
   rowHeaderProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a row header in a table.
+ * @param props - Props for the row header.
+ * @param state - State of the table, as returned by `useTableState`.
+ */
 export function useTableRowHeader<T>(props: RowHeaderProps, state: TableState<T>): RowHeaderAria {
   let {gridCellProps} = useGridCell(props, state);
 

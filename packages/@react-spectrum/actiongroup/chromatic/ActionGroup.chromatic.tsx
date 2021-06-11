@@ -24,6 +24,7 @@ import React from 'react';
 import SettingsIcon from '@spectrum-icons/workflow/Settings';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
+import {View} from '@react-spectrum/view';
 import ViewCardIcon from '@spectrum-icons/workflow/ViewCard';
 import ViewGridIcon from '@spectrum-icons/workflow/ViewGrid';
 import ViewListIcon from '@spectrum-icons/workflow/ViewList';
@@ -92,6 +93,38 @@ storiesOf('ActionGroup', module)
   .add(
     'selectionMode: multiple',
     () => render({selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
+  )
+  .add(
+    'staticColor=white',
+    () => (
+      <View backgroundColor="static-seafoam-600" padding="size-1000">
+        {render({staticColor: 'white', defaultSelectedKeys: ['1']}, viewItems)}
+      </View>
+    )
+  )
+  .add(
+    'staticColor=white, isQuiet',
+    () => (
+      <View backgroundColor="static-seafoam-600" padding="size-1000">
+        {render({staticColor: 'white', isQuiet: true, defaultSelectedKeys: ['1']}, viewItems)}
+      </View>
+    )
+  )
+  .add(
+    'staticColor=black',
+    () => (
+      <View backgroundColor="static-yellow-400" padding="size-1000">
+        {render({staticColor: 'black', defaultSelectedKeys: ['1']}, viewItems)}
+      </View>
+    )
+  )
+  .add(
+    'staticColor=black, isQuiet',
+    () => (
+      <View backgroundColor="static-yellow-400" padding="size-1000">
+        {render({staticColor: 'black', isQuiet: true, defaultSelectedKeys: ['1']}, viewItems)}
+      </View>
+    )
   )
   .add(
     'selectionMode: single, disallowEmptySelection',

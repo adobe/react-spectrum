@@ -37,6 +37,11 @@ export interface GridRowAria {
   rowProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a row in a grid.
+ * @param props - Props for the row.
+ * @param state - State of the parent grid, as returned by `useGridState`.
+ */
 export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T, C>>(props: GridRowProps<T>, state: S): GridRowAria {
   let {
     node,

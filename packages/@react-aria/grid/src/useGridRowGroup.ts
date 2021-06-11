@@ -17,6 +17,9 @@ interface GridRowGroupAria {
   rowGroupProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the accessibility implementation for a row group in a grid.
+ */
 export function useGridRowGroup(): GridRowGroupAria {
   return {
     rowGroupProps: {

@@ -30,7 +30,7 @@ interface GridCellProps {
   isVirtualized?: boolean,
   /** Whether the grid cell is disabled. */
   isDisabled?: boolean,
-  /** Whether the cell or it's first focusable item be focused when the grid cell is focused. */
+  /** Whether the cell or its first focusable child element should be focused when the grid cell is focused. */
   focusMode?: 'child' | 'cell',
   /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean
@@ -41,6 +41,11 @@ interface GridCellAria {
   gridCellProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a cell in a grid.
+ * @param props - Props for the cell.
+ * @param state - State of the parent grid, as returned by `useGridState`.
+ */
 export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps, state: GridState<T, C>): GridCellAria {
   let {
     node,
