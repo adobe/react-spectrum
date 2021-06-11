@@ -21,9 +21,16 @@ import {useId} from '@react-aria/utils';
 import {useMemo} from 'react';
 
 interface TableProps<T> extends GridProps {
+  /** The layout object for the table. Computes what content is visible and how to position and style them. */
   layout?: Layout<Node<T>>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a table component.
+ * A table displays data in one or more rows and columns and enables a user to navigate its contents via directional navigation keys.
+ * @param props - Props for the table.
+ * @param state - State for the table, as returned by `useTableState`.
+ */
 export function useTable<T>(props: TableProps<T>, state: TableState<T>): GridAria {
   let {
     ref,
