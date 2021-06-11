@@ -61,6 +61,11 @@ export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, stat
   };
 }
 
+/**
+ * Provides the behavior and accessibility implementation for the select all checkbox in a table.
+ * @param props - Props for the select all checkbox.
+ * @param state - State of the table, as returned by `useTableState`.
+ */
 export function useTableSelectAllCheckbox<T>(state: TableState<T>): SelectAllCheckboxAria {
   let {isEmpty, isSelectAll} = state.selectionManager;
   return {
