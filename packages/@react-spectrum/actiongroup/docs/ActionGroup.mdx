@@ -176,7 +176,7 @@ function Example() {
 </ActionGroup>
 ```
 
-### Emphasize
+### Emphasized
 
 The additional styling provided by the `isEmphasized` prop is only applied when items are selected.
 
@@ -189,6 +189,56 @@ The additional styling provided by the `isEmphasized` prop is only applied when 
   <Item key="list">List view</Item>
   <Item key="gallery">Gallery view</Item>
 </ActionGroup>
+```
+
+### Static color
+
+The `staticColor` prop can be used when the ActionGroup is displayed over a color background. When selected, the icon and text in each
+button automatically take on the color of the background. You are responsible for choosing the static color variant that ensures the
+text meets an [accessible contrast ratio](https://developer.mozilla.org/en-US/docs/Web/Accessibility/Understanding_WCAG/Perceivable/Color_contrast)
+with the background.
+
+```tsx example
+<Flex wrap gap="size-250">
+  <View backgroundColor="static-seafoam-700" padding="size-500">
+    <ActionGroup staticColor="white">
+      <Item key="edit">
+        <Draw />
+        <Text>Edit</Text>
+      </Item>
+      <Item key="copy">
+        <Copy />
+        <Text>Copy</Text>
+      </Item>
+      <Item key="delete">
+        <Delete />
+        <Text>Delete</Text>
+      </Item>
+    </ActionGroup>
+  </View>
+  <View backgroundColor="static-yellow-400" padding="size-500">
+    <ActionGroup
+      staticColor="black"
+      isQuiet
+      buttonLabelBehavior="hide"
+      selectionMode="single"
+      disallowEmptySelection
+      defaultSelectedKeys={['list']}>
+      <Item key="list">
+        <ViewList />
+        <Text>List view</Text>
+      </Item>
+      <Item key="grid">
+        <ViewGrid />
+        <Text>Grid view</Text>
+      </Item>
+      <Item key="gallery">
+        <ViewCard />
+        <Text>Gallery view</Text>
+      </Item>
+    </ActionGroup>
+  </View>
+</Flex>
 ```
 
 ### Disabled
