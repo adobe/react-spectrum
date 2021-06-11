@@ -48,6 +48,7 @@
     "@react-spectrum/slider": "^3.0.3",
     "@react-spectrum/statuslight": "^3.2.1",
     "@react-spectrum/switch": "^3.1.2",
+    "@react-spectrum/tabs": "3.0.0-rc.0",
     "@react-spectrum/text": "^3.1.2",
     "@react-spectrum/textfield": "^3.1.6",
     "@react-spectrum/theme-dark": "^3.2.1",
