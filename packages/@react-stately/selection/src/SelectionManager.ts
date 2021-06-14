@@ -10,13 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, FocusStrategy, Selection as ISelection, Node, PressEvent, SelectionMode} from '@react-types/shared';
+import {
+  Collection,
+  FocusStrategy,
+  Selection as ISelection,
+  Node,
+  PressEvent,
+  SelectionBehavior,
+  SelectionMode
+} from '@react-types/shared';
 import {Key} from 'react';
 import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 
+
 interface SelectionManagerOptions {
-  allowsCellSelection?: boolean
+  allowsCellSelection?: boolean,
+  selectionBehavior?: SelectionBehavior
 }
 
 /**
@@ -27,11 +37,13 @@ export class SelectionManager implements MultipleSelectionManager {
   private state: MultipleSelectionState;
   private allowsCellSelection: boolean;
   private _isSelectAll: boolean;
+  private selectionBehavior: SelectionBehavior;
 
   constructor(collection: Collection<Node<unknown>>, state: MultipleSelectionState, options?: SelectionManagerOptions) {
     this.collection = collection;
     this.state = state;
     this.allowsCellSelection = options?.allowsCellSelection ?? false;
+    this.selectionBehavior = options?.selectionBehavior || 'toggle';
     this._isSelectAll = null;
   }
 
@@ -373,6 +385,8 @@ export class SelectionManager implements MultipleSelectionManager {
       }
     } else if (e && e.shiftKey) {
       this.extendSelection(key);
+    } else if (this.selectionBehavior === 'toggle' || (e && e.metaKey)) {
+      this.toggleSelection(key);
     } else {
       this.replaceSelection(key);
     }

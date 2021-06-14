@@ -16,7 +16,7 @@ interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelec
 }
 
 export function useGridState<T extends object, C extends GridCollection<T>>(props: GridStateOptions<T, C>): GridState<T, C> {
-  let {collection, focusMode} = props;
+  let {collection, focusMode, selectionBehavior = 'toggle'} = props;
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
       props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
@@ -50,6 +50,6 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
   return {
     collection,
     disabledKeys,
-    selectionManager: new SelectionManager(collection, selectionState)
+    selectionManager: new SelectionManager(collection, selectionState, {selectionBehavior})
   };
 }
