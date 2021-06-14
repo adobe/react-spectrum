@@ -22,20 +22,30 @@ import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface GridCellProps {
+  /** An object representing the grid cell. Contains all the relevant information that makes up the grid cell. */
   node: RSNode<unknown>,
+  /** The ref attached to the grid cell element. */
   ref: RefObject<HTMLElement>,
+  /** Whether the grid cell is contained in a virtual scroller. */
   isVirtualized?: boolean,
+  /** Whether the grid cell is disabled. */
   isDisabled?: boolean,
-
-  /* when a cell is focused, should the cell or it's first focusable item be focused */
+  /** Whether the cell or its first focusable child element should be focused when the grid cell is focused. */
   focusMode?: 'child' | 'cell',
+  /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean
 }
 
 interface GridCellAria {
+  /** Props for the grid cell element. */
   gridCellProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a cell in a grid.
+ * @param props - Props for the cell.
+ * @param state - State of the parent grid, as returned by `useGridState`.
+ */
 export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps, state: GridState<T, C>): GridCellAria {
   let {
     node,

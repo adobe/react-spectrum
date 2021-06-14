@@ -108,6 +108,36 @@ ReactDOM.render(<DimensionViewer />, document.getElementById('dimension-viewer')
 
 <div id="dimension-viewer" />
 
+### CSS functions
+
+Dimension variables may also be used as part of CSS functions like `calc()`, `min()`, and `max()`. This can be done by simply referring to the variable within the CSS expression.
+For example, you could make an element take up 100% of the width of it's container minus a certain dimension value.
+
+```tsx example
+<View width="calc(100% - size-2000)" height="single-line-height" backgroundColor="green-500" />
+```
+
+## Responsive styles
+
+In addition to static values, all style props support object syntax to specify different values for the prop depending on the
+responsive breakpoint. By default, breakpoints are named following t-shirt sizing, and correspond to common device resolutions.
+Breakpoints can be overridden at the application level via the [Provider](Provider.html) component. In addition to breakpoints,
+a `base` value can be provided to style props, which will be applied when no breakpoints match.
+
+In this example, the TextField has a default width of `size-2000`, which is overridden to `size-5000` at the large breakpoint.
+Resize your browser window to see this in action.
+
+```tsx example
+<TextField label="Name" placeholder="John Smith" width={{base: 'size-2000', L: 'size-5000'}} />
+```
+
+React Spectrum's breakpoints are mobile first, which means style props apply at that breakpoint and above. For example, the `L`
+breakpoint is applied at screen sizes 1024px and wider. The `base` value should be used to specify the layout at the smallest
+possible screen size, and additional breakpoints may be added to adapt the layout for larger devices.
+
+Responsive style props can also be used to adapt layouts on different screen sizes. Read more about this in the
+[layout docs](layout.html#responsive-layout).
+
 ## Custom components
 
 Sometimes, you may find yourself needing to build a component that doesn't exist in Spectrum yet. In these cases,
