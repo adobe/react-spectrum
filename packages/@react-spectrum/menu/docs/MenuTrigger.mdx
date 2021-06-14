@@ -95,13 +95,9 @@ function Example() {
 The `align` prop aligns the Menu relative to the trigger and the `direction` prop controls the direction the Menu will render.
 
 ```tsx example
-import More from '@spectrum-icons/workflow/More';
-
 <Flex gap="size-100">
   <MenuTrigger align="start">
-    <ActionButton aria-label="More options">
-      <More />
-    </ActionButton>
+    <ActionButton>Edit</ActionButton>
     <Menu>
       <Item key="cut">Cut</Item>
       <Item key="copy">Copy</Item>
@@ -109,13 +105,27 @@ import More from '@spectrum-icons/workflow/More';
     </Menu>
   </MenuTrigger>
   <MenuTrigger align="end" direction="top" shouldFlip={false}>
-    <ActionButton>
-      Edit options
-    </ActionButton>
+    <ActionButton>View</ActionButton>
+    <Menu>
+      <Item key="side">Side bar</Item>
+      <Item key="options">Page options</Item>
+      <Item key="edit">Edit Panel</Item>
+    </Menu>
+  </MenuTrigger>
+  <MenuTrigger direction="start" align="start">
+    <ActionButton>Edit</ActionButton>
     <Menu>
       <Item key="cut">Cut</Item>
       <Item key="copy">Copy</Item>
       <Item key="paste">Paste</Item>
+    </Menu>
+  </MenuTrigger>
+  <MenuTrigger direction="end" align="end">
+    <ActionButton>View</ActionButton>
+    <Menu>
+      <Item key="side">Side bar</Item>
+      <Item key="options">Page options</Item>
+      <Item key="edit">Edit Panel</Item>
     </Menu>
   </MenuTrigger>
 </Flex>
