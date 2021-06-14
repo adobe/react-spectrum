@@ -182,6 +182,20 @@ storiesOf('useSelectableList', module)
     )
   )
   .add(
+    'multi select replace',
+    () => (
+      <>
+        <div>
+          <List selectionMode="multiple" selectionBehavior="replace">
+            <Item>Paco de Lucia</Item>
+            <Item>Vicente Amigo</Item>
+            <Item>Gerardo Nunez</Item>
+          </List>
+        </div>
+      </>
+    )
+  )
+  .add(
     'multi select behaviors',
     () => render()
   );
