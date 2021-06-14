@@ -721,7 +721,8 @@ function Example() {
 ## Trigger options
 By default, the ComboBox's menu is opened when the user types into the input field ("input"). There are two other supported modes: one where the menu opens when the ComboBox is focused ("focus") and
 the other where the menu only opens when the user clicks or taps on the ComboBox's field button ("manual"). These can be set by providing "focus" or "manual" to the `menuTrigger` prop.
-Guidelines on when to use a specific mode can be found [here](https://spectrum.adobe.com/page/combo-box/#Menu-trigger).
+Guidelines on when to use a specific mode can be found [here](https://spectrum.adobe.com/page/combo-box/#Menu-trigger). Note that the mobile ComboBox experience requires the end user to press the ComboBox button
+to open the tray regardless of the `menuTrigger` setting.
 
 ```tsx example
 <ComboBox label="Select action" menuTrigger="focus">
