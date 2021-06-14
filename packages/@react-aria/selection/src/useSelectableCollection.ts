@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusEvent, HTMLAttributes, Key, KeyboardEvent, RefObject, useEffect} from 'react';
+import {FocusEvent, HTMLAttributes, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
 import {focusWithoutScrolling, isMac, mergeProps} from '@react-aria/utils';
@@ -102,7 +102,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     allowsTabNavigation = false
   } = options;
   let {direction} = useLocale();
-
+  let raf = useRef(null);
   let onKeyDown = (e: KeyboardEvent) => {
     // Let child element (e.g. menu button) handle the event if the Alt key is pressed.
     // Keyboard events bubble through portals. Don't handle keyboard events
@@ -125,44 +125,69 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
     switch (e.key) {
       case 'ArrowDown': {
-        if (delegate.getKeyBelow) {
-          e.preventDefault();
-          let nextKey = manager.focusedKey != null
-              ? delegate.getKeyBelow(manager.focusedKey)
-              : delegate.getFirstKey?.();
-          if (nextKey == null && shouldFocusWrap) {
-            nextKey = delegate.getFirstKey?.(manager.focusedKey);
+        if (!raf.current) {
+          raf.current = requestAnimationFrame(() => {
+            raf.current = null;
+          });
+
+          if (delegate.getKeyBelow) {
+            e.preventDefault();
+            let nextKey = manager.focusedKey != null
+                ? delegate.getKeyBelow(manager.focusedKey)
+                : delegate.getFirstKey?.();
+            if (nextKey == null && shouldFocusWrap) {
+              nextKey = delegate.getFirstKey?.(manager.focusedKey);
+            }
+            navigateToKey(nextKey);
           }
-          navigateToKey(nextKey);
         }
+
         break;
       }
       case 'ArrowUp': {
-        if (delegate.getKeyAbove) {
-          e.preventDefault();
-          let nextKey = manager.focusedKey != null
-              ? delegate.getKeyAbove(manager.focusedKey)
-              : delegate.getLastKey?.();
-          if (nextKey == null && shouldFocusWrap) {
-            nextKey = delegate.getLastKey?.(manager.focusedKey);
+        if (!raf.current) {
+          raf.current = requestAnimationFrame(() => {
+            raf.current = null;
+          });
+
+          if (delegate.getKeyAbove) {
+            e.preventDefault();
+            let nextKey = manager.focusedKey != null
+                ? delegate.getKeyAbove(manager.focusedKey)
+                : delegate.getLastKey?.();
+            if (nextKey == null && shouldFocusWrap) {
+              nextKey = delegate.getLastKey?.(manager.focusedKey);
+            }
+            navigateToKey(nextKey);
           }
-          navigateToKey(nextKey);
         }
         break;
       }
       case 'ArrowLeft': {
-        if (delegate.getKeyLeftOf) {
-          e.preventDefault();
-          let nextKey = delegate.getKeyLeftOf(manager.focusedKey);
-          navigateToKey(nextKey, direction === 'rtl' ? 'first' : 'last');
+        if (!raf.current) {
+          raf.current = requestAnimationFrame(() => {
+            raf.current = null;
+          });
+
+          if (delegate.getKeyLeftOf) {
+            e.preventDefault();
+            let nextKey = delegate.getKeyLeftOf(manager.focusedKey);
+            navigateToKey(nextKey, direction === 'rtl' ? 'first' : 'last');
+          }
         }
         break;
       }
       case 'ArrowRight': {
-        if (delegate.getKeyRightOf) {
-          e.preventDefault();
-          let nextKey = delegate.getKeyRightOf(manager.focusedKey);
-          navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
+        if (!raf.current) {
+          raf.current = requestAnimationFrame(() => {
+            raf.current = null;
+          });
+
+          if (delegate.getKeyRightOf) {
+            e.preventDefault();
+            let nextKey = delegate.getKeyRightOf(manager.focusedKey);
+            navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
+          }
         }
         break;
       }
@@ -247,6 +272,13 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     }
   };
 
+  let onKeyUp = (e: KeyboardEvent) => {
+    if (e.key.includes('Arrow')) {
+      cancelAnimationFrame(raf.current);
+      raf.current = null;
+    }
+  };
+
   let onFocus = (e: FocusEvent) => {
     if (manager.isFocused) {
       // If a focus event bubbled through a portal, reset focus state.
@@ -312,8 +344,18 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => {
+      if (raf.current) {
+        cancelAnimationFrame(raf.current);
+      }
+    };
+  }, [raf]);
+
   let handlers = {
     onKeyDown,
+    onKeyUp,
     onFocus,
     onBlur,
     onMouseDown(e) {
