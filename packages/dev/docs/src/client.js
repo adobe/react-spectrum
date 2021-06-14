@@ -15,6 +15,7 @@ import docsStyle from './docs.css';
 import {listen} from 'quicklink';
 import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
+import {SearchField} from '@react-spectrum/searchfield';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {ThemeSwitcher} from './ThemeSwitcher';
 import {watchModals} from '@react-aria/aria-modal-polyfill';
@@ -177,8 +178,30 @@ function Hamburger() {
   );
 }
 
+function DocSearch() {
+  useEffect(() => {
+    // the following comes from docsearch.min.js
+    // eslint-disable-next-line no-undef
+    docsearch({
+      apiKey: '9b5a0967c8bb751b5048ecfc99917979',
+      indexName: 'react-spectrum',
+      inputSelector: '#algolia-doc-search',
+      debug: false // Set debug to true to inspect the dropdown
+    });
+  }, []);
+
+  return (
+    <SearchField
+      aria-label="Search"
+      UNSAFE_className={docsStyle.docSearchBox}
+      id="algolia-doc-search"
+      placeholder="Search" />
+  );
+}
+
 ReactDOM.render(<>
   <Hamburger />
+  <DocSearch />
   <ThemeSwitcher />
 </>, document.querySelector('.' + docsStyle.pageHeader));
 
