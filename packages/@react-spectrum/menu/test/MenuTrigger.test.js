@@ -13,10 +13,10 @@
 import {act, fireEvent, render, within} from '@testing-library/react';
 import {Button} from '@react-spectrum/button';
 import {Item, Menu, MenuTrigger, Section} from '../';
+import {pressKey, triggerPress} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 import V2Dropdown from '@react/react-spectrum/Dropdown';
 import {Menu as V2Menu, MenuItem as V2MenuItem} from '@react/react-spectrum/Menu';
@@ -185,9 +185,9 @@ describe('MenuTrigger', function () {
   `('$Name can toggle the menu display via ArrowUp key', function ({Component, props}) {
     verifyMenuToggle(Component, props, {}, (button, menu) => {
       if (!menu) {
-        fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38});
+        pressKey(button, {key: 'ArrowUp', code: 38, charCode: 38});
       } else {
-        fireEvent.keyDown(menu, {key: 'Escape'});
+        pressKey(menu, {key: 'Escape'});
       }
     });
   });
@@ -198,9 +198,9 @@ describe('MenuTrigger', function () {
   `('$Name can toggle the menu display via ArrowDown key', function ({Component, props}) {
     verifyMenuToggle(Component, props, {}, (button, menu) => {
       if (!menu) {
-        fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
+        pressKey(button, {key: 'ArrowDown', code: 40, charCode: 40});
       } else {
-        fireEvent.keyDown(menu, {key: 'Escape'});
+        pressKey(menu, {key: 'Escape'});
       }
     });
   });
@@ -280,8 +280,7 @@ describe('MenuTrigger', function () {
       expect(menu).not.toBeInTheDocument();
 
       // Opening menu via down arrow still autofocuses the selected item
-      fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
-      fireEvent.keyUp(button, {key: 'ArrowDown', code: 40, charCode: 40});
+      pressKey(button, {key: 'ArrowDown', code: 40, charCode: 40});
       act(() => {jest.runAllTimers();});
       menu = tree.getByRole('menu');
       menuItems = within(menu).getAllByRole('menuitem');
@@ -292,7 +291,7 @@ describe('MenuTrigger', function () {
       expect(menu).not.toBeInTheDocument();
 
       // Opening menu via up arrow still autofocuses the selected item
-      fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38});
+      pressKey(button, {key: 'ArrowUp', code: 38, charCode: 38});
       menu = tree.getByRole('menu');
       menuItems = within(menu).getAllByRole('menuitem');
       selectedItem = menuItems[1];
@@ -305,7 +304,7 @@ describe('MenuTrigger', function () {
     `('$Name focuses the last item on ArrowUp if there isn\'t a selected item', function ({Component, props}) {
       let tree = renderComponent(Component, props, {});
       let button = tree.getByRole('button');
-      fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38});
+      pressKey(button, {key: 'ArrowUp', code: 38, charCode: 38});
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitem');
       let selectedItem = menuItems[menuItems.length - 1];
@@ -318,7 +317,7 @@ describe('MenuTrigger', function () {
     `('$Name focuses the first item on ArrowDown if there isn\'t a selected item', function ({Component, props}) {
       let tree = renderComponent(Component, props, {});
       let button = tree.getByRole('button');
-      fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
+      pressKey(button, {key: 'ArrowDown', code: 40, charCode: 40});
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitem');
       let selectedItem = menuItems[0];
@@ -347,19 +346,19 @@ describe('MenuTrigger', function () {
       );
 
       let button = tree.getByRole('button');
-      fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
+      pressKey(button, {key: 'ArrowDown', code: 40, charCode: 40});
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitem');
       let selectedItem = menuItems[0];
       expect(selectedItem).toBe(document.activeElement);
 
-      fireEvent.keyDown(menu, {key: 'ArrowDown', code: 40, charCode: 40});
+      pressKey(menu, {key: 'ArrowDown', code: 40, charCode: 40});
       expect(menuItems[1]).toBe(document.activeElement);
 
-      fireEvent.keyDown(menu, {key: 'ArrowDown', code: 40, charCode: 40});
+      pressKey(menu, {key: 'ArrowDown', code: 40, charCode: 40});
       expect(menuItems[2]).toBe(document.activeElement);
 
-      fireEvent.keyDown(menu, {key: 'ArrowUp', code: 38, charCode: 38});
+      pressKey(menu, {key: 'ArrowUp', code: 38, charCode: 38});
       expect(menuItems[1]).toBe(document.activeElement);
     });
   });
@@ -432,7 +431,7 @@ describe('MenuTrigger', function () {
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
-      fireEvent.keyDown(menu, {key: 'Escape', code: 27, charCode: 27});
+      pressKey(menu, {key: 'Escape', code: 27, charCode: 27});
       act(() => {jest.runAllTimers();});
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(button);
@@ -519,8 +518,7 @@ describe('MenuTrigger', function () {
 
       let menuItem1 = within(menu).getByText('Foo');
       expect(menuItem1).toBeTruthy();
-      fireEvent.keyDown(menuItem1, {key: 'Enter', code: 13, charCode: 13});
-      fireEvent.keyUp(menuItem1, {key: 'Enter', code: 13, charCode: 13});
+      pressKey(menuItem1, {key: 'Enter', code: 13, charCode: 13});
       act(() => {jest.runAllTimers();});
       expect(onSelectionChange).toBeCalledTimes(1);
       expect(menu).toBeInTheDocument();
@@ -566,7 +564,7 @@ describe('MenuTrigger', function () {
       ${'V2Dropdown none'}      | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'none'}}
     `('$Name closes on menu item selection if toggled by ENTER key', function ({Component, props, menuProps}) {
       tree = renderComponent(Component, props, menuProps);
-      openAndTriggerMenuItem(tree, Component === MenuTrigger, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: 'Enter', code: 13, charCode: 13}));
+      openAndTriggerMenuItem(tree, Component === MenuTrigger, props.role, menuProps.selectionMode, (item) => pressKey(item, {key: 'Enter', code: 13, charCode: 13}));
 
       let menu = tree.queryByRole('menu');
       expect(menu).toBeNull();
@@ -580,7 +578,7 @@ describe('MenuTrigger', function () {
       ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple'}}
     `('$Name doesn\'t close on menu item selection if toggled by SPACE key (all selection modes except "none")', function ({Component, props, menuProps}) {
       tree = renderComponent(Component, props, menuProps);
-      openAndTriggerMenuItem(tree, true, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32}));
+      openAndTriggerMenuItem(tree, true, props.role, menuProps.selectionMode, (item) => pressKey(item, {key: ' ', code: 32, charCode: 32}));
 
       let menu = tree.queryByRole('menu');
       expect(menu).toBeTruthy();
@@ -592,7 +590,7 @@ describe('MenuTrigger', function () {
       ${'V2Dropdown none'}  | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'none'}}
     `('$Name closes on menu item selection if toggled by SPACE key (selectionMode=none)', function ({Component, props, menuProps}) {
       tree = renderComponent(Component, props, menuProps);
-      openAndTriggerMenuItem(tree, Component === MenuTrigger, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32}));
+      openAndTriggerMenuItem(tree, Component === MenuTrigger, props.role, menuProps.selectionMode, (item) => pressKey(item, {key: ' ', code: 32, charCode: 32}));
 
       let menu = tree.queryByRole('menu');
       expect(menu).toBeNull();
@@ -629,7 +627,7 @@ describe('MenuTrigger', function () {
       ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
     `('$Name ignores repeating keyboard events', function ({Component, props, menuProps}) {
       tree = renderComponent(Component, props, menuProps);
-      openAndTriggerMenuItem(tree, Component === MenuTrigger, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: 'Enter', code: 13, charCode: 13, repeat: true}));
+      openAndTriggerMenuItem(tree, Component === MenuTrigger, props.role, menuProps.selectionMode, (item) => pressKey(item, {key: 'Enter', code: 13, charCode: 13, repeat: true}));
 
       let menu = tree.queryByRole('menu');
       expect(menu).toBeTruthy();
@@ -664,7 +662,7 @@ describe('MenuTrigger', function () {
       expect(onOpenChange).toBeCalledTimes(1);
       expect(button).toHaveAttribute('aria-expanded', 'true');
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      pressKey(document.activeElement, {key: 'Tab'});
       act(() => {jest.runAllTimers();});
 
       expect(document.activeElement).toBe(tree.getByTestId('after-input'));

@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor, within} from '@testing-library/react';
+import {act, render, waitFor, within} from '@testing-library/react';
 import {Item, TabList, TabPanels, Tabs} from '../src';
+import {pressKey} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -108,16 +109,16 @@ describe('Tabs', function () {
 
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
     act(() => {selectedItem.focus();});
-    fireEvent.keyDown(selectedItem, {key: 'ArrowRight', code: 39, charCode: 39});
+    pressKey(selectedItem, {key: 'ArrowRight', code: 39, charCode: 39});
     let nextSelectedItem = tabs[1];
     expect(nextSelectedItem).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(nextSelectedItem, {key: 'ArrowLeft', code: 37, charCode: 37});
+    pressKey(nextSelectedItem, {key: 'ArrowLeft', code: 37, charCode: 37});
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
 
     /** Doesn't change selection because it's horizontal tabs. */
-    fireEvent.keyDown(selectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
+    pressKey(selectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
+    pressKey(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
   });
 
@@ -132,15 +133,15 @@ describe('Tabs', function () {
 
     /** Doesn't change selection because it's vertical tabs. */
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(selectedItem, {key: 'ArrowRight', code: 39, charCode: 39});
+    pressKey(selectedItem, {key: 'ArrowRight', code: 39, charCode: 39});
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(selectedItem, {key: 'ArrowLeft', code: 37, charCode: 37});
+    pressKey(selectedItem, {key: 'ArrowLeft', code: 37, charCode: 37});
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
 
     let nextSelectedItem = tabs[1];
-    fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
+    pressKey(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
     expect(nextSelectedItem).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(nextSelectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
+    pressKey(nextSelectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
   });
 
@@ -154,10 +155,10 @@ describe('Tabs', function () {
     expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
 
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(firstItem, {key: 'ArrowLeft', code: 37, charCode: 37});
+    pressKey(firstItem, {key: 'ArrowLeft', code: 37, charCode: 37});
     let lastItem = tabs[tabs.length - 1];
     expect(lastItem).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(lastItem, {key: 'ArrowRight', code: 39, charCode: 39});
+    pressKey(lastItem, {key: 'ArrowRight', code: 39, charCode: 39});
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
   });
 
@@ -171,10 +172,10 @@ describe('Tabs', function () {
     expect(tablist).toHaveAttribute('aria-orientation', 'vertical');
 
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(firstItem, {key: 'End', code: 35, charCode: 35});
+    pressKey(firstItem, {key: 'End', code: 35, charCode: 35});
     let lastItem = tabs[tabs.length - 1];
     expect(lastItem).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(lastItem, {key: 'Home', code: 36, charCode: 36});
+    pressKey(lastItem, {key: 'Home', code: 36, charCode: 36});
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
   });
 
@@ -187,13 +188,13 @@ describe('Tabs', function () {
     let thirdItem = tabs[2];
     act(() => {firstItem.focus();});
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(firstItem, {key: 'ArrowRight', code: 39, charCode: 39});
+    pressKey(firstItem, {key: 'ArrowRight', code: 39, charCode: 39});
     expect(secondItem).toHaveAttribute('aria-selected', 'false');
     expect(document.activeElement).toBe(secondItem);
-    fireEvent.keyDown(secondItem, {key: 'ArrowRight', code: 39, charCode: 39});
+    pressKey(secondItem, {key: 'ArrowRight', code: 39, charCode: 39});
     expect(thirdItem).toHaveAttribute('aria-selected', 'false');
     expect(document.activeElement).toBe(thirdItem);
-    fireEvent.keyDown(thirdItem, {key: 'Enter', code: 13, charCode: 13});
+    pressKey(thirdItem, {key: 'Enter', code: 13, charCode: 13});
     expect(firstItem).toHaveAttribute('aria-selected', 'false');
     expect(secondItem).toHaveAttribute('aria-selected', 'false');
     expect(thirdItem).toHaveAttribute('aria-selected', 'true');
@@ -287,8 +288,7 @@ describe('Tabs', function () {
     let tablist = tree.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     expect(document.activeElement).toBe(tabs[0]);
-    fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
-    fireEvent.keyUp(tabs[1], {key: 'ArrowRight'});
+    pressKey(tabs[1], {key: 'ArrowRight'});
     expect(onSelectionChange).toBeCalledWith(items[2].name);
   });
 

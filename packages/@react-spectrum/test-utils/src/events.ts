@@ -98,3 +98,8 @@ export function typeText(el: HTMLElement, value: string, opts?: ITypeOpts) {
     skipClick = true;
   }
 }
+
+export function pressKey(el, opts = {}) {
+  fireEvent.keyDown(el, opts);
+  fireEvent.keyUp(el, opts);
+}

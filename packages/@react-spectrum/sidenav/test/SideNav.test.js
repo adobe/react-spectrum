@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor} from '@testing-library/react';
+import {act, render, waitFor} from '@testing-library/react';
 import {Item, Section} from '@react-spectrum/tree';
+import {pressKey, triggerPress} from '@react-spectrum/test-utils';
 import React from 'react';
 import {SideNav} from '../src';
-import {triggerPress} from '@react-spectrum/test-utils';
 import {SideNav as V2SideNav, SideNavItem as V2SideNavItem} from '@react/react-spectrum/SideNav';
 
 let flatItems = [
@@ -268,10 +268,10 @@ describe('SideNav', function () {
     let selectedItem = items[0];
     act(() => {selectedItem.focus();});
     expect(selectedItem).toBe(document.activeElement);
-    fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
+    pressKey(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
     let nextSelectedItem = items[1];
     expect(nextSelectedItem).toBe(document.activeElement);
-    fireEvent.keyDown(nextSelectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
+    pressKey(nextSelectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
     expect(selectedItem).toBe(document.activeElement);
   });
 
@@ -296,13 +296,13 @@ describe('SideNav', function () {
     let firstItem = items[0];
     act(() => {firstItem.focus();});
     expect(firstItem).toBe(document.activeElement);
-    fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});
+    pressKey(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});
     let lastItem = items[items.length - 1];
     expect(lastItem).not.toBe(document.activeElement);
 
     act(() => {lastItem.focus();});
     expect(lastItem).toBe(document.activeElement);
-    fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});
+    pressKey(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});
     expect(firstItem).not.toBe(document.activeElement);
   });
 
@@ -325,13 +325,13 @@ describe('SideNav', function () {
     let firstItem = items[0];
     act(() => {firstItem.focus();});
     expect(firstItem).toBe(document.activeElement);
-    fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});
+    pressKey(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});
     let lastItem = items[items.length - 1];
     expect(lastItem).toBe(document.activeElement);
 
     act(() => {lastItem.focus();});
     expect(lastItem).toBe(document.activeElement);
-    fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});
+    pressKey(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});
     expect(firstItem).toBe(document.activeElement);
   });
 

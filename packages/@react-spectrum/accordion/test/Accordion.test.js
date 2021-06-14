@@ -11,7 +11,8 @@
  */
 
 import {Accordion, Item} from '../src';
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, render, within} from '@testing-library/react';
+import {pressKey} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -77,12 +78,10 @@ describe('Accordion', function () {
     act(() => {selectedItem.focus();});
     expect(document.activeElement).toBe(selectedItem);
 
-    fireEvent.keyDown(selectedItem, {key: 'Enter'});
-    fireEvent.keyUp(selectedItem, {key: 'Enter'});
+    pressKey(selectedItem, {key: 'Enter'});
     expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
 
-    fireEvent.keyDown(selectedItem, {key: 'Enter'});
-    fireEvent.keyUp(selectedItem, {key: 'Enter'});
+    pressKey(selectedItem, {key: 'Enter'});
     expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
   });
 
@@ -93,15 +92,15 @@ describe('Accordion', function () {
     act(() => {firstItem.focus();});
 
     expect(document.activeElement).toBe(firstItem);
-    fireEvent.keyDown(firstItem, {key: 'ArrowUp'});
+    pressKey(firstItem, {key: 'ArrowUp'});
     expect(document.activeElement).toBe(firstItem);
-    fireEvent.keyDown(firstItem, {key: 'ArrowDown'});
+    pressKey(firstItem, {key: 'ArrowDown'});
     expect(document.activeElement).toBe(secondItem);
-    fireEvent.keyDown(secondItem, {key: 'ArrowDown'});
+    pressKey(secondItem, {key: 'ArrowDown'});
     expect(document.activeElement).toBe(thirdItem);
-    fireEvent.keyDown(thirdItem, {key: 'ArrowDown'});
+    pressKey(thirdItem, {key: 'ArrowDown'});
     expect(document.activeElement).toBe(thirdItem);
-    fireEvent.keyDown(thirdItem, {key: 'ArrowUp'});
+    pressKey(thirdItem, {key: 'ArrowUp'});
     expect(document.activeElement).toBe(secondItem);
   });
 
