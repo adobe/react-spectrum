@@ -411,7 +411,7 @@ function Example() {
 
 ### Fully controlled ComboBox
 
-When a ComboBox has multiple controlled properties (e.g. `isOpen`, `inputValue`, `selectedKey`), it is important to note that an update to one of these properties will
+When a ComboBox has multiple controlled properties (e.g.`inputValue`, `selectedKey`, `items`), it is important to note that an update to one of these properties will
 not automatically update the others. Each interaction done in the ComboBox will only trigger its associated event handler. For example, typing in the field will only
 trigger `onInputChange` whereas selecting an item from the ComboBox menu will only trigger `onSelectionChange` so it is your responsibility to update the other
 controlled properties accordingly. Note that you should provide an `onSelectionChange` handler for a ComboBox with controlled input value and open state. This way, you can properly
@@ -436,7 +436,6 @@ function Example() {
   ];
 
   let [fieldState, setFieldState] = React.useState({
-    isOpen: false,
     selectedKey: '',
     inputValue: ''
   });
@@ -447,7 +446,6 @@ function Example() {
 
   let onSelectionChange = (key) => {
     setFieldState({
-      isOpen: false,
       inputValue: list.getItem(key)?.value.name ?? '',
       selectedKey: key
     });
@@ -455,17 +453,8 @@ function Example() {
 
   let onInputChange = (value) => {
     setFieldState(prevState => ({
-      isOpen: true,
       inputValue: value,
       selectedKey: value === '' ? null : prevState.selectedKey
-    }));
-  };
-
-  let onOpenChange = (isOpen) => {
-    setFieldState(prevState => ({
-      isOpen,
-      inputValue: prevState.inputValue,
-      selectedKey: prevState.selectedKey
     }));
   };
 
@@ -478,8 +467,6 @@ function Example() {
         defaultItems={list.items}
         selectedKey={fieldState.selectedKey}
         inputValue={fieldState.inputValue}
-        isOpen={fieldState.isOpen}
-        onOpenChange={onOpenChange}
         onSelectionChange={onSelectionChange}
         onInputChange={onInputChange}>
         {item => <Item>{item.value.name}</Item>}
@@ -875,46 +862,4 @@ For right-to-left (RTL) languages, this is flipped.
   <Item key="kangaroo">Kangaroo</Item>
   <Item key="snake">Snake</Item>
 </ComboBox>
-```
-
-### Menu state
-The open state of the menu can be controlled via the `defaultOpen` and `isOpen` props.
-
-```tsx example
-function Example() {
-  let [fieldState, setFieldState] = React.useState({
-    isOpen: false,
-    selectedKey: 'red panda'
-  });
-
-  let onSelectionChange = (key) => {
-    setFieldState({
-      isOpen: false,
-      selectedKey: key
-    });
-  };
-
-  let onOpenChange = (isOpen) => {
-    setFieldState(prevState => ({
-      isOpen: isOpen,
-      selectedKey: prevState.selectedKey
-    }));
-  };
-
-  return (
-    <ComboBox
-      label="Favorite Animal"
-      isOpen={fieldState.isOpen}
-      onOpenChange={onOpenChange}
-      selectedKey={fieldState.selectedKey}
-      onSelectionChange={onSelectionChange}>
-      <Item key="red panda">Red Panda</Item>
-      <Item key="cat">Cat</Item>
-      <Item key="dog">Dog</Item>
-      <Item key="aardvark">Aardvark</Item>
-      <Item key="kangaroo">Kangaroo</Item>
-      <Item key="snake">Snake</Item>
-    </ComboBox>
-  );
-}
 ```
