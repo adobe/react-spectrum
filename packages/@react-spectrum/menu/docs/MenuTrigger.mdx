@@ -155,24 +155,24 @@ By default, the Menu flips direction automatically upon opening when space is li
 ```tsx example
 <Flex gap="size-100">
   <MenuTrigger shouldFlip>
-    <ActionButton aria-label="More options">
-      <More />
+    <ActionButton>
+      View
+    </ActionButton>
+    <Menu>
+      <Item key="side">Side bar</Item>
+      <Item key="options">Page options</Item>
+      <Item key="edit">Edit Panel</Item>
+    </Menu>
+  </MenuTrigger>
+  <MenuTrigger shouldFlip={false}>
+    <ActionButton>
+      Edit
     </ActionButton>
     <Menu>
       <Item key="cut">Cut</Item>
       <Item key="copy">Copy</Item>
       <Item key="paste">Paste</Item>
     </Menu>
-    </MenuTrigger>
-    <MenuTrigger shouldFlip={false}>
-      <ActionButton>
-        Edit
-      </ActionButton>
-      <Menu>
-        <Item key="cut">Cut</Item>
-        <Item key="copy">Copy</Item>
-        <Item key="paste">Paste</Item>
-      </Menu>
   </MenuTrigger>
 </Flex>
 ```
