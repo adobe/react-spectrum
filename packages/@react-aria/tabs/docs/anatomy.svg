@@ -4,10 +4,10 @@
   <g id="tabs_anatomy_desktop">
     <g id="Tab" transform="translate(176 66)">
       <g id="Tab-2">
-        <text id="Section_1" transform="translate(0 35)" fill="var(--anatomy-gray-800)" font-size="17" font-family="AdobeClean-Regular, Adobe Clean"><tspan x="0" y="0">Section 1</tspan></text>
+        <text id="Section_1" transform="translate(0 35)" fill="var(--anatomy-gray-800)" font-size="17" font-family="Adobe-Clean"><tspan x="0" y="0">Section 1</tspan></text>
       </g>
       <g id="Tab-3" transform="translate(91)">
-        <text id="Section_2" transform="translate(0 35)" fill="var(--anatomy-gray-600)" font-size="17" font-family="AdobeClean-Regular, Adobe Clean"><tspan x="0" y="0">Section 2</tspan></text>
+        <text id="Section_2" transform="translate(0 35)" fill="var(--anatomy-gray-600)" font-size="17" font-family="Adobe-Clean"><tspan x="0" y="0">Section 2</tspan></text>
       </g>
       <g id="Underline" transform="translate(0 58)">
         <rect id="Bar" width="271.906" height="2" rx="1" fill="var(--anatomy-gray-200)"/>
