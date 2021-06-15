@@ -917,7 +917,7 @@ describe('useDroppableCollection', () => {
 
       userEvent.tab();
       userEvent.tab();
-      pressKey(' ')
+      pressKey(' ');
       expect(document.activeElement).toBe(cells[0]);
 
       pressKey('ArrowDown');
