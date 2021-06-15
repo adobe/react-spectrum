@@ -16,6 +16,8 @@ import packageData from '@react-spectrum/button/package.json';
 
 ```jsx import
 import {ActionButton} from '@react-spectrum/button';
+import {View} from '@react-spectrum/view';
+import {Flex} from '@react-spectrum/layout';
 ```
 
 ---
@@ -106,4 +108,28 @@ function Example() {
 
 ```tsx example
 <ActionButton isDisabled>Action!</ActionButton>
+```
+
+### Static color
+
+The `staticColor` prop can be used when an ActionButton is displayed over a color background. You are responsible for
+choosing the static color variant that ensures the text meets an
+[accessible contrast ratio](https://developer.mozilla.org/en-US/docs/Web/Accessibility/Understanding_WCAG/Perceivable/Color_contrast)
+with the background.
+
+```tsx example
+<Flex wrap gap="size-250">
+  <View backgroundColor="static-seafoam-700" padding="size-500">
+    <ActionButton staticColor="white">
+      <Edit />
+      <Text>Edit</Text>
+    </ActionButton>
+  </View>
+  <View backgroundColor="static-yellow-400" padding="size-500">
+    <ActionButton staticColor="black" isQuiet>
+      <Edit />
+      <Text>Edit</Text>
+    </ActionButton>
+  </View>
+</Flex>
 ```
