@@ -31,8 +31,7 @@ function ListItem<T>({item, state}: {item: Node<T>, state: ListState<T>}) {
         background: selected ? 'dodgerblue' : undefined,
         color: selected ? '#fff' : undefined
       }}
-      aria-selected={selected ? 'true' : undefined}
-      role="listitem">
+      aria-selected={selected ? 'true' : undefined}>
       {item.rendered}
     </li>
   );
