@@ -30,7 +30,9 @@ function ListItem<T>({item, state}: {item: Node<T>, state: ListState<T>}) {
       style={{
         background: selected ? 'dodgerblue' : undefined,
         color: selected ? '#fff' : undefined
-      }}>
+      }}
+      aria-selected={selected ? 'true' : undefined}
+      role="listitem">
       {item.rendered}
     </li>
   );
@@ -49,7 +51,7 @@ export function List<T extends object>(props: ListProps<T>) {
   });
 
   return (
-    <ul ref={ref} {...listProps}>
+    <ul ref={ref} {...listProps} role="listbox">
       {[...state.collection].map((item) => (
         <ListItem key={item.key} item={item} state={state} />
       ))}
