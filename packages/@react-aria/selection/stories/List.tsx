@@ -25,6 +25,7 @@ function ListItem<T>({item, state}: {item: Node<T>, state: ListState<T>}) {
   });
   return (
     <li
+      role="option"
       ref={ref}
       {...pressProps}
       style={{
@@ -50,7 +51,7 @@ export function List<T extends object>(props: ListProps<T>) {
   });
 
   return (
-    <ul ref={ref} {...listProps} role="listbox">
+    <ul ref={ref} {...listProps} >
       {[...state.collection].map((item) => (
         <ListItem key={item.key} item={item} state={state} />
       ))}

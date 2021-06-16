@@ -25,10 +25,10 @@ describe('useSelectableCollection', () => {
         <Item>Gerardo Nunez</Item>
       </List>
     );
-    let listitems = getAllByRole('listitem');
-    expect(listitems[0]).not.toHaveAttribute('aria-selected');
+    let options = getAllByRole('option');
+    expect(options[0]).not.toHaveAttribute('aria-selected');
     userEvent.tab();
-    expect(document.activeElement).toBe(listitems[0]);
-    expect(listitems[0]).toHaveAttribute('aria-selected', 'true');
+    expect(document.activeElement).toBe(options[0]);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
   });
 });
