@@ -412,6 +412,8 @@ describe('useDraggableCollection', () => {
       userEvent.tab();
       expect(document.activeElement).toBe(cells[0]);
 
+      fireEvent.keyDown(cells[0], {key: ' '});
+      fireEvent.keyUp(cells[0], {key: ' '});
       expect(rows[0]).toHaveAttribute('aria-selected', 'true');
 
       fireEvent.keyDown(cells[0], {key: 'ArrowDown'});
@@ -507,8 +509,6 @@ describe('useDraggableCollection', () => {
 
       userEvent.tab();
       expect(document.activeElement).toBe(cells[0]);
-      fireEvent.keyDown(cells[0], {key: ' '});
-      fireEvent.keyUp(cells[0], {key: ' '});
 
       fireEvent.keyDown(cells[0], {key: 'ArrowDown'});
       fireEvent.keyUp(cells[0], {key: 'ArrowDown'});

@@ -879,6 +879,7 @@ describe('useDroppableCollection', () => {
 
       userEvent.tab();
       userEvent.tab();
+      pressKey(' ');
       expect(document.activeElement).toBe(cells[0]);
       expect(rows[0]).toHaveAttribute('aria-selected', 'true');
 
@@ -917,7 +918,6 @@ describe('useDroppableCollection', () => {
 
       userEvent.tab();
       userEvent.tab();
-      pressKey(' ');
       expect(document.activeElement).toBe(cells[0]);
 
       pressKey('ArrowDown');
@@ -957,7 +957,6 @@ describe('useDroppableCollection', () => {
 
       userEvent.tab();
       userEvent.tab();
-      pressKey(' ');
       expect(document.activeElement).toBe(cells[0]);
 
       pressKey('ArrowDown');
@@ -997,6 +996,7 @@ describe('useDroppableCollection', () => {
 
       userEvent.tab();
       userEvent.tab();
+      pressKey(' ');
       expect(document.activeElement).toBe(cells[0]);
       expect(rows[0]).toHaveAttribute('aria-selected', 'true');
 

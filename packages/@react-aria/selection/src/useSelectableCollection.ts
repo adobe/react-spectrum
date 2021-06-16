@@ -269,7 +269,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       let navigateToFirstKey = (key: Key | undefined, childFocus?: FocusStrategy) => {
         if (key != null) {
           manager.setFocusedKey(key, childFocus);
-          manager.replaceSelection(key);
+          if (selectOnFocus) {
+            manager.replaceSelection(key);
+          }
         }
       };
       // If the user hasn't yet interacted with the collection, there will be no focusedKey set.
