@@ -134,129 +134,52 @@ storiesOf('useSelectableList', module)
     </SelectableList>
   ))
   .add(
-    'single select allow empty',
+    'single select, allow empty, select on focus',
     () => (
-      <>
-        <div>
-          <h4>Single selection allow empty</h4>
-          <ol>
-            <li>Select the first item by clicking on it</li>
-            <li>press arrow down</li>
-            <li>Second item is selected ✓</li>
-          </ol>
-          <List selectionMode="single">
-            <Item>Paco de Lucia</Item>
-            <Item>Vicente Amigo</Item>
-            <Item>Gerardo Nunez</Item>
-          </List>
-        </div>
-        <div>
-          <h4>Native selection</h4>
-          <span>there is no such native example, it's a dropdown picker</span>
-        </div>
-      </>
+      <List selectionMode="single">
+        <Item>Paco de Lucia</Item>
+        <Item>Vicente Amigo</Item>
+        <Item>Gerardo Nunez</Item>
+      </List>
     )
   )
   .add(
-    'single select no empty',
+    'single select, disallow empty selection, select on focus',
     () => (
-      <>
-        <div>
-          <h4>Single selection allow empty</h4>
-          <ol>
-            <li>Select the first item by clicking on it</li>
-            <li>press arrow down</li>
-            <li>Second item is selected ✓</li>
-          </ol>
-          <List selectionMode="single" disallowEmptySelection>
-            <Item>Paco de Lucia</Item>
-            <Item>Vicente Amigo</Item>
-            <Item>Gerardo Nunez</Item>
-          </List>
-        </div>
-        <div>
-          <h4>Native selection</h4>
-          <span>there is no such native example, it's a dropdown picker</span>
-        </div>
-      </>
+      <List selectionMode="single" disallowEmptySelection>
+        <Item>Paco de Lucia</Item>
+        <Item>Vicente Amigo</Item>
+        <Item>Gerardo Nunez</Item>
+      </List>
     )
   )
   .add(
-    'multi select replace',
+    'multi select, replace on press, select on focus',
     () => (
-      <>
-        <div>
-          <List selectionMode="multiple" selectionBehavior="replace">
-            <Item>Paco de Lucia</Item>
-            <Item>Vicente Amigo</Item>
-            <Item>Gerardo Nunez</Item>
-          </List>
-        </div>
-      </>
+      <List selectionMode="multiple" selectionBehavior="replace">
+        <Item>Paco de Lucia</Item>
+        <Item>Vicente Amigo</Item>
+        <Item>Gerardo Nunez</Item>
+      </List>
     )
   )
   .add(
-    'multi select behaviors',
-    () => render()
+    'multi select, allow empty, select on focus',
+    () => (
+      <List selectionMode="multiple">
+        <Item>Paco de Lucia</Item>
+        <Item>Vicente Amigo</Item>
+        <Item>Gerardo Nunez</Item>
+      </List>
+    )
+  )
+  .add(
+    'multi select, disallow empty, select on focus',
+    () => (
+      <List selectionMode="multiple" disallowEmptySelection>
+        <Item>Paco de Lucia</Item>
+        <Item>Vicente Amigo</Item>
+        <Item>Gerardo Nunez</Item>
+      </List>
+    )
   );
-
-function render() {
-  return (
-    <>
-      <div>
-        <h4>Multi selection</h4>
-        <ol>
-          <li>
-            Select first and second item by clicking on them (while holding
-            shift)
-          </li>
-          <li>Press arrow down (without holding shift)</li>
-          <li>
-            Third item is just focused. selection is unchanged, even though{' '}
-            <code>selectOnFocus</code> is true ❌
-          </li>
-        </ol>
-        <List selectionMode="multiple">
-          <Item>Paco de Lucia</Item>
-          <Item>Vicente Amigo</Item>
-          <Item>Gerardo Nunez</Item>
-        </List>
-      </div>
-      <div>
-        <h4>Multi selection</h4>
-        <ol>
-          <li>
-            Select first and second item by clicking on them (while holding
-            shift)
-          </li>
-          <li>Press arrow down (without holding shift)</li>
-          <li>
-            Third item is just focused. selection is unchanged, even though{' '}
-            <code>selectOnFocus</code> is true ❌
-          </li>
-        </ol>
-        <List selectionMode="multiple" disallowEmptySelection>
-          <Item>Paco de Lucia</Item>
-          <Item>Vicente Amigo</Item>
-          <Item>Gerardo Nunez</Item>
-        </List>
-      </div>
-      <div>
-        <h4>Native multi selection</h4>
-        <ol>
-          <li>
-            Select first and second item by clicking on them (while holding
-            shift)
-          </li>
-          <li>Press arrow down</li>
-          <li>Third item is selected ✓</li>
-        </ol>
-        <select multiple>
-          <option>Paco de Lucia</option>
-          <option>Vicente Amigo</option>
-          <option>Gerardo Nunez</option>
-        </select>
-      </div>
-    </>
-  );
-}

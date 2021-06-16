@@ -41,7 +41,7 @@ export interface ListState<T> {
 export function useListState<T extends object>(props: ListProps<T>): ListState<T>  {
   let {
     filter,
-    selectionBehavior
+    selectionBehavior = 'toggle'
   } = props;
 
   let selectionState = useMultipleSelectionState(props);
