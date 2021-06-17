@@ -14,11 +14,11 @@ import {GridAria, GridProps, useGrid} from '@react-aria/grid';
 import {gridIds} from './utils';
 import {Layout} from '@react-stately/virtualizer';
 import {Node} from '@react-types/shared';
+import {RefObject, useMemo} from 'react';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {TableState} from '@react-stately/table';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useId} from '@react-aria/utils';
-import {useMemo} from 'react';
 
 interface TableProps<T> extends GridProps {
   /** The layout object for the table. Computes what content is visible and how to position and style them. */
@@ -27,13 +27,14 @@ interface TableProps<T> extends GridProps {
 
 /**
  * Provides the behavior and accessibility implementation for a table component.
- * A table displays data in one or more rows and columns and enables a user to navigate its contents via directional navigation keys.
+ * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
+ * and optionally supports row selection and sorting.
  * @param props - Props for the table.
  * @param state - State for the table, as returned by `useTableState`.
+ * @param ref - The ref attached to the table element.
  */
-export function useTable<T>(props: TableProps<T>, state: TableState<T>): GridAria {
+export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: RefObject<HTMLElement>): GridAria {
   let {
-    ref,
     keyboardDelegate,
     isVirtualized,
     layout
@@ -87,7 +88,7 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>): GridAri
 
       return '';
     }
-  }, state);
+  }, state, ref);
 
   // Override to include header rows
   if (isVirtualized) {

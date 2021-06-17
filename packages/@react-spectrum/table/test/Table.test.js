@@ -1479,7 +1479,7 @@ describe('TableView', function () {
 
         expect(body.scrollTop).toBe(1000);
         expect(document.activeElement).toBe(tree.getByRole('grid'));
-        expect(cell).not.toBeInTheDocument();
+        expect(tree.queryByText('Baz 5')).toBeNull();
 
         // Moving focus should scroll the new focused item into view
         moveFocus('ArrowLeft');

@@ -74,6 +74,11 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps, context:
   };
 };
 
+/**
+ * A Row represents a single item in a Table and contains Cell elements for each column.
+ * Cells can be statically defined as children, or generated dynamically using a function
+ * based on the columns defined in the TableHeader.
+ */
 // We don't want getCollectionNode to show up in the type definition
 let _Row = Row as (props: RowProps) => JSX.Element;
 export {_Row as Row};
