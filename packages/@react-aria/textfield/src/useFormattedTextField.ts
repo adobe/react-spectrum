@@ -78,8 +78,6 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
             : input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd);
           break;
         case 'deleteSoftLineBackward':
-          nextValue = input.value.slice(input.selectionStart);
-          break;
         case 'deleteHardLineBackward':
           nextValue = input.value.slice(input.selectionStart);
           break;
