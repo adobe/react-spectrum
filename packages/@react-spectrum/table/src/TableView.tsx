@@ -33,7 +33,7 @@ import {useHover} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
-import {useTable, useTableCell, useTableColumnHeader, useTableRow, useTableRowGroup, useTableRowHeader, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
+import {useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 const DEFAULT_HEADER_HEIGHT = {
@@ -106,10 +106,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
 
   let {gridProps} = useTable({
     ...props,
-    ref: domRef,
     isVirtualized: true,
     layout
-  }, state);
+  }, state, domRef);
 
   // This overrides collection view's renderWrapper to support DOM heirarchy.
   type View = ReusableView<GridNode<T>, unknown>;
@@ -192,10 +191,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       case 'cell': {
         if (item.props.isSelectionCell) {
           return <TableCheckboxCell cell={item} />;
-        }
-
-        if (state.collection.rowHeaderColumnKeys.has(item.column.key)) {
-          return <TableRowHeader cell={item} />;
         }
 
         return <TableCell cell={item} />;
@@ -390,10 +385,8 @@ function TableColumnHeader({column}) {
   let state = useTableContext();
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
-    ref,
-    colspan: column.colspan,
     isVirtualized: true
-  }, state);
+  }, state, ref);
 
   let columnProps = column.props as SpectrumColumnProps<unknown>;
   let {hoverProps, isHovered} = useHover({});
@@ -443,12 +436,8 @@ function TableSelectAllCell({column}) {
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
-    ref,
-    colspan: column.colspan,
-    isVirtualized: true,
-    // Disable click from focusing the div for selectionMode = "single" since there won't be a "Select All" checkbox available
-    isDisabled: isSingleSelectionMode
-  }, state);
+    isVirtualized: true
+  }, state, ref);
 
   let {checkboxProps} = useTableSelectAllCheckbox(state);
   let {hoverProps, isHovered} = useHover({});
@@ -457,7 +446,6 @@ function TableSelectAllCell({column}) {
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
         {...mergeProps(columnHeaderProps, hoverProps)}
-        aria-disabled={isSingleSelectionMode}
         ref={ref}
         className={
           classNames(
@@ -495,16 +483,14 @@ function TableRow({item, children, ...otherProps}) {
   let state = useTableContext();
   let allowsSelection = state.selectionManager.selectionMode !== 'none';
   let isDisabled = state.disabledKeys.has(item.key);
-  let isSelected = state.selectionManager.isSelected(item.key) && !isDisabled;
+  let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps} = useTableRow({
     node: item,
-    isSelected,
-    ref,
-    isVirtualized: true,
-    isDisabled
-  }, state);
+    isVirtualized: true
+  }, state, ref);
 
   let {pressProps, isPressed} = usePress({isDisabled});
+
   // The row should show the focus background style when any cell inside it is focused.
   // If the row itself is focused, then it should have a blue focus indicator on the left.
   let {
@@ -545,10 +531,13 @@ function TableRow({item, children, ...otherProps}) {
   );
 }
 
-function TableHeaderRow({item, children, ...otherProps}) {
-  // TODO: move to react-aria?
+function TableHeaderRow({item, children, style}) {
+  let state = useTableContext();
+  let ref = useRef();
+  let {rowProps} = useTableHeaderRow({node: item, isVirtualized: true}, state, ref);
+
   return (
-    <div role="row" aria-rowindex={item.index + 1} {...otherProps}>
+    <div {...rowProps} ref={ref} style={style}>
       {children}
     </div>
   );
@@ -560,18 +549,10 @@ function TableCheckboxCell({cell}) {
   let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
-    ref,
-    isVirtualized: true,
-    isDisabled
-  }, state);
+    isVirtualized: true
+  }, state, ref);
 
-  let {checkboxProps} = useTableSelectionCheckbox(
-    {
-      key: cell.parentKey,
-      isDisabled
-    },
-    state
-  );
+  let {checkboxProps} = useTableSelectionCheckbox({key: cell.parentKey}, state);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -604,53 +585,20 @@ function TableCheckboxCell({cell}) {
 }
 
 function TableCell({cell}) {
-  let ref = useRef();
   let state = useTableContext();
+  let ref = useRef();
+  let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
   let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
-    ref,
-    isVirtualized: true,
-    isDisabled
-  }, state);
-
-  return (
-    <TableCellBase
-      {...gridCellProps}
-      cell={cell}
-      cellRef={ref} />
-  );
-}
-
-function TableRowHeader({cell}) {
-  let ref = useRef();
-  let state = useTableContext();
-  let isDisabled = state.disabledKeys.has(cell.parentKey);
-  let {rowHeaderProps} = useTableRowHeader({
-    node: cell,
-    ref,
-    isVirtualized: true,
-    isDisabled
-  }, state);
-
-  return (
-    <TableCellBase
-      {...rowHeaderProps}
-      cell={cell}
-      cellRef={ref} />
-  );
-}
-
-function TableCellBase({cell, cellRef, ...otherProps}) {
-  let state = useTableContext();
-  let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
-  let isDisabled = state.disabledKeys.has(cell.parentKey);
+    isVirtualized: true
+  }, state, ref);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
-        {...otherProps}
-        ref={cellRef}
+        {...gridCellProps}
+        ref={ref}
         className={
           classNames(
             styles,
