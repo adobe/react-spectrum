@@ -266,9 +266,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     manager.setFocused(true);
 
     if (manager.focusedKey == null) {
-      let navigateToFirstKey = (key: Key | undefined, childFocus?: FocusStrategy) => {
+      let navigateToFirstKey = (key: Key | undefined) => {
         if (key != null) {
-          manager.setFocusedKey(key, childFocus);
+          manager.setFocusedKey(key);
           if (selectOnFocus) {
             manager.replaceSelection(key);
           }
