@@ -3809,6 +3809,57 @@ describe('TableView', function () {
         expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
       }
     });
+
+    it('should update the row widths when removing and adding columns', function () {
+      function compareWidths(row, b) {
+        let newWidth = row.childNodes[1].style.width;
+        expect(parseInt(newWidth, 10)).toBeGreaterThan(parseInt(b, 10));
+        return newWidth;
+      }
+
+      let tree = render(<HidingColumns />);
+      let table = tree.getByRole('grid');
+      let columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(6);
+
+      let rows = tree.getAllByRole('row');
+      let oldWidth = rows[1].childNodes[1].style.width;
+
+      let audienceCheckbox = tree.getByLabelText('Audience Type');
+      let budgetCheckbox = tree.getByLabelText('Net Budget');
+      let targetCheckbox = tree.getByLabelText('Target OTP');
+      let reachCheckbox = tree.getByLabelText('Reach');
+
+      userEvent.click(audienceCheckbox);
+      expect(audienceCheckbox.checked).toBe(false);
+      act(() => jest.runAllTimers());
+      oldWidth = compareWidths(rows[1], oldWidth);
+
+      userEvent.click(budgetCheckbox);
+      expect(budgetCheckbox.checked).toBe(false);
+      act(() => jest.runAllTimers());
+      oldWidth = compareWidths(rows[1], oldWidth);
+
+      userEvent.click(targetCheckbox);
+      expect(targetCheckbox.checked).toBe(false);
+      act(() => jest.runAllTimers());
+      oldWidth = compareWidths(rows[1], oldWidth);
+
+      // This previously failed, the first column wouldn't update its width
+      // when the 2nd to last column was removed
+      userEvent.click(reachCheckbox);
+      expect(reachCheckbox.checked).toBe(false);
+      act(() => jest.runAllTimers());
+      oldWidth = compareWidths(rows[1], oldWidth);
+      columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(2);
+
+      // Readd the column and check that the width decreases
+      userEvent.click(audienceCheckbox);
+      expect(audienceCheckbox.checked).toBe(true);
+      act(() => jest.runAllTimers());
+      expect(parseInt(rows[1].childNodes[1].style.width, 10)).toBeLessThan(parseInt(oldWidth, 10));
+    });
   });
 
   describe('headerless columns', function () {
