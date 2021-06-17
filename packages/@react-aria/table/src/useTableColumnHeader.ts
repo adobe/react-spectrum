@@ -11,9 +11,9 @@
  */
 
 import {getColumnHeaderId} from './utils';
+import {GridNode} from '@react-types/grid';
 import {HTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
-import {Node} from '@react-types/shared';
 import {TableState} from '@react-stately/table';
 import {useFocusable} from '@react-aria/focus';
 import {useGridCell} from '@react-aria/grid';
@@ -22,15 +22,9 @@ import {usePress} from '@react-aria/interactions';
 
 interface ColumnHeaderProps {
   /** An object representing the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader). Contains all the relevant information that makes up the column header. */
-  node: Node<unknown>,
-  /** The ref attached to the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader). */
-  ref: RefObject<HTMLElement>,
+  node: GridNode<unknown>,
   /** Whether the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) is contained in a virtual scroller. */
-  isVirtualized?: boolean,
-  /** The number of columns the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) should span. */
-  colspan?: number,
-  /** Whether the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) is disabled. */
-  isDisabled?: boolean
+  isVirtualized?: boolean
 }
 
 interface ColumnHeaderAria {
@@ -42,13 +36,15 @@ interface ColumnHeaderAria {
  * Provides the behavior and accessibility implementation for a column header in a table.
  * @param props - Props for the column header.
  * @param state - State of the table, as returned by `useTableState`.
+ * @param ref - The ref attached to the column header element.
  */
-export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>): ColumnHeaderAria {
-  let {node, colspan, ref, isDisabled} = props;
-  let {gridCellProps} = useGridCell(props, state);
+export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>, ref: RefObject<HTMLElement>): ColumnHeaderAria {
+  let {node} = props;
+  let {gridCellProps} = useGridCell(props, state, ref);
 
+  let isSelectionCellDisabled = node.props.isSelectionCell && state.selectionManager.selectionMode === 'single';
   let {pressProps} = usePress({
-    isDisabled: !node.props.allowsSorting || isDisabled,
+    isDisabled: !node.props.allowsSorting || isSelectionCellDisabled,
     onPress() {
       state.sort(node.key);
     }
@@ -66,8 +62,9 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
       ...mergeProps(gridCellProps, pressProps, focusableProps),
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),
-      'aria-colspan': colspan && colspan > 1 ? colspan : null,
-      'aria-sort': ariaSort
+      'aria-colspan': node.colspan && node.colspan > 1 ? node.colspan : null,
+      'aria-sort': ariaSort,
+      'aria-disabled': isSelectionCellDisabled || undefined
     }
   };
 }

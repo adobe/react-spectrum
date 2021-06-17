@@ -24,12 +24,8 @@ import {useSelectableItem} from '@react-aria/selection';
 interface GridCellProps {
   /** An object representing the grid cell. Contains all the relevant information that makes up the grid cell. */
   node: RSNode<unknown>,
-  /** The ref attached to the grid cell element. */
-  ref: RefObject<HTMLElement>,
   /** Whether the grid cell is contained in a virtual scroller. */
   isVirtualized?: boolean,
-  /** Whether the grid cell is disabled. */
-  isDisabled?: boolean,
   /** Whether the cell or its first focusable child element should be focused when the grid cell is focused. */
   focusMode?: 'child' | 'cell',
   /** Whether selection should occur on press up instead of press down. */
@@ -46,12 +42,10 @@ interface GridCellAria {
  * @param props - Props for the cell.
  * @param state - State of the parent grid, as returned by `useGridState`.
  */
-export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps, state: GridState<T, C>): GridCellAria {
+export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps, state: GridState<T, C>, ref: RefObject<HTMLElement>): GridCellAria {
   let {
     node,
-    ref,
     isVirtualized,
-    isDisabled,
     focusMode = 'child',
     shouldSelectOnPressUp
   } = props;
@@ -88,6 +82,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   });
 
   // TODO: move into useSelectableItem?
+  let isDisabled = state.disabledKeys.has(node.key) || state.disabledKeys.has(node.parentKey);
   let {pressProps} = usePress({...itemProps, isDisabled});
 
   let onKeyDown = (e: ReactKeyboardEvent) => {
