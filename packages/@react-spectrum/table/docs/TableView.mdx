@@ -85,43 +85,40 @@ which dramatically improves performance. Make sure that each rendered property i
 property within each Row object.
 
 ```tsx example
-function Example() {
-  let columns = [
-    {name: 'Name', uid: 'name'},
-    {name: 'Type', uid: 'type'},
-    {name: 'Date Modified', uid: 'date'}
-  ];
+let columns = [
+  {name: 'Name', uid: 'name'},
+  {name: 'Type', uid: 'type'},
+  {name: 'Date Modified', uid: 'date'}
+];
 
-  let rows = [
-    {id: '1', name: 'Games', date: '6/7/2020', type: 'File folder'},
-    {id: '2', name: 'Program Files', date: '4/7/2021', type: 'File folder'},
-    {id: '3', name: 'bootmgr', date: '11/20/2010', type: 'System file'},
-    {id: '4', name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
-  ];
+let rows = [
+  {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
+  {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+  {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+  {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+];
 
-  return (
-    <Flex flexGrow={1} maxWidth="size-6000">
-      <TableView aria-label="Example table with dynamic content" width="100%" height="100%">
-        <TableHeader columns={columns}>
-          {column => (
-            <Column key={column.uid} align={column.uid === 'date' ? 'end' : 'start'}>
-              {column.name}
-            </Column>
-          )}
-        </TableHeader>
-        <TableBody items={rows}>
-          {item => (
-            <Row key={item.id}>
-              {/* Note this key is equal to the key of the the column,
-              not the key set on the Row prior */}
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>
-          )}
-        </TableBody>
-      </TableView>
-    </Flex>
-  );
-}
+<TableView
+  aria-label="Example table with dynamic content"
+  height="size-3000"
+  maxWidth="size-6000">
+  <TableHeader columns={columns}>
+    {column => (
+      <Column
+        key={column.uid}
+        align={column.uid === 'date' ? 'end' : 'start'}>
+        {column.name}
+      </Column>
+    )}
+  </TableHeader>
+  <TableBody items={rows}>
+    {item => (
+      <Row>
+        {columnKey => <Cell>{item[columnKey]}</Cell>}
+      </Row>
+    )}
+  </TableBody>
+</TableView>
 ```
 
 ### Internationalization
@@ -224,50 +221,50 @@ function AsyncTable() {
 }
 ```
 
-## Events
 
-### Selection
-TableView supports multiple selection modes. By default, selection is disabled, but this can be modified using the `selectionMode` prop.
+## Selection
+
+By default, TableView doesn't allow row selection but this can be enabled using the `selectionMode` prop.
 Use `defaultSelectedKeys` to provide a default set of selected rows. Note that the value of the selected keys must match the `key` prop of the Row.
 
-The example below uses `defaultSelectedKeys` to select the row with key equal to "2".
+The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the rows with keys "2" and "4".
 
 ```tsx example
-<Flex flexGrow={1} maxWidth="size-6000">
-  <TableView aria-label="Example table with single selection (uncontrolled)" width="100%" height="100%" selectionMode="single" defaultSelectedKeys={['2']}>
-    <TableHeader>
-      <Column>Name</Column>
-      <Column>Type</Column>
-      <Column align="end">Level</Column>
-    </TableHeader>
-    <TableBody>
-      <Row key="1">
-        <Cell>Charizard</Cell>
-        <Cell>Fire, Flying</Cell>
-        <Cell>67</Cell>
-      </Row>
-      <Row key="2">
-        <Cell>Blastoise</Cell>
-        <Cell>Water</Cell>
-        <Cell>56</Cell>
-      </Row>
-      <Row key="3">
-        <Cell>Venusaur</Cell>
-        <Cell>Grass, Poison</Cell>
-        <Cell>83</Cell>
-      </Row>
-      <Row key="4">
-        <Cell>Pikachu</Cell>
-        <Cell>Electric</Cell>
-        <Cell>100</Cell>
-      </Row>
-    </TableBody>
-  </TableView>
-</Flex>
+<TableView aria-label="Example table with multiple selection" maxWidth="size-6000" height="size-3000" selectionMode="multiple" defaultSelectedKeys={['2', '4']}>
+  <TableHeader>
+    <Column>Name</Column>
+    <Column>Type</Column>
+    <Column align="end">Level</Column>
+  </TableHeader>
+  <TableBody>
+    <Row key="1">
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </Row>
+    <Row key="2">
+      <Cell>Blastoise</Cell>
+      <Cell>Water</Cell>
+      <Cell>56</Cell>
+    </Row>
+    <Row key="3">
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </Row>
+    <Row key="4">
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </Row>
+  </TableBody>
+</TableView>
 ```
 
-To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `key` prop from the selected row will
-be passed into the callback when the row is pressed, allowing you to update `selectedKeys` accordingly.
+### Controlled selection
+
+To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `key` prop from the selected rows will
+be passed into the callback when the row is pressed, allowing you to update state accordingly.
 
 Here is how you would control selection for the above example.
 
@@ -280,121 +277,117 @@ function PokemonTable(props) {
   ];
 
   let rows = [
-    {id: '1', name: 'Charizard', type: 'Fire, Flying', level: '67'},
-    {id: '2', name: 'Blastoise', type: 'Water', level: '56'},
-    {id: '3', name: 'Venusaur', type: 'Grass, Poison', level: '83'},
-    {id: '4', name: 'Pikachu', type: 'Electric', level: '100'}
+    {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
+    {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
+    {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+    {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
   ];
 
-  let [selected, setSelected] = React.useState(new Set(['2']));
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
 
   return (
-    <Flex flexGrow={1} maxWidth="size-6000">
-      <TableView aria-label="Example table with single selection (controlled)" width="100%" height="100%" selectionMode="single" selectedKeys={selected} onSelectionChange={setSelected} {...props}>
-        <TableHeader columns={columns}>
-          {column => (
-            <Column key={column.uid} align={column.uid === 'level' ? 'end' : 'start'}>
-              {column.name}
-            </Column>
-          )}
-        </TableHeader>
-        <TableBody items={rows}>
-          {item => (
-            <Row key={item.id}>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>
-          )}
-        </TableBody>
-      </TableView>
-    </Flex>
+    <TableView aria-label="Table with controlled selection" maxWidth="size-6000" height="size-3000" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column key={column.uid} align={column.uid === 'level' ? 'end' : 'start'}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
   );
 }
 ```
 
-Multiple selection can be enabled by setting `selectionMode` to `multiple`.
+### Single selection
+
+To limit users to selecting only a single item at a time, `selectionMode` can be set to `single`.
 
 ```tsx example
 // Using the same table as above
-<PokemonTable selectionMode="multiple" />
+<PokemonTable selectionMode="single" />
 ```
+
+### Disallow empty selection
 
 TableView also supports a `disallowEmptySelection` prop which forces the user to have at least one row in the TableView selected at all times.
+In this mode, if a single row is selected and the user presses it, it will not be deselected.
 
 ```tsx example
 // Using the same table as above
-<PokemonTable selectionMode="single" disallowEmptySelection />
+<PokemonTable disallowEmptySelection />
 ```
 
-### Sorting
+### Disabled rows
+
+You can disable specific rows by providing an array of keys to TableView via the `disabledKeys` prop. This will prevent rows from being
+selectable as shown in the example below.
+
+```tsx example
+// Using the same table as above
+<PokemonTable selectionMode="multiple" disabledKeys={[3]} />
+```
+
+## Sorting
+
 TableView supports sorting its data when a column header is pressed. To designate that a Column should support sorting, provide it with
-the `allowsSorting` prop. The TableView accepts a `SortDescriptor` prop that defines the current column key to sort by and the sort direction (ascending/descending).
-When the user presses a column's sort icon, the column's key and sort direction is passed into the `onSortChange` callback, allowing you to update
-the `SortDescriptor` appropriately.
+the `allowsSorting` prop. The TableView accepts a `sortDescriptor` prop that defines the current column key to sort by and the sort direction (ascending/descending).
+When the user presses a sortable column header, the column's key and sort direction is passed into the `onSortChange` callback, allowing you to update
+the `sortDescriptor` appropriately.
 
 This example performs client side sorting by passing a `sort` function to the [useAsyncList](../react-stately/useAsyncList.html) hook.
 See the docs for more information on how to perform server side sorting.
 
 ```tsx example
 function AsyncSortTable() {
-  let columns = [
-    {name: 'Name', key: 'name'},
-    {name: 'Height', key: 'height'},
-    {name: 'Mass', key: 'mass'},
-    {name: 'Birth Year', key: 'birth_year'}
-  ];
-
   let list = useAsyncList({
     async load({signal}) {
       let res = await fetch(`https://swapi.dev/api/people/?search`, {signal});
       let json = await res.json();
-
       return {
         items: json.results
       };
     },
     async sort({items, sortDescriptor}) {
-      let sorted = items.sort((a, b) => {
-        let cmp;
-        let first = a[sortDescriptor.column].replace("BBY", "");
-        let second = b[sortDescriptor.column].replace("BBY", "");
-
-        if (+first || +second) {
-          cmp = +first < +second ? -1 : 1;
-        } else {
-          cmp = first <= second ? -1 : 1;
-        }
-
-        if (sortDescriptor.direction === 'descending') {
-          cmp *= -1;
-        }
-        return cmp;
-      });
-
       return {
-        items: sorted
+        items: items.sort((a, b) => {
+          let first = a[sortDescriptor.column];
+          let second = b[sortDescriptor.column];
+          let cmp = (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
+          if (sortDescriptor.direction === 'descending') {
+            cmp *= -1;
+          }
+          return cmp;
+        })
       };
     }
   });
 
   return (
-    <Flex height="size-2000" flexGrow={1} maxWidth="size-6000">
-      <TableView aria-label="Example table with client side sorting" height="100%" width="100%" sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
-        <TableHeader columns={columns}>
-          {(column) => (
-            <Column allowsSorting align={column.key !== 'name' ? 'end' : 'start'}>
-              {column.name}
-            </Column>
-          )}
-        </TableHeader>
-        <TableBody
-          items={list.items}
-          loadingState={list.loadingState}>
-          {(item) => (
-            <Row key={item.name}>{(key) => <Cell>{item[key]}</Cell>}</Row>
-          )}
-        </TableBody>
-      </TableView>
-    </Flex>
+    <TableView aria-label="Example table with client side sorting" height="size-3000" maxWidth="size-6000" sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
+      <TableHeader>
+        <Column key="name" allowsSorting>Name</Column>
+        <Column key="height" allowsSorting>Height</Column>
+        <Column key="mass" allowsSorting>Mass</Column>
+        <Column key="birth_year" allowsSorting>Birth Year</Column>
+      </TableHeader>
+      <TableBody
+        items={list.items}
+        loadingState={list.loadingState}>
+        {item => (
+          <Row key={item.name}>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
   );
 }
 ```
@@ -557,40 +550,6 @@ Columns support three different width props: `minWidth`, `width`, and `maxWidth`
 </Flex>
 ```
 
-### Nested columns
-TableView supports nesting columns, allowing you to render "tiered" column headers.
-
-```tsx example
-<Flex flexGrow={1} maxWidth="size-4600">
-  <TableView aria-label="Example table for nested columns" width="100%" height="100%">
-    <TableHeader>
-      <Column title="OS (C:)">
-        <Column align="start">Name</Column>
-        <Column>Type</Column>
-        <Column align="end">Size</Column>
-      </Column>
-    </TableHeader>
-    <TableBody>
-      <Row>
-        <Cell>2021406_Proposal</Cell>
-        <Cell>PDF</Cell>
-        <Cell>86 KB</Cell>
-      </Row>
-      <Row>
-        <Cell>Budget Template</Cell>
-        <Cell>XLS</Cell>
-        <Cell>120 KB</Cell>
-      </Row>
-      <Row>
-        <Cell>Onboarding</Cell>
-        <Cell>PPT</Cell>
-        <Cell>472 KB</Cell>
-      </Row>
-    </TableBody>
-  </TableView>
-</Flex>
-```
-
 ### Focusable cells
 Cells accept any renderable node, allowing you to have focusable children within the TableView.
 
@@ -723,14 +682,6 @@ function TableExample(props) {
 <TableExample isQuiet />
 ```
 
-### Disabled
-Use the `disabledKeys` prop to specify which rows to disable selection for in the TableView.
-
-```tsx example
-// Using same setup as hide header example
-<TableExample disabledKeys={['2', '3']} selectionMode="single" />
-```
-
 ### Density
 The amount of vertical padding that each row contains can be modified by providing the `density` prop.
 
@@ -783,4 +734,89 @@ function renderEmptyState() {
     </TableBody>
   </TableView>
 </Flex>
+```
+
+### Nested columns
+
+TableView supports nesting columns, allowing you to create column groups, or "tiered" column headers.
+
+```tsx example
+<TableView aria-label="Example table for nested columns" maxWidth="size-6000" height="size-3000">
+  <TableHeader>
+    <Column title="Name">
+      <Column isRowHeader>First Name</Column>
+      <Column isRowHeader>Last Name</Column>
+    </Column>
+    <Column title="Information">
+      <Column>Age</Column>
+      <Column>Birthday</Column>
+    </Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Sam</Cell>
+      <Cell>Smith</Cell>
+      <Cell>36</Cell>
+      <Cell>May 3</Cell>
+    </Row>
+    <Row>
+      <Cell>Julia</Cell>
+      <Cell>Jones</Cell>
+      <Cell>24</Cell>
+      <Cell>February 10</Cell>
+    </Row>
+    <Row>
+      <Cell>Peter</Cell>
+      <Cell>Parker</Cell>
+      <Cell>28</Cell>
+      <Cell>September 7</Cell>
+    </Row>
+    <Row>
+      <Cell>Bruce</Cell>
+      <Cell>Wayne</Cell>
+      <Cell>32</Cell>
+      <Cell>December 18</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+```
+
+Nested columns can also be defined dynamically using the function syntax and the `childColumns` prop.
+The following example is the same as the example above, but defined dynamically.
+
+```tsx example
+let columns = [
+  {name: 'Name', key: 'name', children: [
+    {name: 'First Name', key: 'first', isRowHeader: true},
+    {name: 'Last Name', key: 'last', isRowHeader: true}
+  ]},
+  {name: 'Information', key: 'info', children: [
+    {name: 'Age', key: 'age'},
+    {name: 'Birthday', key: 'birthday'}
+  ]}
+];
+
+let rows = [
+  {id: 1, first: 'Sam', last: 'Smith', age: 36, birthday: 'May 3'},
+  {id: 2, first: 'Julia', last: 'Jones', age: 24, birthday: 'February 10'},
+  {id: 3, first: 'Peter', last: 'Parker', age: 28, birthday: 'September 7'},
+  {id: 4, first: 'Bruce', last: 'Wayne', age: 32, birthday: 'December 18'}
+];
+
+<TableView aria-label="Example table for nested columns" maxWidth="size-6000" height="size-3000">
+  <TableHeader columns={columns}>
+    {column => (
+      <Column isRowHeader={column.isRowHeader} childColumns={column.children}>
+        {column.name}
+      </Column>
+    )}
+  </TableHeader>
+  <TableBody items={rows}>
+    {item => (
+      <Row>
+        {columnKey => <Cell>{item[columnKey]}</Cell>}
+      </Row>
+    )}
+  </TableBody>
+</TableView>
 ```
