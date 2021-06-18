@@ -82,7 +82,7 @@ describe('DialogTrigger', function () {
   });
 
   it('should trigger a tray', function () {
-    let {getByRole, getByTestId} = render(
+    let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="tray">
           <ActionButton>Trigger</ActionButton>
@@ -91,9 +91,7 @@ describe('DialogTrigger', function () {
       </Provider>
     );
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
     triggerPress(button);
@@ -110,7 +108,7 @@ describe('DialogTrigger', function () {
   });
 
   it('should trigger a popover', function () {
-    let {getByRole, getByTestId} = render(
+    let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover">
           <ActionButton>Trigger</ActionButton>
@@ -119,9 +117,7 @@ describe('DialogTrigger', function () {
       </Provider>
     );
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
     triggerPress(button);
@@ -180,7 +176,7 @@ describe('DialogTrigger', function () {
 
   it('should trigger a modal instead of a popover on mobile', function () {
     matchMedia.useMediaQuery('(max-width: 700px)');
-    let {getByRole, getByTestId} = render(
+    let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover">
           <ActionButton>Trigger</ActionButton>
@@ -189,9 +185,7 @@ describe('DialogTrigger', function () {
       </Provider>
     );
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
     triggerPress(button);
@@ -209,7 +203,7 @@ describe('DialogTrigger', function () {
 
   it('should trigger a tray instead of a popover on mobile if mobileType="tray"', function () {
     matchMedia.useMediaQuery('(max-width: 700px)');
-    let {getByRole, getByTestId} = render(
+    let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover" mobileType="tray">
           <ActionButton>Trigger</ActionButton>
@@ -218,9 +212,7 @@ describe('DialogTrigger', function () {
       </Provider>
     );
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
     triggerPress(button);
@@ -415,11 +407,9 @@ describe('DialogTrigger', function () {
     }
 
     let onOpenChange = jest.fn();
-    let {getByRole, rerender} = render(<Test isOpen={false} onOpenChange={onOpenChange} />);
+    let {getByRole, queryByRole, rerender} = render(<Test isOpen={false} onOpenChange={onOpenChange} />);
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
     triggerPress(button);
@@ -428,9 +418,7 @@ describe('DialogTrigger', function () {
       jest.runAllTimers();
     });
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(true);
 
@@ -728,7 +716,7 @@ describe('DialogTrigger', function () {
   });
 
   it('disable closing dialog via escape key', async function () {
-    let {getByRole} = render(
+    let {queryByRole, getByRole} = render(
       <Provider theme={theme}>
         <DialogTrigger isKeyboardDismissDisabled>
           <ActionButton>Trigger</ActionButton>
@@ -772,12 +760,12 @@ describe('DialogTrigger', function () {
       jest.runAllTimers();
     });
 
-    expect(() => getByRole('dialog')).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
   });
 
   it('should warn when unmounting a dialog trigger while a modal is open', function () {
     let warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    let {getByRole} = render(
+    let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
         <MenuTrigger>
           <ActionButton>Trigger</ActionButton>
@@ -806,9 +794,9 @@ describe('DialogTrigger', function () {
       jest.runAllTimers();
     });
 
-    expect(() => getByRole('menu')).toThrow();
-    expect(() => getByRole('menuitem')).toThrow();
-    expect(() => getByRole('dialog')).toThrow();
+    expect(queryByRole('menu')).toBeNull();
+    expect(queryByRole('menuitem')).toBeNull();
+    expect(queryByRole('dialog')).toBeNull();
 
     expect(warn).toHaveBeenCalledTimes(1);
     expect(warn).toHaveBeenCalledWith('A DialogTrigger unmounted while open. This is likely due to being placed within a trigger that unmounts or inside a conditional. Consider using a DialogContainer instead.');

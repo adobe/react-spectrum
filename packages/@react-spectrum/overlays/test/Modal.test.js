@@ -18,7 +18,7 @@ import {theme} from '@react-spectrum/theme-default';
 
 describe('Modal', function () {
   it('should render nothing if isOpen is not set', function () {
-    let {getByRole} = render(
+    let {queryByRole} = render(
       <Provider theme={theme}>
         <Modal>
           <div role="dialog">contents</div>
@@ -26,9 +26,7 @@ describe('Modal', function () {
       </Provider>
     );
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
     expect(document.documentElement).not.toHaveStyle('overflow: hidden');
   });
 
