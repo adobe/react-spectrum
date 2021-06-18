@@ -14,6 +14,7 @@ import {act, fireEvent, render} from '@testing-library/react';
 import {FocusScope, useFocusManager} from '../';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import userEvent from '@testing-library/user-event';
 
 describe('FocusScope', function () {
   beforeEach(() => {
@@ -41,22 +42,22 @@ describe('FocusScope', function () {
       act(() => {input1.focus();});
       expect(document.activeElement).toBe(input1);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      userEvent.tab();
       expect(document.activeElement).toBe(input2);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      userEvent.tab();
       expect(document.activeElement).toBe(input3);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      userEvent.tab();
       expect(document.activeElement).toBe(input1);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+      userEvent.tab({shift: true});
       expect(document.activeElement).toBe(input3);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+      userEvent.tab({shift: true});
       expect(document.activeElement).toBe(input2);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+      userEvent.tab({shift: true});
       expect(document.activeElement).toBe(input1);
     });
 
@@ -80,22 +81,22 @@ describe('FocusScope', function () {
       act(() => {input1.focus();});
       expect(document.activeElement).toBe(input1);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      userEvent.tab();
       expect(document.activeElement).toBe(input2);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      userEvent.tab();
       expect(document.activeElement).toBe(input3);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      userEvent.tab();
       expect(document.activeElement).toBe(input1);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+      userEvent.tab({shift: true});
       expect(document.activeElement).toBe(input3);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+      userEvent.tab({shift: true});
       expect(document.activeElement).toBe(input2);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+      userEvent.tab({shift: true});
       expect(document.activeElement).toBe(input1);
     });
 
@@ -105,6 +106,10 @@ describe('FocusScope', function () {
           <input data-testid="input1" />
           <div />
           <input data-testid="input2" />
+          <input data-testid="hiddenInput1" hidden />
+          <input style={{display: 'none'}} />
+          <input style={{visibility: 'hidden'}} />
+          <input style={{visibility: 'collapse'}} />
           <div tabIndex={-1} />
           <input disabled tabIndex={0} />
           <input data-testid="input3" />
@@ -118,22 +123,22 @@ describe('FocusScope', function () {
       act(() => {input1.focus();});
       expect(document.activeElement).toBe(input1);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      userEvent.tab();
       expect(document.activeElement).toBe(input2);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      userEvent.tab();
       expect(document.activeElement).toBe(input3);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      userEvent.tab();
       expect(document.activeElement).toBe(input1);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+      userEvent.tab({shift: true});
       expect(document.activeElement).toBe(input3);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+      userEvent.tab({shift: true});
       expect(document.activeElement).toBe(input2);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+      userEvent.tab({shift: true});
       expect(document.activeElement).toBe(input1);
     });
 
@@ -161,11 +166,17 @@ describe('FocusScope', function () {
           <FocusScope contain>
             <input data-testid="input1" />
             <input data-testid="input2" />
+            <input style={{display: 'none'}} />
+            <input style={{visibility: 'hidden'}} />
+            <input style={{visibility: 'collapse'}} />
             <input data-testid="input3" />
           </FocusScope>
           <FocusScope contain>
             <input data-testid="input4" />
             <input data-testid="input5" />
+            <input style={{display: 'none'}} />
+            <input style={{visibility: 'hidden'}} />
+            <input style={{visibility: 'collapse'}} />
             <input data-testid="input6" />
           </FocusScope>
         </div>
@@ -181,43 +192,43 @@ describe('FocusScope', function () {
       act(() => {input1.focus();});
       expect(document.activeElement).toBe(input1);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      userEvent.tab();
       expect(document.activeElement).toBe(input2);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      userEvent.tab();
       expect(document.activeElement).toBe(input3);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      userEvent.tab();
       expect(document.activeElement).toBe(input1);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+      userEvent.tab({shift: true});
       expect(document.activeElement).toBe(input3);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+      userEvent.tab({shift: true});
       expect(document.activeElement).toBe(input2);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+      userEvent.tab({shift: true});
       expect(document.activeElement).toBe(input1);
 
       act(() => {input4.focus();});
       expect(document.activeElement).toBe(input4);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      userEvent.tab();
       expect(document.activeElement).toBe(input5);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      userEvent.tab();
       expect(document.activeElement).toBe(input6);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      userEvent.tab();
       expect(document.activeElement).toBe(input4);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+      userEvent.tab({shift: true});
       expect(document.activeElement).toBe(input6);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+      userEvent.tab({shift: true});
       expect(document.activeElement).toBe(input5);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+      userEvent.tab({shift: true});
       expect(document.activeElement).toBe(input4);
     });
 
@@ -241,7 +252,7 @@ describe('FocusScope', function () {
       fireEvent.focusIn(input1); // jsdom doesn't fire this automatically
       expect(document.activeElement).toBe(input1);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      userEvent.tab();
       fireEvent.focusIn(input2);
       expect(document.activeElement).toBe(input2);
 
@@ -270,7 +281,7 @@ describe('FocusScope', function () {
       fireEvent.focusIn(input1); // jsdom doesn't fire this automatically
       expect(document.activeElement).toBe(input1);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      userEvent.tab();
       fireEvent.focusIn(input2);
       expect(document.activeElement).toBe(input2);
 
@@ -371,7 +382,7 @@ describe('FocusScope', function () {
       let input3 = getByTestId('input3');
       act(() => {input3.focus();});
 
-      fireEvent.keyDown(input3, {key: 'Tab'});
+      userEvent.tab();
       expect(document.activeElement).toBe(getByTestId('after'));
     });
 
@@ -403,7 +414,7 @@ describe('FocusScope', function () {
       let input1 = getByTestId('input1');
       expect(document.activeElement).toBe(input1);
 
-      fireEvent.keyDown(input1, {key: 'Tab', shiftKey: true});
+      userEvent.tab({shift: true});
       expect(document.activeElement).toBe(getByTestId('before'));
     });
 
@@ -438,7 +449,7 @@ describe('FocusScope', function () {
       let input3 = getByTestId('input3');
       act(() => {input3.focus();});
 
-      fireEvent.keyDown(input3, {key: 'Tab'});
+      userEvent.tab();
       expect(document.activeElement).toBe(getByTestId('after'));
     });
   });
@@ -554,6 +565,9 @@ describe('FocusScope', function () {
           <FocusScope>
             <Item data-testid="item1" tabIndex={0} />
             <Item data-testid="item2" tabIndex={-1} />
+            <Item style={{display: 'none'}} />
+            <Item style={{visibility: 'hidden'}} />
+            <Item style={{visibility: 'collapse'}} />
             <Item data-testid="item3" tabIndex={0} />
           </FocusScope>
         );
@@ -576,6 +590,50 @@ describe('FocusScope', function () {
 
       fireEvent.click(item1);
       expect(document.activeElement).toBe(item3);
+    });
+
+    it('should move focus forward but only to tabbable elements while accounting for container elements within the scope', function () {
+      function Test() {
+        return (
+          <FocusScope>
+            <Group data-testid="group1">
+              <Item data-testid="item1" tabIndex={-1} />
+              <Item data-testid="item2" tabIndex={0} />
+              <Item style={{display: 'none'}} />
+            </Group>
+            <Group data-testid="group2">
+              <Item style={{visibility: 'hidden'}} />
+              <Item style={{visibility: 'collapse'}} />
+              <Item data-testid="item3" tabIndex={0} />
+            </Group>
+          </FocusScope>
+        );
+      }
+
+      function Item(props) {
+        return <div {...props} role="button" />;
+      }
+
+      function Group(props) {
+        let focusManager = useFocusManager();
+        let onMouseDown = e => {
+          focusManager.focusNext({from: e.target, tabbable: true});
+        };
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+        return <div {...props} role="group" onMouseDown={onMouseDown} />;
+      }
+
+      let {getByTestId} = render(<Test />);
+      let group1 = getByTestId('group1');
+      let group2 = getByTestId('group2');
+      let item2 = getByTestId('item2');
+      let item3 = getByTestId('item3');
+
+      fireEvent.mouseDown(group2);
+      expect(document.activeElement).toBe(item3);
+
+      fireEvent.mouseDown(group1);
+      expect(document.activeElement).toBe(item2);
     });
 
     it('should move focus backward', function () {
@@ -658,6 +716,9 @@ describe('FocusScope', function () {
           <FocusScope>
             <Item data-testid="item1" tabIndex={0} />
             <Item data-testid="item2" tabIndex={-1} />
+            <Item style={{display: 'none'}} />
+            <Item style={{visibility: 'hidden'}} />
+            <Item style={{visibility: 'collapse'}} />
             <Item data-testid="item3" tabIndex={0} />
           </FocusScope>
         );
@@ -681,7 +742,54 @@ describe('FocusScope', function () {
       fireEvent.click(item3);
       expect(document.activeElement).toBe(item1);
     });
+
+    it('should move focus backward but only to tabbable elements while accounting for container elements within the scope', function () {
+      function Test() {
+        return (
+          <FocusScope>
+            <Group data-testid="group1">
+              <Item data-testid="item1" tabIndex={0} />
+              <Item data-testid="item2" tabIndex={-1} />
+              <Item style={{display: 'none'}} />
+            </Group>
+            <Group data-testid="group2">
+              <Item style={{visibility: 'hidden'}} />
+              <Item style={{visibility: 'collapse'}} />
+              <Item data-testid="item3" tabIndex={0} />
+            </Group>
+          </FocusScope>
+        );
+      }
+
+      function Item(props) {
+        return <div {...props} role="button" />;
+      }
+
+      function Group(props) {
+        let focusManager = useFocusManager();
+        let onMouseDown = e => {
+          focusManager.focusPrevious({from: e.target, tabbable: true});
+        };
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+        return <div {...props} role="group" onMouseDown={onMouseDown} />;
+      }
+
+      let {getByTestId} = render(<Test />);
+      let group1 = getByTestId('group1');
+      let group2 = getByTestId('group2');
+      let item1 = getByTestId('item1');
+
+      fireEvent.mouseDown(group2);
+      expect(document.activeElement).toBe(item1);
+
+      fireEvent.mouseDown(group1);
+      // focus should remain unchanged, 
+      // because there is no focusable element in scope before group1,
+      // and wrap is false
+      expect(document.activeElement).toBe(item1);
+    });
   });
+
   describe('nested focus scopes', function () {
     it('should make child FocusScopes the active scope regardless of DOM structure', function () {
       function ChildComponent(props) {
@@ -719,6 +827,34 @@ describe('FocusScope', function () {
       act(() => {input3.focus();});
       fireEvent.focusIn(input3);
       expect(document.activeElement).toBe(input3);
+    });
+  });
+
+  describe('scope child of document.body', function () {
+    it('should navigate in and out of scope in DOM order when the nodeToRestore is the document.body', function () {
+      function Test() {
+        return (
+          <div>
+            <input data-testid="beforeScope" />
+            <FocusScope>
+              <input data-testid="inScope" />
+            </FocusScope>
+            <input data-testid="afterScope" />
+          </div>
+        );
+      }
+
+      let {getByTestId} = render(<Test />);
+      let beforeScope = getByTestId('beforeScope');
+      let inScope = getByTestId('inScope');
+      let afterScope = getByTestId('afterScope');
+
+      act(() => {inScope.focus();});
+      userEvent.tab();
+      expect(document.activeElement).toBe(afterScope);
+      act(() => {inScope.focus();});
+      userEvent.tab({shift: true});
+      expect(document.activeElement).toBe(beforeScope);
     });
   });
 });

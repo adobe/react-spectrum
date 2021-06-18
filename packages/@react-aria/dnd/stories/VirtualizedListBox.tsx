@@ -42,19 +42,19 @@ export function VirtualizedListBoxExample(props) {
     ]
   });
 
+  let ref = React.useRef(null);
+
   let onDrop = async (e: DroppableCollectionDropEvent) => {
     if (e.target.type === 'root' || e.target.dropPosition !== 'on') {
       let items = [];
       for (let item of e.items) {
         if (item.kind === 'text') {
           let type: string;
-          if (props.accept) {
-            if (item.types.has(props.accept)) {
-              type = props.accept;
-            }
-          } else if (item.types.has('folder')) {
+          if (props.accept && item.types.has(props.accept)) {
+            type = props.accept;
+          } else if (!props.accept && item.types.has('folder')) {
             type = 'folder';
-          } else if (item.types.has('item')) {
+          } else if (!props.accept && item.types.has('item')) {
             type = 'item';
           }
 
@@ -81,7 +81,7 @@ export function VirtualizedListBoxExample(props) {
   };
 
   return (
-    <VirtualizedListBox items={list.items} onDrop={onDrop} accept={props.accept}>
+    <VirtualizedListBox items={list.items} onDrop={onDrop} accept={props.accept} ref={ref}>
       {item => (
         <Item textValue={item.text}>
           {item.type === 'folder' && <Folder size="S" />}
@@ -95,10 +95,17 @@ export function VirtualizedListBoxExample(props) {
 const Context = React.createContext(null);
 const acceptedTypes = ['item', 'folder'];
 
-export function VirtualizedListBox(props) {
-  let ref = React.useRef<HTMLDivElement>(null);
+export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
+  let domRef = React.useRef<HTMLDivElement>(null);
   let onDrop = action('onDrop');
   let state = useListState({...props, selectionMode: 'multiple'});
+
+  React.useImperativeHandle(ref, () => ({
+    focusItem(key) {
+      state.selectionManager.setFocusedKey(key);
+      state.selectionManager.setFocused(true);
+    }
+  }));
 
   let dropState = useDroppableCollectionState({
     collection: state.collection,
@@ -131,6 +138,8 @@ export function VirtualizedListBox(props) {
     new ListLayout<unknown>({
       estimatedRowHeight: 32,
       padding: 8,
+      loaderHeight: 40,
+      placeholderHeight: 32,
       collator
     })
   , [collator]);
@@ -152,8 +161,8 @@ export function VirtualizedListBox(props) {
       let closestDistance = Infinity;
       let closestDir = null;
 
-      x += ref.current.scrollLeft;
-      y += ref.current.scrollTop;
+      x += domRef.current.scrollLeft;
+      y += domRef.current.scrollTop;
       let visible = layout.getVisibleLayoutInfos(new Rect(x - 50, y - 50, x + 50, y + 50));
 
       for (let layoutInfo of visible) {
@@ -190,21 +199,21 @@ export function VirtualizedListBox(props) {
         };
       }
     }
-  }, dropState, ref);
+  }, dropState, domRef);
 
   let {listBoxProps} = useListBox({
     ...props,
     'aria-label': 'List',
     keyboardDelegate: layout,
     isVirtualized: true
-  }, state, ref);
+  }, state, domRef);
   let isDropTarget = dropState.isDropTarget({type: 'root'});
 
   return (
     <Context.Provider value={{state, dropState}}>
       <Virtualizer
         {...mergeProps(collectionProps, listBoxProps)}
-        ref={ref}
+        ref={domRef}
         className={classNames(dndStyles, 'droppable-collection', 'is-virtualized', {'is-drop-target': isDropTarget})}
         sizeToFit="height"
         scrollDirection="vertical"
@@ -232,7 +241,7 @@ export function VirtualizedListBox(props) {
       </Virtualizer>
     </Context.Provider>
   );
-}
+});
 
 function CollectionItem({item}) {
   let {state, dropState} = React.useContext(Context);

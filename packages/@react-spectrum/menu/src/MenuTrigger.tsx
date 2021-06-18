@@ -35,7 +35,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
     align = 'start',
     shouldFlip = true,
     direction = 'bottom',
-    closeOnSelect = true
+    closeOnSelect
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
@@ -43,12 +43,26 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
 
   let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, menuTriggerRef);
 
+  let initialPlacement: Placement;
+  switch (direction) {
+    case 'left':
+    case 'right':
+    case 'start':
+    case 'end':
+      initialPlacement = `${direction} ${align === 'end' ? 'bottom' : 'top'}` as Placement;
+      break;
+    case 'bottom':
+    case 'top':
+    default:
+      initialPlacement = `${direction} ${align}` as Placement;
+  }
+
   let isMobile = useIsMobileDevice();
   let {overlayProps: positionProps, placement} = useOverlayPosition({
     targetRef: menuTriggerRef,
     overlayRef: useUnwrapDOMRef(menuPopoverRef),
     scrollRef: menuRef,
-    placement: `${direction} ${align}` as Placement,
+    placement: initialPlacement,
     shouldFlip: shouldFlip,
     isOpen: state.isOpen && !isMobile,
     onClose: state.close

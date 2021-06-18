@@ -27,6 +27,8 @@ export class TableLayout<T> extends ListLayout<T> {
   columnWidths: Map<Key, number>;
   stickyColumnIndices: number[];
   getDefaultWidth: (props) => string | number;
+  wasLoading = false;
+  isLoading = false;
 
   constructor(options: TableLayoutOptions<T>) {
     super(options);
@@ -44,6 +46,11 @@ export class TableLayout<T> extends ListLayout<T> {
       // Invalidate everything in this layout pass. Will be reset in ListLayout on the next pass.
       this.invalidateEverything = true;
     }
+
+    // Track whether we were previously loading. This is used to adjust the animations of async loading vs inserts.
+    let loadingState = this.collection.body.props.loadingState;
+    this.wasLoading = this.isLoading;
+    this.isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
     this.buildColumnWidths();
     let header = this.buildHeader();
@@ -65,7 +72,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let remainingSpace = this.virtualizer.visibleRect.width;
     for (let column of this.collection.columns) {
       let props = column.props as ColumnProps<T>;
-      let width = props.width ?? props.defaultWidth ?? this.getDefaultWidth(props);
+      let width = props.width ?? this.getDefaultWidth(props);
       if (width != null) {
         let w = this.parseWidth(width);
         this.columnWidths.set(column.key, w);
@@ -239,8 +246,7 @@ export class TableLayout<T> extends ListLayout<T> {
       children.push(layoutNode);
     }
 
-    // TODO: not show the spinner at the bottom when sorting?
-    if (this.collection.body.props.isLoading) {
+    if (this.isLoading) {
       let rect = new Rect(0, y, width || this.virtualizer.visibleRect.width, children.length === 0 ? this.virtualizer.visibleRect.height : 60);
       let loader = new LayoutInfo('loader', 'loader', rect);
       loader.parentKey = 'body';
@@ -405,5 +411,16 @@ export class TableLayout<T> extends ListLayout<T> {
     }
 
     return Math.max(0, Math.min(items.length - 1, low));
+  }
+
+  getInitialLayoutInfo(layoutInfo: LayoutInfo) {
+    let res = super.getInitialLayoutInfo(layoutInfo);
+
+    // If this insert was the result of async loading, remove the zoom effect and just keep the fade in.
+    if (this.wasLoading) {
+      res.transform = null;
+    }
+
+    return res;
   }
 }

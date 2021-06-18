@@ -11,21 +11,27 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
-import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from './CRUDExample';
 import Delete from '@spectrum-icons/workflow/Delete';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from './HidingColumns';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
-import React from 'react';
+import {Radio, RadioGroup} from '@react-spectrum/radio';
+import React, {Key, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
+import {SelectionMode} from '@react-types/shared';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
+import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
 import {View} from '@react-spectrum/view';
@@ -89,11 +95,11 @@ function renderEmptyState() {
 }
 
 let onSelectionChange = action('onSelectionChange');
-storiesOf('Table', module)
+storiesOf('TableView', module)
   .add(
     'static',
     () => (
-      <Table aria-label="Table with static contents" width={300} height={200}>
+      <TableView aria-label="TableView with static contents" width={300} height={200}>
         <TableHeader>
           <Column key="foo">Foo</Column>
           <Column key="bar">Bar</Column>
@@ -111,13 +117,13 @@ storiesOf('Table', module)
             <Cell>Three</Cell>
           </Row>
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
     'static with selection',
     () => (
-      <Table aria-label="Table with static contents" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView aria-label="TableView with static contents" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column key="foo">Foo</Column>
           <Column key="bar">Bar</Column>
@@ -135,13 +141,13 @@ storiesOf('Table', module)
             <Cell>Three</Cell>
           </Row>
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
     'dynamic',
     () => (
-      <Table aria-label="Table with dynamic contents" width={300} height={200}>
+      <TableView aria-label="TableView with dynamic contents" width={300} height={200}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -152,13 +158,13 @@ storiesOf('Table', module)
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
     'dynamic with selection',
     () => (
-      <Table aria-label="Table with dynamic contents" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView aria-label="TableView with dynamic contents" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -169,13 +175,13 @@ storiesOf('Table', module)
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
     'dynamic with single selection',
     () => (
-      <Table aria-label="Table with dynamic contents" selectionMode="single" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView aria-label="TableView with dynamic contents" selectionMode="single" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -186,13 +192,13 @@ storiesOf('Table', module)
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
     'dynamic with disabled, single selection',
     () => (
-      <Table disabledKeys={['Foo 1', 'Foo 3']} aria-label="Table with dynamic contents" selectionMode="single" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView disabledKeys={['Foo 1', 'Foo 3']} aria-label="TableView with dynamic contents" selectionMode="single" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -203,13 +209,13 @@ storiesOf('Table', module)
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
     'dynamic with disabled, multiple selection',
     () => (
-      <Table disabledKeys={['Foo 1', 'Foo 3']} aria-label="Table with dynamic contents" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView disabledKeys={['Foo 1', 'Foo 3']} aria-label="TableView with dynamic contents" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -220,13 +226,13 @@ storiesOf('Table', module)
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
     'dynamic with disabled, multiple selection, quiet',
     () => (
-      <Table isQuiet disabledKeys={['Foo 1', 'Foo 3']} aria-label="Table with dynamic contents" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView isQuiet disabledKeys={['Foo 1', 'Foo 3']} aria-label="TableView with dynamic contents" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -237,13 +243,20 @@ storiesOf('Table', module)
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
+    )
+  )
+  .add(
+    // For testing https://github.com/adobe/react-spectrum/issues/1885
+    'swap selection mode',
+    () => (
+      <ChangableSelectionMode />
     )
   )
   .add(
     'static with nested columns',
     () => (
-      <Table aria-label="Table with nested columns" selectionMode="multiple" width={500} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView aria-label="TableView with nested columns" selectionMode="multiple" width={500} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column key="test">Test</Column>
           <Column title="Group 1">
@@ -268,13 +281,13 @@ storiesOf('Table', module)
             <Cell>Three</Cell>
           </Row>
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
     'dynamic with nested columns',
     () => (
-      <Table aria-label="Table with nested columns" selectionMode="multiple" width={700} height={300} overflowMode="wrap" onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView aria-label="TableView with nested columns" selectionMode="multiple" width={700} height={300} overflowMode="wrap" onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={nestedColumns}>
           {column =>
             <Column childColumns={column.children}>{column.name}</Column>
@@ -287,7 +300,7 @@ storiesOf('Table', module)
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
@@ -295,7 +308,7 @@ storiesOf('Table', module)
     () => (
       <Flex direction="column">
         <input placeholder="Focusable before" />
-        <Table aria-label="Table with focusable cells" selectionMode="multiple" width={450} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableView aria-label="TableView with focusable cells" selectionMode="multiple" width={450} height={200} onSelectionChange={s => onSelectionChange([...s])}>
           <TableHeader>
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
@@ -318,7 +331,7 @@ storiesOf('Table', module)
               <Cell>Three</Cell>
             </Row>
           </TableBody>
-        </Table>
+        </TableView>
         <input placeholder="Focusable after" />
       </Flex>
     )
@@ -326,7 +339,7 @@ storiesOf('Table', module)
   .add(
     'many columns and rows',
     () => (
-      <Table aria-label="Table with many columns and rows" selectionMode="multiple" width={700} height={500} onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView aria-label="TableView with many columns and rows" selectionMode="multiple" width={700} height={500} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={manyColunns}>
           {column =>
             <Column minWidth={100}>{column.name}</Column>
@@ -339,14 +352,14 @@ storiesOf('Table', module)
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     ),
     {chromatic: {disable: true}}
   )
   .add(
     'isQuiet, many columns and rows',
     () => (
-      <Table aria-label="Quiet table with many columns and rows" selectionMode="multiple" width={700} height={500} isQuiet onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView aria-label="Quiet TableView with many columns and rows" selectionMode="multiple" width={700} height={500} isQuiet onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={manyColunns}>
           {column =>
             <Column minWidth={100}>{column.name}</Column>
@@ -359,14 +372,14 @@ storiesOf('Table', module)
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     ),
     {chromatic: {disable: true}}
   )
   .add(
     'column widths and dividers',
     () => (
-      <Table aria-label="Table with column widths and dividers" selectionMode="multiple" width={500} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView aria-label="TableView with column widths and dividers" selectionMode="multiple" width={500} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column width={250} showDivider>File Name</Column>
           <Column>Type</Column>
@@ -384,13 +397,13 @@ storiesOf('Table', module)
             <Cell>120 KB</Cell>
           </Row>
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
     'isQuiet, column widths and dividers',
     () => (
-      <Table aria-label="Quiet table with column widths and dividers" selectionMode="multiple" width={500} height={200} isQuiet onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView aria-label="Quiet TableView with column widths and dividers" selectionMode="multiple" width={500} height={200} isQuiet onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column width={250} showDivider>File Name</Column>
           <Column>Type</Column>
@@ -408,13 +421,13 @@ storiesOf('Table', module)
             <Cell>120 KB</Cell>
           </Row>
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
     'density="compact"',
     () => (
-      <Table aria-label="Table with custom row height" selectionMode="multiple" width={500} height={200} isQuiet density="compact" onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView aria-label="TableView with custom row height" selectionMode="multiple" width={500} height={200} isQuiet density="compact" onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column width={250} showDivider>File Name</Column>
           <Column>Type</Column>
@@ -432,13 +445,13 @@ storiesOf('Table', module)
             <Cell>120 KB</Cell>
           </Row>
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
     'density="spacious"',
     () => (
-      <Table aria-label="Table with custom row height" selectionMode="multiple" width={500} height={200} isQuiet density="spacious" onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView aria-label="TableView with custom row height" selectionMode="multiple" width={500} height={200} isQuiet density="spacious" onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column width={250} showDivider>File Name</Column>
           <Column>Type</Column>
@@ -456,13 +469,13 @@ storiesOf('Table', module)
             <Cell>120 KB</Cell>
           </Row>
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
     'overflowMode="wrap"',
     () => (
-      <Table aria-label="Table with variable row heights" selectionMode="multiple" width={500} height={300} isQuiet overflowMode="wrap" onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView aria-label="TableView with variable row heights" selectionMode="multiple" width={500} height={300} isQuiet overflowMode="wrap" onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column width={250} showDivider>File Name</Column>
           <Column>Type</Column>
@@ -480,13 +493,13 @@ storiesOf('Table', module)
             <Cell>120 KB</Cell>
           </Row>
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
     'overflowMode="wrap", density="compact"',
     () => (
-      <Table aria-label="Table with variable row heights" selectionMode="multiple" width={500} height={300} isQuiet overflowMode="wrap" density="compact" onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView aria-label="TableView with variable row heights" selectionMode="multiple" width={500} height={300} isQuiet overflowMode="wrap" density="compact" onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column width={250} showDivider>File Name</Column>
           <Column>Type</Column>
@@ -504,13 +517,13 @@ storiesOf('Table', module)
             <Cell>120 KB</Cell>
           </Row>
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
     'overflowMode="wrap", density="spacious"',
     () => (
-      <Table aria-label="Table with variable row heights" selectionMode="multiple" width={500} height={300} isQuiet overflowMode="wrap" density="spacious" onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView aria-label="TableView with variable row heights" selectionMode="multiple" width={500} height={300} isQuiet overflowMode="wrap" density="spacious" onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column width={250} showDivider>File Name</Column>
           <Column>Type</Column>
@@ -528,13 +541,13 @@ storiesOf('Table', module)
             <Cell>120 KB</Cell>
           </Row>
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
     'custom isRowHeader labeling',
     () => (
-      <Table aria-label="Table with custom row header labeling" selectionMode="multiple" width={500} height={200} isQuiet onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView aria-label="TableView with custom row header labeling" selectionMode="multiple" width={500} height={200} isQuiet onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column isRowHeader>First Name</Column>
           <Column isRowHeader>Last Name</Column>
@@ -552,7 +565,7 @@ storiesOf('Table', module)
             <Cell>February 10</Cell>
           </Row>
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
@@ -570,45 +583,64 @@ storiesOf('Table', module)
   .add(
     'isLoading',
     () => (
-      <Table aria-label="Table loading" width={700} height={200}>
+      <TableView aria-label="TableView loading" width={700} height={200}>
         <TableHeader columns={manyColunns}>
           {column =>
             <Column minWidth={100}>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={[]} isLoading>
+        <TableBody items={[]} loadingState="loading">
           {item =>
             (<Row key={item.foo}>
               {key => <Cell>{item[key]}</Cell>}
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
     'isLoading more',
     () => (
-      <Table aria-label="Table loading more" width={700} height={200}>
+      <TableView aria-label="TableView loading more" width={700} height={200}>
         <TableHeader columns={columns}>
           {column =>
             <Column minWidth={100}>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={items} isLoading>
+        <TableBody items={items} loadingState="loadingMore">
           {item =>
             (<Row key={item.foo}>
               {key => <Cell>{item[key]}</Cell>}
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
+    )
+  )
+  .add(
+    'filtering',
+    () => (
+      <TableView aria-label="Table filtering" width={700} height={200}>
+        <TableHeader columns={columns}>
+          {column =>
+            <Column minWidth={100}>{column.name}</Column>
+          }
+        </TableHeader>
+        <TableBody items={items} loadingState="filtering">
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
     )
   )
   .add(
     'renderEmptyState',
     () => (
-      <Table aria-label="Table with empty state" width={700} height={400} isQuiet renderEmptyState={renderEmptyState}>
+      <TableView aria-label="TableView with empty state" width={700} height={400} isQuiet renderEmptyState={renderEmptyState}>
         <TableHeader columns={manyColunns}>
           {column =>
             <Column minWidth={100}>{column.name}</Column>
@@ -617,7 +649,7 @@ storiesOf('Table', module)
         <TableBody>
           {[]}
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
@@ -628,8 +660,8 @@ storiesOf('Table', module)
   .add(
     'hideHeader',
     () => (
-      <Table
-        aria-label="Table with static contents"
+      <TableView
+        aria-label="TableView with static contents"
         width={350}
         height={200}>
         <TableHeader>
@@ -737,7 +769,7 @@ storiesOf('Table', module)
             <Cell>Three</Cell>
           </Row>
         </TableBody>
-      </Table>
+      </TableView>
     )
   )
   .add(
@@ -754,6 +786,42 @@ storiesOf('Table', module)
     'loads more on scroll when contentSize.height < rect.height * 2',
     () => <AsyncServerFilterTable height={500} />,
     {chromatic: {disable: true}}
+  )
+  .add(
+    'with dialog trigger',
+    () => (
+      <TableView aria-label="TableView with static contents" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column key="foo">Foo</Column>
+          <Column key="bar">Bar</Column>
+          <Column key="baz">Baz</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>Two</Cell>
+            <Cell>
+              <DialogTrigger>
+                <ActionButton aria-label="Add"><Add /></ActionButton>
+                {close => (
+                  <Dialog>
+                    <Heading>The Heading</Heading>
+                    <Divider />
+                    <Content>
+                      <TextField label="Last Words" />
+                    </Content>
+                    <ButtonGroup>
+                      <Button variant="secondary" onPress={close}>Cancel</Button>
+                      <Button variant="cta" onPress={close}>Confirm</Button>
+                    </ButtonGroup>
+                  </Dialog>
+                )}
+              </DialogTrigger>
+            </Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
   );
 
 function AsyncLoadingExample() {
@@ -793,14 +861,14 @@ function AsyncLoadingExample() {
   return (
     <div>
       <ActionButton marginBottom={10} onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
-      <Table aria-label="Top news from Reddit" selectionMode="multiple" width={1000} height={400} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
+      <TableView aria-label="Top news from Reddit" selectionMode="multiple" width={1000} height={400} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
         <TableHeader>
           <Column key="score" width={100} allowsSorting>Score</Column>
           <Column key="title" isRowHeader allowsSorting>Title</Column>
           <Column key="author" width={200} allowsSorting>Author</Column>
           <Column key="num_comments" width={100} allowsSorting>Comments</Column>
         </TableHeader>
-        <TableBody items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
+        <TableBody items={list.items} loadingState={list.loadingState} onLoadMore={list.loadMore}>
           {item =>
             (<Row key={item.data.id}>
               {key =>
@@ -811,7 +879,7 @@ function AsyncLoadingExample() {
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     </div>
   );
 }
@@ -900,7 +968,7 @@ function ProjectListTable() {
         value={filterText}
         onChange={(onChange)} />
       <View flexGrow={1} height={700} overflow="hidden">
-        <Table
+        <TableView
           aria-label={'Project list'}
           height={'100%'}
           isQuiet
@@ -914,12 +982,12 @@ function ProjectListTable() {
           </TableHeader>
           <TableBody
             items={filteredItems}
-            isLoading={list.isLoading}>
+            loadingState={list.loadingState}>
             {(item) => (
               <Row key={item.id}>{(key) => <Cell>{item[key]}</Cell>}</Row>
             )}
           </TableBody>
-        </Table>
+        </TableView>
       </View>
     </>
   );
@@ -980,7 +1048,7 @@ function AsyncServerFilterTable(props) {
         placeholder={'Search by name'}
         defaultValue={list.filterText}
         onChange={(onChange)} />
-      <Table
+      <TableView
         aria-label={'Star Wars Characters'}
         height={200}
         width={600}
@@ -996,13 +1064,39 @@ function AsyncServerFilterTable(props) {
         </TableHeader>
         <TableBody
           items={list.items}
-          isLoading={list.isLoading}
+          loadingState={list.loadingState}
           onLoadMore={list.loadMore}>
           {(item) => (
             <Row key={item.name}>{(key) => <Cell>{item[key]}</Cell>}</Row>
           )}
         </TableBody>
-      </Table>
+      </TableView>
     </div>
+  );
+}
+
+function ChangableSelectionMode() {
+  let [selectionMode, setSelectionMode] = useState('none' as SelectionMode);
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([]) as 'all' | Iterable<Key>);
+
+  return (
+    <Flex direction="column" flexGrow={1} maxWidth="size-6000">
+      <RadioGroup defaultValue="none" onChange={(value: SelectionMode) => setSelectionMode(value)} label="Show / Hide">
+        <Radio value="multiple">Multiple</Radio>
+        <Radio value="none">None</Radio>
+      </RadioGroup>
+      <TableView overflowMode="wrap" selectionMode={selectionMode} selectedKeys={selectedKeys} aria-label="TableView with controlled selection" width="100%" height="100%" onSelectionChange={setSelectedKeys}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    </Flex>
   );
 }

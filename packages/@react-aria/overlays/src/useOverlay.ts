@@ -46,7 +46,9 @@ interface OverlayProps {
 
 interface OverlayAria {
   /** Props to apply to the overlay container element. */
-  overlayProps: HTMLAttributes<HTMLElement>
+  overlayProps: HTMLAttributes<HTMLElement>,
+  /** Props to apply to the underlay element, if any. */
+  underlayProps: HTMLAttributes<HTMLElement>
 }
 
 const visibleOverlays: RefObject<HTMLElement>[] = [];
@@ -57,7 +59,14 @@ const visibleOverlays: RefObject<HTMLElement>[] = [];
  * or optionally, on blur. Only the top-most overlay will close at once.
  */
 export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): OverlayAria {
-  let {onClose, shouldCloseOnBlur, isOpen, isDismissable = false, isKeyboardDismissDisabled = false, shouldCloseOnInteractOutside} = props;
+  let {
+    onClose,
+    shouldCloseOnBlur,
+    isOpen,
+    isDismissable = false,
+    isKeyboardDismissDisabled = false,
+    shouldCloseOnInteractOutside
+  } = props;
 
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
   useEffect(() => {
@@ -80,8 +89,21 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
     }
   };
 
+  let onInteractOutsideStart = (e: SyntheticEvent<HTMLElement>) => {
+    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as HTMLElement)) {
+      if (visibleOverlays[visibleOverlays.length - 1] === ref) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
+    }
+  };
+
   let onInteractOutside = (e: SyntheticEvent<HTMLElement>) => {
     if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as HTMLElement)) {
+      if (visibleOverlays[visibleOverlays.length - 1] === ref) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
       onHide();
     }
   };
@@ -95,7 +117,7 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
   };
 
   // Handle clicking outside the overlay to close it
-  useInteractOutside({ref, onInteractOutside: isDismissable ? onInteractOutside : null});
+  useInteractOutside({ref, onInteractOutside: isDismissable ? onInteractOutside : null, onInteractOutsideStart});
 
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !shouldCloseOnBlur,
@@ -106,10 +128,20 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
     }
   });
 
+  let onPointerDownUnderlay = e => {
+    // fixes a firefox issue that starts text selection https://bugzilla.mozilla.org/show_bug.cgi?id=1675846
+    if (e.target === e.currentTarget) {
+      e.preventDefault();
+    }
+  };
+
   return {
     overlayProps: {
       onKeyDown,
       ...focusWithinProps
+    },
+    underlayProps: {
+      onPointerDown: onPointerDownUnderlay
     }
   };
 }

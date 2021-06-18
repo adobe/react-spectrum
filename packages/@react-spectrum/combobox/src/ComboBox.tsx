@@ -58,7 +58,8 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: Focusa
 
   let isMobile = useIsMobileDevice();
   if (isMobile) {
-    return <MobileComboBox {...props} ref={ref} />;
+    // menuTrigger=focus/manual don't apply to mobile combobox
+    return <MobileComboBox {...props} menuTrigger="input" ref={ref} />;
   } else {
     return <ComboBoxBase {...props} ref={ref} />;
   }
@@ -161,7 +162,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
         ref={popoverRef}
         placement={placement}
         hideArrow
-        isNonModal>
+        isNonModal
+        isDismissable={false}>
         <ListBoxBase
           ref={listBoxRef}
           domProps={listBoxProps}
@@ -191,7 +193,8 @@ interface ComboBoxInputProps extends SpectrumComboBoxProps<unknown> {
   triggerProps: AriaButtonProps,
   triggerRef: RefObject<FocusableRefValue<HTMLElement>>,
   style?: React.CSSProperties,
-  className?: string
+  className?: string,
+  isOpen?: boolean
 }
 
 const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInputProps, ref: RefObject<HTMLElement>) {
@@ -307,9 +310,9 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
           isDisabled={isDisabled}
           isQuiet={isQuiet}
           validationState={validationState}
-          // loading circle should only be displayed if menu is open or if menuTrigger is "manual" (to stop circle from showing up when user selects an option)
+          // loading circle should only be displayed if menu is open, if menuTrigger is "manual", or first time load (to stop circle from showing up when user selects an option)
           // TODO: add special case for completionMode: complete as well
-          isLoading={showLoading && (isOpen || menuTrigger === 'manual')}
+          isLoading={showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading')}
           loadingIndicator={loadingState != null && loadingCircle} />
         <PressResponder preventFocusOnPress isPressed={isOpen}>
           <FieldButton

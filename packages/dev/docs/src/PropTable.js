@@ -75,11 +75,11 @@ const GROUPS = {
   ]
 };
 
-export function PropTable({component, links}) {
+export function PropTable({component, links, style}) {
   let [ungrouped, groups] = groupProps(component.props.properties);
 
   return (
-    <>
+    <div style={style}>
       <TypeContext.Provider value={links}>
         <InterfaceType properties={ungrouped} showRequired showDefault isComponent />
         {Object.keys(groups).map(group => (
@@ -92,7 +92,7 @@ export function PropTable({component, links}) {
           </details>
         ))}
       </TypeContext.Provider>
-    </>
+    </div>
   );
 }
 

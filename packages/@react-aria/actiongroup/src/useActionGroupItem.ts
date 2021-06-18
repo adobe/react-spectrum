@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, Key, RefObject} from 'react';
+import {HTMLAttributes, Key, RefObject, useEffect, useRef} from 'react';
 import {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
-import {useSelectableItem} from '@react-aria/selection';
+import {PressProps} from '@react-aria/interactions';
 
 interface ActionGroupItemProps {
   key: Key
 }
 
 interface ActionGroupItemAria {
-  buttonProps: HTMLAttributes<HTMLElement>
+  buttonProps: HTMLAttributes<HTMLElement> & PressProps
 }
 
 const BUTTON_ROLES = {
@@ -29,7 +29,8 @@ const BUTTON_ROLES = {
   'multiple': 'checkbox'
 };
 
-export function useActionGroupItem<T>(props: ActionGroupItemProps, state: ListState<T>, ref: RefObject<HTMLElement>): ActionGroupItemAria {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function useActionGroupItem<T>(props: ActionGroupItemProps, state: ListState<T>, ref?: RefObject<HTMLElement>): ActionGroupItemAria {
   let selectionMode = state.selectionManager.selectionMode;
   let buttonProps = {
     role: BUTTON_ROLES[selectionMode]
@@ -40,13 +41,29 @@ export function useActionGroupItem<T>(props: ActionGroupItemProps, state: ListSt
     buttonProps['aria-checked'] = isSelected;
   }
 
-  let {itemProps} = useSelectableItem({
-    selectionManager: state.selectionManager,
-    key: props.key,
-    ref
-  });
+  let isFocused = props.key === state.selectionManager.focusedKey;
+  let lastRender = useRef({isFocused, state});
+  lastRender.current = {isFocused, state};
+
+  // If the focused item is removed from the DOM, reset the focused key to null.
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => {
+      if (lastRender.current.isFocused) {
+        lastRender.current.state.selectionManager.setFocusedKey(null);
+      }
+    };
+  }, []);
 
   return {
-    buttonProps: mergeProps(itemProps, buttonProps)
+    buttonProps: mergeProps(buttonProps, {
+      tabIndex: isFocused || state.selectionManager.focusedKey == null ? 0 : -1,
+      onFocus() {
+        state.selectionManager.setFocusedKey(props.key);
+      },
+      onPress() {
+        state.selectionManager.select(props.key);
+      }
+    })
   };
 }

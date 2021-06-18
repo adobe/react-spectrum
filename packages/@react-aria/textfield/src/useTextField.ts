@@ -17,7 +17,7 @@ import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {useFocusable} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
 
-interface TextFieldAria {
+export interface TextFieldAria {
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
   /** Props for the text field's visible label element (if any). */

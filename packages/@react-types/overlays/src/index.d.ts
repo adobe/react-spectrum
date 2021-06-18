@@ -90,7 +90,8 @@ export interface PopoverProps extends StyleProps, OverlayProps {
   isOpen?: boolean,
   onClose?: () => void,
   shouldCloseOnBlur?: boolean,
-  isNonModal?: boolean
+  isNonModal?: boolean,
+  isDismissable?: boolean
 }
 
 export interface TrayProps extends StyleProps, OverlayProps {

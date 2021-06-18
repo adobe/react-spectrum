@@ -15,7 +15,7 @@ import React from 'react';
 import {render, waitFor} from '@testing-library/react';
 
 describe('ariaHideOutside', function () {
-  it('should hide everything except the provided element', function () {
+  it('should hide everything except the provided element [button]', function () {
     let {getByRole, getAllByRole} = render(
       <>
         <input type="checkbox" />
@@ -323,7 +323,7 @@ describe('ariaHideOutside', function () {
     expect(() => getByRole('button')).not.toThrow();
   });
 
-  it('should hide everything except the provided element', function () {
+  it('should hide everything except the provided element [row]', function () {
     let {getAllByRole} = render(
       <div role="grid">
         <div role="row">
