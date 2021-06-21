@@ -58,7 +58,8 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: Focusa
 
   let isMobile = useIsMobileDevice();
   if (isMobile) {
-    return <MobileComboBox {...props} ref={ref} />;
+    // menuTrigger=focus/manual don't apply to mobile combobox
+    return <MobileComboBox {...props} menuTrigger="input" ref={ref} />;
   } else {
     return <ComboBoxBase {...props} ref={ref} />;
   }
@@ -161,7 +162,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
         ref={popoverRef}
         placement={placement}
         hideArrow
-        isNonModal>
+        isNonModal
+        isDismissable={false}>
         <ListBoxBase
           ref={listBoxRef}
           domProps={listBoxProps}

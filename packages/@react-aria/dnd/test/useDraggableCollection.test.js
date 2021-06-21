@@ -579,7 +579,7 @@ describe('useDraggableCollection', () => {
   describe('screen reader', () => {
     beforeEach(() => {
       // reset focus visible state
-      fireEvent.blur(window);
+      fireEvent.focus(document.body);
     });
 
     afterEach(() => {

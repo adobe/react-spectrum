@@ -41,8 +41,8 @@ module.exports = new Transformer({
         if (path.node.source) {
           let symbols = new Map();
           for (let specifier of path.node.specifiers) {
-            symbols.set(specifier.exported.name, {local: specifier.local.name});
-            asset.symbols.set(specifier.exported.name, specifier.local.name);
+            symbols.set(specifier.local.name, {local: specifier.exported.name});
+            asset.symbols.set(specifier.exported.name, specifier.exported.name);
           }
 
           asset.addDependency({

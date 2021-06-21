@@ -10,17 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
+jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
-import {ActionButton} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
+import {announce} from '@react-aria/live-announcer';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {Content} from '@react-spectrum/view';
 import {CRUDExample} from '../stories/CRUDExample';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {Divider} from '@react-spectrum/divider';
 import {getFocusableTreeWalker} from '@react-aria/focus';
+import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from '../stories/HidingColumns';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Switch} from '@react-spectrum/switch';
+import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {typeText} from '@react-spectrum/test-utils';
@@ -1471,7 +1479,7 @@ describe('TableView', function () {
 
         expect(body.scrollTop).toBe(1000);
         expect(document.activeElement).toBe(tree.getByRole('grid'));
-        expect(cell).not.toBeInTheDocument();
+        expect(tree.queryByText('Baz 5')).toBeNull();
 
         // Moving focus should scroll the new focused item into view
         moveFocus('ArrowLeft');
@@ -2151,6 +2159,90 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(4, 20), true);
       });
     });
+
+    describe('annoucements', function () {
+      it('should announce the selected or deselected row', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let row = tree.getAllByRole('row')[1];
+        triggerPress(row);
+        expect(announce).toHaveBeenLastCalledWith('Foo 1 selected.');
+
+        triggerPress(row);
+        expect(announce).toHaveBeenLastCalledWith('Foo 1 not selected.');
+      });
+
+      it('should announce the row and number of selected items when there are more than one', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let rows = tree.getAllByRole('row');
+        triggerPress(rows[1]);
+        triggerPress(rows[2]);
+
+        expect(announce).toHaveBeenLastCalledWith('Foo 2 selected. 2 items selected.');
+
+        triggerPress(rows[2]);
+        expect(announce).toHaveBeenLastCalledWith('Foo 2 not selected. 1 item selected.');
+      });
+
+      it('should announce only the number of selected items when multiple are selected at once', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let rows = tree.getAllByRole('row');
+        triggerPress(rows[1]);
+        triggerPress(rows[3], {shiftKey: true});
+
+        expect(announce).toHaveBeenLastCalledWith('3 items selected.');
+
+        triggerPress(rows[1], {shiftKey: true});
+        expect(announce).toHaveBeenLastCalledWith('1 item selected.');
+      });
+
+      it('should announce select all', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        userEvent.click(tree.getByLabelText('Select All'));
+        expect(announce).toHaveBeenLastCalledWith('All items selected.');
+
+        userEvent.click(tree.getByLabelText('Select All'));
+        expect(announce).toHaveBeenLastCalledWith('No items selected.');
+      });
+
+      it('should announce all row header columns', function () {
+        let tree = render(
+          <TableView aria-label="Table" selectionMode="multiple">
+            <TableHeader>
+              <Column isRowHeader>First Name</Column>
+              <Column isRowHeader>Last Name</Column>
+              <Column>Birthday</Column>
+            </TableHeader>
+            <TableBody>
+              <Row>
+                <Cell>Sam</Cell>
+                <Cell>Smith</Cell>
+                <Cell>May 3</Cell>
+              </Row>
+              <Row>
+                <Cell>Julia</Cell>
+                <Cell>Jones</Cell>
+                <Cell>February 10</Cell>
+              </Row>
+            </TableBody>
+          </TableView>
+        );
+
+        let row = tree.getAllByRole('row')[1];
+        triggerPress(row);
+        expect(announce).toHaveBeenLastCalledWith('Sam Smith selected.');
+
+        triggerPress(row);
+        expect(announce).toHaveBeenLastCalledWith('Sam Smith not selected.');
+      });
+    });
   });
 
   describe('single selection', function () {
@@ -2699,6 +2791,84 @@ describe('TableView', function () {
 
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+    });
+  });
+
+  describe('with dialog trigger', function () {
+    let TableExample = (props) => (
+      <TableView aria-label="TableView with static contents" selectionMode="multiple" width={300} height={200} {...props}>
+        <TableHeader>
+          <Column key="foo">Foo</Column>
+          <Column key="bar">Bar</Column>
+          <Column key="baz">Baz</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>Two</Cell>
+            <Cell>
+              <DialogTrigger>
+                <ActionButton aria-label="Add"><Add /></ActionButton>
+                {close => (
+                  <Dialog>
+                    <Heading>The Heading</Heading>
+                    <Divider />
+                    <Content>
+                      <TextField autoFocus label="Last Words" data-testid="input" />
+                    </Content>
+                    <ButtonGroup>
+                      <Button variant="secondary" onPress={close}>Cancel</Button>
+                      <Button variant="cta" onPress={close}>Confirm</Button>
+                    </ButtonGroup>
+                  </Dialog>
+                )}
+              </DialogTrigger>
+            </Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    );
+
+    it('arrow keys interactions don\'t move the focus away from the textfield in the dialog', function () {
+      let tree = render(<TableExample />);
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(2);
+
+      let button = within(rows[1]).getByRole('button');
+      triggerPress(button);
+
+      let dialog = tree.getByRole('dialog');
+      let input = within(dialog).getByTestId('input');
+
+      expect(input).toBeTruthy();
+      userEvent.type(input, 'blah');
+      expect(document.activeElement).toEqual(input);
+      expect(input.value).toBe('blah');
+
+      act(() => {
+        fireEvent.keyDown(input, {key: 'ArrowLeft', code: 37, charCode: 37});
+        fireEvent.keyUp(input, {key: 'ArrowLeft', code: 37, charCode: 37});
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement).toEqual(input);
+
+      act(() => {
+        fireEvent.keyDown(input, {key: 'ArrowRight', code: 39, charCode: 39});
+        fireEvent.keyUp(input, {key: 'ArrowRight', code: 39, charCode: 39});
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement).toEqual(input);
+
+      act(() => {
+        fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
+        fireEvent.keyUp(input, {key: 'Escape', code: 27, charCode: 27});
+        jest.runAllTimers();
+      });
+
+      expect(dialog).not.toBeInTheDocument();
     });
   });
 
@@ -3638,6 +3808,57 @@ describe('TableView', function () {
         expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
         expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
       }
+    });
+
+    it('should update the row widths when removing and adding columns', function () {
+      function compareWidths(row, b) {
+        let newWidth = row.childNodes[1].style.width;
+        expect(parseInt(newWidth, 10)).toBeGreaterThan(parseInt(b, 10));
+        return newWidth;
+      }
+
+      let tree = render(<HidingColumns />);
+      let table = tree.getByRole('grid');
+      let columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(6);
+
+      let rows = tree.getAllByRole('row');
+      let oldWidth = rows[1].childNodes[1].style.width;
+
+      let audienceCheckbox = tree.getByLabelText('Audience Type');
+      let budgetCheckbox = tree.getByLabelText('Net Budget');
+      let targetCheckbox = tree.getByLabelText('Target OTP');
+      let reachCheckbox = tree.getByLabelText('Reach');
+
+      userEvent.click(audienceCheckbox);
+      expect(audienceCheckbox.checked).toBe(false);
+      act(() => jest.runAllTimers());
+      oldWidth = compareWidths(rows[1], oldWidth);
+
+      userEvent.click(budgetCheckbox);
+      expect(budgetCheckbox.checked).toBe(false);
+      act(() => jest.runAllTimers());
+      oldWidth = compareWidths(rows[1], oldWidth);
+
+      userEvent.click(targetCheckbox);
+      expect(targetCheckbox.checked).toBe(false);
+      act(() => jest.runAllTimers());
+      oldWidth = compareWidths(rows[1], oldWidth);
+
+      // This previously failed, the first column wouldn't update its width
+      // when the 2nd to last column was removed
+      userEvent.click(reachCheckbox);
+      expect(reachCheckbox.checked).toBe(false);
+      act(() => jest.runAllTimers());
+      oldWidth = compareWidths(rows[1], oldWidth);
+      columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(2);
+
+      // Readd the column and check that the width decreases
+      userEvent.click(audienceCheckbox);
+      expect(audienceCheckbox.checked).toBe(true);
+      act(() => jest.runAllTimers());
+      expect(parseInt(rows[1].childNodes[1].style.width, 10)).toBeLessThan(parseInt(oldWidth, 10));
     });
   });
 
