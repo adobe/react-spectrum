@@ -44,17 +44,13 @@ export function useField(props: AriaFieldProps): FieldAria {
     ].filter(Boolean).join(' ') || undefined
   });
 
-  let descriptionProps = {};
-  let errorMessageProps = {};
+  let descriptionProps: HTMLAttributes<HTMLElement> = {};
+  let errorMessageProps: HTMLAttributes<HTMLElement> = {};
   if (description) {
-    descriptionProps = {
-      id: descriptionId
-    };
+    descriptionProps.id = descriptionId;
   }
   if (errorMessage) {
-    errorMessageProps = {
-      id: errorMessageId
-    };
+    errorMessageProps.id = errorMessageId;
   }
 
   return {
