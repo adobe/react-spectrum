@@ -25,12 +25,14 @@ function ListItem<T>({item, state}: {item: Node<T>, state: ListState<T>}) {
   });
   return (
     <li
+      role="option"
       ref={ref}
       {...pressProps}
       style={{
         background: selected ? 'dodgerblue' : undefined,
         color: selected ? '#fff' : undefined
-      }}>
+      }}
+      aria-selected={selected ? 'true' : undefined}>
       {item.rendered}
     </li>
   );
