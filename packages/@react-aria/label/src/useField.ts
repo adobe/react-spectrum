@@ -15,9 +15,9 @@ import {HTMLAttributes} from 'react';
 import {LabelAria, useLabel} from './useLabel';
 import {mergeProps, useSlotId} from '@react-aria/utils';
 
-interface AriaFieldProps extends LabelableProps, HelpTextProps {}
+interface AriaFieldProps extends LabelableProps, HelpTextProps, AriaLabelingProps {}
 
-export interface FieldAria extends LabelAria, AriaLabelingProps {
+export interface FieldAria extends LabelAria {
   /** Props for the description element, if any. */
   descriptionProps: HTMLAttributes<HTMLElement>,
   /** Props for the error message element, if any. */
@@ -40,6 +40,7 @@ export function useField(props: AriaFieldProps): FieldAria {
     'aria-describedby': [
       props['aria-describedby'],
       descriptionId,
+      // Use aria-describedby for error message because aria-errormessage is unsupported using VoiceOver or NVDA. See https://github.com/adobe/react-spectrum/issues/1346#issuecomment-740136268
       errorMessageId
     ].filter(Boolean).join(' ') || undefined
   });

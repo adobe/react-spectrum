@@ -78,6 +78,9 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
     <Field
       {...props as Omit<SpectrumNumberFieldProps, 'onChange'>}
       labelProps={labelProps}
+      /* TODO: Pass in props for HelpText */
+      descriptionProps={{}}
+      errorMessageProps={{}}
       ref={domRef}
       wrapperClassName={classNames(
         stepperStyle,

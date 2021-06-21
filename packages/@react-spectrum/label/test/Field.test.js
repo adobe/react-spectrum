@@ -12,7 +12,7 @@
 
 import {Field} from '../';
 import React from 'react';
-import {render, screen} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import {useField} from '@react-aria/label';
 
 let defaultProps = {

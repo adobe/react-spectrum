@@ -28,7 +28,7 @@ import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 
-interface TextFieldBaseProps extends SpectrumTextFieldProps, PressEvents {
+interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange'>, PressEvents {
   wrapperChildren?: ReactElement | ReactElement[],
   inputClassName?: string,
   validationIconClassName?: string,
@@ -153,11 +153,9 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       className: multiLine ? 'spectrum-Field-field--multiline' : ''
     }));
 
-    // TODO: Find a workaround. SpectrumFieldProps defines onChange as FormEventHandler<HTMLElement> from DOMProps, but Textfield defines it as ValueBase<string>['onChange']
-    let {onChange, ...fieldProps} = props;
     return (
       <Field
-        {...fieldProps}
+        {...props}
         labelProps={labelProps}
         descriptionProps={descriptionProps}
         errorMessageProps={errorMessageProps}

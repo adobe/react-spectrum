@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, DOMRef, SpectrumHelpTextProps, StyleProps} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {DOMRef, SpectrumHelpTextProps} from '@react-types/shared';
 import React, {HTMLAttributes} from 'react';
+import {useDOMRef} from '@react-spectrum/utils';
 
 interface HelpTextProps extends SpectrumHelpTextProps {
   /** Props for the help text description element. */
@@ -27,12 +26,12 @@ function HelpText(props: HelpTextProps, ref: DOMRef<HTMLDivElement>) {
     description,
     errorMessage,
     validationState,
-    isDisabled,
-    showIcon,
+    // TODO
+    // isDisabled,
+    // showIcon,
     descriptionProps,
     errorMessageProps
   } = props;
-  let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
 
   if (!description && !(errorMessage && validationState === 'invalid')) {
@@ -40,11 +39,7 @@ function HelpText(props: HelpTextProps, ref: DOMRef<HTMLDivElement>) {
   }
 
   return (
-    <div
-      {...filterDOMProps(props)}
-      {...styleProps}
-      ref={domRef}
-      className={styleProps.className}>
+    <div ref={domRef}>
       {errorMessage && validationState === 'invalid' ? (
         <div {...errorMessageProps}>
           {errorMessage}

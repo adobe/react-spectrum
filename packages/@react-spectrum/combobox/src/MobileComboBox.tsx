@@ -93,6 +93,9 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
       <Field
         {...props}
         labelProps={labelProps}
+        /* TODO: Pass in props for HelpText */
+        descriptionProps={{}}
+        errorMessageProps={{}}
         elementType="span"
         ref={domRef}
         includeNecessityIndicatorInAccessibilityName>
