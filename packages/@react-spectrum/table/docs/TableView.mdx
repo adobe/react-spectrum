@@ -20,6 +20,7 @@ import {ActionButton} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, TableView, TableBody, TableHeader} from '@react-spectrum/table';
 import {Flex} from '@react-spectrum/layout';
+import {ActionGroup, Item} from '@react-spectrum/actiongroup'
 ```
 
 ---
@@ -118,7 +119,7 @@ let rows = [
 ### Layout
 TableViews are often contained within a page layout that defines the size of the table. For example, a page might have a header or toolbar with a TableView below that fills the remaining vertical space. TableView is designed to scroll internally while the column headers remain fixed. Because of this, TableViews should not be placed within a scrollable container.
 
-The example below shows how to use a Flex component with to size a TableView, filling the remainder of the available space.
+The example below shows how to use a [Flex](Flex.html) component to achieve the layout described above. Note the TableView uses the `flex` prop to fill the remainder of the available space.
 
 
 ```tsx example
@@ -232,10 +233,12 @@ let rows = [
 {"id":100,"first_name":"Edmon","last_name":"Alsopp","city":"Sandu"}];
 ///- end collapse -///
 
-// Table data hidden for example
-// Display table in flex with actiongroup above. without height
-<Flex height="size-2000" width="100%" direction="column">
-  <div>sdghsfgiudsfglibdfilbfg</div>
+<Flex height="size-5000" width="100%" direction="column" gap="size-150">
+  <ActionGroup>
+    <Item key="add">Add</Item>
+    <Item key="delete">Delete</Item>
+    <Item key="edit">Edit</Item>
+  </ActionGroup>
   <TableView
     flex
     minHeight={0}
@@ -334,25 +337,23 @@ function AsyncTable() {
   });
 
   return (
-    <Flex height="size-2000" flexGrow={1} maxWidth="size-6000">
-      <TableView aria-label="example async loading table" height="100%" width="100%">
-        <TableHeader columns={columns}>
-          {(column) => (
-            <Column align={column.key !== 'name' ? 'end' : 'start'}>
-              {column.name}
-            </Column>
-          )}
-        </TableHeader>
-        <TableBody
-          items={list.items}
-          loadingState={list.loadingState}
-          onLoadMore={list.loadMore}>
-          {(item) => (
-            <Row key={item.name}>{(key) => <Cell>{item[key]}</Cell>}</Row>
-          )}
-        </TableBody>
-      </TableView>
-    </Flex>
+    <TableView aria-label="example async loading table" height="size-3000">
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column align={column.key !== 'name' ? 'end' : 'start'}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody
+        items={list.items}
+        loadingState={list.loadingState}
+        onLoadMore={list.loadMore}>
+        {(item) => (
+          <Row key={item.name}>{(key) => <Cell>{item[key]}</Cell>}</Row>
+        )}
+      </TableBody>
+    </TableView>
   );
 }
 ```
@@ -366,7 +367,7 @@ Use `defaultSelectedKeys` to provide a default set of selected rows. Note that t
 The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the rows with keys "2" and "4".
 
 ```tsx example
-<TableView aria-label="Example table with multiple selection" maxWidth="size-6000" height="size-3000" selectionMode="multiple" defaultSelectedKeys={['2', '4']}>
+<TableView aria-label="Example table with multiple selection" selectionMode="multiple" defaultSelectedKeys={['2', '4']}>
   <TableHeader>
     <Column>Name</Column>
     <Column>Type</Column>
@@ -422,7 +423,7 @@ function PokemonTable(props) {
   let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
 
   return (
-    <TableView aria-label="Table with controlled selection" maxWidth="size-6000" height="size-3000" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
+    <TableView aria-label="Table with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
       <TableHeader columns={columns}>
         {column => (
           <Column key={column.uid} align={column.uid === 'level' ? 'end' : 'start'}>
@@ -505,7 +506,7 @@ function AsyncSortTable() {
   });
 
   return (
-    <TableView aria-label="Example table with client side sorting" height="size-3000" maxWidth="size-6000" sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
+    <TableView aria-label="Example table with client side sorting" sortDescriptor={list.sortDescriptor} onSortChange={list.sort} height="size-3000">
       <TableHeader>
         <Column key="name" allowsSorting>Name</Column>
         <Column key="height" allowsSorting>Height</Column>
@@ -577,111 +578,105 @@ function AsyncSortTable() {
 [View guidelines](https://spectrum.adobe.com/page/table/#Usage-guidelines)
 
 ```tsx example
-<Flex flexGrow={1} maxWidth="size-4600">
-  <TableView aria-label="Example table for column alignment" width="100%" height="100%">
-    <TableHeader>
-      <Column align="start">Name</Column>
-      <Column align="center">Type</Column>
-      <Column align="end">Size</Column>
-    </TableHeader>
-    <TableBody>
-      <Row>
-        <Cell>2021406_Proposal</Cell>
-        <Cell>PDF</Cell>
-        <Cell>86 KB</Cell>
-      </Row>
-      <Row>
-        <Cell>Budget Template</Cell>
-        <Cell>XLS</Cell>
-        <Cell>120 KB</Cell>
-      </Row>
-      <Row>
-        <Cell>Onboarding</Cell>
-        <Cell>PPT</Cell>
-        <Cell>472 KB</Cell>
-      </Row>
-      <Row>
-        <Cell>Welcome</Cell>
-        <Cell>TXT</Cell>
-        <Cell>24 KB</Cell>
-      </Row>
-    </TableBody>
-  </TableView>
-</Flex>
+<TableView aria-label="Example table for column alignment">
+  <TableHeader>
+    <Column align="start">Name</Column>
+    <Column align="center">Type</Column>
+    <Column align="end">Size</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>2021406_Proposal</Cell>
+      <Cell>PDF</Cell>
+      <Cell>86 KB</Cell>
+    </Row>
+    <Row>
+      <Cell>Budget Template</Cell>
+      <Cell>XLS</Cell>
+      <Cell>120 KB</Cell>
+    </Row>
+    <Row>
+      <Cell>Onboarding</Cell>
+      <Cell>PPT</Cell>
+      <Cell>472 KB</Cell>
+    </Row>
+    <Row>
+      <Cell>Welcome</Cell>
+      <Cell>TXT</Cell>
+      <Cell>24 KB</Cell>
+    </Row>
+  </TableBody>
+</TableView>
 ```
 
 ### Column widths
 Columns support three different width props: `minWidth`, `width`, and `maxWidth`. Each of these props accepts fixed values or percentages. TableView prioritizes columns with defined widths and divides the remaining space evenly amongst the other columns.
 
 ```tsx example
-<Flex flexGrow={1} maxWidth="size-4600">
-  <TableView aria-label="Example table for column widths" width="100%" height="100%">
-    <TableHeader>
-      <Column maxWidth={300} align="start">Name</Column>
-      <Column width={80}>Type</Column>
-      <Column minWidth={100} align="end">Size</Column>
-    </TableHeader>
-    <TableBody>
-      <Row>
-        <Cell>2021406_Proposal</Cell>
-        <Cell>PDF</Cell>
-        <Cell>86 KB</Cell>
-      </Row>
-      <Row>
-        <Cell>Budget Template</Cell>
-        <Cell>XLS</Cell>
-        <Cell>120 KB</Cell>
-      </Row>
-      <Row>
-        <Cell>Onboarding</Cell>
-        <Cell>PPT</Cell>
-        <Cell>472 KB</Cell>
-      </Row>
-      <Row>
-        <Cell>Welcome</Cell>
-        <Cell>TXT</Cell>
-        <Cell>24 KB</Cell>
-      </Row>
-    </TableBody>
-  </TableView>
-</Flex>
+<TableView aria-label="Example table for column widths">
+  <TableHeader>
+    <Column maxWidth={300} align="start">Name</Column>
+    <Column width={80}>Type</Column>
+    <Column minWidth={100} align="end">Size</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>2021406_Proposal</Cell>
+      <Cell>PDF</Cell>
+      <Cell>86 KB</Cell>
+    </Row>
+    <Row>
+      <Cell>Budget Template</Cell>
+      <Cell>XLS</Cell>
+      <Cell>120 KB</Cell>
+    </Row>
+    <Row>
+      <Cell>Onboarding</Cell>
+      <Cell>PPT</Cell>
+      <Cell>472 KB</Cell>
+    </Row>
+    <Row>
+      <Cell>Welcome</Cell>
+      <Cell>TXT</Cell>
+      <Cell>24 KB</Cell>
+    </Row>
+  </TableBody>
+</TableView>
 ```
 
 ### Column dividers
 [View guidelines](https://spectrum.adobe.com/page/table/#Column-dividers)
 
 ```tsx example
-<Flex flexGrow={1} maxWidth="size-4600">
-  <TableView aria-label="Example table for column dividers" width="100%" height="100%">
-    <TableHeader>
-      <Column align="start" showDivider>Name</Column>
-      <Column showDivider>Type</Column>
-      <Column align="end" showDivider>Size</Column>
-    </TableHeader>
-    <TableBody>
-      <Row>
-        <Cell>2021406_Proposal</Cell>
-        <Cell>PDF</Cell>
-        <Cell>86 KB</Cell>
-      </Row>
-      <Row>
-        <Cell>Budget Template</Cell>
-        <Cell>XLS</Cell>
-        <Cell>120 KB</Cell>
-      </Row>
-      <Row>
-        <Cell>Onboarding</Cell>
-        <Cell>PPT</Cell>
-        <Cell>472 KB</Cell>
-      </Row>
-      <Row>
-        <Cell>Welcome</Cell>
-        <Cell>TXT</Cell>
-        <Cell>24 KB</Cell>
-      </Row>
-    </TableBody>
-  </TableView>
-</Flex>
+<TableView aria-label="Example table for column dividers">
+  <TableHeader>
+    <Column align="start" showDivider>Name</Column>
+    <Column showDivider>Type</Column>
+    <Column align="end" showDivider>Size</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>2021406_Proposal</Cell>
+      <Cell>PDF</Cell>
+      <Cell>86 KB</Cell>
+    </Row>
+    <Row>
+      <Cell>Budget Template</Cell>
+      <Cell>XLS</Cell>
+      <Cell>120 KB</Cell>
+    </Row>
+    <Row>
+      <Cell>Onboarding</Cell>
+      <Cell>PPT</Cell>
+      <Cell>472 KB</Cell>
+    </Row>
+    <Row>
+      <Cell>Welcome</Cell>
+      <Cell>TXT</Cell>
+      <Cell>24 KB</Cell>
+    </Row>
+  </TableBody>
+</TableView>
 ```
 
 ### Hide header
@@ -707,31 +702,29 @@ function TableExample(props) {
   ];
 
   return (
-    <Flex flexGrow={1} maxWidth="size-6000">
-      <TableView aria-label="Example table with hidden headers" width="100%" height="100%" {...props}>
-        <TableHeader columns={columns}>
-          {column => (
-            <Column
-              hideHeader={column.key === 'addInfo'}
-              align={column.key === 'age' ? 'end' : 'start'}
-              showDivider={column.key === 'addInfo'}>
-              {column.name}
-            </Column>
-          )}
-        </TableHeader>
-        <TableBody items={rows}>
-          {item =>
-            (<Row key={item.id}>
-              {key =>
-                key === 'addInfo'
-                ? <Cell><ActionButton isQuiet><Add /></ActionButton></Cell>
-                : <Cell>{item[key]}</Cell>
-              }
-            </Row>)
-          }
-        </TableBody>
-      </TableView>
-    </Flex>
+    <TableView aria-label="Example table with hidden headers" {...props}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column
+            hideHeader={column.key === 'addInfo'}
+            align={column.key === 'age' ? 'end' : 'start'}
+            showDivider={column.key === 'addInfo'}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows}>
+        {item =>
+          (<Row key={item.id}>
+            {key =>
+              key === 'addInfo'
+              ? <Cell><ActionButton isQuiet><Add /></ActionButton></Cell>
+              : <Cell>{item[key]}</Cell>
+            }
+          </Row>)
+        }
+      </TableBody>
+    </TableView>
   );
 }
 ```
@@ -783,18 +776,16 @@ function renderEmptyState() {
   );
 }
 
-<Flex height="size-6000" flexGrow={1} maxWidth="size-6000">
-  <TableView aria-label="Example table for empty state" width="100%" height="100%" renderEmptyState={renderEmptyState}>
-    <TableHeader>
-      <Column>Name</Column>
-      <Column>Type</Column>
-      <Column>Size</Column>
-    </TableHeader>
-    <TableBody>
-      {[]}
-    </TableBody>
-  </TableView>
-</Flex>
+<TableView aria-label="Example table for empty state" width="100%" height="100%" renderEmptyState={renderEmptyState}>
+  <TableHeader>
+    <Column>Name</Column>
+    <Column>Type</Column>
+    <Column>Size</Column>
+  </TableHeader>
+  <TableBody>
+    {[]}
+  </TableBody>
+</TableView>
 ```
 
 ### Nested columns
@@ -802,7 +793,7 @@ function renderEmptyState() {
 TableView supports nesting columns, allowing you to create column groups, or "tiered" column headers.
 
 ```tsx example
-<TableView aria-label="Example table for nested columns" maxWidth="size-6000" height="size-3000">
+<TableView aria-label="Example table for nested columns">
   <TableHeader>
     <Column title="Name">
       <Column isRowHeader>First Name</Column>
@@ -864,7 +855,7 @@ let rows = [
   {id: 4, first: 'Bruce', last: 'Wayne', age: 32, birthday: 'December 18'}
 ];
 
-<TableView aria-label="Example table for nested columns" maxWidth="size-6000" height="size-3000">
+<TableView aria-label="Example table for nested columns">
   <TableHeader columns={columns}>
     {column => (
       <Column isRowHeader={column.isRowHeader} childColumns={column.children}>
