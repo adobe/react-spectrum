@@ -72,7 +72,7 @@ keywords: [table, grid]
 ```
 
 ## Content
-TableView is a complex [collection component](../react-stately/collections.html) that is built up from many child elements including columns, rows, and cells. Columns are defined within a TableHeader element and rows are defined within a TableBody element. Rows contain Cell elements that correspond to each column. Cells accept any element, allowing you to have focusable children within the TableView.
+TableView is a complex [collection component](../react-stately/collections.html) that is built up from many child elements including columns, rows, and cells. Columns are defined within a TableHeader element and rows are defined within a TableBody element. Rows contain Cell elements that correspond to each column. Cells can contain any element, allowing you to have focusable children within the TableView.
 
 Basic usage of TableView, seen in the example above, shows the use of a static collection where the contents of the TableView is hard coded. Dynamic collections, as shown below, can be used when the options come from an external data source such as an API, or update over time. Providing the data in this way allows TableView to automatically cache the rendering of each item, which dramatically improves performance.
 
@@ -692,8 +692,7 @@ function TableExample(props) {
     {id: '1', firstName: 'John', lastName: 'Doe', age: '45'},
     {id: '2', firstName: 'Jane', lastName: 'Doe', age: '37'},
     {id: '3', firstName: 'Joe', lastName: 'Schmoe', age: '67'},
-    {id: '4', firstName: 'Joe', lastName: 'Bloggs', age: '12'},
-    {id: '5', firstName: 'Longggggggggggg Wrapping', lastName: 'Name', age: '56'}
+    {id: '4', firstName: 'Joe', lastName: 'Bloggs', age: '12'}
   ];
 
   return (
@@ -771,7 +770,7 @@ function renderEmptyState() {
   );
 }
 
-<TableView aria-label="Example table for empty state" width="100%" height="100%" renderEmptyState={renderEmptyState}>
+<TableView aria-label="Example table for empty state" height="size-3000" renderEmptyState={renderEmptyState}>
   <TableHeader>
     <Column>Name</Column>
     <Column>Type</Column>
@@ -785,7 +784,7 @@ function renderEmptyState() {
 
 ### Nested columns
 
-TableView supports nesting columns, allowing you to create column groups, or "tiered" column headers.
+TableView supports nesting columns, allowing you to create column groups, or "tiered" column headers. Data for the leaf columns appears in each row of the table body.
 
 ```tsx example
 <TableView aria-label="Example table for nested columns">
