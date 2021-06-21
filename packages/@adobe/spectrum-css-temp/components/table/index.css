@@ -150,6 +150,10 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Table-cellContents {
+  display: flex;
+  justify-content: inherit;
+  flex: 1 1 0%;
+
   /* truncate text with ellipsis */
   overflow: hidden;
   white-space: nowrap;

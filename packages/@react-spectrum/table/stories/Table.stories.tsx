@@ -377,6 +377,75 @@ storiesOf('TableView', module)
     {chromatic: {disable: true}}
   )
   .add(
+    'should fill cell width',
+    () => (
+      <TableView aria-label="TableView with filled cells" selectionMode="multiple" width={500} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column>File Name</Column>
+          <Column align="center">Type</Column>
+          <Column align="end">Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <View
+                width="100%"
+                backgroundColor="gray-200">
+                Budget
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                width="100%"
+                backgroundColor="gray-200"
+                UNSAFE_style={{textAlign: 'center'}}>
+                XLS
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                width="100%"
+                backgroundColor="gray-200"
+                UNSAFE_style={{textAlign: 'end'}}>
+                120 KB
+              </View>
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <View
+                width="70%"
+                backgroundColor="gray-200">
+                70% width
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                width="70%"
+                backgroundColor="gray-200"
+                UNSAFE_style={{textAlign: 'center'}}>
+                70% width
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                width="70%"
+                backgroundColor="gray-200"
+                UNSAFE_style={{textAlign: 'end'}}>
+                70% width
+              </View>
+            </Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
     'column widths and dividers',
     () => (
       <TableView aria-label="TableView with column widths and dividers" selectionMode="multiple" width={500} height={200} onSelectionChange={s => onSelectionChange([...s])}>
