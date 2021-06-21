@@ -20,7 +20,6 @@ import {ActionButton} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, TableView, TableBody, TableHeader} from '@react-spectrum/table';
 import {Flex} from '@react-spectrum/layout';
-import {ActionGroup, Item} from '@react-spectrum/actiongroup'
 ```
 
 ---
@@ -234,14 +233,10 @@ let rows = [
 ///- end collapse -///
 
 <Flex height="size-5000" width="100%" direction="column" gap="size-150">
-  <ActionGroup>
-    <Item key="add">Add</Item>
-    <Item key="delete">Delete</Item>
-    <Item key="edit">Edit</Item>
-  </ActionGroup>
+  <ActionButton alignSelf="start">Add</ActionButton>
   <TableView
     flex
-    minHeight={0}
+    minHeight={0} //wait for merge
     aria-label="Example table with dynamic content">
     <TableHeader columns={columns}>
       {column => (
