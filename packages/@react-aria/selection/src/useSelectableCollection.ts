@@ -108,7 +108,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     // Let child element (e.g. menu button) handle the event if the Alt key is pressed.
     // Keyboard events bubble through portals. Don't handle keyboard events
     // for elements outside the collection (e.g. menus).
-    if (e.altKey || !ref.current.contains(e.target as HTMLElement)) {
+    if ((e.altKey && !e.ctrlKey) || !ref.current.contains(e.target as HTMLElement)) {
       return;
     }
 
@@ -118,7 +118,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
         if (e.shiftKey && manager.selectionMode === 'multiple') {
           manager.extendSelection(key);
-        } else if (selectOnFocus) {
+        } else if (selectOnFocus && !e.ctrlKey) {
           manager.replaceSelection(key);
         }
       }

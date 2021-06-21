@@ -10,24 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-import {getRowLabelledBy} from './utils';
-import {GridRowAria, GridRowProps, useGridRow} from '@react-aria/grid';
+import {GridRowAria, GridRowProps} from '@react-aria/grid';
 import {RefObject} from 'react';
-import {TableCollection} from '@react-types/table';
 import {TableState} from '@react-stately/table';
 
 /**
- * Provides the behavior and accessibility implementation for a row in a table.
+ * Provides the behavior and accessibility implementation for a header row in a table.
  * @param props - Props for the row.
  * @param state - State of the table, as returned by `useTableState`.
  */
-export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T>, ref: RefObject<HTMLElement>): GridRowAria {
-  let {node} = props;
-  let {rowProps} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state, ref);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function useTableHeaderRow<T>(props: GridRowProps<T>, state: TableState<T>, ref: RefObject<HTMLElement>): GridRowAria {
+  let {node, isVirtualized} = props;
+  let rowProps = {
+    role: 'row'
+  };
+
+  if (isVirtualized) {
+    rowProps['aria-rowindex'] = node.index + 1; // aria-rowindex is 1 based
+  }
+
   return {
-    rowProps: {
-      ...rowProps,
-      'aria-labelledby': getRowLabelledBy(state, node.key)
-    }
+    rowProps
   };
 }

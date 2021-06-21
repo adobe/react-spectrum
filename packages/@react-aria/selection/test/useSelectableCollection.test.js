@@ -13,7 +13,7 @@
 import {Item} from '@react-stately/collections';
 import {List} from '../stories/List';
 import React from 'react';
-import {render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 describe('useSelectableCollection', () => {
@@ -30,5 +30,39 @@ describe('useSelectableCollection', () => {
     userEvent.tab();
     expect(document.activeElement).toBe(options[0]);
     expect(options[0]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('can navigate without replacing the selection in multiple selection selectOnFocus', () => {
+    let {getAllByRole} = render(
+      <List selectionMode="multiple" selectionBehavior="replace">
+        <Item>Paco de Lucia</Item>
+        <Item>Vicente Amigo</Item>
+        <Item>Gerardo Nunez</Item>
+      </List>
+    );
+    let options = getAllByRole('option');
+    expect(options[0]).not.toHaveAttribute('aria-selected');
+    userEvent.tab();
+    expect(document.activeElement).toBe(options[0]);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(options[1]).not.toHaveAttribute('aria-selected');
+    expect(options[2]).not.toHaveAttribute('aria-selected');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+    expect(document.activeElement).toBe(options[1]);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(options[1]).not.toHaveAttribute('aria-selected');
+    expect(options[2]).not.toHaveAttribute('aria-selected');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+    expect(document.activeElement).toBe(options[2]);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(options[1]).not.toHaveAttribute('aria-selected');
+    expect(options[2]).not.toHaveAttribute('aria-selected');
+    fireEvent.keyDown(document.activeElement, {key: ' '});
+    fireEvent.keyUp(document.activeElement, {key: ' '});
+    expect(options[0]).not.toHaveAttribute('aria-selected');
+    expect(options[1]).not.toHaveAttribute('aria-selected');
+    expect(options[2]).toHaveAttribute('aria-selected', 'true');
   });
 });
