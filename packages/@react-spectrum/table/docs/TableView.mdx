@@ -40,49 +40,46 @@ keywords: [table, grid]
 
 ## Example
 ```tsx example
-<Flex flexGrow={1} maxWidth="size-6000">
-  <TableView aria-label="Example table with static contents" width="100%" height="100%">
-    <TableHeader>
-      <Column>Name</Column>
-      <Column>Type</Column>
-      <Column align="end">Date Modified</Column>
-    </TableHeader>
-    <TableBody>
-      <Row>
-        <Cell>Games</Cell>
-        <Cell>File folder</Cell>
-        <Cell>6/7/2020</Cell>
-      </Row>
-      <Row>
-        <Cell>Program Files</Cell>
-        <Cell>File folder</Cell>
-        <Cell>4/7/2021</Cell>
-      </Row>
-      <Row>
-        <Cell>bootmgr</Cell>
-        <Cell>System file</Cell>
-        <Cell>11/20/2010</Cell>
-      </Row>
-      <Row>
-        <Cell>log.txt</Cell>
-        <Cell>Text Document</Cell>
-        <Cell>1/18/2016</Cell>
-      </Row>
-    </TableBody>
-  </TableView>
-</Flex>
+<TableView aria-label="Example table with static contents" width="100%" height="100%" selectionMode="multiple">
+  <TableHeader>
+    <Column>Name</Column>
+    <Column>Type</Column>
+    <Column align="end">Date Modified</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Games</Cell>
+      <Cell>File folder</Cell>
+      <Cell>6/7/2020</Cell>
+    </Row>
+    <Row>
+      <Cell>Program Files</Cell>
+      <Cell>File folder</Cell>
+      <Cell>4/7/2021</Cell>
+    </Row>
+    <Row>
+      <Cell>bootmgr</Cell>
+      <Cell>System file</Cell>
+      <Cell>11/20/2010</Cell>
+    </Row>
+    <Row>
+      <Cell>log.txt</Cell>
+      <Cell>Text Document</Cell>
+      <Cell>1/18/2016</Cell>
+    </Row>
+  </TableBody>
+</TableView>
 ```
+fix this hey <TypeLink links={docs.links} type={docs.exports.TableHeader} />,
 
 ## Content
-TableView expects a TableHeader and a TableBody as children. In turn, TableHeader and TableBody follow the [Collection Components](../react-stately/collections.html) API.
-The TableHeader accepts either static Columns or a `columns` prop with a renderer function for dynamic rendering. Similarly, TableBody accepts either static Rows or a `items` prop with a renderer function.
-Row follows the same pattern, accepting Cells as children instead.
+TableView is a complex [collection component](../react-stately/collections.html) that is built up from many child elements including columns, rows, and cells. Columns are defined within a TableHeader element and rows are defined within a TableBody element. Rows contain Cell elements that correspond to each column. Cells accept any element, allowing you to have focusable children within the TableView.
 
-Basic usage of TableView, seen in the example above, shows multiple Columns and Rows populated with strings and Cells respectively. Static collections, as in this example, can be used when the contents of the TableView is known ahead of time.
+Basic usage of TableView, seen in the example above, shows the use of a static collection where the contents of the TableView is hard coded. Dynamic collections, as shown below, can be used when the options come from an external data source such as an API, or update over time. Providing the data in this way allows TableView to automatically cache the rendering of each item, which dramatically improves performance.
 
-Dynamic collections, as shown below, can be used when the options come from an external data source such as an API call, or update over time. Providing the data in this way allows TableView to automatically cache the rendering of each item,
-which dramatically improves performance. Make sure that each rendered property in the Row object matches with a Column's key. In the example below, the `uid` of each Column is set as its key and matches with a
-property within each Row object.
+Columns and rows can be statically defined as children, or generated dynamically using a function based on the data passed to the `columns` or `items` prop respectively. Cells can also be statically defined as children, or generated dynamically based on the columns defined in the TableHeader.
+
+Each column and row has a unique key defined by the data. In the example below, the `uid` property of the column object is used as the `key` for the Column element within the TableHeader. The `key` of each row element is implicitly defined by the id property of the row object. See [collections](../react-stately/collections.html#unique-keys) to learn more keys in dynamic collections.
 
 ```tsx example
 let columns = [
