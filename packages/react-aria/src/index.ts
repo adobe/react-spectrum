@@ -32,6 +32,7 @@ export {useSeparator} from '@react-aria/separator';
 export {SSRProvider, useIsSSR} from '@react-aria/ssr';
 export {useSlider, useSliderThumb} from '@react-aria/slider';
 export {useSwitch} from '@react-aria/switch';
+export {useTab, useTabList, useTabPanel} from '@react-aria/tabs';
 export {useTextField} from '@react-aria/textfield';
 export {useTooltip, useTooltipTrigger} from '@react-aria/tooltip';
 export {chain, mergeProps, useId} from '@react-aria/utils';

@@ -68,6 +68,11 @@ Column.getCollectionNode = function* getCollectionNode<T>(props: ColumnProps<T>,
   updateContext(context);
 };
 
+/**
+ * A Column represents a field of each item within a Table. Columns may also contain nested
+ * Column elements to represent column groups. Nested columns can be statically defined as
+ * children, or dynamically generated using a function based on the `childColumns` prop.
+ */
 // We don't want getCollectionNode to show up in the type definition
 let _Column = Column as <T>(props: ColumnProps<T>) => JSX.Element;
 export {_Column as Column};

@@ -140,6 +140,8 @@ export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
     new ListLayout<unknown>({
       estimatedRowHeight: 32,
       padding: 8,
+      loaderHeight: 40,
+      placeholderHeight: 32,
       collator
     })
   , [collator]);

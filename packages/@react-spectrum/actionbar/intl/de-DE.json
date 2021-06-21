@@ -1,5 +1,0 @@
-{
-  "deselect": "Auswahl aufheben",
-  "selected": "{count, plural, =0 {Keins ausgewählt} =1 {Eins ausgewählt} other {# ausgewählt}}",
-  "selectedAll": "Alle ausgewählt"
-}

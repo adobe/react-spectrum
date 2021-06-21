@@ -75,69 +75,67 @@ const JEST_TIMER_FUNCTIONS = [
   'advanceTimersToNextTimer'
 ];
 
-module.exports = {
-  rules: {
-    'act-events-test': {
-      meta: {
-        type: 'problem',
-        docs: {
-          description: 'Recommend using act wrappers when firing events',
-          recommended: false
-        },
-        fixable: 'code',
-        schema: [
-          {
-            type: 'object',
-            properties: {},
-            additionalProperties: false
-          }
-        ]
-      },
-      create(context) {
-        if (context.getFilename().includes(path.sep + 'test' + path.sep)) {
-          let actLocalName = 'act';
-          return {
-            ImportSpecifier(node) {
-              let {parent} = node;
-              if (
-                  parent.importKind === 'value' &&
-                  parent.source &&
-                  parent.source.type === 'Literal' &&
-                  parent.source.value === '@testing-library/react' &&
-                  node.imported.type === 'Identifier' &&
-                  node.imported.name === 'act'
-                ) {
-                actLocalName = node.local.name;
-              }
-            },
-            CallExpression(node) {
-              if (
-                node.callee.type === 'MemberExpression' &&
-                actLocalName &&
-                inTestcaseWithoutAct(context, actLocalName)
-              ) {
-                if (
-                  node.arguments.length === 0 &&
-                  node.callee.property.type === 'Identifier' &&
-                  (node.callee.property.name === 'focus' ||
-                    node.callee.property.name === 'blur')
-                ) {
-                  report(node, context, actLocalName);
-                } else if (
-                  node.callee.object.type === 'Identifier' &&
-                  node.callee.object.name === 'jest' &&
-                  node.callee.property.type === 'Identifier' &&
-                  JEST_TIMER_FUNCTIONS.includes(node.callee.property.name)
-                ) {
-                  report(node, context, actLocalName);
-                }
-              }
-            }
-          };
-        } else {
-          return {};
-        }
+let rule = {
+  meta: {
+    type: 'problem',
+    docs: {
+      description: 'Recommend using act wrappers when firing events',
+      recommended: false
+    },
+    fixable: 'code',
+    schema: [
+      {
+        type: 'object',
+        properties: {},
+        additionalProperties: false
       }
+    ]
+  },
+  create(context) {
+    if (context.getFilename().includes(path.sep + 'test' + path.sep)) {
+      let actLocalName = 'act';
+      return {
+        ImportSpecifier(node) {
+          let {parent} = node;
+          if (
+            parent.importKind === 'value' &&
+            parent.source &&
+            parent.source.type === 'Literal' &&
+            parent.source.value === '@testing-library/react' &&
+            node.imported.type === 'Identifier' &&
+            node.imported.name === 'act'
+          ) {
+            actLocalName = node.local.name;
+          }
+        },
+        CallExpression(node) {
+          if (
+            node.callee.type === 'MemberExpression' &&
+            actLocalName &&
+            inTestcaseWithoutAct(context, actLocalName)
+          ) {
+            if (
+              node.arguments.length === 0 &&
+              node.callee.property.type === 'Identifier' &&
+              (node.callee.property.name === 'focus' ||
+                node.callee.property.name === 'blur')
+            ) {
+              report(node, context, actLocalName);
+            } else if (
+              node.callee.object.type === 'Identifier' &&
+              node.callee.object.name === 'jest' &&
+              node.callee.property.type === 'Identifier' &&
+              JEST_TIMER_FUNCTIONS.includes(node.callee.property.name)
+            ) {
+              report(node, context, actLocalName);
+            }
+          }
+        }
+      };
+    } else {
+      return {};
     }
   }
 };
+
+module.exports = rule;
