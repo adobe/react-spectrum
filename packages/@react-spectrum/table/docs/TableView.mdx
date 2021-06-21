@@ -116,6 +116,11 @@ let rows = [
 </TableView>
 ```
 ### Layout
+TableViews are often contained within a page layout that defines the size of the table. For example, a page might have a header or toolbar with a TableView below that fills the remaining vertical space. TableView is designed to scroll internally while the column headers remain fixed. Because of this, TableViews should not be placed within a scrollable container.
+
+The example below shows how to use a Flex component with to size a TableView, filling the remainder of the available space.
+
+
 ```tsx example
 ///- begin collapse -///
 let columns = [
@@ -233,6 +238,7 @@ let rows = [
   <div>sdghsfgiudsfglibdfilbfg</div>
   <TableView
     flex
+    minHeight={0}
     aria-label="Example table with dynamic content">
     <TableHeader columns={columns}>
       {column => (
