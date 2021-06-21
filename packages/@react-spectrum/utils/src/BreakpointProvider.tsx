@@ -5,7 +5,7 @@ interface Breakpoints {
   S?: number,
   M?: number,
   L?: number,
-  [custom: string]: number
+  [custom: string]: number | undefined
 }
 
 interface BreakpointContext {
