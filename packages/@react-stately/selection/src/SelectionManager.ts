@@ -120,7 +120,9 @@ export class SelectionManager implements MultipleSelectionManager {
     }
 
     key = this.getKey(key);
-    return this.state.selectedKeys === 'all' || this.state.selectedKeys.has(key);
+    return this.state.selectedKeys === 'all'
+      ? !this.state.disabledKeys.has(key)
+      : this.state.selectedKeys.has(key);
   }
 
   /**
@@ -282,6 +284,10 @@ export class SelectionManager implements MultipleSelectionManager {
       keys.currentKey = key;
     }
 
+    if (this.disallowEmptySelection && keys.size === 0) {
+      return;
+    }
+
     this.state.setSelectedKeys(keys);
   }
 
@@ -356,7 +362,7 @@ export class SelectionManager implements MultipleSelectionManager {
    * Removes all keys from the selection.
    */
   clearSelection() {
-    if (this.state.selectedKeys === 'all' || this.state.selectedKeys.size > 0) {
+    if (!this.disallowEmptySelection && (this.state.selectedKeys === 'all' || this.state.selectedKeys.size > 0)) {
       this.state.setSelectedKeys(new Selection());
     }
   }

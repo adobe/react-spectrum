@@ -211,7 +211,7 @@ a.spectrum-ActionButton {
     padding-inline-start: var(--spectrum-actionbutton-icon-padding-x);
   }
 
-  .spectrum-ActionButton-label + .spectrum-Icon {
+  .spectrum-ActionButton-label:not([hidden]) + .spectrum-Icon {
     padding-inline-end: var(--spectrum-actionbutton-icon-padding-x);
   }
 
