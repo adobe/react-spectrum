@@ -40,7 +40,7 @@ keywords: [table, grid]
 
 ## Example
 ```tsx example
-<TableView aria-label="Example table with static contents" width="100%" height="100%" selectionMode="multiple">
+<TableView aria-label="Example table with static contents" selectionMode="multiple">
   <TableHeader>
     <Column>Name</Column>
     <Column>Type</Column>
@@ -70,7 +70,6 @@ keywords: [table, grid]
   </TableBody>
 </TableView>
 ```
-fix this hey <TypeLink links={docs.links} type={docs.exports.TableHeader} />,
 
 ## Content
 TableView is a complex [collection component](../react-stately/collections.html) that is built up from many child elements including columns, rows, and cells. Columns are defined within a TableHeader element and rows are defined within a TableBody element. Rows contain Cell elements that correspond to each column. Cells accept any element, allowing you to have focusable children within the TableView.
@@ -97,7 +96,6 @@ let rows = [
 
 <TableView
   aria-label="Example table with dynamic content"
-  height="size-3000"
   maxWidth="size-6000">
   <TableHeader columns={columns}>
     {column => (
@@ -117,6 +115,143 @@ let rows = [
   </TableBody>
 </TableView>
 ```
+### Layout
+```tsx example
+///- begin collapse -///
+let columns = [
+  {name: 'First name', id: 'first_name'},
+  {name: 'Last name', id: 'last_name'},
+  {name: 'City', id: 'city'}
+];
+
+let rows = [
+{"id":1,"first_name":"Andras","last_name":"Rodmell","city":"Tilburg"},
+{"id":2,"first_name":"Hansiain","last_name":"Muino","city":"Hollola"},
+{"id":3,"first_name":"Northrop","last_name":"Adnet","city":"Lai Cách"},
+{"id":4,"first_name":"Giana","last_name":"Phython","city":"Laspezia"},
+{"id":5,"first_name":"Maud","last_name":"Jaram","city":"Tipaz"},
+{"id":6,"first_name":"Gasparo","last_name":"Wiggin","city":"Feuknoni"},
+{"id":7,"first_name":"Phillie","last_name":"Lezemere","city":"Krajan Sidodadi"},
+{"id":8,"first_name":"Kailey","last_name":"Du Plantier","city":"Shangping"},
+{"id":9,"first_name":"Brady","last_name":"Oxtarby","city":"Bang Mun Nak"},
+{"id":10,"first_name":"Ekaterina","last_name":"Crennan","city":"Santo Antônio do Amparo"},
+{"id":11,"first_name":"Jaine","last_name":"Trembey","city":"Manūjān"},
+{"id":12,"first_name":"Emmey","last_name":"Dunguy","city":"Garhi Yāsīn"},
+{"id":13,"first_name":"Camille","last_name":"Millwall","city":"Orion"},
+{"id":14,"first_name":"Staci","last_name":"Glusby","city":"Alofi"},
+{"id":15,"first_name":"Ned","last_name":"Crumbleholme","city":"Ban Bueng"},
+{"id":16,"first_name":"Tana","last_name":"Beardsworth","city":"Puerto Aisén"},
+{"id":17,"first_name":"Dewain","last_name":"Fladgate","city":"London"},
+{"id":18,"first_name":"Thurstan","last_name":"Trembath","city":"Orléans"},
+{"id":19,"first_name":"Vaclav","last_name":"Fitzpayn","city":"Huangchen"},
+{"id":20,"first_name":"Keven","last_name":"Monkeman","city":"Medenychi"},
+{"id":21,"first_name":"Talia","last_name":"Ryman","city":"Piteå"},
+{"id":22,"first_name":"Percy","last_name":"Le Teve","city":"Terny"},
+{"id":23,"first_name":"Jackson","last_name":"Anten","city":"Beiling"},
+{"id":24,"first_name":"Jakob","last_name":"Goullee","city":"Pelym"},
+{"id":25,"first_name":"Dru","last_name":"Klainer","city":"Zavrč"},
+{"id":26,"first_name":"Lucie","last_name":"Donahue","city":"Kiryū"},
+{"id":27,"first_name":"Marc","last_name":"McPeck","city":"Nong Muang Khai"},
+{"id":28,"first_name":"Vivianna","last_name":"Allport","city":"Kajatian"},
+{"id":29,"first_name":"Drud","last_name":"Hurn","city":"Bambuí"},
+{"id":30,"first_name":"Trever","last_name":"Ambrodi","city":"Xiangtan"},
+{"id":31,"first_name":"Gwennie","last_name":"Kingswold","city":"San Benito"},
+{"id":32,"first_name":"Karlan","last_name":"Tilby","city":"Patrída"},
+{"id":33,"first_name":"Heddie","last_name":"Sneath","city":"Esperanza"},
+{"id":34,"first_name":"Harlen","last_name":"Sandells","city":"Harrismith"},
+{"id":35,"first_name":"Gavan","last_name":"Halward","city":"Al Ḩayfah"},
+{"id":36,"first_name":"Andre","last_name":"Everest","city":"Bahui"},
+{"id":37,"first_name":"Merilyn","last_name":"Rowbrey","city":"Imishli"},
+{"id":38,"first_name":"Abe","last_name":"Pecht","city":"Pangkalan Kasai"},
+{"id":39,"first_name":"Britt","last_name":"Collingridge","city":"Érd"},
+{"id":40,"first_name":"Leticia","last_name":"Thorndycraft","city":"Paita"},
+{"id":41,"first_name":"Eward","last_name":"Tigwell","city":"Aral"},
+{"id":42,"first_name":"Torrie","last_name":"Curzon","city":"Stockholm"},
+{"id":43,"first_name":"Jenifer","last_name":"Swalwel","city":"Jinniu"},
+{"id":44,"first_name":"Marianna","last_name":"Radley","city":"Hedi"},
+{"id":45,"first_name":"Antoine","last_name":"Tyers","city":"Hewa"},
+{"id":46,"first_name":"Darline","last_name":"Gallehawk","city":"København"},
+{"id":47,"first_name":"Rikki","last_name":"Rosenzveig","city":"Affery"},
+{"id":48,"first_name":"Debera","last_name":"Vedenichev","city":"Żywiec"},
+{"id":49,"first_name":"Morena","last_name":"Hewins","city":"Las Lajas"},
+{"id":50,"first_name":"Cordy","last_name":"Reimer","city":"Derbent"},
+{"id":51,"first_name":"Quint","last_name":"Thoresbie","city":"Guyang"},
+{"id":52,"first_name":"Christean","last_name":"Deere","city":"Waegwan"},
+{"id":53,"first_name":"Moyra","last_name":"Battelle","city":"Villa Presidente Frei, Ñuñoa, Santiago, Chile"},
+{"id":54,"first_name":"Fayth","last_name":"Gallafant","city":"Kedungharjo"},
+{"id":55,"first_name":"Thedrick","last_name":"Duddy","city":"Thị Trấn Mường Lát"},
+{"id":56,"first_name":"George","last_name":"Rickerd","city":"Zarqa"},
+{"id":57,"first_name":"Nikos","last_name":"Rideout","city":"Yuanqiao"},
+{"id":58,"first_name":"Alejandra","last_name":"Le Port","city":"Il’ichëvo"},
+{"id":59,"first_name":"Eleonora","last_name":"Gibberd","city":"Sua"},
+{"id":60,"first_name":"Archibaldo","last_name":"Place","city":"Sidayu"},
+{"id":61,"first_name":"Helen","last_name":"Brenton","city":"Kuressaare"},
+{"id":62,"first_name":"Leyla","last_name":"Armstead","city":"Haifa"},
+{"id":63,"first_name":"Bridget","last_name":"Strotone","city":"Karasuk"},
+{"id":64,"first_name":"Jarid","last_name":"Packer","city":"Студеничани"},
+{"id":65,"first_name":"Christos","last_name":"Natt","city":"Nova Russas"},
+{"id":66,"first_name":"Alwyn","last_name":"Mingaud","city":"Conde"},
+{"id":67,"first_name":"Archy","last_name":"Thorneywork","city":"Gulu"},
+{"id":68,"first_name":"Iolanthe","last_name":"Spurgeon","city":"Ayrihuanca"},
+{"id":69,"first_name":"Rossy","last_name":"Axford","city":"Ledeč nad Sázavou"},
+{"id":70,"first_name":"Consuela","last_name":"Lillegard","city":"Finote Selam"},
+{"id":71,"first_name":"Salomon","last_name":"Buckney","city":"Kampokpok"},
+{"id":72,"first_name":"Celene","last_name":"Espley","city":"Sinubong"},
+{"id":73,"first_name":"Kristos","last_name":"Denyukhin","city":"Las Palmas"},
+{"id":74,"first_name":"Bertha","last_name":"Mallabon","city":"Vera"},
+{"id":75,"first_name":"Jorry","last_name":"Yuryev","city":"Carletonville"},
+{"id":76,"first_name":"Holly-anne","last_name":"Wagstaffe","city":"Sukadana"},
+{"id":77,"first_name":"Lara","last_name":"Shears","city":"Gambēla"},
+{"id":78,"first_name":"Romonda","last_name":"Glanville","city":"Donglu"},
+{"id":79,"first_name":"Felice","last_name":"Pryde","city":"Sapadun"},
+{"id":80,"first_name":"Nick","last_name":"Kidney","city":"Chernigovka"},
+{"id":81,"first_name":"Hermina","last_name":"Dooley","city":"New Agutaya"},
+{"id":82,"first_name":"Ketty","last_name":"FitzGeorge","city":"Abaza"},
+{"id":83,"first_name":"Patrizio","last_name":"Bovingdon","city":"‘Ayn al ‘Arab"},
+{"id":84,"first_name":"Caitrin","last_name":"Braine","city":"Il’inskiy"},
+{"id":85,"first_name":"Ian","last_name":"De Few","city":"Jatinagara"},
+{"id":86,"first_name":"Eben","last_name":"Adan","city":"Bolong"},
+{"id":87,"first_name":"Peder","last_name":"Innott","city":"Gampaha"},
+{"id":88,"first_name":"Selie","last_name":"Cruise","city":"Mariscala"},
+{"id":89,"first_name":"Melania","last_name":"Meredyth","city":"La’ershan"},
+{"id":90,"first_name":"Antonina","last_name":"Proby","city":"Shantoudian"},
+{"id":91,"first_name":"Sabra","last_name":"Dreng","city":"Dzhankoy"},
+{"id":92,"first_name":"Sibeal","last_name":"Hall-Gough","city":"Mengxi"},
+{"id":93,"first_name":"Fidel","last_name":"Maisey","city":"Gus’-Khrustal’nyy"},
+{"id":94,"first_name":"Alejandro","last_name":"Devey","city":"Charata"},
+{"id":95,"first_name":"Norina","last_name":"Stoyle","city":"Malaya Dubna"},
+{"id":96,"first_name":"Lari","last_name":"Kiezler","city":"Guaíba"},
+{"id":97,"first_name":"Percival","last_name":"Geffinger","city":"Ngeni"},
+{"id":98,"first_name":"Jo","last_name":"Spoure","city":"Karata"},
+{"id":99,"first_name":"Karlie","last_name":"Gooddy","city":"Pelem"},
+{"id":100,"first_name":"Edmon","last_name":"Alsopp","city":"Sandu"}];
+///- end collapse -///
+
+// Table data hidden for example
+// Display table in flex with actiongroup above. without height
+<Flex height="size-2000" width="100%" direction="column">
+  <div>sdghsfgiudsfglibdfilbfg</div>
+  <TableView
+    flex
+    aria-label="Example table with dynamic content">
+    <TableHeader columns={columns}>
+      {column => (
+        <Column
+          key={column.id}>
+          {column.name}
+        </Column>
+      )}
+    </TableHeader>
+    <TableBody items={rows}>
+      {item => (
+        <Row>
+          {columnKey => <Cell>{item[columnKey]}</Cell>}
+        </Row>
+      )}
+    </TableBody>
+  </TableView>
+</Flex>
+```
 
 ### Internationalization
 To internationalize a TableView, all text content within the TableView should be localized. This includes the `aria-label` provided to the TableView if any.
@@ -132,32 +267,30 @@ to one or more Columns, allowing you to customize which columns should label the
 The example below applies `isRowHeader` to the "First Name" and "Last Name" columns so that each row is announced with the person's full name (e.g. "John Doe").
 
 ```tsx example
-<Flex flexGrow={1} maxWidth="size-3000">
-  <TableView aria-label="Example table with static contents" width="100%" height="100%">
-    <TableHeader>
-      <Column isRowHeader>First Name</Column>
-      <Column isRowHeader>Last Name</Column>
-      <Column align="end">Age</Column>
-    </TableHeader>
-    <TableBody>
-      <Row>
-        <Cell>John</Cell>
-        <Cell>Doe</Cell>
-        <Cell>45</Cell>
-      </Row>
-      <Row>
-        <Cell>Jane</Cell>
-        <Cell>Doe</Cell>
-        <Cell>37</Cell>
-      </Row>
-      <Row>
-        <Cell>Joe</Cell>
-        <Cell>Schmoe</Cell>
-        <Cell>67</Cell>
-      </Row>
-    </TableBody>
-  </TableView>
-</Flex>
+<TableView aria-label="Example table with static contents">
+  <TableHeader>
+    <Column isRowHeader>First Name</Column>
+    <Column isRowHeader>Last Name</Column>
+    <Column align="end">Age</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>John</Cell>
+      <Cell>Doe</Cell>
+      <Cell>45</Cell>
+    </Row>
+    <Row>
+      <Cell>Jane</Cell>
+      <Cell>Doe</Cell>
+      <Cell>37</Cell>
+    </Row>
+    <Row>
+      <Cell>Joe</Cell>
+      <Cell>Schmoe</Cell>
+      <Cell>67</Cell>
+    </Row>
+  </TableBody>
+</TableView>
 ```
 
 ## Asynchronous loading
