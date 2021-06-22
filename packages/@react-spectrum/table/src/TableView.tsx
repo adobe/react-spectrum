@@ -266,13 +266,14 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         focusedKey={state.selectionManager.focusedKey}
         renderView={renderView}
         renderWrapper={renderWrapper}
-        domRef={domRef} />
+        domRef={domRef}
+        isQuiet={isQuiet} />
     </TableContext.Provider>
   );
 }
 
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
-function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, ...otherProps}) {
+function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, isQuiet, ...otherProps}) {
   let {direction} = useLocale();
   let headerRef = useRef<HTMLDivElement>();
   let bodyRef = useRef<HTMLDivElement>();
@@ -345,9 +346,10 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
         style={{
           /* The width needs to be two pixels larger than visibleRect width because
            * the <HeaderRow /> has a single pixel each left and right border to get
-           * the header cell labels to line up with table content.
+           * the header cell labels to line up with table content. When quiet the
+           * extra two pixels aren't needed because there is no left and right border.
            */
-          width: visibleRect.width + 2,
+          width: visibleRect.width + (isQuiet ? 0 : 2),
           height: headerHeight,
           overflow: 'hidden',
           position: 'relative',

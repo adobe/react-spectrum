@@ -256,6 +256,11 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Table--quiet {
+  .spectrum-Table-head {
+    border-left: 0;
+    border-right: 0;
+  }
+
   .spectrum-Table-body {
     border-radius: var(--spectrum-table-quiet-border-radius);
   }
