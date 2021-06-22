@@ -10,13 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+import {fireEvent, render} from '@testing-library/react';
 import {Item} from '@react-stately/collections';
 import {List} from '../stories/List';
 import React from 'react';
-import {fireEvent, render} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 describe('useSelectableCollection', () => {
+  beforeEach(() => {
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 750);
+  });
   it('can navigate without replacing the selection in multiple selection selectOnFocus', () => {
     let {getAllByRole} = render(
       <List selectionMode="multiple" selectionBehavior="replace">
@@ -49,6 +52,29 @@ describe('useSelectableCollection', () => {
     fireEvent.keyDown(document.activeElement, {key: ' '});
     fireEvent.keyUp(document.activeElement, {key: ' '});
     expect(options[0]).not.toHaveAttribute('aria-selected');
+    expect(options[1]).not.toHaveAttribute('aria-selected');
+    expect(options[2]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('uses toggle mode in mobile', () => {
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 600);
+    let {getAllByRole} = render(
+      <List selectionMode="multiple" selectionBehavior="replace">
+        <Item>Paco de Lucia</Item>
+        <Item>Vicente Amigo</Item>
+        <Item>Gerardo Nunez</Item>
+      </List>
+    );
+    let options = getAllByRole('option');
+    expect(options[0]).not.toHaveAttribute('aria-selected');
+    fireEvent.touchStart(options[0], {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
+    fireEvent.touchEnd(options[0], {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(options[1]).not.toHaveAttribute('aria-selected');
+    expect(options[2]).not.toHaveAttribute('aria-selected');
+    fireEvent.touchStart(options[2], {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
+    fireEvent.touchEnd(options[2], {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
+    expect(options[0]).toHaveAttribute('aria-selected', 'true')
     expect(options[1]).not.toHaveAttribute('aria-selected');
     expect(options[2]).toHaveAttribute('aria-selected', 'true');
   });

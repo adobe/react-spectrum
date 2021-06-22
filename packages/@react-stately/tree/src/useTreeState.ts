@@ -16,7 +16,6 @@ import {SelectionManager, useMultipleSelectionState} from '@react-stately/select
 import {TreeCollection} from './TreeCollection';
 import {useCollection} from '@react-stately/collections';
 import {useControlledState} from '@react-stately/utils';
-import { useIsMobileDevice } from '@react-spectrum/utils';
 
 export interface TreeProps<T> extends CollectionBase<T>, Expandable, MultipleSelection {}
 export interface TreeState<T> {
@@ -41,7 +40,6 @@ export interface TreeState<T> {
  * of items from props, item expanded state, and manages multiple selection state.
  */
 export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T> {
-  let isMobile = useIsMobileDevice();
   let [expandedKeys, setExpandedKeys] = useControlledState(
     props.expandedKeys ? new Set(props.expandedKeys) : undefined,
     props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
@@ -71,7 +69,7 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
     expandedKeys,
     disabledKeys,
     toggleKey: onToggle,
-    selectionManager: new SelectionManager(tree, selectionState, {isMobile})
+    selectionManager: new SelectionManager(tree, selectionState)
   };
 }
 
