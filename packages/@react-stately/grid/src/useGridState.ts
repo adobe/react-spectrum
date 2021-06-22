@@ -2,6 +2,7 @@ import {GridCollection} from '@react-types/grid';
 import {Key, useEffect, useMemo} from 'react';
 import {MultipleSelection} from '@react-types/shared';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import { useIsMobileDevice } from '@react-spectrum/utils';
 
 export interface GridState<T, C extends GridCollection<T>> {
   collection: C,
@@ -21,6 +22,7 @@ interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelec
  * Provides state management for a grid component. Handles row selection and focusing a grid cell's focusable child if applicable.
  */
 export function useGridState<T extends object, C extends GridCollection<T>>(props: GridStateOptions<T, C>): GridState<T, C> {
+  let isMobile = useIsMobileDevice();
   let {collection, focusMode, selectionBehavior = 'toggle'} = props;
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
@@ -55,6 +57,6 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
   return {
     collection,
     disabledKeys,
-    selectionManager: new SelectionManager(collection, selectionState, {selectionBehavior})
+    selectionManager: new SelectionManager(collection, selectionState, {selectionBehavior, isMobile})
   };
 }

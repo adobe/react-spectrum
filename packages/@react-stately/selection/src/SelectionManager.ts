@@ -26,7 +26,8 @@ import {Selection} from './Selection';
 
 interface SelectionManagerOptions {
   allowsCellSelection?: boolean,
-  selectionBehavior?: SelectionBehavior
+  selectionBehavior?: SelectionBehavior,
+  isMobile?: boolean
 }
 
 /**
@@ -38,6 +39,7 @@ export class SelectionManager implements MultipleSelectionManager {
   private allowsCellSelection: boolean;
   private _isSelectAll: boolean;
   private selectionBehavior: SelectionBehavior;
+  private isMobile: boolean;
 
   constructor(collection: Collection<Node<unknown>>, state: MultipleSelectionState, options?: SelectionManagerOptions) {
     this.collection = collection;
@@ -45,6 +47,7 @@ export class SelectionManager implements MultipleSelectionManager {
     this.allowsCellSelection = options?.allowsCellSelection ?? false;
     this.selectionBehavior = options?.selectionBehavior || 'toggle';
     this._isSelectAll = null;
+    this.isMobile = options.isMobile;
   }
 
   /**
@@ -391,7 +394,7 @@ export class SelectionManager implements MultipleSelectionManager {
       }
     } else if (e && e.shiftKey) {
       this.extendSelection(key);
-    } else if (this.selectionBehavior === 'toggle' || (e && e.metaKey)) {
+    } else if (this.selectionBehavior === 'toggle' || (e && e.metaKey) || this.isMobile) {
       this.toggleSelection(key);
     } else {
       this.replaceSelection(key);

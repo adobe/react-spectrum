@@ -15,6 +15,7 @@ import {Key, useEffect, useMemo} from 'react';
 import {ListCollection} from './ListCollection';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {useCollection} from '@react-stately/collections';
+import { useIsMobileDevice } from '@react-spectrum/utils';
 
 export interface ListProps<T> extends CollectionBase<T>, MultipleSelection {
   /** Filter function to generate a filtered list of nodes. */
@@ -39,6 +40,7 @@ export interface ListState<T> {
  * of items from props, and manages multiple selection state.
  */
 export function useListState<T extends object>(props: ListProps<T>): ListState<T>  {
+  let isMobile = useIsMobileDevice();
   let {
     filter,
     selectionBehavior = 'toggle'
@@ -64,6 +66,6 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
   return {
     collection,
     disabledKeys,
-    selectionManager: new SelectionManager(collection, selectionState, {selectionBehavior})
+    selectionManager: new SelectionManager(collection, selectionState, {selectionBehavior, isMobile})
   };
 }
