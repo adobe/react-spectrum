@@ -74,7 +74,7 @@ describe('useSelectableCollection', () => {
     expect(options[2]).not.toHaveAttribute('aria-selected');
     fireEvent.touchStart(options[2], {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
     fireEvent.touchEnd(options[2], {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
-    expect(options[0]).toHaveAttribute('aria-selected', 'true')
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
     expect(options[1]).not.toHaveAttribute('aria-selected');
     expect(options[2]).toHaveAttribute('aria-selected', 'true');
   });
