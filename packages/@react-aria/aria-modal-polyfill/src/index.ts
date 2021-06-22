@@ -14,10 +14,12 @@ import {hideOthers} from 'aria-hidden';
 
 type Revert = () => void;
 
+const currentDocument = typeof document !== 'undefined' ? document : undefined;
+
 /**
  * Acts as a polyfill for `aria-modal` by watching for added modals and hiding any surrounding DOM elements with `aria-hidden`.
  */
-export function watchModals(selector:string = 'body'): Revert {
+export function watchModals(selector:string = 'body', {document = currentDocument} = {}): Revert {
   /**
    * Listen for additions to the child list of the selected element (defaults to body). This is where providers render modal portals.
    * When one is added, see if there is a modal inside it, if there is, then hide everything else from screen readers.
