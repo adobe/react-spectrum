@@ -384,12 +384,14 @@ storiesOf('TableView', module)
           <Column>File Name</Column>
           <Column align="center">Type</Column>
           <Column align="end">Size</Column>
+          <Column>Description</Column>
         </TableHeader>
         <TableBody>
           <Row>
             <Cell>2018 Proposal</Cell>
             <Cell>PDF</Cell>
             <Cell>214 KB</Cell>
+            <Cell>very very very very very very long long long long long description</Cell>
           </Row>
           <Row>
             <Cell>
@@ -415,6 +417,14 @@ storiesOf('TableView', module)
                 120 KB
               </View>
             </Cell>
+            <Cell>
+              <View
+                width="100%"
+                backgroundColor="gray-200"
+                UNSAFE_style={{textAlign: 'end'}}>
+                very very very very very very long long long long long description
+              </View>
+            </Cell>
           </Row>
           <Row>
             <Cell>
@@ -438,6 +448,14 @@ storiesOf('TableView', module)
                 backgroundColor="gray-200"
                 UNSAFE_style={{textAlign: 'end'}}>
                 70% width
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                width="70%"
+                backgroundColor="gray-200"
+                UNSAFE_style={{textAlign: 'end'}}>
+                very very very very very very long long long long long description
               </View>
             </Cell>
           </Row>
