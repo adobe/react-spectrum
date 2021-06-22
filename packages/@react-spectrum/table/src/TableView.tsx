@@ -343,7 +343,11 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
       <div
         role="presentation"
         style={{
-          width: visibleRect.width,
+          /* The width needs to be two pixels larger than visibleRect width because
+           * the <HeaderRow /> has a single pixel each left and right border to get
+           * the header cell labels to line up with table content.
+           */
+          width: visibleRect.width + 2,
           height: headerHeight,
           overflow: 'hidden',
           position: 'relative',
