@@ -19,8 +19,6 @@
 .react-spectrum-Table-cell {
   display: flex;
   align-items: center;
-  /* To ensure the flex child only takes up available width, see https://makandracards.com/makandra/66994-css-flex-and-min-width */
-  min-width: 0px;
 }
 
 .react-spectrum-Table-cellWrapper > .react-spectrum-Table-cell {
