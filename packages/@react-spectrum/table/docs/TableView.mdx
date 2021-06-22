@@ -692,11 +692,12 @@ function TableExample(props) {
     {id: '1', firstName: 'John', lastName: 'Doe', age: '45'},
     {id: '2', firstName: 'Jane', lastName: 'Doe', age: '37'},
     {id: '3', firstName: 'Joe', lastName: 'Schmoe', age: '67'},
-    {id: '4', firstName: 'Joe', lastName: 'Bloggs', age: '12'}
+    {id: '4', firstName: 'Joe', lastName: 'Bloggs', age: '12'},
+    {id: '5', firstName: 'Taylor', lastName: 'Rodriguez Lloyd-Atkinson', age: '83'}
   ];
 
   return (
-    <TableView aria-label="Example table with hidden headers" {...props}>
+    <TableView aria-label="Example table with hidden headers" maxWidth="size-6000" {...props}>
       <TableHeader columns={columns}>
         {column => (
           <Column
