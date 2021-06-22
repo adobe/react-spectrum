@@ -448,7 +448,7 @@ function Example() {
 ### Fully controlled
 
 The following example shows how you would create a controlled ComboBox, controlling everything from the selected value (`selectedKey`)
-to the combobox options (`items`). By passing in `inputValue`, `selectedKey`, `isOpen`, and `items` to the `ComboBox` you can control
+to the combobox options (`items`). By passing in `inputValue`, `selectedKey`, and `items` to the `ComboBox` you can control
 exactly what your ComboBox should display. For example, note that the item filtering for the controlled ComboBox below now follows a "starts with"
 filter strategy, accomplished by controlling the exact set of items available to the ComboBox whenever the input value updates.
 
@@ -469,7 +469,6 @@ function ControlledComboBox() {
   // Store ComboBox input value, selected option, open state, and items
   // in a state tracker
   let [fieldState, setFieldState] = React.useState({
-    isOpen: false,
     selectedKey: '',
     inputValue: '',
     items: optionList
@@ -485,7 +484,6 @@ function ControlledComboBox() {
     setFieldState(prevState => {
       let selectedItem = prevState.items.find(option => option.id === key);
       return ({
-        isOpen: false,
         inputValue: selectedItem?.name ?? '',
         selectedKey: key,
         items: optionList.filter(item => startsWith(item.name, selectedItem?.name ?? ''))
@@ -497,22 +495,21 @@ function ControlledComboBox() {
   // field is altered by the user
   let onInputChange = (value) => {
     setFieldState(prevState => ({
-      isOpen: true,
       inputValue: value,
       selectedKey: value === '' ? null : prevState.selectedKey,
       items: optionList.filter(item => startsWith(item.name, value))
     }));
   };
 
-  // Specify how each of the ComboBox values should change when the
-  // open state is changed
-  let onOpenChange = (isOpen) => {
-    setFieldState(prevState => ({
-      isOpen,
-      inputValue: prevState.inputValue,
-      selectedKey: prevState.selectedKey,
-      items: prevState.items
-    }));
+  // Show entire list if user opens the menu manually
+  let onOpenChange = (isOpen, menuTrigger) => {
+    if (menuTrigger === 'manual' && isOpen) {
+      setFieldState(prevState => ({
+        inputValue: prevState.inputValue,
+        selectedKey: prevState.selectedKey,
+        items: optionList
+      }));
+    }
   };
 
   // Pass each controlled prop to useComboBox along with their
@@ -523,7 +520,6 @@ function ControlledComboBox() {
       items={fieldState.items}
       selectedKey={fieldState.selectedKey}
       inputValue={fieldState.inputValue}
-      isOpen={fieldState.isOpen && fieldState.items.length > 0}
       onOpenChange={onOpenChange}
       onSelectionChange={onSelectionChange}
       onInputChange={onInputChange}>

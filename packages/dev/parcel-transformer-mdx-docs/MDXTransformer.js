@@ -65,11 +65,13 @@ module.exports = new Transformer({
               provider = 'ExampleThemeSwitcher';
             }
 
-            if (/^\s*function (.|\n)*}\s*$/.test(code)) {
-              let name = code.match(/^\s*function (.*?)\s*\(/)[1];
-              code = `${code}\nReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));`;
-            } else if (/^<(.|\n)*>$/m.test(code)) {
-              code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`);
+            if (!options.includes('render=false')) {
+              if (/^\s*function (.|\n)*}\s*$/.test(code)) {
+                let name = code.match(/^\s*function (.*?)\s*\(/)[1];
+                code = `${code}\nReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));`;
+              } else if (/^<(.|\n)*>$/m.test(code)) {
+                code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`);
+              }
             }
 
             if (!options.includes('export=true')) {
@@ -77,6 +79,11 @@ module.exports = new Transformer({
             }
 
             exampleCode.push(code);
+
+            if (options.includes('render=false')) {
+              node.meta = null;
+              return transformExample(node, preRelease);
+            }
 
             if (meta === 'snippet') {
               node.meta = null;
