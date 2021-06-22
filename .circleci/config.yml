@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  azure-cli: circleci/azure-cli@1.1.0
+  azure-cli: circleci/azure-cli@1.2.0
 jobs:
   install:
     docker:
