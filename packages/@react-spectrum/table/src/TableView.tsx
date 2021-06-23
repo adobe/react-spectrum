@@ -343,15 +343,14 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
       ref={domRef}>
       <div
         role="presentation"
+        className={classNames(styles, 'spectrum-Table-head-body')}
         style={{
           width: visibleRect.width,
           height: headerHeight,
           overflow: 'hidden',
           position: 'relative',
           willChange: state.isScrolling ? 'scroll-position' : '',
-          transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined,
-          borderLeft: !isQuiet && '1px solid transparent',
-          borderRight: !isQuiet && '1px solid transparent',
+          transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined
         }}
         ref={headerRef}>
         {state.visibleViews[0]}
