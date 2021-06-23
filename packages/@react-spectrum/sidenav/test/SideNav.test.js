@@ -92,7 +92,7 @@ describe('SideNav', function () {
     stub2 = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 400);
   });
   afterAll(function () {
-    jest.useRealTimers('modern');
+    jest.useRealTimers();
     stub1.mockReset();
     stub2.mockReset();
     scrollHeight.mockReset();
