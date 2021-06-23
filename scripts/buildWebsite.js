@@ -104,10 +104,11 @@ async function build() {
   fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'));
   fs.copySync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
 
-  // Only copy babel patch over
-  let patches = fs.readdirSync(path.join(__dirname, '..', 'patches'));
-  let babelPatch = patches.find(name => name.startsWith('@babel'));
-  fs.copySync(path.join(__dirname, '..', 'patches', babelPatch), path.join(dir, 'patches', babelPatch));
+  // Only copy babel and parcel patches over
+  let patches = fs.readdirSync(path.join(__dirname, '..', 'patches')).filter(name => name.startsWith('@babel') || name.startsWith('@parcel'));
+  for (let patch of patches) {
+    fs.copySync(path.join(__dirname, '..', 'patches', patch), path.join(dir, 'patches', patch));
+  }
 
   // Install dependencies from npm
   await run('yarn', {cwd: dir, stdio: 'inherit'});

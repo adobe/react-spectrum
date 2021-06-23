@@ -10,35 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-.react-spectrum-Table {
-  user-select: none;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  min-width: 0;
-}
+import {Meta} from '@storybook/react';
 
-.react-spectrum-Table-cell {
-  display: flex;
-  align-items: center;
-}
+// Original ComboBox chromatic story was too large to be processed
+const meta: Meta = {
+  title: 'ComboBoxRTL',
+  parameters: {
+    chromaticProvider: {colorSchemes: ['light', 'dark', 'lightest', 'darkest'], locales: ['ar-AE'], scales: ['medium', 'large']}
+  }
+};
 
-.react-spectrum-Table-cellWrapper > .react-spectrum-Table-cell {
-  height: 100%;
-}
+export default meta;
 
-.react-spectrum-Table-cell--alignCenter {
-  justify-content: center;
-}
-
-.react-spectrum-Table-cell--alignEnd {
-  justify-content: flex-end;
-}
-
-.react-spectrum-Table-centeredWrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
+export {PropDefaults, PropSelectedKey, PropInputValue, PropAriaLabelled, PropLabelEnd, PropLabelSide, PropCustomWidth} from './ComboBox.chromatic';

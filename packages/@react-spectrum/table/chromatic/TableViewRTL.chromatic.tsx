@@ -10,35 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-.react-spectrum-Table {
-  user-select: none;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  min-width: 0;
-}
+import {Meta} from '@storybook/react';
 
-.react-spectrum-Table-cell {
-  display: flex;
-  align-items: center;
-}
+// Original Table story wasn't performant with so many tables, so split off RTL into its own story
+const meta: Meta = {
+  title: 'TableViewRTL',
+  parameters: {
+    chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['medium'], disableAnimations: true},
+    // large delay with the layout since there are so many tables
+    chromatic: {delay: 2000}
+  }
+};
 
-.react-spectrum-Table-cellWrapper > .react-spectrum-Table-cell {
-  height: 100%;
-}
+export default meta;
 
-.react-spectrum-Table-cell--alignCenter {
-  justify-content: center;
-}
-
-.react-spectrum-Table-cell--alignEnd {
-  justify-content: flex-end;
-}
-
-.react-spectrum-Table-centeredWrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
+export {
+  Default,
+  ColumnAlign,
+  ColumnDividers,
+  ColumnWidth,
+  HiddenColumns,
+  NestedColumns,
+  Empty
+} from './TableView.chromatic';
