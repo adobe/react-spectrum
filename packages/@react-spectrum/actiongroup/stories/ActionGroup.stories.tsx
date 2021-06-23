@@ -43,6 +43,7 @@ import TextStrikethrough from '@spectrum-icons/workflow/TextStrikethrough';
 import TextStyle from '@spectrum-icons/workflow/TextStyle';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import VectorDraw from '@spectrum-icons/workflow/VectorDraw';
+import {View} from '@react-spectrum/view';
 import ViewCardIcon from '@spectrum-icons/workflow/ViewCard';
 import ViewGridIcon from '@spectrum-icons/workflow/ViewGrid';
 import ViewListIcon from '@spectrum-icons/workflow/ViewList';
@@ -158,6 +159,38 @@ storiesOf('ActionGroup', module)
   .add(
     'isQuiet, isEmphasized',
     () => render({isEmphasized: true, isQuiet: true, defaultSelectedKeys: ['1']}, viewItems)
+  )
+  .add(
+    'staticColor=white',
+    () => (
+      <View backgroundColor="static-seafoam-600" padding="size-1000">
+        {render({staticColor: 'white', defaultSelectedKeys: ['1']}, viewItems)}
+      </View>
+    )
+  )
+  .add(
+    'staticColor=white, isQuiet',
+    () => (
+      <View backgroundColor="static-seafoam-600" padding="size-1000">
+        {render({staticColor: 'white', isQuiet: true, defaultSelectedKeys: ['1']}, viewItems)}
+      </View>
+    )
+  )
+  .add(
+    'staticColor=black',
+    () => (
+      <View backgroundColor="static-yellow-400" padding="size-1000">
+        {render({staticColor: 'black', defaultSelectedKeys: ['1']}, viewItems)}
+      </View>
+    )
+  )
+  .add(
+    'staticColor=black, isQuiet',
+    () => (
+      <View backgroundColor="static-yellow-400" padding="size-1000">
+        {render({staticColor: 'black', isQuiet: true, defaultSelectedKeys: ['1']}, viewItems)}
+      </View>
+    )
   )
   .add(
     'selectionMode: multiple',
@@ -317,6 +350,16 @@ storiesOf('ActionGroup', module)
     )
   )
   .add(
+    'overflowMode: collapse, single selection',
+    () => (
+      <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', display: 'flex', gap: 10, width: 300, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+        {renderCollapsibleAlignment({density: 'compact', maxWidth: '50%', isEmphasized: true})}
+        {renderCollapsibleAlignment({density: 'compact', maxWidth: '50%', isEmphasized: true, buttonLabelBehavior: 'show'})}
+        {renderCollapsibleAlignmentNoIcons({density: 'compact', maxWidth: '50%', isEmphasized: true, buttonLabelBehavior: 'show'})}
+      </div>
+    )
+  )
+  .add(
     'orientation: vertical, overflowMode: collapse',
     () => (
       <div style={{padding: '10px', resize: 'vertical', overflow: 'auto', width: 32, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
@@ -426,8 +469,8 @@ function renderCollapsible(props = {}) {
         <Text>Copy</Text>
       </Item>
       <Item key="delete">
-        <DeleteIcon />
         <Text>Delete</Text>
+        <DeleteIcon />
       </Item>
       <Item key="move">
         <MoveIcon />
@@ -502,13 +545,31 @@ function renderCollapsibleAlignment(props = {}) {
         <Text>Align Center</Text>
       </Item>
       <Item key="right">
-        <TextAlignRight />
         <Text>Align Right</Text>
+        <TextAlignRight />
       </Item>
       <Item key="justify">
         <TextAlignJustify />
         <Text>Justify</Text>
       </Item>
+    </ActionGroup>
+  );
+}
+
+function renderCollapsibleAlignmentNoIcons(props = {}) {
+  return (
+    <ActionGroup
+      aria-label="Text alignment"
+      overflowMode="collapse"
+      selectionMode="single"
+      defaultSelectedKeys={['left']}
+      disallowEmptySelection
+      onSelectionChange={action('onSelectionChange')}
+      {...props}>
+      <Item key="left">Align Left</Item>
+      <Item key="center">Align Center</Item>
+      <Item key="right">Align Right</Item>
+      <Item key="justify">Justify</Item>
     </ActionGroup>
   );
 }
