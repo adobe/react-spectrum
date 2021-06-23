@@ -59,8 +59,13 @@ export interface ColumnProps<T> {
   /** The minimum width of the column. */
   minWidth?: number | string,
   /** The maximum width of the column. */
-  maxWidth?: number | string
+  maxWidth?: number | string,
   // defaultWidth?: number | string
+  /** Whether the column allows sorting. */
+  allowsSorting?: boolean,
+  /** Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation. */
+  isRowHeader?: boolean
+
 }
 
 // TODO: how to support these in CollectionBuilder...
@@ -70,12 +75,8 @@ export interface SpectrumColumnProps<T> extends ColumnProps<T> {
    * @default 'start'
    */
   align?: 'start' | 'center' | 'end',
-  /** Whether the column allows sorting. */
-  allowsSorting?: boolean,
   // /** Whether the column should stick to the viewport when scrolling. */
   // isSticky?: boolean, // shouldStick?? Not implemented yet?
-  /** Whether a column is a row header and should be announced by assistive technology during row navigation. */
-  isRowHeader?: boolean,
   /** Whether the column should render a divider between it and the next column. */
   showDivider?: boolean,
   /**
@@ -118,8 +119,13 @@ export type CellElement = ReactElement<CellProps>;
 export type CellRenderer = (columnKey: Key) => CellElement;
 
 export interface TableCollection<T> extends GridCollection<T> {
+  // TODO perhaps elaborate on this? maybe not clear enought, essentially returns the table header rows (e.g. in a tiered headers table, will return the nodes containing the top tier column, next tier, etc)
+  /** A list of header row nodes in the table. */
   headerRows: GridNode<T>[],
+  /** A list of column nodes in the table. */
   columns: GridNode<T>[],
+  /** A set of column keys that serve as the [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader). */
   rowHeaderColumnKeys: Set<Key>,
+  /** The node that makes up the body of the table. */
   body: GridNode<T>
 }

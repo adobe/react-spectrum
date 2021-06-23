@@ -19,7 +19,7 @@ governing permissions and limitations under the License.
       color: var(--spectrum-table-header-sort-icon-color);
     }
 
-    &:hover {
+    &.is-hovered {
       color: var(--spectrum-table-header-text-color-hover);
 
       .spectrum-Table-sortedIcon {
@@ -119,7 +119,7 @@ tbody.spectrum-Table-body {
 
   /* We apply background color to the cell rather than the row so that
    * cells can overlap (e.g. sticky row headers). */
-  &:hover .spectrum-Table-cell {
+  &.is-hovered .spectrum-Table-cell {
     background-color: var(--spectrum-table-row-background-color-hover);
   }
 
@@ -143,7 +143,7 @@ tbody.spectrum-Table-body {
       background-color: var(--spectrum-table-row-background-color-selected);
     }
 
-    &:hover .spectrum-Table-cell {
+    &.is-hovered .spectrum-Table-cell {
       background-color: var(--spectrum-table-row-background-color-selected-hover);
     }
 
@@ -191,7 +191,7 @@ tbody.spectrum-Table-body {
       background-color: var(--spectrum-alias-background-color-default);
     }
 
-    &:hover .spectrum-Table-cell {
+    &.is-hovered .spectrum-Table-cell {
       background-color: var(--spectrum-table-quiet-row-background-color-hover);
     }
 
@@ -209,7 +209,7 @@ tbody.spectrum-Table-body {
         background-color: var(--spectrum-table-quiet-row-background-color-selected);
       }
 
-      &:hover .spectrum-Table-cell {
+      &.is-hovered .spectrum-Table-cell {
         background-color: var(--spectrum-table-quiet-row-background-color-selected-hover);
       }
 
