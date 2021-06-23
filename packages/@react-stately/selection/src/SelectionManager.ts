@@ -27,13 +27,18 @@ export class SelectionManager implements MultipleSelectionManager {
   private state: MultipleSelectionState;
   private allowsCellSelection: boolean;
   private _isSelectAll: boolean;
+  private callbackMap;
 
   constructor(collection: Collection<Node<unknown>>, state: MultipleSelectionState, options?: SelectionManagerOptions) {
     this.collection = collection;
     this.state = state;
     this.allowsCellSelection = options?.allowsCellSelection ?? false;
     this._isSelectAll = null;
+    this.callbackMap = options.callbackMap;
   }
+
+// TODO: initialize callBackSet here instead of useGridState and when we call setFocusedKey, call every callback in the set with the new focused key
+
 
   /**
    * The type of selection that is allowed in the collection.
@@ -79,7 +84,8 @@ export class SelectionManager implements MultipleSelectionManager {
    * Sets the focused key.
    */
   setFocusedKey(key: Key, childFocusStrategy?: FocusStrategy) {
-    this.state.setFocusedKey(key, childFocusStrategy);
+    let callbackInMap = this.callbackMap.get(key);
+    this.state.setFocusedKey(key, childFocusStrategy, callbackInMap);
   }
 
   /**

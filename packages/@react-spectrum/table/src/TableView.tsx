@@ -241,6 +241,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
   };
 
+  // TODO: call manager.subscribeToFocusKey with callback that calls a setState when focusKey changes so scrolling happens properly
+
+
   return (
     <TableContext.Provider value={state}>
       <TableVirtualizer
@@ -294,6 +297,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
   let {virtualizerProps} = useVirtualizer({
     focusedKey,
     scrollToItem(key) {
+      console.log('scroll to item')
       let item = collection.getItem(key);
       let column = collection.columns[0];
       state.virtualizer.scrollToItem(key, {
@@ -585,6 +589,7 @@ function TableCheckboxCell({cell}) {
 }
 
 function TableCell({cell}) {
+  console.log('rendering')
   let state = useTableContext();
   let ref = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;

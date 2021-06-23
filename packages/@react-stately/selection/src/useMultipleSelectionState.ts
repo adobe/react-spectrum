@@ -59,10 +59,12 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
     get childFocusStrategy() {
       return childFocusStrategyRef.current;
     },
-    setFocusedKey(k, childFocusStrategy = 'first') {
+    setFocusedKey(k, childFocusStrategy = 'first', callback) {
+      // console.log('setting focusedKEy', k, callback)
       focusedKeyRef.current = k;
       childFocusStrategyRef.current = childFocusStrategy;
-      setFocusedKey(k);
+      callback && callback(k);
+      // setFocusedKey(k);
     },
     selectedKeys,
     setSelectedKeys,

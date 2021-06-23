@@ -27,8 +27,10 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
       props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
     , [props.disabledKeys]);
 
+  let callbackMap = new Map();
+
   let setFocusedKey = selectionState.setFocusedKey;
-  selectionState.setFocusedKey = (key, child) => {
+  selectionState.setFocusedKey = (key, child, callback) => {
     // If focusMode is cell and an item is focused, focus a child cell instead.
     if (focusMode === 'cell' && key != null) {
       let item = collection.getItem(key);
@@ -41,8 +43,8 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
         }
       }
     }
-
-    setFocusedKey(key, child);
+    // console.log(' in usegridstate')
+    setFocusedKey(key, child, callback);
   };
 
   // Reset focused key if that item is deleted from the collection.
@@ -55,6 +57,6 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
   return {
     collection,
     disabledKeys,
-    selectionManager: new SelectionManager(collection, selectionState)
+    selectionManager: new SelectionManager(collection, selectionState, {callbackMap: callbackMap})
   };
 }

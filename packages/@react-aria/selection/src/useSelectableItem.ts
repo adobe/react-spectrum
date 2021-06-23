@@ -11,7 +11,7 @@
  */
 
 import {focusSafely} from '@react-aria/focus';
-import {HTMLAttributes, Key, RefObject, useEffect} from 'react';
+import {HTMLAttributes, Key, RefObject, useEffect, useRef, useState} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressEvent} from '@react-types/shared';
 import {PressProps} from '@react-aria/interactions';
@@ -68,20 +68,31 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     shouldUseVirtualFocus,
     focus
   } = options;
-
+  let [isFocused, setFocused] = useState(false);
   let onSelect = (e: PressEvent | PointerEvent) => manager.select(key, e);
 
   // Focus the associated DOM node when this item becomes the focusedKey
-  let isFocused = key === manager.focusedKey;
   useEffect(() => {
-    if (isFocused && manager.isFocused && !shouldUseVirtualFocus && document.activeElement !== ref.current) {
-      if (focus) {
-        focus();
-      } else {
-        focusSafely(ref.current);
-      }
+    if (shouldUseVirtualFocus) {
+      return;
     }
-  }, [ref, isFocused, manager.focusedKey, manager.childFocusStrategy, manager.isFocused, shouldUseVirtualFocus]);
+    // TODO: Replace with manager.subscribeToFocusKey
+    manager.callbackMap.set(key, (focusedKey) => {
+      let isFocused = key === focusedKey;
+      setFocused(isFocused);
+      if (isFocused && manager.isFocused && document.activeElement !== ref.current) {
+        if (focus) {
+          focus();
+        } else {
+          focusSafely(ref.current);
+        }
+      }
+    });
+
+    return () => {
+      manager.callbackMap.delete(key);
+    }
+  }, [ref, manager.isFocused, shouldUseVirtualFocus]);
 
   // Set tabIndex to 0 if the element is focused, or -1 otherwise so that only the last focused
   // item is tabbable.  If using virtual focus, don't set a tabIndex at all so that VoiceOver
@@ -92,8 +103,11 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       tabIndex: isFocused ? 0 : -1,
       onFocus(e) {
         if (e.target === ref.current) {
-          manager.setFocusedKey(key);
+          manager.setFocusedKey(key, undefined);
         }
+      },
+      onBlur() {
+        setFocused(false);
       }
     };
   }
