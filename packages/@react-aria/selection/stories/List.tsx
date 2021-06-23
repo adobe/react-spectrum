@@ -7,7 +7,6 @@ import {
 } from '@react-types/shared';
 import {ListState, useListState} from '@react-stately/list';
 import React, {useRef} from 'react';
-import {useIsMobileDevice} from '@react-spectrum/utils';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableItem, useSelectableList} from '@react-aria/selection';
 
@@ -40,9 +39,8 @@ function ListItem<T>({item, state}: {item: Node<T>, state: ListState<T>}) {
 }
 
 export function List<T extends object>(props: ListProps<T>) {
-  let isMobile = useIsMobileDevice();
   const ref = useRef<HTMLUListElement>(null);
-  const state = useListState({...props, selectionBehavior: isMobile ? 'toggle' : props.selectionBehavior});
+  const state = useListState(props);
   const {listProps} = useSelectableList({
     ...props,
     selectionManager: state.selectionManager,
