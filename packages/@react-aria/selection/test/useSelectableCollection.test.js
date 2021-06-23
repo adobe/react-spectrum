@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {fireEvent, render} from '@testing-library/react';
 import {Item} from '@react-stately/collections';
 import {List} from '../stories/List';
 import React from 'react';
-import {fireEvent, render} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 describe('useSelectableCollection', () => {
