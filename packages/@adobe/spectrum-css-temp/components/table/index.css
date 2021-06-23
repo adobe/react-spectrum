@@ -34,7 +34,7 @@ governing permissions and limitations under the License.
   transition: transform var(--spectrum-global-animation-duration-100) ease-in-out;
 }
 
-.spectrum-Table-head-body {
+.spectrum-Table-headWrapper {
   border-left-width: 1px;
   border-left-style: solid;
   border-right-width: 1px;
@@ -258,7 +258,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Table--quiet {
-  .spectrum-Table-head-body {
+  .spectrum-Table-headWrapper {
     border-left: 0;
     border-right: 0;
   }
