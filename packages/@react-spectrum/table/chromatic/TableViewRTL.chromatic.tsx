@@ -10,7 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="css-module-types" />
+import {Meta} from '@storybook/react';
 
-export * from './ErrorBoundary';
-export * from './GeneratePowerset';
+// Original Table story wasn't performant with so many tables, so split off RTL into its own story
+const meta: Meta = {
+  title: 'TableViewRTL',
+  parameters: {
+    chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['medium'], disableAnimations: true},
+    // large delay with the layout since there are so many tables
+    chromatic: {delay: 2000}
+  }
+};
+
+export default meta;
+
+export {
+  Default,
+  ColumnAlign,
+  ColumnDividers,
+  ColumnWidth,
+  HiddenColumns,
+  NestedColumns,
+  Empty
+} from './TableView.chromatic';
