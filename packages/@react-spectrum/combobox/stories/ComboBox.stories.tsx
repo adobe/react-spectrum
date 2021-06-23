@@ -233,24 +233,12 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
-    // Will separate into separate stories
-    'with help text',
-    () => (
-      <div>
-        {render({description: 'hello', errorMessage: 'error', validationState: 'invalid'})}
-        <hr />
-        {render({description: 'hello', errorMessage: 'error'})}
-        <hr />
-        {render({description: 'hello', errorMessage: 'error', validationState: 'invalid', showIcon: true, label: 'Combobox - showIcon=true'})}
-        <hr />
-        {render({description: 'hello', errorMessage: 'error', isDisabled: true, label: 'Combobox - disabled'})}
-        <hr />
-        {render({label: 'Combobox - no help text'})}
-        <hr />
-        {render({label: 'Combobox - has aria-describedby', 'aria-describedby': 'other-desc', description: 'hello'})}
-        <div id="other-desc">Please select an item.</div>
-      </div>
-    )
+    'with description',
+    () => render({description: 'hello'})
+  )
+  .add(
+    'with error message',
+    () => render({description: 'hello', errorMessage: 'error', validationState: 'invalid'})
   )
   .add(
     'isRequired',

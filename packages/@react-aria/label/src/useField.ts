@@ -38,10 +38,10 @@ export function useField(props: AriaFieldProps): FieldAria {
 
   fieldProps = mergeProps(fieldProps, {
     'aria-describedby': [
-      props['aria-describedby'],
       descriptionId,
       // Use aria-describedby for error message because aria-errormessage is unsupported using VoiceOver or NVDA. See https://github.com/adobe/react-spectrum/issues/1346#issuecomment-740136268
-      errorMessageId
+      errorMessageId,
+      props['aria-describedby']
     ].filter(Boolean).join(' ') || undefined
   });
 
