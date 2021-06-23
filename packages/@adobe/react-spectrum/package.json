@@ -1,6 +1,6 @@
 {
   "name": "@adobe/react-spectrum",
-  "version": "3.11.0",
+  "version": "3.11.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -39,7 +39,7 @@
     "@react-spectrum/menu": "^3.3.0",
     "@react-spectrum/meter": "^3.1.2",
     "@react-spectrum/numberfield": "^3.0.0",
-    "@react-spectrum/overlays": "^3.4.2",
+    "@react-spectrum/overlays": "^3.4.3",
     "@react-spectrum/picker": "^3.2.4",
     "@react-spectrum/progress": "^3.1.2",
     "@react-spectrum/provider": "^3.2.0",
