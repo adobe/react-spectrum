@@ -28,7 +28,7 @@ const meta: Meta<SpectrumPickerProps<object>> = {
   parameters: {
     chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true},
     // chromatic needs a bit more time than disableAnimations allows
-    chromatic: {delay: 300}
+    chromatic: {delay: 1200}
   },
   decorators: [Story => <div style={{height: '400px'}}><Story /></div>]
 };

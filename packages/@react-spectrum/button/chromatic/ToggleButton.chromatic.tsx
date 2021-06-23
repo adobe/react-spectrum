@@ -11,8 +11,8 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
+import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat, View} from '@adobe/react-spectrum';
-import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
@@ -28,21 +28,7 @@ let states = [
   {UNSAFE_className: classNames(styles, 'focus-ring')}
 ];
 
-// Generate a powerset of the options
-let combinations: any[] = [{}];
-for (let i = 0; i < states.length; i++) {
-  let len = combinations.length;
-  for (let j = 0; j < len; j++) {
-    let merged = mergeProps(combinations[j], states[i]);
-
-    // Ignore disabled combined with interactive states.
-    if (merged.isDisabled && merged.UNSAFE_className) {
-      continue;
-    }
-
-    combinations.push(merged);
-  }
-}
+let combinations = generatePowerset(states, (merged) => merged.isDisabled && merged.UNSAFE_className);
 
 storiesOf('Button/ToggleButton', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
