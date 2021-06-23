@@ -22,7 +22,6 @@ import userEvent from '@testing-library/user-event';
 
 describe('useDrag and useDrop', function () {
   beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({
       left: 0,
       top: 0,
@@ -32,7 +31,7 @@ describe('useDrag and useDrop', function () {
       height: 50
     }));
 
-    jest.useFakeTimers();
+    jest.useFakeTimers('modern');
   });
 
   afterEach(() => {
