@@ -33,14 +33,12 @@ export function ListViewItem(props) {
   let {hoverProps, isHovered} = useHover({});
   let {rowProps} = useGridRow({
     node: item,
-    isVirtualized: true,
-    ref
-  }, state);
+    isVirtualized: true
+  }, state, ref);
   let {gridCellProps} = useGridCell({
     node: item,
-    ref,
     focusMode: 'cell'
-  }, state);
+  }, state, ref);
   const mergedProps = mergeProps(
     gridCellProps,
     hoverProps,

@@ -46,10 +46,18 @@ module.exports = new Packager({
       for (let [exported] of asset.symbols) {
         let {asset: resolvedAsset, exportSymbol} = bundleGraph.resolveSymbol(asset, exported);
         let processed = resolvedAsset.id === asset.id ? obj : processAsset(resolvedAsset);
+
         if (exportSymbol === '*') {
           Object.assign(res, processed);
         } else {
-          res[exported] = processed[exportSymbol];
+          // Re-exported with different name (e.g. export {useGridCell as useTableCell})
+          if (exportSymbol !== exported) {
+            let clone = {...processed[exportSymbol]};
+            clone.name = exported;
+            res[exported] = clone;
+          } else {
+            res[exported] = processed[exportSymbol];
+          }
         }
       }
 

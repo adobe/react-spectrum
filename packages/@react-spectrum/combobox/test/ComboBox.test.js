@@ -424,6 +424,22 @@ describe('ComboBox', function () {
         expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
         testComboBoxOpen(combobox, button, listbox);
       });
+
+      it('opens menu when combobox is focused by clicking button', function () {
+        let {getByRole} = renderComboBox({menuTrigger: 'focus'});
+
+        let button = getByRole('button');
+        let combobox = getByRole('combobox');
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        let listbox = getByRole('listbox');
+        expect(onOpenChange).toBeCalledTimes(1);
+        expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
+        testComboBoxOpen(combobox, button, listbox);
+      });
     });
 
     describe('button click', function () {
