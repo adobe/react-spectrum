@@ -344,17 +344,14 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
       <div
         role="presentation"
         style={{
-          /* The width needs to be two pixels larger than visibleRect width because
-           * the <HeaderRow /> has a single pixel each left and right border to get
-           * the header cell labels to line up with table content. When quiet the
-           * extra two pixels aren't needed because there is no left and right border.
-           */
-          width: visibleRect.width + (isQuiet ? 0 : 2),
+          width: visibleRect.width,
           height: headerHeight,
           overflow: 'hidden',
           position: 'relative',
           willChange: state.isScrolling ? 'scroll-position' : '',
-          transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined
+          transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined,
+          borderLeft: !isQuiet && '1px solid transparent',
+          borderRight: !isQuiet && '1px solid transparent',
         }}
         ref={headerRef}>
         {state.visibleViews[0]}

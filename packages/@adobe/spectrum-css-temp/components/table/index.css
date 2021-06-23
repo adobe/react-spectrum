@@ -34,11 +34,6 @@ governing permissions and limitations under the License.
   transition: transform var(--spectrum-global-animation-duration-100) ease-in-out;
 }
 
-.spectrum-Table-head {
-  border-left: 1px solid transparent;
-  border-right: 1px solid transparent;
-}
-
 .spectrum-Table-headCell {
   box-sizing: border-box;
   font-size: var(--spectrum-table-header-text-size);
