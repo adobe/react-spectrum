@@ -337,6 +337,39 @@ storiesOf('TableView', module)
     )
   )
   .add(
+    'thin table',
+    () => (
+      <TableView aria-label="TableView with static contents" width={300} height={200}>
+        <TableHeader>
+          <Column key="foo">Foo</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>One</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
     'many columns and rows',
     () => (
       <TableView aria-label="TableView with many columns and rows" selectionMode="multiple" width={700} height={500} onSelectionChange={s => onSelectionChange([...s])}>

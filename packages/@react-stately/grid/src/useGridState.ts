@@ -27,10 +27,8 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
       props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
     , [props.disabledKeys]);
 
-  let callbackMap = new Map();
-
   let setFocusedKey = selectionState.setFocusedKey;
-  selectionState.setFocusedKey = (key, child, callback) => {
+  selectionState.setFocusedKey = (key, child, callbackSet) => {
     // If focusMode is cell and an item is focused, focus a child cell instead.
     if (focusMode === 'cell' && key != null) {
       let item = collection.getItem(key);
@@ -43,20 +41,27 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
         }
       }
     }
-    // console.log(' in usegridstate')
-    setFocusedKey(key, child, callback);
+    setFocusedKey(key, child, callbackSet);
   };
 
   // Reset focused key if that item is deleted from the collection.
+  // TODO: this seems like it will have problems with the whole callback set business
   useEffect(() => {
     if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
+      // TODO perhaps needs the callback set to be passed, but how do we get it?
+      // Move the initialzation of selection manager up?
       selectionState.setFocusedKey(null);
     }
   }, [collection, selectionState.focusedKey]);
 
+  let selectionManager = useMemo(() => {
+    console.log('new selectionManager')
+    return new SelectionManager(collection, selectionState)
+  }, [collection, selectionState])
+
   return {
     collection,
     disabledKeys,
-    selectionManager: new SelectionManager(collection, selectionState, {callbackMap: callbackMap})
+    selectionManager
   };
 }

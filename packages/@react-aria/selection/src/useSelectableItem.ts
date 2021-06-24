@@ -68,7 +68,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     shouldUseVirtualFocus,
     focus
   } = options;
-  let [isFocused, setFocused] = useState(false);
+  let [isFocused, setFocused] = useState(manager.focusedKey === key);
   let onSelect = (e: PressEvent | PointerEvent) => manager.select(key, e);
 
   // Focus the associated DOM node when this item becomes the focusedKey
@@ -76,8 +76,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     if (shouldUseVirtualFocus) {
       return;
     }
-    // TODO: Replace with manager.subscribeToFocusKey
-    manager.callbackMap.set(key, (focusedKey) => {
+
+    let handler = (focusedKey) => {
       let isFocused = key === focusedKey;
       setFocused(isFocused);
       if (isFocused && manager.isFocused && document.activeElement !== ref.current) {
@@ -87,11 +87,15 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
           focusSafely(ref.current);
         }
       }
-    });
+    };
 
+    console.log('adding handler')
+    manager.subscribeToFocusKeyChange(handler);
     return () => {
-      manager.callbackMap.delete(key);
+      manager.unsubscribeToFocusKeyChange(handler);
     }
+    // TODO If I add manager to the dep list as well as state.selectionManager to tableview's useeffect subscriber, scrolling works
+    // Scrolling now works after memoizing
   }, [ref, manager.isFocused, shouldUseVirtualFocus]);
 
   // Set tabIndex to 0 if the element is focused, or -1 otherwise so that only the last focused

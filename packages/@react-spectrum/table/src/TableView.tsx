@@ -21,7 +21,7 @@ import intlMessages from '../intl/*.json';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useCallback, useContext, useMemo, useRef} from 'react';
+import React, {ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
@@ -241,8 +241,26 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
   };
 
-  // TODO: call manager.subscribeToFocusKey with callback that calls a setState when focusKey changes so scrolling happens properly
 
+
+
+
+  // Note: Problem is that we make a new selectionManager everytime in useGridState, solved by memoizing it
+  // call manager.subscribeToFocusKey with callback that calls a setState when focusKey changes so scrolling happens properly
+  let [focusedKey, setFocusedKey] = useState(state.selectionManager.focusedKey);
+  useEffect(() => {
+    let handler = (focusedKey) => {
+      setFocusedKey(focusedKey);
+    };
+
+    state.selectionManager.subscribeToFocusKeyChange(handler);
+    console.log('state', state.selectionManager.id)
+    return () => {
+      state.selectionManager.callbackSet.delete(handler);
+    }
+  // The below was needed when selectionManager was changing on every table rerender
+  }, [state.selectionManager]);
+  // }, []);
 
   return (
     <TableContext.Provider value={state}>
@@ -266,7 +284,8 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         }
         layout={layout}
         collection={state.collection}
-        focusedKey={state.selectionManager.focusedKey}
+        // focusedKey={state.selectionManager.focusedKey}
+        focusedKey={focusedKey}
         renderView={renderView}
         renderWrapper={renderWrapper}
         domRef={domRef} />

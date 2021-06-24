@@ -15,6 +15,8 @@ import {Key} from 'react';
 import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 
+type Handler = (focusedKey: Key) => void;
+
 interface SelectionManagerOptions {
   allowsCellSelection?: boolean
 }
@@ -27,14 +29,17 @@ export class SelectionManager implements MultipleSelectionManager {
   private state: MultipleSelectionState;
   private allowsCellSelection: boolean;
   private _isSelectAll: boolean;
-  private callbackMap;
+  // TODO make private and add util functions to add and remove from the set
+  private callbackSet;
+  private id;
 
   constructor(collection: Collection<Node<unknown>>, state: MultipleSelectionState, options?: SelectionManagerOptions) {
     this.collection = collection;
     this.state = state;
     this.allowsCellSelection = options?.allowsCellSelection ?? false;
     this._isSelectAll = null;
-    this.callbackMap = options.callbackMap;
+    this.callbackSet = new Set<Handler>();
+    this.id = Math.random();
   }
 
 // TODO: initialize callBackSet here instead of useGridState and when we call setFocusedKey, call every callback in the set with the new focused key
@@ -84,8 +89,21 @@ export class SelectionManager implements MultipleSelectionManager {
    * Sets the focused key.
    */
   setFocusedKey(key: Key, childFocusStrategy?: FocusStrategy) {
-    let callbackInMap = this.callbackMap.get(key);
-    this.state.setFocusedKey(key, childFocusStrategy, callbackInMap);
+    console.log('selection manager set focused', this.id);
+    this.state.setFocusedKey(key, childFocusStrategy, this.callbackSet);
+  }
+
+  // // TODO: Add this subscribe and unsubscribe in selection manager?
+  subscribeToFocusKeyChange(handler: Handler) {
+    this.callbackSet.add(handler);
+  }
+
+  unsubscribeToFocusKeyChange(handler: Handler) {
+    this.callbackSet.delete(handler);
+  }
+
+  get focusCallbacks(){
+    return this.callbackSet;
   }
 
   /**
