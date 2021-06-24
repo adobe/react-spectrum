@@ -40,15 +40,15 @@ interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
   keyboardDelegate?: KeyboardDelegate
 }
 
-interface ComboBoxAria {
+interface ComboBoxAria<T> {
+  /** Props for the label element. */
+  labelProps: HTMLAttributes<HTMLElement>,
   /** Props for the combo box input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  /** Props for the combo box menu. */
-  listBoxProps: AriaListBoxOptions<unknown>,
-  /** Props for the optional combo box menu trigger button. */
-  buttonProps: AriaButtonProps,
-  /** Props for the combo box label element. */
-  labelProps: HTMLAttributes<HTMLElement>
+  /** Props for the list box, to be passed to [useListBox](useListBox.html). */
+  listBoxProps: AriaListBoxOptions<T>,
+  /** Props for the optional trigger button, to be passed to [useButton](useButton.html). */
+  buttonProps: AriaButtonProps
 }
 
 /**
@@ -57,7 +57,7 @@ interface ComboBoxAria {
  * @param props - Props for the combo box.
  * @param state - State for the select, as returned by `useComboBoxState`.
  */
-export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState<T>): ComboBoxAria {
+export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState<T>): ComboBoxAria<T> {
   let {
     buttonRef,
     popoverRef,
