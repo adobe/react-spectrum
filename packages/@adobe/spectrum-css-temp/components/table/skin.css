@@ -10,6 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+.spectrum-Table-headWrapper {
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+
 .spectrum-Table-headCell {
   color: var(--spectrum-table-header-text-color);
   background-color: var(--spectrum-alias-background-color-default);
