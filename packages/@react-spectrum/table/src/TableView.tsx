@@ -241,10 +241,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
   };
 
-
-
-
-
   // Note: Problem is that we make a new selectionManager everytime in useGridState, solved by memoizing it
   // call manager.subscribeToFocusKey with callback that calls a setState when focusKey changes so scrolling happens properly
   let [focusedKey, setFocusedKey] = useState(state.selectionManager.focusedKey);
@@ -254,7 +250,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     };
 
     state.selectionManager.subscribeToFocusKeyChange(handler);
-    console.log('state', state.selectionManager.id)
+    // console.log('state', state.selectionManager.id)
     return () => {
       state.selectionManager.callbackSet.delete(handler);
     }
@@ -316,7 +312,6 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
   let {virtualizerProps} = useVirtualizer({
     focusedKey,
     scrollToItem(key) {
-      console.log('scroll to item')
       let item = collection.getItem(key);
       let column = collection.columns[0];
       state.virtualizer.scrollToItem(key, {
@@ -608,7 +603,7 @@ function TableCheckboxCell({cell}) {
 }
 
 function TableCell({cell}) {
-  console.log('rendering')
+  // console.log('rendering')
   let state = useTableContext();
   let ref = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;

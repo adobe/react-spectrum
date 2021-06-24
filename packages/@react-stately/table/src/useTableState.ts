@@ -64,7 +64,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
   );
   let {disabledKeys, selectionManager} = useGridState({...props, collection});
 
-  return {
+  let state = useMemo(() => ({
     collection,
     disabledKeys,
     selectionManager,
@@ -78,5 +78,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
           : 'ascending'
       });
     }
-  };
+  }), [collection, disabledKeys, selectionManager, props.showSelectionCheckboxes, props.sortDescriptor, props.onSortChange]);
+
+  return state;
 }

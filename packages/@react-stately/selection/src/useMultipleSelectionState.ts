@@ -42,7 +42,7 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
-  let blah = useMemo(() =>
+  let state = useMemo(() =>
   ({
     selectionMode,
     disallowEmptySelection,
@@ -66,7 +66,6 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
 
       if (callbackSet) {
         for (let handler of callbackSet) {
-          // console.log('in multipleselection', handler);
           handler(k);
         }
       }
@@ -76,75 +75,7 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
     disabledKeys: disabledKeysProp
   }), [selectionMode, disallowEmptySelection, disabledKeysProp, selectedKeys])
 
-  return blah
-
-
-  // let blah = useRef({
-  //   selectionMode,
-  //   disallowEmptySelection,
-  //   get isFocused() {
-  //     return isFocusedRef.current;
-  //   },
-  //   setFocused(f) {
-  //     isFocusedRef.current = f;
-  //     setFocused(f);
-  //   },
-  //   get focusedKey() {
-  //     return focusedKeyRef.current;
-  //   },
-  //   get childFocusStrategy() {
-  //     return childFocusStrategyRef.current;
-  //   },
-  //   setFocusedKey(k, childFocusStrategy = 'first', callbackSet) {
-  //     console.log('callbackSet', callbackSet.size)
-  //     focusedKeyRef.current = k;
-  //     childFocusStrategyRef.current = childFocusStrategy;
-
-  //     if (callbackSet) {
-  //       for (let handler of callbackSet) {
-  //         // console.log('in multipleselection', handler);
-  //         handler(k);
-  //       }
-  //     }
-  //   },
-  //   selectedKeys,
-  //   setSelectedKeys,
-  //   disabledKeys: disabledKeysProp
-  // });
-  // return blah.current;
-
-  // return {
-  //   selectionMode,
-  //   disallowEmptySelection,
-  //   get isFocused() {
-  //     return isFocusedRef.current;
-  //   },
-  //   setFocused(f) {
-  //     isFocusedRef.current = f;
-  //     setFocused(f);
-  //   },
-  //   get focusedKey() {
-  //     return focusedKeyRef.current;
-  //   },
-  //   get childFocusStrategy() {
-  //     return childFocusStrategyRef.current;
-  //   },
-  //   setFocusedKey(k, childFocusStrategy = 'first', callbackSet) {
-  //     console.log('callbackSet', callbackSet.size)
-  //     focusedKeyRef.current = k;
-  //     childFocusStrategyRef.current = childFocusStrategy;
-
-  //     if (callbackSet) {
-  //       for (let handler of callbackSet) {
-  //         // console.log('in multipleselection', handler);
-  //         handler(k);
-  //       }
-  //     }
-  //   },
-  //   selectedKeys,
-  //   setSelectedKeys,
-  //   disabledKeys: disabledKeysProp
-  // };
+  return state;
 }
 
 function convertSelection(selection: 'all' | Iterable<Key>, defaultValue?: Selection): 'all' | Selection {

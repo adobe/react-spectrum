@@ -92,11 +92,11 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     console.log('adding handler')
     manager.subscribeToFocusKeyChange(handler);
     return () => {
+      // console.log('removing handler')
       manager.unsubscribeToFocusKeyChange(handler);
     }
-    // TODO If I add manager to the dep list as well as state.selectionManager to tableview's useeffect subscriber, scrolling works
-    // Scrolling now works after memoizing
-  }, [ref, manager.isFocused, shouldUseVirtualFocus]);
+    // adding manager to dep array so we regenerate handlers when we get a new SelectionManager(aka collection changes)
+  }, [ref, shouldUseVirtualFocus, manager]);
 
   // Set tabIndex to 0 if the element is focused, or -1 otherwise so that only the last focused
   // item is tabbable.  If using virtual focus, don't set a tabIndex at all so that VoiceOver
