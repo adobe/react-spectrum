@@ -89,7 +89,7 @@ export class SelectionManager implements MultipleSelectionManager {
    * Sets the focused key.
    */
   setFocusedKey(key: Key, childFocusStrategy?: FocusStrategy) {
-    console.log('selection manager set focused', this.id);
+    // console.log('selection manager set focused', this.id);
     this.state.setFocusedKey(key, childFocusStrategy, this.callbackSet);
   }
 
@@ -102,7 +102,7 @@ export class SelectionManager implements MultipleSelectionManager {
     this.callbackSet.delete(handler);
   }
 
-  get focusCallbacks(){
+  get focusCallbacks() {
     return this.callbackSet;
   }
 

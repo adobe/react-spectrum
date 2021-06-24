@@ -11,7 +11,7 @@
  */
 
 import {focusSafely} from '@react-aria/focus';
-import {HTMLAttributes, Key, RefObject, useEffect, useRef, useState} from 'react';
+import {HTMLAttributes, Key, RefObject, useEffect, useState} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressEvent} from '@react-types/shared';
 import {PressProps} from '@react-aria/interactions';
@@ -68,6 +68,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     shouldUseVirtualFocus,
     focus
   } = options;
+  // Track focus via local state so that we can rerender an individual cell when focused key changes
   let [isFocused, setFocused] = useState(manager.focusedKey === key);
   let onSelect = (e: PressEvent | PointerEvent) => manager.select(key, e);
 
@@ -89,14 +90,18 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       }
     };
 
-    console.log('adding handler')
+    // Call handler if item is supposed to be focused on initial render and it isn't already rendered
+    // This case can occur when doing page down/up/home/end operations where the newly focused item has just been rendered for the first time
+    if (isFocused && document.activeElement !== ref.current) {
+      handler(key);
+    }
+
     manager.subscribeToFocusKeyChange(handler);
     return () => {
-      // console.log('removing handler')
       manager.unsubscribeToFocusKeyChange(handler);
     }
     // adding manager to dep array so we regenerate handlers when we get a new SelectionManager(aka collection changes)
-  }, [ref, shouldUseVirtualFocus, manager]);
+  }, [ref, shouldUseVirtualFocus, manager, key, focus, isFocused]);
 
   // Set tabIndex to 0 if the element is focused, or -1 otherwise so that only the last focused
   // item is tabbable.  If using virtual focus, don't set a tabIndex at all so that VoiceOver
