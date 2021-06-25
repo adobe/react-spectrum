@@ -25,7 +25,7 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T>, ref
   let {node} = props;
   let {rowProps} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state, ref);
   // Not entirely sure why I needed this, but this fixed the tests... Weird cuz the aria-labelledby values didn't seem to be a problem in storybook
-  let rowLabel = useMemo(() => getRowLabelledBy(state, node.key), [state, node.key])
+  let rowLabel = useMemo(() => getRowLabelledBy(state, node.key), [state, node.key]);
   return {
     rowProps: {
       ...rowProps,
