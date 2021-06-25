@@ -252,7 +252,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     state.selectionManager.subscribeToFocusKeyChange(handler);
     // console.log('state', state.selectionManager.id)
     return () => {
-      state.selectionManager.callbackSet.delete(handler);
+      state.selectionManager.unsubscribeToFocusKeyChange(handler);
     };
   // The below was needed when selectionManager was changing on every table rerender
   }, [state.selectionManager]);
@@ -603,7 +603,6 @@ function TableCheckboxCell({cell}) {
 }
 
 function TableCell({cell}) {
-  console.log('rendering')
   let state = useTableContext();
   let ref = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;

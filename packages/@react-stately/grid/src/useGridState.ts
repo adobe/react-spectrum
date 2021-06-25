@@ -44,20 +44,15 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
     setFocusedKey(key, child, callbackSet);
   };
 
-  let selectionManager = useMemo(() => {
-    console.log('new selctionmanager');
-    return new SelectionManager(collection, selectionState);
-  }, [collection, selectionState]);
+  let selectionManager = useMemo(() => new SelectionManager(collection, selectionState), [collection, selectionState]);
 
   // Reset focused key if that item is deleted from the collection.
   useEffect(() => {
     if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
       // Need to include focusCallbacks here so that this setFocusedKey call doesn't blow up
-      // TODO: there is a bug where it seems like it is removing too many/not having enough focusCallbacks here
-      console.log('selectionManager.focusCallbacks', selectionManager.focusCallbacks);
       selectionState.setFocusedKey(null, undefined, selectionManager.focusCallbacks);
     }
-  }, [collection, selectionState.focusedKey, selectionState.setFocusedKey, selectionManager]);
+  }, [collection, selectionState.focusedKey, selectionManager]);
 
   return {
     collection,

@@ -100,7 +100,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     manager.subscribeToFocusKeyChange(handler);
     return () => {
       manager.unsubscribeToFocusKeyChange(handler);
-    }
+    };
     // adding manager to dep array so we regenerate handlers when we get a new SelectionManager(aka collection changes)
   }, [ref, shouldUseVirtualFocus, manager, key]);
 
