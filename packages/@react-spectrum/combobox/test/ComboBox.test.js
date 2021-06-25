@@ -1399,8 +1399,7 @@ describe('ComboBox', function () {
       expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
     });
 
-    // TODO: figure out why this is broken...
-    it.skip('should clear the focused item when typing', function () {
+    it('should clear the focused item when typing', function () {
       let {getByRole} = renderComboBox();
 
       let combobox = getByRole('combobox');

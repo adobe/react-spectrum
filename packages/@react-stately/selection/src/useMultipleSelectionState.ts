@@ -72,7 +72,7 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
     selectedKeys,
     setSelectedKeys,
     disabledKeys: disabledKeysProp
-  }), [selectionMode, disallowEmptySelection, disabledKeysProp, selectedKeys, setSelectedKeys]);
+  }), [selectionMode, disallowEmptySelection, disabledKeysProp, selectedKeys]);
 
   return state;
 }
