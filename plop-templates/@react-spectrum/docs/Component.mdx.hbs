@@ -18,15 +18,18 @@ import packageData from '@react-spectrum/{{packageName}}/package.json';
 import { {{~componentName~}} } from '@react-spectrum/{{packageName}}';
 ```
 
+*Include after_version if the docs shouldn't be published to the website until reaching a specific package version.*
 ---
 category: Category Name
 keywords: []
+after_version: 3.0.0-alpha.0
 ---
 
 # {{componentName}}
 
 <p>{docs.exports.{{componentName}}.description}</p>
 
+*Be sure to update the Spectrum url below to match the current component.*
 <HeaderInfo
   packageData={packageData}
   componentNames={['{{componentName}}']}
@@ -62,6 +65,7 @@ keywords: []
 
 ## Props
 
+*Include an additional PropTables if multiple components are being documented in a single file. See Tabs.mdx for an example.*
 <PropTable component={docs.exports.{{componentName~}}} links={docs.links} />
 
 ## Visual options
