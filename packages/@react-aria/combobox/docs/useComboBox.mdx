@@ -309,7 +309,7 @@ function ListBox(props) {
           state={state} />
       ))}
     </ul>
-  )
+  );
 }
 
 function Option({item, state}) {
@@ -623,6 +623,44 @@ receiving keyboard focus as shown in the example below. Note that you are respon
   <Item key="kangaroo">Kangaroo</Item>
   <Item key="snake">Snake</Item>
 </ComboBox>
+```
+
+### Asynchronous loading
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
+and filtering of data from a server. You may additionally want to display a spinner to indicate the loading
+state to the user, or support features like infinite scroll to load more data. See
+[this CodeSandbox](https://codesandbox.io/s/dreamy-burnell-3i2jy?file=/src/Autocomplete.tsx) for an example
+of a ComboBox supporting those features.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+function AsyncLoadingExample() {
+  let list = useAsyncList({
+    async load({signal, filterText}) {
+      let res = await fetch(
+        `https://swapi.dev/api/people/?search=${filterText}`,
+        {signal}
+      );
+      let json = await res.json();
+
+      return {
+        items: json.results
+      };
+    }
+  });
+
+  return (
+    <ComboBox
+      label="Star Wars Character Lookup"
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={list.setFilterText}>
+      {(item) => <Item key={item.name}>{item.name}</Item>}
+    </ComboBox>
+  );
+}
 ```
 
 ## Internationalization
