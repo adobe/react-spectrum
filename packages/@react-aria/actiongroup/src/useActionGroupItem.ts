@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, Key, RefObject, useEffect, useRef} from 'react';
+import {HTMLAttributes, Key, RefObject, useEffect, useRef, useState} from 'react';
 import {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
 import {PressProps} from '@react-aria/interactions';
@@ -35,6 +35,19 @@ export function useActionGroupItem<T>(props: ActionGroupItemProps, state: ListSt
   let buttonProps = {
     role: BUTTON_ROLES[selectionMode]
   };
+
+  // Cause rerender when focus key changes so tab index properly updates
+  let [, setFocusedKey] = useState(false);
+  useEffect(() => {
+    let handler = (focusedKey) => {
+      setFocusedKey(focusedKey);
+    };
+
+    state.selectionManager.subscribeToFocusKeyChange(handler);
+    return () => {
+      state.selectionManager.unsubscribeToFocusKeyChange(handler);
+    };
+  }, [state.selectionManager]);
 
   if (selectionMode !== 'none') {
     let isSelected = state.selectionManager.isSelected(props.key);
