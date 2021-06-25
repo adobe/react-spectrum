@@ -250,13 +250,10 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     };
 
     state.selectionManager.subscribeToFocusKeyChange(handler);
-    // console.log('state', state.selectionManager.id)
     return () => {
       state.selectionManager.unsubscribeToFocusKeyChange(handler);
     };
-  // The below was needed when selectionManager was changing on every table rerender
   }, [state.selectionManager]);
-  // }, []);
 
   return (
     <TableContext.Provider value={state}>
