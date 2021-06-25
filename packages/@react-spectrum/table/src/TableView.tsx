@@ -241,8 +241,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
   };
 
-  // Note: Problem is that we make a new selectionManager everytime in useGridState, solved by memoizing it
-  // call manager.subscribeToFocusKey with callback that calls a setState when focusKey changes so scrolling happens properly
+  // Call manager.subscribeToFocusKey with callback that calls a setState when focusKey changes so scrolling happens properly if focusing something out of view
   let [focusedKey, setFocusedKey] = useState(state.selectionManager.focusedKey);
   useEffect(() => {
     let handler = (focusedKey) => {
@@ -277,7 +276,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         }
         layout={layout}
         collection={state.collection}
-        // focusedKey={state.selectionManager.focusedKey}
         focusedKey={focusedKey}
         renderView={renderView}
         renderWrapper={renderWrapper}

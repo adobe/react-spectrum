@@ -109,7 +109,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       tabIndex: isFocused ? 0 : -1,
       onFocus(e) {
         if (e.target === ref.current) {
-          manager.setFocusedKey(key, undefined);
+          manager.setFocusedKey(key);
         }
       }
     };

@@ -31,30 +31,32 @@ const BUTTON_ROLES = {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function useActionGroupItem<T>(props: ActionGroupItemProps, state: ListState<T>, ref?: RefObject<HTMLElement>): ActionGroupItemAria {
+  let {key} = props;
   let selectionMode = state.selectionManager.selectionMode;
   let buttonProps = {
     role: BUTTON_ROLES[selectionMode]
   };
 
-  // Cause rerender when focus key changes so tab index properly updates
-  let [, setFocusedKey] = useState(false);
+  // Cause rerender when focus key changes. Default state to null so intitial
+  // focus within the actionGroup properly updates ALL actiongroup item tab index
+  let [isFocused, setFocused] = useState(null);
   useEffect(() => {
     let handler = (focusedKey) => {
-      setFocusedKey(focusedKey);
+      let isFocused = key === focusedKey;
+      setFocused(isFocused);
     };
 
     state.selectionManager.subscribeToFocusKeyChange(handler);
     return () => {
       state.selectionManager.unsubscribeToFocusKeyChange(handler);
     };
-  }, [state.selectionManager]);
+  }, [state.selectionManager, key]);
 
   if (selectionMode !== 'none') {
     let isSelected = state.selectionManager.isSelected(props.key);
     buttonProps['aria-checked'] = isSelected;
   }
 
-  let isFocused = props.key === state.selectionManager.focusedKey;
   let lastRender = useRef({isFocused, state});
   lastRender.current = {isFocused, state};
 
