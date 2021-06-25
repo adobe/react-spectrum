@@ -21,6 +21,8 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@re
 import packageData from '@react-aria/select/package.json';
 import Anatomy from './anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import examplePreview from 'url:./example.png';
 
 ---
 category: Pickers
@@ -322,6 +324,15 @@ function Option({item, state}) {
 ```
 
 </details>
+
+## Styled examples
+
+<ExampleCard
+  url="https://codesandbox.io/s/hardcore-moon-xzc4r?file=/src/ComboBox.tsx"
+  preview={examplePreview}
+  title="Tailwind CSS"
+  description="An example of styling a Select with Tailwind." />
+
 ## Internationalization
 
 `useSelect` and `useListBox` handle some aspects of internationalization automatically.

@@ -21,10 +21,14 @@ import selectionDocs from 'docs:@react-stately/selection';
 import statelyDocs from 'docs:@react-stately/combobox';
 import Anatomy from './anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import examplePreview from 'url:./example.png';
+import searchExamplePreview from 'url:./search.png';
+import materialExamplePreview from 'url:./material.png';
 
 ---
 category: Pickers
-keywords: [combobox, aria]
+keywords: [combobox, autocomplete, autosuggest, typeahead, search, aria]
 after_version: 3.0.0-alpha.0
 ---
 
@@ -339,6 +343,27 @@ function Option({item, state}) {
 ```
 
 </details>
+
+## Styled examples
+
+<ExampleCard
+  url="https://codesandbox.io/s/hardcore-moon-xzc4r?file=/src/ComboBox.tsx"
+  preview={examplePreview}
+  title="Tailwind CSS"
+  description="An example of styling a ComboBox with Tailwind." />
+
+<ExampleCard
+  url="https://codesandbox.io/s/hardcore-moon-xzc4r?file=/src/ComboBox.tsx"
+  preview={searchExamplePreview}
+  title="Search autocomplete"
+  description="A search autocomplete with multiple sections, styled with Tailwind." />
+
+<ExampleCard
+  url="https://codesandbox.io/s/hardcore-moon-xzc4r?file=/src/ComboBox.tsx"
+  preview={materialExamplePreview}
+  title="Material UI"
+  description="An example combo box built with Material UI and React Aria." />
+
 ## Usage
 
 The following examples show how to use the ComboBox component created in the above example.
