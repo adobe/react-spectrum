@@ -24,8 +24,6 @@ import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useSelectableCollection} from '@react-aria/selection';
 
 export interface GridProps extends DOMProps, AriaLabelingProps {
-  /** The ref attached to the grid element. */
-  ref: RefObject<HTMLElement>,
   /** Whether the grid uses virtual scrolling. */
   isVirtualized?: boolean,
   /**
@@ -55,10 +53,10 @@ export interface GridAria {
  * A grid displays data in one or more rows and columns and enables a user to navigate its contents via directional navigation keys.
  * @param props - Props for the grid.
  * @param state - State for the grid, as returned by `useGridState`.
+ * @param ref - The ref attached to the grid element.
  */
-export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<T>>): GridAria {
+export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<T>>, ref: RefObject<HTMLElement>): GridAria {
   let {
-    ref,
     isVirtualized,
     keyboardDelegate,
     focusMode,

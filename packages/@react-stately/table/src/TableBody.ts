@@ -29,7 +29,7 @@ TableBody.getCollectionNode = function* getCollectionNode<T>(props: TableBodyPro
         if (!items) {
           throw new Error('props.children was a function but props.items is missing');
         }
-    
+
         for (let item of items) {
           yield {
             type: 'item',
@@ -52,6 +52,10 @@ TableBody.getCollectionNode = function* getCollectionNode<T>(props: TableBodyPro
   };
 };
 
+/**
+ * A TableBody is a container for the Row elements of a Table. Rows can be statically defined
+ * as children, or generated dynamically using a function based on the data passed to the `items` prop.
+ */
 // We don't want getCollectionNode to show up in the type definition
 let _TableBody = TableBody as <T>(props: TableBodyProps<T>) => JSX.Element;
 export {_TableBody as TableBody};
