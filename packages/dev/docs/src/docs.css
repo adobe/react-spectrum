@@ -500,6 +500,10 @@ summary {
   border-radius: 4px;
 }
 
+summary svg {
+  vertical-align: top;
+}
+
 summary:focus {
   outline: none;
   border-color: var(--spectrum-alias-border-color-focus);

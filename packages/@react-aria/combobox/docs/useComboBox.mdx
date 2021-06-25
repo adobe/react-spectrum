@@ -122,7 +122,7 @@ A "contains" filter function is obtained from <TypeLink links={i18nDocs.links} t
 that the list box can be filtered based on the option text and the current input text.
 
 The list box popup should use the same `Popover` and `ListBox` components created with [useOverlay](useOverlay.html)
-and [useListBox](useListBox.html) that you may already have in your component library. These can be shared with other
+and [useListBox](useListBox.html) that you may already have in your component library or application. These can be shared with other
 components such as a `Select` created with [useSelect](useSelect.html) or a `Dialog` popover created with [useDialog](useDialog.html).
 The code for these components is also included below in the collapsed sections.
 
@@ -227,7 +227,7 @@ It can be shared between many other components, including [Select](useSelect.htm
 See [useOverlayTrigger](useOverlayTrigger.html) for more examples of popovers.
 
 <details>
-  <summary><ChevronRight size="S" /> <strong>Show code</strong></summary>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
 import {useOverlay, DismissButton} from '@react-aria/overlays';
@@ -283,7 +283,7 @@ user types in the ComboBox. They can also be shared with other components like a
 [useListBox](useListBox.html) for more examples, including sections and more complex items.
 
 <details>
-  <summary><ChevronRight size="S" /> <strong>Show code</strong></summary>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
 import {useListBox, useOption} from '@react-aria/listbox';
