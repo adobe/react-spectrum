@@ -39,11 +39,9 @@ export class SelectionManager implements MultipleSelectionManager {
     this.allowsCellSelection = options?.allowsCellSelection ?? false;
     this._isSelectAll = null;
     this.callbackSet = new Set<Handler>();
+    // TODO remove this
     this.id = Math.random();
   }
-
-// TODO: initialize callBackSet here instead of useGridState and when we call setFocusedKey, call every callback in the set with the new focused key
-
 
   /**
    * The type of selection that is allowed in the collection.

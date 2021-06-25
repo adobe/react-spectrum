@@ -92,7 +92,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
 
     // Call handler if item is supposed to be focused on initial render and it isn't already rendered
     // This case can occur when doing page down/up/home/end operations where the newly focused item has just been rendered for the first time
-    if (isFocused && document.activeElement !== ref.current) {
+    // Uses manager.focusedKey instead of isFocused due to buggy behavior when using the latter
+    if (manager.focusedKey === key && document.activeElement !== ref.current) {
       handler(key);
     }
 
@@ -101,7 +102,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       manager.unsubscribeToFocusKeyChange(handler);
     }
     // adding manager to dep array so we regenerate handlers when we get a new SelectionManager(aka collection changes)
-  }, [ref, shouldUseVirtualFocus, manager, key, focus, isFocused]);
+  }, [ref, shouldUseVirtualFocus, manager, key]);
 
   // Set tabIndex to 0 if the element is focused, or -1 otherwise so that only the last focused
   // item is tabbable.  If using virtual focus, don't set a tabIndex at all so that VoiceOver
@@ -114,9 +115,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         if (e.target === ref.current) {
           manager.setFocusedKey(key, undefined);
         }
-      },
-      onBlur() {
-        setFocused(false);
       }
     };
   }
