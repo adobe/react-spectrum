@@ -80,12 +80,6 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
-    'with mapped items (defaultItem and items undef)',
-    () => (
-      <ComboBoxWithMap defaultSelectedKey="two" />
-    )
-  )
-  .add(
     'no items',
     () => (
       <ComboBox defaultItems={[]} label="Combobox" {...actions}>
@@ -453,6 +447,19 @@ storiesOf('ComboBox', module)
     'server side filtering with controlled key and inputValue reset if not focused',
     () => (
       <AsyncLoadingExampleControlledKeyWithReset />
+    )
+  )
+  .add(
+    '2 comboboxes',
+    () => (
+      <Flex gap="size-100">
+        <ComboBox defaultItems={items} label="Combobox1">
+          {(item) => <Item>{item.name}</Item>}
+        </ComboBox>
+        <ComboBox defaultItems={items} label="Combobox2">
+          {(item) => <Item>{item.name}</Item>}
+        </ComboBox>
+      </Flex>
     )
   );
 

@@ -20,7 +20,7 @@ import {filterDOMProps} from '@react-aria/utils';
 import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {OpenTransition} from '@react-spectrum/overlays/src/OpenTransition';
+import {OpenTransition} from '@react-spectrum/overlays';
 import React, {ReactElement, useEffect, useRef} from 'react';
 import {SpectrumActionBarProps} from '@react-types/actionbar';
 import styles from './actionbar.css';

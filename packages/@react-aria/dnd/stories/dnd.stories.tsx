@@ -367,10 +367,9 @@ function DraggableCollection(props) {
 
   let {gridProps} = useGrid({
     ...props,
-    ref,
     'aria-label': 'Draggable list',
     focusMode: 'cell'
-  }, gridState);
+  }, gridState, ref);
 
   return (
     <div
@@ -398,17 +397,12 @@ function DraggableCollectionItem({item, state, dragState, onCut}) {
   let cellNode = [...item.childNodes][0];
   let isSelected = state.selectionManager.isSelected(item.key);
 
-  let {rowProps} = useGridRow({
-    node: item,
-    ref: rowRef,
-    isSelected
-  }, state);
+  let {rowProps} = useGridRow({node: item}, state, rowRef);
   let {gridCellProps} = useGridCell({
     node: cellNode,
-    ref: cellRef,
     focusMode: 'cell',
     shouldSelectOnPressUp: true
-  }, state);
+  }, state, cellRef);
 
   let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
 
