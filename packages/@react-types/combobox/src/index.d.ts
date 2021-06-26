@@ -38,12 +38,7 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
    * The interaction required to display the ComboBox menu.
    * @default 'input'
    */
-  menuTrigger?: MenuTriggerAction,
-  /**
-   * Whether the menu should automatically flip direction when space is limited.
-   * @default true
-   */
-  shouldFlip?: boolean
+  menuTrigger?: MenuTriggerAction
 }
 
 export interface SpectrumComboBoxProps<T> extends Omit<ComboBoxProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
@@ -60,5 +55,10 @@ export interface SpectrumComboBoxProps<T> extends Omit<ComboBoxProps<T>, 'menuTr
    */
   direction?: 'bottom' | 'top',
   /** The current loading state of the ComboBox. Determines whether or not the progress circle should be shown. */
-  loadingState?: LoadingState
+  loadingState?: LoadingState,
+  /**
+   * Whether the menu should automatically flip direction when space is limited.
+   * @default true
+   */
+  shouldFlip?: boolean
 }
