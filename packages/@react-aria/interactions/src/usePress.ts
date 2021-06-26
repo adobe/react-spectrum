@@ -671,7 +671,7 @@ function shouldPreventDefault(target: Element) {
 }
 
 function shouldPreventDefaultKeyboard(target: Element) {
-  return target.getAttribute('type') !== 'submit';
+  return !((target.tagName === 'INPUT' || target.tagName === 'BUTTON') && target.getAttribute('type') === 'submit');
 }
 
 function isVirtualPointerEvent(event: PointerEvent) {
