@@ -28,11 +28,14 @@ author: '[Daniel Lu](https://github.com/LFDanLu)'
 <Image src={comboboxExampleImageUrl} alt="Screenshot of example ComboBox, select a major" style={{maxWidth: 'min(50%, 350px)', display: 'block', margin: '20px auto'}} />
 
 After many months of research, development, and extensive testing across browsers, devices, and assistive technology, the React Spectrum [ComboBox](../react-spectrum/ComboBox.html) component and
-React Aria [useComboBox](../react-aria/useComboBox.html) hook are now available! For those who may be unfamiliar with a combobox, it is an input field that has a popover listbox associated with it. The listbox contains
+React Aria [useComboBox](../react-aria/useComboBox.html) hook are now available! For those who may be unfamiliar with a combobox (alternatively known as a "autocomplete"), it is an input field that has a popover listbox associated with it. The listbox contains
 a list of options within that a user may select as the value for the combobox and is often filtered to display possible matches to the user's current input text. Finally, there is a button accompanying the input field used
-for toggling the open state of the popover listbox.
+for toggling the open state of the popover listbox. An example of a combobox that you may be familiar with is the search bar found on Google, Youtube, or Twitter.
 
-While the above may seem rather straight forward, a combobox contains a significant amount of complexity. In this blog post, we'll be covering the challenges we encountered with regards to ComboBox's mobile experience and accessibility.
+While the above may seem rather straight forward, a combobox contains a significant amount of complexity. The state logic of the combobox needs to track the input value and selected option, determining when to sync the two or allow each to
+diverge depending on the user interaction. This logic is complicated even further if the combobox allows the user to submit custom values or if the input value or selected item is controlled via props instead. Additionally, the combobox can be used
+on a variety of platforms that each support different interaction methods (touch, virtual clicks, keyboard and mouse), resulting in subtle nuances in the combobox's behavior.
+In this blog post, we'll be covering the challenges we encountered with regards to ComboBox's mobile experience and accessibility.
 
 ## Mobile experience
 
