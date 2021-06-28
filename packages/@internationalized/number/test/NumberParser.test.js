@@ -11,6 +11,7 @@
  */
 
 import {NumberParser} from '../src/NumberParser';
+import fc from 'fast-check'
 
 describe('NumberParser', function () {
   describe('parse', function () {
@@ -139,6 +140,57 @@ describe('NumberParser', function () {
       it('should parse a percent with decimals', function () {
         expect(new NumberParser('en-US', {style: 'percent'}).parse('10.5%')).toBe(0.1);
         expect(new NumberParser('en-US', {style: 'percent', minimumFractionDigits: 2}).parse('10.5%')).toBe(0.105);
+      });
+    });
+
+    describe('round trips', function () {
+      const localesArb = fc.constantFrom('en-US', 'de-DE', 'fr-FR', 'ar-EG', 'en-IN', 'ja-JP');
+      const styleOptsArb = fc.oneof(
+        {withCrossShrink: true},
+        fc.record({style: fc.constant('decimal')}),
+        fc.record({style: fc.constant('percent')}),
+        fc.record(
+          {style: fc.constant('currency'), currency: fc.constantFrom('USD', 'EUR', 'CNY', 'JPY'), currencyDisplay: fc.constantFrom('symbol', 'code', 'name')},
+          {requiredKeys: ['style', 'currency']}
+        ),
+        fc.record(
+          {style: fc.constant('unit'), unit: fc.constantFrom('inch', 'liter', 'kilometer-per-hour')},
+          {requiredKeys: ['style', 'unit']}
+        )
+      );
+      const genericOptsArb = fc.record({
+        localeMatcher: fc.constantFrom('best fit', 'lookup'),
+        unitDisplay: fc.constantFrom('narrow', 'long'),
+        useGrouping: fc.boolean(),
+        minimumIntegerDigits: fc.integer({min: 1, max: 21}),
+        minimumFractionDigits: fc.integer({min: 0, max: 20}),
+        maximumFractionDigits: fc.integer({min: 0, max: 20}),
+        minimumSignificantDigits: fc.integer({min: 1, max: 21}),
+        maximumSignificantDigits: fc.integer({min: 1, max: 21}),
+      }, {requiredKeys: []});
+      const valueArb = fc.tuple(
+        fc.constantFrom(1, -1),
+        fc.double({next: true, noNaN: true, min: Number.EPSILON, max: 1/Number.EPSILON})
+      ).map(([sign, value]) => sign * value);
+      // (valueArb) We restricted the set of possible values to avoid unwanted overflows to infinity and underflows to zero
+      //            and stay in the domain of legit values.
+      
+      it('should fully reverse NumberFormat', function () {
+        fc.assert(
+          fc.property(
+            valueArb, localesArb, styleOptsArb, genericOptsArb,
+            function (d, locales, styleOpts, genericOpts) {
+              const opts = { ...styleOpts, ...genericOpts };
+              fc.pre(opts.minimumFractionDigits === undefined || opts.maximumFractionDigits === undefined || opts.minimumFractionDigits <= opts.maximumFractionDigits);
+              fc.pre(opts.minimumSignificantDigits === undefined || opts.maximumSignificantDigits === undefined || opts.minimumSignificantDigits <= opts.maximumSignificantDigits);
+              const formatter = new Intl.NumberFormat(locales, opts);
+              const parser = new NumberParser(locales, opts);
+        
+              const formattedOnce = formatter.format(d);
+              expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
+            }
+          )
+        );
       });
     });
   });
