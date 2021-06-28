@@ -26,32 +26,9 @@ storiesOf('SearchWithin', module)
   ).add(
     'isRequired',
     () => render({isRequired: true})
-  ).add(
-    'Default (Picker on right)',
-    () => renderPickerOnRight({})
-  ).add(
-    'isDisabled (Picker on right)',
-    () => renderPickerOnRight({isDisabled: true})
-  ).add(
-    'isRequired (Picker on right)',
-    () => renderPickerOnRight({isRequired: true})
   );
 
 function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}) {
-  return (
-    <SearchWithin label="Search" {...props}>
-      <Picker defaultSelectedKey="all">
-        <Item key="all">All</Item>
-        <Item key="campaigns">Campaigns</Item>
-        <Item key="audiences">Audiences</Item>
-        <Item key="tags">Tags</Item>
-      </Picker>
-      <SearchField placeholder="Search" />
-    </SearchWithin>
-  );
-}
-
-function renderPickerOnRight(props: Omit<SpectrumSearchWithinProps, 'children'> = {}) {
   return (
     <SearchWithin label="Search" {...props}>
       <SearchField placeholder="Search" />
