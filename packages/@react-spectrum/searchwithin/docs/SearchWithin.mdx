@@ -16,12 +16,13 @@ import packageData from '@react-spectrum/searchwithin/package.json';
 
 ```jsx import
 import {SearchWithin} from '@react-spectrum/searchwithin';
+import {SearchField} from '@react-spectrum/searchfield';
+import {Picker} from '@react-spectrum/picker';
 ```
 
-*Include after_version if the docs shouldn't be published to the website until reaching a specific package version.*
 ---
-category: Category Name
-keywords: []
+category: Forms
+keywords: [search within]
 after_version: 3.0.0-alpha.0
 ---
 
@@ -29,7 +30,6 @@ after_version: 3.0.0-alpha.0
 
 <p>{docs.exports.SearchWithin.description}</p>
 
-*Be sure to update the Spectrum url below to match the current component.*
 <HeaderInfo
   packageData={packageData}
   componentNames={['SearchWithin']}
@@ -53,32 +53,13 @@ after_version: 3.0.0-alpha.0
 
 ## Content
 
-*If the component has a children prop that accepts any type of content (e.g. `ReactNode`), include this section. Please include a note about how to internationalize the content.*
-
-## Value
-
-*If the component displays or allows a user to input a value, include this section.*
+SearchWithin accepts a [Search Field](SearchField.html) and a [Picker](SearchField.html) as children.
 
 ## Labeling
 
-*If the component supports a label prop, include this section. Please include a note about how to internationalize the content.*
-
-## Events
-
-*If the component supports event props, include this section. Only cover the events that are important to the main functionality of the component.*
-
-## Validation
-
-*If the component supports validation props, include this section.*
+SearchWithin can be labeled using the `label` prop. This will add a visible label, and be used by the SearchField and the Picker's aria-labelledby, as well as by the group itself.
 
 ## Props
 
-*Include an additional PropTables if multiple components are being documented in a single file. See Tabs.mdx for an example.*
 <PropTable component={docs.exports.SearchWithin} links={docs.links} />
 
-## Visual options
-
-*Show examples of all variants and visual props here with links to the design website for more usage details. Examples can be grouped together for conciseness.*
-
-### Sample Option
-[View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
