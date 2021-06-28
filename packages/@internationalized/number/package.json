@@ -1,0 +1,25 @@
+{
+  "name": "@internationalized/number",
+  "version": "3.0.1",
+  "description": "Internationalized number formatting and parsing utilities",
+  "license": "Apache-2.0",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.6.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

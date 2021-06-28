@@ -54,7 +54,13 @@ export function Snippet({children}) {
 }
 
 export function Example({children, colorScheme}) {
-  return <ThemeProvider colorScheme={colorScheme} UNSAFE_className={styles.example}>{children}</ThemeProvider>;
+  return (
+    <ThemeProvider colorScheme={colorScheme} UNSAFE_className={styles.example}>
+      <ErrorBoundary>
+        {children}
+      </ErrorBoundary>
+    </ThemeProvider>
+  );
 }
 
 export function ThemeSwitcher() {
@@ -74,4 +80,23 @@ export function ThemeSwitcher() {
       </ActionButton>
     </div>
   );
+}
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {error: null};
+  }
+
+  static getDerivedStateFromError(e) {
+    return {error: e.message};
+  }
+
+  render() {
+    if (this.state.error) {
+      return <div>An error occurred while rendering the example.</div>;
+    }
+
+    return this.props.children;
+  }
 }

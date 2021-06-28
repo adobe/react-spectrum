@@ -17,23 +17,32 @@ import {TableState} from '@react-stately/table';
 import {useId} from '@react-aria/utils';
 
 interface SelectionCheckboxProps {
-  key: Key,
-  isDisabled?: boolean
+  /** A unique key for the checkbox. */
+  key: Key
 }
 
 interface SelectionCheckboxAria {
+  /** Props for the row selection checkbox element. */
   checkboxProps: AriaCheckboxProps
 }
 
+interface SelectAllCheckboxAria {
+  /** Props for the select all checkbox element. */
+  checkboxProps: AriaCheckboxProps
+}
+
+/**
+ * Provides the behavior and accessibility implementation for a selection checkbox in a table.
+ * @param props - Props for the selection checkbox.
+ * @param state - State of the table, as returned by `useTableState`.
+ */
 export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, state: TableState<T>): SelectionCheckboxAria {
-  let {
-    key,
-    isDisabled
-  } = props;
+  let {key} = props;
 
   let manager = state.selectionManager;
   let checkboxId = useId();
-  let isSelected = state.selectionManager.isSelected(key) && !isDisabled;
+  let isDisabled = state.disabledKeys.has(key);
+  let isSelected = state.selectionManager.isSelected(key);
 
   let onChange = () => manager.select(key);
 
@@ -43,17 +52,24 @@ export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, stat
       'aria-label': 'Select',
       'aria-labelledby': `${checkboxId} ${getRowLabelledBy(state, key)}`,
       isSelected,
+      isDisabled: isDisabled || manager.selectionMode === 'none',
       onChange
     }
   };
 }
 
-export function useTableSelectAllCheckbox<T>(state: TableState<T>): SelectionCheckboxAria {
-  let {isEmpty, isSelectAll} = state.selectionManager;
+/**
+ * Provides the behavior and accessibility implementation for the select all checkbox in a table.
+ * @param props - Props for the select all checkbox.
+ * @param state - State of the table, as returned by `useTableState`.
+ */
+export function useTableSelectAllCheckbox<T>(state: TableState<T>): SelectAllCheckboxAria {
+  let {isEmpty, isSelectAll, selectionMode} = state.selectionManager;
   return {
     checkboxProps: {
       'aria-label': 'Select All',
       isSelected: isSelectAll,
+      isDisabled: selectionMode !== 'multiple',
       isIndeterminate: !isEmpty && !isSelectAll,
       onChange: () => state.selectionManager.toggleSelectAll()
     }

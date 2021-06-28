@@ -15,7 +15,7 @@ import React from 'react';
 import {render, waitFor} from '@testing-library/react';
 
 describe('ariaHideOutside', function () {
-  it('should hide everything except the provided element', function () {
+  it('should hide everything except the provided element [button]', function () {
     let {getByRole, getAllByRole} = render(
       <>
         <input type="checkbox" />
@@ -321,5 +321,35 @@ describe('ariaHideOutside', function () {
     expect(() => getAllByRole('checkbox')).not.toThrow();
     expect(() => getAllByRole('radio')).not.toThrow();
     expect(() => getByRole('button')).not.toThrow();
+  });
+
+  it('should hide everything except the provided element [row]', function () {
+    let {getAllByRole} = render(
+      <div role="grid">
+        <div role="row">
+          <div role="gridcell">Cell 1</div>
+        </div>
+        <div role="row">
+          <div role="gridcell">Cell 2</div>
+        </div>
+      </div>
+    );
+
+    let cells = getAllByRole('gridcell');
+    let rows = getAllByRole('row');
+
+    let revert = ariaHideOutside([rows[1]]);
+
+    expect(rows[0]).not.toHaveAttribute('aria-hidden', 'true');
+    expect(cells[0]).toHaveAttribute('aria-hidden', 'true');
+    expect(rows[1]).not.toHaveAttribute('aria-hidden', 'true');
+    expect(cells[1]).not.toHaveAttribute('aria-hidden', 'true');
+
+    revert();
+
+    expect(rows[0]).not.toHaveAttribute('aria-hidden', 'true');
+    expect(cells[0]).not.toHaveAttribute('aria-hidden', 'true');
+    expect(rows[1]).not.toHaveAttribute('aria-hidden', 'true');
+    expect(cells[1]).not.toHaveAttribute('aria-hidden', 'true');
   });
 });

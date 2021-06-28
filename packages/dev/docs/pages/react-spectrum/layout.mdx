@@ -148,6 +148,91 @@ properties supported by grid.
 * [The Difference Between Explicit and Implicit Grids](https://css-tricks.com/difference-explicit-implicit-grids/) — an
 article that discusses the various ways of defining grids.
 
+## Responsive layout
+
+All props of the `Flex` and `Grid` components support object syntax to specify different values for the prop depending on the
+responsive breakpoint. By default, breakpoints are named following t-shirt sizing, and correspond to common device resolutions.
+Breakpoints can be overridden at the application level via the [Provider](Provider.html) component. In addition to breakpoints,
+a `base` value can be provided to style props, which will be applied when no breakpoints match.
+
+This example applies Flex direction `row` by default, but switches to `column` at the large breakpoint.
+
+```tsx
+<Flex direction={{base: 'row', L: 'column'}} />
+```
+
+React Spectrum's breakpoints are mobile first, which means style props apply at that breakpoint and above. For example, the `L`
+breakpoint is applied at screen sizes 1024px and wider. The `base` value should be used to specify the layout at the smallest
+possible screen size, and additional breakpoints may be added to adapt the layout for larger devices.
+
+The following example shows how you could use `Grid` to define a responsive layout. It consists of a header, navigation area,
+content area, table of contents, and footer. On small screens, all of these areas are displayed in a vertical stack, and the table of
+contents is hidden. At the medium breakpoint, the navigation and content appear next to each other. At the large breakpoint, the table
+of contents appears.
+
+This layout is accomplished by changing the grid areas and columns at the medium and large breakpoints. In addition, the `isHidden`
+prop of the table of contents element is set to true except at the large breakpoint. Within the navigation area, the boxes representing
+links are displayed in a vertical stack on large displays, and a horizontal stack on small screens. This is done by changing
+the Flex `direction` prop between `row` and `column` at the medium breakpoint.
+
+Resize your browser window to see how the layout changes.
+
+```tsx example
+<Grid
+  areas={{
+    base: [
+      'header',
+      'nav',
+      'content',
+      'footer'
+    ],
+    M: [
+      'header   header',
+      'nav      content',
+      'nav      content',
+      'footer   footer'
+    ],
+    L: [
+      'header header  header',
+      'nav    content toc',
+      'nav    content toc',
+      'footer footer  footer'
+    ],
+  }}
+  columns={{
+    M: ['size-2000', '1fr'],
+    L: ['size-2000', '1fr', 'size-2000']
+  }}
+  gap="size-100">
+  <View
+    backgroundColor="celery-600"
+    gridArea="header"
+    height="size-1000" />
+  <View
+    backgroundColor="blue-600"
+    gridArea="nav">
+    <Flex direction={{base: 'row', M: 'column'}} gap="size-100" margin="size-100">
+      <View backgroundColor="static-gray-50" height="size-250" minWidth="size-900" />
+      <View backgroundColor="static-gray-50" height="size-250" minWidth="size-900" />
+      <View backgroundColor="static-gray-50" height="size-250" minWidth="size-900" />
+    </Flex>
+  </View>
+  <View
+    backgroundColor="purple-600"
+    gridArea="content"
+    height="size-4600" />
+  <View
+    backgroundColor="magenta-600"
+    gridArea="toc"
+    minHeight="size-1000"
+    isHidden={{base: true, L: false}} />
+  <View
+    backgroundColor="seafoam-600"
+    gridArea="footer"
+    height="size-1000" />
+</Grid>
+```
+
 ## Slots
 
 Several React Spectrum components include pre-defined layouts that you can insert elements into via slots.

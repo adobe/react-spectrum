@@ -20,10 +20,6 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@re
 import packageData from '@react-aria/menu/package.json';
 import Anatomy from './menu-trigger-anatomy.svg';
 
-```jsx import
-import {useMenuTrigger} from '@react-aria/menu';
-```
-
 ---
 category: Overlays
 keywords: [menu trigger, mutli-select menu, aria]
@@ -93,7 +89,7 @@ In addition, see [useMenu](useMenu.html) for examples of menu item groups, and m
 ```tsx example
 import {useMenuTriggerState} from '@react-stately/menu';
 import {useButton} from '@react-aria/button';
-import {useMenu, useMenuItem} from '@react-aria/menu';
+import {useMenu, useMenuItem, useMenuTrigger} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 import {Item} from '@react-stately/collections';
 import {mergeProps} from '@react-aria/utils';

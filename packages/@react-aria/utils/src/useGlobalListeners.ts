@@ -16,7 +16,8 @@ interface GlobalListeners {
   addGlobalListener<K extends keyof DocumentEventMap>(el: EventTarget, type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void,
   addGlobalListener(el: EventTarget, type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void,
   removeGlobalListener<K extends keyof DocumentEventMap>(el: EventTarget, type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void,
-  removeGlobalListener(el: EventTarget, type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void
+  removeGlobalListener(el: EventTarget, type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void,
+  removeAllGlobalListeners(): void
 }
 
 export function useGlobalListeners(): GlobalListeners {
@@ -29,15 +30,16 @@ export function useGlobalListeners(): GlobalListeners {
     eventTarget.removeEventListener(type, listener, options);
     globalListeners.current.delete(listener);
   }, []);
+  let removeAllGlobalListeners = useCallback(() => {
+    globalListeners.current.forEach((value, key) => {
+      removeGlobalListener(value.eventTarget, value.type, key, value.options);
+    });
+  }, [removeGlobalListener]);
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
-    return () => {
-      globalListeners.current.forEach((value, key) => {
-        removeGlobalListener(value.eventTarget, value.type, key, value.options);
-      });
-    };
-  }, [removeGlobalListener]);
+    return removeAllGlobalListeners;
+  }, [removeAllGlobalListeners]);
 
-  return {addGlobalListener, removeGlobalListener};
+  return {addGlobalListener, removeGlobalListener, removeAllGlobalListeners};
 }

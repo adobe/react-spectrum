@@ -1,0 +1,49 @@
+.react-spectrum-ListView {
+  border-color: var(--spectrum-table-border-color, var(--spectrum-alias-border-color-mid));
+  border-style: solid;
+  position: relative;
+  border-width: var(--spectrum-table-border-size, var(--spectrum-alias-border-size-thin));
+  border-radius: var(--spectrum-table-border-radius, var(--spectrum-alias-border-radius-regular));
+  overflow: auto;
+  vertical-align: var(--spectrum-table-cell-vertical-alignment);
+  border-collapse: separate;
+  border-spacing: 0;
+  transform: translate3d(0, 0, 0);
+  padding: 0;
+  background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
+  outline: 0;
+}
+
+.react-spectrum-ListViewItem {
+  display: grid; /* TODO: define grid areas */
+  border-bottom: 1px solid var(--spectrum-tabel-cell-border-color, var(--spectrum-global-color-gray-300));
+  box-sizing: border-box;
+  font-size: var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default));
+  font-weight: var(--spectrum-table-cell-text-font-weight, var(--spectrum-global-font-weight-regular));
+  line-height: calc(var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default)) * var(--spectrum-table-cell-text-line-height, var(--spectrum-alias-body-text-line-height)) - 1px);
+  padding: var(--spectrum-global-dimension-size-125) var(--spectrum-table-cell-padding-x, var(--spectrum-global-dimension-size-200));
+  transition: background-color var(--spectrum-global-animation-duration-100) ease-in-out;
+  position: relative;
+  background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
+  color: var(--spectrum-table-cell-text-color, var(--spectrum-alias-text-color));
+  outline: 0;
+
+  &.is-hovered,
+  &.is-focused {
+     background-color: var(--spectrum-table-row-background-color-hover);
+  }
+
+  &:focus-ring {
+     background-color: var(--spectrum-table-row-background-color-hover);
+     box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
+     border-radius: var(--spectrum-table-cell-border-radius-key-focus);
+  }
+}
+
+.react-spectrum-ListView-centeredWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}

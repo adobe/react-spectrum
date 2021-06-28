@@ -1,5 +1,5 @@
 {
-  "Decrement": "Amortizare",
-  "Enter a number": "Introduceţi un număr",
-  "Increment": "Creştere"
+  "decrease": "Scădere {fieldLabel}",
+  "increase": "Creștere {fieldLabel}",
+  "numberField": "Câmp numeric"
 }

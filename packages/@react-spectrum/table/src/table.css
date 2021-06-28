@@ -11,8 +11,11 @@
  */
 
 .react-spectrum-Table {
+  user-select: none;
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  min-width: 0;
 }
 
 .react-spectrum-Table-cell {

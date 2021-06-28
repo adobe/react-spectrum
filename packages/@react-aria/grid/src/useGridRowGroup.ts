@@ -13,9 +13,13 @@
 import {HTMLAttributes} from 'react';
 
 interface GridRowGroupAria {
+  /** Props for the row group element. */
   rowGroupProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the accessibility implementation for a row group in a grid.
+ */
 export function useGridRowGroup(): GridRowGroupAria {
   return {
     rowGroupProps: {

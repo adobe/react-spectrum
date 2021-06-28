@@ -70,7 +70,11 @@ interface SelectableListOptions {
   /**
    * Whether the collection items should use virtual focus instead of being focused directly.
    */
-  shouldUseVirtualFocus?: boolean
+  shouldUseVirtualFocus?: boolean,
+  /**
+   * Whether navigation through tab key is enabled.
+   */
+  allowsTabNavigation?: boolean
 }
 
 interface SelectableListAria {
@@ -96,7 +100,8 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     disallowEmptySelection,
     selectOnFocus = false,
     disallowTypeAhead,
-    shouldUseVirtualFocus
+    shouldUseVirtualFocus,
+    allowsTabNavigation
   } = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
@@ -107,7 +112,7 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
   // If not virtualized, scroll the focused element into view when the focusedKey changes.
   // When virtualized, Virtualizer handles this internally.
   useEffect(() => {
-    if (!isVirtualized && selectionManager.focusedKey) {
+    if (!isVirtualized && selectionManager.focusedKey && ref?.current) {
       let element = ref.current.querySelector(`[data-key="${selectionManager.focusedKey}"]`) as HTMLElement;
       if (element) {
         scrollIntoView(ref.current, element);
@@ -124,7 +129,8 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     disallowEmptySelection,
     selectOnFocus,
     disallowTypeAhead,
-    shouldUseVirtualFocus
+    shouldUseVirtualFocus,
+    allowsTabNavigation
   });
 
   return {
@@ -138,8 +144,8 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
  * but doesn't affect parents above `scrollView`.
  */
 function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
-  let offsetX = element.offsetLeft - scrollView.offsetLeft;
-  let offsetY = element.offsetTop - scrollView.offsetTop;
+  let offsetX = relativeOffset(scrollView, element, 'left');
+  let offsetY = relativeOffset(scrollView, element, 'top');
   let width = element.offsetWidth;
   let height = element.offsetHeight;
   let x = scrollView.scrollLeft;
@@ -160,4 +166,28 @@ function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
 
   scrollView.scrollLeft = x;
   scrollView.scrollTop = y;
+}
+
+/**
+ * Computes the offset left or top from child to ancestor by accumulating
+ * offsetLeft or offsetTop through intervening offsetParents.
+ */
+function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|'top') {
+  const prop = axis === 'left' ? 'offsetLeft' : 'offsetTop';
+  let sum = 0;
+  while (child.offsetParent) {
+    sum += child[prop];
+    if (child.offsetParent === ancestor) {
+      // Stop once we have found the ancestor we are interested in.
+      break;
+    } else if (child.offsetParent.contains(ancestor)) {
+      // If the ancestor is not `position:relative`, then we stop at 
+      // _its_ offset parent, and we subtract off _its_ offset, so that
+      // we end up with the proper offset from child to ancestor.
+      sum -= ancestor[prop];
+      break;
+    }
+    child = child.offsetParent as HTMLElement;
+  }
+  return sum;
 }

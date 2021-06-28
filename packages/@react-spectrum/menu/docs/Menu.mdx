@@ -36,7 +36,7 @@ keywords: [menu trigger, dropdown, action menu]
   packageData={packageData}
   componentNames={['Menu', 'MenuTrigger']}
   sourceData={[
-    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/popovers/'}
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/popover/'}
   ]} />
 
 ## Example
@@ -122,6 +122,7 @@ function Example() {
 ## Selection
 Menu supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
 Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `key` prop of the items.
+See the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for caveats regarding selection prop typing.
 
 ```tsx example
 function Example() {
@@ -253,8 +254,6 @@ Sections without a `title` must provide an `aria-label` for accessibility.
 ## Complex Menu Items
 
 Items within Menu also allow for additional content used to better communicate options. Icons and descriptions can be added to the `children` of `Item` as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
-
-[View guidelines](https://spectrum.adobe.com/page/popovers/#Content-types)
 
 ```tsx example
 import {Keyboard, Text} from '@react-spectrum/text';
