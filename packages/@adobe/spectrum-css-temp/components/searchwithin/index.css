@@ -11,81 +11,59 @@ governing permissions and limitations under the License.
 */
 
 @import '../commons/index.css';
-
-:root {
+.spectrum-SearchWithin {
   --spectrum-searchwithin-width: 250px;
 
   /* Force override */
   --spectrum-searchwithin-border-radius: 0;
-  --spectrum-searchwithin-dropdown-min-width: 0;
+  --spectrum-searchwithin-picker-min-width: 0;
 }
 
 .spectrum-SearchWithin {
-  width: var(--spectrum-searchwithin-width);
+  inline-size: var(--spectrum-searchwithin-width);
   display: inline-flex;
   position: relative;
+}
 
-  .spectrum-Dropdown {
-    width: auto;
-    min-width: 0;
+.spectrum-SearchWithin-picker {
+  inline-size: auto;
+  min-inline-size: 0;
+  flex-shrink: 0;
 
-    button {
-      width: unset;
-      contain: unset;
-      justify-content: unset;
-    }
+  button {
+    width: unset;
+    contain: unset;
+    justify-content: unset;
+    border-end-start-radius: var(--spectrum-searchwithin-border-radius);
+    border-start-start-radius: var(--spectrum-searchwithin-border-radius);
+  }
+}
 
-    &:first-child {
-      button {
-        border-top-right-radius: var(--spectrum-searchwithin-border-radius);
-        border-bottom-right-radius: var(--spectrum-searchwithin-border-radius);
-      }
-    }
+.spectrum-SearchWithin-input {
+  flex: 1;
+  box-sizing: border-box;
+  min-inline-size: inherit;
+  margin-inline-end: calc(
+    -1 * var(--spectrum-textfield-border-size)
+  ); /* hides left border */
 
-    &:last-child {
-      button {
-        border-top-left-radius: var(--spectrum-searchwithin-border-radius);
-        border-bottom-left-radius: var(--spectrum-searchwithin-border-radius);
-      }
-    }
+  input {
+    border-end-end-radius: var(--spectrum-searchwithin-border-radius);
+    border-start-end-radius: var(--spectrum-searchwithin-border-radius);
   }
 
-  .spectrum-Dropdown-label {
-    /* Override dropdown's min-width and be tiny */
-    min-width: var(--spectrum-searchwithin-dropdown-min-width);
+  &:hover,
+  &:focus {
+    position: relative; /* shows left border */
   }
+}
 
-  .spectrum-Textfield {
-    flex: 1;
-    border-top-left-radius: var(--spectrum-searchwithin-border-radius);
-    border-bottom-left-radius: var(--spectrum-searchwithin-border-radius);
+.spectrum-SearchWithin-clearButton {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+}
 
-    &:last-child {
-      margin-left: calc(var(--spectrum-textfield-border-size) * -1); /* hides left border */
-
-      input {
-        border-top-left-radius: var(--spectrum-searchwithin-border-radius);
-        border-bottom-left-radius: var(--spectrum-searchwithin-border-radius);
-      }
-    }
-
-    &:first-child {
-      margin-right: calc(var(--spectrum-textfield-border-size) * -1); /* hides right border */
-
-      input {
-        border-top-right-radius: var(--spectrum-searchwithin-border-radius);
-        border-bottom-right-radius: var(--spectrum-searchwithin-border-radius);
-      }
-    }
-
-    &:hover, &:focus {
-      position: relative; /* shows border */
-    }
-  }
-
-  .spectrum-ClearButton {
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
+.spectrum-SearchWithin > .spectrum-Textfield {
+  flex-grow: 1;
 }

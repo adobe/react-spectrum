@@ -12,7 +12,7 @@
 
 import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, FocusableRef, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
-import {Field} from '../../label';
+import {Field} from '@react-spectrum/label';
 import React, {ReactNode, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/searchwithin/vars.css';
 import {useLabel} from '@react-aria/label';
@@ -38,8 +38,8 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   let domRef = useFocusableRef(ref, inputRef);
 
   let defaultSlotValues = {isDisabled, isRequired, label: undefined, isQuiet: false, 'aria-labelledby': labelProps.id};
-  let searchFieldClassName = classNames(styles, 'spectrum-Textfield');
-  let pickerClassName = classNames(styles, 'spectrum-Dropdown');
+  let searchFieldClassName = classNames(styles, 'spectrum-SearchWithin-input');
+  let pickerClassName = classNames(styles, 'spectrum-SearchWithin-picker');
   let slots = {
     searchfield: {UNSAFE_className: searchFieldClassName, ...defaultSlotValues},
     picker: {UNSAFE_className: pickerClassName, ...defaultSlotValues}
