@@ -66,6 +66,17 @@ storiesOf('Drag and Drop', module)
     )
   )
   .add(
+    'nested drop regions',
+    () => (
+      <Flex direction="column" gap="size-200" alignItems="center">
+        <Draggable />
+        <Droppable>
+          <Droppable />
+        </Droppable>
+      </Flex>
+    )
+  )
+  .add(
     'Droppable listbox',
     () => (
       <Flex direction="row" gap="size-200" alignItems="center">
@@ -222,7 +233,7 @@ function Draggable() {
   );
 }
 
-function Droppable({type}: any) {
+function Droppable({type, children}: any) {
   let ref = React.useRef();
   let {dropProps, isDropTarget} = useDrop({
     ref,
@@ -249,6 +260,7 @@ function Droppable({type}: any) {
         ref={ref}
         className={classNames(dropzoneStyles, 'spectrum-Dropzone', {'is-dragged': isDropTarget})}>
         Drop here
+        {children}
       </div>
     </FocusRing>
   );
