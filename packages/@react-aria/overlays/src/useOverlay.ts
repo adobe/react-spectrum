@@ -89,8 +89,21 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
     }
   };
 
+  let onInteractOutsideStart = (e: SyntheticEvent<HTMLElement>) => {
+    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as HTMLElement)) {
+      if (visibleOverlays[visibleOverlays.length - 1] === ref) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
+    }
+  };
+
   let onInteractOutside = (e: SyntheticEvent<HTMLElement>) => {
     if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as HTMLElement)) {
+      if (visibleOverlays[visibleOverlays.length - 1] === ref) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
       onHide();
     }
   };
@@ -104,7 +117,7 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
   };
 
   // Handle clicking outside the overlay to close it
-  useInteractOutside({ref, onInteractOutside: isDismissable ? onInteractOutside : null});
+  useInteractOutside({ref, onInteractOutside: isDismissable ? onInteractOutside : null, onInteractOutsideStart});
 
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !shouldCloseOnBlur,

@@ -40,7 +40,12 @@ interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'children'> {
   /**
    * An optional visual label for the listbox.
    */
-  label?: ReactNode
+  label?: ReactNode,
+
+  /**
+   * Whether the listbox options should use virtual focus instead of being focused directly.
+   */
+   shouldUseVirtualFocus?: boolean
 }
 
 /**
