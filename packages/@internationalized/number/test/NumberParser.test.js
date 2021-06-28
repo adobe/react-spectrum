@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import fc from 'fast-check';
 import {NumberParser} from '../src/NumberParser';
-import fc from 'fast-check'
 
 describe('NumberParser', function () {
   describe('parse', function () {
@@ -166,12 +166,12 @@ describe('NumberParser', function () {
         minimumFractionDigits: fc.integer({min: 0, max: 20}),
         maximumFractionDigits: fc.integer({min: 0, max: 20}),
         minimumSignificantDigits: fc.integer({min: 1, max: 21}),
-        maximumSignificantDigits: fc.integer({min: 1, max: 21}),
+        maximumSignificantDigits: fc.integer({min: 1, max: 21})
       }, {requiredKeys: []});
       const valueArb = fc.tuple(
         fc.constantFrom(1, -1),
-        fc.double({next: true, noNaN: true, min: Number.EPSILON, max: 1/Number.EPSILON})
-      ).map(([sign, value]) => sign * value);
+        fc.double({next: true, noNaN: true, min: Number.EPSILON, max: 1 / Number.EPSILON})
+        ).map(([sign, value]) => sign * value);
       // (valueArb) We restricted the set of possible values to avoid unwanted overflows to infinity and underflows to zero
       //            and stay in the domain of legit values.
       
@@ -180,7 +180,7 @@ describe('NumberParser', function () {
           fc.property(
             valueArb, localesArb, styleOptsArb, genericOptsArb,
             function (d, locales, styleOpts, genericOpts) {
-              const opts = { ...styleOpts, ...genericOpts };
+              const opts = {...styleOpts, ...genericOpts};
               fc.pre(opts.minimumFractionDigits === undefined || opts.maximumFractionDigits === undefined || opts.minimumFractionDigits <= opts.maximumFractionDigits);
               fc.pre(opts.minimumSignificantDigits === undefined || opts.maximumSignificantDigits === undefined || opts.minimumSignificantDigits <= opts.maximumSignificantDigits);
               const formatter = new Intl.NumberFormat(locales, opts);
