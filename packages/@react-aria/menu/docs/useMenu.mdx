@@ -159,7 +159,6 @@ function MenuItem({item, state, onAction}) {
   // Get props for the menu item element
   let ref = React.useRef();
   let isDisabled = state.disabledKeys.has(item.key);
-  let isFocused = state.selectionManager.focusedKey === item.key;
 
   let {menuItemProps} = useMenuItem({
     key: item.key,
@@ -167,9 +166,14 @@ function MenuItem({item, state, onAction}) {
     onAction
   }, state, ref);
 
+  // Handle focus events so we can apply highlighted
+  // style to the focused menu item
+  let [isFocused, setFocused] = React.useState(false);
+  let {focusProps} = useFocus({onFocusChange: setFocused});
+
   return (
     <li
-      {...menuItemProps}
+      {...mergeProps(menuItemProps, focusProps)}
       ref={ref}
       style={{
         background: isFocused ? 'gray' : 'transparent',

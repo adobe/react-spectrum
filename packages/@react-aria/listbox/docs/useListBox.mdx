@@ -81,7 +81,7 @@ along with props for an optional visual label:
   <InterfaceType properties={docs.links[docs.exports.useListBox.return.id].properties} />
 </TypeContext.Provider>
 
-`useOption` returns props for an individual option and its children, along with states you can use for styling:
+`useOption` returns props for an individual option and its children:
 
 <TypeContext.Provider value={docs.links}>
   <InterfaceType properties={docs.links[docs.exports.useOption.return.id].properties} />
@@ -165,7 +165,13 @@ function ListBox(props) {
 function Option({item, state}) {
   // Get props for the option element
   let ref = React.useRef();
-  let {optionProps, isSelected, isDisabled} = useOption({key: item.key}, state, ref);
+  let isDisabled = state.disabledKeys.has(item.key);
+  let isSelected = state.selectionManager.isSelected(item.key);
+  let {optionProps} = useOption({
+    key: item.key,
+    isDisabled,
+    isSelected
+  }, state, ref);
 
   // Determine whether we should show a keyboard
   // focus ring for accessibility
@@ -292,7 +298,13 @@ function Option({item, state}) {
   // Same as in the first example...
 ///- begin collapse -///
   let ref = React.useRef();
-  let {optionProps, isSelected, isDisabled} = useOption({key: item.key}, state, ref);
+  let isDisabled = state.disabledKeys.has(item.key);
+  let isSelected = state.selectionManager.isSelected(item.key);
+  let {optionProps} = useOption({
+    key: item.key,
+    isDisabled,
+    isSelected
+  }, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
   return (
@@ -378,7 +390,13 @@ function ListBox(props) {
 
 function Option({item, state}) {
   let ref = React.useRef();
-  let {optionProps, labelProps, descriptionProps, isSelected, isDisabled} = useOption({key: item.key}, state, ref);
+  let isDisabled = state.disabledKeys.has(item.key);
+  let isSelected = state.selectionManager.isSelected(item.key);
+  let {optionProps, labelProps, descriptionProps} = useOption({
+    key: item.key,
+    isDisabled,
+    isSelected
+  }, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
   // Pull out the two expected children. We will clone them
