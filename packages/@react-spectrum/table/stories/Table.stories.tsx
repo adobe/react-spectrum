@@ -462,32 +462,22 @@ storiesOf('TableView', module)
           </Row>
           <Row>
             <Cell>
-              <span
-                // style={{width: '70%', backgroundColor:"lightblue", textAlign:'center'}}
-                style={{backgroundColor:"lightblue"}}
-                >
+              <span style={{backgroundColor: 'lightblue'}}>
                 span child
               </span>
             </Cell>
             <Cell>
-              <span
-                // style={{width: '70%', backgroundColor:"lightblue", textAlign:'center'}}
-                style={{backgroundColor:"lightblue"}}
-                >
+              <span style={{backgroundColor: 'lightblue'}}>
                 span child</span>
             </Cell>
             <Cell>
-              <span
-                // style={{width: '70%', backgroundColor:"lightblue", textAlign:'end'}}
-                style={{backgroundColor:"lightblue"}}
-                >span child
+              <span style={{backgroundColor: 'lightblue'}}>
+                span child
               </span>
             </Cell>
             <Cell>
-              <span
-                // style={{width: '70%', backgroundColor:"lightblue", textAlign:'center'}}
-                style={{width: '70%', backgroundColor:"lightblue"}}
-                >very very very very very very long long long long long description
+              <span style={{width: '70%', backgroundColor: 'lightblue'}}>
+                very very very very very very long long long long long description
               </span>
             </Cell>
           </Row>
