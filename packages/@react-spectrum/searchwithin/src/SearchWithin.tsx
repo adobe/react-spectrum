@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useFocusableRef, useResizeObserver, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, FocusableRef, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
-import React, {ReactNode, useRef} from 'react';
+import React, {ReactNode, useCallback, useLayoutEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/searchwithin/vars.css';
 import {useLabel} from '@react-aria/label';
-import {useProviderProps} from '@react-spectrum/provider';
+import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 export interface SpectrumSearchWithinProps extends SpectrumLabelableProps, DOMProps, StyleProps {
   children: ReactNode,
@@ -37,12 +37,30 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
   let domRef = useFocusableRef(ref, inputRef);
 
+  // Measure the width of the field to inform the width of the menu.
+  let [menuWidth, setMenuWidth] = useState(null);
+  let {scale} = useProvider();
+
+  let onResize = useCallback(() => {
+    if (domRef.current) {
+      let width = domRef.current.offsetWidth;
+      setMenuWidth(width);
+    }
+  }, [domRef]);
+
+  useResizeObserver({
+    ref: domRef,
+    onResize: onResize
+  });
+
+  useLayoutEffect(onResize, [scale, onResize]);
+
   let defaultSlotValues = {isDisabled, isRequired, label: undefined, isQuiet: false, 'aria-labelledby': labelProps.id};
   let searchFieldClassName = classNames(styles, 'spectrum-SearchWithin-input');
   let pickerClassName = classNames(styles, 'spectrum-SearchWithin-picker');
   let slots = {
     searchfield: {UNSAFE_className: searchFieldClassName, ...defaultSlotValues},
-    picker: {UNSAFE_className: pickerClassName, ...defaultSlotValues}
+    picker: {UNSAFE_className: pickerClassName, menuWidth, align: 'end', ...defaultSlotValues}
   };
 
   return (
