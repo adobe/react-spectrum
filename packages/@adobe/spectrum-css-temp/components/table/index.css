@@ -162,14 +162,6 @@ governing permissions and limitations under the License.
   /* allow focus ring of child to extend outside the bounds */
   padding: 4px;
   margin: -4px;
-
-  /*
-   * This is so user provided content follows the column alignment setting.
-   * Has a specificity of 0 1 0, which is the same as a single class.
-   */
-  > * {
-    display: inline;
-  }
 }
 
 .spectrum-Table-cell--hideHeader {

@@ -398,30 +398,30 @@ storiesOf('TableView', module)
               <View
                 width="100%"
                 backgroundColor="gray-200">
-                Budget
+                100%
               </View>
             </Cell>
             <Cell>
               <View
+                UNSAFE_style={{margin: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
                 width="100%"
-                backgroundColor="gray-200"
-                UNSAFE_style={{textAlign: 'center'}}>
-                XLS
+                backgroundColor="gray-200">
+                100%
               </View>
             </Cell>
             <Cell>
               <View
+                UNSAFE_style={{float: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
                 width="100%"
-                backgroundColor="gray-200"
-                UNSAFE_style={{textAlign: 'end'}}>
-                120 KB
+                backgroundColor="gray-200">
+                100%
               </View>
             </Cell>
             <Cell>
               <View
+                UNSAFE_style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
                 width="100%"
-                backgroundColor="gray-200"
-                UNSAFE_style={{textAlign: 'end'}}>
+                backgroundColor="gray-200">
                 very very very very very very long long long long long description
               </View>
             </Cell>
@@ -429,34 +429,66 @@ storiesOf('TableView', module)
           <Row>
             <Cell>
               <View
+                UNSAFE_style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="50%"
+                backgroundColor="gray-200">
+                50% div
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{margin: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
                 width="70%"
                 backgroundColor="gray-200">
-                70% width
+                70% div
               </View>
             </Cell>
             <Cell>
               <View
+                UNSAFE_style={{float: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
                 width="70%"
-                backgroundColor="gray-200"
-                UNSAFE_style={{textAlign: 'center'}}>
-                70% width
+                backgroundColor="gray-200">
+                70% div
               </View>
             </Cell>
             <Cell>
               <View
+                UNSAFE_style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
                 width="70%"
-                backgroundColor="gray-200"
-                UNSAFE_style={{textAlign: 'end'}}>
-                70% width
-              </View>
-            </Cell>
-            <Cell>
-              <View
-                width="70%"
-                backgroundColor="gray-200"
-                UNSAFE_style={{textAlign: 'end'}}>
+                backgroundColor="gray-200">
                 very very very very very very long long long long long description
               </View>
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <span
+                // style={{width: '70%', backgroundColor:"lightblue", textAlign:'center'}}
+                style={{backgroundColor:"lightblue"}}
+                >
+                span child
+              </span>
+            </Cell>
+            <Cell>
+              <span
+                // style={{width: '70%', backgroundColor:"lightblue", textAlign:'center'}}
+                style={{backgroundColor:"lightblue"}}
+                >
+                span child</span>
+            </Cell>
+            <Cell>
+              <span
+                // style={{width: '70%', backgroundColor:"lightblue", textAlign:'end'}}
+                style={{backgroundColor:"lightblue"}}
+                >span child
+              </span>
+            </Cell>
+            <Cell>
+              <span
+                // style={{width: '70%', backgroundColor:"lightblue", textAlign:'center'}}
+                style={{width: '70%', backgroundColor:"lightblue"}}
+                >very very very very very very long long long long long description
+              </span>
             </Cell>
           </Row>
         </TableBody>
