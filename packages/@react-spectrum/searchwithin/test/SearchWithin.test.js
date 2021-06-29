@@ -9,18 +9,44 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+// import {Item, Picker, SearchField, SearchWithin} from '../';
+// import {Provider} from '@react-spectrum/provider';
+// import React from 'react';
+// import {render} from '@testing-library/react';
+// import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+// import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 
-import {SearchWithin} from '../';
-import {render} from '@testing-library/react';
-import React from 'react';
+// let theme = {
+//   light: themeLight,
+//   medium: scaleMedium
+// };
 
 describe('SearchWithin', function () {
-  it.each`
-    Name | Component      | props
-    ${'SearchWithin'} | ${SearchWithin} | ${{}}
-  `('$Name handles defaults', function ({Component, props}) {
-    let tree = render(<Component {...props} />);
 
-    expect(tree).toBeTruthy();
+  // let defaultProps = {
+  //   label: 'Test'
+  // };
+
+  // const ExampleSearchWithin = React.forwardRef((props = {}, ref) => (
+  //   <Provider theme={theme}>
+  //     <SearchWithin {...defaultProps} {...props} ref={ref}>
+  //       <SearchField placeholder="Search" />
+  //       <Picker defaultSelectedKey="all">
+  //         <Item key="all">All</Item>
+  //         <Item key="campaigns">Campaigns</Item>
+  //         <Item key="audiences">Audiences</Item>
+  //         <Item key="tags">Tags</Item>
+  //       </Picker>
+  //     </SearchWithin>
+  //   </Provider>
+  //   ));
+
+  // function renderSearchWithin(props = {}) {
+  //   return render(<ExampleSearchWithin {...props} />);
+  // }
+  
+  it('temp test', function () {
+
+    expect(true).toBeTruthy();
   });
 });

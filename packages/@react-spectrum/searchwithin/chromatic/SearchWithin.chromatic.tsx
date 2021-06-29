@@ -10,22 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
-import {SearchWithin} from '../';
+import {Item, Picker} from '@react-spectrum/picker';
 import React from 'react';
+import {SearchField} from '@react-spectrum/searchfield';
+import {SearchWithin, SpectrumSearchWithinProps} from '../';
+
 import {storiesOf} from '@storybook/react';
-
-interface SpectrumSearchWithinProps {
-
-}
 
 storiesOf('SearchWithin', module)
   .add(
-    'name me',
+    'Default',
     () => render({})
   );
 
-function render(props: SpectrumSearchWithinProps = {}) {
+function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}) {
   return (
-    <SearchWithin {...props} />
+    <SearchWithin label="Search" {...props}>
+      <SearchField placeholder="Search" />
+      <Picker defaultSelectedKey="all">
+        <Item key="all">All</Item>
+        <Item key="campaigns">Campaigns</Item>
+        <Item key="audiences">Audiences</Item>
+        <Item key="tags">Tags</Item>
+      </Picker>
+    </SearchWithin>
   );
 }
