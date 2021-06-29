@@ -37,7 +37,7 @@ export function SlotProvider(props) {
   let {slots = {}, children} = props;
 
   // Merge props for each slot from parent context and props
-  let value = useMemo(() => 
+  let value = useMemo(() =>
     Object.keys(parentSlots)
       .concat(Object.keys(slots))
       .reduce((o, p) => ({
