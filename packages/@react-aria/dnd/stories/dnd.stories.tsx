@@ -70,8 +70,8 @@ storiesOf('Drag and Drop', module)
     () => (
       <Flex direction="column" gap="size-200" alignItems="center">
         <Draggable />
-        <Droppable>
-          <Droppable />
+        <Droppable actionId="Parent">
+          <Droppable actionId="Child" />
         </Droppable>
       </Flex>
     )
@@ -233,22 +233,22 @@ function Draggable() {
   );
 }
 
-function Droppable({type, children}: any) {
+function Droppable({type, children, actionId = ''}: any) {
   let ref = React.useRef();
   let {dropProps, isDropTarget} = useDrop({
     ref,
-    onDropEnter: action('onDropEnter'),
+    onDropEnter: action(`onDropEnter${actionId}`),
     // onDropMove: action('onDropMove'),
-    onDropExit: action('onDropExit'),
-    onDropActivate: action('onDropActivate'),
-    onDrop: action('onDrop'),
+    onDropExit: action(`onDropExit${actionId}`),
+    onDropActivate: action(`onDropActivate${actionId}`),
+    onDrop: action(`onDrop${actionId}`),
     getDropOperation(types, allowedOperations) {
       return !type || types.has(type) ? allowedOperations[0] : 'cancel';
     }
   });
 
   let {clipboardProps} = useClipboard({
-    onPaste: action('onPaste')
+    onPaste: action(`onPaste${actionId}`)
   });
 
   let {buttonProps} = useButton({elementType: 'div'}, ref);
