@@ -102,6 +102,8 @@ export function useSearchField(
     clearButtonProps: {
       'aria-label': formatMessage('Clear search'),
       excludeFromTabOrder: true,
+      // @ts-ignore
+      preventFocusOnPress: true,
       onPress: onClearButtonClick,
       onPressStart
     }
