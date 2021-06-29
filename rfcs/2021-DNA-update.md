@@ -25,11 +25,14 @@ and how to build our components with the new tokens, both Parcel and Webpack.
 <!-- Why are we doing this? What use cases does it support? What is the expected
 outcome? -->
 We need to upgrade our version of DNA so that any future decisions we make about Spectrum-CSS are easier.
-This will give us a chromatic baseline for our CSS work plus any colors or sizes that DNA has changed or added.
+First, this will make updating to new versions of DNA as they come out easier.
+By doing the upgrade now and alone, we can make a chromatic baseline. We'll easily know what colors or sizes that DNA
+has changed or added.
 This will make it easier to enact any plans for Spectrum-CSS, including transitioning our changes back or moving off
-to consume DSS directly. The expected outcome is that we use the current values that Design has specified for Spectrum
-and we limit our testing surface area to size and color and we do not include behavior.
-Finally, this gets us closer to supporting t-shirt sizes.
+to consume DSS directly because we won't need to worry about colors or sizes changing as much.
+The expected outcome is that we use the current values that Design has specified for Spectrum,
+and we limit our testing surface area to size and color. We do not include behavior.
+As an added benefit, this gets us closer to supporting t-shirt sizes.
 
 ## Detailed Design
 
@@ -57,10 +60,10 @@ We do have some comments in our code for patches/fixes since we couldn't easily 
 If we come across one of these, we should do our best to fix it where it comes from.
 
 
-There are some CSS files that are shared across components, people working on a component should address those
+There are some CSS files that are shared across components, people working on a component should address these
 as needed and try to get them merged to the upgrade branch early so that we don't duplicate that effort.
 Again, see the branch link above, there are things like font, icons, typography, that need to apply to many
-components.
+components. Some of this work could also be done before we farm out the work on the rest of the components.
 
 ## Documentation
 
@@ -68,8 +71,8 @@ components.
     How will this RFC be documented? Does it need a formal announcement to explain 
 		the motivation?
 -->
-This change should be fairly minor as far as work and use go. If there is a DNA bug though, it may be
-harder for a contributor or one of us to fix and may take longer.
+This change should be fairly minor as far as work and use go. We may need something explaining our relationship
+with our token system so that contributors don't get confused.
 
 ## Drawbacks
 
@@ -83,7 +86,8 @@ harder for a contributor or one of us to fix and may take longer.
     experience, etc. Try to identify as many potential problems with
     implementing this RFC as possible.
 -->
-There is a chance that we'll let some DNA bugs through.
+There is a chance that we'll let some DNA bugs through. If there is a DNA bug, it may be
+harder for a contributor or one of us to fix and may take longer.
 
 ## Backwards Compatibility Analysis
 
