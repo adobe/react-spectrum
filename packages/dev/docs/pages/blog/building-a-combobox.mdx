@@ -73,9 +73,9 @@ as we built ComboBox and subsequent testing sessions revealed varied support acr
 ### Portals
 
 One significant difference between the WAI-ARIA 1.2 ComboBox spec and our ComboBox implementation was the usage of React Portals for the listbox. In the [example](https://www.w3.org/TR/wai-aria-practices-1.2/examples/combobox/combobox-autocomplete-list.html)
-the listbox is a sibling to the combobox, allowing for easy navigation between the the two elements when using a screenreader. The same couldn't be said for our listbox since
-it is portalled to the end of the document, meaning there could be any number of elements that a screenreader user would have to navigate through just to move from the ComboBox input to the listbox itself. For touch screen reader users, it would be particularly problematic
-since they may not have access to a physical keyboard and thus can't use the arrow keys as to navigate through options.
+the listbox is a sibling to the combobox, allowing for easy navigation between the two elements when using a screen reader. The same couldn't be said for our listbox since
+it is portalled to the end of the document, meaning there could be any number of elements that a screen reader user would have to navigate through just to move from the ComboBox input to the listbox itself. For touch screen reader users, it would be particularly problematic
+since they may not have access to a physical keyboard and thus can't use the arrow keys to navigate through options.
 
 This put us in a bind because removing the portal strategy wasn't really an option. If we didn't portal the popover out to the end of the document, we'd run into the risk of the listbox being clipped if the combobox's parent had `overflow: hidden` or `overflow: scroll`
 set. Therefore, we had to figure out a way to make the input and listbox the only elements accessible to screen readers while the popover is open so that a screen reader user wouldn't accidentally leave the ComboBox context.
@@ -88,7 +88,7 @@ Check out our [ariaHideOutside](https://github.com/adobe/react-spectrum/blob/mai
 ### Mobile implementation divergence
 
 Another divergence between the WAI-ARIA 1.2 ComboBox example and our ComboBox implementation came as a result of our mobile implementation. Initially, we considered the outer input and the tray input as both being individual combo boxes that mirror each other's state. This became increasingly complicated as we
-tried to manage things like focus and internal state between the two inputs. The result included adding several tray input specific affordances added to our `useComboBox` hook as well as reducing the aria hook's generality by introducing this React Spectrum specific behavior. Interacting with the tray input with a screen reader was also problematic
+tried to manage things like focus and internal state between the two inputs. The result included adding several tray input specific affordances to our `useComboBox` hook as well as reducing the aria hook's generality by introducing this React Spectrum specific behavior. Interacting with the tray input using a screen reader was also problematic
 since the screen reader would detect that the input had `role="combobox"` and thus erroneously announce "double tap to close", a touch action usually reserved for focusing an input. After some deliberation, we decided to alter the accessibility implementation for the mobile experience, removing the outer combo box input in favor of a button that
 resembles a combo box. Tapping the button opens the tray that contains the actual combo box input, albeit with `role="searchbox"` instead of `role="combobox"` to avoid the aforementioned screen reader announcement.
 
