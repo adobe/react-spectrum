@@ -22,7 +22,7 @@ let SlotContext = React.createContext(null);
 export function useSlotProps<T>(props: T, defaultSlot?: string): T {
   let slot = (props as SlotProps).slot || defaultSlot;
   let {[slot]: slotProps = {}} = useContext(SlotContext) || {};
-  return mergeProps(slotProps, props);
+  return mergeProps(props, slotProps);
 }
 
 export function cssModuleToSlots(cssModule) {
