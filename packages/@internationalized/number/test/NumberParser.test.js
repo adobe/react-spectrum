@@ -172,13 +172,13 @@ describe('NumberParser', function () {
         maximumSignificantDigits: fc.integer({min: 1, max: 21})
       }, {requiredKeys: []});
 
+      // We restricted the set of possible values to avoid unwanted overflows to infinity and underflows to zero
+      // and stay in the domain of legit values.
       const DOUBLE_MIN = Number.EPSILON;
       const valueArb = fc.tuple(
         fc.constantFrom(1, -1),
         fc.double({next: true, noNaN: true, min: DOUBLE_MIN, max: 1 / DOUBLE_MIN})
         ).map(([sign, value]) => sign * value);
-      // (valueArb) We restricted the set of possible values to avoid unwanted overflows to infinity and underflows to zero
-      //            and stay in the domain of legit values.
       
       it('should fully reverse NumberFormat', function () {
         fc.assert(
