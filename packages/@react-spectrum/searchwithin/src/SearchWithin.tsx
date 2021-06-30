@@ -11,18 +11,13 @@
  */
 
 import {classNames, SlotProvider, useFocusableRef, useResizeObserver, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, FocusableRef, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
-import React, {ReactNode, useCallback, useLayoutEffect, useRef, useState} from 'react';
+import {FocusableRef} from '@react-types/shared';
+import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
+import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
 import styles from '@adobe/spectrum-css-temp/components/searchwithin/vars.css';
 import {useLabel} from '@react-aria/label';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
-
-export interface SpectrumSearchWithinProps extends SpectrumLabelableProps, DOMProps, StyleProps {
-  children: ReactNode,
-  /** Whether the children should be disabled. Propagated to both children. */
-  isDisabled?: boolean
-}
 
 function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
