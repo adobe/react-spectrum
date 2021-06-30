@@ -47,6 +47,7 @@ export function useId(defaultId?: string): string {
   }, [setValue, updateValue]);
 
   let res = useSSRSafeId(value);
+
   idsUpdaterMap.set(res, updateValue);
   return res;
 }
@@ -80,11 +81,11 @@ export function mergeIds(idA: string, idB: string): string {
  * if we can use it in places such as labelledby.
  */
 export function useSlotId(): string {
-  let [id, setId] = useState(useId());
+  let id = useId();
   useLayoutEffect(() => {
     let setCurr = idsUpdaterMap.get(id);
     if (setCurr && !document.getElementById(id)) {
-      setId(null);
+      setCurr(null);
     }
   }, [id]);
 

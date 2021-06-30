@@ -22,6 +22,9 @@ let SlotContext = React.createContext(null);
 export function useSlotProps<T>(props: T, defaultSlot?: string): T {
   let slot = (props as SlotProps).slot || defaultSlot;
   let {[slot]: slotProps = {}} = useContext(SlotContext) || {};
+  if (props.id) {
+    return {...mergeProps(props, slotProps), id: props.id};
+  }
   return mergeProps(props, slotProps);
 }
 

@@ -14,11 +14,13 @@ import React, {useRef} from 'react';
 import {render} from '@testing-library/react';
 import {SlotProvider, useSlotProps} from '../';
 import {triggerPress} from '@react-spectrum/test-utils';
+import {useId, useSlotId} from '@react-aria/utils';
 import {usePress} from '@react-aria/interactions';
 
 
 describe('Slots', function () {
   let results = {};
+
   afterEach(() => {
     results = {};
   });
@@ -28,7 +30,7 @@ describe('Slots', function () {
     props = results;
     let ref = useRef();
     let {pressProps} = usePress({onPress: props.onPress, ref});
-    return <button {...pressProps} ref={ref}>push me</button>;
+    return <button id={props.id} {...pressProps} ref={ref}>push me</button>;
   }
 
   it('sets props', function () {
@@ -92,5 +94,45 @@ describe('Slots', function () {
     triggerPress(getByRole('button'));
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onPressUser).toHaveBeenCalledTimes(1);
+  });
+
+  // use unique ids each time otherwise useId will get confused with the setState and will try to reuse an old one
+  // this is probably a bug, we should probably cleanup old id setState's on unmount
+  it('overrides ids', function () {
+    let slots = {
+      slotname: {id: 'foo-1'}
+    };
+    render(
+      <SlotProvider slots={slots}>
+        <Component label="boop" id="bar-1" />
+      </SlotProvider>
+    );
+    expect(results).toMatchObject({id: 'bar-1'});
+  });
+
+  it('overrides ids useId', function () {
+    function SlotsUseId(props) {
+      let id = useId(props.id);
+      return (
+        <SlotProvider slots={{slotname: {...props.slots, id}}}>
+          <Component id="bar-2" />
+        </SlotProvider>
+      );
+    }
+    render(<SlotsUseId id="foo-2" />);
+    expect(results).toMatchObject({id: 'bar-2'}); // we've merged with the user provided id
+  });
+
+  it('overrides ids useSlotId', function () {
+    function SlotsUseSlotId() {
+      let id = useSlotId();
+      return (
+        <SlotProvider slots={{slotname: {id}}}>
+          <Component id="bar-3" />
+        </SlotProvider>
+      );
+    }
+    render(<SlotsUseSlotId />);
+    expect(results).toMatchObject({id: 'bar-3'}); // we've merged with the user provided id
   });
 });

@@ -11,7 +11,7 @@
  */
 
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {HeadingProps} from '@react-types/text';
 import React, {ElementType, forwardRef} from 'react';
 import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
@@ -19,13 +19,7 @@ import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 const slotDOMProps = new Set(['aria-current']);
 
 function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
-  let slotProps = useSlotProps({}, 'heading');
-  props = mergeProps(slotProps, props);
-
-  let domProps = mergeProps(
-    filterDOMProps(props),
-    filterDOMProps(slotProps, {propNames: slotDOMProps})
-  );
+  props = useSlotProps(props, 'heading');
 
   let {
     children,
@@ -37,7 +31,7 @@ function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
   let HeadingTag = `h${level}` as ElementType;
 
   return (
-    <HeadingTag {...domProps} {...styleProps} ref={domRef}>
+    <HeadingTag {...filterDOMProps(otherProps, {propNames: slotDOMProps})} {...styleProps} ref={domRef}>
       {children}
     </HeadingTag>
   );
