@@ -27,7 +27,7 @@ export interface SpectrumSearchWithinProps extends SpectrumLabelableProps, DOMPr
 function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   let {styleProps} = useStyleProps(props);
-  let {labelProps} = useLabel(props);
+  let {labelProps, fieldProps} = useLabel(props);
   let {
     children,
     isDisabled,
@@ -59,7 +59,7 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   let searchFieldClassName = classNames(styles, 'spectrum-SearchWithin-input');
   let pickerClassName = classNames(styles, 'spectrum-SearchWithin-picker');
   let slots = {
-    searchfield: {UNSAFE_className: searchFieldClassName, ...defaultSlotValues},
+    searchfield: {UNSAFE_className: searchFieldClassName, ...fieldProps, ...defaultSlotValues},
     picker: {UNSAFE_className: pickerClassName, menuWidth, align: 'end', ...defaultSlotValues}
   };
 
