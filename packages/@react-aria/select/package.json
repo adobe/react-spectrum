@@ -21,6 +21,7 @@
     "@react-aria/i18n": "^3.3.1",
     "@react-aria/interactions": "^3.4.0",
     "@react-aria/label": "^3.1.2",
+    "@react-aria/listbox": "^3.2.5",
     "@react-aria/menu": "^3.2.1",
     "@react-aria/selection": "^3.4.1",
     "@react-aria/utils": "^3.8.0",
