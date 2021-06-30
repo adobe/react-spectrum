@@ -13,7 +13,8 @@
 import {Item, Picker} from '@react-spectrum/picker';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
-import {SearchWithin, SpectrumSearchWithinProps} from '../';
+import {SearchWithin} from '../';
+import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
 
 import {storiesOf} from '@storybook/react';
 

@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Item, Picker} from '../../picker';
+import {Item, Picker} from '@react-spectrum/picker';
 import React from 'react';
-import {SearchField} from '../../searchfield';
-import {SearchFieldProps} from '../../../@react-types/searchfield/src';
-import {SearchWithin, SpectrumSearchWithinProps} from '../';
-import {SpectrumPickerProps} from '../../../@react-types/select/src';
+import {SearchField} from '@react-spectrum/searchfield';
+import {SearchFieldProps} from '@react-types/searchfield';
+import {SearchWithin} from '../';
+import {SpectrumPickerProps} from '@react-types/select';
+import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('SearchWithin', module)
