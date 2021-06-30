@@ -13,7 +13,9 @@
 import {Item, Picker} from '../../picker';
 import React from 'react';
 import {SearchField} from '../../searchfield';
+import {SearchFieldProps} from '../../../@react-types/searchfield/src';
 import {SearchWithin, SpectrumSearchWithinProps} from '../';
+import {SpectrumPickerProps} from '../../../@react-types/select/src';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('SearchWithin', module)
@@ -21,18 +23,34 @@ storiesOf('SearchWithin', module)
     'Default',
     () => render({})
   ).add(
-    'isDisabled',
+    'isDisabled: true',
     () => render({isDisabled: true})
   ).add(
-    'isRequired',
+    'isRequired: true',
     () => render({isRequired: true})
+  ).add(
+    'isRequired: true, necessityIndicator: label',
+    () => render({isRequired: true, necessityIndicator: 'label'})
+  )
+  .add(
+    'isRequired: false, necessityIndicator: label',
+    () => render({isRequired: false, necessityIndicator: 'label'})
+  ).add(
+    'custom width',
+    () => render({width: 300})
+  ).add(
+    'labelPosition: side',
+    () => render({labelPosition: 'side'})
+  ).add(
+    'auto focus',
+    () => render({}, {autoFocus: true})
   );
 
-function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}) {
+function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps: SearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) {
   return (
     <SearchWithin label="Search" {...props}>
-      <SearchField placeholder="Search" />
-      <Picker defaultSelectedKey="all">
+      <SearchField placeholder="Search" {...searchFieldProps} />
+      <Picker defaultSelectedKey="all" {...pickerProps}>
         <Item key="all">All</Item>
         <Item key="campaigns">Campaigns</Item>
         <Item key="audiences">Audiences</Item>
