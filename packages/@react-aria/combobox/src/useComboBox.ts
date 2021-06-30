@@ -127,7 +127,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
   let onBlur = (e: FocusEvent) => {
     // Ignore blur if focused moved to the button or into the popover.
-    if (e.relatedTarget === buttonRef.current || popoverRef.current?.contains(e.relatedTarget as HTMLElement)) {
+    if (e.relatedTarget === buttonRef?.current || popoverRef.current?.contains(e.relatedTarget as HTMLElement)) {
       return;
     }
 
