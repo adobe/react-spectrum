@@ -13,8 +13,8 @@
 import React, {useRef} from 'react';
 import {render} from '@testing-library/react';
 import {SlotProvider, useSlotProps} from '../';
-import {usePress} from '@react-aria/interactions';
 import {triggerPress} from '@react-spectrum/test-utils';
+import {usePress} from '@react-aria/interactions';
 
 
 describe('Slots', function () {
