@@ -96,18 +96,16 @@ describe('Slots', function () {
     expect(onPressUser).toHaveBeenCalledTimes(1);
   });
 
-  // use unique ids each time otherwise useId will get confused with the setState and will try to reuse an old one
-  // this is probably a bug, we should probably cleanup old id setState's on unmount
   it('overrides ids', function () {
     let slots = {
-      slotname: {id: 'foo-1'}
+      slotname: {id: 'foo'}
     };
     render(
       <SlotProvider slots={slots}>
-        <Component label="boop" id="bar-1" />
+        <Component label="boop" id="bar" />
       </SlotProvider>
     );
-    expect(results).toMatchObject({id: 'bar-1'});
+    expect(results).toMatchObject({id: 'bar'});
   });
 
   it('overrides ids useId', function () {
@@ -115,12 +113,12 @@ describe('Slots', function () {
       let id = useId(props.id);
       return (
         <SlotProvider slots={{slotname: {...props.slots, id}}}>
-          <Component id="bar-2" />
+          <Component id="bar" />
         </SlotProvider>
       );
     }
-    render(<SlotsUseId id="foo-2" />);
-    expect(results).toMatchObject({id: 'bar-2'}); // we've merged with the user provided id
+    render(<SlotsUseId id="foo" />);
+    expect(results).toMatchObject({id: 'bar'}); // we've merged with the user provided id
   });
 
   it('overrides ids useSlotId', function () {
@@ -128,11 +126,11 @@ describe('Slots', function () {
       let id = useSlotId();
       return (
         <SlotProvider slots={{slotname: {id}}}>
-          <Component id="bar-3" />
+          <Component id="bar" />
         </SlotProvider>
       );
     }
     render(<SlotsUseSlotId />);
-    expect(results).toMatchObject({id: 'bar-3'}); // we've merged with the user provided id
+    expect(results).toMatchObject({id: 'bar'}); // we've merged with the user provided id
   });
 });

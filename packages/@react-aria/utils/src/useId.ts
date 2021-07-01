@@ -49,6 +49,13 @@ export function useId(defaultId?: string): string {
   let res = useSSRSafeId(value);
 
   idsUpdaterMap.set(res, updateValue);
+
+  useLayoutEffect(() => {
+    let r = res;
+    return () => {
+      idsUpdaterMap.delete(r);
+    };
+  }, [res]);
   return res;
 }
 
