@@ -56,6 +56,10 @@ SearchWithin accepts a [Search Field](SearchField.html) and a [Picker](SearchFie
 
 SearchWithin can be labeled using the `label` prop. This will add a visible label, and be used by the SearchField and the Picker's aria-labelledby, as well as by the group itself.
 
+## Internationalization
+
+In order to internationalize a SearchWithin, a localized string should be passed to the label prop. When the necessityIndicator prop is set to "label", a localized string will be provided for "(required)" or "(optional)" automatically.
+
 ## Props
 
 <PropTable component={docs.exports.SearchWithin} links={docs.links} />
