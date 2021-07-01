@@ -83,7 +83,7 @@ and [useButton](useButton.html) which handles the button press interactions.
 `useComboBox` returns props that you should spread onto the appropriate elements:
 
 <TypeContext.Provider value={docs.links}>
-  <InterfaceType properties={docs.links[docs.exports.useComboBox.return.id].properties} />
+  <InterfaceType properties={docs.links[docs.exports.useComboBox.return.base?.id ?? docs.exports.useComboBox.return.id].properties} />
 </TypeContext.Provider>
 
 State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useComboBoxState} /> hook from `@react-stately/combobox`.

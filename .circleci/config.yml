@@ -1,15 +1,35 @@
 version: 2.1
+
 orbs:
   azure-cli: circleci/azure-cli@1.2.0
-jobs:
-  install:
+
+executors:
+  rsp:
     docker:
-      - image: circleci/node:12
+      - image: cimg/node:12.22
+    environment:
+      CACHE_VERSION: v1
+    working_directory: ~/react-spectrum
+
+  rsp-large:
+    docker:
+      - image: cimg/node:12.22
     resource_class: large
     environment:
       CACHE_VERSION: v1
-
     working_directory: ~/react-spectrum
+
+  rsp-xlarge:
+    docker:
+      - image: cimg/node:12.22
+    resource_class: xlarge
+    environment:
+      CACHE_VERSION: v1
+    working_directory: ~/react-spectrum
+
+jobs:
+  install:
+    executor: rsp-large
     steps:
       - checkout
       - restore_cache:
@@ -41,13 +61,7 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
   install-17:
-    docker:
-      - image: circleci/node:12
-    resource_class: large
-    environment:
-      CACHE_VERSION: v1
-
-    working_directory: ~/react-spectrum
+    executor: rsp-large
     steps:
       - checkout
       - restore_cache:
@@ -67,13 +81,7 @@ jobs:
           key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
   test-ssr:
-    docker:
-      - image: circleci/node:12
-    resource_class: xlarge
-    environment:
-      CACHE_VERSION: v1
-
-    working_directory: ~/react-spectrum
+    executor: rsp-xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -84,13 +92,7 @@ jobs:
 
   test:
     parallelism: 3
-    docker:
-      - image: circleci/node:12
-    resource_class: xlarge
-    environment:
-      CACHE_VERSION: v1
-
-    working_directory: ~/react-spectrum
+    executor: rsp-xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -115,13 +117,7 @@ jobs:
           path: ~/junit
 
   test-ssr-17:
-    docker:
-      - image: circleci/node:12
-    resource_class: xlarge
-    environment:
-      CACHE_VERSION: v1
-
-    working_directory: ~/react-spectrum
+    executor: rsp-xlarge
     steps:
       - restore_cache:
           key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -133,13 +129,7 @@ jobs:
 
   test-17:
     parallelism: 3
-    docker:
-      - image: circleci/node:12
-    resource_class: xlarge
-    environment:
-      CACHE_VERSION: v1
-
-    working_directory: ~/react-spectrum
+    executor: rsp-xlarge
     steps:
       - restore_cache:
           key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -162,12 +152,7 @@ jobs:
           path: ~/junit
 
   lint:
-    docker:
-      - image: circleci/node:12
-    environment:
-      CACHE_VERSION: v1
-
-    working_directory: ~/react-spectrum
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -177,13 +162,7 @@ jobs:
           command: yarn lint
 
   storybook:
-    docker:
-      - image: circleci/node:12
-    resource_class: large
-    environment:
-      CACHE_VERSION: v1
-
-    working_directory: ~/react-spectrum
+    executor: rsp-large
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -198,13 +177,7 @@ jobs:
             - '*/storybook/'
 
   storybook-17:
-    docker:
-      - image: circleci/node:12
-    resource_class: large
-    environment:
-      CACHE_VERSION: v1
-
-    working_directory: ~/react-spectrum
+    executor: rsp-large
     steps:
       - restore_cache:
           key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -219,13 +192,7 @@ jobs:
             - '*/storybook-17/'
 
   docs:
-    docker:
-      - image: circleci/node:12
-    resource_class: xlarge
-    environment:
-      CACHE_VERSION: v1
-
-    working_directory: ~/react-spectrum
+    executor: rsp-xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -240,13 +207,7 @@ jobs:
             - '*/docs/'
 
   docs-production:
-    docker:
-      - image: circleci/node:12
-    resource_class: xlarge
-    environment:
-      CACHE_VERSION: v1
-
-    working_directory: ~/react-spectrum
+    executor: rsp-xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -282,12 +243,7 @@ jobs:
           command: az storage blob upload-batch -d "\$web" -s /tmp/dist/production/docs --account-name reactspectrum
 
   comment:
-    docker:
-      - image: circleci/node:12
-    environment:
-      CACHE_VERSION: v1
-
-    working_directory: ~/react-spectrum
+    executor: rsp
     steps:
       - checkout
       - restore_cache:
@@ -301,13 +257,7 @@ jobs:
             fi
 
   publish-nightly:
-    docker:
-      - image: circleci/node:12
-    resource_class: xlarge
-    environment:
-      CACHE_VERSION: v1
-
-    working_directory: ~/react-spectrum
+    executor: rsp-xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
