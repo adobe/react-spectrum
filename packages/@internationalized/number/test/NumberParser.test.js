@@ -184,33 +184,35 @@ describe('NumberParser', function () {
         fc.double({next: true, noNaN: true, min: DOUBLE_MIN, max: 1 / DOUBLE_MIN})
       ).map(([sign, value]) => sign * value);
 
+      const inputsArb = fc.tuple(valueArb, localesArb, styleOptsArb, genericOptsArb)
+        .map(([d, locale, styleOpts, genericOpts]) => ({d, opts: {...styleOpts, ...genericOpts}, locale}))
+        .filter(({opts}) => opts.minimumFractionDigits === undefined || opts.maximumFractionDigits === undefined || opts.minimumFractionDigits <= opts.maximumFractionDigits)
+        .filter(({opts}) => opts.minimumSignificantDigits === undefined || opts.maximumSignificantDigits === undefined || opts.minimumSignificantDigits <= opts.maximumSignificantDigits)
+        .map(({d, opts, locale}) => {
+          if (opts.style === 'percent') {
+            opts.minimumFractionDigits = opts.minimumFractionDigits > 18 ? 18 : opts.minimumFractionDigits;
+            opts.maximumFractionDigits = opts.maximumFractionDigits > 18 ? 18 : opts.maximumFractionDigits;
+          }
+          return {d, opts, locale};
+        })
+        .map(({d, opts, locale}) => {
+          let adjustedNumberForFractions = d;
+          if (Math.abs(d) < 1 && opts.minimumFractionDigits && opts.minimumFractionDigits > 1) {
+            adjustedNumberForFractions = d * (10 ** (opts.minimumFractionDigits || 2));
+          } else if (Math.abs(d) > 1 && opts.minimumFractionDigits && opts.minimumFractionDigits > 1) {
+            adjustedNumberForFractions = d / (10 ** (opts.minimumFractionDigits || 2));
+          }
+          return {adjustedNumberForFractions, opts, locale};
+        });
+
       it('should fully reverse NumberFormat', function () {
         fc.assert(
           fc.property(
-            valueArb, localesArb, styleOptsArb, genericOptsArb,
-            function (d, locales, styleOpts, genericOpts) {
-              const opts = {...styleOpts, ...genericOpts};
-              // is there some way to combine this with the above logic?
-              if (styleOpts.style === 'percent') {
-                opts.minimumFractionDigits = genericOpts.minimumFractionDigits > 18 ? 18 : genericOpts.minimumFractionDigits;
-                opts.maximumFractionDigits = genericOpts.maximumFractionDigits > 18 ? 18 : genericOpts.maximumFractionDigits;
-              }
-              fc.pre(opts.minimumFractionDigits === undefined || opts.maximumFractionDigits === undefined || opts.minimumFractionDigits <= opts.maximumFractionDigits);
-              fc.pre(opts.minimumSignificantDigits === undefined || opts.maximumSignificantDigits === undefined || opts.minimumSignificantDigits <= opts.maximumSignificantDigits);
-              // invalid currency maximumSignificantDigits, getting an error about too many pre-conditions
-              // fc.pre(!(opts.style === 'currency' && opts.maximumSignificantDigits <= 2));
-              // this set of options for da-DK results in nothing but the unit being displayed, it seems to be a bug in the browser? (new Intl.NumberFormat('da-DK', {"style":"unit","unit":"kilometer-per-hour", 'unitDisplay': 'long', "maximumSignificantDigits":5})).format(0.2)
-              // fc.pre(!(opts.style === 'unit' && opts.unit === 'kilometer-per-hour' && opts.unitDisplay === 'long' && (Math.abs(d) < 1 && Math.abs(d) > 0) && locales === 'da-DK'));
-              const formatter = new Intl.NumberFormat(locales, opts);
-              const parser = new NumberParser(locales, opts);
+            inputsArb,
+            function ({adjustedNumberForFractions, locale, opts}) {
+              const formatter = new Intl.NumberFormat(locale, opts);
+              const parser = new NumberParser(locale, opts);
 
-              // is there some way to combine this with the above logic?
-              let adjustedNumberForFractions = d;
-              if (Math.abs(d) < 1 && genericOpts.minimumFractionDigits && genericOpts.minimumFractionDigits > 1) {
-                adjustedNumberForFractions = d * (10 ** (genericOpts.minimumFractionDigits || 2));
-              } else if (Math.abs(d) > 1 && genericOpts.minimumFractionDigits && genericOpts.minimumFractionDigits > 1) {
-                adjustedNumberForFractions = d / (10 ** (genericOpts.minimumFractionDigits || 2));
-              }
               const formattedOnce = formatter.format(adjustedNumberForFractions);
               expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
             }
