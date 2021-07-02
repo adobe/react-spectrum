@@ -11,7 +11,11 @@
  */
 
 import fc from 'fast-check';
+import messages from '../../../@react-aria/numberfield/intl/*';
 import {NumberParser} from '../src/NumberParser';
+
+// for some reason hu-HU isn't supported in jsdom/node
+let locales = Object.keys(messages).map(locale => locale.replace('.json', '')).filter(locale => locale !== 'hu-HU');
 
 describe('NumberParser', function () {
   describe('parse', function () {
@@ -138,7 +142,7 @@ describe('NumberParser', function () {
       });
 
       it('should parse a percent with decimals', function () {
-        expect(new NumberParser('en-US', {style: 'percent'}).parse('10.5%')).toBe(0.1);
+        expect(new NumberParser('en-US', {style: 'percent'}).parse('10.5%')).toBe(0.11);
         expect(new NumberParser('en-US', {style: 'percent', minimumFractionDigits: 2}).parse('10.5%')).toBe(0.105);
       });
     });
@@ -146,12 +150,12 @@ describe('NumberParser', function () {
     describe('round trips', function () {
       // Locales have to include: 'de-DE', 'ar-EG', 'fr-FR' and possibly others
       // But for the moment they are not properly supported
-      const localesArb = fc.constantFrom('en-US', 'en-IN', 'ja-JP');
+      const localesArb = fc.constantFrom(...locales);
       const styleOptsArb = fc.oneof(
         {withCrossShrink: true},
         fc.record({style: fc.constant('decimal')}),
         // 'percent' should be part of the possible options, but for the moment it fails for some tests
-        // fc.record({style: fc.constant('percent')}),
+        fc.record({style: fc.constant('percent')}),
         fc.record(
           {style: fc.constant('currency'), currency: fc.constantFrom('USD', 'EUR', 'CNY', 'JPY'), currencyDisplay: fc.constantFrom('symbol', 'code', 'name')},
           {requiredKeys: ['style', 'currency']}
@@ -178,20 +182,36 @@ describe('NumberParser', function () {
       const valueArb = fc.tuple(
         fc.constantFrom(1, -1),
         fc.double({next: true, noNaN: true, min: DOUBLE_MIN, max: 1 / DOUBLE_MIN})
-        ).map(([sign, value]) => sign * value);
-      
+      ).map(([sign, value]) => sign * value);
+
       it('should fully reverse NumberFormat', function () {
         fc.assert(
           fc.property(
             valueArb, localesArb, styleOptsArb, genericOptsArb,
             function (d, locales, styleOpts, genericOpts) {
               const opts = {...styleOpts, ...genericOpts};
+              // is there some way to combine this with the above logic?
+              if (styleOpts.style === 'percent') {
+                opts.minimumFractionDigits = genericOpts.minimumFractionDigits > 18 ? 18 : genericOpts.minimumFractionDigits;
+                opts.maximumFractionDigits = genericOpts.maximumFractionDigits > 18 ? 18 : genericOpts.maximumFractionDigits;
+              }
               fc.pre(opts.minimumFractionDigits === undefined || opts.maximumFractionDigits === undefined || opts.minimumFractionDigits <= opts.maximumFractionDigits);
               fc.pre(opts.minimumSignificantDigits === undefined || opts.maximumSignificantDigits === undefined || opts.minimumSignificantDigits <= opts.maximumSignificantDigits);
+              // invalid currency maximumSignificantDigits, getting an error about too many pre-conditions
+              // fc.pre(!(opts.style === 'currency' && opts.maximumSignificantDigits <= 2));
+              // this set of options for da-DK results in nothing but the unit being displayed, it seems to be a bug in the browser? (new Intl.NumberFormat('da-DK', {"style":"unit","unit":"kilometer-per-hour", 'unitDisplay': 'long', "maximumSignificantDigits":5})).format(0.2)
+              // fc.pre(!(opts.style === 'unit' && opts.unit === 'kilometer-per-hour' && opts.unitDisplay === 'long' && (Math.abs(d) < 1 && Math.abs(d) > 0) && locales === 'da-DK'));
               const formatter = new Intl.NumberFormat(locales, opts);
               const parser = new NumberParser(locales, opts);
-        
-              const formattedOnce = formatter.format(d);
+
+              // is there some way to combine this with the above logic?
+              let adjustedNumberForFractions = d;
+              if (Math.abs(d) < 1 && genericOpts.minimumFractionDigits && genericOpts.minimumFractionDigits > 1) {
+                adjustedNumberForFractions = d * (10 ** (genericOpts.minimumFractionDigits || 2));
+              } else if (Math.abs(d) > 1 && genericOpts.minimumFractionDigits && genericOpts.minimumFractionDigits > 1) {
+                adjustedNumberForFractions = d / (10 ** (genericOpts.minimumFractionDigits || 2));
+              }
+              const formattedOnce = formatter.format(adjustedNumberForFractions);
               expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
             }
           )

@@ -18,6 +18,7 @@ import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '../src';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
+import {NumberFormatter, NumberParser} from '@internationalized/number';
 
 storiesOf('NumberField', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
@@ -219,8 +220,13 @@ storiesOf('NumberField', module)
   );
 
 function render(props: any = {}) {
+  let formatter = new NumberFormatter('da-DK', {"style":"unit","unit":"kilometer-per-hour", "unitDisplay":"long","maximumSignificantDigits":1});
+  console.log('initial format', formatter.format(2.220446049250313e-16));
+  let parser = new NumberParser('da-DK', {"style":"unit","unit":"kilometer-per-hour", "unitDisplay":"long","maximumSignificantDigits":1});
+  console.log('result', parser.parse(formatter.format(2.220446049250313e-16)));
+  console.log('final', formatter.format(parser.parse(formatter.format(2.220446049250313e-16))));
   return (
-    <NumberField onChange={action('onChange')} UNSAFE_className="custom_classname" label="Width" {...props} />
+    <div />
   );
 }
 
