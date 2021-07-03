@@ -13,11 +13,12 @@
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {Checkbox} from '@react-spectrum/checkbox';
+import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {countries, states} from './data';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
+import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {Key, useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -107,6 +108,24 @@ storiesOf('Form', module)
   .add(
     'form with reset',
     () => <FormWithControls />
+  )
+  .add(
+    'form with numberfield and locale=ar-AE',
+    () => (
+      <Flex gap="size-100">
+        <NumberField label="Outside form" />
+        <Form>
+          <NumberField label="Inside form" />
+        </Form>
+        <Form>
+          <TextField label="First Name" placeholder="John" />
+        </Form>
+        <Form>
+          <TextField label="First Name" placeholder="John" />
+          <NumberField label="Inside form" />
+        </Form>
+      </Flex>
+    )
   );
 
 function render(props: any = {}) {
@@ -116,6 +135,7 @@ function render(props: any = {}) {
       <TextField label="Last Name" placeholder="Smith" />
       <TextField label="Street Address" placeholder="123 Any Street" />
       <TextField label="City" placeholder="San Francisco" />
+      <NumberField label="Years lived there" />
       <Picker label="State" placeholder="Select a state" items={states}>
         {item => <Item key={item.abbr}>{item.name}</Item>}
       </Picker>
@@ -123,6 +143,11 @@ function render(props: any = {}) {
       <Picker label="Country" placeholder="Select a country" items={countries}>
         {item => <Item key={item.name}>{item.name}</Item>}
       </Picker>
+      <CheckboxGroup defaultValue={['dragons']} label="Pets">
+        <Checkbox value="dogs">Dogs</Checkbox>
+        <Checkbox value="cats">Cats</Checkbox>
+        <Checkbox value="dragons">Dragons</Checkbox>
+      </CheckboxGroup>
       <RadioGroup label="Favorite pet" name="favorite-pet-group">
         <Radio value="dogs">Dogs</Radio>
         <Radio value="cats">Cats</Radio>
