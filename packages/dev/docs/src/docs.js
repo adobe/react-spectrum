@@ -78,12 +78,12 @@ for (let image of images) {
   ReactDOM.render(
     <ThemeProvider UNSAFE_className={docsStyle.inlineProvider}>
       <ImageModal>
-        <button>
+        <button className={docsStyle.expandableImageButton}>
           <img src={url} className={image.className} alt={image.alt} />
         </button>
-        <button>
+        <div role="dialog" tabIndex={0}>
           <img src={url} alt={image.alt} />
-        </button>
+        </div>
       </ImageModal>
     </ThemeProvider>
   , container);
