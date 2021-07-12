@@ -40,30 +40,20 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-SearchWithin-input {
-  flex: 1;
-  box-sizing: border-box;
-  min-inline-size: inherit;
-  margin-inline-end: calc(
-    -1 * var(--spectrum-textfield-border-size)
-  ); /* hides left border */
-
+  flex-grow: 1;
   input {
     border-end-end-radius: var(--spectrum-searchwithin-border-radius);
     border-start-end-radius: var(--spectrum-searchwithin-border-radius);
+    flex: 1;
+    box-sizing: border-box;
+    min-inline-size: inherit;
+    margin-inline-end: calc(
+      -1 * var(--spectrum-textfield-border-size)
+    ); /* hides right border */
+
+    &:hover,
+    &:focus {
+      position: relative; /* shows right border */
+    }
   }
-
-  &:hover,
-  &:focus {
-    position: relative; /* shows left border */
-  }
-}
-
-.spectrum-SearchWithin-clearButton {
-  position: absolute;
-  inset-block-start: 0;
-  inset-inline-end: 0;
-}
-
-.spectrum-SearchWithin > .spectrum-Textfield {
-  flex-grow: 1;
 }
