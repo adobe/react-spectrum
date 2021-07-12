@@ -10,30 +10,105 @@
  * governing permissions and limitations under the License.
  */
 
+import {generatePowerset} from '../../story-utils';
+import {Grid, repeat} from '../../layout';
 import {Item, Picker} from '@react-spectrum/picker';
+import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {SearchWithin} from '../';
 import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
 
-import {storiesOf} from '@storybook/react';
+let states = [
+  {isRequired: true},
+  {isDisabled: true},
+  {necessityIndicator: 'label'}
+];
 
-storiesOf('SearchWithin', module)
-  .add(
-    'Default',
-    () => render({})
-  );
+let items = [
+  {name: 'All', id: 'all'},
+  {name: 'Campaigns', id: 'campaigns'},
+  {name: 'Tags', id: 'tags'},
+  {name: 'Audiences', id: 'audiences'}
+];
 
-function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}) {
-  return (
-    <SearchWithin label="Search" {...props}>
-      <SearchField placeholder="Search" />
-      <Picker defaultSelectedKey="all">
-        <Item key="all">All</Item>
-        <Item key="campaigns">Campaigns</Item>
-        <Item key="audiences">Audiences</Item>
-        <Item key="tags">Tags</Item>
-      </Picker>
-    </SearchWithin>
-  );
+let combinations = generatePowerset(states);
+
+function shortName(key) {
+  let returnVal = '';
+  switch (key) {
+    case 'isRequired':
+      returnVal = 'req';
+      break;
+    case 'isDisabled':
+      returnVal = 'disable';
+      break;
+    case 'necessityIndicator':
+      returnVal = 'necInd=label';
+      break;
+  }
+  return returnVal;
 }
+
+const meta: Meta<SpectrumSearchWithinProps> = {
+  title: 'SearchWithin',
+  parameters: {
+    chromaticProvider: {colorSchemes: ['light', 'dark', 'lightest', 'darkest'], locales: ['en-US'], scales: ['medium', 'large']}
+  }
+};
+
+export default meta;
+
+const Template: Story<SpectrumSearchWithinProps> = (args) => (
+  <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
+    {combinations.map(c => {
+      let key = Object.keys(c).map(k => shortName(k)).join(' ');
+      if (!key) {
+        key = 'empty';
+      }
+
+      return (
+        <SearchWithin key={key} {...args} {...c} label={args['aria-label'] ? undefined : key}>
+          <SearchField placeholder="Search" />
+          <Picker defaultSelectedKey="all">
+            {items.map((item) => <Item key={item.id}>{item.name}</Item>)}
+          </Picker>
+        </SearchWithin>
+      );
+    })}
+  </Grid>
+);
+
+// Chromatic can't handle the size of the side label story so removed some extraneous props that don't matter for side label case.
+const TemplateSideLabel: Story<SpectrumSearchWithinProps> = (args) => (
+  <Grid columns={repeat(2, '1fr')} autoFlow="row" gap="size-200" width={900}>
+    {combinations.map(c => {
+      let key = Object.keys(c).map(k => shortName(k)).join(' ');
+      if (!key) {
+        key = 'empty';
+      }
+
+      return (
+        <SearchWithin key={key} {...args} {...c} label={args['aria-label'] ? undefined : key}>
+          <SearchField placeholder="Search" />
+          <Picker defaultSelectedKey="all">
+            {items.map((item) => <Item key={item.id}>{item.name}</Item>)}
+          </Picker>
+        </SearchWithin>
+      );
+    })}
+  </Grid>
+);
+
+export const PropDefaults = Template.bind({});
+PropDefaults.storyName = 'default';
+PropDefaults.args = {};
+
+export const PropLabelSide = TemplateSideLabel.bind({});
+PropLabelSide.storyName = 'label side';
+PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side'};
+
+export const PropCustomWidth = Template.bind({});
+PropCustomWidth.storyName = 'custom width';
+PropCustomWidth.args = {...PropDefaults.args, width: 300};
+
