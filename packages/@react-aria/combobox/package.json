@@ -28,7 +28,7 @@
     "@react-aria/textfield": "^3.3.0",
     "@react-aria/utils": "^3.8.1",
     "@react-stately/collections": "^3.3.2",
-    "@react-stately/combobox": "3.0.0-rc.0",
+    "@react-stately/combobox": "^3.0.0",
     "@react-stately/layout": "^3.3.0",
     "@react-types/button": "^3.4.0",
     "@react-types/combobox": "^3.0.0",

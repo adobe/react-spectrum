@@ -49,7 +49,7 @@
     "@react-spectrum/textfield": "^3.1.6",
     "@react-spectrum/utils": "^3.6.0",
     "@react-stately/collections": "^3.3.2",
-    "@react-stately/combobox": "3.0.0-rc.0",
+    "@react-stately/combobox": "^3.0.0",
     "@react-types/button": "^3.4.0",
     "@react-types/combobox": "^3.0.0",
     "@react-types/overlays": "^3.5.0",
