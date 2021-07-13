@@ -56,3 +56,13 @@ export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
 
 export interface AriaMenuProps<T> extends MenuProps<T>, DOMProps, AriaLabelingProps {}
 export interface SpectrumMenuProps<T> extends AriaMenuProps<T>, StyleProps {}
+
+export interface SpectrumActionMenuProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps {
+  align?: Alignment,  // from shared types
+  direction?: 'bottom' | 'top' | 'left' | 'right' | 'start' | 'end',
+  shouldFlip?: boolean,
+  isDisabled?: boolean,
+  isQuiet?: boolean,
+  autoFocus?: boolean,
+  onAction?: (key: Key) => void 
+}
