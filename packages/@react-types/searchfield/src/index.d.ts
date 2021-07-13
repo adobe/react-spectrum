@@ -19,14 +19,6 @@ export interface SearchFieldProps extends TextFieldProps {
   /** Handler that is called when the clear button is pressed. */
   onClear?: () => void
 }
-export interface SearchFieldSlotProps {
-  /** Additional className for input, only to be used by slots. */
-  inputClassName?: string,
-
-  /** Additional className for clear button, only to be used by slots. */
-  clearButtonClassName?: string
-}
 
 export interface AriaSearchFieldProps extends SearchFieldProps, AriaTextFieldProps {}
 export interface SpectrumSearchFieldProps extends AriaSearchFieldProps, SpectrumTextFieldProps {}
-export interface SpectrumSearchFieldSlotProps extends SpectrumSearchFieldProps, SearchFieldSlotProps {}

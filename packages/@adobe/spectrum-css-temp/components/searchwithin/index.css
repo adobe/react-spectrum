@@ -30,7 +30,7 @@ governing permissions and limitations under the License.
   min-inline-size: 0;
   flex-shrink: 0;
 
-  .spectrum-SearchWithin-pickerButton {
+  button {
     width: unset;
     contain: unset;
     justify-content: unset;
@@ -39,10 +39,9 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-SearchWithin-searchfield {
+.spectrum-SearchWithin-input {
   flex-grow: 1;
-  
-  .spectrum-SearchWithin-input {
+  input {
     border-end-end-radius: var(--spectrum-searchwithin-border-radius);
     border-start-end-radius: var(--spectrum-searchwithin-border-radius);
     flex: 1;
@@ -56,11 +55,5 @@ governing permissions and limitations under the License.
     &:focus {
       position: relative; /* shows right border */
     }
-  }
-
-  .spectrum-SearchWithin-clearButton{
-    position: absolute;
-    inset-block-start: 0;
-    inset-inline-end: 0;
   }
 }
