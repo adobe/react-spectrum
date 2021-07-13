@@ -38,7 +38,7 @@ import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder, useHover} from '@react-aria/interactions';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useRef, useState} from 'react';
-import {SpectrumPickerProps} from '@react-types/select';
+import {SpectrumPickerProps, SpectrumPickerSlotProps} from '@react-types/select';
 import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useFormProps} from '@react-spectrum/form';
@@ -47,7 +47,9 @@ import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSelectState} from '@react-stately/select';
 
 function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
-  props = useSlotProps(props, 'picker');
+  let slotProps = useSlotProps<SpectrumPickerSlotProps>(props, 'picker');
+  let slot_buttonClassName = slotProps.buttonClassName;
+  props = mergeProps(slotProps, props);
   props = useProviderProps(props);
   props = useFormProps(props);
   let formatMessage = useMessageFormatter(intlMessages);
@@ -220,7 +222,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
           isDisabled={isDisabled}
           validationState={validationState}
           autoFocus={autoFocus}
-          UNSAFE_className={classNames(styles, 'spectrum-Dropdown-trigger', {'is-hovered': isHovered})}>
+          UNSAFE_className={classNames(styles, 'spectrum-Dropdown-trigger', {'is-hovered': isHovered}, slot_buttonClassName)}>
           <SlotProvider
             slots={{
               icon: {UNSAFE_className: classNames(styles, 'spectrum-Icon'), size: 'S'},

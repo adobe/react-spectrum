@@ -51,11 +51,14 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   useLayoutEffect(onResize, [scale, onResize]);
 
   let defaultSlotValues = {isDisabled, isRequired, label: undefined, isQuiet: false, 'aria-labelledby': labelProps.id};
-  let searchFieldClassName = classNames(styles, 'spectrum-SearchWithin-input');
+  let searchFieldClassName = classNames(styles, 'spectrum-SearchWithin-searchfield');
   let pickerClassName = classNames(styles, 'spectrum-SearchWithin-picker');
+  let inputClassName = classNames(styles, 'spectrum-SearchWithin-input');
+  let buttonClassName = classNames(styles, 'spectrum-SearchWithin-pickerButton');
+  let clearButtonClassName = classNames(styles, 'spectrum-SearchWithin-clearButton');
   let slots = {
-    searchfield: {UNSAFE_className: searchFieldClassName, ...fieldProps, ...defaultSlotValues},
-    picker: {UNSAFE_className: pickerClassName, menuWidth, align: 'end', ...defaultSlotValues}
+    searchfield: {UNSAFE_className: searchFieldClassName, inputClassName, clearButtonClassName, ...fieldProps, ...defaultSlotValues},
+    picker: {UNSAFE_className: pickerClassName, menuWidth, align: 'end', buttonClassName, ...defaultSlotValues}
   };
 
   return (

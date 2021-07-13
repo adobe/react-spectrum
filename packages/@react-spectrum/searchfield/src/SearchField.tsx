@@ -13,8 +13,9 @@
 import {classNames, useSlotProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
+import {mergeProps} from '../../../@react-aria/utils';
 import React, {forwardRef, RefObject, useRef} from 'react';
-import {SpectrumSearchFieldProps} from '@react-types/searchfield';
+import {SpectrumSearchFieldProps, SpectrumSearchFieldSlotProps} from '@react-types/searchfield';
 import styles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
@@ -23,7 +24,10 @@ import {useSearchField} from '@react-aria/searchfield';
 import {useSearchFieldState} from '@react-stately/searchfield';
 
 function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRef>) {
-  props = useSlotProps(props, 'searchfield');
+  let slotProps = useSlotProps<SpectrumSearchFieldSlotProps>(props, 'searchfield');
+  let slot_inputClassName = slotProps.inputClassName;
+  let slot_clearButtonClassName = slotProps.clearButtonClassName;
+  props = mergeProps(slotProps, props);
   props = useProviderProps(props);
   let defaultIcon = (
     <Magnifier data-testid="searchicon" />
@@ -47,7 +51,8 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
       UNSAFE_className={
         classNames(
           styles,
-          'spectrum-ClearButton'
+          'spectrum-ClearButton',
+          slot_clearButtonClassName
         )
       }
       isDisabled={isDisabled} />
@@ -72,7 +77,7 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
           UNSAFE_className
         )
       }
-      inputClassName={classNames(styles, 'spectrum-Search-input')}
+      inputClassName={classNames(styles, 'spectrum-Search-input', slot_inputClassName)}
       ref={ref}
       inputRef={inputRef}
       isDisabled={isDisabled}

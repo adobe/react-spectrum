@@ -66,3 +66,10 @@ export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabe
   /** Whether the element should receive focus on render. */
   autoFocus?: boolean
 }
+
+export interface PickerSlotProps {
+  /** Additional className for button, only to be used by slots. */
+  buttonClassName?: string
+}
+
+export interface SpectrumPickerSlotProps extends SpectrumPickerProps<object>, PickerSlotProps {}
