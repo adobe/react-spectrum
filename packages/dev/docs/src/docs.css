@@ -143,6 +143,18 @@ html, body {
   padding-bottom: 0;
 }
 
+.expandableImage {
+  cursor: zoom-in;
+}
+
+.expandableImageButton {
+  appearance: none;
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
 .video {
   max-width: 100%;
   margin: 20px 0;
