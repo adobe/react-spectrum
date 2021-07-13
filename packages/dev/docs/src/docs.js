@@ -16,13 +16,18 @@ import {Content, View} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import docsStyle from './docs.css';
+import {FocusScope} from '@react-aria/focus';
 import highlightCss from './syntax-highlight.css';
+import {Modal} from '@react-spectrum/overlays';
 import {Pressable} from '@react-aria/interactions';
 import React, {useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {ThemeProvider} from './ThemeSwitcher';
+import {usePress} from '@react-aria/interactions';
 
 let links = document.querySelectorAll('a[data-link]');
+let images = document.querySelectorAll('img[data-img]');
+
 for (let link of links) {
   if (link.closest('[hidden]')) {
     continue;
@@ -44,6 +49,46 @@ for (let link of links) {
   , container);
 
   link.parentNode.replaceChild(container, link);
+}
+
+function ImageModal({children}) {
+  let [trigger, contents] = React.Children.toArray(children);
+  let [isOpen, setOpen] = React.useState(false);
+  let {pressProps} = usePress({
+    onPress: () => setOpen(true)
+  });
+
+  trigger = React.cloneElement(trigger, pressProps);
+  return (
+    <>
+      {trigger}
+      <Modal isDismissable isOpen={isOpen} onClose={() => setOpen(false)} UNSAFE_style={{overflow: 'scroll'}}>
+        <FocusScope contain restoreFocus autoFocus>
+          {contents}
+        </FocusScope>
+      </Modal>
+    </>
+  );
+}
+
+for (let image of images) {
+  let container = document.createElement('span');
+  let url = image.src.replace(/.*\/\/[^/]*/, '');
+
+  ReactDOM.render(
+    <ThemeProvider UNSAFE_className={docsStyle.inlineProvider}>
+      <ImageModal>
+        <button className={docsStyle.expandableImageButton}>
+          <img src={url} className={image.className} alt={image.alt} />
+        </button>
+        <div role="dialog" tabIndex={0}>
+          <img src={url} alt={image.alt} />
+        </div>
+      </ImageModal>
+    </ThemeProvider>
+  , container);
+
+  image.parentNode.replaceChild(container, image);
 }
 
 function LinkPopover({id}) {
