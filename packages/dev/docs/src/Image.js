@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import clsx from 'clsx';
 import docStyles from './docs.css';
 import path from 'path';
 import React from 'react';
+
 
 export const ImageContext = React.createContext();
 
@@ -42,14 +44,19 @@ export function Hero({wide, narrow, wide2x, narrow2x, wideWebp, narrowWebp, wide
   );
 }
 
-export function Image({src, ...otherProps}) {
+export function Image({src, expandable, ...otherProps}) {
   let publicUrl = React.useContext(ImageContext);
   let baseUrl = publicUrl.replace(/\/$/, '');
   let url = baseUrl + '/' + path.basename(src);
 
+  let className = clsx(
+    docStyles.video,
+    expandable && docStyles.expandableImage
+  );
+
   return (
     // eslint-disable-next-line jsx-a11y/alt-text
-    <img src={url} className={docStyles.video} {...otherProps} />
+    <img src={url} className={className} data-img={expandable ? 'expand-img' : null} {...otherProps} />
   );
 }
 

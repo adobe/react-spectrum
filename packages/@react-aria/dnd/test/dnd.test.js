@@ -319,6 +319,112 @@ describe('useDrag and useDrop', function () {
         expect(onDropEnter).toHaveBeenCalledTimes(1);
         expect(onDropExit).toHaveBeenCalledTimes(1);
       });
+
+      describe('nested drop targets', () => {
+        let onDropParent = jest.fn();
+        let onDropEnterParent = jest.fn();
+        let onDropExitParent = jest.fn();
+        let onDropActivateParent = jest.fn();
+        let onDropMoveParent = jest.fn();
+
+        let onDropChild = jest.fn();
+        let onDropEnterChild = jest.fn();
+        let onDropExitChild = jest.fn();
+        let onDropActivateChild = jest.fn();
+        let onDropMoveChild = jest.fn();
+
+        function renderNestedDrop() {
+          return render(
+            <Droppable onDrop={onDropParent} onDropExit={onDropExitParent} onDropEnter={onDropEnterParent} onDropActivate={onDropActivateParent} onDropMove={onDropMoveParent}>
+              <Droppable onDrop={onDropChild} onDropExit={onDropExitChild} onDropEnter={onDropEnterChild} onDropActivate={onDropActivateChild} onDropMove={onDropMoveChild} />
+            </Droppable>
+          );
+        }
+
+        afterEach(() => {
+          jest.clearAllMocks();
+          act(() => jest.runAllTimers());
+        });
+
+        it('does not trigger parent onDrop and onDropExit when dropping on child', () => {
+          let tree = renderNestedDrop();
+          let droppableParent = tree.getAllByRole('button')[0];
+          let droppableChild = droppableParent.firstChild;
+
+          let dataTransfer = new DataTransfer();
+          fireEvent(droppableChild, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+          act(() => jest.runAllTimers());
+          expect(onDropChild).toHaveBeenCalledTimes(1);
+          expect(onDropExitChild).toHaveBeenCalledTimes(1);
+          expect(onDropParent).not.toHaveBeenCalled();
+          expect(onDropExitParent).not.toHaveBeenCalled();
+        });
+
+        it('does not trigger parent onDropEnter when entering drop child', () => {
+          let tree = renderNestedDrop();
+          let droppableParent = tree.getAllByRole('button')[0];
+          let droppableChild = droppableParent.firstChild;
+
+          let dataTransfer = new DataTransfer();
+          fireEvent(droppableChild, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+          expect(onDropEnterChild).toHaveBeenCalledTimes(1);
+          expect(onDropEnterParent).not.toHaveBeenCalled();
+        });
+
+        it('does not trigger parent onDropExit when exiting child', () => {
+          let tree = renderNestedDrop();
+          let droppableParent = tree.getAllByRole('button')[0];
+          let droppableChild = droppableParent.firstChild;
+
+          let dataTransfer = new DataTransfer();
+          fireEvent(droppableChild, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(droppableChild, new DragEvent('dragleave', {dataTransfer, clientX: 1, clientY: 1}));
+          expect(onDropExitChild).toHaveBeenCalledTimes(1);
+          expect(onDropExitParent).not.toHaveBeenCalled();
+        });
+
+        it('does not trigger parent onDropActivate when hovering on drop child', () => {
+          let tree = renderNestedDrop();
+          let droppableParent = tree.getAllByRole('button')[0];
+          let droppableChild = droppableParent.firstChild;
+
+          let dataTransfer = new DataTransfer();
+          fireEvent(droppableChild, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(droppableChild, new DragEvent('dragover', {dataTransfer, clientX: 2, clientY: 2}));
+          expect(onDropActivateChild).not.toHaveBeenCalled();
+          expect(onDropActivateParent).not.toHaveBeenCalled();
+
+          act(() => jest.advanceTimersByTime(500));
+          expect(onDropActivateChild).not.toHaveBeenCalled();
+          expect(onDropActivateParent).not.toHaveBeenCalled();
+
+          act(() => jest.advanceTimersByTime(500));
+          expect(onDropActivateChild).toHaveBeenCalledTimes(1);
+          expect(onDropActivateChild).toHaveBeenCalledWith({
+            type: 'dropactivate',
+            x: 2,
+            y: 2
+          });
+          expect(onDropActivateParent).not.toHaveBeenCalled();
+        });
+
+        it('does not trigger parent onDropMove when moving on drop child', () => {
+          let tree = renderNestedDrop();
+          let droppableParent = tree.getAllByRole('button')[0];
+          let droppableChild = droppableParent.firstChild;
+
+          let dataTransfer = new DataTransfer();
+          fireEvent(droppableChild, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(droppableChild, new DragEvent('dragover', {dataTransfer, clientX: 2, clientY: 2}));
+          expect(onDropMoveChild).toHaveBeenCalledTimes(1);
+          expect(onDropMoveChild).toHaveBeenCalledWith({
+            type: 'dropmove',
+            x: 2,
+            y: 2
+          });
+          expect(onDropMoveParent).not.toHaveBeenCalled();
+        });
+      });
     });
 
     describe('drag data', () => {

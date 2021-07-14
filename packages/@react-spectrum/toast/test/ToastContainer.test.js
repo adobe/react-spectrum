@@ -39,12 +39,12 @@ function renderComponent(contents) {
 
 describe.skip('Toast Provider and Container', function () {
   it('Renders a button that triggers a toast via the provider', async () => {
-    let {getByRole, queryAllByRole} = renderComponent(<RenderToastButton />);
+    let {getByRole, queryAllByRole, queryByRole} = renderComponent(<RenderToastButton />);
     let button = getByRole('button');
 
     expect(() => {
-      getByRole('alert');
-    }).toThrow();
+      queryByRole('alert');
+    }).toBeNull();
 
     triggerPress(button);
 
@@ -64,7 +64,7 @@ describe.skip('Toast Provider and Container', function () {
   });
 
   it('removes a toast via timeout', async () => {
-    let {getByRole} = renderComponent(<RenderToastButton timeout={1} />);
+    let {getByRole, queryByRole} = renderComponent(<RenderToastButton timeout={1} />);
     let button = getByRole('button');
 
     triggerPress(button);
@@ -75,8 +75,8 @@ describe.skip('Toast Provider and Container', function () {
 
     await waitFor(() => {
       expect(() => {
-        getByRole('alert');
-      }).toThrow();
+        queryByRole('alert');
+      }).toBeNull();
     });
 
   });

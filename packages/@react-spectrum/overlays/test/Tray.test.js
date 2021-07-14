@@ -22,7 +22,7 @@ describe('Tray', function () {
   afterAll(() => jest.useRealTimers());
 
   it('should render nothing if isOpen is not set', function () {
-    let {getByRole} = render(
+    let {queryByRole} = render(
       <Provider theme={theme}>
         <Tray>
           <div role="dialog">contents</div>
@@ -30,9 +30,7 @@ describe('Tray', function () {
       </Provider>
     );
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
     expect(document.documentElement).not.toHaveStyle('overflow: hidden');
   });
 
