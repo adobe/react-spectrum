@@ -29,3 +29,6 @@ AriaLabel.args = {'aria-label': 'Some more actions'};
 
 export const DOMId = Template().bind({});
 DOMId.args = {id: 'my-action-menu'};
+
+export const Quiet = Template().bind({});
+Quiet.args = {direction: 'top', align: 'end', isQuiet: true};
