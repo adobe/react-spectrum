@@ -11,6 +11,7 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
+import {AriaListBoxOptions} from '@react-aria/listbox';
 import {AriaSelectProps} from '@react-types/select';
 import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {FocusEvent, HTMLAttributes, RefObject, useMemo} from 'react';
@@ -41,7 +42,7 @@ interface SelectAria {
   valueProps: HTMLAttributes<HTMLElement>,
 
   /** Props for the popup. */
-  menuProps: HTMLAttributes<HTMLElement>
+  menuProps: AriaListBoxOptions<unknown>
 }
 
 /**
@@ -165,6 +166,10 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     },
     menuProps: {
       ...menuProps,
+      autoFocus: state.focusStrategy || true,
+      shouldSelectOnPressUp: true,
+      shouldFocusOnHover: true,
+      disallowEmptySelection: true,
       onBlur: (e) => {
         if (e.currentTarget.contains(e.relatedTarget as Node)) {
           return;
