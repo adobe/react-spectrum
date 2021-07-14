@@ -12,7 +12,7 @@ import {useMessageFormatter} from '@react-aria/i18n';
 
 function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   let formatMessage = useMessageFormatter(intlMessages);
-  let buttonProps = filterDOMProps(props);
+  let buttonProps = filterDOMProps(props, {labelable: true});
   if (buttonProps['aria-label'] === undefined) {
     buttonProps['aria-label'] = formatMessage('more-actions');
   }
