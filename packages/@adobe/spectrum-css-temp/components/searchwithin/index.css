@@ -41,6 +41,11 @@ governing permissions and limitations under the License.
 
 .spectrum-SearchWithin-input {
   flex-grow: 1;
+
+  &:focus-within {
+    z-index: 1; /* shows entire focus ring */
+  }
+
   input {
     border-end-end-radius: var(--spectrum-searchwithin-border-radius);
     border-start-end-radius: var(--spectrum-searchwithin-border-radius);
