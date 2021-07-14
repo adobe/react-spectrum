@@ -59,6 +59,21 @@ storiesOf('Grid', module)
         )}
       </Grid>
     )
+  )
+  .add(
+    'responsive',
+    () => (
+      <Grid
+        columns={{base: repeat('auto-fit', 'size-800'), M: repeat('auto-fit', 'size-1200'), L: repeat('auto-fit', 'size-2000')}}
+        autoRows={{base: 'size-800', M: 'size-1200', L: 'size-2000'}}
+        justifyContent="center"
+        width="80%"
+        gap={{base: 'size-100', M: 'size-250', L: 'size-350'}}>
+        {colors.map(color =>
+          <View key={color} backgroundColor={color} />
+        )}
+      </Grid>
+    )
   );
 
 // function render(props: GridProps) {

@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/listbox",
-  "version": "3.2.5",
+  "version": "3.3.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -25,7 +25,7 @@
     "@react-aria/utils": "^3.8.0",
     "@react-stately/collections": "^3.3.2",
     "@react-stately/list": "^3.2.3",
-    "@react-types/listbox": "^3.1.1",
+    "@react-types/listbox": "^3.2.0",
     "@react-types/shared": "^3.6.0"
   },
   "peerDependencies": {
