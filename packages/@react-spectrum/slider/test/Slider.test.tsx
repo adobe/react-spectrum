@@ -57,13 +57,13 @@ describe('Slider', function () {
   });
 
   it('supports showValueLabel: false', function () {
-    let {getByRole} = render(<Slider label="The Label" showValueLabel={false} />);
+    let {getByRole, queryByRole} = render(<Slider label="The Label" showValueLabel={false} />);
     let group = getByRole('group');
     expect(group.textContent).toBe('The Label');
 
     let slider = getByRole('slider');
     expect(slider).toHaveAttribute('aria-valuetext', '0');
-    expect(() => getByRole('status')).toThrow();
+    expect(queryByRole('status')).toBeNull();
   });
 
   it('supports disabled', function () {

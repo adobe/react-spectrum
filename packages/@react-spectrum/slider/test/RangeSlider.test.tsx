@@ -56,11 +56,11 @@ describe('RangeSlider', function () {
   });
 
   it('supports showValueLabel: false', function () {
-    let {getByRole} = render(<RangeSlider label="The Label" showValueLabel={false} />);
+    let {getByRole, queryByRole} = render(<RangeSlider label="The Label" showValueLabel={false} />);
     let group = getByRole('group');
 
     expect(group.textContent).toBe('The Label');
-    expect(() => getByRole('status')).toThrow();
+    expect(queryByRole('status')).toBeNull();
   });
 
   it('supports disabled', function () {
