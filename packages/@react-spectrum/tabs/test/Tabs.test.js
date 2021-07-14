@@ -637,4 +637,10 @@ describe('Tabs', function () {
     tabPanelInput = getByTestId('panel2_input');
     expect(tabPanelInput.value).toBe('');
   });
+  
+  it('supports custom props', function () {
+    let {getByTestId} = renderComponent({'data-testid': 'tabs1'});
+    let tabs = getByTestId('tabs1');
+    expect(tabs).toBeInTheDocument();
+  });
 });

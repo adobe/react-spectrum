@@ -46,15 +46,10 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
   } = item;
 
   let state = useContext(ListBoxContext);
-  let isSelected = state.selectionManager.isSelected(key);
-  let isDisabled = state.disabledKeys.has(key);
-  let isFocused = state.selectionManager.focusedKey === key;
 
   let ref = useRef<HTMLDivElement>();
-  let {optionProps, labelProps, descriptionProps} = useOption(
+  let {optionProps, labelProps, descriptionProps, isSelected, isDisabled, isFocused} = useOption(
     {
-      isSelected,
-      isDisabled,
       'aria-label': item['aria-label'],
       key,
       shouldSelectOnPressUp,

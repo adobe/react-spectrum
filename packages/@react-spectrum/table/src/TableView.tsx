@@ -342,6 +342,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
       ref={domRef}>
       <div
         role="presentation"
+        className={classNames(styles, 'spectrum-Table-headWrapper')}
         style={{
           width: visibleRect.width,
           height: headerHeight,

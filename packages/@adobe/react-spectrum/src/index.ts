@@ -15,6 +15,7 @@ export {Breadcrumbs} from '@react-spectrum/breadcrumbs';
 export {ActionButton, Button, LogicButton, ToggleButton} from '@react-spectrum/button';
 export {ButtonGroup} from '@react-spectrum/buttongroup';
 export {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
+export {ComboBox} from '@react-spectrum/combobox';
 export {AlertDialog, Dialog, DialogTrigger, DialogContainer, useDialogContainer} from '@react-spectrum/dialog';
 export {Divider} from '@react-spectrum/divider';
 export {Form} from '@react-spectrum/form';
