@@ -163,27 +163,27 @@ describe('ColorSlider', () => {
     });
 
     it('hides value label with showValueLabel=false', () => {
-      let {getByRole} = render(<ColorSlider defaultValue="#7f0000" channel="red" showValueLabel={false} />);
-      expect(() => getByRole('status')).toThrow();
+      let {queryByRole} = render(<ColorSlider defaultValue="#7f0000" channel="red" showValueLabel={false} />);
+      expect(queryByRole('status')).toBeNull();
     });
 
     it('hides value label when no visible label', () => {
-      let {getByRole} = render(<ColorSlider defaultValue="#7f0000" channel="red" label={null} />);
-      expect(() => getByRole('status')).toThrow();
+      let {queryByRole} = render(<ColorSlider defaultValue="#7f0000" channel="red" label={null} />);
+      expect(queryByRole('status')).toBeNull();
     });
 
     it('hides value label when aria-label is specified', () => {
-      let {getByRole} = render(<ColorSlider defaultValue="#7f0000" channel="red" aria-label="Test" />);
-      expect(() => getByRole('status')).toThrow();
+      let {queryByRole} = render(<ColorSlider defaultValue="#7f0000" channel="red" aria-label="Test" />);
+      expect(queryByRole('status')).toBeNull();
     });
 
     it('hides value label when aria-labelledby is specified', () => {
-      let {getByRole} = render(<ColorSlider defaultValue="#7f0000" channel="red" aria-labelledby="label-id" />);
-      expect(() => getByRole('status')).toThrow();
+      let {queryByRole} = render(<ColorSlider defaultValue="#7f0000" channel="red" aria-labelledby="label-id" />);
+      expect(queryByRole('status')).toBeNull();
     });
 
     it('hides label and value label and has default aria-label when orientation=vertical', () => {
-      let {getByRole} = render(<ColorSlider defaultValue="#000000" channel="red" orientation="vertical" />);
+      let {getByRole, queryByRole} = render(<ColorSlider defaultValue="#000000" channel="red" orientation="vertical" />);
       let slider = getByRole('slider');
       let group = getByRole('group');
 
@@ -192,11 +192,11 @@ describe('ColorSlider', () => {
       expect(group).toHaveAttribute('id');
       expect(slider).toHaveAttribute('aria-labelledby', group.id);
 
-      expect(() => getByRole('status')).toThrow();
+      expect(queryByRole('status')).toBeNull();
     });
 
     it('uses custom label as aria-label orientation=vertical', () => {
-      let {getByRole} = render(<ColorSlider defaultValue="#000000" channel="red" label="Test" orientation="vertical" />);
+      let {getByRole, queryByRole} = render(<ColorSlider defaultValue="#000000" channel="red" label="Test" orientation="vertical" />);
       let slider = getByRole('slider');
       let group = getByRole('group');
 
@@ -205,11 +205,11 @@ describe('ColorSlider', () => {
       expect(group).toHaveAttribute('id');
       expect(slider).toHaveAttribute('aria-labelledby', group.id);
 
-      expect(() => getByRole('status')).toThrow();
+      expect(queryByRole('status')).toBeNull();
     });
 
     it('supports custom aria-label with orientation=vertical', () => {
-      let {getByRole} = render(<ColorSlider defaultValue="#000000" channel="red" aria-label="Test" orientation="vertical" />);
+      let {getByRole, queryByRole} = render(<ColorSlider defaultValue="#000000" channel="red" aria-label="Test" orientation="vertical" />);
       let slider = getByRole('slider');
       let group = getByRole('group');
 
@@ -218,11 +218,11 @@ describe('ColorSlider', () => {
       expect(group).toHaveAttribute('id');
       expect(slider).toHaveAttribute('aria-labelledby', group.id);
 
-      expect(() => getByRole('status')).toThrow();
+      expect(queryByRole('status')).toBeNull();
     });
 
     it('supports custom aria-labelledby with orientation=vertical', () => {
-      let {getByRole} = render(<ColorSlider defaultValue="#000000" channel="red" aria-labelledby="label-id" orientation="vertical" />);
+      let {getByRole, queryByRole} = render(<ColorSlider defaultValue="#000000" channel="red" aria-labelledby="label-id" orientation="vertical" />);
       let slider = getByRole('slider');
       let group = getByRole('group');
 
@@ -231,7 +231,7 @@ describe('ColorSlider', () => {
       expect(group).toHaveAttribute('id');
       expect(slider).toHaveAttribute('aria-labelledby', group.id);
 
-      expect(() => getByRole('status')).toThrow();
+      expect(queryByRole('status')).toBeNull();
     });
   });
 
