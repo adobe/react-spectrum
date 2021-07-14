@@ -118,7 +118,6 @@
     "eslint-plugin-react": "^7.21.2",
     "eslint-plugin-react-hooks": "^4.1.2",
     "eslint-plugin-rulesdir": "^0.1.0",
-    "esquery": "^1.4.0",
     "fast-glob": "^3.1.0",
     "file-loader": "^0.9.0",
     "fs-extra": "^10.0.0",
