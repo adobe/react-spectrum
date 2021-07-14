@@ -13,8 +13,8 @@ const meta: Meta<SpectrumActionMenuProps<object>> = {
 
 export default meta;
 
-const Template = <T extends object>(): Story<SpectrumActionMenuProps<T>> => () => (
-  <ActionMenu onAction={action('action')}>
+const Template = <T extends object>(): Story<SpectrumActionMenuProps<T>> => (args) => (
+  <ActionMenu onAction={action('action')} {...args}>
     <Item key="one">One</Item>
     <Item key="two">Two</Item>
     <Item key="three">Three</Item>
@@ -23,3 +23,9 @@ const Template = <T extends object>(): Story<SpectrumActionMenuProps<T>> => () =
 
 export const Default = Template().bind({});
 Default.args = {};
+
+export const AriaLabel = Template().bind({});
+AriaLabel.args = {'aria-label': 'Some more actions'};
+
+export const DOMId = Template().bind({});
+DOMId.args = {id: 'my-action-menu'};
