@@ -10,19 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncLoadable, CollectionBase, DOMProps, FocusableProps, InputBase, LoadingState, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase, Validation} from '@react-types/shared';
+import {AsyncLoadable, CollectionBase, DOMProps, FocusableProps, InputBase, LabelableProps, LoadingState, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase, Validation} from '@react-types/shared';
 
-export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, InputBase, TextInputBase, DOMProps, Validation, FocusableProps {
+export type MenuTriggerAction = 'focus' | 'input' | 'manual';
+
+export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, InputBase, TextInputBase, DOMProps, Validation, FocusableProps, LabelableProps {
   /** The list of ComboBox items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of ComboBox items (controlled). */
   items?: Iterable<T>,
-  /** Sets the open state of the menu. */
-  isOpen?: boolean,
-  /** Sets the default open state of the menu. */
-  defaultOpen?: boolean,
-  /** Method that is called when the open state of the menu changes. */
-  onOpenChange?: (isOpen: boolean) => void,
+  /** Method that is called when the open state of the menu changes. Returns the new open state and the action that caused the opening of the menu. */
+  onOpenChange?: (isOpen: boolean, menuTrigger?: MenuTriggerAction) => void,
   /** The value of the ComboBox input (controlled). */
   inputValue?: string,
   /** The default value of the ComboBox input (uncontrolled). */
@@ -40,15 +38,15 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
    * The interaction required to display the ComboBox menu.
    * @default 'input'
    */
-  menuTrigger?: 'focus' | 'input' | 'manual',
-  /**
-   * Whether the menu should automatically flip direction when space is limited.
-   * @default true
-   */
-  shouldFlip?: boolean
+  menuTrigger?: MenuTriggerAction
 }
 
-export interface SpectrumComboBoxProps<T> extends ComboBoxProps<T>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface SpectrumComboBoxProps<T> extends Omit<ComboBoxProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+  /**
+   * The interaction required to display the ComboBox menu. Note that this prop has no effect on the mobile ComboBox experience.
+   * @default 'input'
+   */
+  menuTrigger?: MenuTriggerAction,
   /** Whether the ComboBox should be displayed with a quiet style. */
   isQuiet?: boolean,
   /**
@@ -57,5 +55,10 @@ export interface SpectrumComboBoxProps<T> extends ComboBoxProps<T>, SpectrumLabe
    */
   direction?: 'bottom' | 'top',
   /** The current loading state of the ComboBox. Determines whether or not the progress circle should be shown. */
-  loadingState?: LoadingState
+  loadingState?: LoadingState,
+  /**
+   * Whether the menu should automatically flip direction when space is limited.
+   * @default true
+   */
+  shouldFlip?: boolean
 }

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useSyncRef} from '@react-aria/utils';
 import {PressProps} from './usePress';
 import {PressResponderContext} from './context';
 import React, {ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
@@ -24,7 +24,7 @@ export const PressResponder = React.forwardRef(({children, ...props}: PressRespo
   let prevContext = useContext(PressResponderContext);
   let context = mergeProps(prevContext || {}, {
     ...props,
-    ref,
+    ref: ref || prevContext?.ref,
     register() {
       isRegistered.current = true;
       if (prevContext) {
@@ -32,6 +32,8 @@ export const PressResponder = React.forwardRef(({children, ...props}: PressRespo
       }
     }
   });
+
+  useSyncRef(prevContext, ref);
 
   useEffect(() => {
     if (!isRegistered.current) {

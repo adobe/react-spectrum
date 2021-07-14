@@ -14,10 +14,12 @@ import {hideOthers} from 'aria-hidden';
 
 type Revert = () => void;
 
+const currentDocument = typeof document !== 'undefined' ? document : undefined;
+
 /**
  * Acts as a polyfill for `aria-modal` by watching for added modals and hiding any surrounding DOM elements with `aria-hidden`.
  */
-export function watchModals(selector:string = 'body'): Revert {
+export function watchModals(selector:string = 'body', {document = currentDocument} = {}): Revert {
   /**
    * Listen for additions to the child list of the selected element (defaults to body). This is where providers render modal portals.
    * When one is added, see if there is a modal inside it, if there is, then hide everything else from screen readers.
@@ -34,10 +36,10 @@ export function watchModals(selector:string = 'body'): Revert {
   let observer = new MutationObserver((mutationRecord) => {
     for (let mutation of mutationRecord) {
       if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-        let addNode: Element = (Array.from(mutation.addedNodes).find((node: any) => node.querySelector?.('[aria-modal="true"], [data-ismodal]')) as HTMLElement);
+        let addNode: Element = (Array.from(mutation.addedNodes).find((node: any) => node.querySelector?.('[aria-modal="true"], [data-ismodal="true"]')) as HTMLElement);
         if (addNode) {
           modalContainers.push(addNode);
-          let modal = addNode.querySelector('[aria-modal="true"], [data-ismodal]') as HTMLElement;
+          let modal = addNode.querySelector('[aria-modal="true"], [data-ismodal="true"]') as HTMLElement;
           undo?.();
           undo = hideOthers(modal);
         }
@@ -48,7 +50,7 @@ export function watchModals(selector:string = 'body'): Revert {
           undo();
           modalContainers = modalContainers.filter((val, i) => i !== nodeIndexRemove);
           if (modalContainers.length > 0) {
-            let modal = modalContainers[modalContainers.length - 1].querySelector('[aria-modal="true"], [data-ismodal]');
+            let modal = modalContainers[modalContainers.length - 1].querySelector('[aria-modal="true"], [data-ismodal="true"]');
             undo = hideOthers(modal);
           } else {
             undo = undefined;

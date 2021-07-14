@@ -14,6 +14,7 @@ import spawn from 'cross-spawn';
 import glob from 'fast-glob';
 import {promises as fs} from 'fs';
 import path from 'path';
+import concurrently from 'concurrently';
 
 const PACKAGES = {
   ui: path.dirname(require.resolve('@adobe/react-spectrum-ui/dist/')),
@@ -27,6 +28,7 @@ const PACKAGES = {
 };
 
 (async function () {
+  let commandPromises = [];
   // run in packages where at least one dist js file is newer that the corresponding source js file
   for (let [pkg, srcFolder] of Object.entries(PACKAGES)) {
     let distFolder = getIconPackageFolder(pkg);
@@ -42,40 +44,23 @@ const PACKAGES = {
         path.join(distFolder, path.basename(srcFile, path.extname(srcFile))) +
         '.js';
       if (!(await exists(distFile)) || (await isNewerThan(srcFile, distFile))) {
-        console.log(`Building icons for @spectrum-icons/${pkg}`);
-        if (pkg !== 'illustrations') {
-          await run('yarn', ['make-icons'], {
-            cwd: distFolder,
-            stdio: 'inherit'
-          });
-        }
-        await run('yarn', ['build-icons'], {
-          cwd: distFolder,
-          stdio: 'inherit'
-        });
+        commandPromises.push(pkg !== 'illustrations' ?
+          {command: 'yarn make-icons && yarn build-icons', name: `Making and building icons for @spectrum-icons/${pkg}`, cwd: distFolder} :
+          {command: 'yarn build-icons', name: `Building icons for @spectrum-icons/${pkg}`, cwd: distFolder}
+        );
         break;
       }
     }
   }
-})().catch((err) => {
+  return Promise.all(commandPromises);
+})().then(commands => {
+  if (commands.length > 0) {
+    concurrently(commands);
+  }
+}).catch((err) => {
   console.error(err.stack);
   process.exit(1);
 });
-
-function run(cmd, args, opts) {
-  return new Promise((resolve, reject) => {
-    let child = spawn(cmd, args, opts);
-    child.on('error', reject);
-    child.on('close', (code) => {
-      if (code !== 0) {
-        reject(new Error('Child process failed'));
-        return;
-      }
-
-      resolve();
-    });
-  });
-}
 
 function getIconPackageFolder(name) {
   return path.resolve(

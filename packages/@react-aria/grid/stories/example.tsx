@@ -26,10 +26,9 @@ export function Grid(props) {
 
   let ref = React.useRef();
   let {gridProps} = useGrid({
-    ref,
     'aria-label': 'Grid',
     focusMode: gridFocusMode
-  }, gridState);
+  }, gridState, ref);
 
   return (
     <div {...gridProps} ref={ref}>
@@ -48,15 +47,11 @@ function Row({state, item, focusMode}) {
   let rowRef = React.useRef();
   let cellRef = React.useRef();
   let cellNode = [...item.childNodes][0];
-  let {rowProps} = useGridRow({
-    node: item,
-    ref: rowRef
-  }, state);
+  let {rowProps} = useGridRow({node: item}, state, rowRef);
   let {gridCellProps} = useGridCell({
     node: cellNode,
-    ref: cellRef,
     focusMode
-  }, state);
+  }, state, cellRef);
 
   let [isRowFocused, setRowFocused] = React.useState(false);
   let {focusProps: rowFocusProps} = useFocus({

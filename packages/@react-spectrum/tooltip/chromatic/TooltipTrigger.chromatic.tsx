@@ -22,12 +22,11 @@ const meta: Meta<SpectrumTooltipTriggerProps> = {
   parameters: {
     chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true},
     // chromatic needs a bit more time than disableAnimations allows
-    chromatic: {delay: 300}
+    chromatic: {delay: 2000}
   }
 };
 
 export default meta;
-
 
 const Template = (): Story<SpectrumTooltipTriggerProps> => (args) => (
   <TooltipTrigger {...args} defaultOpen>

@@ -97,7 +97,7 @@ for the radio.
 ```tsx example
 import {useRadioGroupState} from '@react-stately/radio';
 
-let RadioContext = React.createContext();
+let RadioContext = React.createContext(null);
 
 function RadioGroup(props) {
   let {children, label} = props;
@@ -153,7 +153,7 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 import {useFocusRing} from '@react-aria/focus';
 
 // RadioGroup is the same as in the previous example
-let RadioContext = React.createContext();
+let RadioContext = React.createContext(null);
 
 function RadioGroup(props) {
   let {children, label} = props;

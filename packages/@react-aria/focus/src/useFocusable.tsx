@@ -11,8 +11,8 @@
  */
 
 import {FocusableDOMProps, FocusableProps} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
-import React, {HTMLAttributes, MutableRefObject, ReactNode, RefObject, useContext, useEffect} from 'react';
+import {mergeProps, useSyncRef} from '@react-aria/utils';
+import React, {HTMLAttributes, MutableRefObject, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {useFocus, useKeyboard} from '@react-aria/interactions';
 
 interface FocusableOptions extends FocusableProps, FocusableDOMProps {
@@ -33,15 +33,7 @@ let FocusableContext = React.createContext<FocusableContextValue>(null);
 
 function useFocusableContext(ref: RefObject<HTMLElement>): FocusableContextValue {
   let context = useContext(FocusableContext) || {};
-
-  useEffect(() => {
-    if (context && context.ref) {
-      context.ref.current = ref.current;
-      return () => {
-        context.ref.current = null;
-      };
-    }
-  }, [context, ref]);
+  useSyncRef(context, ref);
 
   return context;
 }
@@ -75,12 +67,14 @@ export function useFocusable(props: FocusableOptions, domRef: RefObject<HTMLElem
   let interactions = mergeProps(focusProps, keyboardProps);
   let domProps = useFocusableContext(domRef);
   let interactionProps = props.isDisabled ? {} : domProps;
+  let autoFocusRef = useRef(props.autoFocus);
 
   useEffect(() => {
-    if (props.autoFocus && domRef.current) {
+    if (autoFocusRef.current && domRef.current) {
       domRef.current.focus();
     }
-  }, [props.autoFocus, domRef]);
+    autoFocusRef.current = false;
+  }, []);
 
   return {
     focusableProps: mergeProps(

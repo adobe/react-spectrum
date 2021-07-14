@@ -226,10 +226,9 @@ const DroppableGrid = React.forwardRef(function (props: any, ref) {
 
   let {gridProps} = useGrid({
     ...props,
-    ref: domRef,
     'aria-label': 'List',
     focusMode: 'cell'
-  }, gridState);
+  }, gridState, domRef);
 
   let isDropTarget = dropState.isDropTarget({type: 'root'});
   let dropRef = React.useRef();
@@ -285,18 +284,12 @@ function CollectionItem({item, state, dropState, onPaste}) {
   let rowRef = React.useRef();
   let cellRef = React.useRef();
   let cellNode = [...item.childNodes][0];
-  let isSelected = state.selectionManager.isSelected(item.key);
 
-  let {rowProps} = useGridRow({
-    node: item,
-    ref: rowRef,
-    isSelected
-  }, state);
+  let {rowProps} = useGridRow({node: item}, state, rowRef);
   let {gridCellProps} = useGridCell({
     node: cellNode,
-    ref: cellRef,
     focusMode: 'cell'
-  }, state);
+  }, state, cellRef);
 
   let dropIndicatorRef = React.useRef();
   let {dropIndicatorProps} = useDropIndicator({
