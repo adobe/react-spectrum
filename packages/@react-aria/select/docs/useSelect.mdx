@@ -20,10 +20,10 @@ import listboxDocs from 'docs:@react-aria/listbox';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-aria/select/package.json';
 import Anatomy from './anatomy.svg';
-
-```jsx import
-import {useSelect} from '@react-aria/select';
-```
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import examplePreview from 'url:./example.png';
+import styledExamplePreview from 'url:./styled-components.png';
 
 ---
 category: Pickers
@@ -127,16 +127,14 @@ using <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlay
 In addition, see [useListBox](useListBox.html) for examples of sections (option groups), and more complex
 options.
 
-```tsx example
+```tsx example export=true
 import {useSelectState} from '@react-stately/select';
 import {Item} from '@react-stately/collections';
-import {HiddenSelect} from '@react-aria/select';
-import {useListBox, useOption} from '@react-aria/listbox';
-import {mergeProps} from '@react-aria/utils';
+import {useSelect, HiddenSelect} from '@react-aria/select';
 import {useButton} from '@react-aria/button';
-import {useFocus} from '@react-aria/interactions';
-import {FocusScope} from '@react-aria/focus';
-import {useOverlay, DismissButton} from '@react-aria/overlays';
+
+// Reuse the ListBox and Popover from your component library. See below for details.
+import {ListBox, Popover} from 'your-component-library';
 
 function Select(props) {
   // Create state based on the incoming props
@@ -179,102 +177,13 @@ function Select(props) {
         </span>
       </button>
       {state.isOpen &&
-        <ListBoxPopup
-          {...menuProps}
-          state={state} />
+        <Popover isOpen={state.isOpen} onClose={state.close}>
+          <ListBox
+            {...menuProps}
+            state={state} />
+        </Popover>
       }
     </div>
-  );
-}
-
-function ListBoxPopup({state, ...otherProps}) {
-  let ref = React.useRef();
-
-  // Get props for the listbox
-  let {listBoxProps} = useListBox({
-    autoFocus: state.focusStrategy || true,
-    disallowEmptySelection: true,
-    ...otherProps
-  }, state, ref);
-
-  // Handle events that should cause the popup to close,
-  // e.g. blur, clicking outside, or pressing the escape key.
-  let overlayRef = React.useRef();
-  let {overlayProps} = useOverlay({
-    onClose: () => state.close(),
-    shouldCloseOnBlur: true,
-    isOpen: state.isOpen,
-    isDismissable: true
-  }, overlayRef);
-
-  // Wrap in <FocusScope> so that focus is restored back to the
-  // trigger when the popup is closed. In addition, add hidden
-  // <DismissButton> components at the start and end of the list
-  // to allow screen reader users to dismiss the popup easily.
-  return (
-    <FocusScope restoreFocus>
-      <div {...overlayProps} ref={overlayRef}>
-        <DismissButton onDismiss={() => state.close()} />
-        <ul
-          {...mergeProps(listBoxProps, otherProps)}
-          ref={ref}
-          style={{
-            position: 'absolute',
-            width: '100%',
-            margin: '4px 0 0 0',
-            padding: 0,
-            listStyle: 'none',
-            border: '1px solid gray',
-            background: 'lightgray'
-          }}>
-          {[...state.collection].map(item => (
-            <Option
-              key={item.key}
-              item={item}
-              state={state} />
-          ))}
-        </ul>
-        <DismissButton onDismiss={() => state.close()} />
-      </div>
-    </FocusScope>
-  )
-}
-
-function Option({item, state}) {
-  // Get props for the option element
-  let ref = React.useRef();
-  let isDisabled = state.disabledKeys.has(item.key);
-  let isSelected = state.selectionManager.isSelected(item.key);
-  let {optionProps} = useOption({
-    key: item.key,
-    isDisabled,
-    isSelected,
-    shouldSelectOnPressUp: true,
-    shouldFocusOnHover: true
-  }, state, ref);
-
-  // Handle focus events so we can apply highlighted
-  // style to the focused option
-  let [isFocused, setFocused] = React.useState(false);
-  let {focusProps} = useFocus({onFocusChange: setFocused});
-
-  return (
-    <li
-      {...mergeProps(optionProps, focusProps)}
-      ref={ref}
-      style={{
-        background: isSelected
-          ? 'blueviolet'
-          : isFocused
-            ? 'gray'
-            : 'transparent',
-        color: isSelected || isFocused ? 'white' : 'black',
-        padding: '2px 5px',
-        outline: 'none',
-        cursor: 'pointer'
-      }}>
-      {item.rendered}
-    </li>
   );
 }
 
@@ -287,6 +196,149 @@ function Option({item, state}) {
   <Item>Purple</Item>
 </Select>
 ```
+
+### Popover
+
+The `Popover` component is used to contain the popup listbox for the Select.
+It can be shared between many other components, including [ComboBox](useComboBox.html),
+[Menu](useMenuTrigger.html), [Dialog](useOverlayTrigger.html), and others.
+See [useOverlayTrigger](useOverlayTrigger.html) for more examples of popovers.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useOverlay, DismissButton} from '@react-aria/overlays';
+import {FocusScope} from '@react-aria/focus';
+
+function Popover(props) {
+  let ref = React.useRef();
+  let {
+    popoverRef = ref,
+    isOpen,
+    onClose,
+    children,
+    ...otherProps
+  } = props;
+
+  // Handle events that should cause the popup to close,
+  // e.g. blur, clicking outside, or pressing the escape key.
+  let {overlayProps} = useOverlay({
+    isOpen,
+    onClose,
+    shouldCloseOnBlur: true,
+    isDismissable: true
+  }, popoverRef);
+
+  // Add a hidden <DismissButton> component at the end of the popover
+  // to allow screen reader users to dismiss the popup easily.
+  return (
+    <FocusScope restoreFocus>
+      <div
+        {...overlayProps}
+        ref={popoverRef}
+        style={{
+          position: "absolute",
+          width: "100%",
+          border: "1px solid gray",
+          background: "lightgray",
+          marginTop: 4
+        }}>
+        {children}
+        <DismissButton onDismiss={() => state.close()} />
+      </div>
+    </FocusScope>
+  );
+}
+```
+
+</details>
+
+### ListBox
+
+The `ListBox` and `Option` components are used to show the list of options.
+They can also be shared with other components like a [ComboBox](useComboBox.html). See
+[useListBox](useListBox.html) for more examples, including sections and more complex items.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useListBox, useOption} from '@react-aria/listbox';
+
+function ListBox(props) {
+  let ref = React.useRef();
+  let {listBoxRef = ref, state} = props;
+  let {listBoxProps} = useListBox(props, state, listBoxRef);
+
+  return (
+    <ul
+      {...listBoxProps}
+      ref={listBoxRef}
+      style={{
+        margin: 0,
+        padding: 0,
+        listStyle: "none"
+      }}>
+      {[...state.collection].map(item => (
+        <Option
+          key={item.key}
+          item={item}
+          state={state} />
+      ))}
+    </ul>
+  )
+}
+
+function Option({item, state}) {
+  let ref = React.useRef();
+  let {optionProps, isSelected, isFocused, isDisabled} = useOption({key: item.key}, state, ref);
+
+  let backgroundColor;
+  let color = 'black';
+
+  if (isSelected) {
+    backgroundColor = 'blueviolet';
+    color = 'white';
+  } else if (isFocused) {
+    backgroundColor = 'gray';
+  } else if (isDisabled) {
+    backgroundColor = 'transparent';
+    color = 'gray';
+  }
+
+  return (
+    <li
+      {...optionProps}
+      ref={ref}
+      style={{
+        background: backgroundColor,
+        color: color,
+        padding: '2px 5px',
+        outline: 'none',
+        cursor: 'pointer'
+      }}>
+      {item.rendered}
+    </li>
+  );
+}
+```
+
+</details>
+
+## Styled examples
+
+<ExampleCard
+  url="https://codesandbox.io/s/hardcore-moon-xzc4r?file=/src/ComboBox.tsx"
+  preview={examplePreview}
+  title="Tailwind CSS"
+  description="An example of styling a Select with Tailwind." />
+
+<ExampleCard
+  url="https://codesandbox.io/s/sharp-sun-e3fgd?file=/src/Select.tsx"
+  preview={styledExamplePreview}
+  title="Styled Components"
+  description="A Select with complex item content built with Styled Components." />
 
 ## Internationalization
 
