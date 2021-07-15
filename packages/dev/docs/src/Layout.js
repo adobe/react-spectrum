@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import clsx from 'clsx';
 import {Divider} from '@react-spectrum/divider';
@@ -68,7 +68,14 @@ const mdxComponents = {
   p: ({children, ...props}) => <p className={typographyStyles['spectrum-Body3']} {...props}>{children}</p>,
   ul: ({children, ...props}) => <ul {...props} className={typographyStyles['spectrum-Body3']}>{children}</ul>,
   ol: ({children, ...props}) => <ol {...props} className={typographyStyles['spectrum-Body3']}>{children}</ol>,
-  code: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
+  code: ({children, ...props}) => (
+    <>
+      <button className={clsx(buttonStyles['spectrum-ActionButton', 'spectrum-ActionButton--sizeM', 'spectrum-ActionButton--quiet'], 'codeSandboxButton')} style={{float: 'right'}}>
+        <span className={buttonStyles['spectrum-ActionButton-label']}>Open Sandbox</span>
+      </button>
+      <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>
+    </>
+  ),
   inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
   a: ({children, ...props}) => <a {...props} className={clsx(linkStyle['spectrum-Link'], docStyles.link)} {...getAnchorProps(props.href)}>{children}</a>,
   kbd: ({children, ...props}) => <kbd {...props} className={docStyles['keyboard']}>{children}</kbd>

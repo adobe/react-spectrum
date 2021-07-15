@@ -217,3 +217,134 @@ window.addEventListener('pagehide', () => {
   sessionStorage.setItem('sidebarSelectedItem', location.pathname);
   sessionStorage.setItem('sidebarScrollPosition', sidebar.scrollTop);
 });
+
+let indexHTML = `<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="theme-color" content="#000000">
+  <!--
+      manifest.json provides metadata used when your web app is added to the
+      homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
+    -->
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
+  <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+  <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the \`public\` folder during the build.
+      Only files inside the \`public\` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running \`npm run build\`.
+    -->
+  <title>React App</title>
+</head>
+
+<body>
+  <noscript>
+    You need to enable JavaScript to run this app.
+  </noscript>
+  <div id="root"></div>
+  <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run \`npm start\` or \`yarn start\`.
+      To create a production bundle, use \`npm run build\` or \`yarn build\`.
+    -->
+</body>
+
+</html>`;
+
+let indexJS = `import React from "react";
+import ReactDOM from "react-dom";
+
+import Example from "./Example";
+
+const rootElement = document.getElementById("root");
+ReactDOM.render(<Example />, rootElement);
+`;
+
+function openCodeSandbox(e) {
+  // Disable button while awaiting sandbox creation.
+  e.currentTarget.disabled = true;
+
+  // Get package info for codesandbox.
+  let packageInfo = e.currentTarget.closest('article').querySelector('tbody').childNodes;
+  let packageName = packageInfo[0].innerText.split('add ')[1];
+  let packageVersion = packageInfo[1].innerText.split('\t')[1];
+  let importText = packageInfo[2].innerText.split('\t')[1];
+  let exampleTitle = document.querySelector('h1').textContent;
+
+  // Get example code.
+  let exampleCode = e.currentTarget.nextElementSibling.querySelector('.source').textContent;
+
+  // Separate import lines.
+  let lines = exampleCode.split('\n');
+  let additionalImports = lines.filter(line => line.startsWith('import'));
+  exampleCode = lines.filter(line => !line.startsWith('import')).join('\n');
+
+  let example = `import React from 'react';
+import { Provider, defaultTheme } from "@adobe/react-spectrum";
+${importText};
+${additionalImports.join('')}
+export default function Example() {
+  return (
+    <Provider theme={defaultTheme}>
+      ${exampleCode}
+    </Provider>
+    );
+  }
+  `;
+
+  fetch('https://codesandbox.io/api/v1/sandboxes/define?json=1', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json'
+    },
+    body: JSON.stringify({
+      files: {
+        'package.json': {
+          content: {
+            name: `${exampleTitle} Example - React Spectrum`, // TODO: Include a subtitle for components with more than one example
+            main: 'index.js',
+            dependencies: {
+              react: 'latest',
+              'react-dom': 'latest',
+              '@adobe/react-spectrum': 'latest',
+              [packageName]: packageVersion
+            }
+          }
+        },
+        'Example.js': {
+          content: example
+        },
+        'index.js': {
+          content: indexJS
+        },
+        'index.html': {
+          content: indexHTML
+        }
+      }
+    })
+  })
+  .then((x) => x.json())
+  .then((data) =>
+    window.open(`https://codesandbox.io/s/${data.sandbox_id}?file=/Example.js`, '_blank')
+  );
+
+  e.currentTarget.disabled = false;
+}
+
+let codeSandboxButtons = document.querySelectorAll('.codeSandboxButton');
+
+Array.from(codeSandboxButtons).forEach(function (element) {
+  element.addEventListener('click', openCodeSandbox);
+});
