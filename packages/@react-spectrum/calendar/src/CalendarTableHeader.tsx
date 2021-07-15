@@ -10,29 +10,38 @@
  * governing permissions and limitations under the License.
  */
 
+import {CalendarDate, toDate} from '@internationalized/date';
 import {classNames} from '@react-spectrum/utils';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
+import {useCalendarTableHeader} from '@react-aria/calendar';
 import {useDateFormatter} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface CalendarTableHeaderProps {
-  weekDays: Array<Date>
+  weekDays: Array<CalendarDate>
 }
 
 export function CalendarTableHeader({weekDays}: CalendarTableHeaderProps) {
+  const {
+    columnHeaderProps
+  } = useCalendarTableHeader();
   let dayFormatter = useDateFormatter({weekday: 'narrow'});
   let dayFormatterLong = useDateFormatter({weekday: 'long'});
   return (
     <thead>
-      <tr>
+      <tr aria-rowindex={1}>
         {
-          weekDays.map((dateDay, index) => {
+          weekDays.map((date, index) => {
+            // Timezone doesn't matter here, assuming all days are formatted in the same zone.
+            let dateDay = toDate(date, 'America/Los_Angeles');
             let day = dayFormatter.format(dateDay);
             let dayLong = dayFormatterLong.format(dateDay);
             return (
               <th
                 key={index}
+                aria-colindex={index + 1}
+                {...columnHeaderProps}
                 className={classNames(styles, 'spectrum-Calendar-tableCell')}>
                 {/* Make sure screen readers read the full day name, but we show an abbreviation visually. */}
                 <VisuallyHidden>{dayLong}</VisuallyHidden>
