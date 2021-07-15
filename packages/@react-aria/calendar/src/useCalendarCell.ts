@@ -19,7 +19,8 @@ import {PressProps, usePress} from '@react-aria/interactions';
 import {useDateFormatter, useMessageFormatter} from '@react-aria/i18n';
 
 export interface AriaCalendarCellProps {
-  date: CalendarDate
+  date: CalendarDate,
+  colIndex: number
 }
 
 interface CalendarCellAria {
@@ -28,7 +29,7 @@ interface CalendarCellAria {
 }
 
 export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarState | RangeCalendarState, ref: RefObject<HTMLElement>): CalendarCellAria {
-  let {date} = props;
+  let {colIndex, date} = props;
   let formatMessage = useMessageFormatter(intlMessages);
   let dateFormatter = useDateFormatter({
     weekday: 'long',
@@ -107,6 +108,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     cellProps: {
       onMouseEnter: isDisabled ? null : onMouseEnter,
       role: 'gridcell',
+      'aria-colindex': colIndex,
       'aria-disabled': isDisabled || null,
       'aria-selected': isSelected
     },

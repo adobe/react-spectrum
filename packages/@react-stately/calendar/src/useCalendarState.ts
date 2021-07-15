@@ -86,6 +86,8 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
 
     if (!isSameMonth(date, currentMonth)) {
       setCurrentMonth(startOfMonth(date));
+      setFocusedDate(date);
+      return;
     }
 
     setFocusedDate(date);
