@@ -96,7 +96,7 @@ describe('Slots', function () {
     expect(onPressUser).toHaveBeenCalledTimes(1);
   });
 
-  it('overrides ids', function () {
+  it('lets users set their own id', function () {
     let slots = {
       slotname: {id: 'foo'}
     };
@@ -108,7 +108,7 @@ describe('Slots', function () {
     expect(results).toMatchObject({id: 'bar'});
   });
 
-  it('overrides ids useId', function () {
+  it('lets users set their own id when used in conjunction with useId', function () {
     function SlotsUseId(props) {
       let id = useId(props.id);
       return (
@@ -121,7 +121,7 @@ describe('Slots', function () {
     expect(results).toMatchObject({id: 'bar'}); // we've merged with the user provided id
   });
 
-  it('overrides ids useSlotId', function () {
+  it('lets users set their own id when used in conjunction with useSlotId', function () {
     function SlotsUseSlotId() {
       let id = useSlotId();
       return (
