@@ -125,5 +125,9 @@ function useRegion() {
   }
 
   // If not, just try splitting the string.
-  return locale.split('-')[1];
+  // If the second part of the locale string is 'u',
+  // then this is a unicode extension, so ignore it.
+  // Otherwise, it should be the region.
+  let part = locale.split('-')[1];
+  return part === 'u' ? null : part;
 }

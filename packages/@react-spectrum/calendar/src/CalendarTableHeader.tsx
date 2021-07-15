@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {CalendarDate, toDate} from '@internationalized/date';
 import {classNames} from '@react-spectrum/utils';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
@@ -17,7 +18,7 @@ import {useDateFormatter} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface CalendarTableHeaderProps {
-  weekDays: Array<Date>
+  weekDays: Array<CalendarDate>
 }
 
 export function CalendarTableHeader({weekDays}: CalendarTableHeaderProps) {
@@ -27,7 +28,9 @@ export function CalendarTableHeader({weekDays}: CalendarTableHeaderProps) {
     <thead>
       <tr>
         {
-          weekDays.map((dateDay, index) => {
+          weekDays.map((date, index) => {
+            // Timezone doesn't matter here, assuming all days are formatted in the same zone.
+            let dateDay = toDate(date, 'America/Los_Angeles');
             let day = dayFormatter.format(dateDay);
             let dayLong = dayFormatterLong.format(dateDay);
             return (
