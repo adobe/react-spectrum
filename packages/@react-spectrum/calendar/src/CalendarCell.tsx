@@ -13,7 +13,7 @@
 import {AriaCalendarCellProps, useCalendarCell} from '@react-aria/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {classNames} from '@react-spectrum/utils';
-import {isSameDay, isSameMonth, isToday} from 'date-fns';
+import {getDayOfWeek, isSameDay, isSameMonth, isToday, toDate} from '@internationalized/date';
 import React, {useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useDateFormatter} from '@react-aria/i18n';
@@ -27,13 +27,18 @@ export function CalendarCell({state, ...props}: CalendarCellProps) {
   let ref = useRef<HTMLElement>();
   let {cellProps, buttonProps} = useCalendarCell(props, state, ref);
   let {hoverProps, isHovered} = useHover({});
-  let dateFormatter = useDateFormatter({day: 'numeric'});
+  let dateFormatter = useDateFormatter({
+    day: 'numeric',
+    timeZone: state.timeZone,
+    calendar: state.currentMonth.calendar.identifier
+  });
   let isSelected = state.isSelected(props.date);
   let highlightedRange = 'highlightedRange' in state && state.highlightedRange;
   let isSelectionStart = highlightedRange && isSameDay(props.date, highlightedRange.start);
   let isSelectionEnd = highlightedRange && isSameDay(props.date, highlightedRange.end);
-  let isRangeStart = isSelected && (props.date.getDay() === 0 || props.date.getDate() === 1);
-  let isRangeEnd = isSelected && (props.date.getDay() === 6 || props.date.getDate() === state.daysInMonth);
+  let dayOfWeek = getDayOfWeek(props.date);
+  let isRangeStart = isSelected && (dayOfWeek === 0 || props.date.day === 1);
+  let isRangeEnd = isSelected && (dayOfWeek === 6 || props.date.day === state.daysInMonth);
 
   return (
     <td
@@ -44,7 +49,7 @@ export function CalendarCell({state, ...props}: CalendarCellProps) {
         {...hoverProps}
         ref={ref}
         className={classNames(styles, 'spectrum-Calendar-date', {
-          'is-today': isToday(props.date),
+          'is-today': isToday(props.date, state.timeZone),
           'is-selected': isSelected,
           'is-focused': state.isCellFocused(props.date),
           'is-disabled': state.isCellDisabled(props.date),
@@ -56,7 +61,7 @@ export function CalendarCell({state, ...props}: CalendarCellProps) {
           'is-selection-end': isSelectionEnd,
           'is-hovered': isHovered
         })}>
-        {dateFormatter.format(props.date)}
+        {dateFormatter.format(toDate(props.date, state.timeZone))}
       </span>
     </td>
   );

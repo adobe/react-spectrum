@@ -11,13 +11,17 @@
  */
 
 import {CalendarBase} from './CalendarBase';
+import {createCalendar} from '@internationalized/date';
 import React from 'react';
 import {SpectrumCalendarProps} from '@react-types/calendar';
 import {useCalendar} from '@react-aria/calendar';
 import {useCalendarState} from '@react-stately/calendar';
 
 export function Calendar(props: SpectrumCalendarProps) {
-  let state = useCalendarState(props);
+  let state = useCalendarState({
+    ...props,
+    createCalendar
+  });
   let aria = useCalendar(props, state);
   return (
     <CalendarBase

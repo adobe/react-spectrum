@@ -1,5 +1,7 @@
 {
   "calendar": "Calendar",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} la {end, date, long}",
   "date": "Dată",
   "dateRange": "Raza datei",
   "day": "Zi",
