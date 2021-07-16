@@ -36,6 +36,20 @@ function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchF
   );
 }
 
+function renderReverse(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps: SearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) {
+  return (
+    <SearchWithin label="Search" {...props}>
+      <Picker defaultSelectedKey="all" {...pickerProps}>
+        <Item key="all">All</Item>
+        <Item key="campaigns">Campaigns</Item>
+        <Item key="audiences">Audiences</Item>
+        <Item key="tags">Tags</Item>
+      </Picker>
+      <SearchField placeholder="Search" {...searchFieldProps} />
+    </SearchWithin>
+  );
+}
+
 export const Default = () => render({});
 
 export const isDisabled = () => render({isDisabled: true});
@@ -56,3 +70,5 @@ export const LabelPositionSide = () => render({});
 LabelPositionSide.storyName = 'labelPosition: side';
 
 export const AutoFocus = () => render({}, {autoFocus: true});
+
+export const ReverseChildrenOrder = () => renderReverse({});

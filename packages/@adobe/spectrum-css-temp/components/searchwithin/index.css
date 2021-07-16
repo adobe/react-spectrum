@@ -41,6 +41,7 @@ governing permissions and limitations under the License.
 
 .spectrum-SearchWithin-searchfield {
   flex-grow: 1;
+  order: -1;
 
   &:focus-within {
     z-index: 1; /* shows entire focus ring */
