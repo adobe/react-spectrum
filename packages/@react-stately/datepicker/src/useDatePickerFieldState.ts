@@ -63,12 +63,53 @@ const TYPE_MAPPING = {
   dayperiod: 'dayPeriod'
 };
 
-export function useDatePickerFieldState(props: DatePickerProps): DatePickerFieldState {
+const FIELD_OPTIONS = {
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit'
+};
+
+interface DatePickerFieldProps extends DatePickerProps {
+  maxGranularity?: DatePickerProps['granularity']
+}
+
+export function useDatePickerFieldState(props: DatePickerFieldProps): DatePickerFieldState {
   let [validSegments, setValidSegments] = useState(
     props.value || props.defaultValue ? {...EDITABLE_SEGMENTS} : {}
   );
 
-  let dateFormatter = useDateFormatter(props.formatOptions);
+  let opts = useMemo(() => {
+    let keys = Object.keys(FIELD_OPTIONS);
+    let startIdx = keys.indexOf(props.maxGranularity ?? 'year');
+    if (startIdx < 0) {
+      startIdx = 0;
+    }
+
+    let endIdx = keys.indexOf(props.granularity ?? 'day');
+    if (endIdx < 0) {
+      endIdx = 2;
+    }
+
+    if (startIdx > endIdx) {
+      throw new Error('maxGranularity must be greater than granularity');
+    }
+
+    let opts: Intl.DateTimeFormatOptions = keys.slice(startIdx, endIdx + 1).reduce((opts, key) => {
+      opts[key] = FIELD_OPTIONS[key];
+      return opts;
+    }, {});
+
+    if (props.hourCycle != null) {
+      opts.hour12 = props.hourCycle === 12;
+    }
+
+    return opts;
+  }, [props.maxGranularity, props.granularity, props.hourCycle]);
+
+  let dateFormatter = useDateFormatter(opts);
   let resolvedOptions = useMemo(() => dateFormatter.resolvedOptions(), [dateFormatter]);
 
   // Determine how many editable segments there are for validation purposes.

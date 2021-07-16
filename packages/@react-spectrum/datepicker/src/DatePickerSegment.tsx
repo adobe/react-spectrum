@@ -13,7 +13,7 @@
 import {classNames} from '@react-spectrum/utils';
 import {DatePickerBase} from '@react-types/datepicker';
 import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
-import React from 'react';
+import React, {useRef} from 'react';
 import styles from './index.css';
 import {useDateSegment} from '@react-aria/datepicker';
 import {useFocusManager} from '@react-aria/focus';
@@ -58,7 +58,7 @@ function LiteralSegment({segment, isPlaceholder}: LiteralSegmentProps) {
   });
 
   return (
-    <span 
+    <span
       role="presentation"
       className={classNames(styles, 'react-spectrum-Datepicker-literal', {'is-placeholder': isPlaceholder})}
       {...pressProps}
@@ -69,10 +69,15 @@ function LiteralSegment({segment, isPlaceholder}: LiteralSegmentProps) {
 }
 
 function EditableSegment({segment, state, ...otherProps}: DatePickerSegmentProps) {
-  let {segmentProps} = useDateSegment(otherProps, segment, state);
+  let ref = useRef();
+  let {segmentProps} = useDateSegment(otherProps, segment, state, ref);
   return (
     <div
+      ref={ref}
       className={classNames(styles, 'react-spectrum-DatePicker-cell', {'is-placeholder': segment.isPlaceholder})}
+      style={{
+        width: segment.type === 'dayPeriod' ? null : String(segment.maxValue).length + 'ch'
+      }}
       data-testid={segment.type}
       {...segmentProps}>
       {segment.text}

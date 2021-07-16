@@ -62,6 +62,15 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
     styleProps.className
   );
 
+  let fieldClassName = classNames(
+    styles,
+    'spectrum-InputGroup-input',
+    {
+      'is-disabled': isDisabled,
+      'is-invalid': state.validationState === 'invalid'
+    }
+  );
+
   return (
     <FocusRing
       within
@@ -87,7 +96,9 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
             value={value.start}
             defaultValue={null}
             onChange={start => setDate('start', start)}
-            UNSAFE_className={classNames(styles, 'spectrum-Datepicker-startField')} />
+            granularity={props.granularity}
+            UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')}
+            inputClassName={fieldClassName} />
           <DateRangeDash />
           <DatePickerField
             {...endFieldProps as any}
@@ -101,6 +112,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
             value={value.end}
             defaultValue={null}
             onChange={end => setDate('end', end)}
+            granularity={props.granularity}
             UNSAFE_className={classNames(
               styles,
               'spectrum-Datepicker-endField',
@@ -108,7 +120,8 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
                 datepickerStyles,
                 'react-spectrum-Datepicker-endField'
               )
-            )} />
+            )}
+            inputClassName={fieldClassName} />
         </FocusScope>
         <DialogTrigger
           type="popover"

@@ -61,6 +61,16 @@ export function DatePicker(props: SpectrumDatePickerProps) {
     },
     styleProps.className
   );
+
+  let fieldClassName = classNames(
+    styles,
+    'spectrum-InputGroup-input',
+    {
+      'is-disabled': isDisabled,
+      'is-invalid': state.validationState === 'invalid'
+    }
+  );
+
   return (
     <FocusRing
       within
@@ -87,7 +97,8 @@ export function DatePicker(props: SpectrumDatePickerProps) {
             isReadOnly={isReadOnly}
             isRequired={isRequired}
             formatOptions={formatOptions}
-            UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-endField')} />
+            granularity={props.granularity}
+            inputClassName={fieldClassName} />
         </FocusScope>
         <DialogTrigger
           type="popover"

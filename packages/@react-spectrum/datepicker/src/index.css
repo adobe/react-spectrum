@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-.react-spectrum-Datepicker-field.react-spectrum-Datepicker-field {
-  /* needs to override the style from Textfield */
+.react-spectrum-Datepicker-startField.react-spectrum-Datepicker-startField {
   width: auto;
 }
 
 .react-spectrum-Datepicker-endField {
+  width: auto;
   flex: 1;
 }
 
@@ -28,9 +28,6 @@
 .react-spectrum-Datepicker-input {
   display: flex;
   align-items: center;
-  /* Override default InputGroup styling in spectrum-css which assumes the input is an actual <input> element */
-  width: auto !important;
-  min-width: 0 !important;
 }
 
 
@@ -48,12 +45,14 @@
   background: none;
   padding: 0 2px;
   border-radius: 2px;
-  user-select: none;
-  -webkit-user-select: none;
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+  box-sizing: content-box;
 }
 
 .react-spectrum-DatePicker-cell:focus {
-  background-color: var(--spectrum-alias-text-highlight-color);
+  background-color: var(--spectrum-global-color-static-blue);
+  color: white;
   caret-color: transparent;
   outline: none;
 }
@@ -67,7 +66,7 @@
 }
 
 .react-spectrum-DatePicker-cell.is-placeholder:focus {
-  color: inherit;
+  color: white;
 }
 
 .react-spectrum-Datepicker-dialog {

@@ -27,7 +27,9 @@ interface DatePickerBase extends InputBase, Validation, FocusableProps, Labelabl
   minValue?: DateValue,
   maxValue?: DateValue,
   formatOptions?: Intl.DateTimeFormatOptions,
-  placeholderDate?: DateValue
+  placeholderDate?: DateValue,
+  hourCycle?: 12 | 24,
+  granularity?: 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second' | 'millisecond'
 }
 
 export interface DatePickerProps extends DatePickerBase, ValueBase<DateValue> {}
@@ -41,3 +43,17 @@ interface SpectrumDatePickerBase extends SpectrumLabelableProps, DOMProps, Style
 
 export interface SpectrumDatePickerProps extends DatePickerProps, SpectrumDatePickerBase {}
 export interface SpectrumDateRangePickerProps extends DateRangePickerProps, SpectrumDatePickerBase {}
+
+interface Time {
+  hour: number,
+  minute: number,
+  second: number,
+  millisecond: number
+}
+
+interface TimePickerProps extends InputBase, Validation, FocusableProps, LabelableProps, ValueBase<Time> {
+  hourCycle?: 12 | 24,
+  granularity?: 'hour' | 'minute' | 'second' | 'millisecond'
+}
+
+interface SpectrumTimePickerProps extends TimePickerProps, SpectrumLabelableProps, DOMProps, StyleProps {}

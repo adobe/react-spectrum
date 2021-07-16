@@ -36,6 +36,18 @@ storiesOf('DatePicker', module)
     () => render({value: new Date(2020, 2, 3)})
   )
   .add(
+    'granularity: month',
+    () => render({granularity: 'month'})
+  )
+  .add(
+    'granularity: minute',
+    () => render({granularity: 'minute'})
+  )
+  .add(
+    'granularity: second',
+    () => render({granularity: 'second'})
+  )
+  .add(
     'custom date format',
     () => render({
       formatOptions: {
