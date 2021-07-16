@@ -25,6 +25,9 @@ export function useId(defaultId?: string): string {
   isRendering.current = true;
   let [value, setValue] = useState(defaultId);
   let nextId = useRef(null);
+
+  let res = useSSRSafeId(value);
+
   // don't memo this, we want it new each render so that the Effects always run
   let updateValue = (val) => {
     if (!isRendering.current) {
@@ -34,9 +37,22 @@ export function useId(defaultId?: string): string {
     }
   };
 
+  if (res !== null) {
+    idsUpdaterMap.set(res, updateValue);
+  }
+
   useLayoutEffect(() => {
     isRendering.current = false;
   }, [updateValue]);
+
+  useLayoutEffect(() => {
+    let r = res;
+    return () => {
+      if (r !== null) {
+        idsUpdaterMap.delete(r);
+      }
+    };
+  }, [res]);
 
   useEffect(() => {
     let newId = nextId.current;
@@ -45,17 +61,6 @@ export function useId(defaultId?: string): string {
       nextId.current = null;
     }
   }, [setValue, updateValue]);
-
-  let res = useSSRSafeId(value);
-
-  idsUpdaterMap.set(res, updateValue);
-
-  useLayoutEffect(() => {
-    let r = res;
-    return () => {
-      idsUpdaterMap.delete(r);
-    };
-  }, [res]);
   return res;
 }
 
