@@ -31,7 +31,7 @@ const meta: Meta<SpectrumMenuTriggerProps> = {
   parameters: {
     chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true},
     // chromatic needs a bit more time than disableAnimations allows
-    chromatic: {delay: 2000}
+    chromatic: {pauseAnimationAtEnd: true}
   },
   decorators: [Story => <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}><Story /></div>]
 };
