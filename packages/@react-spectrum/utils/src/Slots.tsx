@@ -19,15 +19,11 @@ interface SlotProps {
 
 let SlotContext = React.createContext(null);
 
-export function useSlotProps<T>(props: T, defaultSlot?: string): T {
+export function useSlotProps<T>(props: T & {id?: string}, defaultSlot?: string): T {
   let slot = (props as SlotProps).slot || defaultSlot;
   let {[slot]: slotProps = {}} = useContext(SlotContext) || {};
-  // @ts-ignore
-  if (props.id) {
-    // @ts-ignore
-    return {...mergeProps(props, slotProps), id: props.id};
-  }
-  return mergeProps(props, slotProps);
+
+  return mergeProps(props, mergeProps(slotProps, {id: props.id}));
 }
 
 export function cssModuleToSlots(cssModule) {

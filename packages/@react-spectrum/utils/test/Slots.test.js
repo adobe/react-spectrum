@@ -30,7 +30,8 @@ describe('Slots', function () {
     props = results;
     let ref = useRef();
     let {pressProps} = usePress({onPress: props.onPress, ref});
-    return <button id={props.id} {...pressProps} ref={ref}>push me</button>;
+    let id = useId(props.id);
+    return <button id={id} {...pressProps} ref={ref}>push me</button>;
   }
 
   it('sets props', function () {
@@ -108,29 +109,76 @@ describe('Slots', function () {
     expect(results).toMatchObject({id: 'bar'});
   });
 
-  it('lets users set their own id when used in conjunction with useId', function () {
+  it('lets users set their own id when used in conjunction with useId even if a default is passed to useId', function () {
     function SlotsUseId(props) {
       let id = useId(props.id);
       return (
-        <SlotProvider slots={{slotname: {...props.slots, id}}}>
-          <Component id="bar" />
-        </SlotProvider>
+        <>
+          <div role="presentation" aria-controls={id}>nowhere</div>
+          <SlotProvider slots={{slotname: {...props.slots, id}}}>
+            <Component id="bar" />
+          </SlotProvider>
+        </>
       );
     }
-    render(<SlotsUseId id="foo" />);
+    let {getByRole} = render(<SlotsUseId id="foo" />);
     expect(results).toMatchObject({id: 'bar'}); // we've merged with the user provided id
+    expect(getByRole('presentation')).toHaveAttribute('aria-controls', 'bar');
+  });
+
+  it('lets users set their own id when used in conjunction with useId', function () {
+    function SlotsUseId(props) {
+      let id = useId();
+      return (
+        <>
+          <div role="presentation" aria-controls={id}>nowhere</div>
+          <SlotProvider slots={{slotname: {...props.slots, id}}}>
+            <Component id="bar" />
+          </SlotProvider>
+        </>
+      );
+    }
+    let {getByRole} = render(<SlotsUseId />);
+    expect(results).toMatchObject({id: 'bar'}); // we've merged with the user provided id
+    expect(getByRole('presentation')).toHaveAttribute('aria-controls', 'bar');
   });
 
   it('lets users set their own id when used in conjunction with useSlotId', function () {
     function SlotsUseSlotId() {
       let id = useSlotId();
       return (
-        <SlotProvider slots={{slotname: {id}}}>
-          <Component id="bar" />
-        </SlotProvider>
+        <>
+          <div role="presentation" aria-controls={id}>nowhere</div>
+          <SlotProvider slots={{slotname: {id}}}>
+            <Component id="bar" />
+          </SlotProvider>
+        </>
       );
     }
-    render(<SlotsUseSlotId />);
+    let {getByRole} = render(<SlotsUseSlotId />);
     expect(results).toMatchObject({id: 'bar'}); // we've merged with the user provided id
+    expect(getByRole('presentation')).toHaveAttribute('aria-controls', 'bar');
   });
+
+  it('multiple useIds can be used together and resolve to the one used on the component', function () {
+    let id = '';
+    function SlotsUseSlotId() {
+      let id1 = useId();
+      let id2 = useId();
+      id = useRef(id2).current;
+
+      return (
+        <>
+          <div role="presentation" aria-controls={id1}>nowhere</div>
+          <SlotProvider slots={{slotname: {id: id1}}}>
+            <Component id={id2} />
+          </SlotProvider>
+        </>
+      );
+    }
+    let {getByRole} = render(<SlotsUseSlotId />);
+    expect(results).toMatchObject({id}); // we've merged with the user provided id
+    expect(getByRole('presentation')).toHaveAttribute('aria-controls', id);
+  });
+
 });
