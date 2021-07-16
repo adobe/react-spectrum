@@ -1,5 +1,7 @@
 {
   "calendar": "Calendario",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} a {end, date, long}",
   "date": "Fecha",
   "dateRange": "Intervalo de fecha",
   "day": "Día",

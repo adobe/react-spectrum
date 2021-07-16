@@ -49,6 +49,7 @@ export function useDrop(options: DropOptions): DropResult {
 
   let onDragOver = (e: DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
 
     if (e.clientX === state.x && e.clientY === state.y) {
       e.dataTransfer.dropEffect = state.dropEffect;
@@ -92,6 +93,7 @@ export function useDrop(options: DropOptions): DropResult {
   };
 
   let onDragEnter = (e: DragEvent) => {
+    e.stopPropagation();
     state.dragEnterCount++;
     if (state.dragEnterCount > 1) {
       return;
@@ -132,6 +134,7 @@ export function useDrop(options: DropOptions): DropResult {
   };
 
   let onDragLeave = (e: DragEvent) => {
+    e.stopPropagation();
     state.dragEnterCount--;
     if (state.dragEnterCount > 0) {
       return;
@@ -152,6 +155,7 @@ export function useDrop(options: DropOptions): DropResult {
 
   let onDrop = (e: DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
 
     if (typeof options.onDrop === 'function') {
       let dropOperation = DROP_EFFECT_TO_DROP_OPERATION[state.dropEffect];
