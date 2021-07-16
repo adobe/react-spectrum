@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+import {action} from '@storybook/addon-actions';
 import {Item, Picker} from '@react-spectrum/picker';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
@@ -25,8 +25,8 @@ export default {
 function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps: SearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) {
   return (
     <SearchWithin label="Search" {...props}>
-      <SearchField placeholder="Search" {...searchFieldProps} />
-      <Picker defaultSelectedKey="all" {...pickerProps}>
+      <SearchField placeholder="Search" {...searchFieldProps} onChange={action('change')} onSubmit={action('submit')} />
+      <Picker defaultSelectedKey="all" {...pickerProps} onSelectionChange={action('selectionChange')}>
         <Item key="all">All</Item>
         <Item key="campaigns">Campaigns</Item>
         <Item key="audiences">Audiences</Item>
@@ -39,13 +39,13 @@ function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchF
 function renderReverse(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps: SearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) {
   return (
     <SearchWithin label="Search" {...props}>
-      <Picker defaultSelectedKey="all" {...pickerProps}>
+      <Picker defaultSelectedKey="all" {...pickerProps} onSelectionChange={action('selectionChange')}>
         <Item key="all">All</Item>
         <Item key="campaigns">Campaigns</Item>
         <Item key="audiences">Audiences</Item>
         <Item key="tags">Tags</Item>
       </Picker>
-      <SearchField placeholder="Search" {...searchFieldProps} />
+      <SearchField placeholder="Search" {...searchFieldProps} {...searchFieldProps} onChange={action('change')} onSubmit={action('submit')} />
     </SearchWithin>
   );
 }
