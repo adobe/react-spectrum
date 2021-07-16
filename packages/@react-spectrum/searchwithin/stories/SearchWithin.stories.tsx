@@ -17,35 +17,10 @@ import {SearchFieldProps} from '@react-types/searchfield';
 import {SearchWithin} from '../';
 import {SpectrumPickerProps} from '@react-types/select';
 import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('SearchWithin', module)
-  .add(
-    'Default',
-    () => render({})
-  ).add(
-    'isDisabled: true',
-    () => render({isDisabled: true})
-  ).add(
-    'isRequired: true',
-    () => render({isRequired: true})
-  ).add(
-    'isRequired: true, necessityIndicator: label',
-    () => render({isRequired: true, necessityIndicator: 'label'})
-  )
-  .add(
-    'isRequired: false, necessityIndicator: label',
-    () => render({isRequired: false, necessityIndicator: 'label'})
-  ).add(
-    'custom width',
-    () => render({width: 300})
-  ).add(
-    'labelPosition: side',
-    () => render({labelPosition: 'side'})
-  ).add(
-    'auto focus',
-    () => render({}, {autoFocus: true})
-  );
+export default {
+  title: 'SearchWithin'
+};
 
 function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps: SearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) {
   return (
@@ -60,3 +35,24 @@ function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchF
     </SearchWithin>
   );
 }
+
+export const Default = () => render({});
+
+export const isDisabled = () => render({isDisabled: true});
+isDisabled.storyName = 'isDisabled: true';
+
+export const isRequired = () => render({isRequired: true});
+isRequired.storyName = 'isRequired: true';
+
+export const isRequiredNecessityIndicatorLabel = () => render({isRequired: true, necessityIndicator: 'label'});
+isRequiredNecessityIndicatorLabel.storyName = 'isRequired: true, necessityIndicator \'label\' ';
+
+export const isRequiredFalse_necessityIndicator = () => render({isRequired: false, necessityIndicator: 'label'});
+isRequiredFalse_necessityIndicator.storyName = 'isRequired: false, necessityIndicator \'label\' ';
+
+export const CustomWidth = () => render({width: 300});
+
+export const LabelPositionSide = () => render({});
+LabelPositionSide.storyName = 'labelPosition: side';
+
+export const AutoFocus = () => render({}, {autoFocus: true});
