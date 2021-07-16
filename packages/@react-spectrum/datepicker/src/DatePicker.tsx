@@ -13,6 +13,7 @@
 import {Calendar} from '@react-spectrum/calendar';
 import CalendarIcon from '@spectrum-icons/workflow/Calendar';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {Content} from '@react-spectrum/view';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './index.css';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -44,7 +45,7 @@ export function DatePicker(props: SpectrumDatePickerProps) {
   let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({isDisabled});
   let state = useDatePickerState(props);
-  let {comboboxProps, fieldProps, buttonProps, dialogProps} = useDatePicker(props, state);
+  let {groupProps, fieldProps, buttonProps, dialogProps, descProps} = useDatePicker(props, state);
   let {value, setValue, selectDate, isOpen, setOpen} = state;
   let targetRef = useRef<HTMLDivElement>();
   let {direction} = useLocale();
@@ -69,9 +70,10 @@ export function DatePicker(props: SpectrumDatePickerProps) {
       autoFocus={autoFocus}>
       <div
         {...styleProps}
-        {...mergeProps(comboboxProps, hoverProps)}
+        {...mergeProps(groupProps, hoverProps)}
         className={className}
         ref={targetRef}>
+        {descProps && descProps.children && <span {...descProps} />}
         <FocusScope autoFocus={autoFocus}>
           <DatePickerField
             {...fieldProps as any}
@@ -104,10 +106,12 @@ export function DatePicker(props: SpectrumDatePickerProps) {
             <CalendarIcon />
           </FieldButton>
           <Dialog UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')} {...dialogProps}>
-            <Calendar
-              autoFocus
-              value={value}
-              onChange={selectDate} />
+            <Content>
+              <Calendar
+                autoFocus
+                value={value}
+                onChange={selectDate} />
+            </Content>
           </Dialog>
         </DialogTrigger>
       </div>

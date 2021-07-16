@@ -45,6 +45,9 @@ export function useDateField(props: DatePickerProps & DOMProps): DateFieldAria {
       onMouseDown
     },
     segmentProps: {
+      'aria-controls': props['aria-controls'],
+      'aria-haspopup': props['aria-haspopup'],
+      'aria-invalid': props['aria-invalid'],
       // Segments should be labeled by the input id if provided, otherwise the field itself
       'aria-labelledby': fieldProps['aria-labelledby'] || fieldProps.id
     }
