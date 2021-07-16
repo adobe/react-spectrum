@@ -10,14 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+import {CalendarDate} from '@internationalized/date';
 import {RangeValue} from '@react-types/shared';
 
 export interface CalendarStateBase {
   isDisabled: boolean,
   isReadOnly: boolean,
-  currentMonth: Date,
-  focusedDate: Date,
-  setFocusedDate(value: Date): void,
+  currentMonth: CalendarDate,
+  timeZone: string,
+  focusedDate: CalendarDate,
+  setFocusedDate(value: CalendarDate): void,
   focusNextDay(): void,
   focusPreviousDay(): void,
   focusNextWeek(): void,
@@ -29,32 +31,32 @@ export interface CalendarStateBase {
   focusNextYear(): void,
   focusPreviousYear(): void,
   selectFocusedDate(): void,
-  selectDate(date: Date): void,
+  selectDate(date: CalendarDate): void,
   isFocused: boolean,
   setFocused(value: boolean): void,
   weeksInMonth: number,
   weekStart: number,
   daysInMonth: number,
-  weekDays: Array<Date>,
-  getCellDate(weekIndex: number, dayIndex: number): Date,
-  isInvalid(date: Date): boolean,
-  isSelected(date: Date): boolean,
-  isCellFocused(date: Date): boolean,
-  isCellDisabled(date: Date): boolean,
+  weekDays: Array<CalendarDate>,
+  getCellDate(weekIndex: number, dayIndex: number): CalendarDate,
+  isInvalid(date: CalendarDate): boolean,
+  isSelected(date: CalendarDate): boolean,
+  isCellFocused(date: CalendarDate): boolean,
+  isCellDisabled(date: CalendarDate): boolean,
   isPreviousMonthInvalid(): boolean,
   isNextMonthInvalid(): boolean
 }
 
 export interface CalendarState extends CalendarStateBase {
-  value: Date,
+  value: CalendarDate,
   setValue(value: Date): void
 }
 
 export interface RangeCalendarState extends CalendarStateBase {
-  value: RangeValue<Date>,
+  value: RangeValue<CalendarDate>,
   setValue(value: RangeValue<Date>): void,
-  highlightDate(date: Date): void,
-  anchorDate: Date | null,
-  setAnchorDate(date: Date | null): void,
-  highlightedRange: RangeValue<Date>
+  highlightDate(date: CalendarDate): void,
+  anchorDate: CalendarDate | null,
+  setAnchorDate(date: CalendarDate | null): void,
+  highlightedRange: RangeValue<CalendarDate>
 }

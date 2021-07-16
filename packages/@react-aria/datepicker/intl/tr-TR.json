@@ -1,5 +1,7 @@
 {
   "calendar": "Takvim",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} ila {end, date, long}",
   "date": "Tarih",
   "dateRange": "Tarih Aralığı",
   "day": "Gün",

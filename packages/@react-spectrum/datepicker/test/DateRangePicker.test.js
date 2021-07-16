@@ -17,6 +17,18 @@ import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 
+
+function pointerEvent(type, opts) {
+  let evt = new Event(type, {bubbles: true, cancelable: true});
+  Object.assign(evt, {
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false,
+    button: opts.button || 0
+  }, opts);
+  return evt;
+}
+
 describe('DateRangePicker', function () {
   // there are live announcers, we need to be able to get rid of them after each test or get a warning in the console about act()
   beforeAll(() => jest.useFakeTimers());
@@ -28,9 +40,9 @@ describe('DateRangePicker', function () {
   });
   describe('basics', function () {
     it('should render a DateRangePicker with a specified date range', function () {
-      let {getByRole, getAllByRole} = render(<DateRangePicker value={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}} />);
+      let {getAllByRole} = render(<DateRangePicker value={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}} />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getAllByRole('group')[0];
       expect(combobox).toBeVisible();
       expect(combobox).not.toHaveAttribute('aria-disabled');
       expect(combobox).not.toHaveAttribute('aria-invalid');
@@ -41,7 +53,7 @@ describe('DateRangePicker', function () {
       expect(segments[0].textContent).toBe('2');
       expect(segments[0].getAttribute('aria-label')).toBe('Month');
       expect(segments[0].getAttribute('aria-valuenow')).toBe('2');
-      expect(segments[0].getAttribute('aria-valuetext')).toBe('February');
+      expect(segments[0].getAttribute('aria-valuetext')).toBe('2 − February');
       expect(segments[0].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[0].getAttribute('aria-valuemax')).toBe('12');
 
@@ -62,7 +74,7 @@ describe('DateRangePicker', function () {
       expect(segments[3].textContent).toBe('5');
       expect(segments[3].getAttribute('aria-label')).toBe('Month');
       expect(segments[3].getAttribute('aria-valuenow')).toBe('5');
-      expect(segments[3].getAttribute('aria-valuetext')).toBe('May');
+      expect(segments[3].getAttribute('aria-valuetext')).toBe('5 − May');
       expect(segments[3].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[3].getAttribute('aria-valuemax')).toBe('12');
 
@@ -90,9 +102,9 @@ describe('DateRangePicker', function () {
         minute: 'numeric',
         second: 'numeric'
       };
-      let {getByRole, getAllByRole} = render(<DateRangePicker value={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}} formatOptions={format} />);
+      let {getAllByRole} = render(<DateRangePicker value={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}} formatOptions={format} />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getAllByRole('group')[0];
       expect(combobox).toBeVisible();
       expect(combobox).not.toHaveAttribute('aria-disabled');
       expect(combobox).not.toHaveAttribute('aria-invalid');
@@ -231,9 +243,9 @@ describe('DateRangePicker', function () {
 
   describe('labeling', function () {
     it('should support labeling with a default label', function () {
-      let {getByRole, getByLabelText} = render(<DateRangePicker />);
+      let {getAllByRole, getByLabelText} = render(<DateRangePicker />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getAllByRole('group')[0];
       expect(combobox).toHaveAttribute('aria-label', 'Date Range');
       expect(combobox).toHaveAttribute('id');
 
@@ -243,7 +255,7 @@ describe('DateRangePicker', function () {
       let endDate = getByLabelText('End Date');
       expect(endDate).toHaveAttribute('aria-labelledby', `${combobox.id} ${endDate.id}`);
 
-      let button = getByRole('button');
+      let button = getAllByRole('button')[0];
       expect(button).toHaveAttribute('aria-label', 'Calendar');
       expect(button).toHaveAttribute('id');
       expect(button).toHaveAttribute('aria-labelledby', `${combobox.id} ${button.id}`);
@@ -262,9 +274,9 @@ describe('DateRangePicker', function () {
     });
 
     it('should support labeling with aria-label', function () {
-      let {getByRole, getByLabelText} = render(<DateRangePicker aria-label="Birth date" />);
+      let {getAllByRole, getByLabelText} = render(<DateRangePicker aria-label="Birth date" />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getAllByRole('group')[0];
       expect(combobox).toHaveAttribute('aria-label', 'Birth date');
       expect(combobox).toHaveAttribute('id');
 
@@ -274,7 +286,7 @@ describe('DateRangePicker', function () {
       let endDate = getByLabelText('End Date');
       expect(endDate).toHaveAttribute('aria-labelledby', `${combobox.id} ${endDate.id}`);
 
-      let button = getByRole('button');
+      let button = getAllByRole('button')[0];
       expect(button).toHaveAttribute('aria-label', 'Calendar');
       expect(button).toHaveAttribute('id');
       expect(button).toHaveAttribute('aria-labelledby', `${combobox.id} ${button.id}`);
@@ -293,9 +305,9 @@ describe('DateRangePicker', function () {
     });
 
     it('should support labeling with aria-labelledby', function () {
-      let {getByRole, getByLabelText} = render(<DateRangePicker aria-labelledby="foo" />);
+      let {getAllByRole, getByLabelText} = render(<DateRangePicker aria-labelledby="foo" />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getAllByRole('group')[0];
       expect(combobox).not.toHaveAttribute('aria-label');
       expect(combobox).toHaveAttribute('aria-labelledby', 'foo');
 
@@ -305,7 +317,7 @@ describe('DateRangePicker', function () {
       let endDate = getByLabelText('End Date');
       expect(endDate).toHaveAttribute('aria-labelledby', `foo ${endDate.id}`);
 
-      let button = getByRole('button');
+      let button = getAllByRole('button')[0];
       expect(button).toHaveAttribute('aria-label', 'Calendar');
       expect(button).toHaveAttribute('id');
       expect(button).toHaveAttribute('aria-labelledby', `foo ${button.id}`);
@@ -345,7 +357,8 @@ describe('DateRangePicker', function () {
       let endDate = getByLabelText('End Date');
       let endSegments = getAllByRoleInContainer(endDate, 'spinbutton');
 
-      fireEvent.mouseDown(rangeDash);
+      fireEvent(rangeDash, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      triggerPress(rangeDash);
       expect(endSegments[0]).toHaveFocus();
     });
   });
