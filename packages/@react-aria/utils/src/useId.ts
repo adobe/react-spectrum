@@ -37,9 +37,7 @@ export function useId(defaultId?: string): string {
     }
   };
 
-  if (res !== null) {
-    idsUpdaterMap.set(res, updateValue);
-  }
+  idsUpdaterMap.set(res, updateValue);
 
   useLayoutEffect(() => {
     isRendering.current = false;
@@ -48,9 +46,7 @@ export function useId(defaultId?: string): string {
   useLayoutEffect(() => {
     let r = res;
     return () => {
-      if (r !== null) {
-        idsUpdaterMap.delete(r);
-      }
+      idsUpdaterMap.delete(r);
     };
   }, [res]);
 
@@ -94,12 +90,15 @@ export function mergeIds(idA: string, idB: string): string {
  */
 export function useSlotId(): string {
   let id = useId();
+  let [resolvedId, setResolvedId] = useState(id);
   useLayoutEffect(() => {
     let setCurr = idsUpdaterMap.get(id);
     if (setCurr && !document.getElementById(id)) {
-      setCurr(null);
+      setResolvedId(null);
+    } else {
+      setResolvedId(id);
     }
   }, [id]);
 
-  return id;
+  return resolvedId;
 }
