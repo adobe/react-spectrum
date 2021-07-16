@@ -16,8 +16,6 @@ import {HeadingProps} from '@react-types/text';
 import React, {ElementType, forwardRef} from 'react';
 import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
-const slotDOMProps = new Set(['aria-current']);
-
 function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
   props = useSlotProps(props, 'heading');
 
@@ -31,7 +29,7 @@ function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
   let HeadingTag = `h${level}` as ElementType;
 
   return (
-    <HeadingTag {...filterDOMProps(otherProps, {propNames: slotDOMProps})} {...styleProps} ref={domRef}>
+    <HeadingTag {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
       {children}
     </HeadingTag>
   );
