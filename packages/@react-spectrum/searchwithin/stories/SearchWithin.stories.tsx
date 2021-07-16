@@ -64,6 +64,8 @@ isRequiredNecessityIndicatorLabel.storyName = 'isRequired: true, necessityIndica
 export const isRequiredFalse_necessityIndicator = () => render({isRequired: false, necessityIndicator: 'label'});
 isRequiredFalse_necessityIndicator.storyName = 'isRequired: false, necessityIndicator \'label\' ';
 
+export const PickerDisabled = () => render({}, {}, {isDisabled: true});
+
 export const CustomWidth = () => render({width: 300});
 
 export const LabelPositionSide = () => render({});
