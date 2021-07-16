@@ -13,10 +13,10 @@
 import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
 import {DatePickerProps} from '@react-types/datepicker';
 import {DOMProps} from '@react-types/shared';
-import {HTMLAttributes, useState} from 'react';
+import {HTMLAttributes, RefObject, useMemo, useRef, useState} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useId} from '@react-aria/utils';
+import {mergeProps, useEvent, useId} from '@react-aria/utils';
 import {useDateFormatter, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useFocusManager} from '@react-aria/focus';
 import {useMediaQuery} from '@react-spectrum/utils';
@@ -27,9 +27,9 @@ interface DateSegmentAria {
   segmentProps: HTMLAttributes<HTMLDivElement>
 }
 
-export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateSegment, state: DatePickerFieldState): DateSegmentAria {
+export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateSegment, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateSegmentAria {
   let [enteredKeys, setEnteredKeys] = useState('');
-  let {direction} = useLocale();
+  let {locale, direction} = useLocale();
   let messageFormatter = useMessageFormatter(intlMessages);
   let focusManager = useFocusManager();
 
@@ -95,6 +95,7 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
       case 'Tab':
         break;
       case 'Backspace': {
+        // Safari on iOS does not fire beforeinput for the backspace key because the cursor is at the start.
         e.preventDefault();
         if (isNumeric(segment.text) && !props.isReadOnly) {
           let newValue = segment.text.slice(0, -1);
@@ -103,24 +104,31 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
         }
         break;
       }
-      default:
-        e.preventDefault();
-        e.stopPropagation();
-        if ((isNumeric(e.key) || /^[ap]$/.test(e.key)) && !props.isReadOnly) {
-          onInput(e.key);
-        }
     }
   };
+
+  // Safari dayPeriod option doesn't work...
+  let amPmFormatter = useDateFormatter({hour: 'numeric', hour12: true});
+  let am = useMemo(() => {
+    let date = new Date();
+    date.setHours(0);
+    return amPmFormatter.formatToParts(date).find(part => part.type === 'dayPeriod').value;
+  }, [amPmFormatter]);
+
+  let pm = useMemo(() => {
+    let date = new Date();
+    date.setHours(12);
+    return amPmFormatter.formatToParts(date).find(part => part.type === 'dayPeriod').value;
+  }, [amPmFormatter]);
 
   let onInput = (key: string) => {
     let newValue = enteredKeys + key;
 
     switch (segment.type) {
       case 'dayPeriod':
-        // TODO: internationalize
-        if (key === 'a') {
+        if (key.localeCompare(am[0], locale, {sensitivity: 'base'}) === 0) {
           state.setSegment('dayPeriod', 0);
-        } else if (key === 'p') {
+        } else if (key.localeCompare(pm[0], locale, {sensitivity: 'base'}) === 0) {
           state.setSegment('dayPeriod', 12);
         }
         focusManager.focusNext();
@@ -137,8 +145,10 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
 
         let numberValue = parseNumber(newValue);
         let segmentValue = numberValue;
-        if (segment.type === 'hour' && state.dateFormatter.resolvedOptions().hour12 && numberValue === 12) {
-          segmentValue = 0;
+        if (segment.type === 'hour' && state.dateFormatter.resolvedOptions().hour12) {
+          if (segment.value > 12) {
+            numberValue += 12;
+          }
         } else if (numberValue > segment.maxValue) {
           segmentValue = parseNumber(key);
         }
@@ -159,6 +169,51 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
   let onFocus = () => {
     setEnteredKeys('');
   };
+
+  let compositionRef = useRef('');
+  useEvent(ref, 'beforeinput', e => {
+    e.preventDefault();
+
+    switch (e.inputType) {
+      case 'deleteContentBackward':
+      case 'deleteContentForward':
+        if (isNumeric(segment.text) && !props.isReadOnly) {
+          let newValue = segment.text.slice(0, -1);
+          state.setSegment(segment.type, newValue.length === 0 ? segment.minValue : parseNumber(newValue));
+          setEnteredKeys(newValue);
+        }
+        break;
+      case 'insertCompositionText':
+        // insertCompositionText cannot be canceled.
+        // Record the current state of the element so we can restore it in the `input` event below.
+        compositionRef.current = ref.current.textContent;
+
+        // Safari gets stuck in a composition state unless we also assign to the value here.
+        // eslint-disable-next-line no-self-assign
+        ref.current.textContent = ref.current.textContent;
+        break;
+      default:
+        if (e.data != null) {
+          onInput(e.data);
+        }
+        break;
+    }
+  });
+
+  useEvent(ref, 'input', (e: InputEvent) => {
+    let {inputType, data} = e;
+    switch (inputType) {
+      case 'insertCompositionText':
+        // Reset the DOM to how it was in the beforeinput event.
+        ref.current.textContent = compositionRef.current;
+
+        // Android sometimes fires key presses of letters as composition events. Need to handle am/pm keys here too.
+        if (data.localeCompare(am[0], locale, {sensitivity: 'base'}) === 0 || data.localeCompare(pm[0], locale, {sensitivity: 'base'}) === 0) {
+          onInput(data);
+        }
+        break;
+    }
+  });
 
   let {pressProps} = usePress({
     onPressStart: (e) => {
@@ -189,7 +244,10 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
       'aria-labelledby': `${props['aria-labelledby']} ${id}`,
       contentEditable: !props.isDisabled,
       suppressContentEditableWarning: !props.isDisabled,
-      inputMode: props.isDisabled ? undefined : 'numeric',
+      spellCheck: false,
+      autoCapitalize: false,
+      autoCorrect: false,
+      inputMode: props.isDisabled || segment.type === 'dayPeriod' ? undefined : 'numeric',
       tabIndex: props.isDisabled ? undefined : 0,
       onKeyDown,
       onFocus
