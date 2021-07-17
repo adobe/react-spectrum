@@ -128,6 +128,17 @@ class VersionManager {
     for (let pkg of monopackages) {
       this.changedPackages.add(pkg);
     }
+
+    let all = process.argv.find(arg => arg === '--all');
+    if (all) {
+      for (let name in this.workspacePackages) {
+        let filePath = this.workspacePackages[name].location + '/package.json';
+        let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        if (!pkg.private) {
+          this.changedPackages.add(name);
+        }
+      }
+    }
   }
 
   async getVersionBumps() {
@@ -252,7 +263,13 @@ class VersionManager {
 
         if (this.workspacePackages[p].workspaceDependencies.includes(pkg)) {
           if (this.existingPackages.has(p)) {
-            this.addReleasedPackage(p, bump, true);
+            // Bump a patch version of the dependent package if it's not also a prerelease.
+            // Otherwise, bump to the next prerelease in the existing status.
+            let filePath = this.workspacePackages[p].location + '/package.json';
+            let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+            let prerelease = semver.parse(pkg.version).prerelease;
+            let b = prerelease.length === 0 ? 'patch' : prerelease[0];
+            this.addReleasedPackage(p, b, true);
           }
         }
       }

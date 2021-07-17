@@ -32,6 +32,9 @@ Cell.getCollectionNode = function* getCollectionNode<T>(props: CellProps): Gener
   };
 };
 
+/**
+ * A Cell represents the value of a single Column within a Table Row.
+ */
 // We don't want getCollectionNode to show up in the type definition
 let _Cell = Cell as (props: CellProps) => JSX.Element;
 export {_Cell as Cell};

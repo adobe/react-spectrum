@@ -647,12 +647,13 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
-  `('$Name properly formats defaultValue', () => {
+  `('$Name calls onChange with typed value and properly formats', () => {
     let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'EUR'}});
 
     act(() => {textField.focus();});
     typeText(textField, '12 .83');
     act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '€12.83');
 
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(12.83);
@@ -1233,8 +1234,8 @@ describe('NumberField', function () {
 
   it.each`
     Name              | props                                                                      | locale
-    ${'US Euros'}     | ${{defaultValue: 10, formatOptions: {style: 'currency', currency: 'SAR'}}} | ${'en-US'}
-  `('$Name typing in locale stays consistent', ({props, locale}) => {
+    ${'US SAR'}       | ${{defaultValue: 10, formatOptions: {style: 'currency', currency: 'SAR'}}} | ${'en-US'}
+  `('$Name will not allow invalid characters', ({props, locale}) => {
     let {textField} = renderNumberField({onChange: onChangeSpy, ...props}, {locale});
     expect(textField).toHaveAttribute('value', 'SAR 10.00');
 
@@ -1921,7 +1922,7 @@ describe('NumberField', function () {
       InputEvent.prototype.getTargetRanges = getTargetRanges;
     });
 
-    it.each(['deleteContentBackward', 'deleteContentForward', 'deleteContent', 'deleteByCut', 'deleteByDrag'])('allows %s of whole currency symbol', (inputType) => {
+    it.each(['deleteHardLineBackward', 'deleteSoftLineBackward', 'deleteContentBackward', 'deleteContentForward', 'deleteContent', 'deleteByCut', 'deleteByDrag'])('allows %s of whole currency symbol', (inputType) => {
       let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
 
       act(() => {textField.focus();});
@@ -1941,7 +1942,7 @@ describe('NumberField', function () {
       expect(proceed).toBe(true);
     });
 
-    it.each(['deleteContentBackward', 'deleteContentForward', 'deleteContent', 'deleteByCut', 'deleteByDrag'])('prevents %s of partial currency symbol', (inputType) => {
+    it.each(['deleteHardLineBackward', 'deleteSoftLineBackward', 'deleteContentBackward', 'deleteContentForward', 'deleteContent', 'deleteByCut', 'deleteByDrag'])('prevents %s of partial currency symbol', (inputType) => {
       let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
 
       act(() => {textField.focus();});

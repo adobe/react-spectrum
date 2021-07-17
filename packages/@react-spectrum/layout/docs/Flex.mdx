@@ -44,6 +44,9 @@ with consistent space between each item. The gap can be defined with [Spectrum d
 to ensure consistency across applications, and allow the layout to adapt to different devices automatically.
 In addition, these values can be autocompleted in many IDEs for convenience.
 
+All `Flex` props also support object syntax to define responsive layouts that change at certain breakpoints.
+See the [layout docs](layout.html#responsive-layout) for more details.
+
 ## Examples
 
 ### Vertical stack
@@ -133,7 +136,7 @@ an `alignItems` value to account for this.
 ### Justification
 
 The `justifyContent` prop can be used to align items along the main axis. When `direction` is `"column"`, this refers
-to vertical alignment, and when `direction` is `"column"` it refers to horizontal alignment.
+to vertical alignment, and when `direction` is `"row"` it refers to horizontal alignment.
 
 This example vertically centers the stack of items within the available space defined by a container.
 

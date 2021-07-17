@@ -34,7 +34,7 @@ keywords: [menu, dropdown, action menu]
   packageData={packageData}
   componentNames={['MenuTrigger', 'Menu']}
   sourceData={[
-    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/popovers/'}
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/popover/'}
   ]} />
 
 ## Example
@@ -54,9 +54,7 @@ keywords: [menu, dropdown, action menu]
 
 ## Content
 
-The MenuTrigger accepts exactly two children: the Menu and the element which
-triggers the opening of the Menu. The trigger element must be the first child passed into
-the MenuTrigger and should support press events.
+The MenuTrigger accepts exactly two children: the element which triggers the opening of the Menu and the Menu itself. The trigger element must be the first child passed into the MenuTrigger and should support press events.
 
 ## Events
 
@@ -92,18 +90,14 @@ function Example() {
 
 ### Align and direction
 
-[View guidelines](https://spectrum.adobe.com/page/popovers/#Placement)
+[View guidelines](https://spectrum.adobe.com/page/popover/#Placement)
 
 The `align` prop aligns the Menu relative to the trigger and the `direction` prop controls the direction the Menu will render.
 
 ```tsx example
-import More from '@spectrum-icons/workflow/More';
-
 <Flex gap="size-100">
   <MenuTrigger align="start">
-    <ActionButton aria-label="More options">
-      <More />
-    </ActionButton>
+    <ActionButton>Edit</ActionButton>
     <Menu>
       <Item key="cut">Cut</Item>
       <Item key="copy">Copy</Item>
@@ -111,13 +105,27 @@ import More from '@spectrum-icons/workflow/More';
     </Menu>
   </MenuTrigger>
   <MenuTrigger align="end" direction="top" shouldFlip={false}>
-    <ActionButton>
-      Edit options
-    </ActionButton>
+    <ActionButton>View</ActionButton>
+    <Menu>
+      <Item key="side">Side bar</Item>
+      <Item key="options">Page options</Item>
+      <Item key="edit">Edit Panel</Item>
+    </Menu>
+  </MenuTrigger>
+  <MenuTrigger direction="start" align="start">
+    <ActionButton>Edit</ActionButton>
     <Menu>
       <Item key="cut">Cut</Item>
       <Item key="copy">Copy</Item>
       <Item key="paste">Paste</Item>
+    </Menu>
+  </MenuTrigger>
+  <MenuTrigger direction="end" align="end">
+    <ActionButton>View</ActionButton>
+    <Menu>
+      <Item key="side">Side bar</Item>
+      <Item key="options">Page options</Item>
+      <Item key="edit">Edit Panel</Item>
     </Menu>
   </MenuTrigger>
 </Flex>
@@ -147,24 +155,24 @@ By default, the Menu flips direction automatically upon opening when space is li
 ```tsx example
 <Flex gap="size-100">
   <MenuTrigger shouldFlip>
-    <ActionButton aria-label="More options">
-      <More />
+    <ActionButton>
+      View
+    </ActionButton>
+    <Menu>
+      <Item key="side">Side bar</Item>
+      <Item key="options">Page options</Item>
+      <Item key="edit">Edit Panel</Item>
+    </Menu>
+  </MenuTrigger>
+  <MenuTrigger shouldFlip={false}>
+    <ActionButton>
+      Edit
     </ActionButton>
     <Menu>
       <Item key="cut">Cut</Item>
       <Item key="copy">Copy</Item>
       <Item key="paste">Paste</Item>
     </Menu>
-    </MenuTrigger>
-    <MenuTrigger shouldFlip={false}>
-      <ActionButton>
-        Edit
-      </ActionButton>
-      <Menu>
-        <Item key="cut">Cut</Item>
-        <Item key="copy">Copy</Item>
-        <Item key="paste">Paste</Item>
-      </Menu>
   </MenuTrigger>
 </Flex>
 ```
