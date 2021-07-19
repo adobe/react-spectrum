@@ -1,5 +1,7 @@
 {
   "calendar": "Kalendarz",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} do {end, date, long}",
   "date": "Data",
   "dateRange": "Zakres dat",
   "day": "Dzień",

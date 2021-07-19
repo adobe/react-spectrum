@@ -11,6 +11,7 @@
  */
 
 export type {CheckboxGroupState} from '@react-stately/checkbox';
+export type {ComboBoxState} from '@react-stately/combobox';
 export type {ListData} from '@react-stately/data';
 export type {ListProps, ListState, SingleSelectListProps, SingleSelectListState} from '@react-stately/list';
 export type {MenuTriggerState} from '@react-stately/menu';
@@ -21,11 +22,13 @@ export type {SelectState} from '@react-stately/select';
 export type {SliderState} from '@react-stately/slider';
 export type {MultipleSelectionManager, MultipleSelectionState, SingleSelectionState} from '@react-stately/selection';
 export type {NumberFieldState} from '@react-stately/numberfield';
+export type {TabListState} from '@react-stately/tabs';
 export type {ToggleState} from '@react-stately/toggle';
 export type {TooltipTriggerState} from '@react-stately/tooltip';
 export type {TreeProps, TreeState} from '@react-stately/tree';
 
 export {useCheckboxGroupState} from '@react-stately/checkbox';
+export {useComboBoxState} from '@react-stately/combobox';
 export {Item, Section, useCollection} from '@react-stately/collections';
 export {useAsyncList, useListData, useTreeData} from '@react-stately/data';
 export {useListState, useSingleSelectListState} from '@react-stately/list';
@@ -37,6 +40,7 @@ export {useSearchFieldState} from '@react-stately/searchfield';
 export {useSelectState} from '@react-stately/select';
 export {useSliderState} from '@react-stately/slider';
 export {useMultipleSelectionState} from '@react-stately/selection';
+export {useTabListState} from '@react-stately/tabs';
 export {useToggleState} from '@react-stately/toggle';
 export {useTooltipTriggerState} from '@react-stately/tooltip';
 export {useTreeState} from '@react-stately/tree';

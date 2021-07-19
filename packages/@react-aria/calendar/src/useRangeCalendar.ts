@@ -13,7 +13,7 @@
 import {CalendarAria} from './types';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isSameDay} from 'date-fns';
+import {isSameDay, toDate} from '@internationalized/date';
 import {mergeProps} from '@react-aria/utils';
 import {RangeCalendarProps} from '@react-types/calendar';
 import {RangeCalendarState} from '@react-stately/calendar';
@@ -31,13 +31,13 @@ export function useRangeCalendar(props: RangeCalendarProps, state: RangeCalendar
       // Use a single date message if the start and end dates are the same day,
       // otherwise include both dates.
       if (isSameDay(start, end)) {
-        return formatMessage('selectedDateDescription', {date: start});
+        return formatMessage('selectedDateDescription', {date: toDate(start, state.timeZone)});
       } else {
-        return formatMessage('selectedRangeDescription', {start, end});
+        return formatMessage('selectedRangeDescription', {start: toDate(start, state.timeZone), end: toDate(end, state.timeZone)});
       }
     }
     return '';
-  }, [start, end, state.anchorDate, formatMessage]);
+  }, [start, end, state.anchorDate, state.timeZone, formatMessage]);
 
   let onKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {

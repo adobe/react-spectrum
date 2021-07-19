@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusEvent, HTMLAttributes, Key, KeyboardEvent, RefObject, useEffect} from 'react';
+import {FocusEvent, HTMLAttributes, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
 import {focusWithoutScrolling, isMac, mergeProps} from '@react-aria/utils';
@@ -284,8 +284,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     }
   };
 
+  const autoFocusRef = useRef(autoFocus);
   useEffect(() => {
-    if (autoFocus) {
+    if (autoFocusRef.current) {
       let focusedKey = null;
 
       // Check focus strategy to determine which item to focus
@@ -309,6 +310,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         focusSafely(ref.current);
       }
     }
+    autoFocusRef.current = false;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -29,7 +29,8 @@ interface PopoverWrapperProps extends HTMLAttributes<HTMLElement> {
   onClose?: () => void,
   shouldCloseOnBlur?: boolean,
   isKeyboardDismissDisabled?: boolean,
-  isNonModal?: boolean
+  isNonModal?: boolean,
+  isDismissable?: boolean
 }
 
 /**
@@ -47,7 +48,18 @@ let arrowPlacement = {
 };
 
 function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, placement, arrowProps, onClose, shouldCloseOnBlur, hideArrow, isKeyboardDismissDisabled, isNonModal, ...otherProps} = props;
+  let {
+    children,
+    placement,
+    arrowProps,
+    onClose,
+    shouldCloseOnBlur,
+    hideArrow,
+    isKeyboardDismissDisabled,
+    isNonModal,
+    isDismissable = true,
+    ...otherProps
+  } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
 
@@ -62,7 +74,8 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
         shouldCloseOnBlur={shouldCloseOnBlur}
         isKeyboardDismissDisabled={isKeyboardDismissDisabled}
         hideArrow={hideArrow}
-        isNonModal={isNonModal}>
+        isNonModal={isNonModal}
+        isDismissable={isDismissable}>
         {children}
       </PopoverWrapper>
     </Overlay>
@@ -70,9 +83,22 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
 }
 
 const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HTMLDivElement>) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {children, placement = 'bottom', arrowProps, isOpen, hideArrow, shouldCloseOnBlur, isKeyboardDismissDisabled, isNonModal, ...otherProps} = props;
-  let {overlayProps} = useOverlay({...props, isDismissable: true}, ref);
+  let {
+    children,
+    placement = 'bottom',
+    arrowProps,
+    isOpen,
+    hideArrow,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    shouldCloseOnBlur,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isKeyboardDismissDisabled,
+    isNonModal,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isDismissable,
+    ...otherProps
+  } = props;
+  let {overlayProps} = useOverlay({...props, isDismissable: isDismissable && isOpen}, ref);
   let {modalProps} = useModal({
     isDisabled: isNonModal
   });
