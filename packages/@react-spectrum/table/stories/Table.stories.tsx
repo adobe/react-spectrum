@@ -476,7 +476,7 @@ storiesOf('TableView', module)
               </span>
             </Cell>
             <Cell>
-              <span style={{width: '70%', backgroundColor: 'lightblue'}}>
+              <span style={{backgroundColor: 'lightblue'}}>
                 very very very very very very long long long long long description
               </span>
             </Cell>
