@@ -7,9 +7,9 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. -->
 
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
-- RFC PR: (leave this empty, to be filled in later)
-- Authors: (the names of everyone contributing to this RFC)
+- Start Date: 2021-06-28
+- RFC PR: https://github.com/adobe/react-spectrum/pull/2068
+- Authors: Rob Snow @snowystinger
 
 # Upgrade to DNA 7
 
@@ -17,7 +17,7 @@ governing permissions and limitations under the License. -->
 
 <!-- One-paragraph explanation of the feature. -->
 This RFC entails the work needed to upgrade us from our custom vars to `@spectrum-css/vars`. It will outline
-how to install DNA, move components to the new tokens, what you should do when you find a bug in the new DNA version,
+how to install DNA, move components to the new tokens, what to do when you find a bug in the new DNA version,
 and build our components with the new tokens, both Parcel and Webpack.
 
 ## Motivation
@@ -93,7 +93,8 @@ harder for a contributor or one of us to fix and may take longer.
     change for them? If so, how are you going to minimize the disruption
     to existing users?
 -->
-This RFC should result in no changes to existing users of React-Spectrum.
+This RFC should result in no changes to existing users of React-Spectrum, unless anyone was customizing based on token names.
+Token names are not considered API right now, so it's not something we really need to worry about yet.
 
 ## Alternatives
 
@@ -154,3 +155,4 @@ We'll likely want someone from Design who can answer questions if something is i
     If there is an issue, pull request, or other URL that provides useful
     context for this proposal, please include those links here.
 -->
+Spectrum-CSS is doing similar work here: https://github.com/adobe/spectrum-css/pull/1138
