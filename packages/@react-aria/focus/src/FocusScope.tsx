@@ -301,14 +301,16 @@ function focusFirstInScope(scope: HTMLElement[]) {
 }
 
 function useAutoFocus(scopeRef: RefObject<HTMLElement[]>, autoFocus: boolean) {
+  const autoFocusRef = React.useRef(autoFocus);
   useEffect(() => {
-    if (autoFocus) {
+    if (autoFocusRef.current) {
       activeScope = scopeRef;
       if (!isElementInScope(document.activeElement, activeScope.current)) {
         focusFirstInScope(scopeRef.current);
       }
     }
-  }, [scopeRef, autoFocus]);
+    autoFocusRef.current = false;
+  }, []);
 }
 
 function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boolean, contain: boolean) {

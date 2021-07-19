@@ -159,4 +159,14 @@ storiesOf('Flex', module)
         <View backgroundColor="magenta-600" order={1} width="size-800" height="size-800" />
       </Flex>
     )
+  )
+  .add(
+    'responsive',
+    () => (
+      <Flex direction={{base: 'column', L: 'row'}} gap={{base: 'size-100', M: 'size-250', L: 'size-350'}}>
+        <View backgroundColor="celery-600"  width="size-800" height="size-800" />
+        <View backgroundColor="blue-600"  width="size-800" height="size-800" />
+        <View backgroundColor="magenta-600" width="size-800" height="size-800" />
+      </Flex>
+    )
   );

@@ -22,6 +22,7 @@ import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
+import {toDate} from '@internationalized/date';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
@@ -38,7 +39,12 @@ export function CalendarBase(props: CalendarBaseProps) {
     aria,
     ...otherProps
   } = props;
-  let monthDateFormatter = useDateFormatter({month: 'long', year: 'numeric'});
+  let monthDateFormatter = useDateFormatter({
+    month: 'long',
+    year: 'numeric',
+    era: state.currentMonth.calendar.identifier !== 'gregory' ? 'long' : undefined,
+    calendar: state.currentMonth.calendar.identifier
+  });
   let {
     calendarProps,
     calendarTitleProps,
@@ -64,7 +70,7 @@ export function CalendarBase(props: CalendarBaseProps) {
         <h2
           {...calendarTitleProps}
           className={classNames(styles, 'spectrum-Calendar-title')}>
-          {monthDateFormatter.format(state.currentMonth)}
+          {monthDateFormatter.format(toDate(state.currentMonth, state.timeZone))}
         </h2>
         <ActionButton
           {...prevButtonProps}
