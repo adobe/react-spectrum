@@ -56,11 +56,17 @@ let indexHTML = `<!DOCTYPE html>
 
 let indexJS = `import React from "react";
 import ReactDOM from "react-dom";
+import { Provider, defaultTheme } from "@adobe/react-spectrum";
 
 import Example from "./Example";
 
 const rootElement = document.getElementById("root");
-ReactDOM.render(<Example />, rootElement);
+ReactDOM.render(
+  <Provider theme={defaultTheme}>
+    <Example />
+  </Provider>,
+  rootElement
+);
 `;
 
 export function createCodeSandbox(e) {
@@ -71,7 +77,7 @@ export function createCodeSandbox(e) {
   let packageInfo = e.currentTarget.closest('article').querySelector('tbody').childNodes;
   let packageName = packageInfo[0].innerText.split('add ')[1];
   let packageVersion = packageInfo[1].innerText.split('\t')[1];
-  let importText = packageInfo[2].innerText.split('\t')[1];
+  let imports = packageInfo[2].innerText.split('\t')[1];
   let exampleTitle = document.querySelector('h1').textContent;
 
   // Get example code.
@@ -79,21 +85,27 @@ export function createCodeSandbox(e) {
 
   // Separate import lines.
   let lines = exampleCode.split('\n');
-  let additionalImports = lines.filter(line => line.startsWith('import')).join('');
+  imports = `${imports}\n${lines.filter(line => line.startsWith('import')).join('\n')}`;
   exampleCode = lines.filter(line => !line.startsWith('import')).join('\n');
 
-  let example = `import React from 'react';
-import { Provider, defaultTheme } from "@adobe/react-spectrum";
-${importText};
-${additionalImports}
+  // Put imports at top, export component, and put code inside render if needed.
+  if (/^\s*function (.|\n)*}\s*$/.test(exampleCode)) {
+    exampleCode = `import React from 'react';
+${imports}
+
+export default ${exampleCode}
+`;
+  } else {
+    exampleCode = `import React from 'react';
+${imports}
+
 export default function Example() {
   return (
-    <Provider theme={defaultTheme}>
-      ${exampleCode}
-    </Provider>
-    );
+    ${exampleCode}
+  );
+}
+`;
   }
-  `;
 
   fetch('https://codesandbox.io/api/v1/sandboxes/define?json=1', {
     method: 'POST',
@@ -116,7 +128,7 @@ export default function Example() {
           }
         },
         'Example.js': {
-          content: example
+          content: exampleCode
         },
         'index.js': {
           content: indexJS
