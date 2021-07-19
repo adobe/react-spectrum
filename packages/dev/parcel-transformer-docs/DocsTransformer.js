@@ -549,7 +549,7 @@ module.exports = new Transformer({
             result.default = tag.description;
           } else if (tag.title === 'access') {
             result.access = tag.description;
-          } else if (tag.title === 'private') {
+          } else if (tag.title === 'private' || tag.title === 'deprecated') {
             result.access = 'private';
           } else if (tag.title === 'protected') {
             result.access = 'protected';

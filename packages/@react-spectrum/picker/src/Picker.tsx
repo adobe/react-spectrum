@@ -118,8 +118,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     <FocusScope restoreFocus>
       <DismissButton onDismiss={() => state.close()} />
       <ListBoxBase
+        {...menuProps}
         ref={listboxRef}
-        domProps={menuProps}
         disallowEmptySelection
         autoFocus={state.focusStrategy || true}
         shouldSelectOnPressUp
