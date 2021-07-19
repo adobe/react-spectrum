@@ -3,7 +3,7 @@
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under
  * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
  * OF ANY KIND, either express or implied. See the License for the specific language
@@ -13,7 +13,15 @@
 import {Key} from 'react';
 import {ListState} from '@react-stately/list';
 
-export const listIds = new WeakMap<ListState<unknown>, string>();
+interface ListData {
+  id: string,
+  shouldSelectOnPressUp?: boolean,
+  shouldFocusOnHover?: boolean,
+  shouldUseVirtualFocus?: boolean,
+  isVirtualized?: boolean
+}
+
+export const listData = new WeakMap<ListState<unknown>, ListData>();
 
 function normalizeKey(key: Key): string {
   if (typeof key === 'string') {
@@ -24,11 +32,11 @@ function normalizeKey(key: Key): string {
 }
 
 export function getItemId<T>(state: ListState<T>, itemKey: Key): string {
-  let listId = listIds.get(state);
+  let data = listData.get(state);
 
-  if (!listId) {
+  if (!data) {
     throw new Error('Unknown list');
   }
 
-  return `${listId}-option-${normalizeKey(itemKey)}`;
+  return `${data.id}-option-${normalizeKey(itemKey)}`;
 }
