@@ -14,7 +14,9 @@ import {Collection, Node} from '@react-types/shared';
 import {Key} from 'react';
 
 export interface GridCollection<T> extends Collection<Node<T>> {
+  /** The number of columns in the grid. */
   columnCount: number,
+  /** A list of rows in the grid. */
   rows: GridNode<T>[]
 }
 

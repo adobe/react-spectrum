@@ -129,6 +129,20 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     this.collection = this.virtualizer.collection;
     this.rootNodes = this.buildCollection();
 
+    // Remove deleted layout nodes
+    if (this.lastCollection) {
+      for (let key of this.lastCollection.getKeys()) {
+        if (!this.collection.getItem(key)) {
+          let layoutNode = this.layoutNodes.get(key);
+          if (layoutNode) {
+            this.layoutInfos.delete(layoutNode.layoutInfo.key);
+            this.layoutInfos.delete(layoutNode.header?.key);
+            this.layoutNodes.delete(key);
+          }
+        }
+      }
+    }
+
     this.lastWidth = this.virtualizer.visibleRect.width;
     this.lastCollection = this.collection;
   }
@@ -179,43 +193,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       this.layoutInfos.set(layoutNode.header.key, layoutNode.header);
     }
 
-    // Remove deleted child layout nodes from key mapping.
-    if (cached) {
-      let childKeys = new Set();
-      if (layoutNode.children) {
-        for (let child of layoutNode.children) {
-          childKeys.add(child.layoutInfo.key);
-        }
-      }
-
-      if (cached.children) {
-        for (let child of cached.children) {
-          if (!childKeys.has(child.layoutInfo.key)) {
-            this.removeLayoutNode(child);
-          }
-        }
-      }
-    }
-
     this.layoutNodes.set(node.key, layoutNode);
     return layoutNode;
-  }
-
-  removeLayoutNode(layoutNode: LayoutNode) {
-    this.layoutNodes.delete(layoutNode.layoutInfo.key);
-
-    this.layoutInfos.delete(layoutNode.layoutInfo.key);
-    if (layoutNode.header) {
-      this.layoutInfos.delete(layoutNode.header.key);
-    }
-
-    if (layoutNode.children) {
-      for (let child of layoutNode.children) {
-        if (this.layoutNodes.get(child.layoutInfo.key) === child) {
-          this.removeLayoutNode(child);
-        }
-      }
-    }
   }
 
   buildNode(node: Node<T>, x: number, y: number): LayoutNode {

@@ -162,10 +162,11 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
         ref={popoverRef}
         placement={placement}
         hideArrow
-        isNonModal>
+        isNonModal
+        isDismissable={false}>
         <ListBoxBase
+          {...listBoxProps}
           ref={listBoxRef}
-          domProps={listBoxProps}
           disallowEmptySelection
           autoFocus={state.focusStrategy}
           shouldSelectOnPressUp
