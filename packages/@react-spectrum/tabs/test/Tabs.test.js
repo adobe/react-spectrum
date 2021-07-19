@@ -318,14 +318,14 @@ describe('Tabs', function () {
       }
     });
 
-    let {getByRole} = renderComponent({
+    let {getByRole, queryByRole} = renderComponent({
       'aria-label': 'Test Tabs',
       'aria-labelledby': 'external label',
       onSelectionChange,
       defaultSelectedKey: items[0].name
     });
 
-    expect(() => getByRole('tablist')).toThrow();
+    expect(queryByRole('tablist')).toBeNull();
     let tabpanel = getByRole('tabpanel');
     expect(tabpanel).toBeTruthy();
     expect(tabpanel).toHaveTextContent(items[0].children);
@@ -365,10 +365,10 @@ describe('Tabs', function () {
       }
     });
 
-    let {getByRole} = renderComponent();
+    let {getByRole, queryByRole} = renderComponent();
     let tablist = getByRole('tablist');
     expect(tablist).toBeTruthy();
-    expect(() => getByRole('button')).toThrow();
+    expect(queryByRole('button')).toBeNull();
   });
 
   it('dynamically collapses and expands on tab addition/subtraction', function () {
@@ -387,7 +387,7 @@ describe('Tabs', function () {
       }
     });
 
-    let {getByRole, rerender} = render(
+    let {getByRole, queryByRole, rerender} = render(
       <Provider theme={theme}>
         <Tabs aria-label="Test Tabs" items={items}>
           <TabList>
@@ -407,7 +407,7 @@ describe('Tabs', function () {
     );
     let tablist = getByRole('tablist');
     expect(tablist).toBeTruthy();
-    expect(() => getByRole('button')).toThrow();
+    expect(queryByRole('button')).toBeNull();
 
     spy.mockImplementationOnce(function () {
       if (this instanceof HTMLDivElement) {
@@ -444,7 +444,7 @@ describe('Tabs', function () {
       </Provider>
     );
 
-    expect(() => getByRole('tablist')).toThrow();
+    expect(queryByRole('tablist')).toBeNull();
     let tabpanel = getByRole('tabpanel');
     expect(tabpanel).toBeTruthy();
     expect(tabpanel).toHaveTextContent(items[0].children);
@@ -474,7 +474,7 @@ describe('Tabs', function () {
 
     tablist = getByRole('tablist');
     expect(tablist).toBeTruthy();
-    expect(() => getByRole('button')).toThrow();
+    expect(queryByRole('button')).toBeNull();
 
     tabpanel = getByRole('tabpanel');
     expect(tabpanel).toBeTruthy();
@@ -523,7 +523,7 @@ describe('Tabs', function () {
 
     tablist = getByRole('tablist');
     expect(tablist).toBeTruthy();
-    expect(() => getByRole('button')).toThrow();
+    expect(queryByRole('button')).toBeNull();
   });
 
   it('disabled tabs cannot be selected via collapse picker', function () {
@@ -541,14 +541,14 @@ describe('Tabs', function () {
       }
     });
 
-    let {getByRole} = renderComponent({
+    let {getByRole, queryByRole} = renderComponent({
       'aria-label': 'Test Tabs',
       onSelectionChange,
       defaultSelectedKey: items[0].name,
       disabledKeys: ['Tab 3']
     });
 
-    expect(() => getByRole('tablist')).toThrow();
+    expect(queryByRole('tablist')).toBeNull();
     let tabpanel = getByRole('tabpanel');
     expect(tabpanel).toBeTruthy();
     expect(tabpanel).toHaveTextContent(items[0].children);

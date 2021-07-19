@@ -12,10 +12,22 @@
 
 import {act, fireEvent, render} from '@testing-library/react';
 import {DatePicker, DateRangePicker} from '../';
+import {installPointerEvent} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
+
+function pointerEvent(type, opts) {
+  let evt = new Event(type, {bubbles: true, cancelable: true});
+  Object.assign(evt, {
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false,
+    button: opts.button || 0
+  }, opts);
+  return evt;
+}
 
 describe('DatePickerBase', function () {
   describe('basics', function () {
@@ -24,17 +36,22 @@ describe('DatePickerBase', function () {
       ${'DatePicker'}        | ${DatePicker}        | ${3}
       ${'DateRangePicker'}   | ${DateRangePicker}   | ${6}
     `('$Name should render a default datepicker', ({Component, numSegments}) => {
-      let {getByRole, getAllByRole} = render(<Component />);
+      let {getAllByRole} = render(<Component />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getAllByRole('group')[0];
       expect(combobox).toBeVisible();
       expect(combobox).not.toHaveAttribute('aria-disabled');
       expect(combobox).not.toHaveAttribute('aria-invalid');
 
       let segments = getAllByRole('spinbutton');
       expect(segments.length).toBe(numSegments);
+      for (let segment of segments) {
+        expect(segment).not.toHaveAttribute('aria-disabled');
+        expect(segment).toHaveAttribute('contentEditable', 'true');
+        expect(segment).toHaveAttribute('inputMode', 'numeric');
+      }
 
-      let button = getByRole('button');
+      let button = getAllByRole('button')[0];
       expect(button).toBeVisible();
     });
 
@@ -43,17 +60,19 @@ describe('DatePickerBase', function () {
       ${'DatePicker'}        | ${DatePicker}
       ${'DateRangePicker'}   | ${DateRangePicker}
     `('$Name should set aria-disabled when isDisabled', ({Component}) => {
-      let {getByRole, getAllByRole} = render(<Component isDisabled />);
+      let {getAllByRole} = render(<Component isDisabled />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getAllByRole('group')[0];
       expect(combobox).toHaveAttribute('aria-disabled', 'true');
 
       let segments = getAllByRole('spinbutton');
       for (let segment of segments) {
         expect(segment).toHaveAttribute('aria-disabled', 'true');
+        expect(segment).not.toHaveAttribute('contentEditable', 'true');
+        expect(segment).not.toHaveAttribute('inputMode', 'numeric');
       }
 
-      let button = getByRole('button');
+      let button = getAllByRole('button')[0];
       expect(button).toHaveAttribute('disabled');
     });
 
@@ -62,17 +81,17 @@ describe('DatePickerBase', function () {
       ${'DatePicker'}        | ${DatePicker}
       ${'DateRangePicker'}   | ${DateRangePicker}
     `('$Name should set aria-readonly when isReadOnly', ({Component}) => {
-      let {getByRole, getAllByRole} = render(<Component isReadOnly />);
+      let {getAllByRole} = render(<Component isReadOnly />);
 
-      let combobox = getByRole('combobox');
-      expect(combobox).toHaveAttribute('aria-readonly', 'true');
+      let combobox = getAllByRole('group')[0];
+      expect(combobox).not.toHaveAttribute('aria-readonly', 'true');
 
       let segments = getAllByRole('spinbutton');
       for (let segment of segments) {
         expect(segment).toHaveAttribute('aria-readonly', 'true');
       }
 
-      let button = getByRole('button');
+      let button = getAllByRole('button')[0];
       expect(button).toHaveAttribute('disabled');
     });
 
@@ -81,10 +100,10 @@ describe('DatePickerBase', function () {
       ${'DatePicker'}        | ${DatePicker}
       ${'DateRangePicker'}   | ${DateRangePicker}
     `('$Name should set aria-required when isRequired', ({Component}) => {
-      let {getByRole, getAllByRole} = render(<Component isRequired />);
+      let {getAllByRole} = render(<Component isRequired />);
 
-      let combobox = getByRole('combobox');
-      expect(combobox).toHaveAttribute('aria-required', 'true');
+      let combobox = getAllByRole('group')[0];
+      expect(combobox).not.toHaveAttribute('aria-required', 'true');
 
       let segments = getAllByRole('spinbutton');
       for (let segment of segments) {
@@ -97,10 +116,15 @@ describe('DatePickerBase', function () {
       ${'DatePicker'}        | ${DatePicker}
       ${'DateRangePicker'}   | ${DateRangePicker}
     `('$Name should set aria-invalid when validationState="invalid"', ({Component}) => {
-      let {getByRole} = render(<Component validationState="invalid" />);
+      let {getAllByRole} = render(<Component validationState="invalid" />);
 
-      let combobox = getByRole('combobox');
-      expect(combobox).toHaveAttribute('aria-invalid', 'true');
+      let combobox = getAllByRole('group')[0];
+      expect(combobox).not.toHaveAttribute('aria-invalid', 'true');
+ 
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('aria-invalid', 'true');
+      }
     });
   });
 
@@ -110,29 +134,38 @@ describe('DatePickerBase', function () {
       ${'DatePicker'}        | ${DatePicker}
       ${'DateRangePicker'}   | ${DateRangePicker}
     `('$Name should open a calendar popover when clicking the button', ({Component}) => {
-      let {getByRole} = render(
+      let {getAllByRole} = render(
         <Provider theme={theme}>
           <Component />
         </Provider>
       );
 
-      let combobox = getByRole('combobox');
-      expect(combobox).toHaveAttribute('aria-haspopup', 'dialog');
+      let combobox = getAllByRole('group')[0];
+      expect(combobox).not.toHaveAttribute('aria-haspopup', 'dialog');
       expect(combobox).not.toHaveAttribute('aria-owns');
 
-      let button = getByRole('button');
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('aria-haspopup', 'dialog');
+        expect(segment).not.toHaveAttribute('aria-expanded');
+        expect(segment).not.toHaveAttribute('aria-controls');
+      }
+
+      let button = getAllByRole('button')[0];
       expect(button).toHaveAttribute('aria-haspopup', 'dialog');
+      expect(button).toHaveAttribute('aria-expanded', 'false');
       expect(button).not.toHaveAttribute('aria-controls');
 
       triggerPress(button);
 
-      let dialog = getByRole('dialog');
+      let dialog = getAllByRole('dialog')[0];
       expect(dialog).toBeVisible();
       expect(dialog).toHaveAttribute('id');
       let dialogId = dialog.getAttribute('id');
 
-      expect(combobox).toHaveAttribute('aria-expanded', 'true');
-      expect(combobox).toHaveAttribute('aria-owns', dialogId);
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('aria-controls', dialogId);
+      }
 
       expect(button).toHaveAttribute('aria-expanded', 'true');
       expect(button).toHaveAttribute('aria-controls', dialogId);
@@ -146,29 +179,37 @@ describe('DatePickerBase', function () {
       ${'DatePicker'}        | ${DatePicker}
       ${'DateRangePicker'}   | ${DateRangePicker}
     `('$Name should open a calendar popover pressing Alt + ArrowDown on the keyboard', ({Component}) => {
-      let {getByRole} = render(
+      let {getAllByRole} = render(
         <Provider theme={theme}>
           <Component />
         </Provider>
       );
 
-      let combobox = getByRole('combobox');
-      expect(combobox).toHaveAttribute('aria-haspopup', 'dialog');
+      let combobox = getAllByRole('group')[0];
+      expect(combobox).not.toHaveAttribute('aria-haspopup', 'dialog');
       expect(combobox).not.toHaveAttribute('aria-owns');
 
-      let button = getByRole('button');
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('aria-haspopup', 'dialog');
+        expect(segment).not.toHaveAttribute('aria-expanded');
+        expect(segment).not.toHaveAttribute('aria-controls');
+      }
+
+      let button = getAllByRole('button')[0];
       expect(button).toHaveAttribute('aria-haspopup', 'dialog');
       expect(button).not.toHaveAttribute('aria-controls');
 
       fireEvent.keyDown(combobox, {key: 'ArrowDown', altKey: true});
 
-      let dialog = getByRole('dialog');
+      let dialog = getAllByRole('dialog')[0];
       expect(dialog).toBeVisible();
       expect(dialog).toHaveAttribute('id');
       let dialogId = dialog.getAttribute('id');
 
-      expect(combobox).toHaveAttribute('aria-expanded', 'true');
-      expect(combobox).toHaveAttribute('aria-owns', dialogId);
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('aria-controls', dialogId);
+      }
 
       expect(button).toHaveAttribute('aria-expanded', 'true');
       expect(button).toHaveAttribute('aria-controls', dialogId);
@@ -182,30 +223,38 @@ describe('DatePickerBase', function () {
       ${'DatePicker'}        | ${DatePicker}
       ${'DateRangePicker'}   | ${DateRangePicker}
     `('$Name should open a calendar popover when tapping on the date field with a touch device', ({Component}) => {
-      let {getByRole} = render(
+      let {getAllByRole} = render(
         <Provider theme={theme}>
           <Component />
         </Provider>
       );
 
-      let combobox = getByRole('combobox');
-      expect(combobox).toHaveAttribute('aria-haspopup', 'dialog');
+      let combobox = getAllByRole('group')[0];
+      expect(combobox).not.toHaveAttribute('aria-haspopup', 'dialog');
       expect(combobox).not.toHaveAttribute('aria-owns');
 
-      let button = getByRole('button');
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('aria-haspopup', 'dialog');
+        expect(segment).not.toHaveAttribute('aria-expanded');
+        expect(segment).not.toHaveAttribute('aria-controls');
+      }
+
+      let button = getAllByRole('button')[0];
       expect(button).toHaveAttribute('aria-haspopup', 'dialog');
       expect(button).not.toHaveAttribute('aria-controls');
 
       fireEvent.touchStart(combobox, {targetTouches: [{identifier: 1}]});
       fireEvent.touchEnd(combobox, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
 
-      let dialog = getByRole('dialog');
+      let dialog = getAllByRole('dialog')[0];
       expect(dialog).toBeVisible();
       expect(dialog).toHaveAttribute('id');
       let dialogId = dialog.getAttribute('id');
 
-      expect(combobox).toHaveAttribute('aria-expanded', 'true');
-      expect(combobox).toHaveAttribute('aria-owns', dialogId);
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('aria-controls', dialogId);
+      }
 
       expect(button).toHaveAttribute('aria-expanded', 'true');
       expect(button).toHaveAttribute('aria-controls', dialogId);
@@ -216,6 +265,8 @@ describe('DatePickerBase', function () {
   });
 
   describe('focus management', function () {
+    installPointerEvent();
+
     it.each`
       Name                   | Component
       ${'DatePicker'}        | ${DatePicker}
@@ -271,7 +322,7 @@ describe('DatePickerBase', function () {
       let literals = getAllByText('/');
       let segments = getAllByRole('spinbutton');
 
-      fireEvent.mouseDown(literals[0]);
+      fireEvent(literals[0], pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       expect(segments[1]).toHaveFocus();
     });
 
@@ -294,10 +345,10 @@ describe('DatePickerBase', function () {
 
       let {getAllByTestId} = render(<Component formatOptions={format} />);
 
-      fireEvent.mouseDown(getAllByTestId('weekday')[0]);
+      fireEvent(getAllByTestId('weekday')[0], pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       expect(getAllByTestId('month')[0]).toHaveFocus();
 
-      fireEvent.mouseDown(getAllByTestId('era')[0]);
+      fireEvent(getAllByTestId('era')[0], pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       expect(getAllByTestId('hour')[0]).toHaveFocus();
     });
 

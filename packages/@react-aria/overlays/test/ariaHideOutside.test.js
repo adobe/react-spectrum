@@ -47,7 +47,7 @@ describe('ariaHideOutside', function () {
   });
 
   it('should hide everything except multiple elements', function () {
-    let {getByRole, getAllByRole} = render(
+    let {getByRole, getAllByRole, queryByRole, queryAllByRole} = render(
       <>
         <input type="checkbox" />
         <button>Button</button>
@@ -64,8 +64,8 @@ describe('ariaHideOutside', function () {
     expect(checkboxes[1]).not.toHaveAttribute('aria-hidden', 'true');
     expect(button).toHaveAttribute('aria-hidden');
 
-    expect(() => getAllByRole('checkbox')).not.toThrow();
-    expect(() => getByRole('button')).toThrow();
+    expect(queryAllByRole('checkbox')).not.toBeNull();
+    expect(queryByRole('button')).toBeNull();
 
     revert();
 
@@ -218,14 +218,14 @@ describe('ariaHideOutside', function () {
       </>
     );
 
-    let {getByRole, getAllByRole, getByTestId, rerender} = render(<Test />);
+    let {queryByRole, getByRole, getAllByRole, getByTestId, rerender} = render(<Test />);
 
     let test = getByTestId('test');
     let revert = ariaHideOutside([test]);
 
     expect(() => getAllByRole('checkbox')).toThrow();
-    expect(() => getByRole('radio')).toThrow();
-    expect(() => getByRole('button')).not.toThrow();
+    expect(queryByRole('radio')).toBeNull();
+    expect(queryByRole('button')).not.toBeNull();
     expect(() => getByTestId('test')).not.toThrow();
 
     rerender(<Test show />);
