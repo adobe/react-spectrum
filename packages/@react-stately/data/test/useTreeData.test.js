@@ -528,9 +528,21 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[0]).toBe(initialResult.items[0].children[0]);
     expect(result.current.items[0].children[1]).not.toBe(initialResult.items[0].children[1]);
     expect(result.current.items[0].children[1].children).toHaveLength(2);
-    expect(result.current.items[0].children[1].children[0]).toBe(initialResult.items[0].children[1].children[1]);
+    expect(result.current.items[0].children[1].children[0]).toEqual(initialResult.items[0].children[1].children[1]);
     expect(result.current.items[0].children[1].children[1]).toBe(initialResult.items[0].children[1].children[0]);
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
+  });
+
+  it('update parentKey when a node is moved to another parent', function () {
+    const {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
+
+    act(() => {
+      result.current.move('Brad', 'John', 0);
+    });
+
+    const john = result.current.items[0].children[0];
+    const brad = john.children[0];
+    expect(brad.parentKey).toBe(john.key);
   });
 
   it('should move an item to a different parent', function () {
@@ -547,7 +559,7 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children).toHaveLength(3);
     expect(result.current.items[0].children[0]).not.toBe(initialResult.items[0].children[0]);
     expect(result.current.items[0].children[0].children).toHaveLength(2);
-    expect(result.current.items[0].children[0].children[0]).toBe(initialResult.items[0].children[1].children[1]);
+    expect(result.current.items[0].children[0].children[0].value).toBe(initialResult.items[0].children[1].children[1].value);
     expect(result.current.items[0].children[0].children[1]).toBe(initialResult.items[0].children[0].children[0]);
     expect(result.current.items[0].children[1]).not.toBe(initialResult.items[0].children[1]);
     expect(result.current.items[0].children[1].children).toHaveLength(1);
