@@ -54,9 +54,9 @@ describe('SearchWithin', function () {
   });
 
   it('renders correctly', function () {
-    let {getAllByText, getByRole, getByPlaceholderText} = renderSearchWithin();
+    let {getAllByText, getByRole, getByLabelText} = renderSearchWithin();
 
-    let searchfield = getByPlaceholderText('Search');
+    let searchfield = getByLabelText('Test', {selector: 'input'});
     expect(searchfield).toBeVisible();
     expect(searchfield).toHaveAttribute('type', 'search');
 
@@ -70,14 +70,14 @@ describe('SearchWithin', function () {
 
   it('can type in search and get onChange', function () {
     let onChange = jest.fn();
-    let {getByPlaceholderText} = renderSearchWithin({}, {onChange});
-    let searchField = getByPlaceholderText('Search');
-    expect(searchField).toHaveAttribute('value', '');
+    let {getByLabelText} = renderSearchWithin({}, {onChange});
+    let searchfield = getByLabelText('Test', {selector: 'input'});
+    expect(searchfield).toHaveAttribute('value', '');
 
-    act(() => {searchField.focus();});
-    typeText(searchField, 'test search');
-    act(() => {searchField.blur();});
-    expect(searchField).toHaveAttribute('value', 'test search');
+    act(() => {searchfield.focus();});
+    typeText(searchfield, 'test search');
+    act(() => {searchfield.blur();});
+    expect(searchfield).toHaveAttribute('value', 'test search');
     expect(onChange).toBeCalledTimes(11);
   });
 
@@ -95,9 +95,9 @@ describe('SearchWithin', function () {
   });
 
   it('searchfield and picker are labelled correctly', function () {
-    let {getByRole, getAllByText, getByPlaceholderText} = renderSearchWithin();
+    let {getByRole, getAllByText, getByLabelText} = renderSearchWithin();
 
-    let searchfield = getByPlaceholderText('Search');
+    let searchfield = getByLabelText('Test', {selector: 'input'});
     let picker = getByRole('button');
     triggerPress(picker);
 
