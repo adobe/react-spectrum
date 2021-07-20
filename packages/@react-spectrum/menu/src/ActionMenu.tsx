@@ -26,7 +26,7 @@ function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: Fo
   let formatMessage = useMessageFormatter(intlMessages);
   let buttonProps = filterDOMProps(props, {labelable: true});
   if (buttonProps['aria-label'] === undefined) {
-    buttonProps['aria-label'] = formatMessage('more-actions');
+    buttonProps['aria-label'] = formatMessage('moreActions');
   }
   
   return (
