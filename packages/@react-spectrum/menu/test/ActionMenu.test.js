@@ -40,11 +40,13 @@ describe('ActionMenu', function () {
     </Provider>);
     
     let button = tree.getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'More actions');
     triggerPress(button);
     
     let menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
     expect(menu).toHaveAttribute('aria-labelledby', button.id);
+    
     
     let menuItem1 = within(menu).getByText('Foo');
     let menuItem2 = within(menu).getByText('Bar');
