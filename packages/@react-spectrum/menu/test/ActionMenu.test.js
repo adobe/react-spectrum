@@ -56,4 +56,16 @@ describe('ActionMenu', function () {
     expect(menuItem3).toBeTruthy();
   });
 
+  it('cústom aria label', function () {
+    let tree = render(<Provider theme={theme}>
+      <ActionMenu aria-label="Custom Aria Label">
+        <Item>Foo</Item>
+        <Item>Bar</Item>
+        <Item>Baz</Item>
+      </ActionMenu>
+    </Provider>);
+
+    let button = tree.getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'Custom Aria Label');
+  });
 });
