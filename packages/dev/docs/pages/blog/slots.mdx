@@ -1,0 +1,101 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+
+import {BlogPostLayout} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+keywords: [react spectrum, react, spectrum, context]
+description: There are many ways of creating composable React components, this is our take on a flexible way that allows us to enforce certain properties.
+date: 2021-07-19
+author: '[Rob Snow](https://twitter.com/snowystinger)'
+image: ../assets/ReactAria_976x445_2x.png
+---
+
+# Creating flexible composable components
+
+Building components in React frequently involves combining or composing many other components. We want this to be intuitive and to "just work". We also want it to be flexible for customization where appropriate but be able to lock in certain features so that users can't accidentally shoot themselves in the foot.
+
+## What do we want
+
+As with most coding problems, we start with how do we want out API to look.
+```snippet
+<Dialog>
+  <Title>The dialogs title</Title>
+  <Header>Extra heading level content</Header>
+  <Body>This is the content of the dialog.</Body>
+  <Footer>This is the dialogs footer</Footer>
+  <ButtonGroup>
+    <Button>Cancel</Button>
+    <Button>Confirm</Button>
+  </ButtonGroup>
+</Dialog>
+```
+This was the simplest representation of a Dialog we could come up with for our Design System. I've lifted the names straight from the Design specs for the different areas that content can reside in as seen here. <!-- TODO GET IMAGE --> Now you may be looking at this and saying that it looks pretty similar to how our library works. So spoilers, we accomplished our goal. However, I think it can be valuable to look at the other options we considered in order to get here, this way, the pros and cons will have some context (no pun intended).
+
+## Problems of passing props in React
+
+In React, we frequently want to have components that act as containers for other components. When the container does not care about the children, this is easy. But sometimes the container expects certain components as children or expects that the children have certain props set on them. This can be a difficult problem to solve in React.
+
+### React cloneChildren
+
+The first tool you may be tempted to reach for is React's cloneChildren. This is a powerful function that allows a component to take any children passed to it and modify what props are passed to them. For instance, maybe you have a `List` of selectable `Option`s, and you want to add a callback to each of those so that `List` can track with `Option` is currently selected. You could make a `List` component that looks something like this.
+
+```snippet
+function List(props) {
+  let [selected, setSelected] = useState(props.defaultSelected);
+  return React.Children.map(this.props.children, child => {
+     return React.cloneElement(child, {
+       onSelect: (value) => setSelected(value)
+     });
+  });
+}
+
+<List>
+  <Option value="One" />
+  <Option value="Two" />
+  <Option value="Three" />
+</List>
+```
+
+Great, we have a `List` and we can pass arbitrary `Option`s to it. Well, almost. We can pass any React Element that can take an `onSelect` prop that matches the signature `(value:string) => void`. What if we wanted to wrap some of our `Option`s in a component that performed some analytics.
+
+```snippet
+<List>
+  <Analytics><Option value="One" /></Analytics>
+  <Option value="Two" />
+  <Option value="Three" />
+</List>
+```
+
+Well, we'd need to pass `onSelect` through the Analytics wrapping component down to the Option. This can get pretty messy pretty quickly, maybe the options also need classnames, keyboard handlers, etc, it can get hard to follow the props and make sure all the right ones are passed through.
+
+Or, what if we had something like the `Dialog` example where the children could be different elements. You would need something like:
+
+```snippet
+function Dialog(props) {
+  let index = 0;
+  return React.Children.map(this.props.children, child => {
+    let childProps = {};
+    if (index === 0) {/* ... add props to childProps for Title */}
+    else if (index === 1) {/* ... add props to childProps for Heading */}
+    // ... etc
+    index++;
+    return React.cloneElement(child, childProps);
+  });
+}
+```
+
+This is also restricted to the order in which the children are added, and if you tried to inspect the children to find out which was which, you'd ruin the ability to add a component like our `Analytics` above.
+
+
+### React Context
+
+This is probably the point where you'd reach for React's Context.
