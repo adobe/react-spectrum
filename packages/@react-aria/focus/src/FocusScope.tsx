@@ -184,6 +184,19 @@ function getScopeRoot(scope: HTMLElement[]) {
 function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolean) {
   let focusedNode = useRef<HTMLElement>();
 
+  // Loop through the scopeRef array, and check if scopeRef contains
+  // a FocusScope element (determined by two span children). If it does,
+  // pop it.
+  scopeRef.current.forEach(element => {
+    // How do I check for a FocusScope element? Maybe check if it
+    // has two spans. This might not be the best solution for future
+    // development
+    var arr = [...element.children]
+    arr.forEach((item, index, object) => {
+      if (item.nodeName == "span") object.splice(index, 1);
+    })
+  });
+
   let raf = useRef(null);
   useEffect(() => {
     let scope = scopeRef.current;
