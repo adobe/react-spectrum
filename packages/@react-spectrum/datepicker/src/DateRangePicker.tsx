@@ -12,6 +12,7 @@
 
 import CalendarIcon from '@spectrum-icons/workflow/Calendar';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {Content} from '@react-spectrum/view';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './index.css';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -24,7 +25,7 @@ import {SpectrumDateRangePickerProps} from '@react-types/datepicker';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {useDateRangePicker} from '@react-aria/datepicker';
 import {useDateRangePickerState} from '@react-stately/datepicker';
-import {useHover} from '@react-aria/interactions';
+import {useHover, usePress} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
@@ -43,7 +44,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
   let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({isDisabled});
   let state = useDateRangePickerState(props);
-  let {comboboxProps, buttonProps, dialogProps, startFieldProps, endFieldProps} = useDateRangePicker(props, state);
+  let {groupProps, buttonProps, dialogProps, startFieldProps, endFieldProps, descProps} = useDateRangePicker(props, state);
   let {value, setDate, selectDateRange, isOpen, setOpen} = state;
   let targetRef = useRef<HTMLDivElement>();
   let {direction} = useLocale();
@@ -70,9 +71,10 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
       autoFocus={autoFocus}>
       <div
         {...styleProps}
-        {...mergeProps(comboboxProps, hoverProps)}
+        {...mergeProps(groupProps, hoverProps)}
         className={className}
         ref={targetRef}>
+        {descProps && descProps.children && <span {...descProps} />}
         <FocusScope autoFocus={autoFocus}>
           <DatePickerField
             {...startFieldProps as any}
@@ -83,6 +85,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
             formatOptions={formatOptions}
             placeholderDate={placeholderDate}
             value={value.start}
+            defaultValue={null}
             onChange={start => setDate('start', start)}
             UNSAFE_className={classNames(styles, 'spectrum-Datepicker-startField')} />
           <DateRangeDash />
@@ -96,6 +99,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
             formatOptions={formatOptions}
             placeholderDate={placeholderDate}
             value={value.end}
+            defaultValue={null}
             onChange={end => setDate('end', end)}
             UNSAFE_className={classNames(
               styles,
@@ -123,10 +127,12 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
             <CalendarIcon />
           </FieldButton>
           <Dialog UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')} {...dialogProps}>
-            <RangeCalendar
-              autoFocus
-              value={value}
-              onChange={selectDateRange} />
+            <Content>
+              <RangeCalendar
+                autoFocus
+                value={value || null}
+                onChange={selectDateRange} />
+            </Content>
           </Dialog>
         </DialogTrigger>
       </div>
@@ -136,16 +142,19 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
 
 function DateRangeDash() {
   let focusManager = useFocusManager();
-  let onMouseDown = (e) => {
-    e.preventDefault();
-    focusManager.focusNext({from: e.target});
-  };
+  let {pressProps} = usePress({
+    onPressStart: (e) => {
+      if (e.pointerType === 'mouse') {
+        focusManager.focusNext({from: e.target as HTMLElement});
+      }
+    }
+  });
 
   return (
     <div
       role="presentation"
       data-testid="date-range-dash"
       className={classNames(styles, 'spectrum-Datepicker--rangeDash')}
-      onMouseDown={onMouseDown} />
+      {...pressProps} />
   );
 }

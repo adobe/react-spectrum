@@ -1,5 +1,7 @@
 {
   "calendar": "Kalendorius",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "nuo {start, date, long} iki {end, date, long}",
   "date": "Data",
   "dateRange": "Datų intervalas",
   "day": "Diena",
