@@ -19,12 +19,14 @@ import {triggerPress} from '@react-spectrum/test-utils';
 
 
 describe('ActionMenu', function () {
+  let onActionSpy = jest.fn();
 
   beforeAll(function () {
     jest.useFakeTimers();
   });
 
   afterEach(() => {
+    onActionSpy.mockClear();
     act(() => {
       jest.runAllTimers();
     });
@@ -32,7 +34,7 @@ describe('ActionMenu', function () {
 
   it('basic test', function () {
     let tree = render(<Provider theme={theme}>
-      <ActionMenu>
+      <ActionMenu onAction={onActionSpy}>
         <Item>Foo</Item>
         <Item>Bar</Item>
         <Item>Baz</Item>
@@ -54,6 +56,9 @@ describe('ActionMenu', function () {
     expect(menuItem1).toBeTruthy();
     expect(menuItem2).toBeTruthy();
     expect(menuItem3).toBeTruthy();
+    
+    triggerPress(menuItem1);
+    expect(onActionSpy).toHaveBeenCalledTimes(1);
   });
 
   it('cústom aria label', function () {
@@ -67,5 +72,35 @@ describe('ActionMenu', function () {
 
     let button = tree.getByRole('button');
     expect(button).toHaveAttribute('aria-label', 'Custom Aria Label');
+  });
+  
+  it('is disabled', function () {
+    let tree = render(<Provider theme={theme}>
+      <ActionMenu isDisabled>
+        <Item>Foo</Item>
+        <Item>Bar</Item>
+        <Item>Baz</Item>
+      </ActionMenu>
+    </Provider>);
+    
+    let button = tree.getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'More actions');
+    triggerPress(button);
+    
+    let menu = tree.queryByRole('menu');
+    expect(menu).toBeNull();
+  });
+
+  it('supports autofocus', function () {
+    let tree = render(<Provider theme={theme}>
+      <ActionMenu autoFocus>
+        <Item>Foo</Item>
+        <Item>Bar</Item>
+        <Item>Baz</Item>
+      </ActionMenu>
+    </Provider>);
+    
+    let button = tree.getByRole('button');
+    expect(document.activeElement).toBe(button);
   });
 });
