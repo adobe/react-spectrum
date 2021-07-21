@@ -2471,7 +2471,7 @@ describe('TableView', function () {
         let tree = renderTable({onSelectionChange});
         let columnheader = tree.getAllByRole('columnheader')[0];
         let checkboxInput = columnheader.querySelector('input[type="checkbox"]');
-        expect(columnheader).toHaveAttribute('aria-disabled', 'true');
+        expect(columnheader).not.toHaveAttribute('aria-disabled', 'true');
         expect(columnheader.firstElementChild).toBeVisible();
         expect(checkboxInput).not.toBeVisible();
         expect(checkboxInput.getAttribute('aria-label')).toEqual('Select');

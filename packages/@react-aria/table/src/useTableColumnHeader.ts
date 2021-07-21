@@ -63,8 +63,7 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),
       'aria-colspan': node.colspan && node.colspan > 1 ? node.colspan : null,
-      'aria-sort': ariaSort,
-      'aria-disabled': isSelectionCellDisabled || undefined
+      'aria-sort': ariaSort
     }
   };
 }

@@ -1080,8 +1080,9 @@ function ChangableSelectionMode() {
 
   return (
     <Flex direction="column" flexGrow={1} maxWidth="size-6000">
-      <RadioGroup defaultValue="none" onChange={(value: SelectionMode) => setSelectionMode(value)} label="Show / Hide">
+      <RadioGroup defaultValue="none" onChange={(value: SelectionMode) => setSelectionMode(value)} label="Selection Mode">
         <Radio value="multiple">Multiple</Radio>
+        <Radio value="single">Single</Radio>
         <Radio value="none">None</Radio>
       </RadioGroup>
       <TableView overflowMode="wrap" selectionMode={selectionMode} selectedKeys={selectedKeys} aria-label="TableView with controlled selection" width="100%" height="100%" onSelectionChange={setSelectedKeys}>
