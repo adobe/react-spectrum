@@ -11,12 +11,17 @@
  */
 
 import {fireEvent, render} from '@testing-library/react';
+import {installPointerEvent} from '@react-spectrum/test-utils';
 import {Item} from '@react-stately/collections';
 import {List} from '../stories/List';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
+
 describe('useSelectableCollection', () => {
+  beforeEach(() => {
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 750);
+  });
   it('can navigate without replacing the selection in multiple selection selectOnFocus', () => {
     let {getAllByRole} = render(
       <List selectionMode="multiple" selectionBehavior="replace">
@@ -51,5 +56,41 @@ describe('useSelectableCollection', () => {
     expect(options[0]).not.toHaveAttribute('aria-selected');
     expect(options[1]).not.toHaveAttribute('aria-selected');
     expect(options[2]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  describe.each`
+    type                     | prepare               | actions
+    ${'VO Events'}           | ${installPointerEvent}| ${[
+      (el) => fireEvent.pointerDown(el, {button: 0, pointerType: 'virtual'}),
+      (el) => fireEvent.pointerUp(el, {button: 0, pointerType: 'virtual'})
+    ]}
+    ${'Touch Pointer Events'} | ${installPointerEvent}| ${[
+      (el) => fireEvent.pointerDown(el, {button: 0, pointerType: 'touch', pointerId: 1}),
+      (el) => fireEvent.pointerUp(el, {button: 0, pointerType: 'touch', pointerId: 1})
+    ]}
+  `('always uses toggle for $type', ({prepare, actions: [start, end]}) => {
+    prepare();
+    it('uses toggle mode when the interaction is touch', () => {
+      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 600);
+      let {getAllByRole} = render(
+        <List selectionMode="multiple" selectionBehavior="replace">
+          <Item>Paco de Lucia</Item>
+          <Item>Vicente Amigo</Item>
+          <Item>Gerardo Nunez</Item>
+        </List>
+      );
+      let options = getAllByRole('option');
+      expect(options[0]).not.toHaveAttribute('aria-selected');
+      start(options[0]);
+      end(options[0]);
+      expect(options[0]).toHaveAttribute('aria-selected', 'true');
+      expect(options[1]).not.toHaveAttribute('aria-selected');
+      expect(options[2]).not.toHaveAttribute('aria-selected');
+      start(options[2]);
+      end(options[2]);
+      expect(options[0]).toHaveAttribute('aria-selected', 'true');
+      expect(options[1]).not.toHaveAttribute('aria-selected');
+      expect(options[2]).toHaveAttribute('aria-selected', 'true');
+    });
   });
 });
