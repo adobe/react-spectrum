@@ -68,7 +68,7 @@ export const PickerDisabled = () => render({}, {}, {isDisabled: true});
 
 export const CustomWidth = () => render({width: 300});
 
-export const LabelPositionSide = () => render({});
+export const LabelPositionSide = () => render({labelPosition: 'side'});
 LabelPositionSide.storyName = 'labelPosition: side';
 
 export const AutoFocus = () => render({}, {autoFocus: true});
