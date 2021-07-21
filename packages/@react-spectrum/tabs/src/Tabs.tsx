@@ -12,6 +12,7 @@
 
 import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useStyleProps, useValueEffect} from '@react-spectrum/utils';
 import {DOMProps, DOMRef, Node, Orientation} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Item, Picker} from '@react-spectrum/picker';
 import {ListCollection, SingleSelectListState} from '@react-stately/list';
@@ -129,6 +130,7 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
         tabPanelProps
       }}>
       <div
+        {...filterDOMProps(otherProps)}
         {...styleProps}
         ref={domRef}
         className={classNames(

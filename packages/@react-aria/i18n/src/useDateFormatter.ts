@@ -12,6 +12,10 @@
 
 import {useLocale} from './context';
 
+interface DateFormatterOptions extends Intl.DateTimeFormatOptions {
+  calendar?: string
+}
+
 let formatterCache = new Map<string, Intl.DateTimeFormat>();
 
 /**
@@ -19,8 +23,13 @@ let formatterCache = new Map<string, Intl.DateTimeFormat>();
  * and handles caching of the date formatter for performance.
  * @param options - Formatting options.
  */
-export function useDateFormatter(options?: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
+export function useDateFormatter(options?: DateFormatterOptions): Intl.DateTimeFormat {
   let {locale} = useLocale();
+
+  // Polyfill the `calendar` option - not supported in Safari.
+  if (options?.calendar && !locale.includes('-u-ca-')) {
+    locale += '-u-ca-' + options.calendar;
+  }
 
   let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
   if (formatterCache.has(cacheKey)) {

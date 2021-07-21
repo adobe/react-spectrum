@@ -97,6 +97,7 @@ export class CollectionBuilder<T extends object> {
       let cached = this.cache.get(partialNode.value);
       if (cached && (!cached.shouldInvalidate || !cached.shouldInvalidate(this.context))) {
         cached.index = partialNode.index;
+        cached.parentKey = parentNode ? parentNode.key : null;
         yield cached;
         return;
       }

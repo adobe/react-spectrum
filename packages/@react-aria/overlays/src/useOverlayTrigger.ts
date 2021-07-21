@@ -40,7 +40,7 @@ export function useOverlayTrigger(props: OverlayTriggerProps, state: OverlayTrig
   // Backward compatibility. Share state close function with useOverlayPosition so it can close on scroll
   // without forcing users to pass onClose.
   useEffect(() => {
-    if (ref.current) {
+    if (ref && ref.current) {
       onCloseMap.set(ref.current, state.close);
     }
   });
