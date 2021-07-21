@@ -22,6 +22,22 @@ describe('useSelectableCollection', () => {
   beforeEach(() => {
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 750);
   });
+
+  it('selects the first item it focuses if selectOnFocus', () => {
+    let {getAllByRole} = render(
+      <List selectionMode="single">
+        <Item>Paco de Lucia</Item>
+        <Item>Vicente Amigo</Item>
+        <Item>Gerardo Nunez</Item>
+      </List>
+    );
+    let options = getAllByRole('option');
+    expect(options[0]).not.toHaveAttribute('aria-selected');
+    userEvent.tab();
+    expect(document.activeElement).toBe(options[0]);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+  });
+
   it('can navigate without replacing the selection in multiple selection selectOnFocus', () => {
     let {getAllByRole} = render(
       <List selectionMode="multiple" selectionBehavior="replace">
@@ -33,8 +49,6 @@ describe('useSelectableCollection', () => {
     let options = getAllByRole('option');
     expect(options[0]).not.toHaveAttribute('aria-selected');
     userEvent.tab();
-    fireEvent.keyDown(document.activeElement, {key: ' '});
-    fireEvent.keyUp(document.activeElement, {key: ' '});
     expect(document.activeElement).toBe(options[0]);
     expect(options[0]).toHaveAttribute('aria-selected', 'true');
     expect(options[1]).not.toHaveAttribute('aria-selected');

@@ -51,7 +51,7 @@ export function List<T extends object>(props: ListProps<T>) {
   });
 
   return (
-    <ul ref={ref} {...listProps}>
+    <ul ref={ref} {...listProps} >
       {[...state.collection].map((item) => (
         <ListItem key={item.key} item={item} state={state} />
       ))}
