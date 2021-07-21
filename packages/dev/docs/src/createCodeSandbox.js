@@ -70,18 +70,16 @@ ReactDOM.render(
 `;
 
 export function createCodeSandbox(e) {
-  // Disable button while awaiting sandbox creation.
-  e.currentTarget.disabled = true;
-
   // Get package info for codesandbox.
-  let packageInfo = e.currentTarget.closest('article').querySelector('tbody').childNodes;
+  // TODO: Get these at build time and put in data-* properties
+  let packageInfo = e.target.closest('article').querySelector('tbody').childNodes;
   let packageName = packageInfo[0].innerText.split('add ')[1];
   let packageVersion = packageInfo[1].innerText.split('\t')[1];
   let imports = packageInfo[2].innerText.split('\t')[1];
   let exampleTitle = document.querySelector('h1').textContent;
 
   // Get example code.
-  let exampleCode = e.currentTarget.nextElementSibling.querySelector('.source').textContent;
+  let exampleCode = e.target.parentNode.parentNode.querySelector('.source').textContent;
 
   // Separate import lines.
   let lines = exampleCode.split('\n');

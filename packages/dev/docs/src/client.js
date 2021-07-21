@@ -13,6 +13,7 @@
 import {ActionButton} from '@react-spectrum/button';
 import {createCodeSandbox} from './createCodeSandbox';
 import docsStyle from './docs.css';
+import {Link} from '@react-spectrum/link';
 import {listen} from 'quicklink';
 import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
@@ -219,4 +220,19 @@ window.addEventListener('pagehide', () => {
   sessionStorage.setItem('sidebarScrollPosition', sidebar.scrollTop);
 });
 
-[...document.querySelectorAll('.codeSandboxButton')].forEach(element => element.addEventListener('click', createCodeSandbox));
+// Only add CodeSandbox links to react-spectrum examples now. We'll add react-aria and react-stately support later
+if (window.location.pathname.startsWith('/react-spectrum')) {
+  [...document.querySelectorAll('code[metastring^="example"]')].forEach(element => {
+    let div = document.createElement('span');
+    div.classList.add('codeSandboxLink');
+    element.prepend(div);
+  
+    ReactDOM.render(
+      <Link UNSAFE_style={{float: 'right'}} onPress={createCodeSandbox}>
+        Open Sandbox
+      </Link>,
+      element.querySelector('.codeSandboxLink')
+    );
+  });
+}
+
