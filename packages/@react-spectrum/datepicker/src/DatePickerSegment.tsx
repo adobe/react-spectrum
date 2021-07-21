@@ -17,6 +17,7 @@ import React from 'react';
 import styles from './index.css';
 import {useDateSegment} from '@react-aria/datepicker';
 import {useFocusManager} from '@react-aria/focus';
+import {usePress} from '@react-aria/interactions';
 
 interface DatePickerSegmentProps extends DatePickerBase {
   segment: DateSegment,
@@ -48,19 +49,19 @@ export function DatePickerSegment({segment, state, ...otherProps}: DatePickerSeg
 
 function LiteralSegment({segment, isPlaceholder}: LiteralSegmentProps) {
   let focusManager = useFocusManager();
-  let onMouseDown = (e) => {
-    let node = focusManager.focusNext({from: e.target});
-    if (node) {
-      e.preventDefault();
-      e.stopPropagation();
+  let {pressProps} = usePress({
+    onPressStart: (e) => {
+      if (e.pointerType === 'mouse') {
+        focusManager.focusNext({from: e.target as HTMLElement});
+      }
     }
-  };
+  });
 
   return (
     <span 
       role="presentation"
       className={classNames(styles, 'react-spectrum-Datepicker-literal', {'is-placeholder': isPlaceholder})}
-      onMouseDown={onMouseDown}
+      {...pressProps}
       data-testid={segment.type === 'literal' ? undefined : segment.type}>
       {segment.text}
     </span>

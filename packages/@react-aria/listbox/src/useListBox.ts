@@ -14,8 +14,9 @@ import {AriaListBoxProps} from '@react-types/listbox';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, ReactNode, RefObject} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
-import {listIds} from './utils';
+import {listData} from './utils';
 import {ListState} from '@react-stately/list';
+import {useFocusWithin} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
 import {useSelectableList} from '@react-aria/selection';
@@ -27,7 +28,7 @@ interface ListBoxAria {
   labelProps: HTMLAttributes<HTMLElement>
 }
 
-interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'children'> {
+export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'children'> {
   /** Whether the listbox uses virtual scrolling. */
   isVirtualized?: boolean,
 
@@ -36,6 +37,17 @@ interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'children'> {
    * to override the default.
    */
   keyboardDelegate?: KeyboardDelegate,
+
+  /**
+   * Whether the listbox items should use virtual focus instead of being focused directly.
+   */
+  shouldUseVirtualFocus?: boolean,
+
+  /** Whether selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean,
+
+  /** Whether options should be focused when the user hovers over them. */
+  shouldFocusOnHover?: boolean,
 
   /**
    * An optional visual label for the listbox.
@@ -59,8 +71,21 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
     disabledKeys: state.disabledKeys
   });
 
+  let {focusWithinProps} = useFocusWithin({
+    onFocusWithin: props.onFocus,
+    onBlurWithin: props.onBlur,
+    onFocusWithinChange: props.onFocusChange
+  });
+
+  // Share list id and some props with child options.
   let id = useId(props.id);
-  listIds.set(state, id);
+  listData.set(state, {
+    id,
+    shouldUseVirtualFocus: props.shouldUseVirtualFocus,
+    shouldSelectOnPressUp: props.shouldSelectOnPressUp,
+    shouldFocusOnHover: props.shouldFocusOnHover,
+    isVirtualized: props.isVirtualized
+  });
 
   let {labelProps, fieldProps} = useLabel({
     ...props,
@@ -72,7 +97,7 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
 
   return {
     labelProps,
-    listBoxProps: mergeProps(domProps, state.selectionManager.selectionMode === 'multiple' ? {
+    listBoxProps: mergeProps(domProps, focusWithinProps, state.selectionManager.selectionMode === 'multiple' ? {
       'aria-multiselectable': 'true'
     } : {}, {
       role: 'listbox',

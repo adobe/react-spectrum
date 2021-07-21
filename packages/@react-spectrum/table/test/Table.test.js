@@ -2778,17 +2778,13 @@ describe('TableView', function () {
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
 
-      expect(() => {
-        tree.getByRole('menu');
-      }).toThrow();
+      expect(tree.queryByRole('menu')).toBeNull();
 
       expect(document.activeElement).toBe(within(rows[2]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
 
-      expect(() => {
-        tree.getByRole('menu');
-      }).toThrow();
+      expect(tree.queryByRole('menu')).toBeNull();
 
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 

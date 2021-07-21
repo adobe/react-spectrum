@@ -40,7 +40,7 @@ function ListItem<T>({item, state}: {item: Node<T>, state: ListState<T>}) {
 
 export function List<T extends object>(props: ListProps<T>) {
   const ref = useRef<HTMLUListElement>(null);
-  const state = useListState({...props});
+  const state = useListState(props);
   const {listProps} = useSelectableList({
     ...props,
     selectionManager: state.selectionManager,
