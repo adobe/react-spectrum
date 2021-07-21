@@ -42,6 +42,9 @@ governing permissions and limitations under the License.
 .spectrum-SearchWithin-searchfield {
   flex-grow: 1;
   order: -1;
+  margin-inline-end: calc(
+    -1 * var(--spectrum-textfield-border-size)
+  ); /* hides right border */
 
   &:focus-within {
     z-index: 1; /* shows entire focus ring */
@@ -53,9 +56,6 @@ governing permissions and limitations under the License.
     flex: 1;
     box-sizing: border-box;
     min-inline-size: inherit;
-    margin-inline-end: calc(
-      -1 * var(--spectrum-textfield-border-size)
-    ); /* hides right border */
 
     &:hover,
     &:focus {
