@@ -53,7 +53,7 @@ function shortName(key) {
 const meta: Meta<SpectrumSearchWithinProps> = {
   title: 'SearchWithin',
   parameters: {
-    chromaticProvider: {colorSchemes: ['light', 'dark', 'lightest', 'darkest'], locales: ['en-US'], scales: ['medium', 'large']}
+    chromaticProvider: {colorSchemes: ['light', 'dark', 'lightest', 'darkest'], locales: ['en-US', 'ar-AE'], scales: ['medium', 'large']}
   }
 };
 
