@@ -159,16 +159,21 @@ Fortunately there is another method of passing information to child components t
 ```
 Where Dialog has a DialogContext and the Dialog child components know about this context. However, we wanted to avoid this situation where we have special child components for every component. It adds a lot of bloat to our library and doesn't add much functionality.
 
-We strike a deliberate middle ground. We have classes of components, containers or parent components, and children. For example, Dialogs are a container and Title, Body, etc are children. Because we wanted to avoid components like the above mentioned `Dialog.Title`, we came up with some different component names than the original blueprint for Dialog showed. For example, Body doesn't make much sense in the context of a List Option (another container), so we opted for `Content`. From our exploration of Render Props and looking at web component api's, we borrowed the term [Slots](https://react-spectrum.adobe.com/react-spectrum/layout.html#slots). Next we needed rules for Slots to follow:
- 1. Containers can have many named slots and children consume a single slot
+We strike a deliberate middle ground between global and specific components. We have classes of components, containers or parent components, and children. For example, Dialogs are a container and Title, Body, etc are children. Because we wanted to avoid components like the above mentioned `Dialog.Title`, we came up with some different component names than the original blueprint for Dialog showed. For example, Body doesn't make much sense in the context of a List Option (another container), so we opted for `Content`. From our exploration of Render Props and looking at web component api's, we borrowed the term [Slots](https://react-spectrum.adobe.com/react-spectrum/layout.html#slots). Next we needed rules for Slots to follow:
+ 1. Containers can have many named slots and children consume a single slot each
  1. Children consuming Slots must have a default slot
  1. Children consuming Slots can have another slot name defined
  1. Multiple children can consume the same slot
  1. We only pass props on the Slots Context
- 1. Props passed on the Slots Context should have priority over user provided props
+ 1. Props passed on the Slots Context should have priority over user provided props, except style/classname/id
+
+The most important rule and the one that took us longest to realize is the last one. As we began using Slots, we realized that if a container passed a prop to a particular slot, then the container knew best, or parent knows best. For example, in our Dialog layout, we know that we will only ever use the medium size of `Divider` to go between the Header and Body areas. We wanted to make sure that a user couldn't specify `large` or `small` variants of the `Divider`. In the case of styles and classnames though, we merge, though Slots still win in duplicate style keys. Finally, we decided that a user provided id should always win so that they can target their elements in the way they expect.
+
+Using Context can be dangerous though, there's no stopping it (<!-- todo get image you can't stop the signal mal -->). So we purposefully clear our Slots Context in cases where we expect the user to supply a lot of content that may contain anything. <!-- todo example dialog with a vertical divider in the content region -->
+
+The Slots Context also lent itself very nicely to our move to use Flex and Grid. If all slotted elements are provided as siblings to the parent, then we don't need to worry about the order in which they are added. We can set the CSS `order` or `grid-area` and they'll always appear in the correct place.
 
 
+## Conclusion
 
-
-Using Context can be dangerous though, there's no stopping it (<!-- todo get image you can't stop the signal mal -->). So we purposefully clear our Slots Context in cases where we expect the user to supply a lot of content that may contain anything.
-
+Slots Context can be a great way to build composable components in a Design System or Application. I'm not saying to use Slots for everything, both cloneElement and Render Props have their places and we've used both of them. Instead, Slots can help facilitate component generalization and enforce layout and behavior choices within a container.
