@@ -54,7 +54,7 @@ export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, stat
   return {
     checkboxProps: {
       id: checkboxId,
-      'aria-label': formatMessage('Select'),
+      'aria-label': formatMessage('select'),
       'aria-labelledby': `${checkboxId} ${getRowLabelledBy(state, key)}`,
       isSelected,
       isDisabled: isDisabled || manager.selectionMode === 'none',
@@ -74,7 +74,7 @@ export function useTableSelectAllCheckbox<T>(state: TableState<T>): SelectAllChe
 
   return {
     checkboxProps: {
-      'aria-label': formatMessage(selectionMode === 'single' ? 'Select' : 'Select All'),
+      'aria-label': formatMessage(selectionMode === 'single' ? 'select' : 'selectAll'),
       isSelected: isSelectAll,
       isDisabled: selectionMode !== 'multiple',
       isIndeterminate: !isEmpty && !isSelectAll,
