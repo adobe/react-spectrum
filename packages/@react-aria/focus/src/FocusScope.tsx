@@ -101,9 +101,9 @@ export function FocusScope(props: FocusScopeProps) {
 
   return (
     <FocusContext.Provider value={focusManager}>
-      <span hidden ref={startRef} />
+      <span data-focus-scope-start hidden ref={startRef} />
       {children}
-      <span hidden ref={endRef} />
+      <span data-focus-scope-end hidden ref={endRef} />
     </FocusContext.Provider>
   );
 }
@@ -185,15 +185,28 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
   let focusedNode = useRef<HTMLElement>();
 
   // Loop through the scopeRef array, and check if scopeRef contains
-  // a FocusScope element (determined by two span children). If it does,
-  // pop it.
+  // a FocusScope element directly nested. If it does, pop it.
   scopeRef.current.forEach(element => {
-    // How do I check for a FocusScope element? Maybe check if it
-    // has two spans. This might not be the best solution for future
-    // development
     var arr = [...element.children]
+    var hitFirst = false;
+    var hitLast = false;
     arr.forEach((item, index, object) => {
-      if (item.nodeName == "span") object.splice(index, 1);
+      // Check if any elements have `data-focus-scope-start`, `data-docus-scope-end`
+      // or hitFirst is true and hitLast is not, meaning it has reached the children.
+      var attrs = item.attributes
+      for(var i = attrs.length - 1; i >= 0; i--) {
+        var attributeName = attrs[i].name
+        if (attributeName.includes('data-focus-scope-start')) {
+          hitFirst = true
+          hitLast = false
+          object.splice(index, 1);
+        } else if (attrs[i].name.includes('data-docus-scope-end')) {
+          hitLast = true
+          object.splice(index, 1);
+        } else if (hitFirst && !hitLast) {
+          object.splice(index, 1);
+        }
+      }
     })
   });
 
