@@ -16,8 +16,7 @@ import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {SearchWithin} from '../src';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
-import {typeText} from '@react-spectrum/test-utils';
+import {triggerPress, typeText} from '@react-spectrum/test-utils';
 
 let defaultProps = {
   label: 'Test'
