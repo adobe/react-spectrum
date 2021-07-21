@@ -46,7 +46,7 @@ In React, we frequently want to have components that act as containers for other
 
 ### React cloneChildren
 
-The first tool you may be tempted to reach for is React's cloneChildren. This is a powerful function that allows a component to take any children passed to it and modify what props are passed to them. For instance, maybe you have a `List` of selectable `Option`s, and you want to add a callback to each of those so that `List` can track with `Option` is currently selected. You could make a `List` component that looks something like this.
+The first tool you may be tempted to reach for is React's [cloneChildren](https://reactjs.org/docs/react-api.html#cloneelement). This is a powerful function that allows a component to take any children passed to it and modify what props are passed to them (not strictly how it works, but it gets the idea across). For instance, maybe you have a `List` of selectable `Option`s, and you want to add a callback to each of those so that `List` can track with `Option` is currently selected. You could make a `List` component that looks something like this.
 
 ```snippet
 function List(props) {
@@ -59,9 +59,9 @@ function List(props) {
 }
 
 <List>
-  <Option value="One" />
-  <Option value="Two" />
-  <Option value="Three" />
+  <Option>One</Option>
+  <Option>Two</Option>
+  <Option>Three</Option>
 </List>
 ```
 
@@ -69,9 +69,9 @@ Great, we have a `List` and we can pass arbitrary `Option`s to it. Well, almost.
 
 ```snippet
 <List>
-  <Analytics><Option value="One" /></Analytics>
-  <Option value="Two" />
-  <Option value="Three" />
+  <Analytics><Option>One</Option></Analytics>
+  <Option>Two</Option>
+  <Option>Three</Option>
 </List>
 ```
 
@@ -95,7 +95,80 @@ function Dialog(props) {
 
 This is also restricted to the order in which the children are added, and if you tried to inspect the children to find out which was which, you'd ruin the ability to add a component like our `Analytics` above.
 
+### Render Props
 
-### React Context
+There is another way to handle this without looping over children, called [Render Props](https://reactjs.org/docs/render-props.html). In this, we could expose the `children` prop as a function that accepts a number of props. Maybe something like this
 
-This is probably the point where you'd reach for React's Context.
+```snippet
+function Dialog(props) {
+  return props.children({title: {id, classname}, body: {/* body props ...etc */})
+}
+```
+
+Which we could use like:
+
+```snippet
+<Dialog>
+  {({title, body}) => (
+    <Title {...title} />
+    <Heading />
+    <Analytics><Body {...body} /></Analytics>
+    ...
+  )}
+</Dialog>
+```
+
+This solves our issue that we couldn't wrap the elements in other components. It has also taken care of needing to know the order of the children and we no longer need to clone them to apply props. Instead, we've put some boilerplate burden on users, as they now have to attach the right arguments to the right elements. This is most obvious in our `List` example. To make a static list, you'd need to do something like:
+
+```snippet
+<List>
+  {(optionProps) => (
+    <>
+      <Analytics><Option {...optionProps}>One</Option></Analytics>
+      <Option {...optionProps}>Two</Option>
+      <Option {...optionProps}>Three</Option>
+    </>
+  )}
+</List>
+```
+
+That is a lot of repeating the same spread, plus the React Fragment is annoying to remember.
+It also makes documentation harder because children are such a special prop and this deviates from the expected usage. Users can also get into trouble if they decide they know better than the Design System because they could intentionally omit props very easily or change the order of the children and swap the props they apply.
+
+We could make it harder to do this by employing multiple Render Props
+
+```snippet
+<Dialog title={(title) => <Title {...title} />} body={(body) => <Analytics><Body {...body} /></Analytics>} />
+```
+
+Now the props can't be swapped around as easily, but it's at the cost of making the component much harder to read because the JSX is disrupted by props everywhere. In addition, this makes the `List` even harder and you don't want to mix the two styles because that's confusing to users.
+
+
+### Context
+
+<!-- TODO better transitions in this entire section -->
+Fortunately there is another method of passing information to child components that doesn't expose the information to a user and it doesn't matter how many components are placed in between the parent and the child, [Context](https://reactjs.org/docs/context.html). Typically Context is used for global values, like themes, or between two very specific components. An example of what I mean by very specific might've been something like this:
+
+```snippet
+<Dialog>
+  <Dialog.Title>The dialogs title</Dialog.Title>
+  <Dialog.Header>Extra heading level content</Dialog.Header>
+  <Dialog.Body>This is the content of the dialog.</Dialog.Body>
+  ...
+</Dialog>
+```
+Where Dialog has a DialogContext and the Dialog child components know about this context. However, we wanted to avoid this situation where we have special child components for every component. It adds a lot of bloat to our library and doesn't add much functionality.
+
+We strike a deliberate middle ground. We have classes of components, containers or parent components, and children. For example, Dialogs are a container and Title, Body, etc are children. Because we wanted to avoid components like the above mentioned `Dialog.Title`, we came up with some different component names than the original blueprint for Dialog showed. For example, Body doesn't make much sense in the context of a List Option (another container), so we opted for `Content`. From our exploration of Render Props and looking at web component api's, we borrowed the term [Slots](https://react-spectrum.adobe.com/react-spectrum/layout.html#slots). Next we needed rules for Slots to follow:
+ 1. Containers can have many named slots and children consume a single slot
+ 1. Children consuming Slots must have a default slot
+ 1. Children consuming Slots can have another slot name defined
+ 1. Multiple children can consume the same slot
+ 1. We only pass props on the Slots Context
+ 1. Props passed on the Slots Context should have priority over user provided props
+
+
+
+
+Using Context can be dangerous though, there's no stopping it (<!-- todo get image you can't stop the signal mal -->). So we purposefully clear our Slots Context in cases where we expect the user to supply a lot of content that may contain anything.
+
