@@ -11,11 +11,11 @@
  */
 
 import {DOMProps, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
-import {ReactNode} from 'react';
+import {ReactElement} from 'react';
 
 export interface SpectrumSearchWithinProps extends SpectrumLabelableProps, DOMProps, StyleProps {
   /** The SearchField and Picker contained within the SearchWithin. */
-  children: ReactNode,
+  children: [ReactElement, ReactElement],
 
   /** Whether the children should be disabled. Propagated to both children. */
   isDisabled?: boolean
