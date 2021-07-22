@@ -12,8 +12,8 @@
 
 import React, {Fragment, ReactNode, RefObject, useImperativeHandle, useState} from 'react';
 import ReactDOM from 'react-dom';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
 import {useLayoutEffect} from '@react-aria/utils';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 // @ts-ignore
 const isReactConcurrent = !!ReactDOM.createRoot;
