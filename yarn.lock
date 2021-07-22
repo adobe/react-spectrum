@@ -9437,6 +9437,11 @@ dezalgo@^1.0.0:
     asap "^2.0.0"
     wrappy "1"
 
+diff-match-patch@^1.0.4:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/diff-match-patch/-/diff-match-patch-1.0.5.tgz#abb584d5f10cd1196dfc55aa03701592ae3f7b37"
+  integrity sha512-IayShXAgj/QMXgB0IWmKx+rOPuGMhqm5w6jvFxmVenXKIzRqTAAsbBPT3kWQeGANj3jGgvcvv4yK6SxqYmikgw==
+
 diff-sequences@^25.1.0:
   version "25.1.0"
   resolved "https://registry.yarnpkg.com/diff-sequences/-/diff-sequences-25.1.0.tgz#fd29a46f1c913fd66c22645dc75bffbe43051f32"
@@ -10911,6 +10916,13 @@ file-loader@^6.0.0:
   dependencies:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
+
+file-patch@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/file-patch/-/file-patch-0.3.0.tgz#8bc2f401a06c45eb3b34a99c54406ac89f84e6ab"
+  integrity sha512-9BPZAVsMIcoC3PSW89F/ivl2xk5Kt5QSeLvkwyBJSaKMAGgxZ/dUYRl5W58tjiSQOC5fwD7FQJoFEcqlvIHB+g==
+  dependencies:
+    diff-match-patch "^1.0.4"
 
 file-system-cache@^1.0.5:
   version "1.0.5"

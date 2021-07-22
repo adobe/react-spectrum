@@ -1,0 +1,40 @@
+@@ -2820,16 +2820,63 @@
+ per);%0A  
++const root = ReactDOM.createRoot(container);%0A  
+ return %7B
+@@ -2934,32 +2934,28 @@
+ %3E %7B%0A        
+-Reac
++roo
+ t
+-DOM
+ .render(test
+@@ -2964,35 +2964,24 @@
+ rness(props)
+-, container
+ );%0A      %7D);
+@@ -3053,24 +3053,20 @@
+         
+-Reac
++roo
+ t
+-DOM
+ .render(
+@@ -3087,19 +3087,8 @@
+ ops)
+-, container
+ );%0A 
+@@ -3166,49 +3166,21 @@
+     
+-Reac
++roo
+ t
+-DOM
+ .unmount
+-ComponentAtNode
+ (
+-container
+ );%0A 
+@@ -3327,8 +3327,9 @@
+ derHook;
++%0A
