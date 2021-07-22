@@ -1,5 +1,7 @@
 {
   "sortable": "sortable column",
   "ascending": "ascending",
-  "descending": "descending"
+  "descending": "descending",
+  "ascendingSort": "sorted by column {columnIndex} in ascending order",
+  "descendingSort": "sorted by column {columnIndex} in descending order"
 }

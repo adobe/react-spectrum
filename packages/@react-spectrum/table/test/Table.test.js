@@ -2242,6 +2242,44 @@ describe('TableView', function () {
         triggerPress(row);
         expect(announce).toHaveBeenLastCalledWith('Sam Smith not selected.');
       });
+
+      it('should announce changes in sort order', function () {
+        function ExampleSortTable() {
+          let [sortDescriptor, setSortDescriptor] = React.useState({column: 'bar', direction: 'ascending'});
+
+          return (
+            <TableView aria-label="Table" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
+              <TableHeader>
+                <Column key="foo" allowsSorting>Foo</Column>
+                <Column key="bar" allowsSorting>Bar</Column>
+                <Column key="baz">Baz</Column>
+              </TableHeader>
+              <TableBody>
+                <Row>
+                  <Cell>Foo 1</Cell>
+                  <Cell>Bar 1</Cell>
+                  <Cell>Baz 1</Cell>
+                </Row>
+              </TableBody>
+            </TableView>
+          )
+        }
+
+
+        let tree = render(<ExampleSortTable />);
+        let table = tree.getByRole('grid');
+        let columnheaders = within(table).getAllByRole('columnheader');
+        expect(columnheaders).toHaveLength(3);
+
+        triggerPress(columnheaders[1]);
+        expect(announce).toHaveBeenLastCalledWith('sorted by column 2 in descending order', 'assertive', 500);
+        triggerPress(columnheaders[1]);
+        expect(announce).toHaveBeenLastCalledWith('sorted by column 2 in ascending order', 'assertive', 500);
+        triggerPress(columnheaders[0]);
+        expect(announce).toHaveBeenLastCalledWith('sorted by column 1 in ascending order', 'assertive', 500);
+        triggerPress(columnheaders[0]);
+        expect(announce).toHaveBeenLastCalledWith('sorted by column 1 in descending order', 'assertive', 500);
+      })
     });
   });
 
