@@ -2262,9 +2262,8 @@ describe('TableView', function () {
                 </Row>
               </TableBody>
             </TableView>
-          )
+          );
         }
-
 
         let tree = render(<ExampleSortTable />);
         let table = tree.getByRole('grid');
@@ -2279,7 +2278,7 @@ describe('TableView', function () {
         expect(announce).toHaveBeenLastCalledWith('sorted by column 1 in ascending order', 'assertive', 500);
         triggerPress(columnheaders[0]);
         expect(announce).toHaveBeenLastCalledWith('sorted by column 1 in descending order', 'assertive', 500);
-      })
+      });
     });
   });
 
