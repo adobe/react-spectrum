@@ -93,7 +93,7 @@ jobs:
       - run:
           name: build
           command: |
-            yarn install --pure-lockfile --cache-folder ~/.cache/yarn && yarn install-18 --cache-folder ~/.cache/yarn && yarn patch-18
+            yarn install --pure-lockfile --cache-folder ~/.cache/yarn && yarn install-18 --cache-folder ~/.cache/yarn && yarn install && yarn patch-18
 
       - save_cache:
           paths:

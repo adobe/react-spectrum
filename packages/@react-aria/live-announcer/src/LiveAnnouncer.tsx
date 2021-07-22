@@ -13,6 +13,7 @@
 import React, {Fragment, ReactNode, RefObject, useImperativeHandle, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {useLayoutEffect} from '@react-aria/utils';
 
 // @ts-ignore
 const isReactConcurrent = !!ReactDOM.createRoot;
@@ -128,15 +129,16 @@ const LiveRegionAnnouncer = React.forwardRef((props: {callback?: () => void}, re
     }
   };
 
-  useImperativeHandle(ref, () => {
+  useLayoutEffect(() => {
     if (callback) {
       callback();
     }
-    return {
-      announce,
-      clear
-    };
-  });
+  }, []);
+
+  useImperativeHandle(ref, () => ({
+    announce,
+    clear
+  }));
 
   return (
     <Fragment>
