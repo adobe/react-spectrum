@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "check-types": "tsc",
-    "install-17": "yarn add -W react@^17.0.1 react-dom@^17.0.1",
+    "install-17": "yarn add -W react@^17.0.1 react-dom@^17.0.1 react-test-renderer@^17.0.2",
     "install-18": "yarn add -W react@18.0.0-alpha-9ab90de60-20210720 react-dom@18.0.0-alpha-9ab90de60-20210720 react-test-renderer@18.0.0-alpha-9ab90de60-20210720 https://pkg.csb.dev/testing-library/react-testing-library/commit/0e2cf7da/@testing-library/react",
     "start": "cross-env NODE_ENV=storybook start-storybook -p 9003 --ci -c '.storybook'",
     "build:storybook": "build-storybook -c .storybook -o dist/$(git rev-parse HEAD)/storybook",
@@ -152,7 +152,7 @@
     "react-axe": "^3.0.2",
     "react-dom": "^16.8.0 || ^17.0.0-rc.1",
     "react-overlays": "0.8.3",
-    "react-test-renderer": "^16.8.0 || ^17.0.0-rc.1",
+    "react-test-renderer": "^16.9.0",
     "recursive-readdir": "^2.2.2",
     "regenerator-runtime": "0.13.3",
     "rimraf": "^2.6.3",

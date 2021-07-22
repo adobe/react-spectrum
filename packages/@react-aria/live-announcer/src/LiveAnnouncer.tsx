@@ -79,12 +79,13 @@ function ensureInstance(callback: (announcer: Announcer) => void) {
       // https://github.com/reactwg/react-18/discussions/5
       root.render(
         // do we actually want the callback to be called during downtime? or after render in a useeffect?
-        <LiveRegionAnnouncer ref={liveRegionAnnouncer} callback={() => callback(liveRegionAnnouncer.current)}/>
+        <LiveRegionAnnouncer ref={liveRegionAnnouncer} callback={() => callback(liveRegionAnnouncer.current)} />
       );
     } else {
       ReactDOM.render(
-        <LiveRegionAnnouncer ref={liveRegionAnnouncer} callback={() => callback(liveRegionAnnouncer.current)}/>,
-        node
+        <LiveRegionAnnouncer ref={liveRegionAnnouncer} />,
+        node,
+        () => callback(liveRegionAnnouncer.current)
       );
     }
   } else {
@@ -128,7 +129,9 @@ const LiveRegionAnnouncer = React.forwardRef((props: {callback?: () => void}, re
   };
 
   useImperativeHandle(ref, () => {
-    callback();
+    if (callback) {
+      callback();
+    }
     return {
       announce,
       clear

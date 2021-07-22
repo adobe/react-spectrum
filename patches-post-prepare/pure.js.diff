@@ -1,40 +1,77 @@
-@@ -2820,16 +2820,63 @@
+@@ -8,16 +8,59 @@
+ rict%22;%0A%0A
++import %7Bact%7D from 'react-dom/test-utils';%0A%0A
+ Object.d
+@@ -2863,16 +2863,131 @@
  per);%0A  
-+const root = ReactDOM.createRoot(container);%0A  
++// @ts-ignore%0A  if (ReactDOM.createRoot) %7B%0A    // @ts-ignore%0A    const root = ReactDOM.createRoot(container)%0A      
  return %7B
-@@ -2934,32 +2934,28 @@
- %3E %7B%0A        
--Reac
-+roo
- t
--DOM
- .render(test
-@@ -2964,35 +2964,24 @@
- rness(props)
--, container
- );%0A      %7D);
-@@ -3053,24 +3053,20 @@
-         
--Reac
-+roo
- t
--DOM
- .render(
-@@ -3087,19 +3087,8 @@
- ops)
--, container
- );%0A 
-@@ -3166,49 +3166,21 @@
+@@ -2987,16 +2987,20 @@
+ eturn %7B%0A
++    
+     rend
+@@ -3003,38 +3003,42 @@
+ render(props) %7B%0A
++  
+       
++  
+ (0, _testUtils.a
+@@ -3049,32 +3049,468 @@
+ () =%3E %7B%0A        
++    root.render(testHarness(props));%0A          %7D);%0A        %7D,%0A%0A        rerender(props) %7B%0A          (0, _testUtils.act)(() =%3E %7B%0A            root.render(testHarness(props));%0A          %7D);%0A        %7D,%0A%0A        unmount() %7B%0A          (0, _testUtils.act)(() =%3E %7B%0A            root.unmount();%0A          %7D);%0A        %7D,%0A%0A        act: _testUtils.act%0A    %7D%0A  %7D else %7B%0A    return %7B%0A      render(props) %7B%0A        (0, _testUtils.act)(() =%3E %7B%0A          
+ ReactDOM.render(
+@@ -3543,36 +3543,42 @@
+ ner);%0A      
++  
+ %7D);%0A
++ 
      
--Reac
-+roo
- t
--DOM
- .unmount
--ComponentAtNode
- (
--container
- );%0A 
-@@ -3327,8 +3327,9 @@
- derHook;
-+%0A
++ 
+ %7D,%0A%0A
++  
+     rerender
+@@ -3585,32 +3585,34 @@
+ (props) %7B%0A      
++  
+ (0, _testUtils.a
+@@ -3615,32 +3615,34 @@
+ ls.act)(() =%3E %7B%0A
++  
+         ReactDOM
+@@ -3687,32 +3687,38 @@
+ ;%0A      
++  
+ %7D);%0A
++ 
+     
++ 
+ %7D,%0A%0A
++ 
+     
++ 
+ unmount(
+@@ -3717,24 +3717,26 @@
+ unmount() %7B%0A
++  
+       (0, _t
+@@ -3749,32 +3749,34 @@
+ ls.act)(() =%3E %7B%0A
++  
+         ReactDOM
+@@ -3813,28 +3813,32 @@
+ ner);%0A      
++  
+ %7D);%0A
++  
+     %7D,%0A%0A    
+@@ -3833,24 +3833,26 @@
+     %7D,%0A%0A    
++  
+ act: _testUt
+@@ -3861,18 +3861,23 @@
+ s.act%0A  
++  
+ %7D
+-;
++%0A  %7D
+ %0A%7D%0A%0Acons

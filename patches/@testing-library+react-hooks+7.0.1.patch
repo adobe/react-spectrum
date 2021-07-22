@@ -1,31 +1,70 @@
 diff --git a/node_modules/@testing-library/react-hooks/src/dom/pure.ts b/node_modules/@testing-library/react-hooks/src/dom/pure.ts
-index 42d6607..162e23c 100644
+index 42d6607..45a3c50 100644
 --- a/node_modules/@testing-library/react-hooks/src/dom/pure.ts
 +++ b/node_modules/@testing-library/react-hooks/src/dom/pure.ts
-@@ -12,21 +12,22 @@ function createDomRenderer<TProps, TResult>(
+@@ -12,24 +12,47 @@ function createDomRenderer<TProps, TResult>(
  ) {
    const container = document.createElement('div')
    const testHarness = createTestHarness(rendererProps, wrapper)
 -
-+  // @ts-ignore
-+  const root = ReactDOM.createRoot(container)
-   return {
-     render(props?: TProps) {
-       act(() => {
+-  return {
+-    render(props?: TProps) {
+-      act(() => {
 -        ReactDOM.render(testHarness(props), container)
-+        root.render(testHarness(props))
-       })
-     },
-     rerender(props?: TProps) {
-       act(() => {
+-      })
+-    },
+-    rerender(props?: TProps) {
+-      act(() => {
 -        ReactDOM.render(testHarness(props), container)
-+        root.render(testHarness(props))
-       })
-     },
-     unmount() {
-       act(() => {
+-      })
+-    },
+-    unmount() {
+-      act(() => {
 -        ReactDOM.unmountComponentAtNode(container)
-+        root.unmount()
-       })
-     },
-     act
+-      })
+-    },
+-    act
++  // @ts-ignore
++  if (ReactDOM.createRoot) {
++    // @ts-ignore
++    const root = ReactDOM.createRoot(container)
++    return {
++      render(props?: TProps) {
++        act(() => {
++          root.render(testHarness(props))
++        })
++      },
++      rerender(props?: TProps) {
++        act(() => {
++          root.render(testHarness(props))
++        })
++      },
++      unmount() {
++        act(() => {
++          root.unmount()
++        })
++      },
++      act
++    }
++  } else {
++    return {
++      render(props?: TProps) {
++        act(() => {
++          ReactDOM.render(testHarness(props), container)
++        })
++      },
++      rerender(props?: TProps) {
++        act(() => {
++          ReactDOM.render(testHarness(props), container)
++        })
++      },
++      unmount() {
++        act(() => {
++          ReactDOM.unmountComponentAtNode(container)
++        })
++      },
++      act
++    }
+   }
+ }
+ 
