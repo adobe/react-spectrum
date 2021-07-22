@@ -18,9 +18,13 @@ function shiftArgs(args: any[]) {
     ? args.shift()
     : new GregorianCalendar();
 
-  let era = typeof args[0] === 'string'
-    ? args.shift()
-    : calendar.getCurrentEra();
+  let era: string;
+  if (typeof args[0] === 'string') {
+    era = args.shift();
+  } else {
+    let eras = calendar.getEras();
+    era = eras[eras.length - 1];
+  }
 
   let year = args.shift();
   let month = args.shift();
@@ -51,6 +55,14 @@ export class CalendarDate {
       this.calendar.balanceDate(this);
     }
   }
+
+  copy(): CalendarDate {
+    if (this.era) {
+      return new CalendarDate(this.calendar, this.era, this.year, this.month, this.day);
+    } else {
+      return new CalendarDate(this.calendar, this.year, this.month, this.day);
+    }
+  }
 }
 
 export class Time {
@@ -60,6 +72,10 @@ export class Time {
     public readonly second: number = 0,
     public readonly millisecond: number = 0
   ) {}
+
+  copy(): Time {
+    return new Time(this.hour, this.minute, this.second, this.millisecond);
+  }
 }
 
 export class CalendarDateTime extends CalendarDate {
@@ -78,5 +94,13 @@ export class CalendarDateTime extends CalendarDate {
     this.minute = args.shift() || 0;
     this.second = args.shift() || 0;
     this.millisecond = args.shift() || 0;
+  }
+
+  copy(): CalendarDateTime {
+    if (this.era) {
+      return new CalendarDateTime(this.calendar, this.era, this.year, this.month, this.day, this.hour, this.minute, this.second, this.millisecond);
+    } else {
+      return new CalendarDateTime(this.calendar, this.year, this.month, this.day, this.hour, this.minute, date.second);
+    }
   }
 }

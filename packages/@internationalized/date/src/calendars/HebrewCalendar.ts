@@ -15,7 +15,7 @@
 
 import {Calendar} from '../types';
 import {CalendarDate} from '../CalendarDate';
-import {mod} from '../utils';
+import {mod, Mutable} from '../utils';
 
 const HEBREW_EPOCH = 347997;
 
@@ -175,7 +175,23 @@ export class HebrewCalendar implements Calendar {
     return getDaysInYear(date.year);
   }
 
-  getCurrentEra() {
-    return 'AM';
+  getYearsInEra(): number {
+    return 9999;
+  }
+
+  getEras() {
+    return ['AM'];
+  }
+
+  addYears(date: Mutable<CalendarDate>, years: number) {
+    // Keep date in the same month when switching between leap years and non leap years
+    let nextYear = date.year + years;
+    if (isLeapYear(date.year) && !isLeapYear(nextYear) && date.month > 6) {
+      date.month--;
+    } else if (!isLeapYear(date.year) && isLeapYear(nextYear) && date.month > 6) {
+      date.month++;
+    }
+
+    date.year = nextYear;
   }
 }

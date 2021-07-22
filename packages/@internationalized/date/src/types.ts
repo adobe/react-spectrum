@@ -20,8 +20,9 @@ export interface Calendar {
 
   getDaysInMonth(date: CalendarDate): number,
   getMonthsInYear(date: CalendarDate): number,
+  getYearsInEra(date: CalendarDate): number,
 
-  getCurrentEra(): string,
+  getEras(): string[],
 
   balanceDate?(date: CalendarDate): void,
   addYears?(date: CalendarDate, years: number): void
@@ -31,10 +32,15 @@ export interface Duration {
   years?: number,
   months?: number,
   weeks?: number,
-  days?: number
+  days?: number,
+  hours?: number,
+  minutes?: number,
+  seconds?: number,
+  milliseconds?: number
 }
 
 export interface DateFields {
+  era?: string,
   year?: number,
   month?: number,
   day?: number
