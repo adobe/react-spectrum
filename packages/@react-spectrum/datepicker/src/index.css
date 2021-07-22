@@ -25,15 +25,28 @@
   border-end-start-radius: 0;
 }
 
+.react-spectrum-Datepicker-field {
+  /* overflow: hidden; */
+}
+
 .react-spectrum-Datepicker-input {
   display: flex;
   align-items: center;
-}
+  /* width: auto; */
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
 
+  &::-webkit-scrollbar { /* WebKit */
+    width: 0;
+    height: 0;
+  }
+}
 
 .react-spectrum-Datepicker-literal {
   white-space: pre;
   user-select: none;
+  color: var(--spectrum-textfield-text-color);
 }
 
 .react-spectrum-Datepicker-literal.is-placeholder {
@@ -48,6 +61,8 @@
   font-variant-numeric: tabular-nums;
   text-align: end;
   box-sizing: content-box;
+  white-space: nowrap;
+  color: var(--spectrum-textfield-text-color);
 }
 
 .react-spectrum-DatePicker-cell:focus {
@@ -66,7 +81,7 @@
 }
 
 .react-spectrum-DatePicker-cell.is-placeholder:focus {
-  color: white;
+  color: var(--spectrum-global-color-static-gray-400);
 }
 
 .react-spectrum-Datepicker-dialog {

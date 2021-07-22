@@ -23,6 +23,7 @@ import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.
 import {useDateField} from '@react-aria/datepicker';
 import {useDatePickerFieldState} from '@react-stately/datepicker';
 import {useStyleProps} from '@react-spectrum/utils';
+import {createCalendar} from '@internationalized/date';
 
 interface DateFieldDescProps extends DOMProps {
   children?: string,
@@ -30,7 +31,10 @@ interface DateFieldDescProps extends DOMProps {
 }
 
 export function DatePickerField(props: SpectrumDatePickerProps & {descProps?: DateFieldDescProps}) {
-  let state = useDatePickerFieldState(props);
+  let state = useDatePickerFieldState({
+    ...props,
+    createCalendar
+  });
   let {
     isDisabled,
     isReadOnly,
@@ -53,6 +57,7 @@ export function DatePickerField(props: SpectrumDatePickerProps & {descProps?: Da
       'spectrum-Textfield--valid': validationState === 'valid',
       'spectrum-Textfield--quiet': isQuiet
     },
+    classNames(datepickerStyles, 'react-spectrum-Datepicker-field'),
     styleProps.className
   );
 

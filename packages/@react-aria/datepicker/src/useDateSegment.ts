@@ -17,18 +17,19 @@ import {HTMLAttributes, RefObject, useMemo, useRef, useState} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useEvent, useId} from '@react-aria/utils';
-import {useDateFormatter, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useDateFormatter, useFilter, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useFocusManager} from '@react-aria/focus';
 import {useMediaQuery} from '@react-spectrum/utils';
 import {usePress} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
+import { NumberParser } from '@internationalized/number';
 
 interface DateSegmentAria {
   segmentProps: HTMLAttributes<HTMLDivElement>
 }
 
 export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateSegment, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateSegmentAria {
-  let [enteredKeys, setEnteredKeys] = useState('');
+  let enteredKeys = useRef('');
   let {locale, direction} = useLocale();
   let messageFormatter = useMessageFormatter(intlMessages);
   let focusManager = useFocusManager();
@@ -41,10 +42,10 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
   });
 
   if (segment.type === 'month') {
-    let monthTextValue = monthDateFormatter.format(state.value);
+    let monthTextValue = monthDateFormatter.format(state.dateValue);
     textValue = monthTextValue !== textValue ? `${textValue} - ${monthTextValue}` : monthTextValue;
   } else if (segment.type === 'hour' || segment.type === 'dayPeriod') {
-    textValue = hourDateFormatter.format(state.value);
+    textValue = hourDateFormatter.format(state.dateValue);
   }
 
   let {spinButtonProps} = useSpinButton({
@@ -55,13 +56,33 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
     isDisabled: props.isDisabled,
     isReadOnly: props.isReadOnly,
     isRequired: props.isRequired,
-    onIncrement: () => state.increment(segment.type),
-    onDecrement: () => state.decrement(segment.type),
-    onIncrementPage: () => state.incrementPage(segment.type),
-    onDecrementPage: () => state.decrementPage(segment.type),
-    onIncrementToMax: () => state.setSegment(segment.type, segment.maxValue),
-    onDecrementToMin: () => state.setSegment(segment.type, segment.minValue)
+    onIncrement: () => {
+      enteredKeys.current = '';
+      state.increment(segment.type);
+    },
+    onDecrement: () => {
+      enteredKeys.current = '';
+      state.decrement(segment.type);
+    },
+    onIncrementPage: () => {
+      enteredKeys.current = '';
+      state.incrementPage(segment.type);
+    },
+    onDecrementPage: () => {
+      enteredKeys.current = '';
+      state.decrementPage(segment.type);
+    },
+    onIncrementToMax: () => {
+      enteredKeys.current = '';
+      state.setSegment(segment.type, segment.maxValue);
+    },
+    onDecrementToMin: () => {
+      enteredKeys.current = '';
+      state.setSegment(segment.type, segment.minValue);
+    }
   });
+
+  let parser = useMemo(() => new NumberParser(locale, {maximumFractionDigits: 0}), [locale]);
 
   let onKeyDown = (e) => {
     if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) {
@@ -97,10 +118,10 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
       case 'Backspace': {
         // Safari on iOS does not fire beforeinput for the backspace key because the cursor is at the start.
         e.preventDefault();
-        if (isNumeric(segment.text) && !props.isReadOnly) {
+        if (parser.isValidPartialNumber(segment.text, segment.minValue, segment.maxValue) && !props.isReadOnly) {
           let newValue = segment.text.slice(0, -1);
-          state.setSegment(segment.type, newValue.length === 0 ? segment.minValue : parseNumber(newValue));
-          setEnteredKeys(newValue);
+          state.setSegment(segment.type, newValue.length === 0 ? segment.minValue : parser.parse(newValue));
+          enteredKeys.current = newValue;
         }
         break;
       }
@@ -108,6 +129,7 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
   };
 
   // Safari dayPeriod option doesn't work...
+  let {startsWith} = useFilter({sensitivity: 'base'});
   let amPmFormatter = useDateFormatter({hour: 'numeric', hour12: true});
   let am = useMemo(() => {
     let date = new Date();
@@ -122,14 +144,16 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
   }, [amPmFormatter]);
 
   let onInput = (key: string) => {
-    let newValue = enteredKeys + key;
+    let newValue = enteredKeys.current + key;
 
     switch (segment.type) {
       case 'dayPeriod':
-        if (key.localeCompare(am[0], locale, {sensitivity: 'base'}) === 0) {
+        if (startsWith(am, key)) {
           state.setSegment('dayPeriod', 0);
-        } else if (key.localeCompare(pm[0], locale, {sensitivity: 'base'}) === 0) {
+        } else if (startsWith(pm, key)) {
           state.setSegment('dayPeriod', 12);
+        } else {
+          break;
         }
         focusManager.focusNext();
         break;
@@ -139,27 +163,31 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
       case 'second':
       case 'month':
       case 'year': {
-        if (!isNumeric(newValue)) {
+        if (!parser.isValidPartialNumber(newValue, segment.minValue, segment.maxValue)) {
           return;
         }
 
-        let numberValue = parseNumber(newValue);
+        let numberValue = parser.parse(newValue);
         let segmentValue = numberValue;
         if (segment.type === 'hour' && state.dateFormatter.resolvedOptions().hour12) {
-          if (segment.value > 12) {
+          if (segment.value >= 12 && numberValue > 1) {
             numberValue += 12;
           }
         } else if (numberValue > segment.maxValue) {
-          segmentValue = parseNumber(key);
+          segmentValue = parser.parse(key);
+        }
+
+        if (isNaN(numberValue)) {
+          return;
         }
 
         state.setSegment(segment.type, segmentValue);
 
         if (Number(numberValue + '0') > segment.maxValue) {
-          setEnteredKeys('');
+          enteredKeys.current = '';
           focusManager.focusNext();
         } else {
-          setEnteredKeys(newValue);
+          enteredKeys.current = newValue;
         }
         break;
       }
@@ -167,7 +195,8 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
   };
 
   let onFocus = () => {
-    setEnteredKeys('');
+    enteredKeys.current = '';
+    ref.current.scrollIntoView();
   };
 
   let compositionRef = useRef('');
@@ -177,10 +206,10 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
     switch (e.inputType) {
       case 'deleteContentBackward':
       case 'deleteContentForward':
-        if (isNumeric(segment.text) && !props.isReadOnly) {
+        if (parser.isValidPartialNumber(segment.text, segment.minValue, segment.maxValue) && !props.isReadOnly) {
           let newValue = segment.text.slice(0, -1);
-          state.setSegment(segment.type, newValue.length === 0 ? segment.minValue : parseNumber(newValue));
-          setEnteredKeys(newValue);
+          state.setSegment(segment.type, newValue.length === 0 ? segment.minValue : parser.parse(newValue));
+          enteredKeys.current = newValue;
         }
         break;
       case 'insertCompositionText':
@@ -208,7 +237,8 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
         ref.current.textContent = compositionRef.current;
 
         // Android sometimes fires key presses of letters as composition events. Need to handle am/pm keys here too.
-        if (data.localeCompare(am[0], locale, {sensitivity: 'base'}) === 0 || data.localeCompare(pm[0], locale, {sensitivity: 'base'}) === 0) {
+        // Can also happen e.g. with Pinyin keyboard on iOS.
+        if (startsWith(am, data) || startsWith(pm, data)) {
           onInput(data);
         }
         break;

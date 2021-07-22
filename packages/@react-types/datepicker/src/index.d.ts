@@ -21,8 +21,10 @@ import {
   Validation,
   ValueBase
 } from '@react-types/shared';
+import { CalendarDate, CalendarDateTime } from '@internationalized/date';
 
-export type DateValue = string | number | Date;
+
+export type DateValue = CalendarDate | CalendarDateTime;
 interface DatePickerBase extends InputBase, Validation, FocusableProps, LabelableProps {
   minValue?: DateValue,
   maxValue?: DateValue,
@@ -56,4 +58,6 @@ interface TimePickerProps extends InputBase, Validation, FocusableProps, Labelab
   granularity?: 'hour' | 'minute' | 'second' | 'millisecond'
 }
 
-interface SpectrumTimePickerProps extends TimePickerProps, SpectrumLabelableProps, DOMProps, StyleProps {}
+interface SpectrumTimePickerProps extends TimePickerProps, SpectrumLabelableProps, DOMProps, StyleProps {
+  isQuiet?: boolean
+}

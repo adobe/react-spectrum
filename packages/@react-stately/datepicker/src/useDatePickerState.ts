@@ -15,11 +15,13 @@ import {isInvalid, setTime} from './utils';
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
 import {ValidationState} from '@react-types/shared';
+import { CalendarDateTime, toDate } from '@internationalized/date';
 
 export interface DatePickerState {
-  value: Date,
-  setValue: (value: Date) => void,
-  selectDate: (value: Date) => void,
+  value: CalendarDateTime,
+  dateValue: Date,
+  setValue: (value: CalendarDateTime) => void,
+  selectDate: (value: CalendarDateTime) => void,
   isOpen: boolean,
   setOpen: (isOpen: boolean) => void,
   validationState: ValidationState
@@ -28,7 +30,7 @@ export interface DatePickerState {
 export function useDatePickerState(props: DatePickerProps): DatePickerState {
   let [isOpen, setOpen] = useState(false);
   let [value, setValue] = useControlledState(props.value, props.defaultValue || null, props.onChange);
-  let dateValue = value != null ? new Date(value) : null;
+  let dateValue = value != null ? toDate(value, 'America/Los_Angeles') : null;
 
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
   let selectDate = (newValue: Date) => {
@@ -38,12 +40,13 @@ export function useDatePickerState(props: DatePickerProps): DatePickerState {
     setValue(newValue);
     setOpen(false);
   };
-  
-  let validationState: ValidationState = props.validationState || 
+
+  let validationState: ValidationState = props.validationState ||
     (isInvalid(dateValue, props.minValue, props.maxValue) ? 'invalid' : null);
 
   return {
-    value: dateValue,
+    value,
+    dateValue,
     setValue,
     selectDate,
     isOpen,

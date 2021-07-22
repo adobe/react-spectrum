@@ -49,8 +49,8 @@ export function useDatePicker(props: DatePickerAriaProps, state: DatePickerState
   let dateValueDescription = useMemo(
     () => {
       if (state.value) {
-        if (state.value instanceof Date) {
-          return formatMessage('currentDate', {date: state.value});
+        if (state.dateValue instanceof Date) {
+          return formatMessage('currentDate', {date: state.dateValue});
         } else if (state.value.start && state.value.start instanceof Date && state.value.end && state.value.end instanceof Date) {
           return formatMessage('currentDateRange', {start: state.value.start, end: state.value.end});
         }

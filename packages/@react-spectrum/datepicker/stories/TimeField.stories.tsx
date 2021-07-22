@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {TimeField} from '../';
+import { parseTime, Time } from '../../../@internationalized/date';
 
 const BlockDecorator = storyFn => <div>{storyFn()}</div>;
 
@@ -29,11 +30,11 @@ storiesOf('TimeField', module)
   )
   .add(
     'defaultValue',
-    () => render({defaultValue: new Date(2020, 2, 3)})
+    () => render({defaultValue: parseTime('20:24')})
   )
   .add(
     'controlled value',
-    () => render({value: new Date(2020, 2, 3)})
+    () => render({value: new Time(2, 35)})
   )
   .add(
     'granularity: second',
@@ -44,29 +45,16 @@ storiesOf('TimeField', module)
     () => render({hourCycle: 24})
   )
   .add(
-    'custom date format',
-    () => render({
-      formatOptions: {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric'
-      }
-    })
-  )
-  .add(
     'isDisabled',
-    () => render({isDisabled: true, value: new Date(2020, 2, 3)})
+    () => render({isDisabled: true, value: new Time(2, 35)})
   )
   .add(
     'isQuiet, isDisabled',
-    () => render({isQuiet: true, isDisabled: true, value: new Date(2020, 2, 3)})
+    () => render({isQuiet: true, isDisabled: true, value: new Time(2, 35)})
   )
   .add(
     'isReadOnly',
-    () => render({isReadOnly: true, value: new Date(2020, 2, 3)})
+    () => render({isReadOnly: true, value: new Time(2, 35)})
   )
   .add(
     'isRequired',
@@ -78,19 +66,11 @@ storiesOf('TimeField', module)
   )
   .add(
     'validationState: invalid',
-    () => render({validationState: 'invalid', value: new Date(2020, 2, 3)})
+    () => render({validationState: 'invalid', value: new Time(2, 35)})
   )
   .add(
     'validationState: valid',
-    () => render({validationState: 'valid', value: new Date(2020, 2, 3)})
-  )
-  .add(
-    'minDate: 2010/1/1, maxDate: 2020/1/1',
-    () => render({minValue: new Date(2010, 0, 1), maxValue: new Date(2020, 0, 1)})
-  )
-  .add(
-    'placeholderDate: 1980/1/1',
-    () => render({placeholderDate: new Date(1980, 0, 1)})
+    () => render({validationState: 'valid', value: new Time(2, 35)})
   );
 
 function render(props = {}) {
