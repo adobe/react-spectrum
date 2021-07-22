@@ -98,11 +98,56 @@ describe('SearchWithin', function () {
 
     let searchfield = getByLabelText('Test', {selector: 'input'});
     let picker = getByRole('button');
+    let group = getByRole('group');
     triggerPress(picker);
 
     let listbox = getByRole('listbox');
     let label = getAllByText('Test')[0];
     expect(listbox).toHaveAttribute('aria-labelledby', label.id);
     expect(searchfield).toHaveAttribute('aria-labelledby', label.id);
+    expect(group).toHaveAttribute('aria-labelledby', label.id);
+  });
+
+  it('isDisabled=true disables both the searchfield and picker', function () {
+    let {getByRole, getByLabelText} = renderSearchWithin({isDisabled: true});
+
+    let searchfield = getByLabelText('Test', {selector: 'input'});
+    let picker = getByRole('button');
+
+    expect(searchfield).toHaveAttribute('disabled');
+    expect(picker).toHaveAttribute('disabled');
+  });
+
+  it('autoFocus=true on searchfield will automatically focus the input', function () {
+    let {getByLabelText} = renderSearchWithin({}, {autoFocus: true});
+
+    let searchfield = getByLabelText('Test', {selector: 'input'});
+
+    expect(searchfield).toHaveFocus();
+  });
+
+  it('slot props override props provided to children', function () {
+    let {getByRole, getAllByText, getByLabelText} = renderSearchWithin(
+      {isDisabled: true, isRequired: false, label: 'Test1'},
+      {isDisabled: false, isRequired: true, label: 'Test2', isQuiet: true},
+      {isDisabled: false, isRequired: true, label: 'Test3', isQuiet: true}
+    );
+
+    let searchfield = getByLabelText('Test1', {selector: 'input'});
+    let picker = getByRole('button');
+    let group = getByRole('group');
+    triggerPress(picker);
+    let label = getAllByText('Test1')[0];
+
+    expect(searchfield).toHaveAttribute('disabled');
+    expect(picker).toHaveAttribute('disabled');
+
+    expect(searchfield).not.toHaveAttribute('aria-required');
+
+    expect(searchfield).toHaveAttribute('aria-labelledby', label.id);
+    expect(group).toHaveAttribute('aria-labelledby', label.id);
+
+    expect(searchfield.classList.contains('is-quiet')).toBeFalsy();
+    expect(picker.classList.contains('spectrum-Dropdown--quiet')).toBeFalsy();
   });
 });
