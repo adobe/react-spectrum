@@ -1,0 +1,31 @@
+diff --git a/node_modules/@testing-library/react-hooks/src/dom/pure.ts b/node_modules/@testing-library/react-hooks/src/dom/pure.ts
+index 42d6607..162e23c 100644
+--- a/node_modules/@testing-library/react-hooks/src/dom/pure.ts
++++ b/node_modules/@testing-library/react-hooks/src/dom/pure.ts
+@@ -12,21 +12,22 @@ function createDomRenderer<TProps, TResult>(
+ ) {
+   const container = document.createElement('div')
+   const testHarness = createTestHarness(rendererProps, wrapper)
+-
++  // @ts-ignore
++  const root = ReactDOM.createRoot(container)
+   return {
+     render(props?: TProps) {
+       act(() => {
+-        ReactDOM.render(testHarness(props), container)
++        root.render(testHarness(props))
+       })
+     },
+     rerender(props?: TProps) {
+       act(() => {
+-        ReactDOM.render(testHarness(props), container)
++        root.render(testHarness(props))
+       })
+     },
+     unmount() {
+       act(() => {
+-        ReactDOM.unmountComponentAtNode(container)
++        root.unmount()
+       })
+     },
+     act

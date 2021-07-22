@@ -26,6 +26,7 @@ const LIVEREGION_TIMEOUT_DELAY = 7000;
 let liveRegionAnnouncer = React.createRef<Announcer>();
 let node: HTMLElement = null;
 let messageId = 0;
+let root: any = null;
 
 /**
  * Announces the message using screen reader technology.
@@ -50,9 +51,10 @@ export function clearAnnouncer(assertiveness: Assertiveness) {
  */
 export function destroyAnnouncer() {
   if (liveRegionAnnouncer.current) {
-    ReactDOM.unmountComponentAtNode(node);
+    root.unmount(node);
     document.body.removeChild(node);
     node = null;
+    root = null;
   }
 }
 
@@ -64,17 +66,20 @@ function ensureInstance(callback: (announcer: Announcer) => void) {
     node = document.createElement('div');
     node.dataset.liveAnnouncer = 'true';
     document.body.prepend(node);
-    ReactDOM.render(
-      <LiveRegionAnnouncer ref={liveRegionAnnouncer} />,
-      node,
-      () => callback(liveRegionAnnouncer.current)
+    // @ts-ignore
+    root = ReactDOM.createRoot(node);
+    // https://github.com/reactwg/react-18/discussions/5
+    root.render(
+      // do we actually want the callback to be called during downtime? or after render in a useeffect?
+      <LiveRegionAnnouncer ref={liveRegionAnnouncer} callback={() => callback(liveRegionAnnouncer.current)} />
     );
   } else {
     callback(liveRegionAnnouncer.current);
   }
 }
 
-const LiveRegionAnnouncer = React.forwardRef((_, ref: RefObject<Announcer>) => {
+const LiveRegionAnnouncer = React.forwardRef((props: {callback?: () => void}, ref: RefObject<Announcer>) => {
+  let {callback} = props;
   let [assertiveMessages, setAssertiveMessages] = useState([]);
   let [politeMessages, setPoliteMessages] = useState([]);
 
@@ -108,10 +113,13 @@ const LiveRegionAnnouncer = React.forwardRef((_, ref: RefObject<Announcer>) => {
     }
   };
 
-  useImperativeHandle(ref, () => ({
-    announce,
-    clear
-  }));
+  useImperativeHandle(ref, () => {
+    callback();
+    return {
+      announce,
+      clear
+    };
+  });
 
   return (
     <Fragment>

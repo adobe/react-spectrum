@@ -89,9 +89,11 @@ export function useDrag(options: DragOptions): DragResult {
         node.style.top = '0';
         node.style.left = '-100000px';
         document.body.appendChild(node);
+        // @ts-ignore
+        let root = ReactDOM.createRoot(node);
 
         // Call renderPreview to get a JSX element, and render it into the div with React DOM.
-        ReactDOM.render(preview, node);
+        root.render(preview);
 
         // Compute the offset that the preview will appear under the mouse.
         // If possible, this is based on the point the user clicked on the target.
