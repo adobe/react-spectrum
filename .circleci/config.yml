@@ -189,7 +189,7 @@ jobs:
 
       - run:
           name: build storybook
-          command: make storybook
+          command: yarn build:storybook
 
       - persist_to_workspace:
           root: dist
@@ -204,7 +204,7 @@ jobs:
 
       - run:
           name: build storybook-17
-          command: make storybook-17
+          command: yarn build:storybook-17
 
       - persist_to_workspace:
           root: dist
@@ -219,7 +219,7 @@ jobs:
 
       - run:
           name: build storybook-18
-          command: make storybook-18
+          command: yarn build:storybook-18
 
       - persist_to_workspace:
           root: dist
