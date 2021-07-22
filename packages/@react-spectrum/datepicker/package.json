@@ -55,7 +55,7 @@
     "@react-spectrum/test-utils": "3.0.0-alpha.1"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1",
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^17.0.0 || ^18.0.0-alpha-9ab90de60-20210720 || ^18.0.0",
     "@react-spectrum/provider": "^3.0.0-rc.1"
   },
   "publishConfig": {

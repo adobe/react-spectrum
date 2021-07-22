@@ -17,7 +17,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1"
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^17.0.0 || ^18.0.0-alpha-9ab90de60-20210720 || ^18.0.0"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",

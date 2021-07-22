@@ -14,6 +14,9 @@ import React, {Fragment, ReactNode, RefObject, useImperativeHandle, useState} fr
 import ReactDOM from 'react-dom';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
+// @ts-ignore
+const isReactConcurrent = !!ReactDOM.createRoot;
+
 type Assertiveness = 'assertive' | 'polite';
 interface Announcer {
   announce(message: string, assertiveness: Assertiveness, timeout: number): void,
@@ -51,7 +54,11 @@ export function clearAnnouncer(assertiveness: Assertiveness) {
  */
 export function destroyAnnouncer() {
   if (liveRegionAnnouncer.current) {
-    root.unmount(node);
+    if (isReactConcurrent) {
+      root.unmount();
+    } else {
+      ReactDOM.unmountComponentAtNode(node);
+    }
     document.body.removeChild(node);
     node = null;
     root = null;
@@ -66,13 +73,20 @@ function ensureInstance(callback: (announcer: Announcer) => void) {
     node = document.createElement('div');
     node.dataset.liveAnnouncer = 'true';
     document.body.prepend(node);
-    // @ts-ignore
-    root = ReactDOM.createRoot(node);
-    // https://github.com/reactwg/react-18/discussions/5
-    root.render(
-      // do we actually want the callback to be called during downtime? or after render in a useeffect?
-      <LiveRegionAnnouncer ref={liveRegionAnnouncer} callback={() => callback(liveRegionAnnouncer.current)} />
-    );
+    if (isReactConcurrent) {
+      // @ts-ignore
+      root = ReactDOM.createRoot(node);
+      // https://github.com/reactwg/react-18/discussions/5
+      root.render(
+        // do we actually want the callback to be called during downtime? or after render in a useeffect?
+        <LiveRegionAnnouncer ref={liveRegionAnnouncer} callback={() => callback(liveRegionAnnouncer.current)}/>
+      );
+    } else {
+      ReactDOM.render(
+        <LiveRegionAnnouncer ref={liveRegionAnnouncer} callback={() => callback(liveRegionAnnouncer.current)}/>,
+        node
+      );
+    }
   } else {
     callback(liveRegionAnnouncer.current);
   }
