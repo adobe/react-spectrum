@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {ReactElement} from 'react';
 
-export interface SpectrumSearchWithinProps extends SpectrumLabelableProps, DOMProps, StyleProps {
+export interface SpectrumSearchWithinProps extends SpectrumLabelableProps, DOMProps, StyleProps, AriaLabelingProps {
   /** The SearchField and Picker contained within the SearchWithin. */
   children: [ReactElement, ReactElement],
 

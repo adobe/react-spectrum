@@ -26,7 +26,8 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   let {
     children,
     isDisabled,
-    isRequired
+    isRequired,
+    'aria-label': ariaLabel
   } = props;
 
   let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
@@ -50,7 +51,7 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
 
   useLayoutEffect(onResize, [scale, onResize]);
 
-  let defaultSlotValues = {isDisabled, isRequired, label: null, isQuiet: false, 'aria-labelledby': labelProps.id};
+  let defaultSlotValues = {isDisabled, isRequired, label: null, isQuiet: false, 'aria-labelledby': labelProps.id || ariaLabel};
   let searchFieldClassName = classNames(styles, 'spectrum-SearchWithin-searchfield');
   let pickerClassName = classNames(styles, 'spectrum-SearchWithin-picker');
   let slots = {
@@ -65,7 +66,7 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
       ref={domRef}>
       <div
         role="group"
-        aria-labelledby={labelProps.id}
+        aria-labelledby={labelProps.id || ariaLabel}
         className={classNames(styles, 'spectrum-SearchWithin', styleProps.className)}>
         <SlotProvider slots={slots}>
           {children}

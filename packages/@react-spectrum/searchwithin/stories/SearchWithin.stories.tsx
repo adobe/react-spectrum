@@ -71,6 +71,8 @@ export const CustomWidth = () => render({width: 300});
 export const LabelPositionSide = () => render({labelPosition: 'side'});
 LabelPositionSide.storyName = 'labelPosition: side';
 
+export const NoLabel = () => render({label: undefined, 'aria-label': 'Aria Label'});
+
 export const AutoFocus = () => render({}, {autoFocus: true});
 
 export const ReverseChildrenOrder = () => renderReverse({});

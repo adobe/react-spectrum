@@ -150,4 +150,14 @@ describe('SearchWithin', function () {
     expect(searchfield.classList.contains('is-quiet')).toBeFalsy();
     expect(picker.classList.contains('spectrum-Dropdown--quiet')).toBeFalsy();
   });
+
+  it('searchfield and group are labelled correctly if aria-label used', function () {
+    let {getByRole, getByLabelText} = renderSearchWithin({label: undefined, 'aria-label': 'Aria Label'});
+
+    let searchfield = getByLabelText('Aria Label', {selector: 'input'});
+    let group = getByRole('group');
+
+    expect(searchfield).toHaveAttribute('aria-label', 'Aria Label');
+    expect(group).toHaveAttribute('aria-labelledby', 'Aria Label');
+  });
 });
