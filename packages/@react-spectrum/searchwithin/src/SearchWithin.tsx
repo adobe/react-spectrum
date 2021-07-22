@@ -27,7 +27,9 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
     children,
     isDisabled,
     isRequired,
-    'aria-label': ariaLabel
+    label,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby
   } = props;
 
   let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
@@ -58,6 +60,10 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
     searchfield: {UNSAFE_className: searchFieldClassName, ...fieldProps, ...defaultSlotValues},
     picker: {UNSAFE_className: pickerClassName, menuWidth, align: 'end', ...defaultSlotValues}
   };
+
+  if (!label && !ariaLabel && !ariaLabelledby) {
+    console.warn('If you do not provide a `label` prop, you must specify an aria-label or aria-labelledby attribute for accessibility');
+  }
 
   return (
     <Field
