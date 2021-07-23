@@ -151,6 +151,7 @@ describe('TableView', function () {
     expect(headers[2]).toHaveAttribute('aria-colindex', '3');
 
     for (let header of headers) {
+      expect(header).not.toHaveAttribute('aria-sort');
       expect(header).not.toHaveAttribute('aria-describedby');
     }
 
@@ -232,6 +233,7 @@ describe('TableView', function () {
     expect(headers[3]).toHaveAttribute('aria-colindex', '4');
 
     for (let header of headers) {
+      expect(header).not.toHaveAttribute('aria-sort');
       expect(header).not.toHaveAttribute('aria-describedby');
     }
 
@@ -3126,7 +3128,7 @@ describe('TableView', function () {
   });
 
   describe('sorting', function () {
-    it('should set the proper aria-describedby on sortable column headers', function () {
+    it('should set the proper aria-describedby and aria-sort on sortable column headers', function () {
       let tree = render(
         <TableView aria-label="Table">
           <TableHeader>
@@ -3147,10 +3149,13 @@ describe('TableView', function () {
       let table = tree.getByRole('grid');
       let columnheaders = within(table).getAllByRole('columnheader');
       expect(columnheaders).toHaveLength(3);
+      expect(columnheaders[0]).toHaveAttribute('aria-sort', 'none');
+      expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
       expect(columnheaders[0]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
       expect(columnheaders[1]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
     });
 
@@ -3175,10 +3180,13 @@ describe('TableView', function () {
       let table = tree.getByRole('grid');
       let columnheaders = within(table).getAllByRole('columnheader');
       expect(columnheaders).toHaveLength(3);
+      expect(columnheaders[0]).toHaveAttribute('aria-sort', 'none');
+      expect(columnheaders[1]).toHaveAttribute('aria-sort', 'ascending');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
       expect(columnheaders[0]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
       expect(columnheaders[1]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, ascending');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
     });
 
@@ -3203,10 +3211,13 @@ describe('TableView', function () {
       let table = tree.getByRole('grid');
       let columnheaders = within(table).getAllByRole('columnheader');
       expect(columnheaders).toHaveLength(3);
+      expect(columnheaders[0]).toHaveAttribute('aria-sort', 'none');
+      expect(columnheaders[1]).toHaveAttribute('aria-sort', 'descending');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
       expect(columnheaders[0]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
       expect(columnheaders[1]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, descending');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
     });
 
@@ -3232,10 +3243,13 @@ describe('TableView', function () {
       let table = tree.getByRole('grid');
       let columnheaders = within(table).getAllByRole('columnheader');
       expect(columnheaders).toHaveLength(3);
+      expect(columnheaders[0]).toHaveAttribute('aria-sort', 'none');
+      expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
       expect(columnheaders[0]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
       expect(columnheaders[1]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
       triggerPress(columnheaders[0]);
@@ -3266,10 +3280,13 @@ describe('TableView', function () {
       let table = tree.getByRole('grid');
       let columnheaders = within(table).getAllByRole('columnheader');
       expect(columnheaders).toHaveLength(3);
+      expect(columnheaders[0]).toHaveAttribute('aria-sort', 'ascending');
+      expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
       expect(columnheaders[0]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, ascending');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
       expect(columnheaders[1]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
       triggerPress(columnheaders[0]);
@@ -3301,9 +3318,12 @@ describe('TableView', function () {
       let columnheaders = within(table).getAllByRole('columnheader');
       expect(columnheaders).toHaveLength(3);
       expect(columnheaders[0]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, descending');
+      expect(columnheaders[0]).toHaveAttribute('aria-sort', 'descending');
+      expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
       expect(columnheaders[1]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
       triggerPress(columnheaders[0]);
@@ -3334,10 +3354,13 @@ describe('TableView', function () {
       let table = tree.getByRole('grid');
       let columnheaders = within(table).getAllByRole('columnheader');
       expect(columnheaders).toHaveLength(3);
+      expect(columnheaders[0]).toHaveAttribute('aria-sort', 'ascending');
+      expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
       expect(columnheaders[0]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, ascending');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
       expect(columnheaders[1]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
       triggerPress(columnheaders[1]);

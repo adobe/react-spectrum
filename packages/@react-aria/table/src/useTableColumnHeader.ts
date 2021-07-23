@@ -15,7 +15,7 @@ import {GridNode} from '@react-types/grid';
 import {HTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useDescription} from '@react-aria/utils';
+import {isAndroid, mergeProps, useDescription} from '@react-aria/utils';
 import {TableState} from '@react-stately/table';
 import {useFocusable} from '@react-aria/focus';
 import {useGridCell} from '@react-aria/grid';
@@ -56,13 +56,19 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
   // Needed to pick up the focusable context, enabling things like Tooltips for example
   let {focusableProps} = useFocusable({}, ref);
 
-  let formatMessage = useMessageFormatter(intlMessages);
-  let sortDescription;
+  let ariaSort: HTMLAttributes<HTMLElement>['aria-sort'] = null;
   let isSortedColumn = state.sortDescriptor?.column === node.key;
   let sortDirection = state.sortDescriptor?.direction;
+  if (node.props.allowsSorting) {
+    ariaSort = isSortedColumn ? sortDirection : 'none';
+  }
+
+  let formatMessage = useMessageFormatter(intlMessages);
+  let sortDescription;
   if (allowsSorting) {
     sortDescription = `${formatMessage('sortable')}`;
-    if (isSortedColumn && sortDirection) {
+    // Android Talkback doesn't support aria-sort so we add sort order details to the aria-described by here
+    if (isSortedColumn && sortDirection && isAndroid()) {
       sortDescription = `${sortDescription}, ${formatMessage(sortDirection)}`;
     }
   }
@@ -75,7 +81,8 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),
       'aria-colspan': node.colspan && node.colspan > 1 ? node.colspan : null,
-      'aria-disabled': isSelectionCellDisabled || undefined
+      'aria-disabled': isSelectionCellDisabled || undefined,
+      'aria-sort': ariaSort
     }
   };
 }
