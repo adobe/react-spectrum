@@ -56,7 +56,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   let updateOverflow = useCallback(() => {
     let computeVisibleItems = (visibleItems: number) => {
-      // N.B. refs can be null at runtime.
+      // Refs can be null at runtime.
       let currListRef: HTMLUListElement | null = listRef.current;
       if (!currListRef) {
         return;
