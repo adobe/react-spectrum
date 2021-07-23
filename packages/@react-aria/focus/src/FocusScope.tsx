@@ -278,16 +278,16 @@ const focusScopeDataAttrNames = [
   'data-focus-scope-end'
 ];
 
-function isFocusScopeDirectChild(scopes: HTMLElement[]) {
-  return scopes.some(scope => focusScopeDataAttrNames.some(name => scope.getAttribute(name) !== null));
+function isFocusScopeDirectChild(scope: HTMLElement) {
+  return focusScopeDataAttrNames.some(name => scope.getAttribute(name) !== null);
 }
 
-function isFocusScopeNestedChild(element: Element) {
-  return focusScopeDataAttrNames.some(name => element.querySelector(`[${name}]`));
+function isFocusScopeNestedChild(scope: HTMLElement) {
+  return focusScopeDataAttrNames.some(name => scope.querySelector(`[${name}]`));
 }
 
 function isFocusScopeInScope(scopes: HTMLElement[]) {
-  return isFocusScopeDirectChild(scopes) || scopes.some(scope => isFocusScopeNestedChild(scope));
+  return scopes.some(scope => isFocusScopeDirectChild(scope) || isFocusScopeNestedChild(scope));
 }
 
 function isElementInScope(element: Element, scope: HTMLElement[]) {
