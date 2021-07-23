@@ -61,7 +61,7 @@ const ROW_HEIGHTS = {
   }
 };
 
-const SELECTION_CELL_DEFAULT_WIDTH = 55;
+const SELECTION_CELL_DEFAULT_WIDTH = 39;
 
 const TableContext = React.createContext<TableState<unknown>>(null);
 function useTableContext() {
