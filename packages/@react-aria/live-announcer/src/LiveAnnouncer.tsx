@@ -130,10 +130,10 @@ const LiveRegionAnnouncer = React.forwardRef((props: {callback?: () => void}, re
   };
 
   useLayoutEffect(() => {
-    if (callback) {
+    if (ref.current && callback) {
       callback();
     }
-  }, []);
+  }, [ref.current]);
 
   useImperativeHandle(ref, () => ({
     announce,
