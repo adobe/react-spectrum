@@ -24,7 +24,7 @@ Column.getCollectionNode = function* getCollectionNode<T>(props: ColumnProps<T>,
   let {title, children, childColumns} = props;
 
   let rendered = title || children;
-  let textValue = props.textValue || (typeof rendered === 'string' ? rendered : '');
+  let textValue = props.textValue || (typeof rendered === 'string' ? rendered : '') || props['aria-label'];
 
   let fullNodes = yield {
     type: 'column',
