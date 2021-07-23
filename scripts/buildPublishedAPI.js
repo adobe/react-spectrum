@@ -22,6 +22,11 @@ build().catch(err => {
   process.exit(1);
 });
 
+/**
+ * Building this will run the docs builder using the apiCheck pipeline in .parcelrc
+ * This will generate json containing the visible (API/exposed) type definitions for each package
+ * This is run against a downloaded copy of the last published version of each package into a temporary directory and build there
+ */
 async function build() {
   // Create a temp directory to build the site in
   let dir = tempy.directory();
@@ -84,7 +89,7 @@ async function build() {
   // Add dependencies on each published package to the package.json, and
   // copy the docs from the current package into the temp dir.
   let packagesDir = path.join(__dirname, '..', 'packages');
-  let packages = glob.sync('*/*/package.json', {cwd: packagesDir});
+  let packages = glob.sync('*/**/package.json', {cwd: packagesDir});
   for (let p of packages) {
     let json = JSON.parse(fs.readFileSync(path.join(packagesDir, p), 'utf8'));
     if (!json.private && json.name !== '@adobe/react-spectrum') {
