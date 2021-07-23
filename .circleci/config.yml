@@ -171,6 +171,41 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
+  test-ssr-18:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum18-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: test ssr
+          command: |
+            yarn test:ssr
+
+  test-18:
+    parallelism: 3
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum18-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run: mkdir ~/junit
+
+      - run:
+          name: test
+          command: |
+            shopt -s globstar
+            TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
+            JEST_JUNIT_OUTPUT_NAME="junit-18.xml" yarn test ${TESTFILES}
+
+      - run:
+          command: cp junit-18.xml ~/junit/
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
+
   lint:
     executor: rsp
     steps:
@@ -324,6 +359,12 @@ workflows:
       - test-17:
           requires:
             - install-17
+      - test-ssr-18:
+          requires:
+            - install-18
+      - test-18:
+          requires:
+            - install-18
       - lint:
           requires:
             - install
