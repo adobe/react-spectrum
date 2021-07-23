@@ -64,6 +64,27 @@ for (let i = 1; i <= 100; i++) {
   manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
 }
 
+function ExampleSortTable() {
+  let [sortDescriptor, setSortDescriptor] = React.useState({column: 'bar', direction: 'ascending'});
+
+  return (
+    <TableView aria-label="Table" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
+      <TableHeader>
+        <Column key="foo" allowsSorting>Foo</Column>
+        <Column key="bar" allowsSorting>Bar</Column>
+        <Column key="baz">Baz</Column>
+      </TableHeader>
+      <TableBody>
+        <Row>
+          <Cell>Foo 1</Cell>
+          <Cell>Bar 1</Cell>
+          <Cell>Baz 1</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
+  );
+}
+
 describe('TableView', function () {
   let offsetWidth, offsetHeight;
 
@@ -2246,27 +2267,6 @@ describe('TableView', function () {
       });
 
       it('should announce changes in sort order', function () {
-        function ExampleSortTable() {
-          let [sortDescriptor, setSortDescriptor] = React.useState({column: 'bar', direction: 'ascending'});
-
-          return (
-            <TableView aria-label="Table" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
-              <TableHeader>
-                <Column key="foo" allowsSorting>Foo</Column>
-                <Column key="bar" allowsSorting>Bar</Column>
-                <Column key="baz">Baz</Column>
-              </TableHeader>
-              <TableBody>
-                <Row>
-                  <Cell>Foo 1</Cell>
-                  <Cell>Bar 1</Cell>
-                  <Cell>Baz 1</Cell>
-                </Row>
-              </TableBody>
-            </TableView>
-          );
-        }
-
         let tree = render(<ExampleSortTable />);
         let table = tree.getByRole('grid');
         let columnheaders = within(table).getAllByRole('columnheader');
@@ -3159,7 +3159,7 @@ describe('TableView', function () {
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
     });
 
-    it('should set the proper aria-describedby on an ascending sorted column header', function () {
+    it('should set the proper aria-describedby and aria-sort on an ascending sorted column header', function () {
       let tree = render(
         <TableView aria-label="Table" sortDescriptor={{column: 'bar', direction: 'ascending'}}>
           <TableHeader>
@@ -3190,7 +3190,7 @@ describe('TableView', function () {
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
     });
 
-    it('should set the proper aria-describedby on an descending sorted column header', function () {
+    it('should set the proper aria-describedby and aria-sort on an descending sorted column header', function () {
       let tree = render(
         <TableView aria-label="Table" sortDescriptor={{column: 'bar', direction: 'descending'}}>
           <TableHeader>
@@ -3219,6 +3219,28 @@ describe('TableView', function () {
       expect(columnheaders[1]).toHaveAttribute('aria-describedby');
       expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
+    });
+
+    it('should add sort direction info to the column header\'s aria-describedby for Android', function () {
+      let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
+      let tree = render(<ExampleSortTable />);
+
+      let table = tree.getByRole('grid');
+      let columnheaders = within(table).getAllByRole('columnheader');
+      expect(columnheaders).toHaveLength(3);
+      expect(columnheaders[0]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[1]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[0]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[1]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, ascending');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
+
+      triggerPress(columnheaders[1]);
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, descending');
+
+      uaMock.mockRestore();
     });
 
     it('should fire onSortChange when there is no existing sortDescriptor', function () {

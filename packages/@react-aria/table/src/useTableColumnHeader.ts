@@ -59,7 +59,8 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
   let ariaSort: HTMLAttributes<HTMLElement>['aria-sort'] = null;
   let isSortedColumn = state.sortDescriptor?.column === node.key;
   let sortDirection = state.sortDescriptor?.direction;
-  if (node.props.allowsSorting) {
+  // aria-sort not supported in Android Talkback
+  if (node.props.allowsSorting && !isAndroid()) {
     ariaSort = isSortedColumn ? sortDirection : 'none';
   }
 
