@@ -16,6 +16,8 @@ import React, {ReactNode, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {storiesOf} from '@storybook/react';
 
+const dialogsRoot = 'dialogsRoot';
+
 storiesOf('FocusScope', module)
   .addDecorator(withKnobs)
   .add(
@@ -30,7 +32,7 @@ function MaybePortal({children, usePortal}: { children: ReactNode, usePortal: bo
 
   return ReactDOM.createPortal(
     <>{children}</>,
-    document.body
+    document.getElementById(dialogsRoot)
   );
 }
 
@@ -74,6 +76,8 @@ function KeyboardNavigation({usePortal}: {usePortal: boolean}) {
       </button>
 
       {open && <NestedDialog onClose={() => setOpen(false)} usePortal={usePortal} />}
+
+      <div id={dialogsRoot} />
     </div>
   );
 }
