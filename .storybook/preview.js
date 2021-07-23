@@ -14,7 +14,6 @@ if (isReactConcurrent) {
       nodes.set(rootNode, root);
     }
     root.render(app);
-    }
   };
 
   ReactDOM.unmountComponentAtNode = (component) => {
@@ -26,8 +25,8 @@ if (isReactConcurrent) {
       console.error("ReactDOM injection: can't unmount the given component");
       return false;
     }
-  };
-}
+  }
+};
 
 // decorator order matters, the last one will be the outer most
 
