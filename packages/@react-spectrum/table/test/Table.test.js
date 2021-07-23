@@ -2273,13 +2273,13 @@ describe('TableView', function () {
         expect(columnheaders).toHaveLength(3);
 
         triggerPress(columnheaders[1]);
-        expect(announce).toHaveBeenLastCalledWith('sorted by column 2 in descending order', 'assertive', 500);
+        expect(announce).toHaveBeenLastCalledWith('sorted by column Bar in descending order', 'assertive', 500);
         triggerPress(columnheaders[1]);
-        expect(announce).toHaveBeenLastCalledWith('sorted by column 2 in ascending order', 'assertive', 500);
+        expect(announce).toHaveBeenLastCalledWith('sorted by column Bar in ascending order', 'assertive', 500);
         triggerPress(columnheaders[0]);
-        expect(announce).toHaveBeenLastCalledWith('sorted by column 1 in ascending order', 'assertive', 500);
+        expect(announce).toHaveBeenLastCalledWith('sorted by column Foo in ascending order', 'assertive', 500);
         triggerPress(columnheaders[0]);
-        expect(announce).toHaveBeenLastCalledWith('sorted by column 1 in descending order', 'assertive', 500);
+        expect(announce).toHaveBeenLastCalledWith('sorted by column Foo in descending order', 'assertive', 500);
       });
     });
   });

@@ -2,6 +2,6 @@
   "sortable": "sortable column",
   "ascending": "ascending",
   "descending": "descending",
-  "ascendingSort": "sorted by column {columnIndex} in ascending order",
-  "descendingSort": "sorted by column {columnIndex} in descending order"
+  "ascendingSort": "sorted by column {columnName} in ascending order",
+  "descendingSort": "sorted by column {columnName} in descending order"
 }

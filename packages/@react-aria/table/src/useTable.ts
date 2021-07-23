@@ -102,8 +102,8 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: Ref
   let {column, direction: sortDirection} = state.sortDescriptor || {};
   let formatMessage = useMessageFormatter(intlMessages);
   let sortDescription = useMemo(() => {
-    let columnIndex = state.collection.columns.findIndex(c => c.key === column);
-    return sortDirection && column ? formatMessage(`${sortDirection}Sort`, {columnIndex: columnIndex + 1}) : undefined;
+    let columnName = state.collection.columns.find(c => c.key === column)?.textValue;
+    return sortDirection && column ? formatMessage(`${sortDirection}Sort`, {columnName}) : undefined;
   }, [sortDirection, column, state.collection.columns]);
 
   let descriptionProps = useDescription(sortDescription);
