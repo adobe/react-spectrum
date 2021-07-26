@@ -284,6 +284,10 @@ governing permissions and limitations under the License.
   padding-top: 0px;
   padding-bottom: 0px;
   vertical-align: var(--spectrum-table-cell-checkbox-vertical-alignment);
+
+  .spectrum-Table-checkbox {
+    padding-inline-end: 0px;
+  }
 }
 
 .spectrum-Table-checkbox {

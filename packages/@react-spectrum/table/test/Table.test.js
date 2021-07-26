@@ -64,6 +64,27 @@ for (let i = 1; i <= 100; i++) {
   manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
 }
 
+function ExampleSortTable() {
+  let [sortDescriptor, setSortDescriptor] = React.useState({column: 'bar', direction: 'ascending'});
+
+  return (
+    <TableView aria-label="Table" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
+      <TableHeader>
+        <Column key="foo" allowsSorting>Foo</Column>
+        <Column key="bar" allowsSorting>Bar</Column>
+        <Column key="baz">Baz</Column>
+      </TableHeader>
+      <TableBody>
+        <Row>
+          <Cell>Foo 1</Cell>
+          <Cell>Bar 1</Cell>
+          <Cell>Baz 1</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
+  );
+}
+
 describe('TableView', function () {
   let offsetWidth, offsetHeight;
 
@@ -152,6 +173,7 @@ describe('TableView', function () {
 
     for (let header of headers) {
       expect(header).not.toHaveAttribute('aria-sort');
+      expect(header).not.toHaveAttribute('aria-describedby');
     }
 
     expect(headers[0]).toHaveTextContent('Foo');
@@ -233,6 +255,7 @@ describe('TableView', function () {
 
     for (let header of headers) {
       expect(header).not.toHaveAttribute('aria-sort');
+      expect(header).not.toHaveAttribute('aria-describedby');
     }
 
     let checkbox = within(headers[0]).getByRole('checkbox');
@@ -2242,6 +2265,22 @@ describe('TableView', function () {
         triggerPress(row);
         expect(announce).toHaveBeenLastCalledWith('Sam Smith not selected.');
       });
+
+      it('should announce changes in sort order', function () {
+        let tree = render(<ExampleSortTable />);
+        let table = tree.getByRole('grid');
+        let columnheaders = within(table).getAllByRole('columnheader');
+        expect(columnheaders).toHaveLength(3);
+
+        triggerPress(columnheaders[1]);
+        expect(announce).toHaveBeenLastCalledWith('sorted by column Bar in descending order', 'assertive', 500);
+        triggerPress(columnheaders[1]);
+        expect(announce).toHaveBeenLastCalledWith('sorted by column Bar in ascending order', 'assertive', 500);
+        triggerPress(columnheaders[0]);
+        expect(announce).toHaveBeenLastCalledWith('sorted by column Foo in ascending order', 'assertive', 500);
+        triggerPress(columnheaders[0]);
+        expect(announce).toHaveBeenLastCalledWith('sorted by column Foo in descending order', 'assertive', 500);
+      });
     });
   });
 
@@ -3103,7 +3142,7 @@ describe('TableView', function () {
   });
 
   describe('sorting', function () {
-    it('should set aria-sort="none" on sortable column headers', function () {
+    it('should set the proper aria-describedby and aria-sort on sortable column headers', function () {
       let tree = render(
         <TableView aria-label="Table">
           <TableHeader>
@@ -3127,9 +3166,14 @@ describe('TableView', function () {
       expect(columnheaders[0]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[0]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[1]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
     });
 
-    it('should set aria-sort="ascending" on sorted column header', function () {
+    it('should set the proper aria-describedby and aria-sort on an ascending sorted column header', function () {
       let tree = render(
         <TableView aria-label="Table" sortDescriptor={{column: 'bar', direction: 'ascending'}}>
           <TableHeader>
@@ -3153,9 +3197,14 @@ describe('TableView', function () {
       expect(columnheaders[0]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'ascending');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[0]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[1]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
     });
 
-    it('should set aria-sort="descending" on sorted column header', function () {
+    it('should set the proper aria-describedby and aria-sort on an descending sorted column header', function () {
       let tree = render(
         <TableView aria-label="Table" sortDescriptor={{column: 'bar', direction: 'descending'}}>
           <TableHeader>
@@ -3179,6 +3228,33 @@ describe('TableView', function () {
       expect(columnheaders[0]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'descending');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[0]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[1]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
+    });
+
+    it('should add sort direction info to the column header\'s aria-describedby for Android', function () {
+      let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
+      let tree = render(<ExampleSortTable />);
+
+      let table = tree.getByRole('grid');
+      let columnheaders = within(table).getAllByRole('columnheader');
+      expect(columnheaders).toHaveLength(3);
+      expect(columnheaders[0]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[1]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[0]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[1]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, ascending');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
+
+      triggerPress(columnheaders[1]);
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, descending');
+
+      uaMock.mockRestore();
     });
 
     it('should fire onSortChange when there is no existing sortDescriptor', function () {
@@ -3206,6 +3282,11 @@ describe('TableView', function () {
       expect(columnheaders[0]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[0]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[1]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
       triggerPress(columnheaders[0]);
 
@@ -3238,6 +3319,11 @@ describe('TableView', function () {
       expect(columnheaders[0]).toHaveAttribute('aria-sort', 'ascending');
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[0]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[1]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
       triggerPress(columnheaders[0]);
 
@@ -3267,9 +3353,14 @@ describe('TableView', function () {
       let table = tree.getByRole('grid');
       let columnheaders = within(table).getAllByRole('columnheader');
       expect(columnheaders).toHaveLength(3);
+      expect(columnheaders[0]).toHaveAttribute('aria-describedby');
       expect(columnheaders[0]).toHaveAttribute('aria-sort', 'descending');
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[1]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
       triggerPress(columnheaders[0]);
 
@@ -3302,6 +3393,11 @@ describe('TableView', function () {
       expect(columnheaders[0]).toHaveAttribute('aria-sort', 'ascending');
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[0]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[1]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
       triggerPress(columnheaders[1]);
 
@@ -3564,10 +3660,36 @@ describe('TableView', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('55px');
-          expect(row.childNodes[1].style.width).toBe('315px');
-          expect(row.childNodes[2].style.width).toBe('315px');
-          expect(row.childNodes[3].style.width).toBe('315px');
+          expect(row.childNodes[0].style.width).toBe('38px');
+          expect(row.childNodes[1].style.width).toBe('320.6666666666667px');
+          expect(row.childNodes[2].style.width).toBe('320.6666666666667px');
+          expect(row.childNodes[3].style.width).toBe('320.6666666666667px');
+        }
+      });
+
+      it('should divide the available width by default in large scale', function () {
+        let tree = render((
+          <TableView aria-label="Table" selectionMode="multiple">
+            <TableHeader columns={columns}>
+              {column => <Column>{column.name}</Column>}
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        ), 'large');
+
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('48px');
+          expect(row.childNodes[1].style.width).toBe('317.3333333333333px');
+          expect(row.childNodes[2].style.width).toBe('317.3333333333333px');
+          expect(row.childNodes[3].style.width).toBe('317.3333333333333px');
         }
       });
 
@@ -3619,10 +3741,10 @@ describe('TableView', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[0].style.width).toBe('38px');
           expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('372.5px');
-          expect(row.childNodes[3].style.width).toBe('372.5px');
+          expect(row.childNodes[2].style.width).toBe('381px');
+          expect(row.childNodes[3].style.width).toBe('381px');
         }
       });
 
@@ -3674,10 +3796,10 @@ describe('TableView', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[0].style.width).toBe('38px');
           expect(row.childNodes[1].style.width).toBe('200px');
           expect(row.childNodes[2].style.width).toBe('500px');
-          expect(row.childNodes[3].style.width).toBe('245px');
+          expect(row.childNodes[3].style.width).toBe('262px');
         }
       });
 
@@ -3727,21 +3849,21 @@ describe('TableView', function () {
 
         let rows = tree.getAllByRole('row');
 
-        expect(rows[0].childNodes[0].style.width).toBe('244px');
-        expect(rows[0].childNodes[1].style.width).toBe('756px');
+        expect(rows[0].childNodes[0].style.width).toBe('230.4px');
+        expect(rows[0].childNodes[1].style.width).toBe('769.6px');
 
-        expect(rows[1].childNodes[0].style.width).toBe('244px');
-        expect(rows[1].childNodes[1].style.width).toBe('378px');
-        expect(rows[1].childNodes[2].style.width).toBe('189px');
-        expect(rows[1].childNodes[3].style.width).toBe('189px');
+        expect(rows[1].childNodes[0].style.width).toBe('230.4px');
+        expect(rows[1].childNodes[1].style.width).toBe('384.8px');
+        expect(rows[1].childNodes[2].style.width).toBe('192.4px');
+        expect(rows[1].childNodes[3].style.width).toBe('192.4px');
 
         for (let row of rows.slice(2)) {
-          expect(row.childNodes[0].style.width).toBe('55px');
-          expect(row.childNodes[1].style.width).toBe('189px');
-          expect(row.childNodes[2].style.width).toBe('189px');
-          expect(row.childNodes[3].style.width).toBe('189px');
-          expect(row.childNodes[4].style.width).toBe('189px');
-          expect(row.childNodes[5].style.width).toBe('189px');
+          expect(row.childNodes[0].style.width).toBe('38px');
+          expect(row.childNodes[1].style.width).toBe('192.4px');
+          expect(row.childNodes[2].style.width).toBe('192.4px');
+          expect(row.childNodes[3].style.width).toBe('192.4px');
+          expect(row.childNodes[4].style.width).toBe('192.4px');
+          expect(row.childNodes[5].style.width).toBe('192.4px');
         }
       });
     });
