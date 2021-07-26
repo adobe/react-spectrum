@@ -61,7 +61,10 @@ const ROW_HEIGHTS = {
   }
 };
 
-const SELECTION_CELL_DEFAULT_WIDTH = 55;
+const SELECTION_CELL_DEFAULT_WIDTH = {
+  medium: 38,
+  large: 48
+};
 
 const TableContext = React.createContext<TableState<unknown>>(null);
 function useTableContext() {
@@ -97,7 +100,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         let width = DEFAULT_HIDE_HEADER_CELL_WIDTH[scale];
         return showDivider ? width + 1 : width;
       } else if (isSelectionCell) {
-        return SELECTION_CELL_DEFAULT_WIDTH;
+        return SELECTION_CELL_DEFAULT_WIDTH[scale];
       }
     }
   }), [props.overflowMode, scale, density]);
