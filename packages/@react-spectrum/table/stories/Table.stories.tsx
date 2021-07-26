@@ -711,7 +711,8 @@ storiesOf('TableView', module)
           <Row>
             <Cell>One</Cell>
             <Cell>
-              <ActionButton isQuiet aria-label="Add Info">                <Add />
+              <ActionButton isQuiet aria-label="Add Info">
+                <Add />
               </ActionButton>
             </Cell>
             <Cell>
