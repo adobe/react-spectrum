@@ -12,7 +12,7 @@
 
 import {Collection} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
-import {Layout, Point, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
+import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useRef} from 'react';
 import {ScrollView} from './ScrollView';
 import {VirtualizerItem} from './VirtualizerItem';
@@ -141,25 +141,16 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
   let onFocus = useCallback((e: FocusEvent) => {
     // If the focused item is scrolled out of view and is not in the DOM, the collection
     // will have tabIndex={0}. When tabbing in from outside, scroll the focused item into view.
-    // We only want to do this if the collection itself is receiving focus, not a child
-    // element, and we aren't moving focus to the collection from within (see below).
-    if (e.target === ref.current && !isFocusWithin.current) {
-      virtualizer.scrollToItem(focusedKey, {duration: 0});
-    } else if (e.target !== ref.current && focusedKey != null && !isFocusWithin.current) {
-      let focusedView = virtualizer.getView(focusedKey);
-      // Otherwise if we are re-entering the collection and there is a previously focused key that is out of view, scroll it into view
-      // If it is in view already, preserve the current scroll position via scrollTo. This is to prevent the shift-tabbing into the
-      // collection from scrolling the focused key out of view due to useSelectableCollection focusing the last element in the table when tabbing out of the collection
-      if (!focusedView) {
-        virtualizer.scrollToItem(focusedKey, {duration: 0});
+    if (!isFocusWithin.current) {
+      if (scrollToItem) {
+        scrollToItem(focusedKey);
       } else {
-        let rect = virtualizer.getVisibleRect();
-        virtualizer.scrollTo(new Point(rect.x, rect.y), 0);
+        virtualizer.scrollToItem(focusedKey, {duration: 0});
       }
     }
 
     isFocusWithin.current = e.target !== ref.current;
-  }, [ref, virtualizer, focusedKey]);
+  }, [ref, virtualizer, focusedKey, scrollToItem]);
 
   let onBlur = useCallback((e: FocusEvent) => {
     isFocusWithin.current = ref.current.contains(e.relatedTarget as Element);
