@@ -151,7 +151,7 @@ export class GridCollection<T> implements IGridCollection<T> {
     return this.keyMap.get(key);
   }
 
-  getAt(idx: number) {
+  at(idx: number) {
     const keys = [...this.getKeys()];
     return this.getItem(keys[idx]);
   }

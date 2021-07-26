@@ -95,7 +95,7 @@ export class ListCollection<T> implements Collection<Node<T>> {
     return this.keyMap.get(key);
   }
 
-  getAt(idx: number) {
+  at(idx: number) {
     const keys = [...this.getKeys()];
     return this.getItem(keys[idx]);
   }
