@@ -3550,10 +3550,36 @@ describe('TableView', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('55px');
-          expect(row.childNodes[1].style.width).toBe('315px');
-          expect(row.childNodes[2].style.width).toBe('315px');
-          expect(row.childNodes[3].style.width).toBe('315px');
+          expect(row.childNodes[0].style.width).toBe('38px');
+          expect(row.childNodes[1].style.width).toBe('320.6666666666667px');
+          expect(row.childNodes[2].style.width).toBe('320.6666666666667px');
+          expect(row.childNodes[3].style.width).toBe('320.6666666666667px');
+        }
+      });
+
+      it('should divide the available width by default in large scale', function () {
+        let tree = render((
+          <TableView aria-label="Table" selectionMode="multiple">
+            <TableHeader columns={columns}>
+              {column => <Column>{column.name}</Column>}
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        ), 'large');
+
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('48px');
+          expect(row.childNodes[1].style.width).toBe('317.3333333333333px');
+          expect(row.childNodes[2].style.width).toBe('317.3333333333333px');
+          expect(row.childNodes[3].style.width).toBe('317.3333333333333px');
         }
       });
 
@@ -3605,10 +3631,10 @@ describe('TableView', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[0].style.width).toBe('38px');
           expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('372.5px');
-          expect(row.childNodes[3].style.width).toBe('372.5px');
+          expect(row.childNodes[2].style.width).toBe('381px');
+          expect(row.childNodes[3].style.width).toBe('381px');
         }
       });
 
@@ -3660,10 +3686,10 @@ describe('TableView', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[0].style.width).toBe('38px');
           expect(row.childNodes[1].style.width).toBe('200px');
           expect(row.childNodes[2].style.width).toBe('500px');
-          expect(row.childNodes[3].style.width).toBe('245px');
+          expect(row.childNodes[3].style.width).toBe('262px');
         }
       });
 
@@ -3713,21 +3739,21 @@ describe('TableView', function () {
 
         let rows = tree.getAllByRole('row');
 
-        expect(rows[0].childNodes[0].style.width).toBe('244px');
-        expect(rows[0].childNodes[1].style.width).toBe('756px');
+        expect(rows[0].childNodes[0].style.width).toBe('230.4px');
+        expect(rows[0].childNodes[1].style.width).toBe('769.6px');
 
-        expect(rows[1].childNodes[0].style.width).toBe('244px');
-        expect(rows[1].childNodes[1].style.width).toBe('378px');
-        expect(rows[1].childNodes[2].style.width).toBe('189px');
-        expect(rows[1].childNodes[3].style.width).toBe('189px');
+        expect(rows[1].childNodes[0].style.width).toBe('230.4px');
+        expect(rows[1].childNodes[1].style.width).toBe('384.8px');
+        expect(rows[1].childNodes[2].style.width).toBe('192.4px');
+        expect(rows[1].childNodes[3].style.width).toBe('192.4px');
 
         for (let row of rows.slice(2)) {
-          expect(row.childNodes[0].style.width).toBe('55px');
-          expect(row.childNodes[1].style.width).toBe('189px');
-          expect(row.childNodes[2].style.width).toBe('189px');
-          expect(row.childNodes[3].style.width).toBe('189px');
-          expect(row.childNodes[4].style.width).toBe('189px');
-          expect(row.childNodes[5].style.width).toBe('189px');
+          expect(row.childNodes[0].style.width).toBe('38px');
+          expect(row.childNodes[1].style.width).toBe('192.4px');
+          expect(row.childNodes[2].style.width).toBe('192.4px');
+          expect(row.childNodes[3].style.width).toBe('192.4px');
+          expect(row.childNodes[4].style.width).toBe('192.4px');
+          expect(row.childNodes[5].style.width).toBe('192.4px');
         }
       });
     });
