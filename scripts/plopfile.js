@@ -16,6 +16,10 @@ let otherProject = 'other';
 
 module.exports = function (plop) {
   plop.setActionType('renameMany', require('../plop-actions/renameMany'));
+
+  const currentYear = new Date(Date.now()).getUTCFullYear();
+  plop.setHelper('currentYear', () => currentYear);
+
   plop.setHelper('replace', function (match, replacement, options) {
     let string = options.fn(this);
     return string.replace(match, replacement);
