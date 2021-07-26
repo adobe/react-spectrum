@@ -2503,6 +2503,20 @@ describe('TableView', function () {
         expect(onSelectionChange).not.toHaveBeenCalled();
       });
     });
+
+    describe('row selection column header', function () {
+      it('should contain a hidden checkbox and VisuallyHidden accessible text', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+        let columnheader = tree.getAllByRole('columnheader')[0];
+        let checkboxInput = columnheader.querySelector('input[type="checkbox"]');
+        expect(columnheader).not.toHaveAttribute('aria-disabled', 'true');
+        expect(columnheader.firstElementChild).toBeVisible();
+        expect(checkboxInput).not.toBeVisible();
+        expect(checkboxInput.getAttribute('aria-label')).toEqual('Select');
+        expect(columnheader.firstElementChild.textContent).toEqual(checkboxInput.getAttribute('aria-label'));
+      });
+    });
   });
 
   describe('press/hover interactions and selection mode', function () {

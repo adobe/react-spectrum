@@ -461,11 +461,21 @@ function TableSelectAllCell({column}) {
             }
           )
         }>
+        {
+          /* 
+            In single selection mode, the checkbox will be hidden. 
+            So to avoid leaving a column header with no accessible content, 
+            we use a VisuallyHidden component to include the aria-label from the checkbox, 
+            which for single selection will be "Select."
+          */
+          isSingleSelectionMode &&
+          <VisuallyHidden>{checkboxProps['aria-label']}</VisuallyHidden>
+        }
         <Checkbox
           {...checkboxProps}
           isDisabled={isSingleSelectionMode}
           isEmphasized
-          UNSAFE_style={{visibility: isSingleSelectionMode ? 'hidden' : 'visible'}}
+          UNSAFE_style={isSingleSelectionMode ? {visibility: 'hidden'} : undefined}
           UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />
       </div>
     </FocusRing>

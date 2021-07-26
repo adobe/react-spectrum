@@ -1,4 +1,6 @@
 {
+  "select": "Select",
+  "selectAll": "Select All",
   "sortable": "sortable column",
   "ascending": "ascending",
   "descending": "descending",
