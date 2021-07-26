@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 .spectrum-SearchWithin {
-  --spectrum-searchwithin-width: 250px;
+  --spectrum-searchwithin-width: 192px;
 
   /* Force override */
   --spectrum-searchwithin-border-radius: 0;
@@ -31,9 +31,7 @@ governing permissions and limitations under the License.
   flex-shrink: 0;
 
   > button {
-    width: unset;
     contain: unset;
-    justify-content: unset;
     border-end-start-radius: var(--spectrum-searchwithin-border-radius);
     border-start-start-radius: var(--spectrum-searchwithin-border-radius);
   }
