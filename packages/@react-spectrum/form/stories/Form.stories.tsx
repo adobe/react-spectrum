@@ -20,6 +20,8 @@ import {Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {Key, useState} from 'react';
+import {SearchField} from '@react-spectrum/searchfield';
+import {SearchWithin} from '@react-spectrum/searchwithin';
 import {storiesOf} from '@storybook/react';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 
@@ -137,6 +139,12 @@ function render(props: any = {}) {
         <Item>Purple</Item>
       </Picker>
       <TextArea label="Comments" placeholder="How do you feel?" />
+      <SearchWithin label="Search">
+        <SearchField placeholder="Search" />
+        <Picker label="State" placeholder="Select a state" items={states}>
+          {item => <Item key={item.abbr}>{item.name}</Item>}
+        </Picker>
+      </SearchWithin>
     </Form>
   );
 }
@@ -153,6 +161,7 @@ function FormWithControls(props: any = {}) {
   let [favoriteColor2, setFavoriteColor2] = useState('green' as Key);
   let [howIFeel2, setHowIFeel2] = useState('I feel good, o I feel so good!');
   let [preventDefault, setPreventDefault] = useState(true);
+  let [favoriteColor3, setFavoriteColor3] = useState('green' as Key);
 
   return (
     <Flex>
@@ -193,6 +202,17 @@ function FormWithControls(props: any = {}) {
         </Picker>
         <TextArea name="comments-controlled" label="Comments" placeholder="How do you feel? controlled" value={howIFeel} onChange={setHowIFeel} />
         <TextArea name="comments-uncontrolled" label="Comments" placeholder="How do you feel? default" defaultValue="hello" />
+        <SearchWithin label="Search">
+          <SearchField placeholder="Search" />
+          <Picker name="favorite-color3" label="Favorite color searchwithin" selectedKey={favoriteColor3} onSelectionChange={setFavoriteColor3}>
+            <Item key="red">Red</Item>
+            <Item key="orange">Orange</Item>
+            <Item key="yellow">Yellow</Item>
+            <Item key="green">Green</Item>
+            <Item key="blue">Blue</Item>
+            <Item key="purple">Purple</Item>
+          </Picker>
+        </SearchWithin>
         <ButtonGroup>
           <Button variant="primary" type="submit">Submit</Button>
         </ButtonGroup>
