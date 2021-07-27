@@ -64,3 +64,61 @@ In order to internationalize a SearchWithin, a localized string should be passed
 
 <PropTable component={docs.exports.SearchWithin} links={docs.links} />
 
+## Visual options
+
+### Disabled
+
+```tsx example
+<SearchWithin label="Search" isDisabled>
+  <SearchField placeholder="Search" />
+  <Picker defaultSelectedKey="all">
+    <Item key="all">All</Item>
+    <Item key="campaigns">Campaigns</Item>
+    <Item key="audiences">Audiences</Item>
+    <Item key="tags">Tags</Item>
+  </Picker>
+</SearchWithin>
+```
+
+### Read only
+
+```tsx example
+<SearchWithin label="Search">
+  <SearchField placeholder="Search" value="Read Only" isReadOnly />
+  <Picker defaultSelectedKey="all">
+    <Item key="all">All</Item>
+    <Item key="campaigns">Campaigns</Item>
+    <Item key="audiences">Audiences</Item>
+    <Item key="tags">Tags</Item>
+  </Picker>
+</SearchWithin>
+```
+
+### Label Position
+
+```tsx example
+<SearchWithin label="Search" labelPosition="side">
+  <SearchField placeholder="Search" />
+  <Picker defaultSelectedKey="all">
+    <Item key="all">All</Item>
+    <Item key="campaigns">Campaigns</Item>
+    <Item key="audiences">Audiences</Item>
+    <Item key="tags">Tags</Item>
+  </Picker>
+</SearchWithin>
+```
+
+### Custom width
+
+```tsx example
+<SearchWithin label="Search" width="size-3600" >
+  <SearchField placeholder="Search" />
+  <Picker defaultSelectedKey="all">
+    <Item key="all">All</Item>
+    <Item key="campaigns">Campaigns</Item>
+    <Item key="audiences">Audiences</Item>
+    <Item key="tags">Tags</Item>
+  </Picker>
+</SearchWithin>
+```
+
