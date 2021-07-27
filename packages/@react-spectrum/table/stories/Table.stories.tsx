@@ -307,7 +307,7 @@ storiesOf('TableView', module)
     'focusable cells',
     () => (
       <Flex direction="column">
-        <input placeholder="Focusable before" />
+        <input aria-label="Focusable before" placeholder="Focusable before" />
         <TableView aria-label="TableView with focusable cells" selectionMode="multiple" width={450} height={200} onSelectionChange={s => onSelectionChange([...s])}>
           <TableHeader>
             <Column key="foo">Foo</Column>
@@ -332,7 +332,7 @@ storiesOf('TableView', module)
             </Row>
           </TableBody>
         </TableView>
-        <input placeholder="Focusable after" />
+        <input aria-label="Focusable after" placeholder="Focusable after" />
       </Flex>
     )
   )
@@ -778,7 +778,7 @@ storiesOf('TableView', module)
             Foo
           </Column>
           <Column key="addAction" hideHeader>
-            Add Item
+            Add Info
           </Column>
           <Column key="deleteAction" hideHeader showDivider>
             Delete Item
@@ -790,12 +790,12 @@ storiesOf('TableView', module)
           <Row>
             <Cell>One</Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Add Info">
                 <Add />
               </ActionButton>
             </Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Delete">
                 <Delete />
               </ActionButton>
             </Cell>
@@ -805,12 +805,12 @@ storiesOf('TableView', module)
           <Row>
             <Cell>One</Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Add Info">
                 <Add />
               </ActionButton>
             </Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Delete">
                 <Delete />
               </ActionButton>
             </Cell>
@@ -820,12 +820,12 @@ storiesOf('TableView', module)
           <Row>
             <Cell>One</Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Add Info">
                 <Add />
               </ActionButton>
             </Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Delete">
                 <Delete />
               </ActionButton>
             </Cell>
@@ -835,12 +835,12 @@ storiesOf('TableView', module)
           <Row>
             <Cell>One</Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Add Info">
                 <Add />
               </ActionButton>
             </Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Delete">
                 <Delete />
               </ActionButton>
             </Cell>
@@ -850,12 +850,12 @@ storiesOf('TableView', module)
           <Row>
             <Cell>One</Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Add Info">
                 <Add />
               </ActionButton>
             </Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Delete">
                 <Delete />
               </ActionButton>
             </Cell>
@@ -865,12 +865,12 @@ storiesOf('TableView', module)
           <Row>
             <Cell>One</Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Add Info">
                 <Add />
               </ActionButton>
             </Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Delete">
                 <Delete />
               </ActionButton>
             </Cell>
@@ -1066,7 +1066,7 @@ function ProjectListTable() {
   };
 
   return (
-    <>
+    <div>
       <SearchField
         marginStart={'size-200'}
         marginBottom={'size-200'}
@@ -1098,7 +1098,7 @@ function ProjectListTable() {
           </TableBody>
         </TableView>
       </View>
-    </>
+    </div>
   );
 }
 
@@ -1190,8 +1190,9 @@ function ChangableSelectionMode() {
 
   return (
     <Flex direction="column" flexGrow={1} maxWidth="size-6000">
-      <RadioGroup defaultValue="none" onChange={(value: SelectionMode) => setSelectionMode(value)} label="Show / Hide">
+      <RadioGroup defaultValue="none" onChange={(value: SelectionMode) => setSelectionMode(value)} label="Selection Mode">
         <Radio value="multiple">Multiple</Radio>
+        <Radio value="single">Single</Radio>
         <Radio value="none">None</Radio>
       </RadioGroup>
       <TableView overflowMode="wrap" selectionMode={selectionMode} selectedKeys={selectedKeys} aria-label="TableView with controlled selection" width="100%" height="100%" onSelectionChange={setSelectedKeys}>
