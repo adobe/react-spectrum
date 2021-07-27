@@ -131,7 +131,7 @@ export interface Collection<T> extends Iterable<T> {
   getItem(key: Key): T,
 
   /** Get an item by the index of its key. */
-  getAt(idx: number): T,
+  at(idx: number): T,
 
   /** Get the key that comes before the given key in the collection. */
   getKeyBefore(key: Key): Key | null,
