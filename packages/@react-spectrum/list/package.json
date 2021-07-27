@@ -44,7 +44,6 @@
     "@react-spectrum/layout": "^3.2.0",
     "@react-spectrum/listbox": "^3.4.3",
     "@react-spectrum/progress": "^3.1.1",
-    "@react-spectrum/provider": "^3.2.0",
     "@react-spectrum/text": "^3.1.1",
     "@react-spectrum/textfield": "^3.1.5",
     "@react-spectrum/utils": "^3.6.1",
@@ -63,7 +62,7 @@
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1",
-    "@react-spectrum/provider": "^3.0.0-rc.1"
+    "@react-spectrum/provider": "^3.2.0"
   },
   "publishConfig": {
     "access": "public"
