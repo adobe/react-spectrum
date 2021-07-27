@@ -10,20 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {boolean, withKnobs} from '@storybook/addon-knobs';
 import {FocusScope} from '../';
+import {Meta, Story} from '@storybook/react';
 import React, {ReactNode, useState} from 'react';
 import ReactDOM from 'react-dom';
-import {storiesOf} from '@storybook/react';
 
 const dialogsRoot = 'dialogsRoot';
 
-storiesOf('FocusScope', module)
-  .addDecorator(withKnobs)
-  .add(
-    'keyboard navigation with nested FocusScope',
-    () => <KeyboardNavigation usePortal={boolean('Use Portal', false)} />
-  );
+interface StoryProps {
+  usePortal: boolean
+}
+
+const meta: Meta<StoryProps> = {
+  title: 'FocusScope',
+  component: FocusScope
+};
+
+export default meta;
+
+const Template = (): Story<StoryProps> => ({usePortal}) => <Example usePortal={usePortal} />;
 
 function MaybePortal({children, usePortal}: { children: ReactNode, usePortal: boolean}) {
   if (!usePortal) {
@@ -64,7 +69,7 @@ function NestedDialog({onClose, usePortal}: {onClose: VoidFunction, usePortal: b
   );
 }
 
-function KeyboardNavigation({usePortal}: {usePortal: boolean}) {
+function Example({usePortal}: StoryProps) {
   let [open, setOpen] = useState(false);
 
   return (
@@ -81,3 +86,9 @@ function KeyboardNavigation({usePortal}: {usePortal: boolean}) {
     </div>
   );
 }
+
+export const KeyboardNavigation = Template().bind({});
+KeyboardNavigation.args = {usePortal: false};
+
+export const KeyboardNavigationInsidePortal = Template().bind({});
+KeyboardNavigationInsidePortal.args = {usePortal: true};
