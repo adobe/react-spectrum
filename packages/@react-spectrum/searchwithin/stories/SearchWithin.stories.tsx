@@ -58,6 +58,15 @@ isDisabled.storyName = 'isDisabled: true';
 export const isRequired = () => render({isRequired: true});
 isRequired.storyName = 'isRequired: true';
 
+export const isReadOnly = () => render({}, {isReadOnly: true, value: 'Read Only'});
+isReadOnly.storyName = 'isReadOnly: true';
+
+export const searchfieldDefaultValue = () => render({}, {defaultValue: 'Default Value'});
+searchfieldDefaultValue.storyName = 'Default value for Searchfield';
+
+export const pickerDefaultValue = () => render({}, {}, {defaultSelectedKey: 'tags'});
+pickerDefaultValue.storyName = 'Default value for Picker';
+
 export const isRequiredNecessityIndicatorLabel = () => render({isRequired: true, necessityIndicator: 'label'});
 isRequiredNecessityIndicatorLabel.storyName = 'isRequired: true, necessityIndicator \'label\' ';
 
@@ -66,13 +75,21 @@ isRequiredFalse_necessityIndicator.storyName = 'isRequired: false, necessityIndi
 
 export const PickerDisabled = () => render({}, {}, {isDisabled: true});
 
-export const CustomWidth = () => render({width: 300});
+export const CustomWidth300 = () => render({width: 300});
+CustomWidth300.storyName = 'Custom width: 300';
+
+export const CustomWidth30 = () => render({width: 30});
+CustomWidth30.storyName = 'Custom width: 30';
 
 export const LabelPositionSide = () => render({labelPosition: 'side'});
 LabelPositionSide.storyName = 'labelPosition: side';
 
 export const NoLabel = () => render({label: undefined, 'aria-label': 'Aria Label'});
 
-export const AutoFocus = () => render({}, {autoFocus: true});
+export const AutoFocusSearchField = () => render({}, {autoFocus: true});
+AutoFocusSearchField.storyName = 'autoFocus: true on SearchField';
+
+export const AutoFocusPicker = () => render({}, {}, {autoFocus: true});
+AutoFocusPicker.storyName = 'autoFocus: true on Picker';
 
 export const ReverseChildrenOrder = () => renderReverse({});
