@@ -12,9 +12,12 @@
 
 import {AriaCheckboxProps} from '@react-types/checkbox';
 import {getRowLabelledBy} from './utils';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Key} from 'react';
 import {TableState} from '@react-stately/table';
 import {useId} from '@react-aria/utils';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 interface SelectionCheckboxProps {
   /** A unique key for the checkbox. */
@@ -46,10 +49,12 @@ export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, stat
 
   let onChange = () => manager.select(key);
 
+  const formatMessage = useMessageFormatter(intlMessages);
+
   return {
     checkboxProps: {
       id: checkboxId,
-      'aria-label': 'Select',
+      'aria-label': formatMessage('select'),
       'aria-labelledby': `${checkboxId} ${getRowLabelledBy(state, key)}`,
       isSelected,
       isDisabled: isDisabled || manager.selectionMode === 'none',
@@ -65,9 +70,11 @@ export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, stat
  */
 export function useTableSelectAllCheckbox<T>(state: TableState<T>): SelectAllCheckboxAria {
   let {isEmpty, isSelectAll, selectionMode} = state.selectionManager;
+  const formatMessage = useMessageFormatter(intlMessages);
+
   return {
     checkboxProps: {
-      'aria-label': 'Select All',
+      'aria-label': formatMessage(selectionMode === 'single' ? 'select' : 'selectAll'),
       isSelected: isSelectAll,
       isDisabled: selectionMode !== 'multiple',
       isIndeterminate: !isEmpty && !isSelectAll,

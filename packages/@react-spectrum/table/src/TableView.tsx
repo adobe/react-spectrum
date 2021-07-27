@@ -61,7 +61,10 @@ const ROW_HEIGHTS = {
   }
 };
 
-const SELECTION_CELL_DEFAULT_WIDTH = 55;
+const SELECTION_CELL_DEFAULT_WIDTH = {
+  medium: 38,
+  large: 48
+};
 
 const TableContext = React.createContext<TableState<unknown>>(null);
 function useTableContext() {
@@ -97,7 +100,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         let width = DEFAULT_HIDE_HEADER_CELL_WIDTH[scale];
         return showDivider ? width + 1 : width;
       } else if (isSelectionCell) {
-        return SELECTION_CELL_DEFAULT_WIDTH;
+        return SELECTION_CELL_DEFAULT_WIDTH[scale];
       }
     }
   }), [props.overflowMode, scale, density]);
@@ -458,11 +461,21 @@ function TableSelectAllCell({column}) {
             }
           )
         }>
+        {
+          /* 
+            In single selection mode, the checkbox will be hidden. 
+            So to avoid leaving a column header with no accessible content, 
+            we use a VisuallyHidden component to include the aria-label from the checkbox, 
+            which for single selection will be "Select."
+          */
+          isSingleSelectionMode &&
+          <VisuallyHidden>{checkboxProps['aria-label']}</VisuallyHidden>
+        }
         <Checkbox
           {...checkboxProps}
           isDisabled={isSingleSelectionMode}
           isEmphasized
-          UNSAFE_style={{visibility: isSingleSelectionMode ? 'hidden' : 'visible'}}
+          UNSAFE_style={isSingleSelectionMode ? {visibility: 'hidden'} : undefined}
           UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />
       </div>
     </FocusRing>

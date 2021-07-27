@@ -712,7 +712,7 @@ function TableExample(props) {
           (<Row key={item.id}>
             {key =>
               key === 'addInfo'
-              ? <Cell><ActionButton isQuiet><Add /></ActionButton></Cell>
+              ? <Cell><ActionButton aria-label="Add Info" isQuiet><Add /></ActionButton></Cell>
               : <Cell>{item[key]}</Cell>
             }
           </Row>)
