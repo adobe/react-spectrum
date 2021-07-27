@@ -411,7 +411,7 @@ storiesOf('TableView', module)
             </Cell>
             <Cell>
               <View
-                UNSAFE_style={{float: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                UNSAFE_style={{marginInlineStart: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
                 width="100%"
                 backgroundColor="gray-200">
                 100%
@@ -462,21 +462,21 @@ storiesOf('TableView', module)
           </Row>
           <Row>
             <Cell>
-              <span style={{backgroundColor: 'lightblue'}}>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
                 span child
               </span>
             </Cell>
             <Cell>
-              <span style={{backgroundColor: 'lightblue'}}>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
                 span child</span>
             </Cell>
             <Cell>
-              <span style={{backgroundColor: 'lightblue'}}>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
                 span child
               </span>
             </Cell>
             <Cell>
-              <span style={{backgroundColor: 'lightblue'}}>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
                 very very very very very very long long long long long description
               </span>
             </Cell>
