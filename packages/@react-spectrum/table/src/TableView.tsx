@@ -626,6 +626,7 @@ function TableCell({cell}) {
               stylesOverrides,
               'react-spectrum-Table-cell',
               {
+                'react-spectrum-Table-cell--alignStart': columnProps.align === 'start',
                 'react-spectrum-Table-cell--alignCenter': columnProps.align === 'center',
                 'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end'
               }

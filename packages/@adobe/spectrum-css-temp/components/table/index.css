@@ -157,6 +157,10 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Table-cellContents {
+  flex: 1 1 0%;
+  /* To ensure the flex child only takes up available width, see https://makandracards.com/makandra/66994-css-flex-and-min-width */
+  min-width: 0px;
+
   /* truncate text with ellipsis */
   overflow: hidden;
   white-space: nowrap;

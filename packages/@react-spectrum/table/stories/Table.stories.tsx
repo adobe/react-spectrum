@@ -381,6 +381,115 @@ storiesOf('TableView', module)
     {chromatic: {disable: true}}
   )
   .add(
+    'should fill cell width',
+    () => (
+      <TableView aria-label="TableView with filled cells" selectionMode="multiple" width={500} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column>File Name</Column>
+          <Column align="center">Type</Column>
+          <Column align="end">Size</Column>
+          <Column>Description</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+            <Cell>very very very very very very long long long long long description</Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <View
+                width="100%"
+                backgroundColor="gray-200">
+                100%
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{margin: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="100%"
+                backgroundColor="gray-200">
+                100%
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{marginInlineStart: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="100%"
+                backgroundColor="gray-200">
+                100%
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="100%"
+                backgroundColor="gray-200">
+                very very very very very very long long long long long description
+              </View>
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <View
+                UNSAFE_style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="50%"
+                backgroundColor="gray-200">
+                50% div
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{margin: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="70%"
+                backgroundColor="gray-200">
+                70% div
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{float: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="70%"
+                backgroundColor="gray-200">
+                70% div
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="70%"
+                backgroundColor="gray-200">
+                very very very very very very long long long long long description
+              </View>
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
+                span child
+              </span>
+            </Cell>
+            <Cell>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
+                span child</span>
+            </Cell>
+            <Cell>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
+                span child
+              </span>
+            </Cell>
+            <Cell>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
+                very very very very very very long long long long long description
+              </span>
+            </Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
     'column widths and dividers',
     () => (
       <TableView aria-label="TableView with column widths and dividers" selectionMode="multiple" width={500} height={200} onSelectionChange={s => onSelectionChange([...s])}>
