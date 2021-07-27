@@ -340,7 +340,7 @@ storiesOf('TableView', module)
     'many columns and rows',
     () => (
       <>
-        <input />
+        <input aria-label="Focusable before" placeholder="Focusable before" />
         <TableView aria-label="TableView with many columns and rows" selectionMode="multiple" width={700} height={500} onSelectionChange={s => onSelectionChange([...s])}>
           <TableHeader columns={manyColunns}>
             {column =>
@@ -355,7 +355,7 @@ storiesOf('TableView', module)
             }
           </TableBody>
         </TableView>
-        <input />
+        <input aria-label="Focusable after" placeholder="Focusable after" />
       </>
     ),
     {chromatic: {disable: true}}
