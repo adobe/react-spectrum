@@ -27,11 +27,18 @@
   height: 100%;
 }
 
+.react-spectrum-Table-cell--alignStart {
+  text-align: start;
+  justify-content: start;
+}
+
 .react-spectrum-Table-cell--alignCenter {
+  text-align: center;
   justify-content: center;
 }
 
 .react-spectrum-Table-cell--alignEnd {
+  text-align: end;
   justify-content: flex-end;
 }
 
