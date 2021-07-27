@@ -301,6 +301,18 @@ function FormWithControls(props: any = {}) {
             Comments default
             <textarea placeholder="How do you feel?" defaultValue="hello" />
           </label>
+          <label>
+            Favorite Color searchwithin
+            <input type="text" placeholder="Search" />
+            <select onChange={e => setFavoriteColor3(e.target.value)}>
+              <option value="red" selected={favoriteColor3 === 'red'}>Red</option>
+              <option value="orange" selected={favoriteColor3 === 'orange'}>Orange</option>
+              <option value="yellow" selected={favoriteColor3 === 'yellow'}>Yellow</option>
+              <option value="green" selected={favoriteColor3 === 'green'}>Green</option>
+              <option value="blue" selected={favoriteColor3 === 'blue'}>Blue</option>
+              <option value="purple" selected={favoriteColor3 === 'purple'}>Purple</option>
+            </select>
+          </label>
           <ButtonGroup>
             <Button variant="secondary" type="reset">Reset</Button>
             <Button variant="primary" type="submit">Submit</Button>
