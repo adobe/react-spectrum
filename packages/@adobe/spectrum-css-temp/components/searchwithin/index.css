@@ -12,8 +12,8 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 .spectrum-SearchWithin {
-  --spectrum-searchwithin-width: 240px;
-  --spectrum-searchwithin-searchfield-width: 128px;
+  --spectrum-searchwithin-width: var(--spectrum-global-dimension-size-3000);
+  --spectrum-searchwithin-searchfield-width: var(--spectrum-global-dimension-size-1600);
 
   /* Force override */
   --spectrum-searchwithin-border-radius: 0;
