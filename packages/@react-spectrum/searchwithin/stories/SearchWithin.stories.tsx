@@ -52,6 +52,9 @@ function renderReverse(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, 
 
 export const Default = () => render({});
 
+export const ValueControlled = () => render({}, {value: 'Controlled'});
+ValueControlled.storyName = 'value (controlled) ';
+
 export const isDisabled = () => render({isDisabled: true});
 isDisabled.storyName = 'isDisabled: true';
 
