@@ -316,13 +316,19 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
         }
 
         items = updateTree(items, key, () => null);
+
+        const movedNode = {
+          ...node,
+          parentKey: toParentKey
+        };
+
         return updateTree(items, toParentKey, parentNode => ({
           key: parentNode.key,
           parentKey: parentNode.parentKey,
           value: parentNode.value,
           children: [
             ...parentNode.children.slice(0, index),
-            node,
+            movedNode,
             ...parentNode.children.slice(index)
           ]
         }));

@@ -104,6 +104,11 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   let {direction} = useLocale();
 
   let onKeyDown = (e: KeyboardEvent) => {
+    // Prevent option + tab from doing anything since it doesn't move focus to the cells, only buttons/checkboxes
+    if (e.altKey && e.key === 'Tab') {
+      e.preventDefault();
+    }
+
     // Let child element (e.g. menu button) handle the event if the Alt key is pressed.
     // Keyboard events bubble through portals. Don't handle keyboard events
     // for elements outside the collection (e.g. menus).
