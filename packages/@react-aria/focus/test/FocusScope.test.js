@@ -828,6 +828,80 @@ describe('FocusScope', function () {
       fireEvent.focusIn(input3);
       expect(document.activeElement).toBe(input3);
     });
+
+    it('should lock tab navigation inside direct child focus scope', function () {
+      function Test() {
+        return (
+          <div>
+            <input data-testid="outside" />
+            <FocusScope autoFocus restoreFocus contain>
+              <input data-testid="parent1" />
+              <input data-testid="parent2" />
+              <input data-testid="parent3" />
+              <FocusScope autoFocus restoreFocus contain>
+                <input data-testid="child1" />
+                <input data-testid="child2" />
+                <input data-testid="child3" />
+              </FocusScope>
+            </FocusScope>
+          </div>
+        );
+      }
+
+      let {getByTestId} = render(<Test />);
+      let child1 = getByTestId('child1');
+      let child2 = getByTestId('child2');
+      let child3 = getByTestId('child3');
+
+      expect(document.activeElement).toBe(child1);
+      userEvent.tab();
+      expect(document.activeElement).toBe(child2);
+      userEvent.tab();
+      expect(document.activeElement).toBe(child3);
+      userEvent.tab();
+      expect(document.activeElement).toBe(child1);
+      userEvent.tab({shift: true});
+      expect(document.activeElement).toBe(child3);
+    });
+
+    it('should lock tab navigation inside nested child focus scope', function () {
+      function Test() {
+        return (
+          <div>
+            <input data-testid="outside" />
+            <FocusScope autoFocus restoreFocus contain>
+              <input data-testid="parent1" />
+              <input data-testid="parent2" />
+              <input data-testid="parent3" />
+              <div>
+                <div>
+                  <FocusScope autoFocus restoreFocus contain>
+                    <input data-testid="child1" />
+                    <input data-testid="child2" />
+                    <input data-testid="child3" />
+                  </FocusScope>
+                </div>
+              </div>
+            </FocusScope>
+          </div>
+        );
+      }
+
+      let {getByTestId} = render(<Test />);
+      let child1 = getByTestId('child1');
+      let child2 = getByTestId('child2');
+      let child3 = getByTestId('child3');
+
+      expect(document.activeElement).toBe(child1);
+      userEvent.tab();
+      expect(document.activeElement).toBe(child2);
+      userEvent.tab();
+      expect(document.activeElement).toBe(child3);
+      userEvent.tab();
+      expect(document.activeElement).toBe(child1);
+      userEvent.tab({shift: true});
+      expect(document.activeElement).toBe(child3);
+    });
   });
 
   describe('scope child of document.body', function () {
