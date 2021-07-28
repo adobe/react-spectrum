@@ -28,7 +28,7 @@ governing permissions and limitations under the License.
 
 .spectrum-SearchWithin-picker {
   inline-size: auto;
-  min-inline-size: 0;
+  min-inline-size: var(--spectrum-global-dimension-size-900);
   flex-shrink: 0;
 
   > button {
@@ -39,7 +39,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-SearchWithin-searchfield {
-  width: var(--spectrum-searchwithin-searchfield-width);
+  min-inline-size: var(--spectrum-searchwithin-searchfield-width);
   flex-grow: 1;
   order: -1;
   margin-inline-end: calc(
