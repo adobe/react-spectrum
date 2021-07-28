@@ -126,6 +126,14 @@ describe('SearchWithin', function () {
     expect(searchfield).toHaveFocus();
   });
 
+  it('autoFocus=true on picker will automatically focus the picker', function () {
+    let {getByRole} = renderSearchWithin({}, {}, {autoFocus: true});
+
+    let picker = getByRole('button');
+
+    expect(picker).toHaveFocus();
+  });
+
   it('slot props override props provided to children', function () {
     let {getByRole, getAllByText, getByLabelText} = renderSearchWithin(
       {isDisabled: true, isRequired: false, label: 'Test1'},
