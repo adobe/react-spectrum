@@ -32,7 +32,7 @@ governing permissions and limitations under the License.
   display: inline-flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  min-width: calc(2.5 * var(--spectrum-dropdown-height));
+  min-inline-size: var(--spectrum-alias-single-line-width);
   border-radius: var(--spectrum-border-radius);
 
   .spectrum-FieldButton {
@@ -52,6 +52,8 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-InputGroup-field {
+    inline-size: unset;
+    min-inline-size: unset;
     .spectrum-InputGroup-input-validationIcon {
       padding-inline-end: 0;
       inset-inline-end: var(--spectrum-combobox-validation-icon-right);
