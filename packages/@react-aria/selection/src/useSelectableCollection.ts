@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusEvent, HTMLAttributes, Key, KeyboardEvent, RefObject, useEffect} from 'react';
+import {FocusEvent, HTMLAttributes, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
 import {focusWithoutScrolling, isMac, mergeProps} from '@react-aria/utils';
@@ -104,6 +104,11 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   let {direction} = useLocale();
 
   let onKeyDown = (e: KeyboardEvent) => {
+    // Prevent option + tab from doing anything since it doesn't move focus to the cells, only buttons/checkboxes
+    if (e.altKey && e.key === 'Tab') {
+      e.preventDefault();
+    }
+
     // Let child element (e.g. menu button) handle the event if the Alt key is pressed.
     // Keyboard events bubble through portals. Don't handle keyboard events
     // for elements outside the collection (e.g. menus).
@@ -284,8 +289,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     }
   };
 
+  const autoFocusRef = useRef(autoFocus);
   useEffect(() => {
-    if (autoFocus) {
+    if (autoFocusRef.current) {
       let focusedKey = null;
 
       // Check focus strategy to determine which item to focus
@@ -309,6 +315,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         focusSafely(ref.current);
       }
     }
+    autoFocusRef.current = false;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

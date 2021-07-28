@@ -1,5 +1,7 @@
 {
   "calendar": "日历",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long}至{end, date, long}",
   "date": "日期",
   "dateRange": "日期范围",
   "day": "日",
