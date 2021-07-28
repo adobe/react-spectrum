@@ -46,6 +46,10 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
       wrapperClassName
     );
 
+    children = React.cloneElement(children, mergeProps(children.props, {
+      style: {width: '100%'}
+    }));
+
     return (
       <div
         {...styleProps}
