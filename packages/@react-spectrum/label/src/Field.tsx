@@ -46,13 +46,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
       wrapperClassName
     );
 
-    children = React.cloneElement(children, mergeProps(children.props, {
-      className: classNames(
-        labelStyles,
-        'spectrum-Field-field'
-      )
-    }));
-
     return (
       <div
         {...styleProps}
@@ -68,7 +61,13 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
           elementType={elementType}>
           {label}
         </Label>
-        {children}
+        <div
+          className={classNames(
+            labelStyles,
+            'spectrum-Field-field'
+          )}>
+          {children}
+        </div>
       </div>
     );
   }
