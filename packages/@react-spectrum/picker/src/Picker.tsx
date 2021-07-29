@@ -32,7 +32,7 @@ import intlMessages from '../intl/*.json';
 import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
-import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect, useResizeObserver, useSyncRef} from '@react-aria/utils';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder, useHover} from '@react-aria/interactions';
@@ -77,6 +77,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
   let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
   let unwrappedTriggerRef = useUnwrapDOMRef(triggerRef);
+  // @ts-ignore a ref can come in on the slots context
+  useSyncRef(props, domRef);
   let listboxRef = useRef();
 
   // We create the listbox layout in Picker and pass it to ListBoxBase below

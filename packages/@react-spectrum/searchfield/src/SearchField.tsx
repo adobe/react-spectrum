@@ -21,6 +21,7 @@ import {TextFieldRef} from '@react-types/textfield';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchField} from '@react-aria/searchfield';
 import {useSearchFieldState} from '@react-stately/searchfield';
+import {useSyncRef} from '@react-aria/utils';
 
 function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRef>) {
   props = useSlotProps(props, 'searchfield');
@@ -38,6 +39,8 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
 
   let state = useSearchFieldState(props);
   let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
+  // @ts-ignore a ref can come in on the slots context
+  useSyncRef(props, inputRef);
   let {labelProps, inputProps, clearButtonProps} = useSearchField(props, state, inputRef);
 
   let clearButton = (

@@ -33,18 +33,20 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   } = props;
 
   let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
-  let domRef = useFocusableRef(ref, inputRef);
+  let pickerRef = useRef<HTMLButtonElement>();
+  let domRef = useFocusableRef(ref);
 
   // Measure the width of the field to inform the width of the menu.
   let [menuWidth, setMenuWidth] = useState(null);
   let {scale} = useProvider();
 
   let onResize = useCallback(() => {
-    if (domRef.current) {
-      let width = domRef.current.offsetWidth;
-      setMenuWidth(width);
+    let buttonWidth = pickerRef?.current?.offsetWidth;
+    let inputWidth = inputRef?.current?.offsetWidth;
+    if (!isNaN(buttonWidth) && !isNaN(inputWidth)) {
+      setMenuWidth(buttonWidth + inputWidth);
     }
-  }, [domRef]);
+  }, [pickerRef, inputRef, setMenuWidth]);
 
   useResizeObserver({
     ref: domRef,
@@ -57,8 +59,8 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   let searchFieldClassName = classNames(styles, 'spectrum-SearchWithin-searchfield');
   let pickerClassName = classNames(styles, 'spectrum-SearchWithin-picker');
   let slots = {
-    searchfield: {UNSAFE_className: searchFieldClassName, ...fieldProps, ...defaultSlotValues},
-    picker: {UNSAFE_className: pickerClassName, menuWidth, align: 'end', ...defaultSlotValues}
+    searchfield: {UNSAFE_className: searchFieldClassName, ref: inputRef, ...fieldProps, ...defaultSlotValues},
+    picker: {UNSAFE_className: pickerClassName, menuWidth, align: 'end', ref: pickerRef, ...defaultSlotValues}
   };
 
   if (!label && !ariaLabel && !ariaLabelledby) {
