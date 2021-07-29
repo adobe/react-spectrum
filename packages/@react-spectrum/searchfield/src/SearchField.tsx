@@ -39,8 +39,6 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
 
   let state = useSearchFieldState(props);
   let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
-  // @ts-ignore a ref can come in on the slots context
-  useSyncRef(props, inputRef);
   let {labelProps, inputProps, clearButtonProps} = useSearchField(props, state, inputRef);
 
   let clearButton = (

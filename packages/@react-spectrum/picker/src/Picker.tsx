@@ -77,8 +77,6 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
   let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
   let unwrappedTriggerRef = useUnwrapDOMRef(triggerRef);
-  // @ts-ignore a ref can come in on the slots context
-  useSyncRef(props, domRef);
   let listboxRef = useRef();
 
   // We create the listbox layout in Picker and pass it to ListBoxBase below
