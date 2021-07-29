@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 import {action} from '@storybook/addon-actions';
+import {ActionButton} from '@react-spectrum/button';
+import {Flex} from '@react-spectrum/layout';
 import {Item, Picker} from '@react-spectrum/picker';
 import React, {useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
@@ -17,8 +19,6 @@ import {SearchFieldProps} from '@react-types/searchfield';
 import {SearchWithin} from '../';
 import {SpectrumPickerProps} from '@react-types/select';
 import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
-import {Flex} from '@react-spectrum/layout';
-import {ActionButton} from '@react-spectrum/button';
 
 export default {
   title: 'SearchWithin'
@@ -120,4 +120,4 @@ AutoFocusPicker.storyName = 'autoFocus: true on Picker';
 
 export const ReverseChildrenOrder = () => renderReverse({});
 
-export const ResizeSearchWithin = () => <ResizeSearchWithinApp />
+export const ResizeSearchWithin = () => <ResizeSearchWithinApp />;
