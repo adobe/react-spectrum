@@ -28,4 +28,4 @@ describe('LayoutInfo', () => {
     expect(copy).toEqual(layoutInfo);
 
   });
-})
+});
