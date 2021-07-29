@@ -195,7 +195,7 @@ describe('TableView', function () {
     expect(rowheader).toHaveTextContent('Foo 2');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
 
-    expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+    expect(rows[1]).not.toHaveAttribute('aria-selected');
     expect(rows[1]).toHaveAttribute('aria-labelledby', rowheader.id);
 
 
@@ -355,7 +355,7 @@ describe('TableView', function () {
     expect(rowheader).toHaveTextContent('Foo 2');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
 
-    expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+    expect(rows[1]).not.toHaveAttribute('aria-selected');
     expect(rows[1]).toHaveAttribute('aria-labelledby', rowheader.id);
 
     let cells = within(rowgroups[1]).getAllByRole('gridcell');
