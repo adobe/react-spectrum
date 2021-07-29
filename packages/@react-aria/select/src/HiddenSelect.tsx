@@ -14,6 +14,7 @@ import React, {ReactNode, RefObject} from 'react';
 import {SelectState} from '@react-stately/select';
 import {useInteractionModality} from '@react-aria/interactions';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
+import {ValidationState} from '@react-types/shared';
 
 interface AriaHiddenSelectProps {
   /** The text label for the select. */
@@ -23,7 +24,10 @@ interface AriaHiddenSelectProps {
   name?: string,
 
   /** Sets the disabled state of the select and input. */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+
+  /** Whether the input should display as "invalid".  */
+  validationState?: ValidationState
 }
 
 interface HiddenSelectProps<T> extends AriaHiddenSelectProps {
@@ -72,7 +76,8 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectProps, state: SelectSt
       tabIndex: modality == null || state.isFocused || state.isOpen ? -1 : 0,
       style: {fontSize: 16},
       onFocus: () => triggerRef.current.focus(),
-      disabled: isDisabled
+      disabled: isDisabled,
+      'aria-invalid': props.validationState === 'invalid' ? true : undefined
     },
     selectProps: {
       tabIndex: -1,
@@ -80,7 +85,8 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectProps, state: SelectSt
       name,
       size: state.collection.size,
       value: state.selectedKey ?? '',
-      onChange: (e: React.ChangeEvent<HTMLSelectElement>) => state.setSelectedKey(e.target.value)
+      onChange: (e: React.ChangeEvent<HTMLSelectElement>) => state.setSelectedKey(e.target.value),
+      'aria-invalid': props.validationState === 'invalid' ? true : undefined
     }
   };
 }
@@ -126,6 +132,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
         type="hidden"
         name={name}
         disabled={isDisabled}
+        aria-invalid={props.validationState === 'invalid' ? true : undefined}
         value={state.selectedKey} />
     );
   }

@@ -207,6 +207,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         )
       }>
       <HiddenSelect
+        validationState={props.validationState}
         isDisabled={isDisabled}
         state={state}
         triggerRef={unwrappedTriggerRef}
