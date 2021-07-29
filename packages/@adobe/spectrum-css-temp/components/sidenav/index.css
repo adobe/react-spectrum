@@ -50,7 +50,8 @@ governing permissions and limitations under the License.
   font-style: normal;
   text-decoration: none;
 
-  word-break: break-word;
+  word-break: normal;
+  overflow-wrap: anywhere;
   hyphens: auto;
 
   cursor: pointer;

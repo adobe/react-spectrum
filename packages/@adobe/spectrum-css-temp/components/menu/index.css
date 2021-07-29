@@ -110,7 +110,8 @@ governing permissions and limitations under the License.
 .spectrum-Menu-itemLabel {
   grid-area: text;
   line-height: var(--spectrum-global-font-line-height-small);
-  word-break: break-all;
+  word-break: normal;
+  overflow-wrap: anywhere;
 }
 
 .spectrum-Menu-itemLabel--wrapping {

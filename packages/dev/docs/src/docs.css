@@ -343,7 +343,8 @@ footer li:last-child:after {
 }
 
 .propTable td:last-child {
-  word-break: break-word;
+  word-break: normal;
+  overflow-wrap: anywhere;
 }
 
 .propTable tr {
@@ -729,7 +730,8 @@ h2.sectionHeader {
   .propTable td[data-column] code {
     display: inline-block;
     vertical-align: text-top;
-    word-break: break-word;
+    word-break: normal;
+    overflow-wrap: anywhere;
     max-width: calc(100% - 80px);
   }
 
