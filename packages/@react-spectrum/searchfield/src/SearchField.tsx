@@ -21,7 +21,6 @@ import {TextFieldRef} from '@react-types/textfield';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchField} from '@react-aria/searchfield';
 import {useSearchFieldState} from '@react-stately/searchfield';
-import {useSyncRef} from '@react-aria/utils';
 
 function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRef>) {
   props = useSlotProps(props, 'searchfield');
