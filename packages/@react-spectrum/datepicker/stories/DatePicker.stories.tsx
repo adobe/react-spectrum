@@ -18,7 +18,7 @@ import { Flex } from '../../layout';
 import { Item, Picker, Section } from '../../picker';
 import { Provider } from '../../provider';
 import { useLocale } from '../../../react-aria';
-import { parseDate, parseDateTime, CalendarDate, CalendarDateTime } from '@internationalized/date';
+import { parseDate, parseDateTime, CalendarDate, CalendarDateTime, toZoned, toTimeZone, parseZonedDateTime, parseAbsolute, parseAbsoluteToLocal } from '@internationalized/date';
 
 const BlockDecorator = storyFn => <div>{storyFn()}</div>;
 
@@ -41,6 +41,10 @@ storiesOf('DatePicker', module)
     () => render({value: new CalendarDate(2020, 2, 3)})
   )
   .add(
+    'defaultValue, zoned',
+    () => render({defaultValue: toZoned(parseDate('2020-02-03'), 'America/Los_Angeles')})
+  )
+  .add(
     'granularity: month',
     () => render({granularity: 'month'})
   )
@@ -53,8 +57,18 @@ storiesOf('DatePicker', module)
     () => render({granularity: 'second'})
   )
   .add(
-    'granularity: minute, controlled',
-    () => render({granularity: 'minute', value: parseDateTime('2020-02-03T08:45')})
+    'granularity: minute, defaultValue',
+    () => render({granularity: 'minute', defaultValue: parseDateTime('2021-03-14T08:45')})
+  )
+  .add(
+    'granularity: minute, defaultValue, zoned',
+    () => render({granularity: 'minute', defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]')})
+  )
+  .add('granularity: minute, defaultValue, zoned, absolute',
+    () => render({granularity: 'minute', defaultValue: parseAbsoluteToLocal('2021-11-07T07:45:00Z')})
+  )
+  .add('granularity: minute, defaultValue, zoned, absolute, timeZone',
+    () => render({granularity: 'minute', defaultValue: parseAbsolute('2021-11-07T07:45:00Z', 'America/New_York')})
   )
   .add(
     'isDisabled',

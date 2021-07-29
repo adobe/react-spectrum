@@ -10,10 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, CalendarDateTime, Time} from './CalendarDate';
-import { toCalendarDateTime } from './conversion';
-import {DateFields, Duration} from './types';
+import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
+import { GregorianCalendar } from './calendars/GregorianCalendar';
+import { epochFromDate, fromAbsolute, getTimeZoneOffset, toAbsolute, toCalendar, toCalendarDate, toCalendarDateTime } from './conversion';
+import {CycleOptions, CycleTimeOptions, DateField, DateFields, Disambiguation, Duration, OverflowBehavior, TimeField, TimeFields} from './types';
 import {Mutable} from './utils';
+
+const ONE_HOUR = 3600000;
 
 /* eslint-disable no-redeclare */
 export function add(date: CalendarDateTime, duration: Duration): CalendarDateTime;
@@ -52,14 +55,14 @@ function addYears(date: Mutable<CalendarDate>, years: number) {
 
 function balanceYearMonth(date: Mutable<CalendarDate>) {
   while (date.month < 1) {
-    addYears(date, -1);
     date.month += date.calendar.getMonthsInYear(date);
+    addYears(date, -1);
   }
 
   let monthsInYear = 0;
   while (date.month > (monthsInYear = date.calendar.getMonthsInYear(date))) {
-    addYears(date, 1);
     date.month -= monthsInYear;
+    addYears(date, 1);
   }
 }
 
@@ -91,11 +94,7 @@ function constrain(date: Mutable<CalendarDate>) {
   date.day = Math.max(1, Math.min(date.calendar.getDaysInMonth(date), date.day));
 }
 
-/* eslint-disable no-redeclare */
-export function subtract(date: CalendarDateTime, duration: Duration): CalendarDateTime;
-export function subtract(date: CalendarDate, duration: Duration): CalendarDate;
-export function subtract(date: CalendarDate | CalendarDateTime, duration: Duration): CalendarDate | CalendarDateTime {
-/* eslint-enable no-redeclare */
+export function invertDuration(duration: Duration): Duration {
   let inverseDuration = {};
   for (let key in duration) {
     if (typeof duration[key] === 'number') {
@@ -103,12 +102,21 @@ export function subtract(date: CalendarDate | CalendarDateTime, duration: Durati
     }
   }
 
-  return add(date, inverseDuration);
+  return inverseDuration;
 }
 
 /* eslint-disable no-redeclare */
-export function set(date: CalendarDateTime, fields: DateFields, behavior?: 'balance' | 'constrain'): CalendarDateTime;
-export function set(date: CalendarDate, fields: DateFields, behavior: 'balance' | 'constrain' = 'balance'): CalendarDate {
+export function subtract(date: CalendarDateTime, duration: Duration): CalendarDateTime;
+export function subtract(date: CalendarDate, duration: Duration): CalendarDate;
+export function subtract(date: CalendarDate | CalendarDateTime, duration: Duration): CalendarDate | CalendarDateTime {
+/* eslint-enable no-redeclare */
+  return add(date, invertDuration(duration));
+}
+
+/* eslint-disable no-redeclare */
+export function set(date: CalendarDateTime, fields: DateFields, behavior?: OverflowBehavior): CalendarDateTime;
+export function set(date: CalendarDate, fields: DateFields, behavior: OverflowBehavior): CalendarDate;
+export function set(date: CalendarDate, fields: DateFields, behavior: OverflowBehavior = 'balance'): CalendarDate {
 /* eslint-enable no-redeclare */
   let mutableDate: Mutable<CalendarDate> = date.copy();
 
@@ -117,8 +125,8 @@ export function set(date: CalendarDate, fields: DateFields, behavior: 'balance' 
   }
 
   if (fields.year != null) {
-    // mutableDate.year = fields.year;
-    addYears(mutableDate, fields.year - mutableDate.year);
+    mutableDate.year = fields.year;
+    // addYears(mutableDate, fields.year - mutableDate.year);
   }
 
   if (fields.month != null) {
@@ -143,18 +151,12 @@ export function set(date: CalendarDate, fields: DateFields, behavior: 'balance' 
   return mutableDate;
 }
 
-interface TimeFields {
-  hour?: number,
-  minute?: number,
-  second?: number,
-  millisecond?: number
-}
-
 /* eslint-disable no-redeclare */
-export function setTime(value: CalendarDateTime, fields: TimeFields, behavior?: 'balance' | 'constrain'): CalendarDateTime;
-export function setTime(value: Time, fields: TimeFields, behavior?: 'balance' | 'constrain'): Time {
+export function setTime(value: CalendarDateTime, fields: TimeFields, behavior?: OverflowBehavior): CalendarDateTime;
+export function setTime(value: Time, fields: TimeFields, behavior: OverflowBehavior): Time;
+export function setTime(value: Time | CalendarDateTime, fields: TimeFields, behavior: OverflowBehavior = 'balance'): Time | CalendarDateTime {
 /* eslint-enable no-redeclare */
-  let mutableValue: Mutable<Time> = value.copy();
+  let mutableValue: Mutable<Time | CalendarDateTime> = value.copy();
 
   if (fields.hour != null) {
     mutableValue.hour = fields.hour;
@@ -175,8 +177,7 @@ export function setTime(value: Time, fields: TimeFields, behavior?: 'balance' | 
   switch (behavior) {
     case 'balance': {
       let days = balanceTime(mutableValue);
-      if (mutableValue instanceof CalendarDateTime) {
-        // @ts-ignore
+      if ('day' in mutableValue) {
         mutableValue.day += days;
         balance(mutableValue);
       } else if (days > 0) {
@@ -192,7 +193,7 @@ export function setTime(value: Time, fields: TimeFields, behavior?: 'balance' | 
   return mutableValue;
 }
 
-function balanceTime(time: Mutable<Time>): number {
+function balanceTime(time: TimeFields): number {
   time.second += Math.floor(time.millisecond / 1000);
   time.millisecond = nonNegativeMod(time.millisecond, 1000);
 
@@ -208,7 +209,7 @@ function balanceTime(time: Mutable<Time>): number {
   return days;
 }
 
-function constrainTime(time: Mutable<Time>) {
+function constrainTime(time: Mutable<Time | CalendarDateTime>) {
   time.millisecond = Math.max(0, Math.min(time.millisecond, 1000));
   time.second = Math.max(0, Math.min(time.second, 59));
   time.minute = Math.max(0, Math.min(time.minute, 59));
@@ -223,7 +224,7 @@ function nonNegativeMod(a: number, b: number) {
   return result;
 }
 
-function addTime(time: Mutable<Time>, duration: Duration): number {
+function addTime(time: TimeFields, duration: Duration): number {
   time.hour += duration.hours || 0;
   time.minute += duration.minutes || 0;
   time.second += duration.seconds || 0;
@@ -243,27 +244,10 @@ export function endOfMonth(date: CalendarDate): CalendarDate {
   return mutableDate;
 }
 
-type DateField = keyof DateFields;
-type TimeField = keyof TimeFields;
-
-interface CycleDateOptions {
-  /** Whether to round the field value to the nearest interval of the amount. */
-  round?: boolean
-}
-
-interface CycleTimeOptions extends CycleDateOptions {
-  /**
-   * Whether to use 12 or 24 hour time. If 12 hour time is chosen, the resulting value
-   * will remain in the same day period as the original value (e.g. if the value is AM,
-   * the resulting value also be AM).
-   * @default 24
-   */
-  hourCycle?: 12 | 24
-}
-
 /* eslint-disable no-redeclare */
-export function cycleDate(value: CalendarDateTime, field: DateField, amount: number, options?: CycleDateOptions): CalendarDateTime;
-export function cycleDate(value: CalendarDate, field: DateField, amount: number, options?: CycleDateOptions) {
+export function cycleDate(value: CalendarDateTime, field: DateField, amount: number, options?: CycleOptions): CalendarDateTime;
+export function cycleDate(value: CalendarDate, field: DateField, amount: number, options?: CycleOptions): CalendarDate;
+export function cycleDate(value: CalendarDate, field: DateField, amount: number, options?: CycleOptions) {
 /* eslint-enable no-redeclare */
   let mutable: Mutable<CalendarDate> = value.copy();
 
@@ -279,7 +263,6 @@ export function cycleDate(value: CalendarDate, field: DateField, amount: number,
       break;
     }
     case 'year': {
-      // TODO: limit to min/max date of era?
       let year = cycleValue(value.year, amount, 1, value.calendar.getYearsInEra(value), options?.round);
       addYears(mutable, year - value.year);
       break;
@@ -303,16 +286,17 @@ export function cycleDate(value: CalendarDate, field: DateField, amount: number,
 
 /* eslint-disable no-redeclare */
 export function cycleTime(value: CalendarDateTime, field: TimeField, amount: number, options?: CycleTimeOptions): CalendarDateTime;
-export function cycleTime(value: Time, field: TimeField, amount: number, options?: CycleTimeOptions) {
+export function cycleTime(value: Time, field: TimeField, amount: number, options?: CycleTimeOptions): Time;
+export function cycleTime(value: Time | CalendarDateTime, field: TimeField, amount: number, options?: CycleTimeOptions) {
 /* eslint-enable no-redeclare */
-  let mutable: Mutable<Time> = value.copy();
+  let mutable: Mutable<Time | CalendarDateTime> = value.copy();
 
   switch (field) {
     case 'hour': {
       let hours = value.hour;
       let min = 0;
       let max = 23;
-      if (options.hourCycle === 12) {
+      if (options?.hourCycle === 12) {
         let isPM = hours >= 12;
         min = isPM ? 12 : 0;
         max = isPM ? 23 : 11;
@@ -364,4 +348,106 @@ function cycleValue(value: number, amount: number, min: number, max: number, rou
   }
 
   return value;
+}
+
+export function addZoned(dateTime: ZonedDateTime, duration: Duration): ZonedDateTime {
+  let ms: number;
+  if ((duration.years != null && duration.years !== 0) || (duration.months != null && duration.months !== 0) || (duration.days != null && duration.days !== 0)) {
+    let res = add(dateTime, {
+      years: duration.years,
+      months: duration.months,
+      days: duration.days
+    });
+
+    // Changing the date may change the timezone offset, so we need to recompute
+    // using the 'compatible' disambiguation.
+    ms = toAbsolute(res, dateTime.timeZone);
+  } else {
+    // Otherwise, preserve the offset of the original date.
+    ms = epochFromDate(dateTime) - dateTime.offset;
+  }
+
+  // Perform time manipulation in milliseconds rather than on the original time fields to account for DST.
+  // For example, adding one hour during a DST transition may result in the hour field staying the same or
+  // skipping an hour. This results in the offset field changing value instead of the specified field.
+  ms += duration.milliseconds || 0;
+  ms += (duration.seconds || 0) * 1000;
+  ms += (duration.minutes || 0) * 60 * 1000;
+  ms += (duration.hours || 0) * 60 * 60 * 1000;
+
+  let res = fromAbsolute(ms, dateTime.timeZone);
+  return toCalendar(res, dateTime.calendar);
+}
+
+export function subtractZoned(dateTime: ZonedDateTime, duration: Duration): ZonedDateTime {
+  return addZoned(dateTime, invertDuration(duration));
+}
+
+export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField, amount: number, options?: CycleTimeOptions): ZonedDateTime {
+  // For date fields, we want the time to remain consistent and the UTC offset to potentially change to account for DST changes.
+  // For time fields, we want the time to change by the amount given. This may result in the hour field staying the same, but the UTC
+  // offset changing in the case of a backward DST transition, or skipping an hour in the case of a forward DST transition.
+  switch (field) {
+    case 'hour': {
+      let min = 0;
+      let max = 23;
+      if (options?.hourCycle === 12) {
+        let isPM = dateTime.hour >= 12;
+        min = isPM ? 12 : 0;
+        max = isPM ? 23 : 11;
+      }
+
+      // The minimum and maximum hour may be affected by daylight saving time.
+      // For example, it might jump forward at midnight, and skip 1am.
+      // Or it might end at midnight and repeat the 11pm hour. To handle this, we get
+      // the possible absolute times for the min and max, and find the maximum range
+      // that is within the current day.
+      let minDate = toCalendar(setTime(dateTime, {hour: min}), new GregorianCalendar());
+      let minAbsolute = [toAbsolute(minDate, dateTime.timeZone, 'earlier'), toAbsolute(minDate, dateTime.timeZone, 'later')]
+        .filter(ms => fromAbsolute(ms, dateTime.timeZone).day === minDate.day)[0];
+
+      let maxDate = toCalendar(setTime(dateTime, {hour: max}), new GregorianCalendar());
+      let maxAbsolute = [toAbsolute(maxDate, dateTime.timeZone, 'earlier'), toAbsolute(maxDate, dateTime.timeZone, 'later')]
+        .filter(ms => fromAbsolute(ms, dateTime.timeZone).day === maxDate.day).pop();
+
+      // Since hours may repeat, we need to operate on the absolute time in milliseconds.
+      // This is done in hours from the Unix epoch so that cycleValue works correctly,
+      // and then converted back to milliseconds.
+      let ms = epochFromDate(dateTime) - dateTime.offset;
+      let hours = Math.floor(ms / ONE_HOUR);
+      let remainder = ms % ONE_HOUR;
+      ms = cycleValue(
+        hours,
+        amount,
+        Math.floor(minAbsolute / ONE_HOUR),
+        Math.floor(maxAbsolute / ONE_HOUR),
+        options?.round
+      ) * ONE_HOUR + remainder;
+
+      // Now compute the new timezone offset, and convert the absolute time back to local time.
+      return toCalendar(fromAbsolute(ms, dateTime.timeZone), dateTime.calendar);
+    }
+    case 'minute':
+    case 'second':
+    case 'millisecond':
+      // @ts-ignore
+      return cycleTime(dateTime, field, amount, options);
+    case 'era':
+    case 'year':
+    case 'month':
+    case 'day': {
+      let res = cycleDate(dateTime, field, amount, options);
+      let ms = toAbsolute(res, dateTime.timeZone);
+      let offset = getTimeZoneOffset(ms, dateTime.timeZone);
+      return new ZonedDateTime(res.calendar, res.era, res.year, res.month, res.day, dateTime.timeZone, offset, res.hour, res.minute, res.second, res.millisecond);
+    }
+  }
+}
+
+export function setZoned(dateTime: ZonedDateTime, fields: DateFields & TimeFields, behavior?: OverflowBehavior, disambiguation?: Disambiguation): ZonedDateTime {
+  // Set the date/time fields, and recompute the UTC offset to account for DST changes.
+  // We also need to validate by converting back to a local time in case hours are skipped during forward DST transitions.
+  let res = setTime(set(dateTime, fields, behavior), fields, behavior);
+  let ms = toAbsolute(res, dateTime.timeZone, disambiguation);
+  return toCalendar(fromAbsolute(ms, dateTime.timeZone), dateTime.calendar);
 }

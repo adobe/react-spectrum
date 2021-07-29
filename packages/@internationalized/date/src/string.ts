@@ -10,14 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, CalendarDateTime, Time} from './CalendarDate';
+import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 import { GregorianCalendar } from './calendars/GregorianCalendar';
-import { toAbsolute, toCalendar } from './conversion';
+import { epochFromDate, fromAbsolute, getTimeZoneOffset, possibleAbsolutes, toAbsolute, toCalendar, toTimeZone } from './conversion';
+import { getLocalTimeZone } from './queries';
+import { Disambiguation } from './types';
 import {Mutable} from './utils';
 
-const TIME_RE = /^(\d{2})(?::(\d{2}))?(?::(\d{2}))?(?:\.(\d+))?$/;
+const TIME_RE = /^(\d{2})(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?$/;
 const DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
-const DATE_TIME_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(?:\.(\d+))?$/;
+const DATE_TIME_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?$/;
+const ZONED_DATE_TIME_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:([+-]\d{2})(?::(\d{2}))?)?\[(.*?)\]$/;
+const ABSOLUTE_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:(?:([+-]\d{2})(?::(\d{2}))?)|Z)$/;
 
 export function parseTime(value: string): Time {
   let m = value.match(TIME_RE);
@@ -29,7 +33,7 @@ export function parseTime(value: string): Time {
     parseNumber(m[1], 0, 23),
     m[2] ? parseNumber(m[2], 0, 59) : 0,
     m[3] ? parseNumber(m[3], 0, 59) : 0,
-    m[4] ? parseNumber(m[4], 0, Infinity) : 0
+    m[4] ? parseNumber(m[4], 0, Infinity) * 1000 : 0
   );
 }
 
@@ -60,13 +64,82 @@ export function parseDateTime(value: string): CalendarDateTime {
     parseNumber(m[2], 1, 12),
     1,
     m[4] ? parseNumber(m[4], 0, 23) : 0,
-    m[2] ? parseNumber(m[5], 0, 59) : 0,
-    m[3] ? parseNumber(m[6], 0, 59) : 0,
-    m[4] ? parseNumber(m[7], 0, Infinity) : 0
+    m[5] ? parseNumber(m[5], 0, 59) : 0,
+    m[6] ? parseNumber(m[6], 0, 59) : 0,
+    m[7] ? parseNumber(m[7], 0, Infinity) * 1000 : 0
   );
 
   date.day = parseNumber(m[3], 0, date.calendar.getDaysInMonth(date));
   return date;
+}
+
+export function parseZonedDateTime(value: string, disambiguation?: Disambiguation): ZonedDateTime {
+  let m = value.match(ZONED_DATE_TIME_RE);
+  if (!m) {
+    throw new Error('Invalid ISO 8601 date time string: ' + value);
+  }
+
+  let date: Mutable<ZonedDateTime> = new ZonedDateTime(
+    parseNumber(m[1], 1, 9999),
+    parseNumber(m[2], 1, 12),
+    1,
+    m[10],
+    0,
+    m[4] ? parseNumber(m[4], 0, 23) : 0,
+    m[5] ? parseNumber(m[5], 0, 59) : 0,
+    m[6] ? parseNumber(m[6], 0, 59) : 0,
+    m[7] ? parseNumber(m[7], 0, Infinity) * 1000 : 0
+  );
+
+  date.day = parseNumber(m[3], 0, date.calendar.getDaysInMonth(date));
+
+  let ms: number;
+  if (m[8]) {
+    date.offset = parseNumber(m[8], -23, 23) * 60 * 60 * 1000 + parseNumber(m[9] ?? '0', 0, 59) * 60 * 1000;
+    ms = epochFromDate(date) - date.offset;
+
+    // Validate offset against parsed date.
+    let absolutes = possibleAbsolutes(date, date.timeZone);
+    if (!absolutes.includes(ms)) {
+      throw new Error(`Offset ${offsetToString(date.offset)} is invalid for ${dateTimeToString(date)} in ${date.timeZone}`);
+    }
+  } else {
+    // Convert to absolute and back to fix invalid times due to DST.
+    ms = toAbsolute(date, date.timeZone, disambiguation);
+  }
+
+  return fromAbsolute(ms, date.timeZone);
+}
+
+export function parseAbsolute(value: string, timeZone: string): ZonedDateTime {
+  let m = value.match(ABSOLUTE_RE);
+  if (!m) {
+    throw new Error('Invalid ISO 8601 date time string: ' + value);
+  }
+
+  let date: Mutable<ZonedDateTime> = new ZonedDateTime(
+    parseNumber(m[1], 1, 9999),
+    parseNumber(m[2], 1, 12),
+    1,
+    timeZone,
+    0,
+    m[4] ? parseNumber(m[4], 0, 23) : 0,
+    m[5] ? parseNumber(m[5], 0, 59) : 0,
+    m[6] ? parseNumber(m[6], 0, 59) : 0,
+    m[7] ? parseNumber(m[7], 0, Infinity) * 1000 : 0
+  );
+
+  date.day = parseNumber(m[3], 0, date.calendar.getDaysInMonth(date));
+
+  if (m[8]) {
+    date.offset = parseNumber(m[8], -23, 23) * 60 * 60 * 1000 + parseNumber(m[9] ?? '0', 0, 59) * 60 * 1000;
+  }
+
+  return toTimeZone(date, timeZone);
+}
+
+export function parseAbsoluteToLocal(value: string): ZonedDateTime {
+  return parseAbsolute(value, getLocalTimeZone());
 }
 
 function parseNumber(value: string, min: number, max: number) {
@@ -79,7 +152,7 @@ function parseNumber(value: string, min: number, max: number) {
 }
 
 export function timeToString(time: Time): string {
-  return `${String(time.hour).padStart(2, '0')}:${String(time.minute).padStart(2, '0')}:${String(time.second).padStart(2, '0')}${time.millisecond ? '.' + time.millisecond : ''}`;
+  return `${String(time.hour).padStart(2, '0')}:${String(time.minute).padStart(2, '0')}:${String(time.second).padStart(2, '0')}${time.millisecond ? String(time.millisecond / 1000).slice(1) : ''}`;
 }
 
 export function dateToString(date: CalendarDate): string {
@@ -88,9 +161,18 @@ export function dateToString(date: CalendarDate): string {
 }
 
 export function dateTimeToString(date: CalendarDateTime): string {
+  // @ts-ignore
   return `${dateToString(date)}T${timeToString(date)}`;
 }
 
-export function toAbsoluteString(date: CalendarDateTime, timeZone: string) {
-  return new Date(toAbsolute(date, timeZone)).toISOString();
+function offsetToString(offset: number) {
+  let sign = Math.sign(offset) < 0 ? '-' : '+';
+  offset = Math.abs(offset);
+  let offsetHours = Math.floor(offset / (60 * 60 * 1000));
+  let offsetMinutes = (offset % (60 * 60 * 1000)) / (60 * 1000);
+  return `${sign}${String(offsetHours).padStart(2, '0')}:${String(offsetMinutes).padStart(2, '0')}`;
+}
+
+export function zonedDateTimeToString(date: ZonedDateTime): string {
+  return `${dateTimeToString(date)}${offsetToString(date.offset)}[${date.timeZone}]`;
 }

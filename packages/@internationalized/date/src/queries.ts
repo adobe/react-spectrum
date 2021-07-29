@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, CalendarDateTime} from './CalendarDate';
-import {fromAbsolute, toCalendar, toCalendarDate} from './conversion';
+import {CalendarDate, ZonedDateTime} from './CalendarDate';
+import {fromAbsolute, toAbsolute, toCalendar, toCalendarDate} from './conversion';
 
 export function isSameDay(a: CalendarDate, b: CalendarDate): boolean {
   b = toCalendar(b, a.calendar);
@@ -45,7 +45,7 @@ export function getDayOfWeek(date: CalendarDate) {
   return dayOfWeek;
 }
 
-export function now(timeZone: string): CalendarDateTime {
+export function now(timeZone: string): ZonedDateTime {
   return fromAbsolute(Date.now(), timeZone);
 }
 
@@ -55,4 +55,16 @@ export function today(timeZone: string): CalendarDate {
 
 export function compare(a: CalendarDate, b: CalendarDate): number {
   return a.calendar.toJulianDay(a) - b.calendar.toJulianDay(b);
+}
+
+export function getHoursInDay(a: CalendarDate, timeZone: string): number {
+  let ms = toAbsolute(a, timeZone);
+  let tomorrow = a.add({days: 1});
+  let tomorrowMs = toAbsolute(tomorrow, timeZone);
+  return (tomorrowMs - ms) / 3600000;
+}
+
+export function getLocalTimeZone(): string {
+  // TODO: cache? but how to invalidate...
+  return new Intl.DateTimeFormat().resolvedOptions().timeZone;
 }

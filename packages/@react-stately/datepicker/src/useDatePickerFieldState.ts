@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {DatePickerProps} from '@react-types/datepicker';
+import {DatePickerProps, DateValue} from '@react-types/datepicker';
 import {useControlledState} from '@react-stately/utils';
 import {useDateFormatter} from '@react-aria/i18n';
 import {useEffect, useMemo, useRef, useState} from 'react';
 
-import {Calendar, CalendarDateTime, GregorianCalendar, now, set, setTime, toCalendar, toCalendarDate, toCalendarDateTime, toDate, cycleDate, cycleTime} from '@internationalized/date';
+import {Calendar, CalendarDate, CalendarDateTime, GregorianCalendar, now, toCalendar, toCalendarDate, toCalendarDateTime, toZoned, ZonedDateTime} from '@internationalized/date';
 
 export interface DateSegment {
   type: Intl.DateTimeFormatPartTypes,
@@ -86,8 +86,12 @@ export function useDatePickerFieldState(props: DatePickerFieldProps): DatePicker
   let defaultResolvedOptions = useMemo(() => defaultFormatter.resolvedOptions(), [defaultFormatter]);
   let {
     createCalendar,
-    timeZone = 'UTC' //defaultResolvedOptions.timeZone
+    // timeZone = 'America/Sao_Paulo'//defaultResolvedOptions.timeZone
   } = props;
+
+  let v = (props.value || props.defaultValue);
+  let defaultTimeZone = (v && 'timeZone' in v ? v.timeZone : undefined);
+  let timeZone = defaultTimeZone || 'UTC';
 
   let calendar = useMemo(() => createCalendar(defaultResolvedOptions.calendar), [createCalendar, defaultResolvedOptions.calendar]);
 
@@ -121,7 +125,11 @@ export function useDatePickerFieldState(props: DatePickerFieldProps): DatePicker
     }
 
     opts.timeZone = timeZone;
-    // opts.timeZoneName = 'short';
+
+    let hasTime = props.granularity === 'hour' || props.granularity === 'minute' || props.granularity === 'second';
+    if (hasTime && defaultTimeZone) {
+      opts.timeZoneName = 'short';
+    }
 
     return opts;
   }, [props.maxGranularity, props.granularity, props.hourCycle, timeZone]);
@@ -146,16 +154,15 @@ export function useDatePickerFieldState(props: DatePickerFieldProps): DatePicker
   // until all segments are set. If the value === null (not undefined), then assume the component
   // is controlled, so use the placeholder as the value until all segments are entered so it doesn't
   // change from uncontrolled to controlled and emit a warning.
-  let [placeholderDate, setPlaceholderDate] = useState(toCalendar(toCalendarDateTime(props.placeholderDate ? props.placeholderDate : createPlaceholderDate(calendar, timeZone)), calendar));
+  let [placeholderDate, setPlaceholderDate] = useState(props.placeholderDate ? convertValue(props.placeholderDate, calendar) : createPlaceholderDate(calendar, defaultTimeZone));
   let [date, setDate] = useControlledState<CalendarDateTime>(
-    props.value === null ? placeholderDate : toCalendar(toCalendarDateTime(props.value), calendar),
-    props.defaultValue ? toCalendar(toCalendarDateTime(props.defaultValue), calendar) : null,
+    props.value === null ? placeholderDate : convertValue(props.value, calendar),
+    props.defaultValue ? convertValue(props.defaultValue, calendar) : null,
     value => {
-      console.log(props.onChange, value)
       if (props.onChange) {
         let hasTime = props.granularity === 'hour' || props.granularity === 'minute' || props.granularity === 'second';
         let gregorianDate = toCalendar(value, new GregorianCalendar());
-        props.onChange(hasTime ? gregorianDate : toCalendarDate(gregorianDate));
+        props.onChange(hasTime || defaultTimeZone ? gregorianDate : toCalendarDate(gregorianDate));
       }
     }
   );
@@ -164,7 +171,7 @@ export function useDatePickerFieldState(props: DatePickerFieldProps): DatePicker
   let lastCalendarIdentifier = useRef(calendar.identifier);
   useEffect(() => {
     if (calendar.identifier !== lastCalendarIdentifier.current) {
-      setPlaceholderDate(placeholder => Object.keys(validSegments).length > 0 ? toCalendar(placeholder, calendar) : createPlaceholderDate(calendar, timeZone));
+      setPlaceholderDate(placeholder => Object.keys(validSegments).length > 0 ? toCalendar(placeholder, calendar) : createPlaceholderDate(calendar, defaultTimeZone));
       setDate(date => Object.keys(validSegments).length >= numSegments ? toCalendar(date, calendar) : date);
       lastCalendarIdentifier.current = calendar.identifier;
     }
@@ -180,7 +187,7 @@ export function useDatePickerFieldState(props: DatePickerFieldProps): DatePicker
     }
   };
 
-  let dateValue = toDate(value, timeZone);
+  let dateValue = value.toDate(timeZone);
   let segments = dateFormatter.formatToParts(dateValue)
     .map(segment => ({
       type: TYPE_MAPPING[segment.type] || segment.type,
@@ -294,22 +301,22 @@ function getSegmentLimits(date: CalendarDateTime, type: string, options: Intl.Re
   };
 }
 
-function addSegment(value: CalendarDateTime, part: string, amount: number, options: Intl.ResolvedDateTimeFormatOptions): CalendarDateTime {
+function addSegment(value: CalendarDateTime, part: string, amount: number, options: Intl.ResolvedDateTimeFormatOptions) {
   switch (part) {
     case 'era':
     case 'year':
     case 'month':
     case 'day':
-      return cycleDate(value, part, amount, {round: part === 'year'});
+      return value.cycle(part, amount, {round: part === 'year'});
     case 'dayPeriod': {
       let hours = value.hour;
       let isPM = hours >= 12;
-      return setTime(value, {hour: isPM ? hours - 12 : hours + 12});
+      return value.set({hour: isPM ? hours - 12 : hours + 12});
     }
     case 'hour':
     case 'minute':
     case 'second':
-      return cycleTime(value, part, amount, {
+      return value.cycle(part, amount, {
         round: part !== 'hour',
         hourCycle: options.hour12 ? 12 : 24
       });
@@ -321,7 +328,7 @@ function setSegment(value: CalendarDateTime, part: string, segmentValue: number,
     case 'day':
     case 'month':
     case 'year':
-      return set(value, {[part]: segmentValue});
+      return value.set({[part]: segmentValue});
     case 'dayPeriod': {
       let hours = value.hour;
       let wasPM = hours >= 12;
@@ -329,7 +336,7 @@ function setSegment(value: CalendarDateTime, part: string, segmentValue: number,
       if (isPM === wasPM) {
         return value;
       }
-      return setTime(value, {hour: wasPM ? hours - 12 : hours + 12});
+      return value.set({hour: wasPM ? hours - 12 : hours + 12});
     }
     case 'hour':
       // In 12 hour time, ensure that AM/PM does not change
@@ -346,15 +353,29 @@ function setSegment(value: CalendarDateTime, part: string, segmentValue: number,
       // fallthrough
     case 'minute':
     case 'second':
-      return setTime(value, {[part]: segmentValue});
+      return value.set({[part]: segmentValue});
   }
 }
 
+function convertValue(value: DateValue, calendar: Calendar) {
+  if ('hour' in value) {
+    return toCalendar(value, calendar);
+  }
+
+  return toCalendar(toCalendarDateTime(value), calendar);
+}
+
 function createPlaceholderDate(calendar, timeZone) {
-  return setTime(toCalendar(now(timeZone), calendar), {
+  let date = toCalendar(now(timeZone), calendar).set({
     hour: 12,
     minute: 0,
     second: 0,
     millisecond: 0
   });
+
+  if (!timeZone) {
+    return toCalendarDateTime(date);
+  }
+
+  return date;
 }

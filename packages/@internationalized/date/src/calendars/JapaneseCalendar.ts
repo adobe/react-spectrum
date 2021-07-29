@@ -103,7 +103,7 @@ export class JapaneseCalendar extends GregorianCalendar {
     let cur = ERA_START_DATES[era];
     let years = next[0] - cur[0];
 
-    if (date.month < next[1] || (date.month === next[1] && date.day <= next[2])) {
+    if (date.month < next[1] || (date.month === next[1] && date.day < next[2])) {
       years++;
     }
 

@@ -170,6 +170,10 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
         let numberValue = parser.parse(newValue);
         let segmentValue = numberValue;
         if (segment.type === 'hour' && state.dateFormatter.resolvedOptions().hour12) {
+          if (numberValue > 12) {
+            segmentValue = parser.parse(key);
+          }
+
           if (segment.value >= 12 && numberValue > 1) {
             numberValue += 12;
           }

@@ -45,3 +45,31 @@ export interface DateFields {
   month?: number,
   day?: number
 }
+
+export interface TimeFields {
+  hour?: number,
+  minute?: number,
+  second?: number,
+  millisecond?: number
+}
+
+export type DateField = keyof DateFields;
+export type TimeField = keyof TimeFields;
+
+export type OverflowBehavior = 'balance' | 'constrain';
+export type Disambiguation = 'compatible' | 'earlier' | 'later' | 'reject';
+
+export interface CycleOptions {
+  /** Whether to round the field value to the nearest interval of the amount. */
+  round?: boolean
+}
+
+export interface CycleTimeOptions extends CycleOptions {
+  /**
+   * Whether to use 12 or 24 hour time. If 12 hour time is chosen, the resulting value
+   * will remain in the same day period as the original value (e.g. if the value is AM,
+   * the resulting value also be AM).
+   * @default 24
+   */
+  hourCycle?: 12 | 24
+}

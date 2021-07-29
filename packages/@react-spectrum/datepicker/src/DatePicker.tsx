@@ -98,7 +98,8 @@ export function DatePicker(props: SpectrumDatePickerProps) {
             isRequired={isRequired}
             formatOptions={formatOptions}
             granularity={props.granularity}
-            inputClassName={fieldClassName} />
+            inputClassName={fieldClassName}
+            timeZone={props.timeZone} />
         </FocusScope>
         <DialogTrigger
           type="popover"
