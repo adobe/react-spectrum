@@ -2836,7 +2836,7 @@ describe('TableView', function () {
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
       expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[1]);
 
-      act(() => table.focus());
+      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
 
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
