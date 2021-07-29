@@ -2828,15 +2828,18 @@ describe('TableView', function () {
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', altKey: true});
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeInTheDocument();
       expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[0]);
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
       expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[1]);
 
       fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
 
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
