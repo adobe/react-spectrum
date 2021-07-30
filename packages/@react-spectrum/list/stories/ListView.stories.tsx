@@ -11,6 +11,8 @@ import {Menu, MenuTrigger} from '@react-spectrum/menu';
 import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import {Image} from '@react-spectrum/image';
+import {ActionGroup} from '@react-spectrum/actiongroup';
 
 
 function renderEmptyState() {
@@ -106,5 +108,50 @@ storiesOf('ListView', module)
   .add('loading', () => (
     <ListView width="300px" height="300px" isLoading>
       {[]}
+    </ListView>
+  ))
+  .add('density: compact', () => (
+    <ListView width="250px" density="compact">
+      <Item textValue="row1">row 1</Item>
+      <Item textValue="row2">row 2</Item>
+      <Item textValue="row3">row 3</Item>
+    </ListView>
+  ))
+  .add('density: spacious', () => (
+    <ListView width="250px" density="spacious">
+      <Item textValue="row1">row 1</Item>
+      <Item textValue="row2">row 2</Item>
+      <Item textValue="row3">row 3</Item>
+    </ListView>
+  ))
+  .add('slots', () => (
+    <ListView width="250px" density="spacious">
+      <Item textValue="articuno">
+        <Image objectFit="contain" src="https://img.pokemondb.net/sprites/sword-shield/icon/articuno.png" alt="zapdos"/>
+        <Content>Articuno</Content>
+        <ActionGroup>
+          <Item>
+            <Add />
+          </Item>
+        </ActionGroup>
+      </Item>
+      <Item textValue="zapdos">
+        <Image objectFit="contain" src="https://img.pokemondb.net/sprites/sword-shield/icon/zapdos.png" alt="zapdos"/>
+        <Content>Zapdos</Content>
+        <ActionGroup>
+          <Item>
+            <Add />
+          </Item>
+        </ActionGroup>
+      </Item>
+      <Item textValue="moltres">
+        <Image objectFit="contain" src="https://img.pokemondb.net/sprites/sword-shield/icon/moltres.png" alt="zapdos"/>
+        <Content>Moltres</Content>
+        <ActionGroup>
+          <Item>
+            <Add />
+          </Item>
+        </ActionGroup>
+      </Item>
     </ListView>
   ));

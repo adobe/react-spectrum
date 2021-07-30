@@ -33,7 +33,7 @@ export function useListLayout<T>(state: ListState<T>) {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() =>
       new ListLayout<T>({
-        estimatedRowHeight: scale === 'large' ? 48 : 32,
+        estimatedRowHeight: scale === 'large' ? 40 : 32,
         padding: 0,
         collator
       })
@@ -45,6 +45,11 @@ export function useListLayout<T>(state: ListState<T>) {
 }
 
 interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps {
+  /**
+   * Sets the amount of vertical padding within each cell.
+   * @default 'regular'
+   */
+  density?: 'compact' | 'regular' | 'spacious',
   isLoading?: boolean,
   renderEmptyState?: () => JSX.Element,
   transitionDuration?: number
@@ -52,6 +57,7 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
 
 function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
+    density = 'regular',
     transitionDuration = 0
   } = props;
   let domRef = useDOMRef(ref);
@@ -107,6 +113,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
           classNames(
             listStyles,
             'react-spectrum-ListView',
+            `react-spectrum-ListView--${density}`,
             styleProps.className
           )
         }

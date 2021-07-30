@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {classNames} from '@react-spectrum/utils';
+import {classNames, SlotProvider} from '@react-spectrum/utils';
 import listStyles from './listview.css';
 import {ListViewContext} from './ListView';
 import {mergeProps} from '@react-aria/utils';
@@ -17,6 +17,8 @@ import React, {useContext, useRef} from 'react';
 import {useFocusRing} from '@react-aria/focus';
 import {useGridCell, useGridRow} from '@react-aria/grid';
 import {useHover} from '@react-aria/interactions';
+import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+import {Grid} from '@react-spectrum/layout';
 
 
 export function ListViewItem(props) {
@@ -62,7 +64,17 @@ export function ListViewItem(props) {
         }
         ref={ref}
         {...mergedProps}>
-        {item.rendered}
+        <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
+          <SlotProvider
+            slots={{
+              content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
+              icon: {size: 'M'},
+              image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
+              actionGroup: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionGroup'], isQuiet: true, density: 'compact'}
+            }}>
+            {item.rendered}
+          </SlotProvider>
+        </Grid>
       </div>
     </div>
   );

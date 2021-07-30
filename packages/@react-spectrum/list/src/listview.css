@@ -1,3 +1,10 @@
+
+:root {
+  --spectrum-listview-item-compact-padding-y: var(--spectrum-global-dimension-size-50);
+  --spectrum-listview-item-regular-padding-y: var(--spectrum-global-dimension-size-75);
+  --spectrum-listview-item-spacious-padding-y: var(--spectrum-global-dimension-size-100);
+}
+
 .react-spectrum-ListView {
   border-color: var(--spectrum-table-border-color, var(--spectrum-alias-border-color-mid));
   border-style: solid;
@@ -21,7 +28,8 @@
   font-size: var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default));
   font-weight: var(--spectrum-table-cell-text-font-weight, var(--spectrum-global-font-weight-regular));
   line-height: calc(var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default)) * var(--spectrum-table-cell-text-line-height, var(--spectrum-alias-body-text-line-height)) - 1px);
-  padding: var(--spectrum-global-dimension-size-125) var(--spectrum-table-cell-padding-x, var(--spectrum-global-dimension-size-200));
+  padding-top: var(--spectrum-listview-item-regular-padding-y);
+  padding-bottom: var(--spectrum-listview-item-regular-padding-y);
   transition: background-color var(--spectrum-global-animation-duration-100) ease-in-out;
   position: relative;
   background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
@@ -38,6 +46,46 @@
      box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
      border-radius: var(--spectrum-table-cell-border-radius-key-focus);
   }
+}
+
+.react-spectrum-ListView--compact .react-spectrum-ListViewItem {
+  padding-top: var(--spectrum-listview-item-compact-padding-y);
+  padding-bottom: var(--spectrum-listview-item-compact-padding-y);
+}
+
+.react-spectrum-ListView--spacious .react-spectrum-ListViewItem {
+  padding-top: var(--spectrum-listview-item-spacious-padding-y);
+  padding-bottom: var(--spectrum-listview-item-spacious-padding-y);
+}
+
+.react-spectrum-ListViewItem-grid {
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  grid-template-rows: 1fr;
+  grid-template-areas: "icon image content actionGroup";
+  align-items: center;
+}
+
+.react-spectrum-ListViewItem-image {
+  grid-area: image;
+  border-radius: var(--spectrum-global-dimension-size-25);
+  width: var(--spectrum-global-dimension-size-400);
+  height: var(--spectrum-global-dimension-size-400);
+}
+
+.react-spectrum-ListViewItem-content {
+  grid-area: content;
+  padding-left: var(--spectrum-global-dimension-size-100);
+  padding-right: var(--spectrum-global-dimension-size-100);
+  flex-grow: 1;
+}
+
+.react-spectrum-ListViewItem-actionGroup {
+  grid-area: actionGroup;
+  flex-grow: 0;
+  flex-shrink: 0;
+  margin-left: var(--spectrum-global-dimension-size-0);
+  margin-right: var(--spectrum-global-dimension-size-0);
 }
 
 .react-spectrum-ListView-centeredWrapper {

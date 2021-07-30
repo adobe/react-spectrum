@@ -14,7 +14,7 @@ import {ActionButton} from '@react-spectrum/button';
 import {AriaLabelingProps, DOMProps, DOMRef, Node, StyleProps} from '@react-types/shared';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, SlotProvider, useDOMRef, useStyleProps, useValueEffect} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useDOMRef, useSlotProps, useStyleProps, useValueEffect} from '@react-spectrum/utils';
 import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {ListState, useListState} from '@react-stately/list';
@@ -32,6 +32,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
+  props = useSlotProps(props, 'actionGroup');
 
   let {
     isEmphasized,
