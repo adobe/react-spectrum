@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 import {action} from '@storybook/addon-actions';
+import {ActionButton} from '@react-spectrum/button';
+import {Flex} from '@react-spectrum/layout';
 import {Item, Picker} from '@react-spectrum/picker';
-import React from 'react';
+import React, {useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {SearchFieldProps} from '@react-types/searchfield';
 import {SearchWithin} from '../';
@@ -45,8 +47,29 @@ function renderReverse(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, 
         <Item key="audiences">Audiences</Item>
         <Item key="tags">Tags</Item>
       </Picker>
-      <SearchField placeholder="Search" {...searchFieldProps} {...searchFieldProps} onChange={action('change')} onSubmit={action('submit')} />
+      <SearchField placeholder="Search" {...searchFieldProps} onChange={action('change')} onSubmit={action('submit')} />
     </SearchWithin>
+  );
+}
+
+function ResizeSearchWithinApp(props) {
+  const [state, setState] = useState(true);
+
+  return (
+    <Flex direction="column" gap="size-200" alignItems="start">
+      <div style={{width: state ? '300px' : '400px'}}>
+        <SearchWithin label="Search" {...props} width="100%">
+          <SearchField placeholder="Search" onChange={action('change')} onSubmit={action('submit')} />
+          <Picker defaultSelectedKey="all" onSelectionChange={action('selectionChange')}>
+            <Item key="all">All</Item>
+            <Item key="campaigns">Campaigns</Item>
+            <Item key="audiences">Audiences</Item>
+            <Item key="tags">Tags</Item>
+          </Picker>
+        </SearchWithin>
+      </div>
+      <ActionButton onPress={() => setState(!state)}>Toggle size</ActionButton>
+    </Flex>
   );
 }
 
@@ -96,3 +119,7 @@ export const AutoFocusPicker = () => render({}, {}, {autoFocus: true});
 AutoFocusPicker.storyName = 'autoFocus: true on Picker';
 
 export const ReverseChildrenOrder = () => renderReverse({});
+
+export const ResizeSearchWithin = () => <ResizeSearchWithinApp />;
+
+export const ResizeSearchWithinNoLabel = () => <ResizeSearchWithinApp label={null} />;

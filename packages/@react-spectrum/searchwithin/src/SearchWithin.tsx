@@ -34,19 +34,21 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
     'aria-labelledby': ariaLabelledby
   } = props;
 
-  let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
-  let domRef = useFocusableRef(ref, inputRef);
+  let domRef = useFocusableRef(ref);
+  let groupRef = useRef<HTMLDivElement>();
 
   // Measure the width of the field to inform the width of the menu.
   let [menuWidth, setMenuWidth] = useState(null);
   let {scale} = useProvider();
 
   let onResize = useCallback(() => {
-    if (domRef.current) {
-      let width = domRef.current.offsetWidth;
+    let shouldUseGroup = !!label;
+    let width = shouldUseGroup ? groupRef.current?.offsetWidth : domRef.current?.offsetWidth;
+
+    if (!isNaN(width)) {
       setMenuWidth(width);
     }
-  }, [domRef]);
+  }, [groupRef, domRef, setMenuWidth, label]);
 
   useResizeObserver({
     ref: domRef,
@@ -75,7 +77,8 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
       <div
         role="group"
         aria-labelledby={labelProps.id || ariaLabel}
-        className={classNames(styles, 'spectrum-SearchWithin', styleProps.className)}>
+        className={classNames(styles, 'spectrum-SearchWithin', styleProps.className)}
+        ref={groupRef}>
         <SlotProvider slots={slots}>
           {children}
         </SlotProvider>
