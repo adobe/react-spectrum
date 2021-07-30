@@ -122,10 +122,14 @@ governing permissions and limitations under the License.
       display: table-cell;
     }
 
-    .spectrum-Field-field {
+    .spectrum-Field-wrapper {
       display: table-cell;
       width: auto;
       min-width: var(--spectrum-component-single-line-width);
+    }
+
+    .spectrum-Field-field {
+      width: 100%;
     }
   }
 

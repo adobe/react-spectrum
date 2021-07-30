@@ -71,5 +71,6 @@ governing permissions and limitations under the License.
   &.spectrum-SearchWithin-container {
      /* override the default width of the field container, only with labelPosition=top. */
      --spectrum-field-default-width: var(--spectrum-global-dimension-size-3000);
+    min-inline-size: var(--spectrum-global-dimension-size-3000);
   }
 }
