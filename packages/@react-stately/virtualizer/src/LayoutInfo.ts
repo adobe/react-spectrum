@@ -94,6 +94,7 @@ export class LayoutInfo {
     res.transform = this.transform;
     res.parentKey = this.parentKey;
     res.isSticky = this.isSticky;
+    res.zIndex = this.zIndex;
     return res;
   }
 }

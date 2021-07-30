@@ -117,7 +117,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
 
   // On small screen devices, the listbox is rendered in a tray, otherwise a popover.
   let listbox = (
-    <FocusScope restoreFocus>
+    <FocusScope restoreFocus contain={isMobile}>
       <DismissButton onDismiss={() => state.close()} />
       <ListBoxBase
         {...menuProps}
@@ -158,7 +158,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray isOpen={state.isOpen} onClose={state.close} shouldCloseOnBlur>
+      <Tray isOpen={state.isOpen} onClose={state.close}>
         {listbox}
       </Tray>
     );
