@@ -22,7 +22,12 @@ import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
-  props = useFormProps(props);
+  let formProps = useFormProps({});
+  let inForm = false;
+  if (Object.keys(formProps).length > 0) {
+    inForm = true;
+  }
+  props = {...props, ...formProps};
   let {styleProps} = useStyleProps(props);
   let {labelProps, fieldProps} = useLabel(props);
   let {
@@ -69,7 +74,7 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   let pickerClassName = classNames(styles, 'spectrum-SearchWithin-picker');
   let slots = {
     searchfield: {UNSAFE_className: searchFieldClassName, ...fieldProps, ...defaultSlotValues},
-    picker: {UNSAFE_className: pickerClassName, menuWidth, align: 'end', ...defaultSlotValues}
+    picker: {UNSAFE_className: pickerClassName, menuWidth, align: 'end', width: inForm ? 'size-1200' : undefined, ...defaultSlotValues}
   };
 
   if (!label && !ariaLabel && !ariaLabelledby) {
