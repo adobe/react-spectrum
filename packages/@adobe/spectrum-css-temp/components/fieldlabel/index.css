@@ -64,11 +64,11 @@ governing permissions and limitations under the License.
  * and this causes both the label and inner field to resize as well. */
 .spectrum-Field {
   --spectrum-field-default-width: var(--spectrum-component-single-line-width);
-  width: var(--spectrum-field-default-width);
 
   &.spectrum-Field--positionTop {
     display: inline-flex;
     flex-direction: column;
+    width: var(--spectrum-field-default-width);
 
     .spectrum-Field-field {
       /* If the user overrides the width of the field, propagate to the inner component */
