@@ -40,11 +40,9 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   let {scale} = useProvider();
 
   let onResize = useCallback(() => {
-    if (groupRef.current) {
-      let width = groupRef.current?.offsetWidth;
-      if (!isNaN(width)) {
-        setMenuWidth(width);
-      }
+    let width = groupRef.current?.offsetWidth;
+    if (!isNaN(width)) {
+      setMenuWidth(width);
     }
   }, [groupRef, setMenuWidth]);
 
