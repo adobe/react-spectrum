@@ -29,9 +29,11 @@ import userEvent from '@testing-library/user-event';
 describe('DialogTrigger', function () {
   let matchMedia;
   beforeAll(() => {
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     jest.useFakeTimers();
   });
   afterAll(() => {
+    jest.clearAllMocks();
     jest.useRealTimers();
   });
 
