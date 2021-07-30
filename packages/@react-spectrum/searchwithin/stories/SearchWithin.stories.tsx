@@ -94,10 +94,16 @@ export const pickerDefaultValue = () => render({}, {}, {defaultSelectedKey: 'tag
 pickerDefaultValue.storyName = 'Default value for Picker';
 
 export const isRequiredNecessityIndicatorLabel = () => render({isRequired: true, necessityIndicator: 'label'});
-isRequiredNecessityIndicatorLabel.storyName = 'isRequired: true, necessityIndicator \'label\' ';
+isRequiredNecessityIndicatorLabel.storyName = 'isRequired: true, necessityIndicator "label"';
 
 export const isRequiredFalse_necessityIndicator = () => render({isRequired: false, necessityIndicator: 'label'});
-isRequiredFalse_necessityIndicator.storyName = 'isRequired: false, necessityIndicator \'label\' ';
+isRequiredFalse_necessityIndicator.storyName = 'isRequired: false, necessityIndicator "label"';
+
+export const InputValidationSateInvalid = () => render({}, {validationState: 'invalid'});
+InputValidationSateInvalid.storyName = 'input validationState: invalid';
+
+export const PickerValidationSateInvalid = () => render({}, {}, {validationState: 'invalid'});
+PickerValidationSateInvalid.storyName = 'picker validationState: invalid';
 
 export const PickerDisabled = () => render({}, {}, {isDisabled: true});
 

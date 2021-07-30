@@ -57,7 +57,14 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
 
   useLayoutEffect(onResize, [scale, onResize]);
 
-  let defaultSlotValues = {isDisabled, isRequired, label: null, isQuiet: false, 'aria-labelledby': labelProps.id || ariaLabel};
+  let defaultSlotValues = {
+    isDisabled,
+    isRequired,
+    label: null,
+    isQuiet: false,
+    'aria-labelledby': labelProps.id || ariaLabel,
+    validationState: null
+  };
   let searchFieldClassName = classNames(styles, 'spectrum-SearchWithin-searchfield');
   let pickerClassName = classNames(styles, 'spectrum-SearchWithin-picker');
   let slots = {
