@@ -13,7 +13,7 @@
 import {classNames, SlotProvider, useFocusableRef, useResizeObserver, useStyleProps} from '@react-spectrum/utils';
 import {Field} from '@react-spectrum/label';
 import {FocusableRef} from '@react-types/shared';
-import React, {useCallback, useLayoutEffect, useState} from 'react';
+import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
 import styles from '@adobe/spectrum-css-temp/components/searchwithin/vars.css';
 import {useLabel} from '@react-aria/label';
@@ -33,22 +33,23 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   } = props;
 
   let domRef = useFocusableRef(ref);
+  let groupRef = useRef<HTMLDivElement>();
 
   // Measure the width of the field to inform the width of the menu.
   let [menuWidth, setMenuWidth] = useState(null);
   let {scale} = useProvider();
 
   let onResize = useCallback(() => {
-    if (domRef.current) {
-      let width = domRef.current.querySelector('[role=group]')?.offsetWidth;
+    if (groupRef.current) {
+      let width = groupRef.current?.offsetWidth;
       if (!isNaN(width)) {
         setMenuWidth(width);
       }
     }
-  }, [domRef, setMenuWidth]);
+  }, [groupRef, setMenuWidth]);
 
   useResizeObserver({
-    ref: domRef,
+    ref: groupRef,
     onResize: onResize
   });
 
@@ -74,7 +75,8 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
       <div
         role="group"
         aria-labelledby={labelProps.id || ariaLabel}
-        className={classNames(styles, 'spectrum-SearchWithin', styleProps.className)}>
+        className={classNames(styles, 'spectrum-SearchWithin', styleProps.className)}
+        ref={groupRef}>
         <SlotProvider slots={slots}>
           {children}
         </SlotProvider>
