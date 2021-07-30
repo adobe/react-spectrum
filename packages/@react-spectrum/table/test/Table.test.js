@@ -3638,6 +3638,22 @@ describe('TableView', function () {
         act(() => jest.runAllTimers());
         expect(tree.queryByRole('checkbox')).toBeNull();
       });
+
+      it('should return the proper cell z-indexes for overflowMode="wrap"', function () {
+        let tree = renderTable({overflowMode: 'wrap', selectionMode: 'multiple'});
+        let rows = tree.getAllByRole('row');
+        expect(rows).toHaveLength(3);
+
+        for (let row of rows) {
+          for (let [index, cell] of row.childNodes.entries()) {
+            if (index === 0) {
+              expect(cell.style.zIndex).toBe('2');
+            } else {
+              expect(cell.style.zIndex).toBe('1');
+            }
+          }
+        }
+      });
     });
 
     describe('column widths', function () {
