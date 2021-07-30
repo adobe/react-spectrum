@@ -55,7 +55,7 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   }, [groupRef, domRef, setMenuWidth, label]);
 
   useResizeObserver({
-    ref: groupRef,
+    ref: domRef,
     onResize: onResize
   });
 

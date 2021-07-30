@@ -121,3 +121,5 @@ AutoFocusPicker.storyName = 'autoFocus: true on Picker';
 export const ReverseChildrenOrder = () => renderReverse({});
 
 export const ResizeSearchWithin = () => <ResizeSearchWithinApp />;
+
+export const ResizeSearchWithinNoLabel = () => <ResizeSearchWithinApp label={null} />;
