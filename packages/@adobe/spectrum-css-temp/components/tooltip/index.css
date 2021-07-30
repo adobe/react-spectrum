@@ -39,8 +39,7 @@ governing permissions and limitations under the License.
   font-size: var(--spectrum-tooltip-text-size);
   font-weight: var(--spectrum-tooltip-text-font-weight);
   line-height: var(--spectrum-tooltip-text-line-height);
-  word-break: normal;
-  overflow-wrap: anywhere;
+  word-break: break-word;
   -webkit-font-smoothing: antialiased;
 
   &.is-open {

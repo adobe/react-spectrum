@@ -122,8 +122,7 @@
 
   text-align: left;
   word-spacing: normal;
-  word-break: normal;
-  overflow-wrap: anywhere;
+  word-break: break-word;
   line-height: 1.5;
 
   -moz-tab-size: 4;
