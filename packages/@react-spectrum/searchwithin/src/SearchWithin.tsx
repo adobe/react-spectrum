@@ -13,7 +13,7 @@
 import {classNames, SlotProvider, useFocusableRef, useResizeObserver, useStyleProps} from '@react-spectrum/utils';
 import {Field} from '@react-spectrum/label';
 import {FocusableRef} from '@react-types/shared';
-import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
+import React, {useCallback, useLayoutEffect, useState} from 'react';
 import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
 import styles from '@adobe/spectrum-css-temp/components/searchwithin/vars.css';
 import {useLabel} from '@react-aria/label';
@@ -41,7 +41,7 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   let onResize = useCallback(() => {
     if (domRef.current) {
       let width = domRef.current.querySelector('[role=group]')?.offsetWidth;
-      if(!isNaN(width)) {
+      if (!isNaN(width)) {
         setMenuWidth(width);
       }
     }
