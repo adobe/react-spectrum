@@ -250,6 +250,10 @@ governing permissions and limitations under the License.
   &.is-drop-target {
     @inherit: %drop-target;
   }
+
+  .spectrum-Table-cellWrapper:last-child .spectrum-Table-cell--divider {
+    border-inline-end-width: 0;
+  }
 }
 
 /* the CSS logical properties postcss plugin doesn't seem to work with :focus-ring. */
