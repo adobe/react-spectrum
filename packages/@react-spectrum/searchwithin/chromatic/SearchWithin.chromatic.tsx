@@ -81,7 +81,7 @@ const Template: Story<SpectrumSearchWithinProps> = (args) => (
 
 // Chromatic can't handle the size of the side label story so removed some extraneous props that don't matter for side label case.
 const TemplateSideLabel: Story<SpectrumSearchWithinProps> = (args) => (
-  <Grid columns={repeat(2, '1fr')} autoFlow="row" gap="size-200" width={900}>
+  <Grid columns={repeat(2, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k)).join(' ');
       if (!key) {

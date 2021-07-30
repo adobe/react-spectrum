@@ -18,6 +18,7 @@ import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
 import styles from '@adobe/spectrum-css-temp/components/searchwithin/vars.css';
 import {useLabel} from '@react-aria/label';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
+import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 
 function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
@@ -69,7 +70,11 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
     <Field
       {...props}
       labelProps={labelProps}
-      ref={domRef}>
+      ref={domRef}
+      wrapperClassName={classNames(
+        styles,
+        'spectrum-SearchWithin-container'
+      )}>
       <div
         role="group"
         aria-labelledby={labelProps.id || ariaLabel}
