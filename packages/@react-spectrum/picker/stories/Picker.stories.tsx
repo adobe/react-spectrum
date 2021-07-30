@@ -57,7 +57,7 @@ storiesOf('Picker', module)
     'default',
     () => (
       <Picker label="Test" onSelectionChange={action('selectionChange')}>
-<Item key="rarely">Short</Item>
+        <Item key="rarely">Short</Item>
         <Item key="sometimes">Normal</Item>
         <Item key="always">This item is very long and word wraps poorly</Item>
       </Picker>
