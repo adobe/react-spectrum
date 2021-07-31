@@ -65,7 +65,13 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
           elementType={elementType}>
           {label}
         </Label>
-        {children}
+        <div
+          className={classNames(
+            labelStyles,
+            'spectrum-Field-wrapper'
+          )}>
+          {children}
+        </div>
       </div>
     );
   }
