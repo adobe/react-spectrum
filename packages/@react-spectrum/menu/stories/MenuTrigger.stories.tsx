@@ -527,6 +527,33 @@ storiesOf('MenuTrigger', module)
         <Item key="3">Three</Item>
       </Menu>
     )
+  )
+  .add(
+    'two menus',
+    () => (
+      <>
+        <MenuTrigger onOpenChange={action('onOpenChange1')}>
+          <ActionButton>
+            Menu1 Button
+          </ActionButton>
+          <Menu onAction={action('onAction1')}>
+            <Item key="One">One</Item>
+            <Item key="Two">Two</Item>
+            <Item key="Three">Three</Item>
+          </Menu>
+        </MenuTrigger>
+        <MenuTrigger onOpenChange={action('onOpenChange2')}>
+          <ActionButton>
+            Menu2 Button
+          </ActionButton>
+          <Menu onAction={action('onAction2')}>
+            <Item key="Apple">Apple</Item>
+            <Item key="Banana">Banana</Item>
+            <Item key="Carrot">Carrot</Item>
+          </Menu>
+        </MenuTrigger>
+      </>
+    )
   );
 
 let customMenuItem = (item) => {

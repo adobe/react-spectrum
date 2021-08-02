@@ -4,6 +4,8 @@
     "noImplicitAny": false,
     // maybe bump to 'esNext'?
     "target": "es6",
+    // something like this to get rid of the @ts-ignores i added
+    // "types": ["node", "jest", "react/next", "react-dom/next"],
     // allows react jsx in tsx files
     "jsx": "react",
     // Eventually turn off, one we have no more assumed default exports.

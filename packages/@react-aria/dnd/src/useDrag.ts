@@ -53,6 +53,7 @@ const MESSAGES = {
   }
 };
 
+// do we want to support a `legacyRoot` option that allows people to choose what they are using?
 // @ts-ignore
 const isReactConcurrent = !!ReactDOM.createRoot;
 

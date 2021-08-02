@@ -568,8 +568,8 @@ describe('ActionGroup', function () {
 
     act(() => {
       triggerPress(button);
-      jest.runAllTimers();
     });
+    act(() => {jest.runAllTimers();});
 
     let dialog = tree.getByRole('dialog');
     expect(dialog).toBeVisible();
@@ -577,8 +577,8 @@ describe('ActionGroup', function () {
     act(() => {
       fireEvent.keyDown(dialog, {key: 'Escape'});
       fireEvent.keyUp(dialog, {key: 'Escape'});
-      jest.runAllTimers();
     });
+    act(() => {jest.runAllTimers();});
 
     expect(tree.queryByRole('dialog')).toBeNull();
   });

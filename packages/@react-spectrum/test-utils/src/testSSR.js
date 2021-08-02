@@ -57,7 +57,8 @@ export async function testSSR(filename, source) {
           document.body.innerHTML = `<div id="root">${body}</div>`;
           let container = document.querySelector('#root');
           let element = evaluate(source, filename);
-          ReactDOM.hydrate(<SSRProvider>{element}</SSRProvider>, container);
+          // @ts-ignore
+          ReactDOM.hydrateRoot(container, <SSRProvider>{element}</SSRProvider>);
         } catch (err) {
           errors.push(err.stack);
         }

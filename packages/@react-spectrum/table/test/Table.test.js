@@ -2845,24 +2845,22 @@ describe('TableView', function () {
       act(() => {
         fireEvent.keyDown(input, {key: 'ArrowLeft', code: 37, charCode: 37});
         fireEvent.keyUp(input, {key: 'ArrowLeft', code: 37, charCode: 37});
-        jest.runAllTimers();
       });
-
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toEqual(input);
 
       act(() => {
         fireEvent.keyDown(input, {key: 'ArrowRight', code: 39, charCode: 39});
         fireEvent.keyUp(input, {key: 'ArrowRight', code: 39, charCode: 39});
-        jest.runAllTimers();
       });
-
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toEqual(input);
 
       act(() => {
         fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
         fireEvent.keyUp(input, {key: 'Escape', code: 27, charCode: 27});
-        jest.runAllTimers();
       });
+      act(() => {jest.runAllTimers();});
 
       expect(dialog).not.toBeInTheDocument();
     });

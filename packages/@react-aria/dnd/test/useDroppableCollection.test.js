@@ -18,8 +18,10 @@ import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 describe('useDroppableCollection', () => {
+  beforeAll(() => {
+    jest.useFakeTimers('modern');
+  });
   beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
       let y = 0;
       let height = 50;
@@ -62,8 +64,6 @@ describe('useDroppableCollection', () => {
       }
       return this.getBoundingClientRect().height;
     });
-
-    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -92,7 +92,7 @@ describe('useDroppableCollection', () => {
 
       let dataTransfer = new DataTransfer();
       fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
-      act(() => jest.runAllTimers());
+      act(() => {jest.runAllTimers();});
       expect(draggable).toHaveAttribute('data-dragging', 'true');
 
       fireEvent(cells[0], new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
@@ -195,7 +195,7 @@ describe('useDroppableCollection', () => {
       expect(dropIndicator).toHaveAttribute('aria-roledescription', 'drop indicator');
 
       fireEvent(cells[2], new DragEvent('drop', {dataTransfer, clientX: 2, clientY: 2}));
-      act(() => jest.advanceTimersByTime(1));
+      await act(async () => {jest.advanceTimersByTime(1);});
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith({
         type: 'drop',
@@ -212,7 +212,8 @@ describe('useDroppableCollection', () => {
         ]
       });
 
-      await waitFor(() => expect(within(grid).getAllByRole('gridcell')).toHaveLength(4), {interval: 10});
+      act(() => {jest.advanceTimersByTime(10);});
+      expect(within(grid).getAllByRole('gridcell')).toHaveLength(4);
       cells = within(grid).getAllByRole('gridcell');
       expect(cells.map(cell => cell.textContent)).toEqual(['One', 'Two', 'hello world', 'Three']);
 
@@ -223,7 +224,7 @@ describe('useDroppableCollection', () => {
       expect(cells[2].parentElement).toHaveAttribute('aria-selected', 'true');
     });
 
-    it('should auto scroll when near the bottom', () => {
+    it('should auto scroll when near the bottom', async () => {
       let onDropEnter = jest.fn();
       let onDragExit = jest.fn();
       let onDrop = jest.fn();
@@ -257,9 +258,11 @@ describe('useDroppableCollection', () => {
       expect(scrollTop).not.toHaveBeenCalled();
 
       fireEvent(cells[4], new DragEvent('dragover', {dataTransfer, clientX: 30, clientY: 135}));
-      act(() => jest.runOnlyPendingTimers());
+      // dragover starts an 800ms timer DROP_ACTIVATE_TIMEOUT, scrollTop gets called roughly every raf or 16mx
+      // consult devon if this is the way we want the test to be or if i missed something else above
+      act(() => {jest.advanceTimersByTime(16);});
       expect(scrollTop).toHaveBeenCalledTimes(1);
-      act(() => jest.runOnlyPendingTimers());
+      act(() => {jest.advanceTimersByTime(16);});
       expect(scrollTop).toHaveBeenCalledTimes(2);
       jest.clearAllTimers();
 
@@ -268,7 +271,7 @@ describe('useDroppableCollection', () => {
       expect(scrollTop).toHaveBeenCalledTimes(2);
 
       fireEvent(cells[2], new DragEvent('dragover', {dataTransfer, clientX: 30, clientY: 15}));
-      act(() => jest.runOnlyPendingTimers());
+      act(() => {jest.advanceTimersByTime(16);});
       expect(scrollTop).toHaveBeenCalledTimes(3);
       jest.clearAllTimers();
 
@@ -378,7 +381,7 @@ describe('useDroppableCollection', () => {
       pressKey('ArrowDown');
       expect(document.activeElement).toBe(within(cells[3]).getByRole('button'));
 
-      pressKey('Enter');
+      await act(async () => {pressKey('Enter');});
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith({
         type: 'drop',
@@ -395,7 +398,7 @@ describe('useDroppableCollection', () => {
         ]
       });
 
-      await waitFor(() => expect(within(grid).getAllByRole('gridcell')).toHaveLength(4), {interval: 10});
+      expect(within(grid).getAllByRole('gridcell')).toHaveLength(4);
       cells = within(grid).getAllByRole('gridcell');
       expect(cells.map(cell => cell.textContent)).toEqual(['One', 'hello world', 'Two', 'Three']);
 
@@ -1055,7 +1058,7 @@ describe('useDroppableCollection', () => {
       expect(cells).toHaveLength(7);
 
       act(() => within(cells[3]).getByRole('button').focus());
-      fireEvent.click(within(cells[3]).getByRole('button'));
+      await act(async () => {fireEvent.click(within(cells[3]).getByRole('button'));});
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith({
         type: 'drop',
@@ -1072,7 +1075,7 @@ describe('useDroppableCollection', () => {
         ]
       });
 
-      await waitFor(() => expect(within(grid).getAllByRole('gridcell')).toHaveLength(4), {interval: 10});
+      expect(within(grid).getAllByRole('gridcell')).toHaveLength(4);
       cells = within(grid).getAllByRole('gridcell');
       expect(cells.map(cell => cell.textContent)).toEqual(['One', 'hello world', 'Two', 'Three']);
 

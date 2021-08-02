@@ -642,8 +642,8 @@ describe('Menu', function () {
 
     act(() => {
       triggerPress(menuItem);
-      jest.runAllTimers();
     });
+    act(() => {jest.runAllTimers();});
 
     let dialog = tree.getByRole('dialog');
     expect(dialog).toBeVisible();
@@ -651,8 +651,8 @@ describe('Menu', function () {
     act(() => {
       fireEvent.keyDown(dialog, {key: 'Escape'});
       fireEvent.keyUp(dialog, {key: 'Escape'});
-      jest.runAllTimers();
     });
+    act(() => {jest.runAllTimers();});
 
     expect(tree.queryByRole('dialog')).toBeNull();
   });

@@ -37,9 +37,9 @@ describe('watchModals', () => {
   });
 
   afterEach(() => {
-    jest.runAllTimers();
     matchMedia.clear();
     window.requestAnimationFrame.mockRestore();
+    act(() => {jest.runAllTimers();});
   });
 
   let verify = async function (modal, queryByRole) {

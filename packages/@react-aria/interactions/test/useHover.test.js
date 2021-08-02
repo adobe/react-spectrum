@@ -514,8 +514,8 @@ describe('useHover', function () {
         act(() => {
           fireEvent.keyDown(dialog, {key: 'Escape'});
           fireEvent.keyUp(dialog, {key: 'Escape'});
-          jest.runAllTimers();
         });
+        act(() => {jest.runAllTimers();});
       }
 
       matchMedia.clear();
