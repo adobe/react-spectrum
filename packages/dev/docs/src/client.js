@@ -221,7 +221,7 @@ window.addEventListener('pagehide', () => {
 });
 
 // Only add CodeSandbox links to react-spectrum examples now. We'll add react-aria and react-stately support later
-if (window.location.pathname.startsWith('/react-spectrum')) {
+if (window.location.pathname.includes('/react-spectrum/')) {
   [...document.querySelectorAll('code[metastring^="example"]')].forEach(element => {
     let div = document.createElement('span');
     div.classList.add('codeSandboxLink');
