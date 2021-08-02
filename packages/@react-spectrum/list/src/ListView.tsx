@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaLabelingProps, CollectionBase, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, CollectionBase, DOMProps, DOMRef, MultipleSelection, StyleProps} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
@@ -20,7 +20,7 @@ import {ListState, useListState} from '@react-stately/list';
 import listStyles from './listview.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useContext, useMemo} from 'react';
+import React, {Key, ReactElement, useContext, useMemo, useState} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
@@ -44,7 +44,7 @@ export function useListLayout<T>(state: ListState<T>) {
   return layout;
 }
 
-interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps {
+interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps, MultipleSelection {
   /**
    * Sets the amount of vertical padding within each cell.
    * @default 'regular'
@@ -52,17 +52,21 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
   density?: 'compact' | 'regular' | 'spacious',
   isLoading?: boolean,
   renderEmptyState?: () => JSX.Element,
-  transitionDuration?: number
+  transitionDuration?: number,
+  onAction?: (key: Key) => void
 }
 
 function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
     density = 'regular',
-    transitionDuration = 0
+    transitionDuration = 0,
+    selectionStyle = 'checkbox',
+    onAction
   } = props;
   let domRef = useDOMRef(ref);
   let {collection} = useListState(props);
   let formatMessage = useMessageFormatter(intlMessages);
+  let [selectionMode, setSelectionMode] = useState(false);
 
   let {styleProps} = useStyleProps(props);
   let {direction} = useLocale();
@@ -101,7 +105,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   layout.isLoading = props.isLoading;
 
   return (
-    <ListViewContext.Provider value={{state, keyboardDelegate}}>
+    <ListViewContext.Provider value={{state, keyboardDelegate, selectionStyle, onAction, selectionMode, setSelectionMode}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}

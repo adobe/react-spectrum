@@ -37,7 +37,9 @@ export interface MultipleSelection {
   /** Handler that is called when the selection changes. */
   onSelectionChange?: (keys: Selection) => any,
   /** The currently disabled keys in the collection (controlled). */
-  disabledKeys?: Iterable<Key>
+  disabledKeys?: Iterable<Key>,
+
+  selectionStyle?: 'checkbox' | 'highlight'
 }
 
 export type FocusStrategy = 'first' | 'last';

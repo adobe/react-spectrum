@@ -1,4 +1,6 @@
+import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
+import {ActionGroup} from '@react-spectrum/actiongroup';
 import Add from '@spectrum-icons/workflow/Add';
 import {Content, View} from '@react-spectrum/view';
 import Delete from '@spectrum-icons/workflow/Delete';
@@ -6,13 +8,13 @@ import Edit from '@spectrum-icons/workflow/Edit';
 import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import {Image} from '@react-spectrum/image';
 import {Item, ListView} from '../';
+import {Link} from '@react-spectrum/link';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
 import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {Image} from '@react-spectrum/image';
-import {ActionGroup} from '@react-spectrum/actiongroup';
 
 
 function renderEmptyState() {
@@ -127,7 +129,7 @@ storiesOf('ListView', module)
   .add('slots', () => (
     <ListView width="250px" density="spacious">
       <Item textValue="articuno">
-        <Image objectFit="contain" src="https://img.pokemondb.net/sprites/sword-shield/icon/articuno.png" alt="zapdos"/>
+        <Image objectFit="contain" src="https://img.pokemondb.net/sprites/sword-shield/icon/articuno.png" alt="articuno" />
         <Content>Articuno</Content>
         <ActionGroup>
           <Item>
@@ -136,7 +138,7 @@ storiesOf('ListView', module)
         </ActionGroup>
       </Item>
       <Item textValue="zapdos">
-        <Image objectFit="contain" src="https://img.pokemondb.net/sprites/sword-shield/icon/zapdos.png" alt="zapdos"/>
+        <Image objectFit="contain" src="https://img.pokemondb.net/sprites/sword-shield/icon/zapdos.png" alt="zapdos" />
         <Content>Zapdos</Content>
         <ActionGroup>
           <Item>
@@ -145,7 +147,7 @@ storiesOf('ListView', module)
         </ActionGroup>
       </Item>
       <Item textValue="moltres">
-        <Image objectFit="contain" src="https://img.pokemondb.net/sprites/sword-shield/icon/moltres.png" alt="zapdos"/>
+        <Image objectFit="contain" src="https://img.pokemondb.net/sprites/sword-shield/icon/moltres.png" alt="moltres" />
         <Content>Moltres</Content>
         <ActionGroup>
           <Item>
@@ -154,4 +156,62 @@ storiesOf('ListView', module)
         </ActionGroup>
       </Item>
     </ListView>
+  ))
+  .add('selection: none', () => (
+    <Example selectionMode="none" />
+  ))
+  .add('selection: single, checkbox', () => (
+    <Example selectionMode="single" />
+  ))
+  .add('selection: single, highlight', () => (
+    <Example selectionMode="single" selectionStyle="highlight" />
+  ))
+  .add('selection: multiple, checkbox', () => (
+    <Example selectionMode="multiple" />
+  ))
+  .add('selection: multiple, highlight', () => (
+    <Example selectionMode="multiple" selectionStyle="highlight" />
+  ))
+  .add('parent link example', () => (
+    <Example2 selectionMode="multiple" />
   ));
+
+function Example(props?) {
+  return (
+    <ListView width="250px" onAction={action('onAction')} {...props}>
+      <Item key="folder1" hasChildItems>
+        <Content>folder 1</Content>
+      </Item>
+      <Item key="row1">
+        <Content>row 1</Content>
+      </Item>
+      <Item key="row2">
+        <Content>row 2</Content>
+      </Item>
+      <Item key="row3">
+        <Content>row 3</Content>
+      </Item>
+    </ListView>
+  );
+}
+
+function Example2(props?) {
+  return (
+    <ListView width="250px" {...props}>
+      <Item key="folder1" hasChildItems>
+        <Content>
+          <Link>folder 1</Link>
+        </Content>
+      </Item>
+      <Item textValue="row1">
+        <Content>row 1</Content>
+      </Item>
+      <Item textValue="row2">
+        <Content>row 2</Content>
+      </Item>
+      <Item textValue="row3">
+        <Content>row 3</Content>
+      </Item>
+    </ListView>
+  );
+}
