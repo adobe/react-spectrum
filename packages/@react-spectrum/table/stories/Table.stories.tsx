@@ -247,6 +247,40 @@ storiesOf('TableView', module)
     )
   )
   .add(
+    'defaultSelectedKeys, dynamic, multiple selection, showDivider',
+    () => (
+      <TableView defaultSelectedKeys={['Foo 1', 'Foo 3']} onSelectionChange={s => onSelectionChange([...s])} selectionMode="multiple" aria-label="TableView with dynamic contents" width={300} height={200}>
+        <TableHeader columns={columns}>
+          {column => <Column showDivider>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'selectedKeys, dynamic, multiple selection, quiet, showDider',
+    () => (
+      <TableView isQuiet selectedKeys={['Foo 1', 'Foo 3']} onSelectionChange={s => onSelectionChange([...s])} selectionMode="multiple" aria-label="TableView with dynamic contents" width={300} height={200}>
+        <TableHeader columns={columns}>
+          {column => <Column showDivider>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
     // For testing https://github.com/adobe/react-spectrum/issues/1885
     'swap selection mode',
     () => (
