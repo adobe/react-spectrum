@@ -80,7 +80,11 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
     <Field
       {...props}
       labelProps={labelProps}
-      ref={domRef}>
+      ref={domRef}
+      wrapperClassName={classNames(
+        styles,
+        'spectrum-SearchWithin-container'
+      )}>
       <div
         role="group"
         aria-labelledby={labelProps.id || ariaLabel}
