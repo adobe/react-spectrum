@@ -27,6 +27,12 @@
   height: 100%;
 }
 
+.react-spectrum-Table-cellWrapper:last-child {
+  /* Fix for pixel-rounding issue in Chrome. */
+  left: unset !important;
+  right: 0;
+}
+
 .react-spectrum-Table-cell--alignStart {
   text-align: start;
   justify-content: start;
