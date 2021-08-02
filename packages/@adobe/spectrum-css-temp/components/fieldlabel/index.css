@@ -88,6 +88,9 @@ governing permissions and limitations under the License.
 
     .spectrum-Field-field {
       flex: 1;
+      /* Setting `flex: 1;` is equivalent to `flex: 1 1 0;`, which means we expect to be able to shrink
+      * To be able to shrink, we must have a min-width that isn't 'auto' */
+      min-width: 0;
     }
 
     .spectrum-Field-field--multiline {
