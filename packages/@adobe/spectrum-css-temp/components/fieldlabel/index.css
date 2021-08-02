@@ -122,7 +122,7 @@ governing permissions and limitations under the License.
       display: table-cell;
     }
 
-    .spectrum-Field-wrapper {
+    .spectrum-Field-field {
       display: table-cell;
       width: auto;
       min-width: var(--spectrum-component-single-line-width);
