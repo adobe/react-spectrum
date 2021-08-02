@@ -22,6 +22,7 @@ governing permissions and limitations under the License.
 
 .spectrum-SearchWithin {
   inline-size: var(--spectrum-searchwithin-width);
+  min-inline-size: var(--spectrum-searchwithin-width);
   display: inline-flex;
   position: relative;
 }

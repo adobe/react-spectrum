@@ -16,11 +16,13 @@ import {FocusableRef} from '@react-types/shared';
 import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
 import styles from '@adobe/spectrum-css-temp/components/searchwithin/vars.css';
+import {useFormProps} from '@react-spectrum/form';
 import {useLabel} from '@react-aria/label';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
+  props = useFormProps(props);
   let {styleProps} = useStyleProps(props);
   let {labelProps, fieldProps} = useLabel(props);
   let {
@@ -32,19 +34,21 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
     'aria-labelledby': ariaLabelledby
   } = props;
 
-  let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
-  let domRef = useFocusableRef(ref, inputRef);
+  let domRef = useFocusableRef(ref);
+  let groupRef = useRef<HTMLDivElement>();
 
   // Measure the width of the field to inform the width of the menu.
   let [menuWidth, setMenuWidth] = useState(null);
   let {scale} = useProvider();
 
   let onResize = useCallback(() => {
-    if (domRef.current) {
-      let width = domRef.current.offsetWidth;
+    let shouldUseGroup = !!label;
+    let width = shouldUseGroup ? groupRef.current?.offsetWidth : domRef.current?.offsetWidth;
+
+    if (!isNaN(width)) {
       setMenuWidth(width);
     }
-  }, [domRef]);
+  }, [groupRef, domRef, setMenuWidth, label]);
 
   useResizeObserver({
     ref: domRef,
@@ -53,7 +57,14 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
 
   useLayoutEffect(onResize, [scale, onResize]);
 
-  let defaultSlotValues = {isDisabled, isRequired, label: null, isQuiet: false, 'aria-labelledby': labelProps.id || ariaLabel};
+  let defaultSlotValues = {
+    isDisabled,
+    isRequired,
+    label: null,
+    isQuiet: false,
+    'aria-labelledby': labelProps.id || ariaLabel,
+    validationState: null
+  };
   let searchFieldClassName = classNames(styles, 'spectrum-SearchWithin-searchfield');
   let pickerClassName = classNames(styles, 'spectrum-SearchWithin-picker');
   let slots = {
@@ -73,7 +84,8 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
       <div
         role="group"
         aria-labelledby={labelProps.id || ariaLabel}
-        className={classNames(styles, 'spectrum-SearchWithin', styleProps.className)}>
+        className={classNames(styles, 'spectrum-SearchWithin', styleProps.className)}
+        ref={groupRef}>
         <SlotProvider slots={slots}>
           {children}
         </SlotProvider>

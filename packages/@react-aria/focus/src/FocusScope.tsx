@@ -376,8 +376,14 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
         if (nextElement) {
           focusElement(nextElement, true);
         } else {
-          // If there is no next element, blur the focused element to move focus to the body.
-          focusedElement.blur();
+           // If there is no next element and the nodeToRestore isn't within a FocusScope (i.e. we are leaving the top level focus scope)
+           // then move focus to the body.
+           // Otherwise restore focus to the nodeToRestore (e.g menu within a popover -> tabbing to close the menu should move focus to menu trigger)
+          if (!isElementInAnyScope(nodeToRestore, scopes)) {
+            focusedElement.blur();
+          } else {
+            focusElement(nodeToRestore, true);
+          }
         }
       }
     };
