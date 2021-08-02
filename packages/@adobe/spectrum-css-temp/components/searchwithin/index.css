@@ -26,9 +26,6 @@ governing permissions and limitations under the License.
   display: inline-flex;
   position: relative;
 }
-.spectrum-SearchWithin.spectrum-SearchWithin {
-  inline-size: var(--spectrum-searchwithin-width);
-}
 
 .spectrum-SearchWithin-picker {
   inline-size: auto;
