@@ -10,15 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
+import {announce} from '@react-aria/live-announcer';
 import {GridAria, GridProps, useGrid} from '@react-aria/grid';
 import {gridIds} from './utils';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Layout} from '@react-stately/virtualizer';
+import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import {RefObject, useMemo} from 'react';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {TableState} from '@react-stately/table';
 import {useCollator, useLocale} from '@react-aria/i18n';
-import {useId} from '@react-aria/utils';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 interface TableProps<T> extends GridProps {
   /** The layout object for the table. Computes what content is visible and how to position and style them. */
@@ -95,7 +99,21 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: Ref
     gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
   }
 
+  let {column, direction: sortDirection} = state.sortDescriptor || {};
+  let formatMessage = useMessageFormatter(intlMessages);
+  let sortDescription = useMemo(() => {
+    let columnName = state.collection.columns.find(c => c.key === column)?.textValue;
+    return sortDirection && column ? formatMessage(`${sortDirection}Sort`, {columnName}) : undefined;
+  }, [sortDirection, column, state.collection.columns]);
+
+  let descriptionProps = useDescription(sortDescription);
+
+  // Only announce after initial render, tabbing to the table will tell you the initial sort info already
+  useUpdateEffect(() => {
+    announce(sortDescription, 'assertive', 500);
+  }, [sortDescription]);
+
   return {
-    gridProps
+    gridProps: mergeProps(gridProps, descriptionProps)
   };
 }
