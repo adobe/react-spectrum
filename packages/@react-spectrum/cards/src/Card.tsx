@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps, useSlotId} from '@react-aria/utils';
 import React, {useMemo, useRef} from 'react';
@@ -28,6 +28,8 @@ function Card(props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) {
   let {cardProps, titleProps, detailProps} = useCard(props);
   let domRef = useDOMRef(ref);
   let gridRef = useRef();
+
+  let hasFooter = useHasChild(`.${styles['spectrum-Card-footer']}`, unwrapDOMRef(gridRef));
 
   let slots = useMemo(() => ({
     image: {UNSAFE_className: classNames(styles, 'spectrum-Card-image')},
@@ -51,7 +53,7 @@ function Card(props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) {
       <Grid ref={gridRef} UNSAFE_className={styles['spectrum-Card-grid']}>
         <SlotProvider slots={slots}>
           {props.children}
-          <Divider />
+          {hasFooter && <Divider />}
         </SlotProvider>
       </Grid>
     </article>
