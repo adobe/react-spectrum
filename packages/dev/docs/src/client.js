@@ -228,7 +228,7 @@ if (window.location.pathname.includes('/react-spectrum/')) {
     element.prepend(div);
   
     ReactDOM.render(
-      <Link UNSAFE_style={{float: 'right'}} onPress={createCodeSandbox}>
+      <Link aria-label="Open current example in a code sandbox" UNSAFE_style={{float: 'right'}} onPress={createCodeSandbox}>
         Open Sandbox
       </Link>,
       element.querySelector('.codeSandboxLink')
