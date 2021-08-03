@@ -204,13 +204,13 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
         case 'success':
           selectedKeys = (data.selectedKeys === 'all' || action.selectedKeys === 'all')
             ? 'all'
-            : [...data.selectedKeys, ...(action.selectedKeys ?? [])];
+            : new Set([...data.selectedKeys, ...(action.selectedKeys ?? [])]);
           // Append the new items
           return {
             ...data,
             state: 'idle',
             items: [...data.items, ...action.items],
-            selectedKeys: selectedKeys === 'all' ? 'all' : new Set(selectedKeys),
+            selectedKeys,
             sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
             abortController: null,
             cursor: action.cursor
