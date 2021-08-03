@@ -19,32 +19,37 @@ import {Menu} from './Menu';
 import {MenuTrigger} from './MenuTrigger';
 import More from '@spectrum-icons/workflow/More';
 import React from 'react';
-import {SpectrumActionMenuProps} from '@react-types/menu';
+import {SpectrumActionMenuProps, SpectrumMenuTriggerProps} from '@react-types/menu';
 import {useMessageFormatter} from '@react-aria/i18n';
+import {useSlotProps} from '@react-spectrum/utils';
+import {SpectrumActionButtonProps} from '@react-types/button';
 
 function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+  let otherProps = useSlotProps<Omit<SpectrumMenuTriggerProps & SpectrumActionButtonProps, 'children'>>({}, 'actionmenu');
   let formatMessage = useMessageFormatter(intlMessages);
   let buttonProps = filterDOMProps(props, {labelable: true});
   if (buttonProps['aria-label'] === undefined) {
     buttonProps['aria-label'] = formatMessage('moreActions');
   }
-  
+  let align = otherProps.align || props.align;
+
   return (
-    <MenuTrigger 
-      align={props.align}
+    <MenuTrigger
+      align={align}
       direction={props.direction}
       shouldFlip={props.shouldFlip}>
-      <ActionButton 
-        ref={ref} 
+      <ActionButton
+        ref={ref}
         {...buttonProps}
+        UNSAFE_className={otherProps.UNSAFE_className}
         isDisabled={props.isDisabled}
         isQuiet={props.isQuiet}
         autoFocus={props.autoFocus}>
         <More />
       </ActionButton>
-      <Menu 
-        children={props.children} 
-        items={props.items} 
+      <Menu
+        children={props.children}
+        items={props.items}
         disabledKeys={props.disabledKeys}
         onAction={props.onAction} />
     </MenuTrigger>
