@@ -11,19 +11,35 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {CardView} from '../';
+import {Card, CardView, GridLayout} from '../';
 import {SpectrumCardViewProps} from '@react-types/card';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
+let items = [
+  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683},
+  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683},
+  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683},
+  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683}
+];
+
+
+// TODO add static and dynamic, various layouts
 storiesOf('CardView', module)
   .add(
-    'name me',
+    'default',
     () => render({})
   );
 
+
+
 function render(props: SpectrumCardViewProps) {
+  let {layout = GridLayout} = props;
   return (
-    <CardView {...props} onChange={action('onChange')} />
+    <CardView layout={layout} items={items}>
+      {item =>
+        <Card src={item.url} width={item.width} />
+      }
+    </CardView>
   );
 }

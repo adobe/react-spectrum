@@ -44,6 +44,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
     rendered,
     key
   } = item;
+  console.log('item', item)
 
   let state = useContext(ListBoxContext);
 
