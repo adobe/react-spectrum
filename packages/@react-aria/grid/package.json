@@ -24,9 +24,9 @@
     "@react-aria/live-announcer": "^3.0.1",
     "@react-aria/selection": "^3.5.1",
     "@react-aria/utils": "^3.8.2",
-    "@react-stately/grid": "3.0.0-beta.1",
+    "@react-stately/grid": "3.0.0-rc.0",
     "@react-stately/virtualizer": "^3.1.5",
-    "@react-types/grid": "3.0.0-beta.1",
+    "@react-types/grid": "3.0.0-rc.0",
     "@react-types/shared": "^3.8.0"
   },
   "peerDependencies": {
