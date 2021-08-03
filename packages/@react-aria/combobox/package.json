@@ -35,7 +35,8 @@
     "@react-types/shared": "^3.7.0"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1"
+    "react": "^16.8.0 || ^17.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"
