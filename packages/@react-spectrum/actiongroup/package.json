@@ -57,7 +57,8 @@
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1",
-    "@react-spectrum/provider": "^3.2.0"
+    "@react-spectrum/provider": "^3.2.0",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"
