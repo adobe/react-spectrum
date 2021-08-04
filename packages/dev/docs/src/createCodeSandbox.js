@@ -157,10 +157,22 @@ export default function Example() {
             dependencies: {
               react: 'latest',
               'react-dom': 'latest',
+              'react-scripts': 'latest',
               '@adobe/react-spectrum': 'latest',
               ...(importMap['@spectrum-icons'].size > 0 && {'@spectrum-icons/workflow': 'latest'}),
               ...(importMap[packageName]?.size > 0 && {[packageName]: packageVersion})
-            }
+            },
+            devDependencies: {
+              '@babel/runtime': 'latest',
+              'typescript': 'latest'
+            },
+            'scripts': {
+              'start': 'react-scripts start',
+              'build': 'react-scripts build',
+              'test': 'react-scripts test --env=jsdom',
+              'eject': 'react-scripts eject'
+            },
+            browserslist: ['>0.2%', 'not dead', 'not ie <= 11', 'not op_mini all']
           }
         },
         'Example.js': {
