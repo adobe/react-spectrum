@@ -70,33 +70,46 @@ ReactDOM.render(
 `;
 
 export function createCodeSandbox(e) {
-  // Get package info for codesandbox.
-  // TODO: Get these at build time and put in data-* properties
-  let packageInfo = e.target.closest('article').querySelector('tbody').childNodes;
-  let packageName = packageInfo[0].innerText.split('add ')[1];
-  let packageVersion = packageInfo[1].innerText.split('\t')[1];
-  let imports = packageInfo[2].innerText.split('\t')[1];
   let exampleTitle = document.querySelector('h1').textContent;
-
-  // Get example code.
   let exampleCode = e.target.parentNode.parentNode.querySelector('.source').textContent;
+  let pageImports =  e.target.closest('.example').getAttribute('data-imports');
+  let importsRegex = /import ((?:.|\n)*?) from (['"].*?['"]);?/g;
 
-  // Separate import lines.
-  let lines = exampleCode.split('\n');
-  imports = `${imports}\n${lines.filter(line => line.startsWith('import')).join('\n')}`;
-  exampleCode = lines.filter(line => !line.startsWith('import')).join('\n');
+  let importMap = {
+    '@react-spectrum': new Set(),
+    '@spectrum-icons': new Set()
+  };
 
-  // Put imports at top, export component, and put code inside render if needed.
+  // Remove imports from example and add to page's imports
+  exampleCode = exampleCode.replace(importsRegex, (m, _, s) => {
+    pageImports += m;
+    return '';
+  });
+
+  pageImports.replace(importsRegex, (m, _, s) => {
+    let importGroup = _.replace(/[{}\s]/g, '').split(',');
+    importGroup.forEach(i => {
+      // For now, we'll include any import if the name is present. This could give some false positives, but it should ensure no missing imports.
+      if (exampleCode.includes(i)) {
+        let currentPackage = s.substring(1, s.indexOf('/'));
+        importMap[currentPackage]?.add(i);
+      }
+    });
+  });
+
+  // Build imports section
+  let imports = importMap['@react-spectrum'].size > 0 ? `import {${[...importMap['@react-spectrum']].join(', ')}} from '@adobe/react-spectrum';` + '\n' : '';
+  [...importMap['@spectrum-icons']].forEach(icon => imports += `import ${icon} from '@spectrum-icons/workflow/${icon}';` + '\n');
+  
+  // Add render if needed, put imports at top, and export component.
   if (/^\s*function (.|\n)*}\s*$/.test(exampleCode)) {
     exampleCode = `import React from 'react';
 ${imports}
-
 export default ${exampleCode}
 `;
   } else {
     exampleCode = `import React from 'react';
 ${imports}
-
 export default function Example() {
   return (
     ${exampleCode}
@@ -120,8 +133,8 @@ export default function Example() {
             dependencies: {
               react: 'latest',
               'react-dom': 'latest',
-              '@adobe/react-spectrum': 'latest',
-              [packageName]: packageVersion
+              ...(importMap['@react-spectrum'].size > 0 && {'@adobe/react-spectrum': 'latest'}),
+              ...(importMap['@spectrum-icons'].size > 0 && {'@spectrum-icons/workflow': 'latest'})
             }
           }
         },
