@@ -487,7 +487,8 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
             )
           } />
         <ListBoxBase
-          domProps={mergeProps(listBoxProps, {onTouchStart, onTouchEnd})}
+          {...listBoxProps}
+          domProps={{onTouchStart, onTouchEnd}}
           disallowEmptySelection
           shouldSelectOnPressUp
           focusOnPointerEnter

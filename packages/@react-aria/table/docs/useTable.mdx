@@ -22,6 +22,7 @@ import Anatomy from './TableAnatomy.svg';
 
 ```jsx import
 import {useTable, useTableCell, useTableColumnHeader, useTableRow, useTableHeaderRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
+import VisuallyHidden from '@react-aria/visually-hidden';
 ```
 
 ---
@@ -400,10 +401,20 @@ function TableSelectAllCell({column, state}) {
     <th
       {...columnHeaderProps}
       ref={ref}>
+      {
+        /* 
+          In single selection mode, the checkbox will be hidden. 
+          So to avoid leaving a column header with no accessible content, 
+          use a VisuallyHidden component to include the aria-label from the checkbox, 
+          which for single selection will be "Select."
+        */
+        isSingleSelectionMode &&
+        <VisuallyHidden>{inputProps['aria-label']}</VisuallyHidden>
+      }
       <input
         {...inputProps}
         ref={inputRef}
-        style={{visibility: isSingleSelectionMode ? 'hidden' : 'visible'}} />
+        style={isSingleSelectionMode ? {visibility: 'hidden'} : undefined} />
     </th>
   );
 }

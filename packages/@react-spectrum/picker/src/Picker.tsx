@@ -18,6 +18,7 @@ import {
   SlotProvider,
   useDOMRef,
   useIsMobileDevice,
+  useSlotProps,
   useStyleProps,
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
@@ -46,6 +47,7 @@ import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSelectState} from '@react-stately/select';
 
 function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
+  props = useSlotProps(props, 'picker');
   props = useProviderProps(props);
   props = useFormProps(props);
   let formatMessage = useMessageFormatter(intlMessages);
@@ -115,11 +117,11 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
 
   // On small screen devices, the listbox is rendered in a tray, otherwise a popover.
   let listbox = (
-    <FocusScope restoreFocus>
+    <FocusScope restoreFocus contain={isMobile}>
       <DismissButton onDismiss={() => state.close()} />
       <ListBoxBase
+        {...menuProps}
         ref={listboxRef}
-        domProps={menuProps}
         disallowEmptySelection
         autoFocus={state.focusStrategy || true}
         shouldSelectOnPressUp
@@ -156,7 +158,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray isOpen={state.isOpen} onClose={state.close} shouldCloseOnBlur>
+      <Tray isOpen={state.isOpen} onClose={state.close}>
         {listbox}
       </Tray>
     );

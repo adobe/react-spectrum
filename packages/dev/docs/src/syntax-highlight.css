@@ -122,7 +122,7 @@
 
   text-align: left;
   word-spacing: normal;
-  word-break: break-all;
+  word-break: break-word;
   line-height: 1.5;
 
   -moz-tab-size: 4;
