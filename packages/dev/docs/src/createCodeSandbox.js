@@ -129,8 +129,11 @@ ${imports}
 export default ${exampleCode}
 `;
   } else {
+    let nonRenderCode = exampleCode.replace(/^(<(.|\n)*>)$/m, () => '');
+    exampleCode = exampleCode.replace(nonRenderCode, '');
     exampleCode = `import React from 'react';
 ${imports}
+${nonRenderCode}
 export default function Example() {
   return (
     ${exampleCode}
