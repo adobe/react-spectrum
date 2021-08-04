@@ -84,10 +84,15 @@ export function createCodeSandbox(e) {
   let exampleCode = e.target.parentNode.parentNode.querySelector('.source').textContent;
   let pageImports =  e.target.closest('.example').getAttribute('data-imports');
   let importsRegex = /import ((?:.|\n)*?) from (['"].*?['"]);?/g;
+  let packageInfo = e.target.closest('article').querySelector('tbody').childNodes;
+  let packageName = packageInfo[0].innerText.split('add ')[1];
+  let packageVersion = packageInfo[1].innerText.split('\t')[1];
+  let isPreRelease = packageVersion.includes('-alpha.') || packageVersion.includes('-beta.') || packageVersion.includes('-rc.');
 
   let importMap = {
     '@react-spectrum': new Set(),
-    '@spectrum-icons': new Set()
+    '@spectrum-icons': new Set(),
+    ...(isPreRelease && {[packageName]: new Set()})
   };
 
   // Remove imports from example and add to page's imports
@@ -101,14 +106,20 @@ export function createCodeSandbox(e) {
     importGroup.forEach(i => {
       // For now, we'll include any import if the name is present. This could give some false positives, but it should ensure no missing imports.
       if (exampleCode.includes(i)) {
-        let currentPackage = s.substring(1, s.indexOf('/'));
-        importMap[currentPackage]?.add(i);
+        // If pre-release, use the indivdual package.
+        if (isPreRelease && packageName === s.slice(1, -1)) {
+          importMap[packageName]?.add(i);
+        } else {
+          let currentPackage = s.substring(1, s.indexOf('/'));
+          importMap[currentPackage]?.add(i);
+        }
       }
     });
   });
 
   // Build imports section
   let imports = importMap['@react-spectrum'].size > 0 ? `import {${[...importMap['@react-spectrum']].join(', ')}} from '@adobe/react-spectrum';` + '\n' : '';
+  imports += isPreRelease && importMap[packageName].size > 0 ? `import {${[...importMap[packageName]].join(', ')}} from '${packageName}';` + '\n' : '';
   [...importMap['@spectrum-icons']].forEach(icon => imports += `import ${icon} from '@spectrum-icons/workflow/${icon}';` + '\n');
   
   // Add render if needed, put imports at top, and export component.
@@ -143,8 +154,9 @@ export default function Example() {
             dependencies: {
               react: 'latest',
               'react-dom': 'latest',
-              ...(importMap['@react-spectrum'].size > 0 && {'@adobe/react-spectrum': 'latest'}),
-              ...(importMap['@spectrum-icons'].size > 0 && {'@spectrum-icons/workflow': 'latest'})
+              '@adobe/react-spectrum': 'latest',
+              ...(importMap['@spectrum-icons'].size > 0 && {'@spectrum-icons/workflow': 'latest'}),
+              ...(importMap[packageName]?.size > 0 && {[packageName]: packageVersion})
             }
           }
         },
