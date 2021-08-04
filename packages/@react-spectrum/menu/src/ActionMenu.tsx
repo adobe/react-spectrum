@@ -43,7 +43,7 @@ function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: Fo
         {...buttonProps}
         UNSAFE_className={otherProps.UNSAFE_className}
         isDisabled={props.isDisabled}
-        isQuiet={props.isQuiet}
+        isQuiet={otherProps.isQuiet ?? props.isQuiet}
         autoFocus={props.autoFocus}>
         <More />
       </ActionButton>

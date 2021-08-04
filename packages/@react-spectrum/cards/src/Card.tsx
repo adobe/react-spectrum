@@ -24,6 +24,7 @@ import {Grid} from '@react-spectrum/layout';
 
 function Card(props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
+  let {isQuiet} = props;
   let {styleProps} = useStyleProps(props);
   let {cardProps, titleProps, detailProps} = useCard(props);
   let domRef = useDOMRef(ref);
@@ -38,7 +39,7 @@ function Card(props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) {
     heading: {UNSAFE_className: classNames(styles, 'spectrum-Card-heading'), ...titleProps},
     content: {UNSAFE_className: classNames(styles, 'spectrum-Card-content')},
     detail: {UNSAFE_className: classNames(styles, 'spectrum-Card-detail'), ...detailProps},
-    actionmenu: {UNSAFE_className: classNames(styles, 'spectrum-Card-actions'), align: 'end'},
+    actionmenu: {UNSAFE_className: classNames(styles, 'spectrum-Card-actions'), align: 'end', isQuiet: true},
     footer: {UNSAFE_className: classNames(styles, 'spectrum-Card-footer')},
     divider: {UNSAFE_className: classNames(styles, 'spectrum-Card-divider'), size: 'S'}
   }), [titleProps, detailProps]);
@@ -49,7 +50,10 @@ function Card(props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) {
       {...cardProps}
       {...styleProps}
       ref={domRef}
-      className={classNames(styles, 'spectrum-Card', 'spectrum-Card-default', styleProps.className)}>
+      className={classNames(styles, 'spectrum-Card', {
+        'spectrum-Card--default': !isQuiet,
+        'spectrum-Card--isQuiet': isQuiet
+      }, styleProps.className)}>
       <Grid ref={gridRef} UNSAFE_className={styles['spectrum-Card-grid']}>
         <SlotProvider slots={slots}>
           {props.children}

@@ -48,7 +48,7 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-card-border-color);
 }
 
-.spectrum-Card--quiet,
+.spectrum-Card--isQuiet,
 .spectrum-Card--gallery {
   border-color: transparent;
   background-color: transparent;
