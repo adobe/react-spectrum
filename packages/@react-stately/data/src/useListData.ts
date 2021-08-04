@@ -211,9 +211,12 @@ export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (
         let keySet = new Set(keys);
         let items = state.items.filter(item => !keySet.has(getKey(item)));
 
-        let selection = new Set(state.selectedKeys);
-        for (let key of keys) {
-          selection.delete(key);
+        let selection: Selection = 'all';
+        if (state.selectedKeys !== 'all') {
+          selection = new Set(state.selectedKeys);
+          for (let key of keys) {
+            selection.delete(key);
+          }
         }
 
         return {
