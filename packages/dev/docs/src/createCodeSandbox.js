@@ -36,6 +36,16 @@ let indexHTML = `<!DOCTYPE html>
 </head>
 
 <body>
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+    }
+    #root,
+    #root > div {
+      min-height: 100vh;
+    }
+  </style>
   <noscript>
     You need to enable JavaScript to run this app.
   </noscript>
