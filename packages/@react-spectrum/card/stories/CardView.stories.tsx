@@ -17,10 +17,10 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 let items = [
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683}
+  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 1},
+  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 2},
+  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 3},
+  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 4}
 ];
 
 
@@ -31,14 +31,12 @@ storiesOf('CardView', module)
     () => render({})
   );
 
-
-
 function render(props: SpectrumCardViewProps) {
   let {layout = GridLayout} = props;
   return (
-    <CardView layout={layout} items={items}>
+    <CardView layout={layout} items={items} width="800px">
       {item =>
-        <Card src={item.url} width={item.width} />
+        <Card key={item.id} src={item.url} />
       }
     </CardView>
   );

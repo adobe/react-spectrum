@@ -10,11 +10,36 @@
  * governing permissions and limitations under the License.
  */
 
-import {KeyboardDelegate, Node} from '@react-types/shared';
-import {Layout} from '@react-stately/virtualizer';
+import {Node} from '@react-types/shared';
+import {Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
+import {Key} from 'react';
 
-// TODO: Perhaps this doesn't extend Layout? Perhaps all the other layouts (Waterfall, Grid, Gallery) should extend Layout instead?
-export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
+// TODO: Perhaps this doesn't extend Layout? Perhaps all the other layouts (Waterfall, Grid, Gallery) should extend Layout instead? Maybe we don't need this
+export class BaseLayout<T> extends Layout<Node<T>> {
+  protected contentSize: Size;
+  protected layoutInfos: Map<Key, LayoutInfo>;
+
+  constructor() {
+    super();
+    this.layoutInfos = new Map();
+  }
+
+  // Content size is determined in buildCollection (differs between layouts so not defined here)
+  getContentSize() {
+    return this.contentSize;
+  }
+
+  getLayoutInfo(key: Key) {
+    return this.layoutInfos.get(key);
+  }
+
+  // Filler getVisibleLayoutInfos, should be separately defined in Waterfall, Grid, Gallery. Update accordingly if it becomes similar between the layouts
+  getVisibleLayoutInfos(rect: Rect) {
+    let res: LayoutInfo[] = [];
+    return res;
+  }
+
+  // TODO: ignore drag and drop for now
   // shouldShowDropSpacing() {
   //   let dropTarget = this.collectionView._dropTarget;
   //   let dragTarget = this.collectionView._dragTarget;
@@ -32,23 +57,20 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   //     && this.component.props.dropPosition === 'between';
   // }
 
-  // getInitialLayoutInfo(type, section, index) {
-  //   let initial = super.getInitialLayoutInfo(type, section, index);
+  // TODO Modified from v2 to match v3, but not entirely sure what these do?
+  getInitialLayoutInfo(layoutInfo: LayoutInfo) {
+    layoutInfo.opacity = 0;
+    layoutInfo.transform = 'scale3d(0.8, 0.8, 0.8)';
+    return layoutInfo;
+  }
 
-  //   initial.opacity = 0;
-  //   initial.transform = 'scale3d(0.8, 0.8, 0.8)';
+  getFinalLayoutInfo(layoutInfo: LayoutInfo) {
+    layoutInfo.opacity = 0;
+    layoutInfo.transform = 'scale3d(0.8, 0.8, 0.8)';
+    return layoutInfo;
+  }
 
-  //   return initial;
-  // }
-
-  // getFinalLayoutInfo(type, section, index) {
-  //   let final = super.getFinalLayoutInfo(type, section, index);
-
-  //   final.opacity = 0;
-  //   final.transform = 'scale3d(0.8, 0.8, 0.8)';
-
-  //   return final;
-  // }
+  // TODO bring the below back when implementing Gallery and Waterfall layout. Used to determine the closest card above/below b/c non uniform
 
   // _findClosestLayoutInfo(target, rect) {
   //   let layoutInfos = this.getVisibleLayoutInfos(rect);

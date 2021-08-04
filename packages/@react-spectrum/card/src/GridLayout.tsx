@@ -11,7 +11,23 @@
  */
 
 import {BaseLayout} from './';
+import {Collection, Direction, KeyboardDelegate, Node} from '@react-types/shared';
+import {Key} from 'react';
 import {Size} from '@react-stately/virtualizer';
+
+// TODO: add GridLayoutOptions types
+export type GridLayoutOptions<T> = {
+  cardSize?: 'S' | 'M' | 'L',
+  minItemSize?: Size,
+  maxItemSize?: Size,
+  margin?: any, // Perhaps should accept Responsive<DimensionValue>
+  minSpace?: Size,
+  maxColumns?: number,
+  itemPadding?: number,
+  direction
+};
+
+// TODO: copied from V2, update this with the proper spectrum values
 const DEFAULT_OPTIONS = {
   S: {
     itemPadding: 20,
@@ -33,66 +49,101 @@ const DEFAULT_OPTIONS = {
   }
 };
 
-// TODO Perhaps this extend
-export class GridLayout<T> extends BaseLayout<T> {
-  // constructor(options = {}) {
-  //   super();
-  //   let cardSize = options.cardSize || 'L';
-  //   /**
-  //    * The minimum item size
-  //    * @type {Size}
-  //    * @default 208 x 208
-  //    */
-  //   this.minItemSize = options.minItemSize || DEFAULT_OPTIONS[cardSize].minItemSize;
 
-  //   /**
-  //    * The maximum item size.
-  //    * @type {Size}
-  //    * @default Infinity
-  //    */
-  //   this.maxItemSize = options.maxItemSize || DEFAULT_OPTIONS[cardSize].maxItemSize;
+// TODO Perhaps this extends something else, maybe BaseLayout doesn't need to exist and we can extend off a different layout
+// Maybe extend GridKeyboardDelegate?
+// Info that will come in handy/replace stuff below
+/*
+this.virtualizer.visibleRect.width => use this to calculate the number of columns. Subtitutes collectionView.size.width
+*/
 
-  //   /**
-  //    * The margin around the grid view between the edges and the items
-  //    * @type {Size}
-  //    * @default 24
-  //    */
-  //   this.margin = options.margin != null ? options.margin : DEFAULT_OPTIONS[cardSize].margin;
+export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
+  // from v2, TODO: type these, do these need to be protected?
+  protected minItemSize;
+  protected maxItemSize;
+  protected margin;
+  protected minSpace;
+  protected maxColumns;
+  protected itemPadding;
+  protected itemSize;
+  protected numColumns;
+  protected numRows;
+  protected horizontalSpacing
+  protected cardType;
 
-  //   /**
-  //    * The minimum space required between items
-  //    * @type {Size}
-  //    * @default 24 x 48
-  //    */
-  //   this.minSpace = options.minSpace || DEFAULT_OPTIONS[cardSize].minSpace;
+  collection: Collection<Node<T>>;
+  // TODO: is this a thing?
+  disabledKeys: Set<Key> = new Set();
+  protected direction: Direction;
 
-  //   /**
-  //    * The maximum number of columns. Default is infinity.
-  //    * @type {number}
-  //    * @default Infinity
-  //    */
-  //   this.maxColumns = options.maxColumns || DEFAULT_OPTIONS[cardSize].maxColumns;
+// TODO: Determine how to calculate the layout info
+// look at what is currently available from v2 and compare with what is in v3 Layouts (buildCollection/buildChild etc)
 
-  //   /**
-  //    * The vertical padding for an item
-  //    * @type {number}
-  //    * @default 52
-  //    */
-  //   this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding;
+  constructor(options: GridLayoutOptions<T> = {}) {
+    super();
+    let cardSize = options.cardSize || 'L';
 
-  //   /**
-  //    * The space between items created when dragging between them
-  //    * @type {number}
-  //    * @default 100
-  //    */
-  //   this.dropSpacing = options.dropSpacing != null ? options.dropSpacing : DEFAULT_OPTIONS[cardSize].dropSpacing;
+    // TODO: move the descriptions to the GridLayoutOptions type
 
-  //   this.itemSize = null;
-  //   this.numColumns = 0;
-  //   this.numRows = 0;
-  //   this.horizontalSpacing = 0;
-  //   this.cardType = 'quiet'; // Better name?
-  // }
+    /**
+     * The minimum item size
+     * @type {Size}
+     * @default 208 x 208
+     */
+    this.minItemSize = options.minItemSize || DEFAULT_OPTIONS[cardSize].minItemSize;
+
+    /**
+     * The maximum item size.
+     * @type {Size}
+     * @default Infinity
+     */
+    this.maxItemSize = options.maxItemSize || DEFAULT_OPTIONS[cardSize].maxItemSize;
+
+    /**
+     * The margin around the grid view between the edges and the items
+     * @type {Size} (actually isn't this just a string/interger?)
+     * @default 24
+     */
+    this.margin = options.margin != null ? options.margin : DEFAULT_OPTIONS[cardSize].margin;
+
+    /**
+     * The minimum space required between items
+     * @type {Size}
+     * @default 24 x 48
+     */
+    this.minSpace = options.minSpace || DEFAULT_OPTIONS[cardSize].minSpace;
+
+    /**
+     * The maximum number of columns. Default is infinity.
+     * @type {number}
+     * @default Infinity
+     */
+    this.maxColumns = options.maxColumns || DEFAULT_OPTIONS[cardSize].maxColumns;
+
+    /**
+     * The vertical padding for an item
+     * @type {number}
+     * @default 52
+     */
+    this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding;
+
+    // TODO: add drag and drop later
+    //   /**
+    //    * The space between items created when dragging between them
+    //    * @type {number}
+    //    * @default 100
+    //    */
+    //   this.dropSpacing = options.dropSpacing != null ? options.dropSpacing : DEFAULT_OPTIONS[cardSize].dropSpacing;
+
+    this.itemSize = null;
+    this.numColumns = 0;
+    this.numRows = 0;
+    this.horizontalSpacing = 0;
+    this.cardType = 'quiet';
+    // TODO perhaps can extend GridKeyboardDelegate instead? Maybe get rid of "implements KeyboardDelegate" instead and have a separate keyboard delegate for GridLayout
+    this.direction = options.direction;
+  }
+
 
   // getLayoutInfo(type, section, index) {
   //   let row = Math.floor(index / this.numColumns);
@@ -223,4 +274,68 @@ export class GridLayout<T> extends BaseLayout<T> {
   // indexPathRightOf(indexPath) {
   //   return this.collectionView.incrementIndexPath(indexPath, 1);
   // }
+
+
+
+
+  // Since the collection doesn't represent the visual layout, need to calculate what row and column the current key is in,
+  // then return the key that occupies the row + column below. This can be done by figuring out how many cards exist per column then dividing the
+  // collection contents by that number (which will give us the row distribution)
+  getKeyBelow(key: Key) {
+    // let collection = this.collection;
+
+    // key = collection.getKeyAfter(key);
+    // while (key != null) {
+    //   let item = collection.getItem(key);
+    //   if (item.type === 'item' && !this.disabledKeys.has(item.key)) {
+    //     return key;
+    //   }
+
+    //   key = collection.getKeyAfter(key);
+    // }
+    return key;
+  }
+
+  getKeyAbove(key: Key) {
+    // let collection = this.collection;
+
+    // key = collection.getKeyBefore(key);
+    // while (key != null) {
+    //   let item = collection.getItem(key);
+    //   if (item.type === 'item' && !this.disabledKeys.has(item.key)) {
+    //     return key;
+    //   }
+
+    //   key = collection.getKeyBefore(key);
+    // }
+    return key;
+  }
+
+  // TODO: perhaps I can use the GridKeyboardDelegate for these instead
+  getKeyRightOf(key: Key) {
+    key = this.direction === 'rtl' ?  this.collection.getKeyBefore(key) : this.collection.getKeyAfter(key);
+    while (key != null) {
+      let item = this.collection.getItem(key);
+      if (item.type === 'item' && !this.disabledKeys.has(key)) {
+        return key;
+      }
+
+      key = this.direction === 'rtl' ?  this.collection.getKeyBefore(key) : this.collection.getKeyAfter(key);
+    }
+  }
+
+  getKeyLeftOf(key: Key) {
+    key = this.direction === 'rtl' ?  this.collection.getKeyAfter(key) : this.collection.getKeyBefore(key);
+    while (key != null) {
+      let item = this.collection.getItem(key);
+      if (item.type === 'item' && !this.disabledKeys.has(key)) {
+        return key;
+      }
+
+      key = this.direction === 'rtl' ?  this.collection.getKeyAfter(key) : this.collection.getKeyBefore(key);
+    }
+  }
+
+  // TODO: does this need getKeyPageUp/Down? Page up and page down don't do anything in v2
+
 }
