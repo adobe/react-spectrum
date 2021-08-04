@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/table",
-  "version": "3.0.0-rc.0",
+  "version": "3.0.0-rc.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -25,12 +25,12 @@
     "@react-aria/live-announcer": "^3.0.1",
     "@react-aria/selection": "^3.5.1",
     "@react-aria/utils": "^3.8.2",
-    "@react-stately/table": "3.0.0-rc.0",
+    "@react-stately/table": "3.0.0-rc.1",
     "@react-stately/virtualizer": "^3.1.5",
     "@react-types/checkbox": "^3.2.3",
     "@react-types/grid": "3.0.0-rc.0",
     "@react-types/shared": "^3.8.0",
-    "@react-types/table": "3.0.0-rc.0"
+    "@react-types/table": "3.0.0-rc.7"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1",

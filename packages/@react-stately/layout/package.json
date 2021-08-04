@@ -21,7 +21,7 @@
     "@react-stately/virtualizer": "^3.1.5",
     "@react-types/grid": "3.0.0-rc.0",
     "@react-types/shared": "^3.8.0",
-    "@react-types/table": "3.0.0-rc.0"
+    "@react-types/table": "3.0.0-rc.7"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1"
