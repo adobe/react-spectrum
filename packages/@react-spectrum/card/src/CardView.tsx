@@ -150,7 +150,8 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
         // layout={layout}
         layout={gridLayout}
         // TODO: why do I need to pass gridCollection here...
-        collection={gridCollection}
+        // collection={gridCollection}
+        collection={collection}
         isLoading={props.isLoading}
         onLoadMore={props.onLoadMore}>
         {(type, item) => {
@@ -188,6 +189,7 @@ function InternalCard(props) {
     item
   } = props;
   let {state, cardOrientation, cardSize, isQuiet} = useContext(CardViewContext);
+  // TODO: check if selection is enabled here
 
   // item.rendered will have the children provided to the Card (e.g. Image, ActionMenu, etc)
   // item.props will have all other relevant info: size, orientation, isQuiet, etc
@@ -202,7 +204,7 @@ function InternalCard(props) {
 
   return (
     <div>
-      <img src={item.childNodes[0].props.src} />
+      <img src={item.props.src} />
     </div>
   )
 }
