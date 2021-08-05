@@ -12,68 +12,38 @@
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
-import React, {useContext} from 'react';
+import React, {ReactElement, useContext} from 'react';
 import {SpectrumCardViewProps} from '@react-types/card';
 // TODO: get rid of useCardView? Sounds like we just use useGrid.
 // import {useCardView} from '@react-aria/card';
 // TODO: get rid of useCardViewState? Do we need, sounds like we'll just be using useGridState
 // import {useCardViewState} from '@react-stately/card';
 import {Virtualizer} from '@react-aria/virtualizer';
-
-
-
-
-
-// TODO Delete this, just used for Collections API item testing, copy pasta from ListView
-import {ListState, useListState} from '@react-stately/list';
+import {useListState} from '@react-stately/list';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
-import {useProvider} from '@react-spectrum/provider';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
-import {ListLayout} from '@react-stately/layout';
-export function useListLayout<T>(state: ListState<T>) {
-  let {scale} = useProvider();
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let layout = React.useMemo(() =>
-      new ListLayout<T>({
-        estimatedRowHeight: scale === 'large' ? 48 : 32,
-        padding: 0,
-        collator
-      })
-    , [collator, scale]);
-
-  layout.collection = state.collection;
-  layout.disabledKeys = state.disabledKeys;
-  return layout;
-}
-
-import {GridLayout} from './';
 
 
 const CardViewContext = React.createContext(null);
 
 function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(props);
-  // let state = useCardViewState(props);
-  // let ariaProps = useCardView(props, state);
   let domRef = useDOMRef(ref);
   let {
     cardOrientation,
     cardSize,
     isQuiet,
     renderEmptyState,
-    // TODO: add layout back in when I get rid of the test layouts that are hard coded below
-    // layout
+    layout
   } = props;
-
+  let cardViewLayout = typeof layout === 'function' ? new layout({cardSize, cardOrientation}) : layout;
   // TODO:
   // What exactly is the layout of CardView going to be? Is it a single column Grid with each row having child Card elements?
   // Or is it a multi column grid with each Card being a Cell in the Row?
   // " Each card is represented as a row in the grid with a single cell inside." Does this mean you have rows next to each other? Feels weird, check v2 implementation
 
 
-  // TODO: to test, just use the layout from listview
   // TODO: Don't think we need formatMessage and collator here, CardView won't support typeahead right?
   // let formatMessage = useMessageFormatter(intlMessages);
   // let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -81,7 +51,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   let {collection} = useListState(props);
 
   // TODO: Is CardView a single column grid? If so, is each card a "cell" within a row? Does each row have a single card or multiple?
-  //  Figure out what to pass to "items" here
+  // Figure out what to pass to "items" here
   let gridCollection = React.useMemo(() => new GridCollection<T>({
     columnCount: 1,
     items: [...collection].map(item => ({
@@ -94,26 +64,16 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     }))
   }), [collection]);
 
-  console.log('gridCollection', gridCollection, gridCollection.size, gridCollection.at(0),  gridCollection.at(1),  gridCollection.at(2))
   let state = useGridState({
     ...props,
     collection: gridCollection
   });
-  console.log('state', state);
 
-  // TODO this will be passed in via props, just keep the part where we set collection and disabledkeys
-  let gridLayout = new GridLayout<T>();
-  gridLayout.collection = state.collection;
-  gridLayout.disabledKeys = state.disabledKeys;
-  gridLayout.isLoading = props.isLoading;
-  gridLayout.direction = direction;
-  console.log('GLENLKGNEKL', gridLayout)
-
-
-  // TODO: this is a placeholder layout. Will be replaced by the CardView specific layouts
-  // Each layout will need its own validate/build functions that determine the number of columns + divide the cards into
-  // visual rows depending on how large the CardView is vs Card sizes
-  // let layout = useListLayout(state);
+  // TODO: need to fix the typescript here, perhaps add a new type in Card types which is a Layout w/ these properties
+  cardViewLayout.collection = state.collection;
+  cardViewLayout.disabledKeys = state.disabledKeys;
+  cardViewLayout.isLoading = props.isLoading;
+  cardViewLayout.direction = direction;
 
   // TODO: placeholder keyboardDelegate, will be replaced by the layout specific keyboard delegates
   // Will need to figure out how to get the proper above/below/right/left keys. If CardView is regarded as a single
@@ -131,37 +91,33 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   let {gridProps} = useGrid({
     ...props,
     isVirtualized: true,
-    // TODO: this
+    // TODO: replace this with the gridLayout since it has positional keyabove/below logic
     keyboardDelegate
   }, state, domRef);
-  console.log("BLAH", collection);
 
-  // console.log('layout', layout);
+  console.log('collection', collection, cardViewLayout);
   return (
-    <CardViewContext.Provider value={{state, cardOrientation, cardSize, isQuiet, cardType: gridLayout.cardType}}>
+    <CardViewContext.Provider value={{state, cardOrientation, cardSize, isQuiet, cardType: cardViewLayout.cardType}}>
       <Virtualizer
         {...gridProps}
-        // Informs the width of the CardView
         {...styleProps}
         ref={domRef}
         focusedKey={state.selectionManager.focusedKey}
         sizeToFit="height"
         scrollDirection="vertical"
-        // layout={layout}
-        layout={gridLayout}
-        // TODO: why do I need to pass gridCollection here...
-        // collection={gridCollection}
+        layout={cardViewLayout}
         collection={collection}
         isLoading={props.isLoading}
         onLoadMore={props.onLoadMore}>
         {(type, item) => {
+          console.log('TTYPE', type)
           if (type === 'item') {
-            console.log('IGITI', item)
             return (
               <InternalCard item={item} />
             )
           } else if (type === 'loader') {
-            return <div />;
+            console.log('loader')
+            return <div>LOADING</div>;
             // TODO: Create CenteredWrapper for CardView
             // <CenteredWrapper>
             //   <ProgressCircle
@@ -174,7 +130,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
               return null;
             }
 
-            return <div />
+            return <div style={{height: '400px', width: '400px'}}>EMPTY STATE</div>
             // TODO: Render emptyState, think about what the wrapper should look like (use CenteredWrapper?)
           }
         }}
@@ -189,7 +145,8 @@ function InternalCard(props) {
     item
   } = props;
   let {state, cardOrientation, cardSize, isQuiet} = useContext(CardViewContext);
-  // TODO: check if selection is enabled here
+  // TODO: check if selection is enabled here and if so render the checkbox on the card
+  let allowsSelection = state.selectionMode !== 'none';
 
   // item.rendered will have the children provided to the Card (e.g. Image, ActionMenu, etc)
   // item.props will have all other relevant info: size, orientation, isQuiet, etc
@@ -200,7 +157,6 @@ function InternalCard(props) {
   // TODO this will have a bunch of other stuff such as useGridRow and useGridCell
 
   // TODO: Outer div is row, inner div is cell
-  console.log('item', item)
 
   return (
     <div>
@@ -212,5 +168,5 @@ function InternalCard(props) {
 /**
  * TODO: Add description of component here.
  */
-const _CardView = React.forwardRef(CardView);
+ const _CardView = React.forwardRef(CardView) as <T>(props: SpectrumCardViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_CardView as CardView};

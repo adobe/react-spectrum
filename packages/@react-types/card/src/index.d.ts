@@ -15,7 +15,8 @@ import {Layout} from '@react-stately/virtualizer';
 import {ReactNode} from 'react';
 
 export interface LayoutConstructor<T> {
-  new (): Layout<Node<T>>;
+  // TODO type the args
+  new (args): Layout<Node<T>>;
 }
 
 interface CardViewProps<T> extends CollectionBase<T>, MultipleSelection, AsyncLoadable {
