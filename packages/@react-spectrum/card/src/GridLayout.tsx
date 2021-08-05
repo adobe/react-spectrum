@@ -11,7 +11,7 @@
  */
 
 import {BaseLayout} from './';
-import {Direction, KeyboardDelegate, Node} from '@react-types/shared';
+import {Collection, Direction, KeyboardDelegate, Node} from '@react-types/shared';
 import {GridCollection} from '@react-types/grid';
 import {InvalidationContext, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
@@ -73,8 +73,8 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   cardType;
 
   // The following are set in CardView, not through options
-  collection:  GridCollection<T>;
-  protected lastCollection: GridCollection<T>;
+  collection: Collection<Node<T>>;
+  protected lastCollection: Collection<Node<T>>;
   isLoading: boolean;
   // TODO: is this a thing? I know its available in CardView's props due to multipleSelection type
   disabledKeys: Set<Key> = new Set();
@@ -212,8 +212,8 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     for (let index = firstVisibleItem; index < lastVisibleItem; index++) {
       // Can't use collection.at unfortunately because the collection.keyMap.keys has row and child node as a separate key.
       // Perhaps I should change up what gets provided to new GridCollection items
-      console.log('index', index, this.collection.rows[index])
-      let keyFromIndex = this.collection.rows[index].key;
+      // console.log('this', this.collection.at)
+      let keyFromIndex = this.collection.at(index).key;
       // let keyFromIndex = this.collection.at(index).key;
       // TODO: double check that this is retrieving the correct layoutInfos
       // Right now it is grabbing the row keys, not the cell keys. I think that is correct
@@ -236,7 +236,7 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     // In this case, we need to recalculate the entire layout.
     this.invalidateEverything = invalidationContext.sizeChanged;
     // TODO: grabbed from ListLayout, not entirely sure if necessary
-    // this.collection = this.virtualizer.collection as GridCollection<T>;
+    this.collection = this.virtualizer.collection;
 
     // Below adapted from V2 code
     // Compute the number of rows and columns needed to display the content
@@ -408,26 +408,29 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   // collection contents by that number (which will give us the row distribution)
   getKeyBelow(key: Key) {
     let indexRowBelow;
-    let index = this.collection.rows.findIndex(card => card.key === key);
+    // Alternative approach is to do a for loop that repeats this.numColumns times and calls getKeyAfter each time
+    let keyArray = [...this.collection.getKeys()];
+    let index = keyArray.findIndex(k => k === key);
     if (index !== -1) {
       indexRowBelow = index + this.numColumns;
     } else {
       return null;
     }
 
-    return this.collection.rows[indexRowBelow]?.key || null;
+    return this.collection.at(indexRowBelow)?.key || null;
   }
 
   getKeyAbove(key: Key) {
     let indexRowAbove;
-    let index = this.collection.rows.findIndex(card => card.key === key);
+    let keyArray = [...this.collection.getKeys()];
+    let index = keyArray.findIndex(k => k === key);
     if (index !== -1) {
       indexRowAbove = index - this.numColumns;
     } else {
       return null;
     }
 
-    return this.collection.rows[indexRowAbove]?.key || null;
+    return this.collection.at(indexRowAbove)?.key || null;
   }
 
   // TODO: perhaps I can use the GridKeyboardDelegate for these instead
