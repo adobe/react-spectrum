@@ -96,6 +96,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   getVisibleLayoutInfos(rect: Rect) {
+    console.log('rect', rect, rect.maxX, rect.maxY)
     let res: LayoutInfo[] = [];
 
     let addNodes = (nodes: LayoutNode[]) => {
@@ -128,6 +129,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
     this.collection = this.virtualizer.collection;
     this.rootNodes = this.buildCollection();
+    console.log('root nodes', this.rootNodes);
 
     // Remove deleted layout nodes
     if (this.lastCollection) {
@@ -290,6 +292,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
     let rect = new Rect(x, y, width - x, rectHeight);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
+    console.log('layout info in build item', layoutInfo);
     layoutInfo.estimatedSize = isEstimated;
     return {
       layoutInfo

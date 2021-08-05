@@ -113,7 +113,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   // TODO: this is a placeholder layout. Will be replaced by the CardView specific layouts
   // Each layout will need its own validate/build functions that determine the number of columns + divide the cards into
   // visual rows depending on how large the CardView is vs Card sizes
-  let layout = useListLayout(state);
+  // let layout = useListLayout(state);
 
   // TODO: placeholder keyboardDelegate, will be replaced by the layout specific keyboard delegates
   // Will need to figure out how to get the proper above/below/right/left keys. If CardView is regarded as a single
@@ -134,9 +134,9 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     // TODO: this
     keyboardDelegate
   }, state, domRef);
+  console.log("BLAH", collection);
 
-
-  console.log('layout', layout);
+  // console.log('layout', layout);
   return (
     <CardViewContext.Provider value={{state, cardOrientation, cardSize, isQuiet, cardType: gridLayout.cardType}}>
       <Virtualizer
@@ -147,12 +147,15 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
         focusedKey={state.selectionManager.focusedKey}
         sizeToFit="height"
         scrollDirection="vertical"
-        layout={layout}
-        collection={collection}
+        // layout={layout}
+        layout={gridLayout}
+        // TODO: why do I need to pass gridCollection here...
+        collection={gridCollection}
         isLoading={props.isLoading}
         onLoadMore={props.onLoadMore}>
         {(type, item) => {
           if (type === 'item') {
+            console.log('IGITI', item)
             return (
               <InternalCard item={item} />
             )
@@ -195,9 +198,11 @@ function InternalCard(props) {
   // TODO this will have a bunch of other stuff such as useGridRow and useGridCell
 
   // TODO: Outer div is row, inner div is cell
+  console.log('item', item)
+
   return (
     <div>
-      <img src={item.props.src} />
+      <img src={item.childNodes[0].props.src} />
     </div>
   )
 }
