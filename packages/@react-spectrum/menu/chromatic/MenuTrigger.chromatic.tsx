@@ -92,9 +92,9 @@ let withSection = [
 ];
 
 let withArabic = [
-  {name: 'ينسخ', icon: 'Copy', shortcut: '⌘ن'},
-  {name: 'يقطع', icon: 'Cut', shortcut: '⌘C'},
-  {name: 'معجون', icon: 'Paste', shortcut: '⌘V'}
+  {name: 'نسخ', icon: 'Copy', shortcut: '⌘C'},
+  {name: 'قص', icon: 'Cut', shortcut: '⌘X'},
+  {name: 'لصق', icon: 'Paste', shortcut: '⌘V'}
 ];
 
 const Template = (): Story<SpectrumMenuTriggerProps> => (args) => (
