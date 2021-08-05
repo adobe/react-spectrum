@@ -77,24 +77,11 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   cardViewLayout.isLoading = props.isLoading;
   cardViewLayout.direction = direction;
 
-  // TODO: placeholder keyboardDelegate, will be replaced by the layout specific keyboard delegates
-  // Will need to figure out how to get the proper above/below/right/left keys. If CardView is regarded as a single
-  // column grid, but the layout is actually multiple columns and rows then it will be a bit tricky. But if it is a single column
-  // with multiple rows, and each row contains N cards then it won't be too bad
-  // Actually, left/right is simple, getKeyRight/Left will just be the current key index +/- 1 (assuming the collection is a single column grid w/ each card being its own row). Up/down
-  // will need to be overriden where we'll need to calculate the number of columns ourselves since the collection won't be an accurate representation of the current visual layout.
-  let keyboardDelegate = React.useMemo(() => new GridKeyboardDelegate({
-    collection: state.collection,
-    disabledKeys: state.disabledKeys,
-    ref: domRef,
-    direction,
-    focusMode: 'cell'
-  }), [state, domRef]);
   let {gridProps} = useGrid({
     ...props,
     isVirtualized: true,
-    // TODO: replace this with the gridLayout since it has positional keyabove/below logic
-    keyboardDelegate
+    // TODO: fix the typescript here, layout definition need to show that it implements keyboard delegate
+    keyboardDelegate: cardViewLayout
   }, state, domRef);
 
   console.log('collection', collection, cardViewLayout);
@@ -127,7 +114,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
               </CenteredWrapper>
             )
           } else if (type === 'placeholder') {
-            let emptyState = props.renderEmptyState ? props.renderEmptyState() : null;
+            let emptyState = renderEmptyState ? renderEmptyState() : null;
             if (emptyState == null) {
               return null;
             }
@@ -161,6 +148,11 @@ function CenteredWrapper({children}) {
   );
 }
 
+
+import {useFocusRing} from '@react-aria/focus';
+import {useGridCell, useGridRow} from '@react-aria/grid';
+import {mergeProps} from '@react-aria/utils';
+
 function InternalCard(props) {
   let {
     item
@@ -179,9 +171,36 @@ function InternalCard(props) {
 
   // TODO: Outer div is row, inner div is cell
 
+
+  // TODO: update the below, hacky stand in to test the keyboard delegate
+  let ref = React.useRef<HTMLDivElement>();
+  let {
+    isFocusVisible: isFocusVisibleWithin,
+    focusProps: focusWithinProps
+  } = useFocusRing({within: true});
+  let {isFocusVisible, focusProps} = useFocusRing();
+  let {rowProps} = useGridRow({
+    node: item,
+    isVirtualized: true
+  }, state, ref);
+  let {gridCellProps} = useGridCell({
+    node: item,
+    focusMode: 'cell'
+  }, state, ref);
+  const mergedProps = mergeProps(
+    gridCellProps,
+    focusWithinProps,
+    focusProps
+  );
+
+
   return (
-    <div>
-      <img src={item.props.src} />
+    <div {...rowProps}>
+      <div
+        ref={ref}
+        {...mergedProps}>
+          {!isFocusVisible && <img src={item.props.src} />}
+      </div>
     </div>
   )
 }
