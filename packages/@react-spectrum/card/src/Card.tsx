@@ -21,8 +21,6 @@ Card.getCollectionNode = function* getCollectionNode<T>(props, context: any): Ge
   let {children} = props;
 
   yield {
-    // TODO readd this? Or actually we might just want type to be 'item' here
-    // type: 'card',
     type: 'item',
     props: props,
     rendered: children,
