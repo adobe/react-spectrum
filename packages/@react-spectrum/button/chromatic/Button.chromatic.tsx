@@ -47,7 +47,7 @@ storiesOf('Button', module)
           isQuiet
           variant="primary">
           <Bell />
-          <Text>تقصير</Text>
+          <Text>هادئ</Text>
         </Button>
       </Flex>
     )
