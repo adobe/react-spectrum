@@ -23,7 +23,9 @@ import {useListState} from '@react-stately/list';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {ProgressCircle} from '@react-spectrum/progress';
 
+import cardViewStyles from './cardview.css';
 
 const CardViewContext = React.createContext(null);
 
@@ -110,33 +112,50 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
         isLoading={props.isLoading}
         onLoadMore={props.onLoadMore}>
         {(type, item) => {
-          console.log('TTYPE', type)
           if (type === 'item') {
             return (
               <InternalCard item={item} />
             )
           } else if (type === 'loader') {
-            console.log('loader')
-            return <div>LOADING</div>;
-            // TODO: Create CenteredWrapper for CardView
-            // <CenteredWrapper>
-            //   <ProgressCircle
-            //     isIndeterminate
-            //     aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
-            // </CenteredWrapper>
+            return (
+              <CenteredWrapper>
+                <ProgressCircle
+                  isIndeterminate
+                  // TODO add formatMessage
+                  // aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')}
+                  />
+              </CenteredWrapper>
+            )
           } else if (type === 'placeholder') {
             let emptyState = props.renderEmptyState ? props.renderEmptyState() : null;
             if (emptyState == null) {
               return null;
             }
 
-            return <div style={{height: '400px', width: '400px'}}>EMPTY STATE</div>
-            // TODO: Render emptyState, think about what the wrapper should look like (use CenteredWrapper?)
+            return (
+              <CenteredWrapper>
+                {emptyState}
+              </CenteredWrapper>
+            );
           }
         }}
       </Virtualizer>
     </CardViewContext.Provider>
 
+  );
+}
+
+function CenteredWrapper({children}) {
+  let {state} = useContext(CardViewContext);
+  return (
+    <div
+      role="row"
+      aria-rowindex={state.collection.size + 1}
+      className={classNames(cardViewStyles, 'react-spectrum-CardView-centeredWrapper')}>
+      <div role="gridcell">
+        {children}
+      </div>
+    </div>
   );
 }
 
