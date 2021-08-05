@@ -417,6 +417,15 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     }
   }
 
+  // TODO: Having these mean that Home and End will bring focus to the first and last item in the list which differs from what v2 does
+  getFirstKey() {
+    return this.collection.getFirstKey();
+  }
+
+  getLastKey() {
+    return this.collection.getLastKey();
+  }
+
   // TODO: does this need getKeyPageUp/Down? Page up and page down don't do anything in v2
 
 }
