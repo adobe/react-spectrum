@@ -197,6 +197,7 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     let res = [];
     // Adapted from v2
     let numItems = this.collection.size;
+    console.log('tweagaweg', numItems)
     //  let numItems = this.collectionView.getSectionLength(0) - 1;
     if (numItems < 0 || !this.itemSize) {
       return res;
@@ -205,11 +206,13 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     // The approach from v2 uses indexes where other v3 layouts iterate through every node/root node. This feels more efficient
     let firstVisibleItem = this.getIndexAtPoint(rect.x, rect.y);
     let lastVisibleItem = this.getIndexAtPoint(rect.maxX, rect.maxY);
+    console.log('LAST VISIBLE', lastVisibleItem)
 
     // TBH, do we really need to check isVisible here? Is there a case where an item between the first/last visible item wouldn't be visible?
-    for (let index = firstVisibleItem; index <= lastVisibleItem; index++) {
+    for (let index = firstVisibleItem; index < lastVisibleItem; index++) {
       // Can't use collection.at unfortunately because the collection.keyMap.keys has row and child node as a separate key.
       // Perhaps I should change up what gets provided to new GridCollection items
+      console.log('index', index, this.collection.rows[index])
       let keyFromIndex = this.collection.rows[index].key;
       // let keyFromIndex = this.collection.at(index).key;
       // TODO: double check that this is retrieving the correct layoutInfos
@@ -233,7 +236,7 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     // In this case, we need to recalculate the entire layout.
     this.invalidateEverything = invalidationContext.sizeChanged;
     // TODO: grabbed from ListLayout, not entirely sure if necessary
-    this.collection = this.virtualizer.collection as GridCollection<T>;
+    // this.collection = this.virtualizer.collection as GridCollection<T>;
 
     // Below adapted from V2 code
     // Compute the number of rows and columns needed to display the content

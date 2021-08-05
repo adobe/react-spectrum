@@ -93,7 +93,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
 
   // Sync loading state into the layout.
   layout.isLoading = props.isLoading;
-
+  console.log('layout', layout);
   return (
     <ListViewContext.Provider value={{state, keyboardDelegate}}>
       <Virtualizer
