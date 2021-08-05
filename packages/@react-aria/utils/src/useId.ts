@@ -25,6 +25,9 @@ export function useId(defaultId?: string): string {
   isRendering.current = true;
   let [value, setValue] = useState(defaultId);
   let nextId = useRef(null);
+
+  let res = useSSRSafeId(value);
+
   // don't memo this, we want it new each render so that the Effects always run
   let updateValue = (val) => {
     if (!isRendering.current) {
@@ -34,9 +37,18 @@ export function useId(defaultId?: string): string {
     }
   };
 
+  idsUpdaterMap.set(res, updateValue);
+
   useLayoutEffect(() => {
     isRendering.current = false;
   }, [updateValue]);
+
+  useLayoutEffect(() => {
+    let r = res;
+    return () => {
+      idsUpdaterMap.delete(r);
+    };
+  }, [res]);
 
   useEffect(() => {
     let newId = nextId.current;
@@ -45,9 +57,6 @@ export function useId(defaultId?: string): string {
       nextId.current = null;
     }
   }, [setValue, updateValue]);
-
-  let res = useSSRSafeId(value);
-  idsUpdaterMap.set(res, updateValue);
   return res;
 }
 
@@ -80,13 +89,16 @@ export function mergeIds(idA: string, idB: string): string {
  * if we can use it in places such as labelledby.
  */
 export function useSlotId(): string {
-  let [id, setId] = useState(useId());
+  let id = useId();
+  let [resolvedId, setResolvedId] = useState(id);
   useLayoutEffect(() => {
     let setCurr = idsUpdaterMap.get(id);
     if (setCurr && !document.getElementById(id)) {
-      setId(null);
+      setResolvedId(null);
+    } else {
+      setResolvedId(id);
     }
   }, [id]);
 
-  return id;
+  return resolvedId;
 }
