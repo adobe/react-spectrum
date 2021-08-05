@@ -170,21 +170,28 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     let res = [];
     // Adapted from v2
     let numItems = this.collection.size;
-    if (numItems < 0 || !this.itemSize) {
-      return res;
-    }
+    console.log('numItems', numItems, this.itemSize)
+    if (numItems <= 0 || !this.itemSize) {
+      if (this.layoutInfos.size > 0) {
+        for (let layoutInfo of this.layoutInfos.values()) {
+          console.log('layoutInfo', layoutInfo)
+          res.push(layoutInfo);
+        }
+      }
+    } else {
+      console.log('in else of getVisibleLayoutInfos')
+      // The approach from v2 uses indexes where other v3 layouts iterate through every node/root node. This feels more efficient
+      let firstVisibleItem = this.getIndexAtPoint(rect.x, rect.y);
+      let lastVisibleItem = this.getIndexAtPoint(rect.maxX, rect.maxY);
 
-    // The approach from v2 uses indexes where other v3 layouts iterate through every node/root node. This feels more efficient
-    let firstVisibleItem = this.getIndexAtPoint(rect.x, rect.y);
-    let lastVisibleItem = this.getIndexAtPoint(rect.maxX, rect.maxY);
-
-    // TBH, do we really need to check isVisible here? Is there a case where an item between the first/last visible item wouldn't be visible?
-    for (let index = firstVisibleItem; index < lastVisibleItem; index++) {
-      let keyFromIndex = this.collection.at(index).key;
-      // TODO: double check that this is retrieving the correct layoutInfos
-      let layoutInfo = this.layoutInfos.get(keyFromIndex);
-      if (this.isVisible(layoutInfo, rect)) {
-        res.push(layoutInfo);
+      // TBH, do we really need to check isVisible here? Is there a case where an item between the first/last visible item wouldn't be visible?
+      for (let index = firstVisibleItem; index < lastVisibleItem; index++) {
+        let keyFromIndex = this.collection.at(index).key;
+        // TODO: double check that this is retrieving the correct layoutInfos
+        let layoutInfo = this.layoutInfos.get(keyFromIndex);
+        if (this.isVisible(layoutInfo, rect)) {
+          res.push(layoutInfo);
+        }
       }
     }
 
@@ -244,6 +251,8 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   }
 
   buildCollection() {
+    console.trace()
+    // debugger;
     let y = this.margin;
     let index = 0;
     for (let node of this.collection) {
@@ -261,9 +270,9 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
       y = loader.rect.maxY;
     }
 
-    if (this.collection.size === 0) {
+    if (this.collection.size === 0 && this.layoutInfos.size === 0) {
       console.log('creating placeholder')
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.virtualizer.visibleRect.height);
+      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.virtualizer.visibleRect.height ?? 60);
       let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
       this.layoutInfos.set('placeholder', placeholder);
       y = placeholder.rect.maxY;
@@ -292,24 +301,26 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
 
   // TODO: add updateItemSize since Virtualizer statelly needs it?
   // Do we really need this?
-  // updateItemSize(key: Key, size: Size) {
-  //   let layoutInfo = this.layoutInfos.get(key);
-  //   // If no layoutInfo, item has been deleted/removed.
-  //   if (!layoutInfo) {
-  //     return false;
-  //   }
+  updateItemSize(key: Key, size: Size) {
+    // TODO fix
+    return false
+    let layoutInfo = this.layoutInfos.get(key);
+    // If no layoutInfo, item has been deleted/removed.
+    if (!layoutInfo) {
+      return false;
+    }
 
-  //   layoutInfo.estimatedSize = false;
-  //   if (layoutInfo.rect.height !== size.height) {
-  //     // Copy layout info rather than mutating so that later caches are invalidated.
-  //     let newLayoutInfo = layoutInfo.copy();
-  //     newLayoutInfo.rect.height = size.height;
-  //     this.layoutInfos.set(key, newLayoutInfo);
-  //     return true;
-  //   }
+    layoutInfo.estimatedSize = false;
+    if (layoutInfo.rect.height !== size.height) {
+      // Copy layout info rather than mutating so that later caches are invalidated.
+      let newLayoutInfo = layoutInfo.copy();
+      newLayoutInfo.rect.height = size.height;
+      this.layoutInfos.set(key, newLayoutInfo);
+      return true;
+    }
 
-  //   return false;
-  // }
+    return false;
+  }
 
 
   // TODO: add drop and drop later
