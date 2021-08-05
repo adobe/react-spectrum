@@ -11,8 +11,10 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Button} from '@react-spectrum/button';
 import {Checkbox} from '../';
-import React from 'react';
+import {Flex} from '@react-spectrum/layout';
+import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('Checkbox', module)
@@ -89,6 +91,82 @@ storiesOf('Checkbox', module)
   .add(
     'no label',
     () => renderNoLabel({'aria-label': 'This checkbox has no visible label'})
+  )
+  .add(
+    'isEmphasized: true, isSelected: true, isIndeterminate: toggle ',
+    () => {
+      let [isIndeterminate, setIndeterminate] = useState(false);
+      return (<Checkbox
+        onChange={() => {setIndeterminate(!isIndeterminate);}}
+        isEmphasized
+        isSelected
+        isIndeterminate={isIndeterminate} />);
+    }
+  )
+  .add(
+    'toggle isIndeterminate, isSelected: true, isEmphasized: true',
+    () => {
+      let [isIndeterminate, setIndeterminate] = useState(false);
+      let [isSelected, setSelected] = useState(false);
+      return (
+        <Flex direction="column" gap="size-100">
+          <Button variant="primary" onPress={() => {setIndeterminate(!isIndeterminate);}}>Toggle Indeterminate</Button>
+          <Button variant="primary" onPress={() => {setSelected(!isSelected);}}>Toggle Selected</Button>
+          <Checkbox
+            isEmphasized
+            isSelected={isSelected}
+            isIndeterminate={isIndeterminate} />
+        </Flex>
+      );
+    }
+  )
+  .add(
+    'master selection checkbox',
+    () => {
+      let [isIndeterminate, setIndeterminate] = useState(false);
+      let [isSelected, setSelected] = useState(false);
+      let [isApple, setApple] = useState(false);
+      let [isOrange, setOrange] = useState(false);
+
+      useEffect(() => {
+        if (isApple && isOrange && !isSelected) {
+          setIndeterminate(false);
+          setSelected(true);
+        } else if (!isApple && !isOrange) {
+          setIndeterminate(false);
+          setSelected(false);
+        } else if (isApple || isOrange) {
+          setIndeterminate(true);
+          setSelected(false);
+        }
+      }, [isApple, isOrange]);
+
+      return (
+        <Flex direction="column" gap="size-100">
+          <div>isIndeterminate: {isIndeterminate ? 'true': 'false'}</div>
+          <div>isSelected: {isSelected ? 'true': 'false'}</div>
+          <Checkbox
+            onChange={(value) => {setApple(value); setOrange(value); setIndeterminate(false); setSelected(value);}}
+            isEmphasized
+            isSelected={isSelected}
+            isIndeterminate={isIndeterminate} />
+          <Checkbox
+            onChange={(value) => {setApple(value);}}
+            isSelected={isApple}
+            isEmphasized>
+            Apple
+          </Checkbox>
+          <Checkbox
+            onChange={(value) => {setOrange(value);}}
+            isSelected={isOrange}
+            isEmphasized>
+            Orange
+          </Checkbox>
+          <Button variant="primary" onPress={() => {setApple(!isApple);}}>Toggle Apple</Button>
+          <Button variant="primary" onPress={() => {setOrange(!isOrange);}}>Toggle Orange</Button>
+        </Flex>
+      );
+    }
   );
 
 function render(props = {}) {
