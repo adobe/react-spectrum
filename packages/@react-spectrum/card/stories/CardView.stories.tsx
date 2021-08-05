@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {Card, CardView, GridLayout} from '../';
 import {SpectrumCardViewProps} from '@react-types/card';
-import React from 'react';
+import React, {useMemo} from 'react';
 import {storiesOf} from '@storybook/react';
 
 let items = [
@@ -23,18 +23,33 @@ let items = [
   {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 4}
 ];
 
-
 // TODO add static and dynamic, various layouts
 storiesOf('CardView', module)
   .add(
-    'default',
-    () => render({})
+    'default grid layout',
+    () => render({layout: GridLayout})
+  )
+  .add(
+    'isLoading',
+    () => (
+      <CardView layout={GridLayout} isLoading width="800px">
+        {[]}
+      </CardView>
+    )
+  )
+  .add(
+    'empty state',
+    () => (
+      <CardView layout={GridLayout} width="800px">
+        {[]}
+      </CardView>
+    )
   );
 
-function render(props: SpectrumCardViewProps) {
-  let {layout = GridLayout} = props;
+function render(props) {
+  let {layout} = props;
   return (
-    <CardView layout={layout} items={items} width="800px">
+    <CardView layout={layout} items={items} width="800px" height="200px">
       {item =>
         <Card key={item.id} src={item.url} />
       }

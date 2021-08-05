@@ -12,7 +12,6 @@
 
 import {BaseLayout} from './';
 import {Collection, Direction, KeyboardDelegate, Node} from '@react-types/shared';
-import {GridCollection} from '@react-types/grid';
 import {InvalidationContext, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
 
@@ -21,13 +20,14 @@ export type GridLayoutOptions<T> = {
   cardSize?: 'S' | 'M' | 'L',
   minItemSize?: Size,
   maxItemSize?: Size,
-  margin?: any, // Perhaps should accept Responsive<DimensionValue>
+  margin?: any, // TODO: Perhaps should accept Responsive<DimensionValue>
   minSpace?: Size,
   maxColumns?: number,
   itemPadding?: number
 };
 
 // TODO: copied from V2, update this with the proper spectrum values
+// Should these be affected by Scale as well?
 const DEFAULT_OPTIONS = {
   S: {
     itemPadding: 20,
@@ -51,10 +51,6 @@ const DEFAULT_OPTIONS = {
 
 // TODO Perhaps this extends something else, maybe BaseLayout doesn't need to exist and we can extend off a different layout
 // Maybe extend GridKeyboardDelegate?
-// Info that will come in handy/replace stuff below
-/*
-this.virtualizer.visibleRect.width => use this to calculate the number of columns. Subtitutes collectionView.size.width
-*/
 
 export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   // from v2, TODO: type these, do these need to be protected?
@@ -70,7 +66,7 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   protected horizontalSpacing
   // TODO: Removed protected so that we can access it within CardView. Perhaps update this so it matches the Card "layout" prop types
   // Make keep it as protected and implement a getter method so that it can be accessed but not modified from the outside
-  cardType;
+  // protected cardType;
 
   // The following are set in CardView, not through options
   collection: Collection<Node<T>>;
@@ -80,7 +76,7 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   disabledKeys: Set<Key> = new Set();
   direction: Direction;
   protected invalidateEverything: boolean;
-  // Not sure we need the below for GridLayout, the loader height and placeholder hei
+  // Not sure we need the below for GridLayout, the loader height and placeholder height
   // protected loaderHeight: number;
   // protected placeholderHeight: number;
 
@@ -147,37 +143,13 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     this.numColumns = 0;
     this.numRows = 0;
     this.horizontalSpacing = 0;
-    // Grid layout only supports quiet cards, perhaps change this to be
-    this.cardType = 'quiet';
     this.lastCollection = null;
   }
 
-  // TODO: Replaced by the getLayoutInfo in BaseLayout which queries this.layoutInfo.
-  // Dunno if any of the other logic will need to be carried over, keep for now
-  // getLayoutInfo(type, section, index) {
-  //   let row = Math.floor(index / this.numColumns);
-  //   let column = index % this.numColumns;
-  //   let x = this.margin + column * (this.itemSize.width + this.horizontalSpacing);
-  //   let y = this.margin + row * (this.itemSize.height + this.minSpace.height);
-
-  //   if (this.shouldShowDropSpacing()) {
-  //     let dropTarget = this.collectionView._dropTarget;
-  //     let dropRow = Math.floor(dropTarget.indexPath.index / this.numColumns);
-  //     if (dropRow === row) {
-  //       x -= this.dropSpacing / 2;
-
-  //       if (index >= dropTarget.indexPath.index) {
-  //         x += this.dropSpacing;
-  //       }
-  //     }
-  //   }
-
-  //   let layoutInfo = new LayoutInfo(type, section, index);
-  //   layoutInfo.rect = new Rect(x, y, this.itemSize.width, this.itemSize.height);
-  //   layoutInfo.estimatedSize = false;
-
-  //   return layoutInfo;
-  // }
+  get cardType() {
+    // GridLayout only supports quiet cards
+    return 'quiet';
+  }
 
   // TODO: Below functions From V2 Maybe don't need this? Might be a short cut for getting all visible rects since otherwise we'd have to iterate across all nodes
   getIndexAtPoint(x, y, allowInsertingAtEnd = false) {
@@ -193,12 +165,11 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     );
   }
 
+  // TODO think I need to fix this since it doesn't work for empty collections or isloading
   getVisibleLayoutInfos(rect) {
     let res = [];
     // Adapted from v2
     let numItems = this.collection.size;
-    console.log('tweagaweg', numItems)
-    //  let numItems = this.collectionView.getSectionLength(0) - 1;
     if (numItems < 0 || !this.itemSize) {
       return res;
     }
@@ -206,17 +177,11 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     // The approach from v2 uses indexes where other v3 layouts iterate through every node/root node. This feels more efficient
     let firstVisibleItem = this.getIndexAtPoint(rect.x, rect.y);
     let lastVisibleItem = this.getIndexAtPoint(rect.maxX, rect.maxY);
-    console.log('LAST VISIBLE', lastVisibleItem)
 
     // TBH, do we really need to check isVisible here? Is there a case where an item between the first/last visible item wouldn't be visible?
     for (let index = firstVisibleItem; index < lastVisibleItem; index++) {
-      // Can't use collection.at unfortunately because the collection.keyMap.keys has row and child node as a separate key.
-      // Perhaps I should change up what gets provided to new GridCollection items
-      // console.log('this', this.collection.at)
       let keyFromIndex = this.collection.at(index).key;
-      // let keyFromIndex = this.collection.at(index).key;
       // TODO: double check that this is retrieving the correct layoutInfos
-      // Right now it is grabbing the row keys, not the cell keys. I think that is correct
       let layoutInfo = this.layoutInfos.get(keyFromIndex);
       if (this.isVisible(layoutInfo, rect)) {
         res.push(layoutInfo);
@@ -264,7 +229,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
 
     this.buildCollection();
 
-
     // TODO: grabbed from ListLayout, not entirely sure if necessary
     // Remove layout info that doesn't exist in new collection
     if (this.lastCollection) {
@@ -279,30 +243,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     this.lastCollection = this.collection;
   }
 
-    //   let row = Math.floor(index / this.numColumns);
-  //   let column = index % this.numColumns;
-  //   let x = this.margin + column * (this.itemSize.width + this.horizontalSpacing);
-  //   let y = this.margin + row * (this.itemSize.height + this.minSpace.height);
-
-  //   if (this.shouldShowDropSpacing()) {
-  //     let dropTarget = this.collectionView._dropTarget;
-  //     let dropRow = Math.floor(dropTarget.indexPath.index / this.numColumns);
-  //     if (dropRow === row) {
-  //       x -= this.dropSpacing / 2;
-
-  //       if (index >= dropTarget.indexPath.index) {
-  //         x += this.dropSpacing;
-  //       }
-  //     }
-  //   }
-
-  //   let layoutInfo = new LayoutInfo(type, section, index);
-  //   layoutInfo.rect = new Rect(x, y, this.itemSize.width, this.itemSize.height);
-  //   layoutInfo.estimatedSize = false;
-
-  //   return layoutInfo;
-
-  // I don't think I need to construct the node list
   buildCollection() {
     let y = this.margin;
     let index = 0;
@@ -314,13 +254,15 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
 
     // TODO: removed instances of loaderHeight and placeholderHeight
     if (this.isLoading) {
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.virtualizer.visibleRect.height);
+      console.log('ISLOADING', this.virtualizer.visibleRect.height)
+      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.collection.size === 0 ? this.virtualizer.visibleRect.height : 60);
       let loader = new LayoutInfo('loader', 'loader', rect);
       this.layoutInfos.set('loader', loader);
       y = loader.rect.maxY;
     }
 
     if (this.collection.size === 0) {
+      console.log('creating placeholder')
       let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.virtualizer.visibleRect.height);
       let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
       this.layoutInfos.set('placeholder', placeholder);
@@ -328,9 +270,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     }
 
     this.contentSize = new Size(this.virtualizer.visibleRect.width, y + this.margin);
-    // TODO: compare this content Size with the below to make sure it lines up
-        // let contentHeight = this.margin * 2 + (this.numRows * this.itemSize.height) + ((this.numRows - 1) * this.minSpace.height);
-    // this.contentSize = new Size(this.virtualizer.visibleRect.width, contentHeight);
   }
 
   buildChild(node: Node<T>, y: number, index: number): LayoutInfo {
@@ -353,25 +292,24 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
 
   // TODO: add updateItemSize since Virtualizer statelly needs it?
   // Do we really need this?
-  updateItemSize(key: Key, size: Size) {
-    let layoutInfo = this.layoutInfos.get(key);
-    // If no layoutInfo, item has been deleted/removed.
-    if (!layoutInfo) {
-      return false;
-    }
+  // updateItemSize(key: Key, size: Size) {
+  //   let layoutInfo = this.layoutInfos.get(key);
+  //   // If no layoutInfo, item has been deleted/removed.
+  //   if (!layoutInfo) {
+  //     return false;
+  //   }
 
-    layoutInfo.estimatedSize = false;
-    if (layoutInfo.rect.height !== size.height) {
-      // Copy layout info rather than mutating so that later caches are invalidated.
-      let newLayoutInfo = layoutInfo.copy();
-      newLayoutInfo.rect.height = size.height;
-      this.layoutInfos.set(key, newLayoutInfo);
-      return true;
-    }
+  //   layoutInfo.estimatedSize = false;
+  //   if (layoutInfo.rect.height !== size.height) {
+  //     // Copy layout info rather than mutating so that later caches are invalidated.
+  //     let newLayoutInfo = layoutInfo.copy();
+  //     newLayoutInfo.rect.height = size.height;
+  //     this.layoutInfos.set(key, newLayoutInfo);
+  //     return true;
+  //   }
 
-    return false;
-  }
-
+  //   return false;
+  // }
 
 
   // TODO: add drop and drop later
