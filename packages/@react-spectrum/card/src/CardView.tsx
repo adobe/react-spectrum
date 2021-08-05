@@ -145,6 +145,8 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   );
 }
 
+
+// TODO filler centerwrapper from ListView, check if is valid
 function CenteredWrapper({children}) {
   let {state} = useContext(CardViewContext);
   return (

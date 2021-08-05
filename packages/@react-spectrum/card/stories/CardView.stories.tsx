@@ -44,17 +44,33 @@ storiesOf('CardView', module)
     () => render({layout: GridLayout})
   )
   .add(
-    'isLoading',
+    'isLoading, no height',
     () => (
-      <CardView layout={GridLayout} isLoading width="800px" height="300px">
+      <CardView layout={GridLayout} isLoading width="800px" UNSAFE_style={{background: 'white'}}>
         {[]}
       </CardView>
     )
   )
   .add(
-    'empty state',
+    'isLoading, set height',
     () => (
-      <CardView layout={GridLayout} width="800px" height="300px">
+      <CardView layout={GridLayout} isLoading width="800px" height="300px" UNSAFE_style={{background: 'white'}}>
+        {[]}
+      </CardView>
+    )
+  )
+  .add(
+    'empty state, no height',
+    () => (
+      <CardView layout={GridLayout} width="800px" renderEmptyState={renderEmptyState} UNSAFE_style={{background: 'white'}}>
+        {[]}
+      </CardView>
+    )
+  )
+  .add(
+    'empty state, set height',
+    () => (
+      <CardView layout={GridLayout} width="800px" height="300px" renderEmptyState={renderEmptyState} UNSAFE_style={{background: 'white'}}>
         {[]}
       </CardView>
     )
@@ -63,7 +79,7 @@ storiesOf('CardView', module)
 function render(props) {
   let {layout} = props;
   return (
-    <CardView layout={layout} items={items} width="800px" height="200px">
+    <CardView layout={layout} items={items} width="800px" height="800px" UNSAFE_style={{background: 'white'}}>
       {item =>
         <Card key={item.id} src={item.url} />
       }

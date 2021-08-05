@@ -170,16 +170,17 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     let res = [];
     // Adapted from v2
     let numItems = this.collection.size;
-    console.log('numItems', numItems, this.itemSize)
     if (numItems <= 0 || !this.itemSize) {
+      // If there aren't any items in the collection, we are in a loader/placeholder state. Return those layoutInfos as
+      // the currently visible items
       if (this.layoutInfos.size > 0) {
         for (let layoutInfo of this.layoutInfos.values()) {
-          console.log('layoutInfo', layoutInfo)
-          res.push(layoutInfo);
+          if (this.isVisible(layoutInfo, rect)) {
+            res.push(layoutInfo);
+          }
         }
       }
     } else {
-      console.log('in else of getVisibleLayoutInfos')
       // The approach from v2 uses indexes where other v3 layouts iterate through every node/root node. This feels more efficient
       let firstVisibleItem = this.getIndexAtPoint(rect.x, rect.y);
       let lastVisibleItem = this.getIndexAtPoint(rect.maxX, rect.maxY);
@@ -251,8 +252,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   }
 
   buildCollection() {
-    console.trace()
-    // debugger;
     let y = this.margin;
     let index = 0;
     for (let node of this.collection) {
@@ -261,21 +260,30 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
       index++;
     }
 
-    // TODO: removed instances of loaderHeight and placeholderHeight
     if (this.isLoading) {
-      console.log('ISLOADING', this.virtualizer.visibleRect.height)
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.collection.size === 0 ? this.virtualizer.visibleRect.height : 60);
+      let loaderY = y;
+      let loaderHeight;
+      let marginOffset;
+      // If there aren't any items, make loader take all avaliable room and remove margin from y calculation
+      // so it doesn't scroll
+      if (this.collection.size === 0) {
+        loaderY = 0;
+        // TODO: filler loader and placeholder heights, get the desired loader height later
+        loaderHeight = this.virtualizer.visibleRect.height || 60;
+        marginOffset = this.margin;
+      }
+
+      let rect = new Rect(0, loaderY, this.virtualizer.visibleRect.width, loaderHeight);
       let loader = new LayoutInfo('loader', 'loader', rect);
       this.layoutInfos.set('loader', loader);
-      y = loader.rect.maxY;
+      y = loader.rect.maxY - marginOffset;
     }
 
-    if (this.collection.size === 0 && this.layoutInfos.size === 0) {
-      console.log('creating placeholder')
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.virtualizer.visibleRect.height ?? 60);
+    if (this.collection.size === 0 && !this.isLoading) {
+      let rect = new Rect(0, 0, this.virtualizer.visibleRect.width, this.virtualizer.visibleRect.height);
       let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
       this.layoutInfos.set('placeholder', placeholder);
-      y = placeholder.rect.maxY;
+      y = placeholder.rect.maxY - this.margin;
     }
 
     this.contentSize = new Size(this.virtualizer.visibleRect.width, y + this.margin);
