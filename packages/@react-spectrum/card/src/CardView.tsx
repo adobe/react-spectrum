@@ -51,23 +51,26 @@ export function useListLayout<T>(state: ListState<T>) {
 import {GridLayout} from './';
 
 
-export const CardViewContext = React.createContext(null);
+const CardViewContext = React.createContext(null);
 
 function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
-  // Handles RSP specific style options, UNSAFE_style, and UNSAFE_className props (see https://react-spectrum.adobe.com/react-spectrum/styling.html#style-props)
   let {styleProps} = useStyleProps(props);
   // let state = useCardViewState(props);
   // let ariaProps = useCardView(props, state);
   let domRef = useDOMRef(ref);
+  let {
+    cardOrientation,
+    cardSize,
+    isQuiet,
+    renderEmptyState,
+    // TODO: add layout back in when I get rid of the test layouts that are hard coded below
+    // layout
+  } = props;
 
   // TODO:
   // What exactly is the layout of CardView going to be? Is it a single column Grid with each row having child Card elements?
   // Or is it a multi column grid with each Card being a Cell in the Row?
   // " Each card is represented as a row in the grid with a single cell inside." Does this mean you have rows next to each other? Feels weird, check v2 implementation
-
-  let gridLayout = new GridLayout({direction: 'rtl'});
-  console.log('GLENLKGNEKL', gridLayout)
-
 
 
   // TODO: to test, just use the layout from listview
@@ -76,36 +79,46 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   // let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let {direction} = useLocale();
   let {collection} = useListState(props);
+
   // TODO: Is CardView a single column grid? If so, is each card a "cell" within a row? Does each row have a single card or multiple?
   //  Figure out what to pass to "items" here
-  let gridCollection = React.useMemo(() => new GridCollection({
+  let gridCollection = React.useMemo(() => new GridCollection<T>({
     columnCount: 1,
     items: [...collection].map(item => ({
       type: 'item',
       childNodes: [{
         ...item,
         index: 0,
-        type: 'cell'
+        type: 'gridcell'
       }]
     }))
   }), [collection]);
 
-  console.log('gridCollection', gridCollection)
+  console.log('gridCollection', gridCollection, gridCollection.size, gridCollection.at(0),  gridCollection.at(1),  gridCollection.at(2))
   let state = useGridState({
     ...props,
     collection: gridCollection
   });
   console.log('state', state);
 
+  // TODO this will be passed in via props, just keep the part where we set collection and disabledkeys
+  let gridLayout = new GridLayout<T>();
+  gridLayout.collection = state.collection;
+  gridLayout.disabledKeys = state.disabledKeys;
+  gridLayout.isLoading = props.isLoading;
+  gridLayout.direction = direction;
+  console.log('GLENLKGNEKL', gridLayout)
+
+
   // TODO: this is a placeholder layout. Will be replaced by the CardView specific layouts
   // Each layout will need its own validate/build functions that determine the number of columns + divide the cards into
   // visual rows depending on how large the CardView is vs Card sizes
   let layout = useListLayout(state);
+
   // TODO: placeholder keyboardDelegate, will be replaced by the layout specific keyboard delegates
   // Will need to figure out how to get the proper above/below/right/left keys. If CardView is regarded as a single
   // column grid, but the layout is actually multiple columns and rows then it will be a bit tricky. But if it is a single column
   // with multiple rows, and each row contains N cards then it won't be too bad
-
   // Actually, left/right is simple, getKeyRight/Left will just be the current key index +/- 1 (assuming the collection is a single column grid w/ each card being its own row). Up/down
   // will need to be overriden where we'll need to calculate the number of columns ourselves since the collection won't be an accurate representation of the current visual layout.
   let keyboardDelegate = React.useMemo(() => new GridKeyboardDelegate({
@@ -118,13 +131,14 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   let {gridProps} = useGrid({
     ...props,
     isVirtualized: true,
+    // TODO: this
     keyboardDelegate
   }, state, domRef);
 
 
   console.log('layout', layout);
   return (
-    <CardViewContext.Provider value={state}>
+    <CardViewContext.Provider value={{state, cardOrientation, cardSize, isQuiet, cardType: gridLayout.cardType}}>
       <Virtualizer
         {...gridProps}
         // Informs the width of the CardView
@@ -134,14 +148,30 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
         sizeToFit="height"
         scrollDirection="vertical"
         layout={layout}
-        collection={collection}>
+        collection={collection}
+        isLoading={props.isLoading}
+        onLoadMore={props.onLoadMore}>
         {(type, item) => {
-          // TODO readd this
-          // if (type === 'card') {
           if (type === 'item') {
             return (
               <InternalCard item={item} />
             )
+          } else if (type === 'loader') {
+            return <div />;
+            // TODO: Create CenteredWrapper for CardView
+            // <CenteredWrapper>
+            //   <ProgressCircle
+            //     isIndeterminate
+            //     aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
+            // </CenteredWrapper>
+          } else if (type === 'placeholder') {
+            let emptyState = props.renderEmptyState ? props.renderEmptyState() : null;
+            if (emptyState == null) {
+              return null;
+            }
+
+            return <div />
+            // TODO: Render emptyState, think about what the wrapper should look like (use CenteredWrapper?)
           }
         }}
       </Virtualizer>
@@ -154,13 +184,17 @@ function InternalCard(props) {
   let {
     item
   } = props;
+  let {state, cardOrientation, cardSize, isQuiet} = useContext(CardViewContext);
+
   // item.rendered will have the children provided to the Card (e.g. Image, ActionMenu, etc)
-  // item.props will have all other relevant info: size, orientation, etc
+  // item.props will have all other relevant info: size, orientation, isQuiet, etc
+  // To get the proper isQuiet from item.props vs the info coming from the CardView context,
+  // we can check the cardType + isQuiet from CardView context and compare with isQuiet from item.props and make a decision
+  // based on if the CardView allows isQuiet for the specific layout
 
   // TODO this will have a bunch of other stuff such as useGridRow and useGridCell
-  // let {state} = useContext(CardViewContext);
 
-  // Outer div is row, inner div is cell
+  // TODO: Outer div is row, inner div is cell
   return (
     <div>
       <img src={item.props.src} />

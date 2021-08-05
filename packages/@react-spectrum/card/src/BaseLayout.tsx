@@ -24,7 +24,7 @@ export class BaseLayout<T> extends Layout<Node<T>> {
     this.layoutInfos = new Map();
   }
 
-  // Content size is determined in buildCollection (differs between layouts so not defined here)
+  // Content size is determined in buildCollection (differs between layouts so buildCollection is not defined here)
   getContentSize() {
     return this.contentSize;
   }
