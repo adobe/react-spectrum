@@ -143,8 +143,8 @@ storiesOf('Checkbox', module)
 
       return (
         <Flex direction="column" gap="size-100">
-          <div>isIndeterminate: {isIndeterminate ? 'true': 'false'}</div>
-          <div>isSelected: {isSelected ? 'true': 'false'}</div>
+          <div>isIndeterminate: {isIndeterminate ? 'true' : 'false'}</div>
+          <div>isSelected: {isSelected ? 'true' : 'false'}</div>
           <Checkbox
             onChange={(value) => {setApple(value); setOrange(value); setIndeterminate(false); setSelected(value);}}
             isEmphasized
