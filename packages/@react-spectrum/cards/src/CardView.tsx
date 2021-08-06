@@ -19,6 +19,7 @@ import intlMessages from '../intl/*.json';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useContext, useMemo, useRef} from 'react';
 import {SpectrumCardViewProps} from '@react-types/cards';
+import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {useGrid} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
@@ -100,7 +101,14 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
         layout={cardViewLayout}
         collection={collection}
         isLoading={isLoading}
-        onLoadMore={onLoadMore}>
+        onLoadMore={onLoadMore}
+        className={
+          classNames(
+            styles,
+            'spectrum-CardGrid',
+            styleProps.className
+          )
+        }>
         {(type, item) => {
           if (type === 'item') {
             return (
