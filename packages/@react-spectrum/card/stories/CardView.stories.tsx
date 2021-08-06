@@ -44,8 +44,9 @@ export default {
   title: 'CardView'
 }
 
+let onSelectionChange = action('onSelectionChange');
 let actions = {
-  onSelectionChange: action('onSelectionChange'),
+  onSelectionChange: s => onSelectionChange([...s]),
 };
 
 export const DefaultGrid = () => render({});
@@ -77,7 +78,7 @@ function render(props) {
   } = props;
 
   return (
-    <CardView  {...actions} layout={layout} items={items} width="800px" height="800px" UNSAFE_style={{background: 'white'}} aria-label="Test CardView">
+    <CardView  {...actions} layout={layout} items={items} width="800px" height="800px" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
       {item =>
         <Card key={item.id} src={item.url} />
       }
