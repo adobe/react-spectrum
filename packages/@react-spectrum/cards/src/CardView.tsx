@@ -173,15 +173,15 @@ function InternalCard(props) {
   // we can check the cardType + isQuiet from CardView context and compare with isQuiet from item.props and make a decision
   // based on if the CardView allows isQuiet for the specific layout
 
-
-  let ref = React.useRef<HTMLDivElement>();
+  let rowRef = useRef();
+  let cellRef = useRef();
   // let ref = useRef<DOMRefValue<HTMLDivElement>>();
   // let unwrappedRef = useUnwrapDOMRef(ref);
 
   let {rowProps} = useGridRow({
     node: item,
     isVirtualized: true
-  }, state, ref);
+  }, state, rowRef);
   // let {rowProps} = useGridRow({
   //   node: item,
   //   isVirtualized: true
@@ -190,16 +190,16 @@ function InternalCard(props) {
   let {gridCellProps} = useGridCell({
     node: item,
     focusMode: 'cell'
-  }, state, ref);
+  }, state, cellRef);
   // let {gridCellProps} = useGridCell({
   //   node: item,
   //   focusMode: 'cell'
   // }, state, unwrappedRef);
 
   return (
-    <div {...rowProps}>
+    <div {...rowProps} ref={rowRef}>
       {/* TODO: I presume we ignore all props passed in via item.props? */}
-      <CardBase ref={ref} articleProps={gridCellProps} isQuiet={isQuiet || cardType === 'quiet'}>
+      <CardBase ref={cellRef} articleProps={gridCellProps} isQuiet={isQuiet || cardType === 'quiet'}>
         {item.rendered}
       </CardBase>
     </div>
