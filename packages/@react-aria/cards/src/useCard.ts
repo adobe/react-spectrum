@@ -20,7 +20,7 @@ interface AriaCardOptions extends AriaCardProps {
 interface CardAria {
   cardProps: HTMLAttributes<HTMLDivElement>,
   titleProps: HTMLAttributes<HTMLDivElement>,
-  detailProps: HTMLAttributes<HTMLDivElement>
+  contentProps: HTMLAttributes<HTMLDivElement>
 }
 
 /**
@@ -33,7 +33,7 @@ export function useCard(props: AriaCardOptions): CardAria {
   let titleProps = useMemo(() => ({
     id: titleId
   }), [titleId]);
-  let detailProps = useMemo(() => ({
+  let contentProps = useMemo(() => ({
     id: descriptionId
   }), [descriptionId]);
 
@@ -44,6 +44,6 @@ export function useCard(props: AriaCardOptions): CardAria {
       'aria-describedby': descriptionId
     },
     titleProps,
-    detailProps
+    contentProps
   };
 }

@@ -20,13 +20,16 @@ import {useProviderProps} from '@react-spectrum/provider';
 // incomplete component for show right now
 
 function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
+  /* Slots should be able to pass an alt for default behavior, but in Images, the child may know better. */
+  let userProvidedAlt = props.alt;
   props = useSlotProps(props, 'image');
+  props = useProviderProps(props);
   let {
     objectFit,
     src,
     alt,
     ...otherProps
-  } = useProviderProps(props);
+  } = props;
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
 
@@ -34,7 +37,7 @@ function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
     console.warn(
       'The `alt` prop was not provided to an image. ' +
       'Add `alt` text for screen readers, or set `alt=""` prop to indicate that the image ' +
-      'is decorative or redundant with displayed text and should not be annouced by screen readers.'
+      'is decorative or redundant with displayed text and should not be announced by screen readers.'
     );
   }
 
@@ -50,7 +53,7 @@ function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
       ref={domRef}>
       <img
         src={src}
-        alt={alt}
+        alt={userProvidedAlt || alt}
         style={{objectFit, height: '100%', width: '100%'}} />
     </div>
   );

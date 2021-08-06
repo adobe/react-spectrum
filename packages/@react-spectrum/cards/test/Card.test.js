@@ -10,17 +10,45 @@
  * governing permissions and limitations under the License.
  */
 
-import {Card} from '../';
-import {render} from '@testing-library/react';
+import {Card} from '../src';
+import {Default, DefaultPreviewAlt, NoDescription} from '../stories/Card.stories';
 import React from 'react';
+import {render} from '@testing-library/react';
 
 describe('Card', function () {
   it.each`
-    Name | Component      | props
-    ${'Card'} | ${Card} | ${{}}
-  `('$Name handles defaults', function ({Component, props}) {
-    let tree = render(<Component {...props} />);
+    Name         | Component | props
+    ${'Default'} | ${Default}   | ${{}}
+  `('$Name is labelled and described', function ({Component, props}) {
+    let {getByRole, getByLabelText} = render(<Card {...Default.args} />);
+    let card = getByRole('article');
+    let heading = getByRole('heading', {level: 3});
+    let image = getByRole('img');
+    let labelledCard = getByLabelText(heading.textContent);
+    expect(card).toBe(labelledCard);
+    expect(card).toHaveAccessibleDescription('Description');
+    expect(image).not.toHaveAccessibleName();
+  });
 
-    expect(tree).toBeTruthy();
+  it.each`
+    Name               | Component          | props
+    ${'NoDescription'} | ${NoDescription}   | ${{}}
+  `('$Name is labelled and not described', function ({Component, props}) {
+    let {getByRole, queryByRole} = render(<Card {...NoDescription.args} />);
+    let card = getByRole('article');
+    let heading = getByRole('heading', {level: 3});
+    let section = queryByRole('section');
+    expect(section).toBeNull();
+    expect(card).toHaveAttribute('aria-labelledby', heading.id);
+    expect(card).not.toHaveAccessibleDescription();
+  });
+
+  it.each`
+    Name                   | Component              | props
+    ${'DefaultPreviewAlt'} | ${DefaultPreviewAlt}   | ${{}}
+  `('$Name has a labelled image', function ({Component, props}) {
+    let {getByRole} = render(<Card {...DefaultPreviewAlt.args} />);
+    let image = getByRole('img');
+    expect(image).toHaveAccessibleName('preview');
   });
 });

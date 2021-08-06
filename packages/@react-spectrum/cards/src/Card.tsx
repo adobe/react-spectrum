@@ -10,39 +10,38 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
+import {Divider} from '@react-spectrum/divider';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, useSlotId} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import React, {useMemo, useRef} from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {useCard} from '@react-aria/cards';
 import {useProviderProps} from '@react-spectrum/provider';
-import {Divider} from '../../divider';
-import {Grid} from '@react-spectrum/layout';
 
 
 function Card(props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
-  let {isQuiet} = props;
+  let {isQuiet, orientation = 'vertical'} = props;
   let {styleProps} = useStyleProps(props);
-  let {cardProps, titleProps, detailProps} = useCard(props);
+  let {cardProps, titleProps, contentProps} = useCard(props);
   let domRef = useDOMRef(ref);
   let gridRef = useRef();
 
-  let hasFooter = useHasChild(`.${styles['spectrum-Card-footer']}`, unwrapDOMRef(gridRef));
+  let hasFooter = useHasChild(`.${styles['spectrum-Card-footer']}`, gridRef);
 
   let slots = useMemo(() => ({
-    image: {UNSAFE_className: classNames(styles, 'spectrum-Card-image')},
+    image: {UNSAFE_className: classNames(styles, 'spectrum-Card-image'), objectFit: isQuiet ? 'contain' : 'cover', alt: ''},
     illustration: {UNSAFE_className: classNames(styles, 'spectrum-Card-illustration')},
     avatar: {UNSAFE_className: classNames(styles, 'spectrum-Card-avatar'), size: 'avatar-size-100'},
     heading: {UNSAFE_className: classNames(styles, 'spectrum-Card-heading'), ...titleProps},
-    content: {UNSAFE_className: classNames(styles, 'spectrum-Card-content')},
-    detail: {UNSAFE_className: classNames(styles, 'spectrum-Card-detail'), ...detailProps},
+    content: {UNSAFE_className: classNames(styles, 'spectrum-Card-content'), ...contentProps},
+    detail: {UNSAFE_className: classNames(styles, 'spectrum-Card-detail')},
     actionmenu: {UNSAFE_className: classNames(styles, 'spectrum-Card-actions'), align: 'end', isQuiet: true},
     footer: {UNSAFE_className: classNames(styles, 'spectrum-Card-footer')},
     divider: {UNSAFE_className: classNames(styles, 'spectrum-Card-divider'), size: 'S'}
-  }), [titleProps, detailProps]);
+  }), [titleProps, contentProps]);
 
   return (
     <article
@@ -51,15 +50,16 @@ function Card(props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) {
       {...styleProps}
       ref={domRef}
       className={classNames(styles, 'spectrum-Card', {
-        'spectrum-Card--default': !isQuiet,
-        'spectrum-Card--isQuiet': isQuiet
+        'spectrum-Card--default': !isQuiet && orientation !== 'horizontal',
+        'spectrum-Card--isQuiet': isQuiet && orientation !== 'horizontal',
+        'spectrum-Card--horizontal': orientation === 'horizontal'
       }, styleProps.className)}>
-      <Grid ref={gridRef} UNSAFE_className={styles['spectrum-Card-grid']}>
+      <div ref={gridRef} className={styles['spectrum-Card-grid']}>
         <SlotProvider slots={slots}>
           {props.children}
           {hasFooter && <Divider />}
         </SlotProvider>
-      </Grid>
+      </div>
     </article>
   );
 }

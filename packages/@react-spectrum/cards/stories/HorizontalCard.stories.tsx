@@ -11,20 +11,32 @@
  */
 
 import {Card} from '../';
-import {Default} from '../stories/Card.stories';
+import {
+  Default,
+  LongContent
+} from './Card.stories';
+import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
-import {storiesOf} from '@storybook/react';
 
 
-storiesOf('Card', module)
-  .add(
-    'name me',
-    () => render({})
-  );
+const meta: Meta<SpectrumCardProps> = {
+  title: 'Card/horizontal',
+  component: Card
+};
 
-function render(props: SpectrumCardProps = Default.args) {
-  return (
-    <Card {...props} />
-  );
-}
+export default meta;
+
+
+const Template = (): Story<SpectrumCardProps> => (args) => (
+  <div style={{maxWidth: '200px'}}>
+    <Card {...args} />
+  </div>
+);
+
+export const Horizontal = Template().bind({});
+Horizontal.args = {...Default.args, orientation: 'horizontal'};
+
+export const HorizontalLongDescription = Template().bind({});
+HorizontalLongDescription.args = {...LongContent.args, orientation: 'horizontal'};
+

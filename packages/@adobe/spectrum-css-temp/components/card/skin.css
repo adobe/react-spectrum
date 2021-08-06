@@ -53,13 +53,11 @@ governing permissions and limitations under the License.
   border-color: transparent;
   background-color: transparent;
 
-  .spectrum-Card-preview {
-    background-color: var(--spectrum-card-quiet-preview-background-color);
-  }
 
   &:hover {
     border-color: transparent;
-    .spectrum-Card-preview {
+    .spectrum-Card-image,
+    .spectrum-Card-illustration {
       background-color: var(--spectrum-card-quiet-preview-background-color-hover);
     }
   }

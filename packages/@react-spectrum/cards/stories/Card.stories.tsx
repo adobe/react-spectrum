@@ -10,18 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionMenu, Item} from '@react-spectrum/menu';
+import assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
+import {Button} from '@react-spectrum/button';
 import {Card} from '../';
+import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {Content, Footer} from '@react-spectrum/view';
+import {Flex} from '@react-spectrum/layout';
+import {Heading, Text} from '@react-spectrum/text';
+import {Image} from '@react-spectrum/image';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
-import {Image} from '@react-spectrum/image';
-import {Heading, Text} from '@react-spectrum/text';
-import {Content, Footer} from '@react-spectrum/view';
-import {ActionMenu, Item} from '@react-spectrum/menu';
-import {Button} from '@react-spectrum/button';
-import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {Flex} from '../../layout';
-import assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
 
 
 const meta: Meta<SpectrumCardProps> = {
@@ -40,7 +40,41 @@ const Template = (): Story<SpectrumCardProps> => (args) => (
 export const Default = Template().bind({});
 Default.args = {children: (
   <>
-    <Image alt="preview" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
+    <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
+    <Heading>Title</Heading>
+    <Text slot="detail">PNG</Text>
+    <Content>Description</Content>
+    <ActionMenu>
+      <Item>Action 1</Item>
+      <Item>Action 2</Item>
+    </ActionMenu>
+    <Footer>
+      <Button variant="primary">Something</Button>
+    </Footer>
+  </>
+)};
+
+export const DefaultSquare = Template().bind({});
+DefaultSquare.args = {children: (
+  <>
+    <Image src="https://i.imgur.com/DhygPot.jpg" />
+    <Heading>Title</Heading>
+    <Text slot="detail">PNG</Text>
+    <Content>Description</Content>
+    <ActionMenu>
+      <Item>Action 1</Item>
+      <Item>Action 2</Item>
+    </ActionMenu>
+    <Footer>
+      <Button variant="primary">Something</Button>
+    </Footer>
+  </>
+)};
+
+export const DefaultPreviewAlt = Template().bind({});
+DefaultPreviewAlt.args = {children: (
+  <>
+    <Image alt="preview" src="https://i.imgur.com/Z7AzH2c.jpg" />
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
     <Content>Description</Content>
@@ -57,7 +91,24 @@ Default.args = {children: (
 export const LongContent = Template().bind({});
 LongContent.args = {children: (
   <>
-    <Image alt="preview" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
+    <Image src="https://i.imgur.com/Z7AzH2c.png" />
+    <Heading>Title</Heading>
+    <Text slot="detail">PNG</Text>
+    <Content>This is the description that never ends, it goes on and on my friends. Someone started typing without knowing what it was.</Content>
+    <ActionMenu>
+      <Item>Action 1</Item>
+      <Item>Action 2</Item>
+    </ActionMenu>
+    <Footer>
+      <Button variant="primary">Something</Button>
+    </Footer>
+  </>
+)};
+
+export const LongContentSquare = Template().bind({});
+LongContentSquare.args = {children: (
+  <>
+    <Image src="https://i.imgur.com/DhygPot.png" />
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
     <Content>This is the description that never ends, it goes on and on my friends. Someone started typing without knowing what it was.</Content>
@@ -74,7 +125,23 @@ LongContent.args = {children: (
 export const NoDescription = Template().bind({});
 NoDescription.args = {children: (
   <>
-    <Image alt="preview" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
+    <Image src="https://i.imgur.com/Z7AzH2c.png" />
+    <Heading>Title</Heading>
+    <Text slot="detail">PNG</Text>
+    <ActionMenu>
+      <Item>Action 1</Item>
+      <Item>Action 2</Item>
+    </ActionMenu>
+    <Footer>
+      <Button variant="primary">Something</Button>
+    </Footer>
+  </>
+)};
+
+export const NoDescriptionSquare = Template().bind({});
+NoDescriptionSquare.args = {children: (
+  <>
+    <Image src="https://i.imgur.com/DhygPot.jpg" />
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
     <ActionMenu>
@@ -90,7 +157,7 @@ NoDescription.args = {children: (
 export const NoFooter = Template().bind({});
 NoFooter.args = {children: (
   <>
-    <Image alt="preview" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
+    <Image src="https://i.imgur.com/Z7AzH2c.png" />
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
     <Content>Description</Content>
@@ -101,10 +168,23 @@ NoFooter.args = {children: (
   </>
 )};
 
+export const NoActionMenu = Template().bind({});
+NoActionMenu.args = {children: (
+  <>
+    <Image src="https://i.imgur.com/Z7AzH2c.png" />
+    <Heading>Title</Heading>
+    <Text slot="detail">PNG</Text>
+    <Content>Description</Content>
+    <Footer>
+      <Button variant="primary">Something</Button>
+    </Footer>
+  </>
+)};
+
 export const NoFooterOrDescription = Template().bind({});
 NoFooterOrDescription.args = {children: (
   <>
-    <Image alt="preview" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
+    <Image src="https://i.imgur.com/Z7AzH2c.png" />
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
     <ActionMenu>
@@ -129,9 +209,9 @@ NoImage.args = {children: (
 export const GridOfCards = () => (
   <Flex direction="row" gap={15} wrap="wrap" margin={50}>
     <Default {...Default.args} />
+    <Default {...DefaultSquare.args} />
     <Default {...Default.args} />
-    <Default {...Default.args} />
-    <Default {...Default.args} />
+    <Default {...DefaultSquare.args} />
     <Default {...Default.args} />
   </Flex>
 );
@@ -139,7 +219,7 @@ export const GridOfCards = () => (
 export const WithIllustration = Template().bind({});
 WithIllustration.args = {children: (
   <>
-    <File alt="file" slot="illustration" />
+    <File alt="file" slot="illustration" width={50} height={50} />
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
     <ActionMenu>
