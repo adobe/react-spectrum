@@ -17,6 +17,7 @@ import {Card} from '../';
 import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {Content, Footer} from '@react-spectrum/view';
 import {Flex} from '@react-spectrum/layout';
+import {getImage} from './utils';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Meta, Story} from '@storybook/react';
@@ -60,6 +61,23 @@ export const DefaultSquare = Template().bind({});
 DefaultSquare.args = {children: (
   <>
     <Image src="https://i.imgur.com/DhygPot.jpg" />
+    <Heading>Title</Heading>
+    <Text slot="detail">PNG</Text>
+    <Content>Description</Content>
+    <ActionMenu>
+      <Item>Action 1</Item>
+      <Item>Action 2</Item>
+    </ActionMenu>
+    <Footer>
+      <Button variant="primary">Something</Button>
+    </Footer>
+  </>
+)};
+
+export const DefaultTall = Template().bind({});
+DefaultTall.args = {children: (
+  <>
+    <Image src="https://i.imgur.com/3lzeoK7.jpg" />
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
     <Content>Description</Content>
@@ -210,11 +228,26 @@ NoImage.args = {children: (
 
 export const GridOfCards = () => (
   <Flex direction="row" gap={15} wrap="wrap" margin={50}>
-    <Default {...Default.args} />
-    <Default {...DefaultSquare.args} />
-    <Default {...Default.args} />
-    <Default {...DefaultSquare.args} />
-    <Default {...Default.args} />
+    {
+      (new Array(7).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <Default key={`${index}${url}`}>
+            <Image src={url} />
+            <Heading>Title</Heading>
+            <Text slot="detail">PNG</Text>
+            <Content>Description</Content>
+            <ActionMenu>
+              <Item>Action 1</Item>
+              <Item>Action 2</Item>
+            </ActionMenu>
+            <Footer>
+              <Button variant="primary">Something</Button>
+            </Footer>
+          </Default>
+        );
+      })
+    }
   </Flex>
 );
 

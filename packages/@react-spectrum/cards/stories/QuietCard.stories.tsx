@@ -11,10 +11,23 @@
  */
 
 import {Card} from '../';
-import {Default, DefaultSquare, NoDescription, NoDescriptionSquare, WithIllustration} from './Card.stories';
+import {
+  Default,
+  DefaultSquare,
+  DefaultTall,
+  NoDescription,
+  NoDescriptionSquare,
+  WithIllustration
+} from './Card.stories';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
+import {getImage} from './utils';
+import {Image} from '@react-spectrum/image';
+import {Heading, Text} from '@react-spectrum/text';
+import {Content, Footer} from '@react-spectrum/view';
+import {ActionMenu, Item} from '@react-spectrum/menu';
+import {Button} from '@react-spectrum/button';
 
 
 const meta: Meta<SpectrumCardProps> = {
@@ -26,7 +39,7 @@ export default meta;
 
 
 const Template = (): Story<SpectrumCardProps> => (args) => (
-  <div style={{width: '208px'}}>
+  <div style={{width: '208px', height: '276px'}}>
     <Card {...args} />
   </div>
 );
@@ -36,6 +49,9 @@ Quiet.args = {...Default.args, isQuiet: true};
 
 export const QuietSquare = Template().bind({});
 QuietSquare.args = {...DefaultSquare.args, isQuiet: true};
+
+export const QuietTall = Template().bind({});
+QuietTall.args = {...DefaultTall.args, isQuiet: true};
 
 export const QuietNoDescription = Template().bind({});
 QuietNoDescription.args = {...NoDescription.args, isQuiet: true};
@@ -52,16 +68,31 @@ export const GridOfCards = () => (
       width: '100%',
       display: 'grid',
       gap: '20px',
-      gridTemplateColumns: 'repeat(auto-fit, 250px)',
+      gridTemplateColumns: 'repeat(auto-fit, 208px)',
       gridAutoRows: 'auto',
       justifyItems: 'center',
       alignItems: 'start'
     }}>
-    <Default {...Quiet.args} />
-    <Default {...QuietSquare.args} />
-    <Default {...Quiet.args} />
-    <Default {...QuietSquare.args} />
-    <Default {...Quiet.args} />
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <Quiet {...Quiet.args} key={`${index}${url}`}>
+            <Image src={url} />
+            <Heading>Title</Heading>
+            <Text slot="detail">PNG</Text>
+            <Content>Description</Content>
+            <ActionMenu>
+              <Item>Action 1</Item>
+              <Item>Action 2</Item>
+            </ActionMenu>
+            <Footer>
+              <Button variant="primary">Something</Button>
+            </Footer>
+          </Quiet>
+        );
+      })
+    }
   </div>
 );
 

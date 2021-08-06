@@ -15,6 +15,7 @@ governing permissions and limitations under the License.
 .spectrum-Card {
   box-sizing: border-box;
   min-inline-size: var(--spectrum-card-min-width);
+  block-size: 100%;
 
   border: var(--spectrum-card-border-size) solid transparent;
   border-radius: var(--spectrum-card-border-radius);
@@ -151,6 +152,7 @@ governing permissions and limitations under the License.
   min-inline-size: var(--spectrum-card-quiet-min-size);
 
   .spectrum-Card-grid {
+    block-size: 100%;
     display: grid;
     grid-template-columns: auto 1fr auto;
     grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) minmax(30px, auto) auto var(--spectrum-card-body-padding-bottom);
