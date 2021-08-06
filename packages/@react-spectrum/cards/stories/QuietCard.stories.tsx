@@ -62,14 +62,16 @@ QuietNoDescriptionSquare.args = {...NoDescriptionSquare.args, isQuiet: true};
 export const QuietWithIllustration = Template().bind({});
 QuietWithIllustration.args = {...WithIllustration.args, isQuiet: true};
 
-export const GridOfCards = () => (
+export const GridOfCards = (props: SpectrumCardProps) => (
   <div
     style={{
       width: '100%',
+      margin: '50px',
       display: 'grid',
       gap: '20px',
       gridTemplateColumns: 'repeat(auto-fit, 208px)',
       gridAutoRows: 'auto',
+      justifyContent: 'center',
       justifyItems: 'center',
       alignItems: 'start'
     }}>
@@ -77,40 +79,54 @@ export const GridOfCards = () => (
       (new Array(15).fill(0)).map((_, index) => {
         let url = getImage(index);
         return (
-          <Quiet {...Quiet.args} key={`${index}${url}`}>
-            <Image src={url} />
-            <Heading>Title</Heading>
-            <Text slot="detail">PNG</Text>
-            <Content>Description</Content>
-            <ActionMenu>
-              <Item>Action 1</Item>
-              <Item>Action 2</Item>
-            </ActionMenu>
-            <Footer>
-              <Button variant="primary">Something</Button>
-            </Footer>
-          </Quiet>
+          <div style={{width: '208px', height: '276px'}}>
+            <Card {...Quiet.args} {...props} key={`${index}${url}`}>
+              <Image src={url} />
+              <Heading>Title {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>Description</Content>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+            </Card>
+          </div>
         );
       })
     }
   </div>
 );
 
-export const GridOfCardsNoDescription = () => (
+export const GridOfCardsNoDescription = (props: SpectrumCardProps) => (
   <div
     style={{
       width: '100%',
+      margin: '50px',
       display: 'grid',
       gap: '20px',
-      gridTemplateColumns: 'repeat(auto-fit, 250px)',
+      gridTemplateColumns: 'repeat(auto-fit, 208px)',
       gridAutoRows: 'auto',
+      justifyContent: 'center',
       justifyItems: 'center',
       alignItems: 'start'
     }}>
-    <Default {...QuietNoDescription.args} />
-    <Default {...QuietNoDescriptionSquare.args} />
-    <Default {...QuietNoDescription.args} />
-    <Default {...QuietNoDescriptionSquare.args} />
-    <Default {...QuietNoDescription.args} />
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{width: '208px', height: '256px'}}>
+            <Card {...QuietNoDescription.args} {...props} key={`${index}${url}`}>
+              <Image src={url} />
+              <Heading>Title {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+            </Card>
+          </div>
+        );
+      })
+    }
   </div>
 );

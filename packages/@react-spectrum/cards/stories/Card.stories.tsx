@@ -226,15 +226,15 @@ NoImage.args = {children: (
   </>
 )};
 
-export const GridOfCards = () => (
+export const GridOfCards = (props: SpectrumCardProps) => (
   <Flex direction="row" gap={15} wrap="wrap" margin={50}>
     {
       (new Array(7).fill(0)).map((_, index) => {
         let url = getImage(index);
         return (
-          <Default key={`${index}${url}`}>
+          <Card {...Default.args} {...props} key={`${index}${url}`}>
             <Image src={url} />
-            <Heading>Title</Heading>
+            <Heading>Title {index}</Heading>
             <Text slot="detail">PNG</Text>
             <Content>Description</Content>
             <ActionMenu>
@@ -244,7 +244,7 @@ export const GridOfCards = () => (
             <Footer>
               <Button variant="primary">Something</Button>
             </Footer>
-          </Default>
+          </Card>
         );
       })
     }
