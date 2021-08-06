@@ -53,7 +53,6 @@ const DEFAULT_OPTIONS = {
 // Maybe extend GridKeyboardDelegate?
 
 export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
-  // from v2, TODO: type these, do these need to be protected?
   protected minItemSize;
   protected maxItemSize;
   protected margin;
@@ -64,9 +63,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   protected numColumns;
   protected numRows;
   protected horizontalSpacing
-  // TODO: Removed protected so that we can access it within CardView. Perhaps update this so it matches the Card "layout" prop types
-  // Make keep it as protected and implement a getter method so that it can be accessed but not modified from the outside
-  // protected cardType;
 
   // The following are set in CardView, not through options
   collection: Collection<Node<T>>;
@@ -79,9 +75,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   // Not sure we need the below for GridLayout, the loader height and placeholder height
   // protected loaderHeight: number;
   // protected placeholderHeight: number;
-
-// TODO: Determine how to calculate the layout info
-// look at what is currently available from v2 and compare with what is in v3 Layouts (buildCollection/buildChild etc)
 
   constructor(options: GridLayoutOptions<T> = {}) {
     super();
@@ -165,7 +158,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     );
   }
 
-  // TODO think I need to fix this since it doesn't work for empty collections or isloading
   getVisibleLayoutInfos(rect) {
     let res = [];
     // Adapted from v2
@@ -208,7 +200,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     // Invalidate cache if the size of the collection changed.
     // In this case, we need to recalculate the entire layout.
     this.invalidateEverything = invalidationContext.sizeChanged;
-    // TODO: grabbed from ListLayout, not entirely sure if necessary
     this.collection = this.virtualizer.collection;
 
     // Below adapted from V2 code
@@ -246,7 +237,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
         }
       }
     }
-
 
     this.lastCollection = this.collection;
   }
@@ -310,8 +300,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   // TODO: add updateItemSize since Virtualizer statelly needs it?
   // Do we really need this?
   updateItemSize(key: Key, size: Size) {
-    // TODO fix
-    return false
     let layoutInfo = this.layoutInfos.get(key);
     // If no layoutInfo, item has been deleted/removed.
     if (!layoutInfo) {
