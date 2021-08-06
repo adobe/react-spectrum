@@ -13,8 +13,9 @@
 import {ActionButton} from '@react-spectrum/button';
 import {createCodeSandbox} from './createCodeSandbox';
 import docsStyle from './docs.css';
-import {Link} from '@react-spectrum/link';
+import LinkOut from '@spectrum-icons/workflow/LinkOut';
 import {listen} from 'quicklink';
+import {Text} from '@react-spectrum/Text';
 import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
@@ -223,14 +224,19 @@ window.addEventListener('pagehide', () => {
 // Only add CodeSandbox links to react-spectrum examples now. We'll add react-aria and react-stately support later
 if (window.location.pathname.includes('/react-spectrum/')) {
   [...document.querySelectorAll('code[metastring^="example"]')].forEach(element => {
-    let div = document.createElement('span');
+    let div = document.createElement('div');
     div.classList.add('codeSandboxLink');
     element.prepend(div);
   
     ReactDOM.render(
-      <Link aria-label="Open current example in a code sandbox" UNSAFE_style={{float: 'right'}} onPress={createCodeSandbox}>
-        Open Sandbox
-      </Link>,
+      <ActionButton
+        onPress={createCodeSandbox}
+        aria-label="Open current example in a code sandbox"
+        UNSAFE_style={{float: 'right'}}
+        isQuiet>
+        <LinkOut />
+        <Text>Open Sandbox</Text>
+      </ActionButton>,
       element.querySelector('.codeSandboxLink')
     );
   });
