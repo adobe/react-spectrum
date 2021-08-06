@@ -11,10 +11,14 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ActionMenu, Item} from '@react-spectrum/menu';
+import {Button} from '@react-spectrum/button';
 import {Card, CardView, GridLayout} from '../';
-import {Content} from '@react-spectrum/view';
-import {Heading} from '@react-spectrum/text';
+import {Content, Footer} from '@react-spectrum/view';
+import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import {Image} from '@react-spectrum/image';
+import {Meta, Story} from '@storybook/react';
 import React, {useMemo} from 'react';
 
 let items = [
@@ -80,7 +84,19 @@ function render(props) {
   return (
     <CardView  {...actions} layout={layout} items={items} width="800px" height="800px" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
       {item =>
-        <Card key={item.id} src={item.url} />
+        <Card key={item.id}>
+          <Image src={item.url} />
+          <Heading>Title</Heading>
+          <Text slot="detail">PNG</Text>
+          <Content>Description</Content>
+          <ActionMenu>
+            <Item>Action 1</Item>
+            <Item>Action 2</Item>
+          </ActionMenu>
+          <Footer>
+            <Button variant="primary">Something</Button>
+          </Footer>
+        </Card>
       }
     </CardView>
   );

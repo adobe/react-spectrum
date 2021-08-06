@@ -11,20 +11,20 @@
  */
 
 import cardViewStyles from './cardview.css';
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {classNames, useDOMRef, useUnwrapDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {GridCollection, useGridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useContext, useMemo} from 'react';
+import React, {ReactElement, useContext, useMemo, useRef} from 'react';
 import {SpectrumCardViewProps} from '@react-types/cards';
 import {useGrid} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {Virtualizer} from '@react-aria/virtualizer';
 
-const CardViewContext = React.createContext(null);
+export const CardViewContext = React.createContext(null);
 
 function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(props);
@@ -70,7 +70,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     ...props,
     collection: gridCollection,
     // TODO: this is a tentative change to make SelectionManager return the cell key on selection
-    allowCellSelection: true
+    allowsCellSelection: true
   });
 
   // TODO: need to fix the typescript here, perhaps add a new type in Card types which is a Layout w/ these properties
@@ -148,15 +148,14 @@ function CenteredWrapper({children}) {
   );
 }
 
-import {useFocusRing} from '@react-aria/focus';
 import {useGridCell, useGridRow} from '@react-aria/grid';
-import {mergeProps} from '@react-aria/utils';
+import {CardBase} from './CardBase';
 
 function InternalCard(props) {
   let {
     item
   } = props;
-  let {state, cardOrientation, cardSize, isQuiet} = useContext(CardViewContext);
+  let {state, cardOrientation, cardSize, isQuiet, cardType} = useContext(CardViewContext);
   // TODO: check if selection is enabled here and if so render the checkbox on the card
   let allowsSelection = state.selectionMode !== 'none';
 
@@ -166,39 +165,35 @@ function InternalCard(props) {
   // we can check the cardType + isQuiet from CardView context and compare with isQuiet from item.props and make a decision
   // based on if the CardView allows isQuiet for the specific layout
 
-  // TODO this will have a bunch of other stuff such as useGridRow and useGridCell
 
-  // TODO: Outer div is row, inner div is cell
-
-
-  // TODO: update the below, hacky stand in to test the keyboard delegate
   let ref = React.useRef<HTMLDivElement>();
-  let {
-    isFocusVisible: isFocusVisibleWithin,
-    focusProps: focusWithinProps
-  } = useFocusRing({within: true});
-  let {isFocusVisible, focusProps} = useFocusRing();
+  // let ref = useRef<DOMRefValue<HTMLDivElement>>();
+  // let unwrappedRef = useUnwrapDOMRef(ref);
+
   let {rowProps} = useGridRow({
     node: item,
     isVirtualized: true
   }, state, ref);
+  // let {rowProps} = useGridRow({
+  //   node: item,
+  //   isVirtualized: true
+  // }, state, unwrappedRef);
+
   let {gridCellProps} = useGridCell({
     node: item,
     focusMode: 'cell'
   }, state, ref);
-  const mergedProps = mergeProps(
-    gridCellProps,
-    focusWithinProps,
-    focusProps
-  );
+  // let {gridCellProps} = useGridCell({
+  //   node: item,
+  //   focusMode: 'cell'
+  // }, state, unwrappedRef);
 
   return (
     <div {...rowProps}>
-      <div
-        ref={ref}
-        {...mergedProps}>
-          {!isFocusVisible && <img src={item.props.src} />}
-      </div>
+      {/* TODO: I presume we ignore all props passed in via item.props? */}
+      <CardBase ref={ref} articleProps={gridCellProps} isQuiet={isQuiet || cardType === 'quiet'}>
+        {item.rendered}
+      </CardBase>
     </div>
   )
 }
