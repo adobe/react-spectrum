@@ -16,14 +16,17 @@ import {Content} from '@react-spectrum/view';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import React, {useMemo} from 'react';
-import {storiesOf} from '@storybook/react';
 
 let items = [
   {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 1},
   {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 2},
   {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 3},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 4}
+  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 4},
+  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 5},
+  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 6},
+  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 7}
 ];
+
 
 function renderEmptyState() {
   return (
@@ -37,52 +40,60 @@ function renderEmptyState() {
   );
 }
 
-// TODO add static and dynamic, various layouts
-storiesOf('CardView', module)
-  .add(
-    'default grid layout',
-    () => render({layout: GridLayout})
-  )
-  .add(
-    'isLoading, no height',
-    () => (
-      <CardView layout={GridLayout} isLoading width="800px" UNSAFE_style={{background: 'white'}}>
-        {[]}
-      </CardView>
-    )
-  )
-  .add(
-    'isLoading, set height',
-    () => (
-      <CardView layout={GridLayout} isLoading width="800px" height="300px" UNSAFE_style={{background: 'white'}}>
-        {[]}
-      </CardView>
-    )
-  )
-  .add(
-    'empty state, no height',
-    () => (
-      <CardView layout={GridLayout} width="800px" renderEmptyState={renderEmptyState} UNSAFE_style={{background: 'white'}}>
-        {[]}
-      </CardView>
-    )
-  )
-  .add(
-    'empty state, set height',
-    () => (
-      <CardView layout={GridLayout} width="800px" height="300px" renderEmptyState={renderEmptyState} UNSAFE_style={{background: 'white'}}>
-        {[]}
-      </CardView>
-    )
-  );
+export default {
+  title: 'CardView'
+}
+
+let actions = {
+  onSelectionChange: action('onSelectionChange'),
+};
+
+export const DefaultGrid = () => render({});
+DefaultGrid.storyName = 'default grid layout with initialized layout';
+
+export const DefaultGridConstructor = () => render({layout: GridLayout});
+DefaultGridConstructor.storyName = 'default grid layout w/ layout constructor';
+
+export const isLoadingNoHeight = () => renderNoItems({width: '800px', isLoading: true});
+isLoadingNoHeight.storyName = 'isLoading, no height';
+
+export const isLoadingHeight = () => renderNoItems({width: '800px', height: '800px', isLoading: true});
+isLoadingHeight.storyName = 'isLoading, set height';
+
+export const emptyNoHeight = () => renderNoItems({width: '800px', renderEmptyState});
+emptyNoHeight.storyName = 'empty state, no height';
+
+export const emptyWithHeight = () => renderNoItems({width: '800px', height: '800px', renderEmptyState});
+emptyWithHeight.storyName = 'empty, set height';
+
+
+// TODO add static and dynamic, various layouts, card size, selected keys, disabled keys
+
 
 function render(props) {
-  let {layout} = props;
+  let gridLayout = useMemo(() => new GridLayout({}), []);
+  let {
+    layout = gridLayout
+  } = props;
+
   return (
-    <CardView layout={layout} items={items} width="800px" height="800px" UNSAFE_style={{background: 'white'}}>
+    <CardView  {...actions} layout={layout} items={items} width="800px" height="800px" UNSAFE_style={{background: 'white'}} aria-label="Test CardView">
       {item =>
         <Card key={item.id} src={item.url} />
       }
+    </CardView>
+  );
+}
+
+function renderNoItems(props) {
+  let gridLayout = useMemo(() => new GridLayout({}), []);
+  let {
+    layout = gridLayout
+  } = props;
+
+  return (
+    <CardView {...props} layout={layout} UNSAFE_style={{background: 'white'}} aria-label="Test CardView">
+      {[]}
     </CardView>
   );
 }
