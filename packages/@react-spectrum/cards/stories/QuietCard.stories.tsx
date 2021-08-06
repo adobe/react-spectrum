@@ -10,7 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionMenu, Item} from '@react-spectrum/menu';
 import {Card} from '../';
+import {classNames} from '../../utils';
+import {Content} from '@react-spectrum/view';
 import {
   Default,
   DefaultSquare,
@@ -19,15 +22,13 @@ import {
   NoDescriptionSquare,
   WithIllustration
 } from './Card.stories';
+import {getImage} from './utils';
+import {Heading, Text} from '@react-spectrum/text';
+import {Image} from '@react-spectrum/image';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
-import {getImage} from './utils';
-import {Image} from '@react-spectrum/image';
-import {Heading, Text} from '@react-spectrum/text';
-import {Content, Footer} from '@react-spectrum/view';
-import {ActionMenu, Item} from '@react-spectrum/menu';
-import {Button} from '@react-spectrum/button';
+import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 
 
 const meta: Meta<SpectrumCardProps> = {
@@ -39,7 +40,7 @@ export default meta;
 
 
 const Template = (): Story<SpectrumCardProps> => (args) => (
-  <div style={{width: '208px', height: '276px'}}>
+  <div style={{width: '208px'}}>
     <Card {...args} />
   </div>
 );
@@ -64,6 +65,7 @@ QuietWithIllustration.args = {...WithIllustration.args, isQuiet: true};
 
 export const GridOfCards = (props: SpectrumCardProps) => (
   <div
+    className={classNames(styles, 'spectrum-CardGrid')}
     style={{
       width: '100%',
       margin: '50px',
@@ -99,6 +101,7 @@ export const GridOfCards = (props: SpectrumCardProps) => (
 
 export const GridOfCardsNoDescription = (props: SpectrumCardProps) => (
   <div
+    className={classNames(styles, 'spectrum-CardGrid')}
     style={{
       width: '100%',
       margin: '50px',

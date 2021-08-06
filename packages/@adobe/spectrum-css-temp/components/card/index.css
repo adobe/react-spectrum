@@ -103,7 +103,7 @@ governing permissions and limitations under the License.
   .spectrum-Card-illustration {
     block-size: var(--spectrum-card-coverphoto-height);
     inline-size: 100%;
-    min-inline-size: var(--spectrum-card-min-width);
+    /*min-inline-size: var(--spectrum-card-min-width); causes to obscure border */
 
     align-self: center;
     justify-self: center;
@@ -147,9 +147,65 @@ governing permissions and limitations under the License.
   }
 }
 
+:not(.spectrum-CardGrid) {
+  .spectrum-Card--isQuiet {
+    min-inline-size: var(--spectrum-card-quiet-min-size);
 
-.spectrum-Card--isQuiet {
-  min-inline-size: var(--spectrum-card-quiet-min-size);
+    .spectrum-Card-grid {
+      block-size: 100%;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) minmax(30px, auto) auto var(--spectrum-card-body-padding-bottom);
+      grid-template-areas: /* can either have three rows of preview or change the spans above? */ "preview preview preview"
+          ".       .       ."
+          "title   detail  actionmenu"
+          "content content content"
+          ".       .       .      ";
+    }
+    .spectrum-Card-image,
+    .spectrum-Card-illustration {
+      grid-area: preview;
+      display: flex;
+
+      align-self: center;
+      justify-self: center;
+    }
+    .spectrum-Card-image {
+    }
+    .spectrum-Card-illustration {
+    }
+    .spectrum-Card-avatar {
+      display: none;
+    }
+    .spectrum-Card-heading {
+      align-self: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-inline-end: var(--spectrum-card-title-padding-right);
+    }
+    .spectrum-Card-detail {
+      align-self: center;
+    }
+    .spectrum-Card-actions {
+      align-self: center;
+    }
+    .spectrum-Card-content {
+      margin-block-start: 5px;
+      margin-block-end: 5px;
+    }
+    .spectrum-Card-divider {
+      display: none;
+    }
+    .spectrum-Card-footer {
+      display: none;
+    }
+  }
+}
+
+.spectrum-CardGrid {
+  .spectrum-Card--isQuiet {
+    min-inline-size: var(--spectrum-card-quiet-min-size);
 
   .spectrum-Card-grid {
     block-size: 100%;
@@ -158,24 +214,24 @@ governing permissions and limitations under the License.
     grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) minmax(30px, auto) auto var(--spectrum-card-body-padding-bottom);
     grid-template-areas: /* can either have three rows of preview or change the spans above? */
       "preview preview preview"
-      ".       .       ."
-      "title   detail  actionmenu"
-      "content content content"
-      ".       .       .      ";
+        ".       .       ."
+        "title   detail  actionmenu"
+        "content content content"
+        ".       .       .      ";
 
     &:before {
-      content: '';
-      grid-area: preview;
+       content: '';
+       grid-area: preview;
 
-      /* aspect ration 1:1 because padding-top is calculated from width */
-      inline-size: 0;
-      block-size: 0;
-      padding-top: 100%;
-      padding-left: 100%;
+       /* aspect ration 1:1 because padding-top is calculated from width */
+       inline-size: 0;
+       block-size: 0;
+       padding-top: 100%;
+       padding-left: 100%;
 
-      background-color: var(--spectrum-card-quiet-preview-background-color);
-      border-radius: var(--spectrum-card-quiet-border-radius);
-      transition: background-color var(--spectrum-global-animation-duration-100);
+       background-color: var(--spectrum-card-quiet-preview-background-color);
+       border-radius: var(--spectrum-card-quiet-border-radius);
+       transition: background-color var(--spectrum-global-animation-duration-100);
     }
   }
   .spectrum-Card-image,
@@ -217,6 +273,7 @@ governing permissions and limitations under the License.
   }
   .spectrum-Card-footer {
     display: none;
+  }
   }
 }
 
