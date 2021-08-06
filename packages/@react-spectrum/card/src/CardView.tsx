@@ -61,14 +61,16 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
       childNodes: [{
         ...item,
         index: 0,
-        type: 'gridcell'
+        type: 'cell'
       }]
     }))
   }), [collection]);
 
   let state = useGridState({
     ...props,
-    collection: gridCollection
+    collection: gridCollection,
+    // TODO: this is a tentative change to make SelectionManager return the cell key on selection
+    allowCellSelection: true
   });
 
   // TODO: need to fix the typescript here, perhaps add a new type in Card types which is a Layout w/ these properties
