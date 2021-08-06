@@ -33,7 +33,9 @@ export default meta;
 
 
 const Template = (): Story<SpectrumCardProps> => (args) => (
-  <Card {...args} />
+  <div style={{width: '208px'}}>
+    <Card {...args} />
+  </div>
 );
 
 

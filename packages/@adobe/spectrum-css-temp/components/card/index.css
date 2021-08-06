@@ -153,7 +153,7 @@ governing permissions and limitations under the License.
   .spectrum-Card-grid {
     display: grid;
     grid-template-columns: auto 1fr auto;
-    grid-template-rows: minmax(auto, var(--spectrum-card-coverphoto-height)) var(--spectrum-card-quiet-body-header-margin-top) minmax(30px, auto) auto var(--spectrum-card-body-padding-bottom);
+    grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) minmax(30px, auto) auto var(--spectrum-card-body-padding-bottom);
     grid-template-areas: /* can either have three rows of preview or change the spans above? */
       "preview preview preview"
       ".       .       ."
@@ -164,6 +164,13 @@ governing permissions and limitations under the License.
     &:before {
       content: '';
       grid-area: preview;
+
+      /* aspect ration 1:1 because padding-top is calculated from width */
+      inline-size: 0;
+      block-size: 0;
+      padding-top: 100%;
+      padding-left: 100%;
+
       background-color: var(--spectrum-card-quiet-preview-background-color);
       border-radius: var(--spectrum-card-quiet-border-radius);
       transition: background-color var(--spectrum-global-animation-duration-100);
