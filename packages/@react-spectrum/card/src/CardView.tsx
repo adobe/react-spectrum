@@ -17,7 +17,7 @@ import {GridCollection, useGridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useContext} from 'react';
+import React, {ReactElement, useContext, useMemo} from 'react';
 import {SpectrumCardViewProps} from '@react-types/card';
 import {useGrid} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';
@@ -39,7 +39,8 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     onLoadMore
   } = props;
 
-  let cardViewLayout = typeof layout === 'function' ? new layout({cardSize, cardOrientation}) : layout;
+  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({cardSize, cardOrientation}) : layout, [layout, cardSize, cardOrientation]);
+
   // TODO:
   // What exactly is the layout of CardView going to be? Is it a single column Grid with each row having child Card elements?
   // Or is it a multi column grid with each Card being a Cell in the Row?
@@ -53,7 +54,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
 
   // TODO: Is CardView a single column grid? If so, is each card a "cell" within a row? Does each row have a single card or multiple?
   // Figure out what to pass to "items" here
-  let gridCollection = React.useMemo(() => new GridCollection<T>({
+  let gridCollection = useMemo(() => new GridCollection<T>({
     columnCount: 1,
     items: [...collection].map(item => ({
       type: 'item',
@@ -71,9 +72,11 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   });
 
   // TODO: need to fix the typescript here, perhaps add a new type in Card types which is a Layout w/ these properties
-  cardViewLayout.collection = state.collection;
+  // TODO: double check that this is the correct collection being set (we wanna use the list collection for the keyboard delegate?)
+  // If not, update the gridlayout code to use the gridCollection
+  cardViewLayout.collection = collection;
   cardViewLayout.disabledKeys = state.disabledKeys;
-  cardViewLayout.isLoading = props.isLoading;
+  cardViewLayout.isLoading = isLoading;
   cardViewLayout.direction = direction;
 
   let {gridProps} = useGrid({
