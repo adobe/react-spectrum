@@ -38,6 +38,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     isLoading,
     onLoadMore
   } = props;
+
   let cardViewLayout = typeof layout === 'function' ? new layout({cardSize, cardOrientation}) : layout;
   // TODO:
   // What exactly is the layout of CardView going to be? Is it a single column Grid with each row having child Card elements?
