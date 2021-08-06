@@ -12,7 +12,7 @@
 
 import {CardView} from '../';
 import React from 'react';
-import {SpectrumCardViewProps} from '@react-types/card';
+import {SpectrumCardViewProps} from '@react-types/cards';
 import {storiesOf} from '@storybook/react';
 
 
