@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, MultipleSelection, Node, StyleProps} from '@react-types/shared';
+import {Layout} from '@react-stately/virtualizer';
 import {ReactNode} from 'react';
 
 interface AriaCardProps extends AriaLabelingProps {}
@@ -23,3 +24,20 @@ interface SpectrumCardProps extends AriaCardProps, StyleProps, DOMProps {
   // not needed for quiet cards
   orientation?: 'horizontal' | 'vertical'
 }
+
+export interface LayoutConstructor<T> {
+  // TODO type the args
+  new (args): Layout<Node<T>>;
+}
+
+interface CardViewProps<T> extends CollectionBase<T>, MultipleSelection, AsyncLoadable {
+  layout: LayoutConstructor<T> | Layout<Node<T>>,
+  cardSize?: 'S' | 'M' | 'L',
+  cardOrientation?: 'horizontal' | 'vertical',
+  isQuiet?: boolean,
+  renderEmptyState?: () => ReactNode
+}
+
+export interface AriaCardViewProps<T> extends CardViewProps<T>, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumCardViewProps<T> extends AriaCardViewProps<T>, StyleProps {}
