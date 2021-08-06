@@ -15,10 +15,10 @@ import {createCodeSandbox} from './createCodeSandbox';
 import docsStyle from './docs.css';
 import LinkOut from '@spectrum-icons/workflow/LinkOut';
 import {listen} from 'quicklink';
-import {Text} from '@react-spectrum/Text';
 import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
+import {Text} from '@react-spectrum/Text';
 import {ThemeSwitcher} from './ThemeSwitcher';
 import {watchModals} from '@react-aria/aria-modal-polyfill';
 
