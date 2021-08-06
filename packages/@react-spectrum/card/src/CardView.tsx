@@ -10,22 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
+import cardViewStyles from './cardview.css';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
+import {GridCollection, useGridState} from '@react-stately/grid';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useContext} from 'react';
 import {SpectrumCardViewProps} from '@react-types/card';
-// TODO: get rid of useCardView? Sounds like we just use useGrid.
-// import {useCardView} from '@react-aria/card';
-// TODO: get rid of useCardViewState? Do we need, sounds like we'll just be using useGridState
-// import {useCardViewState} from '@react-stately/card';
-import {Virtualizer} from '@react-aria/virtualizer';
+import {useGrid} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';
-import {GridCollection, useGridState} from '@react-stately/grid';
-import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
-import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
-import {ProgressCircle} from '@react-spectrum/progress';
-
-import cardViewStyles from './cardview.css';
+import {useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {Virtualizer} from '@react-aria/virtualizer';
 
 const CardViewContext = React.createContext(null);
 
@@ -37,7 +34,9 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     cardSize,
     isQuiet,
     renderEmptyState,
-    layout
+    layout,
+    isLoading,
+    onLoadMore
   } = props;
   let cardViewLayout = typeof layout === 'function' ? new layout({cardSize, cardOrientation}) : layout;
   // TODO:
@@ -46,9 +45,8 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   // " Each card is represented as a row in the grid with a single cell inside." Does this mean you have rows next to each other? Feels weird, check v2 implementation
 
 
-  // TODO: Don't think we need formatMessage and collator here, CardView won't support typeahead right?
-  // let formatMessage = useMessageFormatter(intlMessages);
-  // let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  // TODO: Don't think we need collator here, CardView won't support typeahead right?
+  let formatMessage = useMessageFormatter(intlMessages);
   let {direction} = useLocale();
   let {collection} = useListState(props);
 
@@ -84,7 +82,6 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     keyboardDelegate: cardViewLayout
   }, state, domRef);
 
-  console.log('collection', collection, cardViewLayout);
   return (
     <CardViewContext.Provider value={{state, cardOrientation, cardSize, isQuiet, cardType: cardViewLayout.cardType}}>
       <Virtualizer
@@ -96,8 +93,8 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
         scrollDirection="vertical"
         layout={cardViewLayout}
         collection={collection}
-        isLoading={props.isLoading}
-        onLoadMore={props.onLoadMore}>
+        isLoading={isLoading}
+        onLoadMore={onLoadMore}>
         {(type, item) => {
           if (type === 'item') {
             return (
@@ -108,9 +105,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
               <CenteredWrapper>
                 <ProgressCircle
                   isIndeterminate
-                  // TODO add formatMessage
-                  // aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')}
-                  />
+                  aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
               </CenteredWrapper>
             )
           } else if (type === 'placeholder') {
@@ -132,7 +127,6 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   );
 }
 
-
 // TODO filler centerwrapper from ListView, check if is valid
 function CenteredWrapper({children}) {
   let {state} = useContext(CardViewContext);
@@ -147,7 +141,6 @@ function CenteredWrapper({children}) {
     </div>
   );
 }
-
 
 import {useFocusRing} from '@react-aria/focus';
 import {useGridCell, useGridRow} from '@react-aria/grid';
@@ -192,7 +185,6 @@ function InternalCard(props) {
     focusWithinProps,
     focusProps
   );
-
 
   return (
     <div {...rowProps}>
