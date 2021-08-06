@@ -18,7 +18,7 @@ import {GridCollection, useGridState} from '@react-stately/grid';
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useContext, useMemo} from 'react';
-import {SpectrumCardViewProps} from '@react-types/card';
+import {SpectrumCardViewProps} from '@react-types/cards';
 import {useGrid} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
