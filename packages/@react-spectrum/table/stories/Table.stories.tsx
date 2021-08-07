@@ -1008,7 +1008,7 @@ function AsyncLoadingExample() {
   return (
     <div>
       <ActionButton marginBottom={10} onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
-      <TableView aria-label="Top news from Reddit" selectionMode="multiple" width={1000} height={400} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
+      <TableView aria-label="Top news from Reddit" selectionMode="multiple" width={1000} height={400} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
         <TableHeader>
           <Column key="score" width={100} allowsSorting>Score</Column>
           <Column key="title" isRowHeader allowsSorting>Title</Column>
