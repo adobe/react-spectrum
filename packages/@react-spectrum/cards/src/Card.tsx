@@ -10,24 +10,43 @@
  * governing permissions and limitations under the License.
  */
 
+import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, SlotProvider, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
 import {Divider} from '@react-spectrum/divider';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
-import React, {useMemo, useRef} from 'react';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {FocusRing} from '@react-aria/focus';
+import React, {useMemo, useRef, useState} from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {useCard} from '@react-aria/cards';
+import {useFocusWithin, useHover, usePress} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
+
+// can there be a selection checkbox when not in a grid?
+// is there a way to turn off the selection checkbox?
+// is cards getting an isSelected prop? do cards have controlled/uncontrolled?
 
 
 function Card(props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
+  let [isSelected, setIsSelected] = useState(false);
   let {isQuiet, orientation = 'vertical'} = props;
   let {styleProps} = useStyleProps(props);
   let {cardProps, titleProps, contentProps} = useCard(props);
   let domRef = useDOMRef(ref);
   let gridRef = useRef();
+
+  let {hoverProps, isHovered} = useHover({});
+  let [isFocused, setIsFocused] = useState(false);
+  let {focusWithinProps} = useFocusWithin({
+    onFocusWithinChange: setIsFocused
+  });
+  let {pressProps} = usePress({
+    /* using press will result in a flash of no blue borders */
+    onPressStart: () => setIsSelected(prev => !prev),
+    isDisabled: orientation === 'horizontal'
+  });
 
   let hasFooter = useHasChild(`.${styles['spectrum-Card-footer']}`, gridRef);
 
@@ -44,23 +63,36 @@ function Card(props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) {
   }), [titleProps, contentProps]);
 
   return (
-    <article
-      {...filterDOMProps(props)}
-      {...cardProps}
-      {...styleProps}
-      ref={domRef}
-      className={classNames(styles, 'spectrum-Card', {
-        'spectrum-Card--default': !isQuiet && orientation !== 'horizontal',
-        'spectrum-Card--isQuiet': isQuiet && orientation !== 'horizontal',
-        'spectrum-Card--horizontal': orientation === 'horizontal'
-      }, styleProps.className)}>
-      <div ref={gridRef} className={styles['spectrum-Card-grid']}>
-        <SlotProvider slots={slots}>
-          {props.children}
-          {hasFooter && <Divider />}
-        </SlotProvider>
-      </div>
-    </article>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <article
+        {...styleProps}
+        {...mergeProps(cardProps, pressProps, focusWithinProps, hoverProps, filterDOMProps(props))}
+        ref={domRef}
+        className={classNames(styles, 'spectrum-Card', {
+          'spectrum-Card--default': !isQuiet && orientation !== 'horizontal',
+          'spectrum-Card--isQuiet': isQuiet && orientation !== 'horizontal',
+          'spectrum-Card--horizontal': orientation === 'horizontal',
+          'is-hovered': isHovered,
+          'is-focused': isFocused,
+          'is-selected': isSelected
+        }, styleProps.className)}>
+        <div ref={gridRef} className={classNames(styles, 'spectrum-Card-grid')}>
+          <div className={classNames(styles, 'spectrum-Card-checkboxWrapper')}>
+            <Checkbox
+              excludeFromTabOrder
+              isSelected={isSelected}
+              onChange={setIsSelected}
+              UNSAFE_className={classNames(styles, 'spectrum-Card-checkbox')}
+              isEmphasized
+              aria-label="select" />
+          </div>
+          <SlotProvider slots={slots}>
+            {props.children}
+            {hasFooter && <Divider />}
+          </SlotProvider>
+        </div>
+      </article>
+    </FocusRing>
   );
 }
 

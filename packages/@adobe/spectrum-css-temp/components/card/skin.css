@@ -11,6 +11,51 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Card {
+  &:hover {
+    border-color: var(--spectrum-card-border-color-hover);
+  }
+
+  &.is-selected,
+  &:focus-ring {
+    border-color: var(--spectrum-card-border-color-key-focus);
+    box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
+  }
+
+  &.is-drop-target {
+    border-color: var(--spectrum-card-border-color-key-focus);
+    box-shadow: 0 0 0 1px var(--spectrum-card-border-color-key-focus);
+    background-color: var(--spectrum-alias-highlight-selected);
+  }
+
+   .spectrum-Card-checkboxWrapper {
+     background-color: var(--spectrum-quickactions-background-color);
+   }
+
+  .spectrum-Card-detail {
+    color: var(--spectrum-card-description-text-color);
+  }
+}
+
+.spectrum-Card-illustration {
+}
+.spectrum-Card-image {
+}
+.spectrum-Card-avatar {
+}
+.spectrum-Card-heading {
+}
+.spectrum-Card-detail {
+}
+.spectrum-Card-actions {
+}
+.spectrum-Card-content {
+}
+.spectrum-Card-divider {
+}
+.spectrum-Card-footer {
+}
+
+.spectrum-Card--default {
   border-color: var(--spectrum-card-border-color);
   background-color: var(--spectrum-card-background-color);
 
@@ -29,97 +74,144 @@ governing permissions and limitations under the License.
     box-shadow: 0 0 0 1px var(--spectrum-card-border-color-key-focus);
     background-color: var(--spectrum-alias-highlight-selected);
   }
-
-  .spectrum-Card-subtitle {
+  .spectrum-Card-grid {
+    &:before {
+      background-color: var(--spectrum-card-quiet-preview-background-color);
+    }
+  }
+  .spectrum-Card-image,
+  .spectrum-Card-illustration {
+    border-block-end-color: var(--spectrum-card-coverphoto-border-color);
+  }
+  .spectrum-Card-image {
+  }
+  .spectrum-Card-avatar {
+  }
+  .spectrum-Card-heading {
+  }
+  .spectrum-Card-detail {
+  }
+  .spectrum-Card-actions {
+  }
+  .spectrum-Card-content {
     color: var(--spectrum-card-description-text-color);
   }
-}
-
-.spectrum-Card-description {
-  color: var(--spectrum-card-description-text-color);
-}
-
-.spectrum-Card-coverPhoto {
-  background-color: var(--spectrum-card-coverphoto-background-color);
-  border-block-end-color: var(--spectrum-card-coverphoto-border-color);
-}
-
-.spectrum-Card-footer {
-  border-color: var(--spectrum-card-border-color);
-}
-
-.spectrum-Card--isQuiet,
-.spectrum-Card--gallery {
-  border-color: transparent;
-  background-color: transparent;
-
-
-  &:hover {
-    border-color: transparent;
-    .spectrum-Card-image,
-    .spectrum-Card-illustration {
-      background-color: var(--spectrum-card-quiet-preview-background-color-hover);
-    }
+  .spectrum-Card-divider {
   }
-
-  &.is-selected,
-  &:focus-ring {
-    border-color: transparent;
-    box-shadow: none;
-    .spectrum-Card-preview {
-      background-color: var(--spectrum-card-quiet-preview-background-color);
-
-      &:before {
-        border-color: var(--spectrum-card-quiet-border-color-selected);
-        box-shadow: 0 0 0 1px var(--spectrum-card-quiet-border-color-selected);
-      }
-    }
+  .spectrum-Card-footer {
   }
+}
 
-  &.is-drop-target {
+:not(.spectrum-CardGrid) {
+  .spectrum-Card--isQuiet {
     border-color: transparent;
     background-color: transparent;
-    box-shadow: none;
-
-    .spectrum-Card-preview {
-      background-color: var(--spectrum-alias-highlight-selected);
-
-      &:before {
-        border-color: var(--spectrum-card-quiet-border-color-selected);
-        box-shadow: 0 0 0 1px var(--spectrum-card-quiet-border-color-selected);
-      }
+    &:hover {
     }
 
-    .spectrum-Asset-folderBackground,
-    .spectrum-Asset-fileBackground {
-      fill: var(--spectrum-alias-highlight-selected);
+    &.is-selected,
+    &:focus-ring {
+
     }
 
-    .spectrum-Asset-folderOutline,
-    .spectrum-Asset-fileOutline {
-      fill: var(--spectrum-card-quiet-border-color-selected);
+    &.is-drop-target {
+
     }
-  }
-
-  .spectrum-Card-title {
-    color: var(--spectrum-card-quiet-title-text-color);
-  }
-
-  .spectrum-Card-subtitle {
-    color: var(--spectrum-card-quiet-subtitle-text-color);
+    .spectrum-Card-grid {
+    }
+    .spectrum-Card-image,
+    .spectrum-Card-illustration {
+    }
+    .spectrum-Card-image {
+    }
+    .spectrum-Card-avatar {
+    }
+    .spectrum-Card-heading {
+    }
+    .spectrum-Card-detail {
+    }
+    .spectrum-Card-actions {
+    }
+    .spectrum-Card-content {
+    }
+    .spectrum-Card-divider {
+    }
+    .spectrum-Card-footer {
+    }
   }
 }
 
-.spectrum-Card--horizontal {
-  &:hover {
-    .spectrum-Card-preview {
-      border-color: var(--spectrum-card-border-color-hover);
+
+.spectrum-CardGrid {
+  .spectrum-Card--isQuiet {
+    border-color: transparent;
+    background-color: transparent;
+    &:hover {
+      .spectrum-Card-grid {
+        &:before {
+           background-color: var(--spectrum-card-quiet-preview-background-color-hover);
+         }
+      }
+    }
+
+    &.is-selected,
+    &:focus-ring {
+
+    }
+    .spectrum-Card-grid {
+      &:before {
+        background-color: var(--spectrum-card-quiet-preview-background-color);
+      }
+    }
+    .spectrum-Card-image,
+    .spectrum-Card-illustration {
+    }
+    .spectrum-Card-image {
+    }
+    .spectrum-Card-avatar {
+    }
+    .spectrum-Card-heading {
+    }
+    .spectrum-Card-detail {
+    }
+    .spectrum-Card-actions {
+    }
+    .spectrum-Card-content {
+    }
+    .spectrum-Card-divider {
+    }
+    .spectrum-Card-footer {
     }
   }
+}
 
-  .spectrum-Card-preview {
-    background-color: var(--spectrum-card-quiet-preview-background-color);
 
-    border-color: var(--spectrum-card-border-color);
+.spectrum-Card--horizontal {
+  border-color: var(--spectrum-card-border-color);
+  background-color: var(--spectrum-card-background-color);
+  .spectrum-Card-grid {
+    &:before {
+    }
+  }
+  .spectrum-Card-image,
+  .spectrum-Card-illustration {
+  }
+  .spectrum-Card-image {
+  }
+  .spectrum-Card-illustration {
+  }
+  .spectrum-Card-avatar {
+  }
+  .spectrum-Card-heading {
+  }
+  .spectrum-Card-detail {
+  }
+  .spectrum-Card-actions {
+  }
+  .spectrum-Card-content {
+  }
+  .spectrum-Card-divider {
+  }
+  .spectrum-Card-footer {
   }
 }

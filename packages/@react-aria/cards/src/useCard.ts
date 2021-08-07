@@ -41,7 +41,8 @@ export function useCard(props: AriaCardOptions): CardAria {
     cardProps: {
       ...filterDOMProps(props),
       'aria-labelledby': titleId,
-      'aria-describedby': descriptionId
+      'aria-describedby': descriptionId,
+      tabIndex: 0
     },
     titleProps,
     contentProps
