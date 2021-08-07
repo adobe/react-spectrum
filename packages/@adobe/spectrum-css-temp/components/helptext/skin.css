@@ -10,14 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
-.spectrum-HelpText-description {
-  color: var(--spectrum-alias-label-text-color);
+:root {
+  --spectrum-helptext-neutral-texticon-text-color: var(--spectrum-alias-label-text-color);
+  --spectrum-helptext-neutral-texticon-text-color-disabled: var(--spectrum-alias-text-color-disabled);
 
+  /* Override: DNA uses --spectrum-semantic-negative-text-color-small */
+  --spectrum-helptext-negative-texticon-text-color: var(--spectrum-semantic-negative-color-text-small);
+  /* Override: DNA uses --spectrum-semantic-negative-icon-color */
+  --spectrum-helptext-negative-texticon-icon-color: var(--spectrum-semantic-negative-color-text-small);
+}
+
+.spectrum-HelpText--neutral {
+  .spectrum-HelpText-text {
+    color: var(--spectrum-helptext-neutral-texticon-text-color);
+  }
   &.is-disabled {
-    color: var(--spectrum-alias-text-color-disabled);
+    .spectrum-HelpText-text {
+      color: var(--spectrum-helptext-neutral-texticon-text-color-disabled);
+    }
   }
 }
 
-.spectrum-HelpText-errorMessage {
-  color: var(--spectrum-semantic-negative-color-text-small);
+.spectrum-HelpText--negative {
+  .spectrum-HelpText-validationIcon {
+    color: var(--spectrum-helptext-negative-texticon-icon-color);
+  }
+  .spectrum-HelpText-text {
+    color: var(--spectrum-helptext-negative-texticon-text-color);
+  }
 }

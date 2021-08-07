@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {classNames, useDOMRef} from '@react-spectrum/utils';
 import {DOMRef, SpectrumHelpTextProps} from '@react-types/shared';
 import React, {HTMLAttributes} from 'react';
@@ -28,29 +29,36 @@ function HelpText(props: HelpTextProps, ref: DOMRef<HTMLDivElement>) {
     errorMessage,
     validationState,
     isDisabled,
-    // TODO
-    // showIcon,
+    showIcon,
     descriptionProps,
     errorMessageProps
   } = props;
   let domRef = useDOMRef(ref);
 
-  if (!description && !(errorMessage && validationState === 'invalid')) {
+  const isErrorMessage = errorMessage && validationState === 'invalid';
+
+  if (!description && !isErrorMessage) {
     return null;
   }
 
   return (
-    <div className={classNames(styles, 'spectrum-HelpText')} ref={domRef}>
-      {errorMessage && validationState === 'invalid' ? (
-        <div {...errorMessageProps} className={classNames(styles, 'spectrum-HelpText-errorMessage')}>
-          {errorMessage}
-        </div>
+    <div
+      className={classNames(
+        styles,
+        'spectrum-HelpText',
+        `spectrum-HelpText--${isErrorMessage ? 'negative' : 'neutral'}`,
+        {'is-disabled': isDisabled}
+      )}
+      ref={domRef}>
+      {isErrorMessage ? (
+        <>
+          {showIcon && <AlertMedium UNSAFE_className={classNames(styles, 'spectrum-HelpText-validationIcon')} />}
+          <div {...errorMessageProps} className={classNames(styles, 'spectrum-HelpText-text')}>
+            {errorMessage}
+          </div>
+        </>
       ) : (
-        <div
-          {...descriptionProps}
-          className={classNames(styles, 'spectrum-HelpText-description', {
-            'is-disabled': isDisabled
-          })}>
+        <div {...descriptionProps} className={classNames(styles, 'spectrum-HelpText-text')}>
           {description}
         </div>
       )}
