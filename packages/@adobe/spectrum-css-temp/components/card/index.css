@@ -132,6 +132,7 @@ governing permissions and limitations under the License.
 
     border-start-end-radius: var(--spectrum-card-border-radius);
     border-start-start-radius: var(--spectrum-card-border-radius);
+    border-block-end: var(--spectrum-card-border-size) solid transparent;
   }
   .spectrum-Card-image {
   }
