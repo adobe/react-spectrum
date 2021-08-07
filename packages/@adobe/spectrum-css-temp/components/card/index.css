@@ -315,7 +315,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Card--horizontal {
   border: var(--spectrum-card-border-size) solid transparent;
-  block-size: var(--spectrum-global-dimension-size-800);
+  block-size: var(--spectrum-global-dimension-size-1200);
   .spectrum-Card-checkboxWrapper {
     display: none;
   }
@@ -331,8 +331,8 @@ governing permissions and limitations under the License.
   .spectrum-Card-grid {
     display: grid;
     block-size: 100%;
-    grid-template-columns: var(--spectrum-global-dimension-size-800) var(--spectrum-global-dimension-size-200) 1fr auto;
-    grid-template-rows: auto auto;
+    grid-template-columns: var(--spectrum-global-dimension-size-1200) var(--spectrum-global-dimension-size-200) 1fr auto;
+    grid-template-rows: auto 1fr;
     grid-template-areas:
       "preview . title   actionmenu"
       "preview . content .";
@@ -383,15 +383,17 @@ governing permissions and limitations under the License.
   }
   .spectrum-Card-actions {
     align-self: center;
+    margin-inline-end: var(--spectrum-global-dimension-size-150);
   }
   /* how to handle long description?? */
   .spectrum-Card-content {
     width: 100%;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    text-overflow: ellipsis;
     overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    /* not working because this line is removed in css preprocessing */
+    -webkit-box-orient: vertical;
+    visibility: visible;
   }
   .spectrum-Card-divider {
     display: none;

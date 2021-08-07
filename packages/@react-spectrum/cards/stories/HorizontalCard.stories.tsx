@@ -29,7 +29,7 @@ export default meta;
 
 
 const Template = (): Story<SpectrumCardProps> => (args) => (
-  <div style={{width: '250px'}}>
+  <div style={{width: '350px'}}>
     <Card {...args} />
   </div>
 );
