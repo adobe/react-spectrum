@@ -101,6 +101,7 @@ governing permissions and limitations under the License.
     display: grid;
     grid-template-columns: var(--spectrum-card-body-padding-left) auto 1fr auto var(--spectrum-card-body-padding-right);
     grid-template-rows: auto  32px 16px minmax(30px, auto) auto auto auto var(--spectrum-card-body-padding-bottom);
+    /* maybe remove avatar and absolutely position it relative to the preview? */
     grid-template-areas:
       "preview preview preview preview    preview"
       ".       avatar  .       .          ."
