@@ -10,94 +10,53 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox} from '@react-spectrum/checkbox';
-import {classNames, SlotProvider, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
-import {Divider} from '@react-spectrum/divider';
+
+import {CardBase} from './CardBase';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {FocusRing} from '@react-aria/focus';
-import React, {useMemo, useRef, useState} from 'react';
+import {PartialNode} from '@react-stately/collections';
+import React from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
-import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
-import {useCard} from '@react-aria/cards';
-import {useFocusWithin, useHover, usePress} from '@react-aria/interactions';
-import {useProviderProps} from '@react-spectrum/provider';
 
-// can there be a selection checkbox when not in a grid?
-// is there a way to turn off the selection checkbox?
-// is cards getting an isSelected prop? do cards have controlled/uncontrolled?
-
-
+// TODO confirm that this is the approach we wanna take
+// Problems with attaching a ref
 function Card(props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) {
-  props = useProviderProps(props);
-  let [isSelected, setIsSelected] = useState(false);
-  let {isQuiet, orientation = 'vertical'} = props;
-  let {styleProps} = useStyleProps(props);
-  let {cardProps, titleProps, contentProps} = useCard(props);
-  let domRef = useDOMRef(ref);
-  let gridRef = useRef();
-
-  let {hoverProps, isHovered} = useHover({});
-  let [isFocused, setIsFocused] = useState(false);
-  let {focusWithinProps} = useFocusWithin({
-    onFocusWithinChange: setIsFocused
-  });
-  let {pressProps} = usePress({
-    /* using press will result in a flash of no blue borders */
-    onPressStart: () => setIsSelected(prev => !prev),
-    isDisabled: orientation === 'horizontal'
-  });
-
-  let hasFooter = useHasChild(`.${styles['spectrum-Card-footer']}`, gridRef);
-
-  let slots = useMemo(() => ({
-    image: {UNSAFE_className: classNames(styles, 'spectrum-Card-image'), objectFit: isQuiet ? 'contain' : 'cover', alt: ''},
-    illustration: {UNSAFE_className: classNames(styles, 'spectrum-Card-illustration')},
-    avatar: {UNSAFE_className: classNames(styles, 'spectrum-Card-avatar'), size: 'avatar-size-100'},
-    heading: {UNSAFE_className: classNames(styles, 'spectrum-Card-heading'), ...titleProps},
-    content: {UNSAFE_className: classNames(styles, 'spectrum-Card-content'), ...contentProps},
-    detail: {UNSAFE_className: classNames(styles, 'spectrum-Card-detail')},
-    actionmenu: {UNSAFE_className: classNames(styles, 'spectrum-Card-actions'), align: 'end', isQuiet: true},
-    footer: {UNSAFE_className: classNames(styles, 'spectrum-Card-footer')},
-    divider: {UNSAFE_className: classNames(styles, 'spectrum-Card-divider'), size: 'S'}
-  }), [titleProps, contentProps]);
-
-  return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <article
-        {...styleProps}
-        {...mergeProps(cardProps, pressProps, focusWithinProps, hoverProps, filterDOMProps(props))}
-        ref={domRef}
-        className={classNames(styles, 'spectrum-Card', {
-          'spectrum-Card--default': !isQuiet && orientation !== 'horizontal',
-          'spectrum-Card--isQuiet': isQuiet && orientation !== 'horizontal',
-          'spectrum-Card--horizontal': orientation === 'horizontal',
-          'is-hovered': isHovered,
-          'is-focused': isFocused,
-          'is-selected': isSelected
-        }, styleProps.className)}>
-        <div ref={gridRef} className={classNames(styles, 'spectrum-Card-grid')}>
-          <div className={classNames(styles, 'spectrum-Card-checkboxWrapper')}>
-            <Checkbox
-              excludeFromTabOrder
-              isSelected={isSelected}
-              onChange={setIsSelected}
-              UNSAFE_className={classNames(styles, 'spectrum-Card-checkbox')}
-              isEmphasized
-              aria-label="select" />
-          </div>
-          <SlotProvider slots={slots}>
-            {props.children}
-            {hasFooter && <Divider />}
-          </SlotProvider>
-        </div>
-      </article>
-    </FocusRing>
-  );
+  let context;
+  if (context !== null) {
+    console.log('returning null')
+    return null;
+  } else {
+    console.log('returning base')
+    return (
+      <CardBase {...props} />
+    );
+  }
 }
 
-/**
- * TODO: Add description of component here.
- */
-const _Card = React.forwardRef(Card);
+
+// function Card<T>(props): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
+//   return null;
+// }
+
+Card.getCollectionNode = function* getCollectionNode<T>(props, context: any): Generator<PartialNode<T>> {
+  let {children} = props;
+
+  yield {
+    type: 'item',
+    props: props,
+    rendered: children,
+    'aria-label': props['aria-label'],
+    hasChildNodes: false
+  };
+};
+
+
+// TODO: Ask about the below, if we export as forwardRef it breaks CollectionBuilder and if we export as is it breaks Rob's stories
+// We don't want getCollectionNode to show up in the type definition
+let _Card = Card as <T>(props, ref) => JSX.Element;
 export {_Card as Card};
+
+// /**
+//  * TODO: Add description of component here.
+//  */
+//  const _Card = React.forwardRef(Card);
+//  export {_Card as Card};
