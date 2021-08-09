@@ -59,11 +59,14 @@ DefaultGrid.storyName = 'default grid layout with initialized layout';
 export const DefaultGridConstructor = () => render({layout: GridLayout});
 DefaultGridConstructor.storyName = 'default grid layout w/ layout constructor';
 
-export const isLoadingNoHeight = () => renderNoItems({width: '800px', isLoading: true});
-isLoadingNoHeight.storyName = 'isLoading, no height';
+export const isLoadingNoHeight = () => renderNoItems({width: '800px', loadingState: 'loading'});
+isLoadingNoHeight.storyName = 'loadingState = loading, no height';
 
-export const isLoadingHeight = () => renderNoItems({width: '800px', height: '800px', isLoading: true});
-isLoadingHeight.storyName = 'isLoading, set height';
+export const isLoadingHeight = () => renderNoItems({width: '800px', height: '800px', loadingState: 'loading'});
+isLoadingHeight.storyName = 'loadingState = loading, set height';
+
+export const loadingMore = () => render({width: '800px', height: '800px', loadingState: 'loadingMore'});
+loadingMore.storyName = 'loadingState = loadingMore';
 
 export const emptyNoHeight = () => renderNoItems({width: '800px', renderEmptyState});
 emptyNoHeight.storyName = 'empty state, no height';
@@ -82,7 +85,7 @@ function render(props) {
   } = props;
 
   return (
-    <CardView  {...actions} layout={layout} items={items} width="800px" height="800px" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
+    <CardView  {...actions} {...props} layout={layout} items={items} width="800px" height="800px" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
       {item =>
         <Card key={item.id}>
           <Image src={item.url} />

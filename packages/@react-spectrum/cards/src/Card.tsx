@@ -23,10 +23,8 @@ import {useCardViewContext} from './CardViewContext';
 function Card(props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) {
   let context = useCardViewContext();
   if (context !== null) {
-    console.log('returning null')
     return null;
   } else {
-    console.log('returning base')
     return (
       <CardBase {...props} />
     );
