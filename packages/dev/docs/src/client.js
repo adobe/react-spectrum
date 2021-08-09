@@ -18,7 +18,7 @@ import {listen} from 'quicklink';
 import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
-import {Text} from '@react-spectrum/Text';
+import {Text} from '@react-spectrum/text';
 import {ThemeSwitcher} from './ThemeSwitcher';
 import {watchModals} from '@react-aria/aria-modal-polyfill';
 
