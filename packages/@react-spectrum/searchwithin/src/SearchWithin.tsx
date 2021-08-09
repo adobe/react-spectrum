@@ -80,6 +80,9 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
     <Field
       {...props}
       labelProps={labelProps}
+      /* TODO: Pass in props for HelpText */
+      descriptionProps={{}}
+      errorMessageProps={{}}
       ref={domRef}
       wrapperClassName={classNames(
         styles,
