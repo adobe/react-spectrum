@@ -224,6 +224,7 @@ governing permissions and limitations under the License.
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      margin-inline-end: var(--spectrum-card-title-padding-right);
     }
     .spectrum-Card-actions {
       align-self: start;
@@ -275,13 +276,12 @@ governing permissions and limitations under the License.
     .spectrum-Card-image,
     .spectrum-Card-illustration {
       grid-area: preview;
-      inline-size: 75%;
-      block-size: 75%;
-      min-inline-size: 75%; /* I do not know why setting a min-width causes the image to shrink */
+      block-size: 100%;
+      inline-size: 100%;
+      min-inline-size: 100%; /* I do not know why setting a min-width causes the image to shrink */
 
       align-self: center;
       justify-self: center;
-      border-radius: var(--spectrum-card-quiet-border-radius);
     }
     .spectrum-Card-image {
     }
@@ -305,6 +305,7 @@ governing permissions and limitations under the License.
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      margin-inline-end: var(--spectrum-card-title-padding-right);
       /* prevent from collapsing completely when there is a long title */
       min-inline-size: min-content;
     }

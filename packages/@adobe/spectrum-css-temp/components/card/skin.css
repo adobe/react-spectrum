@@ -15,12 +15,6 @@ governing permissions and limitations under the License.
     border-color: var(--spectrum-card-border-color-hover);
   }
 
-  &.is-selected,
-  &:focus-ring {
-    border-color: var(--spectrum-card-border-color-key-focus);
-    box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
-  }
-
   &.is-drop-target {
     border-color: var(--spectrum-card-border-color-key-focus);
     box-shadow: 0 0 0 1px var(--spectrum-card-border-color-key-focus);
@@ -111,7 +105,10 @@ governing permissions and limitations under the License.
 
     &.is-selected,
     &:focus-ring {
-
+      .spectrum-Card-image,
+      .spectrum-Card-illustration {
+         box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
+      }
     }
 
     &.is-drop-target {
@@ -156,7 +153,14 @@ governing permissions and limitations under the License.
 
     &.is-selected,
     &:focus-ring {
-
+      .spectrum-Card-grid {
+        &:before {
+          /* Image needs to go right to the edge, so no border. Adding border on focus causes
+           * a jump in the text and image. So focus ring is only box-shadow
+           */
+          box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
+        }
+      }
     }
     .spectrum-Card-grid {
       &:before {
