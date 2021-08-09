@@ -30,7 +30,7 @@
     "@react-stately/color": "3.0.0-beta.3",
     "@react-types/color": "3.0.0-beta.2",
     "@react-types/shared": "^3.8.0",
-    "@react-aria/slider": "^3.0.3",
+    "@react-aria/slider": "^3.0.3"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1",
