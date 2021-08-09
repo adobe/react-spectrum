@@ -197,7 +197,8 @@ function InternalCard(props) {
   // }, state, unwrappedRef);
 
   return (
-    <div {...rowProps} ref={rowRef}>
+    // TODO: added padding here to make the focus ring not get cut off. Replace with a real fix
+    <div {...rowProps} ref={rowRef} style={{padding: '2px'}}>
       {/* TODO: I presume we ignore all props passed in via item.props? */}
       <CardBase ref={cellRef} articleProps={gridCellProps} isQuiet={isQuiet || cardType === 'quiet'} item={item}>
         {item.rendered}
