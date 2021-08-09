@@ -16,11 +16,12 @@ import {DOMRef} from '@react-types/shared';
 import {PartialNode} from '@react-stately/collections';
 import React from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
+import {useCardViewContext} from './CardViewContext';
 
 // TODO confirm that this is the approach we wanna take
 // Problems with attaching a ref
 function Card(props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) {
-  let context;
+  let context = useCardViewContext();
   if (context !== null) {
     console.log('returning null')
     return null;

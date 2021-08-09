@@ -11,7 +11,7 @@
  */
 
 import {Checkbox} from '@react-spectrum/checkbox';
-import {classNames, SlotProvider, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useHasChild, useStyleProps} from '@react-spectrum/utils';
 import {Divider} from '@react-spectrum/divider';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
@@ -20,6 +20,7 @@ import React, {useMemo, useRef, useState} from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {useCard} from '@react-aria/cards';
+import {useCardViewContext} from './CardViewContext';
 import {useControlledState} from '@react-stately/utils';
 import {useFocusWithin, useHover, usePress} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -31,7 +32,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function CardBase(props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
-  let context = {isSelected: true, onSelectionChange: () => {}, articleProps: {}}; // keeping context separate from props
+  let context = useCardViewContext() || {isSelected: true, onSelectionChange: () => {}, articleProps: {}}; // we can call again here, won't change from Card.tsx
   let {articleProps} = context;
   let [isSelected, setIsSelected] = useControlledState(context.isSelected, undefined, context.onSelectionChange);
   let {isQuiet, orientation = 'vertical'} = props;
