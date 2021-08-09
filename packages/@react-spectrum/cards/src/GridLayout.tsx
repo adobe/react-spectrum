@@ -40,7 +40,7 @@ const DEFAULT_OPTIONS = {
   },
   L: {
     // TODO: for now bumping this higher since the new cards have more stuff in the content area.
-    // Will need to ask Spectrum what these values should be. Used to be 52.
+    // Will need to ask Spectrum what these values should be. Used to be 52. Do the same for S above
     itemPadding: 100,
     minItemSize: new Size(208, 208),
     maxItemSize: new Size(Infinity, Infinity),
@@ -188,6 +188,13 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
           res.push(layoutInfo);
         }
       }
+
+      // Check if loader is in view and add to res if so
+      let loader = this.layoutInfos.get('loader');
+      if (loader && this.isVisible(loader, rect)) {
+        res.push(loader)
+      }
+
     }
 
     return res;
@@ -257,15 +264,14 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
 
     if (this.isLoading) {
       let loaderY = y;
-      let loaderHeight;
-      let marginOffset;
+      let loaderHeight = 60;
+      let marginOffset = this.margin;
       // If there aren't any items, make loader take all avaliable room and remove margin from y calculation
       // so it doesn't scroll
       if (this.collection.size === 0) {
         loaderY = 0;
         // TODO: filler loader and placeholder heights, get the desired loader height later
         loaderHeight = this.virtualizer.visibleRect.height || 60;
-        marginOffset = this.margin;
       }
 
       let rect = new Rect(0, loaderY, this.virtualizer.visibleRect.width, loaderHeight);

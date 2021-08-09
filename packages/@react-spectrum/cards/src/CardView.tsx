@@ -35,10 +35,10 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     isQuiet,
     renderEmptyState,
     layout,
-    isLoading,
+    loadingState,
     onLoadMore
   } = props;
-
+  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({cardSize, cardOrientation}) : layout, [layout, cardSize, cardOrientation]);
 
   // TODO:

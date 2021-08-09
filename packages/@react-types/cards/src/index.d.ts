@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, MultipleSelection, Node, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, LoadingState, MultipleSelection, Node, StyleProps} from '@react-types/shared';
 import {Layout} from '@react-stately/virtualizer';
 import {ReactNode} from 'react';
 
@@ -29,12 +29,13 @@ export interface LayoutConstructor<T> {
   new (args): Layout<Node<T>>;
 }
 
-interface CardViewProps<T> extends CollectionBase<T>, MultipleSelection, AsyncLoadable {
+interface CardViewProps<T> extends CollectionBase<T>, MultipleSelection, Omit<AsyncLoadable, 'isLoading'> {
   layout: LayoutConstructor<T> | Layout<Node<T>>,
   cardSize?: 'S' | 'M' | 'L',
   cardOrientation?: 'horizontal' | 'vertical',
   isQuiet?: boolean,
-  renderEmptyState?: () => ReactNode
+  renderEmptyState?: () => ReactNode,
+  loadingState?: LoadingState
 }
 
 export interface AriaCardViewProps<T> extends CardViewProps<T>, DOMProps, AriaLabelingProps {}
