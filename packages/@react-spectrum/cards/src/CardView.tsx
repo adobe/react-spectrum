@@ -21,9 +21,9 @@ import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useMemo, useRef} from 'react';
 import {SpectrumCardViewProps} from '@react-types/cards';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
+import {useCollator,useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useGrid} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';
-import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {Virtualizer} from '@react-aria/virtualizer';
 
 function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
@@ -38,8 +38,9 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     loadingState,
     onLoadMore
   } = props;
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({cardSize, cardOrientation}) : layout, [layout, cardSize, cardOrientation]);
+  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({cardSize, cardOrientation, collator}) : layout, [layout, cardSize, cardOrientation]);
 
   // TODO:
   // What exactly is the layout of CardView going to be? Is it a single column Grid with each row having child Card elements?
@@ -47,7 +48,6 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   // " Each card is represented as a row in the grid with a single cell inside." Does this mean you have rows next to each other? Feels weird, check v2 implementation
 
 
-  // TODO: Don't think we need collator here, CardView won't support typeahead right?
   let formatMessage = useMessageFormatter(intlMessages);
   let {direction} = useLocale();
   let {collection} = useListState(props);
