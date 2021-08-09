@@ -264,6 +264,57 @@ WithIllustration.args = {children: (
   </>
 )};
 
+export const LongTitle = Template().bind({});
+LongTitle.args = {children: (
+  <>
+    <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
+    <Heading>This is a long title about how dinosaurs used to rule the earth before a meteor came and wiped them all out</Heading>
+    <Text slot="detail">PNG</Text>
+    <Content>Description</Content>
+    <ActionMenu>
+      <Item>Action 1</Item>
+      <Item>Action 2</Item>
+    </ActionMenu>
+    <Footer>
+      <Button variant="primary">Something</Button>
+    </Footer>
+  </>
+)};
+
+export const LongDescription = Template().bind({});
+LongDescription.args = {children: (
+  <>
+    <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
+    <Heading>Title</Heading>
+    <Text slot="detail">PNG</Text>
+    <Content>This is a long description about the Pterodactyl, a pterosaur of the late Jurassic period, with a long slender head and neck and a very short tail.</Content>
+    <ActionMenu>
+      <Item>Action 1</Item>
+      <Item>Action 2</Item>
+    </ActionMenu>
+    <Footer>
+      <Button variant="primary">Something</Button>
+    </Footer>
+  </>
+)};
+
+export const LongDetail = Template().bind({});
+LongDetail.args = {children: (
+  <>
+    <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
+    <Heading>Title</Heading>
+    <Text slot="detail">Stats: Genus: Pterodactylus; Rafinesque, 1815 Order: Pterosauria Kingdom: Animalia Phylum: Chordata</Text>
+    <Content>Description</Content>
+    <ActionMenu>
+      <Item>Action 1</Item>
+      <Item>Action 2</Item>
+    </ActionMenu>
+    <Footer>
+      <Button variant="primary">Something</Button>
+    </Footer>
+  </>
+)};
+
 function File(props) {
   props = useSlotProps(props, 'asset');
   let {styleProps} = useStyleProps(props);

@@ -14,9 +14,10 @@ governing permissions and limitations under the License.
 
 .spectrum-Card {
   box-sizing: border-box;
-  min-inline-size: var(--spectrum-card-min-width);
+  min-inline-size: var(--spectrum-card-body-header-height);;
   block-size: 100%;
   border-radius: var(--spectrum-card-border-radius);
+
 
   text-decoration: none;
 
@@ -155,6 +156,9 @@ governing permissions and limitations under the License.
   }
   .spectrum-Card-detail {
     align-self: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .spectrum-Card-actions {
     align-self: center;
@@ -213,16 +217,16 @@ governing permissions and limitations under the License.
     }
     .spectrum-Card-heading {
       align-self: center;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
       margin-inline-end: var(--spectrum-card-title-padding-right);
     }
     .spectrum-Card-detail {
       align-self: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .spectrum-Card-actions {
-      align-self: center;
+      align-self: start;
     }
     .spectrum-Card-content {
       margin-block-start: 5px;
@@ -244,8 +248,8 @@ governing permissions and limitations under the License.
     .spectrum-Card-grid {
       block-size: 100%;
       display: grid;
-      grid-template-columns: auto 1fr auto;
-      grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) minmax(30px, auto) auto var(--spectrum-card-body-padding-bottom);
+      grid-template-columns: auto minmax(auto, 1fr) auto;
+      grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) auto auto var(--spectrum-card-body-padding-bottom);
       grid-template-areas: /* can either have three rows of preview or change the spans above? */
         "preview preview preview"
           ".       .       ."
@@ -298,6 +302,11 @@ governing permissions and limitations under the License.
     }
     .spectrum-Card-detail {
       align-self: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      /* prevent from collapsing completely when there is a long title */
+      min-inline-size: min-content;
     }
     .spectrum-Card-actions {
       align-self: center;

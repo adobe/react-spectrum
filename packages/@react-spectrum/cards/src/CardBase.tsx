@@ -16,26 +16,42 @@ import {Divider} from '@react-spectrum/divider';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
-import React, {useMemo, useRef, useState} from 'react';
+import React, {HTMLAttributes, useMemo, useRef, useState} from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {useCard} from '@react-aria/cards';
 import {useCardViewContext} from './CardViewContext';
-import {useControlledState} from '@react-stately/utils';
-import {useFocusWithin, useHover, usePress} from '@react-aria/interactions';
+import {useFocusWithin, useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 
 // can there be a selection checkbox when not in a grid?
 // is there a way to turn off the selection checkbox?
 // is cards getting an isSelected prop? do cards have controlled/uncontrolled?
 
+interface CardBaseProps extends SpectrumCardProps {
+  articleProps?: HTMLAttributes<HTMLElement>,
+  item
+}
 
-function CardBase(props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) {
+function CardBase(props: CardBaseProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
-  let context = useCardViewContext() || {isSelected: true, onSelectionChange: () => {}, articleProps: {}}; // we can call again here, won't change from Card.tsx
-  let {articleProps} = context;
-  let [isSelected, setIsSelected] = useControlledState(context.isSelected, undefined, context.onSelectionChange);
-  let {isQuiet, orientation = 'vertical'} = props;
+  // TODO: Don't send in articleProps via context (unless we want to make another context for InternalCard)? Pass it in via props since it will only be provided via CardView's InternalCard
+  let context = useCardViewContext() || {}; // we can call again here, won't change from Card.tsx
+  let {state} = context;
+  let manager = state?.selectionManager;
+  // let [isSelected, setIsSelected] = useControlledState(context.isSelected, undefined, context.onSelectionChange);
+  let {
+    isQuiet,
+    orientation = 'vertical',
+    articleProps = {},
+    item
+  } = props;
+
+  let key = item?.key;
+  let isSelected = manager?.isSelected(key);
+  let isDisabled = state?.disabledKeys.has(key);
+  let onChange = () => manager.select(key);
+
   let {styleProps} = useStyleProps(props);
   let {cardProps, titleProps, contentProps} = useCard(props);
   // let domRef = useDOMRef(ref);
@@ -44,12 +60,8 @@ function CardBase(props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) {
   let {hoverProps, isHovered} = useHover({});
   let [isFocused, setIsFocused] = useState(false);
   let {focusWithinProps} = useFocusWithin({
-    onFocusWithinChange: setIsFocused
-  });
-  let {pressProps} = usePress({
-    /* using press will result in a flash of no blue borders */
-    onPressStart: () => setIsSelected(prev => !prev),
-    isDisabled: orientation === 'horizontal'
+    onFocusWithinChange: setIsFocused,
+    isDisabled
   });
 
   let hasFooter = useHasChild(`.${styles['spectrum-Card-footer']}`, gridRef);
@@ -70,7 +82,7 @@ function CardBase(props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) {
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <article
         {...styleProps}
-        {...mergeProps(cardProps, pressProps, focusWithinProps, hoverProps, filterDOMProps(props), articleProps)}
+        {...mergeProps(cardProps, focusWithinProps, hoverProps, filterDOMProps(props), articleProps)}
         ref={ref}
         className={classNames(styles, 'spectrum-Card', {
           'spectrum-Card--default': !isQuiet && orientation !== 'horizontal',
@@ -81,15 +93,17 @@ function CardBase(props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) {
           'is-selected': isSelected
         }, styleProps.className)}>
         <div ref={gridRef} className={classNames(styles, 'spectrum-Card-grid')}>
-          <div className={classNames(styles, 'spectrum-Card-checkboxWrapper')}>
-            <Checkbox
-              excludeFromTabOrder
-              isSelected={isSelected}
-              onChange={setIsSelected}
-              UNSAFE_className={classNames(styles, 'spectrum-Card-checkbox')}
-              isEmphasized
-              aria-label="select" />
-          </div>
+          {manager && manager.selectionMode !== 'none' && (
+            <div className={classNames(styles, 'spectrum-Card-checkboxWrapper')}>
+              <Checkbox
+                excludeFromTabOrder
+                isSelected={isSelected}
+                onChange={onChange}
+                UNSAFE_className={classNames(styles, 'spectrum-Card-checkbox')}
+                isEmphasized
+                aria-label="select" />
+            </div>
+          )}
           <SlotProvider slots={slots}>
             {props.children}
             {hasFooter && <Divider />}

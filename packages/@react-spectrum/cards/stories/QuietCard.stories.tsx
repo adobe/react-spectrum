@@ -17,7 +17,7 @@ import {Content} from '@react-spectrum/view';
 import {
   Default,
   DefaultSquare,
-  DefaultTall, NoActionMenu,
+  DefaultTall, LongDescription, LongDetail, LongTitle, NoActionMenu,
   NoDescription,
   NoDescriptionSquare,
   WithIllustration
@@ -67,6 +67,15 @@ QuietNoActionMenu.args = {...NoActionMenu.args, isQuiet: true};
 export const QuietWithIllustration = Template().bind({});
 QuietWithIllustration.args = {...WithIllustration.args, isQuiet: true};
 
+export const QuietLongTitle = Template().bind({});
+QuietLongTitle.args = {...LongTitle.args, isQuiet: true};
+
+export const QuietLongDescription = Template().bind({});
+QuietLongDescription.args = {...LongDescription.args, isQuiet: true};
+
+export const QuietLongDetail = Template().bind({});
+QuietLongDetail.args = {...LongDetail.args, isQuiet: true};
+
 export const GridOfCards = (props: SpectrumCardProps) => (
   <div
     className={classNames(styles, 'spectrum-CardGrid')}
@@ -85,7 +94,7 @@ export const GridOfCards = (props: SpectrumCardProps) => (
       (new Array(15).fill(0)).map((_, index) => {
         let url = getImage(index);
         return (
-          <div style={{width: '208px', height: '276px'}}>
+          <div style={{width: '208px', height: '305px'}}>
             <Card {...Quiet.args} {...props} key={`${index}${url}`}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
@@ -121,7 +130,7 @@ export const GridOfCardsNoDescription = (props: SpectrumCardProps) => (
       (new Array(15).fill(0)).map((_, index) => {
         let url = getImage(index);
         return (
-          <div style={{width: '208px', height: '256px'}}>
+          <div style={{width: '208px', height: '274px'}}>
             <Card {...QuietNoDescription.args} {...props} key={`${index}${url}`}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
@@ -156,11 +165,47 @@ export const GridOfCardsIllustrations = (props: SpectrumCardProps) => (
       (new Array(15).fill(0)).map((_, index) => {
         let url = getImage(index);
         return (
-          <div style={{width: '208px', height: '256px'}}>
+          <div style={{width: '208px', height: '274px'}}>
             <Card {...QuietNoDescription.args} {...props} key={`${index}${url}`}>
               <File slot="illustration" />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+            </Card>
+          </div>
+        );
+      })
+    }
+  </div>
+);
+
+export const GridOfLongTitleCards = (props: SpectrumCardProps) => (
+  <div
+    className={classNames(styles, 'spectrum-CardGrid')}
+    style={{
+      width: '100%',
+      margin: '50px',
+      display: 'grid',
+      gap: '20px',
+      gridTemplateColumns: 'repeat(auto-fit, 208px)',
+      gridAutoRows: 'auto',
+      justifyContent: 'center',
+      justifyItems: 'center',
+      alignItems: 'start'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{width: '208px', height: '305px'}}>
+            <Card {...Quiet.args} {...props} key={`${index}${url}`}>
+              <Image src={url} />
+              <Heading>This is a long title about how dinosaurs used to rule the earth before a meteor came and wiped them all out {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>Description</Content>
               <ActionMenu>
                 <Item>Action 1</Item>
                 <Item>Action 2</Item>

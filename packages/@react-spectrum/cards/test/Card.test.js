@@ -12,15 +12,14 @@
 
 import {Card} from '../src';
 import {Default, DefaultPreviewAlt, NoDescription} from '../stories/Card.stories';
+import {Quiet} from '../stories/QuietCard.stories';
 import React from 'react';
 import {render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 describe('Card', function () {
-  it.each`
-    Name         | Component | props
-    ${'Default'} | ${Default}   | ${{}}
-  `('$Name is labelled and described', function ({Component, props}) {
-    let {getByRole, getByLabelText} = render(<Card {...Default.args} />);
+  it('Default is labelled and described', function () {
+    let {getByRole, getByLabelText, getAllByRole} = render(<Card {...Default.args} />);
     let card = getByRole('article');
     let heading = getByRole('heading', {level: 3});
     let image = getByRole('img');
@@ -28,12 +27,26 @@ describe('Card', function () {
     expect(card).toBe(labelledCard);
     expect(card).toHaveAccessibleDescription('Description');
     expect(image).not.toHaveAccessibleName();
+
+    userEvent.tab();
+    expect(card).toBe(document.activeElement);
+
+    let buttons = getAllByRole('button');
+    expect(buttons.length).toBe(2);
+
+    userEvent.tab();
+    expect(buttons[0]).toBe(document.activeElement);
+    expect(buttons[0]).toHaveAttribute('aria-label', 'More actions');
+
+    // this is the footer button
+    userEvent.tab();
+    expect(buttons[1]).toBe(document.activeElement);
+
+    userEvent.tab();
+    expect(document.body).toBe(document.activeElement);
   });
 
-  it.each`
-    Name               | Component          | props
-    ${'NoDescription'} | ${NoDescription}   | ${{}}
-  `('$Name is labelled and not described', function ({Component, props}) {
+  it('NoDescription is labelled and not described', function () {
     let {getByRole, queryByRole} = render(<Card {...NoDescription.args} />);
     let card = getByRole('article');
     let heading = getByRole('heading', {level: 3});
@@ -43,12 +56,33 @@ describe('Card', function () {
     expect(card).not.toHaveAccessibleDescription();
   });
 
-  it.each`
-    Name                   | Component              | props
-    ${'DefaultPreviewAlt'} | ${DefaultPreviewAlt}   | ${{}}
-  `('$Name has a labelled image', function ({Component, props}) {
+  it('DefaultPreviewAlt has a labelled image', function () {
     let {getByRole} = render(<Card {...DefaultPreviewAlt.args} />);
     let image = getByRole('img');
     expect(image).toHaveAccessibleName('preview');
+  });
+
+  it('Quiet has no footer buttons', function () {
+    let {getByRole, getByLabelText, getAllByRole} = render(<Card {...Quiet.args} />);
+    let card = getByRole('article');
+    let heading = getByRole('heading', {level: 3});
+    let image = getByRole('img');
+    let labelledCard = getByLabelText(heading.textContent);
+    expect(card).toBe(labelledCard);
+    expect(card).toHaveAccessibleDescription('Description');
+    expect(image).not.toHaveAccessibleName();
+
+    userEvent.tab();
+    expect(card).toBe(document.activeElement);
+
+    let buttons = getAllByRole('button');
+    expect(buttons.length).toBe(1);
+
+    userEvent.tab();
+    expect(buttons[0]).toBe(document.activeElement);
+    expect(buttons[0]).toHaveAttribute('aria-label', 'More actions');
+
+    userEvent.tab();
+    expect(document.body).toBe(document.activeElement);
   });
 });
