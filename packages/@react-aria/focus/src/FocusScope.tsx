@@ -101,9 +101,9 @@ export function FocusScope(props: FocusScopeProps) {
 
   return (
     <FocusContext.Provider value={focusManager}>
-      <span hidden ref={startRef} />
+      <span data-focus-scope-start hidden ref={startRef} />
       {children}
-      <span hidden ref={endRef} />
+      <span data-focus-scope-end hidden ref={endRef} />
     </FocusContext.Provider>
   );
 }
@@ -273,8 +273,25 @@ function isElementInAnyScope(element: Element, scopes: Set<RefObject<HTMLElement
   return false;
 }
 
+const focusScopeDataAttrNames = [
+  'data-focus-scope-start',
+  'data-focus-scope-end'
+];
+
+function isFocusScopeDirectChild(scope: HTMLElement) {
+  return focusScopeDataAttrNames.some(name => scope.getAttribute(name) !== null);
+}
+
+function isFocusScopeNestedChild(scope: HTMLElement) {
+  return focusScopeDataAttrNames.some(name => scope.querySelector(`[${name}]`));
+}
+
+function isFocusScopeInScope(scopes: HTMLElement[]) {
+  return scopes.some(scope => isFocusScopeDirectChild(scope) || isFocusScopeNestedChild(scope));
+}
+
 function isElementInScope(element: Element, scope: HTMLElement[]) {
-  return scope.some(node => node.contains(element));
+  return !isFocusScopeInScope(scope) && scope.some(node => node.contains(element));
 }
 
 function focusElement(element: HTMLElement | null, scroll = false) {
@@ -359,8 +376,14 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
         if (nextElement) {
           focusElement(nextElement, true);
         } else {
-          // If there is no next element, blur the focused element to move focus to the body.
-          focusedElement.blur();
+           // If there is no next element and the nodeToRestore isn't within a FocusScope (i.e. we are leaving the top level focus scope)
+           // then move focus to the body.
+           // Otherwise restore focus to the nodeToRestore (e.g menu within a popover -> tabbing to close the menu should move focus to menu trigger)
+          if (!isElementInAnyScope(nodeToRestore, scopes)) {
+            focusedElement.blur();
+          } else {
+            focusElement(nodeToRestore, true);
+          }
         }
       }
     };

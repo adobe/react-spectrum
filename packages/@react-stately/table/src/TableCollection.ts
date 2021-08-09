@@ -272,4 +272,9 @@ export class TableCollection<T> extends GridCollection<T> {
   getItem(key: Key) {
     return this.keyMap.get(key);
   }
+
+  at(idx: number) {
+    const keys = [...this.getKeys()];
+    return this.getItem(keys[idx]);
+  }
 }

@@ -15,6 +15,7 @@ import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '../';
+import {Heading} from '@react-spectrum/text';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
@@ -28,9 +29,11 @@ import userEvent from '@testing-library/user-event';
 describe('DialogTrigger', function () {
   let matchMedia;
   beforeAll(() => {
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     jest.useFakeTimers();
   });
   afterAll(() => {
+    jest.clearAllMocks();
     jest.useRealTimers();
   });
 
@@ -927,4 +930,54 @@ describe('DialogTrigger', function () {
 
     expect(document.activeElement).toBe(innerInput);
   });
+
+  it('will not lose focus to body', async () => {
+    let {getByRole, getByTestId} = render(
+      <Provider theme={theme}>
+        <DialogTrigger type="popover">
+          <ActionButton>Trigger</ActionButton>
+          <Dialog>
+            <Heading>The Heading</Heading>
+            <Content>
+              <MenuTrigger>
+                <ActionButton data-testid="innerButton">Test</ActionButton>
+                <Menu autoFocus="first">
+                  <Item>Item 1</Item>
+                  <Item>Item 2</Item>
+                  <Item>Item 3</Item>
+                </Menu>
+              </MenuTrigger>
+            </Content>
+          </Dialog>
+        </DialogTrigger>
+      </Provider>
+    );
+    let button = getByRole('button');
+    triggerPress(button);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let outerDialog = getByRole('dialog');
+
+    await waitFor(() => {
+      expect(outerDialog).toBeVisible();
+    }); // wait for animation
+    let innerButton = getByTestId('innerButton');
+    userEvent.tab();
+    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+    act(() => {
+      jest.runAllTimers();
+    });
+    userEvent.tab();
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    expect(document.activeElement).toBe(innerButton);
+  });
+
 });
