@@ -11,7 +11,7 @@
  */
 
 import {Flex} from '@react-spectrum/layout';
-import React from 'react';
+import React, {useState} from 'react';
 import {SpectrumTextFieldProps} from '@react-types/textfield';
 import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
@@ -28,10 +28,19 @@ storiesOf('HelpText', module)
   )
   .add(
     'description and error message',
-    () => render({
-      description: 'Password must be at least 8 characters.', // Won't render
-      errorMessage: 'Create a password with at least 8 characters.'
-    })
+    () => {
+      let [value, setValue] = useState('');
+
+      return (
+        <TextField
+          label="Empty field"
+          description="This input is only valid when it's empty."
+          errorMessage="Please remove your input."
+          value={value}
+          onChange={setValue}
+          validationState={value.length ? 'invalid' : undefined} />
+      );
+    }
   )
   .add(
     'description and error message, validationState: valid',
