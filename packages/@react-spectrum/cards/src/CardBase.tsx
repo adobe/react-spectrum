@@ -80,6 +80,7 @@ function CardBase(props: CardBaseProps, ref: DOMRef<HTMLDivElement>) {
   }), [titleProps, contentProps]);
 
   return (
+    // TODO: Focus ring in v2 only goes around preview for quiet varients, fix this for v3?
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <article
         {...styleProps}

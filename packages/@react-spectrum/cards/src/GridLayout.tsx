@@ -39,7 +39,9 @@ const DEFAULT_OPTIONS = {
     dropSpacing: 50
   },
   L: {
-    itemPadding: 52,
+    // TODO: for now bumping this higher since the new cards have more stuff in the content area.
+    // Will need to ask Spectrum what these values should be. Used to be 52.
+    itemPadding: 100,
     minItemSize: new Size(208, 208),
     maxItemSize: new Size(Infinity, Infinity),
     margin: 24,
@@ -216,6 +218,9 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     let itemWidth = Math.floor(width / this.numColumns);
     itemWidth = Math.max(this.minItemSize.width, Math.min(this.maxItemSize.width, itemWidth));
 
+    // TODO: Right now the v2 code here assumes a static number for itemPadding (aka the content area below the preview)
+    // Perhaps rewrite this so that it uses that itemPadding as a estimated height, then on the second run through it checks the largest
+    // description height in the DOM and uses that
     // Compute the item height, which is proportional to the item width
     let t = ((itemWidth - this.minItemSize.width) / this.minItemSize.width);
     let itemHeight = this.minItemSize.height + this.minItemSize.height * t;
