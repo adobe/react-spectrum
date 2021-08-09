@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {CardViewContext, useCardViewContext} from './CardViewContext';
 import cardViewStyles from './cardview.css';
 import {classNames, useDOMRef, useUnwrapDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
@@ -17,15 +18,13 @@ import {GridCollection, useGridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useContext, useMemo, useRef} from 'react';
+import React, {ReactElement, useMemo, useRef} from 'react';
 import {SpectrumCardViewProps} from '@react-types/cards';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {useGrid} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {Virtualizer} from '@react-aria/virtualizer';
-
-export const CardViewContext = React.createContext(null);
 
 function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(props);
@@ -143,7 +142,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
 
 // TODO filler centerwrapper from ListView, check if is valid
 function CenteredWrapper({children}) {
-  let {state} = useContext(CardViewContext);
+  let {state} = useCardViewContext();
   return (
     <div
       role="row"
@@ -163,7 +162,8 @@ function InternalCard(props) {
   let {
     item
   } = props;
-  let {state, cardOrientation, cardSize, isQuiet, cardType} = useContext(CardViewContext);
+  let {state, cardOrientation, cardSize, isQuiet, cardType} = useCardViewContext();
+
   // TODO: check if selection is enabled here and if so render the checkbox on the card
   let allowsSelection = state.selectionMode !== 'none';
 
@@ -199,7 +199,7 @@ function InternalCard(props) {
   return (
     <div {...rowProps} ref={rowRef}>
       {/* TODO: I presume we ignore all props passed in via item.props? */}
-      <CardBase ref={cellRef} articleProps={gridCellProps} isQuiet={isQuiet || cardType === 'quiet'}>
+      <CardBase ref={cellRef} articleProps={gridCellProps} isQuiet={isQuiet || cardType === 'quiet'} item={item}>
         {item.rendered}
       </CardBase>
     </div>

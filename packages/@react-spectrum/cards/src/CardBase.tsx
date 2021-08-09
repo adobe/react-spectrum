@@ -58,7 +58,7 @@ function CardBase(props: CardBaseProps, ref: DOMRef<HTMLDivElement>) {
   // let domRef = useDOMRef(ref);
   let gridRef = useRef();
 
-  let {hoverProps, isHovered} = useHover({});
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let [isFocused, setIsFocused] = useState(false);
   let {focusWithinProps} = useFocusWithin({
     onFocusWithinChange: setIsFocused,
