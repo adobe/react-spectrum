@@ -34,12 +34,7 @@ function HelpText(props: HelpTextProps, ref: DOMRef<HTMLDivElement>) {
     errorMessageProps
   } = props;
   let domRef = useDOMRef(ref);
-
-  const isErrorMessage = errorMessage && validationState === 'invalid';
-
-  if (!description && !isErrorMessage) {
-    return null;
-  }
+  let isErrorMessage = errorMessage && validationState === 'invalid';
 
   return (
     <div

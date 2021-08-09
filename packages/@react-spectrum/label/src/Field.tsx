@@ -42,8 +42,9 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let hasHelpText = !!description || errorMessage && validationState === 'invalid';
 
-  if (label) {
+  if (label || hasHelpText) {
     let labelWrapperClass = classNames(
       labelStyles,
       'spectrum-Field',
@@ -67,25 +68,29 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
         {...styleProps}
         ref={ref as RefObject<HTMLDivElement>}
         className={labelWrapperClass}>
-        <Label
-          {...labelProps}
-          labelPosition={labelPosition}
-          labelAlign={labelAlign}
-          isRequired={isRequired}
-          necessityIndicator={necessityIndicator}
-          includeNecessityIndicatorInAccessibilityName={includeNecessityIndicatorInAccessibilityName}
-          elementType={elementType}>
-          {label}
-        </Label>
+        {label && (
+          <Label
+            {...labelProps}
+            labelPosition={labelPosition}
+            labelAlign={labelAlign}
+            isRequired={isRequired}
+            necessityIndicator={necessityIndicator}
+            includeNecessityIndicatorInAccessibilityName={includeNecessityIndicatorInAccessibilityName}
+            elementType={elementType}>
+            {label}
+          </Label>
+        )}
         {children}
-        <HelpText
-          descriptionProps={descriptionProps}
-          errorMessageProps={errorMessageProps}
-          description={description}
-          errorMessage={errorMessage}
-          validationState={validationState}
-          isDisabled={isDisabled}
-          showIcon={showIcon} />
+        {hasHelpText && (
+          <HelpText
+            descriptionProps={descriptionProps}
+            errorMessageProps={errorMessageProps}
+            description={description}
+            errorMessage={errorMessage}
+            validationState={validationState}
+            isDisabled={isDisabled}
+            showIcon={showIcon} />
+        )}
       </div>
     );
   }

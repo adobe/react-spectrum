@@ -89,6 +89,15 @@ describe('Field', function () {
         let input = getByRole('textbox');
         expect(input).not.toHaveAttribute('aria-describedby');
       });
+
+      it('renders when no visible label is provided', () => {
+        let {getByRole, getByText} = renderField({label: null, 'aria-label': 'Field label', description: 'Help text'});
+
+        let helpText = getByText('Help text');
+        expect(helpText).toBeInTheDocument();
+        let input = getByRole('textbox');
+        expect(input).toHaveAttribute('aria-describedby', helpText.id);
+      });
     });
 
     describe('error message', function () {

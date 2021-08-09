@@ -152,23 +152,18 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     textField = React.cloneElement(textField, mergeProps(textField.props, {
       className: multiLine ? 'spectrum-Field-field--multiline' : ''
     }));
-
-    return (
-      <Field
-        {...props}
-        labelProps={labelProps}
-        descriptionProps={descriptionProps}
-        errorMessageProps={errorMessageProps}
-        ref={domRef}>
-        {textField}
-      </Field>
-    );
   }
 
-  return React.cloneElement(textField, mergeProps(textField.props, {
-    ...styleProps,
-    ref: domRef
-  }));
+  return (
+    <Field
+      {...props}
+      labelProps={labelProps}
+      descriptionProps={descriptionProps}
+      errorMessageProps={errorMessageProps}
+      ref={domRef}>
+      {textField}
+    </Field>
+  );
 }
 
 const _TextFieldBase = forwardRef(TextFieldBase);
