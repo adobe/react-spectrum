@@ -1,5 +1,7 @@
 {
   "calendar": "Kalendár",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} do {end, date, long}",
   "date": "Dátum",
   "dateRange": "Rozsah dátumov",
   "day": "Deň",

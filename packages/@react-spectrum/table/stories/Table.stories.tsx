@@ -247,6 +247,40 @@ storiesOf('TableView', module)
     )
   )
   .add(
+    'defaultSelectedKeys, dynamic, multiple selection, showDivider',
+    () => (
+      <TableView defaultSelectedKeys={['Foo 1', 'Foo 3']} onSelectionChange={s => onSelectionChange([...s])} selectionMode="multiple" aria-label="TableView with dynamic contents" width={300} height={200}>
+        <TableHeader columns={columns}>
+          {column => <Column showDivider>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'selectedKeys, dynamic, multiple selection, quiet, showDider',
+    () => (
+      <TableView isQuiet selectedKeys={['Foo 1', 'Foo 3']} onSelectionChange={s => onSelectionChange([...s])} selectionMode="multiple" aria-label="TableView with dynamic contents" width={300} height={200}>
+        <TableHeader columns={columns}>
+          {column => <Column showDivider>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
     // For testing https://github.com/adobe/react-spectrum/issues/1885
     'swap selection mode',
     () => (
@@ -307,7 +341,7 @@ storiesOf('TableView', module)
     'focusable cells',
     () => (
       <Flex direction="column">
-        <input placeholder="Focusable before" />
+        <input aria-label="Focusable before" placeholder="Focusable before" />
         <TableView aria-label="TableView with focusable cells" selectionMode="multiple" width={450} height={200} onSelectionChange={s => onSelectionChange([...s])}>
           <TableHeader>
             <Column key="foo">Foo</Column>
@@ -332,27 +366,31 @@ storiesOf('TableView', module)
             </Row>
           </TableBody>
         </TableView>
-        <input placeholder="Focusable after" />
+        <input aria-label="Focusable after" placeholder="Focusable after" />
       </Flex>
     )
   )
   .add(
     'many columns and rows',
     () => (
-      <TableView aria-label="TableView with many columns and rows" selectionMode="multiple" width={700} height={500} onSelectionChange={s => onSelectionChange([...s])}>
-        <TableHeader columns={manyColunns}>
-          {column =>
-            <Column minWidth={100}>{column.name}</Column>
-          }
-        </TableHeader>
-        <TableBody items={manyRows}>
-          {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>)
-          }
-        </TableBody>
-      </TableView>
+      <>
+        <input aria-label="Focusable before" placeholder="Focusable before" />
+        <TableView aria-label="TableView with many columns and rows" selectionMode="multiple" width={700} height={500} onSelectionChange={s => onSelectionChange([...s])}>
+          <TableHeader columns={manyColunns}>
+            {column =>
+              <Column minWidth={100}>{column.name}</Column>
+            }
+          </TableHeader>
+          <TableBody items={manyRows}>
+            {item =>
+              (<Row key={item.foo}>
+                {key => <Cell>{item[key]}</Cell>}
+              </Row>)
+            }
+          </TableBody>
+        </TableView>
+        <input aria-label="Focusable after" placeholder="Focusable after" />
+      </>
     ),
     {chromatic: {disable: true}}
   )
@@ -375,6 +413,115 @@ storiesOf('TableView', module)
       </TableView>
     ),
     {chromatic: {disable: true}}
+  )
+  .add(
+    'should fill cell width',
+    () => (
+      <TableView aria-label="TableView with filled cells" selectionMode="multiple" width={500} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column>File Name</Column>
+          <Column align="center">Type</Column>
+          <Column align="end">Size</Column>
+          <Column>Description</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+            <Cell>very very very very very very long long long long long description</Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <View
+                width="100%"
+                backgroundColor="gray-200">
+                100%
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{margin: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="100%"
+                backgroundColor="gray-200">
+                100%
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{marginInlineStart: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="100%"
+                backgroundColor="gray-200">
+                100%
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="100%"
+                backgroundColor="gray-200">
+                very very very very very very long long long long long description
+              </View>
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <View
+                UNSAFE_style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="50%"
+                backgroundColor="gray-200">
+                50% div
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{margin: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="70%"
+                backgroundColor="gray-200">
+                70% div
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{float: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="70%"
+                backgroundColor="gray-200">
+                70% div
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="70%"
+                backgroundColor="gray-200">
+                very very very very very very long long long long long description
+              </View>
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
+                span child
+              </span>
+            </Cell>
+            <Cell>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
+                span child</span>
+            </Cell>
+            <Cell>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
+                span child
+              </span>
+            </Cell>
+            <Cell>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
+                very very very very very very long long long long long description
+              </span>
+            </Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
   )
   .add(
     'column widths and dividers',
@@ -669,7 +816,7 @@ storiesOf('TableView', module)
             Foo
           </Column>
           <Column key="addAction" hideHeader>
-            Add Item
+            Add Info
           </Column>
           <Column key="deleteAction" hideHeader showDivider>
             Delete Item
@@ -681,12 +828,12 @@ storiesOf('TableView', module)
           <Row>
             <Cell>One</Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Add Info">
                 <Add />
               </ActionButton>
             </Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Delete">
                 <Delete />
               </ActionButton>
             </Cell>
@@ -696,12 +843,12 @@ storiesOf('TableView', module)
           <Row>
             <Cell>One</Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Add Info">
                 <Add />
               </ActionButton>
             </Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Delete">
                 <Delete />
               </ActionButton>
             </Cell>
@@ -711,12 +858,12 @@ storiesOf('TableView', module)
           <Row>
             <Cell>One</Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Add Info">
                 <Add />
               </ActionButton>
             </Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Delete">
                 <Delete />
               </ActionButton>
             </Cell>
@@ -726,12 +873,12 @@ storiesOf('TableView', module)
           <Row>
             <Cell>One</Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Add Info">
                 <Add />
               </ActionButton>
             </Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Delete">
                 <Delete />
               </ActionButton>
             </Cell>
@@ -741,12 +888,12 @@ storiesOf('TableView', module)
           <Row>
             <Cell>One</Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Add Info">
                 <Add />
               </ActionButton>
             </Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Delete">
                 <Delete />
               </ActionButton>
             </Cell>
@@ -756,12 +903,12 @@ storiesOf('TableView', module)
           <Row>
             <Cell>One</Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Add Info">
                 <Add />
               </ActionButton>
             </Cell>
             <Cell>
-              <ActionButton isQuiet>
+              <ActionButton isQuiet aria-label="Delete">
                 <Delete />
               </ActionButton>
             </Cell>
@@ -861,7 +1008,7 @@ function AsyncLoadingExample() {
   return (
     <div>
       <ActionButton marginBottom={10} onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
-      <TableView aria-label="Top news from Reddit" selectionMode="multiple" width={1000} height={400} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
+      <TableView aria-label="Top news from Reddit" selectionMode="multiple" width={1000} height={400} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
         <TableHeader>
           <Column key="score" width={100} allowsSorting>Score</Column>
           <Column key="title" isRowHeader allowsSorting>Title</Column>
@@ -957,7 +1104,7 @@ function ProjectListTable() {
   };
 
   return (
-    <>
+    <div>
       <SearchField
         marginStart={'size-200'}
         marginBottom={'size-200'}
@@ -989,7 +1136,7 @@ function ProjectListTable() {
           </TableBody>
         </TableView>
       </View>
-    </>
+    </div>
   );
 }
 
@@ -1081,8 +1228,9 @@ function ChangableSelectionMode() {
 
   return (
     <Flex direction="column" flexGrow={1} maxWidth="size-6000">
-      <RadioGroup defaultValue="none" onChange={(value: SelectionMode) => setSelectionMode(value)} label="Show / Hide">
+      <RadioGroup defaultValue="none" onChange={(value: SelectionMode) => setSelectionMode(value)} label="Selection Mode">
         <Radio value="multiple">Multiple</Radio>
+        <Radio value="single">Single</Radio>
         <Radio value="none">None</Radio>
       </RadioGroup>
       <TableView overflowMode="wrap" selectionMode={selectionMode} selectedKeys={selectedKeys} aria-label="TableView with controlled selection" width="100%" height="100%" onSelectionChange={setSelectedKeys}>
