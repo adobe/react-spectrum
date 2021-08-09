@@ -23,7 +23,8 @@ export type GridLayoutOptions<T> = {
   margin?: any, // TODO: Perhaps should accept Responsive<DimensionValue>
   minSpace?: Size,
   maxColumns?: number,
-  itemPadding?: number
+  itemPadding?: number,
+  collator?: Intl.Collator
 };
 
 // TODO: copied from V2, update this with the proper spectrum values
@@ -64,7 +65,8 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   protected itemSize;
   protected numColumns;
   protected numRows;
-  protected horizontalSpacing
+  protected horizontalSpacing;
+  protected collator: Intl.Collator;
 
   // The following are set in CardView, not through options
   collection: Collection<Node<T>>;
@@ -139,6 +141,7 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     this.numRows = 0;
     this.horizontalSpacing = 0;
     this.lastCollection = null;
+    this.collator = options.collator;
   }
 
   get cardType() {
@@ -389,7 +392,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     return this.collection.at(indexRowAbove)?.key || null;
   }
 
-  // TODO: perhaps I can use the GridKeyboardDelegate for these instead
   getKeyRightOf(key: Key) {
     key = this.direction === 'rtl' ?  this.collection.getKeyBefore(key) : this.collection.getKeyAfter(key);
     while (key != null) {
@@ -416,7 +418,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     }
   }
 
-  // TODO: Having these mean that Home and End will bring focus to the first and last item in the list which differs from what v2 does
   getFirstKey() {
     return this.collection.getFirstKey();
   }
@@ -425,6 +426,62 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     return this.collection.getLastKey();
   }
 
-  // TODO: does this need getKeyPageUp/Down? Page up and page down don't do anything in v2
+  // Page up and down mimics that of listlayout, perhaps change to an index based search for performance?
+  getKeyPageAbove(key: Key) {
+    let layoutInfo = this.getLayoutInfo(key);
+
+    if (layoutInfo) {
+      let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
+      while (layoutInfo && layoutInfo.rect.y > pageY) {
+        let keyAbove = this.getKeyAbove(layoutInfo.key);
+        layoutInfo = this.getLayoutInfo(keyAbove);
+      }
+
+      if (layoutInfo) {
+        return layoutInfo.key;
+      }
+    }
+
+    return this.getFirstKey();
+  }
+
+  getKeyPageBelow(key: Key) {
+    let layoutInfo = this.getLayoutInfo(key != null ? key : this.getFirstKey());
+
+    if (layoutInfo) {
+      let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
+      while (layoutInfo && layoutInfo.rect.y < pageY) {
+        let keyBelow = this.getKeyBelow(layoutInfo.key);
+        layoutInfo = this.getLayoutInfo(keyBelow);
+      }
+
+      if (layoutInfo) {
+        return layoutInfo.key;
+      }
+    }
+
+    return this.getLastKey();
+  }
+
+  getKeyForSearch(search: string, fromKey?: Key) {
+    if (!this.collator) {
+      return null;
+    }
+
+    let collection = this.collection;
+    let key = fromKey || this.getFirstKey();
+    while (key != null) {
+      let item = collection.getItem(key);
+      console.log('item.text', item);
+      let substring = item.textValue.slice(0, search.length);
+      if (item.textValue && this.collator.compare(substring, search) === 0) {
+        return key;
+      }
+
+      key = this.collection.getKeyAfter(key);
+    }
+
+    return null;
+  }
 
 }

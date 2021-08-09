@@ -37,14 +37,15 @@ function Card(props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) {
 // }
 
 Card.getCollectionNode = function* getCollectionNode<T>(props, context: any): Generator<PartialNode<T>> {
-  let {children} = props;
+  let {children, textValue} = props;
 
   yield {
     type: 'item',
     props: props,
     rendered: children,
     'aria-label': props['aria-label'],
-    hasChildNodes: false
+    hasChildNodes: false,
+    textValue
   };
 };
 
