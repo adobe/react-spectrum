@@ -40,7 +40,6 @@ function CardBase(props: CardBaseProps, ref: DOMRef<HTMLDivElement>) {
   let context = useCardViewContext() || {}; // we can call again here, won't change from Card.tsx
   let {state} = context;
   let manager = state?.selectionManager;
-  // let [isSelected, setIsSelected] = useControlledState(context.isSelected, undefined, context.onSelectionChange);
   let {
     isQuiet,
     orientation = 'vertical',
