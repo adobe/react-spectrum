@@ -15,6 +15,7 @@ import {ActionMenu, Item} from '@react-spectrum/menu';
 import {Button} from '@react-spectrum/button';
 import {Card, CardView, GridLayout} from '../';
 import {Content, Footer} from '@react-spectrum/view';
+import {getImage} from './utils';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
@@ -22,28 +23,28 @@ import React, {useMemo} from 'react';
 import {useCollator} from '@react-aria/i18n';
 
 let items = [
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 1, title: 'Bob 1'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 2, title: 'Joe 1'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 3, title: 'Jane 1'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 4, title: 'Bob 2'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 5, title: 'Joe 2'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 6, title: 'Jane 2'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 7, title: 'Bob 3'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 8, title: 'Joe 3'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 9, title: 'Jane 3'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 10, title: 'Bob 4'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 11, title: 'Joe 4'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 12, title: 'Jane 4'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 13, title: 'Bob 5'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 14, title: 'Joe 5'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 15, title: 'Jane 5'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 16, title: 'Bob 6'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 17, title: 'Joe 6'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 18, title: 'Jane 6'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 19, title: 'Bob 7'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 20, title: 'Joe 7'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 21, title: 'Jane 7'},
-  {url: 'https://i.imgur.com/Z7AzH2c.png', width: 1024, height: 683, id: 22, title: 'Bob 8'}
+  {width: 1024, height: 683, id: 1, title: 'Bob 1'},
+  { width: 1024, height: 683, id: 2, title: 'Joe 1'},
+  {width: 1024, height: 683, id: 3, title: 'Jane 1'},
+  {width: 1024, height: 683, id: 4, title: 'Bob 2'},
+  {width: 1024, height: 683, id: 5, title: 'Joe 2'},
+  {width: 1024, height: 683, id: 6, title: 'Jane 2'},
+  {width: 1024, height: 683, id: 7, title: 'Bob 3'},
+  {width: 1024, height: 683, id: 8, title: 'Joe 3'},
+  {width: 1024, height: 683, id: 9, title: 'Jane 3'},
+  {width: 1024, height: 683, id: 10, title: 'Bob 4'},
+  {width: 1024, height: 683, id: 11, title: 'Joe 4'},
+  {width: 1024, height: 683, id: 12, title: 'Jane 4'},
+  {width: 1024, height: 683, id: 13, title: 'Bob 5'},
+  {width: 1024, height: 683, id: 14, title: 'Joe 5'},
+  {width: 1024, height: 683, id: 15, title: 'Jane 5'},
+  {width: 1024, height: 683, id: 16, title: 'Bob 6'},
+  {width: 1024, height: 683, id: 17, title: 'Joe 6'},
+  {width: 1024, height: 683, id: 18, title: 'Jane 6'},
+  {width: 1024, height: 683, id: 19, title: 'Bob 7'},
+  {width: 1024, height: 683, id: 20, title: 'Joe 7'},
+  {width: 1024, height: 683, id: 21, title: 'Jane 7'},
+  {width: 1024, height: 683, id: 22, title: 'Bob 8'}
 ];
 
 
@@ -104,7 +105,7 @@ function render(props) {
     <CardView  {...actions} {...props} layout={layout} items={items} width="800px" height="800px" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
       {item =>
         <Card key={item.id} textValue={item.title}>
-          <Image src={item.url} />
+          <Image src={getImage(item.id)} />
           <Heading>{item.title}</Heading>
           <Text slot="detail">PNG</Text>
           <Content>Description</Content>
