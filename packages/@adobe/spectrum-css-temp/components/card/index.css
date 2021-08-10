@@ -320,6 +320,8 @@ layer 3:
   }
   .spectrum-Card-image,
   .spectrum-Card-illustration {
+    clip-path: inset(0% 0% 0% 0% round 5px);
+    position: absolute;
     grid-area: preview;
     block-size: 100%;
     inline-size: 100%;

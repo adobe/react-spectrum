@@ -100,14 +100,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
         layout={cardViewLayout}
         collection={collection}
         isLoading={isLoading}
-        onLoadMore={onLoadMore}
-        className={
-          classNames(
-            styles,
-            'spectrum-CardGrid',
-            styleProps.className
-          )
-        }>
+        onLoadMore={onLoadMore}>
         {(type, item) => {
           if (type === 'item') {
             return (
@@ -199,7 +192,20 @@ function InternalCard(props) {
   return (
     // TODO: added padding here to make the focus ring not get cut off. Replace with a real fix
     <div {...rowProps} ref={rowRef} style={{padding: '2px', height: '100%'}}>
-      <CardBase ref={cellRef} articleProps={gridCellProps} isQuiet={isQuiet || cardType === 'quiet'} orientation={cardOrientation} size={cardSize} item={item}>
+      <CardBase
+        ref={cellRef}
+        articleProps={gridCellProps}
+        isQuiet={isQuiet || cardType === 'quiet'}
+        orientation={cardOrientation}
+        size={cardSize}
+        item={item}
+        UNSAFE_className={
+          classNames(
+            styles,
+            'spectrum-Card--inGrid'
+          )
+        }
+        >
         {item.rendered}
       </CardBase>
     </div>
