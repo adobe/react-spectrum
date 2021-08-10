@@ -14,7 +14,8 @@ export interface GridState<T, C extends GridCollection<T>> {
 interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelection {
   collection: C,
   disabledKeys?: Iterable<Key>,
-  focusMode?: 'row' | 'cell'
+  focusMode?: 'row' | 'cell',
+  allowsCellSelection?: boolean
 }
 
 /**

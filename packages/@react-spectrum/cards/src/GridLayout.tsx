@@ -15,14 +15,40 @@ import {Collection, Direction, KeyboardDelegate, Node} from '@react-types/shared
 import {InvalidationContext, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
 
-// TODO: add GridLayoutOptions types
 export type GridLayoutOptions<T> = {
+  /**
+   * The card size in the grid.
+   */
   cardSize?: 'S' | 'M' | 'L',
+  /**
+   * The minimum item size.
+   * @default 208 x 208
+   */
   minItemSize?: Size,
+  /**
+   * The maximum item size.
+   * @default Infinity
+   */
   maxItemSize?: Size,
-  margin?: any, // TODO: Perhaps should accept Responsive<DimensionValue>
+  /**
+   * The margin around the grid view between the edges and the items.
+   * @default 24
+   */
+  margin?: number, // TODO: Perhaps should accept Responsive<DimensionValue>
+  /**
+   * The minimum space required between items.
+   * @default 24 x 48
+   */
   minSpace?: Size,
+  /**
+   * The maximum number of columns.
+   * @default Infinity
+   */
   maxColumns?: number,
+  /**
+   * The vertical padding for an item.
+   * @default 52
+   */
   itemPadding?: number,
   collator?: Intl.Collator
 };
@@ -52,80 +78,35 @@ const DEFAULT_OPTIONS = {
   }
 };
 
-// TODO Perhaps this extends something else, maybe BaseLayout doesn't need to exist and we can extend off a different layout
-// Maybe extend GridKeyboardDelegate?
-
 export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
-  protected minItemSize;
-  protected maxItemSize;
-  protected margin;
-  protected minSpace;
-  protected maxColumns;
-  protected itemPadding;
-  protected itemSize;
-  protected numColumns;
-  protected numRows;
-  protected horizontalSpacing;
+  protected minItemSize: Size;
+  protected maxItemSize: Size;
+  protected margin: number;
+  protected minSpace: Size;
+  protected maxColumns: number;
+  protected itemPadding: number;
+  protected itemSize: Size;
+  protected numColumns: number;
+  protected numRows: number;
+  protected horizontalSpacing: number;
   protected collator: Intl.Collator;
-
+  protected lastCollection: Collection<Node<T>>;
+  protected invalidateEverything: boolean;
   // The following are set in CardView, not through options
   collection: Collection<Node<T>>;
-  protected lastCollection: Collection<Node<T>>;
   isLoading: boolean;
   // TODO: is this a thing? I know its available in CardView's props due to multipleSelection type
   disabledKeys: Set<Key> = new Set();
   direction: Direction;
-  protected invalidateEverything: boolean;
-  // Not sure we need the below for GridLayout, the loader height and placeholder height
-  // protected loaderHeight: number;
-  // protected placeholderHeight: number;
 
   constructor(options: GridLayoutOptions<T> = {}) {
     super();
     let cardSize = options.cardSize || 'L';
-
-    // TODO: move the descriptions to the GridLayoutOptions type
-
-    /**
-     * The minimum item size
-     * @type {Size}
-     * @default 208 x 208
-     */
     this.minItemSize = options.minItemSize || DEFAULT_OPTIONS[cardSize].minItemSize;
-
-    /**
-     * The maximum item size.
-     * @type {Size}
-     * @default Infinity
-     */
     this.maxItemSize = options.maxItemSize || DEFAULT_OPTIONS[cardSize].maxItemSize;
-
-    /**
-     * The margin around the grid view between the edges and the items
-     * @type {Size} (actually isn't this just a string/interger?)
-     * @default 24
-     */
     this.margin = options.margin != null ? options.margin : DEFAULT_OPTIONS[cardSize].margin;
-
-    /**
-     * The minimum space required between items
-     * @type {Size}
-     * @default 24 x 48
-     */
     this.minSpace = options.minSpace || DEFAULT_OPTIONS[cardSize].minSpace;
-
-    /**
-     * The maximum number of columns. Default is infinity.
-     * @type {number}
-     * @default Infinity
-     */
     this.maxColumns = options.maxColumns || DEFAULT_OPTIONS[cardSize].maxColumns;
-
-    /**
-     * The vertical padding for an item
-     * @type {number}
-     * @default 52
-     */
     this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding;
 
     // TODO: add drag and drop later
@@ -155,9 +136,7 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     let itemWidth = this.itemSize.width + this.horizontalSpacing;
     return Math.max(0,
       Math.min(
-        // Adapted from v2 where collectionView.getSectionLength(0) returned the number of items + 1
         this.collection.size + (allowInsertingAtEnd ? 1 : 0),
-        // this.collectionView.getSectionLength(0) - (allowInsertingAtEnd ? 0 : 1),
         Math.floor(y / itemHeight) * this.numColumns + Math.floor((x - this.horizontalSpacing) / itemWidth)
       )
     );
@@ -165,7 +144,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
 
   getVisibleLayoutInfos(rect) {
     let res = [];
-    // Adapted from v2
     let numItems = this.collection.size;
     if (numItems <= 0 || !this.itemSize) {
       // If there aren't any items in the collection, we are in a loader/placeholder state. Return those layoutInfos as
@@ -182,10 +160,8 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
       let firstVisibleItem = this.getIndexAtPoint(rect.x, rect.y);
       let lastVisibleItem = this.getIndexAtPoint(rect.maxX, rect.maxY);
 
-      // TBH, do we really need to check isVisible here? Is there a case where an item between the first/last visible item wouldn't be visible?
       for (let index = firstVisibleItem; index < lastVisibleItem; index++) {
         let keyFromIndex = this.collection.at(index).key;
-        // TODO: double check that this is retrieving the correct layoutInfos
         let layoutInfo = this.layoutInfos.get(keyFromIndex);
         if (this.isVisible(layoutInfo, rect)) {
           res.push(layoutInfo);
@@ -214,7 +190,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     this.invalidateEverything = invalidationContext.sizeChanged;
     this.collection = this.virtualizer.collection;
 
-    // Below adapted from V2 code
     // Compute the number of rows and columns needed to display the content
     let availableWidth = this.virtualizer.visibleRect.width - this.margin * 2;
     let columns = Math.floor(availableWidth / (this.minItemSize.width + this.minSpace.width));
@@ -243,7 +218,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
 
     this.buildCollection();
 
-    // TODO: grabbed from ListLayout, not entirely sure if necessary
     // Remove layout info that doesn't exist in new collection
     if (this.lastCollection) {
       for (let key of this.lastCollection.getKeys()) {
@@ -273,7 +247,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
       // so it doesn't scroll
       if (this.collection.size === 0) {
         loaderY = 0;
-        // TODO: filler loader and placeholder heights, get the desired loader height later
         loaderHeight = this.virtualizer.visibleRect.height || 60;
       }
 
@@ -367,7 +340,7 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   // collection contents by that number (which will give us the row distribution)
   getKeyBelow(key: Key) {
     let indexRowBelow;
-    // Alternative approach is to do a for loop that repeats this.numColumns times and calls getKeyAfter each time
+    // TODO: Alternative approach is to do a for loop that repeats this.numColumns times and calls getKeyAfter each time
     let keyArray = [...this.collection.getKeys()];
     let index = keyArray.findIndex(k => k === key);
     if (index !== -1) {
@@ -426,7 +399,7 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     return this.collection.getLastKey();
   }
 
-  // Page up and down mimics that of listlayout, perhaps change to an index based search for performance?
+  // TODO: Page up and down mimics that of listlayout, perhaps change to an index based search for performance?
   getKeyPageAbove(key: Key) {
     let layoutInfo = this.getLayoutInfo(key);
 

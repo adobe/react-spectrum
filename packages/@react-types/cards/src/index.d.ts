@@ -25,11 +25,12 @@ interface SpectrumCardProps extends AriaCardProps, StyleProps, DOMProps {
 }
 
 export interface LayoutConstructor<T> {
-  // TODO type the args
-  new (args): Layout<Node<T>>;
+  // TODO type the options. Prob will need to GridLayout || WaterfallLayout || GalleryLayout
+  new (options?: any): Layout<Node<T>>;
 }
 
 interface CardViewProps<T> extends CollectionBase<T>, MultipleSelection, Omit<AsyncLoadable, 'isLoading'> {
+  // TODO: perhaps this shouldn't be Layout<Node<T>> but rather GridLayout || WaterfallLayout || GalleryLayout?
   layout: LayoutConstructor<T> | Layout<Node<T>>,
   cardSize?: 'S' | 'M' | 'L',
   cardOrientation?: 'horizontal' | 'vertical',

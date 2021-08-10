@@ -75,6 +75,9 @@ DefaultGrid.storyName = 'default grid layout with initialized layout';
 export const DefaultGridConstructor = () => render({layout: GridLayout});
 DefaultGridConstructor.storyName = 'default grid layout w/ layout constructor';
 
+export const SmallGrid = () => render({layout: GridLayout, cardSize: 'S'});
+SmallGrid.storyName = 'grid layout with small cards';
+
 export const isLoadingNoHeight = () => renderNoItems({width: '800px', loadingState: 'loading'});
 isLoadingNoHeight.storyName = 'loadingState = loading, no height';
 
