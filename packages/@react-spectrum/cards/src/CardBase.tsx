@@ -50,7 +50,7 @@ function CardBase(props: CardBaseProps, ref: DOMRef<HTMLDivElement>) {
   let key = item?.key;
   let isSelected = manager?.isSelected(key);
   let isDisabled = state?.disabledKeys.has(key);
-  let onChange = () => manager.select(key);
+  let onChange = () => manager?.select(key);
 
   let {styleProps} = useStyleProps(props);
   let {cardProps, titleProps, contentProps} = useCard(props);

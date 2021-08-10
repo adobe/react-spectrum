@@ -42,18 +42,10 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({cardSize, cardOrientation, collator}) : layout, [layout, cardSize, cardOrientation]);
 
-  // TODO:
-  // What exactly is the layout of CardView going to be? Is it a single column Grid with each row having child Card elements?
-  // Or is it a multi column grid with each Card being a Cell in the Row?
-  // " Each card is represented as a row in the grid with a single cell inside." Does this mean you have rows next to each other? Feels weird, check v2 implementation
-
-
   let formatMessage = useMessageFormatter(intlMessages);
   let {direction} = useLocale();
   let {collection} = useListState(props);
 
-  // TODO: Is CardView a single column grid? If so, is each card a "cell" within a row? Does each row have a single card or multiple?
-  // Figure out what to pass to "items" here
   let gridCollection = useMemo(() => new GridCollection<T>({
     columnCount: 1,
     items: [...collection].map(item => ({
@@ -70,6 +62,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     ...props,
     collection: gridCollection,
     // TODO: this is a tentative change to make SelectionManager return the cell key on selection
+    // If we don't want to go this way then I think we will have to write our own onAction instead of using manger.select?
     allowsCellSelection: true
   });
 
@@ -157,15 +150,6 @@ function InternalCard(props) {
   } = props;
   let {state, cardOrientation, cardSize, isQuiet, cardType} = useCardViewContext();
 
-  // TODO: check if selection is enabled here and if so render the checkbox on the card
-  let allowsSelection = state.selectionMode !== 'none';
-
-  // item.rendered will have the children provided to the Card (e.g. Image, ActionMenu, etc)
-  // item.props will have all other relevant info: size, orientation, isQuiet, etc
-  // To get the proper isQuiet from item.props vs the info coming from the CardView context,
-  // we can check the cardType + isQuiet from CardView context and compare with isQuiet from item.props and make a decision
-  // based on if the CardView allows isQuiet for the specific layout
-
   let rowRef = useRef();
   let cellRef = useRef();
   // let ref = useRef<DOMRefValue<HTMLDivElement>>();
@@ -204,8 +188,7 @@ function InternalCard(props) {
             styles,
             'spectrum-Card--inGrid'
           )
-        }
-        >
+        }>
         {item.rendered}
       </CardBase>
     </div>
