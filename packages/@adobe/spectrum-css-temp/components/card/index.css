@@ -329,7 +329,7 @@ layer 3:
     justify-self: center;
   }
   .spectrum-Card-image {
-    clip-path: inset(0% 0% 0% 0% round 5px);
+    clip-path: inset(0% 0% 0% 0% round var(--spectrum-card-quiet-border-radius));
     /* remove from flow so it doesn't affect grid area size, this way the aspect ratio is maintained
      todo: figure out why or how it's already in the correct centered spot */
     position: absolute;
