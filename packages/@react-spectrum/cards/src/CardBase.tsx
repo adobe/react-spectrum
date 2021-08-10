@@ -11,9 +11,9 @@
  */
 
 import {Checkbox} from '@react-spectrum/checkbox';
-import {classNames, SlotProvider, useHasChild, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
 import {Divider} from '@react-spectrum/divider';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, Node} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 import React, {HTMLAttributes, useMemo, useRef, useState} from 'react';
@@ -29,12 +29,12 @@ import {FocusRing} from '@react-aria/focus';
 // is there a way to turn off the selection checkbox?
 // is cards getting an isSelected prop? do cards have controlled/uncontrolled?
 
-interface CardBaseProps extends SpectrumCardProps {
+interface CardBaseProps<T> extends SpectrumCardProps {
   articleProps?: HTMLAttributes<HTMLElement>,
-  item
+  item?: Node<T>
 }
 
-function CardBase(props: CardBaseProps, ref: DOMRef<HTMLDivElement>) {
+function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   // TODO: Don't send in articleProps via context (unless we want to make another context for InternalCard)? Pass it in via props since it will only be provided via CardView's InternalCard
   let context = useCardViewContext() || {}; // we can call again here, won't change from Card.tsx
@@ -54,7 +54,7 @@ function CardBase(props: CardBaseProps, ref: DOMRef<HTMLDivElement>) {
 
   let {styleProps} = useStyleProps(props);
   let {cardProps, titleProps, contentProps} = useCard(props);
-  // let domRef = useDOMRef(ref);
+  let domRef = useDOMRef(ref);
   let gridRef = useRef();
 
   let {hoverProps, isHovered} = useHover({isDisabled});
@@ -84,7 +84,7 @@ function CardBase(props: CardBaseProps, ref: DOMRef<HTMLDivElement>) {
       <article
         {...styleProps}
         {...mergeProps(cardProps, focusWithinProps, hoverProps, filterDOMProps(props), articleProps)}
-        ref={ref}
+        ref={domRef}
         className={classNames(styles, 'spectrum-Card', {
           'spectrum-Card--default': !isQuiet && orientation !== 'horizontal',
           'spectrum-Card--isQuiet': isQuiet && orientation !== 'horizontal',

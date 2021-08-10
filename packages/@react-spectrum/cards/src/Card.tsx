@@ -14,27 +14,21 @@
 import {CardBase} from './CardBase';
 import {DOMRef} from '@react-types/shared';
 import {PartialNode} from '@react-stately/collections';
-import React from 'react';
+import React, {forwardRef} from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
 import {useCardViewContext} from './CardViewContext';
 
-// TODO confirm that this is the approach we wanna take
-// Problems with attaching a ref
-function Card(props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) {
+let Card = forwardRef((props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) => {
   let context = useCardViewContext();
   if (context !== null) {
     return null;
   } else {
     return (
-      <CardBase {...props} />
+      <CardBase {...props} ref={ref} />
     );
   }
-}
+});
 
-
-// function Card<T>(props): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
-//   return null;
-// }
 
 Card.getCollectionNode = function* getCollectionNode<T>(props, context: any): Generator<PartialNode<T>> {
   let {children, textValue} = props;
@@ -49,14 +43,6 @@ Card.getCollectionNode = function* getCollectionNode<T>(props, context: any): Ge
   };
 };
 
-
-// TODO: Ask about the below, if we export as forwardRef it breaks CollectionBuilder and if we export as is it breaks Rob's stories
 // We don't want getCollectionNode to show up in the type definition
 let _Card = Card as <T>(props, ref) => JSX.Element;
 export {_Card as Card};
-
-// /**
-//  * TODO: Add description of component here.
-//  */
-//  const _Card = React.forwardRef(Card);
-//  export {_Card as Card};
