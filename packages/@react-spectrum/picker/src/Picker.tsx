@@ -29,7 +29,7 @@ import {FocusScope} from '@react-aria/focus';
 import {HiddenSelect, useSelect} from '@react-aria/select';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {Label} from '@react-spectrum/label';
+import {Field, Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
@@ -255,53 +255,18 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     </div>
   );
 
-  if (label) {
-    let labelWrapperClass = classNames(
-      labelStyles,
-      'spectrum-Field',
-      {
-        'spectrum-Field--positionTop': labelPosition === 'top',
-        'spectrum-Field--positionSide': labelPosition === 'side'
-      },
-      classNames(
-        styles,
-        'spectrum-Field',
-        {
-          'spectrum-Dropdown-fieldWrapper--quiet': isQuiet,
-          'spectrum-Dropdown-fieldWrapper--positionSide': labelPosition === 'side'
-        }
-      ),
-      styleProps.className
-    );
-
-    picker = React.cloneElement(picker, mergeProps(picker.props, {
-      className: classNames(labelStyles, 'spectrum-Field-field')
-    }));
-
-    return (
-      <div
-        {...styleProps}
-        ref={domRef}
-        className={labelWrapperClass}>
-        <Label
-          {...labelProps}
-          labelPosition={labelPosition}
-          labelAlign={labelAlign}
-          isRequired={isRequired}
-          necessityIndicator={necessityIndicator}
-          includeNecessityIndicatorInAccessibilityName
-          elementType="span">
-          {label}
-        </Label>
-        {picker}
-      </div>
-    );
-  }
-
-  return React.cloneElement(picker, mergeProps(picker.props, {
-    ...styleProps,
-    ref: domRef
-  }));
+  return (
+    <Field
+      {...props}
+      labelProps={labelProps}
+      descriptionProps={{}}
+      errorMessageProps={{}}
+      includeNecessityIndicatorInAccessibilityName
+      elementType="span"
+      ref={domRef}>
+      {picker}
+    </Field>
+  );
 }
 
 /**

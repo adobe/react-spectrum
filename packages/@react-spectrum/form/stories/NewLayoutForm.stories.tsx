@@ -15,7 +15,7 @@ import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {countries, states} from './data';
-import {Flex} from '@react-spectrum/layout';
+import {Flex, Grid} from '@react-spectrum/layout';
 import {Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '@react-spectrum/numberfield';
@@ -26,7 +26,7 @@ import {SearchWithin} from '@react-spectrum/searchwithin';
 import {storiesOf} from '@storybook/react';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 
-storiesOf('Form/default', module)
+storiesOf('Form/new layout', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
   .add(
     'Default',
@@ -53,20 +53,23 @@ storiesOf('Form/default', module)
     () => render({width: 400, labelPosition: 'side', labelAlign: 'end'})
   )
   .add(
+    // maybe some other way to do this one? right now i just check if in a newFormLayout Form, then ditch all their wrappers
     'fields next to each other',
     () => (
-      <Form>
-        <Flex>
-          <TextField label="First Name" placeholder="John" marginEnd="size-100" flex={1} />
-          <TextField label="Last Name" placeholder="Smith" flex={1} />
+      <Form newFormLayout>
+        <Flex gap={10}>
+          <div style={{flex: '1'}}><TextField label="First Name" placeholder="John"/></div>
+          <div style={{flex: '1'}}><TextField label="Last Name" placeholder="Smith" /></div>
         </Flex>
         <TextField label="Street Address" placeholder="123 Any Street" />
-        <Flex>
-          <TextField label="City" placeholder="San Francisco" marginEnd="size-100" flex={1} />
-          <Picker label="State" placeholder="Select a state" items={states} marginEnd="size-100" flex={1}>
-            {item => <Item key={item.abbr}>{item.name}</Item>}
-          </Picker>
-          <TextField label="Zip code" placeholder="12345" flex={1} />
+        <Flex gap={10}>
+          <div style={{flex: '1'}}><TextField label="City" placeholder="San Francisco" /></div>
+          <div style={{flex: '1'}}>
+            <Picker label="State" placeholder="Select a state" items={states}>
+              {item => <Item key={item.abbr}>{item.name}</Item>}
+            </Picker>
+          </div>
+          <div style={{flex: '1'}}><TextField label="Zip code" placeholder="12345" /></div>
         </Flex>
       </Form>
     )
@@ -116,23 +119,31 @@ storiesOf('Form/default', module)
     () => (
       <Flex gap="size-100">
         <NumberField label="Outside form" />
-        <Form>
+        <Form newFormLayout alignSelf="start">
           <NumberField label="Inside form" />
         </Form>
-        <Form>
+        <Form newFormLayout alignSelf="start">
           <TextField label="First Name" placeholder="John" />
         </Form>
-        <Form>
+        <Form newFormLayout alignSelf="start">
           <TextField label="First Name" placeholder="John" />
           <NumberField label="Inside form" />
         </Form>
       </Flex>
     )
+  )
+  .add(
+    'Missing some labels',
+    () => renderSomeNonVisibleLabels({})
+  )
+  .add(
+    'Label position side missing some labels',
+    () => renderSomeNonVisibleLabels({labelPosition: 'side'})
   );
 
 function render(props: any = {}) {
   return (
-    <Form {...props}>
+    <Form {...props} newFormLayout>
       <TextField label="First Name" placeholder="John" />
       <TextField label="Last Name" placeholder="Smith" errorMessage="Some helpful message" description="Something to describe the field" />
       <TextField label="Street Address" placeholder="123 Any Street" />
@@ -174,6 +185,50 @@ function render(props: any = {}) {
   );
 }
 
+function renderSomeNonVisibleLabels(props: any = {}) {
+  return (
+    <Form {...props} newFormLayout>
+      <TextField aria-label="First Name" placeholder="John" />
+      <TextField label="Last Name" placeholder="Smith" errorMessage="Some helpful message" description="Something to describe the field" />
+      <TextField label="Street Address" placeholder="123 Any Street" />
+      <TextField label="City" placeholder="San Francisco" />
+      <NumberField aria-label="Years lived there" />
+      <Picker label="State" placeholder="Select a state" items={states}>
+        {item => <Item key={item.abbr}>{item.name}</Item>}
+      </Picker>
+      <TextField label="Zip code" placeholder="12345" />
+      <Picker label="Country" placeholder="Select a country" items={countries}>
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </Picker>
+      <CheckboxGroup defaultValue={['dragons']} label="Pets">
+        <Checkbox value="dogs">Dogs</Checkbox>
+        <Checkbox value="cats">Cats</Checkbox>
+        <Checkbox value="dragons">Dragons</Checkbox>
+      </CheckboxGroup>
+      <RadioGroup label="Favorite pet" name="favorite-pet-group">
+        <Radio value="dogs">Dogs</Radio>
+        <Radio value="cats">Cats</Radio>
+        <Radio value="dragons">Dragons</Radio>
+      </RadioGroup>
+      <Picker label="Favorite color">
+        <Item>Red</Item>
+        <Item>Orange</Item>
+        <Item>Yellow</Item>
+        <Item>Green</Item>
+        <Item>Blue</Item>
+        <Item>Purple</Item>
+      </Picker>
+      <TextArea aria-label="Comments" placeholder="How do you feel?" />
+      <SearchWithin label="Search">
+        <SearchField placeholder="Search" />
+        <Picker label="State" placeholder="Select a state" items={states}>
+          {item => <Item key={item.abbr}>{item.name}</Item>}
+        </Picker>
+      </SearchWithin>
+    </Form>
+  );
+}
+
 function FormWithControls(props: any = {}) {
   let [firstName, setFirstName] = useState('hello');
   let [isHunter, setIsHunter] = useState(true);
@@ -198,7 +253,8 @@ function FormWithControls(props: any = {}) {
             e.preventDefault();
           }
         }}
-        {...props}>
+        {...props}
+        newFormLayout>
         <TextField name="first-name" label="First Name controlled" placeholder="John" value={firstName} onChange={setFirstName} />
         <TextField name="last-name" label="Last Name default" placeholder="Smith" defaultValue="world" />
         <TextField name="street-address" label="Street Address none" placeholder="123 Any Street" />

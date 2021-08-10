@@ -18,6 +18,7 @@ import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css
 import {mergeProps} from '@react-aria/utils';
 import React, {RefObject} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
+import {useFormProps} from '@react-spectrum/form';
 
 function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   let {
@@ -44,6 +45,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   let {styleProps} = useStyleProps(otherProps);
   let hasHelpText = !!description || errorMessage && validationState === 'invalid';
 
+  let {newFormLayout} = useFormProps({});
   if (label || hasHelpText) {
     let labelWrapperClass = classNames(
       labelStyles,
@@ -62,15 +64,14 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
         'spectrum-Field-field'
       )
     }));
-
-    return (
-      <div
-        {...styleProps}
-        ref={ref as RefObject<HTMLDivElement>}
-        className={labelWrapperClass}>
-        {label && (
+    if (newFormLayout) {
+      return (
+        <>
           <Label
             {...labelProps}
+            UNSAFE_className={classNames(labelStyles, {
+              hasHelpText
+            })}
             labelPosition={labelPosition}
             labelAlign={labelAlign}
             isRequired={isRequired}
@@ -79,8 +80,70 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
             elementType={elementType}>
             {label}
           </Label>
-        )}
-        {children}
+          {children}
+          {hasHelpText && (
+            <HelpText
+              descriptionProps={descriptionProps}
+              errorMessageProps={errorMessageProps}
+              description={description}
+              errorMessage={errorMessage}
+              validationState={validationState}
+              isDisabled={isDisabled}
+              showIcon={showIcon} />
+          )}
+        </>
+      );
+    } else {
+      return (
+        <div
+          {...styleProps}
+          ref={ref as RefObject<HTMLDivElement>}
+          className={labelWrapperClass}>
+          {label && (
+            <Label
+              {...labelProps}
+              labelPosition={labelPosition}
+              labelAlign={labelAlign}
+              isRequired={isRequired}
+              necessityIndicator={necessityIndicator}
+              includeNecessityIndicatorInAccessibilityName={includeNecessityIndicatorInAccessibilityName}
+              elementType={elementType}>
+              {label}
+            </Label>
+          )}
+          {children}
+          {hasHelpText && (
+            <HelpText
+              descriptionProps={descriptionProps}
+              errorMessageProps={errorMessageProps}
+              description={description}
+              errorMessage={errorMessage}
+              validationState={validationState}
+              isDisabled={isDisabled}
+              showIcon={showIcon} />
+          )}
+        </div>
+      );
+    }
+  }
+
+  if (newFormLayout) {
+    children = React.cloneElement(children, mergeProps(children.props, {
+      className: classNames(
+        labelStyles,
+        'spectrum-Field-field'
+      )
+    }));
+    return (
+      <>
+        <span
+          className={classNames(labelStyles, {
+            hasHelpText
+          })} />
+        {React.cloneElement(children, mergeProps(children.props, {
+          ...styleProps,
+          ref
+        }))}
         {hasHelpText && (
           <HelpText
             descriptionProps={descriptionProps}
@@ -91,7 +154,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
             isDisabled={isDisabled}
             showIcon={showIcon} />
         )}
-      </div>
+      </>
     );
   }
 

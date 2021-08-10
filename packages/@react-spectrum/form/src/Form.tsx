@@ -46,6 +46,7 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
     isDisabled,
     isReadOnly,
     validationState,
+    newFormLayout,
     ...otherProps
   } = props;
 
@@ -55,7 +56,8 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
   let ctx = {
     labelPosition,
     labelAlign,
-    necessityIndicator
+    necessityIndicator,
+    newFormLayout
   };
 
   return (
@@ -66,8 +68,9 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
       className={
         classNames(
           styles,
-          'spectrum-Form',
           {
+            'spectrum-Form': !newFormLayout,
+            'spectrum-Form-newLayout': newFormLayout,
             'spectrum-Form--positionSide': labelPosition === 'side',
             'spectrum-Form--positionTop': labelPosition === 'top'
           },

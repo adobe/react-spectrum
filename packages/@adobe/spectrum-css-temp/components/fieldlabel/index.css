@@ -145,3 +145,28 @@ governing permissions and limitations under the License.
     }
   }
 }
+
+
+.spectrum-Form-newLayout {
+  display: grid;
+
+  > .spectrum-Field-field {
+    width: 100%;
+  }
+
+  &.spectrum-Form--positionSide {
+     grid-template-columns: 1fr auto;
+     gap: 10px;
+
+    .hasHelpText {
+      /* Span two rows so that help is pushed under the input */
+      grid-row-end: span 2;
+    }
+  }
+
+  /* With labelPosition=top, we use a normal flex stack */
+  &.spectrum-Form--positionTop {
+     grid-template-columns: repeat(1, 1fr);
+  }
+}
+

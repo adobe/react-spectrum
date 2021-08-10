@@ -62,8 +62,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     inputRef,
     isLoading,
     loadingIndicator,
-    validationIconClassName,
-    ...otherProps
+    validationIconClassName
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let domRef = useRef<HTMLDivElement>(null);
@@ -83,7 +82,6 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     }
   }));
 
-  let {styleProps} = useStyleProps(otherProps);
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
   let isInvalid = validationState === 'invalid';
 
