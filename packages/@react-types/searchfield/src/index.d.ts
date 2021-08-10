@@ -11,6 +11,9 @@
  */
 
 import {AriaTextFieldProps, SpectrumTextFieldProps, TextFieldProps} from '@react-types/textfield';
+import {AsyncLoadable, CollectionBase, LoadingState, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
+import {Key} from 'react';
+import {MenuTriggerAction} from '@react-types/combobox';
 
 export interface SearchFieldProps extends TextFieldProps {
   /** Handler that is called when the SearchField is submitted. */
@@ -18,6 +21,41 @@ export interface SearchFieldProps extends TextFieldProps {
 
   /** Handler that is called when the clear button is pressed. */
   onClear?: () => void
+}
+
+export interface SearchAutocompleteProps<T> extends CollectionBase<T>, SearchFieldProps {
+  menuTrigger: 'focus' | 'input',
+  isQuiet?: boolean,
+  direction?: 'bottom' | 'top',
+  shouldFlip?: boolean,
+  loadingState?: LoadingState,
+  onLoadMore?: () => void,
+  onSubmit?: (value: string) => void,
+  disabledKeys?: Set<Key>
+}
+
+export interface SpectrumSearchAutocompleteProps<T> extends Omit<SearchAutocompleteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+  /**
+   * The interaction required to display the SearchAutocomplete menu. Note that this prop has no effect on the mobile SearchAutocomplete experience.
+   * @default 'input'
+   */
+  menuTrigger?: MenuTriggerAction,
+  /** Whether the SearchAutocomplete should be displayed with a quiet style. */
+  isQuiet?: boolean,
+  /**
+   * Direction the menu will render relative to the SearchAutocomplete.
+   * @default 'bottom'
+   */
+  direction?: 'bottom' | 'top',
+  /** The current loading state of the SearchAutocomplete. Determines whether or not the progress circle should be shown. */
+  loadingState?: LoadingState,
+  /**
+   * Whether the menu should automatically flip direction when space is limited.
+   * @default true
+   */
+  shouldFlip?: boolean,
+  onLoadMore?: () => void,
+  disabledKeys?: Set<Key>
 }
 
 export interface AriaSearchFieldProps extends SearchFieldProps, AriaTextFieldProps {}
