@@ -23,6 +23,7 @@ import {Image} from '@react-spectrum/image';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
+import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 
 
 const meta: Meta<SpectrumCardProps> = {
@@ -232,7 +233,7 @@ export const GridOfCards = (props: SpectrumCardProps) => (
       (new Array(7).fill(0)).map((_, index) => {
         let url = getImage(index);
         return (
-          <Card {...Default.args} {...props} key={`${index}${url}`}>
+          <Card {...Default.args} {...props} UNSAFE_className={classNames(styles, 'spectrum-Card--inGrid')} key={`${index}${url}`}>
             <Image src={url} />
             <Heading>Title {index}</Heading>
             <Text slot="detail">PNG</Text>

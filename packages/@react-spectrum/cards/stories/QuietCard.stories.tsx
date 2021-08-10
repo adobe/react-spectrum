@@ -95,7 +95,7 @@ export const GridOfCards = (props: SpectrumCardProps) => (
         let url = getImage(index);
         return (
           <div style={{width: '208px', height: '305px'}}>
-            <Card {...Quiet.args} {...props} key={`${index}${url}`}>
+            <Card {...Quiet.args} {...props} UNSAFE_className={classNames(styles, 'spectrum-Card--inGrid')} key={`${index}${url}`}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
@@ -131,7 +131,7 @@ export const GridOfCardsNoDescription = (props: SpectrumCardProps) => (
         let url = getImage(index);
         return (
           <div style={{width: '208px', height: '274px'}}>
-            <Card {...QuietNoDescription.args} {...props} key={`${index}${url}`}>
+            <Card {...QuietNoDescription.args} {...props} UNSAFE_className={classNames(styles, 'spectrum-Card--inGrid')} key={`${index}${url}`}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
@@ -166,7 +166,7 @@ export const GridOfCardsIllustrations = (props: SpectrumCardProps) => (
         let url = getImage(index);
         return (
           <div style={{width: '208px', height: '274px'}}>
-            <Card {...QuietNoDescription.args} {...props} key={`${index}${url}`}>
+            <Card {...QuietNoDescription.args} {...props} UNSAFE_className={classNames(styles, 'spectrum-Card--inGrid')} key={`${index}${url}`}>
               <File slot="illustration" />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
@@ -201,7 +201,7 @@ export const GridOfLongTitleCards = (props: SpectrumCardProps) => (
         let url = getImage(index);
         return (
           <div style={{width: '208px', height: '305px'}}>
-            <Card {...Quiet.args} {...props} key={`${index}${url}`}>
+            <Card {...Quiet.args} {...props} UNSAFE_className={classNames(styles, 'spectrum-Card--inGrid')} key={`${index}${url}`}>
               <Image src={url} />
               <Heading>This is a long title about how dinosaurs used to rule the earth before a meteor came and wiped them all out {index}</Heading>
               <Text slot="detail">PNG</Text>

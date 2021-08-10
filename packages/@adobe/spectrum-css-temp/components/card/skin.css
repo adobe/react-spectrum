@@ -57,7 +57,10 @@ governing permissions and limitations under the License.
     border-color: var(--spectrum-card-border-color-hover);
   }
 
-  &.is-selected,
+  &.is-selected {
+     border-color: var(--spectrum-card-border-color-key-focus);
+   }
+
   &:focus-ring {
     border-color: var(--spectrum-card-border-color-key-focus);
     box-shadow: 0 0 0 1px var(--spectrum-card-border-color-key-focus);
@@ -96,96 +99,140 @@ governing permissions and limitations under the License.
   }
 }
 
-:not(.spectrum-CardGrid) {
-  .spectrum-Card--isQuiet {
-    border-color: transparent;
-    background-color: transparent;
-    &:hover {
-    }
-
-    &.is-selected,
-    &:focus-ring {
-      .spectrum-Card-image,
-      .spectrum-Card-illustration {
-         box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
-      }
-    }
-
-    &.is-drop-target {
-
-    }
-    .spectrum-Card-grid {
-    }
+:not(.spectrum-Card--inGrid).spectrum-Card--isQuiet {
+  border-color: transparent;
+  background-color: transparent;
+  &:hover {
     .spectrum-Card-image,
     .spectrum-Card-illustration {
+      box-shadow: 0 0 0 1px var(--spectrum-card-border-color-hover);
     }
-    .spectrum-Card-image {
+  }
+
+  &:focus-ring {
+    .spectrum-Card-image,
+    .spectrum-Card-illustration {
+       box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
     }
-    .spectrum-Card-avatar {
-    }
-    .spectrum-Card-heading {
-    }
-    .spectrum-Card-detail {
-    }
-    .spectrum-Card-actions {
-    }
-    .spectrum-Card-content {
-    }
-    .spectrum-Card-divider {
-    }
-    .spectrum-Card-footer {
-    }
+  }
+
+  &.is-drop-target {
+
+  }
+  .spectrum-Card-grid {
+  }
+  .spectrum-Card-image,
+  .spectrum-Card-illustration {
+  }
+  .spectrum-Card-image {
+  }
+  .spectrum-Card-avatar {
+  }
+  .spectrum-Card-heading {
+  }
+  .spectrum-Card-detail {
+  }
+  .spectrum-Card-actions {
+  }
+  .spectrum-Card-content {
+  }
+  .spectrum-Card-divider {
+  }
+  .spectrum-Card-footer {
   }
 }
 
 
-.spectrum-CardGrid {
-  .spectrum-Card--isQuiet {
-    border-color: transparent;
-    background-color: transparent;
-    &:hover {
-      .spectrum-Card-grid {
-        &:before {
-           background-color: var(--spectrum-card-quiet-preview-background-color-hover);
-         }
+.spectrum-Card--inGrid.spectrum-Card--isQuiet {
+  border-color: transparent;
+  background-color: transparent;
+  &:hover {
+    .spectrum-Card-grid {
+      &:before {
+        background-color: var(--spectrum-card-quiet-preview-background-color-hover);
+        box-shadow: 0 0 0 1px var(--spectrum-card-border-color-hover);
       }
     }
+  }
 
-    &.is-selected,
-    &:focus-ring {
+  &.is-selected {
+    .spectrum-Card-grid {
+      &:before {
+        /* Image needs to go right to the edge, so no border. Adding border on focus causes
+        * a jump in the text and image. So focus ring is only box-shadow
+        */
+        box-shadow: 0 0 0 1px var(--spectrum-card-border-color-key-focus);
+      }
+    }
+  }
+
+  &:hover.is-selected {
+    .spectrum-Card-grid {
+      &:before {
+        /* Image needs to go right to the edge, so no border. Adding border on focus causes
+        * a jump in the text and image. So focus ring is only box-shadow
+        */
+        box-shadow: 0 0 0 1px var(--spectrum-card-border-color-key-focus);
+      }
+    }
+  }
+
+  &:focus-ring {
+    .spectrum-Card-grid {
+      &:before {
+        box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
+      }
+    }
+  }
+
+  &:focus-ring:hover.is-selected {
+    .spectrum-Card-grid {
+      &:before {
+        box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
+      }
+    }
+  }
+
+  &.is-selected {
+    .spectrum-Card-grid {
+      &:after {
+        background-color: var(--spectrum-global-color-blue-400);
+        opacity: 0.15;
+      }
+    }
+    &:hover {
       .spectrum-Card-grid {
-        &:before {
-          /* Image needs to go right to the edge, so no border. Adding border on focus causes
-           * a jump in the text and image. So focus ring is only box-shadow
-           */
-          box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
+        &:after {
+          background-color: var(--spectrum-global-color-blue-400);
+          opacity: 0.25;
         }
       }
     }
-    .spectrum-Card-grid {
-      &:before {
-        background-color: var(--spectrum-card-quiet-preview-background-color);
-      }
+  }
+
+  .spectrum-Card-grid {
+    &:before {
+      background-color: var(--spectrum-card-quiet-preview-background-color);
     }
-    .spectrum-Card-image,
-    .spectrum-Card-illustration {
-    }
-    .spectrum-Card-image {
-    }
-    .spectrum-Card-avatar {
-    }
-    .spectrum-Card-heading {
-    }
-    .spectrum-Card-detail {
-    }
-    .spectrum-Card-actions {
-    }
-    .spectrum-Card-content {
-    }
-    .spectrum-Card-divider {
-    }
-    .spectrum-Card-footer {
-    }
+  }
+  .spectrum-Card-image,
+  .spectrum-Card-illustration {
+  }
+  .spectrum-Card-image {
+  }
+  .spectrum-Card-avatar {
+  }
+  .spectrum-Card-heading {
+  }
+  .spectrum-Card-detail {
+  }
+  .spectrum-Card-actions {
+  }
+  .spectrum-Card-content {
+  }
+  .spectrum-Card-divider {
+  }
+  .spectrum-Card-footer {
   }
 }
 
