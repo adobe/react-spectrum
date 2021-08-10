@@ -286,7 +286,7 @@ layer 3:
     block-size: 100%;
     display: grid;
     grid-template-columns: auto minmax(auto, 1fr) auto;
-    grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) auto auto var(--spectrum-card-body-padding-bottom);
+    grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) auto 1fr var(--spectrum-card-body-padding-bottom);
     grid-template-areas: /* can either have three rows of preview or change the spans above? */
       "preview preview preview"
         ".       .       ."
@@ -329,6 +329,10 @@ layer 3:
     justify-self: center;
   }
   .spectrum-Card-image {
+    clip-path: inset(0% 0% 0% 0% round 5px);
+    /* remove from flow so it doesn't affect grid area size, this way the aspect ratio is maintained
+     todo: figure out why or how it's already in the correct centered spot */
+    position: absolute;
   }
   .spectrum-Card-illustration {
     display: grid; /* not sure why flex doesn't work here */

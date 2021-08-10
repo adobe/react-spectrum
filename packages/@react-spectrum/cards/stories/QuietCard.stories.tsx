@@ -218,6 +218,43 @@ export const GridOfLongTitleCards = (props: SpectrumCardProps) => (
   </div>
 );
 
+
+export const GridWithTallRows = (props: SpectrumCardProps) => (
+  <div
+    className={classNames(styles, 'spectrum-CardGrid')}
+    style={{
+      width: '100%',
+      margin: '50px',
+      display: 'grid',
+      gap: '20px',
+      gridTemplateColumns: 'repeat(auto-fit, 208px)',
+      gridAutoRows: 'auto',
+      justifyContent: 'center',
+      justifyItems: 'center',
+      alignItems: 'start'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{width: '208px', height: '400px'}}>
+            <Card {...Quiet.args} {...props} UNSAFE_className={classNames(styles, 'spectrum-Card--inGrid')} key={`${index}${url}`}>
+              <Image src={url} />
+              <Heading>Title {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>Description</Content>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+            </Card>
+          </div>
+        );
+      })
+    }
+  </div>
+);
+
 function File(props) {
   props = useSlotProps(props, 'asset');
   let {styleProps} = useStyleProps(props);
