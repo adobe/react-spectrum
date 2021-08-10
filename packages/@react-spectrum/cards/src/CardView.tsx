@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {CardBase} from './CardBase';
 import {CardViewContext, useCardViewContext} from './CardViewContext';
 import cardViewStyles from './cardview.css';
 import {classNames, useDOMRef, useUnwrapDOMRef, useStyleProps} from '@react-spectrum/utils';
@@ -22,7 +23,7 @@ import React, {ReactElement, useMemo, useRef} from 'react';
 import {SpectrumCardViewProps} from '@react-types/cards';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {useCollator,useLocale, useMessageFormatter} from '@react-aria/i18n';
-import {useGrid} from '@react-aria/grid';
+import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';
 import {Virtualizer} from '@react-aria/virtualizer';
 
@@ -141,9 +142,6 @@ function CenteredWrapper({children}) {
   );
 }
 
-import {useGridCell, useGridRow} from '@react-aria/grid';
-import {CardBase} from './CardBase';
-
 function InternalCard(props) {
   let {
     item
@@ -151,27 +149,18 @@ function InternalCard(props) {
   let {state, cardOrientation, cardSize, isQuiet, cardType} = useCardViewContext();
 
   let rowRef = useRef();
-  let cellRef = useRef();
-  // let ref = useRef<DOMRefValue<HTMLDivElement>>();
-  // let unwrappedRef = useUnwrapDOMRef(ref);
+  let cellRef = useRef<DOMRefValue<HTMLDivElement>>();
+  let unwrappedRef = useUnwrapDOMRef(cellRef);
 
   let {rowProps} = useGridRow({
     node: item,
     isVirtualized: true
   }, state, rowRef);
-  // let {rowProps} = useGridRow({
-  //   node: item,
-  //   isVirtualized: true
-  // }, state, unwrappedRef);
 
   let {gridCellProps} = useGridCell({
     node: item,
     focusMode: 'cell'
-  }, state, cellRef);
-  // let {gridCellProps} = useGridCell({
-  //   node: item,
-  //   focusMode: 'cell'
-  // }, state, unwrappedRef);
+  }, state, unwrappedRef);
 
   return (
     // TODO: added padding here to make the focus ring not get cut off. Replace with a real fix
