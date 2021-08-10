@@ -34,12 +34,11 @@ export function DatePicker(props: SpectrumDatePickerProps) {
   props = useProviderProps(props);
   let {
     autoFocus,
-    formatOptions,
     isQuiet,
     isDisabled,
     isReadOnly,
     isRequired,
-    placeholderDate,
+    placeholderValue,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -92,14 +91,13 @@ export function DatePicker(props: SpectrumDatePickerProps) {
             validationState={state.validationState}
             value={value}
             onChange={setValue}
-            placeholderDate={placeholderDate}
+            placeholderValue={placeholderValue}
             isDisabled={isDisabled}
             isReadOnly={isReadOnly}
             isRequired={isRequired}
-            formatOptions={formatOptions}
             granularity={props.granularity}
             inputClassName={fieldClassName}
-            timeZone={props.timeZone} />
+            hideTimeZone={props.hideTimeZone} />
         </FocusScope>
         <DialogTrigger
           type="popover"

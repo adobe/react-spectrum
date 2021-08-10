@@ -217,7 +217,7 @@ export function toCalendar(date: CalendarDate | CalendarDateTime | ZonedDateTime
   return calendarDate;
 }
 
-export function toZoned(date: CalendarDateTime, timeZone: string, disambiguation?: Disambiguation) {
+export function toZoned(date: CalendarDate | CalendarDateTime, timeZone: string, disambiguation?: Disambiguation) {
   if (date instanceof ZonedDateTime && date.timeZone === timeZone) {
     return date;
   }

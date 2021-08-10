@@ -50,7 +50,7 @@
 }
 
 .react-spectrum-Datepicker-literal.is-placeholder {
-  color: var(--spectrum-textfield-placeholder-text-color, var(--spectrum-global-color-gray-600));
+  color: var(--spectrum-global-color-gray-700);
 }
 
 .react-spectrum-DatePicker-cell {

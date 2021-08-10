@@ -27,7 +27,6 @@ export interface DateSegment {
 }
 
 export interface DatePickerFieldState {
-  // value: Date,
   value: CalendarDateTime,
   dateValue: Date,
   setValue: (value: CalendarDateTime) => void,
@@ -86,16 +85,18 @@ export function useDatePickerFieldState(props: DatePickerFieldProps): DatePicker
   let defaultResolvedOptions = useMemo(() => defaultFormatter.resolvedOptions(), [defaultFormatter]);
   let {
     createCalendar,
+    hideTimeZone,
     // timeZone = 'America/Sao_Paulo'//defaultResolvedOptions.timeZone
   } = props;
 
-  let v = (props.value || props.defaultValue);
+  let v = (props.value || props.defaultValue || props.placeholderValue);
   let defaultTimeZone = (v && 'timeZone' in v ? v.timeZone : undefined);
   let timeZone = defaultTimeZone || 'UTC';
+  let granularity = props.granularity || (v && 'minute' in v ? 'minute' : 'day');
 
   let calendar = useMemo(() => createCalendar(defaultResolvedOptions.calendar), [createCalendar, defaultResolvedOptions.calendar]);
 
-  let [validSegments, setValidSegments] = useState(
+  let [validSegments, setValidSegments] = useState<Partial<typeof EDITABLE_SEGMENTS>>(
     props.value || props.defaultValue ? {...EDITABLE_SEGMENTS} : {}
   );
 
@@ -106,7 +107,7 @@ export function useDatePickerFieldState(props: DatePickerFieldProps): DatePicker
       startIdx = 0;
     }
 
-    let endIdx = keys.indexOf(props.granularity ?? 'day');
+    let endIdx = keys.indexOf(granularity);
     if (endIdx < 0) {
       endIdx = 2;
     }
@@ -126,13 +127,13 @@ export function useDatePickerFieldState(props: DatePickerFieldProps): DatePicker
 
     opts.timeZone = timeZone;
 
-    let hasTime = props.granularity === 'hour' || props.granularity === 'minute' || props.granularity === 'second';
-    if (hasTime && defaultTimeZone) {
+    let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second';
+    if (hasTime && defaultTimeZone && !hideTimeZone) {
       opts.timeZoneName = 'short';
     }
 
     return opts;
-  }, [props.maxGranularity, props.granularity, props.hourCycle, timeZone]);
+  }, [props.maxGranularity, granularity, props.hourCycle, timeZone, defaultTimeZone, hideTimeZone]);
 
   let dateFormatter = useDateFormatter(opts);
   let resolvedOptions = useMemo(() => dateFormatter.resolvedOptions(), [dateFormatter]);
@@ -154,7 +155,7 @@ export function useDatePickerFieldState(props: DatePickerFieldProps): DatePicker
   // until all segments are set. If the value === null (not undefined), then assume the component
   // is controlled, so use the placeholder as the value until all segments are entered so it doesn't
   // change from uncontrolled to controlled and emit a warning.
-  let [placeholderDate, setPlaceholderDate] = useState(props.placeholderDate ? convertValue(props.placeholderDate, calendar) : createPlaceholderDate(calendar, defaultTimeZone));
+  let [placeholderDate, setPlaceholderDate] = useState(props.placeholderValue ? convertValue(props.placeholderValue, calendar) : createPlaceholderDate(calendar, defaultTimeZone));
   let [date, setDate] = useControlledState<CalendarDateTime>(
     props.value === null ? placeholderDate : convertValue(props.value, calendar),
     props.defaultValue ? convertValue(props.defaultValue, calendar) : null,
@@ -171,11 +172,15 @@ export function useDatePickerFieldState(props: DatePickerFieldProps): DatePicker
   let lastCalendarIdentifier = useRef(calendar.identifier);
   useEffect(() => {
     if (calendar.identifier !== lastCalendarIdentifier.current) {
-      setPlaceholderDate(placeholder => Object.keys(validSegments).length > 0 ? toCalendar(placeholder, calendar) : createPlaceholderDate(calendar, defaultTimeZone));
-      setDate(date => Object.keys(validSegments).length >= numSegments ? toCalendar(date, calendar) : date);
+      let isValid = Object.keys(validSegments).length >= numSegments;
+      if (isValid) {
+        setDate(date => toCalendar(date, calendar));
+      } else {
+        setPlaceholderDate(placeholder => Object.keys(validSegments).length > 0 ? toCalendar(placeholder, calendar) : createPlaceholderDate(calendar, defaultTimeZone));
+      }
       lastCalendarIdentifier.current = calendar.identifier;
     }
-  }, [calendar, setDate]);
+  }, [calendar, setDate, validSegments, defaultTimeZone, numSegments]);
 
   // If all segments are valid, use the date from state, otherwise use the placeholder date.
   let value = Object.keys(validSegments).length >= numSegments ? date : placeholderDate;
@@ -187,18 +192,22 @@ export function useDatePickerFieldState(props: DatePickerFieldProps): DatePicker
     }
   };
 
-  let dateValue = value.toDate(timeZone);
-  let segments = dateFormatter.formatToParts(dateValue)
-    .map(segment => ({
-      type: TYPE_MAPPING[segment.type] || segment.type,
-      text: segment.value,
-      ...getSegmentLimits(value, segment.type, resolvedOptions),
-      isPlaceholder: !validSegments[segment.type]
-    } as DateSegment));
+  let dateValue = useMemo(() => value.toDate(timeZone), [value, timeZone]);
+  let segments = useMemo(() =>
+    dateFormatter.formatToParts(dateValue)
+      .map(segment => ({
+        type: TYPE_MAPPING[segment.type] || segment.type,
+        text: segment.value,
+        ...getSegmentLimits(value, segment.type, resolvedOptions),
+        isPlaceholder: !validSegments[segment.type]
+      } as DateSegment))
+  , [dateValue, validSegments, dateFormatter, resolvedOptions, value]);
+
+  let hasEra = useMemo(() => segments.some(s => s.type === 'era'), [segments]);
 
   let adjustSegment = (type: Intl.DateTimeFormatPartTypes, amount: number) => {
     validSegments[type] = true;
-    if (type === 'year') {
+    if (type === 'year' && hasEra) {
       validSegments.era = true;
     }
     setValidSegments({...validSegments});
@@ -225,7 +234,7 @@ export function useDatePickerFieldState(props: DatePickerFieldProps): DatePicker
     },
     setSegment(part, v) {
       validSegments[part] = true;
-      if (part === 'year') {
+      if (part === 'year' && hasEra) {
         validSegments.era = true;
       }
       setValidSegments({...validSegments});

@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {TimeField} from '../';
-import { parseTime, Time } from '../../../@internationalized/date';
+import { CalendarDateTime, parseTime, parseZonedDateTime, Time, toZoned } from '@internationalized/date';
 
 const BlockDecorator = storyFn => <div>{storyFn()}</div>;
 
@@ -41,8 +41,20 @@ storiesOf('TimeField', module)
     () => render({granularity: 'second'})
   )
   .add(
+    'hourCycle: 12',
+    () => render({hourCycle: 12})
+  )
+  .add(
     'hourCycle: 24',
     () => render({hourCycle: 24})
+  )
+  .add(
+    'zoned',
+    () => render({defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]')})
+  )
+  .add(
+    'hideTimeZone',
+    () => render({defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]'), hideTimeZone: true})
   )
   .add(
     'isDisabled',
@@ -71,6 +83,14 @@ storiesOf('TimeField', module)
   .add(
     'validationState: valid',
     () => render({validationState: 'valid', value: new Time(2, 35)})
+  )
+  .add(
+    'placeholderValue: 8 AM',
+    () => render({placeholderValue: new Time(8)})
+  )
+  .add(
+    'placeholderValue: 1980/1/1 8AM, zoned',
+    () => render({placeholderValue: toZoned(new CalendarDateTime(1980, 1, 1, 8), 'America/Los_Angeles')})
   );
 
 function render(props = {}) {

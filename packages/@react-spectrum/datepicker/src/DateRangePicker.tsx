@@ -37,8 +37,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
     isReadOnly,
     isRequired,
     autoFocus,
-    formatOptions,
-    placeholderDate,
+    placeholderValue,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -91,8 +90,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
             isDisabled={isDisabled}
             isReadOnly={isReadOnly}
             isRequired={isRequired}
-            formatOptions={formatOptions}
-            placeholderDate={placeholderDate}
+            placeholderValue={placeholderValue}
             value={value.start}
             defaultValue={null}
             onChange={start => setDate('start', start)}
@@ -107,8 +105,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
             isReadOnly={isReadOnly}
             isRequired={isRequired}
             validationState={state.validationState}
-            formatOptions={formatOptions}
-            placeholderDate={placeholderDate}
+            placeholderValue={placeholderValue}
             value={value.end}
             defaultValue={null}
             onChange={end => setDate('end', end)}

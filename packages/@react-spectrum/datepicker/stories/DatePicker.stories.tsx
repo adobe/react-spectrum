@@ -71,6 +71,10 @@ storiesOf('DatePicker', module)
     () => render({granularity: 'minute', defaultValue: parseAbsolute('2021-11-07T07:45:00Z', 'America/New_York')})
   )
   .add(
+    'hideTimeZone',
+    () => render({granularity: 'minute', defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]'), hideTimeZone: true})
+  )
+  .add(
     'isDisabled',
     () => render({isDisabled: true, value: new CalendarDate(2020, 2, 3)})
   )
@@ -103,8 +107,16 @@ storiesOf('DatePicker', module)
     () => render({minValue: new Date(2010, 0, 1), maxValue: new CalendarDate(2020, 0, 1)})
   )
   .add(
-    'placeholderDate: 1980/1/1',
-    () => render({placeholderDate: new CalendarDate(1980, 0, 1)})
+    'placeholderValue: 1980/1/1',
+    () => render({placeholderValue: new CalendarDate(1980, 1, 1)})
+  )
+  .add(
+    'placeholderValue: 1980/1/1 8 AM',
+    () => render({placeholderValue: new CalendarDateTime(1980, 1, 1, 8)})
+  )
+  .add(
+    'placeholderValue: 1980/1/1, zoned',
+    () => render({placeholderValue: toZoned(new CalendarDate(1980, 1, 1), 'America/Los_Angeles')})
   );
 
 function render(props = {}) {

@@ -90,8 +90,8 @@ storiesOf('DateRangePicker', module)
     () => render({minValue: new Date(2010, 1, 1), maxValue: new Date(2020, 1, 1)})
   )
   .add(
-    'placeholderDate: 1980/1/1',
-    () => render({placeholderDate: new Date(1980, 0, 1)})
+    'placeholderValue: 1980/1/1',
+    () => render({placeholderValue: new Date(1980, 0, 1)})
   );
 
 function render(props = {}) {

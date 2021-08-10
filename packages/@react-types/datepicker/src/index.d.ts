@@ -28,10 +28,10 @@ export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
 interface DatePickerBase extends InputBase, Validation, FocusableProps, LabelableProps {
   minValue?: DateValue,
   maxValue?: DateValue,
-  formatOptions?: Intl.DateTimeFormatOptions,
-  placeholderDate?: DateValue,
+  placeholderValue?: DateValue,
   hourCycle?: 12 | 24,
-  granularity?: 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second' | 'millisecond'
+  granularity?: 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second' | 'millisecond',
+  hideTimeZone?: boolean
 }
 
 export interface DatePickerProps extends DatePickerBase, ValueBase<DateValue> {}
@@ -46,9 +46,12 @@ interface SpectrumDatePickerBase extends SpectrumLabelableProps, DOMProps, Style
 export interface SpectrumDatePickerProps extends DatePickerProps, SpectrumDatePickerBase {}
 export interface SpectrumDateRangePickerProps extends DateRangePickerProps, SpectrumDatePickerBase {}
 
-interface TimePickerProps extends InputBase, Validation, FocusableProps, LabelableProps, ValueBase<Time> {
+export type TimeValue = Time | CalendarDateTime | ZonedDateTime;
+interface TimePickerProps extends InputBase, Validation, FocusableProps, LabelableProps, ValueBase<TimeValue> {
   hourCycle?: 12 | 24,
-  granularity?: 'hour' | 'minute' | 'second' | 'millisecond'
+  granularity?: 'hour' | 'minute' | 'second' | 'millisecond',
+  hideTimeZone?: boolean,
+  placeholderValue?: TimeValue
 }
 
 interface SpectrumTimePickerProps extends TimePickerProps, SpectrumLabelableProps, DOMProps, StyleProps {

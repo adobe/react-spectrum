@@ -789,9 +789,9 @@ describe('DatePicker', function () {
       expect(combobox).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
     });
 
-    it('should use the placeholderDate prop if provided', function () {
+    it('should use the placeholderValue prop if provided', function () {
       let onChange = jest.fn();
-      let {getByRole} = render(<DatePicker onChange={onChange} placeholderDate={new Date(1980, 0, 1)} />);
+      let {getByRole} = render(<DatePicker onChange={onChange} placeholderValue={new Date(1980, 0, 1)} />);
 
       let combobox = getByRole('group');
       expect(combobox).toHaveTextContent('1/1/1980');

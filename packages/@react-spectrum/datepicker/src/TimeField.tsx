@@ -23,7 +23,7 @@ import {useDatePickerState} from '@react-stately/datepicker';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 import { useControlledState } from '@react-stately/utils';
-import { toCalendarDateTime, today, toTime } from '@internationalized/date';
+import { CalendarDateTime, Time, toCalendarDateTime, today, toTime, ZonedDateTime } from '@internationalized/date';
 
 export function TimeField(props: SpectrumTimePickerProps) {
   props = useProviderProps(props);
@@ -33,6 +33,7 @@ export function TimeField(props: SpectrumTimePickerProps) {
     isDisabled,
     isReadOnly,
     isRequired,
+    placeholderValue,
     ...otherProps
   } = props;
 
@@ -42,9 +43,12 @@ export function TimeField(props: SpectrumTimePickerProps) {
     props.onChange
   );
 
-  let dateTime = useMemo(() => value == null ? null : toCalendarDateTime(today('America/Los_Angeles'), value), [value]);
-  let onChange = value => {
-    setValue(toTime(value));
+  let v = value || placeholderValue;
+  let placeholderDate = useMemo(() => placeholderValue == null ? null : convertValue(placeholderValue), [placeholderValue]);
+
+  let dateTime = useMemo(() => value == null ? null : convertValue(value), [value]);
+  let onChange = newValue => {
+    setValue(v && 'day' in v ? newValue : toTime(newValue));
   };
 
   return (
@@ -60,7 +64,17 @@ export function TimeField(props: SpectrumTimePickerProps) {
         isRequired={isRequired}
         maxGranularity="hour"
         granularity={props.granularity ?? 'minute'}
-        hourCycle={props.hourCycle} />
+        hourCycle={props.hourCycle}
+        hideTimeZone={props.hideTimeZone}
+        placeholderValue={placeholderDate} />
     </FocusScope>
   );
+}
+
+function convertValue(value: Time | CalendarDateTime | ZonedDateTime) {
+  if ('day' in value) {
+    return value;
+  }
+
+  return toCalendarDateTime(today('America/Los_Angeles'), value);
 }

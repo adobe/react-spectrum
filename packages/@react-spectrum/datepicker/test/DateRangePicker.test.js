@@ -642,9 +642,9 @@ describe('DateRangePicker', function () {
       expect(endDate).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
     });
 
-    it('should use the placeholderDate prop if provided', function () {
+    it('should use the placeholderValue prop if provided', function () {
       let onChange = jest.fn();
-      let {getByLabelText} = render(<DateRangePicker onChange={onChange} placeholderDate={new Date(1980, 0, 1)} />);
+      let {getByLabelText} = render(<DateRangePicker onChange={onChange} placeholderValue={new Date(1980, 0, 1)} />);
 
       let startDate = getByLabelText('Start Date');
       let endDate = getByLabelText('End Date');

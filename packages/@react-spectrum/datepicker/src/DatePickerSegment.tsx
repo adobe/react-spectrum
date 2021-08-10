@@ -53,7 +53,10 @@ function LiteralSegment({segment, isPlaceholder}: LiteralSegmentProps) {
   let {pressProps} = usePress({
     onPressStart: (e) => {
       if (e.pointerType === 'mouse') {
-        focusManager.focusNext({from: e.target as HTMLElement});
+        let res = focusManager.focusNext({from: e.target as HTMLElement});
+        if (!res) {
+          focusManager.focusPrevious({from: e.target as HTMLElement});
+        }
       }
     }
   });
