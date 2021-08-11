@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionMenu, Item} from '@react-spectrum/menu';
 import {Button} from '@react-spectrum/button';
-import {Card, CardView, GridLayout} from '../';
+import {Card, CardView, GalleryLayout, GridLayout} from '../';
 import {Content, Footer} from '@react-spectrum/view';
 import {getImage} from './utils';
 import {Heading, Text} from '@react-spectrum/text';
@@ -23,30 +23,29 @@ import React, {useMemo} from 'react';
 import {useCollator} from '@react-aria/i18n';
 
 let items = [
-  {width: 1024, height: 683, id: 1, title: 'Bob 1'},
-  { width: 1024, height: 683, id: 2, title: 'Joe 1'},
-  {width: 1024, height: 683, id: 3, title: 'Jane 1'},
-  {width: 1024, height: 683, id: 4, title: 'Bob 2'},
-  {width: 1024, height: 683, id: 5, title: 'Joe 2'},
-  {width: 1024, height: 683, id: 6, title: 'Jane 2'},
-  {width: 1024, height: 683, id: 7, title: 'Bob 3'},
-  {width: 1024, height: 683, id: 8, title: 'Joe 3'},
-  {width: 1024, height: 683, id: 9, title: 'Jane 3'},
-  {width: 1024, height: 683, id: 10, title: 'Bob 4'},
-  {width: 1024, height: 683, id: 11, title: 'Joe 4'},
-  {width: 1024, height: 683, id: 12, title: 'Jane 4'},
-  {width: 1024, height: 683, id: 13, title: 'Bob 5'},
-  {width: 1024, height: 683, id: 14, title: 'Joe 5'},
-  {width: 1024, height: 683, id: 15, title: 'Jane 5'},
-  {width: 1024, height: 683, id: 16, title: 'Bob 6'},
-  {width: 1024, height: 683, id: 17, title: 'Joe 6'},
-  {width: 1024, height: 683, id: 18, title: 'Jane 6'},
-  {width: 1024, height: 683, id: 19, title: 'Bob 7'},
-  {width: 1024, height: 683, id: 20, title: 'Joe 7'},
-  {width: 1024, height: 683, id: 21, title: 'Jane 7'},
-  {width: 1024, height: 683, id: 22, title: 'Bob 8'}
+  {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 1, title: 'Bob 1'},
+  {width: 640, height: 640, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 2, title: 'Joe 1'},
+  {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 3, title: 'Jane 1'},
+  {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 4, title: 'Bob 2'},
+  {width: 640, height: 640, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 5, title: 'Joe 2'},
+  {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 6, title: 'Jane 2'},
+  {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 7, title: 'Bob 3'},
+  {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 8, title: 'Joe 3'},
+  {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 9, title: 'Jane 3'},
+  {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 10, title: 'Bob 4'},
+  {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 11, title: 'Joe 4'},
+  {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 12, title: 'Jane 4'},
+  {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 13, title: 'Bob 5'},
+  {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 14, title: 'Joe 5'},
+  {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 15, title: 'Jane 5'},
+  {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 16, title: 'Bob 6'},
+  {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 17, title: 'Joe 6'},
+  {width: 640, height: 640, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 18, title: 'Jane 6'},
+  {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 19, title: 'Bob 7'},
+  {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 20, title: 'Joe 7'},
+  {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 21, title: 'Jane 7'},
+  {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 22, title: 'Bob 8'}
 ];
-
 
 function renderEmptyState() {
   return (
@@ -69,14 +68,20 @@ let actions = {
   onSelectionChange: s => onSelectionChange([...s]),
 };
 
-export const DefaultGrid = () => render({});
+export const DefaultGrid = () => render({items});
 DefaultGrid.storyName = 'default grid layout with initialized layout';
 
-export const DefaultGridConstructor = () => render({layout: GridLayout});
+export const DefaultGridStatic = () => renderStatic({items});
+DefaultGridStatic.storyName = 'default grid layout, static card';
+
+export const DefaultGridConstructor = () => render({layout: GridLayout, items});
 DefaultGridConstructor.storyName = 'default grid layout w/ layout constructor';
 
-export const SmallGrid = () => render({layout: GridLayout, cardSize: 'S'});
+export const SmallGrid = () => render({layout: GridLayout, cardSize: 'S', items});
 SmallGrid.storyName = 'grid layout with small cards';
+
+export const DefaultGallery = () => render({layout: GalleryLayout, items: items});
+DefaultGallery.storyName = 'default gallery layout';
 
 export const isLoadingNoHeight = () => renderNoItems({width: '800px', loadingState: 'loading'});
 isLoadingNoHeight.storyName = 'loadingState = loading, no height';
@@ -105,9 +110,9 @@ function render(props) {
   } = props;
 
   return (
-    <CardView  {...actions} {...props} layout={layout} items={items} width="800px" height="800px" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
+    <CardView  {...actions} {...props} layout={layout} width="800px" height="800px" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
       {item =>
-        <Card key={item.id} textValue={item.title}>
+        <Card key={item.id} textValue={item.title} width={item.width} height={item.height}>
           <Image src={getImage(item.id)} />
           <Heading>{item.title}</Heading>
           <Text slot="detail">PNG</Text>
@@ -134,6 +139,71 @@ function renderNoItems(props) {
   return (
     <CardView {...props} layout={layout} UNSAFE_style={{background: 'white'}} aria-label="Test CardView">
       {[]}
+    </CardView>
+  );
+}
+
+function renderStatic(props) {
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let gridLayout = useMemo(() => new GridLayout({collator}), []);
+  let {
+    layout = gridLayout
+  } = props;
+
+  return (
+    <CardView  {...actions} {...props} layout={layout} width="800px" height="800px" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
+      <Card textValue="Bob 1">
+        <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
+        <Heading>Bob 1</Heading>
+        <Text slot="detail">PNG</Text>
+        <Content>Description</Content>
+        <ActionMenu>
+          <Item>Action 1</Item>
+          <Item>Action 2</Item>
+        </ActionMenu>
+        <Footer>
+          <Button variant="primary">Something</Button>
+        </Footer>
+      </Card>
+      <Card textValue="Joe 1">
+        <Image src="https://i.imgur.com/DhygPot.jpg" />
+        <Heading>Joe 1</Heading>
+        <Text slot="detail">PNG</Text>
+        <Content>Description</Content>
+        <ActionMenu>
+          <Item>Action 1</Item>
+          <Item>Action 2</Item>
+        </ActionMenu>
+        <Footer>
+          <Button variant="primary">Something</Button>
+        </Footer>
+      </Card>
+      <Card textValue="Jane 1">
+        <Image src="https://i.imgur.com/3lzeoK7.jpg" />
+        <Heading>Jane 1</Heading>
+        <Text slot="detail">PNG</Text>
+        <Content>Description</Content>
+        <ActionMenu>
+          <Item>Action 1</Item>
+          <Item>Action 2</Item>
+        </ActionMenu>
+        <Footer>
+          <Button variant="primary">Something</Button>
+        </Footer>
+      </Card>
+      <Card textValue="Bob 2">
+        <Image src="https://i.imgur.com/1nScMIH.jpg" />
+        <Heading>Bob 2</Heading>
+        <Text slot="detail">PNG</Text>
+        <Content>Description</Content>
+        <ActionMenu>
+          <Item>Action 1</Item>
+          <Item>Action 2</Item>
+        </ActionMenu>
+        <Footer>
+          <Button variant="primary">Something</Button>
+        </Footer>
+      </Card>
     </CardView>
   );
 }

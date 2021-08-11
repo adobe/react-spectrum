@@ -179,11 +179,8 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     return res;
   }
 
-  validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
-    // TODO: think about what else could cause the layoutinfo cache to be invalid (would I need to invalidate everything if the min/max item size changes)
-    // Invalidate cache if the size of the collection changed.
-    // In this case, we need to recalculate the entire layout.
-    this.invalidateEverything = invalidationContext.sizeChanged;
+  validate() {
+    // TODO: Removed the invalidateEverything check since in ListLayout that was mainly for Sections it seems?
     this.collection = this.virtualizer.collection;
 
     // Compute the number of rows and columns needed to display the content
@@ -263,11 +260,7 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   }
 
   buildChild(node: Node<T>, y: number, index: number): LayoutInfo {
-    let cached = this.layoutInfos.get(node.key);
-    if (!this.invalidateEverything && cached  && y === cached.rect.y) {
-      return cached;
-    }
-
+    // TODO: Removed the cache check not entirely convinced it is useful in this case
     let row = Math.floor(index / this.numColumns);
     let column = index % this.numColumns;
     let x = this.margin + column * (this.itemSize.width + this.horizontalSpacing);
@@ -290,10 +283,12 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     }
 
     layoutInfo.estimatedSize = false;
-    if (layoutInfo.rect.height !== size.height) {
+    // TODO: updated this to check width as well, double check if we need this
+    if (layoutInfo.rect.height !== size.height || layoutInfo.rect.width !== size.width) {
       // Copy layout info rather than mutating so that later caches are invalidated.
       let newLayoutInfo = layoutInfo.copy();
       newLayoutInfo.rect.height = size.height;
+      newLayoutInfo.rect.width = size.width;
       this.layoutInfos.set(key, newLayoutInfo);
       return true;
     }
