@@ -84,7 +84,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
 
   // TODO: may need to add aria-rowcount to the virtualizer div? It exists in v2
   return (
-    <CardViewContext.Provider value={{state, cardOrientation, cardSize, isQuiet, cardType: cardViewLayout.cardType}}>
+    <CardViewContext.Provider value={{state, cardOrientation, cardSize, isQuiet, layoutType: cardViewLayout.layoutType}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}
@@ -147,7 +147,7 @@ function InternalCard(props) {
   let {
     item
   } = props;
-  let {state, cardOrientation, cardSize, isQuiet, cardType} = useCardViewContext();
+  let {state, cardOrientation, cardSize, isQuiet, layoutType} = useCardViewContext();
 
   let rowRef = useRef();
   let cellRef = useRef<DOMRefValue<HTMLDivElement>>();
@@ -163,13 +163,17 @@ function InternalCard(props) {
     focusMode: 'cell'
   }, state, unwrappedRef);
 
+  if (layoutType === 'grid' || layoutType === 'gallery') {
+    isQuiet = true;
+  }
+
   return (
     // TODO: added padding here to make the focus ring not get cut off. Replace with a real fix
     <div {...rowProps} ref={rowRef} style={{padding: '2px', height: '100%'}}>
       <CardBase
         ref={cellRef}
         articleProps={gridCellProps}
-        isQuiet={isQuiet || cardType === 'quiet'}
+        isQuiet={isQuiet}
         orientation={cardOrientation}
         size={cardSize}
         item={item}

@@ -125,9 +125,9 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     this.collator = options.collator;
   }
 
-  get cardType() {
+  get layoutType() {
     // GridLayout only supports quiet cards
-    return 'quiet';
+    return 'grid';
   }
 
   // TODO: Below functions From V2 Maybe don't need this? Might be a short cut for getting all visible rects since otherwise we'd have to iterate across all nodes
