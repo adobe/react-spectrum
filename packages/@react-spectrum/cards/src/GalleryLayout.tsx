@@ -99,7 +99,7 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
     this.collator = options.collator;
   }
 
-  get cardType() {
+  get layoutType() {
     // GalleryLayout only supports quiet vertical cards
     // return 'quiet';
     return 'gallery';
@@ -301,18 +301,16 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
 
   getKeyBelow(key: Key) {
     let layoutInfo = this.getLayoutInfo(key);
-    // let rect = new Rect(layoutInfo.rect.x, layoutInfo.rect.maxY + 1, 1, this.collectionView.contentSize.height);
-    // TODO: check this, subtituted contentSize with the visibleRect height but perhaps it should the visible rect height + one more row?
-    let rect = new Rect(layoutInfo.rect.x, layoutInfo.rect.maxY + 1, 1, this.virtualizer.visibleRect.height);
+    let rect = new Rect(layoutInfo.rect.x, layoutInfo.rect.maxY + 1, layoutInfo.rect.width, this.virtualizer.visibleRect.height);
 
-    return this._findClosest(layoutInfo.rect, rect);
+    return this._findClosest(layoutInfo.rect, rect)?.key;
   }
 
   getKeyAbove(key: Key) {
     let layoutInfo = this.getLayoutInfo(key);
-    let rect = new Rect(layoutInfo.rect.x, 0, 1, layoutInfo.rect.y - 1);
+    let rect = new Rect(layoutInfo.rect.x, 0, layoutInfo.rect.width, layoutInfo.rect.y - 1);
 
-    return this._findClosest(layoutInfo.rect, rect);
+    return this._findClosest(layoutInfo.rect, rect)?.key;
   }
 
 
@@ -352,12 +350,39 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
   }
 
   getKeyPageAbove(key: Key) {
-    // TODO: write after writing getKeyAbove. Might be just like GridLayout?
-    return null;
+    let layoutInfo = this.getLayoutInfo(key);
+
+    if (layoutInfo) {
+      let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
+      while (layoutInfo && layoutInfo.rect.y > pageY) {
+        let keyAbove = this.getKeyAbove(layoutInfo.key);
+        layoutInfo = this.getLayoutInfo(keyAbove);
+      }
+
+      if (layoutInfo) {
+        return layoutInfo.key;
+      }
+    }
+
+    return this.getFirstKey();
   }
 
   getKeyPageBelow(key: Key) {
-    return null;
+    let layoutInfo = this.getLayoutInfo(key != null ? key : this.getFirstKey());
+
+    if (layoutInfo) {
+      let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
+      while (layoutInfo && layoutInfo.rect.y < pageY) {
+        let keyBelow = this.getKeyBelow(layoutInfo.key);
+        layoutInfo = this.getLayoutInfo(keyBelow);
+      }
+
+      if (layoutInfo) {
+        return layoutInfo.key;
+      }
+    }
+
+    return this.getLastKey();
   }
 
   getKeyForSearch(search: string, fromKey?: Key) {

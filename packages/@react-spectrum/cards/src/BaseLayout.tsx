@@ -74,9 +74,7 @@ export class BaseLayout<T> extends Layout<Node<T>> {
     return layoutInfo;
   }
 
-  // TODO check if the below two funcs works.
   _findClosestLayoutInfo(target: Rect, rect: Rect) {
-    // TODO double check what this.getVisibleLayoutInfos returns
     let layoutInfos = this.getVisibleLayoutInfos(rect);
     let best = null;
     let bestDistance = Infinity;
