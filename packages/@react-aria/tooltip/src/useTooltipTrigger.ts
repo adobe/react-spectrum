@@ -60,12 +60,10 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
 
   useEffect(() => {
     let onKeyDown = (e) => {
-      if (ref && ref.current) {
-        // Escape after clicking something can give it keyboard focus
-        // dismiss tooltip on esc key press
-        if (e.key === 'Escape') {
-          state.close(true);
-        }
+      // Escape after clicking something can give it keyboard focus
+      // dismiss tooltip on esc key press
+      if (e.key === 'Escape') {
+        state.close(true);
       }
     };
     if (state.isOpen) {
@@ -74,7 +72,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
         document.removeEventListener('keydown', onKeyDown, true);
       };
     }
-  }, [ref, state]);
+  }, [state]);
 
   let onHoverStart = () => {
     if (trigger === 'focus') {
