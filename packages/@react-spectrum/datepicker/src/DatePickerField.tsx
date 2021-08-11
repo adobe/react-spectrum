@@ -13,52 +13,50 @@
 import Alert from '@spectrum-icons/ui/AlertMedium';
 import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames} from '@react-spectrum/utils';
+import {createCalendar} from '@internationalized/date';
 import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './index.css';
-import {DOMProps} from '@react-types/shared';
+import {Field} from '@react-spectrum/label';
 import {FocusRing} from '@react-aria/focus';
-import React from 'react';
+import React, {useRef} from 'react';
 import {SpectrumDatePickerProps} from '@react-types/datepicker';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useDateField} from '@react-aria/datepicker';
 import {useDatePickerFieldState} from '@react-stately/datepicker';
-import {useStyleProps} from '@react-spectrum/utils';
-import {createCalendar} from '@internationalized/date';
 
-interface DateFieldDescProps extends DOMProps {
-  children?: string,
-  hidden?: boolean
+interface DatePickerFieldProps extends SpectrumDatePickerProps {
+  inputClassName?: string,
+  hideValidationIcon?: boolean,
+  maxGranularity?: SpectrumDatePickerProps['granularity']
 }
 
-export function DatePickerField(props: SpectrumDatePickerProps & {descProps?: DateFieldDescProps}) {
-  let state = useDatePickerFieldState({
-    ...props,
-    createCalendar
-  });
+export function DatePickerField(props: DatePickerFieldProps) {
   let {
     isDisabled,
     isReadOnly,
     isRequired,
     isQuiet,
-    validationState,
-    descProps,
     inputClassName,
-    ...otherProps
+    hideValidationIcon
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
-  let {fieldProps, segmentProps} = useDateField(props);
+  let ref = useRef();
+  let state = useDatePickerFieldState({
+    ...props,
+    createCalendar
+  });
 
-  let isInvalid = validationState === 'invalid';
+  let {labelProps, fieldProps} = useDateField(props, state, ref);
+
+  let isInvalid = state.validationState === 'invalid';
   let textfieldClass = classNames(
     textfieldStyles,
     'spectrum-Textfield',
     {
-      'spectrum-Textfield--invalid': isInvalid,
-      'spectrum-Textfield--valid': validationState === 'valid',
+      'spectrum-Textfield--invalid': isInvalid && !hideValidationIcon,
+      'spectrum-Textfield--valid': state.validationState === 'valid' && !hideValidationIcon,
       'spectrum-Textfield--quiet': isQuiet
     },
-    classNames(datepickerStyles, 'react-spectrum-Datepicker-field'),
-    styleProps.className
+    classNames(datepickerStyles, 'react-spectrum-Datepicker-field')
   );
 
   let inputClass = classNames(
@@ -78,30 +76,32 @@ export function DatePickerField(props: SpectrumDatePickerProps & {descProps?: Da
   );
 
   let validationIcon = null;
-  if (validationState === 'invalid') {
-    validationIcon = <Alert data-testid="invalid-icon" UNSAFE_className={iconClass} />;
-  } else if (validationState === 'valid') {
-    validationIcon = <Checkmark data-testid="valid-icon" UNSAFE_className={iconClass} />;
+  if (!hideValidationIcon) {
+    if (state.validationState === 'invalid') {
+      validationIcon = <Alert data-testid="invalid-icon" UNSAFE_className={iconClass} />;
+    } else if (state.validationState === 'valid') {
+      validationIcon = <Checkmark data-testid="valid-icon" UNSAFE_className={iconClass} />;
+    }
   }
 
   return (
-    <div {...fieldProps} {...styleProps} className={textfieldClass}>
-      {descProps && descProps.children && <span {...descProps} />}
-      <FocusRing focusClass={classNames(textfieldStyles, 'is-focused')} focusRingClass={classNames(textfieldStyles, 'focus-ring')} isTextInput within>
-        <div role="presentation" className={inputClass}>
-          {state.segments.map((segment, i) =>
-            (<DatePickerSegment
-              {...segmentProps}
-              key={i}
-              segment={segment}
-              state={state}
-              isDisabled={isDisabled}
-              isReadOnly={isReadOnly}
-              isRequired={isRequired} />)
-          )}
-        </div>
-      </FocusRing>
-      {validationIcon}
-    </div>
+    <Field {...props} labelProps={labelProps}>
+      <div {...fieldProps} className={textfieldClass}>
+        <FocusRing focusClass={classNames(textfieldStyles, 'is-focused')} focusRingClass={classNames(textfieldStyles, 'focus-ring')} isTextInput within>
+          <div role="presentation" className={inputClass} ref={ref}>
+            {state.segments.map((segment, i) =>
+              (<DatePickerSegment
+                key={i}
+                segment={segment}
+                state={state}
+                isDisabled={isDisabled}
+                isReadOnly={isReadOnly}
+                isRequired={isRequired} />)
+            )}
+          </div>
+        </FocusRing>
+        {validationIcon}
+      </div>
+    </Field>
   );
 }

@@ -13,13 +13,13 @@
 import {classNames} from '@react-spectrum/utils';
 import {DatePickerBase} from '@react-types/datepicker';
 import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
+import {NumberParser} from '@internationalized/number';
 import React, {useMemo, useRef} from 'react';
 import styles from './index.css';
 import {useDateSegment} from '@react-aria/datepicker';
 import {useFocusManager} from '@react-aria/focus';
+import {useLocale} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
-import { NumberParser } from '../../../@internationalized/number';
-import { useLocale } from '../../../react-aria';
 
 interface DatePickerSegmentProps extends DatePickerBase {
   segment: DateSegment,

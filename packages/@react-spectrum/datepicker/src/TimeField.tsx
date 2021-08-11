@@ -10,31 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {CalendarDateTime, getLocalTimeZone, Time, toCalendarDateTime, today, toTime, ZonedDateTime} from '@internationalized/date';
 import {DatePickerField} from './DatePickerField';
 import {FocusScope} from '@react-aria/focus';
-import {mergeProps} from '@react-aria/utils';
-import React, {useMemo, useRef} from 'react';
-import {SpectrumDatePickerProps, SpectrumTimePickerProps} from '@react-types/datepicker';
-import '@adobe/spectrum-css-temp/components/textfield/vars.css'; // HACK: must be included BEFORE inputgroup
-import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
-import {useDatePicker} from '@react-aria/datepicker';
-import {useDatePickerState} from '@react-stately/datepicker';
-import {useHover} from '@react-aria/interactions';
+import React, {useMemo} from 'react';
+import {SpectrumTimePickerProps} from '@react-types/datepicker';
+import {useControlledState} from '@react-stately/utils';
 import {useProviderProps} from '@react-spectrum/provider';
-import { useControlledState } from '@react-stately/utils';
-import { CalendarDateTime, Time, toCalendarDateTime, today, toTime, ZonedDateTime } from '@internationalized/date';
 
 export function TimeField(props: SpectrumTimePickerProps) {
   props = useProviderProps(props);
   let {
     autoFocus,
-    isQuiet,
-    isDisabled,
-    isReadOnly,
-    isRequired,
-    placeholderValue,
-    ...otherProps
+    placeholderValue = new Time(12),
+    minValue,
+    maxValue
   } = props;
 
   let [value, setValue] = useControlledState(
@@ -44,7 +34,10 @@ export function TimeField(props: SpectrumTimePickerProps) {
   );
 
   let v = value || placeholderValue;
-  let placeholderDate = useMemo(() => placeholderValue == null ? null : convertValue(placeholderValue), [placeholderValue]);
+  let day = v && 'day' in v ? v : undefined;
+  let placeholderDate = useMemo(() => convertValue(placeholderValue), [placeholderValue]);
+  let minDate = useMemo(() => convertValue(minValue, day), [minValue, day]);
+  let maxDate = useMemo(() => convertValue(maxValue, day), [maxValue, day]);
 
   let dateTime = useMemo(() => value == null ? null : convertValue(value), [value]);
   let onChange = newValue => {
@@ -54,27 +47,27 @@ export function TimeField(props: SpectrumTimePickerProps) {
   return (
     <FocusScope autoFocus={autoFocus}>
       <DatePickerField
+        {...props}
         data-testid="date-field"
-        isQuiet={isQuiet}
-        validationState={props.validationState}
         value={dateTime}
+        defaultValue={undefined}
+        minValue={minDate}
+        maxValue={maxDate}
         onChange={onChange}
-        isDisabled={isDisabled}
-        isReadOnly={isReadOnly}
-        isRequired={isRequired}
         maxGranularity="hour"
-        granularity={props.granularity ?? 'minute'}
-        hourCycle={props.hourCycle}
-        hideTimeZone={props.hideTimeZone}
         placeholderValue={placeholderDate} />
     </FocusScope>
   );
 }
 
-function convertValue(value: Time | CalendarDateTime | ZonedDateTime) {
+function convertValue(value: Time | CalendarDateTime | ZonedDateTime, date = today(getLocalTimeZone())) {
+  if (!value) {
+    return null;
+  }
+
   if ('day' in value) {
     return value;
   }
 
-  return toCalendarDateTime(today('America/Los_Angeles'), value);
+  return toCalendarDateTime(date, value);
 }

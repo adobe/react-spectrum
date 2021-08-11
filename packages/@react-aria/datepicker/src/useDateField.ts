@@ -10,24 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {DatePickerProps} from '@react-types/datepicker';
-import {DOMProps} from '@react-types/shared';
-import {filterDOMProps, useLabels} from '@react-aria/utils';
-import {HTMLAttributes, MouseEvent} from 'react';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
+import {AriaDatePickerProps} from '@react-types/datepicker';
+import {DatePickerFieldState} from '@react-stately/datepicker';
+import {HTMLAttributes, LabelHTMLAttributes, MouseEvent, RefObject} from 'react';
+import {mergeProps, useDescription} from '@react-aria/utils';
+import {useDateFormatter} from '@react-aria/i18n';
 import {useFocusManager} from '@react-aria/focus';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLabel} from '@react-aria/label';
 
 interface DateFieldAria {
-  fieldProps: HTMLAttributes<HTMLElement>,
-  segmentProps: HTMLAttributes<HTMLElement>
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  fieldProps: HTMLAttributes<HTMLElement>
 }
 
-export function useDateField(props: DatePickerProps & DOMProps): DateFieldAria {
-  let domProps = filterDOMProps(props, {labelable: true});
-  let formatMessage = useMessageFormatter(intlMessages);
-  let fieldProps = useLabels(props, formatMessage('date'));
+export const labelIds = new WeakMap<DatePickerFieldState, string>();
+
+export function useDateField(props: AriaDatePickerProps, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
+  let {labelProps, fieldProps} = useLabel({
+    ...props,
+    labelElementType: 'span'
+  });
   let focusManager = useFocusManager();
 
   // This is specifically for mouse events, not touch or keyboard.
@@ -35,21 +37,25 @@ export function useDateField(props: DatePickerProps & DOMProps): DateFieldAria {
   let onMouseDown = (e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    focusManager.focusNext({from: e.target as HTMLElement});
+    focusManager.focusPrevious({from: e.target as HTMLElement, wrap: true});
   };
 
+  let formatter = useDateFormatter(state.getFormatOptions({month: 'long'}));
+  let descriptionProps = useDescription(state.value ? formatter.format(state.dateValue) : null);
+
+  labelIds.set(state, fieldProps['aria-labelledby'] || fieldProps.id);
+
   return {
-    fieldProps: {
-      ...domProps,
-      ...fieldProps,
-      onMouseDown
+    labelProps: {
+      ...labelProps,
+      onClick: () => {
+        focusManager.focusNext({from: ref.current as HTMLElement});
+      }
     },
-    segmentProps: {
-      'aria-controls': props['aria-controls'],
-      'aria-haspopup': props['aria-haspopup'],
-      'aria-invalid': props['aria-invalid'],
-      // Segments should be labeled by the input id if provided, otherwise the field itself
-      'aria-labelledby': fieldProps['aria-labelledby'] || fieldProps.id
-    }
+    fieldProps: mergeProps(fieldProps, descriptionProps, {
+      role: 'group',
+      'aria-disabled': props.isDisabled || undefined,
+      onMouseDown
+    })
   };
 }

@@ -11,6 +11,7 @@
  */
 
 import {
+  AriaLabelingProps,
   DOMProps,
   FocusableProps,
   InputBase,
@@ -21,8 +22,7 @@ import {
   Validation,
   ValueBase
 } from '@react-types/shared';
-import { CalendarDate, CalendarDateTime, Time, ZonedDateTime } from '@internationalized/date';
-
+import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
 
 export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
 interface DatePickerBase extends InputBase, Validation, FocusableProps, LabelableProps {
@@ -34,13 +34,18 @@ interface DatePickerBase extends InputBase, Validation, FocusableProps, Labelabl
   hideTimeZone?: boolean
 }
 
+export interface AriaDatePickerBaseProps extends DatePickerBase, AriaLabelingProps, DOMProps {}
+
 export interface DatePickerProps extends DatePickerBase, ValueBase<DateValue> {}
+export interface AriaDatePickerProps extends AriaDatePickerBaseProps, DatePickerProps {}
 
 export type DateRange = RangeValue<DateValue>;
 export interface DateRangePickerProps extends DatePickerBase, ValueBase<DateRange> {}
+export interface AriaDateRangePickerProps extends AriaDatePickerBaseProps, DateRangePickerProps {}
 
-interface SpectrumDatePickerBase extends SpectrumLabelableProps, DOMProps, StyleProps {
-  isQuiet?: boolean
+interface SpectrumDatePickerBase extends AriaDatePickerBaseProps, SpectrumLabelableProps, StyleProps {
+  isQuiet?: boolean,
+  showFormatHelpText?: boolean
 }
 
 export interface SpectrumDatePickerProps extends DatePickerProps, SpectrumDatePickerBase {}
@@ -51,7 +56,9 @@ interface TimePickerProps extends InputBase, Validation, FocusableProps, Labelab
   hourCycle?: 12 | 24,
   granularity?: 'hour' | 'minute' | 'second' | 'millisecond',
   hideTimeZone?: boolean,
-  placeholderValue?: TimeValue
+  placeholderValue?: TimeValue,
+  minValue?: TimeValue,
+  maxValue?: TimeValue
 }
 
 interface SpectrumTimePickerProps extends TimePickerProps, SpectrumLabelableProps, DOMProps, StyleProps {

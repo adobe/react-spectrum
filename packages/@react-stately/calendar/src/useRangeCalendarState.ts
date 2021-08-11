@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, CalendarDate, compare, fromAbsolute, toCalendarDate, toDate} from '@internationalized/date';
-import {DateValue} from '@react-types/datepicker';
+import {Calendar, CalendarDate, compareDate, fromAbsolute, toCalendarDate, toDate} from '@internationalized/date';
+import {DateValue} from '@react-types/calendar';
 import {RangeCalendarProps} from '@react-types/calendar';
 import {RangeCalendarState} from './types';
 import {RangeValue} from '@react-types/shared';
@@ -74,13 +74,17 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
       }
     },
     isSelected(date) {
-      return  highlightedRange && compare(date, highlightedRange.start) >= 0 && compare(date, highlightedRange.end) <= 0;
+      return highlightedRange && compareDate(date, highlightedRange.start) >= 0 && compareDate(date, highlightedRange.end) <= 0;
     }
   };
 }
 
 function makeRange(start: CalendarDate, end: CalendarDate): RangeValue<CalendarDate> {
-  if (compare(end, start) < 0) {
+  if (!start || !end) {
+    return null;
+  }
+
+  if (compareDate(end, start) < 0) {
     [start, end] = [end, start];
   }
 
@@ -89,7 +93,7 @@ function makeRange(start: CalendarDate, end: CalendarDate): RangeValue<CalendarD
 
 function convertRange(range: RangeValue<DateValue>, timeZone: string): RangeValue<CalendarDate> {
   return {
-    start: toCalendarDate(fromAbsolute(new Date(range.start).getTime(), timeZone)),
-    end: toCalendarDate(fromAbsolute(new Date(range.end).getTime(), timeZone))
+    start: range.start ? toCalendarDate(fromAbsolute(new Date(range.start).getTime(), timeZone)) : null,
+    end: range.end ? toCalendarDate(fromAbsolute(new Date(range.end).getTime(), timeZone)) : null
   };
 }

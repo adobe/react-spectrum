@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {Calendar, CalendarDateTime, GregorianCalendar, now, toCalendar, toCalendarDate, toCalendarDateTime, ZonedDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue} from '@react-types/datepicker';
+import {FieldOptions, getFormatOptions, isInvalid} from './utils';
 import {useControlledState} from '@react-stately/utils';
 import {useDateFormatter} from '@react-aria/i18n';
 import {useEffect, useMemo, useRef, useState} from 'react';
-
-import {Calendar, CalendarDate, CalendarDateTime, GregorianCalendar, now, toCalendar, toCalendarDate, toCalendarDateTime, toZoned, ZonedDateTime} from '@internationalized/date';
+import {ValidationState} from '@react-types/shared';
 
 export interface DateSegment {
   type: Intl.DateTimeFormatPartTypes,
@@ -32,12 +33,14 @@ export interface DatePickerFieldState {
   setValue: (value: CalendarDateTime) => void,
   segments: DateSegment[],
   dateFormatter: Intl.DateTimeFormat,
+  validationState: ValidationState,
   increment: (type: Intl.DateTimeFormatPartTypes) => void,
   decrement: (type: Intl.DateTimeFormatPartTypes) => void,
   incrementPage: (type: Intl.DateTimeFormatPartTypes) => void,
   decrementPage: (type: Intl.DateTimeFormatPartTypes) => void,
   setSegment: (type: Intl.DateTimeFormatPartTypes, value: number) => void,
-  confirmPlaceholder: (type: Intl.DateTimeFormatPartTypes) => void
+  confirmPlaceholder: (type: Intl.DateTimeFormatPartTypes) => void,
+  getFormatOptions(fieldOptions: FieldOptions): Intl.DateTimeFormatOptions
 }
 
 const EDITABLE_SEGMENTS = {
@@ -65,28 +68,15 @@ const TYPE_MAPPING = {
   dayperiod: 'dayPeriod'
 };
 
-const FIELD_OPTIONS = {
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit'
-};
-
 interface DatePickerFieldProps extends DatePickerProps {
   maxGranularity?: DatePickerProps['granularity'],
-  createCalendar: (name: string) => Calendar,
-  timeZone?: string
+  createCalendar: (name: string) => Calendar
 }
 
 export function useDatePickerFieldState(props: DatePickerFieldProps): DatePickerFieldState {
-  let defaultFormatter = useDateFormatter();
-  let defaultResolvedOptions = useMemo(() => defaultFormatter.resolvedOptions(), [defaultFormatter]);
   let {
     createCalendar,
-    hideTimeZone,
-    // timeZone = 'America/Sao_Paulo'//defaultResolvedOptions.timeZone
+    hideTimeZone
   } = props;
 
   let v = (props.value || props.defaultValue || props.placeholderValue);
@@ -94,49 +84,22 @@ export function useDatePickerFieldState(props: DatePickerFieldProps): DatePicker
   let timeZone = defaultTimeZone || 'UTC';
   let granularity = props.granularity || (v && 'minute' in v ? 'minute' : 'day');
 
-  let calendar = useMemo(() => createCalendar(defaultResolvedOptions.calendar), [createCalendar, defaultResolvedOptions.calendar]);
-
   let [validSegments, setValidSegments] = useState<Partial<typeof EDITABLE_SEGMENTS>>(
     props.value || props.defaultValue ? {...EDITABLE_SEGMENTS} : {}
   );
 
-  let opts = useMemo(() => {
-    let keys = Object.keys(FIELD_OPTIONS);
-    let startIdx = keys.indexOf(props.maxGranularity ?? 'year');
-    if (startIdx < 0) {
-      startIdx = 0;
-    }
-
-    let endIdx = keys.indexOf(granularity);
-    if (endIdx < 0) {
-      endIdx = 2;
-    }
-
-    if (startIdx > endIdx) {
-      throw new Error('maxGranularity must be greater than granularity');
-    }
-
-    let opts: Intl.DateTimeFormatOptions = keys.slice(startIdx, endIdx + 1).reduce((opts, key) => {
-      opts[key] = FIELD_OPTIONS[key];
-      return opts;
-    }, {});
-
-    if (props.hourCycle != null) {
-      opts.hour12 = props.hourCycle === 12;
-    }
-
-    opts.timeZone = timeZone;
-
-    let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second';
-    if (hasTime && defaultTimeZone && !hideTimeZone) {
-      opts.timeZoneName = 'short';
-    }
-
-    return opts;
-  }, [props.maxGranularity, granularity, props.hourCycle, timeZone, defaultTimeZone, hideTimeZone]);
+  let formatOpts = useMemo(() => ({
+    granularity,
+    maxGranularity: props.maxGranularity ?? 'year',
+    timeZone: defaultTimeZone,
+    hideTimeZone,
+    hourCycle: props.hourCycle
+  }), [props.maxGranularity, granularity, props.hourCycle, defaultTimeZone, hideTimeZone]);
+  let opts = useMemo(() => getFormatOptions({}, formatOpts), [formatOpts]);
 
   let dateFormatter = useDateFormatter(opts);
   let resolvedOptions = useMemo(() => dateFormatter.resolvedOptions(), [dateFormatter]);
+  let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
 
   // Determine how many editable segments there are for validation purposes.
   // The result is cached for performance.
@@ -155,13 +118,18 @@ export function useDatePickerFieldState(props: DatePickerFieldProps): DatePicker
   // until all segments are set. If the value === null (not undefined), then assume the component
   // is controlled, so use the placeholder as the value until all segments are entered so it doesn't
   // change from uncontrolled to controlled and emit a warning.
-  let [placeholderDate, setPlaceholderDate] = useState(props.placeholderValue ? convertValue(props.placeholderValue, calendar) : createPlaceholderDate(calendar, defaultTimeZone));
-  let [date, setDate] = useControlledState<CalendarDateTime>(
-    props.value === null ? placeholderDate : convertValue(props.value, calendar),
-    props.defaultValue ? convertValue(props.defaultValue, calendar) : null,
+  let [placeholderDate, setPlaceholderDate] = useState(
+    props.placeholderValue
+      ? convertValue(props.placeholderValue, calendar)
+      : createPlaceholderDate(calendar, defaultTimeZone)
+  );
+
+  let [date, setDate] = useControlledState(
+    convertValue(props.value, calendar),
+    convertValue(props.defaultValue, calendar),
     value => {
       if (props.onChange) {
-        let hasTime = props.granularity === 'hour' || props.granularity === 'minute' || props.granularity === 'second';
+        let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second';
         let gregorianDate = toCalendar(value, new GregorianCalendar());
         props.onChange(hasTime || defaultTimeZone ? gregorianDate : toCalendarDate(gregorianDate));
       }
@@ -183,7 +151,7 @@ export function useDatePickerFieldState(props: DatePickerFieldProps): DatePicker
   }, [calendar, setDate, validSegments, defaultTimeZone, numSegments]);
 
   // If all segments are valid, use the date from state, otherwise use the placeholder date.
-  let value = Object.keys(validSegments).length >= numSegments ? date : placeholderDate;
+  let value = date && Object.keys(validSegments).length >= numSegments ? date : placeholderDate;
   let setValue = (value: CalendarDateTime) => {
     if (Object.keys(validSegments).length >= numSegments) {
       setDate(value);
@@ -205,21 +173,29 @@ export function useDatePickerFieldState(props: DatePickerFieldProps): DatePicker
 
   let hasEra = useMemo(() => segments.some(s => s.type === 'era'), [segments]);
 
-  let adjustSegment = (type: Intl.DateTimeFormatPartTypes, amount: number) => {
-    validSegments[type] = true;
-    if (type === 'year' && hasEra) {
+  let markValid = (part: Intl.DateTimeFormatPartTypes) => {
+    validSegments[part] = true;
+    if (part === 'year' && hasEra) {
       validSegments.era = true;
     }
     setValidSegments({...validSegments});
+  };
+
+  let adjustSegment = (type: Intl.DateTimeFormatPartTypes, amount: number) => {
+    markValid(type);
     setValue(addSegment(value, type, amount, resolvedOptions));
   };
 
+  let validationState: ValidationState = props.validationState ||
+    (isInvalid(date, props.minValue, props.maxValue) ? 'invalid' : null);
+
   return {
-    value,
+    value: date,
     dateValue,
     setValue,
     segments,
     dateFormatter,
+    validationState,
     increment(part) {
       adjustSegment(part, 1);
     },
@@ -233,17 +209,15 @@ export function useDatePickerFieldState(props: DatePickerFieldProps): DatePicker
       adjustSegment(part, -(PAGE_STEP[part] || 1));
     },
     setSegment(part, v) {
-      validSegments[part] = true;
-      if (part === 'year' && hasEra) {
-        validSegments.era = true;
-      }
-      setValidSegments({...validSegments});
+      markValid(part);
       setValue(setSegment(value, part, v, resolvedOptions));
     },
     confirmPlaceholder(part) {
-      validSegments[part] = true;
-      setValidSegments({...validSegments});
-      setValue(value);
+      markValid(part);
+      setValue(value.copy());
+    },
+    getFormatOptions(fieldOptions: FieldOptions) {
+      return getFormatOptions(fieldOptions, formatOpts);
     }
   };
 }
@@ -366,7 +340,15 @@ function setSegment(value: CalendarDateTime, part: string, segmentValue: number,
   }
 }
 
-function convertValue(value: DateValue, calendar: Calendar) {
+function convertValue(value: DateValue, calendar: Calendar): CalendarDateTime | ZonedDateTime {
+  if (value === null) {
+    return null;
+  }
+
+  if (!value) {
+    return undefined;
+  }
+
   if ('hour' in value) {
     return toCalendar(value, calendar);
   }

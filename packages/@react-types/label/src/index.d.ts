@@ -20,7 +20,7 @@ export interface LabelProps {
   elementType?: ElementType
 }
 
-export interface SpectrumLabelProps extends LabelProps, DOMProps, StyleProps, HTMLAttributes<HTMLElement> {
+interface SpectrumLabelPropsBase extends LabelProps, DOMProps, StyleProps {
   labelPosition?: LabelPosition, // default top
   labelAlign?: Alignment, // default start
   isRequired?: boolean,
@@ -28,7 +28,9 @@ export interface SpectrumLabelProps extends LabelProps, DOMProps, StyleProps, HT
   includeNecessityIndicatorInAccessibilityName?: boolean
 }
 
-export interface SpectrumFieldProps extends SpectrumLabelProps {
+export interface SpectrumLabelProps extends SpectrumLabelPropsBase, HTMLAttributes<HTMLElement> {}
+
+export interface SpectrumFieldProps extends SpectrumLabelPropsBase {
   children: ReactElement,
   label?: ReactNode,
   labelProps: HTMLAttributes<HTMLElement>,

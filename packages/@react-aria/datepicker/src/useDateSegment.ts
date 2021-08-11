@@ -13,16 +13,17 @@
 import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
 import {DatePickerProps} from '@react-types/datepicker';
 import {DOMProps} from '@react-types/shared';
-import {HTMLAttributes, RefObject, useMemo, useRef, useState} from 'react';
+import {HTMLAttributes, RefObject, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {labelIds} from './useDateField';
 import {mergeProps, useEvent, useId} from '@react-aria/utils';
+import {NumberParser} from '@internationalized/number';
 import {useDateFormatter, useFilter, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useFocusManager} from '@react-aria/focus';
 import {useMediaQuery} from '@react-spectrum/utils';
 import {usePress} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
-import { NumberParser } from '@internationalized/number';
 
 interface DateSegmentAria {
   segmentProps: HTMLAttributes<HTMLDivElement>
@@ -35,10 +36,12 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
   let focusManager = useFocusManager();
 
   let textValue = segment.text;
-  let monthDateFormatter = useDateFormatter({month: 'long'});
+  let options = useMemo(() => state.dateFormatter.resolvedOptions(), [state.dateFormatter]);
+  let monthDateFormatter = useDateFormatter({month: 'long', timeZone: options.timeZone});
   let hourDateFormatter = useDateFormatter({
     hour: 'numeric',
-    hour12: state.dateFormatter.resolvedOptions().hour12
+    hour12: options.hour12,
+    timeZone: options.timeZone
   });
 
   if (segment.type === 'month') {
@@ -92,6 +95,7 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
     switch (e.key) {
       case 'ArrowLeft':
         e.preventDefault();
+        e.stopPropagation();
         if (direction === 'rtl') {
           focusManager.focusNext();
         } else {
@@ -100,6 +104,7 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
         break;
       case 'ArrowRight':
         e.preventDefault();
+        e.stopPropagation();
         if (direction === 'rtl') {
           focusManager.focusPrevious();
         } else {
@@ -108,6 +113,7 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
         break;
       case 'Enter':
         e.preventDefault();
+        e.stopPropagation();
         if (segment.isPlaceholder && !props.isReadOnly) {
           state.confirmPlaceholder(segment.type);
         }
@@ -118,6 +124,7 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
       case 'Backspace': {
         // Safari on iOS does not fire beforeinput for the backspace key because the cursor is at the start.
         e.preventDefault();
+        e.stopPropagation();
         if (parser.isValidPartialNumber(segment.text, segment.minValue, segment.maxValue) && !props.isReadOnly) {
           let newValue = segment.text.slice(0, -1);
           state.setSegment(segment.type, newValue.length === 0 ? segment.minValue : parser.parse(newValue));
@@ -204,6 +211,7 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
   };
 
   let compositionRef = useRef('');
+  // @ts-ignore - TODO: possibly old TS version? doesn't fail in my editor...
   useEvent(ref, 'beforeinput', e => {
     e.preventDefault();
 
@@ -265,6 +273,8 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
     'aria-valuenow': null
   } : {};
 
+  let fieldLabelId = labelIds.get(state);
+
   let id = useId(props.id);
   return {
     segmentProps: mergeProps(spinButtonProps, {
@@ -272,10 +282,10 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
       ...touchPropOverrides,
       ...pressProps,
       'aria-controls': props['aria-controls'],
-      'aria-haspopup': props['aria-haspopup'],
-      'aria-invalid': props['aria-invalid'],
+      // 'aria-haspopup': props['aria-haspopup'], // deprecated in ARIA 1.2
+      'aria-invalid': state.validationState === 'invalid' ? 'true' : undefined,
       'aria-label': messageFormatter(segment.type),
-      'aria-labelledby': `${props['aria-labelledby']} ${id}`,
+      'aria-labelledby': `${fieldLabelId} ${id}`,
       contentEditable: !props.isDisabled,
       suppressContentEditableWarning: !props.isDisabled,
       spellCheck: 'false',
@@ -288,28 +298,4 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
       onFocus
     })
   };
-}
-
-// Converts unicode number strings to real JS numbers.
-// Numbers can be displayed and typed in many number systems, but JS
-// only understands latin numbers.
-// See https://www.fileformat.info/info/unicode/category/Nd/list.htm
-// for a list of unicode numeric characters.
-// Currently only Arabic and Latin numbers are supported, but more
-// could be added here in the future.
-// Keep this in sync with `isNumeric` below.
-function parseNumber(str: string): number {
-  str = str
-    // Arabic Indic
-    .replace(/[\u0660-\u0669]/g, c => String(c.charCodeAt(0) - 0x0660))
-    // Extended Arabic Indic
-    .replace(/[\u06f0-\u06f9]/g, c => String(c.charCodeAt(0) - 0x06f0));
-
-  return Number(str);
-}
-
-// Checks whether a unicode string could be converted to a number.
-// Keep this in sync with `parseNumber` above.
-function isNumeric(str: string) {
-  return /^[0-9\u0660-\u0669\u06f0-\u06f9]+$/.test(str);
 }

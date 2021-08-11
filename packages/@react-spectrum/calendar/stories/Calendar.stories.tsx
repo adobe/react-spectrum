@@ -20,7 +20,7 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {useLocale} from '@react-aria/i18n';
 
-storiesOf('Calendar', module)
+storiesOf('Date and Time/Calendar', module)
   .add(
     'Default',
     () => render()

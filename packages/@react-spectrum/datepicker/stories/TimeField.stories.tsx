@@ -11,22 +11,18 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {CalendarDateTime, parseTime, parseZonedDateTime, Time, toZoned} from '@internationalized/date';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {TimeField} from '../';
-import { CalendarDateTime, parseTime, parseZonedDateTime, Time, toZoned } from '@internationalized/date';
 
 const BlockDecorator = storyFn => <div>{storyFn()}</div>;
 
-storiesOf('TimeField', module)
+storiesOf('Date and Time/TimeField', module)
   .addDecorator(BlockDecorator)
   .add(
     'default',
     () => render()
-  )
-  .add(
-    'isQuiet',
-    () => render({isQuiet: true})
   )
   .add(
     'defaultValue',
@@ -69,10 +65,6 @@ storiesOf('TimeField', module)
     () => render({isReadOnly: true, value: new Time(2, 35)})
   )
   .add(
-    'isRequired',
-    () => render({isRequired: true})
-  )
-  .add(
     'autoFocus',
     () => render({autoFocus: true})
   )
@@ -91,11 +83,75 @@ storiesOf('TimeField', module)
   .add(
     'placeholderValue: 1980/1/1 8AM, zoned',
     () => render({placeholderValue: toZoned(new CalendarDateTime(1980, 1, 1, 8), 'America/Los_Angeles')})
+  )
+  .add(
+    'minValue: 8 AM',
+    () => render({minValue: new Time(8)})
+  )
+  .add(
+    'maxValue: 8 PM',
+    () => render({maxValue: new Time(20)})
+  )
+  .add(
+    'minValue: 8 AM, maxValue: 8 PM',
+    () => render({minValue: new Time(8), maxValue: new Time(20)})
+  );
+
+storiesOf('Date and Time/TimeField/styling', module)
+  .addDecorator(BlockDecorator)
+  .add(
+    'isQuiet',
+    () => render({isQuiet: true})
+  )
+  .add(
+    'labelPosition: side',
+    () => render({labelPosition: 'side'})
+  )
+  .add(
+    'labelAlign: end',
+    () => render({labelPosition: 'top', labelAlign: 'end'})
+  )
+  .add(
+    'required',
+    () => render({isRequired: true})
+  )
+  .add(
+    'required with label',
+    () => render({isRequired: true, necessityIndicator: 'label'})
+  )
+  .add(
+    'optional',
+    () => render({necessityIndicator: 'label'})
+  )
+  .add(
+    'no visible label',
+    () => render({'aria-label': 'Time', label: null})
+  )
+  .add(
+    'quiet no visible label',
+    () => render({isQuiet: true, 'aria-label': 'Time', label: null})
+  )
+  .add(
+    'custom width',
+    () => render({width: 'size-3000'})
+  )
+  .add(
+    'quiet custom width',
+    () => render({isQuiet: true, width: 'size-3000'})
+  )
+  .add(
+    'custom width no visible label',
+    () => render({width: 'size-3000', label: null, 'aria-label': 'Width'})
+  )
+  .add(
+    'custom width, labelPosition=side',
+    () => render({width: 'size-3000', labelPosition: 'side'})
   );
 
 function render(props = {}) {
   return (
     <TimeField
+      label="Time"
       onChange={action('change')}
       {...props} />
   );

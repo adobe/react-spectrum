@@ -11,26 +11,22 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {CalendarDate, CalendarDateTime, parseAbsolute, parseAbsoluteToLocal, parseDate, parseDateTime, parseZonedDateTime, toZoned} from '@internationalized/date';
 import {DatePicker} from '../';
+import {Flex} from '@react-spectrum/layout';
+import {Item, Picker, Section} from '@react-spectrum/picker';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import { Flex } from '../../layout';
-import { Item, Picker, Section } from '../../picker';
-import { Provider } from '../../provider';
-import { useLocale } from '../../../react-aria';
-import { parseDate, parseDateTime, CalendarDate, CalendarDateTime, toZoned, toTimeZone, parseZonedDateTime, parseAbsolute, parseAbsoluteToLocal } from '@internationalized/date';
+import {useLocale} from '@react-aria/i18n';
 
 const BlockDecorator = storyFn => <div>{storyFn()}</div>;
 
-storiesOf('DatePicker', module)
+storiesOf('Date and Time/DatePicker', module)
   .addDecorator(BlockDecorator)
   .add(
     'default',
     () => render()
-  )
-  .add(
-    'isQuiet',
-    () => render({isQuiet: true})
   )
   .add(
     'defaultValue',
@@ -87,10 +83,6 @@ storiesOf('DatePicker', module)
     () => render({isReadOnly: true, value: new CalendarDate(2020, 2, 3)})
   )
   .add(
-    'isRequired',
-    () => render({isRequired: true})
-  )
-  .add(
     'autoFocus',
     () => render({autoFocus: true})
   )
@@ -103,8 +95,8 @@ storiesOf('DatePicker', module)
     () => render({validationState: 'valid', value: new CalendarDate(2020, 2, 3)})
   )
   .add(
-    'minDate: 2010/1/1, maxDate: 2020/1/1',
-    () => render({minValue: new Date(2010, 0, 1), maxValue: new CalendarDate(2020, 0, 1)})
+    'minValue: 2010/1/1, maxValue: 2020/1/1',
+    () => render({minValue: new CalendarDate(2010, 0, 1), maxValue: new CalendarDate(2020, 0, 1)})
   )
   .add(
     'placeholderValue: 1980/1/1',
@@ -119,9 +111,61 @@ storiesOf('DatePicker', module)
     () => render({placeholderValue: toZoned(new CalendarDate(1980, 1, 1), 'America/Los_Angeles')})
   );
 
+storiesOf('Date and Time/DatePicker/styling', module)
+  .addDecorator(BlockDecorator)
+  .add(
+    'isQuiet',
+    () => render({isQuiet: true})
+  )
+  .add(
+    'labelPosition: side',
+    () => render({labelPosition: 'side'})
+  )
+  .add(
+    'labelAlign: end',
+    () => render({labelPosition: 'top', labelAlign: 'end'})
+  )
+  .add(
+    'required',
+    () => render({isRequired: true})
+  )
+  .add(
+    'required with label',
+    () => render({isRequired: true, necessityIndicator: 'label'})
+  )
+  .add(
+    'optional',
+    () => render({necessityIndicator: 'label'})
+  )
+  .add(
+    'no visible label',
+    () => render({'aria-label': 'Time', label: null})
+  )
+  .add(
+    'quiet no visible label',
+    () => render({isQuiet: true, 'aria-label': 'Time', label: null})
+  )
+  .add(
+    'custom width',
+    () => render({width: 'size-3000'})
+  )
+  .add(
+    'quiet custom width',
+    () => render({isQuiet: true, width: 'size-3000'})
+  )
+  .add(
+    'custom width no visible label',
+    () => render({width: 'size-3000', label: null, 'aria-label': 'Width'})
+  )
+  .add(
+    'custom width, labelPosition=side',
+    () => render({width: 'size-3000', labelPosition: 'side'})
+  );
+
 function render(props = {}) {
   return (
     <Example
+      label="Date"
       onChange={action('change')}
       {...props} />
   );
