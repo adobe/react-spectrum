@@ -11,10 +11,10 @@
  */
 
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
-import { GregorianCalendar } from './calendars/GregorianCalendar';
-import { epochFromDate, fromAbsolute, getTimeZoneOffset, possibleAbsolutes, toAbsolute, toCalendar, toTimeZone } from './conversion';
-import { getLocalTimeZone } from './queries';
-import { Disambiguation } from './types';
+import {Disambiguation} from './types';
+import {epochFromDate, fromAbsolute, possibleAbsolutes, toAbsolute, toCalendar, toTimeZone} from './conversion';
+import {getLocalTimeZone} from './queries';
+import {GregorianCalendar} from './calendars/GregorianCalendar';
 import {Mutable} from './utils';
 
 const TIME_RE = /^(\d{2})(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?$/;

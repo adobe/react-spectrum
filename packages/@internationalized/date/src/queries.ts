@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, ZonedDateTime} from './CalendarDate';
+import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 import {fromAbsolute, toAbsolute, toCalendar, toCalendarDate} from './conversion';
 
 export function isSameDay(a: CalendarDate, b: CalendarDate): boolean {
@@ -53,8 +53,16 @@ export function today(timeZone: string): CalendarDate {
   return toCalendarDate(now(timeZone));
 }
 
-export function compare(a: CalendarDate, b: CalendarDate): number {
+export function compareDate(a: CalendarDate, b: CalendarDate): number {
   return a.calendar.toJulianDay(a) - b.calendar.toJulianDay(b);
+}
+
+export function compareTime(a: Time | CalendarDateTime, b: Time | CalendarDateTime): number {
+  return timeToMs(a) - timeToMs(b);
+}
+
+function timeToMs(a: Time | CalendarDateTime): number {
+  return a.hour * 60 * 60 * 1000 + a.minute * 60 * 1000 + a.second * 1000 + a.millisecond;
 }
 
 export function getHoursInDay(a: CalendarDate, timeZone: string): number {

@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {add, addTime, addZoned, cycleDate, cycleTime, cycleZoned, set, setTime, setZoned, subtract, subtractTime, subtractZoned} from './manipulation';
 import {Calendar, CycleOptions, CycleTimeOptions, DateField, DateFields, Disambiguation, Duration, OverflowBehavior, TimeField, TimeFields} from './types';
+import {compareDate, compareTime} from './queries';
+import {dateTimeToString, dateToString, timeToString, zonedDateTimeToString} from './string';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
-import { add, addZoned, cycleDate, cycleTime, cycleZoned, set, setTime, setZoned, subtract, subtractZoned } from './manipulation';
-import { toDate, zonedToDate } from './conversion';
-import { dateTimeToString, dateToString, timeToString, zonedDateTimeToString } from './string';
+import {toCalendarDateTime, toDate, toZoned, zonedToDate} from './conversion';
 
 function shiftArgs(args: any[]) {
   let calendar: Calendar = typeof args[0] === 'object'
@@ -90,6 +91,10 @@ export class CalendarDate {
   toString() {
     return dateToString(this);
   }
+
+  compare(b: CalendarDate) {
+    return compareDate(this, b);
+  }
 }
 
 export class Time {
@@ -105,11 +110,11 @@ export class Time {
   }
 
   add(duration: Duration) {
-    return add(this, duration);
+    return addTime(this, duration);
   }
 
   subtract(duration: Duration) {
-    return subtract(this, duration);
+    return subtractTime(this, duration);
   }
 
   set(fields: TimeFields, behavior?: OverflowBehavior) {
@@ -122,6 +127,10 @@ export class Time {
 
   toString() {
     return timeToString(this);
+  }
+
+  compare(b: Time) {
+    return compareTime(this, b);
   }
 }
 
@@ -169,6 +178,15 @@ export class CalendarDateTime extends CalendarDate {
 
   toString() {
     return dateTimeToString(this);
+  }
+
+  compare(b: CalendarDate | CalendarDateTime) {
+    let res = compareDate(this, b);
+    if (res === 0) {
+      return compareTime(this, toCalendarDateTime(b));
+    }
+
+    return res;
   }
 }
 
@@ -222,5 +240,10 @@ export class ZonedDateTime extends CalendarDateTime {
 
   toAbsoluteString() {
     return this.toDate().toISOString();
+  }
+
+  compare(b: CalendarDate | CalendarDateTime | ZonedDateTime) {
+    // TODO: Is this a bad idea??
+    return this.toDate() - toZoned(b, this.timeZone).toDate();
   }
 }

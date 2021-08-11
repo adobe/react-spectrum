@@ -15,9 +15,9 @@
 
 import {Calendar, Disambiguation} from './types';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
+import {getLocalTimeZone} from './queries';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
-import { Mutable } from './utils';
-import { getLocalTimeZone } from './queries';
+import {Mutable} from './utils';
 
 export function epochFromDate(date: CalendarDateTime) {
   date = toCalendar(date, new GregorianCalendar());
@@ -155,6 +155,14 @@ export function fromAbsolute(ms: number, timeZone: string): ZonedDateTime {
   return new ZonedDateTime(year, month, day, timeZone, offset, hour, minute, second, millisecond);
 }
 
+export function fromDate(date: Date, timeZone: string): ZonedDateTime {
+  return fromAbsolute(date.getTime(), timeZone);
+}
+
+export function fromDateToLocal(date: Date): ZonedDateTime {
+  return fromDate(date, getLocalTimeZone());
+}
+
 export function toCalendarDate(dateTime: CalendarDateTime): CalendarDate {
   return new CalendarDate(dateTime.calendar, dateTime.era, dateTime.year, dateTime.month, dateTime.day);
 }
@@ -218,13 +226,16 @@ export function toCalendar(date: CalendarDate | CalendarDateTime | ZonedDateTime
 }
 
 export function toZoned(date: CalendarDate | CalendarDateTime, timeZone: string, disambiguation?: Disambiguation) {
-  if (date instanceof ZonedDateTime && date.timeZone === timeZone) {
-    return date;
+  if (date instanceof ZonedDateTime) {
+    if (date.timeZone === timeZone) {
+      return date;
+    }
+
+    return toTimeZone(date, timeZone);
   }
 
   let ms = toAbsolute(date, timeZone, disambiguation);
-  let offset = getTimeZoneOffset(ms, timeZone);
-  return new ZonedDateTime(date.calendar, date.era, date.year, date.month, date.day, timeZone, offset, date.hour, date.minute, date.second, date.millisecond);
+  return fromAbsolute(ms, timeZone);
 }
 
 export function zonedToDate(date: ZonedDateTime) {

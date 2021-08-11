@@ -11,9 +11,9 @@
  */
 
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
-import { GregorianCalendar } from './calendars/GregorianCalendar';
-import { epochFromDate, fromAbsolute, getTimeZoneOffset, toAbsolute, toCalendar, toCalendarDate, toCalendarDateTime } from './conversion';
 import {CycleOptions, CycleTimeOptions, DateField, DateFields, Disambiguation, Duration, OverflowBehavior, TimeField, TimeFields} from './types';
+import {epochFromDate, fromAbsolute, getTimeZoneOffset, toAbsolute, toCalendar, toCalendarDateTime} from './conversion';
+import {GregorianCalendar} from './calendars/GregorianCalendar';
 import {Mutable} from './utils';
 
 const ONE_HOUR = 3600000;
@@ -24,7 +24,7 @@ export function add(date: CalendarDate, duration: Duration): CalendarDate;
 export function add(date: CalendarDate | CalendarDateTime, duration: Duration): CalendarDate | CalendarDateTime {
 /* eslint-enable no-redeclare */
   let mutableDate: Mutable<CalendarDate> = date.copy();
-  let days = addTime(toCalendarDateTime(date), duration);
+  let days = addTimeFields(toCalendarDateTime(date), duration);
 
   addYears(mutableDate, duration.years || 0);
   mutableDate.month += duration.months || 0;
@@ -224,12 +224,22 @@ function nonNegativeMod(a: number, b: number) {
   return result;
 }
 
-function addTime(time: TimeFields, duration: Duration): number {
+function addTimeFields(time: TimeFields, duration: Duration): number {
   time.hour += duration.hours || 0;
   time.minute += duration.minutes || 0;
   time.second += duration.seconds || 0;
   time.millisecond += duration.milliseconds || 0;
   return balanceTime(time);
+}
+
+export function addTime(time: Time, duration: Duration): Time {
+  let res = time.copy();
+  addTimeFields(res, duration);
+  return res;
+}
+
+export function subtractTime(time: Time, duration: Duration): Time {
+  return addTime(time, invertDuration(duration));
 }
 
 export function startOfMonth(date: CalendarDate): CalendarDate {
