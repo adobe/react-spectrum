@@ -14,5 +14,6 @@
 
 export * from './CardView';
 export * from './BaseLayout';
+export * from './GalleryLayout';
 export * from './GridLayout';
 export * from './Card';

@@ -121,13 +121,8 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
   // For now use the current this.layoutInfos map. If sections become a thing, can make a local layoutNodes or something that
   // organizes everything into sections
 
-  validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
-    // TODO: think about what else could cause the layoutinfo cache to be invalid (would I need to invalidate everything if the min/max item size changes)
-    // Invalidate cache if the size of the collection changed.
-    // In this case, we need to recalculate the entire layout.
-    this.invalidateEverything = invalidationContext.sizeChanged;
+  validate() {
     this.collection = this.virtualizer.collection;
-
     this.buildCollection();
 
     // Remove layout info that doesn't exist in new collection
@@ -140,16 +135,10 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
     }
 
     this.lastCollection = this.collection;
-
-    // TODO: not sure why the below was a thing, need to dig to see if it is important
-    // Oh might need it for baseLayout's getContentSize? That gets called in Virtualizer
-    // Will need to set this.contentSize here then, maybe do it in buildCollection instead
-    // this.contentHeight = y;
   }
 
   buildCollection() {
-
-    // TODO: split up the below further. Get rid of the sections, buildChild will
+    // TODO: split up the below further.
     let y = this.itemSpacing.height;
     let availableWidth = this.virtualizer.visibleRect.width - this.itemSpacing.width * 2;
 
@@ -159,70 +148,66 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
     //   dropTarget = null;
     // }
 
-    let numSections = this.collectionView.getNumberOfSections();
-    for (let section = 0; section < numSections; section++) {
-      this.layoutInfos[section] = [];
+    // Compute aspect ratios for all of the items, and the total width if all items were on in a single row.
+    let ratios = [];
+    let totalWidth = 0;
+    for (let node of this.collection) {
+      // TODO: Is there any way to calculate the aspect ratios without the user explictly passing in the width + height of the image?
+      // Check table overflowmode wrap and see how it calculates the item height
+      let ratio = node.props.width / node.props.height;
+      ratios.push(ratio);
+      totalWidth += ratio * this.idealRowHeight;
+    }
 
-      let numItems = this.collectionView.getSectionLength(section);
+    // Determine how many rows we'll need, and partition the items into rows
+    // using the aspect ratios as weights.
+    let rows = Math.max(1, Math.round(totalWidth / availableWidth));
+    let partition = linearPartition(ratios, rows);
 
-      // Compute aspect ratios for all of the items, and the total width if all items were on in a single row.
-      let ratios = [];
-      let totalWidth = 0;
-      for (let index = 0; index < numItems; index++) {
-        let size = this.collectionView.delegate.getItemSize(this.collectionView.getItem(section, index));
-        let ratio = size.width / size.height;
-        ratios.push(ratio);
-
-        totalWidth += ratio * this.idealRowHeight;
+    let index = 0;
+    for (let row of partition) {
+      // Compute the total weight for this row
+      let totalWeight = 0;
+      for (let j = index; j < index + row.length; j++) {
+        totalWeight += ratios[j];
       }
 
-      // Determine how many rows we'll need, and partition the items into rows
-      // using the aspect ratios as weights.
-      let rows = Math.max(1, Math.round(totalWidth / availableWidth));
-      let partition = linearPartition(ratios, rows);
-
-      let index = 0;
-      for (let row of partition) {
-        // Compute the total weight for this row
-        let totalWeight = 0;
-        for (let j = index; j < index + row.length; j++) {
-          totalWeight += ratios[j];
-        }
-
-        // Deternine the row height based on the total available width and weight of this row.
-        let ratio = (availableWidth - (row.length - 1) * this.itemSpacing.width) / totalWeight;
-        if (row === partition[partition.length - 1] && ratio > this.idealRowHeight * 2) {
-          ratio = this.idealRowHeight;
-        }
-
-        let height = Math.round(ratio) + this.itemPadding;
-        let x = this.itemSpacing.width;
-
-        // If the drop target is on this row, shift the whole row to the left to create space for the dropped item
-        if (dropTarget && y === this.dropTargetY) {
-          x -= this.dropSpacing / 2;
-        }
-
-        // Create items for this row.
-        for (let j = index; j < index + row.length; j++) {
-          let layoutInfo = new LayoutInfo('item', section, j);
-          let width = Math.round(ratio * ratios[j]);
-
-          // Shift items in this row after the drop target to the right
-          if (dropTarget && dropTarget.indexPath.index === j && y === this.dropTargetY) {
-            x += this.dropSpacing;
-          }
-
-          layoutInfo.rect = new Rect(x, y, width, height);
-          layoutInfo.isLastInRow = j === index + row.length - 1;
-          this.layoutInfos[section][j] = layoutInfo;
-
-          x += width + this.itemSpacing.width;
-        }
-
-        y += height + this.itemSpacing.height;
-        index += row.length;
+      // Determine the row height based on the total available width and weight of this row.
+      let rowHeight = (availableWidth - (row.length - 1) * this.itemSpacing.width) / totalWeight;
+      if (row === partition[partition.length - 1] && rowHeight > this.idealRowHeight * 2) {
+        rowHeight = this.idealRowHeight;
       }
+
+      let itemHeight = Math.round(rowHeight) + this.itemPadding;
+      let x = this.itemSpacing.width;
+
+      // TODO: readd when adding drag and drop
+      // // If the drop target is on this row, shift the whole row to the left to create space for the dropped item
+      // if (dropTarget && y === this.dropTargetY) {
+      //   x -= this.dropSpacing / 2;
+      // }
+
+      // Create items for this row.
+      for (let j = index; j < index + row.length; j++) {
+        let node = this.collection.at(j);
+        let itemWidth = Math.round(rowHeight * ratios[j]);
+
+        // TODO: readd when adding drag and drop
+        // // Shift items in this row after the drop target to the right
+        // if (dropTarget && dropTarget.indexPath.index === j && y === this.dropTargetY) {
+        //   x += this.dropSpacing;
+        // }
+
+        let rect = new Rect(x, y, itemWidth, itemHeight)
+        let layoutInfo = new LayoutInfo(node.type, node.key, rect);
+        this.layoutInfos.set(node.key, layoutInfo)
+        x += itemWidth + this.itemSpacing.width;
+        // TODO: readd this when adding drag and drop
+        // layoutInfo.isLastInRow = j === index + row.length - 1;
+      }
+
+      y += itemHeight + this.itemSpacing.height;
+      index += row.length;
     }
 
     if (this.isLoading) {
@@ -253,6 +238,28 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
     this.contentSize = new Size(this.virtualizer.visibleRect.width, y + this.itemSpacing.height);
   }
 
+  // TODO: add updateItemSize since Virtualizer statelly needs it?
+  // Do we really need this?
+  updateItemSize(key: Key, size: Size) {
+    let layoutInfo = this.layoutInfos.get(key);
+    // If no layoutInfo, item has been deleted/removed.
+    if (!layoutInfo) {
+      return false;
+    }
+
+    layoutInfo.estimatedSize = false;
+    // TODO: updated this to check width as well, double check if we need this
+    if (layoutInfo.rect.height !== size.height || layoutInfo.rect.width !== size.width) {
+      // Copy layout info rather than mutating so that later caches are invalidated.
+      let newLayoutInfo = layoutInfo.copy();
+      newLayoutInfo.rect.height = size.height;
+      newLayoutInfo.rect.width = size.width;
+      this.layoutInfos.set(key, newLayoutInfo);
+      return true;
+    }
+
+    return false;
+  }
 
 
   // TODO: readd when adding drag and drop back in. Double check if sections are a thing for GalleryLayout
