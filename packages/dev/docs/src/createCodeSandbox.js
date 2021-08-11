@@ -91,6 +91,8 @@ export function createCodeSandbox(e) {
 
   let importMap = {
     '@react-spectrum': new Set(),
+    '@react-stately': new Set(),
+    '@react-aria': new Set(),
     ...(isPreRelease && {[packageName]: new Set()})
   };
 
@@ -123,6 +125,8 @@ export function createCodeSandbox(e) {
 
   // Build imports section
   let imports = importMap['@react-spectrum'].size > 0 ? `import { ${[...importMap['@react-spectrum']].join(', ')} } from '@adobe/react-spectrum';` + '\n' : '';
+  imports += importMap['@react-stately'].size > 0 ? `import { ${[...importMap['@react-stately']].join(', ')} } from 'react-stately';` + '\n' : '';
+  imports += importMap['@react-aria'].size > 0 ? `import { ${[...importMap['@react-aria']].join(', ')} } from 'react-aria';` + '\n' : '';
   imports += isPreRelease && importMap[packageName].size > 0 ? `import { ${[...importMap[packageName]].join(', ')} } from '${packageName}';` + '\n' : '';
   [...Object.keys(importMap).filter(p => p.startsWith('@spectrum-icons'))].forEach(p => imports += `import ${[...importMap[p]][0]} from '${p}';` + '\n');
   
@@ -163,6 +167,8 @@ export default function Example() {
               'react-dom': 'latest',
               'react-scripts': 'latest',
               '@adobe/react-spectrum': 'latest',
+              ...(importMap['@react-stately'].size > 0 && {'react-stately': 'latest'}),
+              ...(importMap['@react-aria'].size > 0 && {'react-aria': 'latest'}),
               ...(Object.keys(importMap).some(p => p.startsWith('@spectrum-icons/illustrations')) && {'@spectrum-icons/illustrations': 'latest'}),
               ...(Object.keys(importMap).some(p => p.startsWith('@spectrum-icons/workflow')) && {'@spectrum-icons/workflow': 'latest'}),
               ...(Object.keys(importMap).some(p => p.startsWith('@spectrum-icons/ui')) && {'@spectrum-icons/ui': 'latest'}),
