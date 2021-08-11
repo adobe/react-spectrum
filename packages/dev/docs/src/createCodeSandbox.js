@@ -91,7 +91,6 @@ export function createCodeSandbox(e) {
 
   let importMap = {
     '@react-spectrum': new Set(),
-    '@spectrum-icons': new Set(),
     ...(isPreRelease && {[packageName]: new Set()})
   };
 
@@ -111,16 +110,21 @@ export function createCodeSandbox(e) {
           importMap[packageName]?.add(i);
         } else {
           let currentPackage = s.substring(1, s.indexOf('/'));
-          importMap[currentPackage]?.add(i);
+          if (currentPackage === '@spectrum-icons') {
+            // If icon, use indivdual package
+            importMap[s.slice(1, -1)] = new Set([i]);
+          } else {
+            importMap[currentPackage]?.add(i);
+          }
         }
       }
     });
   });
 
   // Build imports section
-  let imports = importMap['@react-spectrum'].size > 0 ? `import {${[...importMap['@react-spectrum']].join(', ')}} from '@adobe/react-spectrum';` + '\n' : '';
-  imports += isPreRelease && importMap[packageName].size > 0 ? `import {${[...importMap[packageName]].join(', ')}} from '${packageName}';` + '\n' : '';
-  [...importMap['@spectrum-icons']].forEach(icon => imports += `import ${icon} from '@spectrum-icons/workflow/${icon}';` + '\n');
+  let imports = importMap['@react-spectrum'].size > 0 ? `import { ${[...importMap['@react-spectrum']].join(', ')} } from '@adobe/react-spectrum';` + '\n' : '';
+  imports += isPreRelease && importMap[packageName].size > 0 ? `import { ${[...importMap[packageName]].join(', ')} } from '${packageName}';` + '\n' : '';
+  [...Object.keys(importMap).filter(p => p.startsWith('@spectrum-icons'))].forEach(p => imports += `import ${[...importMap[p]][0]} from '${p}';` + '\n');
   
   // Add render if needed, put imports at top, and export component.
   if (/^\s*function (.|\n)*}\s*$/.test(exampleCode)) {
@@ -159,7 +163,9 @@ export default function Example() {
               'react-dom': 'latest',
               'react-scripts': 'latest',
               '@adobe/react-spectrum': 'latest',
-              ...(importMap['@spectrum-icons'].size > 0 && {'@spectrum-icons/workflow': 'latest'}),
+              ...(Object.keys(importMap).some(p => p.startsWith('@spectrum-icons/illustrations')) && {'@spectrum-icons/illustrations': 'latest'}),
+              ...(Object.keys(importMap).some(p => p.startsWith('@spectrum-icons/workflow')) && {'@spectrum-icons/workflow': 'latest'}),
+              ...(Object.keys(importMap).some(p => p.startsWith('@spectrum-icons/ui')) && {'@spectrum-icons/ui': 'latest'}),
               ...(importMap[packageName]?.size > 0 && {[packageName]: packageVersion})
             },
             devDependencies: {
