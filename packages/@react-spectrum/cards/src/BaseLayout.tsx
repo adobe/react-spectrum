@@ -39,6 +39,10 @@ export class BaseLayout<T> extends Layout<Node<T>> {
     return res;
   }
 
+  isVisible(layoutInfo: LayoutInfo, rect: Rect) {
+    return layoutInfo.rect.intersects(rect);
+  }
+
   // TODO: ignore drag and drop for now
   // shouldShowDropSpacing() {
   //   let dropTarget = this.collectionView._dropTarget;
@@ -70,32 +74,28 @@ export class BaseLayout<T> extends Layout<Node<T>> {
     return layoutInfo;
   }
 
-  // TODO bring the below back when implementing Gallery and Waterfall layout. Used to determine the closest card above/below b/c non uniform
+  // TODO check if the below two funcs works.
+  _findClosestLayoutInfo(target: Rect, rect: Rect) {
+    // TODO double check what this.getVisibleLayoutInfos returns
+    let layoutInfos = this.getVisibleLayoutInfos(rect);
+    let best = null;
+    let bestDistance = Infinity;
 
-  // _findClosestLayoutInfo(target, rect) {
-  //   let layoutInfos = this.getVisibleLayoutInfos(rect);
-  //   let best = null;
-  //   let bestDistance = Infinity;
+    for (let cur of layoutInfos) {
+      if (cur.type === 'item') {
+        let dist = Math.pow(target.x - cur.rect.x, 2) + Math.pow(target.y - cur.rect.y, 2);
+        if (dist < bestDistance) {
+          best = cur;
+          bestDistance = dist;
+        }
+      }
+    }
 
-  //   for (let cur of layoutInfos) {
-  //     if (cur.type === 'item') {
-  //       let dist = Math.pow(target.x - cur.rect.x, 2) + Math.pow(target.y - cur.rect.y, 2);
-  //       if (dist < bestDistance) {
-  //         best = cur;
-  //         bestDistance = dist;
-  //       }
-  //     }
-  //   }
+    return best;
+  }
 
-  //   return best;
-  // }
-
-  // _findClosest(target, rect) {
-  //   let best = this._findClosestLayoutInfo(target, rect);
-  //   if (best) {
-  //     return new IndexPath(best.section, best.index);
-  //   }
-
-  //   return null;
-  // }
+  _findClosest(target: Rect, rect: Rect) {
+    let best = this._findClosestLayoutInfo(target, rect);
+    return best || null;
+  }
 }

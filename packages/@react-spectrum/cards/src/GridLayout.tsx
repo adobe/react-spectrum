@@ -143,7 +143,7 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   }
 
   getVisibleLayoutInfos(rect) {
-    let res = [];
+    let res: LayoutInfo[] = [];
     let numItems = this.collection.size;
     if (numItems <= 0 || !this.itemSize) {
       // If there aren't any items in the collection, we are in a loader/placeholder state. Return those layoutInfos as
@@ -177,10 +177,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     }
 
     return res;
-  }
-
-  isVisible(layoutInfo: LayoutInfo, rect: Rect) {
-    return layoutInfo.rect.intersects(rect);
   }
 
   validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
@@ -445,7 +441,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     let key = fromKey || this.getFirstKey();
     while (key != null) {
       let item = collection.getItem(key);
-      console.log('item.text', item);
       let substring = item.textValue.slice(0, search.length);
       if (item.textValue && this.collator.compare(substring, search) === 0) {
         return key;
@@ -456,5 +451,4 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
 
     return null;
   }
-
 }

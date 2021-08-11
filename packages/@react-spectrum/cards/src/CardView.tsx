@@ -82,6 +82,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     keyboardDelegate: cardViewLayout
   }, state, domRef);
 
+  // TODO: may need to add aria-rowcount to the virtualizer div? It exists in v2
   return (
     <CardViewContext.Provider value={{state, cardOrientation, cardSize, isQuiet, cardType: cardViewLayout.cardType}}>
       <Virtualizer
