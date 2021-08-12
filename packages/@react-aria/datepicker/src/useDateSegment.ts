@@ -13,12 +13,12 @@
 import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
 import {DatePickerProps} from '@react-types/datepicker';
 import {DOMProps} from '@react-types/shared';
-import {HTMLAttributes, RefObject, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {labelIds} from './useDateField';
 import {mergeProps, useEvent, useId} from '@react-aria/utils';
 import {NumberParser} from '@internationalized/number';
+import React, {HTMLAttributes, RefObject, useMemo, useRef} from 'react';
 import {useDateFormatter, useFilter, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useFocusManager} from '@react-aria/focus';
 import {useMediaQuery} from '@react-spectrum/utils';
@@ -297,7 +297,8 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
       spellCheck: 'false',
       autoCapitalize: 'off',
       autoCorrect: 'off',
-      enterkeyhint: 'next',
+      // Capitalization was changed in React 17...
+      [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: 'next',
       inputMode: props.isDisabled || segment.type === 'dayPeriod' ? undefined : 'numeric',
       tabIndex: props.isDisabled ? undefined : 0,
       onKeyDown,
