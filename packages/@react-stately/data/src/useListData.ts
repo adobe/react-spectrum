@@ -218,6 +218,9 @@ export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (
             selection.delete(key);
           }
         }
+        if (selection === 'all' && items.length === 0) {
+          selection = new Set();
+        }
 
         return {
           ...state,

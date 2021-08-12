@@ -229,12 +229,23 @@ describe('useListData', function () {
     let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: 'all'}));
 
     act(() => {
-      result.current.remove('Sam"');
+      result.current.remove('Sam');
     });
 
     expect(result.current.selectedKeys).toEqual('all');
   });
 
+  it('should change all selection to empty set if last item is removed', function () {
+    let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: 'all'}));
+
+    act(() => {
+      result.current.remove('Sam');
+      result.current.remove('David');
+      result.current.remove('Julia');
+    });
+
+    expect(result.current.selectedKeys).toEqual(new Set());
+  });
 
   it('should remove multiple items', function () {
     let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'David', 'Julia']}));
