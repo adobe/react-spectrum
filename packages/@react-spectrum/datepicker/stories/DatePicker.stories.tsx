@@ -53,6 +53,14 @@ storiesOf('Date and Time/DatePicker', module)
     () => render({granularity: 'second'})
   )
   .add(
+    'hourCycle: 12',
+    () => render({granularity: 'minute', hourCycle: 12})
+  )
+  .add(
+    'hourCycle: 24',
+    () => render({granularity: 'minute', hourCycle: 24})
+  )
+  .add(
     'granularity: minute, defaultValue',
     () => render({granularity: 'minute', defaultValue: parseDateTime('2021-03-14T08:45')})
   )
@@ -139,11 +147,11 @@ storiesOf('Date and Time/DatePicker/styling', module)
   )
   .add(
     'no visible label',
-    () => render({'aria-label': 'Time', label: null})
+    () => render({'aria-label': 'Date', label: null})
   )
   .add(
     'quiet no visible label',
-    () => render({isQuiet: true, 'aria-label': 'Time', label: null})
+    () => render({isQuiet: true, 'aria-label': 'Date', label: null})
   )
   .add(
     'custom width',
@@ -155,7 +163,7 @@ storiesOf('Date and Time/DatePicker/styling', module)
   )
   .add(
     'custom width no visible label',
-    () => render({width: 'size-3000', label: null, 'aria-label': 'Width'})
+    () => render({width: 'size-3000', label: null, 'aria-label': 'Date'})
   )
   .add(
     'custom width, labelPosition=side',

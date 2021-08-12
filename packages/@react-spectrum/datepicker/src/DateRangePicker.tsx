@@ -103,6 +103,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
             defaultValue={null}
             onChange={start => setDate('start', start)}
             granularity={props.granularity}
+            hourCycle={props.hourCycle}
             UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')}
             inputClassName={fieldClassName} />
           <DateRangeDash />
@@ -118,6 +119,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
             defaultValue={null}
             onChange={end => setDate('end', end)}
             granularity={props.granularity}
+            hourCycle={props.hourCycle}
             UNSAFE_className={classNames(
               styles,
               'spectrum-Datepicker-endField',

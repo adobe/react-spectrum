@@ -107,6 +107,7 @@ export function DatePicker(props: SpectrumDatePickerProps) {
             isReadOnly={isReadOnly}
             isRequired={isRequired}
             granularity={props.granularity}
+            hourCycle={props.hourCycle}
             inputClassName={fieldClassName}
             UNSAFE_className={classNames(styles, 'spectrum-InputGroup-field')}
             hideTimeZone={props.hideTimeZone} />

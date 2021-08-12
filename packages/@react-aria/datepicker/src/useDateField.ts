@@ -37,7 +37,7 @@ export function useDateField(props: AriaDatePickerProps, state: DatePickerFieldS
   let onMouseDown = (e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    focusManager.focusPrevious({from: e.target as HTMLElement, wrap: true});
+    focusManager.focusLast();
   };
 
   let formatter = useDateFormatter(state.getFormatOptions({month: 'long'}));

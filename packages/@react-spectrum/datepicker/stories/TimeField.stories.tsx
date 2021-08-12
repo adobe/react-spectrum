@@ -141,7 +141,7 @@ storiesOf('Date and Time/TimeField/styling', module)
   )
   .add(
     'custom width no visible label',
-    () => render({width: 'size-3000', label: null, 'aria-label': 'Width'})
+    () => render({width: 'size-3000', label: null, 'aria-label': 'Time'})
   )
   .add(
     'custom width, labelPosition=side',

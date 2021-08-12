@@ -151,6 +151,10 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
   }, [amPmFormatter]);
 
   let onInput = (key: string) => {
+    if (props.isDisabled || props.isReadOnly) {
+      return;
+    }
+
     let newValue = enteredKeys.current + key;
 
     switch (segment.type) {
@@ -207,7 +211,9 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
 
   let onFocus = () => {
     enteredKeys.current = '';
-    ref.current.scrollIntoView();
+    if (ref.current?.scrollIntoView) {
+      ref.current.scrollIntoView();
+    }
   };
 
   let compositionRef = useRef('');

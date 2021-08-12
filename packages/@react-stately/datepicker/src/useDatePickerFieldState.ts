@@ -153,6 +153,10 @@ export function useDatePickerFieldState(props: DatePickerFieldProps): DatePicker
   // If all segments are valid, use the date from state, otherwise use the placeholder date.
   let value = date && Object.keys(validSegments).length >= numSegments ? date : placeholderDate;
   let setValue = (value: CalendarDateTime) => {
+    if (props.isDisabled || props.isReadOnly) {
+      return;
+    }
+
     if (Object.keys(validSegments).length >= numSegments) {
       setDate(value);
     } else {

@@ -41,6 +41,14 @@ storiesOf('Date and Time/DateRangePicker', module)
     () => render({granularity: 'minute'})
   )
   .add(
+    'hourCycle: 12',
+    () => render({granularity: 'minute', hourCycle: 12})
+  )
+  .add(
+    'hourCycle: 24',
+    () => render({granularity: 'minute', hourCycle: 24})
+  )
+  .add(
     'isDisabled',
     () => render({isDisabled: true, value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}})
   )
@@ -101,11 +109,11 @@ storiesOf('Date and Time/DateRangePicker/styling', module)
   )
   .add(
     'no visible label',
-    () => render({'aria-label': 'Time', label: null})
+    () => render({'aria-label': 'Date range', label: null})
   )
   .add(
     'quiet no visible label',
-    () => render({isQuiet: true, 'aria-label': 'Time', label: null})
+    () => render({isQuiet: true, 'aria-label': 'Date range', label: null})
   )
   .add(
     'custom width',
@@ -117,7 +125,7 @@ storiesOf('Date and Time/DateRangePicker/styling', module)
   )
   .add(
     'custom width no visible label',
-    () => render({width: 'size-3600', label: null, 'aria-label': 'Width'})
+    () => render({width: 'size-3600', label: null, 'aria-label': 'Date range'})
   )
   .add(
     'custom width, labelPosition=side',

@@ -47,12 +47,12 @@ export function useDateRangePicker(props: AriaDateRangePickerProps, state: DateR
 
   let startFieldProps = useLabels({
     'aria-label': formatMessage('startDate'),
-    'aria-labelledby': fieldProps['aria-labelledby']
+    'aria-labelledby': labelledBy
   });
 
   let endFieldProps = useLabels({
     'aria-label': formatMessage('endDate'),
-    'aria-labelledby': fieldProps['aria-labelledby']
+    'aria-labelledby': labelledBy
   });
 
   let buttonId = useId();
