@@ -141,12 +141,19 @@ describe('ZonedDateTime', function () {
         let zoned = toZoned(new CalendarDateTime(2021, 3, 14, 1), 'America/Los_Angeles');
         let expected = toZoned(new CalendarDateTime(2021, 3, 14, 3), 'America/Los_Angeles');
         expect(zoned.cycle('hour', 1)).toEqual(expected);
+
+        zoned = toZoned(new CalendarDateTime(2021, 3, 13, 2), 'America/Los_Angeles');
+        expect(zoned.cycle('day', 1)).toEqual(expected);
       });
 
       it('reverse', function () {
         let zoned = toZoned(new CalendarDateTime(2021, 3, 14, 3), 'America/Los_Angeles');
         let expected = toZoned(new CalendarDateTime(2021, 3, 14, 1), 'America/Los_Angeles');
         expect(zoned.cycle('hour', -1)).toEqual(expected);
+
+        zoned = toZoned(new CalendarDateTime(2021, 3, 15, 2), 'America/Los_Angeles');
+        expected = toZoned(new CalendarDateTime(2021, 3, 14, 3), 'America/Los_Angeles');
+        expect(zoned.cycle('day', -1)).toEqual(expected);
       });
     });
 
@@ -155,12 +162,20 @@ describe('ZonedDateTime', function () {
         let zoned = toZoned(new CalendarDateTime(2021, 11, 7, 1), 'America/Los_Angeles', 'earlier');
         let expected = toZoned(new CalendarDateTime(2021, 11, 7, 1), 'America/Los_Angeles', 'later');
         expect(zoned.cycle('hour', 1)).toEqual(expected);
+
+        zoned = toZoned(new CalendarDateTime(2021, 11, 6, 1), 'America/Los_Angeles');
+        expected = toZoned(new CalendarDateTime(2021, 11, 7, 1), 'America/Los_Angeles', 'earlier');
+        expect(zoned.cycle('day', 1)).toEqual(expected);
       });
 
       it('reverse', function () {
         let zoned = toZoned(new CalendarDateTime(2021, 11, 7, 1), 'America/Los_Angeles', 'later');
         let expected = toZoned(new CalendarDateTime(2021, 11, 7, 1), 'America/Los_Angeles', 'earlier');
         expect(zoned.cycle('hour', -1)).toEqual(expected);
+
+        zoned = toZoned(new CalendarDateTime(2021, 11, 8, 1), 'America/Los_Angeles');
+        expected = toZoned(new CalendarDateTime(2021, 11, 7, 1), 'America/Los_Angeles', 'earlier');
+        expect(zoned.cycle('day', -1)).toEqual(expected);
       });
     });
 

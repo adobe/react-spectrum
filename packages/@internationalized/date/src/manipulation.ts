@@ -12,7 +12,7 @@
 
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 import {CycleOptions, CycleTimeOptions, DateField, DateFields, Disambiguation, Duration, OverflowBehavior, TimeField, TimeFields} from './types';
-import {epochFromDate, fromAbsolute, getTimeZoneOffset, toAbsolute, toCalendar, toCalendarDateTime} from './conversion';
+import {epochFromDate, fromAbsolute, toAbsolute, toCalendar, toCalendarDateTime} from './conversion';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
 import {Mutable} from './utils';
 
@@ -448,8 +448,7 @@ export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField
     case 'day': {
       let res = cycleDate(dateTime, field, amount, options);
       let ms = toAbsolute(res, dateTime.timeZone);
-      let offset = getTimeZoneOffset(ms, dateTime.timeZone);
-      return new ZonedDateTime(res.calendar, res.era, res.year, res.month, res.day, dateTime.timeZone, offset, res.hour, res.minute, res.second, res.millisecond);
+      return toCalendar(fromAbsolute(ms, dateTime.timeZone), dateTime.calendar);
     }
   }
 }
