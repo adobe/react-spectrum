@@ -11,26 +11,28 @@
  */
 
 import { {{~componentName~}} } from '../';
+import {Meta, Story} from '@storybook/react';
 import React from 'react';
 {{#if (includes scopes "@react-types")}}
 import {Spectrum{{componentName}}Props} from '@react-types/{{packageName}}';
 {{/if}}
-import {storiesOf} from '@storybook/react';
-
 {{#unless (includes scopes "@react-types")}}
+
 interface Spectrum{{componentName}}Props {
 
 }
 {{/unless}}
 
-storiesOf('{{componentName}}', module)
-  .add(
-    'name me',
-    () => render({})
-  );
+const meta: Meta<Spectrum{{componentName}}Props> = {
+  title: '{{componentName}}',
+  component: {{componentName}}
+};
 
-function render(props: Spectrum{{componentName}}Props = {}) {
-  return (
-    <{{componentName}} {...props} />
-  );
-}
+export default meta;
+
+const Template = (): Story<Spectrum{{componentName}}Props> => (args) => (
+  <{{componentName}} {...args}>This is a React Spectrum {{componentName}}</{{componentName}}>
+);
+
+export const Default = Template().bind({});
+Default.args = {};
