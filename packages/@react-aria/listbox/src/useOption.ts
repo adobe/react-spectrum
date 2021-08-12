@@ -109,7 +109,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
   let optionProps = {
     role: 'option',
     'aria-disabled': isDisabled,
-    'aria-selected': isSelected
+    'aria-selected': state.selectionManager.selectionMode !== 'none' ? isSelected : undefined
   };
 
   // Safari with VoiceOver on macOS misreads options with aria-labelledby or aria-label as simply "text".
