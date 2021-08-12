@@ -15,13 +15,12 @@ import {DatePickerProps} from '@react-types/datepicker';
 import {DOMProps} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {isIOS, mergeProps, useEvent, useId} from '@react-aria/utils';
 import {labelIds} from './useDateField';
-import {mergeProps, useEvent, useId} from '@react-aria/utils';
 import {NumberParser} from '@internationalized/number';
 import React, {HTMLAttributes, RefObject, useMemo, useRef} from 'react';
 import {useDateFormatter, useFilter, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useFocusManager} from '@react-aria/focus';
-import {useMediaQuery} from '@react-spectrum/utils';
 import {usePress} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
 
@@ -214,6 +213,13 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
     if (ref.current?.scrollIntoView) {
       ref.current.scrollIntoView();
     }
+
+    // Safari requires that a selection is set or it won't fire input events.
+    // Since usePress disables text selection, this won't happen by default.
+    ref.current.style.webkitUserSelect = 'text';
+    let selection = window.getSelection();
+    selection.collapse(ref.current);
+    ref.current.style.webkitUserSelect = '';
   };
 
   let compositionRef = useRef('');
@@ -263,15 +269,29 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
     }
   });
 
+  // Focus on mouse down/touch up to match native textfield behavior.
+  // usePress handles canceling text selection.
   let {pressProps} = usePress({
+    preventFocusOnPress: true,
     onPressStart: (e) => {
       if (e.pointerType === 'mouse') {
+        e.target.focus();
+      }
+    },
+    onPress(e) {
+      if (e.pointerType !== 'mouse') {
         e.target.focus();
       }
     }
   });
 
-  let touchPropOverrides = useMediaQuery('(hover: none) and (pointer: coarse)') ? {
+  // For Android: prevent selection on long press.
+  useEvent(ref, 'selectstart', e => {
+    e.preventDefault();
+  });
+
+  // spinbuttons cannot be focused with VoiceOver on iOS.
+  let touchPropOverrides = isIOS() ? {
     role: 'textbox',
     'aria-valuemax': null,
     'aria-valuemin': null,
@@ -283,10 +303,9 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
 
   let id = useId(props.id);
   return {
-    segmentProps: mergeProps(spinButtonProps, {
+    segmentProps: mergeProps(spinButtonProps, pressProps, {
       id,
       ...touchPropOverrides,
-      ...pressProps,
       'aria-controls': props['aria-controls'],
       // 'aria-haspopup': props['aria-haspopup'], // deprecated in ARIA 1.2
       'aria-invalid': state.validationState === 'invalid' ? 'true' : undefined,

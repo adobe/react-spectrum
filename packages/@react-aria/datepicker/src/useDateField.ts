@@ -11,12 +11,13 @@
  */
 
 import {AriaDatePickerProps} from '@react-types/datepicker';
+import {createFocusManager} from '@react-aria/focus';
 import {DatePickerFieldState} from '@react-stately/datepicker';
-import {HTMLAttributes, LabelHTMLAttributes, MouseEvent, RefObject} from 'react';
+import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 import {mergeProps, useDescription} from '@react-aria/utils';
 import {useDateFormatter} from '@react-aria/i18n';
-import {useFocusManager} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
+import {usePress} from '@react-aria/interactions';
 
 interface DateFieldAria {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
@@ -30,15 +31,22 @@ export function useDateField(props: AriaDatePickerProps, state: DatePickerFieldS
     ...props,
     labelElementType: 'span'
   });
-  let focusManager = useFocusManager();
 
-  // This is specifically for mouse events, not touch or keyboard.
-  // Focus the last segment on mouse down in the field.
-  let onMouseDown = (e: MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    focusManager.focusLast();
-  };
+  // Focus the last segment on mouse down/touch up in the field.
+  let {pressProps} = usePress({
+    onPressStart(e) {
+      if (e.pointerType === 'mouse') {
+        let focusManager = createFocusManager(ref);
+        focusManager.focusLast();
+      }
+    },
+    onPress(e) {
+      if (e.pointerType !== 'mouse') {
+        let focusManager = createFocusManager(ref);
+        focusManager.focusLast();
+      }
+    }
+  });
 
   let formatter = useDateFormatter(state.getFormatOptions({month: 'long'}));
   let descriptionProps = useDescription(state.value ? formatter.format(state.dateValue) : null);
@@ -49,13 +57,13 @@ export function useDateField(props: AriaDatePickerProps, state: DatePickerFieldS
     labelProps: {
       ...labelProps,
       onClick: () => {
-        focusManager.focusNext({from: ref.current as HTMLElement});
+        let focusManager = createFocusManager(ref);
+        focusManager.focusFirst();
       }
     },
-    fieldProps: mergeProps(fieldProps, descriptionProps, {
+    fieldProps: mergeProps(fieldProps, descriptionProps, pressProps, {
       role: 'group',
-      'aria-disabled': props.isDisabled || undefined,
-      onMouseDown
+      'aria-disabled': props.isDisabled || undefined
     })
   };
 }

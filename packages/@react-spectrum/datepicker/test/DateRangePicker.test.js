@@ -340,14 +340,15 @@ describe('DateRangePicker', function () {
       let {getByLabelText} = render(<DateRangePicker label="Date range" />);
       let startDate = getByLabelText('Start Date');
       let endDate = getByLabelText('End Date');
+      let startSegments = getAllByRoleInContainer(startDate, 'spinbutton');
       let endSegments = getAllByRoleInContainer(endDate, 'spinbutton');
 
-      fireEvent.mouseDown(startDate);
-      expect(endSegments[endSegments.length - 1]).toHaveFocus();
+      triggerPress(startDate);
+      expect(startSegments[startSegments.length - 1]).toHaveFocus();
 
       act(() => document.activeElement.blur());
 
-      fireEvent.mouseDown(endDate);
+      triggerPress(endDate);
       expect(endSegments[endSegments.length - 1]).toHaveFocus();
     });
 

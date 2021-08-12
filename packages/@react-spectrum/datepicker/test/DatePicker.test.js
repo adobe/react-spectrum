@@ -266,7 +266,7 @@ describe('DatePicker', function () {
       let field = getAllByRole('group')[1];
       let segments = getAllByRole('spinbutton');
 
-      fireEvent.mouseDown(field);
+      triggerPress(field);
       expect(segments[segments.length - 1]).toHaveFocus();
     });
   });
