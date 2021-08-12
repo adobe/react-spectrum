@@ -10,18 +10,31 @@
  * governing permissions and limitations under the License.
  */
 
-import {Node} from '@react-types/shared';
+import {Collection, Direction, KeyboardDelegate, Node} from '@react-types/shared';
 import {Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
 
+export interface BaseLayoutOptions<T> {
+  collator?: Intl.Collator
+}
+
 // TODO: Perhaps this doesn't extend Layout? Perhaps all the other layouts (Waterfall, Grid, Gallery) should extend Layout instead? Maybe we don't need this
-export class BaseLayout<T> extends Layout<Node<T>> {
+export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected contentSize: Size;
   protected layoutInfos: Map<Key, LayoutInfo>;
+  protected collator: Intl.Collator;
+  protected lastCollection: Collection<Node<T>>;
+  collection: Collection<Node<T>>;
+  isLoading: boolean;
+  // TODO: is this a thing? I know its available in CardView's props due to multipleSelection type
+  disabledKeys: Set<Key> = new Set();
+  direction: Direction;
 
-  constructor() {
+  constructor(options: BaseLayoutOptions<T> = {}) {
     super();
     this.layoutInfos = new Map();
+    this.collator = options.collator;
+    this.lastCollection = null;
   }
 
   // Content size is determined in buildCollection (differs between layouts so buildCollection is not defined here)
@@ -33,9 +46,15 @@ export class BaseLayout<T> extends Layout<Node<T>> {
     return this.layoutInfos.get(key);
   }
 
-  // Filler getVisibleLayoutInfos, should be separately defined in Waterfall, Grid, Gallery. Update accordingly if it becomes similar between the layouts
-  getVisibleLayoutInfos(rect: Rect) {
+  getVisibleLayoutInfos(rect) {
     let res: LayoutInfo[] = [];
+
+    for (let layoutInfo of this.layoutInfos.values()) {
+      if (this.isVisible(layoutInfo, rect)) {
+        res.push(layoutInfo);
+      }
+    }
+
     return res;
   }
 
@@ -95,5 +114,85 @@ export class BaseLayout<T> extends Layout<Node<T>> {
   _findClosest(target: Rect, rect: Rect) {
     let best = this._findClosestLayoutInfo(target, rect);
     return best || null;
+  }
+
+  getKeyBelow(key: Key) {
+    let layoutInfo = this.getLayoutInfo(key);
+    let rect = new Rect(layoutInfo.rect.x, layoutInfo.rect.maxY + 1, layoutInfo.rect.width, this.virtualizer.visibleRect.height);
+
+    return this._findClosest(layoutInfo.rect, rect)?.key;
+  }
+
+  getKeyAbove(key: Key) {
+    let layoutInfo = this.getLayoutInfo(key);
+    let rect = new Rect(layoutInfo.rect.x, 0, layoutInfo.rect.width, layoutInfo.rect.y - 1);
+
+    return this._findClosest(layoutInfo.rect, rect)?.key;
+  }
+
+  // TODO: move getKeyRightOf/leftOf into here as well?
+
+  getFirstKey() {
+    return this.collection.getFirstKey();
+  }
+
+  getLastKey() {
+    return this.collection.getLastKey();
+  }
+
+  getKeyPageAbove(key: Key) {
+    let layoutInfo = this.getLayoutInfo(key);
+
+    if (layoutInfo) {
+      let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
+      while (layoutInfo && layoutInfo.rect.y > pageY) {
+        let keyAbove = this.getKeyAbove(layoutInfo.key);
+        layoutInfo = this.getLayoutInfo(keyAbove);
+      }
+
+      if (layoutInfo) {
+        return layoutInfo.key;
+      }
+    }
+
+    return this.getFirstKey();
+  }
+
+  getKeyPageBelow(key: Key) {
+    let layoutInfo = this.getLayoutInfo(key != null ? key : this.getFirstKey());
+
+    if (layoutInfo) {
+      let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
+      while (layoutInfo && layoutInfo.rect.y < pageY) {
+        let keyBelow = this.getKeyBelow(layoutInfo.key);
+        layoutInfo = this.getLayoutInfo(keyBelow);
+      }
+
+      if (layoutInfo) {
+        return layoutInfo.key;
+      }
+    }
+
+    return this.getLastKey();
+  }
+
+  getKeyForSearch(search: string, fromKey?: Key) {
+    if (!this.collator) {
+      return null;
+    }
+
+    let collection = this.collection;
+    let key = fromKey || this.getFirstKey();
+    while (key != null) {
+      let item = collection.getItem(key);
+      let substring = item.textValue.slice(0, search.length);
+      if (item.textValue && this.collator.compare(substring, search) === 0) {
+        return key;
+      }
+
+      key = this.collection.getKeyAfter(key);
+    }
+
+    return null;
   }
 }

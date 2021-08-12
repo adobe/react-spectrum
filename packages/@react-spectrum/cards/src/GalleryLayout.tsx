@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {BaseLayout} from './';
+import {BaseLayout, BaseLayoutOptions} from './';
 import {Collection, Direction, KeyboardDelegate, Node} from '@react-types/shared';
 import {InvalidationContext, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
 
-export type GalleryLayoutOptions<T> = {
+export interface GalleryLayoutOptions<T> extends BaseLayoutOptions<T> {
   /**
    * The card size in the grid.
    */
@@ -35,8 +35,6 @@ export type GalleryLayoutOptions<T> = {
    * @default 32
    */
   itemPadding?: Size,
-
-  collator?: Intl.Collator
 };
 
 // TODO: copied from V2, update this with the proper spectrum values
@@ -63,18 +61,9 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
   // TODO: should this have had a margin option? v2 seems to use itemSpacing
   protected itemSpacing: Size;
   protected itemPadding: number;
-  protected collator: Intl.Collator;
-  protected lastCollection: Collection<Node<T>>;
-  protected invalidateEverything: boolean;
-  // The following are set in CardView, not through options
-  collection: Collection<Node<T>>;
-  isLoading: boolean;
-  // TODO: is this a thing? I know its available in CardView's props due to multipleSelection type
-  disabledKeys: Set<Key> = new Set();
-  direction: Direction;
 
   constructor(options: GalleryLayoutOptions<T> = {}) {
-    super();
+    super(options);
     let cardSize = options.cardSize || 'L';
     this.idealRowHeight = options.idealRowHeight || DEFAULT_OPTIONS[cardSize].idealRowHeight;
     this.itemSpacing = options.itemSpacing || DEFAULT_OPTIONS[cardSize].itemSpacing;
@@ -87,34 +76,12 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
     //  * @default 100
     //  */
     // this.dropSpacing = options.dropSpacing != null ? options.dropSpacing : DEFAULT_OPTIONS[cardSize].dropSpacing;
-
-
-
-    // this.layoutInfos = [];
-    // this.itemSize = null;
-    // this.numColumns = 0;
-    // this.numRows = 0;
-    // this.horizontalSpacing = 0;
-    this.lastCollection = null;
-    this.collator = options.collator;
   }
 
   get layoutType() {
     // GalleryLayout only supports quiet vertical cards
     // return 'quiet';
     return 'gallery';
-  }
-
-  getVisibleLayoutInfos(rect) {
-    let res: LayoutInfo[] = [];
-
-    for (let layoutInfo of this.layoutInfos.values()) {
-      if (this.isVisible(layoutInfo, rect)) {
-        res.push(layoutInfo);
-      }
-    }
-
-    return res;
   }
 
   // TODO: For now assume that we won't support sections here (double check with team)
@@ -139,8 +106,10 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
 
   buildCollection() {
     // TODO: split up the below further.
+    let visibleWidth = this.virtualizer.visibleRect.width;
+    let visibleHeight = this.virtualizer.visibleRect.height;
     let y = this.itemSpacing.height;
-    let availableWidth = this.virtualizer.visibleRect.width - this.itemSpacing.width * 2;
+    let availableWidth = visibleWidth - this.itemSpacing.width * 2;
 
     // TODO: readd when bringing back drag and drop
     // let dropTarget = this.collectionView._dropTarget;
@@ -213,34 +182,33 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
     if (this.isLoading) {
       let loaderY = y;
       let loaderHeight = 60;
-      let marginOffset = this.itemSpacing.height;
       // If there aren't any items, make loader take all avaliable room and remove margin from y calculation
       // so it doesn't scroll
       if (this.collection.size === 0) {
         loaderY = 0;
-        loaderHeight = this.virtualizer.visibleRect.height || 60;
+        loaderHeight = visibleHeight || 60;
       }
 
-      let rect = new Rect(0, loaderY, this.virtualizer.visibleRect.width, loaderHeight);
+      let rect = new Rect(0, loaderY, visibleWidth, loaderHeight);
       let loader = new LayoutInfo('loader', 'loader', rect);
       this.layoutInfos.set('loader', loader);
-      y = loader.rect.maxY - marginOffset;
+      y = loader.rect.maxY;
     }
 
     if (this.collection.size === 0 && !this.isLoading) {
-      let rect = new Rect(0, 0, this.virtualizer.visibleRect.width, this.virtualizer.visibleRect.height);
+      let rect = new Rect(0, 0, visibleWidth, visibleHeight);
       let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
       this.layoutInfos.set('placeholder', placeholder);
-      y = placeholder.rect.maxY - this.itemSpacing.height;
+      y = placeholder.rect.maxY;
     }
 
-    // TODO: check if this is correct
-    this.contentSize = new Size(this.virtualizer.visibleRect.width, y + this.itemSpacing.height);
+    this.contentSize = new Size(visibleWidth, y);
   }
 
   // TODO: add updateItemSize since Virtualizer statelly needs it?
-  // Do we really need this?
+  // Do we really need this? Only triggers if do any size estimates
   updateItemSize(key: Key, size: Size) {
+    console.log('update')
     let layoutInfo = this.layoutInfos.get(key);
     // If no layoutInfo, item has been deleted/removed.
     if (!layoutInfo) {
@@ -297,23 +265,6 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
   //   this.layoutInfos[section] = [];
   // }
 
-
-
-  getKeyBelow(key: Key) {
-    let layoutInfo = this.getLayoutInfo(key);
-    let rect = new Rect(layoutInfo.rect.x, layoutInfo.rect.maxY + 1, layoutInfo.rect.width, this.virtualizer.visibleRect.height);
-
-    return this._findClosest(layoutInfo.rect, rect)?.key;
-  }
-
-  getKeyAbove(key: Key) {
-    let layoutInfo = this.getLayoutInfo(key);
-    let rect = new Rect(layoutInfo.rect.x, 0, layoutInfo.rect.width, layoutInfo.rect.y - 1);
-
-    return this._findClosest(layoutInfo.rect, rect)?.key;
-  }
-
-
   // TODO: perhaps have baseLayout implement KeyboardDelegate so we can have these common funcs stored there (right,left, first, getKeyForSearch are all the same)?
   getKeyRightOf(key: Key) {
     key = this.direction === 'rtl' ?  this.collection.getKeyBefore(key) : this.collection.getKeyAfter(key);
@@ -340,73 +291,6 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
       key = this.direction === 'rtl' ?  this.collection.getKeyAfter(key) : this.collection.getKeyBefore(key);
     }
   }
-
-  getFirstKey() {
-    return this.collection.getFirstKey();
-  }
-
-  getLastKey() {
-    return this.collection.getLastKey();
-  }
-
-  getKeyPageAbove(key: Key) {
-    let layoutInfo = this.getLayoutInfo(key);
-
-    if (layoutInfo) {
-      let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
-      while (layoutInfo && layoutInfo.rect.y > pageY) {
-        let keyAbove = this.getKeyAbove(layoutInfo.key);
-        layoutInfo = this.getLayoutInfo(keyAbove);
-      }
-
-      if (layoutInfo) {
-        return layoutInfo.key;
-      }
-    }
-
-    return this.getFirstKey();
-  }
-
-  getKeyPageBelow(key: Key) {
-    let layoutInfo = this.getLayoutInfo(key != null ? key : this.getFirstKey());
-
-    if (layoutInfo) {
-      let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
-      while (layoutInfo && layoutInfo.rect.y < pageY) {
-        let keyBelow = this.getKeyBelow(layoutInfo.key);
-        layoutInfo = this.getLayoutInfo(keyBelow);
-      }
-
-      if (layoutInfo) {
-        return layoutInfo.key;
-      }
-    }
-
-    return this.getLastKey();
-  }
-
-  getKeyForSearch(search: string, fromKey?: Key) {
-    if (!this.collator) {
-      return null;
-    }
-
-    let collection = this.collection;
-    let key = fromKey || this.getFirstKey();
-    while (key != null) {
-      let item = collection.getItem(key);
-      let substring = item.textValue.slice(0, search.length);
-      if (item.textValue && this.collator.compare(substring, search) === 0) {
-        return key;
-      }
-
-      key = this.collection.getKeyAfter(key);
-    }
-
-    return null;
-  }
-
-
-
 
   // TODO: add when re-enabling drag and drop
   // getDropTarget(point) {

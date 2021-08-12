@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionMenu, Item} from '@react-spectrum/menu';
 import {Button} from '@react-spectrum/button';
-import {Card, CardView, GalleryLayout, GridLayout} from '../';
+import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
 import {Content, Footer} from '@react-spectrum/view';
 import {getImage} from './utils';
 import {Heading, Text} from '@react-spectrum/text';
@@ -69,34 +69,75 @@ let actions = {
 };
 
 export const DefaultGrid = () => render({items});
-DefaultGrid.storyName = 'default grid layout with initialized layout';
+DefaultGrid.storyName = 'default Grid layout with initialized layout';
 
 export const DefaultGridStatic = () => renderStatic({items});
-DefaultGridStatic.storyName = 'default grid layout, static card';
+DefaultGridStatic.storyName = 'default Grid layout, static card';
 
 export const DefaultGridConstructor = () => render({layout: GridLayout, items});
-DefaultGridConstructor.storyName = 'default grid layout w/ layout constructor';
+DefaultGridConstructor.storyName = 'default Grid layout w/ layout constructor';
 
 export const SmallGrid = () => render({layout: GridLayout, cardSize: 'S', items});
-SmallGrid.storyName = 'grid layout with small cards';
+SmallGrid.storyName = 'Grid layout with small cards';
+
+export const isLoadingNoHeightGrid = () => renderNoItems({width: '800px', loadingState: 'loading', items});
+isLoadingNoHeightGrid.storyName = 'Grid, loadingState = loading, no height';
+
+export const isLoadingHeightGrid = () => renderNoItems({width: '800px', height: '800px', loadingState: 'loading', items});
+isLoadingHeightGrid.storyName = 'Grid, loadingState = loading, set height';
+
+export const loadingMoreGrid = () => render({width: '800px', height: '800px', loadingState: 'loadingMore', items});
+loadingMoreGrid.storyName = 'Grid, loadingState = loadingMore';
+
+export const emptyNoHeightGrid = () => renderNoItems({width: '800px', renderEmptyState});
+emptyNoHeightGrid.storyName = 'Grid, empty state, no height';
+
+export const emptyWithHeightGrid = () => renderNoItems({width: '800px', height: '800px', renderEmptyState});
+emptyWithHeightGrid.storyName = 'Grid, empty, set height';
 
 export const DefaultGallery = () => render({layout: GalleryLayout, items: items});
 DefaultGallery.storyName = 'default gallery layout';
 
-export const isLoadingNoHeight = () => renderNoItems({width: '800px', loadingState: 'loading'});
-isLoadingNoHeight.storyName = 'loadingState = loading, no height';
+export const SmallGallery = () => render({layout: GalleryLayout, cardSize: 'S', items});
+SmallGallery.storyName = 'Gallery layout with small cards';
 
-export const isLoadingHeight = () => renderNoItems({width: '800px', height: '800px', loadingState: 'loading'});
-isLoadingHeight.storyName = 'loadingState = loading, set height';
+export const isLoadingNoHeightGallery = () => renderNoItems({layout: GalleryLayout, width: '800px', loadingState: 'loading'});
+isLoadingNoHeightGallery.storyName = 'Gallery, loadingState = loading, no height';
 
-export const loadingMore = () => render({width: '800px', height: '800px', loadingState: 'loadingMore'});
-loadingMore.storyName = 'loadingState = loadingMore';
+export const isLoadingHeightGallery = () => renderNoItems({layout: GalleryLayout, width: '800px', height: '800px', loadingState: 'loading'});
+isLoadingHeightGallery.storyName = 'Gallery, loadingState = loading, set height';
 
-export const emptyNoHeight = () => renderNoItems({width: '800px', renderEmptyState});
-emptyNoHeight.storyName = 'empty state, no height';
+export const loadingMoreGallery = () => render({layout: GalleryLayout, width: '800px', height: '800px', loadingState: 'loadingMore', items});
+loadingMoreGallery.storyName = 'Gallery, loadingState = loadingMore';
 
-export const emptyWithHeight = () => renderNoItems({width: '800px', height: '800px', renderEmptyState});
-emptyWithHeight.storyName = 'empty, set height';
+export const emptyNoHeightGallery = () => renderNoItems({layout: GalleryLayout, width: '800px', renderEmptyState});
+emptyNoHeightGallery.storyName = 'Gallery, empty state, no height';
+
+export const emptyWithHeightGallery = () => renderNoItems({layout: GalleryLayout, width: '800px', height: '800px', renderEmptyState});
+emptyWithHeightGallery.storyName = 'Gallery, empty, set height';
+
+export const DefaultWaterfall = () => render({layout: WaterfallLayout, items: items});
+DefaultWaterfall.storyName = 'default Waterfall layout';
+
+export const SmallWaterfall = () => render({layout: WaterfallLayout, cardSize: 'S', items});
+SmallWaterfall.storyName = 'Waterfall layout with small cards';
+
+export const isLoadingNoHeightWaterfall = () => renderNoItems({layout: WaterfallLayout, width: '800px', loadingState: 'loading'});
+isLoadingNoHeightWaterfall.storyName = 'Waterfall, loadingState = loading, no height';
+
+export const isLoadingHeightWaterfall = () => renderNoItems({layout: WaterfallLayout, width: '800px', height: '800px', loadingState: 'loading'});
+isLoadingHeightWaterfall.storyName = 'Waterfall, loadingState = loading, set height';
+
+export const loadingMoreWaterfall = () => render({layout: WaterfallLayout, width: '800px', height: '800px', loadingState: 'loadingMore', items});
+loadingMoreWaterfall.storyName = 'Waterfall, loadingState = loadingMore';
+
+export const emptyNoHeightWaterfall = () => renderNoItems({layout: WaterfallLayout, width: '800px', renderEmptyState});
+emptyNoHeightWaterfall.storyName = 'Waterfall, empty state, no height';
+
+export const emptyWithHeightWaterfall = () => renderNoItems({layout: WaterfallLayout, width: '800px', height: '800px', renderEmptyState});
+emptyWithHeightWaterfall.storyName = 'Waterfall, empty, set height';
+
+
 
 
 // TODO add static and dynamic, various layouts, card size, selected keys, disabled keys

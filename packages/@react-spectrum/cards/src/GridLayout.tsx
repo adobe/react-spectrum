@@ -11,11 +11,12 @@
  */
 
 import {BaseLayout} from './';
-import {Collection, Direction, KeyboardDelegate, Node} from '@react-types/shared';
-import {InvalidationContext, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
+import {KeyboardDelegate, Node} from '@react-types/shared';
+import {LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
+import { BaseLayoutOptions } from './BaseLayout';
 
-export type GridLayoutOptions<T> = {
+export interface GridLayoutOptions<T> extends BaseLayoutOptions<T> {
   /**
    * The card size in the grid.
    */
@@ -50,7 +51,6 @@ export type GridLayoutOptions<T> = {
    * @default 52
    */
   itemPadding?: number,
-  collator?: Intl.Collator
 };
 
 // TODO: copied from V2, update this with the proper spectrum values
@@ -89,18 +89,9 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   protected numColumns: number;
   protected numRows: number;
   protected horizontalSpacing: number;
-  protected collator: Intl.Collator;
-  protected lastCollection: Collection<Node<T>>;
-  protected invalidateEverything: boolean;
-  // The following are set in CardView, not through options
-  collection: Collection<Node<T>>;
-  isLoading: boolean;
-  // TODO: is this a thing? I know its available in CardView's props due to multipleSelection type
-  disabledKeys: Set<Key> = new Set();
-  direction: Direction;
 
   constructor(options: GridLayoutOptions<T> = {}) {
-    super();
+    super(options);
     let cardSize = options.cardSize || 'L';
     this.minItemSize = options.minItemSize || DEFAULT_OPTIONS[cardSize].minItemSize;
     this.maxItemSize = options.maxItemSize || DEFAULT_OPTIONS[cardSize].maxItemSize;
@@ -121,8 +112,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     this.numColumns = 0;
     this.numRows = 0;
     this.horizontalSpacing = 0;
-    this.lastCollection = null;
-    this.collator = options.collator;
   }
 
   get layoutType() {
@@ -182,9 +171,26 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   validate() {
     // TODO: Removed the invalidateEverything check since in ListLayout that was mainly for Sections it seems?
     this.collection = this.virtualizer.collection;
+    this.buildCollection();
+
+    // Remove layout info that doesn't exist in new collection
+    if (this.lastCollection) {
+      for (let key of this.lastCollection.getKeys()) {
+        if (!this.collection.getItem(key)) {
+          this.layoutInfos.delete(key);
+        }
+      }
+    }
+
+    this.lastCollection = this.collection;
+  }
+
+  buildCollection() {
+    let visibleWidth = this.virtualizer.visibleRect.width;
+    let visibleHeight = this.virtualizer.visibleRect.height;
 
     // Compute the number of rows and columns needed to display the content
-    let availableWidth = this.virtualizer.visibleRect.width - this.margin * 2;
+    let availableWidth = visibleWidth - this.margin * 2;
     let columns = Math.floor(availableWidth / (this.minItemSize.width + this.minSpace.width));
     this.numColumns = Math.max(1, Math.min(this.maxColumns, columns));
     this.numRows = Math.ceil(this.collection.size / this.numColumns);
@@ -207,23 +213,8 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     this.itemSize = new Size(itemWidth, itemHeight);
 
     // Compute the horizontal spacing and content height
-    this.horizontalSpacing = Math.floor((this.virtualizer.visibleRect.width - this.numColumns * this.itemSize.width) / (this.numColumns + 1));
+    this.horizontalSpacing = Math.floor((visibleWidth - this.numColumns * this.itemSize.width) / (this.numColumns + 1));
 
-    this.buildCollection();
-
-    // Remove layout info that doesn't exist in new collection
-    if (this.lastCollection) {
-      for (let key of this.lastCollection.getKeys()) {
-        if (!this.collection.getItem(key)) {
-          this.layoutInfos.delete(key);
-        }
-      }
-    }
-
-    this.lastCollection = this.collection;
-  }
-
-  buildCollection() {
     let y = this.margin;
     let index = 0;
     for (let node of this.collection) {
@@ -235,28 +226,27 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     if (this.isLoading) {
       let loaderY = y;
       let loaderHeight = 60;
-      let marginOffset = this.margin;
       // If there aren't any items, make loader take all avaliable room and remove margin from y calculation
       // so it doesn't scroll
       if (this.collection.size === 0) {
         loaderY = 0;
-        loaderHeight = this.virtualizer.visibleRect.height || 60;
+        loaderHeight = visibleHeight || 60;
       }
 
-      let rect = new Rect(0, loaderY, this.virtualizer.visibleRect.width, loaderHeight);
+      let rect = new Rect(0, loaderY, visibleWidth, loaderHeight);
       let loader = new LayoutInfo('loader', 'loader', rect);
       this.layoutInfos.set('loader', loader);
-      y = loader.rect.maxY - marginOffset;
+      y = loader.rect.maxY;
     }
 
     if (this.collection.size === 0 && !this.isLoading) {
-      let rect = new Rect(0, 0, this.virtualizer.visibleRect.width, this.virtualizer.visibleRect.height);
+      let rect = new Rect(0, 0, visibleWidth, visibleHeight);
       let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
       this.layoutInfos.set('placeholder', placeholder);
-      y = placeholder.rect.maxY - this.margin;
+      y = placeholder.rect.maxY;
     }
 
-    this.contentSize = new Size(this.virtualizer.visibleRect.width, y + this.margin);
+    this.contentSize = new Size(visibleWidth, y);
   }
 
   buildChild(node: Node<T>, y: number, index: number): LayoutInfo {
@@ -381,69 +371,5 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
       key = this.direction === 'rtl' ?  this.collection.getKeyAfter(key) : this.collection.getKeyBefore(key);
     }
   }
-
-  getFirstKey() {
-    return this.collection.getFirstKey();
-  }
-
-  getLastKey() {
-    return this.collection.getLastKey();
-  }
-
-  // TODO: Page up and down mimics that of listlayout, perhaps change to an index based search for performance?
-  getKeyPageAbove(key: Key) {
-    let layoutInfo = this.getLayoutInfo(key);
-
-    if (layoutInfo) {
-      let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
-      while (layoutInfo && layoutInfo.rect.y > pageY) {
-        let keyAbove = this.getKeyAbove(layoutInfo.key);
-        layoutInfo = this.getLayoutInfo(keyAbove);
-      }
-
-      if (layoutInfo) {
-        return layoutInfo.key;
-      }
-    }
-
-    return this.getFirstKey();
-  }
-
-  getKeyPageBelow(key: Key) {
-    let layoutInfo = this.getLayoutInfo(key != null ? key : this.getFirstKey());
-
-    if (layoutInfo) {
-      let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
-      while (layoutInfo && layoutInfo.rect.y < pageY) {
-        let keyBelow = this.getKeyBelow(layoutInfo.key);
-        layoutInfo = this.getLayoutInfo(keyBelow);
-      }
-
-      if (layoutInfo) {
-        return layoutInfo.key;
-      }
-    }
-
-    return this.getLastKey();
-  }
-
-  getKeyForSearch(search: string, fromKey?: Key) {
-    if (!this.collator) {
-      return null;
-    }
-
-    let collection = this.collection;
-    let key = fromKey || this.getFirstKey();
-    while (key != null) {
-      let item = collection.getItem(key);
-      let substring = item.textValue.slice(0, search.length);
-      if (item.textValue && this.collator.compare(substring, search) === 0) {
-        return key;
-      }
-
-      key = this.collection.getKeyAfter(key);
-    }
-
-    return null;
-  }
+  // TODO: Page up and down mimics that of listlayout (extended from baseLayout), perhaps change to an index based search for performance?
 }
