@@ -12,14 +12,16 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionMenu, Item} from '@react-spectrum/menu';
-import {Button} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
 import {Content, Footer} from '@react-spectrum/view';
+import {Flex} from '@react-spectrum/layout';
 import {getImage} from './utils';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
-import React, {useMemo} from 'react';
+import {TextField} from '@react-spectrum/textfield';
+import React, {useMemo, useState} from 'react';
 import {useCollator} from '@react-aria/i18n';
 
 let items = [
@@ -150,24 +152,38 @@ function render(props) {
     layout = gridLayout
   } = props;
 
+  let [value, setValue] = useState('');
+  let [items, setItems] = useState(props.items);
+  let removeItem = () => {
+    let val = parseInt(value);
+    let newItems = items.slice(0, val).concat(items.slice(val + 1, items.length))
+    setItems(newItems);
+  }
+
   return (
-    <CardView  {...actions} {...props} layout={layout} width="800px" height="800px" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
-      {item =>
-        <Card key={item.id} textValue={item.title} width={item.width} height={item.height}>
-          <Image src={getImage(item.id)} />
-          <Heading>{item.title}</Heading>
-          <Text slot="detail">PNG</Text>
-          <Content>Description</Content>
-          <ActionMenu>
-            <Item>Action 1</Item>
-            <Item>Action 2</Item>
-          </ActionMenu>
-          <Footer>
-            <Button variant="primary">Something</Button>
-          </Footer>
-        </Card>
-      }
-    </CardView>
+    <Flex direction="column">
+      <Flex direction="row" maxWidth="500px" alignItems="end">
+        <TextField value={value} onChange={setValue} label="Nth item to remove" />
+        <ActionButton onPress={removeItem}>Remove</ActionButton>
+      </Flex>
+      <CardView  {...actions} {...props} items={items} layout={layout} width="800px" height="800px" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
+        {item =>
+          <Card key={item.id} textValue={item.title} width={item.width} height={item.height}>
+            <Image src={getImage(item.id)} />
+            <Heading>{item.title}</Heading>
+            <Text slot="detail">PNG</Text>
+            <Content>Description</Content>
+            <ActionMenu>
+              <Item>Action 1</Item>
+              <Item>Action 2</Item>
+            </ActionMenu>
+            <Footer>
+              <Button variant="primary">Something</Button>
+            </Footer>
+          </Card>
+        }
+      </CardView>
+    </Flex>
   );
 }
 
