@@ -27,9 +27,6 @@ const meta: Meta = {
 
 export default meta;
 
-export const ArabicComplex = TemplateArabicWithIcons().bind({});
-ArabicComplex.storyName = 'Arabic complex items';
-
 export {
   Default,
   WithSections,
@@ -43,5 +40,6 @@ export {
   DirectionLeft,
   DirectionLeftEnd,
   DirectionRight,
-  DirectionRightEnd
+  DirectionRightEnd,
+  ArabicComplex
 } from './MenuTrigger.chromatic';

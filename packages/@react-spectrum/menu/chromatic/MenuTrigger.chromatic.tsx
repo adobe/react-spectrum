@@ -149,7 +149,7 @@ const TemplateWithIcons = (): Story<SpectrumMenuTriggerProps> => (args) => (
   </MenuTrigger>
 );
 
-export const TemplateArabicWithIcons = (): Story<SpectrumMenuTriggerProps> => (args) => (
+const TemplateArabicWithIcons = (): Story<SpectrumMenuTriggerProps> => (args) => (
   <MenuTrigger {...args} isOpen>
     <ActionButton>
       Menu Button
@@ -212,3 +212,6 @@ DirectionRight.args = {direction: 'right'};
 export const DirectionRightEnd = Template().bind({});
 DirectionRightEnd.storyName = 'direction="right", align="end"';
 DirectionRightEnd.args = {direction: 'right', align: 'end'};
+
+export const ArabicComplex = TemplateArabicWithIcons().bind({});
+ArabicComplex.storyName = 'Arabic complex items';
