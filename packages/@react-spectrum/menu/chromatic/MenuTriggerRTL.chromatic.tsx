@@ -12,7 +12,6 @@
 
 import {Meta} from '@storybook/react';
 import React from 'react';
-import {TemplateArabicWithIcons} from './MenuTrigger.chromatic';
 
 // Open MenuTriggers behave funny if rendered off screen, especially with the offset stories
 const meta: Meta = {
