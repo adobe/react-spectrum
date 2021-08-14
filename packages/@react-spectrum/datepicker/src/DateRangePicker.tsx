@@ -15,15 +15,13 @@ import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './index.css';
-import {DateRange, SpectrumDateRangePickerProps} from '@react-types/datepicker';
+import {DateValue, SpectrumDateRangePickerProps} from '@react-types/datepicker';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusScope, useFocusManager, useFocusRing} from '@react-aria/focus';
-import {fromDateToLocal, getLocalTimeZone, toCalendarDate} from '@internationalized/date';
 import {mergeProps} from '@react-aria/utils';
 import {RangeCalendar} from '@react-spectrum/calendar';
-import {RangeValue} from '@react-types/shared';
 import React, {useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {useDateRangePicker} from '@react-aria/datepicker';
@@ -32,7 +30,7 @@ import {useHover, usePress} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export function DateRangePicker(props: SpectrumDateRangePickerProps) {
+export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProps<T>) {
   props = useProviderProps(props);
   let {
     isQuiet,
@@ -150,9 +148,8 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
             <Content>
               <RangeCalendar
                 autoFocus
-                value={rangeToCalendarRage(value)}
-                // @ts-ignore
-                onChange={range => selectDateRange(calendarRangeToRange(range))} />
+                value={value}
+                onChange={selectDateRange} />
             </Content>
           </Dialog>
         </DialogTrigger>
@@ -178,23 +175,4 @@ function DateRangeDash() {
       className={classNames(styles, 'spectrum-Datepicker--rangeDash')}
       {...pressProps} />
   );
-}
-
-// TODO: remove once calendar API is converted over...
-function rangeToCalendarRage(range: DateRange) {
-  return {
-    start: range.start?.toDate(getLocalTimeZone()),
-    end: range.end?.toDate(getLocalTimeZone())
-  };
-}
-
-function calendarRangeToRange(range: RangeValue<Date>) {
-  if (!range) {
-    return null;
-  }
-
-  return {
-    start: toCalendarDate(fromDateToLocal(range.start)),
-    end: toCalendarDate(fromDateToLocal(range.end))
-  };
 }

@@ -16,14 +16,13 @@ import {classNames} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './index.css';
+import {DateValue, SpectrumDatePickerProps} from '@react-types/datepicker';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusScope, useFocusRing} from '@react-aria/focus';
-import {fromDateToLocal, getLocalTimeZone, toCalendarDate} from '@internationalized/date';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
-import {SpectrumDatePickerProps} from '@react-types/datepicker';
 import '@adobe/spectrum-css-temp/components/textfield/vars.css'; // HACK: must be included BEFORE inputgroup
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {useDatePicker} from '@react-aria/datepicker';
@@ -32,7 +31,7 @@ import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export function DatePicker(props: SpectrumDatePickerProps) {
+export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>) {
   props = useProviderProps(props);
   let {
     autoFocus,
@@ -132,9 +131,8 @@ export function DatePicker(props: SpectrumDatePickerProps) {
             <Content>
               <Calendar
                 autoFocus
-                value={state.value ? state.value.toDate(getLocalTimeZone()) : null}
-                // @ts-ignore
-                onChange={date => selectDate(toCalendarDate(fromDateToLocal(date)))} />
+                value={state.value}
+                onChange={selectDate} />
             </Content>
           </Dialog>
         </DialogTrigger>

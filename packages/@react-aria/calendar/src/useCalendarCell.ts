@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, isSameDay, isToday, toDate} from '@internationalized/date';
+import {CalendarDate, isSameDay, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
 // @ts-ignore
@@ -44,7 +44,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
   let isDisabled = state.isCellDisabled(date);
 
   // aria-label should be localize Day of week, Month, Day and Year without Time.
-  let nativeDate = toDate(date, state.timeZone);
+  let nativeDate = date.toDate(state.timeZone);
   let label = dateFormatter.format(nativeDate);
   if (isToday(date, state.timeZone)) {
     // If date is today, set appropriate string depending on selected state:

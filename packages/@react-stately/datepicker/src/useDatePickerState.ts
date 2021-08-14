@@ -29,9 +29,9 @@ export interface DatePickerState {
   formatValue(locale: string, fieldOptions: FieldOptions): string
 }
 
-export function useDatePickerState(props: DatePickerProps): DatePickerState {
+export function useDatePickerState<T extends DateValue>(props: DatePickerProps<T>): DatePickerState {
   let [isOpen, setOpen] = useState(false);
-  let [value, setValue] = useControlledState(props.value, props.defaultValue || null, props.onChange);
+  let [value, setValue] = useControlledState<DateValue>(props.value, props.defaultValue || null, props.onChange);
 
   let v = (value || props.placeholderValue);
   let defaultTimeZone = (v && 'timeZone' in v ? v.timeZone : undefined);
@@ -41,9 +41,10 @@ export function useDatePickerState(props: DatePickerProps): DatePickerState {
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
   let selectDate = (newValue: CalendarDate) => {
     if (value && 'hour' in value) {
-      newValue = value.set(newValue);
+      setValue(value.set(newValue));
+    } else {
+      setValue(newValue);
     }
-    setValue(newValue);
     setOpen(false);
   };
 

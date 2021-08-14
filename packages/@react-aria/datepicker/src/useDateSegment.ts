@@ -11,7 +11,7 @@
  */
 
 import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
-import {DatePickerProps} from '@react-types/datepicker';
+import {DatePickerProps, DateValue} from '@react-types/datepicker';
 import {DOMProps} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -28,7 +28,7 @@ interface DateSegmentAria {
   segmentProps: HTMLAttributes<HTMLDivElement>
 }
 
-export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateSegment, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateSegmentAria {
+export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & DOMProps, segment: DateSegment, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateSegmentAria {
   let enteredKeys = useRef('');
   let {locale, direction} = useLocale();
   let messageFormatter = useMessageFormatter(intlMessages);

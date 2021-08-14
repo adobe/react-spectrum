@@ -75,6 +75,10 @@ storiesOf('Date and Time/DatePicker', module)
     () => render({granularity: 'minute', defaultValue: parseAbsolute('2021-11-07T07:45:00Z', 'America/New_York')})
   )
   .add(
+    'defaultValue with time, granularity: day',
+    () => render({granularity: 'day', defaultValue: parseDateTime('2021-03-14T08:45')})
+  )
+  .add(
     'hideTimeZone',
     () => render({granularity: 'minute', defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]'), hideTimeZone: true})
   )

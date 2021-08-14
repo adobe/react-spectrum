@@ -28,7 +28,7 @@ export interface DateRangePickerState {
   formatValue(locale: string, fieldOptions: FieldOptions): string
 }
 
-export function useDateRangePickerState(props: DateRangePickerProps): DateRangePickerState {
+export function useDateRangePickerState<T extends DateValue>(props: DateRangePickerProps<T>): DateRangePickerState {
   let [isOpen, setOpen] = useState(false);
   let onChange = value => {
     if (value.start && value.end && props.onChange) {
@@ -45,12 +45,13 @@ export function useDateRangePickerState(props: DateRangePickerProps): DateRangeP
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
   let selectDateRange = (range: RangeValue<CalendarDate>) => {
     if (range && value?.start && 'hour' in value.start) {
-      range = {
+      setValue({
         start: value.start.set(range.start),
         end: value.end.set(range.end)
-      };
+      });
+    } else {
+      setValue(range);
     }
-    setValue(range);
     setOpen(false);
   };
 
