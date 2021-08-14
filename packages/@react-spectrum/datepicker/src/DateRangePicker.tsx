@@ -15,15 +15,17 @@ import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './index.css';
-import {DateValue, SpectrumDateRangePickerProps} from '@react-types/datepicker';
+import {DateValue, SpectrumDateRangePickerProps, TimeValue} from '@react-types/datepicker';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
+import {Flex} from '@react-spectrum/layout';
 import {FocusScope, useFocusManager, useFocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import {RangeCalendar} from '@react-spectrum/calendar';
 import React, {useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
+import {TimeField} from './TimeField';
 import {useDateRangePicker} from '@react-aria/datepicker';
 import {useDateRangePickerState} from '@react-stately/datepicker';
 import {useHover, usePress} from '@react-aria/interactions';
@@ -46,7 +48,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
   let targetRef = useRef<HTMLDivElement>();
   let state = useDateRangePickerState(props);
   let {labelProps, groupProps, buttonProps, dialogProps, startFieldProps, endFieldProps} = useDateRangePicker(props, state, targetRef);
-  let {value, setDate, selectDateRange, isOpen, setOpen} = state;
+  let {value, isOpen, setOpen} = state;
   let {direction} = useLocale();
 
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
@@ -80,6 +82,13 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
     }
   );
 
+  let v = state.value?.start || props.placeholderValue;
+  let timePlaceholder: TimeValue = props.placeholderValue && 'hour' in props.placeholderValue ? props.placeholderValue : null;
+  let timeMinValue: TimeValue = props.minValue && 'hour' in props.minValue ? props.minValue : null;
+  let timeMaxValue: TimeValue = props.maxValue && 'hour' in props.maxValue ? props.maxValue : null;
+  let timeGranularity = props.granularity === 'hour' || props.granularity === 'minute' || props.granularity === 'second' || props.granularity === 'millisecond' ? props.granularity : null;
+  let showTimeField = (v && 'hour' in v) || !!timeGranularity;
+
   return (
     <Field width="auto" {...props} labelProps={labelProps}>
       <div
@@ -99,7 +108,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
             placeholderValue={placeholderValue}
             value={value.start}
             defaultValue={null}
-            onChange={start => setDate('start', start)}
+            onChange={start => state.setValue({...value, start})}
             granularity={props.granularity}
             hourCycle={props.hourCycle}
             UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')}
@@ -115,7 +124,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
             placeholderValue={placeholderValue}
             value={value.end}
             defaultValue={null}
-            onChange={end => setDate('end', end)}
+            onChange={end => state.setValue({...value, end})}
             granularity={props.granularity}
             hourCycle={props.hourCycle}
             UNSAFE_className={classNames(
@@ -148,8 +157,32 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
             <Content>
               <RangeCalendar
                 autoFocus
-                value={value}
-                onChange={selectDateRange} />
+                value={state.dateRange}
+                onChange={state.setDateRange} />
+              {showTimeField &&
+                <Flex gap="size-100">
+                  <TimeField
+                    label="Start time"
+                    value={state.timeRange?.start || null}
+                    onChange={v => state.setTime('start', v)}
+                    placeholderValue={timePlaceholder}
+                    granularity={timeGranularity}
+                    minValue={timeMinValue}
+                    maxValue={timeMaxValue}
+                    hourCycle={props.hourCycle}
+                    hideTimeZone={props.hideTimeZone} />
+                  <TimeField
+                    label="End time"
+                    value={state.timeRange?.end || null}
+                    onChange={v => state.setTime('end', v)}
+                    placeholderValue={timePlaceholder}
+                    granularity={timeGranularity}
+                    minValue={timeMinValue}
+                    maxValue={timeMaxValue}
+                    hourCycle={props.hourCycle}
+                    hideTimeZone={props.hideTimeZone} />
+                </Flex>
+              }
             </Content>
           </Dialog>
         </DialogTrigger>

@@ -10,18 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate} from '@internationalized/date';
-import {DateRange, DateRangePickerProps, DateValue} from '@react-types/datepicker';
+import {DateRange, DateRangePickerProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {FieldOptions, getFormatOptions, isInvalid} from './utils';
 import {RangeValue, ValidationState} from '@react-types/shared';
+import {toCalendarDateTime, toDateFields} from '@internationalized/date';
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
 
+type TimeRange = RangeValue<TimeValue>;
 export interface DateRangePickerState {
   value: DateRange,
   setValue: (value: DateRange) => void,
   setDate: (part: keyof DateRange, value: DateValue) => void,
-  selectDateRange: (value: RangeValue<CalendarDate>) => void,
+  setTime: (part: keyof TimeRange, value: TimeValue) => void,
+  dateRange: DateRange,
+  setDateRange: (value: DateRange) => void,
+  timeRange: TimeRange,
+  setTimeRange: (value: TimeRange) => void,
   isOpen: boolean,
   setOpen: (isOpen: boolean) => void,
   validationState: ValidationState,
@@ -42,17 +47,53 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
     onChange
   );
 
-  // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
-  let selectDateRange = (range: RangeValue<CalendarDate>) => {
-    if (range && value?.start && 'hour' in value.start) {
-      setValue({
-        start: value.start.set(range.start),
-        end: value.end.set(range.end)
-      });
-    } else {
-      setValue(range);
+  let v = (value?.start || value?.end || props.placeholderValue);
+  let granularity = props.granularity || (v && 'minute' in v ? 'minute' : 'day');
+  let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second' || granularity === 'millisecond';
+
+  let [dateRange, setSelectedDateRange] = useState<DateRange>(null);
+  let [timeRange, setSelectedTimeRange] = useState<TimeRange>(null);
+
+  if (value && value.start && value.end) {
+    dateRange = value;
+    if ('hour' in value.start) {
+      // @ts-ignore
+      timeRange = value;
     }
-    setOpen(false);
+  }
+
+  let commitValue = (dateRange: DateRange, timeRange: TimeRange) => {
+    setValue({
+      start: 'timeZone' in timeRange.start ? timeRange.start.set(toDateFields(dateRange.start)) : toCalendarDateTime(dateRange.start, timeRange.start),
+      end: 'timeZone' in timeRange.end ? timeRange.end.set(toDateFields(dateRange.end)) : toCalendarDateTime(dateRange.end, timeRange.end)
+    });
+  };
+
+  // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
+  let setDateRange = (range: DateRange) => {
+    if (hasTime) {
+      if (range.start && range.end && timeRange?.start && timeRange?.end) {
+        commitValue(range, timeRange);
+      } else {
+        setSelectedDateRange(range);
+      }
+    } else if (range.start && range.end) {
+      setValue(range);
+    } else {
+      setSelectedDateRange(range);
+    }
+
+    if (!hasTime) {
+      setOpen(false);
+    }
+  };
+
+  let setTimeRange = (range: TimeRange) => {
+    if (dateRange?.start && dateRange?.end && range.start && range.end) {
+      commitValue(dateRange, range);
+    } else {
+      setSelectedTimeRange(range);
+    }
   };
 
   let validationState: ValidationState = props.validationState
@@ -65,10 +106,16 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
   return {
     value,
     setValue,
+    dateRange,
+    timeRange,
     setDate(part, date) {
-      setValue({...value, [part]: date});
+      setDateRange({...dateRange, [part]: date});
     },
-    selectDateRange,
+    setTime(part, time) {
+      setTimeRange({...timeRange, [part]: time});
+    },
+    setDateRange,
+    setTimeRange,
     isOpen,
     setOpen,
     validationState,

@@ -52,7 +52,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
   let labelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
 
   let {locale} = useLocale();
-  let descriptionProps = useDescription(state.dateValue ? state.formatValue(locale, {month: 'long'}) : null);
+  let descriptionProps = useDescription(state.formatValue(locale, {month: 'long'}));
 
   return {
     groupProps: mergeProps(descriptionProps, {

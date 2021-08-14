@@ -44,7 +44,7 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
 
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
 
-  let [value, setControlledValue] = useControlledState<DateValue>(props.value || undefined, props.defaultValue, props.onChange);
+  let [value, setControlledValue] = useControlledState<DateValue>(props.value, props.defaultValue, props.onChange);
   let calendarDateValue = useMemo(() => value ? toCalendar(toCalendarDate(value), calendar) : null, [value, calendar]);
   let defaultMonth = calendarDateValue || toCalendar(today(timeZone), calendar);
   let [currentMonth, setCurrentMonth] = useState(defaultMonth); // TODO: does this need to be in state at all??

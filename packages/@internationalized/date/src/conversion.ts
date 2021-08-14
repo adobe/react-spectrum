@@ -13,7 +13,7 @@
 // Portions of the code in this file are based on code from the TC39 Temporal proposal.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {AnyCalendarDate, AnyDateTime, Calendar, Disambiguation} from './types';
+import {AnyCalendarDate, AnyDateTime, AnyTime, Calendar, DateFields, Disambiguation, TimeFields} from './types';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 import {getLocalTimeZone} from './queries';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
@@ -167,7 +167,25 @@ export function toCalendarDate(dateTime: AnyCalendarDate): CalendarDate {
   return new CalendarDate(dateTime.calendar, dateTime.era, dateTime.year, dateTime.month, dateTime.day);
 }
 
-export function toCalendarDateTime(date: CalendarDate | CalendarDateTime | ZonedDateTime, time?: Time): CalendarDateTime {
+export function toDateFields(date: AnyCalendarDate): DateFields {
+  return {
+    era: date.era,
+    year: date.year,
+    month: date.month,
+    day: date.day
+  };
+}
+
+export function toTimeFields(date: AnyTime): TimeFields {
+  return {
+    hour: date.hour,
+    minute: date.minute,
+    second: date.second,
+    millisecond: date.millisecond
+  };
+}
+
+export function toCalendarDateTime(date: CalendarDate | CalendarDateTime | ZonedDateTime, time?: AnyTime): CalendarDateTime {
   let hour = 0, minute = 0, second = 0, millisecond = 0;
   if ('timeZone' in date) {
     ({hour, minute, second, millisecond} = date);

@@ -16,7 +16,7 @@ import {classNames} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './index.css';
-import {DateValue, SpectrumDatePickerProps} from '@react-types/datepicker';
+import {DateValue, SpectrumDatePickerProps, TimeValue} from '@react-types/datepicker';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
@@ -25,6 +25,7 @@ import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import '@adobe/spectrum-css-temp/components/textfield/vars.css'; // HACK: must be included BEFORE inputgroup
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
+import {TimeField} from './TimeField';
 import {useDatePicker} from '@react-aria/datepicker';
 import {useDatePickerState} from '@react-stately/datepicker';
 import {useHover} from '@react-aria/interactions';
@@ -46,7 +47,7 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
   let targetRef = useRef<HTMLDivElement>();
   let state = useDatePickerState(props);
   let {groupProps, labelProps, fieldProps, buttonProps, dialogProps} = useDatePicker(props, state, targetRef);
-  let {value, setValue, selectDate, isOpen, setOpen} = state;
+  let {value, setValue, isOpen, setOpen} = state;
   let {direction} = useLocale();
 
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
@@ -86,6 +87,13 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
 
   //   return s.type;
   // }).join(' ') : '';
+
+  let v = state.value || props.placeholderValue;
+  let timePlaceholder: TimeValue = props.placeholderValue && 'hour' in props.placeholderValue ? props.placeholderValue : null;
+  let timeMinValue: TimeValue = props.minValue && 'hour' in props.minValue ? props.minValue : null;
+  let timeMaxValue: TimeValue = props.maxValue && 'hour' in props.maxValue ? props.maxValue : null;
+  let timeGranularity = props.granularity === 'hour' || props.granularity === 'minute' || props.granularity === 'second' || props.granularity === 'millisecond' ? props.granularity : null;
+  let showTimeField = (v && 'hour' in v) || !!timeGranularity;
 
   return (
     <Field {...props} labelProps={labelProps}>
@@ -131,8 +139,20 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
             <Content>
               <Calendar
                 autoFocus
-                value={state.value}
-                onChange={selectDate} />
+                value={state.dateValue}
+                onChange={state.setDateValue} />
+              {showTimeField &&
+                <TimeField
+                  label="Time"
+                  value={state.timeValue}
+                  onChange={state.setTimeValue}
+                  placeholderValue={timePlaceholder}
+                  granularity={timeGranularity}
+                  minValue={timeMinValue}
+                  maxValue={timeMaxValue}
+                  hourCycle={props.hourCycle}
+                  hideTimeZone={props.hideTimeZone} />
+              }
             </Content>
           </Dialog>
         </DialogTrigger>
