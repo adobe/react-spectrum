@@ -13,19 +13,20 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
+import {AnyCalendarDate} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {GregorianCalendar} from './GregorianCalendar';
 import {Mutable} from '../utils';
 
 const TAIWAN_ERA_START = 1911;
 
-function gregorianYear(date: CalendarDate) {
+function gregorianYear(date: AnyCalendarDate) {
   return date.era === 'minguo'
     ? date.year + TAIWAN_ERA_START
     : 1 - date.year + TAIWAN_ERA_START;
 }
 
-function gregorianToTaiwan(year: number, date: Mutable<CalendarDate>) {
+function gregorianToTaiwan(year: number, date: Mutable<AnyCalendarDate>) {
   let y = year - TAIWAN_ERA_START;
   if (y > 0) {
     date.era = 'minguo';
@@ -40,12 +41,12 @@ export class TaiwanCalendar extends GregorianCalendar {
   identifier = 'roc'; // Republic of China
 
   fromJulianDay(jd: number): CalendarDate {
-    let date = super.fromJulianDay(jd) as Mutable<CalendarDate>;
+    let date: Mutable<CalendarDate> = super.fromJulianDay(jd);
     gregorianToTaiwan(date.year, date);
-    return date;
+    return date as CalendarDate;
   }
 
-  toJulianDay(date: CalendarDate) {
+  toJulianDay(date: AnyCalendarDate) {
     return super.toJulianDay(
       new CalendarDate(
         gregorianYear(date),
@@ -59,11 +60,11 @@ export class TaiwanCalendar extends GregorianCalendar {
     return ['before_minguo', 'minguo'];
   }
 
-  balanceDate(date: Mutable<CalendarDate>) {
+  balanceDate(date: Mutable<AnyCalendarDate>) {
     gregorianToTaiwan(gregorianYear(date), date);
   }
 
-  addYears(date: Mutable<CalendarDate>, years: number) {
+  addYears(date: Mutable<AnyCalendarDate>, years: number) {
     if (date.era === 'before_minguo') {
       years = -years;
     }

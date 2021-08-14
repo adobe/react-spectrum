@@ -13,6 +13,7 @@
 // Portions of the code in this file are based on code from the TC39 Temporal proposal.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
+import {AnyCalendarDate} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {GregorianCalendar} from './GregorianCalendar';
 import {Mutable} from '../utils';
@@ -21,7 +22,7 @@ const ERA_START_DATES = [[1868, 9, 8], [1912, 7, 30], [1926, 12, 25], [1989, 1, 
 const ERA_ADDENDS = [1867, 1911, 1925, 1988, 2018];
 const ERA_NAMES = ['meiji', 'taisho', 'showa', 'heisei', 'reiwa'];
 
-function findEraFromGregorianDate(date: CalendarDate) {
+function findEraFromGregorianDate(date: AnyCalendarDate) {
   const idx = ERA_START_DATES.findIndex(([year, month, day]) => {
     if (date.year < year) {
       return true;
@@ -49,7 +50,7 @@ function findEraFromGregorianDate(date: CalendarDate) {
   return idx - 1;
 }
 
-function toGregorian(date: CalendarDate) {
+function toGregorian(date: AnyCalendarDate) {
   let eraAddend = ERA_ADDENDS[ERA_NAMES.indexOf(date.era)];
   if (!eraAddend) {
     throw new Error('Unknown era: ' + date.era);
@@ -71,14 +72,14 @@ export class JapaneseCalendar extends GregorianCalendar {
     let era = findEraFromGregorianDate(date);
     date.era = ERA_NAMES[era];
     date.year -= ERA_ADDENDS[era];
-    return date;
+    return date as CalendarDate;
   }
 
-  toJulianDay(date: CalendarDate) {
+  toJulianDay(date: AnyCalendarDate) {
     return super.toJulianDay(toGregorian(date));
   }
 
-  balanceDate(date: Mutable<CalendarDate>) {
+  balanceDate(date: Mutable<AnyCalendarDate>) {
     let gregorianDate = toGregorian(date);
     let era = findEraFromGregorianDate(gregorianDate);
 
@@ -92,7 +93,7 @@ export class JapaneseCalendar extends GregorianCalendar {
     return ERA_NAMES;
   }
 
-  getYearsInEra(date: CalendarDate): number {
+  getYearsInEra(date: AnyCalendarDate): number {
     let gregorianDate = toGregorian(date);
     let era = findEraFromGregorianDate(gregorianDate);
     let next = ERA_START_DATES[era + 1];

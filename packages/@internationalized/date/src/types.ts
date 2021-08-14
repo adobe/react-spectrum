@@ -12,20 +12,39 @@
 
 import {CalendarDate} from './CalendarDate';
 
+export interface AnyCalendarDate {
+  readonly calendar: Calendar,
+  readonly era: string,
+  readonly year: number,
+  readonly month: number,
+  readonly day: number,
+  copy(): this
+}
+
+export interface AnyTime {
+  readonly hour: number,
+  readonly minute: number,
+  readonly second: number,
+  readonly millisecond: number,
+  copy(): this
+}
+
+export interface AnyDateTime extends AnyCalendarDate, AnyTime {}
+
 export interface Calendar {
   identifier: string,
 
   fromJulianDay(jd: number): CalendarDate,
-  toJulianDay(date: CalendarDate): number,
+  toJulianDay(date: AnyCalendarDate): number,
 
-  getDaysInMonth(date: CalendarDate): number,
-  getMonthsInYear(date: CalendarDate): number,
-  getYearsInEra(date: CalendarDate): number,
+  getDaysInMonth(date: AnyCalendarDate): number,
+  getMonthsInYear(date: AnyCalendarDate): number,
+  getYearsInEra(date: AnyCalendarDate): number,
 
   getEras(): string[],
 
-  balanceDate?(date: CalendarDate): void,
-  addYears?(date: CalendarDate, years: number): void
+  balanceDate?(date: AnyCalendarDate): void,
+  addYears?(date: AnyCalendarDate, years: number): void
 }
 
 export interface Duration {
