@@ -238,5 +238,10 @@ describe('ZonedDateTime', function () {
       expect(zoned.offset).not.toBe(expected.offset);
       expect(zoned.set({month: 3})).toEqual(expected);
     });
+
+    it('should preserve the offset if setting identical fields', function () {
+      let zoned = toZoned(new CalendarDateTime(2021, 11, 7, 1), 'America/Los_Angeles', 'later');
+      expect(zoned.set({hour: 1})).toBe(zoned);
+    });
   });
 });

@@ -460,7 +460,15 @@ export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField
 export function setZoned(dateTime: ZonedDateTime, fields: DateFields & TimeFields, behavior?: OverflowBehavior, disambiguation?: Disambiguation): ZonedDateTime {
   // Set the date/time fields, and recompute the UTC offset to account for DST changes.
   // We also need to validate by converting back to a local time in case hours are skipped during forward DST transitions.
-  let res = setTime(set(toCalendarDateTime(dateTime), fields, behavior), fields, behavior);
+  let plainDateTime = toCalendarDateTime(dateTime);
+  let res = setTime(set(plainDateTime, fields, behavior), fields, behavior);
+
+  // If the resulting plain date time values are equal, return the original time.
+  // We don't want to change the offset when setting the time to the same value.
+  if (res.compare(plainDateTime) === 0) {
+    return dateTime;
+  }
+
   let ms = toAbsolute(res, dateTime.timeZone, disambiguation);
   return toCalendar(fromAbsolute(ms, dateTime.timeZone), dateTime.calendar);
 }
