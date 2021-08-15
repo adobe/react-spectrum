@@ -45,6 +45,7 @@ export interface Calendar {
 
   balanceDate?(date: AnyCalendarDate): void,
   addYears?(date: AnyCalendarDate, years: number): void
+  constrainDate?(date: AnyCalendarDate): void,
 }
 
 export interface Duration {
@@ -75,7 +76,6 @@ export interface TimeFields {
 export type DateField = keyof DateFields;
 export type TimeField = keyof TimeFields;
 
-export type OverflowBehavior = 'balance' | 'constrain';
 export type Disambiguation = 'compatible' | 'earlier' | 'later' | 'reject';
 
 export interface CycleOptions {

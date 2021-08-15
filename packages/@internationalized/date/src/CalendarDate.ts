@@ -80,8 +80,8 @@ export class CalendarDate {
     return subtract(this, duration);
   }
 
-  set(fields: DateFields, behavior?: OverflowBehavior) {
-    return set(this, fields, behavior);
+  set(fields: DateFields) {
+    return set(this, fields);
   }
 
   cycle(field: DateField, amount: number, options?: CycleOptions) {
@@ -124,8 +124,8 @@ export class Time {
     return subtractTime(this, duration);
   }
 
-  set(fields: TimeFields, behavior?: OverflowBehavior) {
-    return setTime(this, fields, behavior);
+  set(fields: TimeFields) {
+    return setTime(this, fields);
   }
 
   cycle(field: TimeField, amount: number, options?: CycleTimeOptions) {
@@ -191,8 +191,8 @@ export class CalendarDateTime {
     return subtract(this, duration);
   }
 
-  set(fields: DateFields & TimeFields, behavior?: OverflowBehavior) {
-    return set(setTime(this, fields, behavior), fields, behavior);
+  set(fields: DateFields & TimeFields) {
+    return set(setTime(this, fields), fields);
   }
 
   cycle(field: DateField | TimeField, amount: number, options?: CycleTimeOptions) {
@@ -281,8 +281,8 @@ export class ZonedDateTime {
     return subtractZoned(this, duration);
   }
 
-  set(fields: DateFields & TimeFields, behavior?: OverflowBehavior, disambiguation?: Disambiguation) {
-    return setZoned(this, fields, behavior, disambiguation);
+  set(fields: DateFields & TimeFields, disambiguation?: Disambiguation) {
+    return setZoned(this, fields, disambiguation);
   }
 
   cycle(field: DateField | TimeField, amount: number, options?: CycleTimeOptions) {

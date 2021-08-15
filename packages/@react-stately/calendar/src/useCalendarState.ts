@@ -104,7 +104,7 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
 
   let weekDays = useMemo(() => (
     [...new Array(7).keys()]
-      .map(index => currentMonth.set({day: index - monthStartsAt + 1}))
+      .map(index => startOfMonth(currentMonth).add({days: index - monthStartsAt}))
   ), [currentMonth, monthStartsAt]);
 
   return {
@@ -159,8 +159,8 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
     daysInMonth: currentMonth.calendar.getDaysInMonth(currentMonth),
     weekDays,
     getCellDate(weekIndex, dayIndex) {
-      let day = (weekIndex * 7 + dayIndex) - monthStartsAt + 1;
-      return currentMonth.set({day});
+      let days = (weekIndex * 7 + dayIndex) - monthStartsAt;
+      return startOfMonth(currentMonth).add({days});
     },
     isInvalid(date) {
       return isInvalid(date, minDate, maxDate);

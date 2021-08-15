@@ -31,7 +31,7 @@ export function add(date: CalendarDate | CalendarDateTime, duration: Duration) {
   mutableDate.month += duration.months || 0;
 
   balanceYearMonth(mutableDate);
-  constrain(mutableDate);
+  constrainMonthDay(mutableDate);
 
   mutableDate.day += (duration.weeks || 0) * 7;
   mutableDate.day += duration.days || 0;
@@ -81,16 +81,7 @@ function balanceDay(date: Mutable<AnyCalendarDate>) {
   }
 }
 
-function balance(date: Mutable<AnyCalendarDate>) {
-  balanceYearMonth(date);
-  balanceDay(date);
-
-  if (date.calendar.balanceDate) {
-    date.calendar.balanceDate(date);
-  }
-}
-
-function constrain(date: Mutable<AnyCalendarDate>) {
+function constrainMonthDay(date: Mutable<AnyCalendarDate>) {
   date.month = Math.max(1, Math.min(date.calendar.getMonthsInYear(date), date.month));
   date.day = Math.max(1, Math.min(date.calendar.getDaysInMonth(date), date.day));
 }
@@ -115,9 +106,9 @@ export function subtract(date: CalendarDate | CalendarDateTime, duration: Durati
 }
 
 /* eslint-disable no-redeclare */
-export function set(date: CalendarDateTime, fields: DateFields, behavior?: OverflowBehavior): CalendarDateTime;
-export function set(date: CalendarDate, fields: DateFields, behavior: OverflowBehavior): CalendarDate;
-export function set(date: CalendarDate | CalendarDateTime, fields: DateFields, behavior: OverflowBehavior = 'balance') {
+export function set(date: CalendarDateTime, fields: DateFields): CalendarDateTime;
+export function set(date: CalendarDate, fields: DateFields): CalendarDate;
+export function set(date: CalendarDate | CalendarDateTime, fields: DateFields) {
 /* eslint-enable no-redeclare */
   let mutableDate: Mutable<AnyCalendarDate> = date.copy();
 
@@ -127,7 +118,6 @@ export function set(date: CalendarDate | CalendarDateTime, fields: DateFields, b
 
   if (fields.year != null) {
     mutableDate.year = fields.year;
-    // addYears(mutableDate, fields.year - mutableDate.year);
   }
 
   if (fields.month != null) {
@@ -138,24 +128,20 @@ export function set(date: CalendarDate | CalendarDateTime, fields: DateFields, b
     mutableDate.day = fields.day;
   }
 
-  switch (behavior) {
-    case 'balance':
-      balance(mutableDate);
-      break;
-    case 'constrain':
-      constrain(mutableDate);
-      break;
-    default:
-      throw new Error(`Invalid behavior: ${behavior}. Must be either 'balance' or 'constrain'.`);
+  constrainMonthDay(mutableDate);
+  mutableDate.year = Math.max(1, Math.min(date.calendar.getYearsInEra(mutableDate), mutableDate.year));
+
+  if (date.calendar.constrainDate) {
+    date.calendar.constrainDate(mutableDate);
   }
 
   return mutableDate;
 }
 
 /* eslint-disable no-redeclare */
-export function setTime(value: CalendarDateTime, fields: TimeFields, behavior?: OverflowBehavior): CalendarDateTime;
-export function setTime(value: Time, fields: TimeFields, behavior: OverflowBehavior): Time;
-export function setTime(value: Time | CalendarDateTime, fields: TimeFields, behavior: OverflowBehavior = 'balance') {
+export function setTime(value: CalendarDateTime, fields: TimeFields): CalendarDateTime;
+export function setTime(value: Time, fields: TimeFields): Time;
+export function setTime(value: Time | CalendarDateTime, fields: TimeFields) {
 /* eslint-enable no-redeclare */
   let mutableValue: Mutable<Time | CalendarDateTime> = value.copy();
 
@@ -175,22 +161,7 @@ export function setTime(value: Time | CalendarDateTime, fields: TimeFields, beha
     mutableValue.millisecond = fields.millisecond;
   }
 
-  switch (behavior) {
-    case 'balance': {
-      let days = balanceTime(mutableValue);
-      if ('day' in mutableValue) {
-        mutableValue.day += days;
-        balance(mutableValue);
-      } else if (days > 0) {
-        throw new Error('Hours cannot be greater than 24');
-      }
-      break;
-    }
-    case 'constrain':
-      constrainTime(mutableValue);
-      break;
-  }
-
+  constrainTime(mutableValue);
   return mutableValue;
 }
 
@@ -457,11 +428,11 @@ export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField
   }
 }
 
-export function setZoned(dateTime: ZonedDateTime, fields: DateFields & TimeFields, behavior?: OverflowBehavior, disambiguation?: Disambiguation): ZonedDateTime {
+export function setZoned(dateTime: ZonedDateTime, fields: DateFields & TimeFields, disambiguation?: Disambiguation): ZonedDateTime {
   // Set the date/time fields, and recompute the UTC offset to account for DST changes.
   // We also need to validate by converting back to a local time in case hours are skipped during forward DST transitions.
   let plainDateTime = toCalendarDateTime(dateTime);
-  let res = setTime(set(plainDateTime, fields, behavior), fields, behavior);
+  let res = setTime(set(plainDateTime, fields), fields);
 
   // If the resulting plain date time values are equal, return the original time.
   // We don't want to change the offset when setting the time to the same value.

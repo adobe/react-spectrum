@@ -19,6 +19,7 @@ import {GregorianCalendar} from './GregorianCalendar';
 import {Mutable} from '../utils';
 
 const ERA_START_DATES = [[1868, 9, 8], [1912, 7, 30], [1926, 12, 25], [1989, 1, 8], [2019, 5, 1]];
+const ERA_END_DATES = [[1912, 7, 29], [1926, 12, 24], [1989, 1, 7], [2019, 4, 31]];
 const ERA_ADDENDS = [1867, 1911, 1925, 1988, 2018];
 const ERA_NAMES = ['meiji', 'taisho', 'showa', 'heisei', 'reiwa'];
 
@@ -86,6 +87,17 @@ export class JapaneseCalendar extends GregorianCalendar {
     if (ERA_NAMES[era] !== date.era) {
       date.era = ERA_NAMES[era];
       date.year = gregorianDate.year - ERA_ADDENDS[era];
+    }
+  }
+
+  constrainDate(date: Mutable<AnyCalendarDate>) {
+    let idx = ERA_NAMES.indexOf(date.era);
+    let end = ERA_END_DATES[idx];
+    if (end != null) {
+      let [year, month, day] = end;
+      date.year = Math.max(1, Math.min(year - ERA_ADDENDS[idx], date.year));
+      date.month = Math.max(1, Math.min(month, date.month));
+      date.day = Math.max(1, Math.min(day, date.day));
     }
   }
 

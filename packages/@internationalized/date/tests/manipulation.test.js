@@ -289,24 +289,14 @@ describe('CalendarDate manipulation', function () {
       expect(date.set({month: 5})).toEqual(new CalendarDate(2020, 5, 3));
     });
 
-    it('should balance month', function () {
-      let date = new CalendarDate(2020, 2, 3);
-      expect(date.set({month: 13})).toEqual(new CalendarDate(2021, 1, 3));
-    });
-
     it('should constrain month', function () {
       let date = new CalendarDate(2020, 2, 3);
-      expect(date.set({month: 13}, 'constrain')).toEqual(new CalendarDate(2020, 12, 3));
-    });
-
-    it('should set month and balance day', function () {
-      let date = new CalendarDate(2020, 2, 31);
-      expect(date.set({month: 9})).toEqual(new CalendarDate(2020, 10, 1));
+      expect(date.set({month: 13})).toEqual(new CalendarDate(2020, 12, 3));
     });
 
     it('should set month and constrain day', function () {
       let date = new CalendarDate(2020, 2, 31);
-      expect(date.set({month: 9}, 'constrain')).toEqual(new CalendarDate(2020, 9, 30));
+      expect(date.set({month: 9})).toEqual(new CalendarDate(2020, 9, 30));
     });
 
     it('should set day', function () {
@@ -314,43 +304,36 @@ describe('CalendarDate manipulation', function () {
       expect(date.set({day: 9})).toEqual(new CalendarDate(2020, 2, 9));
     });
 
-    it('should balance day', function () {
-      let date = new CalendarDate(2020, 9, 3);
-      expect(date.set({day: 31})).toEqual(new CalendarDate(2020, 10, 1));
-    });
-
     it('should constrain day', function () {
       let date = new CalendarDate(2020, 9, 3);
-      expect(date.set({day: 31}, 'constrain')).toEqual(new CalendarDate(2020, 9, 30));
-    });
-
-    it('should balance day on leap years', function () {
-      let date = new CalendarDate(2020, 2, 3);
-      expect(date.set({day: 31})).toEqual(new CalendarDate(2020, 3, 2));
-
-      date = new CalendarDate(2019, 2, 3);
-      expect(date.set({day: 31})).toEqual(new CalendarDate(2019, 3, 3));
+      expect(date.set({day: 31})).toEqual(new CalendarDate(2020, 9, 30));
     });
 
     it('should constrain day on leap years', function () {
       let date = new CalendarDate(2020, 2, 3);
-      expect(date.set({day: 31}, 'constrain')).toEqual(new CalendarDate(2020, 2, 29));
+      expect(date.set({day: 31})).toEqual(new CalendarDate(2020, 2, 29));
 
       date = new CalendarDate(2019, 2, 3);
-      expect(date.set({day: 31}, 'constrain')).toEqual(new CalendarDate(2019, 2, 28));
+      expect(date.set({day: 31})).toEqual(new CalendarDate(2019, 2, 28));
     });
 
     describe('Japanese calendar', function () {
-      it('should rebalance era', function () {
-        let date = new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 4, 30);
-        expect(date.set({month: 5})).toEqual(new CalendarDate(new JapaneseCalendar(), 'reiwa', 1, 5, 30));
+      it('should constrain date in era', function () {
+        let date = new CalendarDate(new JapaneseCalendar(), 'heisei', 30, 4, 30);
+        expect(date.set({year: 35})).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 4, 30));
+
+        date = new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 2, 30);
+        expect(date.set({month: 5})).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 4, 30));
+
+        date = new CalendarDate(new JapaneseCalendar(), 'showa', 63, 1, 6);
+        expect(date.set({day: 8})).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 63, 1, 7));
       });
     });
 
     describe('Taiwan calendar', function () {
-      it('should rebalance era', function () {
+      it('should constrain year in era', function () {
         let date = new CalendarDate(new TaiwanCalendar(), 'before_minguo', 5, 4, 30);
-        expect(date.set({year: -2})).toEqual(new CalendarDate(new TaiwanCalendar(), 'minguo', 3, 4, 30));
+        expect(date.set({year: -2})).toEqual(new CalendarDate(new TaiwanCalendar(), 'before_minguo', 1, 4, 30));
       });
     });
   });
