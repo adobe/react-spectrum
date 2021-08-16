@@ -339,6 +339,10 @@ function useAutoFocus(scopeRef: RefObject<HTMLElement[]>, autoFocus: boolean) {
 function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boolean, contain: boolean) {
   // useLayoutEffect instead of useEffect so the active element is saved synchronously instead of asynchronously.
   useLayoutEffect(() => {
+    if (!restoreFocus) {
+      return;
+    }
+
     let scope = scopeRef.current;
     let nodeToRestore = document.activeElement as HTMLElement;
 

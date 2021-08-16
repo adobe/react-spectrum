@@ -432,6 +432,42 @@ describe('FocusScope', function () {
       userEvent.tab();
       expect(document.activeElement).toBe(getByTestId('after'));
     });
+
+    it('should not handle tabbing if the focus scope does not restore focus', function () {
+      function Test({show}) {
+        return (
+          <div>
+            <input data-testid="before" />
+            <button data-testid="trigger" />
+            <input data-testid="after-trigger" />
+            {show &&
+              <FocusScope autoFocus>
+                <input data-testid="input1" />
+                <input data-testid="input2" />
+                <input data-testid="input3" />
+              </FocusScope>
+            }
+            <input data-testid="after" />
+          </div>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test />);
+
+      let trigger = getByTestId('trigger');
+      act(() => {trigger.focus();});
+
+      rerender(<Test show />);
+
+      let input1 = getByTestId('input1');
+      expect(document.activeElement).toBe(input1);
+
+      let input3 = getByTestId('input3');
+      act(() => {input3.focus();});
+
+      userEvent.tab();
+      expect(document.activeElement).toBe(getByTestId('after'));
+    });
   });
 
   describe('auto focus', function () {
