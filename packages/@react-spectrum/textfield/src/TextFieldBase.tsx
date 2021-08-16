@@ -12,11 +12,7 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
-import {
-  classNames,
-  createFocusableRef,
-  useStyleProps
-} from '@react-spectrum/utils';
+import {classNames, createFocusableRef} from '@react-spectrum/utils';
 import {Field} from '@react-spectrum/label';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
@@ -62,8 +58,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     inputRef,
     isLoading,
     loadingIndicator,
-    validationIconClassName,
-    ...otherProps
+    validationIconClassName
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let domRef = useRef<HTMLDivElement>(null);
@@ -83,7 +78,6 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     }
   }));
 
-  let {styleProps} = useStyleProps(otherProps);
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
   let isInvalid = validationState === 'invalid';
 
