@@ -63,11 +63,44 @@ storiesOf('HelpText', module)
     () => render({description: 'Password must be at least 8 characters.', isDisabled: true})
   )
   .add(
+    'labelPosition: side',
+    () => render({
+      description: 'Password must be at least 8 characters.',
+      labelPosition: 'side'
+    })
+  )
+  .add(
     'no visible label',
     () => render({
       label: null,
       'aria-label': 'Password',
       description: 'Password must be at least 8 characters.'
+    })
+  )
+  .add(
+    'no visible label, labelPosition: side',
+    () => render({
+      label: null,
+      'aria-label': 'Password',
+      description: 'Password must be at least 8 characters.',
+      labelPosition: 'side'
+    })
+  )
+  .add(
+    'custom width',
+    () => render({
+      label: 'Password',
+      description: 'Password must be at least 8 characters.',
+      width: '100px'
+    })
+  )
+  .add(
+    'custom width, labelPosition: side',
+    () => render({
+      label: 'Password',
+      description: 'Password must be at least 8 characters.',
+      width: '440px',
+      labelPosition: 'side'
     })
   )
   .add(

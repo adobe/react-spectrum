@@ -38,6 +38,9 @@
     flex-shrink: 0;
   }
   .spectrum-HelpText-text {
+    /* Not in DNA: make text fill up all horizontal space. */
+    flex: 1;
+
     margin-inline-end: var(--spectrum-helptext-neutral-texticon-icon-gap);
     padding-block: var(--spectrum-helptext-neutral-textonly-text-padding-top) var(--spectrum-helptext-neutral-textonly-text-padding-bottom);
     line-height: var(--spectrum-helptext-neutral-textonly-text-line-height);

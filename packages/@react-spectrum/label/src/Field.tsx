@@ -11,6 +11,7 @@
  */
 
 import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {Flex} from '@react-spectrum/layout';
 import {HelpText} from './HelpText';
 import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
@@ -63,6 +64,39 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
       )
     }));
 
+    let renderHelpText = () => (
+      <HelpText
+        descriptionProps={descriptionProps}
+        errorMessageProps={errorMessageProps}
+        description={description}
+        errorMessage={errorMessage}
+        validationState={validationState}
+        isDisabled={isDisabled}
+        showIcon={showIcon} />
+    );
+
+    let renderChildren = () => {
+      if (hasHelpText) {
+        if (labelPosition === 'side') {
+          return (
+            <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
+              {children}
+              {renderHelpText()}
+            </Flex>
+          );
+        }
+
+        return (
+          <>
+            {children}
+            {renderHelpText()}
+          </>
+        );
+      }
+
+      return children;
+    };
+
     return (
       <div
         {...styleProps}
@@ -80,17 +114,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
             {label}
           </Label>
         )}
-        {children}
-        {hasHelpText && (
-          <HelpText
-            descriptionProps={descriptionProps}
-            errorMessageProps={errorMessageProps}
-            description={description}
-            errorMessage={errorMessage}
-            validationState={validationState}
-            isDisabled={isDisabled}
-            showIcon={showIcon} />
-        )}
+        {renderChildren()}
       </div>
     );
   }
