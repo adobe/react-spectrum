@@ -53,6 +53,10 @@
     text-align: end; /* labelPosition=side case */
     .spectrum-HelpText-text {
       margin-inline-end: 0;
+      margin-inline-start: var(--spectrum-helptext-neutral-texticon-icon-gap);
+    }
+    .spectrum-HelpText-validationIcon {
+      margin-inline-end: 0;
     }
   }
 }
