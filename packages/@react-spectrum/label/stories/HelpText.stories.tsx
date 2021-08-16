@@ -63,6 +63,22 @@ storiesOf('HelpText', module)
     () => render({description: 'Password must be at least 8 characters.', isDisabled: true})
   )
   .add(
+    'labelAlign: end',
+    () => render({
+      description: 'Password must be at least 8 characters.',
+      labelAlign: 'end'
+    })
+  )
+  .add(
+    'labelAlign: end, showIcon: true',
+    () => render({
+      errorMessage: 'Create a password with at least 8 characters.',
+      validationState: 'invalid',
+      showIcon: true,
+      labelAlign: 'end'
+    })
+  )
+  .add(
     'labelPosition: side',
     () => render({
       description: 'Password must be at least 8 characters.',

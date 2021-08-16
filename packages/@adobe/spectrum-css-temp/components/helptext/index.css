@@ -47,4 +47,12 @@
     text-transform: var(--spectrum-helptext-neutral-textonly-text-transform);
     letter-spacing: var(--spectrum-helptext-neutral-textonly-text-letter-spacing);
   }
+  /* Not in DNA */
+  &.spectrum-HelpText--alignEnd {
+    justify-content: flex-end; /* labelPosition=top case */
+    text-align: end; /* labelPosition=side case */
+    .spectrum-HelpText-text {
+      margin-inline-end: 0;
+    }
+  }
 }

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {Alignment} from './labelable';
 import {ReactNode} from 'react';
 
 export type ValidationState = 'valid' | 'invalid';
@@ -73,5 +74,7 @@ export interface SpectrumHelpTextProps extends HelpTextProps, Validation {
   /** Whether the description is displayed with lighter text. */
   isDisabled?: boolean,
   /** Whether an error icon is rendered. */
-  showIcon?: boolean
+  showIcon?: boolean,
+  /** The help text's horizontal alignment relative to the element it is describing. */
+  labelAlign?: Alignment
 }
