@@ -36,6 +36,45 @@ storiesOf('HelpText', module)
   .add(
     'disabled',
     () => render({description: 'Password must be at least 8 characters.', isDisabled: true})
+  )
+  .add(
+    'labelAlign: end',
+    () => render({
+      description: 'Password must be at least 8 characters.',
+      labelAlign: 'end'
+    })
+  )
+  .add(
+    'labelPosition: side',
+    () => render({
+      description: 'Password must be at least 8 characters.',
+      labelPosition: 'side'
+    })
+  )
+  .add(
+    'no visible label',
+    () => render({
+      label: null,
+      'aria-label': 'Password',
+      description: 'Password must be at least 8 characters.'
+    })
+  )
+  .add(
+    'custom width',
+    () => render({
+      label: 'Password',
+      description: 'Password must be at least 8 characters.',
+      width: '100px'
+    })
+  )
+  .add(
+    'custom width, labelPosition: side',
+    () => render({
+      label: 'Password',
+      description: 'Password must be at least 8 characters.',
+      width: '440px',
+      labelPosition: 'side'
+    })
   );
 
 function render(props: SpectrumTextFieldProps = {}) {
