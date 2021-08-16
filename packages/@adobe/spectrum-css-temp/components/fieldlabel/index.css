@@ -141,6 +141,10 @@ governing permissions and limitations under the License.
       display: table-cell;
     }
 
+    .spectrum-Field-wrapper {
+      width: 100%;
+    }
+
     .spectrum-Field-field {
       display: table-cell;
       width: auto;
