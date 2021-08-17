@@ -69,9 +69,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
         <>
           <Label
             {...labelProps}
-            UNSAFE_className={classNames(labelStyles, {
-              hasHelpText
-            })}
             labelPosition={labelPosition}
             labelAlign={labelAlign}
             isRequired={isRequired}
@@ -83,6 +80,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
           {children}
           {hasHelpText && (
             <HelpText
+              UNSAFE_className={classNames(labelStyles, 'spectrum-Field-helpText')}
               descriptionProps={descriptionProps}
               errorMessageProps={errorMessageProps}
               description={description}
@@ -136,10 +134,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     }));
     return (
       <>
-        <span
-          className={classNames(labelStyles, {
-            hasHelpText
-          })} />
         {React.cloneElement(children, mergeProps(children.props, {
           ...styleProps,
           ref

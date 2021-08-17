@@ -158,9 +158,16 @@ governing permissions and limitations under the License.
      grid-template-columns: 1fr auto;
      gap: 10px;
 
-    .hasHelpText {
-      /* Span two rows so that help is pushed under the input */
-      grid-row-end: span 2;
+    > .spectrum-Field-field {
+      grid-column-start: 2;
+    }
+
+    > .spectrum-Field-helpText {
+      grid-column-start: 2;
+    }
+
+    > :not(.spectrum-FieldLabel) {
+      grid-column-start: 2;
     }
   }
 

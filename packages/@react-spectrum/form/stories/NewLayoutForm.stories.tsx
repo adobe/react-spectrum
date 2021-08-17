@@ -25,6 +25,8 @@ import {SearchField} from '@react-spectrum/searchfield';
 import {SearchWithin} from '@react-spectrum/searchwithin';
 import {storiesOf} from '@storybook/react';
 import {TextArea, TextField} from '@react-spectrum/textfield';
+import {ColorWheel} from '@react-spectrum/color';
+import {Slider} from '@react-spectrum/slider';
 
 storiesOf('Form/new layout', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -181,6 +183,8 @@ function render(props: any = {}) {
           {item => <Item key={item.abbr}>{item.name}</Item>}
         </Picker>
       </SearchWithin>
+      <ColorWheel />
+      <Slider label="the slider" />
     </Form>
   );
 }

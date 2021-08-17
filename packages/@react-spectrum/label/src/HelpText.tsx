@@ -11,7 +11,7 @@
  */
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
-import {classNames, useDOMRef} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, SpectrumHelpTextProps} from '@react-types/shared';
 import React, {HTMLAttributes} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/helptext/vars.css';
@@ -35,13 +35,16 @@ function HelpText(props: HelpTextProps, ref: DOMRef<HTMLDivElement>) {
   } = props;
   let domRef = useDOMRef(ref);
   let isErrorMessage = errorMessage && validationState === 'invalid';
+  let {styleProps} = useStyleProps(props);
 
   return (
     <div
+      {...styleProps}
       className={classNames(
         styles,
         'spectrum-HelpText',
         `spectrum-HelpText--${isErrorMessage ? 'negative' : 'neutral'}`,
+        styleProps.className,
         {'is-disabled': isDisabled}
       )}
       ref={domRef}>
