@@ -128,6 +128,10 @@ export interface ListState<T> {
   filterText: string
 }
 
+interface CreateListOptions<T, C> extends ListOptions<T> {
+  cursor?: C
+}
+
 /**
  * Manages state for an immutable list data structure, and provides convenience methods to
  * update the data over time.
@@ -162,63 +166,8 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
   };
 }
 
-interface ListRemoveOpts<T> {
-  dispatch,
-  getKey,
-  cursor?
-}
-
-export function removeActions<T>(opts: ListRemoveOpts<T>) {
-  let {cursor, dispatch, getKey} = opts;
-  return {
-    remove(...keys: Key[]) {
-      dispatch(state => {
-        let keySet = new Set(keys);
-        let items = state.items.filter(item => !keySet.has(getKey(item)));
-
-        let selection: Selection = 'all';
-        if (state.selectedKeys !== 'all') {
-          selection = new Set(state.selectedKeys);
-          for (let key of keys) {
-            selection.delete(key);
-          }
-        }
-        if (cursor == null && items.length === 0) {
-          selection = new Set();
-        }
-
-        return {
-          ...state,
-          items,
-          selectedKeys: selection
-        };
-      });
-    },
-    removeSelectedItems() {
-      dispatch(state => {
-        if (state.selectedKeys === 'all') {
-          // return 'all' value if still unloaded items (i.e. cursor is not null)
-          return {
-            ...state,
-            items: [],
-            selectedKeys: cursor != null ? 'all' : new Set()
-          };
-        }
-
-        let selectedKeys = state.selectedKeys;
-        let items = state.items.filter(item => !selectedKeys.has(getKey(item)));
-        return {
-          ...state,
-          items,
-          selectedKeys: new Set()
-        };
-      });
-    }
-  };
-}
-
-export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (state: ListState<T>) => ListState<T>) => void): Omit<ListData<T>, 'items' | 'selectedKeys' | 'getItem' | 'filterText'> {
-  let {getKey} = opts;
+export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch: (updater: (state: ListState<T>) => ListState<T>) => void): Omit<ListData<T>, 'items' | 'selectedKeys' | 'getItem' | 'filterText'> {
+  let {cursor, getKey} = opts;
   return {
     setSelectedKeys(selectedKeys: Selection) {
       dispatch(state => ({
@@ -261,7 +210,49 @@ export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (
     append(...values: T[]) {
       dispatch(state => insert(state, state.items.length, ...values));
     },
-    ...removeActions({dispatch, getKey}),
+    remove(...keys: Key[]) {
+      dispatch(state => {
+        let keySet = new Set(keys);
+        let items = state.items.filter(item => !keySet.has(getKey(item)));
+
+        let selection: Selection = 'all';
+        if (state.selectedKeys !== 'all') {
+          selection = new Set(state.selectedKeys);
+          for (let key of keys) {
+            selection.delete(key);
+          }
+        }
+        if (cursor == null && items.length === 0) {
+          selection = new Set();
+        }
+
+        return {
+          ...state,
+          items,
+          selectedKeys: selection
+        };
+      });
+    },
+    removeSelectedItems() {
+      dispatch(state => {
+        if (state.selectedKeys === 'all') {
+          // return 'all' value if there still exists unloaded items (i.e. cursor is not null)
+          return {
+            ...state,
+            items: [],
+            selectedKeys: cursor != null ? 'all' : new Set()
+          };
+        }
+
+        let selectedKeys = state.selectedKeys;
+        let items = state.items.filter(item => !selectedKeys.has(getKey(item)));
+        return {
+          ...state,
+          items,
+          selectedKeys: new Set()
+        };
+      });
+    },
     move(key: Key, toIndex: number) {
       dispatch(state => {
         let index = state.items.findIndex(item => getKey(item) === key);

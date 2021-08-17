@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {createListActions, ListData, ListState, removeActions} from './useListData';
+import {createListActions, ListData, ListState} from './useListData';
 import {Key, Reducer, useEffect, useReducer} from 'react';
 import {LoadingState, Selection, SortDescriptor} from '@react-types/shared';
 
@@ -342,15 +342,8 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     sort(sortDescriptor: SortDescriptor) {
       dispatchFetch({type: 'sorting', sortDescriptor}, sort || load);
     },
-    ...createListActions({...options, getKey}, fn => {
+    ...createListActions({...options, getKey, cursor: data.cursor}, fn => {
       dispatch({type: 'update', updater: fn});
-    }),
-    ...removeActions({
-      dispatch: fn => {
-        dispatch({type: 'update', updater: fn});
-      },
-      getKey,
-      cursor: data.cursor
     }),
     setFilterText(filterText: string) {
       dispatchFetch({type: 'filtering', filterText}, load);
