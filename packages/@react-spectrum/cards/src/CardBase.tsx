@@ -23,7 +23,6 @@ import {useCard} from '@react-aria/cards';
 import {useCardViewContext} from './CardViewContext';
 import {useFocusWithin, useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
-import {FocusRing} from '@react-aria/focus';
 
 // can there be a selection checkbox when not in a grid?
 // is there a way to turn off the selection checkbox?
@@ -107,6 +106,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
           {manager && manager.selectionMode !== 'none' && (
             <div className={classNames(styles, 'spectrum-Card-checkboxWrapper')}>
               <Checkbox
+                isDisabled={isDisabled}
                 excludeFromTabOrder
                 isSelected={isSelected}
                 onChange={onChange}
