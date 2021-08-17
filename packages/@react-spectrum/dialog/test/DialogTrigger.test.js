@@ -965,7 +965,7 @@ describe('DialogTrigger', function () {
       expect(outerDialog).toBeVisible();
     }); // wait for animation
     let innerButton = getByTestId('innerButton');
-    userEvent.tab();
+    act(() => innerButton.focus());
     fireEvent.keyDown(document.activeElement, {key: 'Enter'});
     fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 

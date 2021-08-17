@@ -95,6 +95,9 @@ export function FocusScope(props: FocusScopeProps) {
     }
 
     scopeRef.current = nodes;
+  }, [children, parentScope]);
+
+  useLayoutEffect(() => {
     scopes.set(scopeRef, parentScope);
     return () => {
       if (activeScope === scopeRef) {
@@ -102,7 +105,7 @@ export function FocusScope(props: FocusScopeProps) {
       }
       scopes.delete(scopeRef);
     };
-  }, [children, parentScope]);
+  }, [scopeRef, parentScope]);
 
   useFocusContainment(scopeRef, contain);
   useRestoreFocus(scopeRef, restoreFocus, contain);
@@ -196,7 +199,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
   let focusedNode = useRef<HTMLElement>();
 
   let raf = useRef(null);
-  useEffect(() => {
+  useLayoutEffect(() => {
     let scope = scopeRef.current;
     if (!contain) {
       return;
@@ -241,6 +244,8 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
         } else if (activeScope) {
           focusFirstInScope(activeScope.current);
         }
+      } else if (scopeRef === activeScope) {
+        focusedNode.current = e.target;
       }
     };
 
