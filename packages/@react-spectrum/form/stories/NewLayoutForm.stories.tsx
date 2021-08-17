@@ -56,17 +56,37 @@ storiesOf('Form/new layout', module)
   )
   .add(
     // maybe some other way to do this one? right now i just check if in a newFormLayout Form, then ditch all their wrappers
+    'fields next to each other - previous',
+    () => (
+      <Form newFormLayout>
+        <Flex>
+          <TextField label="First Name" placeholder="John" marginEnd="size-100" flex={1} />
+          <TextField label="Last Name" placeholder="Smith" flex={1} />
+        </Flex>
+        <TextField label="Street Address" placeholder="123 Any Street" />
+        <Flex>
+          <TextField label="City" placeholder="San Francisco" marginEnd="size-100" flex={1} />
+          <Picker label="State" placeholder="Select a state" items={states} marginEnd="size-100" flex={1}>
+            {item => <Item key={item.abbr}>{item.name}</Item>}
+          </Picker>
+          <TextField label="Zip code" placeholder="12345" flex={1} />
+        </Flex>
+      </Form>
+    )
+  )
+  .add(
+    // maybe some other way to do this one? right now i just check if in a newFormLayout Form, then ditch all their wrappers
     'fields next to each other',
     () => (
       <Form newFormLayout>
-        <Flex gap={10}>
+        <Flex gap="size-100">
           <FieldGroup>
             <TextField flex="1" label="First Name" placeholder="John" />
             <TextField flex="1" label="Last Name" placeholder="Smith" />
           </FieldGroup>
         </Flex>
         <TextField label="Street Address" placeholder="123 Any Street" />
-        <Flex gap={10}>
+        <Flex gap="size-100">
           <FieldGroup>
             <TextField flex="1" label="City" placeholder="San Francisco" />
             <Picker flex="1" label="State" placeholder="Select a state" items={states}>
