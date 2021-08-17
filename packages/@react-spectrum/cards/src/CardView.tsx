@@ -81,10 +81,9 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     // TODO: fix the typescript here, layout definition need to show that it implements keyboard delegate
     keyboardDelegate: cardViewLayout
   }, state, domRef);
-
   // TODO: may need to add aria-rowcount to the virtualizer div? It exists in v2
   return (
-    <CardViewContext.Provider value={{state, cardOrientation, cardSize, isQuiet, layoutType: cardViewLayout.layoutType}}>
+    <CardViewContext.Provider value={{state, cardOrientation, cardSize, isQuiet, layout: cardViewLayout}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}
@@ -147,8 +146,9 @@ function InternalCard(props) {
   let {
     item
   } = props;
-  let {state, cardOrientation, cardSize, isQuiet, layoutType} = useCardViewContext();
+  let {state, cardOrientation, cardSize, isQuiet, layout} = useCardViewContext();
 
+  let layoutType = layout.layoutType;
   let rowRef = useRef();
   let cellRef = useRef<DOMRefValue<HTMLDivElement>>();
   let unwrappedRef = useUnwrapDOMRef(cellRef);
@@ -163,6 +163,7 @@ function InternalCard(props) {
     focusMode: 'cell'
   }, state, unwrappedRef);
 
+
   if (layoutType === 'grid' || layoutType === 'gallery') {
     isQuiet = true;
   }
@@ -172,6 +173,8 @@ function InternalCard(props) {
     <div {...rowProps} ref={rowRef} style={{padding: '2px', height: '100%'}}>
       <CardBase
         ref={cellRef}
+        // TODO: readd this if we need to trigger a updateItemSize when the real image loads and we were using placeholder images
+        // cardViewLayout={cardViewLayout}
         articleProps={gridCellProps}
         isQuiet={isQuiet}
         orientation={cardOrientation}
@@ -180,7 +183,12 @@ function InternalCard(props) {
         UNSAFE_className={
           classNames(
             styles,
-            'spectrum-Card--inGrid'
+            'spectrum-Card--inGrid',
+            {
+              'spectrum-Card--grid': layout === 'grid',
+              'spectrum-Card--gallery': layout === 'gallery',
+              'spectrum-Card--waterfall': layout === 'waterfall',
+            }
           )
         }>
         {item.rendered}

@@ -82,7 +82,6 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
   }
 
   validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
-    console.log('validate')
     // TODO: should this have the invalidationContext
     this.collection = this.virtualizer.collection;
     this.buildCollection(invalidationContext);
@@ -99,6 +98,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     this.lastCollection = this.collection;
   }
 
+  // TODO: split this down further
   buildCollection(invalidationContext: InvalidationContext<Node<T>, unknown>) {
     // Compute the number of columns needed to display the content
     let visibleWidth = this.virtualizer.visibleRect.width;
@@ -121,16 +121,16 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     // Setup an array of column heights
     let columnHeights = Array(this.numColumns).fill(this.margin);
     for (let node of this.collection) {
+      let key = node.key;
       // Compute the height of the item. Use the existing height if available,
       // otherwise call the delegate to estimate the size.
-      let oldLayoutInfo = this.layoutInfos.get(node.key)
+      let oldLayoutInfo = this.layoutInfos.get(key)
       let height;
       let estimatedSize = true;
       if (oldLayoutInfo) {
         height = oldLayoutInfo.rect.height;
         estimatedSize = invalidationContext.sizeChanged || oldLayoutInfo.estimatedSize;
       } else if (node.props.width && node.props.height) {
-        // TODO: see if the layout works without this else if statement
         let nodeWidth = node.props.width;
         let nodeHeight = node.props.height;
         let scaledHeight = Math.round(nodeWidth * ((itemWidth) / nodeHeight));
@@ -145,11 +145,12 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       let y = columnHeights[column];
 
       let rect = new Rect(x, y, itemWidth, height)
-      let layoutInfo = new LayoutInfo(node.type, node.key, rect);
+      let layoutInfo = new LayoutInfo(node.type, key, rect);
       layoutInfo.estimatedSize = estimatedSize;
-      this.layoutInfos.set(node.key, layoutInfo)
+      this.layoutInfos.set(key, layoutInfo)
 
-      // TODO: figure out this bit, when does this get called and what to replace this.collectionView._transaction with
+      // TODO: From v2 figure out this bit, when does this get called and what to replace this.collectionView._transaction with?
+      // Removing it from v2 doesn't seem to do anything?
       // if (layoutInfo.estimatedSize && !invalidationContext.contentChanged && !this.collectionView._transaction) {
       //   this.updateItemSize(new IndexPath(section, i));
       // }
@@ -185,57 +186,28 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       y = placeholder.rect.maxY;
     }
 
-    // TODO: check if this is correct
     this.contentSize = new Size(this.virtualizer.visibleRect.width, y);
   }
 
-  updateItemSize(key, size) {
-    console.log('updating', key, size)
+  updateItemSize(key: Key, size: Size) {
+    let layoutInfo = this.layoutInfos.get(key);
+    if (!size || !layoutInfo) {
+      return false;
+    }
+
+    if (size.height !== layoutInfo.rect.height) {
+      // TODO: also not sure about copying layout info vs mutating it. Listlayout does the below
+      // but I feel that is because it actually maintained a layoutNode map cache which this doesn't have
+      let newLayoutInfo = layoutInfo.copy();
+      newLayoutInfo.rect.height = size.height;
+      this.layoutInfos.set(key, newLayoutInfo);
+      // TODO: v2 had layoutInfo.estimatedSize = view.estimatedSize || false; but we can't do the same here?
+      layoutInfo.estimatedSize = false;
+      return true;
+    }
+
+    return false;
   }
-  // TODO: add updateItemSize since Virtualizer statelly needs it?
-  // // Do we really need this?
-  // updateItemSize(key: Key, size: Size) {
-  //   let layoutInfo = this.layoutInfos.get(key);
-  //   // If no layoutInfo, item has been deleted/removed.
-  //   if (!layoutInfo) {
-  //     return false;
-  //   }
-
-  //   layoutInfo.estimatedSize = false;
-  //   // TODO: updated this to check width as well, double check if we need this
-  //   if (layoutInfo.rect.height !== size.height || layoutInfo.rect.width !== size.width) {
-  //     // Copy layout info rather than mutating so that later caches are invalidated.
-  //     let newLayoutInfo = layoutInfo.copy();
-  //     newLayoutInfo.rect.height = size.height;
-  //     newLayoutInfo.rect.width = size.width;
-  //     this.layoutInfos.set(key, newLayoutInfo);
-  //     return true;
-  //   }
-
-  //   return false;
-  // }
-
-
-  // TODO: update this appropriately, should it match the updateItemSizes of the other layouts?
-  // updateItemSize(indexPath) {
-  //   let {section, index} = indexPath;
-  //   let view = this.collectionView.getItemView(section, index);
-  //   if (!view) {
-  //     return false;
-  //   }
-
-
-  //   let layoutInfo = this.layoutInfos[section][index];
-  //   let size = view.getSize();
-
-  //   if (size.height !== layoutInfo.rect.height) {
-  //     layoutInfo.rect.height = size.height;
-  //     layoutInfo.estimatedSize = view.estimatedSize || false;
-  //     return true;
-  //   }
-
-  //   return false;
-  // }
 
   getNextColumnIndex(columnHeights) {
     let minIndex = 0;
@@ -285,16 +257,17 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
   //   this.layoutInfos[section] = [];
   // }
 
+  // TODO: the below two suffer from occasional issues with skipping adjacent cards in favor for ones in the next column
   getKeyRightOf(key: Key) {
     let layoutInfo = this.getLayoutInfo(key);
-    let rect = new Rect(layoutInfo.rect.maxX + 1, 0, this.virtualizer.visibleRect.width, this.virtualizer.visibleRect.height);
+    let rect = new Rect(layoutInfo.rect.maxX + 1, 0, this.virtualizer.visibleRect.width, this.virtualizer.contentSize.height);
 
     return this._findClosest(layoutInfo.rect, rect)?.key;
   }
 
   getKeyLeftOf(key: Key) {
     let layoutInfo = this.getLayoutInfo(key);
-    let rect = new Rect(0, 0, layoutInfo.rect.x - 1, this.virtualizer.visibleRect.height);
+    let rect = new Rect(0, 0, layoutInfo.rect.x - 1, this.virtualizer.contentSize.height);
 
     return this._findClosest(layoutInfo.rect, rect)?.key;
   }

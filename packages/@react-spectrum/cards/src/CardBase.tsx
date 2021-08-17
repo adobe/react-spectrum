@@ -11,7 +11,7 @@
  */
 
 import {Checkbox} from '@react-spectrum/checkbox';
-import {classNames, SlotProvider, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useDOMRef, useHasChild, useUnwrapDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {Divider} from '@react-spectrum/divider';
 import {DOMRef, Node} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
@@ -65,6 +65,16 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
   });
 
   let hasFooter = useHasChild(`.${styles['spectrum-Card-footer']}`, gridRef);
+
+  // TODO maybe remove this stuff? If we have placeholder images, we may need to call updateSize when the real images load. Can pass onLoad to the Image if so
+  // let layoutInfo = cardViewLayout.layoutInfos.get(key);
+  // let reusableView = cardViewLayout.virtualizer.getReusableView(layoutInfo)
+  // let unwrappedRef = useUnwrapDOMRef(domRef);
+  // let {updateSize} = useVirtualizerItem({reusableView, ref: domRef})
+  // let onLoad = () => {
+  //   updateSize();
+  // }
+
 
   let slots = useMemo(() => ({
     image: {UNSAFE_className: classNames(styles, 'spectrum-Card-image'), objectFit: isQuiet ? 'contain' : 'cover', alt: ''},
