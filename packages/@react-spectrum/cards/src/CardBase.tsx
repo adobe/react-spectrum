@@ -22,7 +22,6 @@ import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {useCardViewContext} from './CardViewContext';
 import {useFocusWithin, useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
-import {FocusRing} from '@react-aria/focus';
 
 interface CardBaseProps<T> extends SpectrumCardProps {
   articleProps?: HTMLAttributes<HTMLElement>,
@@ -174,6 +173,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
           {manager && manager.selectionMode !== 'none' && (
             <div className={classNames(styles, 'spectrum-Card-checkboxWrapper')}>
               <Checkbox
+                isDisabled={isDisabled}
                 excludeFromTabOrder
                 isSelected={isSelected}
                 onChange={onChange}
