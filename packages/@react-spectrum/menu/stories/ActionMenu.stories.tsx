@@ -103,9 +103,9 @@ function DirectionAlignment() {
     <Picker label="Direction" items={directionItems} selectedKey={direction} onSelectionChange={handleDirectionChange}>
       {(item) => <Item key={item.key}>{item.label}</Item>}
     </Picker>
-    <ActionMenu 
-      onAction={action('action')} 
-      align={align} 
+    <ActionMenu
+      onAction={action('action')}
+      align={align}
       direction={direction}>
       <Item key="one">One</Item>
       <Item key="two">Two</Item>
@@ -128,6 +128,9 @@ Quiet.args = {isQuiet: true};
 
 export const Disabled = Template().bind({});
 Disabled.args = {isDisabled: true};
+
+export const DisabledKeys = Template().bind({});
+DisabledKeys.args = {disabledKeys: ['two']};
 
 export const AutoFocus = Template().bind({});
 AutoFocus.args = {autoFocus: true};
