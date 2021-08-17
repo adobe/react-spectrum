@@ -17,17 +17,35 @@ import {useAvatar} from '../';
 describe('useAvatar', () => {
   const renderAvatarHook = (props) => renderHook(() => useAvatar(props)).result.current;
 
-  it('handles defaults', () => {
-    const {avatarProps} = renderAvatarHook({src: 'http://localhost/some_image.png'});
-    expect(avatarProps.alt).toBe('');
-    expect(avatarProps['aria-label']).toBeUndefined();
-    expect(avatarProps['role']).toBeUndefined();
+  describe('when default element type', () => {
+    it('defaults to presentation role when alt is empty', () => {
+      const {avatarProps} = renderAvatarHook({src: 'http://localhost/some_image.png'});
+      expect(avatarProps.alt).toBe('');
+      expect(avatarProps['aria-label']).toBeUndefined();
+      expect(avatarProps['role']).toBeUndefined();
+    });
+
+    it('handles non-empty alt', () => {
+      const {avatarProps} = renderAvatarHook({alt: 'Descriptive', src: 'http://localhost/some_image.png'});
+      expect(avatarProps.alt).toBe('Descriptive');
+      expect(avatarProps['aria-label']).toBeUndefined();
+      expect(avatarProps['role']).toBeUndefined();
+    });
   });
 
-  it('handles custom element type', () => {
-    const {avatarProps} = renderAvatarHook({elementType: 'div', src: 'http://localhost/some_image.png'});
-    expect(avatarProps.alt).toBeUndefined();
-    expect(avatarProps['aria-label']).toBe('');
-    expect(avatarProps['role']).toBe('img');
+  describe('when custom element type', () => {
+    it('defaults to presentation role when alt is empty', () => {
+      const {avatarProps} = renderAvatarHook({elementType: 'div', src: 'http://localhost/some_image.png'});
+      expect(avatarProps.alt).toBeUndefined();
+      expect(avatarProps['aria-label']).toBeUndefined();
+      expect(avatarProps['role']).toBe('presentation');
+    });
+
+    it('handles non-empty alt', () => {
+      const {avatarProps} = renderAvatarHook({alt: 'Descriptive', elementType: 'div', src: 'http://localhost/some_image.png'});
+      expect(avatarProps.alt).toBeUndefined();
+      expect(avatarProps['aria-label']).toBe('Descriptive');
+      expect(avatarProps['role']).toBe('img');
+    });
   });
 });

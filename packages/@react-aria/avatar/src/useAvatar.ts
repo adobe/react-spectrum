@@ -11,23 +11,15 @@
  */
 
 import {AriaAvatarProps} from '@react-types/avatar';
+import {ElementType, HTMLAttributes, ImgHTMLAttributes, SVGAttributes} from 'react';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {ImgHTMLAttributes} from 'react';
 
-interface AriaAvatarOptions extends AriaAvatarProps {
-  /**
-   * The HTML element used to render the avatar, e.g. 'img', or 'div'.
-   *
-   * @default 'img'
-   */
-   elementType?: string
-}
 
-interface AvatarAria {
+interface AvatarAria<T> {
   /**
    * Props for the avatar element.
    */
-  avatarProps: ImgHTMLAttributes<HTMLElement>
+  avatarProps: T
 }
 
 /**
@@ -35,7 +27,10 @@ interface AvatarAria {
  * component. An avatar is a thumbnail representation of an entity, such as a
  * user or an organization.
  */
-export function useAvatar(props: AriaAvatarOptions): AvatarAria {
+export function useAvatar(props: AriaAvatarProps<'div'>): AvatarAria<HTMLAttributes<HTMLDivElement>>;
+export function useAvatar(props: AriaAvatarProps<'img'>): AvatarAria<ImgHTMLAttributes<HTMLImageElement>>;
+export function useAvatar(props: AriaAvatarProps<'svg'>): AvatarAria<SVGAttributes<SVGElement>>;
+export function useAvatar(props: AriaAvatarProps<ElementType>): AvatarAria<HTMLAttributes<HTMLElement> | SVGAttributes<SVGElement>> {
   const {
     elementType = 'img',
     alt = '',
@@ -44,9 +39,12 @@ export function useAvatar(props: AriaAvatarOptions): AvatarAria {
 
   const avatarProps = {
     ...(elementType === 'img' && {alt}),
-    ...(elementType !== 'img' && {
+    ...(elementType !== 'img' && alt && {
       'aria-label': alt,
       role: 'img'
+    }),
+    ...(elementType !== 'img' && !alt && {
+      role: 'presentation'
     })
   };
 
