@@ -138,10 +138,12 @@ export default ${exampleCode}
 `;
   } else {
     let nonRenderCode = exampleCode.replace(/^(<(.|\n)*>)$/m, () => '');
-    exampleCode = exampleCode.replace(nonRenderCode, '');
+    exampleCode = exampleCode.replace(nonRenderCode, '').trim();
+    nonRenderCode = nonRenderCode.trim();
+    nonRenderCode = nonRenderCode.length > 0 ? '\n' + nonRenderCode + '\n' : '';
+    exampleCode = exampleCode.replaceAll('\n', '\n    ');
     exampleCode = `import React from 'react';
-${imports}
-${nonRenderCode}
+${imports}${nonRenderCode}
 export default function Example() {
   return (
     ${exampleCode}
