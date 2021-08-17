@@ -86,6 +86,14 @@ storiesOf('HelpText', module)
     })
   )
   .add(
+    'labelAlign: end, labelPosition: side',
+    () => render({
+      description: 'Password must be at least 8 characters.',
+      labelAlign: 'end',
+      labelPosition: 'side'
+    })
+  )
+  .add(
     'no visible label',
     () => render({
       label: null,

@@ -49,8 +49,7 @@
   }
   /* Not in DNA */
   &.spectrum-HelpText--alignEnd {
-    justify-content: flex-end; /* labelPosition=top case */
-    text-align: end; /* labelPosition=side case */
+    text-align: end; /* Works with labelPosition=top and labelPosition=side */
     .spectrum-HelpText-text {
       margin-inline-end: 0;
       margin-inline-start: var(--spectrum-helptext-neutral-texticon-icon-gap);
