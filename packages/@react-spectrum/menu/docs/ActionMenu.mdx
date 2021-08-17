@@ -34,7 +34,7 @@ after_version: 3.5.0
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['ActionMenu']}
+  componentNames={['Menu']}
   sourceData={[
     {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/popover/'}
   ]} />
@@ -52,7 +52,7 @@ after_version: 3.5.0
 ## Content
 
 ActionMenu follows the [Collection Components](../react-stately/collections.html) API,
-accepting both static and dynamic collections. See [Menu](Menu.html#content) further explination.
+accepting both static and dynamic collections. See [Menu](Menu.html#content) for further explanation.
 
 ```tsx example
 function Example() {
@@ -119,7 +119,7 @@ ActionMenu supports sections in order to group options. Sections can be used by 
 
 ### Dynamic Items
 
-Sections used with dynamic items are populated from a hierarchical data structure. Similarly to the props on Menu, `<Section>` takes an array of data using the `items` prop.
+Sections used with dynamic items are populated from a hierarchical data structure. Similarly to the props on ActionMenu, `<Section>` takes an array of data using the `items` prop.
 
 ```tsx example
 function Example() {
@@ -192,7 +192,7 @@ import {Keyboard, Text} from '@react-spectrum/text';
 
 ### Autofocus
 
-Applying `autoFocus` to the ActionMenu sets focus to an ActionMenu button.
+Applying `autoFocus` to the ActionMenu sets focus to the ActionMenu trigger.
 
 ### Disabled items
 
