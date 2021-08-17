@@ -12,7 +12,7 @@
 
 import {AriaCardProps, SpectrumCardProps} from '@react-types/cards';
 import {Checkbox} from '@react-spectrum/checkbox';
-import {classNames, SlotProvider, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useDOMRef, useHasChild, useUnwrapDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {Divider} from '@react-spectrum/divider';
 import {DOMRef, Node} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useLayoutEffect, useSlotId} from '@react-aria/utils';

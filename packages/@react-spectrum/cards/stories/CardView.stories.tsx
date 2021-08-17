@@ -16,7 +16,6 @@ import {ActionButton, Button} from '@react-spectrum/button';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
 import {Content, Footer} from '@react-spectrum/view';
 import {Flex} from '@react-spectrum/layout';
-import {getImage} from './utils';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
@@ -24,12 +23,12 @@ import {TextField} from '@react-spectrum/textfield';
 import React, {useMemo, useState} from 'react';
 import {useCollator} from '@react-aria/i18n';
 
-let items = [
+let itemsLowVariance = [
   {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 1, title: 'Bob 1'},
-  {width: 640, height: 640, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 2, title: 'Joe 1'},
+  {width: 640, height: 640, src: 'https://i.imgur.com/DhygPot.jpg', id: 2, title: 'Joe 1'},
   {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 3, title: 'Jane 1'},
   {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 4, title: 'Bob 2'},
-  {width: 640, height: 640, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 5, title: 'Joe 2'},
+  {width: 640, height: 640, src: 'https://i.imgur.com/DhygPot.jpg', id: 5, title: 'Joe 2'},
   {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 6, title: 'Jane 2'},
   {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 7, title: 'Bob 3'},
   {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 8, title: 'Joe 3'},
@@ -42,11 +41,61 @@ let items = [
   {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 15, title: 'Jane 5'},
   {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 16, title: 'Bob 6'},
   {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 17, title: 'Joe 6'},
-  {width: 640, height: 640, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 18, title: 'Jane 6'},
+  {width: 640, height: 640, src: 'https://i.imgur.com/DhygPot.jpg', id: 18, title: 'Jane 6'},
   {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 19, title: 'Bob 7'},
   {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 20, title: 'Joe 7'},
   {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 21, title: 'Jane 7'},
   {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 22, title: 'Bob 8'}
+];
+
+let items = [
+  {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Bob 1'},
+  {width: 640, height: 640, src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 1'},
+  {width: 182, height: 1009, src: 'https://i.imgur.com/L7RTlvI.png', title: 'Jane 1'},
+  {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Bob 2'},
+  {width: 640, height: 640, src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 2'},
+  {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Jane 2'},
+  {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Bob 3'},
+  {width: 182, height: 1009, src: 'https://i.imgur.com/L7RTlvI.png', title: 'Joe 3'},
+  {width: 1215, height: 121, src: 'https://i.imgur.com/zzwWogn.jpg', title: 'Jane 3'},
+  {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Bob 4'},
+  {width: 182, height: 1009, src: 'https://i.imgur.com/L7RTlvI.png', title: 'Joe 4'},
+  {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Jane 4'},
+  {width: 182, height: 1009, src: 'https://i.imgur.com/L7RTlvI.png', title: 'Bob 5'},
+  {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Joe 5'},
+  {width: 182, height: 1009, src: 'https://i.imgur.com/L7RTlvI.png', title: 'Jane 5'},
+  {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Bob 6'},
+  {width: 1215, height: 121, src: 'https://i.imgur.com/zzwWogn.jpg', title: 'Joe 6'},
+  {width: 640, height: 640, src: 'https://i.imgur.com/DhygPot.jpg', title: 'Jane 6'},
+  {width: 182, height: 1009, src: 'https://i.imgur.com/L7RTlvI.png', title: 'Bob 7'},
+  {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Joe 7'},
+  {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Jane 7'},
+  {width: 1215, height: 121, src: 'https://i.imgur.com/zzwWogn.jpg', title: 'Bob 8'}
+];
+
+let itemsNoSize = [
+  {src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Bob 1'},
+  {src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 1'},
+  {src: 'https://i.imgur.com/L7RTlvI.png', title: 'Jane 1'},
+  {src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Bob 2'},
+  {src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 2'},
+  {src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Jane 2'},
+  {src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Bob 3'},
+  {src: 'https://i.imgur.com/L7RTlvI.png', title: 'Joe 3'},
+  {src: 'https://i.imgur.com/zzwWogn.jpg', title: 'Jane 3'},
+  {src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Bob 4'},
+  {src: 'https://i.imgur.com/L7RTlvI.png', title: 'Joe 4'},
+  {src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Jane 4'},
+  {src: 'https://i.imgur.com/L7RTlvI.png', title: 'Bob 5'},
+  {src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Joe 5'},
+  {src: 'https://i.imgur.com/L7RTlvI.png', title: 'Jane 5'},
+  {src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Bob 6'},
+  {src: 'https://i.imgur.com/zzwWogn.jpg', title: 'Joe 6'},
+  {src: 'https://i.imgur.com/DhygPot.jpg', title: 'Jane 6'},
+  {src: 'https://i.imgur.com/L7RTlvI.png', title: 'Bob 7'},
+  {src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Joe 7'},
+  {src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Jane 7'},
+  {src: 'https://i.imgur.com/zzwWogn.jpg', title: 'Bob 8'}
 ];
 
 function renderEmptyState() {
@@ -97,8 +146,11 @@ emptyNoHeightGrid.storyName = 'Grid, empty state, no height';
 export const emptyWithHeightGrid = () => renderNoItems({width: '800px', height: '800px', renderEmptyState});
 emptyWithHeightGrid.storyName = 'Grid, empty, set height';
 
+export const DefaultGalleryLowVariance = () => render({layout: GalleryLayout, items: itemsLowVariance});
+DefaultGalleryLowVariance.storyName = 'default gallery layout, low variance in aspect ratios';
+
 export const DefaultGallery = () => render({layout: GalleryLayout, items: items});
-DefaultGallery.storyName = 'default gallery layout';
+DefaultGallery.storyName = 'default gallery layout, high variance in aspect ratios';
 
 export const SmallGallery = () => render({layout: GalleryLayout, cardSize: 'S', items});
 SmallGallery.storyName = 'Gallery layout with small cards';
@@ -121,8 +173,14 @@ emptyWithHeightGallery.storyName = 'Gallery, empty, set height';
 export const DefaultWaterfall = () => render({layout: WaterfallLayout, items: items});
 DefaultWaterfall.storyName = 'default Waterfall layout';
 
-export const SmallWaterfall = () => render({layout: WaterfallLayout, cardSize: 'S', items});
-SmallWaterfall.storyName = 'Waterfall layout with small cards';
+export const DefaultWaterfallNoSize = () => render({layout: WaterfallLayout, items: itemsNoSize});
+DefaultWaterfallNoSize.storyName = 'default Waterfall layout, no size provided with items';
+
+export const QuietWaterfall = () => render({layout: WaterfallLayout, items, isQuiet: true});
+QuietWaterfall.storyName = 'Waterfall layout with quiet cards';
+
+export const QuietWaterfallNoSize = () => render({layout: WaterfallLayout, items, isQuiet: true});
+QuietWaterfallNoSize.storyName = 'Waterfall layout with quiet cards, no size provided with items';
 
 export const isLoadingNoHeightWaterfall = () => renderNoItems({layout: WaterfallLayout, width: '800px', loadingState: 'loading'});
 isLoadingNoHeightWaterfall.storyName = 'Waterfall, loadingState = loading, no height';
@@ -161,15 +219,15 @@ function render(props) {
   }
 
   return (
-    <Flex direction="column">
+    <Flex direction="column" maxWidth="800px" width="100%" height="800px">
       <Flex direction="row" maxWidth="500px" alignItems="end">
         <TextField value={value} onChange={setValue} label="Nth item to remove" />
         <ActionButton onPress={removeItem}>Remove</ActionButton>
       </Flex>
-      <CardView  {...actions} {...props} items={items} layout={layout} width="800px" height="800px" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
+      <CardView  {...actions} {...props} items={items} layout={layout} width="100%" height="100%" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
         {item =>
-          <Card key={item.id} textValue={item.title} width={item.width} height={item.height}>
-            <Image src={getImage(item.id)} />
+          <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
+            <Image src={item.src} />
             <Heading>{item.title}</Heading>
             <Text slot="detail">PNG</Text>
             <Content>Description</Content>
@@ -236,7 +294,7 @@ function renderStatic(props) {
         </Footer>
       </Card>
       <Card textValue="Jane 1">
-        <Image src="https://i.imgur.com/3lzeoK7.jpg" />
+        <Image src="https://i.imgur.com/L7RTlvI.png" />
         <Heading>Jane 1</Heading>
         <Text slot="detail">PNG</Text>
         <Content>Description</Content>
