@@ -157,6 +157,7 @@ governing permissions and limitations under the License.
   &.spectrum-Form--positionSide {
      grid-template-columns: 1fr auto;
      gap: 10px;
+     align-items: start;
 
     > .spectrum-Field-field {
       grid-column-start: 2;
