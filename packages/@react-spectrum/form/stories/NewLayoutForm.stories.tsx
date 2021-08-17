@@ -16,7 +16,7 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {countries, states} from './data';
 import {Flex, Grid} from '@react-spectrum/layout';
-import {Form} from '../';
+import {FieldGroup, Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
@@ -60,18 +60,20 @@ storiesOf('Form/new layout', module)
     () => (
       <Form newFormLayout>
         <Flex gap={10}>
-          <div style={{flex: '1'}}><TextField label="First Name" placeholder="John"/></div>
-          <div style={{flex: '1'}}><TextField label="Last Name" placeholder="Smith" /></div>
+          <FieldGroup>
+            <TextField flex="1" label="First Name" placeholder="John" />
+            <TextField flex="1" label="Last Name" placeholder="Smith" />
+          </FieldGroup>
         </Flex>
         <TextField label="Street Address" placeholder="123 Any Street" />
         <Flex gap={10}>
-          <div style={{flex: '1'}}><TextField label="City" placeholder="San Francisco" /></div>
-          <div style={{flex: '1'}}>
-            <Picker label="State" placeholder="Select a state" items={states}>
+          <FieldGroup>
+            <TextField flex="1" label="City" placeholder="San Francisco" />
+            <Picker flex="1" label="State" placeholder="Select a state" items={states}>
               {item => <Item key={item.abbr}>{item.name}</Item>}
             </Picker>
-          </div>
-          <div style={{flex: '1'}}><TextField label="Zip code" placeholder="12345" /></div>
+            <TextField flex="1" label="Zip code" placeholder="12345" />
+          </FieldGroup>
         </Flex>
       </Form>
     )

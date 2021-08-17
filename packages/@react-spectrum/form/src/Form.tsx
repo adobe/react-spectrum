@@ -24,6 +24,15 @@ export function useFormProps<T extends SpectrumLabelableProps>(props: T): T {
   return {...ctx, ...props};
 }
 
+export function FieldGroup(props) {
+  let contextProps = useFormProps({});
+  return (
+    <FormContext.Provider value={{...contextProps, newFormLayout: false}}>
+      {props.children}
+    </FormContext.Provider>
+  );
+}
+
 const formPropNames = new Set([
   'action',
   'autoComplete',
