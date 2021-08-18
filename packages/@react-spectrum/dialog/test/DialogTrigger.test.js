@@ -965,6 +965,7 @@ describe('DialogTrigger', function () {
       expect(outerDialog).toBeVisible();
     }); // wait for animation
     let innerButton = getByTestId('innerButton');
+    // Focus manually - userEvent.tab is buggy when starting from an element with tabIndex="-1"
     act(() => innerButton.focus());
     fireEvent.keyDown(document.activeElement, {key: 'Enter'});
     fireEvent.keyUp(document.activeElement, {key: 'Enter'});

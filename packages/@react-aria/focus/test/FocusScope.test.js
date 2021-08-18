@@ -1029,6 +1029,72 @@ describe('FocusScope', function () {
       act(() => parent.focus());
       expect(document.activeElement).toBe(child1);
     });
+
+    it('should not lock focus inside a focus scope with a child scope in a portal', function () {
+      function Portal(props) {
+        return ReactDOM.createPortal(props.children, document.body);
+      }
+
+      function Test() {
+        return (
+          <div>
+            <FocusScope autoFocus restoreFocus contain>
+              <input data-testid="parent" />
+              <div>
+                <Portal>
+                  <FocusScope>
+                    <input data-testid="child" />
+                  </FocusScope>
+                </Portal>
+              </div>
+            </FocusScope>
+          </div>
+        );
+      }
+
+      let {getByTestId} = render(<Test />);
+      let parent = getByTestId('parent');
+      let child = getByTestId('child');
+
+      expect(document.activeElement).toBe(parent);
+      act(() => child.focus());
+      expect(document.activeElement).toBe(child);
+      act(() => parent.focus());
+      expect(document.activeElement).toBe(parent);
+    });
+
+    it('should lock focus inside a child focus scope with contain in a portal', function () {
+      function Portal(props) {
+        return ReactDOM.createPortal(props.children, document.body);
+      }
+
+      function Test() {
+        return (
+          <div>
+            <FocusScope autoFocus restoreFocus contain>
+              <input data-testid="parent" />
+              <div>
+                <Portal>
+                  <FocusScope contain>
+                    <input data-testid="child" />
+                  </FocusScope>
+                </Portal>
+              </div>
+            </FocusScope>
+          </div>
+        );
+      }
+
+      let {getByTestId} = render(<Test />);
+      let parent = getByTestId('parent');
+      let child = getByTestId('child');
+
+      expect(document.activeElement).toBe(parent);
+      act(() => child.focus());
+      expect(document.activeElement).toBe(child);
+      act(() => parent.focus());
+      expect(document.activeElement).toBe(child);
+    });
   });
 
   describe('scope child of document.body', function () {

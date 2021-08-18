@@ -243,7 +243,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       if (!activeScope || isAncestorScope(activeScope, scopeRef)) {
         activeScope = scopeRef;
         focusedNode.current = e.target;
-      } else if (scopeRef === activeScope && !isElementInScope(e.target, scopeRef.current)) {
+      } else if (scopeRef === activeScope && !isElementInChildScope(e.target, scopeRef)) {
         // If a focus event occurs outside the active scope (e.g. user tabs from browser location bar),
         // restore focus to the previously focused node or the first tabbable element in the active scope.
         if (focusedNode.current) {
@@ -260,7 +260,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       // Firefox doesn't shift focus back to the Dialog properly without this
       raf.current = requestAnimationFrame(() => {
         // Use document.activeElement instead of e.relatedTarget so we can tell if user clicked into iframe
-        if (scopeRef === activeScope && !isElementInScope(document.activeElement, scopeRef.current)) {
+        if (scopeRef === activeScope && !isElementInChildScope(document.activeElement, scopeRef)) {
           activeScope = scopeRef;
           focusedNode.current = e.target;
           focusedNode.current.focus();
@@ -297,6 +297,18 @@ function isElementInAnyScope(element: Element) {
 
 function isElementInScope(element: Element, scope: HTMLElement[]) {
   return scope.some(node => node.contains(element));
+}
+
+function isElementInChildScope(element: Element, scope: ScopeRef) {
+  // node.contains in isElementInScope covers child scopes that are also DOM children,
+  // but does not cover child scopes in portals.
+  for (let s of scopes.keys()) {
+    if ((s === scope || isAncestorScope(scope, s)) && isElementInScope(element, s.current)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 function isAncestorScope(ancestor: ScopeRef, scope: ScopeRef) {
