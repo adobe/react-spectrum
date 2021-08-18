@@ -100,7 +100,13 @@ export function FocusScope(props: FocusScopeProps) {
   useLayoutEffect(() => {
     scopes.set(scopeRef, parentScope);
     return () => {
-      if (activeScope === scopeRef) {
+      // Restore the active scope on unmount if this scope or a descendant scope is active.
+      // Parent effect cleanups run before children, so we need to check if the
+      // parent scope actually still exists before restoring the active scope to it.
+      if (
+        (scopeRef === activeScope || isAncestorScope(scopeRef, activeScope)) &&
+        (!parentScope || scopes.has(parentScope))
+      ) {
         activeScope = parentScope;
       }
       scopes.delete(scopeRef);
@@ -212,6 +218,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       }
 
       let focusedElement = document.activeElement as HTMLElement;
+      let scope = scopeRef.current;
       if (!isElementInScope(focusedElement, scope)) {
         return;
       }
@@ -302,7 +309,7 @@ function isAncestorScope(ancestor: ScopeRef, scope: ScopeRef) {
     return true;
   }
 
-  return isAncestorScope(parent, scope);
+  return isAncestorScope(ancestor, parent);
 }
 
 function focusElement(element: HTMLElement | null, scroll = false) {

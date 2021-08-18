@@ -958,6 +958,77 @@ describe('FocusScope', function () {
       userEvent.tab({shift: true});
       expect(document.activeElement).toBe(child3);
     });
+
+    it('should restore to the correct scope on unmount', function () {
+      function Test({show1, show2, show3}) {
+        return (
+          <div>
+            <input data-testid="outside" />
+            <FocusScope autoFocus restoreFocus contain>
+              <input data-testid="parent" />
+              {show1 &&
+                <FocusScope contain>
+                  <input data-testid="child1" />
+                  {show2 &&
+                    <FocusScope contain>
+                      <input data-testid="child2" />
+                      {show3 &&
+                        <FocusScope contain>
+                          <input data-testid="child3" />
+                        </FocusScope>
+                      }
+                    </FocusScope>
+                  }
+                </FocusScope>
+              }
+            </FocusScope>
+          </div>
+        );
+      }
+
+      let {rerender, getByTestId} = render(<Test />);
+      let parent = getByTestId('parent');
+
+      expect(document.activeElement).toBe(parent);
+
+      act(() => rerender(<Test show1 />));
+      expect(document.activeElement).toBe(parent);
+
+      // Can move into a child, but not out.
+      let child1 = getByTestId('child1');
+      userEvent.tab();
+      expect(document.activeElement).toBe(child1);
+
+      act(() => parent.focus());
+      expect(document.activeElement).toBe(child1);
+
+      rerender(<Test show1 show2 />);
+      expect(document.activeElement).toBe(child1);
+
+      let child2 = getByTestId('child2');
+      userEvent.tab();
+      expect(document.activeElement).toBe(child2);
+
+      act(() => child1.focus());
+      expect(document.activeElement).toBe(child2);
+
+      act(() => parent.focus());
+      expect(document.activeElement).toBe(child2);
+
+      rerender(<Test show1 show2 show3 />);
+
+      let child3 = getByTestId('child3');
+      userEvent.tab();
+      expect(document.activeElement).toBe(child3);
+
+      rerender(<Test show1 />);
+
+      act(() => child1.focus());
+      expect(document.activeElement).toBe(child1);
+
+      act(() => parent.focus());
+      expect(document.activeElement).toBe(child1);
+    });
   });
 
   describe('scope child of document.body', function () {
