@@ -59,6 +59,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
   protected itemPadding: number;
   protected numColumns: number;
   protected itemWidth: number;
+  protected horizontalSpacing: number;
 
   constructor(options: WaterfallLayoutOptions<T> = {}) {
     super(options);
@@ -117,6 +118,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     // Compute the horizontal spacing
     // if only one column, we cannot divide by zero, so set it to 1
     let horizontalSpacing = Math.round((availableWidth - this.numColumns * itemWidth) / Math.max(1, this.numColumns - 1));
+    this.horizontalSpacing = horizontalSpacing;
 
     // Setup an array of column heights
     let columnHeights = Array(this.numColumns).fill(this.margin);
@@ -259,16 +261,17 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
 
   getClosestRight(key: Key) {
     let layoutInfo = this.getLayoutInfo(key);
-    // TODO: perhaps refine this to only check the immediate next column. Then if no key is returned, check the column after that and loop until we reach the last column
-    // That way we prioritize adjacent cards even if the card two columns over is technically close due to the card inbetween being really tall (weakness of measuring distance from the card's top corners)
-    let rect = new Rect(layoutInfo.rect.maxX + 1, 0, this.virtualizer.visibleRect.width, this.virtualizer.contentSize.height);
+    // Refactored from v2. Current strategy is to find the closest card in the adjacent column.
+    // This prevent the issue where it was possible that the closest layoutInfo would be two columns over due to the middle card being exceptionally tall
+    // and thus the top corner to top corner distance was massive
+    let rect = new Rect(layoutInfo.rect.maxX + 1, 0, layoutInfo.rect.width + this.horizontalSpacing, this.virtualizer.contentSize.height);
 
     return this._findClosest(layoutInfo.rect, rect)?.key;
   }
 
   getClosestLeft(key: Key) {
     let layoutInfo = this.getLayoutInfo(key);
-    let rect = new Rect(0, 0, layoutInfo.rect.x - 1, this.virtualizer.contentSize.height);
+    let rect = new Rect(layoutInfo.rect.x - layoutInfo.rect.width - this.horizontalSpacing - 1, 0, layoutInfo.rect.width + this.horizontalSpacing, this.virtualizer.contentSize.height);
 
     return this._findClosest(layoutInfo.rect, rect)?.key;
   }

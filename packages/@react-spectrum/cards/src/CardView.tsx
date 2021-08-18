@@ -81,7 +81,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     // TODO: fix the typescript here, layout definition need to show that it implements keyboard delegate
     keyboardDelegate: cardViewLayout
   }, state, domRef);
-  // TODO: may need to add aria-rowcount to the virtualizer div? It exists in v2
+  // TODO: does aria-row count and aria-col count need to be modified? Perhaps aria-col count needs to be omitted
   return (
     <CardViewContext.Provider value={{state, cardOrientation, cardSize, isQuiet, layout: cardViewLayout}}>
       <Virtualizer
