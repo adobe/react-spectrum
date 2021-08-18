@@ -100,7 +100,12 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
     for (let cur of layoutInfos) {
       if (cur.type === 'item') {
-        let dist = Math.pow(target.x - cur.rect.x, 2) + Math.pow(target.y - cur.rect.y, 2);
+        let curRect = cur.rect;
+        let targetMidX = (target.x + target.maxX) / 2;
+        let targetMidY = (target.y + target.maxY) / 2;
+        let curMidX = (curRect.x + curRect.maxX) / 2;
+        let curMidY = (curRect.y + curRect.maxY) / 2;
+        let dist = Math.pow(targetMidX - curMidX, 2) + Math.pow(targetMidY - curMidY, 2);
         if (dist < bestDistance) {
           best = cur;
           bestDistance = dist;

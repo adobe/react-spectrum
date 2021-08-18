@@ -257,19 +257,28 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
   //   this.layoutInfos[section] = [];
   // }
 
-  // TODO: the below two suffer from occasional issues with skipping adjacent cards in favor for ones in the next column
-  getKeyRightOf(key: Key) {
+  getClosestRight(key: Key) {
     let layoutInfo = this.getLayoutInfo(key);
+    // TODO: perhaps refine this to only check the immediate next column. Then if no key is returned, check the column after that and loop until we reach the last column
+    // That way we prioritize adjacent cards even if the card two columns over is technically close due to the card inbetween being really tall (weakness of measuring distance from the card's top corners)
     let rect = new Rect(layoutInfo.rect.maxX + 1, 0, this.virtualizer.visibleRect.width, this.virtualizer.contentSize.height);
 
     return this._findClosest(layoutInfo.rect, rect)?.key;
   }
 
-  getKeyLeftOf(key: Key) {
+  getClosestLeft(key: Key) {
     let layoutInfo = this.getLayoutInfo(key);
     let rect = new Rect(0, 0, layoutInfo.rect.x - 1, this.virtualizer.contentSize.height);
 
     return this._findClosest(layoutInfo.rect, rect)?.key;
+  }
+
+  getKeyRightOf(key: Key) {
+    return this.direction === 'rtl' ?  this.getClosestLeft(key) : this.getClosestRight(key);
+  }
+
+  getKeyLeftOf(key: Key) {
+    return this.direction === 'rtl' ?  this.getClosestRight(key) : this.getClosestLeft(key);
   }
 
   // TODO: add when re-enabling drag and drop
