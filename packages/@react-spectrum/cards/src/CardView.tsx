@@ -185,9 +185,9 @@ function InternalCard(props) {
             styles,
             'spectrum-Card--inGrid',
             {
-              'spectrum-Card--grid': layout === 'grid',
-              'spectrum-Card--gallery': layout === 'gallery',
-              'spectrum-Card--waterfall': layout === 'waterfall',
+              'spectrum-Card--grid': layoutType === 'grid',
+              'spectrum-Card--gallery': layoutType === 'gallery',
+              'spectrum-Card--waterfall': layoutType === 'waterfall',
             }
           )
         }>
