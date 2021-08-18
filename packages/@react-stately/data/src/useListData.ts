@@ -240,7 +240,7 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
           return {
             ...state,
             items: [],
-            selectedKeys: cursor != null ? 'all' : new Set()
+            selectedKeys: new Set()
           };
         }
 
