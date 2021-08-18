@@ -98,6 +98,7 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     let best = null;
     let bestDistance = Infinity;
 
+    // TODO: for judging closest left/right card, perhaps we should calc the distance between the top of the current and the top and bottom of the next layoutInfo and take the smallest?
     for (let cur of layoutInfos) {
       if (cur.type === 'item') {
         let curRect = cur.rect;
