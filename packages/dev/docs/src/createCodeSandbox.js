@@ -83,6 +83,7 @@ export function createCodeSandbox(e) {
   let exampleTitle = document.querySelector('h1').textContent;
   let exampleCode = e.target.parentNode.parentNode.querySelector('.source').textContent;
   let pageImports =  e.target.closest('.example').getAttribute('data-imports');
+  let extraCode =  e.target.closest('.example').getAttribute('data-extra-code');
   let importsRegex = /import ((?:.|\n)*?) from (['"].*?['"]);?/g;
   let packageInfo = e.target.closest('article').querySelector('tbody').childNodes;
   let packageName = packageInfo[0].innerText.split('add ')[1];
@@ -139,6 +140,14 @@ export default ${exampleCode}
   } else {
     let nonRenderCode = exampleCode.replace(/^(<(.|\n)*>)$/m, () => '');
     exampleCode = exampleCode.replace(nonRenderCode, '').trim();
+    let extraIncluded = false;
+    extraCode.replace(/(let\s|const\s|var\s|function\s)\w+/g, (a) => {
+      let identifier = a.split(' ')[1];
+      if (!extraIncluded && identifier.length > 1 && exampleCode.includes(identifier)) {
+        nonRenderCode += extraCode;
+        extraIncluded = true;
+      }
+    });
     nonRenderCode = nonRenderCode.trim();
     nonRenderCode = nonRenderCode.length > 0 ? '\n' + nonRenderCode + '\n' : '';
     exampleCode = exampleCode.replaceAll('\n', '\n    ');

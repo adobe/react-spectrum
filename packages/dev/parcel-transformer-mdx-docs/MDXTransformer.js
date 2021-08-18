@@ -37,6 +37,7 @@ module.exports = new Transformer({
   async transform({asset, options}) {
     let exampleCode = [];
     let exampleImports = [];
+    let exampleExtraCode = [];
     let assetPackage = await asset.getPackage();
     let preReleaseParts = assetPackage.version.match(/(alpha)|(beta)|(rc)/);
     let preRelease = preReleaseParts ? preReleaseParts[0] : '';
@@ -47,6 +48,10 @@ module.exports = new Transformer({
           if (meta === 'import') {
             exampleCode.push(node.value);
             exampleImports.push(node.value);
+            let nonImportCode = node.value.replace(/import ((?:.|\n)*?) from (['"].*?['"]);?/g, '').trim();
+            if (nonImportCode.length > 0) {
+              exampleExtraCode.push(nonImportCode);
+            }
             node.meta = null;
             return [];
           }
@@ -75,6 +80,7 @@ module.exports = new Transformer({
                 let name = code.match(/^\s*function (.*?)\s*\(/)[1];
                 code = `${code}\nReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
+                exampleExtraCode.push(code.replace(/^(<(.|\n)*>)$/m, () => '').trim());
                 code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`);
               }
             }
@@ -218,6 +224,7 @@ module.exports = new Transformer({
           if (node.tagName === 'pre' && node.children && node.children.length > 0 && node.children[0].tagName === 'code' && node.children[0].properties.metastring) {
             node.properties.className = node.children[0].properties.metastring.split(' ');
             node.properties['data-imports'] = exampleImports.join('/n');
+            node.properties['data-extra-code'] = exampleExtraCode.filter(c => c !== '').join('/n');
           }
 
           return [node];
