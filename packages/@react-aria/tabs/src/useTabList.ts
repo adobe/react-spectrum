@@ -32,7 +32,8 @@ interface TabListAria {
 export function useTabList<T>(props: AriaTabListProps<T>, state: TabListState<T>, ref: RefObject<HTMLElement>): TabListAria {
   let {
     orientation = 'horizontal',
-    keyboardActivation = 'automatic'
+    keyboardActivation = 'automatic',
+    isVirtualized
   } = props;
   let {
     collection,
@@ -51,7 +52,8 @@ export function useTabList<T>(props: AriaTabListProps<T>, state: TabListState<T>
     selectionManager: manager,
     keyboardDelegate: delegate,
     selectOnFocus: keyboardActivation === 'automatic',
-    disallowEmptySelection: true
+    disallowEmptySelection: true,
+    isVirtualized
   });
 
   // Compute base id for all tabs

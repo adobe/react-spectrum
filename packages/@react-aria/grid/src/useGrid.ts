@@ -83,7 +83,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   let {collectionProps} = useSelectableCollection({
     ref,
     selectionManager: state.selectionManager,
-    keyboardDelegate: delegate
+    keyboardDelegate: delegate,
+    isVirtualized
   });
 
   let id = useId();
