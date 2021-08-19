@@ -140,7 +140,7 @@ If you need to add additional structure to `Tabs` such as buttons in-line with t
 `TabList` and `TabPanels` are not required to be the immediate children of `Tabs`.
 
 ```tsx example
-function Example () {
+function Example(props) {
   let [tabs, setTabs] = React.useState([
     {name: 'Tab 1', children: 'Tab Body 1'},
     {name: 'Tab 2', children: 'Tab Body 2'},
