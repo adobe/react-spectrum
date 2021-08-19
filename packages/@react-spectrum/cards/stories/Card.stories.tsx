@@ -15,6 +15,7 @@ import {ActionMenu, Item} from '@react-spectrum/menu';
 import assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
 import {Button} from '@react-spectrum/button';
 import {Card} from '../';
+import {CardBase} from '../src/CardBase';
 import {CardViewContext} from '../src/CardViewContext';
 import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {Content, Footer} from '@react-spectrum/view';
@@ -24,7 +25,6 @@ import {Image} from '@react-spectrum/image';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
-import {CardBase} from '../src/CardBase';
 
 
 const meta: Meta<SpectrumCardProps> = {

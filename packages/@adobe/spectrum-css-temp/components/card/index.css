@@ -780,8 +780,9 @@ Quiet Vertical
 
 /** Standard Horizontal **/
 :not(.constrainedX):not(.constrainedY).spectrum-Card--horizontal {
-  border: var(--spectrum-card-border-size) solid transparent;
-  block-size: var(--spectrum-global-dimension-size-1200);
+  border-width: var(--spectrum-card-border-size);
+  border-style: solid;
+  border-radius: var(--spectrum-card-border-radius);
   .spectrum-Card-checkboxWrapper {
     display: none;
   }
@@ -795,37 +796,49 @@ Quiet Vertical
   }
 
   .spectrum-Card-grid {
+    position: relative;
     display: grid;
     block-size: 100%;
-    grid-template-columns: var(--spectrum-global-dimension-size-1200) var(--spectrum-global-dimension-size-200) 1fr auto;
+    grid-template-columns: auto var(--spectrum-global-dimension-size-200) 1fr auto;
     grid-template-rows: auto 1fr;
     grid-template-areas:
       "preview . title   actionmenu"
-      "preview . content .";
-
-  /* can't quite tell if the content should go under the menu */
+      "preview . content content";
 
     &:before {
       content: ' ';
       grid-area: preview;
-
-      /* aspect ratio 1:1 is taken care of by card height and 1st column width */
 
       border-start-start-radius: var(--spectrum-card-quiet-border-radius);
       border-end-start-radius: var(--spectrum-card-quiet-border-radius);
       transition: background-color var(--spectrum-global-animation-duration-100);
     }
   }
+  /** This size helper is only for horizontal cards where height of the image is fluid instead of the usual
+      width. https://stackoverflow.com/questions/26438388/maintain-div-aspect-ratio-according-to-height
+   **/
+  .spectrum-Card-sizeHelper {
+    display: block;
+    grid-area: preview;
+    block-size: 100%;
+    inline-size: auto;
+  }
   .spectrum-Card-image,
   .spectrum-Card-illustration {
+    grid-area: preview;
+    position: absolute;
     block-size: 100%;
     inline-size: 100%;
+    min-inline-size: 100%; /* I do not know why setting a min-width causes the image to shrink */
+    /*aspect-ratio: 1/1;*/ /* can't use in safari or FF :( */
 
     align-self: center;
     justify-self: center;
 
     border-start-start-radius: var(--spectrum-card-border-radius);
     border-end-start-radius: var(--spectrum-card-border-radius);
+    border-inline-end-width: var(--spectrum-card-border-size);
+    border-inline-end-styles: solid;
   }
 
   .spectrum-Card-image {
@@ -869,4 +882,102 @@ Quiet Vertical
   }
 }
 
+.constrainedX.constrainedY.spectrum-Card--horizontal {
+  border-width: var(--spectrum-card-border-size);
+  border-style: solid;
+  border-radius: var(--spectrum-card-border-radius);
+  .spectrum-Card-checkboxWrapper {
+    display: none;
+  }
+  &.is-focused,
+  &.is-selected,
+  &:focus,
+  &:hover {
+    .spectrum-Card-checkboxWrapper {
+      display: none;
+    }
+  }
+
+  .spectrum-Card-grid {
+    display: grid;
+    block-size: 100%;
+    grid-template-columns: auto var(--spectrum-global-dimension-size-200) 1fr auto;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "preview . title   actionmenu"
+      "preview . content content";
+
+    &:before {
+      content: ' ';
+
+      inline-size: 100%;
+      block-size: 100%;
+      border-radius: var(--spectrum-card-border-radius);
+      transition: background-color var(--spectrum-global-animation-duration-100);
+    }
+  }
+  .spectrum-Card-sizeHelper {
+    display: block;
+    grid-area: preview;
+    block-size: 100%;
+    inline-size: auto;
+  }
+  .spectrum-Card-image,
+  .spectrum-Card-illustration {
+    grid-area: preview;
+    position: absolute;
+    block-size: 100%;
+    inline-size: 100%;
+    min-inline-size: 100%; /* I do not know why setting a min-width causes the image to shrink */
+    /*aspect-ratio: 1/1;*/ /* can't use in safari or FF :( */
+
+    align-self: center;
+    justify-self: center;
+
+    border-start-start-radius: var(--spectrum-card-border-radius);
+    border-end-start-radius: var(--spectrum-card-border-radius);
+    border-inline-end-width: var(--spectrum-card-border-size);
+    border-inline-end-styles: solid;
+  }
+
+  .spectrum-Card-image {
+  }
+
+  .spectrum-Card-illustration {
+  }
+
+  .spectrum-Card-avatar {
+    display: none;
+  }
+  .spectrum-Card-heading {
+    align-self: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-inline-end: var(--spectrum-card-title-padding-right);
+  }
+  .spectrum-Card-detail {
+    display: none;
+  }
+  .spectrum-Card-actions {
+    align-self: center;
+    margin-inline-end: var(--spectrum-global-dimension-size-150);
+  }
+  /* how to handle long description?? */
+  .spectrum-Card-content {
+    width: 100%;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    /* not working because this line is removed in css preprocessing */
+    -webkit-box-orient: vertical;
+    visibility: visible;
+  }
+  .spectrum-Card-divider {
+    display: none;
+  }
+  .spectrum-Card-footer {
+    display: none;
+  }
+}
 /** END Standard Horizontal **/

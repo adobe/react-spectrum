@@ -104,6 +104,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
                 aria-label="select" />
             </div>
           )}
+          {orientation === 'horizontal' && <img className={classNames(styles, 'spectrum-Card-sizeHelper')} aria-hidden alt="" width="1" height="1" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" />}
           <SlotProvider slots={slots}>
             {props.children}
             {hasFooter && <Divider />}
