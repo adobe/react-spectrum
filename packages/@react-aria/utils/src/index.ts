@@ -29,3 +29,4 @@ export * from './getScrollParent';
 export * from './useViewportSize';
 export * from './useDescription';
 export * from './platform';
+export * from './useEvent';

@@ -38,7 +38,7 @@ export class BuddhistCalendar extends GregorianCalendar {
     );
   }
 
-  getCurrentEra() {
-    return 'BE';
+  getEras() {
+    return ['BE'];
   }
 }

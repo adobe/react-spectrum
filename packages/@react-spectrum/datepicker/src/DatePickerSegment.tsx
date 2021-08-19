@@ -13,10 +13,12 @@
 import {classNames} from '@react-spectrum/utils';
 import {DatePickerBase} from '@react-types/datepicker';
 import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
-import React from 'react';
+import {NumberParser} from '@internationalized/number';
+import React, {useMemo, useRef} from 'react';
 import styles from './index.css';
 import {useDateSegment} from '@react-aria/datepicker';
 import {useFocusManager} from '@react-aria/focus';
+import {useLocale} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 
 interface DatePickerSegmentProps extends DatePickerBase {
@@ -38,7 +40,6 @@ export function DatePickerSegment({segment, state, ...otherProps}: DatePickerSeg
     // These segments cannot be directly edited by the user.
     case 'weekday':
     case 'timeZoneName':
-    case 'era':
       return <LiteralSegment segment={segment} isPlaceholder />;
 
     // Editable segment
@@ -52,13 +53,16 @@ function LiteralSegment({segment, isPlaceholder}: LiteralSegmentProps) {
   let {pressProps} = usePress({
     onPressStart: (e) => {
       if (e.pointerType === 'mouse') {
-        focusManager.focusNext({from: e.target as HTMLElement});
+        let res = focusManager.focusNext({from: e.target as HTMLElement});
+        if (!res) {
+          focusManager.focusPrevious({from: e.target as HTMLElement});
+        }
       }
     }
   });
 
   return (
-    <span 
+    <span
       role="presentation"
       className={classNames(styles, 'react-spectrum-Datepicker-literal', {'is-placeholder': isPlaceholder})}
       {...pressProps}
@@ -69,10 +73,18 @@ function LiteralSegment({segment, isPlaceholder}: LiteralSegmentProps) {
 }
 
 function EditableSegment({segment, state, ...otherProps}: DatePickerSegmentProps) {
-  let {segmentProps} = useDateSegment(otherProps, segment, state);
+  let ref = useRef();
+  let {segmentProps} = useDateSegment(otherProps, segment, state, ref);
+  let {locale} = useLocale();
+  let parser = useMemo(() => new NumberParser(locale), [locale]);
+  let isNumeric = useMemo(() => parser.isValidPartialNumber(segment.text), [segment.text, parser]);
   return (
     <div
+      ref={ref}
       className={classNames(styles, 'react-spectrum-DatePicker-cell', {'is-placeholder': segment.isPlaceholder})}
+      style={{
+        minWidth: !isNumeric ? null : String(segment.maxValue).length + 'ch'
+      }}
       data-testid={segment.type}
       {...segmentProps}>
       {segment.text}
