@@ -21,5 +21,7 @@ interface SpectrumCardProps extends AriaCardProps, StyleProps, DOMProps {
   layout?: 'grid' | 'waterfall' | 'gallery',
   size?: 'S' | 'M' | 'L',
   // not needed for quiet cards
-  orientation?: 'horizontal' | 'vertical'
+  orientation?: 'horizontal' | 'vertical',
+  constrainedX?: boolean,
+  constrainedY?: boolean
 }

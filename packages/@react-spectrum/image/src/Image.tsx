@@ -15,6 +15,7 @@ import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React from 'react';
 import {SpectrumImageProps} from '@react-types/image';
+import styles from '@adobe/spectrum-css-temp/components/image/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 
 // incomplete component for show right now
@@ -45,7 +46,7 @@ function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
     <div
       {...filterDOMProps(props)}
       {...styleProps}
-      className={classNames({}, styleProps.className)}
+      className={classNames(styles, styleProps.className)}
       style={{
         ...styleProps.style,
         overflow: 'hidden'
@@ -54,7 +55,8 @@ function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
       <img
         src={src}
         alt={userProvidedAlt || alt}
-        style={{objectFit, height: '100%', width: '100%'}} />
+        style={{objectFit}}
+        className={classNames(styles, 'spectrum-Image-img')} />
     </div>
   );
 }

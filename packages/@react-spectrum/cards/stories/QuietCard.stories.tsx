@@ -11,13 +11,18 @@
  */
 
 import {ActionMenu, Item} from '@react-spectrum/menu';
+import assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
 import {Card} from '../';
-import {classNames, useSlotProps, useStyleProps} from '../../utils';
+import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {
   Default,
   DefaultSquare,
-  DefaultTall, LongDescription, LongDetail, LongTitle, NoActionMenu,
+  DefaultTall,
+  LongDescription,
+  LongDetail,
+  LongTitle,
+  NoActionMenu,
   NoDescription,
   NoDescriptionSquare,
   WithIllustration
@@ -29,7 +34,6 @@ import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
-import assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
 
 
 const meta: Meta<SpectrumCardProps> = {
@@ -46,8 +50,18 @@ const Template = (): Story<SpectrumCardProps> => (args) => (
   </div>
 );
 
+
+const TemplateUnconstrained = (): Story<SpectrumCardProps> => (args) => (
+  <div style={{height: '305px'}}>
+    <Card {...args} />
+  </div>
+);
+
 export const Quiet = Template().bind({});
 Quiet.args = {...Default.args, isQuiet: true};
+
+export const QuietConstrainedY = TemplateUnconstrained().bind({});
+QuietConstrainedY.args = {...Default.args, isQuiet: true, constrainedY: true};
 
 export const QuietSquare = Template().bind({});
 QuietSquare.args = {...DefaultSquare.args, isQuiet: true};
@@ -76,9 +90,8 @@ QuietLongDescription.args = {...LongDescription.args, isQuiet: true};
 export const QuietLongDetail = Template().bind({});
 QuietLongDetail.args = {...LongDetail.args, isQuiet: true};
 
-export const GridOfCards = (props: SpectrumCardProps) => (
+export const GridOfCards2ConstrainedAxis = (props: SpectrumCardProps) => (
   <div
-    className={classNames(styles, 'spectrum-CardGrid')}
     style={{
       width: '100%',
       margin: '50px',
@@ -95,7 +108,100 @@ export const GridOfCards = (props: SpectrumCardProps) => (
         let url = getImage(index);
         return (
           <div style={{width: '208px', height: '305px'}}>
-            <Card {...Quiet.args} {...props} UNSAFE_className={classNames(styles, 'spectrum-Card--inGrid')} key={`${index}${url}`}>
+            <Card {...Quiet.args} {...props} constrainedX constrainedY key={`${index}${url}`}>
+              <Image src={url} />
+              <Heading>Title {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>Description</Content>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+            </Card>
+          </div>
+        );
+      })
+    }
+  </div>
+);
+
+export const GridOfCardsHorizontallyConstrained = (props: SpectrumCardProps) => (
+  <div
+    style={{
+      width: '100%',
+      height: '100vh',
+      margin: '50px',
+      display: 'flex',
+      flexDirection: 'column',
+      flexWrap: 'wrap',
+      alignItems: 'start'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{width: '208px', margin: '10px'}}>
+            <Card {...Quiet.args} {...props} constrainedX key={`${index}${url}`}>
+              <Image src={url} />
+              <Heading>Title {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>Description</Content>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+            </Card>
+          </div>
+        );
+      })
+    }
+  </div>
+);
+
+export const GridOfCardsVerticallyConstrained = (props: SpectrumCardProps) => (
+  <div
+    style={{
+      width: '100%',
+      margin: '50px',
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'wrap'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{height: '305px', margin: '10px'}}>
+            <Card {...Quiet.args} {...props} constrainedY key={`${index}${url}`}>
+              <Image src={url} />
+              <Heading>Title {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>Description</Content>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+            </Card>
+          </div>
+        );
+      })
+    }
+  </div>
+);
+
+
+export const GridOfCardsUnconstrained = (props: SpectrumCardProps) => (
+  <div
+    style={{
+      width: '100%',
+      margin: '50px'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div>
+            <Card {...Quiet.args} {...props} key={`${index}${url}`}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>

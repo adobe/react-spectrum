@@ -99,7 +99,7 @@ governing permissions and limitations under the License.
   }
 }
 
-:not(.spectrum-Card--inGrid).spectrum-Card--isQuiet {
+:not(.constrainedX):not(.constrainedY).spectrum-Card--isQuiet {
   border-color: transparent;
   background-color: transparent;
   &:hover {
@@ -143,7 +143,7 @@ governing permissions and limitations under the License.
 }
 
 
-.spectrum-Card--inGrid.spectrum-Card--isQuiet {
+.constrainedX.constrainedY.spectrum-Card--isQuiet {
   border-color: transparent;
   background-color: transparent;
   &:hover {
@@ -237,7 +237,7 @@ governing permissions and limitations under the License.
 }
 
 
-.spectrum-Card--horizontal {
+:not(.constrainedX):not(.constrainedY).spectrum-Card--horizontal {
   border-color: var(--spectrum-card-border-color);
   background-color: var(--spectrum-card-background-color);
   .spectrum-Card-grid {

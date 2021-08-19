@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 /**
-There are 5 layers to cards
+LAYERS: There are 5 layers to cards
 layer -1:
   card back color, seen mostly in quiet cards in a grid
 
@@ -30,8 +30,33 @@ layer 3:
   checkbox
 */
 
+/**
+LAYOUTS
+                       standard-vertical      standard-horizontal       quiet-vertical
+vertical-masonry       x                      no                        x
+horizontal-masonry     no                     no                        x
+tiles                  x                      x                         x
+standalone             x                      x                         x
+
+Standard Vertical
+.constrainedX.constrainedY
+.constrainedX:not(.constrainedY)
+:not(.constrainedX):not(.constrainedY)
+
+Standard Horizontal
+.constrainedX.constrainedY
+:not(.constrainedX):not(.constrainedY)
+
+Quiet Vertical
+.constrainedX.constrainedY
+.constrainedX:not(.constrainedY)
+:not(.constrainedX).constrainedY
+:not(.constrainedX):not(.constrainedY)
+
+*/
 
 
+/** Shared **/
 .spectrum-Card {
   box-sizing: border-box;
   min-inline-size: var(--spectrum-card-body-header-height);;
@@ -88,10 +113,10 @@ layer 3:
 }
 
 .spectrum-Card-image {
-  grid-area: preview-start / preview-start / span 2 /preview-end;
+  grid-area: preview;
 }
 .spectrum-Card-illustration {
-  grid-area: preview-start / preview-start / span 2 /preview-end;
+  grid-area: preview;
 }
 .spectrum-Card-avatar {
   grid-area: avatar;
@@ -124,18 +149,16 @@ layer 3:
 .spectrum-Card-grid:after {
   z-index: 2;
 }
-
-.spectrum-Card--default {
+/** Standard Vertical **/
+:not(.constrainedX):not(.constrainedY).spectrum-Card--default {
   border: var(--spectrum-card-border-size) solid transparent;
   .spectrum-Card-grid {
     display: grid;
     grid-template-columns: var(--spectrum-card-body-padding-left) auto 1fr auto var(--spectrum-card-body-padding-right);
-    grid-template-rows: auto  32px 16px minmax(30px, auto) auto auto auto var(--spectrum-card-body-padding-bottom);
-    /* maybe remove avatar and absolutely position it relative to the preview? */
+    grid-template-rows: auto minmax(30px, auto) auto auto auto var(--spectrum-card-body-padding-bottom);
+    /* absolutely position avatar relative to the preview */
     grid-template-areas:
       "preview preview preview preview    preview"
-      ".       avatar  .       .          ."
-      ".       avatar  .       .          ."
       ".       title   detail  actionmenu ."
       ".       content content content    ."
       ".       divider divider divider    ."
@@ -144,7 +167,7 @@ layer 3:
 
     &:before {
        content: ' ';
-       grid-area: preview-start / preview-start / span 2 /preview-end;
+       grid-area: preview;
        min-block-size: var(--spectrum-card-coverphoto-height);
        background-color: var(--spectrum-card-quiet-preview-background-color);
        border-start-start-radius: var(--spectrum-card-quiet-border-radius);
@@ -207,7 +230,11 @@ layer 3:
   }
 }
 
-:not(.spectrum-Card--inGrid).spectrum-Card--isQuiet {
+/** END Standard Vertical **/
+
+/** Quiet Vertical **/
+/** Standalone **/
+:not(.constrainedX):not(.constrainedY).spectrum-Card--isQuiet {
   min-inline-size: var(--spectrum-card-quiet-min-size);
 
   .spectrum-Card-grid {
@@ -233,7 +260,6 @@ layer 3:
   }
   .spectrum-Card-image,
   .spectrum-Card-illustration {
-    grid-area: preview;
     display: flex;
 
     align-self: center;
@@ -279,7 +305,8 @@ layer 3:
   }
 }
 
-.spectrum-Card--inGrid.spectrum-Card--isQuiet {
+/** Waterfall **/
+.constrainedX:not(.constrainedY).spectrum-Card--isQuiet {
   min-inline-size: var(--spectrum-card-quiet-min-size);
 
   .spectrum-Card-grid {
@@ -289,24 +316,173 @@ layer 3:
     grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) auto 1fr var(--spectrum-card-body-padding-bottom);
     grid-template-areas: /* can either have three rows of preview or change the spans above? */
       "preview preview preview"
-        ".       .       ."
-        "title   detail  actionmenu"
-        "content content content"
-        ".       .       .      ";
+      ".       .       ."
+      "title   detail  actionmenu"
+      "content content content"
+      ".       .       .      ";
 
     &:before {
        content: ' ';
        grid-area: preview;
 
-       /* aspect ration 1:1 because padding-top is calculated from width */
-       inline-size: 0;
-       block-size: 0;
-       padding-top: 100%;
-       padding-left: 100%;
-
        background-color: var(--spectrum-card-quiet-preview-background-color);
        border-radius: var(--spectrum-card-quiet-border-radius);
        transition: background-color var(--spectrum-global-animation-duration-100);
+    }
+  }
+  .spectrum-Card-image,
+  .spectrum-Card-illustration {
+    block-size: 100%;
+    inline-size: 100%;
+    min-inline-size: 100%; /* I do not know why setting a min-width causes the image to shrink */
+
+    align-self: center;
+    justify-self: center;
+    border-radius: var(--spectrum-card-quiet-border-radius);
+  }
+  .spectrum-Card-illustration {
+    display: grid; /* not sure why flex doesn't work here */
+    align-items: center;
+    justify-items: center;
+  }
+  .spectrum-Card-avatar {
+    display: none;
+  }
+  .spectrum-Card-heading {
+    align-self: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-inline-end: var(--spectrum-card-title-padding-right);
+  }
+  .spectrum-Card-detail {
+    align-self: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-inline-end: var(--spectrum-card-title-padding-right);
+    /* prevent from collapsing completely when there is a long title */
+    min-inline-size: min-content;
+  }
+  .spectrum-Card-actions {
+    align-self: center;
+  }
+  .spectrum-Card-content {
+    margin-block-start: 5px;
+    margin-block-end: 5px;
+  }
+  .spectrum-Card-divider {
+    display: none;
+  }
+  .spectrum-Card-footer {
+    display: none;
+  }
+}
+
+/** Gallery **/
+:not(.constrainedX).constrainedY.spectrum-Card--isQuiet {
+  min-inline-size: var(--spectrum-card-quiet-min-size);
+
+  .spectrum-Card-grid {
+    block-size: 100%;
+    display: grid;
+    grid-template-columns: auto minmax(auto, 1fr) auto;
+    grid-template-rows: 1fr var(--spectrum-card-quiet-body-header-margin-top) auto auto var(--spectrum-card-body-padding-bottom);
+    grid-template-areas:
+      "preview preview preview"
+      ".       .       ."
+      "title   detail  actionmenu"
+      "content content content"
+      ".       .       .      ";
+
+    &:before {
+      content: ' ';
+      grid-area: preview;
+
+      background-color: var(--spectrum-card-quiet-preview-background-color);
+      border-radius: var(--spectrum-card-quiet-border-radius);
+      transition: background-color var(--spectrum-global-animation-duration-100);
+    }
+  }
+  .spectrum-Card-image,
+  .spectrum-Card-illustration {
+    block-size: 100%;
+    inline-size: 100%;
+    min-inline-size: 100%; /* I do not know why setting a min-width causes the image to shrink */
+
+    align-self: center;
+    justify-self: center;
+    border-radius: var(--spectrum-card-quiet-border-radius);
+  }
+
+  .spectrum-Card-illustration {
+    display: grid; /* not sure why flex doesn't work here */
+    align-items: center;
+    justify-items: center;
+  }
+  .spectrum-Card-avatar {
+    display: none;
+  }
+  .spectrum-Card-heading {
+    align-self: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-inline-end: var(--spectrum-card-title-padding-right);
+  }
+  .spectrum-Card-detail {
+    align-self: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-inline-end: var(--spectrum-card-title-padding-right);
+    /* prevent from collapsing completely when there is a long title */
+    min-inline-size: min-content;
+  }
+  .spectrum-Card-actions {
+    align-self: center;
+  }
+  .spectrum-Card-content {
+    margin-block-start: 5px;
+    margin-block-end: 5px;
+  }
+  .spectrum-Card-divider {
+    display: none;
+  }
+  .spectrum-Card-footer {
+    display: none;
+  }
+}
+
+/** Tile **/
+.constrainedX.constrainedY.spectrum-Card--isQuiet {
+  min-inline-size: var(--spectrum-card-quiet-min-size);
+
+  .spectrum-Card-grid {
+    block-size: 100%;
+    display: grid;
+    grid-template-columns: auto minmax(auto, 1fr) auto;
+    grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) auto 1fr var(--spectrum-card-body-padding-bottom);
+    grid-template-areas: /* can either have three rows of preview or change the spans above? */
+      "preview preview preview"
+      ".       .       ."
+      "title   detail  actionmenu"
+      "content content content"
+      ".       .       .      ";
+
+    &:before {
+      content: ' ';
+      grid-area: preview;
+
+      /* aspect ration 1:1 because padding-top is calculated from width */
+      inline-size: 0;
+      block-size: 0;
+      padding-top: 100%;
+      padding-left: 100%;
+
+      background-color: var(--spectrum-card-quiet-preview-background-color);
+      border-radius: var(--spectrum-card-quiet-border-radius);
+      transition: background-color var(--spectrum-global-animation-duration-100);
     }
 
     &:after {
@@ -320,7 +496,6 @@ layer 3:
   }
   .spectrum-Card-image,
   .spectrum-Card-illustration {
-    grid-area: preview;
     block-size: 100%;
     inline-size: 100%;
     min-inline-size: 100%; /* I do not know why setting a min-width causes the image to shrink */
@@ -372,8 +547,9 @@ layer 3:
     display: none;
   }
 }
+/** END Quiet Vertical **/
 
-.spectrum-Card--horizontal {
+:not(.constrainedX):not(.constrainedY).spectrum-Card--horizontal {
   border: var(--spectrum-card-border-size) solid transparent;
   block-size: var(--spectrum-global-dimension-size-1200);
   .spectrum-Card-checkboxWrapper {

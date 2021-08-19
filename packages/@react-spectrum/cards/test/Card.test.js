@@ -63,7 +63,7 @@ describe('Card', function () {
   });
 
   it('Quiet has no footer buttons', function () {
-    let {getByRole, getByLabelText, getAllByRole} = render(<Card {...Quiet.args} />);
+    let {getByRole, getByLabelText} = render(<Card {...Quiet.args} />);
     let card = getByRole('article');
     let heading = getByRole('heading', {level: 3});
     let image = getByRole('img');
@@ -75,14 +75,10 @@ describe('Card', function () {
     userEvent.tab();
     expect(card).toBe(document.activeElement);
 
-    let buttons = getAllByRole('button');
-    expect(buttons.length).toBe(1);
+    let button = getByRole('button');
 
     userEvent.tab();
-    expect(buttons[0]).toBe(document.activeElement);
-    expect(buttons[0]).toHaveAttribute('aria-label', 'More actions');
-
-    userEvent.tab();
-    expect(document.body).toBe(document.activeElement);
+    expect(button).toBe(document.activeElement);
+    expect(button).toHaveAttribute('aria-label', 'More actions');
   });
 });
