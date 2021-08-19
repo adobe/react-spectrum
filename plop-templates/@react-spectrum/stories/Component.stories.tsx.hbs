@@ -11,23 +11,29 @@
  */
 
 import {action} from '@storybook/addon-actions';
-{{#if (includes scopes "@react-types")}}
 import { {{~componentName~}} } from '../';
-import {Spectrum{{componentName}}Props} from '@react-types/{{packageName}}';
-{{else}}
-import { {{~componentName}}, Spectrum{{componentName}}Props} from '../';
-{{/if}}
+import {Meta, Story} from '@storybook/react';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
+{{#if (includes scopes "@react-types")}}
+import {Spectrum{{componentName}}Props} from '@react-types/{{packageName}}';
+{{/if}}
+{{#unless (includes scopes "@react-types")}}
 
-storiesOf('{{componentName}}', module)
-  .add(
-    'name me',
-    () => render({})
-  );
+interface Spectrum{{componentName}}Props {
 
-function render(props: Spectrum{{componentName}}Props) {
-  return (
-    <{{componentName}} {...props} onChange={action('onChange')} />
-  );
 }
+{{/unless}}
+
+const meta: Meta<Spectrum{{componentName}}Props> = {
+  title: '{{componentName}}',
+  component: {{componentName}}
+};
+
+export default meta;
+
+const Template = (): Story<Spectrum{{componentName}}Props> => (args) => (
+  <{{componentName}} {...args}>This is a React Spectrum {{componentName}}</{{componentName}}>
+);
+
+export const Default = Template().bind({});
+Default.args = {onChange: action('onChange')};
