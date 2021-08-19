@@ -234,11 +234,11 @@ storiesOf('ComboBox', module)
   )
   .add(
     'with description',
-    () => render({description: 'hello'})
+    () => render({description: 'Please select an item.'})
   )
   .add(
     'with error message',
-    () => render({description: 'hello', errorMessage: 'error', validationState: 'invalid'})
+    () => render({errorMessage: 'Please enter the correct item.', validationState: 'invalid'})
   )
   .add(
     'isRequired',

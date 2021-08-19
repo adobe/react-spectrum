@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, HelpTextProps, LabelableProps} from '@react-types/shared';
+import {HelpTextProps} from '@react-types/shared';
 import {HTMLAttributes} from 'react';
-import {LabelAria, useLabel} from './useLabel';
+import {LabelAria, LabelAriaProps, useLabel} from './useLabel';
 import {mergeProps, useSlotId} from '@react-aria/utils';
 
-interface AriaFieldProps extends LabelableProps, HelpTextProps, AriaLabelingProps {}
+interface AriaFieldProps extends LabelAriaProps, HelpTextProps {}
 
 export interface FieldAria extends LabelAria {
   /** Props for the description element, if any. */

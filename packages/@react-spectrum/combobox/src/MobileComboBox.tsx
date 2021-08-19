@@ -41,9 +41,9 @@ import {Tray} from '@react-spectrum/overlays';
 import {useButton} from '@react-aria/button';
 import {useComboBox} from '@react-aria/combobox';
 import {useDialog} from '@react-aria/dialog';
+import {useField} from '@react-aria/label';
 import {useFilter} from '@react-aria/i18n';
 import {useFocusableRef} from '@react-spectrum/utils';
-import {useLabel} from '@react-aria/label';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useOverlayTrigger} from '@react-aria/overlays';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -73,7 +73,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
   let domRef = useFocusableRef(ref, buttonRef);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
 
-  let {labelProps, fieldProps} = useLabel({
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span'
   });
@@ -93,9 +93,8 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
       <Field
         {...props}
         labelProps={labelProps}
-        /* TODO: Pass in props for HelpText */
-        descriptionProps={{}}
-        errorMessageProps={{}}
+        descriptionProps={descriptionProps}
+        errorMessageProps={errorMessageProps}
         elementType="span"
         ref={domRef}
         includeNecessityIndicatorInAccessibilityName>
@@ -286,6 +285,8 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     isDisabled,
     validationState,
     label,
+    description,
+    errorMessage,
     overlayProps,
     loadingState,
     onLoadMore,
@@ -301,7 +302,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   let layout = useListBoxLayout(state);
   let formatMessage = useMessageFormatter(intlMessages);
 
-  let {inputProps, listBoxProps, labelProps} = useComboBox(
+  let {inputProps, listBoxProps, labelProps, descriptionProps, errorMessageProps} = useComboBox(
     {
       ...props,
       // completionMode,
@@ -443,8 +444,12 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
         <DismissButton onDismiss={onClose} />
         <TextFieldBase
           label={label}
+          description={description}
+          errorMessage={errorMessage}
           labelProps={labelProps}
           inputProps={{...inputProps, onKeyDown}}
+          descriptionProps={descriptionProps}
+          errorMessageProps={errorMessageProps}
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={showLoading && loadingState === 'filtering'}
