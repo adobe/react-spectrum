@@ -67,7 +67,7 @@ export function ComboBox(props) {
             marginLeft: 0
           }}>
           <span
-            aria-hidden='true'
+            aria-hidden="true"
             style={{padding: '0 2px'}}>
             ▼
           </span>
