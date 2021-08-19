@@ -1,9 +1,21 @@
+/*
+ * Copyright 2021 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import {useCheckbox} from '@react-aria/checkbox';
 import {useFocusRing} from '@react-aria/focus';
 import {useRef} from 'react';
-import {useTable, useTableCell, useTableColumnHeader, useTableRow, useTableHeaderRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
+import {useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
 import {useTableState} from '@react-stately/table';
 import {useToggleState} from '@react-stately/toggle';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
@@ -50,8 +62,8 @@ const TableRowGroup = React.forwardRef((props: any, ref) => {
     <Element ref={ref} {...rowGroupProps} style={style}>
       {children}
     </Element>
-  )
-})
+  );
+});
 
 function TableHeaderRow({item, state, children}) {
   let ref = useRef();
@@ -100,6 +112,7 @@ function TableRow({item, children, state}) {
   return (
     <tr
       style={{
+        // eslint-disable-next-line no-nested-ternary
         background: isSelected
           ? 'blueviolet'
           : item.index % 2

@@ -384,7 +384,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
  * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
  * but doesn't affect parents above `scrollView`.
  */
- function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
+function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
   let offsetX = relativeOffset(scrollView, element, 'left');
   let offsetY = relativeOffset(scrollView, element, 'top');
   let width = element.offsetWidth;
@@ -413,7 +413,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
  * Computes the offset left or top from child to ancestor by accumulating
  * offsetLeft or offsetTop through intervening offsetParents.
  */
- function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|'top') {
+function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|'top') {
   const prop = axis === 'left' ? 'offsetLeft' : 'offsetTop';
   let sum = 0;
   while (child.offsetParent) {

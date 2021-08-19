@@ -1,11 +1,23 @@
+/*
+ * Copyright 2021 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {DismissButton, useOverlay} from '@react-aria/overlays';
 import {FocusScope} from '@react-aria/focus';
 import React from 'react';
 import {useButton} from '@react-aria/button';
-import {useComboBoxState} from '@react-stately/combobox'
 import {useComboBox} from '@react-aria/combobox';
+import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter} from '@react-aria/i18n';
 import {useListBox, useOption} from '@react-aria/listbox';
-import {useOverlay, DismissButton} from '@react-aria/overlays';
 
 export function ComboBox(props) {
   // Setup filter function and state.
@@ -24,7 +36,7 @@ export function ComboBox(props) {
       inputRef,
       buttonRef,
       listBoxRef,
-      popoverRef,
+      popoverRef
     },
     state
   );
@@ -55,7 +67,7 @@ export function ComboBox(props) {
             marginLeft: 0
           }}>
           <span
-            aria-hidden="true"
+            aria-hidden='true'
             style={{padding: '0 2px'}}>
             ▼
           </span>
@@ -79,8 +91,7 @@ function Popover(props) {
     popoverRef = ref,
     isOpen,
     onClose,
-    children,
-    ...otherProps
+    children
   } = props;
 
   // Handle events that should cause the popup to close,
@@ -100,10 +111,10 @@ function Popover(props) {
         {...overlayProps}
         ref={popoverRef}
         style={{
-          position: "absolute",
-          width: "100%",
-          border: "1px solid gray",
-          background: "lightgray",
+          position: 'absolute',
+          width: '100%',
+          border: '1px solid gray',
+          background: 'lightgray',
           marginTop: 4
         }}>
         {children}
@@ -126,9 +137,9 @@ function ListBox(props) {
       style={{
         margin: 0,
         padding: 0,
-        listStyle: "none",
-        maxHeight: "150px",
-        overflow: "auto"
+        listStyle: 'none',
+        maxHeight: '150px',
+        overflow: 'auto'
       }}>
       {[...state.collection].map(item => (
         <Option

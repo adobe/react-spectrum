@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Tabs} from './example';
 import {Item} from '@react-stately/collections';
 import React from 'react';
+import {Tabs} from './example';
 
 const meta = {
   title: 'useTabList'
