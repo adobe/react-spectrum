@@ -193,8 +193,8 @@ const nonLiteralParts = new Set(['decimal', 'fraction', 'integer', 'minusSign', 
 
 function getSymbols(formatter: Intl.NumberFormat, intlOptions: Intl.ResolvedNumberFormatOptions, originalOptions: Intl.NumberFormatOptions): Symbols {
   // Note: some locale's don't add a group symbol until there is a ten thousands place
-  let allParts = formatter.formatToParts(-10000.1);
-  let posAllParts = formatter.formatToParts(10000.1);
+  let allParts = formatter.formatToParts(-10000.111);
+  let posAllParts = formatter.formatToParts(10000.111);
   let singularParts = formatter.formatToParts(1);
 
   let minusSign = allParts.find(p => p.type === 'minusSign')?.value ?? '-';
