@@ -95,34 +95,6 @@ storiesOf('CheckboxGroup', module)
     () => render({label: null, 'aria-label': 'Pets'})
   )
   .add(
-    'with description',
-    () => render({description: 'Please select a pet.'})
-  )
-  .add(
-    'with error message',
-    () => render({errorMessage: 'Please select a better pet.', validationState: 'invalid'})
-  )
-  .add(
-    'with error message, labelPosition: side',
-    () => render({labelPosition: 'side', errorMessage: 'Please select a better pet. This is a longer error message to test line wraps.', validationState: 'invalid'})
-  )
-  .add(
-    'with error message, labelAlign: end',
-    () => render({labelAlign: 'end', errorMessage: 'Please select a better pet. This is a longer error message to test line wraps.', validationState: 'invalid'})
-  )
-  .add(
-    'with error message, horizontal',
-    () => render({orientation: 'horizontal', errorMessage: 'Please select a better pet.', validationState: 'invalid'})
-  )
-  .add(
-    'with error message, horizontal, labelPosition: side',
-    () => render({orientation: 'horizontal', labelPosition: 'side', errorMessage: 'Please select a better pet. Please select a better pet. This is a longer error message to test line wraps.', validationState: 'invalid'})
-  )
-  .add(
-    'with error message, horizontal, labelAlign: end',
-    () => render({orientation: 'horizontal', labelAlign: 'end', errorMessage: 'Please select a better pet. This is a longer error message to test line wraps.', validationState: 'invalid'})
-  )
-  .add(
     'autoFocus on one checkbox',
     () => render({}, [{}, {autoFocus: true}, {}])
   )

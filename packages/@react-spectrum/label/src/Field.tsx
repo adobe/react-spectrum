@@ -11,12 +11,12 @@
  */
 
 import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {Flex} from '@react-spectrum/layout';
 import {HelpText} from './HelpText';
 import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
+import {mergeProps} from '@react-aria/utils';
 import React, {RefObject} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 
@@ -25,8 +25,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     label,
     labelPosition = 'top' as LabelPosition,
     labelAlign,
-    role,
-    'aria-disabled': ariaDisabled,
     isRequired,
     necessityIndicator,
     includeNecessityIndicatorInAccessibilityName,
@@ -45,7 +43,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let domProps = filterDOMProps(props, {labelable: true});
   let hasHelpText = !!description || errorMessage && validationState === 'invalid';
 
   if (label || hasHelpText) {
@@ -104,9 +101,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     return (
       <div
         {...styleProps}
-        {...domProps}
-        role={role}
-        aria-disabled={ariaDisabled}
         ref={ref as RefObject<HTMLDivElement>}
         className={labelWrapperClass}>
         {label && (
@@ -128,9 +122,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
 
   return React.cloneElement(children, mergeProps(children.props, {
     ...styleProps,
-    ...domProps,
-    role,
-    'aria-disabled': ariaDisabled,
     ref
   }));
 }
