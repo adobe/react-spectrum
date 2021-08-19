@@ -25,7 +25,7 @@ export function Table(props) {
   let ref = useRef();
   let bodyRef = useRef();
   let {collection} = state;
-  let {gridProps} = useTable({...props, scrollRef: bodyRef}, state, ref);
+  let {gridProps, scrollBodyProps} = useTable({...props, scrollRef: bodyRef}, state, ref);
 
   return (
     <table {...gridProps} ref={ref} style={{borderCollapse: 'collapse'}}>
@@ -40,7 +40,7 @@ export function Table(props) {
           </TableHeaderRow>
         ))}
       </TableRowGroup>
-      <TableRowGroup ref={bodyRef} type="tbody" style={{display: 'block', overflow: 'auto', maxHeight: '200px'}}>
+      <TableRowGroup ref={bodyRef} type="tbody" style={{display: 'block', overflow: 'auto', maxHeight: '200px'}} {...scrollBodyProps}>
         {[...collection.body.childNodes].map(row => (
           <TableRow key={row.key} item={row} state={state}>
             {[...row.childNodes].map(cell =>
@@ -56,10 +56,10 @@ export function Table(props) {
 }
 
 const TableRowGroup = React.forwardRef((props: any, ref) => {
-  let {type: Element, style, children} = props;
+  let {type: Element, style, children, onScroll} = props;
   let {rowGroupProps} = useTableRowGroup();
   return (
-    <Element ref={ref} {...rowGroupProps} style={style}>
+    <Element ref={ref} onScroll={onScroll} {...rowGroupProps} style={style}>
       {children}
     </Element>
   );
