@@ -236,7 +236,6 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
     removeSelectedItems() {
       dispatch(state => {
         if (state.selectedKeys === 'all') {
-          // return 'all' value if there still exists unloaded items (i.e. cursor is not null)
           return {
             ...state,
             items: [],
