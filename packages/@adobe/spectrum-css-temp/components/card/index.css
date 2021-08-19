@@ -39,19 +39,19 @@ tiles                  x                      x                         x
 standalone             x                      x                         x
 
 Standard Vertical
-.constrainedX.constrainedY
-.constrainedX:not(.constrainedY)
-:not(.constrainedX):not(.constrainedY)
+.constrainedX.constrainedY -> 2axis constrained | tiles
+.constrainedX:not(.constrainedY) -> horizontally constrained | vertical masonry
+:not(.constrainedX):not(.constrainedY) -> unconstrained | standalone
 
 Standard Horizontal
-.constrainedX.constrainedY
-:not(.constrainedX):not(.constrainedY)
+.constrainedX.constrainedY -> 2axis constrained | tiles
+:not(.constrainedX):not(.constrainedY) -> unconstrained | standalone
 
 Quiet Vertical
-.constrainedX.constrainedY
-.constrainedX:not(.constrainedY)
-:not(.constrainedX).constrainedY
-:not(.constrainedX):not(.constrainedY)
+.constrainedX.constrainedY -> 2axis constrained | tiles
+.constrainedX:not(.constrainedY) -> horizontally constrained | vertical masonry
+:not(.constrainedX).constrainedY -> vertically constrained | horizontal masonry
+:not(.constrainedX):not(.constrainedY) -> unconstrained | standalone
 
 */
 
@@ -110,6 +110,12 @@ Quiet Vertical
 
 .spectrum-Card-grid {
   position: relative;
+  &:before {
+
+  }
+  &:after {
+    pointer-events: none;
+  }
 }
 
 .spectrum-Card-image {
@@ -149,13 +155,17 @@ Quiet Vertical
 .spectrum-Card-grid:after {
   z-index: 2;
 }
+
 /** Standard Vertical **/
+/** Standalone **/
 :not(.constrainedX):not(.constrainedY).spectrum-Card--default {
-  border: var(--spectrum-card-border-size) solid transparent;
+  border-width: var(--spectrum-card-border-size);
+  border-style: solid;
+  border-radius: var(--spectrum-card-border-radius);
   .spectrum-Card-grid {
     display: grid;
     grid-template-columns: var(--spectrum-card-body-padding-left) auto 1fr auto var(--spectrum-card-body-padding-right);
-    grid-template-rows: auto minmax(30px, auto) auto auto auto var(--spectrum-card-body-padding-bottom);
+    grid-template-rows: minmax(var(--spectrum-card-body-padding-bottom), auto) minmax(30px, auto) auto auto auto var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
       "preview preview preview preview    preview"
@@ -166,18 +176,25 @@ Quiet Vertical
       ".       .       .       .          .";
 
     &:before {
-       content: ' ';
-       grid-area: preview;
-       min-block-size: var(--spectrum-card-coverphoto-height);
-       background-color: var(--spectrum-card-quiet-preview-background-color);
-       border-start-start-radius: var(--spectrum-card-quiet-border-radius);
-       border-start-end-radius: var(--spectrum-card-quiet-border-radius);
-       transition: background-color var(--spectrum-global-animation-duration-100);
-     }
+      content: ' ';
+      inline-size: 100%;
+      block-size: 100%;
+      position: absolute;
+      border-radius: var(--spectrum-card-border-radius);
+      transition: background-color var(--spectrum-global-animation-duration-100);
+    }
+
+    &:after {
+      content: ' ';
+      inline-size: 100%;
+      block-size: 100%;
+      position: absolute;
+      border-radius: var(--spectrum-card-border-radius);
+      transition: background-color var(--spectrum-global-animation-duration-100);
+    }
   }
   .spectrum-Card-image,
   .spectrum-Card-illustration {
-    block-size: var(--spectrum-card-coverphoto-height);
     inline-size: 100%;
     /*min-inline-size: var(--spectrum-card-min-width); causes to obscure border */
 
@@ -186,7 +203,8 @@ Quiet Vertical
 
     border-start-end-radius: var(--spectrum-card-border-radius);
     border-start-start-radius: var(--spectrum-card-border-radius);
-    border-block-end: var(--spectrum-card-border-size) solid transparent;
+    border-block-end-width: var(--spectrum-card-border-size);
+    border-block-end-style: solid;
   }
   .spectrum-Card-image {
   }
@@ -230,6 +248,190 @@ Quiet Vertical
   }
 }
 
+/** Waterfall **/
+.constrainedX:not(.constrainedY).spectrum-Card--default {
+  border-width: var(--spectrum-card-border-size);
+  border-style: solid;
+  border-radius: var(--spectrum-card-border-radius);
+  .spectrum-Card-grid {
+    display: grid;
+    grid-template-columns: var(--spectrum-card-body-padding-left) auto 1fr auto var(--spectrum-card-body-padding-right);
+    grid-template-rows: minmax(var(--spectrum-card-body-padding-bottom), auto) minmax(30px, auto) auto auto auto var(--spectrum-card-body-padding-bottom);
+    /* absolutely position avatar relative to the preview */
+    grid-template-areas:
+      "preview preview preview preview    preview"
+      ".       title   detail  actionmenu ."
+      ".       content content content    ."
+      ".       divider divider divider    ."
+      ".       footer  footer  footer     ."
+      ".       .       .       .          .";
+
+    &:before {
+      content: ' ';
+      inline-size: 100%;
+      block-size: 100%;
+      position: absolute;
+      border-radius: var(--spectrum-card-border-radius);
+      transition: background-color var(--spectrum-global-animation-duration-100);
+    }
+
+    &:after {
+      content: ' ';
+      inline-size: 100%;
+      block-size: 100%;
+      position: absolute;
+      border-radius: var(--spectrum-card-border-radius);
+      transition: background-color var(--spectrum-global-animation-duration-100);
+    }
+  }
+  .spectrum-Card-image,
+  .spectrum-Card-illustration {
+    inline-size: 100%;
+    /*min-inline-size: var(--spectrum-card-min-width); causes to obscure border */
+
+    align-self: center;
+    justify-self: center;
+
+    border-start-end-radius: var(--spectrum-card-border-radius);
+    border-start-start-radius: var(--spectrum-card-border-radius);
+    border-block-end-width: var(--spectrum-card-border-size);
+    border-block-end-style: solid;
+  }
+  .spectrum-Card-image {
+  }
+  .spectrum-Card-illustration {
+    display: grid; /* not sure why flex doesn't work here */
+    align-items: center;
+    justify-items: center;
+  }
+  .spectrum-Card-avatar {
+    inline-size: var(--spectrum-global-dimension-size-100);
+    block-size: var(--spectrum-global-dimension-size-100);
+  }
+  .spectrum-Card-heading {
+    align-self: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-inline-end: var(--spectrum-card-title-padding-right);
+  }
+  .spectrum-Card-detail {
+    align-self: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .spectrum-Card-actions {
+    align-self: center;
+  }
+  .spectrum-Card-content {
+    margin-block-start: 5px;
+    margin-block-end: 5px;
+  }
+  .spectrum-Card-divider {
+    margin-block-start: 5px;
+    margin-block-end: 5px;
+  }
+  .spectrum-Card-footer {
+    margin-block-start: 5px;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+/** Tile **/
+.constrainedX.constrainedY.spectrum-Card--default {
+  border-width: var(--spectrum-card-border-size);
+  border-style: solid;
+  border-radius: var(--spectrum-card-border-radius);
+
+  .spectrum-Card-grid {
+    display: grid;
+    block-size: 100%;
+    grid-template-columns: var(--spectrum-card-body-padding-left) auto 1fr auto var(--spectrum-card-body-padding-right);
+    grid-template-rows: 1fr minmax(30px, auto) auto auto auto var(--spectrum-card-body-padding-bottom);
+    /* absolutely position avatar relative to the preview */
+    grid-template-areas:
+      "preview preview preview preview    preview"
+      ".       title   detail  actionmenu ."
+      ".       content content content    ."
+      ".       divider divider divider    ."
+      ".       footer  footer  footer     ."
+      ".       .       .       .          .";
+
+    &:before {
+      content: ' ';
+      inline-size: 100%;
+      block-size: 100%;
+      position: absolute;
+      border-radius: var(--spectrum-card-border-radius);
+      transition: background-color var(--spectrum-global-animation-duration-100);
+    }
+
+    &:after {
+      content: ' ';
+      inline-size: 100%;
+      block-size: 100%;
+      position: absolute;
+      border-radius: var(--spectrum-card-border-radius);
+      transition: background-color var(--spectrum-global-animation-duration-100);
+    }
+  }
+  .spectrum-Card-image,
+  .spectrum-Card-illustration {
+    block-size: var(--spectrum-card-coverphoto-height);
+    inline-size: 100%;
+    /*min-inline-size: var(--spectrum-card-min-width); causes to obscure border */
+
+    align-self: center;
+    justify-self: center;
+
+    border-start-end-radius: var(--spectrum-card-border-radius);
+    border-start-start-radius: var(--spectrum-card-border-radius);
+    border-block-end-width: var(--spectrum-card-border-size);
+    border-block-end-style: solid;
+  }
+  .spectrum-Card-image {
+  }
+  .spectrum-Card-illustration {
+    display: grid; /* not sure why flex doesn't work here */
+    align-items: center;
+    justify-items: center;
+  }
+  .spectrum-Card-avatar {
+    inline-size: var(--spectrum-global-dimension-size-100);
+    block-size: var(--spectrum-global-dimension-size-100);
+  }
+  .spectrum-Card-heading {
+    align-self: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-inline-end: var(--spectrum-card-title-padding-right);
+  }
+  .spectrum-Card-detail {
+    align-self: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .spectrum-Card-actions {
+    align-self: center;
+  }
+  .spectrum-Card-content {
+    margin-block-start: 5px;
+    margin-block-end: 5px;
+  }
+  .spectrum-Card-divider {
+    margin-block-start: 5px;
+    margin-block-end: 5px;
+  }
+  .spectrum-Card-footer {
+    margin-block-start: 5px;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
 /** END Standard Vertical **/
 
 /** Quiet Vertical **/
@@ -242,12 +444,21 @@ Quiet Vertical
     display: grid;
     grid-template-columns: auto 1fr auto;
     grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) minmax(30px, auto) auto var(--spectrum-card-body-padding-bottom);
-    grid-template-areas: /* can either have three rows of preview or change the spans above? */
+    grid-template-areas:
       "preview preview preview"
       ".       .       ."
       "title   detail  actionmenu"
       "content content content"
       ".       .       .      ";
+
+    &:before {
+      content: ' ';
+      grid-area: preview;
+
+      background-color: var(--spectrum-card-quiet-preview-background-color);
+      border-radius: var(--spectrum-card-quiet-border-radius);
+      transition: background-color var(--spectrum-global-animation-duration-100);
+    }
 
     &:after {
       content: ' ';
@@ -314,7 +525,7 @@ Quiet Vertical
     display: grid;
     grid-template-columns: auto minmax(auto, 1fr) auto;
     grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) auto 1fr var(--spectrum-card-body-padding-bottom);
-    grid-template-areas: /* can either have three rows of preview or change the spans above? */
+    grid-template-areas:
       "preview preview preview"
       ".       .       ."
       "title   detail  actionmenu"
@@ -328,6 +539,15 @@ Quiet Vertical
        background-color: var(--spectrum-card-quiet-preview-background-color);
        border-radius: var(--spectrum-card-quiet-border-radius);
        transition: background-color var(--spectrum-global-animation-duration-100);
+    }
+
+    &:after {
+      content: ' ';
+      grid-area: preview;
+      inline-size: 100%;
+      block-size: 100%;
+
+      border-radius: var(--spectrum-card-quiet-border-radius);
     }
   }
   .spectrum-Card-image,
@@ -403,6 +623,15 @@ Quiet Vertical
       border-radius: var(--spectrum-card-quiet-border-radius);
       transition: background-color var(--spectrum-global-animation-duration-100);
     }
+
+    &:after {
+      content: ' ';
+      grid-area: preview;
+      inline-size: 100%;
+      block-size: 100%;
+
+      border-radius: var(--spectrum-card-quiet-border-radius);
+    }
   }
   .spectrum-Card-image,
   .spectrum-Card-illustration {
@@ -463,7 +692,7 @@ Quiet Vertical
     display: grid;
     grid-template-columns: auto minmax(auto, 1fr) auto;
     grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) auto 1fr var(--spectrum-card-body-padding-bottom);
-    grid-template-areas: /* can either have three rows of preview or change the spans above? */
+    grid-template-areas:
       "preview preview preview"
       ".       .       ."
       "title   detail  actionmenu"
@@ -549,6 +778,7 @@ Quiet Vertical
 }
 /** END Quiet Vertical **/
 
+/** Standard Horizontal **/
 :not(.constrainedX):not(.constrainedY).spectrum-Card--horizontal {
   border: var(--spectrum-card-border-size) solid transparent;
   block-size: var(--spectrum-global-dimension-size-1200);
@@ -638,3 +868,5 @@ Quiet Vertical
     display: none;
   }
 }
+
+/** END Standard Horizontal **/

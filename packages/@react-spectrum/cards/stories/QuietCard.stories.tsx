@@ -34,6 +34,9 @@ import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
+import {action} from '@storybook/addon-actions';
+import {CardViewContext} from '../src/CardViewContext';
+import {CardBase} from '../src/CardBase';
 
 
 const meta: Meta<SpectrumCardProps> = {
@@ -51,17 +54,26 @@ const Template = (): Story<SpectrumCardProps> => (args) => (
 );
 
 
-const TemplateUnconstrained = (): Story<SpectrumCardProps> => (args) => (
-  <div style={{height: '305px'}}>
-    <Card {...args} />
+/* This is a bit of a funny template, we can't get selected on a Card through context because
+* if there's context it assumes it's being rendered in a collection. It's just here for a quick check of styles. */
+let manager = {
+  isSelected: () => true,
+  select: action('select')
+};
+let state = {
+  disabledKeys: new Set(),
+  selectionManager: manager
+};
+const TemplateSelected = (): Story<SpectrumCardProps> => (args) => (
+  <div style={{width: '208px'}}>
+    <CardViewContext.Provider value={{state}}>
+      <CardBase {...args} />
+    </CardViewContext.Provider>
   </div>
 );
 
 export const Quiet = Template().bind({});
 Quiet.args = {...Default.args, isQuiet: true};
-
-export const QuietConstrainedY = TemplateUnconstrained().bind({});
-QuietConstrainedY.args = {...Default.args, isQuiet: true, constrainedY: true};
 
 export const QuietSquare = Template().bind({});
 QuietSquare.args = {...DefaultSquare.args, isQuiet: true};
@@ -200,7 +212,7 @@ export const GridOfCardsUnconstrained = (props: SpectrumCardProps) => (
       (new Array(15).fill(0)).map((_, index) => {
         let url = getImage(index);
         return (
-          <div>
+          <div style={{float: 'left', margin: '10px'}}>
             <Card {...Quiet.args} {...props} key={`${index}${url}`}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
@@ -237,7 +249,7 @@ export const GridOfCardsNoDescription = (props: SpectrumCardProps) => (
         let url = getImage(index);
         return (
           <div style={{width: '208px', height: '274px'}}>
-            <Card {...QuietNoDescription.args} {...props} UNSAFE_className={classNames(styles, 'spectrum-Card--inGrid')} key={`${index}${url}`}>
+            <Card {...QuietNoDescription.args} {...props} constrainedX constrainedY key={`${index}${url}`}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
@@ -272,7 +284,7 @@ export const GridOfCardsIllustrations = (props: SpectrumCardProps) => (
         let url = getImage(index);
         return (
           <div style={{width: '208px', height: '274px'}}>
-            <Card {...QuietNoDescription.args} {...props} UNSAFE_className={classNames(styles, 'spectrum-Card--inGrid')} key={`${index}${url}`}>
+            <Card {...QuietNoDescription.args} {...props} constrainedX constrainedY key={`${index}${url}`}>
               <File slot="illustration" />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
@@ -307,7 +319,7 @@ export const GridOfLongTitleCards = (props: SpectrumCardProps) => (
         let url = getImage(index);
         return (
           <div style={{width: '208px', height: '305px'}}>
-            <Card {...Quiet.args} {...props} UNSAFE_className={classNames(styles, 'spectrum-Card--inGrid')} key={`${index}${url}`}>
+            <Card {...Quiet.args} {...props} constrainedX constrainedY key={`${index}${url}`}>
               <Image src={url} />
               <Heading>This is a long title about how dinosaurs used to rule the earth before a meteor came and wiped them all out {index}</Heading>
               <Text slot="detail">PNG</Text>
@@ -344,7 +356,7 @@ export const GridWithTallRows = (props: SpectrumCardProps) => (
         let url = getImage(index);
         return (
           <div style={{width: '208px', height: '400px'}}>
-            <Card {...Quiet.args} {...props} UNSAFE_className={classNames(styles, 'spectrum-Card--inGrid')} key={`${index}${url}`}>
+            <Card {...Quiet.args} {...props} constrainedX constrainedY key={`${index}${url}`}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
@@ -360,6 +372,9 @@ export const GridWithTallRows = (props: SpectrumCardProps) => (
     }
   </div>
 );
+
+export const Selected = TemplateSelected().bind({});
+Selected.args = {...Quiet.args};
 
 function File(props) {
   props = useSlotProps(props, 'asset');
