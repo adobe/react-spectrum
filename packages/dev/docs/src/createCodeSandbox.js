@@ -82,6 +82,7 @@ ReactDOM.render(
 export function createCodeSandbox(e) {
   let exampleTitle = document.querySelector('h1').textContent;
   let exampleCode = e.target.parentNode.parentNode.querySelector('.source').textContent;
+  let isFragment = e.target.closest('.example').getAttribute('data-fragment') === 'true';
   let pageImports =  e.target.closest('.example').getAttribute('data-imports');
   let extraCode =  e.target.closest('.example').getAttribute('data-extra-code');
   let importsRegex = /import ((?:.|\n)*?) from (['"].*?['"]);?/g;
@@ -150,7 +151,10 @@ export default ${exampleCode}
     });
     nonRenderCode = nonRenderCode.trim();
     nonRenderCode = nonRenderCode.length > 0 ? '\n' + nonRenderCode + '\n' : '';
-    exampleCode = exampleCode.replaceAll('\n', '\n    ');
+    exampleCode = exampleCode.replaceAll('\n', isFragment ? '\n      ' : '\n    ');
+    if (isFragment) {
+      exampleCode = '<>\n      ' + exampleCode + '\n    </>';
+    }
     exampleCode = `import React from 'react';
 ${imports}${nonRenderCode}
 export default function Example() {

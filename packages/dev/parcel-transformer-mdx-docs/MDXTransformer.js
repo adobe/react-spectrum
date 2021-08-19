@@ -109,7 +109,7 @@ module.exports = new Transformer({
             // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actually
             // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
             node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*?\/\/\/- end collapse -\/\/\//g, () => '').trim();
-            node.meta = 'example';
+            node.meta = `example ${options.join(' ')}`;
 
             return [
               ...transformExample(node, preRelease),
@@ -225,6 +225,7 @@ module.exports = new Transformer({
             node.properties.className = node.children[0].properties.metastring.split(' ');
             node.properties['data-imports'] = exampleImports.join('/n');
             node.properties['data-extra-code'] = exampleExtraCode.filter(c => c !== '').join('/n');
+            node.properties['data-fragment'] = node.children[0].properties.metastring.includes('fragment=true');
           }
 
           return [node];
