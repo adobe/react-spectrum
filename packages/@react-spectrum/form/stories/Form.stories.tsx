@@ -155,7 +155,7 @@ function render(props: any = {}) {
         <Radio value="cats">Cats</Radio>
         <Radio value="dragons">Dragons</Radio>
       </RadioGroup>
-      <Picker label="Favorite color">
+      <Picker label="Favorite color" description="Select any color you like." errorMessage="Please select a nicer color.">
         <Item>Red</Item>
         <Item>Orange</Item>
         <Item>Yellow</Item>
