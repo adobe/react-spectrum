@@ -122,6 +122,42 @@ describe('CheckboxGroup', () => {
     expect(checkboxGroup).toHaveAttribute('aria-label', 'My Favorite Pet');
   });
 
+  it('supports description', () => {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <CheckboxGroup label="Favorite Pet" description="Please select your favorite pet.">
+          <Checkbox value="dogs">Dogs</Checkbox>
+          <Checkbox value="cats">Cats</Checkbox>
+          <Checkbox value="dragons">Dragons</Checkbox>
+        </CheckboxGroup>
+      </Provider>
+    );
+    let checkboxGroup = getByRole('group', {exact: true});
+
+    let descriptionId = checkboxGroup.getAttribute('aria-describedby');
+    expect(descriptionId).toBeDefined();
+    let description = document.getElementById(descriptionId);
+    expect(description).toHaveTextContent('Please select your favorite pet.');
+  });
+
+  it('supports error message', () => {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <CheckboxGroup label="Favorite Pet" errorMessage="Please select a better pet." validationState="invalid">
+          <Checkbox value="dogs">Dogs</Checkbox>
+          <Checkbox value="cats">Cats</Checkbox>
+          <Checkbox value="dragons">Dragons</Checkbox>
+        </CheckboxGroup>
+      </Provider>
+    );
+    let checkboxGroup = getByRole('group', {exact: true});
+
+    let errorMessageId = checkboxGroup.getAttribute('aria-describedby');
+    expect(errorMessageId).toBeDefined();
+    let errorMessage = document.getElementById(errorMessageId);
+    expect(errorMessage).toHaveTextContent('Please select a better pet.');
+  });
+
   it('supports custom props', () => {
     let {getByRole} = render(
       <Provider theme={theme}>

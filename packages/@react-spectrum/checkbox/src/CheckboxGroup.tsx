@@ -13,8 +13,7 @@
 import {CheckboxGroupContext} from './context';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, LabelPosition} from '@react-types/shared';
-import {Label} from '@react-spectrum/label';
-import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
+import {Field} from '@react-spectrum/label';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React from 'react';
 import {SpectrumCheckboxGroupProps} from '@react-types/checkbox';
@@ -28,11 +27,7 @@ function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivEle
   props = useFormProps(props);
   let {
     isEmphasized,
-    isRequired,
-    necessityIndicator,
-    label,
     labelPosition = 'top' as LabelPosition,
-    labelAlign,
     children,
     orientation = 'vertical',
     validationState,
@@ -41,40 +36,28 @@ function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivEle
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
   let state = useCheckboxGroupState(props);
-  let {labelProps, groupProps} = useCheckboxGroup(props, state);
+  let {labelProps, groupProps, descriptionProps, errorMessageProps} = useCheckboxGroup(props, state);
+  let wrapperClassName = classNames(
+    styles,
+    'spectrum-FieldGroup',
+    {
+      'spectrum-FieldGroup--positionSide': labelPosition === 'side'
+    },
+    styleProps.className
+  );
 
   return (
-    <div
-      {...styleProps}
+    <Field
+      {...props as Omit<SpectrumCheckboxGroupProps, 'onChange'>}
       {...groupProps}
-      className={
-        classNames(
-          styles,
-          'spectrum-FieldGroup',
-          {
-            'spectrum-FieldGroup--positionSide': labelPosition === 'side'
-          },
-          // This is so checkbox group works inside a <Form>
-          classNames(
-            labelStyles,
-            'spectrum-Field'
-          ),
-          styleProps.className
-        )
-      }
-      ref={domRef}>
-      {label &&
-        <Label
-          {...labelProps}
-          elementType="span"
-          labelPosition={labelPosition}
-          labelAlign={labelAlign}
-          isRequired={isRequired}
-          necessityIndicator={necessityIndicator}
-          includeNecessityIndicatorInAccessibilityName>
-          {label}
-        </Label>
-      }
+      wrapperClassName={wrapperClassName}
+      labelProps={labelProps}
+      descriptionProps={descriptionProps}
+      errorMessageProps={errorMessageProps}
+      showIcon
+      ref={domRef}
+      includeNecessityIndicatorInAccessibilityName
+      elementType="span">
       <div
         role="presentation"
         className={
@@ -92,7 +75,7 @@ function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivEle
           </CheckboxGroupContext.Provider>
         </Provider>
       </div>
-    </div>
+    </Field>
   );
 }
 
