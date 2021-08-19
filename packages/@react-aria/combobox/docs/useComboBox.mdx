@@ -303,7 +303,9 @@ function ListBox(props) {
       style={{
         margin: 0,
         padding: 0,
-        listStyle: "none"
+        listStyle: "none",
+        maxHeight: "150px",
+        overflow: "auto"
       }}>
       {[...state.collection].map(item => (
         <Option

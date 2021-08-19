@@ -80,7 +80,11 @@ interface SelectableCollectionOptions {
   /**
    * Whether the collection items are contained in a virtual scroller.
    */
-  isVirtualized?: boolean
+  isVirtualized?: boolean,
+  /**
+   * The ref attached to the scrollable body. Used to provided automatic scrolling on item focus for non-virtualized collections.
+   */
+  scrollRef?: RefObject<HTMLElement>
 }
 
 interface SelectableCollectionAria {
@@ -104,7 +108,8 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     disallowTypeAhead = false,
     shouldUseVirtualFocus,
     allowsTabNavigation = false,
-    isVirtualized
+    isVirtualized,
+    scrollRef
   } = options;
   let {direction} = useLocale();
 
@@ -327,13 +332,13 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   // If not virtualized, scroll the focused element into view when the focusedKey changes.
   // When virtualized, Virtualizer handles this internally.
   useEffect(() => {
-    if (!isVirtualized && manager.focusedKey && ref?.current) {
-      let element = ref.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
+    if (!isVirtualized && manager.focusedKey && scrollRef?.current) {
+      let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
       if (element) {
-        scrollIntoView(ref.current, element);
+        scrollIntoView(scrollRef.current, element);
       }
     }
-  }, [isVirtualized, ref, manager.focusedKey]);
+  }, [isVirtualized, scrollRef, manager.focusedKey]);
 
   let handlers = {
     onKeyDown,

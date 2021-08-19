@@ -53,7 +53,8 @@ export function useTabList<T>(props: AriaTabListProps<T>, state: TabListState<T>
     keyboardDelegate: delegate,
     selectOnFocus: keyboardActivation === 'automatic',
     disallowEmptySelection: true,
-    isVirtualized
+    isVirtualized,
+    scrollRef: ref
   });
 
   // Compute base id for all tabs

@@ -11,7 +11,7 @@
  */
 
 import {Collection, FocusStrategy, KeyboardDelegate, Node} from '@react-types/shared';
-import {HTMLAttributes, Key, RefObject, useEffect, useMemo} from 'react';
+import {HTMLAttributes, Key, RefObject, useMemo} from 'react';
 import {ListKeyboardDelegate} from './ListKeyboardDelegate';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useCollator} from '@react-aria/i18n';
@@ -120,7 +120,8 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     disallowTypeAhead,
     shouldUseVirtualFocus,
     allowsTabNavigation,
-    isVirtualized
+    isVirtualized,
+    scrollRef: ref
   });
 
   return {
