@@ -137,6 +137,7 @@ Quiet Vertical
 }
 .spectrum-Card-content {
   grid-area: content;
+  word-break: break-word;
 }
 .spectrum-Card-divider {
   grid-area: divider;
@@ -642,6 +643,10 @@ Quiet Vertical
     align-self: center;
     justify-self: center;
     border-radius: var(--spectrum-card-quiet-border-radius);
+    > img {
+      width: unset;
+      margin: auto;
+    }
   }
 
   .spectrum-Card-illustration {
@@ -703,7 +708,7 @@ Quiet Vertical
       content: ' ';
       grid-area: preview;
 
-      /* aspect ration 1:1 because padding-top is calculated from width */
+      /* aspect ratio 1:1 because padding-top is calculated from width */
       inline-size: 0;
       block-size: 0;
       padding-top: 100%;

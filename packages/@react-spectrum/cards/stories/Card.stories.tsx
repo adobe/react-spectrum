@@ -162,6 +162,23 @@ LongContentSquare.args = {children: (
   </>
 )};
 
+export const LongContentPoorWordSize = Template().bind({});
+LongContentPoorWordSize.args = {children: (
+  <>
+    <Image src="https://i.imgur.com/Z7AzH2c.png" />
+    <Heading>Title</Heading>
+    <Text slot="detail">PNG</Text>
+    <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
+    <ActionMenu>
+      <Item>Action 1</Item>
+      <Item>Action 2</Item>
+    </ActionMenu>
+    <Footer>
+      <Button variant="primary">Something</Button>
+    </Footer>
+  </>
+)};
+
 export const NoDescription = Template().bind({});
 NoDescription.args = {children: (
   <>

@@ -21,7 +21,7 @@ import {Content} from '@react-spectrum/view';
 import {
   Default,
   DefaultSquare,
-  DefaultTall,
+  DefaultTall, LongContentPoorWordSize,
   LongDescription,
   LongDetail,
   LongTitle,
@@ -97,6 +97,9 @@ QuietLongTitle.args = {...Quiet.args, ...LongTitle.args};
 
 export const QuietLongDescription = Template().bind({});
 QuietLongDescription.args = {...Quiet.args, ...LongDescription.args};
+
+export const QuietLongContentPoorWordSize = Template().bind({});
+QuietLongContentPoorWordSize.args = {...Quiet.args, ...LongContentPoorWordSize.args};
 
 export const QuietLongDetail = Template().bind({});
 QuietLongDetail.args = {...Quiet.args, ...LongDetail.args};
