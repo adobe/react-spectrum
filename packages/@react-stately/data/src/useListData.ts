@@ -128,6 +128,10 @@ export interface ListState<T> {
   filterText: string
 }
 
+interface CreateListOptions<T, C> extends ListOptions<T> {
+  cursor?: C
+}
+
 /**
  * Manages state for an immutable list data structure, and provides convenience methods to
  * update the data over time.
@@ -162,8 +166,8 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
   };
 }
 
-export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (state: ListState<T>) => ListState<T>) => void): Omit<ListData<T>, 'items' | 'selectedKeys' | 'getItem' | 'filterText'> {
-  let {getKey} = opts;
+export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch: (updater: (state: ListState<T>) => ListState<T>) => void): Omit<ListData<T>, 'items' | 'selectedKeys' | 'getItem' | 'filterText'> {
+  let {cursor, getKey} = opts;
   return {
     setSelectedKeys(selectedKeys: Selection) {
       dispatch(state => ({
@@ -218,7 +222,7 @@ export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (
             selection.delete(key);
           }
         }
-        if (selection === 'all' && items.length === 0) {
+        if (cursor == null && items.length === 0) {
           selection = new Set();
         }
 
