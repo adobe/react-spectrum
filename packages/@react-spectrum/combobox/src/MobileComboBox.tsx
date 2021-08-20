@@ -93,9 +93,6 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
       <Field
         {...props}
         labelProps={labelProps}
-        // TODO: pass in help text props
-        descriptionProps={{}}
-        errorMessageProps={{}}
         elementType="span"
         ref={domRef}
         includeNecessityIndicatorInAccessibilityName>
@@ -445,9 +442,6 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           label={label}
           labelProps={labelProps}
           inputProps={{...inputProps, onKeyDown}}
-          // TODO: pass in help text props
-          descriptionProps={{}}
-          errorMessageProps={{}}
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={showLoading && loadingState === 'filtering'}

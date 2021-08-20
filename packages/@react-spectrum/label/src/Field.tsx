@@ -35,8 +35,9 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     showIcon,
     children,
     labelProps,
-    descriptionProps,
-    errorMessageProps,
+    // Not every component that uses <Field> supports help text.
+    descriptionProps = {},
+    errorMessageProps = {},
     elementType,
     wrapperClassName,
 

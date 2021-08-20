@@ -34,7 +34,7 @@ export interface SpectrumFieldProps extends SpectrumLabelPropsBase, SpectrumHelp
   children: ReactElement,
   label?: ReactNode,
   labelProps: HTMLAttributes<HTMLElement>,
-  descriptionProps: HTMLAttributes<HTMLElement>,
-  errorMessageProps: HTMLAttributes<HTMLElement>,
+  descriptionProps?: HTMLAttributes<HTMLElement>,
+  errorMessageProps?: HTMLAttributes<HTMLElement>,
   wrapperClassName?: string
 }
