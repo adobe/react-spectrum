@@ -73,7 +73,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
   let domRef = useFocusableRef(ref, buttonRef);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
 
-  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
+  let {labelProps, fieldProps} = useField({
     ...props,
     labelElementType: 'span'
   });
@@ -93,8 +93,9 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
       <Field
         {...props}
         labelProps={labelProps}
-        descriptionProps={descriptionProps}
-        errorMessageProps={errorMessageProps}
+        // TODO: pass in help text props
+        descriptionProps={{}}
+        errorMessageProps={{}}
         elementType="span"
         ref={domRef}
         includeNecessityIndicatorInAccessibilityName>
@@ -285,8 +286,6 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     isDisabled,
     validationState,
     label,
-    description,
-    errorMessage,
     overlayProps,
     loadingState,
     onLoadMore,
@@ -302,7 +301,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   let layout = useListBoxLayout(state);
   let formatMessage = useMessageFormatter(intlMessages);
 
-  let {inputProps, listBoxProps, labelProps, descriptionProps, errorMessageProps} = useComboBox(
+  let {inputProps, listBoxProps, labelProps} = useComboBox(
     {
       ...props,
       // completionMode,
@@ -444,12 +443,11 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
         <DismissButton onDismiss={onClose} />
         <TextFieldBase
           label={label}
-          description={description}
-          errorMessage={errorMessage}
           labelProps={labelProps}
           inputProps={{...inputProps, onKeyDown}}
-          descriptionProps={descriptionProps}
-          errorMessageProps={errorMessageProps}
+          // TODO: pass in help text props
+          descriptionProps={{}}
+          errorMessageProps={{}}
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={showLoading && loadingState === 'filtering'}

@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncLoadable, CollectionBase, DOMProps, FocusableProps, HelpTextProps, InputBase, LabelableProps, LoadingState, SingleSelection, SpectrumHelpTextProps, SpectrumLabelableProps, StyleProps, TextInputBase, Validation} from '@react-types/shared';
+import {AsyncLoadable, CollectionBase, DOMProps, FocusableProps, InputBase, LabelableProps, LoadingState, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase, Validation} from '@react-types/shared';
 
 export type MenuTriggerAction = 'focus' | 'input' | 'manual';
 
-export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, InputBase, TextInputBase, DOMProps, Validation, HelpTextProps, FocusableProps, LabelableProps {
+export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, InputBase, TextInputBase, DOMProps, Validation, FocusableProps, LabelableProps {
   /** The list of ComboBox items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of ComboBox items (controlled). */
@@ -41,7 +41,7 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
   menuTrigger?: MenuTriggerAction
 }
 
-export interface SpectrumComboBoxProps<T> extends Omit<ComboBoxProps<T>, 'menuTrigger'>, SpectrumLabelableProps, SpectrumHelpTextProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface SpectrumComboBoxProps<T> extends Omit<ComboBoxProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
    * The interaction required to display the ComboBox menu. Note that this prop has no effect on the mobile ComboBox experience.
    * @default 'input'
