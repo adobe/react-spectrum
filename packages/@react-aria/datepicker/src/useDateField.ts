@@ -10,46 +10,60 @@
  * governing permissions and limitations under the License.
  */
 
-import {DatePickerProps} from '@react-types/datepicker';
-import {DOMProps} from '@react-types/shared';
-import {filterDOMProps, useLabels} from '@react-aria/utils';
-import {HTMLAttributes, MouseEvent} from 'react';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
-import {useFocusManager} from '@react-aria/focus';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {AriaDatePickerProps} from '@react-types/datepicker';
+import {createFocusManager} from '@react-aria/focus';
+import {DatePickerFieldState} from '@react-stately/datepicker';
+import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {mergeProps, useDescription} from '@react-aria/utils';
+import {useDateFormatter} from '@react-aria/i18n';
+import {useLabel} from '@react-aria/label';
+import {usePress} from '@react-aria/interactions';
 
 interface DateFieldAria {
-  fieldProps: HTMLAttributes<HTMLElement>,
-  segmentProps: HTMLAttributes<HTMLElement>
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  fieldProps: HTMLAttributes<HTMLElement>
 }
 
-export function useDateField(props: DatePickerProps & DOMProps): DateFieldAria {
-  let domProps = filterDOMProps(props, {labelable: true});
-  let formatMessage = useMessageFormatter(intlMessages);
-  let fieldProps = useLabels(props, formatMessage('date'));
-  let focusManager = useFocusManager();
+export const labelIds = new WeakMap<DatePickerFieldState, string>();
 
-  // This is specifically for mouse events, not touch or keyboard.
-  // Focus the last segment on mouse down in the field.
-  let onMouseDown = (e: MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    focusManager.focusNext({from: e.target as HTMLElement});
-  };
+export function useDateField(props: AriaDatePickerProps, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
+  let {labelProps, fieldProps} = useLabel({
+    ...props,
+    labelElementType: 'span'
+  });
+
+  // Focus the last segment on mouse down/touch up in the field.
+  let {pressProps} = usePress({
+    onPressStart(e) {
+      if (e.pointerType === 'mouse') {
+        let focusManager = createFocusManager(ref);
+        focusManager.focusLast();
+      }
+    },
+    onPress(e) {
+      if (e.pointerType !== 'mouse') {
+        let focusManager = createFocusManager(ref);
+        focusManager.focusLast();
+      }
+    }
+  });
+
+  let formatter = useDateFormatter(state.getFormatOptions({month: 'long'}));
+  let descriptionProps = useDescription(state.value ? formatter.format(state.dateValue) : null);
+
+  labelIds.set(state, fieldProps['aria-labelledby'] || fieldProps.id);
 
   return {
-    fieldProps: {
-      ...domProps,
-      ...fieldProps,
-      onMouseDown
+    labelProps: {
+      ...labelProps,
+      onClick: () => {
+        let focusManager = createFocusManager(ref);
+        focusManager.focusFirst();
+      }
     },
-    segmentProps: {
-      'aria-controls': props['aria-controls'],
-      'aria-haspopup': props['aria-haspopup'],
-      'aria-invalid': props['aria-invalid'],
-      // Segments should be labeled by the input id if provided, otherwise the field itself
-      'aria-labelledby': fieldProps['aria-labelledby'] || fieldProps.id
-    }
+    fieldProps: mergeProps(fieldProps, descriptionProps, pressProps, {
+      role: 'group',
+      'aria-disabled': props.isDisabled || undefined
+    })
   };
 }

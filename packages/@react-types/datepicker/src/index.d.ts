@@ -11,6 +11,7 @@
  */
 
 import {
+  AriaLabelingProps,
   DOMProps,
   FocusableProps,
   InputBase,
@@ -21,23 +22,45 @@ import {
   Validation,
   ValueBase
 } from '@react-types/shared';
+import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
 
-export type DateValue = string | number | Date;
+export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
 interface DatePickerBase extends InputBase, Validation, FocusableProps, LabelableProps {
   minValue?: DateValue,
   maxValue?: DateValue,
-  formatOptions?: Intl.DateTimeFormatOptions,
-  placeholderDate?: DateValue
+  placeholderValue?: DateValue,
+  hourCycle?: 12 | 24,
+  granularity?: 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second' | 'millisecond',
+  hideTimeZone?: boolean
 }
 
+export interface AriaDatePickerBaseProps extends DatePickerBase, AriaLabelingProps, DOMProps {}
+
 export interface DatePickerProps extends DatePickerBase, ValueBase<DateValue> {}
+export interface AriaDatePickerProps extends AriaDatePickerBaseProps, DatePickerProps {}
 
 export type DateRange = RangeValue<DateValue>;
 export interface DateRangePickerProps extends DatePickerBase, ValueBase<DateRange> {}
+export interface AriaDateRangePickerProps extends AriaDatePickerBaseProps, DateRangePickerProps {}
 
-interface SpectrumDatePickerBase extends SpectrumLabelableProps, DOMProps, StyleProps {
-  isQuiet?: boolean
+interface SpectrumDatePickerBase extends AriaDatePickerBaseProps, SpectrumLabelableProps, StyleProps {
+  isQuiet?: boolean,
+  showFormatHelpText?: boolean
 }
 
 export interface SpectrumDatePickerProps extends DatePickerProps, SpectrumDatePickerBase {}
 export interface SpectrumDateRangePickerProps extends DateRangePickerProps, SpectrumDatePickerBase {}
+
+export type TimeValue = Time | CalendarDateTime | ZonedDateTime;
+interface TimePickerProps extends InputBase, Validation, FocusableProps, LabelableProps, ValueBase<TimeValue> {
+  hourCycle?: 12 | 24,
+  granularity?: 'hour' | 'minute' | 'second' | 'millisecond',
+  hideTimeZone?: boolean,
+  placeholderValue?: TimeValue,
+  minValue?: TimeValue,
+  maxValue?: TimeValue
+}
+
+interface SpectrumTimePickerProps extends TimePickerProps, SpectrumLabelableProps, DOMProps, StyleProps {
+  isQuiet?: boolean
+}

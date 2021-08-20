@@ -29,6 +29,12 @@ function getItems2() {
   });
 }
 
+function getItemsEnd() {
+  return new Promise(resolve => {
+    setTimeout(() => resolve({items: ITEMS, cursor: null}), 100);
+  });
+}
+
 describe('useAsyncList', () => {
   beforeAll(() => {
     jest.useFakeTimers();
@@ -868,6 +874,59 @@ describe('useAsyncList', () => {
       () => useAsyncList({load, initialSelectedKeys: 'all'})
     );
     expect(result.current.selectedKeys).toEqual('all');
+  });
+
+  it('should maintain all selection if last visible item removed and unloaded items still exist', async () => {
+    let load = jest.fn()
+      .mockImplementationOnce(getItems);
+    let {result, waitForNextUpdate} = renderHook(
+      () => useAsyncList({load})
+    );
+    await act(async () => {
+      result.current.loadMore();
+      jest.runAllTimers();
+      await waitForNextUpdate();
+      result.current.setSelectedKeys('all');
+      result.current.remove(1);
+      result.current.remove(2);
+      jest.runAllTimers();
+    });
+    expect(result.current.selectedKeys).toEqual('all');
+  });
+
+  it('should change selection to empty set if last item removed with no unloaded items left', async () => {
+    let load = jest.fn()
+      .mockImplementationOnce(getItemsEnd);
+    let {result, waitForNextUpdate} = renderHook(
+      () => useAsyncList({load})
+    );
+    await act(async () => {
+      result.current.loadMore();
+      jest.runAllTimers();
+      await waitForNextUpdate();
+      result.current.setSelectedKeys('all');
+      result.current.remove(1);
+      result.current.remove(2);
+      jest.runAllTimers();
+    });
+    expect(result.current.selectedKeys).toEqual(new Set());
+  });
+
+  it('should change selection to empty set if all items removed', async () => {
+    let load = jest.fn()
+      .mockImplementationOnce(getItemsEnd);
+    let {result, waitForNextUpdate} = renderHook(
+      () => useAsyncList({load})
+    );
+    await act(async () => {
+      result.current.loadMore();
+      jest.runAllTimers();
+      await waitForNextUpdate();
+      result.current.setSelectedKeys('all');
+      result.current.removeSelectedItems();
+      jest.runAllTimers();
+    });
+    expect(result.current.selectedKeys).toEqual(new Set());
   });
 
   describe('filtering', function () {

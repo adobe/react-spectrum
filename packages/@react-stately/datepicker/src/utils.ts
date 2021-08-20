@@ -10,22 +10,69 @@
  * governing permissions and limitations under the License.
  */
 
-import {DateValue} from '@react-types/datepicker';
+import {DatePickerProps, DateValue} from '@react-types/datepicker';
 
-export function setTime(date: Date, time: Date) {
-  if (!date || !time) {
-    return;
-  }
-
-  date.setHours(time.getHours());
-  date.setMinutes(time.getMinutes());
-  date.setSeconds(time.getSeconds());
-  date.setMilliseconds(time.getMilliseconds());
+export function isInvalid(value: DateValue, minValue: DateValue, maxValue: DateValue) {
+  return value != null && (
+    (minValue != null && value.compare(minValue) < 0) ||
+    (maxValue != null && value.compare(maxValue) > 0)
+  );
 }
 
-export function isInvalid(value: Date, minValue: DateValue, maxValue: DateValue) {
-  return value != null && (
-    (minValue != null && value < new Date(minValue)) || 
-    (maxValue != null && value > new Date(maxValue))
-  );
+export type FieldOptions = Pick<Intl.DateTimeFormatOptions, 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second'>;
+interface FormatterOptions {
+  timeZone?: string,
+  hideTimeZone?: boolean,
+  granularity?: DatePickerProps['granularity'],
+  maxGranularity?: DatePickerProps['granularity'],
+  hourCycle?: 12 | 24
+}
+
+const DEFAULT_FIELD_OPTIONS: FieldOptions = {
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit'
+};
+
+export function getFormatOptions(
+  fieldOptions: FieldOptions,
+  options: FormatterOptions
+): Intl.DateTimeFormatOptions {
+  fieldOptions = {...DEFAULT_FIELD_OPTIONS, ...fieldOptions};
+  let granularity = options.granularity || 'minute';
+  let keys = Object.keys(fieldOptions);
+  let startIdx = keys.indexOf(options.maxGranularity ?? 'year');
+  if (startIdx < 0) {
+    startIdx = 0;
+  }
+
+  let endIdx = keys.indexOf(granularity);
+  if (endIdx < 0) {
+    endIdx = 2;
+  }
+
+  if (startIdx > endIdx) {
+    throw new Error('maxGranularity must be greater than granularity');
+  }
+
+  let opts: Intl.DateTimeFormatOptions = keys.slice(startIdx, endIdx + 1).reduce((opts, key) => {
+    opts[key] = fieldOptions[key];
+    return opts;
+  }, {});
+
+  if (options.hourCycle != null) {
+    opts.hour12 = options.hourCycle === 12;
+  }
+
+  opts.timeZone = options.timeZone || 'UTC';
+
+  let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second';
+  if (hasTime && options.timeZone && !options.hideTimeZone) {
+    opts.timeZoneName = 'short';
+  }
+
+  return opts;
 }
