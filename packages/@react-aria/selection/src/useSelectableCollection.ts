@@ -83,6 +83,7 @@ interface SelectableCollectionOptions {
   isVirtualized?: boolean,
   /**
    * The ref attached to the scrollable body. Used to provided automatic scrolling on item focus for non-virtualized collections.
+   * If not provided, defaults to the collection ref.
    */
   scrollRef?: RefObject<HTMLElement>
 }
@@ -111,7 +112,8 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     shouldUseVirtualFocus,
     allowsTabNavigation = false,
     isVirtualized,
-    scrollRef
+    // If no scrollRef is provided, assume the collection ref is the scrollable region
+    scrollRef = ref
   } = options;
   let {direction} = useLocale();
 
@@ -342,8 +344,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     }
   }, [isVirtualized, scrollRef, manager.focusedKey]);
 
-
-  let prevScroll = useRef(scrollRef?.current?.scrollTop || 0);
+  let prevScroll = useRef({scrollTop: scrollRef?.current?.scrollTop || 0, scrollLeft: scrollRef?.current?.scrollLeft || 0});
   // Bring focused key into view if focus enters the collection from outside. Only for non virtualized collections,
   // virtualized collections should handle this in their virtualizer or get this for free via our Virtualizer component
   useEffect(() => {
@@ -352,17 +353,24 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         if (manager.focusedKey) {
           let element = ref.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
           if (element) {
-            // Need to track previous scroll position, but at the same time need to override the scroll position
-            let scrollContainerTop = scrollRef.current.offsetTop + prevScroll.current;
-            let scrollContainerBottom = scrollRef.current.offsetTop + prevScroll.current + scrollRef.current.offsetHeight;
-            let elementBottom = element.offsetTop + element.clientHeight;
+            // Figure out if element is out of view
+            let scrollContainerTop = scrollRef.current.offsetTop + prevScroll.current.scrollTop;
+            let scrollContainerBottom = scrollRef.current.offsetTop + prevScroll.current.scrollTop + scrollRef.current.offsetHeight;
+            let scrollContainerLeft = scrollRef.current.offsetLeft + prevScroll.current.scrollLeft;
+            let scrollContainerRight = scrollRef.current.offsetLeft + prevScroll.current.scrollLeft + scrollRef.current.offsetWidth;
             let elementTop = element.offsetTop;
+            let elementBottom = element.offsetTop + element.clientHeight;
+            let elementLeft = element.offsetLeft;
+            let elementRight = element.offsetLeft + element.clientWidth;
+
+            let elementOutOfView = elementTop <= scrollContainerTop || elementBottom >= scrollContainerBottom || elementRight >= scrollContainerRight || elementLeft <= scrollContainerLeft;
             // If focused key is out of view and is in the scrollable region, scroll it into view when re-entering the table
-            if (scrollRef.current?.contains(element) && (elementTop <= scrollContainerTop || elementBottom >= scrollContainerBottom)) {
+            if (scrollRef.current?.contains(element) && elementOutOfView) {
               scrollIntoView(scrollRef.current, element);
             } else {
               // If focusedkey is already in view, override the scroll that may happen from shift tabbing (browser will focus last focusable element in the table which may be out of view, causing a scroll)
-              scrollRef.current.scrollTop = prevScroll.current;
+              scrollRef.current.scrollTop = prevScroll.current.scrollTop;
+              scrollRef.current.scrollLeft = prevScroll.current.scrollLeft;
             }
           }
         }
@@ -377,7 +385,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
   // Save the previous scroll position
   let onScroll = useCallback(() => {
-    prevScroll.current = scrollRef.current.scrollTop;
+    prevScroll.current = {scrollTop: scrollRef.current.scrollTop, scrollLeft: scrollRef.current.scrollLeft};
   }, [scrollRef]);
 
   let handlers = {
