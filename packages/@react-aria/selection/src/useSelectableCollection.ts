@@ -410,9 +410,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       focusableElements.push('[tabindex]:not([tabindex="-1"]):not([disabled])');
       const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]):not([tabindex="-1"]),');
 
-      if (e.key === 'Tab' && !ref.current.contains(e.target as HTMLElement)) {
+      if (e.key === 'Tab' && !ref.current.contains(e.target as HTMLElement) && !isVirtualized) {
         let tabbableElements = Array.from(document.querySelectorAll(TABBABLE_ELEMENT_SELECTOR));
-        let index = tabbableElements.findIndex(node => node === e.target)
+        let index = tabbableElements.findIndex(node => node === e.target);
         let nodeToFocus;
         if (e.shiftKey) {
           nodeToFocus = tabbableElements[index - 1];
@@ -426,13 +426,13 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
           focusSafely(element);
         }
       }
-    }
+    };
 
     window.addEventListener('keydown', onKeyDown, true);
     return () => {
       window.removeEventListener('keydown', onKeyDown, true);
-    }
-  }, [])
+    };
+  }, [manager.focusedKey, ref, isVirtualized]);
 
   let handlers = {
     onKeyDown,
