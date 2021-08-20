@@ -138,6 +138,7 @@ Quiet Vertical
 .spectrum-Card-content {
   grid-area: content;
   word-break: break-word;
+  overflow: hidden;
 }
 .spectrum-Card-divider {
   grid-area: divider;

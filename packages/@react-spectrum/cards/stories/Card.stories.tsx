@@ -19,7 +19,7 @@ import {CardBase} from '../src/CardBase';
 import {CardViewContext} from '../src/CardViewContext';
 import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {Content, Footer} from '@react-spectrum/view';
-import {getImage} from './utils';
+import {getDescription, getImage} from './utils';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Meta, Story} from '@storybook/react';
@@ -285,7 +285,7 @@ export const CardGrid = (props: SpectrumCardProps) => (
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
-              <Content>Description</Content>
+              <Content>{getDescription(index)}</Content>
               <ActionMenu>
                 <Item>Action 1</Item>
                 <Item>Action 2</Item>
@@ -321,7 +321,7 @@ export const CardWaterfall = (props: SpectrumCardProps) => (
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
-              <Content>Description</Content>
+              <Content>{getDescription(index)}</Content>
               <ActionMenu>
                 <Item>Action 1</Item>
                 <Item>Action 2</Item>
@@ -352,7 +352,7 @@ export const CardFloat = (props: SpectrumCardProps) => (
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
-              <Content>Description</Content>
+              <Content>{getDescription(index)}</Content>
               <ActionMenu>
                 <Item>Action 1</Item>
                 <Item>Action 2</Item>
