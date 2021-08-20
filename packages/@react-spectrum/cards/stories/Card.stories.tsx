@@ -418,6 +418,8 @@ LongDetail.args = {children: (
 export const Selected = TemplateSelected().bind({});
 Selected.args = {...Default.args};
 
+// actually use Illustration???
+// where to get the three asset svgs to use with Illustration
 function File(props) {
   props = useSlotProps(props, 'asset');
   let {styleProps} = useStyleProps(props);
