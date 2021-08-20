@@ -247,6 +247,40 @@ storiesOf('TableView', module)
     )
   )
   .add(
+    'defaultSelectedKeys, dynamic, multiple selection, showDivider',
+    () => (
+      <TableView defaultSelectedKeys={['Foo 1', 'Foo 3']} onSelectionChange={s => onSelectionChange([...s])} selectionMode="multiple" aria-label="TableView with dynamic contents" width={300} height={200}>
+        <TableHeader columns={columns}>
+          {column => <Column showDivider>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'selectedKeys, dynamic, multiple selection, quiet, showDider',
+    () => (
+      <TableView isQuiet selectedKeys={['Foo 1', 'Foo 3']} onSelectionChange={s => onSelectionChange([...s])} selectionMode="multiple" aria-label="TableView with dynamic contents" width={300} height={200}>
+        <TableHeader columns={columns}>
+          {column => <Column showDivider>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
     // For testing https://github.com/adobe/react-spectrum/issues/1885
     'swap selection mode',
     () => (
@@ -974,7 +1008,7 @@ function AsyncLoadingExample() {
   return (
     <div>
       <ActionButton marginBottom={10} onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
-      <TableView aria-label="Top news from Reddit" selectionMode="multiple" width={1000} height={400} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
+      <TableView aria-label="Top news from Reddit" selectionMode="multiple" width={1000} height={400} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
         <TableHeader>
           <Column key="score" width={100} allowsSorting>Score</Column>
           <Column key="title" isRowHeader allowsSorting>Title</Column>

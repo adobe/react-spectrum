@@ -462,10 +462,10 @@ function TableSelectAllCell({column}) {
           )
         }>
         {
-          /* 
-            In single selection mode, the checkbox will be hidden. 
-            So to avoid leaving a column header with no accessible content, 
-            we use a VisuallyHidden component to include the aria-label from the checkbox, 
+          /*
+            In single selection mode, the checkbox will be hidden.
+            So to avoid leaving a column header with no accessible content,
+            we use a VisuallyHidden component to include the aria-label from the checkbox,
             which for single selection will be "Select."
           */
           isSingleSelectionMode &&
@@ -618,7 +618,7 @@ function TableCell({cell}) {
             styles,
             'spectrum-Table-cell',
             {
-              'spectrum-Table-cell--divider': columnProps.showDivider,
+              'spectrum-Table-cell--divider': columnProps.showDivider && cell.column.nextKey !== null,
               'spectrum-Table-cell--hideHeader': columnProps.hideHeader,
               'is-disabled': isDisabled
             },
