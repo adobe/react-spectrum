@@ -12,8 +12,11 @@
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
-import {classNames, SlotProvider, useIsMobileDevice} from '@react-spectrum/utils';
+import {classNames, SlotProvider} from '@react-spectrum/utils';
+import {Content} from '@react-spectrum/view';
 import {Grid} from '@react-spectrum/layout';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import listStyles from './listview.css';
 import {ListViewContext} from './ListView';
 import {mergeProps, useId} from '@react-aria/utils';
@@ -21,26 +24,22 @@ import React, {useContext, useRef} from 'react';
 import {useFocusRing} from '@react-aria/focus';
 import {useGridCell, useGridRow} from '@react-aria/grid';
 import {useHover} from '@react-aria/interactions';
-import {useLocale} from '@react-aria/i18n';
-
-
-const SELECTION_INTERVAL = 1000;
-let selectionTimeout;
+import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
 export function ListViewItem(props) {
   let {
     item
   } = props;
-  let {onAction, selectionStyle, state, selectionMode, setSelectionMode} = useContext(ListViewContext);
+  let {onAction, state, selectionMode} = useContext(ListViewContext);
   let {direction} = useLocale();
   let ref = useRef<HTMLDivElement>();
-  let isMobile = useIsMobileDevice();
   let {
     isFocusVisible: isFocusVisibleWithin,
     focusProps: focusWithinProps
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({});
+  let isDisabled = state.disabledKeys.has(item.key);
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let {rowProps} = useGridRow({
     node: item,
     isVirtualized: true
@@ -54,23 +53,7 @@ export function ListViewItem(props) {
     hoverProps,
     focusWithinProps,
     focusProps,
-    {...((state.selectionManager.selectionMode === 'none' && item.props.hasChildItems) && {onPointerUp: () => onAction(item.key)})},
-    {...((isMobile) && {
-      onPointerUp: () => {
-        console.log('action', item.key);
-        onAction(item.key);
-      },
-      onTouchStart: () => {
-        selectionTimeout = setTimeout(() => {
-          setSelectionMode(true);
-        }, SELECTION_INTERVAL);
-      },
-      onTouchEnd: () => {
-        if (selectionTimeout) {
-          clearTimeout(selectionTimeout);
-        }
-      }
-    })}
+    {...((state.selectionManager.selectionMode === 'none' && item.props.hasChildItems) && {onPointerUp: () => onAction(item.key)})}
   );
   let {checkboxProps} = useListSelectionCheckbox(props, state);
 
@@ -89,7 +72,7 @@ export function ListViewItem(props) {
       );
   }
 
-  let showCheckbox = (!isMobile && selectionStyle === 'checkbox' && state.selectionManager.selectionMode !== 'none') || selectionMode;
+  let showCheckbox = state.selectionManager.selectionMode !== 'none' || selectionMode;
   return (
     <div
       {...rowProps}>
@@ -101,8 +84,7 @@ export function ListViewItem(props) {
             {
               'is-focused': isFocusVisibleWithin,
               'focus-ring': isFocusVisible,
-              'is-hovered': isHovered,
-              'react-spectrum-ListViewItem-selected': selectionStyle === 'highlight' && state.selectionManager.isSelected(item.key)
+              'is-hovered': isHovered
             }
           )
         }
@@ -114,11 +96,16 @@ export function ListViewItem(props) {
           <SlotProvider
             slots={{
               content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
-              icon: {size: 'M'},
+              text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
+              description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
+              icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
               image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
-              actionGroup: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionGroup'], isQuiet: true, density: 'compact'}
+              actionGroup: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true, density: 'compact'},
+              actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
+              actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
+              link: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content'], isQuiet: true}
             }}>
-            {item.rendered}
+            {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
             {chevron}
           </SlotProvider>
         </Grid>
@@ -138,9 +125,12 @@ function useListSelectionCheckbox(props, state) {
 
   let onChange = () => manager.select(key);
 
+  const formatMessage = useMessageFormatter(intlMessages);
+
   return {
     checkboxProps: {
       id: checkboxId,
+      'aria-label': formatMessage('select'),
       isSelected,
       isDisabled: isDisabled || manager.selectionMode === 'none',
       onChange

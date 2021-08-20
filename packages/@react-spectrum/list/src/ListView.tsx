@@ -60,7 +60,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let {
     density = 'regular',
     transitionDuration = 0,
-    selectionStyle = 'checkbox',
     onAction
   } = props;
   let domRef = useDOMRef(ref);
@@ -105,7 +104,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   layout.isLoading = props.isLoading;
 
   return (
-    <ListViewContext.Provider value={{state, keyboardDelegate, selectionStyle, onAction, selectionMode, setSelectionMode}}>
+    <ListViewContext.Provider value={{state, keyboardDelegate, onAction, selectionMode, setSelectionMode}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}

@@ -1,17 +1,18 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
+import {ActionMenu, Menu, MenuTrigger} from '@react-spectrum/menu';
 import Add from '@spectrum-icons/workflow/Add';
 import {Content, View} from '@react-spectrum/view';
+import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Edit from '@spectrum-icons/workflow/Edit';
 import {Flex} from '@react-spectrum/layout';
+import Folder from '@spectrum-icons/workflow/Folder';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
-import {Image} from '@react-spectrum/image';
 import {Item, ListView} from '../';
 import {Link} from '@react-spectrum/link';
-import {Menu, MenuTrigger} from '@react-spectrum/menu';
 import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -79,7 +80,7 @@ storiesOf('ListView', module)
     return (
       <ListView items={items} width="300px" height="250px">
         {(item) => (
-          <Item>
+          <Item key={item.key}>
             <Flex alignItems="center" gap="10px">
               <View flexGrow={1}>Item {item.key}</View> {/* TODO */}
               <ActionButton><Add /></ActionButton>
@@ -126,55 +127,43 @@ storiesOf('ListView', module)
       <Item textValue="row3">row 3</Item>
     </ListView>
   ))
-  .add('slots', () => (
-    <ListView width="250px" density="spacious">
-      <Item textValue="articuno">
-        <Image objectFit="contain" src="https://img.pokemondb.net/sprites/sword-shield/icon/articuno.png" alt="articuno" />
-        <Content>Articuno</Content>
-        <ActionGroup>
-          <Item>
-            <Add />
-          </Item>
-        </ActionGroup>
-      </Item>
-      <Item textValue="zapdos">
-        <Image objectFit="contain" src="https://img.pokemondb.net/sprites/sword-shield/icon/zapdos.png" alt="zapdos" />
-        <Content>Zapdos</Content>
-        <ActionGroup>
-          <Item>
-            <Add />
-          </Item>
-        </ActionGroup>
-      </Item>
-      <Item textValue="moltres">
-        <Image objectFit="contain" src="https://img.pokemondb.net/sprites/sword-shield/icon/moltres.png" alt="moltres" />
-        <Content>Moltres</Content>
-        <ActionGroup>
-          <Item>
-            <Add />
-          </Item>
-        </ActionGroup>
-      </Item>
-    </ListView>
-  ))
   .add('selection: none', () => (
     <Example selectionMode="none" />
   ))
   .add('selection: single, checkbox', () => (
     <Example selectionMode="single" />
   ))
-  .add('selection: single, highlight', () => (
-    <Example selectionMode="single" selectionStyle="highlight" />
+  .add('selection: single, checkbox, disabled', () => (
+    <Example selectionMode="single" disabledKeys={['row1']} />
   ))
   .add('selection: multiple, checkbox', () => (
     <Example selectionMode="multiple" />
   ))
-  .add('selection: multiple, highlight', () => (
-    <Example selectionMode="multiple" selectionStyle="highlight" />
-  ))
   .add('parent link example', () => (
     <Example2 selectionMode="multiple" />
-  ));
+  ))
+  .add('actions: ActionButton', () =>
+    renderActionsExample(props => <ActionButton {...props}><Copy /></ActionButton>))
+  .add('actions: ActionGroup', () =>
+    renderActionsExample(props => (
+      <ActionGroup {...props}>
+        <Item key="add"><Add /></Item>
+        <Item key="delete"><Delete /></Item>
+      </ActionGroup>
+    )))
+  .add('actions: ActionMenu', () =>
+    renderActionsExample(props => (
+      <ActionMenu {...props}>
+        <Item key="add">
+          <Add />
+          <Text>Add</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionMenu>
+    )));
 
 function Example(props?) {
   return (
@@ -199,9 +188,7 @@ function Example2(props?) {
   return (
     <ListView width="250px" {...props}>
       <Item key="folder1" hasChildItems>
-        <Content>
-          <Link>folder 1</Link>
-        </Content>
+        <Link>folder 1</Link>
       </Item>
       <Item textValue="row1">
         <Content>row 1</Content>
@@ -211,6 +198,34 @@ function Example2(props?) {
       </Item>
       <Item textValue="row3">
         <Content>row 3</Content>
+      </Item>
+    </ListView>
+  );
+}
+
+function renderActionsExample(renderActions, props?) {
+  return (
+    <ListView width="300px" {...props}>
+      <Item textValue="row1" hasChildItems>
+        <Folder />
+        <Link>folder 1</Link>
+        <Text slot="description">description for folder 1</Text>
+        {renderActions({onPress: () => console.log('row 1')})}
+      </Item>
+      <Item textValue="row1">
+        <Text>row 1</Text>
+        <Text slot="description">description for row 1</Text>
+        {renderActions({onPress: () => console.log('row 1')})}
+      </Item>
+      <Item textValue="row2">
+        <Text>row 2</Text>
+        <Text slot="description">description for row 2</Text>
+        {renderActions({onPress: () => console.log('row 2')})}
+      </Item>
+      <Item textValue="row3">
+        <Text>row 3</Text>
+        <Text slot="description">description for row 3</Text>
+        {renderActions({onPress: () => console.log('row 3')})}
       </Item>
     </ListView>
   );

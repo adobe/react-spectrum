@@ -21,6 +21,7 @@ import More from '@spectrum-icons/workflow/More';
 import React from 'react';
 import {SpectrumActionMenuProps} from '@react-types/menu';
 import {useMessageFormatter} from '@react-aria/i18n';
+import {useSlotProps} from '@react-spectrum/utils';
 
 function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   let formatMessage = useMessageFormatter(intlMessages);
@@ -28,7 +29,8 @@ function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: Fo
   if (buttonProps['aria-label'] === undefined) {
     buttonProps['aria-label'] = formatMessage('moreActions');
   }
-  
+  props = useSlotProps(props, 'actionGroup');
+
   return (
     <MenuTrigger 
       align={props.align}
