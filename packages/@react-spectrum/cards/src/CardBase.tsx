@@ -41,8 +41,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     orientation = 'vertical',
     articleProps = {},
     item,
-    constrainedX,
-    constrainedY
+    layout
   } = props;
 
   let key = item?.key;
@@ -90,8 +89,8 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
           'is-hovered': isHovered,
           'is-focused': isFocused,
           'is-selected': isSelected,
-          'constrainedX': constrainedX,
-          'constrainedY': constrainedY
+          'constrainedX': layout === 'waterfall' || layout === 'grid',
+          'constrainedY': layout === 'gallery' || layout === 'grid'
         }, styleProps.className)}>
         <div ref={gridRef} className={classNames(styles, 'spectrum-Card-grid')}>
           {manager && manager.selectionMode !== 'none' && (

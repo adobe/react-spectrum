@@ -118,7 +118,7 @@ export const GridOfCards2ConstrainedAxis = (props: SpectrumCardProps) => (
       (new Array(15).fill(0)).map((_, index) => {
         let url = getImage(index);
         return (
-          <Card {...Quiet.args} {...props} constrainedX constrainedY key={`${index}${url}`}>
+          <Card {...Quiet.args} {...props} layout="grid" key={`${index}${url}`}>
             <Image src={url} />
             <Heading>Title {index}</Heading>
             <Text slot="detail">PNG</Text>
@@ -150,7 +150,7 @@ export const GridOfCardsHorizontallyConstrained = (props: SpectrumCardProps) => 
         let url = getImage(index);
         return (
           <div style={{width: '208px', margin: '10px'}}>
-            <Card {...Quiet.args} {...props} constrainedX key={`${index}${url}`}>
+            <Card {...Quiet.args} {...props} layout="waterfall" key={`${index}${url}`}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
@@ -181,7 +181,7 @@ export const GridOfCardsVerticallyConstrained = (props: SpectrumCardProps) => (
         let url = getImage(index);
         return (
           <div style={{height: '305px', margin: '10px'}}>
-            <Card {...Quiet.args} {...props} constrainedY key={`${index}${url}`}>
+            <Card {...Quiet.args} {...props} layout="gallery" key={`${index}${url}`}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
@@ -242,7 +242,7 @@ export const GridOfCardsNoDescription = (props: SpectrumCardProps) => (
       (new Array(15).fill(0)).map((_, index) => {
         let url = getImage(index);
         return (
-          <Card {...QuietNoDescription.args} {...props} constrainedX constrainedY key={`${index}${url}`}>
+          <Card {...QuietNoDescription.args} {...props} layout="grid" key={`${index}${url}`}>
             <Image src={url} />
             <Heading>Title {index}</Heading>
             <Text slot="detail">PNG</Text>
@@ -272,7 +272,7 @@ export const GridOfCardsIllustrations = (props: SpectrumCardProps) => (
       (new Array(15).fill(0)).map((_, index) => {
         let url = getImage(index);
         return (
-          <Card {...QuietNoDescription.args} {...props} constrainedX constrainedY key={`${index}${url}`}>
+          <Card {...QuietNoDescription.args} {...props} layout="grid" key={`${index}${url}`}>
             <File slot="illustration" />
             <Heading>Title {index}</Heading>
             <Text slot="detail">PNG</Text>
@@ -302,7 +302,7 @@ export const GridOfLongTitleCards = (props: SpectrumCardProps) => (
       (new Array(15).fill(0)).map((_, index) => {
         let url = getImage(index);
         return (
-          <Card {...Quiet.args} {...props} constrainedX constrainedY key={`${index}${url}`}>
+          <Card {...Quiet.args} {...props} layout="grid" key={`${index}${url}`}>
             <Image src={url} />
             <Heading>This is a long title about how dinosaurs used to rule the earth before a meteor came and wiped them all out {index}</Heading>
             <Text slot="detail">PNG</Text>
@@ -334,7 +334,7 @@ export const GridWithTallRows = (props: SpectrumCardProps) => (
       (new Array(15).fill(0)).map((_, index) => {
         let url = getImage(index);
         return (
-          <Card {...Quiet.args} {...props} constrainedX constrainedY key={`${index}${url}`}>
+          <Card {...Quiet.args} {...props} layout="grid" key={`${index}${url}`}>
             <Image src={url} />
             <Heading>Title {index}</Heading>
             <Text slot="detail">PNG</Text>

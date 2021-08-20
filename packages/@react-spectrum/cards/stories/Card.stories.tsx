@@ -281,7 +281,7 @@ export const GridOfCards2ConstrainedAxis = (props: SpectrumCardProps) => (
         let url = getImage(index);
         return (
           <div style={{width: '208px', height: '268px'}}>
-            <Card {...Default.args} {...props} constrainedX constrainedY key={`${index}${url}`}>
+            <Card {...Default.args} {...props} layout="grid" key={`${index}${url}`}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
@@ -317,7 +317,7 @@ export const GridOfCardsHorizontallyConstrained = (props: SpectrumCardProps) => 
         let url = getImage(index);
         return (
           <div style={{width: '208px', margin: '10px'}}>
-            <Card {...Default.args} {...props} constrainedX key={`${index}${url}`}>
+            <Card {...Default.args} {...props} layout="waterfall" key={`${index}${url}`}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
