@@ -348,16 +348,17 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   // virtualized collections should handle this in their virtualizer or get this for free via our Virtualizer component
   useEffect(() => {
     let onFocus = (e) => {
-      if (ref.current?.contains(e.target) && (!ref.current?.contains(e.relatedTarget) && !isVirtualized)) {
+      if ((e.target instanceof HTMLElement && ref.current?.contains(e.target)) && !isVirtualized && !manager.isFocused) {
         if (manager.focusedKey) {
-          let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
+          let element = ref.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
           if (element) {
             // Need to track previous scroll position, but at the same time need to override the scroll position
             let scrollContainerTop = scrollRef.current.offsetTop + prevScroll.current;
             let scrollContainerBottom = scrollRef.current.offsetTop + prevScroll.current + scrollRef.current.offsetHeight;
             let elementBottom = element.offsetTop + element.clientHeight;
-            // If focused key is out of view, scroll it into view when re-entering the table
-            if (!(elementBottom > scrollContainerTop && elementBottom < scrollContainerBottom)) {
+            let elementTop = element.offsetTop;
+            // If focused key is out of view and is in the scrollable region, scroll it into view when re-entering the table
+            if (scrollRef.current?.contains(element) && (elementTop <= scrollContainerTop || elementBottom >= scrollContainerBottom)) {
               scrollIntoView(scrollRef.current, element);
             } else {
               // If focusedkey is already in view, override the scroll that may happen from shift tabbing (browser will focus last focusable element in the table which may be out of view, causing a scroll)
