@@ -102,8 +102,12 @@ export class EthiopicCalendar implements Calendar {
     return 365 + getLeapDay(date.year);
   }
 
-  getCurrentEra() {
-    return 'AM';
+  getYearsInEra(): number {
+    return 9999;
+  }
+
+  getEras() {
+    return ['AA', 'AM'];
   }
 }
 
@@ -117,8 +121,8 @@ export class EthiopicAmeteAlemCalendar extends EthiopicCalendar {
     return date;
   }
 
-  getCurrentEra() {
-    return 'AA';
+  getEras() {
+    return ['AA'];
   }
 }
 
@@ -163,7 +167,7 @@ export class CopticCalendar extends EthiopicCalendar {
     date.year += years;
   }
 
-  getCurrentEra() {
-    return 'CE';
+  getEras() {
+    return ['BCE', 'CE'];
   }
 }

@@ -11,63 +11,54 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {CalendarDate, parseDate, toZoned} from '@internationalized/date';
 import {DateRangePicker} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 const BlockDecorator = storyFn => <div>{storyFn()}</div>;
 
-storiesOf('DateRangePicker', module)
+storiesOf('Date and Time/DateRangePicker', module)
   .addDecorator(BlockDecorator)
   .add(
     'default',
     () => render()
   )
   .add(
-    'isQuiet',
-    () => render({isQuiet: true})
-  )
-  .add(
     'defaultValue',
-    () => render({defaultValue: {start: new Date(2020, 2, 3), end: new Date(2020, 5, 4)}})
+    () => render({defaultValue: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}})
   )
   .add(
     'controlled value',
-    () => render({value: {start: new Date(2020, 2, 3), end: new Date(2020, 5, 4)}})
+    () => render({value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}})
   )
   .add(
-    'custom date format',
-    () => render({
-      formatOptions: {
-          // weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric'
-        // hour12: false,
-        // // timeZoneName: 'short',
-        // // timeZone: 'America/New_York'
-        // // era: 'long'
-      }
-    })
+    'defaultValue, zoned',
+    () => render({defaultValue: {start: toZoned(parseDate('2020-02-03'), 'America/New_York'), end: toZoned(parseDate('2020-02-05'), 'America/Los_Angeles')}})
+  )
+  .add(
+    'granularity: minute',
+    () => render({granularity: 'minute'})
+  )
+  .add(
+    'hourCycle: 12',
+    () => render({granularity: 'minute', hourCycle: 12})
+  )
+  .add(
+    'hourCycle: 24',
+    () => render({granularity: 'minute', hourCycle: 24})
   )
   .add(
     'isDisabled',
-    () => render({isDisabled: true, value: {start: new Date(2020, 2, 3), end: new Date(2020, 5, 4)}})
+    () => render({isDisabled: true, value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}})
   )
   .add(
     'isQuiet, isDisabled',
-    () => render({isQuiet: true, isDisabled: true, value: {start: new Date(2020, 2, 3), end: new Date(2020, 5, 4)}})
+    () => render({isQuiet: true, isDisabled: true, value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}})
   )
   .add(
     'isReadOnly',
-    () => render({isReadOnly: true, value: {start: new Date(2020, 2, 3), end: new Date(2020, 5, 4)}})
-  )
-  .add(
-    'isRequired',
-    () => render({isRequired: true})
+    () => render({isReadOnly: true, value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}})
   )
   .add(
     'autoFocus',
@@ -75,25 +66,77 @@ storiesOf('DateRangePicker', module)
   )
   .add(
     'validationState: invalid',
-    () => render({validationState: 'invalid', value: {start: new Date(2020, 2, 3), end: new Date(2020, 5, 4)}})
+    () => render({validationState: 'invalid', value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}})
   )
   .add(
     'validationState: valid',
-    () => render({validationState: 'valid', value: {start: new Date(2020, 2, 3), end: new Date(2020, 5, 4)}})
+    () => render({validationState: 'valid', value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}})
   )
   .add(
     'minDate: 2010/1/1, maxDate: 2020/1/1',
-    () => render({minValue: new Date(2010, 1, 1), maxValue: new Date(2020, 1, 1)})
+    () => render({minValue: new CalendarDate(2010, 1, 1), maxValue: new CalendarDate(2020, 1, 1)})
   )
   .add(
-    'placeholderDate: 1980/1/1',
-    () => render({placeholderDate: new Date(1980, 0, 1)})
+    'placeholderValue: 1980/1/1',
+    () => render({placeholderValue: new CalendarDate(1980, 1, 1)})
+  );
+
+storiesOf('Date and Time/DateRangePicker/styling', module)
+  .addDecorator(BlockDecorator)
+  .add(
+    'isQuiet',
+    () => render({isQuiet: true})
+  )
+  .add(
+    'labelPosition: side',
+    () => render({labelPosition: 'side'})
+  )
+  .add(
+    'labelAlign: end',
+    () => render({labelPosition: 'top', labelAlign: 'end'})
+  )
+  .add(
+    'required',
+    () => render({isRequired: true})
+  )
+  .add(
+    'required with label',
+    () => render({isRequired: true, necessityIndicator: 'label'})
+  )
+  .add(
+    'optional',
+    () => render({necessityIndicator: 'label'})
+  )
+  .add(
+    'no visible label',
+    () => render({'aria-label': 'Date range', label: null})
+  )
+  .add(
+    'quiet no visible label',
+    () => render({isQuiet: true, 'aria-label': 'Date range', label: null})
+  )
+  .add(
+    'custom width',
+    () => render({width: 'size-3600'})
+  )
+  .add(
+    'quiet custom width',
+    () => render({isQuiet: true, width: 'size-3600'})
+  )
+  .add(
+    'custom width no visible label',
+    () => render({width: 'size-3600', label: null, 'aria-label': 'Date range'})
+  )
+  .add(
+    'custom width, labelPosition=side',
+    () => render({width: 'size-3600', labelPosition: 'side'})
   );
 
 function render(props = {}) {
   return (
     <div>
       <DateRangePicker
+        label="Date range"
         onChange={action('change')}
         {...props} />
     </div>

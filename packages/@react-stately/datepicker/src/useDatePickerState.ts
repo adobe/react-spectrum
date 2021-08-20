@@ -10,44 +10,65 @@
  * governing permissions and limitations under the License.
  */
 
-import {DatePickerProps} from '@react-types/datepicker';
-import {isInvalid, setTime} from './utils';
+import {CalendarDate} from '@internationalized/date';
+import {DatePickerProps, DateValue} from '@react-types/datepicker';
+import {FieldOptions, getFormatOptions} from './utils';
+import {isInvalid} from './utils';
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
 export interface DatePickerState {
-  value: Date,
-  setValue: (value: Date) => void,
-  selectDate: (value: Date) => void,
+  value: DateValue,
+  dateValue: Date,
+  setValue: (value: DateValue) => void,
+  selectDate: (value: CalendarDate) => void,
   isOpen: boolean,
   setOpen: (isOpen: boolean) => void,
-  validationState: ValidationState
+  validationState: ValidationState,
+  formatValue(locale: string, fieldOptions: FieldOptions): string
 }
 
 export function useDatePickerState(props: DatePickerProps): DatePickerState {
   let [isOpen, setOpen] = useState(false);
   let [value, setValue] = useControlledState(props.value, props.defaultValue || null, props.onChange);
-  let dateValue = value != null ? new Date(value) : null;
+
+  let v = (value || props.placeholderValue);
+  let defaultTimeZone = (v && 'timeZone' in v ? v.timeZone : undefined);
+  let granularity = props.granularity || (v && 'minute' in v ? 'minute' : 'day');
+  let dateValue = value != null ? value.toDate(defaultTimeZone ?? 'UTC') : null;
 
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
-  let selectDate = (newValue: Date) => {
-    if (value) {
-      setTime(newValue, dateValue);
+  let selectDate = (newValue: CalendarDate) => {
+    if (value && 'hour' in value) {
+      newValue = value.set(newValue);
     }
     setValue(newValue);
     setOpen(false);
   };
-  
-  let validationState: ValidationState = props.validationState || 
-    (isInvalid(dateValue, props.minValue, props.maxValue) ? 'invalid' : null);
+
+  let validationState: ValidationState = props.validationState ||
+    (isInvalid(value, props.minValue, props.maxValue) ? 'invalid' : null);
 
   return {
-    value: dateValue,
+    value,
+    dateValue,
     setValue,
     selectDate,
     isOpen,
     setOpen,
-    validationState
+    validationState,
+    formatValue(locale, fieldOptions) {
+      let formatOptions = getFormatOptions(fieldOptions, {
+        granularity,
+        timeZone: defaultTimeZone,
+        hideTimeZone: props.hideTimeZone,
+        hourCycle: props.hourCycle
+      });
+
+      // TODO: cache
+      let formatter = new Intl.DateTimeFormat(locale, formatOptions);
+      return formatter.format(dateValue);
+    }
   };
 }

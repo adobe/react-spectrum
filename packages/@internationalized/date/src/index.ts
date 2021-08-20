@@ -25,3 +25,4 @@ export * from './manipulation';
 export * from './conversion';
 export * from './queries';
 export * from './types';
+export * from './string';
