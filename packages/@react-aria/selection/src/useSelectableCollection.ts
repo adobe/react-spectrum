@@ -388,6 +388,52 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     prevScroll.current = {scrollTop: scrollRef.current.scrollTop, scrollLeft: scrollRef.current.scrollLeft};
   }, [scrollRef]);
 
+  useEffect(() => {
+    let onKeyDown = (e) => {
+      // The consts here can be removed if we export them from FocusScope
+      const focusableElements = [
+        'input:not([disabled]):not([type=hidden])',
+        'select:not([disabled])',
+        'textarea:not([disabled])',
+        'button:not([disabled])',
+        'a[href]',
+        'area[href]',
+        'summary',
+        'iframe',
+        'object',
+        'embed',
+        'audio[controls]',
+        'video[controls]',
+        '[contenteditable]'
+      ];
+
+      focusableElements.push('[tabindex]:not([tabindex="-1"]):not([disabled])');
+      const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]):not([tabindex="-1"]),');
+
+      if (e.key === 'Tab' && !ref.current.contains(e.target as HTMLElement)) {
+        let tabbableElements = Array.from(document.querySelectorAll(TABBABLE_ELEMENT_SELECTOR));
+        let index = tabbableElements.findIndex(node => node === e.target)
+        let nodeToFocus;
+        if (e.shiftKey) {
+          nodeToFocus = tabbableElements[index - 1];
+        } else {
+          nodeToFocus = tabbableElements[index + 1];
+        }
+
+        if (ref.current.contains(nodeToFocus) && manager.focusedKey) {
+          e.preventDefault();
+          let element = ref.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
+          focusSafely(element);
+        }
+      }
+    }
+
+    window.addEventListener('keydown', onKeyDown, true);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown, true);
+    }
+  }, [])
+
   let handlers = {
     onKeyDown,
     onFocus,

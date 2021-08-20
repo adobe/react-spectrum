@@ -45,7 +45,7 @@ let rows = [
 
 const Template = () => (args:any = {}) => (
   <>
-    {!args.hideInput &&<input aria-label="Focusable before" placeholder="Focusable before" />}
+    {!args.hideInput && <input aria-label="Focusable before" placeholder="Focusable before" />}
     <Table aria-label="Table with selection" selectionMode="multiple">
       <TableHeader columns={columns}>
         {column => (
