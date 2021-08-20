@@ -25,7 +25,7 @@ export function add(date: CalendarDate | CalendarDateTime, duration: Duration): 
 export function add(date: CalendarDate | CalendarDateTime, duration: Duration) {
 /* eslint-enable no-redeclare */
   let mutableDate: Mutable<AnyCalendarDate> = date.copy();
-  let days = addTimeFields(toCalendarDateTime(date), duration);
+  let days = 'hour' in date ? addTimeFields(date, duration) : 0;
 
   addYears(mutableDate, duration.years || 0);
   mutableDate.month += duration.months || 0;

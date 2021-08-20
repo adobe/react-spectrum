@@ -85,6 +85,14 @@ describe('CalendarDate manipulation', function () {
       expect(date.add({years: 2, months: 3, days: 10})).toEqual(new CalendarDate(2023, 2, 4));
     });
 
+    it('should ignore time when adding to a date', function () {
+      let date = new CalendarDate(2020, 10, 25);
+      expect(date.add({hours: 36})).toEqual(date);
+      expect(date.add({minutes: 500})).toEqual(date);
+      expect(date.add({seconds: 5000000})).toEqual(date);
+      expect(date.add({milliseconds: 50000000000})).toEqual(date);
+    });
+
     describe('Japanese calendar', function () {
       it('should add years and rebalance era', function () {
         let date = new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 4, 30);
@@ -213,6 +221,14 @@ describe('CalendarDate manipulation', function () {
     it('should subtract weeks', function () {
       let date = new CalendarDate(2020, 10, 6);
       expect(date.subtract({weeks: 5})).toEqual(new CalendarDate(2020, 9, 1));
+    });
+
+    it('should ignore time when subtracting from a date', function () {
+      let date = new CalendarDate(2020, 10, 25);
+      expect(date.subtract({hours: 36})).toEqual(date);
+      expect(date.subtract({minutes: 500})).toEqual(date);
+      expect(date.subtract({seconds: 5000000})).toEqual(date);
+      expect(date.subtract({milliseconds: 50000000000})).toEqual(date);
     });
 
     describe('Japanese calendar', function () {
