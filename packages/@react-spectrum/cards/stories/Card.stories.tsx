@@ -263,7 +263,7 @@ NoImage.args = {children: (
   </>
 )};
 
-export const GridOfCards2ConstrainedAxis = (props: SpectrumCardProps) => (
+export const CardGrid = (props: SpectrumCardProps) => (
   <div
     style={{
       width: '100%',
@@ -301,7 +301,7 @@ export const GridOfCards2ConstrainedAxis = (props: SpectrumCardProps) => (
   </div>
 );
 
-export const GridOfCardsHorizontallyConstrained = (props: SpectrumCardProps) => (
+export const CardWaterfall = (props: SpectrumCardProps) => (
   <div
     style={{
       width: '100%',
@@ -337,7 +337,7 @@ export const GridOfCardsHorizontallyConstrained = (props: SpectrumCardProps) => 
   </div>
 );
 
-export const GridOfCardsUnconstrained = (props: SpectrumCardProps) => (
+export const CardFloat = (props: SpectrumCardProps) => (
   <div
     style={{
       width: '100%',

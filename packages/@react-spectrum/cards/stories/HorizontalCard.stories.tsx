@@ -77,7 +77,7 @@ HorizontalLongDescription.args = {...Horizontal.args, ...LongContent.args};
 export const HorizontalLongDetail = Template().bind({});
 HorizontalLongDetail.args = {...Horizontal.args, ...LongDetail.args};
 
-export const GridOfCards2ConstrainedAxis = (props: SpectrumCardProps) => (
+export const CardGrid = (props: SpectrumCardProps) => (
   <div
     style={{
       width: '100%',
@@ -108,7 +108,7 @@ export const GridOfCards2ConstrainedAxis = (props: SpectrumCardProps) => (
 );
 
 
-export const GridOfCardsUnconstrained = (props: SpectrumCardProps) => (
+export const CardFloat = (props: SpectrumCardProps) => (
   <div
     style={{
       width: '100%',
@@ -136,7 +136,7 @@ export const GridOfCardsUnconstrained = (props: SpectrumCardProps) => (
   </div>
 );
 
-export const GridOfCards2ConstrainedAxisTall = (props: SpectrumCardProps) => (
+export const CardGridTall = (props: SpectrumCardProps) => (
   <div
     style={{
       width: '100%',

@@ -104,7 +104,7 @@ QuietLongContentPoorWordSize.args = {...Quiet.args, ...LongContentPoorWordSize.a
 export const QuietLongDetail = Template().bind({});
 QuietLongDetail.args = {...Quiet.args, ...LongDetail.args};
 
-export const GridOfCards2ConstrainedAxis = (props: SpectrumCardProps) => (
+export const CardGrid = (props: SpectrumCardProps) => (
   <div
     style={{
       width: '100%',
@@ -134,7 +134,7 @@ export const GridOfCards2ConstrainedAxis = (props: SpectrumCardProps) => (
   </div>
 );
 
-export const GridOfCardsHorizontallyConstrained = (props: SpectrumCardProps) => (
+export const CardWaterfall = (props: SpectrumCardProps) => (
   <div
     style={{
       width: '100%',
@@ -167,7 +167,7 @@ export const GridOfCardsHorizontallyConstrained = (props: SpectrumCardProps) => 
   </div>
 );
 
-export const GridOfCardsVerticallyConstrained = (props: SpectrumCardProps) => (
+export const CardGallery = (props: SpectrumCardProps) => (
   <div
     style={{
       width: '100%',
@@ -199,7 +199,7 @@ export const GridOfCardsVerticallyConstrained = (props: SpectrumCardProps) => (
 );
 
 
-export const GridOfCardsUnconstrained = (props: SpectrumCardProps) => (
+export const CardFloat = (props: SpectrumCardProps) => (
   <div
     style={{
       width: '100%',
@@ -227,7 +227,7 @@ export const GridOfCardsUnconstrained = (props: SpectrumCardProps) => (
   </div>
 );
 
-export const GridOfCardsNoDescription = (props: SpectrumCardProps) => (
+export const CardGridNoDescription = (props: SpectrumCardProps) => (
   <div
     className={classNames(styles, 'spectrum-CardGrid')}
     style={{
@@ -257,7 +257,7 @@ export const GridOfCardsNoDescription = (props: SpectrumCardProps) => (
   </div>
 );
 
-export const GridOfCardsIllustrations = (props: SpectrumCardProps) => (
+export const CardGridIllustrations = (props: SpectrumCardProps) => (
   <div
     className={classNames(styles, 'spectrum-CardGrid')}
     style={{
@@ -287,7 +287,7 @@ export const GridOfCardsIllustrations = (props: SpectrumCardProps) => (
   </div>
 );
 
-export const GridOfLongTitleCards = (props: SpectrumCardProps) => (
+export const CardGridLongTitle = (props: SpectrumCardProps) => (
   <div
     className={classNames(styles, 'spectrum-CardGrid')}
     style={{
@@ -319,7 +319,7 @@ export const GridOfLongTitleCards = (props: SpectrumCardProps) => (
 );
 
 
-export const GridWithTallRows = (props: SpectrumCardProps) => (
+export const CardGridTallRows = (props: SpectrumCardProps) => (
   <div
     className={classNames(styles, 'spectrum-CardGrid')}
     style={{
