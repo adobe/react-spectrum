@@ -30,7 +30,7 @@ import {
   NoDescriptionSquare,
   WithIllustration
 } from './Card.stories';
-import {getDescription, getImage} from './utils';
+import {getImage} from './utils';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Meta, Story} from '@storybook/react';
@@ -122,7 +122,7 @@ export const CardGrid = (props: SpectrumCardProps) => (
             <Image src={url} />
             <Heading>Title {index}</Heading>
             <Text slot="detail">PNG</Text>
-            <Content>{getDescription(index)}</Content>
+            <Content>Description</Content>
             <ActionMenu>
               <Item>Action 1</Item>
               <Item>Action 2</Item>
@@ -154,7 +154,7 @@ export const CardWaterfall = (props: SpectrumCardProps) => (
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
-              <Content>{getDescription(index)}</Content>
+              <Content>Description</Content>
               <ActionMenu>
                 <Item>Action 1</Item>
                 <Item>Action 2</Item>
@@ -185,7 +185,7 @@ export const CardGallery = (props: SpectrumCardProps) => (
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
-              <Content>{getDescription(index)}</Content>
+              <Content>Description</Content>
               <ActionMenu>
                 <Item>Action 1</Item>
                 <Item>Action 2</Item>
@@ -214,7 +214,7 @@ export const CardFloat = (props: SpectrumCardProps) => (
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
-              <Content>{getDescription(index)}</Content>
+              <Content>Description</Content>
               <ActionMenu>
                 <Item>Action 1</Item>
                 <Item>Action 2</Item>
@@ -306,7 +306,7 @@ export const CardGridLongTitle = (props: SpectrumCardProps) => (
             <Image src={url} />
             <Heading>This is a long title about how dinosaurs used to rule the earth before a meteor came and wiped them all out {index}</Heading>
             <Text slot="detail">PNG</Text>
-            <Content>{getDescription(index)}</Content>
+            <Content>Description</Content>
             <ActionMenu>
               <Item>Action 1</Item>
               <Item>Action 2</Item>
@@ -338,7 +338,7 @@ export const CardGridTallRows = (props: SpectrumCardProps) => (
             <Image src={url} />
             <Heading>Title {index}</Heading>
             <Text slot="detail">PNG</Text>
-            <Content>{getDescription(index)}</Content>
+            <Content>Description</Content>
             <ActionMenu>
               <Item>Action 1</Item>
               <Item>Action 2</Item>
