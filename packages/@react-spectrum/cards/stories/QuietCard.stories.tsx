@@ -30,7 +30,7 @@ import {
   NoDescriptionSquare,
   WithIllustration
 } from './Card.stories';
-import {getImage} from './utils';
+import {getDescription, getImage} from './utils';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Meta, Story} from '@storybook/react';
@@ -154,7 +154,7 @@ export const CardWaterfall = (props: SpectrumCardProps) => (
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
-              <Content>Description</Content>
+              <Content>{getDescription(index)}</Content>
               <ActionMenu>
                 <Item>Action 1</Item>
                 <Item>Action 2</Item>
