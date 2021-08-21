@@ -792,7 +792,7 @@ Quiet Vertical
  Horizontal standalone cannot be supported until aspect-ratio is supported
  probably due to https://stackoverflow.com/questions/44770074/css-grid-row-height-safari-bug but
  was unable to get the workaround to work.
- We can get these to work if we use some JS?? not sure yet how we'd go about it because the image gets too big in safari anyways
+ For now working around it with a useLayoutEffect in CardBase.
  **/
 :not(.constrainedX):not(.constrainedY).spectrum-Card--horizontal {
   border-width: var(--spectrum-card-border-size);
@@ -908,7 +908,10 @@ Quiet Vertical
 }
 
 /** Tile **/
-/** Cannot be used in FF until aspect-ratio is supported or this is resolved https://bugzilla.mozilla.org/show_bug.cgi?id=1436180 **/
+/**
+Broken as a CSS only solution in FF until aspect-ratio is supported or this is resolved https://bugzilla.mozilla.org/show_bug.cgi?id=1436180
+For now working around it with a useLayoutEffect in CardBase.
+**/
 .constrainedX.constrainedY.spectrum-Card--horizontal {
   border-width: var(--spectrum-card-border-size);
   border-style: solid;
