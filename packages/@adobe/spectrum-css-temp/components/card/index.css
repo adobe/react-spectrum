@@ -351,10 +351,11 @@ Quiet Vertical
     display: grid;
     block-size: 100%;
     grid-template-columns: var(--spectrum-card-body-padding-left) auto 1fr auto var(--spectrum-card-body-padding-right);
-    grid-template-rows: 1fr minmax(30px, auto) auto auto auto var(--spectrum-card-body-padding-bottom);
+    grid-template-rows: 1fr var(--spectrum-global-dimension-size-300) auto auto auto auto var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
       "preview preview preview preview    preview"
+      ".       .       .       .          ."
       ".       title   detail  actionmenu ."
       ".       content content content    ."
       ".       divider divider divider    ."
@@ -602,6 +603,7 @@ Quiet Vertical
 }
 
 /** Gallery **/
+/** Non-collection version doesn't work in FF, but should work in a collection which determines the size **/
 :not(.constrainedX).constrainedY.spectrum-Card--isQuiet {
   min-inline-size: var(--spectrum-card-quiet-min-size);
 
@@ -609,7 +611,7 @@ Quiet Vertical
     block-size: 100%;
     display: grid;
     grid-template-columns: auto minmax(auto, 1fr) auto;
-    grid-template-rows: 1fr var(--spectrum-card-quiet-body-header-margin-top) auto auto var(--spectrum-card-body-padding-bottom);
+    grid-template-rows: 1fr var(--spectrum-card-quiet-body-header-margin-top) auto minmax(auto, var(--spectrum-global-dimension-size-600)) var(--spectrum-card-body-padding-bottom);
     grid-template-areas:
       "preview preview preview"
       ".       .       ."
@@ -906,7 +908,7 @@ Quiet Vertical
 }
 
 /** Tile **/
-/** Cannot be used in FF until aspect-ratio is supported, this one we can definitely solve with JS and that may be enough **/
+/** Cannot be used in FF until aspect-ratio is supported or this is resolved https://bugzilla.mozilla.org/show_bug.cgi?id=1436180 **/
 .constrainedX.constrainedY.spectrum-Card--horizontal {
   border-width: var(--spectrum-card-border-size);
   border-style: solid;
@@ -935,6 +937,7 @@ Quiet Vertical
 
     &:before {
       content: ' ';
+      position: absolute;
 
       inline-size: 100%;
       block-size: 100%;

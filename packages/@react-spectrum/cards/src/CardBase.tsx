@@ -14,7 +14,7 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, SlotProvider, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
 import {Divider} from '@react-spectrum/divider';
 import {DOMRef, Node} from '@react-types/shared';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 import React, {HTMLAttributes, useMemo, useRef, useState} from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
@@ -51,7 +51,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
   let {styleProps} = useStyleProps(props);
   let {cardProps, titleProps, contentProps} = useCard(props);
   let domRef = useDOMRef(ref);
-  let gridRef = useRef();
+  let gridRef = useRef<HTMLDivElement>();
 
   let {hoverProps, isHovered} = useHover({isDisabled});
   let [isFocused, setIsFocused] = useState(false);
@@ -84,6 +84,16 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     divider: {UNSAFE_className: classNames(styles, 'spectrum-Card-divider'), size: 'S'}
   }), [titleProps, contentProps]);
 
+  // this is for horizontal cards
+  let [height, setHeight] = useState(NaN);
+  useLayoutEffect(() => {
+    if (orientation !== 'horizontal') {
+      return;
+    }
+    let cardHeight = gridRef.current.getBoundingClientRect().height;
+    setHeight(cardHeight);
+  }, [gridRef, setHeight]);
+
 
   return (
     // TODO: Focus ring in v2 only goes around preview for quiet varients, fix this for v3?
@@ -115,8 +125,8 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
                 aria-label="select" />
             </div>
           )}
-          {orientation === 'horizontal' && (
-            <img className={classNames(styles, 'spectrum-Card-sizeHelper')} aria-hidden alt="" width="1" height="1" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" />
+          {orientation === 'horizontal' && !isNaN(height) && (
+            <img className={classNames(styles, 'spectrum-Card-sizeHelper')} style={{width: `${height}px`, height: `${height}px`}} aria-hidden alt="" width="1" height="1" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" />
           )}
           <SlotProvider slots={slots}>
             {props.children}

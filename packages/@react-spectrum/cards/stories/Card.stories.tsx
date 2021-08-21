@@ -280,7 +280,7 @@ export const CardGrid = (props: SpectrumCardProps) => (
       (new Array(15).fill(0)).map((_, index) => {
         let url = getImage(index);
         return (
-          <div style={{width: '208px', height: '268px'}}>
+          <div style={{width: '208px', height: '293px'}}>
             <Card {...Default.args} {...props} layout="grid" key={`${index}${url}`}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
