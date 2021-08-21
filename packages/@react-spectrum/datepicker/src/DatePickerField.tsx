@@ -23,6 +23,7 @@ import React, {useRef} from 'react';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useDateField} from '@react-aria/datepicker';
 import {useDatePickerFieldState} from '@react-stately/datepicker';
+import {useLocale} from '@react-aria/i18n';
 
 interface DatePickerFieldProps<T extends DateValue> extends SpectrumDatePickerProps<T> {
   inputClassName?: string,
@@ -40,8 +41,10 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
     hideValidationIcon
   } = props;
   let ref = useRef();
+  let {locale} = useLocale();
   let state = useDatePickerFieldState({
     ...props,
+    locale,
     createCalendar
   });
 

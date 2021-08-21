@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {DateFormatter, toCalendarDateTime, toDateFields} from '@internationalized/date';
 import {DateRange, DateRangePickerProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {FieldOptions, getFormatOptions, isInvalid} from './utils';
 import {RangeValue, ValidationState} from '@react-types/shared';
-import {toCalendarDateTime, toDateFields} from '@internationalized/date';
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
 
@@ -136,20 +136,16 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
         hourCycle: props.hourCycle
       });
 
-      // TODO: cache
-      let startFormatter = new Intl.DateTimeFormat(locale, startOptions);
+      let startFormatter = new DateFormatter(locale, startOptions);
       let endFormatter: Intl.DateTimeFormat;
       if (startTimeZone === endTimeZone && startGranularity === endGranularity) {
-        // Use formatRange if available, as it results in shorter output when some of the fields
+        // Use formatRange, as it results in shorter output when some of the fields
         // are shared between the start and end dates (e.g. the same month).
-        if ('formatRange' in startFormatter) {
-          // Formatting will fail if the end date is before the start date. Fall back below when that happens.
-          try {
-            // @ts-ignore
-            return startFormatter.formatRange(value.start.toDate(startTimeZone), value.end.toDate(endTimeZone));
-          } catch (e) {
-            // ignore
-          }
+        // Formatting will fail if the end date is before the start date. Fall back below when that happens.
+        try {
+          return startFormatter.formatRange(value.start.toDate(startTimeZone), value.end.toDate(endTimeZone));
+        } catch (e) {
+          // ignore
         }
 
         endFormatter = startFormatter;
@@ -161,7 +157,7 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
           hourCycle: props.hourCycle
         });
 
-        endFormatter = new Intl.DateTimeFormat(locale, endOptions);
+        endFormatter = new DateFormatter(locale, endOptions);
       }
 
       return `${startFormatter.format(value.start.toDate(startTimeZone))} – ${endFormatter.format(value.end.toDate(endTimeZone))}`;

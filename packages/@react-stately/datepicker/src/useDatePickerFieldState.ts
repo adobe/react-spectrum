@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, CalendarDateTime, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, now, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
+import {Calendar, CalendarDateTime, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, now, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue} from '@react-types/datepicker';
 import {FieldOptions, getFormatOptions, isInvalid} from './utils';
 import {useControlledState} from '@react-stately/utils';
-import {useDateFormatter} from '@react-aria/i18n';
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
@@ -32,7 +31,7 @@ export interface DatePickerFieldState {
   dateValue: Date,
   setValue: (value: CalendarDateTime) => void,
   segments: DateSegment[],
-  dateFormatter: Intl.DateTimeFormat,
+  dateFormatter: DateFormatter,
   validationState: ValidationState,
   increment: (type: Intl.DateTimeFormatPartTypes) => void,
   decrement: (type: Intl.DateTimeFormatPartTypes) => void,
@@ -70,11 +69,13 @@ const TYPE_MAPPING = {
 
 interface DatePickerFieldProps<T extends DateValue> extends DatePickerProps<T> {
   maxGranularity?: DatePickerProps<T>['granularity'],
+  locale: string,
   createCalendar: (name: string) => Calendar
 }
 
 export function useDatePickerFieldState<T extends DateValue>(props: DatePickerFieldProps<T>): DatePickerFieldState {
   let {
+    locale,
     createCalendar,
     hideTimeZone
   } = props;
@@ -102,7 +103,7 @@ export function useDatePickerFieldState<T extends DateValue>(props: DatePickerFi
   }), [props.maxGranularity, granularity, props.hourCycle, defaultTimeZone, hideTimeZone]);
   let opts = useMemo(() => getFormatOptions({}, formatOpts), [formatOpts]);
 
-  let dateFormatter = useDateFormatter(opts);
+  let dateFormatter = useMemo(() => new DateFormatter(locale, opts), [locale, opts]);
   let resolvedOptions = useMemo(() => dateFormatter.resolvedOptions(), [dateFormatter]);
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
 

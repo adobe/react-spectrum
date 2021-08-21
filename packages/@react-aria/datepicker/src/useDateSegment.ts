@@ -124,7 +124,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
         // Safari on iOS does not fire beforeinput for the backspace key because the cursor is at the start.
         e.preventDefault();
         e.stopPropagation();
-        if (parser.isValidPartialNumber(segment.text, segment.minValue, segment.maxValue) && !props.isReadOnly) {
+        if (parser.isValidPartialNumber(segment.text) && !props.isReadOnly) {
           let newValue = segment.text.slice(0, -1);
           state.setSegment(segment.type, newValue.length === 0 ? segment.minValue : parser.parse(newValue));
           enteredKeys.current = newValue;
@@ -173,15 +173,28 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
       case 'second':
       case 'month':
       case 'year': {
-        if (!parser.isValidPartialNumber(newValue, segment.minValue, segment.maxValue)) {
+        if (!parser.isValidPartialNumber(newValue)) {
           return;
         }
 
         let numberValue = parser.parse(newValue);
         let segmentValue = numberValue;
         if (segment.type === 'hour' && state.dateFormatter.resolvedOptions().hour12) {
-          if (numberValue > 12) {
-            segmentValue = parser.parse(key);
+          switch (state.dateFormatter.resolvedOptions().hourCycle) {
+            case 'h11':
+              if (numberValue > 11) {
+                segmentValue = parser.parse(key);
+              }
+              break;
+            case 'h12':
+              if (numberValue === 0) {
+                return;
+              }
+
+              if (numberValue > 12) {
+                segmentValue = parser.parse(key);
+              }
+              break;
           }
 
           if (segment.value >= 12 && numberValue > 1) {
@@ -230,7 +243,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
     switch (e.inputType) {
       case 'deleteContentBackward':
       case 'deleteContentForward':
-        if (parser.isValidPartialNumber(segment.text, segment.minValue, segment.maxValue) && !props.isReadOnly) {
+        if (parser.isValidPartialNumber(segment.text) && !props.isReadOnly) {
           let newValue = segment.text.slice(0, -1);
           state.setSegment(segment.type, newValue.length === 0 ? segment.minValue : parser.parse(newValue));
           enteredKeys.current = newValue;

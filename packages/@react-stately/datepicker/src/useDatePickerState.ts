@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, toCalendarDateTime, toDateFields} from '@internationalized/date';
+import {CalendarDate, DateFormatter, toCalendarDateTime, toDateFields} from '@internationalized/date';
 import {DatePickerProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {FieldOptions, getFormatOptions} from './utils';
 import {isInvalid} from './utils';
@@ -110,8 +110,7 @@ export function useDatePickerState<T extends DateValue>(props: DatePickerProps<T
         hourCycle: props.hourCycle
       });
 
-      // TODO: cache
-      let formatter = new Intl.DateTimeFormat(locale, formatOptions);
+      let formatter = new DateFormatter(locale, formatOptions);
       return formatter.format(dateValue);
     }
   };
