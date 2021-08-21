@@ -10,21 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {Card} from '../';
-import {Default} from '../stories/Card.stories';
+import {Card} from '@react-spectrum/cards';
+import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
-import {storiesOf} from '@storybook/react';
+
+const meta: Meta<SpectrumCardProps> = {
+  title: 'Card',
+  component: Card
+};
+
+export default meta;
 
 
-storiesOf('Card', module)
-  .add(
-    'name me',
-    () => render({})
-  );
+const Template = (): Story<SpectrumCardProps> => (args) => (
+  <Card {...args} />
+);
 
-function render(props: SpectrumCardProps = Default.args) {
-  return (
-    <Card {...props} />
-  );
-}
+
+export const Default = Template().bind({});
+Default.args = {};

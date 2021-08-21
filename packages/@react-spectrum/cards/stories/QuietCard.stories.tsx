@@ -10,26 +10,33 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
 import {ActionMenu, Item} from '@react-spectrum/menu';
+import assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
 import {Card} from '../';
-import {classNames, useSlotProps, useStyleProps} from '../../utils';
+import {CardBase} from '../src/CardBase';
+import {CardViewContext} from '../src/CardViewContext';
+import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {
   Default,
   DefaultSquare,
-  DefaultTall, LongDescription, LongDetail, LongTitle, NoActionMenu,
+  DefaultTall, LongContentPoorWordSize,
+  LongDescription,
+  LongDetail,
+  LongTitle,
+  NoActionMenu,
   NoDescription,
   NoDescriptionSquare,
   WithIllustration
 } from './Card.stories';
-import {getImage} from './utils';
+import {getDescription, getImage} from './utils';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
-import assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
 
 
 const meta: Meta<SpectrumCardProps> = {
@@ -39,10 +46,28 @@ const meta: Meta<SpectrumCardProps> = {
 
 export default meta;
 
-
 const Template = (): Story<SpectrumCardProps> => (args) => (
   <div style={{width: '208px'}}>
     <Card {...args} />
+  </div>
+);
+
+
+/* This is a bit of a funny template, we can't get selected on a Card through context because
+* if there's context it assumes it's being rendered in a collection. It's just here for a quick check of styles. */
+let manager = {
+  isSelected: () => true,
+  select: action('select')
+};
+let state = {
+  disabledKeys: new Set(),
+  selectionManager: manager
+};
+const TemplateSelected = (): Story<SpectrumCardProps> => (args) => (
+  <div style={{width: '208px'}}>
+    <CardViewContext.Provider value={{state}}>
+      <CardBase {...args} />
+    </CardViewContext.Provider>
   </div>
 );
 
@@ -50,52 +75,113 @@ export const Quiet = Template().bind({});
 Quiet.args = {...Default.args, isQuiet: true};
 
 export const QuietSquare = Template().bind({});
-QuietSquare.args = {...DefaultSquare.args, isQuiet: true};
+QuietSquare.args = {...Quiet.args, ...DefaultSquare.args};
 
 export const QuietTall = Template().bind({});
-QuietTall.args = {...DefaultTall.args, isQuiet: true};
+QuietTall.args = {...Quiet.args, ...DefaultTall.args};
 
 export const QuietNoDescription = Template().bind({});
-QuietNoDescription.args = {...NoDescription.args, isQuiet: true};
+QuietNoDescription.args = {...Quiet.args, ...NoDescription.args};
 
 export const QuietNoDescriptionSquare = Template().bind({});
-QuietNoDescriptionSquare.args = {...NoDescriptionSquare.args, isQuiet: true};
+QuietNoDescriptionSquare.args = {...Quiet.args, ...NoDescriptionSquare.args};
 
 export const QuietNoActionMenu = Template().bind({});
-QuietNoActionMenu.args = {...NoActionMenu.args, isQuiet: true};
+QuietNoActionMenu.args = {...Quiet.args, ...NoActionMenu.args};
 
 export const QuietWithIllustration = Template().bind({});
-QuietWithIllustration.args = {...WithIllustration.args, isQuiet: true};
+QuietWithIllustration.args = {...Quiet.args, ...WithIllustration.args};
 
 export const QuietLongTitle = Template().bind({});
-QuietLongTitle.args = {...LongTitle.args, isQuiet: true};
+QuietLongTitle.args = {...Quiet.args, ...LongTitle.args};
 
 export const QuietLongDescription = Template().bind({});
-QuietLongDescription.args = {...LongDescription.args, isQuiet: true};
+QuietLongDescription.args = {...Quiet.args, ...LongDescription.args};
+
+export const QuietLongContentPoorWordSize = Template().bind({});
+QuietLongContentPoorWordSize.args = {...Quiet.args, ...LongContentPoorWordSize.args};
 
 export const QuietLongDetail = Template().bind({});
-QuietLongDetail.args = {...LongDetail.args, isQuiet: true};
+QuietLongDetail.args = {...Quiet.args, ...LongDetail.args};
 
-export const GridOfCards = (props: SpectrumCardProps) => (
+export const CardGrid = (props: SpectrumCardProps) => (
   <div
-    className={classNames(styles, 'spectrum-CardGrid')}
     style={{
       width: '100%',
       margin: '50px',
       display: 'grid',
       gap: '20px',
       gridTemplateColumns: 'repeat(auto-fit, 208px)',
-      gridAutoRows: 'auto',
-      justifyContent: 'center',
-      justifyItems: 'center',
+      gridAutoRows: '305px'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <Card {...Quiet.args} {...props} layout="grid" key={`${index}${url}`}>
+            <Image src={url} />
+            <Heading>Title {index}</Heading>
+            <Text slot="detail">PNG</Text>
+            <Content>Description</Content>
+            <ActionMenu>
+              <Item>Action 1</Item>
+              <Item>Action 2</Item>
+            </ActionMenu>
+          </Card>
+        );
+      })
+    }
+  </div>
+);
+
+export const CardWaterfall = (props: SpectrumCardProps) => (
+  <div
+    style={{
+      width: '100%',
+      height: '100vh',
+      margin: '50px',
+      display: 'flex',
+      flexDirection: 'column',
+      flexWrap: 'wrap',
       alignItems: 'start'
     }}>
     {
       (new Array(15).fill(0)).map((_, index) => {
         let url = getImage(index);
         return (
-          <div style={{width: '208px', height: '305px'}}>
-            <Card {...Quiet.args} {...props} UNSAFE_className={classNames(styles, 'spectrum-Card--inGrid')} key={`${index}${url}`}>
+          <div style={{width: '208px', margin: '10px'}}>
+            <Card {...Quiet.args} {...props} layout="waterfall" key={`${index}${url}`}>
+              <Image src={url} />
+              <Heading>Title {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>{getDescription(index)}</Content>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+            </Card>
+          </div>
+        );
+      })
+    }
+  </div>
+);
+
+export const CardGallery = (props: SpectrumCardProps) => (
+  <div
+    style={{
+      width: '100%',
+      margin: '50px',
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'wrap'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{height: '305px', margin: '10px'}}>
+            <Card {...Quiet.args} {...props} layout="gallery" key={`${index}${url}`}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
@@ -112,133 +198,19 @@ export const GridOfCards = (props: SpectrumCardProps) => (
   </div>
 );
 
-export const GridOfCardsNoDescription = (props: SpectrumCardProps) => (
+
+export const CardFloat = (props: SpectrumCardProps) => (
   <div
-    className={classNames(styles, 'spectrum-CardGrid')}
     style={{
       width: '100%',
-      margin: '50px',
-      display: 'grid',
-      gap: '20px',
-      gridTemplateColumns: 'repeat(auto-fit, 208px)',
-      gridAutoRows: 'auto',
-      justifyContent: 'center',
-      justifyItems: 'center',
-      alignItems: 'start'
+      margin: '50px'
     }}>
     {
       (new Array(15).fill(0)).map((_, index) => {
         let url = getImage(index);
         return (
-          <div style={{width: '208px', height: '274px'}}>
-            <Card {...QuietNoDescription.args} {...props} UNSAFE_className={classNames(styles, 'spectrum-Card--inGrid')} key={`${index}${url}`}>
-              <Image src={url} />
-              <Heading>Title {index}</Heading>
-              <Text slot="detail">PNG</Text>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
-            </Card>
-          </div>
-        );
-      })
-    }
-  </div>
-);
-
-export const GridOfCardsIllustrations = (props: SpectrumCardProps) => (
-  <div
-    className={classNames(styles, 'spectrum-CardGrid')}
-    style={{
-      width: '100%',
-      margin: '50px',
-      display: 'grid',
-      gap: '20px',
-      gridTemplateColumns: 'repeat(auto-fit, 208px)',
-      gridAutoRows: 'auto',
-      justifyContent: 'center',
-      justifyItems: 'center',
-      alignItems: 'start'
-    }}>
-    {
-      (new Array(15).fill(0)).map((_, index) => {
-        let url = getImage(index);
-        return (
-          <div style={{width: '208px', height: '274px'}}>
-            <Card {...QuietNoDescription.args} {...props} UNSAFE_className={classNames(styles, 'spectrum-Card--inGrid')} key={`${index}${url}`}>
-              <File slot="illustration" />
-              <Heading>Title {index}</Heading>
-              <Text slot="detail">PNG</Text>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
-            </Card>
-          </div>
-        );
-      })
-    }
-  </div>
-);
-
-export const GridOfLongTitleCards = (props: SpectrumCardProps) => (
-  <div
-    className={classNames(styles, 'spectrum-CardGrid')}
-    style={{
-      width: '100%',
-      margin: '50px',
-      display: 'grid',
-      gap: '20px',
-      gridTemplateColumns: 'repeat(auto-fit, 208px)',
-      gridAutoRows: 'auto',
-      justifyContent: 'center',
-      justifyItems: 'center',
-      alignItems: 'start'
-    }}>
-    {
-      (new Array(15).fill(0)).map((_, index) => {
-        let url = getImage(index);
-        return (
-          <div style={{width: '208px', height: '305px'}}>
-            <Card {...Quiet.args} {...props} UNSAFE_className={classNames(styles, 'spectrum-Card--inGrid')} key={`${index}${url}`}>
-              <Image src={url} />
-              <Heading>This is a long title about how dinosaurs used to rule the earth before a meteor came and wiped them all out {index}</Heading>
-              <Text slot="detail">PNG</Text>
-              <Content>Description</Content>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
-            </Card>
-          </div>
-        );
-      })
-    }
-  </div>
-);
-
-
-export const GridWithTallRows = (props: SpectrumCardProps) => (
-  <div
-    className={classNames(styles, 'spectrum-CardGrid')}
-    style={{
-      width: '100%',
-      margin: '50px',
-      display: 'grid',
-      gap: '20px',
-      gridTemplateColumns: 'repeat(auto-fit, 208px)',
-      gridAutoRows: 'auto',
-      justifyContent: 'center',
-      justifyItems: 'center',
-      alignItems: 'start'
-    }}>
-    {
-      (new Array(15).fill(0)).map((_, index) => {
-        let url = getImage(index);
-        return (
-          <div style={{width: '208px', height: '400px'}}>
-            <Card {...Quiet.args} {...props} UNSAFE_className={classNames(styles, 'spectrum-Card--inGrid')} key={`${index}${url}`}>
+          <div style={{float: 'left', margin: '10px'}}>
+            <Card {...Quiet.args} {...props} key={`${index}${url}`}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
@@ -254,6 +226,132 @@ export const GridWithTallRows = (props: SpectrumCardProps) => (
     }
   </div>
 );
+
+export const CardGridNoDescription = (props: SpectrumCardProps) => (
+  <div
+    className={classNames(styles, 'spectrum-CardGrid')}
+    style={{
+      width: '100%',
+      margin: '50px',
+      display: 'grid',
+      gap: '20px',
+      gridTemplateColumns: 'repeat(auto-fit, 208px)',
+      gridAutoRows: '274px'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <Card {...QuietNoDescription.args} {...props} layout="grid" key={`${index}${url}`}>
+            <Image src={url} />
+            <Heading>Title {index}</Heading>
+            <Text slot="detail">PNG</Text>
+            <ActionMenu>
+              <Item>Action 1</Item>
+              <Item>Action 2</Item>
+            </ActionMenu>
+          </Card>
+        );
+      })
+    }
+  </div>
+);
+
+export const CardGridIllustrations = (props: SpectrumCardProps) => (
+  <div
+    className={classNames(styles, 'spectrum-CardGrid')}
+    style={{
+      width: '100%',
+      margin: '50px',
+      display: 'grid',
+      gap: '20px',
+      gridTemplateColumns: 'repeat(auto-fit, 208px)',
+      gridAutoRows: '274px'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <Card {...QuietNoDescription.args} {...props} layout="grid" key={`${index}${url}`}>
+            <File slot="illustration" />
+            <Heading>Title {index}</Heading>
+            <Text slot="detail">PNG</Text>
+            <ActionMenu>
+              <Item>Action 1</Item>
+              <Item>Action 2</Item>
+            </ActionMenu>
+          </Card>
+        );
+      })
+    }
+  </div>
+);
+
+export const CardGridLongTitle = (props: SpectrumCardProps) => (
+  <div
+    className={classNames(styles, 'spectrum-CardGrid')}
+    style={{
+      width: '100%',
+      margin: '50px',
+      display: 'grid',
+      gap: '20px',
+      gridTemplateColumns: 'repeat(auto-fit, 208px)',
+      gridAutoRows: '305px'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <Card {...Quiet.args} {...props} layout="grid" key={`${index}${url}`}>
+            <Image src={url} />
+            <Heading>This is a long title about how dinosaurs used to rule the earth before a meteor came and wiped them all out {index}</Heading>
+            <Text slot="detail">PNG</Text>
+            <Content>Description</Content>
+            <ActionMenu>
+              <Item>Action 1</Item>
+              <Item>Action 2</Item>
+            </ActionMenu>
+          </Card>
+        );
+      })
+    }
+  </div>
+);
+
+
+export const CardGridTallRows = (props: SpectrumCardProps) => (
+  <div
+    className={classNames(styles, 'spectrum-CardGrid')}
+    style={{
+      width: '100%',
+      margin: '50px',
+      display: 'grid',
+      gap: '20px',
+      gridTemplateColumns: 'repeat(auto-fit, 208px)',
+      gridAutoRows: '400px'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <Card {...Quiet.args} {...props} layout="grid" key={`${index}${url}`}>
+            <Image src={url} />
+            <Heading>Title {index}</Heading>
+            <Text slot="detail">PNG</Text>
+            <Content>Description</Content>
+            <ActionMenu>
+              <Item>Action 1</Item>
+              <Item>Action 2</Item>
+            </ActionMenu>
+          </Card>
+        );
+      })
+    }
+  </div>
+);
+
+export const Selected = TemplateSelected().bind({});
+Selected.args = {...Quiet.args};
 
 function File(props) {
   props = useSlotProps(props, 'asset');

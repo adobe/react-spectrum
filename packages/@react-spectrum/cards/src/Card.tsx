@@ -29,7 +29,8 @@ let Card = forwardRef((props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) =>
   }
 });
 
-
+// @ts-ignore
+// eslint-disable-next-line
 Card.getCollectionNode = function* getCollectionNode<T>(props, context: any): Generator<PartialNode<T>> {
   let {children, textValue} = props;
 
@@ -43,6 +44,6 @@ Card.getCollectionNode = function* getCollectionNode<T>(props, context: any): Ge
   };
 };
 
-// We don't want getCollectionNode to show up in the type definition
+// eslint-disable-next-line
 let _Card = Card as <T>(props, ref) => JSX.Element;
 export {_Card as Card};

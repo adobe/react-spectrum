@@ -10,20 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
 import {ActionMenu, Item} from '@react-spectrum/menu';
 import assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
 import {Button} from '@react-spectrum/button';
 import {Card} from '../';
+import {CardBase} from '../src/CardBase';
+import {CardViewContext} from '../src/CardViewContext';
 import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {Content, Footer} from '@react-spectrum/view';
-import {Flex} from '@react-spectrum/layout';
-import {getImage} from './utils';
+import {getDescription, getImage} from './utils';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
-import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 
 
 const meta: Meta<SpectrumCardProps> = {
@@ -37,6 +38,24 @@ export default meta;
 const Template = (): Story<SpectrumCardProps> => (args) => (
   <div style={{width: '208px'}}>
     <Card {...args} />
+  </div>
+);
+
+/* This is a bit of a funny template, we can't get selected on a Card through context because
+* if there's context it assumes it's being rendered in a collection. It's just here for a quick check of styles. */
+let manager = {
+  isSelected: () => true,
+  select: action('select')
+};
+let state = {
+  disabledKeys: new Set(),
+  selectionManager: manager
+};
+const TemplateSelected = (): Story<SpectrumCardProps> => (args) => (
+  <div style={{width: '208px'}}>
+    <CardViewContext.Provider value={{state}}>
+      <CardBase {...args} />
+    </CardViewContext.Provider>
   </div>
 );
 
@@ -143,6 +162,23 @@ LongContentSquare.args = {children: (
   </>
 )};
 
+export const LongContentPoorWordSize = Template().bind({});
+LongContentPoorWordSize.args = {children: (
+  <>
+    <Image src="https://i.imgur.com/Z7AzH2c.png" />
+    <Heading>Title</Heading>
+    <Text slot="detail">PNG</Text>
+    <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
+    <ActionMenu>
+      <Item>Action 1</Item>
+      <Item>Action 2</Item>
+    </ActionMenu>
+    <Footer>
+      <Button variant="primary">Something</Button>
+    </Footer>
+  </>
+)};
+
 export const NoDescription = Template().bind({});
 NoDescription.args = {children: (
   <>
@@ -227,29 +263,109 @@ NoImage.args = {children: (
   </>
 )};
 
-export const GridOfCards = (props: SpectrumCardProps) => (
-  <Flex direction="row" gap={15} wrap="wrap" margin={50}>
+export const CardGrid = (props: SpectrumCardProps) => (
+  <div
+    style={{
+      width: '100%',
+      margin: '50px',
+      display: 'grid',
+      gap: '20px',
+      gridTemplateColumns: 'repeat(auto-fit, 208px)',
+      gridAutoRows: 'auto',
+      justifyContent: 'center',
+      justifyItems: 'center',
+      alignItems: 'start'
+    }}>
     {
-      (new Array(7).fill(0)).map((_, index) => {
+      (new Array(15).fill(0)).map((_, index) => {
         let url = getImage(index);
         return (
-          <Card {...Default.args} {...props} UNSAFE_className={classNames(styles, 'spectrum-Card--inGrid')} key={`${index}${url}`}>
-            <Image src={url} />
-            <Heading>Title {index}</Heading>
-            <Text slot="detail">PNG</Text>
-            <Content>Description</Content>
-            <ActionMenu>
-              <Item>Action 1</Item>
-              <Item>Action 2</Item>
-            </ActionMenu>
-            <Footer>
-              <Button variant="primary">Something</Button>
-            </Footer>
-          </Card>
+          <div style={{width: '208px', height: '268px'}}>
+            <Card {...Default.args} {...props} layout="grid" key={`${index}${url}`}>
+              <Image src={url} />
+              <Heading>Title {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>Description</Content>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+              <Footer>
+                <Button variant="secondary">Button</Button>
+              </Footer>
+            </Card>
+          </div>
         );
       })
     }
-  </Flex>
+  </div>
+);
+
+export const CardWaterfall = (props: SpectrumCardProps) => (
+  <div
+    style={{
+      width: '100%',
+      height: '150vh',
+      margin: '50px',
+      display: 'flex',
+      flexDirection: 'column',
+      flexWrap: 'wrap',
+      alignItems: 'start'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{width: '208px', margin: '10px'}}>
+            <Card {...Default.args} {...props} layout="waterfall" key={`${index}${url}`}>
+              <Image src={url} />
+              <Heading>Title {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>{getDescription(index)}</Content>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+              <Footer>
+                <Button variant="secondary">Button</Button>
+              </Footer>
+            </Card>
+          </div>
+        );
+      })
+    }
+  </div>
+);
+
+export const CardFloat = (props: SpectrumCardProps) => (
+  <div
+    style={{
+      width: '100%',
+      margin: '50px'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{float: 'left', margin: '10px'}}>
+            <Card {...Default.args} {...props} key={`${index}${url}`}>
+              <Image src={url} />
+              <Heading>Title {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>Description</Content>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+              <Footer>
+                <Button variant="secondary">Button</Button>
+              </Footer>
+            </Card>
+          </div>
+        );
+      })
+    }
+  </div>
 );
 
 export const WithIllustration = Template().bind({});
@@ -316,6 +432,11 @@ LongDetail.args = {children: (
   </>
 )};
 
+export const Selected = TemplateSelected().bind({});
+Selected.args = {...Default.args};
+
+// actually use Illustration???
+// where to get the three asset svgs to use with Illustration
 function File(props) {
   props = useSlotProps(props, 'asset');
   let {styleProps} = useStyleProps(props);

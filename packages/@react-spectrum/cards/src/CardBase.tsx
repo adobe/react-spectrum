@@ -11,7 +11,7 @@
  */
 
 import {Checkbox} from '@react-spectrum/checkbox';
-import {classNames, SlotProvider, useDOMRef, useHasChild, useUnwrapDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
 import {Divider} from '@react-spectrum/divider';
 import {DOMRef, Node} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
@@ -23,10 +23,6 @@ import {useCard} from '@react-aria/cards';
 import {useCardViewContext} from './CardViewContext';
 import {useFocusWithin, useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
-
-// can there be a selection checkbox when not in a grid?
-// is there a way to turn off the selection checkbox?
-// is cards getting an isSelected prop? do cards have controlled/uncontrolled?
 
 interface CardBaseProps<T> extends SpectrumCardProps {
   articleProps?: HTMLAttributes<HTMLElement>,
@@ -43,7 +39,8 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     isQuiet,
     orientation = 'vertical',
     articleProps = {},
-    item
+    item,
+    layout
   } = props;
 
   let key = item?.key;
@@ -83,9 +80,10 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     content: {UNSAFE_className: classNames(styles, 'spectrum-Card-content'), ...contentProps},
     detail: {UNSAFE_className: classNames(styles, 'spectrum-Card-detail')},
     actionmenu: {UNSAFE_className: classNames(styles, 'spectrum-Card-actions'), align: 'end', isQuiet: true},
-    footer: {UNSAFE_className: classNames(styles, 'spectrum-Card-footer')},
+    footer: {UNSAFE_className: classNames(styles, 'spectrum-Card-footer'), isHidden: isQuiet},
     divider: {UNSAFE_className: classNames(styles, 'spectrum-Card-divider'), size: 'S'}
   }), [titleProps, contentProps]);
+
 
   return (
     // TODO: Focus ring in v2 only goes around preview for quiet varients, fix this for v3?
@@ -100,7 +98,9 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
           'spectrum-Card--horizontal': orientation === 'horizontal',
           'is-hovered': isHovered,
           'is-focused': isFocused,
-          'is-selected': isSelected
+          'is-selected': isSelected,
+          'constrainedX': layout === 'waterfall' || layout === 'grid',
+          'constrainedY': layout === 'gallery' || layout === 'grid'
         }, styleProps.className)}>
         <div ref={gridRef} className={classNames(styles, 'spectrum-Card-grid')}>
           {manager && manager.selectionMode !== 'none' && (
@@ -114,6 +114,9 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
                 isEmphasized
                 aria-label="select" />
             </div>
+          )}
+          {orientation === 'horizontal' && (
+            <img className={classNames(styles, 'spectrum-Card-sizeHelper')} aria-hidden alt="" width="1" height="1" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" />
           )}
           <SlotProvider slots={slots}>
             {props.children}

@@ -831,6 +831,45 @@ describe('useAsyncList', () => {
     expect(result.current.items).toEqual(ITEMS2);
   });
 
+  it('should maintain all selection through a loadMore call', async () => {
+    let load = jest.fn()
+      .mockImplementationOnce(getItems)
+      .mockImplementationOnce(getItems2);
+    let {result} = renderHook(
+      () => useAsyncList({load})
+    );
+
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.items).toEqual([]);
+
+    await act(async () => {
+      jest.runAllTimers();
+      result.current.setSelectedKeys('all');
+    });
+
+    expect(result.current.selectedKeys).toEqual('all');
+
+    await act(async () => {
+      result.current.loadMore();
+      jest.runAllTimers();
+    });
+
+    expect(load).toHaveBeenCalledTimes(2);
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.items).toEqual([...ITEMS, ...ITEMS2]);
+    expect(result.current.selectedKeys).toEqual('all');
+  });
+
+  it('should accept all for initialSelectedKeys', () => {
+    let load = jest.fn()
+      .mockImplementationOnce(getItems);
+    let {result} = renderHook(
+      () => useAsyncList({load, initialSelectedKeys: 'all'})
+    );
+    expect(result.current.selectedKeys).toEqual('all');
+  });
+
   describe('filtering', function () {
     const filterItems = [{id: 1, name: 'Bob'}, {id: 2, name: 'Joe'}, {id: 3, name: 'Bob Joe'}];
     const itemsFirstCall = [{id: 1, name: 'Bob'}, {id: 3, name: 'Bob Joe'}];
@@ -887,6 +926,29 @@ describe('useAsyncList', () => {
       expect(result.current.isLoading).toBe(false);
       expect(result.current.items).toEqual(filterItems);
       expect(result.current.filterText).toEqual('Blah');
+    });
+
+    it('should preserve all selectedKeys through filtering', async () => {
+      let load = jest.fn().mockImplementation(getFilterItems);
+      let initialFilterText = 'Blah';
+      let {result, waitForNextUpdate} = renderHook(() => useAsyncList({load, initialFilterText}));
+
+      await act(async () => {
+        result.current.setSelectedKeys('all');
+      });
+
+      expect(result.current.selectedKeys).toEqual('all');
+
+      await act(async () => {
+        jest.runAllTimers();
+        await waitForNextUpdate();
+      });
+
+      expect(result.current.loadingState).toBe('idle');
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.items).toEqual(filterItems);
+      expect(result.current.filterText).toEqual('Blah');
+      expect(result.current.selectedKeys).toEqual('all');
     });
 
     it('should update the list of items when the filter text changes (server side filtering)', async () => {
