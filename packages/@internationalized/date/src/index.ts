@@ -21,7 +21,6 @@ export {IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar} f
 export {HebrewCalendar} from './calendars/HebrewCalendar';
 export {EthiopicCalendar, EthiopicAmeteAlemCalendar, CopticCalendar} from './calendars/EthiopicCalendar';
 export {createCalendar} from './createCalendar';
-export * from './manipulation';
 export * from './conversion';
 export * from './queries';
 export * from './types';

@@ -13,6 +13,7 @@
 import {AnyCalendarDate, AnyTime} from './types';
 import {CalendarDate, ZonedDateTime} from './CalendarDate';
 import {fromAbsolute, toAbsolute, toCalendar, toCalendarDate} from './conversion';
+import {Mutable} from './utils';
 
 export function isSameDay(a: AnyCalendarDate, b: AnyCalendarDate): boolean {
   b = toCalendar(b, a.calendar);
@@ -76,4 +77,32 @@ export function getHoursInDay(a: CalendarDate, timeZone: string): number {
 export function getLocalTimeZone(): string {
   // TODO: cache? but how to invalidate...
   return new Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+
+export function startOfMonth<T extends AnyCalendarDate>(date: T): T {
+  let mutableDate: Mutable<T> = date.copy();
+  mutableDate.day = 1;
+  return mutableDate;
+}
+
+export function endOfMonth<T extends AnyCalendarDate>(date: T): T {
+  let mutableDate: Mutable<T> = date.copy();
+  mutableDate.day = date.calendar.getDaysInMonth(date);
+  return mutableDate;
+}
+
+export function getMinimumMonthInYear(date: AnyCalendarDate) {
+  if (date.calendar.getMinimumMonthInYear) {
+    return date.calendar.getMinimumMonthInYear(date);
+  }
+
+  return 1;
+}
+
+export function getMinimumDayInMonth(date: AnyCalendarDate) {
+  if (date.calendar.getMinimumDayInMonth) {
+    return date.calendar.getMinimumDayInMonth(date);
+  }
+
+  return 1;
 }

@@ -83,7 +83,8 @@ export class GregorianCalendar implements Calendar {
     return daysInMonth[isLeapYear(date.year) ? 'leapyear' : 'standard'][date.month - 1];
   }
 
-  getMonthsInYear(): number {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getMonthsInYear(date: AnyCalendarDate): number {
     return 12;
   }
 

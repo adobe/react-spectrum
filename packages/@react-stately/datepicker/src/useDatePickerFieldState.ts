@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, CalendarDateTime, GregorianCalendar, now, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
+import {Calendar, CalendarDateTime, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, now, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue} from '@react-types/datepicker';
 import {FieldOptions, getFormatOptions, isInvalid} from './utils';
 import {useControlledState} from '@react-stately/utils';
@@ -157,11 +157,10 @@ export function useDatePickerFieldState<T extends DateValue>(props: DatePickerFi
       return;
     }
 
-    // The display calendar should not have any effect on the emitted value.
-    // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
-    newValue = toCalendar(newValue, v?.calendar || new GregorianCalendar());
-
     if (Object.keys(validSegments).length >= numSegments) {
+      // The display calendar should not have any effect on the emitted value.
+      // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
+      newValue = toCalendar(newValue, v?.calendar || new GregorianCalendar());
       setDate(newValue);
     } else {
       setPlaceholderDate(newValue);
@@ -249,13 +248,13 @@ function getSegmentLimits(date: DateValue, type: string, options: Intl.ResolvedD
     case 'month':
       return {
         value: date.month,
-        minValue: 1,
+        minValue: getMinimumMonthInYear(date),
         maxValue: date.calendar.getMonthsInYear(date)
       };
     case 'day':
       return {
         value: date.day,
-        minValue: 1,
+        minValue: getMinimumDayInMonth(date),
         maxValue: date.calendar.getDaysInMonth(date)
       };
   }

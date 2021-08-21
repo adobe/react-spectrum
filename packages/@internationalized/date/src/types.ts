@@ -40,12 +40,15 @@ export interface Calendar {
   getDaysInMonth(date: AnyCalendarDate): number,
   getMonthsInYear(date: AnyCalendarDate): number,
   getYearsInEra(date: AnyCalendarDate): number,
-
   getEras(): string[],
 
+  getMinimumMonthInYear?(date: AnyCalendarDate): number,
+  getMinimumDayInMonth?(date: AnyCalendarDate): number,
+
   balanceDate?(date: AnyCalendarDate): void,
-  addYears?(date: AnyCalendarDate, years: number): void
-  constrainDate?(date: AnyCalendarDate): void,
+  addYears?(date: AnyCalendarDate, years: number): void,
+  add?(date: AnyCalendarDate, duration: Duration): CalendarDate,
+  constrainDate?(date: AnyCalendarDate): void
 }
 
 export interface Duration {

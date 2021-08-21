@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AnyCalendarDate, AnyTime, CycleOptions, CycleTimeOptions, DateField, DateFields, Disambiguation, Duration, OverflowBehavior, TimeField, TimeFields} from './types';
+import {AnyCalendarDate, AnyTime, CycleOptions, CycleTimeOptions, DateField, DateFields, Disambiguation, Duration, TimeField, TimeFields} from './types';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 import {epochFromDate, fromAbsolute, toAbsolute, toCalendar, toCalendarDateTime} from './conversion';
+import {getMinimumDayInMonth, getMinimumMonthInYear} from './queries';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
 import {Mutable} from './utils';
 
@@ -27,20 +28,28 @@ export function add(date: CalendarDate | CalendarDateTime, duration: Duration) {
   let mutableDate: Mutable<AnyCalendarDate> = date.copy();
   let days = 'hour' in date ? addTimeFields(date, duration) : 0;
 
-  addYears(mutableDate, duration.years || 0);
-  mutableDate.month += duration.months || 0;
+  if (date.calendar.add) {
+    let res = date.calendar.add(date, duration);
+    mutableDate.era = res.era;
+    mutableDate.year = res.year;
+    mutableDate.month = res.month;
+    mutableDate.day = res.day;
+  } else {
+    addYears(mutableDate, duration.years || 0);
+    mutableDate.month += duration.months || 0;
 
-  balanceYearMonth(mutableDate);
-  constrainMonthDay(mutableDate);
+    balanceYearMonth(mutableDate);
+    constrainMonthDay(mutableDate);
 
-  mutableDate.day += (duration.weeks || 0) * 7;
-  mutableDate.day += duration.days || 0;
-  mutableDate.day += days;
+    mutableDate.day += (duration.weeks || 0) * 7;
+    mutableDate.day += duration.days || 0;
+    mutableDate.day += days;
 
-  balanceDay(mutableDate);
+    balanceDay(mutableDate);
 
-  if (mutableDate.calendar.balanceDate) {
-    mutableDate.calendar.balanceDate(mutableDate);
+    if (mutableDate.calendar.balanceDate) {
+      mutableDate.calendar.balanceDate(mutableDate);
+    }
   }
 
   return mutableDate;
@@ -82,8 +91,17 @@ function balanceDay(date: Mutable<AnyCalendarDate>) {
 }
 
 function constrainMonthDay(date: Mutable<AnyCalendarDate>) {
-  date.month = Math.max(1, Math.min(date.calendar.getMonthsInYear(date), date.month));
-  date.day = Math.max(1, Math.min(date.calendar.getDaysInMonth(date), date.day));
+  date.month = Math.max(getMinimumMonthInYear(date), Math.min(date.calendar.getMonthsInYear(date), date.month));
+  date.day = Math.max(getMinimumDayInMonth(date), Math.min(date.calendar.getDaysInMonth(date), date.day));
+}
+
+function constrain(date: Mutable<AnyCalendarDate>) {
+  if (date.calendar.constrainDate) {
+    date.calendar.constrainDate(date);
+  }
+
+  date.year = Math.max(1, Math.min(date.calendar.getYearsInEra(date), date.year));
+  constrainMonthDay(date);
 }
 
 export function invertDuration(duration: Duration): Duration {
@@ -128,13 +146,7 @@ export function set(date: CalendarDate | CalendarDateTime, fields: DateFields) {
     mutableDate.day = fields.day;
   }
 
-  constrainMonthDay(mutableDate);
-  mutableDate.year = Math.max(1, Math.min(date.calendar.getYearsInEra(mutableDate), mutableDate.year));
-
-  if (date.calendar.constrainDate) {
-    date.calendar.constrainDate(mutableDate);
-  }
-
+  constrain(mutableDate);
   return mutableDate;
 }
 
@@ -214,18 +226,6 @@ export function subtractTime(time: Time, duration: Duration): Time {
   return addTime(time, invertDuration(duration));
 }
 
-export function startOfMonth<T extends AnyCalendarDate>(date: T): T {
-  let mutableDate: Mutable<T> = date.copy();
-  mutableDate.day = 1;
-  return mutableDate;
-}
-
-export function endOfMonth<T extends AnyCalendarDate>(date: T): T {
-  let mutableDate: Mutable<T> = date.copy();
-  mutableDate.day = date.calendar.getDaysInMonth(date);
-  return mutableDate;
-}
-
 /* eslint-disable no-redeclare */
 export function cycleDate(value: CalendarDateTime, field: DateField, amount: number, options?: CycleOptions): CalendarDateTime;
 export function cycleDate(value: CalendarDate, field: DateField, amount: number, options?: CycleOptions): CalendarDate;
@@ -245,24 +245,20 @@ export function cycleDate(value: CalendarDate | CalendarDateTime, field: DateFie
       break;
     }
     case 'year': {
-      let year = cycleValue(value.year, amount, 1, value.calendar.getYearsInEra(value), options?.round);
-      addYears(mutable, year - value.year);
+      mutable.year = cycleValue(value.year, amount, 1, value.calendar.getYearsInEra(value), options?.round);
       break;
     }
     case 'month':
-      mutable.month = cycleValue(value.month, amount, 1, value.calendar.getMonthsInYear(value), options?.round);
+      mutable.month = cycleValue(value.month, amount, getMinimumMonthInYear(value), value.calendar.getMonthsInYear(value), options?.round);
       break;
     case 'day':
-      mutable.day = cycleValue(value.day, amount, 1, value.calendar.getDaysInMonth(value), options?.round);
+      mutable.day = cycleValue(value.day, amount, getMinimumDayInMonth(value), value.calendar.getDaysInMonth(value), options?.round);
       break;
     default:
       throw new Error('Unsupported field ' + field);
   }
 
-  if (mutable.calendar.balanceDate) {
-    mutable.calendar.balanceDate(mutable);
-  }
-
+  constrain(mutable);
   return mutable;
 }
 
