@@ -180,7 +180,7 @@ export const CardGallery = (props: SpectrumCardProps) => (
       (new Array(15).fill(0)).map((_, index) => {
         let url = getImage(index);
         return (
-          <div style={{height: '305px', margin: '10px'}}>
+          <div style={{height: '339px', margin: '10px'}}>
             <Card {...Quiet.args} {...props} layout="gallery" key={`${index}${url}`}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
