@@ -349,9 +349,11 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   // virtualized collections should handle this in their virtualizer or get this for free via our Virtualizer component
   useEffect(() => {
     let onFocus = (e) => {
-      if ((e.target instanceof HTMLElement && ref.current?.contains(e.target)) && !isVirtualized && !manager.isFocused) {
+      // Note: we can get away with only checking if the target is in the scrollable region only because the keydown capturing listener below
+      // will prevent tab/shift tab from focusing the select all checkbox and instead focus the last focused key.
+      if ((e.target instanceof HTMLElement && scrollRef.current?.contains(e.target)) && !isVirtualized && !manager.isFocused) {
         if (manager.focusedKey) {
-          let element = ref.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
+          let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
           if (element) {
             // Figure out if element is out of view
             let scrollContainerTop = scrollRef.current.offsetTop + prevScroll.current.scrollTop;
@@ -381,7 +383,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     return () => {
       window.removeEventListener('focus', onFocus, true);
     };
-  }, [manager.focusedKey, scrollRef, isVirtualized, ref]);
+  }, [manager.focusedKey, scrollRef, isVirtualized]);
 
   // Save the previous scroll position
   let onScroll = useCallback(() => {
@@ -423,7 +425,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         if (ref.current.contains(nodeToFocus) && manager.focusedKey) {
           e.preventDefault();
           let element = ref.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
-          focusSafely(element);
+          element && focusSafely(element);
         }
       }
     };
