@@ -18,7 +18,7 @@ import {DOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId, useLabels, useUpdateEffect} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {KeyboardEvent, useRef} from 'react';
+import {KeyboardEvent} from 'react';
 import {useDateFormatter, useLocale, useMessageFormatter} from '@react-aria/i18n';
 
 export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: CalendarStateBase, selectedDateDescription: string): CalendarAria {
@@ -30,7 +30,6 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
   let domProps = filterDOMProps(props, {labelable: true});
   let formatMessage = useMessageFormatter(intlMessages);
   let monthFormatter = useDateFormatter({month: 'long', year: 'numeric'});
-  let calendarBody = useRef(null); // TODO: should this be in RSP?
   let calendarId = useId(props.id);
   let calendarTitleId = useId();
   let captionId = useId();
@@ -139,7 +138,6 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
       isDisabled: props.isDisabled || state.isPreviousMonthInvalid()
     },
     calendarBodyProps: {
-      ref: calendarBody,
       role: 'grid',
       'aria-readonly': isReadOnly || null,
       'aria-disabled': isDisabled || null,

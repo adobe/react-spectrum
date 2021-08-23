@@ -15,10 +15,10 @@ import {DateValue, RangeCalendarProps} from '@react-types/calendar';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isSameDay} from '@internationalized/date';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useEvent, useId} from '@react-aria/utils';
 import {RangeCalendarState} from '@react-stately/calendar';
 import {useCalendarBase} from './useCalendarBase';
-import {useMemo} from 'react';
+import {useMemo, useRef} from 'react';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 export function useRangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, state: RangeCalendarState): CalendarAria {
@@ -50,8 +50,30 @@ export function useRangeCalendar<T extends DateValue>(props: RangeCalendarProps<
 
   let res = useCalendarBase(props, state, selectedDateDescription);
   res.calendarBodyProps = mergeProps(res.calendarBodyProps, {
+    id: useId(),
     'aria-multiselectable': true,
     onKeyDown
+  });
+
+  res.nextButtonProps.id = useId();
+  res.prevButtonProps.id = useId();
+
+  // Stop range selection when pressing or releasing a pointer outside the calendar body,
+  // except when pressing the next or previous buttons to switch months.
+  useEvent(useRef(window), 'pointerup', e => {
+    if (!state.anchorDate) {
+      return;
+    }
+
+    let target = e.target as HTMLElement;
+    let body = document.getElementById(res.calendarBodyProps.id);
+    if (
+      (!body.contains(target) || target.getAttribute('role') !== 'button') &&
+      !document.getElementById(res.nextButtonProps.id)?.contains(target) &&
+      !document.getElementById(res.prevButtonProps.id)?.contains(target)
+    ) {
+      state.selectFocusedDate();
+    }
   });
 
   return res;

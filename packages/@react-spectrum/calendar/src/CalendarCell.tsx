@@ -27,7 +27,7 @@ interface CalendarCellProps extends AriaCalendarCellProps {
 
 export function CalendarCell({state, ...props}: CalendarCellProps) {
   let ref = useRef<HTMLElement>();
-  let {cellProps, buttonProps} = useCalendarCell(props, state, ref);
+  let {cellProps, buttonProps, isPressed} = useCalendarCell(props, state, ref);
   let {hoverProps, isHovered} = useHover({});
   let dateFormatter = useDateFormatter({
     day: 'numeric',
@@ -61,7 +61,8 @@ export function CalendarCell({state, ...props}: CalendarCellProps) {
           'is-range-selection': isSelected && 'highlightedRange' in state,
           'is-selection-start': isSelectionStart,
           'is-selection-end': isSelectionEnd,
-          'is-hovered': isHovered
+          'is-hovered': isHovered,
+          'is-pressed': isPressed
         })}>
         {dateFormatter.format(toDate(props.date, state.timeZone))}
       </span>
