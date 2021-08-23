@@ -20,7 +20,7 @@ import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import ChevronRight from '@spectrum-icons/ui/ChevronRightLarge';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {toDate} from '@internationalized/date';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
@@ -56,6 +56,25 @@ export function CalendarBase(props: CalendarBaseProps) {
   let {direction} = useLocale();
   let {styleProps} = useStyleProps(otherProps);
 
+  let [isRangeSelecting, setRangeSelecting] = useState(false);
+  let hasAnchorDate = 'anchorDate' in state && state.anchorDate != null;
+
+  // Update isRangeSelecting immediately when it becomes true.
+  // This feels weird but is actually fine...
+  // https://reactjs.org/docs/hooks-faq.html#how-do-i-implement-getderivedstatefromprops
+  if (hasAnchorDate && !isRangeSelecting) {
+    setRangeSelecting(true);
+  }
+
+  // Delay removing the is-range-selecting class for a frame after selection ends.
+  // This avoids an undesired animation on touch devices.
+  useEffect(() => {
+    if (!hasAnchorDate && isRangeSelecting) {
+      let raf = requestAnimationFrame(() => setRangeSelecting(false));
+      return () => cancelAnimationFrame(raf);
+    }
+  }, [hasAnchorDate, isRangeSelecting]);
+
   return (
     <div
       {...styleProps}
@@ -87,7 +106,7 @@ export function CalendarBase(props: CalendarBaseProps) {
       </div>
       <table
         {...calendarBodyProps}
-        className={classNames(styles, 'spectrum-Calendar-body', 'spectrum-Calendar-table')}>
+        className={classNames(styles, 'spectrum-Calendar-body', 'spectrum-Calendar-table', {'is-range-selecting': isRangeSelecting})}>
         <VisuallyHidden elementType="caption" {...captionProps} />
         <CalendarTableHeader weekDays={state.weekDays} />
         <CalendarTableBody state={state} />
