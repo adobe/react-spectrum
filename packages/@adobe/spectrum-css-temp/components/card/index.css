@@ -251,6 +251,7 @@ user-provided
       ".       .       .       .          .";
 
     &:before {
+      z-index: 4;
       content: ' ';
       grid-area: preview;
       inline-size: 100%;
