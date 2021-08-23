@@ -61,7 +61,8 @@ function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteP
     {
       ...props,
       defaultFilter: contains,
-      allowsEmptyCollection: isAsync
+      allowsEmptyCollection: isAsync,
+      allowsCustomValue: true
     }
   );
   let layout = useListBoxLayout(comboBoxState);
