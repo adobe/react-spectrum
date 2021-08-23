@@ -15,7 +15,7 @@ import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './index.css';
-import {DateValue, SpectrumDateRangePickerProps, TimeValue} from '@react-types/datepicker';
+import {DateValue, SpectrumDateRangePickerProps} from '@react-types/datepicker';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
