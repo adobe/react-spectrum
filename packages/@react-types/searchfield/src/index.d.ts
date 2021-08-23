@@ -35,6 +35,10 @@ export interface SearchAutocompleteProps<T> extends CollectionBase<T>, SearchFie
 }
 
 export interface SpectrumSearchAutocompleteProps<T> extends Omit<SearchAutocompleteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+  /** The list of SearchAutocomplete items (uncontrolled). */
+  defaultItems?: Iterable<T>,
+  /** The list of SearchAutocomplete items (controlled). */
+  items?: Iterable<T>,
   /**
    * The interaction required to display the SearchAutocomplete menu. Note that this prop has no effect on the mobile SearchAutocomplete experience.
    * @default 'input'
