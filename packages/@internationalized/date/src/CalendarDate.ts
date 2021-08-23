@@ -39,7 +39,7 @@ function shiftArgs(args: any[]) {
 
 export class CalendarDate {
   // This prevents TypeScript from allowing other types with the same fields to match.
-  // i.e. a ZonedDateTime should be be passable to a parameter that expects CalendarDate.
+  // i.e. a ZonedDateTime should not be be passable to a parameter that expects CalendarDate.
   // If that behavior is desired, use the AnyCalendarDate interface instead.
   #type;
   public readonly calendar: Calendar;
