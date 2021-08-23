@@ -24,7 +24,7 @@ export interface SearchFieldProps extends TextFieldProps {
 }
 
 export interface SearchAutocompleteProps<T> extends CollectionBase<T>, SearchFieldProps {
-  menuTrigger: 'focus' | 'input',
+  menuTrigger?: MenuTriggerAction,
   isQuiet?: boolean,
   direction?: 'bottom' | 'top',
   shouldFlip?: boolean,

@@ -9,9 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import {AriaButtonProps} from '@react-types/button';
 import {classNames, useFocusableRef, useResizeObserver, useUnwrapDOMRef} from '@react-spectrum/utils';
+import {ClearButton} from '@react-spectrum/button';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
-import {DOMRefValue} from '@react-types/shared';
+import {DOMRefValue, FocusableRef} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {FocusRing} from '@react-aria/focus';
 // @ts-ignore
@@ -20,24 +22,24 @@ import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
 import {Placement} from '@react-types/overlays';
 import {Popover} from '@react-spectrum/overlays';
-import {ProgressCircle} from '@react-spectrum/progress';
+import {ProgressCircle} from '../../progress/src/ProgressCircle';
 import React, {forwardRef, InputHTMLAttributes, RefObject, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
-import {SearchField} from '@react-spectrum/searchfield';
 import {SpectrumSearchAutocompleteProps} from '@react-types/searchfield';
 import styles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
-import {TextFieldRef} from '@react-types/textfield';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter, useMessageFormatter} from '@react-aria/i18n';
 import {useHover} from '@react-aria/interactions';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSearchAutocomplete} from '@react-aria/searchfield';
+import {useSearchFieldState} from '@react-stately/searchfield';
 
-function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: RefObject<TextFieldRef>) {
+function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
 
   let {
+    menuTrigger = 'input',
     shouldFlip = true,
     direction = 'bottom',
     isQuiet,
@@ -55,23 +57,27 @@ function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteP
   let domRef = useFocusableRef(ref, inputRef);
 
   let {contains} = useFilter({sensitivity: 'base'});
-  let state = useComboBoxState(
+  let comboBoxState = useComboBoxState(
     {
       ...props,
       defaultFilter: contains,
       allowsEmptyCollection: isAsync
     }
   );
-  let layout = useListBoxLayout(state);
+  let layout = useListBoxLayout(comboBoxState);
 
-  let {inputProps, listBoxProps, labelProps} = useSearchAutocomplete(
+  let searchFieldState = useSearchFieldState(props);
+
+  let state = {...comboBoxState, ...searchFieldState};
+  
+  let {inputProps, listBoxProps, labelProps, clearButtonProps} = useSearchAutocomplete(
     {
       ...props,
       keyboardDelegate: layout,
       popoverRef: unwrappedPopoverRef,
       listBoxRef,
-      inputRef: inputRef,
-      menuTrigger: 'input'
+      inputRef,
+      menuTrigger
     },
     state
   );
@@ -123,13 +129,14 @@ function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteP
 
   return (
     <>
-      <Field labelProps={labelProps} ref={domRef}>
+      <Field {...props} labelProps={labelProps} ref={domRef}>
         <SearchAutocompleteInput
           {...props}
           isOpen={state.isOpen}
           loadingState={loadingState}
           inputProps={inputProps}
-          inputRef={inputRef} />
+          inputRef={inputRef}
+          clearButtonProps={clearButtonProps} />
       </Field>
       <Popover
         isOpen={state.isOpen}
@@ -166,26 +173,27 @@ function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteP
 interface SearchAutocompleteInputProps extends SpectrumSearchAutocompleteProps<unknown> {
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
-  // triggerProps: AriaButtonProps,
-  // triggerRef: RefObject<FocusableRefValue<HTMLElement>>,
   style?: React.CSSProperties,
   className?: string,
-  isOpen?: boolean
+  isOpen?: boolean,
+  clearButtonProps: AriaButtonProps
 }
 
-const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInput(props: Omit<SearchAutocompleteInputProps, 'children'>, ref: RefObject<HTMLElement>) {
+const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInput(props: SearchAutocompleteInputProps, ref: RefObject<HTMLElement>) {
   let {
     isQuiet,
     isDisabled,
     isReadOnly,
     validationState,
-    inputRef,
     inputProps,
+    inputRef,
     autoFocus,
     style,
     className,
     loadingState,
-    isOpen
+    isOpen,
+    menuTrigger,
+    clearButtonProps
   } = props;
   let {hoverProps, isHovered} = useHover({});
   let formatMessage = useMessageFormatter(intlMessages);
@@ -194,7 +202,7 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
 
   let loadingCircle = (
     <ProgressCircle
-      aria-label={'loading'}
+      aria-label="loading" // TODO: formatMessage('loading')
       size="S"
       isIndeterminate
       UNSAFE_className={classNames(
@@ -207,8 +215,21 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
       )} />
   );
 
-  let icon = (
+  let searchIcon = (
     <Magnifier data-testid="searchicon" />
+  );
+
+  let clearButton = (
+    <ClearButton
+      {...clearButtonProps}
+      preventFocus
+      UNSAFE_className={
+        classNames(
+          styles,
+          'spectrum-ClearButton'
+        )
+      }
+      isDisabled={isDisabled} />
   );
 
   let isLoading = loadingState === 'loading' || loadingState === 'filtering';
@@ -263,47 +284,30 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
             className
           )
         }>
-        {/* <SearchField
-          UNSAFE_className={
-            classNames(
-              styles,
-              'spectrum-InputGroup-field'
-            )
-          }
-          aria-label="searchfield"
-          isDisabled={isDisabled}
-          isQuiet={isQuiet}
-          isReadOnly={isReadOnly}
-          validationState={validationState} /> */}
         <TextFieldBase
           inputProps={inputProps}
           inputRef={inputRef}
           UNSAFE_className={
             classNames(
               styles,
-              'spectrum-InputGroup-field'
+              'spectrum-Search',
+              'spectrum-Textfield',
+              {
+                'is-disabled': isDisabled,
+                'is-quiet': isQuiet,
+                'spectrum-Search--invalid': validationState === 'invalid',
+                'spectrum-Search--valid': validationState === 'valid'
+              }
             )
           }
-          inputClassName={
-            classNames(
-              styles,
-              'spectrum-InputGroup-input'
-            )
-          }
-          validationIconClassName={
-            classNames(
-              styles,
-              'spectrum-InputGroup-input-validationIcon'
-            )
-          }
+          inputClassName={classNames(styles, 'spectrum-Search-input')}
           isDisabled={isDisabled}
-          icon={icon}
           isQuiet={isQuiet}
           validationState={validationState}
-          // loading circle should only be displayed if menu is open, if menuTrigger is "manual", or first time load (to stop circle from showing up when user selects an option)
-          // TODO: add special case for completionMode: complete as well
-          isLoading={showLoading && (isOpen || loadingState === 'loading')}
-          loadingIndicator={loadingState != null && loadingCircle} />
+          isLoading={showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading')}
+          loadingIndicator={loadingState != null && loadingCircle}
+          icon={searchIcon}
+          wrapperChildren={(inputValue !== '' && !isReadOnly) && clearButton} />
       </div>
     </FocusRing>
   );
