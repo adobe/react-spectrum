@@ -81,6 +81,7 @@ export function getLocalTimeZone(): string {
 
 export function startOfMonth<T extends AnyCalendarDate>(date: T): T {
   let mutableDate: Mutable<T> = date.copy();
+  // TODO: should this use getMinimumDayInMonth? That breaks Calendar...
   mutableDate.day = 1;
   return mutableDate;
 }
