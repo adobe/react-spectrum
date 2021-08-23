@@ -68,7 +68,7 @@ const TYPE_MAPPING = {
 };
 
 interface DatePickerFieldProps<T extends DateValue> extends DatePickerProps<T> {
-  maxGranularity?: DatePickerProps<T>['granularity'],
+  maxGranularity?: 'year' | 'month' | DatePickerProps<T>['granularity'],
   locale: string,
   createCalendar: (name: string) => Calendar
 }
@@ -80,7 +80,7 @@ export function useDatePickerFieldState<T extends DateValue>(props: DatePickerFi
     hideTimeZone
   } = props;
 
-  let v = (props.value || props.defaultValue || props.placeholderValue);
+  let v: DateValue = (props.value || props.defaultValue || props.placeholderValue);
   let defaultTimeZone = (v && 'timeZone' in v ? v.timeZone : undefined);
   let timeZone = defaultTimeZone || 'UTC';
   let granularity = props.granularity || (v && 'minute' in v ? 'minute' : 'day');

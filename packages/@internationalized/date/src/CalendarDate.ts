@@ -11,7 +11,7 @@
  */
 
 import {add, addTime, addZoned, cycleDate, cycleTime, cycleZoned, set, setTime, setZoned, subtract, subtractTime, subtractZoned} from './manipulation';
-import {AnyCalendarDate, AnyTime, Calendar, CycleOptions, CycleTimeOptions, DateField, DateFields, Disambiguation, Duration, OverflowBehavior, TimeField, TimeFields} from './types';
+import {AnyCalendarDate, AnyTime, Calendar, CycleOptions, CycleTimeOptions, DateField, DateFields, Disambiguation, Duration, TimeField, TimeFields} from './types';
 import {compareDate, compareTime} from './queries';
 import {dateTimeToString, dateToString, timeToString, zonedDateTimeToString} from './string';
 import {GregorianCalendar} from './calendars/GregorianCalendar';

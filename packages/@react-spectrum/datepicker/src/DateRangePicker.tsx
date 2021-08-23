@@ -83,9 +83,10 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
   );
 
   let v = state.value?.start || props.placeholderValue;
-  let timePlaceholder: TimeValue = props.placeholderValue && 'hour' in props.placeholderValue ? props.placeholderValue : null;
-  let timeMinValue: TimeValue = props.minValue && 'hour' in props.minValue ? props.minValue : null;
-  let timeMaxValue: TimeValue = props.maxValue && 'hour' in props.maxValue ? props.maxValue : null;
+  let placeholder: DateValue = placeholderValue;
+  let timePlaceholder = placeholder && 'hour' in placeholder ? placeholder : null;
+  let timeMinValue = props.minValue && 'hour' in props.minValue ? props.minValue : null;
+  let timeMaxValue = props.maxValue && 'hour' in props.maxValue ? props.maxValue : null;
   let timeGranularity = props.granularity === 'hour' || props.granularity === 'minute' || props.granularity === 'second' || props.granularity === 'millisecond' ? props.granularity : null;
   let showTimeField = (v && 'hour' in v) || !!timeGranularity;
 
