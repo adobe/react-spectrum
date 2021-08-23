@@ -169,8 +169,7 @@ function InternalCard(props) {
   }
 
   return (
-    // TODO: added padding here to make the focus ring not get cut off. Replace with a real fix
-    <div {...rowProps} ref={rowRef} style={{padding: '2px', height: '100%'}}>
+    <div {...rowProps} ref={rowRef} style={{height: '100%'}}>
       <CardBase
         ref={cellRef}
         // TODO: readd this if we need to trigger a updateItemSize when the real image loads and we were using placeholder images
@@ -180,17 +179,7 @@ function InternalCard(props) {
         orientation={cardOrientation}
         size={cardSize}
         item={item}
-        UNSAFE_className={
-          classNames(
-            styles,
-            'spectrum-Card--inGrid',
-            {
-              'spectrum-Card--grid': layoutType === 'grid',
-              'spectrum-Card--gallery': layoutType === 'gallery',
-              'spectrum-Card--waterfall': layoutType === 'waterfall',
-            }
-          )
-        }>
+        layout={layoutType}>
         {item.rendered}
       </CardBase>
     </div>

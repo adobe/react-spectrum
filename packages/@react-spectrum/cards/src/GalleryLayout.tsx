@@ -44,6 +44,7 @@ const DEFAULT_OPTIONS = {
     idealRowHeight: 112,
     minItemSize: new Size(96, 96),
     itemSpacing: new Size(8, 16),
+    // TODO: will need to update as well
     itemPadding: 24,
     dropSpacing: 50
   },
@@ -51,7 +52,8 @@ const DEFAULT_OPTIONS = {
     idealRowHeight: 208,
     minItemSize: new Size(136, 136),
     itemSpacing: new Size(24, 32),
-    itemPadding: 32,
+    // TODO: updated to work with new v3 cards (there is additional space required for the descriptions if there is a description)
+    itemPadding: 114,
     dropSpacing: 100
   }
 };

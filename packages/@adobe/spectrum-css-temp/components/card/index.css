@@ -159,8 +159,6 @@ Quiet Vertical
 /** Standard Vertical **/
 /** Waterfall **/
 .spectrum-Card--waterfall.spectrum-Card--default {
-  border-width: var(--spectrum-card-border-size);
-  border-style: solid;
   border-radius: var(--spectrum-card-border-radius);
   .spectrum-Card-grid {
     display: grid;
@@ -176,6 +174,7 @@ Quiet Vertical
       ".       .       .       .          .";
 
     &:before {
+      z-index: 4;
       content: ' ';
       inline-size: 100%;
       block-size: 100%;
