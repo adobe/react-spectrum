@@ -12,7 +12,6 @@
 
 import {AriaTextFieldProps, SpectrumTextFieldProps, TextFieldProps} from '@react-types/textfield';
 import {AsyncLoadable, CollectionBase, LoadingState, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
-import {Key} from 'react';
 import {MenuTriggerAction} from '@react-types/combobox';
 
 export interface SearchFieldProps extends TextFieldProps {
@@ -23,22 +22,27 @@ export interface SearchFieldProps extends TextFieldProps {
   onClear?: () => void
 }
 
-export interface SearchAutocompleteProps<T> extends CollectionBase<T>, SearchFieldProps {
-  menuTrigger?: MenuTriggerAction,
-  isQuiet?: boolean,
-  direction?: 'bottom' | 'top',
-  shouldFlip?: boolean,
-  loadingState?: LoadingState,
-  onLoadMore?: () => void,
-  onSubmit?: (value: string) => void,
-  disabledKeys?: Set<Key>
-}
-
-export interface SpectrumSearchAutocompleteProps<T> extends Omit<SearchAutocompleteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<TextFieldProps, 'onChange'> {
   /** The list of SearchAutocomplete items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of SearchAutocomplete items (controlled). */
   items?: Iterable<T>,
+  /** Method that is called when the open state of the menu changes. Returns the new open state and the action that caused the opening of the menu. */
+  onOpenChange?: (isOpen: boolean, menuTrigger?: MenuTriggerAction) => void,
+  /** The value of the SearchAutocomplete input (controlled). */
+  inputValue?: string,
+  /** The default value of the SearchAutocomplete input (uncontrolled). */
+  defaultInputValue?: string,
+  /** Handler that is called when the SearchAutocomplete input value changes. */
+  onInputChange?: (value: string) => void,
+  /**
+   * The interaction required to display the SearchAutocomplete menu.
+   * @default 'input'
+   */
+  menuTrigger?: MenuTriggerAction
+}
+
+export interface SpectrumSearchAutocompleteProps<T> extends Omit<SearchAutocompleteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
    * The interaction required to display the SearchAutocomplete menu. Note that this prop has no effect on the mobile SearchAutocomplete experience.
    * @default 'input'
@@ -58,8 +62,7 @@ export interface SpectrumSearchAutocompleteProps<T> extends Omit<SearchAutocompl
    * @default true
    */
   shouldFlip?: boolean,
-  onLoadMore?: () => void,
-  disabledKeys?: Set<Key>
+  onLoadMore?: () => void
 }
 
 export interface AriaSearchFieldProps extends SearchFieldProps, AriaTextFieldProps {}

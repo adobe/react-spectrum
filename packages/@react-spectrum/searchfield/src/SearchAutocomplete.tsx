@@ -197,7 +197,8 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
     clearButtonProps
   } = props;
   let {hoverProps, isHovered} = useHover({});
-  let formatMessage = useMessageFormatter(intlMessages);
+  // TODO: Setup i18n messages
+  // let formatMessage = useMessageFormatter(intlMessages);
   let timeout = useRef(null);
   let [showLoading, setShowLoading] = useState(false);
 

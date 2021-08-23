@@ -9,9 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {Item, SearchAutocomplete, SearchField} from '../';
+import {Flex} from '../../layout';
 import React from 'react';
 import Refresh from '@spectrum-icons/workflow/Refresh';
+import {SearchField} from '../';
 import {storiesOf} from '@storybook/react';
 
 const info = 'A containing element with `role="search"` has been added to define a **search** landmark region.';
