@@ -41,10 +41,6 @@ storiesOf('Date and Time/DateField', module)
     () => render({defaultValue: toZoned(parseDate('2020-02-03'), 'America/Los_Angeles')})
   )
   .add(
-    'granularity: month',
-    () => render({granularity: 'month'})
-  )
-  .add(
     'granularity: minute',
     () => render({granularity: 'minute'})
   )

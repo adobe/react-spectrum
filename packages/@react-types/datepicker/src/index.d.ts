@@ -36,7 +36,7 @@ interface DatePickerBase<T extends DateValue> extends InputBase, Validation, Foc
   maxValue?: DateValue,
   placeholderValue?: T,
   hourCycle?: 12 | 24,
-  granularity?: 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second' | 'millisecond',
+  granularity?: 'day' | 'hour' | 'minute' | 'second' | 'millisecond',
   hideTimeZone?: boolean
 }
 
