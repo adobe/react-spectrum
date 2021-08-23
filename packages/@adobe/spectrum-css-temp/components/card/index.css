@@ -39,19 +39,19 @@ tiles                  x                      x                         x
 standalone             x                      x                         x
 
 Standard Vertical
-.constrainedX.constrainedY -> 2axis constrained | tiles
-.constrainedX:not(.constrainedY) -> horizontally constrained | vertical masonry
-:not(.constrainedX):not(.constrainedY) -> unconstrained | standalone
+.spectrum-Card--waterfall
+.spectrum-Card--tile
+.spectrum-Card--noLayout
 
 Standard Horizontal
-.constrainedX.constrainedY -> 2axis constrained | tiles
-:not(.constrainedX):not(.constrainedY) -> unconstrained | standalone
+.spectrum-Card--tile
+.spectrum-Card--noLayout
 
 Quiet Vertical
-.constrainedX.constrainedY -> 2axis constrained | tiles
-.constrainedX:not(.constrainedY) -> horizontally constrained | vertical masonry
-:not(.constrainedX).constrainedY -> vertically constrained | horizontal masonry
-:not(.constrainedX):not(.constrainedY) -> unconstrained | standalone
+.spectrum-Card--waterfall
+.spectrum-Card--gallery
+.spectrum-Card--tile
+.spectrum-Card--noLayout
 
 */
 
@@ -157,101 +157,8 @@ Quiet Vertical
 }
 
 /** Standard Vertical **/
-/** Standalone **/
-:not(.constrainedX):not(.constrainedY).spectrum-Card--default {
-  border-width: var(--spectrum-card-border-size);
-  border-style: solid;
-  border-radius: var(--spectrum-card-border-radius);
-  .spectrum-Card-grid {
-    display: grid;
-    grid-template-columns: var(--spectrum-card-body-padding-left) auto 1fr auto var(--spectrum-card-body-padding-right);
-    grid-template-rows: minmax(var(--spectrum-card-body-padding-bottom), auto) minmax(30px, auto) auto auto auto var(--spectrum-card-body-padding-bottom);
-    /* absolutely position avatar relative to the preview */
-    grid-template-areas:
-      "preview preview preview preview    preview"
-      ".       title   detail  actionmenu ."
-      ".       content content content    ."
-      ".       divider divider divider    ."
-      ".       footer  footer  footer     ."
-      ".       .       .       .          .";
-
-    &:before {
-      content: ' ';
-      inline-size: 100%;
-      block-size: 100%;
-      position: absolute;
-      border-radius: var(--spectrum-card-border-radius);
-      transition: background-color var(--spectrum-global-animation-duration-100);
-    }
-
-    &:after {
-      content: ' ';
-      inline-size: 100%;
-      block-size: 100%;
-      position: absolute;
-      border-radius: var(--spectrum-card-border-radius);
-      transition: background-color var(--spectrum-global-animation-duration-100);
-    }
-  }
-  .spectrum-Card-image,
-  .spectrum-Card-illustration {
-    inline-size: 100%;
-    /*min-inline-size: var(--spectrum-card-min-width); causes to obscure border */
-
-    align-self: center;
-    justify-self: center;
-
-    border-start-end-radius: var(--spectrum-card-border-radius);
-    border-start-start-radius: var(--spectrum-card-border-radius);
-    border-block-end-width: var(--spectrum-card-border-size);
-    border-block-end-style: solid;
-  }
-  .spectrum-Card-image {
-  }
-  .spectrum-Card-illustration {
-    display: grid; /* not sure why flex doesn't work here */
-    align-items: center;
-    justify-items: center;
-    inline-size: 100%;
-    block-size: var(--spectrum-card-coverphoto-height); /* this may be an incorrect assumption */
-  }
-  .spectrum-Card-avatar {
-    inline-size: var(--spectrum-global-dimension-size-100);
-    block-size: var(--spectrum-global-dimension-size-100);
-  }
-  .spectrum-Card-heading {
-    align-self: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-inline-end: var(--spectrum-card-title-padding-right);
-  }
-  .spectrum-Card-detail {
-    align-self: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .spectrum-Card-actions {
-    align-self: center;
-  }
-  .spectrum-Card-content {
-    margin-block-start: 5px;
-    margin-block-end: 5px;
-  }
-  .spectrum-Card-divider {
-    margin-block-start: 5px;
-    margin-block-end: 5px;
-  }
-  .spectrum-Card-footer {
-    margin-block-start: 5px;
-    display: flex;
-    justify-content: flex-end;
-  }
-}
-
 /** Waterfall **/
-.constrainedX:not(.constrainedY).spectrum-Card--default {
+.spectrum-Card--waterfall.spectrum-Card--default {
   border-width: var(--spectrum-card-border-size);
   border-style: solid;
   border-radius: var(--spectrum-card-border-radius);
@@ -342,7 +249,7 @@ Quiet Vertical
 }
 
 /** Tile **/
-.constrainedX.constrainedY.spectrum-Card--default {
+.spectrum-Card--grid.spectrum-Card--default {
   border-width: var(--spectrum-card-border-size);
   border-style: solid;
   border-radius: var(--spectrum-card-border-radius);
@@ -435,51 +342,55 @@ Quiet Vertical
     justify-content: flex-end;
   }
 }
-/** END Standard Vertical **/
 
-/** Quiet Vertical **/
 /** Standalone **/
-:not(.constrainedX):not(.constrainedY).spectrum-Card--isQuiet {
-  min-inline-size: var(--spectrum-card-quiet-min-size);
-
+.spectrum-Card--noLayout.spectrum-Card--default {
+  border-width: var(--spectrum-card-border-size);
+  border-style: solid;
+  border-radius: var(--spectrum-card-border-radius);
   .spectrum-Card-grid {
-    block-size: 100%;
     display: grid;
-    grid-template-columns: auto 1fr auto;
-    grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) minmax(30px, auto) auto var(--spectrum-card-body-padding-bottom);
+    grid-template-columns: var(--spectrum-card-body-padding-left) auto 1fr auto var(--spectrum-card-body-padding-right);
+    grid-template-rows: minmax(var(--spectrum-card-body-padding-bottom), auto) minmax(30px, auto) auto auto auto var(--spectrum-card-body-padding-bottom);
+    /* absolutely position avatar relative to the preview */
     grid-template-areas:
-      "preview preview preview"
-      ".       .       ."
-      "title   detail  actionmenu"
-      "content content content"
-      ".       .       .      ";
+      "preview preview preview preview    preview"
+      ".       title   detail  actionmenu ."
+      ".       content content content    ."
+      ".       divider divider divider    ."
+      ".       footer  footer  footer     ."
+      ".       .       .       .          .";
 
     &:before {
       content: ' ';
-      grid-area: preview;
-
-      background-color: var(--spectrum-card-quiet-preview-background-color);
-      border-radius: var(--spectrum-card-quiet-border-radius);
+      inline-size: 100%;
+      block-size: 100%;
+      position: absolute;
+      border-radius: var(--spectrum-card-border-radius);
       transition: background-color var(--spectrum-global-animation-duration-100);
     }
 
     &:after {
       content: ' ';
-      grid-area: preview;
       inline-size: 100%;
       block-size: 100%;
-
-      border-radius: var(--spectrum-card-quiet-border-radius);
+      position: absolute;
+      border-radius: var(--spectrum-card-border-radius);
+      transition: background-color var(--spectrum-global-animation-duration-100);
     }
   }
   .spectrum-Card-image,
   .spectrum-Card-illustration {
-    display: flex;
+    inline-size: 100%;
+    /*min-inline-size: var(--spectrum-card-min-width); causes to obscure border */
 
     align-self: center;
     justify-self: center;
 
-    border-radius: var(--spectrum-card-quiet-border-radius);
+    border-start-end-radius: var(--spectrum-card-border-radius);
+    border-start-start-radius: var(--spectrum-card-border-radius);
+    border-block-end-width: var(--spectrum-card-border-size);
+    border-block-end-style: solid;
   }
   .spectrum-Card-image {
   }
@@ -488,13 +399,17 @@ Quiet Vertical
     align-items: center;
     justify-items: center;
     inline-size: 100%;
-    block-size: var(--spectrum-card-coverphoto-height);
+    block-size: var(--spectrum-card-coverphoto-height); /* this may be an incorrect assumption */
   }
   .spectrum-Card-avatar {
-    display: none;
+    inline-size: var(--spectrum-global-dimension-size-100);
+    block-size: var(--spectrum-global-dimension-size-100);
   }
   .spectrum-Card-heading {
     align-self: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
   .spectrum-Card-detail {
@@ -502,25 +417,30 @@ Quiet Vertical
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-inline-end: var(--spectrum-card-title-padding-right);
   }
   .spectrum-Card-actions {
-    align-self: start;
+    align-self: center;
   }
   .spectrum-Card-content {
     margin-block-start: 5px;
     margin-block-end: 5px;
   }
   .spectrum-Card-divider {
-    display: none;
+    margin-block-start: 5px;
+    margin-block-end: 5px;
   }
   .spectrum-Card-footer {
-    display: none;
+    margin-block-start: 5px;
+    display: flex;
+    justify-content: flex-end;
   }
 }
+/** END Standard Vertical **/
 
+
+/** Quiet Vertical **/
 /** Waterfall **/
-.constrainedX:not(.constrainedY).spectrum-Card--isQuiet {
+.spectrum-Card--waterfall.spectrum-Card--isQuiet {
   min-inline-size: var(--spectrum-card-quiet-min-size);
 
   .spectrum-Card-grid {
@@ -536,12 +456,12 @@ Quiet Vertical
       ".       .       .      ";
 
     &:before {
-       content: ' ';
-       grid-area: preview;
+      content: ' ';
+      grid-area: preview;
 
-       background-color: var(--spectrum-card-quiet-preview-background-color);
-       border-radius: var(--spectrum-card-quiet-border-radius);
-       transition: background-color var(--spectrum-global-animation-duration-100);
+      background-color: var(--spectrum-card-quiet-preview-background-color);
+      border-radius: var(--spectrum-card-quiet-border-radius);
+      transition: background-color var(--spectrum-global-animation-duration-100);
     }
 
     &:after {
@@ -604,7 +524,7 @@ Quiet Vertical
 
 /** Gallery **/
 /** Non-collection version doesn't work in FF, but should work in a collection which determines the size **/
-:not(.constrainedX).constrainedY.spectrum-Card--isQuiet {
+.spectrum-Card--gallery.spectrum-Card--isQuiet {
   min-inline-size: var(--spectrum-card-quiet-min-size);
 
   .spectrum-Card-grid {
@@ -692,7 +612,7 @@ Quiet Vertical
 }
 
 /** Tile **/
-.constrainedX.constrainedY.spectrum-Card--isQuiet {
+.spectrum-Card--grid.spectrum-Card--isQuiet {
   min-inline-size: var(--spectrum-card-quiet-min-size);
 
   .spectrum-Card-grid {
@@ -784,17 +704,206 @@ Quiet Vertical
     display: none;
   }
 }
+
+/** Standalone **/
+.spectrum-Card--noLayout.spectrum-Card--isQuiet {
+  min-inline-size: var(--spectrum-card-quiet-min-size);
+
+  .spectrum-Card-grid {
+    block-size: 100%;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) minmax(30px, auto) auto var(--spectrum-card-body-padding-bottom);
+    grid-template-areas:
+      "preview preview preview"
+      ".       .       ."
+      "title   detail  actionmenu"
+      "content content content"
+      ".       .       .      ";
+
+    &:before {
+      content: ' ';
+      grid-area: preview;
+
+      background-color: var(--spectrum-card-quiet-preview-background-color);
+      border-radius: var(--spectrum-card-quiet-border-radius);
+      transition: background-color var(--spectrum-global-animation-duration-100);
+    }
+
+    &:after {
+      content: ' ';
+      grid-area: preview;
+      inline-size: 100%;
+      block-size: 100%;
+
+      border-radius: var(--spectrum-card-quiet-border-radius);
+    }
+  }
+  .spectrum-Card-image,
+  .spectrum-Card-illustration {
+    display: flex;
+
+    align-self: center;
+    justify-self: center;
+
+    border-radius: var(--spectrum-card-quiet-border-radius);
+  }
+  .spectrum-Card-image {
+  }
+  .spectrum-Card-illustration {
+    display: grid; /* not sure why flex doesn't work here */
+    align-items: center;
+    justify-items: center;
+    inline-size: 100%;
+    block-size: var(--spectrum-card-coverphoto-height);
+  }
+  .spectrum-Card-avatar {
+    display: none;
+  }
+  .spectrum-Card-heading {
+    align-self: center;
+    margin-inline-end: var(--spectrum-card-title-padding-right);
+  }
+  .spectrum-Card-detail {
+    align-self: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-inline-end: var(--spectrum-card-title-padding-right);
+  }
+  .spectrum-Card-actions {
+    align-self: start;
+  }
+  .spectrum-Card-content {
+    margin-block-start: 5px;
+    margin-block-end: 5px;
+  }
+  .spectrum-Card-divider {
+    display: none;
+  }
+  .spectrum-Card-footer {
+    display: none;
+  }
+}
 /** END Quiet Vertical **/
 
 /** Standard Horizontal **/
+/** Tile **/
+/**
+Broken as a CSS only solution in FF until aspect-ratio is supported or this is resolved https://bugzilla.mozilla.org/show_bug.cgi?id=1436180
+For now working around it with a useLayoutEffect in CardBase.
+**/
+.spectrum-Card--grid.spectrum-Card--horizontal {
+  border-width: var(--spectrum-card-border-size);
+  border-style: solid;
+  border-radius: var(--spectrum-card-border-radius);
+  .spectrum-Card-checkboxWrapper {
+    display: none;
+  }
+  &.is-focused,
+  &.is-selected,
+  &:focus,
+  &:hover {
+    .spectrum-Card-checkboxWrapper {
+      display: none;
+    }
+  }
+
+  .spectrum-Card-grid {
+    display: grid;
+    block-size: 100%;
+    grid-template-columns: auto var(--spectrum-global-dimension-size-200) 1fr auto var(--spectrum-global-dimension-size-200);
+    grid-template-rows: auto 1fr var(--spectrum-global-dimension-size-200);
+    grid-template-areas:
+      "preview . title   actionmenu ."
+      "preview . content content ."
+      "preview . .       .       .";
+
+    &:before {
+      content: ' ';
+      position: absolute;
+
+      inline-size: 100%;
+      block-size: 100%;
+      border-radius: var(--spectrum-card-border-radius);
+      transition: background-color var(--spectrum-global-animation-duration-100);
+    }
+  }
+  .spectrum-Card-sizeHelper {
+    display: block;
+    grid-area: preview;
+    block-size: 100%;
+    inline-size: auto;
+  }
+  .spectrum-Card-image,
+  .spectrum-Card-illustration {
+    grid-area: preview;
+    position: absolute;
+    block-size: 100%;
+    inline-size: 100%;
+    min-inline-size: 100%; /* I do not know why setting a min-width causes the image to shrink */
+    /*aspect-ratio: 1/1;*/ /* can't use in safari or FF :( */
+
+    align-self: center;
+    justify-self: center;
+
+    border-start-start-radius: var(--spectrum-card-border-radius);
+    border-end-start-radius: var(--spectrum-card-border-radius);
+    border-inline-end-width: var(--spectrum-card-border-size);
+    border-inline-end-style: solid;
+  }
+
+  .spectrum-Card-image {
+  }
+
+  .spectrum-Card-illustration {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+  }
+
+  .spectrum-Card-avatar {
+    display: none;
+  }
+  .spectrum-Card-heading {
+    align-self: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-inline-end: var(--spectrum-card-title-padding-right);
+  }
+  .spectrum-Card-detail {
+    display: none;
+  }
+  .spectrum-Card-actions {
+    align-self: center;
+  }
+  /* how to handle long description?? */
+  .spectrum-Card-content {
+    width: 100%;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    /* not working because this line is removed in css preprocessing */
+    -webkit-box-orient: vertical;
+    visibility: visible;
+  }
+  .spectrum-Card-divider {
+    display: none;
+  }
+  .spectrum-Card-footer {
+    display: none;
+  }
+}
+
 /** Standalone **/
 /**
- Horizontal standalone cannot be supported until aspect-ratio is supported
+ Horizontal standalone css only cannot be supported until aspect-ratio is supported
  probably due to https://stackoverflow.com/questions/44770074/css-grid-row-height-safari-bug but
  was unable to get the workaround to work.
  For now working around it with a useLayoutEffect in CardBase.
  **/
-:not(.constrainedX):not(.constrainedY).spectrum-Card--horizontal {
+.spectrum-Card--noLayout.spectrum-Card--horizontal {
   border-width: var(--spectrum-card-border-size);
   border-style: solid;
   border-radius: var(--spectrum-card-border-radius);
@@ -871,111 +980,9 @@ Quiet Vertical
   }
 
   .spectrum-Card-illustration {
-  }
-
-  .spectrum-Card-avatar {
-    display: none;
-  }
-  .spectrum-Card-heading {
-    align-self: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-inline-end: var(--spectrum-card-title-padding-right);
-  }
-  .spectrum-Card-detail {
-    display: none;
-  }
-  .spectrum-Card-actions {
-    align-self: center;
-  }
-  /* how to handle long description?? */
-  .spectrum-Card-content {
-    width: 100%;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    /* not working because this line is removed in css preprocessing */
-    -webkit-box-orient: vertical;
-    visibility: visible;
-  }
-  .spectrum-Card-divider {
-    display: none;
-  }
-  .spectrum-Card-footer {
-    display: none;
-  }
-}
-
-/** Tile **/
-/**
-Broken as a CSS only solution in FF until aspect-ratio is supported or this is resolved https://bugzilla.mozilla.org/show_bug.cgi?id=1436180
-For now working around it with a useLayoutEffect in CardBase.
-**/
-.constrainedX.constrainedY.spectrum-Card--horizontal {
-  border-width: var(--spectrum-card-border-size);
-  border-style: solid;
-  border-radius: var(--spectrum-card-border-radius);
-  .spectrum-Card-checkboxWrapper {
-    display: none;
-  }
-  &.is-focused,
-  &.is-selected,
-  &:focus,
-  &:hover {
-    .spectrum-Card-checkboxWrapper {
-      display: none;
-    }
-  }
-
-  .spectrum-Card-grid {
     display: grid;
-    block-size: 100%;
-    grid-template-columns: auto var(--spectrum-global-dimension-size-200) 1fr auto var(--spectrum-global-dimension-size-200);
-    grid-template-rows: auto 1fr var(--spectrum-global-dimension-size-200);
-    grid-template-areas:
-      "preview . title   actionmenu ."
-      "preview . content content ."
-      "preview . .       .       .";
-
-    &:before {
-      content: ' ';
-      position: absolute;
-
-      inline-size: 100%;
-      block-size: 100%;
-      border-radius: var(--spectrum-card-border-radius);
-      transition: background-color var(--spectrum-global-animation-duration-100);
-    }
-  }
-  .spectrum-Card-sizeHelper {
-    display: block;
-    grid-area: preview;
-    block-size: 100%;
-    inline-size: auto;
-  }
-  .spectrum-Card-image,
-  .spectrum-Card-illustration {
-    grid-area: preview;
-    position: absolute;
-    block-size: 100%;
-    inline-size: 100%;
-    min-inline-size: 100%; /* I do not know why setting a min-width causes the image to shrink */
-    /*aspect-ratio: 1/1;*/ /* can't use in safari or FF :( */
-
-    align-self: center;
-    justify-self: center;
-
-    border-start-start-radius: var(--spectrum-card-border-radius);
-    border-end-start-radius: var(--spectrum-card-border-radius);
-    border-inline-end-width: var(--spectrum-card-border-size);
-    border-inline-end-style: solid;
-  }
-
-  .spectrum-Card-image {
-  }
-
-  .spectrum-Card-illustration {
+    align-items: center;
+    justify-items: center;
   }
 
   .spectrum-Card-avatar {

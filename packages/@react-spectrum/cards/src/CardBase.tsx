@@ -99,8 +99,10 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
           'is-hovered': isHovered,
           'is-focused': isFocused,
           'is-selected': isSelected,
-          'constrainedX': layout === 'waterfall' || layout === 'grid',
-          'constrainedY': layout === 'gallery' || layout === 'grid'
+          'spectrum-Card--waterfall': layout === 'waterfall',
+          'spectrum-Card--gallery': layout === 'gallery',
+          'spectrum-Card--grid': layout === 'grid',
+          'spectrum-Card--noLayout': layout !== 'waterfall' && layout !== 'gallery' && layout !== 'grid'
         }, styleProps.className)}>
         <div ref={gridRef} className={classNames(styles, 'spectrum-Card-grid')}>
           {manager && manager.selectionMode !== 'none' && (
@@ -114,7 +116,8 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
                 aria-label="select" />
             </div>
           )}
-          {orientation === 'horizontal' && !isNaN(height) && (
+          {/* This is to workaround the FF bug mentioned in the CSS, it maintains a 1:1 aspect-ratio grid area */
+            orientation === 'horizontal' && !isNaN(height) && (
             <img className={classNames(styles, 'spectrum-Card-sizeHelper')} style={{width: `${height}px`, height: `${height}px`}} aria-hidden alt="" width="1" height="1" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" />
           )}
           <SlotProvider slots={slots}>
