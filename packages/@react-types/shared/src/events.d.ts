@@ -40,7 +40,9 @@ export interface PressEvent {
   /** Whether the ctrl keyboard modifier was held during the press event. */
   ctrlKey: boolean,
   /** Whether the meta keyboard modifier was held during the press event. */
-  metaKey: boolean
+  metaKey: boolean,
+  /** Whether the alt keyboard modifier was held during the press event. */
+  altKey: boolean
 }
 
 export interface HoverEvent {
