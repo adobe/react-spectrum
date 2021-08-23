@@ -154,7 +154,7 @@ function getResolvedHourCycle(locale: string, options: Intl.DateTimeFormatOption
   // Format the minimum possible hour and maximum possible hour in a day and parse the results.
   locale = locale.replace(/(-u-)?-nu-[a-zA-Z0-9]+/, '');
   locale += (locale.includes('-u-') ? '' : '-u') + '-nu-latn';
-  let formatter = getCachedDateFormatter(locale, {...options, timeZone: 'America/Los_Angeles'});
+  let formatter = getCachedDateFormatter(locale, options);
 
   let min = parseInt(formatter.formatToParts(new Date(2020, 2, 3, 0)).find(p => p.type === 'hour').value, 10);
   let max = parseInt(formatter.formatToParts(new Date(2020, 2, 3, 23)).find(p => p.type === 'hour').value, 10);
