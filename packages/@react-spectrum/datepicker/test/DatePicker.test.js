@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
-import {CalendarDate, CalendarDateTime, getLocalTimeZone, today} from '../../../@internationalized/date';
+import {act, fireEvent, render, within} from '@testing-library/react';
+import {CalendarDate, CalendarDateTime, getLocalTimeZone, toCalendarDateTime, today} from '@internationalized/date';
 import {DatePicker} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -130,7 +130,7 @@ describe('DatePicker', function () {
   describe('calendar popover', function () {
     it('should emit onChange when selecting a date in the calendar in controlled mode', function () {
       let onChange = jest.fn();
-      let {getByRole, getAllByRole} = render(
+      let {getByRole, getAllByRole, queryByLabelText} = render(
         <Provider theme={theme}>
           <DatePicker label="Date" value={new CalendarDate(2019, 2, 3)} onChange={onChange} />
         </Provider>
@@ -144,6 +144,8 @@ describe('DatePicker', function () {
 
       let dialog = getByRole('dialog');
       expect(dialog).toBeVisible();
+
+      expect(queryByLabelText('Time')).toBeNull();
 
       let cells = getAllByRole('gridcell');
       let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
@@ -184,6 +186,132 @@ describe('DatePicker', function () {
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith(new CalendarDate(2019, 2, 4));
       expect(combobox).toHaveTextContent('2/4/2019'); // uncontrolled
+    });
+
+    it('should display a time field when a CalendarDateTime value is used', function () {
+      let onChange = jest.fn();
+      let {getByRole, getAllByRole, getAllByLabelText} = render(
+        <Provider theme={theme}>
+          <DatePicker label="Date" defaultValue={new CalendarDateTime(2019, 2, 3, 8, 45)} onChange={onChange} />
+        </Provider>
+      );
+
+      let combobox = getAllByRole('group')[0];
+      expect(combobox).toHaveTextContent('2/3/2019, 8:45 AM');
+
+      let button = getByRole('button');
+      triggerPress(button);
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let cells = getAllByRole('gridcell');
+      let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
+      expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
+
+      let timeField = getAllByLabelText('Time')[0];
+      expect(timeField).toHaveTextContent('8:45 AM');
+
+      // selecting a date should not close the popover
+      triggerPress(selected.nextSibling.children[0]);
+
+      expect(dialog).toBeVisible();
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2019, 2, 4, 8, 45));
+      expect(combobox).toHaveTextContent('2/4/2019, 8:45 AM');
+
+      let hour = within(timeField).getByLabelText('Hour');
+      expect(hour).toHaveAttribute('role', 'spinbutton');
+      expect(hour).toHaveAttribute('aria-valuetext', '8 AM');
+
+      act(() => hour.focus());
+      fireEvent.keyDown(hour, {key: 'ArrowUp'});
+      fireEvent.keyUp(hour, {key: 'ArrowUp'});
+
+      expect(hour).toHaveAttribute('aria-valuetext', '9 AM');
+
+      expect(dialog).toBeVisible();
+      expect(onChange).toHaveBeenCalledTimes(2);
+      expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2019, 2, 4, 9, 45));
+      expect(combobox).toHaveTextContent('2/4/2019, 9:45 AM');
+    });
+
+    it('should not fire onChange until both date and time are selected', function () {
+      let onChange = jest.fn();
+      let {getByRole, getAllByRole, getAllByLabelText} = render(
+        <Provider theme={theme}>
+          <DatePicker label="Date" granularity="minute" onChange={onChange} />
+        </Provider>
+      );
+
+      let combobox = getAllByRole('group')[0];
+      let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
+      let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).set({hour: 12, minute: 0}).toDate(getLocalTimeZone()));
+      expect(combobox).toHaveTextContent(placeholder);
+
+      let button = getByRole('button');
+      triggerPress(button);
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let cells = getAllByRole('gridcell');
+      let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
+      expect(selected).toBeUndefined();
+
+      let timeField = getAllByLabelText('Time')[0];
+      expect(timeField).toHaveTextContent('12:00 PM');
+
+      // selecting a date should not close the popover
+      let todayCell = cells.find(cell => cell.firstChild.getAttribute('aria-label')?.startsWith('Today'));
+      triggerPress(todayCell.firstChild);
+
+      expect(todayCell).toHaveAttribute('aria-selected', 'true');
+
+      expect(dialog).toBeVisible();
+      expect(onChange).not.toHaveBeenCalled();
+      expect(combobox).toHaveTextContent(placeholder);
+
+      let hour = within(timeField).getByLabelText('Hour');
+      expect(hour).toHaveAttribute('role', 'spinbutton');
+      expect(hour).toHaveAttribute('aria-valuetext', '12 PM');
+
+      act(() => hour.focus());
+      fireEvent.keyDown(hour, {key: 'ArrowUp'});
+      fireEvent.keyUp(hour, {key: 'ArrowUp'});
+
+      expect(hour).toHaveAttribute('aria-valuetext', '1 PM');
+
+      expect(onChange).not.toHaveBeenCalled();
+      expect(combobox).toHaveTextContent(placeholder);
+
+      fireEvent.keyDown(hour, {key: 'ArrowRight'});
+      fireEvent.keyUp(hour, {key: 'ArrowRight'});
+
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Minute');
+      expect(document.activeElement).toHaveAttribute('aria-valuetext', '00');
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+
+      expect(document.activeElement).toHaveAttribute('aria-valuetext', '01');
+
+      expect(onChange).not.toHaveBeenCalled();
+      expect(combobox).toHaveTextContent(placeholder);
+
+      fireEvent.keyDown(hour, {key: 'ArrowRight'});
+      fireEvent.keyUp(hour, {key: 'ArrowRight'});
+
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Day Period');
+      expect(document.activeElement).toHaveAttribute('aria-valuetext', '1 PM');
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+      expect(dialog).toBeVisible();
+      expect(onChange).toHaveBeenCalledTimes(1);
+      let value = toCalendarDateTime(today(getLocalTimeZone())).set({hour: 13, minute: 1});
+      expect(onChange).toHaveBeenCalledWith(value);
+      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
     });
   });
 
@@ -723,8 +851,8 @@ describe('DatePicker', function () {
     });
 
     it('should display an error icon when date is less than the minimum (uncontrolled)', function () {
-      let {getByTestId, getByLabelText} = render(<DatePicker label="Date" defaultValue={new CalendarDate(1985, 1, 1)} minValue={new CalendarDate(1985, 1, 1)} />);
-      expect(() => getByTestId('invalid-icon')).toThrow();
+      let {getByTestId, getByLabelText, queryByTestId} = render(<DatePicker label="Date" defaultValue={new CalendarDate(1985, 1, 1)} minValue={new CalendarDate(1985, 1, 1)} />);
+      expect(queryByTestId('invalid-icon')).toBeNull();
 
       let year = getByLabelText('Year');
       fireEvent.keyDown(year, {key: 'ArrowDown'});
@@ -732,7 +860,7 @@ describe('DatePicker', function () {
       expect(getByTestId('invalid-icon')).toBeVisible();
 
       fireEvent.keyDown(year, {key: 'ArrowUp'});
-      expect(() => getByTestId('invalid-icon')).toThrow();
+      expect(queryByTestId('invalid-icon')).toBeNull();
     });
 
     it('should display an error icon when date is greater than the maximum (controlled)', function () {
@@ -741,8 +869,8 @@ describe('DatePicker', function () {
     });
 
     it('should display an error icon when date is greater than the maximum (uncontrolled)', function () {
-      let {getByTestId, getByLabelText} = render(<DatePicker label="Date" defaultValue={new CalendarDate(1985, 1, 1)} maxValue={new CalendarDate(1985, 1, 1)} />);
-      expect(() => getByTestId('invalid-icon')).toThrow();
+      let {getByTestId, getByLabelText, queryByTestId} = render(<DatePicker label="Date" defaultValue={new CalendarDate(1985, 1, 1)} maxValue={new CalendarDate(1985, 1, 1)} />);
+      expect(queryByTestId('invalid-icon')).toBeNull();
 
       let year = getByLabelText('Year');
       fireEvent.keyDown(year, {key: 'ArrowUp'});
@@ -750,7 +878,7 @@ describe('DatePicker', function () {
       expect(getByTestId('invalid-icon')).toBeVisible();
 
       fireEvent.keyDown(year, {key: 'ArrowDown'});
-      expect(() => getByTestId('invalid-icon')).toThrow();
+      expect(queryByTestId('invalid-icon')).toBeNull();
     });
   });
 
