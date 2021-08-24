@@ -445,7 +445,7 @@ function File(props) {
     <div className={classNames(assetStyles, styleProps.className)}>
       <svg
         viewBox="0 0 128 128"
-        {...styleProps}
+        {...styleProps as any}
         className={classNames(assetStyles, 'spectrum-Asset-file')}
         aria-label={props.alt}
         aria-hidden={props.decorative || null}
