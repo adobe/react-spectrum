@@ -164,11 +164,12 @@ Quiet Vertical
   border-radius: var(--spectrum-card-border-radius);
   .spectrum-Card-grid {
     display: grid;
-    grid-template-columns: var(--spectrum-card-body-padding-left) auto 1fr auto var(--spectrum-card-body-padding-right);
-    grid-template-rows: minmax(var(--spectrum-card-body-padding-bottom), auto) minmax(30px, auto) auto auto auto var(--spectrum-card-body-padding-bottom);
+    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) 1fr minmax(0, auto) var(--spectrum-card-body-padding-right);
+    grid-template-rows: minmax(var(--spectrum-card-body-padding-bottom), auto) var(--spectrum-global-dimension-size-300) minmax(30px, auto) auto auto auto var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
       "preview preview preview preview    preview"
+      ".       .       .       .          ."
       ".       title   detail  actionmenu ."
       ".       content content content    ."
       ".       divider divider divider    ."
@@ -214,8 +215,10 @@ Quiet Vertical
     justify-items: center;
   }
   .spectrum-Card-avatar {
-    inline-size: var(--spectrum-global-dimension-size-100);
-    block-size: var(--spectrum-global-dimension-size-100);
+    grid-area: preview;
+    position: absolute;
+    inset-block-end: -15px;
+    inset-inline-start: var(--spectrum-card-body-padding-left);
   }
   .spectrum-Card-heading {
     align-self: center;
@@ -257,7 +260,7 @@ Quiet Vertical
   .spectrum-Card-grid {
     display: grid;
     block-size: 100%;
-    grid-template-columns: var(--spectrum-card-body-padding-left) auto 1fr auto var(--spectrum-card-body-padding-right);
+    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) 1fr minmax(0, auto) var(--spectrum-card-body-padding-right);
     grid-template-rows: 1fr var(--spectrum-global-dimension-size-300) auto auto auto auto var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
@@ -309,8 +312,10 @@ Quiet Vertical
     justify-items: center;
   }
   .spectrum-Card-avatar {
-    inline-size: var(--spectrum-global-dimension-size-100);
-    block-size: var(--spectrum-global-dimension-size-100);
+    grid-area: preview;
+    position: absolute;
+    inset-block-end: -15px;
+    inset-inline-start: var(--spectrum-card-body-padding-left);
   }
   .spectrum-Card-heading {
     align-self: center;
@@ -350,11 +355,12 @@ Quiet Vertical
   border-radius: var(--spectrum-card-border-radius);
   .spectrum-Card-grid {
     display: grid;
-    grid-template-columns: var(--spectrum-card-body-padding-left) auto 1fr auto var(--spectrum-card-body-padding-right);
-    grid-template-rows: minmax(var(--spectrum-card-body-padding-bottom), auto) minmax(30px, auto) auto auto auto var(--spectrum-card-body-padding-bottom);
+    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) 1fr minmax(0, auto) var(--spectrum-card-body-padding-right);
+    grid-template-rows: minmax(var(--spectrum-card-body-padding-bottom), auto) var(--spectrum-global-dimension-size-300) minmax(30px, auto) auto auto auto var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
       "preview preview preview preview    preview"
+      ".       .       .       .          ."
       ".       title   detail  actionmenu ."
       ".       content content content    ."
       ".       divider divider divider    ."
@@ -402,8 +408,10 @@ Quiet Vertical
     block-size: var(--spectrum-card-coverphoto-height); /* this may be an incorrect assumption */
   }
   .spectrum-Card-avatar {
-    inline-size: var(--spectrum-global-dimension-size-100);
-    block-size: var(--spectrum-global-dimension-size-100);
+    grid-area: preview;
+    position: absolute;
+    inset-block-end: -15px;
+    inset-inline-start: var(--spectrum-card-body-padding-left);
   }
   .spectrum-Card-heading {
     align-self: center;
@@ -446,7 +454,7 @@ Quiet Vertical
   .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
-    grid-template-columns: auto minmax(auto, 1fr) auto;
+    grid-template-columns: minmax(0, auto) 1fr minmax(0, auto);
     grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) auto 1fr var(--spectrum-card-body-padding-bottom);
     grid-template-areas:
       "preview preview preview"
@@ -530,7 +538,7 @@ Quiet Vertical
   .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
-    grid-template-columns: auto minmax(auto, 1fr) auto;
+    grid-template-columns: minmax(0, auto) 1fr minmax(0, auto);
     grid-template-rows: 1fr var(--spectrum-card-quiet-body-header-margin-top) auto minmax(auto, var(--spectrum-global-dimension-size-600)) var(--spectrum-card-body-padding-bottom);
     grid-template-areas:
       "preview preview preview"
@@ -618,7 +626,7 @@ Quiet Vertical
   .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
-    grid-template-columns: auto minmax(auto, 1fr) auto;
+    grid-template-columns: minmax(0, auto) 1fr minmax(0, auto);
     grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) auto 1fr var(--spectrum-card-body-padding-bottom);
     grid-template-areas:
       "preview preview preview"
@@ -712,7 +720,7 @@ Quiet Vertical
   .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: minmax(0, auto) 1fr minmax(0, auto);
     grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) minmax(30px, auto) auto var(--spectrum-card-body-padding-bottom);
     grid-template-areas:
       "preview preview preview"

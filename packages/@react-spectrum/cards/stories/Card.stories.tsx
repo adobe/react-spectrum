@@ -64,6 +64,7 @@ export const Default = Template().bind({});
 Default.args = {children: (
   <>
     <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
+    <Avatar />
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
     <Content>Description</Content>
@@ -444,7 +445,6 @@ function File(props) {
     <div className={classNames(assetStyles, styleProps.className)}>
       <svg
         viewBox="0 0 128 128"
-        {...props}
         {...styleProps}
         className={classNames(assetStyles, 'spectrum-Asset-file')}
         aria-label={props.alt}
@@ -462,5 +462,14 @@ function File(props) {
         </g>
       </svg>
     </div>
+  );
+}
+
+// temp until Avatar PR is merged in
+function Avatar(props) {
+  props = useSlotProps(props, 'avatar');
+  let {styleProps} = useStyleProps(props);
+  return (
+    <div {...styleProps} style={{width: '26px', height: '26px', borderRadius: '13px', backgroundColor: 'green'}} />
   );
 }
