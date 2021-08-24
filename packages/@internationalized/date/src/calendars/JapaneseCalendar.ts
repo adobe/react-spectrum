@@ -88,7 +88,25 @@ export class JapaneseCalendar extends GregorianCalendar {
     }
   }
 
-  getCurrentEra() {
-    return ERA_NAMES[ERA_NAMES.length - 1];
+  getEras() {
+    return ERA_NAMES;
+  }
+
+  getYearsInEra(date: CalendarDate): number {
+    let gregorianDate = toGregorian(date);
+    let era = findEraFromGregorianDate(gregorianDate);
+    let next = ERA_START_DATES[era + 1];
+    if (next == null) {
+      return 9999;
+    }
+
+    let cur = ERA_START_DATES[era];
+    let years = next[0] - cur[0];
+
+    if (date.month < next[1] || (date.month === next[1] && date.day < next[2])) {
+      years++;
+    }
+
+    return years;
   }
 }

@@ -91,7 +91,12 @@ export class GregorianCalendar implements Calendar {
     return isLeapYear(date.year) ? 366 : 365;
   }
 
-  getCurrentEra() {
-    return 'AD';
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getYearsInEra(date: CalendarDate): number {
+    return 9999;
+  }
+
+  getEras() {
+    return ['BC', 'AD'];
   }
 }

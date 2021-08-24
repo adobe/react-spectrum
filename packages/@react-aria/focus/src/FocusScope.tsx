@@ -51,7 +51,11 @@ interface FocusManager {
   /** Moves focus to the next focusable or tabbable element in the focus scope. */
   focusNext(opts?: FocusManagerOptions): HTMLElement,
   /** Moves focus to the previous focusable or tabbable element in the focus scope. */
-  focusPrevious(opts?: FocusManagerOptions): HTMLElement
+  focusPrevious(opts?: FocusManagerOptions): HTMLElement,
+  /** Moves focus to the first focusable or tabbable element in the focus scope. */
+  focusFirst(opts?: FocusManagerOptions): HTMLElement,
+    /** Moves focus to the last focusable or tabbable element in the focus scope. */
+  focusLast(opts?: FocusManagerOptions): HTMLElement
 }
 
 type ScopeRef = RefObject<HTMLElement[]>;
@@ -168,6 +172,28 @@ function createFocusManagerForScope(scopeRef: React.RefObject<HTMLElement[]>): F
         walker.currentNode = sentinel;
         previousNode = walker.previousNode() as HTMLElement;
       }
+      if (previousNode) {
+        focusElement(previousNode, true);
+      }
+      return previousNode;
+    },
+    focusFirst(opts = {}) {
+      let scope = scopeRef.current;
+      let {tabbable} = opts;
+      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable}, scope);
+      walker.currentNode = scope[0].previousElementSibling;
+      let nextNode = walker.nextNode() as HTMLElement;
+      if (nextNode) {
+        focusElement(nextNode, true);
+      }
+      return nextNode;
+    },
+    focusLast(opts = {}) {
+      let scope = scopeRef.current;
+      let {tabbable} = opts;
+      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable}, scope);
+      walker.currentNode = scope[scope.length - 1].nextElementSibling;
+      let previousNode = walker.previousNode() as HTMLElement;
       if (previousNode) {
         focusElement(previousNode, true);
       }
@@ -522,6 +548,26 @@ export function createFocusManager(ref: RefObject<HTMLElement>): FocusManager {
         focusElement(previousNode, true);
       }
       return previousNode;
+    },
+    focusFirst(opts = {}) {
+      let root = ref.current;
+      let {tabbable} = opts;
+      let walker = getFocusableTreeWalker(root, {tabbable});
+      let nextNode = walker.nextNode() as HTMLElement;
+      if (nextNode) {
+        focusElement(nextNode, true);
+      }
+      return nextNode;
+    },
+    focusLast(opts = {}) {
+      let root = ref.current;
+      let {tabbable} = opts;
+      let walker = getFocusableTreeWalker(root, {tabbable});
+      let next = last(walker);
+      if (next) {
+        focusElement(next, true);
+      }
+      return next;
     }
   };
 }

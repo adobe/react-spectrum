@@ -11,21 +11,17 @@
  */
 
 import {
-  add,
   Calendar,
   CalendarDate,
-  compare,
+  compareDate,
   endOfMonth,
   fromAbsolute,
   getDayOfWeek,
   isSameDay,
   isSameMonth,
-  set,
   startOfMonth,
-  subtract,
   toCalendar,
   toCalendarDate,
-  toDate,
   today
 } from '@internationalized/date';
 import {CalendarProps} from '@react-types/calendar';
@@ -101,7 +97,7 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
 
   let weekDays = useMemo(() => (
     [...new Array(7).keys()]
-      .map(index => set(currentMonth, {day: index - monthStartsAt + 1}))
+      .map(index => currentMonth.set({day: index - monthStartsAt + 1}))
   ), [currentMonth, monthStartsAt]);
 
   return {
@@ -114,22 +110,22 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     timeZone,
     setFocusedDate,
     focusNextDay() {
-      focusCell(add(focusedDate, {days: 1}));
+      focusCell(focusedDate.add({days: 1}));
     },
     focusPreviousDay() {
-      focusCell(subtract(focusedDate, {days: 1}));
+      focusCell(focusedDate.subtract({days: 1}));
     },
     focusNextWeek() {
-      focusCell(add(focusedDate, {weeks: 1}));
+      focusCell(focusedDate.add({weeks: 1}));
     },
     focusPreviousWeek() {
-      focusCell(subtract(focusedDate, {weeks: 1}));
+      focusCell(focusedDate.subtract({weeks: 1}));
     },
     focusNextMonth() {
-      focusCell(add(focusedDate, {months: 1}));
+      focusCell(focusedDate.add({months: 1}));
     },
     focusPreviousMonth() {
-      focusCell(subtract(focusedDate, {months: 1}));
+      focusCell(focusedDate.subtract({months: 1}));
     },
     focusStartOfMonth() {
       focusCell(startOfMonth(focusedDate));
@@ -138,16 +134,16 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
       focusCell(endOfMonth(focusedDate));
     },
     focusNextYear() {
-      focusCell(add(focusedDate, {years: 1}));
+      focusCell(focusedDate.add({years: 1}));
     },
     focusPreviousYear() {
-      focusCell(subtract(focusedDate, {years: 1}));
+      focusCell(focusedDate.subtract({years: 1}));
     },
     selectFocusedDate() {
-      setValue(toDate(focusedDate, timeZone));
+      setValue(focusedDate.toDate(timeZone));
     },
     selectDate(date) {
-      setValue(toDate(date, timeZone));
+      setValue(date.toDate(timeZone));
     },
     isFocused,
     setFocused,
@@ -157,7 +153,7 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     weekDays,
     getCellDate(weekIndex, dayIndex) {
       let day = (weekIndex * 7 + dayIndex) - monthStartsAt + 1;
-      return set(currentMonth, {day});
+      return currentMonth.set({day});
     },
     isInvalid(date) {
       return isInvalid(date, minDate, maxDate);
@@ -172,15 +168,15 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
       return props.isDisabled || !isSameMonth(date, currentMonth) || isInvalid(date, minDate, maxDate);
     },
     isPreviousMonthInvalid() {
-      return isInvalid(endOfMonth(subtract(currentMonth, {months: 1})), minDate, maxDate);
+      return isInvalid(endOfMonth(currentMonth.subtract({months: 1})), minDate, maxDate);
     },
     isNextMonthInvalid() {
-      return isInvalid(startOfMonth(add(currentMonth, {months: 1})), minDate, maxDate);
+      return isInvalid(startOfMonth(currentMonth.add({months: 1})), minDate, maxDate);
     }
   };
 }
 
 function isInvalid(date: CalendarDate, minDate: CalendarDate, maxDate: CalendarDate) {
-  return (minDate != null && compare(date, minDate) < 0) ||
-    (maxDate != null && compare(date, maxDate) > 0);
+  return (minDate != null && compareDate(date, minDate) < 0) ||
+    (maxDate != null && compareDate(date, maxDate) > 0);
 }

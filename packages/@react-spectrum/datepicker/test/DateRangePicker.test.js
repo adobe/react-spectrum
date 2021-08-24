@@ -11,12 +11,12 @@
  */
 
 import {act, fireEvent, getAllByRole as getAllByRoleInContainer, render} from '@testing-library/react';
+import {CalendarDate, CalendarDateTime, getLocalTimeZone, today} from '@internationalized/date';
 import {DateRangePicker} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
-
 
 function pointerEvent(type, opts) {
   let evt = new Event(type, {bubbles: true, cancelable: true});
@@ -27,6 +27,13 @@ function pointerEvent(type, opts) {
     button: opts.button || 0
   }, opts);
   return evt;
+}
+
+function beforeInput(target, key) {
+  // JSDOM doesn't support the beforeinput event
+  let e = new InputEvent('beforeinput', {cancelable: true, data: key});
+  e.inputType = 'insertText';
+  fireEvent(target, e);
 }
 
 describe('DateRangePicker', function () {
@@ -40,7 +47,7 @@ describe('DateRangePicker', function () {
   });
   describe('basics', function () {
     it('should render a DateRangePicker with a specified date range', function () {
-      let {getAllByRole} = render(<DateRangePicker value={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}} />);
+      let {getAllByRole} = render(<DateRangePicker label="Date range" value={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 5, 6)}} />);
 
       let combobox = getAllByRole('group')[0];
       expect(combobox).toBeVisible();
@@ -93,16 +100,8 @@ describe('DateRangePicker', function () {
       expect(segments[5].getAttribute('aria-valuemax')).toBe('9999');
     });
 
-    it('should render a DateRangePicker with a custom date format', function () {
-      let format = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric'
-      };
-      let {getAllByRole} = render(<DateRangePicker value={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}} formatOptions={format} />);
+    it('should render a DateRangePicker granularity="second"', function () {
+      let {getAllByRole} = render(<DateRangePicker label="Date range" value={{start: new CalendarDateTime(2019, 2, 3), end: new CalendarDateTime(2019, 5, 6)}} granularity="second" />);
 
       let combobox = getAllByRole('group')[0];
       expect(combobox).toBeVisible();
@@ -112,10 +111,10 @@ describe('DateRangePicker', function () {
       let segments = getAllByRole('spinbutton');
       expect(segments.length).toBe(14);
 
-      expect(segments[0].textContent).toBe('February');
+      expect(segments[0].textContent).toBe('2');
       expect(segments[0].getAttribute('aria-label')).toBe('Month');
       expect(segments[0].getAttribute('aria-valuenow')).toBe('2');
-      expect(segments[0].getAttribute('aria-valuetext')).toBe('February');
+      expect(segments[0].getAttribute('aria-valuetext')).toBe('2 − February');
       expect(segments[0].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[0].getAttribute('aria-valuemax')).toBe('12');
 
@@ -158,10 +157,10 @@ describe('DateRangePicker', function () {
       expect(segments[6].getAttribute('aria-label')).toBe('Day Period');
       expect(segments[6].getAttribute('aria-valuetext')).toBe('12 AM');
 
-      expect(segments[7].textContent).toBe('May');
+      expect(segments[7].textContent).toBe('5');
       expect(segments[7].getAttribute('aria-label')).toBe('Month');
       expect(segments[7].getAttribute('aria-valuenow')).toBe('5');
-      expect(segments[7].getAttribute('aria-valuetext')).toBe('May');
+      expect(segments[7].getAttribute('aria-valuetext')).toBe('5 − May');
       expect(segments[7].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[7].getAttribute('aria-valuemax')).toBe('12');
 
@@ -211,7 +210,7 @@ describe('DateRangePicker', function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <DateRangePicker defaultValue={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}} onChange={onChange} />
+          <DateRangePicker label="Date range" defaultValue={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 5, 6)}} onChange={onChange} />
         </Provider>
       );
 
@@ -235,81 +234,81 @@ describe('DateRangePicker', function () {
 
       expect(dialog).not.toBeInTheDocument();
       expect(onChange).toHaveBeenCalledTimes(1);
-      expect(onChange).toHaveBeenCalledWith({start: new Date(2019, 1, 10), end: new Date(2019, 1, 17)});
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 2, 10), end: new CalendarDate(2019, 2, 17)});
       expect(startDate).toHaveTextContent('2/10/2019'); // uncontrolled
       expect(endDate).toHaveTextContent('2/17/2019');
     });
   });
 
   describe('labeling', function () {
-    it('should support labeling with a default label', function () {
-      let {getAllByRole, getByLabelText} = render(<DateRangePicker />);
+    it('should support labeling', function () {
+      let {getAllByRole, getByLabelText, getByText} = render(<DateRangePicker label="Date range" />);
+
+      let label = getByText('Date range');
 
       let combobox = getAllByRole('group')[0];
-      expect(combobox).toHaveAttribute('aria-label', 'Date Range');
-      expect(combobox).toHaveAttribute('id');
+      expect(combobox).toHaveAttribute('aria-labelledby', label.id);
 
       let startDate = getByLabelText('Start Date');
-      expect(startDate).toHaveAttribute('aria-labelledby', `${combobox.id} ${startDate.id}`);
+      expect(startDate).toHaveAttribute('aria-labelledby', `${label.id} ${startDate.id}`);
 
       let endDate = getByLabelText('End Date');
-      expect(endDate).toHaveAttribute('aria-labelledby', `${combobox.id} ${endDate.id}`);
+      expect(endDate).toHaveAttribute('aria-labelledby', `${label.id} ${endDate.id}`);
 
       let button = getAllByRole('button')[0];
       expect(button).toHaveAttribute('aria-label', 'Calendar');
       expect(button).toHaveAttribute('id');
-      expect(button).toHaveAttribute('aria-labelledby', `${combobox.id} ${button.id}`);
+      expect(button).toHaveAttribute('aria-labelledby', `${label.id} ${button.id}`);
 
       let startSegments = getAllByRoleInContainer(startDate, 'spinbutton');
       for (let segment of startSegments) {
         expect(segment).toHaveAttribute('id');
-        expect(segment).toHaveAttribute('aria-labelledby', `${combobox.id} ${startDate.id} ${segment.id}`);
+        expect(segment).toHaveAttribute('aria-labelledby', `${label.id} ${startDate.id} ${segment.id}`);
       }
 
       let endSegments = getAllByRoleInContainer(endDate, 'spinbutton');
       for (let segment of endSegments) {
         expect(segment).toHaveAttribute('id');
-        expect(segment).toHaveAttribute('aria-labelledby', `${combobox.id} ${endDate.id} ${segment.id}`);
+        expect(segment).toHaveAttribute('aria-labelledby', `${label.id} ${endDate.id} ${segment.id}`);
       }
     });
 
     it('should support labeling with aria-label', function () {
       let {getAllByRole, getByLabelText} = render(<DateRangePicker aria-label="Birth date" />);
 
-      let combobox = getAllByRole('group')[0];
-      expect(combobox).toHaveAttribute('aria-label', 'Birth date');
-      expect(combobox).toHaveAttribute('id');
+      let field = getAllByRole('group')[0];
+      expect(field).toHaveAttribute('aria-label', 'Birth date');
+      expect(field).toHaveAttribute('id');
 
       let startDate = getByLabelText('Start Date');
-      expect(startDate).toHaveAttribute('aria-labelledby', `${combobox.id} ${startDate.id}`);
+      expect(startDate).toHaveAttribute('aria-labelledby', `${field.id} ${startDate.id}`);
 
       let endDate = getByLabelText('End Date');
-      expect(endDate).toHaveAttribute('aria-labelledby', `${combobox.id} ${endDate.id}`);
+      expect(endDate).toHaveAttribute('aria-labelledby', `${field.id} ${endDate.id}`);
 
       let button = getAllByRole('button')[0];
       expect(button).toHaveAttribute('aria-label', 'Calendar');
       expect(button).toHaveAttribute('id');
-      expect(button).toHaveAttribute('aria-labelledby', `${combobox.id} ${button.id}`);
+      expect(button).toHaveAttribute('aria-labelledby', `${field.id} ${button.id}`);
 
       let startSegments = getAllByRoleInContainer(startDate, 'spinbutton');
       for (let segment of startSegments) {
         expect(segment).toHaveAttribute('id');
-        expect(segment).toHaveAttribute('aria-labelledby', `${combobox.id} ${startDate.id} ${segment.id}`);
+        expect(segment).toHaveAttribute('aria-labelledby', `${field.id} ${startDate.id} ${segment.id}`);
       }
 
       let endSegments = getAllByRoleInContainer(endDate, 'spinbutton');
       for (let segment of endSegments) {
         expect(segment).toHaveAttribute('id');
-        expect(segment).toHaveAttribute('aria-labelledby', `${combobox.id} ${endDate.id} ${segment.id}`);
+        expect(segment).toHaveAttribute('aria-labelledby', `${field.id} ${endDate.id} ${segment.id}`);
       }
     });
 
     it('should support labeling with aria-labelledby', function () {
       let {getAllByRole, getByLabelText} = render(<DateRangePicker aria-labelledby="foo" />);
 
-      let combobox = getAllByRole('group')[0];
-      expect(combobox).not.toHaveAttribute('aria-label');
-      expect(combobox).toHaveAttribute('aria-labelledby', 'foo');
+      let field = getAllByRole('group')[0];
+      expect(field).toHaveAttribute('aria-labelledby', 'foo');
 
       let startDate = getByLabelText('Start Date');
       expect(startDate).toHaveAttribute('aria-labelledby', `foo ${startDate.id}`);
@@ -338,21 +337,23 @@ describe('DateRangePicker', function () {
 
   describe('focus management', function () {
     it('should focus the first segment of each field on mouse down', function () {
-      let {getByLabelText} = render(<DateRangePicker />);
+      let {getByLabelText} = render(<DateRangePicker label="Date range" />);
       let startDate = getByLabelText('Start Date');
       let endDate = getByLabelText('End Date');
       let startSegments = getAllByRoleInContainer(startDate, 'spinbutton');
       let endSegments = getAllByRoleInContainer(endDate, 'spinbutton');
 
-      fireEvent.mouseDown(startDate);
-      expect(startSegments[0]).toHaveFocus();
+      triggerPress(startDate);
+      expect(startSegments[startSegments.length - 1]).toHaveFocus();
 
-      fireEvent.mouseDown(endDate);
-      expect(endSegments[0]).toHaveFocus();
+      act(() => document.activeElement.blur());
+
+      triggerPress(endDate);
+      expect(endSegments[endSegments.length - 1]).toHaveFocus();
     });
 
     it('should focus the first segment of the end date on mouse down on the dash', function () {
-      let {getByTestId, getByLabelText} = render(<DateRangePicker />);
+      let {getByTestId, getByLabelText} = render(<DateRangePicker label="Date range" />);
       let rangeDash = getByTestId('date-range-dash');
       let endDate = getByLabelText('End Date');
       let endSegments = getAllByRoleInContainer(endDate, 'spinbutton');
@@ -371,7 +372,8 @@ describe('DateRangePicker', function () {
       let onChange = jest.fn();
       let {getAllByLabelText} = render(
         <DateRangePicker
-          defaultValue={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}}
+          label="Date range"
+          defaultValue={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 5, 6)}}
           onChange={onChange} />
       );
 
@@ -382,7 +384,7 @@ describe('DateRangePicker', function () {
 
       expect(startMonth).toHaveTextContent('1'); // uncontrolled
       expect(onChange).toHaveBeenCalledTimes(1);
-      expect(onChange).toHaveBeenCalledWith({start: new Date(2019, 0, 3), end: new Date(2019, 4, 6)});
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 1, 3), end: new CalendarDate(2019, 5, 6)});
 
       let endYear = getAllByLabelText('Year')[1];
       expect(endYear).toHaveTextContent('2019');
@@ -391,14 +393,15 @@ describe('DateRangePicker', function () {
 
       expect(endYear).toHaveTextContent('2020'); // uncontrolled
       expect(onChange).toHaveBeenCalledTimes(2);
-      expect(onChange).toHaveBeenCalledWith({start: new Date(2019, 0, 3), end: new Date(2020, 4, 6)});
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 1, 3), end: new CalendarDate(2020, 5, 6)});
     });
 
     it('should edit a date range with the arrow keys (controlled)', function () {
       let onChange = jest.fn();
       let {getAllByLabelText} = render(
         <DateRangePicker
-          value={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}}
+          label="Date range"
+          value={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 5, 6)}}
           onChange={onChange} />
       );
 
@@ -409,7 +412,7 @@ describe('DateRangePicker', function () {
 
       expect(startMonth).toHaveTextContent('2'); // controlled
       expect(onChange).toHaveBeenCalledTimes(1);
-      expect(onChange).toHaveBeenCalledWith({start: new Date(2019, 0, 3), end: new Date(2019, 4, 6)});
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 1, 3), end: new CalendarDate(2019, 5, 6)});
 
       let endYear = getAllByLabelText('Year')[1];
       expect(endYear).toHaveTextContent('2019');
@@ -418,73 +421,76 @@ describe('DateRangePicker', function () {
 
       expect(endYear).toHaveTextContent('2019'); // controlled
       expect(onChange).toHaveBeenCalledTimes(2);
-      expect(onChange).toHaveBeenCalledWith({start: new Date(2019, 1, 3), end: new Date(2020, 4, 6)});
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2020, 5, 6)});
     });
 
     it('should edit a date range by entering text (uncontrolled)', function () {
       let onChange = jest.fn();
       let {getAllByLabelText} = render(
         <DateRangePicker
-          defaultValue={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}}
+          label="Date range"
+          defaultValue={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 5, 6)}}
           onChange={onChange} />
       );
 
       let startMonth = getAllByLabelText('Month')[0];
       act(() => {startMonth.focus();});
-      fireEvent.keyDown(startMonth, {key: '8'});
+      beforeInput(startMonth, '8');
 
       expect(startMonth).toHaveTextContent('8'); // uncontrolled
       expect(onChange).toHaveBeenCalledTimes(1);
-      expect(onChange).toHaveBeenCalledWith({start: new Date(2019, 7, 3), end: new Date(2019, 4, 6)});
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 8, 3), end: new CalendarDate(2019, 5, 6)});
 
       expect(getAllByLabelText('Day')[0]).toHaveFocus();
 
       let endYear = getAllByLabelText('Year')[1];
       expect(endYear).toHaveTextContent('2019');
       act(() => {endYear.focus();});
-      fireEvent.keyDown(endYear, {key: '2'});
-      fireEvent.keyDown(endYear, {key: '0'});
-      fireEvent.keyDown(endYear, {key: '2'});
-      fireEvent.keyDown(endYear, {key: '2'});
+      beforeInput(endYear, '2');
+      beforeInput(endYear, '0');
+      beforeInput(endYear, '2');
+      beforeInput(endYear, '2');
 
       expect(endYear).toHaveTextContent('2022'); // uncontrolled
       expect(onChange).toHaveBeenCalledTimes(5);
-      expect(onChange).toHaveBeenCalledWith({start: new Date(2019, 7, 3), end: new Date(2022, 4, 6)});
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 8, 3), end: new CalendarDate(2022, 5, 6)});
     });
 
     it('should edit a date range by entering text (controlled)', function () {
       let onChange = jest.fn();
       let {getAllByLabelText} = render(
         <DateRangePicker
-          value={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}}
+          label="Date range"
+          value={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 5, 6)}}
           onChange={onChange} />
       );
 
       let startMonth = getAllByLabelText('Month')[0];
       act(() => {startMonth.focus();});
-      fireEvent.keyDown(startMonth, {key: '8'});
+      beforeInput(startMonth, '8');
 
       expect(startMonth).toHaveTextContent('2'); // controlled
       expect(onChange).toHaveBeenCalledTimes(1);
-      expect(onChange).toHaveBeenCalledWith({start: new Date(2019, 7, 3), end: new Date(2019, 4, 6)});
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 8, 3), end: new CalendarDate(2019, 5, 6)});
 
       expect(getAllByLabelText('Day')[0]).toHaveFocus();
 
       let endDay = getAllByLabelText('Day')[1];
       expect(endDay).toHaveTextContent('6');
       act(() => {endDay.focus();});
-      fireEvent.keyDown(endDay, {key: '4'});
+      beforeInput(endDay, '4');
 
       expect(endDay).toHaveTextContent('6'); // controlled
       expect(onChange).toHaveBeenCalledTimes(2);
-      expect(onChange).toHaveBeenCalledWith({start: new Date(2019, 1, 3), end: new Date(2019, 4, 4)});
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 5, 4)});
     });
 
     it('should support backspace (uncontrolled)', function () {
       let onChange = jest.fn();
       let {getAllByLabelText} = render(
         <DateRangePicker
-          defaultValue={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}}
+          label="Date range"
+          defaultValue={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 5, 6)}}
           onChange={onChange} />
       );
 
@@ -495,14 +501,15 @@ describe('DateRangePicker', function () {
 
       expect(endYear).toHaveTextContent('201'); // uncontrolled
       expect(onChange).toHaveBeenCalledTimes(1);
-      expect(onChange).toHaveBeenCalledWith({start: new Date(2019, 1, 3), end: new Date(201, 4, 6)});
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 2, 3), end: new CalendarDate(201, 5, 6)});
     });
 
     it('should support backspace (controlled)', function () {
       let onChange = jest.fn();
       let {getAllByLabelText} = render(
         <DateRangePicker
-          value={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}}
+          label="Date range"
+          value={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 5, 6)}}
           onChange={onChange} />
       );
 
@@ -513,7 +520,7 @@ describe('DateRangePicker', function () {
 
       expect(endYear).toHaveTextContent('2019'); // controlled
       expect(onChange).toHaveBeenCalledTimes(1);
-      expect(onChange).toHaveBeenCalledWith({start: new Date(2019, 1, 3), end: new Date(201, 4, 6)});
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 2, 3), end: new CalendarDate(201, 5, 6)});
     });
   });
 
@@ -521,8 +528,9 @@ describe('DateRangePicker', function () {
     it('should display an error icon when the start date is less than the minimum (controlled)', function () {
       let {getByTestId} = render(
         <DateRangePicker
-          value={{start: new Date(1980, 0, 1), end: new Date(1999, 1, 3)}}
-          minValue={new Date(1985, 0, 1)} />
+          label="Date range"
+          value={{start: new CalendarDate(1980, 1, 1), end: new CalendarDate(1999, 2, 3)}}
+          minValue={new CalendarDate(1985, 1, 1)} />
       );
       expect(getByTestId('invalid-icon')).toBeVisible();
     });
@@ -530,8 +538,9 @@ describe('DateRangePicker', function () {
     it('should display an error icon when the start date is less than the minimum (uncontrolled)', function () {
       let {getByTestId, getAllByLabelText} = render(
         <DateRangePicker
-          defaultValue={{start: new Date(1985, 0, 1), end: new Date(1999, 1, 3)}}
-          minValue={new Date(1985, 0, 1)} />
+          label="Date range"
+          defaultValue={{start: new CalendarDate(1985, 1, 1), end: new CalendarDate(1999, 2, 3)}}
+          minValue={new CalendarDate(1985, 1, 1)} />
       );
       expect(() => getByTestId('invalid-icon')).toThrow();
 
@@ -547,8 +556,9 @@ describe('DateRangePicker', function () {
     it('should display an error icon when the start date is greater than the maximum (controlled)', function () {
       let {getByTestId} = render(
         <DateRangePicker
-          value={{start: new Date(1990, 0, 1), end: new Date(1999, 1, 3)}}
-          maxValue={new Date(1985, 0, 1)} />
+          label="Date range"
+          value={{start: new CalendarDate(1990, 1, 1), end: new CalendarDate(1999, 2, 3)}}
+          maxValue={new CalendarDate(1985, 1, 1)} />
       );
       expect(getByTestId('invalid-icon')).toBeVisible();
     });
@@ -556,8 +566,9 @@ describe('DateRangePicker', function () {
     it('should display an error icon when the start date is greater than the maximum (uncontrolled)', function () {
       let {getByTestId, getAllByLabelText} = render(
         <DateRangePicker
-          defaultValue={{start: new Date(1984, 1, 1), end: new Date(1984, 1, 3)}}
-          maxValue={new Date(1985, 0, 1)} />
+          label="Date range"
+          defaultValue={{start: new CalendarDate(1984, 2, 1), end: new CalendarDate(1984, 2, 3)}}
+          maxValue={new CalendarDate(1985, 1, 1)} />
       );
       expect(() => getByTestId('invalid-icon')).toThrow();
 
@@ -573,8 +584,9 @@ describe('DateRangePicker', function () {
     it('should display an error icon when the end date is greater than the maximum (controlled)', function () {
       let {getByTestId} = render(
         <DateRangePicker
-          value={{start: new Date(1980, 0, 1), end: new Date(1999, 1, 3)}}
-          maxValue={new Date(1985, 0, 1)} />
+          label="Date range"
+          value={{start: new CalendarDate(1980, 1, 1), end: new CalendarDate(1999, 2, 3)}}
+          maxValue={new CalendarDate(1985, 1, 1)} />
       );
       expect(getByTestId('invalid-icon')).toBeVisible();
     });
@@ -582,8 +594,9 @@ describe('DateRangePicker', function () {
     it('should display an error icon when the end date is greater than the maximum (uncontrolled)', function () {
       let {getByTestId, getAllByLabelText} = render(
         <DateRangePicker
-          defaultValue={{start: new Date(1980, 1, 1), end: new Date(1984, 1, 3)}}
-          maxValue={new Date(1985, 0, 1)} />
+          label="Date range"
+          defaultValue={{start: new CalendarDate(1980, 2, 1), end: new CalendarDate(1984, 2, 3)}}
+          maxValue={new CalendarDate(1985, 1, 1)} />
       );
       expect(() => getByTestId('invalid-icon')).toThrow();
 
@@ -599,7 +612,8 @@ describe('DateRangePicker', function () {
     it('should display an error icon when the end date is less than the start date (controlled)', function () {
       let {getByTestId} = render(
         <DateRangePicker
-          value={{start: new Date(1990, 0, 1), end: new Date(1980, 1, 3)}} />
+          label="Date range"
+          value={{start: new CalendarDate(1990, 1, 1), end: new CalendarDate(1980, 2, 3)}} />
       );
       expect(getByTestId('invalid-icon')).toBeVisible();
     });
@@ -607,7 +621,8 @@ describe('DateRangePicker', function () {
     it('should display an error icon when the end date is less than the start date (uncontrolled)', function () {
       let {getByTestId, getAllByLabelText} = render(
         <DateRangePicker
-          defaultValue={{start: new Date(1980, 1, 1), end: new Date(1980, 1, 3)}} />
+          label="Date range"
+          defaultValue={{start: new CalendarDate(1980, 2, 1), end: new CalendarDate(1980, 2, 3)}} />
       );
       expect(() => getByTestId('invalid-icon')).toThrow();
 
@@ -624,27 +639,29 @@ describe('DateRangePicker', function () {
   describe('placeholder', function () {
     it('should display a placeholder date if no value is provided', function () {
       let onChange = jest.fn();
-      let {getByLabelText} = render(<DateRangePicker onChange={onChange} />);
+      let {getByLabelText} = render(<DateRangePicker label="Date range" onChange={onChange} />);
 
       let startDate = getByLabelText('Start Date');
       let endDate = getByLabelText('End Date');
-      expect(startDate).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
-      expect(endDate).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
+      let today = new Intl.DateTimeFormat('en-US').format(new Date());
+      expect(startDate).toHaveTextContent(today);
+      expect(endDate).toHaveTextContent(today);
     });
 
     it('should display a placeholder date if the value prop is null', function () {
       let onChange = jest.fn();
-      let {getByLabelText} = render(<DateRangePicker onChange={onChange} value={null} />);
+      let {getByLabelText} = render(<DateRangePicker label="Date range" onChange={onChange} value={null} />);
 
       let startDate = getByLabelText('Start Date');
       let endDate = getByLabelText('End Date');
-      expect(startDate).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
-      expect(endDate).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
+      let today = new Intl.DateTimeFormat('en-US').format(new Date());
+      expect(startDate).toHaveTextContent(today);
+      expect(endDate).toHaveTextContent(today);
     });
 
-    it('should use the placeholderDate prop if provided', function () {
+    it('should use the placeholderValue prop if provided', function () {
       let onChange = jest.fn();
-      let {getByLabelText} = render(<DateRangePicker onChange={onChange} placeholderDate={new Date(1980, 0, 1)} />);
+      let {getByLabelText} = render(<DateRangePicker label="Date range" onChange={onChange} placeholderValue={new CalendarDate(1980, 1, 1)} />);
 
       let startDate = getByLabelText('Start Date');
       let endDate = getByLabelText('End Date');
@@ -654,55 +671,60 @@ describe('DateRangePicker', function () {
 
     it('should not fire onChange until both start and end dates have been entered', function () {
       let onChange = jest.fn();
-      let {getByLabelText, getAllByRole} = render(<DateRangePicker onChange={onChange} />);
+      let {getByLabelText, getAllByRole} = render(<DateRangePicker label="Date range" onChange={onChange} />);
 
       let startDate = getByLabelText('Start Date');
       let endDate = getByLabelText('End Date');
 
-      expect(startDate).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
-      expect(endDate).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
+      let formatter = new Intl.DateTimeFormat('en-US');
+      expect(startDate).toHaveTextContent(formatter.format(new Date()));
+      expect(endDate).toHaveTextContent(formatter.format(new Date()));
 
       let segments = getAllByRole('spinbutton');
       act(() => {segments[0].focus();});
 
-      fireEvent.keyDown(document.activeElement, {key: '2'});
-      expect(startDate).toHaveTextContent(`2/1/${new Date().getFullYear()}`);
+      beforeInput(document.activeElement, '2');
+      let value = today(getLocalTimeZone()).set({month: 2});
+      expect(startDate).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
 
-      fireEvent.keyDown(document.activeElement, {key: '3'});
-      expect(startDate).toHaveTextContent(`2/3/${new Date().getFullYear()}`);
+      beforeInput(document.activeElement, '3');
+      value = today(getLocalTimeZone()).set({month: 2, day: 3});
+      expect(startDate).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
       expect(segments[2]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
 
-      fireEvent.keyDown(document.activeElement, {key: '2'});
-      fireEvent.keyDown(document.activeElement, {key: '0'});
-      fireEvent.keyDown(document.activeElement, {key: '2'});
-      fireEvent.keyDown(document.activeElement, {key: '0'});
+      beforeInput(document.activeElement, '2');
+      beforeInput(document.activeElement, '0');
+      beforeInput(document.activeElement, '2');
+      beforeInput(document.activeElement, '0');
       expect(startDate).toHaveTextContent('2/3/2020');
       expect(segments[3]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
 
-      fireEvent.keyDown(document.activeElement, {key: '4'});
-      expect(endDate).toHaveTextContent(`4/1/${new Date().getFullYear()}`);
+      beforeInput(document.activeElement, '4');
+      value = today(getLocalTimeZone()).set({month: 4});
+      expect(endDate).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
       expect(segments[4]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
 
-      fireEvent.keyDown(document.activeElement, {key: '8'});
-      expect(endDate).toHaveTextContent(`4/8/${new Date().getFullYear()}`);
+      beforeInput(document.activeElement, '8');
+      value = today(getLocalTimeZone()).set({month: 4, day: 8});
+      expect(endDate).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
       expect(segments[5]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
 
-      fireEvent.keyDown(document.activeElement, {key: '2'});
+      beforeInput(document.activeElement, '2');
       expect(onChange).toHaveBeenCalledTimes(1);
-      fireEvent.keyDown(document.activeElement, {key: '0'});
+      beforeInput(document.activeElement, '0');
       expect(onChange).toHaveBeenCalledTimes(2);
-      fireEvent.keyDown(document.activeElement, {key: '2'});
+      beforeInput(document.activeElement, '2');
       expect(onChange).toHaveBeenCalledTimes(3);
-      fireEvent.keyDown(document.activeElement, {key: '2'});
+      beforeInput(document.activeElement, '2');
       expect(onChange).toHaveBeenCalledTimes(4);
 
-      expect(onChange).toHaveBeenCalledWith({start: new Date(2020, 1, 3), end: new Date(2022, 3, 8)});
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2022, 4, 8)});
     });
   });
 });
