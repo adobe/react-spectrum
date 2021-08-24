@@ -64,7 +64,8 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteProps<T>, 
     value: state.inputValue,
     onChange: state.setInputValue,
     autoComplete: 'off',
-    onClear: () => state.setInputValue('')
+    onClear: () => state.setInputValue(''),
+    onSubmit: (value) => props.onSubmit(value, state.selectedKey || null)
   }, state, inputRef);
   
 
