@@ -12,8 +12,8 @@
 
 
 import {Item} from '@react-stately/collections';
-import {Select} from './example';
 import React from 'react';
+import {Select} from './example';
 
 const meta = {
   title: 'useSelect'
