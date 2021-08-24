@@ -12,6 +12,7 @@
 
 import {AriaTextFieldProps, SpectrumTextFieldProps, TextFieldProps} from '@react-types/textfield';
 import {AsyncLoadable, CollectionBase, LoadingState, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
+import {Key} from 'react';
 import {MenuTriggerAction} from '@react-types/combobox';
 
 export interface SearchFieldProps extends TextFieldProps {
@@ -22,7 +23,7 @@ export interface SearchFieldProps extends TextFieldProps {
   onClear?: () => void
 }
 
-export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<TextFieldProps, 'onChange'> {
+export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<SearchFieldProps, 'onSubmit'> {
   /** The list of SearchAutocomplete items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of SearchAutocomplete items (controlled). */
@@ -39,7 +40,8 @@ export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<Text
    * The interaction required to display the SearchAutocomplete menu.
    * @default 'input'
    */
-  menuTrigger?: MenuTriggerAction
+  menuTrigger?: MenuTriggerAction,
+  onSubmit?: (value: string, key: Key | null) => void
 }
 
 export interface SpectrumSearchAutocompleteProps<T> extends Omit<SearchAutocompleteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
