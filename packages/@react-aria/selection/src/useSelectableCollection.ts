@@ -82,7 +82,8 @@ interface SelectableCollectionOptions {
    */
   isVirtualized?: boolean,
   /**
-   * The ref attached to the scrollable body. Used to provided automatic scrolling on item focus for non-virtualized collections.
+   * The ref attached to the scrollable body. Used to provide automatic scrolling on item focus for non-virtualized collections.
+   * If not provided, defaults to the collection ref.
    */
   scrollRef?: RefObject<HTMLElement>
 }
@@ -109,7 +110,8 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     shouldUseVirtualFocus,
     allowsTabNavigation = false,
     isVirtualized,
-    scrollRef
+    // If no scrollRef is provided, assume the collection ref is the scrollable region
+    scrollRef = ref
   } = options;
   let {direction} = useLocale();
 
