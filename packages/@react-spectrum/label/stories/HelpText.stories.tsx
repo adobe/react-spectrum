@@ -35,7 +35,7 @@ storiesOf('HelpText', module)
         <TextField
           label="Empty field"
           description="This input is only valid when it's empty."
-          errorMessage="Please remove your input."
+          errorMessage="Remove input."
           value={value}
           onChange={setValue}
           validationState={value.length ? 'invalid' : undefined} />
@@ -43,10 +43,19 @@ storiesOf('HelpText', module)
     }
   )
   .add(
+    'description, validationState: valid',
+    () => render({
+      label: 'Nickname',
+      description: 'Enter your nickname, or leave blank if you don\'t have one.',
+      validationState: 'valid'
+    })
+  )
+  .add(
     'description and error message, validationState: valid',
     () => render({
-      description: 'Password must be at least 8 characters.',
-      errorMessage: 'Create a password with at least 8 characters.', // Won't render
+      label: 'Valid field',
+      description: 'The error message will never render because validationState is "valid".',
+      errorMessage: 'Uninformative error message', // Won't render
       validationState: 'valid'
     })
   )

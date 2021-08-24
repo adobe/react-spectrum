@@ -64,7 +64,7 @@ function HelpText(props: HelpTextProps, ref: DOMRef<HTMLDivElement>) {
 }
 
 /**
- * TODO: Add description of component here.
+ * Help text provides either an informative description or an error message that gives more context about what a user needs to input. It's commonly used in forms.
  */
 const _HelpText = React.forwardRef(HelpText);
 export {_HelpText as HelpText};
