@@ -74,7 +74,7 @@ export interface SpectrumHelpTextProps extends HelpTextProps, Validation {
   /** Whether the description is displayed with lighter text. */
   isDisabled?: boolean,
   /** Whether an error icon is rendered. */
-  showIcon?: boolean,
+  showErrorIcon?: boolean,
   /** The help text's horizontal alignment relative to the element it is describing. */
   labelAlign?: Alignment
 }

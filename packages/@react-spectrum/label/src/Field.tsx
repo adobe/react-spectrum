@@ -32,7 +32,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     description,
     errorMessage,
     isDisabled,
-    showIcon,
+    showErrorIcon,
     children,
     labelProps,
     // Not every component that uses <Field> supports help text.
@@ -74,7 +74,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
         validationState={validationState}
         isDisabled={isDisabled}
         labelAlign={labelAlign}
-        showIcon={showIcon} />
+        showErrorIcon={showErrorIcon} />
     );
 
     let renderChildren = () => {

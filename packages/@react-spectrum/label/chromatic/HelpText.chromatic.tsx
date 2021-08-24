@@ -26,11 +26,11 @@ storiesOf('HelpText', module)
     () => render({errorMessage: 'Create a password with at least 8 characters.', validationState: 'invalid'})
   )
   .add(
-    'showIcon: true',
+    'showErrorIcon: true',
     () => render({
       errorMessage: 'Create a password with at least 8 characters.',
       validationState: 'invalid',
-      showIcon: true
+      showErrorIcon: true
     })
   )
   .add(

@@ -29,7 +29,7 @@ function HelpText(props: HelpTextProps, ref: DOMRef<HTMLDivElement>) {
     errorMessage,
     validationState,
     isDisabled,
-    showIcon,
+    showErrorIcon,
     labelAlign = 'start' as Alignment,
     descriptionProps,
     errorMessageProps
@@ -49,7 +49,7 @@ function HelpText(props: HelpTextProps, ref: DOMRef<HTMLDivElement>) {
       ref={domRef}>
       {isErrorMessage ? (
         <>
-          {showIcon && <AlertMedium UNSAFE_className={classNames(styles, 'spectrum-HelpText-validationIcon')} />}
+          {showErrorIcon && <AlertMedium UNSAFE_className={classNames(styles, 'spectrum-HelpText-validationIcon')} />}
           <div {...errorMessageProps} className={classNames(styles, 'spectrum-HelpText-text')}>
             {errorMessage}
           </div>
