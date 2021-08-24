@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/avatar": "3.0.0-alpha.0",
+    "@react-aria/utils": "^3.8.2",
     "@react-spectrum/utils": "^3.6.1",
     "@react-types/avatar": "3.0.0-alpha.0",
     "@react-types/shared": "^3.7.1"

@@ -12,10 +12,10 @@
 
 import {classNames, dimensionValue, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef} from 'react';
 import {SpectrumAvatarProps} from '@react-types/avatar';
 import styles from '@adobe/spectrum-css-temp/components/avatar/vars.css';
-import {useAvatar} from '@react-aria/avatar';
 import {useProviderProps} from '@react-spectrum/provider';
 
 const DEFAULT_SIZE = 'avatar-size-100';
@@ -23,6 +23,7 @@ const SIZE_RE = /^size-\d+/;
 
 function Avatar(props: SpectrumAvatarProps, ref: DOMRef<HTMLImageElement>) {
   const {
+    alt = '',
     isDisabled,
     size,
     src,
@@ -31,7 +32,8 @@ function Avatar(props: SpectrumAvatarProps, ref: DOMRef<HTMLImageElement>) {
 
   const {styleProps} = useStyleProps(otherProps);
   const domRef = useDOMRef(ref);
-  const {avatarProps: {alt, ...otherAvatarProps}} = useAvatar(props); // alt for jsx-a11y/alt-text
+
+  const domProps = filterDOMProps(otherProps);
 
   // Casting `size` as `any` since `isNaN` expects a `number`, but we want it
   // to handle `string` numbers; e.g. '300' as opposed to 300
@@ -42,7 +44,7 @@ function Avatar(props: SpectrumAvatarProps, ref: DOMRef<HTMLImageElement>) {
   return (
     <img
       {...styleProps}
-      {...otherAvatarProps}
+      {...domProps}
       alt={alt}
       className={classNames(
         styles,

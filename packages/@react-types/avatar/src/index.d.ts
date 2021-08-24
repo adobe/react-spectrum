@@ -11,16 +11,6 @@
  */
 
 import {DOMProps, StyleProps} from '@react-types/shared';
-import {ElementType, JSXElementConstructor} from 'react';
-
-export interface AriaAvatarElementTypeProps<T extends ElementType = 'img'> {
-  /**
-   * The HTML element used to render the avatar, e.g. 'img', or 'svg'.
-   *
-   * @default 'img'
-   */
-  elementType?: T | JSXElementConstructor<any>
-}
 
 export interface AvatarProps {
   /**
@@ -28,12 +18,14 @@ export interface AvatarProps {
    *
    * @default null
    */
-  alt?: string
+  alt?: string,
+  /**
+   * The image URL for the avatar.
+   */
+  src: string
 }
 
-export interface AriaAvatarProps<T extends ElementType = 'img'> extends AvatarProps, AriaAvatarElementTypeProps<T>, DOMProps {}
-
-export interface SpectrumAvatarProps extends AriaAvatarProps, Omit<StyleProps, 'width' | 'height'> {
+export interface SpectrumAvatarProps extends AvatarProps, DOMProps, Omit<StyleProps, 'width' | 'height'> {
   /**
    * Whether the avatar is disabled.
    */
@@ -56,9 +48,5 @@ export interface SpectrumAvatarProps extends AriaAvatarProps, Omit<StyleProps, '
     // This allows autocomplete to work properly and not collapse the above options into just `string`.
     // See https://github.com/microsoft/TypeScript/issues/29729.
     | (string & {})
-    | number,
-  /**
-   * The image URL for the avatar.
-   */
-  src: string
+    | number
 }
