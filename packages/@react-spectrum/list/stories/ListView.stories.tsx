@@ -1,4 +1,3 @@
-import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
 import {ActionMenu, Menu, MenuTrigger} from '@react-spectrum/menu';
@@ -41,22 +40,16 @@ storiesOf('ListView', module)
   .add('with buttons', () => (
     <ListView width="300px">
       <Item textValue="one">
-        <Flex alignItems="center">
-          <View flexGrow={1}>row 1</View>
-          <ActionButton>Button 1</ActionButton>
-        </Flex>
+        <Content>row 1</Content>
+        <ActionButton>Button 1</ActionButton>
       </Item>
       <Item textValue="two">
-        <Flex alignItems="center">
-          <View flexGrow={1}>row 2</View>
-          <ActionButton>Button 1</ActionButton>
-        </Flex>
+        <Content>row 2</Content>
+        <ActionButton>Button 1</ActionButton>
       </Item>
       <Item textValue="three">
-        <Flex alignItems="center">
-          <View flexGrow={1}>row 3</View>
-          <ActionButton>Button 1</ActionButton>
-        </Flex>
+        <Content>row 3</Content>
+        <ActionButton>Button 1</ActionButton>
       </Item>
     </ListView>
   ))
@@ -81,23 +74,25 @@ storiesOf('ListView', module)
       <ListView items={items} width="300px" height="250px">
         {(item) => (
           <Item key={item.key}>
-            <Flex alignItems="center" gap="10px">
-              <View flexGrow={1}>Item {item.key}</View> {/* TODO */}
-              <ActionButton><Add /></ActionButton>
-              <MenuTrigger>
-                <ActionButton><MoreSmall /></ActionButton>
-                <Menu>
-                  <Item>
-                    <Edit />
-                    <Text>Edit</Text>
-                  </Item>
-                  <Item>
-                    <Delete />
-                    <Text>Delete</Text>
-                  </Item>
-                </Menu>
-              </MenuTrigger>
-            </Flex>
+            <Content>
+              <Flex alignItems="center" gap="10px">
+                <View flexGrow={1}>Item {item.key}</View> {/* TODO */}
+                <ActionButton><Add /></ActionButton>
+                <MenuTrigger>
+                  <ActionButton><MoreSmall /></ActionButton>
+                  <Menu>
+                    <Item>
+                      <Edit />
+                      <Text>Edit</Text>
+                    </Item>
+                    <Item>
+                      <Delete />
+                      <Text>Delete</Text>
+                    </Item>
+                  </Menu>
+                </MenuTrigger>
+              </Flex>
+            </Content>
           </Item>
         )}
       </ListView>
@@ -146,9 +141,15 @@ storiesOf('ListView', module)
     renderActionsExample(props => <ActionButton {...props}><Copy /></ActionButton>))
   .add('actions: ActionGroup', () =>
     renderActionsExample(props => (
-      <ActionGroup {...props}>
-        <Item key="add"><Add /></Item>
-        <Item key="delete"><Delete /></Item>
+      <ActionGroup buttonLabelBehavior="hide" {...props}>
+        <Item key="add">
+          <Add />
+          <Text>Add</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
       </ActionGroup>
     )))
   .add('actions: ActionMenu', () =>
@@ -167,7 +168,7 @@ storiesOf('ListView', module)
 
 function Example(props?) {
   return (
-    <ListView width="250px" onAction={action('onAction')} {...props}>
+    <ListView width="250px" {...props}>
       <Item key="folder1" hasChildItems>
         <Content>folder 1</Content>
       </Item>

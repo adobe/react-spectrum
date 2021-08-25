@@ -12,25 +12,23 @@
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
-import {classNames, SlotProvider} from '@react-spectrum/utils';
+import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {Grid} from '@react-spectrum/layout';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
 import listStyles from './listview.css';
 import {ListViewContext} from './ListView';
-import {mergeProps, useId} from '@react-aria/utils';
+import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
 import {useFocusRing} from '@react-aria/focus';
-import {useGridCell, useGridRow} from '@react-aria/grid';
+import {useGridCell, useGridRow, useGridSelectionCheckbox} from '@react-aria/grid';
 import {useHover} from '@react-aria/interactions';
-import {useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useLocale} from '@react-aria/i18n';
 
 export function ListViewItem(props) {
   let {
     item
   } = props;
-  let {onAction, state, selectionMode} = useContext(ListViewContext);
+  let {state} = useContext(ListViewContext);
   let {direction} = useLocale();
   let ref = useRef<HTMLDivElement>();
   let {
@@ -52,10 +50,9 @@ export function ListViewItem(props) {
     gridCellProps,
     hoverProps,
     focusWithinProps,
-    focusProps,
-    {...((state.selectionManager.selectionMode === 'none' && item.props.hasChildItems) && {onPointerUp: () => onAction(item.key)})}
+    focusProps
   );
-  let {checkboxProps} = useListSelectionCheckbox(props, state);
+  let {checkboxProps} = useGridSelectionCheckbox({...props, key: item.key}, state);
 
   let chevron = null;
   if (item.props.hasChildItems) {
@@ -72,7 +69,7 @@ export function ListViewItem(props) {
       );
   }
 
-  let showCheckbox = state.selectionManager.selectionMode !== 'none' || selectionMode;
+  let showCheckbox = state.selectionManager.selectionMode !== 'none';
   return (
     <div
       {...rowProps}>
@@ -90,9 +87,13 @@ export function ListViewItem(props) {
         }
         ref={ref}
         {...mergedProps}>
-        <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']} UNSAFE_style={{minHeight: '32px'}}>
-          {showCheckbox &&
-          <Checkbox UNSAFE_style={{marginLeft: '4px', paddingRight: '0'}} {...checkboxProps} isEmphasized />}
+        <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
+          {showCheckbox && (
+            <Checkbox
+              UNSAFE_className={listStyles['react-spectrum-ListViewItem-checkbox']}
+              {...checkboxProps}
+              isEmphasized />
+          )}
           <SlotProvider
             slots={{
               content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
@@ -100,40 +101,21 @@ export function ListViewItem(props) {
               description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
               icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
               image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
-              actionGroup: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true, density: 'compact'},
+              link: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content'], isQuiet: true},
               actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
-              actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
-              link: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content'], isQuiet: true}
+              actionGroup: {
+                UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'],
+                isQuiet: true,
+                density: 'compact'
+              }
             }}>
             {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
-            {chevron}
+            <ClearSlots>
+              {chevron}
+            </ClearSlots>
           </SlotProvider>
         </Grid>
       </div>
     </div>
   );
-}
-
-function useListSelectionCheckbox(props, state) {
-  let {item} = props;
-  let {key} = item;
-
-  let manager = state.selectionManager;
-  let checkboxId = useId();
-  let isDisabled = state.disabledKeys.has(key);
-  let isSelected = state.selectionManager.isSelected(key);
-
-  let onChange = () => manager.select(key);
-
-  const formatMessage = useMessageFormatter(intlMessages);
-
-  return {
-    checkboxProps: {
-      id: checkboxId,
-      'aria-label': formatMessage('select'),
-      isSelected,
-      isDisabled: isDisabled || manager.selectionMode === 'none',
-      onChange
-    }
-  };
 }

@@ -2,5 +2,6 @@
   "selectedCount": "{count, plural, =0 {No items selected} one {# item selected} other {# items selected}}.",
   "selectedAll": "All items selected.",
   "selectedItem": "{item} selected.",
-  "deselectedItem": "{item} not selected."
+  "deselectedItem": "{item} not selected.",
+  "select": "Select"
 }

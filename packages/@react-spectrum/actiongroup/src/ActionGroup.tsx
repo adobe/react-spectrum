@@ -285,40 +285,42 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor,
     // Use a PressResponder to send DOM props through.
     // ActionButton doesn't allow overriding the role by default.
     <PressResponder {...mergeProps(buttonProps, hoverProps)}>
-      <SlotProvider
-        slots={{
-          text: {
-            id: hideButtonText ? textId : null,
-            isHidden: hideButtonText
-          }
-        }}>
-        <ActionButton
-          ref={ref}
-          UNSAFE_className={
-            classNames(
-              styles,
-              'spectrum-ActionGroup-item',
-              {
-                'is-selected': isSelected,
-                'is-hovered': isHovered,
-                'spectrum-ActionGroup-item--iconOnly': hideButtonText
-              },
+      <ClearSlots>
+        <SlotProvider
+          slots={{
+            text: {
+              id: hideButtonText ? textId : null,
+              isHidden: hideButtonText
+            }
+          }}>
+          <ActionButton
+            ref={ref}
+            UNSAFE_className={
               classNames(
-                buttonStyles,
+                styles,
+                'spectrum-ActionGroup-item',
                 {
-                  'spectrum-ActionButton--emphasized': isEmphasized,
-                  'is-selected': isSelected
-                }
+                  'is-selected': isSelected,
+                  'is-hovered': isHovered,
+                  'spectrum-ActionGroup-item--iconOnly': hideButtonText
+                },
+                classNames(
+                  buttonStyles,
+                  {
+                    'spectrum-ActionButton--emphasized': isEmphasized,
+                    'is-selected': isSelected
+                  }
+                )
               )
-            )
-          }
-          isDisabled={isDisabled}
-          staticColor={staticColor}
-          aria-label={item['aria-label']}
-          aria-labelledby={item['aria-label'] == null && hideButtonText ? textId : undefined}>
-          {item.rendered}
-        </ActionButton>
-      </SlotProvider>
+            }
+            isDisabled={isDisabled}
+            staticColor={staticColor}
+            aria-label={item['aria-label']}
+            aria-labelledby={item['aria-label'] == null && hideButtonText ? textId : undefined}>
+            {item.rendered}
+          </ActionButton>
+        </SlotProvider>
+      </ClearSlots>
     </PressResponder>
   );
 

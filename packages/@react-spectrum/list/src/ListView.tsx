@@ -20,7 +20,7 @@ import {ListState, useListState} from '@react-stately/list';
 import listStyles from './listview.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {Key, ReactElement, useContext, useMemo, useState} from 'react';
+import React, {ReactElement, useContext, useMemo} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
@@ -52,20 +52,17 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
   density?: 'compact' | 'regular' | 'spacious',
   isLoading?: boolean,
   renderEmptyState?: () => JSX.Element,
-  transitionDuration?: number,
-  onAction?: (key: Key) => void
+  transitionDuration?: number
 }
 
 function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
     density = 'regular',
-    transitionDuration = 0,
-    onAction
+    transitionDuration = 0
   } = props;
   let domRef = useDOMRef(ref);
   let {collection} = useListState(props);
   let formatMessage = useMessageFormatter(intlMessages);
-  let [selectionMode, setSelectionMode] = useState(false);
 
   let {styleProps} = useStyleProps(props);
   let {direction} = useLocale();
@@ -104,7 +101,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   layout.isLoading = props.isLoading;
 
   return (
-    <ListViewContext.Provider value={{state, keyboardDelegate, onAction, selectionMode, setSelectionMode}}>
+    <ListViewContext.Provider value={{state, keyboardDelegate}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}
