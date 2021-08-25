@@ -42,13 +42,12 @@ interface SelectAllCheckboxAria {
  */
 export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, state: TableState<T>): SelectionCheckboxAria {
   let {key} = props;
-  let checkboxId = useId();
   const {checkboxProps} = useGridSelectionCheckbox(props, state);
 
   return {
     checkboxProps: {
       ...checkboxProps,
-      'aria-labelledby': `${checkboxId} ${getRowLabelledBy(state, key)}`
+      'aria-labelledby': `${checkboxProps.id} ${getRowLabelledBy(state, key)}`
     }
   };
 }
