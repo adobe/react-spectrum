@@ -82,7 +82,7 @@ interface SelectableCollectionOptions {
    */
   isVirtualized?: boolean,
   /**
-   * The ref attached to the scrollable body. Used to provided automatic scrolling on item focus for non-virtualized collections.
+   * The ref attached to the scrollable body. Used to provide automatic scrolling on item focus for non-virtualized collections.
    * If not provided, defaults to the collection ref.
    */
   scrollRef?: RefObject<HTMLElement>

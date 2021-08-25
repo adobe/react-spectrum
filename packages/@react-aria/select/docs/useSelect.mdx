@@ -128,10 +128,10 @@ In addition, see [useListBox](useListBox.html) for examples of sections (option 
 options.
 
 ```tsx example export=true
-import {useSelectState} from '@react-stately/select';
+import {HiddenSelect, useSelect} from '@react-aria/select';
 import {Item} from '@react-stately/collections';
-import {useSelect, HiddenSelect} from '@react-aria/select';
 import {useButton} from '@react-aria/button';
+import {useSelectState} from '@react-stately/select';
 
 // Reuse the ListBox and Popover from your component library. See below for details.
 import {ListBox, Popover} from 'your-component-library';
@@ -194,6 +194,10 @@ function Select(props) {
   <Item>Green</Item>
   <Item>Blue</Item>
   <Item>Purple</Item>
+  <Item>Black</Item>
+  <Item>White</Item>
+  <Item>Lime</Item>
+  <Item>Fushsia</Item>
 </Select>
 ```
 
@@ -208,7 +212,7 @@ See [useOverlayTrigger](useOverlayTrigger.html) for more examples of popovers.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useOverlay, DismissButton} from '@react-aria/overlays';
+import {DismissButton, useOverlay} from '@react-aria/overlays';
 import {FocusScope} from '@react-aria/focus';
 
 function Popover(props) {
@@ -217,8 +221,7 @@ function Popover(props) {
     popoverRef = ref,
     isOpen,
     onClose,
-    children,
-    ...otherProps
+    children
   } = props;
 
   // Handle events that should cause the popup to close,
@@ -245,7 +248,7 @@ function Popover(props) {
           marginTop: 4
         }}>
         {children}
-        <DismissButton onDismiss={() => state.close()} />
+        <DismissButton onDismiss={onClose} />
       </div>
     </FocusScope>
   );
@@ -278,7 +281,9 @@ function ListBox(props) {
       style={{
         margin: 0,
         padding: 0,
-        listStyle: "none"
+        listStyle: "none",
+        maxHeight: "150px",
+        overflow: "auto"
       }}>
       {[...state.collection].map(item => (
         <Option
@@ -287,7 +292,7 @@ function ListBox(props) {
           state={state} />
       ))}
     </ul>
-  )
+  );
 }
 
 function Option({item, state}) {

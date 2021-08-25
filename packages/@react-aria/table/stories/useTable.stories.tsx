@@ -43,7 +43,7 @@ let rows = [
   {id: 12, name: 'Pikachu', type: 'Electric', level: '100', filler: 'filler here', blah: 'blah here'}
 ];
 
-const Template = () => (args:any = {}) => (
+const Template = () => (args: any = {}) => (
   <>
     {!args.hideInput && <input aria-label="Focusable before" placeholder="Focusable before" />}
     <Table aria-label="Table with selection" selectionMode="multiple">

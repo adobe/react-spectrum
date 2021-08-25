@@ -82,7 +82,11 @@ export class PersianCalendar implements Calendar {
     return isLeapYear(date.year) ? 30 : 29;
   }
 
-  getCurrentEra() {
-    return 'AP';
+  getEras() {
+    return ['AP'];
+  }
+
+  getYearsInEra(): number {
+    return 9999;
   }
 }

@@ -32,8 +32,7 @@ interface TabListAria {
 export function useTabList<T>(props: AriaTabListProps<T>, state: TabListState<T>, ref: RefObject<HTMLElement>): TabListAria {
   let {
     orientation = 'horizontal',
-    keyboardActivation = 'automatic',
-    isVirtualized
+    keyboardActivation = 'automatic'
   } = props;
   let {
     collection,
@@ -53,7 +52,6 @@ export function useTabList<T>(props: AriaTabListProps<T>, state: TabListState<T>
     keyboardDelegate: delegate,
     selectOnFocus: keyboardActivation === 'automatic',
     disallowEmptySelection: true,
-    isVirtualized,
     scrollRef: ref
   });
 
