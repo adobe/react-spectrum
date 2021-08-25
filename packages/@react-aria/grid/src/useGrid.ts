@@ -40,7 +40,11 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
    * A function that returns the text that should be announced by assistive technology when a row is added or removed from selection.
    * @default (key) => state.collection.getItem(key)?.textValue
    */
-  getRowText?: (key: Key) => string
+  getRowText?: (key: Key) => string,
+  /**
+   * The ref attached to the scrollable body. Used to provided automatic scrolling on item focus for non-virtualized grids.
+   */
+  scrollRef?: RefObject<HTMLElement>
 }
 
 export interface GridAria {
@@ -60,7 +64,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     isVirtualized,
     keyboardDelegate,
     focusMode,
-    getRowText = (key) => state.collection.getItem(key)?.textValue
+    getRowText = (key) => state.collection.getItem(key)?.textValue,
+    scrollRef
   } = props;
   let formatMessage = useMessageFormatter(intlMessages);
 
@@ -83,7 +88,9 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   let {collectionProps} = useSelectableCollection({
     ref,
     selectionManager: state.selectionManager,
-    keyboardDelegate: delegate
+    keyboardDelegate: delegate,
+    isVirtualized,
+    scrollRef
   });
 
   let id = useId();
