@@ -13,7 +13,8 @@ import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Item, ListView} from '../';
 import {Link} from '@react-spectrum/link';
 import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
-import React from 'react';
+import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
+import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
 
@@ -32,6 +33,13 @@ function renderEmptyState() {
 storiesOf('ListView', module)
   .add('default', () => (
     <ListView width="250px">
+      <Item textValue="row1">row 1</Item>
+      <Item textValue="row2">row 2</Item>
+      <Item textValue="row3">row 3</Item>
+    </ListView>
+  ))
+  .add('isQuiet', () => (
+    <ListView width="250px" isQuiet>
       <Item textValue="row1">row 1</Item>
       <Item textValue="row2">row 2</Item>
       <Item textValue="row3">row 3</Item>
@@ -104,7 +112,7 @@ storiesOf('ListView', module)
     </ListView>
   ))
   .add('loading', () => (
-    <ListView width="300px" height="300px" isLoading>
+    <ListView width="300px" height="300px" loadingState="loading">
       {[]}
     </ListView>
   ))
@@ -164,7 +172,32 @@ storiesOf('ListView', module)
           <Text>Delete</Text>
         </Item>
       </ActionMenu>
-    )));
+    )))
+  .add('test', () => (
+    <div style={{height: '400px', width: '260px', backgroundColor: 'blue'}}>
+
+      <ListView height="100%" width="250px">
+        <Item>a</Item>
+      </ListView>
+    </div>
+  ))
+  .add('empty test', () => (<EmptyTest />))
+  .add('flex test', () => (
+
+    <div style={{height: '400px', backgroundColor: 'blue'}}>
+      <Flex direction="column">
+
+        <ListView flexGrow={1} minWidth={0} minHeight={0}>
+          <Item>a</Item>
+        </ListView>
+      </Flex>
+    </div>
+  ))
+  .add('width test', () => (
+    <ListView flexGrow={1} minWidth={0} minHeight={0}>
+      <Item>a</Item>
+    </ListView>
+  ));
 
 function Example(props?) {
   return (
@@ -229,5 +262,52 @@ function renderActionsExample(renderActions, props?) {
         {renderActions({onPress: () => console.log('row 3')})}
       </Item>
     </ListView>
+  );
+}
+
+let i = 0;
+function EmptyTest() {
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    let newItems = [];
+    for (i = 0; i < 20; i++) {
+      newItems.push({key: i, name: `Item ${i}`});
+    }
+    setItems(newItems);
+  }, []);
+
+  const renderEmpty = () => (
+    <IllustratedMessage>
+      <NoSearchResults />
+      <Heading>No items</Heading>
+    </IllustratedMessage>
+  );
+  return (
+    <div>
+      <Flex>
+        <ActionButton
+          onPress={() => {
+            let newArr = [...items];
+            newArr.push({key: i++, name: `Item ${i}`});
+            setItems(newArr);
+          }}>Add 1</ActionButton>
+        <ActionButton onPress={() => setItems([])}>Clear All</ActionButton>
+        <ActionButton
+          onPress={() => {
+            let newItems = [...items];
+            setItems(newItems.slice(0, 4));
+          }}>Slice</ActionButton>
+      </Flex>
+      <ListView items={items} width="250px" height="500px" renderEmptyState={renderEmpty}>
+        {
+          item => (
+            <Item key={item.key}>
+              <Content>{item.name}</Content>
+            </Item>
+          )
+        }
+      </ListView>
+    </div>
   );
 }

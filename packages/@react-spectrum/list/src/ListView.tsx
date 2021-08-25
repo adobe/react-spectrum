@@ -9,7 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaLabelingProps, CollectionBase, DOMProps, DOMRef, MultipleSelection, StyleProps} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  CollectionBase,
+  DOMProps,
+  DOMRef,
+  LoadingState,
+  MultipleSelection,
+  StyleProps
+} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
@@ -50,7 +58,8 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
    * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious',
-  isLoading?: boolean,
+  isQuiet?: boolean,
+  loadingState?: LoadingState,
   renderEmptyState?: () => JSX.Element,
   transitionDuration?: number
 }
@@ -58,6 +67,8 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
 function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
     density = 'regular',
+    loadingState,
+    isQuiet,
     transitionDuration = 0
   } = props;
   let domRef = useDOMRef(ref);
@@ -98,7 +109,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }, state, domRef);
 
   // Sync loading state into the layout.
-  layout.isLoading = props.isLoading;
+  layout.isLoading = loadingState === 'loading';
 
   return (
     <ListViewContext.Provider value={{state, keyboardDelegate}}>
@@ -114,6 +125,9 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
             listStyles,
             'react-spectrum-ListView',
             `react-spectrum-ListView--${density}`,
+            {
+              'react-spectrum-ListView--quiet': isQuiet
+            },
             styleProps.className
           )
         }

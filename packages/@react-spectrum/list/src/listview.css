@@ -21,6 +21,11 @@
   outline: 0;
 }
 
+.react-spectrum-ListView--quiet {
+  background-color: var(--spectrum-alias-background-color-transparent);
+  border-width: 0;
+}
+
 .react-spectrum-ListViewItem {
   display: grid; /* TODO: define grid areas */
   border-bottom: 1px solid var(--spectrum-tabel-cell-border-color, var(--spectrum-global-color-gray-300));
@@ -31,9 +36,13 @@
   padding: var(--spectrum-listview-item-regular-padding-y) var(--spectrum-global-dimension-size-150);
   transition: background-color var(--spectrum-global-animation-duration-100) ease-in-out;
   position: relative;
-  background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
+  /*background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));*/
   color: var(--spectrum-table-cell-text-color, var(--spectrum-alias-text-color));
   outline: 0;
+
+  .react-spectrum-ListView--quiet & {
+    border-bottom: 0;
+  }
 
   &.is-hovered,
   &.is-focused {
