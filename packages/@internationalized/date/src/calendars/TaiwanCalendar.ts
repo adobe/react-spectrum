@@ -55,8 +55,8 @@ export class TaiwanCalendar extends GregorianCalendar {
     );
   }
 
-  getCurrentEra() {
-    return 'minguo';
+  getEras() {
+    return ['before_minguo', 'minguo'];
   }
 
   balanceDate(date: Mutable<CalendarDate>) {

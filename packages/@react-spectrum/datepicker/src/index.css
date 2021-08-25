@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-.react-spectrum-Datepicker-field.react-spectrum-Datepicker-field {
-  /* needs to override the style from Textfield */
+.react-spectrum-Datepicker-startField.react-spectrum-Datepicker-startField {
   width: auto;
 }
 
 .react-spectrum-Datepicker-endField {
+  width: auto;
   flex: 1;
 }
 
@@ -25,22 +25,32 @@
   border-end-start-radius: 0;
 }
 
+.react-spectrum-Datepicker-field {
+  /* overflow: hidden; */
+}
+
 .react-spectrum-Datepicker-input {
   display: flex;
   align-items: center;
-  /* Override default InputGroup styling in spectrum-css which assumes the input is an actual <input> element */
-  width: auto !important;
-  min-width: 0 !important;
-}
+  /* width: auto; */
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
 
+  &::-webkit-scrollbar { /* WebKit */
+    width: 0;
+    height: 0;
+  }
+}
 
 .react-spectrum-Datepicker-literal {
   white-space: pre;
   user-select: none;
+  color: var(--spectrum-textfield-text-color);
 }
 
 .react-spectrum-Datepicker-literal.is-placeholder {
-  color: var(--spectrum-textfield-placeholder-text-color, var(--spectrum-global-color-gray-600));
+  color: var(--spectrum-global-color-gray-700);
 }
 
 .react-spectrum-DatePicker-cell {
@@ -48,12 +58,16 @@
   background: none;
   padding: 0 2px;
   border-radius: 2px;
-  user-select: none;
-  -webkit-user-select: none;
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+  box-sizing: content-box;
+  white-space: nowrap;
+  color: var(--spectrum-textfield-text-color);
 }
 
 .react-spectrum-DatePicker-cell:focus {
-  background-color: var(--spectrum-alias-text-highlight-color);
+  background-color: var(--spectrum-global-color-static-blue);
+  color: white;
   caret-color: transparent;
   outline: none;
 }
@@ -67,7 +81,7 @@
 }
 
 .react-spectrum-DatePicker-cell.is-placeholder:focus {
-  color: inherit;
+  color: var(--spectrum-global-color-static-gray-400);
 }
 
 .react-spectrum-Datepicker-dialog {

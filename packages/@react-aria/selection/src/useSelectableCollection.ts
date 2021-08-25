@@ -76,7 +76,16 @@ interface SelectableCollectionOptions {
   /**
    * Whether navigation through tab key is enabled.
    */
-  allowsTabNavigation?: boolean
+  allowsTabNavigation?: boolean,
+  /**
+   * Whether the collection items are contained in a virtual scroller.
+   */
+  isVirtualized?: boolean,
+  /**
+   * The ref attached to the scrollable body. Used to provide automatic scrolling on item focus for non-virtualized collections.
+   * If not provided, defaults to the collection ref.
+   */
+  scrollRef?: RefObject<HTMLElement>
 }
 
 interface SelectableCollectionAria {
@@ -99,7 +108,10 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     selectOnFocus = false,
     disallowTypeAhead = false,
     shouldUseVirtualFocus,
-    allowsTabNavigation = false
+    allowsTabNavigation = false,
+    isVirtualized,
+    // If no scrollRef is provided, assume the collection ref is the scrollable region
+    scrollRef = ref
   } = options;
   let {direction} = useLocale();
 
@@ -319,6 +331,17 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // If not virtualized, scroll the focused element into view when the focusedKey changes.
+  // When virtualized, Virtualizer handles this internally.
+  useEffect(() => {
+    if (!isVirtualized && manager.focusedKey && scrollRef?.current) {
+      let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
+      if (element) {
+        scrollIntoView(scrollRef.current, element);
+      }
+    }
+  }, [isVirtualized, scrollRef, manager.focusedKey]);
+
   let handlers = {
     onKeyDown,
     onFocus,
@@ -356,4 +379,58 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       tabIndex
     }
   };
+}
+
+/**
+ * Scrolls `scrollView` so that `element` is visible.
+ * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
+ * but doesn't affect parents above `scrollView`.
+ */
+function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
+  let offsetX = relativeOffset(scrollView, element, 'left');
+  let offsetY = relativeOffset(scrollView, element, 'top');
+  let width = element.offsetWidth;
+  let height = element.offsetHeight;
+  let x = scrollView.scrollLeft;
+  let y = scrollView.scrollTop;
+  let maxX = x + scrollView.offsetWidth;
+  let maxY = y + scrollView.offsetHeight;
+
+  if (offsetX <= x) {
+    x = offsetX;
+  } else if (offsetX + width > maxX) {
+    x += offsetX + width - maxX;
+  }
+  if (offsetY <= y) {
+    y = offsetY;
+  } else if (offsetY + height > maxY) {
+    y += offsetY + height - maxY;
+  }
+
+  scrollView.scrollLeft = x;
+  scrollView.scrollTop = y;
+}
+
+/**
+ * Computes the offset left or top from child to ancestor by accumulating
+ * offsetLeft or offsetTop through intervening offsetParents.
+ */
+function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|'top') {
+  const prop = axis === 'left' ? 'offsetLeft' : 'offsetTop';
+  let sum = 0;
+  while (child.offsetParent) {
+    sum += child[prop];
+    if (child.offsetParent === ancestor) {
+      // Stop once we have found the ancestor we are interested in.
+      break;
+    } else if (child.offsetParent.contains(ancestor)) {
+      // If the ancestor is not `position:relative`, then we stop at
+      // _its_ offset parent, and we subtract off _its_ offset, so that
+      // we end up with the proper offset from child to ancestor.
+      sum -= ancestor[prop];
+      break;
+    }
+    child = child.offsetParent as HTMLElement;
+  }
+  return sum;
 }

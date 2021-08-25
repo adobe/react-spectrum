@@ -109,7 +109,11 @@ export class IndianCalendar extends GregorianCalendar {
     return 30;
   }
 
-  getCurrentEra() {
-    return 'saka';
+  getYearsInEra(): number {
+    return 9999;
+  }
+
+  getEras() {
+    return ['saka'];
   }
 }

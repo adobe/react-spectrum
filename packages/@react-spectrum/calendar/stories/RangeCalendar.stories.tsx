@@ -16,7 +16,7 @@ import {RangeCalendar} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
-storiesOf('RangeCalendar', module)
+storiesOf('Date and Time/RangeCalendar', module)
   .add(
     'Default',
     () => render()

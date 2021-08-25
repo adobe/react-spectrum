@@ -70,8 +70,12 @@ export class IslamicCivilCalendar implements Calendar {
     return isLeapYear(date.year) ? 355 : 354;
   }
 
-  getCurrentEra() {
-    return 'AH';
+  getYearsInEra(): number {
+    return 9999;
+  }
+
+  getEras() {
+    return ['AH'];
   }
 }
 

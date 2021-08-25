@@ -186,8 +186,6 @@ describe('FocusScope', function () {
       let input2 = getByTestId('input2');
       let input3 = getByTestId('input3');
       let input4 = getByTestId('input4');
-      let input5 = getByTestId('input5');
-      let input6 = getByTestId('input6');
 
       act(() => {input1.focus();});
       expect(document.activeElement).toBe(input1);
@@ -211,25 +209,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input1);
 
       act(() => {input4.focus();});
-      expect(document.activeElement).toBe(input4);
-
-      userEvent.tab();
-      expect(document.activeElement).toBe(input5);
-
-      userEvent.tab();
-      expect(document.activeElement).toBe(input6);
-
-      userEvent.tab();
-      expect(document.activeElement).toBe(input4);
-
-      userEvent.tab({shift: true});
-      expect(document.activeElement).toBe(input6);
-
-      userEvent.tab({shift: true});
-      expect(document.activeElement).toBe(input5);
-
-      userEvent.tab({shift: true});
-      expect(document.activeElement).toBe(input4);
+      expect(document.activeElement).toBe(input1);
     });
 
     it('should restore focus to the last focused element in the scope when re-entering the browser', function () {
@@ -426,6 +406,42 @@ describe('FocusScope', function () {
             <button data-testid="trigger" />
             {show &&
               <FocusScope restoreFocus autoFocus>
+                <input data-testid="input1" />
+                <input data-testid="input2" />
+                <input data-testid="input3" />
+              </FocusScope>
+            }
+            <input data-testid="after" />
+          </div>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test />);
+
+      let trigger = getByTestId('trigger');
+      act(() => {trigger.focus();});
+
+      rerender(<Test show />);
+
+      let input1 = getByTestId('input1');
+      expect(document.activeElement).toBe(input1);
+
+      let input3 = getByTestId('input3');
+      act(() => {input3.focus();});
+
+      userEvent.tab();
+      expect(document.activeElement).toBe(getByTestId('after'));
+    });
+
+    it('should not handle tabbing if the focus scope does not restore focus', function () {
+      function Test({show}) {
+        return (
+          <div>
+            <input data-testid="before" />
+            <button data-testid="trigger" />
+            <input data-testid="after-trigger" />
+            {show &&
+              <FocusScope autoFocus>
                 <input data-testid="input1" />
                 <input data-testid="input2" />
                 <input data-testid="input3" />
@@ -783,7 +799,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(item1);
 
       fireEvent.mouseDown(group1);
-      // focus should remain unchanged, 
+      // focus should remain unchanged,
       // because there is no focusable element in scope before group1,
       // and wrap is false
       expect(document.activeElement).toBe(item1);
@@ -901,6 +917,183 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(child1);
       userEvent.tab({shift: true});
       expect(document.activeElement).toBe(child3);
+    });
+
+    it('should not lock tab navigation inside a nested focus scope without contain', function () {
+      function Test() {
+        return (
+          <div>
+            <input data-testid="outside" />
+            <FocusScope autoFocus restoreFocus contain>
+              <input data-testid="parent" />
+              <div>
+                <div>
+                  <FocusScope>
+                    <input data-testid="child1" />
+                    <input data-testid="child2" />
+                    <input data-testid="child3" />
+                  </FocusScope>
+                </div>
+              </div>
+            </FocusScope>
+          </div>
+        );
+      }
+
+      let {getByTestId} = render(<Test />);
+      let parent = getByTestId('parent');
+      let child1 = getByTestId('child1');
+      let child2 = getByTestId('child2');
+      let child3 = getByTestId('child3');
+
+      expect(document.activeElement).toBe(parent);
+      userEvent.tab();
+      expect(document.activeElement).toBe(child1);
+      userEvent.tab();
+      expect(document.activeElement).toBe(child2);
+      userEvent.tab();
+      expect(document.activeElement).toBe(child3);
+      userEvent.tab();
+      expect(document.activeElement).toBe(parent);
+      userEvent.tab({shift: true});
+      expect(document.activeElement).toBe(child3);
+    });
+
+    it('should restore to the correct scope on unmount', function () {
+      function Test({show1, show2, show3}) {
+        return (
+          <div>
+            <input data-testid="outside" />
+            <FocusScope autoFocus restoreFocus contain>
+              <input data-testid="parent" />
+              {show1 &&
+                <FocusScope contain>
+                  <input data-testid="child1" />
+                  {show2 &&
+                    <FocusScope contain>
+                      <input data-testid="child2" />
+                      {show3 &&
+                        <FocusScope contain>
+                          <input data-testid="child3" />
+                        </FocusScope>
+                      }
+                    </FocusScope>
+                  }
+                </FocusScope>
+              }
+            </FocusScope>
+          </div>
+        );
+      }
+
+      let {rerender, getByTestId} = render(<Test />);
+      let parent = getByTestId('parent');
+
+      expect(document.activeElement).toBe(parent);
+
+      act(() => rerender(<Test show1 />));
+      expect(document.activeElement).toBe(parent);
+
+      // Can move into a child, but not out.
+      let child1 = getByTestId('child1');
+      userEvent.tab();
+      expect(document.activeElement).toBe(child1);
+
+      act(() => parent.focus());
+      expect(document.activeElement).toBe(child1);
+
+      rerender(<Test show1 show2 />);
+      expect(document.activeElement).toBe(child1);
+
+      let child2 = getByTestId('child2');
+      userEvent.tab();
+      expect(document.activeElement).toBe(child2);
+
+      act(() => child1.focus());
+      expect(document.activeElement).toBe(child2);
+
+      act(() => parent.focus());
+      expect(document.activeElement).toBe(child2);
+
+      rerender(<Test show1 show2 show3 />);
+
+      let child3 = getByTestId('child3');
+      userEvent.tab();
+      expect(document.activeElement).toBe(child3);
+
+      rerender(<Test show1 />);
+
+      act(() => child1.focus());
+      expect(document.activeElement).toBe(child1);
+
+      act(() => parent.focus());
+      expect(document.activeElement).toBe(child1);
+    });
+
+    it('should not lock focus inside a focus scope with a child scope in a portal', function () {
+      function Portal(props) {
+        return ReactDOM.createPortal(props.children, document.body);
+      }
+
+      function Test() {
+        return (
+          <div>
+            <FocusScope autoFocus restoreFocus contain>
+              <input data-testid="parent" />
+              <div>
+                <Portal>
+                  <FocusScope>
+                    <input data-testid="child" />
+                  </FocusScope>
+                </Portal>
+              </div>
+            </FocusScope>
+          </div>
+        );
+      }
+
+      let {getByTestId} = render(<Test />);
+      let parent = getByTestId('parent');
+      let child = getByTestId('child');
+
+      expect(document.activeElement).toBe(parent);
+      act(() => child.focus());
+      expect(document.activeElement).toBe(child);
+      act(() => parent.focus());
+      expect(document.activeElement).toBe(parent);
+    });
+
+    it('should lock focus inside a child focus scope with contain in a portal', function () {
+      function Portal(props) {
+        return ReactDOM.createPortal(props.children, document.body);
+      }
+
+      function Test() {
+        return (
+          <div>
+            <FocusScope autoFocus restoreFocus contain>
+              <input data-testid="parent" />
+              <div>
+                <Portal>
+                  <FocusScope contain>
+                    <input data-testid="child" />
+                  </FocusScope>
+                </Portal>
+              </div>
+            </FocusScope>
+          </div>
+        );
+      }
+
+      let {getByTestId} = render(<Test />);
+      let parent = getByTestId('parent');
+      let child = getByTestId('child');
+
+      expect(document.activeElement).toBe(parent);
+      act(() => child.focus());
+      expect(document.activeElement).toBe(child);
+      act(() => parent.focus());
+      expect(document.activeElement).toBe(child);
     });
   });
 
