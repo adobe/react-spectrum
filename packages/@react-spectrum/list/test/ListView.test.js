@@ -240,7 +240,7 @@ describe('ListView', function () {
   });
 
   it('should display loading affordance', function () {
-    let {getByRole} = render(<ListView aria-label="List" isLoading>{[]}</ListView>);
+    let {getByRole} = render(<ListView aria-label="List" loadingState="loading">{[]}</ListView>);
     expect(getByRole('progressbar')).toBeTruthy();
   });
 
