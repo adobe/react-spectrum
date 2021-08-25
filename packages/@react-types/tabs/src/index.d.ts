@@ -48,12 +48,7 @@ interface AriaTabListBase {
   isDisabled?: boolean
 }
 
-export interface AriaTabListProps<T> extends TabListProps<T>, AriaTabListBase, DOMProps, AriaLabelingProps {
-  /**
-   * Whether the TabList is contained in a virtual scroller.
-   */
-  isVirtualized?: boolean
-}
+export interface AriaTabListProps<T> extends TabListProps<T>, AriaTabListBase, DOMProps, AriaLabelingProps {}
 
 export interface AriaTabPanelProps extends DOMProps, AriaLabelingProps {}
 
