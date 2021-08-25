@@ -17,7 +17,6 @@ import intlMessages from '../intl/*.json';
 import {Key} from 'react';
 import {TableState} from '@react-stately/table';
 import {useGridSelectionCheckbox} from '@react-aria/grid';
-import {useId} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface SelectionCheckboxProps {
