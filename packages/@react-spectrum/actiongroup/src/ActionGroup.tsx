@@ -14,7 +14,15 @@ import {ActionButton} from '@react-spectrum/button';
 import {AriaLabelingProps, DOMProps, DOMRef, Node, StyleProps} from '@react-types/shared';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, SlotProvider, useDOMRef, useSlotProps, useStyleProps, useValueEffect} from '@react-spectrum/utils';
+import {
+  classNames,
+  ClearSlots,
+  SlotProvider,
+  useDOMRef,
+  useSlotProps,
+  useStyleProps,
+  useValueEffect
+} from '@react-spectrum/utils';
 import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {ListState, useListState} from '@react-stately/list';
