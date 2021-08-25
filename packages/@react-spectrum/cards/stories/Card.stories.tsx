@@ -13,6 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionMenu, Item} from '@react-spectrum/menu';
 import assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
+import {Avatar} from '@react-spectrum/avatar';
 import {Button} from '@react-spectrum/button';
 import {Card} from '../';
 import {CardBase} from '../src/CardBase';
@@ -65,7 +66,7 @@ export const Default = Template().bind({});
 Default.args = {children: (
   <>
     <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
-    <Avatar />
+    <Avatar src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" />
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
     <Content>Description</Content>
@@ -490,15 +491,6 @@ function File(props) {
         </g>
       </svg>
     </div>
-  );
-}
-
-// temp until Avatar PR is merged in
-function Avatar(props) {
-  props = useSlotProps(props, 'avatar');
-  let {styleProps} = useStyleProps(props);
-  return (
-    <div {...styleProps} style={{width: '26px', height: '26px', borderRadius: '13px', backgroundColor: 'green'}} />
   );
 }
 
