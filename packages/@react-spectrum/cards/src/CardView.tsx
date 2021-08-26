@@ -89,7 +89,6 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
         {...styleProps}
         ref={domRef}
         focusedKey={state.selectionManager.focusedKey}
-        sizeToFit="height"
         scrollDirection="vertical"
         layout={cardViewLayout}
         collection={collection}
