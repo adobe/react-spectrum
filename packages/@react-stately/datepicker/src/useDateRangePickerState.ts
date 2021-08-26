@@ -57,8 +57,7 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
   if (value && value.start && value.end) {
     dateRange = value;
     if ('hour' in value.start) {
-      // @ts-ignore
-      timeRange = value;
+      timeRange = value as TimeRange;
     }
   }
 
