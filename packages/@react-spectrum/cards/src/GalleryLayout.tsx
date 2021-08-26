@@ -199,33 +199,6 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
 
     return false;
   }
-
-  // TODO: perhaps have baseLayout implement KeyboardDelegate so we can have these common funcs stored there (right,left, first, getKeyForSearch are all the same)?
-  getKeyRightOf(key: Key) {
-    key = this.direction === 'rtl' ?  this.collection.getKeyBefore(key) : this.collection.getKeyAfter(key);
-    while (key != null) {
-      let item = this.collection.getItem(key);
-      // Don't check if item is disabled because we want to be able to focus disabled items in a grid (double check this)
-      if (item.type === 'item') {
-        return key;
-      }
-
-      key = this.direction === 'rtl' ?  this.collection.getKeyBefore(key) : this.collection.getKeyAfter(key);
-    }
-  }
-
-  getKeyLeftOf(key: Key) {
-    key = this.direction === 'rtl' ?  this.collection.getKeyAfter(key) : this.collection.getKeyBefore(key);
-    while (key != null) {
-      let item = this.collection.getItem(key);
-      // Don't check if item is disabled because we want to be able to focus disabled items in a grid (double check this)
-      if (item.type === 'item') {
-        return key;
-      }
-
-      key = this.direction === 'rtl' ?  this.collection.getKeyAfter(key) : this.collection.getKeyBefore(key);
-    }
-  }
 }
 
 // https://www8.cs.umu.se/kurser/TDBA77/VT06/algorithms/BOOK/BOOK2/NODE45.HTM

@@ -114,6 +114,32 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     return this._findClosest(layoutInfo.rect, rect)?.key;
   }
 
+  getKeyRightOf(key: Key) {
+    key = this.direction === 'rtl' ?  this.collection.getKeyBefore(key) : this.collection.getKeyAfter(key);
+    while (key != null) {
+      let item = this.collection.getItem(key);
+      // Don't check if item is disabled because we want to be able to focus disabled items in a grid (double check this)
+      if (item.type === 'item') {
+        return key;
+      }
+
+      key = this.direction === 'rtl' ?  this.collection.getKeyBefore(key) : this.collection.getKeyAfter(key);
+    }
+  }
+
+  getKeyLeftOf(key: Key) {
+    key = this.direction === 'rtl' ?  this.collection.getKeyAfter(key) : this.collection.getKeyBefore(key);
+    while (key != null) {
+      let item = this.collection.getItem(key);
+      // Don't check if item is disabled because we want to be able to focus disabled items in a grid (double check this)
+      if (item.type === 'item') {
+        return key;
+      }
+
+      key = this.direction === 'rtl' ?  this.collection.getKeyAfter(key) : this.collection.getKeyBefore(key);
+    }
+  }
+
   getFirstKey() {
     return this.collection.getFirstKey();
   }
