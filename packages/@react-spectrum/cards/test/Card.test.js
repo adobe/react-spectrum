@@ -22,11 +22,11 @@ describe('Card', function () {
     let {getByRole, getByLabelText, getAllByRole} = render(<Card {...Default.args} />);
     let card = getByRole('article');
     let heading = getByRole('heading', {level: 3});
-    let image = getByRole('img');
+    let images = getAllByRole('img');
     let labelledCard = getByLabelText(heading.textContent);
     expect(card).toBe(labelledCard);
     expect(card).toHaveAccessibleDescription('Description');
-    expect(image).not.toHaveAccessibleName();
+    expect(images[0]).not.toHaveAccessibleName();
 
     userEvent.tab();
     expect(card).toBe(document.activeElement);
@@ -57,20 +57,20 @@ describe('Card', function () {
   });
 
   it('DefaultPreviewAlt has a labelled image', function () {
-    let {getByRole} = render(<Card {...DefaultPreviewAlt.args} />);
-    let image = getByRole('img');
-    expect(image).toHaveAccessibleName('preview');
+    let {getAllByRole} = render(<Card {...DefaultPreviewAlt.args} />);
+    let images = getAllByRole('img');
+    expect(images[0]).toHaveAccessibleName('preview');
   });
 
   it('Quiet has no footer buttons', function () {
-    let {getByRole, getByLabelText} = render(<Card {...Quiet.args} />);
+    let {getByRole, getAllByRole, getByLabelText} = render(<Card {...Quiet.args} />);
     let card = getByRole('article');
     let heading = getByRole('heading', {level: 3});
-    let image = getByRole('img');
+    let images = getAllByRole('img');
     let labelledCard = getByLabelText(heading.textContent);
     expect(card).toBe(labelledCard);
     expect(card).toHaveAccessibleDescription('Description');
-    expect(image).not.toHaveAccessibleName();
+    expect(images[0]).not.toHaveAccessibleName();
 
     userEvent.tab();
     expect(card).toBe(document.activeElement);

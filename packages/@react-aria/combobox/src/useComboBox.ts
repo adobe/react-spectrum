@@ -94,7 +94,9 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     keyboardDelegate: delegate,
     disallowTypeAhead: true,
     disallowEmptySelection: true,
-    ref: inputRef
+    ref: inputRef,
+    // Prevent item scroll behavior from being applied here, should be handled in the user's Popover + ListBox component
+    isVirtualized: true
   });
 
   // For textfield specific keydown operations

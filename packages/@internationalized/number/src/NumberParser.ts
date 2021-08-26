@@ -71,10 +71,10 @@ function getNumberParserImpl(locale: string, options: Intl.NumberFormatOptions, 
 
   // If that doesn't match, and the locale doesn't include a hard coded numbering system,
   // try each of the other supported numbering systems until we find one that matches.
-  if (!locale.includes('-u-nu-') && !defaultParser.isValidPartialNumber(value)) {
+  if (!locale.includes('-nu-') && !defaultParser.isValidPartialNumber(value)) {
     for (let numberingSystem of NUMBERING_SYSTEMS) {
       if (numberingSystem !== defaultParser.options.numberingSystem) {
-        let parser = getCachedNumberParser(locale + '-u-nu-' + numberingSystem, options);
+        let parser = getCachedNumberParser(locale + (locale.includes('-u-') ? '-nu-' : '-u-nu-') + numberingSystem, options);
         if (parser.isValidPartialNumber(value)) {
           return parser;
         }

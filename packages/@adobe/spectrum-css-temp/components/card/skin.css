@@ -34,12 +34,15 @@ governing permissions and limitations under the License.
 .spectrum-Card-avatar {
 }
 .spectrum-Card-heading {
+  color: var(--spectrum-global-color-gray-900);
 }
 .spectrum-Card-detail {
+  color: var(--spectrum-global-color-gray-700);
 }
 .spectrum-Card-actions {
 }
 .spectrum-Card-content {
+  color: var(--spectrum-global-color-gray-700);
 }
 .spectrum-Card-divider {
 }
