@@ -61,9 +61,12 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
   protected horizontalSpacing: number;
 
   constructor(options: WaterfallLayoutOptions<T> = {}) {
+    // TODO: WaterfallLayout doesn't use card size in v2, but perhaps it should support it? Perhaps it would modify
+    // minItemSize defaults or other things
     super(options);
-    // TODO: This doesn't have card size from v2, but perhaps it should support it?
-    this.minItemSize = options.minItemSize || new Size(240, 136);
+    // TODO: Modified the item height min to 300 (refine the number later) in an attempt to make sure the checkbox doesn't cover the title
+    // will need to modify Card css itself so that the height of the image can grow and have gray borders on the left and right to maintain aspect ratio
+    this.minItemSize = options.minItemSize || new Size(240, 300);
     this.maxItemSize = options.maxItemSize || new Size(Infinity, Infinity);
     this.margin = 24;
     this.minSpace = options.minSpace || new Size(24, 24);
@@ -82,7 +85,6 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
   }
 
   validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
-    // TODO: should this have the invalidationContext
     this.collection = this.virtualizer.collection;
     this.buildCollection(invalidationContext);
 
@@ -98,7 +100,6 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     this.lastCollection = this.collection;
   }
 
-  // TODO: split this down further
   buildCollection(invalidationContext: InvalidationContext<Node<T>, unknown>) {
     // Compute the number of columns needed to display the content
     let visibleWidth = this.virtualizer.visibleRect.width;
@@ -194,6 +195,10 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     let layoutInfo = this.layoutInfos.get(key);
     if (!size || !layoutInfo) {
       return false;
+    }
+
+    if (size.height < this.minItemSize.height) {
+      size.height = this.minItemSize.height;
     }
 
     if (size.height !== layoutInfo.rect.height) {
