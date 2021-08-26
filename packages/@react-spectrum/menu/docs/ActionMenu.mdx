@@ -79,7 +79,7 @@ In order to internationalize an ActionMenu, the content provided to all child it
 For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the ActionMenu is flipped.
 
 ## Events
-ActionMenu supports the `onAction` callback which receives the selected item. See [Selection](#selection) for more information.
+ActionMenu supports the `onAction` prop, which is called when the user presses a menu item. It receives the key of the item as an argument, which can be used to perform the relevant action.
 
 ```tsx example
 function Example() {
