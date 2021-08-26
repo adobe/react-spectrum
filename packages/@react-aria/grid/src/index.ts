@@ -15,4 +15,4 @@ export * from './useGrid';
 export * from './useGridRowGroup';
 export * from './useGridRow';
 export * from './useGridCell';
-export * from './useGridSelectionChechbox';
+export * from './useGridSelectionCheckbox';
