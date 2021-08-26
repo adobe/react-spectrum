@@ -119,7 +119,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         {...styleProps}
         ref={domRef}
         focusedKey={state.selectionManager.focusedKey}
-        sizeToFit="height"
         scrollDirection="vertical"
         className={
           classNames(

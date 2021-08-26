@@ -1,3 +1,4 @@
+import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
 import {ActionMenu, Menu, MenuTrigger} from '@react-spectrum/menu';
@@ -173,45 +174,21 @@ storiesOf('ListView', module)
         </Item>
       </ActionMenu>
     )))
-  .add('test', () => (
-    <div style={{height: '400px', width: '260px', backgroundColor: 'blue'}}>
-
-      <ListView height="100%" width="250px">
-        <Item>a</Item>
-      </ListView>
-    </div>
-  ))
-  .add('empty test', () => (<EmptyTest />))
-  .add('flex test', () => (
-
-    <div style={{height: '400px', backgroundColor: 'blue'}}>
-      <Flex direction="column">
-
-        <ListView flexGrow={1} minWidth={0} minHeight={0}>
-          <Item>a</Item>
-        </ListView>
-      </Flex>
-    </div>
-  ))
-  .add('width test', () => (
-    <ListView flexGrow={1} minWidth={0} minHeight={0}>
-      <Item>a</Item>
-    </ListView>
-  ));
+  .add('dynamic items + renderEmptyState', () => (<EmptyTest />));
 
 function Example(props?) {
   return (
-    <ListView width="250px" {...props}>
+    <ListView width="250px" onSelectionChange={action('onSelectionChange')} {...props}>
       <Item key="folder1" hasChildItems>
         <Content>folder 1</Content>
       </Item>
-      <Item key="row1">
+      <Item key="row1" textValue="row1">
         <Content>row 1</Content>
       </Item>
-      <Item key="row2">
+      <Item key="row2" textValue="row2">
         <Content>row 2</Content>
       </Item>
-      <Item key="row3">
+      <Item key="row3" textValue="row3">
         <Content>row 3</Content>
       </Item>
     </ListView>
@@ -220,7 +197,7 @@ function Example(props?) {
 
 function Example2(props?) {
   return (
-    <ListView width="250px" {...props}>
+    <ListView width="250px" onSelectionChange={action('onSelectionChange')} {...props}>
       <Item key="folder1" hasChildItems>
         <Link>folder 1</Link>
       </Item>
@@ -239,27 +216,27 @@ function Example2(props?) {
 
 function renderActionsExample(renderActions, props?) {
   return (
-    <ListView width="300px" {...props}>
-      <Item textValue="row1" hasChildItems>
+    <ListView width="300px" selectionMode="single" {...props} onSelectionChange={keys => console.log('sel', keys)}>
+      <Item key="a" textValue="row1" hasChildItems>
         <Folder />
         <Link>folder 1</Link>
         <Text slot="description">description for folder 1</Text>
-        {renderActions({onPress: () => console.log('row 1')})}
+        {renderActions({onPress: action('actionPress')})}
       </Item>
-      <Item textValue="row1">
+      <Item key="b" textValue="row2">
         <Text>row 1</Text>
         <Text slot="description">description for row 1</Text>
-        {renderActions({onPress: () => console.log('row 1')})}
+        {renderActions({onPress: action('actionPress')})}
       </Item>
-      <Item textValue="row2">
+      <Item key="c" textValue="row3">
         <Text>row 2</Text>
         <Text slot="description">description for row 2</Text>
-        {renderActions({onPress: () => console.log('row 2')})}
+        {renderActions({onPress: action('actionPress')})}
       </Item>
-      <Item textValue="row3">
+      <Item key="d" textValue="row4">
         <Text>row 3</Text>
         <Text slot="description">description for row 3</Text>
-        {renderActions({onPress: () => console.log('row 3')})}
+        {renderActions({onPress: action('actionPress')})}
       </Item>
     </ListView>
   );
@@ -267,6 +244,71 @@ function renderActionsExample(renderActions, props?) {
 
 let i = 0;
 function EmptyTest() {
+  const [items, setItems] = useState([]);
+  const [divProps, setDivProps] = useState({});
+
+  useEffect(() => {
+    let newItems = [];
+    for (i = 0; i < 20; i++) {
+      newItems.push({key: i, name: `Item ${i}`});
+    }
+    setItems(newItems);
+  }, []);
+
+  const renderEmpty = () => (
+    <IllustratedMessage>
+      <NoSearchResults />
+      <Heading>No items</Heading>
+    </IllustratedMessage>
+  );
+  let hasDivProps = Object.keys(divProps).length > 0;
+  return (
+    <div>
+      <Flex direction="row">
+        <div {...divProps}>
+          <ListView items={items} width="250px" height={hasDivProps ? null : '500px'} renderEmptyState={renderEmpty}>
+            {
+              item => (
+                <Item key={item.key}>
+                  <Content>{item.name}</Content>
+                </Item>
+              )
+            }
+          </ListView>
+        </div>
+        <div style={{paddingLeft: '10px'}}>
+          <ActionButton
+            isDisabled={hasDivProps}
+            onPress={() => setDivProps({style: {display: 'flex', flexGrow: 1, minWidth: '200px', maxHeight: '500px'}})}>
+            Use flex div wrapper (no set height)
+          </ActionButton>
+          <Flex gap={10} marginTop={10}>
+            <ActionButton onPress={() => setItems([])}>
+              Clear All
+            </ActionButton>
+            <ActionButton
+              onPress={() => {
+                let newArr = [...items];
+                newArr.push({key: i++, name: `Item ${i}`});
+                setItems(newArr);
+              }}>
+              Add 1
+            </ActionButton>
+            <ActionButton
+              onPress={() => {
+                let newItems = [...items];
+                setItems(newItems.slice(0, 4));
+              }}>
+              Slice (0, 4)
+            </ActionButton>
+          </Flex>
+        </div>
+      </Flex>
+    </div>
+  );
+}
+
+function EmptyTest2() {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
@@ -299,15 +341,17 @@ function EmptyTest() {
             setItems(newItems.slice(0, 4));
           }}>Slice</ActionButton>
       </Flex>
-      <ListView items={items} width="250px" height="500px" renderEmptyState={renderEmpty}>
-        {
-          item => (
-            <Item key={item.key}>
-              <Content>{item.name}</Content>
-            </Item>
-          )
-        }
-      </ListView>
+      <div >
+        <ListView items={items} width="250px" flexGrow={1}  renderEmptyState={renderEmpty}>
+          {
+            item => (
+              <Item key={item.key}>
+                <Content>{item.name}</Content>
+              </Item>
+            )
+          }
+        </ListView>
+      </div>
     </div>
   );
 }
