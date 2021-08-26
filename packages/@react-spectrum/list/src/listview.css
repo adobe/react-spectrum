@@ -6,6 +6,7 @@
 }
 
 .react-spectrum-ListView {
+  box-sizing: border-box;
   border-color: var(--spectrum-table-border-color, var(--spectrum-alias-border-color-mid));
   border-style: solid;
   position: relative;
@@ -47,6 +48,10 @@
   &.is-hovered,
   &.is-focused {
     background-color: var(--spectrum-table-row-background-color-hover);
+
+    .react-spectrum-ListView--quiet & {
+      border-radius: var(--spectrum-table-border-radius, var(--spectrum-alias-border-radius-regular));
+    }
   }
 
   &:focus-ring {
@@ -75,27 +80,19 @@
 
 .react-spectrum-ListViewItem-grid {
   display: grid;
-  grid-template-columns: auto auto 1fr auto auto;
+  grid-template-columns: auto auto auto 1fr auto auto;
   grid-template-rows: 1fr auto;
   grid-template-areas:
-    "icon image content actions chevron"
-    "icon image description actions chevron"
+    "checkbox icon image content actions chevron"
+    "checkbox icon image description actions chevron"
   ;
   align-items: center;
 }
 
 .react-spectrum-ListViewItem-checkbox {
-  margin-left: 4px;
-  padding-right: 0;
-
-  [dir="ltr"] & {
-    margin-left: 4px;
-    padding-right: 0;
-  }
-  [dir="rtl"] & {
-    margin-right: 4px;
-    padding-left: 0;
-  }
+  grid-area: checkbox;
+  align-items: center;
+  justify-items: center;
 }
 
 .react-spectrum-ListViewItem-icon,
