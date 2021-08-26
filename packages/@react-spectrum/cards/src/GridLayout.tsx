@@ -151,7 +151,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
       if (loader && this.isVisible(loader, rect)) {
         res.push(loader)
       }
-
     }
 
     return res;
@@ -235,7 +234,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   }
 
   buildChild(node: Node<T>, y: number, index: number): LayoutInfo {
-    // TODO: Removed the cache check not entirely convinced it is useful in this case
     let row = Math.floor(index / this.numColumns);
     let column = index % this.numColumns;
     let x = this.margin + column * (this.itemSize.width + this.horizontalSpacing);
@@ -252,7 +250,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   // collection contents by that number (which will give us the row distribution)
   getKeyBelow(key: Key) {
     let indexRowBelow;
-    // TODO: Alternative approach is to do a for loop that repeats this.numColumns times and calls getKeyAfter each time
     let keyArray = [...this.collection.getKeys()];
     let index = keyArray.findIndex(k => k === key);
     if (index !== -1) {
