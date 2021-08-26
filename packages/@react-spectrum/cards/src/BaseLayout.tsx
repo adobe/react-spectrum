@@ -18,7 +18,6 @@ export interface BaseLayoutOptions<T> {
   collator?: Intl.Collator
 }
 
-// TODO: Perhaps this doesn't extend Layout? Perhaps all the other layouts (Waterfall, Grid, Gallery) should extend Layout instead? Maybe we don't need this
 export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected contentSize: Size;
   protected layoutInfos: Map<Key, LayoutInfo>;
@@ -26,7 +25,6 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected lastCollection: Collection<Node<T>>;
   collection: Collection<Node<T>>;
   isLoading: boolean;
-  // TODO: is this a thing? I know its available in CardView's props due to multipleSelection type
   disabledKeys: Set<Key> = new Set();
   direction: Direction;
 
@@ -37,7 +35,6 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     this.lastCollection = null;
   }
 
-  // Content size is determined in buildCollection (differs between layouts so buildCollection is not defined here)
   getContentSize() {
     return this.contentSize;
   }
@@ -62,25 +59,6 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     return layoutInfo.rect.intersects(rect);
   }
 
-  // TODO: ignore drag and drop for now
-  // shouldShowDropSpacing() {
-  //   let dropTarget = this.collectionView._dropTarget;
-  //   let dragTarget = this.collectionView._dragTarget;
-
-  //   // If items are being reordered, don't show the drop spacing if the drop target is right next to the drag target.
-  //   // When dropped, the item will not move since the target is the same as the source.
-  //   if (dropTarget && dragTarget && dragTarget.indexPath.section === dropTarget.indexPath.section && (dragTarget.indexPath.index === dropTarget.indexPath.index || dragTarget.indexPath.index + 1 === dropTarget.indexPath.index)) {
-  //     return false;
-  //   }
-
-  //   // Only show the drop spacing if dropping between two items.
-  //   // If the default drop position is not "between", then we could be dropping on the entire grid instead of an item.
-  //   return dropTarget
-  //     && dropTarget.dropPosition === DragTarget.DROP_BETWEEN
-  //     && this.component.props.dropPosition === 'between';
-  // }
-
-  // TODO Modified from v2 to match v3, but not entirely sure what these do?
   getInitialLayoutInfo(layoutInfo: LayoutInfo) {
     layoutInfo.opacity = 0;
     layoutInfo.transform = 'scale3d(0.8, 0.8, 0.8)';
@@ -98,7 +76,7 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     let best = null;
     let bestDistance = Infinity;
 
-    // TODO: for judging closest left/right card, perhaps we should calc the distance between the top of the current and the top and bottom of the next layoutInfo and take the smallest?
+    // Calculates distance as the distance between the center of 2 rects.
     for (let cur of layoutInfos) {
       if (cur.type === 'item') {
         let curRect = cur.rect;
@@ -135,8 +113,6 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
     return this._findClosest(layoutInfo.rect, rect)?.key;
   }
-
-  // TODO: move getKeyRightOf/leftOf into here as well?
 
   getFirstKey() {
     return this.collection.getFirstKey();
