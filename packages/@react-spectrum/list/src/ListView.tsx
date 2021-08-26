@@ -91,7 +91,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }), [collection]);
   let state = useGridState({
     ...props,
-    collection: gridCollection
+    collection: gridCollection,
+    allowsCellSelection: true
   });
   let layout = useListLayout(state);
   let keyboardDelegate = useMemo(() => new GridKeyboardDelegate({
