@@ -24,8 +24,9 @@ import {Placement} from '@react-types/overlays';
 import {Popover} from '@react-spectrum/overlays';
 import {ProgressCircle} from '../../progress/src/ProgressCircle';
 import React, {forwardRef, InputHTMLAttributes, RefObject, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {SpectrumSearchAutocompleteProps} from '@react-types/searchfield';
-import styles from '@adobe/spectrum-css-temp/components/search/vars.css';
+import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useComboBoxState} from '@react-stately/combobox';
@@ -227,7 +228,7 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
       preventFocus
       UNSAFE_className={
         classNames(
-          styles,
+          searchStyles,
           'spectrum-ClearButton'
         )
       }
@@ -291,7 +292,7 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
           inputRef={inputRef}
           UNSAFE_className={
             classNames(
-              styles,
+              searchStyles,
               'spectrum-Search',
               'spectrum-Textfield',
               {
@@ -302,7 +303,7 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
               }
             )
           }
-          inputClassName={classNames(styles, 'spectrum-Search-input')}
+          inputClassName={classNames(searchStyles, 'spectrum-Search-input')}
           isDisabled={isDisabled}
           isQuiet={isQuiet}
           validationState={validationState}
