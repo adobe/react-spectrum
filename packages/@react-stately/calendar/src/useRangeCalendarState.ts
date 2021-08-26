@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, CalendarDate, GregorianCalendar, toCalendar, toCalendarDate} from '@internationalized/date';
+import {Calendar, CalendarDate, Duration, GregorianCalendar, toCalendar, toCalendarDate} from '@internationalized/date';
 import {DateRange, DateValue} from '@react-types/calendar';
 import {RangeCalendarProps} from '@react-types/calendar';
 import {RangeCalendarState} from './types';
@@ -20,7 +20,9 @@ import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
 
 interface RangeCalendarStateOptions<T extends DateValue> extends RangeCalendarProps<T> {
-  createCalendar: (name: string) => Calendar
+  locale: string,
+  createCalendar: (name: string) => Calendar,
+  visibleDuration?: Duration
 }
 
 export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarStateOptions<T>): RangeCalendarState {

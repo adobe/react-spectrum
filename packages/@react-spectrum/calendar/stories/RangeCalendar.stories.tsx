@@ -61,6 +61,14 @@ storiesOf('Date and Time/RangeCalendar', module)
   .add(
     'autoFocus',
     () => render({defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}, autoFocus: true})
+  )
+  .add(
+    'visibleMonths: 2',
+    () => render({visibleMonths: 2})
+  )
+  .add(
+    'visibleMonths: 3',
+    () => render({visibleMonths: 3})
   );
 
   // Fake cell for testing css

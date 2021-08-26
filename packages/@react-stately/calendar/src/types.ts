@@ -17,7 +17,7 @@ import {RangeValue} from '@react-types/shared';
 export interface CalendarStateBase {
   isDisabled: boolean,
   isReadOnly: boolean,
-  currentMonth: CalendarDate,
+  visibleRange: RangeValue<CalendarDate>,
   timeZone: string,
   focusedDate: CalendarDate,
   setFocusedDate(value: CalendarDate): void,
@@ -31,21 +31,18 @@ export interface CalendarStateBase {
   focusEndOfMonth(): void,
   focusNextYear(): void,
   focusPreviousYear(): void,
+  focusNextVisibleRange(): void,
+  focusPreviousVisibleRange(): void,
   selectFocusedDate(): void,
   selectDate(date: CalendarDate): void,
   isFocused: boolean,
   setFocused(value: boolean): void,
-  weeksInMonth: number,
-  weekStart: number,
-  daysInMonth: number,
-  weekDays: Array<CalendarDate>,
-  getCellDate(weekIndex: number, dayIndex: number): CalendarDate,
   isInvalid(date: CalendarDate): boolean,
   isSelected(date: CalendarDate): boolean,
   isCellFocused(date: CalendarDate): boolean,
   isCellDisabled(date: CalendarDate): boolean,
-  isPreviousMonthInvalid(): boolean,
-  isNextMonthInvalid(): boolean
+  isPreviousVisibleRangeInvalid(): boolean,
+  isNextVisibleRangeInvalid(): boolean
 }
 
 export interface CalendarState extends CalendarStateBase {

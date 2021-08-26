@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, isSameDay, isSameMonth, isToday} from '@internationalized/date';
+import {CalendarDate, isEqualDay, isSameDay, isSameMonth, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {HTMLAttributes, RefObject, useEffect, useRef} from 'react';
+import {focusWithoutScrolling} from '@react-aria/utils';
+import {HTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
@@ -21,7 +22,7 @@ import {useDateFormatter, useMessageFormatter} from '@react-aria/i18n';
 
 export interface AriaCalendarCellProps {
   date: CalendarDate,
-  colIndex: number
+  isDisabled?: boolean
 }
 
 interface CalendarCellAria {
@@ -31,7 +32,7 @@ interface CalendarCellAria {
 }
 
 export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarState | RangeCalendarState, ref: RefObject<HTMLElement>): CalendarCellAria {
-  let {colIndex, date} = props;
+  let {date, isDisabled} = props;
   let formatMessage = useMessageFormatter(intlMessages);
   let dateFormatter = useDateFormatter({
     weekday: 'long',
@@ -43,22 +44,36 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
   });
   let isSelected = state.isSelected(date);
   let isFocused = state.isCellFocused(date);
-  let isDisabled = state.isCellDisabled(date);
+  isDisabled = isDisabled || state.isCellDisabled(date);
+
+  // For performance, reuse the same date object as before if the new date prop is the same.
+  // This allows subsequent useMemo results to be reused.
+  let lastDate = useRef(null);
+  if (lastDate.current && isEqualDay(date, lastDate.current)) {
+    date = lastDate.current;
+  }
+
+  lastDate.current = date;
+
+  let nativeDate = useMemo(() => date.toDate(state.timeZone), [date, state.timeZone]);
 
   // aria-label should be localize Day of week, Month, Day and Year without Time.
-  let nativeDate = date.toDate(state.timeZone);
-  let label = dateFormatter.format(nativeDate);
-  if (isToday(date, state.timeZone)) {
-    // If date is today, set appropriate string depending on selected state:
-    label = formatMessage(isSelected ? 'todayDateSelected' : 'todayDate', {
-      date: nativeDate
-    });
-  } else if (isSelected) {
-    // If date is selected but not today:
-    label = formatMessage('dateSelected', {
-      date: nativeDate
-    });
-  }
+  let isDateToday = isToday(date, state.timeZone);
+  let label = useMemo(() => {
+    if (isDateToday) {
+      // If date is today, set appropriate string depending on selected state:
+      return formatMessage(isSelected ? 'todayDateSelected' : 'todayDate', {
+        date: nativeDate
+      });
+    } else if (isSelected) {
+      // If date is selected but not today:
+      return formatMessage('dateSelected', {
+        date: nativeDate
+      });
+    }
+
+    return dateFormatter.format(nativeDate);
+  }, [dateFormatter, nativeDate, formatMessage, isSelected, isDateToday]);
 
   // When a cell is focused and this is a range calendar, add a prompt to help
   // screenreader users know that they are in a range selection mode.
@@ -156,14 +171,13 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
   // Focus the button in the DOM when the state updates.
   useEffect(() => {
     if (isFocused && ref.current) {
-      ref.current.focus();
+      focusWithoutScrolling(ref.current);
     }
   }, [isFocused, ref]);
 
   return {
     cellProps: {
       role: 'gridcell',
-      'aria-colindex': colIndex,
       'aria-disabled': isDisabled || null,
       'aria-selected': isSelected
     },

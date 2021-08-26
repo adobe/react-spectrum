@@ -326,17 +326,17 @@ describe('Calendar', () => {
       expect(getByLabelText('Thursday, June 6, 2019', {exact: false})).toHaveFocus();
     });
 
-    it('renders a caption with the selected date', () => {
+    it('renders a description with the selected date', () => {
       let {getByText, getByRole} = render(<Calendar defaultValue={new CalendarDate(2019, 6, 5)} />);
 
       let grid = getByRole('grid');
       let caption = document.getElementById(grid.getAttribute('aria-describedby'));
-      expect(caption.tagName.toLowerCase()).toBe('caption');
       expect(caption).toHaveTextContent('Selected Date: Wednesday, June 5, 2019');
 
       let newDate = getByText('17');
       triggerPress(newDate);
 
+      caption = document.getElementById(grid.getAttribute('aria-describedby'));
       expect(caption).toHaveTextContent('Selected Date: Monday, June 17, 2019');
     });
   });

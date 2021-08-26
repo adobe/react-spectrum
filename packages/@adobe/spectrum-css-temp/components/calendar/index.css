@@ -19,10 +19,10 @@ governing permissions and limitations under the License.
   --spectrum-calendar-margin-x: 32px;
   --spectrum-calendar-width: calc((var(--spectrum-calendar-day-width) + var(--spectrum-calendar-day-padding) * 2) * 7);
   --spectrum-calendar-button-gap: var(--spectrum-global-dimension-size-40);
+  --spectrum-calendar-title-margin-x: var(--spectrum-global-dimension-size-75);
 }
 
 .spectrum-Calendar {
-  width: var(--spectrum-calendar-width);
   display: inline-block;
   touch-action: none;
 }
@@ -32,9 +32,21 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Calendar-header {
-  display: flex;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
   width: 100%;
-  align-items: center;
+  gap: var(--spectrum-global-dimension-size-300);
+}
+
+.spectrum-Calendar-monthHeader {
+  display: grid;
+  grid-template-areas: 'prev title next';
+  grid-template-columns: minmax(auto, 1fr) auto minmax(auto, 1fr);
+  align-content: start;
+  width: var(--spectrum-calendar-width);
+  padding: 0 var(--spectrum-calendar-button-gap);
+  box-sizing: border-box;
 }
 
 .spectrum-Calendar-title {
@@ -42,10 +54,8 @@ governing permissions and limitations under the License.
   font-weight: bold;
 
   line-height: var(--spectrum-calendar-title-height);
-  margin: 0;
-  order: 1;
-  flex-grow: 1;
-
+  margin: 0 var(--spectrum-calendar-title-margin-x);
+  grid-area: title;
 
   text-align: center;
   overflow: hidden;
@@ -53,19 +63,21 @@ governing permissions and limitations under the License.
   text-overflow: ellipsis;
 }
 
-.spectrum-Calendar {
-  .spectrum-Calendar-prevMonth,
-  .spectrum-Calendar-nextMonth {
-    margin: 0 var(--spectrum-calendar-button-gap);
-  }
-}
-
 .spectrum-Calendar-prevMonth {
-  order: 0;
+  grid-area: prev;
+  justify-self: start;
 }
 
 .spectrum-Calendar-nextMonth {
-  order: 2;
+  grid-area: next;
+  justify-self: end;
+}
+
+.spectrum-Calendar-months {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: var(--spectrum-global-dimension-size-300);
 }
 
 .spectrum-Calendar-dayOfWeek {

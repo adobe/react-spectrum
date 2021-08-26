@@ -12,49 +12,13 @@
 
 import {CalendarAria} from './types';
 import {DateValue, RangeCalendarProps} from '@react-types/calendar';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
-import {isSameDay} from '@internationalized/date';
-import {mergeProps, useEvent, useId} from '@react-aria/utils';
 import {RangeCalendarState} from '@react-stately/calendar';
 import {useCalendarBase} from './useCalendarBase';
-import {useMemo, useRef} from 'react';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useEvent, useId} from '@react-aria/utils';
+import {useRef} from 'react';
 
 export function useRangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, state: RangeCalendarState): CalendarAria {
-  // Compute localized message for the selected date or range
-  let formatMessage = useMessageFormatter(intlMessages);
-  let {start, end} = state.highlightedRange || {start: null, end: null};
-  let selectedDateDescription = useMemo(() => {
-    // No message if currently selecting a range, or there is nothing highlighted.
-    if (!state.anchorDate && start && end) {
-      // Use a single date message if the start and end dates are the same day,
-      // otherwise include both dates.
-      if (isSameDay(start, end)) {
-        return formatMessage('selectedDateDescription', {date: start.toDate(state.timeZone)});
-      } else {
-        return formatMessage('selectedRangeDescription', {start: start.toDate(state.timeZone), end: end.toDate(state.timeZone)});
-      }
-    }
-    return '';
-  }, [start, end, state.anchorDate, state.timeZone, formatMessage]);
-
-  let onKeyDown = (e: KeyboardEvent) => {
-    switch (e.key) {
-      case 'Escape':
-        // Cancel the selection.
-        state.setAnchorDate(null);
-        break;
-    }
-  };
-
-  let res = useCalendarBase(props, state, selectedDateDescription);
-  res.calendarBodyProps = mergeProps(res.calendarBodyProps, {
-    id: useId(),
-    'aria-multiselectable': true,
-    onKeyDown
-  });
-
+  let res = useCalendarBase(props, state);
   res.nextButtonProps.id = useId();
   res.prevButtonProps.id = useId();
 
@@ -66,7 +30,7 @@ export function useRangeCalendar<T extends DateValue>(props: RangeCalendarProps<
     }
 
     let target = e.target as HTMLElement;
-    let body = document.getElementById(res.calendarBodyProps.id);
+    let body = document.getElementById(res.calendarProps.id);
     if (
       (!body.contains(target) || target.getAttribute('role') !== 'button') &&
       !document.getElementById(res.nextButtonProps.id)?.contains(target) &&

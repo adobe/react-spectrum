@@ -13,12 +13,13 @@
 import {AriaButtonProps} from '@react-types/button';
 import {HTMLAttributes} from 'react';
 
-type DOMProps = HTMLAttributes<HTMLElement>;
 export interface CalendarAria {
-  calendarProps: DOMProps,
-  calendarTitleProps: DOMProps,
+  calendarProps: HTMLAttributes<HTMLElement>,
   nextButtonProps: AriaButtonProps,
-  prevButtonProps: AriaButtonProps,
-  calendarBodyProps: DOMProps,
-  captionProps: DOMProps & {children: string}
+  prevButtonProps: AriaButtonProps
+}
+
+
+export interface CalendarGridAria {
+  gridProps: HTMLAttributes<HTMLElement>
 }

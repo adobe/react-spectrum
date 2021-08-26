@@ -12,105 +12,93 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {CalendarAria} from '@react-aria/calendar';
+import {CalendarMonth} from './CalendarMonth';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {CalendarTableBody} from './CalendarTableBody';
-import {CalendarTableHeader} from './CalendarTableHeader';
 import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import ChevronRight from '@spectrum-icons/ui/ChevronRightLarge';
-import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {classNames} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
-import {toDate} from '@internationalized/date';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-interface CalendarBaseProps extends CalendarPropsBase, DOMProps, StyleProps {
-  state: CalendarState | RangeCalendarState,
-  aria: CalendarAria
+interface CalendarBaseProps<T extends CalendarState | RangeCalendarState> extends CalendarPropsBase, DOMProps, StyleProps {
+  state: T,
+  useCalendar: (props: CalendarPropsBase, state: T) => CalendarAria,
+  visibleMonths?: number
 }
 
-export function CalendarBase(props: CalendarBaseProps) {
+export function CalendarBase<T extends CalendarState | RangeCalendarState>(props: CalendarBaseProps<T>) {
   props = useProviderProps(props);
   let {
     state,
-    aria,
-    ...otherProps
+    useCalendar,
+    visibleMonths = 1
   } = props;
+  let {direction} = useLocale();
+  let currentMonth = state.visibleRange.start;
   let monthDateFormatter = useDateFormatter({
     month: 'long',
     year: 'numeric',
-    era: state.currentMonth.calendar.identifier !== 'gregory' ? 'long' : undefined,
-    calendar: state.currentMonth.calendar.identifier
+    era: currentMonth.calendar.identifier !== 'gregory' ? 'long' : undefined,
+    calendar: currentMonth.calendar.identifier
   });
-  let {
-    calendarProps,
-    calendarTitleProps,
-    nextButtonProps,
-    prevButtonProps,
-    calendarBodyProps,
-    captionProps
-  } = aria;
-  let {direction} = useLocale();
-  let {styleProps} = useStyleProps(otherProps);
+  let {calendarProps, prevButtonProps, nextButtonProps} = useCalendar(props, state);
 
-  let [isRangeSelecting, setRangeSelecting] = useState(false);
-  let hasAnchorDate = 'anchorDate' in state && state.anchorDate != null;
+  let titles = [];
+  let calendars = [];
+  for (let i = 0; i < visibleMonths; i++) {
+    titles.push(
+      <div key={i} className={classNames(styles, 'spectrum-Calendar-monthHeader')}>
+        {i === 0 &&
+          <ActionButton
+            {...prevButtonProps}
+            UNSAFE_className={classNames(styles, 'spectrum-Calendar-prevMonth')}
+            isQuiet>
+            {direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}
+          </ActionButton>
+        }
+        <h2
+          className={classNames(styles, 'spectrum-Calendar-title')}>
+          {monthDateFormatter.format(currentMonth.add({months: i}).toDate(state.timeZone))}
+        </h2>
+        {i === visibleMonths - 1 &&
+          <ActionButton
+            {...nextButtonProps}
+            UNSAFE_className={classNames(styles, 'spectrum-Calendar-nextMonth')}
+            isQuiet>
+            {direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />}
+          </ActionButton>
+        }
+      </div>
+    );
 
-  // Update isRangeSelecting immediately when it becomes true.
-  // This feels weird but is actually fine...
-  // https://reactjs.org/docs/hooks-faq.html#how-do-i-implement-getderivedstatefromprops
-  if (hasAnchorDate && !isRangeSelecting) {
-    setRangeSelecting(true);
+    let d = currentMonth.add({months: i});
+    calendars.push(
+      <CalendarMonth
+        {...props}
+        key={`${d.year}-${d.month}-${d.day}`}
+        state={state}
+        startDate={d} />
+    );
   }
-
-  // Delay removing the is-range-selecting class for a frame after selection ends.
-  // This avoids an undesired animation on touch devices.
-  useEffect(() => {
-    if (!hasAnchorDate && isRangeSelecting) {
-      let raf = requestAnimationFrame(() => setRangeSelecting(false));
-      return () => cancelAnimationFrame(raf);
-    }
-  }, [hasAnchorDate, isRangeSelecting]);
 
   return (
     <div
-      {...styleProps}
       {...calendarProps}
       className={
         classNames(styles,
-          'spectrum-Calendar',
-          styleProps.className
+          'spectrum-Calendar'
         )
       }>
       <div className={classNames(styles, 'spectrum-Calendar-header')}>
-        <h2
-          {...calendarTitleProps}
-          className={classNames(styles, 'spectrum-Calendar-title')}>
-          {monthDateFormatter.format(toDate(state.currentMonth, state.timeZone))}
-        </h2>
-        <ActionButton
-          {...prevButtonProps}
-          UNSAFE_className={classNames(styles, 'spectrum-Calendar-prevMonth')}
-          isQuiet>
-          {direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}
-        </ActionButton>
-        <ActionButton
-          {...nextButtonProps}
-          UNSAFE_className={classNames(styles, 'spectrum-Calendar-nextMonth')}
-          isQuiet>
-          {direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />}
-        </ActionButton>
+        {titles}
       </div>
-      <table
-        {...calendarBodyProps}
-        className={classNames(styles, 'spectrum-Calendar-body', 'spectrum-Calendar-table', {'is-range-selecting': isRangeSelecting})}>
-        <VisuallyHidden elementType="caption" {...captionProps} />
-        <CalendarTableHeader weekDays={state.weekDays} />
-        <CalendarTableBody state={state} />
-      </table>
+      <div className={classNames(styles, 'spectrum-Calendar-months')}>
+        {calendars}
+      </div>
     </div>
   );
 }

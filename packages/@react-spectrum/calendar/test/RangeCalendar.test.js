@@ -894,22 +894,21 @@ describe('RangeCalendar', () => {
       expect(selectedDates[1]).toHaveFocus();
     });
 
-    it('renders a caption with the selected date range', () => {
+    it('renders a description with the selected date range', () => {
       let {getByText, getByRole} = render(<RangeCalendar defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}} />);
 
       let grid = getByRole('grid');
       let caption = document.getElementById(grid.getAttribute('aria-describedby'));
-      expect(caption.tagName.toLowerCase()).toBe('caption');
       expect(caption).toHaveTextContent('Selected Range: June 5, 2019 to June 10, 2019');
 
       userEvent.click(getByText('17'));
 
       // in selection mode, the caption should be empty
       expect(grid).not.toHaveAttribute('aria-describedby');
-      expect(caption).toHaveTextContent('');
 
       userEvent.click(getByText('10'));
 
+      caption = document.getElementById(grid.getAttribute('aria-describedby'));
       expect(grid).toHaveAttribute('aria-describedby', caption.id);
       expect(caption).toHaveTextContent('Selected Range: June 10, 2019 to June 17, 2019');
     });
