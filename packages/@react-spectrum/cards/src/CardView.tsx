@@ -21,7 +21,6 @@ import intlMessages from '../intl/*.json';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useMemo, useRef} from 'react';
 import {SpectrumCardViewProps} from '@react-types/cards';
-import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {useCollator,useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';
@@ -171,8 +170,6 @@ function InternalCard(props) {
     <div {...rowProps} ref={rowRef} style={{height: '100%'}}>
       <CardBase
         ref={cellRef}
-        // TODO: readd this if we need to trigger a updateItemSize when the real image loads and we were using placeholder images
-        // cardViewLayout={cardViewLayout}
         articleProps={gridCellProps}
         isQuiet={isQuiet}
         orientation={cardOrientation}
