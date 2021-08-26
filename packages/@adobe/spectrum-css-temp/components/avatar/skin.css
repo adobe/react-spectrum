@@ -12,6 +12,8 @@ governing permissions and limitations under the License.
 
 .spectrum-Avatar {
   opacity: var(--spectrum-avatar-small-opacity);
+  outline: none;
+  transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out;
 
   &.is-disabled {
     opacity: var(--spectrum-avatar-small-opacity-disabled);
