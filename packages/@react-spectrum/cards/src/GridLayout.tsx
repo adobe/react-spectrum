@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {BaseLayout} from './';
+import {BaseLayout, BaseLayoutOptions} from './';
 import {KeyboardDelegate, Node} from '@react-types/shared';
 import {LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
-import { BaseLayoutOptions } from './BaseLayout';
 
 export interface GridLayoutOptions<T> extends BaseLayoutOptions<T> {
   /**
@@ -106,7 +105,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   }
 
   get layoutType() {
-    // GridLayout only supports quiet cards
     return 'grid';
   }
 
@@ -160,7 +158,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   }
 
   validate() {
-    // TODO: Removed the invalidateEverything check since in ListLayout that was mainly for Sections it seems?
     this.collection = this.virtualizer.collection;
     this.buildCollection();
 
@@ -193,9 +190,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     let itemWidth = Math.floor(width / this.numColumns);
     itemWidth = Math.max(this.minItemSize.width, Math.min(this.maxItemSize.width, itemWidth));
 
-    // TODO: Right now the v2 code here assumes a static number for itemPadding (aka the content area below the preview)
-    // Perhaps rewrite this so that it uses that itemPadding as a estimated height, then on the second run through it checks the largest
-    // description height in the DOM and uses that
     // Compute the item height, which is proportional to the item width
     let t = ((itemWidth - this.minItemSize.width) / this.minItemSize.width);
     let itemHeight = this.minItemSize.height + this.minItemSize.height * t;
@@ -251,29 +245,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
     this.layoutInfos.set(node.key, layoutInfo)
     return layoutInfo;
-  }
-
-  // TODO: add updateItemSize since Virtualizer statelly needs it?
-  // Do we really need this?
-  updateItemSize(key: Key, size: Size) {
-    let layoutInfo = this.layoutInfos.get(key);
-    // If no layoutInfo, item has been deleted/removed.
-    if (!layoutInfo) {
-      return false;
-    }
-
-    layoutInfo.estimatedSize = false;
-    // TODO: updated this to check width as well, double check if we need this
-    if (layoutInfo.rect.height !== size.height || layoutInfo.rect.width !== size.width) {
-      // Copy layout info rather than mutating so that later caches are invalidated.
-      let newLayoutInfo = layoutInfo.copy();
-      newLayoutInfo.rect.height = size.height;
-      newLayoutInfo.rect.width = size.width;
-      this.layoutInfos.set(key, newLayoutInfo);
-      return true;
-    }
-
-    return false;
   }
 
   // Since the collection doesn't represent the visual layout, need to calculate what row and column the current key is in,

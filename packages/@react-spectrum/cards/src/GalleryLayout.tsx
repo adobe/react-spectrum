@@ -11,9 +11,8 @@
  */
 
 import {BaseLayout, BaseLayoutOptions} from './';
-import {Collection, Direction, KeyboardDelegate, Node} from '@react-types/shared';
-import {InvalidationContext, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
-import {Key} from 'react';
+import {KeyboardDelegate} from '@react-types/shared';
+import {LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 
 export interface GalleryLayoutOptions<T> extends BaseLayoutOptions<T> {
   /**
@@ -73,14 +72,8 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
   }
 
   get layoutType() {
-    // GalleryLayout only supports quiet vertical cards
-    // return 'quiet';
     return 'gallery';
   }
-
-  // TODO: For now assume that we won't support sections here (double check with team)
-  // For now use the current this.layoutInfos map. If sections become a thing, can make a local layoutNodes or something that
-  // organizes everything into sections
 
   validate() {
     this.collection = this.virtualizer.collection;
@@ -99,7 +92,6 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
   }
 
   buildCollection() {
-    // TODO: split up the below further.
     let visibleWidth = this.virtualizer.visibleRect.width;
     let visibleHeight = this.virtualizer.visibleRect.height;
     let y = this.itemSpacing.height;
@@ -174,30 +166,6 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
     }
 
     this.contentSize = new Size(visibleWidth, y);
-  }
-
-  // TODO: add updateItemSize since Virtualizer statelly needs it?
-  // Do we really need this? Only triggers if do any size estimates
-  updateItemSize(key: Key, size: Size) {
-    console.log('update')
-    let layoutInfo = this.layoutInfos.get(key);
-    // If no layoutInfo, item has been deleted/removed.
-    if (!layoutInfo) {
-      return false;
-    }
-
-    layoutInfo.estimatedSize = false;
-    // TODO: updated this to check width as well, double check if we need this
-    if (layoutInfo.rect.height !== size.height || layoutInfo.rect.width !== size.width) {
-      // Copy layout info rather than mutating so that later caches are invalidated.
-      let newLayoutInfo = layoutInfo.copy();
-      newLayoutInfo.rect.height = size.height;
-      newLayoutInfo.rect.width = size.width;
-      this.layoutInfos.set(key, newLayoutInfo);
-      return true;
-    }
-
-    return false;
   }
 }
 

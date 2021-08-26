@@ -62,16 +62,6 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
 
   let hasFooter = useHasChild(`.${styles['spectrum-Card-footer']}`, gridRef);
 
-  // TODO maybe remove this stuff? If we have placeholder images, we may need to call updateSize when the real images load. Can pass onLoad to the Image if so
-  // let layoutInfo = cardViewLayout.layoutInfos.get(key);
-  // let reusableView = cardViewLayout.virtualizer.getReusableView(layoutInfo)
-  // let unwrappedRef = useUnwrapDOMRef(domRef);
-  // let {updateSize} = useVirtualizerItem({reusableView, ref: domRef})
-  // let onLoad = () => {
-  //   updateSize();
-  // }
-
-
   let slots = useMemo(() => ({
     image: {UNSAFE_className: classNames(styles, 'spectrum-Card-image'), objectFit: isQuiet ? 'contain' : 'cover', alt: ''},
     illustration: {UNSAFE_className: classNames(styles, 'spectrum-Card-illustration')},
@@ -96,7 +86,6 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
 
 
   return (
-    // TODO: Focus ring in v2 only goes around preview for quiet varients, fix this for v3?
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <article
         {...styleProps}
