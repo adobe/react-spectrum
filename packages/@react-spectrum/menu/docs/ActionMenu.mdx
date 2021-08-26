@@ -60,7 +60,7 @@ function Example() {
     {name: 'Cut'},
     {name: 'Copy'},
     {name: 'Paste'},
-    {name: 'Replace'}
+    {name: 'Select All'}
   ];
 
   return (
@@ -105,14 +105,14 @@ ActionMenu supports sections in order to group options. Sections can be used by 
 
 ```tsx example
 <ActionMenu>
-  <Section title="Styles">
-    <Item key="bold">Bold</Item>
-    <Item key="underline">Underline</Item>
+  <Section title="File">
+    <Item key="bold">New</Item>
+    <Item key="underline">Open...</Item>
   </Section>
-  <Section title="Align">
-    <Item key="left">Left</Item>
-    <Item key="middle">Middle</Item>
-    <Item key="right">Right</Item>
+  <Section title="Save">
+    <Item key="left">Save</Item>
+    <Item key="middle">Save As...</Item>
+    <Item key="right">Save All</Item>
   </Section>
 </ActionMenu>
 ```
@@ -125,19 +125,20 @@ Sections used with dynamic items are populated from a hierarchical data structur
 function Example() {
   let openWindows = [
     {
-      name: 'Left Panel',
-      id: 'left',
+      name: 'Reversion',
+      id: 'revert',
       children: [
-        {id: 1, name: 'Final Copy (1)'}
+        {id: 11, name: 'Undo'},
+        {id: 12, name: 'Redo'}
       ]
     },
     {
-      name: 'Right Panel',
-      id: 'right',
+      name: 'Clipboard',
+      id: 'buffer',
       children: [
-        {id: 2, name: 'index.ts'},
-        {id: 3, name: 'package.json'},
-        {id: 4, name: 'license.txt'}
+        {id: 21, name: 'Cut'},
+        {id: 22, name: 'Copy'},
+        {id: 23, name: 'Paste'}
       ]
     }
   ];
@@ -199,12 +200,13 @@ Applying `autoFocus` to the ActionMenu sets focus to the ActionMenu trigger.
 ```tsx example
 <ActionMenu
   items={[
-    {name: 'tiff', id: 'a1b2c3'},
-    {name: 'png', id: 'g5h1j9'},
-    {name: 'jpg', id: 'p8k3i4'},
-    {name: 'PDF', id: 'j7i3a0'}
+    {name: 'Undo', id: 'a1b2c3'},
+    {name: 'Redo', id: 'g5h1j9'},
+    {name: 'Cut', id: 'p8k3i4'},
+    {name: 'Copy', id: 'j7i3a0'},
+    {name: 'Paste', id: 't4u8v6'}
   ]}
-  disabledKeys={['a1b2c3', 'p8k3i4']}>
+  disabledKeys={['g5h1j9', 't4u8v6']}>
   {item => <Item>{item.name}</Item>}
 </ActionMenu>
 ```
@@ -223,9 +225,9 @@ The `align` prop aligns the ActionMenu menu relative to the trigger and the `dir
     <Item key="paste">Paste</Item>
   </ActionMenu>
   <ActionMenu align="end" direction="top" shouldFlip={false}>
-    <Item key="side">Side bar</Item>
-    <Item key="options">Page options</Item>
-    <Item key="edit">Edit Panel</Item>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
   </ActionMenu>
   <ActionMenu direction="start" align="start">
     <Item key="cut">Cut</Item>
@@ -233,9 +235,9 @@ The `align` prop aligns the ActionMenu menu relative to the trigger and the `dir
     <Item key="paste">Paste</Item>
   </ActionMenu>
   <ActionMenu direction="end" align="end">
-    <Item key="side">Side bar</Item>
-    <Item key="options">Page options</Item>
-    <Item key="edit">Edit Panel</Item>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
   </ActionMenu>
 </Flex>
 ```
@@ -246,9 +248,9 @@ By default, the ActionMenu menu flips direction automatically upon opening when 
 ```tsx example
 <Flex gap="size-100">
   <ActionMenu shouldFlip>
-    <Item key="side">Side bar</Item>
-    <Item key="options">Page options</Item>
-    <Item key="edit">Edit Panel</Item>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
   </ActionMenu>
   <ActionMenu shouldFlip={false}>
     <Item key="cut">Cut</Item>
