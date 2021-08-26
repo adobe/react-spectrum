@@ -99,15 +99,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     this.minSpace = options.minSpace || DEFAULT_OPTIONS[cardSize].minSpace;
     this.maxColumns = options.maxColumns || DEFAULT_OPTIONS[cardSize].maxColumns;
     this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding;
-
-    // TODO: add drag and drop later
-    //   /**
-    //    * The space between items created when dragging between them
-    //    * @type {number}
-    //    * @default 100
-    //    */
-    //   this.dropSpacing = options.dropSpacing != null ? options.dropSpacing : DEFAULT_OPTIONS[cardSize].dropSpacing;
-
     this.itemSize = null;
     this.numColumns = 0;
     this.numRows = 0;
@@ -259,7 +250,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
     let rect = new Rect(x, y, this.itemSize.width, this.itemSize.height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
     this.layoutInfos.set(node.key, layoutInfo)
-    // TODO: add drop spacing logic from v2's getLayoutInfo when drop functionality is added
     return layoutInfo;
   }
 
@@ -285,36 +275,6 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
 
     return false;
   }
-
-
-  // TODO: add drop and drop later
-  // getDropTarget(point) {
-  //   let dropPosition = this.component.props.dropPosition === 'on' && !this.collectionView._dragTarget
-  //     ? DragTarget.DROP_ON
-  //     : DragTarget.DROP_BETWEEN;
-
-  //   // If we are dropping between rows, the target should move to the
-  //   // next item halfway through a row.
-  //   if (dropPosition === DragTarget.DROP_BETWEEN) {
-  //     point = point.copy();
-  //     point.x += (this.itemSize.width + this.horizontalSpacing) / 2;
-  //   }
-
-  //   let indexPath;
-  //   if (dropPosition === DragTarget.DROP_ON) {
-  //     indexPath = this.collectionView.indexPathAtPoint(point);
-  //   } else {
-  //     let index = this.getIndexAtPoint(point.x, point.y, true);
-  //     indexPath = new IndexPath(0, index);
-  //   }
-
-  //   if (indexPath) {
-  //     return new DragTarget('item', indexPath, dropPosition);
-  //   }
-
-  //   let index = dropPosition === DragTarget.DROP_ON ? 0 : this.collectionView.getSectionLength(0);
-  //   return new DragTarget('item', new IndexPath(0, index), DragTarget.DROP_BETWEEN);
-  // }
 
   // Since the collection doesn't represent the visual layout, need to calculate what row and column the current key is in,
   // then return the key that occupies the row + column below. This can be done by figuring out how many cards exist per column then dividing the

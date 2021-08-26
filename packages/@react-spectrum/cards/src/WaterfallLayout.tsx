@@ -49,7 +49,6 @@ export interface WaterfallLayoutOptions<T> extends BaseLayoutOptions<T> {
 };
 
 // TODO: this didn't have any options that varied with card size, should it have?
-
 export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   protected minItemSize: Size;
   protected maxItemSize: Size;
@@ -222,43 +221,6 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     return minIndex;
   }
 
-
-
-  // TODO: readd when adding drag and drop back in
-  // itemInserted(indexPath) {
-  //   this.layoutInfos[indexPath.section].splice(indexPath.index, 0, null);
-  // }
-
-  // itemRemoved(indexPath) {
-  //   this.layoutInfos[indexPath.section].splice(indexPath.index, 1);
-  // }
-
-  // itemMoved(from, to) {
-  //   let layoutInfo = this.layoutInfos[from.section].splice(from.index, 1)[0];
-  //   this.layoutInfos[to.section].splice(to.index, 0, layoutInfo);
-  // }
-
-  // itemReplaced(indexPath) {
-  //   this.layoutInfos[indexPath.section][indexPath.index] = null;
-  // }
-
-  // sectionInserted(section) {
-  //   this.layoutInfos.splice(section, 0, []);
-  // }
-
-  // sectionRemoved(section) {
-  //   this.layoutInfos.splice(section, 1);
-  // }
-
-  // sectionMoved(fromSection, toSection) {
-  //   let section = this.layoutInfos.splice(fromSection, 1)[0];
-  //   this.layoutInfos.splice(toSection, 0, section);
-  // }
-
-  // sectionReplaced(section) {
-  //   this.layoutInfos[section] = [];
-  // }
-
   getClosestRight(key: Key) {
     let layoutInfo = this.getLayoutInfo(key);
     // Refactored from v2. Current strategy is to find the closest card in the adjacent column.
@@ -283,15 +245,4 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
   getKeyLeftOf(key: Key) {
     return this.direction === 'rtl' ?  this.getClosestRight(key) : this.getClosestLeft(key);
   }
-
-  // TODO: add when re-enabling drag and drop
-  // getDropTarget(point) {
-  //   let indexPath = this.collectionView.indexPathAtPoint(point);
-  //   if (indexPath) {
-  //     return new DragTarget('item', indexPath, DragTarget.DROP_ON);
-  //   }
-
-  //   return new DragTarget('item', new IndexPath(0, 0), DragTarget.DROP_BETWEEN);
-  // }
-
 }

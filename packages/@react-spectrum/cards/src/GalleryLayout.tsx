@@ -70,14 +70,6 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
     this.idealRowHeight = options.idealRowHeight || DEFAULT_OPTIONS[cardSize].idealRowHeight;
     this.itemSpacing = options.itemSpacing || DEFAULT_OPTIONS[cardSize].itemSpacing;
     this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding;
-
-    // TODO: add drag and drop later
-    // /**
-    //  * The space between items created when dragging between them
-    //  * @type {number}
-    //  * @default 100
-    //  */
-    // this.dropSpacing = options.dropSpacing != null ? options.dropSpacing : DEFAULT_OPTIONS[cardSize].dropSpacing;
   }
 
   get layoutType() {
@@ -113,18 +105,10 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
     let y = this.itemSpacing.height;
     let availableWidth = visibleWidth - this.itemSpacing.width * 2;
 
-    // TODO: readd when bringing back drag and drop
-    // let dropTarget = this.collectionView._dropTarget;
-    // if (!this.shouldShowDropSpacing()) {
-    //   dropTarget = null;
-    // }
-
     // Compute aspect ratios for all of the items, and the total width if all items were on in a single row.
     let ratios = [];
     let totalWidth = 0;
     for (let node of this.collection) {
-      // TODO: Is there any way to calculate the aspect ratios without the user explictly passing in the width + height of the image?
-      // Check table overflowmode wrap and see how it calculates the item height
       let ratio = node.props.width / node.props.height;
       ratios.push(ratio);
       totalWidth += ratio * this.idealRowHeight;
@@ -152,29 +136,14 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
       let itemHeight = Math.round(rowHeight) + this.itemPadding;
       let x = this.itemSpacing.width;
 
-      // TODO: readd when adding drag and drop
-      // // If the drop target is on this row, shift the whole row to the left to create space for the dropped item
-      // if (dropTarget && y === this.dropTargetY) {
-      //   x -= this.dropSpacing / 2;
-      // }
-
       // Create items for this row.
       for (let j = index; j < index + row.length; j++) {
         let node = this.collection.at(j);
         let itemWidth = Math.round(rowHeight * ratios[j]);
-
-        // TODO: readd when adding drag and drop
-        // // Shift items in this row after the drop target to the right
-        // if (dropTarget && dropTarget.indexPath.index === j && y === this.dropTargetY) {
-        //   x += this.dropSpacing;
-        // }
-
         let rect = new Rect(x, y, itemWidth, itemHeight)
         let layoutInfo = new LayoutInfo(node.type, node.key, rect);
         this.layoutInfos.set(node.key, layoutInfo)
         x += itemWidth + this.itemSpacing.width;
-        // TODO: readd this when adding drag and drop
-        // layoutInfo.isLastInRow = j === index + row.length - 1;
       }
 
       y += itemHeight + this.itemSpacing.height;
@@ -231,42 +200,6 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
     return false;
   }
 
-
-  // TODO: readd when adding drag and drop back in. Double check if sections are a thing for GalleryLayout
-  // itemInserted(indexPath) {
-  //   this.layoutInfos[indexPath.section].splice(indexPath.index, 0, null);
-  // }
-
-  // itemRemoved(indexPath) {
-  //   this.layoutInfos[indexPath.section].splice(indexPath.index, 1);
-  // }
-
-  // itemMoved(from, to) {
-  //   let layoutInfo = this.layoutInfos[from.section].splice(from.index, 1)[0];
-  //   this.layoutInfos[to.section].splice(to.index, 0, layoutInfo);
-  // }
-
-  // itemReplaced(indexPath) {
-  //   this.layoutInfos[indexPath.section][indexPath.index] = null;
-  // }
-
-  // sectionInserted(section) {
-  //   this.layoutInfos.splice(section, 0, []);
-  // }
-
-  // sectionRemoved(section) {
-  //   this.layoutInfos.splice(section, 1);
-  // }
-
-  // sectionMoved(fromSection, toSection) {
-  //   let section = this.layoutInfos.splice(fromSection, 1)[0];
-  //   this.layoutInfos.splice(toSection, 0, section);
-  // }
-
-  // sectionReplaced(section) {
-  //   this.layoutInfos[section] = [];
-  // }
-
   // TODO: perhaps have baseLayout implement KeyboardDelegate so we can have these common funcs stored there (right,left, first, getKeyForSearch are all the same)?
   getKeyRightOf(key: Key) {
     key = this.direction === 'rtl' ?  this.collection.getKeyBefore(key) : this.collection.getKeyAfter(key);
@@ -293,39 +226,6 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
       key = this.direction === 'rtl' ?  this.collection.getKeyAfter(key) : this.collection.getKeyBefore(key);
     }
   }
-
-  // TODO: add when re-enabling drag and drop
-  // getDropTarget(point) {
-  //   let dropPosition = this.component.props.dropPosition === 'on' && !this.collectionView._dragTarget
-  //     ? DragTarget.DROP_ON
-  //     : DragTarget.DROP_BETWEEN;
-
-  //   let indexPath;
-  //   if (dropPosition === DragTarget.DROP_ON) {
-  //     indexPath = this.collectionView.indexPathAtPoint(point);
-  //   } else {
-  //     // Find the closest item in this row
-  //     let layoutInfo = this._findClosestLayoutInfo(point, new Rect(0, point.y, this.collectionView.size.width, this.itemSpacing.height));
-  //     if (layoutInfo) {
-  //       indexPath = new IndexPath(layoutInfo.section, layoutInfo.index);
-
-  //       // If the item is the last in a row, and the point is at least half way across, insert the new items after.
-  //       if (layoutInfo.isLastInRow && (point.x - layoutInfo.rect.x) > layoutInfo.rect.width / 2) {
-  //         indexPath.index++;
-  //       }
-
-  //       // Store the row Y position so we can compare in `validate`.
-  //       this.dropTargetY = layoutInfo.rect.y;
-  //     }
-  //   }
-
-  //   if (indexPath) {
-  //     return new DragTarget('item', indexPath, dropPosition);
-  //   }
-
-  //   let index = dropPosition === DragTarget.DROP_ON ? 0 : this.collectionView.getSectionLength(0);
-  //   return new DragTarget('item', new IndexPath(0, index), DragTarget.DROP_BETWEEN);
-  // }
 }
 
 // https://www8.cs.umu.se/kurser/TDBA77/VT06/algorithms/BOOK/BOOK2/NODE45.HTM
