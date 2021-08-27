@@ -1,0 +1,6 @@
+{
+  "deselectedItem": "{item} ikke valgt.",
+  "selectedAll": "Alle elementer valgt.",
+  "selectedCount": "{count, plural, =0 {Ingen elementer valgt} one {# element valgt} other {# elementer valgt}}.",
+  "selectedItem": "{item} valgt."
+}

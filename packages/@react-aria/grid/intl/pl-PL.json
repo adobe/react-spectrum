@@ -1,0 +1,6 @@
+{
+  "deselectedItem": "Nie zaznaczono {item}.",
+  "selectedAll": "Wszystkie zaznaczone elementy.",
+  "selectedCount": "{count, plural, =0 {Nie zaznaczono żadnych elementów} one {# zaznaczony element} other {# zaznaczonych elementów}}.",
+  "selectedItem": "Zaznaczono {item}."
+}
