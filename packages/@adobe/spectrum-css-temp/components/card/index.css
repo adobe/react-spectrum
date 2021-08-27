@@ -17,7 +17,7 @@ LAYERS: There are 5 layers to cards
 layer -1:
   card back color, seen mostly in quiet cards in a grid
 
-layer 0 or default:
+layer default:
   all content provided by the user
 
 layer 1:
@@ -146,26 +146,47 @@ Quiet Vertical
 .spectrum-Card-footer {
   grid-area: footer;
 }
-.spectrum-Card-checkboxWrapper {
-  z-index: 3;
-}
-.spectrum-Card-grid:before {
-  z-index: -1;
-}
-.spectrum-Card-grid:after {
-  z-index: 2;
-}
 
 /** Standard Vertical **/
 /** Waterfall **/
 .spectrum-Card--waterfall.spectrum-Card--default {
+  .spectrum-Card-checkboxWrapper {
+    z-index: 3;
+  }
+  .spectrum-Card-grid:after {
+    z-index: 2;
+  }
+  position: relative;
   border-width: var(--spectrum-card-border-size);
   border-style: solid;
   border-radius: var(--spectrum-card-border-radius);
+
+  &:before {
+    content: ' ';
+    inline-size: 100%;
+    block-size: 100%;
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0;
+    border-radius: var(--spectrum-card-border-radius);
+    transition: background-color var(--spectrum-global-animation-duration-100);
+  }
+
+  &:after {
+    content: ' ';
+    inline-size: 100%;
+    block-size: 100%;
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0;
+    border-radius: var(--spectrum-card-border-radius);
+    transition: background-color var(--spectrum-global-animation-duration-100);
+  }
+
   .spectrum-Card-grid {
     display: grid;
     grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) 1fr minmax(0, auto) var(--spectrum-card-body-padding-right);
-    grid-template-rows: minmax(var(--spectrum-card-body-padding-bottom), auto) var(--spectrum-global-dimension-size-300) minmax(30px, auto) auto auto auto var(--spectrum-card-body-padding-bottom);
+    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), auto) var(--spectrum-global-dimension-size-300) auto 1fr auto auto var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
       "preview preview preview preview    preview"
@@ -178,34 +199,26 @@ Quiet Vertical
 
     &:before {
       content: ' ';
+      grid-area: preview;
       inline-size: 100%;
       block-size: 100%;
-      position: absolute;
-      border-radius: var(--spectrum-card-border-radius);
-      transition: background-color var(--spectrum-global-animation-duration-100);
-    }
-
-    &:after {
-      content: ' ';
-      inline-size: 100%;
-      block-size: 100%;
-      position: absolute;
-      border-radius: var(--spectrum-card-border-radius);
+      border-start-start-radius: var(--spectrum-card-border-radius);
+      border-start-end-radius: var(--spectrum-card-border-radius);
       transition: background-color var(--spectrum-global-animation-duration-100);
     }
   }
   .spectrum-Card-image,
   .spectrum-Card-illustration {
     inline-size: 100%;
-    /*min-inline-size: var(--spectrum-card-min-width); causes to obscure border */
+    block-size: 100%;
 
     align-self: center;
     justify-self: center;
 
-    border-start-end-radius: var(--spectrum-card-border-radius);
-    border-start-start-radius: var(--spectrum-card-border-radius);
     border-block-end-width: var(--spectrum-card-border-size);
     border-block-end-style: solid;
+
+    clip-path: inset(0% 0% 0% 0% round var(--spectrum-card-border-radius) var(--spectrum-card-border-radius) 0 0);
   }
   .spectrum-Card-image {
   }
@@ -253,15 +266,44 @@ Quiet Vertical
 
 /** Tile **/
 .spectrum-Card--grid.spectrum-Card--default {
+  .spectrum-Card-checkboxWrapper {
+    z-index: 3;
+  }
+  .spectrum-Card-grid:after {
+    z-index: 2;
+  }
+  position: relative;
   border-width: var(--spectrum-card-border-size);
   border-style: solid;
   border-radius: var(--spectrum-card-border-radius);
+
+  &:before {
+    content: ' ';
+    inline-size: 100%;
+    block-size: 100%;
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0;
+    border-radius: var(--spectrum-card-border-radius);
+    transition: background-color var(--spectrum-global-animation-duration-100);
+  }
+
+  &:after {
+    content: ' ';
+    inline-size: 100%;
+    block-size: 100%;
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0;
+    border-radius: var(--spectrum-card-border-radius);
+    transition: background-color var(--spectrum-global-animation-duration-100);
+  }
 
   .spectrum-Card-grid {
     display: grid;
     block-size: 100%;
     grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) 1fr minmax(0, auto) var(--spectrum-card-body-padding-right);
-    grid-template-rows: 1fr var(--spectrum-global-dimension-size-300) auto auto auto auto var(--spectrum-card-body-padding-bottom);
+    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), 1fr) var(--spectrum-global-dimension-size-300) auto auto auto auto var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
       "preview preview preview preview    preview"
@@ -274,35 +316,27 @@ Quiet Vertical
 
     &:before {
       content: ' ';
+      grid-area: preview;
       inline-size: 100%;
       block-size: 100%;
-      position: absolute;
-      border-radius: var(--spectrum-card-border-radius);
-      transition: background-color var(--spectrum-global-animation-duration-100);
-    }
-
-    &:after {
-      content: ' ';
-      inline-size: 100%;
-      block-size: 100%;
-      position: absolute;
-      border-radius: var(--spectrum-card-border-radius);
+      border-start-start-radius: var(--spectrum-card-border-radius);
+      border-start-end-radius: var(--spectrum-card-border-radius);
       transition: background-color var(--spectrum-global-animation-duration-100);
     }
   }
   .spectrum-Card-image,
   .spectrum-Card-illustration {
-    block-size: var(--spectrum-card-coverphoto-height);
     inline-size: 100%;
+    block-size: 100%;
     /*min-inline-size: var(--spectrum-card-min-width); causes to obscure border */
 
     align-self: center;
     justify-self: center;
 
-    border-start-end-radius: var(--spectrum-card-border-radius);
-    border-start-start-radius: var(--spectrum-card-border-radius);
     border-block-end-width: var(--spectrum-card-border-size);
     border-block-end-style: solid;
+
+    clip-path: inset(0% 0% 0% 0% round var(--spectrum-card-border-radius) var(--spectrum-card-border-radius) 0 0);
   }
   .spectrum-Card-image {
   }
@@ -350,13 +384,43 @@ Quiet Vertical
 
 /** Standalone **/
 .spectrum-Card--noLayout.spectrum-Card--default {
+  .spectrum-Card-checkboxWrapper {
+    z-index: 3;
+  }
+  .spectrum-Card-grid:after {
+    z-index: 2;
+  }
+  position: relative;
   border-width: var(--spectrum-card-border-size);
   border-style: solid;
   border-radius: var(--spectrum-card-border-radius);
+
+  &:before {
+    content: ' ';
+    inline-size: 100%;
+    block-size: 100%;
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0;
+    border-radius: var(--spectrum-card-border-radius);
+    transition: background-color var(--spectrum-global-animation-duration-100);
+  }
+
+  &:after {
+    content: ' ';
+    inline-size: 100%;
+    block-size: 100%;
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0;
+    border-radius: var(--spectrum-card-border-radius);
+    transition: background-color var(--spectrum-global-animation-duration-100);
+  }
+
   .spectrum-Card-grid {
     display: grid;
     grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) 1fr minmax(0, auto) var(--spectrum-card-body-padding-right);
-    grid-template-rows: minmax(var(--spectrum-card-body-padding-bottom), auto) var(--spectrum-global-dimension-size-300) minmax(30px, auto) auto auto auto var(--spectrum-card-body-padding-bottom);
+    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), auto) var(--spectrum-global-dimension-size-300) auto 1fr auto auto var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
       "preview preview preview preview    preview"
@@ -369,34 +433,27 @@ Quiet Vertical
 
     &:before {
       content: ' ';
+      grid-area: preview;
       inline-size: 100%;
       block-size: 100%;
-      position: absolute;
-      border-radius: var(--spectrum-card-border-radius);
-      transition: background-color var(--spectrum-global-animation-duration-100);
-    }
-
-    &:after {
-      content: ' ';
-      inline-size: 100%;
-      block-size: 100%;
-      position: absolute;
-      border-radius: var(--spectrum-card-border-radius);
+      border-start-start-radius: var(--spectrum-card-border-radius);
+      border-start-end-radius: var(--spectrum-card-border-radius);
       transition: background-color var(--spectrum-global-animation-duration-100);
     }
   }
   .spectrum-Card-image,
   .spectrum-Card-illustration {
     inline-size: 100%;
+    block-size: 100%;
     /*min-inline-size: var(--spectrum-card-min-width); causes to obscure border */
 
     align-self: center;
     justify-self: center;
 
-    border-start-end-radius: var(--spectrum-card-border-radius);
-    border-start-start-radius: var(--spectrum-card-border-radius);
     border-block-end-width: var(--spectrum-card-border-size);
     border-block-end-style: solid;
+
+    clip-path: inset(0% 0% 0% 0% round var(--spectrum-card-border-radius) var(--spectrum-card-border-radius) 0 0);
   }
   .spectrum-Card-image {
   }
@@ -449,13 +506,22 @@ Quiet Vertical
 /** Quiet Vertical **/
 /** Waterfall **/
 .spectrum-Card--waterfall.spectrum-Card--isQuiet {
+  .spectrum-Card-checkboxWrapper {
+    z-index: 3;
+  }
+  .spectrum-Card-grid:before {
+    z-index: -1;
+  }
+  .spectrum-Card-grid:after {
+    z-index: 2;
+  }
   min-inline-size: var(--spectrum-card-quiet-min-size);
 
   .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
     grid-template-columns: minmax(0, auto) 1fr minmax(0, auto);
-    grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) auto 1fr var(--spectrum-card-body-padding-bottom);
+    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), auto) var(--spectrum-card-quiet-body-header-margin-top) auto 1fr var(--spectrum-card-body-padding-bottom);
     grid-template-areas:
       "preview preview preview"
       ".       .       ."
@@ -533,6 +599,15 @@ Quiet Vertical
 /** Gallery **/
 /** Non-collection version doesn't work in FF, but should work in a collection which determines the size **/
 .spectrum-Card--gallery.spectrum-Card--isQuiet {
+  .spectrum-Card-checkboxWrapper {
+    z-index: 3;
+  }
+  .spectrum-Card-grid:before {
+    z-index: -1;
+  }
+  .spectrum-Card-grid:after {
+    z-index: 2;
+  }
   min-inline-size: var(--spectrum-card-quiet-min-size);
 
   .spectrum-Card-grid {
@@ -621,6 +696,15 @@ Quiet Vertical
 
 /** Tile **/
 .spectrum-Card--grid.spectrum-Card--isQuiet {
+  .spectrum-Card-checkboxWrapper {
+    z-index: 3;
+  }
+  .spectrum-Card-grid:before {
+    z-index: -1;
+  }
+  .spectrum-Card-grid:after {
+    z-index: 2;
+  }
   min-inline-size: var(--spectrum-card-quiet-min-size);
 
   .spectrum-Card-grid {
@@ -715,6 +799,15 @@ Quiet Vertical
 
 /** Standalone **/
 .spectrum-Card--noLayout.spectrum-Card--isQuiet {
+  .spectrum-Card-checkboxWrapper {
+    z-index: 3;
+  }
+  .spectrum-Card-grid:before {
+    z-index: -1;
+  }
+  .spectrum-Card-grid:after {
+    z-index: 2;
+  }
   min-inline-size: var(--spectrum-card-quiet-min-size);
 
   .spectrum-Card-grid {
@@ -802,6 +895,9 @@ Broken as a CSS only solution in FF until aspect-ratio is supported or this is r
 For now working around it with a useLayoutEffect in CardBase.
 **/
 .spectrum-Card--grid.spectrum-Card--horizontal {
+  .spectrum-Card-grid:after {
+    z-index: 2;
+  }
   border-width: var(--spectrum-card-border-size);
   border-style: solid;
   border-radius: var(--spectrum-card-border-radius);
@@ -912,6 +1008,9 @@ For now working around it with a useLayoutEffect in CardBase.
  For now working around it with a useLayoutEffect in CardBase.
  **/
 .spectrum-Card--noLayout.spectrum-Card--horizontal {
+  .spectrum-Card-grid:after {
+    z-index: 2;
+  }
   border-width: var(--spectrum-card-border-size);
   border-style: solid;
   border-radius: var(--spectrum-card-border-radius);
