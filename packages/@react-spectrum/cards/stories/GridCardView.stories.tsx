@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ActionMenu, Item} from '@react-spectrum/menu';
-import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
+import {Card, CardView, GridLayout} from '../';
 import {Content, Footer} from '@react-spectrum/view';
 import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
@@ -23,32 +23,7 @@ import React, {useMemo, useState} from 'react';
 import {TextField} from '@react-spectrum/textfield';
 import {useCollator} from '@react-aria/i18n';
 
-let itemsLowVariance = [
-  {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 1, title: 'Bob 1'},
-  {width: 640, height: 640, src: 'https://i.imgur.com/DhygPot.jpg', id: 2, title: 'Joe 1'},
-  {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 3, title: 'Jane 1'},
-  {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 4, title: 'Bob 2'},
-  {width: 640, height: 640, src: 'https://i.imgur.com/DhygPot.jpg', id: 5, title: 'Joe 2'},
-  {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 6, title: 'Jane 2'},
-  {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 7, title: 'Bob 3'},
-  {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 8, title: 'Joe 3'},
-  {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 9, title: 'Jane 3'},
-  {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 10, title: 'Bob 4'},
-  {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 11, title: 'Joe 4'},
-  {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 12, title: 'Jane 4'},
-  {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 13, title: 'Bob 5'},
-  {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 14, title: 'Joe 5'},
-  {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 15, title: 'Jane 5'},
-  {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 16, title: 'Bob 6'},
-  {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 17, title: 'Joe 6'},
-  {width: 640, height: 640, src: 'https://i.imgur.com/DhygPot.jpg', id: 18, title: 'Jane 6'},
-  {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 19, title: 'Bob 7'},
-  {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 20, title: 'Joe 7'},
-  {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 21, title: 'Jane 7'},
-  {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 22, title: 'Bob 8'}
-];
-
-let items = [
+export let items = [
   {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Bob 1'},
   {width: 640, height: 640, src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 1'},
   {width: 182, height: 1009, src: 'https://i.imgur.com/L7RTlvI.png', title: 'Jane 1'},
@@ -73,32 +48,7 @@ let items = [
   {width: 1215, height: 121, src: 'https://i.imgur.com/zzwWogn.jpg', title: 'Bob 8'}
 ];
 
-let itemsNoSize = [
-  {src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Bob 1'},
-  {src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 1'},
-  {src: 'https://i.imgur.com/L7RTlvI.png', title: 'Jane 1'},
-  {src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Bob 2'},
-  {src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 2'},
-  {src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Jane 2'},
-  {src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Bob 3'},
-  {src: 'https://i.imgur.com/L7RTlvI.png', title: 'Joe 3'},
-  {src: 'https://i.imgur.com/zzwWogn.jpg', title: 'Jane 3'},
-  {src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Bob 4'},
-  {src: 'https://i.imgur.com/L7RTlvI.png', title: 'Joe 4'},
-  {src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Jane 4'},
-  {src: 'https://i.imgur.com/L7RTlvI.png', title: 'Bob 5'},
-  {src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Joe 5'},
-  {src: 'https://i.imgur.com/L7RTlvI.png', title: 'Jane 5'},
-  {src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Bob 6'},
-  {src: 'https://i.imgur.com/zzwWogn.jpg', title: 'Joe 6'},
-  {src: 'https://i.imgur.com/DhygPot.jpg', title: 'Jane 6'},
-  {src: 'https://i.imgur.com/L7RTlvI.png', title: 'Bob 7'},
-  {src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Joe 7'},
-  {src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Jane 7'},
-  {src: 'https://i.imgur.com/zzwWogn.jpg', title: 'Bob 8'}
-];
-
-function renderEmptyState() {
+export function renderEmptyState() {
   return (
     <IllustratedMessage>
       <svg width="150" height="103" viewBox="0 0 150 103">
@@ -111,7 +61,8 @@ function renderEmptyState() {
 }
 
 export default {
-  title: 'CardView'
+  title: 'CardView/Grid layout',
+  excludeStories: ['items', 'renderEmptyState', 'DynamicCardView', 'NoItemCardView', 'StaticCardView']
 };
 
 let onSelectionChange = action('onSelectionChange');
@@ -119,87 +70,36 @@ let actions = {
   onSelectionChange: s => onSelectionChange([...s])
 };
 
+export const DefaultGridStatic = () => StaticCardView({items});
+DefaultGridStatic.storyName = 'static card';
+
 export const DefaultGrid = () => DynamicCardView({items});
 DefaultGrid.storyName = 'default Grid layout with initialized layout';
-
-export const DefaultGridStatic = () => StaticCardView({items});
-DefaultGridStatic.storyName = 'default Grid layout, static card';
 
 export const DefaultGridConstructor = () => DynamicCardView({layout: GridLayout, items});
 DefaultGridConstructor.storyName = 'default Grid layout w/ layout constructor';
 
 export const SmallGrid = () => DynamicCardView({layout: GridLayout, cardSize: 'S', items});
-SmallGrid.storyName = 'Grid layout with small cards';
+SmallGrid.storyName = ' small cards';
 
 export const isLoadingNoHeightGrid = () => NoItemCardView({width: '800px', loadingState: 'loading', items});
-isLoadingNoHeightGrid.storyName = 'Grid, loadingState = loading, no height';
+isLoadingNoHeightGrid.storyName = 'loadingState = loading, no height';
 
 export const isLoadingHeightGrid = () => NoItemCardView({width: '800px', height: '800px', loadingState: 'loading', items});
-isLoadingHeightGrid.storyName = 'Grid, loadingState = loading, set height';
+isLoadingHeightGrid.storyName = 'loadingState = loading, set height';
 
 export const loadingMoreGrid = () => DynamicCardView({width: '800px', height: '800px', loadingState: 'loadingMore', items});
-loadingMoreGrid.storyName = 'Grid, loadingState = loadingMore';
+loadingMoreGrid.storyName = 'loadingState = loadingMore';
 
 export const emptyNoHeightGrid = () => NoItemCardView({width: '800px', renderEmptyState});
-emptyNoHeightGrid.storyName = 'Grid, empty state, no height';
+emptyNoHeightGrid.storyName = 'empty state, no height';
 
 export const emptyWithHeightGrid = () => NoItemCardView({width: '800px', height: '800px', renderEmptyState});
-emptyWithHeightGrid.storyName = 'Grid, empty, set height';
-
-export const DefaultGalleryLowVariance = () => DynamicCardView({layout: GalleryLayout, items: itemsLowVariance});
-DefaultGalleryLowVariance.storyName = 'default gallery layout, low variance in aspect ratios';
-
-export const DefaultGallery = () => DynamicCardView({layout: GalleryLayout, items: items});
-DefaultGallery.storyName = 'default gallery layout, high variance in aspect ratios';
-
-export const SmallGallery = () => DynamicCardView({layout: GalleryLayout, cardSize: 'S', items});
-SmallGallery.storyName = 'Gallery layout with small cards';
-
-export const isLoadingNoHeightGallery = () => NoItemCardView({layout: GalleryLayout, width: '800px', loadingState: 'loading'});
-isLoadingNoHeightGallery.storyName = 'Gallery, loadingState = loading, no height';
-
-export const isLoadingHeightGallery = () => NoItemCardView({layout: GalleryLayout, width: '800px', height: '800px', loadingState: 'loading'});
-isLoadingHeightGallery.storyName = 'Gallery, loadingState = loading, set height';
-
-export const loadingMoreGallery = () => DynamicCardView({layout: GalleryLayout, width: '800px', height: '800px', loadingState: 'loadingMore', items});
-loadingMoreGallery.storyName = 'Gallery, loadingState = loadingMore';
-
-export const emptyNoHeightGallery = () => NoItemCardView({layout: GalleryLayout, width: '800px', renderEmptyState});
-emptyNoHeightGallery.storyName = 'Gallery, empty state, no height';
-
-export const emptyWithHeightGallery = () => NoItemCardView({layout: GalleryLayout, width: '800px', height: '800px', renderEmptyState});
-emptyWithHeightGallery.storyName = 'Gallery, empty, set height';
-
-export const DefaultWaterfall = () => DynamicCardView({layout: WaterfallLayout, items: items});
-DefaultWaterfall.storyName = 'default Waterfall layout';
-
-export const DefaultWaterfallNoSize = () => DynamicCardView({layout: WaterfallLayout, items: itemsNoSize});
-DefaultWaterfallNoSize.storyName = 'default Waterfall layout, no size provided with items';
-
-export const QuietWaterfall = () => DynamicCardView({layout: WaterfallLayout, items, isQuiet: true});
-QuietWaterfall.storyName = 'Waterfall layout with quiet cards';
-
-export const QuietWaterfallNoSize = () => DynamicCardView({layout: WaterfallLayout, items, isQuiet: true});
-QuietWaterfallNoSize.storyName = 'Waterfall layout with quiet cards, no size provided with items';
-
-export const isLoadingNoHeightWaterfall = () => NoItemCardView({layout: WaterfallLayout, width: '800px', loadingState: 'loading'});
-isLoadingNoHeightWaterfall.storyName = 'Waterfall, loadingState = loading, no height';
-
-export const isLoadingHeightWaterfall = () => NoItemCardView({layout: WaterfallLayout, width: '800px', height: '800px', loadingState: 'loading'});
-isLoadingHeightWaterfall.storyName = 'Waterfall, loadingState = loading, set height';
-
-export const loadingMoreWaterfall = () => DynamicCardView({layout: WaterfallLayout, width: '800px', height: '800px', loadingState: 'loadingMore', items});
-loadingMoreWaterfall.storyName = 'Waterfall, loadingState = loadingMore';
-
-export const emptyNoHeightWaterfall = () => NoItemCardView({layout: WaterfallLayout, width: '800px', renderEmptyState});
-emptyNoHeightWaterfall.storyName = 'Waterfall, empty state, no height';
-
-export const emptyWithHeightWaterfall = () => NoItemCardView({layout: WaterfallLayout, width: '800px', height: '800px', renderEmptyState});
-emptyWithHeightWaterfall.storyName = 'Waterfall, empty, set height';
+emptyWithHeightGrid.storyName = 'empty, set height';
 
 // TODO add static and dynamic, various layouts, card size, selected keys, disabled keys
 
-function DynamicCardView(props) {
+export function DynamicCardView(props) {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
   let {
@@ -241,7 +141,7 @@ function DynamicCardView(props) {
   );
 }
 
-function NoItemCardView(props) {
+export function NoItemCardView(props) {
   let gridLayout = useMemo(() => new GridLayout({}), []);
   let {
     layout = gridLayout
@@ -254,7 +154,7 @@ function NoItemCardView(props) {
   );
 }
 
-function StaticCardView(props) {
+export function StaticCardView(props) {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
   let {
