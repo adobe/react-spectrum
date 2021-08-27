@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {AriaButtonProps} from '@react-types/button';
-import {classNames, useFocusableRef, useResizeObserver, useUnwrapDOMRef} from '@react-spectrum/utils';
+import {classNames, useFocusableRef, useIsMobileDevice, useResizeObserver, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRefValue, FocusableRef} from '@react-types/shared';
@@ -20,6 +20,7 @@ import {FocusRing} from '@react-aria/focus';
 import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
+import {MobileSearchAutocomplete} from './MobileSearchAutocomplete';
 import {Placement} from '@react-types/overlays';
 import {Popover} from '@react-spectrum/overlays';
 import {ProgressCircle} from '../../progress/src/ProgressCircle';
@@ -39,6 +40,18 @@ import {useSearchFieldState} from '@react-stately/searchfield';
 function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
 
+  let isMobile = useIsMobileDevice();
+  if (isMobile) {
+    // menuTrigger=focus/manual don't apply to mobile searchwithin
+    return <MobileSearchAutocomplete {...props} menuTrigger="input" ref={ref} />;
+  } else {
+    return <SearchAutocompleteBase {...props} ref={ref} />;
+  }
+}
+
+const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
+  props = useProviderProps(props);
+
   let {
     menuTrigger = 'input',
     shouldFlip = true,
@@ -48,7 +61,6 @@ function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteP
     onLoadMore,
     onSubmit
   } = props;
-
 
   let formatMessage = useMessageFormatter(intlMessages);
   let isAsync = loadingState != null;
@@ -174,7 +186,7 @@ function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteP
       </Popover>
     </>
   );
-}
+});
 
 interface SearchAutocompleteInputProps extends SpectrumSearchAutocompleteProps<unknown> {
   inputProps: InputHTMLAttributes<HTMLInputElement>,
