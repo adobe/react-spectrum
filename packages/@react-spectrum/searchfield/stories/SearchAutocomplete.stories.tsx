@@ -37,7 +37,9 @@ let actions = {
   onInputChange: action('onInputChange'),
   onSelectionChange: action('onSelectionChange'),
   onBlur: action('onBlur'),
-  onFocus: action('onFocus')
+  onFocus: action('onFocus'),
+  onChange: action('onChange'),
+  onSubmit: action('onSubmit')
 };
 
 function render(props = {}) {
