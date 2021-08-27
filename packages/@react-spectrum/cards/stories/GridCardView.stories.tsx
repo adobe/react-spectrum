@@ -19,7 +19,7 @@ import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
-import React, {useMemo, useState} from 'react';
+import React, {Key, useMemo, useState} from 'react';
 import {TextField} from '@react-spectrum/textfield';
 import {useCollator} from '@react-aria/i18n';
 
@@ -62,7 +62,7 @@ export function renderEmptyState() {
 
 export default {
   title: 'CardView/Grid layout',
-  excludeStories: ['items', 'renderEmptyState', 'DynamicCardView', 'NoItemCardView', 'StaticCardView']
+  excludeStories: ['items', 'renderEmptyState', 'DynamicCardView', 'NoItemCardView', 'StaticCardView', 'ControlledCardView']
 };
 
 let onSelectionChange = action('onSelectionChange');
@@ -80,7 +80,19 @@ export const DefaultGridConstructor = () => DynamicCardView({layout: GridLayout,
 DefaultGridConstructor.storyName = 'default Grid layout w/ layout constructor';
 
 export const SmallGrid = () => DynamicCardView({layout: GridLayout, cardSize: 'S', items});
-SmallGrid.storyName = ' small cards';
+SmallGrid.storyName = 'small cards';
+
+export const DisabledKeys = () => DynamicCardView({items, disabledKeys: ['Joe 2', 'Bob 4']});
+DisabledKeys.storyName = 'disabled keys, Joe2, Bob 4';
+
+export const NoSelection = () => DynamicCardView({items, selectionMode: 'none'});
+NoSelection.storyName = 'no selection allowed';
+
+export const SingleSelection = () => DynamicCardView({items, selectionMode: 'single'});
+SingleSelection.storyName = 'single selection only';
+
+export const SelectedKeys = () => ControlledCardView({items});
+SelectedKeys.storyName = 'selected keys, controlled';
 
 export const isLoadingNoHeightGrid = () => NoItemCardView({width: '800px', loadingState: 'loading', items});
 isLoadingNoHeightGrid.storyName = 'loadingState = loading, no height';
@@ -103,7 +115,9 @@ export function DynamicCardView(props) {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
   let {
-    layout = gridLayout
+    layout = gridLayout,
+    selectionMode = "multiple",
+    ...otherProps
   } = props;
 
   let [value, setValue] = useState('');
@@ -120,13 +134,57 @@ export function DynamicCardView(props) {
         <TextField value={value} onChange={setValue} label="Nth item to remove" />
         <ActionButton onPress={removeItem}>Remove</ActionButton>
       </Flex>
-      <CardView  {...actions} {...props} items={items} layout={layout} width="100%" height="100%" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
+      <CardView {...actions} {...otherProps} selectionMode={selectionMode} items={items} layout={layout} width="100%" height="100%" UNSAFE_style={{background: 'white'}} aria-label="Test CardView">
         {(item: any) => (
           <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
             <Image src={item.src} />
             <Heading>{item.title}</Heading>
             <Text slot="detail">PNG</Text>
-            <Content>Description</Content>
+            <Content>Very very very very very very very very very very very very very long description</Content>
+            <ActionMenu>
+              <Item>Action 1</Item>
+              <Item>Action 2</Item>
+            </ActionMenu>
+            <Footer>
+              <Button variant="primary">Something</Button>
+            </Footer>
+          </Card>
+        )}
+      </CardView>
+    </Flex>
+  );
+}
+
+export function ControlledCardView(props) {
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
+  let {
+    layout = gridLayout
+  } = props;
+
+  let [value, setValue] = useState('');
+  let [items, setItems] = useState(props.items);
+  let [selectedKeys, setSelectedKeys] = useState('all' as 'all' | Iterable<Key>);
+
+  let removeItem = () => {
+    let val = parseInt(value, 10);
+    let newItems = items.slice(0, val).concat(items.slice(val + 1, items.length));
+    setItems(newItems);
+  };
+
+  return (
+    <Flex direction="column" maxWidth="800px" width="100%" height="800px">
+      <Flex direction="row" maxWidth="500px" alignItems="end">
+        <TextField value={value} onChange={setValue} label="Nth item to remove" />
+        <ActionButton onPress={removeItem}>Remove</ActionButton>
+      </Flex>
+      <CardView  {...actions} {...props} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} items={items} layout={layout} width="100%" height="100%" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
+        {(item: any) => (
+          <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
+            <Image src={item.src} />
+            <Heading>{item.title}</Heading>
+            <Text slot="detail">PNG</Text>
+            <Content>Very very very very very very very very very very very very very long description</Content>
             <ActionMenu>
               <Item>Action 1</Item>
               <Item>Action 2</Item>
@@ -163,7 +221,7 @@ export function StaticCardView(props) {
 
   return (
     <CardView  {...actions} {...props} layout={layout} width="800px" height="800px" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
-      <Card textValue="Bob 1">
+      <Card width={1001} height={381} textValue="Bob 1">
         <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
         <Heading>Bob 1</Heading>
         <Text slot="detail">PNG</Text>
@@ -176,7 +234,7 @@ export function StaticCardView(props) {
           <Button variant="primary">Something</Button>
         </Footer>
       </Card>
-      <Card textValue="Joe 1">
+      <Card width={640} height={640} textValue="Joe 1">
         <Image src="https://i.imgur.com/DhygPot.jpg" />
         <Heading>Joe 1</Heading>
         <Text slot="detail">PNG</Text>
@@ -189,7 +247,7 @@ export function StaticCardView(props) {
           <Button variant="primary">Something</Button>
         </Footer>
       </Card>
-      <Card textValue="Jane 1">
+      <Card width={182} height={1009} textValue="Jane 1">
         <Image src="https://i.imgur.com/L7RTlvI.png" />
         <Heading>Jane 1</Heading>
         <Text slot="detail">PNG</Text>
@@ -202,9 +260,22 @@ export function StaticCardView(props) {
           <Button variant="primary">Something</Button>
         </Footer>
       </Card>
-      <Card textValue="Bob 2">
+      <Card width={1516} height={1009} textValue="Bob 2">
         <Image src="https://i.imgur.com/1nScMIH.jpg" />
         <Heading>Bob 2</Heading>
+        <Text slot="detail">PNG</Text>
+        <Content>Description</Content>
+        <ActionMenu>
+          <Item>Action 1</Item>
+          <Item>Action 2</Item>
+        </ActionMenu>
+        <Footer>
+          <Button variant="primary">Something</Button>
+        </Footer>
+      </Card>
+      <Card width={640} height={640} textValue="Joe 1">
+        <Image src="https://i.imgur.com/DhygPot.jpg" />
+        <Heading>Joe 2</Heading>
         <Text slot="detail">PNG</Text>
         <Content>Description</Content>
         <ActionMenu>

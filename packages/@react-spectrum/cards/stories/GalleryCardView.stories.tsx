@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {ControlledCardView, DynamicCardView, items, NoItemCardView, renderEmptyState, StaticCardView} from './GridCardView.stories';
 import {GalleryLayout} from '../';
-import {DynamicCardView, items, NoItemCardView, renderEmptyState, StaticCardView} from './GridCardView.stories';
 
 let itemsLowVariance = [
   {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 1, title: 'Bob 1'},
@@ -48,11 +48,23 @@ DefaultGalleryStatic.storyName = 'static card';
 export const DefaultGalleryLowVariance = () => DynamicCardView({layout: GalleryLayout, items: itemsLowVariance});
 DefaultGalleryLowVariance.storyName = 'dynamic cards, low variance in aspect ratios';
 
-export const DefaultGallery = () => DynamicCardView({layout: GalleryLayout, items: items});
+export const DefaultGallery = () => DynamicCardView({layout: GalleryLayout, items});
 DefaultGallery.storyName = 'dynamic cards, high variance in aspect ratios';
 
-export const SmallGallery = () => DynamicCardView({layout: GalleryLayout, cardSize: 'S', items});
+export const SmallGallery = () => DynamicCardView({layout: GalleryLayout, cardSize: 'S', items: itemsLowVariance});
 SmallGallery.storyName = 'small cards';
+
+export const DisabledKeys = () => DynamicCardView({layout: GalleryLayout, items: itemsLowVariance, disabledKeys: ['Joe 2', 'Bob 4']});
+DisabledKeys.storyName = 'disabled keys, Joe2, Bob 4';
+
+export const NoSelection = () => DynamicCardView({layout: GalleryLayout, items: itemsLowVariance, selectionMode: 'none'});
+NoSelection.storyName = 'no selection allowed';
+
+export const SingleSelection = () => DynamicCardView({layout: GalleryLayout, items: itemsLowVariance, selectionMode: 'single'});
+SingleSelection.storyName = 'single selection only';
+
+export const SelectedKeys = () => ControlledCardView({layout: GalleryLayout, items: itemsLowVariance});
+SelectedKeys.storyName = 'selected keys, controlled';
 
 export const isLoadingNoHeightGallery = () => NoItemCardView({layout: GalleryLayout, width: '800px', loadingState: 'loading'});
 isLoadingNoHeightGallery.storyName = 'loadingState = loading, no height';
