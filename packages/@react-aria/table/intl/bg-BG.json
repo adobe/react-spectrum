@@ -1,4 +1,9 @@
 {
-  "select": "Избирам",
-  "selectAll": "Избери всички"
+  "ascending": "възходящ",
+  "ascendingSort": "сортирано по колона {columnName} във възходящ ред",
+  "descending": "низходящ",
+  "descendingSort": "сортирано по колона {columnName} в низходящ ред",
+  "select": "Изберете",
+  "selectAll": "Изберете всичко",
+  "sortable": "сортираща колона"
 }
