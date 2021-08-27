@@ -56,7 +56,8 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteProps<T>, 
     popoverRef,
     inputRef,
     listBoxRef,
-    keyboardDelegate
+    keyboardDelegate,
+    onSubmit = () => {}
   } = props;
 
   let {labelProps, inputProps, clearButtonProps} = useSearchField({
@@ -65,7 +66,7 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteProps<T>, 
     onChange: state.setInputValue,
     autoComplete: 'off',
     onClear: () => state.setInputValue(''),
-    onSubmit: (value) => props.onSubmit(value, state.selectedKey || null)
+    onSubmit: (value) => onSubmit(value, state.selectedKey || null)
   }, state, inputRef);
   
 

@@ -45,7 +45,8 @@ function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteP
     direction = 'bottom',
     isQuiet,
     loadingState,
-    onLoadMore
+    onLoadMore,
+    onSubmit
   } = props;
 
 
@@ -68,7 +69,10 @@ function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteP
   );
   let layout = useListBoxLayout(comboBoxState);
 
-  let searchFieldState = useSearchFieldState(props);
+  let searchFieldState = useSearchFieldState({
+    ...props,
+    onSubmit: (value) => onSubmit(value, null)
+  });
 
   let state = {...comboBoxState, ...searchFieldState};
   
