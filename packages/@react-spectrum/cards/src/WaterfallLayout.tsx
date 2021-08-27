@@ -64,9 +64,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     // TODO: WaterfallLayout doesn't use card size in v2, but perhaps it should support it? Perhaps it would modify
     // minItemSize defaults or other things
     super(options);
-    // TODO: Modified the item height min to 300 (refine the number later) in an attempt to make sure the checkbox doesn't cover the title
-    // will need to modify Card css itself so that the height of the image can grow and have gray borders on the left and right to maintain aspect ratio
-    this.minItemSize = options.minItemSize || new Size(240, 300);
+    this.minItemSize = options.minItemSize || new Size(240, 136);
     this.maxItemSize = options.maxItemSize || new Size(Infinity, Infinity);
     this.margin = 24;
     this.minSpace = options.minSpace || new Size(24, 24);
@@ -195,10 +193,6 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     let layoutInfo = this.layoutInfos.get(key);
     if (!size || !layoutInfo) {
       return false;
-    }
-
-    if (size.height < this.minItemSize.height) {
-      size.height = this.minItemSize.height;
     }
 
     if (size.height !== layoutInfo.rect.height) {
