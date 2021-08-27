@@ -15,7 +15,7 @@ import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/searchfield/package.json';
 
 ```jsx import
-import {SearchAutocomplete, Item} from '@react-spectrum/searchfield';
+import {SearchAutocomplete, Section, Item} from '@react-spectrum/searchfield';
 import {useFilter} from '@react-aria/i18n';
 ```
 
@@ -162,6 +162,76 @@ the `id` of the labeling element instead.
 
 In order to internationalize a SearchAutocomplete, a localized string should be passed to the `label` or `aria-label` prop.
 When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
+
+
+## Sections
+SearchAutocomplete supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. Each `Section` takes a `title` and `key` prop.
+
+### Static items
+```tsx example
+<SearchAutocomplete label="Preferred fruit or vegetable">
+  <Section title="Fruit">
+    <Item key="Apple">Apple</Item>
+    <Item key="Banana">Banana</Item>
+    <Item key="Orange">Orange</Item>
+    <Item key="Honeydew">Honeydew</Item>
+    <Item key="Grapes">Grapes</Item>
+    <Item key="Watermelon">Watermelon</Item>
+    <Item key="Cantaloupe">Cantaloupe</Item>
+    <Item key="Pear">Pear</Item>
+  </Section>
+  <Section title="Vegetable">
+    <Item key="Cabbage">Cabbage</Item>
+    <Item key="Broccoli">Broccoli</Item>
+    <Item key="Carrots">Carrots</Item>
+    <Item key="Lettuce">Lettuce</Item>
+    <Item key="Spinach">Spinach</Item>
+    <Item key="Bok Choy">Bok Choy</Item>
+    <Item key="Cauliflower">Cauliflower</Item>
+    <Item key="Potatoes">Potatoes</Item>
+  </Section>
+</SearchAutocomplete>
+```
+
+### Dynamic items
+Sections used with dynamic items are populated from a hierarchical data structure. Please note that `Section` takes an array of data using the `items` prop only.
+
+```tsx example
+function Example() {
+  let options = [
+    {name: 'Fruit', children: [
+      {name: 'Apple'},
+      {name: 'Banana'},
+      {name: 'Orange'},
+      {name: 'Honeydew'},
+      {name: 'Grapes'},
+      {name: 'Watermelon'},
+      {name: 'Cantaloupe'},
+      {name: 'Pear'}
+    ]},
+    {name: 'Vegetable', children: [
+      {name: 'Cabbage'},
+      {name: 'Broccoli'},
+      {name: 'Carrots'},
+      {name: 'Lettuce'},
+      {name: 'Spinach'},
+      {name: 'Bok Choy'},
+      {name: 'Cauliflower'},
+      {name: 'Potatoes'}
+    ]}
+  ];
+
+  return (
+    <SearchAutocomplete label="Preferred fruit or vegetable" defaultItems={options}>
+      {item => (
+        <Section key={item.name} items={item.children} title={item.name}>
+          {item => <Item key={item.name}>{item.name}</Item>}
+        </Section>
+      )}
+    </SearchAutocomplete>
+  );
+}
+```
 
 ## Asynchronous loading
 
