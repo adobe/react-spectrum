@@ -33,8 +33,8 @@ export interface GalleryLayoutOptions<T> extends BaseLayoutOptions<T> {
    * The vertical padding for an item.
    * @default 32
    */
-  itemPadding?: Size,
-};
+  itemPadding?: Size
+}
 
 // TODO: copied from V2, update this with the proper spectrum values
 // Should these be affected by Scale as well?
@@ -132,9 +132,9 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
       for (let j = index; j < index + row.length; j++) {
         let node = this.collection.at(j);
         let itemWidth = Math.round(rowHeight * ratios[j]);
-        let rect = new Rect(x, y, itemWidth, itemHeight)
+        let rect = new Rect(x, y, itemWidth, itemHeight);
         let layoutInfo = new LayoutInfo(node.type, node.key, rect);
-        this.layoutInfos.set(node.key, layoutInfo)
+        this.layoutInfos.set(node.key, layoutInfo);
         x += itemWidth + this.itemSpacing.width;
       }
 
@@ -184,8 +184,8 @@ function linearPartition(seq, k) {
     return [seq];
   }
 
-  let table = Array(n).fill().map(() => Array(k).fill(0));
-  let solution = Array(n - 1).fill().map(() => Array(k - 1).fill(0));
+  let table = Array(n).fill(0).map(() => Array(k).fill(0));
+  let solution = Array(n - 1).fill(0).map(() => Array(k - 1).fill(0));
 
   for (let i = 0; i < n; i++) {
     table[i][0] = seq[i] + (i > 0 ? table[i - 1][0] : 0);

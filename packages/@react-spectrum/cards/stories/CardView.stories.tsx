@@ -11,16 +11,16 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionMenu, Item} from '@react-spectrum/menu';
 import {ActionButton, Button} from '@react-spectrum/button';
+import {ActionMenu, Item} from '@react-spectrum/menu';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
 import {Content, Footer} from '@react-spectrum/view';
 import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
-import {TextField} from '@react-spectrum/textfield';
 import React, {useMemo, useState} from 'react';
+import {TextField} from '@react-spectrum/textfield';
 import {useCollator} from '@react-aria/i18n';
 
 let itemsLowVariance = [
@@ -112,100 +112,96 @@ function renderEmptyState() {
 
 export default {
   title: 'CardView'
-}
+};
 
 let onSelectionChange = action('onSelectionChange');
 let actions = {
-  onSelectionChange: s => onSelectionChange([...s]),
+  onSelectionChange: s => onSelectionChange([...s])
 };
 
-export const DefaultGrid = () => render({items});
+export const DefaultGrid = () => DynamicCardView({items});
 DefaultGrid.storyName = 'default Grid layout with initialized layout';
 
-export const DefaultGridStatic = () => renderStatic({items});
+export const DefaultGridStatic = () => StaticCardView({items});
 DefaultGridStatic.storyName = 'default Grid layout, static card';
 
-export const DefaultGridConstructor = () => render({layout: GridLayout, items});
+export const DefaultGridConstructor = () => DynamicCardView({layout: GridLayout, items});
 DefaultGridConstructor.storyName = 'default Grid layout w/ layout constructor';
 
-export const SmallGrid = () => render({layout: GridLayout, cardSize: 'S', items});
+export const SmallGrid = () => DynamicCardView({layout: GridLayout, cardSize: 'S', items});
 SmallGrid.storyName = 'Grid layout with small cards';
 
-export const isLoadingNoHeightGrid = () => renderNoItems({width: '800px', loadingState: 'loading', items});
+export const isLoadingNoHeightGrid = () => NoItemCardView({width: '800px', loadingState: 'loading', items});
 isLoadingNoHeightGrid.storyName = 'Grid, loadingState = loading, no height';
 
-export const isLoadingHeightGrid = () => renderNoItems({width: '800px', height: '800px', loadingState: 'loading', items});
+export const isLoadingHeightGrid = () => NoItemCardView({width: '800px', height: '800px', loadingState: 'loading', items});
 isLoadingHeightGrid.storyName = 'Grid, loadingState = loading, set height';
 
-export const loadingMoreGrid = () => render({width: '800px', height: '800px', loadingState: 'loadingMore', items});
+export const loadingMoreGrid = () => DynamicCardView({width: '800px', height: '800px', loadingState: 'loadingMore', items});
 loadingMoreGrid.storyName = 'Grid, loadingState = loadingMore';
 
-export const emptyNoHeightGrid = () => renderNoItems({width: '800px', renderEmptyState});
+export const emptyNoHeightGrid = () => NoItemCardView({width: '800px', renderEmptyState});
 emptyNoHeightGrid.storyName = 'Grid, empty state, no height';
 
-export const emptyWithHeightGrid = () => renderNoItems({width: '800px', height: '800px', renderEmptyState});
+export const emptyWithHeightGrid = () => NoItemCardView({width: '800px', height: '800px', renderEmptyState});
 emptyWithHeightGrid.storyName = 'Grid, empty, set height';
 
-export const DefaultGalleryLowVariance = () => render({layout: GalleryLayout, items: itemsLowVariance});
+export const DefaultGalleryLowVariance = () => DynamicCardView({layout: GalleryLayout, items: itemsLowVariance});
 DefaultGalleryLowVariance.storyName = 'default gallery layout, low variance in aspect ratios';
 
-export const DefaultGallery = () => render({layout: GalleryLayout, items: items});
+export const DefaultGallery = () => DynamicCardView({layout: GalleryLayout, items: items});
 DefaultGallery.storyName = 'default gallery layout, high variance in aspect ratios';
 
-export const SmallGallery = () => render({layout: GalleryLayout, cardSize: 'S', items});
+export const SmallGallery = () => DynamicCardView({layout: GalleryLayout, cardSize: 'S', items});
 SmallGallery.storyName = 'Gallery layout with small cards';
 
-export const isLoadingNoHeightGallery = () => renderNoItems({layout: GalleryLayout, width: '800px', loadingState: 'loading'});
+export const isLoadingNoHeightGallery = () => NoItemCardView({layout: GalleryLayout, width: '800px', loadingState: 'loading'});
 isLoadingNoHeightGallery.storyName = 'Gallery, loadingState = loading, no height';
 
-export const isLoadingHeightGallery = () => renderNoItems({layout: GalleryLayout, width: '800px', height: '800px', loadingState: 'loading'});
+export const isLoadingHeightGallery = () => NoItemCardView({layout: GalleryLayout, width: '800px', height: '800px', loadingState: 'loading'});
 isLoadingHeightGallery.storyName = 'Gallery, loadingState = loading, set height';
 
-export const loadingMoreGallery = () => render({layout: GalleryLayout, width: '800px', height: '800px', loadingState: 'loadingMore', items});
+export const loadingMoreGallery = () => DynamicCardView({layout: GalleryLayout, width: '800px', height: '800px', loadingState: 'loadingMore', items});
 loadingMoreGallery.storyName = 'Gallery, loadingState = loadingMore';
 
-export const emptyNoHeightGallery = () => renderNoItems({layout: GalleryLayout, width: '800px', renderEmptyState});
+export const emptyNoHeightGallery = () => NoItemCardView({layout: GalleryLayout, width: '800px', renderEmptyState});
 emptyNoHeightGallery.storyName = 'Gallery, empty state, no height';
 
-export const emptyWithHeightGallery = () => renderNoItems({layout: GalleryLayout, width: '800px', height: '800px', renderEmptyState});
+export const emptyWithHeightGallery = () => NoItemCardView({layout: GalleryLayout, width: '800px', height: '800px', renderEmptyState});
 emptyWithHeightGallery.storyName = 'Gallery, empty, set height';
 
-export const DefaultWaterfall = () => render({layout: WaterfallLayout, items: items});
+export const DefaultWaterfall = () => DynamicCardView({layout: WaterfallLayout, items: items});
 DefaultWaterfall.storyName = 'default Waterfall layout';
 
-export const DefaultWaterfallNoSize = () => render({layout: WaterfallLayout, items: itemsNoSize});
+export const DefaultWaterfallNoSize = () => DynamicCardView({layout: WaterfallLayout, items: itemsNoSize});
 DefaultWaterfallNoSize.storyName = 'default Waterfall layout, no size provided with items';
 
-export const QuietWaterfall = () => render({layout: WaterfallLayout, items, isQuiet: true});
+export const QuietWaterfall = () => DynamicCardView({layout: WaterfallLayout, items, isQuiet: true});
 QuietWaterfall.storyName = 'Waterfall layout with quiet cards';
 
-export const QuietWaterfallNoSize = () => render({layout: WaterfallLayout, items, isQuiet: true});
+export const QuietWaterfallNoSize = () => DynamicCardView({layout: WaterfallLayout, items, isQuiet: true});
 QuietWaterfallNoSize.storyName = 'Waterfall layout with quiet cards, no size provided with items';
 
-export const isLoadingNoHeightWaterfall = () => renderNoItems({layout: WaterfallLayout, width: '800px', loadingState: 'loading'});
+export const isLoadingNoHeightWaterfall = () => NoItemCardView({layout: WaterfallLayout, width: '800px', loadingState: 'loading'});
 isLoadingNoHeightWaterfall.storyName = 'Waterfall, loadingState = loading, no height';
 
-export const isLoadingHeightWaterfall = () => renderNoItems({layout: WaterfallLayout, width: '800px', height: '800px', loadingState: 'loading'});
+export const isLoadingHeightWaterfall = () => NoItemCardView({layout: WaterfallLayout, width: '800px', height: '800px', loadingState: 'loading'});
 isLoadingHeightWaterfall.storyName = 'Waterfall, loadingState = loading, set height';
 
-export const loadingMoreWaterfall = () => render({layout: WaterfallLayout, width: '800px', height: '800px', loadingState: 'loadingMore', items});
+export const loadingMoreWaterfall = () => DynamicCardView({layout: WaterfallLayout, width: '800px', height: '800px', loadingState: 'loadingMore', items});
 loadingMoreWaterfall.storyName = 'Waterfall, loadingState = loadingMore';
 
-export const emptyNoHeightWaterfall = () => renderNoItems({layout: WaterfallLayout, width: '800px', renderEmptyState});
+export const emptyNoHeightWaterfall = () => NoItemCardView({layout: WaterfallLayout, width: '800px', renderEmptyState});
 emptyNoHeightWaterfall.storyName = 'Waterfall, empty state, no height';
 
-export const emptyWithHeightWaterfall = () => renderNoItems({layout: WaterfallLayout, width: '800px', height: '800px', renderEmptyState});
+export const emptyWithHeightWaterfall = () => NoItemCardView({layout: WaterfallLayout, width: '800px', height: '800px', renderEmptyState});
 emptyWithHeightWaterfall.storyName = 'Waterfall, empty, set height';
-
-
-
 
 // TODO add static and dynamic, various layouts, card size, selected keys, disabled keys
 
-
-function render(props) {
+function DynamicCardView(props) {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let gridLayout = useMemo(() => new GridLayout({collator}), []);
+  let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
   let {
     layout = gridLayout
   } = props;
@@ -213,10 +209,10 @@ function render(props) {
   let [value, setValue] = useState('');
   let [items, setItems] = useState(props.items);
   let removeItem = () => {
-    let val = parseInt(value);
-    let newItems = items.slice(0, val).concat(items.slice(val + 1, items.length))
+    let val = parseInt(value, 10);
+    let newItems = items.slice(0, val).concat(items.slice(val + 1, items.length));
     setItems(newItems);
-  }
+  };
 
   return (
     <Flex direction="column" maxWidth="800px" width="100%" height="800px">
@@ -225,7 +221,7 @@ function render(props) {
         <ActionButton onPress={removeItem}>Remove</ActionButton>
       </Flex>
       <CardView  {...actions} {...props} items={items} layout={layout} width="100%" height="100%" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
-        {item =>
+        {(item: any) => (
           <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
             <Image src={item.src} />
             <Heading>{item.title}</Heading>
@@ -239,13 +235,13 @@ function render(props) {
               <Button variant="primary">Something</Button>
             </Footer>
           </Card>
-        }
+        )}
       </CardView>
     </Flex>
   );
 }
 
-function renderNoItems(props) {
+function NoItemCardView(props) {
   let gridLayout = useMemo(() => new GridLayout({}), []);
   let {
     layout = gridLayout
@@ -258,9 +254,9 @@ function renderNoItems(props) {
   );
 }
 
-function renderStatic(props) {
+function StaticCardView(props) {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let gridLayout = useMemo(() => new GridLayout({collator}), []);
+  let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
   let {
     layout = gridLayout
   } = props;

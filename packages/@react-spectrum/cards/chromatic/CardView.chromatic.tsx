@@ -21,7 +21,7 @@ import React, {useMemo} from 'react';
 import {SpectrumCardViewProps} from '@react-types/cards';
 import {useCollator} from '@react-aria/i18n';
 
-const meta: Meta<SpectrumCardViewProps> = {
+const meta: Meta<SpectrumCardViewProps<object>> = {
   title: 'CardView'
 };
 
@@ -52,9 +52,9 @@ let itemsLowVariance = [
   {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 22, title: 'Bob 8'}
 ];
 
-const Template = (): Story<SpectrumCardViewProps> => (props) => {
+function DynamicCardView(props: SpectrumCardViewProps<object>) {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let gridLayout = useMemo(() => new GridLayout({collator}), []);
+  let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
   let {
     layout = gridLayout,
     items
@@ -62,7 +62,7 @@ const Template = (): Story<SpectrumCardViewProps> => (props) => {
 
   return (
     <CardView {...props} items={items} layout={layout} width="800px" height="800px" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
-      {item =>
+      {(item: any) => (
         <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
           <Image src={item.src} />
           <Heading>{item.title}</Heading>
@@ -76,10 +76,12 @@ const Template = (): Story<SpectrumCardViewProps> => (props) => {
             <Button variant="primary">Something</Button>
           </Footer>
         </Card>
-      }
+      )}
     </CardView>
-  )
-};
+  );
+}
+
+const Template = (): Story<SpectrumCardViewProps<object>> => (props) => <DynamicCardView {...props} />;
 
 
 export const DefaultGrid = Template().bind({});
