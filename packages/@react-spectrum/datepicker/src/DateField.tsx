@@ -10,9 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="css-module-types" />
+import {DatePickerField} from './DatePickerField';
+import {DateValue, SpectrumDatePickerProps} from '@react-types/datepicker';
+import {FocusScope} from '@react-aria/focus';
+import React from 'react';
+import {useProviderProps} from '@react-spectrum/provider';
 
-export * from './DatePicker';
-export * from './DateRangePicker';
-export * from './TimeField';
-export * from './DateField';
+export function DateField<T extends DateValue>(props: SpectrumDatePickerProps<T>) {
+  props = useProviderProps(props);
+  let {
+    autoFocus
+  } = props;
+
+  return (
+    <FocusScope autoFocus={autoFocus}>
+      <DatePickerField {...props} />
+    </FocusScope>
+  );
+}

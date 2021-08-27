@@ -11,60 +11,172 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Calendar} from '../';
-import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseZonedDateTime, today, ZonedDateTime} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, parseAbsolute, parseAbsoluteToLocal, parseDate, parseDateTime, parseZonedDateTime, toZoned} from '@internationalized/date';
+import {DateField} from '../';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
-import React, {useState} from 'react';
+import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {TimeField} from '@react-spectrum/datepicker';
 import {useLocale} from '@react-aria/i18n';
 
-storiesOf('Date and Time/Calendar', module)
+const BlockDecorator = storyFn => <div>{storyFn()}</div>;
+
+storiesOf('Date and Time/DateField', module)
+  .addDecorator(BlockDecorator)
   .add(
-    'Default',
+    'default',
     () => render()
   )
   .add(
     'defaultValue',
-    () => render({defaultValue: new CalendarDate(2019, 6, 5)})
+    () => render({defaultValue: parseDate('2020-02-03')})
   )
   .add(
     'controlled value',
-    () => render({value: new CalendarDate(2019, 5, 5)})
+    () => render({value: new CalendarDate(2020, 2, 3)})
   )
   .add(
-    'with time',
-    () => <CalendarWithTime />
+    'defaultValue, zoned',
+    () => render({defaultValue: toZoned(parseDate('2020-02-03'), 'America/Los_Angeles')})
   )
   .add(
-    'with zoned time',
-    () => <CalendarWithZonedTime />
+    'granularity: minute',
+    () => render({granularity: 'minute'})
   )
   .add(
-    'minValue: today, maxValue: 1 week from now',
-    () => render({minValue: today(getLocalTimeZone()), maxValue: today(getLocalTimeZone()).add({weeks: 1})})
+    'granularity: second',
+    () => render({granularity: 'second'})
   )
   .add(
-    'defaultValue + minValue + maxValue',
-    () => render({defaultValue: new CalendarDate(2019, 6, 10), minValue: new CalendarDate(2019, 6, 5), maxValue: new CalendarDate(2019, 6, 20)})
+    'hourCycle: 12',
+    () => render({granularity: 'minute', hourCycle: 12})
+  )
+  .add(
+    'hourCycle: 24',
+    () => render({granularity: 'minute', hourCycle: 24})
+  )
+  .add(
+    'granularity: minute, defaultValue',
+    () => render({granularity: 'minute', defaultValue: parseDateTime('2021-03-14T08:45')})
+  )
+  .add(
+    'granularity: minute, defaultValue, zoned',
+    () => render({granularity: 'minute', defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]')})
+  )
+  .add('granularity: minute, defaultValue, zoned, absolute',
+    () => render({granularity: 'minute', defaultValue: parseAbsoluteToLocal('2021-11-07T07:45:00Z')})
+  )
+  .add('granularity: minute, defaultValue, zoned, absolute, timeZone',
+    () => render({granularity: 'minute', defaultValue: parseAbsolute('2021-11-07T07:45:00Z', 'America/New_York')})
+  )
+  .add(
+    'defaultValue with time, granularity: day',
+    () => render({granularity: 'day', defaultValue: parseDateTime('2021-03-14T08:45')})
+  )
+  .add(
+    'hideTimeZone',
+    () => render({granularity: 'minute', defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]'), hideTimeZone: true})
   )
   .add(
     'isDisabled',
-    () => render({defaultValue: new CalendarDate(2019, 6, 5), isDisabled: true})
+    () => render({isDisabled: true, value: new CalendarDate(2020, 2, 3)})
+  )
+  .add(
+    'isQuiet, isDisabled',
+    () => render({isQuiet: true, isDisabled: true, value: new CalendarDate(2020, 2, 3)})
   )
   .add(
     'isReadOnly',
-    () => render({defaultValue: new CalendarDate(2019, 6, 5), isReadOnly: true})
+    () => render({isReadOnly: true, value: new CalendarDate(2020, 2, 3)})
   )
   .add(
     'autoFocus',
-    () => render({defaultValue: new CalendarDate(2019, 6, 5), autoFocus: true})
+    () => render({autoFocus: true})
+  )
+  .add(
+    'validationState: invalid',
+    () => render({validationState: 'invalid', value: new CalendarDate(2020, 2, 3)})
+  )
+  .add(
+    'validationState: valid',
+    () => render({validationState: 'valid', value: new CalendarDate(2020, 2, 3)})
+  )
+  .add(
+    'minValue: 2010/1/1, maxValue: 2020/1/1',
+    () => render({minValue: new CalendarDate(2010, 0, 1), maxValue: new CalendarDate(2020, 0, 1)})
+  )
+  .add(
+    'placeholderValue: 1980/1/1',
+    () => render({placeholderValue: new CalendarDate(1980, 1, 1)})
+  )
+  .add(
+    'placeholderValue: 1980/1/1 8 AM',
+    () => render({placeholderValue: new CalendarDateTime(1980, 1, 1, 8)})
+  )
+  .add(
+    'placeholderValue: 1980/1/1, zoned',
+    () => render({placeholderValue: toZoned(new CalendarDate(1980, 1, 1), 'America/Los_Angeles')})
+  );
+
+storiesOf('Date and Time/DateField/styling', module)
+  .addDecorator(BlockDecorator)
+  .add(
+    'isQuiet',
+    () => render({isQuiet: true})
+  )
+  .add(
+    'labelPosition: side',
+    () => render({labelPosition: 'side'})
+  )
+  .add(
+    'labelAlign: end',
+    () => render({labelPosition: 'top', labelAlign: 'end'})
+  )
+  .add(
+    'required',
+    () => render({isRequired: true})
+  )
+  .add(
+    'required with label',
+    () => render({isRequired: true, necessityIndicator: 'label'})
+  )
+  .add(
+    'optional',
+    () => render({necessityIndicator: 'label'})
+  )
+  .add(
+    'no visible label',
+    () => render({'aria-label': 'Date', label: null})
+  )
+  .add(
+    'quiet no visible label',
+    () => render({isQuiet: true, 'aria-label': 'Date', label: null})
+  )
+  .add(
+    'custom width',
+    () => render({width: 'size-3000'})
+  )
+  .add(
+    'quiet custom width',
+    () => render({isQuiet: true, width: 'size-3000'})
+  )
+  .add(
+    'custom width no visible label',
+    () => render({width: 'size-3000', label: null, 'aria-label': 'Date'})
+  )
+  .add(
+    'custom width, labelPosition=side',
+    () => render({width: 'size-3000', labelPosition: 'side'})
   );
 
 function render(props = {}) {
-  return <Example onChange={action('change')} {...props} />;
+  return (
+    <Example
+      label="Date"
+      onChange={action('change')}
+      {...props} />
+  );
 }
 
 // https://github.com/unicode-org/cldr/blob/22af90ae3bb04263f651323ce3d9a71747a75ffb/common/supplemental/supplementalData.xml#L4649-L4664
@@ -79,6 +191,8 @@ const preferences = [
   {label: 'Amharic (Ethiopia)', locale: 'am-ET', territories: 'ET', ordering: 'gregory ethiopic ethioaa'},
   {label: 'Hebrew (Israel)', locale: 'he-IL', territories: 'IL', ordering: 'gregory hebrew islamic islamic-civil islamic-tbla'},
   {label: 'Hindi (India)', locale: 'hi-IN', territories: 'IN', ordering: 'gregory indian'},
+  // {label: 'Marathi (India)', locale: 'mr-IN', territories: 'IN', ordering: 'gregory indian'},
+  {label: 'Bengali (India)', locale: 'bn-IN', territories: 'IN', ordering: 'gregory indian'},
   {label: 'Japanese (Japan)', locale: 'ja-JP', territories: 'JP', ordering: 'gregory japanese'},
   // {territories: 'KR', ordering: 'gregory dangi'},
   {label: 'Thai (Thailand)', locale: 'th-TH', territories: 'TH', ordering: 'buddhist gregory'},
@@ -118,7 +232,7 @@ function Example(props) {
 
   return (
     <Flex direction="column" gap="size-600" alignItems="center">
-      <Flex direction="row" gap="size-150">
+      <Flex direction="row" gap="size-150" wrap justifyContent="center">
         <Picker label="Locale" items={preferences} selectedKey={locale} onSelectionChange={updateLocale}>
           {item => <Item key={item.locale}>{item.label}</Item>}
         </Picker>
@@ -132,38 +246,8 @@ function Example(props) {
         </Picker>
       </Flex>
       <Provider locale={(locale || defaultLocale) + (calendar && calendar !== preferredCalendars[0].key ? '-u-ca-' + calendar : '')}>
-        <Calendar {...props} />
+        <DateField {...props} />
       </Provider>
-    </Flex>
-  );
-}
-
-function CalendarWithTime() {
-  let [value, setValue] = useState(new CalendarDateTime(2019, 6, 5, 8));
-  let onChange = (v: CalendarDateTime) => {
-    setValue(v);
-    action('onChange')(v);
-  };
-
-  return (
-    <Flex direction="column">
-      <Calendar value={value} onChange={onChange} />
-      <TimeField label="Time" value={value} onChange={onChange} />
-    </Flex>
-  );
-}
-
-function CalendarWithZonedTime() {
-  let [value, setValue] = useState(parseZonedDateTime('2021-03-14T00:45-08:00[America/Los_Angeles]'));
-  let onChange = (v: ZonedDateTime) => {
-    setValue(v);
-    action('onChange')(v);
-  };
-
-  return (
-    <Flex direction="column">
-      <Calendar value={value} onChange={onChange} />
-      <TimeField label="Time" value={value} onChange={onChange} />
     </Flex>
   );
 }

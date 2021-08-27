@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {AnyDateTime, Disambiguation} from './types';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
-import {Disambiguation} from './types';
-import {epochFromDate, fromAbsolute, possibleAbsolutes, toAbsolute, toCalendar, toTimeZone} from './conversion';
+import {epochFromDate, fromAbsolute, possibleAbsolutes, toAbsolute, toCalendar, toCalendarDateTime, toTimeZone} from './conversion';
 import {getLocalTimeZone} from './queries';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
 import {Mutable} from './utils';
@@ -50,7 +50,7 @@ export function parseDate(value: string): CalendarDate {
   );
 
   date.day = parseNumber(m[3], 0, date.calendar.getDaysInMonth(date));
-  return date;
+  return date as CalendarDate;
 }
 
 export function parseDateTime(value: string): CalendarDateTime {
@@ -70,7 +70,7 @@ export function parseDateTime(value: string): CalendarDateTime {
   );
 
   date.day = parseNumber(m[3], 0, date.calendar.getDaysInMonth(date));
-  return date;
+  return date as CalendarDateTime;
 }
 
 export function parseZonedDateTime(value: string, disambiguation?: Disambiguation): ZonedDateTime {
@@ -93,19 +93,21 @@ export function parseZonedDateTime(value: string, disambiguation?: Disambiguatio
 
   date.day = parseNumber(m[3], 0, date.calendar.getDaysInMonth(date));
 
+  let plainDateTime = toCalendarDateTime(date as ZonedDateTime);
+
   let ms: number;
   if (m[8]) {
     date.offset = parseNumber(m[8], -23, 23) * 60 * 60 * 1000 + parseNumber(m[9] ?? '0', 0, 59) * 60 * 1000;
-    ms = epochFromDate(date) - date.offset;
+    ms = epochFromDate(date as ZonedDateTime) - date.offset;
 
     // Validate offset against parsed date.
-    let absolutes = possibleAbsolutes(date, date.timeZone);
+    let absolutes = possibleAbsolutes(plainDateTime, date.timeZone);
     if (!absolutes.includes(ms)) {
       throw new Error(`Offset ${offsetToString(date.offset)} is invalid for ${dateTimeToString(date)} in ${date.timeZone}`);
     }
   } else {
     // Convert to absolute and back to fix invalid times due to DST.
-    ms = toAbsolute(date, date.timeZone, disambiguation);
+    ms = toAbsolute(toCalendarDateTime(plainDateTime), date.timeZone, disambiguation);
   }
 
   return fromAbsolute(ms, date.timeZone);
@@ -135,7 +137,7 @@ export function parseAbsolute(value: string, timeZone: string): ZonedDateTime {
     date.offset = parseNumber(m[8], -23, 23) * 60 * 60 * 1000 + parseNumber(m[9] ?? '0', 0, 59) * 60 * 1000;
   }
 
-  return toTimeZone(date, timeZone);
+  return toTimeZone(date as ZonedDateTime, timeZone);
 }
 
 export function parseAbsoluteToLocal(value: string): ZonedDateTime {
@@ -160,7 +162,7 @@ export function dateToString(date: CalendarDate): string {
   return `${String(gregorianDate.year).padStart(4, '0')}-${String(gregorianDate.month).padStart(2, '0')}-${String(gregorianDate.day).padStart(2, '0')}`;
 }
 
-export function dateTimeToString(date: CalendarDateTime): string {
+export function dateTimeToString(date: AnyDateTime): string {
   // @ts-ignore
   return `${dateToString(date)}T${timeToString(date)}`;
 }
