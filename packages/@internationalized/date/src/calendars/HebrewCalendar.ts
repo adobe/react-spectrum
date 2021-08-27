@@ -13,7 +13,7 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {Calendar} from '../types';
+import {AnyCalendarDate, Calendar} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {mod, Mutable} from '../utils';
 
@@ -154,7 +154,7 @@ export class HebrewCalendar implements Calendar {
     return new CalendarDate(this, year, month, day);
   }
 
-  toJulianDay(date: CalendarDate) {
+  toJulianDay(date: AnyCalendarDate) {
     let jd = startOfYear(date.year);
     for (let month = 1; month < date.month; month++) {
       jd += getDaysInMonth(date.year, month);
@@ -163,15 +163,15 @@ export class HebrewCalendar implements Calendar {
     return jd + date.day + HEBREW_EPOCH;
   }
 
-  getDaysInMonth(date: CalendarDate): number {
+  getDaysInMonth(date: AnyCalendarDate): number {
     return getDaysInMonth(date.year, date.month);
   }
 
-  getMonthsInYear(date: CalendarDate): number {
+  getMonthsInYear(date: AnyCalendarDate): number {
     return isLeapYear(date.year) ? 13 : 12;
   }
 
-  getDaysInYear(date: CalendarDate): number {
+  getDaysInYear(date: AnyCalendarDate): number {
     return getDaysInYear(date.year);
   }
 
@@ -183,7 +183,7 @@ export class HebrewCalendar implements Calendar {
     return ['AM'];
   }
 
-  addYears(date: Mutable<CalendarDate>, years: number) {
+  addYears(date: Mutable<AnyCalendarDate>, years: number) {
     // Keep date in the same month when switching between leap years and non leap years
     let nextYear = date.year + years;
     if (isLeapYear(date.year) && !isLeapYear(nextYear) && date.month > 6) {

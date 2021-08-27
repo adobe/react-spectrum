@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDateTime, getLocalTimeZone, Time, toCalendarDateTime, today, toTime, ZonedDateTime} from '@internationalized/date';
 import {DatePickerField} from './DatePickerField';
+import {DateValue, SpectrumTimePickerProps, TimeValue} from '@react-types/datepicker';
 import {FocusScope} from '@react-aria/focus';
+import {getLocalTimeZone, Time, toCalendarDateTime, today, toTime} from '@internationalized/date';
 import React, {useMemo} from 'react';
-import {SpectrumTimePickerProps} from '@react-types/datepicker';
 import {useControlledState} from '@react-stately/utils';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export function TimeField(props: SpectrumTimePickerProps) {
+export function TimeField<T extends TimeValue>(props: SpectrumTimePickerProps<T>) {
   props = useProviderProps(props);
   let {
     autoFocus,
@@ -27,7 +27,7 @@ export function TimeField(props: SpectrumTimePickerProps) {
     maxValue
   } = props;
 
-  let [value, setValue] = useControlledState(
+  let [value, setValue] = useControlledState<TimeValue>(
     props.value,
     props.defaultValue,
     props.onChange
@@ -60,7 +60,7 @@ export function TimeField(props: SpectrumTimePickerProps) {
   );
 }
 
-function convertValue(value: Time | CalendarDateTime | ZonedDateTime, date = today(getLocalTimeZone())) {
+function convertValue(value: TimeValue, date: DateValue = today(getLocalTimeZone())) {
   if (!value) {
     return null;
   }

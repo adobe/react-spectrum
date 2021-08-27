@@ -29,13 +29,13 @@ export interface InputBase {
   isReadOnly?: boolean
 }
 
-export interface ValueBase<T> {
+export interface ValueBase<T, C = T> {
   /** The current value (controlled). */
   value?: T,
   /** The default value (uncontrolled). */
   defaultValue?: T,
   /** Handler that is called when the value changes. */
-  onChange?: (value: T) => void
+  onChange?: (value: C) => void
 }
 
 export interface TextInputBase {
