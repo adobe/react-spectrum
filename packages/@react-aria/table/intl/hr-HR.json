@@ -1,4 +1,9 @@
 {
-  "select": "Odaberi",
-  "selectAll": "Odaberi sve"
+  "ascending": "rastući",
+  "ascendingSort": "razvrstano po stupcima {columnName} rastućem redoslijedom",
+  "descending": "padajući",
+  "descendingSort": "razvrstano po stupcima {columnName} padajućim redoslijedom",
+  "select": "Odaberite",
+  "selectAll": "Odaberite sve",
+  "sortable": "stupac koji se može razvrstati"
 }
