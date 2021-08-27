@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ControlledCardView, DynamicCardView, items, NoItemCardView, renderEmptyState, StaticCardView} from './GridCardView.stories';
+import {AsyncLoadingCardView, ControlledCardView, DynamicCardView, items, NoItemCardView, renderEmptyState, StaticCardView} from './GridCardView.stories';
 import {GalleryLayout} from '../';
 
 let itemsLowVariance = [
@@ -80,3 +80,6 @@ emptyNoHeightGallery.storyName = 'empty state, no height';
 
 export const emptyWithHeightGallery = () => NoItemCardView({layout: GalleryLayout, width: '800px', height: '800px', renderEmptyState});
 emptyWithHeightGallery.storyName = 'empty, set height';
+
+export const AsyncLoading = () => AsyncLoadingCardView({layout: GalleryLayout, width: '800px', height: '800px'});
+AsyncLoading.storyName = 'Async loading';

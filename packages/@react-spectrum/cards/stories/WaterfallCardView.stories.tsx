@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ControlledCardView, DynamicCardView, items, NoItemCardView, renderEmptyState, StaticCardView} from './GridCardView.stories';
+import {AsyncLoadingCardView, ControlledCardView, DynamicCardView, items, NoItemCardView, renderEmptyState, StaticCardView} from './GridCardView.stories';
 import {WaterfallLayout} from '../';
 
 let itemsNoSize = [
@@ -83,3 +83,6 @@ emptyNoHeightWaterfall.storyName = 'empty state, no height';
 
 export const emptyWithHeightWaterfall = () => NoItemCardView({layout: WaterfallLayout, width: '800px', height: '800px', renderEmptyState});
 emptyWithHeightWaterfall.storyName = 'empty, set height';
+
+export const AsyncLoading = () => AsyncLoadingCardView({layout: WaterfallLayout, width: '800px', height: '800px'});
+AsyncLoading.storyName = 'Async loading';
