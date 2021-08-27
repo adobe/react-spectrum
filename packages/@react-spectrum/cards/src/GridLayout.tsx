@@ -11,11 +11,11 @@
  */
 
 import {BaseLayout, BaseLayoutOptions} from './';
+import {Key} from 'react';
 import {KeyboardDelegate, Node} from '@react-types/shared';
 import {LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
-import {Key} from 'react';
 
-export interface GridLayoutOptions<T> extends BaseLayoutOptions<T> {
+export interface GridLayoutOptions extends BaseLayoutOptions {
   /**
    * The card size in the grid.
    */
@@ -49,8 +49,8 @@ export interface GridLayoutOptions<T> extends BaseLayoutOptions<T> {
    * The vertical padding for an item.
    * @default 52
    */
-  itemPadding?: number,
-};
+  itemPadding?: number
+}
 
 // TODO: copied from V2, update this with the proper spectrum values
 // Should these be affected by Scale as well?
@@ -89,7 +89,7 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   protected numRows: number;
   protected horizontalSpacing: number;
 
-  constructor(options: GridLayoutOptions<T> = {}) {
+  constructor(options: GridLayoutOptions = {}) {
     super(options);
     let cardSize = options.cardSize || 'L';
     this.minItemSize = options.minItemSize || DEFAULT_OPTIONS[cardSize].minItemSize;
@@ -149,7 +149,7 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
       // Check if loader is in view and add to res if so
       let loader = this.layoutInfos.get('loader');
       if (loader && this.isVisible(loader, rect)) {
-        res.push(loader)
+        res.push(loader);
       }
     }
 
@@ -241,7 +241,7 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
 
     let rect = new Rect(x, y, this.itemSize.width, this.itemSize.height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
-    this.layoutInfos.set(node.key, layoutInfo)
+    this.layoutInfos.set(node.key, layoutInfo);
     return layoutInfo;
   }
 

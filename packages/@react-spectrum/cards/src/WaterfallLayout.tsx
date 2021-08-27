@@ -11,11 +11,11 @@
  */
 
 import {BaseLayout, BaseLayoutOptions} from './';
-import {KeyboardDelegate, Node} from '@react-types/shared';
 import {InvalidationContext, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
+import {KeyboardDelegate, Node} from '@react-types/shared';
 
-export interface WaterfallLayoutOptions<T> extends BaseLayoutOptions<T> {
+export interface WaterfallLayoutOptions extends BaseLayoutOptions {
   /**
    * The minimum item size.
    * @default 240 x 136
@@ -45,8 +45,8 @@ export interface WaterfallLayoutOptions<T> extends BaseLayoutOptions<T> {
    * The vertical padding for an item.
    * @default 56
    */
-  itemPadding?: number,
-};
+  itemPadding?: number
+}
 
 // TODO: this didn't have any options that varied with card size, should it have?
 export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
@@ -60,7 +60,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
   protected itemWidth: number;
   protected horizontalSpacing: number;
 
-  constructor(options: WaterfallLayoutOptions<T> = {}) {
+  constructor(options: WaterfallLayoutOptions = {}) {
     // TODO: WaterfallLayout doesn't use card size in v2, but perhaps it should support it? Perhaps it would modify
     // minItemSize defaults or other things
     super(options);
@@ -126,7 +126,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       let key = node.key;
       // Compute the height of the item. Use the existing height if available,
       // otherwise call the delegate to estimate the size.
-      let oldLayoutInfo = this.layoutInfos.get(key)
+      let oldLayoutInfo = this.layoutInfos.get(key);
       let height;
       let estimatedSize = true;
       if (oldLayoutInfo) {
@@ -146,10 +146,10 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       let x = this.margin + column * (itemWidth + horizontalSpacing);
       let y = columnHeights[column];
 
-      let rect = new Rect(x, y, itemWidth, height)
+      let rect = new Rect(x, y, itemWidth, height);
       let layoutInfo = new LayoutInfo(node.type, key, rect);
       layoutInfo.estimatedSize = estimatedSize;
-      this.layoutInfos.set(key, layoutInfo)
+      this.layoutInfos.set(key, layoutInfo);
 
       // TODO: From v2 figure out this bit, when does this get called and what to replace this.collectionView._transaction with?
       // Removing it from v2 doesn't seem to do anything?

@@ -245,7 +245,7 @@ export class TableLayout<T> extends ListLayout<T> {
       width = Math.max(width, layoutNode.layoutInfo.rect.width);
       children.push(layoutNode);
     }
-    console.log('width || this.virtualizer.visibleRect.width', width, this.virtualizer.contentSize.width, this.virtualizer.visibleRect.width)
+
     if (this.isLoading) {
       let rect = new Rect(0, y, width || this.virtualizer.visibleRect.width, children.length === 0 ? this.virtualizer.visibleRect.height : 60);
       let loader = new LayoutInfo('loader', 'loader', rect);

@@ -11,10 +11,10 @@
  */
 
 import {Collection, Direction, KeyboardDelegate, Node} from '@react-types/shared';
-import {Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
+import {Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 
-export interface BaseLayoutOptions<T> {
+export interface BaseLayoutOptions {
   collator?: Intl.Collator
 }
 
@@ -28,7 +28,7 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   disabledKeys: Set<Key> = new Set();
   direction: Direction;
 
-  constructor(options: BaseLayoutOptions<T> = {}) {
+  constructor(options: BaseLayoutOptions = {}) {
     super();
     this.layoutInfos = new Map();
     this.collator = options.collator;

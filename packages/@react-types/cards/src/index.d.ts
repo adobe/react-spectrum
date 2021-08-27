@@ -25,13 +25,18 @@ interface SpectrumCardProps extends AriaCardProps, StyleProps, DOMProps {
   orientation?: 'horizontal' | 'vertical'
 }
 
+interface LayoutOptions {
+  cardSize?: 'S' | 'M' | 'L',
+  cardOrientation?: 'horizontal' | 'vertical',
+  collator?: Intl.Collator
+}
+
 export interface LayoutConstructor<T> {
-  // TODO type the options. Prob will need to GridLayout || WaterfallLayout || GalleryLayout
-  new (options?: any): Layout<Node<T>>;
+  new (options?: LayoutOptions): Layout<Node<T>>
 }
 
 interface CardViewProps<T> extends CollectionBase<T>, MultipleSelection, Omit<AsyncLoadable, 'isLoading'> {
-  // TODO: perhaps this shouldn't be Layout<Node<T>> but rather GridLayout || WaterfallLayout || GalleryLayout?
+  // TODO: Does LayoutContructor and Layout give enough info for a user to know what to put in their own custom layout?
   layout: LayoutConstructor<T> | Layout<Node<T>>,
   cardSize?: 'S' | 'M' | 'L',
   cardOrientation?: 'horizontal' | 'vertical',

@@ -13,7 +13,7 @@
 import {CardBase} from './CardBase';
 import {CardViewContext, useCardViewContext} from './CardViewContext';
 import cardViewStyles from './cardview.css';
-import {classNames, useDOMRef, useUnwrapDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {GridCollection, useGridState} from '@react-stately/grid';
 // @ts-ignore
@@ -21,7 +21,7 @@ import intlMessages from '../intl/*.json';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useMemo, useRef} from 'react';
 import {SpectrumCardViewProps} from '@react-types/cards';
-import {useCollator,useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';
 import {Virtualizer} from '@react-aria/virtualizer';
@@ -40,7 +40,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   } = props;
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({cardSize, cardOrientation, collator}) : layout, [layout, cardSize, cardOrientation]);
+  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({cardSize, cardOrientation, collator}) : layout, [layout, cardSize, cardOrientation, collator]);
 
   let formatMessage = useMessageFormatter(intlMessages);
   let {direction} = useLocale();
@@ -97,7 +97,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
           if (type === 'item') {
             return (
               <InternalCard item={item} />
-            )
+            );
           } else if (type === 'loader') {
             return (
               <CenteredWrapper>
@@ -105,7 +105,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
                   isIndeterminate
                   aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
               </CenteredWrapper>
-            )
+            );
           } else if (type === 'placeholder') {
             let emptyState = renderEmptyState ? renderEmptyState() : null;
             if (emptyState == null) {
@@ -179,11 +179,11 @@ function InternalCard(props) {
         {item.rendered}
       </CardBase>
     </div>
-  )
+  );
 }
 
 /**
  * TODO: Add description of component here.
  */
- const _CardView = React.forwardRef(CardView) as <T>(props: SpectrumCardViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+const _CardView = React.forwardRef(CardView) as <T>(props: SpectrumCardViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_CardView as CardView};
