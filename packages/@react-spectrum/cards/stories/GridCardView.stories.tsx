@@ -105,9 +105,6 @@ isLoadingHeightGrid.storyName = 'loadingState = loading, set height';
 export const loadingMoreGrid = () => DynamicCardView({width: '800px', height: '800px', loadingState: 'loadingMore', items});
 loadingMoreGrid.storyName = 'loadingState = loadingMore';
 
-export const emptyNoHeightGrid = () => NoItemCardView({width: '800px', renderEmptyState});
-emptyNoHeightGrid.storyName = 'empty state, no height';
-
 export const emptyWithHeightGrid = () => NoItemCardView({width: '800px', height: '800px', renderEmptyState});
 emptyWithHeightGrid.storyName = 'empty, set height';
 
@@ -211,11 +208,29 @@ export function NoItemCardView(props) {
   let {
     layout = gridLayout
   } = props;
+  let [show, setShow] = useState(false);
 
   return (
-    <CardView {...props} layout={layout} UNSAFE_style={{background: 'white'}} aria-label="Test CardView">
-      {[]}
-    </CardView>
+    <>
+      <ActionButton onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
+      <CardView {...props} items={show ? items : []} layout={layout} UNSAFE_style={{background: 'white'}} aria-label="Test CardView">
+        {(item: any) => (
+            <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
+              <Image src={item.src} />
+              <Heading>{item.title}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>Very very very very very very very very very very very very very long description</Content>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+              <Footer>
+                <Button variant="primary">Something</Button>
+              </Footer>
+            </Card>
+          )}
+      </CardView>
+    </>
   );
 }
 

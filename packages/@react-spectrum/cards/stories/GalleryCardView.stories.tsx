@@ -75,9 +75,6 @@ isLoadingHeightGallery.storyName = 'loadingState = loading, set height';
 export const loadingMoreGallery = () => DynamicCardView({layout: GalleryLayout, width: '800px', height: '800px', loadingState: 'loadingMore', items});
 loadingMoreGallery.storyName = 'loadingState = loadingMore';
 
-export const emptyNoHeightGallery = () => NoItemCardView({layout: GalleryLayout, width: '800px', renderEmptyState});
-emptyNoHeightGallery.storyName = 'empty state, no height';
-
 export const emptyWithHeightGallery = () => NoItemCardView({layout: GalleryLayout, width: '800px', height: '800px', renderEmptyState});
 emptyWithHeightGallery.storyName = 'empty, set height';
 
