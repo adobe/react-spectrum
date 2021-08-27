@@ -52,7 +52,8 @@ interface EventBase {
   currentTarget: EventTarget,
   shiftKey: boolean,
   ctrlKey: boolean,
-  metaKey: boolean
+  metaKey: boolean,
+  altKey: boolean
 }
 
 export interface PressResult {
@@ -126,7 +127,8 @@ export function usePress(props: PressHookProps): PressResult {
           target: originalEvent.currentTarget as HTMLElement,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
-          ctrlKey: originalEvent.ctrlKey
+          ctrlKey: originalEvent.ctrlKey,
+          altKey: originalEvent.altKey
         });
       }
 
@@ -154,7 +156,8 @@ export function usePress(props: PressHookProps): PressResult {
           target: originalEvent.currentTarget as HTMLElement,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
-          ctrlKey: originalEvent.ctrlKey
+          ctrlKey: originalEvent.ctrlKey,
+          altKey: originalEvent.altKey
         });
       }
 
@@ -171,7 +174,8 @@ export function usePress(props: PressHookProps): PressResult {
           target: originalEvent.currentTarget as HTMLElement,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
-          ctrlKey: originalEvent.ctrlKey
+          ctrlKey: originalEvent.ctrlKey,
+          altKey: originalEvent.altKey
         });
       }
     };
@@ -189,7 +193,8 @@ export function usePress(props: PressHookProps): PressResult {
           target: originalEvent.currentTarget as HTMLElement,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
-          ctrlKey: originalEvent.ctrlKey
+          ctrlKey: originalEvent.ctrlKey,
+          altKey: originalEvent.altKey
         });
       }
     };
@@ -578,7 +583,8 @@ export function usePress(props: PressHookProps): PressResult {
             currentTarget: state.target,
             shiftKey: false,
             ctrlKey: false,
-            metaKey: false
+            metaKey: false,
+            altKey: false
           });
         }
       };
@@ -658,7 +664,8 @@ function createEvent(target: HTMLElement, e: EventBase): EventBase {
     currentTarget: target,
     shiftKey: e.shiftKey,
     ctrlKey: e.ctrlKey,
-    metaKey: e.metaKey
+    metaKey: e.metaKey,
+    altKey: e.altKey
   };
 }
 
