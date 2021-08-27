@@ -16,11 +16,13 @@ import {ActionMenu, Item} from '@react-spectrum/menu';
 import {Card, CardView, GridLayout} from '../';
 import {Content, Footer} from '@react-spectrum/view';
 import {Flex} from '@react-spectrum/layout';
+import {getImageFullData} from './utils';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
 import React, {Key, useMemo, useState} from 'react';
 import {TextField} from '@react-spectrum/textfield';
+import {useAsyncList} from '@react-stately/data';
 import {useCollator} from '@react-aria/i18n';
 
 export let items = [
@@ -62,7 +64,7 @@ export function renderEmptyState() {
 
 export default {
   title: 'CardView/Grid layout',
-  excludeStories: ['items', 'renderEmptyState', 'DynamicCardView', 'NoItemCardView', 'StaticCardView', 'ControlledCardView']
+  excludeStories: ['items', 'renderEmptyState', 'DynamicCardView', 'NoItemCardView', 'StaticCardView', 'ControlledCardView', 'AsyncLoadingCardView']
 };
 
 let onSelectionChange = action('onSelectionChange');
@@ -108,6 +110,9 @@ emptyNoHeightGrid.storyName = 'empty state, no height';
 
 export const emptyWithHeightGrid = () => NoItemCardView({width: '800px', height: '800px', renderEmptyState});
 emptyWithHeightGrid.storyName = 'empty, set height';
+
+export const AsyncLoading = () => AsyncLoadingCardView({width: '800px', height: '800px'});
+AsyncLoading.storyName = 'Async loading';
 
 // TODO add static and dynamic, various layouts, card size, selected keys, disabled keys
 
@@ -159,7 +164,9 @@ export function ControlledCardView(props) {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
   let {
-    layout = gridLayout
+    layout = gridLayout,
+    selectionMode = "multiple",
+    ...otherProps
   } = props;
 
   let [value, setValue] = useState('');
@@ -178,7 +185,7 @@ export function ControlledCardView(props) {
         <TextField value={value} onChange={setValue} label="Nth item to remove" />
         <ActionButton onPress={removeItem}>Remove</ActionButton>
       </Flex>
-      <CardView  {...actions} {...props} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} items={items} layout={layout} width="100%" height="100%" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
+      <CardView  {...actions} {...otherProps} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} items={items} layout={layout} width="100%" height="100%" UNSAFE_style={{background: 'white'}} aria-label="Test CardView">
         {(item: any) => (
           <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
             <Image src={item.src} />
@@ -286,6 +293,61 @@ export function StaticCardView(props) {
           <Button variant="primary">Something</Button>
         </Footer>
       </Card>
+    </CardView>
+  );
+}
+
+export function AsyncLoadingCardView(props) {
+  interface StarWarsChar {
+    name: string,
+    url: string
+  }
+
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
+  let {
+    layout = gridLayout
+  } = props;
+
+  let list = useAsyncList<StarWarsChar>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+      let items = [];
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search`, {signal});
+      let json = await res.json();
+      items = json.results.map((element, index) => {
+        return {
+          ...getImageFullData(index),
+          title: element.name
+        }
+      })
+      return {
+        items: items,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <CardView {...actions} {...props} items={list.items} onLoadMore={list.loadMore} loadingState={list.loadingState} layout={layout} UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
+      {(item: any) => (
+        <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
+          <Image src={item.src} />
+          <Heading>{item.title}</Heading>
+          <Text slot="detail">PNG</Text>
+          <Content>Very very very very very very very very very very very very very long description</Content>
+          <ActionMenu>
+            <Item>Action 1</Item>
+            <Item>Action 2</Item>
+          </ActionMenu>
+          <Footer>
+            <Button variant="primary">Something</Button>
+          </Footer>
+        </Card>
+      )}
     </CardView>
   );
 }

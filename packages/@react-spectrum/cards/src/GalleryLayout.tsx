@@ -86,6 +86,10 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
           this.layoutInfos.delete(key);
         }
       }
+
+      if (!this.isLoading) {
+        this.layoutInfos.delete('loader')
+      }
     }
 
     this.lastCollection = this.collection;
