@@ -408,6 +408,18 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
     }
   };
 
+  let searchIcon = (
+    <Magnifier data-testid="searchicon" />
+  );
+
+  let icon = React.cloneElement(searchIcon, {
+    UNSAFE_className: classNames(
+        textfieldStyles,
+        'spectrum-Textfield-icon'
+        ),
+    size: 'S'
+  });
+
   return (
     <FocusScope restoreFocus contain>
       <div
@@ -430,6 +442,7 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
           loadingIndicator={loadingState != null && loadingCircle}
           validationState={validationState}
           wrapperChildren={(state.inputValue !== '' || loadingState === 'filtering' || validationState != null) && !props.isReadOnly && clearButton}
+          icon={icon}
           UNSAFE_className={
             classNames(
               searchStyles,
@@ -451,12 +464,8 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
           }
           inputClassName={
             classNames(
-              comboboxStyles,
-              'tray-textfield-input',
-              classNames(
-                searchStyles,
-                'spectrum-Search-input'
-              )
+              searchStyles,
+              'spectrum-Search-input'
             )
           }
           validationIconClassName={
