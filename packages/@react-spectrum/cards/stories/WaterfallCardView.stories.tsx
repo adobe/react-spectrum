@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DynamicCardView, items, NoItemCardView, renderEmptyState, StaticCardView} from './GridCardView.stories';
+import {ControlledCardView, DynamicCardView, items, NoItemCardView, renderEmptyState, StaticCardView} from './GridCardView.stories';
 import {WaterfallLayout} from '../';
 
 let itemsNoSize = [
@@ -56,6 +56,18 @@ QuietWaterfall.storyName = 'quiet cards';
 
 export const QuietWaterfallNoSize = () => DynamicCardView({layout: WaterfallLayout, items: itemsNoSize, isQuiet: true});
 QuietWaterfallNoSize.storyName = 'quiet cards, no size provided with items';
+
+export const DisabledKeys = () => DynamicCardView({layout: WaterfallLayout, items, disabledKeys: ['Joe 2', 'Bob 4']});
+DisabledKeys.storyName = 'disabled keys, Joe2, Bob 4';
+
+export const NoSelection = () => DynamicCardView({layout: WaterfallLayout, items, selectionMode: 'none'});
+NoSelection.storyName = 'no selection allowed';
+
+export const SingleSelection = () => DynamicCardView({layout: WaterfallLayout, items, selectionMode: 'single'});
+SingleSelection.storyName = 'single selection only';
+
+export const SelectedKeys = () => ControlledCardView({layout: WaterfallLayout, items});
+SelectedKeys.storyName = 'selected keys, controlled';
 
 export const isLoadingNoHeightWaterfall = () => NoItemCardView({layout: WaterfallLayout, width: '800px', loadingState: 'loading'});
 isLoadingNoHeightWaterfall.storyName = 'loadingState = loading, no height';
