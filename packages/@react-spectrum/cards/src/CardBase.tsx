@@ -63,7 +63,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
   let hasFooter = useHasChild(`.${styles['spectrum-Card-footer']}`, gridRef);
 
   let slots = useMemo(() => ({
-    image: {UNSAFE_className: classNames(styles, 'spectrum-Card-image'), objectFit: isQuiet ? 'contain' : 'cover', alt: ''},
+    image: {UNSAFE_className: classNames(styles, 'spectrum-Card-image'), objectFit: orientation === 'horizontal' ? 'cover' : 'contain', alt: ''},
     illustration: {UNSAFE_className: classNames(styles, 'spectrum-Card-illustration')},
     avatar: {UNSAFE_className: classNames(styles, 'spectrum-Card-avatar'), size: 'avatar-size-100'},
     heading: {UNSAFE_className: classNames(styles, 'spectrum-Card-heading'), ...titleProps},

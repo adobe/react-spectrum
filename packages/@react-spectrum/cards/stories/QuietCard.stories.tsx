@@ -138,7 +138,7 @@ export const CardWaterfall = (props: SpectrumCardProps) => (
   <div
     style={{
       width: '100%',
-      height: '100vh',
+      height: '150vh',
       margin: '50px',
       display: 'flex',
       flexDirection: 'column',
