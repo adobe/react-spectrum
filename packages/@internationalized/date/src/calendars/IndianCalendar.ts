@@ -13,6 +13,7 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
+import {AnyCalendarDate} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {GregorianCalendar, gregorianToJulianDay, isLeapYear} from './GregorianCalendar';
 import {Mutable} from '../utils';
@@ -70,7 +71,7 @@ export class IndianCalendar extends GregorianCalendar {
     return new CalendarDate(this, indianYear, indianMonth, indianDay);
   }
 
-  toJulianDay(date: CalendarDate) {
+  toJulianDay(date: AnyCalendarDate) {
     let year = date.year + INDIAN_ERA_START;
 
     let leapMonth: number;
@@ -97,7 +98,7 @@ export class IndianCalendar extends GregorianCalendar {
     return jd;
   }
 
-  getDaysInMonth(date: CalendarDate): number {
+  getDaysInMonth(date: AnyCalendarDate): number {
     if (date.month === 1 && isLeapYear(date.year + INDIAN_ERA_START)) {
       return 31;
     }

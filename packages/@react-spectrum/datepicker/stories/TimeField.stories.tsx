@@ -38,11 +38,19 @@ storiesOf('Date and Time/TimeField', module)
   )
   .add(
     'hourCycle: 12',
-    () => render({hourCycle: 12})
+    () => render({hourCycle: 12, defaultValue: parseTime('00:00')})
   )
   .add(
     'hourCycle: 24',
-    () => render({hourCycle: 24})
+    () => render({hourCycle: 24, defaultValue: parseTime('00:00')})
+  )
+  .add(
+    'hourCycle: 12, granularity: hour',
+    () => render({hourCycle: 12, granularity: 'hour'})
+  )
+  .add(
+    'hourCycle: 24, granularity: hour',
+    () => render({hourCycle: 24, granularity: 'hour'})
   )
   .add(
     'zoned',

@@ -11,17 +11,17 @@
  */
 
 import {CalendarAria} from './types';
+import {DateValue, RangeCalendarProps} from '@react-types/calendar';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isSameDay, toDate} from '@internationalized/date';
+import {isSameDay} from '@internationalized/date';
 import {mergeProps} from '@react-aria/utils';
-import {RangeCalendarProps} from '@react-types/calendar';
 import {RangeCalendarState} from '@react-stately/calendar';
 import {useCalendarBase} from './useCalendarBase';
 import {useMemo} from 'react';
 import {useMessageFormatter} from '@react-aria/i18n';
 
-export function useRangeCalendar(props: RangeCalendarProps, state: RangeCalendarState): CalendarAria {
+export function useRangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, state: RangeCalendarState): CalendarAria {
   // Compute localized message for the selected date or range
   let formatMessage = useMessageFormatter(intlMessages);
   let {start, end} = state.highlightedRange || {start: null, end: null};
@@ -31,9 +31,9 @@ export function useRangeCalendar(props: RangeCalendarProps, state: RangeCalendar
       // Use a single date message if the start and end dates are the same day,
       // otherwise include both dates.
       if (isSameDay(start, end)) {
-        return formatMessage('selectedDateDescription', {date: toDate(start, state.timeZone)});
+        return formatMessage('selectedDateDescription', {date: start.toDate(state.timeZone)});
       } else {
-        return formatMessage('selectedRangeDescription', {start: toDate(start, state.timeZone), end: toDate(end, state.timeZone)});
+        return formatMessage('selectedRangeDescription', {start: start.toDate(state.timeZone), end: end.toDate(state.timeZone)});
       }
     }
     return '';

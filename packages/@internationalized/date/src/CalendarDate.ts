@@ -11,7 +11,7 @@
  */
 
 import {add, addTime, addZoned, cycleDate, cycleTime, cycleZoned, set, setTime, setZoned, subtract, subtractTime, subtractZoned} from './manipulation';
-import {Calendar, CycleOptions, CycleTimeOptions, DateField, DateFields, Disambiguation, Duration, OverflowBehavior, TimeField, TimeFields} from './types';
+import {AnyCalendarDate, AnyTime, Calendar, CycleOptions, CycleTimeOptions, DateField, DateFields, Disambiguation, Duration, TimeField, TimeFields} from './types';
 import {compareDate, compareTime} from './queries';
 import {dateTimeToString, dateToString, timeToString, zonedDateTimeToString} from './string';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
@@ -38,6 +38,10 @@ function shiftArgs(args: any[]) {
 }
 
 export class CalendarDate {
+  // This prevents TypeScript from allowing other types with the same fields to match.
+  // i.e. a ZonedDateTime should not be be passable to a parameter that expects CalendarDate.
+  // If that behavior is desired, use the AnyCalendarDate interface instead.
+  #type;
   public readonly calendar: Calendar;
   public readonly era: string;
   public readonly year: number;
@@ -76,8 +80,8 @@ export class CalendarDate {
     return subtract(this, duration);
   }
 
-  set(fields: DateFields, behavior?: OverflowBehavior) {
-    return set(this, fields, behavior);
+  set(fields: DateFields) {
+    return set(this, fields);
   }
 
   cycle(field: DateField, amount: number, options?: CycleOptions) {
@@ -92,12 +96,15 @@ export class CalendarDate {
     return dateToString(this);
   }
 
-  compare(b: CalendarDate) {
+  compare(b: AnyCalendarDate) {
     return compareDate(this, b);
   }
 }
 
 export class Time {
+  // This prevents TypeScript from allowing other types with the same fields to match.
+  #type;
+
   constructor(
     public readonly hour: number = 0,
     public readonly minute: number = 0,
@@ -117,8 +124,8 @@ export class Time {
     return subtractTime(this, duration);
   }
 
-  set(fields: TimeFields, behavior?: OverflowBehavior) {
-    return setTime(this, fields, behavior);
+  set(fields: TimeFields) {
+    return setTime(this, fields);
   }
 
   cycle(field: TimeField, amount: number, options?: CycleTimeOptions) {
@@ -129,12 +136,19 @@ export class Time {
     return timeToString(this);
   }
 
-  compare(b: Time) {
+  compare(b: AnyTime) {
     return compareTime(this, b);
   }
 }
 
-export class CalendarDateTime extends CalendarDate {
+export class CalendarDateTime {
+  // This prevents TypeScript from allowing other types with the same fields to match.
+  #type;
+  public readonly calendar: Calendar;
+  public readonly era: string;
+  public readonly year: number;
+  public readonly month: number;
+  public readonly day: number;
   public readonly hour: number;
   public readonly minute: number;
   public readonly second: number;
@@ -145,7 +159,16 @@ export class CalendarDateTime extends CalendarDate {
   constructor(calendar: Calendar, era: string, year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number);
   constructor(...args: any[]) {
     let [calendar, era, year, month, day] = shiftArgs(args);
-    super(calendar, era, year, month, day);
+    this.calendar = calendar;
+    this.era = era;
+    this.year = year;
+    this.month = month;
+    this.day = day;
+
+    if (this.calendar.balanceDate) {
+      this.calendar.balanceDate(this);
+    }
+
     this.hour = args.shift() || 0;
     this.minute = args.shift() || 0;
     this.second = args.shift() || 0;
@@ -160,8 +183,16 @@ export class CalendarDateTime extends CalendarDate {
     }
   }
 
-  set(fields: DateFields & TimeFields, behavior?: OverflowBehavior) {
-    return set(setTime(this, fields, behavior), fields, behavior);
+  add(duration: Duration) {
+    return add(this, duration);
+  }
+
+  subtract(duration: Duration) {
+    return subtract(this, duration);
+  }
+
+  set(fields: DateFields & TimeFields) {
+    return set(setTime(this, fields), fields);
   }
 
   cycle(field: DateField | TimeField, amount: number, options?: CycleTimeOptions) {
@@ -176,11 +207,15 @@ export class CalendarDateTime extends CalendarDate {
     }
   }
 
+  toDate(timeZone: string) {
+    return toDate(this, timeZone);
+  }
+
   toString() {
     return dateTimeToString(this);
   }
 
-  compare(b: CalendarDate | CalendarDateTime) {
+  compare(b: CalendarDate | CalendarDateTime | ZonedDateTime) {
     let res = compareDate(this, b);
     if (res === 0) {
       return compareTime(this, toCalendarDateTime(b));
@@ -190,7 +225,18 @@ export class CalendarDateTime extends CalendarDate {
   }
 }
 
-export class ZonedDateTime extends CalendarDateTime {
+export class ZonedDateTime {
+  // This prevents TypeScript from allowing other types with the same fields to match.
+  #type;
+  public readonly calendar: Calendar;
+  public readonly era: string;
+  public readonly year: number;
+  public readonly month: number;
+  public readonly day: number;
+  public readonly hour: number;
+  public readonly minute: number;
+  public readonly second: number;
+  public readonly millisecond: number;
   public readonly timeZone: string;
   public readonly offset: number;
 
@@ -201,9 +247,22 @@ export class ZonedDateTime extends CalendarDateTime {
     let [calendar, era, year, month, day] = shiftArgs(args);
     let timeZone = args.shift();
     let offset = args.shift();
-    super(calendar, era, year, month, day, ...args);
+    this.calendar = calendar;
+    this.era = era;
+    this.year = year;
+    this.month = month;
+    this.day = day;
+
+    if (this.calendar.balanceDate) {
+      this.calendar.balanceDate(this);
+    }
+
     this.timeZone = timeZone;
     this.offset = offset;
+    this.hour = args.shift() || 0;
+    this.minute = args.shift() || 0;
+    this.second = args.shift() || 0;
+    this.millisecond = args.shift() || 0;
   }
 
   copy(): ZonedDateTime {
@@ -222,8 +281,8 @@ export class ZonedDateTime extends CalendarDateTime {
     return subtractZoned(this, duration);
   }
 
-  set(fields: DateFields & TimeFields, behavior?: OverflowBehavior, disambiguation?: Disambiguation) {
-    return setZoned(this, fields, behavior, disambiguation);
+  set(fields: DateFields & TimeFields, disambiguation?: Disambiguation) {
+    return setZoned(this, fields, disambiguation);
   }
 
   cycle(field: DateField | TimeField, amount: number, options?: CycleTimeOptions) {
@@ -244,6 +303,6 @@ export class ZonedDateTime extends CalendarDateTime {
 
   compare(b: CalendarDate | CalendarDateTime | ZonedDateTime) {
     // TODO: Is this a bad idea??
-    return this.toDate() - toZoned(b, this.timeZone).toDate();
+    return this.toDate().getTime() - toZoned(b, this.timeZone).toDate().getTime();
   }
 }

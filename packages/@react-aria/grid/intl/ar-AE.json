@@ -1,0 +1,6 @@
+{
+  "deselectedItem": "{item} غير المحدد",
+  "selectedAll": "جميع العناصر المحددة.",
+  "selectedCount": "{count, plural, =0 {لم يتم تحديد عناصر} one {# عنصر محدد} other {# عنصر محدد}}.",
+  "selectedItem": "{item} المحدد"
+}

@@ -11,7 +11,7 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {AriaDatePickerProps, AriaDateRangePickerProps} from '@react-types/datepicker';
+import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue} from '@react-types/datepicker';
 import {AriaDialogProps} from '@react-types/dialog';
 import {createFocusManager} from '@react-aria/focus';
 import {DateRangePickerState} from '@react-stately/datepicker';
@@ -23,16 +23,16 @@ import {mergeProps, useDescription, useId, useLabels} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
-interface DateRangePickerAria {
+interface DateRangePickerAria<T extends DateValue> {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   groupProps: HTMLAttributes<HTMLElement>,
-  startFieldProps: AriaDatePickerProps,
-  endFieldProps: AriaDatePickerProps,
+  startFieldProps: AriaDatePickerProps<T>,
+  endFieldProps: AriaDatePickerProps<T>,
   buttonProps: AriaButtonProps,
   dialogProps:  AriaDialogProps
 }
 
-export function useDateRangePicker(props: AriaDateRangePickerProps, state: DateRangePickerState, ref: RefObject<HTMLElement>): DateRangePickerAria {
+export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePickerProps<T>, state: DateRangePickerState, ref: RefObject<HTMLElement>): DateRangePickerAria<T> {
   let formatMessage = useMessageFormatter(intlMessages);
   let {labelProps, fieldProps} = useLabel({
     ...props,
