@@ -49,21 +49,21 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   let gridCollection = useMemo(() => new GridCollection<T>({
     columnCount: 1,
     items: [...collection].map(item => ({
-      type: 'item',
+      // TODO: another tentative change, makes it so the child cell (the card) is the item and thus doesn't need
+      // allowsCellSelection on useGridState. Also fixes bug with previous allowsCellSelection approach where going from 'all' selected
+      // to deselecting a single card didnt properly remove that single card from selection
+      type: 'row',
       childNodes: [{
         ...item,
         index: 0,
-        type: 'cell'
+        type: 'item'
       }]
     }))
   }), [collection]);
 
   let state = useGridState({
     ...props,
-    collection: gridCollection,
-    // TODO: this is a tentative change to make SelectionManager return the cell key on selection
-    // If we don't want to go this way then I think we will have to write our own onAction instead of using manger.select?
-    allowsCellSelection: true
+    collection: gridCollection
   });
 
   // TODO: need to fix the typescript here, perhaps add a new type in Card types which is a Layout w/ these properties
