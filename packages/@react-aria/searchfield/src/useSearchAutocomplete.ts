@@ -84,7 +84,9 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteProps<T>, 
   return {
     labelProps,
     inputProps: mergeProps(inputProps, comboBoxInputProps),
-    listBoxProps,
+    listBoxProps: mergeProps(listBoxProps, {
+      selectionMode: 'none'
+    }),
     clearButtonProps
   };
 }
