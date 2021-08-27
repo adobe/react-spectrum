@@ -13,7 +13,22 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 /**
-LAYERS: There are 5 layers to cards
+LAYERS: There are 4 layers to standard/horizontal cards
+layer default:
+  all content provided by the user
+
+layer 1:
+  avatar
+
+layer 2:
+  color covering
+
+layer 3:
+  checkbox
+*/
+
+/**
+LAYERS: There are 5 layers to quiet cards
 layer -1:
   card back color, seen mostly in quiet cards in a grid
 
@@ -153,7 +168,7 @@ Quiet Vertical
   .spectrum-Card-checkboxWrapper {
     z-index: 3;
   }
-  .spectrum-Card-grid:after {
+  &:after {
     z-index: 2;
   }
   position: relative;
@@ -269,7 +284,7 @@ Quiet Vertical
   .spectrum-Card-checkboxWrapper {
     z-index: 3;
   }
-  .spectrum-Card-grid:after {
+  &:after {
     z-index: 2;
   }
   position: relative;
@@ -387,7 +402,7 @@ Quiet Vertical
   .spectrum-Card-checkboxWrapper {
     z-index: 3;
   }
-  .spectrum-Card-grid:after {
+  &:after {
     z-index: 2;
   }
   position: relative;
