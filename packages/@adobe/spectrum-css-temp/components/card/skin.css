@@ -143,6 +143,7 @@ governing permissions and limitations under the License.
     .spectrum-Card-grid {
       &:before {
         background-color: var(--spectrum-card-quiet-preview-background-color-hover);
+        /* TODO do we still want this border on the image itself? */
         box-shadow: 0 0 0 1px var(--spectrum-card-border-color-hover);
       }
     }
@@ -150,7 +151,7 @@ governing permissions and limitations under the License.
 
   &.is-selected {
     .spectrum-Card-grid {
-      &:before {
+      &:after {
         /* Image needs to go right to the edge, so no border. Adding border on focus causes
         * a jump in the text and image. So focus ring is only box-shadow
         */
@@ -161,7 +162,7 @@ governing permissions and limitations under the License.
 
   &:hover.is-selected {
     .spectrum-Card-grid {
-      &:before {
+      &:after {
         /* Image needs to go right to the edge, so no border. Adding border on focus causes
         * a jump in the text and image. So focus ring is only box-shadow
         */
@@ -172,7 +173,7 @@ governing permissions and limitations under the License.
 
   &:focus-ring {
     .spectrum-Card-grid {
-      &:before {
+      &:after {
         box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
       }
     }
@@ -180,7 +181,7 @@ governing permissions and limitations under the License.
 
   &:focus-ring:hover.is-selected {
     .spectrum-Card-grid {
-      &:before {
+      &:after {
         box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
       }
     }
@@ -188,15 +189,13 @@ governing permissions and limitations under the License.
 
   &.is-selected {
     .spectrum-Card-grid {
-      &:after {
-        background-color: var(--spectrum-global-color-blue-400);
+      .spectrum-Card-decoration {
         opacity: 0.15;
       }
     }
     &:hover {
       .spectrum-Card-grid {
-        &:after {
-          background-color: var(--spectrum-global-color-blue-400);
+        .spectrum-Card-decoration {
           opacity: 0.25;
         }
       }
@@ -226,6 +225,10 @@ governing permissions and limitations under the License.
   .spectrum-Card-divider {
   }
   .spectrum-Card-footer {
+  }
+  .spectrum-Card-decoration {
+    background-color: var(--spectrum-global-color-blue-400);
+    opacity: 0;
   }
 }
 
