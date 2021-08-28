@@ -18,25 +18,28 @@ import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 export interface GridRowProps<T> {
+  /** An object representing the grid row. Contains all the relevant information that makes up the grid row. */
   node: Node<T>,
-  ref?: RefObject<HTMLElement>,
+  /** Whether the grid row is contained in a virtual scroller. */
   isVirtualized?: boolean,
-  isSelected?: boolean,
-  isDisabled?: boolean,
+  /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean
 }
 
 export interface GridRowAria {
+  /** Props for the grid row element. */
   rowProps: HTMLAttributes<HTMLElement>
 }
 
-export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T, C>>(props: GridRowProps<T>, state: S): GridRowAria {
+/**
+ * Provides the behavior and accessibility implementation for a row in a grid.
+ * @param props - Props for the row.
+ * @param state - State of the parent grid, as returned by `useGridState`.
+ */
+export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T, C>>(props: GridRowProps<T>, state: S, ref: RefObject<HTMLElement>): GridRowAria {
   let {
     node,
-    ref,
     isVirtualized,
-    isSelected,
-    isDisabled,
     shouldSelectOnPressUp
   } = props;
 
@@ -48,12 +51,15 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     shouldSelectOnPressUp
   });
 
+  let isSelected = state.selectionManager.isSelected(node.key);
+  let isDisabled = state.disabledKeys.has(node.key);
+
   // TODO: move into useSelectableItem?
   let {pressProps} = usePress({...itemProps, isDisabled});
 
   let rowProps: HTMLAttributes<HTMLElement> = {
     role: 'row',
-    'aria-selected': isSelected,
+    'aria-selected': state.selectionManager.selectionMode !== 'none' ? isSelected : undefined,
     ...pressProps
   };
 

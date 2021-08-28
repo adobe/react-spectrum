@@ -1,0 +1,9 @@
+{
+  "ascending": "augošā secībā",
+  "ascendingSort": "kārtots pēc kolonnas {columnName} augošā secībā",
+  "descending": "dilstošā secībā",
+  "descendingSort": "kārtots pēc kolonnas {columnName} dilstošā secībā",
+  "select": "Atlasīt",
+  "selectAll": "Atlasīt visu",
+  "sortable": "kārtojamā kolonna"
+}

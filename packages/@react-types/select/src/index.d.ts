@@ -28,7 +28,7 @@ import {
   Validation
 } from '@react-types/shared';
 
-export interface SelectProps<T> extends CollectionBase<T>, AsyncLoadable, InputBase, Validation, LabelableProps, TextInputBase, SingleSelection, FocusableProps {
+export interface SelectProps<T> extends CollectionBase<T>, AsyncLoadable, Omit<InputBase, 'isReadOnly'>, Validation, LabelableProps, TextInputBase, SingleSelection, FocusableProps {
   /** Sets the open state of the menu. */
   isOpen?: boolean,
   /** Sets the default open state of the menu. */
@@ -42,7 +42,12 @@ export interface SelectProps<T> extends CollectionBase<T>, AsyncLoadable, InputB
   shouldFlip?: boolean
 }
 
-export interface AriaSelectProps<T> extends SelectProps<T>, DOMProps, AriaLabelingProps, FocusableDOMProps {}
+export interface AriaSelectProps<T> extends SelectProps<T>, DOMProps, AriaLabelingProps, FocusableDOMProps {
+  /**
+   * The name of the input, used when submitting an HTML form.
+   */
+  name?: string
+}
 
 export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabelableProps, StyleProps  {
   /** Whether the textfield should be displayed with a quiet style. */
@@ -58,10 +63,6 @@ export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabe
   direction?: 'bottom' | 'top',
   /** Width of the menu. */
   menuWidth?: DimensionValue,
-  /**
-   * The name of the Picker input, used when submitting an HTML form.
-   */
-  name?: string,
   /** Whether the element should receive focus on render. */
   autoFocus?: boolean
 }

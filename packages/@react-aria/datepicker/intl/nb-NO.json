@@ -1,10 +1,13 @@
 {
   "calendar": "Kalender",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} til {end, date, long}",
   "date": "Dato",
   "dateRange": "Datoområde",
   "day": "Dag",
   "dayPeriod": "Dagsperiode",
   "endDate": "Sluttdato",
+  "era": "Era",
   "hour": "Time",
   "minute": "Minutt",
   "month": "Måned",

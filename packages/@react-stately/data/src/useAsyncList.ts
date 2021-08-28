@@ -45,7 +45,9 @@ interface AsyncListLoadOptions<T, C> {
   /** The pagination cursor returned from the last page load. */
   cursor?: C,
   /** The current filter text used to perform server side filtering. */
-  filterText?: string
+  filterText?: string,
+  /** The current loading state of the list. */
+  loadingState?: LoadingState
 }
 
 interface AsyncListStateUpdate<T, C> {
@@ -56,7 +58,9 @@ interface AsyncListStateUpdate<T, C> {
   /** The sort descriptor to set. */
   sortDescriptor?: SortDescriptor,
   /** The pagination cursor to be used for the next page load. */
-  cursor?: C
+  cursor?: C,
+  /** The updated filter text for the list. */
+  filterText?: string
 }
 
 interface AsyncListState<T, C> extends ListState<T> {
@@ -107,6 +111,7 @@ interface AsyncListData<T> extends ListData<T> {
 }
 
 function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncListState<T, C> {
+  let selectedKeys;
   switch (data.state) {
     case 'idle':
     case 'error':
@@ -147,11 +152,13 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
             return data;
           }
 
+          selectedKeys = action.selectedKeys ?? data.selectedKeys;
           return {
             ...data,
+            filterText: action.filterText ?? data.filterText,
             state: 'idle',
             items: [...action.items],
-            selectedKeys: new Set(action.selectedKeys ?? data.selectedKeys),
+            selectedKeys: selectedKeys === 'all' ? 'all' : new Set(selectedKeys),
             sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
             abortController: null,
             cursor: action.cursor
@@ -182,23 +189,37 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
             items: action.type === 'loading' ? [] : data.items,
             abortController: action.abortController
           };
+        case 'update':
+          // We're already loading, and an update happened at the same time (e.g. selectedKey changed).
+          // Update data but don't abort previous load.
+          return {
+            ...data,
+            ...action.updater(data)
+          };
         default:
           throw new Error(`Invalid action "${action.type}" in state "${data.state}"`);
       }
     case 'loadingMore':
       switch (action.type) {
         case 'success':
+          selectedKeys = (data.selectedKeys === 'all' || action.selectedKeys === 'all')
+            ? 'all'
+            : new Set([...data.selectedKeys, ...(action.selectedKeys ?? [])]);
           // Append the new items
           return {
             ...data,
             state: 'idle',
             items: [...data.items, ...action.items],
-            selectedKeys: new Set([...data.selectedKeys, ...(action.selectedKeys ?? [])]),
+            selectedKeys,
             sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
             abortController: null,
             cursor: action.cursor
           };
         case 'error':
+          if (action.abortController !== data.abortController) {
+            return data;
+          }
+
           return {
             ...data,
             state: 'error',
@@ -217,6 +238,20 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
             // Reset items to an empty list if loading, but not when sorting.
             items: action.type === 'loading' ? [] : data.items,
             abortController: action.abortController
+          };
+        case 'loadingMore':
+          // If already loading more and another loading more is triggered, abort the new load more since
+          // it is a duplicate request since the cursor hasn't been updated.
+          // Do not overwrite the data.abortController
+          action.abortController.abort();
+
+          return data;
+        case 'update':
+          // We're already loading, and an update happened at the same time (e.g. selectedKey changed).
+          // Update data but don't abort previous load.
+          return {
+            ...data,
+            ...action.updater(data)
           };
         default:
           throw new Error(`Invalid action "${action.type}" in state "${data.state}"`);
@@ -244,7 +279,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     state: 'idle',
     error: null,
     items: [],
-    selectedKeys: new Set(initialSelectedKeys),
+    selectedKeys: initialSelectedKeys === 'all' ? 'all' : new Set(initialSelectedKeys),
     sortDescriptor: initialSortDescriptor,
     filterText: initialFilterText
   });
@@ -253,16 +288,25 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     let abortController = new AbortController();
     try {
       dispatch({...action, abortController});
+      let previousFilterText = action.filterText ?? data.filterText;
+
       let response = await fn({
         items: data.items.slice(),
         selectedKeys: data.selectedKeys,
         sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
         signal: abortController.signal,
         cursor: action.type === 'loadingMore' ? data.cursor : null,
-        filterText: action.filterText ?? data.filterText
+        filterText: previousFilterText
       });
 
+      let filterText = response.filterText ?? previousFilterText;
       dispatch({type: 'success', ...response, abortController});
+
+      // Fetch a new filtered list if filterText is updated via `load` response func rather than list.setFilterText
+      // Only do this if not aborted (e.g. user triggers another filter action before load completes)
+      if (filterText && (filterText !== previousFilterText) && !abortController.signal.aborted) {
+        dispatchFetch({type: 'filtering', filterText}, load);
+      }
     } catch (e) {
       dispatch({type: 'error', error: e, abortController});
     }
@@ -298,7 +342,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     sort(sortDescriptor: SortDescriptor) {
       dispatchFetch({type: 'sorting', sortDescriptor}, sort || load);
     },
-    ...createListActions({...options, getKey}, fn => {
+    ...createListActions({...options, getKey, cursor: data.cursor}, fn => {
       dispatch({type: 'update', updater: fn});
     }),
     setFilterText(filterText: string) {

@@ -1,0 +1,9 @@
+{
+  "ascending": "遞增",
+  "ascendingSort": "已依據「{columnName}」欄遞增排序",
+  "descending": "遞減",
+  "descendingSort": "已依據「{columnName}」欄遞減排序",
+  "select": "選取",
+  "selectAll": "全選",
+  "sortable": "可排序的欄"
+}

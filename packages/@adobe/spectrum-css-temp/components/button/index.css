@@ -211,7 +211,7 @@ a.spectrum-ActionButton {
     padding-inline-start: var(--spectrum-actionbutton-icon-padding-x);
   }
 
-  .spectrum-ActionButton-label + .spectrum-Icon {
+  .spectrum-ActionButton-label:not([hidden]) + .spectrum-Icon {
     padding-inline-end: var(--spectrum-actionbutton-icon-padding-x);
   }
 
@@ -268,6 +268,23 @@ a.spectrum-ActionButton {
 
   font-size: var(--spectrum-actionbutton-quiet-text-size);
   font-weight: var(--spectrum-actionbutton-quiet-text-font-weight);
+}
+
+.spectrum-ActionButton--emphasized,
+.spectrum-ActionButton--staticColor {
+  @inherit: %spectrum-ButtonWithFocusRing;
+
+  &:after {
+    /* Override border-radius set in %spectrum-ButtonWithFocusRing since this is not a pill button */
+    border-radius: calc(var(--spectrum-actionbutton-border-radius) + var(--spectrum-alias-focus-ring-gap));
+  }
+
+  &:focus-ring {
+    &:after {
+      /* action buttons only have a 1px border, not 2px */
+      margin: calc(calc(var(--spectrum-alias-focus-ring-gap) * -1) - var(--spectrum-actionbutton-quiet-border-size));
+    }
+  }
 }
 
 .spectrum-LogicButton {

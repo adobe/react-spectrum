@@ -51,6 +51,15 @@
   font-weight: 900;
 }
 
+/* https://use.typekit.net/use4asx.css */
+@font-face {
+  font-family: "Source Code Pro";
+  src: url("https://use.typekit.net/af/398a64/00000000000000007735dc06/30/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff2"),url("https://use.typekit.net/af/398a64/00000000000000007735dc06/30/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff"),url("https://use.typekit.net/af/398a64/00000000000000007735dc06/30/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("opentype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
 .tk-adobe-clean {
   font-family: "adobe-clean",sans-serif;
 }
@@ -132,6 +141,18 @@ html, body {
 
 .inCategory .heroImage {
   padding-bottom: 0;
+}
+
+.expandableImage {
+  cursor: zoom-in;
+}
+
+.expandableImageButton {
+  appearance: none;
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
 }
 
 .video {
@@ -498,6 +519,10 @@ summary {
   padding: 2px;
   border: 2px solid transparent;
   border-radius: 4px;
+}
+
+summary svg {
+  vertical-align: top;
 }
 
 summary:focus {

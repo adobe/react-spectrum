@@ -153,13 +153,4 @@ describe('Color', function () {
       expect(color.toString('hsba')).toBe('hsba(320, 100%, 0%, 0)');
     });
   });
-
-  it('withChannelValue', () => {
-    let color = parseColor('hsl(120, 100%, 50%)');
-    let newColor = color.withChannelValue('hue', 200);
-    expect(newColor.getChannelValue('hue')).toBe(200);
-    expect(newColor.getChannelValue('saturation')).toBe(color.getChannelValue('saturation'));
-    expect(newColor.getChannelValue('lightness')).toBe(color.getChannelValue('lightness'));
-    expect(newColor.getChannelValue('alpha')).toBe(color.getChannelValue('alpha'));
-  });
 });

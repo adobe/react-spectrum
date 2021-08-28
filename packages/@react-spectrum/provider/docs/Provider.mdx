@@ -13,6 +13,7 @@ import {Flex} from '@react-spectrum/layout';
 import {Picker, Item} from '@react-spectrum/picker';
 import {ActionButton} from '@react-spectrum/button';
 import {RadioGroup, Radio} from '@react-spectrum/radio';
+import {View} from '@react-spectrum/view';
 ```
 
 ---
@@ -75,6 +76,26 @@ Another important setting for your application is the locale. By default, React 
 ```
 
 To access the current locale anywhere in your application, see the [useLocale](https://react-spectrum.adobe.com/react-aria/useLocale.html) hook.
+
+### Breakpoints
+
+The Provider component can also be used to set the responsive breakpoints for your application, which are used by [layout components](layout.html#responsive-layout) and [style props](styling.html#responsive-styles) of all components within the Provider. By default, React Spectrum provides 5 breakpoints, which correspond to common device resolutions:
+
+* S – 640px
+* M - 768px
+* L – 1024px
+* XL - 1280px
+* XXL - 1536px
+
+These breakpoints can be overridden by passing the `breakpoints` prop to the `Provider` component. Any components within the Provider will consume these breakpoints and apply their style props accordingly. By default, React Spectrum uses t-shirt style names for breakpoints, but you can name custom breakpoints however you like.
+
+This example specifies two breakpoints: `tablet` and `desktop`. It displays a [View](View.html) that changes color depending on which breakpoint is matched: green by default, blue at the `tablet` breakpoint, and magenta at the `desktop` breakpoint. See the docs for [style props](styling.html#responsive-styles) for more details.
+
+```tsx example
+<Provider theme={theme} breakpoints={{tablet: 640, desktop: 1024}}>
+  <View height="size-1000" backgroundColor={{base: 'celery-600', tablet: 'blue-600', desktop: 'magenta-600'}} />
+</Provider>
+```
 
 ## Property groups
 Provider can also be used to define common properties for a group of components within it. For example, a group of components could be disabled together rather than individually by setting the `isDisabled` prop on any parent provider.

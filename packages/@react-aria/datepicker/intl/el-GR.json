@@ -1,10 +1,13 @@
 {
   "calendar": "Ημερολόγιο",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} ως {end, date, long}",
   "date": "Ημερομηνία",
   "dateRange": "Εύρος ημερομηνιών",
   "day": "Ημέρα",
   "dayPeriod": "Περίοδος ημερών",
   "endDate": "Ημερομηνία λήξης",
+  "era": "περίοδος",
   "hour": "Ώρα",
   "minute": "Λεπτό",
   "month": "Μήνας",

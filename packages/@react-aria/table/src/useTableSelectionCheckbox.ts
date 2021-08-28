@@ -12,48 +12,59 @@
 
 import {AriaCheckboxProps} from '@react-types/checkbox';
 import {getRowLabelledBy} from './utils';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Key} from 'react';
 import {TableState} from '@react-stately/table';
-import {useId} from '@react-aria/utils';
+import {useGridSelectionCheckbox} from '@react-aria/grid';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 interface SelectionCheckboxProps {
-  key: Key,
-  isDisabled?: boolean
+  /** A unique key for the checkbox. */
+  key: Key
 }
 
 interface SelectionCheckboxAria {
+  /** Props for the row selection checkbox element. */
   checkboxProps: AriaCheckboxProps
 }
 
+interface SelectAllCheckboxAria {
+  /** Props for the select all checkbox element. */
+  checkboxProps: AriaCheckboxProps
+}
+
+/**
+ * Provides the behavior and accessibility implementation for a selection checkbox in a table.
+ * @param props - Props for the selection checkbox.
+ * @param state - State of the table, as returned by `useTableState`.
+ */
 export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, state: TableState<T>): SelectionCheckboxAria {
-  let {
-    key,
-    isDisabled
-  } = props;
-
-  let manager = state.selectionManager;
-  let checkboxId = useId();
-  let isSelected = state.selectionManager.isSelected(key) && !isDisabled;
-
-  let onChange = () => manager.select(key);
+  let {key} = props;
+  const {checkboxProps} = useGridSelectionCheckbox(props, state);
 
   return {
     checkboxProps: {
-      id: checkboxId,
-      'aria-label': 'Select',
-      'aria-labelledby': `${checkboxId} ${getRowLabelledBy(state, key)}`,
-      isSelected,
-      onChange
+      ...checkboxProps,
+      'aria-labelledby': `${checkboxProps.id} ${getRowLabelledBy(state, key)}`
     }
   };
 }
 
-export function useTableSelectAllCheckbox<T>(state: TableState<T>): SelectionCheckboxAria {
-  let {isEmpty, isSelectAll} = state.selectionManager;
+/**
+ * Provides the behavior and accessibility implementation for the select all checkbox in a table.
+ * @param props - Props for the select all checkbox.
+ * @param state - State of the table, as returned by `useTableState`.
+ */
+export function useTableSelectAllCheckbox<T>(state: TableState<T>): SelectAllCheckboxAria {
+  let {isEmpty, isSelectAll, selectionMode} = state.selectionManager;
+  const formatMessage = useMessageFormatter(intlMessages);
+
   return {
     checkboxProps: {
-      'aria-label': 'Select All',
+      'aria-label': formatMessage(selectionMode === 'single' ? 'select' : 'selectAll'),
       isSelected: isSelectAll,
+      isDisabled: selectionMode !== 'multiple',
       isIndeterminate: !isEmpty && !isSelectAll,
       onChange: () => state.selectionManager.toggleSelectAll()
     }

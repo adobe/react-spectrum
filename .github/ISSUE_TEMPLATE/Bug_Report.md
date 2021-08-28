@@ -36,6 +36,7 @@ Search open/closed issues before submitting since someone might have asked the s
 ## 💻 Code Sample
 
 <!-- Please provide a code repository, gist, code snippet or sample files to reproduce the issue -->
+<!-- You can use this codesandbox template to get started https://codesandbox.io/s/react-spectrum-template-syueo -->
 
 ## 🌍 Your Environment
 

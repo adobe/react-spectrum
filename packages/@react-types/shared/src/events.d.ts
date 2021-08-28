@@ -40,7 +40,9 @@ export interface PressEvent {
   /** Whether the ctrl keyboard modifier was held during the press event. */
   ctrlKey: boolean,
   /** Whether the meta keyboard modifier was held during the press event. */
-  metaKey: boolean
+  metaKey: boolean,
+  /** Whether the alt keyboard modifier was held during the press event. */
+  altKey: boolean
 }
 
 export interface HoverEvent {
@@ -134,4 +136,16 @@ export interface MoveEvents {
   onMove?: (e: MoveMoveEvent) => void,
   /** Handler that is called when a move interaction ends. */
   onMoveEnd?: (e: MoveEndEvent) => void
+}
+
+export interface ScrollEvent {
+  /** The amount moved in the X direction since the last event. */
+  deltaX: number,
+  /** The amount moved in the Y direction since the last event. */
+  deltaY: number
+}
+
+export interface ScrollEvents {
+  /** Handler that is called when the scroll wheel moves. */
+  onScroll?: (e: ScrollEvent) => void
 }

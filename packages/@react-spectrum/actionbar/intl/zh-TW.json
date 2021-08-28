@@ -1,0 +1,7 @@
+{
+  "actions": "動作",
+  "actionsAvailable": "可執行的動作。",
+  "clearSelection": "清除選取項目",
+  "selected": "{count, plural, =0 {未選取任何項目} other {已選取 # 個}}",
+  "selectedAll": "已選取所有項目"
+}

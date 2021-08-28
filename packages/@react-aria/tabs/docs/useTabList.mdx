@@ -1,0 +1,170 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/tabs';
+import statelyDocs from 'docs:@react-stately/tabs';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-aria/tabs/package.json';
+import Anatomy from './anatomy.svg';
+
+```jsx import
+import {useTab, useTabList, useTabPanel} from '@react-aria/tabs';
+import {useTabListState} from '@react-stately/tabs';
+```
+
+---
+category: Navigation
+keywords: [tabs, aria]
+after_version: 3.0.0-rc.0
+---
+
+# useTabList
+
+<p>{docs.exports.useTabList.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useTabList', 'useTab', 'useTabPanel']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices/#tabpanel'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useTabList} links={docs.links} />
+
+<FunctionAPI function={docs.exports.useTab} links={docs.links} />
+
+<FunctionAPI function={docs.exports.useTabPanel} links={docs.links} />
+
+## Features
+
+Tabs provide a list of tabs that a user can select from to switch between multiple tab panels. `useTabList`, `useTab`, and `useTabPanel` can be used to implement these in an accessible way.
+
+* Support for mouse, touch, and keyboard interactions on tabs
+* Support for LTR and RTL keyboard navigation
+* Support for disabled tabs
+* Follows the tabs ARIA pattern, semantically linking tabs and their associated tab panels
+* Focus management for tab panels without any focusable children
+
+## Anatomy
+
+<Anatomy />
+
+Tabs consist of a tab list with one or more visually separated tabs. Each tab has associated content, and only the selected tab's content is shown.
+Each tab can be clicked, tapped, or navigated to via arrow keys. Depending on the `keyboardActivation` prop, the tab can be selected by receiving keyboard focus, or it can be selected with the <kbd>Enter</kbd> key.
+
+`useTabList` returns props to spread onto the tab list container:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useTabList.return.id].properties} />
+</TypeContext.Provider>
+
+`useTab` returns props to be spread onto each individual tab:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useTab.return.id].properties} />
+</TypeContext.Provider>
+
+`useTabPanel` returns props to spread onto the container for the tab content:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useTabPanel.return.id].properties} />
+</TypeContext.Provider>
+
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTabListState} />
+hook in `@react-stately/tabs`. The state object should be passed as an option to `useTabList`, `useTab`,
+and `useTabPanel`.
+
+## Example
+
+This example displays a basic list of tabs. The currently selected tab receives a `tabIndex` of 0 while the rest are set to -1 ensuring that the whole tablist is a single tab stop. The selected tab has a different style so it's obvious which one is currently selected. `useTab` and `useTabPanel` handle associating the tabs and tab panels for assistive technology. The currently selected tab panel is rendered below the list of tabs. The `key` prop on the `TabPanel` element is important to ensure that DOM state (e.g. text field contents) is not shared between unrelated tabs.
+
+```tsx example export=true
+import {Item} from '@react-stately/collections';
+
+function Tabs(props) {
+  let state = useTabListState(props);
+  let ref = React.useRef();
+  let {tabListProps} = useTabList(props, state, ref);
+  return (
+    <div style={{height: '150px'}}>
+      <div {...tabListProps} ref={ref} style={{display: 'flex', borderBottom: '1px solid grey'}}>
+        {[...state.collection].map((item) => (
+          <Tab key={item.key} item={item} state={state} />
+        ))}
+      </div>
+      <TabPanel key={state.selectedItem?.key} state={state} />
+    </div>
+  );
+}
+
+function Tab({item, state}) {
+  let {key, rendered} = item;
+  let ref = React.useRef();
+  let {tabProps} = useTab({key}, state, ref);
+  let isSelected = state.selectedKey === key;
+  let isDisabled = state.disabledKeys.has(key);
+  return (
+    <div
+      {...tabProps}
+      ref={ref}
+      style={{
+        padding: '10px',
+        borderBottom: isSelected ? '3px solid var(--blue)' : undefined,
+        opacity: isDisabled ? '0.5' : undefined
+      }}>
+      {rendered}
+    </div>
+  );
+}
+
+function TabPanel({state, ...props}) {
+  let ref = React.useRef();
+  let {tabPanelProps} = useTabPanel(props, state, ref);
+  return (
+    <div {...tabPanelProps} ref={ref} style={{padding: '10px'}}>
+      {state.selectedItem?.props.children}
+    </div>
+  );
+}
+
+<Tabs aria-label="History of Ancient Rome" disabledKeys={['Emp']}>
+  <Item key="FoR" title="Founding of Rome">Arma virumque cano, Troiae qui primus ab oris.</Item>
+  <Item key="MaR" title="Monarchy and Republic">Senatus Populusque Romanus.</Item>
+  <Item key="Emp" title="Empire">Alea jacta est.</Item>
+</Tabs>
+```
+
+## With focusable content
+
+When the tab panel doesn't contain any focusable content, the entire panel is given a `tabIndex=0` so that the content can be navigated to with the keyboard. When the tab panel contains focusable content, such as a textfield, then the `tabIndex` is omitted because the content itself can receive focus.
+
+This example uses the same `Tabs` component from above. Try navigating from the tabs to the content for each panel using the keyboard.
+
+```tsx example
+<Tabs aria-label="Notes app">
+  <Item key="item1" title="Jane Doe">
+    <label>Leave a note for Jane: <input type="text" /></label>
+  </Item>
+  <Item key="item2" title="John Doe">Senatus Populusque Romanus.</Item>
+  <Item key="item3" title="Joe Bloggs">Alea jacta est.</Item>
+</Tabs>
+```
+
+## Internationalization
+
+`useTabList` handles some aspects of internationalization automatically. For example, keyboard navigation is automatically mirrored for right-to-left languages. You are responsible for localizing all tab labels and content.
+
+### RTL
+
+In right-to-left languages, the tablist should be mirrored. The first tab is furthest right and the last tab is furthest left. Ensure that your CSS accounts for this.

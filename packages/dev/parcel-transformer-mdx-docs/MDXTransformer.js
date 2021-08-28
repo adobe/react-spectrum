@@ -54,8 +54,10 @@ module.exports = new Transformer({
 
             // TODO: Parsing code with regex is bad. Replace with babel transform or something.
             let code = node.value;
-            code = code.replace(/import ((?:.|\n)*?) from (['"].*?['"]);?/g, (m) => {
-              exampleCode.push(m);
+            code = code.replace(/import ((?:.|\n)*?) from (['"].*?['"]);?/g, (m, _, s) => {
+              if (s.slice(1, -1) !== 'your-component-library') {
+                exampleCode.push(m);
+              }
               return '';
             });
 
@@ -65,11 +67,13 @@ module.exports = new Transformer({
               provider = 'ExampleThemeSwitcher';
             }
 
-            if (/^\s*function (.|\n)*}\s*$/.test(code)) {
-              let name = code.match(/^\s*function (.*?)\s*\(/)[1];
-              code = `${code}\nReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));`;
-            } else if (/^<(.|\n)*>$/m.test(code)) {
-              code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`);
+            if (!options.includes('render=false')) {
+              if (/^\s*function (.|\n)*}\s*$/.test(code)) {
+                let name = code.match(/^\s*function (.*?)\s*\(/)[1];
+                code = `${code}\nReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));`;
+              } else if (/^<(.|\n)*>$/m.test(code)) {
+                code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`);
+              }
             }
 
             if (!options.includes('export=true')) {
@@ -77,6 +81,11 @@ module.exports = new Transformer({
             }
 
             exampleCode.push(code);
+
+            if (options.includes('render=false')) {
+              node.meta = null;
+              return transformExample(node, preRelease);
+            }
 
             if (meta === 'snippet') {
               node.meta = null;
@@ -88,9 +97,9 @@ module.exports = new Transformer({
               ];
             }
 
-            // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actuall
+            // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actually
             // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
-            node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*\/\/\/- end collapse -\/\/\//g, '').trim();
+            node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*?\/\/\/- end collapse -\/\/\//g, () => '').trim();
             node.meta = 'example';
 
             return [

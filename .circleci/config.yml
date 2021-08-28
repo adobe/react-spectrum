@@ -1,17 +1,42 @@
 version: 2.1
+
 orbs:
-  azure-cli: circleci/azure-cli@1.1.0
+  azure-cli: circleci/azure-cli@1.2.0
+
+executors:
+  rsp:
+    docker:
+      - image: cimg/node:12.22
+    environment:
+      CACHE_VERSION: v1
+    working_directory: ~/react-spectrum
+
+  rsp-large:
+    docker:
+      - image: cimg/node:12.22
+    resource_class: large
+    environment:
+      CACHE_VERSION: v1
+    working_directory: ~/react-spectrum
+
+  rsp-xlarge:
+    docker:
+      - image: cimg/node:12.22
+    resource_class: xlarge
+    environment:
+      CACHE_VERSION: v1
+    working_directory: ~/react-spectrum
+
 jobs:
   install:
-    docker:
-      - image: circleci/node:12
-    resource_class: large
-
-    working_directory: ~/react-spectrum
+    executor: rsp-large
     steps:
       - checkout
       - restore_cache:
-          key: rsp-yarn-{{ checksum "yarn.lock" }}
+          keys:
+            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
+            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-
 
       - run:
           name: Write npmrc
@@ -23,66 +48,124 @@ jobs:
       - run:
           name: build
           command: |
-            yarn --pure-lockfile
+            yarn --pure-lockfile --cache-folder ~/.cache/yarn
 
       - save_cache:
          paths:
-           - node_modules
-         key: rsp-yarn-{{ checksum "yarn.lock" }}
+           - ~/.cache/yarn
+         key: rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
 
       - save_cache:
           paths:
             - ~/react-spectrum
-          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+  install-17:
+    executor: rsp-large
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
+            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-
+
+      - run:
+          name: build
+          command: |
+            yarn install --pure-lockfile --cache-folder ~/.cache/yarn && yarn install-17 --cache-folder ~/.cache/yarn
+
+      - save_cache:
+          paths:
+            - ~/react-spectrum
+          key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+  test-ssr:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: test ssr
+          command: yarn test:ssr
 
   test:
-    docker:
-      - image: circleci/node:12
-
-    working_directory: ~/react-spectrum
+    parallelism: 3
+    executor: rsp-xlarge
     steps:
       - restore_cache:
-          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run: mkdir ~/junit
 
       - run:
           name: test
-          command: yarn ci-test
+          command: |
+            shopt -s globstar
+            TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
+            yarn test ${TESTFILES}
 
-  test_17:
-    docker:
-      - image: circleci/node:12
+      - run:
+          command: |
+            cat junit.xml
+            cp junit.xml ~/junit/
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
 
-    working_directory: ~/react-spectrum
+  test-ssr-17:
+    executor: rsp-xlarge
     steps:
       - restore_cache:
-          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: test ssr
+          command: |
+            yarn test:ssr
+
+  test-17:
+    parallelism: 3
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run: mkdir ~/junit
 
       - run:
           name: test
-          command: yarn ci-test-17
+          command: |
+            shopt -s globstar
+            TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
+            JEST_JUNIT_OUTPUT_NAME="junit-17.xml" yarn test ${TESTFILES}
+
+      - run:
+          command: cp junit-17.xml ~/junit/
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
 
   lint:
-    docker:
-      - image: circleci/node:12
-
-    working_directory: ~/react-spectrum
+    executor: rsp
     steps:
       - restore_cache:
-          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: lint
           command: yarn lint
 
   storybook:
-    docker:
-      - image: circleci/node:12
-    resource_class: large
-
-    working_directory: ~/react-spectrum
+    executor: rsp-large
     steps:
       - restore_cache:
-          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: build storybook
@@ -94,14 +177,10 @@ jobs:
             - '*/storybook/'
 
   storybook-17:
-    docker:
-      - image: circleci/node:12
-    resource_class: large
-
-    working_directory: ~/react-spectrum
+    executor: rsp-large
     steps:
       - restore_cache:
-          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: build storybook-17
@@ -113,14 +192,10 @@ jobs:
             - '*/storybook-17/'
 
   docs:
-    docker:
-      - image: circleci/node:12
-    resource_class: xlarge
-
-    working_directory: ~/react-spectrum
+    executor: rsp-xlarge
     steps:
       - restore_cache:
-          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: build docs
@@ -132,14 +207,10 @@ jobs:
             - '*/docs/'
 
   docs-production:
-    docker:
-      - image: circleci/node:12
-    resource_class: xlarge
-
-    working_directory: ~/react-spectrum
+    executor: rsp-xlarge
     steps:
       - restore_cache:
-          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: build docs
@@ -172,13 +243,11 @@ jobs:
           command: az storage blob upload-batch -d "\$web" -s /tmp/dist/production/docs --account-name reactspectrum
 
   comment:
-    docker:
-      - image: circleci/node:12
-    working_directory: ~/react-spectrum
+    executor: rsp
     steps:
       - checkout
       - restore_cache:
-          key: rsp-yarn-{{ checksum "yarn.lock" }}
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: comment on pr
@@ -188,13 +257,10 @@ jobs:
             fi
 
   publish-nightly:
-    docker:
-      - image: circleci/node:12
-    resource_class: xlarge
-    working_directory: ~/react-spectrum
+    executor: rsp-xlarge
     steps:
       - restore_cache:
-          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
       - run:
           name: Authenticate with npm
           command: |
@@ -209,12 +275,19 @@ workflows:
   commit:
     jobs:
       - install
+      - install-17
+      - test-ssr:
+          requires:
+            - install
       - test:
           requires:
             - install
-      - test_17:
+      - test-ssr-17:
           requires:
-            - install
+            - install-17
+      - test-17:
+          requires:
+            - install-17
       - lint:
           requires:
             - install
@@ -223,7 +296,7 @@ workflows:
             - install
       - storybook-17:
           requires:
-            - install
+            - install-17
       - docs:
           requires:
             - install
@@ -236,8 +309,10 @@ workflows:
       - deploy:
           requires:
             - lint
+            - test-ssr
             - test
-            - test_17
+            - test-ssr-17
+            - test-17
             - storybook
             - storybook-17
             - docs
