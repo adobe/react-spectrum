@@ -35,7 +35,6 @@ import {useFilter, useMessageFormatter} from '@react-aria/i18n';
 import {useHover} from '@react-aria/interactions';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSearchAutocomplete} from '@react-aria/searchfield';
-import {useSearchFieldState} from '@react-stately/searchfield';
 
 function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
@@ -58,8 +57,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
     direction = 'bottom',
     isQuiet,
     loadingState,
-    onLoadMore,
-    onSubmit
+    onLoadMore
   } = props;
 
   let formatMessage = useMessageFormatter(intlMessages);
@@ -71,7 +69,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
   let domRef = useFocusableRef(ref, inputRef);
 
   let {contains} = useFilter({sensitivity: 'base'});
-  let comboBoxState = useComboBoxState(
+  let state = useComboBoxState(
     {
       ...props,
       defaultFilter: contains,
@@ -79,14 +77,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
       allowsCustomValue: true
     }
   );
-  let layout = useListBoxLayout(comboBoxState);
-
-  let searchFieldState = useSearchFieldState({
-    ...props,
-    onSubmit: (value) => onSubmit(value, null)
-  });
-
-  let state = {...comboBoxState, ...searchFieldState};
+  let layout = useListBoxLayout(state);
   
   let {inputProps, listBoxProps, labelProps, clearButtonProps} = useSearchAutocomplete(
     {

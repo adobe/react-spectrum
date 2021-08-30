@@ -17,7 +17,6 @@ import {HTMLAttributes, InputHTMLAttributes, RefObject} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {SearchAutocompleteProps} from '@react-types/searchfield';
-import {SearchFieldState} from '@react-stately/searchfield';
 import {useComboBox} from '@react-aria/combobox';
 import {useSearchField} from '@react-aria/searchfield';
 
@@ -43,15 +42,13 @@ interface SearchAutocompleteAria<T> {
   clearButtonProps: AriaButtonProps
 }
 
-interface SearchAutocompleteState<T> extends ComboBoxState<T>, SearchFieldState {}
-
 /**
  * Provides the behavior and accessibility implementation for a search autocomplete component.
  * A search autocomplete combines a combobox with a searchfield, allowing users to filter a list of options to items matching a query.
  * @param props - Props for the search autocomplete.
  * @param state - State for the search autocomplete, as returned by `useSearchAutocomplete`.
  */
-export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteProps<T>, state: SearchAutocompleteState<T>): SearchAutocompleteAria<T> {
+export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteProps<T>, state: ComboBoxState<T>): SearchAutocompleteAria<T> {
   let {
     popoverRef,
     inputRef,
@@ -67,7 +64,10 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteProps<T>, 
     autoComplete: 'off',
     onClear: () => state.setInputValue(''),
     onSubmit: (value) => onSubmit(value, state.selectedKey || null)
-  }, state, inputRef);
+  }, {
+    value: state.inputValue,
+    setValue: state.setInputValue
+  }, inputRef);
   
 
   let {listBoxProps, inputProps: comboBoxInputProps} = useComboBox(
