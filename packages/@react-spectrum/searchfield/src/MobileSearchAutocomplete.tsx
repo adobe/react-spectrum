@@ -157,9 +157,9 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
 
   let icon = React.cloneElement(searchIcon, {
     UNSAFE_className: classNames(
-        textfieldStyles,
-        'spectrum-Textfield-icon'
-        ),
+      textfieldStyles,
+      'spectrum-Textfield-icon'
+    ),
     size: 'S'
   });
 
@@ -222,7 +222,17 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
                 'spectrum-Textfield--invalid': validationState === 'invalid',
                 'spectrum-Textfield--valid': validationState === 'valid',
                 'spectrum-Textfield--quiet': isQuiet
-              }
+              },
+              classNames(
+                searchStyles,
+                'spectrum-Search',
+                {
+                  'is-disabled': isDisabled,
+                  'is-quiet': isQuiet,
+                  'spectrum-Search--invalid': validationState === 'invalid',
+                  'spectrum-Search--valid': validationState === 'valid'
+                }
+              )
             )
           }>
           <div
@@ -234,8 +244,13 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
                 {
                   'is-hovered': isHovered,
                   'is-placeholder': isPlaceholder,
-                  'is-disabled': isDisabled
-                }
+                  'is-disabled': isDisabled,
+                  'is-quiet': isQuiet
+                },
+                classNames(
+                  searchStyles,
+                  'spectrum-Search-input'
+                )
               )
             }>
             {icon}
