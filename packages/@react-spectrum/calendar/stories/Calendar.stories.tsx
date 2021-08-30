@@ -69,6 +69,14 @@ storiesOf('Date and Time/Calendar', module)
   .add(
     'visibleMonths: 3',
     () => render({visibleMonths: 3})
+  )
+  .add(
+    'minValue: today, visibleMonths: 3',
+    () => render({minValue: today(getLocalTimeZone()), visibleMonths: 3})
+  )
+  .add(
+    'minValue, visibleMonths: 3, defaultValue',
+    () => render({minValue: new CalendarDate(2019, 6, 1), defaultValue: new CalendarDate(2019, 6, 5), visibleMonths: 3})
   );
 
 function render(props = {}) {

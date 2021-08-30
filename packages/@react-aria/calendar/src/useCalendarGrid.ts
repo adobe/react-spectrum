@@ -20,16 +20,16 @@ import {mergeProps, useDescription, useLabels} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 interface CalendarGridProps extends CalendarPropsBase {
-  startDate: CalendarDate,
-  endDate: CalendarDate
+  startDate?: CalendarDate,
+  endDate?: CalendarDate
 }
 
 export function useCalendarGrid(props: CalendarGridProps, state: CalendarState | RangeCalendarState): CalendarGridAria {
   let {
     isReadOnly = false,
     isDisabled = false,
-    startDate,
-    endDate
+    startDate = state.visibleRange.start,
+    endDate = state.visibleRange.end
   } = props;
 
   let {direction} = useLocale();
@@ -44,26 +44,26 @@ export function useCalendarGrid(props: CalendarGridProps, state: CalendarState |
       case 'PageUp':
         e.preventDefault();
         if (e.shiftKey) {
-          state.focusPreviousYear();
+          state.focusPreviousSection();
         } else {
-          state.focusPreviousMonth();
+          state.focusPreviousPage();
         }
         break;
       case 'PageDown':
         e.preventDefault();
         if (e.shiftKey) {
-          state.focusNextYear();
+          state.focusNextSection();
         } else {
-          state.focusNextMonth();
+          state.focusNextPage();
         }
         break;
       case 'End':
         e.preventDefault();
-        state.focusEndOfMonth();
+        state.focusPageEnd();
         break;
       case 'Home':
         e.preventDefault();
-        state.focusStartOfMonth();
+        state.focusPageStart();
         break;
       case 'ArrowLeft':
         e.preventDefault();
@@ -75,7 +75,7 @@ export function useCalendarGrid(props: CalendarGridProps, state: CalendarState |
         break;
       case 'ArrowUp':
         e.preventDefault();
-        state.focusPreviousWeek();
+        state.focusPreviousRow();
         break;
       case 'ArrowRight':
         e.preventDefault();
@@ -87,7 +87,7 @@ export function useCalendarGrid(props: CalendarGridProps, state: CalendarState |
         break;
       case 'ArrowDown':
         e.preventDefault();
-        state.focusNextWeek();
+        state.focusNextRow();
         break;
       case 'Escape':
         // Cancel the selection.

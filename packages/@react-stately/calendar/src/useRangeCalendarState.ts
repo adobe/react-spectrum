@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {alignCenter} from './utils';
 import {Calendar, CalendarDate, Duration, GregorianCalendar, toCalendar, toCalendarDate} from '@internationalized/date';
 import {DateRange, DateValue} from '@react-types/calendar';
 import {RangeCalendarProps} from '@react-types/calendar';
@@ -26,7 +27,7 @@ interface RangeCalendarStateOptions<T extends DateValue> extends RangeCalendarPr
 }
 
 export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarStateOptions<T>): RangeCalendarState {
-  let {value: valueProp, defaultValue, onChange, createCalendar, ...calendarProps} = props;
+  let {value: valueProp, defaultValue, onChange, createCalendar, locale, visibleDuration = {months: 1}, minValue, maxValue, ...calendarProps} = props;
   let [value, setValue] = useControlledState<DateRange>(
     valueProp,
     defaultValue,
@@ -34,10 +35,25 @@ export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarS
   );
 
   let [anchorDate, setAnchorDate] = useState(null);
+  let alignment: 'center' | 'start' = 'center';
+  if (value && value.start && value.end) {
+    let start = alignCenter(toCalendarDate(value.start), visibleDuration, locale, minValue, maxValue);
+    let end = start.add(visibleDuration).subtract({days: 1});
+
+    if (value.end.compare(end) > 0) {
+      alignment = 'start';
+    }
+  }
+
   let calendar = useCalendarState({
     ...calendarProps,
     value: value && value.start,
-    createCalendar
+    createCalendar,
+    locale,
+    visibleDuration,
+    minValue,
+    maxValue,
+    selectionAlignment: alignment
   });
 
   let highlightedRange = anchorDate ? makeRange(anchorDate, calendar.focusedDate) : value && makeRange(value.start, value.end);

@@ -378,7 +378,7 @@ describe('CalendarBase', () => {
         defaultValue = {start: defaultValue, end: defaultValue};
       }
 
-      let {getByRole, getAllByRole, getByLabelText, getAllByLabelText, unmount} = render(<Calendar defaultValue={defaultValue} autoFocus {...props} />);
+      let {getAllByRole, getByLabelText, getAllByLabelText, unmount} = render(<Calendar defaultValue={defaultValue} autoFocus {...props} />);
       let grid = getAllByRole('grid')[0]; // get by role will see two, role=grid and implicit <table> which also has role=grid
 
       let cell = getAllByLabelText('selected', {exact: false}).filter(cell => cell.role !== 'grid')[0];
@@ -390,9 +390,9 @@ describe('CalendarBase', () => {
 
       cell = getByLabelText(value, {exact: false});
       expect(grid).not.toHaveAttribute('aria-activedescendant');
-      expect(document.activeElement).toBe(cell);
+      expect(document.activeElement.outerHTML).toBe(cell.outerHTML);
 
-      let heading = getByRole('heading');
+      let heading = getAllByRole('heading')[0];
       expect(heading).toHaveTextContent(month);
 
       // clear any live announcers
@@ -438,11 +438,29 @@ describe('CalendarBase', () => {
 
     it.each`
       Name                    | Calendar          | props
+      ${'v3 Calendar'}        | ${Calendar}       | ${{visibleMonths: 3}}
+      ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{visibleMonths: 3}}
+    `('$Name should move the focused date to the start or end of the page with the home/end keys when multiple months are visible', async ({Calendar, props}) => {
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 12), 'Home', 'Wednesday, May 1, 2019', 'May 2019', props);
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 12), 'End', 'Wednesday, July 31, 2019', 'May 2019', props);
+    });
+
+    it.each`
+      Name                    | Calendar          | props
       ${'v3 Calendar'}        | ${Calendar}       | ${{}}
       ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{}}
     `('$Name should move the focused date by one month with the page up/page down keys', async ({Calendar, props}) => {
       await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageUp', 'Sunday, May 5, 2019', 'May 2019', props);
       await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageDown', 'Friday, July 5, 2019', 'July 2019', props);
+    });
+
+    it.each`
+      Name                    | Calendar          | props
+      ${'v3 Calendar'}        | ${Calendar}       | ${{visibleMonths: 3}}
+      ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{visibleMonths: 3}}
+    `('$Name should move the focused date by one page with the page up/page down keys when multiple months are visible', async ({Calendar, props}) => {
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageUp', 'Tuesday, March 5, 2019', 'February 2019', props);
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageDown', 'Thursday, September 5, 2019', 'August 2019', props);
     });
 
     it.each`
@@ -461,14 +479,14 @@ describe('CalendarBase', () => {
     `('$Name should not move the focused date outside the valid range', async ({Calendar, props}) => {
       await testKeyboard(Calendar, new CalendarDate(2019, 6, 2), 'ArrowLeft', 'Sunday, June 2, 2019 selected', 'June 2019', props);
       await testKeyboard(Calendar, new CalendarDate(2019, 6, 8), 'ArrowRight', 'Saturday, June 8, 2019 selected', 'June 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'ArrowUp', 'Wednesday, June 5, 2019 selected', 'June 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'ArrowDown', 'Wednesday, June 5, 2019 selected', 'June 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'Home', 'Wednesday, June 5, 2019 selected', 'June 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'End', 'Wednesday, June 5, 2019 selected', 'June 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageUp', 'Wednesday, June 5, 2019 selected', 'June 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageDown', 'Wednesday, June 5, 2019 selected', 'June 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageUp', 'Wednesday, June 5, 2019 selected', 'June 2019', props, {shiftKey: true});
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageDown', 'Wednesday, June 5, 2019 selected', 'June 2019', props, {shiftKey: true});
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'ArrowUp', 'Sunday, June 2, 2019', 'June 2019', props);
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'ArrowDown', 'Saturday, June 8, 2019', 'June 2019', props);
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'Home', 'Sunday, June 2, 2019', 'June 2019', props);
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'End', 'Saturday, June 8, 2019', 'June 2019', props);
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageUp', 'Sunday, June 2, 2019', 'June 2019', props);
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageDown', 'Saturday, June 8, 2019', 'June 2019', props);
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageUp', 'Sunday, June 2, 2019', 'June 2019', props, {shiftKey: true});
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageDown', 'Saturday, June 8, 2019', 'June 2019', props, {shiftKey: true});
     });
   });
 

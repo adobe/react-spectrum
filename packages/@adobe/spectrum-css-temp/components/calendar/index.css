@@ -23,7 +23,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Calendar {
-  display: inline-block;
+  display: block;
   touch-action: none;
 }
 
@@ -78,6 +78,7 @@ governing permissions and limitations under the License.
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
   gap: var(--spectrum-global-dimension-size-300);
+  align-items: start;
 }
 
 .spectrum-Calendar-dayOfWeek {
@@ -114,7 +115,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Calendar-table {
   table-layout: fixed;
-  /*width: 100%;*/
+  width: var(--spectrum-calendar-width);
 
   border-collapse: collapse;
   border-spacing: 0;

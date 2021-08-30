@@ -10,15 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {alignCenter, alignEnd, alignStart, constrainStart, constrainValue, isInvalid} from './utils';
 import {
   Calendar,
   CalendarDate,
   Duration,
-  endOfMonth,
   GregorianCalendar,
   isSameDay,
-  startOfMonth,
-  startOfWeek,
   toCalendar,
   toCalendarDate,
   today
@@ -32,7 +30,8 @@ import {useEffect, useMemo, useRef, useState} from 'react';
 interface CalendarStateOptions<T extends DateValue> extends CalendarProps<T> {
   locale: string,
   createCalendar: (name: string) => Calendar,
-  visibleDuration?: Duration
+  visibleDuration?: Duration,
+  selectionAlignment?: 'start' | 'center' | 'end'
 }
 
 export function useCalendarState<T extends DateValue>(props: CalendarStateOptions<T>): CalendarState {
@@ -44,7 +43,8 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
     timeZone = resolvedOptions.timeZone,
     visibleDuration = {months: 1},
     minValue,
-    maxValue
+    maxValue,
+    selectionAlignment
   } = props;
 
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
@@ -52,7 +52,17 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
   let [value, setControlledValue] = useControlledState<DateValue>(props.value, props.defaultValue, props.onChange);
   let calendarDateValue = useMemo(() => value ? toCalendar(toCalendarDate(value), calendar) : null, [value, calendar]);
   let defaultDate = useMemo(() => calendarDateValue || toCalendar(today(timeZone), calendar), [calendarDateValue, timeZone, calendar]);
-  let [startDate, setStartDate] = useState(() => alignCenter(defaultDate, visibleDuration, locale));
+  let [startDate, setStartDate] = useState(() => {
+    switch (selectionAlignment) {
+      case 'start':
+        return alignStart(defaultDate, visibleDuration, locale, minValue, maxValue);
+      case 'end':
+        return alignEnd(defaultDate, visibleDuration, locale, minValue, maxValue);
+      case 'center':
+      default:
+        return alignCenter(defaultDate, visibleDuration, locale, minValue, maxValue);
+    }
+  });
   let [focusedDate, setFocusedDate] = useState(defaultDate);
   let [isFocused, setFocused] = useState(props.autoFocus || false);
 
@@ -63,23 +73,22 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
   useEffect(() => {
     if (calendar.identifier !== lastCalendarIdentifier.current) {
       let newFocusedDate = toCalendar(focusedDate, calendar);
-      setStartDate(alignCenter(newFocusedDate, visibleDuration, locale));
+      setStartDate(alignCenter(newFocusedDate, visibleDuration, locale, minValue, maxValue));
       setFocusedDate(newFocusedDate);
       lastCalendarIdentifier.current = calendar.identifier;
     }
-  }, [calendar, focusedDate, visibleDuration, locale]);
+  }, [calendar, focusedDate, visibleDuration, locale, minValue, maxValue]);
 
   // Sets focus to a specific cell date
   function focusCell(date: CalendarDate) {
-    if (isInvalid(date, minValue, maxValue)) {
-      return;
-    }
+    // date = constrain(focusedDate, date, visibleDuration, locale, minValue, maxValue);
+    date = constrainValue(date, minValue, maxValue);
 
     let next = startDate.add(visibleDuration);
     if (date.compare(startDate) < 0) {
-      setStartDate(alignEnd(date, visibleDuration, locale));
+      setStartDate(alignEnd(date, visibleDuration, locale, minValue, maxValue));
     } else if (date.compare(next) >= 0) {
-      setStartDate(alignStart(date, visibleDuration, locale));
+      setStartDate(alignStart(date, visibleDuration, locale, minValue, maxValue));
     }
 
     setFocusedDate(date);
@@ -118,37 +127,53 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
     focusPreviousDay() {
       focusCell(focusedDate.subtract({days: 1}));
     },
-    focusNextWeek() {
-      focusCell(focusedDate.add({weeks: 1}));
+    focusNextRow() {
+      if (visibleDuration.days) {
+        this.focusNextPage();
+      } else if (visibleDuration.weeks || visibleDuration.months || visibleDuration.years) {
+        focusCell(focusedDate.add({weeks: 1}));
+      }
     },
-    focusPreviousWeek() {
-      focusCell(focusedDate.subtract({weeks: 1}));
+    focusPreviousRow() {
+      if (visibleDuration.days) {
+        this.focusPreviousPage();
+      } else if (visibleDuration.weeks || visibleDuration.months || visibleDuration.years) {
+        focusCell(focusedDate.subtract({weeks: 1}));
+      }
     },
-    focusNextMonth() {
-      focusCell(focusedDate.add({months: 1}));
+    focusNextPage() {
+      let start = startDate.add(visibleDuration);
+      setStartDate(constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue));
+      setFocusedDate(constrainValue(focusedDate.add(visibleDuration), minValue, maxValue));
     },
-    focusPreviousMonth() {
-      focusCell(focusedDate.subtract({months: 1}));
+    focusPreviousPage() {
+      let start = startDate.subtract(visibleDuration);
+      setStartDate(constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue));
+      setFocusedDate(constrainValue(focusedDate.subtract(visibleDuration), minValue, maxValue));
     },
-    focusStartOfMonth() {
-      focusCell(startOfMonth(focusedDate));
+    focusPageStart() {
+      focusCell(startDate);
     },
-    focusEndOfMonth() {
-      focusCell(endOfMonth(focusedDate));
+    focusPageEnd() {
+      focusCell(endDate);
     },
-    focusNextYear() {
-      focusCell(focusedDate.add({years: 1}));
+    focusNextSection() {
+      if (visibleDuration.days) {
+        this.focusNextPage();
+      } else if (visibleDuration.weeks) {
+        focusCell(focusedDate.add({months: 1}));
+      } else if (visibleDuration.months || visibleDuration.years) {
+        focusCell(focusedDate.add({years: 1}));
+      }
     },
-    focusPreviousYear() {
-      focusCell(focusedDate.subtract({years: 1}));
-    },
-    focusNextVisibleRange() {
-      setStartDate(startDate.add(visibleDuration));
-      setFocusedDate(focusedDate.add(visibleDuration));
-    },
-    focusPreviousVisibleRange() {
-      setStartDate(startDate.subtract(visibleDuration));
-      setFocusedDate(focusedDate.subtract(visibleDuration));
+    focusPreviousSection() {
+      if (visibleDuration.days) {
+        this.focusPreviousPage();
+      } else if (visibleDuration.weeks) {
+        focusCell(focusedDate.subtract({months: 1}));
+      } else if (visibleDuration.months || visibleDuration.years) {
+        focusCell(focusedDate.subtract({years: 1}));
+      }
     },
     selectFocusedDate() {
       setValue(focusedDate);
@@ -177,50 +202,4 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
       return isInvalid(endDate.add({days: 1}), minValue, maxValue);
     }
   };
-}
-
-function isInvalid(date: CalendarDate, minValue: DateValue, maxValue: DateValue) {
-  return (minValue != null && date.compare(minValue) < 0) ||
-    (maxValue != null && date.compare(maxValue) > 0);
-}
-
-function alignCenter(date: CalendarDate, duration: Duration, locale: string) {
-  let halfDuration: Duration = {};
-  for (let key in duration) {
-    halfDuration[key] = Math.floor(duration[key] / 2);
-    if (halfDuration[key] > 0 && halfDuration[key] % 2 === 0) {
-      halfDuration[key]--;
-    }
-  }
-
-  return alignStart(date, duration, locale).subtract(halfDuration);
-}
-
-function alignStart(date: CalendarDate, duration: Duration, locale: string) {
-  // align to the start of the largest unit
-  if (duration.years) {
-    date = date.set({month: 1, day: 1});
-  } else if (duration.months) {
-    date = date.set({day: 1});
-  } else if (duration.weeks) {
-    date = startOfWeek(date, locale);
-  }
-
-  return date;
-}
-
-function alignEnd(date: CalendarDate, duration: Duration, locale: string) {
-  let d = {...duration};
-  // subtract 1 from the smallest unit
-  if (duration.days) {
-    d.days--;
-  } else if (duration.weeks) {
-    d.weeks--;
-  } else if (duration.months) {
-    d.months--;
-  } else if (duration.years) {
-    d.years--;
-  }
-
-  return alignStart(date, duration, locale).subtract(d);
 }

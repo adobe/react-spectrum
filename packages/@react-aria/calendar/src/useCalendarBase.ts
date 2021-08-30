@@ -57,12 +57,12 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
       'aria-labelledby': props['aria-labelledby']
     }),
     nextButtonProps: {
-      onPress: () => state.focusNextVisibleRange(),
+      onPress: () => state.focusNextPage(),
       'aria-label': formatMessage('next'),
       isDisabled: props.isDisabled || state.isNextVisibleRangeInvalid()
     },
     prevButtonProps: {
-      onPress: () => state.focusPreviousVisibleRange(),
+      onPress: () => state.focusPreviousPage(),
       'aria-label': formatMessage('previous'),
       isDisabled: props.isDisabled || state.isPreviousVisibleRangeInvalid()
     }

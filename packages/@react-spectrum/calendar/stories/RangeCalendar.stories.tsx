@@ -69,6 +69,14 @@ storiesOf('Date and Time/RangeCalendar', module)
   .add(
     'visibleMonths: 3',
     () => render({visibleMonths: 3})
+  )
+  .add(
+    'minValue: today, visibleMonths: 3',
+    () => render({minValue: today(getLocalTimeZone()), visibleMonths: 3})
+  )
+  .add(
+    'defaultValue, visibleMonths: 3',
+    () => render({visibleMonths: 3, defaultValue: {start: new CalendarDate(2021, 10, 5), end: new CalendarDate(2021, 12, 10)}})
   );
 
   // Fake cell for testing css

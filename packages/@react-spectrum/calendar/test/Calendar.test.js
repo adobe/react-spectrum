@@ -80,6 +80,26 @@ describe('Calendar', () => {
       expect(cell).toHaveFocus();
       expect(grid).not.toHaveAttribute('aria-activedescendant');
     });
+
+    it('should center the selected date if multiple months are visible', () => {
+      let {getAllByRole, getByLabelText} = render(<Calendar value={new CalendarDate(2019, 2, 3)} visibleMonths={3} />);
+
+      let grids = getAllByRole('grid');
+      expect(grids).toHaveLength(3);
+
+      let cell = getByLabelText('selected', {exact: false});
+      expect(grids[1].contains(cell)).toBe(true);
+    });
+
+    it('should constrain the visible region depending on the minValue', () => {
+      let {getAllByRole, getByLabelText} = render(<Calendar value={new CalendarDate(2019, 2, 3)} minValue={new CalendarDate(2019, 2, 1)} visibleMonths={3} />);
+
+      let grids = getAllByRole('grid');
+      expect(grids).toHaveLength(3);
+
+      let cell = getByLabelText('selected', {exact: false});
+      expect(grids[0].contains(cell)).toBe(true);
+    });
   });
 
   describe('selection', () => {

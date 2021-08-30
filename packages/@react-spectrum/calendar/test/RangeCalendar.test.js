@@ -192,6 +192,36 @@ describe('RangeCalendar', () => {
 
       expect(prevButton).toHaveFocus();
     });
+
+    it('should center the selected range if multiple months are visible', () => {
+      let {getAllByRole, getAllByLabelText} = render(<RangeCalendar value={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 2, 10)}} visibleMonths={3} />);
+
+      let grids = getAllByRole('grid');
+      expect(grids).toHaveLength(3);
+
+      let cells = getAllByLabelText('selected', {exact: false});
+      expect(cells.every(cell => grids[1].contains(cell))).toBe(true);
+    });
+
+    it('should constrain the visible region depending on the minValue', () => {
+      let {getAllByRole, getAllByLabelText} = render(<RangeCalendar value={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 2, 10)}} minValue={new CalendarDate(2019, 2, 1)} visibleMonths={3} />);
+
+      let grids = getAllByRole('grid');
+      expect(grids).toHaveLength(3);
+
+      let cells = getAllByLabelText('selected', {exact: false});
+      expect(cells.every(cell => grids[0].contains(cell))).toBe(true);
+    });
+
+    it('should start align the selected range if it would go out of view when centered', () => {
+      let {getAllByRole, getAllByLabelText} = render(<RangeCalendar value={{start: new CalendarDate(2019, 1, 3), end: new CalendarDate(2019, 3, 10)}} visibleMonths={3} />);
+
+      let grids = getAllByRole('grid');
+      expect(grids).toHaveLength(3);
+
+      let cells = getAllByLabelText('selected', {exact: false});
+      expect(grids[0].contains(cells[0])).toBe(true);
+    });
   });
 
   describe('selection', () => {
