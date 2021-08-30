@@ -13,7 +13,10 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 /**
-LAYERS: There are 4 layers to standard/horizontal cards
+LAYERS: There are 5 layers to quiet cards
+layer -1:
+  card back color, seen mostly in quiet cards in a grid
+
 layer default:
   all content provided by the user
 
@@ -26,12 +29,9 @@ layer 2:
 layer 3:
   checkbox
 */
-
 /**
-LAYERS: There are 5 layers to quiet cards
-layer -1:
-  card back color, seen mostly in quiet cards in a grid
-
+LAYERS: There are 4 layers to standard/horizontal cards
+no -1 layer because standard cards have a background already
 layer default:
   all content provided by the user
 
@@ -67,8 +67,32 @@ Quiet Vertical
 .spectrum-Card--gallery
 .spectrum-Card--tile
 .spectrum-Card--noLayout
-
 */
+
+/**
+ELEMENTS
+.spectrum-Card
+.spectrum-Card:before element in standard cards for border/focus
+.spectrum-Card:after element in standard cards for selection overlay
+.spectrum-Card-grid element defining the css grid that everything is laid out on
+.spectrum-Card-grid:before element in the grid used to enforce aspect ratio in quiet cards
+.spectrum-Card-grid:after element in the grid used to decorate with focus ring (required on just the image part in quiet cards)
+.spectrum-Card-grid .spectrum-Card-decoration extra element in the grid used to decorative features like the blue overlay just over the image in quiet cards
+.spectrum-Card-grid .spectrum-Card-sizeHelper extra element in the grid used to enforce aspect ratio in horizontal cards (can't use the before for this, see FF)
+.spectrum-Card-checkboxWrapper
+.spectrum-Card-checkbox
+
+user-provided
+.spectrum-Card-image
+.spectrum-Card-illustration
+.spectrum-Card-avatar
+.spectrum-Card-heading
+.spectrum-Card-detail
+.spectrum-Card-actions
+.spectrum-Card-content
+.spectrum-Card-divider
+.spectrum-Card-footer
+ */
 
 
 /** Shared **/
@@ -126,7 +150,8 @@ Quiet Vertical
   &:before {
 
   }
-  &:after {
+  &:after,
+  .spectrum-Card-decoration{
     pointer-events: none;
   }
 }
@@ -160,6 +185,9 @@ Quiet Vertical
 }
 .spectrum-Card-footer {
   grid-area: footer;
+}
+.spectrum-Card-decoration {
+  display: none;
 }
 
 /** Standard Vertical **/
@@ -548,13 +576,24 @@ Quiet Vertical
       content: ' ';
       grid-area: preview;
 
-      background-color: var(--spectrum-card-quiet-preview-background-color);
       border-radius: var(--spectrum-card-quiet-border-radius);
       transition: background-color var(--spectrum-global-animation-duration-100);
     }
 
     &:after {
       content: ' ';
+      grid-area: preview;
+      position: absolute;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
+      inset-block-start: 0;
+      inset-block-end: 0;
+      margin: calc(var(--spectrum-alias-focus-ring-gap) * -2);
+
+      border-radius: calc(var(--spectrum-card-quiet-border-radius) + var(--spectrum-alias-focus-ring-gap));
+    }
+    .spectrum-Card-decoration {
+      display: block;
       grid-area: preview;
       inline-size: 100%;
       block-size: 100%;
@@ -641,13 +680,24 @@ Quiet Vertical
       content: ' ';
       grid-area: preview;
 
-      background-color: var(--spectrum-card-quiet-preview-background-color);
       border-radius: var(--spectrum-card-quiet-border-radius);
       transition: background-color var(--spectrum-global-animation-duration-100);
     }
 
     &:after {
       content: ' ';
+      grid-area: preview;
+      position: absolute;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
+      inset-block-start: 0;
+      inset-block-end: 0;
+      margin: calc(var(--spectrum-alias-focus-ring-gap) * -2);
+
+      border-radius: calc(var(--spectrum-card-quiet-border-radius) + var(--spectrum-alias-focus-ring-gap));
+    }
+    .spectrum-Card-decoration {
+      display: block;
       grid-area: preview;
       inline-size: 100%;
       block-size: 100%;
@@ -744,13 +794,24 @@ Quiet Vertical
       padding-top: 100%;
       padding-left: 100%;
 
-      background-color: var(--spectrum-card-quiet-preview-background-color);
       border-radius: var(--spectrum-card-quiet-border-radius);
       transition: background-color var(--spectrum-global-animation-duration-100);
     }
 
     &:after {
       content: ' ';
+      grid-area: preview;
+      position: absolute;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
+      inset-block-start: 0;
+      inset-block-end: 0;
+      margin: calc(var(--spectrum-alias-focus-ring-gap) * -2);
+
+      border-radius: calc(var(--spectrum-card-quiet-border-radius) + var(--spectrum-alias-focus-ring-gap));
+    }
+    .spectrum-Card-decoration {
+      display: block;
       grid-area: preview;
       inline-size: 100%;
       block-size: 100%;
@@ -841,13 +902,26 @@ Quiet Vertical
       content: ' ';
       grid-area: preview;
 
-      background-color: var(--spectrum-card-quiet-preview-background-color);
       border-radius: var(--spectrum-card-quiet-border-radius);
       transition: background-color var(--spectrum-global-animation-duration-100);
     }
 
     &:after {
       content: ' ';
+      grid-area: preview;
+      position: absolute;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
+      inset-block-start: 0;
+      inset-block-end: 0;
+      margin: calc(var(--spectrum-alias-focus-ring-gap) * -2);
+      padding: calc(var(--spectrum-alias-focus-ring-gap) * 2);
+      background-clip: content-box;
+
+      border-radius: calc(var(--spectrum-card-quiet-border-radius) + var(--spectrum-alias-focus-ring-gap));
+    }
+    .spectrum-Card-decoration {
+      display: block;
       grid-area: preview;
       inline-size: 100%;
       block-size: 100%;

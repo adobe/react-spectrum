@@ -124,6 +124,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
             {props.children}
             {hasFooter && <Divider />}
           </SlotProvider>
+          <div className={classNames(styles, 'spectrum-Card-decoration')} />
         </div>
       </article>
     </FocusRing>
