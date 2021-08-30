@@ -93,7 +93,6 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     }
     // ToDo: how to handle illustrations? what if the illustration looks like an image?
     let image = gridRef.current.querySelector(`.${styles['spectrum-Card-image']} img`) as HTMLImageElement;
-    console.log(image);
     if (!image) {
       return;
     }
@@ -101,6 +100,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
       let height = image.naturalHeight;
       let width = image.naturalWidth;
       /*
+      * ToDo: Choose between min-padding and plain ratio
       * Do we want to just do a ratio measurement when it's close to being a square?
       * or do we want to actually figure out min-padding?
       * Min Padding would require us to check that the padding is not less than the min in both Vertical and Horizontal
@@ -114,8 +114,10 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
       let trueWidth = ratio * width;
       let paddingVertical = imgTagHeight - trueHeight;
       let paddingHorizontal = imgTagWidth - trueWidth;
-      if (paddingVertical < 16 && paddingHorizontal < 16) { // does this need to be different per scale?
+      if (paddingVertical < 16 && paddingHorizontal < 16) { // ToDo: does this need to be different per scale?
         setIsCloseToSquare(true);
+      } else {
+        setIsCloseToSquare(false);
       }
 
       // let ratio = height / width;
@@ -124,15 +126,14 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
       // }
     };
     if (image.complete) {
-      console.log('complete')
       measure();
     } else {
-      console.log('load')
       image.addEventListener('load', measure);
       return () => {
         image.removeEventListener('load', measure);
       };
     }
+    // ToDo: how to re-run if image src changes?
   }, [props.children, setIsCloseToSquare]);
 
 
