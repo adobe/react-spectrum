@@ -22,6 +22,8 @@ import {Field} from '@react-spectrum/label';
 import {FocusableRef, ValidationState} from '@react-types/shared';
 import {FocusRing, FocusScope} from '@react-aria/focus';
 import {focusSafely} from '@react-aria/focus';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
 import {mergeProps, useId} from '@react-aria/utils';
@@ -37,7 +39,7 @@ import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.
 import {Tray} from '@react-spectrum/overlays';
 import {useButton} from '@react-aria/button';
 import {useDialog} from '@react-aria/dialog';
-import {useFilter} from '@react-aria/i18n';
+import {useFilter, useMessageFormatter} from '@react-aria/i18n';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useLabel} from '@react-aria/label';
 import {useOverlayTrigger} from '@react-aria/overlays';
@@ -152,12 +154,11 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
     style,
     className
 } = props;
-  // TODO: Setup i18n messages    
-  // let formatMessage = useMessageFormatter(intlMessages);
+  let formatMessage = useMessageFormatter(intlMessages);
   let valueId = useId();
   let invalidId = useId();
   let validationIcon = validationState === 'invalid'
-    ? <AlertMedium id={invalidId} aria-label="invalid" /> /// TOD: formatMessage('invalid')
+    ? <AlertMedium id={invalidId} aria-label={formatMessage('invalid')} />
     : <CheckmarkMedium />;
 
   let searchIcon = (
@@ -179,7 +180,7 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
         props.onPress(e);
       }}
       preventFocus
-      aria-label="Clear" // TODO: {formatMessage('clear')}
+      aria-label={formatMessage('clear')}
       excludeFromTabOrder
       UNSAFE_className={
         classNames(
@@ -326,7 +327,7 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
   let popoverRef = useRef<HTMLDivElement>();
   let listBoxRef = useRef<HTMLDivElement>();
   let layout = useListBoxLayout(state);
-  // let formatMessage = useMessageFormatter(intlMessages);
+  let formatMessage = useMessageFormatter(intlMessages);
 
   let {inputProps, listBoxProps, labelProps, clearButtonProps} = useSearchAutocomplete(
     {
@@ -369,7 +370,7 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
     <ClearButton
       {...clearButtonProps}
       preventFocus
-      aria-label="Clear" // TODO: {formatMessage('clear')}
+      aria-label={formatMessage('clear')}
       excludeFromTabOrder
       UNSAFE_className={
         classNames(
@@ -382,7 +383,7 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
 
   let loadingCircle = (
     <ProgressCircle
-      aria-label="loading" // TODO: {formatMessage('loading')}
+      aria-label={formatMessage('loading')}
       size="S"
       isIndeterminate
       UNSAFE_className={classNames(
@@ -528,8 +529,7 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
           shouldUseVirtualFocus
           renderEmptyState={() => loadingState !== 'loading' && (
             <span className={classNames(comboboxStyles, 'no-results')}>
-              No Results
-              {/* TODO: {formatMessage('noResults')} */}
+              {formatMessage('noResults')}
             </span>
           )}
           UNSAFE_className={
