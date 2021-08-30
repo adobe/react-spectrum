@@ -106,8 +106,11 @@ export const MobileSearchAutocomplete = React.forwardRef(function MobileSearchAu
           ref={buttonRef}
           isQuiet={isQuiet}
           isDisabled={isDisabled}
+          isReadOnly={isReadOnly}
           isPlaceholder={!state.inputValue}
           validationState={validationState}
+          inputValue={state.inputValue}
+          clearInput={() => state.setInputValue('')}
           onPress={() => !isReadOnly && state.open(null, 'manual')}>
           {state.inputValue || props.placeholder || ''}
         </SearchAutocompleteButton>
@@ -126,8 +129,11 @@ export const MobileSearchAutocomplete = React.forwardRef(function MobileSearchAu
 interface SearchAutocompleteButtonProps extends AriaButtonProps {
   isQuiet?: boolean,
   isDisabled?: boolean,
+  isReadOnly?: boolean,
   isPlaceholder?: boolean,
   validationState?: ValidationState,
+  inputValue?: string,
+  clearInput?: () => void,
   children?: ReactNode,
   style?: React.CSSProperties,
   className?: string
@@ -137,8 +143,11 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
   let {
     isQuiet,
     isDisabled,
+    isReadOnly,
     isPlaceholder,
     validationState,
+    inputValue,
+    clearInput,
     children,
     style,
     className
@@ -162,6 +171,24 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
     ),
     size: 'S'
   });
+
+  let clearButton = (
+    <ClearButton
+      onPress={(e) => {
+        clearInput();
+        props.onPress(e);
+      }}
+      preventFocus
+      aria-label="Clear" // TODO: {formatMessage('clear')}
+      excludeFromTabOrder
+      UNSAFE_className={
+        classNames(
+          searchStyles,
+          'spectrum-ClearButton'
+        )
+      }
+      isDisabled={isDisabled} />
+  );
 
 
   let validation = React.cloneElement(validationIcon, {
@@ -266,6 +293,7 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
             </span>
           </div>
           {validationState ? validation : null}
+          {(inputValue !== '' || validationState != null) && !isReadOnly && clearButton}
         </div>
       </div>
     </FocusRing>
