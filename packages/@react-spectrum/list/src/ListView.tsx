@@ -9,7 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaLabelingProps, CollectionBase, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  CollectionBase,
+  DOMProps,
+  DOMRef,
+  LoadingState,
+  MultipleSelection,
+  StyleProps
+} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
@@ -33,7 +41,7 @@ export function useListLayout<T>(state: ListState<T>) {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() =>
       new ListLayout<T>({
-        estimatedRowHeight: scale === 'large' ? 48 : 32,
+        estimatedRowHeight: scale === 'large' ? 40 : 32,
         padding: 0,
         collator
       })
@@ -44,14 +52,23 @@ export function useListLayout<T>(state: ListState<T>) {
   return layout;
 }
 
-interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps {
-  isLoading?: boolean,
+interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps, MultipleSelection {
+  /**
+   * Sets the amount of vertical padding within each cell.
+   * @default 'regular'
+   */
+  density?: 'compact' | 'regular' | 'spacious',
+  isQuiet?: boolean,
+  loadingState?: LoadingState,
   renderEmptyState?: () => JSX.Element,
   transitionDuration?: number
 }
 
 function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
+    density = 'regular',
+    loadingState,
+    isQuiet,
     transitionDuration = 0
   } = props;
   let domRef = useDOMRef(ref);
@@ -74,7 +91,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }), [collection]);
   let state = useGridState({
     ...props,
-    collection: gridCollection
+    collection: gridCollection,
+    allowsCellSelection: true
   });
   let layout = useListLayout(state);
   let keyboardDelegate = useMemo(() => new GridKeyboardDelegate({
@@ -92,7 +110,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }, state, domRef);
 
   // Sync loading state into the layout.
-  layout.isLoading = props.isLoading;
+  layout.isLoading = loadingState === 'loading';
 
   return (
     <ListViewContext.Provider value={{state, keyboardDelegate}}>
@@ -101,12 +119,15 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         {...styleProps}
         ref={domRef}
         focusedKey={state.selectionManager.focusedKey}
-        sizeToFit="height"
         scrollDirection="vertical"
         className={
           classNames(
             listStyles,
             'react-spectrum-ListView',
+            `react-spectrum-ListView--${density}`,
+            {
+              'react-spectrum-ListView--quiet': isQuiet
+            },
             styleProps.className
           )
         }

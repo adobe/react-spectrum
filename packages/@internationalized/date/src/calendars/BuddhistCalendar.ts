@@ -13,6 +13,7 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
+import {AnyCalendarDate} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {GregorianCalendar} from './GregorianCalendar';
 import {Mutable} from '../utils';
@@ -25,10 +26,10 @@ export class BuddhistCalendar extends GregorianCalendar {
   fromJulianDay(jd: number): CalendarDate {
     let date = super.fromJulianDay(jd) as Mutable<CalendarDate>;
     date.year -= BUDDHIST_ERA_START;
-    return date;
+    return date as CalendarDate;
   }
 
-  toJulianDay(date: CalendarDate) {
+  toJulianDay(date: AnyCalendarDate) {
     return super.toJulianDay(
       new CalendarDate(
         date.year + BUDDHIST_ERA_START,

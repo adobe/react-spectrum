@@ -13,7 +13,7 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {Calendar} from '../types';
+import {AnyCalendarDate, Calendar} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {mod} from '../utils';
 
@@ -75,24 +75,25 @@ export class GregorianCalendar implements Calendar {
     return new CalendarDate(this, year, month, day);
   }
 
-  toJulianDay(date: CalendarDate): number {
+  toJulianDay(date: AnyCalendarDate): number {
     return gregorianToJulianDay(date.year, date.month, date.day);
   }
 
-  getDaysInMonth(date: CalendarDate): number {
+  getDaysInMonth(date: AnyCalendarDate): number {
     return daysInMonth[isLeapYear(date.year) ? 'leapyear' : 'standard'][date.month - 1];
   }
 
-  getMonthsInYear(): number {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getMonthsInYear(date: AnyCalendarDate): number {
     return 12;
   }
 
-  getDaysInYear(date: CalendarDate): number {
+  getDaysInYear(date: AnyCalendarDate): number {
     return isLeapYear(date.year) ? 366 : 365;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getYearsInEra(date: CalendarDate): number {
+  getYearsInEra(date: AnyCalendarDate): number {
     return 9999;
   }
 

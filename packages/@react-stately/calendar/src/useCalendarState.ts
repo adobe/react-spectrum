@@ -13,10 +13,9 @@
 import {
   Calendar,
   CalendarDate,
-  compareDate,
   endOfMonth,
-  fromAbsolute,
   getDayOfWeek,
+  GregorianCalendar,
   isSameDay,
   isSameMonth,
   startOfMonth,
@@ -24,18 +23,18 @@ import {
   toCalendarDate,
   today
 } from '@internationalized/date';
-import {CalendarProps} from '@react-types/calendar';
+import {CalendarProps, DateValue} from '@react-types/calendar';
 import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
 import {useDateFormatter} from '@react-aria/i18n';
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {useWeekStart} from './useWeekStart';
 
-interface CalendarStateOptions extends CalendarProps {
+interface CalendarStateOptions<T extends DateValue> extends CalendarProps<T> {
   createCalendar: (name: string) => Calendar
 }
 
-export function useCalendarState(props: CalendarStateOptions): CalendarState {
+export function useCalendarState<T extends DateValue>(props: CalendarStateOptions<T>): CalendarState {
   let defaultFormatter = useDateFormatter();
   let resolvedOptions = useMemo(() => defaultFormatter.resolvedOptions(), [defaultFormatter]);
   let {
@@ -45,9 +44,8 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
 
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
 
-  let [value, setControlledValue] = useControlledState(props.value || undefined, props.defaultValue, props.onChange);
-  let dateValue = useMemo(() => value ? new Date(value) : null, [value]);
-  let calendarDateValue = useMemo(() => dateValue ? toCalendar(toCalendarDate(fromAbsolute(dateValue.getTime(), timeZone)), calendar) : null, [dateValue, timeZone, calendar]);
+  let [value, setControlledValue] = useControlledState<DateValue>(props.value, props.defaultValue, props.onChange);
+  let calendarDateValue = useMemo(() => value ? toCalendar(toCalendarDate(value), calendar) : null, [value, calendar]);
   let defaultMonth = calendarDateValue || toCalendar(today(timeZone), calendar);
   let [currentMonth, setCurrentMonth] = useState(defaultMonth); // TODO: does this need to be in state at all??
   let [focusedDate, setFocusedDate] = useState(defaultMonth);
@@ -71,8 +69,8 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
 
   let days = currentMonth.calendar.getDaysInMonth(currentMonth);
   let weeksInMonth = Math.ceil((monthStartsAt + days) / 7);
-  let minDate = useMemo(() => props.minValue ? toCalendar(toCalendarDate(fromAbsolute(new Date(props.minValue).getTime(), timeZone)), calendar) : null, [calendar, props.minValue, timeZone]);
-  let maxDate = useMemo(() => props.maxValue ? toCalendar(toCalendarDate(fromAbsolute(new Date(props.maxValue).getTime(), timeZone)), calendar) : null, [calendar, props.maxValue, timeZone]);
+  let minDate = props.minValue;
+  let maxDate = props.maxValue;
 
   // Sets focus to a specific cell date
   function focusCell(date: CalendarDate) {
@@ -89,15 +87,24 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     setFocusedDate(date);
   }
 
-  function setValue(value: Date) {
+  function setValue(newValue: CalendarDate) {
     if (!props.isDisabled && !props.isReadOnly) {
-      setControlledValue(value);
+      // The display calendar should not have any effect on the emitted value.
+      // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
+      newValue = toCalendar(newValue, value?.calendar || new GregorianCalendar());
+
+      // Preserve time if the input value had one.
+      if (value && 'hour' in value) {
+        setControlledValue(value.set(newValue));
+      } else {
+        setControlledValue(newValue);
+      }
     }
   }
 
   let weekDays = useMemo(() => (
     [...new Array(7).keys()]
-      .map(index => currentMonth.set({day: index - monthStartsAt + 1}))
+      .map(index => startOfMonth(currentMonth).add({days: index - monthStartsAt}))
   ), [currentMonth, monthStartsAt]);
 
   return {
@@ -140,10 +147,10 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
       focusCell(focusedDate.subtract({years: 1}));
     },
     selectFocusedDate() {
-      setValue(focusedDate.toDate(timeZone));
+      setValue(focusedDate);
     },
     selectDate(date) {
-      setValue(date.toDate(timeZone));
+      setValue(date);
     },
     isFocused,
     setFocused,
@@ -152,8 +159,8 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     daysInMonth: currentMonth.calendar.getDaysInMonth(currentMonth),
     weekDays,
     getCellDate(weekIndex, dayIndex) {
-      let day = (weekIndex * 7 + dayIndex) - monthStartsAt + 1;
-      return currentMonth.set({day});
+      let days = (weekIndex * 7 + dayIndex) - monthStartsAt;
+      return startOfMonth(currentMonth).add({days});
     },
     isInvalid(date) {
       return isInvalid(date, minDate, maxDate);
@@ -176,7 +183,7 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
   };
 }
 
-function isInvalid(date: CalendarDate, minDate: CalendarDate, maxDate: CalendarDate) {
-  return (minDate != null && compareDate(date, minDate) < 0) ||
-    (maxDate != null && compareDate(date, maxDate) > 0);
+function isInvalid(date: CalendarDate, minDate: DateValue, maxDate: DateValue) {
+  return (minDate != null && date.compare(minDate) < 0) ||
+    (maxDate != null && date.compare(maxDate) > 0);
 }

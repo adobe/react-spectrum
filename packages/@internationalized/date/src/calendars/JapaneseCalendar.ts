@@ -13,15 +13,18 @@
 // Portions of the code in this file are based on code from the TC39 Temporal proposal.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
+import {AnyCalendarDate, Duration} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {GregorianCalendar} from './GregorianCalendar';
 import {Mutable} from '../utils';
+import {toCalendar} from '../conversion';
 
 const ERA_START_DATES = [[1868, 9, 8], [1912, 7, 30], [1926, 12, 25], [1989, 1, 8], [2019, 5, 1]];
+const ERA_END_DATES = [[1912, 7, 29], [1926, 12, 24], [1989, 1, 7], [2019, 4, 30]];
 const ERA_ADDENDS = [1867, 1911, 1925, 1988, 2018];
 const ERA_NAMES = ['meiji', 'taisho', 'showa', 'heisei', 'reiwa'];
 
-function findEraFromGregorianDate(date: CalendarDate) {
+function findEraFromGregorianDate(date: AnyCalendarDate) {
   const idx = ERA_START_DATES.findIndex(([year, month, day]) => {
     if (date.year < year) {
       return true;
@@ -49,7 +52,7 @@ function findEraFromGregorianDate(date: CalendarDate) {
   return idx - 1;
 }
 
-function toGregorian(date: CalendarDate) {
+function toGregorian(date: AnyCalendarDate) {
   let eraAddend = ERA_ADDENDS[ERA_NAMES.indexOf(date.era)];
   if (!eraAddend) {
     throw new Error('Unknown era: ' + date.era);
@@ -71,14 +74,14 @@ export class JapaneseCalendar extends GregorianCalendar {
     let era = findEraFromGregorianDate(date);
     date.era = ERA_NAMES[era];
     date.year -= ERA_ADDENDS[era];
-    return date;
+    return date as CalendarDate;
   }
 
-  toJulianDay(date: CalendarDate) {
+  toJulianDay(date: AnyCalendarDate) {
     return super.toJulianDay(toGregorian(date));
   }
 
-  balanceDate(date: Mutable<CalendarDate>) {
+  balanceDate(date: Mutable<AnyCalendarDate>) {
     let gregorianDate = toGregorian(date);
     let era = findEraFromGregorianDate(gregorianDate);
 
@@ -88,13 +91,48 @@ export class JapaneseCalendar extends GregorianCalendar {
     }
   }
 
+  add(date: AnyCalendarDate, duration: Duration) {
+    // Always do addition in the gregorian calendar to avoid issues with eras.
+    // For example, Heisei 31/4/30 + 1 day is Reiwa 1/5/1. Reiwa 1/1/1 does not exist.
+    return toCalendar(toGregorian(date).add(duration), this);
+  }
+
+  constrainDate(date: Mutable<AnyCalendarDate>) {
+    let idx = ERA_NAMES.indexOf(date.era);
+    let end = ERA_END_DATES[idx];
+    if (end != null) {
+      let [, endMonth, endDay] = end;
+
+      // Constrain the year to the maximum possible value in the era.
+      // Then constrain the month and day fields within that.
+      let maxYear = getMaxYear(idx);
+      date.year = Math.min(maxYear, date.year);
+      if (date.year === maxYear) {
+        date.month = Math.min(endMonth, date.month);
+
+        if (date.month === endMonth) {
+          date.day = Math.min(endDay, date.day);
+        }
+      }
+
+      if (date.year === 1) {
+        let [, startMonth, startDay] = ERA_START_DATES[idx];
+        date.month = Math.max(startMonth, date.month);
+
+        if (date.month === startMonth) {
+          date.day = Math.max(startDay, date.day);
+        }
+      }
+    }
+  }
+
   getEras() {
     return ERA_NAMES;
   }
 
-  getYearsInEra(date: CalendarDate): number {
-    let gregorianDate = toGregorian(date);
-    let era = findEraFromGregorianDate(gregorianDate);
+  getYearsInEra(date: AnyCalendarDate): number {
+    // Get the number of years in the era, taking into account the date's month and day fields.
+    let era = ERA_NAMES.indexOf(date.era);
     let next = ERA_START_DATES[era + 1];
     if (next == null) {
       return 9999;
@@ -109,4 +147,52 @@ export class JapaneseCalendar extends GregorianCalendar {
 
     return years;
   }
+
+  getMonthsInYear(date: AnyCalendarDate): number {
+    let idx = ERA_NAMES.indexOf(date.era);
+    let end = ERA_END_DATES[idx];
+    if (end && date.year === getMaxYear(idx)) {
+      return end[1];
+    }
+
+    return super.getMonthsInYear(date);
+  }
+
+  getDaysInMonth(date: AnyCalendarDate): number {
+    let idx = ERA_NAMES.indexOf(date.era);
+    let end = ERA_END_DATES[idx];
+    if (end && date.year === getMaxYear(idx) && date.month === end[1]) {
+      return end[2];
+    }
+
+    return super.getDaysInMonth(date);
+  }
+
+  getMinimumMonthInYear(date: AnyCalendarDate): number {
+    let start = getMinimums(date);
+    return start ? start[1] : 1;
+  }
+
+  getMinimumDayInMonth(date: AnyCalendarDate): number {
+    let start = getMinimums(date);
+    return start && date.month === start[1] ? start[2] : 1;
+  }
+}
+
+function getMinimums(date: AnyCalendarDate) {
+  if (date.year === 1) {
+    let idx = ERA_NAMES.indexOf(date.era);
+    return ERA_START_DATES[idx];
+  }
+}
+
+function getMaxYear(era: number) {
+  let [endYear, endMonth, endDay] = ERA_END_DATES[era];
+  let [startYear, startMonth, startDay] = ERA_START_DATES[era];
+  let maxYear = endYear - startYear;
+  if (startMonth < endMonth || (startMonth === endMonth && startDay < endDay)) {
+    maxYear++;
+  }
+
+  return maxYear;
 }

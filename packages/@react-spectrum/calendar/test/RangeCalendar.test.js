@@ -12,12 +12,11 @@
 
 jest.mock('@react-aria/live-announcer');
 import {announce} from '@react-aria/live-announcer';
+import {CalendarDate} from '@internationalized/date';
 import {fireEvent, render} from '@testing-library/react';
 import {RangeCalendar} from '../';
 import React from 'react';
-import {startOfDay} from 'date-fns';
 import {triggerPress} from '@react-spectrum/test-utils';
-import V2Calendar from '@react/react-spectrum/Calendar';
 
 let cellFormatter = new Intl.DateTimeFormat('en-US', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
 let keyCodes = {'Enter': 13, ' ': 32, 'PageUp': 33, 'PageDown': 34, 'End': 35, 'Home': 36, 'ArrowLeft': 37, 'ArrowUp': 38, 'ArrowRight': 39, 'ArrowDown': 40, Escape: 27};
@@ -34,10 +33,8 @@ describe('RangeCalendar', () => {
   describe('basics', () => {
     it.each`
       Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{defaultValue: {start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}}}
-      ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range', defaultValue: [new Date(2019, 5, 5), new Date(2019, 5, 10)]}}
+      ${'v3'}       | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
     `('$Name should render a calendar with a defaultValue', ({RangeCalendar, props}) => {
-      let isV2 = RangeCalendar === V2Calendar;
       let {getAllByLabelText, getByRole, getAllByRole} = render(<RangeCalendar {...props} />);
 
       let heading = getByRole('heading');
@@ -59,18 +56,16 @@ describe('RangeCalendar', () => {
 
       let i = 0;
       for (let cell of selectedDates) {
-        expect(isV2 ? cell : cell.parentElement).toHaveAttribute('role', 'gridcell');
-        expect(isV2 ? cell : cell.parentElement).toHaveAttribute('aria-selected', 'true');
+        expect(cell.parentElement).toHaveAttribute('role', 'gridcell');
+        expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
         expect(cell).toHaveAttribute('aria-label', labels[i++]);
       }
     });
 
     it.each`
       Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{value: {start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}}}
-      ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range', value: [new Date(2019, 5, 5), new Date(2019, 5, 10)]}}
+      ${'v3'}       | ${RangeCalendar} | ${{value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
     `('$Name should render a calendar with a value', ({RangeCalendar, props}) => {
-      let isV2 = RangeCalendar === V2Calendar;
       let {getAllByLabelText, getByRole, getAllByRole} = render(<RangeCalendar {...props} />);
 
       let heading = getByRole('heading');
@@ -92,38 +87,30 @@ describe('RangeCalendar', () => {
 
       let i = 0;
       for (let cell of selectedDates) {
-        expect(isV2 ? cell : cell.parentElement).toHaveAttribute('role', 'gridcell');
-        expect(isV2 ? cell : cell.parentElement).toHaveAttribute('aria-selected', 'true');
+        expect(cell.parentElement).toHaveAttribute('role', 'gridcell');
+        expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
         expect(cell).toHaveAttribute('aria-label', labels[i++]);
       }
     });
 
     it.each`
       Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{value: {start: new Date(2019, 1, 3), end: new Date(2019, 1, 18)}}}
-      ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range', value: [new Date(2019, 1, 3), new Date(2019, 1, 18)]}}
+      ${'v3'}       | ${RangeCalendar} | ${{value: {start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 2, 18)}}}
     `('$Name should focus the first selected date if autoFocus is set', ({RangeCalendar, props}) => {
       let {getByRole, getAllByLabelText} = render(<RangeCalendar {...props} autoFocus />);
 
       let cells = getAllByLabelText('selected', {exact: false});
       let grid = getByRole('grid');
 
-      if (RangeCalendar === V2Calendar) {
-        expect(cells[0]).toHaveAttribute('role', 'gridcell');
-        expect(cells[0]).toHaveAttribute('aria-selected', 'true');
-        expect(grid).toHaveFocus();
-        expect(grid).toHaveAttribute('aria-activedescendant', cells[0].id);
-      } else {
-        expect(cells[0].parentElement).toHaveAttribute('role', 'gridcell');
-        expect(cells[0].parentElement).toHaveAttribute('aria-selected', 'true');
-        expect(cells[0]).toHaveFocus();
-        expect(grid).not.toHaveAttribute('aria-activedescendant');
-      }
+      expect(cells[0].parentElement).toHaveAttribute('role', 'gridcell');
+      expect(cells[0].parentElement).toHaveAttribute('aria-selected', 'true');
+      expect(cells[0]).toHaveFocus();
+      expect(grid).not.toHaveAttribute('aria-activedescendant');
     });
 
     // v2 doesn't pass this test - it starts by showing the end date instead of the start date.
     it('should show selected dates across multiple months', () => {
-      let {getByRole, getByLabelText, getAllByLabelText, getAllByRole} = render(<RangeCalendar value={{start: new Date(2019, 5, 20), end: new Date(2019, 6, 10)}} />);
+      let {getByRole, getByLabelText, getAllByLabelText, getAllByRole} = render(<RangeCalendar value={{start: new CalendarDate(2019, 6, 20), end: new CalendarDate(2019, 7, 10)}} />);
 
       let heading = getByRole('heading');
       expect(heading).toHaveTextContent('June 2019');
@@ -206,35 +193,24 @@ describe('RangeCalendar', () => {
     it.each`
       Name          | RangeCalendar    | props
       ${'v3'}       | ${RangeCalendar} | ${{}}
-      ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range'}}
     `('$Name adds a range selection prompt to the focused cell', ({RangeCalendar, props}) => {
-      const isV2 = RangeCalendar === V2Calendar;
       let {getByRole, getByLabelText} = render(<RangeCalendar {...props} autoFocus />);
 
       let grid = getByRole('grid');
       let cell = getByLabelText('today', {exact: false});
-      if (isV2) {
-        expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
-      } else {
-        expect(grid).not.toHaveAttribute('aria-activedescendant');
-      }
+      expect(grid).not.toHaveAttribute('aria-activedescendant');
       expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())} (Click to start selecting date range)`);
 
       // enter selection mode
       fireEvent.keyDown(grid, {key: 'Enter', keyCode: keyCodes.Enter});
-      if (isV2) {
-        expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
-      } else {
-        expect(grid).not.toHaveAttribute('aria-activedescendant');
-      }
-      expect(isV2 ? cell : cell.parentElement).toHaveAttribute('aria-selected');
+      expect(grid).not.toHaveAttribute('aria-activedescendant');
+      expect(cell.parentElement).toHaveAttribute('aria-selected');
       expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())} selected (Click to finish selecting date range)`);
     });
 
     it.each`
       Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{defaultValue: {start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}}}
-      ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range', defaultValue: [new Date(2019, 5, 5), new Date(2019, 5, 10)]}}
+      ${'v3'}       | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
     `('$Name can select a range with the keyboard (uncontrolled)', ({RangeCalendar, props}) => {
       let onChange = jest.fn();
       let {getAllByLabelText, getByRole} = render(
@@ -273,22 +249,14 @@ describe('RangeCalendar', () => {
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('8');
       expect(onChange).toHaveBeenCalledTimes(1);
 
-      let value = onChange.mock.calls[0][0];
-      let start, end;
-      if (Array.isArray(value)) { // v2
-        [start, end] = value;
-      } else { // v3
-        ({start, end} = value);
-      }
-
-      expect(start.valueOf()).toBe(new Date(2019, 5, 4).valueOf()); // v2 returns a moment object
-      expect(startOfDay(end).valueOf()).toBe(new Date(2019, 5, 8).valueOf()); // v2 returns a moment object
+      let {start, end} = onChange.mock.calls[0][0];
+      expect(start).toEqual(new CalendarDate(2019, 6, 4));
+      expect(end).toEqual(new CalendarDate(2019, 6, 8));
     });
 
     it.each`
       Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{value: {start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}}}
-      ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range', value: [new Date(2019, 5, 5), new Date(2019, 5, 10)]}}
+      ${'v3'}       | ${RangeCalendar} | ${{value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
     `('$Name can select a range with the keyboard (controlled)', ({RangeCalendar, props}) => {
       let onChange = jest.fn();
       let {getAllByLabelText, getByRole} = render(
@@ -327,19 +295,11 @@ describe('RangeCalendar', () => {
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('10');
       expect(onChange).toHaveBeenCalledTimes(1);
 
-      let value = onChange.mock.calls[0][0];
-      let start, end;
-      if (Array.isArray(value)) { // v2
-        [start, end] = value;
-      } else { // v3
-        ({start, end} = value);
-      }
-
-      expect(start.valueOf()).toBe(new Date(2019, 5, 4).valueOf()); // v2 returns a moment object
-      expect(startOfDay(end).valueOf()).toBe(new Date(2019, 5, 8).valueOf()); // v2 returns a moment object
+      let {start, end} = onChange.mock.calls[0][0];
+      expect(start).toEqual(new CalendarDate(2019, 6, 4));
+      expect(end).toEqual(new CalendarDate(2019, 6, 8));
     });
 
-    // v2 does not pass this test.
     it('does not enter selection mode with the keyboard if isReadOnly', () => {
       let {getByRole, getByLabelText} = render(<RangeCalendar isReadOnly autoFocus />);
 
@@ -359,8 +319,7 @@ describe('RangeCalendar', () => {
 
     it.each`
       Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{defaultValue: {start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}}}
-      ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range', defaultValue: [new Date(2019, 5, 5), new Date(2019, 5, 10)]}}
+      ${'v3'}       | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
     `('$Name selects a range with the mouse (uncontrolled)', ({RangeCalendar, props}) => {
       let onChange = jest.fn();
       let {getAllByLabelText, getByText} = render(
@@ -391,22 +350,14 @@ describe('RangeCalendar', () => {
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('17');
       expect(onChange).toHaveBeenCalledTimes(1);
 
-      let value = onChange.mock.calls[0][0];
-      let start, end;
-      if (Array.isArray(value)) { // v2
-        [start, end] = value;
-      } else { // v3
-        ({start, end} = value);
-      }
-
-      expect(start.valueOf()).toBe(new Date(2019, 5, 7).valueOf()); // v2 returns a moment object
-      expect(startOfDay(end).valueOf()).toBe(new Date(2019, 5, 17).valueOf()); // v2 returns a moment object
+      let {start, end} = onChange.mock.calls[0][0];
+      expect(start).toEqual(new CalendarDate(2019, 6, 7));
+      expect(end).toEqual(new CalendarDate(2019, 6, 17));
     });
 
     it.each`
       Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{value: {start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}}}
-      ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range', value: [new Date(2019, 5, 5), new Date(2019, 5, 10)]}}
+      ${'v3'}       | ${RangeCalendar} | ${{value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
     `('$Name selects a range with the mouse (controlled)', ({RangeCalendar, props}) => {
       let onChange = jest.fn();
       let {getAllByLabelText, getByText} = render(
@@ -437,19 +388,11 @@ describe('RangeCalendar', () => {
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('10');
       expect(onChange).toHaveBeenCalledTimes(1);
 
-      let value = onChange.mock.calls[0][0];
-      let start, end;
-      if (Array.isArray(value)) { // v2
-        [start, end] = value;
-      } else { // v3
-        ({start, end} = value);
-      }
-
-      expect(start.valueOf()).toBe(new Date(2019, 5, 7).valueOf()); // v2 returns a moment object
-      expect(startOfDay(end).valueOf()).toBe(new Date(2019, 5, 17).valueOf()); // v2 returns a moment object
+      let {start, end} = onChange.mock.calls[0][0];
+      expect(start).toEqual(new CalendarDate(2019, 6, 7));
+      expect(end).toEqual(new CalendarDate(2019, 6, 17));
     });
 
-    // v2 does not pass this test.
     it('does not enter selection mode with the mouse if isReadOnly', () => {
       let {getByRole, getByLabelText, getByText} = render(<RangeCalendar isReadOnly autoFocus />);
 
@@ -469,7 +412,6 @@ describe('RangeCalendar', () => {
     it.each`
       Name          | RangeCalendar    | props
       ${'v3'}       | ${RangeCalendar} | ${{isDisabled: true}}
-      ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range', disabled: true}}
     `('$Name does not select a date on click if isDisabled', ({RangeCalendar, props}) => {
       let onChange = jest.fn();
       let {getAllByLabelText, getByText} = render(
@@ -489,8 +431,7 @@ describe('RangeCalendar', () => {
 
     it.each`
       Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{defaultValue: {start: new Date(2019, 1, 8), end: new Date(2019, 1, 15)}, minValue: new Date(2019, 1, 5), maxValue: new Date(2019, 1, 15)}}
-      ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range', defaultValue: [new Date(2019, 1, 8), new Date(2019, 1, 15)], min: new Date(2019, 1, 5), max: new Date(2019, 1, 15)}}
+      ${'v3'}       | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 2, 8), end: new CalendarDate(2019, 2, 15)}, minValue: new CalendarDate(2019, 2, 5), maxValue: new CalendarDate(2019, 2, 15)}}
     `('$Name does not select a date on click if outside the valid date range', ({RangeCalendar, props}) => {
       let onChange = jest.fn();
       let {getByLabelText, getAllByLabelText} = render(
@@ -530,8 +471,7 @@ describe('RangeCalendar', () => {
 
     it.each`
       Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{value: {start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}}}
-      ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range', value: [new Date(2019, 5, 5), new Date(2019, 5, 10)]}}
+      ${'v3'}       | ${RangeCalendar} | ${{value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
     `('$Name cancels the selection when the escape key is pressed', ({RangeCalendar, props}) => {
       let onChange = jest.fn();
       let {getByText, getAllByLabelText} = render(
@@ -570,7 +510,7 @@ describe('RangeCalendar', () => {
   // These tests only work against v3
   describe('announcing', () => {
     it('announces when the current month changes', () => {
-      let {getByLabelText} = render(<RangeCalendar defaultValue={{start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}} />);
+      let {getByLabelText} = render(<RangeCalendar defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}} />);
 
       let nextButton = getByLabelText('Next');
       triggerPress(nextButton);
@@ -580,7 +520,7 @@ describe('RangeCalendar', () => {
     });
 
     it('announces when the selected date range changes', () => {
-      let {getByText} = render(<RangeCalendar defaultValue={{start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}} />);
+      let {getByText} = render(<RangeCalendar defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}} />);
 
       triggerPress(getByText('17'));
       triggerPress(getByText('10'));
@@ -590,7 +530,7 @@ describe('RangeCalendar', () => {
     });
 
     it('ensures that the active descendant is announced when the focused date changes', () => {
-      let {getByRole, getAllByLabelText} = render(<RangeCalendar defaultValue={{start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}} autoFocus />);
+      let {getByRole, getAllByLabelText} = render(<RangeCalendar defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}} autoFocus />);
 
       let grid = getByRole('grid');
 
@@ -603,7 +543,7 @@ describe('RangeCalendar', () => {
     });
 
     it('renders a caption with the selected date range', () => {
-      let {getByText, getByRole} = render(<RangeCalendar defaultValue={{start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}} />);
+      let {getByText, getByRole} = render(<RangeCalendar defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}} />);
 
       let grid = getByRole('grid');
       let caption = document.getElementById(grid.getAttribute('aria-describedby'));
