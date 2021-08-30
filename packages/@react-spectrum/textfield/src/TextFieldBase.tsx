@@ -154,6 +154,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       labelProps={labelProps}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
+      showErrorIcon={false}
       ref={domRef}>
       {textField}
     </Field>

@@ -23,7 +23,6 @@ import {
   InputBase,
   LabelableProps,
   SingleSelection,
-  SpectrumHelpTextProps,
   SpectrumLabelableProps,
   StyleProps,
   TextInputBase,
@@ -51,7 +50,7 @@ export interface AriaSelectProps<T> extends SelectProps<T>, DOMProps, AriaLabeli
   name?: string
 }
 
-export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabelableProps, SpectrumHelpTextProps, StyleProps  {
+export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabelableProps, StyleProps  {
   /** Whether the textfield should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Alignment of the menu relative to the input target.

@@ -266,6 +266,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       labelProps={labelProps}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
+      showErrorIcon={false}
       includeNecessityIndicatorInAccessibilityName
       elementType="span">
       {picker}
