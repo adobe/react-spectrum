@@ -950,19 +950,19 @@ describe('DatePicker', function () {
       fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
-      let value = today(getLocalTimeZone()).add({months: 1});
+      let value = today(getLocalTimeZone()).cycle('month', 1);
       expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
       expect(segments[2]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
-      value = today(getLocalTimeZone()).add({months: 1, days: 1});
+      value = value.cycle('day', 1);
       expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       expect(onChange).toHaveBeenCalledTimes(1);
-      value = today(getLocalTimeZone()).add({years: 1, months: 1, days: 1});
+      value = value.cycle('year', 1);
       expect(onChange).toHaveBeenCalledWith(value);
       expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
     });
@@ -982,22 +982,22 @@ describe('DatePicker', function () {
       fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
-      let value = today(getLocalTimeZone()).add({months: 1});
+      let value = today(getLocalTimeZone()).cycle('month', 1);
       expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
       expect(segments[2]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
-      value = today(getLocalTimeZone()).add({months: 1, days: 1});
+      value = value.cycle('day', 1);
       expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       expect(onChange).toHaveBeenCalledTimes(1);
-      expect(onChange).toHaveBeenCalledWith(today(getLocalTimeZone()).add({years: 1, months: 1, days: 1}));
+      expect(onChange).toHaveBeenCalledWith(value.cycle('year', 1));
       expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone()))); // controlled
 
-      value = today(getLocalTimeZone()).add({years: 1, months: 1, days: 1});
+      value = value.cycle('year', 1);
       rerender(<DatePicker label="Date" onChange={onChange} value={value} />);
       expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
     });
