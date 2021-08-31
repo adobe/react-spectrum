@@ -370,7 +370,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -382,7 +383,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -832,7 +834,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -844,7 +847,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1249,7 +1253,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1261,7 +1266,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
