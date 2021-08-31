@@ -25,42 +25,54 @@ import {
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
 
 export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
-interface DatePickerBase extends InputBase, Validation, FocusableProps, LabelableProps {
+type MappedDateValue<T> =
+  T extends ZonedDateTime ? ZonedDateTime :
+  T extends CalendarDateTime ? CalendarDateTime :
+  T extends CalendarDate ? CalendarDate :
+  never;
+
+interface DatePickerBase<T extends DateValue> extends InputBase, Validation, FocusableProps, LabelableProps {
   minValue?: DateValue,
   maxValue?: DateValue,
-  placeholderValue?: DateValue,
+  placeholderValue?: T,
   hourCycle?: 12 | 24,
-  granularity?: 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second' | 'millisecond',
+  granularity?: 'day' | 'hour' | 'minute' | 'second' | 'millisecond',
   hideTimeZone?: boolean
 }
 
-export interface AriaDatePickerBaseProps extends DatePickerBase, AriaLabelingProps, DOMProps {}
+export interface AriaDatePickerBaseProps<T extends DateValue> extends DatePickerBase<T>, AriaLabelingProps, DOMProps {}
 
-export interface DatePickerProps extends DatePickerBase, ValueBase<DateValue> {}
-export interface AriaDatePickerProps extends AriaDatePickerBaseProps, DatePickerProps {}
+export interface DatePickerProps<T extends DateValue> extends DatePickerBase<T>, ValueBase<T, MappedDateValue<T>> {}
+export interface AriaDatePickerProps<T extends DateValue> extends AriaDatePickerBaseProps<T>, DatePickerProps<T> {}
 
 export type DateRange = RangeValue<DateValue>;
-export interface DateRangePickerProps extends DatePickerBase, ValueBase<DateRange> {}
-export interface AriaDateRangePickerProps extends AriaDatePickerBaseProps, DateRangePickerProps {}
+export interface DateRangePickerProps<T extends DateValue> extends DatePickerBase<T>, ValueBase<RangeValue<T>, RangeValue<MappedDateValue<T>>> {}
+export interface AriaDateRangePickerProps<T extends DateValue> extends AriaDatePickerBaseProps<T>, DateRangePickerProps<T> {}
 
-interface SpectrumDatePickerBase extends AriaDatePickerBaseProps, SpectrumLabelableProps, StyleProps {
+interface SpectrumDatePickerBase<T extends DateValue> extends AriaDatePickerBaseProps<T>, SpectrumLabelableProps, StyleProps {
   isQuiet?: boolean,
   showFormatHelpText?: boolean
 }
 
-export interface SpectrumDatePickerProps extends DatePickerProps, SpectrumDatePickerBase {}
-export interface SpectrumDateRangePickerProps extends DateRangePickerProps, SpectrumDatePickerBase {}
+export interface SpectrumDatePickerProps<T extends DateValue> extends DatePickerProps<T>, SpectrumDatePickerBase<T> {}
+export interface SpectrumDateRangePickerProps<T extends DateValue> extends DateRangePickerProps<T>, SpectrumDatePickerBase<T> {}
 
 export type TimeValue = Time | CalendarDateTime | ZonedDateTime;
-interface TimePickerProps extends InputBase, Validation, FocusableProps, LabelableProps, ValueBase<TimeValue> {
+type MappedTimeValue<T> =
+  T extends ZonedDateTime ? ZonedDateTime :
+  T extends CalendarDateTime ? CalendarDateTime :
+  T extends Time ? Time :
+  never;
+
+export interface TimePickerProps<T extends TimeValue> extends InputBase, Validation, FocusableProps, LabelableProps, ValueBase<T, MappedTimeValue<T>> {
   hourCycle?: 12 | 24,
   granularity?: 'hour' | 'minute' | 'second' | 'millisecond',
   hideTimeZone?: boolean,
-  placeholderValue?: TimeValue,
+  placeholderValue?: T,
   minValue?: TimeValue,
   maxValue?: TimeValue
 }
 
-interface SpectrumTimePickerProps extends TimePickerProps, SpectrumLabelableProps, DOMProps, StyleProps {
+export interface SpectrumTimePickerProps<T extends TimeValue> extends TimePickerProps<T>, SpectrumLabelableProps, DOMProps, StyleProps {
   isQuiet?: boolean
 }

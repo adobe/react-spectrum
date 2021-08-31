@@ -11,6 +11,7 @@
  */
 
 import {CalendarDate} from '@internationalized/date';
+import {DateValue} from '@react-types/calendar';
 import {RangeValue} from '@react-types/shared';
 
 export interface CalendarStateBase {
@@ -49,12 +50,12 @@ export interface CalendarStateBase {
 
 export interface CalendarState extends CalendarStateBase {
   value: CalendarDate,
-  setValue(value: Date): void
+  setValue(value: CalendarDate): void
 }
 
 export interface RangeCalendarState extends CalendarStateBase {
-  value: RangeValue<CalendarDate>,
-  setValue(value: RangeValue<Date>): void,
+  value: RangeValue<DateValue>,
+  setValue(value: RangeValue<DateValue>): void,
   highlightDate(date: CalendarDate): void,
   anchorDate: CalendarDate | null,
   setAnchorDate(date: CalendarDate | null): void,

@@ -16,21 +16,22 @@ import {classNames} from '@react-spectrum/utils';
 import {createCalendar} from '@internationalized/date';
 import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './index.css';
+import {DateValue, SpectrumDatePickerProps} from '@react-types/datepicker';
 import {Field} from '@react-spectrum/label';
 import {FocusRing} from '@react-aria/focus';
 import React, {useRef} from 'react';
-import {SpectrumDatePickerProps} from '@react-types/datepicker';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useDateField} from '@react-aria/datepicker';
 import {useDatePickerFieldState} from '@react-stately/datepicker';
+import {useLocale} from '@react-aria/i18n';
 
-interface DatePickerFieldProps extends SpectrumDatePickerProps {
+interface DatePickerFieldProps<T extends DateValue> extends SpectrumDatePickerProps<T> {
   inputClassName?: string,
   hideValidationIcon?: boolean,
-  maxGranularity?: SpectrumDatePickerProps['granularity']
+  maxGranularity?: SpectrumDatePickerProps<T>['granularity']
 }
 
-export function DatePickerField(props: DatePickerFieldProps) {
+export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps<T>) {
   let {
     isDisabled,
     isReadOnly,
@@ -40,8 +41,10 @@ export function DatePickerField(props: DatePickerFieldProps) {
     hideValidationIcon
   } = props;
   let ref = useRef();
+  let {locale} = useLocale();
   let state = useDatePickerFieldState({
     ...props,
+    locale,
     createCalendar
   });
 

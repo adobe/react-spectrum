@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaDatePickerProps} from '@react-types/datepicker';
+import {AriaDatePickerProps, DateValue} from '@react-types/datepicker';
 import {createFocusManager} from '@react-aria/focus';
 import {DatePickerFieldState} from '@react-stately/datepicker';
 import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
@@ -26,7 +26,7 @@ interface DateFieldAria {
 
 export const labelIds = new WeakMap<DatePickerFieldState, string>();
 
-export function useDateField(props: AriaDatePickerProps, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
+export function useDateField<T extends DateValue>(props: AriaDatePickerProps<T>, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
   let {labelProps, fieldProps} = useLabel({
     ...props,
     labelElementType: 'span'

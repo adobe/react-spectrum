@@ -12,12 +12,12 @@
 
 import {CalendarBase} from './CalendarBase';
 import {createCalendar} from '@internationalized/date';
+import {DateValue, SpectrumRangeCalendarProps} from '@react-types/calendar';
 import React from 'react';
-import {SpectrumRangeCalendarProps} from '@react-types/calendar';
 import {useRangeCalendar} from '@react-aria/calendar';
 import {useRangeCalendarState} from '@react-stately/calendar';
 
-export function RangeCalendar(props: SpectrumRangeCalendarProps) {
+export function RangeCalendar<T extends DateValue>(props: SpectrumRangeCalendarProps<T>) {
   let state = useRangeCalendarState({
     ...props,
     createCalendar
