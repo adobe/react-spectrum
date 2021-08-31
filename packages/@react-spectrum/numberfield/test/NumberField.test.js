@@ -1655,7 +1655,7 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledWith(10123);
   });
 
-  it.each`
+  it.skip.each`
     Name
     ${'NumberField controlled'}
   `('$Name 10 is rendered and will change if the controlled version is implemented', () => {
