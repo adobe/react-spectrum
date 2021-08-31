@@ -72,6 +72,8 @@ let actions = {
   onSelectionChange: s => onSelectionChange([...s])
 };
 
+// TODO add stories for Layouts with non-default options passed in
+
 export const DefaultGridStatic = () => StaticCardView({items});
 DefaultGridStatic.storyName = 'static card';
 

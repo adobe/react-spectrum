@@ -50,7 +50,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Card--default {
-  box-shadow: inset 0 0 0 1px var(--spectrum-card-border-color-hover);
+  border-color: var(--spectrum-card-border-color);
   background-color: var(--spectrum-card-background-color);
   .spectrum-Card-grid {
     &:before {
@@ -139,7 +139,6 @@ governing permissions and limitations under the License.
 .spectrum-Card--isQuiet {
   border-color: transparent;
   background-color: transparent;
-
   &:hover {
     .spectrum-Card-grid {
       &:before {
@@ -156,7 +155,7 @@ governing permissions and limitations under the License.
         /* Image needs to go right to the edge, so no border. Adding border on focus causes
         * a jump in the text and image. So focus ring is only box-shadow
         */
-        box-shadow: inset 0 0 0 1px var(--spectrum-card-border-color-key-focus);
+        box-shadow: 0 0 0 1px var(--spectrum-card-border-color-key-focus);
       }
     }
   }
@@ -167,7 +166,7 @@ governing permissions and limitations under the License.
         /* Image needs to go right to the edge, so no border. Adding border on focus causes
         * a jump in the text and image. So focus ring is only box-shadow
         */
-        box-shadow: inset 0 0 0 1px var(--spectrum-card-border-color-key-focus);
+        box-shadow: 0 0 0 1px var(--spectrum-card-border-color-key-focus);
       }
     }
   }
