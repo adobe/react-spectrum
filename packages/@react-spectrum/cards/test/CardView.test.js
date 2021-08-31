@@ -311,18 +311,17 @@ describe('CardView', function () {
           jest.runAllTimers();
         });
 
-        let expectedLeft;
-        let expectedTop;
         let cards = tree.getAllByRole('gridcell');
         triggerPress(cards[1]);
         expect(document.activeElement).toBe(cards[1]);
         let cardStyles = getCardStyles(cards[1]);
-        expectedLeft = cardStyles.left;
-        expectedTop = `${parseInt(cardStyles.top, 10) + parseInt(cardStyles.height, 10) + 48}px`;
+        let expectedLeft = cardStyles.left;
+        let expectedTop = `${parseInt(cardStyles.top, 10) + parseInt(cardStyles.height, 10) + 48}px`;
 
         act(() => {
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+          jest.runAllTimers();
         });
 
         cardStyles = getCardStyles(document.activeElement);
@@ -336,18 +335,17 @@ describe('CardView', function () {
           jest.runAllTimers();
         });
 
-        let expectedLeft;
-        let expectedTop;
         let cards = tree.getAllByRole('gridcell');
         triggerPress(cards[5]);
         expect(document.activeElement).toBe(cards[5]);
         let cardStyles = getCardStyles(cards[5]);
-        expectedLeft = cardStyles.left;
-        expectedTop = `${parseInt(cardStyles.top, 10) - parseInt(cardStyles.height, 10) - 48}px`;
+        let expectedLeft = cardStyles.left;
+        let expectedTop = `${parseInt(cardStyles.top, 10) - parseInt(cardStyles.height, 10) - 48}px`;
 
         act(() => {
           fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
+          jest.runAllTimers();
         });
 
         cardStyles = getCardStyles(document.activeElement);
@@ -359,28 +357,29 @@ describe('CardView', function () {
         Name                  | layout
         ${'Grid layout'}      | ${GridLayout}
         ${'Gallery layout'}   | ${GalleryLayout}
-      `('$Name CardView should move focus via Arrow Left', function ({Name, layout}) {
+      `('$Name CardView should move focus via Arrow Left', function ({layout}) {
         let tree = render(<DynamicCardView layout={layout} />);
         act(() => {
           jest.runAllTimers();
         });
 
-        let expectedLeft;
-        let expectedTop;
         let cards = tree.getAllByRole('gridcell');
+
         triggerPress(cards[1]);
         expect(document.activeElement).toBe(cards[1]);
         let cardStyles = getCardStyles(cards[1]);
-        expectedLeft = `${parseInt(cardStyles.left, 10) - parseInt(cardStyles.width, 10) - 24}px`;
-        expectedTop = cardStyles.top;
+        let expectedLeft = cardStyles.left;
+        let expectedTop = cardStyles.top;
 
         act(() => {
           fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+          jest.runAllTimers();
         });
 
         expect(document.activeElement).toBe(cards[0]);
         cardStyles = getCardStyles(document.activeElement);
+        expectedLeft = `${parseInt(expectedLeft, 10) - parseInt(cardStyles.width, 10) - 24}px`
         expect(cardStyles.top).toEqual(expectedTop);
         expect(cardStyles.left).toEqual(expectedLeft);
       });
@@ -398,7 +397,7 @@ describe('CardView', function () {
         Name                  | layout
         ${'Grid layout'}      | ${GridLayout}
         ${'Gallery layout'}   | ${GalleryLayout}
-      `('$Name CardView should move focus via Arrow Left (RTL)', function ({layout}) {
+      `('$Name CardView should move focus via Arrow Right (RTL)', function ({layout}) {
         let tree = render(<DynamicCardView locale="ar-AE" layout={layout} />);
         act(() => {
           jest.runAllTimers();
@@ -411,16 +410,18 @@ describe('CardView', function () {
         triggerPress(cards[1]);
         expect(document.activeElement).toBe(cards[1]);
         let cardStyles = getCardStyles(cards[1]);
-        expectedRight = `${parseInt(cardStyles.right, 10) - parseInt(cardStyles.width, 10) - 24}px`;
+        expectedRight = cardStyles.right;
         expectedTop = cardStyles.top;
 
         act(() => {
           fireEvent.keyDown(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
+          jest.runAllTimers();
         });
 
         expect(document.activeElement).toBe(cards[0]);
         cardStyles = getCardStyles(document.activeElement);
+        expectedRight = `${parseInt(expectedRight, 10) - parseInt(cardStyles.width, 10) - 24}px`
         expect(cardStyles.top).toEqual(expectedTop);
         expect(cardStyles.right).toEqual(expectedRight);
       });
@@ -440,19 +441,17 @@ describe('CardView', function () {
           jest.runAllTimers();
         });
 
-        let expectedLeft;
-        let expectedTop;
         cards = tree.getAllByRole('gridcell');
         expect(document.activeElement).toBe(cards[cards.length - 1]);
         let cardStyles = getCardStyles(document.activeElement);
-        expectedLeft = cardStyles.left;
+        let expectedLeft = cardStyles.left;
 
-        let numCardsInPage = Math.round(800 / (parseInt(cardStyles.height, 10) + 48));
-        expectedTop = `${parseInt(cardStyles.top, 10) - numCardsInPage * (parseInt(cardStyles.height, 10) + 48)}px`;
+        let numCardsInPage = Math.floor(800 / (parseInt(cardStyles.height, 10) + 48));
+        let expectedTop = `${parseInt(cardStyles.top, 10) - numCardsInPage * (parseInt(cardStyles.height, 10) + 48)}px`;
 
         act(() => {
-          fireEvent.keyDown(document.activeElement, {key: 'PageUp', code: 33, charCode: 3});
-          fireEvent.keyUp(document.activeElement, {key: 'PageUp', code: 33, charCode: 35});
+          fireEvent.keyDown(document.activeElement, {key: 'PageUp', code: 33, charCode: 33});
+          fireEvent.keyUp(document.activeElement, {key: 'PageUp', code: 33, charCode: 33});
           jest.runAllTimers();
         });
 
@@ -470,18 +469,16 @@ describe('CardView', function () {
         let cards = tree.getAllByRole('gridcell');
         triggerPress(cards[1]);
 
-        let expectedLeft;
-        let expectedTop;
         expect(document.activeElement).toBe(cards[1]);
         let cardStyles = getCardStyles(document.activeElement);
-        expectedLeft = cardStyles.left;
+        let expectedLeft = cardStyles.left;
 
-        let numCardsInPage = Math.round(800 / (parseInt(cardStyles.height, 10) + 48));
-        expectedTop = `${parseInt(cardStyles.top, 10) + numCardsInPage * (parseInt(cardStyles.height, 10) + 48)}px`;
+        let numCardsInPage = Math.floor(800 / (parseInt(cardStyles.height, 10) + 48));
+        let expectedTop = `${parseInt(cardStyles.top, 10) + numCardsInPage * (parseInt(cardStyles.height, 10) + 48)}px`;
 
         act(() => {
-          fireEvent.keyDown(document.activeElement, {key: 'PageDown', code: 34, charCode: 3});
-          fireEvent.keyUp(document.activeElement, {key: 'PageDown', code: 34, charCode: 35});
+          fireEvent.keyDown(document.activeElement, {key: 'PageDown', code: 34, charCode: 34});
+          fireEvent.keyUp(document.activeElement, {key: 'PageDown', code: 34, charCode: 34});
           jest.runAllTimers();
         });
 
@@ -539,18 +536,18 @@ describe('CardView', function () {
           jest.runAllTimers();
         });
 
-        let expectedTop;
         let cards = tree.getAllByRole('gridcell');
         triggerPress(cards[0]);
         expect(document.activeElement).toBe(cards[0]);
         expect(within(document.activeElement).getByText('Title 1')).toBeTruthy();
 
         let cardStyles = getCardStyles(cards[0]);
-        expectedTop = `${parseInt(cardStyles.top, 10) + parseInt(cardStyles.height, 10) + 32}px`;
+        let expectedTop = `${parseInt(cardStyles.top, 10) + parseInt(cardStyles.height, 10) + 32}px`;
 
         act(() => {
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+          jest.runAllTimers();
         });
 
         cardStyles = getCardStyles(document.activeElement);
@@ -564,18 +561,18 @@ describe('CardView', function () {
           jest.runAllTimers();
         });
 
-        let expectedTop;
         let cards = tree.getAllByRole('gridcell');
         triggerPress(cards[3]);
         expect(document.activeElement).toBe(cards[3]);
         expect(within(document.activeElement).getByText('Title 4')).toBeTruthy();
 
         let cardStyles = getCardStyles(cards[3]);
-        expectedTop = cardStyles.top;
+        let expectedTop = cardStyles.top;
 
         act(() => {
           fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
+          jest.runAllTimers();
         });
 
         cardStyles = getCardStyles(document.activeElement);
@@ -584,7 +581,85 @@ describe('CardView', function () {
         expect(within(document.activeElement).getByText('Title 1')).toBeTruthy();
       });
 
-      // TODO: page up page down
+      it('should move focus via Page Up', function () {
+        let tree = render(<DynamicCardView layout={GalleryLayout} />);
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let cards = tree.getAllByRole('gridcell');
+        triggerPress(cards[0]);
+
+        act(() => {
+          fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
+          fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
+          jest.runAllTimers();
+        });
+
+        act(() => {
+          fireEvent.keyDown(document.activeElement, {key: 'PageUp', code: 33, charCode: 33});
+          fireEvent.keyUp(document.activeElement, {key: 'PageUp', code: 33, charCode: 33});
+          jest.runAllTimers();
+        });
+
+        let pageUpElement = document.activeElement;
+
+        act(() => {
+          fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
+          fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
+          jest.runAllTimers();
+        });
+
+        let cardStyles = getCardStyles(document.activeElement);
+        let numCardsInPage = Math.floor(800 / (parseInt(cardStyles.height, 10) + 32));
+
+        for (let i = 0; i < numCardsInPage; i++) {
+          act(() => {
+            fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
+            fireEvent.keyUp(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
+            jest.runAllTimers();
+          });
+        }
+
+        expect(document.activeElement).toEqual(pageUpElement);
+      });
+
+      it('should move focus via Page Down', function () {
+        let tree = render(<DynamicCardView layout={GalleryLayout} />);
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let cards = tree.getAllByRole('gridcell');
+        triggerPress(cards[0]);
+
+        act(() => {
+          fireEvent.keyDown(document.activeElement, {key: 'PageDown', code: 34, charCode: 34});
+          fireEvent.keyUp(document.activeElement, {key: 'PageDown', code: 34, charCode: 34});
+          jest.runAllTimers();
+        });
+
+        let pageDownElement = document.activeElement;
+
+        act(() => {
+          fireEvent.keyDown(document.activeElement, {key: 'Home', code: 36, charCode: 36});
+          fireEvent.keyUp(document.activeElement, {key: 'Home', code: 36, charCode: 36});
+          jest.runAllTimers();
+        });
+
+        let cardStyles = getCardStyles(document.activeElement);
+        let numCardsInPage = Math.floor(800 / (parseInt(cardStyles.height, 10) + 32));
+
+        for (let i = 0; i < numCardsInPage; i++) {
+          act(() => {
+            fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+            fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+            jest.runAllTimers();
+          });
+        }
+
+        expect(document.activeElement).toEqual(pageDownElement);
+      });
     });
   });
 
@@ -634,6 +709,109 @@ describe('CardView', function () {
         }
       }
     });
+
+    describe('keyboard nav', function () {
+      it('should move focus via Arrow Down', function () {
+        let tree = render(<DynamicCardView layout={WaterfallLayout} />);
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let cards = tree.getAllByRole('gridcell');
+        triggerPress(cards[0]);
+        expect(document.activeElement).toBe(cards[0]);
+        expect(within(document.activeElement).getByText('Title 1')).toBeTruthy();
+
+        let cardStyles = getCardStyles(cards[0]);
+        let expectedTop = `${parseInt(cardStyles.top, 10) + parseInt(cardStyles.height, 10) + 24}px`;
+        let expectedLeft = cardStyles.left;
+
+        act(() => {
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+          jest.runAllTimers();
+        });
+
+        cardStyles = getCardStyles(document.activeElement);
+        expect(cardStyles.top).toEqual(expectedTop);
+        expect(cardStyles.left).toEqual(expectedLeft);
+        expect(within(document.activeElement).getByText('Title 4')).toBeTruthy();
+      });
+
+      it('should move focus via Arrow Up', function () {
+        let tree = render(<DynamicCardView layout={WaterfallLayout} />);
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let cards = tree.getAllByRole('gridcell');
+        triggerPress(cards[3]);
+        expect(document.activeElement).toBe(cards[3]);
+        expect(within(document.activeElement).getByText('Title 4')).toBeTruthy();
+
+        let cardStyles = getCardStyles(cards[3]);
+        let expectedTop = cardStyles.top;
+        let expectedLeft = cardStyles.left;
+
+        act(() => {
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
+          jest.runAllTimers();
+        });
+
+        cardStyles = getCardStyles(document.activeElement);
+        expectedTop = `${parseInt(expectedTop, 10) - parseInt(cardStyles.height, 10) - 24}px`;
+        expect(cardStyles.top).toEqual(expectedTop);
+        expect(cardStyles.left).toEqual(expectedLeft);
+        expect(within(document.activeElement).getByText('Title 1')).toBeTruthy();
+      });
+
+      // TODO: figure out why the spacing is only 16px between each item
+      it.skip('should move focus via Arrow Left', function () {
+        let tree = render(<DynamicCardView layout={WaterfallLayout} />);
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let cards = tree.getAllByRole('gridcell');
+
+        triggerPress(cards[1]);
+        act(() => {
+          jest.runAllTimers();
+        });
+        expect(document.activeElement).toBe(cards[1]);
+        let cardStyles = getCardStyles(cards[1]);
+        let expectedLeft = cardStyles.left;
+        let expectedTop = cardStyles.top;
+
+        act(() => {
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+          jest.runAllTimers();
+        });
+
+        expect(document.activeElement).toBe(cards[0]);
+        cardStyles = getCardStyles(document.activeElement);
+        expectedLeft = `${parseInt(expectedLeft, 10) - parseInt(cardStyles.width, 10) - 24}px`;
+        expect(cardStyles.top).toEqual(expectedTop);
+        expect(cardStyles.left).toEqual(expectedLeft);
+      });
+
+      // TODO: update the below two tests when we decide on exact keyboard behavior for entering the card
+      // it('should move focus via Arrow Left (RTL)', function () {
+
+      // });
+
+      // it('should move focus via Arrow Right', function () {
+
+      // });
+
+      // it('should move focus via Arrow Right (RTL)', function () {
+
+      // });
+
+      // TODO: Can't test PageUp/Down of WaterfallLayout because it is setting the heights of the items to 0. Figure out why
+    });
   });
 
   describe('common keyboard nav', function () {
@@ -655,6 +833,7 @@ describe('CardView', function () {
       act(() => {
         fireEvent.keyDown(document.activeElement, {key: 'Home', code: 36, charCode: 36});
         fireEvent.keyUp(document.activeElement, {key: 'Home', code: 36, charCode: 36});
+        jest.runAllTimers();
       });
 
       expect(document.activeElement).toBe(cards[0]);

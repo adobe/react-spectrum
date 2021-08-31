@@ -26,12 +26,12 @@ export interface GalleryLayoutOptions<T> extends BaseLayoutOptions<T> {
   idealRowHeight?: number,
   /**
    * The spacing between items.
-   * @default 24 x 24
+   * @default 24 x 32
    */
   itemSpacing?: Size,
   /**
    * The vertical padding for an item.
-   * @default 32
+   * @default 114
    */
   itemPadding?: Size
 }
