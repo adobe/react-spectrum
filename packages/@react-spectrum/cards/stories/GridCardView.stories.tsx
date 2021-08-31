@@ -68,8 +68,10 @@ export default {
 };
 
 let onSelectionChange = action('onSelectionChange');
+let onLoadMore = action('onLoadMore');
 let actions = {
-  onSelectionChange: s => onSelectionChange([...s])
+  onSelectionChange: s => onSelectionChange([...s]),
+  onLoadMore: onLoadMore
 };
 
 // TODO add stories for Layouts with non-default options passed in
@@ -106,6 +108,9 @@ isLoadingHeightGrid.storyName = 'loadingState = loading, set height';
 
 export const loadingMoreGrid = () => DynamicCardView({width: '800px', height: '800px', loadingState: 'loadingMore', items});
 loadingMoreGrid.storyName = 'loadingState = loadingMore';
+
+export const filteringGrid = () => DynamicCardView({width: '800px', height: '800px', loadingState: 'filtering', items});
+filteringGrid.storyName = 'loadingState = filtering';
 
 export const emptyWithHeightGrid = () => NoItemCardView({width: '800px', height: '800px', renderEmptyState});
 emptyWithHeightGrid.storyName = 'empty, set height';

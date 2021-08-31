@@ -78,6 +78,9 @@ isLoadingHeightWaterfall.storyName = 'loadingState = loading, set height';
 export const loadingMoreWaterfall = () => DynamicCardView({layout: WaterfallLayout, width: '800px', height: '800px', loadingState: 'loadingMore', items});
 loadingMoreWaterfall.storyName = 'loadingState = loadingMore';
 
+export const filteringWaterfall = () => DynamicCardView({layout: WaterfallLayout, width: '800px', height: '800px', loadingState: 'filtering', items});
+filteringWaterfall.storyName = 'loadingState = filtering';
+
 export const emptyWithHeightWaterfall = () => NoItemCardView({layout: WaterfallLayout, width: '800px', height: '800px', renderEmptyState});
 emptyWithHeightWaterfall.storyName = 'empty, set height';
 

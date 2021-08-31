@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, screen, waitFor, within} from '@testing-library/react';
+import {act, fireEvent, render, within} from '@testing-library/react';
 import {ActionMenu, Item} from '@react-spectrum/menu';
 import {Button} from '@react-spectrum/button';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
@@ -60,6 +60,8 @@ let itemsNoSize = [
   {src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Title 12'}
 ];
 
+let mockHeight = 800;
+let mockWidth = 800;
 let onSelectionChange = jest.fn();
 let getCardStyles = (card) => {
   return card.parentNode.parentNode.style;
@@ -158,8 +160,8 @@ function DynamicCardView(props) {
 
 describe('CardView', function () {
   beforeAll(function () {
-    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 800);
-    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 800);
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => mockWidth);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => mockHeight);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.useFakeTimers();
   });
@@ -446,7 +448,7 @@ describe('CardView', function () {
         let cardStyles = getCardStyles(document.activeElement);
         let expectedLeft = cardStyles.left;
 
-        let numCardsInPage = Math.floor(800 / (parseInt(cardStyles.height, 10) + 48));
+        let numCardsInPage = Math.floor(mockHeight / (parseInt(cardStyles.height, 10) + 48));
         let expectedTop = `${parseInt(cardStyles.top, 10) - numCardsInPage * (parseInt(cardStyles.height, 10) + 48)}px`;
 
         act(() => {
@@ -473,7 +475,7 @@ describe('CardView', function () {
         let cardStyles = getCardStyles(document.activeElement);
         let expectedLeft = cardStyles.left;
 
-        let numCardsInPage = Math.floor(800 / (parseInt(cardStyles.height, 10) + 48));
+        let numCardsInPage = Math.floor(mockHeight / (parseInt(cardStyles.height, 10) + 48));
         let expectedTop = `${parseInt(cardStyles.top, 10) + numCardsInPage * (parseInt(cardStyles.height, 10) + 48)}px`;
 
         act(() => {
@@ -611,7 +613,7 @@ describe('CardView', function () {
         });
 
         let cardStyles = getCardStyles(document.activeElement);
-        let numCardsInPage = Math.floor(800 / (parseInt(cardStyles.height, 10) + 32));
+        let numCardsInPage = Math.floor(mockHeight / (parseInt(cardStyles.height, 10) + 32));
 
         for (let i = 0; i < numCardsInPage; i++) {
           act(() => {
@@ -648,7 +650,7 @@ describe('CardView', function () {
         });
 
         let cardStyles = getCardStyles(document.activeElement);
-        let numCardsInPage = Math.floor(800 / (parseInt(cardStyles.height, 10) + 32));
+        let numCardsInPage = Math.floor(mockHeight / (parseInt(cardStyles.height, 10) + 32));
 
         for (let i = 0; i < numCardsInPage; i++) {
           act(() => {
@@ -811,6 +813,7 @@ describe('CardView', function () {
       // });
 
       // TODO: Can't test PageUp/Down of WaterfallLayout because it is setting the heights of the items to 0. Figure out why
+      // seems to be the updateItemSize
     });
   });
 
@@ -820,7 +823,7 @@ describe('CardView', function () {
       ${'Grid layout'}      | ${GridLayout}
       ${'Gallery layout'}   | ${GalleryLayout}
       ${'Waterfall layout'} | ${WaterfallLayout}
-    `('$Name CardViewshould move focus via Home', function ({layout}) {
+    `('$Name CardView should move focus via Home', function ({layout}) {
       let tree = render(<DynamicCardView layout={layout} />);
       act(() => {
         jest.runAllTimers();
@@ -844,7 +847,7 @@ describe('CardView', function () {
       ${'Grid layout'}      | ${GridLayout}
       ${'Gallery layout'}   | ${GalleryLayout}
       ${'Waterfall layout'} | ${WaterfallLayout}
-    `('$Name CardViewshould should move focus via End', function ({layout}) {
+    `('$Name CardView should move focus via End', function ({layout}) {
       let tree = render(<DynamicCardView layout={layout} />);
       act(() => {
         jest.runAllTimers();
@@ -865,11 +868,11 @@ describe('CardView', function () {
     });
 
     it.each`
-    Name                  | layout
-    ${'Grid layout'}      | ${GridLayout}
-    ${'Gallery layout'}   | ${GalleryLayout}
-    ${'Waterfall layout'} | ${WaterfallLayout}
-  `('$Name CardViewshould should move focus via type to select', function ({layout}) {
+      Name                  | layout
+      ${'Grid layout'}      | ${GridLayout}
+      ${'Gallery layout'}   | ${GalleryLayout}
+      ${'Waterfall layout'} | ${WaterfallLayout}
+    `('$Name CardView should move focus via type to select', function ({layout}) {
       let tree = render(<DynamicCardView layout={layout} />);
       act(() => {
         jest.runAllTimers();
@@ -889,20 +892,250 @@ describe('CardView', function () {
   });
 
   describe('selection', function () {
-    // common tests for selection, do a it.each, test aria-selected
-    // test disabled cards don't fire selection
-    // multiple, single, non selection mode
-    // selectedKeys and disabled keys
+    // TODO: Add range selection test via shift click and shift + arrow keys when that functionality is fixed
+    it('CardView should support selectedKeys', function () {
+      let tree = render(<DynamicCardView selectedKeys={['Title 1', 'Title 2']} />);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let cards = tree.getAllByRole('gridcell');
+      expect(cards[0].parentNode).toHaveAttribute('aria-selected', "true");
+      expect(cards[1].parentNode).toHaveAttribute('aria-selected', "true");
+      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('aria-checked', "true");
+      expect(within(cards[1]).getByRole('checkbox')).toHaveAttribute('aria-checked', "true");
+    });
+
+    it('CardView should support disabledKeys', function () {
+      let tree = render(<DynamicCardView disabledKeys={['Title 1']} />);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let cards = tree.getAllByRole('gridcell');
+      triggerPress(cards[0]);
+      expect(document.activeElement).not.toBe(cards[0]);
+      expect(cards[0].parentNode).not.toHaveAttribute('aria-selected', "true");
+      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('disabled');
+      expect(within(cards[0]).getByRole('checkbox')).not.toHaveAttribute('aria-checked', "true");
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
+    it('CardView should support multiple selection', function () {
+      let tree = render(<DynamicCardView />);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let cards = tree.getAllByRole('gridcell');
+      triggerPress(cards[0]);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Title 1']));
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+
+      triggerPress(cards[2]);
+      expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Title 1', 'Title 3']));
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+
+      expect(cards[0].parentNode).toHaveAttribute('aria-selected', "true");
+      expect(cards[2].parentNode).toHaveAttribute('aria-selected', "true");
+      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('aria-checked', "true");
+      expect(within(cards[2]).getByRole('checkbox')).toHaveAttribute('aria-checked', "true");
+
+      triggerPress(cards[0]);
+      expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['Title 3']));
+      expect(onSelectionChange).toHaveBeenCalledTimes(3);
+
+      expect(cards[0].parentNode).toHaveAttribute('aria-selected', "false");
+      expect(cards[2].parentNode).toHaveAttribute('aria-selected', "true");
+      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('aria-checked', "false");
+      expect(within(cards[2]).getByRole('checkbox')).toHaveAttribute('aria-checked', "true");
+    });
+
+    it('CardView should support single selection', function () {
+      let tree = render(<DynamicCardView selectionMode="single" />);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let cards = tree.getAllByRole('gridcell');
+      triggerPress(cards[0]);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Title 1']));
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(cards[0].parentNode).toHaveAttribute('aria-selected', "true");
+      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('aria-checked', "true");
+
+      triggerPress(cards[2]);
+      expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Title 3']));
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(cards[0].parentNode).toHaveAttribute('aria-selected', "false");
+      expect(cards[2].parentNode).toHaveAttribute('aria-selected', "true");
+      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('aria-checked', "false");
+      expect(within(cards[2]).getByRole('checkbox')).toHaveAttribute('aria-checked', "true");
+
+      triggerPress(cards[2]);
+      expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set([]));
+      expect(onSelectionChange).toHaveBeenCalledTimes(3);
+      expect(cards[0].parentNode).toHaveAttribute('aria-selected', "false");
+      expect(cards[2].parentNode).toHaveAttribute('aria-selected', "false");
+      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('aria-checked', "false");
+      expect(within(cards[2]).getByRole('checkbox')).toHaveAttribute('aria-checked', "false");
+    });
+
+    it('CardView should support no selection', function () {
+      let tree = render(<DynamicCardView selectionMode="none" />);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let cards = tree.getAllByRole('gridcell');
+      triggerPress(cards[0]);
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+      expect(cards[0].parentNode).not.toHaveAttribute('aria-selected');
+      expect(within(cards[0]).queryByRole('checkbox')).toBeNull();
+
+      triggerPress(cards[2]);
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+      expect(cards[2].parentNode).not.toHaveAttribute('aria-selected');
+      expect(within(cards[2]).queryByRole('checkbox')).toBeNull();
+    });
   });
 
-
-
-  // test loading spinners appear, test async case
   describe('loading', function () {
+    it.each`
+      Name                  | layout
+      ${'Grid layout'}      | ${GridLayout}
+      ${'Gallery layout'}   | ${GalleryLayout}
+      ${'Waterfall layout'} | ${WaterfallLayout}
+    `('$Name CardView should render a loading spinner when loading', function ({layout}) {
+      let tree = render(<DynamicCardView layout={layout} items={[]} loadingState="loading" />);
+      act(() => {
+        jest.runAllTimers();
+      });
 
-  })
+      let row = tree.getByRole('row');
+      expect(row).toBeTruthy();
+
+      let gridCell = within(row).getByRole('gridcell');
+      expect(gridCell).toBeTruthy();
+
+      let spinner = within(gridCell).getByRole('progressbar');
+      expect(spinner).toHaveAttribute('aria-label', 'Loading…');
+      expect(row.parentNode.style.height).toBe(`${mockHeight}px`);
+
+      tree.rerender(<DynamicCardView layout={layout} />);
+      let grid = tree.getByRole('grid');
+      expect(within(grid).queryByRole('progressbar')).toBeNull();
+      expect(grid).toHaveAttribute('aria-rowcount', defaultItems.length.toString());
+      expect(within(grid).getByText('Title 1')).toBeTruthy();
+    });
+
+    it.each`
+      Name                  | layout
+      ${'Grid layout'}      | ${GridLayout}
+      ${'Gallery layout'}   | ${GalleryLayout}
+      ${'Waterfall layout'} | ${WaterfallLayout}
+    `('$Name CardView should render a loading spinner at the bottom when loading more', function ({layout}) {
+      let tree = render(<DynamicCardView layout={layout} loadingState="loadingMore" />);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let grid = tree.getByRole('grid');
+      expect(grid).toHaveAttribute('aria-rowcount', defaultItems.length.toString());
+      expect(within(grid).getByText('Title 1')).toBeTruthy();
+
+      let cards = tree.getAllByRole('gridcell');
+      expect(cards).toBeTruthy();
+      triggerPress(cards[1]);
+
+      act(() => {
+        fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
+        fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
+        jest.runAllTimers();
+      });
+
+      let spinner = within(grid).getByRole('progressbar');
+      expect(spinner).toHaveAttribute('aria-label', 'Loading more…');
+      expect(getCardStyles(spinner.parentNode).height).toBe('60px');
+    });
+
+    it.each`
+      Name                  | layout
+      ${'Grid layout'}      | ${GridLayout}
+      ${'Gallery layout'}   | ${GalleryLayout}
+    `('$Name CardView should call loadMore when scrolling to the bottom', function ({layout}) {
+      let onLoadMore = jest.fn();
+      let tree = render(<DynamicCardView layout={layout} onLoadMore={onLoadMore} />);
+      expect(tree).toBeTruthy();
+
+       // TODO: loadMore is being called twice on mount??? debug this
+      // act(() => {
+      //   jest.runAllTimers();
+      // });
+
+      // let cards = tree.getAllByRole('gridcell');
+      // expect(cards).toBeTruthy();
+      // expect(onLoadMore).toHaveBeenCalledTimes(0);
+      // triggerPress(cards[1]);
+
+      // act(() => {
+      //   fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
+      //   fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
+      //   jest.runAllTimers();
+      // });
+
+      // grid = tree.getByRole('grid');
+      // grid.scrollTop = 3000;
+      // fireEvent.scroll(grid);
+      // expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
+
+
+    it.each`
+      Name                  | layout
+      ${'Grid layout'}      | ${GridLayout}
+      ${'Gallery layout'}   | ${GalleryLayout}
+      ${'Waterfall layout'} | ${WaterfallLayout}
+    `('$Name CardView should not render a loading spinner when filtering', function ({layout}) {
+      let tree = render(<DynamicCardView layout={layout} loadingState="filtering" />);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let grid = tree.getByRole('grid');
+      expect(grid).toHaveAttribute('aria-rowcount', defaultItems.length.toString());
+      expect(within(grid).getByText('Title 1')).toBeTruthy();
+
+      act(() => {
+        fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
+        fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
+        jest.runAllTimers();
+      });
+
+      expect(within(grid).queryByRole('progressbar')).toBeNull();
+    });
+  });
 
   describe('emptyState', function () {
+    it.each`
+      Name                  | layout
+      ${'Grid layout'}      | ${GridLayout}
+      ${'Gallery layout'}   | ${GalleryLayout}
+      ${'Waterfall layout'} | ${WaterfallLayout}
+    `('$Name CardView should render empty state when there are no items', function ({layout}) {
+      let renderEmptyState = () => <div>empty</div>
+      let tree = render(<DynamicCardView layout={layout} items={[]} renderEmptyState={renderEmptyState} />);
+      act(() => {
+        jest.runAllTimers();
+      });
 
-  })
+      let row = tree.getByRole('row');
+      expect(row).toBeTruthy();
+
+      let gridCell = within(row).getByRole('gridcell');
+      expect(gridCell).toBeTruthy();
+      expect(within(gridCell).getByText('empty')).toBeTruthy();
+      expect(row.parentNode.style.height).toBe(`${mockHeight}px`);
+    });
+  });
 });
