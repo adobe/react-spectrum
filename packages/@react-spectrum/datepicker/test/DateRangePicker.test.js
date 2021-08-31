@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, getAllByRole as getAllByRoleInContainer, render} from '@testing-library/react';
-import {CalendarDate, CalendarDateTime, getLocalTimeZone, today} from '@internationalized/date';
+import {act, fireEvent, getAllByRole as getAllByRoleInContainer, render, within} from '@testing-library/react';
+import {CalendarDate, CalendarDateTime, getLocalTimeZone, toCalendarDateTime, today} from '@internationalized/date';
 import {DateRangePicker} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -237,6 +237,167 @@ describe('DateRangePicker', function () {
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 2, 10), end: new CalendarDate(2019, 2, 17)});
       expect(startDate).toHaveTextContent('2/10/2019'); // uncontrolled
       expect(endDate).toHaveTextContent('2/17/2019');
+    });
+
+    it('should display time fields when a CalendarDateTime value is used', function () {
+      let onChange = jest.fn();
+      let {getByRole, getAllByRole, getByLabelText, getAllByLabelText} = render(
+        <Provider theme={theme}>
+          <DateRangePicker label="Date" defaultValue={{start: new CalendarDateTime(2019, 2, 3, 8, 45), end: new CalendarDateTime(2019, 5, 6, 10, 45)}} onChange={onChange} />
+        </Provider>
+      );
+
+      let startDate = getByLabelText('Start Date');
+      let endDate = getByLabelText('End Date');
+      expect(startDate).toHaveTextContent('2/3/2019, 8:45 AM');
+      expect(endDate).toHaveTextContent('5/6/2019, 10:45 AM');
+
+      let button = getByRole('button');
+      triggerPress(button);
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let cells = getAllByRole('gridcell');
+      let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
+      expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected (Click to start selecting date range)');
+
+      let startTimeField = getAllByLabelText('Start time')[0];
+      expect(startTimeField).toHaveTextContent('8:45 AM');
+
+      let endTimeField = getAllByLabelText('End time')[0];
+      expect(endTimeField).toHaveTextContent('10:45 AM');
+
+      // selecting a date should not close the popover
+      triggerPress(getByLabelText('Sunday, February 10, 2019 selected'));
+      triggerPress(getByLabelText('Sunday, February 17, 2019'));
+
+      expect(dialog).toBeVisible();
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDateTime(2019, 2, 10, 8, 45), end: new CalendarDateTime(2019, 2, 17, 10, 45)});
+      expect(startDate).toHaveTextContent('2/10/2019, 8:45 AM');
+      expect(endDate).toHaveTextContent('2/17/2019, 10:45 AM');
+
+      let hour = within(startTimeField).getByLabelText('Hour');
+      expect(hour).toHaveAttribute('role', 'spinbutton');
+      expect(hour).toHaveAttribute('aria-valuetext', '8 AM');
+
+      act(() => hour.focus());
+      fireEvent.keyDown(hour, {key: 'ArrowUp'});
+      fireEvent.keyUp(hour, {key: 'ArrowUp'});
+
+      expect(hour).toHaveAttribute('aria-valuetext', '9 AM');
+
+      expect(dialog).toBeVisible();
+      expect(onChange).toHaveBeenCalledTimes(2);
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDateTime(2019, 2, 10, 9, 45), end: new CalendarDateTime(2019, 2, 17, 10, 45)});
+      expect(startDate).toHaveTextContent('2/10/2019, 9:45 AM');
+      expect(endDate).toHaveTextContent('2/17/2019, 10:45 AM');
+
+      hour = within(endTimeField).getByLabelText('Hour');
+      expect(hour).toHaveAttribute('role', 'spinbutton');
+      expect(hour).toHaveAttribute('aria-valuetext', '10 AM');
+
+      act(() => hour.focus());
+      fireEvent.keyDown(hour, {key: 'ArrowUp'});
+      fireEvent.keyUp(hour, {key: 'ArrowUp'});
+
+      expect(hour).toHaveAttribute('aria-valuetext', '11 AM');
+
+      expect(dialog).toBeVisible();
+      expect(onChange).toHaveBeenCalledTimes(3);
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDateTime(2019, 2, 10, 9, 45), end: new CalendarDateTime(2019, 2, 17, 11, 45)});
+      expect(startDate).toHaveTextContent('2/10/2019, 9:45 AM');
+      expect(endDate).toHaveTextContent('2/17/2019, 11:45 AM');
+    });
+
+    it('should not fire onChange until both date range and time range are selected', function () {
+      let onChange = jest.fn();
+      let {getByRole, getAllByRole, getByLabelText, getAllByLabelText} = render(
+        <Provider theme={theme}>
+          <DateRangePicker label="Date" granularity="minute" onChange={onChange} />
+        </Provider>
+      );
+
+      let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
+      let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).set({hour: 12, minute: 0}).toDate(getLocalTimeZone()));
+      let startDate = getByLabelText('Start Date');
+      let endDate = getByLabelText('End Date');
+      expect(startDate).toHaveTextContent(placeholder);
+      expect(endDate).toHaveTextContent(placeholder);
+
+      let button = getByRole('button');
+      triggerPress(button);
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let cells = getAllByRole('gridcell');
+      let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
+      expect(selected).toBeUndefined();
+
+      let startTimeField = getAllByLabelText('Start time')[0];
+      expect(startTimeField).toHaveTextContent('12:00 PM');
+
+      let endTimeField = getAllByLabelText('End time')[0];
+      expect(endTimeField).toHaveTextContent('12:00 PM');
+
+      // selecting a date should not close the popover
+      let enabledCells = cells.filter(cell => !cell.hasAttribute('aria-disabled'));
+      triggerPress(enabledCells[0].firstChild);
+      triggerPress(enabledCells[1].firstChild);
+
+      expect(dialog).toBeVisible();
+      expect(onChange).not.toHaveBeenCalled();
+      expect(startDate).toHaveTextContent(placeholder);
+      expect(endDate).toHaveTextContent(placeholder);
+
+      for (let timeField of [startTimeField, endTimeField]) {
+        let hour = within(timeField).getByLabelText('Hour');
+        expect(hour).toHaveAttribute('role', 'spinbutton');
+        expect(hour).toHaveAttribute('aria-valuetext', '12 PM');
+
+        act(() => hour.focus());
+        fireEvent.keyDown(hour, {key: 'ArrowUp'});
+        fireEvent.keyUp(hour, {key: 'ArrowUp'});
+
+        expect(hour).toHaveAttribute('aria-valuetext', '1 PM');
+
+        expect(onChange).not.toHaveBeenCalled();
+        expect(startDate).toHaveTextContent(placeholder);
+        expect(endDate).toHaveTextContent(placeholder);
+
+        fireEvent.keyDown(hour, {key: 'ArrowRight'});
+        fireEvent.keyUp(hour, {key: 'ArrowRight'});
+
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Minute');
+        expect(document.activeElement).toHaveAttribute('aria-valuetext', '00');
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+
+        expect(document.activeElement).toHaveAttribute('aria-valuetext', '01');
+
+        expect(onChange).not.toHaveBeenCalled();
+        expect(startDate).toHaveTextContent(placeholder);
+        expect(endDate).toHaveTextContent(placeholder);
+
+        fireEvent.keyDown(hour, {key: 'ArrowRight'});
+        fireEvent.keyUp(hour, {key: 'ArrowRight'});
+
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Day Period');
+        expect(document.activeElement).toHaveAttribute('aria-valuetext', '1 PM');
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      }
+
+      expect(dialog).toBeVisible();
+      expect(onChange).toHaveBeenCalledTimes(1);
+      let startValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 1, hour: 13, minute: 1});
+      let endValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 2, hour: 13, minute: 1});
+      expect(onChange).toHaveBeenCalledWith({start: startValue, end: endValue});
+      expect(startDate).toHaveTextContent(formatter.format(startValue.toDate(getLocalTimeZone())));
+      expect(endDate).toHaveTextContent(formatter.format(endValue.toDate(getLocalTimeZone())));
     });
   });
 

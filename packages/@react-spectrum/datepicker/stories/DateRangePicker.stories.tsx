@@ -41,6 +41,10 @@ storiesOf('Date and Time/DateRangePicker', module)
     () => render({granularity: 'minute'})
   )
   .add(
+    'granularity: second',
+    () => render({granularity: 'second'})
+  )
+  .add(
     'hourCycle: 12',
     () => render({granularity: 'minute', hourCycle: 12})
   )

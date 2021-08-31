@@ -19,7 +19,6 @@ import {filterDOMProps, mergeProps, useId, useLabels, useUpdateEffect} from '@re
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {KeyboardEvent, useRef} from 'react';
-import {toDate} from '@internationalized/date';
 import {useDateFormatter, useLocale, useMessageFormatter} from '@react-aria/i18n';
 
 export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: CalendarStateBase, selectedDateDescription: string): CalendarAria {
@@ -41,7 +40,7 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
   useUpdateEffect(() => {
     // announce the new month with a change from the Previous or Next button
     if (!state.isFocused) {
-      announce(monthFormatter.format(toDate(state.currentMonth, state.timeZone)));
+      announce(monthFormatter.format(state.currentMonth.toDate(state.timeZone)));
     }
     // handle an update to the current month from the Previous or Next button
     // rather than move focus, we announce the new month value

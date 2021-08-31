@@ -11,7 +11,7 @@
  */
 
 import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
-import {DatePickerProps} from '@react-types/datepicker';
+import {DatePickerProps, DateValue} from '@react-types/datepicker';
 import {DOMProps} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -28,7 +28,7 @@ interface DateSegmentAria {
   segmentProps: HTMLAttributes<HTMLDivElement>
 }
 
-export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateSegment, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateSegmentAria {
+export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & DOMProps, segment: DateSegment, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateSegmentAria {
   let enteredKeys = useRef('');
   let {locale, direction} = useLocale();
   let messageFormatter = useMessageFormatter(intlMessages);
@@ -124,7 +124,7 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
         // Safari on iOS does not fire beforeinput for the backspace key because the cursor is at the start.
         e.preventDefault();
         e.stopPropagation();
-        if (parser.isValidPartialNumber(segment.text, segment.minValue, segment.maxValue) && !props.isReadOnly) {
+        if (parser.isValidPartialNumber(segment.text) && !props.isReadOnly) {
           let newValue = segment.text.slice(0, -1);
           state.setSegment(segment.type, newValue.length === 0 ? segment.minValue : parser.parse(newValue));
           enteredKeys.current = newValue;
@@ -173,15 +173,28 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
       case 'second':
       case 'month':
       case 'year': {
-        if (!parser.isValidPartialNumber(newValue, segment.minValue, segment.maxValue)) {
+        if (!parser.isValidPartialNumber(newValue)) {
           return;
         }
 
         let numberValue = parser.parse(newValue);
         let segmentValue = numberValue;
         if (segment.type === 'hour' && state.dateFormatter.resolvedOptions().hour12) {
-          if (numberValue > 12) {
-            segmentValue = parser.parse(key);
+          switch (state.dateFormatter.resolvedOptions().hourCycle) {
+            case 'h11':
+              if (numberValue > 11) {
+                segmentValue = parser.parse(key);
+              }
+              break;
+            case 'h12':
+              if (numberValue === 0) {
+                return;
+              }
+
+              if (numberValue > 12) {
+                segmentValue = parser.parse(key);
+              }
+              break;
           }
 
           if (segment.value >= 12 && numberValue > 1) {
@@ -230,7 +243,7 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
     switch (e.inputType) {
       case 'deleteContentBackward':
       case 'deleteContentForward':
-        if (parser.isValidPartialNumber(segment.text, segment.minValue, segment.maxValue) && !props.isReadOnly) {
+        if (parser.isValidPartialNumber(segment.text) && !props.isReadOnly) {
           let newValue = segment.text.slice(0, -1);
           state.setSegment(segment.type, newValue.length === 0 ? segment.minValue : parser.parse(newValue));
           enteredKeys.current = newValue;
