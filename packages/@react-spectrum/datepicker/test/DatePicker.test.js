@@ -982,7 +982,7 @@ describe('DatePicker', function () {
       fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
-      let value = today(getLocalTimeZone()).cycle('month', 1)
+      let value = today(getLocalTimeZone()).cycle('month', 1);
       expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
