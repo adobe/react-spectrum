@@ -85,13 +85,13 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     setHeight(cardHeight);
   }, [gridRef, setHeight]);
 
-  // this is for tile quiet, anything else?
+  // This is only for quiet grid cards
   let [isCloseToSquare, setIsCloseToSquare] = useState(false);
   useLayoutEffect(() => {
     if (!(layout === 'grid' && isQuiet)) {
       return;
     }
-    // ToDo: how to handle illustrations? what if the illustration looks like an image?
+    // ToDo: how to handle illustrations? what if the illustration looks like an image? What about swatches/fonts https://spectrum-contributions.corp.adobe.com/page/asset-card-beta/#File-type
     let image = gridRef.current.querySelector(`.${styles['spectrum-Card-image']} img`) as HTMLImageElement;
     if (!image) {
       return;
