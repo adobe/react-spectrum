@@ -93,6 +93,19 @@ describe('CalendarDate manipulation', function () {
       expect(date.add({milliseconds: 50000000000})).toEqual(date);
     });
 
+    it('should add in BC', function () {
+      let date = new CalendarDate('BC', 10, 9, 3);
+      expect(date.add({years: 1})).toEqual(new CalendarDate('BC', 9, 9, 3));
+    });
+
+    it('should add between BC and AD', function () {
+      let date = new CalendarDate('BC', 1, 9, 3);
+      expect(date.add({years: 1})).toEqual(new CalendarDate(1, 9, 3));
+
+      date = new CalendarDate('BC', 11, 9, 3);
+      expect(date.add({years: 20})).toEqual(new CalendarDate(10, 9, 3));
+    });
+
     describe('Japanese calendar', function () {
       it('should add years and rebalance era', function () {
         let date = new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 4, 30);
@@ -231,6 +244,19 @@ describe('CalendarDate manipulation', function () {
       expect(date.subtract({milliseconds: 50000000000})).toEqual(date);
     });
 
+    it('should subtract in BC', function () {
+      let date = new CalendarDate('BC', 1, 9, 3);
+      expect(date.subtract({years: 1})).toEqual(new CalendarDate('BC', 2, 9, 3));
+    });
+
+    it('should subtract between AD and BC', function () {
+      let date = new CalendarDate(1, 9, 3);
+      expect(date.subtract({years: 1})).toEqual(new CalendarDate('BC', 1, 9, 3));
+
+      date = new CalendarDate(10, 9, 3);
+      expect(date.subtract({years: 20})).toEqual(new CalendarDate('BC', 11, 9, 3));
+    });
+
     describe('Japanese calendar', function () {
       it('should subtract years and rebalance era', function () {
         let date = new CalendarDate(new JapaneseCalendar(), 'reiwa', 1, 5, 30);
@@ -311,7 +337,7 @@ describe('CalendarDate manipulation', function () {
     });
 
     it('should set month and constrain day', function () {
-      let date = new CalendarDate(2020, 2, 31);
+      let date = new CalendarDate(2020, 8, 31);
       expect(date.set({month: 9})).toEqual(new CalendarDate(2020, 9, 30));
     });
 
@@ -339,16 +365,16 @@ describe('CalendarDate manipulation', function () {
         expect(date.set({year: 35})).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 4, 30));
 
         date = new CalendarDate(new JapaneseCalendar(), 'showa', 63, 1, 6);
-        expect(date.set({year: 72})).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 63, 1, 6));
+        expect(date.set({year: 72})).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 6));
 
-        date = new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 2, 30);
+        date = new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 3, 30);
         expect(date.set({month: 5})).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 4, 30));
 
         date = new CalendarDate(new JapaneseCalendar(), 'showa', 1, 12, 30);
         expect(date.set({month: 5})).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 1, 12, 30));
 
-        date = new CalendarDate(new JapaneseCalendar(), 'showa', 63, 1, 6);
-        expect(date.set({day: 8})).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 63, 1, 7));
+        date = new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 6);
+        expect(date.set({day: 8})).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 7));
 
         date = new CalendarDate(new JapaneseCalendar(), 'showa', 1, 12, 30);
         expect(date.set({day: 5})).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 1, 12, 25));
@@ -391,6 +417,24 @@ describe('CalendarDate manipulation', function () {
         expect(date.cycle('year', -1)).toEqual(new CalendarDate(2019, 9, 3));
         expect(date.cycle('year', 5)).toEqual(new CalendarDate(2025, 9, 3));
         expect(date.cycle('year', -5)).toEqual(new CalendarDate(2015, 9, 3));
+
+        date = new CalendarDate(9999, 9, 3);
+        expect(date.cycle('year', 1)).toEqual(new CalendarDate(1, 9, 3));
+
+        date = new CalendarDate(1, 9, 3);
+        expect(date.cycle('year', -1)).toEqual(new CalendarDate('BC', 1, 9, 3));
+
+        date = new CalendarDate(10, 9, 3);
+        expect(date.cycle('year', -20)).toEqual(new CalendarDate('BC', 11, 9, 3));
+
+        date = new CalendarDate('BC', 1, 9, 3);
+        expect(date.cycle('year', 1)).toEqual(new CalendarDate(1, 9, 3));
+
+        date = new CalendarDate(new HebrewCalendar(), 5782, 13, 1);
+        expect(date.cycle('year', 1)).toEqual(new CalendarDate(new HebrewCalendar(), 5783, 12, 1));
+
+        date = new CalendarDate(new HebrewCalendar(), 5783, 12, 1);
+        expect(date.cycle('year', -1)).toEqual(new CalendarDate(new HebrewCalendar(), 5782, 13, 1));
       });
 
       it('should cycle the year with rounding', function () {
@@ -404,13 +448,19 @@ describe('CalendarDate manipulation', function () {
         expect(date.cycle('year', 1)).toEqual(new CalendarDate(2021, 2, 28));
       });
 
-      it('should constrain the year within the era', function () {
+      it('should adjust the era', function () {
         let date = new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 4, 30);
-        expect(date.cycle('year', 1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 4, 30));
-        expect(date.cycle('year', 5)).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 5, 4, 30));
+        expect(date.cycle('year', 1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'reiwa', 2, 4, 30));
+        expect(date.cycle('year', 5)).toEqual(new CalendarDate(new JapaneseCalendar(), 'reiwa', 6, 4, 30));
+
+        date = new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 7);
+        expect(date.cycle('year', 1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 2, 1, 7));
+
+        date = new CalendarDate(new JapaneseCalendar(), 'heisei', 2, 1, 7);
+        expect(date.cycle('year', -1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 7));
 
         date = new CalendarDate(new JapaneseCalendar(), 'showa', 2, 8, 5);
-        expect(date.cycle('year', -1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 1, 12, 25));
+        expect(date.cycle('year', -1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'taisho', 15, 8, 5));
       });
     });
 
@@ -437,15 +487,21 @@ describe('CalendarDate manipulation', function () {
         expect(date.cycle('month', 1)).toEqual(new CalendarDate(2021, 2, 28));
       });
 
-      it('should constrain the month within the era', function () {
+      it('should adjust the era', function () {
         let date = new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 4, 30);
-        expect(date.cycle('month', 1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 1, 30));
+        expect(date.cycle('month', 1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'reiwa', 1, 5, 30));
 
         date = new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 1, 30);
-        expect(date.cycle('month', -1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 4, 30));
+        expect(date.cycle('month', -1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'reiwa', 1, 12, 30));
 
         date = new CalendarDate(new JapaneseCalendar(), 'showa', 1, 12, 25);
-        expect(date.cycle('month', 1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 1, 12, 25));
+        expect(date.cycle('month', 1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'taisho', 15, 1, 25));
+
+        date = new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 7);
+        expect(date.cycle('month', 1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 2, 7));
+
+        date = new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 2, 7);
+        expect(date.cycle('month', -1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 7));
       });
     });
 
@@ -464,12 +520,15 @@ describe('CalendarDate manipulation', function () {
         expect(date.cycle('day', -5, {round: true})).toEqual(new CalendarDate(2020, 8, 1));
       });
 
-      it('should constrain the day within the era', function () {
-        let date = new CalendarDate(new JapaneseCalendar(), 'showa', 63, 1, 7);
-        expect(date.cycle('day', 1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 63, 1, 1));
+      it('should adjust the era', function () {
+        let date = new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 7);
+        expect(date.cycle('day', 1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 1, 8));
+
+        date = new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 1, 8);
+        expect(date.cycle('day', -1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 7));
 
         date = new CalendarDate(new JapaneseCalendar(), 'showa', 1, 12, 25);
-        expect(date.cycle('day', -1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 1, 12, 31));
+        expect(date.cycle('day', -1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'taisho', 15, 12, 24));
       });
     });
   });

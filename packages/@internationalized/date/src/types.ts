@@ -46,8 +46,8 @@ export interface Calendar {
   getMinimumDayInMonth?(date: AnyCalendarDate): number,
 
   balanceDate?(date: AnyCalendarDate): void,
-  addYears?(date: AnyCalendarDate, years: number): void,
-  add?(date: AnyCalendarDate, duration: Duration): CalendarDate,
+  balanceYearMonth?(date: AnyCalendarDate, previousDate: AnyCalendarDate): void,
+  getYearsToAdd?(date: AnyCalendarDate, years: number): number,
   constrainDate?(date: AnyCalendarDate): void
 }
 
