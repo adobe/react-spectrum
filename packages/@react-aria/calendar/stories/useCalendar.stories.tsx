@@ -10,12 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {createCalendar, getWeeksInMonth, startOfWeek} from '@internationalized/date';
-import React, {useRef} from 'react';
+import {Example} from './Example';
+import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {useCalendar, useCalendarCell, useCalendarGrid} from '../src';
-import {useCalendarState} from '@react-stately/calendar';
-import {useDateFormatter, useLocale} from '@react-aria/i18n';
 
 storiesOf('Date and Time/useCalendar', module)
   .add(
@@ -34,52 +31,3 @@ storiesOf('Date and Time/useCalendar', module)
     'months: 1',
     () => <Example visibleDuration={{months: 1}} />
   );
-
-function Example(props) {
-  let {locale} = useLocale();
-  let state = useCalendarState({
-    ...props,
-    locale,
-    createCalendar
-  });
-  let {calendarProps} = useCalendar(props, state);
-  let {gridProps} = useCalendarGrid(props, state);
-
-  let weeks = props.visibleDuration.weeks ?? 1;
-  let startDate = state.visibleRange.start;
-  if (props.visibleDuration.months) {
-    weeks = getWeeksInMonth(state.visibleRange.start, locale);
-    startDate = startOfWeek(startDate, locale);
-  }
-
-  return (
-    <div {...calendarProps}>
-      <div {...gridProps}>
-        {[...new Array(weeks).keys()].map(weekIndex => (
-          <div role="row">
-            {[...new Array(props.visibleDuration.days ?? 7).keys()].map(dayIndex => (
-              <Cell key={dayIndex} state={state} date={startDate.add({weeks: weekIndex, days: dayIndex})} />
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function Cell(props) {
-  let ref = useRef();
-  let {cellProps, buttonProps} = useCalendarCell(props, props.state, ref);
-
-  let dateFormatter = useDateFormatter({
-    day: 'numeric',
-    timeZone: props.state.timeZone,
-    calendar: props.date.calendar.identifier
-  });
-
-  return (
-    <div {...cellProps} style={{display: 'inline-block'}}>
-      <span ref={ref} {...buttonProps} style={{display: 'block', width: 42, height: 42, background: props.state.isSelected(props.date) ? 'blue' : ''}}>{dateFormatter.format(props.date.toDate(props.state.timeZone))}</span>
-    </div>
-  );
-}
