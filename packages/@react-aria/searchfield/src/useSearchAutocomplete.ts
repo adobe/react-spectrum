@@ -12,10 +12,11 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaListBoxOptions} from '@react-aria/listbox';
+import {chain, mergeProps} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
-import {HTMLAttributes, InputHTMLAttributes, RefObject} from 'react';
+import {HTMLAttributes, InputHTMLAttributes, KeyboardEvent, RefObject, useMemo} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
+import {ListKeyboardDelegate, useSelectableCollection} from '@react-aria/selection';
 import {SearchAutocompleteProps} from '@react-types/searchfield';
 import {useComboBox} from '@react-aria/combobox';
 import {useSearchField} from '@react-aria/searchfield';
@@ -54,7 +55,7 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteProps<T>, 
     inputRef,
     listBoxRef,
     keyboardDelegate,
-    onSubmit
+    onSubmit = () => {}
   } = props;
 
   let {labelProps, inputProps, clearButtonProps} = useSearchField({
