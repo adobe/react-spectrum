@@ -14,6 +14,7 @@ import {
   AriaLabelingProps,
   DOMProps,
   FocusableProps,
+  HelpTextProps,
   InputBase,
   LabelableProps,
   RangeValue,
@@ -31,7 +32,7 @@ type MappedDateValue<T> =
   T extends CalendarDate ? CalendarDate :
   never;
 
-interface DatePickerBase<T extends DateValue> extends InputBase, Validation, FocusableProps, LabelableProps {
+interface DatePickerBase<T extends DateValue> extends InputBase, Validation, FocusableProps, LabelableProps, HelpTextProps {
   minValue?: DateValue,
   maxValue?: DateValue,
   placeholderValue?: T,

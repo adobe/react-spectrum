@@ -125,6 +125,10 @@ storiesOf('Date and Time/DatePicker', module)
   .add(
     'visibleMonths: 3',
     () => render({visibleMonths: 3, granularity: 'minute'})
+  )
+  .add(
+    'showFormatHelpText',
+    () => render({showFormatHelpText: true})
   );
 
 storiesOf('Date and Time/DatePicker/styling', module)
@@ -176,6 +180,14 @@ storiesOf('Date and Time/DatePicker/styling', module)
   .add(
     'custom width, labelPosition=side',
     () => render({width: 'size-3000', labelPosition: 'side'})
+  )
+  .add(
+    'description',
+    () => render({description: 'Help text'})
+  )
+  .add(
+    'errorMessage',
+    () => render({errorMessage: 'Enter a date after today', validationState: 'invalid'})
   );
 
 function render(props = {}) {

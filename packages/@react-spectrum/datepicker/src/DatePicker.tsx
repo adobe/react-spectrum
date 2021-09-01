@@ -28,6 +28,7 @@ import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TimeField} from './TimeField';
 import {useDatePicker} from '@react-aria/datepicker';
 import {useDatePickerState} from '@react-stately/datepicker';
+import {useFormatHelpText} from './utils';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -42,12 +43,11 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
     isRequired,
     placeholderValue,
     visibleMonths
-    // showFormatHelpText,
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let targetRef = useRef<HTMLDivElement>();
   let state = useDatePickerState(props);
-  let {groupProps, labelProps, fieldProps, buttonProps, dialogProps} = useDatePicker(props, state, targetRef);
+  let {groupProps, labelProps, fieldProps, descriptionProps, errorMessageProps, buttonProps, dialogProps} = useDatePicker(props, state, targetRef);
   let {value, setValue, isOpen, setOpen} = state;
   let {direction} = useLocale();
 
@@ -79,15 +79,9 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
     }
   );
 
-  // TODO: format help text
-  // let formatter = useDateFormatter({dateStyle: 'short'});
-  // let segments = showFormatHelpText ? formatter.formatToParts(new Date()).map(s => {
-  //   if (s.type === 'literal') {
-  //     return s.value;
-  //   }
-
-  //   return s.type;
-  // }).join(' ') : '';
+  // Note: this description is intentionally not passed to useDatePicker.
+  // The format help text is unnecessary for screen reader users because each segment already has a label.
+  let description = useFormatHelpText(props);
 
   let v = state.value || props.placeholderValue;
   let placeholder: DateValue = placeholderValue;
@@ -98,7 +92,13 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
   let showTimeField = (v && 'hour' in v) || !!timeGranularity;
 
   return (
-    <Field {...props} labelProps={labelProps}>
+    <Field
+      {...props}
+      description={description}
+      labelProps={labelProps}
+      descriptionProps={descriptionProps}
+      errorMessageProps={errorMessageProps}
+      validationState={state.validationState}>
       <div
         {...mergeProps(groupProps, hoverProps, focusProps)}
         className={className}

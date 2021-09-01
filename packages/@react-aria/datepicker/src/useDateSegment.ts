@@ -13,13 +13,12 @@
 import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
 import {DatePickerProps, DateValue} from '@react-types/datepicker';
 import {DOMProps} from '@react-types/shared';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
 import {isIOS, mergeProps, useEvent, useId} from '@react-aria/utils';
 import {labelIds} from './useDateField';
 import {NumberParser} from '@internationalized/number';
 import React, {HTMLAttributes, RefObject, useMemo, useRef} from 'react';
-import {useDateFormatter, useFilter, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useDateFormatter, useFilter, useLocale} from '@react-aria/i18n';
+import {useDisplayNames} from './useDisplayNames';
 import {useFocusManager} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
@@ -31,7 +30,7 @@ interface DateSegmentAria {
 export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & DOMProps, segment: DateSegment, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateSegmentAria {
   let enteredKeys = useRef('');
   let {locale, direction} = useLocale();
-  let messageFormatter = useMessageFormatter(intlMessages);
+  let displayNames = useDisplayNames();
   let focusManager = useFocusManager();
 
   let textValue = segment.text;
@@ -322,7 +321,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
       'aria-controls': props['aria-controls'],
       // 'aria-haspopup': props['aria-haspopup'], // deprecated in ARIA 1.2
       'aria-invalid': state.validationState === 'invalid' ? 'true' : undefined,
-      'aria-label': messageFormatter(segment.type),
+      'aria-label': segment.type !== 'literal' ? displayNames.of(segment.type) : undefined,
       'aria-labelledby': `${fieldLabelId} ${id}`,
       contentEditable: !props.isDisabled,
       suppressContentEditableWarning: !props.isDisabled,

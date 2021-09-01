@@ -91,6 +91,10 @@ storiesOf('Date and Time/DateRangePicker', module)
   .add(
     'visibleMonths: 3',
     () => render({visibleMonths: 3, granularity: 'minute'})
+  )
+  .add(
+    'showFormatHelpText',
+    () => render({showFormatHelpText: true})
   );
 
 storiesOf('Date and Time/DateRangePicker/styling', module)
@@ -142,6 +146,14 @@ storiesOf('Date and Time/DateRangePicker/styling', module)
   .add(
     'custom width, labelPosition=side',
     () => render({width: 'size-3600', labelPosition: 'side'})
+  )
+  .add(
+    'description',
+    () => render({description: 'Help text'})
+  )
+  .add(
+    'errorMessage',
+    () => render({errorMessage: 'Dates must be after today', validationState: 'invalid'})
   );
 
 function render(props = {}) {

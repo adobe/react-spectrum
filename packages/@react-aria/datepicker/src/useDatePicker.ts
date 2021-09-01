@@ -19,13 +19,17 @@ import {HTMLAttributes, KeyboardEvent, LabelHTMLAttributes, RefObject} from 'rea
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useDescription, useId} from '@react-aria/utils';
-import {useLabel} from '@react-aria/label';
+import {useField} from '@react-aria/label';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
 interface DatePickerAria<T extends DateValue> {
   groupProps: HTMLAttributes<HTMLElement>,
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   fieldProps: AriaDatePickerProps<T>,
+  /** Props for the description element, if any. */
+  descriptionProps: HTMLAttributes<HTMLElement>,
+  /** Props for the error message element, if any. */
+  errorMessageProps: HTMLAttributes<HTMLElement>,
   buttonProps: AriaButtonProps,
   dialogProps: AriaDialogProps
 }
@@ -44,7 +48,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
     }
   };
 
-  let {labelProps, fieldProps} = useLabel({
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span'
   });
@@ -52,13 +56,15 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
   let labelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
 
   let {locale} = useLocale();
-  let descriptionProps = useDescription(state.formatValue(locale, {month: 'long'}));
+  let descProps = useDescription(state.formatValue(locale, {month: 'long'}));
+  let ariaDescribedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
 
   return {
-    groupProps: mergeProps(descriptionProps, {
+    groupProps: mergeProps(descProps, {
       role: 'group',
       'aria-disabled': props.isDisabled || null,
       'aria-labelledby': labelledBy,
+      'aria-describedby': ariaDescribedBy,
       onKeyDown
     }),
     labelProps: {
@@ -69,12 +75,15 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       }
     },
     fieldProps,
+    descriptionProps,
+    errorMessageProps,
     buttonProps: {
-      ...descriptionProps,
+      ...descProps,
       id: buttonId,
       'aria-haspopup': 'dialog',
       'aria-label': formatMessage('calendar'),
-      'aria-labelledby': `${labelledBy} ${buttonId}`
+      'aria-labelledby': `${labelledBy} ${buttonId}`,
+      'aria-describedby': ariaDescribedBy
     },
     dialogProps: {
       id: dialogId,

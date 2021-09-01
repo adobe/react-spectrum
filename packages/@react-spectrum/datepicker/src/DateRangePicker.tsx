@@ -28,6 +28,7 @@ import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TimeField} from './TimeField';
 import {useDateRangePicker} from '@react-aria/datepicker';
 import {useDateRangePickerState} from '@react-stately/datepicker';
+import {useFormatHelpText} from './utils';
 import {useHover, usePress} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -48,7 +49,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
   let {hoverProps, isHovered} = useHover({isDisabled});
   let targetRef = useRef<HTMLDivElement>();
   let state = useDateRangePickerState(props);
-  let {labelProps, groupProps, buttonProps, dialogProps, startFieldProps, endFieldProps} = useDateRangePicker(props, state, targetRef);
+  let {labelProps, groupProps, buttonProps, dialogProps, startFieldProps, endFieldProps, descriptionProps, errorMessageProps} = useDateRangePicker(props, state, targetRef);
   let {value, isOpen, setOpen} = state;
   let {direction} = useLocale();
 
@@ -83,6 +84,10 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
     }
   );
 
+  // Note: this description is intentionally not passed to useDatePicker.
+  // The format help text is unnecessary for screen reader users because each segment already has a label.
+  let description = useFormatHelpText(props);
+
   let v = state.value?.start || props.placeholderValue;
   let placeholder: DateValue = placeholderValue;
   let timePlaceholder = placeholder && 'hour' in placeholder ? placeholder : null;
@@ -92,7 +97,14 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
   let showTimeField = (v && 'hour' in v) || !!timeGranularity;
 
   return (
-    <Field width="auto" {...props} labelProps={labelProps}>
+    <Field
+      width="auto"
+      {...props}
+      description={description}
+      labelProps={labelProps}
+      descriptionProps={descriptionProps}
+      errorMessageProps={errorMessageProps}
+      validationState={state.validationState}>
       <div
         {...styleProps}
         {...mergeProps(groupProps, hoverProps, focusProps)}

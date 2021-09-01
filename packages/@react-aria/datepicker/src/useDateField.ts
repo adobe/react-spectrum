@@ -16,18 +16,22 @@ import {DatePickerFieldState} from '@react-stately/datepicker';
 import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 import {mergeProps, useDescription} from '@react-aria/utils';
 import {useDateFormatter} from '@react-aria/i18n';
-import {useLabel} from '@react-aria/label';
+import {useField} from '@react-aria/label';
 import {usePress} from '@react-aria/interactions';
 
 interface DateFieldAria {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
-  fieldProps: HTMLAttributes<HTMLElement>
+  fieldProps: HTMLAttributes<HTMLElement>,
+  /** Props for the description element, if any. */
+  descriptionProps: HTMLAttributes<HTMLElement>,
+  /** Props for the error message element, if any. */
+  errorMessageProps: HTMLAttributes<HTMLElement>
 }
 
 export const labelIds = new WeakMap<DatePickerFieldState, string>();
 
 export function useDateField<T extends DateValue>(props: AriaDatePickerProps<T>, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
-  let {labelProps, fieldProps} = useLabel({
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span'
   });
@@ -49,7 +53,7 @@ export function useDateField<T extends DateValue>(props: AriaDatePickerProps<T>,
   });
 
   let formatter = useDateFormatter(state.getFormatOptions({month: 'long'}));
-  let descriptionProps = useDescription(state.value ? formatter.format(state.dateValue) : null);
+  let descProps = useDescription(state.value ? formatter.format(state.dateValue) : null);
 
   labelIds.set(state, fieldProps['aria-labelledby'] || fieldProps.id);
 
@@ -61,9 +65,12 @@ export function useDateField<T extends DateValue>(props: AriaDatePickerProps<T>,
         focusManager.focusFirst();
       }
     },
-    fieldProps: mergeProps(fieldProps, descriptionProps, pressProps, {
+    fieldProps: mergeProps(fieldProps, descProps, pressProps, {
       role: 'group',
-      'aria-disabled': props.isDisabled || undefined
-    })
+      'aria-disabled': props.isDisabled || undefined,
+      'aria-describedby': [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined
+    }),
+    descriptionProps,
+    errorMessageProps
   };
 }
