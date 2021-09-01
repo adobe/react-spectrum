@@ -245,7 +245,7 @@ export function StaticCardView(props) {
 
   return (
     <CardView  {...actions} {...props} layout={layout} width="800px" height="800px" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
-      <Card width={1001} height={381} textValue="Bob 1">
+      <Card key="Bob 1" width={1001} height={381} textValue="Bob 1">
         <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
         <Heading>Bob 1</Heading>
         <Text slot="detail">PNG</Text>
@@ -258,7 +258,7 @@ export function StaticCardView(props) {
           <Button variant="primary">Something</Button>
         </Footer>
       </Card>
-      <Card width={640} height={640} textValue="Joe 1">
+      <Card key="Joe 1" width={640} height={640} textValue="Joe 1">
         <Image src="https://i.imgur.com/DhygPot.jpg" />
         <Heading>Joe 1</Heading>
         <Text slot="detail">PNG</Text>
@@ -271,7 +271,7 @@ export function StaticCardView(props) {
           <Button variant="primary">Something</Button>
         </Footer>
       </Card>
-      <Card width={182} height={1009} textValue="Jane 1">
+      <Card key="Jane 1" width={182} height={1009} textValue="Jane 1">
         <Image src="https://i.imgur.com/L7RTlvI.png" />
         <Heading>Jane 1</Heading>
         <Text slot="detail">PNG</Text>
@@ -284,7 +284,7 @@ export function StaticCardView(props) {
           <Button variant="primary">Something</Button>
         </Footer>
       </Card>
-      <Card width={1516} height={1009} textValue="Bob 2">
+      <Card key="Bob 2" width={1516} height={1009} textValue="Bob 2">
         <Image src="https://i.imgur.com/1nScMIH.jpg" />
         <Heading>Bob 2</Heading>
         <Text slot="detail">PNG</Text>
@@ -297,7 +297,7 @@ export function StaticCardView(props) {
           <Button variant="primary">Something</Button>
         </Footer>
       </Card>
-      <Card width={640} height={640} textValue="Joe 1">
+      <Card key="Joe 2" width={640} height={640} textValue="Joe 2">
         <Image src="https://i.imgur.com/DhygPot.jpg" />
         <Heading>Joe 2</Heading>
         <Text slot="detail">PNG</Text>

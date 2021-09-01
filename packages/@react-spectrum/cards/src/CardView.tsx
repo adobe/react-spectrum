@@ -47,14 +47,14 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   let gridCollection = useMemo(() => new GridCollection<T>({
     columnCount: 1,
     items: [...collection].map(item => ({
-      // TODO: another tentative change, makes it so the child cell (the card) is the item and thus doesn't need
-      // allowsCellSelection on useGridState. Also fixes bug with previous allowsCellSelection approach where going from 'all' selected
-      // to deselecting a single card didnt properly remove that single card from selection
-      type: 'row',
+      // Makes the Grid row use the keys the user provides to the cards so that selection change via interactions returns the card keys
+      type: 'item',
+      key: item.key,
       childNodes: [{
         ...item,
         index: 0,
-        type: 'item'
+        type: 'cell',
+        key: `cell-${item.key}`
       }]
     }))
   }), [collection]);
@@ -78,6 +78,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     // TODO: fix the typescript here, layout definition need to show that it implements keyboard delegate
     keyboardDelegate: cardViewLayout
   }, state, domRef);
+
   // TODO: does aria-row count and aria-col count need to be modified? Perhaps aria-col count needs to be omitted
   return (
     <CardViewContext.Provider value={{state, isQuiet, layout: cardViewLayout}}>
