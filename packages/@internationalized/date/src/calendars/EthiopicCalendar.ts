@@ -13,7 +13,7 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {Calendar} from '../types';
+import {AnyCalendarDate, Calendar} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {Mutable} from '../utils';
 
@@ -73,10 +73,10 @@ export class EthiopicCalendar implements Calendar {
       date.year += AMETE_MIHRET_DELTA;
     }
 
-    return date;
+    return date as CalendarDate;
   }
 
-  toJulianDay(date: CalendarDate) {
+  toJulianDay(date: AnyCalendarDate) {
     let year = date.year;
     if (date.era === 'AA') {
       year -= AMETE_MIHRET_DELTA;
@@ -85,7 +85,7 @@ export class EthiopicCalendar implements Calendar {
     return ceToJulianDay(ETHIOPIC_EPOCH, year, date.month, date.day);
   }
 
-  getDaysInMonth(date: CalendarDate): number {
+  getDaysInMonth(date: AnyCalendarDate): number {
     let year = date.year;
     if (date.era === 'AA') {
       year -= AMETE_MIHRET_DELTA;
@@ -98,12 +98,16 @@ export class EthiopicCalendar implements Calendar {
     return 13;
   }
 
-  getDaysInYear(date: CalendarDate): number {
+  getDaysInYear(date: AnyCalendarDate): number {
     return 365 + getLeapDay(date.year);
   }
 
-  getCurrentEra() {
-    return 'AM';
+  getYearsInEra(): number {
+    return 9999;
+  }
+
+  getEras() {
+    return ['AA', 'AM'];
   }
 }
 
@@ -114,11 +118,11 @@ export class EthiopicAmeteAlemCalendar extends EthiopicCalendar {
     let date = julianDayToCE(this, ETHIOPIC_EPOCH, jd);
     date.era = 'AA';
     date.year += AMETE_MIHRET_DELTA;
-    return date;
+    return date as CalendarDate;
   }
 
-  getCurrentEra() {
-    return 'AA';
+  getEras() {
+    return ['AA'];
   }
 }
 
@@ -134,10 +138,10 @@ export class CopticCalendar extends EthiopicCalendar {
       date.era = 'CE';
     }
 
-    return date;
+    return date as CalendarDate;
   }
 
-  toJulianDay(date: CalendarDate) {
+  toJulianDay(date: AnyCalendarDate) {
     let year = date.year;
     if (date.era === 'BCE') {
       year = 1 - year;
@@ -146,7 +150,7 @@ export class CopticCalendar extends EthiopicCalendar {
     return ceToJulianDay(COPTIC_EPOCH, year, date.month, date.day);
   }
 
-  getDaysInMonth(date: CalendarDate): number {
+  getDaysInMonth(date: AnyCalendarDate): number {
     let year = date.year;
     if (date.era === 'BCE') {
       year = 1 - year;
@@ -155,7 +159,7 @@ export class CopticCalendar extends EthiopicCalendar {
     return getDaysInMonth(year, date.month);
   }
 
-  addYears(date: Mutable<CalendarDate>, years: number) {
+  addYears(date: Mutable<AnyCalendarDate>, years: number) {
     if (date.era === 'BCE') {
       years = -years;
     }
@@ -163,7 +167,7 @@ export class CopticCalendar extends EthiopicCalendar {
     date.year += years;
   }
 
-  getCurrentEra() {
-    return 'CE';
+  getEras() {
+    return ['BCE', 'CE'];
   }
 }

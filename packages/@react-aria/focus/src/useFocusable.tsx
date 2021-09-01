@@ -35,7 +35,9 @@ function useFocusableContext(ref: RefObject<HTMLElement>): FocusableContextValue
   let context = useContext(FocusableContext) || {};
   useSyncRef(context, ref);
 
-  return context;
+  // eslint-disable-next-line
+  let {ref: _, ...otherProps} = context;
+  return otherProps;
 }
 
 /**

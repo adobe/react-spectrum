@@ -12,30 +12,86 @@
 
 import {CalendarDate} from './CalendarDate';
 
+export interface AnyCalendarDate {
+  readonly calendar: Calendar,
+  readonly era: string,
+  readonly year: number,
+  readonly month: number,
+  readonly day: number,
+  copy(): this
+}
+
+export interface AnyTime {
+  readonly hour: number,
+  readonly minute: number,
+  readonly second: number,
+  readonly millisecond: number,
+  copy(): this
+}
+
+export interface AnyDateTime extends AnyCalendarDate, AnyTime {}
+
 export interface Calendar {
   identifier: string,
 
   fromJulianDay(jd: number): CalendarDate,
-  toJulianDay(date: CalendarDate): number,
+  toJulianDay(date: AnyCalendarDate): number,
 
-  getDaysInMonth(date: CalendarDate): number,
-  getMonthsInYear(date: CalendarDate): number,
+  getDaysInMonth(date: AnyCalendarDate): number,
+  getMonthsInYear(date: AnyCalendarDate): number,
+  getYearsInEra(date: AnyCalendarDate): number,
+  getEras(): string[],
 
-  getCurrentEra(): string,
+  getMinimumMonthInYear?(date: AnyCalendarDate): number,
+  getMinimumDayInMonth?(date: AnyCalendarDate): number,
 
-  balanceDate?(date: CalendarDate): void,
-  addYears?(date: CalendarDate, years: number): void
+  balanceDate?(date: AnyCalendarDate): void,
+  addYears?(date: AnyCalendarDate, years: number): void,
+  add?(date: AnyCalendarDate, duration: Duration): CalendarDate,
+  constrainDate?(date: AnyCalendarDate): void
 }
 
 export interface Duration {
   years?: number,
   months?: number,
   weeks?: number,
-  days?: number
+  days?: number,
+  hours?: number,
+  minutes?: number,
+  seconds?: number,
+  milliseconds?: number
 }
 
 export interface DateFields {
+  era?: string,
   year?: number,
   month?: number,
   day?: number
+}
+
+export interface TimeFields {
+  hour?: number,
+  minute?: number,
+  second?: number,
+  millisecond?: number
+}
+
+export type DateField = keyof DateFields;
+export type TimeField = keyof TimeFields;
+
+export type Disambiguation = 'compatible' | 'earlier' | 'later' | 'reject';
+
+export interface CycleOptions {
+  /** Whether to round the field value to the nearest interval of the amount. */
+  round?: boolean
+}
+
+export interface CycleTimeOptions extends CycleOptions {
+  /**
+   * Whether to use 12 or 24 hour time. If 12 hour time is chosen, the resulting value
+   * will remain in the same day period as the original value (e.g. if the value is AM,
+   * the resulting value also be AM).
+   * @default 24
+   */
+  hourCycle?: 12 | 24
 }
