@@ -10,25 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate} from '@internationalized/date';
-import {DateRange, DateRangePickerProps, DateValue} from '@react-types/datepicker';
+import {DateFormatter, toCalendarDateTime, toDateFields} from '@internationalized/date';
+import {DateRange, DateRangePickerProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {FieldOptions, getFormatOptions, isInvalid} from './utils';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
 
+type TimeRange = RangeValue<TimeValue>;
 export interface DateRangePickerState {
   value: DateRange,
   setValue: (value: DateRange) => void,
   setDate: (part: keyof DateRange, value: DateValue) => void,
-  selectDateRange: (value: RangeValue<CalendarDate>) => void,
+  setTime: (part: keyof TimeRange, value: TimeValue) => void,
+  dateRange: DateRange,
+  setDateRange: (value: DateRange) => void,
+  timeRange: TimeRange,
+  setTimeRange: (value: TimeRange) => void,
   isOpen: boolean,
   setOpen: (isOpen: boolean) => void,
   validationState: ValidationState,
   formatValue(locale: string, fieldOptions: FieldOptions): string
 }
 
-export function useDateRangePickerState(props: DateRangePickerProps): DateRangePickerState {
+export function useDateRangePickerState<T extends DateValue>(props: DateRangePickerProps<T>): DateRangePickerState {
   let [isOpen, setOpen] = useState(false);
   let onChange = value => {
     if (value.start && value.end && props.onChange) {
@@ -42,16 +47,52 @@ export function useDateRangePickerState(props: DateRangePickerProps): DateRangeP
     onChange
   );
 
-  // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
-  let selectDateRange = (range: RangeValue<CalendarDate>) => {
-    if (range && value?.start && 'hour' in value.start) {
-      range = {
-        start: value.start.set(range.start),
-        end: value.end.set(range.end)
-      };
+  let v = (value?.start || value?.end || props.placeholderValue);
+  let granularity = props.granularity || (v && 'minute' in v ? 'minute' : 'day');
+  let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second' || granularity === 'millisecond';
+
+  let [dateRange, setSelectedDateRange] = useState<DateRange>(null);
+  let [timeRange, setSelectedTimeRange] = useState<TimeRange>(null);
+
+  if (value && value.start && value.end) {
+    dateRange = value;
+    if ('hour' in value.start) {
+      timeRange = value as TimeRange;
     }
-    setValue(range);
-    setOpen(false);
+  }
+
+  let commitValue = (dateRange: DateRange, timeRange: TimeRange) => {
+    setValue({
+      start: 'timeZone' in timeRange.start ? timeRange.start.set(toDateFields(dateRange.start)) : toCalendarDateTime(dateRange.start, timeRange.start),
+      end: 'timeZone' in timeRange.end ? timeRange.end.set(toDateFields(dateRange.end)) : toCalendarDateTime(dateRange.end, timeRange.end)
+    });
+  };
+
+  // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
+  let setDateRange = (range: DateRange) => {
+    if (hasTime) {
+      if (range.start && range.end && timeRange?.start && timeRange?.end) {
+        commitValue(range, timeRange);
+      } else {
+        setSelectedDateRange(range);
+      }
+    } else if (range.start && range.end) {
+      setValue(range);
+    } else {
+      setSelectedDateRange(range);
+    }
+
+    if (!hasTime) {
+      setOpen(false);
+    }
+  };
+
+  let setTimeRange = (range: TimeRange) => {
+    if (dateRange?.start && dateRange?.end && range.start && range.end) {
+      commitValue(dateRange, range);
+    } else {
+      setSelectedTimeRange(range);
+    }
   };
 
   let validationState: ValidationState = props.validationState
@@ -64,10 +105,16 @@ export function useDateRangePickerState(props: DateRangePickerProps): DateRangeP
   return {
     value,
     setValue,
+    dateRange,
+    timeRange,
     setDate(part, date) {
-      setValue({...value, [part]: date});
+      setDateRange({...dateRange, [part]: date});
     },
-    selectDateRange,
+    setTime(part, time) {
+      setTimeRange({...timeRange, [part]: time});
+    },
+    setDateRange,
+    setTimeRange,
     isOpen,
     setOpen,
     validationState,
@@ -88,20 +135,16 @@ export function useDateRangePickerState(props: DateRangePickerProps): DateRangeP
         hourCycle: props.hourCycle
       });
 
-      // TODO: cache
-      let startFormatter = new Intl.DateTimeFormat(locale, startOptions);
+      let startFormatter = new DateFormatter(locale, startOptions);
       let endFormatter: Intl.DateTimeFormat;
       if (startTimeZone === endTimeZone && startGranularity === endGranularity) {
-        // Use formatRange if available, as it results in shorter output when some of the fields
+        // Use formatRange, as it results in shorter output when some of the fields
         // are shared between the start and end dates (e.g. the same month).
-        if ('formatRange' in startFormatter) {
-          // Formatting will fail if the end date is before the start date. Fall back below when that happens.
-          try {
-            // @ts-ignore
-            return startFormatter.formatRange(value.start.toDate(startTimeZone), value.end.toDate(endTimeZone));
-          } catch (e) {
-            // ignore
-          }
+        // Formatting will fail if the end date is before the start date. Fall back below when that happens.
+        try {
+          return startFormatter.formatRange(value.start.toDate(startTimeZone), value.end.toDate(endTimeZone));
+        } catch (e) {
+          // ignore
         }
 
         endFormatter = startFormatter;
@@ -113,7 +156,7 @@ export function useDateRangePickerState(props: DateRangePickerProps): DateRangeP
           hourCycle: props.hourCycle
         });
 
-        endFormatter = new Intl.DateTimeFormat(locale, endOptions);
+        endFormatter = new DateFormatter(locale, endOptions);
       }
 
       return `${startFormatter.format(value.start.toDate(startTimeZone))} – ${endFormatter.format(value.end.toDate(endTimeZone))}`;

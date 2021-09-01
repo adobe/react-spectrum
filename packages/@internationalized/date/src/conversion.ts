@@ -13,13 +13,13 @@
 // Portions of the code in this file are based on code from the TC39 Temporal proposal.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {Calendar, Disambiguation} from './types';
+import {AnyCalendarDate, AnyDateTime, AnyTime, Calendar, DateFields, Disambiguation, TimeFields} from './types';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 import {getLocalTimeZone} from './queries';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
 import {Mutable} from './utils';
 
-export function epochFromDate(date: CalendarDateTime) {
+export function epochFromDate(date: AnyDateTime) {
   date = toCalendar(date, new GregorianCalendar());
   return epochFromParts(date.year, date.month, date.day, date.hour, date.minute, date.second, date.millisecond);
 }
@@ -101,7 +101,7 @@ function isValidWallTime(date: CalendarDateTime, timeZone: string, absolute: num
     && date.second === parts.second;
 }
 
-export function toAbsolute(date: CalendarDate, timeZone: string, disambiguation: Disambiguation = 'compatible'): number {
+export function toAbsolute(date: CalendarDate | CalendarDateTime, timeZone: string, disambiguation: Disambiguation = 'compatible'): number {
   let dateTime = toCalendarDateTime(date);
   let ms = epochFromDate(dateTime);
   let offsetBefore = getTimeZoneOffset(ms - DAYMILLIS, timeZone);
@@ -137,7 +137,7 @@ export function toAbsolute(date: CalendarDate, timeZone: string, disambiguation:
   }
 }
 
-export function toDate(dateTime: CalendarDate, timeZone: string, disambiguation: Disambiguation = 'compatible'): Date {
+export function toDate(dateTime: CalendarDate | CalendarDateTime, timeZone: string, disambiguation: Disambiguation = 'compatible'): Date {
   return new Date(toAbsolute(dateTime, timeZone, disambiguation));
 }
 
@@ -163,18 +163,31 @@ export function fromDateToLocal(date: Date): ZonedDateTime {
   return fromDate(date, getLocalTimeZone());
 }
 
-export function toCalendarDate(dateTime: CalendarDateTime): CalendarDate {
+export function toCalendarDate(dateTime: AnyCalendarDate): CalendarDate {
   return new CalendarDate(dateTime.calendar, dateTime.era, dateTime.year, dateTime.month, dateTime.day);
 }
 
-/* eslint-disable no-redeclare */
-export function toCalendarDateTime(date: ZonedDateTime, time?: Time): CalendarDateTime;
-export function toCalendarDateTime(date: CalendarDateTime, time?: Time): CalendarDateTime;
-export function toCalendarDateTime(date: CalendarDate, time?: Time): CalendarDateTime;
-export function toCalendarDateTime(date: CalendarDate | CalendarDateTime | ZonedDateTime, time?: Time) {
-/* eslint-enable no-redeclare */
+export function toDateFields(date: AnyCalendarDate): DateFields {
+  return {
+    era: date.era,
+    year: date.year,
+    month: date.month,
+    day: date.day
+  };
+}
+
+export function toTimeFields(date: AnyTime): TimeFields {
+  return {
+    hour: date.hour,
+    minute: date.minute,
+    second: date.second,
+    millisecond: date.millisecond
+  };
+}
+
+export function toCalendarDateTime(date: CalendarDate | CalendarDateTime | ZonedDateTime, time?: AnyTime): CalendarDateTime {
   let hour = 0, minute = 0, second = 0, millisecond = 0;
-  if ('timeZone' in date && !time) {
+  if ('timeZone' in date) {
     ({hour, minute, second, millisecond} = date);
   } else if ('hour' in date && !time) {
     return date;
@@ -201,31 +214,22 @@ export function toTime(dateTime: CalendarDateTime): Time {
   return new Time(dateTime.hour, dateTime.minute, dateTime.second, dateTime.millisecond);
 }
 
-/* eslint-disable no-redeclare */
-export function toCalendar(date: ZonedDateTime, calendar: Calendar): ZonedDateTime;
-export function toCalendar(date: CalendarDateTime, calendar: Calendar): CalendarDateTime;
-export function toCalendar(date: CalendarDate, calendar: Calendar): CalendarDate;
-export function toCalendar(date: CalendarDate | CalendarDateTime | ZonedDateTime, calendar: Calendar) {
-/* eslint-enable no-redeclare */
+export function toCalendar<T extends AnyCalendarDate>(date: T, calendar: Calendar): T {
   if (date.calendar.identifier === calendar.identifier) {
     return date;
   }
 
   let calendarDate = calendar.fromJulianDay(date.calendar.toJulianDay(date));
-  if ('hour' in date) {
-    let copy: Mutable<CalendarDateTime> = date.copy();
-    copy.calendar = calendar;
-    copy.era = calendarDate.era;
-    copy.year = calendarDate.year;
-    copy.month = calendarDate.month;
-    copy.day = calendarDate.day;
-    return copy;
-  }
-
-  return calendarDate;
+  let copy: Mutable<T> = date.copy();
+  copy.calendar = calendar;
+  copy.era = calendarDate.era;
+  copy.year = calendarDate.year;
+  copy.month = calendarDate.month;
+  copy.day = calendarDate.day;
+  return copy;
 }
 
-export function toZoned(date: CalendarDate | CalendarDateTime, timeZone: string, disambiguation?: Disambiguation) {
+export function toZoned(date: CalendarDate | CalendarDateTime | ZonedDateTime, timeZone: string, disambiguation?: Disambiguation) {
   if (date instanceof ZonedDateTime) {
     if (date.timeZone === timeZone) {
       return date;

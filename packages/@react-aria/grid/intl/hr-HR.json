@@ -1,0 +1,7 @@
+{
+  "deselectedItem": "Stavka {item} nije odabrana.",
+  "select": "Odaberite",
+  "selectedAll": "Odabrane su sve stavke.",
+  "selectedCount": "{count, plural, =0 {Nije odabrana nijedna stavka} one {Odabrana je # stavka} other {Odabrano je # stavki}}.",
+  "selectedItem": "Stavka {item} je odabrana."
+}

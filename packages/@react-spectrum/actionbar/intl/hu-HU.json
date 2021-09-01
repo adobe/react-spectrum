@@ -1,0 +1,7 @@
+{
+  "actions": "Műveletek",
+  "actionsAvailable": "Műveletek állnak rendelkezésre.",
+  "clearSelection": "Kijelölés törlése",
+  "selected": "{count, plural, =0 {Egy sincs kijelölve} other {# kijelölve}}",
+  "selectedAll": "Mind kijelölve"
+}

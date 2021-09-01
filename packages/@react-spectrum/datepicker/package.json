@@ -44,6 +44,7 @@
     "@react-spectrum/calendar": "3.0.0-alpha.1",
     "@react-spectrum/dialog": "^3.1.0",
     "@react-spectrum/label": "^3.3.4",
+    "@react-spectrum/layout": "^3.2.1",
     "@react-spectrum/utils": "^3.1.0",
     "@react-spectrum/view": "^3.1.1",
     "@react-stately/datepicker": "3.0.0-alpha.1",

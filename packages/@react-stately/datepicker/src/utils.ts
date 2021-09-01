@@ -23,8 +23,8 @@ export type FieldOptions = Pick<Intl.DateTimeFormatOptions, 'year' | 'month' | '
 interface FormatterOptions {
   timeZone?: string,
   hideTimeZone?: boolean,
-  granularity?: DatePickerProps['granularity'],
-  maxGranularity?: DatePickerProps['granularity'],
+  granularity?: DatePickerProps<any>['granularity'],
+  maxGranularity?: 'year' | 'month' | DatePickerProps<any>['granularity'],
   hourCycle?: 12 | 24
 }
 

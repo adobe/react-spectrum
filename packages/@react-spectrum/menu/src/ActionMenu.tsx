@@ -30,9 +30,11 @@ function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: Fo
   if (buttonProps['aria-label'] === undefined) {
     buttonProps['aria-label'] = formatMessage('moreActions');
   }
+  props = useSlotProps(props, 'actionGroup');
 
   return (
     <MenuTrigger
+      isOpen={props.isOpen}
       align={props.align}
       direction={props.direction}
       shouldFlip={props.shouldFlip}>

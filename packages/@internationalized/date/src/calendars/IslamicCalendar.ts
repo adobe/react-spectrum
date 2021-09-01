@@ -13,7 +13,7 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {Calendar} from '../types';
+import {AnyCalendarDate, Calendar} from '../types';
 import {CalendarDate} from '../CalendarDate';
 
 const CIVIL_EPOC = 1948440; // CE 622 July 16 Friday (Julian calendar) / CE 622 July 19 (Gregorian calendar)
@@ -49,11 +49,11 @@ export class IslamicCivilCalendar implements Calendar {
     return julianDayToIslamic(this, CIVIL_EPOC, jd);
   }
 
-  toJulianDay(date: CalendarDate) {
+  toJulianDay(date: AnyCalendarDate) {
     return islamicToJulianDay(CIVIL_EPOC, date.year, date.month, date.day);
   }
 
-  getDaysInMonth(date: CalendarDate): number {
+  getDaysInMonth(date: AnyCalendarDate): number {
     let length = 29 + date.month % 2;
     if (date.month === 12 && isLeapYear(date.year)) {
       length++;
@@ -66,7 +66,7 @@ export class IslamicCivilCalendar implements Calendar {
     return 12;
   }
 
-  getDaysInYear(date: CalendarDate): number {
+  getDaysInYear(date: AnyCalendarDate): number {
     return isLeapYear(date.year) ? 355 : 354;
   }
 
@@ -86,7 +86,7 @@ export class IslamicTabularCalendar extends IslamicCivilCalendar {
     return julianDayToIslamic(this, ASTRONOMICAL_EPOC, jd);
   }
 
-  toJulianDay(date: CalendarDate) {
+  toJulianDay(date: AnyCalendarDate) {
     return islamicToJulianDay(ASTRONOMICAL_EPOC, date.year, date.month, date.day);
   }
 }
@@ -177,7 +177,7 @@ export class IslamicUmalquraCalendar extends IslamicCivilCalendar {
     }
   }
 
-  toJulianDay(date: CalendarDate): number {
+  toJulianDay(date: AnyCalendarDate): number {
     if (date.year < UMALQURA_YEAR_START || date.year > UMALQURA_YEAR_END) {
       return super.toJulianDay(date);
     }
@@ -185,7 +185,7 @@ export class IslamicUmalquraCalendar extends IslamicCivilCalendar {
     return CIVIL_EPOC + umalquraMonthStart(date.year, date.month) + (date.day - 1);
   }
 
-  getDaysInMonth(date: CalendarDate): number {
+  getDaysInMonth(date: AnyCalendarDate): number {
     if (date.year < UMALQURA_YEAR_START || date.year > UMALQURA_YEAR_END) {
       return super.getDaysInMonth(date);
     }
@@ -193,7 +193,7 @@ export class IslamicUmalquraCalendar extends IslamicCivilCalendar {
     return umalquraMonthLength(date.year, date.month);
   }
 
-  getDaysInYear(date: CalendarDate): number {
+  getDaysInYear(date: AnyCalendarDate): number {
     if (date.year < UMALQURA_YEAR_START || date.year > UMALQURA_YEAR_END) {
       return super.getDaysInYear(date);
     }

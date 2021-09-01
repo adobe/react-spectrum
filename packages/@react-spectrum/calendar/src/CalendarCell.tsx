@@ -14,9 +14,11 @@ import {AriaCalendarCellProps, useCalendarCell} from '@react-aria/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {classNames} from '@react-spectrum/utils';
 import {getDayOfWeek, isSameDay, isSameMonth, isToday, toDate} from '@internationalized/date';
+import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useDateFormatter} from '@react-aria/i18n';
+import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
 
 interface CalendarCellProps extends AriaCalendarCellProps {
@@ -39,19 +41,19 @@ export function CalendarCell({state, ...props}: CalendarCellProps) {
   let dayOfWeek = getDayOfWeek(props.date);
   let isRangeStart = isSelected && (dayOfWeek === 0 || props.date.day === 1);
   let isRangeEnd = isSelected && (dayOfWeek === 6 || props.date.day === state.daysInMonth);
+  let {focusProps, isFocusVisible} = useFocusRing();
 
   return (
     <td
       {...cellProps}
       className={classNames(styles, 'spectrum-Calendar-tableCell')}>
       <span
-        {...buttonProps}
-        {...hoverProps}
+        {...mergeProps(buttonProps, hoverProps, focusProps)}
         ref={ref}
         className={classNames(styles, 'spectrum-Calendar-date', {
           'is-today': isToday(props.date, state.timeZone),
           'is-selected': isSelected,
-          'is-focused': state.isCellFocused(props.date),
+          'is-focused': state.isCellFocused(props.date) && isFocusVisible,
           'is-disabled': state.isCellDisabled(props.date),
           'is-outsideMonth': !isSameMonth(props.date, state.currentMonth),
           'is-range-start': isRangeStart,
