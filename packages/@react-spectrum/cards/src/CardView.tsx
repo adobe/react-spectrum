@@ -14,18 +14,17 @@ import {CardBase} from './CardBase';
 import {CardViewContext, useCardViewContext} from './CardViewContext';
 import cardViewStyles from './cardview.css';
 import {classNames, useDOMRef, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
-import {DOMRef, DOMRefValue, Node} from '@react-types/shared';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {GridCollection, useGridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useMemo, useRef} from 'react';
-import {ReusableView} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/cards';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';
-import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';
+import {Virtualizer} from '@react-aria/virtualizer';
 
 function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(props);
@@ -80,15 +79,6 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     keyboardDelegate: cardViewLayout
   }, state, domRef);
 
-  type View = ReusableView<Node<T>, unknown>;
-  let renderWrapper = (parent: View, reusableView: View) => (
-    <VirtualizerItem
-      className={classNames(cardViewStyles, 'react-spectrum-CardView-CardWrapper')}
-      key={reusableView.key}
-      reusableView={reusableView}
-      parent={parent} />
-  );
-
   // TODO: does aria-row count and aria-col count need to be modified? Perhaps aria-col count needs to be omitted
   return (
     <CardViewContext.Provider value={{state, isQuiet, layout: cardViewLayout}}>
@@ -101,8 +91,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
         layout={cardViewLayout}
         collection={collection}
         isLoading={isLoading}
-        onLoadMore={onLoadMore}
-        renderWrapper={renderWrapper}>
+        onLoadMore={onLoadMore}>
         {(type, item) => {
           if (type === 'item') {
             return (
@@ -171,13 +160,22 @@ function InternalCard(props) {
     focusMode: 'cell'
   }, state, unwrappedRef);
 
-
+  let rowStyles;
   if (layoutType === 'grid' || layoutType === 'gallery') {
     isQuiet = true;
+    rowStyles = {
+      height: 'calc(100% - 12px)',
+      width: 'calc(100% - 12px)',
+      transform: 'translate(6px, 6px)'
+    };
+  } else {
+    rowStyles = {
+      height: '100%'
+    };
   }
 
   return (
-    <div {...rowProps} ref={rowRef} style={{height: '100%'}}>
+    <div {...rowProps} ref={rowRef} style={rowStyles}>
       <CardBase
         ref={cellRef}
         articleProps={gridCellProps}

@@ -129,14 +129,14 @@ export class GalleryLayout<T> extends BaseLayout<T> {
         rowHeight = this.idealRowHeight;
       }
 
-      let itemHeight = Math.round(rowHeight) + this.itemPadding;
+      let itemHeight = Math.round(rowHeight) + this.itemPadding + 12;
       let x = this.itemSpacing.width;
 
       // Create items for this row.
       for (let j = index; j < index + row.length; j++) {
         let node = this.collection.at(j);
-        let itemWidth = Math.round(rowHeight * ratios[j]);
-        let rect = new Rect(x, y, itemWidth, itemHeight);
+        let itemWidth = Math.round(rowHeight * ratios[j]) + 12;
+        let rect = new Rect(x - 6, y - 6, itemWidth, itemHeight);
         let layoutInfo = new LayoutInfo(node.type, node.key, rect);
         this.layoutInfos.set(node.key, layoutInfo);
         x += itemWidth + this.itemSpacing.width;
