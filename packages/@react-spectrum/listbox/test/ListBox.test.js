@@ -96,7 +96,7 @@ describe('ListBox', function () {
     let i = 1;
     for (let item of items) {
       expect(item).toHaveAttribute('tabindex');
-      expect(item).toHaveAttribute('aria-selected');
+      expect(item).not.toHaveAttribute('aria-selected');
       expect(item).toHaveAttribute('aria-disabled');
       expect(item).toHaveAttribute('aria-posinset', '' + i++);
       expect(item).toHaveAttribute('aria-setsize');
@@ -246,7 +246,7 @@ describe('ListBox', function () {
     });
 
     it('supports disabled items', function () {
-      let tree = renderComponent({onSelectionChange, disabledKeys: ['Baz'], autoFocus: 'first'});
+      let tree = renderComponent({onSelectionChange, selectionMode: 'single', disabledKeys: ['Baz'], autoFocus: 'first'});
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
 

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Alignment, DOMProps, LabelPosition, NecessityIndicator, StyleProps} from '@react-types/shared';
+import {Alignment, DOMProps, LabelPosition, NecessityIndicator, SpectrumHelpTextProps, StyleProps} from '@react-types/shared';
 import {ElementType, HTMLAttributes, ReactElement, ReactNode} from 'react';
 
 export interface LabelProps {
@@ -20,7 +20,7 @@ export interface LabelProps {
   elementType?: ElementType
 }
 
-export interface SpectrumLabelProps extends LabelProps, DOMProps, StyleProps, HTMLAttributes<HTMLElement> {
+interface SpectrumLabelPropsBase extends LabelProps, DOMProps, StyleProps {
   labelPosition?: LabelPosition, // default top
   labelAlign?: Alignment, // default start
   isRequired?: boolean,
@@ -28,9 +28,13 @@ export interface SpectrumLabelProps extends LabelProps, DOMProps, StyleProps, HT
   includeNecessityIndicatorInAccessibilityName?: boolean
 }
 
-export interface SpectrumFieldProps extends SpectrumLabelProps {
+export interface SpectrumLabelProps extends SpectrumLabelPropsBase, HTMLAttributes<HTMLElement> {}
+
+export interface SpectrumFieldProps extends SpectrumLabelPropsBase, SpectrumHelpTextProps {
   children: ReactElement,
   label?: ReactNode,
   labelProps: HTMLAttributes<HTMLElement>,
+  descriptionProps?: HTMLAttributes<HTMLElement>,
+  errorMessageProps?: HTMLAttributes<HTMLElement>,
   wrapperClassName?: string
 }

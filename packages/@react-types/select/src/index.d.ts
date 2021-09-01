@@ -19,6 +19,7 @@ import {
   DOMProps,
   FocusableDOMProps,
   FocusableProps,
+  HelpTextProps,
   InputBase,
   LabelableProps,
   SingleSelection,
@@ -28,7 +29,7 @@ import {
   Validation
 } from '@react-types/shared';
 
-export interface SelectProps<T> extends CollectionBase<T>, AsyncLoadable, Omit<InputBase, 'isReadOnly'>, Validation, LabelableProps, TextInputBase, SingleSelection, FocusableProps {
+export interface SelectProps<T> extends CollectionBase<T>, AsyncLoadable, Omit<InputBase, 'isReadOnly'>, Validation, HelpTextProps, LabelableProps, TextInputBase, SingleSelection, FocusableProps {
   /** Sets the open state of the menu. */
   isOpen?: boolean,
   /** Sets the default open state of the menu. */

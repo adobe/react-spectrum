@@ -1,0 +1,9 @@
+{
+  "ascending": "crescătoare",
+  "ascendingSort": "sortate după coloana {columnName} în ordine crescătoare",
+  "descending": "descrescătoare",
+  "descendingSort": "sortate după coloana {columnName} în ordine descrescătoare",
+  "select": "Selectare",
+  "selectAll": "Selectare totală",
+  "sortable": "coloană sortabilă"
+}

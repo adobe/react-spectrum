@@ -1,10 +1,13 @@
 {
   "calendar": "Kalendārs",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} līdz {end, date, long}",
   "date": "Datums",
   "dateRange": "Datumu diapazons",
   "day": "Diena",
   "dayPeriod": "Dienu periods",
   "endDate": "Beigu datums",
+  "era": "Ēra",
   "hour": "Stunda",
   "minute": "Minūte",
   "month": "Mēnesis",

@@ -1,10 +1,13 @@
 {
   "calendar": "Календар",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "Від {start, date, long} до {end, date, long}",
   "date": "Дата",
   "dateRange": "Діапазон дат",
   "day": "День",
   "dayPeriod": "Період дня",
   "endDate": "Дата завершення",
+  "era": "Ера",
   "hour": "Година",
   "minute": "Хвилина",
   "month": "Місяць",

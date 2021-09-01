@@ -40,7 +40,7 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
   useUpdateEffect(() => {
     // announce the new month with a change from the Previous or Next button
     if (!state.isFocused) {
-      announce(monthFormatter.format(state.currentMonth));
+      announce(monthFormatter.format(state.currentMonth.toDate(state.timeZone)));
     }
     // handle an update to the current month from the Previous or Next button
     // rather than move focus, we announce the new month value
@@ -49,7 +49,7 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
   // Announce when the selected value changes
   useUpdateEffect(() => {
     if (selectedDateDescription) {
-      announce(selectedDateDescription);
+      announce(selectedDateDescription, 'polite', 4000);
     }
     // handle an update to the caption that describes the currently selected range, to announce the new value
   }, [selectedDateDescription]);
@@ -145,6 +145,8 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
       'aria-disabled': isDisabled || null,
       'aria-labelledby': labelProps['aria-labelledby'],
       'aria-describedby': selectedDateDescription ? captionId : null,
+      'aria-colcount': 7,
+      'aria-rowcount': state.weeksInMonth + 1,
       onKeyDown,
       onFocus: () => state.setFocused(true),
       onBlur: () => state.setFocused(false)
