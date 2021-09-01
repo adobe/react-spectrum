@@ -12,8 +12,8 @@
 
 import {BaseLayout, BaseLayoutOptions} from './';
 import {Key} from 'react';
-import {KeyboardDelegate, Node} from '@react-types/shared';
 import {LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
+import {Node} from '@react-types/shared';
 
 export interface GridLayoutOptions extends BaseLayoutOptions {
   /**
@@ -77,7 +77,7 @@ const DEFAULT_OPTIONS = {
   }
 };
 
-export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
+export class GridLayout<T> extends BaseLayout<T> {
   protected minItemSize: Size;
   protected maxItemSize: Size;
   protected margin: number;
@@ -171,7 +171,7 @@ export class GridLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
       // TODO: dunno why I had to add this but it gets rid of the loading spinner, otherwise it remains on initial async load
       // Can't figure out why ListLayout didn't need that
       if (!this.isLoading) {
-        this.layoutInfos.delete('loader')
+        this.layoutInfos.delete('loader');
       }
     }
 

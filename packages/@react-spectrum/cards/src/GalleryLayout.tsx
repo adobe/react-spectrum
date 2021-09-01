@@ -11,10 +11,9 @@
  */
 
 import {BaseLayout, BaseLayoutOptions} from './';
-import {KeyboardDelegate} from '@react-types/shared';
 import {LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 
-export interface GalleryLayoutOptions<T> extends BaseLayoutOptions<T> {
+export interface GalleryLayoutOptions extends BaseLayoutOptions {
   /**
    * The card size in the grid.
    */
@@ -57,13 +56,13 @@ const DEFAULT_OPTIONS = {
   }
 };
 
-export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
+export class GalleryLayout<T> extends BaseLayout<T> {
   protected idealRowHeight: number;
   // TODO: should this have had a margin option? v2 seems to use itemSpacing
   protected itemSpacing: Size;
   protected itemPadding: number;
 
-  constructor(options: GalleryLayoutOptions<T> = {}) {
+  constructor(options: GalleryLayoutOptions = {}) {
     super(options);
     let cardSize = options.cardSize || 'L';
     this.idealRowHeight = options.idealRowHeight || DEFAULT_OPTIONS[cardSize].idealRowHeight;
@@ -88,7 +87,7 @@ export class GalleryLayout<T> extends BaseLayout<T> implements KeyboardDelegate 
       }
 
       if (!this.isLoading) {
-        this.layoutInfos.delete('loader')
+        this.layoutInfos.delete('loader');
       }
     }
 
