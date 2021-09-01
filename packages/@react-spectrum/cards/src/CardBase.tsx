@@ -133,7 +133,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
       };
     }
     // ToDo: how to re-run if image src changes?
-  }, [props.children, setIsCloseToSquare]);
+  }, [props.children, setIsCloseToSquare, isQuiet, layout]);
 
 
   return (
