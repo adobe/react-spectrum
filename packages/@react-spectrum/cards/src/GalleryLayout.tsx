@@ -14,10 +14,10 @@ import {BaseLayout, BaseLayoutOptions} from './';
 import {LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 
 export interface GalleryLayoutOptions extends BaseLayoutOptions {
-  /**
-   * The card size in the grid.
-   */
-  cardSize?: 'S' | 'M' | 'L',
+  // /**
+  //  * The card size in the grid.
+  //  */
+  // cardSize?: 'S' | 'M' | 'L',
   /**
    * The the default row height.
    * @default 208
@@ -64,7 +64,8 @@ export class GalleryLayout<T> extends BaseLayout<T> {
 
   constructor(options: GalleryLayoutOptions = {}) {
     super(options);
-    let cardSize = options.cardSize || 'L';
+    // TODO: restore cardSize option when we support different size cards
+    let cardSize = 'L';
     this.idealRowHeight = options.idealRowHeight || DEFAULT_OPTIONS[cardSize].idealRowHeight;
     this.itemSpacing = options.itemSpacing || DEFAULT_OPTIONS[cardSize].itemSpacing;
     this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding;

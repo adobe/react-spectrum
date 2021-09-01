@@ -20,13 +20,15 @@ interface SpectrumCardProps extends AriaCardProps, StyleProps, DOMProps {
   children: ReactNode,
   isQuiet?: boolean,
   layout?: 'grid' | 'waterfall' | 'gallery',
-  size?: 'S' | 'M' | 'L',
+  // TODO: readd size when we get updated designs from spectrum
+  // size?: 'S' | 'M' | 'L',
+  // not needed for quiet cards
   orientation?: 'horizontal' | 'vertical'
 }
 
 interface LayoutOptions {
-  cardSize?: 'S' | 'M' | 'L',
-  cardOrientation?: 'horizontal' | 'vertical',
+  // cardSize?: 'S' | 'M' | 'L',
+  // cardOrientation?: 'horizontal' | 'vertical',
   collator?: Intl.Collator
 }
 
@@ -46,8 +48,10 @@ interface CardViewProps<T> extends CollectionBase<T>, MultipleSelection, Omit<As
   // TODO: Does LayoutContructor and Layout give enough info for a user to know what to put in their own custom layout?
   // Replaced with CardViewLayout so that they know they need to have keyboardDelegate stuff as well as collection, disabledKeys, etc
   layout: CardViewLayoutConstructor<T> | CardViewLayout<T>,
-  cardSize?: 'S' | 'M' | 'L',
-  cardOrientation?: 'horizontal' | 'vertical',
+  // TODO: readd size when we get updated designs from spectrum
+  // cardSize?: 'S' | 'M' | 'L',
+  // TODO: readd when we support horizontal cards in the layouts
+  // cardOrientation?: 'horizontal' | 'vertical',
   isQuiet?: boolean,
   renderEmptyState?: () => ReactNode,
   loadingState?: LoadingState

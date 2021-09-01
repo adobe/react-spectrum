@@ -16,10 +16,10 @@ import {LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Node} from '@react-types/shared';
 
 export interface GridLayoutOptions extends BaseLayoutOptions {
-  /**
-   * The card size in the grid.
-   */
-  cardSize?: 'S' | 'M' | 'L',
+  // /**
+  //  * The card size in the grid.
+  //  */
+  // cardSize?: 'S' | 'M' | 'L',
   /**
    * The minimum item size.
    * @default 208 x 208
@@ -91,7 +91,8 @@ export class GridLayout<T> extends BaseLayout<T> {
 
   constructor(options: GridLayoutOptions = {}) {
     super(options);
-    let cardSize = options.cardSize || 'L';
+    // TODO: restore cardSize option when we support different size cards
+    let cardSize = 'L';
     this.minItemSize = options.minItemSize || DEFAULT_OPTIONS[cardSize].minItemSize;
     this.maxItemSize = options.maxItemSize || DEFAULT_OPTIONS[cardSize].maxItemSize;
     this.margin = options.margin != null ? options.margin : DEFAULT_OPTIONS[cardSize].margin;

@@ -51,9 +51,6 @@ DefaultGalleryLowVariance.storyName = 'dynamic cards, low variance in aspect rat
 export const DefaultGallery = () => DynamicCardView({layout: GalleryLayout, items});
 DefaultGallery.storyName = 'dynamic cards, high variance in aspect ratios';
 
-export const SmallGallery = () => DynamicCardView({layout: GalleryLayout, cardSize: 'S', items: itemsLowVariance});
-SmallGallery.storyName = 'small cards';
-
 export const DisabledKeys = () => DynamicCardView({layout: GalleryLayout, items: itemsLowVariance, disabledKeys: ['Joe 2', 'Bob 4']});
 DisabledKeys.storyName = 'disabled keys, Joe2, Bob 4';
 
