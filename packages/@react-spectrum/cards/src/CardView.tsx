@@ -30,8 +30,6 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
   let {
-    cardOrientation,
-    cardSize,
     isQuiet,
     renderEmptyState,
     layout,
@@ -40,7 +38,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   } = props;
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({cardSize, cardOrientation, collator}) : layout, [layout, cardSize, cardOrientation, collator]);
+  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({collator}) : layout, [layout, collator]);
 
   let formatMessage = useMessageFormatter(intlMessages);
   let {direction} = useLocale();
@@ -82,7 +80,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   }, state, domRef);
   // TODO: does aria-row count and aria-col count need to be modified? Perhaps aria-col count needs to be omitted
   return (
-    <CardViewContext.Provider value={{state, cardOrientation, cardSize, isQuiet, layout: cardViewLayout}}>
+    <CardViewContext.Provider value={{state, isQuiet, layout: cardViewLayout}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}
@@ -144,7 +142,7 @@ function InternalCard(props) {
   let {
     item
   } = props;
-  let {state, cardOrientation, cardSize, isQuiet, layout} = useCardViewContext();
+  let {state, cardOrientation, isQuiet, layout} = useCardViewContext();
 
   let layoutType = layout.layoutType;
   let rowRef = useRef();
@@ -173,7 +171,6 @@ function InternalCard(props) {
         articleProps={gridCellProps}
         isQuiet={isQuiet}
         orientation={cardOrientation}
-        size={cardSize}
         item={item}
         layout={layoutType}>
         {item.rendered}

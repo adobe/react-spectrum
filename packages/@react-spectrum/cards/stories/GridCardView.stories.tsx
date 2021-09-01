@@ -85,9 +85,6 @@ DefaultGrid.storyName = 'default Grid layout with initialized layout';
 export const DefaultGridConstructor = () => DynamicCardView({layout: GridLayout, items});
 DefaultGridConstructor.storyName = 'default Grid layout w/ layout constructor';
 
-export const SmallGrid = () => DynamicCardView({layout: GridLayout, cardSize: 'S', items});
-SmallGrid.storyName = 'small cards';
-
 export const DisabledKeys = () => DynamicCardView({items, disabledKeys: ['Joe 2', 'Bob 4']});
 DisabledKeys.storyName = 'disabled keys, Joe2, Bob 4';
 
@@ -117,8 +114,6 @@ emptyWithHeightGrid.storyName = 'empty, set height';
 
 export const AsyncLoading = () => AsyncLoadingCardView({width: '800px', height: '800px'});
 AsyncLoading.storyName = 'Async loading';
-
-// TODO add static and dynamic, various layouts, card size, selected keys, disabled keys
 
 export function DynamicCardView(props) {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
