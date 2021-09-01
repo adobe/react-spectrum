@@ -413,6 +413,8 @@ user-provided
   .spectrum-Card-content {
     margin-block-start: 5px;
     margin-block-end: 5px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .spectrum-Card-divider {
     margin-block-start: 5px;
@@ -750,6 +752,8 @@ user-provided
   .spectrum-Card-content {
     margin-block-start: 5px;
     margin-block-end: 5px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .spectrum-Card-divider {
     display: none;
@@ -876,6 +880,8 @@ user-provided
   .spectrum-Card-content {
     margin-block-start: 5px;
     margin-block-end: 5px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .spectrum-Card-divider {
     display: none;
