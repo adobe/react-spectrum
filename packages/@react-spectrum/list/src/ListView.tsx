@@ -82,17 +82,18 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     columnCount: 1,
     items: [...collection].map(item => ({
       type: 'item',
+      key: item.key,
       childNodes: [{
         ...item,
         index: 0,
-        type: 'cell'
+        type: 'cell',
+        key: `cell-${item.key}`
       }]
     }))
   }), [collection]);
   let state = useGridState({
     ...props,
-    collection: gridCollection,
-    allowsCellSelection: true
+    collection: gridCollection
   });
   let layout = useListLayout(state);
   let keyboardDelegate = useMemo(() => new GridKeyboardDelegate({
@@ -101,7 +102,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     ref: domRef,
     direction,
     collator,
-    focusMode: 'cell'
+    focusMode: 'row'
   }), [state, domRef, direction, collator]);
   let {gridProps} = useGrid({
     ...props,

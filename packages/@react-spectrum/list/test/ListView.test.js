@@ -133,7 +133,7 @@ describe('ListView', function () {
     let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
 
     describe('ArrowRight', function () {
-      it('should not move focus if no focusables present', function () {
+      it.skip('should not move focus if no focusables present', function () {
         let tree = renderList();
         let start = getCell(tree, 'Foo');
         act(() => start.focus());
@@ -141,7 +141,7 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(start);
       });
 
-      describe('with cell focusables', function () {
+      describe.skip('with cell focusables', function () {
         it('should move focus to next cell and back to row', function () {
           let tree = renderListWithFocusables();
           let focusables = within(tree.getAllByRole('row')[0]).getAllByRole('button');
@@ -167,7 +167,7 @@ describe('ListView', function () {
     });
 
     describe('ArrowLeft', function () {
-      it('should not move focus if no focusables present', function () {
+      it.skip('should not move focus if no focusables present', function () {
         let tree = renderList();
         let start = getCell(tree, 'Foo');
         act(() => start.focus());
@@ -176,7 +176,7 @@ describe('ListView', function () {
       });
 
       describe('with cell focusables', function () {
-        it('should move focus to previous cell and back to row', function () {
+        it.skip('should move focus to previous cell and back to row', function () {
           let tree = renderListWithFocusables();
           let focusables = within(tree.getAllByRole('row')[0]).getAllByRole('button');
           let start = getCell(tree, 'Foo');
